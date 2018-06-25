@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.healthcheck
-  (:require [oph.va.virkailija.remote-file-service
+  (:require [oph.soresu.common.config :refer [config]]
+            [oph.va.virkailija.remote-file-service
              :refer [get-remote-file-list]]
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.utils :refer [with-timeout]]
@@ -28,4 +29,4 @@
 
 (defn update-status! []
   (reset! status
-          (apply vector (check-rondo-status))))
+          [(check-rondo-status)]))
