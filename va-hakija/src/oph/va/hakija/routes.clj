@@ -54,16 +54,7 @@
   (compojure-api/DELETE "/system-time" []
     :return SystemTime
     (datetime/reset-time)
-    (system-time-ok-response (datetime/now)))
-
-  (compojure-api/POST
-    "/application_tokens/"
-    []
-    :body [token-data
-           (compojure-api/describe ApplicationTokenData
-                                   "New application token for tests")]
-    :return ApplicationToken
-    (ok (first (exec :form-db queries/create-test-application-token {:application_id (:application-id token-data) :token (generate-hash-id)})))))
+    (system-time-ok-response (datetime/now))))
 
 (defn- avustushaku-ok-response [avustushaku]
   (ok (va-routes/avustushaku-response-content avustushaku)))
