@@ -136,7 +136,11 @@
 
   (compojure-api/HEAD "/" [] (on-healthcheck))
 
-  (compojure-api/GET "/rondo/" [] (on-rondo-healthcheck)))
+  (compojure-api/GET
+    "/rondo/" []
+    :summary "Rondo service healthcheck"
+    :return virkailija-schema/RondoHealthCheck
+    (on-rondo-healthcheck)))
 
 (compojure-api/defroutes resource-routes
   (compojure-api/GET "/translations.json" []

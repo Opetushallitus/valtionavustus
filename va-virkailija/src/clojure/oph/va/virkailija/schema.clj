@@ -314,3 +314,8 @@
    :year s/Int
    :code s/Str
    :code-value s/Str})
+
+(s/defschema RondoHealthCheck
+  "Rondo healthcheck result"
+  {:success s/Bool
+   :error s/Str})
