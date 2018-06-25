@@ -1,4 +1,4 @@
-(ns [oph.va.virkailija.healthcheck]
+(ns oph.va.virkailija.healthcheck
   (:require [oph.va.virkailija.remote-file-service
              :refer [get-remote-file-list]]
             [oph.va.virkailija.rondo-service :as rondo-service]
