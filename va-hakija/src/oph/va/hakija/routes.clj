@@ -1,5 +1,6 @@
 (ns oph.va.hakija.routes
-  (:use [clojure.tools.trace :only [trace]])
+  (:use [clojure.tools.trace :only [trace]]
+        [oph.soresu.common.db :only [generate-hash-id exec]])
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
@@ -20,7 +21,8 @@
             [oph.va.hakija.db :as hakija-db]
             [oph.va.hakija.schema :refer :all]
             [oph.va.hakija.handlers :refer :all]
-            [oph.common.organisation-service :as org]))
+            [oph.common.organisation-service :as org]
+            [oph.va.hakija.db.queries :as queries]))
 
 (defn- on-healthcheck []
   (if (hakija-db/health-check)
@@ -52,24 +54,14 @@
   (compojure-api/DELETE "/system-time" []
     :return SystemTime
     (datetime/reset-time)
-    (system-time-ok-response (datetime/now)))
-
-  (compojure-api/POST
-    "/application_tokens/"
-    []
-    :body [token-data
-           (compojure-api/describe ApplicationTokenData
-                                   "New application token for tests")]
-    :return ApplicationToken
-    (ok (hakija-db/create-application-token (:application-id token-data)))))
+    (system-time-ok-response (datetime/now))))
 
 (defn- avustushaku-ok-response [avustushaku]
   (ok (va-routes/avustushaku-response-content avustushaku)))
 
 (defn- selvitys-form-keyword [selvitys-type]
   (let [key (str "form_" selvitys-type)]
-    (keyword key))
-)
+    (keyword key)))
 
 (defn- get-id []
   (compojure-api/GET "/:id" [id]

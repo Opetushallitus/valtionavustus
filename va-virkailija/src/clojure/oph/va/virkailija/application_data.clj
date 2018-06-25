@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.application-data
   (:require [oph.soresu.common.db :refer [exec]]
+            [oph.va.virkailija.db :as va-db]
             [oph.va.virkailija.utils :refer [convert-to-dash-keys]]
             [clj-time.core :as t]
             [oph.va.virkailija.db.queries :as virkailija-queries]
@@ -60,6 +61,9 @@
           {:search_term
            (str "%" (clojure.string/lower-case search-term) "%")})))
 
+
+ (defn create-application-token [application-id]
+     (:token (va-db/create-application-token application-id)))
 
 
 (defn get-application-token [application-id]

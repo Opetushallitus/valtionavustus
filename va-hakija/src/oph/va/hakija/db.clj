@@ -228,17 +228,6 @@
      :filename (:filename result)
      :size (:file_size result)}))
 
-(defn create-application-token [application-id]
-  (let [existing-token
-        (first (exec :form-db queries/find-application-token
-                     {:application_id application-id}))]
-
-    (if (some? existing-token)
-      {:token (:token existing-token)}
-      (first
-        (exec :form-db queries/create-application-token
-              {:application_id application-id :token (generate-hash-id)})))))
-
 (defn valid-token? [token application-id]
   (and
     (some? token)

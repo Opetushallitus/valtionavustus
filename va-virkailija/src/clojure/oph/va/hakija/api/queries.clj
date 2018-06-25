@@ -52,6 +52,7 @@
 (defquery lock-hakemus "sql/common/hakija/hakemus/lock.sql")
 (defquery close-existing-hakemus! "sql/common/hakija/hakemus/close-existing.sql")
 (defquery find-matching-hakemukset-by-organization-name "sql/hakija/hakemus/find-matching-by-organization-name.sql")
+(defquery create-application-token "sql/hakija/hakemus/create-application-token.sql")
 (defquery revoke-application-tokens
   "sql/hakija/hakemus/revoke-application-tokens.sql")
 (defquery get-application "sql/hakija/hakemus/get-application.sql")

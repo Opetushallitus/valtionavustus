@@ -46,6 +46,7 @@
         (should (empty? (application-data/revoke-application-tokens
                           (:id application)))))))
 
+
 (describe
   "Get applications"
 
@@ -137,5 +138,6 @@
                       (assoc payment :state 2 :filename "file.xml") user)]
         (should= 0 (count (application-data/get-application-unsent-payments
                             (:id application)))))))
+
 
 (run-specs)

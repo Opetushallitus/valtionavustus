@@ -1,28 +1,28 @@
 (ns oph.va.virkailija.paatos
   (:require
-    [ring.util.http-response :refer :all]
-    [compojure.api.sweet :as compojure-api]
-    [oph.va.hakija.api :as hakija-api]
-    [oph.soresu.form.formutil :as formutil]
-    [oph.va.decision-liitteet :as decision-liitteet]
-    [oph.va.virkailija.email :as email]
-    [oph.common.email :refer [refuse-url]]
-    [oph.va.virkailija.schema :as virkailija-schema]
-    [oph.va.virkailija.hakudata :as hakudata]
-    [oph.va.virkailija.db :as virkailija-db]
-    [clojure.tools.logging :as log]
-    [clojure.string :as str]
-    [oph.va.virkailija.decision :as decision]
-    [oph.soresu.common.config :refer [config]]
-    [oph.va.virkailija.application-data :refer [get-application-token]]
-    [oph.va.virkailija.payments-data :as payments-data]
-    [oph.va.virkailija.authentication :as authentication]))
+   [ring.util.http-response :refer :all]
+   [compojure.api.sweet :as compojure-api]
+   [oph.va.hakija.api :as hakija-api]
+   [oph.soresu.form.formutil :as formutil]
+   [oph.va.decision-liitteet :as decision-liitteet]
+   [oph.va.virkailija.email :as email]
+   [oph.common.email :refer [refuse-url]]
+   [oph.va.virkailija.schema :as virkailija-schema]
+   [oph.va.virkailija.hakudata :as hakudata]
+   [oph.va.virkailija.db :as virkailija-db]
+   [clojure.tools.logging :as log]
+   [clojure.string :as str]
+   [oph.va.virkailija.decision :as decision]
+   [oph.soresu.common.config :refer [config]]
+   [oph.va.virkailija.application-data :refer [get-application-token create-application-token]]
+   [oph.va.virkailija.payments-data :as payments-data]
+   [oph.va.virkailija.authentication :as authentication]))
 
 (defn is-notification-email-field? [field]
   (or
-    (formutil/has-field-type? "vaEmailNotification" field)
-    ;;This array is for old-style email-fields which did not yet have the :vaEmailNotification field-type
-    (some #(= (:key field) %) ["organization-email" "primary-email" "signature-email"])))
+   (formutil/has-field-type? "vaEmailNotification" field)
+   ;;This array is for old-style email-fields which did not yet have the :vaEmailNotification field-type
+   (some #(= (:key field) %) ["organization-email" "primary-email" "signature-email"])))
 
 (defn- emails-from-answers [answers]
   (map :value (formutil/filter-values #(is-notification-email-field? %) (answers :value))))
@@ -42,11 +42,11 @@
         decision (decision/paatos-html hakemus-id)
         arvio (virkailija-db/get-arvio hakemus-id)
         token (when (get-in config [:application-change :refuse-enabled?])
-                (get-application-token (:id hakemus)))]
+                (create-application-token (:id hakemus)))]
     (log/info "Sending paatos email for hakemus" hakemus-id " to " emails)
     (if (and (some? token) (not= (:status arvio) "rejected"))
       (email/send-paatos-refuse!
-        emails avustushaku hakemus presenting-officer-email token)
+       emails avustushaku hakemus presenting-officer-email token)
       (email/send-paatos! emails avustushaku hakemus presenting-officer-email))
     (hakija-api/add-paatos-sent-emails hakemus emails decision)
     (ok {:status "sent" :hakemus hakemus-id :emails emails})))
@@ -111,61 +111,61 @@
   "Paatos routes"
 
   (compojure-api/GET "/liitteet" []
-    (ok decision-liitteet/Liitteet))
+                     (ok decision-liitteet/Liitteet))
 
   (compojure-api/POST
-      "/sendall/:avustushaku-id" [:as request]
-    :path-params [avustushaku-id :- Long]
-    (let [ids (get-hakemus-ids-to-send avustushaku-id)]
-      (when (get-in config [:payments :enabled?])
-        (do
-          (log/info "Create initial payment for applications")
-          (payments-data/create-grant-payments
-            avustushaku-id 0 (authentication/get-request-identity request))))
-      (log/info "Send all paatos ids " ids)
-      (run! send-paatos-for-all ids)
-      (ok (merge {:status "ok"}
-                 (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))
+   "/sendall/:avustushaku-id" [:as request]
+   :path-params [avustushaku-id :- Long]
+   (let [ids (get-hakemus-ids-to-send avustushaku-id)]
+     (when (get-in config [:payments :enabled?])
+       (do
+         (log/info "Create initial payment for applications")
+         (payments-data/create-grant-payments
+          avustushaku-id 0 (authentication/get-request-identity request))))
+     (log/info "Send all paatos ids " ids)
+     (run! send-paatos-for-all ids)
+     (ok (merge {:status "ok"}
+                (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))
 
   (compojure-api/POST "/regenerate/:avustushaku-id" []
-    :path-params [avustushaku-id :- Long]
-    (let [ids-result (hakija-api/find-regenerate-hakemus-paatos-ids avustushaku-id)
-          ids (map :hakemus_id ids-result)]
-      (log/info "Regenereate " ids)
-      (run! regenerate-paatos ids)
-      (ok {:status "ok"})))
+                      :path-params [avustushaku-id :- Long]
+                      (let [ids-result (hakija-api/find-regenerate-hakemus-paatos-ids avustushaku-id)
+                            ids (map :hakemus_id ids-result)]
+                        (log/info "Regenereate " ids)
+                        (run! regenerate-paatos ids)
+                        (ok {:status "ok"})))
 
 
   (compojure-api/GET "/sent/:avustushaku-id" []
-    :path-params [avustushaku-id :- Long]
-    (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
-          avustushaku-name (-> avustushaku :content :name :fi)
-          sent-status (get-sent-status avustushaku-id)
-          first-hakemus-id (first (:ids sent-status))
-          first-hakemus (hakija-api/get-hakemus first-hakemus-id)
-          first-hakemus-user-key (:user_key first-hakemus)
-          first-hakemus-token (get-application-token first-hakemus-id)]
-      (ok (merge
-            {:status "ok"
-             :mail (email/mail-example
-                     (if (get-in config [:application-change :refuse-enabled?])
-                       :paatos-refuse
-                       :paatos)
-                     {:avustushaku-name avustushaku-name
-                      :url "URL_PLACEHOLDER"
-                      :refuse-url "REFUSE_URL_PLACEHOLDER"
-                      :register-number (:register_number first-hakemus)
-                      :project-name (:project_name first-hakemus)})
-             :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)
-             :example-refuse-url
-             (refuse-url
-               avustushaku-id first-hakemus-user-key :fi first-hakemus-token)}
-            (select-keys sent-status [:sent :count :sent-time :paatokset])))))
+                     :path-params [avustushaku-id :- Long]
+                     (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+                           avustushaku-name (-> avustushaku :content :name :fi)
+                           sent-status (get-sent-status avustushaku-id)
+                           first-hakemus-id (first (:ids sent-status))
+                           first-hakemus (hakija-api/get-hakemus first-hakemus-id)
+                           first-hakemus-user-key (:user_key first-hakemus)
+                           first-hakemus-token (get-application-token first-hakemus-id)]
+                       (ok (merge
+                            {:status "ok"
+                             :mail (email/mail-example
+                                    (if (get-in config [:application-change :refuse-enabled?])
+                                      :paatos-refuse
+                                      :paatos)
+                                    {:avustushaku-name avustushaku-name
+                                     :url "URL_PLACEHOLDER"
+                                     :refuse-url "REFUSE_URL_PLACEHOLDER"
+                                     :register-number (:register_number first-hakemus)
+                                     :project-name (:project_name first-hakemus)})
+                             :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)
+                             :example-refuse-url
+                             (refuse-url
+                              avustushaku-id first-hakemus-user-key :fi first-hakemus-token)}
+                            (select-keys sent-status [:sent :count :sent-time :paatokset])))))
 
   (compojure-api/GET "/views/:hakemus-id" []
-    :path-params [hakemus-id :- Long]
-    (ok {:views (hakija-api/find-paatos-views hakemus-id)}))
+                     :path-params [hakemus-id :- Long]
+                     (ok {:views (hakija-api/find-paatos-views hakemus-id)}))
 
   (compojure-api/GET "/emails/:hakemus-id" []
-    :path-params [hakemus-id :- Long]
-    (ok {:emails (paatos-emails hakemus-id)})))
+                     :path-params [hakemus-id :- Long]
+                     (ok {:emails (paatos-emails hakemus-id)})))
