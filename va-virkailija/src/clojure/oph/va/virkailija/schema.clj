@@ -317,6 +317,7 @@
 
 (s/defschema HealthCheckResult
   "Integration healthcheck result"
-  {:timestamp s/Inst
+  {:timestamp s/Str
    :success s/Bool
-   :error s/Str})
+   :error s/Str
+   :service s/Str})
