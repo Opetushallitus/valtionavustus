@@ -7,6 +7,9 @@
 
 (defonce ^:private status (atom []))
 
+(defn get-last-status []
+  @status)
+
 (defn check-rondo-status []
   (let [rondo-service (rondo-service/create-service
                         (get-in config [:server :rondo-sftp]))
@@ -18,3 +21,7 @@
                  {:success false :error (.getMessage e)}))
             (get-in config [:server :healthcheck-timeout] 5000)
             {:success false :error "Timeout"})]))
+
+(defn update-status! []
+  (reset! status
+          (apply vector (check-rondo-status))))
