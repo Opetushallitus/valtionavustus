@@ -15,6 +15,8 @@ import ValiselvitysForm from './data/ValiselvitysForm.json'
 import Rahoitusalueet from './data/Rahoitusalueet'
 import HakuStatuses from './haku-details/HakuStatuses'
 import HakuPhases from './haku-details/HakuPhases'
+import queryString from 'query-string'
+
 const dispatcher = new Dispatcher()
 
 const events = {
@@ -234,7 +236,10 @@ export default class HakujenHallintaController {
   onInitialState(emptyState, realInitialState) {
     const hakuList = realInitialState.hakuList
     if (hakuList && !_.isEmpty(hakuList)) {
-      const selectedHaku = _.find(hakuList, h => h.id === realInitialState.hakuId) || hakuList[0]
+      const query = queryString.parse(window.location.search)
+      const grantId = parseInt(query.avustushaku) || realInitialState.hakuId
+      const selectedHaku = _.find(
+        hakuList, h => h.id === grantId) || hakuList[0]
       realInitialState = this.onHakuSelection(realInitialState, selectedHaku)
     }
     return realInitialState
@@ -481,6 +486,7 @@ export default class HakujenHallintaController {
     this.loadPayments(hakuToSelect)
     this.loadForm(hakuToSelect)
     LocalStorage.saveAvustushakuId(hakuToSelect.id)
+    window.history.pushState(null, null, `?avustushaku=${hakuToSelect.id}`);
     return state
   }
 
