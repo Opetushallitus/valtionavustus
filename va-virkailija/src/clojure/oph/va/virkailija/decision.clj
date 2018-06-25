@@ -55,14 +55,23 @@
         maksu (decision-field decision :maksu lang)
         has-multiple-maksuera (-> avustushaku :content :multiplemaksuera)
         multiple-maksuera (and has-multiple-maksuera (> total-paid 60000))
-        first-round-paid (if multiple-maksuera (Math/round (* 0.6 total-paid)) total-paid)
+        first-round-paid (if multiple-maksuera
+                           (Math/round (* 0.6 total-paid)) total-paid)
         paid-formatted (ks/format-number first-round-paid)
         extra-no-multiple "."
-        extra-multiple [:span (str  (translate :ja-loppuera-viimeistaan) "" maksu-date)]
+        extra-multiple [:span
+                        (str
+                          (translate :ja-loppuera-viimeistaan) " " maksu-date)]
         extra (if multiple-maksuera extra-multiple extra-no-multiple)
-        content1 [:span [:p (str (translate "avustus-maksetaan") ":")] [:p [:strong (str iban ", " bic)]]]
-        content2 [:p (str (translate "maksuerat-ja-ajat") ": " paid-formatted " " maksu extra)]
-        content3 (when-not (nil? (:talousarviotili arvio)) [:p (str (translate "talousarviotili") ": " (:talousarviotili arvio))])
+        content1 [:span
+                  [:p (str (translate "avustus-maksetaan") ":")]
+                  [:p [:strong (str iban ", " bic)]]]
+        content2 [:p
+                  (str (translate "maksuerat-ja-ajat") ": "
+                       paid-formatted " " maksu extra)]
+        content3 (when-not (nil? (:talousarviotili arvio))
+                   [:p (str (translate "talousarviotili") ": "
+                            (:talousarviotili arvio))])
         content [:span content1 content2 content3]]
     (section :avustuksen-maksu content translate false)))
 
