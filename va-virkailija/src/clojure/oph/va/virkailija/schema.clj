@@ -315,7 +315,8 @@
    :code s/Str
    :code-value s/Str})
 
-(s/defschema RondoHealthCheck
-  "Rondo healthcheck result"
-  {:success s/Bool
+(s/defschema HealthCheckResult
+  "Integration healthcheck result"
+  {:timestamp s/Inst
+   :success s/Bool
    :error s/Str})

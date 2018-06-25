@@ -125,7 +125,7 @@
   (compojure-api/GET
     "/rondo/" []
     :summary "Rondo service healthcheck"
-    :return virkailija-schema/RondoHealthCheck
+    :return [virkailija-schema/HealthCheckResult]
     (on-rondo-healthcheck)))
 
 (compojure-api/defroutes resource-routes
