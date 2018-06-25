@@ -16,6 +16,11 @@
             [yesql.core :refer [defquery]]))
 
 (defquery create-test-application-token "sql/spec/create-test-application-token.sql")
+
+(defn create-token
+  [application]
+  (first (exec :form-db create-test-application-token {:application_id (:id application) :token (generate-hash-id)})))
+
 (def test-server-port 9000)
 (def base-url (str "http://localhost:" test-server-port ) )
 (defn path->url [path] (str base-url path))
@@ -588,7 +593,7 @@
           (it "prevents refuse application by user without token"
               (let [{:keys [id version]} (create-hakemus!)
                     application (va-db/get-hakemus id)
-                    token-result (first (exec :form-db create-test-application-token {:application_id (:id application) :token (generate-hash-id)}))
+                    token-result (create-token application)
                      {:keys [status] :as response}
                     (put!
                       (format "/api/avustushaku/1/hakemus/%s/%d/refuse/"
@@ -601,7 +606,7 @@
           (it "prevents refuse with incorrect token"
               (let [{:keys [id version]} (create-hakemus!)
                     application (va-db/get-hakemus id)
-                    token-result (first (exec :form-db create-test-application-token {:application_id (:id application) :token (generate-hash-id)}))
+                    token-result (create-token application)
                     {:keys [status]}
                     (put!
                       (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=invalid"
@@ -615,7 +620,7 @@
           (it "sets application to refused state"
               (let [{:keys [id]} (create-hakemus!)
                     application (va-db/get-hakemus id)
-                    token-result (first (exec :form-db create-test-application-token {:application_id (:id application) :token (generate-hash-id)}))
+                    token-result (create-token application)
                     token (:token token-result)
                     {:keys [status]}
                     (put!
@@ -630,7 +635,7 @@
           (it "prevents refusing already refused application"
               (let [{:keys [id]} (create-hakemus!)
                     application (va-db/get-hakemus id)
-                    token-result (first (exec :form-db create-test-application-token {:application_id (:id application) :token (generate-hash-id)}))
+                    token-result (create-token application)
                     token (:token token-result)
                     refuse-result-pre
                     (put!
@@ -649,7 +654,7 @@
           (it "validates application valid token"
               (let [{:keys [id]} (create-hakemus!)
                     application (va-db/get-hakemus id)
-                    token-result (first (exec :form-db create-test-application-token {:application_id (:id application) :token (generate-hash-id)}))
+                    token-result (create-token application)
                     token (:token token-result)
                     result
                     (get!
@@ -661,7 +666,7 @@
           (it "validates application revoked token"
               (let [{:keys [id]} (create-hakemus!)
                     application (va-db/get-hakemus id)
-                    token-result (first (exec :form-db create-test-application-token {:application_id (:id application) :token (generate-hash-id)}))
+                    token-result (create-token application)
                     token (:token token-result)]
                 (va-db/revoke-token token)
                 (let [result
@@ -683,7 +688,7 @@
           (it "validates invalid application token"
               (let [{:keys [id]} (create-hakemus!)
                     application (va-db/get-hakemus id)
-                    token-result (first (exec :form-db create-test-application-token {:application_id (:id application) :token (generate-hash-id)}))
+                    token-result (create-token application)
                     token (str "invalid-" (:token token-result))
                     result
                     (get!
