@@ -2,8 +2,9 @@
   (:require [oph.va.virkailija.remote-file-service
              :refer [get-remote-file-list]]
             [oph.va.virkailija.rondo-service :as rondo-service]
-            [oph.va.virkailija.utils
-             :refer [with-timeout]]))
+            [oph.va.virkailija.utils :refer [with-timeout]]
+            [clj-time.core :as t]
+            [clj-time.format :as f]))
 
 (defonce ^:private status (atom []))
 
@@ -20,7 +21,10 @@
                (catch Exception e
                  {:success false :error (.getMessage e)}))
             (get-in config [:server :healthcheck-timeout] 5000)
-            {:success false :error "Timeout"})]))
+            {:success false :error "Timeout"})]
+    (assoc result
+           :service "rondo"
+           :timestamp (f/unparse (:basic-date-time f/formatters) (t/now)))))
 
 (defn update-status! []
   (reset! status
