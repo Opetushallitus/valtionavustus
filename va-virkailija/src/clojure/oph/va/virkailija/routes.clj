@@ -41,7 +41,12 @@
              :as payment-batches-routes]
             [oph.va.virkailija.va-code-values-routes
              :as va-code-values-routes]
-            [oph.va.virkailija.payments-routes :as payments-routes])
+            [oph.va.virkailija.payments-routes :as payments-routes]
+            [oph.va.virkailija.remote-file-service
+             :refer [get-remote-file-list]]
+            [oph.va.virkailija.rondo-service :as rondo-service]
+            [oph.va.virkailija.utils
+             :refer [with-timeout]])
   (:import [java.io ByteArrayInputStream]))
 
 (def opintopolku-login-url
@@ -61,6 +66,19 @@
            (hakija-api/health-check))
     (ok {})
     (not-found)))
+
+(defn- on-rondo-healthcheck []
+  (let [rondo-service (rondo-service/create-service
+                        (get-in config [:server :rondo-sftp]))]
+  (ok
+    (with-timeout
+      #(try
+         (get-remote-file-list rondo-service)
+         {:success true}
+         (catch Exception e
+           {:success false :error {:error-type :exception :exception e}}))
+      (get-in config [:server :healthcheck-timeout] 5000)
+      {:success false :error {:error-type :timeout}}))))
 
 (defn- without-id [x]
   (dissoc x :id))
@@ -116,7 +134,9 @@
 
   (compojure-api/GET "/" [] (on-healthcheck))
 
-  (compojure-api/HEAD "/" [] (on-healthcheck)))
+  (compojure-api/HEAD "/" [] (on-healthcheck))
+
+  (compojure-api/GET "/rondo/" [] (on-rondo-healthcheck)))
 
 (compojure-api/defroutes resource-routes
   (compojure-api/GET "/translations.json" []
