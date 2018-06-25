@@ -63,14 +63,15 @@
                             " " maksu-date)
         extra (if multiple-maksuera extra-multiple extra-no-multiple)
         content1 [:span
-                  [:p (str (translate "avustus-maksetaan") ":")]
-                  [:p [:strong (str iban ", " bic)]]]
+                  [:p (translate "avustus-maksetaan") ":"]
+                  [:p [:strong iban ", " bic]]]
         content2 [:p
-                  (str (translate "maksuerat-ja-ajat") ": "
-                       paid-formatted " " maksu extra)]
+                  (translate "maksuerat-ja-ajat") ": "
+                  paid-formatted " " maksu extra]
         content3 (when-not (nil? (:talousarviotili arvio))
-                   [:p (str (translate "talousarviotili") ": "
-                            (:talousarviotili arvio))])
+                   [:p
+                    (translate "talousarviotili") ": "
+                    (:talousarviotili arvio)])
         content [:span content1 content2 content3]]
     (section :avustuksen-maksu content translate false)))
 
