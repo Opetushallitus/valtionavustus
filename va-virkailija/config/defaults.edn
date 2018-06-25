@@ -7,8 +7,7 @@
           :attachment-max-size 50 ;in megabytes
           :session-timeout-in-s 28800
           :threads 16
-          :virkailija-url "http://localhost:8081"
-          :healthcheck-timeout 5000}
+          :virkailija-url "http://localhost:8081"}
  :opintopolku {:url "https://virkailija.testiopintopolku.fi"
                :cas-login "/cas/login?service="
                :cas-logout "/cas/logout?service="
@@ -51,4 +50,5 @@
  :multibatch-payments {:enabled? true}
  :va-code-values {:enabled? true}
  :reports {:enabled? true}
- :application-change {:refuse-enabled? false}}
+ :application-change {:refuse-enabled? false}
+ :integration-healthcheck {:enabled? false}}
