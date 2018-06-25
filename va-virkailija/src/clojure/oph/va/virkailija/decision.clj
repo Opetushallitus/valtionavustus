@@ -59,9 +59,8 @@
                            (Math/round (* 0.6 total-paid)) total-paid)
         paid-formatted (ks/format-number first-round-paid)
         extra-no-multiple "."
-        extra-multiple [:span
-                        (str
-                          (translate :ja-loppuera-viimeistaan) " " maksu-date)]
+        extra-multiple (str " " (translate :ja-loppuera-viimeistaan)
+                            " " maksu-date)
         extra (if multiple-maksuera extra-multiple extra-no-multiple)
         content1 [:span
                   [:p (str (translate "avustus-maksetaan") ":")]
