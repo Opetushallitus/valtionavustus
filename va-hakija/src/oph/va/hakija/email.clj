@@ -5,8 +5,7 @@
             [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
             [clostache.parser :refer [render]]
-            [oph.soresu.common.config :refer [config]]
-            [oph.va.hakija.application-data :refer [create-application-token]]))
+            [oph.soresu.common.config :refer [config]]))
 
 (def mail-titles
   {:new-hakemus {:fi "Linkki organisaationne avustushakemukseen"
@@ -15,7 +14,11 @@
                        :sv "Automatisk meddelande: er organisations ansökan om understöd har mottagits"}
    :hakemus-submitted-after-change-request {:fi "Automaattinen viesti: organisaationne avustushakemusta on täydennetty"
                                             :sv "Automatiskt meddelande: er ansökan om understöd har kompletterats"}
-   :hakemus-change-request-responded {:fi "Automaattinen viesti: avustushakemusta on täydennetty"}})
+   :hakemus-change-request-responded {:fi "Automaattinen viesti: avustushakemusta on täydennetty"}
+   :application-refused-presenter
+   {:fi "Automaattinen viesti: Avustuksen saajan ilmoitus"}
+   :application-refused {:fi "Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty"
+                         :sv "Er anmälan om att ni inte tar emot understödet har lämnats in till"}})
 
 (def mail-templates
   {:new-hakemus {:fi (email/load-template "email-templates/new-hakemus.plain.fi")
@@ -25,7 +28,14 @@
    :hakemus-submitted-refuse
    {:fi (email/load-template "email-templates/hakemus-submitted-refuse.plain.fi")
     :sv (email/load-template "email-templates/hakemus-submitted-refuse.plain.sv")}
-   :hakemus-change-request-responded {:fi (email/load-template "email-templates/hakemus-change-request-responded.plain.fi")}})
+   :hakemus-change-request-responded {:fi (email/load-template "email-templates/hakemus-change-request-responded.plain.fi")}
+   :application-refused-presenter
+   {:fi (email/load-template
+          "email-templates/application-refused-presenter.plain.fi")}
+   :application-refused {:fi (email/load-template
+                           "email-templates/application-refused.plain.fi")
+                     :sv (email/load-template
+                           "email-templates/application-refused.plain.sv")}})
 
 (defn start-background-job-send-mails []
   (email/start-background-job-send-mails mail-templates))
@@ -55,6 +65,37 @@
                           :end-time end-time-string
                           :url url})))
 
+(defn generate-refused-email [lang recipients grant-name]
+  {:operation :send
+   :type :application-refused
+   :lang lang
+   :from (get-in email/smtp-config [:from lang])
+   :sender (:sender email/smtp-config)
+   :subject (get-in mail-titles [:application-refused lang])
+   :to recipients
+   :grant-name grant-name})
+
+(defn send-refused-message! [lang recipients grant-name]
+  (>!! email/mail-chan
+       (generate-refused-email lang recipients grant-name)))
+
+(defn generate-presenter-refused-email [recipients grant application-id]
+  (let [url (email/generate-virkailija-url (:id grant) application-id)
+        lang :fi]
+    {:operation :send
+     :type :application-refused-presenter
+     :lang lang
+     :from (get-in email/smtp-config [:from lang])
+     :sender (:sender email/smtp-config)
+     :subject (get-in mail-titles [:application-refused-presenter lang])
+     :to recipients
+     :grant-name (get-in grant [:content :name lang])
+     :url url}))
+
+(defn send-refused-message-to-presenter! [recipients grant application-id]
+  (>!! email/mail-chan
+       (generate-presenter-refused-email recipients grant application-id)))
+
 (defn send-change-request-responded-message-to-virkailija! [to avustushaku-id avustushaku-name-fi hakemus-db-id]
   (let [lang :fi
         url (email/generate-virkailija-url avustushaku-id hakemus-db-id)]
@@ -76,16 +117,8 @@
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
         url (email/generate-url avustushaku-id lang lang-str user-key true)
-        refuse-enabled?
-        (get-in config [:application-change :refuse-enabled?] false)
-        refuse-url
-        (when refuse-enabled?
-          (email/refuse-url avustushaku-id user-key
-                      lang (create-application-token user-key)))
         user-message {:operation :send
-                      :type (if refuse-enabled?
-                              :hakemus-submitted-refuse
-                              :hakemus-submitted)
+                      :type  :hakemus-submitted
                       :lang lang
                       :from (-> email/smtp-config :from lang)
                       :sender (-> email/smtp-config :sender)
@@ -96,8 +129,6 @@
                       :start-time start-time-string
                       :end-date end-date-string
                       :end-time end-time-string
-                      :url url
-                      :refuse-url refuse-url}]
+                      :url url}]
     (log/info "Urls would be: " url)
-    (when refuse-enabled? (log/info "Refuse url: " refuse-url))
     (>!! email/mail-chan user-message)))

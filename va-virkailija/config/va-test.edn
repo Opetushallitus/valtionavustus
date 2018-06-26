@@ -18,4 +18,7 @@
                     :scheduling "0 00 04 ? * *"
                     :strict-host-key-checking :yes}
  :payments {:enabled? true :delete-payments? true}
- :application-change {:refuse-enabled? true}}
+ :application-change {:refuse-enabled? true}
+ :integration-healthcheck {:enabled? true
+                           :timeout 5000
+                           :cron "0 */15 * ? * *"}}

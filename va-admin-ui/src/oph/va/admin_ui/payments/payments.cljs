@@ -4,12 +4,8 @@
             [cljs-time.coerce :as tc]
             [cljs-time.format :as tf]))
 
-(defn valid-batch-values?
-  [values]
-  (and (no-nils? values
-                 [:due-date :invoice-date :receipt-date])
-       (valid-email? (:inspector-email values))
-       (valid-email? (:acceptor-email values))))
+(defn valid-batch-values? [values]
+  (no-nils? values [:due-date :invoice-date :receipt-date]))
 
 (defn any-account-nil? [a]
   (some?
@@ -28,7 +24,7 @@
 
 (defn- batch-payable? [pred applications]
   (and
-    (not (empty? applications))
+    (seq applications)
     (true?
       (some
         pred
@@ -45,7 +41,7 @@
   (when (some? d)
    (format "%04d-%02d-%02d"
            (.getFullYear d)
-           (+ (.getMonth d) 1 )
+           (inc (.getMonth d))
            (.getDate d))))
 
 (defn convert-payment-dates [values]

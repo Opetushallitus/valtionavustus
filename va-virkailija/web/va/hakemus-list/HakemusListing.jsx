@@ -251,6 +251,7 @@ export default class HakemusListing extends Component {
           {!isResolved && <ChangeRequestHeader field="change-request" sorter={sorter} controller={controller} hakemusList={filteredHakemusList} />}
           {!isResolved && isAcademysize && <th className="academysize-column">Koko<HakemusSorter field="academysize" sorter={sorter} controller={controller}/></th>}
          {includesShouldNotPay && <th className="should-pay-notification-column" title={notPayTitle}>{notPayValue}</th> }
+          <th/>
          {!isResolved && <th className="applied-sum-column">Haettu <HakemusSorter field="applied-sum" sorter={sorter} controller={controller}/></th>}
           {isResolved && <th className="selvitys-column">
             <StatusFilter controller={controller}
@@ -457,7 +458,10 @@ class HakemusRow extends Component {
     const changeRequest = HakemusListing._fieldGetter("change-request")(hakemus)
     const statusComment = hakemus["status-comment"] ? ":\n" + hakemus["status-comment"] : ""
     const changeRequestTitle = changeRequest ? "Odottaa täydennystä" + statusComment : ""
+    const postSubmitModified = hakemus["submitted-version"]
+          && hakemus["submitted-version"] !== hakemus.version
     let hakemusName = ""
+
     if (_.isEmpty(hakemus["project-name"])) {
       hakemusName = hakemus["register-number"]
     } else {
@@ -474,6 +478,12 @@ class HakemusRow extends Component {
       <td className="should-pay-notification-column">
         <ShouldPayIcon controller={controller} hakemus={hakemus} state={state} show={showNotPayIcon}/>
         {hakemus.refused && <span title={hakemus["refused-comment"]}>H</span>}
+      </td>
+      <td className="post-submit-notification-column">
+        {postSubmitModified &&
+         <span title="Hakija on muokannut hakemusta lähettämisen jälkeen.">
+           H
+         </span>}
       </td>
       {!isResolved && isAcademysize && <td className="academysize-column">{hakemus.arvio.academysize}</td>}
       {!isResolved && <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>}

@@ -542,6 +542,9 @@ Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
     summasta
 - Virkailija luo Maksatukset-näkymässä uuden maksuerän täyttämällä tarvittavat
   tiedot ja lähettää 1. erän maksatukset Rondoon
+    - Asiakirjoja virkailija voi lisätä mielivaltaisen määrän maksuerää ja
+    vaihetta kohden. Näitä tietoja käytetään maksatusten sähköposti-ilmoituksen
+    lähettämiseen.
 - Seuraavan erän summan asettaa virkailija Väliselvitys-välilehdellä
   - Tämän jälkeen maksu ilmestyy Maksatus-näkymään, josta sen voi lähettää,
     kuten ensimmäisen erän
@@ -556,7 +559,59 @@ luonnissa uniikki tunniste, jolla hakija pääsee lähettämään
 muutoshakemuksen. Tämä tunniste vanhenee, kun avustuksen ensimmäinen maksatus
 lähetetään.
 
-## Käytäntöjä
+## Käytänteitä
+
+### Koodi
+
+Koodin tyylissä tavoitellaan
+[The Clojure Style Guidea](https://github.com/bbatsov/clojure-style-guide).
+
+Ennen oman koodin julkaisua, olisi hyvä ajaa staattiset työkalut.
+
+Sekä `va-virkailija`, `va-admin-ui` että `va-hakija` -projekteihin on lisätty
+alias, jolla voi ajaa kaikki työkalut läpi:
+
+``` shell
+../lein checkall
+```
+
+Tämä ajaa lein check, kibit, eastwood ja bikeshed -työkalut projektin
+koodipohjalle. `va-admin-ui`-projektissa ei ole Eastwood
+käytössä. Eastwood-työkalussa on filteröity pois migraatiot ja testit, jotta
+työkalut eivät aja niitä ja muuta tietokantaa.
+
+Yksittäin työkaluja voit ajaa seuraavasti:
+
+``` shell
+../lein check
+../lein kibit
+../lein eastwood
+../lein bikeshed
+```
+
+Myös yksittäisille nimiavaruudelle voi ajaa eastwood-linterin:
+
+``` shell
+../lein eastwood "{:namespaces [oph.va.virkailija.payment-batches-routes oph.va.virkailija.payment-batches-data]}"
+```
+
+Kibitille voi antaa tarkastettavan tiedoston parametrina:
+
+``` shell
+../lein kibit src/clojure/oph/va/virkailija/payments_data.clj
+```
+
+Bikeshedin kanssa joutuu käyttämään grepiä hyväkseen:
+
+``` shell
+../lein bikeshed | grep 'Checking\|payments_data.clj'
+```
+
+Lisätietoja:
+
+- [kibit](https://github.com/jonase/kibit)
+- [eastwood](https://github.com/jonase/eastwood)
+- [lein-bikeshed](https://github.com/dakrone/lein-bikeshed)
 
 ### Git
 

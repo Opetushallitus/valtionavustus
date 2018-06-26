@@ -25,6 +25,9 @@
   (->> (exec :form-db queries/get-avustushaku {:id id})
        first))
 
+(defn get-avustushaku-roles [avustushaku-id]
+  (exec :form-db queries/get-avustushaku-roles {:avustushaku avustushaku-id}))
+
 (defn list-avustushaut []
   (exec :form-db queries/list-avustushaut {}))
 
@@ -50,6 +53,11 @@
   (->> {:user_key hakemus-id}
        (exec :form-db queries/get-hakemus-by-user-id)
        first))
+
+(defn get-hakemus-version [hakemus-id version]
+  (first
+    (exec :form-db queries/get-hakemus-version-by-user-id
+          {:user_key hakemus-id :version version})))
 
 (defn get-hakemus-paatos [hakemus-id]
   (->> {:hakemus_id hakemus-id}
@@ -135,11 +143,19 @@
                    queries/close-existing-hakemus! params
                    queries/update-hakemus-status<! params])))
 
+(defn set-submitted-version [user-key form-submission-id]
+  (let [params {:user_key user-key
+                :form_submission_id form-submission-id}]
+    (exec-all :form-db [queries/lock-hakemus params
+                        queries/close-existing-hakemus! params
+                        queries/set-application-submitted-version<! params])))
+
 (defn verify-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :draft nil))
 
 (defn submit-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
-  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :submitted nil))
+  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :submitted nil)
+  (set-submitted-version hakemus-id submission-id))
 
 (defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals comment]
   (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :cancelled comment))
@@ -211,17 +227,6 @@
      :content-type (:content_type result)
      :filename (:filename result)
      :size (:file_size result)}))
-
-(defn create-application-token [application-id]
-  (let [existing-token
-        (first (exec :form-db queries/find-application-token
-                     {:application_id application-id}))]
-
-    (if (some? existing-token)
-      {:token (:token existing-token)}
-      (first
-        (exec :form-db queries/create-application-token
-              {:application_id application-id :token (generate-hash-id)})))))
 
 (defn valid-token? [token application-id]
   (and

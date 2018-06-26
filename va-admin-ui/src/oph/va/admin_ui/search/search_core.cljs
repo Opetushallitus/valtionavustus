@@ -21,6 +21,13 @@
 
 (def ^:private max-str-len 60)
 
+(def state-str
+  {"unhandled" "Käsittelemättä"
+   "processing" "Käsittelyssä"
+   "plausible" "Mahdollinen"
+   "rejected" "Hylätty"
+   "accepted" "Hyväksytty"})
+
 (defn- shrink [s]
   (if (> (count s) (- max-str-len 3))
     (str (subs s 0 max-str-len) "...")
@@ -55,7 +62,7 @@
    (apply vector :div content)])
 
 (defn- format-title [grant]
-  (str (when-not (empty? (:register-number grant))
+  (str (when (seq (:register-number grant))
          (str (:register-number grant) " - "))
        (get-in grant [:content :name :fi])))
 
@@ -71,6 +78,13 @@
     (format-title grant)
     (format-duration (get-in grant [:content :duration]))))
 
+(defn- item-row [title value]
+  [:div
+     [:label
+      {:style {:font-weight "bold" :padding-right 5}}
+      title ": "]
+   (or value "-")])
+
 (defn- render-application [i application]
   (render-result-item
     i
@@ -79,19 +93,34 @@
     (str (get application :register-number)
          " - "
          (:organization-name application))
-    (when-not (empty? (:project-name application))
-      [:div [:label {:style {:font-weight "bold" :padding-right 5}} "Hanke:"]
-       (:project-name application)])
-    [:div
-     [:label {:style {:font-weight "bold" :padding-right 5}} "Avustushaku:"]
-     (:grant-name application)]))
+    (item-row "Avustushaku" (:grant-name application))
+    (when (seq (:project-name application))
+      (item-row "Hanke" (:project-name application)))
+    (item-row "Hakemus luotu"
+              (to-simple-date-time (:created-at application)))
+    (item-row "Haettu summa" (:budget-oph-share application))
+    (item-row "Myönnetty summa"
+              (get-in application [:evaluation :budget-granted]))
+    (item-row "Koulutusaste"
+              (get-in application [:evaluation :rahoitusalue]))
+    (item-row "Talousarviotili"
+              (get-in application [:evaluation :talousarviotili]))
+    (item-row "Tila"
+              (get state-str (get-in application [:evaluation :status])))
+    (when-not (get-in application [:evaluation :should-pay])
+      (item-row "Avustusta ei makseta"
+                (get-in application [:evaluation :should-pay-comments])))
+    (when (:refused application)
+      (item-row
+        "Ei ota vastaan"
+        (:refused-comment application)))))
 
 (defn- render-search [results title renderer searching?]
   [:div
    [:h2 title]
    (if searching?
      [ui/circular-progress]
-     (if (> (count results) 0)
+     (if (pos? (count results))
        (doall (map-indexed renderer results))
        [:span "Ei hakutuloksia"]))])
 

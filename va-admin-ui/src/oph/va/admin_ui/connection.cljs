@@ -51,9 +51,9 @@
   (http/get (format "/%s/grants/%d/payments/" api-path id)
             {:with-credentials? true}))
 
-(defn send-payments-email [id data]
-  (http/post (format "/%s/grants/%d/payments-email/" api-path id)
-             {:json-params data :with-credentials? true}))
+(defn send-payments-email [id]
+  (http/post (format "/%s/payment-batches/%d/payments-email/" api-path id)
+             {:with-credentials? true}))
 
 (defn delete-grant-payments [id]
   (http/delete (format "/%s/grants/%d/payments/" api-path id)))
@@ -68,10 +68,19 @@
 (defn get-user-info []
   (http/get (format "/api/userinfo/") {:with-credentials? true}))
 
-(defn find-payment-batch [grant-id date]
+(defn find-payment-batches [grant-id date]
   (http/get (format "/%s/payment-batches/?grant-id=%d&date=%s"
                     api-path grant-id date)
             {:with-credentials? true}))
+
+(defn get-batch-documents [batch-id]
+  (http/get (format "/%s/payment-batches/%d/documents/" api-path batch-id)
+            {:with-credentials? true}))
+
+(defn send-batch-document [batch-id document]
+  (http/post (format "/%s/payment-batches/%d/documents/" api-path batch-id)
+             {:with-credentials? true
+              :json-params document}))
 
 (defn create-payment-batch [data]
   (http/post (format "/%s/payment-batches/" api-path)

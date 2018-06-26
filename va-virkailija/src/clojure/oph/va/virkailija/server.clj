@@ -18,7 +18,8 @@
             [oph.va.virkailija.db.migrations :as dbmigrations]
             [oph.va.virkailija.email :as email]
             [oph.va.virkailija.va-users :as va-users]
-            [oph.va.virkailija.rondo-scheduling :as rondo-scheduling]))
+            [oph.va.virkailija.rondo-scheduling :as rondo-scheduling]
+            [oph.va.virkailija.healthcheck :as healthcheck]))
 
 (defn- startup [config]
   (log/info "Startup, with configuration: " config)
@@ -30,7 +31,10 @@
   (when (get-in config [:va-users :use-cache?])
     (va-users/start-background-job-update-va-users-cache))
   (when (get-in config [:rondo-scheduler :enabled?])
-    (rondo-scheduling/schedule-fetch-from-rondo)))
+    (rondo-scheduling/schedule-fetch-from-rondo))
+  (when (get-in config [:integration-healthcheck :enabled?])
+    (log/info "Starting scheduled healthcheck")
+    (healthcheck/start-schedule-status-update!)))
 
 (defn- shutdown []
   (log/info "Shutting down...")
@@ -40,7 +44,9 @@
     (va-users/stop-background-job-update-va-users-cache))
   (db/close-datasource! :virkailija-db)
   (job-supervisor/await-jobs!)
-  (rondo-scheduling/stop-schedule-from-rondo))
+  (rondo-scheduling/stop-schedule-from-rondo)
+  (when (get-in config [:integration-healthcheck :enabled?])
+    (healthcheck/stop-schedule-status-update!)))
 
 (defn- query-string-for-redirect-location [original-request]
   (if-let [original-query-string (:query-string original-request)]

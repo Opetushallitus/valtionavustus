@@ -20,7 +20,8 @@
          :application-change (:application-change config)
          :multibatch-payments (:multibatch-payments config)
          :reports (:reports config)
-         :va-code-values (:va-code-values config)}
+         :va-code-values (:va-code-values config)
+         :selvitys-limit (:selvitys-limit config)}
         opintopolku (:opintopolku config)]
     (if-let [opintopolku-url (:url opintopolku)]
       (assoc common-environment :opintopolku {:url opintopolku-url

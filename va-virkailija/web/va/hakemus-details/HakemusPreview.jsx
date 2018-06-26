@@ -36,6 +36,8 @@ export default class HakemusPreview extends Component {
     const versionDate = hakemus['version-date']
 
     const formattedVersionDate = `${DateUtil.asDateString(versionDate)} klo ${DateUtil.asTimeString(versionDate)}`
+    const postSubmitModified = hakemus["submitted-version"] &&
+            hakemus["submitted-version"] !== hakemus.version
     const formElementProps = {
       state: formState,
       formContainerClass: EditsDisplayingFormView,
@@ -45,7 +47,11 @@ export default class HakemusPreview extends Component {
       headerElements: [registerNumberDisplay,
                        changeRequests,
                        <small key="version-date">
-                         Päivitetty {formattedVersionDate}
+                         Päivitetty
+                         {postSubmitModified ? " lähettämisen jälkeen" : ""}
+                         <span className="modified-date">
+                           {formattedVersionDate}
+                         </span>
                        </small>,
                        <GrantRefusedNotice application={hakemus}
                                            key="grant-refused" />]

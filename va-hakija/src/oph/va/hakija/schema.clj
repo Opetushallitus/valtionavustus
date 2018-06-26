@@ -14,6 +14,7 @@
    :register-number (s/maybe s/Str)
    :submission VaSubmission
    :validation-errors SubmissionValidationErrors
+   (s/optional-key :submitted-version) (s/maybe s/Int)
    (s/optional-key :refused) (s/maybe s/Bool)
    (s/optional-key :refused-comment) (s/maybe s/Str)
    (s/optional-key :refused-at) (s/maybe s/Inst)})

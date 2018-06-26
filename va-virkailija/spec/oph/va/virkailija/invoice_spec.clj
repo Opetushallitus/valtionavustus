@@ -129,7 +129,7 @@
 (describe
   "Invoice generate"
 
-  (tags :invoice)
+  (tags :invoice :invoicegenerate)
 
   (around-all [_] (with-test-server! :virkailija-db
                     #(start-server
@@ -159,11 +159,8 @@
                        :due-date (java.time.LocalDate/of 2017 12 27)
                        :partner "None"
                        :grant-id (:id grant)
-                       :document-id "ID12345"
                        :currency "EUR"
-                       :invoice-date (java.time.LocalDate/of 2017 12 20)
-                       :acceptor-email "acceptor@example.com"
-                       :inspector-email "inspector@example.com"})
+                       :invoice-date (java.time.LocalDate/of 2017 12 20)})
                     :created-at (f/parse "2017-12-20T10:24:59.750Z"))
             payment (payments-data/create-payment
                       {:application-id (:id application)
@@ -174,6 +171,12 @@
                       {:person-oid "12345"
                        :first-name "Test"
                        :surname "User"})]
+        (payment-batches-data/create-batch-document
+          (:id batch)
+          {:acceptor-email "acceptor@example.com"
+           :presenter-email "presenter@example.com"
+           :phase 0
+           :document-id "ID12345"})
         (create-application-evaluation application "accepted")
         (let [application-with-evaluation
               (some
@@ -191,7 +194,7 @@
               [:Maksuehto "Z001"]
               [:Pitkaviite "123/456/78"]
               [:Tositepvm "2017-12-20"]
-              [:Asiatarkastaja "inspector@example.com"]
+              [:Asiatarkastaja "presenter@example.com"]
               [:Hyvaksyja "acceptor@example.com"]
               [:Tositelaji "XA"]
               [:Maksutili "5000"]
@@ -226,6 +229,8 @@
                             :lkp-account "82500000")
                           (assoc-in [:content :document-type] "XA")
                           (assoc-in [:content :transaction-account] "5000"))
-               :batch batch}))))))
+               :batch (assoc batch :documents
+                             (payment-batches-data/get-batch-documents
+                               (:id batch)))}))))))
 
 (run-specs)

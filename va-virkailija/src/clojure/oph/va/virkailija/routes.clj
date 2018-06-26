@@ -41,7 +41,8 @@
              :as payment-batches-routes]
             [oph.va.virkailija.va-code-values-routes
              :as va-code-values-routes]
-            [oph.va.virkailija.payments-routes :as payments-routes])
+            [oph.va.virkailija.payments-routes :as payments-routes]
+            [oph.va.virkailija.healthcheck :as healthcheck])
   (:import [java.io ByteArrayInputStream]))
 
 (def opintopolku-login-url
@@ -62,14 +63,21 @@
     (ok {})
     (not-found)))
 
+(defn- on-integration-healthcheck []
+  (ok (healthcheck/get-last-status)))
+
 (defn- without-id [x]
   (dissoc x :id))
 
-(defn- on-hakemus-preview [avustushaku-id hakemus-user-key]
+(defn- on-hakemus-preview [avustushaku-id hakemus-user-key decision-version]
   (let [hakemus (hakija-api/get-hakemus-by-user-key hakemus-user-key)
         language (keyword (:language hakemus))
         hakija-app-url (-> config :server :url language)
-        preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key "&preview=true")]
+        preview-url (str
+                      hakija-app-url "avustushaku/" avustushaku-id
+                      "/nayta?hakemus=" hakemus-user-key
+                      (when decision-version "&decision-version=true")
+                      "&preview=true")]
     (resp/redirect preview-url)))
 
 (defn- on-hakemus-edit [avustushaku-id hakemus-user-key]
@@ -112,7 +120,13 @@
 
   (compojure-api/GET "/" [] (on-healthcheck))
 
-  (compojure-api/HEAD "/" [] (on-healthcheck)))
+  (compojure-api/HEAD "/" [] (on-healthcheck))
+
+  (compojure-api/GET
+    "/integrations/" []
+    :summary "Integrations healthcheck"
+    :return [virkailija-schema/HealthCheckResult]
+    (on-integration-healthcheck)))
 
 (compojure-api/defroutes resource-routes
   (compojure-api/GET "/translations.json" []
@@ -128,7 +142,8 @@
 
    (compojure-api/GET "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
      :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
-     (on-hakemus-preview avustushaku-id hakemus-user-key))
+     :query-params [{decision-version :- s/Bool false}]
+     (on-hakemus-preview avustushaku-id hakemus-user-key decision-version))
 
    (compojure-api/GET "/hakemus-edit/:avustushaku-id/:hakemus-user-key" []
      :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]

@@ -1,5 +1,6 @@
 (ns oph.va.hakija.hakija-server-spec
-  (:use [clojure.tools.trace])
+  (:use [clojure.tools.trace]
+        [oph.soresu.common.db :only [generate-hash-id exec]])
   (:require [clojure.string :as string]
             [speclj.core :refer :all]
             [org.httpkit.client :as http]
@@ -11,7 +12,14 @@
             [oph.va.hakija.db :as va-db]
             [oph.soresu.form.formutil :as formutil]
             [oph.common.testing.spec-plumbing :refer :all]
-            [oph.va.hakija.server :refer :all]))
+            [oph.va.hakija.server :refer :all]
+            [yesql.core :refer [defquery]]))
+
+(defquery create-test-application-token "sql/spec/create-test-application-token.sql")
+
+(defn create-token
+  [application]
+  (first (exec :form-db create-test-application-token {:application_id (:id application) :token (generate-hash-id)})))
 
 (def test-server-port 9000)
 (def base-url (str "http://localhost:" test-server-port ) )
@@ -585,10 +593,8 @@
           (it "prevents refuse application by user without token"
               (let [{:keys [id version]} (create-hakemus!)
                     application (va-db/get-hakemus id)
-                    token-result
-                    (post! "/api/test/application_tokens/"
-                           {:application-id (:id application)})
-                    {:keys [status] :as response}
+                    token-result (create-token application)
+                     {:keys [status] :as response}
                     (put!
                       (format "/api/avustushaku/1/hakemus/%s/%d/refuse/"
                               id version)
@@ -600,24 +606,22 @@
           (it "prevents refuse with incorrect token"
               (let [{:keys [id version]} (create-hakemus!)
                     application (va-db/get-hakemus id)
-                    token-result
-                    (post! "/api/test/application_tokens/"
-                           {:application-id (:id application)})
+                    token-result (create-token application)
                     {:keys [status]}
                     (put!
                       (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=invalid"
                               id version)
                       {:comment "Some valid comment"})
                     hakemus (va-db/get-hakemus id)]
+                (println token-result)
                 (should= 401 status)
                 (should= "new" (:status hakemus))))
 
           (it "sets application to refused state"
               (let [{:keys [id]} (create-hakemus!)
                     application (va-db/get-hakemus id)
-                    {:keys [body]} (post! "/api/test/application_tokens/"
-                                          {:application-id (:id application)})
-                    token (:token (json->map body))
+                    token-result (create-token application)
+                    token (:token token-result)
                     {:keys [status]}
                     (put!
                       (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=%s"
@@ -631,9 +635,8 @@
           (it "prevents refusing already refused application"
               (let [{:keys [id]} (create-hakemus!)
                     application (va-db/get-hakemus id)
-                    {:keys [body]} (post! "/api/test/application_tokens/"
-                                          {:application-id (:id application)})
-                    token (:token (json->map body))
+                    token-result (create-token application)
+                    token (:token token-result)
                     refuse-result-pre
                     (put!
                       (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=%s"
@@ -651,9 +654,8 @@
           (it "validates application valid token"
               (let [{:keys [id]} (create-hakemus!)
                     application (va-db/get-hakemus id)
-                    {:keys [body]} (post! "/api/test/application_tokens/"
-                                          {:application-id (:id application)})
-                    token (:token (json->map body))
+                    token-result (create-token application)
+                    token (:token token-result)
                     result
                     (get!
                       (format "/api/v2/applications/%s/tokens/%s/validate/"
@@ -664,9 +666,8 @@
           (it "validates application revoked token"
               (let [{:keys [id]} (create-hakemus!)
                     application (va-db/get-hakemus id)
-                    {:keys [body]} (post! "/api/test/application_tokens/"
-                                          {:application-id (:id application)})
-                    token (:token (json->map body))]
+                    token-result (create-token application)
+                    token (:token token-result)]
                 (va-db/revoke-token token)
                 (let [result
                       (get!
@@ -687,9 +688,8 @@
           (it "validates invalid application token"
               (let [{:keys [id]} (create-hakemus!)
                     application (va-db/get-hakemus id)
-                    {:keys [body]} (post! "/api/test/application_tokens/"
-                                          {:application-id (:id application)})
-                    token (str "invalid-" (:token (json->map body)))
+                    token-result (create-token application)
+                    token (str "invalid-" (:token token-result))
                     result
                     (get!
                       (format "/api/v2/applications/%s/tokens/%s/validate/"

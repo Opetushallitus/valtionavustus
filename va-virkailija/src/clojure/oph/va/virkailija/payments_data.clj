@@ -12,8 +12,6 @@
    [oph.va.virkailija.invoice :as invoice]
    [oph.va.virkailija.email :as email]))
 
-(def date-formatter (f/formatter "dd.MM.YYYY"))
-
 (def system-user
   {:person-oid "System"
    :first-name "Initial"
@@ -60,8 +58,9 @@
 
 (defn update-payment [payment-data identity]
   (let [old-payment (get-payment (:id payment-data) (:version payment-data))
-        payment (dissoc (merge old-payment payment-data (get-user-info identity))
-                        :version :version-closed)
+        payment (dissoc
+                  (merge old-payment payment-data (get-user-info identity))
+                  :version :version-closed)
         result
         (->> payment
              convert-to-underscore-keys
@@ -77,14 +76,6 @@
 (defn- store-payment [payment]
   (exec :virkailija-db queries/create-payment payment))
 
-(defn- total-paid [application-id]
-  (or
-    (->
-      (exec :virkailija-db queries/get-total-paid {:application_id application-id})
-      first
-      :total_paid)
-    0))
-
 (defn create-payment [payment-data identity]
   (let [application (application-data/get-application
                       (:application-id payment-data))]
@@ -98,8 +89,9 @@
         convert-to-dash-keys
         convert-timestamps-from-sql)))
 
-(defn find-payments-by-response [values]
+(defn find-payments-by-response
   "Response values: {:register-number \"string\" :invoice-date \"string\"}"
+  [values]
   (let [application
         (application-data/find-application-by-register-number
               (:register-number values))]
@@ -114,20 +106,40 @@
   (let [response-values (invoice/read-response-xml xml)
         payments (find-payments-by-response response-values)
         payment (first payments)]
-    (cond (empty? payments)
-          (throw (ex-info "No payments found!" {:cause "no-payment" :error-message (format "No payment found with values: %s" response-values) }))
-          (> (count payments) 1)
-          (throw (ex-info "Multiple payments found" {:cause "multiple-payments" :error-message (format
-                                                     "Multiple payments found with the same register
-                                                      number and invoice date: %s" response-values)}))
-          (= (:state payment) 3)
-          (throw (ex-info "Payment already paid" {:cause "already-paid" :error-message (format "Payment (id %d) is already paid."
-                                                                (:id payment))}))
-          (not= (:state payment) 2)
-          (throw (ex-info
-                   "State not valid" {:cause "state-not-valid" :error-message (format "Payment (id %d) is not sent to Rondo or it's state
-                                    (%d) is not valid. It should be 2 in this stage."
-                                   (:id payment) (:state payment))})))
+    (cond
+      (empty? payments)
+      (throw
+        (ex-info
+          "No payments found!"
+          {:cause "no-payment"
+           :error-message
+           (format "No payment found with values: %s" response-values)}))
+      (> (count payments) 1)
+      (throw
+        (ex-info
+          "Multiple payments found"
+          {:cause "multiple-payments"
+           :error-message
+           (format "Multiple payments found with the same register
+                    number and invoice date: %s"
+                   response-values)}))
+      (= (:state payment) 3)
+      (throw
+        (ex-info
+          "Payment already paid"
+          {:cause "already-paid"
+           :error-message
+           (format "Payment (id %d) is already paid." (:id payment))}))
+      (not= (:state payment) 2)
+      (throw
+        (ex-info
+          "State not valid"
+          {:cause "state-not-valid"
+           :error-message
+           (format
+             "Payment (id %d) is not sent to Rondo or it's state
+              (%d) is not valid. It should be 2 in this stage."
+             (:id payment) (:state payment))})))
     (update-payment (assoc payment :state 3)
                     {:person-oid "-" :first-name "Rondo" :surname ""})))
 
@@ -136,42 +148,20 @@
     (application-data/get-applications-with-evaluation-by-grant id)
     (filter valid-for-send-payment?)
     (reduce
-      (fn [p n] (into p (application-data/get-application-payments (:id n)))) [])
+      (fn [p n]
+        (into p (application-data/get-application-payments (:id n)))) [])
     (map convert-timestamps-from-sql)))
+
+(defn get-batch-payments [batch-id]
+  (map
+    convert-to-dash-keys
+    (exec :virkailija-db queries/get-batch-payments {:batch_id batch-id})))
 
 (defn delete-grant-payments [id]
   (exec :virkailija-db queries/delete-grant-payments {:id id}))
 
 (defn delete-payment [id]
   (exec :virkailija-db queries/delete-payment {:id id}))
-
-(defn get-batch-payments-info [batch-id]
-  (convert-to-dash-keys
-    (first (exec :virkailija-db queries/get-grant-payments-info
-                 {:batch_id batch-id}))))
-
-(defn format-email-date [date]
-  (f/unparse date-formatter date))
-
-(defn create-payments-email
-  [{:keys [batch-id inspector-email acceptor-email receipt-date
-           grant-id organisation batch-number]}]
-  (let [grant (grant-data/get-grant grant-id)
-        now (t/now)
-        receipt-year (mod (.getYear receipt-date) 100)
-        payments-info (get-batch-payments-info batch-id)
-        batch-key (invoice/get-batch-key
-                    organisation receipt-year batch-number)]
-
-    {:receivers [inspector-email acceptor-email]
-     :batch-key batch-key
-     :title (get-in grant [:content :name])
-     :date (format-email-date now)
-     :count (:count payments-info)
-     :total-granted (:total-granted payments-info)}))
-
-(defn send-payments-email [data]
-  (email/send-payments-info! (create-payments-email data)))
 
 (defn get-first-payment-sum [application grant]
   (int

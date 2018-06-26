@@ -128,6 +128,7 @@
                       :status-valiselvitys (s/maybe s/Str)
                       :selvitys-email (s/maybe s/Str)
                       :answers [Answer]
+                      (s/optional-key :submitted-version) (s/maybe s/Int)
                       (s/optional-key :refused) (s/maybe s/Bool)
                       (s/optional-key :refused-comment) (s/maybe s/Str)
                       (s/optional-key :refused-at) (s/maybe s/Inst)})
@@ -280,28 +281,27 @@
    (s/optional-key :refused-at) (s/maybe s/Inst)
    (s/optional-key :grant-name) (s/maybe s/Str)})
 
-(s/defschema PaymentsEmail
-  "Grant payments email"
-  {:acceptor-email s/Str
-   :inspector-email s/Str
-   :batch-number s/Int
-   :batch-id s/Int
-   :organisation s/Str
-   :receipt-date LocalDate})
-
 (s/defschema PaymentBatch
   "Payment batch"
-  {(s/optional-key :id) s/Int
+  {(s/optional-key :created-at) s/Inst
+   (s/optional-key :id) s/Int
    (s/optional-key :batch-number) s/Int
    :invoice-date LocalDate
    :due-date LocalDate
    :receipt-date LocalDate
    :currency s/Str
    :partner s/Str
-   :inspector-email s/Str
+   :grant-id s/Int})
+
+(s/defschema BatchDocument
+  "Payment batch document"
+  {(s/optional-key :created-at) s/Inst
+   (s/optional-key :id) s/Int
+   :document-id s/Str
+   :phase s/Int
+   :presenter-email s/Str
    :acceptor-email s/Str
-   :grant-id s/Int
-   :document-id s/Str})
+})
 
 (s/defschema PaymentsCreateResult
   "Payment create result"
@@ -314,3 +314,10 @@
    :year s/Int
    :code s/Str
    :code-value s/Str})
+
+(s/defschema HealthCheckResult
+  "Integration healthcheck result"
+  {:timestamp s/Str
+   :success s/Bool
+   :error s/Str
+   :service s/Str})
