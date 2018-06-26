@@ -146,10 +146,11 @@
              (filterv #(grant-matches? % @grant-filter) @grants)]
          (grants-table
            {:grants filtered-grants
-            :value (find-index-of filtered-grants
-                                  #(= (:id %) (:id @selected-grant)))
-            :on-change (fn [row]
-                         (reset! selected-grant (get filtered-grants row)))}))
+            :value (:id @selected-grant)
+            :on-change (fn [id]
+                         (reset! selected-grant
+                                 (some #(when (= (:id %) id) %)
+                                       filtered-grants)))}))
        [:hr]
        (grant-info @selected-grant)])))
 
