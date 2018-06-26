@@ -1,6 +1,6 @@
 (ns oph.va.admin-ui.payments.grants-ui
   (:require [cljsjs.material-ui]
-            [cljs-react-material-ui.reagent :as ui]
+            [oph.va.admin-ui.components.table :as table]
             [oph.va.admin-ui.theme :as theme]
             [oph.va.admin-ui.payments.utils :refer [to-simple-date-time]]))
 
@@ -10,41 +10,38 @@
    "draft" "Luonnos"
    "deleted" "Poistettu"})
 
-(defn- grant-row [grant selected]
-  [ui/table-row {:key (:id grant) :selected selected :style {:cursor "default"}}
-   [ui/table-row-column {:style theme/table-cell}
-    (get grant :register-number)]
-   [ui/table-row-column {:style theme/table-cell}
-    (get-in grant [:content :name :fi])]
-   [ui/table-row-column {:style theme/table-cell}
-    (get status-strs (get grant :status))]
-   [ui/table-row-column {:style theme/table-cell}
+(defn- grant-row [grant selected on-select]
+  [table/table-row {:key (:id grant)
+                    :on-click #(on-select (:id grant))
+                    :style (if selected
+                             theme/selected-table-row
+                             theme/table-row)}
+   [table/table-row-column (get grant :register-number)]
+   [table/table-row-column (get-in grant [:content :name :fi])]
+   [table/table-row-column (get status-strs (get grant :status))]
+   [table/table-row-column
     (to-simple-date-time (get-in grant [:content :duration :start]))]
-   [ui/table-row-column {:style theme/table-cell}
+   [table/table-row-column
     (to-simple-date-time (get-in grant [:content :duration :end]))]])
 
 (defn grants-table [{:keys [on-change grants value]}]
-  [ui/table
-   {:on-cell-click #(on-change %1)
-    :selectable true
-    :multi-selectable false
-    :height "250px"
-    :style (:table theme/material-styles)
-    :class "table"}
-   [ui/table-header {:display-select-all false :adjust-for-checkbox false}
-    [ui/table-row {:style {:font-size "80px"}}
-     [ui/table-header-column {:style theme/table-cell} "Diaarinumero"]
-     [ui/table-header-column {:style theme/table-cell} "Nimi"]
-     [ui/table-header-column {:style theme/table-cell} "Tila"]
-     [ui/table-header-column {:style theme/table-cell} "Haku alkaa"]
-     [ui/table-header-column {:style theme/table-cell} "Haku päättyy"]]]
-   [ui/table-body {:display-row-checkbox false :deselect-on-clickaway false}
-    (for [grant grants] (grant-row grant (= (.indexOf grants grant) value)))]])
+  [table/table
+   {:height "250px"}
+   [table/table-header
+    [table/table-row
+     [table/table-header-column "Diaarinumero"]
+     [table/table-header-column "Nimi"]
+     [table/table-header-column "Tila"]
+     [table/table-header-column "Haku alkaa"]
+     [table/table-header-column "Haku päättyy"]]]
+   [table/table-body
+    (for [grant grants]
+      (grant-row grant (= value (:id grant)) on-change))]])
 
 (defn grant-info [grant]
   [:div
    [:h3 (get-in grant [:content :name :fi])]
-   [ui/grid-list {:cols 6 :cell-height "auto" :style {:margin 20}}
+   [:div {:style {:display "span" :margin 20}}
     [:div [:label "Toimintayksikkö: "] (:operational-unit grant)]
     [:div [:label "Projekti: "] (:project grant)]
     [:div [:label "Toiminto: "] (:operation grant)]
