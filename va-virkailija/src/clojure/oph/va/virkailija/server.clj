@@ -44,7 +44,9 @@
     (va-users/stop-background-job-update-va-users-cache))
   (db/close-datasource! :virkailija-db)
   (job-supervisor/await-jobs!)
-  (rondo-scheduling/stop-schedule-from-rondo))
+  (rondo-scheduling/stop-schedule-from-rondo)
+  (when (get-in config [:integration-healthcheck :enabled?])
+    (healthcheck/stop-schedule-status-update!)))
 
 (defn- query-string-for-redirect-location [original-request]
   (if-let [original-query-string (:query-string original-request)]
