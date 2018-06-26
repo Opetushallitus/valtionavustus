@@ -12,7 +12,6 @@
  :rondo-scheduler {:enabled? true
                     :scheduling "0 00 04 ? * *"
                     :strict-host-key-checking :yes}
- :payments {:enabled? true :delete-payments? true}
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25
