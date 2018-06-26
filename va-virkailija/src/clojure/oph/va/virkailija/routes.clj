@@ -41,7 +41,8 @@
              :as payment-batches-routes]
             [oph.va.virkailija.va-code-values-routes
              :as va-code-values-routes]
-            [oph.va.virkailija.payments-routes :as payments-routes])
+            [oph.va.virkailija.payments-routes :as payments-routes]
+            [oph.va.virkailija.healthcheck :as healthcheck])
   (:import [java.io ByteArrayInputStream]))
 
 (def opintopolku-login-url
@@ -61,6 +62,9 @@
            (hakija-api/health-check))
     (ok {})
     (not-found)))
+
+(defn- on-integration-healthcheck []
+  (ok (healthcheck/get-last-status)))
 
 (defn- without-id [x]
   (dissoc x :id))
@@ -116,7 +120,13 @@
 
   (compojure-api/GET "/" [] (on-healthcheck))
 
-  (compojure-api/HEAD "/" [] (on-healthcheck)))
+  (compojure-api/HEAD "/" [] (on-healthcheck))
+
+  (compojure-api/GET
+    "/integrations/" []
+    :summary "Integrations healthcheck"
+    :return [virkailija-schema/HealthCheckResult]
+    (on-integration-healthcheck)))
 
 (compojure-api/defroutes resource-routes
   (compojure-api/GET "/translations.json" []

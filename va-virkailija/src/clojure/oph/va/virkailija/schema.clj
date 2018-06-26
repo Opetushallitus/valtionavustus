@@ -314,3 +314,10 @@
    :year s/Int
    :code s/Str
    :code-value s/Str})
+
+(s/defschema HealthCheckResult
+  "Integration healthcheck result"
+  {:timestamp s/Str
+   :success s/Bool
+   :error s/Str
+   :service s/Str})
