@@ -1,7 +1,8 @@
 (ns oph.va.admin-ui.components.table
   (:require [oph.va.admin-ui.theme :as theme]
             [oph.va.admin-ui.components.tools :refer [split-component]]
-            [oph.va.admin-ui.components.ui :as va-ui]))
+            [oph.va.admin-ui.components.ui :as va-ui]
+            [reagent.core :as r]))
 
 (def table-row :tr)
 
@@ -43,15 +44,27 @@
            (update props :class str " va-ui-table")
            children)))
 
-(defn sortable-header-column
-  [{:keys [title column-key on-sort on-filter sort-params]}]
-  [table-header-column
-   [:div
-    {:on-click #(on-sort column-key)}
-    title (when (= (:sort-key sort-params) column-key)
-            [va-ui/arrow
-             {:direction (if (:descend? sort-params) :up :down)
-              :style {:float "right"}}])]
-   [va-ui/text-field
-    {:size :small
-     :on-change #(on-filter column-key (-> % .-target .-value))}]])
+(defn sortable-header-column [props]
+  (let [value (r/atom "")]
+    (fn [props]
+      (let [{:keys [title column-key on-sort on-filter
+                    sort-params field-type]} props]
+        [table-header-column
+         [:div
+          {:on-click #(on-sort column-key)}
+          title (when (= (:sort-key sort-params) column-key)
+                  [va-ui/arrow
+                   {:direction (if (:descend? sort-params) :up :down)
+                    :style {:float "right"}}])]
+         (if (= field-type :date)
+           [va-ui/date-picker-va
+            {:id "title"
+             :size :small
+             :value (when (seq @value) @value)
+             :on-change #(do (reset! value %) (on-filter column-key %))}]
+           [va-ui/text-field
+            {:size :small
+             :value @value
+             :on-change #(do (reset! value %)
+                             (on-filter
+                               column-key (-> % .-target .-value)))}])]))))
