@@ -38,6 +38,8 @@
 
 (def table-row {:cursor "pointer"})
 
+(def table-row-missing-value {:color "rgb(218, 35, 35)"})
+
 (def selected-table-row
   (assoc table-row
          :background-color "#159ecb"
