@@ -42,14 +42,13 @@
          :color "#159ecb"
          :border-bottom "2px solid #159ecb"))
 
-(def grant-container {:background-color "#fafafa"})
-
 (def grants-table {:background-color "#f5f5f5"
                    :padding-bottom 10})
 
 (def grants-table-header {:border-bottom "1px solid rgb(208, 207, 204)"})
 
-(def app-container {:padding "55px 5px 5px 5px"})
+(def app-container {:padding "55px 5px 5px 5px"
+                    :background-color "#fafafa"})
 
 (def top-links {:box-shadow "0 1px 2px 0 rgba(0, 0, 0, 0.1)"
                 :font-size 18

@@ -280,7 +280,7 @@
                             (some #(when (= (:id %) id) %)
                                   @grants)))}]
 
-     [:div {:style theme/grant-container}
+     [:div
       [:div {:style theme/sub-nav}
       [:span {:style theme/sub-nav-item} "Haun tiedot"]
       [:span {:style theme/sub-nav-item} "Hakulomake"]
