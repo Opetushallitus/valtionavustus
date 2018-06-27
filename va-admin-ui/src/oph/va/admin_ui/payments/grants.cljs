@@ -1,17 +1,16 @@
 (ns oph.va.admin-ui.payments.grants
-  (:require [clojure.string :refer [lower-case includes?]]
-            [cljs-time.format :as f]
-            [cljs-time.core :as t]
-            [oph.va.admin-ui.payments.utils
-             :refer [date-formatter to-simple-date-time]]))
-
-(def ^:private lifetime-limit (t/minus (t/now) (t/months 12)))
+  (:require [cljs-time.format :as f]))
 
 (def ^:private status-strs
   {"resolved" "Ratkaistu"
    "published" "Julkaistu"
    "draft" "Luonnos"
    "deleted" "Poistettu"})
+
+(defn- parse-date [s]
+  (if (seq s)
+    (f/parse s)
+    s))
 
 (defn flatten-grants [grants]
   (mapv
@@ -20,6 +19,6 @@
        :register-number (:register-number %)
        :name (get-in % [:content :name :fi])
        :status (get status-strs (:status %))
-       :start (to-simple-date-time (get-in % [:content :duration :start]))
-       :end (to-simple-date-time (get-in % [:content :duration :end])))
+       :start (parse-date (get-in % [:content :duration :start]))
+       :end (parse-date (get-in % [:content :duration :end])))
     grants))

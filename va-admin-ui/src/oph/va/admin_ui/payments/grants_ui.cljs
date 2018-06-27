@@ -3,9 +3,11 @@
             [oph.va.admin-ui.components.table :as table]
             [oph.va.admin-ui.theme :as theme]
             [oph.va.admin-ui.payments.utils
-             :refer [sort-column! update-filters! sort-rows filter-rows]]
+             :refer [date-time-formatter sort-column!
+                     update-filters! sort-rows filter-rows]]
             [reagent.core :as r]
-            [clojure.string :refer [lower-case]]))
+            [clojure.string :refer [lower-case]]
+            [cljs-time.format :as f]))
 
 (defn- grant-row [grant selected on-select]
   [table/table-row {:key (:id grant)
@@ -16,8 +18,8 @@
    [table/table-row-column (:register-number grant)]
    [table/table-row-column (:name grant)]
    [table/table-row-column (:status grant)]
-   [table/table-row-column (:start grant)]
-   [table/table-row-column (:end grant)]])
+   [table/table-row-column (f/unparse-local date-time-formatter (:start grant))]
+   [table/table-row-column (f/unparse-local date-time-formatter (:end grant))]])
 
 (defn grants-table [props]
   (let [sort-params (r/atom {:sort-key nil :descend? true})
