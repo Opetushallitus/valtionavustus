@@ -16,6 +16,7 @@
 (defn flatten-grants [grants]
   (mapv
     #(hash-map
+       :id (:id %)
        :register-number (:register-number %)
        :name (get-in % [:content :name :fi])
        :status (get status-strs (:status %))
