@@ -100,10 +100,10 @@
       str
       lower-case))
 
-(defn row-matches-key? [payment filters]
+(defn row-matches-key? [row filters]
   (every?
     (fn [[k v]]
-      (> (.indexOf (to-lower-str (get payment k)) v) -1))
+      (> (.indexOf (to-lower-str (get row k)) v) -1))
     filters))
 
 (defn filter-rows [rows filters]
