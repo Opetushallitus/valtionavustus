@@ -6,16 +6,8 @@
              :rename {date-picker material-date-picker}]
             [cljs-react-material-ui.icons :as ic]
             [oph.va.admin-ui.theme :as theme]
-            [oph.va.admin-ui.components.table :as va-table]
             [oph.va.admin-ui.utils :refer [format]]
             [oph.va.admin-ui.components.tools :refer [split-component]]))
-
-(defn format-date [d]
-  (when (some? d)
-   (format "%04d-%02d-%02d"
-           (.getFullYear d)
-           (inc (.getMonth d))
-           (.getDate d))))
 
 (defn get-rectangle [element]
   (if (some? element)
@@ -123,19 +115,19 @@
 
 (defn date-picker-va [props]
   (let [label (or (:floating-label-text props) (:label props))]
-   [:div {:class "oph-field" :style (merge theme/date-picker (:style props))}
-    [:span {:class "oph-label"
-            :aria-describedby "field-text"
-            :style {:display "block"}}
-     label
-     (when-some [text (:tooltip props)] [tooltip {} text])]
-    [:input
-     {:value (format-date (:value props))
-      :class "oph-input"
-      :name label
-      :type "date"
-      :style {:width "auto" :height "auto"}
-      :on-change (:on-change props)}]]))
+    [:div {:class "oph-field" :style (merge theme/date-picker (:style props))}
+     (when (seq label)
+       [:span {:class "oph-label"
+               :aria-describedby "field-text"
+               :style {:display "block"}}
+        label
+        (when-some [text (:tooltip props)] [tooltip {} text])])
+     [:input
+      {:value (:value props)
+       :class (str "oph-input" (when (= (:size props) :small) " small"))
+       :name label
+       :type "date"
+       :on-change #((:on-change props) (.-value (.-target %)))}]]))
 
 (defn date-picker [props]
   (let [label (or (:floating-label-text props) (:label props))]
@@ -145,6 +137,7 @@
      (when-some [text (:tooltip props)] [tooltip {} text])]
     [material-date-picker {:value (:value props)
                            :class "oph-input"
+                           :id (or (:id props) label)
                            :name label
                            :underline-show false
                            :style {:width "auto" :height "auto"}
@@ -176,8 +169,6 @@
    (:label p)])
 
 (def raised-button button)
-
-(def table va-table/table)
 
 (defn arrow [{:keys [style direction]}]
   [:span {:style style}

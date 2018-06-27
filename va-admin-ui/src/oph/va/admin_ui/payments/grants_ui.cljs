@@ -1,50 +1,119 @@
 (ns oph.va.admin-ui.payments.grants-ui
   (:require [cljsjs.material-ui]
-            [cljs-react-material-ui.reagent :as ui]
+            [oph.va.admin-ui.components.table :as table]
             [oph.va.admin-ui.theme :as theme]
-            [oph.va.admin-ui.payments.utils :refer [to-simple-date-time]]))
+            [oph.va.admin-ui.payments.utils
+             :refer [date-time-formatter sort-column! to-lower-str sort-rows
+                     update-filters!]]
+            [reagent.core :as r]
+            [clojure.string :refer [lower-case]]
+            [cljs-time.format :as f]
+            [cljs-time.core :as t]))
 
-(def ^:private status-strs
-  {"resolved" "Ratkaistu"
-   "published" "Julkaistu"
-   "draft" "Luonnos"
-   "deleted" "Poistettu"})
+(defn- grant-row [grant selected on-select]
+  [table/table-row {:key (:id grant)
+                    :on-click #(on-select (:id grant))
+                    :style (if selected
+                             theme/selected-table-row
+                             theme/table-row)}
+   [table/table-row-column (:register-number grant)]
+   [table/table-row-column (:name grant)]
+   [table/table-row-column (:status grant)]
+   [table/table-row-column (f/unparse-local date-time-formatter (:start grant))]
+   [table/table-row-column (f/unparse-local date-time-formatter (:end grant))]])
 
-(defn- grant-row [grant selected]
-  [ui/table-row {:key (:id grant) :selected selected :style {:cursor "default"}}
-   [ui/table-row-column {:style theme/table-cell}
-    (get grant :register-number)]
-   [ui/table-row-column {:style theme/table-cell}
-    (get-in grant [:content :name :fi])]
-   [ui/table-row-column {:style theme/table-cell}
-    (get status-strs (get grant :status))]
-   [ui/table-row-column {:style theme/table-cell}
-    (to-simple-date-time (get-in grant [:content :duration :start]))]
-   [ui/table-row-column {:style theme/table-cell}
-    (to-simple-date-time (get-in grant [:content :duration :end]))]])
+(defn- same-day? [d1 d2]
+  (and (= (t/year d1) (t/year d2))
+       (= (t/month d1) (t/month d2))
+       (= (t/day d1) (t/day d2))))
 
-(defn grants-table [{:keys [on-change grants value]}]
-  [ui/table
-   {:on-cell-click #(on-change %1)
-    :selectable true
-    :multi-selectable false
-    :height "250px"
-    :style (:table theme/material-styles)
-    :class "table"}
-   [ui/table-header {:display-select-all false :adjust-for-checkbox false}
-    [ui/table-row {:style {:font-size "80px"}}
-     [ui/table-header-column {:style theme/table-cell} "Diaarinumero"]
-     [ui/table-header-column {:style theme/table-cell} "Nimi"]
-     [ui/table-header-column {:style theme/table-cell} "Tila"]
-     [ui/table-header-column {:style theme/table-cell} "Haku alkaa"]
-     [ui/table-header-column {:style theme/table-cell} "Haku päättyy"]]]
-   [ui/table-body {:display-row-checkbox false :deselect-on-clickaway false}
-    (for [grant grants] (grant-row grant (= (.indexOf grants grant) value)))]])
+(defn- row-matches-key? [row filters]
+  (every?
+    (fn [[k v]]
+      (if (or (= k :start) (= k :end))
+        (same-day? v (get row k))
+        (> (.indexOf (to-lower-str (get row k)) v) -1)))
+    filters))
+
+(defn filter-rows [rows filters]
+  (filter #(row-matches-key? % filters) rows))
+
+(defn update-date-filters! [filters k v]
+  (if (nil? v)
+    (swap! filters dissoc k)
+    (swap! filters assoc k v)))
+
+(defn sort-grant-rows [rows sort-key descend?]
+  (if (or (= sort-key :start) (= sort-key :end))
+    (if descend?
+      (sort-by sort-key t/before? rows)
+      (sort-by sort-key t/after? rows))
+    (sort-rows rows sort-key descend?)))
+
+(defn grants-table [props]
+  (let [sort-params (r/atom {:sort-key nil :descend? true})
+        filters (r/atom {})]
+    (fn [props]
+      (let [{:keys [on-change grants value]} props
+            filtered-sorted-grants
+            (if (some? (:sort-key @sort-params))
+              (sort-grant-rows
+                (filter-rows grants @filters)
+                (:sort-key @sort-params)
+                (:descend? @sort-params))
+              (filter-rows grants @filters))]
+        [table/table
+         {:height "250px"}
+         [table/table-header
+          [table/table-row
+           [table/sortable-header-column
+            {:title "Diaarinumero"
+             :column-key :register-number
+             :sort-params @sort-params
+             :on-sort #(sort-column! sort-params %)
+             :on-filter #(update-filters! filters %1 %2)}]
+           [table/sortable-header-column
+            {:title "Nimi"
+             :column-key :name
+             :sort-params @sort-params
+             :on-sort #(sort-column! sort-params %)
+             :on-filter #(update-filters! filters %1 %2)}]
+           [table/sortable-header-column
+            {:title "Tila"
+             :column-key :status
+             :sort-params @sort-params
+             :on-sort #(sort-column! sort-params %)
+             :on-filter #(update-filters! filters %1 %2)}]
+           [table/sortable-header-column
+            {:title "Haku alkaa"
+             :column-key :start
+             :field-type :date
+             :sort-params @sort-params
+             :on-sort #(sort-column! sort-params %)
+             :on-filter #(update-date-filters! filters %1 (f/parse %2))}]
+           [table/sortable-header-column
+            {:title "Haku päättyy"
+             :column-key :end
+             :field-type :date
+             :sort-params @sort-params
+             :on-sort #(sort-column! sort-params %)
+             :on-filter #(update-date-filters! filters %1 (f/parse %2))}]]]
+         [table/table-body
+          (for [grant filtered-sorted-grants]
+            (grant-row grant (= value (:id grant)) on-change))]
+         [table/table-footer
+      [table/table-row
+       [table/table-row-column
+        (str (count filtered-sorted-grants) "/" (count grants) " hakua")]
+       [table/table-row-column]
+       [table/table-row-column]
+       [table/table-row-column]
+       [table/table-row-column]]]]))))
 
 (defn grant-info [grant]
   [:div
    [:h3 (get-in grant [:content :name :fi])]
-   [ui/grid-list {:cols 6 :cell-height "auto" :style {:margin 20}}
+   [:div {:style {:display "span" :margin 20}}
     [:div [:label "Toimintayksikkö: "] (:operational-unit grant)]
     [:div [:label "Projekti: "] (:project grant)]
     [:div [:label "Toiminto: "] (:operation grant)]

@@ -36,6 +36,13 @@
                    :border-top "1px solid #f6f4f0"
                    :padding-right 14})
 
+(def table-row {:cursor "pointer"})
+
+(def selected-table-row
+  (assoc table-row
+         :background-color "#159ecb"
+         :color "white"))
+
 (def hr-top {:color "#4c7f00"})
 
 (def notice {:margin 10})

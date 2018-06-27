@@ -1,6 +1,7 @@
 (ns oph.va.admin-ui.payments.utils
   (:require [cljs-time.format :as tf]
-            [cljs-time.core :as t]))
+            [cljs-time.core :as t]
+            [clojure.string :refer [lower-case]]))
 
 (def re-email
   (re-pattern
@@ -83,3 +84,32 @@
   (if (zero? phase)
     "Arviointi"
     (str phase ". väliselvitys")))
+
+(defn sort-rows [rows sort-key descend?]
+  (if descend?
+    (sort-by sort-key rows)
+    (reverse (sort-by sort-key rows))))
+
+(defn sort-column! [sort-params sort-key]
+  (swap! sort-params assoc
+         :sort-key sort-key
+         :descend? (not (:descend? @sort-params))))
+
+(defn to-lower-str [v]
+  (-> v
+      str
+      lower-case))
+
+(defn row-matches-key? [row filters]
+  (every?
+    (fn [[k v]]
+      (> (.indexOf (to-lower-str (get row k)) v) -1))
+    filters))
+
+(defn filter-rows [rows filters]
+  (filter #(row-matches-key? % filters) rows))
+
+(defn update-filters! [filters k v]
+  (if (empty? v)
+    (swap! filters dissoc k)
+    (swap! filters assoc k (lower-case v))))
