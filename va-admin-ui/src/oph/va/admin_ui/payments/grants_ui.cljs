@@ -27,7 +27,7 @@
    [table/table-row-column (to-simple-date-time (:end grant))]])
 
 (defn grants-table [props]
-  (let [sort-params (r/atom {:sort-key :name :descend? false})
+  (let [sort-params (r/atom {:sort-key :name :descend? true})
         filters (r/atom {})]
     (fn [props]
       (let [{:keys [on-change grants value]} props
