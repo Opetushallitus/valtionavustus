@@ -8,12 +8,6 @@
             [reagent.core :as r]
             [clojure.string :refer [lower-case]]))
 
-(def ^:private status-strs
-  {"resolved" "Ratkaistu"
-   "published" "Julkaistu"
-   "draft" "Luonnos"
-   "deleted" "Poistettu"})
-
 (defn- grant-row [grant selected on-select]
   [table/table-row {:key (:id grant)
                     :on-click #(on-select (:id grant))

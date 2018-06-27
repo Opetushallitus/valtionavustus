@@ -6,6 +6,12 @@
 
 (def ^:private lifetime-limit (t/minus (t/now) (t/months 12)))
 
+(def ^:private status-strs
+  {"resolved" "Ratkaistu"
+   "published" "Julkaistu"
+   "draft" "Luonnos"
+   "deleted" "Poistettu"})
+
 (defn- parse-date [s]
   (when (seq s)
     (f/parse date-formatter s)))
@@ -25,9 +31,10 @@
 
 (defn flatten-grants [grants]
   (mapv
-    #(merge
-       (select-keys % [:register-number :status])
-       {:name (get-in % [:content :name :fi])
-        :start (get-in % [:content :duration :start])
-        :end (get-in % [:content :duration :end])})
+    #(hash-map
+       :register-number (:register-number %)
+       :name (get-in % [:content :name :fi])
+       :status (get status-strs (:status %))
+       :start (get-in % [:content :duration :start])
+       :end (get-in % [:content :duration :end]))
     grants))
