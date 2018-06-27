@@ -29,7 +29,8 @@
               :font-size 16
               :padding-top 10
               :padding-bottom 5
-              :padding-left 10})
+              :padding-left 10
+              :border-top "2px solid #f0f0f0"})
 
 (def sub-nav-item {:color "#999290"
                    :margin-right 50
@@ -40,6 +41,25 @@
   (assoc sub-nav-item
          :color "#159ecb"
          :border-bottom "2px solid #159ecb"))
+
+(def grant-container {:background-color "#fafafa"})
+
+(def grants-table {:background-color "#f5f5f5"
+                   :padding-bottom 10})
+
+(def grants-table-header {:border-bottom "1px solid rgb(208, 207, 204)"})
+
+(def app-container {:padding "55px 5px 5px 5px"})
+
+(def top-links {:box-shadow "0 1px 2px 0 rgba(0, 0, 0, 0.1)"
+                :font-size 18
+                :text-transform "uppercase"
+                :height 30
+                :padding-top 5
+                :padding-bottom 20
+                :position "fixed"
+                :width "100%"
+                :background-color "white"})
 
 (def table-body {:overflow "auto"})
 
@@ -68,8 +88,6 @@
   (assoc table-row
          :background-color "#159ecb"
          :color "white"))
-
-(def hr-top {:color "#4c7f00"})
 
 (def notice {:margin 10})
 

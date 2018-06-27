@@ -11,7 +11,7 @@
 (defn table-header [& body]
   (let [{:keys [props children]} (split-component body)]
     [:div
-     (update props :style merge theme/table-header)
+     (assoc props :style (merge theme/table-header (:style props)))
      [:table {:width "100%"}
       (apply vector :thead children)]]))
 

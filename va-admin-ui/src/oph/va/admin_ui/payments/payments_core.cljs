@@ -279,8 +279,9 @@
                     (reset! selected-grant
                             (some #(when (= (:id %) id) %)
                                   @grants)))}]
-     [:hr]
-     [:div {:style theme/sub-nav}
+
+     [:div {:style theme/grant-container}
+      [:div {:style theme/sub-nav}
       [:span {:style theme/sub-nav-item} "Haun tiedot"]
       [:span {:style theme/sub-nav-item} "Hakulomake"]
       [:span {:style theme/sub-nav-item} "Päätös"]
@@ -288,83 +289,83 @@
       [:span {:style theme/sub-nav-item} "Loppuselvitys"]
       [:span {:style theme/sub-nav-item-selected}
        "Maksatukset"]]
-     [:div
       [:div
-       (grant-info @selected-grant)]
-      [(fn [data]
-         (let [unsent-payments?
-               (some? (some #(when (< (:state %) 2) %) flatten-payments))
-               new-sent-payments
-               (filter #(and (> (:state %) 1)
-                             (is-today? (:created-at %))) flatten-payments)]
-           [:div {:class
-                  (when (not= (:status @selected-grant) "resolved")
-                    "disabled")}
-            [:div
-             [:hr]
-             [(let [selected (r/atom "outgoing")]
-                (fn [data]
-                  [va-ui/tabs {:value @selected
-                               :on-change #(reset! selected %)}
-                   [va-ui/tab
-                    {:value "outgoing"
-                     :label "Lähtevät maksatukset"}
-                    [(let [outgoing-payments
-                           (filter #(< (:state %) 2) flatten-payments)
-                           available-phases
-                           (find-available-phases
-                             outgoing-payments
-                             (get @batch-values :documents []))]
-                       (fn [data]
-                         [:div
-                          [render-batch-values
-                           {:disabled? (not unsent-payments?)
-                            :values @batch-values
-                            :on-change #(swap! batch-values assoc %1 %2)
-                            :phases available-phases}]
-                          [payments-ui/payments-table
-                           outgoing-payments]
-                          (let [errors
-                                (concat
-                                  (get-batch-errors @payments @batch-values)
-                                  (get-grant-errors @selected-grant)
-                                  (get-application-errors @applications))]
-                            [:div
-                             (when (and (seq outgoing-payments) (seq errors))
-                               (notice
-                                 [:div
-                                  [:h3
-                                   "Seuraavat puutteet estävät
-                             maksatusten lähetyksen"]
-                                  (doall
-                                    (map-indexed
-                                      (fn [i e] [:div {:key i} e])
-                                      errors))]))
+       [:div
+        (grant-info @selected-grant)]
+       [(fn [data]
+          (let [unsent-payments?
+                (some? (some #(when (< (:state %) 2) %) flatten-payments))
+                new-sent-payments
+                (filter #(and (> (:state %) 1)
+                              (is-today? (:created-at %))) flatten-payments)]
+            [:div {:class
+                   (when (not= (:status @selected-grant) "resolved")
+                     "disabled")}
+             [:div
+              [:hr]
+              [(let [selected (r/atom "outgoing")]
+                 (fn [data]
+                   [va-ui/tabs {:value @selected
+                                :on-change #(reset! selected %)}
+                    [va-ui/tab
+                     {:value "outgoing"
+                      :label "Lähtevät maksatukset"}
+                     [(let [outgoing-payments
+                            (filter #(< (:state %) 2) flatten-payments)
+                            available-phases
+                            (find-available-phases
+                              outgoing-payments
+                              (get @batch-values :documents []))]
+                        (fn [data]
+                          [:div
+                           [render-batch-values
+                            {:disabled? (not unsent-payments?)
+                             :values @batch-values
+                             :on-change #(swap! batch-values assoc %1 %2)
+                             :phases available-phases}]
+                           [payments-ui/payments-table
+                            outgoing-payments]
+                           (let [errors
+                                 (concat
+                                   (get-batch-errors @payments @batch-values)
+                                   (get-grant-errors @selected-grant)
+                                   (get-application-errors @applications))]
                              [:div
-                              [va-ui/raised-button
-                               {:primary true
-                                :disabled
-                                (or
-                                  (seq errors)
-                                  (not unsent-payments?))
-                                :label "Lähetä maksatukset"
-                                :style theme/button
-                                :on-click
-                                #(on-send-payments!
-                                   batch-values
-                                   selected-grant
-                                   payments)}]]])]))]]
-                   [va-ui/tab
-                    {:value "sent"
-                     :label [:span
-                             "Lähetetyt maksatukset"
-                             (when (not (empty? new-sent-payments))
-                               [va-ui/badge
-                                (str (count new-sent-payments) " uutta")])]}
-                    [payments-ui/payments-table
-                     (filter #(> (:state %) 1) flatten-payments)]]]))]]]))]
-      (when (user/is-admin? user-info)
-        (render-admin-tools payments @selected-grant delete-payments?))]]))
+                              (when (and (seq outgoing-payments) (seq errors))
+                                (notice
+                                  [:div
+                                   [:h3
+                                    "Seuraavat puutteet estävät
+                             maksatusten lähetyksen"]
+                                   (doall
+                                     (map-indexed
+                                       (fn [i e] [:div {:key i} e])
+                                       errors))]))
+                              [:div
+                               [va-ui/raised-button
+                                {:primary true
+                                 :disabled
+                                 (or
+                                   (seq errors)
+                                   (not unsent-payments?))
+                                 :label "Lähetä maksatukset"
+                                 :style theme/button
+                                 :on-click
+                                 #(on-send-payments!
+                                    batch-values
+                                    selected-grant
+                                    payments)}]]])]))]]
+                    [va-ui/tab
+                     {:value "sent"
+                      :label [:span
+                              "Lähetetyt maksatukset"
+                              (when (not (empty? new-sent-payments))
+                                [va-ui/badge
+                                 (str (count new-sent-payments) " uutta")])]}
+                     [payments-ui/payments-table
+                      (filter #(> (:state %) 1) flatten-payments)]]]))]]]))]
+       (when (user/is-admin? user-info)
+         (render-admin-tools payments @selected-grant delete-payments?))]]]))
 
 (defn init! []
   (let [{:keys [selected-grant batch-values applications payments grants]}
