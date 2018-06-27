@@ -22,3 +22,12 @@
     (let [s-lower (lower-case s)]
       (or (includes? (:register-number g) s-lower)
           (includes? (lower-case (get-in g [:content :name :fi])) s-lower)))))
+
+(defn flatten-grants [grants]
+  (mapv
+    #(merge
+       (select-keys % [:register-number :status])
+       {:name (get-in % [:content :name :fi])
+        :start (get-in % [:content :duration :start])
+        :end (get-in % [:content :duration :end])})
+    grants))
