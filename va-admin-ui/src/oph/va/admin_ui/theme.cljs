@@ -24,6 +24,23 @@
 (def info-label {:font-weight "bold"
                  :color "grey"})
 
+(def sub-nav {:border-bottom "2px solid #e3e3e3"
+              :text-transform "uppercase"
+              :font-size 16
+              :padding-top 10
+              :padding-bottom 5
+              :padding-left 10})
+
+(def sub-nav-item {:color "#999290"
+                   :margin-right 50
+                   :cursor "pointer"
+                   :padding-bottom 6})
+
+(def sub-nav-item-selected
+  (assoc sub-nav-item
+         :color "#159ecb"
+         :border-bottom "2px solid #159ecb"))
+
 (def table-body {:overflow "auto"})
 
 (def table-cell {:font-size 16})
