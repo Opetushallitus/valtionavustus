@@ -2,7 +2,11 @@
   (:require [cljsjs.material-ui]
             [oph.va.admin-ui.components.table :as table]
             [oph.va.admin-ui.theme :as theme]
-            [oph.va.admin-ui.payments.utils :refer [to-simple-date-time]]))
+            [oph.va.admin-ui.payments.utils
+             :refer [to-simple-date-time sort-column! update-filters!
+                     sort-rows filter-rows]]
+            [reagent.core :as r]
+            [clojure.string :refer [lower-case]]))
 
 (def ^:private status-strs
   {"resolved" "Ratkaistu"
@@ -24,19 +28,53 @@
    [table/table-row-column
     (to-simple-date-time (get-in grant [:content :duration :end]))]])
 
-(defn grants-table [{:keys [on-change grants value]}]
-  [table/table
-   {:height "250px"}
-   [table/table-header
-    [table/table-row
-     [table/table-header-column "Diaarinumero"]
-     [table/table-header-column "Nimi"]
-     [table/table-header-column "Tila"]
-     [table/table-header-column "Haku alkaa"]
-     [table/table-header-column "Haku päättyy"]]]
-   [table/table-body
-    (for [grant grants]
-      (grant-row grant (= value (:id grant)) on-change))]])
+(defn grants-table [props]
+  (let [sort-params (r/atom {:sort-key :name :descend? false})
+        filters (r/atom {})]
+    (fn [props]
+      (let [{:keys [on-change grants value]} props
+            filtered-sorted-grants
+            (sort-rows
+              (filter-rows grants @filters)
+              (:sort-key @sort-params)
+              (:descend? @sort-params))]
+        [table/table
+         {:height "250px"}
+         [table/table-header
+          [table/table-row
+           [table/sortable-header-column
+            {:title "Diaarinumero"
+             :column-key :register-number
+             :sort-params @sort-params
+             :on-sort #(sort-column! sort-params %)
+             :on-filter #(update-filters! filters %1 %2)}]
+           [table/sortable-header-column
+            {:title "Nimi"
+             :column-key :name
+             :sort-params @sort-params
+             :on-sort #(sort-column! sort-params %)
+             :on-filter #(update-filters! filters %1 %2)}]
+           [table/sortable-header-column
+            {:title "Tila"
+             :column-key :status
+             :sort-params @sort-params
+             :on-sort #(sort-column! sort-params %)
+             :on-filter #(update-filters! filters %1 %2)}]
+           [table/sortable-header-column
+            {:title "Haku alkaa"
+             :column-key :start
+             :sort-params @sort-params
+             :on-sort #(sort-column! sort-params %)
+             :on-filter #(update-filters! filters %1 %2)}]
+           [table/sortable-header-column
+            {:title "Haku päättyy"
+             :column-key :end
+             :sort-params @sort-params
+             :on-sort #(sort-column! sort-params %)
+             :on-filter #(update-filters! filters %1 %2)}]]]
+         [table/table-body
+          (for [grant filtered-sorted-grants]
+            (grant-row grant (= value (:id grant)) on-change))]]))))
 
 (defn grant-info [grant]
   [:div
