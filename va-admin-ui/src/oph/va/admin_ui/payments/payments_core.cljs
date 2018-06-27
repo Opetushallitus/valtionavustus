@@ -11,7 +11,7 @@
    [oph.va.admin-ui.router :as router]
    [oph.va.admin-ui.payments.grants-ui :refer [grants-table grant-info]]
    [oph.va.admin-ui.payments.grants
-    :refer [grant-matches? convert-dates flatten-grants]]
+    :refer [flatten-grants]]
    [oph.va.admin-ui.payments.financing :as financing]
    [oph.va.admin-ui.payments.utils
     :refer [find-index-of is-today? to-simple-date-time
@@ -432,7 +432,7 @@
         (put! dialog-chan 2)
         (if (:success grants-result)
           (do
-            (reset! grants (convert-dates (:body grants-result)))
+            (reset! grants (:body grants-result))
             (when-let [grant-id (get-param-grant)]
               (when-let [grant (some #(when (= (:id %) grant-id) %) @grants)]
                 (reset! selected-grant grant))))
