@@ -26,8 +26,14 @@
    [table/table-row-column {:style {:text-align "right"}}
     (.toLocaleString (get payment :payment-sum 0)) " €"]
    [table/table-row-column (:bank-iban payment)    ]
-   [table/table-row-column (get payment :lkp-account)]
-   [table/table-row-column (get payment :takp-account)]
+   [table/table-row-column
+    (if (seq (:lkp-account payment))
+      (:lkp-account payment)
+      [:span {:style theme/table-row-missing-value} "LKP-tili puuttuu"])]
+   [table/table-row-column
+    (if (seq (:takp-account payment))
+      (:takp-account payment)
+      [:span {:style theme/table-row-missing-value} "TAKP-tili puuttuu"])]
    [table/table-row-column {:style {:text-align "right"}}
     (.toLocaleString (get payment :payment-sum 0)) " €"]])
 
