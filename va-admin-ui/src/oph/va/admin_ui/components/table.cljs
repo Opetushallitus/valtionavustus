@@ -65,6 +65,7 @@
            [va-ui/text-field
             {:size :small
              :value @value
-             :on-change #(do (reset! value %)
-                             (on-filter
-                               column-key (-> % .-target .-value)))}])]))))
+             :on-change #(let [v (-> % .-target .-value)]
+                           (do (reset! value v)
+                               (on-filter
+                                 column-key v)))}])]))))
