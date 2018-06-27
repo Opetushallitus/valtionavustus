@@ -86,19 +86,6 @@
           (reduce #(+ %1 (get %2 :payment-sum 0)) 0 filtered-payments))
         " €"]]]]))
 
-(defn- sortable-header-column
-  [{:keys [title column-key on-sort on-filter sort-params]}]
-  [table/table-header-column
-   [:div
-    {:on-click #(on-sort column-key)}
-    title (when (= (:sort-key sort-params) column-key)
-            [va-ui/arrow
-             {:direction (if (:descend? sort-params) :up :down)
-              :style {:float "right"}}])]
-   [va-ui/text-field
-    {:size :small
-     :on-change #(on-filter column-key (-> % .-target .-value))}]])
-
 (defn payments-table [payments]
   (let [sort-params (r/atom {:sort-key nil :descend? false})
         filters (r/atom {})]
@@ -113,49 +100,49 @@
          [table/table
           [table/table-header
            [table/table-row
-            [sortable-header-column
+            [table/sortable-header-column
              {:title "Pitkäviite"
               :column-key :register-number
               :sort-params @sort-params
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
-            [sortable-header-column
+            [table/sortable-header-column
              {:title "Toimittajan nimi"
               :column-key :organization-name
               :sort-params @sort-params
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
-            [sortable-header-column
+            [table/sortable-header-column
              {:title "Hanke"
               :column-key :project-name
               :sort-params @sort-params
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
-            [sortable-header-column
+            [table/sortable-header-column
              {:title "Maksuun"
               :column-key :payment-sum
               :sort-params @sort-params
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
-            [sortable-header-column
+            [table/sortable-header-column
              {:title "Pankkitilin IBAN"
               :column-key :bank-iban
               :sort-params @sort-params
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
-            [sortable-header-column
+            [table/sortable-header-column
              {:title "LKP-tili"
               :column-key :lkp-account
               :sort-params @sort-params
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
-            [sortable-header-column
+            [table/sortable-header-column
              {:title "TaKp-tili"
               :column-key :takp-account
               :sort-params @sort-params
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
-            [sortable-header-column
+            [table/sortable-header-column
              {:title "Tiliöinti"
               :column-key :budget-granted
               :sort-params @sort-params
