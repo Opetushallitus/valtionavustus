@@ -10,7 +10,8 @@
    [oph.va.admin-ui.payments.payments :as payments]
    [oph.va.admin-ui.router :as router]
    [oph.va.admin-ui.payments.grants-ui :refer [grants-table grant-info]]
-   [oph.va.admin-ui.payments.grants :refer [grant-matches? convert-dates]]
+   [oph.va.admin-ui.payments.grants
+    :refer [grant-matches? convert-dates flatten-grants]]
    [oph.va.admin-ui.payments.financing :as financing]
    [oph.va.admin-ui.payments.utils
     :refer [find-index-of is-today? to-simple-date-time
@@ -135,24 +136,6 @@
 
 (defn- notice [message]
   [va-ui/card {:style theme/notice} [va-ui/card-text message]])
-
-(defn- grants-components []
-  (let [grant-filter (r/atom "")
-        {:keys [grants selected-grant]} state]
-    (fn []
-      [:div
-       (render-grant-filters @grant-filter #(reset! grant-filter %))
-       (let [filtered-grants
-             (filterv #(grant-matches? % @grant-filter) @grants)]
-         (grants-table
-           {:grants filtered-grants
-            :value (:id @selected-grant)
-            :on-change (fn [id]
-                         (reset! selected-grant
-                                 (some #(when (= (:id %) id) %)
-                                       filtered-grants)))}))
-       [:hr]
-       (grant-info @selected-grant)])))
 
 (defn render-document [i document on-delete]
   [table/table-row {:key i}
@@ -286,10 +269,19 @@
 
 (defn home-page [data]
   (let [{:keys [user-info delete-payments?]} data
-        {:keys [selected-grant batch-values applications payments]} state
+        {:keys [selected-grant batch-values applications payments grants]} state
         flatten-payments (payments/combine @applications @payments)]
     [:div
-     [grants-components]
+     [:div
+      [grants-table
+       {:grants (flatten-grants @grants)
+        :value (:id @selected-grant)
+        :on-change (fn [id]
+                     (reset! selected-grant
+                             (some #(when (= (:id %) id) %)
+                                   @grants)))}]
+      [:hr]
+      (grant-info @selected-grant)]
      [(fn [data]
         (let [unsent-payments?
               (some? (some #(when (< (:state %) 2) %) flatten-payments))
