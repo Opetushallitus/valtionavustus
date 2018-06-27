@@ -6,7 +6,6 @@
              :rename {date-picker material-date-picker}]
             [cljs-react-material-ui.icons :as ic]
             [oph.va.admin-ui.theme :as theme]
-            [oph.va.admin-ui.components.table :as va-table]
             [oph.va.admin-ui.utils :refer [format]]
             [oph.va.admin-ui.components.tools :refer [split-component]]))
 
@@ -170,8 +169,6 @@
    (:label p)])
 
 (def raised-button button)
-
-(def table va-table/table)
 
 (defn arrow [{:keys [style direction]}]
   [:span {:style style}
