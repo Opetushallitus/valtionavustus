@@ -20,13 +20,11 @@
                     :style (if selected
                              theme/selected-table-row
                              theme/table-row)}
-   [table/table-row-column (get grant :register-number)]
-   [table/table-row-column (get-in grant [:content :name :fi])]
-   [table/table-row-column (get status-strs (get grant :status))]
-   [table/table-row-column
-    (to-simple-date-time (get-in grant [:content :duration :start]))]
-   [table/table-row-column
-    (to-simple-date-time (get-in grant [:content :duration :end]))]])
+   [table/table-row-column (:register-number grant)]
+   [table/table-row-column (:name grant)]
+   [table/table-row-column (:status grant)]
+   [table/table-row-column (to-simple-date-time (:start grant))]
+   [table/table-row-column (to-simple-date-time (:end grant))]])
 
 (defn grants-table [props]
   (let [sort-params (r/atom {:sort-key :name :descend? false})
