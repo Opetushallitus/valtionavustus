@@ -113,9 +113,3 @@
   (if (empty? v)
     (swap! filters dissoc k)
     (swap! filters assoc k (lower-case v))))
-
-(defn row-matches? [payment filters]
-  (every?
-    (fn [[k v]]
-      (> (.indexOf (to-lower-str (get payment k)) v) -1))
-    filters))
