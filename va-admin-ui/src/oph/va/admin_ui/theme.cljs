@@ -36,7 +36,7 @@
                    :border-top "1px solid #f6f4f0"
                    :padding-right 14})
 
-(def table-row {:cursor "default"})
+(def table-row {:cursor "pointer"})
 
 (def selected-table-row
   (assoc table-row
