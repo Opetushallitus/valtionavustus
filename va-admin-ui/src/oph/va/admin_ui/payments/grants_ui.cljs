@@ -100,7 +100,15 @@
              :on-filter #(update-date-filters! filters %1 (f/parse %2))}]]]
          [table/table-body
           (for [grant filtered-sorted-grants]
-            (grant-row grant (= value (:id grant)) on-change))]]))))
+            (grant-row grant (= value (:id grant)) on-change))]
+         [table/table-footer
+      [table/table-row
+       [table/table-row-column
+        (str (count filtered-sorted-grants) "/" (count grants) " hakua")]
+       [table/table-row-column]
+       [table/table-row-column]
+       [table/table-row-column]
+       [table/table-row-column]]]]))))
 
 (defn grant-info [grant]
   [:div
