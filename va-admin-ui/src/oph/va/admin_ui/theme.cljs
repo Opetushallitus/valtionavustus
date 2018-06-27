@@ -17,6 +17,13 @@
 
 (def active-link (assoc link :color "#2a2a2a"))
 
+(def grant-info-item {:display "inline-block"
+                      :padding 10
+                      :width 200})
+
+(def info-label {:font-weight "bold"
+                 :color "grey"})
+
 (def table-body {:overflow "auto"})
 
 (def table-cell {:font-size 16})
