@@ -20,15 +20,17 @@
    [table/table-row-column (:end grant)]])
 
 (defn grants-table [props]
-  (let [sort-params (r/atom {:sort-key :name :descend? true})
+  (let [sort-params (r/atom {:sort-key nil :descend? true})
         filters (r/atom {})]
     (fn [props]
       (let [{:keys [on-change grants value]} props
             filtered-sorted-grants
-            (sort-rows
-              (filter-rows grants @filters)
-              (:sort-key @sort-params)
-              (:descend? @sort-params))]
+            (if (some? (:sort-key @sort-params))
+              (sort-rows
+                (filter-rows grants @filters)
+                (:sort-key @sort-params)
+                (:descend? @sort-params))
+              (filter-rows grants @filters))]
         [table/table
          {:height "250px"}
          [table/table-header
