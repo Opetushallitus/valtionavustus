@@ -113,11 +113,19 @@
 (defn grant-info [grant]
   [:div
    [:h3 (get-in grant [:content :name :fi])]
-   [:div {:style {:display "span" :margin 20}}
-    [:div [:label "Toimintayksikkö: "] (:operational-unit grant)]
-    [:div [:label "Projekti: "] (:project grant)]
-    [:div [:label "Toiminto: "] (:operation grant)]
-    [:div [:label "Maksuliikemenotili: "]
-     (get-in grant [:content :transaction-account])]
-    [:div [:label "Tositelaji: "]
-     (get-in grant [:content :document-type])]]])
+   [:div {:style {:display "flex" :margin 20}}
+    [:div {:style theme/grant-info-item}
+     [:label {:style theme/info-label} "Toimintayksikkö"]
+     [:div (:operational-unit grant)]]
+    [:div {:style theme/grant-info-item}
+     [:label {:style theme/info-label} "Projekti"]
+     [:div (:project grant)]]
+    [:div {:style theme/grant-info-item}
+     [:label {:style theme/info-label} "Toiminto"]
+     [:div (:operation grant)]]
+    [:div {:style theme/grant-info-item}
+     [:label {:style theme/info-label} "Maksuliikemenotili"]
+     [:div (get-in grant [:content :transaction-account])]]
+    [:div {:style theme/grant-info-item}
+     [:label {:style theme/info-label} "Tositelaji"]
+     [:div (get-in grant [:content :document-type])]]]])
