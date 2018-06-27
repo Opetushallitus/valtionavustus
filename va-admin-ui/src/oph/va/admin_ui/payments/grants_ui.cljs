@@ -43,6 +43,13 @@
     (swap! filters dissoc k)
     (swap! filters assoc k v)))
 
+(defn sort-grant-rows [rows sort-key descend?]
+  (if (or (= sort-key :start) (= sort-key :end))
+    (if descend?
+      (sort-by sort-key t/before? rows)
+      (sort-by sort-key t/after? rows))
+    (sort-rows rows sort-key descend?)))
+
 (defn grants-table [props]
   (let [sort-params (r/atom {:sort-key nil :descend? true})
         filters (r/atom {})]
@@ -50,7 +57,7 @@
       (let [{:keys [on-change grants value]} props
             filtered-sorted-grants
             (if (some? (:sort-key @sort-params))
-              (sort-rows
+              (sort-grant-rows
                 (filter-rows grants @filters)
                 (:sort-key @sort-params)
                 (:descend? @sort-params))
