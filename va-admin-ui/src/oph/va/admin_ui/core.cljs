@@ -23,7 +23,6 @@
 (def top-links
   {:grant-evaluations {:link "/" :title "Hakemusten arviointi"}
    :grant-admin {:link "/admin/" :title "Hakujen hallinta"}
-   :payments {:link"/admin-ui/payments/" :title "Maksatusten hallinta"}
    :va-code-values {:link "/admin-ui/va-code-values/"
                     :title "VA-Koodienhallinta"}
    :va-pulse {:link "/admin-ui/reports/" :title "VA-pulssi"}
