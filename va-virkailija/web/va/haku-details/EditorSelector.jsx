@@ -118,7 +118,9 @@ export default class EditorSelector extends React.Component {
           </span>
           <span
             onClick={createRedirectTo(
-              "/admin-ui/payments/?grant-id=" + avustushaku.id)}>
+              "/admin-ui/payments/?grant-id=" + avustushaku.id)}
+            className={avustushaku.status !== "published" &&
+                         avustushaku.status !== "resolved" ? "disabled" : ""}>
             Maksatukset
           </span>
         </div>
