@@ -9,17 +9,12 @@ export default class TopBar extends React.Component {
     const environment = this.props.environment
     const state = this.props.state
     const controls = state ? <TopBarControls state={state}/> : ""
-    const selectedHakuId =
-          (state && state.selectedHaku ? state.selectedHaku.id : null) ||
-          (state && state.hakuData && state.hakuData.avustushaku ?
-             state.hakuData.avustushaku.id : null)
     return (
       <section id="topbar">
         <div id="top-container">
           <img id="logo" src="/img/logo-176x50@2x.png" width="176" height="50" alt="Opetushallitus / Utbildningsstyrelsen" />
           <TopBarTabs disabled={!state} activeTab={this.props.activeTab}
-                      config={environment} userInfo={state.userInfo}
-                      selectedHakuId={selectedHakuId}/>
+                      config={environment} userInfo={state.userInfo}/>
           {controls}
           <EnvironmentInfo environment={environment} lang="fi"/>
         </div>
@@ -35,7 +30,7 @@ class TopBarTabs extends React.Component {
   }
 
   render() {
-    const {activeTab, disabled, config, userInfo, selectedHakuId} = this.props
+    const {activeTab, disabled, config, userInfo} = this.props
     const isAdmin = userInfo.privileges.indexOf("va-admin") > -1
     return (
       <div id="tabs">
