@@ -58,7 +58,7 @@
      [:div {:class "oph-typography"}
       (when @initialized
         [:div
-         [:div
+         [:div {:style theme/top-links-container}
           (render-top-links
             (router/get-current-path)
             (cond-> top-links

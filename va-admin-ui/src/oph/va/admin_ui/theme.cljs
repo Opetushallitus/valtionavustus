@@ -55,18 +55,20 @@
 
 (def grants-table-header {:border-bottom "1px solid rgb(208, 207, 204)"})
 
-(def app-container {:padding "55px 5px 5px 5px"
+(def app-container {:padding "70px 5px 5px 5px"
                     :background-color "#fafafa"})
+
+(def top-links-container {:padding-top 15
+                          :background-color "white"
+                          :position "fixed"
+                          :width "100%"})
 
 (def top-links {:box-shadow "0 1px 2px 0 rgba(0, 0, 0, 0.1)"
                 :font-size 18
                 :text-transform "uppercase"
                 :height 30
                 :padding-top 5
-                :padding-bottom 20
-                :position "fixed"
-                :width "100%"
-                :background-color "white"})
+                :padding-bottom 20})
 
 (def table-body {:overflow "auto"})
 
