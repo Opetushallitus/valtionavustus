@@ -34,8 +34,15 @@ class TopBarTabs extends React.Component {
     const isAdmin = userInfo.privileges.indexOf("va-admin") > -1
     return (
       <div id="tabs">
-        <TopBarTab id="arviointi" label="Hakemusten arviointi" href="/" disabled={disabled} activeTab={activeTab}/>
-        <TopBarTab id="admin" label="Hakujen hallinta" href="/admin/" disabled={disabled} activeTab={activeTab}/>
+        <TopBarTab id="arviointi"
+                   label="Hakemusten arviointi"
+                   href="/" disabled={disabled}
+                   activeTab={activeTab}/>
+        <TopBarTab id="admin"
+                   label="Hakujen hallinta"
+                   href="/admin/"
+                   disabled={disabled}
+                   activeTab={activeTab}/>
         {this.isEnabled(config, "va-code-values") &&
            <TopBarTab id="va-code-values" label="VA-koodienhallinta"
                         href="/admin-ui/va-code-values/" disabled={disabled}
