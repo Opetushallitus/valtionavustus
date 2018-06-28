@@ -281,14 +281,30 @@
                                   @grants)))}]
 
      [:div
-      [:div {:style theme/sub-nav}
-      [:span {:style theme/sub-nav-item} "Haun tiedot"]
-      [:span {:style theme/sub-nav-item} "Hakulomake"]
-      [:span {:style theme/sub-nav-item} "Päätös"]
-      [:span {:style theme/sub-nav-item} "Väliselvitys"]
-      [:span {:style theme/sub-nav-item} "Loppuselvitys"]
-      [:span {:style theme/sub-nav-item-selected}
-       "Maksatukset"]]
+      (let [id (:id @selected-grant)]
+        [:div {:style theme/sub-nav}
+         [:span {:style theme/sub-nav-item
+                 :on-click #(router/redirect-to!
+                              (str "/admin/haku-editor/?avustushaku=" id))}
+          "Haun tiedot"]
+         [:span {:style theme/sub-nav-item
+                 :on-click #(router/redirect-to!
+                              (str "/admin/form-editor/?avustushaku=" id))}
+          "Hakulomake"]
+         [:span {:style theme/sub-nav-item
+                 :on-click #(router/redirect-to!
+                              (str "/admin/decision/?avustushaku=" id))}
+          "Päätös"]
+         [:span {:style theme/sub-nav-item
+                 :on-click #(router/redirect-to!
+                              (str "/admin/valiselvitys/?avustushaku=" id))}
+          "Väliselvitys"]
+         [:span {:style theme/sub-nav-item
+                 :on-click #(router/redirect-to!
+                              (str "/admin/loppuselvitys/?avustushaku=" id))}
+          "Loppuselvitys"]
+         [:span {:style theme/sub-nav-item-selected}
+          "Maksatukset"]])
       [:div
        [:div
         (grant-info @selected-grant)]
