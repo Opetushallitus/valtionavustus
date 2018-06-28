@@ -7,6 +7,13 @@ import FormEditorContainer from './FormEditorContainer.jsx'
 import DecisionEditor from './DecisionEditor.jsx'
 import SelvitysFormEditor from './SelvitysFormEditor.jsx'
 
+function createRedirectTo(url) {
+  return (e) => {
+    e.preventDefault()
+    window.location.href = url
+  }
+}
+
 export default class EditorSelector extends React.Component {
   render() {
     const {
@@ -108,6 +115,11 @@ export default class EditorSelector extends React.Component {
                 className={ClassNames(
                   {"selected": subTab === "loppuselvitys"})}>
             Loppuselvitys
+          </span>
+          <span
+            onClick={createRedirectTo(
+              "/admin-ui/payments/?grant-id=" + avustushaku.id)}>
+            Maksatukset
           </span>
         </div>
         <div className="section-container">{subTabContent}</div>
