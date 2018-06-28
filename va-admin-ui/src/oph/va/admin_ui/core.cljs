@@ -23,7 +23,6 @@
 (def top-links
   {:grant-evaluations {:link "/" :title "Hakemusten arviointi"}
    :grant-admin {:link "/admin/" :title "Hakujen hallinta"}
-   :payments {:link"/admin-ui/payments/" :title "Maksatusten hallinta"}
    :va-code-values {:link "/admin-ui/va-code-values/"
                     :title "VA-Koodienhallinta"}
    :va-pulse {:link "/admin-ui/reports/" :title "VA-pulssi"}
@@ -35,7 +34,8 @@
    title])
 
 (defn render-top-links [current-path links selected-grant-id]
-  [:div {:class "top-links"}
+  [:div {:class "top-links"
+         :style theme/top-links}
    (doall
      (map
        (fn [[k {:keys [link title]}]]
@@ -66,18 +66,17 @@
               (dissoc top-links :va-code-values)
               (not (get-in @environment [:reports :enabled?]))
               (dissoc top-links :va-pulse))
-
             (when (:selected-grant payments-core/state)
-              (:id (deref (:selected-grant payments-core/state)))))
-          [:hr theme/hr-top]]
-         (case (router/get-current-path)
-           "/admin-ui/payments/" (payments-core/home-page data)
-           "/admin-ui/va-code-values/" (code-values-core/home-page)
-           "/admin-ui/reports/" (reports-core/home-page)
-           "/admin-ui/search/" (search-core/home-page)
-           (do
-             (router/redirect-to! "/admin-ui/payments/")
-             "Redirecting..."))])
+              (:id (deref (:selected-grant payments-core/state)))))]
+         [:div {:style theme/app-container}
+          (case (router/get-current-path)
+            "/admin-ui/payments/" (payments-core/home-page data)
+            "/admin-ui/va-code-values/" (code-values-core/home-page)
+            "/admin-ui/reports/" (reports-core/home-page)
+            "/admin-ui/search/" (search-core/home-page)
+            (do
+              (router/redirect-to! "/admin-ui/payments/")
+              "Redirecting..."))]])
       (dialogs/render)]]))
 
 (defn mount-root []

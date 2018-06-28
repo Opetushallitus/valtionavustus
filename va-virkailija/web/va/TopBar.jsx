@@ -41,12 +41,6 @@ class TopBarTabs extends React.Component {
       <div id="tabs">
         <TopBarTab id="arviointi" label="Hakemusten arviointi" href="/" disabled={disabled} activeTab={activeTab}/>
         <TopBarTab id="admin" label="Hakujen hallinta" href="/admin/" disabled={disabled} activeTab={activeTab}/>
-        {this.isEnabled(config, "payments") &&
-          <TopBarTab id="payments" label="Maksatukset"
-                     href={selectedHakuId ?
-                           `/admin-ui/payments/?grant-id=${selectedHakuId}` :
-                           `/admin-ui/payments/`}
-                    disabled={disabled} activeTab={activeTab}/>}
         {this.isEnabled(config, "va-code-values") &&
            <TopBarTab id="va-code-values" label="VA-koodienhallinta"
                         href="/admin-ui/va-code-values/" disabled={disabled}
