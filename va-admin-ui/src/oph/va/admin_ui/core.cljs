@@ -59,6 +59,11 @@
       (when @initialized
         [:div
          [:div {:style theme/top-links-container}
+          [:img {:style theme/logo
+                 :src "/img/logo-176x50@2x.png"
+                 :width 176
+                 :height 50
+                 :alt "Opetushallitus / Utbildningsstyrelsen"}]
           (render-top-links
             (router/get-current-path)
             (cond-> top-links

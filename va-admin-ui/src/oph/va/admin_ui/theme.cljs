@@ -70,6 +70,10 @@
                 :padding-top 5
                 :padding-bottom 20})
 
+(def logo {:float "left"
+           :margin "-5px 20px 0 0"
+           :padding-left 5})
+
 (def table-body {:overflow "auto"})
 
 (def table-cell {:font-size 16})
