@@ -22,7 +22,7 @@
 
 (def top-links
   {:grant-evaluations {:link "/" :title "Hakemusten arviointi"}
-   :grant-admin {:link "/admin/" :title "Hakujen hallinta"}
+   :grant-admin {:link "/admin-ui/payments/" :title "Hakujen hallinta"}
    :va-code-values {:link "/admin-ui/va-code-values/"
                     :title "VA-Koodienhallinta"}
    :va-pulse {:link "/admin-ui/reports/" :title "VA-pulssi"}
@@ -30,7 +30,7 @@
 
 (defn create-link [href title active]
   [:a {:key href :href href
-       :style (if active theme/active-link theme/link)}
+       :style (if active theme/top-active-link theme/top-link)}
    title])
 
 (defn render-top-links [current-path links selected-grant-id]

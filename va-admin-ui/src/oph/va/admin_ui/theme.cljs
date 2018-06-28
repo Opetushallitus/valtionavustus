@@ -17,6 +17,11 @@
 
 (def active-link (assoc link :color "#2a2a2a"))
 
+(def top-link {:color "#999290" :font-size "font-size: 1.25rem"})
+
+(def top-active-link (assoc link :color "black"))
+
+
 (def grant-info-item {:display "inline-block"
                       :padding 10
                       :width 200})
