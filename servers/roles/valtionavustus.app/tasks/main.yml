@@ -57,6 +57,7 @@
   sudo: no
   register: app_secrets_contents
   changed_when: False
+  always_run: yes
   tags:
     - app_secrets
 
