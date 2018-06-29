@@ -3,7 +3,7 @@
              :refer [timeout go-loop chan poll! <! put! close!]]))
 
 (def units
-  {:ms 1
+  {:millisecond 1
    :second 1000
    :minute 60000
    :hour 3600000})
