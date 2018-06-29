@@ -9,8 +9,7 @@
    :hour 3600000})
 
 (defn stop [c]
-  (put! c :stop)
-  (close! c))
+  (put! c :stop))
 
 (defn to-ms [time unit]
   (if-let [multiplier (get units unit)]
@@ -21,7 +20,8 @@
   (let [c (chan)]
     (go-loop []
       (<! (timeout ms))
-      (when-not (poll! c)
+      (if (= (poll! c) :stop)
+        (close! c)
         (do
           (apply f args)
           (recur))))
