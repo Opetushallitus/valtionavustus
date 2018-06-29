@@ -125,7 +125,7 @@
   (compojure-api/GET
     "/integrations/" []
     :summary "Integrations healthcheck"
-    :return [virkailija-schema/HealthCheckResult]
+    :return virkailija-schema/HealthCheckResult
     (on-integration-healthcheck)))
 
 (compojure-api/defroutes resource-routes
