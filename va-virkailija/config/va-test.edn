@@ -21,4 +21,4 @@
  :application-change {:refuse-enabled? true}
  :integration-healthcheck {:enabled? true
                            :timeout 5000
-                           :cron "0 */15 * ? * *"}}
+                           :interval-minutes 15}}
