@@ -325,7 +325,7 @@
                                (concat
                                  (get-batch-errors @payments @batch-values)
                                  (get-grant-errors @selected-grant)
-                                 (get-application-errors @applications))]
+                                 (get-application-errors outgoing-payments))]
                            [:div
                             (when (and (seq outgoing-payments) (seq errors))
                               (notice
