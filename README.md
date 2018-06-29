@@ -87,12 +87,39 @@ ls -lA oph
 ```
 
 ```
-drwxr-xr-x  26 username  staff    884 Feb 17 09:46 postgresql-data/
+drwxr-xr-x  26 username  staff    884 Feb 17 09:46 postgres-data/
 drwxr-xr-x  26 username  staff    884 Feb 17 09:46 valtionavustus/
 drwxr-xr-x  25 username  staff    850 Feb 17 10:54 valtionavustus-secret/
 ```
 
+Missä `postgres-data` on data-hakemisto PostgreSQL:lle ja
+`valtionavustus` ja `valtionavustus-secret` ovat projektin
+git-repositoryt.
+
 ### Tietokanta
+
+#### Ajaminen Dockerilla
+
+Docker-imagen luonti:
+
+``` shell
+cd valtionavustus/script/postgres-docker
+docker build . -t va-postgres:9.4
+```
+
+Data-hakemiston luonti:
+
+``` shell
+mkdir -p postgres-data
+```
+
+Tietokannan ajaminen Dockerissa:
+
+``` shell
+docker run --rm --name va-postgres --publish 5432:5432 --volume postgres-data:/var/lib/postgresql/data va-postgres:9.4
+```
+
+#### Ajaminen manuaalisesti
 
 *Huom:* Linux-koneilla Postgres-komennot on helpointa ajaa
 postgres-käyttäjänä:
@@ -101,15 +128,14 @@ postgres-käyttäjänä:
 sudo -s -u postgres
 ```
 
-Luo paikallinen datahakemisto:
+Luo data-hakemisto:
 
 ``` shell
 initdb -D postgresql-data
 ```
 
-Halutessasi aseta seuraavat tiedostoon
-`postgresql-data/postgresql.conf`, jotta voit seurata tarkemmin mitä
-tietokannassa tapahtuu:
+Halutessasi aseta seuraavat tiedostoon `postgres-data/postgresql.conf`,
+jotta voit seurata tarkemmin mitä tietokannassa tapahtuu:
 
 ```
 log_destination = 'stderr'
@@ -120,7 +146,7 @@ log_statement = 'mod'
 Käynnistä tietokantapalvelin:
 
 ``` shell
-postgres -D postgresql-data
+postgres -D postgres-data
 ```
 
 Luo käyttäjät `va-hakija` ja `va-virkailija` (kummankin salasana `va`):
@@ -145,26 +171,6 @@ Tietokannan saa tyhjennettyä ajamalla:
 dropdb va-dev
 createdb -E UTF-8 va-dev
 ```
-
-#### Docker
-
-Vaihtoehtoisesti voit ajaa tietokantaa
-[docker-composella](https://docs.docker.com/compose/). Hakemistossa
-`scripts/docker`:
-
-1. Vaihda `db-variables.env`-tiedostoon haluamasi postgres-käyttäjän
-   salasana. Tiedosto on `.gitignore`:ssa, joten salasanasi ei päädy
-   versiohallintaan.
-2. Aja `docker-compose up -d`
-
-Jos tahdot tyhjentää tietokannan tai teet muutoksia docker-tiedostoihin,
-aja:
-
-``` bash
-docker-compose up --build -d
-```
-
-Vipu `-d` asettaa imagen pyörimään taustalle (daemon).
 
 ### Frontend
 
