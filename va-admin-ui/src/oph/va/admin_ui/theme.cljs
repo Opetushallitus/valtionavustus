@@ -17,6 +17,14 @@
 
 (def active-link (assoc link :color "#2a2a2a"))
 
+(def top-link {:color "#999290"
+               :font-size "font-size: 1.25rem"
+               :border-left "1px solid #d9d9d9"
+               :padding "5px 20px 5px 20px"})
+
+(def top-active-link (assoc top-link :color "black"))
+
+
 (def grant-info-item {:display "inline-block"
                       :padding 10
                       :width 200})
@@ -47,18 +55,24 @@
 
 (def grants-table-header {:border-bottom "1px solid rgb(208, 207, 204)"})
 
-(def app-container {:padding "55px 5px 5px 5px"
+(def app-container {:padding "70px 5px 5px 5px"
                     :background-color "#fafafa"})
+
+(def top-links-container {:padding-top 15
+                          :background-color "white"
+                          :position "fixed"
+                          :width "100%"})
 
 (def top-links {:box-shadow "0 1px 2px 0 rgba(0, 0, 0, 0.1)"
                 :font-size 18
                 :text-transform "uppercase"
                 :height 30
                 :padding-top 5
-                :padding-bottom 20
-                :position "fixed"
-                :width "100%"
-                :background-color "white"})
+                :padding-bottom 20})
+
+(def logo {:float "left"
+           :margin "-5px 20px 0 0"
+           :padding-left 5})
 
 (def table-body {:overflow "auto"})
 

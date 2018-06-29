@@ -21,8 +21,8 @@
 (defonce initialized (r/atom false))
 
 (def top-links
-  {:grant-evaluations {:link "/" :title "Hakemusten arviointi"}
-   :grant-admin {:link "/admin/" :title "Hakujen hallinta"}
+  {:grant-admin {:link "/admin-ui/payments/" :title "Hakujen hallinta"}
+   :grant-evaluations {:link "/" :title "Hakemusten arviointi"}
    :va-code-values {:link "/admin-ui/va-code-values/"
                     :title "VA-Koodienhallinta"}
    :va-pulse {:link "/admin-ui/reports/" :title "VA-pulssi"}
@@ -30,7 +30,7 @@
 
 (defn create-link [href title active]
   [:a {:key href :href href
-       :style (if active theme/active-link theme/link)}
+       :style (if active theme/top-active-link theme/top-link)}
    title])
 
 (defn render-top-links [current-path links selected-grant-id]
@@ -58,7 +58,12 @@
      [:div {:class "oph-typography"}
       (when @initialized
         [:div
-         [:div
+         [:div {:style theme/top-links-container}
+          [:img {:style theme/logo
+                 :src "/img/logo-176x50@2x.png"
+                 :width 176
+                 :height 50
+                 :alt "Opetushallitus / Utbildningsstyrelsen"}]
           (render-top-links
             (router/get-current-path)
             (cond-> top-links
