@@ -278,7 +278,8 @@
        :on-change (fn [id]
                     (reset! selected-grant
                             (some #(when (= (:id %) id) %)
-                                  @grants)))}]
+                                  @grants))
+                    (router/set-query! {:grant-id id}))}]
 
      [:div
       (let [id (:id @selected-grant)]
@@ -454,7 +455,8 @@
             (reset! grants (:body grants-result))
             (let [grant-id (or (get-param-grant) (get (first @grants) :id))]
               (when-let [grant (some #(when (= (:id %) grant-id) %) @grants)]
-                (reset! selected-grant grant))))
+                (reset! selected-grant grant)
+                (router/set-query! {:grant-id (:id grant)}))))
           (dialogs/show-error-message!
             "Virhe tietojen latauksessa"
             (select-keys grants-result [:status :error-text])))
