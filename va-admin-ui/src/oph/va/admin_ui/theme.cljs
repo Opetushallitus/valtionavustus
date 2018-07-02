@@ -68,7 +68,8 @@
                 :text-transform "uppercase"
                 :height 30
                 :padding-top 5
-                :padding-bottom 20})
+                :padding-bottom 20
+                :z-index 1000})
 
 (def logo {:float "left"
            :margin "-5px 20px 0 0"
