@@ -61,15 +61,15 @@
 (def top-links-container {:padding-top 15
                           :background-color "white"
                           :position "fixed"
-                          :width "100%"})
+                          :width "100%"
+                          :z-index 1000})
 
 (def top-links {:box-shadow "0 1px 2px 0 rgba(0, 0, 0, 0.1)"
                 :font-size 18
                 :text-transform "uppercase"
                 :height 30
                 :padding-top 5
-                :padding-bottom 20
-                :z-index 1000})
+                :padding-bottom 20})
 
 (def logo {:float "left"
            :margin "-5px 20px 0 0"
