@@ -182,21 +182,19 @@
 
 (defn tabs [props & children]
   [:div {:class "oph-typography"}
-   [:div {:class "oph-tabs" :style {:cursor "pointer"}}
+   [:div {:style theme/sub-nav}
     (doall
       (map-indexed
         (fn [i t]
           (let [value (:value (second t))]
             [:a {:key i
-                 :class
-                 (str "oph-tab-item"
-                      (when (= value (:value props))
-                        " oph-tab-item-is-active"))
+                 :style (if (= value (:value props))
+                          theme/sub-nav-item-selected
+                          theme/sub-nav-item)
                  :on-click #((:on-change props) value)}
              (:label (second t))]))
         children))]
    [:div
-    {:class "oph-tab-pane oph-tab-pane-is-active" }
     (some #(when (= (:value (second %)) (:value props)) %) children )]])
 
 (defn card-text [& content]
