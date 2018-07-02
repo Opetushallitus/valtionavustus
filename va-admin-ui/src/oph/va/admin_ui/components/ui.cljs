@@ -6,7 +6,7 @@
              :rename {date-picker material-date-picker}]
             [cljs-react-material-ui.icons :as ic]
             [oph.va.admin-ui.theme :as theme]
-            [oph.va.admin-ui.utils :refer [format]]
+            [oph.va.admin-ui.utils :refer [format delayed cancel!]]
             [oph.va.admin-ui.components.tools :refer [split-component]]))
 
 (defn get-position [element]
@@ -220,3 +220,34 @@
   (let [{:keys [props children]} (split-component body)]
     [:span {:style (merge-style props theme/badge)}
      (apply vector :span children)]))
+
+(defn- render-item [index item]
+  [:div {:key index} item])
+
+(defn search-field [props]
+  (let [search-delay (atom nil)
+        popover-state (r/atom {:open false :anchor-el nil})]
+    (fn [props]
+      [:span {:style {:display "inline-block"}}
+       [text-field
+        (assoc props :on-change
+               (fn [e]
+                 (swap! popover-state assoc :anchor-el (.-target e))
+                 (let [value (.-value (.-target e))]
+                   ((:on-change props) value)
+                   (when (some? @search-delay)
+                     (cancel! @search-delay))
+                   (when (> (count value) (get props :min-length 1))
+                     (reset! search-delay
+                             (delayed
+                               (get props :delay 1000)
+                               (fn []
+                                 (reset! search-delay nil)
+                                 ((:on-search props) value)
+                                 (swap! popover-state assoc :open true))))))))]
+       [popover
+        (assoc @popover-state
+               :on-request-close (fn []
+                                   (swap! popover-state assoc :open false)))
+        [:div {:style theme/search-popover}
+         (doall (map-indexed render-item (:items props)))]]])))
