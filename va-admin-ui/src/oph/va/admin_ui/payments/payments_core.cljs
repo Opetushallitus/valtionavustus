@@ -318,7 +318,6 @@
                    (when (not= (:status @selected-grant) "resolved")
                      "disabled")}
              [:div
-              [:hr]
               [(let [selected (r/atom "outgoing")]
                  (fn [data]
                    [va-ui/tabs {:value @selected
