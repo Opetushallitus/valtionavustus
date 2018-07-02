@@ -13,7 +13,7 @@
    (println (string/join "\n"
                          '("Usage:"
                            ""
-                           "  set-submitted-hakemukset-project-name-from-answer-key avustushaku-id answer-key")))
+                           "  rename-answer-key-to-project-name-for-hakemukset avustushaku-id answer-key")))
    (System/exit exit-code)))
 
 (defn- parse-int-or-print-usage-and-exit [x]
@@ -26,25 +26,46 @@
     x
     (print-usage-and-exit 1)))
 
-(defn- set-submitted-hakemukset-project-name-from-answer-key [avustushaku-id answer-key]
+(defn- rename-answer-key-to-project-name-for-hakemukset [avustushaku-id answer-key]
   {:pre [(integer? avustushaku-id) (seq answer-key)]}
   (doseq [hakemus (db/exec :form-db
-                           queries/list-submitted-hakemus-answers-by-avustushaku-id
+                           queries/list-hakemus-answers-by-avustushaku-id
                            {:avustushaku_id avustushaku-id})]
-    (let [hakemus-id (:id hakemus)
-          hakemus-version (:version hakemus)
-          proj-name-from-answer (form-util/find-answer-value (:answers hakemus) answer-key)]
-      (when proj-name-from-answer
-        (printf "hakemus_id=%d, hakemus_version=%d proj-name=\"%s\"\n" hakemus-id hakemus-version proj-name-from-answer)
-        (db/exec :form-db
-                 queries/update-hakemus-project-name!
-                 {:hakemus_id hakemus-id :hakemus_version hakemus-version :project_name proj-name-from-answer})))))
+    (let [{:keys [hakemus_id
+                  hakemus_version
+                  form_submission_id
+                  form_submission_version
+                  answers]}                hakemus
+          proj-name-answer                 (form-util/find-value-for-key (get answers :value) answer-key)
+          proj-name-value                  (:value proj-name-answer)]
+      (when (seq proj-name-value)
+        (let [new-answers (update answers
+                                  :value
+                                  (fn [values]
+                                    (mapv (fn [{k :key :as v}]
+                                            (if (= k answer-key)
+                                              (assoc v :key "project-name")
+                                              v))
+                                          values)))]
+          (printf "hakemus_id=%d, hakemus_version=%d form_submission_id=%d form_submission_version=%d proj-name-value=\"%s\"\n"
+                  hakemus_id
+                  hakemus_version
+                  form_submission_id
+                  form_submission_version
+                  proj-name-value)
+          (db/exec-all :form-db
+                       [queries/update-hakemus-answers! {:form_submission_id      form_submission_id
+                                                         :form_submission_version form_submission_version
+                                                         :answers                 new-answers}
+                        queries/update-hakemus-project-name! {:hakemus_id      hakemus_id
+                                                              :hakemus_version hakemus_version
+                                                              :project_name    proj-name-value}]))))))
 
 (defn -main [& args]
   (condp = (first args)
-    "set-submitted-hakemukset-project-name-from-answer-key"
+    "rename-answer-key-to-project-name-for-hakemukset"
     (let [avustushaku-id (parse-int-or-print-usage-and-exit (second args))
           answer-key (parse-nonempty-str-or-print-usage-and-exit (nth args 2))]
-      (set-submitted-hakemukset-project-name-from-answer-key avustushaku-id answer-key))
+      (rename-answer-key-to-project-name-for-hakemukset avustushaku-id answer-key))
 
     (print-usage-and-exit)))
