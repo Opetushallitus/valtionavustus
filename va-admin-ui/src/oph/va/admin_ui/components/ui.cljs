@@ -26,8 +26,9 @@
         :bottom 0
         :left 0
         :right 0
-        :z-index 500}
-       :on-click #(:on-request-close props)}]
+        :z-index 300}
+       :on-click (fn []
+                   ((:on-request-close props)))}]
      [:div
       {:style
        {:box-shadow
@@ -36,7 +37,7 @@
         :color "black"
         :border-radius 2
         :position "absolute"
-        :z-index 600
+        :z-index 350
         :overflow-y "auto"
         :x (:x rect)
         :y (:y rect)
@@ -57,14 +58,18 @@
          :on-click
          (fn [e]
            (swap! state assoc
-                  :open (not (:open @state))
+                  :open true
                   :anchor-el (.-target e))
            (.preventDefault e))}
-        (get props :icon "?")
-        [popover
-         (merge @state
-                {:on-request-close #(swap! state assoc :open false)})
-         [:div {:style (merge theme/popup (:content-style props))} text]]]])))
+        (get props :icon "?")]
+       [popover
+        (assoc @state
+               :on-request-close
+               (fn []
+                 (swap! state assoc
+                        :open false
+                        :anchor-el nil)))
+        [:div {:style (merge theme/popup (:content-style props))} text]]])))
 
 (defn- add-validator [on-change validator]
   (if (some? validator)
