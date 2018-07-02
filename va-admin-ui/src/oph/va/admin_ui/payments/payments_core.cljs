@@ -460,7 +460,7 @@
         (if (:success grants-result)
           (do
             (reset! grants (:body grants-result))
-            (when-let [grant-id (get-param-grant)]
+            (let [grant-id (or (get-param-grant) (get (first @grants) :id))]
               (when-let [grant (some #(when (= (:id %) grant-id) %) @grants)]
                 (reset! selected-grant grant))))
           (dialogs/show-error-message!
