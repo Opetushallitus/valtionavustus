@@ -282,29 +282,22 @@
 
      [:div
       (let [id (:id @selected-grant)]
-        [:div {:style theme/sub-nav}
-         [:span {:style theme/sub-nav-item
-                 :on-click #(router/redirect-to!
-                              (str "/admin/haku-editor/?avustushaku=" id))}
-          "Haun tiedot"]
-         [:span {:style theme/sub-nav-item
-                 :on-click #(router/redirect-to!
-                              (str "/admin/form-editor/?avustushaku=" id))}
-          "Hakulomake"]
-         [:span {:style theme/sub-nav-item
-                 :on-click #(router/redirect-to!
-                              (str "/admin/decision/?avustushaku=" id))}
-          "Päätös"]
-         [:span {:style theme/sub-nav-item
-                 :on-click #(router/redirect-to!
-                              (str "/admin/valiselvitys/?avustushaku=" id))}
-          "Väliselvitys"]
-         [:span {:style theme/sub-nav-item
-                 :on-click #(router/redirect-to!
-                              (str "/admin/loppuselvitys/?avustushaku=" id))}
-          "Loppuselvitys"]
-         [:span {:style theme/sub-nav-item-selected}
-          "Maksatukset"]])
+        [va-ui/tabs {:value "payments"
+                     :on-change #(when (not= % "payments")
+                                   (router/redirect-to!
+                                     (str "/admin/" % "/?avustushaku=" id)))}
+         [va-ui/tab {:value "haku-editor"
+                     :label "Haun tiedot"}]
+         [va-ui/tab {:value "form-editor"
+                     :label "Hakulomake"}]
+         [va-ui/tab {:value "decision"
+                     :label "Päätös"}]
+         [va-ui/tab {:value "valiselvitys"
+                     :label "Väliselvitys"}]
+         [va-ui/tab {:value "loppuselvitys"
+                     :label "Loppuselvitys"}]
+         [va-ui/tab {:value "payments"
+                     :label "Maksatukset"}]])
       [:div
        [:div
         (grant-info @selected-grant)]
