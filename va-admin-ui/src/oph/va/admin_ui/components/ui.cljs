@@ -9,25 +9,25 @@
             [oph.va.admin-ui.utils :refer [format]]
             [oph.va.admin-ui.components.tools :refer [split-component]]))
 
-(defn get-rectangle [element]
+(defn get-position [element]
   (if (some? element)
     (let [rect (.getBoundingClientRect element)]
-      {:top (.-top rect)
-       :left (.-left rect)})
-    {:top 0 :left 0}))
+      {:x (.-x rect)
+       :y (.-y rect)})
+    {:x 0 :y 0}))
 
 (defn popover [props & content]
-  (let [rect (get-rectangle (:anchor-el props))]
-    [:div
-     {:style
-      {:display (when (not (:open props)) "none")
-       :position "fixed"
-       :top 0
-       :bottom 0
-       :left 0
-       :right 0
-       :z-index 2000}
-      :on-click #(:on-request-close props)}
+  (let [rect (get-position (:anchor-el props))]
+    [:div {:style {:display (when (not (:open props)) "none")}}
+     [:div
+      {:style
+       {:position "fixed"
+        :top 0
+        :bottom 0
+        :left 0
+        :right 0
+        :z-index 500}
+       :on-click #(:on-request-close props)}]
      [:div
       {:style
        {:box-shadow
@@ -35,11 +35,11 @@
         :background-color "white"
         :color "black"
         :border-radius 2
-        :position "fixed"
-        :z-index 2100
+        :position "absolute"
+        :z-index 600
         :overflow-y "auto"
-        :top (:top rect)
-        :left (:left rect)
+        :x (:x rect)
+        :y (:y rect)
         :opacity 1
         :box-sizing "border-box"
         :transform "scale(1, 1)"
