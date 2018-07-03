@@ -111,6 +111,11 @@
 (defn get-reports []
   (get-cached (str "/" api-path "/reports/")))
 
+(defn search-users [term]
+  (http/post "/api/va-user/search"
+             {:with-credentials? true
+              :json-params {:searchInput term}}))
+
 (defn set-config! [c] (reset! config c))
 
 (defn delete-payments? [] (get-in @config [:payments :delete-payments?]))

@@ -1,8 +1,11 @@
 (ns oph.va.admin-ui.payments.financing
-  (:require [reagent.core :as r]
+  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require [cljs.core.async :refer [<!]]
+            [reagent.core :as r]
             [oph.va.admin-ui.components.ui :as va-ui]
             [oph.va.admin-ui.payments.utils
-             :refer [not-empty? valid-email? phase-to-name]]))
+             :refer [not-empty? valid-email? phase-to-name]]
+            [oph.va.admin-ui.connection :as connection]))
 
 (def ^:private week-in-ms (* 1000 60 60 24 7))
 
@@ -54,10 +57,21 @@
                        :presenter-email ""
                        :acceptor-email ""})
 
+(defn search-emails [value on-finished]
+  (go
+    (let [result (<! (connection/search-users value))]
+      (if (:success result)
+        (->> (get-in result [:body :results])
+             (map :email)
+             (filter seq)
+             on-finished)
+        (on-finished [])))))
+
 (defn document-field [props]
   (let [value (r/atom (assoc
                         default-document
-                        :phase (or (first (:phases props)) "")))]
+                        :phase (or (first (:phases props)) "")))
+        emails-state (r/atom {:presenter {:result [] :searching false}})]
     (fn [props]
       [:div
        [va-ui/select-field
@@ -74,22 +88,42 @@
                       (let [document-id (-> e .-target .-value)]
                         (when (<= (count document-id) document-id-max-size)
                           (swap! value assoc :document-id document-id))))}]
-       [va-ui/text-field
+       [va-ui/search-field
         {:floating-label-text "Esittelijän sähköpostiosoite"
          :value (:presenter-email @value)
          :type "email"
          :error (and (not-empty? (:presenter-email @value))
                      (not (valid-email? (:presenter-email @value))))
-         :on-change
-         #(swap! value assoc :presenter-email (.-value (.-target %)))}]
-       [va-ui/text-field
+         :on-change #(swap! value assoc :presenter-email %)
+         :items (get-in @emails-state [:presenter :result])
+         :searching (get-in @emails-state [:presenter :searching])
+         :on-search (fn [value]
+                      (swap! emails-state assoc-in [:presenter :searching] true)
+                      (search-emails
+                        value
+                        (fn [result]
+                          (swap! emails-state
+                                 assoc-in [:presenter :result] result)
+                          (swap! emails-state
+                                 assoc-in [:presenter :searching] false))))}]
+       [va-ui/search-field
         {:floating-label-text "Hyväksyjän sähköpostiosoite"
          :value (:acceptor-email @value)
          :type "email"
          :error (and (not-empty? (:acceptor-email @value))
                      (not (valid-email? (:acceptor-email @value))))
-         :on-change
-         #(swap! value assoc :acceptor-email (.-value (.-target %)))}]
+         :on-change #(swap! value assoc :acceptor-email %)
+         :items (get-in @emails-state [:acceptor :result])
+         :searching (get-in @emails-state [:acceptor :searching])
+         :on-search (fn [value]
+                      (swap! emails-state assoc-in [:acceptor :searching] true)
+                      (search-emails
+                        value
+                        (fn [result]
+                          (swap! emails-state assoc-in
+                                 [:acceptor :result] result)
+                          (swap! emails-state assoc-in
+                                 [:acceptor :searching] false))))}]
        [va-ui/raised-button
         {:primary true
          :disabled (not (valid-document? @value))
