@@ -10,11 +10,11 @@
       node))
 
 (defn- resolve-field-type [koodisto-field]
-  (or (-> koodisto-field :params :inputType)
+  (or (get-in koodisto-field [:params :inputType])
       default-koodisto-field-type))
 
 (defn- add-koodisto-options [db-key koodisto-field-node]
-  (let [koodisto-params (-> koodisto-field-node :params :koodisto)
+  (let [koodisto-params (get-in koodisto-field-node [:params :koodisto])
         koodisto-uri (:uri koodisto-params)
         version (:version koodisto-params)]
     (assoc
