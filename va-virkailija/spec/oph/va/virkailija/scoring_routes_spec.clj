@@ -8,14 +8,6 @@
            [oph.va.virkailija.common-utils :as u]
            [oph.va.virkailija.scoring :as scoring]))
 
-(def user1 {:person-oid "12345"
-           :first-name "First"
-           :surname "User"})
-
-(def user2 {:person-oid "45678"
-            :first-name "Second"
-            :surname "User"})
-
 (defn get-scores [grant-id application-id]
   (-> (str "/api/avustushaku/" grant-id "/hakemus/" application-id "/scores")
       u/get!
