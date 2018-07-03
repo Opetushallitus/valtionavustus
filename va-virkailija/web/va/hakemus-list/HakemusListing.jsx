@@ -198,6 +198,10 @@ export default class HakemusListing extends Component {
     const notPayTitle = "Yhteensä: " + notPayCount + " kpl hakemuksia merkattu ei maksettavaksi."
     const notPayValue = "(" + notPayCount + ")"
 
+    const anyPostModified = hakemusList.find(
+      h => h["submitted-version"]
+        && h["submitted-version"] !== h.version) !== null
+
     const ophShareSum = HakemusListing.formatNumber(_.sum(filteredHakemusList.map(x => x["budget-oph-share"])))
     const hakemusElements = _.map(filteredHakemusList, hakemus => {
       return <HakemusRow
@@ -212,6 +216,7 @@ export default class HakemusListing extends Component {
         isResolved={isResolved}
         isAcademysize={isAcademysize}
         state={state}
+        anyPostModified={anyPostModified}
         includesShouldNotPay={includesShouldNotPay}/> })
     const budgetGrantedSum = HakemusListing.formatNumber(_.sum(filteredHakemusList.map(x => x.arvio["budget-granted"])))
 
@@ -481,12 +486,13 @@ class HakemusRow extends Component {
         <ShouldPayIcon controller={controller} hakemus={hakemus} state={state} show={showNotPayIcon}/>
         {hakemus.refused && <span title={hakemus["refused-comment"]}>H</span>}
       </td>
-      <td className="post-submit-notification-column">
-        {postSubmitModified &&
-         <span title="Hakija on muokannut hakemusta lähettämisen jälkeen.">
-           H
-         </span>}
-      </td>
+      {this.props.anyPostModified ?
+         <td className="post-submit-notification-column">
+          {postSubmitModified ?
+             <span title="Hakija on muokannut hakemusta lähettämisen jälkeen.">
+               H
+             </span> : null}
+         </td> : null}
       {!isResolved && isAcademysize && <td className="academysize-column">{hakemus.arvio.academysize}</td>}
       {!isResolved && <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>}
       {isResolved && <td className="selvitys-column">{statusValiselvitys}</td>}
