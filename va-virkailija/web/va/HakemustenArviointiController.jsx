@@ -555,7 +555,7 @@ export default class HakemustenArviointiController {
       state, hakemus.arvio.id, index)
     state.saveStatus.saveInProgress = true
     HttpUtil.delete(removeUrl)
-      .then(function(response) {
+      .then(function() {
         dispatcher.push(events.loadScores, hakemus.id)
         return null
       })
