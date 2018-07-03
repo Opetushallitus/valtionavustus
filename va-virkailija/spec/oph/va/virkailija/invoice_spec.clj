@@ -19,7 +19,8 @@
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.va-code-values-data :as va-code-values]
             [oph.va.hakija.api :as hakija-api]
-            [oph.va.routes :as va-routes]))
+            [oph.va.routes :as va-routes]
+            [clojure.data.xml :refer [parse]]))
 
 (def payment {:acceptor-email "acceptor@example.com"
               :created-at (f/parse "2017-12-20T10:24:59.750Z")
@@ -73,6 +74,26 @@
   (it "returns value if found altough default was given"
       (should= "somevalue"
                (invoice/get-answer-value answers "key1" "default"))))
+
+(describe
+  "Response XML values"
+  (tags :invoice :payment-response)
+
+  (it "get values"
+      (should=
+        {:register-number "1/234/2018"
+         :invoice-date "2018-06-08"}
+        (invoice/read-response-xml
+          (parse
+            (java.io.ByteArrayInputStream.
+              (.getBytes
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>
+                 <VA-invoice>
+                   <Header>
+                     <Pitkaviite>1/234/2018</Pitkaviite>
+                     <Maksupvm>2018-06-08</Maksupvm>
+                   </Header>
+                 </VA-invoice>")))))))
 
 (describe
   "Get batch number of payment"
