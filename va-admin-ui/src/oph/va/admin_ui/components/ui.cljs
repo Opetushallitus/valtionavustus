@@ -239,13 +239,14 @@
                      (when (some? @search-delay)
                        (cancel! @search-delay))
                      (when (> (count value) (get props :min-length 1))
-                       (reset! search-delay
-                               (delayed
-                                 (get props :delay 1000)
-                                 (fn []
-                                   (reset! search-delay nil)
-                                   (on-search value)
-                                   (swap! popover-state assoc :open true))))))))]
+                       (reset!
+                         search-delay
+                         (delayed
+                           (get props :delay 1000)
+                           (fn []
+                             (reset! search-delay nil)
+                             (on-search value)
+                             (swap! popover-state assoc :open true))))))))]
          [popover
           (assoc @popover-state
                  :on-request-close
