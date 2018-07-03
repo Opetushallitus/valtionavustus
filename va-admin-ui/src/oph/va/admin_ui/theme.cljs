@@ -154,4 +154,5 @@
             :cursor "pointer"
             :padding "1px 5px 1px 5px"})
 
-(def search-popover {:padding 10})
+(def search-popover {:padding 10
+                     :cursor "pointer"})
