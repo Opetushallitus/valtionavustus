@@ -228,54 +228,56 @@ export default class HakemusListing extends Component {
 
     return (
       <table key="hakemusListing" className={hakemusListingClass}>
-        <thead><tr>
-          <th className="organization-column">
-            <input className="text-filter" placeholder="Hakijaorganisaatio" onChange={onFilterChange("organization")} value={filter.organization}></input>
-            <HakemusSorter field="organization" sorter={sorter} controller={controller}/>
-          </th>
-          <th className="project-name-column">
-            <input className="text-filter" placeholder="Hanke tai diaarinumero" onChange={onFilterChange("name")} value={filter.name}></input>
-            <HakemusSorter field="name" sorter={sorter} controller={controller}/>
-          </th>
-          {!isResolved && <th className="score-column">Arvio <HakemusSorter field="score" sorter={sorter} controller={controller}/></th>}
-          <th className="status-column">
-            <StatusFilter controller={controller}
-                          hakemusList={hakemusList}
-                          filter={filter}
-                          label="Tila"
-                          statusValues={HakemusArviointiStatuses.allStatuses()}
-                          statusToFi={HakemusArviointiStatuses.statusToFI}
-                          filterField="status"/>
-            <HakemusSorter field="status" sorter={sorter} controller={controller}/>
-          </th>
-          {!isResolved && <ChangeRequestHeader field="change-request" sorter={sorter} controller={controller} hakemusList={filteredHakemusList} />}
-          {!isResolved && isAcademysize && <th className="academysize-column">Koko<HakemusSorter field="academysize" sorter={sorter} controller={controller}/></th>}
-         {includesShouldNotPay && <th className="should-pay-notification-column" title={notPayTitle}>{notPayValue}</th> }
-          <th/>
-         {!isResolved && <th className="applied-sum-column">Haettu <HakemusSorter field="applied-sum" sorter={sorter} controller={controller}/></th>}
-          {isResolved && <th className="selvitys-column">
-            <StatusFilter controller={controller}
-                          hakemusList={hakemusList}
-                          filter={filter}
-                          label="Välis."
-                          statusValues={HakemusSelvitysStatuses.allStatuses()}
-                          statusToFi={HakemusSelvitysStatuses.statusToFI}
-                          filterField="status_valiselvitys"/>
-            <HakemusSorter field="status_valiselvitys" sorter={sorter} controller={controller}/>
-          </th>}
-          {isResolved && <th className="selvitys-column">
-            <StatusFilter controller={controller}
-                          hakemusList={hakemusList}
-                          filter={filter}
-                          label="Loppus."
-                          statusValues={HakemusSelvitysStatuses.allStatuses()}
-                          statusToFi={HakemusSelvitysStatuses.statusToFI}
-                          filterField="status_loppuselvitys"/>
-            <HakemusSorter field="status_loppuselvitys" sorter={sorter} controller={controller}/>
-          </th>}
-          <th className="granted-sum-column">Myönnetty <HakemusSorter field="granted-sum" sorter={sorter} controller={controller}/></th>
-          <th className="person-filter-column"><PersonFilterButton controller={controller} state={state}/></th>
-        </tr></thead>
+        <thead>
+          <tr>
+            <th className="organization-column">
+              <input className="text-filter" placeholder="Hakijaorganisaatio" onChange={onFilterChange("organization")} value={filter.organization}></input>
+              <HakemusSorter field="organization" sorter={sorter} controller={controller}/>
+            </th>
+            <th className="project-name-column">
+              <input className="text-filter" placeholder="Hanke tai diaarinumero" onChange={onFilterChange("name")} value={filter.name}></input>
+              <HakemusSorter field="name" sorter={sorter} controller={controller}/>
+            </th>
+            {!isResolved && <th className="score-column">Arvio <HakemusSorter field="score" sorter={sorter} controller={controller}/></th>}
+            <th className="status-column">
+              <StatusFilter controller={controller}
+                            hakemusList={hakemusList}
+                            filter={filter}
+                            label="Tila"
+                            statusValues={HakemusArviointiStatuses.allStatuses()}
+                            statusToFi={HakemusArviointiStatuses.statusToFI}
+                            filterField="status"/>
+              <HakemusSorter field="status" sorter={sorter} controller={controller}/>
+            </th>
+            {!isResolved && <ChangeRequestHeader field="change-request" sorter={sorter} controller={controller} hakemusList={filteredHakemusList} />}
+            {!isResolved && isAcademysize && <th className="academysize-column">Koko<HakemusSorter field="academysize" sorter={sorter} controller={controller}/></th>}
+            {includesShouldNotPay && <th className="should-pay-notification-column" title={notPayTitle}>{notPayValue}</th> }
+            <th className="post-submit-notification-column"></th>
+            {!isResolved && <th className="applied-sum-column">Haettu <HakemusSorter field="applied-sum" sorter={sorter} controller={controller}/></th>}
+            {isResolved && <th className="selvitys-column">
+                <StatusFilter controller={controller}
+                                hakemusList={hakemusList}
+                                filter={filter}
+                                label="Välis."
+                                statusValues={HakemusSelvitysStatuses.allStatuses()}
+                                statusToFi={HakemusSelvitysStatuses.statusToFI}
+                                filterField="status_valiselvitys"/>
+                  <HakemusSorter field="status_valiselvitys" sorter={sorter} controller={controller}/>
+            </th>}
+            {isResolved && <th className="selvitys-column">
+                <StatusFilter controller={controller}
+                                hakemusList={hakemusList}
+                                filter={filter}
+                                label="Loppus."
+                                statusValues={HakemusSelvitysStatuses.allStatuses()}
+                                statusToFi={HakemusSelvitysStatuses.statusToFI}
+                                filterField="status_loppuselvitys"/>
+                  <HakemusSorter field="status_loppuselvitys" sorter={sorter} controller={controller}/>
+            </th>}
+            <th className="granted-sum-column">Myönnetty <HakemusSorter field="granted-sum" sorter={sorter} controller={controller}/></th>
+            <th className="person-filter-column"><PersonFilterButton controller={controller} state={state}/></th>
+          </tr>
+        </thead>
         <tbody className={hasSelected ? "has-selected" : ""}>
           {hakemusElements}
         </tbody>
