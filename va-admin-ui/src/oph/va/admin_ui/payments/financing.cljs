@@ -104,8 +104,8 @@
                         (fn [result]
                           (swap! emails-state
                                  assoc-in [:presenter :result] result)
-                          (swap! emails-state assoc-in
-                                 [:presenter :searching] false))))}]
+                          (swap! emails-state
+                                 assoc-in [:presenter :searching] false))))}]
        [va-ui/search-field
         {:floating-label-text "Hyväksyjän sähköpostiosoite"
          :value (:acceptor-email @value)
@@ -120,8 +120,8 @@
                       (search-emails
                         value
                         (fn [result]
-                          (swap! emails-state
-                                 assoc-in [:acceptor :result] result)
+                          (swap! emails-state assoc-in
+                                 [:acceptor :result] result)
                           (swap! emails-state assoc-in
                                  [:acceptor :searching] false))))}]
        [va-ui/raised-button
