@@ -40,12 +40,14 @@ const events = {
   loadSelvitys: 'loadSelvitys',
   selvitysLoaded: 'selvitysLoaded',
   addComment: 'addComment',
+  loadScores: 'loadScores',
   scoresLoaded: 'scoresLoaded',
   setOverriddenAnswerValue: 'setOverriddenAnswerValue',
   setSeurantaAnswerValue: 'setSeurantaAnswerValue',
   changeRequestsLoaded: 'changeRequestsLoaded',
   attachmentVersionsLoaded: 'attachmentVersionsLoaded',
   setScore: 'setScore',
+  removeScore: 'removeScore',
   toggleOthersScoresDisplay: 'toggleOthersScoresDisplay',
   gotoSavedSearch: 'gotoSavedSearch',
   toggleHakemusFilter:'toggleHakemusFilter',
@@ -134,6 +136,8 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.changeRequestsLoaded)], this.onChangeRequestsLoaded,
       [dispatcher.stream(events.attachmentVersionsLoaded)], this.onAttachmentVersionsLoaded,
       [dispatcher.stream(events.setScore)], this.onSetScore,
+      [dispatcher.stream(events.removeScore)], this.onRemoveScore,
+      [dispatcher.stream(events.loadScores)], this.loadScores,
       [dispatcher.stream(events.toggleOthersScoresDisplay)], this.onToggleOthersScoresDisplay,
       [dispatcher.stream(events.togglePersonSelect)], this.onTogglePersonSelect,
       [dispatcher.stream(events.setFilter)], this.onSetFilter,
@@ -164,6 +168,11 @@ export default class HakemustenArviointiController {
 
   static scoresUrl(state, hakemusId) {
     return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + hakemusId + "/scores"
+  }
+
+  static removeScoreUrl(state, evaluationId, scoreIndex) {
+    return "/api/avustushaku/evaluations/"
+      + evaluationId + "/scores/" + scoreIndex + "/"
   }
 
   static changeRequestsUrl(state, hakemusId) {
@@ -539,6 +548,25 @@ export default class HakemustenArviointiController {
     }
     return state
   }
+
+  onRemoveScore(state, index) {
+    const hakemus = state.selectedHakemus
+    const removeUrl = HakemustenArviointiController.removeScoreUrl(
+      state, hakemus.arvio.id, index)
+    state.saveStatus.saveInProgress = true
+    HttpUtil.delete(removeUrl)
+      .then(function(response) {
+        dispatcher.push(events.loadScores, hakemus.id)
+        return null
+      })
+      .catch(function(error) {
+        console.error(
+          `Error in saving hakemus score, DELETE ${removeUrl}`, error)
+        dispatcher.push(events.saveCompleted, "unexpected-save-error")
+      })
+    return state
+  }
+
 
   onSetScore(state, indexAndScore) {
     const { selectionCriteriaIndex, newScore } = indexAndScore
@@ -1041,6 +1069,10 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
 
   addComment(newComment) {
     dispatcher.push(events.addComment, newComment)
+  }
+
+  removeScore(index) {
+    dispatcher.push(events.removeScore, index)
   }
 
   setScore(selectionCriteriaIndex, newScore) {
