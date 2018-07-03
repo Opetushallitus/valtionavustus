@@ -221,33 +221,48 @@
     [:span {:style (merge-style props theme/badge)}
      (apply vector :span children)]))
 
-(defn- render-item [index item]
-  [:div {:key index} item])
+(defn- render-item [index item on-click]
+  [:div {:key index} [:a {:on-click #(on-click item)} item]])
 
 (defn search-field [props]
   (let [search-delay (atom nil)
         popover-state (r/atom {:open false :anchor-el nil})]
     (fn [props]
-      [:span {:style {:display "inline-block"}}
-       [text-field
-        (assoc props :on-change
-               (fn [e]
-                 (swap! popover-state assoc :anchor-el (.-target e))
-                 (let [value (.-value (.-target e))]
-                   ((:on-change props) value)
-                   (when (some? @search-delay)
-                     (cancel! @search-delay))
-                   (when (> (count value) (get props :min-length 1))
-                     (reset! search-delay
-                             (delayed
-                               (get props :delay 1000)
-                               (fn []
-                                 (reset! search-delay nil)
-                                 ((:on-search props) value)
-                                 (swap! popover-state assoc :open true))))))))]
-       [popover
-        (assoc @popover-state
-               :on-request-close (fn []
-                                   (swap! popover-state assoc :open false)))
-        [:div {:style theme/search-popover}
-         (doall (map-indexed render-item (:items props)))]]])))
+      (let [{:keys [on-change on-search items]} props]
+        [:span {:style {:display "inline-block"}}
+         [text-field
+          (assoc props :on-change
+                 (fn [e]
+                   (swap! popover-state assoc :anchor-el (.-target e))
+                   (let [value (.-value (.-target e))]
+                     (on-change value)
+                     (when (some? @search-delay)
+                       (cancel! @search-delay))
+                     (when (> (count value) (get props :min-length 1))
+                       (reset! search-delay
+                               (delayed
+                                 (get props :delay 1000)
+                                 (fn []
+                                   (reset! search-delay nil)
+                                   (on-search value)
+                                   (swap! popover-state assoc :open true))))))))]
+         [popover
+          (assoc @popover-state
+                 :on-request-close
+                 (fn []
+                   (swap! popover-state assoc :open false)))
+          [:div {:style theme/search-popover}
+           (cond
+             (:searching props)
+             [:img {:src "/img/ajax-loader.gif"}]
+             (seq items)
+             (doall
+               (map-indexed
+                 (fn [i v]
+                   (render-item
+                     i v
+                     (fn [item]
+                       (swap! popover-state assoc :open false)
+                       (on-change item))))
+                 items))
+             :else [:div "Ei hakutuloksia"])]]]))))
