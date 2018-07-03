@@ -61,9 +61,10 @@
                 (u/delete!
                   (str "/api/avustushaku/evaluations/" (:arvio-id score)
                        "/scores/" (:selection-criteria-index score) "/"))]
-            (should= 200 (:status result))
-            (let [post-scores (get-scores (:id grant) (:id application))
-                  post-score (first post-scores)]
-              (should= 3 (:score post-score))
-              (should= 0 (:selection-criteria-index post-score))
-              (should= 1 (count post-scores))))))))
+            (should= 200 (:status result))))
+
+        (let [scores (get-scores (:id grant) (:id application))
+              score (first scores)]
+          (should= 3 (:score score))
+          (should= 0 (:selection-criteria-index score))
+          (should= 1 (count scores))))))
