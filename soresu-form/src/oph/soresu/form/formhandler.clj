@@ -1,6 +1,6 @@
 (ns oph.soresu.form.formhandler
-  (require [oph.soresu.form.formutil :as formutil]
-           [oph.soresu.common.koodisto :as koodisto]))
+  (:require [oph.soresu.form.formutil :as formutil]
+            [oph.soresu.common.koodisto :as koodisto]))
 
 (def default-koodisto-field-type "dropdown")
 
