@@ -462,6 +462,15 @@
                              (:selection-criteria-index score)
                              (:score score))))))
 
+(defn- delete-score []
+  (compojure-api/DELETE "/evaluations/:id/scores/:index/" request
+    :path-params [id :- Long, index :- Long]
+    :summary "Delete score"
+    :description "Delete application score given by user"
+    (let [identity (authentication/get-request-identity request)]
+      (scoring/delete-score id index identity)
+      (ok ""))))
+
 (defn- post-hakemus-status []
   (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/status" request
     :path-params [avustushaku-id :- Long, hakemus-id :- Long]
@@ -546,6 +555,7 @@
   (get-change-requests)
   (get-scores)
   (post-scores)
+  (delete-score)
   (post-hakemus-status)
   (put-searches)
   (get-search))

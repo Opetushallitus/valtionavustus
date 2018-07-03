@@ -240,6 +240,12 @@
         updated
         (exec :virkailija-db queries/create-score<! params))))
 
+(defn delete-score [arvio-id selection-criteria-index identity]
+  (exec :virkailija-db queries/delete-score!
+        {:arvio_id  arvio-id
+         :person_oid (:person-oid identity)
+         :selection_criteria_index selection-criteria-index}))
+
 (defn add-score [avustushaku-id arvio-id identity selection-criteria-index score]
   (update-or-create-score avustushaku-id arvio-id identity selection-criteria-index score))
 
