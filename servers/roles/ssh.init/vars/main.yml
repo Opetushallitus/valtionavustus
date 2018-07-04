@@ -14,9 +14,6 @@ adminusers:
   stormaaja:
     state: present
     name: Matti Ahinko
-  tkareine:
-    state: present
-    name: Tuomas Kareinen
   wallops:
     state: present
     name: WallOps
