@@ -27,29 +27,29 @@
 
 (defn- gen-budget-data [applications granted]
   {:type "bar"
-   :options {:title {:display true :text "Budjetti"}
+   :options {:title {:display true :text "Avustukset yhteensä €"}
              :responsive true}
    :data {:labels (mapv :year applications)
           :datasets [{:type "bar"
                       :data (mapv :budget-total applications)
-                      :label "Kokonaisbudjetti"
+                      :label "Rahoitettavaa yhteensä"
                       :backgroundColor "#90EE90"}
                      {:type "bar"
                       :data (mapv :budget-oph-share applications)
-                      :label "OPH budjetti"
+                      :label "Haettu avustus yhteensä"
                       :backgroundColor "#36a2eb"}
                      {:type "bar"
                       :data (mapv :budget-granted granted)
-                      :label "Myönnetty"
+                      :label "Myönnetty avustus yhteensä"
                       :backgroundColor "#a162ff"}
                      {:type "bar"
                       :data (mapv :costs-granted granted)
-                      :label "Kulut"
+                      :label "Hyväksytyt kustannukset yhteensä"
                       :backgroundColor "#f9ff61"}]}})
 
 (defn- gen-evaluations-data [applications accepted rejected]
   {:type "bar"
-   :options {:title {:display true :text "Hakemukset"}
+   :options {:title {:display true :text "Hakemukset kpl"}
              :responsive true}
    :data {:labels (mapv :year applications)
           :datasets [{:data (mapv :count applications)
