@@ -49,7 +49,8 @@
   (let [content [:span [:p (str (translate :asia-title))] [:p avustushaku-name]]]
   (section :asia content translate false)))
 
-(defn avustuksen-maksu [avustushaku bic iban total-paid lang translate arvio]
+(defn avustuksen-maksu-components
+  [avustushaku bic iban total-paid lang translate arvio]
   (let [decision (:decision avustushaku)
         maksu-date (:maksudate decision)
         maksu (decision-field decision :maksu lang)
@@ -71,9 +72,15 @@
         content3 (when-not (nil? (:talousarviotili arvio))
                    [:p
                     (translate "talousarviotili") ": "
-                    (:talousarviotili arvio)])
-        content [:span content1 content2 content3]]
-    (section :avustuksen-maksu content translate false)))
+                    (:talousarviotili arvio)])]
+    [:span content1 content2 content3]))
+
+(defn avustuksen-maksu [avustushaku bic iban total-paid lang translate arvio]
+  (section
+    :avustuksen-maksu
+    (avustuksen-maksu-components avustushaku bic iban total-paid lang translate arvio)
+    translate
+    false))
 
 
 (defn myonteinen-lisateksti [avustushaku hakemus lang]
