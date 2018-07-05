@@ -31,10 +31,9 @@
       (html [:section {:class "section"} [:h2 title] [:div {:class "content"} content-p]])))
 
 (defn optional-section-content [title content translate]
-  (let [content-length (count content)]
-    (if (pos? content-length)
-      (section title content translate true)
-      "")))
+  (if (seq content)
+    (section title content translate true)
+    ""))
 
 (defn optional-section [decision title key translate lang]
   (let [decision-content (decision-field decision key lang)]
