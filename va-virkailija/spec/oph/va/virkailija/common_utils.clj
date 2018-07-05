@@ -85,10 +85,12 @@
                 :register_number "123/456/78"
                 :hakemus_type "hakemus"})))
 
-(defn create-application-evaluation [application status]
+(defn create-application-evaluation
+  ([application status values]
    (virkailija-db/update-or-create-hakemus-arvio
-       (hakija-api/get-avustushaku (:avustushaku application))
-       (:id application)
+     (hakija-api/get-avustushaku (:avustushaku application))
+     (:id application)
+     (merge
        {:status status
         :overridden-answers {:value []}
         :roles {:evaluators []}
@@ -107,7 +109,10 @@
         :summary-comment nil
         :tags {:value []}
         :talousarviotili "29103013"}
-       (:identity user-authentication)))
+       values)
+     (:identity user-authentication)))
+  ([application status]
+   (create-application-evaluation application status {})))
 
 (defn create-evaluation [grant status]
    (create-application-evaluation
