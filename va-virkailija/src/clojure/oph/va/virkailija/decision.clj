@@ -51,29 +51,25 @@
 
 (defn generate-payment-decision
   [{:keys [grant bic iban total-paid lang translate evaluation]}]
-  (let [decision (:decision grant)
-        maksu-date (:maksudate decision)
-        maksu (decision-field decision :maksu lang)
-        has-multiple-maksuera (-> grant :content :multiplemaksuera)
-        multiple-maksuera (and has-multiple-maksuera (> total-paid 60000))
-        first-round-paid (if multiple-maksuera
-                           (Math/round (* 0.6 total-paid)) total-paid)
-        paid-formatted (ks/format-number first-round-paid)
-        extra-no-multiple "."
-        extra-multiple (str " " (translate :ja-loppuera-viimeistaan)
-                            " " maksu-date)
-        extra (if multiple-maksuera extra-multiple extra-no-multiple)
-        content1 [:span
-                  [:p (translate "avustus-maksetaan") ":"]
-                  [:p [:strong iban ", " bic]]]
-        content2 [:p
-                  (translate "maksuerat-ja-ajat") ": "
-                  paid-formatted " " maksu extra]
-        content3 (when-not (nil? (:talousarviotili evaluation))
-                   [:p
-                    (translate "talousarviotili") ": "
-                    (:talousarviotili evaluation)])]
-    [:span content1 content2 content3]))
+  (let [multibatch?
+        (and (get-in grant [:content :multiplemaksuera]) (> total-paid 60000))]
+    [:span
+     [:span
+      [:p (translate "avustus-maksetaan") ":"] [:p [:strong iban ", " bic]]]
+     [:p
+      (translate "maksuerat-ja-ajat") ": "
+      (ks/format-number
+        (if multibatch?
+          (Math/round (* 0.6 total-paid))
+          total-paid)) " "
+      (decision-field (:decision grant) :maksu (keyword lang))
+      (if multibatch?
+        (str " " (translate :ja-loppuera-viimeistaan) " "
+             (get-in grant [:decision :maksudate]))
+        ".")]
+     (when-some [account (:talousarviotili evaluation)]
+       [:p
+        (translate "talousarviotili") ": " account])]))
 
 (defn avustuksen-maksu [avustushaku bic iban total-paid lang translate arvio]
   (section
