@@ -14,11 +14,8 @@
             [clojure.tools.logging :as log]
             [oph.va.virkailija.payments-data :as payments-data]))
 
-(defn decision-translation [translations lang keyword-or-key]
-  (let [key (if (keyword? keyword-or-key) keyword-or-key (keyword keyword-or-key))]
-    (-> translations :paatos key lang)))
-
-
+(defn decision-translation [translations lang translation-key]
+  (get-in translations [:paatos (keyword translation-key) lang]))
 
 (defn content-with-paragraphs [content]
   (let [rows (str/split content #"\n")
