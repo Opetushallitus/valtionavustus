@@ -50,11 +50,11 @@
   (section :asia content translate false)))
 
 (defn avustuksen-maksu-components
-  [avustushaku bic iban total-paid lang translate arvio]
-  (let [decision (:decision avustushaku)
+  [{:keys [grant bic iban total-paid lang translate evaluation]}]
+  (let [decision (:decision grant)
         maksu-date (:maksudate decision)
         maksu (decision-field decision :maksu lang)
-        has-multiple-maksuera (-> avustushaku :content :multiplemaksuera)
+        has-multiple-maksuera (-> grant :content :multiplemaksuera)
         multiple-maksuera (and has-multiple-maksuera (> total-paid 60000))
         first-round-paid (if multiple-maksuera
                            (Math/round (* 0.6 total-paid)) total-paid)
@@ -69,16 +69,23 @@
         content2 [:p
                   (translate "maksuerat-ja-ajat") ": "
                   paid-formatted " " maksu extra]
-        content3 (when-not (nil? (:talousarviotili arvio))
+        content3 (when-not (nil? (:talousarviotili evaluation))
                    [:p
                     (translate "talousarviotili") ": "
-                    (:talousarviotili arvio)])]
+                    (:talousarviotili evaluation)])]
     [:span content1 content2 content3]))
 
 (defn avustuksen-maksu [avustushaku bic iban total-paid lang translate arvio]
   (section
     :avustuksen-maksu
-    (avustuksen-maksu-components avustushaku bic iban total-paid lang translate arvio)
+    (avustuksen-maksu-components
+      {:grant avustushaku
+       :bic bic
+       :iban iban
+       :total-paid total-paid
+       :lang lang
+       :translate translate
+       :evaluation arvio})
     translate
     false))
 
