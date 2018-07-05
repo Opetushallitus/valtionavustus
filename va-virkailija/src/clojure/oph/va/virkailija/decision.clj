@@ -155,8 +155,6 @@
         role (if (nil? arvio-role) (first presenting-officers) arvio-role)
         language (keyword (:language hakemus))
         avustushaku-name (get-in avustushaku [:content :name language])
-        iban (formutil/find-answer-value answers "bank-iban")
-        bic (formutil/find-answer-value answers "bank-bic")
         total-granted (:budget-granted arvio)
         template (email/load-template (str "templates/paatos.html"))
         translations-str (email/load-template "public/translations.json")
