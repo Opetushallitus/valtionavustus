@@ -50,38 +50,42 @@
   (section :asia content translate false)))
 
 (defn generate-payment-decision
-  [{:keys [grant bic iban total-paid lang translate evaluation]}]
-  (let [multibatch?
+  [{:keys [grant application translate]}]
+  (let [answers-value {:value (:answers application)}
+        total-paid (get-in application [:arvio :budget-granted])
+        multibatch?
         (and (get-in grant [:content :multiplemaksuera]) (> total-paid 60000))]
     [:span
      [:span
-      [:p (translate "avustus-maksetaan") ":"] [:p [:strong iban ", " bic]]]
+      [:p (translate "avustus-maksetaan") ":"]
+      [:p
+       [:strong
+        (formutil/find-answer-value answers-value "bank-iban")
+        ", "
+        (formutil/find-answer-value answers-value "bank-bic")]]]
      [:p
       (translate "maksuerat-ja-ajat") ": "
       (ks/format-number
         (if multibatch?
           (Math/round (* 0.6 total-paid))
           total-paid)) " "
-      (decision-field (:decision grant) :maksu (keyword lang))
+      (decision-field
+        (:decision grant) :maksu (keyword (:language application)))
       (if multibatch?
         (str " " (translate :ja-loppuera-viimeistaan) " "
              (get-in grant [:decision :maksudate]))
         ".")]
-     (when-some [account (:talousarviotili evaluation)]
+     (when-some [account (get-in application [:arvio :talousarviotili])]
        [:p
         (translate "talousarviotili") ": " account])]))
 
-(defn avustuksen-maksu [avustushaku bic iban total-paid lang translate arvio]
+(defn avustuksen-maksu [avustushaku hakemus translate]
   (section
     :avustuksen-maksu
     (generate-payment-decision
       {:grant avustushaku
-       :bic bic
-       :iban iban
-       :total-paid total-paid
-       :lang lang
-       :translate translate
-       :evaluation arvio})
+       :application hakemus
+       :translate translate})
     translate
     false))
 
@@ -169,7 +173,7 @@
         translate (partial decision-translation translations language)
         johtaja (decision-field decision :johtaja language)
         valmistelija (decision-field decision :valmistelija language)
-        avustuksen-maksu (avustuksen-maksu avustushaku bic iban total-granted language translate arvio)
+        avustuksen-maksu (avustuksen-maksu avustushaku hakemus translate)
         myonteinen-lisateksti (myonteinen-lisateksti avustushaku hakemus language)
         form-content (-> haku-data :form :content)
         kayttosuunnitelma (ks/kayttosuunnitelma avustushaku hakemus form-content answers translate language)
