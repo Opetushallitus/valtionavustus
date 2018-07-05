@@ -19,13 +19,16 @@
 (def grant-payment-fields-single
   {:decision {:maksudate "20.6.2018"
               :maksu {:fi "Avustus maksetaan noin kuukauden kuluessa päätöksestä."
-                      :sv "Understödet utbetalas till bankkontot ca en månad efter att beslutet fattats"}}})
+                      :sv "Understödet utbetalas till bankkontot ca en månad efter att beslutet fattats"}}
+   :content {:multiplemaksuera false}})
 
 (def grant-payment-fields-multi
   {:decision {:maksudate "31.12.2018"
               :maksu {:fi "28.2.2018 mennessä"
                       :sv "Senast 28.2.2018"}}
-   :content {:multiplemaksuera true}})
+   :content {:multiplemaksuera true
+             :payment-size-limit "no-limit"
+             :payment-min-first-batch 60}})
 
 (def answers {:value [{:fieldType "iban"
                        :key "bank-iban"
@@ -57,7 +60,7 @@
             "<section class=\"section\"><h2>Avustuksen maksu</h2><div class=\"content\"><span><span><p>Avustus maksetaan hakijan ilmoittamalle pankkitilille:</p><p><strong>FI49 5000 9420 0287 30, OKOYFIHH</strong></p></span><p>Maksuerät ja -ajat: 30 000 € Avustus maksetaan noin kuukauden kuluessa päätöksestä..</p></span></div></section>"
             (d/avustuksen-maksu
               (merge grant grant-payment-fields-single)
-              (:hakemus data)
+              (assoc-in (:hakemus data) [:arvio :budget-granted] 30000)
               translate)))))
 
   (it "gets payment section in single batch payments"
@@ -72,7 +75,8 @@
             [:span [:span [:p "Avustus maksetaan hakijan ilmoittamalle pankkitilille" ":"] [:p [:strong "FI49 5000 9420 0287 30" ", " "OKOYFIHH"]]] [:p "Maksuerät ja -ajat" ": " "30 000 €" " " "Avustus maksetaan noin kuukauden kuluessa päätöksestä." "."] nil]
             (d/generate-payment-decision
               {:grant (merge grant grant-payment-fields-single)
-               :application (:hakemus data)
+               :application (assoc-in (:hakemus data)
+                                      [:arvio :budget-granted] 30000)
                :translate translate})))))
 
   (it "gets payment section in single batch payments with TaKP"
@@ -86,7 +90,8 @@
             [:span [:span [:p "Avustus maksetaan hakijan ilmoittamalle pankkitilille" ":"] [:p [:strong "FI49 5000 9420 0287 30" ", " "OKOYFIHH"]]] [:p "Maksuerät ja -ajat" ": " "30 000 €" " " "Avustus maksetaan noin kuukauden kuluessa päätöksestä." "."] [:p "Talousarviotili" ": " "29103013"]]
             (d/generate-payment-decision
               {:grant (merge grant grant-payment-fields-single)
-               :application (:hakemus data)
+               :application (assoc-in (:hakemus data)
+                                      [:arvio :budget-granted] 30000)
                :translate translate})))))
 
   (it "gets payment HTML section in multi batch payment"
@@ -103,7 +108,7 @@
             "<section class=\"section\"><h2>Avustuksen maksu</h2><div class=\"content\"><span><span><p>Avustus maksetaan hakijan ilmoittamalle pankkitilille:</p><p><strong>FI49 5000 9420 0287 30, OKOYFIHH</strong></p></span><p>Maksuerät ja -ajat: 120 000 € 28.2.2018 mennessä ja loppuerä viimeistään 31.12.2018</p></span></div></section>"
             (d/avustuksen-maksu
               (merge grant grant-payment-fields-multi)
-              (:hakemus data)
+              (assoc-in (:hakemus data) [:arvio :budget-granted] 200000)
               translate)))))
 
   (it "gets payment section in multi batch payments"
@@ -120,7 +125,8 @@
             [:span [:span [:p "Avustus maksetaan hakijan ilmoittamalle pankkitilille" ":"] [:p [:strong "FI49 5000 9420 0287 30" ", " "OKOYFIHH"]]] [:p "Maksuerät ja -ajat" ": " "120 000 €" " " "28.2.2018 mennessä" " ja loppuerä viimeistään 31.12.2018"] nil]
             (d/generate-payment-decision
               {:grant (merge grant grant-payment-fields-multi)
-               :application (:hakemus data)
+               :application (assoc-in (:hakemus data)
+                                      [:arvio :budget-granted] 200000)
                :translate translate})))))
 
   (it "gets payment section in multi batch payments with TaKP"
@@ -136,7 +142,8 @@
             [:span [:span [:p "Avustus maksetaan hakijan ilmoittamalle pankkitilille" ":"] [:p [:strong "FI49 5000 9420 0287 30" ", " "OKOYFIHH"]]] [:p "Maksuerät ja -ajat" ": " "120 000 €" " " "28.2.2018 mennessä" " ja loppuerä viimeistään 31.12.2018"] [:p "Talousarviotili" ": " "29103013"]]
             (d/generate-payment-decision
               {:grant (merge grant grant-payment-fields-multi)
-               :application (:hakemus data)
+               :application (assoc-in (:hakemus data)
+                                      [:arvio :budget-granted] 200000)
                :translate translate}))))))
 
 (run-specs)
