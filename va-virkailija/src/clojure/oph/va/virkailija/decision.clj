@@ -22,8 +22,8 @@
         rows-list (html [:span (for [row rows] [:p row])])]
     rows-list))
 
-(defn decision-field [decision key lang]
-  (-> decision key lang))
+(defn decision-field [decision str-key lang]
+  (-> decision str-key lang))
 
 (defn section [title-key content translate create-paragraph]
   (let [content-p  (if create-paragraph (content-with-paragraphs content) content)
