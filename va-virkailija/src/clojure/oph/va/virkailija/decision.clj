@@ -23,7 +23,7 @@
     rows-list))
 
 (defn decision-field [decision str-key lang]
-  (-> decision str-key lang))
+  (get-in decision [str-key lang]))
 
 (defn section [title-key content translate create-paragraph]
   (let [content-p  (if create-paragraph (content-with-paragraphs content) content)
