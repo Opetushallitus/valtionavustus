@@ -49,7 +49,7 @@
   (let [content [:span [:p (str (translate :asia-title))] [:p avustushaku-name]]]
   (section :asia content translate false)))
 
-(defn avustuksen-maksu-components
+(defn generate-payment-decision
   [{:keys [grant bic iban total-paid lang translate evaluation]}]
   (let [decision (:decision grant)
         maksu-date (:maksudate decision)
@@ -78,7 +78,7 @@
 (defn avustuksen-maksu [avustushaku bic iban total-paid lang translate arvio]
   (section
     :avustuksen-maksu
-    (avustuksen-maksu-components
+    (generate-payment-decision
       {:grant avustushaku
        :bic bic
        :iban iban
