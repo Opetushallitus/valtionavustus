@@ -11,7 +11,8 @@
             [oph.va.virkailija.koulutusosio :as koulutusosio]
             [schema.core :as s]
             [hiccup.core :refer [html]]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [oph.va.virkailija.payments-data :as payments-data]))
 
 (defn decision-translation [translations lang keyword-or-key]
   (let [key (if (keyword? keyword-or-key) keyword-or-key (keyword keyword-or-key))]
@@ -49,12 +50,9 @@
   (let [content [:span [:p (str (translate :asia-title))] [:p avustushaku-name]]]
   (section :asia content translate false)))
 
-(defn generate-payment-decision
-  [{:keys [grant application translate]}]
+(defn generate-payment-decision [{:keys [grant application translate]}]
   (let [answers-value {:value (:answers application)}
-        total-paid (get-in application [:arvio :budget-granted])
-        multibatch?
-        (and (get-in grant [:content :multiplemaksuera]) (> total-paid 60000))]
+        payment-sum (payments-data/get-first-payment-sum application grant)]
     [:span
      [:span
       [:p (translate "avustus-maksetaan") ":"]
@@ -65,15 +63,12 @@
         (formutil/find-answer-value answers-value "bank-bic")]]]
      [:p
       (translate "maksuerat-ja-ajat") ": "
-      (ks/format-number
-        (if multibatch?
-          (Math/round (* 0.6 total-paid))
-          total-paid)) " "
+      (ks/format-number payment-sum) " "
       (decision-field
         (:decision grant) :maksu (keyword (:language application)))
-      (if multibatch?
-        (str " " (translate :ja-loppuera-viimeistaan) " "
-             (get-in grant [:decision :maksudate]))
+      (if (not= payment-sum (get-in application [:arvio :budget-granted]))
+        (str " " (translate :ja-loppuera-viimeistaan)
+             " " (get-in grant [:decision :maksudate]))
         ".")]
      (when-some [account (get-in application [:arvio :talousarviotili])]
        [:p
