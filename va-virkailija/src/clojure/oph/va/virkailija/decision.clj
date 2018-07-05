@@ -35,7 +35,7 @@
 
 (defn optional-section-content [title content translate]
   (let [content-length (count content)]
-    (if (> content-length 0)
+    (if (pos? content-length)
       (section title content translate true)
       "")))
 
@@ -134,7 +134,7 @@
                     (str row-kayttosuunnitelma row-oikaisuvaatimus row-ehdot row-yleisohje)
                     (str row-oikaisuvaatimus row-ehdot row-yleisohje)))
         content-length (count content)]
-        (if (> content-length 0)
+        (if (pos? content-length)
           (section :liitteet content translate false)
           "")))
 
@@ -173,7 +173,7 @@
         form-content (-> haku-data :form :content)
         kayttosuunnitelma (ks/kayttosuunnitelma avustushaku hakemus form-content answers translate language)
         has-kayttosuunnitelma (and (:has-kayttosuunnitelma kayttosuunnitelma) is-erityisavustus)
-        show-oph-financing-percentage (> (:self-financing-percentage kayttosuunnitelma) 0)
+        show-oph-financing-percentage (pos? (:self-financing-percentage kayttosuunnitelma))
         oph-financing-percentage (:oph-financing-percentage kayttosuunnitelma)
         liitteet-list (liitteet-list avustushaku hakemus translate language has-kayttosuunnitelma)
         koulutusosio (koulutusosio/koulutusosio hakemus answers translate)
