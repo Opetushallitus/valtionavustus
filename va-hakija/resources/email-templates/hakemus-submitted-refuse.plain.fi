@@ -6,6 +6,8 @@ Hakemustanne voitte tarkastella tästä linkistä: {{& url }}
 
 Jos päätätte olla ottamatta avustusta vastaan, voitte tehdä ilmoituksen tästä linkistä: {{& refuse-url }}
 
+Mikäli haluatte muuttaa hakemukseenne yhteyshenkilön tiedot, voitte tehdä ilmoituksen tästä linkistä: {{& modify-url }}
+
 Ilmoitus tulee tehdä päätöksessä mainittuun päivämäärään mennessä.
 
 Jos otatte avustuksen vastaan, ei siitä tarvitse ilmoittaa erikseen.
