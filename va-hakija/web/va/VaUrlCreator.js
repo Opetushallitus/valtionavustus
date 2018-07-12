@@ -141,7 +141,18 @@ export default class VaUrlCreator extends UrlCreator {
           baseVersion +
           "/refuse/?token=" +
           state.token +
-          "refuse-grant=true"
+          "refuse-grant=true" +
+          "modify-application=false"
+        )
+      },
+      modifyContactsApiUrl: function(state) {
+        const avustusHakuId = state.avustushaku.id
+        const hakemusId = state.saveStatus.hakemusId
+        const baseVersion = state.saveStatus.savedObject.version
+        const lang = "fi"
+        const token = state.token 
+        return (
+          `/avustushaku/${avustusHakuId}/nayta?avustushaku=${avustusHakuId}&hakemus=${hakemusId}&lang=${lang}&preview=false${token ? "&token=" + token : ""}&refuse-grant=false&modify-application=true`
         )
       },
       validateTokenUrl: function(applicationId, token) {

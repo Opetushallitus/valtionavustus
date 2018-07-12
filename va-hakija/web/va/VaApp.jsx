@@ -62,10 +62,12 @@ function printEntityId(state) {
 
 const query = queryString.parse(location.search)
 const urlContent = { parsedQuery: query, location: location }
+console.log(urlContent)
 const develMode =  query.devel === "true"
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
 const environmentP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.environmentConfigUrl()))
+
 
 function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP
@@ -92,7 +94,10 @@ function onInitialStateLoaded(initialState) {
       initialState.configuration.develMode,
       initialState.token,
       initialState.isTokenValid)
-  }
+  } 
+  // else if (query["modify-application"]) {
+  //   window.location.href = urlCreator.modifyContactsApiUrl(initialState)
+  // }
 }
 
 function initVaFormController() {
@@ -118,9 +123,9 @@ function initVaFormController() {
     "printEntityId": printEntityId
   }
   const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
-  const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
+  const stateProperty = controller.initialize(formOperations, initialValues, urlContent)  
   return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state) {
-    return <VaForm controller={controller} state={state} hakemusType="hakemus" useBusinessIdSearch={true} refuseGrant={urlContent.parsedQuery["refuse-grant"]}/>
+    return <VaForm controller={controller} state={state} hakemusType="hakemus" useBusinessIdSearch={true} refuseGrant={urlContent.parsedQuery["refuse-grant"]} modifyApplication={urlContent.parsedQuery["modify-application"]}/>
   }}
 }
 

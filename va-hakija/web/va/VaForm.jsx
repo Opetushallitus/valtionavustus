@@ -19,7 +19,7 @@ const allowedStatuses = ["officer_edit", "submitted", "pending_change_request"]
 
 export default class VaForm extends React.Component {
   render() {
-    const {controller, state, hakemusType, isExpired, refuseGrant} = this.props
+    const {controller, state, hakemusType, isExpired, refuseGrant, modifyApplication} = this.props
     const registerNumber = _.get(state.saveStatus.savedObject, "register-number", undefined)
     const {saveStatus, configuration} = state
     const registerNumberDisplay = <VaHakemusRegisterNumber key="register-number"
@@ -31,12 +31,13 @@ export default class VaForm extends React.Component {
                                             translations={configuration.translations}
                                             lang={configuration.lang} />
     const headerElements = [registerNumberDisplay, changeRequest]
-    const formContainerClass = configuration.preview ? FormPreview : Form
+    const formContainerClass = configuration.preview || modifyApplication === false ? FormPreview : Form
+    console.log(modifyApplication)
     const refuseEnabled = configuration.environment["application-change"] &&
           configuration.environment["application-change"]["refuse-enabled?"]
     const showGrantRefuse = refuseEnabled && configuration.preview
-          && state.token
-          && allowedStatuses.indexOf(saveStatus.savedObject.status) > -1 && (refuseGrant === "true")
+          && state.token && allowedStatuses.indexOf(saveStatus.savedObject.status) > -1 && (refuseGrant === "true")
+    const allowModifyContacts = modifyApplication
     return(
       <div>
         <VaOldBrowserWarning lang={configuration.lang}
