@@ -33,6 +33,7 @@ export default class HakemusComments extends Component {
 
   render() {
     const controller = this.props.controller
+    const userOid = this.props.user["person-oid"]
     const allowHakemusCommenting = this.props.allowHakemusCommenting
     let commentsToRender = []
     const commentsInState = this.props.comments
@@ -49,13 +50,23 @@ export default class HakemusComments extends Component {
 
     const commentComponents = commentsToRender.map(c => <Comment comment={c} key={c.id}/>)
     const noComments = commentsToRender.length === 0
+    const showComments = this.props.grantState === "resolved" ||
+          commentsToRender.find(
+            c => !c["person_oid"] || c["person_oid"] === userOid)
     return (
       <div id="hakemus-comment-container" className="hakemus-arviointi-section">
         <label>Kommentit:</label>
-        <div hidden={!noComments} className="no-comments">Ei kommentteja</div>
-        <div className="comment-list">
-          {commentComponents}
-        </div>
+        {showComments ?
+          <div>
+            <div className="comment-list">
+              {commentComponents}
+            </div>
+          </div> :
+          <div>
+            Mahdolliset muiden käyttäjien jättämät kommentit näytetään, kun
+            olet kirjoittanut oman kommenttisi tai haku on ratkaistu tilassa.
+          </div>
+        }
         <textarea rows="3" className="comment-input" id="comment-input"
                   value={this.state.comment}
                   onChange={handleChange}
