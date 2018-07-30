@@ -81,9 +81,7 @@
       (= (t/month date) (t/month today)))))
 
 (defn phase-to-name [phase]
-  (if (zero? phase)
-    "Arviointi"
-    (str phase ". väliselvitys")))
+  (str (inc phase) ". erä"))
 
 (defn sort-rows [rows sort-key descend?]
   (if descend?
