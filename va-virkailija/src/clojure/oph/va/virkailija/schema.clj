@@ -81,7 +81,8 @@
    :first_name s/Str
    :last_name s/Str
    :email (s/maybe s/Str)
-   :comment s/Str})
+   :comment s/Str
+   (s/optional-key :person_oid) (s/maybe s/Str)})
 
 (s/defschema Comments
   "Comment list"
