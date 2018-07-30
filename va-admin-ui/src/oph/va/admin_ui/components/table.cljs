@@ -50,6 +50,7 @@
       (let [{:keys [title column-key on-sort on-filter
                     sort-params field-type]} props]
         [table-header-column
+         {:style {:text-overflow "clip"}}
          [:div
           {:on-click #(on-sort column-key)}
           title (when (= (:sort-key sort-params) column-key)
@@ -60,11 +61,13 @@
            [va-ui/date-picker-va
             {:id "title"
              :size :small
+             :style theme/sortable-header-column
              :value (when (seq @value) @value)
              :on-change #(do (reset! value %) (on-filter column-key %))}]
            [va-ui/text-field
             {:size :small
              :value @value
+             :style theme/sortable-header-column
              :on-change #(let [v (-> % .-target .-value)]
                            (do (reset! value v)
                                (on-filter
