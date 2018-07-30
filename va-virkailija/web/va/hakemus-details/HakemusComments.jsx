@@ -58,9 +58,11 @@ export default class HakemusComments extends Component {
         <label>Kommentit:</label>
         {showComments ?
           <div>
-            <div className="comment-list">
-              {commentComponents}
-            </div>
+            {noComments ?
+              <div>Ei kommentteja</div> :
+              <div className="comment-list">
+                {commentComponents}
+              </div>}
           </div> :
           <div>
             Mahdolliset muiden käyttäjien jättämät kommentit näytetään, kun
