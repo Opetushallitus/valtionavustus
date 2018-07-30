@@ -156,3 +156,7 @@
 
 (def search-popover {:padding 10
                      :cursor "pointer"})
+
+(def sortable-header-column {:text-overflow "clip"})
+
+(def sortable-header-column-input {:width "100%"})
