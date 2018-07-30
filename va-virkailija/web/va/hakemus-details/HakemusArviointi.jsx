@@ -49,7 +49,8 @@ export default class HakemusArviointi extends Component {
          comments={comments}
          loadingComments={loadingComments}
          allowHakemusCommenting={allowHakemusCommenting}
-         user={userInfo}/>
+         user={userInfo}
+         grantState={avustushaku.status}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} />
