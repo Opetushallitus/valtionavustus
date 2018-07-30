@@ -366,7 +366,8 @@
                                      (:first-name identity)
                                      (:surname identity)
                                      (:email identity)
-                                     (:comment comment))))))
+                                     (:comment comment)
+                                     (:person-oid identity))))))
 (defn- get-hakemus-attachments []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments" []
     :path-params [haku-id :- Long, hakemus-id :- Long]
