@@ -514,6 +514,20 @@ lomakkeen sisältöä. Kaikkia graafisen lomake-editorin komponentteja ei
 ole toteutettu. Lomakkeen voi kopioida json-editorin kautta toiseen
 avustushakuun.
 
+08/2018 lisätty kommenttien piilotus, jos käyttäjä ei ole itse vielä
+kommentoinut ([Jira VA3-438](https://jira.csc.fi/browse/VA3-438)). Kommenteissa
+ei ole ollut aiemmin käyttäjän tunnistetta. Näin ollen vanhemmissa hauissa ei
+voida tarkistaa, onko käyttäjä vielä kommentoinut. Tällöin näytetään kaikki
+kommentit.
+
+Uudemmissa hauissa toimintatapa on seuraava:
+- Kun haku on jossain muussa tilassa, kuin ratkaistu
+  - Jos käyttäjä ei ole kommentoinut, näytetään teksti, että mahdolliset muiden
+    käyttäjien kommentit näkyvät, kun käyttäjä on kirjoittanut oman kommenttinsa
+  - Käyttäjä ei voi tietää, onko hakemuksessa kommentteja vai ei
+- Kun haku on ratkaistu
+  - Näytetään kaikki kommentit tai teksti "Ei kommentteja"
+
 ## Maksatus
 
 Sovellus tarkistaa jokaisen maksatuksen lähetyksessä, että virkailija ei ole
