@@ -50,7 +50,7 @@
       (let [{:keys [title column-key on-sort on-filter
                     sort-params field-type]} props]
         [table-header-column
-         {:style theme/sortable-header-column}
+         {:style (merge theme/sortable-header-column (get props :style))}
          [:div
           {:on-click #(on-sort column-key)}
           title (when (= (:sort-key sort-params) column-key)
