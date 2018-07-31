@@ -55,7 +55,7 @@ export default class HakemusComments extends Component {
             c => !c["person_oid"] || c["person_oid"] === userOid)
     return (
       <div id="hakemus-comment-container" className="hakemus-arviointi-section">
-        <label>Kommentit:</label>
+        <label>Kommentit</label>
         {showComments ?
           <div>
             {noComments ?
