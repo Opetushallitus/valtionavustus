@@ -160,3 +160,7 @@
 (def sortable-header-column {:text-overflow "clip"})
 
 (def sortable-header-column-input {:width "100%"})
+
+(def narrow-column {:width 120})
+
+(def semi-narrow-column {:width 160})
