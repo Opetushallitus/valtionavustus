@@ -87,7 +87,7 @@ function ApplicationPage() {
       return wait.until(api.toggleLanguageButton().isEnabled)()
              .then(api.toggleLanguageButton().click())
              .then(wait.until(function() {
-                return name != api.applicationName()
+                return name !== api.applicationName()
               }))
     }
   }

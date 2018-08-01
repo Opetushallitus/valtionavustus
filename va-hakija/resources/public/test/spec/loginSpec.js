@@ -6,7 +6,7 @@
   })
 
   afterEach(function () {
-    if (this.currentTest.state == 'failed') {
+    if (this.currentTest.state === 'failed') {
       takeScreenshot()
     }
     expect(window.uiError || null).to.be.null

@@ -102,12 +102,14 @@ function Page(mainElement) {
             triggerEvent(input, "input")
             break
           case "RADIO":
-            var radioOption = _(input).find(function(item) { return $(item).prop("value") == value })
+            var radioOption = _(input).find(
+              function(item) { return $(item).prop("value") === value })
             S(radioOption).click()
             triggerEvent(S(radioOption), "click")
             break
           case "SELECT":
-            var option = _(input.children()).find(function(item) { return $(item).prop("value") == value })
+            var option = _(input.children()).find(
+              function(item) { return $(item).prop("value") === value })
             input.val($(option).attr("value"))
             triggerEvent(input, "change")
             break
