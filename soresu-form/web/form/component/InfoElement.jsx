@@ -45,7 +45,12 @@ export class LinkInfoElement extends BasicInfoComponent {
     const translatedText = this.translatedValue('text')
     const translatedHref = this.translatedValue('href')
     const text = translatedText ? translatedText : translatedHref
-    return <a hidden={!translatedHref} target="_blank" href={translatedHref}>{text}</a>
+    return <a hidden={!translatedHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              href={translatedHref}>
+             {text}
+           </a>
   }
 }
 

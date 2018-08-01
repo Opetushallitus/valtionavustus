@@ -20,8 +20,12 @@ class ExistingAttachmentDisplay extends BasicInfoComponent {
     const attachment = this.props.attachment
     const dateTimeString = this.asDateTimeString(attachment["created-at"])
     return <div className="soresu-attachment-display">
-             <a href={this.props.downloadUrl} target="_blank">{attachment.filename}</a>
-               <span> (<LocalizedString translations={this.props.translations.form.attachment}
+             <a href={this.props.downloadUrl}
+                target="_blank"
+                rel="noopener noreferrer">
+               {attachment.filename}
+             </a>
+           <span> (<LocalizedString translations={this.props.translations.form.attachment}
                                         translationKey="attached"
                                         lang={this.props.lang}/> {dateTimeString})
                </span>
