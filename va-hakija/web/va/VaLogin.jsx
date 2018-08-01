@@ -76,7 +76,9 @@ export default class VaLogin extends React.Component {
     const email = this.state.email
     const sent = this.state.sent
     const error = this.state.error
-    const emailIsInvalid = () => SyntaxValidator.validateEmail(this.state.email) && this.state.email != ""
+    const emailIsInvalid = () =>
+          SyntaxValidator.validateEmail(
+            this.state.email) && this.state.email !== ""
     const canSend = () => email === sent || emailIsInvalid()
     const hakemusPreviewUrl = urlCreator.existingSubmissionEditUrl(avustushaku.id, "", lang, model.devel)
 
