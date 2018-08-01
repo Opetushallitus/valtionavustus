@@ -12,10 +12,16 @@ export default class HakemusHakijaSidePreviewLink extends Component {
         <span className="preview-links">Hakemus:</span>
         <a href={previewUrl}
            className="preview-links"
-           target="_blank">Tulostusversio</a>|
+           target="_blank"
+           rel="noopener noreferrer">
+          Tulostusversio
+        </a>|
         <a href={previewUrl + "?decision-version=true"}
            className="preview-links"
-           target="_blank">Alkuperäinen</a>
+           target="_blank"
+           rel="noopener noreferrer">
+          Alkuperäinen
+        </a>
       </span>
     ) : <span/>
   }
