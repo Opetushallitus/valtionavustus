@@ -35,7 +35,7 @@ export default class BankAccountValidator {
     }
 
     const testChar = bicGroups[3].slice(-1)
-    return testChar != "0"
+    return testChar !== "0"
   }
 
   static isValidIban(input) {

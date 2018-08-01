@@ -486,7 +486,7 @@ export default class HakujenHallintaController {
     this.loadPayments(hakuToSelect)
     this.loadForm(hakuToSelect)
     LocalStorage.saveAvustushakuId(hakuToSelect.id)
-    window.history.pushState(null, null, `?avustushaku=${hakuToSelect.id}`);
+    window.history.pushState(null, null, `?avustushaku=${hakuToSelect.id}`)
     return state
   }
 

@@ -11,8 +11,16 @@ export default class HakemusDecisionLink extends Component {
 
     return hakemus && hakemus["user-key"] ?
       <span className="decision"><span className="decision">Päätös:</span>
-        <a href={previewUrl} target="_blank" className="decision">Luonnos</a>|
-        <a href={publicUrl} target="_blank" className="decision">Julkinen</a>
+        <a href={previewUrl}
+           target="_blank"
+           rel="noopener noreferrer"
+           className="decision">Luonnos</a>|
+        <a href={publicUrl}
+           target="_blank"
+           rel="noopener noreferrer"
+           className="decision">
+          Julkinen
+        </a>
       </span>
       : <span/>
   }

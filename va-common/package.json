@@ -25,8 +25,8 @@
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
     "chai": "^4.1.1",
-    "eslint": "^4.19.0",
-    "eslint-plugin-react": "7.7.x",
+    "eslint": "^5.2.0",
+    "eslint-plugin-react": "7.10.x",
     "less": "^2.5.1",
     "mocha": "^3.5.0",
     "mocha-junit-reporter": "^1.5.0"

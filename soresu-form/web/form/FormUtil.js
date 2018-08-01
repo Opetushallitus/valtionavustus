@@ -109,7 +109,7 @@ export default class FormUtil {
       throw new Error("Cannot parse index from empty id")
     }
     const index = _.last(id.split("-"))
-    if (!index || index.length == 0 || isNaN(index) || !(_.isFinite(parseInt(index)))) {
+    if (!index || index.length === 0 || isNaN(index) || !(_.isFinite(parseInt(index)))) {
       return ""
     }
     return parseInt(index)

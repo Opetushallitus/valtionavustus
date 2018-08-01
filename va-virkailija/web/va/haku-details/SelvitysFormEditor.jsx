@@ -88,8 +88,17 @@ export default class SelvitysFormEditor extends React.Component {
         <div className="link-list">
           <div className="link-list-item">
             <h3>Lomakkeen esikatselu</h3>
-            <a target="_blank" href={previewUrlFi}>Suomeksi</a><span className="link-divider"/>
-            <a target="_blank" href={previewUrlSv}>Ruotsiksi</a>
+            <a target="_blank"
+               rel="noopener noreferrer"
+               href={previewUrlFi}>
+              Suomeksi
+            </a>
+            <span className="link-divider"/>
+            <a target="_blank"
+               rel="noopener noreferrer"
+               href={previewUrlSv}>
+              Ruotsiksi
+            </a>
           </div>
         </div>
         <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} />
