@@ -108,7 +108,8 @@ function renderItem(item) {
 
 function isBlockedBy(blockers, itemValues) {
   if (blockers) {
-    return blockers.find(v => itemValues[v] && itemValues[v].length > 0)
+    return blockers.find(
+      v => itemValues[v] && itemValues[v].find(x => x.length > 0))
   }
   return false
 }
