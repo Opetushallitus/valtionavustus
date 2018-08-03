@@ -48,12 +48,16 @@ const educationLevels = [
   {title: "Muut", isChild: true, blockedBy: ["Muut hakuryhmät"]}
 ]
 
+function getId(levelIndex, valueIndex) {
+  return `education-level-${levelIndex}-${valueIndex}`
+}
+
 function renderItemValues(
   {index, title, values, onChange, isTitle, onAdd, onRemove}) {
   const onAddWithFocusNext = (i, e) => {
     onAdd()
     setTimeout(() => {
-      const next = document.getElementById(`education-level-${index}=${i + 1}`)
+      const next = document.getElementById(getId(index, i + 1))
       if (next) {
         next.focus()
       }
@@ -65,7 +69,7 @@ function renderItemValues(
         {!isTitle ? (
           <span>
             <input
-              id={`education-level-${index}=${i}`}
+              id={getId(index, i)}
               value={v}
               onChange={onChange}
               name="education-levels"
