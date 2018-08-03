@@ -129,7 +129,7 @@ export default class HakuEdit extends Component {
         <AcademySize value={avustushaku.is_academysize}
                      disabled={!allowAllHakuEdits}
                      onChange={onChange} />
-        <EducationLevels enabled={true}
+        <EducationLevels enabled={allowNondisruptiveHakuEdits}
                          values={avustushaku.content.rahoitusalueet}
                          onAdd={controller.addTalousarviotili}
                          onRemove={controller.deleteTalousarviotili}
