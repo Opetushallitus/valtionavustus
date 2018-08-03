@@ -295,20 +295,22 @@ export default class HakujenHallintaController {
       update.avustushaku["is_academysize"] = update.newValue === 'true'
     } else if (fieldId.startsWith("set-status-")) {
       update.avustushaku["status"] = update.newValue
-    } else if (fieldId.startsWith("rahoitusalue-")) {
-      const rahoitusalue = /rahoitusalue-(\d+)-tili-(\d+)/.exec(fieldId)
-      const rahoitussalueIndex = rahoitusalue[1]
-      const selectedRahoitusalue = Rahoitusalueet[rahoitussalueIndex]
-      const currentRahoitusalueet = this.getOrCreateRahoitusalueet(update.avustushaku)
-      const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, selectedRahoitusalue)
-
-      const talousarviotiliIndex = rahoitusalue[2]
-      const talousarviotiliValue = update.newValue
-
-      if (talousarviotiliIndex >= rahoitusalueValue.talousarviotilit.length) {
-        rahoitusalueValue.talousarviotilit.push(talousarviotiliValue)
+    } else if (update.field.name === "education-levels") {
+      const value = {
+        rahoitusalue: update.field.dataset.title,
+        talousarviotilit: [update.newValue]
+      }
+      const educationLevels = update.avustushaku.content["rahoitusalueet"]
+      if (educationLevels) {
+        const index = educationLevels.findIndex(
+          x => x.rahoitusalue === update.field.dataset.title)
+        if (index === -1) {
+          educationLevels.push(value)
+        } else {
+          educationLevels[index].talousarviotilit[update.field.dataset.index] = update.newValue
+        }
       } else {
-        rahoitusalueValue.talousarviotilit[talousarviotiliIndex] = talousarviotiliValue
+        update.avustushaku.content["rahoitusalueet"] = [value]
       }
     } else if (fieldId.startsWith("selection-criteria-")) {
       const selectionCriteria = /selection-criteria-(\d+)-(\w+)/.exec(fieldId)
