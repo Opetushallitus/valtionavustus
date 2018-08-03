@@ -296,21 +296,28 @@ export default class HakujenHallintaController {
     } else if (fieldId.startsWith("set-status-")) {
       update.avustushaku["status"] = update.newValue
     } else if (update.field.name === "education-levels") {
-      const value = {
-        rahoitusalue: update.field.dataset.title,
-        talousarviotilit: [update.newValue]
-      }
-      const educationLevels = update.avustushaku.content["rahoitusalueet"]
-      if (educationLevels) {
-        const index = educationLevels.findIndex(
-          x => x.rahoitusalue === update.field.dataset.title)
-        if (index === -1) {
-          educationLevels.push(value)
-        } else {
-          educationLevels[index].talousarviotilit[update.field.dataset.index] = update.newValue
-        }
+      if (update.newValue.length === 0) {
+            this.deleteTalousarviotili(
+              update.avustushaku,
+              update.field.dataset.title,
+              update.field.dataset.index)()
       } else {
-        update.avustushaku.content["rahoitusalueet"] = [value]
+        const value = {
+          rahoitusalue: update.field.dataset.title,
+          talousarviotilit: [update.newValue]
+        }
+        const educationLevels = update.avustushaku.content["rahoitusalueet"]
+        if (educationLevels) {
+          const index = educationLevels.findIndex(
+            x => x.rahoitusalue === update.field.dataset.title)
+          if (index === -1) {
+            educationLevels.push(value)
+          } else {
+            educationLevels[index].talousarviotilit[update.field.dataset.index] = update.newValue
+          }
+        } else {
+          update.avustushaku.content["rahoitusalueet"] = [value]
+        }
       }
     } else if (fieldId.startsWith("selection-criteria-")) {
       const selectionCriteria = /selection-criteria-(\d+)-(\w+)/.exec(fieldId)
