@@ -5,7 +5,7 @@ import DateUtil from 'soresu-form/web/DateUtil'
 
 import HakuStatus from "../avustushaku/HakuStatus.jsx"
 import HakuRoles from "./HakuRoles.jsx"
-import ChooseRahoitusalueet from "./ChooseRahoitusalueet.jsx"
+import EducationLevels from "./EducationLevels.jsx"
 import AutoCompleteCodeValue from "./AutoCompleteCodeValue.jsx"
 
 export default class HakuEdit extends Component {
@@ -129,10 +129,12 @@ export default class HakuEdit extends Component {
         <AcademySize value={avustushaku.is_academysize}
                      disabled={!allowAllHakuEdits}
                      onChange={onChange} />
-        <ChooseRahoitusalueet avustushaku={avustushaku}
-                              allowEditing={allowNondisruptiveHakuEdits}
-                              onChange={onChange}
-                              controller={controller} />
+        <EducationLevels enabled={true}
+                         values={avustushaku.content.rahoitusalueet}
+                         onAdd={controller.addTalousarviotili}
+                         onRemove={controller.deleteTalousarviotili}
+                         grant={avustushaku}
+                         onChange={onChange}/>
         <div>
           <div className="multibatch-fields">
             <h3>Maksatus</h3>
