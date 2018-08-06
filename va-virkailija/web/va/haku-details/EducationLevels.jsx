@@ -123,7 +123,7 @@ export default class EducationLevels extends React.Component {
     }, {})
 
     return (
-      <div>
+      <div className={enabled ? null : "haku-edit-disabled-form"}>
         <h3>Koulutusasteet</h3>
         <table className="education-levels-table">
           <tbody>
