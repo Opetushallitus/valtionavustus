@@ -54,7 +54,7 @@ function getId(levelIndex, valueIndex) {
 
 function renderItemValues(
   {index, title, values, onChange, isTitle, onAdd, onRemove}) {
-  const onAddWithFocusNext = (i, e) => {
+  const onAddWithFocusNext = (i) => {
     onAdd()
     setTimeout(() => {
       const next = document.getElementById(getId(index, i + 1))
