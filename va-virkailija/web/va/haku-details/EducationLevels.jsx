@@ -1,6 +1,6 @@
 import React from 'react'
 
-const educationLevels = [
+export const educationLevels = [
   {title: "Yleissivistävä koulutus, ml. varhaiskasvatus",
    blockedBy: ["Varhaiskasvatus",
                "Esiopetus",
