@@ -45,6 +45,9 @@ export const educationLevels = [
   {title: "Kristillisten koulujen kerhotoiminta",
    isChild: true,
    blockedBy: ["Muut hakuryhmät"]},
+  {title: "Aikuiskoulutus ja vapaa sivistystyö", readOnly: true},
+  {title: "Koko opetustoimi", readOnly: true},
+  {title: "Poikkeus", readOnly: true},
   {title: "Muut", isChild: true, blockedBy: ["Muut hakuryhmät"]}
 ]
 
@@ -53,7 +56,7 @@ function getId(levelIndex, valueIndex) {
 }
 
 function renderItemValues(
-  {index, title, values, onChange, isTitle, onAdd, onRemove}) {
+  {index, title, values, onChange, isTitle, onAdd, onRemove, readOnly}) {
   const onAddWithFocusNext = (i) => {
     onAdd()
     setTimeout(() => {
@@ -73,7 +76,7 @@ function renderItemValues(
               value={v}
               onChange={onChange}
               name="education-levels"
-              className="education-level-field"
+              className={`education-level-field ${readOnly ? "haku-edit-disabled-form" : null}`}
               type="text"
               data-index={i}
               data-title={title}/>
