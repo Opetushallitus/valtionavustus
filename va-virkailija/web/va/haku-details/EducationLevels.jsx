@@ -76,8 +76,15 @@ function renderItemValues(
               value={v}
               onChange={onChange}
               name="education-levels"
-              className={`education-level-field ${readOnly ? "haku-edit-disabled-form" : null}`}
+              className={
+                `education-level-field ${readOnly ? "haku-edit-disabled-form" : null}`
+              }
               type="text"
+              title={
+                readOnly ?
+                  "Vanhoja rahoitusalueita (nyk. koulutusaste) ei voi muokata" :
+                  null
+              }
               data-index={i}
               data-title={title}/>
             {v && !readOnly && i === values.length - 1 ?
