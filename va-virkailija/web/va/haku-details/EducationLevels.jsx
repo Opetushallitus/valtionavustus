@@ -80,7 +80,7 @@ function renderItemValues(
               type="text"
               data-index={i}
               data-title={title}/>
-            {v && i === values.length - 1 ?
+            {v && !readOnly && i === values.length - 1 ?
               <button className="add"
                       onClick={onAddWithFocusNext.bind(null, i)}
                       tabIndex={-1}/> : null}
