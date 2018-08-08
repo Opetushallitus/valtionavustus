@@ -80,6 +80,16 @@
                       :fill false
                       :backgroundColor (vals colors)}]}})
 
+(defn- gen-grants-data [data]
+  {:type "line"
+   :options {:responsive true}
+   :data {:labels (map :year data)
+          :datasets [{:label "Ratkaistut haut kpl"
+                      :data (map :count data)
+                      :backgroundColor "#90ee90"
+                      :borderColor "#70af70"}]}})
+
+
 (defn- chart [{:keys [id data]}]
   [(with-meta
      (create-canvas id)
@@ -88,6 +98,9 @@
 
 (defn home-page []
   [:div
+   [chart
+    {:id "resolved-grants"
+     :data (gen-grants-data @grants-data)}]
    [chart
     {:id "applications"
      :data (gen-evaluations-data
@@ -109,6 +122,17 @@
             (<! (connection/get-reports))]
         (if (:success result)
           (reset! data (:body result))
+          (dialogs/show-error-message!
+            "Virhe raporttien latauksessa"
+            (select-keys result [:status :error-text]))))
+      (put! dialog-chan 2)
+      (close! dialog-chan)))
+  (go
+    (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan haun tietoja" 3)]
+      (put! dialog-chan 1)
+      (let [result (<! (connection/get-grants-report))]
+        (if (:success result)
+          (reset! grants-data (:body result))
           (dialogs/show-error-message!
             "Virhe raporttien latauksessa"
             (select-keys result [:status :error-text]))))
