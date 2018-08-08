@@ -18,6 +18,6 @@
 
   (compojure-api/GET
     "/grants/" request
-    :return schema/GrantsReport
-    :summary "Yearly resolved grants"
+    :return schema/YearlyReport
+    :summary "Yearly resolved grants report"
     (ok (data/get-yearly-resolved-count))))

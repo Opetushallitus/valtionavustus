@@ -325,7 +325,7 @@
                    :valid s/Bool}]
    :current-timestamp s/Str})
 
-(s/defschema GrantsReport
+(s/defschema YearlyReport
   "Grants report"
   [{:year s/Int
     :count s/Int}])
