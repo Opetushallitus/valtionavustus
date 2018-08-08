@@ -18,6 +18,8 @@
 
 (defonce ^:private data (r/atom {}))
 
+(defonce ^:private grants-data (r/atom {}))
+
 (defn- show-data! [id chart-data]
   (let [context (.getContext (.getElementById js/document id) "2d")]
     (js/Chart. context (clj->js chart-data))))
@@ -78,24 +80,26 @@
                       :fill false
                       :backgroundColor (vals colors)}]}})
 
-
-(defn- create-chart [id data]
-  (with-meta
-      (create-canvas id)
-      {:component-did-mount
-       #(show-data! id data)}))
+(defn- chart [{:keys [id data]}]
+  [(with-meta
+     (create-canvas id)
+     {:component-did-mount
+      #(show-data! id data)})])
 
 (defn home-page []
   [:div
-   [(create-chart "applications"
-                  (gen-evaluations-data
-                    (:applications @data)
-                    (:evaluations-accepted @data)
-                    (:evaluations-rejected @data)))]
-   [(create-chart "application-budget"
-                  (gen-budget-data (:applications @data) (:granted @data)))]
-   [(create-chart "total-granted"
-                  (gen-granted-data (:granted @data)))]])
+   [chart
+    {:id "applications"
+     :data (gen-evaluations-data
+             (:applications @data)
+             (:evaluations-accepted @data)
+             (:evaluations-rejected @data))}]
+   [chart
+    {:id "application-budget"
+     :data (gen-budget-data (:applications @data) (:granted @data))}]
+   [chart
+    {:id "total-granted"
+     :data (gen-granted-data (:granted @data))}]])
 
 (defn init! []
   (go
