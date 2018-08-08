@@ -20,6 +20,8 @@
 
 (defonce ^:private grants-data (r/atom {}))
 
+(defonce ^:private applications-data (r/atom {}))
+
 (defn- show-data! [id chart-data]
   (let [context (.getContext (.getElementById js/document id) "2d")]
     (js/Chart. context (clj->js chart-data))))
@@ -104,9 +106,9 @@
    [chart
     {:id "applications"
      :data (gen-evaluations-data
-             (:applications @data)
-             (:evaluations-accepted @data)
-             (:evaluations-rejected @data))}]
+             (:count @applications-data)
+             (:accepted @applications-data)
+             (:rejected @applications-data))}]
    [chart
     {:id "application-budget"
      :data (gen-budget-data (:applications @data) (:granted @data))}]
@@ -125,6 +127,25 @@
           (dialogs/show-error-message!
             "Virhe raporttien latauksessa"
             (select-keys result [:status :error-text]))))
+      (put! dialog-chan 2)
+      (close! dialog-chan)))
+  (go
+    (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan hakemuksia" 3)]
+      (put! dialog-chan 1)
+      (let [applications-result
+            (<! (connection/get-applications-report "count"))
+            accepted-result (<! (connection/get-applications-report "accepted"))
+            rejected-result
+            (<! (connection/get-applications-report "rejected"))]
+        (if (and (:success applications-result)
+                 (:success accepted-result)
+                 (:success rejected-result))
+          (reset! applications-data
+                  {:count (:body applications-result)
+                   :accepted (:body accepted-result)
+                   :rejected (:body rejected-result)})
+          (dialogs/show-error-dialog!
+            "Virhe hakemusten raporttien latauksessa")))
       (put! dialog-chan 2)
       (close! dialog-chan)))
   (go
