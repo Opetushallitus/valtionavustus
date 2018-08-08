@@ -138,4 +138,21 @@
       (should= [{:year (.getYear (java.time.LocalDate/now)) :count 2}]
                (reporting-data/get-rejected-count-by-year))))
 
+(describe
+  "Grant count"
+
+  (tags :reporting :grantreport)
+
+  (around-all [_] (with-test-server! :virkailija-db
+                    #(start-server
+                       {:host "localhost"
+                        :port test-server-port
+                        :auto-reload? false}) (_)))
+
+  (it "gets yearly resolved grant count"
+      (hakija-api-tools/set-all-grants-resolved)
+      (let [grants (grant-data/get-grants)
+            report (first (reporting-data/get-yearly-resolved-count))]
+        (should= (count grants) (count report)))))
+
 (run-specs)
