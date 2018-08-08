@@ -1,7 +1,6 @@
 (ns oph.va.virkailija.reporting-routes
   (:require
    [compojure.api.sweet :as compojure-api]
-   [ring.util.http-response :refer [ok]]
    [schema.core :as s]
    [ring.util.http-response :refer [ok]]
    [oph.va.virkailija.schema :as schema]
