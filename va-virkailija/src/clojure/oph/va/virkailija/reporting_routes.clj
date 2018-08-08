@@ -3,7 +3,7 @@
    [compojure.api.sweet :as compojure-api]
    [ring.util.http-response :refer [ok]]
    [schema.core :as s]
-   [ring.util.http-response :refer :all]
+   [ring.util.http-response :refer [ok]]
    [oph.va.virkailija.schema :as schema]
    [oph.va.virkailija.reporting-data :as data]))
 
