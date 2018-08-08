@@ -34,6 +34,11 @@
 (defn get-total-grant-count []
   (first (exec :form-db hakija-queries/get-total-grant-count {})))
 
+(defn get-yearly-resolved-count []
+  (mapv convert-to-dash-keys
+        (year-to-int-all-v
+          (exec :virkailija-db hakija-queries/get-yearly-resolved-grants {}))))
+
 (defn get-yearly-report []
   {:applications (get-yearly-application-info)
    :evaluations-accepted (get-accepted-count-by-year)

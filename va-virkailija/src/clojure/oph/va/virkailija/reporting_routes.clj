@@ -4,6 +4,7 @@
    [ring.util.http-response :refer [ok]]
    [schema.core :as s]
    [ring.util.http-response :refer :all]
+   [oph.va.virkailija.schema :as schema]
    [oph.va.virkailija.reporting-data :as data]))
 
 (compojure-api/defroutes routes
@@ -13,4 +14,10 @@
     "/" request
     :return s/Any
     :summary "Simple yearly reporting overview"
-    (ok (data/get-yearly-report))))
+    (ok (data/get-yearly-report)))
+
+  (compojure-api/GET
+    "/grants/" request
+    :return schema/GrantsReport
+    :summary "Yearly resolved grants"
+    (ok (data/get-yearly-resolved-count))))

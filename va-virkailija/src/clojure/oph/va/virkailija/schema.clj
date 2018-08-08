@@ -324,3 +324,8 @@
                    :service s/Str
                    :valid s/Bool}]
    :current-timestamp s/Str})
+
+(s/defschema GrantsReport
+  "Grants report"
+  [{:year s/Int
+    :count s/Int}])
