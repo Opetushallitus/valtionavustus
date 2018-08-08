@@ -46,7 +46,5 @@
 
 (defn get-yearly-report []
   {:applications (get-yearly-application-info)
-   :evaluations-accepted (get-accepted-count-by-year)
-   :evaluations-rejected (get-rejected-count-by-year)
    :granted (get-yearly-granted)
    :total-grant-count (:count (get-total-grant-count))})
