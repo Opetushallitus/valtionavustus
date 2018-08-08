@@ -111,6 +111,13 @@
 (defn get-reports []
   (get-cached (str "/" api-path "/reports/")))
 
+(defn get-grants-report []
+  (get-cached (str "/" api-path "/reports/grants/")))
+
+(defn get-applications-report [filter]
+  (get-cached
+    (str "/" api-path "/reports/applications/?applications-filter=" filter)))
+
 (defn search-users [term]
   (http/post "/api/va-user/search"
              {:with-credentials? true

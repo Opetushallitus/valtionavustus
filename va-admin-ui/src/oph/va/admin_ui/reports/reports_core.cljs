@@ -18,6 +18,10 @@
 
 (defonce ^:private data (r/atom {}))
 
+(defonce ^:private grants-data (r/atom {}))
+
+(defonce ^:private applications-data (r/atom {}))
+
 (defn- show-data! [id chart-data]
   (let [context (.getContext (.getElementById js/document id) "2d")]
     (js/Chart. context (clj->js chart-data))))
@@ -78,24 +82,39 @@
                       :fill false
                       :backgroundColor (vals colors)}]}})
 
+(defn- gen-grants-data [data]
+  {:type "line"
+   :options {:responsive true}
+   :data {:labels (map :year data)
+          :datasets [{:label "Ratkaistut haut kpl"
+                      :data (map :count data)
+                      :backgroundColor "#90ee90"
+                      :borderColor "#70af70"}]}})
 
-(defn- create-chart [id data]
-  (with-meta
-      (create-canvas id)
-      {:component-did-mount
-       #(show-data! id data)}))
+
+(defn- chart [{:keys [id data]}]
+  [(with-meta
+     (create-canvas id)
+     {:component-did-mount
+      #(show-data! id data)})])
 
 (defn home-page []
   [:div
-   [(create-chart "applications"
-                  (gen-evaluations-data
-                    (:applications @data)
-                    (:evaluations-accepted @data)
-                    (:evaluations-rejected @data)))]
-   [(create-chart "application-budget"
-                  (gen-budget-data (:applications @data) (:granted @data)))]
-   [(create-chart "total-granted"
-                  (gen-granted-data (:granted @data)))]])
+   [chart
+    {:id "resolved-grants"
+     :data (gen-grants-data @grants-data)}]
+   [chart
+    {:id "applications"
+     :data (gen-evaluations-data
+             (:count @applications-data)
+             (:accepted @applications-data)
+             (:rejected @applications-data))}]
+   [chart
+    {:id "application-budget"
+     :data (gen-budget-data (:applications @data) (:granted @data))}]
+   [chart
+    {:id "total-granted"
+     :data (gen-granted-data (:granted @data))}]])
 
 (defn init! []
   (go
@@ -105,6 +124,36 @@
             (<! (connection/get-reports))]
         (if (:success result)
           (reset! data (:body result))
+          (dialogs/show-error-message!
+            "Virhe raporttien latauksessa"
+            (select-keys result [:status :error-text]))))
+      (put! dialog-chan 2)
+      (close! dialog-chan)))
+  (go
+    (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan hakemuksia" 3)]
+      (put! dialog-chan 1)
+      (let [applications-result
+            (<! (connection/get-applications-report "count"))
+            accepted-result (<! (connection/get-applications-report "accepted"))
+            rejected-result
+            (<! (connection/get-applications-report "rejected"))]
+        (if (and (:success applications-result)
+                 (:success accepted-result)
+                 (:success rejected-result))
+          (reset! applications-data
+                  {:count (:body applications-result)
+                   :accepted (:body accepted-result)
+                   :rejected (:body rejected-result)})
+          (dialogs/show-error-dialog!
+            "Virhe hakemusten raporttien latauksessa")))
+      (put! dialog-chan 2)
+      (close! dialog-chan)))
+  (go
+    (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan haun tietoja" 3)]
+      (put! dialog-chan 1)
+      (let [result (<! (connection/get-grants-report))]
+        (if (:success result)
+          (reset! grants-data (:body result))
           (dialogs/show-error-message!
             "Virhe raporttien latauksessa"
             (select-keys result [:status :error-text]))))

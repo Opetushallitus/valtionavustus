@@ -42,7 +42,8 @@
             [oph.va.virkailija.va-code-values-routes
              :as va-code-values-routes]
             [oph.va.virkailija.payments-routes :as payments-routes]
-            [oph.va.virkailija.healthcheck :as healthcheck])
+            [oph.va.virkailija.healthcheck :as healthcheck]
+            [oph.va.virkailija.reporting-routes :as reporting-routes])
   (:import [java.io ByteArrayInputStream]))
 
 (def opintopolku-login-url
@@ -676,15 +677,6 @@
       (ok "ok")
       (unauthorized))))
 
-
- (compojure-api/defroutes reports-routes
-  "Reports"
-
-  (compojure-api/GET "/" request
-    :return s/Any
-    :summary "Simple yearly reporting overview"
-    (ok (reporting/get-yearly-report))))
-
 (def api-config
   {:formats [:json-kw]
    :exceptions {:handlers {::compojure-ex/response-validation compojure-error-handler
@@ -719,7 +711,7 @@
   (compojure-api/context "/api/v2/applications" [] :tags ["applications"]
     application-routes/routes)
   (compojure-api/context
-    "/api/v2/reports" [] :tags ["reports"] reports-routes)
+    "/api/v2/reports" [] :tags ["reports"] reporting-routes/routes)
   (compojure-api/context "/api/v2/payment-batches" [] :tags ["payment batches"]
                          payment-batches-routes/routes)
   (compojure-api/context "/api/v2/va-code-values" [] :tags ["va-code-values"]

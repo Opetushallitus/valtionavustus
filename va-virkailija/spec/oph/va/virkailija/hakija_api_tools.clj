@@ -7,6 +7,7 @@
 (defquery cancel-all-applications! "sql/spec/hakija/cancel-all-applications.sql")
 (defquery set-application-refused! "sql/spec/hakija/set-application-refused.sql")
 (defquery create-hakemus "sql/spec/hakija/create-hakemus.sql")
+(defquery set-all-grants-resolved! "sql/spec/hakija/set-all-grants-resolved.sql")
 
 (defn cancel-all-applications []
   (exec :form-db cancel-all-applications! {}))
@@ -18,3 +19,6 @@
     (exec-all :form-db [hakija-queries/lock-hakemus params
                         hakija-queries/close-existing-hakemus! params
                         set-application-refused! params])))
+
+(defn set-all-grants-resolved []
+  (exec :form-db set-all-grants-resolved! {}))
