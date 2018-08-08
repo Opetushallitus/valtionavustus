@@ -20,4 +20,15 @@
     "/grants/" request
     :return schema/YearlyReport
     :summary "Yearly resolved grants report"
-    (ok (data/get-yearly-resolved-count))))
+    (ok (data/get-yearly-resolved-count)))
+
+  (compojure-api/GET
+    "/applications/" request
+    :query-params [applications-filter :- s/Str]
+    :return schema/YearlyReport
+    :summary "Yearly applications count"
+    (ok
+      (case applications-filter
+        "count" (data/get-yearly-application-count)
+        "accepted" (data/get-accepted-count-by-year)
+        "rejected" (data/get-rejected-count-by-year)))))

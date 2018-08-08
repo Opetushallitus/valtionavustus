@@ -16,6 +16,11 @@
         (year-to-int-all-v
          (exec :form-db hakija-queries/get-yearly-application-info {}))))
 
+(defn get-yearly-application-count []
+  (mapv convert-to-dash-keys
+        (year-to-int-all-v
+         (exec :form-db hakija-queries/get-yearly-application-count {}))))
+
 (defn get-accepted-count-by-year []
   (year-to-int-all-v
    (exec :virkailija-db queries/get-yearly-evaluation-count-by-status
