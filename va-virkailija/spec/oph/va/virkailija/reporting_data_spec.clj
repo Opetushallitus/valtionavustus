@@ -153,6 +153,6 @@
       (hakija-api-tools/set-all-grants-resolved)
       (let [grants (grant-data/get-grants)
             report (first (reporting-data/get-yearly-resolved-count))]
-        (should= (count grants) (count report)))))
+        (should= (count grants) (:count report)))))
 
 (run-specs)
