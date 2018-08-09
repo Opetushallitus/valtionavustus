@@ -217,6 +217,10 @@
    :phase (s/maybe s/Int)
    :payment-sum s/Int})
 
+(s/defschema SimplePayment
+  "Simple payment"
+  {:state s/Int})
+
 (s/defschema GrantPayment
   "Grant Payment (for creating grant payments)"
   {:phase s/Int})
