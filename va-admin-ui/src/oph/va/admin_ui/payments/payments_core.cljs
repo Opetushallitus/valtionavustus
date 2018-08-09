@@ -295,6 +295,24 @@
           (payments/get-batch-values batch)
           @selected-grant payments)))))
 
+(defn- set-batch-payments-paid! [id grant payments]
+  (go
+    (let [c (conn-with-err-dialog!
+              "Päivitetään maksatuksia"
+              "Maksatusten päivityksessä ongelma"
+              connection/set-batch-payments-state id 2)]
+      (when (some? (<! c))
+        (update-grant-payments! (:id grant) payments)))))
+
+(defn- on-set-batch-paid! [values grant payments]
+  (go
+    (let [c (create-batch! values grant)
+          batch (<! c)]
+      (when (some? batch)
+        (set-batch-payments-paid!
+          (:id batch)
+          grant payments)))))
+
 (defn home-page [data]
   (let [{:keys [user-info delete-payments?]} data
         {:keys [selected-grant batch-values applications payments grants]} state
@@ -391,7 +409,22 @@
                                  #(on-send-payments!
                                     batch-values
                                     selected-grant
-                                    payments)}]]])]))]]
+                                    payments)}]
+                               (when (user/is-admin? user-info)
+                                 [va-ui/raised-button
+                                {:primary true
+                                 :disabled
+                                 (or
+                                   (seq errors)
+                                   (not unsent-payments?))
+                                 :label "Aseta maksetuksi"
+                                 :title "Aseta maksatukset maksetuksi lähettämättä niitä Rondoon"
+                                 :style theme/button
+                                 :on-click
+                                 #(on-set-batch-paid!
+                                    @batch-values
+                                    @selected-grant
+                                    payments)}])]])]))]]
                     [va-ui/tab
                      {:value "sent"
                       :label [:span
