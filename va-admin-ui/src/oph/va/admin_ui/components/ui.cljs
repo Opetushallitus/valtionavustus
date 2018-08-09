@@ -168,7 +168,7 @@
 (defn button [p]
   [:button
    (-> p
-       (select-keys [:on-click :style :disabled])
+       (select-keys [:on-click :style :disabled :title])
        (assoc :class (generate-button-class p))
        set-button-style)
    (:label p)])
