@@ -360,10 +360,8 @@
                               (get @batch-values :documents []))]
                         (fn [data]
                           [:div
-                           {:title
-                            (when (:read-only @batch-values)
-                              (translate :batch-modify-not-allowed))
-                            }
+                           {:title (when (:read-only @batch-values)
+                                     (translate :batch-modify-not-allowed))}
                            [render-batch-values
                             {:disabled? (or (:read-only @batch-values)
                                             (not unsent-payments?))
