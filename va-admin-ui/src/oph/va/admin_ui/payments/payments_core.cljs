@@ -79,13 +79,13 @@
         (fn []
           (go
             (let [c (conn-with-err-dialog!
-                     "Poistetaan maksatuksia"
-                     "Virhe maksatusten poistossa"
-                     connection/delete-grant-payments
-                     (:id selected-grant))
-                 result (<! c)]
-             (when (some? result)
-               (update-grant-payments! (:id selected-grant) payments)))))}]
+                      "Poistetaan maksatuksia"
+                      "Virhe maksatusten poistossa"
+                      connection/delete-grant-payments
+                      (:id selected-grant))
+                  result (<! c)]
+              (when (some? result)
+                (update-grant-payments! (:id selected-grant) payments)))))}]
       [:span])
     [va-ui/raised-button
      {:primary true
@@ -93,22 +93,15 @@
       :style theme/button
       :on-click
       (fn []
-        (go (let [grant-id (:id selected-grant)
-                  response (<! (connection/create-grant-payments
-                                 grant-id))]
-              (if (:success response)
-                (let [download-response
-                      (<! (connection/get-grant-payments grant-id))]
-                  (if (:success download-response)
-                    (reset! payments (:body download-response))
-                    (dialogs/show-error-message!
-                      "Virhe tietojen latauksessa"
-                      (select-keys download-response
-                                   [:status :error-text]))))
-                (dialogs/show-error-message!
-                  "Virhe maksatusten luonnissa"
-                  (select-keys response
-                               [:status :error-text]))))))}]]])
+        (go
+          (let [c (conn-with-err-dialog!
+                    "Luodaan maksatuksia"
+                    "Virhe maksatusten luomisessa"
+                    connection/create-grant-payments
+                    (:id selected-grant))
+                result (<! c)]
+            (when (some? result)
+              (update-grant-payments! (:id selected-grant) payments)))))}]]])
 
 (defn- render-grant-filters [filter-str on-change]
   [:div
