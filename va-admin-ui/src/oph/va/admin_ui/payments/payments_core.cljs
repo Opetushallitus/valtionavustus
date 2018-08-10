@@ -3,6 +3,7 @@
   (:require
    [cljs.core.async :refer [<! put! close! chan]]
    [clojure.string :refer [join]]
+   [oph.va.admin-ui.translations :refer [translate]]
    [oph.va.admin-ui.connection :as connection]
    [reagent.core :as r]
    [oph.va.admin-ui.components.ui :as va-ui]
@@ -361,7 +362,7 @@
                           [:div
                            {:title
                             (when (:read-only @batch-values)
-                              "Olemassaolevan maksuerän tietoja ei voi muokata")
+                              (translate :batch-modify-not-allowed))
                             }
                            [render-batch-values
                             {:disabled? (or (:read-only @batch-values)
@@ -408,8 +409,8 @@
                                  (or
                                    (seq errors)
                                    (not unsent-payments?))
-                                 :label "Aseta maksetuksi"
-                                 :title "Aseta maksatukset maksetuksi lähettämättä niitä Rondoon"
+                                 :label (translate :set-paid)
+                                 :title (translate :set-paid-without-sending)
                                  :style theme/button
                                  :on-click
                                  #(on-set-batch-paid!
