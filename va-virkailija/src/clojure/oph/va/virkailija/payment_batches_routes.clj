@@ -60,7 +60,7 @@
           c (data/send-payments
               {:batch batch
                :grant (grant-data/get-grant (:grant-id batch))
-               :identity (authentication/get-request-identity request) } )]
+               :identity (authentication/get-request-identity request)})]
       (let [result
             (loop [total-result {:count 0 :error-count 0 :errors '()}]
               (if-let [r (<!! c)]
