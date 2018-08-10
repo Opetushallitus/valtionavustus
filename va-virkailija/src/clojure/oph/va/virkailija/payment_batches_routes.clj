@@ -2,7 +2,8 @@
   (:require [clojure.tools.logging :as log]
             [clojure.core.async :refer [<!!]]
             [compojure.api.sweet :as compojure-api]
-            [ring.util.http-response :refer [ok no-content conflict]]
+            [ring.util.http-response
+             :refer [ok no-content conflict bad-request]]
             [oph.va.virkailija.payment-batches-data :as data]
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.schema :as schema]
@@ -33,11 +34,25 @@
       (conflict {:error "Payment batch already exists"})
       (ok (data/create-batch batch-values)))))
 
+(defn- update-payments []
+  (compojure-api/PUT
+    "/:id/payments/" [id :as request]
+    :path-params [id :- Long]
+    :body [data (compojure-api/describe
+                  schema/SimplePayment "Payment update values")]
+    :summary "Update batch payments"
+    (if (= (:state data) 2)
+      (let [batch (data/get-batch id)]
+        (data/set-payments-paid
+          {:identity (authentication/get-request-identity request)
+           :grant-id (:grant-id batch)})
+        (ok ""))
+      (bad-request "Only updating state to paid is allowed"))))
+
 (defn- send-payments []
   (compojure-api/POST
     "/:id/payments/" [id :as request]
     :path-params [id :- Long]
-
     :return schema/PaymentsCreateResult
     :summary "Create new payments for unpaid applications of grant. Payments
               will be sent to Rondo and stored to database."
@@ -45,7 +60,7 @@
           c (data/send-payments
               {:batch batch
                :grant (grant-data/get-grant (:grant-id batch))
-               :identity (authentication/get-request-identity request) } )]
+               :identity (authentication/get-request-identity request)})]
       (let [result
             (loop [total-result {:count 0 :error-count 0 :errors '()}]
               (if-let [r (<!! c)]
@@ -100,6 +115,7 @@
   "payment batches routes"
   (find-payment-batches)
   (create-payment-batch)
+  (update-payments)
   (send-payments)
   (get-documents)
   (create-document)
