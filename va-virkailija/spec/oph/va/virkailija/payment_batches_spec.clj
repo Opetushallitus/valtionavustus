@@ -69,6 +69,10 @@
         (should= 409 status)))
 
   (it "find payment batch (finds one)"
+      (tools/create-batch
+        (assoc valid-payment-batch
+               :receipt-date "2018-02-02"
+               :created-at "2018-08-08T06:12:40.194492+00"))
       (post! "/api/v2/payment-batches/"
              (assoc valid-payment-batch :receipt-date "2018-02-02"))
       (let [{:keys [status body]}
@@ -84,6 +88,14 @@
                  (dissoc (first batches) :id :batch-number :created-at))))
 
   (it "find payment batch (not found any)"
+      (tools/create-batch
+        (assoc valid-payment-batch
+               :receipt-date "2018-02-02"
+               :created-at "2018-08-08T06:12:40.194492+00"))
+      (tools/create-batch
+        (assoc valid-payment-batch
+               :receipt-date "2018-02-02"
+               :created-at "2018-08-09T06:12:40.194492+00"))
       (let [{:keys [status body]}
             (get! "/api/v2/payment-batches/?date=2018-04-17&grant-id=1")]
         (should= 200 status)
