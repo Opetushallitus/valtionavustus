@@ -3,6 +3,7 @@
   (:require
    [cljs.core.async :refer [<! put! close! chan]]
    [clojure.string :refer [join]]
+   [oph.va.admin-ui.translations :refer [translate]]
    [oph.va.admin-ui.connection :as connection]
    [reagent.core :as r]
    [oph.va.admin-ui.components.ui :as va-ui]
@@ -359,8 +360,11 @@
                               (get @batch-values :documents []))]
                         (fn [data]
                           [:div
+                           {:title (when (:read-only @batch-values)
+                                     (translate :batch-modify-not-allowed))}
                            [render-batch-values
-                            {:disabled? (not unsent-payments?)
+                            {:disabled? (or (:read-only @batch-values)
+                                            (not unsent-payments?))
                              :values @batch-values
                              :on-change #(swap! batch-values assoc %1 %2)
                              :phases available-phases}]
@@ -403,8 +407,8 @@
                                  (or
                                    (seq errors)
                                    (not unsent-payments?))
-                                 :label "Aseta maksetuksi"
-                                 :title "Aseta maksatukset maksetuksi lähettämättä niitä Rondoon"
+                                 :label (translate :set-paid)
+                                 :title (translate :set-paid-without-sending)
                                  :style theme/button
                                  :on-click
                                  #(on-set-batch-paid!

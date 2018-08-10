@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.payment-batches-spec
   (:require [speclj.core :refer [should should= describe
-                                 it tags around-all run-specs]]
+                                 it tags around-all run-specs after]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.server :refer [start-server]]
             [oph.va.virkailija.common-utils
@@ -10,7 +10,8 @@
              :refer [create-batch-document-email get-batch-documents
                      get-batch]]
             [oph.va.virkailija.payments-data :as payments-data]
-            [oph.va.virkailija.grant-data :as grant-data]))
+            [oph.va.virkailija.grant-data :as grant-data]
+            [oph.va.virkailija.virkailija-tools :as tools]))
 
 (def valid-payment-batch
   {:invoice-date "2018-04-16"
@@ -49,6 +50,9 @@
           :auto-reload? false
           :without-authentication? true}) (_)))
 
+  (after
+    (tools/delete-payment-batches))
+
   (it "creates payment batch"
       (let [{:keys [status body]}
             (post! "/api/v2/payment-batches/" valid-payment-batch)]
@@ -65,6 +69,10 @@
         (should= 409 status)))
 
   (it "find payment batch (finds one)"
+      (tools/create-batch
+        (assoc valid-payment-batch
+               :receipt-date "2018-02-02"
+               :created-at "2018-08-08T06:12:40.194492+00"))
       (post! "/api/v2/payment-batches/"
              (assoc valid-payment-batch :receipt-date "2018-02-02"))
       (let [{:keys [status body]}
@@ -80,6 +88,14 @@
                  (dissoc (first batches) :id :batch-number :created-at))))
 
   (it "find payment batch (not found any)"
+      (tools/create-batch
+        (assoc valid-payment-batch
+               :receipt-date "2018-02-02"
+               :created-at "2018-08-08T06:12:40.194492+00"))
+      (tools/create-batch
+        (assoc valid-payment-batch
+               :receipt-date "2018-02-02"
+               :created-at "2018-08-09T06:12:40.194492+00"))
       (let [{:keys [status body]}
             (get! "/api/v2/payment-batches/?date=2018-04-17&grant-id=1")]
         (should= 200 status)
@@ -89,6 +105,9 @@
   "Payment batches documents"
 
   (tags :server :batchdocuments)
+
+  (after
+    (tools/delete-payment-batches))
 
   (around-all
     [_]
@@ -163,6 +182,9 @@
   "Payment batches emails"
 
   (tags :server :batchemails)
+
+  (after
+    (tools/delete-payment-batches))
 
   (around-all
     [_]
