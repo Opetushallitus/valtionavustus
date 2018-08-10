@@ -35,6 +35,32 @@
    :selected-grant (r/atom nil)
    :batch-values (r/atom {})})
 
+(defn- conn-with-err-dialog! [dialog-msg error-msg f & args]
+  (let [c (chan)]
+    (go
+      (let [dialog-chan (dialogs/show-loading-dialog! dialog-msg 3)]
+        (put! dialog-chan 1)
+        (let [result (<! (apply f args))]
+          (put! dialog-chan 2)
+          (if (:success result)
+            (>! c (or (:body result) ""))
+            (dialogs/show-error-message!
+              error-msg
+              (select-keys result [:status :error-text]))))
+        (put! dialog-chan 3)
+        (close! dialog-chan)
+        (close! c)))
+    c))
+
+(defn- update-grant-payments! [id payments]
+  (go
+    (let [c (conn-with-err-dialog!
+              "Ladataan maksatuksia"
+              "Maksatuksien latauksessa ongelma"
+              connection/get-grant-payments
+              id)]
+      (reset! payments (<! c)))))
+
 (defn- get-param-grant []
   (let [grant-id (js/parseInt (router/get-current-param :grant-id))]
     (when-not (js/isNaN grant-id) grant-id)))
@@ -51,22 +77,15 @@
         :style theme/button
         :on-click
         (fn []
-          (go (let [grant-id (:id selected-grant)
-                    response (<! (connection/delete-grant-payments
-                                   grant-id))]
-                (if (:success response)
-                  (let [download-response
-                        (<! (connection/get-grant-payments grant-id))]
-                    (if (:success download-response)
-                      (reset! payments (:body download-response))
-                      (dialogs/show-error-message!
-                        "Virhe tietojen latauksessa"
-                        (select-keys download-response
-                                     [:status :error-text]))))
-                  (dialogs/show-error-message!
-                    "Virhe maksatusten poistossa"
-                    (select-keys response
-                                 [:status :error-text]))))))}]
+          (go
+            (let [c (conn-with-err-dialog!
+                     "Poistetaan maksatuksia"
+                     "Virhe maksatusten poistossa"
+                     connection/delete-grant-payments
+                     (:id selected-grant))
+                 result (<! c)]
+             (when (some? result)
+               (update-grant-payments! (:id selected-grant) payments)))))}]
       [:span])
     [va-ui/raised-button
      {:primary true
@@ -249,32 +268,6 @@
                        lähetyksessä tapahtui virhe")))
       (put! dialog-chan 3)
       (close! dialog-chan))))
-
-(defn- conn-with-err-dialog! [dialog-msg error-msg f & args]
-  (let [c (chan)]
-    (go
-      (let [dialog-chan (dialogs/show-loading-dialog! dialog-msg 3)]
-        (put! dialog-chan 1)
-        (let [result (<! (apply f args))]
-          (put! dialog-chan 2)
-          (if (:success result)
-            (>! c (:body result))
-            (dialogs/show-error-message!
-              error-msg
-              (select-keys result [:status :error-text]))))
-        (put! dialog-chan 3)
-        (close! dialog-chan)
-        (close! c)))
-    c))
-
-(defn- update-grant-payments! [id payments]
-  (go
-    (let [c (conn-with-err-dialog!
-              "Ladataan maksatuksia"
-              "Maksatuksien latauksessa ongelma"
-              connection/get-grant-payments
-              id)]
-      (reset! payments (<! c)))))
 
 (defn- send-payments! [values selected-grant payments]
   (go
