@@ -359,8 +359,13 @@
                               (get @batch-values :documents []))]
                         (fn [data]
                           [:div
+                           {:title
+                            (when (:read-only @batch-values)
+                              "Olemassaolevan maksuerän tietoja ei voi muokata")
+                            }
                            [render-batch-values
-                            {:disabled? (not unsent-payments?)
+                            {:disabled? (or (:read-only @batch-values)
+                                            (not unsent-payments?))
                              :values @batch-values
                              :on-change #(swap! batch-values assoc %1 %2)
                              :phases available-phases}]
