@@ -4,6 +4,6 @@ SELECT
 FROM
   virkailija.payment_batches
 WHERE
-  receipt_date = :batch_date::date AND grant_id = :grant_id
+  created_at >= TIMESTAMP 'today' AND grant_id = :grant_id
 ORDER
   BY id DESC
