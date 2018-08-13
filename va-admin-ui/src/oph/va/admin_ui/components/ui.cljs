@@ -21,7 +21,8 @@
     {:display-name "VA popup"
      :component-did-mount
      (fn [e]
-       (.focus (r/dom-node e)))
+       (when (get props :focus-on-mount true)
+         (.focus (r/dom-node e))))
      :reagent-render
      (fn [props content]
        [:div
@@ -53,7 +54,9 @@
         :on-blur (fn [] ((:on-request-close props)))}
        (when (:open props)
          [popup
-          (select-keys rect [:x :y])
+          (merge
+            (select-keys props [:focus-on-mount])
+            (select-keys rect [:x :y]))
           content])])))
 
 (defn tooltip [props text]
@@ -257,6 +260,7 @@
                              (swap! popover-state assoc :open true))))))))]
          [popover
           (assoc @popover-state
+                 :focus-on-mount false
                  :on-request-close
                  (fn []
                    (swap! popover-state assoc :open false)))
