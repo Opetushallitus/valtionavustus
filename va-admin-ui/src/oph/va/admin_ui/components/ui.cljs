@@ -16,37 +16,45 @@
        :y (.-y rect)})
     {:x 0 :y 0}))
 
+(defn- popup [props content]
+  (r/create-class
+    {:display-name "VA popup"
+     :component-did-mount
+     (fn [e]
+       (.focus (r/dom-node e)))
+     :reagent-render
+     (fn [props content]
+       [:div
+        {:tab-index 1
+         :style
+         {:box-shadow
+          "rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px"
+          :background-color "white"
+          :color "black"
+          :border-radius 2
+          :position "absolute"
+          :z-index 350
+          :overflow-y "auto"
+          :x (:x props)
+          :y (:y props)
+          :opacity 1
+          :box-sizing "border-box"
+          :transform "scale(1, 1)"
+          :transform-origin "left top 0px"
+          :max-height 525}}
+        (apply vector :div content)])}))
+
 (defn popover [props & content]
   (let [rect (get-position (:anchor-el props))]
-    [:div {:style {:display (when (not (:open props)) "none")}}
-     [:div
-      {:style
-       {:position "fixed"
-        :top 0
-        :bottom 0
-        :left 0
-        :right 0
-        :z-index 300}
-       :on-click (fn []
-                   ((:on-request-close props)))}]
-     [:div
-      {:style
-       {:box-shadow
-        "rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px"
-        :background-color "white"
-        :color "black"
-        :border-radius 2
-        :position "absolute"
-        :z-index 350
-        :overflow-y "auto"
-        :x (:x rect)
-        :y (:y rect)
-        :opacity 1
-        :box-sizing "border-box"
-        :transform "scale(1, 1)"
-        :transform-origin "left top 0px"
-        :max-height 525}}
-      (apply vector :div content)]]))
+    (fn [props & content]
+      [:div
+       {:style {:display (when (not (:open props)) "none")}
+        :tab-index 0
+        :on-blur (fn [] ((:on-request-close props)))}
+       (when (:open props)
+         [popup
+          (select-keys rect [:x :y])
+          content])])))
 
 (defn tooltip [props text]
   (let [state (r/atom {:open false :anchor-el nil})]
