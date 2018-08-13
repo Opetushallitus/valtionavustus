@@ -16,37 +16,45 @@
        :y (.-y rect)})
     {:x 0 :y 0}))
 
+(defn- popup [props content]
+  (r/create-class
+    {:display-name "VA popup"
+     :component-did-mount
+     (fn [e]
+       (.focus (r/dom-node e)))
+     :reagent-render
+     (fn [props content]
+       [:div
+        {:tab-index 1
+         :style
+         {:box-shadow
+          "rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px"
+          :background-color "white"
+          :color "black"
+          :border-radius 2
+          :position "absolute"
+          :z-index 350
+          :overflow-y "auto"
+          :x (:x props)
+          :y (:y props)
+          :opacity 1
+          :box-sizing "border-box"
+          :transform "scale(1, 1)"
+          :transform-origin "left top 0px"
+          :max-height 525}}
+        (apply vector :div content)])}))
+
 (defn popover [props & content]
   (let [rect (get-position (:anchor-el props))]
-    [:div {:style {:display (when (not (:open props)) "none")}}
-     [:div
-      {:style
-       {:position "fixed"
-        :top 0
-        :bottom 0
-        :left 0
-        :right 0
-        :z-index 300}
-       :on-click (fn []
-                   ((:on-request-close props)))}]
-     [:div
-      {:style
-       {:box-shadow
-        "rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px"
-        :background-color "white"
-        :color "black"
-        :border-radius 2
-        :position "absolute"
-        :z-index 350
-        :overflow-y "auto"
-        :x (:x rect)
-        :y (:y rect)
-        :opacity 1
-        :box-sizing "border-box"
-        :transform "scale(1, 1)"
-        :transform-origin "left top 0px"
-        :max-height 525}}
-      (apply vector :div content)]]))
+    (fn [props & content]
+      [:div
+       {:style {:display (when (not (:open props)) "none")}
+        :tab-index 0
+        :on-blur (fn [] ((:on-request-close props)))}
+       (when (:open props)
+         [popup
+          (select-keys rect [:x :y])
+          content])])))
 
 (defn tooltip [props text]
   (let [state (r/atom {:open false :anchor-el nil})]
@@ -80,23 +88,23 @@
 (defn text-field [p]
   (let [props
         (assoc p :label-text (or (:floating-label-text p) (:label-text p)))]
-   [:div {:class "oph-field" :style (merge theme/text-field (:style p))}
-    [:span {:class "oph-label" :aria-describedby "field-text"}
-     (:label-text props)
-     (when-some [text (:tooltip props)] [tooltip {} text])]
-    [:input
-     (-> props
-         (select-keys [:value :type :type :size :min :max
-                             :max-length :on-key-press])
-         (update :class str " oph-input" (when (= (:size p) :small) " small"))
-         (assoc
-           :style (if (:error props) {:border-color "#f44336"} {})
-           :on-change (add-validator (:on-change props) (:validator props))
-           :on-key-press #(when (and (some? (:on-enter-pressed props))
-                                     (= (.-key %) "Enter"))
-                            ((:on-enter-pressed props)))))]
-    (when-some [help-text (:help-text props)]
-      [:div {:class "oph-field-text"} help-text])]))
+    [:div {:class "oph-field" :style (merge theme/text-field (:style p))}
+     [:span {:class "oph-label" :aria-describedby "field-text"}
+      (:label-text props)
+      (when-some [text (:tooltip props)] [tooltip {} text])]
+     [:input
+      (-> props
+          (select-keys [:value :type :type :size :min :max
+                        :max-length :on-key-press])
+          (update :class str " oph-input" (when (= (:size p) :small) " small"))
+          (assoc
+            :style (if (:error props) {:border-color "#f44336"} {})
+            :on-change (add-validator (:on-change props) (:validator props))
+            :on-key-press #(when (and (some? (:on-enter-pressed props))
+                                      (= (.-key %) "Enter"))
+                             ((:on-enter-pressed props)))))]
+     (when-some [help-text (:help-text props)]
+       [:div {:class "oph-field-text"} help-text])]))
 
 (defn select-field [props]
   [:div {:class "oph-field" :style (merge theme/select-field (:style props))}
@@ -136,19 +144,19 @@
 
 (defn date-picker [props]
   (let [label (or (:floating-label-text props) (:label props))]
-   [:div {:class "oph-field" :style (merge theme/date-picker (:style props))}
-    [:span {:class "oph-label" :aria-describedby "field-text"}
-     label
-     (when-some [text (:tooltip props)] [tooltip {} text])]
-    [material-date-picker {:value (:value props)
-                           :class "oph-input"
-                           :id (or (:id props) label)
-                           :name label
-                           :underline-show false
-                           :style {:width "auto" :height "auto"}
-                           :text-field-style theme/date-picker-field
-                           :input-style {}
-                           :on-change (:on-change props)}]]))
+    [:div {:class "oph-field" :style (merge theme/date-picker (:style props))}
+     [:span {:class "oph-label" :aria-describedby "field-text"}
+      label
+      (when-some [text (:tooltip props)] [tooltip {} text])]
+     [material-date-picker {:value (:value props)
+                            :class "oph-input"
+                            :id (or (:id props) label)
+                            :name label
+                            :underline-show false
+                            :style {:width "auto" :height "auto"}
+                            :text-field-style theme/date-picker-field
+                            :input-style {}
+                            :on-change (:on-change props)}]]))
 
 (defn remove-nils [c] (disj c nil))
 
