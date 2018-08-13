@@ -88,23 +88,23 @@
 (defn text-field [p]
   (let [props
         (assoc p :label-text (or (:floating-label-text p) (:label-text p)))]
-   [:div {:class "oph-field" :style (merge theme/text-field (:style p))}
-    [:span {:class "oph-label" :aria-describedby "field-text"}
-     (:label-text props)
-     (when-some [text (:tooltip props)] [tooltip {} text])]
-    [:input
-     (-> props
-         (select-keys [:value :type :type :size :min :max
-                             :max-length :on-key-press])
-         (update :class str " oph-input" (when (= (:size p) :small) " small"))
-         (assoc
-           :style (if (:error props) {:border-color "#f44336"} {})
-           :on-change (add-validator (:on-change props) (:validator props))
-           :on-key-press #(when (and (some? (:on-enter-pressed props))
-                                     (= (.-key %) "Enter"))
-                            ((:on-enter-pressed props)))))]
-    (when-some [help-text (:help-text props)]
-      [:div {:class "oph-field-text"} help-text])]))
+    [:div {:class "oph-field" :style (merge theme/text-field (:style p))}
+     [:span {:class "oph-label" :aria-describedby "field-text"}
+      (:label-text props)
+      (when-some [text (:tooltip props)] [tooltip {} text])]
+     [:input
+      (-> props
+          (select-keys [:value :type :type :size :min :max
+                        :max-length :on-key-press])
+          (update :class str " oph-input" (when (= (:size p) :small) " small"))
+          (assoc
+            :style (if (:error props) {:border-color "#f44336"} {})
+            :on-change (add-validator (:on-change props) (:validator props))
+            :on-key-press #(when (and (some? (:on-enter-pressed props))
+                                      (= (.-key %) "Enter"))
+                             ((:on-enter-pressed props)))))]
+     (when-some [help-text (:help-text props)]
+       [:div {:class "oph-field-text"} help-text])]))
 
 (defn select-field [props]
   [:div {:class "oph-field" :style (merge theme/select-field (:style props))}
@@ -144,19 +144,19 @@
 
 (defn date-picker [props]
   (let [label (or (:floating-label-text props) (:label props))]
-   [:div {:class "oph-field" :style (merge theme/date-picker (:style props))}
-    [:span {:class "oph-label" :aria-describedby "field-text"}
-     label
-     (when-some [text (:tooltip props)] [tooltip {} text])]
-    [material-date-picker {:value (:value props)
-                           :class "oph-input"
-                           :id (or (:id props) label)
-                           :name label
-                           :underline-show false
-                           :style {:width "auto" :height "auto"}
-                           :text-field-style theme/date-picker-field
-                           :input-style {}
-                           :on-change (:on-change props)}]]))
+    [:div {:class "oph-field" :style (merge theme/date-picker (:style props))}
+     [:span {:class "oph-label" :aria-describedby "field-text"}
+      label
+      (when-some [text (:tooltip props)] [tooltip {} text])]
+     [material-date-picker {:value (:value props)
+                            :class "oph-input"
+                            :id (or (:id props) label)
+                            :name label
+                            :underline-show false
+                            :style {:width "auto" :height "auto"}
+                            :text-field-style theme/date-picker-field
+                            :input-style {}
+                            :on-change (:on-change props)}]]))
 
 (defn remove-nils [c] (disj c nil))
 
