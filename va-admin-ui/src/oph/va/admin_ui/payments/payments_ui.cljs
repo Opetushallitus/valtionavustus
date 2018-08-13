@@ -14,6 +14,9 @@
    [table/table-row-column
     {:style (assoc theme/narrow-column :text-align "right")}
     (:register-number payment)]
+   [table/table-row-column
+    {:style theme/narrow-column}
+    (:state-str payment)]
    [table/table-row-column {:title (:organization-name payment)}
     (:organization-name payment)]
    [table/table-row-column
@@ -96,6 +99,13 @@
             [table/sortable-header-column
              {:title "Pitkäviite"
               :column-key :register-number
+              :sort-params @sort-params
+              :style theme/narrow-column
+              :on-sort #(sort-column! sort-params %)
+              :on-filter #(update-filters! filters %1 %2)}]
+            [table/sortable-header-column
+             {:title "Tila"
+              :column-key :state-str
               :sort-params @sort-params
               :style theme/narrow-column
               :on-sort #(sort-column! sort-params %)
