@@ -84,3 +84,6 @@
   (let [arvio-id (:id (virkailija-db/get-or-create-arvio hakemus-id))]
     (virkailija-db/add-score avustushaku-id arvio-id identity selection-criteria-index score)
     (get-arvio-scores avustushaku-id arvio-id)))
+
+(defn delete-score [evaluation-id selection-criteria-index identity]
+  (virkailija-db/delete-score evaluation-id selection-criteria-index identity))

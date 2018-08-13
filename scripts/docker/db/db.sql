@@ -1,1 +1,0 @@
-CREATE DATABASE "va-dev" ENCODING 'UTF-8';

@@ -9,6 +9,9 @@
  :ui {:show-environment? false}
  :virkailija-db {:database-name "va-prod"}
  :form-db {:database-name "va-prod"}
+ :rondo-scheduler {:enabled? true
+                    :scheduling "0 00 04 ? * *"
+                    :strict-host-key-checking :yes}
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25
@@ -16,4 +19,7 @@
          :bounce-address "valtionavustukset@oph.fi"
          :retry-initial-wait 2000
          :retry-multiplier 4
-         :retry-max-time 60000}}
+         :retry-max-time 60000}
+ :integration-healthcheck {:enabled? true
+                           :timeout 5000
+                           :interval-minutes 15}}

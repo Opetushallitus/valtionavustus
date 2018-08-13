@@ -11,7 +11,8 @@
 
 (defn- render-payment [i payment]
   [table/table-row {:key i}
-   [table/table-row-column {:style {:text-align "right"}}
+   [table/table-row-column
+    {:style (assoc theme/narrow-column :text-align "right")}
     (:register-number payment)]
    [table/table-row-column {:title (:organization-name payment)}
     (:organization-name payment)]
@@ -23,18 +24,24 @@
                     (:grant-id payment)
                     (:application-id payment))}
      (:project-name payment)]]
-   [table/table-row-column {:style {:text-align "right"}}
-    (.toLocaleString (get payment :payment-sum 0)) " €"]
-   [table/table-row-column (:bank-iban payment)    ]
    [table/table-row-column
+    {:style (assoc theme/narrow-column :text-align "right")}
+    (.toLocaleString (get payment :payment-sum 0)) " €"]
+   [table/table-row-column
+    {:style theme/semi-narrow-column}
+    (:bank-iban payment)]
+   [table/table-row-column
+    {:style theme/narrow-column}
     (if (seq (:lkp-account payment))
       (:lkp-account payment)
       [:span {:style theme/table-row-missing-value} "LKP-tili puuttuu"])]
    [table/table-row-column
+    {:style theme/narrow-column}
     (if (seq (:takp-account payment))
       (:takp-account payment)
       [:span {:style theme/table-row-missing-value} "TAKP-tili puuttuu"])]
-   [table/table-row-column {:style {:text-align "right"}}
+   [table/table-row-column
+    {:style (assoc theme/narrow-column :text-align "right")}
     (.toLocaleString (get payment :payment-sum 0)) " €"]])
 
 (defn- render-payment-group [i [phase payments] filters]
@@ -49,17 +56,25 @@
      [table/table-footer
       [table/table-row
        [table/table-row-column
+        {:style theme/narrow-column}
         (str (count filtered-payments) "/" (count payments) " maksatusta")]
        [table/table-row-column]
-       [table/table-row-column "Yhteensä"]
-       [table/table-row-column {:style {:text-align "right"}}
+       [table/table-row-column
+        {:style {:text-align "right"}}
+        "Yhteensä"]
+       [table/table-row-column
+        {:style (assoc theme/narrow-column :text-align "right")}
         (.toLocaleString
           (reduce #(+ %1 (:payment-sum %2)) 0 filtered-payments))
         " €"]
-       [table/table-row-column]
-       [table/table-row-column]
-       [table/table-row-column]
-       [table/table-row-column {:style {:text-align "right"}}
+       [table/table-row-column
+        {:style theme/semi-narrow-column}]
+       [table/table-row-column
+        {:style theme/narrow-column}]
+       [table/table-row-column
+        {:style theme/narrow-column}]
+       [table/table-row-column
+        {:style (assoc theme/narrow-column :text-align "right")}
         (.toLocaleString
           (reduce #(+ %1 (get %2 :payment-sum 0)) 0 filtered-payments))
         " €"]]]]))
@@ -82,6 +97,7 @@
              {:title "Pitkäviite"
               :column-key :register-number
               :sort-params @sort-params
+              :style theme/narrow-column
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
             [table/sortable-header-column
@@ -100,35 +116,38 @@
              {:title "Maksuun"
               :column-key :payment-sum
               :sort-params @sort-params
+              :style theme/narrow-column
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
             [table/sortable-header-column
              {:title "Pankkitilin IBAN"
               :column-key :bank-iban
               :sort-params @sort-params
+              :style theme/semi-narrow-column
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
             [table/sortable-header-column
              {:title "LKP-tili"
               :column-key :lkp-account
               :sort-params @sort-params
+              :style theme/narrow-column
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
             [table/sortable-header-column
              {:title "TaKp-tili"
               :column-key :takp-account
               :sort-params @sort-params
+              :style theme/narrow-column
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
             [table/sortable-header-column
              {:title "Tiliöinti"
               :column-key :budget-granted
               :sort-params @sort-params
+              :style theme/narrow-column
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]]]
-
-          [:div {:style {:padding-right
-                      (when (< (count sorted-filtered-payments)) 14)}}
+          [:div
            (if (empty? sorted-filtered-payments)
              [:div {:style theme/table-empty-text} "Ei maksatuksia"]
              (doall (map-indexed

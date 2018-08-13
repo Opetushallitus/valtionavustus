@@ -8,7 +8,11 @@ export default class SelvitysLink extends Component {
 
     return hakemus && hakemus["user-key"] ?
       <span className="decision">
-        <a href={publicUrl} target="_blank">{label}</a>
+        <a href={publicUrl}
+           target="_blank"
+           rel="noopener noreferrer">
+          {label}
+        </a>
       </span>
       : <span/>
   }

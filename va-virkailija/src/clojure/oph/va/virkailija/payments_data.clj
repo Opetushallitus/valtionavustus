@@ -165,15 +165,17 @@
 
 (defn get-first-payment-sum [application grant]
   (int
-    (if (and
-          (get-in grant [:content :multiplemaksuera] false)
-          (or (= (get-in grant [:content :payment-size-limit] "no-limit")
-                 "no-limit")
-              (>= (:budget-granted application)
-                  (get-in grant [:content :payment-fixed-limit]))))
-      (* (/ (get-in grant [:content :payment-min-first-batch] 60) 100.0)
-         (:budget-granted application))
-      (:budget-granted application))))
+    (let [budget-granted (or (:budget-granted application)
+                             (get-in application [:arvio :budget-granted]))]
+      (if (and
+           (get-in grant [:content :multiplemaksuera] false)
+           (or (= (get-in grant [:content :payment-size-limit] "no-limit")
+                  "no-limit")
+               (>= budget-granted
+                   (get-in grant [:content :payment-fixed-limit] 0))))
+       (* (/ (get-in grant [:content :payment-min-first-batch] 60) 100.0)
+          budget-granted)
+       budget-granted))))
 
 (defn create-payment-values [application sum phase]
   {:application-id (:id application)

@@ -218,7 +218,13 @@ class LiitteetSelection extends React.Component {
   renderLiiteVersionLink(attachmentId, versionId, lang) {
     const hakijaUrl = this.props.environment["hakija-server"].url[lang]
     const linkUrl = `${hakijaUrl}liitteet/${attachmentId}${versionId}_${lang}.pdf`
-    return <a key={lang} className="decision-liite-selection__link" href={linkUrl} target="_blank">{lang}</a>
+    return <a key={lang}
+              className="decision-liite-selection__link"
+              href={linkUrl}
+              target="_blank"
+              rel="noopener noreferrer">
+             {lang}
+           </a>
   }
 }
 
@@ -390,7 +396,15 @@ class DecisionDateAndSend extends React.Component {
             <tbody>
               {this.state.paatokset.map((paatos,index)=>
                 <tr key={index}>
-                  <td><a target="_blank" href={PaatosUrl.publicLink(this.props.avustushaku.id,paatos.user_key)}>{paatos.id} {paatos["organization-name"]} - {paatos["project-name"]}</a></td>
+                  <td>
+                    <a target="_blank"
+                       rel="noopener noreferrer"
+                       href={PaatosUrl.publicLink(
+                         this.props.avustushaku.id,paatos.user_key)}>
+                      {paatos.id}
+                      {paatos["organization-name"]} - {paatos["project-name"]}
+                    </a>
+                  </td>
                   <td>{paatos["sent-emails"].addresses.join(" ")}</td>
                   <td style={{position:'relative'}}>
                     {paatos.view_count === 0 && <span>{paatos.view_count}</span>}

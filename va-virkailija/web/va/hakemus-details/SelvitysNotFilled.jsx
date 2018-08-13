@@ -3,7 +3,8 @@ import React, { Component } from 'react'
 export default class SelvitysNotFilled extends Component {
   render() {
     const {avustushaku, selvitysType} = this.props
-    const title = selvitysType == "valiselvitys" ? "Väliselvitys" : "Loppuselvitys"
+    const title =
+          selvitysType === "valiselvitys" ? "Väliselvitys" : "Loppuselvitys"
     const date = avustushaku[selvitysType + "date"]
     return <div>
       <p>{title} ei ole vielä saapunut.</p>

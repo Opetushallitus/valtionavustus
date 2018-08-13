@@ -1,5 +1,7 @@
 (ns oph.va.admin-ui.utils
-  (:require [goog.string :as gstring]
+  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require [cljs.core.async :refer [<! put! close! poll! chan timeout]]
+            [goog.string :as gstring]
             [goog.string.format]))
 
 (defn format [fmt & args] "Format string" (apply gstring/format fmt args))
@@ -20,3 +22,15 @@
 
 (defn get-answer-value [answers key]
   (get (some #(when (= (:key %) key) %) answers) :value))
+
+(defn delayed [delay-ms f & args]
+  (let [c (chan)]
+    (go
+      (<! (timeout delay-ms))
+      (when (nil? (poll! c))
+        (apply f args)
+        (close! c)))
+    c))
+
+(defn cancel! [d]
+  (put! d :cancel))

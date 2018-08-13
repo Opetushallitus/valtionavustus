@@ -14,29 +14,37 @@
 (defn get-yearly-application-info []
   (mapv convert-to-dash-keys
         (year-to-int-all-v
-         (exec :form-db hakija-queries/get-yearly-application-info {}))))
+          (exec :form-db hakija-queries/get-yearly-application-info {}))))
+
+(defn get-yearly-application-count []
+  (mapv convert-to-dash-keys
+        (year-to-int-all-v
+          (exec :form-db hakija-queries/get-yearly-application-count {}))))
 
 (defn get-accepted-count-by-year []
   (year-to-int-all-v
-   (exec :virkailija-db queries/get-yearly-evaluation-count-by-status
-         {:status "accepted"})))
+    (exec :virkailija-db queries/get-yearly-evaluation-count-by-status
+          {:status "accepted"})))
 
 (defn get-rejected-count-by-year []
   (year-to-int-all-v
-   (exec :virkailija-db queries/get-yearly-evaluation-count-by-status
-         {:status "rejected"})))
+    (exec :virkailija-db queries/get-yearly-evaluation-count-by-status
+          {:status "rejected"})))
 
 (defn get-yearly-granted []
   (mapv convert-to-dash-keys
         (year-to-int-all-v
-         (exec :virkailija-db queries/get-yearly-granted {}))))
+          (exec :virkailija-db queries/get-yearly-granted {}))))
 
 (defn get-total-grant-count []
   (first (exec :form-db hakija-queries/get-total-grant-count {})))
 
+(defn get-yearly-resolved-count []
+  (mapv convert-to-dash-keys
+        (year-to-int-all-v
+          (exec :virkailija-db hakija-queries/get-yearly-resolved-grants {}))))
+
 (defn get-yearly-report []
   {:applications (get-yearly-application-info)
-   :evaluations-accepted (get-accepted-count-by-year)
-   :evaluations-rejected (get-rejected-count-by-year)
    :granted (get-yearly-granted)
    :total-grant-count (:count (get-total-grant-count))})

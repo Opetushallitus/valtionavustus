@@ -52,7 +52,12 @@ export default class EditStatus extends Component {
     }
 
     if (hakemus.status === 'officer_edit' && status === 'officer_edit') {
-      return (<a href={editUrl} target="_blank">Siirry muokkaamaan</a>)
+      return (
+        <a href={editUrl}
+           target="_blank"
+           rel="noopener noreferrer">
+          Siirry muokkaamaan
+        </a>)
     }
 
     return (

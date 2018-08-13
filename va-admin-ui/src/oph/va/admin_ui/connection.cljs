@@ -90,6 +90,11 @@
   (http/post (format "/%s/payment-batches/%d/payments/" api-path id)
              {:with-credentials? true}))
 
+(defn set-batch-payments-state [id state]
+  (http/put (format "/%s/payment-batches/%d/payments/" api-path id)
+             {:with-credentials? true
+              :json-params {:state state}}))
+
 (defn get-va-code-values-by-type [value-type]
   (get-cached (format "/%s/va-code-values?value-type=%s"
                     api-path value-type)))
@@ -110,6 +115,18 @@
 
 (defn get-reports []
   (get-cached (str "/" api-path "/reports/")))
+
+(defn get-grants-report []
+  (get-cached (str "/" api-path "/reports/grants/")))
+
+(defn get-applications-report [filter]
+  (get-cached
+    (str "/" api-path "/reports/applications/?applications-filter=" filter)))
+
+(defn search-users [term]
+  (http/post "/api/va-user/search"
+             {:with-credentials? true
+              :json-params {:searchInput term}}))
 
 (defn set-config! [c] (reset! config c))
 

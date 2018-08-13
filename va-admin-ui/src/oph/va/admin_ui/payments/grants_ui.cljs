@@ -63,8 +63,11 @@
                 (:descend? @sort-params))
               (filter-rows grants @filters))]
         [table/table
-         {:height "250px"}
+         {:height "250px"
+          :style theme/grants-table
+          :class "grants-table"}
          [table/table-header
+          {:style theme/grants-table-header}
           [table/table-row
            [table/sortable-header-column
             {:title "Diaarinumero"

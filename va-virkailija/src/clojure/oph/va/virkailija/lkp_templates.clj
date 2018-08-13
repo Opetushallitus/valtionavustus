@@ -1,5 +1,5 @@
 (ns oph.va.virkailija.lkp-templates
-  (require [clojure.java.io :as io]))
+  (:require [clojure.java.io :as io]))
 
 (def built-in-templates ["lkp-templates/ownership_type.edn"
                          "lkp-templates/radio_button_0.edn"])

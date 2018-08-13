@@ -57,6 +57,10 @@ table.translation {
       border-bottom: 2px solid @light-blue;
       cursor: default;
     }
+    &.disabled {
+      pointer-events: none;
+      color: @light-gray
+    }
   }
 }
 
@@ -154,6 +158,26 @@ table.translation {
         background-position: -1px -3px;
       }
     }
+  }
+
+  .education-levels-table td {
+    width: 250px;
+    padding: 5px 10px 5px 10px;
+  }
+
+  .education-levels-table td div {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .education-levels-table tr {
+    border-bottom: solid 1px @light-gray
+  }
+
+  .education-level-field {
+    width: 65%;
+    margin-right: 5px;
+    padding: 4px
   }
 
   #rahoitusalueet {
@@ -311,6 +335,10 @@ table.translation {
   .haku-edit-disabled-form {
     opacity: 0.2;
     pointer-events: none;
+  }
+
+  .disabled-input {
+    opacity: 0.2;
   }
 
   .multibatch-fields {

@@ -81,7 +81,8 @@
    :first_name s/Str
    :last_name s/Str
    :email (s/maybe s/Str)
-   :comment s/Str})
+   :comment s/Str
+   (s/optional-key :person_oid) (s/maybe s/Str)})
 
 (s/defschema Comments
   "Comment list"
@@ -216,6 +217,10 @@
    :phase (s/maybe s/Int)
    :payment-sum s/Int})
 
+(s/defschema SimplePayment
+  "Simple payment"
+  {:state s/Int})
+
 (s/defschema GrantPayment
   "Grant Payment (for creating grant payments)"
   {:phase s/Int})
@@ -317,7 +322,14 @@
 
 (s/defschema HealthCheckResult
   "Integration healthcheck result"
-  {:timestamp s/Str
-   :success s/Bool
-   :error s/Str
-   :service s/Str})
+  {:integrations [{:timestamp s/Str
+                   :success s/Bool
+                   :error s/Str
+                   :service s/Str
+                   :valid s/Bool}]
+   :current-timestamp s/Str})
+
+(s/defschema YearlyReport
+  "Grants report"
+  [{:year s/Int
+    :count s/Int}])

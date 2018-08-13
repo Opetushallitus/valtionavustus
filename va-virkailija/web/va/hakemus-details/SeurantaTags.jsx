@@ -51,9 +51,18 @@ export default class SeurantaTags extends Component {
           <button key={index} className={classNames(tag)} onClick={_.partial(onToggleTag,tag)}>{tag}</button>
         )}
         <div>
-          <form onSubmit={addTag} >
-            <input type="text" onChange={newTagChanged} value={this.state.newTag} placeholder="Uusi tagi" style={{padding: 4, fontSize: 12}}/>
-            <button type="submit" className="btn btn-sm" style={{marginLeft:5}} disabled={this.state.newTag.length==0}>Lisää uusi tagi</button>
+          <form onSubmit={addTag}>
+            <input type="text"
+                   onChange={newTagChanged}
+                   value={this.state.newTag}
+                   placeholder="Uusi tagi"
+                   style={{padding: 4, fontSize: 12}}/>
+            <button type="submit"
+                    className="btn btn-sm"
+                    style={{marginLeft:5}}
+                    disabled={this.state.newTag.length === 0}>
+              Lisää uusi tagi
+            </button>
           </form>
         </div>
 
