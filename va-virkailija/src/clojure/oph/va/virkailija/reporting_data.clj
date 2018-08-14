@@ -44,6 +44,14 @@
         (year-to-int-all-v
           (exec :virkailija-db hakija-queries/get-yearly-resolved-grants {}))))
 
+(defn get-yearly-education-levels []
+  (->> (exec :virkailija-db queries/get-yearly-education-level {})
+      year-to-int-all-v
+      (map convert-to-dash-keys)
+      (group-by :year)))
+
+(defn get-yearly-total-grant-size [])
+
 (defn get-yearly-report []
   {:applications (get-yearly-application-info)
    :granted (get-yearly-granted)
