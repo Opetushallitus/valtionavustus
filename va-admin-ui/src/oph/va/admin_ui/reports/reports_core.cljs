@@ -63,12 +63,12 @@
                       :backgroundColor "#36a2eb"
                       :borderColor "#36a2eb"}
                      {:data (mapv :count accepted)
-                      :label "Hyväksytyt"
+                      :label "Myönteiset päätökset"
                       :fill false
                       :backgroundColor "#90ee90"
                       :borderColor "#90ee90"}
                      {:data (mapv :count rejected)
-                      :label "Hylätyt"
+                      :label "Kielteiset päätökset"
                       :fill false
                       :backgroundColor "#ff6384"
                       :borderColor "#ff6384"}]}})
