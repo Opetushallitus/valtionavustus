@@ -123,6 +123,9 @@
   (get-cached
     (str "/" api-path "/reports/applications/?applications-filter=" filter)))
 
+(defn get-education-levels []
+  (get-cached (str "/" api-path "/reports/education-levels/")))
+
 (defn search-users [term]
   (http/post "/api/va-user/search"
              {:with-credentials? true

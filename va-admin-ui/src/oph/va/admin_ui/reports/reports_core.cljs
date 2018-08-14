@@ -15,13 +15,21 @@
    :purple "rgb(153, 102, 255)"
    :red "rgb(255, 99, 132)"
    :yellow "rgb(255, 205, 86)"
-   :grey "rgb(201, 203, 207)"})
+   :grey "rgb(201, 203, 207)"
+   :light-blue "rgb(173,216,230)"
+   :light-green "rgb(203,253,203)"
+   :light-orange "rgb(255,216,178)"
+   :light-purple "rgb(224,209,255)"
+   :light-red "rgb(255,223,230)"
+   :dark-purple "rgb(133,7,102)"})
 
 (defonce ^:private data (r/atom {}))
 
 (defonce ^:private grants-data (r/atom {}))
 
 (defonce ^:private applications-data (r/atom {}))
+
+(defonce ^:private education-levels (r/atom {}))
 
 (defn- show-data! [id chart-data]
   (let [context (.getContext (.getElementById js/document id) "2d")]
@@ -93,6 +101,17 @@
                       :borderColor "#70af70"}]}})
 
 
+(defn- gen-education-levels-data [values year]
+  (prn values)
+  {:type "pie"
+   :options {:title {:display true :text (str "Koulutusasteet " year)}
+             :responsive true}
+   :data {:labels (mapv :education-level values)
+          :datasets [{:data (mapv :total-count values)
+                      :label "Koulutusasteiden määrä"
+                      :fill false
+                      :backgroundColor (vals colors)}]}})
+
 (defn- chart [{:keys [id data]}]
   [(with-meta
      (create-canvas id)
@@ -115,7 +134,10 @@
      :data (gen-budget-data (:applications @data) (:granted @data))}]
    [chart
     {:id "total-granted"
-     :data (gen-granted-data (:granted @data))}]])
+     :data (gen-granted-data (:granted @data))}]
+   [chart
+    {:id "total-education-levels"
+     :data (gen-education-levels-data (get @education-levels :2018) 2018)}]])
 
 (defn init! []
   (go
@@ -153,4 +175,10 @@
                  "Ladataan haun tietoja"
                  "Virhe haun tietojen latauksessa"
                  connection/get-grants-report)]
-    (go (reset! grants-data (<! result)))))
+    (go (reset! grants-data (<! result))))
+
+  (let [el-result (ui-tools/conn-with-err-dialog!
+                           "Ladataan koulutusasteraporttia"
+                           "Virhe koulutusasteiden latauksessa"
+                           connection/get-education-levels)]
+    (go (reset! education-levels (<! el-result)))))
