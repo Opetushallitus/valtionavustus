@@ -40,7 +40,6 @@
   (let [grant-sizes (reduce #(assoc %1 (:year %2) (:total-grant-size %2))
                             {}
                             (get-yearly-total-grant-size))]
-    (prn grant-sizes)
     (mapv
       #(assoc (convert-to-dash-keys %)
               :total-grant-size (get grant-sizes (:year %)))
