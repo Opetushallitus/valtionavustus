@@ -5,7 +5,8 @@
    [cljs.core.async :refer [put! <! close!]]
    [oph.va.admin-ui.connection :as connection]
    [oph.va.admin-ui.dialogs :as dialogs]
-   [reagent.core :as r]))
+   [reagent.core :as r]
+   [oph.va.admin-ui.components.ui :as ui]))
 
 (def ^:private colors
   {:blue "rgb(54, 162, 235)"
@@ -101,7 +102,6 @@
 
 
 (defn- gen-education-levels-data [values year]
-  (prn values)
   {:type "pie"
    :options {:title {:display true :text (str "Koulutusasteet " year)}
              :responsive true}
@@ -116,6 +116,22 @@
      (create-canvas id)
      {:component-did-mount
       #(show-data! id data)})])
+
+(defn year-details [props]
+  (let [year (r/atom (str (.getFullYear (js/Date.))))]
+    (fn [props]
+      [:div
+       [:hr]
+       [ui/select-field
+        {:values (map #(hash-map :key % :value % :primary-text %)
+                      (keys (:education-levels props)))
+         :value @year
+         :on-change #(reset! year %)}]
+       [chart
+        {:id "total-education-levels"
+         :data (gen-education-levels-data
+                 (get (:education-levels props) (keyword @year))
+                 (name @year))}]])))
 
 (defn home-page []
   [:div
@@ -134,9 +150,8 @@
    [chart
     {:id "total-granted"
      :data (gen-granted-data (:granted @data))}]
-   [chart
-    {:id "total-education-levels"
-     :data (gen-education-levels-data (get @education-levels :2018) 2018)}]])
+   [year-details
+    {:education-levels @education-levels}]])
 
 (defn init! []
   (go
