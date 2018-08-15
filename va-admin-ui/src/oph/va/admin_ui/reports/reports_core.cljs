@@ -5,7 +5,6 @@
    [cljs.core.async :refer [put! <! close!]]
    [oph.va.admin-ui.connection :as connection]
    [oph.va.admin-ui.dialogs :as dialogs]
-   [oph.va.admin-ui.components.tools :as ui-tools]
    [reagent.core :as r]))
 
 (def ^:private colors
@@ -171,13 +170,13 @@
             "Virhe hakemusten raporttien latauksessa")))
       (put! dialog-chan 2)
       (close! dialog-chan)))
-  (let [result (ui-tools/conn-with-err-dialog!
+  (let [result (dialogs/conn-with-err-dialog!
                  "Ladataan haun tietoja"
                  "Virhe haun tietojen latauksessa"
                  connection/get-grants-report)]
     (go (reset! grants-data (<! result))))
 
-  (let [el-result (ui-tools/conn-with-err-dialog!
+  (let [el-result (dialogs/conn-with-err-dialog!
                            "Ladataan koulutusasteraporttia"
                            "Virhe koulutusasteiden latauksessa"
                            connection/get-education-levels)]
