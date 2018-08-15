@@ -80,3 +80,5 @@
   "sql/hakija/reporting/get-total-grant-count.sql")
 (defquery get-yearly-resolved-grants
   "sql/hakija/reporting/get-yearly-resolved-count.sql")
+(defquery get-yearly-total-grant-size
+  "sql/hakija/reporting/get-yearly-total-grant-size.sql")
