@@ -36,26 +36,9 @@
    :selected-grant (r/atom nil)
    :batch-values (r/atom {})})
 
-(defn- conn-with-err-dialog! [dialog-msg error-msg f & args]
-  (let [c (chan)]
-    (go
-      (let [dialog-chan (dialogs/show-loading-dialog! dialog-msg 3)]
-        (put! dialog-chan 1)
-        (let [result (<! (apply f args))]
-          (put! dialog-chan 2)
-          (if (:success result)
-            (>! c (or (:body result) ""))
-            (dialogs/show-error-message!
-              error-msg
-              (select-keys result [:status :error-text]))))
-        (put! dialog-chan 3)
-        (close! dialog-chan)
-        (close! c)))
-    c))
-
 (defn- update-grant-payments! [id payments]
   (go
-    (let [c (conn-with-err-dialog!
+    (let [c (dialogs/conn-with-err-dialog!
               "Ladataan maksatuksia"
               "Maksatuksien latauksessa ongelma"
               connection/get-grant-payments
@@ -79,7 +62,7 @@
         :on-click
         (fn []
           (go
-            (let [c (conn-with-err-dialog!
+            (let [c (dialogs/conn-with-err-dialog!
                       "Poistetaan maksatuksia"
                       "Virhe maksatusten poistossa"
                       connection/delete-grant-payments
@@ -95,7 +78,7 @@
       :on-click
       (fn []
         (go
-          (let [c (conn-with-err-dialog!
+          (let [c (dialogs/conn-with-err-dialog!
                     "Luodaan maksatuksia"
                     "Virhe maksatusten luomisessa"
                     connection/create-grant-payments
@@ -265,7 +248,7 @@
 
 (defn- send-payments! [values selected-grant payments]
   (go
-    (let [c (conn-with-err-dialog!
+    (let [c (dialogs/conn-with-err-dialog!
               "Lähetetään maksatuksia"
               "Maksatusten lähetyksessä ongelma"
               connection/create-batch-payments (:batch-id values))]
@@ -284,7 +267,7 @@
 
 (defn- set-batch-payments-paid! [id grant payments]
   (go
-    (let [c (conn-with-err-dialog!
+    (let [c (dialogs/conn-with-err-dialog!
               "Päivitetään maksatuksia"
               "Maksatusten päivityksessä ongelma"
               connection/set-batch-payments-state id 2)]
