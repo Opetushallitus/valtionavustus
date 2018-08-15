@@ -58,7 +58,11 @@
                      {:type "bar"
                       :data (mapv :costs-granted granted)
                       :label "Hyväksytyt kustannukset yhteensä"
-                      :backgroundColor "#f9ff61"}]}})
+                      :backgroundColor "#f9ff61"}
+                     {:type "bar"
+                      :data (mapv :total-grant-size granted)
+                      :label "Määräraha yhteensä"
+                      :backgroundColor "#ff9f40"}]}})
 
 (defn- gen-evaluations-data [applications accepted rejected]
   {:type "bar"
