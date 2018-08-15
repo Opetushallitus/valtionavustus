@@ -32,7 +32,7 @@
           {:status "rejected"})))
 
 (defn get-yearly-total-grant-size []
-  (->> (exec :virkailija-db hakija-queries/get-yearly-total-grant-size {})
+  (->> (exec :form-db hakija-queries/get-yearly-total-grant-size {})
        year-to-int-all-v
        (map convert-to-dash-keys)))
 
@@ -53,7 +53,7 @@
 (defn get-yearly-resolved-count []
   (mapv convert-to-dash-keys
         (year-to-int-all-v
-          (exec :virkailija-db hakija-queries/get-yearly-resolved-grants {}))))
+          (exec :form-db hakija-queries/get-yearly-resolved-grants {}))))
 
 (defn get-yearly-education-levels []
   (->> (exec :virkailija-db queries/get-yearly-education-level {})
