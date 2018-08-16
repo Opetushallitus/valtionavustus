@@ -45,6 +45,31 @@
               id)]
       (reset! payments (<! c)))))
 
+(defn get-payment-batch [grant-id]
+  (let [c (chan)]
+    (go
+      (let [bc (dialogs/conn-with-err-dialog!
+                 "Ladataan maksuerän tietoja"
+                 "Maksuerän latauksessa ongelma"
+                 connection/find-payment-batches
+                 grant-id (payments/format-date (js/Date.)))]
+        (let [batch (<! bc)
+              parsed-batch (if (seq batch)
+                             (-> batch
+                                 last
+                                 payments/parse-batch-dates
+                                 (assoc :read-only true))
+                             default-batch-values)]
+          (>! c (assoc parsed-batch :documents
+                         (if (some? (:id parsed-batch))
+                           (<! (dialogs/conn-with-err-dialog!
+                                 "Ladataan maksuerän dokumentteja"
+                                 "Dokumenttien latauksessa ongelma"
+                                 connection/get-batch-documents
+                                 (:id parsed-batch)))
+                           []))))))
+    c))
+
 (defn- get-param-grant []
   (let [grant-id (js/parseInt (router/get-current-param :grant-id))]
     (when-not (js/isNaN grant-id) grant-id)))
@@ -62,6 +87,7 @@
         :on-click
         (fn []
           (go
+
             (let [c (dialogs/conn-with-err-dialog!
                       "Poistetaan maksatuksia"
                       "Virhe maksatusten poistossa"
@@ -258,8 +284,9 @@
 
 (defn- on-send-payments! [batch-values selected-grant payments]
   (go
-    (let [c (create-batch! @batch-values @selected-grant)
-          batch (<! c)]
+    (let [batch (if (some? (:id @batch-values))
+                  (payments/convert-payment-dates @batch-values)
+                  (<! (create-batch! @batch-values @selected-grant)))]
       (when (some? batch)
         (send-payments!
           (payments/get-batch-values batch)
@@ -448,38 +475,7 @@
                       (select-keys payments-response [:status :error-text]))))
                 (put! dialog-chan 3)
                 (close! dialog-chan)))
-            (let [dialog-chan (dialogs/show-loading-dialog!
-                                "Ladataan maksuerän tietoja" 3)]
-              (put! dialog-chan 1)
-              (go
-                (let [batch-response
-                      (<! (connection/find-payment-batches
-                            grant-id (payments/format-date (js/Date.))))]
-                  (put! dialog-chan 2)
-                  (reset! batch-values
-                          (if (and
-                                (= (:status batch-response) 200)
-                                (seq (:body batch-response)))
-                            (-> (:body batch-response)
-                                last
-                                payments/parse-batch-dates
-                                (assoc :read-only true))
-                            default-batch-values)))
-                (put! dialog-chan 3)
-                (close! dialog-chan)
-                (when (some? (:id @batch-values))
-                  (let [doc-dialog-chan (dialogs/show-loading-dialog!
-                                          "Ladataan maksuerän dokumentteja" 3)]
-                    (put! doc-dialog-chan 1)
-                    (go
-                      (let [doc-response
-                            (<! (connection/get-batch-documents
-                                  (:id @batch-values)))]
-                        (put! doc-dialog-chan 2)
-                        (swap! batch-values
-                               assoc :documents (:body doc-response)))
-                      (put! doc-dialog-chan 3)
-                      (close! doc-dialog-chan))))))))))
+            (go (reset! batch-values (<! (get-payment-batch grant-id))))))))
     (go
       (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan haun tietoja" 3)
             grants-result (<! (connection/get-grants))]
