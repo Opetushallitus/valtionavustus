@@ -62,7 +62,6 @@ function printEntityId(state) {
 
 const query = queryString.parse(location.search)
 const urlContent = { parsedQuery: query, location: location }
-console.log(urlContent)
 const develMode =  query.devel === "true"
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
@@ -84,7 +83,8 @@ function onInitialStateLoaded(initialState) {
   budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {
     reportValidationErrors: isNotFirstEdit(initialState)
   })
-  if (initialState.avustushaku.phase !== "current" &&
+  const modifyApplication = query["modify-application"] 
+  if (!modifyApplication && initialState.avustushaku.phase !== "current" &&
       !initialState.configuration.preview &&
       !isEmptyOrReopenedHakemus(initialState.saveStatus.savedObject)) {
     window.location.href = urlCreator.existingSubmissionPreviewUrl(
@@ -95,9 +95,7 @@ function onInitialStateLoaded(initialState) {
       initialState.token,
       initialState.isTokenValid)
   } 
-  // else if (query["modify-application"]) {
-  //   window.location.href = urlCreator.modifyContactsApiUrl(initialState)
-  // }
+
 }
 
 function initVaFormController() {

@@ -135,7 +135,8 @@ export default class FormStateLoop {
       [dispatcher.stream(events.attachmentUploadCompleted)], stateTransitions.onAttachmentUploadCompleted,
       [dispatcher.stream(events.startAttachmentRemoval)], stateTransitions.onRemoveAttachment,
       [dispatcher.stream(events.attachmentRemovalCompleted)], stateTransitions.onAttachmentRemovalCompleted,
-      [dispatcher.stream(events.refuseApplication)], stateTransitions.onRefuseApplication)
+      [dispatcher.stream(events.refuseApplication)], stateTransitions.onRefuseApplication,
+      [dispatcher.stream(events.modifyApplicationContacts)], stateTransitions.onModifyApplicationContacts)
 
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
