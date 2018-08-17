@@ -243,7 +243,7 @@
                         doc-result
                         (recur (rest docs))))))]
             (if (:success last-doc-result)
-              (>! c batch)
+              (>! c (assoc batch :documents (:documents values)))
               (do
                 (dialogs/show-error-message!
                   "Virhe maksuerän asiakirjan luonnissa"
@@ -288,6 +288,9 @@
                   (payments/convert-payment-dates @batch-values)
                   (<! (create-batch! @batch-values @selected-grant)))]
       (when (some? batch)
+        (reset! batch-values
+                (payments/parse-batch-dates
+                  (assoc batch :read-only true)))
         (send-payments!
           (payments/get-batch-values batch)
           @selected-grant payments)))))
