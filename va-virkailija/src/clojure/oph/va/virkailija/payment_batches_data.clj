@@ -97,6 +97,19 @@
       (a/close! c))
     c))
 
+(defn set-payments-paid [{:keys [identity grant-id]}]
+  (doseq [application
+          (filter
+            payments-data/valid-for-send-payment?
+            (grant-data/get-grant-applications-with-evaluation grant-id))]
+    (doseq [payment
+            (application-data/get-application-unsent-payments
+              (:id application))]
+      (payments-data/update-payment
+        (assoc payment :state 3 :filename "") identity)
+      (application-data/revoke-application-tokens
+        (:id application)))))
+
 (defn get-batch-documents [batch-id]
   (->> (exec :virkailija-db queries/get-batch-documents {:batch_id batch-id})
       (map convert-to-dash-keys)

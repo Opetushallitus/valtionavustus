@@ -42,7 +42,8 @@
             [oph.va.virkailija.va-code-values-routes
              :as va-code-values-routes]
             [oph.va.virkailija.payments-routes :as payments-routes]
-            [oph.va.virkailija.healthcheck :as healthcheck])
+            [oph.va.virkailija.healthcheck :as healthcheck]
+            [oph.va.virkailija.reporting-routes :as reporting-routes])
   (:import [java.io ByteArrayInputStream]))
 
 (def opintopolku-login-url
@@ -125,7 +126,7 @@
   (compojure-api/GET
     "/integrations/" []
     :summary "Integrations healthcheck"
-    :return [virkailija-schema/HealthCheckResult]
+    :return virkailija-schema/HealthCheckResult
     (on-integration-healthcheck)))
 
 (compojure-api/defroutes resource-routes
@@ -366,7 +367,8 @@
                                      (:first-name identity)
                                      (:surname identity)
                                      (:email identity)
-                                     (:comment comment))))))
+                                     (:comment comment)
+                                     (:person-oid identity))))))
 (defn- get-hakemus-attachments []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments" []
     :path-params [haku-id :- Long, hakemus-id :- Long]
@@ -462,6 +464,15 @@
                              (:selection-criteria-index score)
                              (:score score))))))
 
+(defn- delete-score []
+  (compojure-api/DELETE "/evaluations/:id/scores/:index/" request
+    :path-params [id :- Long, index :- Long]
+    :summary "Delete score"
+    :description "Delete application score given by user"
+    (let [identity (authentication/get-request-identity request)]
+      (scoring/delete-score id index identity)
+      (ok ""))))
+
 (defn- post-hakemus-status []
   (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/status" request
     :path-params [avustushaku-id :- Long, hakemus-id :- Long]
@@ -546,6 +557,7 @@
   (get-change-requests)
   (get-scores)
   (post-scores)
+  (delete-score)
   (post-hakemus-status)
   (put-searches)
   (get-search))
@@ -665,15 +677,6 @@
       (ok "ok")
       (unauthorized))))
 
-
- (compojure-api/defroutes reports-routes
-  "Reports"
-
-  (compojure-api/GET "/" request
-    :return s/Any
-    :summary "Simple yearly reporting overview"
-    (ok (reporting/get-yearly-report))))
-
 (def api-config
   {:formats [:json-kw]
    :exceptions {:handlers {::compojure-ex/response-validation compojure-error-handler
@@ -708,7 +711,7 @@
   (compojure-api/context "/api/v2/applications" [] :tags ["applications"]
     application-routes/routes)
   (compojure-api/context
-    "/api/v2/reports" [] :tags ["reports"] reports-routes)
+    "/api/v2/reports" [] :tags ["reports"] reporting-routes/routes)
   (compojure-api/context "/api/v2/payment-batches" [] :tags ["payment batches"]
                          payment-batches-routes/routes)
   (compojure-api/context "/api/v2/va-code-values" [] :tags ["va-code-values"]

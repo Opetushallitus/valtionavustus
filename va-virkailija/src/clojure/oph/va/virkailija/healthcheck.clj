@@ -4,18 +4,40 @@
              :refer [get-remote-file-list]]
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.utils :refer [with-timeout]]
-            [clj-time.core :as time]
+            [clj-time.core :as t]
             [clj-time.format :as f]
-            [clojurewerkz.quartzite.scheduler :as qs]
-            [clojurewerkz.quartzite.triggers :as t]
-            [clojurewerkz.quartzite.jobs :refer [defjob] :as j]
-            [clojurewerkz.quartzite.schedule.cron
-             :refer [schedule cron-schedule]]))
+            [oph.va.virkailija.scheduler :as s]))
 
 (defonce ^:private status (atom []))
 
+(defonce ^:private scheduler (atom nil))
+
+(defn is-expired? [check limit]
+  (t/before? (:timestamp check) limit))
+
+(defn validate-checks [coll limit-minutes]
+   (let [limit
+         (t/minus
+           (t/now)
+           (t/minutes limit-minutes))]
+     (map #(assoc % :valid (not (is-expired? % limit))) coll)))
+
+(defn set-timestamps [coll]
+  (map
+    #(assoc %
+            :timestamp
+            (f/unparse (:basic-date-time f/formatters) (:timestamp %)))
+    coll))
+
 (defn get-last-status []
-  @status)
+  {:integrations (-> @status
+                     (validate-checks
+                       (+
+                         (get-in
+                           config [:integration-healthcheck :interval-minutes])
+                         5))
+                     set-timestamps)
+   :current-timestamp (f/unparse (:basic-date-time f/formatters) (t/now))})
 
 (defn check-rondo-status []
   (let [rondo-service (rondo-service/create-service
@@ -30,30 +52,22 @@
                  {:success false :error "Timeout"})]
     (assoc result
            :service "rondo"
-           :timestamp (f/unparse (:basic-date-time f/formatters) (time/now)))))
+           :timestamp (t/now))))
 
 (defn update-status! []
   (reset! status
           [(check-rondo-status)]))
 
-(defjob HealthCheckJob [ctx]
-  (update-status!))
 
 (defn start-schedule-status-update! []
-  (let [s (qs/start (qs/initialize))
-        job (j/build
-              (j/of-type HealthCheckJob)
-              (j/with-identity (j/key "jobs.HealthCheckJob")))
-        trigger
-        (t/build
-          (t/with-identity (t/key "triggers.HealthCheck"))
-          (t/start-now)
-          (t/with-schedule
-            (schedule
-              (cron-schedule
-                (get-in config [:integration-healthcheck :cron])))))]
-    (qs/schedule s job trigger)))
+  (when (nil? @scheduler)
+    (reset! scheduler
+            (s/after
+              (get-in config [:integration-healthcheck :interval-minutes])
+              :minute
+              update-status!))))
 
 (defn stop-schedule-status-update! []
-  (qs/delete-trigger
-    (qs/start (qs/initialize)) (t/key "triggers.HealthCheck")))
+  (when (some? @scheduler)
+    (s/stop @scheduler)
+    (reset! scheduler nil)))

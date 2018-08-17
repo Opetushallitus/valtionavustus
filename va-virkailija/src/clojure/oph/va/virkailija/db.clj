@@ -198,14 +198,15 @@
   (let [arvio-id (:id (get-or-create-arvio hakemus-id))]
     (exec :virkailija-db queries/list-comments {:arvio_id arvio-id})))
 
-(defn add-comment [hakemus-id first-name last-name email comment]
+(defn add-comment [hakemus-id first-name last-name email comment person-oid]
   (let [arvio-id (:id (get-or-create-arvio hakemus-id))]
-    (when-let [id (->> {:arvio_id arvio-id
-                        :first_name first-name
-                        :last_name last-name
-                        :email email
-                        :comment comment}
-                       (exec :virkailija-db queries/create-comment<!))]
+    (when (exec :virkailija-db queries/create-comment<!
+                {:arvio_id arvio-id
+                 :first_name first-name
+                 :last_name last-name
+                 :email email
+                 :comment comment
+                 :person_oid person-oid})
       (list-comments hakemus-id))))
 
 (defn score->map [score]
@@ -239,6 +240,12 @@
     (if-let [updated (exec :virkailija-db queries/update-score<! params)]
         updated
         (exec :virkailija-db queries/create-score<! params))))
+
+(defn delete-score [arvio-id selection-criteria-index identity]
+  (exec :virkailija-db queries/delete-score!
+        {:arvio_id  arvio-id
+         :person_oid (:person-oid identity)
+         :selection_criteria_index selection-criteria-index}))
 
 (defn add-score [avustushaku-id arvio-id identity selection-criteria-index score]
   (update-or-create-score avustushaku-id arvio-id identity selection-criteria-index score))

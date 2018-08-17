@@ -4,6 +4,12 @@
             [cljs-time.coerce :as tc]
             [cljs-time.format :as tf]))
 
+(def state-str
+  {0 "Luotu"
+   1 "Odottaa"
+   2 "Lähetetty"
+   3 "Maksettu"})
+
 (defn valid-batch-values? [values]
   (no-nils? values [:due-date :invoice-date :receipt-date]))
 
@@ -69,16 +75,21 @@
 (defn get-error-messages [errors default-value]
   (map #(get error-messages % default-value) errors))
 
+(defn- set-state-str [p]
+  (assoc p :state-str (get state-str (:state p))))
+
 (defn- convert-application-payments [application payments]
   (let [application-info
         (assoc
           (select-keys
-             application
-             [:project-name :organization-name :register-number
-              :takp-account :lkp-account :budget-granted :grant-id])
+            application
+            [:project-name :organization-name :register-number
+             :takp-account :lkp-account :budget-granted :grant-id])
           :bank-iban (get-answer-value (:answers application) "bank-iban"))]
     (map
-      #(merge application-info %)
+      #(-> %
+           set-state-str
+           (merge application-info))
       payments)))
 
 (defn- find-application-payments [payments application-id application-version]

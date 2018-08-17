@@ -9,7 +9,8 @@ import YhteenvetoController from './YhteenvetoController.jsx'
 import HakemusArviointiStatuses
   from './hakemus-details/HakemusArviointiStatuses'
 import DateUtil from 'soresu-form/web/DateUtil'
-import Rahoitusalueet from './data/Rahoitusalueet'
+import {educationLevels} from './haku-details/EducationLevels.jsx'
+
 
 import './style/main.less'
 import './style/summary.less'
@@ -91,9 +92,11 @@ const RahoitusalueList = ({hakemusList, grant}) => {
     applicationsByRahoitusalue[withoutLabel] = applicationsWithoutRahoitusalue
   }
 
+  const educationLevelNames = educationLevels.map(el => el.title)
+
   const rahoitusAlueetNameValues = _.chain(applicationsByRahoitusalue).omit(
     [nullValue,undefinedValue]).keys().sortBy(
-      (x)=> x === withoutLabel ? 9999: Rahoitusalueet.indexOf(x)).map(
+      (x)=> x === withoutLabel ? 9999 : educationLevelNames.indexOf(x)).map(
         (x) => {
           return {name:x, values:applicationsByRahoitusalue[x]}
     }).value()

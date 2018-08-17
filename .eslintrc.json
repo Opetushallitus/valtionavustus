@@ -25,7 +25,8 @@
     "no-var": "error",
     "prefer-const": "error",
     "react/prop-types": ["error", {"skipUndeclared": true}],
-    "semi": ["warn", "never"]
+    "semi": ["warn", "never"],
+    "react/no-deprecated": ["warn"]
   },
   "overrides": [
     {

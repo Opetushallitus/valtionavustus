@@ -11,21 +11,19 @@
             [oph.va.virkailija.koulutusosio :as koulutusosio]
             [schema.core :as s]
             [hiccup.core :refer [html]]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [oph.va.virkailija.payments-data :as payments-data]))
 
-(defn decision-translation [translations lang keyword-or-key]
-  (let [key (if (keyword? keyword-or-key) keyword-or-key (keyword keyword-or-key))]
-    (-> translations :paatos key lang)))
-
-
+(defn decision-translation [translations lang translation-key]
+  (get-in translations [:paatos (keyword translation-key) lang]))
 
 (defn content-with-paragraphs [content]
   (let [rows (str/split content #"\n")
         rows-list (html [:span (for [row rows] [:p row])])]
     rows-list))
 
-(defn decision-field [decision key lang]
-  (-> decision key lang))
+(defn decision-field [decision str-key lang]
+  (get-in decision [str-key lang]))
 
 (defn section [title-key content translate create-paragraph]
   (let [content-p  (if create-paragraph (content-with-paragraphs content) content)
@@ -33,10 +31,9 @@
       (html [:section {:class "section"} [:h2 title] [:div {:class "content"} content-p]])))
 
 (defn optional-section-content [title content translate]
-  (let [content-length (count content)]
-    (if (> content-length 0)
-      (section title content translate true)
-      "")))
+  (if (seq content)
+    (section title content translate true)
+    ""))
 
 (defn optional-section [decision title key translate lang]
   (let [decision-content (decision-field decision key lang)]
@@ -49,31 +46,39 @@
   (let [content [:span [:p (str (translate :asia-title))] [:p avustushaku-name]]]
   (section :asia content translate false)))
 
-(defn avustuksen-maksu [avustushaku bic iban total-paid lang translate arvio]
-  (let [decision (:decision avustushaku)
-        maksu-date (:maksudate decision)
-        maksu (decision-field decision :maksu lang)
-        has-multiple-maksuera (-> avustushaku :content :multiplemaksuera)
-        multiple-maksuera (and has-multiple-maksuera (> total-paid 60000))
-        first-round-paid (if multiple-maksuera
-                           (Math/round (* 0.6 total-paid)) total-paid)
-        paid-formatted (ks/format-number first-round-paid)
-        extra-no-multiple "."
-        extra-multiple (str " " (translate :ja-loppuera-viimeistaan)
-                            " " maksu-date)
-        extra (if multiple-maksuera extra-multiple extra-no-multiple)
-        content1 [:span
-                  [:p (translate "avustus-maksetaan") ":"]
-                  [:p [:strong iban ", " bic]]]
-        content2 [:p
-                  (translate "maksuerat-ja-ajat") ": "
-                  paid-formatted " " maksu extra]
-        content3 (when-not (nil? (:talousarviotili arvio))
-                   [:p
-                    (translate "talousarviotili") ": "
-                    (:talousarviotili arvio)])
-        content [:span content1 content2 content3]]
-    (section :avustuksen-maksu content translate false)))
+(defn generate-payment-decision [{:keys [grant application translate]}]
+  (let [answers-value {:value (:answers application)}
+        payment-sum (payments-data/get-first-payment-sum application grant)]
+    [:span
+     [:span
+      [:p (translate "avustus-maksetaan") ":"]
+      [:p
+       [:strong
+        (formutil/find-answer-value answers-value "bank-iban")
+        ", "
+        (formutil/find-answer-value answers-value "bank-bic")]]]
+     [:p
+      (translate "maksuerat-ja-ajat") ": "
+      (ks/format-number payment-sum) " "
+      (decision-field
+        (:decision grant) :maksu (keyword (:language application)))
+      (if (not= payment-sum (get-in application [:arvio :budget-granted]))
+        (str " " (translate :ja-loppuera-viimeistaan)
+             " " (get-in grant [:decision :maksudate]))
+        ".")]
+     (when-some [account (get-in application [:arvio :talousarviotili])]
+       [:p
+        (translate "talousarviotili") ": " account])]))
+
+(defn avustuksen-maksu [avustushaku hakemus translate]
+  (section
+    :avustuksen-maksu
+    (generate-payment-decision
+      {:grant avustushaku
+       :application hakemus
+       :translate translate})
+    translate
+    false))
 
 
 (defn myonteinen-lisateksti [avustushaku hakemus lang]
@@ -125,7 +130,7 @@
                     (str row-kayttosuunnitelma row-oikaisuvaatimus row-ehdot row-yleisohje)
                     (str row-oikaisuvaatimus row-ehdot row-yleisohje)))
         content-length (count content)]
-        (if (> content-length 0)
+        (if (pos? content-length)
           (section :liitteet content translate false)
           "")))
 
@@ -150,8 +155,6 @@
         role (if (nil? arvio-role) (first presenting-officers) arvio-role)
         language (keyword (:language hakemus))
         avustushaku-name (get-in avustushaku [:content :name language])
-        iban (formutil/find-answer-value answers "bank-iban")
-        bic (formutil/find-answer-value answers "bank-bic")
         total-granted (:budget-granted arvio)
         template (email/load-template (str "templates/paatos.html"))
         translations-str (email/load-template "public/translations.json")
@@ -159,12 +162,12 @@
         translate (partial decision-translation translations language)
         johtaja (decision-field decision :johtaja language)
         valmistelija (decision-field decision :valmistelija language)
-        avustuksen-maksu (avustuksen-maksu avustushaku bic iban total-granted language translate arvio)
+        avustuksen-maksu (avustuksen-maksu avustushaku hakemus translate)
         myonteinen-lisateksti (myonteinen-lisateksti avustushaku hakemus language)
         form-content (-> haku-data :form :content)
         kayttosuunnitelma (ks/kayttosuunnitelma avustushaku hakemus form-content answers translate language)
         has-kayttosuunnitelma (and (:has-kayttosuunnitelma kayttosuunnitelma) is-erityisavustus)
-        show-oph-financing-percentage (> (:self-financing-percentage kayttosuunnitelma) 0)
+        show-oph-financing-percentage (pos? (:self-financing-percentage kayttosuunnitelma))
         oph-financing-percentage (:oph-financing-percentage kayttosuunnitelma)
         liitteet-list (liitteet-list avustushaku hakemus translate language has-kayttosuunnitelma)
         koulutusosio (koulutusosio/koulutusosio hakemus answers translate)

@@ -54,7 +54,7 @@ export default class VaFormTopbar extends React.Component {
     const helpText = formTranslator.translate(`savehelp-${hakemusType}`, lang)
     const hasEnded = avustushaku.phase === "ended"
     const topicKey = `heading-${hakemusType}`
-    const isHakemus = hakemusType=="hakemus"
+    const isHakemus = hakemusType === "hakemus"
 
     return(
       <section id="topbar">

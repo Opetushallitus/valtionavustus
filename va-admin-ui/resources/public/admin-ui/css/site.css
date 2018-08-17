@@ -1,6 +1,7 @@
 body {
   font-family: 'Helvetica Neue', Verdana, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+  margin: 0;
 }
 
 h1, h2, h3 {
@@ -31,21 +32,8 @@ a:hover {
   padding-bottom: 10px;
 }
 
-.top-links {
-  font-size: 18px;
-  text-transform: uppercase;
-}
-
-.top-links a {
-  padding: 20px;
-}
-
 hr {
   border-top: 1px solid #f6f4f0;
-}
-
-.top-links {
-  min-height: 30px;
 }
 
 .logout-button {
@@ -71,6 +59,10 @@ hr {
 
 .va-ui-table-body tr:nth-child(even) {
   background-color: #f6f4f0;
+}
+
+.va-ui-table-body tr:nth-child(odd) {
+  background-color: white;
 }
 
 .oph-input.small {

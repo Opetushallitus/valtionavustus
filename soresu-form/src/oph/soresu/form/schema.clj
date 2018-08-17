@@ -62,7 +62,8 @@
                                     "checkboxButton"
                                     "namedAttachment"
                                     "koodistoField"
-                                    "tableField"]
+                                    "tableField"
+                                    "ownershipType"]
         form-element-types (into custom-form-element-types default-form-element-types)
         default-wrapper-element-types ["theme" "fieldset" "growingFieldset" "growingFieldsetChild" ]
         wrapper-element-types (into custom-wrapper-element-types default-wrapper-element-types)

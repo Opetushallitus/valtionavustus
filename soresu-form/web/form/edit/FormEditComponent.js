@@ -5,7 +5,8 @@ import {
   TextFieldEdit,
   TextAreaEdit,
   MultipleChoiceEdit,
-  LinkEdit
+  LinkEdit,
+  OwnershipTypeEdit
 } from './EditComponent.jsx'
 import KoodistoFieldEdit from './KoodistoFieldEdit.jsx'
 import TableValue from '../preview/TableValue.jsx'
@@ -24,6 +25,7 @@ export default class FormEditComponent extends React.Component {
       "textArea": TextAreaEdit,
       "link": LinkEdit,
       "radioButton": MultipleChoiceEdit,
+      "ownershipType": OwnershipTypeEdit,
       "checkboxButton": MultipleChoiceEdit,
       "dropdown": MultipleChoiceEdit,
       "koodistoField": KoodistoFieldEdit,

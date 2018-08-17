@@ -12,7 +12,6 @@ import LocalStorage from './LocalStorage'
 import VaUserSearchParameters from './haku-details/VaUserSearchParameters'
 import LoppuselvitysForm from './data/LoppuselvitysForm.json'
 import ValiselvitysForm from './data/ValiselvitysForm.json'
-import Rahoitusalueet from './data/Rahoitusalueet'
 import HakuStatuses from './haku-details/HakuStatuses'
 import HakuPhases from './haku-details/HakuPhases'
 import queryString from 'query-string'
@@ -295,20 +294,29 @@ export default class HakujenHallintaController {
       update.avustushaku["is_academysize"] = update.newValue === 'true'
     } else if (fieldId.startsWith("set-status-")) {
       update.avustushaku["status"] = update.newValue
-    } else if (fieldId.startsWith("rahoitusalue-")) {
-      const rahoitusalue = /rahoitusalue-(\d+)-tili-(\d+)/.exec(fieldId)
-      const rahoitussalueIndex = rahoitusalue[1]
-      const selectedRahoitusalue = Rahoitusalueet[rahoitussalueIndex]
-      const currentRahoitusalueet = this.getOrCreateRahoitusalueet(update.avustushaku)
-      const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, selectedRahoitusalue)
-
-      const talousarviotiliIndex = rahoitusalue[2]
-      const talousarviotiliValue = update.newValue
-
-      if (talousarviotiliIndex >= rahoitusalueValue.talousarviotilit.length) {
-        rahoitusalueValue.talousarviotilit.push(talousarviotiliValue)
+    } else if (update.field.name === "education-levels") {
+      if (update.newValue.length === 0) {
+            this.deleteTalousarviotili(
+              update.avustushaku,
+              update.field.dataset.title,
+              update.field.dataset.index)()
       } else {
-        rahoitusalueValue.talousarviotilit[talousarviotiliIndex] = talousarviotiliValue
+        const value = {
+          rahoitusalue: update.field.dataset.title,
+          talousarviotilit: [update.newValue]
+        }
+        const educationLevels = update.avustushaku.content["rahoitusalueet"]
+        if (educationLevels) {
+          const index = educationLevels.findIndex(
+            x => x.rahoitusalue === update.field.dataset.title)
+          if (index === -1) {
+            educationLevels.push(value)
+          } else {
+            educationLevels[index].talousarviotilit[update.field.dataset.index] = update.newValue
+          }
+        } else {
+          update.avustushaku.content["rahoitusalueet"] = [value]
+        }
       }
     } else if (fieldId.startsWith("selection-criteria-")) {
       const selectionCriteria = /selection-criteria-(\d+)-(\w+)/.exec(fieldId)
@@ -486,7 +494,7 @@ export default class HakujenHallintaController {
     this.loadPayments(hakuToSelect)
     this.loadForm(hakuToSelect)
     LocalStorage.saveAvustushakuId(hakuToSelect.id)
-    window.history.pushState(null, null, `?avustushaku=${hakuToSelect.id}`);
+    window.history.pushState(null, null, `?avustushaku=${hakuToSelect.id}`)
     return state
   }
 

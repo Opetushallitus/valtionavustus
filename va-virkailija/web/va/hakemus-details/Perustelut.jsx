@@ -32,7 +32,8 @@ export default class Perustelut extends React.Component {
     const controller = this.props.controller
     const addReason = (reason) => {
       const currentPerustelut = getPerustelut(this.props)
-      const newPerustelut = currentPerustelut.length==0 ? reason : currentPerustelut + " " + reason
+      const newPerustelut = currentPerustelut.length === 0 ?
+            reason : currentPerustelut + " " + reason
       controller.setArvioPerustelut(hakemus, newPerustelut)
       this.setState({perustelut: newPerustelut,showReasons:false})
       setTimeout(function() {
@@ -40,8 +41,8 @@ export default class Perustelut extends React.Component {
         document.getElementById("perustelut").focus()
       }, 300)
     }
-    const rejected = _.get(hakemus,"arvio.status","")=="rejected"
-    const languageTitle = hakemus.language=="fi" ? "suomeksi" : "ruotsiksi"
+    const rejected = _.get(hakemus,"arvio.status","") === "rejected"
+    const languageTitle = hakemus.language === "fi" ? "suomeksi" : "ruotsiksi"
     const rejectedReasons = rejectedReasonsByLanguage[hakemus.language]
     const toggleReasons = () => this.setState({showReasons:!this.state.showReasons})
 
@@ -53,7 +54,7 @@ export default class Perustelut extends React.Component {
           {
             rejected &&
               <div className="radio-container radio-container--perustelut" hidden={!this.state.showReasons}>
-                {rejectedReasons.map((reason)=>
+                {rejectedReasons.map((reason) =>
                   <div key={reason} className="radio-row">
                     <div onClick={_.partial(addReason,reason)}>{reason}</div>
                   </div>
@@ -73,7 +74,7 @@ export default class Perustelut extends React.Component {
 
 function initialState(props){
   const perustelut = getPerustelut(props)
-  return {perustelut: perustelut, showReasons:perustelut.length==0}
+  return {perustelut: perustelut, showReasons:perustelut.length === 0}
 }
 
 function getPerustelut(props) {

@@ -19,6 +19,7 @@
 (defquery update-score<! "sql/virkailija/score/update.sql")
 (defquery list-scores "sql/virkailija/score/list.sql")
 (defquery list-avustushaku-scores "sql/virkailija/score/list-by-avustushaku.sql")
+(defquery delete-score! "sql/virkailija/score/delete.sql")
 
 (defquery find-search "sql/virkailija/saved_search/find.sql")
 (defquery create-search<! "sql/virkailija/saved_search/create.sql")
@@ -73,6 +74,8 @@
 (defquery get-yearly-evaluation-count-by-status
   "sql/virkailija/reporting/get-yearly-evaluation-count-by-status.sql")
 (defquery get-yearly-granted "sql/virkailija/reporting/get-yearly-granted.sql")
+(defquery get-yearly-education-level
+  "sql/virkailija/reporting/get-yearly-education-level.sql")
 
 (defquery get-va-code-value
   "sql/virkailija/va_code_values/get-va-code-value.sql")

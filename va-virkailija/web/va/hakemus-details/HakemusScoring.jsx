@@ -109,6 +109,18 @@ class ValintaPerusteRow extends Component {
 }
 
 class StarElement extends Component {
+
+  createOnClickHandler(index, score) {
+    const {controller, scoreOfUser} = this.props
+    return () => {
+      if (scoreOfUser && score === scoreOfUser.score) {
+        controller.removeScore(index)
+      } else {
+        controller.setScore(index, score)
+      }
+    }
+  }
+
   render() {
     const indexOfStar = this.props.index
     const starTitle = ScoreResolver.scoreToFI(indexOfStar)
@@ -121,7 +133,9 @@ class StarElement extends Component {
     const controller = this.props.controller
     const enableEditing = allowHakemusScoring && !_.isUndefined(controller)
     const classNames = ClassNames("single-score", {editable: enableEditing})
-    const onClick = enableEditing ? () => { controller.setScore(selectionCriteriaIndex, indexOfStar) } : undefined
+    const onClick = enableEditing ?
+          this.createOnClickHandler(selectionCriteriaIndex, indexOfStar) :
+          undefined
     const showHover = enableEditing && !starVisible ? event => { event.target.setAttribute("src", "/img/star_hover.png") } : undefined
     const hideHover = enableEditing && !starVisible ? event => { event.target.setAttribute("src", starImage)} : undefined
     return <img className={classNames}
