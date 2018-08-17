@@ -158,7 +158,7 @@
      [table/table-header
       [table/table-row
        [table/table-header-column "Vaihe"]
-       [table/table-header-column "ASHA tunniste"]
+       [table/table-header-column "ASHA-tunniste"]
        [table/table-header-column "Esittelijän sähköposti"]
        [table/table-header-column "Hyväksyjän sähköposti"]
        [table/table-header-column "Lisätty"]
