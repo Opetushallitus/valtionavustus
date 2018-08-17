@@ -16,7 +16,7 @@
    [oph.va.admin-ui.payments.financing :as financing]
    [oph.va.admin-ui.payments.utils
     :refer [find-index-of is-today? to-simple-date-time
-            to-simple-date phase-to-name]]
+            to-simple-date phase-to-name replace-doc]]
    [oph.va.admin-ui.dialogs :as dialogs]
    [oph.va.admin-ui.user :as user]
    [oph.va.admin-ui.theme :as theme]
@@ -227,27 +227,25 @@
                                (:id grant))))))
             batch (:body batch-result)]
         (if (:success batch-result)
-          (let [last-doc-result
-                (loop [docs
-                       (filter #(nil? (:created-at %))
-                               (:documents values))]
-                  (if (empty? docs)
-                    {:success true}
-                    (let [doc-result
+          (let [docs-result
+                (loop [docs (:documents values)]
+                  (let [next-doc
+                        (some #(when (nil? (:created-at %)) %) docs)]
+                    (if (nil? next-doc)
+                      {:success true :result docs}
+                      (let [doc-result
                           (<!
                             (connection/send-batch-document
-                              (:id batch)
-                              (dissoc (first docs)
-                                      :created-at)))]
+                              (:id batch) next-doc))]
                       (if-not (:success doc-result)
                         doc-result
-                        (recur (rest docs))))))]
-            (if (:success last-doc-result)
-              (>! c (assoc batch :documents (:documents values)))
+                        (recur (replace-doc docs (:body doc-result))))))))]
+            (if (:success docs-result)
+              (>! c (assoc batch :documents (:result docs-result)))
               (do
                 (dialogs/show-error-message!
                   "Virhe maksuerän asiakirjan luonnissa"
-                  last-doc-result)
+                  docs-result)
                 (close! c))))
           (do
             (dialogs/show-error-message!
