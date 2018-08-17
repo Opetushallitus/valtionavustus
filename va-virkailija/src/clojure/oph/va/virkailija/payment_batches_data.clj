@@ -106,7 +106,7 @@
             (application-data/get-application-unsent-payments
               (:id application))]
       (payments-data/update-payment
-        (assoc payment :state 2 :filename "") identity)
+        (assoc payment :state 3 :filename "") identity)
       (application-data/revoke-application-tokens
         (:id application)))))
 

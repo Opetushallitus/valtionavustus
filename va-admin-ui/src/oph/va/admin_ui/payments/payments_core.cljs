@@ -298,7 +298,7 @@
     (let [c (dialogs/conn-with-err-dialog!
               "Päivitetään maksatuksia"
               "Maksatusten päivityksessä ongelma"
-              connection/set-batch-payments-state id 2)]
+              connection/set-batch-payments-state id 3)]
       (when (some? (<! c))
         (update-grant-payments! (:id grant) payments)))))
 
