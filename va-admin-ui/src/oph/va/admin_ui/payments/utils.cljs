@@ -116,10 +116,8 @@
   (= (select-keys d1 [:document-id :presenter-email :acceptor-email])
      (select-keys d2 [:document-id :presenter-email :acceptor-email])))
 
-(defn replace-doc [docs doc]
-  (assoc
-    docs
-    (find-index-of
-      docs
-      #(doc-matches? % doc))
-    doc))
+(defn replace-doc [docs doc new-doc]
+  (let [index (find-index-of docs #(doc-matches? % doc))]
+    (if (pos? index)
+      (assoc docs index new-doc)
+      docs)))

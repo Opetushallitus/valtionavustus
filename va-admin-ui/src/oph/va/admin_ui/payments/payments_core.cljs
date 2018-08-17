@@ -239,7 +239,8 @@
                               (:id batch) next-doc))]
                       (if-not (:success doc-result)
                         doc-result
-                        (recur (replace-doc docs (:body doc-result))))))))]
+                        (recur
+                          (replace-doc docs next-doc (:body doc-result))))))))]
             (if (:success docs-result)
               (>! c (assoc batch :documents (:result docs-result)))
               (do
