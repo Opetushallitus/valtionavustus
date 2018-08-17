@@ -98,7 +98,7 @@
      [:input
       (-> props
           (select-keys [:value :type :type :size :min :max
-                        :max-length :on-key-press])
+                        :max-length :on-key-press :on-blur])
           (update :class str " oph-input" (when (= (:size p) :small) " small"))
           (assoc
             :style (if (:error props) {:border-color "#f44336"} {})
@@ -242,7 +242,13 @@
       (let [{:keys [on-change on-search items]} props]
         [:span {:style {:display "inline-block"}}
          [text-field
-          (assoc props :on-change
+          (assoc props
+                 :on-blur
+                 (fn []
+                   (delayed
+                     300
+                     #(swap! popover-state assoc :open false)))
+                 :on-change
                  (fn [e]
                    (swap! popover-state assoc :anchor-el (.-target e))
                    (let [value (.-value (.-target e))]

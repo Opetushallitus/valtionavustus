@@ -111,3 +111,13 @@
   (if (empty? v)
     (swap! filters dissoc k)
     (swap! filters assoc k (lower-case v))))
+
+(defn doc-matches? [d1 d2]
+  (= (select-keys d1 [:document-id :presenter-email :acceptor-email])
+     (select-keys d2 [:document-id :presenter-email :acceptor-email])))
+
+(defn replace-doc [docs doc new-doc]
+  (let [index (find-index-of docs #(doc-matches? % doc))]
+    (if (pos? index)
+      (assoc docs index new-doc)
+      docs)))

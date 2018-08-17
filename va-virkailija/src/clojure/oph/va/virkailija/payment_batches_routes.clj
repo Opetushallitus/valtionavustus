@@ -41,7 +41,7 @@
     :body [data (compojure-api/describe
                   schema/SimplePayment "Payment update values")]
     :summary "Update batch payments"
-    (if (= (:state data) 2)
+    (if (= (:state data) 3)
       (let [batch (data/get-batch id)]
         (data/set-payments-paid
           {:identity (authentication/get-request-identity request)
