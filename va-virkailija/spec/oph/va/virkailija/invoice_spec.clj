@@ -244,9 +244,9 @@
                :application application-with-evaluation
                :grant (-> grant
                           (assoc
-                            :project "6600A-M2024"
-                            :operational-unit "6600100130"
-                            :operation "6600151502"
+                            :project {:code "6600A-M2024"}
+                            :operational-unit {:code "6600100130"}
+                            :operation {:code "6600151502"}
                             :lkp-account "82500000")
                           (assoc-in [:content :document-type] "XA")
                           (assoc-in [:content :transaction-account] "5000"))
