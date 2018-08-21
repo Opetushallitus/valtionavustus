@@ -56,7 +56,9 @@
     :return schema/PaymentsCreateResult
     :summary "Create new payments for unpaid applications of grant. Payments
               will be sent to Rondo and stored to database."
-    (let [batch (data/get-batch id)
+    (let [batch (assoc
+                  (data/get-batch id)
+                  :documents (data/get-batch-documents id))
           c (data/send-payments
               {:batch batch
                :grant (grant-data/get-grant (:grant-id batch))
