@@ -86,16 +86,17 @@
         :style theme/button
         :on-click
         (fn []
-          (go
-
-            (let [c (dialogs/conn-with-err-dialog!
-                      "Poistetaan maksatuksia"
-                      "Virhe maksatusten poistossa"
-                      connection/delete-grant-payments
-                      (:id selected-grant))
-                  result (<! c)]
-              (when (some? result)
-                (update-grant-payments! (:id selected-grant) payments)))))}]
+          (when (js/confirm
+                  "Oletko varma, että haluat poistaa kaikki haun maksatukset?")
+            (go
+              (let [c (dialogs/conn-with-err-dialog!
+                        "Poistetaan maksatuksia"
+                        "Virhe maksatusten poistossa"
+                        connection/delete-grant-payments
+                        (:id selected-grant))
+                    result (<! c)]
+                (when (some? result)
+                  (update-grant-payments! (:id selected-grant) payments))))))}]
       [:span])
     [va-ui/raised-button
      {:primary true
