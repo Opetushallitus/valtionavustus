@@ -90,6 +90,20 @@
                :acceptor-email "some.other3@email"}]]
     (is
       (=
+        (first
+          (utils/replace-doc
+            docs
+            {:document-id "id 1"
+             :presenter-email "some1@email"
+             :acceptor-email "some.other1@email"}
+            {:document-id "id 5"
+             :presenter-email "some5@email"
+             :acceptor-email "some.other5@email"}))
+        {:document-id "id 5"
+         :presenter-email "some5@email"
+         :acceptor-email "some.other5@email"}))
+    (is
+      (=
         (last
           (utils/replace-doc
             docs
