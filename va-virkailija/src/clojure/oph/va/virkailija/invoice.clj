@@ -68,7 +68,7 @@
         [:TaKp-tili (:takp-account application)]
         [:Toimintayksikko (get-in grant [:operational-unit :code])]
         [:Projekti (get-in grant [:project :code])]
-        [:Toiminto(get-in grant [:operation :code])]
+        [:Toiminto (get-in grant [:operation :code])]
         [:Kumppani (:partner batch)]]]]]))
 
 (defn payment-to-xml [data]
