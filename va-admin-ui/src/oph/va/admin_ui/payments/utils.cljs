@@ -58,7 +58,8 @@
 
 (defn find-index-of
   ([col pred i m]
-   (when-not (>= i m)
+   (if (>= i m)
+     -1
      (if (pred (nth col i))
        i
        (recur col pred (inc i) m))))
@@ -118,6 +119,6 @@
 
 (defn replace-doc [docs doc new-doc]
   (let [index (find-index-of docs #(doc-matches? % doc))]
-    (if (pos? index)
+    (if (> index -1)
       (assoc docs index new-doc)
       docs)))

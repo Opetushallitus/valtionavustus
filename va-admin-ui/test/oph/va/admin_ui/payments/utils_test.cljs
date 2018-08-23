@@ -4,6 +4,12 @@
             [oph.va.admin-ui.utils :refer [format]]
             [cljs-time.core :as t]))
 
+(deftest test-find-index-of
+  (is (= 2 (utils/find-index-of [0 1 2 3 4] #(= 2 %))))
+  (is (= 0 (utils/find-index-of [0 1 2 3 4] #(= 0 %))))
+  (is (= -1 (utils/find-index-of [0 1 2 3 4] nil?)))
+  (is (= -1 (utils/find-index-of [1 2 3 4] zero?))))
+
 (deftest test-any-nil
   (is (not (utils/any-nil? {} [])))
   (is (not (utils/any-nil? {:hello "word"} [])))
@@ -82,6 +88,20 @@
               {:document-id "id 3"
                :presenter-email "some3@email"
                :acceptor-email "some.other3@email"}]]
+    (is
+      (=
+        (first
+          (utils/replace-doc
+            docs
+            {:document-id "id 1"
+             :presenter-email "some1@email"
+             :acceptor-email "some.other1@email"}
+            {:document-id "id 5"
+             :presenter-email "some5@email"
+             :acceptor-email "some.other5@email"}))
+        {:document-id "id 5"
+         :presenter-email "some5@email"
+         :acceptor-email "some.other5@email"}))
     (is
       (=
         (last
