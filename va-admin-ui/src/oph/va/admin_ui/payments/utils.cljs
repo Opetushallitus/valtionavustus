@@ -119,6 +119,6 @@
 
 (defn replace-doc [docs doc new-doc]
   (let [index (find-index-of docs #(doc-matches? % doc))]
-    (if (pos? index)
+    (if (> index -1)
       (assoc docs index new-doc)
       docs)))
