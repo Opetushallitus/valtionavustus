@@ -287,24 +287,24 @@
                     :grant-id 1})
             batch (payment-batches-data/get-batch (:id (json->map body)))]
         (post!
-                (format "/api/v2/payment-batches/%d/documents/" (:id batch))
-                {:document-id "ID1234567"
-                 :presenter-email "presenter@local"
-                 :acceptor-email "acceptor@local"
-                 :phase 0})
+          (format "/api/v2/payment-batches/%d/documents/" (:id batch))
+          {:document-id "ID1234567"
+           :presenter-email "presenter@local"
+           :acceptor-email "acceptor@local"
+           :phase 0})
 
         (let [documents (payment-batches-data/get-batch-documents (:id batch))
               payment (create-payment grant batch 0 20000)
               application (application-data/get-application
                             (:application-id payment))
               xml-invoice (invoice/payment-to-xml
-                    {:payment payment
-                     :application application
-                     :grant (assoc grant
-                                   :operational-unit {:code "123456789"}
-                                   :project {:code "23456789"}
-                                   :operation {:code "3456789"})
-                     :batch (assoc batch :documents documents)})]
+                            {:payment payment
+                             :application application
+                             :grant (assoc grant
+                                           :operational-unit {:code "123456789"}
+                                           :project {:code "23456789"}
+                                           :operation {:code "3456789"})
+                             :batch (assoc batch :documents documents)})]
           (should=
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><VA-invoice><Header><Maksuera>660018001</Maksuera><Laskunpaiva>2018-04-16</Laskunpaiva><Erapvm>2018-04-30</Erapvm><Bruttosumma>20000</Bruttosumma><Maksuehto>Z001</Maksuehto><Pitkaviite>123/456/78</Pitkaviite><Tositepvm>2018-04-16</Tositepvm><Asiatarkastaja>presenter@local</Asiatarkastaja><Hyvaksyja>acceptor@local</Hyvaksyja><Tositelaji>XA</Tositelaji><Maksutili>5000</Maksutili><Toimittaja><Y-tunnus>1234567-1</Y-tunnus><Nimi>Test Organisation</Nimi><Postiosoite>Someroad 1</Postiosoite><Paikkakunta>Some City</Paikkakunta><Maa>Some Country</Maa><Iban-tili>FI4250001510000023</Iban-tili><Pankkiavain>OKOYFIHH</Pankkiavain><Pankki-maa>FI</Pankki-maa><Kieli>fi</Kieli><Valuutta>EUR</Valuutta></Toimittaja><Postings><Posting><Summa>20000</Summa><LKP-tili>82300000</LKP-tili><TaKp-tili>29103013</TaKp-tili><Toimintayksikko>123456789</Toimintayksikko><Projekti>23456789</Projekti><Toiminto>3456789</Toiminto><Kumppani>123456</Kumppani></Posting></Postings></Header></VA-invoice>"
             (xml/emit-str xml-invoice))))))
