@@ -4,6 +4,12 @@
             [oph.va.admin-ui.utils :refer [format]]
             [cljs-time.core :as t]))
 
+(deftest test-find-index-of
+  (is (= 2 (utils/find-index-of [0 1 2 3 4] #(= 2 %))))
+  (is (= 0 (utils/find-index-of [0 1 2 3 4] #(= 0 %))))
+  (is (= -1 (utils/find-index-of [0 1 2 3 4] nil?)))
+  (is (= -1 (utils/find-index-of [1 2 3 4] zero?))))
+
 (deftest test-any-nil
   (is (not (utils/any-nil? {} [])))
   (is (not (utils/any-nil? {:hello "word"} [])))
