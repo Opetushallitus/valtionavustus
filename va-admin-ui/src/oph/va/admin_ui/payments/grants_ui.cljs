@@ -16,11 +16,19 @@
                     :style (if selected
                              theme/selected-table-row
                              theme/table-row)}
-   [table/table-row-column (:register-number grant)]
+   [table/table-row-column
+    {:style theme/semi-narrow-column}
+    (:register-number grant)]
    [table/table-row-column (:name grant)]
-   [table/table-row-column (:status grant)]
-   [table/table-row-column (f/unparse-local date-time-formatter (:start grant))]
-   [table/table-row-column (f/unparse-local date-time-formatter (:end grant))]])
+   [table/table-row-column
+    {:style theme/semi-narrow-column}
+    (:status grant)]
+   [table/table-row-column
+    {:style theme/semi-narrow-column}
+    (f/unparse-local date-time-formatter (:start grant))]
+   [table/table-row-column
+    {:style theme/semi-narrow-column}
+    (f/unparse-local date-time-formatter (:end grant))]])
 
 (defn- same-day? [d1 d2]
   (and (= (t/year d1) (t/year d2))
@@ -72,6 +80,7 @@
            [table/sortable-header-column
             {:title "Diaarinumero"
              :column-key :register-number
+             :style theme/semi-narrow-column
              :sort-params @sort-params
              :on-sort #(sort-column! sort-params %)
              :on-filter #(update-filters! filters %1 %2)}]
@@ -84,12 +93,14 @@
            [table/sortable-header-column
             {:title "Tila"
              :column-key :status
+             :style theme/semi-narrow-column
              :sort-params @sort-params
              :on-sort #(sort-column! sort-params %)
              :on-filter #(update-filters! filters %1 %2)}]
            [table/sortable-header-column
             {:title "Haku alkaa"
              :column-key :start
+             :style theme/semi-narrow-column
              :field-type :date
              :sort-params @sort-params
              :on-sort #(sort-column! sort-params %)
@@ -97,6 +108,7 @@
            [table/sortable-header-column
             {:title "Haku päättyy"
              :column-key :end
+             :style theme/semi-narrow-column
              :field-type :date
              :sort-params @sort-params
              :on-sort #(sort-column! sort-params %)
