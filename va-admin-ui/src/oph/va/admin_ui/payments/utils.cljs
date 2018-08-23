@@ -58,7 +58,8 @@
 
 (defn find-index-of
   ([col pred i m]
-   (when-not (>= i m)
+   (if (>= i m)
+     -1
      (if (pred (nth col i))
        i
        (recur col pred (inc i) m))))
