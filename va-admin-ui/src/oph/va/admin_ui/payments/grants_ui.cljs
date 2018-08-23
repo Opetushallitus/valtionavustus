@@ -119,11 +119,15 @@
          [table/table-footer
       [table/table-row
        [table/table-row-column
+        {:style (merge theme/semi-narrow-column theme/total-column)}
         (str (count filtered-sorted-grants) "/" (count grants) " hakua")]
        [table/table-row-column]
-       [table/table-row-column]
-       [table/table-row-column]
-       [table/table-row-column]]]]))))
+       [table/table-row-column
+        {:style theme/semi-narrow-column}]
+       [table/table-row-column
+        {:style theme/semi-narrow-column}]
+       [table/table-row-column
+        {:style theme/semi-narrow-column}]]]]))))
 
 (defn grant-info [grant]
   [:div
