@@ -5,7 +5,8 @@
             [oph.va.virkailija.server :refer [start-server]]
             [oph.va.virkailija.common-utils
              :refer [test-server-port get! post! json->map create-submission
-                     create-application create-application-evaluation]]
+                     create-application create-application-evaluation
+                     create-payment]]
             [oph.va.virkailija.payment-batches-data
              :refer [create-batch-document-email get-batch-documents
                      get-batch]]
@@ -20,21 +21,6 @@
    :currency "EUR"
    :partner "123456"
    :grant-id 1})
-
-(defn create-payment [grant batch phase sum]
-  (let [submission (create-submission (:form grant)
-                                      {:budget-oph-share 40000})
-        application (create-application grant submission)
-        evaluation (create-application-evaluation application "accepted")]
-    (payments-data/create-payment
-      {:application-id (:id application)
-       :payment-sum sum
-       :batch-id (:id batch)
-       :state 1
-       :phase phase}
-      {:person-oid "12345"
-       :first-name "Test"
-       :surname "User"})))
 
 (describe "Payment batches routes"
 

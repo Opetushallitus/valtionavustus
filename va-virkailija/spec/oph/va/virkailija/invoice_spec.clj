@@ -1,15 +1,15 @@
 (ns oph.va.virkailija.invoice-spec
   (:require [speclj.core
              :refer [describe it should= should-throw
-                     tags around-all run-specs]]
+                     tags around-all run-specs after]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.server :refer [start-server]]
             [oph.va.virkailija.common-utils
             :refer [test-server-port create-submission
                     create-application admin-authentication
                     valid-payment-values delete! add-mock-authentication
-                    create-application-evaluation
-                    create-application-evaluation]]
+                    create-application-evaluation json->map create-payment
+                    create-application-evaluation get! post!]]
             [oph.va.virkailija.application-data :as application-data]
             [oph.va.virkailija.payment-batches-data :as payment-batches-data]
             [oph.va.virkailija.grant-data :as grant-data]
@@ -20,7 +20,8 @@
             [oph.va.virkailija.va-code-values-data :as va-code-values]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.routes :as va-routes]
-            [clojure.data.xml :refer [parse]]))
+            [clojure.data.xml :refer [parse]]
+            [oph.va.virkailija.virkailija-tools :as tools]))
 
 (def payment {:acceptor-email "acceptor@example.com"
               :created-at (f/parse "2017-12-20T10:24:59.750Z")
@@ -253,5 +254,59 @@
                :batch (assoc batch :documents
                              (payment-batches-data/get-batch-documents
                                (:id batch)))}))))))
+
+(describe
+  "Payment batch payment invoice"
+
+  (tags :server :paymentinvoice)
+
+  (after
+    (tools/delete-payment-batches))
+
+  (around-all
+    [_]
+    (with-test-server!
+      :virkailija-db
+      #(start-server
+         {:host "localhost"
+          :port test-server-port
+          :auto-reload? false
+          :without-authentication? true}) (_)))
+
+  (it "creates xml invoice of batch payment"
+      (let [grant (-> (first (grant-data/get-grants))
+                      (assoc-in [:content :document-type] "XA")
+                      (assoc-in [:content :name] "Some Grant"))
+            {:keys [body]}
+            (post! "/api/v2/payment-batches/"
+                   {:invoice-date "2018-04-16"
+                    :due-date "2018-04-30"
+                    :receipt-date "2018-04-16"
+                    :currency "EUR"
+                    :partner "123456"
+                    :grant-id 1})
+            batch (payment-batches-data/get-batch (:id (json->map body)))]
+        (post!
+          (format "/api/v2/payment-batches/%d/documents/" (:id batch))
+          {:document-id "ID1234567"
+           :presenter-email "presenter@local"
+           :acceptor-email "acceptor@local"
+           :phase 0})
+
+        (let [documents (payment-batches-data/get-batch-documents (:id batch))
+              payment (create-payment grant batch 0 20000)
+              application (application-data/get-application
+                            (:application-id payment))
+              xml-invoice (invoice/payment-to-xml
+                            {:payment payment
+                             :application application
+                             :grant (assoc grant
+                                           :operational-unit {:code "123456789"}
+                                           :project {:code "23456789"}
+                                           :operation {:code "3456789"})
+                             :batch (assoc batch :documents documents)})]
+          (should=
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><VA-invoice><Header><Maksuera>660018001</Maksuera><Laskunpaiva>2018-04-16</Laskunpaiva><Erapvm>2018-04-30</Erapvm><Bruttosumma>20000</Bruttosumma><Maksuehto>Z001</Maksuehto><Pitkaviite>123/456/78</Pitkaviite><Tositepvm>2018-04-16</Tositepvm><Asiatarkastaja>presenter@local</Asiatarkastaja><Hyvaksyja>acceptor@local</Hyvaksyja><Tositelaji>XA</Tositelaji><Maksutili>5000</Maksutili><Toimittaja><Y-tunnus>1234567-1</Y-tunnus><Nimi>Test Organisation</Nimi><Postiosoite>Someroad 1</Postiosoite><Paikkakunta>Some City</Paikkakunta><Maa>Some Country</Maa><Iban-tili>FI4250001510000023</Iban-tili><Pankkiavain>OKOYFIHH</Pankkiavain><Pankki-maa>FI</Pankki-maa><Kieli>fi</Kieli><Valuutta>EUR</Valuutta></Toimittaja><Postings><Posting><Summa>20000</Summa><LKP-tili>82300000</LKP-tili><TaKp-tili>29103013</TaKp-tili><Toimintayksikko>123456789</Toimintayksikko><Projekti>23456789</Projekti><Toiminto>3456789</Toiminto><Kumppani>123456</Kumppani></Posting></Postings></Header></VA-invoice>"
+            (xml/emit-str xml-invoice))))))
 
 (run-specs)
