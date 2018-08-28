@@ -59,6 +59,10 @@ npm-test:
 npm-outdated-dependencies:
 	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_outdated_dependencies,$(npm_project))$(newline))
 
+.PHONY: npm-audit
+npm-audit:
+	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_audit,$(npm_project))$(newline))
+
 .PHONY: lein-clean
 lein-clean: lein-clean-frontends lein-clean-targets
 
@@ -139,6 +143,7 @@ Targets:
   npm-build-frontends           Build frontend sources for va-hakija and va-virkailija.
   npm-test                      Run npm unit tests for $$NPM_PROJECTS.
   npm-outdated-dependencies     Show outdated npm modules for $$NPM_PROJECTS.
+  npm-audit                     Run npm audit for $$NPM_PROJECTS.
 
   lein-clean                    `lein-clean-admin-frontend`, `lein-clean-targets`
   lein-clean-targets            Remove Leiningen target directories from $$LEIN_PROJECTS.
@@ -213,6 +218,10 @@ endef
 
 define npm_build
 cd '$(1)' && npm run build-production
+endef
+
+define npm_audit
+cd '$(1)' && npm audit || true
 endef
 
 define npm_outdated_dependencies
