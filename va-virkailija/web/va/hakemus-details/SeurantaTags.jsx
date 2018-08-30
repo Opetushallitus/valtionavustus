@@ -23,7 +23,7 @@ export default class SeurantaTags extends Component {
     const allTags = _.sortBy(_.uniq(hakuUsedTags.concat(predefinedTags)))
 
     const classNames = (tag) =>{
-      const selected = _.contains(currentTags,tag)
+      const selected = _.includes(currentTags,tag)
       return ClassNames("btn btn-tag btn-sm", {
         "btn-simple": !selected,
         "btn-selected": selected

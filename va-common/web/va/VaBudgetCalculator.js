@@ -88,7 +88,7 @@ export default class VaBudgetCalculator {
       const subtotalSums = _.map(subtotals, 'sum')
       const totalNeeded = useDetailedCosts
         ? _.sum(subtotalSums)
-        : _.sum(_.rest(subtotalSums)) + costsGranted
+        : _.sum(_.tail(subtotalSums)) + costsGranted
       const isBudgetPositive = totalNeeded > 0
       const someSubtotalHasError = useDetailedCosts && _.some(subtotals, x => x.containsErrors)
       return {

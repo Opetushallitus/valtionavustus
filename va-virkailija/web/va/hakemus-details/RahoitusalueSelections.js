@@ -42,5 +42,5 @@ const getSelectedTalousarviotili = (selectedRahoitusalue, selectedTalousarviotil
     return availableTalousarviotilit[0]
   }
 
-  return _.contains(availableTalousarviotilit, selectedTalousarviotili) ? selectedTalousarviotili : null
+  return _.includes(availableTalousarviotilit, selectedTalousarviotili) ? selectedTalousarviotili : null
 }

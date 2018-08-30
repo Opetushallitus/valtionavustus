@@ -79,7 +79,7 @@ export default class JsUtil {
       throw new Error("Cannot handle case with " + allNodesContainingNode.length +
         " parents (" + JSON.stringify(allNodesContainingNode) + "), expected a single one. fieldId=" + idToFind)
     }
-    return _.first(allNodesContainingNode)
+    return _.head(allNodesContainingNode)
   }
 
   static fastTraverse(x, func) {

@@ -91,7 +91,7 @@ const FilterList  = ({hakemusFilter,hakuData,controller}) => {
         id: r.id,
         label: r.label.fi,
         options: r.options.asMutable().map(_.partial(mapOption, r.id)),
-        open: _.contains(openQuestions, r.id)
+        open: _.includes(openQuestions, r.id)
       }
     })
     if (!_.isEmpty(hakuData.avustushaku.content.rahoitusalueet)) {
@@ -103,7 +103,7 @@ const FilterList  = ({hakemusFilter,hakuData,controller}) => {
           value: row.rahoitusalue,
           selected: selectedPredicate("rahoitusalue", row.rahoitusalue)
         })),
-        open: _.contains(openQuestions, "rahoitusalue")
+        open: _.includes(openQuestions, "rahoitusalue")
       })
     }
 
@@ -117,7 +117,7 @@ const FilterList  = ({hakemusFilter,hakuData,controller}) => {
           value: tag,
           selected: selectedPredicate("tags", tag)
         })),
-        open: _.contains(openQuestions, "tags")
+        open: _.includes(openQuestions, "tags")
       })
     }
     return filterQuestions
