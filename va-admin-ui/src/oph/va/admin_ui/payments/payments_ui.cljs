@@ -152,7 +152,7 @@
               :on-filter #(update-filters! filters %1 %2)}]
             [table/sortable-header-column
              {:title "Tiliöinti"
-              :column-key :budget-granted
+              :column-key :payment-sum
               :sort-params @sort-params
               :style theme/narrow-column
               :on-sort #(sort-column! sort-params %)
