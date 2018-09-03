@@ -32,6 +32,7 @@
 (defquery get-grant "sql/virkailija/grants/get-grant.sql")
 (defquery delete-grant-payments
   "sql/virkailija/grants/delete-grant-payments.sql")
+(defquery get-grant-batches "sql/virkailija/grants/get-batches.sql")
 
 (defquery get-payment "sql/virkailija/payments/get-payment.sql")
 (defquery get-payment-version "sql/virkailija/payments/get-payment-version.sql")
