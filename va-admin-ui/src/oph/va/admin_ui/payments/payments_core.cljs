@@ -46,6 +46,22 @@
               id)]
       (reset! payments (<! c)))))
 
+(defn- update-grant-batches! [batches grant-id]
+  (let [dialog-chan (dialogs/show-loading-dialog!
+                                "Ladataan maksueriä" 3)]
+              (put! dialog-chan 1)
+              (go
+                (let [response (<! (connection/get-grant-batches
+                                              grant-id))]
+                  (put! dialog-chan 2)
+                  (if (:success response)
+                    (reset! batches (:body response))
+                    (dialogs/show-error-message!
+                      "Virhe maksuerien latauksessa"
+                      (select-keys response [:status :error-text]))))
+                (put! dialog-chan 3)
+                (close! dialog-chan))))
+
 (defn get-payment-batch [grant-id]
   (let [c (chan)]
     (go
@@ -464,6 +480,8 @@
                                    [:status :error-text])))
                   (put! dialog-chan 3))
                 (close! dialog-chan)))
+
+            (update-grant-batches! batches grant-id)
 
             (let [dialog-chan (dialogs/show-loading-dialog!
                                 "Ladataan maksatuksia" 3)]
