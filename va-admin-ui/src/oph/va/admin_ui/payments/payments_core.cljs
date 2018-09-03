@@ -433,22 +433,23 @@
                                  #(on-send-payments!
                                     batch-values
                                     selected-grant
-                                    payments)}]
+                                    payments
+                                    batches)}]
                                (when (user/is-admin? user-info)
                                  [va-ui/raised-button
-                                {:primary true
-                                 :disabled
-                                 (or
-                                   (seq errors)
-                                   (not unsent-payments?))
-                                 :label (translate :set-paid)
-                                 :title (translate :set-paid-without-sending)
-                                 :style theme/button
-                                 :on-click
-                                 #(on-set-batch-paid!
-                                    @batch-values
-                                    @selected-grant
-                                    payments)}])]])]))]]
+                                  {:primary true
+                                   :disabled
+                                   (or
+                                     (seq errors)
+                                     (not unsent-payments?))
+                                   :label (translate :set-paid)
+                                   :title (translate :set-paid-without-sending)
+                                   :style theme/button
+                                   :on-click
+                                   #(on-set-batch-paid!
+                                      @batch-values
+                                      @selected-grant
+                                      payments)}])]])]))]]
                     [va-ui/tab
                      {:value "sent"
                       :label [:span
