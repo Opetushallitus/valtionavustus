@@ -34,7 +34,8 @@
    :applications (r/atom [])
    :payments (r/atom [])
    :selected-grant (r/atom nil)
-   :batch-values (r/atom {})})
+   :batch-values (r/atom {})
+   :batches (r/atom [])})
 
 (defn- update-grant-payments! [id payments]
   (go
