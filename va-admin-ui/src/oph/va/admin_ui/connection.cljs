@@ -51,6 +51,10 @@
   (http/get (format "/%s/grants/%d/payments/" api-path id)
             {:with-credentials? true}))
 
+(defn get-grant-batches [id]
+  (http/get (format "/%s/grants/%d/batches/" api-path id)
+            {:with-credentials? true}))
+
 (defn send-payments-email [id]
   (http/post (format "/%s/payment-batches/%d/payments-email/" api-path id)
              {:with-credentials? true}))
