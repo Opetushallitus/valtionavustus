@@ -405,7 +405,8 @@
                             outgoing-payments]
                            (let [errors
                                  (concat
-                                   (get-batch-errors @payments @batch-values)
+                                   (get-batch-errors
+                                     outgoing-payments @batch-values)
                                    (get-grant-errors @selected-grant)
                                    (get-application-errors outgoing-payments))]
                              [:div
