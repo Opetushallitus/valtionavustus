@@ -46,7 +46,7 @@ export default class SelvitysPreview extends Component {
         return _.isArray(a) ? uniqueUnion(a, b) : undefined
 
         function uniqueUnion(firstAnswerArray, secondAnswerArray) {
-          return _.uniqBy(_.union(firstAnswerArray, secondAnswerArray), answer => { return answer.key });
+          return _.uniqBy(_.union(firstAnswerArray, secondAnswerArray), answer => { return answer.key })
         }
       })
 
