@@ -289,7 +289,7 @@
       (put! dialog-chan 3)
       (close! dialog-chan))))
 
-(defn- send-payments! [values selected-grant payments]
+(defn- send-payments! [values selected-grant payments batches]
   (go
     (let [c (dialogs/conn-with-err-dialog!
               "Lähetetään maksatuksia"
@@ -299,7 +299,7 @@
         (send-payments-email! (:batch-id values))
         (update-grant-payments! (:id selected-grant) payments)))))
 
-(defn- on-send-payments! [batch-values selected-grant payments]
+(defn- on-send-payments! [batch-values selected-grant payments batches]
   (go
     (let [batch (if (some? (:id @batch-values))
                   (payments/convert-payment-dates @batch-values)
@@ -332,7 +332,8 @@
 
 (defn home-page [data]
   (let [{:keys [user-info delete-payments?]} data
-        {:keys [selected-grant batch-values applications payments grants]} state
+        {:keys [selected-grant batch-values applications
+                payments grants batches]} state
         flatten-payments (payments/combine @applications @payments)]
     [:div
      [grants-table
@@ -452,13 +453,19 @@
                               (when (not (empty? new-sent-payments))
                                 [va-ui/badge
                                  (str (count new-sent-payments) " uutta")])]}
-                     [payments-ui/payments-table
-                      (filter #(> (:state %) 1) flatten-payments)]]]))]]]))]
+
+                     (let [sent-payments
+                           (filter #(> (:state %) 1) flatten-payments)]
+                       [:div
+                        [payments-ui/batches-table {:batches @batches
+                                                    :payments sent-payments}]
+                        [payments-ui/payments-table sent-payments]])]]))]]]))]
        (when (user/is-admin? user-info)
          (render-admin-tools payments @selected-grant delete-payments?))]]]))
 
 (defn init! []
-  (let [{:keys [selected-grant batch-values applications payments grants]}
+  (let [{:keys [selected-grant batch-values batches
+                applications payments grants]}
         state]
     (add-watch
       selected-grant
