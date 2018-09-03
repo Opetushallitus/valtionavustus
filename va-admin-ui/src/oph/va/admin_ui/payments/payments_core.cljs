@@ -297,7 +297,8 @@
               connection/create-batch-payments (:batch-id values))]
       (when (:success (<! c))
         (send-payments-email! (:batch-id values))
-        (update-grant-payments! (:id selected-grant) payments)))))
+        (update-grant-payments! (:id selected-grant) payments)
+        (update-grant-batches! batches (:id selected-grant))))))
 
 (defn- on-send-payments! [batch-values selected-grant payments batches]
   (go
@@ -310,7 +311,8 @@
                   (assoc batch :read-only true)))
         (send-payments!
           (payments/get-batch-values batch)
-          @selected-grant payments)))))
+          @selected-grant payments
+          batches)))))
 
 (defn- set-batch-payments-paid! [id grant payments]
   (go
