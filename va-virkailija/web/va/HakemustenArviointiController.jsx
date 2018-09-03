@@ -835,7 +835,7 @@ export default class HakemustenArviointiController {
     const deleteStaleOverriddenAnswers = () => {
       const overriddenAnswerIds = _.chain(overriddenAnswers.value)
         .filter(ans => ans.fieldType === "vaTraineeDayCalculator")
-        .pluck('key')
+        .map('key')
         .value()
 
       const answerIdsToPreserve = _.keys(defaultFields)
