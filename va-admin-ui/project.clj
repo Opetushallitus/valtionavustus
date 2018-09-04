@@ -97,6 +97,5 @@
                                   [binaryage/devtools]
                                   [figwheel-sidecar]
                                   [org.clojure/tools.nrepl]
-                                  [com.google.guava/guava]
-                                  [cider/cider-nrepl "0.16.0"]]}}
+                                  [com.google.guava/guava]]}}
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]})
