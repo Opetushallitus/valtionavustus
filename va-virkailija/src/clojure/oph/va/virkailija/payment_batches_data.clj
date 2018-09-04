@@ -144,3 +144,12 @@
            :payments (filter
                        #(= (:phase %) (:phase document))
                        payments)})))))
+
+(defn- set-batch-documents [batch]
+  (assoc batch :documents (get-batch-documents (:id batch))))
+
+(defn get-grant-batches [grant-id]
+  (->> (exec :virkailija-db queries/get-grant-batches {:grant_id grant-id})
+       (map convert-to-dash-keys)
+       (map convert-timestamps-from-sql)
+       (map set-batch-documents)))

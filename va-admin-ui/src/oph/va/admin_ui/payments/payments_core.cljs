@@ -34,7 +34,8 @@
    :applications (r/atom [])
    :payments (r/atom [])
    :selected-grant (r/atom nil)
-   :batch-values (r/atom {})})
+   :batch-values (r/atom {})
+   :batches (r/atom [])})
 
 (defn- update-grant-payments! [id payments]
   (go
@@ -44,6 +45,22 @@
               connection/get-grant-payments
               id)]
       (reset! payments (<! c)))))
+
+(defn- update-grant-batches! [batches grant-id]
+  (let [dialog-chan (dialogs/show-loading-dialog!
+                                "Ladataan maksueriä" 3)]
+              (put! dialog-chan 1)
+              (go
+                (let [response (<! (connection/get-grant-batches
+                                              grant-id))]
+                  (put! dialog-chan 2)
+                  (if (:success response)
+                    (reset! batches (:body response))
+                    (dialogs/show-error-message!
+                      "Virhe maksuerien latauksessa"
+                      (select-keys response [:status :error-text]))))
+                (put! dialog-chan 3)
+                (close! dialog-chan))))
 
 (defn get-payment-batch [grant-id]
   (let [c (chan)]
@@ -272,7 +289,7 @@
       (put! dialog-chan 3)
       (close! dialog-chan))))
 
-(defn- send-payments! [values selected-grant payments]
+(defn- send-payments! [values selected-grant payments batches]
   (go
     (let [c (dialogs/conn-with-err-dialog!
               "Lähetetään maksatuksia"
@@ -280,9 +297,10 @@
               connection/create-batch-payments (:batch-id values))]
       (when (:success (<! c))
         (send-payments-email! (:batch-id values))
-        (update-grant-payments! (:id selected-grant) payments)))))
+        (update-grant-payments! (:id selected-grant) payments)
+        (update-grant-batches! batches (:id selected-grant))))))
 
-(defn- on-send-payments! [batch-values selected-grant payments]
+(defn- on-send-payments! [batch-values selected-grant payments batches]
   (go
     (let [batch (if (some? (:id @batch-values))
                   (payments/convert-payment-dates @batch-values)
@@ -293,7 +311,8 @@
                   (assoc batch :read-only true)))
         (send-payments!
           (payments/get-batch-values batch)
-          @selected-grant payments)))))
+          @selected-grant payments
+          batches)))))
 
 (defn- set-batch-payments-paid! [id grant payments]
   (go
@@ -315,7 +334,8 @@
 
 (defn home-page [data]
   (let [{:keys [user-info delete-payments?]} data
-        {:keys [selected-grant batch-values applications payments grants]} state
+        {:keys [selected-grant batch-values applications
+                payments grants batches]} state
         flatten-payments (payments/combine @applications @payments)]
     [:div
      [grants-table
@@ -385,7 +405,8 @@
                             outgoing-payments]
                            (let [errors
                                  (concat
-                                   (get-batch-errors @payments @batch-values)
+                                   (get-batch-errors
+                                     outgoing-payments @batch-values)
                                    (get-grant-errors @selected-grant)
                                    (get-application-errors outgoing-payments))]
                              [:div
@@ -412,22 +433,23 @@
                                  #(on-send-payments!
                                     batch-values
                                     selected-grant
-                                    payments)}]
+                                    payments
+                                    batches)}]
                                (when (user/is-admin? user-info)
                                  [va-ui/raised-button
-                                {:primary true
-                                 :disabled
-                                 (or
-                                   (seq errors)
-                                   (not unsent-payments?))
-                                 :label (translate :set-paid)
-                                 :title (translate :set-paid-without-sending)
-                                 :style theme/button
-                                 :on-click
-                                 #(on-set-batch-paid!
-                                    @batch-values
-                                    @selected-grant
-                                    payments)}])]])]))]]
+                                  {:primary true
+                                   :disabled
+                                   (or
+                                     (seq errors)
+                                     (not unsent-payments?))
+                                   :label (translate :set-paid)
+                                   :title (translate :set-paid-without-sending)
+                                   :style theme/button
+                                   :on-click
+                                   #(on-set-batch-paid!
+                                      @batch-values
+                                      @selected-grant
+                                      payments)}])]])]))]]
                     [va-ui/tab
                      {:value "sent"
                       :label [:span
@@ -435,13 +457,19 @@
                               (when (not (empty? new-sent-payments))
                                 [va-ui/badge
                                  (str (count new-sent-payments) " uutta")])]}
-                     [payments-ui/payments-table
-                      (filter #(> (:state %) 1) flatten-payments)]]]))]]]))]
+
+                     (let [sent-payments
+                           (filter #(> (:state %) 1) flatten-payments)]
+                       [:div
+                        [payments-ui/batches-table {:batches @batches
+                                                    :payments sent-payments}]
+                        [payments-ui/payments-table sent-payments]])]]))]]]))]
        (when (user/is-admin? user-info)
          (render-admin-tools payments @selected-grant delete-payments?))]]]))
 
 (defn init! []
-  (let [{:keys [selected-grant batch-values applications payments grants]}
+  (let [{:keys [selected-grant batch-values batches
+                applications payments grants]}
         state]
     (add-watch
       selected-grant
@@ -463,6 +491,8 @@
                                    [:status :error-text])))
                   (put! dialog-chan 3))
                 (close! dialog-chan)))
+
+            (update-grant-batches! batches grant-id)
 
             (let [dialog-chan (dialogs/show-loading-dialog!
                                 "Ladataan maksatuksia" 3)]
