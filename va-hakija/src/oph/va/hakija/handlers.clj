@@ -27,7 +27,7 @@
 (defn- get-open-avustushaku [haku-id hakemus]
   (let [avustushaku (va-db/get-avustushaku haku-id)
         phase (avustushaku-phase avustushaku)]
-    (if (or (= phase "current") (= (:status hakemus) "pending_change_request") (= (:status hakemus) "officer_edit"))
+    (if (or (= phase "current") (= (:status hakemus) "pending_change_request") (= (:status hakemus) "officer_edit") (= (:status hakemus) "applicant_edit"))
       avustushaku
       (method-not-allowed! {:phase phase}))))
 
