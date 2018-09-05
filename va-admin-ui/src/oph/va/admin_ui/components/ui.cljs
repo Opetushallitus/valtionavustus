@@ -97,7 +97,7 @@
       (when-some [text (:tooltip props)] [tooltip {} text])]
      [:input
       (-> props
-          (select-keys [:value :type :type :size :min :max
+          (select-keys [:value :type :type :size :min :max :placeholder
                         :max-length :on-key-press :on-blur])
           (update :class str " oph-input" (when (= (:size p) :small) " small"))
           (assoc
