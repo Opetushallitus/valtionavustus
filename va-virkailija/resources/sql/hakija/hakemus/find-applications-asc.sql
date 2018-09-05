@@ -15,4 +15,4 @@ WHERE
     OR LOWER(h.project_name) LIKE :search_term
     OR LOWER(h.organization_name) LIKE :search_term)
 ORDER BY
-  created_at DESC
+  created_at ASC
