@@ -345,6 +345,33 @@
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
 
+(defn on-hakemus-applicant-edit-submit [haku-id hakemus-id base-version answers]
+  (let [hakemus (va-db/get-hakemus hakemus-id)
+        avustushaku (get-open-avustushaku haku-id hakemus)
+        form-id (:form avustushaku)
+        form (form-db/get-form form-id)
+        attachments (va-db/get-attachments hakemus-id (:id hakemus))
+        budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+        validation (merge (validation/validate-form form answers attachments)
+                          (va-budget/validate-budget-hakija answers budget-totals form))]
+    (log/info base-version)
+    (log/info (:version hakemus))                      
+    (if (every? empty? (vals validation))
+      (if (= base-version (:version hakemus))
+        (let [submission-id (:form_submission_id hakemus)
+              saved-submission (:body (update-form-submission form-id submission-id answers))
+              submission-version (:version saved-submission)
+              submitted-hakemus (va-db/submit-hakemus haku-id
+                                                      hakemus-id
+                                                      submission-id
+                                                      submission-version
+                                                      (:register_number hakemus)
+                                                      answers
+                                                      budget-totals)]
+          (method-not-allowed! {:applicant-edit "saved"}))
+        (hakemus-conflict-response hakemus))
+      (bad-request! validation))))
+
 (defn on-attachment-list [haku-id hakemus-id]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
     (va-db/get-attachments hakemus-id (:id hakemus))))
