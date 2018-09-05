@@ -15,13 +15,14 @@
 (defn- get-applications []
   (compojure-api/GET "/" []
     :path-params []
-    :query-params [{search :- String ""}]
+    :query-params [{search :- String ""}
+                   {order :- String ""}]
     :return [virkailija-schema/Application]
     :summary "Return list of applications"
     (ok
       (if (empty? search)
         (not-found "No route found")
-        (application-data/find-applications search)))))
+        (application-data/find-applications search order)))))
 
 (compojure-api/defroutes routes
   "application routes"

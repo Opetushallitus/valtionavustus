@@ -13,7 +13,9 @@
 (defn- get-grants []
   (compojure-api/GET "/" []
     :path-params []
-    :query-params [{template :- String ""}, {search :- String ""}]
+    :query-params [{template :- String ""}
+                   {search :- String ""}
+                   {order :- String ""}]
     :return virkailija-schema/Grants
     :summary "Return list of grants"
     (ok
@@ -21,7 +23,7 @@
         (= template "with-content")
         (grant-data/get-resolved-grants-with-content)
         (seq search)
-        (grant-data/find-grants search)
+        (grant-data/find-grants search order)
         :else (grant-data/get-grants)))))
 
 (defn- get-grant-applications []
