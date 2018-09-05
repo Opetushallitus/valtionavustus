@@ -35,9 +35,9 @@
 
 (defn- search-items [params]
   (swap! state assoc :grants-searching true :applications-searching true)
-  (router/set-query! {:search term})
+  (router/set-query! {:search (:search params) :order (:order params)})
   (go
-    (let [result (<! (connection/find-grants term))]
+    (let [result (<! (connection/find-grants params))]
       (if (:success result)
         (reset! (:grants search-results) (:body result))
         (dialogs/show-error-message!
@@ -45,7 +45,7 @@
           (select-keys result [:status :error-text])))
       (swap! state assoc :grants-searching false)))
   (go
-    (let [result (<! (connection/find-applications term))]
+    (let [result (<! (connection/find-applications params))]
       (if (:success result)
         (reset! (:applications search-results) (:body result))
         (dialogs/show-error-message!
