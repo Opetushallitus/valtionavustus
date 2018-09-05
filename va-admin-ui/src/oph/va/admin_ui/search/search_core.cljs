@@ -33,7 +33,7 @@
     (str (subs s 0 max-str-len) "...")
     s))
 
-(defn- search-items [term]
+(defn- search-items [params]
   (swap! state assoc :grants-searching true :applications-searching true)
   (router/set-query! {:search term})
   (go
