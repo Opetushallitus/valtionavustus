@@ -60,13 +60,17 @@ export default class VaUrlCreator extends UrlCreator {
           state.saveStatus.savedObject.status === "pending_change_request"
         const isVirkailijaEdit =
           state.saveStatus.savedObject.status === "officer_edit"
+          const isApplicantEdit =
+            state.saveStatus.savedObject.status === "applicant_edit"
         return (
           baseEditUrl +
           (isChangeRequest
             ? "/change-request-response"
             : isVirkailijaEdit
               ? "/officer-edit-submit"
-              : "/submit")
+              : isApplicantEdit
+                ? "/applicant-edit-submit"
+                : "/submit")
         )
       },
       loadEntityApiUrl: function(urlContent) {
@@ -148,9 +152,8 @@ export default class VaUrlCreator extends UrlCreator {
       modifyContactsApiUrl: function(state) {
         const avustusHakuId = state.avustushaku.id
         const hakemusId = state.saveStatus.hakemusId
-        const baseVersion = state.saveStatus.savedObject.version
         const lang = "fi"
-        const token = state.token 
+        const token = state.token
         return (
           `/avustushaku/${avustusHakuId}/nayta?avustushaku=${avustusHakuId}&hakemus=${hakemusId}&lang=${lang}&preview=false${token ? "&token=" + token : ""}&refuse-grant=false&modify-application=true`
         )

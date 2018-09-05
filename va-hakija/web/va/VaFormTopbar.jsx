@@ -46,6 +46,7 @@ export default class VaFormTopbar extends React.Component {
     const isNormalEdit = () => _.includes(["new", "draft","submitted"], _.get(saveStatus.savedObject, "status"))
     const isChangeRequestResponse = () => "pending_change_request" === _.get(saveStatus.savedObject, "status")
     const isInVirkailijaEditMode = () => "officer_edit" === _.get(saveStatus.savedObject, "status")
+    const isInApplicantEditMode = () => "applicant_edit" === _.get(saveStatus.savedObject, "status")
     const isSubmitted = () => "submitted" === _.get(saveStatus.savedObject, "status")
     const isSubmitDisabled = function() {
       return !(formIsValidOnClientSide && formIsValidOnServerSide && controller.isSaveDraftAllowed(state)) || controller.hasPendingChanges(state) || isSubmitted()
@@ -88,6 +89,11 @@ export default class VaFormTopbar extends React.Component {
                     <TextButton htmlId="virkailija-edit-submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey="virkailija-edit-submit" lang={lang} />
                     <span className="form-control-button-tooltip">{formTranslator.translate("virkailija-edit-submit-help", lang)}</span>
                   </div>
+                )}
+                {isInApplicantEditMode() && (
+                	<div className="form-control soresu-tooltip soresu-tooltip-down">
+                		<TextButton htmlId="applicant-edit-submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey="virkailija-edit-submit" lang={lang} />
+                	</div>
                 )}
                 {configuration.develMode && (
                   <ToggleLanguageButton id="toggle-language" controller={controller} languages={translations.languages} lang={lang}/>

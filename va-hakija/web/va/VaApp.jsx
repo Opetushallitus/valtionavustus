@@ -83,7 +83,7 @@ function onInitialStateLoaded(initialState) {
   budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {
     reportValidationErrors: isNotFirstEdit(initialState)
   })
-  const modifyApplication = query["modify-application"] 
+  const modifyApplication = query["modify-application"]
   if (!modifyApplication && initialState.avustushaku.phase !== "current" &&
       !initialState.configuration.preview &&
       !isEmptyOrReopenedHakemus(initialState.saveStatus.savedObject)) {
@@ -94,7 +94,7 @@ function onInitialStateLoaded(initialState) {
       initialState.configuration.develMode,
       initialState.token,
       initialState.isTokenValid)
-  } 
+  }
 
 }
 
@@ -121,7 +121,7 @@ function initVaFormController() {
     "printEntityId": printEntityId
   }
   const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
-  const stateProperty = controller.initialize(formOperations, initialValues, urlContent)  
+  const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state) {
     return <VaForm controller={controller} state={state} hakemusType="hakemus" useBusinessIdSearch={true} refuseGrant={urlContent.parsedQuery["refuse-grant"]} modifyApplication={urlContent.parsedQuery["modify-application"]}/>
   }}

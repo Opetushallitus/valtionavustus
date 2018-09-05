@@ -15,7 +15,7 @@ import GrantRefuse from './GrantRefuse.jsx'
 
 import './style/main.less'
 
-const allowedStatuses = ["officer_edit", "submitted", "pending_change_request"]
+const allowedStatuses = ["officer_edit", "submitted", "pending_change_request", "applicant_edit"]
 
 export default class VaForm extends React.Component {
   render() {
@@ -62,4 +62,4 @@ export default class VaForm extends React.Component {
       </div>
     )
   }
-}
+ }
