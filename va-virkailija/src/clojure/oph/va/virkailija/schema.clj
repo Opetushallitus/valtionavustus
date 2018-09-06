@@ -269,6 +269,7 @@
    :organization-name s/Str
    :project-name s/Str
    :register-number (s/maybe s/Str)
+   (s/optional-key :parent-id) (s/maybe s/Int)
    :language s/Str
    (s/optional-key :status) (s/maybe ArvioStatus)
    (s/optional-key :should-pay) (s/maybe s/Bool)
