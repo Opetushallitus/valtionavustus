@@ -119,7 +119,7 @@
             [lein-environ "1.1.0"]
             [speclj "3.3.2"]
             [lein-kibit "0.1.6"]
-            [jonase/eastwood "0.2.6"]
+            [jonase/eastwood "0.2.9"]
             [lein-bikeshed "0.5.1"]]
 
   :uberjar-exclusions [#"^\."]

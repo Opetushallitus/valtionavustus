@@ -20,9 +20,12 @@
 (defn get-resolved-grants-with-content []
   (get-grants true))
 
-(defn find-grants [search-term]
+(defn find-grants [search-term order]
   (mapv convert-to-dash-keys
-        (exec :form-db virkailija-queries/find-grants
+        (exec :form-db
+              (if (.endsWith order "desc")
+                virkailija-queries/find-grants
+                virkailija-queries/find-grants-asc)
               {:search_term
                (str "%" (clojure.string/lower-case search-term) "%")})))
 
