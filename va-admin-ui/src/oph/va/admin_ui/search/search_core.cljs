@@ -97,7 +97,7 @@
     (item-row "Avustushaku" (:grant-name application))
     (when (seq (:project-name application))
       (item-row "Hanke" (:project-name application)))
-    (item-row "Hakemus luotu"
+    (item-row "Hakemusta päivitetty"
               (to-simple-date-time (:created-at application)))
     (item-row "Haettu summa" (:budget-oph-share application))
     (item-row "Myönnetty summa"
