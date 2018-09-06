@@ -89,7 +89,8 @@
   (render-result-item
     i
     (str "/avustushaku/"
-         (:grant-id application) "/hakemus/" (:id application) "/")
+         (:grant-id application) "/hakemus/"
+         (or (:parent-id application) (:id application)) "/")
     (str (get application :register-number)
          " - "
          (:organization-name application))
