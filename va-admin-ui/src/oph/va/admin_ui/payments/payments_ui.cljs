@@ -59,7 +59,7 @@
      [table/table-footer
       [table/table-row
        [table/table-row-column
-        {:style theme/narrow-column}
+        {:style (merge theme/narrow-column theme/total-column)}
         (str (count filtered-payments) "/" (count payments) " maksatusta")]
        [table/table-row-column]
        [table/table-row-column
