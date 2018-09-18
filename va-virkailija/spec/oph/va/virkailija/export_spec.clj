@@ -247,8 +247,8 @@
       (should= [["Diaarinumero" "Hakijaorganisaatio" "Hankkeen nimi" "Asiointikieli" "Toteutunut budjetti" "OPH:n avustuksen osuus"]]
                (sheet-cell-values (spreadsheet/select-sheet export/loppuselvitys-all-answers-sheet-name wb)))
       (should= [["Maksuerä" "Toimittaja-numero" "Toimittajan nimi" "Pankkitili" "Maksuliike-menotili" "Eräpvm" "EUR" "Val" "Maksu ehto" "Pitkä viite" "Laskun päivämäärä" "Tositelaji" "Tosite-päivä" "LKP-TILI" "ALV-koodi" "Tiliöinti-summa" "Toiminta-yksikkö" "TaKp-tili" "Valtuus-numero" "Projekti" "Toiminto" "Suorite" "Alue / Kunta" "Kumppani" "Seuranta kohde 1" "Seuranta kohde 2" "Varalla 1" "Varalla 1" "KOM-yksikkö" "Selite (Tiliöinti)" "Asiatarkastajan sähköpostiosoite" "Hyväksyjän sähköpostiosoite"]
-                [1.0 "" "Hakija 1 fi" "FI4485711440007318" "FI1950000121501406" "" 4005.0 "EUR" "Z001" "1/351/2018" "19012018" "XA" "19012018" nil "" 4005.0 "" "" "" "" "6600151502" "" "" "" "" "" "" "" "" "" "" ""]
-                [1.0 "" "Hakija 2 sv" "FI2434690460001769" "FI1950000121501406" "" 31860.0 "EUR" "Z001" "2/351/2018" "19012018" "XA" "19012018" nil "" 31860.0 "" "" "" "" "6600151502" "" "" "" "" "" "" "" "" "" "" ""]]
+                [1.0 "" "Hakija 1 fi" "FI4485711440007318" "FI1950000121501406" "" 4005.0 "EUR" "Z001" "1/351/2018" "19012018" "XE" "19012018" nil "" 4005.0 "" "" "" "" "6600151502" "" "" "" "" "" "" "" "" "" "" ""]
+                [1.0 "" "Hakija 2 sv" "FI2434690460001769" "FI1950000121501406" "" 31860.0 "EUR" "Z001" "2/351/2018" "19012018" "XE" "19012018" nil "" 31860.0 "" "" "" "" "6600151502" "" "" "" "" "" "" "" "" "" "" ""]]
                (sheet-cell-values (spreadsheet/select-sheet export/maksu-sheet-name wb)))
       (should-be-nil (spreadsheet/select-sheet export/loppuselvitys-table-answers-sheet-name wb))))
 
@@ -290,10 +290,10 @@
                 ["3/344/2018" "" "" "sv" 81600.0 62832.0 "Hakijaorg 3 hanke" "Yhtveto 3" "Hanketot 3" "ttt-tavoite 3-1" "ttt-toiminta 3-1" "ttt-tulokset 3-1" nil nil nil "arvioitu 3" "" "tiedotettu 3" "Muu tuotos" "tuot-kuvaus 3-1" "tuot-saatavuus 3-1" "tuot-lisätietoja 3-1" nil nil nil nil "Ei" nil "synt-tulokset 3" "toimintaverkosto 3" "muut yhteistyökumppanit 3" "johtopäätökset 3" "lisätietoja 3" "foo-2.txt" nil "budhankkust3" 92500.0 "budlaitteistokust3" 2500.0 "budeurah1" 3200.0 "budmuujulkrah3" 3300.0 "budmyksrah3" 3400.0 "budmuuttulos3" 3500.0 "ids2.txt"]]
                (sheet-cell-values (spreadsheet/select-sheet export/loppuselvitys-all-answers-sheet-name wb)))
       (should= [["Maksuerä" "Toimittaja-numero" "Toimittajan nimi" "Pankkitili" "Maksuliike-menotili" "Eräpvm" "EUR" "Val" "Maksu ehto" "Pitkä viite" "Laskun päivämäärä" "Tositelaji" "Tosite-päivä" "LKP-TILI" "ALV-koodi" "Tiliöinti-summa" "Toiminta-yksikkö" "TaKp-tili" "Valtuus-numero" "Projekti" "Toiminto" "Suorite" "Alue / Kunta" "Kumppani" "Seuranta kohde 1" "Seuranta kohde 2" "Varalla 1" "Varalla 1" "KOM-yksikkö" "Selite (Tiliöinti)" "Asiatarkastajan sähköpostiosoite" "Hyväksyjän sähköpostiosoite"]
-                [1.0 "" "Hakijaorg 1" "FI5042850060000732" "FI1950000121501406" "" 27412.0 "EUR" "Z001" "1/344/2018" "20032018" "XA" "20032018" 8.2E7 "" 27412.0 "" "" "" "" "6600151502" "" "" "" "" "" "" "" "" "" "" ""]
-                [1.0 "" "Hakijaorg 2" "FI2031585930004414" "FI1950000121501406" "" 25872.0 "EUR" "Z001" "2/344/2018" "20032018" "XA" "20032018" 8.23E7 "" 25872.0 "" "" "" "" "6600151502" "" "" "" "" "" "" "" "" "" "" ""]
-                [1.0 "" "Hakijaorg 3" "FI4842358717000048" "FI1950000121501406" "" 37930.0 "EUR" "Z001" "3/344/2018" "20032018" "XA" "20032018" 8.25E7 "" 37930.0 "" "" "" "" "6600151502" "" "" "" "" "" "" "" "" "" "" ""]
-                [2.0 "" "Hakijaorg 3" "FI4842358717000048" "FI1950000121501406" "" 25287.0 "EUR" "Z001" "3/344/2018" "20032018" "XA" "20032018" 8.25E7 "" 25287.0 "" "" "" "" "6600151502" "" "" "" "" "" "" "" "" "" "" ""]]
+                [1.0 "" "Hakijaorg 1" "FI5042850060000732" "FI1950000121501406" "" 27412.0 "EUR" "Z001" "1/344/2018" "20032018" "XE" "20032018" 8.2E7 "" 27412.0 "" "" "" "" "6600151502" "" "" "" "" "" "" "" "" "" "" ""]
+                [1.0 "" "Hakijaorg 2" "FI2031585930004414" "FI1950000121501406" "" 25872.0 "EUR" "Z001" "2/344/2018" "20032018" "XE" "20032018" 8.23E7 "" 25872.0 "" "" "" "" "6600151502" "" "" "" "" "" "" "" "" "" "" ""]
+                [1.0 "" "Hakijaorg 3" "FI4842358717000048" "FI1950000121501406" "" 37930.0 "EUR" "Z001" "3/344/2018" "20032018" "XE" "20032018" 8.25E7 "" 37930.0 "" "" "" "" "6600151502" "" "" "" "" "" "" "" "" "" "" ""]
+                [2.0 "" "Hakijaorg 3" "FI4842358717000048" "FI1950000121501406" "" 25287.0 "EUR" "Z001" "3/344/2018" "20032018" "XE" "20032018" 8.25E7 "" 25287.0 "" "" "" "" "6600151502" "" "" "" "" "" "" "" "" "" "" ""]]
                (sheet-cell-values (spreadsheet/select-sheet export/maksu-sheet-name wb)))
       (should= [[nil nil nil nil nil "Arvostelut" nil nil]
                 ["Diaarinumero" "Hakijaorganisaatio" "Hankkeen nimi" "Asiointikieli" nil "Kuvaus" "Pisteet" nil]

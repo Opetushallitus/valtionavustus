@@ -96,7 +96,7 @@
                             :grant-id (:id grant)
                             :currency "EUR"
                             :invoice-date invoice-date
-                            :document-type "XA"
+                            :document-type "XE"
                             :transaction-account "6000"})
                     payment (payments-data/create-payment
                              {:application-id (:id application)
@@ -124,7 +124,7 @@
                             :grant-id (:id grant)
                             :currency "EUR"
                             :invoice-date invoice-date
-                            :document-type "XA"
+                            :document-type "XE"
                             :transaction-account "6000"})
                     payment (payments-data/create-payment
                              {:application-id (:id application)

@@ -6,7 +6,9 @@
             [clj-time.coerce :as c]
             [clj-time.format :as f]))
 
-(def organisations {"XA" 6600 "XB" 6604})
+(def organisations {"XA" 6600
+                    "XE" 6600
+                    "XB" 6604})
 
 (defn get-answer-value
   ([answers key]
@@ -48,7 +50,7 @@
       [:Tositepvm (.toString (:receipt-date batch))]
       [:Asiatarkastaja (:presenter-email document)]
       [:Hyvaksyja (:acceptor-email document)]
-      [:Tositelaji (get-in grant [:content :document-type] "XA")]
+      [:Tositelaji (get-in grant [:content :document-type] "XE")]
       [:Maksutili (get-in grant [:content :transaction-account] "5000")]
       [:Toimittaja
        [:Y-tunnus (get-answer-value answers "business-id")]
