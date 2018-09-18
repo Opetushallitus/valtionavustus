@@ -184,7 +184,7 @@
 
   (it "create batch document email"
       (let [grant (-> (first (grant-data/get-grants))
-                      (assoc-in [:content :document-type] "XA")
+                      (assoc-in [:content :document-type] "XE")
                       (assoc-in [:content :name] "Some Grant"))
             {:keys [body]}
             (post! "/api/v2/payment-batches/"

@@ -27,7 +27,7 @@
               :created-at (f/parse "2017-12-20T10:24:59.750Z")
               :application-id 6114
               :currency "EUR"
-              :document-type "XA"
+              :document-type "XE"
               :due-date (f/parse "2017-12-20T10:24:59.750Z")
               :inspector-email "inspector@example.com"
               :invoice-date (f/parse "2017-12-20T10:24:59.750Z")
@@ -103,7 +103,7 @@
   (it "calculates batch id"
       (should= "660017013"
                (invoice/get-batch-key
-                 payment {:content {:document-type "XA"}})))
+                 payment {:content {:document-type "XE"}})))
   (it "returns nil if any needed value is nil"
       (should= nil (invoice/get-batch-key nil {}))
       (should= nil (invoice/get-batch-key {:some "Value"} {}))))
@@ -218,7 +218,7 @@
               [:Tositepvm "2017-12-20"]
               [:Asiatarkastaja "presenter@example.com"]
               [:Hyvaksyja "acceptor@example.com"]
-              [:Tositelaji "XA"]
+              [:Tositelaji "XE"]
               [:Maksutili "5000"]
               [:Toimittaja
                [:Y-tunnus "1234567-1"]
@@ -249,7 +249,7 @@
                             :operational-unit {:code "6600100130"}
                             :operation {:code "6600151502"}
                             :lkp-account "82500000")
-                          (assoc-in [:content :document-type] "XA")
+                          (assoc-in [:content :document-type] "XE")
                           (assoc-in [:content :transaction-account] "5000"))
                :batch (assoc batch :documents
                              (payment-batches-data/get-batch-documents
@@ -275,7 +275,7 @@
 
   (it "creates xml invoice of batch payment"
       (let [grant (-> (first (grant-data/get-grants))
-                      (assoc-in [:content :document-type] "XA")
+                      (assoc-in [:content :document-type] "XE")
                       (assoc-in [:content :name] "Some Grant"))
             {:keys [body]}
             (post! "/api/v2/payment-batches/"
@@ -306,7 +306,7 @@
                                            :operation {:code "3456789"})
                              :batch (assoc batch :documents documents)})]
           (should=
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><VA-invoice><Header><Maksuera>660018001</Maksuera><Laskunpaiva>2018-04-16</Laskunpaiva><Erapvm>2018-04-30</Erapvm><Bruttosumma>20000</Bruttosumma><Maksuehto>Z001</Maksuehto><Pitkaviite>123/456/78</Pitkaviite><Tositepvm>2018-04-16</Tositepvm><Asiatarkastaja>presenter@local</Asiatarkastaja><Hyvaksyja>acceptor@local</Hyvaksyja><Tositelaji>XA</Tositelaji><Maksutili>5000</Maksutili><Toimittaja><Y-tunnus>1234567-1</Y-tunnus><Nimi>Test Organisation</Nimi><Postiosoite>Someroad 1</Postiosoite><Paikkakunta>Some City</Paikkakunta><Maa>Some Country</Maa><Iban-tili>FI4250001510000023</Iban-tili><Pankkiavain>OKOYFIHH</Pankkiavain><Pankki-maa>FI</Pankki-maa><Kieli>fi</Kieli><Valuutta>EUR</Valuutta></Toimittaja><Postings><Posting><Summa>20000</Summa><LKP-tili>82300000</LKP-tili><TaKp-tili>29103013</TaKp-tili><Toimintayksikko>123456789</Toimintayksikko><Projekti>23456789</Projekti><Toiminto>3456789</Toiminto><Kumppani>123456</Kumppani></Posting></Postings></Header></VA-invoice>"
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><VA-invoice><Header><Maksuera>660018001</Maksuera><Laskunpaiva>2018-04-16</Laskunpaiva><Erapvm>2018-04-30</Erapvm><Bruttosumma>20000</Bruttosumma><Maksuehto>Z001</Maksuehto><Pitkaviite>123/456/78</Pitkaviite><Tositepvm>2018-04-16</Tositepvm><Asiatarkastaja>presenter@local</Asiatarkastaja><Hyvaksyja>acceptor@local</Hyvaksyja><Tositelaji>XE</Tositelaji><Maksutili>5000</Maksutili><Toimittaja><Y-tunnus>1234567-1</Y-tunnus><Nimi>Test Organisation</Nimi><Postiosoite>Someroad 1</Postiosoite><Paikkakunta>Some City</Paikkakunta><Maa>Some Country</Maa><Iban-tili>FI4250001510000023</Iban-tili><Pankkiavain>OKOYFIHH</Pankkiavain><Pankki-maa>FI</Pankki-maa><Kieli>fi</Kieli><Valuutta>EUR</Valuutta></Toimittaja><Postings><Posting><Summa>20000</Summa><LKP-tili>82300000</LKP-tili><TaKp-tili>29103013</TaKp-tili><Toimintayksikko>123456789</Toimintayksikko><Projekti>23456789</Projekti><Toiminto>3456789</Toiminto><Kumppani>123456</Kumppani></Posting></Postings></Header></VA-invoice>"
             (xml/emit-str xml-invoice))))))
 
 (run-specs)
