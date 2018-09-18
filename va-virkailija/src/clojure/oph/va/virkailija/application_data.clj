@@ -52,12 +52,14 @@
                                   virkailija-queries/get-application-payments
                                   {:application_id id})))
 
-(defn find-applications [search-term]
+(defn find-applications [search-term order]
   (map
     #(assoc (convert-to-dash-keys %)
             :evaluation (get-application-full-evaluation (:id %)))
     (exec :form-db
-          hakija-queries/find-applications
+          (if (.endsWith order "-desc")
+            hakija-queries/find-applications
+            hakija-queries/find-applications-asc)
           {:search_term
            (str "%" (clojure.string/lower-case search-term) "%")})))
 

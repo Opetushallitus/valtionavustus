@@ -33,11 +33,11 @@
     (str (subs s 0 max-str-len) "...")
     s))
 
-(defn- search-items [term]
+(defn- search-items [params]
   (swap! state assoc :grants-searching true :applications-searching true)
-  (router/set-query! {:search term})
+  (router/set-query! {:search (:search params) :order (:order params)})
   (go
-    (let [result (<! (connection/find-grants term))]
+    (let [result (<! (connection/find-grants params))]
       (if (:success result)
         (reset! (:grants search-results) (:body result))
         (dialogs/show-error-message!
@@ -45,7 +45,7 @@
           (select-keys result [:status :error-text])))
       (swap! state assoc :grants-searching false)))
   (go
-    (let [result (<! (connection/find-applications term))]
+    (let [result (<! (connection/find-applications params))]
       (if (:success result)
         (reset! (:applications search-results) (:body result))
         (dialogs/show-error-message!
@@ -89,14 +89,15 @@
   (render-result-item
     i
     (str "/avustushaku/"
-         (:grant-id application) "/hakemus/" (:id application) "/")
+         (:grant-id application) "/hakemus/"
+         (or (:parent-id application) (:id application)) "/")
     (str (get application :register-number)
          " - "
          (:organization-name application))
     (item-row "Avustushaku" (:grant-name application))
     (when (seq (:project-name application))
       (item-row "Hanke" (:project-name application)))
-    (item-row "Hakemus luotu"
+    (item-row "Hakemusta päivitetty"
               (to-simple-date-time (:created-at application)))
     (item-row "Haettu summa" (:budget-oph-share application))
     (item-row "Myönnetty summa"
@@ -125,16 +126,26 @@
        [:span "Ei hakutuloksia"]))])
 
 (defn- search-field [props]
-  (let [search-term (r/atom (:default-value props))]
+  (let [search-params (r/atom {:search (:default-value props)
+                               :order (if (seq (:default-order props))
+                                        (:default-order props)
+                                        "created-at-desc")})]
     (fn [{:keys [error on-change]}]
       [:div
        [va-ui/text-field
-        {:help-text "Hakusanan pituus tulee olla yli kolme merkkiä"
+        {:placeholder "Hakusanan pituus tulee olla yli kolme merkkiä"
          :error error
-         :on-change #(reset! search-term (-> % .-target .-value))
-         :value @search-term
-         :on-enter-pressed #(on-change @search-term)
-         :style (assoc theme/text-field :width 575)}]])))
+         :on-change #(swap! search-params assoc :search (-> % .-target .-value))
+         :value (:search @search-params)
+         :on-enter-pressed #(on-change @search-params)
+         :style (assoc theme/text-field :width 575)}]
+       [va-ui/select-field
+        {:value (:order @search-params)
+         :on-change (fn [v]
+                      (swap! search-params assoc :order v)
+                      (on-change @search-params))
+         :values [{:value "created-at-desc" :primary-text "Uusin ensin"}
+                  {:value "created-at-asc" :primary-text "Vanhin ensin"}]}]])))
 
 (defn home-page []
   [:div
@@ -144,9 +155,14 @@
        (or
          (router/get-param (router/get-current-query) :search)
          ""))
+     :default-order
+     (js/decodeURIComponent
+       (or
+         (router/get-param (router/get-current-query) :order)
+         ""))
      :error (:term-length-error @state)
      :on-change
-     #(if (> (count %) 3)
+     #(if (> (count (:search %)) 3)
         (do
           (search-items %)
           (swap! state assoc :term-length-error false))
@@ -163,5 +179,6 @@
     (:applications-searching @state)]])
 
 (defn init! []
-  (when-let [term (router/get-param (router/get-current-query) :search)]
-    (search-items term)))
+  (let [term (router/get-param (router/get-current-query) :search)
+        order (router/get-param (router/get-current-query) :order)]
+    (when (seq term) (search-items {:search term :order order}))))

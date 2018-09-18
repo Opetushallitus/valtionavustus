@@ -78,11 +78,11 @@
                          [org.http4s/http4s-dsl_2.11 "0.16.5"]
 
                          ;; ClojureScript
-                         [org.clojure/clojurescript "1.10.238"]
+                         [org.clojure/clojurescript "1.10.339"]
                          [reagent "0.8.1"]
-                         [cljsjs/react-dom "16.3.2-0"]
-                         [cljs-react-material-ui "0.2.48"]
-                         [cljs-http "0.1.43"]
+                         [cljsjs/react-dom "16.4.1-0"]
+                         [cljs-react-material-ui "0.2.50"]
+                         [cljs-http "0.1.45"]
                          [com.andrewmcveigh/cljs-time "0.5.2"]
                          [cljsjs/chartjs "2.7.0-0"]
 
@@ -119,7 +119,7 @@
             [lein-environ "1.1.0"]
             [speclj "3.3.2"]
             [lein-kibit "0.1.6"]
-            [jonase/eastwood "0.2.6"]
+            [jonase/eastwood "0.2.9"]
             [lein-bikeshed "0.5.1"]]
 
   :uberjar-exclusions [#"^\."]

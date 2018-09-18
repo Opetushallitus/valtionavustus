@@ -8,4 +8,4 @@ WHERE
   register_number LIKE :search_term
   OR LOWER(content#>>'{name,fi}') LIKE :search_term
 ORDER BY
-  created_at DESC
+  created_at ASC
