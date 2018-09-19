@@ -70,7 +70,7 @@ export default class SummaryApp extends Component {
 const buildSummaryList = (statuses, applicationsByStatuses, grant) => {
   const statusKeys = _.keys(applicationsByStatuses)
   const summaryListingsAll = statuses.filter(
-    s => _.contains(statusKeys, s)).map(
+    s => _.includes(statusKeys, s)).map(
       s => <SummaryListing key={s}
                            arvioStatus={s}
                            hakemusList={applicationsByStatuses[s]}
@@ -153,7 +153,7 @@ class SummaryHeading extends Component {
           <tbody>
             {
               SummaryApp.statusesInOrder().filter(
-                s => _.contains(statusKeys, s)).map(
+                s => _.includes(statusKeys, s)).map(
                   s => {
                     const applications = applicationsByStatus[s]
                     return <SummaryTableRow

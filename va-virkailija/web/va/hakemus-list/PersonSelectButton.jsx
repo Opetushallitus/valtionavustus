@@ -52,7 +52,7 @@ const PersonSelectButton = ({controller,hakemus,state,show}) => {
     controller.togglePersonSelect(hakemus.id)
     document.body.classList.add('split-view')
   }
-  const roles = _.pluck(state.hakuData.roles,'id')
+  const roles = _.map(state.hakuData.roles,'id')
   const presenterRoleId = hakemus.arvio["presenter-role-id"]
   const personCount = hakemus.arvio.roles.evaluators.filter(id => _.includes(roles,id)).length + (presenterRoleId && _.includes(roles,presenterRoleId) ? 1 : 0)
   const countIndicator = personCount > 0 ? personCount : "+"

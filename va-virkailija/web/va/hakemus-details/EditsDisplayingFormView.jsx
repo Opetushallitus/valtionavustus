@@ -65,7 +65,7 @@ export default class EditsDisplayingFormView extends React.Component {
         return versionsByFieldId[fieldId].length > 1
       })
       return { changedAnswers: _.map(fieldIdsOfUpdatedAttachments, fieldId => {
-        const oldestRelevantAttachmentVersion = _.first(versionsByFieldId[fieldId])
+        const oldestRelevantAttachmentVersion = _.head(versionsByFieldId[fieldId])
         return { fieldType: "namedAttachment",
                  key: fieldId,
                  value: oldestRelevantAttachmentVersion.filename,
@@ -74,7 +74,7 @@ export default class EditsDisplayingFormView extends React.Component {
 
       function stripNonSubmittedVersions(versionsOfAttachment) {
         const beforeAndAfterSubmission = _.partition(versionsOfAttachment, v => { return v["hakemus-version"] <= oldestHakemusVersion })
-        const originalSubmittedAttachmentVersion = _.first(_.sortByOrder(beforeAndAfterSubmission[0], "version", "desc"))
+        const originalSubmittedAttachmentVersion = _.head(_.orderBy(beforeAndAfterSubmission[0], "version", "desc"))
         const attachmentVersionsAfterSubmissions = beforeAndAfterSubmission[1]
         const result = []
         if (originalSubmittedAttachmentVersion) {

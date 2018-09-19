@@ -11,7 +11,7 @@ describe('Form full of errors', function() {
   beforeEach(function() {
     validationErrors = _(JsUtil.flatFilter(formContent, x => !_.isUndefined(x.id) && x.fieldClass === "formField"))
       .map(field => { return { id: field.id, errors: [ { 'error': 'required' } ] }})
-      .indexBy('id')
+      .keyBy('id')
       .mapValues('errors')
       .value()
   })

@@ -192,7 +192,7 @@ export default class SelvitysEmail extends React.Component {
       ? makeTitleForSent(selvitysType)
       : makeTitleForUnsent(selvitysType, lang)
 
-    const areAllEmailsValid = !_.any(recipientEmails, email => !email.isValid)
+    const areAllEmailsValid = !_.some(recipientEmails, email => !email.isValid)
 
     return (
       <div>

@@ -13,7 +13,7 @@ export default class CheckboxButton extends BasicFieldComponent {
     if (props.options) {
       for (let i = 0; i < props.options.length; i++) {
         const optionValue = props.options[i].value
-        const checked = _.contains(props.value, optionValue)
+        const checked = _.includes(props.value, optionValue)
         const label = new Translator(props.options[i]).translate("label", props.lang, optionValue)
         selectionButtons.push(<input type="checkbox" id={props.htmlId + ".checkbox." + i}
                                  key={props.htmlId + "." + optionValue}

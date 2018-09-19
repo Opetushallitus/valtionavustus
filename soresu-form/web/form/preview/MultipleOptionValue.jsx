@@ -13,7 +13,7 @@ export default class MultipleOptionValue extends PreviewComponent {
       for (let i = 0; i < options.length; i++) {
         const isFirst = values.length === 0
         const option = options[i]
-        if (_.contains(this.props.value, option.value)) {
+        if (_.includes(this.props.value, option.value)) {
           values.push(
             <span key={i}>
               <span hidden={isFirst}>, </span>
