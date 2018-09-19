@@ -16,6 +16,7 @@ export default class Form extends React.Component {
     const fields = state.form.content
     const validationErrors = state.form.validationErrors
     const values = state.saveStatus.values
+    const modifyApplication = this.props.modifyApplication
 
     const renderField = function (field, renderingParameters) {
       const htmlId = controller.constructHtmlId(fields, field.id)
@@ -35,7 +36,8 @@ export default class Form extends React.Component {
       } else {
         const formOperations = state.extensionApi.formOperations
         const saved = controller.isSaveDraftAllowed(state)
-        const fieldDisabled = !formOperations.isFieldEnabled(saved, field.id) || field.forceDisabled === true
+        const fieldDisabled = (modifyApplication && !(field.id === "applicant-name" || field.id === "primary-email"))? true : 
+        !formOperations.isFieldEnabled(saved, field.id) || field.forceDisabled === true
         const extendedProperties = _.extend(fieldProperties, { disabled: fieldDisabled,
                                                                renderingParameters: renderingParameters,
                                                                allAttachments: state.saveStatus.attachments,
