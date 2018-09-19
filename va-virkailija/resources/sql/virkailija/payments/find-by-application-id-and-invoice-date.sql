@@ -3,11 +3,12 @@ SELECT
   p.user_name, p.user_oid, p.batch_id, p.payment_sum, p.phase
 FROM
   virkailija.payments AS p
-JOIN
+LEFT JOIN
   virkailija.payment_batches AS b
     ON
       b.id = p.batch_id
 WHERE
-  b.invoice_date = :invoice_date::date
-  AND p.deleted IS NULL
-  AND p.version_closed IS NULL;
+  p.application_id = :application_id AND
+  b.invoice_date = :invoice_date::date AND
+  p.deleted IS NULL AND
+  p.version_closed IS NULL;
