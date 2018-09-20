@@ -4,7 +4,8 @@
                                       sexp-as-element]]
             [clj-time.core :as t]
             [clj-time.coerce :as c]
-            [clj-time.format :as f]))
+            [clj-time.format :as f]
+            [clojure.string :as c-str]))
 
 (def organisations {"XA" 6600
                     "XE" 6600
@@ -72,6 +73,21 @@
         [:Projekti (get-in grant [:project :code])]
         [:Toiminto (get-in grant [:operation :code])]
         [:Kumppani (:partner batch)]]]]]))
+
+(defn valid-pitkaviite? [pitkaviite]
+  (and pitkaviite
+       (re-seq #"^\d+\/\d+\/\d+(_\d+)?$" pitkaviite)))
+
+(defn parse-pitkaviite
+  ([pitkaviite default-phase]
+  (when-not (valid-pitkaviite? pitkaviite)
+    (throw (ex-info "Invalid pitkäviite" {:value pitkaviite})))
+  (let [[body phase] (c-str/split pitkaviite #"_")]
+    {:register-number body
+     :phase (if (seq phase)
+              (dec (Integer/parseInt phase))
+              default-phase)}))
+  ([pitkaviite] (parse-pitkaviite pitkaviite 0)))
 
 (defn payment-to-xml [data]
   "Creates xml document (tags) of given payment of Valtionavustukset maksatus.
