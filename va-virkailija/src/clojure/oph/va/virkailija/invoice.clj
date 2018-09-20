@@ -47,7 +47,9 @@
       [:Erapvm (.toString (:due-date batch))]
       [:Bruttosumma (:payment-sum payment)]
       [:Maksuehto "Z001"]
-      [:Pitkaviite (:register-number application)]
+      [:Pitkaviite (format
+                     "%s_%s"
+                     (:register-number application) (inc (:phase payment)))]
       [:Tositepvm (.toString (:receipt-date batch))]
       [:Asiatarkastaja (:presenter-email document)]
       [:Hyvaksyja (:acceptor-email document)]
