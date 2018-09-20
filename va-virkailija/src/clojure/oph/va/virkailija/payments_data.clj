@@ -92,15 +92,16 @@
 (defn find-payments-by-response
   "Response values: {:register-number \"string\" :invoice-date \"string\"}"
   [values]
-  (let [application
+  (let [parsed (invoice/parse-pitkaviite (:register-number values))
+        application
         (application-data/find-application-by-register-number
-              (:register-number values))]
+          (:register-number parsed))]
     (map
       convert-to-dash-keys
       (exec :virkailija-db
             queries/find-payments-by-application-id-and-invoice-date
             {:application_id (:id application)
-             :invoice_date (:invoice-date values)}))))
+             :phase (:phase parsed)}))))
 
 (defn update-state-by-response [xml]
   (let [response-values (invoice/read-response-xml xml)
