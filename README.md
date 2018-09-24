@@ -569,6 +569,14 @@ Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
   - Tämän jälkeen maksu ilmestyy Maksatus-näkymään, josta sen voi lähettää,
     kuten ensimmäisen erän
 
+Maksusanomassa on pitkäviite, jolla tunnistetaan hakemuksen maksatus
+VA-järjestelmässä. Pitkäviite koostuu hakemuksen diaarinumerosta ja maksuerän
+numerosta alaviivalla erotettuna. Samainen pitkäviite palautuu Rondosta
+sanoman mukana, kun maksatus on maksettu.
+
+Vanhoissa maksatuksissa ei ole pitkäviitteessä maksuerän numeroa. Näitä
+parsittaessa oletetaan, että kyseessä on maksatuksen 1. erä.
+
 ## Muutoksenhaku
 
 Tällä hetkellä järjestelmä tukee hakijan luomaa muutosta ainoastaan avustuksen

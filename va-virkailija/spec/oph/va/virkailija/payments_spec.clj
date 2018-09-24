@@ -55,7 +55,122 @@
                         :auto-reload? false
                         :without-authentication? true}) (_)))
 
-  (it "finds payments by register number and invoice date"
+  (it "finds payments by register number and phase"
+      (let [grant (first (grant-data/get-grants))
+            submission (create-submission
+                         (:form grant) {:budget-granted 40000})
+            application (create-application grant submission)
+            batch (payment-batches-data/create-batch
+                    {:receipt-date payment-date
+                     :due-date payment-date
+                     :partner ""
+                     :grant-id (:id grant)
+                     :currency "EUR"
+                     :invoice-date payment-date})
+            payment (payments-data/create-payment
+                      {:application-id (:id application)
+                       :payment-sum 20000
+                       :batch-id (:id batch)
+                       :state 1
+                       :phase 1}
+                      {:person-oid "12345"
+                       :first-name "Test"
+                       :surname "User"})]
+        (let [payments (payments-data/find-payments-by-response
+                         {:register-number
+                          (str (:register_number application) "_2")
+                          :invoice-date "2018-05-02"})]
+          (should= 1 (count payments))
+          (should=
+            (select-keys payment [:id :version])
+            (select-keys (first payments) [:id :version])))
+        (should
+          (empty? (payments-data/find-payments-by-response
+                    {:register-number (:register_number application)
+                     :invoice-date "2018-05-03"})))))
+
+  (it "finds multiple payments by register number and phase"
+      (let [grant (first (grant-data/get-grants))
+            submission (create-submission
+                         (:form grant) {:budget-granted 40000})
+            application (create-application grant submission)
+            batch (payment-batches-data/create-batch
+                    {:receipt-date payment-date
+                     :due-date payment-date
+                     :partner ""
+                     :grant-id (:id grant)
+                     :currency "EUR"
+                     :invoice-date payment-date})
+            payment1 (payments-data/create-payment
+                       {:application-id (:id application)
+                        :payment-sum 20000
+                        :batch-id (:id batch)
+                        :state 1
+                        :phase 0}
+                       {:person-oid "12345"
+                        :first-name "Test"
+                        :surname "User"})
+            payment2 (payments-data/create-payment
+                       {:application-id (:id application)
+                        :payment-sum 20000
+                        :batch-id (:id batch)
+                        :state 1
+                        :phase 1}
+                       {:person-oid "12345"
+                        :first-name "Test"
+                        :surname "User"})]
+        (let [payments (payments-data/find-payments-by-response
+                         {:register-number
+                          (str (:register_number application) "_1")
+                          :invoice-date "2018-05-02"})]
+          (should= 1 (count payments))
+          (should=
+            (select-keys payment1 [:id :version])
+            (select-keys (first payments) [:id :version])))
+        (let [payments (payments-data/find-payments-by-response
+                         {:register-number
+                          (str (:register_number application) "_2")
+                          :invoice-date "2018-05-02"})]
+          (should= 1 (count payments))
+          (should=
+            (select-keys payment2 [:id :version])
+            (select-keys (first payments) [:id :version])))
+        (should
+          (empty? (payments-data/find-payments-by-response
+                    {:register-number (str (:register_number application) "_3")
+                     :invoice-date "2018-05-03"})))))
+
+  (it "finds payments by register number of first batch"
+      (let [grant (first (grant-data/get-grants))
+            submission (create-submission
+                         (:form grant) {:budget-granted 40000})
+            application (create-application grant submission)
+            batch (payment-batches-data/create-batch
+                    {:receipt-date payment-date
+                     :due-date payment-date
+                     :partner ""
+                     :grant-id (:id grant)
+                     :currency "EUR"
+                     :invoice-date payment-date})
+            payment (payments-data/create-payment
+                      {:application-id (:id application)
+                       :payment-sum 20000
+                       :batch-id (:id batch)
+                       :state 1
+                       :phase 0}
+                      {:person-oid "12345"
+                       :first-name "Test"
+                       :surname "User"})
+            payments (payments-data/find-payments-by-response
+                       {:register-number (str (:register_number application) "_1")
+                        :invoice-date "2018-05-02"})]
+        (should=
+          (select-keys payment [:id :version])
+          (select-keys
+            (first payments)
+            [:id :version]))))
+
+  (it "finds payments by register number of first batch fall back"
       (let [grant (first (grant-data/get-grants))
             submission (create-submission
                          (:form grant) {:budget-granted 40000})
@@ -76,17 +191,15 @@
                       {:person-oid "12345"
                        :first-name "Test"
                        :surname "User"})]
-        (should=
-          (select-keys payment [:id :version])
-          (select-keys
-            (first (payments-data/find-payments-by-response
-                     {:register-number (:register_number application)
-                      :invoice-date "2018-05-02"}))
-            [:id :version]))
-        (should
-          (empty? (payments-data/find-payments-by-response
-                    {:register-number (:register_number application)
-                     :invoice-date "2018-05-03"})))))
+        (let [payments (payments-data/find-payments-by-response
+                         {:register-number (:register_number application)
+                          :invoice-date "2018-05-02"})]
+          (should= 1 (count payments))
+          (should=
+            (select-keys payment [:id :version])
+            (select-keys
+              (first payments)
+              [:id :version])))))
 
   (it "finds payments by grant"
       (let [grant (first (grant-data/get-grants))]
