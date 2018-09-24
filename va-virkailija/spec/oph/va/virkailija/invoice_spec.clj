@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.invoice-spec
   (:require [speclj.core
-             :refer [describe it should= should-throw
+             :refer [describe it should= should-throw should should-not
                      tags around-all run-specs after]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.server :refer [start-server]]
@@ -27,7 +27,7 @@
               :created-at (f/parse "2017-12-20T10:24:59.750Z")
               :application-id 6114
               :currency "EUR"
-              :document-type "XA"
+              :document-type "XE"
               :due-date (f/parse "2017-12-20T10:24:59.750Z")
               :inspector-email "inspector@example.com"
               :invoice-date (f/parse "2017-12-20T10:24:59.750Z")
@@ -54,14 +54,14 @@
 
 (def response-tags [:VA-invoice
                     [:Header
-                     [:Pitkaviite "1/234/2018"]
+                     [:Pitkaviite "1/234/2018_1"]
                      [:Maksupvm "2018-01-25"]]])
 
 (def response-xml (xml/sexp-as-element response-tags))
 
 (describe
-  "Get answer value"
-  (tags :invoice)
+  "Parse values"
+  (tags :invoice :invoiceparse)
 
   (it "gets answer value"
       (should= "test@user.com"
@@ -74,7 +74,27 @@
                  answers "non-existing" "default")))
   (it "returns value if found altough default was given"
       (should= "somevalue"
-               (invoice/get-answer-value answers "key1" "default"))))
+               (invoice/get-answer-value answers "key1" "default")))
+  (it "gets register number and phase"
+      (should= {:register-number "1/234/2018"
+                :phase 0}
+               (invoice/parse-pitkaviite "1/234/2018_1")))
+  (it "gets register number and default phase"
+      (should= {:register-number "1/234/2018"
+                :phase 1}
+               (invoice/parse-pitkaviite "1/234/2018" 1)))
+  (it "throws on invalid pitkaviite"
+      (should-throw
+        Exception "Invalid pitkäviite" (invoice/parse-pitkaviite "invalid")))
+  (it "throws on empty pitkaviite"
+      (should-throw
+        Exception "Invalid pitkäviite" (invoice/parse-pitkaviite "")))
+  (it "throws on nil pitkaviite"
+      (should-throw
+        Exception "Invalid pitkäviite" (invoice/parse-pitkaviite nil)))
+  (it "throws on string without pitkaviite"
+      (should-throw
+        Exception "Invalid pitkäviite" (invoice/parse-pitkaviite "_1"))))
 
 (describe
   "Response XML values"
@@ -82,7 +102,7 @@
 
   (it "get values"
       (should=
-        {:register-number "1/234/2018"
+        {:register-number "1/234/2018_1"
          :invoice-date "2018-06-08"}
         (invoice/read-response-xml
           (parse
@@ -91,7 +111,7 @@
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>
                  <VA-invoice>
                    <Header>
-                     <Pitkaviite>1/234/2018</Pitkaviite>
+                     <Pitkaviite>1/234/2018_1</Pitkaviite>
                      <Maksupvm>2018-06-08</Maksupvm>
                    </Header>
                  </VA-invoice>")))))))
@@ -103,7 +123,7 @@
   (it "calculates batch id"
       (should= "660017013"
                (invoice/get-batch-key
-                 payment {:content {:document-type "XA"}})))
+                 payment {:content {:document-type "XE"}})))
   (it "returns nil if any needed value is nil"
       (should= nil (invoice/get-batch-key nil {}))
       (should= nil (invoice/get-batch-key {:some "Value"} {}))))
@@ -114,7 +134,7 @@
 
   (it "gets content of Pitkaviite"
       (should=
-        '("1/234/2018")
+        '("1/234/2018_1")
         (invoice/get-content response-xml
                              [:VA-invoice :Header :Pitkaviite])))
   (it "gets content of Maksupvm"
@@ -214,11 +234,11 @@
               [:Erapvm "2017-12-27"]
               [:Bruttosumma 20000]
               [:Maksuehto "Z001"]
-              [:Pitkaviite "123/456/78"]
+              [:Pitkaviite "123/456/78_1"]
               [:Tositepvm "2017-12-20"]
               [:Asiatarkastaja "presenter@example.com"]
               [:Hyvaksyja "acceptor@example.com"]
-              [:Tositelaji "XA"]
+              [:Tositelaji "XE"]
               [:Maksutili "5000"]
               [:Toimittaja
                [:Y-tunnus "1234567-1"]
@@ -249,7 +269,7 @@
                             :operational-unit {:code "6600100130"}
                             :operation {:code "6600151502"}
                             :lkp-account "82500000")
-                          (assoc-in [:content :document-type] "XA")
+                          (assoc-in [:content :document-type] "XE")
                           (assoc-in [:content :transaction-account] "5000"))
                :batch (assoc batch :documents
                              (payment-batches-data/get-batch-documents
@@ -275,7 +295,7 @@
 
   (it "creates xml invoice of batch payment"
       (let [grant (-> (first (grant-data/get-grants))
-                      (assoc-in [:content :document-type] "XA")
+                      (assoc-in [:content :document-type] "XE")
                       (assoc-in [:content :name] "Some Grant"))
             {:keys [body]}
             (post! "/api/v2/payment-batches/"
@@ -306,7 +326,24 @@
                                            :operation {:code "3456789"})
                              :batch (assoc batch :documents documents)})]
           (should=
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><VA-invoice><Header><Maksuera>660018001</Maksuera><Laskunpaiva>2018-04-16</Laskunpaiva><Erapvm>2018-04-30</Erapvm><Bruttosumma>20000</Bruttosumma><Maksuehto>Z001</Maksuehto><Pitkaviite>123/456/78</Pitkaviite><Tositepvm>2018-04-16</Tositepvm><Asiatarkastaja>presenter@local</Asiatarkastaja><Hyvaksyja>acceptor@local</Hyvaksyja><Tositelaji>XA</Tositelaji><Maksutili>5000</Maksutili><Toimittaja><Y-tunnus>1234567-1</Y-tunnus><Nimi>Test Organisation</Nimi><Postiosoite>Someroad 1</Postiosoite><Paikkakunta>Some City</Paikkakunta><Maa>Some Country</Maa><Iban-tili>FI4250001510000023</Iban-tili><Pankkiavain>OKOYFIHH</Pankkiavain><Pankki-maa>FI</Pankki-maa><Kieli>fi</Kieli><Valuutta>EUR</Valuutta></Toimittaja><Postings><Posting><Summa>20000</Summa><LKP-tili>82300000</LKP-tili><TaKp-tili>29103013</TaKp-tili><Toimintayksikko>123456789</Toimintayksikko><Projekti>23456789</Projekti><Toiminto>3456789</Toiminto><Kumppani>123456</Kumppani></Posting></Postings></Header></VA-invoice>"
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><VA-invoice><Header><Maksuera>660018001</Maksuera><Laskunpaiva>2018-04-16</Laskunpaiva><Erapvm>2018-04-30</Erapvm><Bruttosumma>20000</Bruttosumma><Maksuehto>Z001</Maksuehto><Pitkaviite>123/456/78_1</Pitkaviite><Tositepvm>2018-04-16</Tositepvm><Asiatarkastaja>presenter@local</Asiatarkastaja><Hyvaksyja>acceptor@local</Hyvaksyja><Tositelaji>XE</Tositelaji><Maksutili>5000</Maksutili><Toimittaja><Y-tunnus>1234567-1</Y-tunnus><Nimi>Test Organisation</Nimi><Postiosoite>Someroad 1</Postiosoite><Paikkakunta>Some City</Paikkakunta><Maa>Some Country</Maa><Iban-tili>FI4250001510000023</Iban-tili><Pankkiavain>OKOYFIHH</Pankkiavain><Pankki-maa>FI</Pankki-maa><Kieli>fi</Kieli><Valuutta>EUR</Valuutta></Toimittaja><Postings><Posting><Summa>20000</Summa><LKP-tili>82300000</LKP-tili><TaKp-tili>29103013</TaKp-tili><Toimintayksikko>123456789</Toimintayksikko><Projekti>23456789</Projekti><Toiminto>3456789</Toiminto><Kumppani>123456</Kumppani></Posting></Postings></Header></VA-invoice>"
             (xml/emit-str xml-invoice))))))
+
+(describe
+  "Invoice validation"
+
+  (tags :invoicevalidation)
+
+  (it "validates pitkäviite"
+      (should (invoice/valid-pitkaviite? "1/234/2018"))
+      (should (invoice/valid-pitkaviite? "100/234/2018"))
+      (should (invoice/valid-pitkaviite? "1/234/2018_1"))
+      (should (invoice/valid-pitkaviite? "100/234/2018_12"))
+      (should-not (invoice/valid-pitkaviite? "/234/2018"))
+      (should-not (invoice/valid-pitkaviite? "1//2018"))
+      (should-not (invoice/valid-pitkaviite? "//_"))
+      (should-not (invoice/valid-pitkaviite? ""))
+      (should-not (invoice/valid-pitkaviite? nil))
+      (should-not (invoice/valid-pitkaviite? "invalid"))))
 
 (run-specs)

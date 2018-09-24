@@ -6,7 +6,7 @@
             [oph.va.admin-ui.utils :refer [format]]
             [oph.va.admin-ui.payments.utils
              :refer [phase-to-name sort-column! update-filters!
-                     sort-rows filter-rows]]
+                     sort-rows filter-rows to-simple-date]]
             [oph.va.admin-ui.components.ui :as va-ui]))
 
 (defn- render-payment [i payment]
@@ -152,7 +152,7 @@
               :on-filter #(update-filters! filters %1 %2)}]
             [table/sortable-header-column
              {:title "Tiliöinti"
-              :column-key :budget-granted
+              :column-key :payment-sum
               :sort-params @sort-params
               :style theme/narrow-column
               :on-sort #(sort-column! sort-params %)
@@ -163,3 +163,74 @@
              (doall (map-indexed
                       #(render-payment-group %1 %2 @filters)
                       grouped-payments)))]]]))))
+
+(defn- render-document [{index :index
+                         document :document
+                         batch :batch
+                         payments :payments}]
+  [table/table-row {:key index}
+   [table/table-row-column
+    (phase-to-name (:phase document))]
+   [table/table-row-column
+    (.toLocaleString
+      (reduce #(+ %1 (:payment-sum %2)) 0 payments))
+    " €"]
+   [table/table-row-column
+    (count payments)]
+   [table/table-row-column
+    (to-simple-date (:invoice-date batch))]
+   [table/table-row-column
+    (to-simple-date (:due-date batch))]
+   [table/table-row-column
+    (to-simple-date (:receipt-date batch))]
+   [table/table-row-column
+    (:document-id document)]
+   [table/table-row-column
+    (:presenter-email document)]
+   [table/table-row-column
+    (:acceptor-email document)]])
+
+(defn render-batch [index batch payments]
+  [table/table-body {:key index}
+   (doall
+     (map-indexed
+       (fn [i doc]
+         (render-document
+           {:index i
+            :document doc
+            :batch batch
+            :payments (filter #(= (:phase %) (:phase doc)) payments)}))
+       (:documents batch)))])
+
+(defn batches-table [{batches :batches
+                      payments :payments}]
+  [table/table
+   [table/table-header
+    [table/table-row
+     [table/table-header-column
+      "Vaihe"]
+     [table/table-header-column
+      "Yhteensä"]
+     [table/table-header-column
+      "Maksatuksia"]
+     [table/table-header-column
+      "Laskupvm"]
+     [table/table-header-column
+      "Eräpvm"]
+     [table/table-header-column
+      "Tositepäivä"]
+     [table/table-header-column
+      "Allekirjoitettu yhteenveto"]
+     [table/table-header-column
+      "Esittelijän sähköpostiosoite"]
+     [table/table-header-column
+      "Hyväksyjän sähköpostiosoite"]]]
+   (if (empty? batches)
+     [:div {:style theme/table-empty-text} "Ei maksueriä"]
+     (doall
+       (map-indexed
+         (fn [i batch]
+           (render-batch
+             i batch
+             (filter #(= (:batch-id %) (:id batch)) payments)))
+         batches)))])

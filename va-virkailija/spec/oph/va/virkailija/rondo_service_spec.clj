@@ -30,7 +30,7 @@
 (def resp-tags
   [:VA-invoice
    [:Header
-    [:Pitkaviite "123/456/78"]
+    [:Pitkaviite "123/456/78_1"]
     [:Maksupvm invoice-date]]])
 
 (def user {:person-oid "12345"
@@ -64,7 +64,7 @@
     (let [xml-file-path (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename)]
       (if (= filename "wrong.xml")
         (with-open [w (clojure.java.io/writer  xml-file-path :append true)]
-          (.write w "<VA-invoice>><Header><Pitkaviite>123/456/78<Pitkaviite//><Maksupvm>2018-05-02</Maksupvm></Header></VA-invoice>"))
+          (.write w "<VA-invoice>><Header><Pitkaviite>123/456/78_1<Pitkaviite//><Maksupvm>2018-05-02</Maksupvm></Header></VA-invoice>"))
         (invoice/write-xml! (xml/sexp-as-element resp-tags) xml-file-path))))
   (get-local-file [service filename]
     (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename))
@@ -96,7 +96,7 @@
                             :grant-id (:id grant)
                             :currency "EUR"
                             :invoice-date invoice-date
-                            :document-type "XA"
+                            :document-type "XE"
                             :transaction-account "6000"})
                     payment (payments-data/create-payment
                              {:application-id (:id application)
@@ -124,7 +124,7 @@
                             :grant-id (:id grant)
                             :currency "EUR"
                             :invoice-date invoice-date
-                            :document-type "XA"
+                            :document-type "XE"
                             :transaction-account "6000"})
                     payment (payments-data/create-payment
                              {:application-id (:id application)

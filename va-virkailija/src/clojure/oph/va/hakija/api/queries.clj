@@ -58,6 +58,7 @@
 (defquery get-application "sql/hakija/hakemus/get-application.sql")
 (defquery get-application-token "sql/hakija/hakemus/get-application-token.sql")
 (defquery find-applications "sql/hakija/hakemus/find-applications.sql")
+(defquery find-applications-asc "sql/hakija/hakemus/find-applications-asc.sql")
 (defquery get-applications-by-grant
   "sql/hakija/hakemus/get-applications-by-grant.sql")
 (defquery find-application-by-register-number

@@ -221,7 +221,7 @@ export default class HakuEdit extends Component {
                           name="document-type"
                           value={avustushaku.content["document-type"] || ""}>
                     <option value=""></option>
-                    <option value="XA">XA</option>
+                    <option value="XE">XE</option>
                     <option value="XB">XB</option>
                   </select>
                 </label>
