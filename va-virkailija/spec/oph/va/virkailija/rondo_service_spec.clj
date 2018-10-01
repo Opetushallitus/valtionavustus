@@ -109,7 +109,7 @@
                     result  (rondo-scheduling/get-state-of-payments test-service)]
                 (should= 3  (:state (payments-data/get-payment (:id payment))))))
 
-          (it "If problems with retrieving state from rondo, show errors correctly"
+          (it "If payment is already paid ignore exception"
 
               (let [configuration {:enabled true
                                    :local-path "/tmp"}
@@ -134,7 +134,8 @@
                               :phase 0
                               :invoice-date invoice-date}
                              user)]
-                (should-throw Exception #"Payment already paid" (rondo-scheduling/get-state-of-payments test-service))))
+                (should=
+                  nil (rondo-scheduling/get-state-of-payments test-service))))
 
           (it "When retrieving payment xml from Rondo, show errors if there are no corresponding payments"
 
