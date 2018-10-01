@@ -23,9 +23,8 @@
       (payments-data/update-state-by-response
         (invoice/read-xml (get-local-file  remote-service filename)))
       (catch clojure.lang.ExceptionInfo e
-        (if (= "already-paid" (-> e ex-data :cause))
-          (delete-remote-file! remote-service filename))
-        (throw e)))
+        (when (not= "already-paid" (-> e ex-data :cause))
+          (throw e))))
     (delete-remote-file! remote-service filename)
     (clojure.java.io/delete-file (get-local-file remote-service filename))))
 
