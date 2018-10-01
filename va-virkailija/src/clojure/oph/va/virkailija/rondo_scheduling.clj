@@ -46,7 +46,7 @@
           (a/>! c {:success false :exception e}))))
     (a/alt!!
       c ([v]
-         (when (not (:success v))
+         (when-not (:success v)
            (throw (or (:exception v)
                       (Exception. (str (:value v))))))
          (log/debug "Succesfully fetched state from Rondo!"))
