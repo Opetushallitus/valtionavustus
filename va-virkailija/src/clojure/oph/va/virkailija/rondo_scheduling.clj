@@ -21,7 +21,7 @@
     (get-remote-file remote-service filename)
     (try
       (payments-data/update-state-by-response
-       (invoice/read-xml (get-local-file  remote-service filename)))
+        (invoice/read-xml (get-local-file  remote-service filename)))
       (catch clojure.lang.ExceptionInfo e
         (if (= "already-paid" (-> e ex-data :cause))
           (delete-remote-file! remote-service filename))
@@ -63,13 +63,13 @@
 (defn schedule-fetch-from-rondo []
   (let [s   (-> (qs/initialize) qs/start)
         job (j/build
-             (j/of-type RondoJob)
-             (j/with-identity (j/key "jobs.RondoJob3")))
+              (j/of-type RondoJob)
+              (j/with-identity (j/key "jobs.RondoJob3")))
         trigger (t/build
-                 (t/with-identity (t/key "triggers.Rondo"))
-                 (t/start-now)
-                 (t/with-schedule (schedule
-                                   (cron-schedule (:scheduling (:rondo-scheduler config)) ))))]
+                  (t/with-identity (t/key "triggers.Rondo"))
+                  (t/start-now)
+                  (t/with-schedule (schedule
+                                     (cron-schedule (:scheduling (:rondo-scheduler config)) ))))]
     (qs/schedule s job trigger)))
 
 (defn stop-schedule-from-rondo []
