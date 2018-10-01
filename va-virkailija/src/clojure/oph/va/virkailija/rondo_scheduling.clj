@@ -62,7 +62,7 @@
     (get-state-of-payments remote-service)))
 
 (defn schedule-fetch-from-rondo []
-  (let [s (-> (qs/initialize) qs/start)
+  (let [s (qs/start (qs/initialize))
         job (j/build
               (j/of-type RondoJob)
               (j/with-identity (j/key "jobs.RondoJob3")))
@@ -76,4 +76,4 @@
     (qs/schedule s job trigger)))
 
 (defn stop-schedule-from-rondo []
-  (qs/delete-trigger (-> (qs/initialize) qs/start) (t/key "triggers.Rondo")))
+  (qs/delete-trigger (qs/start (qs/initialize)) (t/key "triggers.Rondo")))
