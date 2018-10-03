@@ -32,7 +32,7 @@
   (exec :form-db queries/list-avustushaut {}))
 
 
-(defn add-paatos-view[hakemus-id headers remote-addr]
+(defn add-paatos-view [hakemus-id headers remote-addr]
   (exec :form-db queries/create-paatos-view! {:hakemus_id hakemus-id :headers headers :remote_addr remote-addr}))
 
 (defn- pluck-key [answers key as default]
@@ -142,6 +142,9 @@
     (exec-all :form-db [queries/lock-hakemus params
                    queries/close-existing-hakemus! params
                    queries/update-hakemus-status<! params])))
+
+(defn open-hakemus-applicant-edit [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
+   (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :applicant_edit nil))
 
 (defn set-submitted-version [user-key form-submission-id]
   (let [params {:user_key user-key

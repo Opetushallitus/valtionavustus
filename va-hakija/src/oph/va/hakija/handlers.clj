@@ -136,6 +136,21 @@
                               (va-budget/validate-budget-hakija answers budget-totals form))]
         (hakemus-ok-response hakemus submission validation)))))
 
+(defn on-open-hakemus-applicant-edit [haku-id hakemus-id]
+  (let [hakemus (va-db/get-hakemus hakemus-id)
+        avustushaku (va-db/get-avustushaku haku-id)
+        form-id (:form avustushaku)
+        form (form-db/get-form form-id)
+        submission-id (:form_submission_id hakemus)
+        submission (form-db/get-form-submission-version
+                     form-id submission-id
+                     (:form_submission_version hakemus))
+        submission-version (:version submission)
+        register-number (:register_number hakemus)
+        answers (:answers submission)
+        budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)]
+        (va-db/open-hakemus-applicant-edit haku-id hakemus-id submission-id submission-version register-number answers budget-totals)))
+
 (defn on-get-current-answers [haku-id hakemus-id form-key]
   (let [avustushaku (va-db/get-avustushaku haku-id)
         form-id (form-key avustushaku)
@@ -355,7 +370,7 @@
         validation (merge (validation/validate-form form answers attachments)
                           (va-budget/validate-budget-hakija answers budget-totals form))]
     (log/info base-version)
-    (log/info (:version hakemus))                      
+    (log/info (:version hakemus))
     (if (every? empty? (vals validation))
       (if (= base-version (:version hakemus))
         (let [submission-id (:form_submission_id hakemus)
