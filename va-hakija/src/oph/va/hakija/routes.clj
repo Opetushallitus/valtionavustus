@@ -174,6 +174,14 @@
     :summary "Submit applicant edit changes"
     (on-hakemus-applicant-edit-submit haku-id hakemus-id base-version answers)))
 
+(defn- applicant-edit-open []
+  (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/applicant-edit-open" [haku-id hakemus-id :as request]
+    :path-params [haku-id :- Long, hakemus-id :- s/Str]
+    :body    [answers (compojure-api/describe Answers "New answers")]
+    :return  nil
+    :summary "Open application for applicant edit"
+    (on-hakemus-applicant-edit-open haku-id hakemus-id)))
+
 (defn- get-attachments []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
     :path-params [haku-id :- Long, hakemus-id :- s/Str]

@@ -136,7 +136,7 @@
                               (va-budget/validate-budget-hakija answers budget-totals form))]
         (hakemus-ok-response hakemus submission validation)))))
 
-(defn on-open-hakemus-applicant-edit [haku-id hakemus-id]
+(defn on-hakemus-applicant-edit-open [haku-id hakemus-id]
   (let [hakemus (va-db/get-hakemus hakemus-id)
         avustushaku (va-db/get-avustushaku haku-id)
         form-id (:form avustushaku)
