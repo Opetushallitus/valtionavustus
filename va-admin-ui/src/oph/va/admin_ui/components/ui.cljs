@@ -21,7 +21,8 @@
     {:display-name "VA popup"
      :component-did-mount
      (fn [e]
-       (.focus (r/dom-node e)))
+       (when (get props :focus-on-mount true)
+         (.focus (r/dom-node e))))
      :reagent-render
      (fn [props content]
        [:div
@@ -53,7 +54,9 @@
         :on-blur (fn [] ((:on-request-close props)))}
        (when (:open props)
          [popup
-          (select-keys rect [:x :y])
+          (merge
+            (select-keys props [:focus-on-mount])
+            (select-keys rect [:x :y]))
           content])])))
 
 (defn tooltip [props text]
@@ -94,8 +97,8 @@
       (when-some [text (:tooltip props)] [tooltip {} text])]
      [:input
       (-> props
-          (select-keys [:value :type :type :size :min :max
-                        :max-length :on-key-press])
+          (select-keys [:value :type :type :size :min :max :placeholder
+                        :max-length :on-key-press :on-blur])
           (update :class str " oph-input" (when (= (:size p) :small) " small"))
           (assoc
             :style (if (:error props) {:border-color "#f44336"} {})
@@ -239,7 +242,13 @@
       (let [{:keys [on-change on-search items]} props]
         [:span {:style {:display "inline-block"}}
          [text-field
-          (assoc props :on-change
+          (assoc props
+                 :on-blur
+                 (fn []
+                   (delayed
+                     300
+                     #(swap! popover-state assoc :open false)))
+                 :on-change
                  (fn [e]
                    (swap! popover-state assoc :anchor-el (.-target e))
                    (let [value (.-value (.-target e))]
@@ -257,6 +266,7 @@
                              (swap! popover-state assoc :open true))))))))]
          [popover
           (assoc @popover-state
+                 :focus-on-mount false
                  :on-request-close
                  (fn []
                    (swap! popover-state assoc :open false)))

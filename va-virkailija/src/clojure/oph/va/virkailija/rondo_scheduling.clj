@@ -21,11 +21,10 @@
     (get-remote-file remote-service filename)
     (try
       (payments-data/update-state-by-response
-       (invoice/read-xml (get-local-file  remote-service filename)))
+        (invoice/read-xml (get-local-file  remote-service filename)))
       (catch clojure.lang.ExceptionInfo e
-        (if (= "already-paid" (-> e ex-data :cause))
-          (delete-remote-file! remote-service filename))
-        (throw e)))
+        (when (not= "already-paid" (-> e ex-data :cause))
+          (throw e))))
     (delete-remote-file! remote-service filename)
     (clojure.java.io/delete-file (get-local-file remote-service filename))))
 
@@ -47,7 +46,7 @@
           (a/>! c {:success false :exception e}))))
     (a/alt!!
       c ([v]
-         (when (not (:success v))
+         (when-not (:success v)
            (throw (or (:exception v)
                       (Exception. (str (:value v))))))
          (log/debug "Succesfully fetched state from Rondo!"))
@@ -57,20 +56,23 @@
 (defjob RondoJob
   [ctx]
   (log/info "Running scheduled fetch of payments now from rondo!")
-  (let [remote-service (rondo-service/create-service (get-in config [:server :rondo-sftp]))]
+  (let [remote-service (rondo-service/create-service
+                         (get-in config [:server :rondo-sftp]))]
     (get-state-of-payments remote-service)))
 
 (defn schedule-fetch-from-rondo []
-  (let [s   (-> (qs/initialize) qs/start)
+  (let [s (qs/start (qs/initialize))
         job (j/build
-             (j/of-type RondoJob)
-             (j/with-identity (j/key "jobs.RondoJob3")))
+              (j/of-type RondoJob)
+              (j/with-identity (j/key "jobs.RondoJob3")))
         trigger (t/build
-                 (t/with-identity (t/key "triggers.Rondo"))
-                 (t/start-now)
-                 (t/with-schedule (schedule
-                                   (cron-schedule (:scheduling (:rondo-scheduler config)) ))))]
+                  (t/with-identity (t/key "triggers.Rondo"))
+                  (t/start-now)
+                  (t/with-schedule
+                    (schedule
+                      (cron-schedule
+                        (:scheduling (:rondo-scheduler config))))))]
     (qs/schedule s job trigger)))
 
 (defn stop-schedule-from-rondo []
-  (qs/delete-trigger (-> (qs/initialize) qs/start) (t/key "triggers.Rondo")))
+  (qs/delete-trigger (qs/start (qs/initialize)) (t/key "triggers.Rondo")))

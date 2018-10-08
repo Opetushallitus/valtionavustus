@@ -8,7 +8,7 @@ import FormUtil from './FormUtil'
 
 export default class FormBranchEditableFieldGrower {
   static ensureFirstChildIsRequired(state, growingParent) {
-    const firstChildOfGrowingSet = _.first(growingParent.children)
+    const firstChildOfGrowingSet = _.head(growingParent.children)
     const prototypeForm = state.configuration.form
     const answersObject = state.saveStatus.values
     const syntaxValidator = state.extensionApi.customFieldSyntaxValidator

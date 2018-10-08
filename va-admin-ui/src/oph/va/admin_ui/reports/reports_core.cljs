@@ -5,7 +5,8 @@
    [cljs.core.async :refer [put! <! close!]]
    [oph.va.admin-ui.connection :as connection]
    [oph.va.admin-ui.dialogs :as dialogs]
-   [reagent.core :as r]))
+   [reagent.core :as r]
+   [oph.va.admin-ui.components.ui :as ui]))
 
 (def ^:private colors
   {:blue "rgb(54, 162, 235)"
@@ -14,13 +15,21 @@
    :purple "rgb(153, 102, 255)"
    :red "rgb(255, 99, 132)"
    :yellow "rgb(255, 205, 86)"
-   :grey "rgb(201, 203, 207)"})
+   :grey "rgb(201, 203, 207)"
+   :light-blue "rgb(173,216,230)"
+   :light-green "rgb(203,253,203)"
+   :light-orange "rgb(255,216,178)"
+   :light-purple "rgb(224,209,255)"
+   :light-red "rgb(255,223,230)"
+   :dark-purple "rgb(133,7,102)"})
 
 (defonce ^:private data (r/atom {}))
 
 (defonce ^:private grants-data (r/atom {}))
 
 (defonce ^:private applications-data (r/atom {}))
+
+(defonce ^:private education-levels (r/atom {}))
 
 (defn- show-data! [id chart-data]
   (let [context (.getContext (.getElementById js/document id) "2d")]
@@ -49,7 +58,11 @@
                      {:type "bar"
                       :data (mapv :costs-granted granted)
                       :label "Hyväksytyt kustannukset yhteensä"
-                      :backgroundColor "#f9ff61"}]}})
+                      :backgroundColor "#f9ff61"}
+                     {:type "bar"
+                      :data (mapv :total-grant-size granted)
+                      :label "Määräraha yhteensä"
+                      :backgroundColor "#ff9f40"}]}})
 
 (defn- gen-evaluations-data [applications accepted rejected]
   {:type "bar"
@@ -62,12 +75,12 @@
                       :backgroundColor "#36a2eb"
                       :borderColor "#36a2eb"}
                      {:data (mapv :count accepted)
-                      :label "Hyväksytyt"
+                      :label "Myönteiset päätökset"
                       :fill false
                       :backgroundColor "#90ee90"
                       :borderColor "#90ee90"}
                      {:data (mapv :count rejected)
-                      :label "Hylätyt"
+                      :label "Kielteiset päätökset"
                       :fill false
                       :backgroundColor "#ff6384"
                       :borderColor "#ff6384"}]}})
@@ -92,11 +105,37 @@
                       :borderColor "#70af70"}]}})
 
 
+(defn- gen-education-levels-data [values year]
+  {:type "pie"
+   :options {:title {:display true :text (str "Koulutusasteet " year)}
+             :responsive true}
+   :data {:labels (mapv :education-level values)
+          :datasets [{:data (mapv :total-count values)
+                      :label "Koulutusasteiden määrä"
+                      :fill false
+                      :backgroundColor (vals colors)}]}})
+
 (defn- chart [{:keys [id data]}]
   [(with-meta
      (create-canvas id)
      {:component-did-mount
       #(show-data! id data)})])
+
+(defn year-details [props]
+  (let [year (r/atom (str (.getFullYear (js/Date.))))]
+    (fn [props]
+      [:div
+       [:hr]
+       [ui/select-field
+        {:values (map #(hash-map :key % :value % :primary-text %)
+                      (keys (:education-levels props)))
+         :value @year
+         :on-change #(reset! year %)}]
+       [chart
+        {:id "total-education-levels"
+         :data (gen-education-levels-data
+                 (get (:education-levels props) (keyword @year))
+                 (name @year))}]])))
 
 (defn home-page []
   [:div
@@ -114,7 +153,9 @@
      :data (gen-budget-data (:applications @data) (:granted @data))}]
    [chart
     {:id "total-granted"
-     :data (gen-granted-data (:granted @data))}]])
+     :data (gen-granted-data (:granted @data))}]
+   [year-details
+    {:education-levels @education-levels}]])
 
 (defn init! []
   (go
@@ -148,14 +189,14 @@
             "Virhe hakemusten raporttien latauksessa")))
       (put! dialog-chan 2)
       (close! dialog-chan)))
-  (go
-    (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan haun tietoja" 3)]
-      (put! dialog-chan 1)
-      (let [result (<! (connection/get-grants-report))]
-        (if (:success result)
-          (reset! grants-data (:body result))
-          (dialogs/show-error-message!
-            "Virhe raporttien latauksessa"
-            (select-keys result [:status :error-text]))))
-      (put! dialog-chan 2)
-      (close! dialog-chan))))
+  (let [result (dialogs/conn-with-err-dialog!
+                 "Ladataan haun tietoja"
+                 "Virhe haun tietojen latauksessa"
+                 connection/get-grants-report)]
+    (go (reset! grants-data (<! result))))
+
+  (let [el-result (dialogs/conn-with-err-dialog!
+                           "Ladataan koulutusasteraporttia"
+                           "Virhe koulutusasteiden latauksessa"
+                           connection/get-education-levels)]
+    (go (reset! education-levels (<! el-result)))))

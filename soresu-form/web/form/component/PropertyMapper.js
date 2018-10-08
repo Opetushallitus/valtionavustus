@@ -118,7 +118,7 @@ export class MultipleOptionFieldOnChangePropertyMapper {
     const value = _.isArray(props.value) ? props.value : []
     const onChange = e => {
       const targetValue = e.target.value
-      if(_.contains(value, targetValue)) {
+      if(_.includes(value, targetValue)) {
         props.onChange(field, _.without(value, targetValue))
       }
       else {

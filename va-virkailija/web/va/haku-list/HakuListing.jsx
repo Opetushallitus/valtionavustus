@@ -169,7 +169,7 @@ class StatusFilter extends Component {
     const statuses = []
     const onCheckboxChange = function(status) {
       return function() {
-        if (_.contains(statusFilter, status)) {
+        if (_.includes(statusFilter, status)) {
           controller.setFilter(filterField,  _.without(statusFilter, status))
         } else {
           controller.setFilter(filterField, _.union(statusFilter, [status]))
@@ -188,7 +188,7 @@ class StatusFilter extends Component {
 
     for (let i = 0; i < statusValues.length; i++) {
       const status = statusValues[i]
-      const checked = _.contains(statusFilter, status)
+      const checked = _.includes(statusFilter, status)
       const htmlId = "filter-by-status-" + status
       const kpl = _.filter(hakuList, HakemusListing._filterWithArrayPredicate(HakuListing._fieldGetter(filterField), [status])).length
       statuses.push(

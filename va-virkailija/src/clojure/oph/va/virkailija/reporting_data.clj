@@ -31,10 +31,20 @@
     (exec :virkailija-db queries/get-yearly-evaluation-count-by-status
           {:status "rejected"})))
 
+(defn get-yearly-total-grant-size []
+  (->> (exec :form-db hakija-queries/get-yearly-total-grant-size {})
+       year-to-int-all-v
+       (map convert-to-dash-keys)))
+
 (defn get-yearly-granted []
-  (mapv convert-to-dash-keys
-        (year-to-int-all-v
-          (exec :virkailija-db queries/get-yearly-granted {}))))
+  (let [grant-sizes (reduce #(assoc %1 (:year %2) (:total-grant-size %2))
+                            {}
+                            (get-yearly-total-grant-size))]
+    (mapv
+      #(assoc (convert-to-dash-keys %)
+              :total-grant-size (get grant-sizes (:year %)))
+         (year-to-int-all-v
+           (exec :virkailija-db queries/get-yearly-granted {})))))
 
 (defn get-total-grant-count []
   (first (exec :form-db hakija-queries/get-total-grant-count {})))
@@ -42,7 +52,13 @@
 (defn get-yearly-resolved-count []
   (mapv convert-to-dash-keys
         (year-to-int-all-v
-          (exec :virkailija-db hakija-queries/get-yearly-resolved-grants {}))))
+          (exec :form-db hakija-queries/get-yearly-resolved-grants {}))))
+
+(defn get-yearly-education-levels []
+  (->> (exec :virkailija-db queries/get-yearly-education-level {})
+      year-to-int-all-v
+      (map convert-to-dash-keys)
+      (group-by :year)))
 
 (defn get-yearly-report []
   {:applications (get-yearly-application-info)

@@ -58,7 +58,8 @@
 
 (defn find-index-of
   ([col pred i m]
-   (when-not (>= i m)
+   (if (>= i m)
+     -1
      (if (pred (nth col i))
        i
        (recur col pred (inc i) m))))
@@ -111,3 +112,13 @@
   (if (empty? v)
     (swap! filters dissoc k)
     (swap! filters assoc k (lower-case v))))
+
+(defn doc-matches? [d1 d2]
+  (= (select-keys d1 [:document-id :presenter-email :acceptor-email])
+     (select-keys d2 [:document-id :presenter-email :acceptor-email])))
+
+(defn replace-doc [docs doc new-doc]
+  (let [index (find-index-of docs #(doc-matches? % doc))]
+    (if (> index -1)
+      (assoc docs index new-doc)
+      docs)))

@@ -82,7 +82,7 @@
                       (:phases props))
          :on-change #(swap! value assoc :phase (js/parseInt %))}]
        [va-ui/text-field
-        {:floating-label-text "Asiakirjan tunnus"
+        {:floating-label-text "ASHA-tunniste"
          :value (:document-id @value)
          :on-change (fn [e]
                       (let [document-id (-> e .-target .-value)]

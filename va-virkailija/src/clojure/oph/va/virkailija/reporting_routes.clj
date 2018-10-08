@@ -30,4 +30,10 @@
       (case applications-filter
         "count" (data/get-yearly-application-count)
         "accepted" (data/get-accepted-count-by-year)
-        "rejected" (data/get-rejected-count-by-year)))))
+        "rejected" (data/get-rejected-count-by-year))))
+
+  (compojure-api/GET
+    "/education-levels/" request
+    :return s/Any
+    :summary "Yearly education levels"
+    (ok (data/get-yearly-education-levels))))

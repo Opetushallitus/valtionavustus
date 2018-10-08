@@ -104,7 +104,7 @@ Docker-imagen luonti:
 
 ``` shell
 cd valtionavustus/script/postgres-docker
-docker build . -t va-postgres:9.4
+docker build -t va-postgres:9.4 .
 ```
 
 Data-hakemiston luonti:
@@ -116,7 +116,7 @@ mkdir -p postgres-data
 Tietokannan ajaminen Dockerissa:
 
 ``` shell
-docker run --rm --name va-postgres --publish 5432:5432 --volume postgres-data:/var/lib/postgresql/data va-postgres:9.4
+docker run --rm --name va-postgres -p 5432:5432 -v "$PWD/postgres-data:/var/lib/postgresql/data" va-postgres:9.4
 ```
 
 #### Ajaminen manuaalisesti
@@ -568,6 +568,14 @@ Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
 - Seuraavan erän summan asettaa virkailija Väliselvitys-välilehdellä
   - Tämän jälkeen maksu ilmestyy Maksatus-näkymään, josta sen voi lähettää,
     kuten ensimmäisen erän
+
+Maksusanomassa on pitkäviite, jolla tunnistetaan hakemuksen maksatus
+VA-järjestelmässä. Pitkäviite koostuu hakemuksen diaarinumerosta ja maksuerän
+numerosta alaviivalla erotettuna. Samainen pitkäviite palautuu Rondosta
+sanoman mukana, kun maksatus on maksettu.
+
+Vanhoissa maksatuksissa ei ole pitkäviitteessä maksuerän numeroa. Näitä
+parsittaessa oletetaan, että kyseessä on maksatuksen 1. erä.
 
 ## Muutoksenhaku
 

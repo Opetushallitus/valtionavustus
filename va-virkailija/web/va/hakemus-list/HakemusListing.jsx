@@ -62,7 +62,7 @@ export default class HakemusListing extends Component {
 
   static _filterWithArrayPredicate(fieldGetter, filter) {
     return function(hakemus) {
-      return _.contains(filter, fieldGetter(hakemus))
+      return _.includes(filter, fieldGetter(hakemus))
     }
   }
 
@@ -73,7 +73,7 @@ export default class HakemusListing extends Component {
     return function(hakemus) {
       const fieldValue = fieldGetter(hakemus)
 
-      return _.contains(fieldValue, filter)
+      return _.includes(fieldValue, filter)
     }
   }
 
@@ -129,7 +129,7 @@ export default class HakemusListing extends Component {
       if(_.isUndefined(fieldValue) || _.isNull(fieldValue)) {
         return _.some(rahoitusAlueetFilter, i => i.answer === "Ei rahoitusaluetta")
       }
-      return _.contains(rahoitusAlueetFilter.map(i => i.answer),fieldValue)
+      return _.includes(rahoitusAlueetFilter.map(i => i.answer),fieldValue)
     }
   }
 
@@ -141,7 +141,7 @@ export default class HakemusListing extends Component {
     return function(hakemus) {
       const fieldValue = fieldGetter(hakemus)
       const answers = tagsFilter.map(i => i.answer)
-      return _.some(fieldValue, i => _.contains(answers, i))
+      return _.some(fieldValue, i => _.includes(answers, i))
     }
   }
 
@@ -171,7 +171,7 @@ export default class HakemusListing extends Component {
         case "status":
           return _.sortBy(list, HakemusListing._sortByArray(hakemus => hakemus.arvio.status, HakemusArviointiStatuses.allStatuses(), sorter.order, userInfo, allowHakemusScoring))
       }
-      return _.sortByOrder(list, HakemusListing._fieldGetter(sorter.field, userInfo, allowHakemusScoring), sorter.order)
+      return _.orderBy(list, HakemusListing._fieldGetter(sorter.field, userInfo, allowHakemusScoring), sorter.order)
     }
   }
 
@@ -408,7 +408,7 @@ class StatusFilter extends Component {
     const statuses = []
     const onCheckboxChange = function(status) {
       return function() {
-        if (_.contains(statusFilter, status)) {
+        if (_.includes(statusFilter, status)) {
           controller.setFilter(filterField,  _.without(statusFilter, status))
         } else {
           controller.setFilter(filterField, _.union(statusFilter, [status]))
@@ -427,7 +427,7 @@ class StatusFilter extends Component {
 
     for (let i = 0; i < statusValues.length; i++) {
       const status = statusValues[i]
-      const checked = _.contains(statusFilter, status)
+      const checked = _.includes(statusFilter, status)
       const htmlId = "filter-by-status-" + status
       const kpl = _.filter(hakemusList, HakemusListing._filterWithArrayPredicate(HakemusListing._fieldGetter(filterField), [status])).length
       statuses.push(

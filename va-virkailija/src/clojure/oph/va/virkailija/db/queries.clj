@@ -29,9 +29,11 @@
 (defquery get-resolved-grants-with-content
   "sql/virkailija/grants/get-resolved-grants-with-content.sql")
 (defquery find-grants "sql/virkailija/grants/find-grants.sql")
+(defquery find-grants-asc "sql/virkailija/grants/find-grants-asc.sql")
 (defquery get-grant "sql/virkailija/grants/get-grant.sql")
 (defquery delete-grant-payments
   "sql/virkailija/grants/delete-grant-payments.sql")
+(defquery get-grant-batches "sql/virkailija/grants/get-batches.sql")
 
 (defquery get-payment "sql/virkailija/payments/get-payment.sql")
 (defquery get-payment-version "sql/virkailija/payments/get-payment-version.sql")
@@ -74,6 +76,8 @@
 (defquery get-yearly-evaluation-count-by-status
   "sql/virkailija/reporting/get-yearly-evaluation-count-by-status.sql")
 (defquery get-yearly-granted "sql/virkailija/reporting/get-yearly-granted.sql")
+(defquery get-yearly-education-level
+  "sql/virkailija/reporting/get-yearly-education-level.sql")
 
 (defquery get-va-code-value
   "sql/virkailija/va_code_values/get-va-code-value.sql")

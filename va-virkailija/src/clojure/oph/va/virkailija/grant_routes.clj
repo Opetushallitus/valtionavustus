@@ -2,6 +2,7 @@
   (:require [compojure.api.sweet :as compojure-api]
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.payments-data :as payments-data]
+            [oph.va.virkailija.payment-batches-data :as batches-data]
             [ring.util.http-response :refer [ok unauthorized]]
             [schema.core :as s]
             [oph.va.virkailija.schema :as virkailija-schema]
@@ -12,7 +13,9 @@
 (defn- get-grants []
   (compojure-api/GET "/" []
     :path-params []
-    :query-params [{template :- String ""}, {search :- String ""}]
+    :query-params [{template :- String ""}
+                   {search :- String ""}
+                   {order :- String ""}]
     :return virkailija-schema/Grants
     :summary "Return list of grants"
     (ok
@@ -20,7 +23,7 @@
         (= template "with-content")
         (grant-data/get-resolved-grants-with-content)
         (seq search)
-        (grant-data/find-grants search)
+        (grant-data/find-grants search order)
         :else (grant-data/get-grants)))))
 
 (defn- get-grant-applications []
@@ -41,6 +44,15 @@
     :return [virkailija-schema/Payment]
     :summary "Return payments of a grant"
     (ok (payments-data/get-valid-grant-payments grant-id))))
+
+(defn- get-grant-batches []
+  (compojure-api/GET
+    "/:grant-id/batches/" [grant-id :as request]
+    :path-params [grant-id :- Long]
+    :return [(assoc virkailija-schema/PaymentBatch
+                    :documents [virkailija-schema/BatchDocument])]
+    :summary "Return batches with documents of a grant"
+    (ok (batches-data/get-grant-batches grant-id))))
 
 (defn- delete-payments []
   (compojure-api/DELETE
@@ -71,5 +83,6 @@
   (get-grants)
   (get-grant-applications)
   (get-grant-payments)
+  (get-grant-batches)
   (delete-payments)
   (post-payments))

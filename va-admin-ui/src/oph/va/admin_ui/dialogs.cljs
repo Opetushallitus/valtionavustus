@@ -1,7 +1,7 @@
 (ns oph.va.admin-ui.dialogs
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
-   [cljs.core.async :refer [<! chan sliding-buffer]]
+   [cljs.core.async :refer [<! chan sliding-buffer put! close!]]
    [reagent.core :as r]
    [cljs-react-material-ui.core :refer [color]]
    [cljs-react-material-ui.icons :as ic]
@@ -114,3 +114,20 @@
      #(do (when (= % :snackbar)
             (swap! dialogs assoc :snackbar {:open false :message ""}))
           (swap! dialogs assoc-in [% :open] false))))
+
+(defn conn-with-err-dialog! [dialog-msg error-msg f & args]
+  (let [c (chan)]
+    (go
+      (let [dialog-chan (show-loading-dialog! dialog-msg 3)]
+        (put! dialog-chan 1)
+        (let [result (<! (apply f args))]
+          (put! dialog-chan 2)
+          (if (:success result)
+            (>! c (or (:body result) ""))
+            (show-error-message!
+              error-msg
+              (select-keys result [:status :error-text]))))
+        (put! dialog-chan 3)
+        (close! dialog-chan)
+        (close! c)))
+    c))

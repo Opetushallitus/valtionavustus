@@ -164,3 +164,5 @@
 (def narrow-column {:width 120})
 
 (def semi-narrow-column {:width 160})
+
+(def total-column {:overflow "visible"})

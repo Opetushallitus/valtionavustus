@@ -114,7 +114,7 @@
         (constantly "Z001")
         :register-number
         :paatos-date
-        (constantly "XA")
+        (constantly "XE")
         :paatos-date
         :lkp
         (constantly "")

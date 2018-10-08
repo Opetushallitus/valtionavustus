@@ -4,6 +4,12 @@
             [oph.va.admin-ui.utils :refer [format]]
             [cljs-time.core :as t]))
 
+(deftest test-find-index-of
+  (is (= 2 (utils/find-index-of [0 1 2 3 4] #(= 2 %))))
+  (is (= 0 (utils/find-index-of [0 1 2 3 4] #(= 0 %))))
+  (is (= -1 (utils/find-index-of [0 1 2 3 4] nil?)))
+  (is (= -1 (utils/find-index-of [1 2 3 4] zero?))))
+
 (deftest test-any-nil
   (is (not (utils/any-nil? {} [])))
   (is (not (utils/any-nil? {:hello "word"} [])))
@@ -44,3 +50,85 @@
   (is (not (utils/valid-email? "@domain.com")))
   (is (not (utils/valid-email? "domain.com")))
   (is (not (utils/valid-email? "domain"))))
+
+(deftest test-doc-matches
+  (is (utils/doc-matches? {:document-id "id"} {:document-id "id"}))
+  (is (utils/doc-matches?
+        {:document-id "id"
+         :presenter-email "some@email"
+         :acceptor-email "some.other@email"}
+        {:document-id "id"
+         :acceptor-email "some.other@email"
+         :presenter-email "some@email"}))
+  (is (not
+        (utils/doc-matches?
+          {:document-id "id"
+           :presenter-email "some@email"
+           :acceptor-email "some.other@email"}
+          {:document-id "id"
+           :presenter-email "some@email"})))
+  (is (not
+        (utils/doc-matches?
+          {:document-id "id"
+           :presenter-email "some@email"
+           :acceptor-email "some.other@email"}
+          {:document-id "id"
+           :acceptor-email "some.different@email"
+           :presenter-email "some@email"})))
+  (is (not (utils/doc-matches? {:document-id "doc-id"} nil)))
+  (is (not (utils/doc-matches? nil {:document-id "doc-id"}))))
+
+(deftest test-replace-doc
+  (let [docs [{:document-id "id 1"
+               :presenter-email "some1@email"
+               :acceptor-email "some.other1@email"}
+              {:document-id "id 2"
+               :presenter-email "some2@email"
+               :acceptor-email "some.other2@email"}
+              {:document-id "id 3"
+               :presenter-email "some3@email"
+               :acceptor-email "some.other3@email"}]]
+    (is
+      (=
+        (first
+          (utils/replace-doc
+            docs
+            {:document-id "id 1"
+             :presenter-email "some1@email"
+             :acceptor-email "some.other1@email"}
+            {:document-id "id 5"
+             :presenter-email "some5@email"
+             :acceptor-email "some.other5@email"}))
+        {:document-id "id 5"
+         :presenter-email "some5@email"
+         :acceptor-email "some.other5@email"}))
+    (is
+      (=
+        (last
+          (utils/replace-doc
+            docs
+            {:document-id "id 3"
+             :presenter-email "some3@email"
+             :acceptor-email "some.other3@email"}
+            {:document-id "id 4"
+             :presenter-email "some4@email"
+             :acceptor-email "some.other4@email"}))
+        {:document-id "id 4"
+         :presenter-email "some4@email"
+         :acceptor-email "some.other4@email"}))
+    (is
+      (=
+        (second
+          (utils/replace-doc
+            docs
+            {:document-id "id 2"
+             :presenter-email "some2@email"
+             :acceptor-email "some.other2@email"}
+            {:document-id "id 5"
+             :presenter-email "some5@email"
+             :acceptor-email "some.other5@email"}))
+        {:document-id "id 5"
+         :presenter-email "some5@email"
+         :acceptor-email "some.other5@email"}))
+    (is (= (utils/replace-doc docs nil) docs))
+    (is (nil? (utils/replace-doc nil nil)))))

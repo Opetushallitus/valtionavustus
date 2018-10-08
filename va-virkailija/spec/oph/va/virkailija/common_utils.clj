@@ -11,7 +11,8 @@
             [oph.va.virkailija.authentication :as auth]
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.hakija.api :as hakija-api]
-            [oph.va.virkailija.hakija-api-tools :as hakija-api-tools]))
+            [oph.va.virkailija.hakija-api-tools :as hakija-api-tools]
+            [oph.va.virkailija.payments-data :as payments-data]))
 
 (def test-server-port 9001)
 (def base-url (str "http://localhost:" test-server-port))
@@ -121,3 +122,28 @@
        (create-submission
          (:form grant) {:budget-oph-share 40000}))
      status))
+
+(defn create-payment [grant batch phase sum]
+  (let [submission
+        (create-submission
+          (:form grant)
+          {:value
+           [{:key "business-id" :value "1234567-1" :fieldType "textArea"}
+            {:key "bank-iban" :value "FI4250001510000023" :fieldType "textArea"}
+            {:key "bank-bic" :value "OKOYFIHH" :fieldType "textArea"}
+            {:key "bank-country" :value "FI" :fieldType "textArea"}
+            {:key "address" :value "Someroad 1" :fieldType "textArea"}
+            {:key "city" :value "Some City" :fieldType "textArea"}
+            {:key "country" :value "Some Country" :fieldType "textArea"}
+            {:key "ownership-type" :value "liiketalous" :fieldType "textArea"}]})
+        application (create-application grant submission)
+        evaluation (create-application-evaluation application "accepted")]
+    (payments-data/create-payment
+      {:application-id (:id application)
+       :payment-sum sum
+       :batch-id (:id batch)
+       :state 1
+       :phase phase}
+      {:person-oid "12345"
+       :first-name "Test"
+       :surname "User"})))

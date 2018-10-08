@@ -4,9 +4,12 @@
                                       sexp-as-element]]
             [clj-time.core :as t]
             [clj-time.coerce :as c]
-            [clj-time.format :as f]))
+            [clj-time.format :as f]
+            [clojure.string :as c-str]))
 
-(def organisations {"XA" 6600 "XB" 6604})
+(def organisations {"XA" 6600
+                    "XE" 6600
+                    "XB" 6604})
 
 (defn get-answer-value
   ([answers key]
@@ -44,11 +47,13 @@
       [:Erapvm (.toString (:due-date batch))]
       [:Bruttosumma (:payment-sum payment)]
       [:Maksuehto "Z001"]
-      [:Pitkaviite (:register-number application)]
+      [:Pitkaviite (format
+                     "%s_%s"
+                     (:register-number application) (inc (:phase payment)))]
       [:Tositepvm (.toString (:receipt-date batch))]
       [:Asiatarkastaja (:presenter-email document)]
       [:Hyvaksyja (:acceptor-email document)]
-      [:Tositelaji (get-in grant [:content :document-type] "XA")]
+      [:Tositelaji (get-in grant [:content :document-type] "XE")]
       [:Maksutili (get-in grant [:content :transaction-account] "5000")]
       [:Toimittaja
        [:Y-tunnus (get-answer-value answers "business-id")]
@@ -66,10 +71,25 @@
         [:Summa (:payment-sum payment)]
         [:LKP-tili (lkp/get-lkp-account (:answers application))]
         [:TaKp-tili (:takp-account application)]
-        [:Toimintayksikko (:operational-unit grant)]
-        [:Projekti (:project grant)]
-        [:Toiminto  (:operation grant)]
+        [:Toimintayksikko (get-in grant [:operational-unit :code])]
+        [:Projekti (get-in grant [:project :code])]
+        [:Toiminto (get-in grant [:operation :code])]
         [:Kumppani (:partner batch)]]]]]))
+
+(defn valid-pitkaviite? [pitkaviite]
+  (and pitkaviite
+       (re-seq #"^\d+\/\d+\/\d+(_\d+)?$" pitkaviite)))
+
+(defn parse-pitkaviite
+  ([pitkaviite default-phase]
+  (when-not (valid-pitkaviite? pitkaviite)
+    (throw (ex-info "Invalid pitkäviite" {:value pitkaviite})))
+  (let [[body phase] (c-str/split pitkaviite #"_")]
+    {:register-number body
+     :phase (if (seq phase)
+              (dec (Integer/parseInt phase))
+              default-phase)}))
+  ([pitkaviite] (parse-pitkaviite pitkaviite 0)))
 
 (defn payment-to-xml [data]
   "Creates xml document (tags) of given payment of Valtionavustukset maksatus.

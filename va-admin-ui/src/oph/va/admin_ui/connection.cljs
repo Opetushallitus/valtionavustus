@@ -39,16 +39,22 @@
   (http/get (format "/%s/grants/?template=with-content" api-path)
             {:with-credentials? true}))
 
-(defn find-grants [term]
-  (http/get (format "/%s/grants/?search=%s" api-path term)
-             {:with-credentials? true}))
+(defn find-grants [params]
+  (http/get (format "/%s/grants/" api-path)
+             {:with-credentials? true
+              :query-params params}))
 
-(defn find-applications [term]
-  (http/get (format "/%s/applications/?search=%s" api-path term)
-            {:with-credentials? true}))
+(defn find-applications [params]
+  (http/get (format "/%s/applications/" api-path)
+            {:with-credentials? true
+             :query-params params}))
 
 (defn get-grant-payments [id]
   (http/get (format "/%s/grants/%d/payments/" api-path id)
+            {:with-credentials? true}))
+
+(defn get-grant-batches [id]
+  (http/get (format "/%s/grants/%d/batches/" api-path id)
             {:with-credentials? true}))
 
 (defn send-payments-email [id]
@@ -122,6 +128,9 @@
 (defn get-applications-report [filter]
   (get-cached
     (str "/" api-path "/reports/applications/?applications-filter=" filter)))
+
+(defn get-education-levels []
+  (get-cached (str "/" api-path "/reports/education-levels/")))
 
 (defn search-users [term]
   (http/post "/api/va-user/search"

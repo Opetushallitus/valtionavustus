@@ -12,7 +12,7 @@ export default class Selvitys extends Component {
     const {controller, hakemus, avustushaku, translations, selvitysType,
            userInfo, multibatchEnabled, isPresentingOfficer} = this.props
     const hasSelvitys = _.has(hakemus,`selvitys.${selvitysType}.answers`)
-    const preview = _.eq(selvitysType, 'valiselvitys')
+    const preview = _.isEqual(selvitysType, 'valiselvitys')
     const selvitysHakemus = _.get(hakemus,`selvitys.${selvitysType}`)
     const form = _.get(hakemus,`selvitys.${selvitysType}Form`)
     return(
