@@ -91,9 +91,9 @@ export default class VaFormTopbar extends React.Component {
                   </div>
                 )}
                 {isInApplicantEditMode() && (
-                	<div className="form-control soresu-tooltip soresu-tooltip-down">
-                		<TextButton htmlId="applicant-edit-submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey="virkailija-edit-submit" lang={lang} />
-                	</div>
+                  <div className="form-control soresu-tooltip soresu-tooltip-down">
+                  <TextButton htmlId="applicant-edit-submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey="virkailija-edit-submit" lang={lang} />
+                  </div>
                 )}
                 {configuration.develMode && (
                   <ToggleLanguageButton id="toggle-language" controller={controller} languages={translations.languages} lang={lang}/>

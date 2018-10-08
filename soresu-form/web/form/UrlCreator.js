@@ -21,5 +21,6 @@ export default class UrlCreator {
     this.refuseApplicationApiUrl = props.refuseApplicationApiUrl || defaultImpl
     this.validateTokenUrl = props.validateTokenUrl || defaultImpl
     this.modifyContactsApiUrl = props.modifyContactsApiUrl || defaultImpl
+    this.openContactsApiUrl = props.openContactsApiUrl || defaultImpl
   }
 }

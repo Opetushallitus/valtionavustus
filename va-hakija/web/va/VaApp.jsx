@@ -100,13 +100,16 @@ function onInitialStateLoaded(initialState) {
     const avustusHakuId = initialState.avustushaku.id
     const hakemusId = initialState.saveStatus.hakemusId
     const url =   `/api/avustushaku/${avustusHakuId}/hakemus/${hakemusId}/applicant-edit-open`
-    console.log(url)
-    HttpUtil.get(url)
-  // HttpUtil.post(urlCreator.openApplicantEditUrl(  initialState.avustushaku.id, initialState.saveStatus.hakemusId), {id:initialState.saveStatus.hakemusId})
-  //
-  // HttpUtil.get(`/api/avustushaku/${avustusHakuId}/hakemus/${hakemusId}/applicant-edit-open`).then(response => {
-  //   console.log(response)
-  // })
+    const request = {
+    "status": "applicant_edit"
+  }
+
+  HttpUtil.get(url).then(() => {
+    initialState.saveStatus.savedObject.version += 1
+    if(!cancelled){
+      window.open(urlCreator.modifyContactsApiUrl,'_blank')
+    }
+  })
 
   }
 

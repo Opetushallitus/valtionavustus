@@ -404,6 +404,7 @@ onModifyApplicationContacts(state, onSuccessCallback){
     })
   return state
 }
+
 onApplicationContactsModified(state) {
   state.saveStatus.savedObject.contactsModified = true
   return state
