@@ -158,6 +158,15 @@ export default class VaUrlCreator extends UrlCreator {
           `/avustushaku/${avustusHakuId}/nayta?avustushaku=${avustusHakuId}&hakemus=${hakemusId}&lang=${lang}&preview=false${token ? "&token=" + token : ""}&refuse-grant=false&modify-application=true`
         )
       },
+      openContactsApiUrl: function(state) {
+        const avustusHakuId = state.avustushaku.id
+        const hakemusId = state.saveStatus.hakemusId
+        const lang = "fi"
+        const token = state.token
+        return (
+          `/avustushaku/${avustusHakuId}/nayta?avustushaku=${avustusHakuId}&hakemus=${hakemusId}&lang=${lang}&preview=false${token ? "&token=" + token : ""}&refuse-grant=false&modify-application=true`
+        )
+      },
       validateTokenUrl: function(applicationId, token) {
         return (
           "/api/v2/applications/" +

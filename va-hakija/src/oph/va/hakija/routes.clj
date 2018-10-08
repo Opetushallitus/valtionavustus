@@ -177,10 +177,18 @@
 (defn- applicant-edit-open []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/applicant-edit-open" [haku-id hakemus-id :as request]
     :path-params [haku-id :- Long, hakemus-id :- s/Str]
-    :body    [answers (compojure-api/describe Answers "New answers")]
+    :body [body {:status s/Str}]
     :return  nil
     :summary "Open application for applicant edit"
     (on-hakemus-applicant-edit-open haku-id hakemus-id)))
+
+(defn- get-applicant-edit-open []
+  (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/applicant-edit-open"
+  [haku-id hakemus-id :as request]
+    :path-params [haku-id :- Long, hakemus-id :- s/Str]
+    :return  nil
+    :summary "Open application for applicant edit"
+    (ok (on-hakemus-applicant-edit-open haku-id hakemus-id))))
 
 (defn- get-attachments []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
@@ -258,6 +266,8 @@
   (post-change-request-response)
   (officer-edit-submit)
   (applicant-edit-submit)
+  (applicant-edit-open)
+  (get-applicant-edit-open)
   (get-attachments)
   (get-attachment)
   (options-del-attachment)

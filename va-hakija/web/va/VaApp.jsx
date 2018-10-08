@@ -79,6 +79,8 @@ function isEmptyOrReopenedHakemus(savedObject) {
   return !savedObject || (savedObject.status === "pending_change_request" || savedObject.status === "officer_edit")
 }
 
+// const openOnModifyApplication = query["modify-application"] ? controller.setHakemusStatus(hakemus, "pending_change_request", () => hakemus.changeRequest) : null
+
 function onInitialStateLoaded(initialState) {
   budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {
     reportValidationErrors: isNotFirstEdit(initialState)
@@ -94,6 +96,18 @@ function onInitialStateLoaded(initialState) {
       initialState.configuration.develMode,
       initialState.token,
       initialState.isTokenValid)
+  }else if (modifyApplication) {
+    const avustusHakuId = initialState.avustushaku.id
+    const hakemusId = initialState.saveStatus.hakemusId
+    const url =   `/api/avustushaku/${avustusHakuId}/hakemus/${hakemusId}/applicant-edit-open`
+    console.log(url)
+    HttpUtil.get(url)
+  // HttpUtil.post(urlCreator.openApplicantEditUrl(  initialState.avustushaku.id, initialState.saveStatus.hakemusId), {id:initialState.saveStatus.hakemusId})
+  //
+  // HttpUtil.get(`/api/avustushaku/${avustusHakuId}/hakemus/${hakemusId}/applicant-edit-open`).then(response => {
+  //   console.log(response)
+  // })
+
   }
 
 }
