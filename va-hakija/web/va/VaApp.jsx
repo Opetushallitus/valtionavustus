@@ -78,9 +78,7 @@ function initialStateTemplateTransformation(template) {
 function isEmptyOrReopenedHakemus(savedObject) {
   return !savedObject || (savedObject.status === "pending_change_request" || savedObject.status === "officer_edit")
 }
-
-// const openOnModifyApplication = query["modify-application"] ? controller.setHakemusStatus(hakemus, "pending_change_request", () => hakemus.changeRequest) : null
-
+sss
 function onInitialStateLoaded(initialState) {
   budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {
     reportValidationErrors: isNotFirstEdit(initialState)
@@ -106,9 +104,8 @@ function onInitialStateLoaded(initialState) {
 
   HttpUtil.get(url).then(() => {
     initialState.saveStatus.savedObject.version += 1
-    if(!cancelled){
-      window.open(urlCreator.modifyContactsApiUrl,'_blank')
-    }
+    window.open(urlCreator.modifyContactsApiUrl,'_blank')
+
   })
 
   }
