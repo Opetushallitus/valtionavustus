@@ -78,7 +78,7 @@ function initialStateTemplateTransformation(template) {
 function isEmptyOrReopenedHakemus(savedObject) {
   return !savedObject || (savedObject.status === "pending_change_request" || savedObject.status === "officer_edit")
 }
-sss
+
 function onInitialStateLoaded(initialState) {
   budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {
     reportValidationErrors: isNotFirstEdit(initialState)
