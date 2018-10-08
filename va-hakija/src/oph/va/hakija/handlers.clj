@@ -369,8 +369,6 @@
         budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
         validation (merge (validation/validate-form form answers attachments)
                           (va-budget/validate-budget-hakija answers budget-totals form))]
-    (log/info base-version)
-    (log/info (:version hakemus))
     (if (every? empty? (vals validation))
       (if (= base-version (:version hakemus))
         (let [submission-id (:form_submission_id hakemus)
