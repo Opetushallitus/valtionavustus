@@ -58,7 +58,7 @@ export default class VaForm extends React.Component {
                        infoElementValues={state.avustushaku}
                        hakemusType={this.props.hakemusType}
                        useBusinessIdSearch={this.props.useBusinessIdSearch}
-                       modifyApplication={this.props.modifyApplication}
+                       modifyApplication={modifyApplication}
         />
       </div>
     )

@@ -98,9 +98,6 @@ function onInitialStateLoaded(initialState) {
     const avustusHakuId = initialState.avustushaku.id
     const hakemusId = initialState.saveStatus.hakemusId
     const url =   `/api/avustushaku/${avustusHakuId}/hakemus/${hakemusId}/applicant-edit-open`
-    const request = {
-    "status": "applicant_edit"
-  }
 
   HttpUtil.get(url).then(() => {
     initialState.saveStatus.savedObject.version += 1
