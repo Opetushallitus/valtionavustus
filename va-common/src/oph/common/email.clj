@@ -165,7 +165,7 @@
 (defn refuse-url [avustushaku-id user-key lang token]
   (email-utils/refuse-url
      (get-in config [:server :url lang]) avustushaku-id user-key lang token))
- 
+
 (defn modify-url [avustushaku-id user-key lang token]
   (email-utils/modify-url
-      (get-in config [:server :url lang]) avustushaku-id user-key lang token))    
+      (get-in config [:server :url lang]) avustushaku-id user-key lang token))
