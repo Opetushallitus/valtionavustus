@@ -101,8 +101,6 @@ function onInitialStateLoaded(initialState) {
 
   HttpUtil.get(url).then(() => {
     initialState.saveStatus.savedObject.version += 1
-    window.open(urlCreator.modifyContactsApiUrl,'_blank')
-
   })
 
   }
