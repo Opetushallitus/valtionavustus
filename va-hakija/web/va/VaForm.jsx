@@ -12,6 +12,7 @@ import VaFormTopbar from './VaFormTopbar.jsx'
 import VaOldBrowserWarning from './VaOldBrowserWarning.jsx'
 
 import GrantRefuse from './GrantRefuse.jsx'
+import OpenContactsEdit from './OpenContactsEdit.jsx'
 
 import './style/main.less'
 
@@ -36,6 +37,11 @@ export default class VaForm extends React.Component {
           configuration.environment["application-change"]["refuse-enabled?"]
     const showGrantRefuse = refuseEnabled && configuration.preview
           && state.token && allowedStatuses.indexOf(saveStatus.savedObject.status) > -1 && (refuseGrant === "true")
+    const isInApplicantEditMode = () => "applicant_edit" === _.get(saveStatus.savedObject, "status")
+    const showOpenContactsEditButton = modifyApplication && !isInApplicantEditMode()
+    console.log(modifyApplication);
+    console.log(isInApplicantEditMode());
+
     return(
       <div>
         <VaOldBrowserWarning lang={configuration.lang}
@@ -48,6 +54,11 @@ export default class VaForm extends React.Component {
                       isExpired={isExpired} />
         {showGrantRefuse &&
           <GrantRefuse controller={controller} state={state}
+                       onSubmit={controller.refuseApplication}
+                       isTokenValid={state.tokenValidation
+                         ? state.tokenValidation.valid : false}/>}
+        {showOpenContactsEditButton &&
+          <OpenContactsEdit controller={controller} state={state}
                        onSubmit={controller.refuseApplication}
                        isTokenValid={state.tokenValidation
                          ? state.tokenValidation.valid : false}/>}
