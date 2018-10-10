@@ -37,7 +37,8 @@ export default class Form extends React.Component {
         const formOperations = state.extensionApi.formOperations
         const saved = controller.isSaveDraftAllowed(state)
         const applicantFields = ["applicant-name", "primary-email", "organization", "organization-email", "business-id", "organization-postal-address" ]
-        const fieldDisabled = (modifyApplication && !(applicantFields.includes(field.id)))? true :
+        const isOpened = () => "applicant_edit" === _.get(saveStatus.savedObject, "status")
+        const fieldDisabled = (modifyApplication && !isOpened() && !(applicantFields.includes(field.id)))? true :
         !formOperations.isFieldEnabled(saved, field.id) || field.forceDisabled === true
         const extendedProperties = _.extend(fieldProperties, { disabled: fieldDisabled,
                                                                renderingParameters: renderingParameters,
