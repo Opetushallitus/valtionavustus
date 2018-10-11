@@ -39,8 +39,6 @@ export default class VaForm extends React.Component {
           && state.token && allowedStatuses.indexOf(saveStatus.savedObject.status) > -1 && (refuseGrant === "true")
     const isInApplicantEditMode = () => "applicant_edit" === _.get(saveStatus.savedObject, "status")
     const showOpenContactsEditButton = modifyApplication && !isInApplicantEditMode()
-    console.log(modifyApplication);
-    console.log(isInApplicantEditMode());
 
     return(
       <div>

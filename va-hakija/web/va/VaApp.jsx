@@ -94,18 +94,7 @@ function onInitialStateLoaded(initialState) {
       initialState.configuration.develMode,
       initialState.token,
       initialState.isTokenValid)
-  }else if (modifyApplication) {
-    const avustusHakuId = initialState.avustushaku.id
-    const hakemusId = initialState.saveStatus.hakemusId
-    const url =   `/api/avustushaku/${avustusHakuId}/hakemus/${hakemusId}/applicant-edit-open`
-    console.log(url)
-  // HttpUtil.get(url).then(() => {
-  //   initialState.saveStatus.savedObject.version += 1
-  //
-  // })
-
   }
-
 }
 
 function initVaFormController() {
