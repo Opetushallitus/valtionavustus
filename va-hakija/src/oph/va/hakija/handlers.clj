@@ -380,7 +380,17 @@
                                                       submission-version
                                                       (:register_number hakemus)
                                                       answers
-                                                      budget-totals)]
+                                                      budget-totals)
+              roles (filter #(= (:role %) "presenting_officer")
+                                  (va-db/get-avustushaku-roles haku-id)]
+        (when (some #(when (some? (:email %)) true) roles)
+          (va-email/send-applicant-edit-message-to-presenter!
+            (map :email (filter #(some? (:email %)) roles))
+            avustushaku hakemus-id))
+        (when-let [email (find-answer-value
+                           (:answers submission) "primary-email")]
+          (va-email/send-applicant-edit-message!
+            lang [email] (get-in grant [:content :name lang])))
           (method-not-allowed! {:applicant-edit "saved"}))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))

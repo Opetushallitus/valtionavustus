@@ -1,12 +1,10 @@
 import React from "react"
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
-import DateUtil from 'soresu-form/web/DateUtil.js'
 import HttpUtil from "soresu-form/web/HttpUtil"
 
 export default class OpenContactsEdit extends React.Component {
   constructor(props) {
     super(props)
-    const opened = this.props.state.saveStatus.savedObject.status === "applicant_edit" && this.props.modifyApplication
     this.onSubmitClick = this.onSubmitClick.bind(this)
   }
 
@@ -18,8 +16,7 @@ export default class OpenContactsEdit extends React.Component {
 
   HttpUtil.get(url).then(() => {
     this.props.state.saveStatus.savedObject.version += 1
-    location.reload();
-
+    location.reload()
   })
   }
 
