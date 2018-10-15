@@ -334,3 +334,18 @@
   "Grants report"
   [{:year s/Int
     :count s/Int}])
+
+(s/defschema ExternalHanke
+             "Hankkeen tiedot ulkopuolisia järjestelmiä varten"
+             {:project-name (s/maybe s/Str)
+              :avustushaku-start (s/maybe s/Str)
+              :avustushaku-decision-date (s/maybe s/Str)
+              :avustushaku-id s/Int
+              :organization-name (s/maybe s/Str)
+              :budget-total (s/maybe s/Int)
+              :id s/Int
+              :avustushaku-end (s/maybe s/Str)
+              :avustushaku-name (s/maybe {:fi (s/maybe s/Str)
+                                          :sv (s/maybe s/Str)})
+              :budget-oph-share (s/maybe s/Int)
+              :register-number (s/maybe s/Str)})
