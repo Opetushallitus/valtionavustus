@@ -90,6 +90,8 @@
                  :handler any-access}
                 {:pattern #"^/favicon.ico"
                  :handler any-access}
+                {:pattern #"^/api/v2/external/.*"
+                 :handler any-access}
                 {:pattern #".*"
                  :handler authenticated-access
                  :on-error (fn [request _]
