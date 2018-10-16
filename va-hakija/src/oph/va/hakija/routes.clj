@@ -164,7 +164,7 @@
     :body    [answers (compojure-api/describe Answers "New answers")]
     :return  nil
     :summary "Submit officer edit changes"
-    (on-hakemus-officer-edit-submit haku-id hakemus-id base-version answers)))
+    (on-hakemus-edit-submit haku-id hakemus-id base-version answers :officer-edit)))
 
 (defn- applicant-edit-submit []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version/applicant-edit-submit" [haku-id hakemus-id base-version :as request]
@@ -172,7 +172,7 @@
     :body    [answers (compojure-api/describe Answers "New answers")]
     :return  nil
     :summary "Submit applicant edit changes"
-    (on-hakemus-applicant-edit-submit haku-id hakemus-id base-version answers)))
+    (on-hakemus-edit-submit haku-id hakemus-id base-version answers :applicant-edit)))
 
 (defn- applicant-edit-open []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/applicant-edit-open" [haku-id hakemus-id :as request]

@@ -83,30 +83,30 @@
                     (fn []
                       (when (:print-mail-on-disable? smtp-config)
                         (let [email-obj (make-email-obj)]
-                          (log/infof (string/join "\n"
-                                                  ["Would have sent email:"
-                                                   "----"
-                                                   "hostname: %s"
-                                                   "smtp port: %s"
-                                                   "to: %s"
-                                                   "bcc: %s"
-                                                   "from: %s"
-                                                   "reply-to: %s"
-                                                   "bounce address: %s"
-                                                   "other headers: %s"
-                                                   "subject: %s"
-                                                   "\n%s"
-                                                   "----"])
-                                     (.getHostName email-obj)
-                                     (.getSmtpPort email-obj)
-                                     (.getToAddresses email-obj)
-                                     (.getBccAddresses email-obj)
-                                     (.getFromAddress email-obj)
-                                     (.getReplyToAddresses email-obj)
-                                     (.getBounceAddress email-obj)
-                                     (.getHeaders email-obj)
-                                     (.getSubject email-obj)
-                                     email-msg)))))]
+                          (log/info (string/join "\n"
+                                                 ["Would have sent email:"
+                                                  "----"
+                                                  "hostname: %s"
+                                                  "smtp port: %s"
+                                                  "to: %s"
+                                                  "bcc: %s"
+                                                  "from: %s"
+                                                  "reply-to: %s"
+                                                  "bounce address: %s"
+                                                  "other headers: %s"
+                                                  "subject: %s"
+                                                  "\n%s"
+                                                  "----"])
+                                    (.getHostName email-obj)
+                                    (.getSmtpPort email-obj)
+                                    (.getToAddresses email-obj)
+                                    (.getBccAddresses email-obj)
+                                    (.getFromAddress email-obj)
+                                    (.getReplyToAddresses email-obj)
+                                    (.getBounceAddress email-obj)
+                                    (.getHeaders email-obj)
+                                    (.getSubject email-obj)
+                                    email-msg)))))]
       (when (not (try-send! (:retry-initial-wait smtp-config)
                             (:retry-multiplier smtp-config)
                             (:retry-max-time smtp-config)
@@ -164,8 +164,8 @@
 
 (defn refuse-url [avustushaku-id user-key lang token]
   (email-utils/refuse-url
-     (get-in config [:server :url lang]) avustushaku-id user-key lang token))
+   (get-in config [:server :url lang]) avustushaku-id user-key lang token))
 
 (defn modify-url [avustushaku-id user-key lang token]
   (email-utils/modify-url
-      (get-in config [:server :url lang]) avustushaku-id user-key lang token))
+   (get-in config [:server :url lang]) avustushaku-id user-key lang token))
