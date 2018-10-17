@@ -362,7 +362,8 @@
               submission (:body (get-form-submission
                                   (:form avustushaku)
                                   (:form_submission_id hakemus)))]
-        (if (= edit-type :applicant-edit)
+
+        (when (= edit-type :applicant-edit)
           (when (some #(when (some? (:email %)) true) roles)
             (va-email/send-applicant-edit-message-to-presenter!
               (map :email (filter #(some? (:email %)) roles))
@@ -371,6 +372,7 @@
                             (:answers submission) "primary-email")]
             (va-email/send-applicant-edit-message!
               lang [email] (get-in avustushaku [:content :name lang]))))
+
           (method-not-allowed! {edit-type "saved"}))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
