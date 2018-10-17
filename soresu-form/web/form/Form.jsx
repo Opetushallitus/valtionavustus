@@ -18,7 +18,7 @@ export default class Form extends React.Component {
     const values = state.saveStatus.values
     const modifyApplication = this.props.modifyApplication
 
-    const renderField = function (field, renderingParameters) {
+    const renderField = function(field, renderingParameters) {
       const htmlId = controller.constructHtmlId(fields, field.id)
       const fieldProperties = {
         controller: controller,
@@ -36,14 +36,30 @@ export default class Form extends React.Component {
       } else {
         const formOperations = state.extensionApi.formOperations
         const saved = controller.isSaveDraftAllowed(state)
-        const applicantFields = ["applicant-name", "primary-email", "organization", "organization-email", "business-id", "organization-postal-address" ]
+        const applicantFields = [
+          "applicant-name",
+          "primary-email",
+          "organization",
+          "organization-email",
+          "business-id",
+          "organization-postal-address"
+        ]
         const isOpened = () => "applicant_edit" === _.get(state.saveStatus.savedObject, "status")
-        const fieldDisabled =   ((modifyApplication && !isOpened()) || (modifyApplication && isOpened() && !applicantFields.includes(field.id)))? true : !formOperations.isFieldEnabled(saved, field.id) || field.forceDisabled === true
 
-        const extendedProperties = _.extend(fieldProperties, { disabled: fieldDisabled,
-                                                               renderingParameters: renderingParameters,
-                                                               allAttachments: state.saveStatus.attachments,
-                                                               attachmentUploadsInProgress: state.saveStatus.attachmentUploadsInProgress})
+        let fieldDisabled
+        if (modifyApplication) {
+          fieldDisabled =  (isOpened() && !applicantFields.includes(field.id)) || (!isOpened())
+        } else {
+        fieldDisabled =  !formOperations.isFieldEnabled(saved, field.id) || field.forceDisabled === true
+        }
+
+
+        const extendedProperties = _.extend(fieldProperties, {
+          disabled: fieldDisabled,
+          renderingParameters: renderingParameters,
+          allAttachments: state.saveStatus.attachments,
+          attachmentUploadsInProgress: state.saveStatus.attachmentUploadsInProgress
+        })
 
         if (field.fieldClass === "formField" || field.fieldClass === "button") {
           return createFormComponent(field, extendedProperties)
@@ -53,35 +69,30 @@ export default class Form extends React.Component {
       }
     }
 
-    return (
-      <form className="soresu-form">
-        {_.map(fields, f => renderField(f))}
-      </form>
-    )
+    return (<form className="soresu-form">
+      {_.map(fields, f => renderField(f))}
+    </form>)
 
     function createInfoElement(fieldProperties) {
-      return <InfoElement {...fieldProperties}
-                          values={infoElementValues}
-                          answersObject={values} />
+      return <InfoElement {...fieldProperties} values={infoElementValues} answersObject={values}/>
     }
 
     function createFormComponent(field, extendedProperties) {
       const existingInputValue = InputValueStorage.readValue(fields, values, field.id)
-      const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
+      const value = _.isUndefined(existingInputValue)
+        ? ""
+        : existingInputValue
       const fieldErrors = _.get(validationErrors, field.id, [])
-      return <FormComponent {...extendedProperties}
-                            validationErrors={fieldErrors}
-                            value={value}
-                            onChange={controller.componentOnChangeListener}
-                            attachment={extendedProperties.allAttachments[field.id]}
-                            attachmentDownloadUrl={controller.createAttachmentDownloadUrl(state, field)} />
+      return <FormComponent {...extendedProperties} validationErrors={fieldErrors} value={value} onChange={controller.componentOnChangeListener} attachment={extendedProperties.allAttachments[field.id]} attachmentDownloadUrl={controller.createAttachmentDownloadUrl(state, field)}/>
     }
 
     function createWrapperElement(field, fieldProperties, renderingParameters) {
       function resolveChildRenderingParameters(childIndex) {
-        const result = _.isObject(renderingParameters) ? _.cloneDeep(renderingParameters) : {}
+        const result = _.isObject(renderingParameters)
+          ? _.cloneDeep(renderingParameters)
+          : {}
         result.childIndex = childIndex
-        result.removeMe = function () {
+        result.removeMe = function() {
           controller.removeField(field.children[childIndex])
         }
         const isFirstChild = childIndex === 0
@@ -91,7 +102,9 @@ export default class Form extends React.Component {
         const isSecondToLastChild = childIndex === field.children.length - 2
         if (isSecondToLastChild) {
           const nextChild = field.children[childIndex + 1]
-          const nextChildIsDisabled = _.isObject(nextChild) ? nextChild.forceDisabled : false
+          const nextChildIsDisabled = _.isObject(nextChild)
+            ? nextChild.forceDisabled
+            : false
           if (nextChildIsDisabled) {
             result.rowMustNotBeRemoved = true
           }
