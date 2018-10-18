@@ -92,12 +92,14 @@ export default class ApplicationPayments extends Component {
     const grantLeft = application.arvio["budget-granted"] - paidToDate
     const addEnabled = !readonly && grantLeft > 0 && index === payments.length
     const newPaymentSum = addEnabled ? this.state.newPaymentSum : 0
+    const costsGranted = application["arvio"]["costsGranted"]
+            || application["budget-total"]
 
     return (
       <div className={!this.props.payments ? "application-payments-disabled" : ""}>
         <h3>Maksuerät</h3>
         <div>
-          Rahoitettavaa yhteensä {this.localeString(application["budget-total"])} €
+          Rahoitettavaa yhteensä {this.localeString(costsGranted)} €
         </div>
         <div className="payment-info-columns">
           <table className="payment-info-column">
@@ -106,8 +108,7 @@ export default class ApplicationPayments extends Component {
                 <td>Omarahoitus</td>
                 <td className="payment-money-column">
                   {this.localeString(
-                    application["budget-total"] -
-                    application.arvio["budget-granted"])} €
+                    costsGranted - application.arvio["budget-granted"])} €
                 </td>
               </tr>
               <tr>
