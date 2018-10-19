@@ -577,6 +577,15 @@ sanoman mukana, kun maksatus on maksettu.
 Vanhoissa maksatuksissa ei ole pitkäviitteessä maksuerän numeroa. Näitä
 parsittaessa oletetaan, että kyseessä on maksatuksen 1. erä.
 
+### Maksatuksen tila
+
+Tila      | Tunniste tietokannassa | Huomiot
+----------|------------------------|---------------------------------------
+Luotu     | 0                      | Haku on ratkaistu ja maksatukset luotu
+Odottaa   | 1                      | Ei käytössä
+Lähetetty | 2                      | Maksatus on lähetetty Rondoon
+Maksettu  | 3                      | Rondosta on tullut maksupalaute
+
 ## Muutoksenhaku
 
 Tällä hetkellä järjestelmä tukee hakijan luomaa muutosta ainoastaan avustuksen
