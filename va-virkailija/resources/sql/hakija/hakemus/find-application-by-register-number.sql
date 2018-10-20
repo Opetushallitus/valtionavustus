@@ -6,6 +6,10 @@ FROM
   hakija.hakemukset
 WHERE
   register_number = :register_number
+  AND status != 'cancelled'
+  AND status != 'new'
+  AND status != 'draft'
+  AND hakemus_type = 'hakemus'
   AND version_closed IS NULL
 ORDER
   BY id DESC
