@@ -13,7 +13,8 @@
             :refer [test-server-port get! post! create-submission
                     create-application json->map admin-authentication
                     valid-payment-values delete! add-mock-authentication
-                    remove-mock-authentication create-application-evaluation]]))
+                    remove-mock-authentication create-application-evaluation
+                    create-valiselvitys]]))
 
 (def payment-date (java.time.LocalDate/of 2018 5 2))
 
@@ -89,11 +90,15 @@
                     {:register-number (:register_number application)
                      :invoice-date "2018-05-03"})))))
 
-  (it "finds multiple payments by register number and phase"
+  (it "finds multiple payments by register number and phase and ignores valiselvitys"
       (let [grant (first (grant-data/get-grants))
             submission (create-submission
                          (:form grant) {:budget-granted 40000})
             application (create-application grant submission)
+            valiselvitys (create-valiselvitys
+                           application
+                           (create-submission
+                             (:form grant) {}))
             batch (payment-batches-data/create-batch
                     {:receipt-date payment-date
                      :due-date payment-date
