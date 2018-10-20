@@ -86,6 +86,23 @@
                 :register_number "123/456/78"
                 :hakemus_type "hakemus"})))
 
+(defn create-valiselvitys [hakemus submission]
+  (first (exec :form-db hakija-api-tools/create-hakemus
+               {:avustushaku_id (:avustushaku hakemus)
+                :status :submitted
+                :user_key (generate-hash-id)
+                :form_submission_id (:id submission)
+                :form_submission_version (:version submission)
+                :version (:version submission)
+                :budget_total 200000
+                :budget_oph_share 1500000
+                :organization_name "Test Organisation"
+                :project_name "Test Project"
+                :language "fi"
+                :register_number "123/456/78"
+                :hakemus_type "valiselvitys"})))
+
+
 (defn create-application-evaluation
   ([application status values]
    (virkailija-db/update-or-create-hakemus-arvio
