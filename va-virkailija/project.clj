@@ -2,7 +2,8 @@
 
   :description "OPH Valtionavustus, virkailijan käyttöliittymä"
 
-  :plugins [[lein-parent "0.3.2"]]
+  :plugins [[lein-parent "0.3.2"]
+            [lein-mustard "0.1.2"]]
 
   :parent-project {:path "../parent-project.clj"
                    :inherit [:url
