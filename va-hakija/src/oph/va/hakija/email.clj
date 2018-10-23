@@ -113,7 +113,7 @@
    :grant-name grant-name
    :register-number (:register_number hakemus)
    :project-name (:project_name hakemus)
-   :organization_name (:organization_name hakemus)})
+   :organization-name (:organization_name hakemus)})
 
 (defn send-applicant-edit-message! [lang recipients grant-name hakemus]
   (>!! email/mail-chan
