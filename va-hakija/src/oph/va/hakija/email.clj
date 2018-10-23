@@ -110,7 +110,10 @@
    :sender (:sender email/smtp-config)
    :subject (get-in mail-titles [:hakemus-edited-after-applicant-edit lang])
    :to recipients
-   :grant-name grant-name})
+   :grant-name grant-name
+   :register-number (:register_number hakemus)
+   :project-name (:project_name hakemus)
+   :organization_name (:organization_name hakemus)})
 
 (defn send-applicant-edit-message! [lang recipients grant-name hakemus]
   (>!! email/mail-chan
@@ -126,7 +129,8 @@
    :to recipients
    :grant-name grant-name
    :register-number (:register_number hakemus)
-   :project-name (:project_name hakemus)})
+   :project-name (:project_name hakemus)
+   :organization_name (:organization_name hakemus)})
 
 (defn send-applicant-edit-message-to-presenter! [recipients lang application-id grant-name hakemus]
   (>!! email/mail-chan
