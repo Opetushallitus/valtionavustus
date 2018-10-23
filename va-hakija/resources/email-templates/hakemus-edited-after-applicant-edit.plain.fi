@@ -1,4 +1,5 @@
 Avustushakemus: {{ grant-name }}
+Hanke {{ register-number }} "{{ project-name }}"
 
 Ilmoitus yhteystietojen muutoksesta on lähetetty Opetushallitukseen.
 

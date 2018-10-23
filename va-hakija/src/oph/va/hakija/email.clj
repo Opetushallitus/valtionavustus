@@ -102,7 +102,7 @@
   (>!! email/mail-chan
        (generate-presenter-refused-email recipients grant application-id)))
 
-(defn generate-applicant-edit-email [lang recipients grant-name]
+(defn generate-applicant-edit-email [lang recipients grant-name hakemus]
   {:operation :send
    :type :hakemus-edited-after-applicant-edit
    :lang lang
@@ -112,11 +112,11 @@
    :to recipients
    :grant-name grant-name})
 
-(defn send-applicant-edit-message! [lang recipients grant-name]
+(defn send-applicant-edit-message! [lang recipients grant-name hakemus]
   (>!! email/mail-chan
-       (generate-applicant-edit-email lang recipients grant-name)))
+       (generate-applicant-edit-email lang recipients grant-name hakemus)))
 
-(defn generate-presenter-applicant-edit-email [recipients lang application-id grant-name]
+(defn generate-presenter-applicant-edit-email [recipients lang application-id grant-name hakemus]
   {:operation :send
    :type :hakemus-edited-after-applicant-edit
    :lang lang
@@ -124,11 +124,13 @@
    :sender (:sender email/smtp-config)
    :subject (get-in mail-titles [:hakemus-edited-after-applicant-edit lang])
    :to recipients
-   :grant-name grant-name})
+   :grant-name grant-name
+   :register-number (:register_number hakemus)
+   :project-name (:project_name hakemus)})
 
-(defn send-applicant-edit-message-to-presenter! [recipients lang application-id grant-name]
+(defn send-applicant-edit-message-to-presenter! [recipients lang application-id grant-name hakemus]
   (>!! email/mail-chan
-       (generate-presenter-applicant-edit-email recipients lang application-id grant-name)))
+       (generate-presenter-applicant-edit-email recipients lang application-id grant-name hakemus)))
 
 (defn send-change-request-responded-message-to-virkailija! [to avustushaku-id avustushaku-name-fi hakemus-db-id]
   (let [lang :fi
