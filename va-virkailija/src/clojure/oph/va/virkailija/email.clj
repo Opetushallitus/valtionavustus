@@ -102,6 +102,8 @@
         url (paatos-url (:id avustushaku) (:user_key hakemus) (keyword lang-str))
         paatos-refuse-url
         (email/refuse-url (:id avustushaku) (:user_key hakemus) lang token)
+        paatos-modify-url
+        (email/modify-url (:id avustushaku) (:user_key hakemus) lang token)
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])]
     (log/info "Sending decision email with refuse link")
@@ -117,6 +119,7 @@
                           :to to
                           :url url
                           :refuse-url paatos-refuse-url
+                          :modify-url paatos-modify-url
                           :register-number (:register_number hakemus)
                           :project-name (:project_name hakemus)})))
 

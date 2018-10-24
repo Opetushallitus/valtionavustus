@@ -27,7 +27,7 @@
 (defn- get-open-avustushaku [haku-id hakemus]
   (let [avustushaku (va-db/get-avustushaku haku-id)
         phase (avustushaku-phase avustushaku)]
-    (if (or (= phase "current") (= (:status hakemus) "pending_change_request") (= (:status hakemus) "officer_edit"))
+    (if (or (= phase "current") (= (:status hakemus) "pending_change_request") (= (:status hakemus) "officer_edit") (= (:status hakemus) "applicant_edit"))
       avustushaku
       (method-not-allowed! {:phase phase}))))
 
@@ -81,7 +81,7 @@
                                                 avustushaku-start-date
                                                 avustushaku-end-date)
             (hakemus-ok-response (:hakemus new-hakemus) (without-id (:submission new-hakemus)) validation))
-        (internal-server-error!)))
+          (internal-server-error!)))
       (bad-request! security-validation))))
 
 (defn- ok-id [hakemus]
@@ -126,8 +126,8 @@
       (let [hakemus (va-db/get-hakemus-version hakemus-id (:hakemus_version paatos))
             submission-id (:form_submission_id hakemus)
             submission (form-db/get-form-submission-version
-                         form-id submission-id
-                         (:form_submission_version hakemus))
+                        form-id submission-id
+                        (:form_submission_version hakemus))
             submission-version (:version submission)
             answers (:answers submission)
             attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
@@ -135,6 +135,21 @@
             validation (merge (validation/validate-form form answers attachments)
                               (va-budget/validate-budget-hakija answers budget-totals form))]
         (hakemus-ok-response hakemus submission validation)))))
+
+(defn on-hakemus-applicant-edit-open [haku-id hakemus-id]
+  (let [hakemus (va-db/get-hakemus hakemus-id)
+        avustushaku (va-db/get-avustushaku haku-id)
+        form-id (:form avustushaku)
+        form (form-db/get-form form-id)
+        submission-id (:form_submission_id hakemus)
+        submission (form-db/get-form-submission-version
+                    form-id submission-id
+                    (:form_submission_version hakemus))
+        submission-version (:version submission)
+        register-number (:register_number hakemus)
+        answers (:answers submission)
+        budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)]
+    (va-db/open-hakemus-applicant-edit haku-id hakemus-id submission-id submission-version register-number answers budget-totals)))
 
 (defn on-get-current-answers [haku-id hakemus-id form-key]
   (let [avustushaku (va-db/get-avustushaku haku-id)
@@ -188,27 +203,27 @@
   (let [application (va-db/get-hakemus application-id)
         grant (va-db/get-avustushaku (:avustushaku application))
         submission (:body (get-form-submission
-                            (:form grant)
-                            (:form_submission_id application)))
+                           (:form grant)
+                           (:form_submission_id application)))
         lang (keyword (get-in application [:hakemus :language] "fi"))]
     (cond
       (not (va-db/valid-token? token (:id application)))
       (unauthorized "Incorrect token")
       (and (= (:version application) base-version)
-             (not (:refused application)))
+           (not (:refused application)))
       (do
         (va-db/refuse-application application comment)
         (let [roles (filter #(= (:role %) "presenting_officer")
                             (va-db/get-avustushaku-roles (:id grant)))]
           (when (some #(when (some? (:email %)) true) roles)
             (va-email/send-refused-message-to-presenter!
-              (map :email (filter #(some? (:email %)) roles))
-              grant
-              (:id application))))
+             (map :email (filter #(some? (:email %)) roles))
+             grant
+             (:id application))))
         (when-let [email (find-answer-value
-                           (:answers submission) "primary-email")]
+                          (:answers submission) "primary-email")]
           (va-email/send-refused-message!
-            lang [email] (get-in grant [:content :name lang])))
+           lang [email] (get-in grant [:content :name lang])))
         (hakemus-ok-response (va-db/get-hakemus application-id) submission {}))
       :else (hakemus-conflict-response application))))
 
@@ -320,15 +335,16 @@
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
 
-(defn on-hakemus-officer-edit-submit [haku-id hakemus-id base-version answers]
+(defn on-hakemus-edit-submit [haku-id hakemus-id base-version answers edit-type]
   (let [hakemus (va-db/get-hakemus hakemus-id)
-        avustushaku (get-open-avustushaku haku-id hakemus)
+        avustushaku (va-db/get-avustushaku (:avustushaku hakemus))
         form-id (:form avustushaku)
         form (form-db/get-form form-id)
         attachments (va-db/get-attachments hakemus-id (:id hakemus))
         budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
         validation (merge (validation/validate-form form answers attachments)
-                          (va-budget/validate-budget-hakija answers budget-totals form))]
+                          (va-budget/validate-budget-hakija answers budget-totals form))
+        lang (keyword (get-in hakemus [:hakemus :language] "fi"))]
     (if (every? empty? (vals validation))
       (if (= base-version (:version hakemus))
         (let [submission-id (:form_submission_id hakemus)
@@ -340,8 +356,24 @@
                                                       submission-version
                                                       (:register_number hakemus)
                                                       answers
-                                                      budget-totals)]
-          (method-not-allowed! {:officer-edit "saved"}))
+                                                      budget-totals)
+              roles (filter #(= (:role %) "presenting_officer")
+                            (va-db/get-avustushaku-roles haku-id))
+              submission (:body (get-form-submission
+                                 (:form avustushaku)
+                                 (:form_submission_id hakemus)))]
+
+          (when (= edit-type :applicant-edit)
+            (when (some #(when (some? (:email %)) true) roles)
+              (va-email/send-applicant-edit-message-to-presenter!
+               (map :email (filter #(some? (:email %)) roles))
+               :fi hakemus-id (get-in avustushaku [:content :name lang]) hakemus))
+            (when-let [email (find-answer-value
+                              (:answers submission) "primary-email")]
+              (va-email/send-applicant-edit-message!
+               lang [email] (get-in avustushaku [:content :name lang]) hakemus)))
+
+          (method-not-allowed! {edit-type "saved"}))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
 

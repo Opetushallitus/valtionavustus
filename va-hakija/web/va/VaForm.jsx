@@ -12,14 +12,15 @@ import VaFormTopbar from './VaFormTopbar.jsx'
 import VaOldBrowserWarning from './VaOldBrowserWarning.jsx'
 
 import GrantRefuse from './GrantRefuse.jsx'
+import OpenContactsEdit from './OpenContactsEdit.jsx'
 
 import './style/main.less'
 
-const allowedStatuses = ["officer_edit", "submitted", "pending_change_request"]
+const allowedStatuses = ["officer_edit", "submitted", "pending_change_request", "applicant_edit"]
 
 export default class VaForm extends React.Component {
   render() {
-    const {controller, state, hakemusType, isExpired} = this.props
+    const {controller, state, hakemusType, isExpired, refuseGrant, modifyApplication} = this.props
     const registerNumber = _.get(state.saveStatus.savedObject, "register-number", undefined)
     const {saveStatus, configuration} = state
     const registerNumberDisplay = <VaHakemusRegisterNumber key="register-number"
@@ -35,8 +36,10 @@ export default class VaForm extends React.Component {
     const refuseEnabled = configuration.environment["application-change"] &&
           configuration.environment["application-change"]["refuse-enabled?"]
     const showGrantRefuse = refuseEnabled && configuration.preview
-          && state.token
-          && allowedStatuses.indexOf(saveStatus.savedObject.status) > -1
+          && state.token && allowedStatuses.indexOf(saveStatus.savedObject.status) > -1 && (refuseGrant === "true")
+    const isInApplicantEditMode = () => "applicant_edit" === _.get(saveStatus.savedObject, "status")
+    const showOpenContactsEditButton = !showGrantRefuse && modifyApplication && !isInApplicantEditMode()
+
     return(
       <div>
         <VaOldBrowserWarning lang={configuration.lang}
@@ -52,6 +55,11 @@ export default class VaForm extends React.Component {
                        onSubmit={controller.refuseApplication}
                        isTokenValid={state.tokenValidation
                          ? state.tokenValidation.valid : false}/>}
+        {showOpenContactsEditButton &&
+          <OpenContactsEdit controller={controller} state={state}
+                       onSubmit={controller.refuseApplication}
+                       isTokenValid={state.tokenValidation
+                         ? state.tokenValidation.valid : false}/>}
         <FormContainer controller={controller}
                        state={state}
                        formContainerClass={formContainerClass}
@@ -59,8 +67,9 @@ export default class VaForm extends React.Component {
                        infoElementValues={state.avustushaku}
                        hakemusType={this.props.hakemusType}
                        useBusinessIdSearch={this.props.useBusinessIdSearch}
+                       modifyApplication={modifyApplication}
         />
       </div>
     )
   }
-}
+ }

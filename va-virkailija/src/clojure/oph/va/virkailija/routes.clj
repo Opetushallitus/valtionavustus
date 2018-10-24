@@ -43,7 +43,8 @@
              :as va-code-values-routes]
             [oph.va.virkailija.payments-routes :as payments-routes]
             [oph.va.virkailija.healthcheck :as healthcheck]
-            [oph.va.virkailija.reporting-routes :as reporting-routes])
+            [oph.va.virkailija.reporting-routes :as reporting-routes]
+            [oph.va.virkailija.external :as external])
   (:import [java.io ByteArrayInputStream]))
 
 (def opintopolku-login-url
@@ -718,6 +719,9 @@
                          va-code-values-routes/routes)
   (compojure-api/context "/api/v2/payments" [] :tags ["payments"]
                          payments-routes/routes)
+  (compojure-api/context "/api/v2/external" []
+    :tags ["external"]
+    external/routes)
 
   va-routes/config-routes
   resource-routes)

@@ -18,7 +18,8 @@ const serverOperations = {
   initialSave: 'initialSave',
   autoSave: 'autoSave',
   submit: 'submit',
-  refuseApplication: 'refuseApplication'
+  refuseApplication: 'refuseApplication',
+  modifyApplicationContacts: 'modifyApplicationContacts'
 }
 
 export default class FormStateTransitions {
@@ -379,4 +380,34 @@ export default class FormStateTransitions {
     state.saveStatus.savedObject.refused = true
     return state
   }
+
+
+onModifyApplicationContacts(state, onSuccessCallback){
+  const formOperations = state.extensionApi.formOperations
+  const url = formOperations.urlCreator.modifyContactsApiUrl(state)
+  const dispatcher = this.dispatcher
+  const events = this.events
+  const self = this
+  state.saveStatus.saveInProgress = true
+  HttpUtil.put(url)
+    .then(function(response) {
+      self.pushSaveCompletedEvent(state, response, onSuccessCallback)
+    })
+    .catch(function(error) {
+      FormStateTransitions.handleServerError(
+        dispatcher,
+        events,
+        error,
+        "PUT",
+        url,
+        serverOperations.modifyApplicationContacts)
+    })
+  return state
+}
+
+onApplicationContactsModified(state) {
+  state.saveStatus.savedObject.contactsModified = true
+  return state
+}
+
 }

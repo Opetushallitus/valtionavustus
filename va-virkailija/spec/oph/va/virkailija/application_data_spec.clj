@@ -8,7 +8,8 @@
            [oph.va.virkailija.application-data :as application-data]
            [oph.va.virkailija.payments-data :as payments-data]
            [oph.va.virkailija.common-utils
-            :refer [test-server-port create-submission create-application]]))
+            :refer [test-server-port create-submission create-application
+                    create-application-evaluation]]))
 
 (def user {:person-oid "12345"
            :first-name "Test"
@@ -139,5 +140,38 @@
         (should= 0 (count (application-data/get-application-unsent-payments
                             (:id application)))))))
 
+(describe
+  "Get open applications"
+
+  (tags :applications :openapplications)
+
+  (around-all [_] (with-test-server! :virkailija-db
+                    #(start-server
+                       {:host "localhost"
+                        :port test-server-port
+                        :auto-reload? false}) (_)))
+  (it "gets open applications"
+      (let [grant (first (grant-data/get-grants))
+            submission (create-submission (:form grant) {})
+            application (create-application grant submission)]
+        (create-application-evaluation application "accepted")
+        (let [application-count (count
+                                  (application-data/get-open-applications))]
+          (create-application-evaluation
+            (create-application
+              grant
+              (create-submission (:form grant) {}))
+            "accepted")
+
+          (should=
+            (count (application-data/get-open-applications))
+            (inc application-count)))))
+
+  (it "checks if application is accepted"
+      (let [grant (first (grant-data/get-grants))
+            submission (create-submission (:form grant) {})
+            application (create-application grant submission)]
+        (create-application-evaluation application "accepted")
+        (should (application-data/accepted? application)))))
 
 (run-specs)

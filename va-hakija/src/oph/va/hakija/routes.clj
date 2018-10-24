@@ -164,7 +164,31 @@
     :body    [answers (compojure-api/describe Answers "New answers")]
     :return  nil
     :summary "Submit officer edit changes"
-    (on-hakemus-officer-edit-submit haku-id hakemus-id base-version answers)))
+    (on-hakemus-edit-submit haku-id hakemus-id base-version answers :officer-edit)))
+
+(defn- applicant-edit-submit []
+  (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version/applicant-edit-submit" [haku-id hakemus-id base-version :as request]
+    :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
+    :body    [answers (compojure-api/describe Answers "New answers")]
+    :return  nil
+    :summary "Submit applicant edit changes"
+    (on-hakemus-edit-submit haku-id hakemus-id base-version answers :applicant-edit)))
+
+(defn- applicant-edit-open []
+  (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/applicant-edit-open" [haku-id hakemus-id :as request]
+    :path-params [haku-id :- Long, hakemus-id :- s/Str]
+    :body [body {:status s/Str}]
+    :return  nil
+    :summary "Open application for applicant edit"
+    (on-hakemus-applicant-edit-open haku-id hakemus-id)))
+
+(defn- get-applicant-edit-open []
+  (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/applicant-edit-open"
+  [haku-id hakemus-id :as request]
+    :path-params [haku-id :- Long, hakemus-id :- s/Str]
+    :return  nil
+    :summary "Open application for applicant edit"
+    (ok (on-hakemus-applicant-edit-open haku-id hakemus-id))))
 
 (defn- get-attachments []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
@@ -241,6 +265,9 @@
   (post-hakemus-submit)
   (post-change-request-response)
   (officer-edit-submit)
+  (applicant-edit-submit)
+  (applicant-edit-open)
+  (get-applicant-edit-open)
   (get-attachments)
   (get-attachment)
   (options-del-attachment)

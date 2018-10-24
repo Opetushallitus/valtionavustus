@@ -83,3 +83,6 @@
   "sql/hakija/reporting/get-yearly-resolved-count.sql")
 (defquery get-yearly-total-grant-size
   "sql/hakija/reporting/get-yearly-total-grant-size.sql")
+
+(defquery list-open-applications
+  "sql/hakija/hakemus/list-open.sql")

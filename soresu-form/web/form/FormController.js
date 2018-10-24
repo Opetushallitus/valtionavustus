@@ -23,7 +23,8 @@ const events = {
   startAttachmentRemoval: 'startAttachmentRemoval',
   attachmentRemovalCompleted: 'attachmentRemovalCompleted',
   refuseApplication: 'refuseApplication',
-  onApplicationRefused: 'onApplicationRefused'
+  onApplicationRefused: 'onApplicationRefused',
+  onModifyApplicationContacts: 'onModifyApplicationContacts'
 }
 
 export default class FormController {
@@ -136,5 +137,10 @@ export default class FormController {
   refuseApplication(comment) {
     dispatcher.push(events.refuseApplication, comment,
                    () => dispatcher.push(events.onApplicationRefused))
+  }
+
+  modifyApplicationContacts() {
+    dispatcher.push(events.modifyApplicationContacts,
+                   () => dispatcher.push(events.onModifyApplicationContacts))
   }
 }

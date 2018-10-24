@@ -38,7 +38,7 @@ class FieldPropertyMapper {
     return _.extend(commonProps, {
       controller: props.controller,
       field: field,
-      disabled: props.disabled,
+      disabled:  props.disabled,
       renderingParameters: props.renderingParameters
     })
   }

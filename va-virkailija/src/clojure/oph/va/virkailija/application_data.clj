@@ -86,3 +86,20 @@
     (first
      (exec :virkailija-db virkailija-queries/application-has-payments
            {:application_id application-id})))))
+
+(defn accepted? [application]
+  (true?
+    (get
+      (first (exec :virkailija-db
+                   virkailija-queries/is-application-accepted
+                   {:hakemus_id (:id application)}))
+      :accepted)))
+
+(defn get-open-applications []
+  (map
+    convert-to-dash-keys
+    (filter
+      accepted?
+      (exec :form-db
+            hakija-queries/list-open-applications
+            {}))))

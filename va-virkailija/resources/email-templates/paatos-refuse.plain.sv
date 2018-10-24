@@ -4,7 +4,9 @@ Ansökan om understöd: {{ avustushaku-name }}
 
 Beslut link: {{& url }}
 
-Om ni bestämmer er för att inte ta emot understödet kan ni göra en anmälan om detta via denna länk:
+Om ni bestämmer er för att inte ta emot understödet kan ni göra en anmälan om detta via denna länk: {{& refuse-url }}
+
+Om ni vill förandra kontaktinformationen kan ni göra en anmälan om detta via denna länk: {{& modify-url }}
 
 Anmälan ska göras senast det datum som framgår ur beslutet.
 

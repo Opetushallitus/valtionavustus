@@ -67,6 +67,7 @@ const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
 const environmentP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.environmentConfigUrl()))
 
+
 function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP
   template.configuration.environment = environmentP
@@ -82,7 +83,8 @@ function onInitialStateLoaded(initialState) {
   budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {
     reportValidationErrors: isNotFirstEdit(initialState)
   })
-  if (initialState.avustushaku.phase !== "current" &&
+  const modifyApplication = query["modify-application"]
+  if (!modifyApplication && initialState.avustushaku.phase !== "current" &&
       !initialState.configuration.preview &&
       !isEmptyOrReopenedHakemus(initialState.saveStatus.savedObject)) {
     window.location.href = urlCreator.existingSubmissionPreviewUrl(
@@ -120,7 +122,7 @@ function initVaFormController() {
   const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state) {
-    return <VaForm controller={controller} state={state} hakemusType="hakemus" useBusinessIdSearch={true} />
+    return <VaForm controller={controller} state={state} hakemusType="hakemus" useBusinessIdSearch={true} refuseGrant={urlContent.parsedQuery["refuse-grant"]} modifyApplication={urlContent.parsedQuery["modify-application"]}/>
   }}
 }
 
