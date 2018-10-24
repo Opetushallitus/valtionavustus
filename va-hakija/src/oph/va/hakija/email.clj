@@ -19,8 +19,8 @@
    {:fi "Automaattinen viesti: Avustuksen saajan ilmoitus"}
    :application-refused {:fi "Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty"
                          :sv "Er anmälan om att ni inte tar emot understödet har lämnats in till"}
-   :hakemus-edited-after-applicant-edit {:fi "Automaattinen viesti: avustushakemuksen yhteystietoja on muokattu"
-                                         :sv "Automatiskt meddelande: kontaktinformation har ändrats"}})
+   :hakemus-edited-after-applicant-edit {:fi "Automaattinen viesti: hankkeen yhteystietoja on muokattu"
+                                         :sv "Automatisk meddelande: projektets kontaktuppgifterna har ändrats"}})
 
 (def mail-templates
   {:new-hakemus {:fi (email/load-template "email-templates/new-hakemus.plain.fi")
