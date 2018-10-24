@@ -144,9 +144,7 @@ export default class VaUrlCreator extends UrlCreator {
           "/" +
           baseVersion +
           "/refuse/?token=" +
-          state.token +
-          "refuse-grant=true" +
-          "modify-application=false"
+          state.token
         )
       },
       modifyContactsApiUrl: function(state) {

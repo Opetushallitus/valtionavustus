@@ -30,11 +30,11 @@
     },
     "edit-contacts-title": {
       "fi": "Yhteystietojen muokkaus",
-      "sv": "Modifiering av kontakt information"
+      "sv": "Uppdatering av kontaktuppgifterna"
     },
     "open-edit-contacts-button": {
       "fi": "Aloita yhteystietojen muokkaus",
-      "sv": "Börjä modifiera kontakt information"
+      "sv": "Redigera kontaktuppgifterna"
     },
     "form-is-expired": {
       "fi": "{{formtype}} jättämisen määräaika on umpeutunut",
