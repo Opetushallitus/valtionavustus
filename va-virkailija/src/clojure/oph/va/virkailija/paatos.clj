@@ -62,9 +62,6 @@
      emails avustushaku hakemus presenting-officer-email token)
     (ok {:status "sent" :hakemus hakemus-id :emails emails})))
 
-(defn send-send [hakemus-id]
-  (println hakemus-id))
-
 (defn regenerate-paatos [hakemus-id]
   (let [hakemus (hakija-api/get-hakemus hakemus-id)
         submission (hakija-api/get-hakemus-submission hakemus)
