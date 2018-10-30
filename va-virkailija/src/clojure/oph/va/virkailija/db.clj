@@ -62,7 +62,6 @@
                                                       :new new-comment}))
       changelog)))
 
-
 (defn- compare-oppilaitokset [changelog identity timestamp existing new]
   (let [new-oppilaitokset (:oppilaitokset new)
         existing-oppilaitokset (:oppilaitokset existing)]
@@ -108,29 +107,27 @@
                                                     :new (:status new)}))
     changelog))
 
-
 (defn- compare-should-pay [changelog identity timestamp existing new]
-  (if (not= (:should_pay new) (keyword (:should_pay existing)))
+  (if (not (= (:should_pay new) (:should_pay existing)))
     (append-changelog changelog (->changelog-entry identity
-                                                       "should-pay-change"
-                                                       timestamp
-                                                       {:old (:should_pay existing)
-                                                        :new (:should_pay new)}))
-        changelog))
+                                                   "should-pay-change"
+                                                   timestamp
+                                                   {:old (:should_pay existing)
+                                                    :new (:should_pay new)}))
+    changelog))
 
 (defn- update-changelog [identity existing new]
   (let [changelog (:changelog existing)
         timestamp (Date.)]
     (if identity
       (-> (if changelog changelog [])
-        (compare-status identity timestamp existing new)
-        (compare-oppilaitokset identity timestamp existing new)
-        (compare-should-pay identity timestamp existing new)
-        (compare-budget-granted identity timestamp existing new)
-        (compare-summary-comment identity timestamp existing new)
-        (compare-presenter-comment identity timestamp existing new)
-        (compare-overridden-answers identity timestamp existing new)
-      )
+          (compare-status identity timestamp existing new)
+          (compare-oppilaitokset identity timestamp existing new)
+          (compare-should-pay identity timestamp existing new)
+          (compare-budget-granted identity timestamp existing new)
+          (compare-summary-comment identity timestamp existing new)
+          (compare-presenter-comment identity timestamp existing new)
+          (compare-overridden-answers identity timestamp existing new))
       changelog)))
 
 (defn- calculate-total-oph-budget [avustushaku hakemus-id status arvio]
@@ -145,7 +142,7 @@
                                                                          hakemus
                                                                          (:useDetailedCosts arvio)
                                                                          (:costsGranted arvio))]
-                    (:oph-share calculated-budget))))
+            (:oph-share calculated-budget))))
 
 (defn update-or-create-hakemus-arvio [avustushaku hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
@@ -173,8 +170,7 @@
                         :tags (:tags arvio)
                         :oppilaitokset {:names oppilaitokset-names}
                         :should_pay (:should-pay arvio)
-                        :should_pay_comments (:should-pay-comments arvio)
-                        }
+                        :should_pay_comments (:should-pay-comments arvio)}
         existing (get-arvio hakemus-id)
         changelog (update-changelog identity existing arvio-to-save)
         arvio-with-changelog (assoc arvio-to-save :changelog [changelog])]
@@ -238,8 +234,8 @@
                 :selection_criteria_index selection-criteria-index
                 :score                    score}]
     (if-let [updated (exec :virkailija-db queries/update-score<! params)]
-        updated
-        (exec :virkailija-db queries/create-score<! params))))
+      updated
+      (exec :virkailija-db queries/create-score<! params))))
 
 (defn delete-score [arvio-id selection-criteria-index identity]
   (exec :virkailija-db queries/delete-score!
@@ -257,9 +253,9 @@
 
 (defn create-search! [avustushaku-id query name person-oid]
   (exec :virkailija-db queries/create-search<! {:avustushaku_id avustushaku-id
-                                     :query query
-                                     :name name
-                                     :oid person-oid}))
+                                                :query query
+                                                :name name
+                                                :oid person-oid}))
 
 (defn get-search [avustushaku-id saved-search-id]
   (->> {:avustushaku_id avustushaku-id :id saved-search-id}
@@ -275,13 +271,12 @@
          (exec :virkailija-db queries/get-accepted-or-rejected-hakemus-ids)
          (map :hakemus_id))))
 
-
 (defn get-accepted-hakemus-ids [hakemus-ids]
   (if (empty? hakemus-ids)
     []
     (->> {:hakemus_ids (vec hakemus-ids)}
-      (exec :virkailija-db queries/get-accepted-hakemus-ids)
-      (map :hakemus_id))))
+         (exec :virkailija-db queries/get-accepted-hakemus-ids)
+         (map :hakemus_id))))
 
 (defn- va-user->db [va-user]
   {:person_oid (:person-oid va-user)
@@ -301,17 +296,17 @@
 
 (defn update-va-users-cache [va-users]
   (with-transaction :virkailija-db connection
-    (let [db-options {:connection connection}]
-      (queries/lock-va-users-cache-exclusively! {} db-options)
-      (doseq [user va-users]
-        (let [db-user     (va-user->db user)
-              num-updated (queries/update-va-user-cache! db-user db-options)]
-          (when (< num-updated 1)
-            (queries/create-va-user-cache<! db-user db-options))))
-      (let [person-oids (into [] (map :person-oid va-users))]
-        (if (seq person-oids)
-          (queries/delete-va-user-cache-by-not-in! {:person_oids person-oids} db-options)
-          (queries/delete-va-user-cache! {} db-options))))))
+                    (let [db-options {:connection connection}]
+                      (queries/lock-va-users-cache-exclusively! {} db-options)
+                      (doseq [user va-users]
+                        (let [db-user     (va-user->db user)
+                              num-updated (queries/update-va-user-cache! db-user db-options)]
+                          (when (< num-updated 1)
+                            (queries/create-va-user-cache<! db-user db-options))))
+                      (let [person-oids (into [] (map :person-oid va-users))]
+                        (if (seq person-oids)
+                          (queries/delete-va-user-cache-by-not-in! {:person_oids person-oids} db-options)
+                          (queries/delete-va-user-cache! {} db-options))))))
 
 (defn get-va-user-cache-by-person-oid [person-oid]
   (->> {:person_oid person-oid}
@@ -331,22 +326,22 @@
         num-columns-to-search        (count va-users-cache-columns-to-search)
         escaped-terms-for-like-exprs (mapcat #(repeat num-columns-to-search %) escaped-terms)]
     (with-transaction :virkailija-db connection
-      (jdbc/query connection
-                  (cons (string/join " "
-                                     ["select person_oid, first_name, surname, email, content"
-                                      "from va_users_cache"
-                                      "where" like-exprs-for-all-terms
-                                      "order by first_name, surname, email"])
-                        escaped-terms-for-like-exprs)
-                  {:row-fn db->va-user}))))
+                      (jdbc/query connection
+                                  (cons (string/join " "
+                                                     ["select person_oid, first_name, surname, email, content"
+                                                      "from va_users_cache"
+                                                      "where" like-exprs-for-all-terms
+                                                      "order by first_name, surname, email"])
+                                        escaped-terms-for-like-exprs)
+                                  {:row-fn db->va-user}))))
 
 (defn create-application-token [application-id]
   (let [existing-token
         (first (exec :form-db hakija-queries/get-application-token
-                       {:application_id application-id}))]
+                     {:application_id application-id}))]
 
-      (if (some? existing-token)
-        {:token (:token existing-token)}
-        (first
-          (exec :form-db hakija-queries/create-application-token
-                {:application_id application-id :token (generate-hash-id)})))))
+    (if (some? existing-token)
+      {:token (:token existing-token)}
+      (first
+       (exec :form-db hakija-queries/create-application-token
+             {:application_id application-id :token (generate-hash-id)})))))
