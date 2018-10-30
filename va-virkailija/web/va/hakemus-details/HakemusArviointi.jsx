@@ -17,6 +17,7 @@ import AcademySize from './AcademySize.jsx'
 import Perustelut from './Perustelut.jsx'
 import PresenterComment from './PresenterComment.jsx'
 import EditStatus from './EditStatus.jsx'
+import ReSendDecisionEmail from './ReSendDecisionEmail.jsx'
 import ApplicationPayments from './ApplicationPayments.jsx'
 
 import '../style/admin.less'
@@ -67,6 +68,7 @@ export default class HakemusArviointi extends Component {
        <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
        <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusOfficerEditing} status="officer_edit"/>
        <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusCancellation} status="cancelled"/>
+       <ReSendDecisionEmail  avustushaku={avustushaku} hakemus={hakemus}  hakuData={hakuData}/>
        <ChangeLog hakemus={hakemus}/>
      </div>
     )
