@@ -51,14 +51,27 @@
     (hakija-api/add-paatos-sent-emails hakemus emails decision)
     (ok {:status "sent" :hakemus hakemus-id :emails emails})))
 
+(defn re-send-paatos-email [hakemus-id]
+  (let [emails (paatos-emails hakemus-id)
+        hakemus (hakija-api/get-hakemus hakemus-id)
+        avustushaku-id (:avustushaku hakemus)
+        avustushaku (hakija-api/get-avustushaku avustushaku-id)
+        presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)
+        token (get-application-token hakemus-id)]
+    (email/send-paatos-refuse!
+     emails avustushaku hakemus presenting-officer-email token)
+    (ok {:status "sent" :hakemus hakemus-id :emails emails})))
+
+(defn send-send [hakemus-id]
+  (println hakemus-id))
+
 (defn regenerate-paatos [hakemus-id]
   (let [hakemus (hakija-api/get-hakemus hakemus-id)
         submission (hakija-api/get-hakemus-submission hakemus)
         answers (:answers submission)
         decision (decision/paatos-html hakemus-id)]
     (hakija-api/update-paatos-decision hakemus-id decision)
-    (ok {:status "regenerated" })))
-
+    (ok {:status "regenerated"})))
 
 (defn send-paatos-for-all [hakemus-id]
   (log/info "send-paatos-for-all" hakemus-id)
@@ -108,64 +121,61 @@
     (ok {:count (count accepted-ids)})))
 
 (compojure-api/defroutes paatos-routes
-  "Paatos routes"
+                         "Paatos routes"
 
-  (compojure-api/GET "/liitteet" []
-                     (ok decision-liitteet/Liitteet))
+                         (compojure-api/GET "/liitteet" []
+                                            (ok decision-liitteet/Liitteet))
 
-  (compojure-api/POST
-   "/sendall/:avustushaku-id" [:as request]
-   :path-params [avustushaku-id :- Long]
-   (let [ids (get-hakemus-ids-to-send avustushaku-id)]
-     (when (get-in config [:payments :enabled?])
-       (do
-         (log/info "Create initial payment for applications")
-         (payments-data/create-grant-payments
-          avustushaku-id 0 (authentication/get-request-identity request))))
-     (log/info "Send all paatos ids " ids)
-     (run! send-paatos-for-all ids)
-     (ok (merge {:status "ok"}
-                (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))
+                         (compojure-api/POST
+                          "/sendall/:avustushaku-id" [:as request]
+                          :path-params [avustushaku-id :- Long]
+                          (let [ids (get-hakemus-ids-to-send avustushaku-id)]
+                            (when (get-in config [:payments :enabled?])
+                              (do
+                                (log/info "Create initial payment for applications")
+                                (payments-data/create-grant-payments
+                                 avustushaku-id 0 (authentication/get-request-identity request))))
+                            (log/info "Send all paatos ids " ids)
+                            (run! send-paatos-for-all ids)
+                            (ok (merge {:status "ok"}
+                                       (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))
 
-  (compojure-api/POST "/regenerate/:avustushaku-id" []
-                      :path-params [avustushaku-id :- Long]
-                      (let [ids-result (hakija-api/find-regenerate-hakemus-paatos-ids avustushaku-id)
-                            ids (map :hakemus_id ids-result)]
-                        (log/info "Regenereate " ids)
-                        (run! regenerate-paatos ids)
-                        (ok {:status "ok"})))
+                         (compojure-api/POST "/regenerate/:avustushaku-id" []
+                                             :path-params [avustushaku-id :- Long]
+                                             (let [ids-result (hakija-api/find-regenerate-hakemus-paatos-ids avustushaku-id)
+                                                   ids (map :hakemus_id ids-result)]
+                                               (log/info "Regenereate " ids)
+                                               (run! regenerate-paatos ids)
+                                               (ok {:status "ok"}))) (compojure-api/GET "/sent/:avustushaku-id" []
+                                                                                        :path-params [avustushaku-id :- Long]
+                                                                                        (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+                                                                                              avustushaku-name (-> avustushaku :content :name :fi)
+                                                                                              sent-status (get-sent-status avustushaku-id)
+                                                                                              first-hakemus-id (first (:ids sent-status))
+                                                                                              first-hakemus (hakija-api/get-hakemus first-hakemus-id)
+                                                                                              first-hakemus-user-key (:user_key first-hakemus)
+                                                                                              first-hakemus-token (get-application-token first-hakemus-id)]
+                                                                                          (ok (merge
+                                                                                               {:status "ok"
+                                                                                                :mail (email/mail-example
+                                                                                                       (if (get-in config [:application-change :refuse-enabled?])
+                                                                                                         :paatos-refuse
+                                                                                                         :paatos)
+                                                                                                       {:avustushaku-name avustushaku-name
+                                                                                                        :url "URL_PLACEHOLDER"
+                                                                                                        :refuse-url "REFUSE_URL_PLACEHOLDER"
+                                                                                                        :register-number (:register_number first-hakemus)
+                                                                                                        :project-name (:project_name first-hakemus)})
+                                                                                                :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)
+                                                                                                :example-refuse-url
+                                                                                                (refuse-url
+                                                                                                 avustushaku-id first-hakemus-user-key :fi first-hakemus-token)}
+                                                                                               (select-keys sent-status [:sent :count :sent-time :paatokset])))))
 
+                         (compojure-api/GET "/views/:hakemus-id" []
+                                            :path-params [hakemus-id :- Long]
+                                            (ok {:views (hakija-api/find-paatos-views hakemus-id)}))
 
-  (compojure-api/GET "/sent/:avustushaku-id" []
-                     :path-params [avustushaku-id :- Long]
-                     (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
-                           avustushaku-name (-> avustushaku :content :name :fi)
-                           sent-status (get-sent-status avustushaku-id)
-                           first-hakemus-id (first (:ids sent-status))
-                           first-hakemus (hakija-api/get-hakemus first-hakemus-id)
-                           first-hakemus-user-key (:user_key first-hakemus)
-                           first-hakemus-token (get-application-token first-hakemus-id)]
-                       (ok (merge
-                            {:status "ok"
-                             :mail (email/mail-example
-                                    (if (get-in config [:application-change :refuse-enabled?])
-                                      :paatos-refuse
-                                      :paatos)
-                                    {:avustushaku-name avustushaku-name
-                                     :url "URL_PLACEHOLDER"
-                                     :refuse-url "REFUSE_URL_PLACEHOLDER"
-                                     :register-number (:register_number first-hakemus)
-                                     :project-name (:project_name first-hakemus)})
-                             :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)
-                             :example-refuse-url
-                             (refuse-url
-                              avustushaku-id first-hakemus-user-key :fi first-hakemus-token)}
-                            (select-keys sent-status [:sent :count :sent-time :paatokset])))))
-
-  (compojure-api/GET "/views/:hakemus-id" []
-                     :path-params [hakemus-id :- Long]
-                     (ok {:views (hakija-api/find-paatos-views hakemus-id)}))
-
-  (compojure-api/GET "/emails/:hakemus-id" []
-                     :path-params [hakemus-id :- Long]
-                     (ok {:emails (paatos-emails hakemus-id)})))
+                         (compojure-api/GET "/emails/:hakemus-id" []
+                                            :path-params [hakemus-id :- Long]
+                                            (ok {:emails (paatos-emails hakemus-id)})))
