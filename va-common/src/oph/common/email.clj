@@ -121,8 +121,11 @@
             stop? (case (:operation msg)
                     :stop true
                     :send (do
-                            (send-msg! msg
+                            (try
+                              (send-msg! msg
                                        (partial render (get-in mail-templates [(:type msg) (:lang msg)])))
+                            (catch Exception e
+                              (log/error e "Failed to send email")))
                             false))]
         (if (not stop?)
           (recur))))
