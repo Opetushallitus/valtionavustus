@@ -11,12 +11,12 @@ export default class ReSendDecisionEmail extends Component {
   render() {
     const {avustushaku, hakemus} = this.props
     const avustushakuId = avustushaku.id
+    const hakemusId = hakemus.id
     const isResolved = this.props.hakuData.avustushaku.status === "resolved"
     const onSubmit = () => {
       if (confirm('Oletko varma, että haluat lähettää hakijalle sähköpostin uudestaan?')) {
           this.setState({submitting: true})
-          const url = `/api/avustushaku/${hakemus.id}/hakemus/${avustushakuId}/re-send-paatos`
-
+          const url = `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/re-send-paatos`
           HttpUtil.post(url).then(() => {
             this.setState({submitting: false, submitted: true})
           })}
