@@ -4,7 +4,8 @@
             [clojurewerkz.quartzite.scheduler :as qs]
             [clojurewerkz.quartzite.triggers :as t]
             [clojurewerkz.quartzite.jobs :refer [defjob] :as j]
-            [clojurewerkz.quartzite.schedule.cron :refer [schedule cron-schedule]]
+            [clojurewerkz.quartzite.schedule.cron
+             :refer [schedule cron-schedule]]
             [clojure.tools.logging :as log]
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.invoice :as invoice]
@@ -21,13 +22,12 @@
     (get-remote-file remote-service filename)
     (try
       (payments-data/update-state-by-response
-        (invoice/read-xml (get-local-file  remote-service filename)))
+        (invoice/read-xml (get-local-file remote-service filename)))
       (catch clojure.lang.ExceptionInfo e
         (when (not= "already-paid" (-> e ex-data :cause))
           (throw e))))
     (delete-remote-file! remote-service filename)
     (clojure.java.io/delete-file (get-local-file remote-service filename))))
-
 
 (defn fetch-feedback-from-rondo [remote-service]
   (log/debug "Running the fetch-feed-back-from rondo..")
@@ -51,7 +51,6 @@
                       (Exception. (str (:value v))))))
          (log/debug "Succesfully fetched state from Rondo!"))
       (a/timeout timeout-limit) ([_] (log/warn "Timeout from Rondo!")))))
-
 
 (defjob RondoJob
   [ctx]
