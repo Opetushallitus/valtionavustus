@@ -23,3 +23,6 @@
  :integration-healthcheck {:enabled? true
                            :timeout 5000
                            :interval-minutes 15}}
+
+ :payments {:enabled? true
+            :delete-payments? true}
