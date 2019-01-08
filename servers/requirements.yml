@@ -14,7 +14,7 @@
 
 - src: geerlingguy.nodejs
   path: roles/3rdparty
-  version: 4.1.1
+  version: 4.2.2
 
 - src: geerlingguy.nginx
   path: roles/3rdparty
