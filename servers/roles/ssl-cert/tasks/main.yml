@@ -15,6 +15,7 @@
   sudo: no
   register: cert_files
   changed_when: False
+  check_mode: no
 
 - name: List certs
   debug: var=cert_files
@@ -24,7 +25,8 @@
   sudo: no
   register: certs_contents
   changed_when: False
-  with_items: cert_files.stdout_lines
+  with_items: "{{ cert_files.stdout_lines }}"
+  check_mode: no
 
 - name: Copy SSL certificates to the server
   copy:
@@ -33,5 +35,5 @@
     owner: root
     group: haproxy
     mode: 0640
-  with_items: certs_contents.results
+  with_items: "{{ certs_contents.results }}"
   notify: Restart haproxy
