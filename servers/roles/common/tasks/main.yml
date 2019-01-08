@@ -43,7 +43,7 @@
     path: "/var/log/journal"
     state: directory
     owner: root
-    group: root
+    group: systemd-journal
     mode: 02755
   notify: Restart systemd journald
 
