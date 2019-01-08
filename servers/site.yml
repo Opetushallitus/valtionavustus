@@ -19,8 +19,8 @@
   roles:
   - {role: ssh.init, tags: ['ssh']}
   - {role: node, tags: ['nodejs']}
-  - common
-  - buildmachine
-  - valtionavustus.build
-  - 3rdparty/Stouts.jenkins
-  - valtionavustus.deploy
+  - {role: common, tags: ['common']}
+  - {role: buildmachine, tags: ['buildmachine']}
+  - {role: valtionavustus.build, tags: ['build']}
+  - {role: 3rdparty/Stouts.jenkins, tags: ['jenkins']}
+  - {role: valtionavustus.deploy, tags: ['deploy']}
