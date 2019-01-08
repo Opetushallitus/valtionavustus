@@ -21,11 +21,11 @@
 
 - name: Create / delete users
   user: name={{ item.key }} comment="{{ item.value.name }}" state={{ item.value.state }} remove=yes
-  with_dict: adminusers
+  with_dict: "{{ adminusers }}"
 
 - name: Set authorized keys for individual users
   authorized_key: user={{ item.key }} key="{{ lookup('file', '../files/public_keys/' + item.key + '.pub') }}" state={{ item.value.state }} exclusive=yes
-  with_dict: adminusers
+  with_dict: "{{ adminusers }}"
   when: item.value.state == 'present'
 
 - name: Add configured user accounts to passwordless sudoers
@@ -35,7 +35,7 @@
     line: '{{ item.key }} ALL=(ALL) NOPASSWD: ALL'
     state: '{{ item.value.state }}'
     validate: 'visudo -cf %s'
-  with_dict: adminusers
+  with_dict: "{{ adminusers }}"
   when: item.value.state == 'present'
 
 - name: Remove previous gw machine IP mappings from /etc/hosts
