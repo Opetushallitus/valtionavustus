@@ -18,3 +18,4 @@ npm-debug.log
 pom.xml
 scripts/docker/db-variables.env
 target/
+servers/site.retry
