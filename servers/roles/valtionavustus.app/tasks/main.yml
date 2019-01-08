@@ -54,10 +54,10 @@
 
 - name: Decrypt app secrets file into memory
   local_action: shell ansible-vault view "{{ app_secrets_vault_file }}"
-  sudo: no
+  become: no
   register: app_secrets_contents
   changed_when: False
-  always_run: yes
+  check_mode: no
   tags:
     - app_secrets
 
