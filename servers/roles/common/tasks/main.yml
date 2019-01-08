@@ -22,12 +22,12 @@
 
 - name: Install required APT packages
   apt: state=installed pkg={{ item }}
-  with_items: ubuntu_common_required_packages
+  with_items: "{{ ubuntu_common_required_packages }}"
   when: ansible_os_family == 'Debian'
 
 - name: Install required YUM packages
   yum: state=installed pkg={{ item }}
-  with_items: centos_common_required_packages
+  with_items: "{{ centos_common_required_packages }}"
   when: ansible_os_family == 'RedHat'
 
 - name: Disable RepeatedMsgReduction of rsyslogd because it is buggy
@@ -105,7 +105,7 @@
   lineinfile:
     dest: '/etc/aliases'
     regexp: '^root:'
-    line: 'root:\t\t{{ root_user_mail_recipient }}'
+    line: "root:\t\t{{ root_user_mail_recipient }}"
     state: present
   when: ansible_os_family == 'RedHat'
   notify: Init alias db
