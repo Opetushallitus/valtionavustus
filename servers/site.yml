@@ -2,8 +2,8 @@
   sudo: yes
   roles:
   - {role: ssh.init, tags: ['ssh']}
-  - common
-  - valtionavustus.app
+  - {role: common, tags: ['common']}
+  - {role: valtionavustus.app, tags: ['app']}
 
 - hosts: va_loadbalancer
   sudo: yes
