@@ -2,8 +2,11 @@ adminusers:
   anttu:
     state: present
     name: Antero Fagerstedt
-  juusostr:
+  tsu:
     state: present
+    name: Timo Suomela
+  juusostr:
+    state: absent
     name: Juuso Strömberg
   pam:
     state: present

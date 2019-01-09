@@ -3,7 +3,7 @@
 - name: jenkins restart
   service: name=jenkins state=restarted
   sudo: yes
-  
+
 - name: jenkins check web ready
   wait_for: host="{{ jenkins_http_host }}" port="{{ jenkins_http_port}}" timeout=30
 
@@ -14,12 +14,13 @@
   until: result.stdout.find("200 OK") != -1
   register: result
   changed_when: False
+  check_mode: no
 
 - name: jenkins update jobs
   command: "{{jenkins_home}}/jobs/job.sh {{item.item.name}}"
   sudo_user: "{{ jenkins_user }}"
   when: item.changed
-  with_items: jenkins_jobs_changed.results
+  with_items: "{{ jenkins_jobs_changed.results }}"
 
 - name: jenkins reload configuration
   command: java -jar {{jenkins_home}}/jenkins-cli.jar {{jenkins_cli_extra_opts}} -s http://{{ jenkins_http_host }}:{{ jenkins_http_port }}{{jenkins_prefix}} reload-configuration
@@ -28,8 +29,8 @@
 - name: nginx reload
   service: name=nginx state=reloaded
   sudo: yes
-  
+
 - name: apache restart
   service: name=apache2 state=restarted
   sudo: yes
-  
+

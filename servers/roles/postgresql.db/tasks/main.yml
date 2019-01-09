@@ -27,13 +27,13 @@
   sudo: yes
   sudo_user: postgres
   postgresql_user: db={{dbname}} name={{item.dbuser}} password={{item.dbpassword}} priv=ALL
-  with_items: db_accounts
+  with_items: "{{ db_accounts }}"
 
 - name: Ensure users do not have unnecessary privileges
   sudo: yes
   sudo_user: postgres
   postgresql_user: name={{item.dbuser}} role_attr_flags=SUPERUSER,NOCREATEDB  # Note: we might want to have NOSUPERUSER
-  with_items: db_accounts
+  with_items: "{{ db_accounts }}"
 
 - name: Install script to remove old PostgreSQL backups
   template:

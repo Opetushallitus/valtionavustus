@@ -1,13 +1,14 @@
-- name: Wait untils Jenkins web API is available
+- name: Wait until Jenkins web API is available
   shell: curl --head --silent http://{{ jenkins_http_host }}:{{ jenkins_http_port }}{{ jenkins_prefix }}/cli/
   delay: 10
   retries: 12
   until: result.stdout.find("200 OK") != -1
   register: result
+  check_mode: no
 
 - name: Kludge to force the Jenkins job installation. For some reason it does not get triggered properly.
   command: "{{jenkins_home}}/jobs/job.sh {{item.name}}"
-  with_items: jenkins_jobs
+  with_items: "{{ jenkins_jobs }}"
 
 - name: Make sure Jenkins user .ssh exists
   sudo_user: "{{ jenkins_user }}"
@@ -43,6 +44,7 @@
   delegate_to: "{{ item }}"
   with_items: groups['va_app']
   remote_user: "{{ lookup('env','USER') }}"
+  when: not ansible_check_mode
 
 - name: Add new jenkins public SSH key to Postgresql account on app server machines for backups
   authorized_key: user="postgres"
@@ -50,3 +52,4 @@
   delegate_to: "{{ item }}"
   with_items: groups['va_app']
   remote_user: "{{ lookup('env','USER') }}"
+  when: not ansible_check_mode

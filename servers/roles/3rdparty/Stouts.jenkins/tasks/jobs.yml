@@ -6,8 +6,8 @@
 - name: jenkins-jobs | Configure jobs
   template: src={{item.template|default('job.xml.j2')}} dest={{jenkins_home}}/jobs/{{item.name}}.xml owner={{jenkins_user}} group={{jenkins_group}}
   when: item.action|default('create') not in ['delete', 'enable', 'disable']
-  with_items: jenkins_jobs
-  notify: 
+  with_items: "{{ jenkins_jobs }}"
+  notify:
     - jenkins check web ready
     - jenkins check cli ready
     - jenkins update jobs

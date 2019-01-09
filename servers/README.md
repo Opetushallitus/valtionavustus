@@ -49,7 +49,7 @@ ja hakemistossa `library` Ansibleen lisätyt moduulit. Nämä asennetaan
 Ansible Galaxyllä:
 
 ``` bash
-ansible-galaxy install -r requirements.yml
+ansible-galaxy install -r requirements.yml --roles-path=./roles/3rdparty
 ```
 
 Roolin päivittäminen onnistuu vivulla `--force`.
