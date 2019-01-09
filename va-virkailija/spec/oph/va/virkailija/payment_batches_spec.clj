@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.payment-batches-spec
   (:require [speclj.core :refer [should should= describe
                                  it tags around-all run-specs after]]
+            [clj-time.core :as t]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.server :refer [start-server]]
             [oph.va.virkailija.common-utils
@@ -215,7 +216,7 @@
                        :document (some #(when (= (:phase %) 0) %) documents)
                        :payments (filter #(= (:phase %) 0) payments)})]
           (should= ["presenter@local" "acceptor@local"] (:receivers email))
-          (should (.startsWith (:batch-key email) "660018"))
+          (should (.startsWith (:batch-key email) (str "6600", (mod (t/year (t/now )) 100)) ))
           (should= "Some Grant" (:title email))
           (should= 2 (:count email))
           (should= 55000 (:total-granted email))))))
