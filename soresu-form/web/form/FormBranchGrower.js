@@ -8,7 +8,7 @@ export default class FormBranchGrower {
   static addFormFieldsForGrowingFieldsInInitialRender(formSpecificationContent, formContent, answers, addPlaceHolders) {
     function populateRepeatingItem(baseObject, key, valueOfElement) {
       _.assign(baseObject, { "id": key })
-      baseObject.children = baseObject.children.map(c => {
+      baseObject.children = baseObject.children ? baseObject.children.map(c => {
         const primitiveElement = _.cloneDeep(c)
         const distinguisherOfElement = _.last(primitiveElement.id.split('.')) // e.g. "email"
         _.forEach(valueOfElement, primitiveElementValueObject => {
@@ -17,7 +17,7 @@ export default class FormBranchGrower {
           }
         })
         return primitiveElement
-      })
+      }) : []
       return baseObject
     }
 
