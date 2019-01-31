@@ -255,7 +255,7 @@
               [:Postings
                [:Posting
                 [:Summa 20000]
-                [:LKP-tili "82300000"]
+                [:LKP-tili "82310000"]
                 [:TaKp-tili "29103013"]
                 [:Toimintayksikko "6600100130"]
                 [:Projekti "6600A-M2024"]
@@ -269,7 +269,7 @@
                             :project {:code "6600A-M2024"}
                             :operational-unit {:code "6600100130"}
                             :operation {:code "6600151502"}
-                            :lkp-account "82500000")
+                            :lkp-account "82510000")
                           (assoc-in [:content :document-type] "XE")
                           (assoc-in [:content :transaction-account] "5000"))
                :batch (assoc batch :documents
@@ -327,7 +327,7 @@
                                            :operation {:code "3456789"})
                              :batch (assoc batch :documents documents)})]
           (should=
-            (str "<?xml version=\"1.0\" encoding=\"UTF-8\"?><VA-invoice><Header><Maksuera>6600", (mod (t/year (t/now )) 100) , "001</Maksuera><Laskunpaiva>2018-04-16</Laskunpaiva><Erapvm>2018-04-30</Erapvm><Bruttosumma>20000</Bruttosumma><Maksuehto>Z001</Maksuehto><Pitkaviite>123/456/78_1</Pitkaviite><Tositepvm>2018-04-16</Tositepvm><Asiatarkastaja>presenter@local</Asiatarkastaja><Hyvaksyja>acceptor@local</Hyvaksyja><Tositelaji>XE</Tositelaji><Maksutili>5000</Maksutili><Toimittaja><Y-tunnus>1234567-1</Y-tunnus><Nimi>Test Organisation</Nimi><Postiosoite>Someroad 1</Postiosoite><Paikkakunta>Some City</Paikkakunta><Maa>Some Country</Maa><Iban-tili>FI4250001510000023</Iban-tili><Pankkiavain>OKOYFIHH</Pankkiavain><Pankki-maa>FI</Pankki-maa><Kieli>fi</Kieli><Valuutta>EUR</Valuutta></Toimittaja><Postings><Posting><Summa>20000</Summa><LKP-tili>82300000</LKP-tili><TaKp-tili>29103013</TaKp-tili><Toimintayksikko>123456789</Toimintayksikko><Projekti>23456789</Projekti><Toiminto>3456789</Toiminto><Kumppani>123456</Kumppani></Posting></Postings></Header></VA-invoice>")
+            (str "<?xml version=\"1.0\" encoding=\"UTF-8\"?><VA-invoice><Header><Maksuera>6600", (mod (t/year (t/now )) 100) , "001</Maksuera><Laskunpaiva>2018-04-16</Laskunpaiva><Erapvm>2018-04-30</Erapvm><Bruttosumma>20000</Bruttosumma><Maksuehto>Z001</Maksuehto><Pitkaviite>123/456/78_1</Pitkaviite><Tositepvm>2018-04-16</Tositepvm><Asiatarkastaja>presenter@local</Asiatarkastaja><Hyvaksyja>acceptor@local</Hyvaksyja><Tositelaji>XE</Tositelaji><Maksutili>5000</Maksutili><Toimittaja><Y-tunnus>1234567-1</Y-tunnus><Nimi>Test Organisation</Nimi><Postiosoite>Someroad 1</Postiosoite><Paikkakunta>Some City</Paikkakunta><Maa>Some Country</Maa><Iban-tili>FI4250001510000023</Iban-tili><Pankkiavain>OKOYFIHH</Pankkiavain><Pankki-maa>FI</Pankki-maa><Kieli>fi</Kieli><Valuutta>EUR</Valuutta></Toimittaja><Postings><Posting><Summa>20000</Summa><LKP-tili>82310000</LKP-tili><TaKp-tili>29103013</TaKp-tili><Toimintayksikko>123456789</Toimintayksikko><Projekti>23456789</Projekti><Toiminto>3456789</Toiminto><Kumppani>123456</Kumppani></Posting></Postings></Header></VA-invoice>")
             (xml/emit-str xml-invoice))))))
 
 (describe
