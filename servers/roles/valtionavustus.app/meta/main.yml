@@ -2,5 +2,5 @@ dependencies:
   - role: 3rdparty/postgresql
     vars:
       postgresql_backup_local_dir: /var/lib/pgsql/backup
-  - role: postgresql.db
+  - {role: postgresql.db, tags: ['database']}
   - role: java8

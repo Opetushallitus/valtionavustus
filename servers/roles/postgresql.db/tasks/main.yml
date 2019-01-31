@@ -42,6 +42,7 @@
     owner: postgres
     group: postgres
     mode: 0750
+  tags: backups
 
 - name: Schedule removing old PostgreSQL backups
   cron:
@@ -51,3 +52,4 @@
     hour: 0
     minute: 30
     job: "{{ postgresql_backup_local_dir }}/bin/remove_old_backups.sh"
+  tags: backups
