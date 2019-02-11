@@ -18,8 +18,8 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "route-parser": "^0.0.4",
-    "soresu-form": "file:../soresu-form",
-    "va-common": "file:../va-common"
+    "va-common": "file:../va-common",
+    "soresu-form": "file:../soresu-form"
   },
   "devDependencies": {
     "ajv": "^5.2.2",

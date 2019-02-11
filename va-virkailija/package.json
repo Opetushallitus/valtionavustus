@@ -23,8 +23,8 @@
     "react-widgets": "^3.4.8",
     "route-parser": "^0.0.4",
     "seamless-immutable": "^2.4.2",
-    "soresu-form": "file:../soresu-form",
-    "va-common": "file:../va-common"
+    "va-common": "file:../va-common",
+    "soresu-form": "file:../soresu-form"
   },
   "devDependencies": {
     "ajv": "^5.2.2",
