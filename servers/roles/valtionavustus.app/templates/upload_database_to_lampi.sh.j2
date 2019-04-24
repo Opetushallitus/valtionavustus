@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+/bin/sudo -u postgres /bin/pg_dump -Fc -n hakija {{ dbname }} | /usr/local/bin/aws --profile oph-datalake s3 cp - s3://{{ lampi_bucket_name }}/fulldump/valtionavustukset/v1/valtionavustukset-hakija.backup
+/bin/sudo -u postgres /bin/pg_dump -Fc -n virkailija {{ dbname }} | /usr/local/bin/aws --profile oph-datalake s3 cp - s3://{{ lampi_bucket_name }}/fulldump/valtionavustukset/v1/valtionavustukset-virkailija.backup

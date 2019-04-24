@@ -125,3 +125,13 @@
     line: 'MAIL_ADDR="{{ system_reboot_needed_mail_recipient }}"'
     state: present
   when: ansible_os_family == 'RedHat'
+
+- name: Install pip
+  package:
+    name: python36-pip
+    state: present
+
+- pip:
+    name:
+      - awscli==1.16.144
+    executable: /bin/pip3
