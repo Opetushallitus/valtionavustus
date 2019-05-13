@@ -23,7 +23,8 @@
 
 # Needs postgresql_pgdata_dir set
 - include: redhat.yml
-  when: ansible_os_family == "RedHat"
+  when: ansible_os_family == "RedHat" and not ansible_check_mode
+
 
 - name: Create conf.d
   file: path={{ postgresql_conf_dir }}/conf.d state=directory owner=postgres group=postgres
@@ -31,6 +32,15 @@
 - name: Set conf.d include in postgresql.conf
   lineinfile: line="include_dir 'conf.d'" dest={{ postgresql_conf_dir }}/postgresql.conf backup=yes
   notify: Reload PostgreSQL
+
+- name: Create Postgres log directory
+  file:
+    path: "{{postgresql_conf.log_directory }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: 0700
+  when: postgresql_conf is defined and postgresql_conf["log_directory"] is defined
 
 - name: Set config options
   template: src=25ansible_postgresql.conf.j2 dest={{ postgresql_conf_dir }}/conf.d/25ansible_postgresql.conf owner=postgres group=postgres backup=yes
