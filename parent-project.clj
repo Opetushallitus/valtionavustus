@@ -8,10 +8,10 @@
 
   :min-lein-version "2.7.1"
 
-  :repositories [["releases"       {:url "https://artifactory.oph.ware.fi/artifactory/oph-sade-release-local"
+  :repositories [["releases"       {:url "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"
                                     :sign-releases false
                                     :snapshots false}]
-                 ["snapshots"      {:url "https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local"
+                 ["snapshots"      {:url "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"
                                     :releases false}]]
 
   :managed-dependencies [[org.clojure/clojure "1.8.0"]
