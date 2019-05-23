@@ -194,7 +194,7 @@ export default class HakemustenArviointiController {
   static filterHakemukset(hakemukset){
     return _.filter(hakemukset, (hakemus) => {
       const status = hakemus.status
-      return status === "submitted" || status === "pending_change_request" || status === "officer_edit"
+      return status === "submitted" || status === "pending_change_request" || status === "officer_edit" || status === "applicant_edit"
     })
   }
 
