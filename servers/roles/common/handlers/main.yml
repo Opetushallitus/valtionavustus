@@ -6,3 +6,7 @@
 
 - name: Init alias db
   command: newaliases
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes

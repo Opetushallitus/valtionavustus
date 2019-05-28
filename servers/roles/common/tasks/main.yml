@@ -126,6 +126,38 @@
     state: present
   when: ansible_os_family == 'RedHat'
 
+- name: Copy disk usage monitor script
+  template:
+    src: check_disk_usage_and_send_mail_if_over_threshold.sh.j2
+    dest: /usr/local/bin/check_disk_usage_and_send_mail_if_over_threshold.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy disk usage monitor systemd service
+  copy:
+    src: check_disk_usage_and_send_mail_if_over_threshold.service
+    dest: /etc/systemd/system/check_disk_usage_and_send_mail_if_over_threshold.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: Reload systemd
+
+- name: Copy disk usage monitor systemd timer
+  copy:
+    src: check_disk_usage_and_send_mail_if_over_threshold.timer
+    dest: /etc/systemd/system/check_disk_usage_and_send_mail_if_over_threshold.timer
+    owner: root
+    group: root
+    mode: 0644
+  notify: Reload systemd
+
+- name: Start disk usage monitor systemd timer
+  systemd:
+    name: check_disk_usage_and_send_mail_if_over_threshold.timer
+    enabled: yes
+    state: restarted
+
 - name: Install pip
   package:
     name: python36-pip
