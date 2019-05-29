@@ -1,4 +1,7 @@
 adminusers:
+  maximilian:
+    state: present
+    name: Maximilian Remming
   anttu:
     state: present
     name: Antero Fagerstedt
