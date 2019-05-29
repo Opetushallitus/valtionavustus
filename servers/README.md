@@ -111,10 +111,10 @@ Tarkista, että palvelimet vastaavat pingiin:
 
 ``` bash
 # kaikki palvelimet
-ansible all -i vmware_inventory.py -m ping
+ansible all -m ping
 
 # tietty palvelin
-ansible oph-va-app-test01.csc.fi -i vmware_inventory.py -m ping
+ansible oph-va-app-test01.csc.fi -m ping
 ```
 
 ## Yleisiä tehtäviä palvelimilla
@@ -205,13 +205,13 @@ JConsolen vaatimista RMI-porteista.
 ### Provisioi palvelinten ssh-tunnukset
 
 ``` bash
-ansible-playbook -i vmware_inventory.py site.yml -t ssh
+ansible-playbook site.yml -t ssh
 ```
 
 ### Provisioi palvelinten palomuurit
 
 ``` bash
-ansible-playbook -i vmware_inventory.py site.yml -t firewall
+ansible-playbook site.yml -t firewall
 ```
 
 ### Uuden käyttäjän lisääminen CI:n Jenkinsiin
@@ -244,19 +244,19 @@ Muulloin Ansiblen suorittama komento ei voi saada sudo-oikeuksia.
 Provisioi yksittäinen palvelin:
 
 ``` bash
-ansible-playbook -i vmware_inventory.py site.yml -l oph-va-app-test01.csc.fi
+ansible-playbook site.yml -l oph-va-app-test01.csc.fi
 ```
 
 Jos haluat ajaa provisioinnin tietystä Ansiblen taskista lähtien:
 
 ``` bash
-ansible-playbook -i vmware_inventory.py site.yml -l oph-va-app-test01.csc.fi --step --start-at-task="Add supervisor conf to start and stop the applications"
+ansible-playbook site.yml -l oph-va-app-test01.csc.fi --step --start-at-task="Add supervisor conf to start and stop the applications"
 ```
 
 Provisioi kaikki palvelimet:
 
 ``` bash
-ansible-playbook -i vmware_inventory.py site.yml
+ansible-playbook site.yml
 ```
 
 Voit käyttää vipua `-vvvv` nähdäksesi tarkemmin mitä komento tekee.
