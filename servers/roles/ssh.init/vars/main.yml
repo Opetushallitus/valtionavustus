@@ -8,6 +8,9 @@ adminusers:
   tsu:
     state: present
     name: Timo Suomela
+  rce:
+    state: present
+    name: Henry Heikkinen
   juusostr:
     state: absent
     name: Juuso Strömberg
