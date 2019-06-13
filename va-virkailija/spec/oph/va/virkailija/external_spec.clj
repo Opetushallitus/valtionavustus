@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.external-spec
-  (require [speclj.core
+  (require [schema.core :as s]
+           [speclj.core
             :refer [should should-not should= describe
                     it tags around-all run-specs]]
            [oph.common.testing.spec-plumbing :refer [with-test-server!]]
@@ -7,6 +8,7 @@
            [oph.va.virkailija.external-data :as external-data]
            [oph.va.virkailija.application-data :as application-data]
            [oph.va.virkailija.payments-data :as payments-data]
+           [oph.va.virkailija.schema :refer [ExternalGrant]]
            [oph.va.virkailija.common-utils
             :refer [test-server-port create-submission create-application
                     create-application-evaluation]]))
@@ -21,7 +23,9 @@
                         :auto-reload? false}) (_)))
 
   (it "returns grants for given year"
-    (should= 2 (count (external-data/get-grants-for-year 2015)))
+    (let [grants (external-data/get-grants-for-year 2015)]
+      (should= 2 (count grants))
+      (run! #(s/validate ExternalGrant %) grants))
     (should= 0 (count (external-data/get-grants-for-year 2019)))
   ))
 

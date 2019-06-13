@@ -349,3 +349,21 @@
                                     :sv (s/maybe s/Str)})
               :budget-oph-share (s/maybe s/Int)
               :register-number (s/maybe s/Str)})
+
+(s/defschema ExternalGrant
+  "Avustushaun tiedot ulkopuolisia järjestlemiä varten"
+  {:id s/Int
+   :form-loppuselvitys s/Any
+   :content s/Any
+   :valiselvitysdate s/Any
+   :operation-id s/Any
+   :is-academysize s/Bool
+   :haku-type s/Any
+   :form-valiselvitys s/Any
+   :form s/Any
+   :project-id s/Any
+   :status GrantStatus
+   :operational-unit-id s/Any
+   :register-number (s/maybe s/Str)
+   :loppuselvitysdate (s/maybe s/Str)
+   :created-at s/Inst})
