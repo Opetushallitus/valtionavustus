@@ -20,9 +20,6 @@
 (defn get-resolved-grants-with-content []
   (get-grants true))
 
-(defn get-grants-for-year [year]
-  (exec :virkailija-db virkailija-queries/get-grants-for-year {:year year}))
-
 (defn find-grants [search-term order]
   (mapv convert-to-dash-keys
         (exec :form-db

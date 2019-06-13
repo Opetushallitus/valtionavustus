@@ -26,7 +26,6 @@
 (defquery get-search "sql/virkailija/saved_search/get.sql")
 
 (defquery get-grants "sql/virkailija/grants/get-grants.sql")
-(defquery get-grants-for-year "sql/virkailija/grants/get-grants-for-year.sql")
 (defquery get-resolved-grants-with-content
   "sql/virkailija/grants/get-resolved-grants-with-content.sql")
 (defquery find-grants "sql/virkailija/grants/find-grants.sql")

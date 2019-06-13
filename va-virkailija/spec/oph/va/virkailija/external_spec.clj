@@ -4,7 +4,7 @@
                     it tags around-all run-specs]]
            [oph.common.testing.spec-plumbing :refer [with-test-server!]]
            [oph.va.virkailija.server :refer [start-server]]
-           [oph.va.virkailija.grant-data :as grant-data]
+           [oph.va.virkailija.external-data :as external-data]
            [oph.va.virkailija.application-data :as application-data]
            [oph.va.virkailija.payments-data :as payments-data]
            [oph.va.virkailija.common-utils
@@ -21,8 +21,8 @@
                         :auto-reload? false}) (_)))
 
   (it "returns grants for given year"
-    (should= 2 (count (grant-data/get-grants-for-year 2015)))
-    (should= 0 (count (grant-data/get-grants-for-year 2019)))
+    (should= 2 (count (external-data/get-grants-for-year 2015)))
+    (should= 0 (count (external-data/get-grants-for-year 2019)))
   ))
 
 (run-specs)
