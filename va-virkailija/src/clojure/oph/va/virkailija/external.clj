@@ -31,6 +31,22 @@
           (log/error "Error in login ticket handling" e))
         (response/unauthorized {:error "Unauthorized"}))))
 
+  (compojure-api/GET "/avustushaku/:avustushaku-id/hakemukset" request
+    :query-params [{ticket :- s/Str nil}]
+    :path-params [avustushaku-id :- Long]
+    :return [schema/ExternalApplication]
+    :summary ""
+    (try
+      (if (and (some? ticket)
+               (cas/validate-service-ticket virkailija-login-url ticket))
+        (response/ok (external-data/get-applications-by-grant-id avustushaku-id))
+        (response/unauthorized {:error "Unauthorized"}))
+      (catch Exception e
+        (if (and (.getMessage e) (.contains (.getMessage e) "INVALID_TICKET"))
+          (log/warn "Invalid ticket: " (str e))
+          (log/error "Error in login ticket handling" e))
+        (response/unauthorized {:error "Unauthorized"}))))
+
   (compojure-api/GET "/hankkeet/" request
     :query-params [{ticket :- s/Str nil}]
     :return [schema/ExternalHanke]

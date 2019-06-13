@@ -6,3 +6,7 @@
 (defn get-grants-for-year [year]
   (let [rows (exec :virkailija-db external-queries/get-grants-for-year {:year year})]
     (map convert-to-dash-keys rows)))
+
+(defn get-applications-by-grant-id [grant-id]
+  (let [rows (exec :virkailija-db external-queries/get-applications-by-grant-id {:grant_id grant-id})]
+    (map convert-to-dash-keys rows)))

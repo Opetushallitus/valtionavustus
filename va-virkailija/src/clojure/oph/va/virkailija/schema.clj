@@ -367,3 +367,15 @@
    :register-number (s/maybe s/Str)
    :loppuselvitysdate (s/maybe s/Str)
    :created-at s/Inst})
+
+(s/defschema ExternalApplication
+  "Hakemuksen tiedot ulkopuolisia järjestelmiä varten"
+  {:id s/Int
+   :project-name s/Str
+   :organization-name s/Str
+   :in-a-nutshell s/Str
+   :partners s/Str
+   :project-begin s/Str
+   :project-end s/Str
+   :budget-granted s/Int
+   :costs-granted s/Int})

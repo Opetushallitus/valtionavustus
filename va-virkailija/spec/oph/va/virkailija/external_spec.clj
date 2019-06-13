@@ -27,6 +27,10 @@
       (should= 2 (count grants))
       (run! #(s/validate ExternalGrant %) grants))
     (should= 0 (count (external-data/get-grants-for-year 2019)))
+  )
+
+  (it "returns applications by grant id"
+    (should= 0 (count (external-data/get-applications-by-grant-id 1)))
   ))
 
 (run-specs)
