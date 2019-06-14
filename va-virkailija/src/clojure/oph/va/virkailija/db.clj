@@ -107,6 +107,15 @@
                                                     :new (:status new)}))
     changelog))
 
+(defn- compare-allow-visibility-in-external-system [changelog identity timestamp existing new]
+  (if (not (= (:allow_visibility_in_external_system new) (:allow_visibility_in_external_system existing)))
+    (append-changelog changelog (->changelog-entry identity
+                                                   "allow-visibility-in-external-system-change"
+                                                   timestamp
+                                                   {:old (:allow_visibility_in_external_system existing)
+                                                    :new (:allow_visibility_in_external_system new)}))
+    changelog))
+
 (defn- compare-should-pay [changelog identity timestamp existing new]
   (if (not (= (:should_pay new) (:should_pay existing)))
     (append-changelog changelog (->changelog-entry identity
@@ -169,6 +178,7 @@
                         :perustelut (:perustelut arvio)
                         :tags (:tags arvio)
                         :oppilaitokset {:names oppilaitokset-names}
+                        :allow_visibility_in_external_system (:allow-visibility-in-external-system arvio)
                         :should_pay (:should-pay arvio)
                         :should_pay_comments (:should-pay-comments arvio)}
         existing (get-arvio hakemus-id)

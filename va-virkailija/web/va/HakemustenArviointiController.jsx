@@ -920,6 +920,13 @@ export default class HakemustenArviointiController {
     }
   }
 
+  setHakemusAllowVisibilityInExternalSystem(hakemus, newAllowVisibilityInExternalSystem) {
+    return function() {
+      hakemus.arvio["allow-visibility-in-external-system"] = newAllowVisibilityInExternalSystem === "true"
+      dispatcher.push(events.updateHakemusArvio, hakemus)
+    }
+  }
+
   setHakemusShouldPay(hakemus, newShouldPay) {
     return function() {
     hakemus.arvio["should-pay"] = newShouldPay === "true"

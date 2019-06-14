@@ -5,6 +5,7 @@ import SeurantaTags from './SeurantaTags.jsx'
 import SeurantaBudgetEditing
   from '../seurantabudgetedit/SeurantaBudgetEditing.jsx'
 import ShouldPay from './ShouldPay.jsx'
+import AllowVisibilityInExternalSystem from './AllowVisibilityInExternalSystem.jsx'
 import ShouldPayComments from './ShouldPayComments.jsx'
 
 export default class Seuranta extends React.Component {
@@ -13,6 +14,9 @@ export default class Seuranta extends React.Component {
            translations, hakuData} = this.props
     return (
       <div className="seuranta">
+        <AllowVisibilityInExternalSystem controller={controller}
+                                         hakemus={hakemus}
+                                         allowEditing={true}/>
         <ShouldPay controller={controller}
                    hakemus={hakemus}
                    allowEditing={true}/>

@@ -43,5 +43,6 @@ WHERE
   AND h.hakemus_type = 'hakemus'
   AND h.version_closed IS NULL
   AND a.status = 'accepted'
+  AND a.allow_visibility_in_external_system = true
 ORDER BY
   h.id ASC;

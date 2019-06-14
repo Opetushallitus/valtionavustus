@@ -27,6 +27,7 @@
    :tags (:tags arvio)
    :oppilaitokset (:oppilaitokset arvio)
    :changelog (:changelog arvio)
+   :allow-visibility-in-external-system (:allow_visibility_in_external_system arvio)
    :should-pay (:should_pay arvio)
    :should-pay-comments (:should_pay_comments arvio)})
 
@@ -45,6 +46,7 @@
                            :roles              {:evaluators []}
                            :tags               {:value []}
                            :oppilaitokset      {:names []}
+                           :allow-visibility-in-external-system false
                            :should-pay true})))
 
 (defn- find-and-add-arvio [arviot hakemus]

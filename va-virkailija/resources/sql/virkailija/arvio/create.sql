@@ -15,6 +15,7 @@ insert into arviot (
   presentercomment,
   academysize,
   oppilaitokset,
+  allow_visibility_in_external_system,
   should_pay,
   should_pay_comments)
 values (
@@ -34,5 +35,6 @@ values (
   :presentercomment,
   :academysize,
   :oppilaitokset,
+  :allow_visibility_in_external_system,
   :should_pay,
   :should_pay_comments)

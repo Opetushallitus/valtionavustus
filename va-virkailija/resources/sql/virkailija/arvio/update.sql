@@ -16,6 +16,7 @@ set status = :status,
     seuranta_answers = :seuranta_answers,
     tags = :tags,
     oppilaitokset = :oppilaitokset,
+    allow_visibility_in_external_system = :allow_visibility_in_external_system,
     should_pay = :should_pay,
     should_pay_comments = :should_pay_comments
 where hakemus_id = :hakemus_id
