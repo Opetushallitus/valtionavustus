@@ -373,9 +373,9 @@
   {:id s/Int
    :project-name s/Str
    :organization-name s/Str
-   :in-a-nutshell s/Str
-   :partners s/Str
-   :project-begin s/Str
-   :project-end s/Str
-   :budget-granted s/Int
-   :costs-granted s/Int})
+   :nutshell (s/maybe s/Str)
+   :partners (s/maybe s/Str)
+   :project-begin (s/maybe s/Str)
+   :project-end (s/maybe s/Str)
+   :budget-granted (s/maybe s/Int)
+   :costs-granted (s/maybe s/Int)})
