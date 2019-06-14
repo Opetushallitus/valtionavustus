@@ -302,6 +302,8 @@ UI-testien ajon PhantomJS:llä (tiedostot `mocha_spec.clj`).
 Mikäli muutat frontendin koodia, pitää frontendin buildi ajaa uudelleen
 (katso ylhäältä).
 
+Huom! va-virkailijan testien ajaminen edellyttää, että va-hakijan testit on ajettu aiemmin.
+
 Kaikkien Leiningen-projektien testien ajaminen, juurihakemistossa:
 
 ``` shell
