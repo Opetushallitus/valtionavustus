@@ -132,13 +132,17 @@
   ([application status]
    (create-application-evaluation application status {})))
 
-(defn create-evaluation [grant status]
-   (create-application-evaluation
-     (create-application
-       grant
-       (create-submission
-         (:form grant) {:budget-oph-share 40000}))
-     status))
+(defn create-evaluation
+  ([grant status values]
+    (create-application-evaluation
+      (create-application
+        grant
+        (create-submission
+          (:form grant) {:budget-oph-share 40000}))
+      status
+      values))
+  ([grant status]
+    (create-evaluation grant status {})))
 
 (defn create-payment [grant batch phase sum]
   (let [submission
