@@ -363,6 +363,7 @@
    :form-valiselvitys s/Any
    :form s/Any
    :project-id s/Any
+   :phase HakuPhase
    :status GrantStatus
    :operational-unit-id s/Any
    :register-number (s/maybe s/Str)
