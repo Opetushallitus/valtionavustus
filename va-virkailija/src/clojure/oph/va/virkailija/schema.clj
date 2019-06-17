@@ -373,6 +373,7 @@
 (s/defschema ExternalApplication
   "Hakemuksen tiedot ulkopuolisia järjestelmiä varten"
   {:id s/Int
+   :grant-id s/Int
    :project-name s/Str
    :organization-name s/Str
    :nutshell (s/maybe s/Str)
