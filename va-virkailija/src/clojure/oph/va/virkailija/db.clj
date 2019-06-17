@@ -161,6 +161,7 @@
         academysize (or (:academysize arvio) 0)
         overridden-answers (:overridden-answers arvio)
         oppilaitokset-names (filter not-empty (:names (:oppilaitokset arvio)))
+        allow-visibility-in-external-system (or (:allow-visibility-in-external-system arvio) false)
         arvio-to-save  {:hakemus_id hakemus-id
                         :status status
                         :overridden_answers overridden-answers
@@ -178,7 +179,7 @@
                         :perustelut (:perustelut arvio)
                         :tags (:tags arvio)
                         :oppilaitokset {:names oppilaitokset-names}
-                        :allow_visibility_in_external_system (:allow-visibility-in-external-system arvio)
+                        :allow_visibility_in_external_system allow-visibility-in-external-system
                         :should_pay (:should-pay arvio)
                         :should_pay_comments (:should-pay-comments arvio)}
         existing (get-arvio hakemus-id)
