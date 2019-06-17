@@ -376,6 +376,8 @@
    :grant-id s/Int
    :project-name s/Str
    :organization-name s/Str
+   :user-first-name (s/maybe s/Str)
+   :user-last-name (s/maybe s/Str)
    :nutshell (s/maybe s/Str)
    :partners (s/maybe s/Str)
    :project-begin (s/maybe s/Str)
