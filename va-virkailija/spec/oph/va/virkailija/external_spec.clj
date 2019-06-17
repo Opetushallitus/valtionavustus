@@ -6,7 +6,7 @@
            [oph.common.testing.spec-plumbing :refer [with-test-server!]]
            [oph.va.virkailija.server :refer [start-server]]
            [oph.va.virkailija.external-data :as external-data]
-           [oph.va.virkailija.schema :refer [ExternalGrant]]
+           [oph.va.virkailija.schema :refer [ExternalGrant ExternalApplication]]
            [oph.va.virkailija.grant-data :as grant-data]
            [oph.va.virkailija.db :as virkailija-db]
            [oph.va.virkailija.common-utils
@@ -49,7 +49,9 @@
       (create-evaluation grant "accepted" {:allow-visibility-in-external-system true})
       (create-evaluation grant "accepted" {:allow-visibility-in-external-system true})
 
-      (should= 2 (count (external-data/get-applications-by-grant-id (:id grant)))))
+      (let [applications (external-data/get-applications-by-grant-id (:id grant))]
+        (should= 2 (count applications))
+        (run! #(s/validate ExternalApplication %) applications)))
   ))
 
 (run-specs)
