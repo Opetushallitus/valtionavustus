@@ -336,6 +336,11 @@
   [{:year s/Int
     :count s/Int}])
 
+(s/defschema IncompleteLocalizedString
+  "Localized string that might be missing a key"
+  {(s/optional-key :fi) s/Str
+   (s/optional-key :sv) s/Str})
+
 (s/defschema ExternalHanke
              "Hankkeen tiedot ulkopuolisia järjestelmiä varten"
              {:project-name (s/maybe s/Str)
@@ -368,6 +373,7 @@
    :operational-unit-id s/Any
    :register-number (s/maybe s/Str)
    :loppuselvitysdate (s/maybe s/Str)
+   :valmistelija (s/maybe IncompleteLocalizedString)
    :created-at s/Inst})
 
 (s/defschema ExternalApplication
