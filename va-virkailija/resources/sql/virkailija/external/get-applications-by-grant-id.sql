@@ -1,5 +1,5 @@
 SELECT
-  h.id, h.avustushaku as grant_id, h.organization_name, h.project_name,
+  h.id, h.language, h.avustushaku as grant_id, h.organization_name, h.project_name,
   h.user_first_name, h.user_last_name,
   nutshell.value as nutshell,
   partners.value as partners,
