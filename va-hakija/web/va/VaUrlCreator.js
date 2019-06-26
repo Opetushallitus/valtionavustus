@@ -188,9 +188,10 @@ export default class VaUrlCreator extends UrlCreator {
 
   static chooseInitialLanguage(urlContent) {
     const langQueryParam = urlContent.parsedQuery.lang
+    const sanitizedLangQueryParam = langQueryParam && langQueryParam.substring(0,2)
     const hostname = urlContent.location.hostname
-    return langQueryParam
-      ? langQueryParam
+    return sanitizedLangQueryParam === "fi" || sanitizedLangQueryParam === "sv"
+      ? sanitizedLangQueryParam
       : hostname.indexOf("statsunderstod.oph.fi") > -1
         ? "sv"
         : "fi"
