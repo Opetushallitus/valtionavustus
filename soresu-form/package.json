@@ -24,7 +24,8 @@
     "react-transition-group": "^2.2.0",
     "react-widgets": "^3.4.8",
     "seamless-immutable": "^2.4.2",
-    "speakingurl": "7.0.0"
+    "speakingurl": "7.0.0",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -46,6 +47,9 @@
   "scripts": {
     "lint": "eslint --ignore-path ../.gitignore --ignore-pattern '*.json' --ignore-pattern '**/test/lib' '**/*.js*'",
     "test": "mocha --require babel-register $MOCHA_ARGS web/test/*Test.js",
-    "test-watch": "mocha --watch --require babel-register $MOCHA_ARGS web/test/*Test.js"
-  }
+    "test-watch": "mocha --watch --require babel-register $MOCHA_ARGS web/test/*Test.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "snyk": true
 }
