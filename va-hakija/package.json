@@ -19,7 +19,8 @@
     "react-dom": "^15.6.1",
     "route-parser": "^0.0.4",
     "va-common": "file:../va-common",
-    "soresu-form": "file:../soresu-form"
+    "soresu-form": "file:../soresu-form",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "ajv": "^5.2.2",
@@ -52,6 +53,9 @@
     "lint": "eslint --ignore-path ../.gitignore --ignore-pattern '*.json' --ignore-pattern '**/test/lib' '**/*.js*'",
     "test": "mocha --require web/test/babelhook $MOCHA_ARGS ./web/test/*Test.js",
     "test-browser": "phantomjs --web-security=false node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js http://localhost:8080/test/runner.html spec",
-    "test-watch": "mocha --watch --require web/test/babelhook $MOCHA_ARGS web/test/*Test.js"
-  }
+    "test-watch": "mocha --watch --require web/test/babelhook $MOCHA_ARGS web/test/*Test.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "snyk": true
 }
