@@ -24,7 +24,8 @@
     "route-parser": "^0.0.4",
     "seamless-immutable": "^2.4.2",
     "va-common": "file:../va-common",
-    "soresu-form": "file:../soresu-form"
+    "soresu-form": "file:../soresu-form",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "ajv": "^5.2.2",
@@ -50,6 +51,9 @@
     "build-production": "NODE_ENV=production npm run build",
     "build-watch": "webpack --progress --watch",
     "lint": "eslint --ignore-path ../.gitignore --ignore-pattern '*.json' --ignore-pattern '**/test/lib' '**/*.js*'",
-    "test": "true"
-  }
+    "test": "true",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "snyk": true
 }
