@@ -16,7 +16,8 @@
     "lodash": "^4.17.11",
     "moment-timezone": "0.4.0",
     "route-parser": "^0.0.4",
-    "soresu-form": "file:../soresu-form"
+    "soresu-form": "file:../soresu-form",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -38,6 +39,9 @@
   "scripts": {
     "lint": "eslint --ignore-path ../.gitignore --ignore-pattern '*.json' --ignore-pattern '**/test/lib' '**/*.js*'",
     "test": "mocha --require web/test/babelhook $MOCHA_ARGS web/test/*Test.js",
-    "test-watch": "mocha --watch --require web/test/babelhook $MOCHA_ARGS web/test/*Test.js"
-  }
+    "test-watch": "mocha --watch --require web/test/babelhook $MOCHA_ARGS web/test/*Test.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "snyk": true
 }
