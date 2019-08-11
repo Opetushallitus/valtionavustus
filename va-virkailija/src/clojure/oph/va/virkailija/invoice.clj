@@ -11,6 +11,12 @@
                     "XE" 6600
                     "XB" 6604})
 
+(defn timestamp-to-date ([ts]
+  (try (.format (new java.text.SimpleDateFormat "yyyy-MM-dd") ts )
+  (catch Exception e ""))
+))
+
+
 (defn get-answer-value
   ([answers key]
    (:value
@@ -40,41 +46,67 @@
         document (some
                    #(when (= (:phase %) (:phase payment)) %)
                    (:documents batch))]
-    [:VA-invoice
-     [:Header
-      [:Maksuera (get-batch-key batch grant)]
-      [:Laskunpaiva (.toString (:invoice-date batch))]
-      [:Erapvm (.toString (:due-date batch))]
-      [:Bruttosumma (:payment-sum payment)]
-      [:Maksuehto "Z001"]
-      [:Pitkaviite (format
+    [:objects
+     [:object
+     [:header
+      [:toEdiID "003727697901"]
+      [:invoiceType "INVOICE"]
+      [:vendorName (:organization-name application)]
+      [:addressFields
+       [:addressField1 (get-answer-value answers "address" "")]
+       [:addressField2 (get-answer-value answers "city" "")]
+       [:addressField5 (get-answer-value answers "country" "")]]
+
+      [:vendorRegistrationId (get-answer-value answers "business-id")]
+      [:bic (get-answer-value answers "bank-bic")]
+      [:bankAccount (get-answer-value answers "bank-iban")]
+      [:invoiceNumber (str (:application-id payment) "-" (:id payment) "-" (:application-version payment) "-" (:phase payment) )]
+      [:longReference (format
                      "%s_%s"
                      (:register-number application) (inc (:phase payment)))]
-      [:Tositepvm (.toString (:receipt-date batch))]
-      [:Asiatarkastaja (:presenter-email document)]
-      [:Hyvaksyja (:acceptor-email document)]
-      [:Tositelaji (get-in grant [:content :document-type] "XE")]
-      [:Maksutili (get-in grant [:content :transaction-account] "5000")]
-      [:Toimittaja
-       [:Y-tunnus (get-answer-value answers "business-id")]
-       [:Nimi (:organization-name application)]
-       [:Postiosoite (get-answer-value answers "address" "")]
-       [:Paikkakunta (get-answer-value answers "city" "")]
-       [:Maa (get-answer-value answers "country" "")]
-       [:Iban-tili (get-answer-value answers "bank-iban")]
-       [:Pankkiavain (get-answer-value answers "bank-bic")]
-       [:Pankki-maa (get-answer-value answers "bank-country" "")]
-       [:Kieli (:language application)]
-       [:Valuutta (:currency batch)]]
-      [:Postings
-       [:Posting
-        [:Summa (:payment-sum payment)]
-        [:LKP-tili (lkp/get-lkp-account (:answers application))]
-        [:TaKp-tili (:takp-account application)]
-        [:Toimintayksikko (get-in grant [:operational-unit :code])]
-        [:Projekti (get-in grant [:project :code])]
-        [:Toiminto (get-in grant [:operation :code])]
-        [:Kumppani (:partner batch)]]]]]))
+      [:documentDate (.toString (:invoice-date batch))]
+      [:dueDate (.toString (:due-date batch))]
+      [:paymentTerm "Z001"]
+      [:currencyCode (:currency batch)]
+      [:grossAmount (:payment-sum payment)]
+      [:netamount (:payment-sum payment)]
+      [:vatamount 0]
+      [:voucherSeries (get-in grant [:content :document-type] "XE")]
+      [:postingDate (.toString (:receipt-date batch))]
+      [:ownBankShortKeyCode (get-in grant [:content :transaction-account] "5000")]
+
+      [:handler
+       [:verifierName (:presenter-email document)]
+       [:verifierEmail (:presenter-email document)]
+       [:approverName (:acceptor-email document)]
+       [:approverEmail (:acceptor-email document)]
+       [:verifyDate (timestamp-to-date (:created-at document) ) ]
+       [:approvedDate (timestamp-to-date (:created-at document)) ]
+       ]
+
+      [:otsData
+       [:otsBankCountryKeyCode (get-answer-value answers "bank-country" "")]
+       [:otsLanguageCode (:language application)]
+       ]
+
+      [:invoicesource "VA"]
+
+      ]
+
+      [:postings
+       [:postingRows
+        [:postingRow
+         [:rowId 1]
+         [:generalLedgerAccount (lkp/get-lkp-account (:answers application))]
+         [:postingAmount (:payment-sum payment)]
+         [:accountingObject01 (get-in grant [:operational-unit :code])]
+         [:accountingObject02 (:takp-account application)]
+         [:accountingObject04 (get-in grant [:project :code])]
+         [:accountingObject05 (get-in grant [:operation :code])]
+         [:accountingObject08 (:partner batch)]]]]
+
+      ]]))
+
 
 (defn valid-pitkaviite? [pitkaviite]
   (and pitkaviite
