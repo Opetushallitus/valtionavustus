@@ -1,28 +1,29 @@
 (ns oph.va.virkailija.invoice-spec
-  (:require [speclj.core
-             :refer [describe it should= should-throw should should-not
-                     tags around-all run-specs after]]
-            [oph.common.testing.spec-plumbing :refer [with-test-server!]]
-            [oph.va.virkailija.server :refer [start-server]]
-            [oph.va.virkailija.common-utils
-            :refer [test-server-port create-submission
-                    create-application admin-authentication
-                    valid-payment-values delete! add-mock-authentication
-                    create-application-evaluation json->map create-payment
-                    create-application-evaluation get! post!]]
-            [oph.va.virkailija.application-data :as application-data]
-            [oph.va.virkailija.payment-batches-data :as payment-batches-data]
-            [oph.va.virkailija.grant-data :as grant-data]
-            [clj-time.format :as f]
-            [clj-time.core :as t]
-            [clojure.data.xml :as xml]
-            [oph.va.virkailija.invoice :as invoice]
-            [oph.va.virkailija.payments-data :as payments-data]
-            [oph.va.virkailija.va-code-values-data :as va-code-values]
-            [oph.va.hakija.api :as hakija-api]
-            [oph.va.routes :as va-routes]
-            [clojure.data.xml :refer [parse]]
-            [oph.va.virkailija.virkailija-tools :as tools]))
+    (:require [speclj.core
+               :refer [describe it should= should-throw should should-not
+                       tags around-all run-specs after]]
+      [oph.common.testing.spec-plumbing :refer [with-test-server!]]
+      [oph.va.virkailija.server :refer [start-server]]
+      [oph.va.virkailija.common-utils
+       :refer [test-server-port create-submission
+               create-application admin-authentication
+               valid-payment-values delete! add-mock-authentication
+               create-application-evaluation json->map create-payment
+               create-application-evaluation get! post!]]
+      [oph.va.virkailija.application-data :as application-data]
+      [oph.va.virkailija.payment-batches-data :as payment-batches-data]
+      [oph.va.virkailija.grant-data :as grant-data]
+      [clj-time.format :as f]
+      [clj-time.core :as t]
+      [clojure.data.xml :as xml]
+      [oph.va.virkailija.invoice :as invoice]
+      [oph.va.virkailija.payments-data :as payments-data]
+      [oph.va.virkailija.va-code-values-data :as va-code-values]
+      [oph.va.hakija.api :as hakija-api]
+      [oph.va.routes :as va-routes]
+      [clojure.data.xml :refer [parse]]
+      [oph.va.virkailija.virkailija-tools :as tools])
+      (:import (java.util Date)))
 
 (def payment {:acceptor-email "acceptor@example.com"
               :created-at (f/parse "2017-12-20T10:24:59.750Z")
@@ -228,39 +229,64 @@
                   (:id grant)))]
 
           (should=
-            [:VA-invoice
-             [:Header
-              [:Maksuera (format "6600170%02d" (:batch-number batch))]
-              [:Laskunpaiva "2017-12-20"]
-              [:Erapvm "2017-12-27"]
-              [:Bruttosumma 20000]
-              [:Maksuehto "Z001"]
-              [:Pitkaviite "123/456/78_1"]
-              [:Tositepvm "2017-12-20"]
-              [:Asiatarkastaja "presenter@example.com"]
-              [:Hyvaksyja "acceptor@example.com"]
-              [:Tositelaji "XE"]
-              [:Maksutili "5000"]
-              [:Toimittaja
-               [:Y-tunnus "1234567-1"]
-               [:Nimi "Test Organisation"]
-               [:Postiosoite "Someroad 1"]
-               [:Paikkakunta "Some City"]
-               [:Maa "Some Country"]
-               [:Iban-tili "FI4250001510000023"]
-               [:Pankkiavain "OKOYFIHH"]
-               [:Pankki-maa "FI"]
-               [:Kieli "fi"]
-               [:Valuutta "EUR"]]
-              [:Postings
-               [:Posting
-                [:Summa 20000]
-                [:LKP-tili "82310000"]
-                [:TaKp-tili "29103013"]
-                [:Toimintayksikko "6600100130"]
-                [:Projekti "6600A-M2024"]
-                [:Toiminto "6600151502"]
-                [:Kumppani "None"]]]]]
+            [:objects
+             [:object
+              [:header
+               [:toEdiID "003727697901"]
+               [:invoiceType "INVOICE"]
+               [:vendorName "Test Organisation"]
+
+               [:addressFields
+                [:addressField1 "Someroad 1"]
+                [:addressField2 "Some City"]
+                [:addressField5 "Some Country"]]
+
+               [:vendorRegistrationId "1234567-1"]
+               [:bic "OKOYFIHH"]
+               [:bankAccount "FI4250001510000023"]
+               [:invoiceNumber "50-1-0-0"]
+               [:longReference "123/456/78_1"]
+               [:documentDate "2017-12-20"]
+               [:dueDate "2017-12-27"]
+               [:paymentTerm "Z001"]
+               [:currencyCode "EUR"]
+               [:grossAmount 20000]
+               [:netamount 20000]
+               [:vatamount 0]
+               [:voucherSeries "XE"]
+               [:postingDate "2017-12-20"]
+               [:ownBankShortKeyCode "5000"]
+
+               [:handler
+                [:verifierName "presenter@example.com"]
+                [:verifierEmail "presenter@example.com"]
+                [:approverName "acceptor@example.com"]
+                [:approverEmail "acceptor@example.com"]
+                [:verifyDate (.format (java.text.SimpleDateFormat. "yyyy-MM-dd") (new java.util.Date)) ]
+                [:approvedDate (.format (java.text.SimpleDateFormat. "yyyy-MM-dd") (new java.util.Date)) ]
+                ]
+
+               [:otsData
+                [:otsBankCountryKeyCode "FI"]
+                [:otsLanguageCode "fi"]
+                ]
+
+               [:invoicesource "VA"]
+
+               ]
+
+              [:postings
+               [:postingRows
+                [:postingRow
+                 [:rowId 1]
+                 [:generalLedgerAccount "82310000"]
+                 [:postingAmount 20000]
+                 [:accountingObject01 "6600100130"]
+                 [:accountingObject02 "29103013"]
+                 [:accountingObject04 "6600A-M2024"]
+                 [:accountingObject05 "6600151502"]
+                 [:accountingObject08 "None"]
+              ]]]]]
             (invoice/payment-to-invoice
               {:payment payment
                :application application-with-evaluation
@@ -327,7 +353,7 @@
                                            :operation {:code "3456789"})
                              :batch (assoc batch :documents documents)})]
           (should=
-            (str "<?xml version=\"1.0\" encoding=\"UTF-8\"?><VA-invoice><Header><Maksuera>6600", (mod (t/year (t/now )) 100) , "001</Maksuera><Laskunpaiva>2018-04-16</Laskunpaiva><Erapvm>2018-04-30</Erapvm><Bruttosumma>20000</Bruttosumma><Maksuehto>Z001</Maksuehto><Pitkaviite>123/456/78_1</Pitkaviite><Tositepvm>2018-04-16</Tositepvm><Asiatarkastaja>presenter@local</Asiatarkastaja><Hyvaksyja>acceptor@local</Hyvaksyja><Tositelaji>XE</Tositelaji><Maksutili>5000</Maksutili><Toimittaja><Y-tunnus>1234567-1</Y-tunnus><Nimi>Test Organisation</Nimi><Postiosoite>Someroad 1</Postiosoite><Paikkakunta>Some City</Paikkakunta><Maa>Some Country</Maa><Iban-tili>FI4250001510000023</Iban-tili><Pankkiavain>OKOYFIHH</Pankkiavain><Pankki-maa>FI</Pankki-maa><Kieli>fi</Kieli><Valuutta>EUR</Valuutta></Toimittaja><Postings><Posting><Summa>20000</Summa><LKP-tili>82310000</LKP-tili><TaKp-tili>29103013</TaKp-tili><Toimintayksikko>123456789</Toimintayksikko><Projekti>23456789</Projekti><Toiminto>3456789</Toiminto><Kumppani>123456</Kumppani></Posting></Postings></Header></VA-invoice>")
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><objects><object><header><toEdiID>003727697901</toEdiID><invoiceType>INVOICE</invoiceType><vendorName>Test Organisation</vendorName><addressFields><addressField1>Someroad 1</addressField1><addressField2>Some City</addressField2><addressField5>Some Country</addressField5></addressFields><vendorRegistrationId>1234567-1</vendorRegistrationId><bic>OKOYFIHH</bic><bankAccount>FI4250001510000023</bankAccount><invoiceNumber>51-1-0-0</invoiceNumber><longReference>123/456/78_1</longReference><documentDate>2018-04-16</documentDate><dueDate>2018-04-30</dueDate><paymentTerm>Z001</paymentTerm><currencyCode>EUR</currencyCode><grossAmount>20000</grossAmount><netamount>20000</netamount><vatamount>0</vatamount><voucherSeries>XE</voucherSeries><postingDate>2018-04-16</postingDate><ownBankShortKeyCode>5000</ownBankShortKeyCode><handler><verifierName>presenter@local</verifierName><verifierEmail>presenter@local</verifierEmail><approverName>acceptor@local</approverName><approverEmail>acceptor@local</approverEmail><verifyDate>2019-08-12</verifyDate><approvedDate>2019-08-12</approvedDate></handler><otsData><otsBankCountryKeyCode>FI</otsBankCountryKeyCode><otsLanguageCode>fi</otsLanguageCode></otsData><invoicesource>VA</invoicesource></header><postings><postingRows><postingRow><rowId>1</rowId><generalLedgerAccount>82310000</generalLedgerAccount><postingAmount>20000</postingAmount><accountingObject01>123456789</accountingObject01><accountingObject02>29103013</accountingObject02><accountingObject04>23456789</accountingObject04><accountingObject05>3456789</accountingObject05><accountingObject08>123456</accountingObject08></postingRow></postingRows></postings></object></objects>"
             (xml/emit-str xml-invoice))))))
 
 (describe
