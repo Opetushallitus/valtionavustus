@@ -25,7 +25,7 @@
     "react-widgets": "^3.4.8",
     "seamless-immutable": "^2.4.2",
     "speakingurl": "7.0.0",
-    "snyk": "^1.189.0"
+    "snyk": "^1.216.1"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
