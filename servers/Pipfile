@@ -6,7 +6,7 @@ name = "pypi"
 [dev-packages]
 
 [packages]
-ansible = "==2.7.10"
+ansible = "==2.7.12"
 
 [requires]
 python_version = "2.7"
