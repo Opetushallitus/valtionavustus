@@ -200,7 +200,7 @@ cd '$(1)' && { npm install || { \
   rm -fr node_modules package-lock.json && \
   npm install && \
   git checkout -- package-lock.json && \
-  npm install \
+  npm install || npm install \
   ; } }
 cd '$(1)' && { git status -s | wc -l | grep -q '\<0\>' || { \
   echo "WARN: npm install for $(1) left changes in package-lock.json, discarding…" && \
