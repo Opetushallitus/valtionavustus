@@ -6,4 +6,4 @@ nodejs_install_npm_user: root
 # Define a list of global packages to be installed with NPM.
 nodejs_npm_global_packages:
   - name: npm
-    version: 6.1.0
+    version: 6.10.2
