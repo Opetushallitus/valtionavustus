@@ -60,7 +60,9 @@
       [:vendorRegistrationId (get-answer-value answers "business-id")]
       [:bic (get-answer-value answers "bank-bic")]
       [:bankAccount (get-answer-value answers "bank-iban")]
-      [:invoiceNumber (str (:application-id payment) "-" (:id payment) "-" (:application-version payment) "-" (:phase payment) )]
+      [:invoiceNumber (format
+                        "%s_%s"
+                        (:register-number application) (inc (:phase payment)))]
       [:longReference (format
                      "%s_%s"
                      (:register-number application) (inc (:phase payment)))]
