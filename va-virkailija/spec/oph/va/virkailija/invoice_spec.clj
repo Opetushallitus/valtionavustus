@@ -259,7 +259,7 @@
                [:vatamount 0]
                [:voucherSeries "XE"]
                [:postingDate "2017-12-20"]
-               [:ownBankShortKeyCode "5000"]
+               [:ownBankShortKeyCode nil]
 
                [:handler
                 [:verifierName "presenter@example.com"]
@@ -299,8 +299,7 @@
                             :operational-unit {:code "6600100130"}
                             :operation {:code "6600151502"}
                             :lkp-account "82510000")
-                          (assoc-in [:content :document-type] "XE")
-                          (assoc-in [:content :transaction-account] "5000"))
+                          (assoc-in [:content :document-type] "XE"))
                :batch (assoc batch :documents
                              (payment-batches-data/get-batch-documents
                                (:id batch)))}))))))
@@ -356,7 +355,7 @@
                                            :operation {:code "3456789"})
                              :batch (assoc batch :documents documents)})]
           (should=
-            (str "<?xml version=\"1.0\" encoding=\"UTF-8\"?><objects><object><header><toEdiID>003727697901</toEdiID><invoiceType>INVOICE</invoiceType><vendorName>Test Organisation</vendorName><addressFields><addressField1>Someroad 1</addressField1><addressField2>Some City</addressField2><addressField5>Some Country</addressField5></addressFields><vendorRegistrationId>1234567-1</vendorRegistrationId><bic>OKOYFIHH</bic><bankAccount>FI4250001510000023</bankAccount><invoiceNumber>123/456/78_1</invoiceNumber><longReference>123/456/78_1</longReference><documentDate>2018-04-16</documentDate><dueDate>2018-04-30</dueDate><paymentTerm>Z001</paymentTerm><currencyCode>EUR</currencyCode><grossAmount>20000</grossAmount><netamount>20000</netamount><vatamount>0</vatamount><voucherSeries>XE</voucherSeries><postingDate>2018-04-16</postingDate><ownBankShortKeyCode>5000</ownBankShortKeyCode><handler><verifierName>presenter@local</verifierName><verifierEmail>presenter@local</verifierEmail><approverName>acceptor@local</approverName><approverEmail>acceptor@local</approverEmail><verifyDate>", (now-date) "</verifyDate><approvedDate>", (now-date), "</approvedDate></handler><otsData><otsBankCountryKeyCode>FI</otsBankCountryKeyCode><otsLanguageCode>fi</otsLanguageCode></otsData><invoicesource>VA</invoicesource></header><postings><postingRows><postingRow><rowId>1</rowId><generalLedgerAccount>82310000</generalLedgerAccount><postingAmount>20000</postingAmount><accountingObject01>123456789</accountingObject01><accountingObject02>29103013</accountingObject02><accountingObject04>23456789</accountingObject04><accountingObject05>3456789</accountingObject05><accountingObject08>123456</accountingObject08></postingRow></postingRows></postings></object></objects>" )
+            (str "<?xml version=\"1.0\" encoding=\"UTF-8\"?><objects><object><header><toEdiID>003727697901</toEdiID><invoiceType>INVOICE</invoiceType><vendorName>Test Organisation</vendorName><addressFields><addressField1>Someroad 1</addressField1><addressField2>Some City</addressField2><addressField5>Some Country</addressField5></addressFields><vendorRegistrationId>1234567-1</vendorRegistrationId><bic>OKOYFIHH</bic><bankAccount>FI4250001510000023</bankAccount><invoiceNumber>123/456/78_1</invoiceNumber><longReference>123/456/78_1</longReference><documentDate>2018-04-16</documentDate><dueDate>2018-04-30</dueDate><paymentTerm>Z001</paymentTerm><currencyCode>EUR</currencyCode><grossAmount>20000</grossAmount><netamount>20000</netamount><vatamount>0</vatamount><voucherSeries>XE</voucherSeries><postingDate>2018-04-16</postingDate><ownBankShortKeyCode></ownBankShortKeyCode><handler><verifierName>presenter@local</verifierName><verifierEmail>presenter@local</verifierEmail><approverName>acceptor@local</approverName><approverEmail>acceptor@local</approverEmail><verifyDate>", (now-date) "</verifyDate><approvedDate>", (now-date), "</approvedDate></handler><otsData><otsBankCountryKeyCode>FI</otsBankCountryKeyCode></otsData><invoicesource>VA</invoicesource></header><postings><postingRows><postingRow><rowId>1</rowId><generalLedgerAccount>82310000</generalLedgerAccount><postingAmount>20000</postingAmount><accountingObject01>123456789</accountingObject01><accountingObject02>29103013</accountingObject02><accountingObject04>23456789</accountingObject04><accountingObject05>3456789</accountingObject05><accountingObject08>123456</accountingObject08></postingRow></postingRows></postings></object></objects>" )
             (xml/emit-str xml-invoice))))))
 
 (describe
