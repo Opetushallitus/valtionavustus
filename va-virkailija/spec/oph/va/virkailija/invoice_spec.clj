@@ -272,7 +272,6 @@
 
                [:otsData
                 [:otsBankCountryKeyCode "FI"]
-                [:otsLanguageCode "fi"]
                 ]
 
                [:invoicesource "VA"]
