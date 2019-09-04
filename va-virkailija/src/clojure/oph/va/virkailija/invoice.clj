@@ -88,7 +88,6 @@
 
       [:otsData
        [:otsBankCountryKeyCode (get-answer-value answers "bank-country" "")]
-       [:otsLanguageCode (:language application)]
        ]
 
       [:invoicesource "VA"]
