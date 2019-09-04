@@ -75,7 +75,7 @@
       [:vatamount 0]
       [:voucherSeries (get-in grant [:content :document-type] "XE")]
       [:postingDate (.toString (:receipt-date batch))]
-      [:ownBankShortKeyCode (get-in grant [:content :transaction-account] "5000")]
+      [:ownBankShortKeyCode (get-in grant [:content :transaction-account])]
 
       [:handler
        [:verifierName (:presenter-email document)]

@@ -226,8 +226,6 @@
     (merge "Avustushaun Projekti puuttuu")
     (nil? (get grant :operation))
     (merge "Avustushaun Toiminto puuttuu")
-    (nil? (get-in grant [:content :transaction-account]))
-    (merge "Avustushaun Maksuliikemenotili puuttuu")
     (nil? (get-in grant [:content :document-type]))
     (merge "Avustushaun tositelaji puuttuu")))
 
