@@ -9,10 +9,19 @@ LEIN_PROJECTS ?= soresu-form va-common va-hakija va-admin-ui va-virkailija
 LEIN_CHECKOUTS_BASEDIRS := va-hakija/checkouts va-virkailija/checkouts
 LEIN_CHECKOUTS := soresu-form va-common
 LEIN_CHECKOUT_DIRS := $(foreach basedir,$(LEIN_CHECKOUTS_BASEDIRS),$(addprefix $(basedir)/,$(LEIN_CHECKOUTS)))
+NODE_VERSION := $(shell node --version)
+REQUIRED_NODE := $(shell if [ $(NODE_VERSION) == "v8.16.1" ]; then echo true; else echo false; fi)
+NPM_VERSION := $(shell npm --version)
+REQUIRED_NPM := $(shell if [ $(NPM_VERSION) == "6.10.2" ]; then echo true; else echo false; fi)
 
 .PHONY: help
 help:
 	@echo -e '$(subst $(newline),\n,$(usage_text))'
+
+.PHONY: check-node
+check-node:
+	@echo Build requires Node v8.16.1 && $(REQUIRED_NODE)
+	@echo Build requires NPM 6.10.2 && $(REQUIRED_NPM)
 
 .PHONY: clean
 clean: npm-clean lein-clean
@@ -27,11 +36,11 @@ test: npm-test lein-test
 npm-clean: npm-clean-modules npm-clean-frontends
 
 .PHONY: npm-clean-modules
-npm-clean-modules:
+npm-clean-modules: check-node
 	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_clean_modules,$(npm_project))$(newline))
 
 .PHONY: npm-clean-frontends
-npm-clean-frontends:
+npm-clean-frontends: check-node
 	$(call npm_clean_frontend,va-hakija)
 	$(call npm_clean_frontend,va-virkailija)
 
@@ -39,28 +48,28 @@ npm-clean-frontends:
 npm-build: npm-install-modules npm-lint npm-build-frontends
 
 .PHONY: npm-install-modules
-npm-install-modules:
+npm-install-modules: check-node
 	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_install_modules,$(npm_project))$(newline))
 
 .PHONY: npm-lint
-npm-lint:
+npm-lint: check-node
 	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_lint,$(npm_project))$(newline))
 
 .PHONY: npm-build-frontends
-npm-build-frontends:
+npm-build-frontends: check-node
 	$(call npm_build,va-hakija)
 	$(call npm_build,va-virkailija)
 
 .PHONY: npm-test
-npm-test:
+npm-test: check-node
 	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_test,$(npm_project))$(newline))
 
 .PHONY: npm-outdated-dependencies
-npm-outdated-dependencies:
+npm-outdated-dependencies: check-node
 	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_outdated_dependencies,$(npm_project))$(newline))
 
 .PHONY: npm-audit
-npm-audit:
+npm-audit: check-node
 	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_audit,$(npm_project))$(newline))
 
 .PHONY: lein-clean
