@@ -144,7 +144,11 @@
                     test-service (create-test-service configuration)
                     grant (first (grant-data/get-grants))]
                 (payments-data/delete-grant-payments (:id grant))
-                (should-throw Exception #"No payments found!" (rondo-scheduling/get-state-of-payments test-service))))
+                (get-remote-file test-service "file.xml")
+                (should-throw Exception #"No payments found!"
+                              (payments-data/update-state-by-response
+                                (invoice/read-xml (get-local-file test-service "file.xml")))
+                )))
 
           (it "When retrieving payment xml from Rondo, show parse errors, if xml is not valid"
               (let [test-service (create-wrong-test-service configuration)

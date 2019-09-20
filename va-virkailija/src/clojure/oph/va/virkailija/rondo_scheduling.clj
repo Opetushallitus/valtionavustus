@@ -23,16 +23,17 @@
     (try
       (payments-data/update-state-by-response
         (invoice/read-xml (get-local-file remote-service filename)))
+
+      (delete-remote-file! remote-service filename)
+      (clojure.java.io/delete-file (get-local-file remote-service filename))
+
       (catch clojure.lang.ExceptionInfo e
         (if (= "already-paid" (-> e ex-data :cause))
           (log/info
             (format
               "Payment of response %s already paid. Ignoring." filename))
           (do
-            (log/error (format "Error while processing file %s" filename))
-            (throw e)))))
-    (delete-remote-file! remote-service filename)
-    (clojure.java.io/delete-file (get-local-file remote-service filename))))
+            (log/error (format "Error while processing file %s" filename))))))))
 
 (defn fetch-feedback-from-rondo [remote-service]
   (log/debug "Running the fetch-feed-back-from rondo..")
