@@ -206,6 +206,11 @@
                                                          :decision decision
                                                          :sent_emails {:addresses emails}}))
 
+(defn update-paatos-sent-emails [hakemus emails decision]
+  (exec :form-db hakija-queries/update-hakemus-paatos! {:hakemus_id (:id hakemus)
+                                                        :hakemus_version (:version hakemus)
+                                                        :decision decision
+                                                        :sent_emails {:addresses emails}}))
 
 (defn find-regenerate-hakemus-paatos-ids [avustushaku-id]
   (exec :form-db hakija-queries/regenerate-hakemus-paatos-ids {:avustushaku_id avustushaku-id}))

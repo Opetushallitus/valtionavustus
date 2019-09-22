@@ -51,6 +51,23 @@
     (hakija-api/add-paatos-sent-emails hakemus emails decision)
     (ok {:status "sent" :hakemus hakemus-id :emails emails})))
 
+(defn resend-paatos [hakemus-id emails]
+  (let [hakemus (hakija-api/get-hakemus hakemus-id)
+        avustushaku-id (:avustushaku hakemus)
+        avustushaku (hakija-api/get-avustushaku avustushaku-id)
+        presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)
+        decision (decision/paatos-html hakemus-id)
+        arvio (virkailija-db/get-arvio hakemus-id)
+        token (when (get-in config [:application-change :refuse-enabled?])
+                (create-application-token (:id hakemus)))]
+    (log/info "Reending paatos email for hakemus" hakemus-id " to " emails)
+    (if (and (some? token) (not= (:status arvio) "rejected"))
+      (email/send-paatos-refuse!
+       emails avustushaku hakemus presenting-officer-email token)
+      (email/send-paatos! emails avustushaku hakemus presenting-officer-email))
+    (hakija-api/update-paatos-sent-emails hakemus emails decision)
+    (ok {:status "sent" :hakemus hakemus-id :emails emails})))
+
 (defn re-send-paatos-email [hakemus-id]
   (let [emails (paatos-emails hakemus-id)
         hakemus (hakija-api/get-hakemus hakemus-id)
@@ -75,6 +92,11 @@
   (let [emails (paatos-emails hakemus-id)]
     (send-paatos hakemus-id emails)))
 
+(defn resend-paatos-for-all [hakemus-id]
+  (log/info "rexsend-paatos-for-all" hakemus-id)
+  (let [emails (paatos-emails hakemus-id)]
+    (resend-paatos hakemus-id emails)))
+
 (defn send-selvitys-for-all [avustushaku-id selvitys-type hakemus-id]
   (log/info "send-loppuselvitys-for-all" hakemus-id)
   (let [hakemus (hakija-api/get-hakemus hakemus-id)
@@ -98,6 +120,10 @@
 (defn get-hakemus-ids-to-send [avustushaku-id]
   (let [hakemukset-email-status (get-paatos-email-status avustushaku-id)]
     (map :id (filter #(nil? (:sent-emails %)) hakemukset-email-status))))
+
+(defn get-hakemus-ids-to-resend [avustushaku-id]
+  (let [hakemukset-email-status (get-paatos-email-status avustushaku-id)]
+    (map :id (filter #(some? (:sent-emails %)) hakemukset-email-status))))
 
 (defn get-sent-status [avustushaku-id]
   (let [hakemukset-email-status (get-paatos-email-status avustushaku-id)]
@@ -134,6 +160,15 @@
                                  avustushaku-id 0 (authentication/get-request-identity request))))
                             (log/info "Send all paatos ids " ids)
                             (run! send-paatos-for-all ids)
+                            (ok (merge {:status "ok"}
+                                       (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))
+
+                         (compojure-api/POST
+                          "/resendall/:avustushaku-id" [:as request]
+                          :path-params [avustushaku-id :- Long]
+                          (let [ids (get-hakemus-ids-to-resend avustushaku-id)]
+                            (log/info "Send all paatos ids " ids)
+                            (run! resend-paatos-for-all ids)
                             (ok (merge {:status "ok"}
                                        (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))
 

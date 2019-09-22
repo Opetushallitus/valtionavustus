@@ -266,10 +266,54 @@ class RegenerateDecisions extends React.Component {
   }
 }
 
+class ResendDecisions extends React.Component {
+  constructor(props){
+    super(props)
+    this.state = {completed:false,confirm:false}
+  }
+
+  render(){
+    const avustushaku = this.props.avustushaku
+
+    const onConfirm = () =>{
+      this.setState({confirm:true})
+    }
+
+    const onResend = () =>{
+      this.setState({resending:true})
+      const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/resendall/${avustushaku.id}`,{}))
+      sendS.onValue(() => {
+        this.setState({completed:true})
+        this.props.reload()
+      })
+    }
+
+    const resending = this.state.resending
+    return (
+      <div>
+        {this.state.completed && <div style={{fontWeight:'bold',marginBottom:10,marginTop:10}}>Päätökset lähetetty uudelleen</div>
+        }
+        {!this.state.completed &&
+          <div>
+            {this.state.confirm && <button onClick={onResend} disabled={resending}>{resending ? "Lähetetään" :  "Vahvista päätösten uudellenlähetys"}</button>}
+            {!this.state.confirm && <button onClick={onConfirm}>Lähetä {this.props.sent} päätöstä uudelleen</button>}
+          </div>
+        }
+
+      </div>
+    )
+  }
+}
+
 class DecisionDateAndSend extends React.Component {
   constructor(props){
     super(props)
     this.state = {preview:false, refuseEnabled: props.environment["application-change"]["refuse-enabled?"]}
+    this.rerenderParentCallback = this.rerenderParentCallback.bind(this);
+  }
+
+  rerenderParentCallback() {
+    this.fetchEmailState(this.props.avustushaku.id)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -303,7 +347,7 @@ class DecisionDateAndSend extends React.Component {
         </span>
       }
       <div className="decision-separator"/>
-      {this.sendControls()}
+      {this.sendControls(this.rerenderParentCallback)}
     </div>
   }
 
@@ -338,7 +382,7 @@ class DecisionDateAndSend extends React.Component {
     })
   }
 
-  sendControls() {
+  sendControls(rerenderParentCallback) {
     const onPreview = () => {
       this.setState({...this.state, preview:true})
       setTimeout(() => {this.setState({...this.state, preview: false})}, 5000)
@@ -376,6 +420,7 @@ class DecisionDateAndSend extends React.Component {
       {this.state.sending && <div><img src="/img/ajax-loader.gif"/>&nbsp;<strong>Päätöksiä lähetetään...</strong></div>}
       {this.mailsToSend() && <span><button disabled={this.state.preview || this.sentOk()} onClick={onPreview}>Lähetä {this.mailsToSendLabel()} päätöstä</button>&nbsp;</span>}
       {!this.mailsToSend() && <RegenerateDecisions avustushaku={this.props.avustushaku}/>}
+      {this.state.sent !== 0 && <ResendDecisions avustushaku={this.props.avustushaku} sent={this.state.sent} reload={rerenderParentCallback}/>}
       {this.state.preview && <button onClick={onSend}>Vahvista lähetys</button>}
       {this.sentOk() &&
         <div>
