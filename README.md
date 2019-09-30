@@ -652,30 +652,6 @@ Lisätietoja:
 - [eastwood](https://github.com/jonase/eastwood)
 - [lein-bikeshed](https://github.com/dakrone/lein-bikeshed)
 
-### Git
-
-Git workflow on "Long-Running Branches" tyyppinen: [Git Branching - Branching
-Workflows](https://git-scm.com/book/en/v2/Git-Branching-Branching-Workflows).
-
-Kehityksessä käytetään `develop`-haaraa.
-
-Ominaisuudet yms. toteutetaan omina brancheina, jotka on tehty `develop`
--haarasta. Tähän poikkeuksen tekevät kiireelliset hotfixit, jotka tehdään
-`master`-haarasta. Tällöin hotfixin julkaisun jälkeen tulee muutokset
-rebasettaa/mergetä `develop`-haaraan.
-
-Branchit nimetään Jira-tiketin mukaan, esimerkiksi
-`va3-24-rearrange-of-form-fields`. Voit käyttää branchin nimeämisessä myös
-suomenkieltä.
-
-Branchit mergetään `develop`-haaraan pull requesteilla.
-
-`develop`-haara mergetään `master`:iin hallitusti, esimerkiksi ennen
-sprintin demoa.
-
-`master`-haara kannattaa mergetä `develop`:iin aina ennen uuden branchin
-luomista, jotta `master` ei eroa liiaksi `develop`:sta.
-
 ### Tyyli
 
 - `.editorconfig`-tiedostossa on määritelty perustyylit, kuten
