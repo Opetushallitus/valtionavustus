@@ -25,7 +25,7 @@
     "seamless-immutable": "^2.4.2",
     "va-common": "file:../va-common",
     "soresu-form": "file:../soresu-form",
-    "snyk": "^1.216.1"
+    "snyk": "^1.230.5"
   },
   "devDependencies": {
     "ajv": "^5.2.2",
