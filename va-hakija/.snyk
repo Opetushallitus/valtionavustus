@@ -12,3 +12,20 @@ patch:
         patched: '2019-07-04T00:37:46.971Z'
     - va-common > soresu-form > lodash:
         patched: '2019-07-04T00:37:46.971Z'
+  SNYK-JS-HTTPSPROXYAGENT-469131:
+    - snyk > proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T00:37:50.731Z'
+    - snyk > proxy-agent > pac-proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T00:37:50.731Z'
+    - soresu-form > snyk > proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T00:37:50.731Z'
+    - va-common > snyk > proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T00:37:50.731Z'
+    - soresu-form > snyk > proxy-agent > pac-proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T00:37:50.731Z'
+    - va-common > soresu-form > snyk > proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T00:37:50.731Z'
+    - va-common > snyk > proxy-agent > pac-proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T00:37:50.731Z'
+    - va-common > soresu-form > snyk > proxy-agent > pac-proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T00:37:50.731Z'
