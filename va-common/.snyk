@@ -8,3 +8,12 @@ patch:
         patched: '2019-07-04T02:18:22.231Z'
     - soresu-form > lodash:
         patched: '2019-07-04T02:18:22.231Z'
+  SNYK-JS-HTTPSPROXYAGENT-469131:
+    - snyk > proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T02:18:21.318Z'
+    - snyk > proxy-agent > pac-proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T02:18:21.318Z'
+    - soresu-form > snyk > proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T02:18:21.318Z'
+    - soresu-form > snyk > proxy-agent > pac-proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T02:18:21.318Z'
