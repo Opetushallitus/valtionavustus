@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -o errexit -o nounset -o pipefail
+repo="$( cd "$( dirname "$0" )" && pwd )"
+
+function main {
+  init_nodejs
+
+  cd "$repo/va-hakija"
+  npm install
+  npm run build-watch
+}
+
+function init_nodejs {
+  export NVM_DIR="${NVM_DIR:-$HOME/.cache/nvm}"
+  source "$repo/nvm.sh"
+  nvm install 8.16.1
+  npm install -g npm@6.10.2
+}
+
+main "$@"
