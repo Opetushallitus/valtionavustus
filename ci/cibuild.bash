@@ -36,7 +36,6 @@ show_tool_versions() {
 }
 
 clean() {
-  time git clean -fd
   time make clean
 }
 
