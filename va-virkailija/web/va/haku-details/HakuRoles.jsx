@@ -135,9 +135,15 @@ class RoleRow extends React.Component {
     }, 3000).bind(this)
   }
 
+  isValid(event) {
+    return event && event.target && (typeof event.target.checkValidity !== 'function' || event.target.checkValidity())
+  }
+
   handleChange(event) {
     this.props.role[event.target.name] = event.target.value
-    this.debouncedSave()
+    if (this.isValid(event)) {
+      this.debouncedSave()
+    }
     this.props.controller.reRender()
   }
 
@@ -164,7 +170,7 @@ class RoleRow extends React.Component {
         </td>
         <td className="haku-roles-name-column"><input type="text" value={role.name} name="name" onChange={this.handleChange} disabled={disableEditing}/></td>
         <td className="haku-roles-email-column">
-          <input type="text" value={role.email || ""} name="email" onChange={this.handleChange} disabled={disableEditing}/>
+          <input type="email" value={role.email || ""} name="email" onChange={this.handleChange} disabled={disableEditing}/>
           <button type="button" onClick={onDelete} className="remove haku-roles-remove" alt="Poista" title={removeTitleText} tabIndex="-1" disabled={disableEditing} />
         </td>
       </tr>
