@@ -1,15 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.1' encoding='UTF-8'?>
 <project>
+  <actions/>
   <description></description>
-  <logRotator class="hudson.tasks.LogRotator">
-    <daysToKeep>-1</daysToKeep>
-    <numToKeep>100</numToKeep>
-    <artifactDaysToKeep>-1</artifactDaysToKeep>
-    <artifactNumToKeep>10</artifactNumToKeep>
-  </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <jenkins.plugins.slack.SlackNotifier_-SlackJobProperty plugin="slack@1.8">
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>100</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>10</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <jenkins.plugins.slack.SlackNotifier_-SlackJobProperty plugin="slack@1.8.1">
       <teamDomain></teamDomain>
       <token></token>
       <room></room>
@@ -26,8 +29,18 @@
       <includeCustomMessage>false</includeCustomMessage>
       <customMessage></customMessage>
     </jenkins.plugins.slack.SlackNotifier_-SlackJobProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>GIT_REVISION</name>
+          <description>Git revision to deploy</description>
+          <defaultValue>master</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.3.5">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.8.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -38,35 +51,18 @@
     </userRemoteConfigs>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>origin/master</name>
+        <name>$GIT_REVISION</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
-    <disableSubmodules>false</disableSubmodules>
-    <recursiveSubmodules>false</recursiveSubmodules>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-    <authorOrCommitter>false</authorOrCommitter>
-    <pruneBranches>false</pruneBranches>
-    <remotePoll>false</remotePoll>
-    <ignoreNotifyCommit>false</ignoreNotifyCommit>
-    <useShallowClone>false</useShallowClone>
-    <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"/>
-    <gitTool>Default</gitTool>
     <submoduleCfg class="list"/>
-    <relativeTargetDir/>
-    <reference/>
-    <excludedRegions/>
-    <excludedUsers/>
-    <gitConfigName/>
-    <gitConfigEmail/>
-    <skipTag>True</skipTag>
-    <includedRegions/>
-    <scmName/>
+    <extensions/>
   </scm>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class="vector">
+  <triggers>
     <jenkins.triggers.ReverseBuildTrigger>
       <spec></spec>
       <upstreamProjects>{{ va_compile_and_test_job_name }}</upstreamProjects>
@@ -81,28 +77,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>mkdir -p va-hakija/target/uberjar/
-      </command>
-    </hudson.tasks.Shell>
-    <hudson.tasks.Shell>
-      <command>cp ../../valtionavustus-compile-test/builds/lastStableBuild/archive/va-hakija/target/*uberjar*/hakija-*-standalone.jar va-hakija/target/uberjar/
-      </command>
-    </hudson.tasks.Shell>
-    <hudson.tasks.Shell>
-      <command>mkdir -p va-virkailija/target/uberjar/
-      </command>
-    </hudson.tasks.Shell>
-    <hudson.tasks.Shell>
-      <command>cp ../../valtionavustus-compile-test/builds/lastStableBuild/archive/va-virkailija/target/*uberjar*/virkailija-*-standalone.jar va-virkailija/target/uberjar/
-      </command>
-    </hudson.tasks.Shell>
-    <hudson.tasks.Shell>
-      <command>./ci/deploy_jar.bash oph-va-app-test01.csc.fi va-hakija va-hakija/target/uberjar/hakija-*-standalone.jar
-      </command>
-    </hudson.tasks.Shell>
-    <hudson.tasks.Shell>
-      <command>./ci/deploy_jar.bash oph-va-app-test01.csc.fi va-virkailija va-virkailija/target/uberjar/virkailija-*-standalone.jar
-      </command>
+      <command>./deploy-qa.sh</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -112,7 +87,23 @@
       <onlyIfSuccessful>true</onlyIfSuccessful>
       <fingerprint>false</fingerprint>
       <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
     </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.git.GitPublisher plugin="git@3.8.0">
+      <configVersion>2</configVersion>
+      <pushMerge>false</pushMerge>
+      <pushOnlyIfSuccess>true</pushOnlyIfSuccess>
+      <forcePush>true</forcePush>
+      <tagsToPush>
+        <hudson.plugins.git.GitPublisher_-TagToPush>
+          <targetRepoName>origin</targetRepoName>
+          <tagName>green-qa</tagName>
+          <tagMessage></tagMessage>
+          <createTag>false</createTag>
+          <updateTag>true</updateTag>
+        </hudson.plugins.git.GitPublisher_-TagToPush>
+      </tagsToPush>
+    </hudson.plugins.git.GitPublisher>
     <jenkins.plugins.slack.SlackNotifier plugin="slack@1.8.1">
       <teamDomain>{{ slack_notification_team_domain }}</teamDomain>
       <authToken>{{ slack_notification_auth_token }}</authToken>
