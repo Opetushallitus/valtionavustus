@@ -113,7 +113,11 @@
       <fingerprint>false</fingerprint>
       <defaultExcludes>true</defaultExcludes>
     </hudson.tasks.ArtifactArchiver>
-    <jenkins.plugins.slack.SlackNotifier plugin="slack@1.8">
+    <jenkins.plugins.slack.SlackNotifier plugin="slack@1.8.1">
+      <teamDomain>{{ slack_notification_team_domain }}</teamDomain>
+      <authToken>{{ slack_notification_auth_token }}</authToken>
+      <buildServerUrl>https://dev.valtionavustukset.oph.fi/</buildServerUrl>
+      <room>#oph-valtionavustus</room>
     </jenkins.plugins.slack.SlackNotifier>
   </publishers>
   <buildWrappers/>

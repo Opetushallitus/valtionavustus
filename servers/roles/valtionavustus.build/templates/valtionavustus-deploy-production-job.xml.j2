@@ -74,6 +74,10 @@
   </builders>
   <publishers>
     <jenkins.plugins.slack.SlackNotifier plugin="slack@1.8">
+      <teamDomain>{{ slack_notification_team_domain }}</teamDomain>
+      <authToken>{{ slack_notification_auth_token }}</authToken>
+      <buildServerUrl>https://dev.valtionavustukset.oph.fi/</buildServerUrl>
+      <room>#oph-valtionavustus</room>
     </jenkins.plugins.slack.SlackNotifier>
   </publishers>
   <buildWrappers/>
