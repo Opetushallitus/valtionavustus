@@ -39,3 +39,8 @@
 - name: Install g++ for jest (RedHat)
   yum:  state=installed pkg=gcc-c++
   when: ansible_os_family == 'RedHat'
+
+- name: Add gitconfig
+  copy:
+    dest: /home/jenkins/.gitconfig
+    content: "{{ lookup('file', 'gitconfig') }}"
