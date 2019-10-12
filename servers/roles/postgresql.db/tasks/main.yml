@@ -53,3 +53,8 @@
     minute: 30
     job: "{{ postgresql_backup_local_dir }}/bin/remove_old_backups.sh"
   tags: backups
+
+- name: Install postgresql-contrib
+  package:
+    name: postgresql-contrib
+    state: present
