@@ -18,7 +18,7 @@ function start_postgresql_in_container() {
     echo "Warning: found running postgresql container, stopping it."
     remove_postgresql_container
   fi
-  time $DOCKER run --name postgresql -d -p $host_postgres_port:$container_postgres_port -e 'DB_EXTENSION=citext' -e 'DB_USER=va_hakija' -e 'DB_PASS=va' -e 'DB_NAME=va-test' sameersbn/postgresql:9.4-24
+  time $DOCKER run --name postgresql -d -p $host_postgres_port:$container_postgres_port -e 'DB_USER=va_hakija' -e 'DB_PASS=va' -e 'DB_NAME=va-test' sameersbn/postgresql:9.4-24
 }
 
 function store_sql_script_to_container() {
