@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-/bin/sudo -Hi -u postgres /bin/pg_dump -Fc -n hakija {{ dbname }} | /usr/local/bin/aws --profile oph-datalake s3 cp - s3://{{ lampi_bucket_name }}/fulldump/valtionavustukset/v1/valtionavustukset-hakija.backup
-/bin/sudo -Hi -u postgres /bin/pg_dump -Fc -n virkailija {{ dbname }} | /usr/local/bin/aws --profile oph-datalake s3 cp - s3://{{ lampi_bucket_name }}/fulldump/valtionavustukset/v1/valtionavustukset-virkailija.backup
+/bin/sudo -Hi -u postgres /usr/pgsql-9.4/bin/pg_dump -Fc -n hakija {{ dbname }} | /usr/local/bin/aws --profile oph-datalake s3 cp - s3://{{ lampi_bucket_name }}/fulldump/valtionavustukset/v1/valtionavustukset-hakija.backup
+/bin/sudo -Hi -u postgres /usr/pgsql-9.4/bin/pg_dump -Fc -n virkailija {{ dbname }} | /usr/local/bin/aws --profile oph-datalake s3 cp - s3://{{ lampi_bucket_name }}/fulldump/valtionavustukset/v1/valtionavustukset-virkailija.backup
