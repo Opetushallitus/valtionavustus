@@ -3,6 +3,7 @@
   (:require [clojure.java.io :as io]
             [clojure.set :as clj-set]
             [clojure.string :as string]
+            [clojure.tools.logging :as log]
             [clj-time.core :as clj-time]
             [clj-time.format :as clj-time-format]
             [dk.ative.docjure.spreadsheet :as spreadsheet]
@@ -247,7 +248,11 @@
 
 (defn- str->int [str]
   (when (not (empty? str))
-    (Integer/parseInt (remove-white-spaces str))))
+    (try
+      (Integer/parseInt (remove-white-spaces str))
+      (catch NumberFormatException e
+        (log/warn "Invalid value in moneyField:" str)
+        nil))))
 
 (defn- answer->str [answer-set va-focus-areas-items id answer-type]
   (case (:fieldType answer-type)
