@@ -3,7 +3,7 @@ LEIN := ../lein
 
 SPECLJ_ARGS ?= -f d
 
-NPM_PROJECTS ?= soresu-form va-common va-hakija va-virkailija
+NPM_PROJECTS ?= va-hakija va-virkailija
 LEIN_PROJECTS ?= soresu-form va-common va-hakija va-admin-ui va-virkailija
 
 LEIN_CHECKOUTS_BASEDIRS := va-hakija/checkouts va-virkailija/checkouts
@@ -37,7 +37,7 @@ npm-clean: npm-clean-modules npm-clean-frontends
 
 .PHONY: npm-clean-modules
 npm-clean-modules: check-node
-	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_clean_modules,$(npm_project))$(newline))
+	rm -rf node_modules
 
 .PHONY: npm-clean-frontends
 npm-clean-frontends: check-node
@@ -49,16 +49,17 @@ npm-build: npm-install-modules npm-lint npm-build-frontends
 
 .PHONY: npm-install-modules
 npm-install-modules: check-node
-	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_install_modules,$(npm_project))$(newline))
+	npm install
 
 .PHONY: npm-lint
 npm-lint: check-node
-	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_lint,$(npm_project))$(newline))
+	npm run hakija:lint
+	npm run virkailija:lint
 
 .PHONY: npm-build-frontends
 npm-build-frontends: check-node
-	$(call npm_build,va-hakija)
-	$(call npm_build,va-virkailija)
+	npm run hakija:build-production
+	npm run virkailija:build-production
 
 .PHONY: npm-test
 npm-test: check-node
@@ -70,7 +71,7 @@ npm-outdated-dependencies: check-node
 
 .PHONY: npm-audit
 npm-audit: check-node
-	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_audit,$(npm_project))$(newline))
+	npm audit || true
 
 .PHONY: lein-clean
 lein-clean: lein-clean-frontends lein-clean-targets
@@ -195,42 +196,12 @@ Examples:
 See README.md for more.
 endef
 
-define npm_clean_modules
-cd '$(1)' && rm -fr node_modules
-endef
-
 define npm_clean_frontend
 cd '$(1)' && rm -fr resources/public/js
 endef
 
-define npm_install_modules
-cd '$(1)' && { npm install || { \
-  echo "WARN: npm install failed for $(1), trying workaround… <https://github.com/npm/npm/issues/17444>" && \
-  rm -fr node_modules package-lock.json && \
-  npm install && \
-  git checkout -- package-lock.json && \
-  npm install || npm install \
-  ; } }
-cd '$(1)' && { git status -s | wc -l | grep -q '\<0\>' || { \
-  echo "WARN: npm install for $(1) left changes in package-lock.json, discarding…" && \
-  git checkout -- package-lock.json \
-  ; } }
-endef
-
-define npm_lint
-cd '$(1)' && npm run lint
-endef
-
 define npm_test
 cd '$(1)' && npm run test
-endef
-
-define npm_build
-cd '$(1)' && npm run build-production
-endef
-
-define npm_audit
-cd '$(1)' && npm audit || true
 endef
 
 define npm_outdated_dependencies

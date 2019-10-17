@@ -6,9 +6,9 @@ repo="$( cd "$( dirname "$0" )" && pwd )"
 function main {
   init_nodejs
 
-  cd "$repo/va-virkailija"
+  cd "$repo"
   npm install
-  npm run build-watch
+  npm run virkailija:build-watch
 }
 
 function init_nodejs {

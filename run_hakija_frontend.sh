@@ -6,9 +6,9 @@ repo="$( cd "$( dirname "$0" )" && pwd )"
 function main {
   init_nodejs
 
-  cd "$repo/va-hakija"
+  cd "$repo"
   npm install
-  npm run build-watch
+  npm run hakija:build-watch
 }
 
 function init_nodejs {

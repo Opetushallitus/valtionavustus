@@ -62,9 +62,8 @@ const makeConfig = (webpack, basedir) => {
     },
     resolve: {
       alias: {
-        bluebird: path.resolve(basedir, "../soresu-form/node_modules/bluebird"),
-        react: path.resolve(basedir, 'node_modules/react'),
-        "react-dom": path.resolve(basedir, 'node_modules/react-dom')
+        "soresu-form": path.resolve(basedir, "../soresu-form"),
+        "va-common": path.resolve(basedir, "../va-common")
       }
     },
     plugins: plugins
