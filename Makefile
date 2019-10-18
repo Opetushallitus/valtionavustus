@@ -63,7 +63,8 @@ npm-build-frontends: check-node
 
 .PHONY: npm-test
 npm-test: check-node
-	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_test,$(npm_project))$(newline))
+	npm run hakija:test
+	npm run virkailija:test
 
 .PHONY: npm-outdated-dependencies
 npm-outdated-dependencies: check-node
@@ -198,10 +199,6 @@ endef
 
 define npm_clean_frontend
 cd '$(1)' && rm -fr resources/public/js
-endef
-
-define npm_test
-cd '$(1)' && npm run test
 endef
 
 define npm_outdated_dependencies
