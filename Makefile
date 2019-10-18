@@ -53,6 +53,8 @@ npm-install-modules: check-node
 
 .PHONY: npm-lint
 npm-lint: check-node
+	npm run soresu-form:lint
+	npm run common:lint
 	npm run hakija:lint
 	npm run virkailija:lint
 
@@ -63,12 +65,14 @@ npm-build-frontends: check-node
 
 .PHONY: npm-test
 npm-test: check-node
+	npm run soresu-form:test
+	npm run common:test
 	npm run hakija:test
 	npm run virkailija:test
 
 .PHONY: npm-outdated-dependencies
 npm-outdated-dependencies: check-node
-	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_outdated_dependencies,$(npm_project))$(newline))
+	npm outdated || true
 
 .PHONY: npm-audit
 npm-audit: check-node
@@ -199,12 +203,6 @@ endef
 
 define npm_clean_frontend
 cd '$(1)' && rm -fr resources/public/js
-endef
-
-define npm_outdated_dependencies
-@echo '$(1)'
-@cd '$(1)' && npm outdated || true
-@echo
 endef
 
 define lein_clean_target
