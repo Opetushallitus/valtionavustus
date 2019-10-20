@@ -4,6 +4,7 @@
             [oph.va.virkailija.remote-file-service :refer [RemoteFileService]]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.invoice :as invoice]
+            [oph.va.virkailija.payments-data :as payments-data]
             [clojure.tools.logging :as log]
             [clojure.string :as strc]
             [oph.va.virkailija.remote-file-service :refer :all]))
@@ -50,10 +51,13 @@
             (func :method :put :file file :path (:remote_path config)
                   :config config)]
         (if (nil? result)
-          {:success true}
+          (do
+            (payments-data/set-payment-sent-to-maksatuspalvelu payment)
+            {:success true})
           {:success false :value result}))
       (do
         (log/info (format "Would send %s to %s" file (:host-ip config)))
+        (payments-data/set-payment-sent-to-maksatuspalvelu payment)
         {:success true}))))
 
 (defrecord RondoFileService [configuration]
