@@ -4,6 +4,7 @@
                 :sv "http://localhost:8080/"}}
  :api {:restricted-routes? false}
  :form-db {:database-name "va-dev"}
+ :nrepl-enabled? true
  :email {:enabled? false
          :host "localhost"
          :port 2500}

@@ -18,7 +18,9 @@
                              :jvm-opts]}
 
   :dependencies [[oph-va/common]
-                 [com.novemberain/pantomime]]
+                 [com.novemberain/pantomime]
+                 [nrepl]
+                 [cider/cider-nrepl]]
 
   :profiles {:uberjar {:aot [oph.va.hakija.main]}
              :dev     {:env {:config "config/dev.edn"}}

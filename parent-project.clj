@@ -15,6 +15,8 @@
                                     :releases false}]]
 
   :managed-dependencies [[org.clojure/clojure "1.8.0"]
+                         [nrepl "0.6.0"]
+                         [cider/cider-nrepl "0.22.4"]
 
                          ;; our child projects
                          [oph/soresu "0.1.0-SNAPSHOT"]
@@ -90,7 +92,6 @@
                          [com.cemerick/piggieback "0.2.2"]
                          [binaryage/devtools "0.9.10"]
                          [figwheel-sidecar "0.5.16"]
-                         [org.clojure/tools.nrepl "0.2.13"]
                          [com.google.guava/guava "23.6-jre"
                           :exclusions [com.google.code.findbugs/jsr305]]
 

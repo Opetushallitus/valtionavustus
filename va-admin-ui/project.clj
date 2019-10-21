@@ -96,6 +96,6 @@
   :profiles {:dev {:dependencies [[com.cemerick/piggieback]
                                   [binaryage/devtools]
                                   [figwheel-sidecar]
-                                  [org.clojure/tools.nrepl]
+                                  [nrepl]
                                   [com.google.guava/guava]]}}
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]})
