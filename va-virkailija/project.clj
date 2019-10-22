@@ -27,7 +27,8 @@
                  [org.clojure/data.json]
                  [org.clojure/data.xml]
                  [clj-ssh]
-                 [clojurewerkz/quartzite]]
+                 [clojurewerkz/quartzite]
+                 [clj-pdf "2.4.0"]]
 
   :profiles {:uberjar {:aot [oph.va.virkailija.main]}
              :dev     {:env {:config "config/dev.edn"

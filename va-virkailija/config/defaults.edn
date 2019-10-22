@@ -51,4 +51,5 @@
  :va-code-values {:enabled? true}
  :reports {:enabled? true}
  :application-change {:refuse-enabled? false}
- :integration-healthcheck {:enabled? false}}
+ :integration-healthcheck {:enabled? false}
+ :create-tasmaytysraportti {:enabled? false}}}

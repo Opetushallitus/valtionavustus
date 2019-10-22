@@ -19,7 +19,8 @@
             [oph.va.virkailija.email :as email]
             [oph.va.virkailija.va-users :as va-users]
             [oph.va.virkailija.rondo-scheduling :as rondo-scheduling]
-            [oph.va.virkailija.healthcheck :as healthcheck]))
+            [oph.va.virkailija.healthcheck :as healthcheck]
+            [oph.va.virkailija.tasmaytysraportti :as tasmaytysraportti]))
 
 (defn- startup [config]
   (log/info "Startup, with configuration: " config)
@@ -34,7 +35,9 @@
     (rondo-scheduling/schedule-fetch-from-rondo))
   (when (get-in config [:integration-healthcheck :enabled?])
     (log/info "Starting scheduled healthcheck")
-    (healthcheck/start-schedule-status-update!)))
+    (healthcheck/start-schedule-status-update!))
+  (when (get-in config [:create-tasmaytysraportti :enabled?])
+    (tasmaytysraportti/start-schedule-create-tasmaytysraportti)))
 
 (defn- shutdown []
   (log/info "Shutting down...")
