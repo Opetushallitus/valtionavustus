@@ -208,6 +208,7 @@ export default class FormStateTransitions {
     } else if (serverOperation === serverOperations.initialSave) {
       dispatcher.push(events.serverError, {error: "unexpected-save-error"})
     } else if (serverOperation === serverOperations.autoSave) {
+      dispatcher.push(events.serverError, {error: "unexpected-save-error"})
       dispatcher.push(events.initAutoSave)
     } else if (serverOperation === serverOperations.refuseApplication) {
       dispatcher.push(events.serverError, {error: "unexpected-save-error"})
