@@ -15,6 +15,10 @@ function main {
   "$repo/ci/deploy_jar.bash" $APP_HOSTNAME.csc.fi va-virkailija "$repo"/va-virkailija/target/*uberjar*/virkailija-*-standalone.jar
 }
 
+function remove_all_files_ignored_by_git {
+  git clean -xdf
+}
+
 function set_env_vars {
   if [ "$ENV" = "qa" ]; then
     export APP_HOSTNAME="oph-va-app-test01"
@@ -47,5 +51,6 @@ function check_env {
   fi
 }
 
+remove_all_files_ignored_by_git
 check_env
 main "$@"
