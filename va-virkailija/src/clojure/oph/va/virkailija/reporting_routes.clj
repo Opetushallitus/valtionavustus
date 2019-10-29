@@ -4,7 +4,9 @@
    [schema.core :as s]
    [ring.util.http-response :refer [ok]]
    [oph.va.virkailija.schema :as schema]
-   [oph.va.virkailija.reporting-data :as data]))
+   [oph.va.virkailija.reporting-data :as data]
+   [oph.va.virkailija.tasmaytysraportti :as tasmaytysraportti])
+  (:import [java.io ByteArrayInputStream]))
 
 (compojure-api/defroutes routes
   "Reports"
@@ -36,4 +38,14 @@
     "/education-levels/" request
     :return s/Any
     :summary "Yearly education levels"
-    (ok (data/get-yearly-education-levels))))
+    (ok (data/get-yearly-education-levels)))
+
+  (compojure-api/GET
+   "/tasmaytys/avustushaku/:avustushaku-id" []
+   :path-params [avustushaku-id :- Long]
+   :summary "Avustushakukohtainen täsmäytysraportti"
+   (let [document (-> (tasmaytysraportti/get-tasmaytysraportti-by-avustushaku-id avustushaku-id)
+                      (ByteArrayInputStream.))]
+     (-> (ok document)
+         (assoc-in [:headers "Content-Type"] "application/pdf")
+         (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"tasmaytysraportti-avustushaku-" avustushaku-id ".pdf\""))))))

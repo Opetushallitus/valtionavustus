@@ -461,7 +461,8 @@
                        [:div
                         [payments-ui/batches-table {:batches @batches
                                                     :payments sent-payments}]
-                        [payments-ui/payments-table sent-payments]])]]))]]]))]
+                        [payments-ui/payments-table sent-payments]])
+                     [:a {:href (str "/api/v2/reports/tasmaytys/avustushaku/" (:id @selected-grant))} "Lataa täsmäytysraportti"]]]))]]]))]
        (when (user/is-admin? user-info)
          (render-admin-tools payments @selected-grant delete-payments?))]]]))
 

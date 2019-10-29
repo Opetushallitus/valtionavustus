@@ -39,9 +39,9 @@
   (let [rows (map #(select-keys % (keys fields-of-interest)) data)
         header [(map #(:title (% fields-of-interest)) (keys (first rows)))]
         sum (reduce + (map #(:bruttosumma %) data))
-        tmp-file (java.io.File/createTempFile (str "täsmäytysraportti-" tasmaytysraportti_date) ".pdf")]
+        tmp-file (java.io.File/createTempFile "täsmäytysraportti" ".pdf")]
 
-    (log/info (str "Creating täsmäytysraportti for date " tasmaytysraportti_date))
+    (log/info (str "Creating täsmäytysraportti " tmp-file))
 
     (pdf
      [{:size :a4
@@ -54,15 +54,16 @@
       (apply (partial pdf-table header) rows)]
      (output-stream tmp-file))
 
-    (log/info (str "Done creating täsmäytysraportti for " tasmaytysraportti_date))
-    (log/info (str "Storing täsmäytysraportti for " tasmaytysraportti_date))
+    (log/info (str "Done creating täsmäytysraportti " tmp-file))
+    tmp-file))
 
-    (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
-      (jdbc/execute!
-       connection
-       ["INSERT INTO tasmaytysraportit (tasmaytysraportti_date, contents, created_at) VALUES (?, ?, current_date)" tasmaytysraportti_date (get-bytes tmp-file)]))
-
-    (log/info (str "Succesfully stored täsmäytysraportti for " tasmaytysraportti_date))))
+(defn store-tasmaytysraportti [tasmaytysraportti_date tmp-file]
+  (log/info (str "Storing täsmäytysraportti for " tasmaytysraportti_date))
+  (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
+    (jdbc/execute!
+     connection
+     ["INSERT INTO tasmaytysraportit (tasmaytysraportti_date, contents, created_at) VALUES (?, ?, current_date)" tasmaytysraportti_date (get-bytes tmp-file)]))
+  (log/info (str "Succesfully stored täsmäytysraportti for " tasmaytysraportti_date)))
 
 (defn maybe-create-yesterdays-tasmaytysraportti []
   (log/info "Looking for unreported maksatus rows")
@@ -74,12 +75,23 @@
     (if (> rowcount 0)
       (do
         (log/info (str "Found " rowcount " unreported maksatus rows"))
-        (create-tasmaytysraportti tasmaytysraportti_date data))
+        (let [tmp-file (create-tasmaytysraportti tasmaytysraportti_date data)]
+          store-tasmaytysraportti [tasmaytysraportti_date tmp-file]))
       (log/info "No unreported maksatus rows found"))))
+
+(defn get-tasmaytysraportti-by-avustushaku-id [avustushaku-id]
+  (log/info "Looking for unreported maksatus rows")
+  (let [data (exec :virkailija-db
+                   virkailija-queries/get-tasmaytysraportti-by-avustuskahu-id-data
+                   {:avustushaku_id avustushaku-id})
+        tasmaytysraportti_date (:tasmaytysraportti_date (first data))
+        rowcount (count data)
+        tmp-file (create-tasmaytysraportti tasmaytysraportti_date data)]
+    (get-bytes tmp-file)))
 
 (defonce ^:private scheduler (atom nil))
 
-(defn start-schedule-create-tasmaytysraportti []
+(defn start-schedule-create-tasmaytysraportti-by-date []
   (when (nil? @scheduler)
     (reset! scheduler
             (scheduler/after
@@ -87,7 +99,7 @@
              :minute
              maybe-create-yesterdays-tasmaytysraportti))))
 
-(defn stop-schedule-create-tasmaytysraportti []
+(defn stop-schedule-create-tasmaytysraportti-by-date []
   (when (some? @scheduler)
     (scheduler/stop @scheduler)
     (reset! scheduler nil)))

@@ -36,8 +36,8 @@
   (when (get-in config [:integration-healthcheck :enabled?])
     (log/info "Starting scheduled healthcheck")
     (healthcheck/start-schedule-status-update!))
-  (when (get-in config [:create-tasmaytysraportti :enabled?])
-    (tasmaytysraportti/start-schedule-create-tasmaytysraportti)))
+  (when (get-in config [:create-tasmaytysraportti-by-date :enabled?])
+    (tasmaytysraportti/start-schedule-create-tasmaytysraportti-by-date)))
 
 (defn- shutdown []
   (log/info "Shutting down...")
