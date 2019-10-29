@@ -51,7 +51,8 @@
        {:header [["Päivämäärä" "Kappalemäärä" "Bruttosumma"]]}
        [5 5 5]
        (map #(pdf-cell %) [tasmaytysraportti_date (count rows) sum])]
-      (apply (partial pdf-table header) rows)]
+      (if (< 0 (count rows))
+        (apply (partial pdf-table header) rows))]
      (output-stream tmp-file))
 
     (log/info (str "Done creating täsmäytysraportti " tmp-file))
