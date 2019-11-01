@@ -1,34 +1,13 @@
 const path = require("path")
+const TerserPlugin = require('terser-webpack-plugin')
 
 const makeConfig = (webpack, basedir) => {
-  const plugins =
-    (process.env.NODE_ENV === "production"
-      ? [new webpack.DefinePlugin({
-          "process.env.NODE_ENV": JSON.stringify("production")
-        })]
-      : []
-    ).concat(
-      new webpack.optimize.CommonsChunkPlugin({
-        name: "commons",
-        filename: "js/commons.js"
-      }),
-      new webpack.ProvidePlugin({
-        Promise: "bluebird"
-      })
-    ).concat(process.env.NODE_ENV === "production"
-      ? [new webpack.optimize.UglifyJsPlugin({
-          uglifyOptions: {
-            compress: {warnings: false}
-          }
-        })]
-      : [])
-
   return {
+    mode: process.env.NODE_ENV || 'development',
     output: {
       path: path.resolve(basedir, "resources/public"),
       filename: "js/[name].js"
     },
-    devtool: process.env.NODE_ENV === "production" ? false : "eval-source-map",
     module: {
       rules: [
         {
@@ -66,7 +45,17 @@ const makeConfig = (webpack, basedir) => {
         "va-common": path.resolve(basedir, "../va-common")
       }
     },
-    plugins: plugins
+    optimization: {
+      splitChunks: {
+        cacheGroups: {
+          commons: {
+            test: /(soresu-form|va-common)/,
+            name: 'commons',
+            chunks: 'all'
+          }
+        }
+      }
+    }
   }
 }
 
