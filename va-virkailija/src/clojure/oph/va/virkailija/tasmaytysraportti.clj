@@ -8,7 +8,7 @@
   (:use [clojure.java.io]))
 
 (def fields-of-interest
-  {:toimintayksikko {:title "Toimintayksikko" :width 10}
+  {:toimintayksikko_koodi {:title "Toimintayksikko" :width 10}
    :toimittajan_nimi {:title "Toimittajan nimi" :width 10}
    :pankkitili {:title "Pankkitili" :width 10}
    :bruttosumma {:title "Bruttosumma" :width 10}
