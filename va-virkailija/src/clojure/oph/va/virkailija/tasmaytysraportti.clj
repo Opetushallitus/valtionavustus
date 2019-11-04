@@ -81,7 +81,6 @@
       (log/info "No unreported maksatus rows found"))))
 
 (defn get-tasmaytysraportti-by-avustushaku-id [avustushaku-id]
-  (log/info "Looking for unreported maksatus rows")
   (let [data (exec :virkailija-db
                    virkailija-queries/get-tasmaytysraportti-by-avustuskahu-id-data
                    {:avustushaku_id avustushaku-id})
