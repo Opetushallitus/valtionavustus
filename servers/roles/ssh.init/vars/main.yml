@@ -1,6 +1,6 @@
 adminusers:
   maximilian:
-    state: present
+    state: absent
     name: Maximilian Remming
   anttu:
     state: present
