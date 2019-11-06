@@ -8,15 +8,15 @@
   (:use [clojure.java.io]))
 
 (def fields-of-interest
-  {:toimintayksikko_koodi {:title "Toimintayksikko" :width 10}
+  {:toimintayksikko_koodi {:title "Toimintayksikkö" :width 10}
    :toimittajan_nimi {:title "Toimittajan nimi" :width 10}
    :pankkitili {:title "Pankkitili" :width 10}
    :bruttosumma {:title "Bruttosumma" :width 10}
-   :pitka_viite {:title "Pitka viite" :width 10}
+   :pitka_viite {:title "Pitkä viite" :width 10}
    :lkp_tili {:title "LKP-tili" :width 10}
    :takp_tili {:title "TAKP-tili" :width 10}
    :asiatarkastaja {:title "Asiatarkastaja" :width 10}
-   :hyvaksyja {:title "Hyvaksyja" :width 10}})
+   :hyvaksyja {:title "Hyväksyjä" :width 10}})
 
 (defn pdf-cell [value]
   [:pdf-cell [:phrase {:size 10 :family :helvetica :color [0 0 0]} value]])
