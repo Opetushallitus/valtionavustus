@@ -3,6 +3,4 @@ SELECT
 FROM
   v_tasmaytysraportti_data
 WHERE
-  avustushaku = :avustushaku_id
-AND
-  lahetetty_maksatuspalveluun IS NOT NULL;
+  avustushaku = :avustushaku_id;

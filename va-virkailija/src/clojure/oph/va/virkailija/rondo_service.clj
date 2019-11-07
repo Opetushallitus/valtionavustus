@@ -51,13 +51,10 @@
             (func :method :put :file file :path (:remote_path config)
                   :config config)]
         (if (nil? result)
-          (do
-            (payments-data/set-payment-sent-to-maksatuspalvelu payment)
-            {:success true})
+          {:success true}
           {:success false :value result}))
       (do
         (log/info (format "Would send %s to %s" file (:host-ip config)))
-        (payments-data/set-payment-sent-to-maksatuspalvelu payment)
         {:success true}))))
 
 (defrecord RondoFileService [configuration]

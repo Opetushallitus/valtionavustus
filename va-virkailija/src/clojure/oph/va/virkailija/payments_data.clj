@@ -199,7 +199,3 @@
            (application-data/get-applications-with-evaluation-by-grant
              grant-id))))))
   ([grant-id phase] (create-grant-payments grant-id phase system-user)))
-
-(defn set-payment-sent-to-maksatuspalvelu [payment]
-  (exec :virkailija-db queries/payment-set-sent-to-maksatuspalvelu {:id (:id payment)
-                                                                    :version (:version payment)}))

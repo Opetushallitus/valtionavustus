@@ -39,7 +39,6 @@
 (defquery get-payment-version "sql/virkailija/payments/get-payment-version.sql")
 (defquery payment-close-version
   "sql/virkailija/payments/payment-close-version.sql")
-(defquery payment-set-sent-to-maksatuspalvelu "sql/virkailija/payments/set-sent-to-maksatuspalvelu.sql")
 (defquery update-payment "sql/virkailija/payments/update-payment.sql")
 (defquery create-payment "sql/virkailija/payments/create-payment.sql")
 (defquery delete-payment "sql/virkailija/payments/delete-payment.sql")
