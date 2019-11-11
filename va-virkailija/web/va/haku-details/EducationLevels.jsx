@@ -135,7 +135,7 @@ export default class EducationLevels extends React.Component {
 
     return (
       <div className={enabled ? null : "haku-edit-disabled-form"}>
-        <h3>Koulutusasteet</h3>
+        <h3>Koulutusasteet (kirjoita momentti eli talousarviotili ottaaksesi käyttöön, esim. 29.10.30.20)</h3>
         <table className="education-levels-table">
           <tbody>
             {
