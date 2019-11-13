@@ -89,7 +89,7 @@
                 ["SELECT tasmaytysraportti_date, contents FROM tasmaytysraportit WHERE mailed_at IS NULL FOR UPDATE NOWAIT"])]
       (doseq [row rows]
         (let [tasmaytysraportti_date (:tasmaytysraportti_date row)
-              subject (str "Valtionavustustukset / Täsmäytysraportti / " tasmaytysraportti_date)
+              subject (str "Valtionavustukset / Täsmäytysraportti / " tasmaytysraportti_date)
               filename (str "valtionavustukset-tasmaytysraportti-" tasmaytysraportti_date ".pdf")
               to (-> email/smtp-config :to-palkeet)]
           (try
@@ -103,7 +103,7 @@
                                       :attachment {:title filename
                                                    :description subject
                                                    :contents (:contents row)}}
-                                     (fn [_] "Täsmäytysraportti liittenä"))
+                                     (fn [_] "Täsmäytysraportti liitteenä."))
             (jdbc/execute!
              connection
              ["UPDATE tasmaytysraportit SET mailed_at = now(), mailed_to = ? WHERE tasmaytysraportti_date = ?" to tasmaytysraportti_date])
