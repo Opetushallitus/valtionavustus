@@ -9,7 +9,9 @@
             [oph.common.email-utils :as email-utils]
             [oph.common.string :as common-string]
             [oph.common.background-job-supervisor :as job-supervisor])
-  (:import [org.apache.commons.mail SimpleEmail]))
+  (:import [org.apache.commons.mail SimpleEmail]
+           [org.apache.commons.mail MultiPartEmail]
+           [org.apache.commons.mail EmailAttachment]))
 
 (defn load-template [path]
   (->> path
@@ -44,6 +46,23 @@
   (when str
     (common-string/trim-ws str)))
 
+(defn create-attachment [data]
+  (let [tmp-file (java.io.File/createTempFile "filename" ".pdf")
+        a (EmailAttachment.)]
+    (with-open [o (clojure.java.io/output-stream tmp-file)]
+      (.write o (:contents data)))
+    (doto a
+      (.setPath (.getAbsolutePath tmp-file))
+      (.setDisposition EmailAttachment/ATTACHMENT)
+      (.setDescription (:description data))
+      (.setName (:name data)))
+    a))
+
+(defn simple-or-not [msg]
+  (if (:attachment msg)
+    (MultiPartEmail.)
+    (SimpleEmail.)))
+
 (defn- send-msg! [msg format-plaintext-message]
   (let [from            (common-string/trim-ws (:from msg))
         sender          (common-string/trim-ws (:sender msg))
@@ -51,6 +70,7 @@
         bcc             (trim-ws-or-nil (:bcc msg))
         reply-to        (trim-ws-or-nil (:reply-to msg))
         subject         (common-string/trim-ws (:subject msg))
+        attachment      (:attachment msg)
         msg-description (format "%s message from %s (with sender %s) to %s (lang: %s) with subject '%s'"
                                 (name (:type msg))
                                 from
@@ -61,7 +81,7 @@
     (log/info "Sending email:" msg-description)
     (let [email-msg (format-plaintext-message msg)
           make-email-obj (fn []
-                           (let [msg (SimpleEmail.)]
+                           (let [msg (simple-or-not msg)]
                              (doto msg
                                (.setHostName (:host smtp-config))
                                (.setSmtpPort (:port smtp-config))
@@ -74,6 +94,8 @@
                                (.addReplyTo msg reply-to))
                              (when bcc
                                (.addBcc msg bcc))
+                             (when attachment
+                               (.attach msg (create-attachment attachment)))
                              (doseq [address to]
                                (.addTo msg address))
                              msg))
