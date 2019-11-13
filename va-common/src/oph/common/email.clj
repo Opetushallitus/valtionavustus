@@ -11,7 +11,8 @@
             [oph.common.background-job-supervisor :as job-supervisor])
   (:import [org.apache.commons.mail SimpleEmail]
            [org.apache.commons.mail MultiPartEmail]
-           [org.apache.commons.mail EmailAttachment]))
+           [org.apache.commons.mail ByteArrayDataSource]
+           [java.io ByteArrayInputStream]))
 
 (defn load-template [path]
   (->> path
@@ -45,18 +46,6 @@
 (defn- trim-ws-or-nil [str]
   (when str
     (common-string/trim-ws str)))
-
-(defn create-attachment [data]
-  (let [tmp-file (java.io.File/createTempFile "filename" ".pdf")
-        a (EmailAttachment.)]
-    (with-open [o (clojure.java.io/output-stream tmp-file)]
-      (.write o (:contents data)))
-    (doto a
-      (.setPath (.getAbsolutePath tmp-file))
-      (.setDisposition EmailAttachment/ATTACHMENT)
-      (.setDescription (:description data))
-      (.setName (:name data)))
-    a))
 
 (defn simple-or-not [msg]
   (if (:attachment msg)
@@ -95,7 +84,9 @@
                              (when bcc
                                (.addBcc msg bcc))
                              (when attachment
-                               (.attach msg (create-attachment attachment)))
+                               (let [is (ByteArrayInputStream. (:contents attachment))
+                                     ds (ByteArrayDataSource. is, "application/pdf")]
+                                 (.attach msg ds (:title attachment) (:description attachment))))
                              (doseq [address to]
                                (.addTo msg address))
                              msg))
