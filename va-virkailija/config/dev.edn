@@ -12,4 +12,5 @@
          :to-finance ["test@test.com"]}
  :application-change {:refuse-enabled? true}
  :payments {:enabled? true
-            :delete-payments? true}}
+            :delete-payments? true}
+ :tasmaytysraportti-create {:enabled? true}}

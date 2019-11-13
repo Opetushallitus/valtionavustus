@@ -36,8 +36,8 @@
   (when (get-in config [:integration-healthcheck :enabled?])
     (log/info "Starting scheduled healthcheck")
     (healthcheck/start-schedule-status-update!))
-  (when (get-in config [:create-tasmaytysraportti-by-date :enabled?])
-    (tasmaytysraportti/start-schedule-create-tasmaytysraportti-by-date)))
+  (when (get-in config [:tasmaytysraportti-create :enabled?])
+    (tasmaytysraportti/start-schedule-create-tasmaytysraportti)))
 
 (defn- shutdown []
   (log/info "Shutting down...")
@@ -49,7 +49,10 @@
   (job-supervisor/await-jobs!)
   (rondo-scheduling/stop-schedule-from-rondo)
   (when (get-in config [:integration-healthcheck :enabled?])
-    (healthcheck/stop-schedule-status-update!)))
+    (healthcheck/stop-schedule-status-update!))
+  (when (get-in config [:tasmaytysraportti-create :enabled?])
+    (tasmaytysraportti/stop-schedule-create-tasmaytysraportti)))
+
 
 (defn- query-string-for-redirect-location [original-request]
   (if-let [original-query-string (:query-string original-request)]

@@ -120,17 +120,17 @@
         tmp-file (create-tasmaytysraportti tasmaytysraportti_date data)]
     (get-bytes tmp-file)))
 
-(defonce ^:private scheduler (atom nil))
+(defonce ^:private scheduler-report (atom nil))
 
-(defn start-schedule-create-tasmaytysraportti-by-date []
-  (when (nil? @scheduler)
-    (reset! scheduler
+(defn start-schedule-create-tasmaytysraportti []
+  (when (nil? @scheduler-report)
+    (reset! scheduler-report
             (scheduler/after
              1
              :minute
              maybe-create-yesterdays-tasmaytysraportti))))
 
-(defn stop-schedule-create-tasmaytysraportti-by-date []
-  (when (some? @scheduler)
-    (scheduler/stop @scheduler)
-    (reset! scheduler nil)))
+(defn stop-schedule-create-tasmaytysraportti []
+  (when (some? @scheduler-report)
+    (scheduler/stop @scheduler-report)
+    (reset! scheduler-report nil)))
