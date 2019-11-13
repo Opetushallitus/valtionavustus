@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.scheduler
   (:require [clojure.core.async
-             :refer [timeout go-loop chan poll! <! put! close!]]))
+             :refer [timeout go-loop chan poll! <! put! close!]]
+            [clojure.tools.logging :as log]))
 
 (def units
   {:millisecond 1
@@ -23,7 +24,7 @@
       (if (= (poll! c) :stop)
         (close! c)
         (do
-          (apply f args)
+          (try (apply f args) (catch Exception e (log/error e)))
           (recur))))
     c))
 
