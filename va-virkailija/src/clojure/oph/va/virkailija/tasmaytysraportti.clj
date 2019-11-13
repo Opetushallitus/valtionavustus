@@ -3,6 +3,7 @@
             [clojure.tools.logging :as log]
             [clojure.java.jdbc :as jdbc]
             [oph.va.virkailija.scheduler :as scheduler]
+            [oph.common.email :as email]
             [oph.va.virkailija.db.queries :as virkailija-queries])
   (:use clj-pdf.core)
   (:use [clojure.java.io]))
@@ -79,6 +80,36 @@
         (let [tmp-file (create-tasmaytysraportti tasmaytysraportti_date data)]
           store-tasmaytysraportti [tasmaytysraportti_date tmp-file]))
       (log/info "No unreported maksatus rows found"))))
+
+(defn send-unsent-tasmaytysraportti-mails []
+  (log/info "Looking for unsent täsymäytysraportit")
+  (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
+    (let [rows (jdbc/query
+                connection
+                ["SELECT tasmaytysraportti_date, contents FROM tasmaytysraportit WHERE mailed_at IS NULL FOR UPDATE NOWAIT"])]
+      (doseq [row rows]
+        (let [tasmaytysraportti_date (:tasmaytysraportti_date row)
+              subject (str "Valtionavustustukset / Täsmäytysraportti / " tasmaytysraportti_date)
+              filename (str "valtionavustukset-tasmaytysraportti-" tasmaytysraportti_date ".pdf")
+              to (-> email/smtp-config :to-palkeet)]
+          (try
+            (email/try-send-msg-once {:from (-> email/smtp-config :from :fi)
+                                      :reply-to (-> email/smtp-config :bounce-address)
+                                      :sender (-> email/smtp-config :sender)
+                                      :subject subject
+                                      :to to
+                                      :type "tasmaytysraportti"
+                                      :lang "fi"
+                                      :attachment {:title filename
+                                                   :description subject
+                                                   :contents (:contents row)}}
+                                     (fn [_] "Täsmäytysraportti liittenä"))
+            (jdbc/execute!
+             connection
+             ["UPDATE tasmaytysraportit SET mailed_at = now(), mailed_to = ? WHERE tasmaytysraportti_date = ?" to tasmaytysraportti_date])
+            (log/info (str "Succesfully send tasmaytysraportti for " tasmaytysraportti_date))
+            (catch Exception e
+              (log/warn e (str "Failed to send tasmaytysraportti for " tasmaytysraportti_date)))))))))
 
 (defn get-tasmaytysraportti-by-avustushaku-id [avustushaku-id]
   (let [data (exec :virkailija-db

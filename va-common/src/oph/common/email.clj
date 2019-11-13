@@ -139,6 +139,14 @@
                           send-fn))
       (log/error "Failed sending email:" msg-description))))
 
+(defn try-send-msg-once [msg format-plaintext-message]
+  (let [[msg-description send-fn] (create-mail-send-fn msg format-plaintext-message)]
+    (try
+      (send-fn)
+      (catch Exception e
+        (log/error e (format "Failed to send message: %s" (.getMessage e)))
+        (throw e)))))
+
 (defn start-loop-send-mails [mail-templates]
   (go
     (log/info "Starting background job: send mails...")

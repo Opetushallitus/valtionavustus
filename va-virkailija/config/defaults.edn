@@ -37,6 +37,7 @@
                 :sv "no-reply@statsunderstod.oph.fi"}
          :sender "no-reply@csc.fi"
          :to-finance ["test@test.com"]
+         :to-palkeet ["test@test.com"]
          :bounce-address "oph-va-alerts@reaktor.com"
          :print-mail-on-disable? true
          :retry-initial-wait 2000
