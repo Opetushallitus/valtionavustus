@@ -63,8 +63,8 @@
     (MultiPartEmail.)
     (SimpleEmail.)))
 
-(defn- send-msg! [msg format-plaintext-message]
-  (let [from            (common-string/trim-ws (:from msg))
+(defn create-mail-send-fn [msg format-plaintext-message]
+    (let [from            (common-string/trim-ws (:from msg))
         sender          (common-string/trim-ws (:sender msg))
         to              (mapv common-string/trim-ws (:to msg))
         bcc             (trim-ws-or-nil (:bcc msg))
@@ -129,11 +129,15 @@
                                      (.getHeaders email-obj)
                                      (.getSubject email-obj)
                                      email-msg)))))]
-      (when (not (try-send! (:retry-initial-wait smtp-config)
-                            (:retry-multiplier smtp-config)
-                            (:retry-max-time smtp-config)
-                            send-fn))
-        (log/error "Failed sending email:" msg-description)))))
+      [msg-description send-fn])))
+
+(defn- send-msg! [msg format-plaintext-message]
+  (let [[msg-description send-fn] (create-mail-send-fn msg format-plaintext-message)]
+    (when (not (try-send! (:retry-initial-wait smtp-config)
+                          (:retry-multiplier smtp-config)
+                          (:retry-max-time smtp-config)
+                          send-fn))
+      (log/error "Failed sending email:" msg-description))))
 
 (defn start-loop-send-mails [mail-templates]
   (go
