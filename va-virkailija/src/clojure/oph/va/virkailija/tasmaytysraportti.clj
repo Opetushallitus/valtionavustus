@@ -78,7 +78,7 @@
       (do
         (log/info (str "Found " rowcount " unreported maksatus rows"))
         (let [tmp-file (create-tasmaytysraportti tasmaytysraportti_date data)]
-          store-tasmaytysraportti [tasmaytysraportti_date tmp-file]))
+          (store-tasmaytysraportti tasmaytysraportti_date tmp-file)))
       (log/info "No unreported maksatus rows found"))))
 
 (defn send-unsent-tasmaytysraportti-mails []
