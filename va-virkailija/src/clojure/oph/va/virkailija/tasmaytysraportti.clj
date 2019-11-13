@@ -121,6 +121,7 @@
     (get-bytes tmp-file)))
 
 (defonce ^:private scheduler-report (atom nil))
+(defonce ^:private scheduler-mail (atom nil))
 
 (defn start-schedule-create-tasmaytysraportti []
   (when (nil? @scheduler-report)
@@ -134,3 +135,16 @@
   (when (some? @scheduler-report)
     (scheduler/stop @scheduler-report)
     (reset! scheduler-report nil)))
+
+(defn start-schedule-send-tasmaytysraportti []
+  (when (nil? @scheduler-mail)
+    (reset! scheduler-mail
+            (scheduler/after
+             1
+             :minute
+             send-unsent-tasmaytysraportti-mails))))
+
+(defn stop-schedule-send-tasmaytysraportti []
+  (when (some? @scheduler-mail)
+    (scheduler/stop @scheduler-mail)
+    (reset! scheduler-mail nil)))

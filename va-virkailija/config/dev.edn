@@ -13,4 +13,5 @@
  :application-change {:refuse-enabled? true}
  :payments {:enabled? true
             :delete-payments? true}
- :tasmaytysraportti-create {:enabled? true}}
+ :tasmaytysraportti-create {:enabled? true}
+ :tasmaytysraportti-send {:enabled? true}}

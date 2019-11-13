@@ -37,7 +37,9 @@
     (log/info "Starting scheduled healthcheck")
     (healthcheck/start-schedule-status-update!))
   (when (get-in config [:tasmaytysraportti-create :enabled?])
-    (tasmaytysraportti/start-schedule-create-tasmaytysraportti)))
+    (tasmaytysraportti/start-schedule-create-tasmaytysraportti))
+  (when (get-in config [:tasmaytysraportti-send :enabled?])
+    (tasmaytysraportti/start-schedule-send-tasmaytysraportti)))
 
 (defn- shutdown []
   (log/info "Shutting down...")
@@ -51,7 +53,9 @@
   (when (get-in config [:integration-healthcheck :enabled?])
     (healthcheck/stop-schedule-status-update!))
   (when (get-in config [:tasmaytysraportti-create :enabled?])
-    (tasmaytysraportti/stop-schedule-create-tasmaytysraportti)))
+    (tasmaytysraportti/stop-schedule-create-tasmaytysraportti))
+  (when (get-in config [:tasmaytysraportti-send :enabled?])
+    (tasmaytysraportti/stop-schedule-send-tasmaytysraportti)))
 
 
 (defn- query-string-for-redirect-location [original-request]
