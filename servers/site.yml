@@ -1,14 +1,17 @@
-- hosts: va_app
+- hosts: va_app va_loadbalancer va_build
   sudo: yes
   roles:
   - {role: ssh.init, tags: ['ssh']}
+
+- hosts: va_app
+  sudo: yes
+  roles:
   - {role: common, tags: ['common']}
   - {role: valtionavustus.app, tags: ['app']}
 
 - hosts: va_loadbalancer
   sudo: yes
   roles:
-  - {role: ssh.init, tags: ['ssh']}
   - {role: common}
   - {role: 3rdparty/info.haproxy, tags: ['update']}
   - {role: ssl-cert, tags: ['install', 'certs']}
@@ -17,7 +20,6 @@
 - hosts: va_build
   sudo: yes
   roles:
-  - {role: ssh.init, tags: ['ssh']}
   - {role: node, tags: ['nodejs']}
   - {role: common, tags: ['common']}
   - {role: buildmachine, tags: ['buildmachine']}
