@@ -20,7 +20,7 @@
   notify: Restart ssh
 
 - name: Create / delete users
-  user: name={{ item.key }} comment="{{ item.value.name }}" state={{ item.value.state }} remove=yes
+  user: name={{ item.key }} comment="{{ item.value.name }}" state={{ item.value.state }} remove=yes force=yes
   with_dict: "{{ adminusers }}"
 
 - name: Set authorized keys for individual users
