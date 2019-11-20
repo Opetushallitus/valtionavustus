@@ -15,17 +15,17 @@ adminusers:
     state: absent
     name: Juuso Strömberg
   pam:
-    state: present
+    state: absent
     name: Petri Ämmälä
   Silvast:
-    state: present
+    state: absent
     name: Anne-Mari Silvast
   stormaaja:
-    state: present
+    state: absent
     name: Matti Ahinko
   wallops:
-    state: present
+    state: absent
     name: WallOps
   teppo:
-    state: present
+    state: absent
     name: Teppo Juntunen
