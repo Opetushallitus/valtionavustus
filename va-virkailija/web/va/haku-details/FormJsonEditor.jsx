@@ -13,6 +13,9 @@ export default class FormJsonEditor extends React.Component {
     const onClick = () => {
       controller.saveForm(avustushaku, formDraft)
     }
+    const scrollToTop = () => {
+      window.scrollTo(0, 0)
+    }
 
     let parsedForm = formDraft
     let parseError = false
@@ -26,7 +29,10 @@ export default class FormJsonEditor extends React.Component {
     return formDraft ?
       <div className="form-json-editor">
         <h3>Hakulomakkeen sisältö</h3>
-        <button className="btn-fixed" type="button" disabled={disableSave} onClick={onClick}>Tallenna</button>
+        <div className="btn-fixed-container">
+          <button className="btn-fixed" type="button" onClick={scrollToTop}>Takaisin ylös</button>
+          <button className="btn-fixed" type="button" disabled={disableSave} onClick={onClick}>Tallenna</button>
+        </div>
         <span className="error">{parseError}</span>
         <textarea onChange={onChange} disabled={!userHasEditPrivilege || avustushaku.status === "published"} value={formDraft}/>
       </div>

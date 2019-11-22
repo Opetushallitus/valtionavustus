@@ -32,6 +32,9 @@ export default class SelvitysFormEditor extends React.Component {
     const onSaveForm = () => {
       controller.saveSelvitysForm(avustushaku, formDraft, selvitysType)
     }
+    const scrollToTop = () => {
+      window.scrollTo(0, 0)
+    }
 
     let parsedForm = formDraft
     let parseError = false
@@ -105,7 +108,10 @@ export default class SelvitysFormEditor extends React.Component {
         <div className="form-json-editor">
           <h3>Hakulomakkeen sisältö</h3>
           <span className="error">{parseError}</span>
-          <button className="btn-fixed" type="button" onClick={onSaveForm} disabled={disableSave}>Tallenna</button>
+          <div className="btn-fixed-container">
+            <button className="btn-fixed" type="button" onClick={scrollToTop}>Takaisin ylös</button>
+            <button className="btn-fixed" type="button" onClick={onSaveForm} disabled={disableSave}>Tallenna</button>
+          </div>
           <textarea onChange={onJsonChange} value={formDraft}/>
         </div>
       </div>
