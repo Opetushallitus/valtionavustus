@@ -2,6 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 
 import HttpUtil from "soresu-form/web/HttpUtil"
+import DateUtil from 'soresu-form/web/DateUtil'
 
 import FormEditor from './FormEditor.jsx'
 
@@ -16,6 +17,8 @@ export default class SelvitysFormEditor extends React.Component {
     const {avustushaku, controller, translations, koodistos, selvitysType,environment} = this.props
     const formDraft = this.props[selvitysType + "FormDraft"]
     const formContent = avustushaku[selvitysType + "Form"]
+    const updatedAt = formContent.updated_at
+    const formattedUpdatedDate = `${DateUtil.asDateString(updatedAt)} klo ${DateUtil.asTimeString(updatedAt)}`
 
     const previewUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/" + selvitysType
     const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/" + selvitysType + "?lang=sv"
@@ -88,6 +91,7 @@ export default class SelvitysFormEditor extends React.Component {
       <div>
         {selvitysType === 'valiselvitys' ? valiselvitysSection : loppuSelvitysSection}
         <button style={{float:'right'}} onClick={recreateForm}>Palauta alkuperäiset kysymykset</button>
+        {updatedAt && <div style={{float:'right',marginRight:20}}>Päivitetty: {formattedUpdatedDate}</div>}
         <div className="link-list">
           <div className="link-list-item">
             <h3>Lomakkeen esikatselu</h3>
