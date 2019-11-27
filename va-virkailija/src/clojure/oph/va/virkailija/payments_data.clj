@@ -52,7 +52,7 @@
     convert-to-dash-keys
     convert-timestamps-from-sql)))
 
-(defn- get-user-info [identity]
+(defn get-user-info [identity]
   {:user-oid (:person-oid identity)
    :user-name (format "%s %s" (:first-name identity) (:surname identity))})
 

@@ -98,3 +98,6 @@
 (defquery get-yesterdays-unprosessed-tasmaytysraportti-data "sql/virkailija/tasmaytysraportti/get-yesterdays-unprosessed-tasmaytysraportti-data.sql")
 (defquery get-tasmaytysraportti-by-avustuskahu-id-data "sql/virkailija/tasmaytysraportti/get-tasmaytysraportti-by-avustushaku-id-data.sql")
 (defquery store-tasmaytysraportti "sql/virkailija/tasmaytysraportti/store-tasmaytysraportti.sql")
+
+(defquery create-tapahtumaloki-entry "sql/virkailija/tapahtumaloki/create-tapahtumaloki-entry.sql")
+(defquery get-tapahtumaloki-entries "sql/virkailija/tapahtumaloki/get-tapahtumaloki-entries.sql")

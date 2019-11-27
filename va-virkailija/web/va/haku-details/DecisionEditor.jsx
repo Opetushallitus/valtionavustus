@@ -305,15 +305,42 @@ class ResendDecisions extends React.Component {
   }
 }
 
+class TapahtumaLoki extends React.Component {
+
+  dateTime(d) {
+    return `${DateUtil.asDateString(d)} ${DateUtil.asTimeString(d)}`
+  }
+
+  render() {
+    return (
+      <div className={'tapahtumaloki'}>
+        <div className={'header'}>Lähetetyt päätökset</div>
+        <div className={'entries'}>
+        {
+          this.props.lahetykset.map((l, i) => (
+            <div key={i} className={'entry'}>
+              <span>{this.dateTime(l.created_at)}</span>
+              <span>{l.user_name}</span>
+            </div>
+          ))
+        }
+        </div>
+      </div>
+    )
+  }
+}
+
 class DecisionDateAndSend extends React.Component {
   constructor(props){
     super(props)
     this.state = {preview:false, refuseEnabled: props.environment["application-change"]["refuse-enabled?"]}
     this.rerenderParentCallback = this.rerenderParentCallback.bind(this);
+    this.fetchLahetetytPaatokset = this.fetchLahetetytPaatokset.bind(this)
   }
 
   rerenderParentCallback() {
     this.fetchEmailState(this.props.avustushaku.id)
+    this.fetchLahetetytPaatokset(this.props.avustushaku.id)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -325,6 +352,7 @@ class DecisionDateAndSend extends React.Component {
 
   componentDidMount() {
     this.fetchEmailState(this.props.avustushaku.id)
+    this.fetchLahetetytPaatokset(this.props.avustushaku.id)
   }
 
   render(){
@@ -382,6 +410,25 @@ class DecisionDateAndSend extends React.Component {
     })
   }
 
+  fetchLahetetytPaatokset(avustushakuId) {
+    const sendS = Bacon.fromPromise(HttpUtil.get(`/api/paatos/tapahtuma/lahetys/${avustushakuId}`,{}))
+    sendS.onValue(lahetykset => {
+      this.setState({ lahetykset })
+    })
+  }
+
+  hasLahetetytPaatokset() {
+    return typeof this.state.lahetykset !== 'undefined'
+      && Array.isArray(this.state.lahetykset)
+      && this.state.lahetykset.length > 0
+  }
+
+  showTapahtumaLokiOrViimeisinLahetys() {
+    return this.hasLahetetytPaatokset() ?
+      <TapahtumaLoki lahetykset={this.state.lahetykset} /> :
+      <strong>{this.state.sent} päätöstä lähetetty {this.sentTimeStamp()}</strong>
+  }
+
   sendControls(rerenderParentCallback) {
     const onPreview = () => {
       this.setState({...this.state, preview:true})
@@ -393,6 +440,7 @@ class DecisionDateAndSend extends React.Component {
       const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/sendall/${this.props.avustushaku.id}`,{}))
       sendS.onValue((res)=>{
           this.setState({...this.state, count:res.count, sent:res.sent, sentTime: res['sent-time'],paatokset:res.paatokset, sending: false})
+          this.fetchLahetetytPaatokset(this.props.avustushaku.id)
         }
       )
     }
@@ -422,9 +470,10 @@ class DecisionDateAndSend extends React.Component {
       {!this.mailsToSend() && <RegenerateDecisions avustushaku={this.props.avustushaku}/>}
       {this.state.sent !== 0 && <ResendDecisions avustushaku={this.props.avustushaku} sent={this.state.sent} reload={rerenderParentCallback}/>}
       {this.state.preview && <button onClick={onSend}>Vahvista lähetys</button>}
+
       {this.sentOk() &&
         <div>
-          <strong>{this.state.sent} päätöstä lähetetty {this.sentTimeStamp()}</strong>
+          { this.showTapahtumaLokiOrViimeisinLahetys() }
           <table className="table table--sm table--views">
             <colgroup>
               <col width="60%"/>
