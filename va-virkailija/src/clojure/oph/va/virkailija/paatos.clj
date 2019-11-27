@@ -16,6 +16,7 @@
       [oph.soresu.common.config :refer [config]]
       [oph.va.virkailija.application-data :refer [get-application-token create-application-token]]
       [oph.va.virkailija.payments-data :as payments-data]
+      [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]
       [oph.va.virkailija.authentication :as authentication]))
 
 (defn is-notification-email-field? [field]
@@ -159,6 +160,7 @@
                                      avustushaku-id 0 (authentication/get-request-identity request))))
                            (log/info "Send all paatos ids " ids)
                            (run! send-paatos-for-all ids)
+                           (tapahtumaloki/create-paatoksen-lahetys-entry avustushaku-id (authentication/get-request-identity request))
                            (ok (merge {:status "ok"}
                                       (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))
 
@@ -167,6 +169,7 @@
                       (let [ids (get-hakemus-ids-to-resend avustushaku-id)]
                            (log/info "Send all paatos ids " ids)
                            (run! resend-paatos-for-all ids)
+                           (tapahtumaloki/create-paatoksen-lahetys-entry avustushaku-id (authentication/get-request-identity request))
                            (ok (merge {:status "ok"}
                                       (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))
 
@@ -177,6 +180,11 @@
                            (log/info "Regenereate " ids)
                            (run! regenerate-paatos ids)
                            (ok {:status "ok"})))
+
+  (compojure-api/GET
+    "/tapahtuma/lahetys/:avustushaku-id" []
+    :path-params [avustushaku-id :- Long]
+    (ok (tapahtumaloki/get-paatoksen-lahetys-entries avustushaku-id)))
 
   (compojure-api/GET "/sent/:avustushaku-id" []
                      :path-params [avustushaku-id :- Long]
