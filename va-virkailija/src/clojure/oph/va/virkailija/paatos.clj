@@ -35,7 +35,7 @@
              emails (vec (remove nil? (distinct (emails-from-answers answers))))]
             emails))
 
-(defn send-paatos [hakemus-id emails]
+(defn send-paatos [hakemus-id emails batch-id identity]
       (let [hakemus (hakija-api/get-hakemus hakemus-id)
             avustushaku-id (:avustushaku hakemus)
             avustushaku (hakija-api/get-avustushaku avustushaku-id)
@@ -45,14 +45,23 @@
             token (when (get-in config [:application-change :refuse-enabled?])
                         (create-application-token (:id hakemus)))]
            (log/info "Sending paatos email for hakemus" hakemus-id " to " emails)
-           (if (and (some? token) (not= (:status arvio) "rejected"))
-             (email/send-paatos-refuse!
-               emails avustushaku hakemus presenting-officer-email token)
-             (email/send-paatos! emails avustushaku hakemus presenting-officer-email))
+           (try
+             (if (and (some? token) (not= (:status arvio) "rejected"))
+               (email/send-paatos-refuse!
+                 emails avustushaku hakemus presenting-officer-email token)
+               (email/send-paatos! emails avustushaku hakemus presenting-officer-email))
+
+             (tapahtumaloki/create-paatoksen-lahetys-entry
+               avustushaku-id hakemus-id identity batch-id emails true)
+
+             (catch Exception e
+               (tapahtumaloki/create-paatoksen-lahetys-entry
+                 avustushaku-id hakemus-id identity batch-id emails false)))
+
            (hakija-api/add-paatos-sent-emails hakemus emails decision)
            (ok {:status "sent" :hakemus hakemus-id :emails emails})))
 
-(defn resend-paatos [hakemus-id emails]
+(defn resend-paatos [hakemus-id emails batch-id identity]
       (let [hakemus (hakija-api/get-hakemus hakemus-id)
             avustushaku-id (:avustushaku hakemus)
             avustushaku (hakija-api/get-avustushaku avustushaku-id)
@@ -61,23 +70,43 @@
             arvio (virkailija-db/get-arvio hakemus-id)
             token (when (get-in config [:application-change :refuse-enabled?])
                         (create-application-token (:id hakemus)))]
-           (log/info "Reending paatos email for hakemus" hakemus-id " to " emails)
-           (if (and (some? token) (not= (:status arvio) "rejected"))
-             (email/send-paatos-refuse!
-               emails avustushaku hakemus presenting-officer-email token)
-             (email/send-paatos! emails avustushaku hakemus presenting-officer-email))
+           (log/info "Resending paatos email for hakemus" hakemus-id " to " emails)
+
+           (try
+             (if (and (some? token) (not= (:status arvio) "rejected"))
+               (email/send-paatos-refuse!
+                 emails avustushaku hakemus presenting-officer-email token)
+               (email/send-paatos! emails avustushaku hakemus presenting-officer-email))
+
+             (tapahtumaloki/create-paatoksen-lahetys-entry
+               avustushaku-id hakemus-id identity batch-id emails true)
+
+             (catch Exception _
+               (tapahtumaloki/create-paatoksen-lahetys-entry
+                 avustushaku-id hakemus-id identity batch-id emails false)))
+
            (hakija-api/update-paatos-sent-emails hakemus emails decision)
            (ok {:status "sent" :hakemus hakemus-id :emails emails})))
 
-(defn re-send-paatos-email [hakemus-id]
+(defn re-send-paatos-email [hakemus-id batch-id identity]
       (let [emails (paatos-emails hakemus-id)
             hakemus (hakija-api/get-hakemus hakemus-id)
             avustushaku-id (:avustushaku hakemus)
             avustushaku (hakija-api/get-avustushaku avustushaku-id)
             presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)
             token (get-application-token hakemus-id)]
-           (email/send-paatos-refuse!
-             emails avustushaku hakemus presenting-officer-email token)
+
+           (try
+             (email/send-paatos-refuse!
+               emails avustushaku hakemus presenting-officer-email token)
+
+             (tapahtumaloki/create-paatoksen-lahetys-entry
+               avustushaku-id hakemus-id identity batch-id emails true)
+
+             (catch Exception _
+               (tapahtumaloki/create-paatoksen-lahetys-entry
+                 avustushaku-id hakemus-id identity batch-id emails false)))
+
            (ok {:status "sent" :hakemus hakemus-id :emails emails})))
 
 (defn regenerate-paatos [hakemus-id]
@@ -88,15 +117,15 @@
            (hakija-api/update-paatos-decision hakemus-id decision)
            (ok {:status "regenerated"})))
 
-(defn send-paatos-for-all [hakemus-id]
+(defn send-paatos-for-all [batch-id identity hakemus-id]
       (log/info "send-paatos-for-all" hakemus-id)
       (let [emails (paatos-emails hakemus-id)]
-           (send-paatos hakemus-id emails)))
+           (send-paatos hakemus-id emails batch-id identity)))
 
-(defn resend-paatos-for-all [hakemus-id]
-      (log/info "rexsend-paatos-for-all" hakemus-id)
+(defn resend-paatos-for-all [batch-id identity hakemus-id]
+      (log/info "resend-paatos-for-all" hakemus-id)
       (let [emails (paatos-emails hakemus-id)]
-           (resend-paatos hakemus-id emails)))
+           (resend-paatos hakemus-id emails batch-id identity)))
 
 (defn send-selvitys-for-all [avustushaku-id selvitys-type hakemus-id]
       (log/info "send-loppuselvitys-for-all" hakemus-id)
@@ -152,24 +181,24 @@
 
   (compojure-api/POST "/sendall/:avustushaku-id" [:as request]
                       :path-params [avustushaku-id :- Long]
-                      (let [ids (get-hakemus-ids-to-send avustushaku-id)]
+                      (let [ids (get-hakemus-ids-to-send avustushaku-id)
+                            uuid (.toString (java.util.UUID/randomUUID))]
                            (when (get-in config [:payments :enabled?])
                                  (do
                                    (log/info "Create initial payment for applications")
                                    (payments-data/create-grant-payments
                                      avustushaku-id 0 (authentication/get-request-identity request))))
                            (log/info "Send all paatos ids " ids)
-                           (run! send-paatos-for-all ids)
-                           (tapahtumaloki/create-paatoksen-lahetys-entry avustushaku-id (authentication/get-request-identity request))
+                           (run! (partial send-paatos-for-all uuid (authentication/get-request-identity request)) ids)
                            (ok (merge {:status "ok"}
                                       (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))
 
   (compojure-api/POST "/resendall/:avustushaku-id" [:as request]
                       :path-params [avustushaku-id :- Long]
-                      (let [ids (get-hakemus-ids-to-resend avustushaku-id)]
+                      (let [ids (get-hakemus-ids-to-resend avustushaku-id)
+                            uuid (.toString (java.util.UUID/randomUUID))]
                            (log/info "Send all paatos ids " ids)
-                           (run! resend-paatos-for-all ids)
-                           (tapahtumaloki/create-paatoksen-lahetys-entry avustushaku-id (authentication/get-request-identity request))
+                           (run! (partial resend-paatos-for-all uuid (authentication/get-request-identity request)) ids)
                            (ok (merge {:status "ok"}
                                       (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))
 

@@ -560,12 +560,40 @@ table.translation {
 
   .entries {
 
+    div.entry:nth-child(even) {
+      background-color: @lighterer-gray;
+    }
+
     .entry {
-      margin-left: 20px;
+      display: flex;
+      text-align: center;
+
       font-size: 12px;
 
-      span:not(:first-child) {
+      span:first-child {
         margin-left: 20px;
+        text-align: left;
+      }
+
+      span.timestamp {
+        width: 15%;
+      }
+
+      span.sender {
+        width: 20%;
+      }
+
+      span.sentCount {
+        width: 10%;
+        min-width: 70px;
+      }
+
+      span.failedCount {
+        width: 15%;
+      }
+
+      span.header {
+        font-weight: 700;
       }
     }
   }

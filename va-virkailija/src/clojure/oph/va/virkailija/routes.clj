@@ -245,12 +245,13 @@
                       (paatos/send-selvitys-emails avustushaku-id selvitys-type)))
 
 (defn- re-send-paatos-email []
-  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/re-send-paatos" []
+  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/re-send-paatos" request
                       :path-params [avustushaku-id :- Long hakemus-id :- Long]
                       :return s/Any
                       :summary "Re-sends paatos emails"
                       (log/info  (str "Re-send emails for application " hakemus-id))
-                      (paatos/re-send-paatos-email hakemus-id)))
+                      (paatos/re-send-paatos-email
+                        hakemus-id (.toString (java.util.UUID/randomUUID)) (authentication/get-request-identity request))))
 
 (defn- post-change-request-email []
   (compojure-api/POST "/:avustushaku-id/change-request-email" []

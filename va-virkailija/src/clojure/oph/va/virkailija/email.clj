@@ -83,7 +83,7 @@
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])]
     (log/info "Url would be: " url)
-    (>!! email/mail-chan {:operation :send
+    (email/try-send-msg-once {
                           :type :paatos
                           :lang lang
                           :from (-> email/smtp-config :from lang)
@@ -94,7 +94,9 @@
                           :to to
                           :url url
                           :register-number (:register_number hakemus)
-                          :project-name (:project_name hakemus)})))
+                          :project-name (:project_name hakemus)}
+
+                           (partial render (get-in mail-templates [:paatos lang])))))
 
 (defn send-paatos-refuse! [to avustushaku hakemus reply-to token]
   (let [lang-str (:language hakemus)
@@ -108,7 +110,7 @@
         mail-subject (get-in mail-titles [:paatos lang])]
     (log/info "Sending decision email with refuse link")
     (log/info "Urls would be: " url "\n" paatos-refuse-url)
-    (>!! email/mail-chan {:operation :send
+    (email/try-send-msg-once {
                           :type :paatos-refuse
                           :lang lang
                           :from (-> email/smtp-config :from lang)
@@ -121,7 +123,9 @@
                           :refuse-url paatos-refuse-url
                           :modify-url paatos-modify-url
                           :register-number (:register_number hakemus)
-                          :project-name (:project_name hakemus)})))
+                          :project-name (:project_name hakemus)}
+
+                          (partial render (get-in mail-templates [:paatos-refuse lang])))))
 
 
 (defn send-selvitys! [to hakemus mail-subject mail-message]
