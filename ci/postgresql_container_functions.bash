@@ -61,7 +61,7 @@ function give_schema_to_va() {
 }
 
 function create_va_virkailija_user() {
-  store_sql_script_to_container "create user va_virkailija superuser with password 'va'; grant create on database \\\"va-test\\\" to va_virkailija; " /tmp/create_va_virkailija.bash
+  store_sql_script_to_container "create user va_virkailija with password 'va'; alter user va_virkailija with superuser; grant create on database \\\"va-test\\\" to va_virkailija; " /tmp/create_va_virkailija.bash
   exec_in_container /tmp/create_va_virkailija.bash
 }
 
