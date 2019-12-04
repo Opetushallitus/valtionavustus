@@ -58,7 +58,7 @@ const makeState = ({hakemus, selvitysType, selvitysHakemus, avustushaku, userInf
     : []
 
   return {
-    message: translator.translate("default-message", lang, "", {
+    message: translator.translate(selvitysType + "-default-message", lang, "", {
       "selvitys-type-lowercase": selvitysTypeLowercase,
       "selvitys-type-capitalized": selvitysTypeCapitalized,
       "project-name": projectName,
