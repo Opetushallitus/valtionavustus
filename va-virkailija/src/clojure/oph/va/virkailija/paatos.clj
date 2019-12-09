@@ -54,7 +54,7 @@
              (tapahtumaloki/create-paatoksen-lahetys-entry
                avustushaku-id hakemus-id identity batch-id emails true)
 
-             (catch Exception e
+             (catch Exception _
                (tapahtumaloki/create-paatoksen-lahetys-entry
                  avustushaku-id hakemus-id identity batch-id emails false)))
 
@@ -94,11 +94,15 @@
             avustushaku-id (:avustushaku hakemus)
             avustushaku (hakija-api/get-avustushaku avustushaku-id)
             presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)
-            token (get-application-token hakemus-id)]
+            arvio (virkailija-db/get-arvio hakemus-id)
+            token (when (get-in config [:application-change :refuse-enabled?])
+                        (create-application-token (:id hakemus)))]
 
            (try
-             (email/send-paatos-refuse!
-               emails avustushaku hakemus presenting-officer-email token)
+             (if (and (some? token) (not= (:status arvio) "rejected"))
+               (email/send-paatos-refuse!
+                 emails avustushaku hakemus presenting-officer-email token)
+               (email/send-paatos! emails avustushaku hakemus presenting-officer-email))
 
              (tapahtumaloki/create-paatoksen-lahetys-entry
                avustushaku-id hakemus-id identity batch-id emails true)
