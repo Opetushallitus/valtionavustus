@@ -35,7 +35,7 @@
 
 (defn- merge-with-secrets [config]
   (if-let [secrets-config secrets]
-    (merge-with merge secrets-config config)
+    (merge-with merge config secrets-config)
     config))
 
 (def config
@@ -43,5 +43,5 @@
     (->> (or (env :config) "config/dev.edn")
          (slurp)
          (clojure.edn/read-string)
-         (merge-with-defaults)
-         (merge-with-secrets))))
+         (merge-with-secrets)
+         (merge-with-defaults))))
