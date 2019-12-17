@@ -45,9 +45,3 @@
          (clojure.edn/read-string)
          (merge-with-secrets)
          (merge-with-defaults))))
-
-(defn without-authentication? []
-  (let [use-fake-auth (-> config :server :without-authentication?)]
-    (when (and use-fake-auth (not= "dev" environment))
-      (throw (Exception. (str "Disabling authentication is allowed only in dev environment (env=" environment ")"))))
-    use-fake-auth))

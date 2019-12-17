@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.authentication
   (:use [clojure.tools.trace :only [trace]])
-  (:require [oph.soresu.common.config :refer [config environment without-authentication?]]
+  (:require [oph.soresu.common.config :refer [config environment]]
             [oph.va.virkailija.cas :as cas]
             [oph.va.virkailija.va-users :as va-users]
             [oph.common.background-job-supervisor :as job-supervisor]
@@ -74,20 +74,8 @@
       true)
     (log/warn "Login failed for CAS ticket " cas-ticket)))
 
-(def fake-admin-identity
-  {:email nil
-   :first-name "Fake"
-   :lang "fi"
-   ; oid of user "_ valtionavustus" on testiopintopolku.fi
-   :person-oid "1.2.246.562.24.15653262222"
-   :privileges ["va-admin"]
-   :surname "Admin"
-   :username "fakeadmin"})
-
 (defn- get-identity [cas-ticket]
-  (if (without-authentication?)
-      fake-admin-identity
-      (get-in @session-store [cas-ticket :identity])))
+  (get-in @session-store [cas-ticket :identity]))
 
 (defn get-request-identity [request]
   (get-identity (-> request :session :cas-ticket)))
