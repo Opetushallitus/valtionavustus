@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-source /etc/profile.d/npm.sh
-
 set -euo pipefail
 
 function cd_project_root_dir() {
