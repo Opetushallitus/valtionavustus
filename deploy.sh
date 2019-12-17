@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
+node_version="12.13.1"
+npm_version="6.13.4"
 repo="$( cd "$( dirname "$0" )" && pwd )"
 
 function main {
@@ -33,9 +35,9 @@ function set_env_vars {
 function init_nodejs {
   export NVM_DIR="${NVM_DIR:-$HOME/.cache/nvm}"
   source "$repo/nvm.sh"
-  nvm use 8.16.1 || nvm install 8.16.1
-  if [ "$(npm --version)" != "6.10.2" ]; then
-    npm install -g npm@6.10.2
+  nvm use "$node_version" || nvm install "$node_version"
+  if [ "$(npm --version)" != "$npm_version" ]; then
+    npm install -g "npm@${npm_version}"
   fi
 }
 
