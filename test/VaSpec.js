@@ -112,6 +112,91 @@ describeBrowser("VaSpec", function() {
     const logEntryCount = await tapahtumaloki.evaluate(e => e.querySelectorAll(".entry").length)
     assert.strictEqual(logEntryCount, 1)
   })
+
+  it("shows the same updated date on the Päätös tab as on the Väliselvitys and Loppuselvitys tabs", async function() {
+    const {page} = this
+    await loginVirkailija(page)
+
+    const avustushakuName = mkAvustushakuName()
+    console.log(`Avustushaku name for test: ${avustushakuName}`)
+
+    // Copy esimerkkihaku
+    await navigate(page, "/admin/haku-editor/")
+    await clickElement(page, ".haku-filter-remove")
+    await clickElementWithText(page, "td", "Yleisavustus - esimerkkihaku")
+    await clickElementWithText(page, "a", "Kopioi uuden pohjaksi")
+    await page.waitFor(2000) // :|
+
+    const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku"))
+    console.log(`Avustushaku ID: ${avustushakuID}`)
+
+    await clearAndType(page, "#register-number", "230/2015")
+    await clearAndType(page, "#haku-name-fi", avustushakuName)
+    await clearAndType(page, "#hakuaika-start", "1.1.1970 0.00")
+    const nextYear = (new Date()).getFullYear() + 1
+    await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
+    await waitForSave(page, avustushakuID)
+
+    await clickElementWithText(page, "span", "Päätös")
+    const paatosUpdatedAt = textContent(page, "#paatosUpdatedAt")
+
+    await clickElementWithText(page, "span", "Väliselvitys")
+    const valiselvitysUpdatedAt = textContent(page, "#valiselvitysUpdatedAt")
+
+    await clickElementWithText(page, "span", "Loppuselvitys")
+    const loppuselvitysUpdatedAt = textContent(page, "#loppuselvitysUpdatedAt")
+
+    return Promise.all([paatosUpdatedAt, valiselvitysUpdatedAt, loppuselvitysUpdatedAt])
+      .then(([paatos, valiselvitys, loppuselvitys]) => {
+        assert.equal(paatos, valiselvitys)
+        assert.equal(paatos, loppuselvitys)
+      })
+  })
+
+  it("updates only the update date on Päätös tab when päätös is modified", async function() {
+    const {page} = this
+    await loginVirkailija(page)
+
+    const avustushakuName = mkAvustushakuName()
+    console.log(`Avustushaku name for test: ${avustushakuName}`)
+
+    // Copy esimerkkihaku
+    await navigate(page, "/admin/haku-editor/")
+    await clickElement(page, ".haku-filter-remove")
+    await clickElementWithText(page, "td", "Yleisavustus - esimerkkihaku")
+    await clickElementWithText(page, "a", "Kopioi uuden pohjaksi")
+    await page.waitFor(2000) // :|
+
+    const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku"))
+    console.log(`Avustushaku ID: ${avustushakuID}`)
+
+    await clearAndType(page, "#register-number", "230/2015")
+    await clearAndType(page, "#haku-name-fi", avustushakuName)
+    await clearAndType(page, "#hakuaika-start", "1.1.1970 0.00")
+    const nextYear = (new Date()).getFullYear() + 1
+    await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
+    await waitForSave(page, avustushakuID)
+
+    await clickElementWithText(page, "span", "Päätös")
+
+    await page.waitFor(70000)
+    await clearAndType(page, "#decision\\.taustaa\\.fi", "Burger Time")
+    await waitForSave(page, avustushakuID)
+
+    const paatosUpdatedAt = textContent(page, "#paatosUpdatedAt")
+
+    await clickElementWithText(page, "span", "Väliselvitys")
+    const valiselvitysUpdatedAt = textContent(page, "#valiselvitysUpdatedAt")
+
+    await clickElementWithText(page, "span", "Loppuselvitys")
+    const loppuselvitysUpdatedAt = textContent(page, "#loppuselvitysUpdatedAt")
+
+    return Promise.all([paatosUpdatedAt, valiselvitysUpdatedAt, loppuselvitysUpdatedAt])
+      .then(([paatos, valiselvitys, loppuselvitys]) => {
+        assert.equal(valiselvitys, loppuselvitys)
+        assert.notEqual(paatos, valiselvitys)
+      })
+  })
 })
 
 async function sendPäätös(page, avustushakuID) {

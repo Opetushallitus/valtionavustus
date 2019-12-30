@@ -26,3 +26,4 @@ insert into archived_avustushaut (
     operation_id
   from avustushaut
   where id = :id
+returning decision::jsonb

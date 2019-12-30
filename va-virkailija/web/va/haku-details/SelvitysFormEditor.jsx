@@ -17,6 +17,7 @@ export default class SelvitysFormEditor extends React.Component {
     const {avustushaku, controller, translations, koodistos, selvitysType,environment} = this.props
     const formDraft = this.props[selvitysType + "FormDraft"]
     const formContent = avustushaku[selvitysType + "Form"]
+    const updatedAtElementId = `${selvitysType}UpdatedAt`
     const updatedAt = formContent.updated_at
     const formattedUpdatedDate = `${DateUtil.asDateString(updatedAt)} klo ${DateUtil.asTimeString(updatedAt)}`
 
@@ -91,7 +92,7 @@ export default class SelvitysFormEditor extends React.Component {
       <div>
         {selvitysType === 'valiselvitys' ? valiselvitysSection : loppuSelvitysSection}
         <button style={{float:'right'}} onClick={recreateForm}>Palauta alkuperäiset kysymykset</button>
-        {updatedAt && <div style={{float:'right',marginRight:20}}>Päivitetty: {formattedUpdatedDate}</div>}
+        {updatedAt && <div id={updatedAtElementId} style={{float:'right',marginRight:20}}>Päivitetty: {formattedUpdatedDate}</div>}
         <div className="link-list">
           <div className="link-list-item">
             <h3>Lomakkeen esikatselu</h3>

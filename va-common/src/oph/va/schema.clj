@@ -118,6 +118,7 @@
    (s/optional-key :valmistelija) LocalizedStringOptional
    (s/optional-key :hyvaksyminen) LocalizedStringOptional
    (s/optional-key :liitteet) [Liite]
+   (s/optional-key :updatedAt) s/Str
   }
 )
 (s/defschema AvustusHaku {:id Long

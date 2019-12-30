@@ -1,5 +1,6 @@
 (ns oph.va.hakija.api
   (:use [clojure.tools.trace :only [trace]]
+        [clojure.data :as data]
         [clojure.pprint :only [pprint]])
   (:require [clojure.java.io :as io]
             [oph.soresu.common.db :refer :all]
@@ -10,6 +11,8 @@
             [oph.va.environment :as environment]
             [oph.va.routes :refer :all]
             [clojure.tools.logging :as log]
+            [clojure.java.jdbc :as jdbc]
+            [clj-time.core :as clj-time]
             [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.email :as email]
             [oph.common.datetime :as datetime])
@@ -59,6 +62,9 @@
          (map avustushaku-response-content)
          first)))
 
+(defn zero-to-empty-dict [v]
+  (if (== 0 v) {} v))
+
 (defn update-avustushaku [avustushaku]
   (let [haku-status (if (= (:status avustushaku) "new")
                       (new HakuStatus "draft")
@@ -73,9 +79,17 @@
                                    :project_id (:project-id avustushaku)
                                    :operation_id (:operation-id avustushaku)
                                    :operational_unit_id (:operational-unit-id avustushaku))]
-    (exec-all :form-db
-              [hakija-queries/archive-avustushaku! avustushaku-to-save
-               hakija-queries/update-avustushaku! avustushaku-to-save])
+
+    (with-transaction :form-db connection
+      (let [db-options {:connection connection}
+            previous-paatos-version (zero-to-empty-dict (hakija-queries/archive-avustushaku! avustushaku-to-save db-options))
+            new-paatos-version (:decision avustushaku)
+            diff-result (data/diff previous-paatos-version new-paatos-version)]
+        (if (and (= nil (first diff-result)) (= nil (first (rest diff-result))))
+          (hakija-queries/update-avustushaku! avustushaku-to-save db-options)
+          (let [updated-paatos (merge new-paatos-version { :updatedAt (clj-time/now) })
+                avustushaku-with-updated-decision (merge avustushaku-to-save { :decision updated-paatos })]
+            (hakija-queries/update-avustushaku! avustushaku-with-updated-decision db-options)))))
     (->> avustushaku-to-save
          (exec :form-db hakija-queries/get-avustushaku)
          (map avustushaku-response-content)

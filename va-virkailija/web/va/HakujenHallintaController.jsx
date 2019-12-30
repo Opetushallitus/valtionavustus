@@ -476,6 +476,7 @@ export default class HakujenHallintaController {
       if(oldHaku) {
         oldHaku.status = response.status
         oldHaku.phase = response.phase
+        oldHaku.decision.updatedAt = response.decision.updatedAt
       }
       state.saveStatus.saveTime = new Date()
       state.saveStatus.serverError = ""

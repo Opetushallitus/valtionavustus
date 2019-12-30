@@ -29,7 +29,7 @@ async function navigateHakija(page, path) {
 
 function describeBrowser(name, func) {
   describe(name, function() {
-    this.timeout(60_000)
+    this.timeout(100_000)
 
     before(async function() {
     })

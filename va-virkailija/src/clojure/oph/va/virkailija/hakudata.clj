@@ -184,7 +184,7 @@
         {:keys [name selection-criteria self-financing-percentage focus-areas]} (:content base-haku)
         haku-type (:haku-type base-haku)
         form-id (:form base-haku)
-        decision (:decision base-haku)
+        decision (merge (:decision base-haku) { :updatedAt (clj-time/now) })
         project-id (:project-id base-haku)
         operation-id (:operation-id base-haku)
         operational-unit-id (:operational-unit-id base-haku)

@@ -655,11 +655,14 @@ export default class DecisionEditor extends React.Component {
       {id:"johtaja",title:"Johtaja"},
       {id:"valmistelija",title:"Esittelijä"}
     ]
+    const updatedAt = avustushaku.decision.updatedAt
+    const formattedUpdatedAt = `${DateUtil.asDateString(updatedAt)} klo ${DateUtil.asTimeString(updatedAt)}`
     const rahoitusAlueDecisionSubfields = _.isEmpty(avustushaku.content.rahoitusalueet)
       ? []
       : avustushaku.content.rahoitusalueet.map(row => <DecisionFields key={row.rahoitusalue} title={"Myönteisen päätöksen lisäteksti - " + row.rahoitusalue} avustushaku={avustushaku} id={"myonteinenlisateksti-" + row.rahoitusalue.replace(/[\s.]/g, "_")} onChange={onChange}/>)
     return (
       <div className="decision-editor">
+        { updatedAt && <div style={{'textAlign':'right'}} id="paatosUpdatedAt">Päivitetty: {formattedUpdatedAt}</div> }
         <DecisionFields key="taustaa" title="Taustaa" avustushaku={avustushaku} id="taustaa" onChange={onChange}/>
         <DecisionFields key="myonteinenlisateksti" title="Myönteisen päätöksen lisäteksti" avustushaku={avustushaku} id="myonteinenlisateksti" onChange={onChange}/>
         {rahoitusAlueDecisionSubfields.length > 0  &&
