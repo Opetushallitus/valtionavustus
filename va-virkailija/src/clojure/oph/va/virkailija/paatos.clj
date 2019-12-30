@@ -185,6 +185,9 @@
 
   (compojure-api/POST "/sendall/:avustushaku-id" [:as request]
                       :path-params [avustushaku-id :- Long]
+                (let [hakemukset-missing-valmistelija (virkailija-db/get-hakemukset-without-valmistelija  avustushaku-id)]
+                  (if (not-empty hakemukset-missing-valmistelija)
+                      (bad-request {:error (str "Hakemuksilta puuttuu valmistelija: " (clojure.string/join ", " hakemukset-missing-valmistelija))})
                       (let [ids (get-hakemus-ids-to-send avustushaku-id)
                             uuid (.toString (java.util.UUID/randomUUID))]
                            (when (get-in config [:payments :enabled?])
@@ -195,7 +198,7 @@
                            (log/info "Send all paatos ids " ids)
                            (run! (partial send-paatos-for-all uuid (authentication/get-request-identity request)) ids)
                            (ok (merge {:status "ok"}
-                                      (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))
+                                      (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))))
 
   (compojure-api/POST "/resendall/:avustushaku-id" [:as request]
                       :path-params [avustushaku-id :- Long]

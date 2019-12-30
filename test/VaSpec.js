@@ -9,7 +9,7 @@ const {
 } = require("./TestUtil.js")
 
 describeBrowser("VaSpec", function() {
-  it("should allow basic avustushaku flow", async function() {
+  it("should allow basic avustushaku flow and check each hakemus has valmistelija", async function() {
     const {page} = this
     await loginVirkailija(page)
 
@@ -77,25 +77,51 @@ describeBrowser("VaSpec", function() {
       clickElementWithText(page, "td", "Akaan kaupunki"),
     ])
 
+    const hakemusID = await page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)[1])
+    console.log("Hakemus ID:", hakemusID)
+
     await clickElementWithText(page, "label", "Käsittelyssä")
     await clearAndType(page, "#budget-edit-project-budget .amount-column input", "100000")
     await clickElementWithText(page, "label", "Hyväksytty")
+    await waitForArvioSave(page, avustushakuID, hakemusID)
 
     // Set avustushaku state to ratkaistu
     await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
     await clickElementWithText(page, "label", "Ratkaistu")
     await waitForSave(page, avustushakuID)
 
-    // Send päätökset
-    await clickElementWithText(page, "span", "Päätös")
-    await page.waitForSelector(".decision-send-controls button", {visible: true, timeout: 5 * 1000})
-    await clickElementWithText(page, "button", "Lähetä 1 päätöstä")
+    // Sending päätös should give error because the hakemus is missing valmistelija
+    await sendPäätös(page, avustushakuID)
+    assert.strictEqual(
+      await textContent(page, "#päätös-send-error"),
+      `Virhe päätösten lähetyksessä: Hakemuksilta puuttuu valmistelija: ${hakemusID}`
+    )
+
+    // Set valmistelija and sending päätös should succeed
+    await navigate(page, `/avustushaku/${avustushakuID}/`)
+    await clickElement(page, `#hakemus-${hakemusID} .btn-role`)
     await Promise.all([
-      page.waitForResponse(`http://localhost:8081/api/paatos/sendall/${avustushakuID}`),
-      clickElementWithText(page, "button", "Vahvista lähetys"),
+      page.waitForResponse(`http://localhost:8081/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`),
+      clickElementWithText(page, "button", "_ valtionavustus"),
     ])
+
+    await sendPäätös(page, avustushakuID)
+
+    // Entry is added to tapahtumaloki for sent email
+    const tapahtumaloki = await page.waitForSelector(".tapahtumaloki")
+    const logEntryCount = await tapahtumaloki.evaluate(e => e.querySelectorAll(".entry").length)
+    assert.strictEqual(logEntryCount, 1)
   })
 })
+
+async function sendPäätös(page, avustushakuID) {
+  await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
+  await clickElementWithText(page, "button", "Lähetä 1 päätöstä")
+  await Promise.all([
+    page.waitForResponse(`http://localhost:8081/api/paatos/sendall/${avustushakuID}`),
+    clickElementWithText(page, "button", "Vahvista lähetys"),
+  ])
+}
 
 async function uploadFile(page, selector, filePath) {
   const element = await page.$(selector)
@@ -103,7 +129,7 @@ async function uploadFile(page, selector, filePath) {
 }
 
 async function waitForArvioSave(page, avustushakuID, hakemusID) {
-  await page.waitForResponse(`http://localhost:8081/api/avustushaku/${avustushakuID}/hakemus/${avustushakuID}/arvio`)
+  await page.waitForResponse(`http://localhost:8081/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`)
 }
 
 async function waitForSave(page, avustushakuID) {

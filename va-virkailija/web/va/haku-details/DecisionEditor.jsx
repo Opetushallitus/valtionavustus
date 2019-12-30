@@ -341,7 +341,7 @@ class TapahtumaLoki extends React.Component {
       <div className={'tapahtumaloki'}>
         <div className={'header'}>Lähetetyt päätökset</div>
         <div className={'entries'}>
-          <div className={'entry'}>
+          <div className={'header-row'}>
             <span className={'timestamp header'}>Lähetysaika</span>
             <span className={'sender header'}>Lähettäjä</span>
             <span className={'sentCount header'}>Lähetettyjä viestejä</span>
@@ -469,13 +469,23 @@ class DecisionDateAndSend extends React.Component {
     }
 
     const onSend = () =>{
-      this.setState({...this.state,sending: true, preview: false})
+      this.setState({...this.state,sending: true, preview: false, sendError: undefined})
       const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/sendall/${this.props.avustushaku.id}`,{}))
       sendS.onValue((res)=>{
           this.setState({...this.state, count:res.count, sent:res.sent, sentTime: res['sent-time'],paatokset:res.paatokset, sending: false})
           this.fetchLahetetytPaatokset(this.props.avustushaku.id)
         }
       )
+      sendS.onError((err) => {
+        const setPäätösSendError = errorText =>
+          this.setState({...this.state, sending: false, sendError: errorText})
+        if (err.name === "HttpResponseError" && err.response.status === 400) {
+          console.log(err.response.data)
+          setPäätösSendError(err.response.data.error)
+        } else {
+          setPäätösSendError("Odottamaton virhe tapahtui lähettäessä päätöksiä")
+        }
+      })
     }
 
     if (!_.isNumber(this.state.count)) {
@@ -503,6 +513,7 @@ class DecisionDateAndSend extends React.Component {
       {!this.mailsToSend() && <RegenerateDecisions avustushaku={this.props.avustushaku}/>}
       {this.state.sent !== 0 && <ResendDecisions avustushaku={this.props.avustushaku} sent={this.state.sent} reload={rerenderParentCallback}/>}
       {this.state.preview && <button onClick={onSend}>Vahvista lähetys</button>}
+      {this.state.sendError && <p id="päätös-send-error" className="error">Virhe päätösten lähetyksessä: {this.state.sendError}</p>}
 
       {this.sentOk() &&
         <div>

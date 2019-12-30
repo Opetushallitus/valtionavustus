@@ -66,6 +66,7 @@
 (defquery get-application-unsent-payments
   "sql/virkailija/applications/get-unsent-payments.sql")
 (defquery is-application-accepted "sql/virkailija/applications/is-accepted.sql")
+(defquery get-hakemukset-without-valmistelija "sql/virkailija/applications/get-hakemukset-without-valmistelija.sql")
 
 (defquery lock-va-users-cache-exclusively! "sql/virkailija/va_users_cache/lock-exclusively.sql")
 (defquery update-va-user-cache! "sql/virkailija/va_users_cache/update.sql")
