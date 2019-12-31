@@ -531,12 +531,14 @@ class DecisionDateAndSend extends React.Component {
           { this.showTapahtumaLokiOrViimeisinLahetys() }
           <table className="table table--sm table--views">
             <colgroup>
+              <col />
               <col width="60%"/>
               <col width="35%"/>
               <col width="5%"/>
             </colgroup>
             <thead>
               <tr>
+                <th>#</th>
                 <th>Hakemus</th>
                 <th>Osoitteet</th>
                 <th>Näytöt</th>
@@ -545,12 +547,12 @@ class DecisionDateAndSend extends React.Component {
             <tbody>
               {this.state.paatokset.map((paatos,index)=>
                 <tr key={index}>
+                  <td>{paatos.id}</td>
                   <td>
                     <a target="_blank"
                        rel="noopener noreferrer"
                        href={PaatosUrl.publicLink(
                          this.props.avustushaku.id,paatos.user_key)}>
-                      {paatos.id}
                       {paatos["organization-name"]} - {paatos["project-name"]}
                     </a>
                   </td>
