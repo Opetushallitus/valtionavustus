@@ -280,10 +280,20 @@ class ResendDecisions extends React.Component {
     }
 
     const onResend = () =>{
-      this.setState({resending:true})
+      this.setState({resending:true, resendError: undefined, completed: false})
       const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/resendall/${avustushaku.id}`,{}))
       sendS.onValue(() => {
-        this.setState({completed:true})
+        this.setState({completed:true, resending: false})
+        this.props.reload()
+      })
+      sendS.onError(err => {
+        const setPäätösResendError = errorText =>
+          this.setState({resending: false, resendError: errorText, confirm: false})
+        if (err.name === "HttpResponseError" && err.response.status === 400) {
+          setPäätösResendError(err.response.data.error)
+        } else {
+          setPäätösResendError("Odottamaton virhe tapahtui lähettäessä päätöksiä")
+        }
         this.props.reload()
       })
     }
@@ -291,6 +301,7 @@ class ResendDecisions extends React.Component {
     const resending = this.state.resending
     return (
       <div>
+        {this.state.resending && <div><img src="/img/ajax-loader.gif"/>&nbsp;<strong>Päätöksiä lähetetään uudelleen...</strong></div>}
         {this.state.completed && <div style={{fontWeight:'bold',marginBottom:10,marginTop:10}}>Päätökset lähetetty uudelleen</div>
         }
         {!this.state.completed &&
@@ -299,6 +310,7 @@ class ResendDecisions extends React.Component {
             {!this.state.confirm && <button onClick={onConfirm}>Lähetä {this.props.sent} päätöstä uudelleen</button>}
           </div>
         }
+        {this.state.resendError && <p id="päätös-resend-error" className="error">Virhe päätösten uudelleenlähetyksessä: {this.state.resendError}</p>}
 
       </div>
     )
@@ -476,11 +488,10 @@ class DecisionDateAndSend extends React.Component {
           this.fetchLahetetytPaatokset(this.props.avustushaku.id)
         }
       )
-      sendS.onError((err) => {
+      sendS.onError(err => {
         const setPäätösSendError = errorText =>
-          this.setState({...this.state, sending: false, sendError: errorText})
+          this.setState({sending: false, sendError: errorText})
         if (err.name === "HttpResponseError" && err.response.status === 400) {
-          console.log(err.response.data)
           setPäätösSendError(err.response.data.error)
         } else {
           setPäätösSendError("Odottamaton virhe tapahtui lähettäessä päätöksiä")
