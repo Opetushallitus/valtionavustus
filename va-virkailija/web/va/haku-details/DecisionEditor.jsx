@@ -310,7 +310,7 @@ class ResendDecisions extends React.Component {
             {!this.state.confirm && <button onClick={onConfirm}>Lähetä {this.props.sent} päätöstä uudelleen</button>}
           </div>
         }
-        {this.state.resendError && <p id="päätös-resend-error" className="error">Virhe päätösten uudelleenlähetyksessä: {this.state.resendError}</p>}
+        {this.state.resendError && <p id="päätös-resend-error" className="error">{this.state.resendError}</p>}
 
       </div>
     )
@@ -524,7 +524,7 @@ class DecisionDateAndSend extends React.Component {
       {!this.mailsToSend() && <RegenerateDecisions avustushaku={this.props.avustushaku}/>}
       {this.state.sent !== 0 && <ResendDecisions avustushaku={this.props.avustushaku} sent={this.state.sent} reload={rerenderParentCallback}/>}
       {this.state.preview && <button onClick={onSend}>Vahvista lähetys</button>}
-      {this.state.sendError && <p id="päätös-send-error" className="error">Virhe päätösten lähetyksessä: {this.state.sendError}</p>}
+      {this.state.sendError && <p id="päätös-send-error" className="error">{this.state.sendError}</p>}
 
       {this.sentOk() &&
         <div>

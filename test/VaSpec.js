@@ -94,7 +94,7 @@ describeBrowser("VaSpec", function() {
     await sendPäätös(page, avustushakuID)
     assert.strictEqual(
       await textContent(page, "#päätös-send-error"),
-      `Virhe päätösten lähetyksessä: Hakemuksilta puuttuu valmistelija: ${hakemusID}`
+      `Hakemukselle numero ${hakemusID} ei ole valittu valmistelijaa. Päätöksiä ei lähetetty.`
     )
 
     // Set valmistelija and sending päätös should succeed

@@ -177,10 +177,12 @@
            (run! (partial send-selvitys-for-all avustushaku-id selvitys-type) accepted-ids)
            (ok {:count (count accepted-ids)})))
 
-(defn check-hakemukset-have-valmistelija [avustushaku-id]
+(defn check-all-hakemukset-have-valmistelija [avustushaku-id]
   (let [hakemukset-missing-valmistelija (virkailija-db/get-hakemukset-without-valmistelija  avustushaku-id)]
     (if (not-empty hakemukset-missing-valmistelija)
-        (bad-request {:error (str "Hakemuksilta puuttuu valmistelija: " (clojure.string/join ", " hakemukset-missing-valmistelija))})
+        (if (= 1 (count hakemukset-missing-valmistelija))
+          (bad-request {:error (str "Hakemukselle numero " (first hakemukset-missing-valmistelija) " ei ole valittu valmistelijaa. Päätöksiä ei lähetetty.")})
+          (bad-request {:error (str "Hakemuksille numeroilla " (clojure.string/join ", " hakemukset-missing-valmistelija) " ei ole valittu valmistelijaa. Päätöksiä ei lähetetty." )}))
         nil)))
 
 (compojure-api/defroutes
@@ -191,7 +193,7 @@
 
   (compojure-api/POST "/sendall/:avustushaku-id" [:as request]
                       :path-params [avustushaku-id :- Long]
-                    (if-let [err (check-hakemukset-have-valmistelija avustushaku-id)]
+                    (if-let [err (check-all-hakemukset-have-valmistelija avustushaku-id)]
                       err
                       (let [ids (get-hakemus-ids-to-send avustushaku-id)
                             uuid (.toString (java.util.UUID/randomUUID))]
@@ -207,7 +209,7 @@
 
   (compojure-api/POST "/resendall/:avustushaku-id" [:as request]
                       :path-params [avustushaku-id :- Long]
-                    (if-let [err (check-hakemukset-have-valmistelija avustushaku-id)]
+                    (if-let [err (check-all-hakemukset-have-valmistelija avustushaku-id)]
                       err
                       (let [ids (get-hakemus-ids-to-resend avustushaku-id)
                             uuid (.toString (java.util.UUID/randomUUID))]
