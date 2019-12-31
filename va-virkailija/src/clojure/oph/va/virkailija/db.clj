@@ -17,8 +17,8 @@
     []
     (exec :virkailija-db queries/get-arviot {:hakemus_ids hakemus-ids})))
 
-(defn get-hakemukset-without-valmistelija [avustushaku-id]
-  (map :id (exec :virkailija-db queries/get-hakemukset-without-valmistelija {:avustushaku_id avustushaku-id})))
+(defn get-hakemukset-without-valmistelija [hakemus-ids]
+  (map :id (exec :virkailija-db queries/get-hakemukset-without-valmistelija {:hakemus_ids hakemus-ids})))
 
 (defn list-arvio-status-and-budget-granted-by-hakemus-ids [hakemus-ids]
   (if (empty? hakemus-ids)

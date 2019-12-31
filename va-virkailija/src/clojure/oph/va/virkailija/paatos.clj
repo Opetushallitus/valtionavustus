@@ -177,8 +177,8 @@
            (run! (partial send-selvitys-for-all avustushaku-id selvitys-type) accepted-ids)
            (ok {:count (count accepted-ids)})))
 
-(defn check-all-hakemukset-have-valmistelija [avustushaku-id]
-  (let [hakemukset-missing-valmistelija (virkailija-db/get-hakemukset-without-valmistelija  avustushaku-id)]
+(defn check-hakemukset-have-valmistelija [hakemus-ids]
+  (let [hakemukset-missing-valmistelija (virkailija-db/get-hakemukset-without-valmistelija hakemus-ids)]
     (if (not-empty hakemukset-missing-valmistelija)
         (if (= 1 (count hakemukset-missing-valmistelija))
           (bad-request {:error (str "Hakemukselle numero " (first hakemukset-missing-valmistelija) " ei ole valittu valmistelijaa. Päätöksiä ei lähetetty.")})
@@ -193,30 +193,30 @@
 
   (compojure-api/POST "/sendall/:avustushaku-id" [:as request]
                       :path-params [avustushaku-id :- Long]
-                    (if-let [err (check-all-hakemukset-have-valmistelija avustushaku-id)]
-                      err
                       (let [ids (get-hakemus-ids-to-send avustushaku-id)
                             uuid (.toString (java.util.UUID/randomUUID))]
-                           (when (get-in config [:payments :enabled?])
-                                 (do
-                                   (log/info "Create initial payment for applications")
-                                   (payments-data/create-grant-payments
-                                     avustushaku-id 0 (authentication/get-request-identity request))))
-                           (log/info "Send all paatos ids " ids)
-                           (run! (partial send-paatos-for-all uuid (authentication/get-request-identity request)) ids)
-                           (ok (merge {:status "ok"}
-                                      (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset]))))))
+                           (if-let [valmistelija-required-error (check-hakemukset-have-valmistelija ids)]
+                             valmistelija-required-error
+                             (do (when (get-in config [:payments :enabled?])
+                                       (do
+                                         (log/info "Create initial payment for applications")
+                                         (payments-data/create-grant-payments
+                                           avustushaku-id 0 (authentication/get-request-identity request))))
+                                 (log/info "Send all paatos ids " ids)
+                                 (run! (partial send-paatos-for-all uuid (authentication/get-request-identity request)) ids)
+                                 (ok (merge {:status "ok"}
+                                            (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))))
 
   (compojure-api/POST "/resendall/:avustushaku-id" [:as request]
                       :path-params [avustushaku-id :- Long]
-                    (if-let [err (check-all-hakemukset-have-valmistelija avustushaku-id)]
-                      err
                       (let [ids (get-hakemus-ids-to-resend avustushaku-id)
                             uuid (.toString (java.util.UUID/randomUUID))]
-                           (log/info "Send all paatos ids " ids)
-                           (run! (partial resend-paatos-for-all uuid (authentication/get-request-identity request)) ids)
-                           (ok (merge {:status "ok"}
-                                      (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset]))))))
+                           (if-let [valmistelija-required-error (check-hakemukset-have-valmistelija ids)]
+                             valmistelija-required-error
+                             (do (log/info "Send all paatos ids " ids)
+                                 (run! (partial resend-paatos-for-all uuid (authentication/get-request-identity request)) ids)
+                                 (ok (merge {:status "ok"}
+                                            (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))))
 
   (compojure-api/POST "/regenerate/:avustushaku-id" []
                       :path-params [avustushaku-id :- Long]
