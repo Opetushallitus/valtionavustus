@@ -57,6 +57,14 @@
       []
       [{:error "email"}])))
 
+(defn- validate-integer-field [field answer]
+  (if (or (not (has-field-type? "integerField" field))
+          (empty? answer))
+    []
+    (if (validation/parseable-as-integer? answer)
+      []
+      [{:error "integer"}])))
+
 (defn- validate-finnish-business-id-field [field answer]
   (if (or (not (has-field-type? "finnishBusinessIdField" field))
           (empty? answer))
@@ -156,6 +164,7 @@
      (validate-textarea-maxlength field answer)
      (validate-texfield-maxlength field answer)
      (validate-email-field field answer)
+     (validate-integer-field field answer)
      (validate-finnish-business-id-field field answer))))
 
 (defn- validate-field-by-type [answers attachments field]

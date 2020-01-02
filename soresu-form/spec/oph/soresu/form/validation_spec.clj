@@ -34,6 +34,12 @@
    :fieldType  "emailField"
    :required   true})
 
+(def integer-field
+  {:id         "integer"
+   :fieldClass "formField"
+   :fieldType  "integerField"
+   :required   true})
+
 (def finnish-business-id-field
   {:id         "y-tunnus"
    :fieldClass "formField"
@@ -97,6 +103,16 @@
   (it "validates empty email as required"
       (let [result (validate-field (answers-for email-field "") [] email-field)]
         (should= {:email [{:error "required"}]} result)))
+
+  (it "validates non-empty integer"
+      (should= {:integer []} (validate-field (answers-for integer-field "7") [] integer-field))
+      (should= {:integer [{:error "integer"}]} (validate-field (answers-for integer-field "7x") [] integer-field))
+      (should= {:integer [{:error "integer"}]} (validate-field (answers-for integer-field "7.1") [] integer-field))
+      (should= {:integer [{:error "integer"}]} (validate-field (answers-for integer-field "7,1") [] integer-field)))
+
+  (it "validates empty integer as required"
+      (let [result (validate-field (answers-for integer-field "") [] integer-field)]
+        (should= {:integer [{:error "required"}]} result)))
 
   (it "validates non-empty finnish business"
       (should= {:y-tunnus []} (validate-field (answers-for finnish-business-id-field "1629284-5") [] finnish-business-id-field))

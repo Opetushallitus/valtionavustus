@@ -1,6 +1,13 @@
 (ns oph.soresu.common.validation
   (:require [clojure.string :as string]))
 
+(defn parseable-as-integer? [s]
+  (try
+    (do
+      (BigInteger. s)
+      true)
+    (catch NumberFormatException e false)))
+
 (defn email-address? [s]
   (and (string? s)
        (<= (count s) 254)
