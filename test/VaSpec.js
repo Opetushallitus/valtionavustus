@@ -14,12 +14,7 @@ describeBrowser("VaSpec", function() {
     const avustushakuName = mkAvustushakuName()
     console.log(`Avustushaku name for test: ${avustushakuName}`)
 
-    // Copy esimerkkihaku
-    await navigate(page, "/admin/haku-editor/")
-    await clickElement(page, ".haku-filter-remove")
-    await clickElementWithText(page, "td", "Yleisavustus - esimerkkihaku")
-    await clickElementWithText(page, "a", "Kopioi uuden pohjaksi")
-    await page.waitFor(2000) // :|
+    await copyEsimerkkihaku(page)
 
     const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku"))
     console.log(`Avustushaku ID: ${avustushakuID}`)
@@ -117,12 +112,7 @@ describeBrowser("VaSpec", function() {
     const avustushakuName = mkAvustushakuName()
     console.log(`Avustushaku name for test: ${avustushakuName}`)
 
-    // Copy esimerkkihaku
-    await navigate(page, "/admin/haku-editor/")
-    await clickElement(page, ".haku-filter-remove")
-    await clickElementWithText(page, "td", "Yleisavustus - esimerkkihaku")
-    await clickElementWithText(page, "a", "Kopioi uuden pohjaksi")
-    await page.waitFor(2000) // :|
+    await copyEsimerkkihaku(page)
 
     const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku"))
     console.log(`Avustushaku ID: ${avustushakuID}`)
@@ -156,12 +146,7 @@ describeBrowser("VaSpec", function() {
     const avustushakuName = mkAvustushakuName()
     console.log(`Avustushaku name for test: ${avustushakuName}`)
 
-    // Copy esimerkkihaku
-    await navigate(page, "/admin/haku-editor/")
-    await clickElement(page, ".haku-filter-remove")
-    await clickElementWithText(page, "td", "Yleisavustus - esimerkkihaku")
-    await clickElementWithText(page, "a", "Kopioi uuden pohjaksi")
-    await page.waitFor(2000) // :|
+    await copyEsimerkkihaku(page)
 
     const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku"))
     console.log(`Avustushaku ID: ${avustushakuID}`)
@@ -243,4 +228,13 @@ async function textContent(page, selector) {
 
 function mkAvustushakuName() {
   return "Testiavustushaku " + randomBytes(8).toString("hex")
+}
+
+async function copyEsimerkkihaku(page) {
+  // Copy esimerkkihaku
+  await navigate(page, "/admin/haku-editor/")
+  await clickElement(page, ".haku-filter-remove")
+  await clickElementWithText(page, "td", "Yleisavustus - esimerkkihaku")
+  await clickElementWithText(page, "a", "Kopioi uuden pohjaksi")
+  await page.waitFor(2000) // :|
 }
