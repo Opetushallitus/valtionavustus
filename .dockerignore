@@ -1,0 +1,6 @@
+**/node_modules
+**/.git
+.cache
+**/.vscode
+client/coverage/coverage-final.json
+./scripts
