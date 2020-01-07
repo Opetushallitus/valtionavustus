@@ -1,0 +1,29 @@
+FROM clojure:lein-2.8.1
+
+COPY ./soresu-form /app/soresu-form
+COPY ./va-common /app/va-common
+COPY ./va-virkailija /app/va-virkailija
+COPY ./package.json /app/
+COPY ./package-lock.json /app/
+COPY ./parent-project.clj /app/
+COPY ./parent-webpack.config.js /app/
+COPY ./nvm.sh /app/
+
+ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION 12.13.1
+ENV NPM_VERSION 6.13.4
+ENV ADBLOCK 1
+
+WORKDIR app
+
+RUN cd /app && . ./nvm.sh && nvm use $NODE_VERSION || nvm install $NODE_VERSION && nvm use default && npm install -g npm@$NPM_VERSION
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+RUN cd /app && npm install && npm run virkailija:build
+
+RUN cd /app/soresu-form && lein install && cd ..
+RUN cd /app/va-common && lein install && cd ..
+
+WORKDIR app/va-virkailija
+CMD ["lein", "run"]
