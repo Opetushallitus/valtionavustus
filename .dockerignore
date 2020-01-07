@@ -3,4 +3,4 @@
 .cache
 **/.vscode
 client/coverage/coverage-final.json
-./scripts
+./scripts/postgres-docker/postgres-data
