@@ -33,5 +33,5 @@ WORKDIR /app/va-common
 RUN lein install
 
 WORKDIR /app/va-virkailija
-RUN lein compile
+RUN lein install
 ENTRYPOINT ["lein", "run"]
