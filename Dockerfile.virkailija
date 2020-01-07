@@ -15,16 +15,16 @@ ENV NODE_VERSION 12.13.1
 ENV NPM_VERSION 6.13.4
 ENV ADBLOCK 1
 
-WORKDIR app
+WORKDIR /app
 
-RUN cd /app && . ./nvm.sh && nvm use $NODE_VERSION || nvm install $NODE_VERSION && npm install -g npm@$NPM_VERSION
+RUN . ./nvm.sh && nvm use $NODE_VERSION || nvm install $NODE_VERSION && npm install -g npm@$NPM_VERSION
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
-RUN npm install && npm run virkailija:build
+RUN cd /app && npm install && npm run virkailija:build
 
 RUN cd /app/soresu-form && lein install && cd ..
 RUN cd /app/va-common && lein install && cd ..
 
-WORKDIR app/va-virkailija
-CMD ["lein", "run"]
+WORKDIR /app/va-virkailija
+ENTRYPOINT ["lein", "run"]
