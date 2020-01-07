@@ -139,6 +139,42 @@ describeBrowser("VaSpec", function() {
         assert.notEqual(paatos, valiselvitys)
       })
   })
+
+  it.only("supports fields that accept only whole numbers", async function() {
+    const {page} = this
+    await loginVirkailija(page)
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+    await clickElementWithText(page, "span", "Hakulomake")
+    const jsonString = await textContent(page, ".form-json-editor textarea")
+    const json = JSON.parse(jsonString)
+    const content = json.content
+    const integerField =  {
+      "label": {
+        "fi": "label fi",
+        "sv": "label sv"
+      },
+      "fieldClass": "formField",
+      "helpText": {
+        "fi": "helpText fi",
+        "sv": "helpText sv"
+      },
+      "id": "integerFieldId",
+      "params": {
+        "size": "small",
+        "maxlength": 10
+      },
+      "required": true,
+      "fieldType": "integerField"
+    }
+
+    const newJson = JSON.stringify(Object.assign({}, json, { content: [integerField] }))
+    await clearAndType(page, ".form-json-editor textarea", newJson)
+
+    await Promise.all([
+      page.waitForResponse(response => response.url() === `http://localhost:8081/api/avustushaku/${avustushakuID}/form` && response.status() === 200),
+      clickElementWithText(page, "button", "Tallenna")
+    ])
+  })
 })
 
 async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page) {

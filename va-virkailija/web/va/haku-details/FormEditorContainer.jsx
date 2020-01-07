@@ -47,7 +47,7 @@ export default class FormEditorContainer extends Component {
           </div>
         </div>
         <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange}/>
-        <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraft={formDraft} />
+        { formDraft ? <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraft={formDraft} /> : null }
       </section>
     )
   }
