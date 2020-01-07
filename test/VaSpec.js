@@ -11,20 +11,8 @@ describeBrowser("VaSpec", function() {
   it("should allow basic avustushaku flow and check each hakemus has valmistelija", async function() {
     const {page} = this
 
-    const avustushakuName = mkAvustushakuName()
-    console.log(`Avustushaku name for test: ${avustushakuName}`)
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
 
-    await copyEsimerkkihaku(page)
-
-    const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku"))
-    console.log(`Avustushaku ID: ${avustushakuID}`)
-
-    // Fill avustushaku and wait for it to save
-    await clearAndType(page, "#register-number", "230/2015")
-    await clearAndType(page, "#haku-name-fi", avustushakuName)
-    await clearAndType(page, "#hakuaika-start", "1.1.1970 0.00")
-    const nextYear = (new Date()).getFullYear() + 1
-    await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
     await clickElementWithText(page, "label", "Julkaistu")
     await waitForSave(page, avustushakuID)
 
@@ -109,20 +97,7 @@ describeBrowser("VaSpec", function() {
   it("shows the same updated date on the Päätös tab as on the Väliselvitys and Loppuselvitys tabs", async function() {
     const {page} = this
 
-    const avustushakuName = mkAvustushakuName()
-    console.log(`Avustushaku name for test: ${avustushakuName}`)
-
-    await copyEsimerkkihaku(page)
-
-    const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku"))
-    console.log(`Avustushaku ID: ${avustushakuID}`)
-
-    await clearAndType(page, "#register-number", "230/2015")
-    await clearAndType(page, "#haku-name-fi", avustushakuName)
-    await clearAndType(page, "#hakuaika-start", "1.1.1970 0.00")
-    const nextYear = (new Date()).getFullYear() + 1
-    await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
-    await waitForSave(page, avustushakuID)
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
 
     await clickElementWithText(page, "span", "Päätös")
     const paatosUpdatedAt = textContent(page, "#paatosUpdatedAt")
@@ -143,21 +118,7 @@ describeBrowser("VaSpec", function() {
   it("updates only the update date on Päätös tab when päätös is modified", async function() {
     const {page} = this
 
-    const avustushakuName = mkAvustushakuName()
-    console.log(`Avustushaku name for test: ${avustushakuName}`)
-
-    await copyEsimerkkihaku(page)
-
-    const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku"))
-    console.log(`Avustushaku ID: ${avustushakuID}`)
-
-    await clearAndType(page, "#register-number", "230/2015")
-    await clearAndType(page, "#haku-name-fi", avustushakuName)
-    await clearAndType(page, "#hakuaika-start", "1.1.1970 0.00")
-    const nextYear = (new Date()).getFullYear() + 1
-    await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
-    await waitForSave(page, avustushakuID)
-
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
     await clickElementWithText(page, "span", "Päätös")
 
     await page.waitFor(70000)
@@ -179,6 +140,25 @@ describeBrowser("VaSpec", function() {
       })
   })
 })
+
+async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page) {
+  const avustushakuName = mkAvustushakuName()
+  console.log(`Avustushaku name for test: ${avustushakuName}`)
+
+  await copyEsimerkkihaku(page)
+
+  const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku"))
+  console.log(`Avustushaku ID: ${avustushakuID}`)
+
+  await clearAndType(page, "#register-number", "230/2015")
+  await clearAndType(page, "#haku-name-fi", avustushakuName)
+  await clearAndType(page, "#hakuaika-start", "1.1.1970 0.00")
+  const nextYear = (new Date()).getFullYear() + 1
+  await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
+  await waitForSave(page, avustushakuID)
+
+  return avustushakuID
+}
 
 async function sendPäätös(page, avustushakuID) {
   await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
