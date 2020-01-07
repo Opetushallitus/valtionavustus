@@ -21,10 +21,13 @@ RUN . ./nvm.sh && nvm use $NODE_VERSION || nvm install $NODE_VERSION && npm inst
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
-RUN cd /app && npm install && npm run virkailija:build
+RUN npm install && npm run virkailija:build
 
-RUN cd /app/soresu-form && lein install && cd ..
-RUN cd /app/va-common && lein install && cd ..
+WORKDIR /app/soresu-form
+RUN lein install
+
+WORKDIR /app/va-common
+RUN lein install
 
 WORKDIR /app/va-virkailija
 ENTRYPOINT ["lein", "run"]
