@@ -6,6 +6,9 @@ services:
     depends_on:
       - virkailija
     environment:
+      - "HAKIJA_HOSTNAME=va-hakija"
+      - "VIRKAILIJA_HOSTNAME=va-virkailija"
+      - "HEADLESS=true"
       - "ADMIN_PASSWORD=${ADMIN_PASSWORD}"
       - "ADMIN_USERNAME=${ADMIN_USERNAME}"
     networks:
@@ -13,9 +16,8 @@ services:
 
   virkailija:
     image: va-virkailija:latest
-    #build:
-      #context: .
-      #dockerfile: ./Dockerfile.virkailija
+    container_name: va-virkailija
+    hostname: va-virkailija
     ports:
       - "8081:8081"
     expose:
@@ -27,9 +29,8 @@ services:
 
   hakija:
     image: va-hakija:latest
-    #build:
-      #context: .
-      #dockerfile: ./Dockerfile.hakija
+    container_name: va-hakija
+    hostname: va-hakija
     ports:
       - "8080:8080"
     expose:
