@@ -1,0 +1,28 @@
+{:server {:allow-db-clear? true
+          :url {:fi "http://localhost:8080/"
+                :sv "http://localhost:8080/"}
+          :enable-access-log? false
+          :require-https? false}
+ :api {:restricted-routes? false}
+ :nrepl-enabled? true
+ :email {:enabled? false
+         :host "localhost"
+         :port 2500
+         :to-finance ["test@test.com"]}
+ :application-change {:refuse-enabled? true}
+ :payments {:enabled? true
+            :delete-payments? true}
+ :tasmaytysraportti-create {:enabled? true}
+ :tasmaytysraportti-send {:enabled? true}
+ :virkailija-db {:database-name "va-dev"
+                 :username "va_virkailija"
+                 :password "va"
+                 :server-name "va-postgres"
+                 :port-number 5432
+                 :schema "virkailija"}
+ :form-db {:database-name "va-dev"
+           :username "va_hakija"
+           :password "va"
+           :server-name "va-postgres"
+           :port-number 5432
+           :schema "hakija"}}
