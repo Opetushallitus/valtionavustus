@@ -1,6 +1,16 @@
 version: '3.3'
 
 services:
+  uitest:
+    image: va-ui-test:latest
+    depends_on:
+      - virkailija
+    environment:
+      - "ADMIN_PASSWORD=${ADMIN_PASSWORD}"
+      - "ADMIN_USERNAME=${ADMIN_USERNAME}"
+    networks:
+      - subnet-private
+
   virkailija:
     image: va-virkailija:latest
     #build:
