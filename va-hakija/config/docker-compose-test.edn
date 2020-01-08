@@ -1,15 +1,14 @@
-{:server {:auto-reload? false
-          :allow-db-clear? false
-          :port 8081
-          :url {:fi "https://srv1.va-dev.oph.fi/"
-                :sv "https://srv2.va-dev.oph.fi/"}
-          :virkailija-url "https://srv3.va-dev.oph.fi"}
+{:server {:allow-db-clear? true
+          :enable-access-log? false
+          :url {:fi "http://localhost:8080/"
+                :sv "http://localhost:8080/"}}
+ :api {:restricted-routes? false}
  :form-db {:database-name "va-dev"
            :server-name "va-postgres"}
- :email {:enabled? true
-         :host "smtp.sdn.csc.fi"
-         :port 25
-         :sender "no-reply@csc.fi"
-         :retry-initial-wait 2000
-         :retry-multiplier 4
-         :retry-max-time 60000}}
+ :nrepl-enabled? true
+ :email {:enabled? false
+         :host "localhost"
+         :port 2500}
+ :applications-ui {:enabled? true}
+ :application-change {:change-enabled? true
+                      :refuse-enabled? true}}
