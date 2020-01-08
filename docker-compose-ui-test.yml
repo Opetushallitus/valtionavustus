@@ -6,6 +6,15 @@ services:
       context: .
       dockerfile: ./Dockerfile.virkailija
     depends_on:
+      - hakijabackend
+    networks:
+      - subnet-private
+
+  hakijabackend:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.hakija
+    depends_on:
       - db
     networks:
       - subnet-private
