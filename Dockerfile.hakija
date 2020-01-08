@@ -11,7 +11,7 @@ COPY ./nvm.sh /app/
 COPY ./.babelrc /app/
 
 #Overwrite DB hostname
-COPY ./va-hakija/config/docker-compose-test.edn /app/va-hakija/config/dev.edn
+COPY va-hakija/config/docker-compose-test.edn /app/va-hakija/config/dev.edn
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 12.13.1

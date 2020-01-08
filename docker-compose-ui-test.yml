@@ -2,18 +2,20 @@ version: '3.3'
 
 services:
   virkailijabackend:
-    build:
-      context: .
-      dockerfile: ./Dockerfile.virkailija
+    image: va-virkailija-backend:latest
+    #build:
+      #context: .
+      #dockerfile: ./Dockerfile.virkailija
     depends_on:
       - hakijabackend
     networks:
       - subnet-private
 
   hakijabackend:
-    build:
-      context: .
-      dockerfile: ./Dockerfile.hakija
+    image: va-hakija-backend:latest
+    #build:
+      #context: .
+      #dockerfile: ./Dockerfile.hakija
     depends_on:
       - db
     networks:
