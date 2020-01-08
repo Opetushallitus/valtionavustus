@@ -1,0 +1,37 @@
+FROM clojure:lein-2.8.1
+
+COPY ./soresu-form /app/soresu-form
+COPY ./va-common /app/va-common
+COPY ./va-hakija /app/va-hakija
+COPY ./package.json /app/
+COPY ./package-lock.json /app/
+COPY ./parent-project.clj /app/
+COPY ./parent-webpack.config.js /app/
+COPY ./nvm.sh /app/
+COPY ./.babelrc /app/
+
+#Overwrite DB hostname
+COPY ./va-hakija/config/docker-compose-test.edn /app/va-hakija/config/dev.edn
+
+ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION 12.13.1
+ENV NPM_VERSION 6.13.4
+ENV ADBLOCK 1
+
+WORKDIR /app
+
+RUN . ./nvm.sh && nvm use $NODE_VERSION || nvm install $NODE_VERSION && npm install -g npm@$NPM_VERSION
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+RUN npm install && npm run hakija:build
+
+WORKDIR /app/soresu-form
+RUN lein install
+
+WORKDIR /app/va-common
+RUN lein install
+
+WORKDIR /app/va-hakija
+RUN lein install
+ENTRYPOINT ["lein", "run"]
