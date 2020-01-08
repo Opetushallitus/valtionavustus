@@ -10,9 +10,10 @@ function main {
   [ -z "${ADMIN_USERNAME:-}" ] && fail "ADMIN_USERNAME should be set username of pääkäyttäjä"
   [ -z "${ADMIN_PASSWORD:-}" ] && fail "ADMIN_PASSWORD should be set password of pääkäyttäjä"
 
+  export ADBLOCK=1
   cd "$repo"
   npm install
-  npx mocha --watch "test/**/*Spec.js"
+  npx mocha "test/**/*Spec.js"
 }
 
 function init_nodejs {
