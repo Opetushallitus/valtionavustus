@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   virkailija:
-    image: va-virkailija-backend:latest
+    image: va-virkailija:latest
     #build:
       #context: .
       #dockerfile: ./Dockerfile.virkailija
@@ -16,7 +16,7 @@ services:
       - subnet-private
 
   hakija:
-    image: va-hakija-backend:latest
+    image: va-hakija:latest
     #build:
       #context: .
       #dockerfile: ./Dockerfile.hakija
