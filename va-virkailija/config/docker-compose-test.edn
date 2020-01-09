@@ -2,7 +2,6 @@
           :url {:fi "http://localhost:8080/"
                 :sv "http://localhost:8080/"}
           :enable-access-log? false
-          :virkailija-url "http://va-virkailija:8081"
           :require-https? false}
  :api {:restricted-routes? false}
  :nrepl-enabled? true
