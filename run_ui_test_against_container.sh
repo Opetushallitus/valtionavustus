@@ -31,8 +31,9 @@ function waitport {
 function main {
 
   check_requirements
+  VA_SECRET_CONF_FILE=${VA_SECRET_CONF_FILE:-"../valtionavustus-secret/config/secret-dev.edn"}
 
-  cp ../valtionavustus-secret/config/secret-dev.edn ./secret-dev.edn
+  cp ${VA_SECRET_CONF_FILE} ./secret-dev.edn
   docker build -t "va-virkailija:latest" -f ./Dockerfile.virkailija ./
   rm ./secret-dev.edn
 
