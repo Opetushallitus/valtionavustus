@@ -1,14 +1,27 @@
+import Bacon from 'baconjs'
 import React from 'react'
 import _ from 'lodash'
 
 export default class FormJsonEditor extends React.Component {
+  constructor(props) {
+    super(props)
+    const formDraft = props.formDraft
+    this.formDraftStream = new Bacon.Bus()
+    this.formDraftStream
+      .debounce(100)
+      .onValue(formDraft => this.controller.formOnChangeListener(this.props.avustushaku, formDraft))
+    this.state = { formDraft: formDraft }
+  }
+
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
-    const formDraft = this.props.formDraft
+    const formDraft = this.state.formDraft
     const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
     const onChange = e => {
-      controller.formOnChangeListener(avustushaku, e.target.value)
+      const value = e.target.value
+      this.formDraftStream.push(value)
+      this.setState({ formDraft: value })
     }
     const onClick = () => {
       controller.saveForm(avustushaku, formDraft)
