@@ -42,7 +42,7 @@ function main {
 
   trap 'docker-compose -f ./docker-compose-ui-test.yml down' EXIT
 
-  docker-compose -f ./docker-compose-ui-test.yml up -d
+  docker-compose -f ./docker-compose-ui-test.yml up --abort-on-container-exit
 
   #waitport 8080 200
   #waitport 8081 200
