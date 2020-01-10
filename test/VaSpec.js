@@ -140,7 +140,7 @@ describeBrowser("VaSpec", function() {
       })
   })
 
-  it.only("supports fields that accept only whole numbers", async function() {
+  it("supports fields that accept only whole numbers", async function() {
     const {page} = this
     await loginVirkailija(page)
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
