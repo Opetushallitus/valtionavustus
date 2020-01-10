@@ -142,7 +142,6 @@ describeBrowser("VaSpec", function() {
 
   it("supports fields that accept only whole numbers", async function() {
     const {page} = this
-    await loginVirkailija(page)
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
     await clickElementWithText(page, "span", "Hakulomake")
     const jsonString = await textContent(page, ".form-json-editor textarea")
