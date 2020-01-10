@@ -7,9 +7,10 @@ repo="$( cd "$( dirname "$0" )" && pwd )"
 function main {
   init_nodejs
 
+  export ADBLOCK=1
   cd "$repo"
   npm install
-  npx mocha --watch "test/**/*Spec.js"
+  npx mocha "test/**/*Spec.js"
 }
 
 function init_nodejs {
