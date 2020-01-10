@@ -38,16 +38,17 @@ function main {
   rm ./secret-dev.edn
 
   docker build -t "va-hakija:latest" -f ./Dockerfile.hakija ./
+  docker build -t "va-ui-test:latest" -f ./Dockerfile.ui_test ./
 
   trap 'docker-compose -f ./docker-compose-ui-test.yml down' EXIT
 
   docker-compose -f ./docker-compose-ui-test.yml up -d
 
-  waitport 8080 200
-  waitport 8081 200
+  #waitport 8080 200
+  #waitport 8081 200
 
-  export HEADLESS=true
-  ./run_ui_test.sh
+  #export HEADLESS=true
+  #./run_ui_test.sh
 }
 
 main "$@"
