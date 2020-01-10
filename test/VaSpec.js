@@ -15,9 +15,7 @@ describeBrowser("VaSpec", function() {
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
 
-    await clickElementWithText(page, "label", "Julkaistu")
-    await waitForSave(page, avustushakuID)
-
+    await publishAvustushaku(page, avustushakuID)
     await fillAndSendHakemus(page, avustushakuID)
 
     // Set hakuaika to past so the avustushaku closes
@@ -150,6 +148,11 @@ describeBrowser("VaSpec", function() {
     ])
   })
 })
+
+async function publishAvustushaku(page, avustushakuID) {
+  await clickElementWithText(page, "label", "Julkaistu")
+  await waitForSave(page, avustushakuID)
+}
 
 async function fillAndSendHakemus(page, avustushakuID) {
   await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
