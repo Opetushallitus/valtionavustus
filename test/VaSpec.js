@@ -18,34 +18,7 @@ describeBrowser("VaSpec", function() {
     await clickElementWithText(page, "label", "Julkaistu")
     await waitForSave(page, avustushakuID)
 
-    // Fill and send hakemus
-    await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
-
-    await clearAndType(page, "#primary-email", "erkki.esimerkki@example.com")
-    await clickElement(page, "#submit")
-
-    await clearAndType(page, "#finnish-business-id", "2050864-5")
-    await clickElement(page, "input.get-business-id")
-
-    await clearAndType(page, "#applicant-name", "Erkki Esimerkki")
-    await clearAndType(page, "#signature", "Erkki Esimerkki")
-    await clearAndType(page, "#signature-email", "erkki.esimerkki@example.com")
-    await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")
-    await clearAndType(page, "#bank-bic", "OKOYFIHH")
-    await clickElementWithText(page, "label", "Kansanopisto")
-
-    await clearAndType(page, "[name='project-costs-row.amount']", "100000")
-    await uploadFile(page, "[name='previous-income-statement-and-balance-sheet']", "./dummy.pdf")
-    await uploadFile(page, "[name='previous-financial-year-report']", "./dummy.pdf")
-    await uploadFile(page, "[name='previous-financial-year-report']", "./dummy.pdf")
-    await uploadFile(page, "[name='previous-financial-year-auditor-report']", "./dummy.pdf")
-    await uploadFile(page, "[name='current-year-plan-for-action-and-budget']", "./dummy.pdf")
-    await uploadFile(page, "[name='description-of-functional-development-during-last-five-years']", "./dummy.pdf")
-    await uploadFile(page, "[name='financial-information-form']", "./dummy.pdf")
-
-    await page.waitForFunction(() => document.querySelector("#topbar #form-controls button#submit").disabled === false)
-    await clickElement(page, "#topbar #form-controls button#submit")
-    await page.waitForFunction(() => document.querySelector("#topbar #form-controls button#submit").textContent === "Hakemus lähetetty")
+    await fillAndSendHakemus(page, avustushakuID)
 
     // Set hakuaika to past so the avustushaku closes
     await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
@@ -177,6 +150,36 @@ describeBrowser("VaSpec", function() {
     ])
   })
 })
+
+async function fillAndSendHakemus(page, avustushakuID) {
+  await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
+
+  await clearAndType(page, "#primary-email", "erkki.esimerkki@example.com")
+  await clickElement(page, "#submit")
+
+  await clearAndType(page, "#finnish-business-id", "2050864-5")
+  await clickElement(page, "input.get-business-id")
+
+  await clearAndType(page, "#applicant-name", "Erkki Esimerkki")
+  await clearAndType(page, "#signature", "Erkki Esimerkki")
+  await clearAndType(page, "#signature-email", "erkki.esimerkki@example.com")
+  await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")
+  await clearAndType(page, "#bank-bic", "OKOYFIHH")
+  await clickElementWithText(page, "label", "Kansanopisto")
+
+  await clearAndType(page, "[name='project-costs-row.amount']", "100000")
+  await uploadFile(page, "[name='previous-income-statement-and-balance-sheet']", "./dummy.pdf")
+  await uploadFile(page, "[name='previous-financial-year-report']", "./dummy.pdf")
+  await uploadFile(page, "[name='previous-financial-year-report']", "./dummy.pdf")
+  await uploadFile(page, "[name='previous-financial-year-auditor-report']", "./dummy.pdf")
+  await uploadFile(page, "[name='current-year-plan-for-action-and-budget']", "./dummy.pdf")
+  await uploadFile(page, "[name='description-of-functional-development-during-last-five-years']", "./dummy.pdf")
+  await uploadFile(page, "[name='financial-information-form']", "./dummy.pdf")
+
+  await page.waitForFunction(() => document.querySelector("#topbar #form-controls button#submit").disabled === false)
+  await clickElement(page, "#topbar #form-controls button#submit")
+  await page.waitForFunction(() => document.querySelector("#topbar #form-controls button#submit").textContent === "Hakemus lähetetty")
+}
 
 async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page) {
   const avustushakuName = mkAvustushakuName()
