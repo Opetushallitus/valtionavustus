@@ -7,9 +7,6 @@ repo="$( cd "$( dirname "$0" )" && pwd )"
 function main {
   init_nodejs
 
-  [ -z "${ADMIN_USERNAME:-}" ] && fail "ADMIN_USERNAME should be set username of pääkäyttäjä"
-  [ -z "${ADMIN_PASSWORD:-}" ] && fail "ADMIN_PASSWORD should be set password of pääkäyttäjä"
-
   cd "$repo"
   npm install
   npx mocha --watch "test/**/*Spec.js"

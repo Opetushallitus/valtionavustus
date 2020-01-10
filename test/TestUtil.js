@@ -1,22 +1,5 @@
 const puppeteer = require("puppeteer")
 
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
-
-async function loginVirkailija(page) {
-  await navigate(page, "/")
-
-  await page.click("#username")
-  await page.keyboard.type(ADMIN_USERNAME)
-  await page.click("#password")
-  await page.keyboard.type(ADMIN_PASSWORD)
-
-  await Promise.all([
-    page.waitForNavigation(),
-    page.click("input[type=submit]"),
-  ])
-}
-
 async function navigate(page, path) {
   const VIRKAILIJA_PORT = 8081
   await page.goto(`http://localhost:${VIRKAILIJA_PORT}${path}`, { waitUntil: "networkidle0" })
@@ -63,7 +46,6 @@ async function mkBrowser(headless = false) {
 
 module.exports = {
   describeBrowser,
-  loginVirkailija,
   navigate,
   navigateHakija,
 }

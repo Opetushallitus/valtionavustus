@@ -3,7 +3,6 @@ const {randomBytes} = require("crypto")
 
 const {
   describeBrowser,
-  loginVirkailija,
   navigate,
   navigateHakija,
 } = require("./TestUtil.js")
@@ -11,7 +10,6 @@ const {
 describeBrowser("VaSpec", function() {
   it("should allow basic avustushaku flow and check each hakemus has valmistelija", async function() {
     const {page} = this
-    await loginVirkailija(page)
 
     const avustushakuName = mkAvustushakuName()
     console.log(`Avustushaku name for test: ${avustushakuName}`)
@@ -115,7 +113,6 @@ describeBrowser("VaSpec", function() {
 
   it("shows the same updated date on the Päätös tab as on the Väliselvitys and Loppuselvitys tabs", async function() {
     const {page} = this
-    await loginVirkailija(page)
 
     const avustushakuName = mkAvustushakuName()
     console.log(`Avustushaku name for test: ${avustushakuName}`)
@@ -155,7 +152,6 @@ describeBrowser("VaSpec", function() {
 
   it("updates only the update date on Päätös tab when päätös is modified", async function() {
     const {page} = this
-    await loginVirkailija(page)
 
     const avustushakuName = mkAvustushakuName()
     console.log(`Avustushaku name for test: ${avustushakuName}`)
