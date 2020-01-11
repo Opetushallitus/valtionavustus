@@ -59,6 +59,7 @@ start_postgresql_in_docker() {
 }
 
 run_ui_tests() {
+  echo "Running UI tests"
   ./run_ui_test_against_container.sh
 }
 
