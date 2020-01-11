@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-node_version="12.13.1"
-npm_version="6.13.4"
 set -o errexit -o nounset -o pipefail
 repo="$( cd "$( dirname "$0" )" && pwd )"
 
@@ -37,23 +35,16 @@ function waitport {
 
 function main {
   check_requirements
-  init_nodejs
 
   export ADBLOCK=1
   cd "$repo"
+  . ./init_nodejs.sh
   npm install
 
   waitport ${HAKIJA_HOSTNAME} 8080 150
   waitport ${VIRKAILIJA_HOSTNAME} 8081 150
 
   npx mocha "test/**/*Spec.js"
-}
-
-function init_nodejs {
-  export NVM_DIR="${NVM_DIR:-$HOME/.cache/nvm}"
-  source "$repo/nvm.sh"
-  nvm use "${node_version}" || nvm install "${node_version}"
-  npm install -g "npm@${npm_version}"
 }
 
 main "$@"

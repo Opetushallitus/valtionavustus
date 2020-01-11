@@ -3,6 +3,7 @@ FROM ubuntu:19.10
 COPY ./package.json /app/
 COPY ./package-lock.json /app/
 COPY ./run_ui_test.sh /app/
+COPY ./init_nodejs.sh /app/
 COPY ./nvm.sh /app/
 COPY ./test/* /app/test/
 COPY ./dummy.pdf /app/

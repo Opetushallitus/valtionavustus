@@ -9,21 +9,16 @@ COPY ./parent-project.clj /app/
 COPY ./parent-webpack.config.js /app/
 COPY ./nvm.sh /app/
 COPY ./.babelrc /app/
+COPY ./init_nodejs.sh /app/
 
+#Overwrite DB hostname
 COPY ./va-virkailija/config/docker-compose-test.edn /app/va-virkailija/config/dev.edn
 
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 12.13.1
-ENV NPM_VERSION 6.13.4
 ENV ADBLOCK 1
+ENV NVM_DIR /usr/local/nvm
 
 WORKDIR /app
-
-RUN . ./nvm.sh && nvm use $NODE_VERSION || nvm install $NODE_VERSION && npm install -g npm@$NPM_VERSION
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-
-RUN npm install && npm run virkailija:build
+RUN . ./init_nodejs.sh && npm install && npm run virkailija:build
 
 WORKDIR /app/soresu-form
 RUN lein install
