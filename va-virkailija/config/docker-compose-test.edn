@@ -13,6 +13,7 @@
  :application-change {:refuse-enabled? true}
  :payments {:enabled? true
             :delete-payments? true}
+ :va-users {:use-cache? false }
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
  :virkailija-db {:database-name "va-dev"

@@ -10,11 +10,7 @@ COPY ./parent-webpack.config.js /app/
 COPY ./nvm.sh /app/
 COPY ./.babelrc /app/
 
-#Overwrite DB hostname
 COPY ./va-virkailija/config/docker-compose-test.edn /app/va-virkailija/config/dev.edn
-
-#CAS-authentication credentials
-COPY ./secret-dev.edn /valtionavustus-secret/config/secret-dev.edn
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 12.13.1
