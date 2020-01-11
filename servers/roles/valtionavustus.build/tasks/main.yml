@@ -49,13 +49,3 @@
     dest: /home/jenkins/.gitconfig
     content: "{{ lookup('file', 'gitconfig') }}"
 
-- name: Ensure secrets directory exists
-  file: path=/home/jenkins/secrets state=directory owner=jenkins group=jenkins
-
-- name: Copy secrets to Jenkins
-  copy:
-    dest: /home/jenkins/secrets/secret-dev.edn
-    src: ../../valtionavustus-secret/config/secret-dev.edn
-    owner: jenkins
-    group: jenkins
-    mode: 0600
