@@ -1,6 +1,7 @@
 **/node_modules
 **/.git
-.cache
 **/.vscode
-client/coverage/coverage-final.json
+.idea
+*.iml
+
 ./scripts/postgres-docker/postgres-data
