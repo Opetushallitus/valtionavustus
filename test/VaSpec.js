@@ -5,6 +5,8 @@ const {
   describeBrowser,
   navigate,
   navigateHakija,
+  HAKIJA_URL,
+  VIRKAILIJA_URL
 } = require("./TestUtil.js")
 
 describeBrowser("VaSpec", function() {
@@ -82,7 +84,7 @@ describeBrowser("VaSpec", function() {
     await navigate(page, `/avustushaku/${avustushakuID}/`)
     await clickElement(page, `#hakemus-${hakemusID} .btn-role`)
     await Promise.all([
-      page.waitForResponse(`http://localhost:8081/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`),
+      page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`),
       clickElementWithText(page, "button", "_ valtionavustus"),
     ])
 
@@ -142,7 +144,6 @@ describeBrowser("VaSpec", function() {
 
   it("supports fields that accept only whole numbers", async function() {
     const {page} = this
-    await loginVirkailija(page)
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
     await clickElementWithText(page, "span", "Hakulomake")
     const jsonString = await textContent(page, ".form-json-editor textarea")
@@ -171,7 +172,7 @@ describeBrowser("VaSpec", function() {
     await clearAndType(page, ".form-json-editor textarea", newJson)
 
     await Promise.all([
-      page.waitForResponse(response => response.url() === `http://localhost:8081/api/avustushaku/${avustushakuID}/form` && response.status() === 200),
+      page.waitForResponse(response => response.url() === `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/form` && response.status() === 200),
       clickElementWithText(page, "button", "Tallenna")
     ])
   })
@@ -200,7 +201,7 @@ async function sendPäätös(page, avustushakuID) {
   await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
   await clickElementWithText(page, "button", "Lähetä 1 päätöstä")
   await Promise.all([
-    page.waitForResponse(`http://localhost:8081/api/paatos/sendall/${avustushakuID}`),
+    page.waitForResponse(`${VIRKAILIJA_URL}/api/paatos/sendall/${avustushakuID}`),
     clickElementWithText(page, "button", "Vahvista lähetys"),
   ])
 }
@@ -211,11 +212,11 @@ async function uploadFile(page, selector, filePath) {
 }
 
 async function waitForArvioSave(page, avustushakuID, hakemusID) {
-  await page.waitForResponse(`http://localhost:8081/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`)
+  await page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`)
 }
 
 async function waitForSave(page, avustushakuID) {
-  await page.waitForResponse(`http://localhost:8081/api/avustushaku/${avustushakuID}`)
+  await page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}`)
 }
 
 async function clearAndType(page, selector, text) {

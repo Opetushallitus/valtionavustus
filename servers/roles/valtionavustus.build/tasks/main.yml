@@ -14,11 +14,15 @@
   yum: state=installed pkg=lxc-docker
   when: ansible_os_family == 'RedHat'
 
-- name: Disallow Docker from creating iptables rules dynamically
+- name: Install docker-compose (RedHat)
+  yum: state=installed pkg=docker-compose
+  when: ansible_os_family == 'RedHat'
+
+- name: Allow Docker to create iptables rules dynamically
   lineinfile:
     dest: /etc/sysconfig/docker
     regexp: '^OPTIONS='
-    line: "OPTIONS='--selinux-enabled -g /data/jenkins/docker --iptables=false'"
+    line: "OPTIONS='--selinux-enabled -g /data/jenkins/docker --iptables=true'"
 
 - name: Create docker group
   group: name=docker state=present
@@ -44,3 +48,4 @@
   copy:
     dest: /home/jenkins/.gitconfig
     content: "{{ lookup('file', 'gitconfig') }}"
+

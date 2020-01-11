@@ -1,13 +1,20 @@
 const puppeteer = require("puppeteer")
 
+const HAKIJA_HOSTNAME = process.env.HAKIJA_HOSTNAME || 'localhost'
+const HAKIJA_PORT = 8080
+
+const VIRKAILIJA_HOSTNAME = process.env.VIRKAILIJA_HOSTNAME || 'localhost'
+const VIRKAILIJA_PORT = 8081
+
+const VIRKAILIJA_URL = `http://${VIRKAILIJA_HOSTNAME}:${VIRKAILIJA_PORT}`
+const HAKIJA_URL = `http://${HAKIJA_HOSTNAME}:${HAKIJA_PORT}`
+
 async function navigate(page, path) {
-  const VIRKAILIJA_PORT = 8081
-  await page.goto(`http://localhost:${VIRKAILIJA_PORT}${path}`, { waitUntil: "networkidle0" })
+  await page.goto(`${VIRKAILIJA_URL}${path}`, { waitUntil: "networkidle0" })
 }
 
 async function navigateHakija(page, path) {
-  const HAKIJA_PORT = 8080
-  await page.goto(`http://localhost:${HAKIJA_PORT}${path}`, { waitUntil: "networkidle0" })
+  await page.goto(`${HAKIJA_URL}${path}`, { waitUntil: "networkidle0" })
 }
 
 function describeBrowser(name, func) {
@@ -21,7 +28,7 @@ function describeBrowser(name, func) {
     })
 
     beforeEach(async function() {
-      this.browser = await mkBrowser()
+      this.browser = await mkBrowser(process.env['HEADLESS'] === 'true')
       this.page = (await this.browser.pages())[0]
     })
 
@@ -48,4 +55,6 @@ module.exports = {
   describeBrowser,
   navigate,
   navigateHakija,
+  VIRKAILIJA_URL,
+  HAKIJA_URL
 }

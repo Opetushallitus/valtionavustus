@@ -1,0 +1,50 @@
+version: '3.3'
+
+services:
+  uitest:
+    image: va-ui-test:latest
+    depends_on:
+      - virkailija
+    environment:
+      - "HAKIJA_HOSTNAME=va-hakija"
+      - "VIRKAILIJA_HOSTNAME=va-virkailija"
+      - "HEADLESS=true"
+      - "DEBUG=puppeteer:*"
+    networks:
+      - subnet-private
+
+  virkailija:
+    image: va-virkailija:latest
+    container_name: va-virkailija
+    hostname: va-virkailija
+    ports:
+      - '8081:8081'
+    depends_on:
+      - hakija
+    networks:
+      - subnet-private
+
+  hakija:
+    image: va-hakija:latest
+    container_name: va-hakija
+    hostname: va-hakija
+    ports:
+      - '8080:8080'
+    depends_on:
+      - db
+    networks:
+      - subnet-private
+
+  db:
+    image: postgres:9.4
+    volumes:
+      - ./scripts/postgres-docker/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    container_name: va-postgres
+    hostname: va-postgres
+    ports:
+      - '5432:5432'
+    networks:
+      - subnet-private
+
+networks:
+  subnet-private:

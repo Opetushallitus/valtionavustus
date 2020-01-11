@@ -1,0 +1,7 @@
+**/node_modules
+**/.git
+**/.vscode
+.idea
+*.iml
+
+./scripts/postgres-docker/postgres-data
