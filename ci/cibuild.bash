@@ -58,6 +58,10 @@ start_postgresql_in_docker() {
   create_va_virkailija_user
 }
 
+run_ui_tests() {
+  ./run_ui_test_against_container.sh
+}
+
 run_tests() {
   if [ "$run_docker_postgresql" = true ]; then
     start_postgresql_in_docker
@@ -80,6 +84,8 @@ run_tests() {
     echo "Tests failed: $tests_exit_code"
     exit $tests_exit_code
   fi
+
+  run_ui_tests
 }
 
 drop_database() {
