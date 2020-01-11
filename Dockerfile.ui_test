@@ -5,6 +5,7 @@ COPY ./package-lock.json /app/
 COPY ./run_ui_test.sh /app/
 COPY ./nvm.sh /app/
 COPY ./test/* /app/test/
+COPY ./dummy.pdf /app/
 
 RUN apt-get update && apt-get install -y \
   curl \
