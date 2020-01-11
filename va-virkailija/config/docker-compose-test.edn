@@ -15,16 +15,7 @@
             :delete-payments? true}
  :va-users {:use-cache? false }
  :tasmaytysraportti-create {:enabled? true}
- :tasmaytysraportti-send {:enabled? true}
- :virkailija-db {:database-name "va-dev"
-                 :username "va_virkailija"
-                 :password "va"
-                 :server-name "va-postgres"
-                 :port-number 5432
-                 :schema "virkailija"}
- :form-db {:database-name "va-dev"
-           :username "va_hakija"
-           :password "va"
-           :server-name "va-postgres"
-           :port-number 5432
-           :schema "hakija"}}
+ :virkailija-db {:server-name "va-postgres"
+                 :database-name "va-dev"}
+ :form-db {:server-name "va-postgres"
+           :database-name "va-dev"}}
