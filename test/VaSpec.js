@@ -115,6 +115,7 @@ describeBrowser("VaSpec", function() {
 
   it("supports fields that accept only whole numbers", async function() {
     const {page} = this
+
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
     await clickElementWithText(page, "span", "Hakulomake")
     const jsonString = await textContent(page, ".form-json-editor textarea")
@@ -250,7 +251,7 @@ async function textContent(page, selector) {
 }
 
 function mkAvustushakuName() {
-  return "Testiavustushaku " + randomBytes(8).toString("hex")
+  return "Testiavustushaku " + randomString()
 }
 
 async function copyEsimerkkihaku(page) {
@@ -260,4 +261,8 @@ async function copyEsimerkkihaku(page) {
   await clickElementWithText(page, "td", "Yleisavustus - esimerkkihaku")
   await clickElementWithText(page, "a", "Kopioi uuden pohjaksi")
   await page.waitFor(2000) // :|
+}
+
+function randomString() {
+  return randomBytes(8).toString("hex")
 }
