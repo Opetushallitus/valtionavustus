@@ -121,41 +121,70 @@ describeBrowser("VaSpec", function() {
     const jsonString = await textContent(page, ".form-json-editor textarea")
     const json = JSON.parse(jsonString)
     const content = json.content
-    const integerField =  {
-      "label": {
-        "fi": "label fi",
-        "sv": "label sv"
-      },
-      "fieldClass": "formField",
-      "helpText": {
-        "fi": "helpText fi",
-        "sv": "helpText sv"
-      },
-      "id": "integerFieldId",
-      "params": {
-        "size": "small",
-        "maxlength": 10
-      },
-      "required": true,
-      "fieldType": "integerField"
-    }
+    const integerFieldId = "integerFieldId" + randomString()
+    const integerFieldLabel = "integerFieldLabel" + randomString()
+    const integerField =  integerFieldJson(integerFieldId, integerFieldLabel)
 
-    const newJson = JSON.stringify(Object.assign({}, json, { content: [integerField] }))
-    await clearAndType(page, ".form-json-editor textarea", newJson)
+    const newJson = JSON.stringify(Object.assign({}, json, { content: content.concat(integerField) }))
+    await clearAndSet(page, ".form-json-editor textarea", newJson)
 
     await Promise.all([
       page.waitForResponse(response => response.url() === `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/form` && response.status() === 200),
       clickElementWithText(page, "button", "Tallenna")
     ])
+
+    await clickElementWithText(page, "span", "Haun tiedot")
+    await publishAvustushaku(page, avustushakuID)
+
+    await fillAndSendHakemus(page, avustushakuID, async () => {
+      const selector = '#' + integerFieldId
+      const errorSummarySelector = 'a.validation-errors-summary'
+      await clearAndType(page, selector, 'Not an integer')
+      await page.waitForSelector(errorSummarySelector, { visible: true })
+      assert.equal(await textContent(page, errorSummarySelector), '1 vastauksessa puutteita')
+      await clickElement(page, errorSummarySelector)
+      assert.equal(await textContent(page, '.validation-errors'), integerFieldLabel + 'fi: Syötä arvo kokonaislukuina')
+      await page.waitForSelector('#submit:disabled')
+      await clearAndType(page, selector, '420')
+      await page.waitForFunction(s => document.querySelector(s) == null, {}, errorSummarySelector)
+      await page.waitForSelector('#submit:enabled')
+    })
   })
 })
+
+function integerFieldJson(id, label) {
+  return {
+    "fieldClass": "wrapperElement",
+    "id": id + 'wrapper',
+    "fieldType": "theme",
+    "children": [
+      {
+        "label": {
+          "fi": label + "fi",
+          "sv": label + "sv"
+        },
+        "fieldClass": "formField",
+        "helpText": {
+          "fi": "helpText fi",
+          "sv": "helpText sv"
+        },
+        "id": id,
+        "params": {
+          "size": "small",
+          "maxlength": 10
+        },
+        "required": true,
+        "fieldType": "integerField"
+      }
+    ]}
+}
 
 async function publishAvustushaku(page, avustushakuID) {
   await clickElementWithText(page, "label", "Julkaistu")
   await waitForSave(page, avustushakuID)
 }
 
-async function fillAndSendHakemus(page, avustushakuID) {
+async function fillAndSendHakemus(page, avustushakuID, beforeSubmitFn) {
   await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
 
   await clearAndType(page, "#primary-email", "erkki.esimerkki@example.com")
@@ -179,6 +208,10 @@ async function fillAndSendHakemus(page, avustushakuID) {
   await uploadFile(page, "[name='current-year-plan-for-action-and-budget']", "./dummy.pdf")
   await uploadFile(page, "[name='description-of-functional-development-during-last-five-years']", "./dummy.pdf")
   await uploadFile(page, "[name='financial-information-form']", "./dummy.pdf")
+
+  if (beforeSubmitFn) {
+    await beforeSubmitFn()
+  }
 
   await page.waitForFunction(() => document.querySelector("#topbar #form-controls button#submit").disabled === false)
   await clickElement(page, "#topbar #form-controls button#submit")
@@ -232,6 +265,14 @@ async function clearAndType(page, selector, text) {
   await page.evaluate(e => e.value = "", element)
   await page.keyboard.type(text)
   await page.evaluate(e => e.blur(), element)
+}
+
+async function clearAndSet(page, selector, text) {
+  const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
+  await page.evaluate((e, t) => e.value = t, element, text)
+  await page.focus(selector);
+  await page.keyboard.type(' ')
+  await page.keyboard.press('Backspace')
 }
 
 async function clickElementWithText(page, element, text) {

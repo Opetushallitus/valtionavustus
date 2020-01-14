@@ -314,6 +314,10 @@
       "fi": "Syötä arvo kokonaisina euroina",
       "sv": "Skriv in värdet som hela euro"
     },
+    "integer": {
+      "fi": "Syötä arvo kokonaislukuina",
+      "sv": "Skriv in värdet som heltal"
+    },
     "table-misses-one-value": {
       "fi": "Taulukosta puuttuu arvo",
       "sv": "TODO: Taulukosta puuttuu arvo"

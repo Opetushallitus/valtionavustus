@@ -6,6 +6,7 @@ import BasicTextField from './BasicTextField.jsx'
 import BasicTextArea from './BasicTextArea.jsx'
 import EmailTextField from './EmailTextField.jsx'
 import MoneyTextField from './MoneyTextField.jsx'
+import IntegerTextField from './IntegerTextField.jsx'
 import FinnishBusinessIdTextField from './FinnishBusinessIdTextField.jsx'
 import IbanTextField from './IbanTextField.jsx'
 import BicTextField from './BicTextField.jsx'
@@ -36,6 +37,7 @@ export default class FormComponent extends React.Component {
       "nameField": BasicTextField,
       "emailField": EmailTextField,
       "moneyField": MoneyTextField,
+      "integerField": IntegerTextField,
       "finnishBusinessIdField": FinnishBusinessIdTextField,
       "ownershipType": RadioButton,
       "iban": IbanTextField,
@@ -53,6 +55,7 @@ export default class FormComponent extends React.Component {
       "nameField": TextFieldPropertyMapper,
       "emailField": TrimmingTextFieldPropertyMapper,
       "moneyField": TextFieldPropertyMapper,
+      "integerField": TextFieldPropertyMapper,
       "finnishBusinessIdField": TextFieldPropertyMapper,
       "ownershipType": OptionFieldPropertyMapper,
       "iban": UpperCaseTextFieldPropertyMapper,
