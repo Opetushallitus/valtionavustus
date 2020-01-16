@@ -175,7 +175,8 @@
             accepted-ids (virkailija-db/get-accepted-hakemus-ids ids)]
            (log/info "Send all paatos ids " accepted-ids)
            (run! (partial send-selvitys-for-all avustushaku-id selvitys-type) accepted-ids)
-           (ok {:count (count accepted-ids)})))
+           (ok {:count (count accepted-ids)
+                :hakemukset json-ids})))
 
 (defn check-hakemukset-have-valmistelija [hakemus-ids]
   (let [hakemukset-missing-valmistelija (virkailija-db/get-hakemukset-without-valmistelija hakemus-ids)]

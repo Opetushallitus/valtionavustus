@@ -54,8 +54,18 @@
    ["fixed-score-total-average" "Arviokeskiarvo" (comp :score-total-average :scoring :arvio) {:fieldType "numberField"}]])
 
 (def hakemus-table-answers-sheet-name "Hakemuksien taulukot")
-
+(def väliselvitys-table-answers-sheet-name "Väliselvityksien taulukot")
+(def loppuselvitys-table-answers-sheet-name "Loppuselvityksien taulukot")
+(def väliselvitys-all-answers-sheet-name "Väliselvityksien vastaukset")
 (def loppuselvitys-all-answers-sheet-name "Loppuselvityksien vastaukset")
+
+(def väliselvitys-all-answers-sheet-fixed-fields
+  [["fixed-register-number" (:register-number common-field-labels) :register-number {:fieldType "textField"}]
+   ["fixed-organization-name" (:organization-name common-field-labels) :organization-name {:fieldType "textField"}]
+   ["fixed-project-name" (:project-name common-field-labels) :project-name {:fieldType "textField"}]
+   ["fixed-language" (:language common-field-labels) :language {:fieldType "textField"}]
+   ["fixed-budget-total" "Toteutunut budjetti" :budget-total {:fieldType "numberField"}]
+   ["fixed-budget-oph-share" "OPH:n avustuksen osuus" :budget-oph-share {:fieldType "numberField"}]])
 
 (def loppuselvitys-all-answers-sheet-fixed-fields
   [["fixed-register-number" (:register-number common-field-labels) :register-number {:fieldType "textField"}]
@@ -65,7 +75,6 @@
    ["fixed-budget-total" "Toteutunut budjetti" :budget-total {:fieldType "numberField"}]
    ["fixed-budget-oph-share" "OPH:n avustuksen osuus" :budget-oph-share {:fieldType "numberField"}]])
 
-(def loppuselvitys-table-answers-sheet-name "Loppuselvityksien taulukot")
 
 (def maksu-sheet-name "Tiliöinti")
 
@@ -632,6 +641,8 @@
         has-multiple-maksuera (-> avustushaku :content :multiplemaksuera)
         hakemus-form          (:form avustushaku-combined)
         hakemus-list          (:hakemukset avustushaku-combined)
+        väliselvitys-form     (:form_väliselvitys avustushaku-combined)
+        väliselvitys-list     (:väliselvitykset avustushaku-combined)
         loppuselvitys-form    (:form_loppuselvitys avustushaku-combined)
         loppuselvitys-list    (:loppuselvitykset avustushaku-combined)
 
@@ -651,6 +662,15 @@
                                                    va-focus-areas-label
                                                    va-focus-areas-items
                                                    hakemus-all-answers-sheet-fixed-fields)
+
+        väliselvitys-sheets (make-answers-sheets wb
+                                                 väliselvitys-all-answers-sheet-name
+                                                 väliselvitys-table-answers-sheet-name
+                                                 väliselvitys-form
+                                                 väliselvitys-list
+                                                 va-focus-areas-label
+                                                 va-focus-areas-items
+                                                 väliselvitys-all-answers-sheet-fixed-fields)
 
         loppuselvitys-sheets (make-answers-sheets wb
                                                   loppuselvitys-all-answers-sheet-name
@@ -675,6 +695,7 @@
 
     (doseq [sheet (-> [main-sheet]
                       (into hakemus-sheets)
+                      (into väliselvitys-sheets)
                       (into loppuselvitys-sheets)
                       (conj maksu-sheet))]
       (adjust-cells-style! sheet header-style safe-formula-style))

@@ -123,6 +123,8 @@
   (let [avustushaku        (hakija-api/get-avustushaku avustushaku-id)
         form               (hakija-api/form->json (hakija-api/get-form-by-avustushaku avustushaku-id))
         hakemukset         (hakija-api/get-hakemukset-for-export "hakemus" avustushaku-id)
+        form-väliselvitys  (hakija-api/form->json (hakija-api/get-form-by-id (:form_valiselvitys avustushaku)))
+        väliselvitykset    (hakija-api/get-hakemukset-for-export "valiselvitys" avustushaku-id)
         form-loppuselvitys (hakija-api/form->json (hakija-api/get-form-by-id (:form_loppuselvitys avustushaku)))
         loppuselvitykset   (hakija-api/get-hakemukset-for-export "loppuselvitys" avustushaku-id)
         arviot             (get-arviot-map hakemukset)
@@ -134,6 +136,8 @@
                                      (find-and-add-arvio arviot)
                                      (add-scores-to-hakemus scores)))
                               hakemukset)
+     :form_väliselvitys  form-väliselvitys
+     :väliselvitykset    väliselvitykset
      :form_loppuselvitys form-loppuselvitys
      :loppuselvitykset   loppuselvitykset}))
 

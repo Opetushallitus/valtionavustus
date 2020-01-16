@@ -1,4 +1,4 @@
-select h.id
+select h.id, h.user_key
 from hakija.hakemukset h
 where h.avustushaku = :avustushaku_id
       and h.status != 'cancelled'

@@ -1,5 +1,8 @@
 const assert = require("assert")
+const path = require("path")
 const {randomBytes} = require("crypto")
+
+const xlsx = require("xlsx")
 
 const {
   describeBrowser,
@@ -18,11 +21,7 @@ describeBrowser("VaSpec", function() {
     await publishAvustushaku(page, avustushakuID)
     await fillAndSendHakemus(page, avustushakuID)
 
-    // Set hakuaika to past so the avustushaku closes
-    await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
-    const previousYear = (new Date()).getFullYear() - 1
-    await clearAndType(page, "#hakuaika-end", `1.1.${previousYear} 0.00`)
-    await waitForSave(page, avustushakuID)
+    await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
 
     // Accept the hakemus
     await navigate(page, `/avustushaku/${avustushakuID}/`)
@@ -34,15 +33,12 @@ describeBrowser("VaSpec", function() {
     const hakemusID = await page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)[1])
     console.log("Hakemus ID:", hakemusID)
 
-    await clickElementWithText(page, "label", "Käsittelyssä")
+    await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
     await clearAndType(page, "#budget-edit-project-budget .amount-column input", "100000")
-    await clickElementWithText(page, "label", "Hyväksytty")
+    await clickElement(page, "#arviointi-tab label[for='set-arvio-status-accepted']")
     await waitForArvioSave(page, avustushakuID, hakemusID)
 
-    // Set avustushaku state to ratkaistu
-    await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
-    await clickElementWithText(page, "label", "Ratkaistu")
-    await waitForSave(page, avustushakuID)
+    await resolveAvustushaku(page, avustushakuID)
 
     // Sending päätös should give error because the hakemus is missing valmistelija
     await sendPäätös(page, avustushakuID)
@@ -51,17 +47,9 @@ describeBrowser("VaSpec", function() {
       `Hakemukselle numero ${hakemusID} ei ole valittu valmistelijaa. Päätöksiä ei lähetetty.`
     )
 
-    // Set valmistelija and sending päätös should succeed
-    await navigate(page, `/avustushaku/${avustushakuID}/`)
-    await clickElement(page, `#hakemus-${hakemusID} .btn-role`)
-    await Promise.all([
-      page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`),
-      clickElementWithText(page, "button", "_ valtionavustus"),
-    ])
+    await selectValmistelijaForHakemus(page, avustushakuID, hakemusID, "_ valtionavustus")
 
     await sendPäätös(page, avustushakuID)
-
-    // Entry is added to tapahtumaloki for sent email
     const tapahtumaloki = await page.waitForSelector(".tapahtumaloki")
     const logEntryCount = await tapahtumaloki.evaluate(e => e.querySelectorAll(".entry").length)
     assert.strictEqual(logEntryCount, 1)
@@ -150,7 +138,99 @@ describeBrowser("VaSpec", function() {
       await page.waitForSelector('#submit:enabled')
     })
   })
+
+  it("produces väliselvitys sheet in excel export", async function() {
+    const {page} = this
+
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+    await publishAvustushaku(page, avustushakuID)
+    await fillAndSendHakemus(page, avustushakuID)
+
+    await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
+
+    // Accept the hakemus
+    await navigate(page, `/avustushaku/${avustushakuID}/`)
+    await Promise.all([
+      page.waitForNavigation(),
+      clickElementWithText(page, "td", "Akaan kaupunki"),
+    ])
+
+    const hakemusID = await page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)[1])
+    console.log("Hakemus ID:", hakemusID)
+
+    await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
+    await clearAndType(page, "#budget-edit-project-budget .amount-column input", "100000")
+    await clickElement(page, "#arviointi-tab label[for='set-arvio-status-accepted']")
+    await waitForArvioSave(page, avustushakuID, hakemusID)
+
+    await resolveAvustushaku(page, avustushakuID)
+
+    await selectValmistelijaForHakemus(page, avustushakuID, hakemusID, "_ valtionavustus")
+
+    await sendPäätös(page, avustushakuID)
+    const tapahtumaloki = await page.waitForSelector(".tapahtumaloki")
+    const logEntryCount = await tapahtumaloki.evaluate(e => e.querySelectorAll(".entry").length)
+    assert.strictEqual(logEntryCount, 1)
+
+    await gotoVäliselvitysTab(page, avustushakuID)
+    await clickElementWithText(page, "button", "Lähetä väliselvityspyynnöt")
+    const responseP = page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/valiselvitys/send-notification`)
+    await waitForElementWithText(page, "span", "Lähetetty 1 viestiä")
+    const response = await (responseP.then(_ => _.json()))
+    const väliselvitysKey = response.hakemukset[0].user_key
+    console.log(`Väliselvitys user_key: ${väliselvitysKey}`)
+
+    await fillAndSendVäliselvityspyyntö(page, avustushakuID, väliselvitysKey)
+
+    const workbook = await downloadExcelExport(page, avustushakuID)
+
+    assert.deepStrictEqual(workbook.SheetNames, [ "Hakemukset", "Hakemuksien vastaukset", "Väliselvityksien vastaukset", "Loppuselvityksien vastaukset", "Tiliöinti" ])
+    const sheet = workbook.Sheets["Väliselvityksien vastaukset"]
+
+    assert.strictEqual(sheet.B1.v, "Hakijaorganisaatio")
+    assert.strictEqual(sheet.B2.v, "Akaan kaupungin kissojenkasvatuslaitos")
+
+    assert.strictEqual(sheet.C1.v, "Hankkeen nimi")
+    assert.strictEqual(sheet.C2.v, "Kissojen koulutuksen tehostaminen")
+  })
 })
+
+async function resolveAvustushaku(page, avustushakuID) {
+  await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
+  await clickElement(page, "label[for='set-status-resolved']")
+  await waitForSave(page, avustushakuID)
+}
+
+async function closeAvustushakuByChangingEndDateToPast(page, avustushakuID) {
+  await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
+  const previousYear = (new Date()).getFullYear() - 1
+  await clearAndType(page, "#hakuaika-end", `1.1.${previousYear} 0.00`)
+  await waitForSave(page, avustushakuID)
+}
+
+async function fillAndSendVäliselvityspyyntö(page, avustushakuID, väliselvitysKey) {
+  await navigateHakija(page, `/avustushaku/${avustushakuID}/valiselvitys?hakemus=${väliselvitysKey}&lang=fi`)
+  await clearAndType(page, "#organization", "Akaan kaupungin kissojenkasvatuslaitos")
+  await clearAndType(page, "#project-name", "Kissojen koulutuksen tehostaminen")
+  await clearAndType(page, "[name='project-description.project-description-1.goal']", "Kouluttaa kissoja entistä tehokkaamminen")
+  await clearAndType(page, "[name='project-description.project-description-1.activity']", "Kissoille on tarjottu enemmän kissanminttua")
+  await clearAndType(page, "[name='project-description.project-description-1.result']", "Ei tiedossa")
+
+  await clearAndType(page, "[name='textArea-1']", "Miten hankeen toimintaa, tuloksia ja vaikutuksia on arvioitu?")
+  await clearAndType(page, "[name='textArea-3']", "Miten hankkeesta/toiminnasta on tiedotettu?")
+
+  await clickElementWithText(page, "label", "Toimintamalli")
+
+  await clearAndType(page, "[name='project-outcomes.project-outcomes-1.description']", "Kuvaus")
+  await clearAndType(page, "[name='project-outcomes.project-outcomes-1.address']", "Saatavuustiedot, www-osoite tms.")
+
+  await clickElement(page, "label[for='radioButton-good-practices.radio.1']")
+  await clearAndType(page, "[name='textArea-4']", "Lisätietoja")
+
+  await uploadFile(page, "[name='namedAttachment-0']", "./dummy.pdf")
+
+  await submitVäliselvitys(page)
+}
 
 function integerFieldJson(id, label) {
   return {
@@ -180,7 +260,7 @@ function integerFieldJson(id, label) {
 }
 
 async function publishAvustushaku(page, avustushakuID) {
-  await clickElementWithText(page, "label", "Julkaistu")
+  await clickElement(page, "label[for='set-status-published']")
   await waitForSave(page, avustushakuID)
 }
 
@@ -218,6 +298,40 @@ async function fillAndSendHakemus(page, avustushakuID, beforeSubmitFn) {
   await page.waitForFunction(() => document.querySelector("#topbar #form-controls button#submit").textContent === "Hakemus lähetetty")
 }
 
+async function downloadExcelExport(page, avustushakuID) {
+  await navigate(page, `/avustushaku/${avustushakuID}/`)
+
+  // Hack around Puppeteer not being able to tell Puppeteer where to download files
+  const url = `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/export.xslx`
+  const buffer = await downloadFile(page, url)
+  return xlsx.read(buffer, {type: "buffer"})
+}
+
+// https://github.com/puppeteer/puppeteer/issues/299#issuecomment-569221074
+async function downloadFile(page, resource, init) {
+  const data = await page.evaluate(async (resource, init) => {
+    const resp = await window.fetch(resource, init)
+    if (!resp.ok)
+      throw new Error(`Server responded with ${resp.status} ${resp.statusText}`)
+    const data = await resp.blob()
+    const reader = new FileReader()
+    return new Promise(resolve => {
+      reader.addEventListener("loadend", () => resolve({
+        url: reader.result,
+        mime: resp.headers.get('Content-Type'),
+      }))
+      reader.readAsDataURL(data)
+    })
+  }, resource, init)
+  return Buffer.from(data.url.split(",")[1], "base64")
+}
+
+async function submitHakemus(page) {
+  await page.waitForFunction(() => document.querySelector("#topbar #form-controls button#submit").disabled === false)
+  await clickElement(page, "#topbar #form-controls button#submit")
+  await page.waitForFunction(() => document.querySelector("#topbar #form-controls button#submit").textContent === "Hakemus lähetetty")
+}
+
 async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page) {
   const avustushakuName = mkAvustushakuName()
   console.log(`Avustushaku name for test: ${avustushakuName}`)
@@ -235,6 +349,29 @@ async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page) {
   await waitForSave(page, avustushakuID)
 
   return avustushakuID
+}
+
+async function submitVäliselvitys(page) {
+  await page.waitForFunction(() => document.querySelector("#topbar #form-controls button#submit").disabled === false)
+  await clickElement(page, "#topbar #form-controls button#submit")
+  await page.waitForFunction(() => document.querySelector("#topbar #form-controls button#submit").textContent === "Väliselvitys lähetetty")
+}
+
+async function selectValmistelijaForHakemus(page, avustushakuID, hakemusID, valmistelijaName) {
+  await navigate(page, `/avustushaku/${avustushakuID}/`)
+  await clickElement(page, `#hakemus-${hakemusID} .btn-role`)
+
+  const xpath = `//table[contains(@class, 'hakemus-list')]/tbody//tr[contains(@class, 'selected')]//button[contains(., '${valmistelijaName}')]`
+  const valmistelijaButton = await page.waitForXPath(xpath, {visible: true})
+
+  await Promise.all([
+    page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`),
+    valmistelijaButton.click(),
+  ])
+}
+
+async function gotoVäliselvitysTab(page, avustushakuID) {
+  await navigate(page, `/admin/valiselvitys/?avustushaku=${avustushakuID}`)
 }
 
 async function sendPäätös(page, avustushakuID) {
@@ -256,7 +393,7 @@ async function waitForArvioSave(page, avustushakuID, hakemusID) {
 }
 
 async function waitForSave(page, avustushakuID) {
-  await page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}`)
+  await page.waitForFunction(() => document.querySelector("#form-controls .status .info").textContent === "Kaikki tiedot tallennettu")
 }
 
 async function clearAndType(page, selector, text) {
@@ -275,10 +412,14 @@ async function clearAndSet(page, selector, text) {
   await page.keyboard.press('Backspace')
 }
 
-async function clickElementWithText(page, element, text) {
-  const elements = await page.$x(`//${element}[contains(., '${text}')]`)
-  assert.ok(elements.length > 0, `Could not find element with text '${text}'`)
-  await elements[elements.length - 1].click()
+async function clickElementWithText(page, elementType, text) {
+  const element = await waitForElementWithText(page, elementType, text)
+  assert.ok(element, `Could not find ${elementType} element with text '${text}'`)
+  await element.click()
+}
+
+async function waitForElementWithText(page, elementType, text) {
+  return await page.waitForXPath(`//${elementType}[contains(., '${text}')]`, {visible: true})
 }
 
 async function clickElement(page, selector) {

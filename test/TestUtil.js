@@ -1,3 +1,7 @@
+const os = require("os")
+const path = require("path")
+const fs = require("fs").promises
+
 const puppeteer = require("puppeteer")
 
 const HAKIJA_HOSTNAME = process.env.HAKIJA_HOSTNAME || 'localhost'
