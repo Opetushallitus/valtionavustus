@@ -8,5 +8,4 @@
  :form-db {:database-name "va-test"}
  :email {:print-mail-on-disable? false}
  :va-users {:use-cache? false}
- :payments {:enabled? true :delete-payments? true}
- :application-change {:refuse-enabled? true}}
+ :payments {:enabled? true :delete-payments? true}}

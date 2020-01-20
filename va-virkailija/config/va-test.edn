@@ -18,7 +18,6 @@
                     :scheduling "0 00 04 ? * *"
                     :strict-host-key-checking :yes}
  :payments {:enabled? true :delete-payments? true}
- :application-change {:refuse-enabled? true}
  :integration-healthcheck {:enabled? true
                            :timeout 5000
                            :interval-minutes 15}}

@@ -12,7 +12,6 @@
          :host "localhost"
          :port 2500
          :to-finance ["test@test.com"]}
- :application-change {:refuse-enabled? true}
  :payments {:enabled? true
             :delete-payments? true}
  :tasmaytysraportti-create {:enabled? true}

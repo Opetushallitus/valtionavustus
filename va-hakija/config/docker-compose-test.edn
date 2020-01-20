@@ -10,5 +10,4 @@
          :host "localhost"
          :port 2500}
  :applications-ui {:enabled? true}
- :application-change {:change-enabled? true
-                      :refuse-enabled? true}}
+ :application-change {:change-enabled? true}}

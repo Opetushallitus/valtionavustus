@@ -6,5 +6,4 @@
                 :sv "http://localhost:8081/"}}
  :api {:restricted-routes? false}
  :form-db {:database-name "va-test"}
- :email {:print-mail-on-disable? false}
- :application-change {:refuse-enabled? true}}
+ :email {:print-mail-on-disable? false}}
