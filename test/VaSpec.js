@@ -283,7 +283,6 @@ async function fillAndSendHakemus(page, avustushakuID, beforeSubmitFn) {
   await clearAndType(page, "[name='project-costs-row.amount']", "100000")
   await uploadFile(page, "[name='previous-income-statement-and-balance-sheet']", "./dummy.pdf")
   await uploadFile(page, "[name='previous-financial-year-report']", "./dummy.pdf")
-  await uploadFile(page, "[name='previous-financial-year-report']", "./dummy.pdf")
   await uploadFile(page, "[name='previous-financial-year-auditor-report']", "./dummy.pdf")
   await uploadFile(page, "[name='current-year-plan-for-action-and-budget']", "./dummy.pdf")
   await uploadFile(page, "[name='description-of-functional-development-during-last-five-years']", "./dummy.pdf")
