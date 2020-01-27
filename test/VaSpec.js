@@ -101,6 +101,21 @@ describeBrowser("VaSpec", function() {
       })
   })
 
+  it("supports fields that accept only decimals", async function() {
+    const {page} = this
+
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+    const { fieldId, fieldLabel } = await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "decimalField")
+
+    await clickElementWithText(page, "span", "Haun tiedot")
+    await publishAvustushaku(page, avustushakuID)
+
+    await fillAndSendHakemus(page, avustushakuID, async () => {
+      await typeValueInFieldAndExpectValidationError(page, fieldId, 'Not an decimal', fieldLabel, 'fi: Syötä yksi numeroarvo')
+      await typeValueInFieldAndExpectNoValidationError(page, fieldId, '4.20')
+    })
+  })
+
   it("supports fields that accept only whole numbers", async function() {
     const {page} = this
 

@@ -2,6 +2,7 @@ import _ from 'lodash'
 import BankAccountValidator from './BankAccountValidator.js'
 import MoneyValidator from './MoneyValidator'
 import IntegerValidator from './IntegerValidator'
+import DecimalValidator from './DecimalValidator'
 import TableValidator from './TableValidator'
 
 export default class SyntaxValidator {
@@ -39,6 +40,14 @@ export default class SyntaxValidator {
           const integerError = IntegerValidator.validateInteger(value)
           if (integerError) {
             validationErrors.push(integerError)
+          }
+        }
+        break
+      case 'decimalField':
+        {
+          const decimalError = DecimalValidator.validateDecimal(value)
+          if (decimalError) {
+            validationErrors.push(decimalError)
           }
         }
         break

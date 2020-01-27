@@ -318,6 +318,10 @@
       "fi": "Syötä arvo kokonaislukuina",
       "sv": "Skriv in värdet som heltal"
     },
+    "decimal": {
+      "fi": "Syötä yksi numeroarvo",
+      "sv": "Skriv in värdet som ett nummer"
+    },
     "table-misses-one-value": {
       "fi": "Taulukosta puuttuu arvo",
       "sv": "TODO: Taulukosta puuttuu arvo"

@@ -4,6 +4,7 @@ import BasicValue from './BasicValue.jsx'
 import TextAreaValue from './TextAreaValue.jsx'
 import MoneyValue from './MoneyValue.jsx'
 import IntegerValue from './IntegerValue.jsx'
+import DecimalValue from './DecimalValue.jsx'
 import OptionValue from './OptionValue.jsx'
 import MultipleOptionValue from './MultipleOptionValue.jsx'
 import AttachmentPreview from './AttachmentPreview.jsx'
@@ -26,6 +27,7 @@ export default class FormPreviewComponent extends React.Component {
       "emailField": BasicValue,
       "moneyField": MoneyValue,
       "integerField": IntegerValue,
+      "decimalField": DecimalValue,
       "finnishBusinessIdField": BasicValue,
       "ownershipType": OptionValue,
       "iban": BasicValue,
@@ -44,6 +46,7 @@ export default class FormPreviewComponent extends React.Component {
       "emailField": TextFieldPropertyMapper,
       "moneyField": TextFieldPropertyMapper,
       "integerField": TextFieldPropertyMapper,
+      "decimalField": TextFieldPropertyMapper,
       "finnishBusinessIdField": TextFieldPropertyMapper,
       "ownershipType": OptionFieldPropertyMapper,
       "iban": TextFieldPropertyMapper,
