@@ -111,17 +111,8 @@ describeBrowser("VaSpec", function() {
     await publishAvustushaku(page, avustushakuID)
 
     await fillAndSendHakemus(page, avustushakuID, async () => {
-      const selector = '#' + fieldId
-      const errorSummarySelector = 'a.validation-errors-summary'
-      await clearAndType(page, selector, 'Not an integer')
-      await page.waitForSelector(errorSummarySelector, { visible: true })
-      assert.equal(await textContent(page, errorSummarySelector), '1 vastauksessa puutteita')
-      await clickElement(page, errorSummarySelector)
-      assert.equal(await textContent(page, '.validation-errors'), fieldLabel + 'fi: Syötä arvo kokonaislukuina')
-      await page.waitForSelector('#submit:disabled')
-      await clearAndType(page, selector, '420')
-      await page.waitForFunction(s => document.querySelector(s) == null, {}, errorSummarySelector)
-      await page.waitForSelector('#submit:enabled')
+      await typeValueInFieldAndExpectValidationError(page, fieldId, 'Not an integer', fieldLabel, 'fi: Syötä arvo kokonaislukuina')
+      await typeValueInFieldAndExpectNoValidationError(page, fieldId, '420')
     })
   })
 
@@ -216,6 +207,25 @@ async function fillAndSendVäliselvityspyyntö(page, avustushakuID, väliselvity
   await uploadFile(page, "[name='namedAttachment-0']", "./dummy.pdf")
 
   await submitVäliselvitys(page)
+}
+
+async function typeValueInFieldAndExpectValidationError(page, fieldId, value, fieldLabel, errorMessage) {
+  const selector = '#' + fieldId
+  const errorSummarySelector = 'a.validation-errors-summary'
+  await clearAndType(page, selector, value)
+  await page.waitForSelector(errorSummarySelector, { visible: true })
+  assert.equal(await textContent(page, errorSummarySelector), '1 vastauksessa puutteita')
+  await clickElement(page, errorSummarySelector)
+  assert.equal(await textContent(page, '.validation-errors'), fieldLabel + errorMessage)
+  await page.waitForSelector('#submit:disabled')
+}
+
+async function typeValueInFieldAndExpectNoValidationError(page, fieldId, value) {
+  const selector = '#' + fieldId
+  const errorSummarySelector = 'a.validation-errors-summary'
+  await clearAndType(page, selector, '420')
+  await page.waitForFunction(s => document.querySelector(s) == null, {}, errorSummarySelector)
+  await page.waitForSelector('#submit:enabled')
 }
 
 async function addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, fieldType) {
