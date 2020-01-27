@@ -25,6 +25,7 @@ export class EditComponent extends React.Component {
       "textArea": "Tekstialue",
       "emailField": "Sähköposti",
       "moneyField": "Rahasumma",
+      "integerField": "Kokonaisluku",
       "finnishBusinessIdField": "Y-tunnus",
       "ownershipType": "Omistajatyyppi",
       "iban": "IBAN tilinumero",
