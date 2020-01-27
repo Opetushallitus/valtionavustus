@@ -105,33 +105,19 @@ describeBrowser("VaSpec", function() {
     const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
-    await clickElementWithText(page, "span", "Hakulomake")
-    const jsonString = await textContent(page, ".form-json-editor textarea")
-    const json = JSON.parse(jsonString)
-    const content = json.content
-    const integerFieldId = "integerFieldId" + randomString()
-    const integerFieldLabel = "integerFieldLabel" + randomString()
-    const integerField =  integerFieldJson(integerFieldId, integerFieldLabel)
-
-    const newJson = JSON.stringify(Object.assign({}, json, { content: content.concat(integerField) }))
-    await clearAndSet(page, ".form-json-editor textarea", newJson)
-
-    await Promise.all([
-      page.waitForResponse(response => response.url() === `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/form` && response.status() === 200),
-      clickElementWithText(page, "button", "Tallenna")
-    ])
+    const { fieldId, fieldLabel } = await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "integerField")
 
     await clickElementWithText(page, "span", "Haun tiedot")
     await publishAvustushaku(page, avustushakuID)
 
     await fillAndSendHakemus(page, avustushakuID, async () => {
-      const selector = '#' + integerFieldId
+      const selector = '#' + fieldId
       const errorSummarySelector = 'a.validation-errors-summary'
       await clearAndType(page, selector, 'Not an integer')
       await page.waitForSelector(errorSummarySelector, { visible: true })
       assert.equal(await textContent(page, errorSummarySelector), '1 vastauksessa puutteita')
       await clickElement(page, errorSummarySelector)
-      assert.equal(await textContent(page, '.validation-errors'), integerFieldLabel + 'fi: Syötä arvo kokonaislukuina')
+      assert.equal(await textContent(page, '.validation-errors'), fieldLabel + 'fi: Syötä arvo kokonaislukuina')
       await page.waitForSelector('#submit:disabled')
       await clearAndType(page, selector, '420')
       await page.waitForFunction(s => document.querySelector(s) == null, {}, errorSummarySelector)
@@ -232,8 +218,24 @@ async function fillAndSendVäliselvityspyyntö(page, avustushakuID, väliselvity
   await submitVäliselvitys(page)
 }
 
-function integerFieldJson(id, label) {
-  return fieldJson("integerField", id, label)
+async function addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, fieldType) {
+  await clickElementWithText(page, "span", "Hakulomake")
+  const jsonString = await textContent(page, ".form-json-editor textarea")
+  const json = JSON.parse(jsonString)
+  const content = json.content
+  const fieldId = "fieldId" + randomString()
+  const fieldLabel = "fieldLabel" + randomString()
+  const field =  fieldJson(fieldType, fieldId, fieldLabel)
+
+  const newJson = JSON.stringify(Object.assign({}, json, { content: content.concat(field) }))
+  await clearAndSet(page, ".form-json-editor textarea", newJson)
+
+  await Promise.all([
+    page.waitForResponse(response => response.url() === `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/form` && response.status() === 200),
+    clickElementWithText(page, "button", "Tallenna")
+  ])
+
+  return { fieldId, fieldLabel }
 }
 
 function fieldJson(type, id, label) {
