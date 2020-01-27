@@ -233,6 +233,10 @@ async function fillAndSendVäliselvityspyyntö(page, avustushakuID, väliselvity
 }
 
 function integerFieldJson(id, label) {
+  return fieldJson("integerField", id, label)
+}
+
+function fieldJson(type, id, label) {
   return {
     "fieldClass": "wrapperElement",
     "id": id + 'wrapper',
@@ -254,7 +258,7 @@ function integerFieldJson(id, label) {
           "maxlength": 10
         },
         "required": true,
-        "fieldType": "integerField"
+        "fieldType": type
       }
     ]}
 }
