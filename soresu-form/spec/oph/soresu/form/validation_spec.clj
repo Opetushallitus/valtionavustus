@@ -40,6 +40,12 @@
    :fieldType  "integerField"
    :required   true})
 
+(def decimal-field
+  {:id         "decimal"
+   :fieldClass "formField"
+   :fieldType  "decimalField"
+   :required   true})
+
 (def finnish-business-id-field
   {:id         "y-tunnus"
    :fieldClass "formField"
@@ -113,6 +119,16 @@
   (it "validates empty integer as required"
       (let [result (validate-field (answers-for integer-field "") [] integer-field)]
         (should= {:integer [{:error "required"}]} result)))
+
+  (it "validates non-empty decimal"
+      (should= {:decimal []} (validate-field (answers-for decimal-field "7") [] decimal-field))
+      (should= {:decimal []} (validate-field (answers-for decimal-field "7.1") [] decimal-field))
+      (should= {:decimal [{:error "decimal"}]} (validate-field (answers-for decimal-field "7,1") [] decimal-field))
+      (should= {:decimal [{:error "decimal"}]} (validate-field (answers-for decimal-field "7x") [] decimal-field)))
+
+  (it "validates empty decimal as required"
+      (let [result (validate-field (answers-for decimal-field "") [] decimal-field)]
+        (should= {:decimal [{:error "required"}]} result)))
 
   (it "validates non-empty finnish business"
       (should= {:y-tunnus []} (validate-field (answers-for finnish-business-id-field "1629284-5") [] finnish-business-id-field))

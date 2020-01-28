@@ -8,6 +8,13 @@
       true)
     (catch NumberFormatException e false)))
 
+(defn parseable-as-decimal? [s]
+  (try
+    (do
+      (Double. s)
+      true)
+    (catch NumberFormatException e false)))
+
 (defn email-address? [s]
   (and (string? s)
        (<= (count s) 254)

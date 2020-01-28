@@ -55,6 +55,7 @@
                                     "emailField"
                                     "moneyField"
                                     "integerField"
+                                    "decimalField"
                                     "finnishBusinessIdField"
                                     "iban"
                                     "bic"
