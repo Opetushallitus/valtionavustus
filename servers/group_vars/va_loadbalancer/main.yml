@@ -17,6 +17,8 @@ loadbalancer_acl:
     condition: hdr(host) -i dev.valtionavustukset.oph.fi
   - name: va_ip_test
     condition: hdr(host) -i 86.50.28.144
+  - name: source_ip_is_oph_vpn
+    condition: src 178.217.128.38/32
 
 # Map from acl declaration to backend
 
@@ -32,9 +34,9 @@ loadbalancer_acl_mapping:
   - name: va_virkailija_backend_prod
     condition: if va_virkailija_backend_prod
   - name: va_build
-    condition: if va_build
+    condition: if va_build source_ip_is_oph_vpn
   - name: va_ip_test
-    condition: if va_ip_test
+    condition: if va_ip_test source_ip_is_oph_vpn
 
 # Define backends
 
