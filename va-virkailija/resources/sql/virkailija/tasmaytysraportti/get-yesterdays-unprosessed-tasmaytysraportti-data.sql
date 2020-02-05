@@ -7,5 +7,5 @@ WHERE
 AND NOT EXISTS (
   SELECT 1
   FROM tasmaytysraportit t
-  WHERE t.tasmaytysraportti_date = tasmaytysraportti_date
+  WHERE t.tasmaytysraportti_date = TO_CHAR((current_date - 1) :: DATE, 'dd.mm.yyyy')
 )
