@@ -67,18 +67,23 @@
      ["INSERT INTO tasmaytysraportit (tasmaytysraportti_date, contents, created_at) VALUES (?, ?, current_date)" tasmaytysraportti_date (get-bytes tmp-file)]))
   (log/info (str "Succesfully stored täsmäytysraportti for " tasmaytysraportti_date)))
 
-(defn maybe-create-yesterdays-tasmaytysraportti []
+(defn maybe-create-tasmaytysraportti []
   (log/info "Looking for unreported maksatus rows")
   (let [data (exec :virkailija-db
-                   virkailija-queries/get-yesterdays-unprosessed-tasmaytysraportti-data
+                   virkailija-queries/get-unprosessed-tasmaytysraportti-data
                    {})
-        tasmaytysraportti_date (:tasmaytysraportti_date (first data))
         rowcount (count data)]
     (if (> rowcount 0)
       (do
         (log/info (str "Found " rowcount " unreported maksatus rows"))
-        (let [tmp-file (create-tasmaytysraportti tasmaytysraportti_date data)]
-          (store-tasmaytysraportti tasmaytysraportti_date tmp-file)))
+        (let [data-by-date (group-by :tasmaytysraportti_date data)
+              dates (keys data-by-date)]
+          (doseq [tasmaytysraportti_date dates]
+            (do
+              (log/info (str "Process unreported maksatus rows for " tasmaytysraportti_date))
+              (let [data (get data-by-date tasmaytysraportti_date)
+                    tmp-file (create-tasmaytysraportti tasmaytysraportti_date data)]
+                (store-tasmaytysraportti tasmaytysraportti_date tmp-file))))))
       (log/info "No unreported maksatus rows found"))))
 
 (defn send-unsent-tasmaytysraportti-mails []
@@ -129,7 +134,7 @@
             (scheduler/after
              1
              :minute
-             maybe-create-yesterdays-tasmaytysraportti))))
+             maybe-create-tasmaytysraportti))))
 
 (defn stop-schedule-create-tasmaytysraportti []
   (when (some? @scheduler-report)
