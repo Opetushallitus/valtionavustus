@@ -131,6 +131,17 @@ describeBrowser("VaSpec", function() {
     })
   })
 
+  it("supports editing and saving the values of the fields", async function() {
+    const {page} = this
+
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+    await clickElementWithText(page, "span", "Hakulomake")
+    await page.waitForFunction(() => document.querySelector("button#saveForm").disabled === true)
+    await clearAndType(page, "textarea[name='duration-help-text-fi']", "Gimblegamble")
+    await page.waitForFunction(() => document.querySelector("button#saveForm").disabled === false)
+  })
+
+
   it("produces väliselvitys sheet in excel export", async function() {
     const {page} = this
 
