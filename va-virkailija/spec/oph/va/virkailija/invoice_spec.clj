@@ -296,7 +296,7 @@
                :grant (-> grant
                           (assoc
                             :project {:code "6600A-M2024"}
-                            :operational-unit {:code "6600100130"}
+                            :operational-unit {:code "6600100130   "}
                             :operation {:code "6600151502"}
                             :lkp-account "82510000")
                           (assoc-in [:content :document-type] "XE"))
@@ -350,7 +350,7 @@
                             {:payment payment
                              :application application
                              :grant (assoc grant
-                                           :operational-unit {:code "123456789"}
+                                           :operational-unit {:code "123456789 "}
                                            :project {:code "23456789"}
                                            :operation {:code "3456789"})
                              :batch (assoc batch :documents documents)})]

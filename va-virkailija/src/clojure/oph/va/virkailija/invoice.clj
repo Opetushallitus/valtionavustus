@@ -100,12 +100,13 @@
          [:rowId 1]
          [:generalLedgerAccount (lkp/get-lkp-account (:answers application))]
          [:postingAmount (:payment-sum payment)]
-         [:accountingObject01 (get-in grant [:operational-unit :code])]
+         [:accountingObject01
+            (let [toimintayksikko (get-in grant [:operational-unit :code])]
+              (if toimintayksikko (oph.va.virkailija.export/remove-white-spaces toimintayksikko) toimintayksikko))]
          [:accountingObject02 (:takp-account application)]
          [:accountingObject04 (get-in grant [:project :code])]
          [:accountingObject05 (get-in grant [:operation :code])]
          [:accountingObject08 (:partner batch)]]]]
-
       ]]))
 
 

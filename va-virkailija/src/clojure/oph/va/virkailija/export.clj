@@ -242,7 +242,7 @@
             answers
             fixed-fields)))
 
-(defn- remove-white-spaces [str]
+(defn remove-white-spaces [str]
   (string/replace str #"\s" ""))
 
 (defn- comma-to-dot [str]
