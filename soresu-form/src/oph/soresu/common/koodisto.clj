@@ -17,7 +17,8 @@
 (defn json->map [body] (cheshire/parse-string body true))
 
 (defn- do-get [url]
-  (let [{:keys [status headers body error] :as resp} @(http/get url)]
+  (let [req-options {:headers {"Caller-Id" "1.2.246.562.10.00000000001.valtionavustus"}}
+        {:keys [status headers body error] :as resp} @(http/get url req-options)]
     (if (= 200 status)
       (json->map body)
       (throw (ex-info "Error when fetching doing HTTP GET" {:status status

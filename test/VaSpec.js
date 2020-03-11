@@ -196,6 +196,24 @@ describeBrowser("VaSpec", function() {
     assert.strictEqual(sheet.C1.v, "Hankkeen nimi")
     assert.strictEqual(sheet.C2.v, "Kissojen koulutuksen tehostaminen")
   })
+
+  it("should allow user to add koodistokenttä to form and save it", async function() {
+    const {page} = this
+
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+    await navigate(page, `/admin/form-editor/?avustushaku=${avustushakuID}`)
+    // Add new Koodistokenttä
+    await page.hover(".soresu-field-add-header")
+    await clickElementWithText(page, "a", "Koodistokenttä")
+    // Select koodisto for the field
+    const input = await page.waitFor(".koodisto-dropdown .rw-popup input.rw-input")
+    await input.type("automaatio")
+    await clickElementWithText(page, "li", "automaatioyliasentajan eat järjestys")
+    // Select input type for the field
+    await clickElementWithText(page, "label", "Pudotusvalikko")
+
+    await clickFormSaveAndWait(page, avustushakuID)
+  })
 })
 
 async function resolveAvustushaku(page, avustushakuID) {
@@ -266,12 +284,16 @@ async function addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, fie
   const newJson = JSON.stringify(Object.assign({}, json, { content: content.concat(field) }))
   await clearAndSet(page, ".form-json-editor textarea", newJson)
 
+  await clickFormSaveAndWait(page, avustushakuID)
+
+  return { fieldId, fieldLabel }
+}
+
+async function clickFormSaveAndWait(page, avustushakuID) {
   await Promise.all([
     page.waitForResponse(response => response.url() === `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/form` && response.status() === 200),
     clickElementWithText(page, "button", "Tallenna")
   ])
-
-  return { fieldId, fieldLabel }
 }
 
 function fieldJson(type, id, label) {
