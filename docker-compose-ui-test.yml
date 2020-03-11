@@ -9,7 +9,6 @@ services:
       - "HAKIJA_HOSTNAME=va-hakija"
       - "VIRKAILIJA_HOSTNAME=va-virkailija"
       - "HEADLESS=true"
-      - "DEBUG=puppeteer:*"
     networks:
       - subnet-private
 
