@@ -1,6 +1,7 @@
 (ns oph.common.organisation-service
   (:require [org.httpkit.client :as http]
-            [cheshire.core :as cheshire]))
+            [cheshire.core :as cheshire]
+            [oph.common.caller-id :as caller-id]))
 
 (def service-url "https://virkailija.opintopolku.fi/organisaatio-service/rest/")
 
@@ -31,7 +32,7 @@
   (let [url
         (str service-url "organisaatio/" organisation-id "?includeImage=false")
         {:keys [status body error headers]}
-         @(http/get url)]
+         @(http/get url {:headers caller-id/headers})]
     (case status
       200 (json->map body)
       404 nil
