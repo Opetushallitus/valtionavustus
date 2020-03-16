@@ -536,8 +536,8 @@ Sovellus tarkistaa jokaisen maksatuksen lähetyksessä, että virkailija ei ole
 asettanut "Ei maksuun" tietoa tai hakija ei ole ilmoittanut, että ei ota
 avustusta vastaan.
 
-Rondo palauttaa XML-muodossa vastauksen maksatuksesta, mikä luetaan
-Rondo-Schedulerin avulla ajastetusti ja maksatuksen tila päivitetään
+Handi palauttaa XML-muodossa vastauksen maksatuksesta, mikä luetaan
+payment-schedulerin avulla ajastetusti ja maksatuksen tila päivitetään
 tietokantaan.
 
 Maksatukset-näkymässä listataan sekä julkaistut että ratkaistut haut. Ainoastaan
@@ -563,7 +563,7 @@ Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
     kaikille maksetaan useassa erässä ja ensimmäinen erä on 60% myönnetystä
     summasta
 - Virkailija luo Maksatukset-näkymässä uuden maksuerän täyttämällä tarvittavat
-  tiedot ja lähettää 1. erän maksatukset Rondoon
+  tiedot ja lähettää 1. erän maksatukset Handiin
     - Asiakirjoja virkailija voi lisätä mielivaltaisen määrän maksuerää ja
     vaihetta kohden. Näitä tietoja käytetään maksatusten sähköposti-ilmoituksen
     lähettämiseen.
@@ -573,7 +573,7 @@ Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
 
 Maksusanomassa on pitkäviite, jolla tunnistetaan hakemuksen maksatus
 VA-järjestelmässä. Pitkäviite koostuu hakemuksen diaarinumerosta ja maksuerän
-numerosta alaviivalla erotettuna. Samainen pitkäviite palautuu Rondosta
+numerosta alaviivalla erotettuna. Samainen pitkäviite palautuu Handista
 sanoman mukana, kun maksatus on maksettu.
 
 Vanhoissa maksatuksissa ei ole pitkäviitteessä maksuerän numeroa. Näitä
@@ -585,8 +585,8 @@ Tila      | Tunniste tietokannassa | Huomiot
 ----------|------------------------|---------------------------------------
 Luotu     | 0                      | Haku on ratkaistu ja maksatukset luotu
 Odottaa   | 1                      | Ei käytössä
-Lähetetty | 2                      | Maksatus on lähetetty Rondoon
-Maksettu  | 3                      | Rondosta on tullut maksupalaute
+Lähetetty | 2                      | Maksatus on lähetetty maksatuspalveluun
+Maksettu  | 3                      | Maksatuspalvelusta on tullut maksupalaute
 
 ## Muutoksenhaku
 
