@@ -553,7 +553,7 @@ Maksatusprosessi etenee seuraavasti yhdessä erässä maksettavan haun kanssa:
 
 - Ensimmäisen erän suuruus on luonnollisesti myönnetty summa (OPH:n osuus)
 - Virkailija luo Maksatukset-näkymässä uuden maksuerän täyttämällä tarvittavat
-  tiedot ja lähettää maksatukset Rondoon
+  tiedot ja lähettää maksatukset Handiin
 
 Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
 
