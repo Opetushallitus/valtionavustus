@@ -1,5 +1,7 @@
 # Valtionavustukset
 
+[Palvelukortti](https://confluence.csc.fi/pages/viewpage.action?pageId=51873238)
+
 Opetushallituksen (OPH) valtionavustusten hakemiseen, käsittelyyn ja
 myöntämiseen tarkoitetut palvelut.
 
@@ -529,10 +531,6 @@ Uudemmissa hauissa toimintatapa on seuraava:
   - Käyttäjä ei voi tietää, onko hakemuksessa kommentteja vai ei
 - Kun haku on ratkaistu
   - Näytetään kaikki kommentit tai teksti "Ei kommentteja"
-
-## Maksatus
-
-https://confluence.oph.ware.fi/confluence/display/VA3/Maksatusintegraatio
 
 ## Muutoksenhaku
 
