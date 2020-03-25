@@ -532,61 +532,7 @@ Uudemmissa hauissa toimintatapa on seuraava:
 
 ## Maksatus
 
-Sovellus tarkistaa jokaisen maksatuksen lähetyksessä, että virkailija ei ole
-asettanut "Ei maksuun" tietoa tai hakija ei ole ilmoittanut, että ei ota
-avustusta vastaan.
-
-Handi palauttaa XML-muodossa vastauksen maksatuksesta, mikä luetaan
-payment-schedulerin avulla ajastetusti ja maksatuksen tila päivitetään
-tietokantaan.
-
-Maksatukset-näkymässä listataan sekä julkaistut että ratkaistut haut. Ainoastaan
-ratkaistujen hakujen maksatuslistaukset ovat käytettävissä.
-
-Kun haun päätökset lähetetään, kaikille hakemuksille luodaan 1. erän maksatus
-seuraavin ehdoin:
-- Tila on hyväksytty
-- Virkailija ei ole asettanut "Ei maksuun" täppää
-- Hakija ei ole ilmoittanut, että ei ota avustusta vastaan
-
-Maksatusprosessi etenee seuraavasti yhdessä erässä maksettavan haun kanssa:
-
-- Ensimmäisen erän suuruus on luonnollisesti myönnetty summa (OPH:n osuus)
-- Virkailija luo Maksatukset-näkymässä uuden maksuerän täyttämällä tarvittavat
-  tiedot ja lähettää maksatukset Handiin
-
-Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
-
-- Ensimmäisen erän summa määräytyy haussa tehtyjen määritysten (avustuksen
-  summan leikkuri yms.) mukaan
-  - Jos näitä ei ole haun tietoihin määritelty, käytetään oletusarvona, että
-    kaikille maksetaan useassa erässä ja ensimmäinen erä on 60% myönnetystä
-    summasta
-- Virkailija luo Maksatukset-näkymässä uuden maksuerän täyttämällä tarvittavat
-  tiedot ja lähettää 1. erän maksatukset Handiin
-    - Asiakirjoja virkailija voi lisätä mielivaltaisen määrän maksuerää ja
-    vaihetta kohden. Näitä tietoja käytetään maksatusten sähköposti-ilmoituksen
-    lähettämiseen.
-- Seuraavan erän summan asettaa virkailija Väliselvitys-välilehdellä
-  - Tämän jälkeen maksu ilmestyy Maksatus-näkymään, josta sen voi lähettää,
-    kuten ensimmäisen erän
-
-Maksusanomassa on pitkäviite, jolla tunnistetaan hakemuksen maksatus
-VA-järjestelmässä. Pitkäviite koostuu hakemuksen diaarinumerosta ja maksuerän
-numerosta alaviivalla erotettuna. Samainen pitkäviite palautuu Handista
-sanoman mukana, kun maksatus on maksettu.
-
-Vanhoissa maksatuksissa ei ole pitkäviitteessä maksuerän numeroa. Näitä
-parsittaessa oletetaan, että kyseessä on maksatuksen 1. erä.
-
-### Maksatuksen tila
-
-Tila      | Tunniste tietokannassa | Huomiot
-----------|------------------------|---------------------------------------
-Luotu     | 0                      | Haku on ratkaistu ja maksatukset luotu
-Odottaa   | 1                      | Ei käytössä
-Lähetetty | 2                      | Maksatus on lähetetty maksatuspalveluun
-Maksettu  | 3                      | Maksatuspalvelusta on tullut maksupalaute
+https://confluence.oph.ware.fi/confluence/display/VA3/Maksatusintegraatio
 
 ## Muutoksenhaku
 
