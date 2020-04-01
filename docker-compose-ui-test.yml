@@ -44,6 +44,8 @@ services:
       - '5432:5432'
     networks:
       - subnet-private
+    environment:
+      PGDATA: '/tmp/'
 
 networks:
   subnet-private:
