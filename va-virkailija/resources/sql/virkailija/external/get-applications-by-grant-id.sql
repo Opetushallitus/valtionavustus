@@ -1,7 +1,7 @@
 SELECT
   h.id, h.language, h.avustushaku as grant_id, h.organization_name, h.project_name,
   h.user_first_name, h.user_last_name,
-  nutshell.value as nutshell,
+  coalesce(project_goals.value, project_nutshell.value) as nutshell,
   partners.value as partners,
   project_begin.value as project_begin,
   project_end.value as project_end,
@@ -17,7 +17,14 @@ LEFT JOIN
     FROM hakija.form_submissions f, jsonb_array_elements(answers->'value') elem
     WHERE f.version_closed IS NULL
     AND elem->>'key' = 'project-goals'
-  ) AS nutshell ON (h.form_submission_id = nutshell.id AND h.form_submission_version = nutshell.version)
+  ) AS project_goals ON (h.form_submission_id = project_goals.id AND h.form_submission_version = project_goals.version)
+LEFT JOIN
+  (
+    SELECT id, version, elem->>'value' as value
+    FROM hakija.form_submissions f, jsonb_array_elements(answers->'value') elem
+    WHERE f.version_closed IS NULL
+    AND elem->>'key' = 'project-nutshell'
+  ) AS project_nutshell ON (h.form_submission_id = project_nutshell.id AND h.form_submission_version = project_nutshell.version)
 LEFT JOIN
   (
     SELECT id, version, elem->>'value' AS value
