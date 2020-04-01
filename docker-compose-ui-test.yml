@@ -45,6 +45,8 @@ services:
     networks:
       - subnet-private
     environment:
+      POSTGRES_USER: 'va'
+      POSTGRES_PASSWORD: 'va'
       PGDATA: '/tmp/'
 
 networks:
