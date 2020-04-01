@@ -18,6 +18,7 @@ npm-debug.log
 pom.xml
 scripts/docker/db-variables.env
 scripts/postgres-docker/postgres-data/
+scripts/postgres-docker/postgres-data-12-2/
 target/
 servers/site.retry
 *~

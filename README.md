@@ -61,7 +61,7 @@ Haun roolista huolimatta kuka tahansa VA-käyttäjä voi kommentoida hakemuksia.
 * [npm](https://www.npmjs.com/)
 * [Leiningen](https://leiningen.org/), versio 2.8.1
 * [Java SE Development Kit](http://www.oracle.com/technetwork/java/javase/index.html), versio 8
-* [PostgreSQL](https://www.postgresql.org/), vähintään versio 9.4
+* [PostgreSQL](https://www.postgresql.org/), vähintään versio 12.2
 * [GNU make](https://www.gnu.org/software/make/), vähintään versio 3.81
 
 Käytä OPH:n VPN:ää, jotta voit ladata tarvittavat jar-paketit OPH:n
@@ -106,7 +106,7 @@ Docker-imagen luonti:
 
 ``` shell
 cd valtionavustus/script/postgres-docker
-docker build -t va-postgres:9.4 .
+docker build -t va-postgres:12.2 .
 ```
 
 Data-hakemiston luonti:
@@ -118,7 +118,7 @@ mkdir -p postgres-data
 Tietokannan ajaminen Dockerissa:
 
 ``` shell
-docker run --rm --name va-postgres -p 5432:5432 -v "$PWD/postgres-data:/var/lib/postgresql/data" va-postgres:9.4
+run_database.sh
 ```
 
 #### Ajaminen manuaalisesti
