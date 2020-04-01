@@ -35,7 +35,7 @@ services:
       - subnet-private
 
   db:
-    image: postgres:9.4
+    image: postgres:12.2
     volumes:
       - ./scripts/postgres-docker/init-db.sql:/docker-entrypoint-initdb.d/init.sql
     container_name: va-postgres
