@@ -1,0 +1,45 @@
+- name: Install PostgreSQL 12 server
+  yum:
+    name: postgresql12-server
+    state: present
+
+- name: Install PostgreSQL 12 client
+  yum:
+    name: postgresql12
+    state: present
+
+- name: Initialize DB directory
+  shell: /usr/pgsql-12/bin/postgresql-12-setup initdb
+  args:
+    creates: /var/lib/pgsql/12/data
+
+- name: PostgreSQL 12 server config file
+  template:
+    src: postgresql.conf.j2
+    dest: /var/lib/pgsql/12/data/postgresql.conf"
+    owner: postgres
+    group: postgres
+    mode: 0600
+
+- name: Start PostgreSQL 12
+  service:
+    name: postgresql-12
+    state: started
+    enabled: true
+
+- name: Create Postgresql backup directory
+  file: path={{ postgresql_12_backup_dir }} owner=postgres group=postgres state=directory
+
+- name: Create backup directories
+  file: owner=postgres group=postgres mode=0750 state=directory path={{ item }}
+  with_items:
+    - "{{ postgresql_backup_local_dir }}"
+    - "{{ postgresql_backup_local_dir }}/bin"
+    - "{{ postgresql_backup_active_dir }}"
+
+- name: Install backup scripts
+  template: src={{ item }}.j2 dest={{ postgresql_backup_local_dir }}/bin/{{ item }} owner=postgres group=postgres mode=0750
+  with_items:
+    - backup_working_wal.sh
+    - archive_wal.sh
+    - scheduled_backup.sh

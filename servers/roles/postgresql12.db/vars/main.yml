@@ -1,0 +1,3 @@
+postgresql_backup_local_dir: /var/lib/pgsql/12/backup
+postgresql_backup_active_dir: /var/lib/pgsql/12/backup/active
+postgresql_12_backup_dir: /postgresql-backups/12/

@@ -1,0 +1,7 @@
+#@IgnoreInspection BashAddShebang
+
+log_statement = all
+
+wal_level = archive
+archive_mode = on
+archive_command = '/var/lib/pgsql/backup/bin/archive_wal.sh "%p" "%f" main'
