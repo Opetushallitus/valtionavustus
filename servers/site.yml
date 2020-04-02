@@ -8,6 +8,7 @@
   roles:
   - {role: common, tags: ['common']}
   - {role: valtionavustus.app, tags: ['app']}
+  - {role: postgresql12.db, tags: ['pg12']}
 
 - hosts: va_loadbalancer
   sudo: yes
