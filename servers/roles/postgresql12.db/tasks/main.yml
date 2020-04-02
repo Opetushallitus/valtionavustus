@@ -21,25 +21,34 @@
     group: postgres
     mode: 0600
 
+- name: Create backup directories
+  file: owner=postgres group=postgres mode=0750 state=directory path={{ item }}
+  with_items:
+    - "{{ postgresql_12_backup_local_dir }}"
+    - "{{ postgresql_12_backup_local_dir }}/bin"
+    - "{{ postgresql_12_backup_active_dir }}"
+    - "{{ postgresql_12_custom_conf_dir }}"
+
+- name: PostgreSQL 12 server custom configs
+  template:
+    src: va.conf.j2
+    dest: /var/lib/pgsql/12/data/conf.d/postgresql.conf"
+    owner: postgres
+    group: postgres
+    mode: 0600
+
+- name: Create Postgresql backup directory
+  file: path={{ postgresql_12_backup_dir }} owner=postgres group=postgres state=directory
+
+- name: Install backup scripts
+  template: src={{ item }}.j2 dest={{ postgresql_12_backup_local_dir }}/bin/{{ item }} owner=postgres group=postgres mode=0750
+  with_items:
+    - backup_working_wal.sh
+    - archive_wal.sh
+    - scheduled_backup.sh
+
 - name: Start PostgreSQL 12
   service:
     name: postgresql-12
     state: started
     enabled: true
-
-- name: Create Postgresql backup directory
-  file: path={{ postgresql_12_backup_dir }} owner=postgres group=postgres state=directory
-
-- name: Create backup directories
-  file: owner=postgres group=postgres mode=0750 state=directory path={{ item }}
-  with_items:
-    - "{{ postgresql_backup_local_dir }}"
-    - "{{ postgresql_backup_local_dir }}/bin"
-    - "{{ postgresql_backup_active_dir }}"
-
-- name: Install backup scripts
-  template: src={{ item }}.j2 dest={{ postgresql_backup_local_dir }}/bin/{{ item }} owner=postgres group=postgres mode=0750
-  with_items:
-    - backup_working_wal.sh
-    - archive_wal.sh
-    - scheduled_backup.sh

@@ -1,3 +1,7 @@
-postgresql_backup_local_dir: /var/lib/pgsql/12/backup
-postgresql_backup_active_dir: /var/lib/pgsql/12/backup/active
-postgresql_12_backup_dir: /postgresql-backups/12/
+postgresql_12_base_dir: /var/lib/pgsql/12
+postgresql_12_pgdata: "{{ postgresql_12_base_dir }}/data"
+postgresql_12_backup_local_dir: "{{ postgresql_12_base_dir }}/backup"
+postgresql_12_backup_active_dir: "{{ postgresql_12_backup_local_dir }}/active"
+postgresql_12_custom_conf_dir: "{{ postgresql_12_pgdata }}/conf.d"
+postgresql_12_backup_dir: /postgresql-backups/12
+
