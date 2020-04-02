@@ -16,7 +16,7 @@
 - name: PostgreSQL 12 server config file
   template:
     src: postgresql.conf.j2
-    dest: /var/lib/pgsql/12/data/postgresql.conf"
+    dest: /var/lib/pgsql/12/data/postgresql.conf
     owner: postgres
     group: postgres
     mode: 0600
@@ -32,7 +32,7 @@
 - name: PostgreSQL 12 server custom configs
   template:
     src: va.conf.j2
-    dest: /var/lib/pgsql/12/data/conf.d/postgresql.conf"
+    dest: "{{ postgresql_12_custom_conf_dir }}/va.conf"
     owner: postgres
     group: postgres
     mode: 0600
