@@ -121,6 +121,12 @@ Tietokannan ajaminen Dockerissa:
 run_database.sh
 ```
 
+Tietokannan palauttaminen, esim Lammen backupista:
+
+``` shell
+pg_restore --user va -h localhost -v --clean --if-exists --no-acl --no-owner --dbname va-dev ./valtionavustukset-2.backup
+```
+
 #### Ajaminen manuaalisesti
 
 *Huom:* Linux-koneilla Postgres-komennot on helpointa ajaa
