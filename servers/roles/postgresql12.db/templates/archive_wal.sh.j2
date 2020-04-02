@@ -11,9 +11,9 @@ full_file=$1
 file=$2
 server=`hostname`
 
-active_dir={{ postgresql_backup_active_dir }}
+active_dir={{ postgresql_12_backup_active_dir }}
 backup_dir="{{ postgresql_12_backup_dir }}/current/wal"
-mutex={{ postgresql_backup_local_dir }}/walmutex
+mutex={{ postgresql_12_backup_local_dir }}/walmutex
 mailto='{{ postgresql_backup_mail_recipient }}'
 mutex_attempts=50
 
@@ -55,7 +55,7 @@ mkdir -p $backup_dir
 handler rsync $remote_rsync --ignore-existing -ptg $full_file $backup_dir
 
 # create an empty directory for --delete
-empty=`handler mktemp -d {{ postgresql_backup_local_dir }}/emptyXXXXXX`
+empty=`handler mktemp -d {{ postgresql_12_backup_local_dir }}/emptyXXXXXX`
 
 # clear the active directory
 handler rsync $remote_rsync -rptg --delete $empty/ $active_dir

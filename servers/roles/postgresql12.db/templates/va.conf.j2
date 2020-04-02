@@ -4,4 +4,5 @@ log_statement = all
 
 wal_level = archive
 archive_mode = on
-archive_command = '/var/lib/pgsql/backup/bin/archive_wal.sh "%p" "%f" main'
+archive_command = "{{ postgresql_12_backup_local_dir }}/bin/archive_wal.sh \"%p\" \"%f\" main"
+
