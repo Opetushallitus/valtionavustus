@@ -20,6 +20,18 @@
     owner: postgres
     group: postgres
     mode: 0600
+  notify:
+    - Reload PostgreSQL 12
+
+- name: PostgreSQL 12 pg_hba.conf
+  template:
+    src: pg_hba.conf.j2
+    dest: /var/lib/pgsql/12/data/pg_hba.conf
+    owner: postgres
+    group: postgres
+    mode: 0600
+  notify:
+    - Reload PostgreSQL 12
 
 - name: Create backup directories
   file: owner=postgres group=postgres mode=0750 state=directory path={{ item }}
@@ -36,6 +48,8 @@
     owner: postgres
     group: postgres
     mode: 0600
+  notify:
+    - Reload PostgreSQL 12
 
 - name: Create Postgresql backup directory
   file: path={{ postgresql_12_backup_dir }} owner=postgres group=postgres state=directory
