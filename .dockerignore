@@ -5,3 +5,4 @@
 *.iml
 
 ./scripts/postgres-docker/postgres-data
+./scripts/postgres-docker/postgres-data-12-2
