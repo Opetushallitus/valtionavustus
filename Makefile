@@ -45,18 +45,11 @@ npm-clean-frontends: check-node
 	$(call npm_clean_frontend,va-virkailija)
 
 .PHONY: npm-build
-npm-build: npm-install-modules npm-lint npm-build-frontends
+npm-build: npm-install-modules npm-build-frontends
 
 .PHONY: npm-install-modules
 npm-install-modules: check-node
 	npm install
-
-.PHONY: npm-lint
-npm-lint: check-node
-	npm run soresu-form:lint
-	npm run common:lint
-	npm run hakija:lint
-	npm run virkailija:lint
 
 .PHONY: npm-build-frontends
 npm-build-frontends: check-node
@@ -152,8 +145,7 @@ Targets:
   npm-clean                     `npm-clean-modules`, `npm-clean-frontends`
   npm-clean-modules             Remove installed npm modules from $$NPM_PROJECTS.
   npm-clean-frontends           Remove frontend build products from va-hakija and va-virkailija.
-  npm-build                     `npm-lint`, `npm-install-modules`, `npm-build-frontends`
-  npm-lint                      Run JavaScript linter for $$NPM_PROJECTS.
+  npm-build                     `npm-install-modules`, `npm-build-frontends`
   npm-install-modules           Install npm modules for $$NPM_PROJECTS.
   npm-build-frontends           Build frontend sources for va-hakija and va-virkailija.
   npm-test                      Run npm unit tests for $$NPM_PROJECTS.
