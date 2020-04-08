@@ -105,7 +105,7 @@ describeBrowser("VaSpec", function() {
     const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
-    const { fieldId, fieldLabel } = await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, avustushakuID, "decimalField")
+    const { fieldId, fieldLabel } = await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "decimalField")
 
     await clickElementWithText(page, "span", "Haun tiedot")
     await publishAvustushaku(page, avustushakuID)
@@ -120,7 +120,7 @@ describeBrowser("VaSpec", function() {
     const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
-    const { fieldId, fieldLabel } = await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, avustushakuID, "integerField")
+    const { fieldId, fieldLabel } = await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "integerField")
 
     await clickElementWithText(page, "span", "Haun tiedot")
     await publishAvustushaku(page, avustushakuID)
@@ -214,21 +214,6 @@ describeBrowser("VaSpec", function() {
 
     await clickFormSaveAndWait(page, avustushakuID)
   })
-
-  it.only("shows the contents of the project-nutshell -field of a hakemus in external api as 'nutshell'", async function() {
-    const {page} = this
-
-    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
-    const { fieldId, fieldLabel } = await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, avustushakuID, "project-nutshell")
-
-    await clickElementWithText(page, "span", "Haun tiedot")
-    await publishAvustushaku(page, avustushakuID)
-
-    const randomValueForProjectNutshell = randomString()
-    await fillAndSendHakemus(page, avustushakuID, async () => {
-      await typeValueInFieldAndExpectNoValidationError(page, fieldId, randomValueForProjectNutshell)
-    })
-  })
 })
 
 async function resolveAvustushaku(page, avustushakuID) {
@@ -287,16 +272,12 @@ async function typeValueInFieldAndExpectNoValidationError(page, fieldId, value) 
   await page.waitForSelector('#submit:enabled')
 }
 
-async function addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, avustushakuID, fieldType) {
-  const fieldId = "fieldId" + randomString()
-  return addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, fieldId, fieldType)
-}
-
-async function addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, fieldId, fieldType) {
+async function addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, fieldType) {
   await clickElementWithText(page, "span", "Hakulomake")
   const jsonString = await textContent(page, ".form-json-editor textarea")
   const json = JSON.parse(jsonString)
   const content = json.content
+  const fieldId = "fieldId" + randomString()
   const fieldLabel = "fieldLabel" + randomString()
   const field =  fieldJson(fieldType, fieldId, fieldLabel)
 

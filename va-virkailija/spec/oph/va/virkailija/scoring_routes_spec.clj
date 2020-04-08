@@ -1,4 +1,3 @@
-
 (ns oph.va.virkailija.scoring-routes-spec
   (require [speclj.core
             :refer [should should-not should= describe
