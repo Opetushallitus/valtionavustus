@@ -1,6 +1,7 @@
 const assert = require("assert")
 const path = require("path")
 const {randomBytes} = require("crypto")
+const axios = require("axios")
 
 const xlsx = require("xlsx")
 
@@ -105,7 +106,7 @@ describeBrowser("VaSpec", function() {
     const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
-    const { fieldId, fieldLabel } = await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "decimalField")
+    const { fieldId, fieldLabel } = await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, avustushakuID, "decimalField")
 
     await clickElementWithText(page, "span", "Haun tiedot")
     await publishAvustushaku(page, avustushakuID)
@@ -120,7 +121,7 @@ describeBrowser("VaSpec", function() {
     const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
-    const { fieldId, fieldLabel } = await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "integerField")
+    const { fieldId, fieldLabel } = await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, avustushakuID, "integerField")
 
     await clickElementWithText(page, "span", "Haun tiedot")
     await publishAvustushaku(page, avustushakuID)
@@ -214,7 +215,97 @@ describeBrowser("VaSpec", function() {
 
     await clickFormSaveAndWait(page, avustushakuID)
   })
+
+  it("shows the contents of the project-nutshell -field of a hakemus in external api as 'nutshell'", async function() {
+    const {page} = this
+
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+    const { fieldId, fieldLabel } = await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "project-nutshell", "textField")
+
+    await clickElementWithText(page, "span", "Haun tiedot")
+    await publishAvustushaku(page, avustushakuID)
+
+    const randomValueForProjectNutshell = randomString()
+    const hakemusID = await fillAndSendHakemusAndReturnHakemusId(page, avustushakuID, async () => {
+      await typeValueInFieldAndExpectNoValidationError(page, fieldId, randomValueForProjectNutshell)
+    })
+
+    await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
+    await acceptHakemus(page, avustushakuID, hakemusID, async () => {
+      await clickElementWithTestId(page, 'tab-seuranta')
+      await clickElementWithTestId(page, 'set-allow-visibility-in-external-system-true')
+      await waitForSave(page, avustushakuID)
+    })
+
+    const expectedResponse = await expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID, hakemusID, randomValueForProjectNutshell)
+    const actualResponse = await actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID)
+    assert.deepEqual(actualResponse, expectedResponse)
+  })
+
+  it("shows the contents of the project-goals -field of a hakemus in external api as 'nutshell'", async function() {
+    const {page} = this
+
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+    const { fieldId, fieldLabel } = await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "project-goals", "textField")
+
+    await clickElementWithText(page, "span", "Haun tiedot")
+    await publishAvustushaku(page, avustushakuID)
+
+    const randomValueForProjectNutshell = randomString()
+    const hakemusID = await fillAndSendHakemusAndReturnHakemusId(page, avustushakuID, async () => {
+      await typeValueInFieldAndExpectNoValidationError(page, fieldId, randomValueForProjectNutshell)
+    })
+
+    await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
+    await acceptHakemus(page, avustushakuID, hakemusID, async () => {
+      await clickElementWithTestId(page, 'tab-seuranta')
+      await clickElementWithTestId(page, 'set-allow-visibility-in-external-system-true')
+      await waitForSave(page, avustushakuID)
+    })
+
+    const expectedResponse = await expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID, hakemusID, randomValueForProjectNutshell)
+    const actualResponse = await actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID)
+    assert.deepEqual(actualResponse, expectedResponse)
+  })
 })
+
+async function acceptHakemus(page, avustushakuID, hakemusID, beforeSubmitFn) {
+  await navigate(page, `/avustushaku/${avustushakuID}/`)
+  await Promise.all([
+    page.waitForNavigation(),
+    clickElementWithText(page, "td", "Akaan kaupunki"),
+  ])
+
+  await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
+  await clearAndType(page, "#budget-edit-project-budget .amount-column input", "100000")
+  await clickElement(page, "#arviointi-tab label[for='set-arvio-status-accepted']")
+  await waitForArvioSave(page, avustushakuID, hakemusID)
+  await beforeSubmitFn()
+  await resolveAvustushaku(page, avustushakuID)
+}
+
+async function expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID, hakemusID, valueForNutshellField) {
+  return [{
+    'project-name': "",
+    'project-begin': null,
+    'organization-name': "Akaan kaupunki",
+    'grant-id': avustushakuID,
+    partners: null,
+    'costs-granted' : 100000,
+    'user-last-name': null,
+    'language': "fi",
+    id: hakemusID,
+    nutshell: valueForNutshellField,
+    'user-first-name': null,
+    'budget-granted': 100000,
+    'project-end': null
+  }]
+}
+
+async function actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID) {
+  const url = `${VIRKAILIJA_URL}/api/v2/external/avustushaku/${avustushakuID}/hakemukset`
+  return await axios.get(url).then(r => r.data)
+}
 
 async function resolveAvustushaku(page, avustushakuID) {
   await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
@@ -272,21 +363,36 @@ async function typeValueInFieldAndExpectNoValidationError(page, fieldId, value) 
   await page.waitForSelector('#submit:enabled')
 }
 
-async function addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, fieldType) {
+async function addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, avustushakuID, fieldType) {
+  const fieldId = "fieldId" + randomString()
+  return addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, fieldId, fieldType)
+}
+
+async function addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, fieldId, fieldType) {
+  const fields = [{fieldId: fieldId, fieldType: fieldType}]
+  const augmentedFields = await addFieldsToFormAndReturnElementIdsAndLabels(page, avustushakuID, fields)
+  return augmentedFields[0]
+}
+
+async function addFieldsToFormAndReturnElementIdsAndLabels(page, avustushakuID, fields) {
   await clickElementWithText(page, "span", "Hakulomake")
   const jsonString = await textContent(page, ".form-json-editor textarea")
   const json = JSON.parse(jsonString)
   const content = json.content
-  const fieldId = "fieldId" + randomString()
-  const fieldLabel = "fieldLabel" + randomString()
-  const field =  fieldJson(fieldType, fieldId, fieldLabel)
 
-  const newJson = JSON.stringify(Object.assign({}, json, { content: content.concat(field) }))
+  const fieldsWithIdAndLabel = fields.map(({ fieldId, fieldType }) => ({
+    fieldType: fieldType,
+    fieldId: fieldId,
+    fieldLabel: "fieldLabel" + randomString(),
+  }))
+
+  const fieldsJson = fieldsWithIdAndLabel.map(({ fieldType, fieldId, fieldLabel }) => fieldJson(fieldType, fieldId, fieldLabel))
+  const newJson = JSON.stringify(Object.assign({}, json, { content: content.concat(fieldsJson) }))
   await clearAndSet(page, ".form-json-editor textarea", newJson)
 
   await clickFormSaveAndWait(page, avustushakuID)
 
-  return { fieldId, fieldLabel }
+  return fieldsWithIdAndLabel
 }
 
 async function clickFormSaveAndWait(page, avustushakuID) {
@@ -315,7 +421,7 @@ function fieldJson(type, id, label) {
         "id": id,
         "params": {
           "size": "small",
-          "maxlength": 10
+          "maxlength": 1000
         },
         "required": true,
         "fieldType": type
@@ -359,6 +465,22 @@ async function fillAndSendHakemus(page, avustushakuID, beforeSubmitFn) {
   await page.waitForFunction(() => document.querySelector("#topbar #form-controls button#submit").disabled === false)
   await clickElement(page, "#topbar #form-controls button#submit")
   await page.waitForFunction(() => document.querySelector("#topbar #form-controls button#submit").textContent === "Hakemus lähetetty")
+}
+
+async function fillAndSendHakemusAndReturnHakemusId(page, avustushakuID, beforeSubmitFn) {
+  let hakemusID
+
+  async function fn() {
+    const token = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("hakemus"))
+    const url = `${VIRKAILIJA_URL}/api/v2/external/hakemus/id/${token}`
+    hakemusID = await axios.get(url).then(r => r.data.id)
+
+    if (beforeSubmitFn)
+      await beforeSubmitFn()
+  }
+
+  await fillAndSendHakemus(page, avustushakuID, fn)
+  return parseInt(hakemusID)
 }
 
 async function downloadExcelExport(page, avustushakuID) {
@@ -411,7 +533,7 @@ async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page) {
   await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
   await waitForSave(page, avustushakuID)
 
-  return avustushakuID
+  return parseInt(avustushakuID)
 }
 
 async function submitVäliselvitys(page) {
@@ -473,6 +595,11 @@ async function clearAndSet(page, selector, text) {
   await page.focus(selector);
   await page.keyboard.type(' ')
   await page.keyboard.press('Backspace')
+}
+
+async function clickElementWithTestId(page, testId) {
+  const element = await page.waitForSelector(`[data-test-id='${testId}']`, {visible: true, timeout: 5 * 1000})
+  await element.click()
 }
 
 async function clickElementWithText(page, elementType, text) {

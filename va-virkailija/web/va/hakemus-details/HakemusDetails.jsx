@@ -79,7 +79,7 @@ export default class HakemusDetails extends Component {
           throw new Error("Bad subTab selection '" + tabName + "'")
       }
     }
-    const tab = (name, label) => <span className={subTab === name ? 'selected' : ''} onClick={createSubTabSelector(name)}>{label}</span>
+    const tab = (name, label, testId) => <span className={subTab === name ? 'selected' : ''} data-test-id={testId} onClick={createSubTabSelector(name)}>{label}</span>
 
     function createSubTabSelector(subTabToSelect) {
       return e => {
@@ -97,7 +97,7 @@ export default class HakemusDetails extends Component {
           {tab('arviointi', 'Arviointi')}
           {tab('valiselvitys', 'Väliselvitys')}
           {tab('loppuselvitys', 'Loppuselvitys')}
-          {tab('seuranta', 'Seuranta')}
+          {tab('seuranta', 'Seuranta', 'tab-seuranta')}
         </div>
         <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
         <div id="hakemus-arviointi" className="fixed-content">

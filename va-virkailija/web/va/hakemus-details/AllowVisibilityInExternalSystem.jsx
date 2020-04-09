@@ -17,7 +17,7 @@ export default class AllowVisibilityInExternalSystem extends React.Component {
     this.onHakemusAllowVisibilityInExternalSystem = this.onHakemusAllowVisibilityInExternalSystem.bind(this)
 
     const options = _.flatten([
-      {htmlId: "set-allow-visibility-in-external-system-true", value: true, label: "Kyllä"},
+      {htmlId: "set-allow-visibility-in-external-system-true", value: true, label: "Kyllä", testId: "set-allow-visibility-in-external-system-true"},
       {htmlId: "set-allow-visibility-in-external-system-false", value: false, label: "Ei"}
     ].map(spec =>
       [
@@ -30,6 +30,7 @@ export default class AllowVisibilityInExternalSystem extends React.Component {
                checked={spec.value === selectedAllowVisibilityInExternalSystem}
                disabled={!allowEditing} />,
         <label key={spec.htmlId + "-label"}
+               data-test-id={spec.testId}
                htmlFor={spec.htmlId}>{spec.label}</label>
       ]
     ))

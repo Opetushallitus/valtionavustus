@@ -103,3 +103,9 @@
       (exec :form-db
             hakija-queries/list-open-applications
             {}))))
+
+(defn get-application-id-by-token [token]
+  (first
+   (exec :form-db
+         hakija-queries/get-application-id-by-token
+         {:token token})))
