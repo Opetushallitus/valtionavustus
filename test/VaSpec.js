@@ -112,7 +112,7 @@ describeBrowser("VaSpec", function() {
 
     await fillAndSendHakemus(page, avustushakuID, async () => {
       await typeValueInFieldAndExpectValidationError(page, fieldId, 'Not an decimal', fieldLabel, 'fi: Syötä yksi numeroarvo')
-      await typeValueInFieldAndExpectNoValidationError(page, fieldId, '4.20')
+      await typeValueInFieldAndExpectNoValidationError(page, fieldId, '4.2')
     })
   })
 
