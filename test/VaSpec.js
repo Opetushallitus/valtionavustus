@@ -267,7 +267,7 @@ async function typeValueInFieldAndExpectValidationError(page, fieldId, value, fi
 async function typeValueInFieldAndExpectNoValidationError(page, fieldId, value) {
   const selector = '#' + fieldId
   const errorSummarySelector = 'a.validation-errors-summary'
-  await clearAndType(page, selector, '420')
+  await clearAndType(page, selector, value)
   await page.waitForFunction(s => document.querySelector(s) == null, {}, errorSummarySelector)
   await page.waitForSelector('#submit:enabled')
 }
