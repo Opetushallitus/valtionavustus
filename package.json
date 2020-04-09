@@ -50,7 +50,7 @@
     "mocha-junit-reporter": "^1.23.3",
     "mocha-phantomjs-core": "^2.1.2",
     "phantomjs-prebuilt": "^2.1.16",
-    "puppeteer": "^2.1.1",
+    "puppeteer": "^2.0.0",
     "style-loader": "^0.18.2",
     "url-loader": "^1.1.1",
     "webpack": "^4.42.1",
