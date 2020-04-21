@@ -46,3 +46,6 @@
   when: ansible_os_family == 'RedHat'
   tags:
     - firewall
+
+- name: Configure automatic SSL cert renewal via letsencrypt
+  include: letsencrypt.yml

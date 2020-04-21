@@ -1,3 +1,21 @@
+letsencrypt_certbot_user: certbot
+letsencrypt_certbot_group: certbot
+letsencrypt_certbot_root_dir: /opt/certbot
+letsencrypt_certbot_logs_dir: "{{ letsencrypt_certbot_root_dir }}/logs"
+letsencrypt_certbot_config_dir: "{{ letsencrypt_certbot_root_dir }}/config"
+letsencrypt_certbot_renew_script: "{{ letsencrypt_certbot_root_dir }}/renew-certificate"
+letsencrypt_certbot_port: 54321
+letsencrypt_domains:
+  - "valtionavustukset.oph.fi"
+  - "statsunderstod.oph.fi"
+  - "virkailija.valtionavustukset.oph.fi"
+  - "testi.valtionavustukset.oph.fi"
+  - "testi.virkailija.valtionavustukset.oph.fi"
+  - "dev.valtionavustukset.oph.fi"
+letsencrypt_primary_domain: "{{ letsencrypt_domains | first }}"
+letsencrypt_combined_cert_dir: "/etc/pki/domain/certs"
+letsencrypt_combined_cert: "{{ letsencrypt_combined_cert_dir }}/{{ letsencrypt_primary_domain }}.pem"
+
 certs_dir: '../../valtionavustus-secret/certs/lb'
 
 # ACL:s for different endpoints
@@ -19,10 +37,14 @@ loadbalancer_acl:
     condition: hdr(host) -i 86.50.28.144
   - name: source_ip_is_oph_vpn
     condition: src 178.217.128.38/32
+  - name: letsencrypt_acl
+    condition: path_beg /.well-known/acme-challenge/
 
 # Map from acl declaration to backend
 
 loadbalancer_acl_mapping:
+  - name: letsencrypt_backend
+    condition: if letsencrypt_acl
   - name: va_backend_qa
     condition: if va_backend_qa
   - name: va_virkailija_backend_qa
@@ -100,6 +122,13 @@ haproxy_backends:
   server_group:
     - name: "va_build"
       port: 80
+
+- name: 'letsencrypt_backend'
+  balance: 'source'
+  servers:
+    - name: 'letsencrypt'
+      ip: 127.0.0.1
+      port: '{{ letsencrypt_certbot_port }}'
 
 # Global configuration - no need to change
 
