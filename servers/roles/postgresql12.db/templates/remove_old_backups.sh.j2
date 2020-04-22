@@ -3,9 +3,8 @@
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
 
-find "{{ postgresql_backup_dir }}/" \
+find "{{ postgresql_backup_dir }}/12" \
      -mindepth 1 \
      -maxdepth 1 \
-     -mtime +7 \
-     -not -path "/postgresql-backups/permanent" \
+     -mtime +5 \
      -exec rm -fr -- '{}' \;
