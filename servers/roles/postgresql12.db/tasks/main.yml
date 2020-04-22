@@ -76,6 +76,7 @@
     name: "{{dbname}}"
     encoding: 'UTF-8'
     port: "{{ pg_12_port }}"
+  when: not ansible_check_mode
 
 - name: Ensure users have access to database
   sudo: yes
@@ -87,6 +88,7 @@
     priv: "ALL"
     port: "{{ pg_12_port }}"
   with_items: "{{ db_accounts }}"
+  when: not ansible_check_mode
 
 - name: Ensure users do not have unnecessary privileges
   sudo: yes
@@ -96,6 +98,7 @@
     role_attr_flags: "SUPERUSER,NOCREATEDB"  # Note: we might want to have NOSUPERUSER
     port: "{{ pg_12_port }}"
   with_items: "{{ db_accounts }}"
+  when: not ansible_check_mode
 
 - name: Install script to remove old PostgreSQL backups
   template:

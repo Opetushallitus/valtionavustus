@@ -5,3 +5,8 @@ postgresql_12_backup_active_dir: "{{ postgresql_12_backup_local_dir }}/active"
 postgresql_12_custom_conf_dir: "{{ postgresql_12_pgdata }}/conf.d"
 postgresql_12_backup_dir: /postgresql-backups/12
 
+db_accounts:
+  - dbuser: va_hakija
+    dbpassword: va
+  - dbuser: va_virkailija
+    dbpassword: va
