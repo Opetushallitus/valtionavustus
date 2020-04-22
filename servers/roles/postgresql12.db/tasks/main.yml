@@ -96,3 +96,12 @@
     role_attr_flags: "SUPERUSER,NOCREATEDB"  # Note: we might want to have NOSUPERUSER
     port: "{{ pg_12_port }}"
   with_items: "{{ db_accounts }}"
+
+- name: Install script to remove old PostgreSQL backups
+  template:
+    src: remove_old_backups.sh.j2
+    dest: "{{ postgresql_backup_local_dir}}/bin/remove_old_backups.sh"
+    owner: postgres
+    group: postgres
+    mode: 0750
+  tags: backups
