@@ -105,3 +105,13 @@
     group: postgres
     mode: 0750
   tags: backups
+
+- name: Schedule removing old PostgreSQL backups
+  cron:
+    name: Remove old PostgreSQL backups
+    cron_file: ansible_remove_old_postgresql_backups
+    user: postgres
+    hour: 0
+    minute: 30
+    job: "{{ postgresql_backup_local_dir }}/bin/remove_old_backups.sh"
+  tags: backups
