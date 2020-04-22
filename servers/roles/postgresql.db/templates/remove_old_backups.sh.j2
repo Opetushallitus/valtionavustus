@@ -7,4 +7,5 @@ find "{{ postgresql_backup_dir }}/" \
      -mindepth 1 \
      -maxdepth 1 \
      -mtime +7 \
+     -not -path "/postgresql-backups/permanent" \
      -exec rm -fr -- '{}' \;
