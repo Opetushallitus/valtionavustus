@@ -1,4 +1,4 @@
 #!/bin/bash
 set -euo pipefail
 
-/usr/pgsql-9.4/bin/pg_dump -Fc "{{ dbname }}"
+{{ pg_dump_executable }} -Fc "{{ dbname }}"

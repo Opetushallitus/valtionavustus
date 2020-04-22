@@ -132,6 +132,7 @@
 
 - name: Add script to dump database contents
   template: src=dump_database_to_sql.bash.j2 dest=/usr/local/bin/dump_database_to_sql.bash owner=postgres group=postgres mode=0700
+  tags: backup
 
 - name: Copy Lampi DB dump upload script
   template:
