@@ -2,6 +2,5 @@ app_profile: va-test
 dbname: va-qa
 pg_12_port: 5433
 lampi_backup_port: 5433
-lampi_backup_pg_dump_executable: "/usr/pgsql-12/bin/pg_dump"
 logs_mail_recipient: "{{ notification_mail_recipient }}"
 lampi_bucket_name: oph-lampi-qa
