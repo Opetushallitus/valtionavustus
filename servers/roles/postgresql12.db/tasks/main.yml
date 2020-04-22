@@ -67,6 +67,12 @@
     state: started
     enabled: true
 
+- name: Stop PostgreSQL 9.4
+  service:
+    name: postgresql-9.4
+    state: stopped
+    enabled: no
+
 ## Below is copy-paste from PG 9.6 configurations, only the port has changed
 
 - name: Ensure database is created
