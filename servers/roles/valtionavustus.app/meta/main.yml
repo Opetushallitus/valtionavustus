@@ -1,5 +1,5 @@
 dependencies:
   - role: 3rdparty/postgresql
     vars:
-      postgresql_backup_local_dir: /var/lib/pgsql/backup
+      postgresql_backup_local_dir: /var/lib/pgsql/12/backup
   - role: java8

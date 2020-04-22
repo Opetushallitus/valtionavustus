@@ -3,7 +3,7 @@
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
 
-xlog_dir='{{ postgresql_12_pgdata }}/pg_xlog'
+xlog_dir='{{ postgresql_12_pgdata }}/pg_wal'
 backup_dir={{ postgresql_12_backup_active_dir }}
 mailto='{{ postgresql_backup_mail_recipient }}'
 
