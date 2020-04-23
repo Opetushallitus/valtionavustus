@@ -27,7 +27,7 @@
     :return [schema/ExternalGrant]
     :summary ""
     (try
-      (if (or without-authentication? (and (some? ticket)
+      (if (or (without-authentication?) (and (some? ticket)
                (cas/validate-service-ticket virkailija-login-url ticket)))
         (response/ok (external-data/get-grants-for-year year))
         (response/unauthorized {:error "Unauthorized"}))
@@ -43,7 +43,7 @@
     :return [schema/ExternalApplication]
     :summary ""
     (try
-      (if (or without-authentication? (and (some? ticket)
+      (if (or (without-authentication?) (and (some? ticket)
                (cas/validate-service-ticket virkailija-login-url ticket)))
         (response/ok (external-data/get-applications-by-grant-id avustushaku-id))
         (response/unauthorized {:error "Unauthorized"}))
@@ -58,7 +58,7 @@
     :return [schema/ExternalHanke]
     :summary ""
     (try
-      (if (or without-authentication? (and (some? ticket)
+      (if (or (without-authentication?) (and (some? ticket)
                (cas/validate-service-ticket virkailija-login-url ticket)))
         (response/ok (application-data/get-open-applications))
         (response/unauthorized {:error "Unauthorized"}))
