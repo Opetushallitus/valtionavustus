@@ -21,7 +21,7 @@ handler()
         (echo "execuing $command failed with code $ret:" ; echo "$out") | mail -s "$server: Postgres scheduled backup failed" $mailto
         rm -f $mutex
         if [ "$backup_started" = 1 ]; then
-            echo "SELECT pg_stop_backup();" | psql
+            echo "SELECT pg_stop_backup();" | psql > /dev/null
         fi
         exit 1
     else
