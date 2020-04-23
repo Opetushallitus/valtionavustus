@@ -14,6 +14,17 @@ const {
 } = require("./TestUtil.js")
 
 describeBrowser("VaSpec", function() {
+  it("should allow removing attachment from hakemus", async function() {
+    const {page} = this
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+
+    await publishAvustushaku(page, avustushakuID)
+    await fillAndSendHakemus(page, avustushakuID, async function() {
+      await deleteAttachment(page, "financial-information-form")
+      await uploadFile(page, "input[name='financial-information-form']", "./dummy.pdf")
+    })
+  })
+
   it("should allow basic avustushaku flow and check each hakemus has valmistelija", async function() {
     const {page} = this
 
@@ -571,6 +582,11 @@ async function sendPäätös(page, avustushakuID) {
 async function uploadFile(page, selector, filePath) {
   const element = await page.$(selector)
   await element.uploadFile(filePath)
+}
+
+async function deleteAttachment(page, attachmentFieldId) {
+  await clickElement(page, `#${attachmentFieldId} button.soresu-remove`)
+  await page.waitForSelector(`[name='${attachmentFieldId}']`)
 }
 
 async function waitForArvioSave(page, avustushakuID, hakemusID) {
