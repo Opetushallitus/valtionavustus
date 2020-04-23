@@ -124,3 +124,10 @@
     minute: 30
     job: "{{ postgresql_backup_local_dir }}/bin/remove_old_backups.sh"
   tags: backups
+
+- stat: path="/var/lib/pgsql/12/data/postgresql.orig"
+  register: postgresqlorig
+
+- name: Fix file permissions for backups
+  file: path="/var/lib/pgsql/12/data/postgresql.orig" owner="postgres" group="postgres"
+  when: postgresqlorig.stat is defined and postgresqlorig.stat.exists
