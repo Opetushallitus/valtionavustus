@@ -44,7 +44,8 @@
             [oph.va.virkailija.payments-routes :as payments-routes]
             [oph.va.virkailija.healthcheck :as healthcheck]
             [oph.va.virkailija.reporting-routes :as reporting-routes]
-            [oph.va.virkailija.external :as external])
+            [oph.va.virkailija.external :as external]
+            [oph.va.virkailija.help-texts :as help-texts])
   (:import [java.io ByteArrayInputStream]))
 
 (def opintopolku-login-url
@@ -630,6 +631,14 @@
                                             (let [koodi-options (koodisto/get-cached-koodi-options :form-db koodisto-uri version)]
                                               (ok (:content koodi-options)))))
 
+(compojure-api/defroutes help-texts-routes
+                         "Help texts"
+                         (compojure-api/GET "/all" []
+                                            :return s/Any
+                                            :summary "Get help texts"
+                                            (ok (help-texts/find-all))))
+
+
 (defn- query-string-for-login [original-query-params params-to-add keys-to-remove]
   (let [payload-params (apply dissoc original-query-params keys-to-remove)
         complete-params (merge payload-params params-to-add)]
@@ -712,6 +721,7 @@
                       (compojure-api/context "/public/api" [] :tags ["public"] public-routes)
                       (compojure-api/context "/api/avustushaku" [] :tags ["avustushaku"] avustushaku-routes)
                       (compojure-api/context "/login" [] :tags ["login"] login-routes)
+                      (compojure-api/context "/api/help-texts" [] :tags ["help-texts"] help-texts-routes)
                       (compojure-api/context "/api/userinfo" [] :tags ["userinfo"] userinfo-routes)
                       (compojure-api/context "/api/va-user" [] :tags ["va-user"] va-user-routes)
                       (compojure-api/context "/api/koodisto" [] :tags ["koodisto"] koodisto-routes)
