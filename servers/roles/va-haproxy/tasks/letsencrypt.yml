@@ -45,7 +45,7 @@
   file:
     path: /etc/pki/domain/certs
     state: directory
-    owner: root
+    owner: '{{ letsencrypt_certbot_user }}'
     group: haproxy
     mode: 0750
 
