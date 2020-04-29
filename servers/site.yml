@@ -15,7 +15,6 @@
   roles:
   - {role: common}
   - {role: 3rdparty/info.haproxy, tags: ['update']}
-  - {role: ssl-cert, tags: ['install', 'certs']}
   - {role: va-haproxy, tags: ['update']}
 
 - hosts: va_build
