@@ -1,39 +1,12 @@
-- name: Make SSL certificate dir for the server
-  file: path=/etc/pki/domain/certs state=directory owner=root group=haproxy mode=0750
-
-- name: Check if local certs are available
-  local_action: stat path="{{certs_dir}}"
-  sudo: no
-  register: certs_dir_info
-
-- name: Fail if no certs
-  fail: msg='{{certs_dir}} dir not available'
-  when: certs_dir_info.stat.isdir is not defined or certs_dir_info.stat.isdir == False
-
 - name: Get cert list
   local_action: command find {{certs_dir}} -print -mindepth 1 -maxdepth 1 -name '*-vault.pem'
   sudo: no
   register: cert_files
-  changed_when: False
   check_mode: no
 
-- name: List certs
-  debug: var=cert_files
-
-- name: Decrypt certificates into memory
-  local_action: shell ansible-vault view {{item}}
-  sudo: no
-  register: certs_contents
-  changed_when: False
-  with_items: "{{ cert_files.stdout_lines }}"
-  check_mode: no
-
-- name: Copy SSL certificates to the server
-  copy:
-    content: "{{item.stdout}}"
-    dest: "/etc/pki/domain/certs/{{item.item | basename | regex_replace('-vault')}}"
-    owner: root
-    group: haproxy
-    mode: 0640
-  with_items: "{{ certs_contents.results }}"
+- name: Remove certificates from the server
+  file:
+    path: "/etc/pki/domain/certs/{{item | basename | regex_replace('-vault')}}"
+    state: absent
+  with_items: "{{ cert_files.stdout_lines }}"
   notify: Restart haproxy
