@@ -8,6 +8,7 @@ trap log_error ERR
 
 cert_dir="{{ letsencrypt_certbot_config_dir }}/live/{{ letsencrypt_primary_domain }}"
 cert="${cert_dir}/cert.pem"
+combined_cert="${cert_dir}/combined.pem"
 
 function certificate_checksum {
   if [ -f $cert ]; then
@@ -46,7 +47,10 @@ new_checksum=$(certificate_checksum)
 if [ $new_checksum != $old_checksum ]; then
   log certificate renewed
   log copying cert to "{{ letsencrypt_combined_cert }}"
-  cat ${cert_dir}/fullchain.pem ${cert_dir}/privkey.pem > "{{ letsencrypt_combined_cert }}"
+  cat "${cert_dir}"/fullchain.pem "${cert_dir}"/privkey.pem > "${combined_cert}"
+  chgrp haproxy "${combined_cert}"
+  chmod 640 "${combined_cert}"
+  cp --preserve=mode,ownership "${combined_cert}" "{{ letsencrypt_combined_cert }}"
   log reloading the HAProxy configuration...
   sudo /bin/systemctl reload haproxy.service
 else
