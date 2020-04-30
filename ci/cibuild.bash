@@ -11,11 +11,10 @@ cd_project_root_dir
 
 function show_usage() {
   cat << EOF
-Usage: ${0##*/} [-d] [-p <docker_postgres_port] [-r] [clean] [build] [test] [deploy] [deploy_jar -m <module> -s <target_server_name> [-j <source_jar_path>]]
+Usage: ${0##*/} [-d] [-p <docker_postgres_port] [clean] [build] [test] [deploy] [deploy_jar -m <module> -s <target_server_name> [-j <source_jar_path>]]
 
   -d  Disables running PostgreSQL in Docker container
   -p  The host port to which Docker binds PostgreSQL; should be the same as in the app config
-  -r  Recreate database when deploying (default: false)
   -m  The module to deploy: va-hakija or va-virkailija
   -s  Target server hostname
   -j  Source jar path
@@ -24,7 +23,6 @@ EOF
 }
 
 run_docker_postgresql=true
-recreate_database=false
 va_hakija_default_source_path="va-hakija/target/uberjar/hakija-*-standalone.jar"
 va_virkailija_default_source_path="va-virkailija/target/uberjar/virkailija-*-standalone.jar"
 
@@ -89,11 +87,6 @@ run_tests() {
   run_ui_tests
 }
 
-drop_database() {
-  echo "Dropping database..."
-  $SSH "sudo -u postgres /usr/local/bin/run_sql.bash ${CURRENT_DIR}/va-hakija/resources/sql/drop_schema.sql -v schema_name=hakija"
-}
-
 restart_application() {
   module_name=$1
   echo "Stopping application..."
@@ -101,11 +94,6 @@ restart_application() {
     $SSH "supervisorctl stop $module_name"
   else
     $SSH "sudo /usr/local/bin/va_app.bash --stop $module_name"
-  fi
-  if [ "$recreate_database" = true ]; then
-    drop_database
-  else
-    echo "Not dropping existing database."
   fi
   if [ "$target_server_name" = "va-dev" ] || [[ "$target_server_name" == *".csc.fi" ]]; then
     APP_COMMAND="supervisorctl start $module_name"
@@ -215,9 +203,6 @@ while [[ $# > 0 ]]; do
       ;;
       -d|--disable-container-postgresql)
       run_docker_postgresql=false
-      ;;
-      -r|--recreate-database)
-      recreate_database=true
       ;;
       -j|--source-jar-path)
       jar_to_deploy_source_path="$2"
