@@ -11,9 +11,8 @@ cd_project_root_dir
 
 function show_usage() {
   cat << EOF
-Usage: ${0##*/} [-d] [-p <docker_postgres_port] [clean] [build] [test] [deploy] [deploy_jar -m <module> -s <target_server_name> [-j <source_jar_path>]]
+Usage: ${0##*/} [-d] [clean] [build] [test] [deploy] [deploy_jar -m <module> -s <target_server_name> [-j <source_jar_path>]]
 
-  -p  The host port to which Docker binds PostgreSQL; should be the same as in the app config
   -m  The module to deploy: va-hakija or va-virkailija
   -s  Target server hostname
   -j  Source jar path
@@ -47,38 +46,9 @@ build() {
   time make build
 }
 
-start_postgresql_in_docker() {
-  start_postgresql_in_container
-  wait_for_postgresql_to_be_available
-  # give_schema_to_va hakija  # When using our own schema that is owned by va, we don't need to give it access
-  create_va_virkailija_user
-}
-
-run_ui_tests() {
+run_tests() {
   echo "Running UI tests"
   ./run_ui_test_against_container.sh
-}
-
-run_tests() {
-  start_postgresql_in_docker
-
-  local tests_exit_code
-  tests_exit_code=0
-
-  time make test \
-    MOCHA_ARGS="--reporter mocha-junit-reporter" \
-    MOCHA_FILE="target/junit-mocha-js-unit.xml" \
-    SPECLJ_ARGS="-f junit" \
-    || tests_exit_code=$?
-
-  stop_postgresql_container
-
-  if [ $tests_exit_code -ne 0 ]; then
-    echo "Tests failed: $tests_exit_code"
-    exit $tests_exit_code
-  fi
-
-  run_ui_tests
 }
 
 restart_application() {
@@ -191,10 +161,6 @@ while [[ $# > 0 ]]; do
       target_server_name="$2"
       shift # past argument
       ;;
-      -p|--postgresql-port-for-host)
-      host_postgres_port="$2"
-      shift # past argument
-      ;;
       -j|--source-jar-path)
       jar_to_deploy_source_path="$2"
       shift # past argument
@@ -210,8 +176,6 @@ while [[ $# > 0 ]]; do
   esac
   shift # past command or argument value
 done
-
-source `dirname $0`/postgresql_container_functions.bash
 
 show_tool_versions
 
