@@ -13,7 +13,6 @@ function show_usage() {
   cat << EOF
 Usage: ${0##*/} [-d] [-p <docker_postgres_port] [clean] [build] [test] [deploy] [deploy_jar -m <module> -s <target_server_name> [-j <source_jar_path>]]
 
-  -d  Disables running PostgreSQL in Docker container
   -p  The host port to which Docker binds PostgreSQL; should be the same as in the app config
   -m  The module to deploy: va-hakija or va-virkailija
   -s  Target server hostname
@@ -22,7 +21,6 @@ EOF
   exit 2
 }
 
-run_docker_postgresql=true
 va_hakija_default_source_path="va-hakija/target/uberjar/hakija-*-standalone.jar"
 va_virkailija_default_source_path="va-virkailija/target/uberjar/virkailija-*-standalone.jar"
 
@@ -62,9 +60,7 @@ run_ui_tests() {
 }
 
 run_tests() {
-  if [ "$run_docker_postgresql" = true ]; then
-    start_postgresql_in_docker
-  fi
+  start_postgresql_in_docker
 
   local tests_exit_code
   tests_exit_code=0
@@ -75,9 +71,7 @@ run_tests() {
     SPECLJ_ARGS="-f junit" \
     || tests_exit_code=$?
 
-  if [ "$run_docker_postgresql" = true ]; then
-    stop_postgresql_container
-  fi
+  stop_postgresql_container
 
   if [ $tests_exit_code -ne 0 ]; then
     echo "Tests failed: $tests_exit_code"
@@ -200,9 +194,6 @@ while [[ $# > 0 ]]; do
       -p|--postgresql-port-for-host)
       host_postgres_port="$2"
       shift # past argument
-      ;;
-      -d|--disable-container-postgresql)
-      run_docker_postgresql=false
       ;;
       -j|--source-jar-path)
       jar_to_deploy_source_path="$2"
