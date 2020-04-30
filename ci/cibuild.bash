@@ -11,7 +11,7 @@ cd_project_root_dir
 
 function show_usage() {
   cat << EOF
-Usage: ${0##*/} [-d] [clean] [build] [test] [deploy] [deploy_jar -m <module> -s <target_server_name> [-j <source_jar_path>]]
+Usage: ${0##*/} [clean] [build] [test] [deploy] [deploy_jar -m <module> -s <target_server_name> [-j <source_jar_path>]]
 
   -m  The module to deploy: va-hakija or va-virkailija
   -s  Target server hostname
