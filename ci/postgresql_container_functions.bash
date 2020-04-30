@@ -16,9 +16,9 @@ function start_postgresql_in_container() {
   is_container_running=`docker inspect -f {{.State.Running}} postgresql || true`
   if [ "$is_container_running" == true ]; then
     echo "Warning: found running postgresql container, stopping it."
-    remove_postgresql_container
+    stop_and_remove_postgresql_container
   fi
-  time $DOCKER run --name postgresql -d -p $host_postgres_port:$container_postgres_port -e 'DB_USER=va_hakija' -e 'DB_PASS=va' -e 'DB_NAME=va-test' postgres:12.2
+  time $DOCKER run --name postgresql --rm -d -p $host_postgres_port:$container_postgres_port -e 'DB_USER=va_hakija' -e 'DB_PASS=va' -e 'DB_NAME=va-test' postgres:12.2
 }
 
 function store_sql_script_to_container() {
@@ -50,7 +50,7 @@ function wait_for_postgresql_to_be_available() {
     echo "Running $logs_command : ============"
     eval ${logs_command}
     echo "======= / end of ${logs_command} output"
-    remove_postgresql_container
+    stop_and_remove_postgresql_container
     exit 2
   fi
 }
@@ -65,7 +65,11 @@ function create_va_virkailija_user() {
   exec_in_container /tmp/create_va_virkailija.bash
 }
 
-function remove_postgresql_container() {
-  $DOCKER stop postgresql
+function stop_and_remove_postgresql_container() {
+  stop_postgresql_container
   $DOCKER rm -v postgresql
+}
+
+function stop_postgresql_container() {
+  $DOCKER stop postgresql
 }

@@ -78,7 +78,7 @@ run_tests() {
     || tests_exit_code=$?
 
   if [ "$run_docker_postgresql" = true ]; then
-    remove_postgresql_container
+    stop_postgresql_container
   fi
 
   if [ $tests_exit_code -ne 0 ]; then
