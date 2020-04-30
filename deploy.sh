@@ -8,7 +8,7 @@ function main {
   init_nodejs
   set_env_vars
 
-  "$repo/ci/cibuild.bash" -s no-server -p 5432 clean build test
+  "$repo/ci/cibuild.bash" -s no-server clean build test
 
   ls "$repo"/va-hakija/target/*uberjar*/hakija-*-standalone.jar
   ls "$repo"/va-virkailija/target/*uberjar*/virkailija-*-standalone.jar
