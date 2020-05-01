@@ -60,7 +60,7 @@ function main {
   waitport ${VIRKAILIJA_HOSTNAME} 8081 150
 
   npx mocha "test/**/*Spec.js"
-  make test \
+  make clean build test \
     MOCHA_ARGS="--reporter mocha-junit-reporter" \
     MOCHA_FILE="target/junit-mocha-js-unit.xml" \
     SPECLJ_ARGS="-f junit"
