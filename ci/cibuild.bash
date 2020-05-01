@@ -47,9 +47,9 @@ build() {
 }
 
 run_tests() {
-  echo "Running UI tests"
+  echo "Running isolated system tests"
   export HEADLESS=true
-  ./run_ui_test.sh
+  ./run_isolated_system_tests.sh
 }
 
 restart_application() {

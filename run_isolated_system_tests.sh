@@ -4,10 +4,11 @@ repo="$( cd "$( dirname "$0" )" && pwd )"
 
 HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}
 VIRKAILIJA_HOSTNAME=${VIRKAILIJA_HOSTNAME:-"localhost"}
+DOCKER_COMPOSE_FILE=./docker-compose-test.yml
 
 function stop_system_under_test {
   echo "Stopping system under test"
-  docker-compose -f ./docker-compose-ui-test.yml down --remove-orphans
+  docker-compose -f ${DOCKER_COMPOSE_FILE} down --remove-orphans
 }
 trap stop_system_under_test EXIT
 
@@ -16,7 +17,7 @@ function start_system_under_test {
   docker build -t "va-virkailija:latest" -f ./Dockerfile.virkailija ./
   docker build -t "va-hakija:latest" -f ./Dockerfile.hakija ./
 
-  docker-compose -f ./docker-compose-ui-test.yml up --detach
+  docker-compose -f ${DOCKER_COMPOSE_FILE} up --detach
 }
 
 function check_requirements {
