@@ -17,7 +17,7 @@ function start_system_under_test {
   docker build -t "va-virkailija:latest" -f ./Dockerfile.virkailija ./
   docker build -t "va-hakija:latest" -f ./Dockerfile.hakija ./
 
-  docker-compose -f ${DOCKER_COMPOSE_FILE} up --detach
+  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
 }
 
 function check_requirements {
