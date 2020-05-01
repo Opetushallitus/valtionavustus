@@ -1,17 +1,6 @@
 version: '3.3'
 
 services:
-  uitest:
-    image: va-ui-test:latest
-    depends_on:
-      - virkailija
-    environment:
-      - "HAKIJA_HOSTNAME=va-hakija"
-      - "VIRKAILIJA_HOSTNAME=va-virkailija"
-      - "HEADLESS=true"
-    networks:
-      - subnet-private
-
   virkailija:
     image: va-virkailija:latest
     container_name: va-virkailija

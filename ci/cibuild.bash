@@ -48,7 +48,8 @@ build() {
 
 run_tests() {
   echo "Running UI tests"
-  ./run_ui_test_against_container.sh
+  export HEADLESS=true
+  ./run_ui_test.sh
 }
 
 restart_application() {

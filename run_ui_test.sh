@@ -5,6 +5,20 @@ repo="$( cd "$( dirname "$0" )" && pwd )"
 HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}
 VIRKAILIJA_HOSTNAME=${VIRKAILIJA_HOSTNAME:-"localhost"}
 
+function stop_system_under_test {
+  echo "Stopping system under test"
+  docker-compose -f ./docker-compose-ui-test.yml down --remove-orphans
+}
+trap stop_system_under_test EXIT
+
+function start_system_under_test {
+  echo "Starting system under test"
+  docker build -t "va-virkailija:latest" -f ./Dockerfile.virkailija ./
+  docker build -t "va-hakija:latest" -f ./Dockerfile.hakija ./
+
+  docker-compose -f ./docker-compose-ui-test.yml up --detach
+}
+
 function check_requirements {
   if ! [[ -x "$(command -v curl)" ]]; then
     echo "Curl is required, cannot continue"
@@ -41,6 +55,7 @@ function main {
   . ./init_nodejs.sh
   npm install
 
+  start_system_under_test
   waitport ${HAKIJA_HOSTNAME} 8080 150
   waitport ${VIRKAILIJA_HOSTNAME} 8081 150
 
