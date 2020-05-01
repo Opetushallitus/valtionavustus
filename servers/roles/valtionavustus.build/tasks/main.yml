@@ -49,3 +49,5 @@
     dest: /home/jenkins/.gitconfig
     content: "{{ lookup('file', 'gitconfig') }}"
 
+- name: Install chromium so that we get the libs needed by puppeteer
+  yum: state=installed pkg=chromium
