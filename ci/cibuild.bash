@@ -49,6 +49,10 @@ build() {
 run_tests() {
   echo "Running isolated system tests"
   export HEADLESS=true
+  export MOCHA_ARGS="--reporter mocha-junit-reporter"
+  export MOCHA_FILE="target/junit-mocha-js-unit.xml"
+  export SPECLJ_ARGS="-f junit"
+
   ./run_isolated_system_tests.sh
 }
 
