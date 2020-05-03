@@ -59,7 +59,7 @@ function main {
   waitport ${HAKIJA_HOSTNAME} 8080 150
   waitport ${VIRKAILIJA_HOSTNAME} 8081 150
 
-  npx mocha ${MOCHA_ARGS} "test/**/*Spec.js"
+  npx mocha ${MOCHA_ARGS:-} "test/**/*Spec.js"
   make test
 }
 
