@@ -7,14 +7,43 @@ repo="$( cd "$( dirname "$0" )" && pwd )"
 function main {
   init_nodejs
   set_env_vars
-
-  "$repo/ci/cibuild.bash" -s no-server clean build test
+  clean
+  build
+  run_tests
 
   ls "$repo"/va-hakija/target/*uberjar*/hakija-*-standalone.jar
   ls "$repo"/va-virkailija/target/*uberjar*/virkailija-*-standalone.jar
 
   "$repo/ci/deploy_jar.bash" $APP_HOSTNAME.csc.fi va-hakija "$repo"/va-hakija/target/*uberjar*/hakija-*-standalone.jar
   "$repo/ci/deploy_jar.bash" $APP_HOSTNAME.csc.fi va-virkailija "$repo"/va-virkailija/target/*uberjar*/virkailija-*-standalone.jar
+}
+
+clean() {
+  time make clean
+}
+
+build() {
+  add_git_head_snippets
+  time make build
+}
+
+add_git_head_snippets() {
+  echo "Adding git head snippets..."
+  for m in va-hakija va-virkailija; do
+    pushd "$m"
+    git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
+    popd
+  done
+}
+
+run_tests() {
+  echo "Running isolated system tests"
+  export HEADLESS=true
+  export MOCHA_ARGS="--reporter mocha-junit-reporter"
+  export MOCHA_FILE="target/junit-mocha-js-unit.xml"
+  export SPECLJ_ARGS="-f junit"
+
+  ./run_isolated_system_tests.sh
 }
 
 function remove_all_files_ignored_by_git {

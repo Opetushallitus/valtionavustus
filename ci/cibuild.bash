@@ -11,7 +11,7 @@ cd_project_root_dir
 
 function show_usage() {
   cat << EOF
-Usage: ${0##*/} [clean] [build] [test] [deploy] [deploy_jar -m <module> -s <target_server_name> [-j <source_jar_path>]]
+Usage: ${0##*/} [deploy] [deploy_jar -m <module> -s <target_server_name> [-j <source_jar_path>]]
 
   -m  The module to deploy: va-hakija or va-virkailija
   -s  Target server hostname
@@ -26,34 +26,6 @@ va_virkailija_default_source_path="va-virkailija/target/uberjar/virkailija-*-sta
 show_tool_versions() {
     echo "npm: $(npm --version)"
     echo "lein: $(./lein --version)"
-}
-
-clean() {
-  time make clean
-}
-
-add_git_head_snippets() {
-  echo "Adding git head snippets..."
-  for m in va-hakija va-virkailija; do
-    pushd "$m"
-    git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
-    popd
-  done
-}
-
-build() {
-  add_git_head_snippets
-  time make build
-}
-
-run_tests() {
-  echo "Running isolated system tests"
-  export HEADLESS=true
-  export MOCHA_ARGS="--reporter mocha-junit-reporter"
-  export MOCHA_FILE="target/junit-mocha-js-unit.xml"
-  export SPECLJ_ARGS="-f junit"
-
-  ./run_isolated_system_tests.sh
 }
 
 restart_application() {
@@ -147,15 +119,6 @@ while [[ $# > 0 ]]; do
   key="$1"
 
   case $key in
-      clean)
-      commands+=('clean')
-      ;;
-      build)
-      commands+=('build')
-      ;;
-      test)
-      commands+=('run_tests')
-      ;;
       deploy)
       commands+=('deploy')
       ;;
