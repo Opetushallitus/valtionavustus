@@ -72,7 +72,7 @@ function do_deploy_jar {
   $SSH ln -sfT ${TARGET_DIR} ${CURRENT_DIR}
   restart_application ${module_name}
   CAT_LOG_COMMAND="$SSH tail -n 100 /logs/valtionavustus/${module_name}_run.log /logs/valtionavustus/${module_name}_application.log"
-  HEALTH_CHECK_COMMAND="`dirname $0`/health_check.bash ${SSH_USER} ${SSH_KEY} ${target_server_name} ${application_port} $CAT_LOG_COMMAND"
+  HEALTH_CHECK_COMMAND="`dirname $0`/ci/health_check.bash ${SSH_USER} ${SSH_KEY} ${target_server_name} ${application_port} $CAT_LOG_COMMAND"
   echo "Checking that application responds to healthcheck ($HEALTH_CHECK_COMMAND)..."
   $HEALTH_CHECK_COMMAND
   echo "Success in starting $module_name"
