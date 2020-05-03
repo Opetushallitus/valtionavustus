@@ -1,31 +1,11 @@
-FROM clojure:lein-2.8.1
+FROM openjdk:8-jdk
 
-COPY ./soresu-form /app/soresu-form
-COPY ./va-common /app/va-common
-COPY ./va-hakija /app/va-hakija
-COPY ./package.json /app/
-COPY ./package-lock.json /app/
-COPY ./parent-project.clj /app/
-COPY ./parent-webpack.config.js /app/
-COPY ./nvm.sh /app/
-COPY ./.babelrc /app/
-COPY ./init_nodejs.sh /app/
-
-#Overwrite DB hostname
-COPY va-hakija/config/docker-compose-test.edn /app/va-hakija/config/dev.edn
-
-ENV ADBLOCK 1
-ENV NVM_DIR /usr/local/nvm
-
-WORKDIR /app
-RUN . ./init_nodejs.sh && npm install && npm run hakija:build
-
-WORKDIR /app/soresu-form
-RUN lein install
-
-WORKDIR /app/va-common
-RUN lein install
+COPY va-hakija/target/uberjar/hakija-0.1.0-SNAPSHOT-standalone.jar /app/va-hakija/app.jar
+COPY va-hakija/config/defaults.edn /app/va-hakija/config/defaults.edn
+COPY va-hakija/config/docker-compose-test.edn /app/va-hakija/config/docker-compose-test.edn
 
 WORKDIR /app/va-hakija
-RUN lein install
-ENTRYPOINT ["lein", "run"]
+ENV environment=dev
+ENV configdefaults=/app/va-hakija/config/defaults.edn
+ENV config=/app/va-hakija/config/docker-compose-test.edn
+ENTRYPOINT ["java", "-jar", "app.jar"]

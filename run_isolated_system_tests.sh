@@ -54,14 +54,13 @@ function main {
   export ADBLOCK=1
   cd "$repo"
   . ./init_nodejs.sh
-  npm install
 
   start_system_under_test
   waitport ${HAKIJA_HOSTNAME} 8080 150
   waitport ${VIRKAILIJA_HOSTNAME} 8081 150
 
   npx mocha ${MOCHA_ARGS} "test/**/*Spec.js"
-  make clean build test
+  make test
 }
 
 main "$@"
