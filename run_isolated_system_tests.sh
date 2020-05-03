@@ -18,6 +18,9 @@ function start_system_under_test {
   docker build -t "va-hakija:latest" -f ./Dockerfile.hakija ./
 
   docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
+
+  waitport ${HAKIJA_HOSTNAME} 8080 150
+  waitport ${VIRKAILIJA_HOSTNAME} 8081 150
 }
 
 function check_requirements {
@@ -48,19 +51,22 @@ function waitport {
   echo "Port ${PORT} is responding on host ${HOSTNAME}"
 }
 
-function main {
-  check_requirements
-
+function initialize {
   export ADBLOCK=1
   cd "$repo"
   . ./init_nodejs.sh
+}
 
-  start_system_under_test
-  waitport ${HAKIJA_HOSTNAME} 8080 150
-  waitport ${VIRKAILIJA_HOSTNAME} 8081 150
-
+function run_tests {
   npx mocha ${MOCHA_ARGS:-} "test/**/*Spec.js"
   make test
+}
+
+function main {
+  check_requirements
+  initialize
+  start_system_under_test
+  run_tests
 }
 
 main "$@"
