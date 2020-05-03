@@ -47,8 +47,8 @@ function deploy_jars {
   ls ${va_hakija_jar}
   ls ${va_virkailija_jar}
 
-  "$repo/ci/deploy_jar.bash" $APP_HOSTNAME.csc.fi va-hakija ${va_hakija_jar}
-  "$repo/ci/deploy_jar.bash" $APP_HOSTNAME.csc.fi va-virkailija ${va_virkailija_jar}
+  "$repo"/ci/cibuild.bash -s $APP_HOSTNAME.csc.fi -j ${va_hakija_jar} -m va-hakija deploy_jar
+  "$repo"/ci/cibuild.bash -s $APP_HOSTNAME.csc.fi -j ${va_virkailija_jar} -m va-virkailija deploy_jar
 }
 
 function remove_all_files_ignored_by_git {
