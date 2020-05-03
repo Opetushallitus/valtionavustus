@@ -10,12 +10,7 @@ function main {
   clean
   build
   run_tests
-
-  ls "$repo"/va-hakija/target/*uberjar*/hakija-*-standalone.jar
-  ls "$repo"/va-virkailija/target/*uberjar*/virkailija-*-standalone.jar
-
-  "$repo/ci/deploy_jar.bash" $APP_HOSTNAME.csc.fi va-hakija "$repo"/va-hakija/target/*uberjar*/hakija-*-standalone.jar
-  "$repo/ci/deploy_jar.bash" $APP_HOSTNAME.csc.fi va-virkailija "$repo"/va-virkailija/target/*uberjar*/virkailija-*-standalone.jar
+  deploy_jars
 }
 
 clean() {
@@ -44,6 +39,14 @@ run_tests() {
   export SPECLJ_ARGS="-f junit"
 
   ./run_isolated_system_tests.sh
+}
+
+function deploy_jars {
+  ls "$repo"/va-hakija/target/*uberjar*/hakija-*-standalone.jar
+  ls "$repo"/va-virkailija/target/*uberjar*/virkailija-*-standalone.jar
+
+  "$repo/ci/deploy_jar.bash" $APP_HOSTNAME.csc.fi va-hakija "$repo"/va-hakija/target/*uberjar*/hakija-*-standalone.jar
+  "$repo/ci/deploy_jar.bash" $APP_HOSTNAME.csc.fi va-virkailija "$repo"/va-virkailija/target/*uberjar*/virkailija-*-standalone.jar
 }
 
 function remove_all_files_ignored_by_git {
