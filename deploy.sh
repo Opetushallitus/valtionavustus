@@ -47,8 +47,52 @@ function deploy_jars {
   ls ${va_hakija_jar}
   ls ${va_virkailija_jar}
 
-  "$repo"/ci/cibuild.bash -s $APP_HOSTNAME.csc.fi -j ${va_hakija_jar} -m va-hakija deploy_jar
-  "$repo"/ci/cibuild.bash -s $APP_HOSTNAME.csc.fi -j ${va_virkailija_jar} -m va-virkailija deploy_jar
+  do_deploy_jar $APP_HOSTNAME.csc.fi va-hakija ${va_hakija_jar} 8081
+  do_deploy_jar $APP_HOSTNAME.csc.fi va-virkailija ${va_virkailija_jar} 6071
+}
+
+function do_deploy_jar {
+  local target_server_name=$1
+  local module_name=$2
+  local jar_source_path=$3
+  local application_port=$4
+  echo "Starting $module_name..."
+  echo "Transfering to application server ${target_server_name} ..."
+  SSH_KEY=~/.ssh/id_deploy
+  SSH_USER=va-deploy
+  SSH="ssh -i $SSH_KEY va-deploy@${target_server_name}"
+  BASE_DIR=/data/www
+  CURRENT_DIR=${BASE_DIR}/${module_name}-current
+  TARGET_DIR=${BASE_DIR}/${module_name}-`date +'%Y%m%d%H%M%S'`
+  TARGET_JAR_PATH=${TARGET_DIR}/${module_name}.jar
+  echo "Copying artifacts to ${target_server_name}:${TARGET_DIR} ..."
+  $SSH "mkdir -p ${TARGET_DIR}"
+  scp -p -i ${SSH_KEY} ${jar_source_path} ${SSH_USER}@"${target_server_name}":${TARGET_JAR_PATH}
+  scp -pr -i ${SSH_KEY} ${module_name}/config ${module_name}/resources ${SSH_USER}@"${target_server_name}":${TARGET_DIR}
+  $SSH ln -sfT ${TARGET_DIR} ${CURRENT_DIR}
+  restart_application ${module_name}
+  CAT_LOG_COMMAND="$SSH tail -n 100 /logs/valtionavustus/${module_name}_run.log /logs/valtionavustus/${module_name}_application.log"
+  HEALTH_CHECK_COMMAND="`dirname $0`/health_check.bash ${SSH_USER} ${SSH_KEY} ${target_server_name} ${application_port} $CAT_LOG_COMMAND"
+  echo "Checking that application responds to healthcheck ($HEALTH_CHECK_COMMAND)..."
+  $HEALTH_CHECK_COMMAND
+  echo "Success in starting $module_name"
+}
+
+function restart_application {
+  local module_name=$1
+  echo "Stopping application..."
+  if [ "$target_server_name" = "va-dev" ] || [[ "$target_server_name" == *".csc.fi" ]]; then
+    $SSH "supervisorctl stop $module_name"
+  else
+    $SSH "sudo /usr/local/bin/va_app.bash --stop $module_name"
+  fi
+  if [ "$target_server_name" = "va-dev" ] || [[ "$target_server_name" == *".csc.fi" ]]; then
+    APP_COMMAND="supervisorctl start $module_name"
+  else
+    APP_COMMAND="sudo /usr/local/bin/va_app.bash --start $module_name ${CURRENT_DIR}/${module_name}.jar file:${CURRENT_DIR}/resources/log4j-deployed.properties ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/${target_server_name}.edn"
+  fi
+  echo "Starting application (${APP_COMMAND}) ..."
+  $SSH "${APP_COMMAND}"
 }
 
 function remove_all_files_ignored_by_git {
