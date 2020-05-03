@@ -41,12 +41,14 @@ run_tests() {
   ./run_isolated_system_tests.sh
 }
 
+va_hakija_jar="$repo"/va-hakija/target/*uberjar*/hakija-*-standalone.jar
+va_virkailija_jar="$repo"/va-virkailija/target/*uberjar*/virkailija-*-standalone.jar
 function deploy_jars {
-  ls "$repo"/va-hakija/target/*uberjar*/hakija-*-standalone.jar
-  ls "$repo"/va-virkailija/target/*uberjar*/virkailija-*-standalone.jar
+  ls ${va_hakija_jar}
+  ls ${va_virkailija_jar}
 
-  "$repo/ci/deploy_jar.bash" $APP_HOSTNAME.csc.fi va-hakija "$repo"/va-hakija/target/*uberjar*/hakija-*-standalone.jar
-  "$repo/ci/deploy_jar.bash" $APP_HOSTNAME.csc.fi va-virkailija "$repo"/va-virkailija/target/*uberjar*/virkailija-*-standalone.jar
+  "$repo/ci/deploy_jar.bash" $APP_HOSTNAME.csc.fi va-hakija ${va_hakija_jar}
+  "$repo/ci/deploy_jar.bash" $APP_HOSTNAME.csc.fi va-virkailija ${va_virkailija_jar}
 }
 
 function remove_all_files_ignored_by_git {
