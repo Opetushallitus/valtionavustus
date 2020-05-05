@@ -13,6 +13,8 @@ const {
   VIRKAILIJA_URL
 } = require("./TestUtil.js")
 
+const dummyPdfPath = path.join(__dirname, 'dummy.pdf')
+
 describeBrowser("VaSpec", function() {
   it("should allow removing attachment from hakemus", async function() {
     const {page} = this
@@ -21,7 +23,7 @@ describeBrowser("VaSpec", function() {
     await publishAvustushaku(page, avustushakuID)
     await fillAndSendHakemus(page, avustushakuID, async function() {
       await deleteAttachment(page, "financial-information-form")
-      await uploadFile(page, "input[name='financial-information-form']", "./dummy.pdf")
+      await uploadFile(page, "input[name='financial-information-form']", dummyPdfPath)
     })
   })
 
@@ -350,7 +352,7 @@ async function fillAndSendVäliselvityspyyntö(page, avustushakuID, väliselvity
   await clickElement(page, "label[for='radioButton-good-practices.radio.1']")
   await clearAndType(page, "[name='textArea-4']", "Lisätietoja")
 
-  await uploadFile(page, "[name='namedAttachment-0']", "./dummy.pdf")
+  await uploadFile(page, "[name='namedAttachment-0']", dummyPdfPath)
 
   await submitVäliselvitys(page)
 }
@@ -462,12 +464,12 @@ async function fillAndSendHakemus(page, avustushakuID, beforeSubmitFn) {
   await clickElementWithText(page, "label", "Kansanopisto")
 
   await clearAndType(page, "[name='project-costs-row.amount']", "100000")
-  await uploadFile(page, "[name='previous-income-statement-and-balance-sheet']", "./dummy.pdf")
-  await uploadFile(page, "[name='previous-financial-year-report']", "./dummy.pdf")
-  await uploadFile(page, "[name='previous-financial-year-auditor-report']", "./dummy.pdf")
-  await uploadFile(page, "[name='current-year-plan-for-action-and-budget']", "./dummy.pdf")
-  await uploadFile(page, "[name='description-of-functional-development-during-last-five-years']", "./dummy.pdf")
-  await uploadFile(page, "[name='financial-information-form']", "./dummy.pdf")
+  await uploadFile(page, "[name='previous-income-statement-and-balance-sheet']", dummyPdfPath)
+  await uploadFile(page, "[name='previous-financial-year-report']", dummyPdfPath)
+  await uploadFile(page, "[name='previous-financial-year-auditor-report']", dummyPdfPath)
+  await uploadFile(page, "[name='current-year-plan-for-action-and-budget']", dummyPdfPath)
+  await uploadFile(page, "[name='description-of-functional-development-during-last-five-years']", dummyPdfPath)
+  await uploadFile(page, "[name='financial-information-form']", dummyPdfPath)
 
   if (beforeSubmitFn) {
     await beforeSubmitFn()
