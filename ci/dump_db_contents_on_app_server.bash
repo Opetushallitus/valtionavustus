@@ -22,13 +22,13 @@ make_dump() {
     echo "Dump complete."
 }
 
+for server in ${COMMA_SEPARATED_SERVER_LIST//,/ }; do
+    make_dump "$server"
+done
+
 find "$DUMPS_DIR" \
      -mindepth 1 \
      -maxdepth 1 \
      -mtime +3 \
      -exec echo 'Removing old dump: {}' \; \
      -exec rm -f -- '{}' \;
-
-for server in ${COMMA_SEPARATED_SERVER_LIST//,/ }; do
-    make_dump "$server"
-done
