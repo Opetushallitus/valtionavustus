@@ -39,6 +39,13 @@ loadbalancer_acl:
     condition: src 178.217.128.38/32
   - name: letsencrypt_acl
     condition: path_beg /.well-known/acme-challenge/
+  - name: is_hakemus
+    condition: url_param(hakemus) -m found
+
+loadbalancer_response:
+  - action: set-header
+    param: X-Robots-Tag noindex
+    condition: if is_hakemus
 
 # Map from acl declaration to backend
 
@@ -145,6 +152,7 @@ haproxy_frontends:
       cert: '/etc/pki/domain/certs/'
       ciphers: 'ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DS no-sslv3'
     acl: "{{ loadbalancer_acl }}"
+    http_response: "{{ loadbalancer_response }}"
 
     use_backend: "{{ loadbalancer_acl_mapping }}"
 
