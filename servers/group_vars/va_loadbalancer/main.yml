@@ -39,13 +39,10 @@ loadbalancer_acl:
     condition: src 178.217.128.38/32
   - name: letsencrypt_acl
     condition: path_beg /.well-known/acme-challenge/
-  - name: is_hakemus
-    condition: url_param(hakemus) -m found
 
 loadbalancer_response:
   - action: set-header
     param: X-Robots-Tag noindex
-    condition: if is_hakemus
 
 # Map from acl declaration to backend
 
