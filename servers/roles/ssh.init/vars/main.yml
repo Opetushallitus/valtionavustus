@@ -2,6 +2,9 @@ adminusers:
   maximilian:
     state: absent
     name: Maximilian Remming
+  horttanainen:
+    state: present
+    name: Santeri Horttanainen
   anttu:
     state: present
     name: Antero Fagerstedt
