@@ -2,6 +2,9 @@ adminusers:
   maximilian:
     state: absent
     name: Maximilian Remming
+  tokarls:
+    state: present
+    name: Tomi Karlstedt
   horttanainen:
     state: present
     name: Santeri Horttanainen
