@@ -6,6 +6,7 @@ import HakuEdit from './HakuEdit.jsx'
 import FormEditorContainer from './FormEditorContainer.jsx'
 import DecisionEditor from './DecisionEditor.jsx'
 import SelvitysFormEditor from './SelvitysFormEditor.jsx'
+import HelpTooltip from '../HelpTooltip.jsx'
 
 function createRedirectTo(url) {
   return (e) => {
@@ -29,7 +30,8 @@ export default class EditorSelector extends React.Component {
       translations,
       valiselvitysFormDraft,
       loppuselvitysFormDraft,
-      codeOptions
+      codeOptions,
+      helpTexts
     } = this.props
     let subTabContent
     switch (subTab) {
@@ -38,7 +40,8 @@ export default class EditorSelector extends React.Component {
                                   vaUserSearch={vaUserSearch}
                                   userInfo={userInfo}
                                   controller={controller}
-                                  codeOptions={codeOptions} />
+                                  codeOptions={codeOptions}
+                                  helpTexts={helpTexts} />
         break
       case "form-editor":
         subTabContent = <FormEditorContainer avustushaku={avustushaku}
@@ -97,7 +100,7 @@ export default class EditorSelector extends React.Component {
         <div id="editor-subtab-selector" className="section-container">
           <span onClick={createSubTabSelector("haku-editor")}
                 className={ClassNames({"selected": subTab === "haku-editor"})}>
-            Haun tiedot
+            Haun tiedot <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___valilehden_infopallo"]} />
           </span>
           <span onClick={createSubTabSelector("form-editor")}
                 className={ClassNames({"selected": subTab === "form-editor"})}>

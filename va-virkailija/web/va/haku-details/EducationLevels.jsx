@@ -1,4 +1,5 @@
 import React from 'react'
+import HelpTooltip from '../HelpTooltip.jsx'
 
 export const educationLevels = [
   {title: "Yleissivistävä koulutus, ml. varhaiskasvatus",
@@ -127,7 +128,7 @@ function isBlockedBy(blockers, itemValues) {
 
 export default class EducationLevels extends React.Component {
   render() {
-    const {enabled, values, onChange, onAdd, onRemove, grant} = this.props
+    const {enabled, values, onChange, onAdd, onRemove, grant, helpTexts} = this.props
     const itemValues = (values || []).reduce((a, c) => {
       a[c.rahoitusalue] = c.talousarviotilit
       return a
@@ -135,7 +136,7 @@ export default class EducationLevels extends React.Component {
 
     return (
       <div className={enabled ? null : "haku-edit-disabled-form"}>
-        <h3>Koulutusasteet (kirjoita momentti eli talousarviotili ottaaksesi käyttöön, esim. 29.10.30.20)</h3>
+        <h3>Koulutusasteet (kirjoita momentti eli talousarviotili ottaaksesi käyttöön, esim. 29.10.30.20) <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___koulutusasteet"]} /></h3>
         <table className="education-levels-table">
           <tbody>
             {

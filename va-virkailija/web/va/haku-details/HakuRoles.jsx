@@ -5,6 +5,7 @@ import _ from 'lodash'
 import CSSTransitionGroup from 'soresu-form/web/form/component/wrapper/CSSTransitionGroup.jsx'
 import NameFormatter from 'va-common/web/va/util/NameFormatter'
 import VaUserSearchParameters from './VaUserSearchParameters'
+import HelpTooltip from '../HelpTooltip.jsx'
 
 export default class HakuRoles extends Component {
   render() {
@@ -14,7 +15,8 @@ export default class HakuRoles extends Component {
       userHasEditPrivilege,
       userHasEditMyHakuRolePrivilege,
       vaUserSearch,
-      userInfo
+      userInfo,
+      helpTexts
     } = this.props
     const roles = _.sortBy(avustushaku.roles, 'name')
     const roleRows = roles ? roles.map(role => (
@@ -41,9 +43,9 @@ export default class HakuRoles extends Component {
         <table>
           <thead>
             <tr>
-              <th className="haku-roles-role-column">Rooli</th>
-              <th className="haku-roles-name-column">Nimi</th>
-              <th className="haku-roles-email-column">Sähköposti</th>
+              <th className="haku-roles-role-column">Rooli <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___rooli"]} /></th>
+              <th className="haku-roles-name-column">Nimi <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___nimi"]} /></th>
+              <th className="haku-roles-email-column">Sähköposti <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___sähköposti"]} /></th>
             </tr>
           </thead>
           <CSSTransitionGroup transitionName="haku-roles-transition" component="tbody">
@@ -54,7 +56,7 @@ export default class HakuRoles extends Component {
         <div id="va-user-search-add-role">
           <div className="va-user-search-error-display"><span className={searchErrorClass}>Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.</span></div>
           <div>
-            <span>Lisää uusi henkilö: </span>
+            <span>Lisää uusi henkilö: </span><HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___lisää_uusi_henkilö"]} />
             <div className="va-user-search-block">
               <input id="va-user-search-input" type="text" placeholder={"Hae"} onChange={startSearch} disabled={!roles || !userHasEditPrivilege}/>
                 <button type="button" className={clearInputButtonClassname} title="Tyhjennä" disabled={!hasInput} onClick={(e) => {

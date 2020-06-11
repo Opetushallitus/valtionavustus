@@ -7,6 +7,7 @@ import HakuStatus from "../avustushaku/HakuStatus.jsx"
 import HakuRoles from "./HakuRoles.jsx"
 import EducationLevels from "./EducationLevels.jsx"
 import AutoCompleteCodeValue from "./AutoCompleteCodeValue.jsx"
+import HelpTooltip from '../HelpTooltip.jsx'
 
 export default class HakuEdit extends Component {
   render() {
@@ -23,6 +24,7 @@ export default class HakuEdit extends Component {
     const selectedValueProject = this.props.codeOptions.filter(k => k.id===avustushaku["project-id"])[0] || ""
     const selectedValueOperation = this.props.codeOptions.filter(k => k.id===avustushaku["operation-id"])[0] || ""
     const selectedValueOperationalUnit = this.props.codeOptions.filter(k => k.id===avustushaku["operational-unit-id"])[0] || ""
+    const helpTexts = this.props.helpTexts
 
     const onChangeListener = (target, value) => {
       controller.onChangeListener(avustushaku, target, value)
@@ -36,19 +38,22 @@ export default class HakuEdit extends Component {
       onChangeListener(e.target, e.target.value.replace(/\s/g, " "))
     }
 
+    const mainHelp = { __html: helpTexts["hakujen_hallinta__haun_tiedot___ohje"] }
+
     return (
       <div id="haku-edit">
+        <div dangerouslySetInnerHTML={mainHelp}></div>
         <div id="haku-edit-header" className="editor-header">
           <div className="field-register-number">
             <RegisterNumber controller={controller} avustushaku={avustushaku}
-              allowAllHakuEdits={allowAllHakuEdits} onChange={onChange} />
+                            allowAllHakuEdits={allowAllHakuEdits} onChange={onChange} helpTexts={helpTexts}/>
           </div>
          <div className="editor-header-element">
-            <CreateHaku controller={controller} avustushaku={avustushaku}/>
+           <CreateHaku controller={controller} avustushaku={avustushaku} helpTexts={helpTexts}/>
           </div>
         </div>
         <table id="name" className="translation">
-          <thead><tr><th>Haun nimi</th><th>Haun nimi ruotsiksi</th></tr></thead>
+          <thead><tr><th>Haun nimi <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___haun_nimi"]} /></th><th>Haun nimi ruotsiksi</th></tr></thead>
           <tbody>
             <tr>
               <td>
@@ -74,7 +79,7 @@ export default class HakuEdit extends Component {
         </table>
         <div className="editor-field-row code-values">
           <div className="editor-row-element">
-            <h3 className="required">Toimintayksikkö</h3>
+            <h3 className="required">Toimintayksikkö <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___toimintayksikkö"]} /></h3>
             <AutoCompleteCodeValue
               id="operational-unit-id"
               codeType="operational-unit-id"
@@ -88,7 +93,7 @@ export default class HakuEdit extends Component {
               selectedValue={selectedValueOperationalUnit}/>
           </div>
           <div className="editor-row-element">
-            <h3 className="required">Projekti</h3>
+            <h3 className="required">Projekti <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___projekti"]} /></h3>
             <AutoCompleteCodeValue
               id="project-id"
               codeType="project-id"
@@ -102,7 +107,7 @@ export default class HakuEdit extends Component {
               selectedValue={selectedValueProject}/>
           </div>
           <div className="editor-row-element">
-            <h3 className="required">Toiminto</h3>
+            <h3 className="required">Toiminto <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___toiminto"]} /></h3>
             <AutoCompleteCodeValue
               id="operation-id"
               codeType="operation-id"
@@ -116,35 +121,37 @@ export default class HakuEdit extends Component {
               selectedValue={selectedValueOperation}/>
           </div>
         </div>
-        <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} />
+        <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} helpTexts={helpTexts} />
         <div className="haku-duration-and-self-financing">
           <div className="haku-duration-edit-container">
-            <h3>{avustushaku.content.duration.label.fi}</h3>
+            <h3>{avustushaku.content.duration.label.fi} <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___hakuaika"]} /></h3>
             <DateField id="hakuaika-start" onBlur={onChange} value={avustushaku.content.duration.start} disabled={!allowAllHakuEdits} />
             <span className="dateDivider" />
             <DateField id="hakuaika-end" onBlur={onChange} value={avustushaku.content.duration.end} disabled={!allowNondisruptiveHakuEdits} />
           </div>
         </div>
-        <HakuType hakuType={avustushaku["haku-type"]} disabled={!allowAllHakuEdits} onChange={onChange}/>
+        <HakuType hakuType={avustushaku["haku-type"]} disabled={!allowAllHakuEdits} onChange={onChange} helpTexts={helpTexts} />
         <AcademySize value={avustushaku.is_academysize}
                      disabled={!allowAllHakuEdits}
-                     onChange={onChange} />
+                     onChange={onChange}
+                     helpTexts={helpTexts} />
         <EducationLevels enabled={allowNondisruptiveHakuEdits}
                          values={avustushaku.content.rahoitusalueet}
                          onAdd={controller.addTalousarviotili}
                          onRemove={controller.deleteTalousarviotili}
                          grant={avustushaku}
-                         onChange={onChange}/>
+                         onChange={onChange}
+                         helpTexts={helpTexts}/>
         <div>
           <div className="multibatch-fields">
-            <h3>Maksatus</h3>
+            <h3>Maksatus <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___maksatus"]} /></h3>
             <div>
               <div className="haku-edit-field-container">
                 <Maksuerat value={avustushaku.content.multiplemaksuera}
                            disabled={!allowAllHakuEdits} onChange={onChange}/>
               </div>
               <div className="haku-edit-field-container">
-                <h3>Hakijan omarahoitusvaatimus</h3>
+                <h3>Hakijan omarahoitusvaatimus <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___hakijan_omarahoitusvaatimus"]} /></h3>
                 <input id="haku-self-financing-percentage" type="number"
                        min="0" max="99" className="percentage" required="true"
                        maxLength="2" onChange={onChange}
@@ -199,7 +206,7 @@ export default class HakuEdit extends Component {
             <div className="payments-fields">
               <div className="haku-edit-field-container">
                 <label>
-                  <h3>Maksuliikemenotili</h3>
+                  <h3>Maksuliikemenotili <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___maksuliikennemenotili"]} /></h3>
                   <select id="transaction-account"
                           onChange={onChange}
                           name="transaction-account"
@@ -215,7 +222,7 @@ export default class HakuEdit extends Component {
               </div>
               <div className="haku-edit-field-container">
                 <label>
-                  <h3>Tositelaji</h3>
+                  <h3>Tositelaji <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___tositelaji"]} /></h3>
                   <select id="document-type"
                           onChange={onChange}
                           name="document-type"
@@ -230,7 +237,7 @@ export default class HakuEdit extends Component {
           </div>
           <div className="editor-field-row">
             <div className="editor-row-element">
-              <h3 className="required">Määräraha</h3>
+              <h3 className="required">Määräraha <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___määräraha"]} /></h3>
               <input id="total-grant-size" type="number"
                      disabled={!allowAllHakuEdits} onChange={onChange}
                      required="true"
@@ -239,9 +246,9 @@ export default class HakuEdit extends Component {
             </div>
           </div>
         </div>
-        <HakuRoles avustushaku={avustushaku} vaUserSearch={vaUserSearch} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} userHasEditMyHakuRolePrivilege={userHasEditMyHakuRolePrivilege} controller={controller} />
-        <SelectionCriteria controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />
-        <FocusArea controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />
+        <HakuRoles avustushaku={avustushaku} vaUserSearch={vaUserSearch} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} userHasEditMyHakuRolePrivilege={userHasEditMyHakuRolePrivilege} controller={controller} helpTexts={helpTexts}/>
+        <SelectionCriteria controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} helpTexts={helpTexts}/>
+        <FocusArea controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} helpTexts={helpTexts}/>
       </div>
     )
   }
@@ -251,12 +258,13 @@ class CreateHaku extends React.Component {
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
+    const helpTexts = this.props.helpTexts
     function onClick(e) {
       controller.createHaku(avustushaku)
       e.target.blur()
       e.preventDefault()
     }
-    return <a id="create-haku" onClick={onClick}>Kopioi uuden pohjaksi</a>
+    return <span><a id="create-haku" onClick={onClick}>Kopioi uuden pohjaksi</a><HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___kopioi_uuden_pohjaksi"]} /></span>
   }
 }
 
@@ -305,6 +313,7 @@ class SelectionCriteria extends React.Component {
     const allowAllHakuEdits = this.props.allowAllHakuEdits
     const allowNondisruptiveHakuEdits = this.props.allowNondisruptiveHakuEdits
     const criteriaItems = []
+    const helpTexts = this.props.helpTexts
     for (let index = 0; index < selectionCriteria.items.length; index++) {
       const htmlId = "selection-criteria-" + index + "-"
       criteriaItems.push(
@@ -318,7 +327,7 @@ class SelectionCriteria extends React.Component {
 
     return (
       <table id="selection-criteria" className="translation">
-        <thead><tr><th>{selectionCriteria.label.fi}</th><th>{selectionCriteria.label.sv}</th></tr></thead>
+        <thead><tr><th>{selectionCriteria.label.fi} <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___valintaperusteet"]} /></th><th>{selectionCriteria.label.sv}</th></tr></thead>
         <tbody>
         {criteriaItems}
         </tbody>
@@ -336,6 +345,7 @@ class FocusArea extends React.Component {
     const onChange = this.props.onChange
     const allowAllHakuEdits = this.props.allowAllHakuEdits
     const allowNondisruptiveHakuEdits = this.props.allowNondisruptiveHakuEdits
+    const helpTexts = this.props.helpTexts
     const focusAreaItems = []
     for (let index = 0; index < focusAreas.items.length; index++) {
       const htmlId = "focus-area-" + index + "-"
@@ -350,7 +360,7 @@ class FocusArea extends React.Component {
 
     return (
       <table id="focus-areas" className="translation">
-        <thead><tr><th>{focusAreas.label.fi}</th><th>{focusAreas.label.sv}</th></tr></thead>
+        <thead><tr><th>{focusAreas.label.fi} <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___painopistealueet"]} /></th><th>{focusAreas.label.sv}</th></tr></thead>
         <tbody>
         {focusAreaItems}
         </tbody>
@@ -365,6 +375,7 @@ class HakuType extends React.Component {
     const selectedHakuType = this.props.hakuType
     const isDisabled = this.props.disabled
     const onChange = this.props.onChange
+    const helpTexts = this.props.helpTexts
     const options = _.flatten([
       {htmlId: "set-haku-type-yleisavustus", value: "yleisavustus", label: "Yleisavustus"},
       {htmlId: "set-haku-type-eritysavustus", value: "erityisavustus", label: "Erityisavustus"}
@@ -384,7 +395,7 @@ class HakuType extends React.Component {
     ))
     return (
       <div id="set-haku-type">
-        <h3>Hakutyyppi</h3>
+        <h3>Hakutyyppi <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___hakutyyppi"]} /></h3>
         <fieldset className="soresu-radiobutton-group">
           {options}
         </fieldset>
@@ -400,6 +411,7 @@ class AcademySize extends React.Component {
     const isDisabled = this.props.disabled
     const options = []
     const values = [false, true]
+    const helpTexts = this.props.helpTexts
     for (let i=0; i < values.length; i++) {
       const value = values[i]
       const htmlId = "set-is_academysize-" + value
@@ -420,7 +432,7 @@ class AcademySize extends React.Component {
     }
     return (
       <div id="set-academysize">
-        <h3>Oppilaitoksen koko</h3>
+        <h3>Oppilaitoksen koko <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___oppilaitoksen_koko"]} /></h3>
         <fieldset className="soresu-radiobutton-group">
           {options}
         </fieldset>
@@ -477,6 +489,7 @@ class SetStatus extends React.Component {
     const userHasEditPrivilege = this.props.userHasEditPrivilege
     const statuses = []
     const statusValues = ['deleted', 'draft', 'published', 'resolved']
+    const helpTexts = this.props.helpTexts
     const isDisabled = function(status) {
       if (!userHasEditPrivilege) {
         return true
@@ -519,7 +532,7 @@ class SetStatus extends React.Component {
 
     return (
       <div>
-        <h3>Tila</h3>
+        <h3>Tila <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___tila"]} /></h3>
         <fieldset className="soresu-radiobutton-group">
           {statuses}
         </fieldset>
@@ -543,6 +556,7 @@ class RegisterNumber extends React.Component {
     const isRegisterNumberValid = RegisterNumber.isValid(avustushaku)
     const registerNumberClass = isRegisterNumberValid ? "" : "error"
     const errorStyle = {paddingLeft: "5px"}
+    const helpTexts = this.props.helpTexts
     let errorString = ""
     if (_.isNull(registerNumber) || _.isEmpty(registerNumber)) {
       errorString = <span style={errorStyle} className="error">Diaarinumero on pakollinen tieto</span>
@@ -552,7 +566,7 @@ class RegisterNumber extends React.Component {
                     </span>
     }
     return <div className="haku-edit-registernumber">
-             <h3 className="required">Diaarinumero</h3>
+             <h3 className="required">Diaarinumero <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___asianumero"]} /></h3>
              <input type="text" disabled={!allowAllHakuEdits} onChange={this.props.onChange} className={registerNumberClass} maxLength="128" placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
              <div>{errorString}</div>
            </div>

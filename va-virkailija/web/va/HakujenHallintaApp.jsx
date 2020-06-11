@@ -21,6 +21,7 @@ export default class AdminApp extends Component {
     const selectedHaku = state.selectedHaku ? state.selectedHaku : {}
     const translations = state.translations
     const codeOptions = state.codeOptions
+    const helpTexts = state.helpTexts
     return (
       <section>
         <TopBar activeTab="admin" environment={environment} state={state}/>
@@ -42,7 +43,8 @@ export default class AdminApp extends Component {
                           userInfo={state.userInfo}
                           controller={controller}
                           translations={translations}
-                          codeOptions={codeOptions} />
+                          codeOptions={codeOptions}
+                          helpTexts={helpTexts} />
         </section>
       </section>
     )
