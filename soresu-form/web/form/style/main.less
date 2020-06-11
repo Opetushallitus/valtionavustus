@@ -1,6 +1,7 @@
 @import "variables.less";
 @import "common.less";
 @import "soresu-react-widget-dropdown.less";
+@import "tooltip.less";
 
 body {
   font-family: 'Open Sans', sans-serif;
@@ -668,54 +669,6 @@ button[disabled].soresu-text-button {
 }
 .soresu-dropdown.error .rw-dropdownlist div.rw-input {
   border: solid 1px @bright-red;
-}
-.soresu-tooltip {
-  position: relative;
-  &.soresu-help-icon {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    margin-top: 1px;
-    margin-left: 5px;
-    background: transparent url('../img/show_tooltip.png') no-repeat left top;
-  }
-}
-
-.soresu-tooltip > span {
-  .box-triangle(295px);
-  position: absolute;
-  width: 600px;
-  left: -223px;
-  margin-left: -76px;
-  margin-bottom: -4px;
-  color: @form-label-black;
-  background: #fff;
-  border: 1px solid @light-gray;
-  font-size: 14px;
-  padding: 5px 15px;
-  visibility: hidden;
-}
-
-:hover.soresu-tooltip > span {
-  visibility: visible;
-  opacity: 0.95;
-  z-index: 99;
-}
-
-.soresu-tooltip-up > span {
-  .box-triangle-down(@light-gray, #fff);
-}
-
-:hover.soresu-tooltip-up > span {
-  bottom: 32px;
-}
-
-.soresu-tooltip-down > span {
-  .box-triangle-up(@light-gray, #fff);
-}
-
-:hover.soresu-tooltip-down > span {
-  top: 42px;
 }
 
 .soresu-opener-handle {
