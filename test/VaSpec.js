@@ -189,6 +189,12 @@ describeBrowser("VaSpec", function() {
     const logEntryCount = await tapahtumaloki.evaluate(e => e.querySelectorAll(".entry").length)
     assert.strictEqual(logEntryCount, 1)
 
+    await verifyTooltipText(
+      page,
+      `[data-test-id="väliselvitys-välilehti"] a`,
+      /Tällä välilehdellä laaditaan ja lähetetään avustuksen saajien väliselvityspyynnöt.*/
+    )
+
     await gotoVäliselvitysTab(page, avustushakuID)
     await clickElementWithText(page, "button", "Lähetä väliselvityspyynnöt")
     const responseP = page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/valiselvitys/send-notification`)
@@ -313,6 +319,15 @@ async function expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustusha
     'budget-granted': 100000,
     'project-end': null
   }]
+}
+
+async function verifyTooltipText(page, tooltipAnchorSelector, tooltipTextRegex) {
+  const tooltipContentSelector = `${tooltipAnchorSelector} span`
+
+  await page.hover(tooltipAnchorSelector)
+  const tooltipElement = await page.waitForSelector(tooltipContentSelector, { visible: true })
+  const tooltipText = await page.evaluate(element => element.textContent, tooltipElement)
+  assert.match(tooltipText, tooltipTextRegex, `Tooltip ${tooltipTextRegex.source} found from: ${tooltipText}`)
 }
 
 async function actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID) {

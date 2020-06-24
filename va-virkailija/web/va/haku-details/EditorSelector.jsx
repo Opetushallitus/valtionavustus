@@ -111,8 +111,9 @@ export default class EditorSelector extends React.Component {
             Päätös
           </span>
           <span onClick={createSubTabSelector("valiselvitys")}
-                className={ClassNames({"selected": subTab === "valiselvitys"})}>
-            Väliselvitys
+                className={ClassNames({"selected": subTab === "valiselvitys"})}
+                data-test-id="väliselvitys-välilehti">
+            Väliselvitys <HelpTooltip content={helpTexts["hakujen_hallinta__väliselvitys___välilehden_infopallo_välilehtiriville"]} />
           </span>
           <span onClick={createSubTabSelector("loppuselvitys")}
                 className={ClassNames(
