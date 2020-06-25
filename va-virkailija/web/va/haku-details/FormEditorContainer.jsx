@@ -14,6 +14,7 @@ export default class FormEditorContainer extends Component {
     const formDraft = this.props.formDraft
     const controller = this.props.controller
     const updatedAt = _.get(avustushaku, "formContent.updated_at")
+    const helpTexts = this.props.helpTexts
 
     const environment = this.props.environment
     const hakuUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/?lang=fi"
@@ -32,8 +33,12 @@ export default class FormEditorContainer extends Component {
         textArea.scrollIntoView({block: "start", behavior: "smooth"})
         textArea.focus()
     }
+
+    const mainHelp = { __html: helpTexts["hakujen_hallinta__hakulomake___ohje"] }
+
     return (
       <section>
+        <div dangerouslySetInnerHTML={mainHelp}></div>
         <div style={{float:'right'}}><button className="btn btn-blue btn-sm" onClick={scrollToEditor}>JSON editoriin</button></div>
         {updatedAt && <div style={{float:'right',marginRight:20}}>Päivitetty: {formattedUpdatedDate}</div>}
         <div className="link-list">

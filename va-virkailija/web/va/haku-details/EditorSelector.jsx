@@ -49,7 +49,8 @@ export default class EditorSelector extends React.Component {
                                              translations={translations}
                                              koodistos={koodistos}
                                              formDraft={formDraft}
-                                             controller={controller} />
+                                             controller={controller}
+                                             helpTexts={helpTexts} />
         break
       case "decision":
         subTabContent = <DecisionEditor avustushaku={avustushaku}
@@ -104,7 +105,7 @@ export default class EditorSelector extends React.Component {
           </span>
           <span onClick={createSubTabSelector("form-editor")}
                 className={ClassNames({"selected": subTab === "form-editor"})}>
-            Hakulomake
+            Hakulomake <HelpTooltip content={helpTexts["hakujen_hallinta__hakulomake___valilehden_infopallo"]} />
           </span>
           <span onClick={createSubTabSelector("decision")}
                 className={ClassNames({"selected": subTab === "decision"})}>
