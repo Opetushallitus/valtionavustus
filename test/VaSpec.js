@@ -156,7 +156,7 @@ describeBrowser("VaSpec", function() {
   })
 
 
-  it("produces väliselvitys sheet in excel export", async function() {
+  it.only("produces väliselvitys sheet in excel export", async function() {
     const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
@@ -327,7 +327,7 @@ async function verifyTooltipText(page, tooltipAnchorSelector, tooltipTextRegex) 
   await page.hover(tooltipAnchorSelector)
   const tooltipElement = await page.waitForSelector(tooltipContentSelector, { visible: true })
   const tooltipText = await page.evaluate(element => element.textContent, tooltipElement)
-  assert.match(tooltipText, tooltipTextRegex, `Tooltip ${tooltipTextRegex.source} found from: ${tooltipText}`)
+  assert.ok(tooltipTextRegex.test(tooltipText), `Tooltip ${tooltipTextRegex.source} found from: ${tooltipText}`)
 }
 
 async function actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID) {
