@@ -156,7 +156,7 @@ describeBrowser("VaSpec", function() {
   })
 
 
-  it.only("produces väliselvitys sheet in excel export", async function() {
+  it("produces väliselvitys sheet in excel export", async function() {
     const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
