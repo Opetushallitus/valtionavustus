@@ -69,6 +69,17 @@ describeBrowser("VaSpec", function() {
     assert.strictEqual(logEntryCount, 1)
   })
 
+  it("shows tooltip text for loppuselvitys tab in the tab bar", async function() {
+    const {page} = this
+    await navigate(page, "/admin/haku-editor/")
+    await verifyTooltipText(
+      page,
+      `[data-test-id="loppuselvitys-välilehti"] a`,
+      /Tällä välilehdellä laaditaan ja lähetetään avustuksen saajien loppuselvityspyynnöt. Loppuselvityslomaketta voi luonnostella jo haun suunnitteluvaiheessa, mutta kokonaisuudessaan välilehden tulee olla valmiina ja käännettynä vasta juuri ennen loppuselvityspyyntöjen lähettämistä.*/
+    )
+
+  })
+
   it("shows the same updated date on the Päätös tab as on the Väliselvitys and Loppuselvitys tabs", async function() {
     const {page} = this
 
