@@ -522,8 +522,8 @@ class DecisionDateAndSend extends React.Component {
       <div className="decision-separator"/>
       {this.state.sending && <div><img src="/img/ajax-loader.gif"/>&nbsp;<strong>Päätöksiä lähetetään...</strong></div>}
       {this.mailsToSend() && <span><button disabled={this.state.preview || this.sentOk()} onClick={onPreview}>Lähetä {this.mailsToSendLabel()} päätöstä</button>&nbsp;</span>}
-      {!this.mailsToSend() && <RegenerateDecisions avustushaku={this.props.avustushaku}/>}
-      {this.state.sent !== 0 && <ResendDecisions avustushaku={this.props.avustushaku} sent={this.state.sent} reload={rerenderParentCallback} helpTexts={helpTexts}/>}
+      {!this.mailsToSend() && <RegenerateDecisions avustushaku={this.props.avustushaku} helpTexts={this.props.helpTexts}/>}
+      {this.state.sent !== 0 && <ResendDecisions avustushaku={this.props.avustushaku} sent={this.state.sent} reload={rerenderParentCallback} helpTexts={this.props.helpTexts}/>}
       {this.state.preview && <button onClick={onSend}>Vahvista lähetys</button>}
       {this.state.sendError && <p id="päätös-send-error" className="error">{this.state.sendError}</p>}
 
