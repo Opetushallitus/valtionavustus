@@ -128,6 +128,7 @@ export default class EditorSelector extends React.Component {
             className={avustushaku.status !== "published" &&
                          avustushaku.status !== "resolved" ? "disabled" : ""}>
             Maksatukset
+            <HelpTooltip content={helpTexts["hakujen_hallinta__maksatus___välilehden_infopallo_välilehtiriville"]} />
           </span>
         </div>
         <div className="section-container">{subTabContent}</div>
