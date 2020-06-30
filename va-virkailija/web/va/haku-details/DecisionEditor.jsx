@@ -7,22 +7,23 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 
 import PaatosUrl from '../hakemus-details/PaatosUrl'
 import Selvitys from './Selvitys.jsx'
+import HelpTooltip from '../HelpTooltip.jsx'
 
-const DecisionField = ({avustushaku, title, id,language, onChange}) => {
+const DecisionField = ({avustushaku, title, id,language, onChange, helpText, dataTestId}) => {
   const fieldId= `decision.${id}.${language}`
   const value = _.get(avustushaku, fieldId, "")
   const titleLanguage = language === "sv" ? `${title} ruotsiksi` : title
   return(
-    <div className="decision-column">
-      <label>{titleLanguage}</label>
+    <div className="decision-column" data-test-id={dataTestId}>
+      <label>{titleLanguage} {helpText && language === 'fi' ? <HelpTooltip content={helpText} /> : ''} </label>
       <textarea onChange={onChange} rows="5" id={fieldId} value={value}></textarea>
     </div>
   )
 }
 
-const DecisionFields = ({title,avustushaku,id,onChange}) =>
+const DecisionFields = ({title,avustushaku,id,onChange,helpText, dataTestId}) =>
   <div className="decision-row">
-    {['fi','sv'].map((language)=><DecisionField key={language} title={title} avustushaku={avustushaku} id={id} language={language} onChange={onChange}></DecisionField>)}
+    {['fi','sv'].map((language)=><DecisionField key={language} title={title} avustushaku={avustushaku} id={id} language={language} onChange={onChange} helpText={helpText} dataTestId={dataTestId}></DecisionField>)}
   </div>
 
 
@@ -52,7 +53,7 @@ class DateField extends React.Component {
     return (
       <div className="decision-date">
         <div className="decision-column">
-          <span className="decision-date-label">{this.props.label}</span>
+          <span className="decision-date-label" data-test-id="ratkaisupäivä">{this.props.label} <HelpTooltip content={this.props.helpTexts["hakujen_hallinta__päätös___ratkaisupäivä"]} /></span>
           <input type="text"
                  value={this.state.value}
                  id={`decision.${this.props.field}`}
@@ -148,7 +149,7 @@ class LiitteetSelection extends React.Component {
   render() {
     return (
       <div>
-        <h4>Päätöksen liitteet</h4>
+        <h4 data-test-id="paatoksenliitteet">Päätöksen liitteet <HelpTooltip content={this.props.helpTexts["hakujen_hallinta__päätös___päätöksen_liitteet"]} /> </h4>
         <div className="decision-liite-selection">
           {_.map(this.props.decisionLiitteet, group => this.renderLiiteGroup(group))}
         </div>
@@ -159,7 +160,7 @@ class LiitteetSelection extends React.Component {
   renderLiiteGroup(group) {
     return (
       <div key={group.group}>
-        <h5>{group.group}</h5>
+        <h5>{group.group} <HelpTooltip content={this.props.helpTexts[`hakujen_hallinta__päätös___${group.group.toLowerCase().replace(/ /g, "_")}`]} /> </h5>
         {_.map(group.attachments, attachment => this.renderLiite(attachment, group.group))}
       </div>
     )
@@ -257,7 +258,7 @@ class RegenerateDecisions extends React.Component {
         {!this.state.completed &&
           <div>
             {this.state.confirm && <button onClick={onRegenerate} disabled={regenerating}>{regenerating ? "Vahvistetaan" :  "Vahvista päätösten luominen"}</button>}
-            {!this.state.confirm && <button onClick={onConfirm}>Luo päätökset uudelleen</button>}
+            {!this.state.confirm && <button onClick={onConfirm}>Luo päätökset uudelleen <HelpTooltip content={this.props.helpTexts["hakujen_hallinta__päätös___luo_päätökset_uudelleen"]} /></button>}
           </div>
         }
 
@@ -307,7 +308,7 @@ class ResendDecisions extends React.Component {
         {!this.state.completed &&
           <div>
             {this.state.confirm && <button onClick={onResend} disabled={resending}>{resending ? "Lähetetään" :  "Vahvista päätösten uudellenlähetys"}</button>}
-            {!this.state.confirm && <button onClick={onConfirm}>Lähetä {this.props.sent} päätöstä uudelleen</button>}
+            {!this.state.confirm && <button onClick={onConfirm} data-test-id="resend">Lähetä {this.props.sent} päätöstä uudelleen <HelpTooltip content={this.props.helpTexts["hakujen_hallinta__päätös___lähetä_päätökset_uudelleen"]} /> </button>}
           </div>
         }
         {this.state.resendError && <p id="päätös-resend-error" className="error">{this.state.resendError}</p>}
@@ -522,7 +523,7 @@ class DecisionDateAndSend extends React.Component {
       {this.state.sending && <div><img src="/img/ajax-loader.gif"/>&nbsp;<strong>Päätöksiä lähetetään...</strong></div>}
       {this.mailsToSend() && <span><button disabled={this.state.preview || this.sentOk()} onClick={onPreview}>Lähetä {this.mailsToSendLabel()} päätöstä</button>&nbsp;</span>}
       {!this.mailsToSend() && <RegenerateDecisions avustushaku={this.props.avustushaku}/>}
-      {this.state.sent !== 0 && <ResendDecisions avustushaku={this.props.avustushaku} sent={this.state.sent} reload={rerenderParentCallback}/>}
+      {this.state.sent !== 0 && <ResendDecisions avustushaku={this.props.avustushaku} sent={this.state.sent} reload={rerenderParentCallback} helpTexts={helpTexts}/>}
       {this.state.preview && <button onClick={onSend}>Vahvista lähetys</button>}
       {this.state.sendError && <p id="päätös-send-error" className="error">{this.state.sendError}</p>}
 
@@ -642,40 +643,45 @@ export default class DecisionEditor extends React.Component {
       avustushaku,
       decisionLiitteet,
       environment,
-      controller
+      controller,
+      helpTexts
     } = this.props
     const onChange = (e) => controller.onChangeListener(avustushaku, e.target, e.target.value)
     const fields = [
-      {id:"sovelletutsaannokset",title:"Sovelletut säännökset"},
-      {id:"kayttooikeudet",title:"Tekijänoikeudet"},
-      {id:"kayttotarkoitus",title:"Avustuksen käyttötarkoitus"},
-      {id:"kayttoaika",title:"Avustuksen käyttöaika"},
-      {id:"selvitysvelvollisuus",title:"Selvitysvelvollisuus"},
-      {id:"hyvaksyminen",title:"Päätöksen hyväksyminen"},
-      {id:"johtaja",title:"Johtaja"},
-      {id:"valmistelija",title:"Esittelijä"}
+      {id:"sovelletutsaannokset",title:"Sovelletut säännökset", helpText: helpTexts["hakujen_hallinta__päätös___sovelletut_säännökset"], dataTestId:"sovelletutsaannokset"},
+      {id:"kayttooikeudet",title:"Tekijänoikeudet", helpText:helpTexts["hakujen_hallinta__päätös___tekijänoikeudet"], dataTestId:"kayttooikeudet"},
+      {id:"kayttotarkoitus",title:"Avustuksen käyttötarkoitus", helpText:helpTexts["hakujen_hallinta__päätös___avustuksen_käyttötarkoitus"], dataTestId:"kayttotarkoitus"},
+      {id:"kayttoaika",title:"Avustuksen käyttöaika", helpText:helpTexts["hakujen_hallinta__päätös___avustuksen_käyttöaika"], dataTestId:"kayttoaika"},
+      {id:"selvitysvelvollisuus",title:"Selvitysvelvollisuus", helpText:helpTexts["hakujen_hallinta__päätös___selvitysvelvollisuus"], dataTestId:"selvitysvelvollisuus"},
+      {id:"hyvaksyminen",title:"Päätöksen hyväksyminen", helpText:helpTexts["hakujen_hallinta__päätös___päätöksen_hyväksyminen"], dataTestId:"hyvaksyminen"},
+      {id:"johtaja",title:"Johtaja", helpText:helpTexts["hakujen_hallinta__päätös___johtaja"], dataTestId:"johtaja"},
+      {id:"valmistelija",title:"Esittelijä", helpText:helpTexts["hakujen_hallinta__päätös___esittelijä"], dataTestId:"valmistelija"}
     ]
     const updatedAt = avustushaku.decision.updatedAt
     const formattedUpdatedAt = `${DateUtil.asDateString(updatedAt)} klo ${DateUtil.asTimeString(updatedAt)}`
     const rahoitusAlueDecisionSubfields = _.isEmpty(avustushaku.content.rahoitusalueet)
       ? []
       : avustushaku.content.rahoitusalueet.map(row => <DecisionFields key={row.rahoitusalue} title={"Myönteisen päätöksen lisäteksti - " + row.rahoitusalue} avustushaku={avustushaku} id={"myonteinenlisateksti-" + row.rahoitusalue.replace(/[\s.]/g, "_")} onChange={onChange}/>)
+    
+    const mainHelp = { __html: helpTexts["hakujen_hallinta__päätös___ohje"] }
+ 
     return (
       <div className="decision-editor">
+        <div dangerouslySetInnerHTML={mainHelp}></div>
         { updatedAt && <div style={{'textAlign':'right'}} id="paatosUpdatedAt">Päivitetty: {formattedUpdatedAt}</div> }
-        <DecisionFields key="taustaa" title="Taustaa" avustushaku={avustushaku} id="taustaa" onChange={onChange}/>
-        <DecisionFields key="myonteinenlisateksti" title="Myönteisen päätöksen lisäteksti" avustushaku={avustushaku} id="myonteinenlisateksti" onChange={onChange}/>
+        <DecisionFields key="taustaa" title="Taustaa" avustushaku={avustushaku} id="taustaa" onChange={onChange} helpText={helpTexts["hakujen_hallinta__päätös___taustaa"]} dataTestId="taustaa" />
+        <DecisionFields key="myonteinenlisateksti" title="Myönteisen päätöksen lisäteksti" avustushaku={avustushaku} id="myonteinenlisateksti" onChange={onChange} helpText={helpTexts["hakujen_hallinta__päätös___myönteisen_päätöksen_lisäteksti"]} dataTestId="myonteinenlisateksti" />
         {rahoitusAlueDecisionSubfields.length > 0  &&
         <div className="decision-subfields">
           {rahoitusAlueDecisionSubfields}
         </div>
         }
-        {fields.map((field)=><DecisionFields key={field.id} title={field.title} avustushaku={avustushaku} id={field.id} onChange={onChange}/>)}
-        <DecisionFields key="maksu" title="Avustuksen maksuaika" avustushaku={avustushaku} id="maksu" onChange={onChange}/>
+        {fields.map((field)=><DecisionFields key={field.id} title={field.title} avustushaku={avustushaku} id={field.id} onChange={onChange} helpText={field.helpText} dataTestId={field.dataTestId}/>)}
+        <DecisionFields key="maksu" title="Avustuksen maksuaika" avustushaku={avustushaku} id="maksu" onChange={onChange} helpText={helpTexts["hakujen_hallinta__päätös___avustuksen_maksuaika"]} dataTestId={"maksu"} />
         <Selvitys {...this.props}/>
         {avustushaku.content.multiplemaksuera===true && <DateField avustushaku={avustushaku} controller={controller} field="maksudate" label="Viimeinen maksuerä"/>}
-        <LiitteetSelection environment={environment} avustushaku={avustushaku} decisionLiitteet={decisionLiitteet} controller={controller}/>
-        <DecisionDateAndSend avustushaku={avustushaku} controller={controller} environment={environment}/>
+        <LiitteetSelection environment={environment} avustushaku={avustushaku} decisionLiitteet={decisionLiitteet} controller={controller} helpTexts={helpTexts}/>
+        <DecisionDateAndSend avustushaku={avustushaku} controller={controller} environment={environment} helpTexts={helpTexts} />
       </div>
     )
   }

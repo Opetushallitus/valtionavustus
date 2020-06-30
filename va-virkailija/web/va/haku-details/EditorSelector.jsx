@@ -58,8 +58,7 @@ export default class EditorSelector extends React.Component {
                                         environment={environment}
                                         controller={controller}
                                         translations={translations}
-
-        />
+                                        helpTexts={helpTexts} />
         break
       case "valiselvitys":
         subTabContent = <SelvitysFormEditor selvitysType="valiselvitys"
@@ -108,8 +107,9 @@ export default class EditorSelector extends React.Component {
             Hakulomake <HelpTooltip content={helpTexts["hakujen_hallinta__hakulomake___valilehden_infopallo"]} />
           </span>
           <span onClick={createSubTabSelector("decision")}
-                className={ClassNames({"selected": subTab === "decision"})}>
-            Päätös
+                className={ClassNames({"selected": subTab === "decision"})}
+                data-test-id="päätös-välilehti">
+            Päätös <HelpTooltip content={helpTexts["hakujen_hallinta__päätös___välilehden_infopallo_välilehtiriville"]} />
           </span>
           <span onClick={createSubTabSelector("valiselvitys")}
                 className={ClassNames({"selected": subTab === "valiselvitys"})}

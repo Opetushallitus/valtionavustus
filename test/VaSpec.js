@@ -77,7 +77,96 @@ describeBrowser("VaSpec", function() {
       `[data-test-id="loppuselvitys-välilehti"] a`,
       /Tällä välilehdellä laaditaan ja lähetetään avustuksen saajien loppuselvityspyynnöt. Loppuselvityslomaketta voi luonnostella jo haun suunnitteluvaiheessa, mutta kokonaisuudessaan välilehden tulee olla valmiina ja käännettynä vasta juuri ennen loppuselvityspyyntöjen lähettämistä.*/
     )
+  })
 
+  it("shows tooltip texts for päätös tab", async function() {
+    const {page} = this
+
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+
+    await navigate(page, "/admin/haku-editor/")
+    await verifyTooltipText(
+      page,
+      `[data-test-id="päätös-välilehti"] a`,
+      /Tällä välilehdellä laaditaan ja lähetetään hakijoiden avustuspäätös-dokumentit. Päätöstä voi luonnostella jo haun suunnitteluvaiheessa, mutta kokonaisuudessaan välilehden tulee olla valmiina ja käännettynä ennen haun ratkaisua ja päätösten lähettämistä.*/
+    )
+
+    await gotoPäätösTab(page, avustushakuID);
+
+    const decisionEditor = await page.waitForSelector(".decision-editor", { visible: true })
+    const mainHelpText = await page.evaluate(element => element.textContent, decisionEditor)
+    assert.ok(/.*Jokaiselle valtionavustushakemukselle annetaan arviointien jälkeen avustuspäätös, joka on joko myönteinen tai kielteinen\. Haun vastuuvalmistelija vastaa avustuspäätösten laadusta, hyväksyttämisestä ja lähettämisestä\..*/.test(mainHelpText))
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="taustaa"] label a`,
+      /Kuvaa hakuaika, vastaanotettujen hakemuksien lukumäärä, vastaanotettujen hakemusten yhteenlaskettu haettu avustussumma, hyväksyttyjen hakemusten lukumäärä sekä myönnetyn avustuksen määrä kokonaisuudessaan.*/
+    )
+    await verifyTooltipText(
+      page,
+      `[data-test-id="myonteinenlisateksti"] label a`,
+      /Kuvaa avustuksen saajille hankkeen toteuttamista ohjaavia lisätietoja. Näitä voivat olla esimerkiksi avustuksella tavoiteltavat tulokset ja vaikutukset, vaatimus hankesuunnitelman mukaisesta avustuksen käytöstä, vaatimus VA-yleisohjeen noudattamisesta sekä avustuksen saajan muut tehtävät ja velvollisuudet. Mikäli haulle on valittu useita koulutusasteita Haun tiedot -välilehdellä, voidaan jokaiselle koulutusasteelle kirjoittaa oma myönteisen päätöksen lisäteksti.*/
+    )
+    await verifyTooltipText(
+      page,
+      `[data-test-id="sovelletutsaannokset"] label a`,
+      /Viitataan niihin lakeihin ja säädöksiin, joita valtionavustuserän osalta noudatetaan, esim. Valtionavustuslaki 688\/2001*/
+    )
+    await verifyTooltipText(
+      page,
+      `[data-test-id="kayttooikeudet"] label a`,
+      /Käytetään valmista mallivastausta:.*/
+    )
+    await verifyTooltipText(
+      page,
+      `[data-test-id="kayttotarkoitus"] label a`,
+      /Kuvaa avustuksen käyttötarkoitus. Mihin tarkoituksiin avustusta voi käyttää ja mihin tarkoituksiin avustuksen käyttöä ei sallita. Käyttötarkoitusta ohjaavien päätöskirjausten tulee olla linjassa sekä hakutiedotteen kirjausten että hakulomakkeen budjetti-informaation kanssa.*/
+    )
+    await verifyTooltipText(
+      page,
+      `[data-test-id="kayttoaika"] label a`,
+      /Kuvataan milloin avustuksen käyttöaika alkaa ja päättyy. Useimmiten käyttöaika alkaa avustuspäätöstä seuraavasta päivästä, vaikka avustusta ei olisikaan vielä maksettu avustuksen saajan tilille. Avustuksen käyttöaika asetetaan päättyväksi siten kuin on hakutiedotteessa ilmoitettu.*/
+    )
+    await verifyTooltipText(
+      page,
+      `[data-test-id="selvitysvelvollisuus"] label a`,
+      /Kuvataan selvitysvelvollisuus ja mahdollisen väliselvityksen sekä loppuselvityksen aikataulutus. Informoidaan avustuksen saajaan siitä, miten ja milloin selvityslomakkeet avustuksen saajille toimitetaan. Voidaan lisäksi tarkentaa selvitykseen ja kirjanpitoon liittyviä ehtoja.*/
+    )
+    await verifyTooltipText(
+      page,
+      `[data-test-id="hyvaksyminen"] label a`,
+      /Kuvataan avustuksen saajalle, miten hänen pitää toimia tilanteessa, jossa hän ei ota myönnettyä avustusta vastaan. Aseta avustuksesta kieltäytymiselle määräaika. Kieltäytyminen tulee tehdä sekä OPH:n kirjaamoon että avustuspäätöksessä osoitetulle OPH:n yhteyshenkilölle.*/
+    )
+    await verifyTooltipText(
+      page,
+      `[data-test-id="johtaja"] label a`,
+      /Päätöksen hyväksyy sen yksikön päällikkö, jonka vastuulle kyseinen valtionavustushaku kuuluu. Hyväksyjä kirjoitetaan muodossa titteli etunimi sukunimi.*/
+    )
+    await verifyTooltipText(
+      page,
+      `[data-test-id="valmistelija"] label a`,
+      /Esittelijänä toimii valtionavustushaun vastuuvalmistelija. Esittelijä kirjoitetaan muodossa titteli etunimi sukunimi.*/
+    )
+    await verifyTooltipText(
+      page,
+      `[data-test-id="maksu"] label a`,
+      /Kuvataan, että maksetaanko avustus yhdessä vai useammassa erässä ja milloin avustusten maksaminen toteutetaan. Maksupäivämäärää ei tarvitse tarkasti yksilöidä vaan se voidaan kirjata esimerkiksi muodossa ”yhdessä erässä viimeistään xx.x.xxxx”.*/
+    )
+    await verifyTooltipText(
+      page,
+      `[data-test-id="valiselvitys"] a`,
+      /Kirjataan päivämäärä \(muodossa xx.x.xxxx\), jolloin väliselvitys on viimeistään toimitettava OPH:n valtionavustusjärjestelmään. Yleensä väliselvitysten viimeinen toimituspäivämäärä noin hankekauden puolivälissä. Suositellaan käyttämään valitun kuukauden viimeistä päivää. Kirjattu päivämäärä siirtyy automaattisesti Väliselvitys-välilehdelle sekä Väliselvitys-välilehdeltä lähetettävän väliselvityspyynnön sähköpostiviestiin.*/
+    )
+    await verifyTooltipText(
+      page,
+      `[data-test-id="loppuselvitys"] a`,
+      /Kirjataan päivämäärä \(muodossa xx.x.xxxx\), jolloin loppuselvitys on viimeistään toimitettava OPH:n valtionavustusjärjestelmään. Loppuselvitysten viimeinen toimituspäivämäärä on kaksi kuukautta avustuksen käyttöajan päättymisestä. Kirjattu päivämäärä siirtyy automaattisesti Loppuselvitys-välilehdelle sekä Loppuselvitys-välilehdeltä lähetettävän loppuselvityspyynnön sähköpostiviestiin.*/
+    )
+    await verifyTooltipText(
+      page,
+      `[data-test-id="paatoksenliitteet"] a`,
+      /Jokaisen päätöksen oheen liitetään oikaisuvaatimusosoitus sekä valtionavustusten yleisohje. */
+    )
   })
 
   it("shows the same updated date on the Päätös tab as on the Väliselvitys and Loppuselvitys tabs", async function() {
@@ -596,6 +685,10 @@ async function selectValmistelijaForHakemus(page, avustushakuID, hakemusID, valm
 
 async function gotoVäliselvitysTab(page, avustushakuID) {
   await navigate(page, `/admin/valiselvitys/?avustushaku=${avustushakuID}`)
+}
+
+async function gotoPäätösTab(page, avustushakuID) {
+  await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
 }
 
 async function sendPäätös(page, avustushakuID) {
