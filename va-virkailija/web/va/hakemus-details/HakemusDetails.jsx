@@ -11,7 +11,7 @@ export default class HakemusDetails extends Component {
   render() {
     const {hidden, controller, hakemus, avustushaku, hakuData, userInfo,
            loadingComments, showOthersScores, translations, environment,
-           selectedHakemusAccessControl, subTab} = this.props
+           selectedHakemusAccessControl, subTab, helpTexts} = this.props
     const multibatchEnabled =
           (environment["multibatch-payments"] &&
            environment["multibatch-payments"]["enabled?"]) || false
@@ -57,7 +57,8 @@ export default class HakemusDetails extends Component {
                                    showOthersScores={showOthersScores}
                                    subTab={subTab}
                                    controller={controller}
-                                   multibatchEnabled={multibatchEnabled}/>
+                                   multibatchEnabled={multibatchEnabled}
+                                   helpTexts={helpTexts}/>
 
         case 'valiselvitys':
           return <Selvitys controller={controller} hakemus={hakemus}
@@ -65,16 +66,17 @@ export default class HakemusDetails extends Component {
                            translations={translations}
                            selvitysType="valiselvitys"
                            multibatchEnabled={multibatchEnabled}
-                           isPresentingOfficer={isPresentingOfficer}/>
+                           isPresentingOfficer={isPresentingOfficer} helpTexts={helpTexts}/>
         case 'loppuselvitys':
           return <Selvitys controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo}
                            translations={translations}
                            selvitysType="loppuselvitys"
                            multibatchEnabled={multibatchEnabled}
-                           isPresentingOfficer={isPresentingOfficer}/>
+                           isPresentingOfficer={isPresentingOfficer}
+                           helpTexts={helpTexts}/>
         case 'seuranta':
-          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selectedHakemusAccessControl={selectedHakemusAccessControl}/>
+          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selectedHakemusAccessControl={selectedHakemusAccessControl} helpTexts={helpTexts}/>
         default:
           throw new Error("Bad subTab selection '" + tabName + "'")
       }

@@ -11,7 +11,7 @@ import ShouldPayComments from './ShouldPayComments.jsx'
 export default class Seuranta extends React.Component {
   render() {
     const {controller, hakemus, avustushaku,
-           translations, hakuData} = this.props
+           translations, hakuData, helpTexts} = this.props
     return (
       <div className="seuranta">
         <AllowVisibilityInExternalSystem controller={controller}
@@ -24,7 +24,7 @@ export default class Seuranta extends React.Component {
                            hakemus={hakemus}
                            allowEditing={true}/>
         <div className="seuranta-section">
-          <PresenterComment controller={controller} hakemus={hakemus}/>
+          <PresenterComment controller={controller} hakemus={hakemus} helpTexts={helpTexts}/>
           <SeurantaBudgetEditing avustushaku={avustushaku}
                                  hakuData={hakuData}
                                  translations={translations}

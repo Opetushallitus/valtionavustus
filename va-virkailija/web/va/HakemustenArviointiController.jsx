@@ -89,6 +89,7 @@ export default class HakemustenArviointiController {
         evaluator:evaluator,
         presenter:undefined
       },
+      helpTexts: Bacon.fromPromise(HttpUtil.get("/api/help-texts/all")),
       hakemusSorter: [
         {field: "score", order: "desc"}
       ],

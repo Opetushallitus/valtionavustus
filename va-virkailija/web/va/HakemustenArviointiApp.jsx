@@ -36,6 +36,7 @@ export default class App extends Component {
     const avustushakuList = state.avustushakuList
     const subTab = state.subTab
     const environment = hakuData.environment
+    const helpTexts = state.helpTexts
 
     return (
       <section>
@@ -74,7 +75,8 @@ export default class App extends Component {
                           showOthersScores={state.showOthersScores}
                           subTab={subTab}
                           controller={controller}
-                          environment={environment}/>
+                          environment={environment}
+                          helpTexts={helpTexts}/>
           <div hidden={!hasSelected} id="footer">
             <HakemusHakijaSidePreviewLink hakemus={selectedHakemus} avustushaku={avustushaku} />
             <HakemusDecisionLink hakemus={selectedHakemus} avustushaku={avustushaku} />

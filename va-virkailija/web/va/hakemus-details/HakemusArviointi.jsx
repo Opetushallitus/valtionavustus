@@ -19,6 +19,7 @@ import PresenterComment from './PresenterComment.jsx'
 import EditStatus from './EditStatus.jsx'
 import ReSendDecisionEmail from './ReSendDecisionEmail.jsx'
 import ApplicationPayments from './ApplicationPayments.jsx'
+import HelpTooltip from '../HelpTooltip.jsx'
 
 import '../style/admin.less'
 
@@ -26,7 +27,7 @@ export default class HakemusArviointi extends Component {
   render() {
     const {controller, hakemus, avustushaku, hakuData, translations,
            userInfo, loadingComments, showOthersScores,
-           multibatchEnabled} = this.props
+           multibatchEnabled, helpTexts} = this.props
     const {
       allowHakemusCommenting,
       allowHakemusStateChanges,
@@ -38,7 +39,7 @@ export default class HakemusArviointi extends Component {
 
     return (
      <div id="arviointi-tab">
-       <PresenterComment controller={controller} hakemus={hakemus}/>
+       <PresenterComment controller={controller} hakemus={hakemus} helpTexts={helpTexts}/>
        <ChooseRahoitusalueAndTalousarviotili controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
        <SpecifyOppilaitos controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
        <AcademySize controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
@@ -54,7 +55,7 @@ export default class HakemusArviointi extends Component {
          grantState={avustushaku.status}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
-       <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} />
+       <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        {multibatchEnabled && avustushaku.content["multiplemaksuera"] &&
@@ -198,6 +199,7 @@ class ChangeRequest extends React.Component {
   }
 
   render() {
+    const helpTexts = this.props.helpTexts
     const hakemus = this.props.hakemus
     const avustushaku = this.props.avustushaku
     const status = hakemus.status
@@ -230,7 +232,8 @@ class ChangeRequest extends React.Component {
         <button type="button"
                 hidden={newChangeRequest || hasChangeRequired}
                 onClick={openEdit}
-                disabled={!allowEditing}>Pyydä täydennystä</button>
+                disabled={!allowEditing}>Pyydä täydennystä </button>
+<HelpTooltip content={helpTexts["hankkeen_sivu__arviointi___pyydä_täydennystä"]} direction="arviointi" />
         <div hidden={!newChangeRequest}>
           <label>Lähetä täydennyspyyntö</label>
           <span onClick={closeEdit} className="close"></span>
