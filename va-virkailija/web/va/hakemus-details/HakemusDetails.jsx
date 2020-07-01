@@ -66,7 +66,9 @@ export default class HakemusDetails extends Component {
                            translations={translations}
                            selvitysType="valiselvitys"
                            multibatchEnabled={multibatchEnabled}
-                           isPresentingOfficer={isPresentingOfficer} helpTexts={helpTexts}/>
+                           isPresentingOfficer={isPresentingOfficer}
+   selvitysLinkHelpText={helpTexts["hankkeen_sivu__väliselvitys___linkki_lomakkeelle"]}
+   presenterCommentHelpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}/>
         case 'loppuselvitys':
           return <Selvitys controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo}
@@ -74,7 +76,8 @@ export default class HakemusDetails extends Component {
                            selvitysType="loppuselvitys"
                            multibatchEnabled={multibatchEnabled}
                            isPresentingOfficer={isPresentingOfficer}
-                           helpTexts={helpTexts}/>
+   selvitysLinkHelpText={helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"]}
+   presenterCommentHelpText={helpTexts["hankkeen_sivu__loppuselvitys___valmistelijan_huomiot"]}/>
         case 'seuranta':
           return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selectedHakemusAccessControl={selectedHakemusAccessControl} helpTexts={helpTexts}/>
         default:

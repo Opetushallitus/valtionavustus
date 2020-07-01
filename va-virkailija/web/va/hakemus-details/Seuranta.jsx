@@ -16,15 +16,17 @@ export default class Seuranta extends React.Component {
       <div className="seuranta">
         <AllowVisibilityInExternalSystem controller={controller}
                                          hakemus={hakemus}
-                                         allowEditing={true}/>
+                                         allowEditing={true}
+                                         helpText={helpTexts["hankkeen_sivu__seuranta___salli_näkyvyys_ulkoisessa_järjestelmässä"]}/>
         <ShouldPay controller={controller}
                    hakemus={hakemus}
-                   allowEditing={true}/>
+                   allowEditing={true}
+                   helpText={helpTexts["hankkeen_sivu__seuranta___maksuun"]}/>
         <ShouldPayComments controller={controller}
                            hakemus={hakemus}
                            allowEditing={true}/>
         <div className="seuranta-section">
-          <PresenterComment controller={controller} hakemus={hakemus} helpTexts={helpTexts}/>
+          <PresenterComment controller={controller} hakemus={hakemus} helpText={helpTexts["hankkeen_sivu__seuranta___valmistelijan_huomiot"]}/>
           <SeurantaBudgetEditing avustushaku={avustushaku}
                                  hakuData={hakuData}
                                  translations={translations}
@@ -36,7 +38,8 @@ export default class Seuranta extends React.Component {
                             hakuData={hakuData}
                             translations={translations}
                             controller={controller}
-                            hakemus={hakemus}/>
+                            hakemus={hakemus}
+                            helpText={helpTexts["hankkeen_sivu__seuranta___liitteet"]}/>
         </div>
         <div className="seuranta-section">
           <SeurantaTags controller={controller}

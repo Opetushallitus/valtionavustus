@@ -39,7 +39,7 @@ export default class HakemusArviointi extends Component {
 
     return (
      <div id="arviointi-tab">
-       <PresenterComment controller={controller} hakemus={hakemus} helpTexts={helpTexts}/>
+       <PresenterComment controller={controller} hakemus={hakemus} helpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}/>
        <ChooseRahoitusalueAndTalousarviotili controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
        <SpecifyOppilaitos controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
        <AcademySize controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>

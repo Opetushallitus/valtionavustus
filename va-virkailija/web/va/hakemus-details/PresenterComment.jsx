@@ -26,7 +26,7 @@ export default class PresenterComment extends React.Component {
     }
     return (
       <div className="value-edit">
-        <label>Valmistelijan huomiot <HelpTooltip content={this.props.helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]} direction={"valmistelijan-huomiot"} /> </label>
+        <label>Valmistelijan huomiot <HelpTooltip content={this.props.helpText} direction={"valmistelijan-huomiot"} /> </label>
         <textarea rows="5" value={this.state.value} onChange={onChange}></textarea>
       </div>
     )

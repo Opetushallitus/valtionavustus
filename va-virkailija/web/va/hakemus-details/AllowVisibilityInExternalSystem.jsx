@@ -1,5 +1,6 @@
 import React from 'react'
 import _ from "lodash"
+import HelpTooltip from "../HelpTooltip.jsx"
 
 export default class AllowVisibilityInExternalSystem extends React.Component {
   constructor(props){
@@ -10,6 +11,7 @@ export default class AllowVisibilityInExternalSystem extends React.Component {
    this.props.controller.setHakemusAllowVisibilityInExternalSystem(this.props.hakemus, event.target.value)()
   }
   render() {
+    const helpText = this.props.helpText
     const hakemus = this.props.hakemus
     const allowEditing = this.props.allowEditing
     const arvio = hakemus.arvio
@@ -37,7 +39,7 @@ export default class AllowVisibilityInExternalSystem extends React.Component {
 
     return (
       <div id="set-allow-visibility-in-external-system">
-        <h3>Salli näkyvyys ulkoisessa järjestelmässä:</h3>
+        <h3>Salli näkyvyys ulkoisessa järjestelmässä: <HelpTooltip content={helpText} direction={"salli-nakyvyys"}/> </h3>
         <fieldset className="soresu-radiobutton-group">
           {options}
         </fieldset>

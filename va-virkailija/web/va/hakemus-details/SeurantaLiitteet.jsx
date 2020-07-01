@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
+import HelpTooltip from "../HelpTooltip.jsx"
 
 import AttachmentField from 'soresu-form/web/form/component/AttachmentField.jsx'
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -7,7 +8,7 @@ import Translator from 'soresu-form/web/form/Translator'
 
 export default class SeurantaLiitteet extends React.Component {
   render() {
-    const {controller, hakemus, hakuData, avustushaku, translations} = this.props
+    const {controller, hakemus, hakuData, avustushaku, translations, helpText} = this.props
     const hakemusId = hakemus.id
     const avustushakuId = avustushaku.id
     const hakemusUserKey = hakemus["user-key"]
@@ -84,7 +85,7 @@ export default class SeurantaLiitteet extends React.Component {
 
     return (
       <div className="seuranta-liitteet">
-        <h2>Liitteet</h2>
+        <h2>Liitteet <HelpTooltip content={helpText} direction={"arviointi"}/> </h2>
         {_.map(fields, field =>
           <AttachmentField field={field}
                            key={field.id}

@@ -10,14 +10,14 @@ import ApplicationPayments from './ApplicationPayments.jsx'
 export default class Selvitys extends Component {
   render() {
     const {controller, hakemus, avustushaku, translations, selvitysType,
-           userInfo, multibatchEnabled, isPresentingOfficer, helpTexts} = this.props
+           userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText} = this.props
     const hasSelvitys = _.has(hakemus,`selvitys.${selvitysType}.answers`)
     const preview = _.isEqual(selvitysType, 'valiselvitys')
     const selvitysHakemus = _.get(hakemus,`selvitys.${selvitysType}`)
     const form = _.get(hakemus,`selvitys.${selvitysType}Form`)
     return(
       <div>
-        <PresenterComment controller={controller} hakemus={hakemus} helpTexts={helpTexts}/>
+        <PresenterComment controller={controller} hakemus={hakemus} helpText={presenterCommentHelpText}/>
         {!hasSelvitys && <SelvitysNotFilled avustushaku={avustushaku} selvitysType={selvitysType}/>}
         {hasSelvitys && <SelvitysPreview hakemus={hakemus}
                                          avustushaku={avustushaku}
@@ -35,7 +35,7 @@ export default class Selvitys extends Component {
                                onAddPayment={controller.addPayment}
                                onRemovePayment={controller.removePayment}
                                readonly={!isPresentingOfficer}/>}
-        <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType={selvitysType} preview={preview} label="Linkki lomakkeelle"/>
+        <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType={selvitysType} preview={preview} label="Linkki lomakkeelle" helpText={selvitysLinkHelpText} />
         {hasSelvitys && <SelvitysEmail controller={controller}
                                        selvitysType={selvitysType}
                                        hakemus={hakemus}

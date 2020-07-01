@@ -1,5 +1,6 @@
 import React from 'react'
 import _ from "lodash"
+import HelpTooltip from "../HelpTooltip.jsx"
 
 export default class ShouldPay extends React.Component {
   constructor(props){
@@ -10,6 +11,7 @@ export default class ShouldPay extends React.Component {
    this.props.controller.setHakemusShouldPay(this.props.hakemus, event.target.value)()
   }
   render() {
+    const helpText = this.props.helpText
     const hakemus = this.props.hakemus
     const allowEditing = this.props.allowEditing
     const arvio = hakemus.arvio
@@ -36,7 +38,7 @@ export default class ShouldPay extends React.Component {
 
     return (
       <div id="set-should-pay-grant">
-        <h3>Maksuun:</h3>
+        <h3>Maksuun: <HelpTooltip content={helpText} direction={"arviointi"}/> </h3>
         <fieldset className="soresu-radiobutton-group">
           {options}
         </fieldset>

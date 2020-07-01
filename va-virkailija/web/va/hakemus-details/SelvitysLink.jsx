@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
+import HelpTooltip from "../HelpTooltip.jsx"
 
 export default class SelvitysLink extends Component {
   render() {
-    const {hakemus, avustushaku, selvitysType, preview, label} = this.props
+    const {hakemus, avustushaku, selvitysType, preview, label, helpText} = this.props
     const userKey = hakemus["user-key"]
     const publicUrl = hakemus ? selvitysUrl(avustushaku.id, userKey, selvitysType, preview) : undefined
 
@@ -13,6 +14,7 @@ export default class SelvitysLink extends Component {
            rel="noopener noreferrer">
           {label}
         </a>
+        <HelpTooltip content={helpText} direction={"arviointi"}/>
       </span>
       : <span/>
   }
