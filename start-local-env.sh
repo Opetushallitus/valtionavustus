@@ -20,8 +20,11 @@ tmux splitw -h
 tmux select-pane -t 0
 tmux send-keys "./run_database.sh" C-m
 
-while ! nc -z localhost 5432; do
-  sleep 1
+
+echo "waiting for database to accept connections"
+until pg_isready -h localhost -p 5432 -U postgres
+do
+  sleep 2;
 done
 
 tmux splitw -v
@@ -41,3 +44,4 @@ tmux send-keys "./run_virkailija_frontend.sh" C-m
 
 tmux select-pane -t 0
 tmux attach-session -t $session
+
