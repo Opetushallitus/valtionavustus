@@ -1,0 +1,15 @@
+version: '3.3'
+
+services:
+  server:
+    user: ${MY_UID}:${MY_GID}
+    image: postgres:12.2
+    container_name: va-postgres
+    volumes:
+      - ./${PG_DATA_DIR}:/var/lib/postgresql/data
+      - /etc/passwd:/etc/passwd:ro
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: va
+      POSTGRES_PASSWORD: va
