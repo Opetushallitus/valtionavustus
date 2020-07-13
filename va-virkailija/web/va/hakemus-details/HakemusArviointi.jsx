@@ -233,7 +233,7 @@ class ChangeRequest extends React.Component {
                 hidden={newChangeRequest || hasChangeRequired}
                 onClick={openEdit}
                 disabled={!allowEditing}>Pyydä täydennystä </button>
-<HelpTooltip content={helpTexts["hankkeen_sivu__arviointi___pyydä_täydennystä"]} direction="arviointi" />
+        <HelpTooltip content={helpTexts["hankkeen_sivu__arviointi___pyydä_täydennystä"]} direction="arviointi" />
         <div hidden={!newChangeRequest}>
           <label>Lähetä täydennyspyyntö</label>
           <span onClick={closeEdit} className="close"></span>
