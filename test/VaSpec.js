@@ -423,6 +423,9 @@ async function expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustusha
 
 async function verifyTooltipText(page, tooltipAnchorSelector, tooltipTextRegex) {
   const tooltipContentSelector = `${tooltipAnchorSelector} span`
+  await page.evaluate((tooltipAnchorSelector) => {
+    document.querySelector(tooltipAnchorSelector).scrollIntoView({ block: 'center' });
+  }, tooltipAnchorSelector)
 
   await page.hover(tooltipAnchorSelector)
   const tooltipElement = await page.waitForSelector(tooltipContentSelector, { visible: true })
