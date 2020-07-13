@@ -15,7 +15,7 @@ const DecisionField = ({avustushaku, title, id,language, onChange, helpText, dat
   const titleLanguage = language === "sv" ? `${title} ruotsiksi` : title
   return(
     <div className="decision-column" data-test-id={dataTestId}>
-      <label>{titleLanguage} {helpText && language === 'fi' ? <HelpTooltip content={helpText} /> : ''} </label>
+      <label>{titleLanguage} {helpText && language === 'fi' ? <HelpTooltip content={helpText} direction="left" /> : ''} </label>
       <textarea onChange={onChange} rows="5" id={fieldId} value={value}></textarea>
     </div>
   )
@@ -53,7 +53,7 @@ class DateField extends React.Component {
     return (
       <div className="decision-date">
         <div className="decision-column">
-          <span className="decision-date-label" data-test-id="ratkaisupäivä">{this.props.label} <HelpTooltip content={this.props.helpTexts["hakujen_hallinta__päätös___ratkaisupäivä"]} /></span>
+          <span className="decision-date-label" data-test-id="ratkaisupäivä">{this.props.label} <HelpTooltip content={this.props.helpTexts["hakujen_hallinta__päätös___ratkaisupäivä"]} direction="left" /></span>
           <input type="text"
                  value={this.state.value}
                  id={`decision.${this.props.field}`}
@@ -149,7 +149,7 @@ class LiitteetSelection extends React.Component {
   render() {
     return (
       <div>
-        <h4 data-test-id="paatoksenliitteet">Päätöksen liitteet <HelpTooltip content={this.props.helpTexts["hakujen_hallinta__päätös___päätöksen_liitteet"]} /> </h4>
+        <h4 data-test-id="paatoksenliitteet">Päätöksen liitteet <HelpTooltip content={this.props.helpTexts["hakujen_hallinta__päätös___päätöksen_liitteet"]} direction="left" /> </h4>
         <div className="decision-liite-selection">
           {_.map(this.props.decisionLiitteet, group => this.renderLiiteGroup(group))}
         </div>
@@ -160,7 +160,7 @@ class LiitteetSelection extends React.Component {
   renderLiiteGroup(group) {
     return (
       <div key={group.group}>
-        <h5>{group.group} <HelpTooltip content={this.props.helpTexts[`hakujen_hallinta__päätös___${group.group.toLowerCase().replace(/ /g, "_")}`]} /> </h5>
+        <h5>{group.group} <HelpTooltip content={this.props.helpTexts[`hakujen_hallinta__päätös___${group.group.toLowerCase().replace(/ /g, "_")}`]} direction="left" /> </h5>
         {_.map(group.attachments, attachment => this.renderLiite(attachment, group.group))}
       </div>
     )

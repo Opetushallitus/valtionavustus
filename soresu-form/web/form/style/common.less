@@ -15,11 +15,12 @@
 }
 
 .popup-box-shadow {
-  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.40);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
 }
 
 .box-triangle(@position) {
-  &:before, &:after {
+  &:before,
+  &:after {
     content: "";
     position: absolute;
     width: 0;
@@ -40,7 +41,8 @@
 }
 
 .box-triangle-up(@stroke, @fill) {
-  &:before, &:after {
+  &:before,
+  &:after {
     border-top: 0;
   }
 
@@ -56,7 +58,8 @@
 }
 
 .box-triangle-down(@stroke, @fill) {
-  &:before, &:after {
+  &:before,
+  &:after {
     border-bottom: 0;
   }
 
@@ -68,6 +71,43 @@
   &:after {
     bottom: -10px;
     border-top-color: @fill;
+  }
+}
+
+.box-triangle-left(@stroke, @fill) {
+  &:before,
+  &:after {
+    border-left: 0;
+  }
+
+  &:before {
+    top: 8px;
+    left: -11px;
+    border-right-color: @stroke;
+  }
+
+  &:after {
+    top: 9px;
+    left: -10px;
+    border-right-color: @fill;
+  }
+}
+
+.box-triangle-right(@stroke, @fill) {
+  &:before,
+  &:after {
+    border-right: 0;
+  }
+
+  &:before {
+    left: 630px;
+    border-left-color: @stroke;
+  }
+
+  &:after {
+    top: 6px;
+    left: 630px;
+    border-left-color: @fill;
   }
 }
 
@@ -104,7 +144,8 @@
   display: block;
   height: @size;
 
-  &:before, &:after {
+  &:before,
+  &:after {
     right: 0;
     top: -1 * @soresu-chevron-offset;
     position: absolute;
@@ -129,7 +170,8 @@
   display: block;
   height: @size;
 
-  &:before, &:after {
+  &:before,
+  &:after {
     right: 0;
     position: absolute;
     display: block;
@@ -147,7 +189,6 @@
     border-top-color: #fff; /* Match background colour */
   }
 }
-
 
 .modal {
   position: fixed;
@@ -197,11 +238,12 @@
   background-color: rgba(255, 255, 255, 0.5);
 }
 
-input[type=text].error {
+input[type="text"].error {
   border: 2px solid @bright-red;
 }
 
-#not-found-business-id, #other-error-business-ids > span{
+#not-found-business-id,
+#other-error-business-ids > span {
   color: @bright-red;
   font-weight: bold;
 }

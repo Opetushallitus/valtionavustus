@@ -6,7 +6,7 @@
     height: 16px;
     margin-top: 1px;
     margin-left: 11px;
-    background: transparent url('../img/show_tooltip.png') no-repeat left top !important;
+    background: transparent url("../img/show_tooltip.png") no-repeat left top !important;
   }
 }
 
@@ -45,6 +45,24 @@
 
 :hover.soresu-tooltip-down > span {
   top: 42px;
+}
+
+.soresu-tooltip-left > span {
+  .box-triangle-left(@light-gray, #fff);
+}
+
+:hover.soresu-tooltip-left > span {
+  top: -10px;
+  left: 106px;
+}
+
+.soresu-tooltip-right > span {
+  .box-triangle-right(@light-gray, #fff);
+}
+
+:hover.soresu-tooltip-right > span {
+  top: -10px;
+  left: -568px;
 }
 
 .soresu-tooltip-valmistelijan-huomiot > span {

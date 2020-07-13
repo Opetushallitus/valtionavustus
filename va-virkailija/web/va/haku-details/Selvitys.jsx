@@ -6,13 +6,13 @@ export default class Selvitys extends React.Component{
   render(){
     return (
       <div>
-        <h4 data-test-id="valiselvitys">Väliselvitys <HelpTooltip content={this.props.helpTexts["hakujen_hallinta__päätös___väliselvitys"]} /> </h4>
+        <h4 data-test-id="valiselvitys">Väliselvitys <HelpTooltip content={this.props.helpTexts["hakujen_hallinta__päätös___väliselvitys"]} direction="left" /> </h4>
         <div>
           Väliselvitys toimitettava viimeistään
           <DateField {...this.props} field="valiselvitysdate"/>
           <div>Väliselvitys avautuu täytettäväksi kun väliselvityspyyntö on lähetetty</div>
         </div>
-        <h4 data-test-id="loppuselvitys">Loppuselvitys <HelpTooltip content={this.props.helpTexts["hakujen_hallinta__päätös___loppuselvitys"]} /> </h4>
+        <h4 data-test-id="loppuselvitys">Loppuselvitys <HelpTooltip content={this.props.helpTexts["hakujen_hallinta__päätös___loppuselvitys"]} direction="left" /> </h4>
         <div>
           Loppuselvitys toimitettava viimeistään
 

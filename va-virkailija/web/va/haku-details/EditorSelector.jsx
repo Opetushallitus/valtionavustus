@@ -100,7 +100,7 @@ export default class EditorSelector extends React.Component {
         <div id="editor-subtab-selector" className="section-container">
           <span onClick={createSubTabSelector("haku-editor")}
                 className={ClassNames({"selected": subTab === "haku-editor"})}>
-            Haun tiedot <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___valilehden_infopallo"]} />
+            Haun tiedot <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___valilehden_infopallo"]} direction="left" />
           </span>
           <span onClick={createSubTabSelector("form-editor")}
                 className={ClassNames({"selected": subTab === "form-editor"})}>
@@ -128,7 +128,7 @@ export default class EditorSelector extends React.Component {
             className={avustushaku.status !== "published" &&
                          avustushaku.status !== "resolved" ? "disabled" : ""}>
             Maksatukset
-            <HelpTooltip content={helpTexts["hakujen_hallinta__maksatus___välilehden_infopallo_välilehtiriville"]} />
+            <HelpTooltip content={helpTexts["hakujen_hallinta__maksatus___välilehden_infopallo_välilehtiriville"]} direction="right" />
           </span>
         </div>
         <div className="section-container">{subTabContent}</div>
