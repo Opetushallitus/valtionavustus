@@ -166,3 +166,9 @@
 (def semi-narrow-column {:width 160})
 
 (def total-column {:overflow "visible"})
+
+(def disabled {:cursor "default"
+               :opacity 0.2})
+
+(def hidden {:font-style "italic"
+             :color "lightgrey"})

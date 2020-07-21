@@ -101,6 +101,7 @@
                         :max-length :on-key-press :on-blur])
           (update :class str " oph-input" (when (= (:size p) :small) " small"))
           (assoc
+            :data-test-id (:data-test-id props)
             :style (if (:error props) {:border-color "#f44336"} {})
             :on-change (add-validator (:on-change props) (:validator props))
             :on-key-press #(when (and (some? (:on-enter-pressed props))
@@ -180,7 +181,9 @@
   [:button
    (-> p
        (select-keys [:on-click :style :disabled :title])
-       (assoc :class (generate-button-class p))
+       (assoc
+         :class (generate-button-class p)
+         :data-test-id (:data-test-id p))
        set-button-style)
    (:label p)])
 

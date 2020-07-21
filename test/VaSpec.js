@@ -386,7 +386,59 @@ describeBrowser("VaSpec", function() {
     const actualResponse = await actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID)
     assert.deepEqual(actualResponse, expectedResponse)
   })
+
+  it("creates a new koodi", async function() {
+    const { page } = this
+
+    await navigate(page, '/admin-ui/va-code-values/')
+    const code = await createUniqueCode(page)
+
+    await navigate(page, '/admin-ui/va-code-values/')
+    await page.waitForSelector(`tr[data-test-id="${code}"]`)
+  })
+
+  it("sets a koodi hidden and visible", async function() {
+    const { page } = this
+
+    await navigate(page, '/admin-ui/va-code-values/')
+    const code = await createUniqueCode(page)
+    await assertCodeIsVisible(page, code, true)
+    await navigate(page, '/admin-ui/va-code-values/')
+
+    await clickCodeVisibilityButton(page, code, false)
+    await assertCodeIsVisible(page, code, false)
+    await navigate(page, '/admin-ui/va-code-values/')
+    await assertCodeIsVisible(page, code, false)
+
+    await clickCodeVisibilityButton(page, code, true)
+    await assertCodeIsVisible(page, code, true)
+    await navigate(page, '/admin-ui/va-code-values/')
+    await assertCodeIsVisible(page, code, true)
+  })
 })
+
+async function createUniqueCode(page) {
+  const uniqueCode = (new Date()).getTime()
+  await clearAndType(page, '[data-test-id=code-form__year', '2020')
+  await clearAndType(page, '[data-test-id=code-form__code', `${uniqueCode}`)
+  await clearAndType(page, '[data-test-id=code-form__name', `Test code ${uniqueCode}`)
+  await clickElementWithTestId(page, 'code-form__add-button')
+  await page.waitForSelector(`tr[data-test-id="${uniqueCode}"]`)
+  return uniqueCode
+}
+
+async function clickCodeVisibilityButton(page, code, visibility) {
+  const buttonId = visibility ? 'code-row__show-button' : 'code-row__hide-button'
+  const selector = `tr[data-test-id='${code}'] [data-test-id=${buttonId}]`
+  const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
+  await element.click()
+}
+
+async function assertCodeIsVisible(page, code, visibility) {
+  const buttonId = visibility ? 'code-row__hide-button' : 'code-row__show-button'
+  const selector = `tr[data-test-id='${code}'] [data-test-id=${buttonId}]`
+  await page.waitForSelector(selector)
+}
 
 async function acceptHakemus(page, avustushakuID, hakemusID, beforeSubmitFn) {
   await navigate(page, `/avustushaku/${avustushakuID}/`)

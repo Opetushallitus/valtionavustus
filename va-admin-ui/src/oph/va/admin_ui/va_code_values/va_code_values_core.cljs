@@ -45,7 +45,31 @@
       (put! dialog-chan 2)
       (close! dialog-chan))))
 
-(defn- render-code-table [values on-delete]
+(defn toggle-hidden [id code-value]
+  (if (= id (:id code-value))
+      (assoc code-value :hidden (not (:hidden code-value)))
+      code-value))
+
+(defn- hide-code! [id hide code-values]
+  (go
+    (let [dialog-chan (dialogs/show-loading-dialog! "Asetetaan koodin näkyvyys" 3)]
+      (put! dialog-chan 1)
+      (let [result
+            (<! (connection/hide-va-code-value id hide))]
+        (cond
+          (:success result)
+          (do
+            (reset! code-values (map (partial toggle-hidden id) @code-values))
+            (connection/remove-cached! "va-code-values")
+            (dialogs/show-message! "Koodi muutettu"))
+          :else
+          (dialogs/show-error-message!
+            "Virhe koodin näkyvyyden asettamisessa"
+            (select-keys result [:status :error-text]))))
+      (put! dialog-chan 2)
+      (close! dialog-chan))))
+
+(defn- render-code-table [values on-delete on-hide]
   [ui/table {:fixed-header true :selectable false :body-style theme/table-body}
    [ui/table-header {:adjust-for-checkbox false :display-select-all false}
     [ui/table-row
@@ -57,7 +81,11 @@
     (doall
       (map-indexed
         (fn [i row]
-          [ui/table-row {:key i}
+          [ui/table-row
+           {:key i
+            :style (if (:hidden row)
+                       theme/hidden)
+            :data-test-id (:code row)}
            [ui/table-row-column (:year row)]
            [ui/table-row-column (:code row)]
            [ui/table-row-column (:code-value row)]
@@ -67,7 +95,23 @@
               (fn [_]
                 (when (js/confirm "Oletko varma, että halut poistaa koodin?")
                   (on-delete (:id row))))}
-             [ic/action-delete {:color "gray"}]]]])
+             [ic/action-delete {:color "gray"}]]
+            (if (:hidden row)
+             [ui/icon-button
+              {:on-click (fn [_] (on-hide (:id row) false))
+               :data-test-id "code-row__show-button"}
+              [ic/action-visibility {:color "gray"}]]
+             [ui/icon-button
+              {:style theme/disabled}
+              [ic/action-visibility {:color "gray"}]])
+            (if (:hidden row)
+             [ui/icon-button
+              {:style theme/disabled}
+              [ic/action-visibility-off {:color "gray"}]]
+             [ui/icon-button
+              {:on-click (fn [_] (on-hide (:id row) true))
+               :data-test-id "code-row__hide-button"}
+              [ic/action-visibility-off {:color "gray"}]])]])
         values))]])
 
 (defn- create-catch-enter [f]
@@ -107,25 +151,29 @@
                        ""
                        result))))
           :style (assoc theme/text-field :width 75)
-          :on-key-press catch-enter}]
+          :on-key-press catch-enter
+          :data-test-id "code-form__year"}]
         [va-ui/text-field
          {:floating-label-text "Koodi"
           :value (or (:code @v) "")
           :validator #(<= (-> % .-target .-value .-length) 13)
           :on-change #(swap! v assoc :code (.-value (.-target %)))
           :style (assoc theme/text-field :width 150)
-          :on-key-press catch-enter}]
+          :on-key-press catch-enter
+          :data-test-id "code-form__code"}]
         [va-ui/text-field
          {:floating-label-text "Nimi"
           :value (or (:code-value @v) "")
           :on-change #(swap! v assoc :code-value (.-value (.-target %)))
           :style (assoc theme/text-field :width 350)
-          :on-key-press catch-enter}]]
+          :on-key-press catch-enter
+          :data-test-id "code-form__name"}]]
        [va-ui/raised-button
         {:label "Lisää"
          :primary true
          :disabled (not (is-valid? @v))
-         :on-click on-submit}]])))
+         :on-click on-submit
+         :data-test-id "code-form__add-button"}]])))
 
 (defn- download-items! [value-type year code-values]
   (go
@@ -213,7 +261,8 @@
                 @code-values
                 (filter #(code-value-matches? (.toLowerCase @filter-str) %)
                         @code-values))
-              #(delete-code! % code-values))]))]]]))
+              #(delete-code! % code-values)
+              #(hide-code! %1 %2 code-values))]))]]]))
 
 (defn init! []
   (add-watch (:code-filter state) ""

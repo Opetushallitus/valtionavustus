@@ -119,6 +119,12 @@
                {:with-credentials? true})
   (remove-cached! "/va-code-values/"))
 
+
+(defn hide-va-code-value [id hide]
+  (http/post (format "/%s/va-code-values/%d/" api-path id)
+               {:with-credentials? true
+                :json-params {:hidden hide}}))
+
 (defn get-reports []
   (get-cached (str "/" api-path "/reports/")))
 
