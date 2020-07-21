@@ -21,9 +21,9 @@ export default class HakuEdit extends Component {
     const allowAllHakuEdits = userHasEditPrivilege && (avustushaku.status === "new" || avustushaku.status === "draft")
     const allowNondisruptiveHakuEdits = userHasEditPrivilege && (allowAllHakuEdits || avustushaku.phase === "current" || avustushaku.phase === "upcoming")
     const userHasEditMyHakuRolePrivilege = avustushaku.privileges && avustushaku.privileges["edit-my-haku-role"]
-    const selectedValueProject = this.props.codeOptions.filter(k => k.id===avustushaku["project-id"])[0] || ""
-    const selectedValueOperation = this.props.codeOptions.filter(k => k.id===avustushaku["operation-id"])[0] || ""
-    const selectedValueOperationalUnit = this.props.codeOptions.filter(k => k.id===avustushaku["operational-unit-id"])[0] || ""
+    const selectedValueProject = this.props.codeOptions.filter(k => k.id===avustushaku["project-id"] && !k.hidden)[0] || ""
+    const selectedValueOperation = this.props.codeOptions.filter(k => k.id===avustushaku["operation-id"] && !k.hidden)[0] || ""
+    const selectedValueOperationalUnit = this.props.codeOptions.filter(k => k.id===avustushaku["operational-unit-id"] && !k.hidden)[0] || ""
     const helpTexts = this.props.helpTexts
 
     const onChangeListener = (target, value) => {
@@ -78,7 +78,7 @@ export default class HakuEdit extends Component {
           </tbody>
         </table>
         <div className="editor-field-row code-values">
-          <div className="editor-row-element">
+          <div className="editor-row-element" data-test-id="code-value-dropdown__operational-unit">
             <h3 className="required">Toimintayksikkö <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___toimintayksikkö"]} direction="left" /></h3>
             <AutoCompleteCodeValue
               id="operational-unit-id"
@@ -88,7 +88,7 @@ export default class HakuEdit extends Component {
               onChange={onChange}
               codeOptions={
                 this.props.codeOptions.filter(
-                  k => k["value-type"] === "operational-unit")
+                  k => k["value-type"] === "operational-unit" && !k.hidden)
               }
               selectedValue={selectedValueOperationalUnit}/>
           </div>
@@ -102,7 +102,7 @@ export default class HakuEdit extends Component {
               onChange={onChange}
               codeOptions={
                 this.props.codeOptions.filter(
-                  k => k["value-type"] === "project")
+                  k => k["value-type"] === "project" && !k.hidden)
               }
               selectedValue={selectedValueProject}/>
           </div>
@@ -116,7 +116,7 @@ export default class HakuEdit extends Component {
               onChange={onChange}
               codeOptions={
                 this.props.codeOptions.filter(
-                  k => k["value-type"] === "operation")
+                  k => k["value-type"] === "operation" && !k.hidden)
               }
               selectedValue={selectedValueOperation}/>
           </div>

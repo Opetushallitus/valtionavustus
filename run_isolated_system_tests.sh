@@ -10,7 +10,7 @@ function stop_system_under_test {
   echo "Stopping system under test"
   docker-compose -f ${DOCKER_COMPOSE_FILE} down --remove-orphans
 }
-trap stop_system_under_test EXIT
+#trap stop_system_under_test EXIT
 
 function start_system_under_test {
   echo "Starting system under test"
@@ -59,13 +59,13 @@ function initialize {
 
 function run_tests {
   npx mocha ${MOCHA_ARGS:-} "test/**/*Spec.js"
-  make test
+  #make test
 }
 
 function main {
   check_requirements
-  initialize
-  start_system_under_test
+  #initialize
+  #start_system_under_test
   run_tests
 }
 

@@ -415,6 +415,31 @@ describeBrowser("VaSpec", function() {
     await navigate(page, '/admin-ui/va-code-values/')
     await assertCodeIsVisible(page, code, true)
   })
+
+  it('hides a koodi from the dropdowns in haku editor', async function() {
+    const { page } = this
+
+    // create code
+    await navigate(page, '/admin-ui/va-code-values/')
+    const code = await createUniqueCode(page)
+    await assertCodeIsVisible(page, code, true)
+
+    // check code is visible in dropdown
+    await navigate(page, '/admin/haku-editor/')
+    await clearAndType(page, '[data-test-id=code-value-dropdown__operational-unit] > div', `${code}`)
+    await page.waitForSelector(`[data-test-id="${code}"]`)
+
+    // hide code
+    await navigate(page, '/admin-ui/va-code-values/')
+    await clickCodeVisibilityButton(page, code, false)
+    await assertCodeIsVisible(page, code, false)
+    await page.waitForSelector(`[data-test-id="${code}"]`)
+
+    // check no results are found
+    await navigate(page, '/admin/haku-editor/')
+    await clearAndType(page, '[data-test-id=code-value-dropdown__operational-unit] > div', `${code}`)
+    await page.waitForSelector('div.Select-noresults')
+  })
 })
 
 async function createUniqueCode(page) {
