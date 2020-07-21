@@ -47,9 +47,22 @@
             (ok "")))
       (unauthorized ""))))
 
+(defn- edit-va-code-value []
+  (compojure-api/POST
+    "/:id/" [id :as request]
+    :path-params [id :- Long]
+    :body [code-value (compojure-api/describe schema/VACodeValueEdit
+                                              "Edit existing Code Value")]
+    :summary "Edit existing Code Value"
+    (with-admin request
+      (do (data/edit-va-code-value! id code-value)
+          (ok ""))
+      (unauthorized ""))))
+
 (compojure-api/defroutes
   routes
   "va-code values routes"
   (get-va-code-values)
   (create-va-code-value)
-  (delete-va-code-value))
+  (delete-va-code-value)
+  (edit-va-code-value))

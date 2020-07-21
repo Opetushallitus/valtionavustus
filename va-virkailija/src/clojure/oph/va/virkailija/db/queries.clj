@@ -95,6 +95,8 @@
   "sql/virkailija/va_code_values/create-va-code-value.sql")
 (defquery delete-va-code-value
   "sql/virkailija/va_code_values/delete-va-code-value.sql")
+(defquery edit-va-code-value
+  "sql/virkailija/va_code_values/edit-va-code-value.sql")
 
 (defquery get-unprosessed-tasmaytysraportti-data "sql/virkailija/tasmaytysraportti/get-unprocessed-tasmaytysraportti-data.sql")
 (defquery get-tasmaytysraportti-by-avustuskahu-id-data "sql/virkailija/tasmaytysraportti/get-tasmaytysraportti-by-avustushaku-id-data.sql")

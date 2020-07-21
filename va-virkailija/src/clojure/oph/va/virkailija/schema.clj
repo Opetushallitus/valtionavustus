@@ -320,7 +320,12 @@
    :value-type s/Str
    :year s/Int
    :code s/Str
-   :code-value s/Str})
+   :code-value s/Str
+   (s/optional-key :hidden) (s/maybe s/Bool)})
+
+(s/defschema VACodeValueEdit
+  "VA Code Value Edit"
+  {:hidden s/Bool})
 
 (s/defschema HealthCheckResult
   "Integration healthcheck result"

@@ -42,6 +42,9 @@
 (defn delete-va-code-value! [id]
   (exec :virkailija-db queries/delete-va-code-value {:id id}))
 
+(defn edit-va-code-value! [id va-code-value]
+  (exec :virkailija-db queries/edit-va-code-value (assoc va-code-value :id id)))
+
 (defn- find-code-by-id [id va-code-values]
   (some #(when (= (:id %) id) (:code %)) va-code-values))
 
