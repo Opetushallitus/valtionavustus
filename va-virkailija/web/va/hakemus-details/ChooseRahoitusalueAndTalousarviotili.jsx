@@ -65,6 +65,7 @@ export default class ChooseRahoitusalueAndTalousarvioTili extends React.Componen
           <ChooseTalousarviotili selectedTalousarviotili={selectedTalousarviotili}
                                  availableTalousarviotilit={availableTalousarviotilit}
                                  allowEditing={allowEditing}
+                                 helpTexts={helpTexts}
                                  onSelection={this.selectTalousarviotili}/>
         </div>
         )
