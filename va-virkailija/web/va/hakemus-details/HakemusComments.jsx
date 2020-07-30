@@ -4,6 +4,7 @@ import _ from 'lodash'
 import DateUtil from 'soresu-form/web/DateUtil'
 
 import NameFormatter from 'va-common/web/va/util/NameFormatter'
+import HelpTooltip from '../HelpTooltip.jsx'
 
 export default class HakemusComments extends Component {
 
@@ -35,6 +36,8 @@ export default class HakemusComments extends Component {
     const controller = this.props.controller
     const userOid = this.props.user["person-oid"]
     const allowHakemusCommenting = this.props.allowHakemusCommenting
+    const helpTexts = this.props.helpTexts
+
     let commentsToRender = []
     const commentsInState = this.props.comments
     if (_.isArray(commentsInState)) {
@@ -56,6 +59,7 @@ export default class HakemusComments extends Component {
     return (
       <div id="hakemus-comment-container" className="hakemus-arviointi-section">
         <label>Kommentit</label>
+        <HelpTooltip testId={"tooltip-kommentit"} content={helpTexts["hankkeen_sivu__arviointi___kommentit"]} direction={"arviointi"} />
         {showComments ?
           <div>
             {noComments ?

@@ -79,6 +79,41 @@ describeBrowser("VaSpec", function() {
     )
   })
 
+  it.only("shows tooltip texts for arviointi tab", async function(){ // TODO: tähän testit tooltipistä
+    const {page} = this
+
+    const avustushakuID = await createValidCopyOfLukioEsimerkkihakuWithValintaperusteetAndReturnTheNewId(page)
+    await publishAvustushaku(page, avustushakuID)
+    await fillAndSendHakemus(page, avustushakuID)
+    await navigate(page, `/avustushaku/${avustushakuID}/`)
+    await clickElementWithText(page,"td", "Akaan kaupunki")
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-koulutusaste"]`,
+      /Valitse hankkeelle koulutusaste, johon hanke kohdistuu. Valittavissa olevat koulutusasteet on tuotu automaattisesti Haun tiedot -välilehdeltä. Valtionavustuksen vastuuvalmistelija vastaa siitä, että kaikille myönteisen avustuspäätöksen saaville hankkeille on ennen päätösten hyväksymistä valittu oikea koulutusaste.*/
+    )
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-talousarviotili"]`,
+      /Valitse hankkeelle talousarviotili, jolta avustus maksetaan. Valittavissa olevat talousarviotilit on tuotu automaattisesti Haun tiedot -välilehdeltä. Valtionavustuksen vastuuvalmistelija vastaa siitä, että kaikille myönteisen avustuspäätöksen saaville hankkeille on ennen päätösten hyväksymistä valittu oikea talousarviotili.*/
+    )
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-valintaperusteet"]`,
+      /Valintaperusteet on tuotu automaattisesti Haun tiedot -välilehdeltä. Valtionavustuksen vastuuvalmistelijan johdolla päätetään, miten tähtiarviointeja hyödynnetään hakemusten arvioinnissa. Muiden virkailijoiden tähtiarvioinnit näkyvät vasta omien arviointien tallentamisen jälkeen. Arvioinnit näkyvät vain OPH:n virkailijoille.*/
+    )
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-kommentit"]`,
+      /Hankehakemusta arvioiva virkailija kirjoittaa avustuksen arviointiin liittyvät kommentit tähän kenttään ja tallentaa kommentin järjestelmään painamalla Lisää-painiketta. Mahdolliset muiden virkailijoiden kommentit tulevat näkyviin vasta oman kommentin lisäämisen jälkeen. Kommentit näkyvät vain OPH:n virkailijoille.*/
+    )
+
+  })
+
   it("shows tooltip texts for päätös tab", async function() {
     const {page} = this
 
@@ -725,6 +760,33 @@ async function submitHakemus(page) {
   await page.waitForFunction(() => document.querySelector("#topbar #form-controls button#submit").textContent === "Hakemus lähetetty")
 }
 
+async function createValidCopyOfLukioEsimerkkihakuWithValintaperusteetAndReturnTheNewId(page) {
+  const avustushakuName = mkAvustushakuName()
+  console.log(`Avustushaku name for test: ${avustushakuName}`)
+
+  await copyEsimerkkihaku(page)
+
+  const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku"))
+  console.log(`Avustushaku ID: ${avustushakuID}`)
+
+  await clearAndType(page, "#register-number", "230/2015")
+  await clearAndType(page, "#haku-name-fi", avustushakuName)
+  await clearAndType(page, "#hakuaika-start", "1.1.1970 0.00")
+
+  const lukioKoulutusasteSelector = '[name=education-levels][data-title="Lukiokoulutus"]'
+  await clearAndType(page, lukioKoulutusasteSelector, "29.10.30")
+
+  await clickElementWithText(page, "button", "Lisää uusi valintaperuste")
+  await clearAndType(page, "#selection-criteria-0-fi", "Hanke edistää opetustuntikohtaisen valtionosuuden piiriin kuuluvan taiteen perusopetuksen pedagogista kehittämistä.")
+  await clearAndType(page, "#selection-criteria-0-sv", "Och samma på svenska.")
+
+  const nextYear = (new Date()).getFullYear() + 1
+  await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
+  await waitForSave(page, avustushakuID)
+
+  return parseInt(avustushakuID)
+}
+
 async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page) {
   const avustushakuName = mkAvustushakuName()
   console.log(`Avustushaku name for test: ${avustushakuName}`)
@@ -737,6 +799,7 @@ async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page) {
   await clearAndType(page, "#register-number", "230/2015")
   await clearAndType(page, "#haku-name-fi", avustushakuName)
   await clearAndType(page, "#hakuaika-start", "1.1.1970 0.00")
+
   const nextYear = (new Date()).getFullYear() + 1
   await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
   await waitForSave(page, avustushakuID)
