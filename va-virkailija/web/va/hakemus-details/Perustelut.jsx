@@ -2,6 +2,7 @@ import Bacon from 'baconjs'
 import React from 'react'
 import _ from "lodash"
 import rejectedReasonsByLanguage from './rejectedReasonsByLanguage.json'
+import HelpTooltip from '../HelpTooltip.jsx'
 export default class Perustelut extends React.Component {
 
   constructor(props) {
@@ -30,6 +31,7 @@ export default class Perustelut extends React.Component {
     // which causes nasty issues with React, unless we explicitly set this to
     // empty string here
     const controller = this.props.controller
+    const helpTexts = this.props.helpTexts
     const addReason = (reason) => {
       const currentPerustelut = getPerustelut(this.props)
       const newPerustelut = currentPerustelut.length === 0 ?
@@ -50,6 +52,7 @@ export default class Perustelut extends React.Component {
       <div>
         <div className="value-edit" id="perustelut-container">
           <label htmlFor="perustelut">Perustelut hakijalle <strong>{languageTitle}</strong></label>
+          <HelpTooltip testId={"tooltip-koulutusaste"} content={helpTexts["hankkeen_sivu__arviointi___perustelut_hakijalle_suomeksi"]} direction={"arviointi-slim"} />
           {rejected && <a onClick={toggleReasons}>{this.state.showReasons ? "Piilota perustelut" : "Lisää vakioperustelu"}</a>}
           {
             rejected &&
