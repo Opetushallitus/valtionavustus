@@ -43,7 +43,7 @@ export default class HakemusArviointi extends Component {
        <ChooseRahoitusalueAndTalousarviotili controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <SpecifyOppilaitos controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
        <AcademySize controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
-       <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku}
+       <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku} helpTexts={helpTexts}
                        allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
        <HakemusComments
          controller={controller}

@@ -3,6 +3,7 @@ import _ from 'lodash'
 import ClassNames from 'classnames'
 
 import ScoreResolver from '../ScoreResolver.js'
+import HelpTooltip from '../HelpTooltip.jsx'
 
 export default class HakemusScoring extends Component {
   render() {
@@ -16,6 +17,7 @@ export default class HakemusScoring extends Component {
     const showOthersScores = this.props.showOthersScores && allowSeeingOthersScores
 
     const avustushaku = this.props.avustushaku
+    const helpTexts = this.props.helpTexts
     const valintaperusteet = _.get(avustushaku, "content.selection-criteria.items")
     const myOwnValintaPerusteRows = HakemusScoring.createValintaPerusteRows(allScoresOfHakemus,
       valintaperusteet, myUserInfo["person-oid"], allowHakemusScoring, controller)
@@ -23,7 +25,9 @@ export default class HakemusScoring extends Component {
       HakemusScoring.createOthersScoreDisplays(allScoresOfHakemus, scoringOfHakemus, valintaperusteet, myUserInfo) : undefined
     return valintaperusteet && valintaperusteet.length > 0
       ? (
-          <div key="hakemus-scoring-container" id="hakemus-scoring-container">
+          <div key="hakemus-scoring-container" id="hakemus-scoring-container" className="hakemus-arviointi-section">
+            <label>Valintaperusteet:</label>
+            <HelpTooltip testId={"tooltip-valintaperusteet"} content={helpTexts["hankkeen_sivu__arviointi___valintaperusteet"]} direction={"arviointi"} />
            <table className="valintaperuste-list">
               <tbody>
               {myOwnValintaPerusteRows}
