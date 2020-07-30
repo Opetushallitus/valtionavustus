@@ -54,7 +54,7 @@ export default class HakemusArviointi extends Component {
          user={userInfo}
          helpTexts={helpTexts}
          grantState={avustushaku.status}/>
-       <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
@@ -155,6 +155,7 @@ class SetArviointiStatus extends React.Component {
     const arvio = hakemus.arvio
     const status = arvio ? arvio.status : undefined
     const controller = this.props.controller
+    const helpTexts = this.props.helpTexts
     const statuses = []
     const statusValues = HakemusArviointiStatuses.allStatuses()
     for (let i = 0; i < statusValues.length; i++) {
@@ -178,9 +179,13 @@ class SetArviointiStatus extends React.Component {
     }
 
     return (
-      <fieldset className="soresu-radiobutton-group arvio-status-group">
-        {statuses}
-      </fieldset>
+      <div className="hakemus-arviointi-section">
+        <label>Hakemuksen tila:</label>
+        <HelpTooltip testId={"tooltip-tila"} content={helpTexts["hankkeen_sivu__arviointi___hakemuksen_tila"]} direction={"arviointi"} />
+        <fieldset className="soresu-radiobutton-group">
+          {statuses}
+        </fieldset>
+      </div>
     )
   }
 }
