@@ -48,7 +48,7 @@ export default class ChooseRahoitusalueAndTalousarvioTili extends React.Componen
     const hakemus = this.props.hakemus
     const allowEditing = this.props.allowEditing
     const availableRahoitusalueet = this.props.avustushaku.content.rahoitusalueet
-
+    const helpTexts = this.props.helpTexts
     const selectedRahoitusalue = hakemus.arvio.rahoitusalue
     const selectedTalousarviotili = hakemus.arvio.talousarviotili
     const availableTalousarviotilit = RahoitusalueSelections.getAvailableTalousarviotilit(selectedRahoitusalue, availableRahoitusalueet)
@@ -60,6 +60,7 @@ export default class ChooseRahoitusalueAndTalousarvioTili extends React.Componen
           <ChooseRahoitusalue selectedRahoitusalue={selectedRahoitusalue}
                               availableRahoitusalueet={availableRahoitusalueet}
                               allowEditing={allowEditing}
+                              helpTexts={helpTexts}
                               onSelection={this.selectRahoitusalue}/>
           <ChooseTalousarviotili selectedTalousarviotili={selectedTalousarviotili}
                                  availableTalousarviotilit={availableTalousarviotilit}
