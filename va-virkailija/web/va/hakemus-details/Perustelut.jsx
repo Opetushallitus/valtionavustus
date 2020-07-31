@@ -52,7 +52,7 @@ export default class Perustelut extends React.Component {
       <div>
         <div className="value-edit" id="perustelut-container">
           <label htmlFor="perustelut">Perustelut hakijalle <strong>{languageTitle}</strong></label>
-          <HelpTooltip testId={"tooltip-koulutusaste"} content={helpTexts["hankkeen_sivu__arviointi___perustelut_hakijalle_suomeksi"]} direction={"arviointi-slim"} />
+          <HelpTooltip testId={"tooltip-perustelut"} content={helpTexts["hankkeen_sivu__arviointi___perustelut_hakijalle_suomeksi"]} direction={"arviointi-slim"} />
           {rejected && <a onClick={toggleReasons}>{this.state.showReasons ? "Piilota perustelut" : "Lisää vakioperustelu"}</a>}
           {
             rejected &&

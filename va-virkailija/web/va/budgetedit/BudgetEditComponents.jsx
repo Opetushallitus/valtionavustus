@@ -6,6 +6,7 @@ import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
+import HelpTooltip from '../HelpTooltip.jsx'
 
 export default class BudgetEditElement extends React.Component {
   constructor(props) {
@@ -64,6 +65,10 @@ export class EditSummingBudgetElement extends React.Component {
     const originalSum = _.sum(VaBudgetCalculator.getAmountValuesAndSetRequiredFieldsByMutation(field, originalHakemus.answers).map(x => x.value))
     const useDetailedCosts = _.get(originalHakemus, 'arvio.useDetailedCosts', false)
     const showDetailedCosts = controller.budgetBusinessRules.showDetailedCostsForBudgetField(field)
+    const helpText = () => {
+      console.log('Help texts 3', this.props.helpTexts)
+      console.log('Foo', JSON.stringify(customProps, null, 2))
+    }
     const totalCosts = showDetailedCosts
           ? field.sum
           : _.get(originalHakemus, 'arvio.costsGranted', 0)
@@ -71,6 +76,7 @@ export class EditSummingBudgetElement extends React.Component {
         <table id={htmlId} className="summing-table">
           <caption className={!_.isEmpty(classNames) ? classNames : undefined}>
             <LocalizedString translations={field} translationKey="label" lang={lang}/>
+            {helpText()}
           </caption>
           <colgroup>
             <col className="label-column"/>

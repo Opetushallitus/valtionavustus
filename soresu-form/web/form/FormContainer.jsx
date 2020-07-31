@@ -12,7 +12,9 @@ export default class FormContainer extends React.Component {
       controller: this.props.controller,
       state: state,
       infoElementValues: this.props.infoElementValues,
-      modifyApplication: this.props.modifyApplication
+      modifyApplication: this.props.modifyApplication,
+      customProps: this.props.helpTexts,
+      helpTexts: this.props.helpTexts
     }
     const formElement = React.createElement(formContainerClass, formElementProps)
 

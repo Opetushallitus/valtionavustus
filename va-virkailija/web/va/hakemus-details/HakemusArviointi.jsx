@@ -57,8 +57,8 @@ export default class HakemusArviointi extends Component {
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
-       <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
-       <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
+       <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        {multibatchEnabled && avustushaku.content["multiplemaksuera"] &&
          <ApplicationPayments application={hakemus}
                               grant={avustushaku}
@@ -239,7 +239,7 @@ class ChangeRequest extends React.Component {
                 hidden={newChangeRequest || hasChangeRequired}
                 onClick={openEdit}
                 disabled={!allowEditing}>Pyydä täydennystä </button>
-        <HelpTooltip content={helpTexts["hankkeen_sivu__arviointi___pyydä_täydennystä"]} direction="arviointi" />
+        <HelpTooltip testId={"tooltip-taydennys"} content={helpTexts["hankkeen_sivu__arviointi___pyydä_täydennystä"]} direction="arviointi" />
         <div hidden={!newChangeRequest}>
           <label>Lähetä täydennyspyyntö</label>
           <span onClick={closeEdit} className="close"></span>
@@ -285,8 +285,11 @@ class SummaryComment extends React.Component {
 
   render() {
     const allowEditing = this.props.allowEditing
+    const helpTexts = this.props.helpTexts
+
     return <div className="value-edit summary-comment">
       <label htmlFor="summary-comment">Huomautus päätöslistaan</label>
+      <HelpTooltip testId={"tooltip-huomautus"} content={helpTexts["hankkeen_sivu__arviointi___huomautus_päätöslistaan"]} direction={"arviointi-slim"} />
       <textarea id="summary-comment" rows="1" disabled={!allowEditing} value={this.state.summaryComment}
              onChange={evt => this.summaryCommentUpdated(evt.target.value) } maxLength="128" />
     </div>
