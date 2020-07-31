@@ -79,9 +79,7 @@ export default class HakemusBudgetEditing extends React.Component {
       infoElementValues: avustushaku,
       controller: new BudgetEditFormController(controller, new BudgetEditComponentFactory(), avustushaku, budgetEditFormState.form, hakemus, helpTexts),
       containerId: "budget-edit-container",
-      headerElements: [],
-      helpTexts: helpTexts,
-      customProps: helpTexts
+      headerElements: []
     }
     return (
       <div className="budget-edit">

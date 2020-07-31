@@ -62,12 +62,16 @@ export class EditSummingBudgetElement extends React.Component {
     const disabled = this.props.disabled || typeof this.props.disabled === 'undefined'
     const classNames = ClassNames({"required": field.required})
     const originalHakemus = customProps.originalHakemus
+    const helpTexts = customProps.helpTexts
     const originalSum = _.sum(VaBudgetCalculator.getAmountValuesAndSetRequiredFieldsByMutation(field, originalHakemus.answers).map(x => x.value))
     const useDetailedCosts = _.get(originalHakemus, 'arvio.useDetailedCosts', false)
     const showDetailedCosts = controller.budgetBusinessRules.showDetailedCostsForBudgetField(field)
-    const helpText = () => {
-      console.log('Help texts 3', this.props.helpTexts)
-      console.log('Foo', JSON.stringify(customProps, null, 2))
+    const tooltip = () => {
+      if (helpTexts) return (
+        <HelpTooltip testId={"tooltip-talousarvio"}
+                     content={helpTexts["hankkeen_sivu__arviointi___talousarvio"]}
+                     direction={"arviointi-slim"}/>
+      )
     }
     const totalCosts = showDetailedCosts
           ? field.sum
@@ -76,7 +80,7 @@ export class EditSummingBudgetElement extends React.Component {
         <table id={htmlId} className="summing-table">
           <caption className={!_.isEmpty(classNames) ? classNames : undefined}>
             <LocalizedString translations={field} translationKey="label" lang={lang}/>
-            {helpText()}
+            {tooltip()}
           </caption>
           <colgroup>
             <col className="label-column"/>
