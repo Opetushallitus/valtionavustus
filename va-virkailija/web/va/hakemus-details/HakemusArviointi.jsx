@@ -68,8 +68,8 @@ export default class HakemusArviointi extends Component {
                               onRemovePayment={controller.removePayment}
                               readonly={true}/>}
        <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
-       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusOfficerEditing} status="officer_edit"/>
-       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusCancellation} status="cancelled"/>
+       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusOfficerEditing} status="officer_edit" helpTexts={helpTexts} />
+       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusCancellation} status="cancelled" helpTexts={helpTexts} />
        <ReSendDecisionEmail  avustushaku={avustushaku} hakemus={hakemus}  hakuData={hakuData}/>
        <ChangeLog hakemus={hakemus}/>
      </div>

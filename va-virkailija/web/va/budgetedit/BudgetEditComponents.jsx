@@ -67,10 +67,9 @@ export class EditSummingBudgetElement extends React.Component {
     const useDetailedCosts = _.get(originalHakemus, 'arvio.useDetailedCosts', false)
     const showDetailedCosts = controller.budgetBusinessRules.showDetailedCostsForBudgetField(field)
     const tooltip = () => {
-      if (helpTexts) return (
-        <HelpTooltip testId={"tooltip-talousarvio"}
-                     content={helpTexts["hankkeen_sivu__arviointi___talousarvio"]}
-                     direction={"arviointi-slim"}/>
+      const isProjectBudgetElement = htmlId === 'budget-edit-project-budget'
+      if (helpTexts && isProjectBudgetElement) return (
+        <HelpTooltip testId={"tooltip-talousarvio"} content={helpTexts["hankkeen_sivu__arviointi___talousarvio"]} direction={"arviointi-slim"} />
       )
     }
     const totalCosts = showDetailedCosts
