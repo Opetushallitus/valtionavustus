@@ -70,7 +70,7 @@ export default class HakemusArviointi extends Component {
        <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
        <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusOfficerEditing} status="officer_edit" helpTexts={helpTexts} />
        <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusCancellation} status="cancelled" helpTexts={helpTexts} />
-       <ReSendDecisionEmail  avustushaku={avustushaku} hakemus={hakemus}  hakuData={hakuData}/>
+       <ReSendDecisionEmail  avustushaku={avustushaku} hakemus={hakemus} hakuData={hakuData} helpTexts={helpTexts} />
        <ChangeLog hakemus={hakemus}/>
      </div>
     )

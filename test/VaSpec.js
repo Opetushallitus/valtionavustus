@@ -79,7 +79,7 @@ describeBrowser("VaSpec", function() {
     )
   })
 
-  it.only("shows tooltip texts for arviointi tab", async function(){ // TODO: tähän testit tooltipistä
+  it("shows tooltip texts for arviointi tab", async function(){
     const {page} = this
 
     const avustushakuID = await createValidCopyOfLukioEsimerkkihakuWithValintaperusteetAndReturnTheNewId(page)
@@ -152,6 +152,22 @@ describeBrowser("VaSpec", function() {
       page,
       `[data-test-id="tooltip-peruuta-hakemus"]`,
       /Hankkeen yhteyshenkilöksi osoitettu virkailija voi peruuttaa hakemuksen tilanteessa, jossa hakija haluaa vetää hakemuksensa kokonaan pois arvioinneista saamatta hakemukselleen lainkaan päätöstä. Hakemuksen peruuttamisen myötä hakemus siirtyy arkistoon ja poistuu Hakujen arviointi -hakemuslistasta. Hakemuksen peruuttaminen tulee dokumentoida seikkaperäisesti Valmistelijan huomiot -kenttään. Hakijan pyyntö hakemuksen peruuttamiseksi tulee todentaa esimerkiksi liittämällä asiasta käyty sähköpostikeskustelu Seuranta-välilehden Liitteet-osioon.*/
+    )
+
+    const setHakemusStateToRatkaistu = async (page, avustushakuID) => {
+      await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
+      await clickElement(page, '[for=set-status-resolved]')
+    }
+
+    await setHakemusStateToRatkaistu(page, avustushakuID)
+
+    await navigate(page, `/avustushaku/${avustushakuID}/`)
+    await clickElementWithText(page,"td", "Akaan kaupunki")
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-laheta-email-uudestaan"]`,
+      /Hankkeelle voidaan lähettää päätössähköposti uudestaan koska tahansa hakukohtaisten avustuspäätösten laatimisen jälkeen. Painiketta painamalla hakijalle lähetetään avustuspäätös sekä yhteyshenkilön että hakijan viralliseen sähköpostiosoitteeseen. Päätössähköpostissa olevan linkin kautta avustuksen saaja voi päivittää hankkeen yhteyshenkilöä itse, joten tätä ominaisuutta voi hyödyntää esimerkiksi henkilövaihdosten kirjaamisessa järjestelmään.*/
     )
 
   })
