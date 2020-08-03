@@ -35,7 +35,7 @@ export default class ChooseRahoitusalue extends React.Component {
       <div className="hakemus-arviointi-section">
         <label>Koulutusaste:</label>
         <a onClick={onToggleList} disabled={!allowEditing}>{title}</a>
-        <HelpTooltip testId={"tooltip-koulutusaste"} content={helpTexts["hankkeen_sivu__arviointi___koulutusaste"]} direction={"arviointi"} />
+        <HelpTooltip testId={"tooltip-koulutusaste"} content={helpTexts["hankkeen_sivu__arviointi___koulutusaste"]} direction={"arviointi-slim"} />
         <div className="radio-container radio-container--rahoitusalue" hidden={!isOpen}>
           {availableRahoitusalueet.map(ra => {
             const isSelected = ra.rahoitusalue === selectedRahoitusalue
