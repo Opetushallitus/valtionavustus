@@ -40,7 +40,7 @@ export default class HakemusBudgetEditing extends React.Component {
   }
 
   render() {
-    const {controller, hakemus, hakuData, avustushaku, translations, allowEditing} = this.props
+    const {controller, hakemus, hakuData, avustushaku, translations, allowEditing, helpTexts} = this.props
     const vaBudget = FormUtil.findFieldByFieldType(hakuData.form.content, "vaBudget")
 
     if (!vaBudget) {
@@ -77,7 +77,7 @@ export default class HakemusBudgetEditing extends React.Component {
       state: budgetEditFormState,
       formContainerClass: Form,
       infoElementValues: avustushaku,
-      controller: new BudgetEditFormController(controller, new BudgetEditComponentFactory(), avustushaku, budgetEditFormState.form, hakemus),
+      controller: new BudgetEditFormController(controller, new BudgetEditComponentFactory(), avustushaku, budgetEditFormState.form, hakemus, helpTexts),
       containerId: "budget-edit-container",
       headerElements: []
     }

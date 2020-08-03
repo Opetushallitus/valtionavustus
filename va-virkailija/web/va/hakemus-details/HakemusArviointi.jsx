@@ -40,10 +40,10 @@ export default class HakemusArviointi extends Component {
     return (
      <div id="arviointi-tab">
        <PresenterComment controller={controller} hakemus={hakemus} helpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}/>
-       <ChooseRahoitusalueAndTalousarviotili controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
+       <ChooseRahoitusalueAndTalousarviotili controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <SpecifyOppilaitos controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
        <AcademySize controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
-       <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku}
+       <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku} helpTexts={helpTexts}
                        allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
        <HakemusComments
          controller={controller}
@@ -52,12 +52,13 @@ export default class HakemusArviointi extends Component {
          loadingComments={loadingComments}
          allowHakemusCommenting={allowHakemusCommenting}
          user={userInfo}
+         helpTexts={helpTexts}
          grantState={avustushaku.status}/>
-       <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
-       <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
+       <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
-       <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
-       <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
+       <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        {multibatchEnabled && avustushaku.content["multiplemaksuera"] &&
          <ApplicationPayments application={hakemus}
                               grant={avustushaku}
@@ -67,9 +68,9 @@ export default class HakemusArviointi extends Component {
                               onRemovePayment={controller.removePayment}
                               readonly={true}/>}
        <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
-       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusOfficerEditing} status="officer_edit"/>
-       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusCancellation} status="cancelled"/>
-       <ReSendDecisionEmail  avustushaku={avustushaku} hakemus={hakemus}  hakuData={hakuData}/>
+       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusOfficerEditing} status="officer_edit" helpTexts={helpTexts} />
+       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusCancellation} status="cancelled" helpTexts={helpTexts} />
+       <ReSendDecisionEmail  avustushaku={avustushaku} hakemus={hakemus} hakuData={hakuData} helpTexts={helpTexts} />
        <ChangeLog hakemus={hakemus}/>
      </div>
     )
@@ -154,6 +155,7 @@ class SetArviointiStatus extends React.Component {
     const arvio = hakemus.arvio
     const status = arvio ? arvio.status : undefined
     const controller = this.props.controller
+    const helpTexts = this.props.helpTexts
     const statuses = []
     const statusValues = HakemusArviointiStatuses.allStatuses()
     for (let i = 0; i < statusValues.length; i++) {
@@ -177,9 +179,13 @@ class SetArviointiStatus extends React.Component {
     }
 
     return (
-      <fieldset className="soresu-radiobutton-group arvio-status-group">
-        {statuses}
-      </fieldset>
+      <div className="hakemus-arviointi-section">
+        <label>Hakemuksen tila:</label>
+        <HelpTooltip testId={"tooltip-tila"} content={helpTexts["hankkeen_sivu__arviointi___hakemuksen_tila"]} direction={"arviointi"} />
+        <fieldset className="soresu-radiobutton-group">
+          {statuses}
+        </fieldset>
+      </div>
     )
   }
 }
@@ -233,7 +239,7 @@ class ChangeRequest extends React.Component {
                 hidden={newChangeRequest || hasChangeRequired}
                 onClick={openEdit}
                 disabled={!allowEditing}>Pyydä täydennystä </button>
-        <HelpTooltip content={helpTexts["hankkeen_sivu__arviointi___pyydä_täydennystä"]} direction="arviointi" />
+        <HelpTooltip testId={"tooltip-taydennys"} content={helpTexts["hankkeen_sivu__arviointi___pyydä_täydennystä"]} direction="arviointi" />
         <div hidden={!newChangeRequest}>
           <label>Lähetä täydennyspyyntö</label>
           <span onClick={closeEdit} className="close"></span>
@@ -279,8 +285,11 @@ class SummaryComment extends React.Component {
 
   render() {
     const allowEditing = this.props.allowEditing
+    const helpTexts = this.props.helpTexts
+
     return <div className="value-edit summary-comment">
       <label htmlFor="summary-comment">Huomautus päätöslistaan</label>
+      <HelpTooltip testId={"tooltip-huomautus"} content={helpTexts["hankkeen_sivu__arviointi___huomautus_päätöslistaan"]} direction={"arviointi-slim"} />
       <textarea id="summary-comment" rows="1" disabled={!allowEditing} value={this.state.summaryComment}
              onChange={evt => this.summaryCommentUpdated(evt.target.value) } maxLength="128" />
     </div>

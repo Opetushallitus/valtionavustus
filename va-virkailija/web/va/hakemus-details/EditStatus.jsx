@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import HttpUtil from 'soresu-form/web/HttpUtil'
+import HelpTooltip from '../HelpTooltip.jsx'
+
 
 const initialState = {open:false,comment:''}
 
@@ -17,7 +19,7 @@ export default class EditStatus extends Component {
   }
 
   render() {
-    const {avustushaku, hakemus, allowEditing,status} = this.props
+    const {avustushaku, hakemus, allowEditing,status, helpTexts} = this.props
     const avustushakuId = avustushaku.id
     const cancelled = status === 'cancelled'
     const onOpen = () => {
@@ -60,16 +62,32 @@ export default class EditStatus extends Component {
         </a>)
     }
 
+    const tooltip = () => {
+      if (cancelled) {
+        return <HelpTooltip testId={"tooltip-peruuta-hakemus"} content={helpTexts["hankkeen_sivu__arviointi___peruuta_hakemus"]} direction={"arviointi-slim"} />
+      } else {
+        return <HelpTooltip testId={"tooltip-muokkaa-hakemusta"} content={helpTexts["hankkeen_sivu__arviointi___muokkaa_hakemusta"]} direction={"arviointi-slim"} />
+      }
+    }
+
+
     return (
       <div className="value-edit">
         {open &&
           <div>
             <textarea onChange={onStatusCommentChange} placeholder="Kommentti"></textarea>
-            <button className={cancelled ? "btn-danger" : ""} onClick={onSubmit} disabled={this.state.submitting}>{cancelled ? 'Peruuta hakemus' : 'Siirry muokkaamaan'}</button>
+            <span>
+              <button className={cancelled ? "btn-danger" : ""} onClick={onSubmit} disabled={this.state.submitting}>{cancelled ? 'Peruuta hakemus' : 'Siirry muokkaamaan'}</button>
+              { tooltip() }
+            </span>
             {this.state.submitted && <span>{cancelled ? 'Hakemus peruutettu' : 'Tila muutettu'}</span>}
           </div>
         }
-        {!open && <button className={cancelled ? "btn-danger" : ""} onClick={onOpen}>{cancelled ? 'Peruuta hakemus' : 'Muokkaa hakemusta'}</button>}
+        {!open && <span>
+          <button className={cancelled ? "btn-danger" : ""} onClick={onOpen}>{cancelled ? 'Peruuta hakemus' : 'Muokkaa hakemusta'}</button>
+          { tooltip() }
+        </span>
+        }
       </div>
     )
   }

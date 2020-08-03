@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import HttpUtil from 'soresu-form/web/HttpUtil'
+import HelpTooltip from '../HelpTooltip.jsx'
 
 export default class ReSendDecisionEmail extends Component {
 
@@ -9,7 +10,7 @@ export default class ReSendDecisionEmail extends Component {
   }
 
   render() {
-    const {avustushaku, hakemus} = this.props
+    const {avustushaku, hakemus, helpTexts} = this.props
     const avustushakuId = avustushaku.id
     const hakemusId = hakemus.id
     const isResolved = this.props.hakuData.avustushaku.status === "resolved"
@@ -28,6 +29,7 @@ export default class ReSendDecisionEmail extends Component {
         {isResolved &&
           <div>
             <button onClick={onSubmit} disabled={this.state.submitting}>Lähetä päätössähköposti uudestaan</button>
+            <HelpTooltip testId={"tooltip-laheta-email-uudestaan"} content={helpTexts["hankkeen_sivu__arviointi___lähetä_päätössähköposti_uudelleen"]} direction={"arviointi-slim"} />
             {this.state.submitted && <span>Sähköposti lähetetty</span>}
           </div>
         }

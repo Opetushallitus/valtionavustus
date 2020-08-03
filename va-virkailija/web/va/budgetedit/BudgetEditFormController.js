@@ -10,13 +10,16 @@ export default class BudgetEditFormController {
               customComponentFactory,
               avustushaku,
               form,
-              hakemus) {
+              hakemus,
+              helpTexts
+              ) {
     this.arviointiController = arviointiController
     this.customComponentFactory = customComponentFactory
     this.avustushaku = avustushaku
     this.form = form
     this.hakemus = hakemus
     this.budgetBusinessRules = new BudgetBusinessRules(form.content[0], hakemus.arvio)
+    this.helpTexts = helpTexts
     this.componentOnChangeListener = this.componentOnChangeListener.bind(this)
     this.copyOriginalValues = this.copyOriginalValues.bind(this)
     this.toggleDetailedCostsListener = this.toggleDetailedCostsListener.bind(this)
@@ -28,8 +31,11 @@ export default class BudgetEditFormController {
   }
 
   getCustomComponentProperties() {
-    return {avustushaku: this.avustushaku,
-            originalHakemus: this.hakemus}
+    return {
+      avustushaku: this.avustushaku,
+      originalHakemus: this.hakemus,
+      helpTexts: this.helpTexts
+    }
   }
 
   copyOriginalValues() {

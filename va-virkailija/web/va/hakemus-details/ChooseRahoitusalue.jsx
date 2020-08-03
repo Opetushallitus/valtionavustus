@@ -1,5 +1,5 @@
 import React from 'react'
-
+import HelpTooltip from "../HelpTooltip.jsx"
 import RadioRow from './RadioRow.jsx'
 
 export default class ChooseRahoitusalue extends React.Component {
@@ -16,6 +16,7 @@ export default class ChooseRahoitusalue extends React.Component {
     const selectedRahoitusalue = this.props.selectedRahoitusalue
     const availableRahoitusalueet = this.props.availableRahoitusalueet
     const allowEditing = this.props.allowEditing
+    const helpTexts = this.props.helpTexts
 
     const title = selectedRahoitusalue || "Ei valittu"
 
@@ -34,6 +35,7 @@ export default class ChooseRahoitusalue extends React.Component {
       <div className="hakemus-arviointi-section">
         <label>Koulutusaste:</label>
         <a onClick={onToggleList} disabled={!allowEditing}>{title}</a>
+        <HelpTooltip testId={"tooltip-koulutusaste"} content={helpTexts["hankkeen_sivu__arviointi___koulutusaste"]} direction={"arviointi"} />
         <div className="radio-container radio-container--rahoitusalue" hidden={!isOpen}>
           {availableRahoitusalueet.map(ra => {
             const isSelected = ra.rahoitusalue === selectedRahoitusalue

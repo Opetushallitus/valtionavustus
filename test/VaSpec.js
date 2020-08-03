@@ -79,6 +79,99 @@ describeBrowser("VaSpec", function() {
     )
   })
 
+  it("shows tooltip texts for arviointi tab", async function(){
+    const {page} = this
+
+    const avustushakuID = await createValidCopyOfLukioEsimerkkihakuWithValintaperusteetAndReturnTheNewId(page)
+    await publishAvustushaku(page, avustushakuID)
+    await fillAndSendHakemus(page, avustushakuID)
+    await navigate(page, `/avustushaku/${avustushakuID}/`)
+    await clickElementWithText(page,"td", "Akaan kaupunki")
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-koulutusaste"]`,
+      /Valitse hankkeelle koulutusaste, johon hanke kohdistuu. Valittavissa olevat koulutusasteet on tuotu automaattisesti Haun tiedot -välilehdeltä. Valtionavustuksen vastuuvalmistelija vastaa siitä, että kaikille myönteisen avustuspäätöksen saaville hankkeille on ennen päätösten hyväksymistä valittu oikea koulutusaste.*/
+    )
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-talousarviotili"]`,
+      /Valitse hankkeelle talousarviotili, jolta avustus maksetaan. Valittavissa olevat talousarviotilit on tuotu automaattisesti Haun tiedot -välilehdeltä. Valtionavustuksen vastuuvalmistelija vastaa siitä, että kaikille myönteisen avustuspäätöksen saaville hankkeille on ennen päätösten hyväksymistä valittu oikea talousarviotili.*/
+    )
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-valintaperusteet"]`,
+      /Valintaperusteet on tuotu automaattisesti Haun tiedot -välilehdeltä. Valtionavustuksen vastuuvalmistelijan johdolla päätetään, miten tähtiarviointeja hyödynnetään hakemusten arvioinnissa. Muiden virkailijoiden tähtiarvioinnit näkyvät vasta omien arviointien tallentamisen jälkeen. Arvioinnit näkyvät vain OPH:n virkailijoille.*/
+    )
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-kommentit"]`,
+      /Hankehakemusta arvioiva virkailija kirjoittaa avustuksen arviointiin liittyvät kommentit tähän kenttään ja tallentaa kommentin järjestelmään painamalla Lisää-painiketta. Mahdolliset muiden virkailijoiden kommentit tulevat näkyviin vasta oman kommentin lisäämisen jälkeen. Kommentit näkyvät vain OPH:n virkailijoille.*/
+    )
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-tila"]`,
+      /Hankkeen yhteyshenkilöksi osoitettu virkailija päivittää hankkeen tilaa arviointien edetessä kyseisen valtionavustuksen vastuuvalmistelijan johdolla sovittujen toimintatapojen mukaisesti. Kaikkien hakemusten tulee olla tilassa Hyväksytty tai Hylätty ennen avustuspäätösten hyväksymistä.*/
+    )
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-perustelut"]`,
+      /Kenttään kirjataan avustuspäätöksen hakemuskohtaiset huomiot. Tähän kenttään kirjoitetut perustelut siirtyvät sellaisenaan hakemuskohtaiseen avustuspäätökseen, jonka luonnosta voit tarkastella tämän sivunäkymän alaosan Päätös: Luonnos -linkistä. Hylätyn hakemuksen osalta suositellaan käyttämään järjestelmän tarjoamia vakioperusteluja.*/
+    )
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-taydennys"]`,
+      /Tämän ominaisuuden avulla voidaan pyytää avustuksen hakijalta täydennystä puutteelliseen tai virheelliseen hakemukseen. Painikkeen painamisen jälkeen virkailijalle aukeaa tekstikenttä, johon voidaan kirjata, millaisia täydennyksiä hakijalta odotetaan ja mihin mennessä täydennykset tulee kirjata järjestelmään. Täydennyspyyntö toimitetaan yhteyshenkilölle sekä haun viralliseen sähköpostiosoitteeseen. Pyyntö avaa hakemuksen hakijan muokattavaksi. Tieto täydennyspyynnöstä ja sen saatetekstistä tallentuu hakemuksen lokitietoihin ja näkyy myös Hakemusten arviointi -näkymän hakemuslistassa.*/
+    )
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-huomautus"]`,
+      /Päätöslistan avulla esitellään hyväksyjänä olevalle päällikölle hakemusten ja arviointien kokonaisuus. Mikäli avustuspäätöksiä hyväksyttäessä halutaan käydä tarkentavaa keskustelua joistakin hakemuksista, voidaan huomautukset kirjata tähän kenttään, jolloin ne siirtyvät automaattisesti päätöslistaan. Päätöslistan avaat painamalla Hakemusten arviointi -näkymän alaosan linkkiä, jossa on avustusten lukumäärä \(esim. 60\/60 hakemusta\). Huomautukset näkyvät vain OPH:n virkailijoille.*/
+    )
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-talousarvio"]`,
+      /Hankkeen yhteyshenkilöksi osoitettu virkailija voi muokata Hyväksytty-sarakkeen kenttiin hakijan hankebudjettia menoluokittain. Tässä osiossa kirjattu budjetti siirtyy automaattisesti hankekohtaiseen avustuspäätökseen ja muodostaa hankkeelle hyväksytyn budjetin.*/
+    )
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-muokkaa-hakemusta"]`,
+      /Hankkeen yhteyshenkilöksi osoitettu virkailija voi muokata hakemusta hakijan pyynnöstä esimerkiksi virheellisten yhteystietojen osalta. Painikkeen painamisen jälkeen virkailijan tulee kirjoittaa hakemuksen muokkaamisen syy, joka tallentuu hakemuksen lokitietoihin. Hakemuksen sisällöllisissä muokkauksissa suositellaan käyttämään aina Täydennyspyyntö-ominaisuutta.*/
+    )
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-peruuta-hakemus"]`,
+      /Hankkeen yhteyshenkilöksi osoitettu virkailija voi peruuttaa hakemuksen tilanteessa, jossa hakija haluaa vetää hakemuksensa kokonaan pois arvioinneista saamatta hakemukselleen lainkaan päätöstä. Hakemuksen peruuttamisen myötä hakemus siirtyy arkistoon ja poistuu Hakujen arviointi -hakemuslistasta. Hakemuksen peruuttaminen tulee dokumentoida seikkaperäisesti Valmistelijan huomiot -kenttään. Hakijan pyyntö hakemuksen peruuttamiseksi tulee todentaa esimerkiksi liittämällä asiasta käyty sähköpostikeskustelu Seuranta-välilehden Liitteet-osioon.*/
+    )
+
+    const setHakemusStateToRatkaistu = async (page, avustushakuID) => {
+      await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
+      await clickElement(page, '[for=set-status-resolved]')
+    }
+
+    await setHakemusStateToRatkaistu(page, avustushakuID)
+
+    await navigate(page, `/avustushaku/${avustushakuID}/`)
+    await clickElementWithText(page,"td", "Akaan kaupunki")
+
+    await verifyTooltipText(
+      page,
+      `[data-test-id="tooltip-laheta-email-uudestaan"]`,
+      /Hankkeelle voidaan lähettää päätössähköposti uudestaan koska tahansa hakukohtaisten avustuspäätösten laatimisen jälkeen. Painiketta painamalla hakijalle lähetetään avustuspäätös sekä yhteyshenkilön että hakijan viralliseen sähköpostiosoitteeseen. Päätössähköpostissa olevan linkin kautta avustuksen saaja voi päivittää hankkeen yhteyshenkilöä itse, joten tätä ominaisuutta voi hyödyntää esimerkiksi henkilövaihdosten kirjaamisessa järjestelmään.*/
+    )
+
+  })
+
   it("shows tooltip texts for päätös tab", async function() {
     const {page} = this
 
@@ -725,6 +818,33 @@ async function submitHakemus(page) {
   await page.waitForFunction(() => document.querySelector("#topbar #form-controls button#submit").textContent === "Hakemus lähetetty")
 }
 
+async function createValidCopyOfLukioEsimerkkihakuWithValintaperusteetAndReturnTheNewId(page) {
+  const avustushakuName = mkAvustushakuName()
+  console.log(`Avustushaku name for test: ${avustushakuName}`)
+
+  await copyEsimerkkihaku(page)
+
+  const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku"))
+  console.log(`Avustushaku ID: ${avustushakuID}`)
+
+  await clearAndType(page, "#register-number", "230/2015")
+  await clearAndType(page, "#haku-name-fi", avustushakuName)
+  await clearAndType(page, "#hakuaika-start", "1.1.1970 0.00")
+
+  const lukioKoulutusasteSelector = '[name=education-levels][data-title="Lukiokoulutus"]'
+  await clearAndType(page, lukioKoulutusasteSelector, "29.10.30")
+
+  await clickElementWithText(page, "button", "Lisää uusi valintaperuste")
+  await clearAndType(page, "#selection-criteria-0-fi", "Hanke edistää opetustuntikohtaisen valtionosuuden piiriin kuuluvan taiteen perusopetuksen pedagogista kehittämistä.")
+  await clearAndType(page, "#selection-criteria-0-sv", "Och samma på svenska.")
+
+  const nextYear = (new Date()).getFullYear() + 1
+  await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
+  await waitForSave(page, avustushakuID)
+
+  return parseInt(avustushakuID)
+}
+
 async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page) {
   const avustushakuName = mkAvustushakuName()
   console.log(`Avustushaku name for test: ${avustushakuName}`)
@@ -737,6 +857,7 @@ async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page) {
   await clearAndType(page, "#register-number", "230/2015")
   await clearAndType(page, "#haku-name-fi", avustushakuName)
   await clearAndType(page, "#hakuaika-start", "1.1.1970 0.00")
+
   const nextYear = (new Date()).getFullYear() + 1
   await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
   await waitForSave(page, avustushakuID)

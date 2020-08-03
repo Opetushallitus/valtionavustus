@@ -2,6 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 
 import RadioRow from './RadioRow.jsx'
+import HelpTooltip from "../HelpTooltip.jsx"
 
 export default class ChooseTalousarviotili extends React.Component {
   constructor(props) {
@@ -17,6 +18,7 @@ export default class ChooseTalousarviotili extends React.Component {
     const selectedTalousarviotili = this.props.selectedTalousarviotili
     const availableTalousarviotilit = this.props.availableTalousarviotilit
     const allowEditing = this.props.allowEditing && availableTalousarviotilit.length > 1
+    const helpTexts = this.props.helpTexts
 
     const title = describeTitle(selectedTalousarviotili, availableTalousarviotilit)
 
@@ -35,6 +37,7 @@ export default class ChooseTalousarviotili extends React.Component {
       <div className="hakemus-arviointi-section">
         <label>Talousarviotili (momentti):</label>
         <a onClick={onToggleList} disabled={!allowEditing}>{title}</a>
+        <HelpTooltip testId={"tooltip-talousarviotili"} content={helpTexts["hankkeen_sivu__arviointi___talousarviotili"]} />
         <div className="radio-container radio-container--talousarviotili" hidden={!isOpen}>
           {availableTalousarviotilit.map(tt => {
             const isSelected = tt === selectedTalousarviotili
