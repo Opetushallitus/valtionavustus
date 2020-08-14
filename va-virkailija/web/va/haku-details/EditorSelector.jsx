@@ -69,6 +69,7 @@ export default class EditorSelector extends React.Component {
                                         valiselvitysFormDraft={valiselvitysFormDraft}
                                         loppuselvitysFormDraft={loppuselvitysFormDraft}
                                         translations={translations}
+                                        helpTexts={helpTexts}
 
         />
         break
@@ -81,6 +82,7 @@ export default class EditorSelector extends React.Component {
                                             valiselvitysFormDraft={valiselvitysFormDraft}
                                             loppuselvitysFormDraft={loppuselvitysFormDraft}
                                             translations={translations}
+                                            helpTexts={helpTexts}
 
         />
         break

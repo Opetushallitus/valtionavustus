@@ -69,6 +69,37 @@ describeBrowser("VaSpec", function() {
     assert.strictEqual(logEntryCount, 1)
   })
 
+  describe("Help texts", function() {
+
+    it("Shown for loppuselvitys", async function() {
+      const {page} = this
+      await navigate(page, "/admin/loppuselvitys/")
+
+      const selector = '[data-test-id=loppuselvitys-ohje]'
+      const verifyTextRegex = /Loppuselvitysten käyttö on pakollista kaikille valtionavustuksille. Loppuselvitysten käytöstä ja aikataulusta tulee ilmoittaa avustuksen saajalle jo avustuspäätöksessä. Loppuselvityspyynnöt on hyvä toimittaa avustuksen saajille mahdollisimman pian väliselvityspyyntöjen keräämisen jälkeen tai viimeistään kuusi kuukautta ennen hankekauden päättymistä. Tällöin hankkeen yhteyshenkilö voi dokumentoida hankkeen etenemistä loppuselvityslomakkeelle jo heti väliselvityslomakkeen lähettämisestä lähtien, mutta lähettää täytetyn loppuselvityslomakkeen VA-järjestelmään vasta määräaikaan mennessä. Mikäli kyseisen valtionavustuksen kohdalla ei käytetä lainkaan väliselvityksiä, voidaan loppuselvityspyynnöt em. perustein lähettää avustuksen saajille jo hankekauden alussa. Näin vältetään esimerkiksi henkilövaihdoksista johtuva puutteellinen selvitysdokumentaatio.  Voit kopioida minkä tahansa haun loppuselvityslomakkeen sellaisenaan kopioimalla Hakulomakkeen sisältö -kentän koodin \(Loppuselvitys-välilehden lopussa\) haluamastasi haun Loppuselvitys-välilehdeltä ja liittämällä sen valmistelemasi haun vastaavaan kenttään. Loppuselvityslomaketta muokataan samalla tavalla kuin haku- ja väliselvityslomaketta. Voit lisätä, poistaa ja muokata lomakkeen kysymyksiä, ohjetekstiä ja väliotsikoita. Huomaa, että loppuselvityslomakkeeseen tekemäsi muutokset tallentuvat ainoastaan silloin kun painat Tallenna -painiketta. Seuraavat asiat on hyvä huomioida loppuselvityslomaketta muokattaessa:  Tuotokset -osiota ei suositella muokattavan Selvitys taloudesta -osio on lukittu ja sitä voidaan muokata vain pääkäyttäjän toimesta  Loppuselvityksille tehdään asia- ja taloustarkastus. Asiatarkastuksen tekee hankkeelle osoitettu yhteyshenkilö ja taloustarkastuksen OPH:n taloustarkastaja. Tarkastukset tulee tehdä mahdollisimman pian loppuselvityksen vastaanottamisen jälkeen, jotta mahdollisiin epäkohtiin voidaan puuttua välittömästi. Kun loppuselvitys on asiatarkastettu, lähettää yhteyshenkilöksi osoitettu virkailija tiedon asiatarkastuksen valmistumisesta taloustarkastajalle. Taloustarkastuksen jälkeen taloustarkastaja lähettää loppuselvityksen hyväksyntäviestin erikseen jokaiselle hankkeelle hankekohtaiselta Loppuselvitys-välilehdeltä.*/
+      await verifyText(page, selector, verifyTextRegex)
+    })
+
+    it("Shown for väliselvitys", async function() {
+      const {page} = this
+      await navigate(page, "/admin/valiselvitys/")
+
+      const selector = '[data-test-id=valiselvitys-ohje]'
+      const verifyTextRegex = /Väliselvitysten käyttämisestä voidaan päättää hakukohtaisesti. Mikäli väliselvityksiä käytetään, tulee väliselvityksen käytöstä ja aikataulusta ilmoittaa avustuksen saajalle jo avustuspäätöksessä. Väliselvityspyynnöt on hyvä toimittaa avustuksen saajille mahdollisimman pian hankekauden alkamisen jälkeen. Tällöin hankkeen yhteyshenkilö voi dokumentoida hankkeen etenemistä väliselvityslomakkeelle jo heti hankkeen käynnistymisestä lähtien, mutta lähettää täytetyn väliselvityslomakkeen VA-järjestelmään vasta määräaikaan mennessä.  Voit kopioida minkä tahansa haun väliselvityslomakkeen sellaisenaan kopioimalla Hakulomakkeen sisältö -kentän koodin \(Väliselvitys-välilehden lopussa\) haluamasi haun Väliselvitys-välilehdeltä ja liittämällä sen valmistelemasi haun vastaavaan kenttään. Väliselvityslomaketta muokataan samalla tavalla kuin haku- ja loppuselvityslomaketta. Voit lisätä, poistaa ja muokata lomakkeen kysymyksiä, ohjetekstiä ja väliotsikoita. Huomaa, että väliselvityslomakkeeseen tekemäsi muutokset tallentuvat ainoastaan silloin kun painat Tallenna -painiketta.  Väliselvityksille tehdään ainoastaan asiatarkastus hankkeelle osoitetun yhteyshenkilön toimesta. Asiatarkastus tulee tehdä mahdollisimman pian väliselvityksen vastaanottamisen jälkeen, jotta mahdollisiin epäkohtiin voidaan puuttua. Kun väliselvitys on asiatarkastettu, lähettää yhteyshenkilöksi osoitettu virkailija väliselvityksen hyväksyntäviestin erikseen jokaiselle hankkeelle hankekohtaiselta Väliselvitys-välilehdeltä.*/
+      await verifyText(page, selector, verifyTextRegex)
+    })
+
+    it("Shown for päätös", async function() {
+      const {page} = this
+      await navigate(page, "/admin/decision/")
+
+      const selector = '[data-test-id=paatos-ohje]'
+      const verifyTextRegex = /Jokaiselle valtionavustushakemukselle annetaan arviointien jälkeen avustuspäätös, joka on joko myönteinen tai kielteinen. Haun vastuuvalmistelija vastaa avustuspäätösten laadusta, hyväksyttämisestä ja lähettämisestä.  Päätösten laatimisessa tulee noudattaa erityistä huolellisuutta, sillä avustus tulee käyttää päätösdokumentin kirjausten mukaisesti. Päätöksen kirjaukset velvoittavat sekä avustuksen saajaa että OPH:n virkailijaa eikä avustuspäätöksen linjauksista voida poiketa ilman uutta päätöstä \(Huom! Avustuksen käyttöajan pidentäminen tai budjetin muuttaminen voidaan tehdä hyvin dokumentoidulla sähköpostikäsittelyllä, jolloin muutokset hyväksyvä sähköposti on uusi päätös\).  Avustuspäätösten laatiminen, hyväksyminen ja lähettäminen toteutetaan seuraavasti:  Laaditaan huolellisesti päätösdokumenttien tekstit VA-järjestelmässä ja täytetään kaikki muut Päätös-välilehden tiedot Viedään ASHA-järjestelmään päätöslista, myönteisen avustuspäätöksen malli, kielteisen avustuspäätöksen malli sekä ratkaisuyhteenveto Haetaan dokumenteille ASHA-järjestelmässä puolto SV-yksikön päälliköltä ja hyväksyntä valtionavustuksesta vastaavalta päälliköllä Painetaan ”Lähetä x päätöstä”-painiketta VA-järjestelmän Päätös-välilehdeltä, jolloin jokaiselle hakijalle toimitetaan avustuspäätös yhteyshenkilön ja hakijan viralliseen sähköpostiosoitteeseen.*/
+      await verifyText(page, selector, verifyTextRegex)
+    })
+  })
+
+
   it("shows tooltip text for loppuselvitys tab in the tab bar", async function() {
     const {page} = this
     await navigate(page, "/admin/haku-editor/")
@@ -589,6 +620,13 @@ async function expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustusha
     'budget-granted': 100000,
     'project-end': null
   }]
+}
+
+async function verifyText(page, selector, regex) {
+  await page.evaluate((selector) => document.querySelector(selector).scrollIntoView({block: 'center'}), selector)
+  const element = await page.waitForSelector(selector, { visible: true })
+  const text = await page.evaluate(element => element.textContent, element)
+  assert.ok(regex.test(text), `Text ${regex.source} found from: ${text}`)
 }
 
 async function verifyTooltipText(page, tooltipAnchorSelector, tooltipTextRegex) {
