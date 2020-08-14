@@ -14,7 +14,7 @@ export default class SelvitysFormEditor extends React.Component {
   }
 
   render(){
-    const {avustushaku, controller, translations, koodistos, selvitysType,environment} = this.props
+    const {avustushaku, controller, translations, koodistos, selvitysType,environment, helpTexts} = this.props
     const formDraft = this.props[selvitysType + "FormDraft"]
     const formContent = avustushaku[selvitysType + "Form"]
     const updatedAtElementId = `${selvitysType}UpdatedAt`
@@ -70,6 +70,7 @@ export default class SelvitysFormEditor extends React.Component {
       <h4>Väliselvitysten lähettäminen</h4>
       <p>Väliselvitys tulee toimittaa viimeistään <strong>{this.props.avustushaku[selvitysType + 'date']}</strong>.</p>
       <p>Väliselvityspyynnöt lähetetään niille hakijoille, joiden hakemukset on hyväksytty ja jotka eivät ole vielä toimittaneet väliselvitystä.</p>
+      <div data-test-id='valiselvitys-ohje' dangerouslySetInnerHTML={{__html: helpTexts["hakujen_hallinta__väliselvitys___ohje"]}} />
       <p>
         <button disabled={sending} onClick={onSendSelvitys}>Lähetä väliselvityspyynnöt</button>
         {!isNaN(count) && <span> Lähetetty {count} viestiä</span>}
@@ -81,6 +82,7 @@ export default class SelvitysFormEditor extends React.Component {
       <h4>Loppuselvityksen lähettäminen</h4>
       <p>Loppuselvitys on koko ajan täytettävissä ja se tulee toimittaa viimeistään <strong>{this.props.avustushaku[selvitysType + 'date']}</strong>.</p>
       <p>Loppuselvityspyynnöt lähetetään niille hakijoille, joiden hakemukset on hyväksytty ja jotka eivät ole vielä toimittaneet loppuselvitystä.</p>
+      <div data-test-id='loppuselvitys-ohje' dangerouslySetInnerHTML={{__html: helpTexts["hakujen_hallinta__loppuselvitys___ohje"]}} />
       <p>
         <button disabled={sending} onClick={onSendSelvitys}>Lähetä loppuselvityspyynnöt</button>
         {!isNaN(count) && <span> Lähetetty {count} viestiä</span>}
