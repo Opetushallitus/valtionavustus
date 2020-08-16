@@ -35,7 +35,7 @@ export default class ChooseTalousarviotili extends React.Component {
 
     return (
       <div className="hakemus-arviointi-section">
-        <label>Talousarviotili (momentti):</label>
+        <label>Talousarviotili:</label>
         <a onClick={onToggleList} disabled={!allowEditing}>{title}</a>
         <HelpTooltip testId={"tooltip-talousarviotili"} content={helpTexts["hankkeen_sivu__arviointi___talousarviotili"]} direction={"arviointi-slim"} />
         <div className="radio-container radio-container--talousarviotili" hidden={!isOpen}>
