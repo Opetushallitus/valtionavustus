@@ -559,14 +559,14 @@ class RegisterNumber extends React.Component {
     const helpTexts = this.props.helpTexts
     let errorString = ""
     if (_.isNull(registerNumber) || _.isEmpty(registerNumber)) {
-      errorString = <span style={errorStyle} className="error">Diaarinumero on pakollinen tieto</span>
+      errorString = <span style={errorStyle} className="error">Asianumero on pakollinen tieto</span>
     } else if (!isRegisterNumberValid) {
       errorString = <span style={errorStyle} className="error">
-                      Diaarinumero ei ole oikean muotoinen (esim. 340/2015)
+                      Asianumero ei ole oikean muotoinen (esim. 340/2015)
                     </span>
     }
     return <div className="haku-edit-registernumber">
-             <h3 className="required">Diaarinumero <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___asianumero"]} direction="left" /></h3>
+             <h3 className="required">Asianumero <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___asianumero"]} direction="left" /></h3>
              <input type="text" disabled={!allowAllHakuEdits} onChange={this.props.onChange} className={registerNumberClass} maxLength="128" placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
              <div>{errorString}</div>
            </div>

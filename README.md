@@ -52,7 +52,7 @@ Haun roolista huolimatta kuka tahansa VA-käyttäjä voi kommentoida hakemuksia.
 |---|---|
 | Haku tai avustushaku | Mahdollistaa rahan jakamisen hakijoille. Avustushaulle tehdään lomake, joka julkaistaan. Hakija lähettää avustushakukohtaisen hakemuksen. |
 | Hakemus | Hakijan kirjoittama avustushakukohtainen anomus rahoituksen saamiseksi. |
-| Diaarinumero | Tunniste haun arkistointia varten. Usealla haulla voi olla sama diaarinumero. va-virkailija-sovellus lähettää haun (joka sisältää diaarinumeron) sähköpostilla kirjaamo.oph.fi:hin, jossa haut tulostetaan ja arkistoidaan. OPH:lla on suunnitteilla on ottaa käyttöön sähköinen arkistointi, jolloin diaarinumero tulisi hakuun automaattisesti integraation kautta. |
+| Asianumero | Tunniste haun arkistointia varten. Usealla haulla voi olla sama asianumero. va-virkailija-sovellus lähettää haun (joka sisältää asianumeron) sähköpostilla kirjaamo.oph.fi:hin, jossa haut tulostetaan ja arkistoidaan. OPH:lla on suunnitteilla on ottaa käyttöön sähköinen arkistointi, jolloin asianumero tulisi hakuun automaattisesti integraation kautta. |
 
 ## Riippuvuudet
 
@@ -580,7 +580,7 @@ Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
     kuten ensimmäisen erän
 
 Maksusanomassa on pitkäviite, jolla tunnistetaan hakemuksen maksatus
-VA-järjestelmässä. Pitkäviite koostuu hakemuksen diaarinumerosta ja maksuerän
+VA-järjestelmässä. Pitkäviite koostuu hakemuksen asianumerosta ja maksuerän
 numerosta alaviivalla erotettuna. Samainen pitkäviite palautuu Handista
 sanoman mukana, kun maksatus on maksettu.
 

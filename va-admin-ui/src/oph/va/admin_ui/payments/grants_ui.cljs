@@ -78,7 +78,7 @@
           {:style theme/grants-table-header}
           [table/table-row
            [table/sortable-header-column
-            {:title "Diaarinumero"
+            {:title "Asianumero"
              :column-key :register-number
              :style theme/semi-narrow-column
              :sort-params @sort-params

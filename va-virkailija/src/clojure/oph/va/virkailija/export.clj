@@ -20,7 +20,7 @@
 (def cell-value-no-fit-threshold-in-chars 40)
 
 (def common-field-labels
-  (array-map :register-number   "Diaarinumero"
+  (array-map :register-number   "Asianumero"
              :organization-name "Hakijaorganisaatio"
              :project-name      "Hankkeen nimi"
              :language          "Asiointikieli"))

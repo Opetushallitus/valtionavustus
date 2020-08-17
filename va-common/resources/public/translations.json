@@ -261,8 +261,8 @@
       "sv": "Kontrollera siffrorna"
     },
     "register-number": {
-      "fi": "Diaarinumero",
-      "sv": "Diarnummer"
+      "fi": "Asianumero",
+      "sv": "Ärendenummer"
     },
     "pending_change_request": {
       "fi": "Täydennyspyyntö",
