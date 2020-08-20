@@ -33,7 +33,7 @@
             (format
               "Payment of response %s already paid. Ignoring." filename))
           (do
-            (log/error (format "Error while processing file %s" filename))))))))
+            (log/error (format "Error while processing file %s" filename) e)))))))
 
 (defn fetch-feedback-from-rondo [remote-service]
   (log/debug "Running the fetch-feed-back-from rondo..")
