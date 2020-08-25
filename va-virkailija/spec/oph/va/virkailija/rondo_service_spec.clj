@@ -146,18 +146,19 @@
                  nil (rondo-scheduling/get-state-of-payments test-service)))
                 (should= '("file.xml") @deleted-remote-files))
 
-          (it "When retrieving payment xml from Rondo, show errors if there are no corresponding payments"
+          (it "If no payment is found, ignore exception but don't delete remote file"
+              (def deleted-remote-files (atom nil))
+              (defn mark-remote-file-as-deleted
+                [filename]
+                (swap! deleted-remote-files (fn [files] conj files filename)))
 
               (let [configuration {:enabled true
                                    :local-path "/tmp"}
-                    test-service (create-test-service configuration)
+                    test-service (create-test-service configuration mark-remote-file-as-deleted)
                     grant (first (grant-data/get-grants))]
                 (payments-data/delete-grant-payments (:id grant))
-                (get-remote-file test-service "file.xml")
-                (should-throw Exception #"No payments found!"
-                              (payments-data/update-state-by-response
-                                (invoice/read-xml (get-local-file test-service "file.xml")))
-                )))
+                (should= nil (rondo-scheduling/get-state-of-payments test-service)))
+                (should= nil @deleted-remote-files))
 
           (it "When retrieving payment xml from Rondo, show parse errors, if xml is not valid"
               (let [test-service (create-wrong-test-service configuration)

@@ -28,12 +28,12 @@
       (clojure.java.io/delete-file (get-local-file remote-service filename))
 
       (catch clojure.lang.ExceptionInfo e
-        (if (= "already-paid" (-> e ex-data :cause))
-          (do
-            (log/info (format "Payment of response %s already paid. Ignoring and deleting remote file." filename))
-            (delete-remote-file! remote-service filename))
-          (do
-            (log/error (format "Error while processing file %s" filename) e)))))))
+        (case (-> e ex-data :cause)
+          "already-paid" (do
+                           (log/info (format "Payment of response %s already paid. Ignoring and deleting remote file." filename))
+                           (delete-remote-file! remote-service filename))
+          "no-payment" (log/info (format "No corresponding payment found for response %s. Ignoring." filename))
+          :else (log/error (format "Error while processing file %s" filename) e))))))
 
 (defn fetch-feedback-from-rondo [remote-service]
   (log/debug "Running the fetch-feed-back-from rondo..")
