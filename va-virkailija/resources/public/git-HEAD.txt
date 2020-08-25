@@ -1,0 +1,4 @@
+commit 7a4719b6
+Author: Timo Suomela <timo.suomela@reaktor.com>
+
+    Remove dead code

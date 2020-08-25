@@ -37,7 +37,7 @@
            :first-name "Test"
            :surname "User"})
 
-(defrecord TestFileService [configuration]
+(defrecord TestFileService [configuration delete-file-cb]
   RemoteFileService
   (send-payment-to-rondo! [service payment-values] (rondo-service/send-payment! (assoc payment-values :config (:configuration service) :func (constantly nil))))
   (get-remote-file-list [service]
@@ -49,10 +49,14 @@
   (get-local-file [service filename]
     (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename))
   (delete-remote-file! [service filename]
+    (delete-file-cb filename)
     nil))
 
-(defn create-test-service [conf]
-  (TestFileService. conf))
+(defn no-op [a])
+
+(defn create-test-service
+  ([conf] (TestFileService. conf no-op))
+  ([conf delete-file-cb] (TestFileService. conf delete-file-cb)))
 
 (defrecord WrongTestFileService [configuration]
   RemoteFileService
@@ -109,11 +113,15 @@
                     result  (rondo-scheduling/get-state-of-payments test-service)]
                 (should= 3  (:state (payments-data/get-payment (:id payment))))))
 
-          (it "If payment is already paid ignore exception"
+          (it "If payment is already paid ignore exception and delete remote file"
+              (def deleted-remote-files (atom nil))
+              (defn mark-remote-file-as-deleted
+                [filename]
+                (swap! deleted-remote-files (fn [files] (conj files filename))))
 
               (let [configuration {:enabled true
                                    :local-path "/tmp"}
-                    test-service (create-test-service configuration)
+                    test-service (create-test-service configuration mark-remote-file-as-deleted)
                     grant (first (grant-data/get-grants))
                     result (payments-data/delete-grant-payments (:id grant))
                     application (application-data/find-application-by-register-number "123/456/78")
@@ -135,7 +143,8 @@
                               :invoice-date invoice-date}
                              user)]
                 (should=
-                  nil (rondo-scheduling/get-state-of-payments test-service))))
+                 nil (rondo-scheduling/get-state-of-payments test-service)))
+                (should= '("file.xml") @deleted-remote-files))
 
           (it "When retrieving payment xml from Rondo, show errors if there are no corresponding payments"
 

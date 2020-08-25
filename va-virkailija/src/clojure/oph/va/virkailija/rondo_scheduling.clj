@@ -29,9 +29,9 @@
 
       (catch clojure.lang.ExceptionInfo e
         (if (= "already-paid" (-> e ex-data :cause))
-          (log/info
-            (format
-              "Payment of response %s already paid. Ignoring." filename))
+          (do
+            (log/info (format "Payment of response %s already paid. Ignoring and deleting remote file." filename))
+            (delete-remote-file! remote-service filename))
           (do
             (log/error (format "Error while processing file %s" filename) e)))))))
 
