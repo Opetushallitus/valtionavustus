@@ -58,11 +58,11 @@
   ([conf] (TestFileService. conf no-op))
   ([conf delete-file-cb] (TestFileService. conf delete-file-cb)))
 
-(defrecord WrongTestFileService [configuration]
+(defrecord WrongTestFileService [configuration delete-file-cb]
   RemoteFileService
   (send-payment-to-rondo! [service payment-values] (rondo-service/send-payment! (assoc payment-values :config (:configuration service) :func (constantly nil))))
   (get-remote-file-list [service]
-    (list "file.xml"))
+    (list "wrong.xml"))
   (get-local-path [service] (:local-path (:configuration service)))
   (get-remote-file [service filename]
     (let [xml-file-path (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename)]
@@ -73,11 +73,13 @@
   (get-local-file [service filename]
     (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename))
   (delete-remote-file! [service filename]
+    (delete-file-cb filename)
     nil))
 
 
-(defn create-wrong-test-service [conf]
-  (WrongTestFileService. conf))
+(defn create-wrong-test-service
+  ([conf] (WrongTestFileService. conf no-op))
+  ([conf delete-file-cb] (WrongTestFileService. conf delete-file-cb)))
 
 (describe "Testing Rondo Service functions"
           (tags :rondoservice)
@@ -159,9 +161,11 @@
                 (should= nil (rondo-scheduling/get-state-of-payments test-service)))
                 (should= nil @deleted-remote-files))
 
-          (it "When retrieving payment xml from Rondo, show parse errors, if xml is not valid"
-              (let [test-service (create-wrong-test-service configuration)
-                    list-of-files (lazy-seq ["wrong.xml"])]
-                (should-throw Exception #"ParseError" (rondo-scheduling/pop-remote-files list-of-files test-service))
-                (clojure.java.io/delete-file (get-local-file test-service "wrong.xml")))))
+          (it "If xml is malformed, don't delete remote file"
+              (def deleted-remote-files (atom nil))
+              (def mark-remote-file-as-deleted (invocation-recorder deleted-remote-files))
+
+              (let [test-service (create-wrong-test-service configuration)]
+                (should= nil (rondo-scheduling/get-state-of-payments test-service)))
+                (should= nil @deleted-remote-files)))
 (run-specs)
