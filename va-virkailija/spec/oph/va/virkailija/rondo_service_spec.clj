@@ -113,11 +113,12 @@
                     result  (rondo-scheduling/get-state-of-payments test-service)]
                 (should= 3  (:state (payments-data/get-payment (:id payment))))))
 
+          (defn invocation-recorder [items]
+            (fn [item] (swap! items (fn [i] (conj i item)))))
+
           (it "If payment is already paid ignore exception and delete remote file"
               (def deleted-remote-files (atom nil))
-              (defn mark-remote-file-as-deleted
-                [filename]
-                (swap! deleted-remote-files (fn [files] (conj files filename))))
+              (def mark-remote-file-as-deleted (invocation-recorder deleted-remote-files))
 
               (let [configuration {:enabled true
                                    :local-path "/tmp"}
@@ -148,9 +149,7 @@
 
           (it "If no payment is found, ignore exception but don't delete remote file"
               (def deleted-remote-files (atom nil))
-              (defn mark-remote-file-as-deleted
-                [filename]
-                (swap! deleted-remote-files (fn [files] conj files filename)))
+              (def mark-remote-file-as-deleted (invocation-recorder deleted-remote-files))
 
               (let [configuration {:enabled true
                                    :local-path "/tmp"}
