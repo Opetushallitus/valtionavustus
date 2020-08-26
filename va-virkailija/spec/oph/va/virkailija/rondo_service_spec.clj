@@ -37,7 +37,7 @@
            :first-name "Test"
            :surname "User"})
 
-(defrecord TestFileService [configuration delete-file-cb]
+(defrecord TestFileService [configuration delete-file-cb report-exception-cb]
   RemoteFileService
   (send-payment-to-rondo! [service payment-values] (rondo-service/send-payment! (assoc payment-values :config (:configuration service) :func (constantly nil))))
   (get-remote-file-list [service]
@@ -50,15 +50,16 @@
     (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename))
   (delete-remote-file! [service filename]
     (delete-file-cb filename)
-    nil))
+    nil)
+  (report-exception [service msg exception] (report-exception-cb exception)))
 
 (defn no-op [a])
 
 (defn create-test-service
-  ([conf] (TestFileService. conf no-op))
-  ([conf delete-file-cb] (TestFileService. conf delete-file-cb)))
+  ([conf] (TestFileService. conf no-op no-op))
+  ([conf delete-file-cb report-exception-cb] (TestFileService. conf delete-file-cb report-exception-cb)))
 
-(defrecord WrongTestFileService [configuration delete-file-cb]
+(defrecord WrongTestFileService [configuration delete-file-cb report-exception-cb]
   RemoteFileService
   (send-payment-to-rondo! [service payment-values] (rondo-service/send-payment! (assoc payment-values :config (:configuration service) :func (constantly nil))))
   (get-remote-file-list [service]
@@ -74,12 +75,13 @@
     (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename))
   (delete-remote-file! [service filename]
     (delete-file-cb filename)
-    nil))
+    nil)
+  (report-exception [service msg exception] (report-exception-cb exception)))
 
 
 (defn create-wrong-test-service
-  ([conf] (WrongTestFileService. conf no-op))
-  ([conf delete-file-cb] (WrongTestFileService. conf delete-file-cb)))
+  ([conf] (WrongTestFileService. conf no-op no-op))
+  ([conf delete-file-cb report-exception-cb] (WrongTestFileService. conf delete-file-cb report-exception-cb)))
 
 (describe "Testing Rondo Service functions"
           (tags :rondoservice)
@@ -120,11 +122,13 @@
 
           (it "If payment is already paid ignore exception and delete remote file"
               (def deleted-remote-files (atom nil))
+              (def reported-exceptions (atom nil))
               (def mark-remote-file-as-deleted (invocation-recorder deleted-remote-files))
+              (def report-an-exception (invocation-recorder reported-exceptions))
 
               (let [configuration {:enabled true
                                    :local-path "/tmp"}
-                    test-service (create-test-service configuration mark-remote-file-as-deleted)
+                    test-service (create-test-service configuration mark-remote-file-as-deleted report-an-exception)
                     grant (first (grant-data/get-grants))
                     result (payments-data/delete-grant-payments (:id grant))
                     application (application-data/find-application-by-register-number "123/456/78")
@@ -147,25 +151,33 @@
                              user)]
                 (should=
                  nil (rondo-scheduling/get-state-of-payments test-service)))
-                (should= '("file.xml") @deleted-remote-files))
+                (should= '("file.xml") @deleted-remote-files)
+                (should= nil @reported-exceptions))
 
           (it "If no payment is found, ignore exception but don't delete remote file"
               (def deleted-remote-files (atom nil))
+              (def reported-exceptions (atom nil))
               (def mark-remote-file-as-deleted (invocation-recorder deleted-remote-files))
+              (def report-an-exception (invocation-recorder reported-exceptions))
 
               (let [configuration {:enabled true
                                    :local-path "/tmp"}
-                    test-service (create-test-service configuration mark-remote-file-as-deleted)
+                    test-service (create-test-service configuration mark-remote-file-as-deleted report-an-exception)
                     grant (first (grant-data/get-grants))]
                 (payments-data/delete-grant-payments (:id grant))
                 (should= nil (rondo-scheduling/get-state-of-payments test-service)))
-                (should= nil @deleted-remote-files))
+                (should= nil @deleted-remote-files)
+                (should= nil @reported-exceptions))
 
-          (it "If xml is malformed, don't delete remote file"
+          (it "If xml is malformed, report exception and don't delete remote file"
               (def deleted-remote-files (atom nil))
+              (def reported-exceptions (atom nil))
               (def mark-remote-file-as-deleted (invocation-recorder deleted-remote-files))
+              (def report-an-exception (invocation-recorder reported-exceptions))
 
-              (let [test-service (create-wrong-test-service configuration)]
+              (let [test-service (create-wrong-test-service configuration mark-remote-file-as-deleted report-an-exception)]
                 (should= nil (rondo-scheduling/get-state-of-payments test-service)))
-                (should= nil @deleted-remote-files)))
+                (should= nil @deleted-remote-files)
+                (should= 1 (count @reported-exceptions))))
+
 (run-specs)

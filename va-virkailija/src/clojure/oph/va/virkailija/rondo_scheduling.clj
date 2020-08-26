@@ -33,9 +33,9 @@
                            (log/info (format "Payment of response %s already paid. Ignoring and deleting remote file." filename))
                            (delete-remote-file! remote-service filename))
           "no-payment" (log/info (format "No corresponding payment found for response %s. Ignoring." filename))
-          :else (log/error (format "Error while processing file %s" filename) e)))
+          :else (report-exception remote-service (format "Error while processing file %s" filename) e)))
       (catch javax.xml.stream.XMLStreamException e
-        (log/error (format "Error while processing file %s" filename) e)))))
+        (report-exception remote-service (format "Error while processing file %s" filename) e)))))
 
 (defn fetch-feedback-from-rondo [remote-service]
   (log/debug "Running the fetch-feed-back-from rondo..")

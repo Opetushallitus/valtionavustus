@@ -78,7 +78,8 @@
     (do-sftp! :method :rm
               :file filename
               :path (:remote_path_from (:configuration service))
-              :config (:configuration service))))
+              :config (:configuration service)))
+  (report-exception [service msg exception] (log/error msg exception)))
 
 (defn create-service [config]
   (RondoFileService. config))

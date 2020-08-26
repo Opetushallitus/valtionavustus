@@ -7,4 +7,5 @@
   (get-local-path [service] "Get path of where to fetch files")
   (get-remote-file [service filename] "Fetch file from service to local")
   (get-local-file [service filename] "Get path of local file")
-  (delete-remote-file! [service filename] "Delete file from remote service"))
+  (delete-remote-file! [service filename] "Delete file from remote service")
+  (report-exception [service msg exception] "Report exception"))
