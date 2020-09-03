@@ -11,6 +11,7 @@ fi
 
 session="valtionavustus"
 
+tmux kill-session -t $session
 tmux start-server
 tmux new-session -d -s $session
 
