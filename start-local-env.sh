@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 
-command -v tmux > /dev/null 2>&1 || { echo >&2 "I require tmux but it's not installed. Aborting."; exit 1; }
-command -v nc > /dev/null 2>&1 || { echo >&2 "I require nc but it's not installed. Aborting."; exit 1; }
-command -v docker > /dev/null 2>&1 || { echo >&2 "I require docker but it's not installed. Aborting."; exit 1; }
+function require() {
+  cmd=$0
+  command -v ${cmd} > /dev/null 2>&1 || { echo >&2 "I require ${cmd} but it's not installed. Aborting."; exit 1; }
+}
+
+require tmux
+require nc
+require docker
+
 docker ps > /dev/null 2>&1 || { echo >&2 "Running 'docker ps' failed. Is docker daemon running? Aborting."; exit 1; }
 
 JAVA_VERSION="$(java -version 2>&1 >/dev/null | grep 'openjdk version' | awk '{print $3}' | sed 's/"//g' )"
