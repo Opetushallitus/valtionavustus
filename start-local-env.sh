@@ -2,6 +2,8 @@
 
 command -v tmux > /dev/null 2>&1 || { echo >&2 "I require tmux but it's not installed. Aborting."; exit 1; }
 command -v nc > /dev/null 2>&1 || { echo >&2 "I require nc but it's not installed. Aborting."; exit 1; }
+command -v docker > /dev/null 2>&1 || { echo >&2 "I require docker but it's not installed. Aborting."; exit 1; }
+docker ps > /dev/null 2>&1 || { echo >&2 "Running 'docker ps' failed. Is docker daemon running? Aborting."; exit 1; }
 
 JAVA_VERSION="$(java -version 2>&1 >/dev/null | grep 'openjdk version' | awk '{print $3}' | sed 's/"//g' )"
 if [[ "$JAVA_VERSION" != "1.8.0_"* ]]; then
