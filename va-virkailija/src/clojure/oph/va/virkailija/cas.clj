@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.cas
   (:require [oph.soresu.common.config :refer [config]]
-            [oph.va.virkailija.http :as http])
+            [oph.va.virkailija.http :as http]
+            [oph.common.caller-id :refer [caller-id]])
   (:import [org.http4s.client Client]
            [fi.vm.sade.utils.cas CasClient]
            [oph.va.virkailija.http BlazeClients CasClients JavaClient]))
@@ -29,7 +30,8 @@
                                           username
                                           password
                                           @cas-client
-                                          service-client)))
+                                          service-client
+                                          caller-id)))
 
 (defn validate-service-ticket [^String virkailija-login-url ^String cas-ticket]
   (-> @cas-client

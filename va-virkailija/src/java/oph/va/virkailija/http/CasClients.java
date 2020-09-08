@@ -6,25 +6,25 @@ import fi.vm.sade.utils.cas.CasParams;
 import org.http4s.client.Client;
 import scala.Some;
 
-import static oph.va.virkailija.http.Common.CLIENT_SUBSYSTEM_CODE;
-
 public class CasClients {
     public static Client newCasAuthenticatingClient(String serviceUrl,
                                                     String username,
                                                     String password,
                                                     CasClient casClient,
-                                                    Client serviceClient) {
-        return newCasAuthenticatingClient(CasParams.apply(serviceUrl, username, password), casClient, serviceClient);
+                                                    Client serviceClient,
+                                                    String callerId) {
+        return newCasAuthenticatingClient(CasParams.apply(serviceUrl, username, password), casClient, serviceClient, callerId);
     }
 
     public static Client newCasAuthenticatingClient(CasParams casParams,
                                                     CasClient casClient,
-                                                    Client serviceClient) {
+                                                    Client serviceClient,
+                                                    String callerId) {
         return CasAuthenticatingClient.apply(
                 casClient,
                 casParams,
                 serviceClient,
-                Some.apply(CLIENT_SUBSYSTEM_CODE),
+                callerId,
                 "JSESSIONID");
     }
 
