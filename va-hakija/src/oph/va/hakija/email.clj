@@ -27,9 +27,6 @@
                  :sv (email/load-template "email-templates/new-hakemus.plain.sv")}
    :hakemus-submitted {:fi (email/load-template "email-templates/hakemus-submitted.plain.fi")
                        :sv (email/load-template "email-templates/hakemus-submitted.plain.sv")}
-   :hakemus-submitted-refuse
-   {:fi (email/load-template "email-templates/hakemus-submitted-refuse.plain.fi")
-    :sv (email/load-template "email-templates/hakemus-submitted-refuse.plain.sv")}
    :hakemus-change-request-responded {:fi (email/load-template "email-templates/hakemus-change-request-responded.plain.fi")}
    :application-refused-presenter
    {:fi (email/load-template
