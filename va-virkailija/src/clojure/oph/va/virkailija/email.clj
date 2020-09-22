@@ -123,7 +123,8 @@
                           :refuse-url paatos-refuse-url
                           :modify-url paatos-modify-url
                           :register-number (:register_number hakemus)
-                          :project-name (:project_name hakemus)}
+                          :project-name (:project_name hakemus)
+                          :muutospaatosprosessi-enabled (config :muutospaatosprosessi-enabled)}
 
                           (partial render (get-in mail-templates [:paatos-refuse lang])))))
 
