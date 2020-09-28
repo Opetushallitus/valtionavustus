@@ -46,6 +46,7 @@
     "css-loader": "^3.5.1",
     "file-loader": "^0.11.2",
     "jest": "^26.4.2",
+    "jest-junit": "^11.1.0",
     "less": "^3.11.1",
     "less-loader": "^4.0.5",
     "mocha": "^7.1.1",
@@ -63,9 +64,7 @@
   },
   "private": false,
   "scripts": {
-    "puppeteer:test": "npm run test-util:build && mocha $MOCHA_ARGS test/**/*Spec.js",
-    "test-util:build": "tsc -p test/test-util-tsconfig.json",
-    "muutospaatosprosessi:test": "jest --config=test/muutospaatosprosessi/jest.config.js --verbose",
+    "puppeteer:test": "jest --config=test/jest.config.js --verbose",
     "common:test": "cd va-common && mocha --require web/test/babelhook $MOCHA_ARGS web/test/*Test.js",
     "common:test-watch": "cd va-common && mocha --watch --require web/test/babelhook $MOCHA_ARGS web/test/*Test.js",
     "common:snyk-protect": "cd va-common && snyk protect",
