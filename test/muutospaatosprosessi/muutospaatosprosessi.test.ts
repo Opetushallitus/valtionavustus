@@ -20,7 +20,7 @@ describe("dummy", () => {
     await browser.close()
   })
 
-  test("perkele", async () => {
+  test("dummy", async () => {
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
     expect(avustushakuID).toHaveLength(19)
   })
