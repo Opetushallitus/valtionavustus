@@ -25,3 +25,4 @@ servers/site.retry
 \#*
 .#*
 secret-dev.edn
+dist

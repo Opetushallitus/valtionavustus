@@ -58,6 +58,7 @@ npm-build-frontends: check-node
 
 .PHONY: npm-test
 npm-test: check-node
+	npm run puppeteer:test
 	npm run soresu-form:test
 	npm run common:test
 	npm run hakija:test

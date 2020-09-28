@@ -58,7 +58,6 @@ function initialize {
 }
 
 function run_tests {
-  npx mocha ${MOCHA_ARGS:-} "test/**/*Spec.js"
   make test
 }
 

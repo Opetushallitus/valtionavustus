@@ -1,23 +1,44 @@
 const assert = require("assert")
 const path = require("path")
-const {randomBytes} = require("crypto")
 const axios = require("axios")
 
 const xlsx = require("xlsx")
 
 const {
-  describeBrowser,
+  clickElement,
+  clearAndType,
+  copyEsimerkkihaku,
+  waitForSave,
+  mkAvustushakuName,
+  clickElementWithText,
+  randomString,
   navigate,
+  mkBrowser,
+  getFirstPage,
   navigateHakija,
   HAKIJA_URL,
-  VIRKAILIJA_URL
-} = require("./TestUtil.js")
+  VIRKAILIJA_URL,
+  createValidCopyOfEsimerkkihakuAndReturnTheNewId
+} = require("../dist/test/test-util.js")
 
 const dummyPdfPath = path.join(__dirname, 'dummy.pdf')
 
-describeBrowser("VaSpec", function() {
+describe("VaSpec", function() {
+  this.timeout(100_000)
+  let browser
+  let page
+
+  beforeEach(async () => {
+    browser = await mkBrowser()
+    page = await getFirstPage(browser)
+  })
+
+  afterEach(async () => {
+    await page.close()
+    await browser.close()
+  })
+
   it("should allow removing attachment from hakemus", async function() {
-    const {page} = this
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
 
     await publishAvustushaku(page, avustushakuID)
@@ -28,8 +49,6 @@ describeBrowser("VaSpec", function() {
   })
 
   it("should allow basic avustushaku flow and check each hakemus has valmistelija", async function() {
-    const {page} = this
-
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
 
     await publishAvustushaku(page, avustushakuID)
@@ -72,7 +91,6 @@ describeBrowser("VaSpec", function() {
   describe("Help texts", function() {
 
     it("Shown for loppuselvitys", async function() {
-      const {page} = this
       await navigate(page, "/admin/loppuselvitys/")
 
       const selector = '[data-test-id=loppuselvitys-ohje]'
@@ -81,7 +99,6 @@ describeBrowser("VaSpec", function() {
     })
 
     it("Shown for väliselvitys", async function() {
-      const {page} = this
       await navigate(page, "/admin/valiselvitys/")
 
       const selector = '[data-test-id=valiselvitys-ohje]'
@@ -90,7 +107,6 @@ describeBrowser("VaSpec", function() {
     })
 
     it("Shown for päätös", async function() {
-      const {page} = this
       await navigate(page, "/admin/decision/")
 
       const selector = '[data-test-id=paatos-ohje]'
@@ -101,7 +117,6 @@ describeBrowser("VaSpec", function() {
 
 
   it("shows tooltip text for loppuselvitys tab in the tab bar", async function() {
-    const {page} = this
     await navigate(page, "/admin/haku-editor/")
     await verifyTooltipText(
       page,
@@ -111,7 +126,6 @@ describeBrowser("VaSpec", function() {
   })
 
   it("shows tooltip texts for arviointi tab", async function(){
-    const {page} = this
 
     const avustushakuID = await createValidCopyOfLukioEsimerkkihakuWithValintaperusteetAndReturnTheNewId(page)
     await publishAvustushaku(page, avustushakuID)
@@ -204,7 +218,6 @@ describeBrowser("VaSpec", function() {
   })
 
   it("shows tooltip texts for päätös tab", async function() {
-    const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
 
@@ -294,7 +307,6 @@ describeBrowser("VaSpec", function() {
   })
 
   it("shows the same updated date on the Päätös tab as on the Väliselvitys and Loppuselvitys tabs", async function() {
-    const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
 
@@ -315,14 +327,13 @@ describeBrowser("VaSpec", function() {
   })
 
   it("updates only the update date on Päätös tab when päätös is modified", async function() {
-    const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
     await clickElementWithText(page, "span", "Päätös")
 
     await page.waitFor(70000)
     await clearAndType(page, "#decision\\.taustaa\\.fi", "Burger Time")
-    await waitForSave(page, avustushakuID)
+    await waitForSave(page)
 
     const paatosUpdatedAt = textContent(page, "#paatosUpdatedAt")
 
@@ -340,7 +351,6 @@ describeBrowser("VaSpec", function() {
   })
 
   it("supports fields that accept only decimals", async function() {
-    const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
     const { fieldId, fieldLabel } = await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, avustushakuID, "decimalField")
@@ -355,7 +365,6 @@ describeBrowser("VaSpec", function() {
   })
 
   it("supports fields that accept only whole numbers", async function() {
-    const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
     const { fieldId, fieldLabel } = await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, avustushakuID, "integerField")
@@ -370,7 +379,6 @@ describeBrowser("VaSpec", function() {
   })
 
   it("supports editing and saving the values of the fields", async function() {
-    const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
     await clickElementWithText(page, "span", "Hakulomake")
@@ -381,7 +389,6 @@ describeBrowser("VaSpec", function() {
 
 
   it("produces väliselvitys sheet in excel export", async function() {
-    const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
     await publishAvustushaku(page, avustushakuID)
@@ -442,7 +449,6 @@ describeBrowser("VaSpec", function() {
   })
 
   it("should allow user to add koodistokenttä to form and save it", async function() {
-    const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
     await navigate(page, `/admin/form-editor/?avustushaku=${avustushakuID}`)
@@ -460,7 +466,6 @@ describeBrowser("VaSpec", function() {
   })
 
   it("shows the contents of the project-nutshell -field of a hakemus in external api as 'nutshell'", async function() {
-    const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
     const { fieldId, fieldLabel } = await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "project-nutshell", "textField")
@@ -477,7 +482,7 @@ describeBrowser("VaSpec", function() {
     await acceptHakemus(page, avustushakuID, hakemusID, async () => {
       await clickElementWithTestId(page, 'tab-seuranta')
       await clickElementWithTestId(page, 'set-allow-visibility-in-external-system-true')
-      await waitForSave(page, avustushakuID)
+      await waitForSave(page)
     })
 
     const expectedResponse = await expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID, hakemusID, randomValueForProjectNutshell)
@@ -486,7 +491,6 @@ describeBrowser("VaSpec", function() {
   })
 
   it("shows the contents of the project-goals -field of a hakemus in external api as 'nutshell'", async function() {
-    const {page} = this
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
     const { fieldId, fieldLabel } = await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "project-goals", "textField")
@@ -503,7 +507,7 @@ describeBrowser("VaSpec", function() {
     await acceptHakemus(page, avustushakuID, hakemusID, async () => {
       await clickElementWithTestId(page, 'tab-seuranta')
       await clickElementWithTestId(page, 'set-allow-visibility-in-external-system-true')
-      await waitForSave(page, avustushakuID)
+      await waitForSave(page)
     })
 
     const expectedResponse = await expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID, hakemusID, randomValueForProjectNutshell)
@@ -512,7 +516,6 @@ describeBrowser("VaSpec", function() {
   })
 
   it("creates a new koodi", async function() {
-    const { page } = this
 
     await navigate(page, '/admin-ui/va-code-values/')
     const code = await createUniqueCode(page)
@@ -522,7 +525,6 @@ describeBrowser("VaSpec", function() {
   })
 
   it("sets a koodi hidden and visible", async function() {
-    const { page } = this
 
     await navigate(page, '/admin-ui/va-code-values/')
     const code = await createUniqueCode(page)
@@ -541,7 +543,6 @@ describeBrowser("VaSpec", function() {
   })
 
   it('hides a koodi from the dropdowns in haku editor', async function() {
-    const { page } = this
 
     // create code
     await navigate(page, '/admin-ui/va-code-values/')
@@ -649,14 +650,14 @@ async function actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushaku
 async function resolveAvustushaku(page, avustushakuID) {
   await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
   await clickElement(page, "label[for='set-status-resolved']")
-  await waitForSave(page, avustushakuID)
+  await waitForSave(page)
 }
 
 async function closeAvustushakuByChangingEndDateToPast(page, avustushakuID) {
   await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
   const previousYear = (new Date()).getFullYear() - 1
   await clearAndType(page, "#hakuaika-end", `1.1.${previousYear} 0.00`)
-  await waitForSave(page, avustushakuID)
+  await waitForSave(page)
 }
 
 async function fillAndSendVäliselvityspyyntö(page, avustushakuID, väliselvitysKey) {
@@ -770,7 +771,7 @@ function fieldJson(type, id, label) {
 
 async function publishAvustushaku(page, avustushakuID) {
   await clickElement(page, "label[for='set-status-published']")
-  await waitForSave(page, avustushakuID)
+  await waitForSave(page)
 }
 
 async function fillAndSendHakemus(page, avustushakuID, beforeSubmitFn) {
@@ -878,27 +879,7 @@ async function createValidCopyOfLukioEsimerkkihakuWithValintaperusteetAndReturnT
 
   const nextYear = (new Date()).getFullYear() + 1
   await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
-  await waitForSave(page, avustushakuID)
-
-  return parseInt(avustushakuID)
-}
-
-async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page) {
-  const avustushakuName = mkAvustushakuName()
-  console.log(`Avustushaku name for test: ${avustushakuName}`)
-
-  await copyEsimerkkihaku(page)
-
-  const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku"))
-  console.log(`Avustushaku ID: ${avustushakuID}`)
-
-  await clearAndType(page, "#register-number", "230/2015")
-  await clearAndType(page, "#haku-name-fi", avustushakuName)
-  await clearAndType(page, "#hakuaika-start", "1.1.1970 0.00")
-
-  const nextYear = (new Date()).getFullYear() + 1
-  await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
-  await waitForSave(page, avustushakuID)
+  await waitForSave(page)
 
   return parseInt(avustushakuID)
 }
@@ -953,18 +934,6 @@ async function waitForArvioSave(page, avustushakuID, hakemusID) {
   await page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`)
 }
 
-async function waitForSave(page, avustushakuID) {
-  await page.waitForFunction(() => document.querySelector("#form-controls .status .info").textContent === "Kaikki tiedot tallennettu")
-}
-
-async function clearAndType(page, selector, text) {
-  const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
-  await element.click()
-  await page.evaluate(e => e.value = "", element)
-  await page.keyboard.type(text)
-  await page.evaluate(e => e.blur(), element)
-}
-
 async function clearAndSet(page, selector, text) {
   const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
   await page.evaluate((e, t) => e.value = t, element, text)
@@ -978,39 +947,8 @@ async function clickElementWithTestId(page, testId) {
   await element.click()
 }
 
-async function clickElementWithText(page, elementType, text) {
-  const element = await waitForElementWithText(page, elementType, text)
-  assert.ok(element, `Could not find ${elementType} element with text '${text}'`)
-  await element.click()
-}
-
-async function waitForElementWithText(page, elementType, text) {
-  return await page.waitForXPath(`//${elementType}[contains(., '${text}')]`, {visible: true})
-}
-
-async function clickElement(page, selector) {
-  const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
-  await element.click()
-}
-
 async function textContent(page, selector) {
   const element = await page.waitForSelector(selector, {visible: true})
   return await page.evaluate(_ => _.textContent, element)
 }
 
-function mkAvustushakuName() {
-  return "Testiavustushaku " + randomString()
-}
-
-async function copyEsimerkkihaku(page) {
-  // Copy esimerkkihaku
-  await navigate(page, "/admin/haku-editor/")
-  await clickElement(page, ".haku-filter-remove")
-  await clickElementWithText(page, "td", "Yleisavustus - esimerkkihaku")
-  await clickElementWithText(page, "a", "Kopioi uuden pohjaksi")
-  await page.waitFor(2000) // :|
-}
-
-function randomString() {
-  return randomBytes(8).toString("hex")
-}

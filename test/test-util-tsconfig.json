@@ -1,0 +1,10 @@
+{
+  "extends": "../common-tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../dist",
+    "sourceMap": true
+  },
+  "include": [
+    "./test-util.ts"
+  ]
+}
