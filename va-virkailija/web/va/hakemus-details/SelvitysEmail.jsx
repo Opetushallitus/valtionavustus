@@ -58,6 +58,7 @@ const makeState = ({hakemus, selvitysType, selvitysHakemus, avustushaku, userInf
     : []
 
   return {
+    currentSelvitysHakemusId: selvitysHakemus.id,
     message: translator.translate(selvitysType + "-default-message", lang, "", {
       "selvitys-type-lowercase": selvitysTypeLowercase,
       "selvitys-type-capitalized": selvitysTypeCapitalized,
@@ -96,9 +97,11 @@ export default class SelvitysEmail extends React.Component {
     this.state = makeState(props)
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.selvitysHakemus.id !== nextProps.selvitysHakemus.id) {
-      this.setState(makeState(nextProps))
+  static getDerivedStateFromProps(props, state) {
+    if (props.selvitysHakemus.id !== state.currentSelvitysHakemusId) {
+      return makeState(props)
+    } else {
+      return null
     }
   }
 

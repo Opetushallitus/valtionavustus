@@ -102,12 +102,21 @@ class ChangeLog extends React.Component{
 class ChangeLogRow extends React.Component{
   constructor(props){
     super(props)
-    this.state = {open:false}
+    this.state = ChangeLogRow.initialState(props)
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.hakemus.id !== nextProps.hakemus.id) {
-      this.setState({open:false})
+  static getDerivedStateFromProps(props, state) {
+    if (props.hakemus.id !== state.currentHakemusId) {
+      return ChangeLogRow.initialState(props)
+    } else {
+      return null
+    }
+  }
+
+  static initialState(props) {
+    return {
+      currentHakemusId: props.hakemus.id,
+      open:false
     }
   }
 
@@ -195,12 +204,21 @@ class ChangeRequest extends React.Component {
 
   constructor(props){
     super(props)
-    this.state = {preview: false}
+    this.state = ChangeRequest.initialState(props)
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.hakemus.id !== nextProps.hakemus.id) {
-      this.setState({preview: false})
+  static getDerivedStateFromProps(props, state) {
+    if (props.hakemus.id !== state.currentHakemusuId) {
+      return ChangeRequest.initialState(props)
+    } else {
+      return null
+    }
+  }
+
+  static initialState(props) {
+    return {
+      currentHakemusId: props.hakemus.id,
+      preview: false
     }
   }
 
@@ -267,16 +285,31 @@ class ChangeRequest extends React.Component {
 class SummaryComment extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {summaryComment: getSummaryComment(this.props.hakemus)}
+    this.state = SummaryComment.initialState(props)
     this.summaryCommentBus = new Bacon.Bus()
     this.summaryCommentBus.debounce(1000).onValue(([hakemus, newSummaryComment]) => this.props.controller.setHakemusSummaryComment(hakemus, newSummaryComment))
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.hakemus.id !== nextProps.hakemus.id) {
-      this.setState({summaryComment: getSummaryComment(nextProps.hakemus)})
+  static getDerivedStateFromProps(props, state) {
+    if (props.hakemus.id !== state.currentHakemusId) {
+      return SummaryComment.initialState(props)
+    } else {
+      return null
     }
   }
+
+  static initialState(props) {
+    return {
+      currentHakemusId: props.hakemus.id,
+      summaryComment: SummaryComment.getSummaryComment(props.hakemus)
+    }
+  }
+
+  static getSummaryComment(hakemus) {
+    const arvio = hakemus.arvio ? hakemus.arvio : {}
+    return arvio["summary-comment"] ||  ""
+  }
+
 
   summaryCommentUpdated(newSummaryComment) {
     this.setState({summaryComment: newSummaryComment})
@@ -294,9 +327,4 @@ class SummaryComment extends React.Component {
              onChange={evt => this.summaryCommentUpdated(evt.target.value) } maxLength="128" />
     </div>
   }
-}
-
-function getSummaryComment(hakemus) {
-  const arvio = hakemus.arvio ? hakemus.arvio : {}
-  return arvio["summary-comment"] ||  ""
 }

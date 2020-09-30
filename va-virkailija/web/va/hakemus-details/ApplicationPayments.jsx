@@ -6,23 +6,31 @@ export default class ApplicationPayments extends Component {
     this.onAddPayment = this.onAddPayment.bind(this)
     this.onPaymentSumChange = this.onPaymentSumChange.bind(this)
     this.renderPayment = this.renderPayment.bind(this)
-    this.paidToDate = this.paidToDate.bind(this)
-    this.calculateNextPaymentSum = this.calculateNextPaymentSum.bind(this)
-    this.state = {newPaymentSum: this.calculateNextPaymentSum()}
+    this.state = ApplicationPayments.initialState(props)
   }
 
-  componentWillReceiveProps() {
-    this.setState({newPaymentSum: this.calculateNextPaymentSum()})
+  static getDerivedStateFromProps(props, state) {
+    if (props.hakemus.id !== state.currentHakemusId) {
+      return ApplicationPayments.initialState(props)
+    } else {
+      return null
+    }
   }
 
-  calculateNextPaymentSum() {
+  static initialState(props) {
+    return {
+      newPaymentSum: ApplicationPayments.calculateNextPaymentSum(props)
+    }
+  }
+
+  static calculateNextPaymentSum(props) {
     const value = Math.floor(
-      this.calculateDefaultValue(
-        this.props.grant, this.props.application, this.props.payments))
+      ApplicationPayments.calculateDefaultValue(
+        props.grant, props.application, props.payments))
     return isFinite(value) ? value : 0
   }
 
-  calculateDefaultValue(grant, application, payments) {
+  static calculateDefaultValue(grant, application, payments) {
     if ((!payments || payments.length === 0) &&
         (grant.content["payment-size-limit"] === "no-limit" ||
          application.arvio["budget-granted"] >=
@@ -30,11 +38,11 @@ export default class ApplicationPayments extends Component {
       return application.arvio["budget-granted"] *
         grant.content["payment-min-first-batch"] / 100.0
     } else {
-      return application.arvio["budget-granted"] - this.paidToDate(payments)
+      return application.arvio["budget-granted"] - ApplicationPayments.paidToDate(payments)
     }
   }
 
-  paidToDate(payments) {
+  static paidToDate(payments) {
     return payments ? payments.reduce((p, n) => p + n["payment-sum"], 0) : 0
   }
 
@@ -88,7 +96,7 @@ export default class ApplicationPayments extends Component {
     const renderPaymentPercentage =
           this.createPaymentPercentageRenderer(
             application.arvio["budget-granted"])
-    const paidToDate = this.paidToDate(payments)
+    const paidToDate = ApplicationPayments.paidToDate(payments)
     const grantLeft = application.arvio["budget-granted"] - paidToDate
     const addEnabled = !readonly && grantLeft > 0 && index === payments.length
     const newPaymentSum = addEnabled ? this.state.newPaymentSum : 0

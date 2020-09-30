@@ -3,18 +3,26 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import HelpTooltip from '../HelpTooltip.jsx'
 
 
-const initialState = {open:false,comment:''}
-
 export default class EditStatus extends Component {
 
   constructor(props){
     super(props)
-    this.state = initialState
+    this.state = EditStatus.initialState(props)
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.hakemus.id !== nextProps.hakemus.id) {
-      this.setState(initialState)
+  static getDerivedStateFromProps(props, state) {
+    if (props.hakemus.id !== state.currentAvustushakuId) {
+      return EditStatus.initialState(props)
+    } else {
+      return null
+    }
+  }
+
+  static initialState(props) {
+    return {
+      currentAvustushakuId: props.avustushaku.id,
+      open: false,
+      comment: ''
     }
   }
 

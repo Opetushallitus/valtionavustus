@@ -7,9 +7,24 @@ import DateUtil from 'soresu-form/web/DateUtil'
 import FormEditor from './FormEditor.jsx'
 
 export default class SelvitysFormEditor extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    if (this.props.avustushaku.id !== nextProps.avustushaku.id) {
-      this.setState({count:undefined, sending:false})
+  constructor(props) {
+    super(props)
+    this.state = SelvitysFormEditor.initialState(props)
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.avustushaku.id !== state.currentAvustushakuId) {
+      return SelvitysFormEditor.initialState(props)
+    } else {
+      return null
+    }
+  }
+
+  static initialState(props) {
+    return {
+      currentAvustushakuId: props.avustushaku.id,
+      count: undefined,
+      sending: false
     }
   }
 

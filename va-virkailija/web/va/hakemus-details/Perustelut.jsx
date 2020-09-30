@@ -9,7 +9,7 @@ export default class Perustelut extends React.Component {
     super(props)
     this.reasonBus = new Bacon.Bus()
     this.reasonBus.debounce(1000).onValue(([hakemus, newReason]) => { this.props.controller.setArvioPerustelut(hakemus, newReason) })
-    this.state = initialState(props)
+    this.state = Perustelut.initialState(props)
   }
 
   reasonUpdated(newReason) {
@@ -17,10 +17,25 @@ export default class Perustelut extends React.Component {
     this.reasonBus.push([this.props.hakemus, newReason])
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.hakemus.id !== nextProps.hakemus.id) {
-      this.setState(initialState(nextProps))
+  static getDerivedStateFromProps(props, state) {
+    if (props.hakemus.id !== state.currentHakemusId) {
+      return Perustelut.initialState(props)
+    } else {
+      return null
     }
+  }
+
+  static initialState(props){
+    const perustelut = Perustelut.getPerustelut(props)
+    return {
+      currentHakemusId: props.hakemus.id,
+      perustelut: perustelut,
+      showReasons: perustelut.length === 0
+    }
+  }
+
+  static getPerustelut(props) {
+    return _.get(props.hakemus, "arvio.perustelut") || ""
   }
 
   render() {
@@ -33,7 +48,7 @@ export default class Perustelut extends React.Component {
     const controller = this.props.controller
     const helpTexts = this.props.helpTexts
     const addReason = (reason) => {
-      const currentPerustelut = getPerustelut(this.props)
+      const currentPerustelut = Perustelut.getPerustelut(this.props)
       const newPerustelut = currentPerustelut.length === 0 ?
             reason : currentPerustelut + " " + reason
       controller.setArvioPerustelut(hakemus, newPerustelut)
@@ -73,13 +88,4 @@ export default class Perustelut extends React.Component {
       </div>
     )
   }
-}
-
-function initialState(props){
-  const perustelut = getPerustelut(props)
-  return {perustelut: perustelut, showReasons:perustelut.length === 0}
-}
-
-function getPerustelut(props) {
-  return _.get(props.hakemus, "arvio.perustelut") || ""
 }

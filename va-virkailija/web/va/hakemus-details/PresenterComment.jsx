@@ -7,14 +7,24 @@ export default class PresenterComment extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = initialState(props)
+    this.state = PresenterComment.initialState(props)
     this.changeBus = new Bacon.Bus()
     this.changeBus.debounce(1000).onValue(([hakemus, value]) => { this.props.controller.setPresenterComment(hakemus, value) })
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.hakemus.id !== nextProps.hakemus.id) {
-      this.setState(initialState(nextProps))
+  static getDerivedStateFromProps(props, state) {
+    if (props.hakemus.id !== state.currentHakemusId) {
+      return PresenterComment.initialState(props)
+    } else {
+      return null
+    }
+  }
+
+  static initialState(props) {
+    const value = _.get(props.hakemus, "arvio.presentercomment") || ""
+    return {
+      currentHakemusId: props.hakemus.id,
+      value: value
     }
   }
 
@@ -31,10 +41,4 @@ export default class PresenterComment extends React.Component {
       </div>
     )
   }
-}
-
-
-function initialState(props){
-  const value = _.get(props.hakemus, "arvio.presentercomment") || ""
-  return {value: value}
 }

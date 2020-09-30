@@ -4,15 +4,29 @@ import React from 'react'
 export default class ShouldPayComments extends React.Component {
   constructor(props){
     super(props)
-    this.state={shouldPayComments: getShouldPayComments(this.props.hakemus)}
+    this.state= ShouldPayComments.initialState(props)
     this.shouldPayCommentsBus = new Bacon.Bus()
     this.shouldPayCommentsBus.debounce(1000).onValue(([hakemus, newshouldPayComment]) => this.props.controller.setHakemusShouldPayComments(hakemus, newshouldPayComment))
   }
 
- componentWillReceiveProps(nextProps) {
-    if (this.props.hakemus.id !== nextProps.hakemus.id) {
-      this.setState({shouldPayComments: getShouldPayComments(nextProps.hakemus)})
+  static getDerivedStateFromProps(props, state) {
+    if (props.hakemus.id !== state.currentHakemusId) {
+      return ShouldPayComments.initialState(props)
+    } else {
+      return null
     }
+  }
+
+  static initialState(props) {
+    return {
+      currentHakemusId: props.hakemus.id,
+      shouldPayComments: ShouldPayComments.getShouldPayComments(props.hakemus)
+    }
+  }
+
+  static getShouldPayComments(hakemus) {
+    const arvio = hakemus.arvio || {}
+    return arvio["should-pay-comments"]
   }
 
   commentsUpdated(newshouldPayComment){
@@ -30,9 +44,4 @@ export default class ShouldPayComments extends React.Component {
 )
 }
 
-}
-
-function getShouldPayComments(hakemus) {
-  const arvio = hakemus.arvio || {}
-  return arvio["should-pay-comments"]
 }
