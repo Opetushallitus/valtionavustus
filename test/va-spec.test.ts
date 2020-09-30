@@ -4,6 +4,7 @@ import {
   createValidCopyOfEsimerkkihakuAndReturnTheNewId,
   mkBrowser,
   getFirstPage,
+  ratkaiseAvustushaku,
   publishAvustushaku,
   fillAndSendHakemus,
   acceptHakemus,
@@ -20,6 +21,7 @@ import {
   clearAndType,
   waitForArvioSave,
   fillAndSendHakemusAndReturnHakemusId,
+  getEmails,
   randomString,
   expectToBeDefined,
   resolveAvustushaku,
@@ -44,9 +46,8 @@ import {
   clickFormSaveAndWait,
   addFieldToFormAndReturnElementIdAndLabel
 } from "./test-util"
-
 jest.setTimeout(100_000)
-describe("dummy", () => {
+describe("Puppeteer tests", () => {
   let browser: Browser
   let page: Page
 
@@ -92,10 +93,8 @@ describe("dummy", () => {
 
     await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
     await clearAndType(page, "#budget-edit-project-budget .amount-column input", "100000")
-
-    await Promise.all([
+    clickElement(page, "#arviointi-tab label[for='set-arvio-status-accepted']")
     waitForArvioSave(page, avustushakuID, parseInt(hakemusID)),
-    clickElement(page, "#arviointi-tab label[for='set-arvio-status-accepted']")])
 
     await resolveAvustushaku(page, avustushakuID)
 
@@ -412,37 +411,7 @@ describe("dummy", () => {
 
 
   it("produces väliselvitys sheet in excel export", async function() {
-
-    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
-    await publishAvustushaku(page)
-    await fillAndSendHakemus(page, avustushakuID)
-
-    await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
-
-    // Accept the hakemus
-    await navigate(page, `/avustushaku/${avustushakuID}/`)
-    await Promise.all([
-      page.waitForNavigation(),
-      clickElementWithText(page, "td", "Akaan kaupunki"),
-    ])
-
-    const hakemusID = await page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1])
-    expectToBeDefined(hakemusID)
-    console.log("Hakemus ID:", hakemusID)
-
-    await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
-    await clearAndType(page, "#budget-edit-project-budget .amount-column input", "100000")
-    await clickElement(page, "#arviointi-tab label[for='set-arvio-status-accepted']")
-    await waitForArvioSave(page, avustushakuID, parseInt(hakemusID))
-
-    await resolveAvustushaku(page, avustushakuID)
-
-    await selectValmistelijaForHakemus(page, avustushakuID, hakemusID, "_ valtionavustus")
-
-    await sendPäätös(page, avustushakuID)
-    const tapahtumaloki = await page.waitForSelector(".tapahtumaloki")
-    const logEntryCount = await tapahtumaloki.evaluate(e => e.querySelectorAll(".entry").length)
-    expect(logEntryCount).toEqual(1)
+    const avustushakuID = await ratkaiseAvustushaku(page)
 
     await verifyTooltipText(
       page,
@@ -588,5 +557,23 @@ describe("dummy", () => {
     await navigate(page, '/admin/haku-editor/')
     await clearAndType(page, '[data-test-id=code-value-dropdown__operational-unit] > div', `${code}`)
     await page.waitForSelector('div.Select-noresults')
+  })
+
+  describe("Muutospäätösprosessi", () => {
+    it("Completing avustushaku should send an email with link to muutospäätösprosessi", async () => {
+      const avustushakuID = 20
+
+      const emails = await getEmails(avustushakuID)
+      emails.forEach(email => {
+        expect(email["avustushaku-id"]).toEqual(avustushakuID)
+        expect(email.formatted).toMatch(new RegExp(`[\\s\\S]*
+Allaolevasta linkistä voitte tehdä seuraavat muutokset:
+- Päivittää yhteyshenkilön tiedot
+- Hakea pidennystä avustuksen käyttöaikaan
+- Hakea muutosta hankkeen talouden käyttösuunnitelmaan, sisältöön tai toteutustapaan
+https?://.*/avustushaku/${avustushakuID}/nayta.*
+[\\s\\S]*`))
+      }) 
+    })
   })
 })

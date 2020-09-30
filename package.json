@@ -29,11 +29,13 @@
     "route-parser": "^0.0.4",
     "seamless-immutable": "^2.4.2",
     "snyk": "^1.305.1",
-    "speakingurl": "7.0.0"
+    "speakingurl": "7.0.0",
+    "yup": "^0.29.3"
   },
   "devDependencies": {
     "@types/jest": "^26.0.14",
     "@types/puppeteer": "^3.0.2",
+    "@types/yup": "^0.29.7",
     "ajv": "^5.2.2",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.1",

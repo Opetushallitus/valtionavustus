@@ -54,7 +54,8 @@
              (tapahtumaloki/create-paatoksen-lahetys-entry
                avustushaku-id hakemus-id identity batch-id emails true)
 
-             (catch Exception _
+             (catch Exception e
+               (log/error e)
                (tapahtumaloki/create-paatoksen-lahetys-entry
                  avustushaku-id hakemus-id identity batch-id emails false)))
 
@@ -81,7 +82,8 @@
              (tapahtumaloki/create-paatoksen-lahetys-entry
                avustushaku-id hakemus-id identity batch-id emails true)
 
-             (catch Exception _
+             (catch Exception e
+               (log/error e)
                (tapahtumaloki/create-paatoksen-lahetys-entry
                  avustushaku-id hakemus-id identity batch-id emails false)))
 
@@ -107,7 +109,8 @@
              (tapahtumaloki/create-paatoksen-lahetys-entry
                avustushaku-id hakemus-id identity batch-id emails true)
 
-             (catch Exception _
+             (catch Exception e
+               (log/error e)
                (tapahtumaloki/create-paatoksen-lahetys-entry
                  avustushaku-id hakemus-id identity batch-id emails false)))
 

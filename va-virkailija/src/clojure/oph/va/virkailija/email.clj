@@ -1,10 +1,13 @@
 (ns oph.va.virkailija.email
   (:require [clojure.core.async :refer [<! >!! go chan]]
+            [oph.soresu.common.db :refer [exec get-datasource]]
+            [clojure.java.jdbc :as jdbc]
             [oph.common.email :as email]
             [oph.soresu.common.config :refer [config]]
             [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
-            [clostache.parser :refer [render]]))
+            [clostache.parser :refer [render]])
+  (:use [clojure.java.io]))
 
 (def mail-titles
   {:change-request {:fi "Täydennyspyyntö avustushakemukseesi"
@@ -98,6 +101,14 @@
 
                            (partial render (get-in mail-templates [:paatos lang])))))
 
+(defn store-email [avustushaku-id formatted]
+(log/info (str "Storing email for avustushaku with id: " avustushaku-id))
+  (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
+        (jdbc/execute!
+               connection
+                    ["INSERT INTO emails (avustushaku_id, formatted) VALUES (?, ?)" avustushaku-id, formatted]))
+  (log/info (str "Succesfully stored email for avustushaku with id: " avustushaku-id)))
+
 (defn send-paatos-refuse! [to avustushaku hakemus reply-to token]
   (let [lang-str (:language hakemus)
         lang (keyword lang-str)
@@ -107,26 +118,29 @@
         paatos-modify-url
         (email/modify-url (:id avustushaku) (:user_key hakemus) lang token)
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
-        mail-subject (get-in mail-titles [:paatos lang])]
+        mail-subject (get-in mail-titles [:paatos lang])
+        msg {
+             :type :paatos-refuse
+             :lang lang
+             :from (-> email/smtp-config :from lang)
+             :reply-to reply-to
+             :sender (-> email/smtp-config :sender)
+             :subject mail-subject
+             :avustushaku-name avustushaku-name
+             :to to
+             :url url
+             :refuse-url paatos-refuse-url
+             :modify-url paatos-modify-url
+             :register-number (:register_number hakemus)
+             :project-name (:project_name hakemus)
+             :muutospaatosprosessi-enabled (config :muutospaatosprosessi-enabled)}
+        format-plaintext-message (partial render (get-in mail-templates [:paatos-refuse lang]))
+        ]
     (log/info "Sending decision email with refuse link")
     (log/info "Urls would be: " url "\n" paatos-refuse-url)
-    (email/try-send-msg-once {
-                          :type :paatos-refuse
-                          :lang lang
-                          :from (-> email/smtp-config :from lang)
-                          :reply-to reply-to
-                          :sender (-> email/smtp-config :sender)
-                          :subject mail-subject
-                          :avustushaku-name avustushaku-name
-                          :to to
-                          :url url
-                          :refuse-url paatos-refuse-url
-                          :modify-url paatos-modify-url
-                          :register-number (:register_number hakemus)
-                          :project-name (:project_name hakemus)
-                          :muutospaatosprosessi-enabled (config :muutospaatosprosessi-enabled)}
-
-                          (partial render (get-in mail-templates [:paatos-refuse lang])))))
+    (email/try-send-msg-once msg format-plaintext-message)
+    (store-email (:id avustushaku) (format-plaintext-message msg))
+    ))
 
 
 (defn send-selvitys! [to hakemus mail-subject mail-message]

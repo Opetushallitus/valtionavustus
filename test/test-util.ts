@@ -1,5 +1,6 @@
 import * as xlsx from"xlsx"
 import * as path from "path"
+import * as yup from "yup"
 import axios from "axios"
 import { launch, Browser, Page } from "puppeteer"
 import * as assert from "assert"
@@ -15,6 +16,23 @@ export const VIRKAILIJA_URL = `http://${VIRKAILIJA_HOSTNAME}:${VIRKAILIJA_PORT}`
 const HAKIJA_URL = `http://${HAKIJA_HOSTNAME}:${HAKIJA_PORT}`
 
 export const dummyPdfPath = path.join(__dirname, 'dummy.pdf')
+
+interface Email {
+  id: number
+  "avustushaku-id": number
+  timestamp: Date
+  formatted: string
+}
+const emailSchema = yup.array().of(yup.object().shape<Email>({
+  "id": yup.number().required(),
+  "avustushaku-id": yup.number().required(),
+  "timestamp": yup.date().required(),
+  "formatted": yup.string().required()
+}).required()).required()
+
+export const getEmails = (avustushakuID: number) =>
+  axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/email`)
+    .then(r => emailSchema.validate(r.data))
 
 export function mkBrowser() {
   const headless = process.env['HEADLESS'] === 'true'
@@ -502,4 +520,39 @@ export async function clickCodeVisibilityButton(page: Page, code: number, visibi
   const selector = `tr[data-test-id='${code}'] [data-test-id=${buttonId}]`
   const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
   await element.click()
+}
+
+export async function ratkaiseAvustushaku(page: Page) {
+  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+  await publishAvustushaku(page)
+  await fillAndSendHakemus(page, avustushakuID)
+
+  await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
+
+  // Accept the hakemus
+  await navigate(page, `/avustushaku/${avustushakuID}/`)
+  await Promise.all([
+    page.waitForNavigation(),
+    clickElementWithText(page, "td", "Akaan kaupunki"),
+  ])
+
+  const hakemusID = await page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1])
+
+  expectToBeDefined(hakemusID)
+  console.log("Hakemus ID:", hakemusID)
+
+  await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
+  await clearAndType(page, "#budget-edit-project-budget .amount-column input", "100000")
+  await clickElement(page, "#arviointi-tab label[for='set-arvio-status-accepted']")
+  await waitForArvioSave(page, avustushakuID, parseInt(hakemusID))
+
+  await resolveAvustushaku(page, avustushakuID)
+
+  await selectValmistelijaForHakemus(page, avustushakuID, hakemusID, "_ valtionavustus")
+
+  await sendPäätös(page, avustushakuID)
+  const tapahtumaloki = await page.waitForSelector(".tapahtumaloki")
+  const logEntryCount = await tapahtumaloki.evaluate(e => e.querySelectorAll(".entry").length)
+  expect(logEntryCount).toEqual(1)
+  return avustushakuID
 }

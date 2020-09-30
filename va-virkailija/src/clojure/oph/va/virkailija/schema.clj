@@ -8,6 +8,17 @@
   "Status from the opetushallitus point of view"
   (s/enum "unhandled", "processing", "plausible", "rejected", "accepted"))
 
+(s/defschema DbEmail
+  "Email stored in database"
+  {:avustushaku-id s/Num
+   :timestamp s/Inst
+   :id s/Num
+   :formatted s/Str})
+
+(s/defschema DbEmails
+  "Emails stored in database"
+   [DbEmail])
+
 (s/defschema PersonScoreAverage
   "Averga score by person"
   {:person-oid s/Str

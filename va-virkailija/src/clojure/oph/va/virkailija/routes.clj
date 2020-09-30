@@ -1,9 +1,13 @@
 (ns oph.va.virkailija.routes
   (:use [clojure.tools.trace :only [trace]]
         [clojure.pprint :only [pprint]])
+  (:use [clojure.java.io])
+  (:use [clojure.set :only [rename-keys]])
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
+            [oph.soresu.common.db :refer [exec get-datasource]]
+            [clojure.java.jdbc :as jdbc]
             [compojure.core :as compojure]
             [compojure.route :as compojure-route]
             [compojure.api.sweet :as compojure-api]
@@ -209,6 +213,23 @@
                        (if-let [response (hakudata/get-combined-avustushaku-data-with-privileges avustushaku-id identity)]
                          (ok response)
                          (not-found)))))
+
+(defn get-emails [avustushaku-id]
+  (log/info (str "Fetching emails for avustushaku with id: " avustushaku-id))
+  (let [emails (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
+                 (jdbc/query
+                   connection
+                   ["SELECT * from emails WHERE avustushaku_id = ?" avustushaku-id]))]
+    (log/info (str "Succesfully fetched email for avustushaku with id: " avustushaku-id))
+    (log/info emails)
+    (map (fn [email] (rename-keys email {:avustushaku_id :avustushaku-id})) emails)))
+
+(defn- get-avustushaku-email []
+  (compojure-api/GET "/:avustushaku-id/email" request
+                     :path-params [avustushaku-id :- Long]
+                     :return virkailija-schema/DbEmails
+                     :summary "Return emails related to the avustushaku"
+                     (ok (get-emails avustushaku-id))))
 
 (defn- get-selvitys []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/selvitys" request
@@ -545,6 +566,7 @@
                          (put-avustushaku)
                          (post-avustushaku)
                          (get-avustushaku)
+                         (when (:email-api-enabled? config) (get-avustushaku-email))
                          (get-selvitys)
                          (send-selvitys)
                          (send-selvitys-email)
@@ -637,7 +659,6 @@
                                             :return s/Any
                                             :summary "Get help texts"
                                             (ok (help-texts/find-all))))
-
 
 (defn- query-string-for-login [original-query-params params-to-add keys-to-remove]
   (let [payload-params (apply dissoc original-query-params keys-to-remove)
