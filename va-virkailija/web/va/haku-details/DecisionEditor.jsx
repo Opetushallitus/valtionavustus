@@ -30,18 +30,27 @@ const DecisionFields = ({title,avustushaku,id,onChange,helpText, dataTestId}) =>
 class DateField extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {value: this.value(props, props.field)}
+    this.state = DateField.initialState(props)
     this.onChange = this.onChange.bind(this)
   }
 
-  value(props,field) {
-    return _.get(props.avustushaku, `decision.${field}`, "") || ""
+  static getDerivedStateFromProps(props, state) {
+    if (props.avustushaku.id !== state.currentAvustushakuId) {
+      return DateField.initialState(props)
+    } else {
+      return null
+    }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.avustushaku.id !== this.props.avustushaku.id) {
-      this.setState({value: this.value(nextProps, nextProps.field)})
+  static initialState(props) {
+    return {
+      currentAvustushakuId: props.avustushaku.id,
+      value: DateField.value(props, props.field)
     }
+  }
+
+  static value(props,field) {
+    return _.get(props.avustushaku, `decision.${field}`, "") || ""
   }
 
   onChange(event) {
@@ -379,7 +388,7 @@ class TapahtumaLoki extends React.Component {
 class DecisionDateAndSend extends React.Component {
   constructor(props){
     super(props)
-    this.state = {preview:false, refuseEnabled: props.environment["application-change"]["refuse-enabled?"]}
+    this.state = DecisionDateAndSend.initialState(props)
     this.rerenderParentCallback = this.rerenderParentCallback.bind(this);
     this.fetchLahetetytPaatokset = this.fetchLahetetytPaatokset.bind(this)
   }
@@ -389,16 +398,33 @@ class DecisionDateAndSend extends React.Component {
     this.fetchLahetetytPaatokset(this.props.avustushaku.id)
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.avustushaku.id !== this.props.avustushaku.id) {
-      this.setState({preview:false,count:undefined,sending:false})
-      this.fetchEmailState(nextProps.avustushaku.id)
+  static getDerivedStateFromProps(props, state) {
+    if (props.avustushaku.id !== state.currentAvustushakuId) {
+      return DecisionDateAndSend.initialState(props)
+    } else {
+      return null
+    }
+  }
+
+  static initialState(props) {
+    return {
+      currentAvustushakuId: props.avustushaku.id,
+      refuseEnabled: props.environment["application-change"]["refuse-enabled?"],
+      preview: false,
+      count: undefined,
+      sending:false,
     }
   }
 
   componentDidMount() {
     this.fetchEmailState(this.props.avustushaku.id)
     this.fetchLahetetytPaatokset(this.props.avustushaku.id)
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.avustushaku.id !== this.state.currentAvustushakuId) {
+      this.fetchEmailState(this.props.avustushaku.id)
+    }
   }
 
   render(){

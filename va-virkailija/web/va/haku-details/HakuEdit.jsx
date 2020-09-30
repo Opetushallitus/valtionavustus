@@ -271,13 +271,21 @@ class CreateHaku extends React.Component {
 class DateField extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {value: DateField.asDateTimeString(this.props.value)}
+    this.state = DateField.initialState(props)
     this.onChange = this.onChange.bind(this)
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.value !== nextProps.value) {
-      this.setState({value: DateField.asDateTimeString(nextProps.value)})
+  static getDerivedStateFromProps(props, state) {
+    if (props.value !== state.value) {
+      return DateField.initialState(props)
+    } else {
+      return null
+    }
+  }
+
+  static initialState(props) {
+    return {
+      value: DateField.asDateTimeString(props.value)
     }
   }
 

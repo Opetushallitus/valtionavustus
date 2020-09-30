@@ -28,19 +28,28 @@ export default class Selvitys extends React.Component{
 class DateField extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {value: this.value(props, props.field)}
+    this.state = DateField.initialState(props)
     this.onChange = this.onChange.bind(this)
     this.onBlur = this.onBlur.bind(this)
   }
 
-  value(props, field) {
-    return props.avustushaku[field] || ""
+  static getDerivedStateFromProps(props, state) {
+    if (props.avustushaku.id !== state.currentAvustushakuId) {
+      return DateField.initialState(props)
+    } else {
+      return null
+    }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.avustushaku.id !== this.props.avustushaku.id) {
-      this.setState({value: this.value(nextProps, nextProps.field)})
+  static initialState(props) {
+    return {
+      currentAvustushakuId: props.avustushaku.id,
+      value: DateField.value(props, props.field)
     }
+  }
+
+  static value(props, field) {
+    return props.avustushaku[field] || ""
   }
 
   onChange(event) {

@@ -5,14 +5,25 @@ import Bacon from 'baconjs'
 export default class AcademySize extends React.Component {
   constructor(props) {
     super(props)
-    this.state = initialState(props)
+    this.state = AcademySize.initialState(props)
     this.changeBus = new Bacon.Bus()
     this.changeBus.debounce(1000).onValue(([hakemus, value]) => { this.props.controller.setHakemusAcademysize(hakemus, value) })
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.hakemus.id !== nextProps.hakemus.id) {
-      this.setState(initialState(nextProps))
+  static getDerivedStateFromProps(props, state) {
+    if (props.hakemus.id !== state.currentHakemusId) {
+      return AcademySize.initialState(props)
+    } else {
+      return null
+    }
+  }
+
+  static initialState(props){
+    const value = _.get(props.hakemus, "arvio.academysize") || 0
+    return {
+      currentHakemusId: props.hakemus.id,
+      value: value,
+      invalid: false
     }
   }
 
@@ -39,9 +50,4 @@ export default class AcademySize extends React.Component {
       </div>
     )
   }
-}
-
-function initialState(props){
-  const value = _.get(props.hakemus, "arvio.academysize") || 0
-  return {value: value,invalid:false}
 }
