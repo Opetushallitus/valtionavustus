@@ -28,7 +28,7 @@ export default class HakemusComments extends Component {
     return true
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.checkComments()
   }
 
