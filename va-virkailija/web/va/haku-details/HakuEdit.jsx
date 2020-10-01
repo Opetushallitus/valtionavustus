@@ -125,9 +125,9 @@ export default class HakuEdit extends Component {
         <div className="haku-duration-and-self-financing">
           <div className="haku-duration-edit-container">
             <h3>{avustushaku.content.duration.label.fi} <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___hakuaika"]} direction="left" /></h3>
-            <DateField id="hakuaika-start" onBlur={onChange} value={avustushaku.content.duration.start} disabled={!allowAllHakuEdits} />
+            <DateField id="hakuaika-start" onBlur={onChange} avustushakuId={avustushaku.id} value={avustushaku.content.duration.start} disabled={!allowAllHakuEdits} />
             <span className="dateDivider" />
-            <DateField id="hakuaika-end" onBlur={onChange} value={avustushaku.content.duration.end} disabled={!allowNondisruptiveHakuEdits} />
+            <DateField id="hakuaika-end" onBlur={onChange} avustushakuId={avustushaku.id} value={avustushaku.content.duration.end} disabled={!allowNondisruptiveHakuEdits} />
           </div>
         </div>
         <HakuType hakuType={avustushaku["haku-type"]} disabled={!allowAllHakuEdits} onChange={onChange} helpTexts={helpTexts} />
@@ -276,7 +276,7 @@ class DateField extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (props.value !== state.value) {
+    if (props.avustushakuId !== state.currentAvustushakuId) {
       return DateField.initialState(props)
     } else {
       return null
@@ -285,6 +285,7 @@ class DateField extends React.Component {
 
   static initialState(props) {
     return {
+      currentAvustushakuId: props.avustushakuId,
       value: DateField.asDateTimeString(props.value)
     }
   }
