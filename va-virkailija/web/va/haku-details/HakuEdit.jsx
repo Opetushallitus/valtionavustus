@@ -153,7 +153,7 @@ export default class HakuEdit extends Component {
               <div className="haku-edit-field-container">
                 <h3>Hakijan omarahoitusvaatimus <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___hakijan_omarahoitusvaatimus"]} /></h3>
                 <input id="haku-self-financing-percentage" type="number"
-                       min="0" max="99" className="percentage" required="true"
+                       min="0" max="99" className="percentage" required={true}
                        maxLength="2" onChange={onChange}
                        disabled={!allowAllHakuEdits}
                        value={avustushaku.content["self-financing-percentage"]} />
@@ -240,7 +240,7 @@ export default class HakuEdit extends Component {
               <h3 className="required">Määräraha <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___määräraha"]} direction="left" /></h3>
               <input id="total-grant-size" type="number"
                      disabled={!allowAllHakuEdits} onChange={onChange}
-                     required="true"
+                     required={true}
                      value={avustushaku.content["total-grant-size"] || ""}/>
               <span> €</span>
             </div>
