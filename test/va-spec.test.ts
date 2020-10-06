@@ -561,7 +561,7 @@ describe("Puppeteer tests", () => {
 
   describe("Muutospäätösprosessi", () => {
     it("Completing avustushaku should send an email with link to muutospäätösprosessi", async () => {
-      const avustushakuID = 20
+      const avustushakuID = await ratkaiseAvustushaku(page)
 
       const emails = await getEmails(avustushakuID)
       emails.forEach(email => {
