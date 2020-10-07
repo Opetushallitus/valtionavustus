@@ -93,7 +93,7 @@ describe("Puppeteer tests", () => {
 
     await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
     await clearAndType(page, "#budget-edit-project-budget .amount-column input", "100000")
-    clickElement(page, "#arviointi-tab label[for='set-arvio-status-accepted']")
+    await clickElement(page, "#arviointi-tab label[for='set-arvio-status-accepted']")
     waitForArvioSave(page, avustushakuID, parseInt(hakemusID)),
 
     await resolveAvustushaku(page, avustushakuID)
