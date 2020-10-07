@@ -1,15 +1,11 @@
 import React, { Component } from 'react'
-import 'react-select/less/default.less'
-import VirtualizedSelect from 'react-virtualized-select'
+import Select from 'react-select'
 
 export default class AutocompleteCodeValue extends Component {
   constructor(props) {
     super(props)
     this.updateValue = this.updateValue.bind(this)
-    this.NameOptionRenderer = this.NameOptionRenderer.bind(this)
-    this.codeValueRenderer = this.codeValueRenderer.bind(this)
   }
-
 
   updateValue (option) {
     if (option == null) {
@@ -23,43 +19,50 @@ export default class AutocompleteCodeValue extends Component {
     }
   }
 
-  NameOptionRenderer({key, option, selectValue, style}) {
-    const onChange = () => selectValue(option)
-    return (
-      <div
-        className="Select-input name-option-renderer code-value-renderer"
-        style={style}
-        key={key}
-        onClick={onChange}
-        data-test-id={option.code}>
-        <span>{option.code}</span>
-        <span>{option["code-value"]}</span>
-      </div>
-    )
+  getOptionValue(option) {
+    console.log("getOptionValue", option)
+    return `${option.code} ${option["code-value"]}`
   }
-
-
-  codeValueRenderer(option){
-    return (
-      <div className="code-value-renderer">
-        <span>{option.code}</span>
-        <span>{option["code-value"]}</span>
-      </div>)
-  }
-
 
   render() {
     return (
-      <VirtualizedSelect
+      <Select
         labelKey='code'
         placeholder="Valitse listasta"
         backspaceRemoves={true}
         options={this.props.codeOptions}
         onChange={this.updateValue}
-        optionRenderer={this.NameOptionRenderer}
+        getOptionValue={this.getOptionValue}
         value={this.props.selectedValue}
-        valueRenderer={this.codeValueRenderer}
+        components={{ Option, SingleValue }}
       />
     )
   }
+}
+
+function Option(props) {
+  const {data, selectOption, style} = props
+  const option = data
+  const onChange = () => selectOption(option)
+
+  return (
+    <div
+      className="Select-input name-option-renderer code-value-renderer"
+      style={style}
+      onClick={onChange}
+      data-test-id={option.code}>
+      <span>{option.code}</span>
+      <span>{option["code-value"]}</span>
+    </div>
+  )
+}
+
+function SingleValue(params) {
+  const option = params.data
+  return (
+    <div className="code-value-renderer">
+      <span>{option.code}</span>
+      <span>{option["code-value"]}</span>
+    </div>
+  )
 }
