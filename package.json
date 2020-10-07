@@ -24,7 +24,7 @@
     "react-dropzone": "^4.0.1",
     "react-select": "3.1.0",
     "react-transition-group": "^2.2.0",
-    "react-widgets": "^3.4.8",
+    "react-widgets": "^4.6.0",
     "route-parser": "^0.0.4",
     "seamless-immutable": "^2.4.2",
     "snyk": "^1.305.1",
