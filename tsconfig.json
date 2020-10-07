@@ -1,7 +1,12 @@
 {
   "extends": "./common-tsconfig.json",
   "compilerOptions": {
+    "allowJs": true,
+    "jsx": "react",
     "outDir": "dist",
     "sourceMap": true
-  }
+  },
+  "include": [
+    "./**/*"
+  ]
 }

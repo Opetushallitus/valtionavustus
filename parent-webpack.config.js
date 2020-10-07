@@ -11,6 +11,11 @@ const makeConfig = (webpack, basedir) => {
     module: {
       rules: [
         {
+          test: /\.(ts)x?$/,
+          exclude: /node_modules/,
+          loader: 'ts-loader'
+        },
+        {
           test: /\.jsx?$/,
           include:
             [
@@ -43,7 +48,8 @@ const makeConfig = (webpack, basedir) => {
       alias: {
         "soresu-form": path.resolve(basedir, "../soresu-form"),
         "va-common": path.resolve(basedir, "../va-common")
-      }
+      },
+      extensions: ['.ts', '.tsx', '.js', '.jsx']
     },
     optimization: {
       splitChunks: {

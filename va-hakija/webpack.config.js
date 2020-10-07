@@ -8,7 +8,8 @@ module.exports = Object.assign(
     entry: {
       app: "./web/va/VaApp.jsx",
       selvitysApp: "./web/va/SelvitysApp.jsx",
-      login: "./web/va/VaLogin.jsx"
+      login: "./web/va/VaLogin.jsx",
+      muutoshakemusApp: "./web/va/muutoshakemus/MuutoshakemusApp.tsx"
     }
   }
 )
