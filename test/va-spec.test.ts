@@ -46,6 +46,7 @@ import {
   clickFormSaveAndWait,
   addFieldToFormAndReturnElementIdAndLabel
 } from "./test-util"
+
 jest.setTimeout(100_000)
 describe("Puppeteer tests", () => {
   let browser: Browser
@@ -561,7 +562,7 @@ describe("Puppeteer tests", () => {
 
   describe("Muutospäätösprosessi", () => {
     it("Completing avustushaku should send an email with link to muutospäätösprosessi", async () => {
-      const avustushakuID = 20
+      const avustushakuID = await ratkaiseAvustushaku(page)
 
       const emails = await getEmails(avustushakuID)
       emails.forEach(email => {
@@ -571,7 +572,7 @@ Allaolevasta linkistä voitte tehdä seuraavat muutokset:
 - Päivittää yhteyshenkilön tiedot
 - Hakea pidennystä avustuksen käyttöaikaan
 - Hakea muutosta hankkeen talouden käyttösuunnitelmaan, sisältöön tai toteutustapaan
-https?://.*/avustushaku/${avustushakuID}/nayta.*
+https?://.*/muutoshaku/.*
 [\\s\\S]*`))
       }) 
     })

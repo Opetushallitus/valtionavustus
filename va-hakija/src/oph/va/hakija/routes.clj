@@ -289,6 +289,7 @@
            (resp/redirect "http://oph.fi/rahoitus/valtionavustukset"))))
 
    ;; Finnish subcontext
+   (when (config :muutospaatosprosessi-enabled) (compojure/GET "/muutoshaku/:hakemus-id" [hakemus-id] (return-html "muutoshakemus.html")))
    (compojure/GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "index.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "selvitys.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "selvitys.html"))
@@ -307,6 +308,7 @@
         :body decision}))
 
    (compojure-route/resources "/avustushaku/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
+   (compojure-route/resources "/muutoshaku" {:mime-types {"html" "text/html; charset=utf-8"}})
 
    ;;; Swedish subcontext
    (compojure/GET "/statsunderstod/:avustushaku-id/visa" [avustushaku-id] (return-html "index.html"))
