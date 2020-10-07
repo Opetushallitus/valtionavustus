@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 
-import ReactWidgets from 'react-widgets'
+import DropdownList from 'react-widgets/lib/DropdownList';
 
 import {EditComponent, FieldEditComponent} from './EditComponent.jsx'
 
@@ -84,19 +84,19 @@ export class KoodistoDropdown extends Component {
       emptyFilter: 'Ei tuloksia'
     }
     return <div className="koodisto-dropdown">
-             <ReactWidgets.DropdownList defaultOpen={defaultOpen}
-                                        valueField="uri"
-                                        textField={koodistoToText}
-                                        data={koodistosList}
-                                        defaultValue={koodisto}
-                                        valueComponent={KoodistoEntry}
-                                        caseSensitive={false}
-                                        minLength={3}
-                                        filter='contains'
-                                        duration={0}
-                                        onChange={onChange}
-                                        messages={messages}
-                                        placeholder="Valitse koodisto"/>
+             <DropdownList defaultOpen={defaultOpen}
+                           valueField="uri"
+                           textField={koodistoToText}
+                           data={koodistosList}
+                           defaultValue={koodisto}
+                           valueComponent={KoodistoEntry}
+                           caseSensitive={false}
+                           minLength={3}
+                           filter='contains'
+                           duration={0}
+                           onChange={onChange}
+                           messages={messages}
+                           placeholder="Valitse koodisto"/>
            </div>
   }
 }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 
-import ReactWidgets from 'react-widgets'
+import DropdownList from 'react-widgets/lib/DropdownList';
 
 import moment from 'moment-timezone'
 
@@ -31,18 +31,18 @@ export default class AvustushakuDropdown extends Component {
       }
     }
     return <div id="avustushaku-dropdown">
-             <ReactWidgets.DropdownList  valueField="id"
-                                         textField={avustushakuToText}
-                                         data={avustushakuList}
-                                         defaultValue={avustushaku}
-                                         valueComponent={AvustushakuEntry}
-                                         caseSensitive={false}
-                                         minLength={3}
-                                         filter='contains'
-                                         duration={0}
-                                         onChange={onChange}
-                                         messages={messages}
-                                         onToggle={scrollListToTopForIE}/>
+             <DropdownList valueField="id"
+                           textField={avustushakuToText}
+                           data={avustushakuList}
+                           defaultValue={avustushaku}
+                           valueComponent={AvustushakuEntry}
+                           caseSensitive={false}
+                           minLength={3}
+                           filter='contains'
+                           duration={0}
+                           onChange={onChange}
+                           messages={messages}
+                           onToggle={scrollListToTopForIE}/>
            </div>
   }
 }

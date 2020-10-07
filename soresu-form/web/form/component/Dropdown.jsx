@@ -1,6 +1,7 @@
 import React from 'react'
 import ClassNames from 'classnames'
-import DropdownList from 'react-widgets/lib/DropdownList'
+
+import DropdownList from 'react-widgets/lib/DropdownList';
 
 import Translator from '../Translator'
 import BasicFieldComponent from './BasicFieldComponent.jsx'
