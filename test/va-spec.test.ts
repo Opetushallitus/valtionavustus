@@ -556,7 +556,7 @@ describe("Puppeteer tests", () => {
     // check no results are found
     await navigate(page, '/admin/haku-editor/')
     await clearAndType(page, '[data-test-id=code-value-dropdown__operational-unit] > div', `${code}`)
-    await page.waitForSelector('div.Select-noresults')
+    await page.waitForSelector('[data-test-id=code-value-dropdown__operational-unit] [data-test-id=code-value-dropdown__no-options]')
   })
 
   describe("Muutospäätösprosessi", () => {
