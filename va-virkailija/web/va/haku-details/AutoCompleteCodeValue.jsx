@@ -20,7 +20,6 @@ export default class AutocompleteCodeValue extends Component {
   }
 
   getOptionValue(option) {
-    console.log("getOptionValue", option)
     return `${option.code} ${option["code-value"]}`
   }
 
@@ -41,34 +40,31 @@ export default class AutocompleteCodeValue extends Component {
   }
 }
 
-function Option(props) {
-  const {data, selectOption, style} = props
-  const option = data
-  const onChange = () => selectOption(option)
+function Option({data, selectOption, style}) {
+  const onChange = () => selectOption(data)
 
   return (
     <div
       className="Select-input name-option-renderer code-value-renderer"
       style={style}
       onClick={onChange}
-      data-test-id={option.code}>
-      <span>{option.code}</span>
-      <span>{option["code-value"]}</span>
+      data-test-id={data.code}>
+      <span>{data.code}</span>
+      <span>{data["code-value"]}</span>
     </div>
   )
 }
 
-function SingleValue(params) {
-  const option = params.data
+function SingleValue({ data }) {
   return (
     <div className="code-value-renderer">
-      <span>{option.code}</span>
-      <span>{option["code-value"]}</span>
+      <span>{data.code}</span>
+      <span>{data["code-value"]}</span>
     </div>
   )
 }
 
-function NoOptionsMessage(props) {
+function NoOptionsMessage(_props) {
   return (
     <span data-test-id="code-value-dropdown__no-options">
       Ei hakutuloksia
