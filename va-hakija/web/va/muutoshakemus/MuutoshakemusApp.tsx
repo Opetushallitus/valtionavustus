@@ -13,13 +13,25 @@ export function validateLanguage(s: unknown): Language {
     return 'fi'
 }
 
-const translations = {
+const translationsFi = {
+  loading: 'Ladataan lomaketta...',
   contactPersonEdit: {
-    haku: {
-      fi: 'HAKU',
-      sv: 'HAKU'
-    }
+    haku: 'HAKU'
   }
+}
+
+type Translations = typeof translationsFi
+
+const translationsSv: Translations = {
+  loading: translationsFi.loading,
+  contactPersonEdit: {
+    haku: translationsFi.contactPersonEdit.haku
+  }
+}
+
+const translations: { [key in Language]: typeof translationsFi } = {
+  fi: translationsFi,
+  sv: translationsSv
 }
 
 const query = queryString.parse(location.search)
@@ -39,7 +51,7 @@ export function ContactPersonEdit (props: ContactPersonEditProps) {
 
   return (
     <div>
-      <h3>{translations.contactPersonEdit.haku[lang]}: {avustushaku?.content?.name?.[lang]}</h3>
+      <h3>{translations[lang].contactPersonEdit.haku}: {avustushaku?.content?.name?.[lang]}</h3>
     </div>
   )
 }
@@ -74,7 +86,7 @@ class App extends React.Component<AppProps, AppState>  {
     const {state, props} = this
 
     if (state.status === "LOADING")
-      return <p>Ladataan...</p>
+      return <p>{translations[props.lang].loading}</p>
 
     return (
       <div>
