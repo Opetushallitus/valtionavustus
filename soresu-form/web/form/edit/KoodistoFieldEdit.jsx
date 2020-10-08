@@ -75,7 +75,6 @@ export class KoodistoDropdown extends Component {
   render() {
     const koodistosList = this.props.koodistosList
     const koodisto = this.props.koodisto
-    const koodistoToText = koodistoItem => koodistoItem.name
     const onChange = this.props.onChange
     const defaultOpen = _.isUndefined(koodisto)
     const messages = {
@@ -86,7 +85,7 @@ export class KoodistoDropdown extends Component {
     return <div className="koodisto-dropdown">
              <DropdownList defaultOpen={defaultOpen}
                            valueField="uri"
-                           textField={koodistoToText}
+                           textField="name"
                            data={koodistosList}
                            defaultValue={koodisto}
                            valueComponent={KoodistoEntry}
