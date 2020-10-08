@@ -34,6 +34,7 @@ export default class AutocompleteCodeValue extends Component {
         onChange={this.updateValue}
         getOptionValue={this.getOptionValue}
         value={this.props.selectedValue}
+        backspaceRemovesValue={true}
         components={{ Option, SingleValue, NoOptionsMessage }}
       />
     )
