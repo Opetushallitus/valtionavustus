@@ -34,7 +34,7 @@ export default class AutocompleteCodeValue extends Component {
         onChange={this.updateValue}
         getOptionValue={this.getOptionValue}
         value={this.props.selectedValue}
-        components={{ Option, SingleValue }}
+        components={{ Option, SingleValue, NoOptionsMessage }}
       />
     )
   }
@@ -64,5 +64,13 @@ function SingleValue(params) {
       <span>{option.code}</span>
       <span>{option["code-value"]}</span>
     </div>
+  )
+}
+
+function NoOptionsMessage(props) {
+  return (
+    <span data-test-id="code-value-dropdown__no-options">
+      Ei hakutuloksia
+    </span>
   )
 }
