@@ -134,7 +134,7 @@ export class EditComponent extends React.Component {
       t => hiddenFields.indexOf(t) === -1)
 
     const addElementButtons = addableFields.map((key, i) => (
-      <a href="javascript:" key={i} className="soresu-edit"
+      <a key={i} className="soresu-edit"
         onClick={this.handleOnAddClick.bind(this, key)}>
         {EditComponent.fieldTypeInFI(key)}
       </a>
