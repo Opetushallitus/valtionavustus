@@ -453,7 +453,7 @@ describe("Puppeteer tests", () => {
     await page.hover(".soresu-field-add-header")
     await clickElementWithText(page, "a", "Koodistokenttä")
     // Select koodisto for the field
-    const input = await page.waitFor(".koodisto-dropdown .rw-popup input.rw-input")
+    const input = await page.waitFor(".koodisto-dropdown input")
     await input.type("automaatio")
     await clickElementWithText(page, "li", "automaatioyliasentajan eat järjestys")
     // Select input type for the field
