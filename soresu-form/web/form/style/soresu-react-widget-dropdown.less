@@ -3,7 +3,7 @@
 @popup-height: 240px;
 @popup-internal-width: 96%;
 
-.rw-dropdownlist {
+.rw-dropdown-list {
   position: relative;
   display: inline-block;
 
@@ -33,6 +33,10 @@
     }
   }
 
+  button {
+    display: none;
+  }
+
   input {
     width: @popup-internal-width;
     height: 34px;
@@ -59,7 +63,7 @@
     left: 22px;
   }
 
-  .rw-input:active, .rw-input:focus {
+  input:active, input:focus {
     outline: none;
   }
 
