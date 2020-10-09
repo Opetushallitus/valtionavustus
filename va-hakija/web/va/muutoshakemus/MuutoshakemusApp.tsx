@@ -5,6 +5,10 @@ import HttpUtil from "soresu-form/web/HttpUtil"
 // @ts-ignore
 import * as Bacon from "baconjs"
 
+import '../style/main.less'
+// imported for styles
+import 'soresu-form/web/form/Form.jsx'
+
 const queryString = require('query-string')
 
 export type Language = 'fi' | 'sv'
@@ -14,6 +18,7 @@ export function validateLanguage(s: unknown): Language {
 }
 
 const translationsFi = {
+  hakemus: 'Hakemus',
   loading: 'Ladataan lomaketta...',
   contactPersonEdit: {
     haku: 'HAKU'
@@ -23,6 +28,7 @@ const translationsFi = {
 type Translations = typeof translationsFi
 
 const translationsSv: Translations = {
+  hakemus: 'Ansökan',
   loading: translationsFi.loading,
   contactPersonEdit: {
     haku: translationsFi.contactPersonEdit.haku
@@ -58,11 +64,16 @@ export function ContactPersonEdit (props: ContactPersonEditProps) {
   )
 }
 
+type EnvironmentApiResponse = {
+  name: string
+}
+
 type AppState = {
   status: 'LOADING'
 } | {
   status: 'LOADED'
   avustushaku: any
+  environment: EnvironmentApiResponse
 }
 class App extends React.Component<AppProps, AppState>  {
   unsubscribe: Function
@@ -72,10 +83,13 @@ class App extends React.Component<AppProps, AppState>  {
 
     this.state = { status: "LOADING" }
 
-    const avustushaku = Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}`))
+    const initialState = Bacon.combineTemplate({
+      environment: Bacon.fromPromise(HttpUtil.get(`/environment`)),
+      avustushaku: Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}`)),
+    })
 
-    this.unsubscribe = avustushaku.onValue((avustushaku: any) =>
-      this.setState({ status: "LOADED", avustushaku })
+    this.unsubscribe = initialState.onValue(({ avustushaku, environment }: any) =>
+      this.setState({ status: "LOADED", avustushaku, environment })
     )
   }
 
@@ -90,14 +104,53 @@ class App extends React.Component<AppProps, AppState>  {
       return <p>{translations[props.lang].loading}</p>
 
     return (
-      <div>
+      <AppShell lang={lang} env={state.environment.name}>
         <ContactPersonEdit lang={props.lang} avustushaku={state.avustushaku}/>
         <Debug json={state} />
-      </div>
-  )
+      </AppShell>
+    )
   }
 }
 
+type AppShellProps = {
+  lang: Language,
+  env: string
+  children?: JSX.Element[]
+}
+
+function AppShell({ children, lang, env }: AppShellProps) {
+  return (
+    <div>
+      <TopBar env={env} lang={lang} />
+      <section id="container">
+        {children}
+      </section>
+    </div>
+  )
+}
+
+type TopBarProps = { lang: Language, env: string }
+function TopBar({ env }: TopBarProps) {
+  return (
+    <section id="topbar">
+      <div id="top-container">
+        <img id="logo" src="img/logo-240x68@2x.png" width="240" height="68" alt="Opetushallitus / Utbildningsstyrelsen" />
+        <div className="topbar-right">
+          <div className="topbar-title-and-save-status">
+            <h1 id="topic">{translations[lang].hakemus}</h1>
+          </div>
+          <div>
+            <div className="important-info">
+              <div className="environment-info">
+                <div className="environment-info__name">{env}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
 type DebugProps = { json: object }
 function Debug({ json }: DebugProps) {
   return <pre>{JSON.stringify(json, null, 2)}</pre>
