@@ -36,6 +36,8 @@ const translations: { [key in Language]: typeof translationsFi } = {
 
 const query = queryString.parse(location.search)
 const lang = validateLanguage(query.lang) || 'fi'
+// const userKey = query["user-key"]
+const avustushakuId = query["avustushaku-id"]
 
 export interface AppProps {
   lang: Language,
@@ -51,7 +53,7 @@ export function ContactPersonEdit (props: ContactPersonEditProps) {
 
   return (
     <div>
-      <h3>{translations[lang].contactPersonEdit.haku}: {avustushaku?.content?.name?.[lang]}</h3>
+      <h3>{translations[lang].contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushaku?.content?.name?.[lang]}</span></h3>
     </div>
   )
 }
@@ -69,7 +71,6 @@ class App extends React.Component<AppProps, AppState>  {
     super(props)
 
     this.state = { status: "LOADING" }
-    const avustushakuId = 2
 
     const avustushaku = Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}`))
 
