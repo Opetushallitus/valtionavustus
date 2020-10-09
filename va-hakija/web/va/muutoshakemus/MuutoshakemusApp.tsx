@@ -21,7 +21,8 @@ const translationsFi = {
   hakemus: 'Hakemus',
   loading: 'Ladataan lomaketta...',
   contactPersonEdit: {
-    haku: 'HAKU'
+    haku: 'HAKU',
+    registerNumberTitle: 'Asianumero'
   }
 }
 
@@ -31,7 +32,8 @@ const translationsSv: Translations = {
   hakemus: 'Ansökan',
   loading: translationsFi.loading,
   contactPersonEdit: {
-    haku: translationsFi.contactPersonEdit.haku
+    haku: translationsFi.contactPersonEdit.haku,
+    registerNumberTitle: translationsFi.contactPersonEdit.registerNumberTitle
   }
 }
 
@@ -58,9 +60,15 @@ export function ContactPersonEdit (props: ContactPersonEditProps) {
   const { lang, avustushaku } = props
 
   return (
-    <div>
-      <h3>{translations[lang].contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushaku?.content?.name?.[lang]}</span></h3>
-    </div>
+    <section id="contact-person-edit-title">
+      <h1>{translations[lang].contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushaku?.content?.name?.[lang]}</span></h1>
+      <section className="va-register-number">
+        <span className="title">
+          {translations[lang].contactPersonEdit.registerNumberTitle}:
+        </span>
+        <span className="value">{avustushaku?.["register-number"]}</span>
+      </section>
+    </section>
   )
 }
 
