@@ -572,9 +572,29 @@ Allaolevasta linkistä voitte tehdä seuraavat muutokset:
 - Päivittää yhteyshenkilön tiedot
 - Hakea pidennystä avustuksen käyttöaikaan
 - Hakea muutosta hankkeen talouden käyttösuunnitelmaan, sisältöön tai toteutustapaan
-https?://.*/muutoshaku/.*
+https?://.*/muutoshaku.*
 [\\s\\S]*`))
       }) 
+    })
+
+    describe("Changing contact person details", () => {
+
+      it("Muutoshaku page should show the name of the avustushaku", async () => {
+        const avustushakuName = "Testiavustushaku Testi"
+        const avustushakuID = await ratkaiseAvustushaku(page, avustushakuName)
+
+        const emails = await getEmails(avustushakuID)
+
+        const linkToMuutoshaku = emails[0].formatted.match(/https?:\/\/.*\/muutoshaku.*/)?.[0]
+
+        expectToBeDefined(linkToMuutoshaku)
+
+        await page.goto(linkToMuutoshaku, { waitUntil: "networkidle0" })
+        const avustushakuNameSpan = await page.waitForSelector("[data-test-id=avustushaku-name]", { visible: true })
+        const avustushakuNameOnPage = await page.evaluate(element => element.textContent, avustushakuNameSpan)
+
+        expect(avustushakuNameOnPage).toEqual(avustushakuName)
+      })
     })
   })
 })
