@@ -22,7 +22,11 @@ const translationsFi = {
   loading: 'Ladataan lomaketta...',
   contactPersonEdit: {
     haku: 'HAKU',
-    registerNumberTitle: 'Asianumero'
+    registerNumberTitle: 'Asianumero',
+    hanke: 'Hanke',
+    contactPerson: 'Yhteyshenkilö',
+    email: 'Sähköposti',
+    phone: 'Puhelin'
   }
 }
 
@@ -33,7 +37,11 @@ const translationsSv: Translations = {
   loading: translationsFi.loading,
   contactPersonEdit: {
     haku: translationsFi.contactPersonEdit.haku,
-    registerNumberTitle: translationsFi.contactPersonEdit.registerNumberTitle
+    registerNumberTitle: translationsFi.contactPersonEdit.registerNumberTitle,
+    hanke: translationsFi.contactPersonEdit.hanke,
+    contactPerson: translationsFi.contactPersonEdit.contactPerson,
+    email: translationsFi.contactPersonEdit.email,
+    phone: translationsFi.contactPersonEdit.phone
   }
 }
 
@@ -59,7 +67,7 @@ export interface ContactPersonEditProps {
 export function ContactPersonEdit (props: ContactPersonEditProps) {
   const { lang, avustushaku } = props
 
-  return (
+  return (<section>
     <section id="contact-person-edit-title">
       <h1>{translations[lang].contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushaku?.content?.name?.[lang]}</span></h1>
       <section className="va-register-number">
@@ -68,6 +76,45 @@ export function ContactPersonEdit (props: ContactPersonEditProps) {
         </span>
         <span className="value">{avustushaku?.["register-number"]}</span>
       </section>
+    </section>
+    <table>
+      <thead>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+           {translations[lang].contactPersonEdit.hanke} 
+          </td>
+        </tr>
+        <tr>
+          <td>
+           TODO: ensure that tests fill project-name field 
+          </td>
+        </tr>
+        <tr>
+          <td>
+           {translations[lang].contactPersonEdit.contactPerson} 
+          </td>
+          <td>
+           {translations[lang].contactPersonEdit.email} 
+          </td>
+          <td>
+           {translations[lang].contactPersonEdit.phone} 
+          </td>
+        </tr>
+        <tr>
+          <td>
+           <input type="text"></input>
+          </td>
+          <td>
+           <input type="text"></input>
+          </td>
+          <td>
+           <input type="text"></input>
+          </td>
+        </tr>
+      </tbody>
+    </table>
     </section>
   )
 }
