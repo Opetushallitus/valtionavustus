@@ -57,8 +57,8 @@ export async function navigateHakija(page: Page, path: string) {
   await page.goto(`${HAKIJA_URL}${path}`, { waitUntil: "networkidle0" })
 }
 
-export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page) {
-  const avustushakuName = mkAvustushakuName()
+export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page, hakuName?: string) {
+  const avustushakuName = hakuName || mkAvustushakuName()
   console.log(`Avustushaku name for test: ${avustushakuName}`)
 
   await copyEsimerkkihaku(page)
@@ -522,8 +522,8 @@ export async function clickCodeVisibilityButton(page: Page, code: number, visibi
   await element.click()
 }
 
-export async function ratkaiseAvustushaku(page: Page) {
-  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+export async function ratkaiseAvustushaku(page: Page, avustushakuName?: string) {
+  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, avustushakuName)
   await publishAvustushaku(page)
   await fillAndSendHakemus(page, avustushakuID)
 
