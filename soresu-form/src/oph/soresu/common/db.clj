@@ -1,5 +1,5 @@
 (ns oph.soresu.common.db
-  (:use [oph.soresu.common.config :only [config config-name environment]]
+  (:use [oph.soresu.common.config :only [config config-name]]
         [clojure.tools.trace :only [trace]])
   (:require [buddy.core.hash :as buddy-hash]
             [buddy.core.codecs :as buddy-codecs]
@@ -8,18 +8,14 @@
             [clojure.tools.logging :as log]
             [hikari-cp.core :refer :all]
             [oph.soresu.common.jdbc.extensions])
-  (:import [java.security SecureRandom]
-           [java.util UUID]))
+  (:import [java.security SecureRandom]))
 
 (def random (SecureRandom.))
 
-; TODO: Generating 512bit seed on every call makes it quite slow. Is there any secure alternatives?
 (defn generate-hash-id []
-  (if (get-in config [:server :uuid-hash?] false)
-    (UUID/randomUUID)
-    (-> (.generateSeed random (/ 512 8))
-        buddy-hash/sha256
-        buddy-codecs/bytes->hex)))
+  (-> (.generateSeed random (/ 512 8))
+      buddy-hash/sha256
+      buddy-codecs/bytes->hex))
 
 (defn escape-like-pattern [pattern]
   (string/replace pattern #"(\\|%|_)" "\\\\$1"))
