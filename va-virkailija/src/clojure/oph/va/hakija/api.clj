@@ -42,10 +42,11 @@
        :?column?
        (= 1)))
 
-(defn create-avustushaku [avustushaku-content template-form-id decision haku-type project-id operation-id operational-unit-id]
+(defn create-avustushaku [avustushaku-content template-form-id decision haku-type project-id operation-id operational-unit-id created-at]
   (let [form-id (:id (exec :form-db
                            hakija-queries/copy-form<!
-                           {:id template-form-id}))
+                           {:id template-form-id
+                            :created_at (datetime/datetime->str created-at)}))
         avustushaku-id (exec :form-db
                               hakija-queries/create-avustushaku<!
                               {:form form-id
@@ -56,6 +57,7 @@
                                :project_id project-id
                                :operation_id operation-id
                                :operational_unit_id operational-unit-id
+                               :created_at (datetime/datetime->str created-at)
                                })]
     (->> avustushaku-id
          (exec :form-db hakija-queries/get-avustushaku)
@@ -351,10 +353,12 @@
      :filename (:filename result)
      :size (:file_size result)}))
 
-(defn create-form! [form-content]
+(defn create-form! [form-content created-at]
   ;; NOTE: looks like yesql unwraps sequence parameters, thats way we wrap them one extra time here
   ;; TODO: Consolidate with oph.soresu.form.db currently in soresu-form
-  (let [params {:content (list (:content form-content)) :rules (list (:rules form-content))}]
+  (let [params {:content (list (:content form-content))
+                :rules (list (:rules form-content))
+                :created_at (datetime/datetime->str created-at)}]
     (exec :form-db hakija-queries/create-form<! params)))
 
 
@@ -380,8 +384,8 @@
 (defn update-avustushaku-form-valiselvitys [avustushaku-id form-id]
   (exec :form-db hakija-queries/update-form-valiselvitys! {:id avustushaku-id :form_valiselvitys form-id}))
 
-(defn create-form [form-content]
-  (let [form (create-form! form-content)
+(defn create-form [form-content created-at]
+  (let [form (create-form! form-content created-at)
         form-id (:id form)]
     (get-form-by-id form-id)))
 

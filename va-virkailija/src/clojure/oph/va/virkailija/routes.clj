@@ -18,6 +18,7 @@
             [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.routes :refer :all]
             [oph.soresu.form.formutil :as formutil]
+            [oph.common.datetime :as datetime]
             [oph.va.routes :as va-routes]
             [oph.va.jdbc.enums :refer :all]
             [oph.va.hakija.api :as hakija-api]
@@ -441,7 +442,7 @@
                             form-keyword (keyword (str "form_" selvitys-type))
                             form-keyword-value (form-keyword avustushaku)]
                         (if (nil? form-keyword-value)
-                          (let [created-form (hakija-api/create-form form)
+                          (let [created-form (hakija-api/create-form form (datetime/from-sql-time (:created_at avustushaku)))
                                 form-id (:id created-form)
                                 loppuselvitys (= selvitys-type "loppuselvitys")]
                             (if loppuselvitys

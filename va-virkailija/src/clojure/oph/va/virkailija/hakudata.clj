@@ -182,22 +182,21 @@
         first-email (first presenting-officer-emails)] first-email))
 
 (defn create-new-avustushaku [base-haku-id identity]
-  (let [base-haku (-> base-haku-id
+  (let [created-at (clj-time/now)
+        base-haku (-> base-haku-id
                       (hakija-api/get-hakudata)
                       :avustushaku)
         {:keys [name selection-criteria self-financing-percentage focus-areas]} (:content base-haku)
         haku-type (:haku-type base-haku)
         form-id (:form base-haku)
-        decision (merge (:decision base-haku) { :updatedAt (clj-time/now) })
+        decision (merge (:decision base-haku) { :updatedAt created-at })
         project-id (:project-id base-haku)
         operation-id (:operation-id base-haku)
         operational-unit-id (:operational-unit-id base-haku)
         new-haku (hakija-api/create-avustushaku
                    {:name (add-copy-suffixes name)
-                    :duration {:start (clj-time/plus
-                                        (clj-time/now) (clj-time/months 1))
-                               :end (clj-time/plus
-                                      (clj-time/now) (clj-time/months 2))
+                    :duration {:start (clj-time/plus created-at (clj-time/months 1))
+                               :end (clj-time/plus created-at (clj-time/months 2))
                                :label {:fi "Hakuaika"
                                        :sv "Ansökningstid"}}
                     :selection-criteria selection-criteria
@@ -208,7 +207,8 @@
                    haku-type
                    project-id
                    operation-id
-                   operational-unit-id)]
+                   operational-unit-id
+                   created-at)]
     (hakija-api/create-avustushaku-role {:avustushaku (:id new-haku)
                                          :role "presenting_officer"
                                          :name (str (:first-name identity) " "

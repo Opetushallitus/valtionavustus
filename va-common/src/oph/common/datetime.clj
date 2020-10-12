@@ -1,5 +1,6 @@
 (ns oph.common.datetime
   (:require [clj-time.core :as clj-time]
+            [clj-time.coerce :as coerce]
             [clj-time.format :as clj-time-format])
   (:import (org.joda.time DateTime)))
 
@@ -16,6 +17,12 @@
 
 (defn parse [ISO8601-timestamp-string]
   (clj-time-format/parse (clj-time-format/formatters :date-time) ISO8601-timestamp-string))
+
+(defn from-sql-time [sqltime]
+  (coerce/from-sql-time sqltime))
+
+(defn datetime->str [dt]
+  (clj-time-format/unparse (clj-time-format/formatters :date-time) dt))
 
 (defn now []
   (if @now-atom
