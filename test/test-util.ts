@@ -4,6 +4,7 @@ import * as yup from "yup"
 import axios from "axios"
 import { launch, Browser, Page } from "puppeteer"
 import * as assert from "assert"
+import * as fs from "fs"
 const {randomBytes} = require("crypto")
 
 const HAKIJA_HOSTNAME = process.env.HAKIJA_HOSTNAME || 'localhost'
@@ -16,6 +17,7 @@ export const VIRKAILIJA_URL = `http://${VIRKAILIJA_HOSTNAME}:${VIRKAILIJA_PORT}`
 const HAKIJA_URL = `http://${HAKIJA_HOSTNAME}:${HAKIJA_PORT}`
 
 export const dummyPdfPath = path.join(__dirname, 'dummy.pdf')
+const hakulomakeJson = fs.readFileSync(path.join(__dirname, 'prod.hakulomake.json'), 'utf8')
 
 interface Email {
   id: number
@@ -57,15 +59,26 @@ export async function navigateHakija(page: Page, path: string) {
   await page.goto(`${HAKIJA_URL}${path}`, { waitUntil: "networkidle0" })
 }
 
+export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId2(page: Page, hakuName?: string) {
+  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, hakuName)
+
+  await clickElementWithText(page, "span", "Hakulomake")
+  await clearAndSet(page, ".form-json-editor textarea", hakulomakeJson)
+  await clickFormSaveAndWait(page, avustushakuID)
+  return avustushakuID
+}
+
 export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page, hakuName?: string) {
   const avustushakuName = hakuName || mkAvustushakuName()
   console.log(`Avustushaku name for test: ${avustushakuName}`)
 
   await copyEsimerkkihaku(page)
 
-  const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku"))
+  const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku")).then(id => {
+    expectToBeDefined(id)
+    return parseInt(id)
+  })
   console.log(`Avustushaku ID: ${avustushakuID}`)
-  expectToBeDefined(avustushakuID)
 
   await clearAndType(page, "#register-number", "230/2015")
   await clearAndType(page, "#haku-name-fi", avustushakuName)
@@ -75,7 +88,7 @@ export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page
   await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
   await waitForSave(page)
 
-  return parseInt(avustushakuID)
+  return avustushakuID
 }
 
 export async function publishAvustushaku(page: Page) {
@@ -106,6 +119,67 @@ export async function fillAndSendHakemus(page: Page, avustushakuID: number, befo
   await uploadFile(page, "[name='current-year-plan-for-action-and-budget']", dummyPdfPath)
   await uploadFile(page, "[name='description-of-functional-development-during-last-five-years']", dummyPdfPath)
   await uploadFile(page, "[name='financial-information-form']", dummyPdfPath)
+
+  if (beforeSubmitFn) {
+    await beforeSubmitFn()
+  }
+
+  await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).disabled === false)
+  await clickElement(page, "#topbar #form-controls button#submit")
+  await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Hakemus lähetetty")
+}
+
+export async function fillAndSendHakemus2(page: Page, avustushakuID: number, beforeSubmitFn?: () => void) {
+  await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
+
+  await clearAndType(page, "#primary-email", "erkki.esimerkki@example.com")
+  await clickElement(page, "#submit")
+
+  await clearAndType(page, "#finnish-business-id", "2050864-5")
+  await clickElement(page, "input.get-business-id")
+
+  await clearAndType(page, "#applicant-name", "Erkki Esimerkki")
+  await clearAndType(page, "[id='textField-0']", "666")
+
+  await clearAndType(page, "[id='signatories-fieldset-1.name']", "Erkki Esimerkki")
+  await clearAndType(page, "[id='signatories-fieldset-1.email']", "erkki.esimerkki@example.com")
+
+  await clickElementWithText(page, "label", "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko")
+
+  await clickElement(page, "[id='koodistoField-1']")
+  await clickElementWithText(page, "li", "Kainuu")
+
+  await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")
+  await clearAndType(page, "#bank-bic", "OKOYFIHH")
+
+  await clearAndType(page, "#textField-2", "2")
+  await clearAndType(page, "#textField-1", "20")
+
+  await clearAndType(page, "#project-name", "Oispa rahaa")
+
+  await clickElement(page, "[for='language.radio.0']")
+
+  await clickElement(page, "[for='checkboxButton-0.checkbox.0']")
+
+  await clickElementWithText(page, "label", "Opetuksen lisääminen")
+
+  await clearAndType(page, "[id='project-description.project-description-1.goal']", "Tarvitsemme kuutio tonneittain rahaa jotta voimme kylpeä siinä.")
+
+  await clearAndType(page, "[id='project-description.project-description-1.activity']", "Kylvemme rahassa ja rahoitamme rahapuita.")
+
+  await clearAndType(page, "[id='project-description.project-description-1.result']", "Koko budjetti käytetään ja lisää aiotaan hakea.")
+
+  await clearAndType(page, "[id='project-effectiveness']", "Hanke vaikuttaa ylempään ja keskikorkeaan johtoportaaseen.")
+
+  await clearAndType(page, "[id='project-begin']", "13.03.1992")
+  await clearAndType(page, "[id='project-end']", "13.03.2032")
+
+  await clickElementWithText(page, "label", "Kyllä")
+
+  await clearAndType(page, "[id='personnel-costs-row.description']", "Pieninä seteleinä kiitos.")
+  await clearAndType(page, "[id='personnel-costs-row.amount']", "69420666")
+
+  await clearAndType(page, "[id='self-financing-amount']", "1")
 
   if (beforeSubmitFn) {
     await beforeSubmitFn()
@@ -522,11 +596,24 @@ export async function clickCodeVisibilityButton(page: Page, code: number, visibi
   await element.click()
 }
 
+export async function ratkaiseAvustushaku2(page: Page, avustushakuName?: string) {
+  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId2(page, avustushakuName)
+  await clickElementWithText(page, "span", "Haun tiedot")
+  await publishAvustushaku(page)
+  await fillAndSendHakemus2(page, avustushakuID)
+
+  return await acceptAvustushaku(page, avustushakuID)
+}
+
 export async function ratkaiseAvustushaku(page: Page, avustushakuName?: string) {
   const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, avustushakuName)
   await publishAvustushaku(page)
   await fillAndSendHakemus(page, avustushakuID)
+  
+  return await acceptAvustushaku(page, avustushakuID)
+}
 
+async function acceptAvustushaku(page: Page, avustushakuID: number) {
   await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
 
   // Accept the hakemus

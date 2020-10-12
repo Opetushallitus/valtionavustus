@@ -5,6 +5,7 @@ import {
   mkBrowser,
   getFirstPage,
   ratkaiseAvustushaku,
+  ratkaiseAvustushaku2,
   publishAvustushaku,
   fillAndSendHakemus,
   acceptHakemus,
@@ -564,7 +565,7 @@ describe("Puppeteer tests", () => {
 
   describe("Muutospäätösprosessi", () => {
     it("Avustushaun ratkaisu should send an email with link to muutoshaku", async () => {
-      const avustushakuID = await ratkaiseAvustushaku(page)
+      const avustushakuID = await ratkaiseAvustushaku2(page)
 
       const emails = await getEmails(avustushakuID)
       emails.forEach(email => {
@@ -583,7 +584,7 @@ https?://.*/muutoshaku.*
 
       it("Muutoshaku page should show the name of the avustushaku", async () => {
         const avustushakuName = "Testiavustushaku Testi"
-        const avustushakuID = await ratkaiseAvustushaku(page, avustushakuName)
+        const avustushakuID = await ratkaiseAvustushaku2(page, avustushakuName)
 
         const emails = await getEmails(avustushakuID)
 
