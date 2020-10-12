@@ -40,4 +40,4 @@
  :application-change {:change-enabled? false
                       :refuse-enabled? true}
  :selvitys-limit {:enabled? false}
- :muutospaatosprosessi-enabled true}
+ :muutospaatosprosessi {:enabled? true}}

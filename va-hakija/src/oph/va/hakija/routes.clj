@@ -289,7 +289,8 @@
            (resp/redirect "http://oph.fi/rahoitus/valtionavustukset"))))
 
    ;; Finnish subcontext
-   (when (get-in config [:muutospaatosprosessi-enabled]) (compojure/GET "/muutoshaku" [hakemus-id] (return-html "muutoshakemus.html")))
+   (when (get-in config [:muutospaatosprosessi :enabled?])
+     (compojure/GET "/muutoshaku" [hakemus-id] (return-html "muutoshakemus.html")))
    (compojure/GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "index.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "selvitys.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "selvitys.html"))

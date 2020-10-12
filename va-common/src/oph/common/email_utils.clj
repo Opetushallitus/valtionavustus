@@ -16,9 +16,9 @@
 (str va-url "muutoshaku?" url-parameters)))
 
  (defn modify-url [va-url avustushaku-id user-key lang token]
-   (if (config :muutospaatosprosessi-enabled)
+   (if (get-in config [:muutospaatosprosessi :enabled?])
      (muutoshaku-url-generator va-url avustushaku-id user-key lang)
      (url-generator va-url avustushaku-id user-key lang token "modify")))
-  
+
   (defn refuse-url [va-url avustushaku-id user-key lang token]
     (url-generator va-url avustushaku-id user-key lang token "refuse"))

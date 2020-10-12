@@ -566,7 +566,7 @@
                          (put-avustushaku)
                          (post-avustushaku)
                          (get-avustushaku)
-                         (when (:email-api-enabled? config) (get-avustushaku-email))
+                         (when (get-in config [:email-api :enabled?]) (get-avustushaku-email))
                          (get-selvitys)
                          (send-selvitys)
                          (send-selvitys-email)
