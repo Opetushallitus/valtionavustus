@@ -67,55 +67,50 @@ export interface ContactPersonEditProps {
 export function ContactPersonEdit (props: ContactPersonEditProps) {
   const { lang, avustushaku } = props
 
-  return (<section>
-    <section id="contact-person-edit-title">
+  return (
+  <section>
+    <div className="contact-person-edit-title">
       <h1>{translations[lang].contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushaku?.content?.name?.[lang]}</span></h1>
-      <section className="va-register-number">
+      <span className="va-register-number">
         <span className="title">
           {translations[lang].contactPersonEdit.registerNumberTitle}:
         </span>
         <span className="value">{avustushaku?.["register-number"]}</span>
-      </section>
-    </section>
-    <table>
-      <thead>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-           {translations[lang].contactPersonEdit.hanke} 
-          </td>
-        </tr>
-        <tr>
-          <td>
-           TODO: ensure that tests fill project-name field 
-          </td>
-        </tr>
-        <tr>
-          <td>
-           {translations[lang].contactPersonEdit.contactPerson} 
-          </td>
-          <td>
-           {translations[lang].contactPersonEdit.email} 
-          </td>
-          <td>
-           {translations[lang].contactPersonEdit.phone} 
-          </td>
-        </tr>
-        <tr>
-          <td>
-           <input type="text"></input>
-          </td>
-          <td>
-           <input type="text"></input>
-          </td>
-          <td>
-           <input type="text"></input>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    </section>
+      </span>
+    </div>
+    <div>
+      <div>
+        <div>{translations[lang].contactPersonEdit.hanke}</div>
+        <div>MISSING</div>
+      </div>
+      <div className="contact-person-edit-body-contact-person-row">
+        <span>
+          <div>
+            {translations[lang].contactPersonEdit.contactPerson} 
+          </div>
+          <div>
+            <input type="text"></input>
+          </div>
+        </span>
+        <span>
+          <div>
+            {translations[lang].contactPersonEdit.email} 
+          </div>
+          <div>
+            <input type="text"></input>
+          </div>
+        </span>
+        <span>
+          <div>
+            {translations[lang].contactPersonEdit.phone} 
+          </div>
+          <div>
+            <input type="text"></input>
+          </div>
+        </span>
+      </div>
+    </div>
+  </section>
   )
 }
 
