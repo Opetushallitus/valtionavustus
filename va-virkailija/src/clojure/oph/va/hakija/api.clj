@@ -64,8 +64,9 @@
          (map avustushaku-response-content)
          first)))
 
-(defn zero-to-empty-dict [v]
-  (if (== 0 v) {} v))
+(defn diff-paatos [old new]
+  (data/diff (dissoc old :updatedAt)
+             (dissoc new :updatedAt)))
 
 (defn update-avustushaku [avustushaku]
   (let [haku-status (if (= (:status avustushaku) "new")
@@ -84,9 +85,10 @@
 
     (with-transaction :form-db connection
       (let [db-options {:connection connection}
-            previous-paatos-version (zero-to-empty-dict (hakija-queries/archive-avustushaku! avustushaku-to-save db-options))
+            previous-avustushaku-version (hakija-queries/archive-avustushaku<! avustushaku-to-save db-options)
+            previous-paatos-version (:decision previous-avustushaku-version)
             new-paatos-version (:decision avustushaku)
-            diff-result (data/diff previous-paatos-version new-paatos-version)]
+            diff-result (diff-paatos previous-paatos-version new-paatos-version)]
         (if (and (= nil (first diff-result)) (= nil (first (rest diff-result))))
           (hakija-queries/update-avustushaku! avustushaku-to-save db-options)
           (let [updated-paatos (merge new-paatos-version { :updatedAt (clj-time/now) })

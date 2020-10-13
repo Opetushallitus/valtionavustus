@@ -7,7 +7,7 @@
 (defquery update-avustushaku! "sql/hakija/avustushaku/update.sql")
 (defquery update-form-loppuselvitys! "sql/hakija/avustushaku/update-form-loppuselvitys.sql")
 (defquery update-form-valiselvitys! "sql/hakija/avustushaku/update-form-valiselvitys.sql")
-(defquery archive-avustushaku! "sql/hakija/avustushaku/archive.sql")
+(defquery archive-avustushaku<! "sql/hakija/avustushaku/archive.sql")
 (defquery list-avustushaut-by-status "sql/hakija/avustushaku/list-by-status.sql")
 (defquery list-avustushaut-not-deleted "sql/hakija/avustushaku/list-not-deleted.sql")
 (defquery get-avustushaku "sql/hakija/avustushaku/get.sql")
