@@ -8,6 +8,7 @@
 
 .muutoshaku__title {
   text-transform: uppercase;
+  margin: 1rem 0 !important;
 }
 
 .muutoshaku__register-number {
@@ -35,6 +36,86 @@
 
 #muutoshaku__email {
   min-width: 340px;
+}
+
+.muutoshaku__application-edit-cell {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0 1rem 5vw;
+
+  textarea {
+    width: 700px;
+  }
+
+  table {
+    width: 500px;
+    text-align: left;
+    font-weight: 400;
+    margin-bottom: 2rem;
+    border: 1px;
+
+    th,
+    td {
+      padding: 0.5rem 2rem 0.5rem 0;
+    }
+
+    td:first-child {
+      border-right: 2px solid @darker-gray;
+    }
+
+    th:not(:first-child),
+    td:not(:first-child) {
+      padding-left: 2rem;
+    }
+
+    .muutoshaku__current-amount {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .muutoshaku__currency-input {
+      width: 100px;
+    }
+
+    thead {
+      text-transform: uppercase;
+      padding-bottom: 1rem;
+
+      th {
+        font-weight: 400;
+      }
+    }
+
+    tfoot {
+      padding-top: 1rem;
+      border-top: 2px solid @darker-gray;
+
+      th {
+        padding-right: 2rem;
+      }
+    }
+  }
+}
+
+.muutoshaku__application-content {
+  display: flex;
+  width: 500px;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+
+  div.muutoshaku__content-left {
+    padding-right: 2rem;
+    border-right: 2px solid @darker-gray;
+  }
+
+  div.muutoshaku__content-right {
+    padding-left: 2rem;
+  }
+
+  div:first-child {
+    margin-bottom: 1rem;
+  }
 }
 
 .va-old-browser-warning {

@@ -18,28 +18,34 @@ const translationsFi = {
   hakemus: 'Hakemus',
   loading: 'Ladataan lomaketta...',
   contactPersonEdit: {
-    haku: 'HAKU',
+    haku: 'Haku',
     registerNumberTitle: 'Asianumero',
     hanke: 'Hanke',
     contactPerson: 'Yhteyshenkilö',
     email: 'Sähköposti',
     phone: 'Puhelin'
+  },
+  applicationEdit: {
+    title: 'Muutosten hakeminen',
+    contentEdit: 'Haen muutosta hankkeen sisältöön tai toteutustapaan',
+    contentEditDetails: 'Kuvaile muutokset hankkeen sisältöön tai toteutustapaan',
+    financeEdit: 'Haen muutosta hankkeen talouden käyttösuunnitelmaan',
+    currentFinanceEstimation: 'Voimassaoleva talousarvio',
+    newFinanceEstimation: 'Uusi talousarvio',
+    expenses: 'Menot',
+    expensesInTotal: 'Menot yhteensä',
+    periodEdit: 'Haen pidennystä avustuksen käyttöajalle',
+    currentPeriodEnd: 'Voimassaoleva päättymisaika',
+    newPeriodEnd: 'Uusi päättymisaika',
+    reasoning: 'Perustelut'
   }
 }
 
 type Translations = typeof translationsFi
 
 const translationsSv: Translations = {
-  hakemus: 'Ansökan',
-  loading: translationsFi.loading,
-  contactPersonEdit: {
-    haku: translationsFi.contactPersonEdit.haku,
-    registerNumberTitle: translationsFi.contactPersonEdit.registerNumberTitle,
-    hanke: translationsFi.contactPersonEdit.hanke,
-    contactPerson: translationsFi.contactPersonEdit.contactPerson,
-    email: translationsFi.contactPersonEdit.email,
-    phone: translationsFi.contactPersonEdit.phone
-  }
+  ...translationsFi,
+  hakemus: 'Ansökan'
 }
 
 const translations: { [key in Language]: typeof translationsFi } = {
@@ -98,6 +104,103 @@ function ContactPersonEdit(props: ContactPersonEditProps) {
   )
 }
 
+interface ApplicationEditProps {
+  t: Translations
+}
+function ApplicationEdit(props: ApplicationEditProps) {
+  const { t } = props
+  
+  return (
+  <section>
+    <h1 className="muutoshaku__title">{t.applicationEdit.title}</h1>
+    <div className="muutoshaku__form">
+      <div className="soresu-checkbox">
+        <input type="checkbox" id="content-edit" />
+        <label htmlFor="content-edit">{t.applicationEdit.contentEdit}</label>
+      </div>
+      <div className="muutoshaku__application-edit-cell">
+        <label htmlFor="muutoshaku__content-change">{t.applicationEdit.contentEditDetails}</label>
+        <textarea id="muutoshaku__content-change" rows={20} />
+      </div>
+      <div className="soresu-checkbox">
+        <input type="checkbox" id="finance-edit" />
+        <label htmlFor="finance-edit">{t.applicationEdit.financeEdit}</label>
+      </div>
+      <div className="muutoshaku__application-edit-cell">
+        <table>
+          <thead>
+            <tr>
+              <th>{t.applicationEdit.currentFinanceEstimation}</th>
+              <th>{t.applicationEdit.newFinanceEstimation}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th colSpan={2}>{t.applicationEdit.expenses}</th>
+            </tr>
+            <tr>
+              <td>
+                <div className="muutoshaku__current-amount">
+                  <span>jotain</span>
+                  <span>666 €</span>
+                </div>
+              </td>
+              <td>
+                <div className="muutoshaku__current-amount">
+                  <input className="muutoshaku__currency-input" type="text" />
+                  <span>€</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th colSpan={2}></th>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>
+                <div className="muutoshaku__current-amount">
+                  <span>{t.applicationEdit.expensesInTotal}</span>
+                  <span>666 €</span>
+                </div>
+              </th>
+              <th>
+                <div className="muutoshaku__current-amount">
+                  <span>666</span>
+                  <span>€</span>
+                </div>
+              </th>
+            </tr>
+          </tfoot>
+        </table>
+        <label htmlFor="muutoshaku__finance-reasoning">{t.applicationEdit.reasoning}</label>
+        <textarea id="muutoshaku__finance-reasoning" rows={5} />
+      </div>
+      <div className="soresu-checkbox">
+        <input className="soresu-checkbox" type="checkbox" id="period-edit" />
+        <label htmlFor="period-edit">{t.applicationEdit.periodEdit}</label>
+      </div>
+      <div className="muutoshaku__application-edit-cell">
+        <div className="muutoshaku__application-content">
+          <div className="muutoshaku__content-left">
+            <div className="muutoshaku__content-title">{t.applicationEdit.currentPeriodEnd}</div>
+            <div>MISSING</div>
+          </div>
+          <div className="muutoshaku__content-right">
+            <div className="muutoshaku__content-title">{t.applicationEdit.newPeriodEnd}</div>
+            <div>
+              <input type="date" />
+            </div>
+          </div>
+        </div>
+        <label htmlFor="muutoshaku__period-reasoning">{t.applicationEdit.reasoning}</label>
+        <textarea id="muutoshaku__period-reasoning" rows={5} />
+      </div>
+    </div>
+  </section>
+  )
+}
+
 type EnvironmentApiResponse = {
   name: string
 }
@@ -109,6 +212,7 @@ type AppState = {
   avustushaku: any
   environment: EnvironmentApiResponse
 }
+
 class MuutoshakemusApp extends React.Component<AppProps, AppState>  {
   unsubscribe: Function
 
@@ -141,6 +245,7 @@ class MuutoshakemusApp extends React.Component<AppProps, AppState>  {
     return (
       <AppShell t={t} env={state.environment.name}>
         <ContactPersonEdit t={t} avustushaku={state.avustushaku} />
+        <ApplicationEdit t={t} />
         <Debug json={state} />
       </AppShell>
     )
