@@ -4,9 +4,14 @@
     "allowJs": true,
     "jsx": "react",
     "outDir": "dist",
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "soresu-form/*": ["soresu-form/*"]
+    }
   },
   "include": [
-    "./**/*"
-  ]
+    "./va-hakija/**/*"
+  ],
+  "exclude": ["node_modules"]
 }

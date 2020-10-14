@@ -1,20 +1,17 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-// @ts-ignore
-import HttpUtil from "soresu-form/web/HttpUtil"
-// @ts-ignore
-import * as Bacon from "baconjs"
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
+import * as Bacon from 'baconjs'
+import * as queryString from 'query-string'
 
+import HttpUtil from 'soresu-form/web/HttpUtil'
+
+import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
-// imported for styles
-import 'soresu-form/web/form/Form.jsx'
-
-const queryString = require('query-string')
 
 export type Language = 'fi' | 'sv'
 export function validateLanguage(s: unknown): Language {
   if (s === 'sv') return 'sv'
-    return 'fi'
+  return 'fi'
 }
 
 const translationsFi = {
@@ -52,8 +49,8 @@ const translations: { [key in Language]: typeof translationsFi } = {
 
 const query = queryString.parse(location.search)
 const lang = validateLanguage(query.lang) || 'fi'
-// const userKey = query["user-key"]
-const avustushakuId = query["avustushaku-id"]
+// const userKey = query['user-key']
+const avustushakuId = query['avustushaku-id']
 
 export interface AppProps {
   lang: Language,
@@ -131,7 +128,7 @@ class App extends React.Component<AppProps, AppState>  {
   constructor(props: AppProps) {
     super(props)
 
-    this.state = { status: "LOADING" }
+    this.state = { status: 'LOADING' }
 
     const initialState = Bacon.combineTemplate({
       environment: Bacon.fromPromise(HttpUtil.get(`/environment`)),
@@ -139,7 +136,7 @@ class App extends React.Component<AppProps, AppState>  {
     })
 
     this.unsubscribe = initialState.onValue(({ avustushaku, environment }: any) =>
-      this.setState({ status: "LOADED", avustushaku, environment })
+      this.setState({ status: 'LOADED', avustushaku, environment })
     )
   }
 
@@ -150,7 +147,7 @@ class App extends React.Component<AppProps, AppState>  {
   render() {
     const {state, props} = this
 
-    if (state.status === "LOADING")
+    if (state.status === 'LOADING')
       return <p>{translations[props.lang].loading}</p>
 
     return (
@@ -208,5 +205,5 @@ function Debug({ json }: DebugProps) {
 
 ReactDOM.render(
   <App lang={lang} />,
-  document.getElementById("app")
-  );
+  document.getElementById('app')
+)
