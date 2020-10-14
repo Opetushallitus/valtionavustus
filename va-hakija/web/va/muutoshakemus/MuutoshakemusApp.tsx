@@ -8,8 +8,8 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
 
-export type Language = 'fi' | 'sv'
-export function validateLanguage(s: unknown): Language {
+type Language = 'fi' | 'sv'
+function validateLanguage(s: unknown): Language {
   if (s === 'sv') return 'sv'
   return 'fi'
 }
@@ -52,18 +52,17 @@ const lang = validateLanguage(query.lang) || 'fi'
 // const userKey = query['user-key']
 const avustushakuId = query['avustushaku-id']
 
-export interface AppProps {
+interface AppProps {
   lang: Language,
 }
 
-export interface ContactPersonEditProps {
-  lang: Language
+interface ContactPersonEditProps {
+  t: Translations
   avustushaku?: any
 }
 
-export function ContactPersonEdit (props: ContactPersonEditProps) {
-  const { lang, avustushaku } = props
-  const t = translations[lang]
+function ContactPersonEdit(props: ContactPersonEditProps) {
+  const { t, avustushaku } = props
   return (
   <section>
     <div className="muutoshaku__page-title">
@@ -110,7 +109,7 @@ type AppState = {
   avustushaku: any
   environment: EnvironmentApiResponse
 }
-class App extends React.Component<AppProps, AppState>  {
+class MuutoshakemusApp extends React.Component<AppProps, AppState>  {
   unsubscribe: Function
 
   constructor(props: AppProps) {
@@ -134,13 +133,14 @@ class App extends React.Component<AppProps, AppState>  {
 
   render() {
     const {state, props} = this
+    const t = translations[props.lang]
 
     if (state.status === 'LOADING')
-      return <p>{translations[props.lang].loading}</p>
+      return <p>{t.loading}</p>
 
     return (
-      <AppShell lang={lang} env={state.environment.name}>
-        <ContactPersonEdit lang={props.lang} avustushaku={state.avustushaku}/>
+      <AppShell t={t} env={state.environment.name}>
+        <ContactPersonEdit t={t} avustushaku={state.avustushaku} />
         <Debug json={state} />
       </AppShell>
     )
@@ -148,15 +148,15 @@ class App extends React.Component<AppProps, AppState>  {
 }
 
 type AppShellProps = {
-  lang: Language,
+  t: Translations,
   env: string
   children?: JSX.Element[]
 }
 
-function AppShell({ children, lang, env }: AppShellProps) {
+function AppShell({ children, t, env }: AppShellProps) {
   return (
     <div>
-      <TopBar env={env} lang={lang} />
+      <TopBar env={env} t={t} />
       <section className="soresu-form" id="container">
         {children}
       </section>
@@ -164,15 +164,15 @@ function AppShell({ children, lang, env }: AppShellProps) {
   )
 }
 
-type TopBarProps = { lang: Language, env: string }
-function TopBar({ env }: TopBarProps) {
+type TopBarProps = { t: Translations, env: string }
+function TopBar({ t, env }: TopBarProps) {
   return (
     <section id="topbar">
       <div id="top-container">
         <img id="logo" src="img/logo-240x68@2x.png" width="240" height="68" alt="Opetushallitus / Utbildningsstyrelsen" />
         <div className="topbar-right">
           <div className="topbar-title-and-save-status">
-            <h1 id="topic">{translations[lang].hakemus}</h1>
+            <h1 id="topic">{t.hakemus}</h1>
           </div>
           <div>
             <div className="important-info">
@@ -186,12 +186,13 @@ function TopBar({ env }: TopBarProps) {
     </section>
   )
 }
+
 type DebugProps = { json: object }
 function Debug({ json }: DebugProps) {
   return <pre>{JSON.stringify(json, null, 2)}</pre>
 }
 
 ReactDOM.render(
-  <App lang={lang} />,
+  <MuutoshakemusApp lang={lang} />,
   document.getElementById('app')
 )
