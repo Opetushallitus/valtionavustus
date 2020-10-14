@@ -63,48 +63,36 @@ export interface ContactPersonEditProps {
 
 export function ContactPersonEdit (props: ContactPersonEditProps) {
   const { lang, avustushaku } = props
-
+  const t = translations[lang]
   return (
   <section>
-    <div className="contact-person-edit-title">
-      <h1>{translations[lang].contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushaku?.content?.name?.[lang]}</span></h1>
+    <div className="muutoshaku__page-title">
+      <h1 className="muutoshaku__title">{t.contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushaku?.content?.name?.[lang]}</span></h1>
       <span className="va-register-number">
-        <span className="title">
-          {translations[lang].contactPersonEdit.registerNumberTitle}:
-        </span>
-        <span className="value">{avustushaku?.["register-number"]}</span>
+        <span className="muutoshaku__register-number">{t.contactPersonEdit.registerNumberTitle}: </span>
+        {avustushaku?.["register-number"]}
       </span>
     </div>
-    <div>
-      <div>
-        <div>{translations[lang].contactPersonEdit.hanke}</div>
-        <div>MISSING</div>
+    <div className="muutoshaku__form">
+      <div className="muutoshaku__form-row">
+        <div className="muutoshaku__form-cell">
+          <div>{t.contactPersonEdit.hanke}</div>
+          <div>MISSING</div>
+        </div>
       </div>
-      <div className="contact-person-edit-body-contact-person-row">
-        <span>
-          <div>
-            {translations[lang].contactPersonEdit.contactPerson} 
-          </div>
-          <div>
-            <input type="text"></input>
-          </div>
-        </span>
-        <span>
-          <div>
-            {translations[lang].contactPersonEdit.email} 
-          </div>
-          <div>
-            <input type="text"></input>
-          </div>
-        </span>
-        <span>
-          <div>
-            {translations[lang].contactPersonEdit.phone} 
-          </div>
-          <div>
-            <input type="text"></input>
-          </div>
-        </span>
+      <div className="muutoshaku__form-row">
+        <div className="muutoshaku__form-cell">
+          <label htmlFor="muutoshaku__contact-person">{t.contactPersonEdit.contactPerson}</label>
+          <input id="muutoshaku__contact-person" type="text" />
+        </div>
+        <div className="muutoshaku__form-cell">
+          <label htmlFor="muutoshaku__email">{t.contactPersonEdit.email}</label>
+          <input id="muutoshaku__email" type="text" />
+        </div>
+        <div className="muutoshaku__form-cell">
+          <label htmlFor="muutoshaku__phone">{t.contactPersonEdit.phone}</label>
+          <input id="muutoshaku__phone" type="text" />
+        </div>
       </div>
     </div>
   </section>
@@ -169,7 +157,7 @@ function AppShell({ children, lang, env }: AppShellProps) {
   return (
     <div>
       <TopBar env={env} lang={lang} />
-      <section id="container">
+      <section className="soresu-form" id="container">
         {children}
       </section>
     </div>
