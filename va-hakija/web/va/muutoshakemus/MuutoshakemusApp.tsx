@@ -55,7 +55,7 @@ const translations: { [key in Language]: typeof translationsFi } = {
 
 const query = queryString.parse(location.search)
 const lang = validateLanguage(query.lang) || 'fi'
-// const userKey = query['user-key']
+const userKey = query['user-key']
 const avustushakuId = query['avustushaku-id']
 
 interface AppProps {
@@ -65,6 +65,7 @@ interface AppProps {
 interface ContactPersonEditProps {
   t: Translations
   avustushaku?: any
+  hakemus?: any
 }
 
 function ContactPersonEdit(props: ContactPersonEditProps) {
@@ -211,6 +212,7 @@ type AppState = {
   status: 'LOADED'
   avustushaku: any
   environment: EnvironmentApiResponse
+  hakemus: any
 }
 
 class MuutoshakemusApp extends React.Component<AppProps, AppState>  {
@@ -224,10 +226,11 @@ class MuutoshakemusApp extends React.Component<AppProps, AppState>  {
     const initialState = Bacon.combineTemplate({
       environment: Bacon.fromPromise(HttpUtil.get(`/environment`)),
       avustushaku: Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}`)),
+      hakemus: Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}`))
     })
 
-    this.unsubscribe = initialState.onValue(({ avustushaku, environment }: any) =>
-      this.setState({ status: 'LOADED', avustushaku, environment })
+    this.unsubscribe = initialState.onValue(({ avustushaku, environment, hakemus }: any) =>
+      this.setState({ status: 'LOADED', avustushaku, environment, hakemus })
     )
   }
 
@@ -244,7 +247,7 @@ class MuutoshakemusApp extends React.Component<AppProps, AppState>  {
 
     return (
       <AppShell t={t} env={state.environment.name}>
-        <ContactPersonEdit t={t} avustushaku={state.avustushaku} />
+        <ContactPersonEdit t={t} avustushaku={state.avustushaku} hakemus={state.hakemus}/>
         <ApplicationEdit t={t} />
         <Debug json={state} />
       </AppShell>
