@@ -185,26 +185,6 @@ function ApplicationEdit(props: ApplicationEditProps) {
         <label htmlFor="muutoshaku__finance-reasoning">{t.applicationEdit.reasoning}</label>
         <textarea id="muutoshaku__finance-reasoning" rows={5} />
       </div>
-      <div className="soresu-checkbox">
-        <input className="soresu-checkbox" type="checkbox" id="period-edit" />
-        <label htmlFor="period-edit">{t.applicationEdit.periodEdit}</label>
-      </div>
-      <div className="muutoshaku__application-edit-cell">
-        <div className="muutoshaku__application-content">
-          <div className="muutoshaku__content-left">
-            <div className="muutoshaku__content-title">{t.applicationEdit.currentPeriodEnd}</div>
-            <div>MISSING</div>
-          </div>
-          <div className="muutoshaku__content-right">
-            <div className="muutoshaku__content-title">{t.applicationEdit.newPeriodEnd}</div>
-            <div>
-              <input type="date" />
-            </div>
-          </div>
-        </div>
-        <label htmlFor="muutoshaku__period-reasoning">{t.applicationEdit.reasoning}</label>
-        <textarea id="muutoshaku__period-reasoning" rows={5} />
-      </div>
     </div>
   </section>
   )
