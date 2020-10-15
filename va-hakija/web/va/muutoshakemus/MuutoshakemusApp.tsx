@@ -10,8 +10,10 @@ import '../style/main.less'
 
 type Language = 'fi' | 'sv'
 function validateLanguage(s: unknown): Language {
-  if (s === 'sv') return 'sv'
-  return 'fi'
+  if (s !== 'fi' && s !== 'sv') {
+    throw new Error(`Unrecognized language: ${s}`)
+  }
+  return s
 }
 
 const translationsFi = {
