@@ -564,8 +564,17 @@ describe("Puppeteer tests", () => {
   })
 
   describe("Muutospäätösprosessi", () => {
+    const answers = {
+      contactPersonEmail: "erkki.esimerkki@example.com",
+      contactPersonName: "Erkki Esimerkki",
+      contactPersonPhoneNumber: "666",
+      registerNumber: "230/2015",
+      projectName: "Rahassa kylpijät Ky Ay Oy",
+      avustushakuName: `Testiavustushaku ${randomString()}`
+    }
+
     it("Avustushaun ratkaisu should send an email with link to muutoshaku", async () => {
-      const avustushakuID = await ratkaiseAvustushaku2(page)
+      const avustushakuID = await ratkaiseAvustushaku2(page, answers) 
 
       const emails = await getEmails(avustushakuID)
       emails.forEach(email => {
@@ -581,10 +590,8 @@ https?://.*/muutoshaku.*
     })
 
     describe("Changing contact person details", () => {
-
-      it("Muutoshaku page should show the name of the avustushaku", async () => {
-        const avustushakuName = "Testiavustushaku Testi"
-        const avustushakuID = await ratkaiseAvustushaku2(page, avustushakuName)
+      it("should show avustushaku name, project name, and registration number as well as name, email and phone number for contact person", async () => {
+        const avustushakuID = await ratkaiseAvustushaku2(page, answers)
 
         const emails = await getEmails(avustushakuID)
 
@@ -594,9 +601,29 @@ https?://.*/muutoshaku.*
 
         await page.goto(linkToMuutoshaku, { waitUntil: "networkidle0" })
         const avustushakuNameSpan = await page.waitForSelector("[data-test-id=avustushaku-name]", { visible: true })
-        const avustushakuNameOnPage = await page.evaluate(element => element.textContent, avustushakuNameSpan)
+        const avustushakuName = await page.evaluate(element => element.textContent, avustushakuNameSpan)
 
-        expect(avustushakuNameOnPage).toEqual(avustushakuName)
+        const projectNameDiv = await page.waitForSelector("[data-test-id=project-name]", { visible: true })
+        const projectName = await page.evaluate(element => element.textContent, projectNameDiv)
+
+        const registerNumberSpan = await page.waitForSelector("[data-test-id=register-number]", { visible: true })
+        const registerNumber = await page.evaluate(element => element.textContent, registerNumberSpan)
+
+        const contactPersonInput = await page.waitForSelector("#muutoshaku__contact-person", { visible: true })
+        const contactPerson = await page.evaluate(element => element.value, contactPersonInput)
+
+        const contactPersonEmailInput = await page.waitForSelector("#muutoshaku__email", { visible: true })
+        const contactPersonEmail = await page.evaluate(element => element.value, contactPersonEmailInput)
+
+        const contactPersonPhoneInput = await page.waitForSelector("#muutoshaku__phone", { visible: true })
+        const contactPersonPhoneNumber = await page.evaluate(element => element.value, contactPersonPhoneInput)
+
+        expect(avustushakuName).toEqual(answers.avustushakuName)
+        expect(projectName).toEqual(answers.projectName)
+        expect(registerNumber).toEqual(answers.registerNumber)
+        expect(contactPerson).toEqual(answers.contactPersonName)
+        expect(contactPersonEmail).toEqual(answers.contactPersonEmail)
+        expect(contactPersonPhoneNumber).toEqual(answers.contactPersonPhoneNumber)
       })
     })
   })

@@ -70,36 +70,41 @@ interface ContactPersonEditProps {
   hakemus?: any
 }
 
+function getAnswerFromHakemus(hakemus: any, keyName: string) {
+  const answer = hakemus.submission.answers.value.find(({key}: {key: string}) => key === keyName)
+  return answer.value
+}
+
 function ContactPersonEdit(props: ContactPersonEditProps) {
-  const { t, avustushaku } = props
+  const { t, avustushaku, hakemus } = props
   return (
   <section>
     <div className="muutoshaku__page-title">
       <h1 className="muutoshaku__title">{t.contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushaku?.content?.name?.[lang]}</span></h1>
       <span className="va-register-number">
         <span className="muutoshaku__register-number">{t.contactPersonEdit.registerNumberTitle}: </span>
-        {avustushaku?.["register-number"]}
+        <span data-test-id="register-number">{avustushaku?.["register-number"]}</span>
       </span>
     </div>
     <div className="muutoshaku__form">
       <div className="muutoshaku__form-row">
         <div className="muutoshaku__form-cell">
           <div>{t.contactPersonEdit.hanke}</div>
-          <div>MISSING</div>
+          <div data-test-id="project-name">{getAnswerFromHakemus(hakemus, 'project-name')}</div>
         </div>
       </div>
       <div className="muutoshaku__form-row">
         <div className="muutoshaku__form-cell">
           <label htmlFor="muutoshaku__contact-person">{t.contactPersonEdit.contactPerson}</label>
-          <input id="muutoshaku__contact-person" type="text" />
+          <input id="muutoshaku__contact-person" type="text" value={getAnswerFromHakemus(hakemus, "applicant-name")} />
         </div>
         <div className="muutoshaku__form-cell">
           <label htmlFor="muutoshaku__email">{t.contactPersonEdit.email}</label>
-          <input id="muutoshaku__email" type="text" />
+          <input id="muutoshaku__email" type="text" value={getAnswerFromHakemus(hakemus, 'primary-email')} />
         </div>
         <div className="muutoshaku__form-cell">
           <label htmlFor="muutoshaku__phone">{t.contactPersonEdit.phone}</label>
-          <input id="muutoshaku__phone" type="text" />
+          <input id="muutoshaku__phone" type="text" value={getAnswerFromHakemus(hakemus, "textField-0")}/>
         </div>
       </div>
     </div>

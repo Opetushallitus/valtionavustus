@@ -59,8 +59,8 @@ export async function navigateHakija(page: Page, path: string) {
   await page.goto(`${HAKIJA_URL}${path}`, { waitUntil: "networkidle0" })
 }
 
-export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId2(page: Page, hakuName?: string) {
-  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, hakuName)
+export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId2(page: Page, hakuName?: string, registerNumber?: string) {
+  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, hakuName, registerNumber)
 
   await clickElementWithText(page, "span", "Hakulomake")
   await clearAndSet(page, ".form-json-editor textarea", hakulomakeJson)
@@ -68,7 +68,7 @@ export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId2(page: Pag
   return avustushakuID
 }
 
-export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page, hakuName?: string) {
+export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page, hakuName?: string, registerNumber?: string) {
   const avustushakuName = hakuName || mkAvustushakuName()
   console.log(`Avustushaku name for test: ${avustushakuName}`)
 
@@ -80,7 +80,7 @@ export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page
   })
   console.log(`Avustushaku ID: ${avustushakuID}`)
 
-  await clearAndType(page, "#register-number", "230/2015")
+  await clearAndType(page, "#register-number", registerNumber || "230/2015")
   await clearAndType(page, "#haku-name-fi", avustushakuName)
   await clearAndType(page, "#hakuaika-start", "1.1.1970 0.00")
 
@@ -129,17 +129,17 @@ export async function fillAndSendHakemus(page: Page, avustushakuID: number, befo
   await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Hakemus lähetetty")
 }
 
-export async function fillAndSendHakemus2(page: Page, avustushakuID: number, beforeSubmitFn?: () => void) {
+export async function fillAndSendHakemus2(page: Page, avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void) {
   await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
 
-  await clearAndType(page, "#primary-email", "erkki.esimerkki@example.com")
+  await clearAndType(page, "#primary-email", answers.contactPersonEmail)
   await clickElement(page, "#submit")
 
   await clearAndType(page, "#finnish-business-id", "2050864-5")
   await clickElement(page, "input.get-business-id")
 
-  await clearAndType(page, "#applicant-name", "Erkki Esimerkki")
-  await clearAndType(page, "[id='textField-0']", "666")
+  await clearAndType(page, "#applicant-name", answers.contactPersonName)
+  await clearAndType(page, "[id='textField-0']", answers.contactPersonPhoneNumber)
 
   await clearAndType(page, "[id='signatories-fieldset-1.name']", "Erkki Esimerkki")
   await clearAndType(page, "[id='signatories-fieldset-1.email']", "erkki.esimerkki@example.com")
@@ -155,7 +155,7 @@ export async function fillAndSendHakemus2(page: Page, avustushakuID: number, bef
   await clearAndType(page, "#textField-2", "2")
   await clearAndType(page, "#textField-1", "20")
 
-  await clearAndType(page, "#project-name", "Oispa rahaa")
+  await clearAndType(page, "#project-name", answers.projectName)
 
   await clickElement(page, "[for='language.radio.0']")
 
@@ -596,17 +596,26 @@ export async function clickCodeVisibilityButton(page: Page, code: number, visibi
   await element.click()
 }
 
-export async function ratkaiseAvustushaku2(page: Page, avustushakuName?: string) {
-  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId2(page, avustushakuName)
+interface Answers {
+  avustushakuName: string
+  projectName: string
+  contactPersonName: string
+  contactPersonEmail: string
+  contactPersonPhoneNumber: string
+  registerNumber: string
+}
+
+export async function ratkaiseAvustushaku2(page: Page, answers: Answers) {
+  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId2(page, answers.avustushakuName, answers.registerNumber)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
-  await fillAndSendHakemus2(page, avustushakuID)
+  await fillAndSendHakemus2(page, avustushakuID, answers)
 
   return await acceptAvustushaku(page, avustushakuID)
 }
 
-export async function ratkaiseAvustushaku(page: Page, avustushakuName?: string) {
-  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, avustushakuName)
+export async function ratkaiseAvustushaku(page: Page) {
+  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
   await publishAvustushaku(page)
   await fillAndSendHakemus(page, avustushakuID)
   
