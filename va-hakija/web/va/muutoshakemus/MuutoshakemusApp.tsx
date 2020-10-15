@@ -118,7 +118,7 @@ interface ApplicationEditProps {
 }
 function ApplicationEdit(props: ApplicationEditProps) {
   const { t } = props
-  
+
   return (
   <section>
     <h1 className="muutoshaku__title">{t.applicationEdit.title}</h1>
@@ -306,7 +306,7 @@ function TopBar({ t, env }: TopBarProps) {
 
 type DebugProps = { json: object }
 function Debug({ json }: DebugProps) {
-  return <pre>{JSON.stringify(json, null, 2)}</pre>
+  return <pre id="debug-api-response">{JSON.stringify(json, null, 2)}</pre>
 }
 
 ReactDOM.render(
