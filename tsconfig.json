@@ -2,6 +2,7 @@
   "extends": "./common-tsconfig.json",
   "compilerOptions": {
     "allowJs": true,
+    "esModuleInterop": true,
     "jsx": "react",
     "outDir": "dist",
     "sourceMap": true,

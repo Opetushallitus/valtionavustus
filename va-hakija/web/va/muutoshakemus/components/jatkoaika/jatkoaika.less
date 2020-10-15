@@ -1,0 +1,104 @@
+#container {
+
+  .error {
+    background-color: #c9302c;
+  }
+
+  section {
+    h2 {
+      margin: 27px 0 9px 0;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 19px;
+      letter-spacing: 0.01em;
+
+      color: #323232;
+
+      text-align: left;
+      text-transform: uppercase;
+    }
+
+    div.content {
+      width: 50%;
+      float: left;
+      min-width: 400px;
+      margin: 20px 0;
+    }
+
+    div.muutoksenhaku {
+      margin-left: 132px;
+
+      form {
+        display: flex;
+        flex-direction: column;
+
+        input[type="checkbox"] {
+          margin-right: 9px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      div.checkbox-jatkoaika-container {
+        display: flex;
+      }
+
+      div.input {
+        margin-top: 26px;
+
+        .h3 {
+          display: block;
+          margin: initial;
+          margin-bottom: 12px;
+          text-transform: uppercase;
+          color: #000000;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 16px;
+          letter-spacing: 0.01em;
+        }
+      }
+
+      div.textareacontainer {
+        display: flex;
+        flex-direction: column;
+        margin-top: 15px;
+
+        label {
+          font-size: 14px;
+          line-height: 16px;
+          margin-bottom: 4px;
+        }
+
+        textarea {
+          padding: 6px 7px 6px 8px;
+          font-size: 12px;
+          line-height: 14px;
+        }
+      }
+
+      div.twocolumns {
+        display: flex;
+
+        div.paattymispaiva {
+          display: inline;
+          vertical-align: middle;
+
+          input {
+            height: 22px
+          }
+        }
+
+        >div:first-child {
+          padding-right: 16.77px;
+        }
+
+        >div:not(:first-child) {
+          border-left: 1px solid #979797;
+          padding-left: 15px;
+        }
+      }
+    }
+  }
+}
