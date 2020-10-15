@@ -7,6 +7,7 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 
 import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
+import {AvustuksenKayttoajanPidennys} from './components/jatkoaika/AvustuksenKayttoajanPidennys'
 
 type Language = 'fi' | 'sv'
 function validateLanguage(s: unknown): Language {
@@ -256,6 +257,7 @@ class MuutoshakemusApp extends React.Component<AppProps, AppState>  {
       <AppShell t={t} env={state.environment.name}>
         <ContactPersonEdit t={t} avustushaku={state.avustushaku} hakemus={state.hakemus}/>
         <ApplicationEdit t={t} />
+        <AvustuksenKayttoajanPidennys nykyinenPaattymisaika={new Date()} />
         <Debug json={state} />
       </AppShell>
     )
