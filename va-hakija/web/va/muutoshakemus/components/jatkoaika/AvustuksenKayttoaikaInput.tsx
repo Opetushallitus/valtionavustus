@@ -11,8 +11,8 @@ type AvustuksenKayttoaikaInputProps = {
 }
 
 export type UserInputs = {
-  toivottuPaattymispaiva: string
-  perustelut: string
+  toivottuPaattymispaiva?: string
+  perustelut?: string
 }
 
 const debounce_wait = 1000 // 1 second
@@ -34,7 +34,14 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
   const [ textError, setTextError ] = useState(false)
 
   const debouncedSave = debounce(() => autoSave(), debounce_wait)
-  useEffect(() => { debouncedSave() }, [toivottuPaattymispaiva, perustelut])
+
+  useEffect(() => {
+    props.onChange({
+      perustelut: perustelut,
+      toivottuPaattymispaiva: toivottuPaattymispaiva,
+    })
+    debouncedSave()
+  }, [toivottuPaattymispaiva, perustelut])
 
   async function autoSave(): Promise<void> {
     if (!unsavedChanges) return

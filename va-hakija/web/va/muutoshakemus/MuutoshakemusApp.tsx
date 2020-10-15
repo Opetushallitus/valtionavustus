@@ -9,6 +9,7 @@ import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
 import {AvustuksenKayttoajanPidennys} from './components/jatkoaika/AvustuksenKayttoajanPidennys'
 import {TopBar} from './components/TopBar'
+import {UserInputs as KayttoaikaInputs} from './components/jatkoaika/AvustuksenKayttoaikaInput'
 
 type Language = 'fi' | 'sv'
 function validateLanguage(s: unknown): Language {
@@ -21,6 +22,7 @@ function validateLanguage(s: unknown): Language {
 const translationsFi = {
   hakemus: 'Hakemus',
   loading: 'Ladataan lomaketta...',
+  send: 'Lähetä käsiteltäväksi',
   contactPersonEdit: {
     haku: 'Haku',
     registerNumberTitle: 'Asianumero',
@@ -45,7 +47,7 @@ const translationsFi = {
   }
 }
 
-type Translations = typeof translationsFi
+export type Translations = typeof translationsFi
 
 const translationsSv: Translations = {
   ...translationsFi,
@@ -74,7 +76,7 @@ interface ContactPersonEditProps {
 
 function getAnswerFromHakemus(hakemus: any, keyName: string) {
   const answer = hakemus.submission.answers.value.find(({key}: {key: string}) => key === keyName)
-  return answer.value
+  return answer?.value
 }
 
 function ContactPersonEdit(props: ContactPersonEditProps) {
@@ -202,6 +204,7 @@ type AppState = {
   avustushaku: any
   environment: EnvironmentApiResponse
   hakemus: any
+  kayttoajanPidennys?: KayttoaikaInputs
 }
 
 class MuutoshakemusApp extends React.Component<AppProps, AppState>  {
@@ -209,6 +212,9 @@ class MuutoshakemusApp extends React.Component<AppProps, AppState>  {
 
   constructor(props: AppProps) {
     super(props)
+
+    this.handleKayttoajanPidennysChange = this.handleKayttoajanPidennysChange.bind(this)
+    this.handleSendButton = this.handleSendButton.bind(this)
 
     this.state = { status: 'LOADING' }
 
@@ -227,6 +233,19 @@ class MuutoshakemusApp extends React.Component<AppProps, AppState>  {
     this.unsubscribe()
   }
 
+  handleKayttoajanPidennysChange(inputs: KayttoaikaInputs) {
+    this.setState({
+      kayttoajanPidennys: inputs
+    } as any)
+  }
+
+  handleSendButton() {
+    console.log('Send button clicked')
+    if (this.state.status === 'LOADED') {
+      console.log(JSON.stringify(this.state.kayttoajanPidennys, null, 2))
+    }
+  }
+
   render() {
     const {state, props} = this
     const t = translations[props.lang]
@@ -235,10 +254,12 @@ class MuutoshakemusApp extends React.Component<AppProps, AppState>  {
       return <p>{t.loading}</p>
 
     return (
-      <AppShell t={t} env={state.environment.name}>
+      <AppShell t={t} env={state.environment.name} onSend={this.handleSendButton}>
         <ContactPersonEdit t={t} avustushaku={state.avustushaku} hakemus={state.hakemus}/>
         <ApplicationEdit t={t} />
-        <AvustuksenKayttoajanPidennys nykyinenPaattymisaika={new Date()} />
+        <AvustuksenKayttoajanPidennys
+          onChange={this.handleKayttoajanPidennysChange}
+          nykyinenPaattymisaika={new Date()} />
         <Debug json={state} />
       </AppShell>
     )
@@ -249,12 +270,13 @@ type AppShellProps = {
   t: Translations,
   env: string
   children?: JSX.Element[]
+  onSend: () => void
 }
 
-function AppShell({ children, t, env }: AppShellProps) {
+function AppShell({ children, t, env, onSend }: AppShellProps) {
   return (
     <div>
-      <TopBar env={env} title={t.hakemus} />
+      <TopBar env={env} t={t} onSend={onSend} />
       <section className="soresu-form" id="container">
         {children}
       </section>

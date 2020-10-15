@@ -7,6 +7,7 @@ import './jatkoaika.less'
 
 type AvustuksenKayttoajanPidennysProps = {
   nykyinenPaattymisaika: Date
+  onChange: (inputs: UserInputs) => void
 }
 
 // TODO: Tekstit pois täältä!
@@ -17,10 +18,6 @@ export const AvustuksenKayttoajanPidennys = (props: AvustuksenKayttoajanPidennys
 
   function toggleOpen() {
     setInputOpen(!isInputOpen)
-  }
-
-  function handleInputChange(inputs: UserInputs) {
-    console.log(JSON.stringify(inputs)) // TODO: Käsittele kentät
   }
 
   return (
@@ -38,7 +35,7 @@ export const AvustuksenKayttoajanPidennys = (props: AvustuksenKayttoajanPidennys
 
           <AvustuksenKayttoaikaInput
             open={isInputOpen}
-            onChange={handleInputChange}
+            onChange={props.onChange}
             nykyinenPaattymisaika={props.nykyinenPaattymisaika} />
 
         </form>
