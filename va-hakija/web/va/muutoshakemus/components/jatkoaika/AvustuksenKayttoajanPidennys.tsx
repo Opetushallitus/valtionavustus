@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import {
   AvustuksenKayttoaikaInput,
   UserInputs
@@ -7,18 +7,37 @@ import './jatkoaika.less'
 
 type AvustuksenKayttoajanPidennysProps = {
   nykyinenPaattymisaika: Date
-  onChange: (inputs: UserInputs) => void
+  onChange: (inputs: AvustuksenKayttoajanPidennysInput) => void
+}
+
+export type AvustuksenKayttoajanPidennysInput = UserInputs & {
+  haenKayttoajanPidennysta: boolean
 }
 
 // TODO: Tekstit pois täältä!
 
 export const AvustuksenKayttoajanPidennys = (props: AvustuksenKayttoajanPidennysProps) => {
 
-  const [ isInputOpen, setInputOpen ] = useState(false)
+  const [ haenKayttoajanPidennysta, setHaenKayttoajanPidennysta ] = useState(false)
+  const [ userInputs, setUserInputs ] = useState<UserInputs>()
 
-  function toggleOpen() {
-    setInputOpen(!isInputOpen)
+  useEffect(() => {
+    props.onChange({
+      haenKayttoajanPidennysta: haenKayttoajanPidennysta,
+      ...userInputs
+    })
+  }, [haenKayttoajanPidennysta, userInputs])
+
+
+  function toggleHaenKayttoajanPidennysta() {
+    setHaenKayttoajanPidennysta(!haenKayttoajanPidennysta)
   }
+
+  function onKayttoaikaInputChange(inputs: UserInputs) {
+    setUserInputs(inputs)
+  }
+
+  // FIXME: Hukkaa kentät kun suljetaan ja avataan taas
 
   return (
     <section className="section" id="section-muutosten-hakeminen-checkbox">
@@ -27,15 +46,15 @@ export const AvustuksenKayttoajanPidennys = (props: AvustuksenKayttoajanPidennys
         <form>
 
           <div className="checkbox-jatkoaika-container">
-            <input type="checkbox" value="Submit" id="checkbox-jatkoaika" onClick={toggleOpen} />
+            <input type="checkbox" value="Submit" id="checkbox-jatkoaika" onClick={toggleHaenKayttoajanPidennysta} />
             <label htmlFor="checkbox-jatkoaika">
               Haen pidennystä avustuksen käyttöajalle
             </label>
           </div>
 
           <AvustuksenKayttoaikaInput
-            open={isInputOpen}
-            onChange={props.onChange}
+            open={haenKayttoajanPidennysta}
+            onChange={onKayttoaikaInputChange}
             nykyinenPaattymisaika={props.nykyinenPaattymisaika} />
 
         </form>

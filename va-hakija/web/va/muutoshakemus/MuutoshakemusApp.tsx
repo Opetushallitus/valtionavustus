@@ -7,9 +7,11 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 
 import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
-import {AvustuksenKayttoajanPidennys} from './components/jatkoaika/AvustuksenKayttoajanPidennys'
+import {
+  AvustuksenKayttoajanPidennys,
+  AvustuksenKayttoajanPidennysInput
+} from './components/jatkoaika/AvustuksenKayttoajanPidennys'
 import {TopBar} from './components/TopBar'
-import {UserInputs as KayttoaikaInputs} from './components/jatkoaika/AvustuksenKayttoaikaInput'
 import {Language} from './types'
 import {translations} from './translations'
 import {TranslationContext, useTranslations} from './TranslationContext'
@@ -170,7 +172,7 @@ let initialState: MuutoshakemusProps = {
 
 const MuutoshakemusApp = () => {
   const [state, setState] = useState<MuutoshakemusProps>(initialState)
-  const [kayttoaika, setKayttoaika] = useState<KayttoaikaInputs>()
+  const [kayttoaika, setKayttoaika] = useState<AvustuksenKayttoajanPidennysInput>()
 
   useEffect(() => {
     const fetchProps = async () => {
@@ -187,15 +189,13 @@ const MuutoshakemusApp = () => {
     fetchProps()
   }, [])
 
-  const handleKayttoajanPidennysChange = (inputs: KayttoaikaInputs) => {
+  const handleKayttoajanPidennysChange = (inputs: AvustuksenKayttoajanPidennysInput) => {
     setKayttoaika(inputs)
   }
 
   const handleSendButton = () => {
     console.log('Send button clicked')
-    if (status === 'LOADED') {
-      console.log(JSON.stringify(kayttoaika, null, 2))
-    }
+    console.log(JSON.stringify(kayttoaika, null, 2))
   }
 
   const translationContext = {
