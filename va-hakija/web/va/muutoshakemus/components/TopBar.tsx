@@ -1,13 +1,13 @@
-import * as React from "react"
-import {Translations} from '../MuutoshakemusApp'
+import React from 'react'
+import { useTranslations } from '../TranslationContext'
 
 type TopBarProps = {
-  t: Translations,
   env: string,
   onSend: () => void
 }
 
-export function TopBar({ t, env, onSend }: TopBarProps) {
+export function TopBar({ env, onSend }: TopBarProps) {
+  const { t } = useTranslations()
 
   return (
     <section id="topbar">

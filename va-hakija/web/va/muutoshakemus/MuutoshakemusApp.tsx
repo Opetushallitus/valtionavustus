@@ -1,5 +1,5 @@
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
+import React from 'react'
+import ReactDOM from 'react-dom'
 import * as Bacon from 'baconjs'
 import * as queryString from 'query-string'
 
@@ -10,53 +10,15 @@ import '../style/main.less'
 import {AvustuksenKayttoajanPidennys} from './components/jatkoaika/AvustuksenKayttoajanPidennys'
 import {TopBar} from './components/TopBar'
 import {UserInputs as KayttoaikaInputs} from './components/jatkoaika/AvustuksenKayttoaikaInput'
+import {Language} from './types'
+import {translations} from './translations'
+import {TranslationContext, useTranslations} from './TranslationContext'
 
-type Language = 'fi' | 'sv'
 function validateLanguage(s: unknown): Language {
   if (s !== 'fi' && s !== 'sv') {
     throw new Error(`Unrecognized language: ${s}`)
   }
   return s
-}
-
-const translationsFi = {
-  hakemus: 'Hakemus',
-  loading: 'Ladataan lomaketta...',
-  send: 'Lähetä käsiteltäväksi',
-  contactPersonEdit: {
-    haku: 'Haku',
-    registerNumberTitle: 'Asianumero',
-    hanke: 'Hanke',
-    contactPerson: 'Yhteyshenkilö',
-    email: 'Sähköposti',
-    phone: 'Puhelin'
-  },
-  applicationEdit: {
-    title: 'Muutosten hakeminen',
-    contentEdit: 'Haen muutosta hankkeen sisältöön tai toteutustapaan',
-    contentEditDetails: 'Kuvaile muutokset hankkeen sisältöön tai toteutustapaan',
-    financeEdit: 'Haen muutosta hankkeen talouden käyttösuunnitelmaan',
-    currentFinanceEstimation: 'Voimassaoleva talousarvio',
-    newFinanceEstimation: 'Uusi talousarvio',
-    expenses: 'Menot',
-    expensesInTotal: 'Menot yhteensä',
-    periodEdit: 'Haen pidennystä avustuksen käyttöajalle',
-    currentPeriodEnd: 'Voimassaoleva päättymisaika',
-    newPeriodEnd: 'Uusi päättymisaika',
-    reasoning: 'Perustelut'
-  }
-}
-
-export type Translations = typeof translationsFi
-
-const translationsSv: Translations = {
-  ...translationsFi,
-  hakemus: 'Ansökan'
-}
-
-const translations: { [key in Language]: typeof translationsFi } = {
-  fi: translationsFi,
-  sv: translationsSv
 }
 
 const query = queryString.parse(location.search)
@@ -69,7 +31,6 @@ interface AppProps {
 }
 
 interface ContactPersonEditProps {
-  t: Translations
   avustushaku?: any
   hakemus?: any
 }
@@ -80,7 +41,8 @@ function getAnswerFromHakemus(hakemus: any, keyName: string) {
 }
 
 function ContactPersonEdit(props: ContactPersonEditProps) {
-  const { t, avustushaku, hakemus } = props
+  const { avustushaku, hakemus } = props
+  const { t } = useTranslations()
   return (
   <section>
     <div className="muutoshaku__page-title">
@@ -117,10 +79,9 @@ function ContactPersonEdit(props: ContactPersonEditProps) {
 }
 
 interface ApplicationEditProps {
-  t: Translations
 }
-function ApplicationEdit(props: ApplicationEditProps) {
-  const { t } = props
+function ApplicationEdit(_props: ApplicationEditProps) {
+  const { t } = useTranslations()
 
   return (
   <section>
@@ -253,30 +214,36 @@ class MuutoshakemusApp extends React.Component<AppProps, AppState>  {
     if (state.status === 'LOADING')
       return <p>{t.loading}</p>
 
+    const translationContext = {
+      t: translations[props.lang],
+      lang: props.lang
+    }
+
     return (
-      <AppShell t={t} env={state.environment.name} onSend={this.handleSendButton}>
-        <ContactPersonEdit t={t} avustushaku={state.avustushaku} hakemus={state.hakemus}/>
-        <ApplicationEdit t={t} />
-        <AvustuksenKayttoajanPidennys
-          onChange={this.handleKayttoajanPidennysChange}
-          nykyinenPaattymisaika={new Date()} />
-        <Debug json={state} />
-      </AppShell>
+      <TranslationContext.Provider value={translationContext}>
+        <AppShell env={state.environment.name} onSend={this.handleSendButton}>
+          <ContactPersonEdit avustushaku={state.avustushaku} hakemus={state.hakemus}/>
+          <ApplicationEdit />
+          <AvustuksenKayttoajanPidennys
+            onChange={this.handleKayttoajanPidennysChange}
+            nykyinenPaattymisaika={new Date()} />
+          <Debug json={state} />
+        </AppShell>
+      </TranslationContext.Provider>
     )
   }
 }
 
 type AppShellProps = {
-  t: Translations,
   env: string
   children?: JSX.Element[]
   onSend: () => void
 }
 
-function AppShell({ children, t, env, onSend }: AppShellProps) {
+function AppShell({ children, env, onSend }: AppShellProps) {
   return (
     <div>
-      <TopBar env={env} t={t} onSend={onSend} />
+      <TopBar env={env} onSend={onSend} />
       <section className="soresu-form" id="container">
         {children}
       </section>
