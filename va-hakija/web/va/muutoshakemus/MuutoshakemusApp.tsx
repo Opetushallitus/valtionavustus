@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import * as Bacon from 'baconjs'
 import * as queryString from 'query-string'
@@ -26,18 +26,14 @@ const lang = validateLanguage(query.lang) || 'fi'
 const userKey = query['user-key']
 const avustushakuId = query['avustushaku-id']
 
-interface AppProps {
-  lang: Language,
-}
-
 interface ContactPersonEditProps {
   avustushaku?: any
   hakemus?: any
 }
 
 function getAnswerFromHakemus(hakemus: any, keyName: string) {
-  const answer = hakemus.submission.answers.value.find(({key}: {key: string}) => key === keyName)
-  return answer?.value
+  const answer = hakemus?.submission?.answers?.value?.find(({key}: {key: string}) => key === keyName)
+  return answer?.value || ''
 }
 
 function ContactPersonEdit(props: ContactPersonEditProps) {
@@ -62,15 +58,15 @@ function ContactPersonEdit(props: ContactPersonEditProps) {
       <div className="muutoshaku__form-row">
         <div className="muutoshaku__form-cell">
           <label htmlFor="muutoshaku__contact-person">{t.contactPersonEdit.contactPerson}</label>
-          <input id="muutoshaku__contact-person" type="text" value={getAnswerFromHakemus(hakemus, "applicant-name")} />
+          <input id="muutoshaku__contact-person" type="text" defaultValue={getAnswerFromHakemus(hakemus, "applicant-name")} />
         </div>
         <div className="muutoshaku__form-cell">
           <label htmlFor="muutoshaku__email">{t.contactPersonEdit.email}</label>
-          <input id="muutoshaku__email" type="text" value={getAnswerFromHakemus(hakemus, 'primary-email')} />
+          <input id="muutoshaku__email" type="text" defaultValue={getAnswerFromHakemus(hakemus, 'primary-email')} />
         </div>
         <div className="muutoshaku__form-cell">
           <label htmlFor="muutoshaku__phone">{t.contactPersonEdit.phone}</label>
-          <input id="muutoshaku__phone" type="text" value={getAnswerFromHakemus(hakemus, "textField-0")}/>
+          <input id="muutoshaku__phone" type="text" defaultValue={getAnswerFromHakemus(hakemus, "textField-0")}/>
         </div>
       </div>
     </div>
@@ -158,80 +154,72 @@ type EnvironmentApiResponse = {
   name: string
 }
 
-type AppState = {
-  status: 'LOADING'
-} | {
-  status: 'LOADED'
-  avustushaku: any
-  environment: EnvironmentApiResponse
-  hakemus: any
-  kayttoajanPidennys?: KayttoaikaInputs
+type MuutoshakemusProps = {
+  status: 'LOADED' | 'LOADING'
+  avustushaku?: any
+  environment?: EnvironmentApiResponse
+  hakemus?: any
 }
 
-class MuutoshakemusApp extends React.Component<AppProps, AppState>  {
-  unsubscribe: Function
+let initialState: MuutoshakemusProps = {
+  status: 'LOADING',
+  environment: undefined,
+  avustushaku: undefined,
+  hakemus: undefined
+}
 
-  constructor(props: AppProps) {
-    super(props)
+const MuutoshakemusApp = () => {
+  const [state, setState] = useState<MuutoshakemusProps>(initialState)
+  const [kayttoaika, setKayttoaika] = useState<KayttoaikaInputs>()
 
-    this.handleKayttoajanPidennysChange = this.handleKayttoajanPidennysChange.bind(this)
-    this.handleSendButton = this.handleSendButton.bind(this)
+  useEffect(() => {
+    const fetchProps = async () => {
+      Bacon
+        .combineTemplate({
+          environment: Bacon.fromPromise(HttpUtil.get(`/environment`)),
+          avustushaku: Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}`)),
+          hakemus: Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}`))
+        })
+        .onValue((values: any) => {
+          setState({ status: 'LOADED', ...values })
+        })
+    }
+    fetchProps()
+  }, [])
 
-    this.state = { status: 'LOADING' }
-
-    const initialState = Bacon.combineTemplate({
-      environment: Bacon.fromPromise(HttpUtil.get(`/environment`)),
-      avustushaku: Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}`)),
-      hakemus: Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}`))
-    })
-
-    this.unsubscribe = initialState.onValue(({ avustushaku, environment, hakemus }: any) =>
-      this.setState({ status: 'LOADED', avustushaku, environment, hakemus })
-    )
+  const handleKayttoajanPidennysChange = (inputs: KayttoaikaInputs) => {
+    setKayttoaika(inputs)
   }
 
-  componentWillUnmount() {
-    this.unsubscribe()
-  }
-
-  handleKayttoajanPidennysChange(inputs: KayttoaikaInputs) {
-    this.setState({
-      kayttoajanPidennys: inputs
-    } as any)
-  }
-
-  handleSendButton() {
+  const handleSendButton = () => {
     console.log('Send button clicked')
-    if (this.state.status === 'LOADED') {
-      console.log(JSON.stringify(this.state.kayttoajanPidennys, null, 2))
+    if (status === 'LOADED') {
+      console.log(JSON.stringify(kayttoaika, null, 2))
     }
   }
 
-  render() {
-    const {state, props} = this
-    const t = translations[props.lang]
-
-    if (state.status === 'LOADING')
-      return <p>{t.loading}</p>
-
-    const translationContext = {
-      t: translations[props.lang],
-      lang: props.lang
-    }
-
-    return (
-      <TranslationContext.Provider value={translationContext}>
-        <AppShell env={state.environment.name} onSend={this.handleSendButton}>
-          <ContactPersonEdit avustushaku={state.avustushaku} hakemus={state.hakemus}/>
-          <ApplicationEdit />
-          <AvustuksenKayttoajanPidennys
-            onChange={this.handleKayttoajanPidennysChange}
-            nykyinenPaattymisaika={new Date()} />
-          <Debug json={state} />
-        </AppShell>
-      </TranslationContext.Provider>
-    )
+  const translationContext = {
+    t: translations[lang],
+    lang
   }
+
+  return (
+    <>
+      {status === 'LOADING'
+        ? <p>{translations[lang].loading}</p>
+        : <TranslationContext.Provider value={translationContext}>
+            <AppShell env={state.environment?.name || ''} onSend={handleSendButton}>
+              <ContactPersonEdit avustushaku={state.avustushaku} hakemus={state.hakemus}/>
+              <ApplicationEdit />
+              <AvustuksenKayttoajanPidennys
+                onChange={handleKayttoajanPidennysChange}
+                nykyinenPaattymisaika={new Date()} />
+              <Debug json={state} />
+            </AppShell>
+          </TranslationContext.Provider>
+      }
+    </>
+  )
 }
 
 type AppShellProps = {
@@ -257,6 +245,6 @@ function Debug({ json }: DebugProps) {
 }
 
 ReactDOM.render(
-  <MuutoshakemusApp lang={lang} />,
+  <MuutoshakemusApp />,
   document.getElementById('app')
 )
