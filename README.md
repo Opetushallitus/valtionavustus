@@ -304,8 +304,7 @@ cd va-hakija
 ../lein with-profile test spec -a -t tag  # monitorointi ja ajo vain testeille, jotka merkitty tägillä `tag`
 ```
 
-Backendin testit sisältävät myös frontendin yksikkötestien ajon ja
-UI-testien ajon PhantomJS:llä (tiedostot `mocha_spec.clj`).
+Backendin testit sisältävät myös frontendin yksikkötestien ajon
 
 Mikäli muutat frontendin koodia, pitää frontendin buildi ajaa uudelleen
 (katso ylhäältä).
