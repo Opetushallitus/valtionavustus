@@ -563,7 +563,7 @@ describe("Puppeteer tests", () => {
     await page.waitForSelector('[data-test-id=code-value-dropdown__operational-unit] [data-test-id=code-value-dropdown__no-options]')
   })
 
-  describe("Muutospäätösprosessi", () => {
+  describe.only("Muutospäätösprosessi", () => {
     const answers = {
       contactPersonEmail: "erkki.esimerkki@example.com",
       contactPersonName: "Erkki Esimerkki",

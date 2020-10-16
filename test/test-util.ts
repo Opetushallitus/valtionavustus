@@ -146,7 +146,7 @@ export async function fillAndSendHakemus2(page: Page, avustushakuID: number, ans
 
   await clickElementWithText(page, "label", "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko")
 
-  await clickElement(page, "[id='koodistoField-1']")
+  await clickElement(page, "[id='koodistoField-1_input']")
   await clickElementWithText(page, "li", "Kainuu")
 
   await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")
