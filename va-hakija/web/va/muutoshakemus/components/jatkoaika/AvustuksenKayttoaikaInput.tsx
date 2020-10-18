@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import moment from 'moment'
 import {ChangeEvent} from 'react'
+import {useTranslations} from '../../TranslationContext'
 
 type AvustuksenKayttoaikaInputProps = {
   open: boolean
@@ -20,6 +21,7 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
 
   // TODO: Hae nykyinen tila kannasta ja esitäytä lomake.
 
+  const { t } = useTranslations()
   const [ toivottuPaattymispaiva, setToivottuPaattymispaiva ] = useState(
     defaultUusiPaattymisaika(props.nykyinenPaattymisaika))
 
@@ -57,11 +59,13 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
     <div>
       <div className="input twocolumns">
         <div>
-          <div className="h3">Voimassaoleva päättymisaika</div>
+          <div className="h3">{t.kayttoajanPidennys.existingExpirationDateTitle}</div>
           <div className="paattymispaiva">{toString(props.nykyinenPaattymisaika)}</div>
         </div>
         <div>
-          <label className='h3' htmlFor="input-haluttu-paattymispaiva">Uusi päättymisaika</label>
+          <label className='h3' htmlFor="input-haluttu-paattymispaiva">
+            {t.kayttoajanPidennys.newExpirationDateTitle}
+          </label>
           <div className="paattymispaiva">
             <input
               className={dateError ? 'error' : ''}
@@ -75,7 +79,7 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
         </div>
       </div>
       <div className="textareacontainer">
-        <label htmlFor="perustelut-jatkoaika">Perustelut</label>
+        <label htmlFor="perustelut-jatkoaika">{t.kayttoajanPidennys.reasonsTitle}</label>
         <textarea
           id="perustelut-jatkoaika"
           className={textError ? 'error' : ''}

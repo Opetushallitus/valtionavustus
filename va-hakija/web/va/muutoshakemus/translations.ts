@@ -25,6 +25,12 @@ export const translationsFi = {
     currentPeriodEnd: 'Voimassaoleva päättymisaika',
     newPeriodEnd: 'Uusi päättymisaika',
     reasoning: 'Perustelut'
+  },
+  kayttoajanPidennys: {
+    checkboxTitle: 'Haen pidennystä avustuksen käyttöajalle',
+    existingExpirationDateTitle: 'Voimassaoleva päättymisaika',
+    newExpirationDateTitle: 'Uusi päättymisaika',
+    reasonsTitle: 'Perustelut'
   }
 }
 
