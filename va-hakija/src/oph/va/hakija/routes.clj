@@ -190,6 +190,17 @@
     :summary "Open application for applicant edit"
     (ok (on-hakemus-applicant-edit-open haku-id hakemus-id))))
 
+(defn- muutos-hae-jatkoaikaa []
+  (compojure-api/POST "/:haku-id/jatkoaika/:user-key" [haku-id user-key :as request]
+    :path-params [haku-id :- Long]
+    :return nil
+    :body [perustelut (compojure-api/describe {:perustelut s/Str :toivottuPaattymispaiva s/Inst} "Hae jatkoaikaa")]
+    :summary "Apply for deadline extension"
+    (println (str "Haetaan jatkoaikaa hakulle" haku-id "perustelulla " perustelut))
+    (ok {:message (str "Hello, " haku-id perustelut)})
+    ))
+
+
 (defn- get-attachments []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
     :path-params [haku-id :- Long, hakemus-id :- s/Str]
@@ -268,6 +279,7 @@
   (applicant-edit-submit)
   (applicant-edit-open)
   (get-applicant-edit-open)
+  (muutos-hae-jatkoaikaa)
   (get-attachments)
   (get-attachment)
   (options-del-attachment)
