@@ -211,6 +211,14 @@
         :field_id field-id}
        (exec :form-db queries/close-existing-attachment!)))
 
+(defn add-muutoshakemus! [user-key hakemus-version haen-kayttoajan-pidennysta kayttoajan-pidennys-perustelut haettu-kayttoajan-paattymispaiva]
+  (->> {:user_key user-key,
+        :hakemus_version hakemus-version,
+        :haen_kayttoajan_pidennysta haen-kayttoajan-pidennysta,
+        :kayttoajan_pidennys_perustelut kayttoajan-pidennys-perustelut,
+        :haettu_kayttoajan_paattymispaiva haettu-kayttoajan-paattymispaiva}
+       (exec :form-db queries/add-muutoshakemus!)))
+
 (defn list-attachments [hakemus-id]
   (->> {:hakemus_id hakemus-id}
        (exec :form-db queries/list-attachments)))

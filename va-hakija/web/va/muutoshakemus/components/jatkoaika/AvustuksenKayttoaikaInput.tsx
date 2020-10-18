@@ -10,11 +10,9 @@ type AvustuksenKayttoaikaInputProps = {
 }
 
 export type UserInputs = {
-  toivottuPaattymispaiva?: string
-  perustelut?: string
+  haettuKayttoajanPaattymispaiva?: string
+  kayttoajanPidennysPerustelut?: string
 }
-
-// TODO: Tekstit pois ja käännöksiin
 
 export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps) => {
   if (!props.open) return null
@@ -22,20 +20,20 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
   // TODO: Hae nykyinen tila kannasta ja esitäytä lomake.
 
   const { t } = useTranslations()
-  const [ toivottuPaattymispaiva, setToivottuPaattymispaiva ] = useState(
+  const [ haettuKayttoajanPaattymispaiva, setHaettuKayttoajanPaattymispaiva ] = useState(
     defaultUusiPaattymisaika(props.nykyinenPaattymisaika))
 
-  const [ perustelut, setPerustelut ] = useState<string>()
+  const [ kayttoajanPidennysPerustelut, setKayttoajanPidennysPerustelut ] = useState<string>()
   const [ dateError, setDateError ] = useState(false)
   const [ textError, setTextError ] = useState(false)
 
 
   useEffect(() => {
     props.onChange({
-      perustelut: perustelut,
-      toivottuPaattymispaiva: toivottuPaattymispaiva,
+      kayttoajanPidennysPerustelut: kayttoajanPidennysPerustelut,
+      haettuKayttoajanPaattymispaiva: haettuKayttoajanPaattymispaiva,
     })
-  }, [toivottuPaattymispaiva, perustelut])
+  }, [haettuKayttoajanPaattymispaiva, kayttoajanPidennysPerustelut])
 
   function toString(date: Date): string {
     return moment(date).format('DD.MM.YYYY')
@@ -46,11 +44,11 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
   }
 
   function onChangePerustelut(event: ChangeEvent<HTMLTextAreaElement>): void {
-    setPerustelut(event.currentTarget.value)
+    setKayttoajanPidennysPerustelut(event.currentTarget.value)
   }
 
   function onChangeDate(event: ChangeEvent<HTMLInputElement>): void {
-    setToivottuPaattymispaiva(event.currentTarget.value)
+    setHaettuKayttoajanPaattymispaiva(event.currentTarget.value)
   }
 
   const datePattern = '[0-9]{4}-{0-9}[2]-{0-9}[2]'

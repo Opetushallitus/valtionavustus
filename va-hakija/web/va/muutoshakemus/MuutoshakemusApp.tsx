@@ -199,11 +199,22 @@ const MuutoshakemusApp = () => {
   async function handleSendButton() {
     try {
       if (kayttoaika) {
-        await haeKayttoajanPidennysta(kayttoaika)
+        await haeKayttoajanPidennysta({
+          hakemusVersion: state.hakemus.version,
+          avustushakuId,
+          userKey,
+          params: kayttoaika,
+        })
         setUnsavedChanges(false)
+        // FIXME: Bugi: tila on voinut muuttua tallennuksen aikana (näppäinpainalluksia)
+        // FIXME: Tallenna se mitä lähetettiin ja vertaa siihen
+
+        // TODO: Näytä toast tms. että tallennus onnistunut
       }
     } catch (e) {
       setUnsavedChanges(true)
+      // TODO: Näytä että tallennus epäonnistui
+      // TODO: Lähetä virheet alaspäin lapsikomponenteille
     }
   }
 

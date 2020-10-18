@@ -190,6 +190,27 @@
     :summary "Open application for applicant edit"
     (ok (on-hakemus-applicant-edit-open haku-id hakemus-id))))
 
+(defn- muutos-hae-jatkoaikaa []
+  (when (get-in config [:muutospaatosprosessi :enabled?])
+    (compojure-api/POST "/:haku-id/jatkoaika/:user-key" [haku-id user-key :as request]
+      :path-params [haku-id :- Long]
+      :return nil
+      :body [perustelut
+             (compojure-api/describe {
+              :hakemusVersion Long
+              :haenKayttoajanPidennysta s/Bool
+              :kayttoajanPidennysPerustelut s/Str
+              :haettuKayttoajanPaattymispaiva java.time.LocalDate} "Käyttöajan pidennys")]
+      :summary "Apply for deadline extension"
+      (on-muutoshakemus-create
+          user-key
+          (get perustelut :hakemusVersion)
+          (get perustelut :haenKayttoajanPidennysta)
+          (get perustelut :kayttoajanPidennysPerustelut)
+          (get perustelut :haettuKayttoajanPaattymispaiva))
+      (ok))))
+
+
 (defn- get-attachments []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
     :path-params [haku-id :- Long, hakemus-id :- s/Str]
@@ -268,6 +289,7 @@
   (applicant-edit-submit)
   (applicant-edit-open)
   (get-applicant-edit-open)
+  (muutos-hae-jatkoaikaa)
   (get-attachments)
   (get-attachment)
   (options-del-attachment)
