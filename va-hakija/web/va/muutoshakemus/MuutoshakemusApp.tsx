@@ -199,7 +199,11 @@ const MuutoshakemusApp = () => {
   async function handleSendButton() {
     try {
       if (kayttoaika) {
-        await haeKayttoajanPidennysta(kayttoaika)
+        await haeKayttoajanPidennysta({
+          avustushakuId,
+          userKey,
+          params: kayttoaika,
+        })
         setUnsavedChanges(false)
         // FIXME: Bugi: tila on voinut muuttua tallennuksen aikana (näppäinpainalluksia)
         // FIXME: Tallenna se mitä lähetettiin ja vertaa siihen
