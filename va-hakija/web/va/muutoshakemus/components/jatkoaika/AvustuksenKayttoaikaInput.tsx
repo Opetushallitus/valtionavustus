@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import moment from 'moment'
 import {ChangeEvent} from 'react'
-import {debounce} from 'lodash'
-import {haeJatkoaikaa} from '../../client'
 
 type AvustuksenKayttoaikaInputProps = {
   open: boolean
@@ -15,55 +13,27 @@ export type UserInputs = {
   perustelut?: string
 }
 
-const debounce_wait = 1000 // 1 second
-
 // TODO: Tekstit pois ja käännöksiin
 
 export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps) => {
   if (!props.open) return null
 
-  // Fixme: Autosave pois ja tallennus vanhempien komponenttiin!
   // TODO: Hae nykyinen tila kannasta ja esitäytä lomake.
 
   const [ toivottuPaattymispaiva, setToivottuPaattymispaiva ] = useState(
     defaultUusiPaattymisaika(props.nykyinenPaattymisaika))
 
   const [ perustelut, setPerustelut ] = useState<string>()
-  const [ unsavedChanges, setUnsavedChanges ] = useState(false)
   const [ dateError, setDateError ] = useState(false)
   const [ textError, setTextError ] = useState(false)
 
-  const debouncedSave = debounce(() => autoSave(), debounce_wait)
 
   useEffect(() => {
     props.onChange({
       perustelut: perustelut,
       toivottuPaattymispaiva: toivottuPaattymispaiva,
     })
-    debouncedSave()
   }, [toivottuPaattymispaiva, perustelut])
-
-  async function autoSave(): Promise<void> {
-    if (!unsavedChanges) return
-
-    try {
-      await haeJatkoaikaa({
-        toivottuPaattymispaiva: toivottuPaattymispaiva,
-        perustelut: perustelut
-      })
-      setDateError(false)
-      setTextError(false)
-      setUnsavedChanges(false)
-    } catch (e) {
-      if (e?.response?.data?.errors?.toivottuPaattymispaiva !== undefined) {
-        setDateError(true)
-      }
-      if (e?.response?.data?.errors?.perustelut !== undefined) {
-        setTextError(true)
-      }
-      setUnsavedChanges(true)
-    }
-  }
 
   function toString(date: Date): string {
     return moment(date).format('DD.MM.YYYY')
@@ -74,12 +44,10 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
   }
 
   function onChangePerustelut(event: ChangeEvent<HTMLTextAreaElement>): void {
-    setUnsavedChanges(true)
     setPerustelut(event.currentTarget.value)
   }
 
   function onChangeDate(event: ChangeEvent<HTMLInputElement>): void {
-    setUnsavedChanges(true)
     setToivottuPaattymispaiva(event.currentTarget.value)
   }
 

@@ -15,6 +15,7 @@ import {TopBar} from './components/TopBar'
 import {Language} from './types'
 import {translations} from './translations'
 import {TranslationContext, useTranslations} from './TranslationContext'
+import {haeJatkoaikaa} from "./client"
 
 function validateLanguage(s: unknown): Language {
   if (s !== 'fi' && s !== 'sv') {
@@ -173,6 +174,7 @@ let initialState: MuutoshakemusProps = {
 const MuutoshakemusApp = () => {
   const [state, setState] = useState<MuutoshakemusProps>(initialState)
   const [kayttoaika, setKayttoaika] = useState<AvustuksenKayttoajanPidennysInput>()
+  const [hasUnsavedChanges, setUnsavedChanges] = useState(false)
 
   useEffect(() => {
     const fetchProps = async () => {
@@ -190,12 +192,19 @@ const MuutoshakemusApp = () => {
   }, [])
 
   const handleKayttoajanPidennysChange = (inputs: AvustuksenKayttoajanPidennysInput) => {
+    setUnsavedChanges(true)
     setKayttoaika(inputs)
   }
 
-  const handleSendButton = () => {
-    console.log('Send button clicked')
-    console.log(JSON.stringify(kayttoaika, null, 2))
+  async function handleSendButton() {
+    try {
+      if (kayttoaika) {
+        await haeJatkoaikaa(kayttoaika)
+        setUnsavedChanges(false)
+      }
+    } catch (e) {
+      setUnsavedChanges(true)
+    }
   }
 
   const translationContext = {

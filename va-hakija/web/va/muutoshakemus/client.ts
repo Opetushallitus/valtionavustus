@@ -1,20 +1,14 @@
 import axios from 'axios'
+import {AvustuksenKayttoajanPidennysInput} from './components/jatkoaika/AvustuksenKayttoajanPidennys'
 
-const axios_timeout = 10000 // 10 seconds
+const timeout = 10000 // 10 seconds
+const client = axios.create({ timeout })
 
-const client = axios.create({
-  timeout: axios_timeout
-})
-
-type Jatkoaika = {
-  toivottuPaattymispaiva?: string
-  perustelut?: string
-}
-
-export async function haeJatkoaikaa(params: Jatkoaika) {
+export async function haeJatkoaikaa(params: AvustuksenKayttoajanPidennysInput) {
   const url = `api/avustushaku/8/jatkoaika`
 
   return client.post(url, {
+    haenKayttoajanPidennysta: params.haenKayttoajanPidennysta,
     toivottuPaattymispaiva: params.toivottuPaattymispaiva || null,
     perustelut: params.perustelut || null
   })
