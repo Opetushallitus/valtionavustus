@@ -15,7 +15,7 @@ import {TopBar} from './components/TopBar'
 import {Language} from './types'
 import {translations} from './translations'
 import {TranslationContext, useTranslations} from './TranslationContext'
-import {haeJatkoaikaa} from "./client"
+import {haeKayttoajanPidennysta} from './client'
 
 function validateLanguage(s: unknown): Language {
   if (s !== 'fi' && s !== 'sv') {
@@ -199,7 +199,7 @@ const MuutoshakemusApp = () => {
   async function handleSendButton() {
     try {
       if (kayttoaika) {
-        await haeJatkoaikaa(kayttoaika)
+        await haeKayttoajanPidennysta(kayttoaika)
         setUnsavedChanges(false)
       }
     } catch (e) {
