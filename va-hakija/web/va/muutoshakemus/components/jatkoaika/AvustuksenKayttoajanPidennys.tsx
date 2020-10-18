@@ -4,6 +4,7 @@ import {
   UserInputs
 } from './AvustuksenKayttoaikaInput'
 import './jatkoaika.less'
+import {useTranslations} from '../../TranslationContext'
 
 type AvustuksenKayttoajanPidennysProps = {
   nykyinenPaattymisaika: Date
@@ -14,9 +15,8 @@ export type AvustuksenKayttoajanPidennysInput = UserInputs & {
   haenKayttoajanPidennysta: boolean
 }
 
-// TODO: Tekstit pois täältä!
-
 export const AvustuksenKayttoajanPidennys = (props: AvustuksenKayttoajanPidennysProps) => {
+  const { t } = useTranslations()
 
   const [ haenKayttoajanPidennysta, setHaenKayttoajanPidennysta ] = useState(false)
   const [ userInputs, setUserInputs ] = useState<UserInputs>()
@@ -41,14 +41,14 @@ export const AvustuksenKayttoajanPidennys = (props: AvustuksenKayttoajanPidennys
 
   return (
     <section className="section" id="section-muutosten-hakeminen-checkbox">
-      <h2>Muutosten hakeminen</h2>
+      <h2>{t.applicationEdit.title}</h2>
       <div className="content muutoksenhaku">
         <form>
 
           <div className="checkbox-jatkoaika-container">
             <input type="checkbox" value="Submit" id="checkbox-jatkoaika" onClick={toggleHaenKayttoajanPidennysta} />
             <label htmlFor="checkbox-jatkoaika">
-              Haen pidennystä avustuksen käyttöajalle
+              {t.kayttoajanPidennys.checkboxTitle}
             </label>
           </div>
 
