@@ -201,9 +201,15 @@ const MuutoshakemusApp = () => {
       if (kayttoaika) {
         await haeKayttoajanPidennysta(kayttoaika)
         setUnsavedChanges(false)
+        // FIXME: Bugi: tila on voinut muuttua tallennuksen aikana (näppäinpainalluksia)
+        // FIXME: Tallenna se mitä lähetettiin ja vertaa siihen
+
+        // TODO: Näytä toast tms. että tallennus onnistunut
       }
     } catch (e) {
       setUnsavedChanges(true)
+      // TODO: Näytä että tallennus epäonnistui
+      // TODO: Lähetä virheet alaspäin lapsikomponenteille
     }
   }
 

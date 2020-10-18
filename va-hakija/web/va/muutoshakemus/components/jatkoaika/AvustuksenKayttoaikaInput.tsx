@@ -14,8 +14,6 @@ export type UserInputs = {
   perustelut?: string
 }
 
-// TODO: Tekstit pois ja käännöksiin
-
 export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps) => {
   if (!props.open) return null
 
