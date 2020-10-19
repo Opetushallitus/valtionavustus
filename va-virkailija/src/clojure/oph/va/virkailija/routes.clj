@@ -222,7 +222,6 @@
                    connection
                    ["SELECT * from emails WHERE avustushaku_id = ?" avustushaku-id]))]
     (log/info (str "Succesfully fetched email for avustushaku with id: " avustushaku-id))
-    (log/info emails)
     (map (fn [email] (rename-keys email {:avustushaku_id :avustushaku-id})) emails)))
 
 (defn- get-avustushaku-email []
