@@ -187,17 +187,55 @@
 div.muutospyynto-button-container {
   display: flex;
   align-items: center;
+
+  line-height: 21px;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 0.01em;
+}
+
+div.notification-container {
+  color: transparent;
+
+  div {
+    display: flex;
+    margin-left: 18px;
+    height: 45px;
+    width: 142px;
+
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.5s, opacity 0.5s linear;
+
+    &.animate {
+      visibility: visible;
+      opacity: 1;
+      animation: autoHide 0s linear 5s forwards;
+    }
+    &.success {
+      color: @mantis-green;
+    }
+    &.error {
+      color: @bright-red;
+    }
+    @keyframes autoHide {
+      to {
+        visibility: hidden;
+        opacity: 0;
+      }
+    }
+  }
 }
 
 #send-muutospyynto-button {
   border: none;
   width: 198px;
   height: 43px;
-  background: #79C640;
 
-  font-style: normal;
-  font-weight: bold;
-  line-height: 21px;
-
+  background: @mantis-green;
   color: #FFFFFF;
+
+  &:disabled {
+    background: @silver;
+  }
 }

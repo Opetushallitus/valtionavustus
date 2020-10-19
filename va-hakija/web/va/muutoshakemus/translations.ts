@@ -4,6 +4,8 @@ export const translationsFi = {
   hakemus: 'Hakemus',
   loading: 'Ladataan lomaketta...',
   send: 'Lähetä käsiteltäväksi',
+  sentNotification: 'Muutoshakemus lähetetty',
+  errorNotification: 'Muutoshakemuksen lähetys epäonnistui',
   contactPersonEdit: {
     haku: 'Haku',
     registerNumberTitle: 'Asianumero',

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import ReactDOM from 'react-dom'
 import * as Bacon from 'baconjs'
 import * as queryString from 'query-string'
@@ -8,14 +8,15 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
 import {
-  AvustuksenKayttoajanPidennys,
-  AvustuksenKayttoajanPidennysInput
+  AvustuksenKayttoajanPidennys
 } from './components/jatkoaika/AvustuksenKayttoajanPidennys'
 import {TopBar} from './components/TopBar'
 import {Language} from './types'
 import {translations} from './translations'
 import {TranslationContext, useTranslations} from './TranslationContext'
 import {haeKayttoajanPidennysta} from './client'
+import {AppContext, AppProvider} from './store/context'
+import {Types} from "./store/reducers"
 
 function validateLanguage(s: unknown): Language {
   if (s !== 'fi' && s !== 'sv') {
@@ -172,9 +173,9 @@ let initialState: MuutoshakemusProps = {
 }
 
 const MuutoshakemusApp = () => {
+  const { dispatch, state: formState } = React.useContext(AppContext)
+
   const [state, setState] = useState<MuutoshakemusProps>(initialState)
-  const [kayttoaika, setKayttoaika] = useState<AvustuksenKayttoajanPidennysInput>()
-  const [/*_hasUnsavedChanges*/, setUnsavedChanges] = useState(false)
 
   useEffect(() => {
     const fetchProps = async () => {
@@ -191,30 +192,34 @@ const MuutoshakemusApp = () => {
     fetchProps()
   }, [])
 
-  const handleKayttoajanPidennysChange = (inputs: AvustuksenKayttoajanPidennysInput) => {
-    setUnsavedChanges(true)
-    setKayttoaika(inputs)
-  }
-
   async function handleSendButton() {
     try {
-      if (kayttoaika) {
+      const { localState } = formState.jatkoaika
+      if (localState) {
         await haeKayttoajanPidennysta({
           hakemusVersion: state.hakemus.version,
           avustushakuId,
           userKey,
-          params: kayttoaika,
+          params: {
+            ...localState,
+            haenKayttoajanPidennysta: localState.haenKayttoajanPidennysta || false
+          }
         })
-        setUnsavedChanges(false)
-        // FIXME: Bugi: tila on voinut muuttua tallennuksen aikana (näppäinpainalluksia)
-        // FIXME: Tallenna se mitä lähetettiin ja vertaa siihen
-
-        // TODO: Näytä toast tms. että tallennus onnistunut
+        dispatch({
+          type: Types.JatkoaikaSubmitSuccess,
+          payload: {
+            stored: {
+              ...localState,
+              haenKayttoajanPidennysta: localState.haenKayttoajanPidennysta || false
+            }
+          }
+        })
       }
     } catch (e) {
-      setUnsavedChanges(true)
-      // TODO: Näytä että tallennus epäonnistui
-      // TODO: Lähetä virheet alaspäin lapsikomponenteille
+      dispatch({
+        type: Types.JatkoaikaSubmitFailure,
+        payload: { error: e }
+      })
     }
   }
 
@@ -228,12 +233,11 @@ const MuutoshakemusApp = () => {
       {status === 'LOADING'
         ? <p>{translations[lang].loading}</p>
         : <TranslationContext.Provider value={translationContext}>
-            <AppShell env={state.environment?.name || ''} onSend={handleSendButton}>
+            <AppShell env={state.environment?.name || ''} onSend={handleSendButton} >
               <ContactPersonEdit avustushaku={state.avustushaku} hakemus={state.hakemus}/>
               <ApplicationEdit />
               <AvustuksenKayttoajanPidennys
-                onChange={handleKayttoajanPidennysChange}
-                nykyinenPaattymisaika={new Date()} />
+                nykyinenPaattymisPaiva={new Date()} />
               <Debug json={state} />
             </AppShell>
           </TranslationContext.Provider>
@@ -265,6 +269,9 @@ function Debug({ json }: DebugProps) {
 }
 
 ReactDOM.render(
-  <MuutoshakemusApp />,
+  <AppProvider>
+    <MuutoshakemusApp />
+  </AppProvider>
+  ,
   document.getElementById('app')
 )

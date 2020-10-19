@@ -1,39 +1,31 @@
-import React, { useState, useEffect } from 'react'
+import React, {ChangeEvent, useEffect} from 'react'
 import moment from 'moment'
-import {ChangeEvent} from 'react'
 import {useTranslations} from '../../TranslationContext'
+import {
+  AppContext,
+  AvustuksenKayttoajanPidennys,
+  SaveState
+} from '../../store/context'
+import {Types} from '../../store/reducers'
 
 type AvustuksenKayttoaikaInputProps = {
   open: boolean
-  nykyinenPaattymisaika: Date
-  onChange: (inputs: UserInputs) => void
-}
-
-export type UserInputs = {
-  haettuKayttoajanPaattymispaiva?: string
-  kayttoajanPidennysPerustelut?: string
+  nykyinenPaattymisPaiva: Date
 }
 
 export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps) => {
   if (!props.open) return null
 
-  // TODO: Hae nykyinen tila kannasta ja esitäytä lomake.
-
   const { t } = useTranslations()
-  const [ haettuKayttoajanPaattymispaiva, setHaettuKayttoajanPaattymispaiva ] = useState(
-    defaultUusiPaattymisaika(props.nykyinenPaattymisaika))
-
-  const [ kayttoajanPidennysPerustelut, setKayttoajanPidennysPerustelut ] = useState<string>()
-  const [ dateError, /* _setDateError */ ] = useState(false)
-  const [ textError, /* _setTextError */ ] = useState(false)
-
+  const { state, dispatch } = React.useContext(AppContext)
 
   useEffect(() => {
-    props.onChange({
-      kayttoajanPidennysPerustelut: kayttoajanPidennysPerustelut,
-      haettuKayttoajanPaattymispaiva: haettuKayttoajanPaattymispaiva,
-    })
-  }, [haettuKayttoajanPaattymispaiva, kayttoajanPidennysPerustelut])
+    if (props.open && !state.jatkoaika.localState?.haettuKayttoajanPaattymispaiva) {
+      setUusiPaattymispaivaToState(defaultUusiPaattymisaika(props.nykyinenPaattymisPaiva))
+    }
+  }, [props.open])
+
+  // TODO: Hae nykyinen tila kannasta ja esitäytä lomake.
 
   function toString(date: Date): string {
     return moment(date).format('DD.MM.YYYY')
@@ -43,22 +35,57 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
     return moment(date).add(2, 'months').format('YYYY-MM-DD')
   }
 
+  function getPaattymispaivaFromStateOrDefault() {
+    return state.jatkoaika.localState?.haettuKayttoajanPaattymispaiva ||
+          defaultUusiPaattymisaika(props.nykyinenPaattymisPaiva)
+  }
+
   function onChangePerustelut(event: ChangeEvent<HTMLTextAreaElement>): void {
-    setKayttoajanPidennysPerustelut(event.currentTarget.value)
+    setPerustelutToState(event.currentTarget.value)
   }
 
   function onChangeDate(event: ChangeEvent<HTMLInputElement>): void {
-    setHaettuKayttoajanPaattymispaiva(event.currentTarget.value)
+    setUusiPaattymispaivaToState(event.currentTarget.value)
   }
 
-  const datePattern = '[0-9]{4}-{0-9}[2]-{0-9}[2]'
+  function setPerustelutToState(perustelut: string) {
+    dispatch({
+      type: Types.JatkoaikaFormChange,
+      payload: { formState: { kayttoajanPidennysPerustelut: perustelut } }
+    })
+  }
+
+  function setUusiPaattymispaivaToState(paiva: string) {
+    dispatch({
+      type: Types.JatkoaikaFormChange,
+      payload: { formState: { haettuKayttoajanPaattymispaiva: paiva } }
+    })
+  }
+
+  function hasInputValidationError(name: keyof AvustuksenKayttoajanPidennys): boolean {
+    if (state.jatkoaika.lastSave.status !== SaveState.SAVE_FAILED) return false
+    if (!state.jatkoaika.errorState) return false
+
+    const { errorState: error } = state.jatkoaika
+    return 'response' in error && error.response?.data.errors?.[name] !== undefined
+  }
+
+  function hasDateError(): boolean {
+    return hasInputValidationError('haettuKayttoajanPaattymispaiva')
+  }
+
+  function hasPerusteluError(): boolean {
+    return hasInputValidationError('kayttoajanPidennysPerustelut')
+  }
+
+  const datePattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
 
   return (
     <div>
       <div className="input twocolumns">
         <div>
           <div className="h3">{t.kayttoajanPidennys.existingExpirationDateTitle}</div>
-          <div className="paattymispaiva">{toString(props.nykyinenPaattymisaika)}</div>
+          <div className="paattymispaiva">{toString(props.nykyinenPaattymisPaiva)}</div>
         </div>
         <div>
           <label className='h3' htmlFor="input-haluttu-paattymispaiva">
@@ -66,13 +93,13 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
           </label>
           <div className="paattymispaiva">
             <input
-              className={dateError ? 'error' : ''}
+              className={hasDateError() ? 'error' : ''}
               id="input-haluttu-paattymispaiva"
               onChange={onChangeDate}
               placeholder="yyyy-mm-dd"
               pattern={datePattern}
               type="date"
-              defaultValue={defaultUusiPaattymisaika(props.nykyinenPaattymisaika)} />
+              value={getPaattymispaivaFromStateOrDefault()} />
           </div>
         </div>
       </div>
@@ -80,9 +107,11 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
         <label htmlFor="perustelut-jatkoaika">{t.kayttoajanPidennys.reasonsTitle}</label>
         <textarea
           id="perustelut-jatkoaika"
-          className={textError ? 'error' : ''}
+          className={hasPerusteluError() ? 'error' : ''}
           rows={5}
-          onChange={onChangePerustelut} />
+          onChange={onChangePerustelut}
+          value={state.jatkoaika.localState?.kayttoajanPidennysPerustelut}
+        />
       </div>
     </div>
   )

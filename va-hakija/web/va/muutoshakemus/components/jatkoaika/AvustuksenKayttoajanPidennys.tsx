@@ -1,43 +1,26 @@
-import React, {useEffect, useState} from 'react'
-import {
-  AvustuksenKayttoaikaInput,
-  UserInputs
-} from './AvustuksenKayttoaikaInput'
+import React from 'react'
+import { AvustuksenKayttoaikaInput } from './AvustuksenKayttoaikaInput'
 import './jatkoaika.less'
 import {useTranslations} from '../../TranslationContext'
+import {AppContext} from '../../store/context'
+import {Types} from '../../store/reducers'
 
 type AvustuksenKayttoajanPidennysProps = {
-  nykyinenPaattymisaika: Date
-  onChange: (inputs: AvustuksenKayttoajanPidennysInput) => void
-}
-
-export type AvustuksenKayttoajanPidennysInput = UserInputs & {
-  haenKayttoajanPidennysta: boolean
+  nykyinenPaattymisPaiva: Date
 }
 
 export const AvustuksenKayttoajanPidennys = (props: AvustuksenKayttoajanPidennysProps) => {
   const { t } = useTranslations()
-
-  const [ haenKayttoajanPidennysta, setHaenKayttoajanPidennysta ] = useState(false)
-  const [ userInputs, setUserInputs ] = useState<UserInputs>()
-
-  useEffect(() => {
-    props.onChange({
-      haenKayttoajanPidennysta: haenKayttoajanPidennysta,
-      ...userInputs
-    })
-  }, [haenKayttoajanPidennysta, userInputs])
-
+  const { state, dispatch } = React.useContext(AppContext)
 
   function toggleHaenKayttoajanPidennysta() {
-    setHaenKayttoajanPidennysta(!haenKayttoajanPidennysta)
+    dispatch({
+      type: Types.JatkoaikaFormChange,
+      payload: { formState: {
+        haenKayttoajanPidennysta: !state.jatkoaika.localState?.haenKayttoajanPidennysta,
+      }}
+    })
   }
-
-  function onKayttoaikaInputChange(inputs: UserInputs) {
-    setUserInputs(inputs)
-  }
-
-  // FIXME: Hukkaa kentät kun suljetaan ja avataan taas
 
   return (
     <section className="section" id="section-muutosten-hakeminen-checkbox">
@@ -53,9 +36,8 @@ export const AvustuksenKayttoajanPidennys = (props: AvustuksenKayttoajanPidennys
           </div>
 
           <AvustuksenKayttoaikaInput
-            open={haenKayttoajanPidennysta}
-            onChange={onKayttoaikaInputChange}
-            nykyinenPaattymisaika={props.nykyinenPaattymisaika} />
+            open={!!state.jatkoaika.localState?.haenKayttoajanPidennysta}
+            nykyinenPaattymisPaiva={props.nykyinenPaattymisPaiva} />
 
         </form>
       </div>

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {AvustuksenKayttoajanPidennysInput} from './components/jatkoaika/AvustuksenKayttoajanPidennys'
+import {AvustuksenKayttoajanPidennys} from './store/context'
 
 const timeout = 10000 // 10 seconds
 const client = axios.create({ timeout })
@@ -8,7 +8,7 @@ type HaeKayttoajanPidennystaProps = {
   avustushakuId: number
   hakemusVersion: number
   userKey: string
-  params: AvustuksenKayttoajanPidennysInput
+  params: AvustuksenKayttoajanPidennys
 }
 
 export async function haeKayttoajanPidennysta({avustushakuId, hakemusVersion, userKey, params} : HaeKayttoajanPidennystaProps) {
