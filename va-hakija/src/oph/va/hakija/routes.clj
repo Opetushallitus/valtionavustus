@@ -194,9 +194,23 @@
   (compojure-api/POST "/:haku-id/jatkoaika/:user-key" [haku-id user-key :as request]
     :path-params [haku-id :- Long]
     :return nil
-    :body [perustelut (compojure-api/describe {:perustelut s/Str :toivottuPaattymispaiva s/Inst} "Hae jatkoaikaa")]
+    :body [perustelut
+           (compojure-api/describe {
+            :haenKayttoajanPidennysta s/Bool
+            :perustelut s/Str
+            :toivottuPaattymispaiva java.time.LocalDate} "Hae jatkoaikaa")]
     :summary "Apply for deadline extension"
-    (println (str "Haetaan jatkoaikaa hakulle" haku-id "perustelulla " perustelut))
+    (println (str "Haetaan jatkoaikaa "
+                  (get perustelut :haenKayttoajanPidennysta)
+                  " haulle: " haku-id
+                  " paivänä:" (get perustelut :toivottuPaattymispaiva)
+                  " perustelulla " (get perustelut :perustelut)))
+    (on-muutoshakemus-create
+        user-key
+        (get perustelut :haenKayttoajanPidennysta)
+        (get perustelut :perustelut)
+        (get perustelut :toivottuPaattymispaiva)
+     )
     (ok {:message (str "Hello, " haku-id perustelut)})
     ))
 

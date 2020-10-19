@@ -424,6 +424,10 @@
       (not-found))
     (not-found)))
 
+(defn on-muutoshakemus-create [user-key haen-kayttoajan-pidennysta perustelut paattymispaiva]
+  (va-db/add-muutoshakemus! user-key haen-kayttoajan-pidennysta perustelut paattymispaiva)
+  (ok))
+
 (defn on-attachment-get [haku-id hakemus-id field-id]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
     (if (va-db/attachment-exists? (:id hakemus) field-id)
