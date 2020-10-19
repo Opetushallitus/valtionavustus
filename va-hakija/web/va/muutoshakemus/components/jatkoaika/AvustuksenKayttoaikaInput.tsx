@@ -24,8 +24,8 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
     defaultUusiPaattymisaika(props.nykyinenPaattymisaika))
 
   const [ kayttoajanPidennysPerustelut, setKayttoajanPidennysPerustelut ] = useState<string>()
-  const [ dateError, setDateError ] = useState(false)
-  const [ textError, setTextError ] = useState(false)
+  const [ dateError, _setDateError ] = useState(false)
+  const [ textError, _setTextError ] = useState(false)
 
 
   useEffect(() => {

@@ -174,7 +174,7 @@ let initialState: MuutoshakemusProps = {
 const MuutoshakemusApp = () => {
   const [state, setState] = useState<MuutoshakemusProps>(initialState)
   const [kayttoaika, setKayttoaika] = useState<AvustuksenKayttoajanPidennysInput>()
-  const [hasUnsavedChanges, setUnsavedChanges] = useState(false)
+  const [_hasUnsavedChanges, setUnsavedChanges] = useState(false)
 
   useEffect(() => {
     const fetchProps = async () => {
