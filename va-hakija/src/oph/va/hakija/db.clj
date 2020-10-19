@@ -3,6 +3,9 @@
         [oph.soresu.form.db :as form-db]
         [clojure.tools.trace :only [trace]])
   (:require [clojure.java.io :as io]
+            [clojure.tools.logging :as log]
+            [oph.soresu.common.db :refer [exec get-datasource]]
+            [clojure.java.jdbc :as jdbc]
             [oph.soresu.common.jdbc.extensions :refer :all]
             [oph.soresu.form.formutil :as form-util]
             [oph.va.jdbc.extensions :refer :all]
@@ -103,6 +106,29 @@
                    (merge-calculated-params avustushaku-id answers))
         hakemus (exec :form-db queries/create-hakemus<! params)]
     {:hakemus hakemus :submission submission}))
+
+(defn get-normalized-hakemus [hakemus-id]
+  (log/info (str "Get normalized hakemus with id: " hakemus-id))
+  (let [hakemukset (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
+                 (jdbc/query
+                   connection
+                   ["SELECT * from virkailija.avustushaku_hakemukset WHERE user_key = ?" hakemus-id]
+                  {:identifiers #(.replace % \_ \-)}))]
+    (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
+    (first hakemukset)))
+
+(defn store-normalized-hakemus [answers submission hakemus-id]
+(log/info (str "Storing normalized fields for hakemus: " hakemus-id))
+  (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
+        (jdbc/execute!
+               connection
+                    ["INSERT INTO virkailija.avustushaku_hakemukset (user_key, project_name, contact_person, contact_email, contact_phone) VALUES (?, ?, ?, ?, ?) ON CONFLICT (user_key) DO UPDATE SET project_name = EXCLUDED.project_name, contact_person = EXCLUDED.contact_person, contact_email = EXCLUDED.contact_email, contact_phone = EXCLUDED.contact_phone"
+                      hakemus-id,
+                      (form-util/find-answer-value answers "project-name"),
+                      (form-util/find-answer-value answers "applicant-name"),
+                      (form-util/find-answer-value answers "primary-email"),
+                      (form-util/find-answer-value answers "textField-0")]))
+  (log/info (str "Succesfully stored normalized fields for hakemus with id: " hakemus-id)))
 
 (defn update-hakemus-parent-id [hakemus-id parent-id]
   (exec :form-db queries/update-hakemus-parent-id! {:id hakemus-id :parent_id parent-id}))

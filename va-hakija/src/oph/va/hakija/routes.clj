@@ -72,6 +72,13 @@
       (avustushaku-ok-response avustushaku)
       (not-found))))
 
+(defn- get-normalized-hakemus []
+  (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/normalized" [haku-id hakemus-id]
+    :path-params [haku-id :- Long hakemus-id :- s/Str]
+    :return  NormalizedHakemus
+    :summary "Get normalized answers"
+      (ok (hakija-db/get-normalized-hakemus hakemus-id))))
+
 (defn- get-hakemus []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
     :path-params [haku-id :- Long hakemus-id :- s/Str]
@@ -275,6 +282,7 @@
 (compojure-api/defroutes avustushaku-routes
   "Avustushaku routes"
   (get-id)
+  (when (get-in config [:email-api :enabled?]) (get-normalized-hakemus))
   (get-hakemus)
   (get-selvitys)
   (get-selvitys-init)

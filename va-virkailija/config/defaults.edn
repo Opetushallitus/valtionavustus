@@ -58,4 +58,5 @@
  :tasmaytysraportti-send {:enabled? false}
  :muutospaatosprosessi {:enabled? true}
  :email-api {:enabled? true}
+ :normalized-hakemus-api {:enabled? true}
  }
