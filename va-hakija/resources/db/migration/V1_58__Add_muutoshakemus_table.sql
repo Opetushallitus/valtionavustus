@@ -11,5 +11,5 @@ CREATE TABLE muutoshakemus (
 );
 
 /* TODO: muutoshakemus must have reference to specific version of hakemus
-   FOREIGN KEY (form_submission_id, form_submission_version) REFERENCES hakemukset (id, version)
+   FOREIGN KEY (hakemus_id, hakemus_version) REFERENCES hakemukset (id, version)
 */
