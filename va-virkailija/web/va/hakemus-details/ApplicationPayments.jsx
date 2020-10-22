@@ -10,7 +10,7 @@ export default class ApplicationPayments extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (props.hakemus.id !== state.currentHakemusId) {
+    if (props.application.id !== state.currentApplicationId) {
       return ApplicationPayments.initialState(props)
     } else {
       return null
@@ -19,6 +19,7 @@ export default class ApplicationPayments extends Component {
 
   static initialState(props) {
     return {
+      currentApplicationId: props.application.id,
       newPaymentSum: ApplicationPayments.calculateNextPaymentSum(props)
     }
   }

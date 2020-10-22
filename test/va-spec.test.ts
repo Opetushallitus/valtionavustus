@@ -73,8 +73,16 @@ describe("Puppeteer tests", () => {
     })
   })
 
-  it("should allow basic avustushaku flow and check each hakemus has valmistelija", async () => {
+  const allowBasicAvustushakuFlowAndCheckEachHakemusHasValmistelija = (getPage: () => Page, multiplePaymentBatches: boolean) => async () => {
+    const page = getPage()
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+
+    if (multiplePaymentBatches) {
+      await clickElement(page, "label[for='set-maksuera-true']")
+    } else {
+      await clickElement(page, "label[for='set-maksuera-false']")
+    }
+    await waitForSave(page)
 
     await publishAvustushaku(page)
     await fillAndSendHakemus(page, avustushakuID)
@@ -112,6 +120,11 @@ describe("Puppeteer tests", () => {
     const tapahtumaloki = await page.waitForSelector(".tapahtumaloki")
     const logEntryCount = await tapahtumaloki.evaluate(e => e.querySelectorAll(".entry").length)
     expect(logEntryCount).toEqual(1)
+  }
+
+  describe("should allow basic avustushaku flow and check each hakemus has valmistelija", () => {
+    it("when the avustushaku has a single payment batch", allowBasicAvustushakuFlowAndCheckEachHakemusHasValmistelija(() => page, false))
+    it("when the avustushaku has multiple payment batches", allowBasicAvustushakuFlowAndCheckEachHakemusHasValmistelija(() => page, true))
   })
 
   describe("Help texts", function() {
