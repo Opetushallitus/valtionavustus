@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function require() {
-  cmd=$0
+  local cmd=$1
   command -v ${cmd} > /dev/null 2>&1 || { echo >&2 "I require ${cmd} but it's not installed. Aborting."; exit 1; }
 }
 
