@@ -195,7 +195,6 @@
                                                        (:register_number hakemus)
                                                        answers
                                                        budget-totals)]
-          (when (get-in config [:muutospaatosprosessi :enabled?]) (va-db/store-normalized-hakemus answers updated-submission hakemus-id))
           (hakemus-ok-response updated-hakemus updated-submission validation))
         (hakemus-conflict-response hakemus))
       (bad-request! security-validation))))
