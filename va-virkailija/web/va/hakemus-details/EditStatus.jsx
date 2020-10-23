@@ -11,7 +11,7 @@ export default class EditStatus extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (props.hakemus.id !== state.currentAvustushakuId) {
+    if (props.hakemus.id !== state.currentHakemusId) {
       return EditStatus.initialState(props)
     } else {
       return null
@@ -20,7 +20,7 @@ export default class EditStatus extends Component {
 
   static initialState(props) {
     return {
-      currentAvustushakuId: props.avustushaku.id,
+      currentHakemusId: props.hakemus.id,
       open: false,
       comment: ''
     }
