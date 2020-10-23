@@ -24,6 +24,12 @@
        :?column?
        (= 1)))
 
+(defn junction-hackathon-dump []
+  (->> {}
+       (exec :form-db queries/junction-hackathon-dump)
+       first
+       :dump))
+
 (defn get-avustushaku [id]
   (->> (exec :form-db queries/get-avustushaku {:id id})
        first))

@@ -3,6 +3,8 @@
 
 (defquery health-check "sql/healthcheck.sql")
 
+(defquery junction-hackathon-dump "sql/junction-hackathon-dump.sql")
+
 (defquery create-hakemus<! "sql/hakemus/create.sql")
 (defquery update-hakemus-parent-id! "sql/hakemus/update-parent-id.sql")
 (defquery find-by-parent-id-and-hakemus-type "sql/hakemus/find-by-parent-id-and-hakemus-type.sql")
