@@ -21,6 +21,6 @@ export default class VaChangeRequest extends React.Component {
         </div>
       )
     }
-    return <div hidden="true" className="change-request" />
+    return <div hidden={true} className="change-request" />
   }
 }
