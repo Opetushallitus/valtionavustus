@@ -3,6 +3,7 @@
             [oph.soresu.common.db :refer [exec get-datasource]]
             [clojure.java.jdbc :as jdbc]
             [oph.common.email :as email]
+            [oph.soresu.form.formutil :as form-util]
             [oph.soresu.common.config :refer [config]]
             [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
@@ -109,6 +110,38 @@
                     ["INSERT INTO emails (avustushaku_id, formatted) VALUES (?, ?)" avustushaku-id, formatted]))
   (log/info (str "Succesfully stored email for avustushaku with id: " avustushaku-id)))
 
+(defn get-answers [form-submission-id form-submission-version]
+  (log/info (str "Get answers for form submission: " form-submission-id " with version: " form-submission-version))
+  (let [answers (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
+                 (jdbc/query
+                   connection
+                   ["SELECT answers from hakija.form_submissions WHERE id = ? AND version = ?" form-submission-id, form-submission-version]
+                  {:identifiers #(.replace % \_ \-)}))]
+    (log/info (str "Succesfully fetched answers for form submission: " form-submission-id " with version: " form-submission-version))
+    (:answers (first answers))))
+
+(defn store-normalized-hakemus [user-key answers]
+  (log/info (str "Storing normalized fields for hakemus: " user-key))
+  (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
+        (jdbc/execute!
+               connection
+                    ["INSERT INTO virkailija.avustushaku_hakemukset (user_key, project_name, contact_person, contact_email, contact_phone) VALUES (?, ?, ?, ?, ?) ON CONFLICT (user_key) DO UPDATE SET project_name = EXCLUDED.project_name, contact_person = EXCLUDED.contact_person, contact_email = EXCLUDED.contact_email, contact_phone = EXCLUDED.contact_phone"
+                      user-key,
+                      (form-util/find-answer-value answers "project-name"),
+                      (form-util/find-answer-value answers "applicant-name"),
+                      (form-util/find-answer-value answers "primary-email"),
+                      (form-util/find-answer-value answers "textField-0")]))
+  (log/info (str "Succesfully stored normalized fields for hakemus with id: " user-key)))
+
+(defn could-normalize-necessary-fields [hakemus]
+  (let [user-key (:user_key hakemus)
+        answers (get-answers (:form_submission_id hakemus) (:form_submission_version hakemus))]
+  (try (store-normalized-hakemus user-key answers)
+       true
+       (catch Exception e 
+         (log/info "Could not normalize necessary hakemus fields for hakemus: " (user-key) " Error: " (.getMessage e))
+         (false)))))
+
 (defn send-paatos-refuse! [to avustushaku hakemus reply-to token]
   (let [lang-str (:language hakemus)
         lang (keyword lang-str)
@@ -133,7 +166,9 @@
              :modify-url paatos-modify-url
              :register-number (:register_number hakemus)
              :project-name (:project_name hakemus)
-             :muutospaatosprosessi-enabled (get-in config [:muutospaatosprosessi :enabled?])}
+             :muutospaatosprosessi-enabled (and 
+                                             (get-in config [:muutospaatosprosessi :enabled?]) 
+                                              (could-normalize-necessary-fields hakemus))}
         format-plaintext-message (partial render (get-in mail-templates [:paatos-refuse lang]))
         ]
     (log/info "Sending decision email with refuse link")
@@ -141,7 +176,6 @@
     (email/try-send-msg-once msg format-plaintext-message)
     (store-email (:id avustushaku) (format-plaintext-message msg))
     ))
-
 
 (defn send-selvitys! [to hakemus mail-subject mail-message]
   (let [lang (keyword (:language hakemus))]
