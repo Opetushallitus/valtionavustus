@@ -624,7 +624,7 @@ describe("Puppeteer tests", () => {
       contactPersonPhoneNumber: "666",
       registerNumber: "230/2015",
       projectName: "Rahassa kylpijät Ky Ay Oy",
-      avustushakuName: `Testiavustushaku ${randomString()}`
+      avustushakuName: `Testiavustushaku (Muutospäätösprosessi) ${randomString()}`
     }
 
     it("Avustushaun ratkaisu should send an email with link to muutoshaku", async () => {
