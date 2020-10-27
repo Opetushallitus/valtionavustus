@@ -15,6 +15,10 @@ export default class HakemusDetails extends Component {
     const multibatchEnabled =
           (environment["multibatch-payments"] &&
            environment["multibatch-payments"]["enabled?"]) || false
+    const muutoshakemukset = 0
+    const muutospaatosprosessiEnabled =
+          (environment["muutospaatosprosessi"] &&
+           environment["muutospaatosprosessi"]["enabled?"]) || false
 
     const userOid = userInfo["person-oid"]
     const userRole = hakuData.roles.find(r => r.oid === userOid)
@@ -78,6 +82,11 @@ export default class HakemusDetails extends Component {
                            isPresentingOfficer={isPresentingOfficer}
    selvitysLinkHelpText={helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"]}
    presenterCommentHelpText={helpTexts["hankkeen_sivu__loppuselvitys___valmistelijan_huomiot"]}/>
+        case 'muutoshakemukset':
+          if (muutoshakemukset == 0)
+            return <h2>Hankkeella ei ole muutoshakemuksia</h2>
+          else
+            return <div/>
         case 'seuranta':
           return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selectedHakemusAccessControl={selectedHakemusAccessControl} helpTexts={helpTexts}/>
         default:
@@ -93,6 +102,13 @@ export default class HakemusDetails extends Component {
       }
     }
 
+    const MuutoshakemuksetLabel = () =>
+      <span>Muutoshakemukset&nbsp;
+        <span className={muutoshakemukset == 0 ? "" : "muutoshakemukset-warning"}>
+          ({muutoshakemukset})
+        </span>
+      </span>
+
     return (
       <div id="hakemus-details">
         <CloseButton/>
@@ -102,6 +118,7 @@ export default class HakemusDetails extends Component {
           {tab('arviointi', 'Arviointi')}
           {tab('valiselvitys', 'Väliselvitys')}
           {tab('loppuselvitys', 'Loppuselvitys')}
+          {muutospaatosprosessiEnabled && tab('muutoshakemukset', <MuutoshakemuksetLabel/>)}
           {tab('seuranta', 'Seuranta', 'tab-seuranta')}
         </div>
         <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>

@@ -21,6 +21,7 @@
          :multibatch-payments (:multibatch-payments config)
          :reports (:reports config)
          :va-code-values (:va-code-values config)
+         :muutospaatosprosessi (:muutospaatosprosessi config)
          :selvitys-limit (:selvitys-limit config)}
         opintopolku (:opintopolku config)]
     (if-let [opintopolku-url (:url opintopolku)]
