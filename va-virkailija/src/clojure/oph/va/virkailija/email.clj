@@ -102,13 +102,13 @@
 
                            (partial render (get-in mail-templates [:paatos lang])))))
 
-(defn store-email [avustushaku-id formatted]
-(log/info (str "Storing email for avustushaku with id: " avustushaku-id))
+(defn store-email [ hakemus-id user-key formatted]
+(log/info (str "Storing email for hakemus with user-key " user-key))
   (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
         (jdbc/execute!
                connection
-                    ["INSERT INTO emails (avustushaku_id, formatted) VALUES (?, ?)" avustushaku-id, formatted]))
-  (log/info (str "Succesfully stored email for avustushaku with id: " avustushaku-id)))
+                    ["INSERT INTO emails (hakemus_id, user_key, formatted) VALUES (?, ?, ?)" hakemus-id, user-key, formatted]))
+  (log/info (str "Succesfully stored email for hakemus with user-key: " user-key)))
 
 (defn get-answers [form-submission-id form-submission-version]
   (log/info (str "Get answers for form submission: " form-submission-id " with version: " form-submission-version))
@@ -139,8 +139,8 @@
   (try (store-normalized-hakemus user-key answers)
        true
        (catch Exception e 
-         (log/info "Could not normalize necessary hakemus fields for hakemus: " (user-key) " Error: " (.getMessage e))
-         (false)))))
+         (log/info "Could not normalize necessary hakemus fields for hakemus: " user-key " Error: " (.getMessage e))
+         false))))
 
 (defn send-paatos-refuse! [to avustushaku hakemus reply-to token]
   (let [lang-str (:language hakemus)
@@ -148,8 +148,11 @@
         url (paatos-url (:id avustushaku) (:user_key hakemus) (keyword lang-str))
         paatos-refuse-url
         (email/refuse-url (:id avustushaku) (:user_key hakemus) lang token)
+        muutospaatosprosessi-enabled? (and 
+                                       (get-in config [:muutospaatosprosessi :enabled?]) 
+                                       (could-normalize-necessary-fields hakemus))
         paatos-modify-url
-        (email/modify-url (:id avustushaku) (:user_key hakemus) lang token)
+        (email/modify-url (:id avustushaku) (:user_key hakemus) lang token muutospaatosprosessi-enabled?)
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])
         msg {
@@ -166,15 +169,13 @@
              :modify-url paatos-modify-url
              :register-number (:register_number hakemus)
              :project-name (:project_name hakemus)
-             :muutospaatosprosessi-enabled (and 
-                                             (get-in config [:muutospaatosprosessi :enabled?]) 
-                                              (could-normalize-necessary-fields hakemus))}
+             :muutospaatosprosessi-enabled muutospaatosprosessi-enabled?}
         format-plaintext-message (partial render (get-in mail-templates [:paatos-refuse lang]))
         ]
     (log/info "Sending decision email with refuse link")
     (log/info "Urls would be: " url "\n" paatos-refuse-url)
     (email/try-send-msg-once msg format-plaintext-message)
-    (store-email (:id avustushaku) (format-plaintext-message msg))
+    (store-email (:id hakemus) (:user_key hakemus) (format-plaintext-message msg))
     ))
 
 (defn send-selvitys! [to hakemus mail-subject mail-message]

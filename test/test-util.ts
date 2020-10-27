@@ -14,26 +14,28 @@ const VIRKAILIJA_HOSTNAME = process.env.VIRKAILIJA_HOSTNAME || 'localhost'
 const VIRKAILIJA_PORT = 8081
 
 export const VIRKAILIJA_URL = `http://${VIRKAILIJA_HOSTNAME}:${VIRKAILIJA_PORT}`
-const HAKIJA_URL = `http://${HAKIJA_HOSTNAME}:${HAKIJA_PORT}`
+export const HAKIJA_URL = `http://${HAKIJA_HOSTNAME}:${HAKIJA_PORT}`
 
 export const dummyPdfPath = path.join(__dirname, 'dummy.pdf')
 const hakulomakeJson = fs.readFileSync(path.join(__dirname, 'prod.hakulomake.json'), 'utf8')
 
 interface Email {
   id: number
-  "avustushaku-id": number
+  "user-key": string
+  "hakemus-id": number
   timestamp: Date
   formatted: string
 }
 const emailSchema = yup.array().of(yup.object().shape<Email>({
   "id": yup.number().required(),
-  "avustushaku-id": yup.number().required(),
+  "user-key": yup.string().required(),
+  "hakemus-id": yup.number().required(),
   "timestamp": yup.date().required(),
   "formatted": yup.string().required()
 }).required()).required()
 
-export const getEmails = (avustushakuID: number) =>
-  axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/email`)
+export const getEmails = (avustushakuID: number, hakemusID: string) =>
+  axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email`)
     .then(r => emailSchema.validate(r.data))
 
 export function mkBrowser() {
@@ -658,5 +660,5 @@ async function acceptAvustushaku(page: Page, avustushakuID: number) {
   const tapahtumaloki = await page.waitForSelector(".tapahtumaloki")
   const logEntryCount = await tapahtumaloki.evaluate(e => e.querySelectorAll(".entry").length)
   expect(logEntryCount).toEqual(1)
-  return avustushakuID
+  return { avustushakuID, hakemusID}
 }

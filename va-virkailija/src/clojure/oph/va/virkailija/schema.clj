@@ -10,9 +10,10 @@
 
 (s/defschema DbEmail
   "Email stored in database"
-  {:avustushaku-id s/Num
+  {:user-key s/Str
+   :hakemus-id Long
    :timestamp s/Inst
-   :id s/Num
+   :id Long
    :formatted s/Str})
 
 (s/defschema DbEmails

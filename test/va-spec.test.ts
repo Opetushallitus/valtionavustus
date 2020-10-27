@@ -1,6 +1,7 @@
 import { Page, Browser } from "puppeteer"
 import {
   VIRKAILIJA_URL,
+  HAKIJA_URL,
   createValidCopyOfEsimerkkihakuAndReturnTheNewId,
   mkBrowser,
   getFirstPage,
@@ -429,7 +430,7 @@ describe("Puppeteer tests", () => {
 
 
   it("produces väliselvitys sheet in excel export", async function() {
-    const avustushakuID = await ratkaiseAvustushaku(page)
+    const { avustushakuID } = await ratkaiseAvustushaku(page)
 
     await verifyTooltipText(
       page,
@@ -628,26 +629,27 @@ describe("Puppeteer tests", () => {
     }
 
     it("Avustushaun ratkaisu should send an email with link to muutoshaku", async () => {
-      const avustushakuID = await ratkaiseAvustushaku2(page, answers)
+      const { avustushakuID, hakemusID } = await ratkaiseAvustushaku2(page, answers)
 
-      const emails = await getEmails(avustushakuID)
+      const emails = await getEmails(avustushakuID, hakemusID)
       emails.forEach(email => {
-        expect(email["avustushaku-id"]).toEqual(avustushakuID)
-        expect(email.formatted).toMatch(new RegExp(`[\\s\\S]*
-Allaolevasta linkistä voitte tehdä seuraavat muutokset:
-- Päivittää yhteyshenkilön tiedot
-- Hakea pidennystä avustuksen käyttöaikaan
-- Hakea muutosta hankkeen talouden käyttösuunnitelmaan, sisältöön tai toteutustapaan
-https?://.*/muutoshaku.*
-[\\s\\S]*`))
+        expect(email.formatted).toContain(`${HAKIJA_URL}/muutoshaku?lang=fi&user-key=${email["user-key"]}&avustushaku-id=${avustushakuID}`)
+      })
+    })
+
+    it("Avustushaun ratkaisu should send an email without link to muutoshaku if storing normalized hakemus fields is not possible", async () => {
+      const { avustushakuID, hakemusID } = await ratkaiseAvustushaku(page)
+      const emails = await getEmails(avustushakuID, hakemusID)
+      emails.forEach(email => {
+        expect(email.formatted).not.toContain(`${HAKIJA_URL}/muutoshaku?lang=fi&user-key=${email["user-key"]}&avustushaku-id=${avustushakuID}`)
       })
     })
 
     describe("Changing contact person details", () => {
       it("should show avustushaku name, project name, and registration number as well as name, email and phone number for contact person", async () => {
-        const avustushakuID = await ratkaiseAvustushaku2(page, answers)
+        const { avustushakuID, hakemusID } = await ratkaiseAvustushaku2(page, answers)
 
-        const emails = await getEmails(avustushakuID)
+        const emails = await getEmails(avustushakuID, hakemusID)
 
         const linkToMuutoshaku = emails[0].formatted.match(/https?:\/\/.*\/muutoshaku.*/)?.[0]
 
