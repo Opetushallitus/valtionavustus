@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
+import * as yup from 'yup'
 import ReactDOM from 'react-dom'
-import * as Bacon from 'baconjs'
 import * as queryString from 'query-string'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -32,16 +32,15 @@ const avustushakuId = query['avustushaku-id']
 
 interface ContactPersonEditProps {
   avustushaku?: any
-  hakemus?: any
-}
-
-function getAnswerFromHakemus(hakemus: any, keyName: string) {
-  const answer = hakemus?.submission?.answers?.value?.find(({key}: {key: string}) => key === keyName)
-  return answer?.value || ''
+  hakemus: Hakemus
 }
 
 function ContactPersonEdit(props: ContactPersonEditProps) {
   const { avustushaku, hakemus } = props
+
+  if (!hakemus) {
+    throw new Error('Hakemus is undefined')
+  }
   const { t } = useTranslations()
   return (
   <section>
@@ -56,21 +55,21 @@ function ContactPersonEdit(props: ContactPersonEditProps) {
       <div className="muutoshaku__form-row">
         <div className="muutoshaku__form-cell">
           <div>{t.contactPersonEdit.hanke}</div>
-          <div data-test-id="project-name">{getAnswerFromHakemus(hakemus, 'project-name')}</div>
+          <div data-test-id="project-name">{hakemus['project-name']}</div>
         </div>
       </div>
       <div className="muutoshaku__form-row">
         <div className="muutoshaku__form-cell">
           <label htmlFor="muutoshaku__contact-person">{t.contactPersonEdit.contactPerson}</label>
-          <input id="muutoshaku__contact-person" type="text" defaultValue={getAnswerFromHakemus(hakemus, "applicant-name")} />
+          <input id="muutoshaku__contact-person" type="text" defaultValue={hakemus["contact-person"]} />
         </div>
         <div className="muutoshaku__form-cell">
           <label htmlFor="muutoshaku__email">{t.contactPersonEdit.email}</label>
-          <input id="muutoshaku__email" type="text" defaultValue={getAnswerFromHakemus(hakemus, 'primary-email')} />
+          <input id="muutoshaku__email" type="text" defaultValue={hakemus['contact-email']} />
         </div>
         <div className="muutoshaku__form-cell">
           <label htmlFor="muutoshaku__phone">{t.contactPersonEdit.phone}</label>
-          <input id="muutoshaku__phone" type="text" defaultValue={getAnswerFromHakemus(hakemus, "textField-0")}/>
+          <input id="muutoshaku__phone" type="text" defaultValue={hakemus['contact-phone']}/>
         </div>
       </div>
     </div>
@@ -158,18 +157,35 @@ type EnvironmentApiResponse = {
   name: string
 }
 
+interface Hakemus {
+  "user-key": string
+  "project-name": string
+  "contact-person": string
+  "contact-email": string
+  "contact-phone": string
+}
+const hakemusSchema = yup.object().shape<Hakemus>({
+  "user-key": yup.string().required(),
+  "project-name": yup.string().required(),
+  "contact-person": yup.string().required(),
+  "contact-email": yup.string().required(),
+  "contact-phone": yup.string().required()
+}).required()
+
 type MuutoshakemusProps = {
   status: 'LOADED' | 'LOADING'
   avustushaku?: any
   environment?: EnvironmentApiResponse
-  hakemus?: any
+  hakemus?: Hakemus
+  hakemusJson?: any
 }
 
 let initialState: MuutoshakemusProps = {
   status: 'LOADING',
   environment: undefined,
   avustushaku: undefined,
-  hakemus: undefined
+  hakemus: undefined,
+  hakemusJson: undefined
 }
 
 const MuutoshakemusApp = () => {
@@ -179,15 +195,20 @@ const MuutoshakemusApp = () => {
 
   useEffect(() => {
     const fetchProps = async () => {
-      Bacon
-        .combineTemplate({
-          environment: Bacon.fromPromise(HttpUtil.get(`/environment`)),
-          avustushaku: Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}`)),
-          hakemus: Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}`))
-        })
-        .onValue((values: any) => {
-          setState({ status: 'LOADED', ...values })
-        })
+
+      try {
+        const environmentP = HttpUtil.get(`/environment`)
+        const avustushakuP = HttpUtil.get(`/api/avustushaku/${avustushakuId}`)
+        const hakemusJsonP = HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}`)
+        const hakemusP = HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}/normalized`)
+
+        const [environment, avustushaku, hakemusJson, hakemus] = await Promise.all([environmentP, avustushakuP, hakemusJsonP, hakemusP])
+
+        setState({environment, avustushaku, hakemusJson, hakemus, status: 'LOADED'})
+      } catch (err) {
+        console.log(err)
+        throw err
+      }
     }
     fetchProps()
   }, [])
@@ -197,7 +218,7 @@ const MuutoshakemusApp = () => {
       const { localState } = formState.jatkoaika
       if (localState) {
         await haeKayttoajanPidennysta({
-          hakemusVersion: state.hakemus.version,
+          hakemusVersion: state.hakemusJson.version,
           avustushakuId,
           userKey,
           params: {
@@ -233,8 +254,8 @@ const MuutoshakemusApp = () => {
       {state.status === 'LOADING'
         ? <p>{translations[lang].loading}</p>
         : <TranslationContext.Provider value={translationContext}>
-            <AppShell env={state.environment?.name || ''} onSend={handleSendButton} >
-              <ContactPersonEdit avustushaku={state.avustushaku} hakemus={state.hakemus}/>
+            <AppShell env={state.environment?.name || ''} onSend={handleSendButton}>
+              <ContactPersonEdit avustushaku={state.avustushaku} hakemus={hakemusSchema.validateSync(state.hakemus)}/>
               <ApplicationEdit />
               <AvustuksenKayttoajanPidennys
                 nykyinenPaattymisPaiva={new Date()} />
