@@ -230,7 +230,7 @@ const MuutoshakemusApp = () => {
 
   return (
     <>
-      {status === 'LOADING'
+      {state.status === 'LOADING'
         ? <p>{translations[lang].loading}</p>
         : <TranslationContext.Provider value={translationContext}>
             <AppShell env={state.environment?.name || ''} onSend={handleSendButton} >
