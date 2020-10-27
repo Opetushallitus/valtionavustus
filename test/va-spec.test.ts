@@ -45,7 +45,8 @@ import {
   fillAndSendVäliselvityspyyntö,
   downloadExcelExport,
   clickFormSaveAndWait,
-  addFieldToFormAndReturnElementIdAndLabel
+  addFieldToFormAndReturnElementIdAndLabel,
+  navigateToHakemus
 } from "./test-util"
 
 jest.setTimeout(100_000)
@@ -500,6 +501,46 @@ describe("Puppeteer tests", () => {
     expect(actualResponse).toMatchObject(expectedResponse)
   })
 
+  it("Allows modification of applications after they've been resolved", async function() {
+
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+    const { fieldId } = await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "project-nutshell", "textField")
+
+    await clickElementWithText(page, "span", "Haun tiedot")
+    await publishAvustushaku(page)
+
+    const randomValueForProjectNutshell = randomString()
+    const hakemusID = await fillAndSendHakemusAndReturnHakemusId(page, avustushakuID, async () => {
+      await typeValueInFieldAndExpectNoValidationError(page, fieldId, randomValueForProjectNutshell)
+    })
+
+    await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
+    await acceptHakemus(page, avustushakuID, hakemusID, async () => {
+      await clickElementWithTestId(page, 'tab-seuranta')
+      await clickElementWithTestId(page, 'set-allow-visibility-in-external-system-true')
+      await waitForSave(page)
+    })
+
+    const expectedResponse = await expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID, hakemusID, randomValueForProjectNutshell)
+    const actualResponse = await actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID)
+    expect(actualResponse).toMatchObject(expectedResponse)
+
+    const enabledSubmitButtonSelector = '#virkailija-edit-submit:not([disabled])'
+    const kesayliopistoButtonSelector = `[for="type-of-organization.radio.1"]`
+
+    await navigateToHakemus(page, avustushakuID, hakemusID)
+    await clickElementWithText(page, "button", "Muokkaa hakemusta")
+    const newPagePromise = new Promise<Page>(x => browser.once('targetcreated', target => x(target.page())))
+    await clickElementWithText(page, "button", "Siirry muokkaamaan")
+    const modificationPage = await newPagePromise
+    modificationPage.bringToFront()
+    await clickElement(modificationPage, kesayliopistoButtonSelector)
+    await clickElement(modificationPage, enabledSubmitButtonSelector)
+
+    const organizationType = await textContent(modificationPage, '[id=type-of-organization] span')
+    expect(organizationType).toBe('Kesäyliopisto')
+  })
+
   it("shows the contents of the project-goals -field of a hakemus in external api as 'nutshell'", async function() {
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
@@ -587,7 +628,7 @@ describe("Puppeteer tests", () => {
     }
 
     it("Avustushaun ratkaisu should send an email with link to muutoshaku", async () => {
-      const avustushakuID = await ratkaiseAvustushaku2(page, answers) 
+      const avustushakuID = await ratkaiseAvustushaku2(page, answers)
 
       const emails = await getEmails(avustushakuID)
       emails.forEach(email => {
@@ -599,7 +640,7 @@ Allaolevasta linkistä voitte tehdä seuraavat muutokset:
 - Hakea muutosta hankkeen talouden käyttösuunnitelmaan, sisältöön tai toteutustapaan
 https?://.*/muutoshaku.*
 [\\s\\S]*`))
-      }) 
+      })
     })
 
     describe("Changing contact person details", () => {

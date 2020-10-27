@@ -530,6 +530,14 @@ export async function fillAndSendHakemusAndReturnHakemusId(page: Page, avustusha
   return parseInt(hakemusID)
 }
 
+export async function navigateToHakemus(page: Page, avustushakuID: number, hakemusID: number) {
+  await navigate(page, `/avustushaku/${avustushakuID}/`)
+  await Promise.all([
+    page.waitForNavigation(),
+    clickElement(page, `#hakemus-${hakemusID}`)
+  ])
+}
+
 export async function acceptHakemus(page: Page, avustushakuID: number, hakemusID: number, beforeSubmitFn: () => {}) {
   await navigate(page, `/avustushaku/${avustushakuID}/`)
   await Promise.all([
@@ -618,7 +626,7 @@ export async function ratkaiseAvustushaku(page: Page) {
   const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
   await publishAvustushaku(page)
   await fillAndSendHakemus(page, avustushakuID)
-  
+
   return await acceptAvustushaku(page, avustushakuID)
 }
 
