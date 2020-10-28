@@ -19,6 +19,7 @@ type ActionMap<M extends { [index: string]: any }> = {
 }
 
 export enum Types {
+  ContactPersonSetInitialState = "ContactPersonSetInitialState",
   ContactPersonFormChange = "ContactPersonFormChange",
   ContactPersonSubmitSuccess = "ContactPersonSubmitSuccess",
   ContactPersonSubmitFailure = "ContactPersonSubmitFailure",
@@ -84,12 +85,20 @@ type ContactPersonPayload = {
   [Types.ContactPersonFormChange]: {
     formState: Partial<ChangingContactPersonDetails>
   }
+  [Types.ContactPersonSetInitialState]: {
+    stored: ChangingContactPersonDetails
+  }
 }
 
 export type ContactPersonActions = ActionMap<ContactPersonPayload>[keyof ActionMap<ContactPersonPayload>]
 
 export function contactPersonReducer(state: ContactPersonState, action: ContactPersonActions|JatkoaikaActions): ContactPersonState {
   switch (action.type) {
+    case Types.ContactPersonSetInitialState:
+      return {
+        ...state,
+        serverState: action.payload.stored,
+      }
     case Types.ContactPersonSubmitFailure:
       return {
         ...state,

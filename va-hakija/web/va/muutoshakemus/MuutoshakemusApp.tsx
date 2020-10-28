@@ -142,6 +142,17 @@ const MuutoshakemusApp = () => {
 
         const [environment, avustushaku, hakemusJson, hakemus] = await Promise.all([environmentP, avustushakuP, hakemusJsonP, hakemusP])
 
+        dispatch({
+          type: Types.ContactPersonSetInitialState,
+          payload: {
+            stored: {
+              name: hakemus["contact-person"],
+              email: hakemus["contact-email"],
+              phone: hakemus["contact-phone"]
+            }
+          }
+        })
+
         setState({environment, avustushaku, hakemusJson, hakemus, status: 'LOADED'})
       } catch (err) {
         console.log(err)
@@ -193,7 +204,7 @@ const MuutoshakemusApp = () => {
         ? <p>{translations[lang].loading}</p>
         : <TranslationContext.Provider value={translationContext}>
             <AppShell env={state.environment?.name || ''} onSend={handleSendButton}>
-              <ContactPerson avustushaku={state.avustushaku} hakemus={hakemusSchema.validateSync(state.hakemus)} lang={lang}/>
+              <ContactPerson avustushakuName={state.avustushaku.content.name[lang]} projectName={hakemusSchema.validateSync(state.hakemus)["project-name"]} registerNumber={state.avustushaku["register-number"]} lang={lang}/>
               <ApplicationEdit />
               <AvustuksenKayttoajanPidennys
                 nykyinenPaattymisPaiva={new Date()} />

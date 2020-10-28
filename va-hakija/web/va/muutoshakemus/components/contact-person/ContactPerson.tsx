@@ -4,22 +4,23 @@ import {
   AppContext,
 } from '../../store/context'
 import {Types} from '../../store/reducers'
-import { Hakemus, Language } from '../../types'
+import { Language } from '../../types'
 
 interface ContactPersonProps {
-  avustushaku?: any
-  hakemus: Hakemus,
+  avustushakuName: string
+  projectName: string
+  registerNumber: string
   lang: Language
 }
 
-export const ContactPerson = ({hakemus, avustushaku, lang}: ContactPersonProps) => {
+export const ContactPerson = ({ avustushakuName, projectName, registerNumber}: ContactPersonProps) => {
   const { t } = useTranslations()
   const { state, dispatch } = React.useContext(AppContext)
 
 
-  function getContactPersonNameFromStateOrDefault() {
+  function getContactPersonNameFromLocalOrServerState() {
     return state.contactPerson.localState?.name ||
-    hakemus["contact-person"]
+    state.contactPerson.serverState?.name
   }
 
   function onChangeContactPersonName(event: ChangeEvent<HTMLInputElement>): void {
@@ -33,20 +34,52 @@ export const ContactPerson = ({hakemus, avustushaku, lang}: ContactPersonProps) 
     })
   }
 
+  function getContactPersonEmailFromLocalOrServerState() {
+    return state.contactPerson.localState?.email ||
+    state.contactPerson.serverState?.email
+  }
+
+  function onChangeContactPersonEmail(event: ChangeEvent<HTMLInputElement>): void {
+    setContactPersonEmailToState(event.currentTarget.value)
+  }
+
+  function setContactPersonEmailToState(email: string) {
+    dispatch({
+      type: Types.ContactPersonFormChange,
+      payload: { formState: { email } }
+    })
+  }
+
+  function getContactPersonPhoneFromLocalOrServerState() {
+    return state.contactPerson.localState?.phone ||
+    state.contactPerson.serverState?.phone
+  }
+
+  function onChangeContactPersonPhone(event: ChangeEvent<HTMLInputElement>): void {
+    setContactPersonPhoneToState(event.currentTarget.value)
+  }
+
+  function setContactPersonPhoneToState(phone: string) {
+    dispatch({
+      type: Types.ContactPersonFormChange,
+      payload: { formState: { phone } }
+    })
+  }
+
   return (
   <section>
     <div className="muutoshaku__page-title">
-      <h1 className="muutoshaku__title">{t.contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushaku?.content?.name?.[lang]}</span></h1>
+      <h1 className="muutoshaku__title">{t.contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushakuName}</span></h1>
       <span className="va-register-number">
         <span className="muutoshaku__register-number">{t.contactPersonEdit.registerNumberTitle}: </span>
-        <span data-test-id="register-number">{avustushaku?.["register-number"]}</span>
+        <span data-test-id="register-number">{registerNumber}</span>
       </span>
     </div>
     <div className="muutoshaku__form">
       <div className="muutoshaku__form-row">
         <div className="muutoshaku__form-cell">
           <div>{t.contactPersonEdit.hanke}</div>
-          <div data-test-id="project-name">{hakemus['project-name']}</div>
+          <div data-test-id="project-name">{projectName}</div>
         </div>
       </div>
       <div className="muutoshaku__form-row">
@@ -56,15 +89,23 @@ export const ContactPerson = ({hakemus, avustushaku, lang}: ContactPersonProps) 
             id="muutoshaku__contact-person" 
             type="text" 
             onChange={onChangeContactPersonName}
-            value={getContactPersonNameFromStateOrDefault()} />
+            value={getContactPersonNameFromLocalOrServerState()} />
         </div>
         <div className="muutoshaku__form-cell">
           <label htmlFor="muutoshaku__email">{t.contactPersonEdit.email}</label>
-          <input id="muutoshaku__email" type="text" defaultValue={hakemus['contact-email']} />
+          <input 
+            id="muutoshaku__email" 
+            type="text"
+            onChange={onChangeContactPersonEmail}
+            value={getContactPersonEmailFromLocalOrServerState()} />
         </div>
         <div className="muutoshaku__form-cell">
           <label htmlFor="muutoshaku__phone">{t.contactPersonEdit.phone}</label>
-          <input id="muutoshaku__phone" type="text" defaultValue={hakemus['contact-phone']}/>
+          <input
+            id="muutoshaku__phone"
+            type="text"
+            onChange={onChangeContactPersonPhone}
+            value={getContactPersonPhoneFromLocalOrServerState()}/>
         </div>
       </div>
     </div>
