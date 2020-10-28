@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import * as yup from 'yup'
 import ReactDOM from 'react-dom'
 import * as queryString from 'query-string'
 
@@ -10,8 +9,9 @@ import '../style/main.less'
 import {
   AvustuksenKayttoajanPidennys
 } from './components/jatkoaika/AvustuksenKayttoajanPidennys'
+import { ContactPerson } from './components/contact-person/ContactPerson'
 import {TopBar} from './components/TopBar'
-import {Language} from './types'
+import {Language, Hakemus, hakemusSchema} from './types'
 import {translations} from './translations'
 import {TranslationContext, useTranslations} from './TranslationContext'
 import {haeKayttoajanPidennysta} from './client'
@@ -29,53 +29,6 @@ const query = queryString.parse(location.search)
 const lang = validateLanguage(query.lang) || 'fi'
 const userKey = query['user-key']
 const avustushakuId = query['avustushaku-id']
-
-interface ContactPersonEditProps {
-  avustushaku?: any
-  hakemus: Hakemus
-}
-
-function ContactPersonEdit(props: ContactPersonEditProps) {
-  const { avustushaku, hakemus } = props
-
-  if (!hakemus) {
-    throw new Error('Hakemus is undefined')
-  }
-  const { t } = useTranslations()
-  return (
-  <section>
-    <div className="muutoshaku__page-title">
-      <h1 className="muutoshaku__title">{t.contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushaku?.content?.name?.[lang]}</span></h1>
-      <span className="va-register-number">
-        <span className="muutoshaku__register-number">{t.contactPersonEdit.registerNumberTitle}: </span>
-        <span data-test-id="register-number">{avustushaku?.["register-number"]}</span>
-      </span>
-    </div>
-    <div className="muutoshaku__form">
-      <div className="muutoshaku__form-row">
-        <div className="muutoshaku__form-cell">
-          <div>{t.contactPersonEdit.hanke}</div>
-          <div data-test-id="project-name">{hakemus['project-name']}</div>
-        </div>
-      </div>
-      <div className="muutoshaku__form-row">
-        <div className="muutoshaku__form-cell">
-          <label htmlFor="muutoshaku__contact-person">{t.contactPersonEdit.contactPerson}</label>
-          <input id="muutoshaku__contact-person" type="text" defaultValue={hakemus["contact-person"]} />
-        </div>
-        <div className="muutoshaku__form-cell">
-          <label htmlFor="muutoshaku__email">{t.contactPersonEdit.email}</label>
-          <input id="muutoshaku__email" type="text" defaultValue={hakemus['contact-email']} />
-        </div>
-        <div className="muutoshaku__form-cell">
-          <label htmlFor="muutoshaku__phone">{t.contactPersonEdit.phone}</label>
-          <input id="muutoshaku__phone" type="text" defaultValue={hakemus['contact-phone']}/>
-        </div>
-      </div>
-    </div>
-  </section>
-  )
-}
 
 interface ApplicationEditProps {
 }
@@ -156,21 +109,6 @@ function ApplicationEdit(_props: ApplicationEditProps) {
 type EnvironmentApiResponse = {
   name: string
 }
-
-interface Hakemus {
-  "user-key": string
-  "project-name": string
-  "contact-person": string
-  "contact-email": string
-  "contact-phone": string
-}
-const hakemusSchema = yup.object().shape<Hakemus>({
-  "user-key": yup.string().required(),
-  "project-name": yup.string().required(),
-  "contact-person": yup.string().required(),
-  "contact-email": yup.string().required(),
-  "contact-phone": yup.string().required()
-}).required()
 
 type MuutoshakemusProps = {
   status: 'LOADED' | 'LOADING'
@@ -255,7 +193,7 @@ const MuutoshakemusApp = () => {
         ? <p>{translations[lang].loading}</p>
         : <TranslationContext.Provider value={translationContext}>
             <AppShell env={state.environment?.name || ''} onSend={handleSendButton}>
-              <ContactPersonEdit avustushaku={state.avustushaku} hakemus={hakemusSchema.validateSync(state.hakemus)}/>
+              <ContactPerson avustushaku={state.avustushaku} hakemus={hakemusSchema.validateSync(state.hakemus)} lang={lang}/>
               <ApplicationEdit />
               <AvustuksenKayttoajanPidennys
                 nykyinenPaattymisPaiva={new Date()} />

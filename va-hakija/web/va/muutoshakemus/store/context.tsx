@@ -1,8 +1,25 @@
 import React, { createContext, useReducer, Dispatch } from 'react'
-import { JatkoaikaActions, jatkoaikaReducer } from './reducers'
+import { JatkoaikaActions, ContactPersonActions, jatkoaikaReducer, contactPersonReducer } from './reducers'
 import {AxiosError} from 'axios'
 
+export interface ChangingContactPersonDetails {
+  name: string
+  email: string
+  phone: string
+}
+
+export interface ContactPersonState {
+  localState: Partial<ChangingContactPersonDetails> | undefined // browser input field values
+  serverState: ChangingContactPersonDetails | undefined // last input field values stored to DB
+  errorState: Error | AxiosError | undefined // last error when storing to DB
+  lastSave: {
+    status: SaveState,
+    timestamp: Date
+  }
+}
+
 export type InitialStateType = {
+  contactPerson: ContactPersonState
   jatkoaika: JatkoaikaType
 }
 
@@ -29,6 +46,15 @@ export enum SaveState {
 }
 
 const initialState: InitialStateType = {
+  contactPerson: {
+    localState: undefined,
+    serverState: undefined,
+    errorState: undefined,
+    lastSave: {
+      status: SaveState.NOT_SAVED,
+      timestamp: new Date()
+    }
+  },
   jatkoaika: {
     localState: undefined,
     serverState: undefined,
@@ -42,16 +68,16 @@ const initialState: InitialStateType = {
 
 const AppContext = createContext<{
   state: InitialStateType
-  dispatch: Dispatch<JatkoaikaActions>
+  dispatch: Dispatch<JatkoaikaActions|ContactPersonActions>
 }>({
   state: initialState,
   dispatch: () => null
 })
 
-function mainReducer(type: InitialStateType, action: JatkoaikaActions) {
-  const { jatkoaika } = type
+function mainReducer({jatkoaika, contactPerson}: InitialStateType, action: JatkoaikaActions | ContactPersonActions) {
   return {
-    jatkoaika: jatkoaikaReducer(jatkoaika, action)
+    jatkoaika: jatkoaikaReducer(jatkoaika, action),
+    contactPerson: contactPersonReducer(contactPerson, action)
   }
 }
 
