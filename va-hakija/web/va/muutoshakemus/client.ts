@@ -1,5 +1,6 @@
 import axios from 'axios'
 import {AvustuksenKayttoajanPidennys, ChangingContactPersonDetails} from './store/context'
+import moment from 'moment'
 
 const timeout = 10000 // 10 seconds
 const client = axios.create({ timeout })
@@ -19,11 +20,13 @@ interface ChangeContactPersonDetails {
 
 export async function haeKayttoajanPidennysta({avustushakuId, hakemusVersion, userKey, params} : HaeKayttoajanPidennystaProps) {
   const url = `api/muutoshaku/${avustushakuId}/jatkoaika/${userKey}`
+  const paattymispaiva = params.haettuKayttoajanPaattymispaiva ?
+    moment(params.haettuKayttoajanPaattymispaiva).format('YYYY-MM-DD') : null
 
   return client.post(url, {
     hakemusVersion: hakemusVersion,
     haenKayttoajanPidennysta: params.haenKayttoajanPidennysta,
-    haettuKayttoajanPaattymispaiva: params.haettuKayttoajanPaattymispaiva || null,
+    haettuKayttoajanPaattymispaiva: paattymispaiva,
     kayttoajanPidennysPerustelut: params.kayttoajanPidennysPerustelut || null
   })
 }

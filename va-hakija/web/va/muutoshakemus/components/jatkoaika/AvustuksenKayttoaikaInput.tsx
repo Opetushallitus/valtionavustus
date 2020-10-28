@@ -1,4 +1,6 @@
 import React, {ChangeEvent, useEffect} from 'react'
+import { DateTimePicker } from 'react-widgets'
+import momentLocalizer from 'react-widgets-moment'
 import moment from 'moment'
 import {useTranslations} from '../../TranslationContext'
 import {
@@ -7,6 +9,12 @@ import {
   SaveState
 } from '../../store/context'
 import {Types} from '../../store/reducers'
+import 'react-widgets/dist/css/react-widgets.css'
+
+
+moment.locale('fi')
+momentLocalizer()
+
 
 type AvustuksenKayttoaikaInputProps = {
   open: boolean
@@ -31,8 +39,8 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
     return moment(date).format('DD.MM.YYYY')
   }
 
-  function defaultUusiPaattymisaika(date: Date): string {
-    return moment(date).add(2, 'months').format('YYYY-MM-DD')
+  function defaultUusiPaattymisaika(date: Date): Date {
+    return moment(date).add(2, 'months').toDate()
   }
 
   function getPaattymispaivaFromStateOrDefault() {
@@ -44,8 +52,8 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
     setPerustelutToState(event.currentTarget.value)
   }
 
-  function onChangeDate(event: ChangeEvent<HTMLInputElement>): void {
-    setUusiPaattymispaivaToState(event.currentTarget.value)
+  function onDateChange(date?: Date) {
+    setUusiPaattymispaivaToState(date)
   }
 
   function setPerustelutToState(perustelut: string) {
@@ -55,7 +63,7 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
     })
   }
 
-  function setUusiPaattymispaivaToState(paiva: string) {
+  function setUusiPaattymispaivaToState(paiva?: Date) {
     dispatch({
       type: Types.JatkoaikaFormChange,
       payload: { formState: { haettuKayttoajanPaattymispaiva: paiva } }
@@ -78,8 +86,6 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
     return hasInputValidationError('kayttoajanPidennysPerustelut')
   }
 
-  const datePattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}'
-
   return (
     <div>
       <div className="input twocolumns">
@@ -88,18 +94,15 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
           <div className="paattymispaiva">{toString(props.nykyinenPaattymisPaiva)}</div>
         </div>
         <div>
-          <label className='h3' htmlFor="input-haluttu-paattymispaiva">
+          <div className='h3'>
             {t.kayttoajanPidennys.newExpirationDateTitle}
-          </label>
+          </div>
           <div className="paattymispaiva">
-            <input
-              className={hasDateError() ? 'error' : ''}
-              id="input-haluttu-paattymispaiva"
-              onChange={onChangeDate}
-              placeholder="yyyy-mm-dd"
-              pattern={datePattern}
-              type="date"
-              value={getPaattymispaivaFromStateOrDefault()} />
+            <DateTimePicker
+              onChange={onDateChange}
+              containerClassName={hasDateError() ? 'datepicker dp-error' : 'datepicker'}
+              defaultValue={getPaattymispaivaFromStateOrDefault()}
+              time={false} />
           </div>
         </div>
       </div>

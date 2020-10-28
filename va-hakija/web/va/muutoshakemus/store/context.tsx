@@ -35,7 +35,7 @@ export type JatkoaikaType = {
 
 export type AvustuksenKayttoajanPidennys = {
   haenKayttoajanPidennysta: boolean
-  haettuKayttoajanPaattymispaiva?: string
+  haettuKayttoajanPaattymispaiva?: Date
   kayttoajanPidennysPerustelut?: string
 }
 
