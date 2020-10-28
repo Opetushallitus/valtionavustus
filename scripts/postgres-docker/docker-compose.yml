@@ -11,6 +11,7 @@ services:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - '5432:5432'
+    command: ["postgres", "-c", "log_statement=all"]
     environment:
       POSTGRES_USER: va
       POSTGRES_PASSWORD: va
