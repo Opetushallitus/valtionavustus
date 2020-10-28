@@ -297,7 +297,6 @@
   (applicant-edit-submit)
   (applicant-edit-open)
   (get-applicant-edit-open)
-  (muutos-hae-jatkoaikaa)
   (get-attachments)
   (get-attachment)
   (options-del-attachment)
@@ -361,6 +360,10 @@
         (ok organisation-info)
         (not-found)))))
 
+(compojure-api/defroutes muutoshaku-routes
+  "APIs for requesting changes for hakemus after it has already been approved"
+  (muutos-hae-jatkoaikaa))
+
 (compojure-api/defroutes junction-hackathon-routes
   "API for fetching data for Junction Hackathon"
 
@@ -419,6 +422,9 @@
   (compojure-api/context "/api/v2/applications" [] :tags ["applications"] applications-routes)
 
   (compojure-api/context "/api/junction-hackathon" [] :tags ["junction-hackathon"] junction-hackathon-routes)
+
+  (compojure-api/context "/api/muutoshaku" [] :tags ["muutoshaut"] muutoshaku-routes)
+
 
   va-routes/config-routes
   resource-routes)

@@ -12,7 +12,7 @@ type HaeKayttoajanPidennystaProps = {
 }
 
 export async function haeKayttoajanPidennysta({avustushakuId, hakemusVersion, userKey, params} : HaeKayttoajanPidennystaProps) {
-  const url = `api/avustushaku/${avustushakuId}/jatkoaika/${userKey}`
+  const url = `api/muutoshaku/${avustushakuId}/jatkoaika/${userKey}`
 
   return client.post(url, {
     hakemusVersion: hakemusVersion,
