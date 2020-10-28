@@ -73,11 +73,20 @@
       (not-found))))
 
 (defn- get-normalized-hakemus []
-  (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/normalized" [haku-id hakemus-id]
-    :path-params [haku-id :- Long hakemus-id :- s/Str]
+  (compojure-api/GET "/:haku-id/hakemus/:user-key/normalized" [haku-id user-key]
+    :path-params [haku-id :- Long user-key :- s/Str]
     :return  NormalizedHakemus
     :summary "Get normalized answers"
-      (ok (hakija-db/get-normalized-hakemus hakemus-id))))
+      (ok (hakija-db/get-normalized-hakemus user-key))))
+
+(defn- put-normalized-hakemus-contact-person-details []
+  (compojure-api/PUT "/:haku-id/hakemus/:user-key/normalized/contact-person-details" [haku-id user-key]
+    :path-params [haku-id :- Long user-key :- s/Str]
+    :body    [contact-person-details (compojure-api/describe ContactPersonDetails "Change contact person details")]
+    :return  NormalizedHakemus
+    :summary "Put normalized contact person details"
+    (hakija-db/change-normalized-hakemus-contact-person-details user-key contact-person-details)
+    (ok (hakija-db/get-normalized-hakemus user-key))))
 
 (defn- get-hakemus []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
@@ -283,6 +292,7 @@
   "Avustushaku routes"
   (get-id)
   (when (get-in config [:email-api :enabled?]) (get-normalized-hakemus))
+  (when (get-in config [:email-api :enabled?]) (put-normalized-hakemus-contact-person-details))
   (get-hakemus)
   (get-selvitys)
   (get-selvitys-init)

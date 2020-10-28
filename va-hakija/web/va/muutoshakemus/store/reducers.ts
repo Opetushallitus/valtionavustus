@@ -98,6 +98,7 @@ export function contactPersonReducer(state: ContactPersonState, action: ContactP
       return {
         ...state,
         serverState: action.payload.stored,
+        localState: action.payload.stored
       }
     case Types.ContactPersonSubmitFailure:
       return {

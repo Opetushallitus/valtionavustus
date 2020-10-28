@@ -14,13 +14,10 @@ export function TopBar({ env, onSend }: TopBarProps) {
   const { state } = React.useContext(AppContext)
 
   function allChangesSaved(): boolean {
-    if (!state.jatkoaika.localState) return true
+    if (!state.jatkoaika.localState && !state.contactPerson.localState) return true
 
     return isEqual(state.jatkoaika.localState, state.jatkoaika.serverState)
-  }
-
-  function isJatkoaikaHaku(): boolean {
-    return state.jatkoaika.localState?.haenKayttoajanPidennysta || false
+    && isEqual(state.contactPerson.localState, state.contactPerson.serverState)
   }
 
   return (
@@ -41,7 +38,7 @@ export function TopBar({ env, onSend }: TopBarProps) {
         </div>
         <div className="muutospyynto-button-container">
           <button
-            disabled={allChangesSaved() || !isJatkoaikaHaku()}
+            disabled={allChangesSaved()}
             id="send-muutospyynto-button"
             type="submit"
             onClick={onSend}>

@@ -123,6 +123,18 @@
     (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
     (first hakemukset)))
 
+(defn change-normalized-hakemus-contact-person-details [user-key, contact-person-details]
+  (log/info (str "Change normalized contact person details with user-key: " user-key))
+  (let [ contact-person (:contact-person contact-person-details)
+         contact-phone (:contact-phone contact-person-details)
+         contact-email (:contact-email contact-person-details)]
+    (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
+                  (jdbc/execute!
+                    connection
+                    ["UPDATE virkailija.avustushaku_hakemukset SET contact_person = ?, contact_email = ?, contact_phone = ? WHERE user_key = ?" contact-person, contact-email, contact-phone, user-key]
+                    )))
+    (log/info (str "Succesfully changed contact person details with user-key: " user-key)))
+
 (defn update-hakemus-parent-id [hakemus-id parent-id]
   (exec :form-db queries/update-hakemus-parent-id! {:id hakemus-id :parent_id parent-id}))
 

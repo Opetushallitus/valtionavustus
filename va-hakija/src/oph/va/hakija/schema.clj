@@ -13,6 +13,14 @@
    :contact-phone s/Str
    })
 
+(s/defschema ContactPersonDetails
+  "ContactPersonDetails contains contact person details in normalized format"
+  {
+   :contact-person s/Str
+   :contact-email s/Str
+   :contact-phone s/Str
+   })
+
 (s/defschema Hakemus
   "Hakemus contains hakemus, last submission and server validation error info about it"
   {:id     (s/maybe s/Str)

@@ -14,9 +14,15 @@ import {TopBar} from './components/TopBar'
 import {Language, Hakemus, hakemusSchema} from './types'
 import {translations} from './translations'
 import {TranslationContext, useTranslations} from './TranslationContext'
-import {haeKayttoajanPidennysta} from './client'
+import {haeKayttoajanPidennysta, changeContactPersonDetails} from './client'
 import {AppContext, AppProvider} from './store/context'
 import {Types} from "./store/reducers"
+
+function assertRequired<T>(val: T): asserts val is Required<T> {
+  if(Object.values(val).some((value) => !value)) {
+    throw new Error("Could not cast into Required<T>")
+  }
+}
 
 function validateLanguage(s: unknown): Language {
   if (s !== 'fi' && s !== 'sv') {
@@ -163,34 +169,61 @@ const MuutoshakemusApp = () => {
   }, [])
 
   async function handleSendButton() {
-    try {
-      const { localState } = formState.jatkoaika
-      if (localState) {
+    const { localState: jatkoAikaLocalState } = formState.jatkoaika
+    if (jatkoAikaLocalState) {
+      try {
         await haeKayttoajanPidennysta({
           hakemusVersion: state.hakemusJson.version,
           avustushakuId,
           userKey,
           params: {
-            ...localState,
-            haenKayttoajanPidennysta: localState.haenKayttoajanPidennysta || false
+            ...jatkoAikaLocalState,
+            haenKayttoajanPidennysta: jatkoAikaLocalState.haenKayttoajanPidennysta || false
           }
         })
         dispatch({
           type: Types.JatkoaikaSubmitSuccess,
           payload: {
             stored: {
-              ...localState,
-              haenKayttoajanPidennysta: localState.haenKayttoajanPidennysta || false
+              ...jatkoAikaLocalState,
+              haenKayttoajanPidennysta: jatkoAikaLocalState.haenKayttoajanPidennysta || false
             }
           }
         })
+      } catch (e) {
+        dispatch({
+          type: Types.JatkoaikaSubmitFailure,
+          payload: { error: e }
+        })
       }
-    } catch (e) {
-      dispatch({
-        type: Types.JatkoaikaSubmitFailure,
-        payload: { error: e }
-      })
     }
+    const { localState: contactPersonLocalState } = formState.contactPerson
+    if (contactPersonLocalState) {
+      try {
+        assertRequired(contactPersonLocalState)
+        await changeContactPersonDetails({
+          avustushakuId,
+          userKey,
+          params: {
+            ...contactPersonLocalState
+          }
+        })
+        dispatch({
+          type: Types.ContactPersonSubmitSuccess,
+          payload: {
+            stored: {
+              ...contactPersonLocalState,
+            }
+          }
+        })
+      } catch (e) {
+        dispatch({
+          type: Types.JatkoaikaSubmitFailure,
+          payload: { error: e }
+        })
+      }
+    }
+
   }
 
   const translationContext = {
