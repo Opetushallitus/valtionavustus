@@ -47,8 +47,13 @@ import {
   downloadExcelExport,
   clickFormSaveAndWait,
   addFieldToFormAndReturnElementIdAndLabel,
-  navigateToHakemus
+  navigateToHakemus,
+  navigateToHakijaMuutoshakemusPage,
+  getUserKey,
+  getStoredMuutoshakemus
 } from "./test-util"
+
+const moment = require('moment')
 
 jest.setTimeout(100_000)
 describe("Puppeteer tests", () => {
@@ -642,6 +647,42 @@ describe("Puppeteer tests", () => {
       const emails = await getEmails(avustushakuID, hakemusID)
       emails.forEach(email => {
         expect(email.formatted).not.toContain(`${HAKIJA_URL}/muutoshaku?lang=fi&user-key=${email["user-key"]}&avustushaku-id=${avustushakuID}`)
+      })
+    })
+
+    describe.only('Jatkoajan haku', () => {
+
+      it('Hakija can apply for jatkoaika', async () => {
+
+        const selectDate = moment(new Date())
+          .add(2, 'months')
+          .add(1, 'days')
+          .locale('fi')
+
+        const calendarDateSelector = `[title="${selectDate.format('LL')}"]`
+        const calendarButtonSelector = `div[class="paattymispaiva"] button`
+
+        const perustelu = 'Ei kyl millään ehdi deadlineen mennessä ku mun koira söi ne tutkimustulokset'
+        const haettuPaattymispaiva = selectDate.format('YYYY-MM-DD')
+
+        const { avustushakuID, hakemusID } = await ratkaiseAvustushaku2(page, answers)
+        await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+        await clickElement(page, '#checkbox-jatkoaika')
+        await clearAndType(page, '#perustelut-jatkoaika', perustelu)
+        await clickElement(page, calendarButtonSelector)
+        await clickElement(page, calendarDateSelector)
+        await clickElement(page, '#send-muutospyynto-button')
+
+        const successNotificationSelector = 'div[class="animate success"]'
+        const notification = await textContent(page, successNotificationSelector)
+        expect(notification).toBe('Muutoshakemus lähetetty')
+
+        const userKey = (await getUserKey(avustushakuID, hakemusID))[0]
+        const storedMuutos = await getStoredMuutoshakemus(userKey)
+
+        expect(storedMuutos["haen-kayttoajan-pidennysta"]).toBe(true)
+        expect(storedMuutos["kayttoajan-pidennys-perustelut"]).toBe(perustelu)
+        expect(storedMuutos["haettu-kayttoajan-paattymispaiva"]).toBe(haettuPaattymispaiva)
       })
     })
 

@@ -26,6 +26,17 @@ interface Email {
   timestamp: Date
   formatted: string
 }
+
+interface Muutoshakemus {
+  id: number
+  "user-key": string
+  "hakemus-version": number
+  "haen-kayttoajan-pidennysta": boolean
+  "kayttoajan-pidennys-perustelut": string
+  "haettu-kayttoajan-paattymispaiva": string
+  "created-at": Date
+}
+
 const emailSchema = yup.array().of(yup.object().shape<Email>({
   "id": yup.number().required(),
   "user-key": yup.string().required(),
@@ -34,9 +45,26 @@ const emailSchema = yup.array().of(yup.object().shape<Email>({
   "formatted": yup.string().required()
 }).required()).required()
 
+export async function navigateToHakijaMuutoshakemusPage(page: Page, avustushakuID: number, hakemusID: string) {
+  const emails = await getEmails(avustushakuID, hakemusID)
+  const linkToMuutoshaku = emails[0].formatted.match(/https?:\/\/.*\/muutoshaku.*/)?.[0]
+  expectToBeDefined(linkToMuutoshaku)
+  await page.goto(linkToMuutoshaku, { waitUntil: "networkidle0" })
+}
+
 export const getEmails = (avustushakuID: number, hakemusID: string) =>
   axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email`)
     .then(r => emailSchema.validate(r.data))
+
+export async function getUserKey(avustushakuID: number, hakemusID: string): Promise<string[]> {
+  const response = await axios.get<Email[]>(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email`)
+  return response.data.map(h => h['user-key'])
+}
+
+export async function getStoredMuutoshakemus(userKey: string): Promise<Muutoshakemus> {
+  const response = await axios.get<Muutoshakemus>(`${HAKIJA_URL}/api/avustushaku/hakemus/${userKey}`)
+  return response.data
+}
 
 export function mkBrowser() {
   const headless = process.env['HEADLESS'] === 'true'
@@ -268,6 +296,7 @@ export async function resolveAvustushaku(page: Page, avustushakuID: number) {
 export async function sendPäätös(page: Page, avustushakuID: number) {
   await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
   await clickElementWithText(page, "button", "Lähetä 1 päätöstä")
+
   await Promise.all([
     page.waitForResponse(`${VIRKAILIJA_URL}/api/paatos/sendall/${avustushakuID}`),
     clickElementWithText(page, "button", "Vahvista lähetys"),
