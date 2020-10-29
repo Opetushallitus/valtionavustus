@@ -213,7 +213,7 @@
                      :summary "Get muutoshaku"
                      (ok (hakija-db/get-muutoshaku hakemus-id))))
 
-(defn- muutos-hae-jatkoaikaa []
+(defn- post-muutoshakemus-kayttoaika []
   (when (get-in config [:muutospaatosprosessi :enabled?])
     (compojure-api/POST "/:haku-id/jatkoaika/:user-key" [haku-id user-key :as request]
       :path-params [haku-id :- Long]
@@ -379,8 +379,8 @@
 
 (compojure-api/defroutes muutoshaku-routes
   "APIs for requesting changes for hakemus after it has already been approved"
-  (get-muutoshakemus)
-  (muutos-hae-jatkoaikaa))
+  (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemus))
+  (post-muutoshakemus-kayttoaika))
 
 (compojure-api/defroutes junction-hackathon-routes
   "API for fetching data for Junction Hackathon"
