@@ -163,7 +163,7 @@ export async function fillAndSendHakemus2(page: Page, avustushakuID: number, ans
   await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
 
   await clearAndType(page, "#primary-email", answers.contactPersonEmail)
-  await clickElement(page, "#submit")
+  await clickElement(page, "#submit:not([disabled])")
 
   await clearAndType(page, "#finnish-business-id", "2050864-5")
   await clickElement(page, "input.get-business-id")
