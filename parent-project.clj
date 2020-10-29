@@ -27,7 +27,7 @@
                          [clout "2.2.1"]
                          [com.novemberain/pantomime "2.9.0"]
                          [compojure "1.6.1"]
-                         [http-kit "2.3.0"]
+                         [http-kit "2.4.0"]
                          [metosin/compojure-api "1.1.12"]
                          [ring/ring-codec "1.1.1"]
                          [ring/ring-core "1.6.3"]
