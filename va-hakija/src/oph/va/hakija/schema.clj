@@ -13,8 +13,8 @@
    :contact-phone s/Str
    })
 
-(s/defschema Muutoshaku
-  "Muutoshaku for a specific hakemus"
+(s/defschema Muutoshakemus
+  "Muutoshakemus for a specific hakemus"
   {
     :id Long
     :user-key s/Str

@@ -206,10 +206,10 @@
     :summary "Open application for applicant edit"
     (ok (on-hakemus-applicant-edit-open haku-id hakemus-id))))
 
-(defn- get-muutoshaku []
+(defn- get-muutoshakemus []
   (compojure-api/GET "/hakemus/:hakemus-id" [hakemus-id]
                      :path-params [hakemus-id :- s/Str]
-                     :return  Muutoshaku
+                     :return  Muutoshakemus
                      :summary "Get muutoshaku"
                      (ok (hakija-db/get-muutoshaku hakemus-id))))
 
