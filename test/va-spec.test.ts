@@ -650,7 +650,7 @@ describe("Puppeteer tests", () => {
       })
     })
 
-    describe.only('Jatkoajan haku', () => {
+    describe('Jatkoajan haku', () => {
 
       it('Hakija can apply for jatkoaika', async () => {
 
