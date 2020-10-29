@@ -379,6 +379,7 @@
 
 (compojure-api/defroutes muutoshaku-routes
   "APIs for requesting changes for hakemus after it has already been approved"
+  (get-muutoshakemus)
   (muutos-hae-jatkoaikaa))
 
 (compojure-api/defroutes junction-hackathon-routes
