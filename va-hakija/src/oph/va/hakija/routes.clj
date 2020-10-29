@@ -206,6 +206,13 @@
     :summary "Open application for applicant edit"
     (ok (on-hakemus-applicant-edit-open haku-id hakemus-id))))
 
+(defn- get-muutoshaku []
+  (compojure-api/GET "/hakemus/:hakemus-id" [hakemus-id]
+                     :path-params [hakemus-id :- s/Str]
+                     :return  Muutoshaku
+                     :summary "Get muutoshaku"
+                     (ok (hakija-db/get-muutoshaku hakemus-id))))
+
 (defn- muutos-hae-jatkoaikaa []
   (when (get-in config [:muutospaatosprosessi :enabled?])
     (compojure-api/POST "/:haku-id/jatkoaika/:user-key" [haku-id user-key :as request]

@@ -13,6 +13,18 @@
    :contact-phone s/Str
    })
 
+(s/defschema Muutoshaku
+  "Muutoshaku for a specific hakemus"
+  {
+    :id Long
+    :user-key s/Str
+    :hakemus-version Long
+    :haen-kayttoajan-pidennysta s/Bool
+    :kayttoajan-pidennys-perustelut (s/maybe s/Str)
+    :haettu-kayttoajan-paattymispaiva (s/maybe java.time.LocalDate)
+    :created-at s/Inst
+    })
+
 (s/defschema ContactPersonDetails
   "ContactPersonDetails contains contact person details in normalized format"
   {
