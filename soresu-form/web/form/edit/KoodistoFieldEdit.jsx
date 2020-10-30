@@ -25,7 +25,8 @@ export default class KoodistoFieldEdit extends FieldEditComponent {
     }
     if (!koodistos.content) {
       if (this.props.koodistosLoader) {
-        this.props.koodistosLoader()
+        // Delay this.props.koodistosLoader() to avoid setState during render
+        setTimeout(this.props.koodistosLoader)
       }
       return <span>Ei koodistoja.</span>
     }
