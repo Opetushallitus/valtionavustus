@@ -113,14 +113,14 @@
         hakemus (exec :form-db queries/create-hakemus<! params)]
     {:hakemus hakemus :submission submission}))
 
-(defn get-normalized-hakemus [hakemus-id]
-  (log/info (str "Get normalized hakemus with id: " hakemus-id))
+(defn get-normalized-hakemus [user-key]
+  (log/info (str "Get normalized hakemus with id: " user-key))
   (let [hakemukset (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
                  (jdbc/query
                    connection
-                   ["SELECT * from virkailija.avustushaku_hakemukset WHERE user_key = ?" hakemus-id]
+                   ["SELECT * from virkailija.avustushaku_hakemukset WHERE user_key = ?" user-key]
                   {:identifiers #(.replace % \_ \-)}))]
-    (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
+    (log/info (str "Succesfully fetched hakemus with id: " user-key))
     (first hakemukset)))
 
 (defn get-muutoshaku [hakemus-id]
