@@ -662,6 +662,16 @@ describe("Puppeteer tests", () => {
         const calendarDateSelector = `[title="${selectDate.format('LL')}"]`
         const calendarButtonSelector = `div[class="paattymispaiva"] button`
 
+        async function selectedDateHasBeenStoredToState() {
+          const selectedDateInStateSelector = `[class=paattymispaiva][data-test-value="${selectDate.format('DD.MM.YYYY')}"]`
+          await page.waitForSelector(selectedDateInStateSelector, {visible: true, timeout: 5 * 1000})
+        }
+
+        async function waitForCalendarOpeningAnimationToComplete() {
+          const calendarOpenedSelector = `[class*="rw-popup-container"]:not([class*="rw-popup-transition-entering"]`
+          await page.waitForSelector(calendarOpenedSelector, {visible: true, timeout: 5 * 1000})
+        }
+
         const perustelu = 'Ei kyl millään ehdi deadlineen mennessä ku mun koira söi ne tutkimustulokset'
         const haettuPaattymispaiva = selectDate.format('YYYY-MM-DD')
 
@@ -670,7 +680,9 @@ describe("Puppeteer tests", () => {
         await clickElement(page, '#checkbox-jatkoaika')
         await clearAndType(page, '#perustelut-jatkoaika', perustelu)
         await clickElement(page, calendarButtonSelector)
+        await waitForCalendarOpeningAnimationToComplete()
         await clickElement(page, calendarDateSelector)
+        await selectedDateHasBeenStoredToState()
         await clickElement(page, '#send-muutospyynto-button')
 
         const successNotificationSelector = 'div[class="animate success"]'
@@ -683,7 +695,7 @@ describe("Puppeteer tests", () => {
         expect(storedMuutos["haen-kayttoajan-pidennysta"]).toBe(true)
         expect(storedMuutos["kayttoajan-pidennys-perustelut"]).toBe(perustelu)
         expect(storedMuutos["haettu-kayttoajan-paattymispaiva"]).toBe(haettuPaattymispaiva)
-      })
+      }, 150 * 1000)
     })
 
     describe("Changing contact person details", () => {

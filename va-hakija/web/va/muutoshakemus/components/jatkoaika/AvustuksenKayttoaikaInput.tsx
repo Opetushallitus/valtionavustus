@@ -35,7 +35,8 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
 
   // TODO: Hae nykyinen tila kannasta ja esitäytä lomake.
 
-  function toString(date: Date): string {
+  function toString(date?: Date): string {
+    if (!date) return ''
     return moment(date).format('DD.MM.YYYY')
   }
 
@@ -97,7 +98,7 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
           <div className='h3'>
             {t.kayttoajanPidennys.newExpirationDateTitle}
           </div>
-          <div className="paattymispaiva">
+          <div className="paattymispaiva" data-test-value={toString(state.jatkoaika.localState?.haettuKayttoajanPaattymispaiva)}>
             <DateTimePicker
               onChange={onDateChange}
               containerClassName={hasDateError() ? 'datepicker dp-error' : 'datepicker'}
