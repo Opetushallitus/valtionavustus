@@ -52,6 +52,20 @@ export async function navigateToHakijaMuutoshakemusPage(page: Page, avustushakuI
   await page.goto(linkToMuutoshaku, { waitUntil: "networkidle0" })
 }
 
+export async function getElementInnerText(page: Page, selector: string) {
+    return await page.evaluate((s: string) => (document.querySelector(s) && document.querySelector(s) as HTMLElement)?.innerText, selector)
+}
+
+export async function getElementAttribute(page: Page, selector: string, attribute: string) {
+    return await page.evaluate((s: string, a: string) =>
+          (document.querySelector(s) && document.querySelector(s) as HTMLElement)?.getAttribute(a), selector, attribute)
+}
+
+export async function hasElementAttribute(page: Page, selector: string, attribute: string) {
+    return await page.evaluate((s: string, a: string) =>
+          (document.querySelector(s) && document.querySelector(s) as HTMLElement)?.hasAttribute(a), selector, attribute)
+}
+
 export const getEmails = (avustushakuID: number, hakemusID: string) =>
   axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email`)
     .then(r => emailSchema.validate(r.data))

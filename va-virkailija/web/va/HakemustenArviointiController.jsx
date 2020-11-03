@@ -22,6 +22,7 @@ import RahoitusalueSelections from './hakemus-details/RahoitusalueSelections'
 const dispatcher = new Dispatcher()
 
 const events = {
+  onNormalizedData: 'onNormalizedData',
   beforeUnload: 'beforeUnload',
   initialState: 'initialState',
   reRender: 'reRender',
@@ -115,6 +116,7 @@ export default class HakemustenArviointiController {
 
     return Bacon.update(
       {},
+      [dispatcher.stream(events.onNormalizedData)], this.onNormalizedData,
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload,
       [dispatcher.stream(events.initialState)], this.onInitialState,
       [dispatcher.stream(events.reRender)], this.onReRender,
@@ -223,6 +225,13 @@ export default class HakemustenArviointiController {
   onHakemusSelection(state, hakemusIdToSelect) {
     state = this.onSaveHakemusArvio(state, state.selectedHakemus)
     state.selectedHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdToSelect)
+    const avustushakuId = state.hakuData.avustushaku.id
+    const normalizedStream = Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId + "/hakemus/" + hakemusIdToSelect + "/normalized")).mapError(undefined)
+
+    normalizedStream.onValue( normalizedData =>
+      dispatcher.push(events.onNormalizedData, normalizedData)
+    )
+
     if (!state.selectedHakemus) {
       throw new Error(`Avustushaku ${state.hakuData.avustushaku.id} does not have hakemus ${hakemusIdToSelect}`)
     }
@@ -992,7 +1001,13 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
   onRefreshAttachments(state,hakuData){
     state.hakuData.attachments = hakuData.attachments
     return state
+  }
 
+  onNormalizedData(state, normalizedData) {
+    if (state.selectedHakemus) {
+      state.selectedHakemus.normalizedData = normalizedData
+    }
+    return state
   }
 
   onRefreshHakemukset(state,hakuData){

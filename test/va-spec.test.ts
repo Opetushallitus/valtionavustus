@@ -6,8 +6,10 @@ import {
   mkBrowser,
   getFirstPage,
   ratkaiseAvustushaku,
+  getElementInnerText,
   ratkaiseAvustushaku2,
   publishAvustushaku,
+  hasElementAttribute,
   fillAndSendHakemus,
   acceptHakemus,
   clickCodeVisibilityButton,
@@ -699,12 +701,18 @@ describe("Puppeteer tests", () => {
     })
 
     describe("Changing contact person details", () => {
+      let linkToMuutoshaku: string | undefined
+      let avustushakuID: number | undefined
+      const newName = randomString()
+      const newEmail = randomString() + "@reaktor.com"
+      const newPhone = "0901967632"
       it("should show avustushaku name, project name, and registration number as well as name, email and phone number for contact person", async () => {
-        const { avustushakuID, hakemusID } = await ratkaiseAvustushaku2(page, answers)
+        const { avustushakuID: avustushakuId, hakemusID } = await ratkaiseAvustushaku2(page, answers)
+        avustushakuID = avustushakuId
 
         const emails = await getEmails(avustushakuID, hakemusID)
 
-        const linkToMuutoshaku = emails[0].formatted.match(/https?:\/\/.*\/muutoshaku.*/)?.[0]
+        linkToMuutoshaku = emails[0].formatted.match(/https?:\/\/.*\/muutoshaku.*/)?.[0]
 
         expectToBeDefined(linkToMuutoshaku)
 
@@ -733,6 +741,39 @@ describe("Puppeteer tests", () => {
         expect(contactPerson).toEqual(answers.contactPersonName)
         expect(contactPersonEmail).toEqual(answers.contactPersonEmail)
         expect(contactPersonPhoneNumber).toEqual(answers.contactPersonPhoneNumber)
+      })
+
+      it("Save button activates when contact person details are changed", async () => {
+        expectToBeDefined(linkToMuutoshaku)
+        await page.goto(linkToMuutoshaku, { waitUntil: "networkidle0" })
+
+        await page.waitForSelector("#send-muutospyynto-button", { visible: true })
+
+        const sendMuutospyyntoButtonIsDisabled = await hasElementAttribute(page, "#send-muutospyynto-button", "disabled")
+        expect(sendMuutospyyntoButtonIsDisabled).toBeTruthy()
+
+        await clearAndType(page, '#muutoshaku__contact-person', newName)
+        await clearAndType(page, '#muutoshaku__email', newEmail)
+        await clearAndType(page, '#muutoshaku__phone', newPhone)
+
+        const sendMuutospyyntoButtonIsDisabledAfterChange = await hasElementAttribute(page, "#send-muutospyynto-button", "disabled")
+        expect(sendMuutospyyntoButtonIsDisabledAfterChange).toBeFalsy()
+
+        await clickElement(page, "#send-muutospyynto-button")
+      })
+
+      it("Changed contact person details are shown for virkailija", async () => {
+        await navigate(page, `/avustushaku/${avustushakuID}/`)
+        await Promise.all([
+          page.waitForNavigation(),
+          clickElementWithText(page, "td", "Akaan kaupunki"),
+        ])
+        const contactPersonNameOnPage = await getElementInnerText(page, "#applicant-name")
+        const contactPersonPhoneOnPage = await getElementInnerText(page, "#textField-0")
+        const contactPersonEmailOnPage = await getElementInnerText(page, "#primary-email div")
+        expect(contactPersonNameOnPage).toEqual(newName)
+        expect(contactPersonPhoneOnPage).toEqual(newPhone)
+        expect(contactPersonEmailOnPage).toEqual(newEmail)
       })
     })
   })

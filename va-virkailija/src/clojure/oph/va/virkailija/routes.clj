@@ -225,6 +225,16 @@
     (log/info (str "Succesfully fetched email for hakemus with hakemus-id: " hakemus-id))
     emails))
 
+(defn- get-normalized-hakemus []
+  (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/normalized" [haku-id hakemus-id]
+    :path-params [haku-id :- Long hakemus-id :- Long]
+    :return  va-schema/NormalizedHakemus
+    :summary "Get normalized answers"
+    (if-let [normalized-hakemus (virkailija-db/get-normalized-hakemus hakemus-id)]
+      (ok normalized-hakemus)
+      (not-found)
+      )))
+
 (defn- get-avustushaku-email []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/email" request
                      :path-params [avustushaku-id :- Long hakemus-id :- Long]
@@ -564,6 +574,7 @@
                                             (ok (hakemus-search/find-hakemukset-by-organization-name organization-name)))
 
                          (get-avustushaku-status)
+                         (get-normalized-hakemus)
                          (put-avustushaku)
                          (post-avustushaku)
                          (get-avustushaku)

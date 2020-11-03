@@ -12,6 +12,16 @@
             [oph.va.budget :as va-budget])
   (:import [java.util Date]))
 
+(defn get-normalized-hakemus [hakemus-id]
+  (log/info (str "Get normalized hakemus with id: " hakemus-id))
+  (let [hakemukset (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
+                 (jdbc/query
+                   connection
+                   ["SELECT * from virkailija.hakemus WHERE hakemus_id = ?" hakemus-id]
+                  {:identifiers #(.replace % \_ \-)}))]
+    (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
+    (first hakemukset)))
+
 (defn get-arviot [hakemus-ids]
   (if (empty? hakemus-ids)
     []

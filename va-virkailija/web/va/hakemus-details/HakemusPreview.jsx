@@ -17,6 +17,15 @@ import FakeFormState from '../form/FakeFormState'
 
 import '../style/formpreview.less'
 
+function replaceContactPersonInformationWithLatestNormalizedData(currentAnswers, normalizedData) {
+  const contactPersonName = currentAnswers.find(el => el.key === "applicant-name")
+  const contactPersonEmail = currentAnswers.find(el => el.key === "primary-email")
+  const contactPersonPhone = currentAnswers.find(el => el.key === "textField-0")
+  contactPersonName.value = normalizedData["contact-person"]
+  contactPersonEmail.value = normalizedData["contact-email"]
+  contactPersonPhone.value = normalizedData["contact-phone"]
+}
+
 export default class HakemusPreview extends Component {
   render() {
     const hakemus = this.props.hakemus
@@ -70,6 +79,10 @@ export default class HakemusPreview extends Component {
       effectiveForm.content = _.filter(effectiveForm.content, field => field.fieldClass !== "infoElement")
       const formSpecification = hakuData.form
       const currentAnswers = hakemus.answers
+
+      if (hakemus.normalizedData) {
+        replaceContactPersonInformationWithLatestNormalizedData(currentAnswers, hakemus.normalizedData)
+      }
 
       hakemusFormState.answersDelta = EditsDisplayingFormView.resolveChangedFields(currentAnswers, hakemusFormState.changeRequests, hakemusFormState.attachmentVersions)
       const oldestAnswers = (hakemusFormState.changeRequests && hakemusFormState.changeRequests.length > 0) ? hakemusFormState.changeRequests[0].answers : {}
