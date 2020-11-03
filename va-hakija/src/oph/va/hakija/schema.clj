@@ -3,16 +3,6 @@
             [oph.soresu.form.schema :refer :all]
             [oph.va.schema :refer :all]))
 
-(s/defschema NormalizedHakemus
-  "NormalizedHakemus contains hakemus answers in normalized format"
-  {
-   :user-key s/Str
-   :project-name s/Str
-   :contact-person s/Str
-   :contact-email s/Str
-   :contact-phone s/Str
-   })
-
 (s/defschema Muutoshakemus
   "Muutoshakemus for a specific hakemus"
   {

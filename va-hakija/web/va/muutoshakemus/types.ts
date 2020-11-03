@@ -5,6 +5,8 @@ export type Language = 'fi' | 'sv'
 export type Translations = typeof translationsFi
 
 export interface Hakemus {
+  "id": number
+  "hakemus-id": number
   "user-key": string
   "project-name": string
   "contact-person": string
@@ -12,6 +14,8 @@ export interface Hakemus {
   "contact-phone": string
 }
 export const hakemusSchema = yup.object().shape<Hakemus>({
+  "id": yup.number().required(),
+  "hakemus-id": yup.number().required(),
   "user-key": yup.string().required(),
   "project-name": yup.string().required(),
   "contact-person": yup.string().required(),

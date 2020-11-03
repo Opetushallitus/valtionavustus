@@ -120,26 +120,28 @@
     (log/info (str "Succesfully fetched answers for form submission: " form-submission-id " with version: " form-submission-version))
     (:answers (first answers))))
 
-(defn store-normalized-hakemus [user-key answers]
-  (log/info (str "Storing normalized fields for hakemus: " user-key))
+(defn store-normalized-hakemus [id user-key answers]
+  (log/info (str "Storing normalized fields for hakemus: " id))
   (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
         (jdbc/execute!
                connection
-                    ["INSERT INTO virkailija.avustushaku_hakemukset (user_key, project_name, contact_person, contact_email, contact_phone) VALUES (?, ?, ?, ?, ?) ON CONFLICT (user_key) DO UPDATE SET project_name = EXCLUDED.project_name, contact_person = EXCLUDED.contact_person, contact_email = EXCLUDED.contact_email, contact_phone = EXCLUDED.contact_phone"
+                    ["INSERT INTO virkailija.hakemus (hakemus_id, user_key, project_name, contact_person, contact_email, contact_phone) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT (user_key) DO UPDATE SET project_name = EXCLUDED.project_name, contact_person = EXCLUDED.contact_person, contact_email = EXCLUDED.contact_email, contact_phone = EXCLUDED.contact_phone"
+                      id,
                       user-key,
                       (form-util/find-answer-value answers "project-name"),
                       (form-util/find-answer-value answers "applicant-name"),
                       (form-util/find-answer-value answers "primary-email"),
                       (form-util/find-answer-value answers "textField-0")]))
-  (log/info (str "Succesfully stored normalized fields for hakemus with id: " user-key)))
+  (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
 
 (defn could-normalize-necessary-fields [hakemus]
-  (let [user-key (:user_key hakemus)
+  (let [id (:id hakemus)
+        user-key (:user_key hakemus)
         answers (get-answers (:form_submission_id hakemus) (:form_submission_version hakemus))]
-  (try (store-normalized-hakemus user-key answers)
+  (try (store-normalized-hakemus id user-key answers)
        true
        (catch Exception e 
-         (log/info "Could not normalize necessary hakemus fields for hakemus: " user-key " Error: " (.getMessage e))
+         (log/info "Could not normalize necessary hakemus fields for hakemus: " id " Error: " (.getMessage e))
          false))))
 
 (defn send-paatos-refuse! [to avustushaku hakemus reply-to token]

@@ -157,6 +157,20 @@
    :hakemus-version Long
    :filename s/Str})
 
+(s/defschema NormalizedHakemus
+  "NormalizedHakemus contains hakemus answers in normalized format"
+  {
+   :id Long
+   :hakemus-id Long
+   :updated-at s/Inst
+   :created-at s/Inst
+   :user-key s/Str
+   :project-name s/Str
+   :contact-person s/Str
+   :contact-email s/Str
+   :contact-phone s/Str
+   })
+
 (s/defschema VaSubmission {:created_at s/Inst
                            :form Long
                            :version Long

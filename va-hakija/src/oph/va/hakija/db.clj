@@ -118,7 +118,7 @@
   (let [hakemukset (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
                  (jdbc/query
                    connection
-                   ["SELECT * from virkailija.avustushaku_hakemukset WHERE user_key = ?" user-key]
+                   ["SELECT * from virkailija.hakemus WHERE user_key = ?" user-key]
                   {:identifiers #(.replace % \_ \-)}))]
     (log/info (str "Succesfully fetched hakemus with id: " user-key))
     (first hakemukset)))
@@ -150,7 +150,7 @@
     (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
                   (jdbc/execute!
                     connection
-                    ["UPDATE virkailija.avustushaku_hakemukset SET contact_person = ?, contact_email = ?, contact_phone = ? WHERE user_key = ?" contact-person, contact-email, contact-phone, user-key]
+                    ["UPDATE virkailija.hakemus SET contact_person = ?, contact_email = ?, contact_phone = ? WHERE user_key = ?" contact-person, contact-email, contact-phone, user-key]
                     )))
     (log/info (str "Succesfully changed contact person details with user-key: " user-key)))
 
