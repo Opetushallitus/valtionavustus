@@ -4,6 +4,7 @@ repo="$( cd "$( dirname "$0" )" && pwd )"
 
 function main {
   cd "$repo/va-admin-ui"
+  ../lein package
   ../lein figwheel
 }
 
