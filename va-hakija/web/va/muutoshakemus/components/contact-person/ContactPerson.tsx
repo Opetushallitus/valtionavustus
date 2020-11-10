@@ -4,7 +4,7 @@ import {
   AppContext,
 } from '../../store/context'
 import {Types} from '../../store/reducers'
-import { Language } from '../../types'
+import { Language, EmailValidationError } from '../../types'
 
 interface ContactPersonProps {
   avustushakuName: string
@@ -17,20 +17,16 @@ export const ContactPerson = ({ avustushakuName, projectName, registerNumber}: C
   const { t } = useTranslations()
   const { state, dispatch } = React.useContext(AppContext)
 
-
   function getContactPersonNameFromLocalOrServerState() {
     return state.contactPerson.localState?.name ||
     state.contactPerson.serverState?.name
   }
 
   function onChangeContactPersonName(event: ChangeEvent<HTMLInputElement>): void {
-    setContactPersonNameToState(event.currentTarget.value)
-  }
-
-  function setContactPersonNameToState(name: string) {
+    const name = event.currentTarget.value
     dispatch({
       type: Types.ContactPersonFormChange,
-      payload: { formState: { name } }
+      payload: { formState: { name }, validationError: state.contactPerson.validationError }
     })
   }
 
@@ -40,14 +36,16 @@ export const ContactPerson = ({ avustushakuName, projectName, registerNumber}: C
   }
 
   function onChangeContactPersonEmail(event: ChangeEvent<HTMLInputElement>): void {
-    setContactPersonEmailToState(event.currentTarget.value)
-  }
-
-  function setContactPersonEmailToState(email: string) {
+    const email = event.currentTarget.value
+    const isValid = !!email.match(/^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/)
     dispatch({
       type: Types.ContactPersonFormChange,
-      payload: { formState: { email } }
+      payload: { formState: { email }, validationError: isValid ? undefined : new EmailValidationError(`Invalid email: ${email}`) }
     })
+  }
+
+  function hasEmailValidationError() {
+    return state.contactPerson.validationError instanceof EmailValidationError
   }
 
   function getContactPersonPhoneFromLocalOrServerState() {
@@ -56,13 +54,10 @@ export const ContactPerson = ({ avustushakuName, projectName, registerNumber}: C
   }
 
   function onChangeContactPersonPhone(event: ChangeEvent<HTMLInputElement>): void {
-    setContactPersonPhoneToState(event.currentTarget.value)
-  }
-
-  function setContactPersonPhoneToState(phone: string) {
+    const phone = event.currentTarget.value
     dispatch({
       type: Types.ContactPersonFormChange,
-      payload: { formState: { phone } }
+      payload: { formState: { phone }, validationError: state.contactPerson.validationError }
     })
   }
 
@@ -96,6 +91,7 @@ export const ContactPerson = ({ avustushakuName, projectName, registerNumber}: C
           <input 
             id="muutoshaku__email" 
             type="text"
+            className={ hasEmailValidationError() ? "error" : undefined}
             onChange={onChangeContactPersonEmail}
             value={getContactPersonEmailFromLocalOrServerState()} />
         </div>

@@ -20,6 +20,10 @@ export function TopBar({ env, onSend }: TopBarProps) {
     && isEqual(state.contactPerson.localState, state.contactPerson.serverState)
   }
 
+  function formContainsValidationError(): boolean {
+    return !!state.contactPerson.validationError
+  }
+
   return (
     <section id="topbar">
       <div id="top-container">
@@ -38,7 +42,7 @@ export function TopBar({ env, onSend }: TopBarProps) {
         </div>
         <div className="muutospyynto-button-container">
           <button
-            disabled={allChangesSaved()}
+            disabled={allChangesSaved() || formContainsValidationError()}
             id="send-muutospyynto-button"
             type="submit"
             onClick={onSend}>

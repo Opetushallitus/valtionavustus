@@ -23,3 +23,11 @@ export const hakemusSchema = yup.object().shape<Hakemus>({
   "contact-phone": yup.string().required()
 }).required()
 
+export class EmailValidationError extends Error {
+  constructor(message: string) {
+    super()
+    this.name = 'EmailValidationError'
+    this.message = message
+  }
+}
+

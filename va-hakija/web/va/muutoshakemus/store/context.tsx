@@ -1,5 +1,6 @@
 import React, { createContext, useReducer, Dispatch } from 'react'
 import { JatkoaikaActions, ContactPersonActions, jatkoaikaReducer, contactPersonReducer } from './reducers'
+import { EmailValidationError } from '../types'
 import {AxiosError} from 'axios'
 
 export interface ChangingContactPersonDetails {
@@ -11,7 +12,8 @@ export interface ChangingContactPersonDetails {
 export interface ContactPersonState {
   localState: Partial<ChangingContactPersonDetails> | undefined // browser input field values
   serverState: ChangingContactPersonDetails | undefined // last input field values stored to DB
-  errorState: Error | AxiosError | undefined // last error when storing to DB
+  errorState: AxiosError | undefined // last error when storing to DB
+  validationError: EmailValidationError | undefined
   lastSave: {
     status: SaveState,
     timestamp: Date
@@ -50,6 +52,7 @@ const initialState: InitialStateType = {
     localState: undefined,
     serverState: undefined,
     errorState: undefined,
+    validationError: undefined,
     lastSave: {
       status: SaveState.NOT_SAVED,
       timestamp: new Date()

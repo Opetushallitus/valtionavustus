@@ -3,8 +3,11 @@ import {
   JatkoaikaType,
   ChangingContactPersonDetails,
   ContactPersonState,
-  SaveState,
+  SaveState
 } from './context'
+import {
+  EmailValidationError
+} from '../types'
 import {AxiosError} from 'axios'
 
 type ActionMap<M extends { [index: string]: any }> = {
@@ -84,6 +87,7 @@ type ContactPersonPayload = {
   }
   [Types.ContactPersonFormChange]: {
     formState: Partial<ChangingContactPersonDetails>
+    validationError?: EmailValidationError
   }
   [Types.ContactPersonSetInitialState]: {
     stored: ChangingContactPersonDetails
@@ -113,6 +117,7 @@ export function contactPersonReducer(state: ContactPersonState, action: ContactP
       return {
         ...state,
         serverState: action.payload.stored,
+        errorState: undefined,
         lastSave: {
           status: SaveState.SAVE_SUCCEEDED,
           timestamp: new Date(),
@@ -121,6 +126,7 @@ export function contactPersonReducer(state: ContactPersonState, action: ContactP
     case Types.ContactPersonFormChange:
       return {
         ...state,
+        validationError: action.payload.validationError,
         localState: {
           ...state.localState,
           ...action.payload.formState,

@@ -10,6 +10,7 @@ import {
   ratkaiseAvustushaku2,
   publishAvustushaku,
   hasElementAttribute,
+  getElementAttribute,
   fillAndSendHakemus,
   acceptHakemus,
   clickCodeVisibilityButton,
@@ -704,7 +705,7 @@ describe("Puppeteer tests", () => {
       let linkToMuutoshaku: string | undefined
       let avustushakuID: number | undefined
       const newName = randomString()
-      const newEmail = randomString() + "@reaktor.com"
+      const newEmail = "uusi.email@reaktor.com"
       const newPhone = "0901967632"
       it("should show avustushaku name, project name, and registration number as well as name, email and phone number for contact person", async () => {
         const { avustushakuID: avustushakuId, hakemusID } = await ratkaiseAvustushaku2(page, answers)
@@ -742,6 +743,36 @@ describe("Puppeteer tests", () => {
         expect(contactPersonEmail).toEqual(answers.contactPersonEmail)
         expect(contactPersonPhoneNumber).toEqual(answers.contactPersonPhoneNumber)
       })
+
+      it("Save button deactivates when contact person email does not validate", async () => {
+        expectToBeDefined(linkToMuutoshaku)
+        await page.goto(linkToMuutoshaku, { waitUntil: "networkidle0" })
+
+        await page.waitForSelector("#send-muutospyynto-button", { visible: true })
+
+        const sendMuutospyyntoButtonIsDisabled = await hasElementAttribute(page, "#send-muutospyynto-button", "disabled")
+        expect(sendMuutospyyntoButtonIsDisabled).toBeTruthy()
+
+        await clearAndType(page, '#muutoshaku__contact-person', newName)
+        await clearAndType(page, '#muutoshaku__email', "not-email")
+        await clearAndType(page, '#muutoshaku__phone', newPhone)
+
+        const sendMuutospyyntoButtonIsDisabledAfterInvalidEmail = await hasElementAttribute(page, "#send-muutospyynto-button", "disabled")
+        expect(sendMuutospyyntoButtonIsDisabledAfterInvalidEmail).toBeTruthy()
+        
+        const emailInputFieldClassWhenInvalidEmail = await getElementAttribute(page, "#muutoshaku__email", "class")
+        expectToBeDefined(emailInputFieldClassWhenInvalidEmail)
+        expect(emailInputFieldClassWhenInvalidEmail).toContain("error")
+
+        await clearAndType(page, '#muutoshaku__email', newEmail)
+
+        const sendMuutospyyntoButtonIsDisabledAfterChange = await hasElementAttribute(page, "#send-muutospyynto-button", "disabled")
+        expect(sendMuutospyyntoButtonIsDisabledAfterChange).toBeFalsy()
+
+        const emailInputFieldClassWithValidEmail = await getElementAttribute(page, "#muutoshaku__email", "class")
+        expect(emailInputFieldClassWithValidEmail).toBeFalsy()
+      })
+
 
       it("Save button activates when contact person details are changed", async () => {
         expectToBeDefined(linkToMuutoshaku)
