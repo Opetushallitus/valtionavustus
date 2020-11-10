@@ -1,9 +1,8 @@
 import {
   AvustuksenKayttoajanPidennys,
-  JatkoaikaType,
   ChangingContactPersonDetails,
-  ContactPersonState,
-  SaveState
+  LastSave,
+  SaveState,
 } from './context'
 import {
   EmailValidationError
@@ -22,56 +21,78 @@ type ActionMap<M extends { [index: string]: any }> = {
 }
 
 export enum Types {
-  ContactPersonSetInitialState = "ContactPersonSetInitialState",
+  InitialState = "InitialState",
   ContactPersonFormChange = "ContactPersonFormChange",
-  ContactPersonSubmitSuccess = "ContactPersonSubmitSuccess",
-  ContactPersonSubmitFailure = "ContactPersonSubmitFailure",
   JatkoaikaFormChange = "JatkoaikaFormChange", // state of the form in browser
-  JatkoaikaSubmitSuccess = "JatkoaikaSubmitSuccess", // state stored to backend
-  JatkoaikaSubmitFailure = "JatkoaikaSubmitFailure", // error storing data to backend
+  SubmitSuccess = "SubmitSuccess", // state stored to backend
+  SubmitFailure = "SubmitFailure", // error storing data to backend
 }
 
-type JatkoaikaPayload = {
-  [Types.JatkoaikaSubmitFailure]: {
-    error: AxiosError
-  }
-  [Types.JatkoaikaSubmitSuccess]: {
-    stored: AvustuksenKayttoajanPidennys
-  }
+type JatkoaikaFormChangePayload = {
   [Types.JatkoaikaFormChange]: {
-    formState: Partial<AvustuksenKayttoajanPidennys>
+    formState: AvustuksenKayttoajanPidennys
   }
 }
 
-export type JatkoaikaActions = ActionMap<JatkoaikaPayload>[keyof ActionMap<JatkoaikaPayload>]
+export type JatkoaikaActions = ActionMap<JatkoaikaFormChangePayload>[keyof ActionMap<JatkoaikaFormChangePayload>]
 
-export function jatkoaikaReducer(state: JatkoaikaType, action: JatkoaikaActions|ContactPersonActions): JatkoaikaType {
+export type Actions = JatkoaikaActions | LastSaveActions | ContactPersonActions
+
+export function jatkoaikaReducer(state: AvustuksenKayttoajanPidennys | undefined, action: Actions): AvustuksenKayttoajanPidennys | undefined {
   switch (action.type) {
-    case Types.JatkoaikaSubmitFailure:
-      return {
-        ...state,
-        errorState: action.payload.error,
-        lastSave: {
-          status: SaveState.SAVE_FAILED,
-          timestamp: new Date()
-        }
-      }
-    case Types.JatkoaikaSubmitSuccess:
-      return {
-        ...state,
-        serverState: action.payload.stored,
-        lastSave: {
-          status: SaveState.SAVE_SUCCEEDED,
-          timestamp: new Date(),
-        }
-      }
     case Types.JatkoaikaFormChange:
       return {
+        haettuKayttoajanPaattymispaiva: state?.haettuKayttoajanPaattymispaiva || undefined,
+        kayttoajanPidennysPerustelut: state?.kayttoajanPidennysPerustelut || undefined,
+        ...action.payload.formState,
+      }
+    default:
+      return state
+  }
+}
+
+type LastSavePayload = {
+  [Types.SubmitFailure]: {
+    error: AxiosError
+  }
+  [Types.SubmitSuccess]: {
+    jatkoaika?: AvustuksenKayttoajanPidennys
+    yhteyshenkilo?: ChangingContactPersonDetails
+  }
+  [Types.InitialState]: {
+    jatkoaika?: AvustuksenKayttoajanPidennys
+    yhteyshenkilo?: ChangingContactPersonDetails
+  }
+}
+
+export type LastSaveActions = ActionMap<LastSavePayload>[keyof ActionMap<LastSavePayload>]
+
+export function lastSaveReducer(state: LastSave | undefined, action: Actions): LastSave | undefined {
+  switch (action.type) {
+    case Types.InitialState:
+      return {
+        status: SaveState.NOT_SAVED,
+        timestamp: new Date(),
+        errorState: undefined,
+        jatkoaika: action.payload.jatkoaika || state?.jatkoaika,
+        yhteyshenkilo: action.payload.yhteyshenkilo || state?.yhteyshenkilo,
+      }
+    case Types.SubmitFailure:
+      return {
         ...state,
-        localState: {
-          ...state.localState,
-          ...action.payload.formState,
-        }
+        status: SaveState.SAVE_FAILED,
+        timestamp: new Date(),
+        errorState: action.payload.error,
+        yhteyshenkilo: state?.yhteyshenkilo || undefined,
+        jatkoaika: state?.jatkoaika || undefined
+      }
+    case Types.SubmitSuccess:
+      return {
+        status: SaveState.SAVE_SUCCEEDED,
+        errorState: undefined,
+        timestamp: new Date(),
+        jatkoaika: action.payload.jatkoaika,
+        yhteyshenkilo: action.payload.yhteyshenkilo
       }
     default:
       return state
@@ -79,58 +100,20 @@ export function jatkoaikaReducer(state: JatkoaikaType, action: JatkoaikaActions|
 }
 
 type ContactPersonPayload = {
-  [Types.ContactPersonSubmitFailure]: {
-    error: AxiosError
-  }
-  [Types.ContactPersonSubmitSuccess]: {
-    stored: ChangingContactPersonDetails
-  }
   [Types.ContactPersonFormChange]: {
     formState: Partial<ChangingContactPersonDetails>
     validationError?: EmailValidationError
-  }
-  [Types.ContactPersonSetInitialState]: {
-    stored: ChangingContactPersonDetails
   }
 }
 
 export type ContactPersonActions = ActionMap<ContactPersonPayload>[keyof ActionMap<ContactPersonPayload>]
 
-export function contactPersonReducer(state: ContactPersonState, action: ContactPersonActions|JatkoaikaActions): ContactPersonState {
+export function contactPersonReducer(state: Partial<ChangingContactPersonDetails> | undefined, action: Actions): Partial<ChangingContactPersonDetails> | undefined {
   switch (action.type) {
-    case Types.ContactPersonSetInitialState:
-      return {
-        ...state,
-        serverState: action.payload.stored,
-        localState: action.payload.stored
-      }
-    case Types.ContactPersonSubmitFailure:
-      return {
-        ...state,
-        errorState: action.payload.error,
-        lastSave: {
-          status: SaveState.SAVE_FAILED,
-          timestamp: new Date()
-        }
-      }
-    case Types.ContactPersonSubmitSuccess:
-      return {
-        ...state,
-        serverState: action.payload.stored,
-        errorState: undefined,
-        lastSave: {
-          status: SaveState.SAVE_SUCCEEDED,
-          timestamp: new Date(),
-        }
-      }
     case Types.ContactPersonFormChange:
       return {
         ...state,
-        validationError: action.payload.validationError,
-        localState: {
-          ...state.localState,
-          ...action.payload.formState,
-        }
+        ...action.payload.formState,
       }
     default:
       return state

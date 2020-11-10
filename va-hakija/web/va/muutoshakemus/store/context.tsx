@@ -1,44 +1,41 @@
 import React, { createContext, useReducer, Dispatch } from 'react'
-import { JatkoaikaActions, ContactPersonActions, jatkoaikaReducer, contactPersonReducer } from './reducers'
+import {
+  LastSaveActions,
+  ContactPersonActions,
+  jatkoaikaReducer,
+  contactPersonReducer,
+  lastSaveReducer,
+  JatkoaikaActions, Actions
+} from './reducers'
+import { AxiosError } from 'axios'
 import { EmailValidationError } from '../types'
-import {AxiosError} from 'axios'
+
 
 export interface ChangingContactPersonDetails {
   name: string
   email: string
   phone: string
-}
-
-export interface ContactPersonState {
-  localState: Partial<ChangingContactPersonDetails> | undefined // browser input field values
-  serverState: ChangingContactPersonDetails | undefined // last input field values stored to DB
-  errorState: AxiosError | undefined // last error when storing to DB
-  validationError: EmailValidationError | undefined
-  lastSave: {
-    status: SaveState,
-    timestamp: Date
-  }
-}
-
-export type InitialStateType = {
-  contactPerson: ContactPersonState
-  jatkoaika: JatkoaikaType
-}
-
-export type JatkoaikaType = {
-  localState: Partial<AvustuksenKayttoajanPidennys> | undefined // browser input field values
-  serverState: AvustuksenKayttoajanPidennys | undefined // last input field values stored to DB
-  errorState: Error | AxiosError | undefined // last error when storing to DB
-  lastSave: {
-    status: SaveState,
-    timestamp: Date
-  }
+  validationError?: EmailValidationError
 }
 
 export type AvustuksenKayttoajanPidennys = {
   haenKayttoajanPidennysta: boolean
   haettuKayttoajanPaattymispaiva?: Date
   kayttoajanPidennysPerustelut?: string
+}
+
+export type LastSave = {
+  status: SaveState,
+  timestamp: Date
+  errorState: Error | AxiosError | undefined // last error when storing to DB
+  yhteyshenkilo: ChangingContactPersonDetails | undefined
+  jatkoaika: AvustuksenKayttoajanPidennys | undefined
+}
+
+export type InitialStateType = {
+  yhteyshenkilo: Partial<ChangingContactPersonDetails> | undefined
+  jatkoaika: AvustuksenKayttoajanPidennys | undefined
+  lastSave: LastSave | undefined
 }
 
 export enum SaveState {
@@ -48,39 +45,30 @@ export enum SaveState {
 }
 
 const initialState: InitialStateType = {
-  contactPerson: {
-    localState: undefined,
-    serverState: undefined,
+  yhteyshenkilo: undefined,
+  jatkoaika: undefined,
+  lastSave: {
+    status: SaveState.NOT_SAVED,
+    timestamp: new Date(),
     errorState: undefined,
-    validationError: undefined,
-    lastSave: {
-      status: SaveState.NOT_SAVED,
-      timestamp: new Date()
-    }
-  },
-  jatkoaika: {
-    localState: undefined,
-    serverState: undefined,
-    errorState: undefined,
-    lastSave: {
-      status: SaveState.NOT_SAVED,
-      timestamp: new Date()
-    }
+    jatkoaika: undefined,
+    yhteyshenkilo: undefined,
   }
 }
 
 const AppContext = createContext<{
   state: InitialStateType
-  dispatch: Dispatch<JatkoaikaActions|ContactPersonActions>
+  dispatch: Dispatch<LastSaveActions | ContactPersonActions | JatkoaikaActions>
 }>({
   state: initialState,
   dispatch: () => null
 })
 
-function mainReducer({jatkoaika, contactPerson}: InitialStateType, action: JatkoaikaActions | ContactPersonActions) {
+function mainReducer({jatkoaika, yhteyshenkilo, lastSave}: InitialStateType, action: Actions): InitialStateType {
   return {
+    yhteyshenkilo: contactPersonReducer(yhteyshenkilo, action),
     jatkoaika: jatkoaikaReducer(jatkoaika, action),
-    contactPerson: contactPersonReducer(contactPerson, action)
+    lastSave: lastSaveReducer(lastSave, action),
   }
 }
 

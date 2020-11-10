@@ -37,7 +37,6 @@
 (defquery create-attachment<! "sql/attachment/create.sql")
 (defquery update-attachment<! "sql/attachment/update.sql")
 (defquery close-existing-attachment! "sql/attachment/close-existing.sql")
-(defquery add-muutoshakemus! "sql/muutokset/add-muutoshakemus.sql")
 
 (defquery register-number-sequence-exists? "sql/register-number-sequence/exists.sql")
 (defquery create-register-number-sequence<! "sql/register-number-sequence/create.sql")

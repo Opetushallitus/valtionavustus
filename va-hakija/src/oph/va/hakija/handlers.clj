@@ -424,10 +424,6 @@
       (not-found))
     (not-found)))
 
-(defn on-muutoshakemus-create [user-key hakemus-version haen-kayttoajan-pidennysta kayttoajan-pidennys-perustelut haettu-kayttoajan-paattymispaiva]
-  (va-db/add-muutoshakemus! user-key hakemus-version haen-kayttoajan-pidennysta kayttoajan-pidennys-perustelut haettu-kayttoajan-paattymispaiva)
-  (ok))
-
 (defn on-attachment-get [haku-id hakemus-id field-id]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
     (if (va-db/attachment-exists? (:id hakemus) field-id)

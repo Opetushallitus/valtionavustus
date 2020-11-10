@@ -79,15 +79,6 @@
     :summary "Get normalized answers"
       (ok (hakija-db/get-normalized-hakemus user-key))))
 
-(defn- put-normalized-hakemus-contact-person-details []
-  (compojure-api/PUT "/:haku-id/hakemus/:user-key/normalized/contact-person-details" [haku-id user-key]
-    :path-params [haku-id :- Long user-key :- s/Str]
-    :body    [contact-person-details (compojure-api/describe ContactPersonDetails "Change contact person details")]
-    :return  NormalizedHakemus
-    :summary "Put normalized contact person details"
-    (hakija-db/change-normalized-hakemus-contact-person-details user-key contact-person-details)
-    (ok (hakija-db/get-normalized-hakemus user-key))))
-
 (defn- get-hakemus []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
     :path-params [haku-id :- Long hakemus-id :- s/Str]
@@ -211,27 +202,16 @@
                      :path-params [hakemus-id :- s/Str]
                      :return  Muutoshakemus
                      :summary "Get muutoshaku"
-                     (ok (hakija-db/get-muutoshaku hakemus-id))))
+                     (ok (hakija-db/get-muutoshakemus hakemus-id))))
 
-(defn- post-muutoshakemus-kayttoaika []
-  (when (get-in config [:muutospaatosprosessi :enabled?])
-    (compojure-api/POST "/:haku-id/jatkoaika/:user-key" [haku-id user-key :as request]
-      :path-params [haku-id :- Long]
-      :return nil
-      :body [perustelut
-             (compojure-api/describe {
-              :hakemusVersion Long
-              :haenKayttoajanPidennysta s/Bool
-              :kayttoajanPidennysPerustelut s/Str
-              :haettuKayttoajanPaattymispaiva java.time.LocalDate} "Käyttöajan pidennys")]
-      :summary "Apply for deadline extension"
-      (on-muutoshakemus-create
-          user-key
-          (get perustelut :hakemusVersion)
-          (get perustelut :haenKayttoajanPidennysta)
-          (get perustelut :kayttoajanPidennysPerustelut)
-          (get perustelut :haettuKayttoajanPaattymispaiva))
-      (ok))))
+(defn- post-muutoshakemus []
+  (compojure-api/POST "/:haku-id/hakemus/:user-key" [haku-id user-key :as request]
+    :path-params [haku-id :- Long]
+    :return nil
+    :body [muutoshakemus (compojure-api/describe MuutoshakemusRequest "Application change request")]
+    :summary "Apply for changes to application"
+    (hakija-db/on-muutoshakemus user-key muutoshakemus)
+    (ok (hakija-db/get-normalized-hakemus user-key))))
 
 
 (defn- get-attachments []
@@ -299,7 +279,6 @@
   "Avustushaku routes"
   (get-id)
   (when (get-in config [:email-api :enabled?]) (get-normalized-hakemus))
-  (when (get-in config [:email-api :enabled?]) (put-normalized-hakemus-contact-person-details))
   (get-hakemus)
   (get-selvitys)
   (get-selvitys-init)
@@ -380,7 +359,8 @@
 (compojure-api/defroutes muutoshaku-routes
   "APIs for requesting changes for hakemus after it has already been approved"
   (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemus))
-  (post-muutoshakemus-kayttoaika))
+  (when (get-in config [:muutospaatosprosessi :enabled?]) (post-muutoshakemus))
+  )
 
 (compojure-api/defroutes junction-hackathon-routes
   "API for fetching data for Junction Hackathon"
@@ -441,7 +421,7 @@
 
   (compojure-api/context "/api/junction-hackathon" [] :tags ["junction-hackathon"] junction-hackathon-routes)
 
-  (compojure-api/context "/api/muutoshaku" [] :tags ["muutoshaut"] muutoshaku-routes)
+  (compojure-api/context "/api/muutoshakemus" [] :tags ["muutoshakemukset"] muutoshaku-routes)
 
 
   va-routes/config-routes

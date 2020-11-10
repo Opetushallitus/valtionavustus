@@ -123,7 +123,7 @@
     (log/info (str "Succesfully fetched hakemus with id: " user-key))
     (first hakemukset)))
 
-(defn get-muutoshaku [hakemus-id]
+(defn get-muutoshakemus [hakemus-id]
   (log/info (str "Get muutoshakemus with id: " hakemus-id))
   (let [muutoshaku (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
                                              (jdbc/query
@@ -136,23 +136,47 @@
                                                 kayttoajan_pidennys_perustelut,
                                                 created_at,
                                                 to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva
-                                              from hakija.muutoshakemus WHERE user_key = ?
+                                              from virkailija.muutoshakemus WHERE user_key = ?
                                               ORDER BY id DESC" hakemus-id]
                                               {:identifiers #(.replace % \_ \-)}))]
     (log/info (str "Succesfully fetched muutoshaku with id: " hakemus-id))
     (first muutoshaku)))
 
-(defn change-normalized-hakemus-contact-person-details [user-key, contact-person-details]
+(defn add-muutoshakemus [connection user-key hakemus-version jatkoaika]
+  (log/info (str "Inserting muutoshakemus for user-key: " user-key " version: " hakemus-version))
+  (let [ haen-kayttoajan-pidennysta (:haenKayttoajanPidennysta jatkoaika)
+         kayttoajan-pidennys-perustelut (:kayttoajanPidennysPerustelut jatkoaika)
+         haettu-kayttoajan-paattymispaiva (:haettuKayttoajanPaattymispaiva jatkoaika)]
+    (jdbc/execute! connection
+     ["INSERT INTO virkailija.muutoshakemus
+          (id, user_key, hakemus_version, haen_kayttoajan_pidennysta, kayttoajan_pidennys_perustelut, haettu_kayttoajan_paattymispaiva )
+        VALUES
+          (nextval('virkailija.muutoshakemus_id_seq'),?,?,?,?,?)"
+          user-key hakemus-version haen-kayttoajan-pidennysta, kayttoajan-pidennys-perustelut, haettu-kayttoajan-paattymispaiva ])
+))
+
+(defn change-normalized-hakemus-contact-person-details [connection user-key, contact-person-details]
   (log/info (str "Change normalized contact person details with user-key: " user-key))
-  (let [ contact-person (:contact-person contact-person-details)
-         contact-phone (:contact-phone contact-person-details)
-         contact-email (:contact-email contact-person-details)]
-    (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
-                  (jdbc/execute!
-                    connection
-                    ["UPDATE virkailija.hakemus SET contact_person = ?, contact_email = ?, contact_phone = ? WHERE user_key = ?" contact-person, contact-email, contact-phone, user-key]
-                    )))
+  (let [ contact-person (:name contact-person-details)
+         contact-phone (:phone contact-person-details)
+         contact-email (:email contact-person-details)]
+    (jdbc/execute! connection
+     ["UPDATE virkailija.hakemus SET
+      contact_person = ?, contact_email = ?, contact_phone = ? WHERE user_key = ?"
+      contact-person, contact-email, contact-phone, user-key]
+     ))
     (log/info (str "Succesfully changed contact person details with user-key: " user-key)))
+
+(defn on-muutoshakemus [user-key, muutoshakemus]
+  (let [ version (get muutoshakemus :hakemusVersion) ]
+    (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
+      (when (contains? muutoshakemus :jatkoaika)
+            (add-muutoshakemus connection user-key version (get muutoshakemus :jatkoaika)))
+      (when (contains? muutoshakemus :yhteyshenkilo)
+        (log/info (str "Change normalized contact person details with user-key: " user-key))
+        (change-normalized-hakemus-contact-person-details connection user-key (get muutoshakemus :yhteyshenkilo))
+        (log/info (str "Succesfully changed contact person details with user-key: " user-key))
+        ))))
 
 (defn update-hakemus-parent-id [hakemus-id parent-id]
   (exec :form-db queries/update-hakemus-parent-id! {:id hakemus-id :parent_id parent-id}))
@@ -260,14 +284,6 @@
   (->> {:hakemus_id hakemus-id
         :field_id field-id}
        (exec :form-db queries/close-existing-attachment!)))
-
-(defn add-muutoshakemus! [user-key hakemus-version haen-kayttoajan-pidennysta kayttoajan-pidennys-perustelut haettu-kayttoajan-paattymispaiva]
-  (->> {:user_key user-key,
-        :hakemus_version hakemus-version,
-        :haen_kayttoajan_pidennysta haen-kayttoajan-pidennysta,
-        :kayttoajan_pidennys_perustelut kayttoajan-pidennys-perustelut,
-        :haettu_kayttoajan_paattymispaiva haettu-kayttoajan-paattymispaiva}
-       (exec :form-db queries/add-muutoshakemus!)))
 
 (defn list-attachments [hakemus-id]
   (->> {:hakemus_id hakemus-id}

@@ -17,7 +17,7 @@ export const AvustuksenKayttoajanPidennys = (props: AvustuksenKayttoajanPidennys
     dispatch({
       type: Types.JatkoaikaFormChange,
       payload: { formState: {
-        haenKayttoajanPidennysta: !state.jatkoaika.localState?.haenKayttoajanPidennysta,
+        haenKayttoajanPidennysta: !state.jatkoaika?.haenKayttoajanPidennysta,
       }}
     })
   }
@@ -36,7 +36,7 @@ export const AvustuksenKayttoajanPidennys = (props: AvustuksenKayttoajanPidennys
           </div>
 
           <AvustuksenKayttoaikaInput
-            open={!!state.jatkoaika.localState?.haenKayttoajanPidennysta}
+            open={!!state.jatkoaika?.haenKayttoajanPidennysta}
             nykyinenPaattymisPaiva={props.nykyinenPaattymisPaiva} />
 
         </form>

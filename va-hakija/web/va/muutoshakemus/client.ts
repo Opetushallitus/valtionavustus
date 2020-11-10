@@ -5,38 +5,30 @@ import moment from 'moment'
 const timeout = 10000 // 10 seconds
 const client = axios.create({ timeout })
 
-type HaeKayttoajanPidennystaProps = {
+type MuutoshakemusProps = {
   avustushakuId: number
   hakemusVersion: number
   userKey: string
-  params: AvustuksenKayttoajanPidennys
+  jatkoaika?: Partial<AvustuksenKayttoajanPidennys>
+  yhteyshenkilo?: ChangingContactPersonDetails
 }
 
-interface ChangeContactPersonDetails {
-  avustushakuId: number
-  userKey: string
-  params: ChangingContactPersonDetails
+function convertDateToDateString(jatkoaika: Partial<AvustuksenKayttoajanPidennys>) {
+  const { haettuKayttoajanPaattymispaiva: paiva } = jatkoaika
+  return {
+    ...jatkoaika,
+    haettuKayttoajanPaattymispaiva: paiva ? moment(paiva).format('YYYY-MM-DD') : null
+  }
 }
 
-export async function haeKayttoajanPidennysta({avustushakuId, hakemusVersion, userKey, params} : HaeKayttoajanPidennystaProps) {
-  const url = `api/muutoshaku/${avustushakuId}/jatkoaika/${userKey}`
-  const paattymispaiva = params.haettuKayttoajanPaattymispaiva ?
-    moment(params.haettuKayttoajanPaattymispaiva).format('YYYY-MM-DD') : null
+export async function postMuutoshakemus(props: MuutoshakemusProps) {
+  const {avustushakuId, hakemusVersion, userKey, jatkoaika, yhteyshenkilo} = props
+
+  const url = `api/muutoshakemus/${avustushakuId}/hakemus/${userKey}`
 
   return client.post(url, {
     hakemusVersion: hakemusVersion,
-    haenKayttoajanPidennysta: params.haenKayttoajanPidennysta,
-    haettuKayttoajanPaattymispaiva: paattymispaiva,
-    kayttoajanPidennysPerustelut: params.kayttoajanPidennysPerustelut || null
-  })
-}
-
-export async function changeContactPersonDetails({avustushakuId, userKey, params} : ChangeContactPersonDetails) {
-  const url = `api/avustushaku/${avustushakuId}/hakemus/${userKey}/normalized/contact-person-details`
-
-  return client.put(url, {
-    "contact-person": params.name,
-    "contact-email": params.email,
-    "contact-phone": params.phone
+    ...jatkoaika?.haenKayttoajanPidennysta && { jatkoaika: convertDateToDateString(jatkoaika) },
+    ...yhteyshenkilo && { yhteyshenkilo: yhteyshenkilo },
   })
 }

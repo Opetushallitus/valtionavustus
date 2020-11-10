@@ -8,11 +8,11 @@ export function TopBarNotification() {
   const { state } = React.useContext(AppContext)
 
   function lastSaveWasAnError(): boolean {
-    return state.jatkoaika.lastSave.status === SaveState.SAVE_FAILED
+    return state.lastSave?.status === SaveState.SAVE_FAILED
   }
 
   function lastSaveSucceeded(): boolean {
-    return state.jatkoaika.lastSave.status === SaveState.SAVE_SUCCEEDED
+    return state.lastSave?.status === SaveState.SAVE_SUCCEEDED
   }
 
   function getNotificationText() {
@@ -34,7 +34,7 @@ export function TopBarNotification() {
     setTimeout(() => setClassNames(getClassNames()), 400)
   }
 
-  useEffect(() => forceAnimation(), [state.jatkoaika.lastSave.timestamp])
+  useEffect(() => forceAnimation(), [state.lastSave?.timestamp])
 
   return (
     <div className='notification-container'>

@@ -76,7 +76,7 @@ export async function getUserKey(avustushakuID: number, hakemusID: string): Prom
 }
 
 export async function getStoredMuutoshakemus(userKey: string): Promise<Muutoshakemus> {
-  const response = await axios.get<Muutoshakemus>(`${HAKIJA_URL}/api/muutoshaku/hakemus/${userKey}`)
+  const response = await axios.get<Muutoshakemus>(`${HAKIJA_URL}/api/muutoshakemus/hakemus/${userKey}`)
   return response.data
 }
 

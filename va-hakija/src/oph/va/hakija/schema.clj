@@ -15,13 +15,29 @@
     :created-at s/Inst
     })
 
+(s/defschema JatkoaikaHakemus
+  "JatkoaikaHakemus contains fields for applying for deadline extension"
+  {
+    :haenKayttoajanPidennysta s/Bool
+    :kayttoajanPidennysPerustelut s/Str
+    :haettuKayttoajanPaattymispaiva java.time.LocalDate
+    })
+
 (s/defschema ContactPersonDetails
   "ContactPersonDetails contains contact person details in normalized format"
   {
-   :contact-person s/Str
-   :contact-email s/Str
-   :contact-phone s/Str
+   :name s/Str
+   :email s/Str
+   :phone s/Str
    })
+
+(s/defschema MuutoshakemusRequest
+  "MuutoshakemusRequest is the payload for applying for changes to application"
+  {
+    :hakemusVersion Long
+    (s/optional-key :jatkoaika) JatkoaikaHakemus
+    (s/optional-key :yhteyshenkilo) ContactPersonDetails
+  })
 
 (s/defschema Hakemus
   "Hakemus contains hakemus, last submission and server validation error info about it"

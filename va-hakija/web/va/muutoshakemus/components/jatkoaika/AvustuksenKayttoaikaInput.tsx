@@ -28,12 +28,10 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
   const { state, dispatch } = React.useContext(AppContext)
 
   useEffect(() => {
-    if (props.open && !state.jatkoaika.localState?.haettuKayttoajanPaattymispaiva) {
+    if (props.open && !state.jatkoaika?.haettuKayttoajanPaattymispaiva) {
       setUusiPaattymispaivaToState(defaultUusiPaattymisaika(props.nykyinenPaattymisPaiva))
     }
   }, [props.open])
-
-  // TODO: Hae nykyinen tila kannasta ja esitäytä lomake.
 
   function toString(date?: Date): string {
     if (!date) return ''
@@ -45,7 +43,7 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
   }
 
   function getPaattymispaivaFromStateOrDefault() {
-    return state.jatkoaika.localState?.haettuKayttoajanPaattymispaiva ||
+    return state.jatkoaika?.haettuKayttoajanPaattymispaiva ||
           defaultUusiPaattymisaika(props.nykyinenPaattymisPaiva)
   }
 
@@ -60,23 +58,29 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
   function setPerustelutToState(perustelut: string) {
     dispatch({
       type: Types.JatkoaikaFormChange,
-      payload: { formState: { kayttoajanPidennysPerustelut: perustelut } }
+      payload: { formState: {
+        haenKayttoajanPidennysta: true,
+        kayttoajanPidennysPerustelut: perustelut
+      }}
     })
   }
 
   function setUusiPaattymispaivaToState(paiva?: Date) {
     dispatch({
       type: Types.JatkoaikaFormChange,
-      payload: { formState: { haettuKayttoajanPaattymispaiva: paiva } }
+      payload: { formState: {
+        haenKayttoajanPidennysta: true,
+        haettuKayttoajanPaattymispaiva: paiva
+      }}
     })
   }
 
   function hasInputValidationError(name: keyof AvustuksenKayttoajanPidennys): boolean {
-    if (state.jatkoaika.lastSave.status !== SaveState.SAVE_FAILED) return false
-    if (!state.jatkoaika.errorState) return false
+    if (state.lastSave?.status !== SaveState.SAVE_FAILED) return false
+    if (!state.lastSave.errorState) return false
 
-    const { errorState: error } = state.jatkoaika
-    return 'response' in error && error.response?.data.errors?.[name] !== undefined
+    const { errorState: error } = state.lastSave
+    return 'response' in error && error.response?.data.errors?.jatkoaika?.[name] !== undefined
   }
 
   function hasDateError(): boolean {
@@ -98,7 +102,7 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
           <div className='h3'>
             {t.kayttoajanPidennys.newExpirationDateTitle}
           </div>
-          <div className="paattymispaiva" data-test-value={toString(state.jatkoaika.localState?.haettuKayttoajanPaattymispaiva)}>
+          <div className="paattymispaiva" data-test-value={toString(state.jatkoaika?.haettuKayttoajanPaattymispaiva)}>
             <DateTimePicker
               onChange={onDateChange}
               containerClassName={hasDateError() ? 'datepicker dp-error' : 'datepicker'}
@@ -114,7 +118,7 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
           className={hasPerusteluError() ? 'error' : ''}
           rows={5}
           onChange={onChangePerustelut}
-          value={state.jatkoaika.localState?.kayttoajanPidennysPerustelut}
+          value={state.jatkoaika?.kayttoajanPidennysPerustelut}
         />
       </div>
     </div>

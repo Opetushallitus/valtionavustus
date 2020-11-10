@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import ReactDOM from 'react-dom'
 import * as queryString from 'query-string'
 
@@ -6,22 +6,28 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 
 import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
-import {
-  AvustuksenKayttoajanPidennys
-} from './components/jatkoaika/AvustuksenKayttoajanPidennys'
-import { ContactPerson } from './components/contact-person/ContactPerson'
+import {AvustuksenKayttoajanPidennys} from './components/jatkoaika/AvustuksenKayttoajanPidennys'
+import {ContactPerson} from './components/contact-person/ContactPerson'
 import {TopBar} from './components/TopBar'
-import {Language, Hakemus, hakemusSchema} from './types'
+import {Hakemus, hakemusSchema, Language} from './types'
 import {translations} from './translations'
 import {TranslationContext, useTranslations} from './TranslationContext'
-import {haeKayttoajanPidennysta, changeContactPersonDetails} from './client'
-import {AppContext, AppProvider} from './store/context'
-import {Types} from "./store/reducers"
+import {postMuutoshakemus} from './client'
+import {
+  AppContext,
+  AppProvider,
+  ChangingContactPersonDetails
+} from './store/context'
+import {Types} from './store/reducers'
+import { omit } from 'lodash'
 
-function assertRequired<T>(val: T): asserts val is Required<T> {
-  if(Object.values(val).some((value) => !value)) {
-    throw new Error("Could not cast into Required<T>")
-  }
+function isRequired<T>(val: T): val is Required<T> {
+  return !Object.values(val).some((value) => !value)
+}
+
+function isValidYhteyshenkilo(henkilo?: Partial<ChangingContactPersonDetails>): henkilo is Required<ChangingContactPersonDetails> {
+  if (!henkilo) return false
+  return isRequired(omit(henkilo, ['validationError']))
 }
 
 function validateLanguage(s: unknown): Language {
@@ -149,12 +155,23 @@ const MuutoshakemusApp = () => {
         const [environment, avustushaku, hakemusJson, hakemus] = await Promise.all([environmentP, avustushakuP, hakemusJsonP, hakemusP])
 
         dispatch({
-          type: Types.ContactPersonSetInitialState,
+          type: Types.InitialState,
           payload: {
-            stored: {
+            yhteyshenkilo: {
               name: hakemus["contact-person"],
               email: hakemus["contact-email"],
-              phone: hakemus["contact-phone"]
+              phone: hakemus["contact-phone"],
+            }
+          }
+        })
+
+        dispatch({
+          type: Types.ContactPersonFormChange,
+          payload: {
+            formState: {
+              name: hakemus["contact-person"],
+              email: hakemus["contact-email"],
+              phone: hakemus["contact-phone"],
             }
           }
         })
@@ -169,61 +186,30 @@ const MuutoshakemusApp = () => {
   }, [])
 
   async function handleSendButton() {
-    const { localState: jatkoAikaLocalState } = formState.jatkoaika
-    if (jatkoAikaLocalState) {
-      try {
-        await haeKayttoajanPidennysta({
-          hakemusVersion: state.hakemusJson.version,
-          avustushakuId,
-          userKey,
-          params: {
-            ...jatkoAikaLocalState,
-            haenKayttoajanPidennysta: jatkoAikaLocalState.haenKayttoajanPidennysta || false
-          }
-        })
-        dispatch({
-          type: Types.JatkoaikaSubmitSuccess,
-          payload: {
-            stored: {
-              ...jatkoAikaLocalState,
-              haenKayttoajanPidennysta: jatkoAikaLocalState.haenKayttoajanPidennysta || false
-            }
-          }
-        })
-      } catch (e) {
-        dispatch({
-          type: Types.JatkoaikaSubmitFailure,
-          payload: { error: e }
-        })
-      }
-    }
-    const { localState: contactPersonLocalState } = formState.contactPerson
-    if (contactPersonLocalState) {
-      try {
-        assertRequired(contactPersonLocalState)
-        await changeContactPersonDetails({
-          avustushakuId,
-          userKey,
-          params: {
-            ...contactPersonLocalState
-          }
-        })
-        dispatch({
-          type: Types.ContactPersonSubmitSuccess,
-          payload: {
-            stored: {
-              ...contactPersonLocalState,
-            }
-          }
-        })
-      } catch (e) {
-        dispatch({
-          type: Types.JatkoaikaSubmitFailure,
-          payload: { error: e }
-        })
-      }
-    }
+    const { jatkoaika, yhteyshenkilo } = formState
+    const henkilo = isValidYhteyshenkilo(yhteyshenkilo) ? yhteyshenkilo : undefined
 
+    try {
+      await postMuutoshakemus({
+        hakemusVersion: state.hakemusJson.version,
+        avustushakuId,
+        userKey,
+        jatkoaika: jatkoaika,
+        yhteyshenkilo: henkilo
+      })
+      dispatch({
+        type: Types.SubmitSuccess,
+        payload: {
+          jatkoaika: jatkoaika,
+          yhteyshenkilo: henkilo
+        }
+      })
+    } catch (e) {
+      dispatch({
+        type: Types.SubmitFailure,
+        payload: { error: e }
+      })
+    }
   }
 
   const translationContext = {
@@ -237,7 +223,11 @@ const MuutoshakemusApp = () => {
         ? <p>{translations[lang].loading}</p>
         : <TranslationContext.Provider value={translationContext}>
             <AppShell env={state.environment?.name || ''} onSend={handleSendButton}>
-              <ContactPerson avustushakuName={state.avustushaku.content.name[lang]} projectName={hakemusSchema.validateSync(state.hakemus)["project-name"]} registerNumber={state.avustushaku["register-number"]} lang={lang}/>
+              <ContactPerson
+                avustushakuName={state.avustushaku.content.name[lang]}
+                projectName={hakemusSchema.validateSync(state.hakemus)["project-name"]}
+                registerNumber={state.avustushaku["register-number"]}
+                lang={lang} />
               <ApplicationEdit />
               <AvustuksenKayttoajanPidennys
                 nykyinenPaattymisPaiva={new Date()} />

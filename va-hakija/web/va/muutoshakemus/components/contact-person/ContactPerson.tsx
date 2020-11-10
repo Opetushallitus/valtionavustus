@@ -18,21 +18,19 @@ export const ContactPerson = ({ avustushakuName, projectName, registerNumber}: C
   const { state, dispatch } = React.useContext(AppContext)
 
   function getContactPersonNameFromLocalOrServerState() {
-    return state.contactPerson.localState?.name ||
-    state.contactPerson.serverState?.name
+    return state.yhteyshenkilo?.name || state.lastSave?.yhteyshenkilo?.name
   }
 
   function onChangeContactPersonName(event: ChangeEvent<HTMLInputElement>): void {
     const name = event.currentTarget.value
     dispatch({
       type: Types.ContactPersonFormChange,
-      payload: { formState: { name }, validationError: state.contactPerson.validationError }
+      payload: { formState: { name }, validationError: state.yhteyshenkilo?.validationError }
     })
   }
 
   function getContactPersonEmailFromLocalOrServerState() {
-    return state.contactPerson.localState?.email ||
-    state.contactPerson.serverState?.email
+    return state.yhteyshenkilo?.email || state.lastSave?.yhteyshenkilo?.email
   }
 
   function onChangeContactPersonEmail(event: ChangeEvent<HTMLInputElement>): void {
@@ -45,19 +43,18 @@ export const ContactPerson = ({ avustushakuName, projectName, registerNumber}: C
   }
 
   function hasEmailValidationError() {
-    return state.contactPerson.validationError instanceof EmailValidationError
+    return state.yhteyshenkilo?.validationError instanceof EmailValidationError
   }
 
   function getContactPersonPhoneFromLocalOrServerState() {
-    return state.contactPerson.localState?.phone ||
-    state.contactPerson.serverState?.phone
+    return state.yhteyshenkilo?.phone || state.lastSave?.yhteyshenkilo?.phone
   }
 
   function onChangeContactPersonPhone(event: ChangeEvent<HTMLInputElement>): void {
     const phone = event.currentTarget.value
     dispatch({
       type: Types.ContactPersonFormChange,
-      payload: { formState: { phone }, validationError: state.contactPerson.validationError }
+      payload: { formState: { phone }, validationError: state.yhteyshenkilo?.validationError }
     })
   }
 
@@ -80,16 +77,16 @@ export const ContactPerson = ({ avustushakuName, projectName, registerNumber}: C
       <div className="muutoshaku__form-row">
         <div className="muutoshaku__form-cell">
           <label htmlFor="muutoshaku__contact-person">{t.contactPersonEdit.contactPerson}</label>
-          <input 
-            id="muutoshaku__contact-person" 
-            type="text" 
+          <input
+            id="muutoshaku__contact-person"
+            type="text"
             onChange={onChangeContactPersonName}
             value={getContactPersonNameFromLocalOrServerState()} />
         </div>
         <div className="muutoshaku__form-cell">
           <label htmlFor="muutoshaku__email">{t.contactPersonEdit.email}</label>
-          <input 
-            id="muutoshaku__email" 
+          <input
+            id="muutoshaku__email"
             type="text"
             className={ hasEmailValidationError() ? "error" : undefined}
             onChange={onChangeContactPersonEmail}

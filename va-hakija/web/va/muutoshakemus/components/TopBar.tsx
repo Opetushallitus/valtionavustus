@@ -2,7 +2,7 @@ import React from 'react'
 import { useTranslations } from '../TranslationContext'
 import { TopBarNotification } from './TopBarNotification'
 import {AppContext} from '../store/context'
-import { isEqual } from 'lodash'
+import { isEqual, omit } from 'lodash'
 
 type TopBarProps = {
   env: string
@@ -13,15 +13,20 @@ export function TopBar({ env, onSend }: TopBarProps) {
   const { t } = useTranslations()
   const { state } = React.useContext(AppContext)
 
-  function allChangesSaved(): boolean {
-    if (!state.jatkoaika.localState && !state.contactPerson.localState) return true
+  function isSavedYhteyshenkiloStateEqualToLocalYhteyshenkilo(): boolean {
+    return isEqual(
+      omit(state.yhteyshenkilo, ['validationError']),
+      omit(state.lastSave?.yhteyshenkilo, ['validationError'])
+    )
+  }
 
-    return isEqual(state.jatkoaika.localState, state.jatkoaika.serverState)
-    && isEqual(state.contactPerson.localState, state.contactPerson.serverState)
+  function allChangesSaved(): boolean {
+    if (!state.jatkoaika && !state.yhteyshenkilo) return true
+    return isEqual(state.jatkoaika, state.lastSave?.jatkoaika) && isSavedYhteyshenkiloStateEqualToLocalYhteyshenkilo()
   }
 
   function formContainsValidationError(): boolean {
-    return !!state.contactPerson.validationError
+    return !!state.yhteyshenkilo?.validationError
   }
 
   return (
