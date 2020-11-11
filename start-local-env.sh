@@ -11,6 +11,15 @@ require docker
 
 docker ps > /dev/null 2>&1 || { echo >&2 "Running 'docker ps' failed. Is docker daemon running? Aborting."; exit 1; }
 
+repo="$( cd "$( dirname "$0" )" && pwd )"
+
+function stop() {
+  pushd "$repo/scripts/postgres-docker"
+  docker-compose down || true
+  popd
+}
+trap stop EXIT
+
 session="valtionavustus"
 
 tmux kill-session -t $session
