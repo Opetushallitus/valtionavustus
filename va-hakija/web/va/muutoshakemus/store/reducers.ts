@@ -114,6 +114,7 @@ export function contactPersonReducer(state: Partial<ChangingContactPersonDetails
       return {
         ...state,
         ...action.payload.formState,
+        validationError: action.payload.validationError,
       }
     default:
       return state
