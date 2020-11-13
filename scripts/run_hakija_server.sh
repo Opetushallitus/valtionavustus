@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
-repo="$( cd "$( dirname "$0" )" && pwd )"
+scriptdir="$( cd "$( dirname "$0" )" && pwd )"
+repo="$scriptdir/.."
 
 function main {
   cd "$repo/soresu-form"

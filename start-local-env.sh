@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+repodir=$( cd "$( dirname "$0" )" && pwd )
+scriptdir="$repodir/scripts"
 
 function require() {
   local cmd=$1
@@ -30,7 +32,7 @@ tmux splitw -h
 tmux splitw -h
 
 tmux select-pane -t 0
-tmux send-keys "./run_database.sh" C-m
+tmux send-keys "$scriptdir/run_database.sh" C-m
 
 
 echo "waiting for database to accept connections"
@@ -40,19 +42,19 @@ do
 done
 
 tmux splitw -v
-tmux send-keys "./run_admin_ui.sh" C-m
+tmux send-keys "$scriptdir/run_admin_ui.sh" C-m
 
 tmux select-pane -t 2
-tmux send-keys "./run_hakija_server.sh" C-m
+tmux send-keys "$scriptdir/run_hakija_server.sh" C-m
 
 tmux splitw -v
-tmux send-keys "./run_hakija_frontend.sh" C-m
+tmux send-keys "$scriptdir/run_hakija_frontend.sh" C-m
 
 tmux select-pane -t 4
-tmux send-keys "./run_virkailija_server.sh" C-m
+tmux send-keys "$scriptdir/run_virkailija_server.sh" C-m
 
 tmux splitw -v
-tmux send-keys "./run_virkailija_frontend.sh" C-m
+tmux send-keys "$scriptdir/run_virkailija_frontend.sh" C-m
 
 tmux select-pane -t 0
 tmux attach-session -t $session

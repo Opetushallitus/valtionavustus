@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
-repo="$( cd "$( dirname "$0" )" && pwd )"
-source "$repo/scripts/common-functions.sh"
+
+scriptdir="$( cd "$( dirname "$0" )" && pwd )"
+repo="$scriptdir/.."
+source "$scriptdir/common-functions.sh"
 
 function main {
   init_nodejs
