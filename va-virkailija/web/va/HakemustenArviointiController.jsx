@@ -23,6 +23,7 @@ const dispatcher = new Dispatcher()
 
 const events = {
   onNormalizedData: 'onNormalizedData',
+  onMuutoshakemukset: 'onMuutoshakemukset',
   beforeUnload: 'beforeUnload',
   initialState: 'initialState',
   reRender: 'reRender',
@@ -117,6 +118,7 @@ export default class HakemustenArviointiController {
     return Bacon.update(
       {},
       [dispatcher.stream(events.onNormalizedData)], this.onNormalizedData,
+      [dispatcher.stream(events.onMuutoshakemukset)], this.onMuutoshakemukset,
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload,
       [dispatcher.stream(events.initialState)], this.onInitialState,
       [dispatcher.stream(events.reRender)], this.onReRender,
@@ -227,9 +229,13 @@ export default class HakemustenArviointiController {
     state.selectedHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdToSelect)
     const avustushakuId = state.hakuData.avustushaku.id
     const normalizedStream = Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId + "/hakemus/" + hakemusIdToSelect + "/normalized")).mapError(undefined)
+    const muutoshakemusStream = Bacon.fromPromise(HttpUtil.get("/api/muutoshakemus/" + hakemusIdToSelect))
 
     normalizedStream.onValue( normalizedData =>
       dispatcher.push(events.onNormalizedData, normalizedData)
+    )
+    muutoshakemusStream.onValue( muutoshakemukset =>
+      dispatcher.push(events.onMuutoshakemukset, muutoshakemukset)
     )
 
     if (!state.selectedHakemus) {
@@ -1006,6 +1012,13 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
   onNormalizedData(state, normalizedData) {
     if (state.selectedHakemus) {
       state.selectedHakemus.normalizedData = normalizedData
+    }
+    return state
+  }
+
+  onMuutoshakemukset(state, muutoshakemukset) {
+    if (state.selectedHakemus) {
+      state.selectedHakemus.muutoshakemukset = muutoshakemukset 
     }
     return state
   }

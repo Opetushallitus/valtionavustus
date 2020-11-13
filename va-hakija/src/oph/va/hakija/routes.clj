@@ -198,15 +198,15 @@
     (ok (on-hakemus-applicant-edit-open haku-id hakemus-id))))
 
 (defn- get-muutoshakemus []
-  (compojure-api/GET "/hakemus/:user-key" [user-key]
+  (compojure-api/GET "/:user-key" [user-key]
                      :path-params [user-key :- s/Str]
                      :return  Muutoshakemus
                      :summary "Get muutoshaku"
                      (ok (hakija-db/get-muutoshakemus user-key))))
 
 (defn- post-muutoshakemus []
-  (compojure-api/POST "/:haku-id/hakemus/:user-key" [haku-id user-key :as request]
-    :path-params [haku-id :- Long]
+  (compojure-api/POST "/:user-key" [ user-key :as request]
+    :path-params [user-key :- s/Str]
     :return nil
     :body [muutoshakemus (compojure-api/describe MuutoshakemusRequest "Application change request")]
     :summary "Apply for changes to application"

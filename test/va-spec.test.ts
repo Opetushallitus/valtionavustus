@@ -692,6 +692,16 @@ describe("Puppeteer tests", () => {
         const notification = await textContent(page, successNotificationSelector)
         expect(notification).toBe('Muutoshakemus lähetetty')
 
+        await navigate(page, `/avustushaku/${avustushakuID}/`)
+        await Promise.all([
+          page.waitForNavigation(),
+          clickElementWithText(page, "td", "Akaan kaupunki"),
+        ])
+
+        await page.waitForFunction(() => (document.querySelector("[data-test-id=number-of-pending-muutoshakemukset]") as HTMLInputElement).innerText === "1")
+        const muutoshakemuksetTabClass = await getElementAttribute(page, "[data-test-id=number-of-pending-muutoshakemukset]", "class")
+        expect(muutoshakemuksetTabClass).toEqual("muutoshakemukset-warning")
+
         const userKey = (await getUserKey(avustushakuID, hakemusID))[0]
         const storedMuutos = await getStoredMuutoshakemus(userKey)
 

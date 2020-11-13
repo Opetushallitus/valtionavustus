@@ -3,18 +3,6 @@
             [oph.soresu.form.schema :refer :all]
             [oph.va.schema :refer :all]))
 
-(s/defschema Muutoshakemus
-  "Muutoshakemus for a specific hakemus"
-  {
-    :id Long
-    :user-key s/Str
-    :hakemus-version Long
-    :haen-kayttoajan-pidennysta s/Bool
-    :kayttoajan-pidennys-perustelut (s/maybe s/Str)
-    :haettu-kayttoajan-paattymispaiva (s/maybe java.time.LocalDate)
-    :created-at s/Inst
-    })
-
 (s/defschema JatkoaikaHakemus
   "JatkoaikaHakemus contains fields for applying for deadline extension"
   {
@@ -34,7 +22,6 @@
 (s/defschema MuutoshakemusRequest
   "MuutoshakemusRequest is the payload for applying for changes to application"
   {
-    :hakemusVersion Long
     (s/optional-key :jatkoaika) JatkoaikaHakemus
     (s/optional-key :yhteyshenkilo) ContactPersonDetails
   })

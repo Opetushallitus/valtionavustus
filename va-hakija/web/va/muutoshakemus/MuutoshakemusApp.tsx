@@ -191,7 +191,6 @@ const MuutoshakemusApp = () => {
 
     try {
       await postMuutoshakemus({
-        hakemusVersion: state.hakemusJson.version,
         avustushakuId,
         userKey,
         jatkoaika: jatkoaika,

@@ -15,7 +15,7 @@ export default class HakemusDetails extends Component {
     const multibatchEnabled =
           (environment["multibatch-payments"] &&
            environment["multibatch-payments"]["enabled?"]) || false
-    const muutoshakemukset = 0
+    const muutoshakemukset = hakemus.muutoshakemukset
     const muutospaatosprosessiEnabled =
           (environment["muutospaatosprosessi"] &&
            environment["muutospaatosprosessi"]["enabled?"]) || false
@@ -83,7 +83,7 @@ export default class HakemusDetails extends Component {
    selvitysLinkHelpText={helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"]}
    presenterCommentHelpText={helpTexts["hankkeen_sivu__loppuselvitys___valmistelijan_huomiot"]}/>
         case 'muutoshakemukset':
-          if (muutoshakemukset == 0)
+          if (!muutoshakemukset || muutoshakemukset.length === 0)
             return <h2>Hankkeella ei ole muutoshakemuksia</h2>
           else
             return <div/>
@@ -104,8 +104,8 @@ export default class HakemusDetails extends Component {
 
     const MuutoshakemuksetLabel = () =>
       <span>Muutoshakemukset&nbsp;
-        <span className={muutoshakemukset == 0 ? "" : "muutoshakemukset-warning"}>
-          ({muutoshakemukset})
+        <span data-test-id="number-of-pending-muutoshakemukset" className={!muutoshakemukset || muutoshakemukset.length === 0 ? "" : "muutoshakemukset-warning"}>
+          {muutoshakemukset ? muutoshakemukset.length : 0}
         </span>
       </span>
 

@@ -22,6 +22,23 @@
     (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
     (first hakemukset)))
 
+(defn get-muutoshakemukset [hakemus-id]
+  (log/info (str "Get muutoshakemus with hakemus id: " hakemus-id))
+  (let [muutoshaku (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
+                                             (jdbc/query
+                                              connection
+                                              ["SELECT
+                                                id,
+                                                hakemus_id,
+                                                haen_kayttoajan_pidennysta,
+                                                kayttoajan_pidennys_perustelut,
+                                                created_at,
+                                                to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva
+                                              from virkailija.muutoshakemus WHERE hakemus_id = ? ORDER BY id DESC" hakemus-id]
+                                              {:identifiers #(.replace % \_ \-)}))]
+    (log/info (str "Succesfully fetched muutoshaku with id: " hakemus-id))
+    muutoshaku))
+
 (defn get-arviot [hakemus-ids]
   (if (empty? hakemus-ids)
     []

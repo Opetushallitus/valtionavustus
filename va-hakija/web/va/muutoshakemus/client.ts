@@ -7,7 +7,6 @@ const client = axios.create({ timeout })
 
 type MuutoshakemusProps = {
   avustushakuId: number
-  hakemusVersion: number
   userKey: string
   jatkoaika?: Partial<AvustuksenKayttoajanPidennys>
   yhteyshenkilo?: ChangingContactPersonDetails
@@ -22,12 +21,11 @@ function convertDateToDateString(jatkoaika: Partial<AvustuksenKayttoajanPidennys
 }
 
 export async function postMuutoshakemus(props: MuutoshakemusProps) {
-  const {avustushakuId, hakemusVersion, userKey, jatkoaika, yhteyshenkilo} = props
+  const {userKey, jatkoaika, yhteyshenkilo} = props
 
-  const url = `api/muutoshakemus/${avustushakuId}/hakemus/${userKey}`
+  const url = `api/muutoshakemus/${userKey}`
 
   return client.post(url, {
-    hakemusVersion: hakemusVersion,
     ...jatkoaika?.haenKayttoajanPidennysta && { jatkoaika: convertDateToDateString(jatkoaika) },
     ...yhteyshenkilo && { yhteyshenkilo: yhteyshenkilo },
   })

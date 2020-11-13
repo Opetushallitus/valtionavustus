@@ -171,6 +171,21 @@
    :contact-phone s/Str
    })
 
+(s/defschema Muutoshakemus
+  "Muutoshakemus for a specific hakemus"
+  {
+    :id Long
+    :hakemus-id Long
+    :haen-kayttoajan-pidennysta s/Bool
+    :kayttoajan-pidennys-perustelut (s/maybe s/Str)
+    :haettu-kayttoajan-paattymispaiva (s/maybe java.time.LocalDate)
+    :created-at s/Inst
+    })
+
+(s/defschema MuutoshakemusList
+  "Muutoshakemus for a specific hakemus"
+  [Muutoshakemus])
+
 (s/defschema VaSubmission {:created_at s/Inst
                            :form Long
                            :version Long
