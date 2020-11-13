@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -o errexit -o nounset -o pipefail
+
 repodir=$( cd "$( dirname "$0" )" && pwd )
 scriptdir="$repodir/scripts"
 
@@ -24,7 +26,7 @@ trap stop EXIT
 
 session="valtionavustus"
 
-tmux kill-session -t $session
+tmux kill-session -t $session || true
 tmux start-server
 tmux new-session -d -s $session
 
