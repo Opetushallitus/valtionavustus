@@ -123,8 +123,8 @@
     (log/info (str "Succesfully fetched hakemus with id: " user-key))
     (first hakemukset)))
 
-(defn get-muutoshakemus [hakemus-id]
-  (log/info (str "Get muutoshakemus with id: " hakemus-id))
+(defn get-muutoshakemus [user-key]
+  (log/info (str "Get muutoshakemus with user-key: " user-key))
   (let [muutoshaku (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
                                              (jdbc/query
                                               connection
@@ -137,9 +137,9 @@
                                                 created_at,
                                                 to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva
                                               from virkailija.muutoshakemus WHERE user_key = ?
-                                              ORDER BY id DESC" hakemus-id]
+                                              ORDER BY id DESC" user-key]
                                               {:identifiers #(.replace % \_ \-)}))]
-    (log/info (str "Succesfully fetched muutoshaku with id: " hakemus-id))
+    (log/info (str "Succesfully fetched muutoshaku with id: " user-key))
     (first muutoshaku)))
 
 (defn add-muutoshakemus [connection user-key hakemus-version jatkoaika]
