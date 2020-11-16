@@ -12,6 +12,11 @@ services:
     ports:
       - '5432:5432'
     command: ["postgres", "-c", "log_statement=all"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
       POSTGRES_USER: va
       POSTGRES_PASSWORD: va

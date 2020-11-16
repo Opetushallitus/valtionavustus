@@ -36,12 +36,10 @@ tmux splitw -h
 tmux select-pane -t 0
 tmux send-keys "$scriptdir/run_database.sh" C-m
 
-
 echo "waiting for database to accept connections"
-until pg_isready -h localhost -p 5432 -U postgres
-do
+until [ "$(docker inspect -f {{.State.Health.Status}} va-postgres 2>/dev/null || echo "not-running")" == "healthy" ]; do
   sleep 2;
-done
+done;
 
 tmux splitw -v
 tmux send-keys "$scriptdir/run_admin_ui.sh" C-m
