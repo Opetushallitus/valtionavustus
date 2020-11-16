@@ -4,6 +4,11 @@ set -o errexit -o nounset -o pipefail
 repodir=$( cd "$( dirname "$0" )" && pwd )
 scriptdir="$repodir/scripts"
 
+function stop() {
+  ./scripts/stop_database.sh
+}
+trap stop EXIT
+
 function require() {
   local cmd=$1
   command -v ${cmd} > /dev/null 2>&1 || { echo >&2 "I require ${cmd} but it's not installed. Aborting."; exit 1; }
