@@ -7,10 +7,8 @@
   position: relative;
   display: inline-block;
 
-  min-width: @preview-width;
   background-color: @lighterer-gray;
   margin: 5px 4px 4px 0;
-  padding: 4px 20px 4px 11px;
   border: 1px solid @lighterer-gray;
   cursor: pointer;
   color: @light-blue;
@@ -19,17 +17,10 @@
   transition-duration: 0.2s;
 
   &.rw-open {
-    height: @popup-height;
-    .popup-box-shadow;
     background-color: @off-white;
 
     .rw-popup-container {
       opacity: 1;
-    }
-
-    div.rw-input {
-      padding-bottom: 4px;
-      border-bottom: 1px solid @light-gray;
     }
   }
 
@@ -57,10 +48,8 @@
     box-sizing: border-box;
   }
 
-  .rw-select {
-    position: absolute;
-    top: 7px;
-    left: 22px;
+  .rw-filter-input span.rw-select {
+    display: none;
   }
 
   input:active, input:focus {
@@ -71,8 +60,8 @@
     position: absolute;
     top: 50px;
     background-color: @off-white;
-    max-height: 198px;
-    width: @popup-internal-width + 1%;
+    border: 1px solid @darkish-gray;
+    width: 100%;
     overflow: hidden !important; // !important must be used in this container to override inline styles of ReactWidgets.DropdownList
 
     transition-property: all;
@@ -80,6 +69,10 @@
     opacity: 0;
 
     display: block;
+
+    .rw-input {
+      border: none;
+    }
 
     ul {
       height: @popup-height - 92px;
