@@ -9,3 +9,26 @@ function init_nodejs {
   nvm use "${node_version}" || nvm install "${node_version}"
   npm install -g "npm@${npm_version}"
 }
+
+function require_command {
+  if ! command -v "$1" > /dev/null; then
+    fatal "I require $1 but it's not installed. Aborting."
+  fi
+}
+
+function info {
+  log "INFO" "$1"
+}
+
+function fatal {
+  log "ERROR" "$1"
+  exit 1
+}
+
+function log {
+  local -r level="$1"
+  local -r message="$2"
+  local -r timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+
+  >&2 echo -e "${timestamp} ${level} ${message}"
+}
