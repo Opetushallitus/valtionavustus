@@ -4,6 +4,7 @@
 **/resources/public/admin-ui/css/*-min.css
 **/resources/public/applications/js
 **/resources/public/applications/css/*-min.css
+**/resources/public/fonts/
 /va-admin-ui/package*
 *.iml
 .*.swp
