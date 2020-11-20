@@ -102,10 +102,14 @@ export default class HakemusDetails extends Component {
       }
     }
 
+    function hasMuutoshakemus() {
+      return muutoshakemukset && muutoshakemukset.length > 0
+    }
+
     const MuutoshakemuksetLabel = () =>
-      <span>Muutoshakemukset&nbsp;
-        <span data-test-id="number-of-pending-muutoshakemukset" className={!muutoshakemukset || muutoshakemukset.length === 0 ? "" : "muutoshakemukset-warning"}>
-          {muutoshakemukset ? muutoshakemukset.length : 0}
+      <span className='muutoshakemus-tab'>Muutoshakemukset
+        <span className={hasMuutoshakemus() ? 'muutoshakemukset-warning' : ''}>
+          (<span data-test-id="number-of-pending-muutoshakemukset">{muutoshakemukset ? muutoshakemukset.length : 0}</span>)
         </span>
       </span>
 
