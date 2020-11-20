@@ -698,13 +698,15 @@ describe("Puppeteer tests", () => {
           clickElementWithText(page, "td", "Akaan kaupunki"),
         ])
 
+
         await page.waitForFunction(() => (document.querySelector("[data-test-id=number-of-pending-muutoshakemukset]") as HTMLInputElement).innerText === "1")
-        const muutoshakemuksetTabClass = await getElementAttribute(page, "[data-test-id=number-of-pending-muutoshakemukset]", "class")
-        expect(muutoshakemuksetTabClass).toEqual("muutoshakemukset-warning")
+        const numOfMuutosHakemuksetElement = await page.waitForSelector('[data-test-id=number-of-pending-muutoshakemukset]', { visible: true })
+        const color = await page.evaluate(e => getComputedStyle(e).color, numOfMuutosHakemuksetElement)
 
         const userKey = (await getUserKey(avustushakuID, hakemusID))[0]
         const storedMuutos = await getStoredMuutoshakemus(userKey)
 
+        expect(color).toBe('rgb(255, 0, 0)') // red
         expect(storedMuutos["haen-kayttoajan-pidennysta"]).toBe(true)
         expect(storedMuutos["kayttoajan-pidennys-perustelut"]).toBe(perustelu)
         expect(storedMuutos["haettu-kayttoajan-paattymispaiva"]).toBe(haettuPaattymispaiva)
@@ -717,16 +719,23 @@ describe("Puppeteer tests", () => {
       const newName = randomString()
       const newEmail = "uusi.email@reaktor.com"
       const newPhone = "0901967632"
+
+      beforeEach(async () => {
+        if (!linkToMuutoshaku || !avustushakuID) {
+          const { avustushakuID: avustushakuId, hakemusID } = await ratkaiseAvustushaku2(page, answers)
+          avustushakuID = avustushakuId
+
+          const emails = await getEmails(avustushakuID, hakemusID)
+          linkToMuutoshaku = emails[0].formatted.match(/https?:\/\/.*\/muutoshaku.*/)?.[0]
+
+          expectToBeDefined(linkToMuutoshaku)
+          expectToBeDefined(avustushakuID)
+        }
+      })
+
       it("should show avustushaku name, project name, and registration number as well as name, email and phone number for contact person", async () => {
-        const { avustushakuID: avustushakuId, hakemusID } = await ratkaiseAvustushaku2(page, answers)
-        avustushakuID = avustushakuId
-
-        const emails = await getEmails(avustushakuID, hakemusID)
-
-        linkToMuutoshaku = emails[0].formatted.match(/https?:\/\/.*\/muutoshaku.*/)?.[0]
 
         expectToBeDefined(linkToMuutoshaku)
-
         await page.goto(linkToMuutoshaku, { waitUntil: "networkidle0" })
         const avustushakuNameSpan = await page.waitForSelector("[data-test-id=avustushaku-name]", { visible: true })
         const avustushakuName = await page.evaluate(element => element.textContent, avustushakuNameSpan)
@@ -769,7 +778,7 @@ describe("Puppeteer tests", () => {
 
         const sendMuutospyyntoButtonIsDisabledAfterInvalidEmail = await hasElementAttribute(page, "#send-muutospyynto-button", "disabled")
         expect(sendMuutospyyntoButtonIsDisabledAfterInvalidEmail).toBeTruthy()
-        
+
         const emailInputFieldClassWhenInvalidEmail = await getElementAttribute(page, "#muutoshaku__email", "class")
         expectToBeDefined(emailInputFieldClassWhenInvalidEmail)
         expect(emailInputFieldClassWhenInvalidEmail).toContain("error")
