@@ -13,7 +13,7 @@
   tags: [jenkins]
 
 - include: checkjobs.yml
-  when: jenkins_check_jobs
+  when: jenkins_check_jobs | length > 0
   tags: [jenkins]
   
 - name: Copy Dockerfile

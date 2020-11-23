@@ -1,5 +1,3 @@
 ---
 - include: install.yml
-
 - include: configure.yml
-  when: haproxy_manage_config
