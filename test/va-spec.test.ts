@@ -7,7 +7,7 @@ import {
   getFirstPage,
   ratkaiseAvustushaku,
   getElementInnerText,
-  ratkaiseAvustushaku2,
+  ratkaiseMuutoshakemusEnabledAvustushaku,
   publishAvustushaku,
   hasElementAttribute,
   getElementAttribute,
@@ -637,7 +637,7 @@ describe("Puppeteer tests", () => {
     }
 
     it("Avustushaun ratkaisu should send an email with link to muutoshaku", async () => {
-      const { avustushakuID, hakemusID } = await ratkaiseAvustushaku2(page, answers)
+      const { avustushakuID, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
 
       const emails = await getEmails(avustushakuID, hakemusID)
       emails.forEach(email => {
@@ -678,7 +678,7 @@ describe("Puppeteer tests", () => {
         const perustelu = 'Ei kyl millään ehdi deadlineen mennessä ku mun koira söi ne tutkimustulokset'
         const haettuPaattymispaiva = selectDate.format('YYYY-MM-DD')
 
-        const { avustushakuID, hakemusID } = await ratkaiseAvustushaku2(page, answers)
+        const { avustushakuID, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
         await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
         await clickElement(page, '#checkbox-jatkoaika')
         await clearAndType(page, '#perustelut-jatkoaika', perustelu)
@@ -722,7 +722,7 @@ describe("Puppeteer tests", () => {
 
       beforeEach(async () => {
         if (!linkToMuutoshaku || !avustushakuID) {
-          const { avustushakuID: avustushakuId, hakemusID } = await ratkaiseAvustushaku2(page, answers)
+          const { avustushakuID: avustushakuId, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
           avustushakuID = avustushakuId
 
           const emails = await getEmails(avustushakuID, hakemusID)

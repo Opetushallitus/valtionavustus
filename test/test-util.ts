@@ -103,7 +103,7 @@ export async function navigateHakija(page: Page, path: string) {
   await page.goto(`${HAKIJA_URL}${path}`, { waitUntil: "networkidle0" })
 }
 
-export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId2(page: Page, hakuName?: string, registerNumber?: string) {
+export async function createMuutoshakemusEnabledEsimerkkihakuAndReturnId(page: Page, hakuName?: string, registerNumber?: string) {
   const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, hakuName, registerNumber)
 
   await clickElementWithText(page, "span", "Hakulomake")
@@ -173,7 +173,7 @@ export async function fillAndSendHakemus(page: Page, avustushakuID: number, befo
   await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Hakemus lähetetty")
 }
 
-export async function fillAndSendHakemus2(page: Page, avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void) {
+export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void) {
   await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
 
   await clearAndType(page, "#primary-email", answers.contactPersonEmail)
@@ -658,11 +658,11 @@ interface Answers {
   registerNumber: string
 }
 
-export async function ratkaiseAvustushaku2(page: Page, answers: Answers) {
-  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId2(page, answers.avustushakuName, answers.registerNumber)
+export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, answers: Answers) {
+  const avustushakuID = await createMuutoshakemusEnabledEsimerkkihakuAndReturnId(page, answers.avustushakuName, answers.registerNumber)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
-  await fillAndSendHakemus2(page, avustushakuID, answers)
+  await fillAndSendMuutoshakemusEnabledHakemus(page, avustushakuID, answers)
 
   return await acceptAvustushaku(page, avustushakuID)
 }
