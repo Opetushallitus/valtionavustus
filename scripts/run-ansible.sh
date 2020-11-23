@@ -3,6 +3,7 @@ set -o errexit -o nounset -o pipefail
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 
 readonly SSH_KEY_PATH="$HOME/.ssh/oph-valtionavustus"
+readonly VA_SECRETS_REPO="$repo/../valtionavustus-secret"
 
 function main {
   info "Running ansible against $ENV environment"
@@ -12,6 +13,10 @@ function main {
 
   if [ ! -f "$SSH_KEY_PATH" ]; then
     fatal "Expected '$SSH_KEY_PATH' to exists"
+  fi
+
+  if [ ! -d "$VA_SECRETS_REPO/.git" ]; then
+    fatal "Expected '$VA_SECRETS_REPO' to contain git repository"
   fi
 
   # Python 2.7 workaround for error "ValueError: unknown locale: UTF-8"
