@@ -9,14 +9,14 @@
   become: yes
 
 - name: jenkins-install | Install jenkins
-  apt: pkg={{item}}
-  with_items: [curl, jenkins]
+  apt:
+    pkg: [curl, jenkins]
   become: yes
 
 - name: jenkins-install | Install additional deb packages
-  apt: pkg={{item}}
+  apt:
+    pkg: "{{ jenkins_apt_packages }}"
   become: yes
-  with_items: jenkins_apt_packages
 
 - name: jenkins-install | Setup passlib
   apt: pkg=python-passlib

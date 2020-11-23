@@ -16,13 +16,15 @@
   when: ansible_os_family == 'RedHat'
 
 - name: Install required APT packages
-  apt: state=installed pkg={{ item }}
-  with_items: "{{ ubuntu_common_required_packages }}"
+  apt:
+    state: installed
+    pkg: "{{ ubuntu_common_required_packages }}"
   when: ansible_os_family == 'Debian'
 
 - name: Install required YUM packages
-  yum: state=installed pkg={{ item }}
-  with_items: "{{ centos_common_required_packages }}"
+  yum:
+    state: installed
+    pkg: "{{ centos_common_required_packages }}"
   when: ansible_os_family == 'RedHat'
 
 - name: Disable RepeatedMsgReduction of rsyslogd because it is buggy
