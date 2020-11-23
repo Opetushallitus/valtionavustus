@@ -22,12 +22,12 @@
 - name: Remove the old SSH host key of application servers from to ~{{ jenkins_user }}/.ssh/known_hosts
   sudo_user: "{{ jenkins_user }}"
   shell: "ssh-keygen -R {{ item }}"
-  with_items: "{{ groups['va_app'] ))"
+  with_items: "{{ groups['va_app'] }}"
 
 - name: Add the new SSH host key of application servers to ~{{ jenkins_user }}/.ssh/known_hosts for deploys
   sudo_user: "{{ jenkins_user }}"
   shell: "ssh-keyscan -H {{ item }} >> ~{{ jenkins_user }}/.ssh/known_hosts"
-  with_items: "{{ groups['va_app'] ))"
+  with_items: "{{ groups['va_app'] }}"
 
 - name: Generate new SSH key for "{{ jenkins_user }}" user for application deploys
   user: name="{{ jenkins_user }}" generate_ssh_key=yes ssh_key_file=.ssh/id_deploy
