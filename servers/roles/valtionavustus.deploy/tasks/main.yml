@@ -12,20 +12,20 @@
   ignore_errors: yes
 
 - name: Make sure Jenkins user .ssh exists
-  sudo_user: "{{ jenkins_user }}"
+  become_user: "{{ jenkins_user }}"
   file: path=~{{ jenkins_user }}/.ssh state=directory mode=0700
 
 - name: Make sure Jenkins user .ssh/known_hosts exists
-  sudo_user: "{{ jenkins_user }}"
+  become_user: "{{ jenkins_user }}"
   file: "path=~{{ jenkins_user }}/.ssh/known_hosts state=touch mode=0600"
 
 - name: Remove the old SSH host key of application servers from to ~{{ jenkins_user }}/.ssh/known_hosts
-  sudo_user: "{{ jenkins_user }}"
+  become_user: "{{ jenkins_user }}"
   shell: "ssh-keygen -R {{ item }}"
   with_items: "{{ groups['va_app'] }}"
 
 - name: Add the new SSH host key of application servers to ~{{ jenkins_user }}/.ssh/known_hosts for deploys
-  sudo_user: "{{ jenkins_user }}"
+  become_user: "{{ jenkins_user }}"
   shell: "ssh-keyscan -H {{ item }} >> ~{{ jenkins_user }}/.ssh/known_hosts"
   with_items: "{{ groups['va_app'] }}"
 

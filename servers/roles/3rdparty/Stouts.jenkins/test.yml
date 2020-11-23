@@ -1,6 +1,6 @@
 ---
 - hosts: all
-  sudo: true
+  become: true
   roles:
     - { role: ./,
         docker_files_enable: yes,

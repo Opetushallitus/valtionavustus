@@ -5,7 +5,7 @@
   - ping:
 
 - hosts: va_app
-  sudo: yes
+  become: yes
   roles:
   - {role: ssh.init, tags: ['ssh']}
   - {role: common, tags: ['common']}
@@ -14,7 +14,7 @@
 
 - hosts: va_loadbalancer
   tags: ['well-actually-only-loadbalancer']
-  sudo: yes
+  become: yes
   roles:
   - {role: ssh.init, tags: ['ssh']}
   - {role: common}
@@ -23,7 +23,7 @@
 
 - hosts: va_build
   tags: ['well-actually-only-jenkins']
-  sudo: yes
+  become: yes
   roles:
   - {role: ssh.init, tags: ['ssh']}
   - {role: node, tags: ['nodejs']}

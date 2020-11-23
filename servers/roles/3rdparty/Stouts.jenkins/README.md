@@ -14,7 +14,7 @@ Ansible role which manage [Jenkins CI](http://jenkins-ci.org/)
 * Manage Jenkins jobs
 
 > The role needs a root access to run.
-> Add `sudo: yes` in your playbook.
+> Add `become: yes` in your playbook.
 
 > The role does not install a proxy server (nginx, apache)
 > I recommed to use other roles for install proxies (example

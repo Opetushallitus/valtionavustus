@@ -10,7 +10,7 @@
     - proxy_http
     - rewrite
     - ssl
-  sudo: yes
+  become: yes
 
 
 - name: Apache | Disable the default site
@@ -26,19 +26,19 @@
     state: present
 #    validate: '/usr/sbin/apache2ctl -f %s -t'
   with_items: apache_ports_configuration_items
-  sudo: yes
+  become: yes
   tags: apache
   notify:
     - apache restart      
       
 - name: Apache | Compile Apache Jenkins configuration
   template: src=apache.conf.j2 dest=/etc/apache2/sites-available/jenkins.conf
-  sudo: yes  
+  become: yes
   tags: apache
 
 - name: Apache | Enable our Jenkins site
   action: command a2ensite jenkins
-  sudo: yes  
+  become: yes
   tags: apache
   notify:
     - apache restart

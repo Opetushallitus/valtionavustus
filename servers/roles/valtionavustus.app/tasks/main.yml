@@ -40,7 +40,7 @@
 
 - name: Check if app secrets file is available
   local_action: stat path="{{ app_secrets_vault_file }}"
-  sudo: no
+  become: no
   register: app_secrets_vault_file_info
   tags:
     - app_secrets
