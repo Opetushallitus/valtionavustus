@@ -10,83 +10,15 @@ tämä README on.
 | oph-va-app-test01 | [va-hakija](https://testi.valtionavustukset.oph.fi/avustushaku/1/), [va-hakija api](https://testi.valtionavustukset.oph.fi/doc), [va-virkailija](https://testi.virkailija.valtionavustukset.oph.fi/), [va-virkailija api](https://testi.virkailija.valtionavustukset.oph.fi/doc/) | Palvelun testiympäristö, ajaa sovelluksia ja tietokantaa. |
 | oph-va-app-prod01 | [va-hakija](https://valtionavustukset.oph.fi/avustushaku/1/), [va-hakija api](https://valtionavustukset.oph.fi/doc), [va-virkailija](https://testi.virkailija.valtionavustukset.oph.fi/), [va-virkailija api](https://virkailija.valtionavustukset.oph.fi/doc/), [avoimet avustushaut](http://oph.fi/rahoitus/valtionavustukset) | Palvelun tuotantoympäristö, ajaa sovelluksia ja tietokantaa. |
 
-## Ansiblen asennus
+## Palvelinten provisiointi
 
-Provisiointi tehdään Ansiblella, joka on Python-sovellus. Käytä Pythonin
-2.7-versiota. Ansiblea kannattaa ajaa
-[Pipenvin](https://docs.pipenv.org/) avulla
-[virtualenvissä](http://docs.python-guide.org/en/latest/dev/virtualenvs/),
-jotta dependencyt ovat oikein.
-
-Jos käytät macOS:ää, tarvitset seuraavat riippuvuudet:
-
-- OpenSSL, jossa on TLS1.2 tuki
-- Pythonin, joka on käännetty yllä olevaa OpenSSL:ää vasten
-- GNU Multiple Precision Arithmetic Library (GMP)
-
-Voit asentaa ne Homebrewillä:
+Repon juuresta löytyy seuraavat skriptit palvelinten provisiointiin:
 
 ``` bash
-brew install openssl gmp python
-```
-
-Asenna [Pipenv](https://docs.pipenv.org/install/).
-
-Luo projektille virtualenv, tämä asentaa riippuvuudet:
-
-``` bash
-make install
-```
-
-Asennuksen jälkeen ota virtualenv käyttöön:
-
-``` bash
-pipenv shell
-```
-
-Hakemistossa `roles/3rdparty` on asennettu muiden tekemät Ansible-roolit
-ja hakemistossa `library` Ansibleen lisätyt moduulit. Nämä asennetaan
-Ansible Galaxyllä:
-
-``` bash
-ansible-galaxy install -r requirements.yml --roles-path=./roles/3rdparty
-```
-
-Roolin päivittäminen onnistuu vivulla `--force`.
-
-## Salaisuuksien asennus
-
-Suositeltu järjestely projektin tiedostoille ja hakemistoille:
-
-``` bash
-ls -lA oph
-```
-
-```
--rw-------   1 username  staff     33 Nov  3 09:57 .ansible-vault-pass-va.txt
--rw-------   1 username  staff    301 Nov  3 09:10 .env-va.sh
-drwxr-xr-x  29 username  staff    986 Nov  1 09:34 valtionavustus/
-drwxr-xr-x   9 username  staff    306 Nov  3 09:06 valtionavustus-secret/
-```
-
-Huomaa `chmod 600` -oikeudet tiedostoille `.env-va.sh` ja
-`.ansible-vault-pass-va.txt`.
-
-Tiedosto `.env-va.sh` sisältää polun Ansible Vaultin salasanatiedostoon:
-
-``` shell
-export ANSIBLE_VAULT_PASSWORD_FILE=~/Projects/oph/.ansible-vault-pass-va.txt
-```
-
-Tiedosto `.ansible-vault-pass-va.txt` sisältää Ansible Vaultin
-salasanan.
-
-Testaa Ansible Vaultin käyttöä avaamalla salasanalla suojattu tiedosto:
-
-``` shell
-eval `make venv`   # ellet jo ole suorittanut
-source .env-va.sh
-ansible-vault view group_vars/all/va-secrets-vault.yml
+./run-ansible-jenkins.sh
+./run-ansible-qa.sh
+./run-ansible-prod.sh
+./run-ansible-loadblanacer.sh
 ```
 
 ## Yhteyden testaaminen palvelimille
@@ -105,16 +37,6 @@ ssh-yhteyttä:
 
 ``` bash
 ssh -F ssh.config oph-va-app-test01 'echo ok'
-```
-
-Tarkista, että palvelimet vastaavat pingiin:
-
-``` bash
-# kaikki palvelimet
-ansible all -m ping
-
-# tietty palvelin
-ansible oph-va-app-test01.csc.fi -m ping
 ```
 
 ## Yleisiä tehtäviä palvelimilla
@@ -199,67 +121,6 @@ JConsolen vaatimista RMI-porteista.
    * tuotantoympäristöön:
      - va-hakija: "localhost:30023"
      - va-virkailija: "localhost:30024"
-
-## Yleisiä provisiointitehtäviä
-
-### Provisioi palvelinten ssh-tunnukset
-
-``` bash
-ansible-playbook site.yml -t ssh
-```
-
-### Provisioi palvelinten palomuurit
-
-``` bash
-ansible-playbook site.yml -t firewall
-```
-
-### Uuden käyttäjän lisääminen CI:n Jenkinsiin
-
-``` bash
-ssh -F ssh.config oph-va-ci-test01 add_va_jenkins_user.bash $username
-```
-
-### Buildikoneen päivitys
-
-Jenkinsin päivityksen jälkeen lisää jobeihin Slack-notifikaatiot päälle
-käsin: Jenkinsin jobin Configure → Add post-build action → Slack
-Notifications.
-
-Jos buildikoneen jenkins-käyttäjän ssh-avain on muuttunut, se tulee
-lisätä soresu-formin deployment-avaimiin
-[GitHubissa](https://github.com/Opetushallitus/soresu-form/settings/keys).
-
-### Provisioi palvelin
-
-Jos palvelin on uusi CentOS-kone, täytyy palvelimella käydä käsin
-poistamassa tiedostosta `/etc/sudoers` seuraava rivi:
-
-```
-Defaults    requiretty
-```
-
-Muulloin Ansiblen suorittama komento ei voi saada sudo-oikeuksia.
-
-Provisioi yksittäinen palvelin:
-
-``` bash
-ansible-playbook site.yml -l oph-va-app-test01.csc.fi
-```
-
-Jos haluat ajaa provisioinnin tietystä Ansiblen taskista lähtien:
-
-``` bash
-ansible-playbook site.yml -l oph-va-app-test01.csc.fi --step --start-at-task="Add supervisor conf to start and stop the applications"
-```
-
-Provisioi kaikki palvelimet:
-
-``` bash
-ansible-playbook site.yml
-```
-
-Voit käyttää vipua `-vvvv` nähdäksesi tarkemmin mitä komento tekee.
 
 ## Tuotantoonvienti
 
