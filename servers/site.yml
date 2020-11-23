@@ -1,18 +1,22 @@
-- hosts: va_app va_loadbalancer va_build
-  sudo: yes
-  roles:
-  - {role: ssh.init, tags: ['ssh']}
+# This empty play is required to make sure all hosts are in inventory.
+# At least loadbalancer and jenkins rely on this.
+- hosts: va_app va_build va_loadbalancer
+  tasks:
+  - ping:
 
 - hosts: va_app
   sudo: yes
   roles:
+  - {role: ssh.init, tags: ['ssh']}
   - {role: common, tags: ['common']}
   - {role: valtionavustus.app, tags: ['app']}
   - {role: postgresql12.db, tags: ['pg12']}
 
 - hosts: va_loadbalancer
+  tags: ['well-actually-only-loadbalancer']
   sudo: yes
   roles:
+  - {role: ssh.init, tags: ['ssh']}
   - {role: common}
   - {role: 3rdparty/info.haproxy, tags: ['update']}
   - {role: va-haproxy, tags: ['update']}
@@ -20,6 +24,7 @@
 - hosts: va_build
   sudo: yes
   roles:
+  - {role: ssh.init, tags: ['ssh']}
   - {role: node, tags: ['nodejs']}
   - {role: common, tags: ['common']}
   - {role: buildmachine, tags: ['buildmachine']}

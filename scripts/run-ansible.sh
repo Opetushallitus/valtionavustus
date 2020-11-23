@@ -28,26 +28,44 @@ function main {
   use_python_version "2.7.18"
   install_python_dependencies
 
-  run_ansible
+  run_ansible "$@"
 }
 
 function run_ansible {
-  if [ "$ENV" = "qa" ]; then
-    local -r ansible_hosts="va_app_qa"
-  elif [ "$ENV" = "prod" ]; then
-    local -r ansible_hosts="va_app_prod"
-  elif [ "$ENV" = "loadbalancer" ]; then
-    local -r ansible_hosts="va_loadbalancer"
-  elif [ "$ENV" = "jenkins" ]; then
-    local -r ansible_hosts="va_build"
-  else
-    fatal "Invalid environment $ENV"
-  fi
+  local -r target="$ENV"
 
+  case "$target" in
+    qa)
+      local -r limit="va_app_qa"
+      local -r tags="all"
+      ;;
+
+    prod)
+      local -r limit="va_app_prod"
+      local -r tags="all"
+      ;;
+
+    loadbalancer)
+      # Configuring loadbalancer requires that all hosts exist in inventory :mad:
+      # This means we have to run ansible against all hosts and we have to use tags
+      # to make only loadbalancer is configured.
+      local -r limit="all"
+      local -r tags="well-actually-only-loadbalancer"
+      ;;
+
+    jenkins)
+      local -r limit="va_build"
+      local -r tags="all"
+      ;;
+
+    *)
+      fatal "Invalid target $target"
+      ;;
+  esac
+
+  info "Running ansible"
   pushd "$repo/servers"
-  ansible-playbook \
-    --limit "$ansible_hosts" \
-    site.yml
+  ansible-playbook "$@" --tags "$tags" --limit "$limit" site.yml
   popd
 }
 
