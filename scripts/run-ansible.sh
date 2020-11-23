@@ -48,7 +48,7 @@ function run_ansible {
     loadbalancer)
       # Configuring loadbalancer requires that all hosts exist in inventory :mad:
       # This means we have to run ansible against all hosts and we have to use tags
-      # to make only loadbalancer is configured.
+      # to make sure only loadbalancer is configured.
       local -r limit="all"
       local -r tags="well-actually-only-loadbalancer"
       ;;
@@ -56,7 +56,7 @@ function run_ansible {
     jenkins)
       # Configuring jenkins requires that all hosts exist in inventory :mad:
       # This means we have to run ansible against all hosts and we have to use tags
-      # to make only loadbalancer is configured.
+      # to make sure only jenkins is configured.
       local -r limit="all"
       local -r tags="well-actually-only-jenkins"
       ;;
