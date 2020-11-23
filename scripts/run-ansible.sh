@@ -2,6 +2,7 @@
 set -o errexit -o nounset -o pipefail
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 
+readonly PYTHON_VERSION="3.9.0"
 readonly SSH_KEY_PATH="$HOME/.ssh/oph-valtionavustus"
 readonly VA_SECRETS_REPO="$repo/../valtionavustus-secret"
 
@@ -25,7 +26,7 @@ function main {
   export LC_ALL=en_US.UTF-8
   export LANG=en_US.UTF-8
 
-  use_python_version "2.7.18"
+  use_python_version "$PYTHON_VERSION"
   install_python_dependencies
 
   run_ansible "$@"
@@ -99,6 +100,13 @@ function install_python_dependencies {
   pip install pipenv==2020.11.15
   python -m pipenv install > /dev/null
   source "$(python -m pipenv --venv)/bin/activate"
+
+  if [ "$(python --version)" != "Python $PYTHON_VERSION" ]; then
+    info "Python version has changed; rebuilding virtualenv"
+    deactivate
+    python -m pipenv --rm
+    install_python_dependencies
+  fi
   popd
 }
 
