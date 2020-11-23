@@ -9,6 +9,7 @@
 - name: Kludge to force the Jenkins job installation. For some reason it does not get triggered properly.
   command: "{{jenkins_home}}/jobs/job.sh {{item.name}}"
   with_items: "{{ jenkins_jobs }}"
+  ignore_errors: yes
 
 - name: Make sure Jenkins user .ssh exists
   sudo_user: "{{ jenkins_user }}"
@@ -21,12 +22,12 @@
 - name: Remove the old SSH host key of application servers from to ~{{ jenkins_user }}/.ssh/known_hosts
   sudo_user: "{{ jenkins_user }}"
   shell: "ssh-keygen -R {{ item }}"
-  with_items: groups['va_app']
+  with_items: "{{ groups['va_app'] ))"
 
 - name: Add the new SSH host key of application servers to ~{{ jenkins_user }}/.ssh/known_hosts for deploys
   sudo_user: "{{ jenkins_user }}"
   shell: "ssh-keyscan -H {{ item }} >> ~{{ jenkins_user }}/.ssh/known_hosts"
-  with_items: groups['va_app']
+  with_items: "{{ groups['va_app'] ))"
 
 - name: Generate new SSH key for "{{ jenkins_user }}" user for application deploys
   user: name="{{ jenkins_user }}" generate_ssh_key=yes ssh_key_file=.ssh/id_deploy
@@ -42,14 +43,12 @@
   authorized_key: user="va-deploy"
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
   delegate_to: "{{ item }}"
-  with_items: groups['va_app']
+  with_items: "{{ groups['va_app'] }}"
   remote_user: "{{ lookup('env','USER') }}"
-  when: not ansible_check_mode
 
 - name: Add new jenkins public SSH key to Postgresql account on app server machines for backups
   authorized_key: user="postgres"
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
   delegate_to: "{{ item }}"
-  with_items: groups['va_app']
+  with_items: "{{ groups['va_app'] }}"
   remote_user: "{{ lookup('env','USER') }}"
-  when: not ansible_check_mode

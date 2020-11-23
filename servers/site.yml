@@ -22,6 +22,7 @@
   - {role: va-haproxy, tags: ['update']}
 
 - hosts: va_build
+  tags: ['well-actually-only-jenkins']
   sudo: yes
   roles:
   - {role: ssh.init, tags: ['ssh']}

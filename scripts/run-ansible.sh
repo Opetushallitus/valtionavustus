@@ -54,8 +54,11 @@ function run_ansible {
       ;;
 
     jenkins)
-      local -r limit="va_build"
-      local -r tags="all"
+      # Configuring jenkins requires that all hosts exist in inventory :mad:
+      # This means we have to run ansible against all hosts and we have to use tags
+      # to make only loadbalancer is configured.
+      local -r limit="all"
+      local -r tags="well-actually-only-jenkins"
       ;;
 
     *)
