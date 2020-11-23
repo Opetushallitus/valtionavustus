@@ -1,6 +1,3 @@
-- name: Debug hostvars
-  debug: var=hostvars
-
 - name: Add Oracle Java APT repository to sources
   action: apt_repository repo='ppa:webupd8team/java'
   when: ansible_os_family == 'Debian'
@@ -16,8 +13,6 @@
 - name: Run YUM security updates
   command: yum --security update
   register: yum_security_updates
-  when: ansible_os_family == 'RedHat'
-- debug: var=yum_security_updates.stdout_lines
   when: ansible_os_family == 'RedHat'
 
 - name: Install required APT packages

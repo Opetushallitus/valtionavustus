@@ -3,7 +3,7 @@
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
 
-find "{{ postgresql_backup_dir }}/12" \
+find "{{ postgresql_12_backup_dir }}" \
      -mindepth 1 \
      -maxdepth 1 \
      -mtime +5 \

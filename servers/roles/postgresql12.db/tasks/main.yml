@@ -109,7 +109,7 @@
 - name: Install script to remove old PostgreSQL backups
   template:
     src: remove_old_backups.sh.j2
-    dest: "{{ postgresql_backup_local_dir}}/bin/remove_old_backups.sh"
+    dest: "{{ postgresql_12_backup_local_dir}}/bin/remove_old_backups.sh"
     owner: postgres
     group: postgres
     mode: 0750
@@ -122,7 +122,7 @@
     user: postgres
     hour: 0
     minute: 30
-    job: "{{ postgresql_backup_local_dir }}/bin/remove_old_backups.sh"
+    job: "{{ postgresql_12_backup_local_dir }}/bin/remove_old_backups.sh"
   tags: backups
 
 - stat: path="/var/lib/pgsql/12/data/postgresql.orig"
