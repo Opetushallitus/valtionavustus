@@ -395,6 +395,8 @@
 
   (compojure-api/context "/api/avustushaku" [] :tags ["avustushaut"] avustushaku-routes)
 
+  (compojure-api/context "/api/muutoshakemus" [] :tags ["muutoshakemukset"] muutoshaku-routes)
+
   (compojure-api/context "/api/organisations" [] :tags ["organisations"] organisation-routes)
 
   (compojure-api/context "/api/v2/applications" [] :tags ["applications"] applications-routes)
