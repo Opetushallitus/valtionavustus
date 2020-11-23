@@ -690,7 +690,7 @@ describe("Puppeteer tests", () => {
 
         const successNotificationSelector = 'div[class="animate success"]'
         const notification = await textContent(page, successNotificationSelector)
-        expect(notification).toBe('Muutoshakemus lähetetty')
+        expect(notification).toBe('Muutokset tallennettu')
 
         await navigate(page, `/avustushaku/${avustushakuID}/`)
         await Promise.all([
