@@ -19,6 +19,8 @@ function main {
     fatal "Expected '$VA_SECRETS_REPO' to contain git repository"
   fi
 
+  pull_latest_secrets
+
   # Python 2.7 workaround for error "ValueError: unknown locale: UTF-8"
   export LC_ALL=en_US.UTF-8
   export LANG=en_US.UTF-8
@@ -46,6 +48,14 @@ function run_ansible {
   ansible-playbook \
     --limit "$ansible_hosts" \
     site.yml
+  popd
+}
+
+function pull_latest_secrets {
+  info "Pulling latest secrets"
+
+  pushd "$VA_SECRETS_REPO"
+  git pull
   popd
 }
 
