@@ -22,10 +22,6 @@ function main {
 
   pull_latest_secrets
 
-  # Python 2.7 workaround for error "ValueError: unknown locale: UTF-8"
-  export LC_ALL=en_US.UTF-8
-  export LANG=en_US.UTF-8
-
   use_python_version "$PYTHON_VERSION"
   install_python_dependencies
 
