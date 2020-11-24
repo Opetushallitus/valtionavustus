@@ -25,7 +25,7 @@
       <notifyBackToNormal>true</notifyBackToNormal>
       <notifyRepeatedFailure>true</notifyRepeatedFailure>
       <includeTestSummary>false</includeTestSummary>
-      <showCommitList>false</showCommitList>
+      <showCommitList>true</showCommitList>
       <includeCustomMessage>false</includeCustomMessage>
       <customMessage></customMessage>
     </jenkins.plugins.slack.SlackNotifier_-SlackJobProperty>
@@ -75,14 +75,12 @@
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <hudson.tasks.ArtifactArchiver>
-      <artifacts>va-hakija/target/uberjar/*.jar,va-virkailija/target/uberjar/*.jar</artifacts>
-      <allowEmptyArchive>false</allowEmptyArchive>
-      <onlyIfSuccessful>true</onlyIfSuccessful>
-      <fingerprint>false</fingerprint>
-      <defaultExcludes>true</defaultExcludes>
-      <caseSensitive>true</caseSensitive>
-    </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.junit.JUnitResultArchiver plugin="junit@1.26.1">
+      <testResults>**/junit*.xml</testResults>
+      <keepLongStdio>false</keepLongStdio>
+      <healthScaleFactor>1.0</healthScaleFactor>
+      <allowEmptyResults>false</allowEmptyResults>
+    </hudson.tasks.junit.JUnitResultArchiver>
     <hudson.plugins.git.GitPublisher plugin="git@3.8.0">
       <configVersion>2</configVersion>
       <pushMerge>false</pushMerge>
