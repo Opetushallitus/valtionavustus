@@ -114,13 +114,13 @@
     {:hakemus hakemus :submission submission}))
 
 (defn get-normalized-hakemus [user-key]
-  (log/info (str "Get normalized hakemus with id: " user-key))
+  (log/info (str "Get normalized hakemus with user-key: " user-key))
   (let [hakemukset (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
                  (jdbc/query
                    connection
-                   ["SELECT * from virkailija.hakemus WHERE user_key = ?" user-key]
+                   ["SELECT * from virkailija.normalized_hakemus WHERE hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)" user-key]
                   {:identifiers #(.replace % \_ \-)}))]
-    (log/info (str "Succesfully fetched hakemus with id: " user-key))
+    (log/info (str "Succesfully fetched hakemus with user-key: " user-key))
     (first hakemukset)))
 
 (defn get-muutoshakemus [user-key]
@@ -160,8 +160,8 @@
          contact-phone (:phone contact-person-details)
          contact-email (:email contact-person-details)]
     (jdbc/execute! connection
-     ["UPDATE virkailija.hakemus SET
-      contact_person = ?, contact_email = ?, contact_phone = ? WHERE user_key = ?"
+     ["UPDATE virkailija.normalized_hakemus SET
+      contact_person = ?, contact_email = ?, contact_phone = ? WHERE hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)"
       contact-person, contact-email, contact-phone, user-key]
      ))
     (log/info (str "Succesfully changed contact person details with user-key: " user-key)))

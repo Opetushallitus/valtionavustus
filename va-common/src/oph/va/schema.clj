@@ -164,7 +164,6 @@
    :hakemus-id Long
    :updated-at s/Inst
    :created-at s/Inst
-   :user-key s/Str
    :project-name s/Str
    :contact-person s/Str
    :contact-email s/Str
