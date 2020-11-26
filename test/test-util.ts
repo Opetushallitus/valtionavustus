@@ -672,7 +672,7 @@ export async function fillAndSendMuutoshakemus(page: Page, avustushakuID: number
     const calendarDateSelector = `[title="${jatkoaika.format('LL')}"]`
     const calendarButtonSelector = `div[class="paattymispaiva"] button`
     await clickElement(page, '#checkbox-jatkoaika')
-    await clearAndType(page, '#perustelut-jatkoaika', jatkoaikaPerustelu)
+    await clearAndType(page, '#perustelut-jatkoaika', jatkoaikaPerustelu || '')
     await clickElement(page, calendarButtonSelector)
     await waitForCalendarOpeningAnimationToComplete()
     await clickElement(page, calendarDateSelector)
