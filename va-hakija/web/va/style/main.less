@@ -203,26 +203,21 @@ div.notification-container {
     height: 45px;
     width: 142px;
 
-    visibility: hidden;
-    opacity: 0;
-    transition: visibility 0.5s, opacity 0.5s linear;
-
-    &.animate {
-      visibility: visible;
-      opacity: 1;
-      animation: autoHide 0s linear 5s forwards;
+    visibility: visible;
+    opacity: 1;
+    &.auto-hide {
+      visibility: hidden;
+      opacity: 0;
+      transition:
+        opacity 1s linear 5s,
+        visibility 1s linear 5s;
     }
+
     &.success {
       color: @mantis-green;
     }
     &.error {
       color: @bright-red;
-    }
-    @keyframes autoHide {
-      to {
-        visibility: hidden;
-        opacity: 0;
-      }
     }
   }
 }

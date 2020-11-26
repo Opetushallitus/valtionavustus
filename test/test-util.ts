@@ -680,7 +680,7 @@ export async function fillAndSendMuutoshakemus(page: Page, avustushakuID: number
     await clickElement(page, '#send-muutospyynto-button')
   }
 
-  const successNotificationSelector = 'div[class="animate success"]'
+  const successNotificationSelector = 'div[class="auto-hide success"]'
   const notification = await textContent(page, successNotificationSelector)
   expect(notification).toBe('Muutokset tallennettu')
 }

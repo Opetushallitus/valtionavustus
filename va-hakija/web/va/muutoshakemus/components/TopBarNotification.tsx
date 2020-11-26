@@ -22,8 +22,8 @@ export function TopBarNotification() {
   }
 
   function getClassNames(): string {
-    if (lastSaveWasAnError()) return 'animate error'
-    if (lastSaveSucceeded()) return 'animate success'
+    if (lastSaveWasAnError()) return 'auto-hide error'
+    if (lastSaveSucceeded()) return 'auto-hide success'
     return ''
   }
 
