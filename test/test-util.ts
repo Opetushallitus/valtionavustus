@@ -5,6 +5,7 @@ import axios from "axios"
 import { launch, Browser, Page } from "puppeteer"
 import * as assert from "assert"
 import * as fs from "fs"
+import { Moment } from "moment"
 const {randomBytes} = require("crypto")
 
 const HAKIJA_HOSTNAME = process.env.HAKIJA_HOSTNAME || 'localhost'
@@ -647,6 +648,41 @@ export async function clickCodeVisibilityButton(page: Page, code: number, visibi
   const selector = `tr[data-test-id='${code}'] [data-test-id=${buttonId}]`
   const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
   await element.click()
+}
+
+export interface MuutoshakemusValues {
+  jatkoaika?: Moment,
+  jatkoaikaPerustelu?: string
+}
+
+export async function fillAndSendMuutoshakemus(page: Page, avustushakuID: number, hakemusID: string, muutoshakemus: MuutoshakemusValues) {
+  async function selectedDateHasBeenStoredToState(jatkoaika: Moment) {
+    const selectedDateInStateSelector = `[class=paattymispaiva][data-test-value="${jatkoaika.format('DD.MM.YYYY')}"]`
+    await page.waitForSelector(selectedDateInStateSelector, {visible: true, timeout: 5 * 1000})
+  }
+
+  async function waitForCalendarOpeningAnimationToComplete() {
+    const calendarOpenedSelector = `[class*="rw-popup-container"]:not([class*="rw-popup-transition-entering"]`
+    await page.waitForSelector(calendarOpenedSelector, {visible: true, timeout: 5 * 1000})
+  }
+
+  const { jatkoaika, jatkoaikaPerustelu } = muutoshakemus
+  await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+  if (jatkoaika) {
+    const calendarDateSelector = `[title="${jatkoaika.format('LL')}"]`
+    const calendarButtonSelector = `div[class="paattymispaiva"] button`
+    await clickElement(page, '#checkbox-jatkoaika')
+    await clearAndType(page, '#perustelut-jatkoaika', jatkoaikaPerustelu)
+    await clickElement(page, calendarButtonSelector)
+    await waitForCalendarOpeningAnimationToComplete()
+    await clickElement(page, calendarDateSelector)
+    await selectedDateHasBeenStoredToState(jatkoaika)
+    await clickElement(page, '#send-muutospyynto-button')
+  }
+
+  const successNotificationSelector = 'div[class="animate success"]'
+  const notification = await textContent(page, successNotificationSelector)
+  expect(notification).toBe('Muutokset tallennettu')
 }
 
 interface Answers {

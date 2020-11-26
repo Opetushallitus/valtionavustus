@@ -1,0 +1,20 @@
+import React from 'react'
+import moment from 'moment'
+
+import './MuutoshakemusTabs.less'
+
+export const MuutoshakemusTabs = ({ muutoshakemukset, activeMuutoshakemus, setActiveMuutoshakemus }) => {
+  return (
+    <div className='muutoshakemus-tabs'>
+      {muutoshakemukset.map(m => (
+        <button
+          className={`muutoshakemus-tabs__tab ${m.id === activeMuutoshakemus.id ? 'active' : ''}`}
+          onClick={() => setActiveMuutoshakemus(m)}
+          data-test-id={`muutoshakemus-tab-${m.id}`}
+        >
+          Muutoshakemus {moment(m['created-at']).format('D.M.YYYY')}
+        </button>
+      ))}
+    </div>
+  )
+}

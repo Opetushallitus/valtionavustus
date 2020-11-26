@@ -1,4 +1,6 @@
 import { Page, Browser } from "puppeteer"
+import * as moment from 'moment'
+
 import {
   VIRKAILIJA_URL,
   HAKIJA_URL,
@@ -51,12 +53,9 @@ import {
   clickFormSaveAndWait,
   addFieldToFormAndReturnElementIdAndLabel,
   navigateToHakemus,
-  navigateToHakijaMuutoshakemusPage,
-  getUserKey,
-  getStoredMuutoshakemus
+  fillAndSendMuutoshakemus,
+  MuutoshakemusValues
 } from "./test-util"
-
-const moment = require('moment')
 
 jest.setTimeout(100_000)
 describe("Puppeteer tests", () => {
@@ -653,63 +652,35 @@ describe("Puppeteer tests", () => {
       })
     })
 
-    describe('Jatkoajan haku', () => {
-
-      it('Hakija can apply for jatkoaika', async () => {
-
-        const selectDate = moment(new Date())
-          .add(2, 'months')
-          .add(1, 'days')
-          .locale('fi')
-
-        const calendarDateSelector = `[title="${selectDate.format('LL')}"]`
-        const calendarButtonSelector = `div[class="paattymispaiva"] button`
-
-        async function selectedDateHasBeenStoredToState() {
-          const selectedDateInStateSelector = `[class=paattymispaiva][data-test-value="${selectDate.format('DD.MM.YYYY')}"]`
-          await page.waitForSelector(selectedDateInStateSelector, {visible: true, timeout: 5 * 1000})
-        }
-
-        async function waitForCalendarOpeningAnimationToComplete() {
-          const calendarOpenedSelector = `[class*="rw-popup-container"]:not([class*="rw-popup-transition-entering"]`
-          await page.waitForSelector(calendarOpenedSelector, {visible: true, timeout: 5 * 1000})
-        }
-
-        const perustelu = 'Ei kyl millään ehdi deadlineen mennessä ku mun koira söi ne tutkimustulokset'
-        const haettuPaattymispaiva = selectDate.format('YYYY-MM-DD')
-
+    describe('Virkailija', () => {
+      it('can see values a new muutoshakemus', async () => {
         const { avustushakuID, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
-        await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
-        await clickElement(page, '#checkbox-jatkoaika')
-        await clearAndType(page, '#perustelut-jatkoaika', perustelu)
-        await clickElement(page, calendarButtonSelector)
-        await waitForCalendarOpeningAnimationToComplete()
-        await clickElement(page, calendarDateSelector)
-        await selectedDateHasBeenStoredToState()
-        await clickElement(page, '#send-muutospyynto-button')
-
-        const successNotificationSelector = 'div[class="animate success"]'
-        const notification = await textContent(page, successNotificationSelector)
-        expect(notification).toBe('Muutokset tallennettu')
+        const muutoshakemus: MuutoshakemusValues = {
+          jatkoaika: moment(new Date())
+            .add(2, 'months')
+            .add(1, 'days')
+            .locale('fi'),
+          jatkoaikaPerustelu: 'Ei kyl millään ehdi deadlineen mennessä ku mun koira söi ne tutkimustulokset'
+        }
+        await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus)
 
         await navigate(page, `/avustushaku/${avustushakuID}/`)
         await Promise.all([
           page.waitForNavigation(),
-          clickElementWithText(page, "td", "Akaan kaupunki"),
+          clickElementWithText(page, 'td', 'Akaan kaupunki'),
         ])
 
-
-        await page.waitForFunction(() => (document.querySelector("[data-test-id=number-of-pending-muutoshakemukset]") as HTMLInputElement).innerText === "1")
+        await page.waitForFunction(() => (document.querySelector('[data-test-id=number-of-pending-muutoshakemukset]') as HTMLInputElement).innerText === '1')
         const numOfMuutosHakemuksetElement = await page.waitForSelector('[data-test-id=number-of-pending-muutoshakemukset]', { visible: true })
         const color = await page.evaluate(e => getComputedStyle(e).color, numOfMuutosHakemuksetElement)
-
-        const userKey = (await getUserKey(avustushakuID, hakemusID))[0]
-        const storedMuutos = await getStoredMuutoshakemus(userKey)
-
         expect(color).toBe('rgb(255, 0, 0)') // red
-        expect(storedMuutos["haen-kayttoajan-pidennysta"]).toBe(true)
-        expect(storedMuutos["kayttoajan-pidennys-perustelut"]).toBe(perustelu)
-        expect(storedMuutos["haettu-kayttoajan-paattymispaiva"]).toBe(haettuPaattymispaiva)
+
+        await clickElement(page, 'span.muutoshakemus-tab')
+        await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
+        const jatkoaika = await page.$eval('[data-test-id=muutoshakemus-jatkoaika]', el => el.textContent)
+        expect(jatkoaika).toEqual(muutoshakemus.jatkoaika?.format('DD.MM.YYYY'))
+        const jatkoaikaPerustelu = await page.$eval('[data-test-id=muutoshakemus-jatkoaika-perustelu]', el => el.textContent)
+        expect(jatkoaikaPerustelu).toEqual(muutoshakemus.jatkoaikaPerustelu)
       }, 150 * 1000)
     })
 

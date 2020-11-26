@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 
 import HakemusPreview from './HakemusPreview.jsx'
 import HakemusArviointi from './HakemusArviointi.jsx'
+import { Muutoshakemus } from './Muutoshakemus.jsx'
 import Selvitys from './Selvitys.jsx'
 import Seuranta from './Seuranta.jsx'
 
@@ -86,7 +87,7 @@ export default class HakemusDetails extends Component {
           if (!muutoshakemukset || muutoshakemukset.length === 0)
             return <h2>Hankkeella ei ole muutoshakemuksia</h2>
           else
-            return <div/>
+            return <Muutoshakemus muutoshakemukset={muutoshakemukset} hakemus={hakemus} />
         case 'seuranta':
           return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selectedHakemusAccessControl={selectedHakemusAccessControl} helpTexts={helpTexts}/>
         default:
