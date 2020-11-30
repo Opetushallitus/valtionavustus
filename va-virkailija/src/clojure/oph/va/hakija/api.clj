@@ -182,6 +182,7 @@
    :selvitys-email (:selvitys_email hakemus)
    :status-loppuselvitys (:status_loppuselvitys hakemus)
    :status-valiselvitys (:status_valiselvitys hakemus)
+   :status-muutoshakemus (:status_muutoshakemus hakemus)
    :answers (:answer_values hakemus)
    :refused (get hakemus :refused false)
    :refused-comment (:refused_comment hakemus)

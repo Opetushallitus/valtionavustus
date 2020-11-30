@@ -27,3 +27,4 @@ servers/site.retry
 .#*
 secret-dev.edn
 dist
+.rebel_readline_history

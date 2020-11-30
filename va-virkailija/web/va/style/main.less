@@ -15,7 +15,8 @@ table.hakemus-list {
     width: 456px;
     max-width: 456px;
   }
-  .organization-column, .project-name-column {
+  .organization-column,
+  .project-name-column {
     #va-virkailija .overflow-ellipsis();
     input.text-filter {
       width: 240px;
@@ -42,6 +43,17 @@ table.hakemus-list {
   .status-column {
     width: 110px;
   }
+  .muutoshakemus-column {
+    width: 110px;
+  }
+  .muutoshakemus-values {
+    text-align: center;
+    width: 110px;
+
+    &.new {
+      color: @mantis-green;
+    }
+  }
   .selvitys-column {
     width: 120px;
   }
@@ -51,7 +63,7 @@ table.hakemus-list {
     width: 30px;
     text-align: center;
     cursor: pointer;
- }
+  }
 
   .post-submit-notification-column {
     text-align: center;
@@ -69,11 +81,12 @@ table.hakemus-list {
     text-align: center;
     cursor: pointer;
   }
-  .applied-sum-column, .granted-sum-column {
+  .applied-sum-column,
+  .granted-sum-column {
     width: 120px;
     text-align: right;
     .money:after {
-      content: " €"
+      content: " €";
     }
   }
   &.hakemus-list--resolved .project-name-column {
@@ -112,7 +125,6 @@ table.hakemus-list {
   }
 }
 
-
 #footer {
   position: absolute;
   bottom: 2px;
@@ -131,7 +143,7 @@ table.hakemus-list {
 #list-heading {
   position: relative;
 
-  .rw-dropdownlist{
+  .rw-dropdownlist {
     color: @light-blue;
   }
 
@@ -142,13 +154,13 @@ table.hakemus-list {
     font-size: 14px;
   }
 
-  .hakemus-filter-container{
+  .hakemus-filter-container {
     position: relative;
     display: block;
     width: 275px;
     margin-right: 20px;
     float: left;
-    .hakemus-filter-remove{
+    .hakemus-filter-remove {
       color: @light-blue;
       margin-left: 10px;
       cursor: pointer;
@@ -178,7 +190,11 @@ table.hakemus-list {
     }
 
     .answer-old-value {
-      .soresu-value, .soresu-money, .soresu-attachment-display, .soresu-attachment-missing, .va-trainee-day-calculator {
+      .soresu-value,
+      .soresu-money,
+      .soresu-attachment-display,
+      .soresu-attachment-missing,
+      .va-trainee-day-calculator {
         background-color: #f4cecd;
         text-decoration: line-through;
       }
@@ -194,7 +210,11 @@ table.hakemus-list {
       .soresu-key {
         display: none;
       }
-      .soresu-value, .soresu-money, .soresu-attachment-display, .soresu-attachment-missing, .va-trainee-day-calculator {
+      .soresu-value,
+      .soresu-money,
+      .soresu-attachment-display,
+      .soresu-attachment-missing,
+      .va-trainee-day-calculator {
         background-color: #d6f2b5;
       }
       .soresu-attachment-block {
@@ -222,24 +242,24 @@ table.hakemus-list {
       margin: 20px 0 0 0;
     }
 
-    .hakemus-arviointi-section{
+    .hakemus-arviointi-section {
       margin-top: 20px;
       color: @dark-gray;
-      a[disabled]{
-        color:@dark-gray;
+      a[disabled] {
+        color: @dark-gray;
         cursor: default;
       }
       button {
         margin: 4px 4px 4px 0;
         padding: 4px 8px;
       }
-      input{
+      input {
         margin: 4px 4px 4px 0;
         padding: 5px;
       }
     }
 
-    .input-number-sm{
+    .input-number-sm {
       width: 60px;
       padding: 3px;
     }
@@ -344,12 +364,12 @@ table.hakemus-list {
         margin-top: -5px;
         color: @dark-gray;
       }
-      p{
+      p {
         margin-top: 5px;
         margin-bottom: 5px;
         line-height: 1.1;
       }
-      p:first-of-type{
+      p:first-of-type {
         display: inline-block;
       }
     }
@@ -403,7 +423,8 @@ table.hakemus-list {
       }
     }
 
-    textarea, input {
+    textarea,
+    input {
       &:disabled {
         color: @dark-gray;
         border-style: dotted;
@@ -414,7 +435,8 @@ table.hakemus-list {
       margin-bottom: 10px;
       margin-top: 10px;
 
-      &__header, &__value {
+      &__header,
+      &__value {
         text-align: left;
         vertical-align: top;
       }
@@ -435,7 +457,8 @@ table.hakemus-list {
         position: relative;
       }
 
-      .selvitys-email-header__value-input-container + .selvitys-email-header__value-input-container {
+      .selvitys-email-header__value-input-container
+        + .selvitys-email-header__value-input-container {
         margin-top: 4px;
       }
 

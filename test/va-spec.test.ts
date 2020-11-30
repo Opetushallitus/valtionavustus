@@ -653,7 +653,7 @@ describe("Puppeteer tests", () => {
     })
 
     describe('Virkailija', () => {
-      it('can see values a new muutoshakemus', async () => {
+      it('can see values of a new muutoshakemus', async () => {
         const { avustushakuID, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
         const muutoshakemus: MuutoshakemusValues = {
           jatkoaika: moment(new Date())
@@ -665,10 +665,11 @@ describe("Puppeteer tests", () => {
         await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus)
 
         await navigate(page, `/avustushaku/${avustushakuID}/`)
-        await Promise.all([
-          page.waitForNavigation(),
-          clickElementWithText(page, 'td', 'Akaan kaupunki'),
-        ])
+        const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`
+        await page.waitForSelector(muutoshakemusStatusField)
+        const muutoshakemusStatus = await page.$eval(muutoshakemusStatusField, el => el.textContent)
+        expect(muutoshakemusStatus).toEqual('☆ Uusi')
+        await page.click(muutoshakemusStatusField)
 
         await page.waitForFunction(() => (document.querySelector('[data-test-id=number-of-pending-muutoshakemukset]') as HTMLInputElement).innerText === '1')
         const numOfMuutosHakemuksetElement = await page.waitForSelector('[data-test-id=number-of-pending-muutoshakemukset]', { visible: true })

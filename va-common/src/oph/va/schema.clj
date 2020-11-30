@@ -170,6 +170,10 @@
    :contact-phone s/Str
    })
 
+(s/defschema MuutoshakemusStatus
+  "Muutoshakemus status"
+  (s/enum "new" "accepted" "refused"))
+
 (s/defschema Muutoshakemus
   "Muutoshakemus for a specific hakemus"
   {
@@ -178,6 +182,7 @@
     :haen-kayttoajan-pidennysta s/Bool
     :kayttoajan-pidennys-perustelut (s/maybe s/Str)
     :haettu-kayttoajan-paattymispaiva (s/maybe java.time.LocalDate)
+    :status MuutoshakemusStatus
     :created-at s/Inst
     })
 

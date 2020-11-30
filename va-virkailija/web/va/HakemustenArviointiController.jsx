@@ -16,7 +16,7 @@ import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
 
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses'
-import HakemusSelvitysStatuses from './hakemus-details/HakemusSelvitysStatuses'
+import { HakemusSelvitysStatuses, MuutoshakemusStatuses } from './hakemus-details/hakemus-statuses'
 import RahoitusalueSelections from './hakemus-details/RahoitusalueSelections'
 
 const dispatcher = new Dispatcher()
@@ -86,6 +86,7 @@ export default class HakemustenArviointiController {
         status: HakemusArviointiStatuses.allStatuses(),
         status_valiselvitys: HakemusSelvitysStatuses.allStatuses(),
         status_loppuselvitys: HakemusSelvitysStatuses.allStatuses(),
+        status_muutoshakemus: MuutoshakemusStatuses.allStatuses(),
         organization: "",
         roleIsOpen:false,
         evaluator:evaluator,

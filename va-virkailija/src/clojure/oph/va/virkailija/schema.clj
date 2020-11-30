@@ -140,6 +140,7 @@
                       :user-key s/Str
                       :status-loppuselvitys (s/maybe s/Str)
                       :status-valiselvitys (s/maybe s/Str)
+                      :status-muutoshakemus (s/maybe s/Str)
                       :selvitys-email (s/maybe s/Str)
                       :answers [Answer]
                       (s/optional-key :submitted-version) (s/maybe s/Int)

@@ -131,6 +131,7 @@
                                               ["SELECT
                                                 id,
                                                 hakemus_id,
+                                                status,
                                                 haen_kayttoajan_pidennysta,
                                                 kayttoajan_pidennys_perustelut,
                                                 created_at,
