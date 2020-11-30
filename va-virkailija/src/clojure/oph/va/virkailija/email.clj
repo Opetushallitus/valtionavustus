@@ -102,14 +102,6 @@
 
                            (partial render (get-in mail-templates [:paatos lang])))))
 
-(defn store-email [ hakemus-id user-key formatted]
-(log/info (str "Storing email for hakemus with user-key " user-key))
-  (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
-        (jdbc/execute!
-               connection
-                    ["INSERT INTO emails (hakemus_id, user_key, formatted) VALUES (?, ?, ?)" hakemus-id, user-key, formatted]))
-  (log/info (str "Succesfully stored email for hakemus with user-key: " user-key)))
-
 (defn get-answers [form-submission-id form-submission-version]
   (log/info (str "Get answers for form submission: " form-submission-id " with version: " form-submission-version))
   (let [answers (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
@@ -175,7 +167,7 @@
     (log/info "Sending decision email with refuse link")
     (log/info "Urls would be: " url "\n" paatos-refuse-url)
     (email/try-send-msg-once msg format-plaintext-message)
-    (store-email (:id hakemus) (:user_key hakemus) (format-plaintext-message msg))
+    (email/store-email (:id hakemus) (format-plaintext-message msg) (get-datasource :virkailija-db))
     ))
 
 (defn send-selvitys! [to hakemus mail-subject mail-message]

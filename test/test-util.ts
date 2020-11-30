@@ -22,9 +22,9 @@ const hakulomakeJson = fs.readFileSync(path.join(__dirname, 'prod.hakulomake.jso
 
 interface Email {
   id: number
-  "user-key": string
   "hakemus-id": number
-  timestamp: Date
+  "created-at": Date
+  "updated-at": Date
   formatted: string
 }
 
@@ -40,9 +40,9 @@ interface Muutoshakemus {
 
 const emailSchema = yup.array().of(yup.object().shape<Email>({
   "id": yup.number().required(),
-  "user-key": yup.string().required(),
   "hakemus-id": yup.number().required(),
-  "timestamp": yup.date().required(),
+  "created-at": yup.date().required(),
+  "updated-at": yup.date().required(),
   "formatted": yup.string().required()
 }).required()).required()
 

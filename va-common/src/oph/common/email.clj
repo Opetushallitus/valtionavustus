@@ -1,6 +1,7 @@
 (ns oph.common.email
   (:require [clojure.core.async :refer [<! >!! go chan]]
             [clojure.tools.trace :refer [trace]]
+            [clojure.java.jdbc :as jdbc]
             [clojure.tools.logging :as log]
             [clojure.string :as string]
             [clojure.java.io :as io]
@@ -51,6 +52,14 @@
   (if (:attachment msg)
     (MultiPartEmail.)
     (SimpleEmail.)))
+
+(defn store-email [ hakemus-id formatted data-source]
+(log/info (str "Storing email for hakemus with id: " hakemus-id))
+  (jdbc/with-db-transaction [connection {:datasource data-source }]
+        (jdbc/execute!
+               connection
+                    ["INSERT INTO virkailija.emails (hakemus_id, formatted) VALUES (?, ?)" hakemus-id, formatted]))
+  (log/info (str "Succesfully stored email for hakemus with id: " hakemus-id)))
 
 (defn create-mail-send-fn [msg format-plaintext-message]
     (let [from            (common-string/trim-ws (:from msg))

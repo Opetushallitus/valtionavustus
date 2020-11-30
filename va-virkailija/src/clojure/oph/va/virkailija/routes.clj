@@ -227,7 +227,7 @@
   (let [emails (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
                  (jdbc/query
                    connection
-                   ["SELECT * from emails WHERE hakemus_id = ?" hakemus-id]
+                   ["SELECT * from virkailija.emails WHERE hakemus_id = ?" hakemus-id]
                    {:identifiers #(.replace % \_ \-)}))]
     (log/info (str "Succesfully fetched email for hakemus with hakemus-id: " hakemus-id))
     emails))
@@ -242,7 +242,7 @@
       (not-found)
       )))
 
-(defn- get-avustushaku-email []
+(defn- get-hakemus-email []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/email" request
                      :path-params [avustushaku-id :- Long hakemus-id :- Long]
                      :return virkailija-schema/DbEmails
@@ -590,7 +590,7 @@
                          (put-avustushaku)
                          (post-avustushaku)
                          (get-avustushaku)
-                         (when (get-in config [:email-api :enabled?]) (get-avustushaku-email))
+                         (when (get-in config [:email-api :enabled?]) (get-hakemus-email))
                          (get-selvitys)
                          (send-selvitys)
                          (send-selvitys-email)
