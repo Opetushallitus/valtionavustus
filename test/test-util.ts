@@ -6,6 +6,7 @@ import { launch, Browser, Page } from "puppeteer"
 import * as assert from "assert"
 import * as fs from "fs"
 import { Moment } from "moment"
+import * as querystring from "querystring"
 const {randomBytes} = require("crypto")
 
 const HAKIJA_HOSTNAME = process.env.HAKIJA_HOSTNAME || 'localhost'
@@ -46,11 +47,9 @@ const emailSchema = yup.array().of(yup.object().shape<Email>({
   "formatted": yup.string().required()
 }).required()).required()
 
-export async function navigateToHakijaMuutoshakemusPage(page: Page, avustushakuID: number, hakemusID: string) {
-  const emails = await getEmails(avustushakuID, hakemusID)
-  const linkToMuutoshaku = emails[0].formatted.match(/https?:\/\/.*\/muutoshaku.*/)?.[0]
-  expectToBeDefined(linkToMuutoshaku)
-  await page.goto(linkToMuutoshaku, { waitUntil: "networkidle0" })
+export async function navigateToHakijaMuutoshakemusPage(page: Page, avustushakuID: number, hakemusID: number) {
+  const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
+  await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
 }
 
 export async function getElementInnerText(page: Page, selector: string) {
@@ -67,13 +66,40 @@ export async function hasElementAttribute(page: Page, selector: string, attribut
           (document.querySelector(s) && document.querySelector(s) as HTMLElement)?.hasAttribute(a), selector, attribute)
 }
 
-export const getEmails = (avustushakuID: number, hakemusID: string) =>
+export const getEmails = (avustushakuID: number, hakemusID: number) =>
   axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email`)
     .then(r => emailSchema.validate(r.data))
 
-export async function getUserKey(avustushakuID: number, hakemusID: string): Promise<string[]> {
-  const response = await axios.get<Email[]>(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email`)
-  return response.data.map(h => h['user-key'])
+export const getValmistelijaEmails = (avustushakuID: number, hakemusID: number) =>
+  getEmails(avustushakuID, hakemusID)
+  .then(emails => emails.filter(email => !email.formatted.match(/https?:\/\/.*\/muutoshaku.*/)))
+
+export const getMuutoshakemusEmails = (avustushakuID: number, hakemusID: number) =>
+  getEmails(avustushakuID, hakemusID)
+  .then(emails => emails.filter(email => email.formatted.match(/https?:\/\/.*\/muutoshaku.*/)))
+
+export async function getLinkToMuutoshakemusFromSentEmails(avustushakuID: number, hakemusID: number) {
+  const emails = await getMuutoshakemusEmails(avustushakuID, hakemusID)
+
+  const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshaku.*/
+  const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
+  expectToBeDefined(linkToMuutoshakemus)
+  return linkToMuutoshakemus
+}
+
+export async function getLinkToHakemusFromSentEmails(avustushakuID: number, hakemusID: number) {
+  const emails = await getValmistelijaEmails(avustushakuID, hakemusID)
+
+  const linkToHakemusRegex = /https?:\/\/.*\/avustushaku.*/
+  const linkToHakemus = emails[0]?.formatted.match(linkToHakemusRegex)?.[0]
+  expectToBeDefined(linkToHakemus)
+  return linkToHakemus
+}
+
+export async function getUserKey(avustushakuID: number, hakemusID: number): Promise<string> {
+  const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
+  const userKey = querystring.parse(linkToMuutoshakemus)['user-key'] as string
+  return userKey
 }
 
 export async function getStoredMuutoshakemus(userKey: string): Promise<Muutoshakemus> {
@@ -323,7 +349,7 @@ export async function textContent(page: Page, selector: string) {
   return await page.evaluate(_ => _.textContent, element)
 }
 
-export async function selectValmistelijaForHakemus(page: Page, avustushakuID: number, hakemusID: string, valmistelijaName: string) {
+export async function selectValmistelijaForHakemus(page: Page, avustushakuID: number, hakemusID: number, valmistelijaName: string) {
   await navigate(page, `/avustushaku/${avustushakuID}/`)
   await clickElement(page, `#hakemus-${hakemusID} .btn-role`)
 
@@ -655,7 +681,7 @@ export interface MuutoshakemusValues {
   jatkoaikaPerustelu?: string
 }
 
-export async function fillAndSendMuutoshakemus(page: Page, avustushakuID: number, hakemusID: string, muutoshakemus: MuutoshakemusValues) {
+export async function fillAndSendMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, muutoshakemus: MuutoshakemusValues) {
   async function selectedDateHasBeenStoredToState(jatkoaika: Moment) {
     const selectedDateInStateSelector = `[class=paattymispaiva][data-test-value="${jatkoaika.format('DD.MM.YYYY')}"]`
     await page.waitForSelector(selectedDateInStateSelector, {visible: true, timeout: 5 * 1000})
@@ -721,7 +747,10 @@ async function acceptAvustushaku(page: Page, avustushakuID: number) {
     clickElementWithText(page, "td", "Akaan kaupunki"),
   ])
 
-  const hakemusID = await page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1])
+  const hakemusID = await page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1]).then(possibleHakemusID => { 
+    expectToBeDefined(possibleHakemusID) 
+    return parseInt(possibleHakemusID)
+  })
 
   expectToBeDefined(hakemusID)
   console.log("Hakemus ID:", hakemusID)
@@ -729,7 +758,7 @@ async function acceptAvustushaku(page: Page, avustushakuID: number) {
   await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
   await clearAndType(page, "#budget-edit-project-budget .amount-column input", "100000")
   await clickElement(page, "#arviointi-tab label[for='set-arvio-status-accepted']")
-  await waitForArvioSave(page, avustushakuID, parseInt(hakemusID))
+  await waitForArvioSave(page, avustushakuID, hakemusID)
 
   await resolveAvustushaku(page, avustushakuID)
 

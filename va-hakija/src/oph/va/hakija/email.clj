@@ -1,6 +1,7 @@
 (ns oph.va.hakija.email
   (:require [clojure.core.async :refer [<! >!! go chan]]
             [oph.common.datetime :as datetime]
+            [oph.soresu.common.db :refer [exec get-datasource]]
             [oph.common.email :as email]
             [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
@@ -15,6 +16,7 @@
    :hakemus-submitted-after-change-request {:fi "Automaattinen viesti: organisaationne avustushakemusta on täydennetty"
                                             :sv "Automatiskt meddelande: er ansökan om understöd har kompletterats"}
    :hakemus-change-request-responded {:fi "Automaattinen viesti: avustushakemusta on täydennetty"}
+   :notify-valmistelija-of-new-muutoshakemus {:fi "Automaattinen viesti: saapunut muutoshakemus"}
    :application-refused-presenter
    {:fi "Automaattinen viesti: Avustuksen saajan ilmoitus"}
    :application-refused {:fi "Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty"
@@ -28,6 +30,7 @@
    :hakemus-submitted {:fi (email/load-template "email-templates/hakemus-submitted.plain.fi")
                        :sv (email/load-template "email-templates/hakemus-submitted.plain.sv")}
    :hakemus-change-request-responded {:fi (email/load-template "email-templates/hakemus-change-request-responded.plain.fi")}
+   :notify-valmistelija-of-new-muutoshakemus {:fi (email/load-template "email-templates/notify-valmistelija-of-new-muutoshakemus.plain.fi")}
    :application-refused-presenter
    {:fi (email/load-template
          "email-templates/application-refused-presenter.plain.fi")}
@@ -132,6 +135,25 @@
 (defn send-applicant-edit-message-to-presenter! [recipients lang application-id grant-name hakemus]
   (>!! email/mail-chan
        (generate-presenter-applicant-edit-email recipients lang application-id grant-name hakemus)))
+
+(defn notify-valmistelija-of-new-muutoshakemus [to avustushaku-id register-number hanke hakemus-id]
+  (let [lang :fi
+        url (email/generate-virkailija-url avustushaku-id hakemus-id)
+        msg {:operation :send
+                          :type :notify-valmistelija-of-new-muutoshakemus
+                          :lang lang
+                          :from (-> email/smtp-config :from lang)
+                          :sender (-> email/smtp-config :sender)
+                          :subject (get-in mail-titles [:notify-valmistelija-of-new-muutoshakemus lang])
+                          :to to
+                          :hanke hanke
+                          :register-number register-number
+                          :url url}
+        formatted-message (render (get-in mail-templates [:notify-valmistelija-of-new-muutoshakemus lang]) msg)]
+    (log/info "Notifying valmistelija of new muutoshakemus: " url)
+    (>!! email/mail-chan msg)
+    (email/store-email hakemus-id formatted-message (get-datasource :form-db))
+    ))
 
 (defn send-change-request-responded-message-to-virkailija! [to avustushaku-id avustushaku-name-fi hakemus-db-id]
   (let [lang :fi

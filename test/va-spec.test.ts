@@ -5,8 +5,10 @@ import {
   VIRKAILIJA_URL,
   HAKIJA_URL,
   createValidCopyOfEsimerkkihakuAndReturnTheNewId,
+  getLinkToHakemusFromSentEmails,
   mkBrowser,
   getFirstPage,
+  getUserKey,
   ratkaiseAvustushaku,
   getElementInnerText,
   ratkaiseMuutoshakemusEnabledAvustushaku,
@@ -19,6 +21,7 @@ import {
   clickElementWithTestId,
   assertCodeIsVisible,
   expectedResponseFromExternalAPIhakemuksetForAvustushaku,
+  getLinkToMuutoshakemusFromSentEmails,
   actualResponseFromExternalAPIhakemuksetForAvustushaku,
   createUniqueCode,
   closeAvustushakuByChangingEndDateToPast,
@@ -29,6 +32,7 @@ import {
   waitForArvioSave,
   fillAndSendHakemusAndReturnHakemusId,
   getEmails,
+  getValmistelijaEmails,
   randomString,
   expectToBeDefined,
   resolveAvustushaku,
@@ -105,16 +109,18 @@ describe("Puppeteer tests", () => {
       clickElementWithText(page, "td", "Akaan kaupunki"),
     ])
 
-    const hakemusID = await page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1])
+    const hakemusID = await page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1]).then( assumedHakemusID => {
+      expectToBeDefined(assumedHakemusID)
+      return parseInt(assumedHakemusID)
+    })
 
-    expectToBeDefined(hakemusID)
     console.log("Hakemus ID:", hakemusID)
 
     await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
     await clearAndType(page, "#budget-edit-project-budget .amount-column input", "100000")
     await Promise.all([
       clickElement(page, "#arviointi-tab label[for='set-arvio-status-accepted']"),
-      waitForArvioSave(page, avustushakuID, parseInt(hakemusID)),
+      waitForArvioSave(page, avustushakuID, hakemusID),
     ])
 
     await resolveAvustushaku(page, avustushakuID)
@@ -638,21 +644,24 @@ describe("Puppeteer tests", () => {
     it("Avustushaun ratkaisu should send an email with link to muutoshaku", async () => {
       const { avustushakuID, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
 
-      const emails = await getEmails(avustushakuID, hakemusID)
-      emails.forEach(email => {
-        expect(email.formatted).toContain(`${HAKIJA_URL}/muutoshaku?lang=fi&user-key=${email["user-key"]}&avustushaku-id=${avustushakuID}`)
-      })
+      const userKey = await getUserKey(avustushakuID, hakemusID)
+
+      const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
+      expect(linkToMuutoshakemus).toContain(`${HAKIJA_URL}/muutoshaku?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`)
     })
 
     it("Avustushaun ratkaisu should send an email without link to muutoshaku if storing normalized hakemus fields is not possible", async () => {
       const { avustushakuID, hakemusID } = await ratkaiseAvustushaku(page)
       const emails = await getEmails(avustushakuID, hakemusID)
+      const userKey = await getUserKey(avustushakuID, hakemusID)
       emails.forEach(email => {
-        expect(email.formatted).not.toContain(`${HAKIJA_URL}/muutoshaku?lang=fi&user-key=${email["user-key"]}&avustushaku-id=${avustushakuID}`)
+        expect(email.formatted).not.toContain(`${HAKIJA_URL}/muutoshaku?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`)
       })
     })
 
     describe('Virkailija', () => {
+      let avustushakuID: number | undefined
+      let hakemusID: number | undefined
       it('can see values of a new muutoshakemus', async () => {
         const { avustushakuID, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
         const muutoshakemus: MuutoshakemusValues = {
@@ -664,7 +673,6 @@ describe("Puppeteer tests", () => {
         }
         await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus)
 
-        await navigate(page, `/avustushaku/${avustushakuID}/`)
         const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`
         await page.waitForSelector(muutoshakemusStatusField)
         const muutoshakemusStatus = await page.$eval(muutoshakemusStatusField, el => el.textContent)
@@ -683,6 +691,20 @@ describe("Puppeteer tests", () => {
         const jatkoaikaPerustelu = await page.$eval('[data-test-id=muutoshakemus-jatkoaika-perustelu]', el => el.textContent)
         expect(jatkoaikaPerustelu).toEqual(muutoshakemus.jatkoaikaPerustelu)
       }, 150 * 1000)
+
+      it('valmistelija gets an email with link to hakemus', async () => {
+          expectToBeDefined(avustushakuID)
+          expectToBeDefined(hakemusID)
+
+          const emails = await getValmistelijaEmails(avustushakuID, hakemusID)
+
+          const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
+          expectToBeDefined(title)
+          expect(title).toEqual(`Hanke: ${answers.registerNumber} - ${answers.projectName}`)
+
+          const linkToHakemus = await getLinkToHakemusFromSentEmails(avustushakuID, hakemusID)
+          expect(linkToHakemus).toEqual(`${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+      })
     })
 
     describe("Changing contact person details", () => {
@@ -697,8 +719,7 @@ describe("Puppeteer tests", () => {
           const { avustushakuID: avustushakuId, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
           avustushakuID = avustushakuId
 
-          const emails = await getEmails(avustushakuID, hakemusID)
-          linkToMuutoshaku = emails[0].formatted.match(/https?:\/\/.*\/muutoshaku.*/)?.[0]
+          linkToMuutoshaku = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
 
           expectToBeDefined(linkToMuutoshaku)
           expectToBeDefined(avustushakuID)

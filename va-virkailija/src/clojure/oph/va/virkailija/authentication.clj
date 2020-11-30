@@ -75,7 +75,7 @@
     (log/warn "Login failed for CAS ticket " cas-ticket)))
 
 (def fake-admin-identity
-  {:email nil
+  {:email "santeri.horttanainen@reaktor.com"
    :first-name "_"
    :lang "fi"
    :person-oid "1.2.246.562.24.15653262222"

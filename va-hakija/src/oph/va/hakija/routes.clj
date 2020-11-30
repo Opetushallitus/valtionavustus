@@ -8,6 +8,7 @@
             [compojure.route :as compojure-route]
             [compojure.api.sweet :as compojure-api]
             [compojure.api.exception :as compojure-ex]
+            [oph.va.hakija.email :as va-email]
             [compojure.api.upload :as compojure-upload]
             [ring.swagger.json-schema-dirty]  ; for schema.core/conditional
             [schema.core :as s]
@@ -204,15 +205,28 @@
                      :summary "Get muutoshaku"
                      (ok (hakija-db/get-muutoshakemus user-key))))
 
+(defn presenting-officer-email [avustushaku-id]
+  (let [roles (hakija-db/get-avustushaku-roles avustushaku-id)
+        presenting-officers (filter (fn [x] (= (:role x) "presenting_officer")) roles)
+        presenting-officer-emails (map :email presenting-officers)
+        first-email (first presenting-officer-emails)] first-email))
+
 (defn- post-muutoshakemus []
   (compojure-api/POST "/:user-key" [ user-key :as request]
     :path-params [user-key :- s/Str]
     :return nil
     :body [muutoshakemus (compojure-api/describe MuutoshakemusRequest "Application change request")]
     :summary "Apply for changes to application"
+    (let [hakemus (hakija-db/get-hakemus user-key)
+          avustushaku-id (:avustushaku hakemus)
+          haku-id (:id hakemus)
+          register-number (:register_number (hakija-db/get-avustushaku avustushaku-id))
+          hanke (:project-name (hakija-db/get-normalized-hakemus user-key))
+          valmistelija-email (presenting-officer-email avustushaku-id)]
+    (log/info "Hanke: " hanke)
     (hakija-db/on-muutoshakemus user-key muutoshakemus)
-    (ok (hakija-db/get-normalized-hakemus user-key))))
-
+    (va-email/notify-valmistelija-of-new-muutoshakemus [valmistelija-email] avustushaku-id register-number hanke haku-id)
+    (ok (hakija-db/get-normalized-hakemus user-key)))))
 
 (defn- get-attachments []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
