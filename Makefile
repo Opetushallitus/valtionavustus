@@ -45,16 +45,9 @@ npm-clean-frontends: check-node
 	$(call npm_clean_frontend,va-virkailija)
 
 .PHONY: npm-build
-npm-build: npm-install-modules npm-build-frontends
-
-.PHONY: npm-install-modules
-npm-install-modules: check-node
+npm-build: check-node
 	npm install
-
-.PHONY: npm-build-frontends
-npm-build-frontends: check-node
-	npm run hakija:build-production
-	npm run virkailija:build-production
+	npm run build-production
 
 .PHONY: npm-test
 npm-test: check-node
@@ -146,9 +139,6 @@ Targets:
   npm-clean                     `npm-clean-modules`, `npm-clean-frontends`
   npm-clean-modules             Remove installed npm modules from $$NPM_PROJECTS.
   npm-clean-frontends           Remove frontend build products from va-hakija and va-virkailija.
-  npm-build                     `npm-install-modules`, `npm-build-frontends`
-  npm-install-modules           Install npm modules for $$NPM_PROJECTS.
-  npm-build-frontends           Build frontend sources for va-hakija and va-virkailija.
   npm-test                      Run npm unit tests for $$NPM_PROJECTS.
   npm-outdated-dependencies     Show outdated npm modules for $$NPM_PROJECTS.
   npm-audit                     Run npm audit for $$NPM_PROJECTS.

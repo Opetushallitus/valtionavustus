@@ -44,13 +44,10 @@ tmux select-pane -t 2
 tmux send-keys "$scriptdir/run_hakija_server.sh" C-m
 
 tmux splitw -v
-tmux send-keys "$scriptdir/run_hakija_frontend.sh" C-m
+tmux send-keys "$scriptdir/run_frontend.sh" C-m
 
 tmux select-pane -t 4
 tmux send-keys "$scriptdir/run_virkailija_server.sh" C-m
-
-tmux splitw -v
-tmux send-keys "$scriptdir/run_virkailija_frontend.sh" C-m
 
 tmux select-pane -t 0
 tmux attach-session -t $session

@@ -1,7 +1,8 @@
+const webpack = require("webpack")
 const path = require("path")
 const TerserPlugin = require('terser-webpack-plugin')
 
-const makeConfig = (webpack, basedir) => {
+const makeConfig = basedir => {
   return {
     mode: process.env.NODE_ENV || 'development',
     output: {
@@ -84,4 +85,34 @@ const makeConfig = (webpack, basedir) => {
   }
 }
 
-module.exports = makeConfig
+const virkailijaConfig = Object.assign(
+  {},
+  makeConfig(path.resolve(__dirname, "va-virkailija")),
+  {
+    entry: {
+      app: path.resolve(__dirname, "va-virkailija/web/va/HakemustenArviointiApp.jsx"),
+      adminApp: path.resolve(__dirname, "va-virkailija/web/va/HakujenHallintaApp.jsx"),
+      summaryApp: path.resolve(__dirname, "va-virkailija/web/va/YhteenvetoApp.jsx"),
+      login: path.resolve(__dirname, "va-virkailija/web/va/Login.jsx"),
+    }
+  }
+)
+
+const hakijaConfig = Object.assign(
+  {},
+  makeConfig(path.resolve(__dirname, "va-hakija")),
+  {
+    entry: {
+      app: path.resolve(__dirname, "va-hakija/web/va/VaApp.jsx"),
+      selvitysApp: path.resolve(__dirname, "va-hakija/web/va/SelvitysApp.jsx"),
+      login: path.resolve(__dirname, "va-hakija/web/va/VaLogin.jsx"),
+      muutoshakemusApp: path.resolve(__dirname, "va-hakija/web/va/muutoshakemus/MuutoshakemusApp.tsx"),
+    }
+  }
+)
+
+
+module.exports = [
+  hakijaConfig,
+  virkailijaConfig,
+]
