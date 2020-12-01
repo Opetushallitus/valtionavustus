@@ -653,9 +653,8 @@ describe("Puppeteer tests", () => {
     it("Avustushaun ratkaisu should send an email without link to muutoshaku if storing normalized hakemus fields is not possible", async () => {
       const { avustushakuID, hakemusID } = await ratkaiseAvustushaku(page)
       const emails = await getEmails(avustushakuID, hakemusID)
-      const userKey = await getUserKey(avustushakuID, hakemusID)
       emails.forEach(email => {
-        expect(email.formatted).not.toContain(`${HAKIJA_URL}/muutoshaku?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`)
+        expect(email.formatted).not.toContain(`${HAKIJA_URL}/muutoshaku`)
       })
     })
 
@@ -663,7 +662,9 @@ describe("Puppeteer tests", () => {
       let avustushakuID: number | undefined
       let hakemusID: number | undefined
       it('can see values of a new muutoshakemus', async () => {
-        const { avustushakuID, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
+        const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
+        avustushakuID = avustushakuId
+        hakemusID = hakemusId
         const muutoshakemus: MuutoshakemusValues = {
           jatkoaika: moment(new Date())
             .add(2, 'months')
