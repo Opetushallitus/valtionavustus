@@ -673,6 +673,7 @@ describe("Puppeteer tests", () => {
         }
         await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus)
 
+        await navigate(page, `/avustushaku/${avustushakuID}/`)
         const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`
         await page.waitForSelector(muutoshakemusStatusField)
         const muutoshakemusStatus = await page.$eval(muutoshakemusStatusField, el => el.textContent)
