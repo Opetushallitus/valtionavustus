@@ -222,12 +222,12 @@
                          (ok response)
                          (not-found)))))
 
-(defn get-emails [hakemus-id]
+(defn get-emails [hakemus-id email-type]
   (log/info (str "Fetching emails for hakemus with id: " hakemus-id))
   (let [emails (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
                  (jdbc/query
                    connection
-                   ["SELECT * from virkailija.emails WHERE hakemus_id = ?" hakemus-id]
+                   ["SELECT formatted from virkailija.emails WHERE id = (SELECT email_id from virkailija.email_event WHERE hakemus_id = ? AND email_type = ?::virkailija.email_type)" hakemus-id, email-type]
                    {:identifiers #(.replace % \_ \-)}))]
     (log/info (str "Succesfully fetched email for hakemus with hakemus-id: " hakemus-id))
     emails))
@@ -243,11 +243,11 @@
       )))
 
 (defn- get-hakemus-email []
-  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/email" request
-                     :path-params [avustushaku-id :- Long hakemus-id :- Long]
+  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/email/:email-type" []
+                     :path-params [avustushaku-id :- Long hakemus-id :- Long email-type :- s/Str]
                      :return virkailija-schema/DbEmails
                      :summary "Return emails related to the hakemus"
-                     (ok (get-emails hakemus-id))))
+                     (ok (get-emails hakemus-id email-type))))
 
 (defn- get-selvitys []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/selvitys" request

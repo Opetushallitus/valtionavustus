@@ -108,7 +108,8 @@
                                       :attachment {:title filename
                                                    :description subject
                                                    :contents (:contents row)}}
-                                     (fn [_] "Täsmäytysraportti liitteenä."))
+                                     (fn [_] "Täsmäytysraportti liitteenä.")
+                                     (get-datasource :virkailija-db))
             (jdbc/execute!
              connection
              ["UPDATE tasmaytysraportit SET mailed_at = now(), mailed_to = ? WHERE tasmaytysraportti_date = ?" to tasmaytysraportti_date])

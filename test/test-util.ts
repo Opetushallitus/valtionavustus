@@ -22,10 +22,6 @@ export const dummyPdfPath = path.join(__dirname, 'dummy.pdf')
 const hakulomakeJson = fs.readFileSync(path.join(__dirname, 'prod.hakulomake.json'), 'utf8')
 
 interface Email {
-  id: number
-  "hakemus-id": number
-  "created-at": Date
-  "updated-at": Date
   formatted: string
 }
 
@@ -40,10 +36,6 @@ interface Muutoshakemus {
 }
 
 const emailSchema = yup.array().of(yup.object().shape<Email>({
-  "id": yup.number().required(),
-  "hakemus-id": yup.number().required(),
-  "created-at": yup.date().required(),
-  "updated-at": yup.date().required(),
   "formatted": yup.string().required()
 }).required()).required()
 
@@ -66,17 +58,14 @@ export async function hasElementAttribute(page: Page, selector: string, attribut
           (document.querySelector(s) && document.querySelector(s) as HTMLElement)?.hasAttribute(a), selector, attribute)
 }
 
-export const getEmails = (avustushakuID: number, hakemusID: number) =>
-  axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email`)
-    .then(r => emailSchema.validate(r.data))
 
 export const getValmistelijaEmails = (avustushakuID: number, hakemusID: number) =>
-  getEmails(avustushakuID, hakemusID)
-  .then(emails => emails.filter(email => !email.formatted.match(/https?:\/\/.*\/muutoshaku.*/)))
+  axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email/notify-valmistelija-of-new-muutoshakemus`)
+    .then(r => emailSchema.validate(r.data))
 
 export const getMuutoshakemusEmails = (avustushakuID: number, hakemusID: number) =>
-  getEmails(avustushakuID, hakemusID)
-  .then(emails => emails.filter(email => email.formatted.match(/https?:\/\/.*\/muutoshaku.*/)))
+  axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email/paatos-refuse`)
+    .then(r => emailSchema.validate(r.data))
 
 export async function getLinkToMuutoshakemusFromSentEmails(avustushakuID: number, hakemusID: number) {
   const emails = await getMuutoshakemusEmails(avustushakuID, hakemusID)

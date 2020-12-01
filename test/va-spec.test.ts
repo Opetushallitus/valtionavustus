@@ -31,7 +31,7 @@ import {
   clearAndType,
   waitForArvioSave,
   fillAndSendHakemusAndReturnHakemusId,
-  getEmails,
+  getMuutoshakemusEmails,
   getValmistelijaEmails,
   randomString,
   expectToBeDefined,
@@ -652,7 +652,7 @@ describe("Puppeteer tests", () => {
 
     it("Avustushaun ratkaisu should send an email without link to muutoshaku if storing normalized hakemus fields is not possible", async () => {
       const { avustushakuID, hakemusID } = await ratkaiseAvustushaku(page)
-      const emails = await getEmails(avustushakuID, hakemusID)
+      const emails = await getMuutoshakemusEmails(avustushakuID, hakemusID)
       emails.forEach(email => {
         expect(email.formatted).not.toContain(`${HAKIJA_URL}/muutoshaku`)
       })

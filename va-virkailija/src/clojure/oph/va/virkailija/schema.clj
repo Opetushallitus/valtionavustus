@@ -10,11 +10,7 @@
 
 (s/defschema DbEmail
   "Email stored in database"
-  {:hakemus-id Long
-   :created-at s/Inst
-   :updated-at s/Inst
-   :id Long
-   :formatted s/Str})
+  {:formatted s/Str})
 
 (s/defschema DbEmails
   "Emails stored in database"

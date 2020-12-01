@@ -44,7 +44,7 @@
                                               "email-templates/hakemus-edited-after-applicant-edit.plain.sv")}})
 
 (defn start-background-job-send-mails []
-  (email/start-background-job-send-mails mail-templates))
+  (email/start-background-job-send-mails mail-templates (get-datasource :form-db)))
 
 (defn stop-background-job-send-mails []
   (email/stop-background-job-send-mails))
@@ -144,6 +144,7 @@
                           :lang lang
                           :from (-> email/smtp-config :from lang)
                           :sender (-> email/smtp-config :sender)
+                          :hakemus-id hakemus-id
                           :subject (get-in mail-titles [:notify-valmistelija-of-new-muutoshakemus lang])
                           :to to
                           :hanke hanke
@@ -151,9 +152,7 @@
                           :url url}
         formatted-message (render (get-in mail-templates [:notify-valmistelija-of-new-muutoshakemus lang]) msg)]
     (log/info "Notifying valmistelija of new muutoshakemus: " url)
-    (>!! email/mail-chan msg)
-    (email/store-email hakemus-id formatted-message (get-datasource :form-db))
-    ))
+    (>!! email/mail-chan msg)))
 
 (defn send-change-request-responded-message-to-virkailija! [to avustushaku-id avustushaku-name-fi hakemus-db-id]
   (let [lang :fi

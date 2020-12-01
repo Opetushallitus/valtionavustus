@@ -49,7 +49,7 @@
    :sender (-> email/smtp-config :sender)})
 
 (defn start-background-job-send-mails []
-  (email/start-background-job-send-mails mail-templates))
+  (email/start-background-job-send-mails mail-templates (get-datasource :virkailija-db)))
 
 (defn stop-background-job-send-mails []
   (email/stop-background-job-send-mails))
@@ -100,7 +100,8 @@
                           :register-number (:register_number hakemus)
                           :project-name (:project_name hakemus)}
 
-                           (partial render (get-in mail-templates [:paatos lang])))))
+                           (partial render (get-in mail-templates [:paatos lang]))
+                           (get-datasource :virkailija-db))))
 
 (defn get-answers [form-submission-id form-submission-version]
   (log/info (str "Get answers for form submission: " form-submission-id " with version: " form-submission-version))
@@ -156,6 +157,7 @@
              :subject mail-subject
              :avustushaku-name avustushaku-name
              :to to
+             :hakemus-id (:id hakemus)
              :url url
              :refuse-url paatos-refuse-url
              :modify-url paatos-modify-url
@@ -166,8 +168,7 @@
         ]
     (log/info "Sending decision email with refuse link")
     (log/info "Urls would be: " url "\n" paatos-refuse-url)
-    (email/try-send-msg-once msg format-plaintext-message)
-    (email/store-email (:id hakemus) (format-plaintext-message msg) (get-datasource :virkailija-db))
+    (email/try-send-msg-once msg format-plaintext-message (get-datasource :virkailija-db))
     ))
 
 (defn send-selvitys! [to hakemus mail-subject mail-message]
