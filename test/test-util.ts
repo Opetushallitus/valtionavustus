@@ -60,6 +60,9 @@ export async function hasElementAttribute(page: Page, selector: string, attribut
           (document.querySelector(s) && document.querySelector(s) as HTMLElement)?.hasAttribute(a), selector, attribute)
 }
 
+export async function countElements(page: Page, selector: string) {
+  return await page.evaluate((selector: string) => document.querySelectorAll(selector).length, selector)
+}
 
 export const getValmistelijaEmails = (avustushakuID: number, hakemusID: number) =>
   axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email/notify-valmistelija-of-new-muutoshakemus`)
@@ -672,7 +675,15 @@ export interface MuutoshakemusValues {
   jatkoaikaPerustelu?: string
 }
 
-export async function fillAndSendMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, muutoshakemus: MuutoshakemusValues) {
+export async function fillAndSendMuutoshakemusIfNotExists(page: Page, avustushakuID: number, hakemusID: number, muutoshakemus: MuutoshakemusValues) {
+  await navigate(page, `/avustushaku/${avustushakuID}/`)
+  const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`
+  await page.waitForSelector(muutoshakemusStatusField)
+  const muutoshakemusStatus = await page.$eval(muutoshakemusStatusField, el => el.textContent)
+  if (muutoshakemusStatus === '☆ Uusi') {
+    return
+  }
+
   async function selectedDateHasBeenStoredToState(jatkoaika: Moment) {
     const selectedDateInStateSelector = `[class=paattymispaiva][data-test-value="${jatkoaika.format('DD.MM.YYYY')}"]`
     await page.waitForSelector(selectedDateInStateSelector, {visible: true, timeout: 5 * 1000})
@@ -700,6 +711,21 @@ export async function fillAndSendMuutoshakemus(page: Page, avustushakuID: number
   const successNotificationSelector = 'div[class="auto-hide success"]'
   const notification = await textContent(page, successNotificationSelector)
   expect(notification).toBe('Muutokset tallennettu')
+}
+
+export async function validateMuutoshakemusValues(page: Page, muutoshakemus: MuutoshakemusValues) {
+  await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
+  const jatkoaika = await page.$eval('[data-test-id=muutoshakemus-jatkoaika]', el => el.textContent)
+  expect(jatkoaika).toEqual(muutoshakemus.jatkoaika?.format('DD.MM.YYYY'))
+  const jatkoaikaPerustelu = await page.$eval('[data-test-id=muutoshakemus-jatkoaika-perustelu]', el => el.textContent)
+  expect(jatkoaikaPerustelu).toEqual(muutoshakemus.jatkoaikaPerustelu)
+}
+
+export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number) {
+  await navigate(page, `/avustushaku/${avustushakuID}/`)
+  const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`
+  await page.waitForSelector(muutoshakemusStatusField)
+  await page.click(muutoshakemusStatusField)
 }
 
 interface Answers {

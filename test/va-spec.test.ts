@@ -57,9 +57,11 @@ import {
   clickFormSaveAndWait,
   addFieldToFormAndReturnElementIdAndLabel,
   navigateToHakemus,
-  fillAndSendMuutoshakemus,
   MuutoshakemusValues,
-  TEST_Y_TUNNUS
+  TEST_Y_TUNNUS,
+  fillAndSendMuutoshakemusIfNotExists,
+  validateMuutoshakemusValues,
+  countElements
 } from "./test-util"
 
 jest.setTimeout(100_000)
@@ -67,12 +69,12 @@ describe("Puppeteer tests", () => {
   let browser: Browser
   let page: Page
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     browser = await mkBrowser()
     page = await getFirstPage(browser)
   })
 
-  afterEach(async () => {
+  afterAll(async () => {
     await page.close()
     await browser.close()
   })
@@ -660,21 +662,29 @@ describe("Puppeteer tests", () => {
     })
 
     describe('Virkailija', () => {
-      let avustushakuID: number | undefined
-      let hakemusID: number | undefined
-      it('can see values of a new muutoshakemus', async () => {
+      let avustushakuID: number
+      let hakemusID: number
+
+      const muutoshakemus1: MuutoshakemusValues = {
+        jatkoaika: moment(new Date())
+          .add(2, 'months')
+          .add(1, 'days')
+          .locale('fi'),
+        jatkoaikaPerustelu: 'Ei kyl millään ehdi deadlineen mennessä ku mun koira söi ne tutkimustulokset'
+      }
+
+      beforeAll(async () => {
         const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
         avustushakuID = avustushakuId
         hakemusID = hakemusId
-        const muutoshakemus: MuutoshakemusValues = {
-          jatkoaika: moment(new Date())
-            .add(2, 'months')
-            .add(1, 'days')
-            .locale('fi'),
-          jatkoaikaPerustelu: 'Ei kyl millään ehdi deadlineen mennessä ku mun koira söi ne tutkimustulokset'
-        }
-        await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus)
+      })
 
+
+      beforeEach(async () => {
+        await fillAndSendMuutoshakemusIfNotExists(page, avustushakuID, hakemusID, muutoshakemus1)
+      })
+
+      it('can see values of a new muutoshakemus', async () => {
         await navigate(page, `/avustushaku/${avustushakuID}/`)
         const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`
         await page.waitForSelector(muutoshakemusStatusField)
@@ -688,17 +698,10 @@ describe("Puppeteer tests", () => {
         expect(color).toBe('rgb(255, 0, 0)') // red
 
         await clickElement(page, 'span.muutoshakemus-tab')
-        await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
-        const jatkoaika = await page.$eval('[data-test-id=muutoshakemus-jatkoaika]', el => el.textContent)
-        expect(jatkoaika).toEqual(muutoshakemus.jatkoaika?.format('DD.MM.YYYY'))
-        const jatkoaikaPerustelu = await page.$eval('[data-test-id=muutoshakemus-jatkoaika-perustelu]', el => el.textContent)
-        expect(jatkoaikaPerustelu).toEqual(muutoshakemus.jatkoaikaPerustelu)
+        await validateMuutoshakemusValues(page, muutoshakemus1)
       }, 150 * 1000)
 
-      it('valmistelija gets an email with link to hakemus', async () => {
-          expectToBeDefined(avustushakuID)
-          expectToBeDefined(hakemusID)
-
+      it('gets an email with link to hakemus', async () => {
           const emails = await getValmistelijaEmails(avustushakuID, hakemusID)
 
           const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
@@ -708,25 +711,38 @@ describe("Puppeteer tests", () => {
           const linkToHakemus = await getLinkToHakemusFromSentEmails(avustushakuID, hakemusID)
           expect(linkToHakemus).toEqual(`${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
       })
+
+      it('can reject a muutoshakemus', async () => {
+        // navigate to muutoshakemus tab
+        await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+        await page.click('span.muutoshakemus-tab')
+
+        // reject muutoshakemus with default text
+        await page.click('label[for="rejected"]')
+        await page.click('a.muutoshakemus__default-reason-link')
+        await page.click('[data-test-id="muutoshakemus-submit"]')
+
+        // assert muutoshakemus is rejected
+        await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+        const form = await countElements(page, '[data-test-id="muutoshakemus-form"]')
+        expect(form).toEqual(0)
+        await page.waitForFunction(() => (document.querySelector('[data-test-id=number-of-pending-muutoshakemukset]') as HTMLInputElement).innerText === '1')
+        await page.waitForSelector('span.muutoshakemus__paatos-icon--rejected')
+      })
     })
 
     describe("Changing contact person details", () => {
-      let linkToMuutoshaku: string | undefined
-      let avustushakuID: number | undefined
+      let linkToMuutoshaku: string
+      let avustushakuID: number
       const newName = randomString()
       const newEmail = "uusi.email@reaktor.com"
       const newPhone = "0901967632"
 
-      beforeEach(async () => {
-        if (!linkToMuutoshaku || !avustushakuID) {
-          const { avustushakuID: avustushakuId, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
-          avustushakuID = avustushakuId
+      beforeAll(async () => {
+        const { avustushakuID: avustushakuId, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
+        avustushakuID = avustushakuId
 
-          linkToMuutoshaku = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
-
-          expectToBeDefined(linkToMuutoshaku)
-          expectToBeDefined(avustushakuID)
-        }
+        linkToMuutoshaku = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
       })
 
       it("should show avustushaku name, project name, and registration number as well as name, email and phone number for contact person", async () => {
@@ -774,7 +790,6 @@ describe("Puppeteer tests", () => {
       })
 
       it("Save button deactivates when contact person email does not validate", async () => {
-        expectToBeDefined(linkToMuutoshaku)
         await page.goto(linkToMuutoshaku, { waitUntil: "networkidle0" })
 
         await page.waitForSelector("#send-muutospyynto-button", { visible: true })
@@ -804,7 +819,6 @@ describe("Puppeteer tests", () => {
 
 
       it("Save button activates when contact person details are changed", async () => {
-        expectToBeDefined(linkToMuutoshaku)
         await page.goto(linkToMuutoshaku, { waitUntil: "networkidle0" })
 
         await page.waitForSelector("#send-muutospyynto-button", { visible: true })

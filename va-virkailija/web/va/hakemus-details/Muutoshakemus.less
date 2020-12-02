@@ -1,3 +1,24 @@
+@import "~soresu-form/web/form/style/variables.less";
+
+.muutoshakemus-content {
+  padding-left: 0.5rem;
+}
+
+.muutoshakemus__header {
+  color: #000;
+  font-weight: 700;
+  margin: 0;
+}
+
+h3.muutoshakemus__header {
+  font-size: 1.2rem;
+  margin: 1rem 0;
+}
+
+h4.muutoshakemus__header {
+  font-size: 1rem;
+}
+
 .muutoshakemus-section {
   margin: 2rem 0;
 }
@@ -6,10 +27,77 @@
   margin: 2rem 0;
 }
 
+.muutoshakemus__paatos {
+  border-left: 3px solid @bright-blue;
+  padding-left: 1rem;
+}
+
+.muutoshakemus__paatos-status {
+  position: relative;
+  padding-left: 3rem;
+}
+
+.muutoshakemus__paatos-icon {
+  &:before {
+    position: absolute;
+    content: "";
+    height: 100%;
+    width: 2rem;
+    left: 0px;
+    top: 0px;
+    background-size: 2rem;
+  }
+}
+
+.muutoshakemus__paatos-icon--accepted {
+  &:before {
+    background: url("../img/accepted.svg") no-repeat 50% 50%;
+  }
+}
+
+.muutoshakemus__paatos-icon--rejected {
+  &:before {
+    background: url("../img/accepted.svg") no-repeat 50% 50%; // TODO rejected icon
+  }
+}
+
 .muutoshakemus__project-end-row {
   display: flex;
 
   div:not(:first-of-type) {
     margin-left: 1vw;
   }
+}
+
+.muutoshakemus__copy-link-row {
+  position: relative;
+  padding-left: 3rem;
+}
+
+.muutoshakemus__copy-link-text {
+  &:before {
+    position: absolute;
+    content: "";
+    height: 3rem;
+    width: 3rem;
+    left: 0px;
+    top: 0px;
+    background: url("../img/exclamation_mark.svg") no-repeat 50% 50%;
+    background-size: 1.5rem;
+  }
+}
+
+.muutoshakemus__default-reason-link {
+  font-size: 0.8rem;
+  padding-left: 2rem;
+}
+
+textarea.muutoshakemus__error:enabled,
+input.muutoshakemus__error:enabled {
+  border: 1px solid @bright-red;
+}
+
+div.muutoshakemus__error {
+  font-size: 0.8rem;
+  color: @bright-red;
 }

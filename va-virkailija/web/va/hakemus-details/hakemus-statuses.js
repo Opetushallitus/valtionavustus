@@ -15,14 +15,14 @@ export class HakemusSelvitysStatuses {
 
 export class MuutoshakemusStatuses {
   static allStatuses() {
-    return ['missing', 'new', 'refused', 'accepted']
+    return ['missing', 'new', 'rejected', 'accepted']
   }
 
   static statusToFI(status) {
     const translations = {
       missing: '',
       new: 'Uusi',
-      refused: 'Hylätty',
+      rejected: 'Hylätty',
       accepted: 'Hyväksytty'
     }
     return translations[status] !== undefined ? translations[status] : status

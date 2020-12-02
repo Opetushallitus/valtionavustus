@@ -48,6 +48,7 @@ const events = {
   setSeurantaAnswerValue: 'setSeurantaAnswerValue',
   changeRequestsLoaded: 'changeRequestsLoaded',
   attachmentVersionsLoaded: 'attachmentVersionsLoaded',
+  setPaatos: 'setPaatos',
   setScore: 'setScore',
   removeScore: 'removeScore',
   toggleOthersScoresDisplay: 'toggleOthersScoresDisplay',
@@ -141,6 +142,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.setSeurantaAnswerValue)], this.onSetSeurantaAnswerValue,
       [dispatcher.stream(events.changeRequestsLoaded)], this.onChangeRequestsLoaded,
       [dispatcher.stream(events.attachmentVersionsLoaded)], this.onAttachmentVersionsLoaded,
+      [dispatcher.stream(events.setPaatos)], this.onSetPaatos,
       [dispatcher.stream(events.setScore)], this.onSetScore,
       [dispatcher.stream(events.removeScore)], this.onRemoveScore,
       [dispatcher.stream(events.loadScores)], this.loadScores,
@@ -584,6 +586,19 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  onSetPaatos(state, paatos) {
+    const { muutoshakemusId, hakemusId, status } = paatos
+    const hakemus = state.hakuData.hakemukset.find(h => h.id === hakemusId)
+    if (!hakemus) {
+      return
+    }
+    const muutoshakemus = hakemus.muutoshakemukset.find(m => m.id === muutoshakemusId)
+    if (muutoshakemus) {
+      muutoshakemus.status = status
+      hakemus["status-muutoshakemus"] = status
+    }
+    return state
+  }
 
   onSetScore(state, indexAndScore) {
     const { selectionCriteriaIndex, newScore } = indexAndScore
@@ -1110,6 +1125,10 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
 
   removeScore(index) {
     dispatcher.push(events.removeScore, index)
+  }
+
+  setPaatos(paatos) {
+    dispatcher.push(events.setPaatos, paatos)
   }
 
   setScore(selectionCriteriaIndex, newScore) {
