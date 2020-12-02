@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import * as queryString from 'query-string'
 
@@ -11,8 +11,9 @@ import {ContactPerson} from './components/contact-person/ContactPerson'
 import {TopBar} from './components/TopBar'
 import {Hakemus, hakemusSchema, Language} from './types'
 import {translations} from './translations'
-import {TranslationContext, useTranslations} from './TranslationContext'
+import {TranslationContext} from './TranslationContext'
 import {postMuutoshakemus} from './client'
+import Debug from '../Debug'
 import {
   AppContext,
   AppProvider,
@@ -20,6 +21,7 @@ import {
 } from './store/context'
 import {Types} from './store/reducers'
 import { omit } from 'lodash'
+import OriginalHakemusIframe from './OriginalHakemusIframe'
 
 function isRequired<T>(val: T): val is Required<T> {
   return !Object.values(val).some((value) => !value)
@@ -41,82 +43,6 @@ const query = queryString.parse(location.search)
 const lang = validateLanguage(query.lang) || 'fi'
 const userKey = query['user-key']
 const avustushakuId = query['avustushaku-id']
-
-interface ApplicationEditProps {
-}
-function ApplicationEdit(_props: ApplicationEditProps) {
-  const { t } = useTranslations()
-
-  return (
-  <section>
-    <h1 className="muutoshaku__title">{t.applicationEdit.title}</h1>
-    <div className="muutoshaku__form">
-      <div className="soresu-checkbox">
-        <input type="checkbox" id="content-edit" />
-        <label htmlFor="content-edit">{t.applicationEdit.contentEdit}</label>
-      </div>
-      <div className="muutoshaku__application-edit-cell">
-        <label htmlFor="muutoshaku__content-change">{t.applicationEdit.contentEditDetails}</label>
-        <textarea id="muutoshaku__content-change" rows={20} />
-      </div>
-      <div className="soresu-checkbox">
-        <input type="checkbox" id="finance-edit" />
-        <label htmlFor="finance-edit">{t.applicationEdit.financeEdit}</label>
-      </div>
-      <div className="muutoshaku__application-edit-cell">
-        <table>
-          <thead>
-            <tr>
-              <th>{t.applicationEdit.currentFinanceEstimation}</th>
-              <th>{t.applicationEdit.newFinanceEstimation}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th colSpan={2}>{t.applicationEdit.expenses}</th>
-            </tr>
-            <tr>
-              <td>
-                <div className="muutoshaku__current-amount">
-                  <span>jotain</span>
-                  <span>666 €</span>
-                </div>
-              </td>
-              <td>
-                <div className="muutoshaku__current-amount">
-                  <input className="muutoshaku__currency-input" type="text" />
-                  <span>€</span>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <th colSpan={2}></th>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <th>
-                <div className="muutoshaku__current-amount">
-                  <span>{t.applicationEdit.expensesInTotal}</span>
-                  <span>666 €</span>
-                </div>
-              </th>
-              <th>
-                <div className="muutoshaku__current-amount">
-                  <span>666</span>
-                  <span>€</span>
-                </div>
-              </th>
-            </tr>
-          </tfoot>
-        </table>
-        <label htmlFor="muutoshaku__finance-reasoning">{t.applicationEdit.reasoning}</label>
-        <textarea id="muutoshaku__finance-reasoning" rows={5} />
-      </div>
-    </div>
-  </section>
-  )
-}
 
 type EnvironmentApiResponse = {
   name: string
@@ -227,9 +153,9 @@ const MuutoshakemusApp = () => {
                 projectName={hakemusSchema.validateSync(state.hakemus)["project-name"]}
                 registerNumber={state.avustushaku["register-number"]}
                 lang={lang} />
-              <ApplicationEdit />
               <AvustuksenKayttoajanPidennys
                 nykyinenPaattymisPaiva={new Date()} />
+              <OriginalHakemusIframe avustushakuId={avustushakuId} userKey={userKey} />
               <Debug json={state} />
             </AppShell>
           </TranslationContext.Provider>
@@ -253,11 +179,6 @@ function AppShell({ children, env, onSend }: AppShellProps) {
       </section>
     </div>
   )
-}
-
-type DebugProps = { json: object }
-function Debug({ json }: DebugProps) {
-  return <pre id="debug-api-response">{JSON.stringify(json, null, 2)}</pre>
 }
 
 ReactDOM.render(
