@@ -10,6 +10,27 @@ function init_nodejs {
   npm install -g "npm@${npm_version}"
 }
 
+function npm_ci_if_package_lock_has_changed {
+  info "Checking if npm ci needs to be run"
+  require_command shasum
+  local -r checksum_file=".package-lock.json.checksum"
+
+  function run_npm_ci {
+    npm ci
+    shasum package-lock.json > "$checksum_file"
+  }
+
+  if [ ! -f "$checksum_file" ]; then
+    echo "new package-lock.json; running npm ci"
+    run_npm_ci
+  elif ! shasum --check "$checksum_file"; then
+    info "package-lock.json seems to have changed, running npm ci"
+    run_npm_ci
+  else
+    info "package-lock.json doesn't seem to have changed, skipping npm ci"
+  fi
+}
+
 function require_command {
   if ! command -v "$1" > /dev/null; then
     fatal "I require $1 but it's not installed. Aborting."

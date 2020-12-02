@@ -6,7 +6,7 @@ function main {
   init_nodejs
 
   cd "$repo"
-  npm install
+  npm_ci_if_package_lock_has_changed
   npm run build-watch
 }
 
