@@ -175,10 +175,40 @@ function AppShell({ children, env, onSend }: AppShellProps) {
     <div>
       <TopBar env={env} onSend={onSend} />
       <section className="soresu-form" id="container">
-        {children}
+        <ErrorBoundary>
+          {children}
+        </ErrorBoundary>
       </section>
     </div>
   )
+}
+
+type ErrorBoundaryProps = React.PropsWithChildren<void>
+
+type ErrorBoundaryState
+  = { hasError: false }
+  | { hasError: true, error: Error }
+
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props)
+    this.state = { hasError: false }
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error }
+  }
+
+  render () {
+    if (this.state.hasError) {
+      return <div>
+        <h1>Erhe on tapahtunut</h1>
+        <pre>{this.state.error.stack}</pre>
+      </div>
+    }
+
+    return this.props.children
+  }
 }
 
 ReactDOM.render(
