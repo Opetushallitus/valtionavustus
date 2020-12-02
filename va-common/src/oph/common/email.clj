@@ -73,7 +73,7 @@
   (let [email_id (jdbc/with-db-transaction [connection {:datasource data-source }]
         (jdbc/query
                connection
-                    ["INSERT INTO virkailija.emails (formatted, from_address, sender, to_address, bcc, reply_to, subject, attachment_contents, attachment_title, attachment_description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id", email-msg, from, sender, to, bcc, reply-to, subject, (:contents attachment), (:title attachment), (:description attachment)]))]
+                    ["INSERT INTO virkailija.email (formatted, from_address, sender, to_address, bcc, reply_to, subject, attachment_contents, attachment_title, attachment_description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id", email-msg, from, sender, to, bcc, reply-to, subject, (:contents attachment), (:title attachment), (:description attachment)]))]
   (log/info (str "Succesfully stored email with id: " email_id))
   (:id (first email_id)))))
 
@@ -150,14 +150,12 @@
 (defn- create-email-event [email-id success msg data-source]
   (let [msg-type (:type msg)
         hakemus-id (:hakemus-id msg)]
-    (when (or (= msg-type :notify-valmistelija-of-new-muutoshakemus)
-              (= msg-type :paatos-refuse))
   (log/info "Storing email event for email: " email-id)
   (jdbc/with-db-transaction [connection {:datasource data-source }]
-        (jdbc/execute!
-               connection
-                    ["INSERT INTO virkailija.email_event (hakemus_id, email_id, email_type, success) VALUES (?, ?, ?::virkailija.email_type, ?)", hakemus-id, email-id, (name msg-type), success]))
-  (log/info (str "Succesfully stored email event for email: " email-id)))))
+    (jdbc/execute!
+            connection
+                ["INSERT INTO virkailija.email_event (hakemus_id, email_id, email_type, success) VALUES (?, ?, ?::virkailija.email_type, ?)", hakemus-id, email-id, (name msg-type), success]))
+  (log/info (str "Succesfully stored email event for email: " email-id))))
 
 (defn- send-msg! [msg format-plaintext-message data-source]
   (let [[msg-description send-fn] (create-mail-send-fn msg format-plaintext-message)

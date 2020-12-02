@@ -227,7 +227,7 @@
   (let [emails (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
                  (jdbc/query
                    connection
-                   ["SELECT formatted from virkailija.emails WHERE id = (SELECT email_id from virkailija.email_event WHERE hakemus_id = ? AND email_type = ?::virkailija.email_type)" hakemus-id, email-type]
+                   ["SELECT formatted from virkailija.email WHERE id = (SELECT email_id from virkailija.email_event WHERE hakemus_id = ? AND email_type = ?::virkailija.email_type)" hakemus-id, email-type]
                    {:identifiers #(.replace % \_ \-)}))]
     (log/info (str "Succesfully fetched email for hakemus with hakemus-id: " hakemus-id))
     emails))
