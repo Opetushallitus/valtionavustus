@@ -156,7 +156,7 @@
   (jdbc/with-db-transaction [connection {:datasource data-source }]
         (jdbc/execute!
                connection
-                    ["INSERT INTO virkailija.email_event (hakemus_id, email_id, email_type, success) VALUES (?, ?, ?::email_type, ?)", hakemus-id, email-id, (name msg-type), success]))
+                    ["INSERT INTO virkailija.email_event (hakemus_id, email_id, email_type, success) VALUES (?, ?, ?::virkailija.email_type, ?)", hakemus-id, email-id, (name msg-type), success]))
   (log/info (str "Succesfully stored email event for email: " email-id)))))
 
 (defn- send-msg! [msg format-plaintext-message data-source]
