@@ -5,10 +5,8 @@ DROP TYPE email_type;
 CREATE DOMAIN validated_email AS text
   CHECK ( value ~ '^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$' );
 
-ALTER TABLE hakija.avustushaku_roles ALTER COLUMN email TYPE validated_email;
 ALTER TABLE normalized_hakemus ALTER COLUMN contact_email TYPE validated_email;
 
-DROP DOMAIN hakija.email;
 DROP DOMAIN email;
 
 DROP TRIGGER update_emails_updated_at_timestamp ON emails;
