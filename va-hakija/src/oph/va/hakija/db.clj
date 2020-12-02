@@ -129,14 +129,21 @@
                                              (jdbc/query
                                               connection
                                               ["SELECT
-                                                id,
+                                                virkailija.muutoshakemus.id,
                                                 hakemus_id,
-                                                status,
+                                                (CASE WHEN paatos_id IS NULL THEN
+                                                  'new'
+                                                   ELSE
+                                                   paatos::text
+                                                   END) as status,
                                                 haen_kayttoajan_pidennysta,
                                                 kayttoajan_pidennys_perustelut,
-                                                created_at,
+                                                virkailija.muutoshakemus.created_at,
                                                 to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva
-                                              from virkailija.muutoshakemus WHERE hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)
+                                                FROM virkailija.muutoshakemus LEFT JOIN
+                                                     virkalija.paatos ON
+                                               paatos_id = virkailija.paatos.id
+                                                WHERE   hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)
                                               ORDER BY id DESC" user-key]
                                               {:identifiers #(.replace % \_ \-)}))]
     (log/info (str "Succesfully fetched muutoshaku with user-key: " user-key))
