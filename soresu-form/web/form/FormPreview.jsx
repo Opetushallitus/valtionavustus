@@ -7,6 +7,7 @@ import FormPreviewComponent from './preview/FormPreviewComponent.jsx'
 import InfoElement from './component/InfoElement.jsx'
 import WrapperPreviewComponent from './preview/wrapper/WrapperPreviewComponent.jsx'
 import InputValueStorage from './InputValueStorage.js'
+import {dropFirstInfoFields} from "soresu-form/web/form/FormPreviewTS";
 
 export default class FormPreview extends React.Component {
 
@@ -92,7 +93,9 @@ export default class FormPreview extends React.Component {
     const controller = this.props.controller
     const infoElementValues = this.props.infoElementValues.content
     const state = this.props.state
-    const fields = state.form.content
+    const fields = state.configuration.embedForMuutoshaku
+      ? dropFirstInfoFields(state.form.content)
+      : state.form.content
 
     const renderField = function(field) {
       return FormPreview.renderField(controller, null, state, infoElementValues, field)
