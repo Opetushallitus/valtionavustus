@@ -13,7 +13,6 @@ import {Hakemus, hakemusSchema, Language} from './types'
 import {translations} from './translations'
 import {TranslationContext} from './TranslationContext'
 import {postMuutoshakemus} from './client'
-import Debug from '../Debug'
 import {
   AppContext,
   AppProvider,
