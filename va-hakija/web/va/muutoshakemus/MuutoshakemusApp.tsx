@@ -156,7 +156,6 @@ const MuutoshakemusApp = () => {
               <AvustuksenKayttoajanPidennys
                 nykyinenPaattymisPaiva={new Date()} />
               <OriginalHakemusIframe avustushakuId={avustushakuId} userKey={userKey} />
-              <Debug json={state} />
             </AppShell>
           </TranslationContext.Provider>
       }
