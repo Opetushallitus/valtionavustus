@@ -6,6 +6,7 @@ export const translationsFi = {
   send: 'Lähetä käsiteltäväksi',
   sentNotification: 'Muutokset tallennettu',
   errorNotification: 'Muutoksien tallentaminen epäonnistui',
+  originalHakemus: 'Alkuperäinen hakemus',
   contactPersonEdit: {
     haku: 'Haku',
     registerNumberTitle: 'Asianumero',

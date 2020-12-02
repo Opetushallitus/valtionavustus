@@ -15,13 +15,22 @@ export default class FormContainer extends React.Component {
       modifyApplication: this.props.modifyApplication
     }
     const formElement = React.createElement(formContainerClass, formElementProps)
+    const { embedForMuutoshaku } = state.configuration
 
-    return (
-      <section id={containerId} >
-        {headerElements}
-        {useBusinessIdSearch && <BusinessIdSearch state={this.props.state} controller={controller}/>}
-        {formElement}
-      </section>
-    )
+    if (embedForMuutoshaku) {
+      return (
+        <section id={containerId} style={{marginTop: '0px'}}>
+          {formElement}
+        </section>
+      )
+    } else {
+      return (
+        <section id={containerId}>
+          {headerElements}
+          {useBusinessIdSearch && <BusinessIdSearch state={this.props.state} controller={controller}/>}
+          {formElement}
+        </section>
+      )
+    }
   }
 }
