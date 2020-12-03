@@ -22,7 +22,7 @@ export default function OriginalHakemusIframe({ avustushakuId, userKey }: Origin
   return (
     <section className="section">
       <h1 className="muutoshaku__title">{t.originalHakemus}</h1>
-      <iframe scrolling="no" src={iframeUrl} ref={iframeRef} width="100%" height={height} style={{border: '0'}} />
+      <iframe scrolling="no" src={iframeUrl} ref={iframeRef} width="100%" height={height} style={{border: '0'}} data-test-id="original-hakemus"/>
     </section>
   )
 }

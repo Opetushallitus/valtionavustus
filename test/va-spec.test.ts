@@ -58,7 +58,8 @@ import {
   addFieldToFormAndReturnElementIdAndLabel,
   navigateToHakemus,
   fillAndSendMuutoshakemus,
-  MuutoshakemusValues
+  MuutoshakemusValues,
+  TEST_Y_TUNNUS
 } from "./test-util"
 
 jest.setTimeout(100_000)
@@ -756,6 +757,20 @@ describe("Puppeteer tests", () => {
         expect(contactPerson).toEqual(answers.contactPersonName)
         expect(contactPersonEmail).toEqual(answers.contactPersonEmail)
         expect(contactPersonPhoneNumber).toEqual(answers.contactPersonPhoneNumber)
+      })
+
+      it("should show original hakemus", async() => {
+        expectToBeDefined(linkToMuutoshaku)
+        await page.goto(linkToMuutoshaku, { waitUntil: "networkidle0" })
+        const iframe = await page.waitForSelector("iframe[data-test-id=original-hakemus]")
+        if (!iframe) throw Error("Original hakemus iframe not found on page :mad:")
+        const frameContent = await iframe.contentFrame()
+        if (!frameContent) throw Error("Original hakemus frameContent not found on page :mad:")
+
+        expect(await getElementInnerText(frameContent, "[id='signatories-fieldset-1.name']"))
+          .toStrictEqual(answers.contactPersonName)
+        expect(await getElementInnerText(frameContent, "#business-id"))
+          .toStrictEqual(TEST_Y_TUNNUS)
       })
 
       it("Save button deactivates when contact person email does not validate", async () => {

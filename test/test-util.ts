@@ -2,7 +2,7 @@ import * as xlsx from"xlsx"
 import * as path from "path"
 import * as yup from "yup"
 import axios from "axios"
-import { launch, Browser, Page } from "puppeteer"
+import { launch, Browser, Page, FrameBase } from "puppeteer"
 import * as assert from "assert"
 import * as fs from "fs"
 import { Moment } from "moment"
@@ -20,6 +20,8 @@ export const HAKIJA_URL = `http://${HAKIJA_HOSTNAME}:${HAKIJA_PORT}`
 
 export const dummyPdfPath = path.join(__dirname, 'dummy.pdf')
 const hakulomakeJson = fs.readFileSync(path.join(__dirname, 'prod.hakulomake.json'), 'utf8')
+
+export const TEST_Y_TUNNUS = "2050864-5"
 
 interface Email {
   formatted: string
@@ -44,7 +46,7 @@ export async function navigateToHakijaMuutoshakemusPage(page: Page, avustushakuI
   await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
 }
 
-export async function getElementInnerText(page: Page, selector: string) {
+export async function getElementInnerText(page: FrameBase, selector: string) {
     return await page.evaluate((s: string) => (document.querySelector(s) && document.querySelector(s) as HTMLElement)?.innerText, selector)
 }
 
@@ -162,7 +164,7 @@ export async function fillAndSendHakemus(page: Page, avustushakuID: number, befo
   await clearAndType(page, "#primary-email", "erkki.esimerkki@example.com")
   await clickElement(page, "#submit")
 
-  await clearAndType(page, "#finnish-business-id", "2050864-5")
+  await clearAndType(page, "#finnish-business-id", TEST_Y_TUNNUS)
   await clickElement(page, "input.get-business-id")
 
   await clearAndType(page, "#applicant-name", "Erkki Esimerkki")
@@ -195,7 +197,7 @@ export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustus
   await clearAndType(page, "#primary-email", answers.contactPersonEmail)
   await clickElement(page, "#submit:not([disabled])")
 
-  await clearAndType(page, "#finnish-business-id", "2050864-5")
+  await clearAndType(page, "#finnish-business-id", TEST_Y_TUNNUS)
   await clickElement(page, "input.get-business-id")
 
   await clearAndType(page, "#applicant-name", answers.contactPersonName)
