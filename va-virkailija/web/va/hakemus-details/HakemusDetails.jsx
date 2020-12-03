@@ -87,7 +87,7 @@ export default class HakemusDetails extends Component {
           if (!muutoshakemukset || muutoshakemukset.length === 0)
             return <h2>Hankkeella ei ole muutoshakemuksia</h2>
           else
-            return <Muutoshakemus muutoshakemukset={muutoshakemukset} hakemus={hakemus} controller={controller} />
+            return <Muutoshakemus avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakemus={hakemus} controller={controller} />
         case 'seuranta':
           return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selectedHakemusAccessControl={selectedHakemusAccessControl} helpTexts={helpTexts}/>
         default:

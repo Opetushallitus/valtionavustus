@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 
+import HttpUtil from 'soresu-form/web/HttpUtil'
 import { copyToClipboard } from '../copyToClipboard'
 import { isSubmitDisabled, isError } from '../formikHelpers'
 
@@ -22,16 +23,17 @@ const PaatosSchema = Yup.object().shape({
     .required('Perustelu on pakollinen kenttä')
 })
 
-export const MuutoshakemusForm = ({ muutoshakemus, hakemus, controller }) => {
+export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, controller }) => {
   const f = useFormik({
     initialValues: {
       status: 'accepted',
       reason: ''
     },
     validationSchema: PaatosSchema,
-    onSubmit: (values, formik) => {
-      console.log(`submitting paatos for muutoshakemus ${muutoshakemus.id}: ${JSON.stringify(values, null, 2)}`)
-      controller.setPaatos({ muutoshakemusId: muutoshakemus.id, hakemusId: hakemus.id, ...values })
+    onSubmit: async (values, formik) => {
+      const storedPaatos = await HttpUtil.post(`/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/muutoshakemus/${muutoshakemus.id}/paatos`, values)
+
+      controller.setPaatos({ muutoshakemusId: muutoshakemus.id, hakemusId: hakemus.id, status: storedPaatos.status, reason: storedPaatos.reason })
       formik.setSubmitting(false)
     }
   })

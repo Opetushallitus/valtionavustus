@@ -9,7 +9,7 @@ import './Muutoshakemus.less'
 
 export const datetimeFormat = 'D.M.YYYY [klo] HH.mm'
 
-export const Muutoshakemus = ({ muutoshakemukset, hakemus, controller }) => {
+export const Muutoshakemus = ({ avustushaku, muutoshakemukset, hakemus, controller }) => {
   const [a, setActiveMuutoshakemus] = useState(muutoshakemukset[0])
   const projectEndAnswer = hakemus.answers.find(a => a.key === 'project-end')
 
@@ -53,7 +53,7 @@ export const Muutoshakemus = ({ muutoshakemukset, hakemus, controller }) => {
             </div>
           </section>
         }
-        {a.status === 'new' && <MuutoshakemusForm muutoshakemus={a} hakemus={hakemus} controller={controller} />}
+        {a.status === 'new' && <MuutoshakemusForm avustushaku={avustushaku} muutoshakemus={a} hakemus={hakemus} controller={controller} />}
       </div>
     </React.Fragment>
   )
