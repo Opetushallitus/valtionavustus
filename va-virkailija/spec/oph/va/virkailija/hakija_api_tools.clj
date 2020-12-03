@@ -10,15 +10,15 @@
 (defquery set-all-grants-resolved! "sql/spec/hakija/set-all-grants-resolved.sql")
 
 (defn cancel-all-applications []
-  (exec :form-db cancel-all-applications! {}))
+  (exec :db cancel-all-applications! {}))
 
 (defn set-application-refused [user-key form-submission-id comment]
   (let [params {:user_key user-key
                 :form_submission_id form-submission-id
                 :refused_comment comment}]
-    (exec-all :form-db [hakija-queries/lock-hakemus params
+    (exec-all :db [hakija-queries/lock-hakemus params
                         hakija-queries/close-existing-hakemus! params
                         set-application-refused! params])))
 
 (defn set-all-grants-resolved []
-  (exec :form-db set-all-grants-resolved! {}))
+  (exec :db set-all-grants-resolved! {}))

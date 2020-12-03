@@ -28,7 +28,7 @@
 
 (defn- rename-answer-key-to-project-name-for-hakemukset [avustushaku-id answer-key]
   {:pre [(integer? avustushaku-id) (seq answer-key)]}
-  (doseq [hakemus (db/exec :form-db
+  (doseq [hakemus (db/exec :db
                            queries/list-hakemus-answers-by-avustushaku-id
                            {:avustushaku_id avustushaku-id})]
     (let [{:keys [hakemus_id
@@ -53,7 +53,7 @@
                   form_submission_id
                   form_submission_version
                   proj-name-value)
-          (db/exec-all :form-db
+          (db/exec-all :db
                        [queries/update-hakemus-answers! {:form_submission_id      form_submission_id
                                                          :form_submission_version form_submission_version
                                                          :answers                 new-answers}

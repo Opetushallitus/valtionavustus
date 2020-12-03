@@ -18,18 +18,11 @@
                         :user-privilege-name "USER"}
  :ui {:show-environment? true
       :paatos-path "/api/avustushaku/paatos/"}
- :virkailija-db {:pool-name "virkailija-pool"
+ :db {:pool-name "db-pool"
       :username "va_virkailija"
       :password "va"
       :server-name "localhost"
-      :port-number 5432
-      :schema "virkailija"}
- :form-db {:pool-name "hakija-pool"
-             :username "va_hakija"
-             :password "va"
-             :server-name "localhost"
-             :port-number 5432
-             :schema "hakija"}
+      :port-number 5432}
  :email {:enabled? false
          :host nil
          :port nil

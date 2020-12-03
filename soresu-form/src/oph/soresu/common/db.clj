@@ -32,7 +32,7 @@
           :maximum-pool-size 10
           :pool-name "db-pool"
           :adapter "postgresql"
-          :currentSchema (-> config ds-key :schema)}
+          :currentSchema "virkailija,hakija"}
          (-> (ds-key config)
              (dissoc :schema))))
 

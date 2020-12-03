@@ -13,7 +13,8 @@
 
 (defn- startup [config]
   (log/info "Startup, with configuration:" config)
-  (dbmigrations/migrate :form-db
+  (dbmigrations/migrate :db
+                        "hakija"
                         "db.migration"
                         "oph.va.hakija.db.migrations")
   (email/start-background-job-send-mails))
@@ -21,7 +22,7 @@
 (defn- shutdown []
   (log/info "Shutting down...")
   (email/stop-background-job-send-mails)
-  (db/close-datasource! :form-db)
+  (db/close-datasource! :db)
   (job-supervisor/await-jobs!))
 
 (defn- create-restricted-routes [] #'restricted-routes)

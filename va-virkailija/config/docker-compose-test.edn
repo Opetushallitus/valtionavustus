@@ -14,7 +14,5 @@
             :delete-payments? true}
  :va-users {:use-cache? false }
  :tasmaytysraportti-create {:enabled? true}
- :virkailija-db {:server-name "va-postgres"
-                 :database-name "va-dev"}
- :form-db {:server-name "va-postgres"
-           :database-name "va-dev"}}
+ :db {:server-name "va-postgres"
+      :database-name "va-dev"}}

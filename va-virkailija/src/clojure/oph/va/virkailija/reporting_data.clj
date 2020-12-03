@@ -14,25 +14,25 @@
 (defn get-yearly-application-info []
   (mapv convert-to-dash-keys
         (year-to-int-all-v
-          (exec :form-db hakija-queries/get-yearly-application-info {}))))
+          (exec :db hakija-queries/get-yearly-application-info {}))))
 
 (defn get-yearly-application-count []
   (mapv convert-to-dash-keys
         (year-to-int-all-v
-          (exec :form-db hakija-queries/get-yearly-application-count {}))))
+          (exec :db hakija-queries/get-yearly-application-count {}))))
 
 (defn get-accepted-count-by-year []
   (year-to-int-all-v
-    (exec :virkailija-db queries/get-yearly-evaluation-count-by-status
+    (exec :db queries/get-yearly-evaluation-count-by-status
           {:status "accepted"})))
 
 (defn get-rejected-count-by-year []
   (year-to-int-all-v
-    (exec :virkailija-db queries/get-yearly-evaluation-count-by-status
+    (exec :db queries/get-yearly-evaluation-count-by-status
           {:status "rejected"})))
 
 (defn get-yearly-total-grant-size []
-  (->> (exec :form-db hakija-queries/get-yearly-total-grant-size {})
+  (->> (exec :db hakija-queries/get-yearly-total-grant-size {})
        year-to-int-all-v
        (map convert-to-dash-keys)))
 
@@ -44,18 +44,18 @@
       #(assoc (convert-to-dash-keys %)
               :total-grant-size (get grant-sizes (:year %)))
          (year-to-int-all-v
-           (exec :virkailija-db queries/get-yearly-granted {})))))
+           (exec :db queries/get-yearly-granted {})))))
 
 (defn get-total-grant-count []
-  (first (exec :form-db hakija-queries/get-total-grant-count {})))
+  (first (exec :db hakija-queries/get-total-grant-count {})))
 
 (defn get-yearly-resolved-count []
   (mapv convert-to-dash-keys
         (year-to-int-all-v
-          (exec :form-db hakija-queries/get-yearly-resolved-grants {}))))
+          (exec :db hakija-queries/get-yearly-resolved-grants {}))))
 
 (defn get-yearly-education-levels []
-  (->> (exec :virkailija-db queries/get-yearly-education-level {})
+  (->> (exec :db queries/get-yearly-education-level {})
       year-to-int-all-v
       (map convert-to-dash-keys)
       (group-by :year)))

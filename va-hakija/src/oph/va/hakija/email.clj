@@ -44,7 +44,7 @@
                                               "email-templates/hakemus-edited-after-applicant-edit.plain.sv")}})
 
 (defn start-background-job-send-mails []
-  (email/start-background-job-send-mails mail-templates (get-datasource :form-db)))
+  (email/start-background-job-send-mails mail-templates (get-datasource :db)))
 
 (defn stop-background-job-send-mails []
   (email/stop-background-job-send-mails))

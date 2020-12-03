@@ -19,7 +19,7 @@
 
 (defn create-token
   [application]
-  (first (exec :form-db create-test-application-token {:application_id (:id application) :token (generate-hash-id)})))
+  (first (exec :db create-test-application-token {:application_id (:id application) :token (generate-hash-id)})))
 
 (def test-server-port 9000)
 (def base-url (str "http://localhost:" test-server-port ) )
@@ -197,7 +197,7 @@
 
   ;; Start HTTP server for running tests
   (around-all [_]
-    (with-test-server! :form-db #(start-server "localhost" test-server-port false) (_)))
+    (with-test-server! :db #(start-server "localhost" test-server-port false) (_)))
 
   ;; Set time
   (around-all [_]
@@ -443,7 +443,7 @@
 
   ;; Start HTTP server for running tests
   (around-all [_]
-    (with-test-server! :form-db #(start-server "localhost" test-server-port false) (_)))
+    (with-test-server! :db #(start-server "localhost" test-server-port false) (_)))
 
   ;; Set time
   (around-all [_]
@@ -473,7 +473,7 @@
 
   ;; Start HTTP server for running tests
   (around-all [_]
-    (with-test-server! :form-db #(start-server "localhost" test-server-port false) (_)))
+    (with-test-server! :db #(start-server "localhost" test-server-port false) (_)))
 
   ;; Set time
   (around-all [_]
@@ -491,7 +491,7 @@
   (tags :server)
 
   (around-all [_]
-    (with-test-server! :form-db #(start-server "localhost" test-server-port false) (_)))
+    (with-test-server! :db #(start-server "localhost" test-server-port false) (_)))
 
   (around-all [_]
     ;; Add self-financing-amount field to the budget in avustushaku form
@@ -563,7 +563,7 @@
           (tags :server :applicationchange)
 
           (around-all
-            [_] (with-test-server! :form-db
+            [_] (with-test-server! :db
                   #(start-server "localhost" test-server-port false) (_)))
 
           (around-all [_] (set-time hakemus-open-timestamp (_)))
@@ -701,7 +701,7 @@
 (describe "HTTP server at any point"
   (tags :server)
   (around-all
-   [_] (with-test-server! :form-db
+   [_] (with-test-server! :db
          #(start-server "localhost" test-server-port false) (_)))
   (it "should produce 200 response for Junction Hackathon"
       (let [result (get! "/api/junction-hackathon/dump")]

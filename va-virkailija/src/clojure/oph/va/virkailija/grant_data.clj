@@ -11,7 +11,7 @@
    (let [va-code-values (va-code-values/get-va-code-values)]
      (mapv #(va-code-values/find-grant-code-values
               (convert-to-dash-keys %) va-code-values)
-           (exec :virkailija-db
+           (exec :db
                  (if content?
                    virkailija-queries/get-resolved-grants-with-content
                    virkailija-queries/get-grants) {}))))
@@ -22,7 +22,7 @@
 
 (defn find-grants [search-term order]
   (mapv convert-to-dash-keys
-        (exec :form-db
+        (exec :db
               (if (.endsWith order "desc")
                 virkailija-queries/find-grants
                 virkailija-queries/find-grants-asc)
@@ -31,7 +31,7 @@
 
 (defn get-grant [grant-id]
   (let [grant (convert-to-dash-keys
-                (first (exec :virkailija-db virkailija-queries/get-grant
+                (first (exec :db virkailija-queries/get-grant
                              {:grant_id grant-id})))]
     (merge grant
            {:operational-unit

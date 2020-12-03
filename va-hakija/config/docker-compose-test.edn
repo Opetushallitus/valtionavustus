@@ -3,8 +3,8 @@
           :url {:fi "http://localhost:8080/"
                 :sv "http://localhost:8080/"}}
  :api {:restricted-routes? false}
- :form-db {:database-name "va-dev"
-           :server-name "va-postgres"}
+ :db {:database-name "va-dev"
+      :server-name "va-postgres"}
  :nrepl-enabled? true
  :email {:enabled? false
          :host "localhost"

@@ -5,8 +5,7 @@
           :without-authentication? true
           :require-https? false}
  :api {:restricted-routes? false}
- :virkailija-db {:database-name "va-dev"}
- :form-db {:database-name "va-dev"}
+ :db {:database-name "va-dev"}
  :nrepl-enabled? true
  :email {:enabled? false
          :host "localhost"

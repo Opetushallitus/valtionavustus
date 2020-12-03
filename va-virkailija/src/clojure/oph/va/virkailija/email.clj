@@ -50,7 +50,7 @@
    :sender (-> email/smtp-config :sender)})
 
 (defn start-background-job-send-mails []
-  (email/start-background-job-send-mails mail-templates (get-datasource :virkailija-db)))
+  (email/start-background-job-send-mails mail-templates (get-datasource :db)))
 
 (defn stop-background-job-send-mails []
   (email/stop-background-job-send-mails))
@@ -105,11 +105,11 @@
                           :project-name (:project_name hakemus)}
 
                            (partial render (get-in mail-templates [:paatos lang]))
-                           (get-datasource :virkailija-db))))
+                           (get-datasource :db))))
 
 (defn store-normalized-hakemus [id answers]
   (log/info (str "Storing normalized fields for hakemus: " id))
-  (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
+  (jdbc/with-db-transaction [connection {:datasource (get-datasource :db)}]
         (jdbc/execute!
                connection
                     ["INSERT INTO virkailija.normalized_hakemus (hakemus_id, project_name, contact_person, contact_email, contact_phone) VALUES (?, ?, ?, ?, ?) ON CONFLICT (hakemus_id) DO UPDATE SET project_name = EXCLUDED.project_name, contact_person = EXCLUDED.contact_person, contact_email = EXCLUDED.contact_email, contact_phone = EXCLUDED.contact_phone"
@@ -166,7 +166,7 @@
         ]
     (log/info "Sending decision email with refuse link")
     (log/info "Urls would be: " url "\n" paatos-refuse-url)
-    (email/try-send-msg-once msg format-plaintext-message (get-datasource :virkailija-db))
+    (email/try-send-msg-once msg format-plaintext-message (get-datasource :db))
     ))
 
 (defn send-selvitys! [to hakemus mail-subject mail-message]

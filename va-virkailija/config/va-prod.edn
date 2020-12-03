@@ -7,8 +7,7 @@
                 :sv "https://statsunderstod.oph.fi/"}}
  :opintopolku {:url "https://virkailija.opintopolku.fi"}
  :ui {:show-environment? false}
- :virkailija-db {:database-name "va-prod"}
- :form-db {:database-name "va-prod"}
+ :db {:database-name "va-prod"}
  :rondo-scheduler {:enabled? true
                     :scheduling "0 00 04 ? * *"
                     :strict-host-key-checking :yes}

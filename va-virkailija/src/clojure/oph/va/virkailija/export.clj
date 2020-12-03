@@ -223,7 +223,7 @@
 
 (defn- avustushaku->formlabels [form va-focus-areas-label growing-fieldset-lut]
   (let [rich-form (->> form
-                       (formhandler/add-koodisto-values :form-db)
+                       (formhandler/add-koodisto-values :db)
                        :content)
         fields    (formutil/find-fields rich-form)
         wrappers  (formutil/find-wrapper-elements rich-form)]

@@ -232,7 +232,7 @@
 
 (defn get-emails [hakemus-id email-type]
   (log/info (str "Fetching emails for hakemus with id: " hakemus-id))
-  (let [emails (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
+  (let [emails (jdbc/with-db-transaction [connection {:datasource (get-datasource :db)}]
                  (jdbc/query
                    connection
                    ["SELECT formatted from virkailija.email WHERE id = (SELECT email_id from virkailija.email_event WHERE hakemus_id = ? AND email_type = ?::virkailija.email_type)" hakemus-id, email-type]
@@ -679,7 +679,7 @@
                                             :return s/Any
                                             :summary "List contents of certain version of certain koodisto"
                                             :description "Choice values and labels for each value"
-                                            (let [koodi-options (koodisto/get-cached-koodi-options :form-db koodisto-uri version)]
+                                            (let [koodi-options (koodisto/get-cached-koodi-options :db koodisto-uri version)]
                                               (ok (:content koodi-options)))))
 
 (compojure-api/defroutes help-texts-routes

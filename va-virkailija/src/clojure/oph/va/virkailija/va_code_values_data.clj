@@ -7,7 +7,7 @@
 
 (defn get-va-code-value [id]
   (convert-to-dash-keys
-    (first (exec :virkailija-db queries/get-va-code-value {:id id}))))
+    (first (exec :db queries/get-va-code-value {:id id}))))
 
 (defn get-va-code-values
   ([value-type year]
@@ -15,35 +15,35 @@
      convert-to-dash-keys
      (cond
        (and (some? value-type) (some? year))
-       (exec :virkailija-db queries/get-va-code-values-by-type-and-year
+       (exec :db queries/get-va-code-values-by-type-and-year
                   {:value_type value-type :year year})
        (some? value-type)
-       (exec :virkailija-db queries/get-current-va-code-values-by-type
+       (exec :db queries/get-current-va-code-values-by-type
                   {:value_type value-type})
        (some? year)
-       (exec :virkailija-db queries/get-va-code-values-by-year
+       (exec :db queries/get-va-code-values-by-year
                   {:year year})
        :else
-       (exec :virkailija-db queries/get-current-va-code-values {}))))
+       (exec :db queries/get-current-va-code-values {}))))
   ([] (get-va-code-values nil nil)))
 
 (defn create-va-code-value [values]
   (->> values
       convert-to-underscore-keys
-      (exec :virkailija-db queries/create-va-code-value)
+      (exec :db queries/create-va-code-value)
       first
       convert-to-dash-keys))
 
 (defn code-used? [id]
-  (-> (exec :form-db hakija-queries/check-code-usage {:id id})
+  (-> (exec :db hakija-queries/check-code-usage {:id id})
       first
       :used))
 
 (defn delete-va-code-value! [id]
-  (exec :virkailija-db queries/delete-va-code-value {:id id}))
+  (exec :db queries/delete-va-code-value {:id id}))
 
 (defn edit-va-code-value! [id va-code-value]
-  (exec :virkailija-db queries/edit-va-code-value (assoc va-code-value :id id)))
+  (exec :db queries/edit-va-code-value (assoc va-code-value :id id)))
 
 (defn- find-code-by-id [id va-code-values]
   (some #(when (= (:id %) id) (:code %)) va-code-values))

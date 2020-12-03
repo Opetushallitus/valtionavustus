@@ -1,7 +1,6 @@
-{:form-db {:pool-name "hakija-pool"
-           :username "va_hakija"
-           :password "va"
-           :server-name "localhost"
-           :port-number 5432
-           :schema "hakija"
-           :database-name "va-dev"}}
+{:db {:pool-name "db-pool"
+      :username "va_hakija"
+      :password "va"
+      :server-name "localhost"
+      :port-number 5432
+      :database-name "va-dev"}}

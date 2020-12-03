@@ -9,8 +9,8 @@
             [yesql.core :refer [defquery]])
   (:gen-class))
 
-(defn migrate [ds-key & migration-paths]
-  (apply (partial migrations/migrate ds-key) migration-paths))
+(defn migrate [ds-key schema-name & migration-paths]
+  (apply (partial migrations/migrate ds-key schema-name) migration-paths))
 
 (defn update-forms! [forms-to-transform transformation]
   (doseq [form forms-to-transform]
@@ -46,7 +46,7 @@
     (doseq [avustushaku (va-db/list-avustushaut)]
       (let [new-content (assoc (:content avustushaku) :focus-areas painopiste-alueet)
             changed-avustushaku (assoc avustushaku :content new-content)]
-        (common-db/exec :form-db update-avustushaku-content! changed-avustushaku)))))
+        (common-db/exec :db update-avustushaku-content! changed-avustushaku)))))
 
 (migrations/defmigration migrate-field-type-and-fieldType-terms "1.16"
   "Change type to fieldClass and displayAs to fieldType"
@@ -63,7 +63,7 @@
 
 (migrations/defmigration migrate-add-fieldtype-to-submissions "1.18"
   "Add fieldType to each form_submissions value"
- (let [all-submission-versions (common-db/exec :form-db list-all-submission-versions {})
+ (let [all-submission-versions (common-db/exec :db list-all-submission-versions {})
        all-forms (db/list-forms)
        id-regexp-type-map {#"language" "radioButton"
                            #"project-description" "growingFieldset"
@@ -103,7 +103,7 @@
         (doseq [submission all-submission-versions]
           (let [my-form-content (->> all-forms (filter #(= (:id %) (:form submission))) first :content formutil/find-fields)
                 updated-submission (formutil/transform-tree submission :answers (partial add-field-type my-form-content))]
-            (common-db/exec :form-db update-submission-directly! {:answers (updated-submission :answers)
+            (common-db/exec :db update-submission-directly! {:answers (updated-submission :answers)
                                                              :submission_id (:id submission)
                                                              :version (:version submission)
                                                              :form_id (:form submission)}))))))
@@ -138,7 +138,7 @@
   (doseq [avustushaku (va-db/list-avustushaut)]
     (let [new-decision (set/rename-keys (:decision avustushaku) {:esittelija :valmistelija})
           changed-avustushaku (assoc avustushaku :decision new-decision)]
-      (common-db/exec :form-db update-avustushaku-decision! changed-avustushaku))))
+      (common-db/exec :db update-avustushaku-decision! changed-avustushaku))))
 
 (defquery get-hakemukset-with-selvitys-email "db/migration/queries/m1_46-get-hakemukset-with-selvitys-email.sql")
 (defquery update-hakemus-selvitys-email-by-id! "db/migration/queries/m1_46-update-hakemus-selvitys-email-by-id.sql")
@@ -152,8 +152,8 @@
                            (some? org-to) [org-to]
                            :else [])]
               (assoc email :to new-to)))]
-    (doseq [hakemus (common-db/exec :form-db get-hakemukset-with-selvitys-email {})]
-      (common-db/exec :form-db
+    (doseq [hakemus (common-db/exec :db get-hakemukset-with-selvitys-email {})]
+      (common-db/exec :db
                       update-hakemus-selvitys-email-by-id!
                       {:id             (:id hakemus)
                        :selvitys_email (convert-selvitys-email (:selvitys_email hakemus))}))))
@@ -173,7 +173,7 @@
   `operation`. Default value will be empty string."
   (doseq [avustushaku (va-db/list-avustushaut)]
     (common-db/exec
-      :form-db
+      :db
       update-avustushaku-content!
       (set-missing-content-values avustushaku))))
 
@@ -184,7 +184,7 @@
       (when-some [decision-liitteet (:liitteet decision)]
         (let [new-liitteet (map (fn [l] (assoc l :version "")) decision-liitteet)
               new-decision (assoc decision :liitteet new-liitteet)]
-          (common-db/exec :form-db
+          (common-db/exec :db
                           update-avustushaku-decision!
                           {:id       (:id avustushaku)
                            :decision new-decision}))))))

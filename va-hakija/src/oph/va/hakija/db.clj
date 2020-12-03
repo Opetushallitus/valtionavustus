@@ -12,7 +12,7 @@
             [oph.va.hakija.db.queries :as queries]))
 
 (defn with-tx [func]
-  (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
+  (jdbc/with-db-transaction [connection {:datasource (get-datasource :db)}]
     (func connection)))
 
 (defn query
@@ -31,30 +31,30 @@
 
 (defn health-check []
   (->> {}
-       (exec :form-db queries/health-check)
+       (exec :db queries/health-check)
        first
        :?column?
        (= 1)))
 
 (defn junction-hackathon-dump []
   (->> {}
-       (exec :form-db queries/junction-hackathon-dump)
+       (exec :db queries/junction-hackathon-dump)
        first
        :dump))
 
 (defn get-avustushaku [id]
-  (->> (exec :form-db queries/get-avustushaku {:id id})
+  (->> (exec :db queries/get-avustushaku {:id id})
        first))
 
 (defn get-avustushaku-roles [avustushaku-id]
-  (exec :form-db queries/get-avustushaku-roles {:avustushaku avustushaku-id}))
+  (exec :db queries/get-avustushaku-roles {:avustushaku avustushaku-id}))
 
 (defn list-avustushaut []
-  (exec :form-db queries/list-avustushaut {}))
+  (exec :db queries/list-avustushaut {}))
 
 
 (defn add-paatos-view [hakemus-id headers remote-addr]
-  (exec :form-db queries/create-paatos-view! {:hakemus_id hakemus-id :headers headers :remote_addr remote-addr}))
+  (exec :db queries/create-paatos-view! {:hakemus_id hakemus-id :headers headers :remote_addr remote-addr}))
 
 (defn- pluck-key [answers key as default]
   (let [value (or (form-util/find-answer-value answers key) default)]
@@ -72,29 +72,29 @@
 
 (defn get-hakemus [hakemus-id]
   (->> {:user_key hakemus-id}
-       (exec :form-db queries/get-hakemus-by-user-id)
+       (exec :db queries/get-hakemus-by-user-id)
        first))
 
 (defn get-hakemus-version [hakemus-id version]
   (first
-    (exec :form-db queries/get-hakemus-version-by-user-id
+    (exec :db queries/get-hakemus-version-by-user-id
           {:user_key hakemus-id :version version})))
 
 (defn get-hakemus-paatos [hakemus-id]
   (->> {:hakemus_id hakemus-id}
-       (exec :form-db queries/get-hakemus-paatokset)
+       (exec :db queries/get-hakemus-paatokset)
        first))
 
 (defn list-hakemus-change-requests [hakemus-id]
   (->> {:user_key hakemus-id}
-       (exec :form-db queries/list-hakemus-change-requests-by-user-id)))
+       (exec :db queries/list-hakemus-change-requests-by-user-id)))
 
 (defn find-hakemus-by-parent-id-and-type [parent-id hakemus-type]
   (->> {:parent_id parent-id :hakemus_type hakemus-type}
-       (exec :form-db queries/find-by-parent-id-and-hakemus-type) first))
+       (exec :db queries/find-by-parent-id-and-hakemus-type) first))
 
 (defn- register-number-sequence-exists? [register-number]
-  (->> (exec :form-db queries/register-number-sequence-exists? {:suffix register-number})
+  (->> (exec :db queries/register-number-sequence-exists? {:suffix register-number})
        first
        nil?
        not))
@@ -104,8 +104,8 @@
     (when (re-matches #"\d+/\d+" avustushaku-register-number)
       (let [params {:suffix avustushaku-register-number}
             {:keys [suffix seq_number]} (if (register-number-sequence-exists? avustushaku-register-number)
-                                          (exec :form-db queries/update-register-number-sequence<! params)
-                                          (exec :form-db queries/create-register-number-sequence<! params))]
+                                          (exec :db queries/update-register-number-sequence<! params)
+                                          (exec :db queries/create-register-number-sequence<! params))]
         (format "%d/%s" seq_number avustushaku-register-number)))))
 
 (defn- convert-budget-totals [budget-totals]
@@ -122,7 +122,7 @@
                     :hakemus_type hakemus-type}
                    (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params avustushaku-id answers))
-        hakemus (exec :form-db queries/create-hakemus<! params)]
+        hakemus (exec :db queries/create-hakemus<! params)]
     {:hakemus hakemus :submission submission}))
 
 (defn get-normalized-hakemus [user-key]
@@ -188,7 +188,7 @@
       (log/info (str "Succesfully changed contact person details with user-key: " user-key))))))
 
 (defn update-hakemus-parent-id [hakemus-id parent-id]
-  (exec :form-db queries/update-hakemus-parent-id! {:id hakemus-id :parent_id parent-id}))
+  (exec :db queries/update-hakemus-parent-id! {:id hakemus-id :parent_id parent-id}))
 
 (defn update-submission [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (let [register-number (or register-number
@@ -204,7 +204,7 @@
                     :form_submission_version submission-version}
                    (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params avustushaku-id answers))]
-    (exec-all :form-db [queries/lock-hakemus params
+    (exec-all :db [queries/lock-hakemus params
                    queries/close-existing-hakemus! params
                    queries/update-hakemus-submission<! params])))
 
@@ -222,7 +222,7 @@
                     :status_change_comment status-change-comment}
                    (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params avustushaku-id answers))]
-    (exec-all :form-db [queries/lock-hakemus params
+    (exec-all :db [queries/lock-hakemus params
                    queries/close-existing-hakemus! params
                    queries/update-hakemus-status<! params])))
 
@@ -232,7 +232,7 @@
 (defn set-submitted-version [user-key form-submission-id]
   (let [params {:user_key user-key
                 :form_submission_id form-submission-id}]
-    (exec-all :form-db [queries/lock-hakemus params
+    (exec-all :db [queries/lock-hakemus params
                         queries/close-existing-hakemus! params
                         queries/set-application-submitted-version<! params])))
 
@@ -248,20 +248,20 @@
 
 (defn refuse-application [application comment]
   (let [params (assoc application :refused true :refused_comment comment)]
-    (exec-all :form-db [queries/lock-hakemus params
+    (exec-all :db [queries/lock-hakemus params
                         queries/close-existing-hakemus! params
                         queries/set-refused params])))
 
 (defn update-loppuselvitys-status [hakemus-id status]
-  (exec :form-db queries/update-loppuselvitys-status<! {:id hakemus-id :status status}))
+  (exec :db queries/update-loppuselvitys-status<! {:id hakemus-id :status status}))
 
 (defn update-valiselvitys-status [hakemus-id status]
-  (exec :form-db queries/update-valiselvitys-status<! {:id hakemus-id :status status}))
+  (exec :db queries/update-valiselvitys-status<! {:id hakemus-id :status status}))
 
 (defn attachment-exists? [hakemus-id field-id]
   (->> {:hakemus_id hakemus-id
         :field_id field-id}
-       (exec :form-db queries/attachment-exists?)
+       (exec :db queries/attachment-exists?)
        first))
 
 (defn convert-attachment [hakemus-id attachment]
@@ -285,18 +285,18 @@
                     :file_size size
                     :file_data blob})]
     (if (attachment-exists? hakemus-id field-id)
-      (exec-all :form-db [queries/close-existing-attachment! params
+      (exec-all :db [queries/close-existing-attachment! params
                      queries/update-attachment<! params])
-      (exec :form-db queries/create-attachment<! params))))
+      (exec :db queries/create-attachment<! params))))
 
 (defn close-existing-attachment! [hakemus-id field-id]
   (->> {:hakemus_id hakemus-id
         :field_id field-id}
-       (exec :form-db queries/close-existing-attachment!)))
+       (exec :db queries/close-existing-attachment!)))
 
 (defn list-attachments [hakemus-id]
   (->> {:hakemus_id hakemus-id}
-       (exec :form-db queries/list-attachments)))
+       (exec :db queries/list-attachments)))
 
 (defn get-attachments [external-hakemus-id hakemus-id]
   (->> (list-attachments hakemus-id)
@@ -307,7 +307,7 @@
 (defn download-attachment [hakemus-id field-id]
   (let [result (->> {:hakemus_id hakemus-id
                      :field_id field-id}
-                    (exec :form-db queries/download-attachment)
+                    (exec :db queries/download-attachment)
                     first)]
     {:data (io/input-stream (:file_data result))
      :content-type (:content_type result)
@@ -319,7 +319,7 @@
     (some? token)
     (not
       (empty?
-        (exec :form-db queries/get-application-token
+        (exec :db queries/get-application-token
               {:token token :application_id application-id})))))
 
 (defn valid-user-key-token? [token user-key]
@@ -329,5 +329,5 @@
       (valid-token? token (:id application)))))
 
 (defn revoke-token [token]
-  (exec :form-db queries/revoke-application-token!
+  (exec :db queries/revoke-application-token!
         {:token token}))

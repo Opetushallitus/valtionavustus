@@ -5,9 +5,7 @@
           :virkailija-url "https://testi.virkailija.valtionavustukset.oph.fi"
           :url {:fi "https://testi.valtionavustukset.oph.fi/"
                 :sv "https://testi.valtionavustukset.oph.fi/"}}
- :virkailija-db {:database-name "va-qa"}
- :form-db {:database-name "va-qa"
-           :port-number 5432}
+ :db {:database-name "va-qa"}
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25

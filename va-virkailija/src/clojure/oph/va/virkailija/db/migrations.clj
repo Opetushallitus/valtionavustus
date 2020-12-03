@@ -5,8 +5,8 @@
             [yesql.core :refer [defquery]])
   (:gen-class))
 
-(defn migrate [ds-key & migration-paths]
-  (apply (partial migrations/migrate ds-key) migration-paths))
+(defn migrate [ds-key schema-name & migration-paths]
+  (apply (partial migrations/migrate ds-key schema-name) migration-paths))
 
 (defn- create-rahoitusalue-json [rahoitusalue]
   {:rahoitusalue (:rahoitusalue rahoitusalue)
@@ -16,7 +16,7 @@
 (defquery update-avustushaku-content! "db/migration/queries/m1_21-update-avustushaku-content.sql")
 (migrations/defmigration migrate-add-rahoitusalueet-for-avustushaut "1.21"
                          "Add used rahoitusalueet to avustushaut"
-                         (let [used-rahoitusalueet (common-db/exec :virkailija-db list-used-rahoitusalueet {})
+                         (let [used-rahoitusalueet (common-db/exec :db list-used-rahoitusalueet {})
                                avustushakujen-rahoitusalueet (group-by :avustushaku used-rahoitusalueet)]
                            (doseq [avustushaku-id (keys avustushakujen-rahoitusalueet)]
                              (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
@@ -24,4 +24,4 @@
                                    rahoitusalueet-json (map create-rahoitusalue-json avustushaun-rahoitusalueet)
                                    new-content (assoc (:content avustushaku) :rahoitusalueet rahoitusalueet-json)
                                    changed-avustushaku (assoc avustushaku :content new-content)]
-                               (common-db/exec :form-db update-avustushaku-content! changed-avustushaku)))))
+                               (common-db/exec :db update-avustushaku-content! changed-avustushaku)))))

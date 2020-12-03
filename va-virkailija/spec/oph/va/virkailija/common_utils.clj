@@ -71,7 +71,7 @@
   (java.util.UUID/randomUUID))
 
 (defn create-application [grant submission]
-  (first (exec :form-db hakija-api-tools/create-hakemus
+  (first (exec :db hakija-api-tools/create-hakemus
                {:avustushaku_id (:id grant)
                 :status :submitted
                 :user_key (generate-hash-id)
@@ -87,7 +87,7 @@
                 :hakemus_type "hakemus"})))
 
 (defn create-valiselvitys [hakemus submission]
-  (first (exec :form-db hakija-api-tools/create-hakemus
+  (first (exec :db hakija-api-tools/create-hakemus
                {:avustushaku_id (:avustushaku hakemus)
                 :status :submitted
                 :user_key (generate-hash-id)
