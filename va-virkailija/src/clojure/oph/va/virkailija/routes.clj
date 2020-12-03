@@ -117,6 +117,14 @@
       (not (= (:id avustushaku) (:avustushaku hakemus))) (bad-request!)
       :else {:avustushaku avustushaku :hakemus hakemus})))
 
+(defn- post-muutoshakemus-paatos []
+    (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/:muutoshakemus-id/paatos" []
+                        :path-params [avustushaku-id :- Long hakemus-id :- Long muutoshakemus-id :- Long]
+                        :body [paatos (compojure-api/describe virkailija-schema/MuutoshakemusPaatosRequest "Muutoshakemus paatos")]
+                        :return virkailija-schema/MuutoshakemusPaatos
+                        :summary "Create a paatos for muutoshaku"
+                        (ok (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos))))
+
 (defn- get-muutoshakemukset []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/" [hakemus-id]
                      :path-params [hakemus-id :- Long]
@@ -587,6 +595,7 @@
                          (get-avustushaku)
                          (when (get-in config [:email-api :enabled?]) (get-hakemus-email))
                          (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemukset))
+                         (when (get-in config [:muutospaatosprosessi :enabled?]) (post-muutoshakemus-paatos))
                          (get-selvitys)
                          (send-selvitys)
                          (send-selvitys-email)
