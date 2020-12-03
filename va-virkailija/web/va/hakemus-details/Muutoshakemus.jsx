@@ -50,8 +50,6 @@ export const Muutoshakemus = ({ muutoshakemukset, hakemus, controller }) => {
         }
         {a.status === 'new' && <MuutoshakemusForm muutoshakemus={a} hakemus={hakemus} controller={controller} />}
       </div>
-      <div>{JSON.stringify(muutoshakemukset)}</div>
-      <div>{JSON.stringify(hakemus)}</div>
     </div>
   )
 }
