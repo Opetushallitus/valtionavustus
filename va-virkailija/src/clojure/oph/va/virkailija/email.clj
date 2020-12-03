@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.email
   (:require [clojure.core.async :refer [<! >!! go chan]]
             [oph.soresu.common.db :refer [exec get-datasource]]
+            [oph.va.virkailija.muutospaatosprosessi :as muutospaatosprosessi]
             [clojure.java.jdbc :as jdbc]
             [oph.common.email :as email]
             [oph.soresu.form.formutil :as form-util]
@@ -75,6 +76,9 @@
   (let [va-url (-> config :server :url lang)]
   (str va-url "paatos/avustushaku/" avustushaku-id "/hakemus/" user-key)))
 
+(defn modify-url [avustushaku-id user-key lang token muutospaatosprosessi-enabled?]
+  (email/modify-url avustushaku-id user-key lang token muutospaatosprosessi-enabled?))
+
 (defn selvitys-url [avustushaku-id user-key lang selvitys-type]
   (let [va-url (-> config :server :url lang)
         lang-str (or (clojure.core/name lang) "fi")]
@@ -103,16 +107,6 @@
                            (partial render (get-in mail-templates [:paatos lang]))
                            (get-datasource :virkailija-db))))
 
-(defn get-answers [form-submission-id form-submission-version]
-  (log/info (str "Get answers for form submission: " form-submission-id " with version: " form-submission-version))
-  (let [answers (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
-                 (jdbc/query
-                   connection
-                   ["SELECT answers from hakija.form_submissions WHERE id = ? AND version = ?" form-submission-id, form-submission-version]
-                  {:identifiers #(.replace % \_ \-)}))]
-    (log/info (str "Succesfully fetched answers for form submission: " form-submission-id " with version: " form-submission-version))
-    (:answers (first answers))))
-
 (defn store-normalized-hakemus [id answers]
   (log/info (str "Storing normalized fields for hakemus: " id))
   (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
@@ -126,14 +120,20 @@
                       (form-util/find-answer-value answers "textField-0")]))
   (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
 
-(defn could-normalize-necessary-fields [hakemus]
-  (let [id (:id hakemus)
-        answers (get-answers (:form_submission_id hakemus) (:form_submission_version hakemus))]
-  (try (store-normalized-hakemus id answers)
-       true
-       (catch Exception e 
-         (log/info "Could not normalize necessary hakemus fields for hakemus: " id " Error: " (.getMessage e))
-         false))))
+(defn try-normalize-necessary-fields [hakemus]
+  (if-not (muutospaatosprosessi/hakemus-can-be-normalized? hakemus)
+    false
+    (let [id (:id hakemus)
+          answers (muutospaatosprosessi/get-answers (:form_submission_id hakemus) (:form_submission_version hakemus))]
+    (try (store-normalized-hakemus id answers)
+         true
+         (catch Exception e
+           (log/info "Could not normalize necessary hakemus fields for hakemus: " id " Error: " (.getMessage e))
+           false)))))
+
+(defn should-include-muutoshaku-link? [hakemus]
+  (and (get-in config [:muutospaatosprosessi :enabled?])
+       (try-normalize-necessary-fields hakemus)))
 
 (defn send-paatos-refuse! [to avustushaku hakemus reply-to token]
   (let [lang-str (:language hakemus)
@@ -141,11 +141,9 @@
         url (paatos-url (:id avustushaku) (:user_key hakemus) (keyword lang-str))
         paatos-refuse-url
         (email/refuse-url (:id avustushaku) (:user_key hakemus) lang token)
-        muutospaatosprosessi-enabled? (and 
-                                       (get-in config [:muutospaatosprosessi :enabled?]) 
-                                       (could-normalize-necessary-fields hakemus))
+        muutospaatosprosessi-enabled? (should-include-muutoshaku-link? hakemus)
         paatos-modify-url
-        (email/modify-url (:id avustushaku) (:user_key hakemus) lang token muutospaatosprosessi-enabled?)
+        (modify-url (:id avustushaku) (:user_key hakemus) lang token muutospaatosprosessi-enabled?)
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])
         msg {
