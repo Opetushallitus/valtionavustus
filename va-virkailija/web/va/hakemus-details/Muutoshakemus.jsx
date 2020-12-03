@@ -14,7 +14,7 @@ export const Muutoshakemus = ({ muutoshakemukset, hakemus, controller }) => {
   const projectEndAnswer = hakemus.answers.find(a => a.key === 'project-end')
 
   return (
-    <div>
+    <React.Fragment>
       {muutoshakemukset.length > 1 && <MuutoshakemusTabs muutoshakemukset={muutoshakemukset} activeMuutoshakemus={a} setActiveMuutoshakemus={setActiveMuutoshakemus} />}
       <h2>Muutoshakemus {moment(a['created-at']).format(datetimeFormat)}</h2>
       <div className="muutoshakemus-content">
@@ -50,6 +50,6 @@ export const Muutoshakemus = ({ muutoshakemukset, hakemus, controller }) => {
         }
         {a.status === 'new' && <MuutoshakemusForm muutoshakemus={a} hakemus={hakemus} controller={controller} />}
       </div>
-    </div>
+    </React.Fragment>
   )
 }

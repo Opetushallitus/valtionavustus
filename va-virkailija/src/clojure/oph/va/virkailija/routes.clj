@@ -118,7 +118,7 @@
       :else {:avustushaku avustushaku :hakemus hakemus})))
 
 (defn- get-muutoshakemukset []
-  (compojure-api/GET "/:hakemus-id" [hakemus-id]
+  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/" [hakemus-id]
                      :path-params [hakemus-id :- Long]
                      :return  va-schema/MuutoshakemusList
                      :summary "Get muutoshakemukset"
@@ -571,11 +571,6 @@
                      (let [saved-search (get-saved-search avustushaku-id saved-search-id)]
                        (ok (:query saved-search)))))
 
-(compojure-api/defroutes muutoshaku-routes
-  "APIs to view muutoshakemus"
-  (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemukset))
-  )
-
 (compojure-api/defroutes avustushaku-routes
                          "Hakemus listing and filtering"
 
@@ -591,6 +586,7 @@
                          (post-avustushaku)
                          (get-avustushaku)
                          (when (get-in config [:email-api :enabled?]) (get-hakemus-email))
+                         (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemukset))
                          (get-selvitys)
                          (send-selvitys)
                          (send-selvitys-email)
@@ -764,7 +760,6 @@
                       api-config
 
                       (compojure-api/context "/public/api" [] :tags ["public"] public-routes)
-                      (compojure-api/context "/api/muutoshakemus" [] :tags ["muutoshakemukset"] muutoshaku-routes)
                       (compojure-api/context "/api/avustushaku" [] :tags ["avustushaku"] avustushaku-routes)
                       (compojure-api/context "/login" [] :tags ["login"] login-routes)
                       (compojure-api/context "/api/help-texts" [] :tags ["help-texts"] help-texts-routes)

@@ -96,11 +96,6 @@ export async function getUserKey(avustushakuID: number, hakemusID: number): Prom
   return userKey
 }
 
-export async function getStoredMuutoshakemus(userKey: string): Promise<Muutoshakemus> {
-  const response = await axios.get<Muutoshakemus>(`${HAKIJA_URL}/api/muutoshakemus/${userKey}`)
-  return response.data
-}
-
 export function mkBrowser() {
   const headless = process.env['HEADLESS'] === 'true'
   return launch({

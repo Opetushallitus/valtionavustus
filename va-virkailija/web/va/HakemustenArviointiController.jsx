@@ -232,14 +232,13 @@ export default class HakemustenArviointiController {
     state.selectedHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdToSelect)
     const avustushakuId = state.hakuData.avustushaku.id
     const normalizedStream = Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId + "/hakemus/" + hakemusIdToSelect + "/normalized")).mapError(undefined)
-    const muutoshakemusStream = Bacon.fromPromise(HttpUtil.get("/api/muutoshakemus/" + hakemusIdToSelect))
-
     normalizedStream.onValue( normalizedData =>
       dispatcher.push(events.onNormalizedData, normalizedData)
     )
-    muutoshakemusStream.onValue( muutoshakemukset =>
-      dispatcher.push(events.onMuutoshakemukset, muutoshakemukset)
-    )
+
+    Bacon
+      .fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${hakemusIdToSelect}/muutoshakemus/`))
+      .onValue(muutoshakemukset => dispatcher.push(events.onMuutoshakemukset, muutoshakemukset))
 
     if (!state.selectedHakemus) {
       throw new Error(`Avustushaku ${state.hakuData.avustushaku.id} does not have hakemus ${hakemusIdToSelect}`)
@@ -587,15 +586,15 @@ export default class HakemustenArviointiController {
   }
 
   onSetPaatos(state, paatos) {
-    const { muutoshakemusId, hakemusId, status } = paatos
-    const hakemus = state.hakuData.hakemukset.find(h => h.id === hakemusId)
-    if (!hakemus) {
-      return
+    if (!state.selectedHakemus) {
+      return state
     }
-    const muutoshakemus = hakemus.muutoshakemukset.find(m => m.id === muutoshakemusId)
+
+    const { muutoshakemusId, status } = paatos
+    const muutoshakemus = state.selectedHakemus.muutoshakemukset.find(m => m.id === muutoshakemusId)
     if (muutoshakemus) {
       muutoshakemus.status = status
-      hakemus["status-muutoshakemus"] = status
+      state.selectedHakemus["status-muutoshakemus"] = status
     }
     return state
   }
