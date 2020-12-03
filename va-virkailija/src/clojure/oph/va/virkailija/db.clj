@@ -30,7 +30,7 @@
      "INSERT INTO virkailija.paatos
           (paatos, user_key perustelut)
         VALUES
-          (?, ?, ?)
+          (?::paatos_type, ?, ?)
         RETURN id, paatos, perustelut, user_key, created_at, updated_at"
           [(:paatos paatos) (generate-hash-id) (:perustelut paatos)])]
       (execute! tx
