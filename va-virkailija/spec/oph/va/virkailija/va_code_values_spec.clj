@@ -53,7 +53,7 @@
     [_]
     (add-mock-authentication user-authentication)
     (with-test-server!
-      :virkailija-db
+      "virkailija"
       #(start-server
          {:host "localhost"
           :port test-server-port
@@ -72,7 +72,7 @@
 
   (tags :vacodevalues)
 
-  (around-all [_] (with-test-server! :virkailija-db
+  (around-all [_] (with-test-server! "virkailija"
                     #(start-server
                        {:host "localhost"
                         :port test-server-port

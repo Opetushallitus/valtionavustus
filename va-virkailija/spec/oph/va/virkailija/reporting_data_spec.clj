@@ -20,7 +20,7 @@
 
   (tags :reporting :grantedsums)
 
-  (around-all [_] (with-test-server! :virkailija-db
+  (around-all [_] (with-test-server! "virkailija"
                     #(start-server
                        {:host "localhost"
                         :port test-server-port
@@ -59,7 +59,7 @@
     (virkailija-tools/set-all-evaluations-unhandled)
     (hakija-api-tools/cancel-all-applications))
 
-  (around-all [_] (with-test-server! :virkailija-db
+  (around-all [_] (with-test-server! "virkailija"
                     #(start-server
                        {:host "localhost"
                         :port test-server-port
@@ -143,7 +143,7 @@
 
   (tags :reporting :grantreport)
 
-  (around-all [_] (with-test-server! :virkailija-db
+  (around-all [_] (with-test-server! "virkailija"
                     #(start-server
                        {:host "localhost"
                         :port test-server-port

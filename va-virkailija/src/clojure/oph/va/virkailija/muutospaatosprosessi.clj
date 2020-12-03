@@ -6,7 +6,7 @@
 
 (defn get-answers [form-submission-id form-submission-version]
   (log/info (str "Get answers for form submission: " form-submission-id " with version: " form-submission-version))
-  (let [answers (jdbc/with-db-transaction [connection {:datasource (get-datasource :db)}]
+  (let [answers (jdbc/with-db-transaction [connection {:datasource (get-datasource)}]
                                           (jdbc/query
                                             connection
                                             ["SELECT answers from hakija.form_submissions WHERE id = ? AND version = ?" form-submission-id, form-submission-version]

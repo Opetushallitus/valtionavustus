@@ -20,7 +20,7 @@
 
   (tags :applicationtokens)
 
-  (around-all [_] (with-test-server! :virkailija-db
+  (around-all [_] (with-test-server! "virkailija"
                     #(start-server
                        {:host "localhost"
                         :port test-server-port
@@ -53,7 +53,7 @@
 
   (tags :applications :getapplications)
 
-  (around-all [_] (with-test-server! :virkailija-db
+  (around-all [_] (with-test-server! "virkailija"
                     #(start-server
                        {:host "localhost"
                         :port test-server-port
@@ -74,7 +74,7 @@
 
   (tags :applications :applicationpayments)
 
-  (around-all [_] (with-test-server! :virkailija-db
+  (around-all [_] (with-test-server! "virkailija"
                     #(start-server
                        {:host "localhost"
                         :port test-server-port
@@ -145,7 +145,7 @@
 
   (tags :applications :openapplications)
 
-  (around-all [_] (with-test-server! :virkailija-db
+  (around-all [_] (with-test-server! "virkailija"
                     #(start-server
                        {:host "localhost"
                         :port test-server-port

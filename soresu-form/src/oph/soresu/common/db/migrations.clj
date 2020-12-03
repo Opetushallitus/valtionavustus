@@ -9,12 +9,11 @@
           [org.flywaydb.core.api.migration MigrationInfoProvider]
           [org.flywaydb.core.api MigrationVersion]))
 
-(defn migrate [ds-key-name schema-name & migration-paths]
+(defn migrate [schema-name & migration-paths]
   (log/info "Running db migrations, if any...")
-  (let [ds-key (keyword ds-key-name)
-        flyway (doto (Flyway.)
+  (let [flyway (doto (Flyway.)
                  (.setSchemas (into-array String [schema-name]))
-                 (.setDataSource (db/get-datasource ds-key))
+                 (.setDataSource (db/get-datasource))
                  (.setLocations (into-array String migration-paths)))]
     (try (.migrate flyway)
        (catch Throwable e

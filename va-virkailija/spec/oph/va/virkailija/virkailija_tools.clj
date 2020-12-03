@@ -17,10 +17,10 @@
   "sql/spec/virkailija/create-custom-dated-batch.sql")
 
 (defn set-all-evaluations-unhandled []
-  (exec :virkailija-db set-all-unhandled! {}))
+  (exec set-all-unhandled! {}))
 
 (defn delete-payment-batches []
-  (exec :virkailija-db delete-payment-batches! {}))
+  (exec delete-payment-batches! {}))
 
 (defn- parse-date-time [s]
   (c/to-sql-time
@@ -38,5 +38,5 @@
       (update-some :receipt-date parse-local-date)))
 
 (defn create-batch [values]
-  (exec :virkailija-db create-custom-dated-batch!
+  (exec create-custom-dated-batch!
         (convert-to-underscore-keys (convert-timestamps-to-sql values))))

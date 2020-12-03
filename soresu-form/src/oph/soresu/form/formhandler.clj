@@ -13,14 +13,14 @@
   (or (get-in koodisto-field [:params :inputType])
       default-koodisto-field-type))
 
-(defn- add-koodisto-options [db-key koodisto-field-node]
+(defn- add-koodisto-options [koodisto-field-node]
   (let [koodisto-params (get-in koodisto-field-node [:params :koodisto])
         koodisto-uri (:uri koodisto-params)
         version (:version koodisto-params)]
     (assoc
       koodisto-field-node :options
       (:content
-       (koodisto/get-cached-koodi-options db-key koodisto-uri version)))))
+       (koodisto/get-cached-koodi-options koodisto-uri version)))))
 
 (defn- set-field-type-from-params [koodisto-field-node]
   (assoc
@@ -31,7 +31,7 @@
   (formutil/transform-form-content
     form #(process-koodisto-field % node-operation)))
 
-(defn add-koodisto-values [db-key form]
+(defn add-koodisto-values [form]
   (->> form
-       (transform-koodisto-fields (partial add-koodisto-options db-key))
+       (transform-koodisto-fields (partial add-koodisto-options))
        (transform-koodisto-fields set-field-type-from-params)))

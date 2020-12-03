@@ -42,7 +42,7 @@
 
   (tags :decision)
 
-  (around-all [_] (with-test-server! :virkailija-db
+  (around-all [_] (with-test-server! "virkailija"
                     #(start-server
                        {:host "localhost"
                         :port test-server-port

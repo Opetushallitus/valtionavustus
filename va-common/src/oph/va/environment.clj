@@ -4,7 +4,7 @@
             [oph.va.db.queries :as queries]))
 
 (defn get-notice []
-  (-> (db/exec :db queries/get-environment-notice {})
+  (-> (db/exec queries/get-environment-notice {})
       first
       :notice))
 

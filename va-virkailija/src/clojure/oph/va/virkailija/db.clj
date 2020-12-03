@@ -13,7 +13,7 @@
   (:import [java.util Date]))
 
 (defn with-tx [func]
-  (jdbc/with-db-transaction [connection {:datasource (get-datasource :db)}]
+  (jdbc/with-db-transaction [connection {:datasource (get-datasource)}]
     (func connection)))
 
 (defn query
@@ -48,7 +48,7 @@
 
 (defn get-muutoshakemukset [hakemus-id]
   (log/info (str "Get muutoshakemus with hakemus id: " hakemus-id))
-  (let [muutoshaku (jdbc/with-db-transaction [connection {:datasource (get-datasource :db)}]
+  (let [muutoshaku (jdbc/with-db-transaction [connection {:datasource (get-datasource)}]
                                              (jdbc/query
                                               connection
                                               ["SELECT
@@ -76,19 +76,19 @@
 (defn get-arviot [hakemus-ids]
   (if (empty? hakemus-ids)
     []
-    (exec :db queries/get-arviot {:hakemus_ids hakemus-ids})))
+    (exec queries/get-arviot {:hakemus_ids hakemus-ids})))
 
 (defn get-hakemukset-without-valmistelija [hakemus-ids]
-  (map :id (exec :db queries/get-hakemukset-without-valmistelija {:hakemus_ids hakemus-ids})))
+  (map :id (exec queries/get-hakemukset-without-valmistelija {:hakemus_ids hakemus-ids})))
 
 (defn list-arvio-status-and-budget-granted-by-hakemus-ids [hakemus-ids]
   (if (empty? hakemus-ids)
     []
-    (exec :db queries/list-arvio-status-and-budget-granted-by-hakemus-ids {:hakemus_ids hakemus-ids})))
+    (exec queries/list-arvio-status-and-budget-granted-by-hakemus-ids {:hakemus_ids hakemus-ids})))
 
 (defn get-arvio [hakemus-id]
   (->> {:hakemus_id hakemus-id}
-       (exec :db queries/get-arvio)
+       (exec queries/get-arvio)
        first))
 
 (defn- ->changelog-entry [identity type timestamp data]
@@ -250,12 +250,12 @@
         changelog (update-changelog identity existing arvio-to-save)
         arvio-with-changelog (assoc arvio-to-save :changelog [changelog])]
     (if existing
-      (exec :db queries/update-arvio<! arvio-with-changelog)
-      (exec :db queries/create-arvio<! arvio-with-changelog))))
+      (exec queries/update-arvio<! arvio-with-changelog)
+      (exec queries/create-arvio<! arvio-with-changelog))))
 
 (defn health-check []
   (->> {}
-       (exec :db queries/health-check)
+       (exec queries/health-check)
        first
        :?column?
        (= 1)))
@@ -263,15 +263,15 @@
 (defn get-or-create-arvio [hakemus-id]
   (if-let [arvio (get-arvio hakemus-id)]
     arvio
-    (exec :db queries/create-empty-arvio<! {:hakemus_id hakemus-id})))
+    (exec queries/create-empty-arvio<! {:hakemus_id hakemus-id})))
 
 (defn list-comments [hakemus-id]
   (let [arvio-id (:id (get-or-create-arvio hakemus-id))]
-    (exec :db queries/list-comments {:arvio_id arvio-id})))
+    (exec queries/list-comments {:arvio_id arvio-id})))
 
 (defn add-comment [hakemus-id first-name last-name email comment person-oid]
   (let [arvio-id (:id (get-or-create-arvio hakemus-id))]
-    (when (exec :db queries/create-comment<!
+    (when (exec queries/create-comment<!
                 {:arvio_id arvio-id
                  :first_name first-name
                  :last_name last-name
@@ -292,11 +292,11 @@
    :modified-at (:modified_at score)})
 
 (defn list-scores [arvio-id]
-  (->> (exec :db queries/list-scores {:arvio_id arvio-id})
+  (->> (exec queries/list-scores {:arvio_id arvio-id})
        (map score->map)))
 
 (defn list-avustushaku-scores [avustushaku-id]
-  (->> (exec :db queries/list-avustushaku-scores {:avustushaku_id avustushaku-id})
+  (->> (exec queries/list-avustushaku-scores {:avustushaku_id avustushaku-id})
        (map score->map)))
 
 (defn- update-or-create-score [avustushaku-id arvio-id identity selection-criteria-index score]
@@ -308,12 +308,12 @@
                 :email                    (:email identity)
                 :selection_criteria_index selection-criteria-index
                 :score                    score}]
-    (if-let [updated (exec :db queries/update-score<! params)]
+    (if-let [updated (exec queries/update-score<! params)]
       updated
-      (exec :db queries/create-score<! params))))
+      (exec queries/create-score<! params))))
 
 (defn delete-score [arvio-id selection-criteria-index identity]
-  (exec :db queries/delete-score!
+  (exec queries/delete-score!
         {:arvio_id  arvio-id
          :person_oid (:person-oid identity)
          :selection_criteria_index selection-criteria-index}))
@@ -323,18 +323,18 @@
 
 (defn find-search [avustushaku-id query]
   (->> {:avustushaku_id avustushaku-id :query query}
-       (exec :db queries/find-search)
+       (exec queries/find-search)
        first))
 
 (defn create-search! [avustushaku-id query name person-oid]
-  (exec :db queries/create-search<! {:avustushaku_id avustushaku-id
+  (exec queries/create-search<! {:avustushaku_id avustushaku-id
                                                 :query query
                                                 :name name
                                                 :oid person-oid}))
 
 (defn get-search [avustushaku-id saved-search-id]
   (->> {:avustushaku_id avustushaku-id :id saved-search-id}
-       (exec :db queries/get-search)
+       (exec queries/get-search)
        first))
 
 (defn get-finalized-hakemus-ids
@@ -343,14 +343,14 @@
   (if (empty? hakemus-ids)
     []
     (->> {:hakemus_ids (vec hakemus-ids)}
-         (exec :db queries/get-accepted-or-rejected-hakemus-ids)
+         (exec queries/get-accepted-or-rejected-hakemus-ids)
          (map :hakemus_id))))
 
 (defn get-accepted-hakemus-ids [hakemus-ids]
   (if (empty? hakemus-ids)
     []
     (->> {:hakemus_ids (vec hakemus-ids)}
-         (exec :db queries/get-accepted-hakemus-ids)
+         (exec queries/get-accepted-hakemus-ids)
          (map :hakemus_id))))
 
 (defn- va-user->db [va-user]
@@ -370,7 +370,7 @@
    :privileges (-> db :content :privileges)})
 
 (defn update-va-users-cache [va-users]
-  (with-transaction :db connection
+  (with-transaction connection
                     (let [db-options {:connection connection}]
                       (queries/lock-va-users-cache-exclusively! {} db-options)
                       (doseq [user va-users]
@@ -385,7 +385,7 @@
 
 (defn get-va-user-cache-by-person-oid [person-oid]
   (->> {:person_oid person-oid}
-       (exec :db queries/get-va-user-cache-by-person-oid)
+       (exec queries/get-va-user-cache-by-person-oid)
        (map db->va-user)
        first))
 
@@ -400,7 +400,7 @@
         escaped-terms                (map #(str "%" (escape-like-pattern %) "%") terms)
         num-columns-to-search        (count va-users-cache-columns-to-search)
         escaped-terms-for-like-exprs (mapcat #(repeat num-columns-to-search %) escaped-terms)]
-    (with-transaction :db connection
+    (with-transaction connection
                       (jdbc/query connection
                                   (cons (string/join " "
                                                      ["select person_oid, first_name, surname, email, content"
@@ -412,11 +412,11 @@
 
 (defn create-application-token [application-id]
   (let [existing-token
-        (first (exec :db hakija-queries/get-application-token
+        (first (exec hakija-queries/get-application-token
                      {:application_id application-id}))]
 
     (if (some? existing-token)
       {:token (:token existing-token)}
       (first
-       (exec :db hakija-queries/create-application-token
+       (exec hakija-queries/create-application-token
              {:application_id application-id :token (generate-hash-id)})))))

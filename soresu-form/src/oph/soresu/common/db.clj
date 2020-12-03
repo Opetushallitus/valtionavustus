@@ -20,7 +20,7 @@
 (defn escape-like-pattern [pattern]
   (string/replace pattern #"(\\|%|_)" "\\\\$1"))
 
-(defn- datasource-spec [ds-key]
+(defn- datasource-spec []
   "Merge configuration defaults and db config. Latter overrides the defaults"
   (merge {:auto-commit false
           :read-only false
@@ -33,25 +33,25 @@
           :pool-name "db-pool"
           :adapter "postgresql"
           :currentSchema "virkailija,hakija"}
-         (-> (ds-key config)
+         (-> (:db config)
              (dissoc :schema))))
 
 (defonce datasource (atom {}))
 
-(defn get-datasource [ds-key]
+(defn get-datasource []
   (swap! datasource (fn [datasources]
-                      (if (not (contains? datasources ds-key))
-                        (let [ds (make-datasource (datasource-spec ds-key))]
-                          (assoc datasources ds-key ds))
+                      (if (not (contains? datasources :db))
+                        (let [ds (make-datasource (datasource-spec))]
+                          (assoc datasources :db ds))
                         datasources)))
-  (ds-key @datasource))
+  (:db @datasource))
 
-(defn close-datasource! [ds-key]
+(defn close-datasource! []
   (swap! datasource (fn [datasources]
-                      (if (contains? datasources ds-key)
-                        (let [ds (ds-key datasources)]
+                      (if (contains? datasources :db)
+                        (let [ds (:db datasources)]
                           (close-datasource ds)
-                          (dissoc datasources ds-key))
+                          (dissoc datasources :db))
                         datasources))))
 
 (defn get-next-exception-or-original [original-exception]
@@ -59,10 +59,9 @@
        (catch IllegalArgumentException iae
          original-exception)))
 
-(defn clear-db-and-grant! [ds-key schema-name grant-user]
-  (let [ds-key (keyword ds-key)]
+(defn clear-db-and-grant! [schema-name grant-user]
     (if (:allow-db-clear? (:server config))
-      (try (apply (partial jdbc/db-do-commands {:datasource (get-datasource ds-key)} true)
+      (try (apply (partial jdbc/db-do-commands {:datasource (get-datasource)} true)
                   (concat [(str "drop schema if exists " schema-name " cascade")
                            (str "create schema " schema-name)]
                           (if grant-user
@@ -71,21 +70,21 @@
            (catch Exception e (log/error (get-next-exception-or-original e) (.toString e))))
       (throw (RuntimeException. (str "Clearing database is not allowed! "
                                      "check that you run with correct mode. "
-                                     "Current config name is " (config-name)))))))
+                                     "Current config name is " (config-name))))))
 
-(defn clear-db! [ds-key schema-name]
-  (clear-db-and-grant! ds-key schema-name nil))
+(defn clear-db! [schema-name]
+  (clear-db-and-grant! schema-name nil))
 
-(defmacro exec [ds-key query params]
-  `(jdbc/with-db-transaction [connection# {:datasource (get-datasource ~ds-key)}]
+(defmacro exec [query params]
+  `(jdbc/with-db-transaction [connection# {:datasource (get-datasource)}]
      (~query ~params {:connection connection#})))
 
-(defmacro exec-all [ds-key query-list]
-  `(jdbc/with-db-transaction [connection# {:datasource (get-datasource ~ds-key)}]
+(defmacro exec-all [query-list]
+  `(jdbc/with-db-transaction [connection# {:datasource (get-datasource)}]
      (last (for [[query# params#] (partition 2 ~query-list)]
              (query# params# {:connection connection#})))))
 
-(defmacro with-transaction [ds-key connection & body]
-  `(let [~connection {:datasource (get-datasource ~ds-key)}]
+(defmacro with-transaction [connection & body]
+  `(let [~connection {:datasource (get-datasource)}]
      (jdbc/with-db-transaction [conn# ~connection]
        ~@body)))

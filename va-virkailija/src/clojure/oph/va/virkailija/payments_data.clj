@@ -41,13 +41,13 @@
 (defn get-payment
   ([id]
    (->
-    (exec :db queries/get-payment {:id id})
+    (exec queries/get-payment {:id id})
     first
     convert-to-dash-keys
     convert-timestamps-from-sql))
   ([id version]
    (->
-    (exec :db queries/get-payment-version {:id id :version version})
+    (exec queries/get-payment-version {:id id :version version})
     first
     convert-to-dash-keys
     convert-timestamps-from-sql)))
@@ -67,14 +67,14 @@
              (vector queries/payment-close-version
                      {:id (:id payment-data) :version (:version payment-data)}
                      queries/update-payment)
-             (exec-all :db)
+             (exec-all)
              first
              convert-to-dash-keys
              convert-timestamps-from-sql)]
     result))
 
 (defn- store-payment [payment]
-  (exec :db queries/create-payment payment))
+  (exec queries/create-payment payment))
 
 (defn create-payment [payment-data identity]
   (let [application (application-data/get-application
@@ -98,8 +98,7 @@
           (:register-number parsed))]
     (map
       convert-to-dash-keys
-      (exec :db
-            queries/find-payments-by-application-id-and-invoice-date
+      (exec queries/find-payments-by-application-id-and-invoice-date
             {:application_id (:id application)
              :phase (:phase parsed)}))))
 
@@ -156,13 +155,13 @@
 (defn get-batch-payments [batch-id]
   (map
     convert-to-dash-keys
-    (exec :db queries/get-batch-payments {:batch_id batch-id})))
+    (exec queries/get-batch-payments {:batch_id batch-id})))
 
 (defn delete-grant-payments [id]
-  (exec :db queries/delete-grant-payments {:id id}))
+  (exec queries/delete-grant-payments {:id id}))
 
 (defn delete-payment [id]
-  (exec :db queries/delete-payment {:id id}))
+  (exec queries/delete-payment {:id id}))
 
 (defn get-first-payment-sum [application grant]
   (int

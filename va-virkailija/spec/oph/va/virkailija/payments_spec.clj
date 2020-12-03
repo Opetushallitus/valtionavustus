@@ -49,7 +49,7 @@
 
   (tags :payments :paymentsdata)
 
-  (around-all [_] (with-test-server! :virkailija-db
+  (around-all [_] (with-test-server! "virkailija"
                     #(start-server
                        {:host "localhost"
                         :port test-server-port
@@ -225,7 +225,7 @@
     [_]
     (add-mock-authentication admin-authentication)
     (with-test-server!
-      :virkailija-db
+      "virkailija"
       #(start-server
          {:host "localhost"
           :port test-server-port
@@ -292,7 +292,7 @@
 
   (tags :payments :validatingapplication)
 
-  (around-all [_] (with-test-server! :virkailija-db
+  (around-all [_] (with-test-server! "virkailija"
                     #(start-server
                        {:host "localhost"
                         :port test-server-port
@@ -379,7 +379,7 @@
   (around-all
     [_]
     (with-test-server!
-      :virkailija-db
+      "virkailija"
       #(start-server
          {:host "localhost"
           :port test-server-port

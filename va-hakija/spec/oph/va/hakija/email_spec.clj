@@ -18,7 +18,8 @@
   (around-all
     [_]
     (with-test-server!
-      :db #(start-server "localhost" test-server-port false) (_)))
+      "hakija"
+      #(start-server "localhost" test-server-port false) (_)))
 
   (it "generates refused email for applicant"
       (should=

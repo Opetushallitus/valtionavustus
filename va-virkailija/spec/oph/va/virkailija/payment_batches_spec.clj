@@ -30,7 +30,7 @@
   (around-all
     [_]
     (with-test-server!
-      :virkailija-db
+      "virkailija"
       #(start-server
          {:host "localhost"
           :port test-server-port
@@ -99,7 +99,7 @@
   (around-all
     [_]
     (with-test-server!
-      :virkailija-db
+      "virkailija"
       #(start-server
          {:host "localhost"
           :port test-server-port
@@ -176,7 +176,7 @@
   (around-all
     [_]
     (with-test-server!
-      :virkailija-db
+      "virkailija"
       #(start-server
          {:host "localhost"
           :port test-server-port

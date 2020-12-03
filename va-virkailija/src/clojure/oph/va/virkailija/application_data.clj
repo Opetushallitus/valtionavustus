@@ -9,55 +9,48 @@
 
 (defn get-application-evaluation [application-id]
   (convert-to-dash-keys
-    (first (exec :db
-                 virkailija-queries/get-application-evaluation
+    (first (exec virkailija-queries/get-application-evaluation
                  {:application_id application-id}))))
 
 (defn get-application-full-evaluation [application-id]
   (convert-to-dash-keys
-    (first (exec :db
-                 virkailija-queries/get-application-full-evaluation
+    (first (exec virkailija-queries/get-application-full-evaluation
                  {:application_id application-id}))))
 
 (defn get-application [id]
   (convert-to-dash-keys
     (merge
-      (first (exec :db
-                   hakija-queries/get-application
+      (first (exec hakija-queries/get-application
                    {:application_id id}))
       (get-application-evaluation id))))
 
 (defn find-application-by-register-number [register-number]
   (convert-to-dash-keys
    (first
-    (exec :db
-          hakija-queries/find-application-by-register-number
+    (exec hakija-queries/find-application-by-register-number
           {:register_number register-number}))))
 
 (defn get-applications-with-evaluation-by-grant [grant-id]
   (mapv
    #(merge (convert-to-dash-keys %) (get-application-evaluation (:id %)))
-   (exec :db hakija-queries/get-applications-by-grant
+   (exec hakija-queries/get-applications-by-grant
          {:grant_id grant-id})))
 
 (defn get-application-unsent-payments [application-id]
   (map
    convert-to-dash-keys
-   (exec :db
-         virkailija-queries/get-application-unsent-payments
+   (exec virkailija-queries/get-application-unsent-payments
          {:application_id application-id})))
 
 (defn get-application-payments [id]
-  (map convert-to-dash-keys (exec :db
-                                  virkailija-queries/get-application-payments
+  (map convert-to-dash-keys (exec virkailija-queries/get-application-payments
                                   {:application_id id})))
 
 (defn find-applications [search-term order]
   (map
     #(assoc (convert-to-dash-keys %)
             :evaluation (get-application-full-evaluation (:id %)))
-    (exec :db
-          (if (.endsWith order "-desc")
+    (exec (if (.endsWith order "-desc")
             hakija-queries/find-applications
             hakija-queries/find-applications-asc)
           {:search_term
@@ -71,27 +64,24 @@
 (defn get-application-token [application-id]
   (:token
    (first
-    (exec :db
-          hakija-queries/get-application-token
+    (exec hakija-queries/get-application-token
           {:application_id application-id}))))
 
 (defn revoke-application-tokens [application-id]
-  (exec :db
-        hakija-queries/revoke-application-tokens
+  (exec hakija-queries/revoke-application-tokens
         {:application_id application-id}))
 
 (defn has-no-payments? [application-id]
   (not
    (:has_payments
     (first
-     (exec :db virkailija-queries/application-has-payments
+     (exec virkailija-queries/application-has-payments
            {:application_id application-id})))))
 
 (defn accepted? [application]
   (true?
     (get
-      (first (exec :db
-                   virkailija-queries/is-application-accepted
+      (first (exec virkailija-queries/is-application-accepted
                    {:hakemus_id (:id application)}))
       :accepted)))
 
@@ -100,12 +90,10 @@
     convert-to-dash-keys
     (filter
       accepted?
-      (exec :db
-            hakija-queries/list-open-applications
+      (exec hakija-queries/list-open-applications
             {}))))
 
 (defn get-application-id-by-token [token]
   (first
-   (exec :db
-         hakija-queries/get-application-id-by-token
+   (exec hakija-queries/get-application-id-by-token
          {:token token})))

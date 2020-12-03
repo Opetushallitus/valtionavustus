@@ -24,8 +24,7 @@
 
 (defn- startup [config]
   (log/info "Startup, with configuration: " config)
-  (dbmigrations/migrate :db
-                        "virkailija"
+  (dbmigrations/migrate "virkailija"
                         "db.migration"
                         "oph.va.virkailija.db.migrations")
   (email/start-background-job-send-mails)
@@ -48,7 +47,7 @@
   (auth/stop-background-job-timeout-sessions)
   (if (get-in config [:va-users :use-cache?])
     (va-users/stop-background-job-update-va-users-cache))
-  (db/close-datasource! :db)
+  (db/close-datasource!)
   (job-supervisor/await-jobs!)
   (rondo-scheduling/stop-schedule-from-rondo)
   (when (get-in config [:integration-healthcheck :enabled?])

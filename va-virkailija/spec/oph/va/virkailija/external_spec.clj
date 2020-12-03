@@ -20,7 +20,7 @@
   (around-all
     [_]
     (add-mock-authentication user-authentication)
-    (with-test-server! :virkailija-db
+    (with-test-server! "virkailija"
                     #(start-server
                        {:host "localhost"
                         :port test-server-port

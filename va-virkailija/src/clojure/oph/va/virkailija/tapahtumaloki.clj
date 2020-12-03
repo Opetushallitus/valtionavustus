@@ -7,7 +7,7 @@
       [oph.va.virkailija.db.queries :as queries]))
 
 (defn- store-log-entry [entry]
-       (exec :db queries/create-tapahtumaloki-entry entry))
+       (exec queries/create-tapahtumaloki-entry entry))
 
 (defn- create-log-entry [tyyppi avustushaku-id hakemus-id identity batch-id emails success]
        (log/info (str "Creating log entry " tyyppi " for " avustushaku-id))
@@ -24,8 +24,7 @@
       (create-log-entry "paatoksen_lahetys" avustushaku-id hakemus-id identity batch-id emails success))
 
 (defn- get-tapahtumaloki-entries [tyyppi avustushaku-id]
-       (exec :db
-             queries/get-tapahtumaloki-entries
+       (exec queries/get-tapahtumaloki-entries
              {:tyyppi tyyppi :avustushaku_id avustushaku-id}))
 
 (defn get-paatoksen-lahetys-entries [avustushaku-id]

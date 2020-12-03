@@ -13,7 +13,7 @@
 
   (around-all [_]
               (u/add-mock-authentication u/admin-authentication)
-              (with-test-server! :virkailija-db
+              (with-test-server! "virkailija"
                     #(start-server
                        {:host "localhost"
                         :port u/test-server-port

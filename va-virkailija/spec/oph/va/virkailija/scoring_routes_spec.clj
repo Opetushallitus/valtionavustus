@@ -24,7 +24,7 @@
     [_]
     (u/add-mock-authentication u/user-authentication)
     (with-test-server!
-      :virkailija-db
+      "virkailija"
       #(start-server
          {:host "localhost"
           :port u/test-server-port

@@ -61,7 +61,7 @@
 
 (defn store-tasmaytysraportti [tasmaytysraportti_date tmp-file]
   (log/info (str "Storing täsmäytysraportti for " tasmaytysraportti_date))
-  (jdbc/with-db-transaction [connection {:datasource (get-datasource :db)}]
+  (jdbc/with-db-transaction [connection {:datasource (get-datasource)}]
     (jdbc/execute!
      connection
      ["INSERT INTO tasmaytysraportit (tasmaytysraportti_date, contents, created_at) VALUES (?, ?, current_date)" tasmaytysraportti_date (get-bytes tmp-file)]))
@@ -69,8 +69,7 @@
 
 (defn maybe-create-tasmaytysraportti []
   (log/info "Looking for unreported maksatus rows")
-  (let [data (exec :db
-                   virkailija-queries/get-unprosessed-tasmaytysraportti-data
+  (let [data (exec virkailija-queries/get-unprosessed-tasmaytysraportti-data
                    {})
         rowcount (count data)]
     (if (> rowcount 0)
@@ -88,7 +87,7 @@
 
 (defn send-unsent-tasmaytysraportti-mails []
   (log/info "Looking for unsent täsymäytysraportit")
-  (jdbc/with-db-transaction [connection {:datasource (get-datasource :db)}]
+  (jdbc/with-db-transaction [connection {:datasource (get-datasource)}]
     (let [rows (jdbc/query
                 connection
                 ["SELECT tasmaytysraportti_date, contents FROM tasmaytysraportit WHERE mailed_at IS NULL FOR UPDATE NOWAIT"])]
@@ -109,7 +108,7 @@
                                                    :description subject
                                                    :contents (:contents row)}}
                                      (fn [_] "Täsmäytysraportti liitteenä.")
-                                     (get-datasource :db))
+                                     (get-datasource))
             (jdbc/execute!
              connection
              ["UPDATE tasmaytysraportit SET mailed_at = now(), mailed_to = ? WHERE tasmaytysraportti_date = ?" to tasmaytysraportti_date])
@@ -118,8 +117,7 @@
               (log/warn e (str "Failed to send tasmaytysraportti for " tasmaytysraportti_date)))))))))
 
 (defn get-tasmaytysraportti-by-avustushaku-id [avustushaku-id]
-  (let [data (exec :db
-                   virkailija-queries/get-tasmaytysraportti-by-avustuskahu-id-data
+  (let [data (exec virkailija-queries/get-tasmaytysraportti-by-avustuskahu-id-data
                    {:avustushaku_id avustushaku-id})
         tasmaytysraportti_date (:tasmaytysraportti_date (first data))
         rowcount (count data)

@@ -80,21 +80,21 @@
          (mapv koodi-value->soresu-option)
          (sort-by (fn [x] (-> x :label :fi)) compare-case-insensitively))))
 
-(defn- get-cached-koodisto [db-key koodisto-uri version]
+(defn- get-cached-koodisto [koodisto-uri version]
   (->> {:koodisto_uri koodisto-uri
         :version version}
-       (db/exec db-key queries/get-koodisto)
+       (db/exec queries/get-koodisto)
        first))
 
-(defn get-cached-koodi-options [db-key koodisto-uri version]
-  (if-let [cached-koodisto (get-cached-koodisto db-key koodisto-uri version)]
+(defn get-cached-koodi-options [koodisto-uri version]
+  (if-let [cached-koodisto (get-cached-koodisto koodisto-uri version)]
     cached-koodisto
     (let [koodisto (get-koodi-options koodisto-uri version)
           checksum (-> (cheshire/generate-string koodisto)
                        buddy-hash/sha256
                        buddy-codecs/bytes->hex)]
-      (db/exec db-key queries/create-koodisto<! {:koodisto_uri koodisto-uri
+      (db/exec queries/create-koodisto<! {:koodisto_uri koodisto-uri
                                                  :version version
                                                  :checksum checksum
                                                  :content [koodisto]})
-      (get-cached-koodisto db-key koodisto-uri version))))
+      (get-cached-koodisto koodisto-uri version))))

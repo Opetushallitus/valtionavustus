@@ -14,25 +14,25 @@
 (defn get-yearly-application-info []
   (mapv convert-to-dash-keys
         (year-to-int-all-v
-          (exec :db hakija-queries/get-yearly-application-info {}))))
+          (exec hakija-queries/get-yearly-application-info {}))))
 
 (defn get-yearly-application-count []
   (mapv convert-to-dash-keys
         (year-to-int-all-v
-          (exec :db hakija-queries/get-yearly-application-count {}))))
+          (exec hakija-queries/get-yearly-application-count {}))))
 
 (defn get-accepted-count-by-year []
   (year-to-int-all-v
-    (exec :db queries/get-yearly-evaluation-count-by-status
+    (exec queries/get-yearly-evaluation-count-by-status
           {:status "accepted"})))
 
 (defn get-rejected-count-by-year []
   (year-to-int-all-v
-    (exec :db queries/get-yearly-evaluation-count-by-status
+    (exec queries/get-yearly-evaluation-count-by-status
           {:status "rejected"})))
 
 (defn get-yearly-total-grant-size []
-  (->> (exec :db hakija-queries/get-yearly-total-grant-size {})
+  (->> (exec hakija-queries/get-yearly-total-grant-size {})
        year-to-int-all-v
        (map convert-to-dash-keys)))
 
@@ -44,18 +44,18 @@
       #(assoc (convert-to-dash-keys %)
               :total-grant-size (get grant-sizes (:year %)))
          (year-to-int-all-v
-           (exec :db queries/get-yearly-granted {})))))
+           (exec queries/get-yearly-granted {})))))
 
 (defn get-total-grant-count []
-  (first (exec :db hakija-queries/get-total-grant-count {})))
+  (first (exec hakija-queries/get-total-grant-count {})))
 
 (defn get-yearly-resolved-count []
   (mapv convert-to-dash-keys
         (year-to-int-all-v
-          (exec :db hakija-queries/get-yearly-resolved-grants {}))))
+          (exec hakija-queries/get-yearly-resolved-grants {}))))
 
 (defn get-yearly-education-levels []
-  (->> (exec :db queries/get-yearly-education-level {})
+  (->> (exec queries/get-yearly-education-level {})
       year-to-int-all-v
       (map convert-to-dash-keys)
       (group-by :year)))

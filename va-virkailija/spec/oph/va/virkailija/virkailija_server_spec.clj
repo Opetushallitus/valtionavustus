@@ -12,7 +12,7 @@
   (tags :server :auth)
 
   ;; Start HTTP server for running tests
-  (around-all [_] (with-test-server! :virkailija-db
+  (around-all [_] (with-test-server! "virkailija"
                     #(start-server
                        {:host "localhost"
                         :port test-server-port

@@ -25,7 +25,7 @@
 (def timeout-limit 10000)
 
 (defn find-batches [date grant-id]
-  (->> (exec :db queries/find-batches
+  (->> (exec queries/find-batches
              {:batch_date date :grant_id grant-id})
       (map convert-to-dash-keys)
       (map convert-timestamps-from-sql)))
@@ -33,13 +33,13 @@
 (defn create-batch [values]
   (->> values
        convert-to-underscore-keys
-       (exec :db queries/create-batch)
+       (exec queries/create-batch)
        first
        convert-to-dash-keys
        convert-timestamps-from-sql))
 
 (defn get-batch [id]
-  (-> (exec :db queries/get-batch {:batch_id id})
+  (-> (exec queries/get-batch {:batch_id id})
       first
       convert-to-dash-keys
       convert-timestamps-from-sql))
@@ -111,14 +111,14 @@
         (:id application)))))
 
 (defn get-batch-documents [batch-id]
-  (->> (exec :db queries/get-batch-documents {:batch_id batch-id})
+  (->> (exec queries/get-batch-documents {:batch_id batch-id})
       (map convert-to-dash-keys)
       (map convert-timestamps-from-sql)))
 
 (defn create-batch-document [batch-id document]
   (->> (assoc document :batch-id batch-id)
        convert-to-underscore-keys
-       (exec :db queries/create-batch-document)
+       (exec queries/create-batch-document)
        first
        convert-to-dash-keys))
 
@@ -149,7 +149,7 @@
   (assoc batch :documents (get-batch-documents (:id batch))))
 
 (defn get-grant-batches [grant-id]
-  (->> (exec :db queries/get-grant-batches {:grant_id grant-id})
+  (->> (exec queries/get-grant-batches {:grant_id grant-id})
        (map convert-to-dash-keys)
        (map convert-timestamps-from-sql)
        (map set-batch-documents)))
