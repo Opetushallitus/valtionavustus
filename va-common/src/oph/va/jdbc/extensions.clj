@@ -5,6 +5,10 @@
   (:import (org.postgresql.util PGobject)
            (oph.va.jdbc.enums HakuStatus HakuRole HakuType)))
 
+
+(defn is-status-enum? [value] (some #(= value %) [:new :draft :submitted :pending_change_request :officer_edit :cancelled :applicant_edit]))
+(defn is-arviostatus-enum? [value] (some #(= value %) [:unhandled :processing :plausible :rejected :accepted]))
+
 (extend-protocol jdbc/ISQLValue
   HakuStatus
   (sql-value [value]
@@ -26,6 +30,9 @@
 
   clojure.lang.Keyword
   (sql-value [value]
-    (doto (PGobject.)
-      (.setType "status")
-      (.setValue (name value)))))
+    (let [type (cond (is-status-enum? value) "status"
+                     (is-arviostatus-enum? value) "arvio_status"
+                     :else (throw (Error. (str "Cannot convert keyword " value " to enum type"))))]
+      (doto (PGobject.)
+        (.setType type)
+        (.setValue (name value))))))
