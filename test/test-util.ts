@@ -27,16 +27,6 @@ interface Email {
   formatted: string
 }
 
-interface Muutoshakemus {
-  id: number
-  "user-key": string
-  "hakemus-version": number
-  "haen-kayttoajan-pidennysta": boolean
-  "kayttoajan-pidennys-perustelut": string
-  "haettu-kayttoajan-paattymispaiva": string
-  "created-at": Date
-}
-
 const emailSchema = yup.array().of(yup.object().shape<Email>({
   "formatted": yup.string().required()
 }).required()).required()
