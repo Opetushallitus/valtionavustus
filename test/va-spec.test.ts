@@ -718,16 +718,16 @@ describe("Puppeteer tests", () => {
         await page.click('span.muutoshakemus-tab')
 
         // reject muutoshakemus with default text
-        await page.click('label[for="rejected"]')
+        await page.click('label[for="refused"]')
         await page.click('a.muutoshakemus__default-reason-link')
         await page.click('[data-test-id="muutoshakemus-submit"]')
 
-        // assert muutoshakemus is rejected
+        // assert muutoshakemus is refused
         await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
         const form = await countElements(page, '[data-test-id="muutoshakemus-form"]')
         expect(form).toEqual(0)
         await page.waitForFunction(() => (document.querySelector('[data-test-id=number-of-pending-muutoshakemukset]') as HTMLInputElement).innerText === '1')
-        await page.waitForSelector('span.muutoshakemus__paatos-icon--rejected')
+        await page.waitForSelector('span.muutoshakemus__paatos-icon--refused')
       })
     })
 

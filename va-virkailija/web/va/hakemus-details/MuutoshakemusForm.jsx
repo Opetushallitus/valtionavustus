@@ -11,7 +11,7 @@ const defaultReason = 'huh huh pitkä teksti'
 const paatosStatuses = [
   { value: 'accepted', text: 'Hyväksytään' },
   { value: 'accepted_with_changes', text: 'Hyväksytään muutettuna' },
-  { value: 'rejected', text: 'Hylätään' }
+  { value: 'refused', text: 'Hylätään' }
 ]
 
 const PaatosSchema = Yup.object().shape({
