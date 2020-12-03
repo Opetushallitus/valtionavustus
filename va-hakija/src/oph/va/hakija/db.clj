@@ -11,6 +11,18 @@
             [oph.va.jdbc.extensions :refer :all]
             [oph.va.hakija.db.queries :as queries]))
 
+(defn with-tx [func]
+  (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
+    (func connection)))
+
+(defn query
+  ([sql params] (with-tx (fn [tx] (query tx sql params))))
+  ([tx sql params] (jdbc/query tx (concat [sql] params) {:identifiers #(.replace % \_ \-)})))
+
+(defn execute!
+  ([sql params] (with-tx (fn [tx] (execute! tx sql params))))
+  ([tx sql params] (jdbc/execute! tx (concat [sql] params) {:identifiers #(.replace % \_ \-)})))
+
 (defn slurp-binary-file! [file]
   (io! (with-open [reader (io/input-stream file)]
          (let [buffer (byte-array (.length file))]
@@ -115,20 +127,13 @@
 
 (defn get-normalized-hakemus [user-key]
   (log/info (str "Get normalized hakemus with user-key: " user-key))
-  (let [hakemukset (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
-                 (jdbc/query
-                   connection
-                   ["SELECT * from virkailija.normalized_hakemus WHERE hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)" user-key]
-                  {:identifiers #(.replace % \_ \-)}))]
+  (let [hakemukset (query "SELECT * from virkailija.normalized_hakemus WHERE hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)" [user-key])]
     (log/info (str "Succesfully fetched hakemus with user-key: " user-key))
     (first hakemukset)))
 
 (defn get-muutoshakemus [user-key]
   (log/info (str "Get muutoshakemus with user-key: " user-key))
-  (let [muutoshaku (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
-                                             (jdbc/query
-                                              connection
-                                              ["SELECT
+  (let [muutoshaku (query "SELECT
                                                 virkailija.muutoshakemus.id,
                                                 hakemus_id,
                                                 (CASE WHEN paatos_id IS NULL THEN
@@ -144,45 +149,43 @@
                                                      virkalija.paatos ON
                                                paatos_id = virkailija.paatos.id
                                                 WHERE   hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)
-                                              ORDER BY id DESC" user-key]
-                                              {:identifiers #(.replace % \_ \-)}))]
+                                              ORDER BY id DESC" [user-key])]
     (log/info (str "Succesfully fetched muutoshaku with user-key: " user-key))
     (first muutoshaku)))
 
-(defn add-muutoshakemus [connection user-key jatkoaika]
+(defn add-muutoshakemus [tx user-key jatkoaika]
   (log/info (str "Inserting muutoshakemus for user-key: " user-key))
   (let [ haen-kayttoajan-pidennysta (:haenKayttoajanPidennysta jatkoaika)
          kayttoajan-pidennys-perustelut (:kayttoajanPidennysPerustelut jatkoaika)
          haettu-kayttoajan-paattymispaiva (:haettuKayttoajanPaattymispaiva jatkoaika)]
-    (jdbc/execute! connection
-     ["INSERT INTO virkailija.muutoshakemus
+    (execute! tx
+     "INSERT INTO virkailija.muutoshakemus
           (hakemus_id, haen_kayttoajan_pidennysta, kayttoajan_pidennys_perustelut, haettu_kayttoajan_paattymispaiva)
         VALUES
           ((SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1),?,?,?)"
-          user-key haen-kayttoajan-pidennysta, kayttoajan-pidennys-perustelut, haettu-kayttoajan-paattymispaiva ])
+          [user-key haen-kayttoajan-pidennysta, kayttoajan-pidennys-perustelut, haettu-kayttoajan-paattymispaiva ])
 ))
 
-(defn change-normalized-hakemus-contact-person-details [connection user-key, contact-person-details]
+(defn change-normalized-hakemus-contact-person-details [tx user-key, contact-person-details]
   (log/info (str "Change normalized contact person details with user-key: " user-key))
   (let [ contact-person (:name contact-person-details)
          contact-phone (:phone contact-person-details)
          contact-email (:email contact-person-details)]
-    (jdbc/execute! connection
-     ["UPDATE virkailija.normalized_hakemus SET
+    (execute! tx
+     "UPDATE virkailija.normalized_hakemus SET
       contact_person = ?, contact_email = ?, contact_phone = ? WHERE hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)"
-      contact-person, contact-email, contact-phone, user-key]
+      [contact-person, contact-email, contact-phone, user-key]
      ))
     (log/info (str "Succesfully changed contact person details with user-key: " user-key)))
 
 (defn on-muutoshakemus [user-key, muutoshakemus]
-  (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
+  (with-tx (fn [tx]
     (when (contains? muutoshakemus :jatkoaika)
-          (add-muutoshakemus connection user-key (get muutoshakemus :jatkoaika)))
+          (add-muutoshakemus tx user-key (get muutoshakemus :jatkoaika)))
     (when (contains? muutoshakemus :yhteyshenkilo)
       (log/info (str "Change normalized contact person details with user-key: " user-key))
-      (change-normalized-hakemus-contact-person-details connection user-key (get muutoshakemus :yhteyshenkilo))
-      (log/info (str "Succesfully changed contact person details with user-key: " user-key))
-      )))
+      (change-normalized-hakemus-contact-person-details tx user-key (get muutoshakemus :yhteyshenkilo))
+      (log/info (str "Succesfully changed contact person details with user-key: " user-key))))))
 
 (defn update-hakemus-parent-id [hakemus-id parent-id]
   (exec :form-db queries/update-hakemus-parent-id! {:id hakemus-id :parent_id parent-id}))
