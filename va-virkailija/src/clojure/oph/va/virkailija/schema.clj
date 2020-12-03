@@ -11,9 +11,9 @@
 (s/defschema MuutoshakemusPaatos
   "Muutoshakemus paatos"
   {:id Long
-   :paatos s/Str
-   :user_key s/Str
-   :perustelut s/Str
+   :status s/Str
+   :user-key s/Str
+   :reason s/Str
    :created-at s/Inst
    :updated-at s/Inst})
 

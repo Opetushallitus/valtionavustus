@@ -26,13 +26,13 @@
 
 (defn create-muutoshakemus-paatos [muutoshakemus-id paatos]
   (with-tx (fn [tx]
-    (let [paatos (query tx
+    (let [paatos (first (query tx
      "INSERT INTO virkailija.paatos
-          (paatos, user_key perustelut)
+          (status, user_key, reason)
         VALUES
-          (?::paatos_type, ?, ?)
-        RETURN id, paatos, perustelut, user_key, created_at, updated_at"
-          [(:paatos paatos) (generate-hash-id) (:perustelut paatos)])]
+          (?::virkailija.paatos_type, ?, ?)
+        RETURNING id, status, reason, user_key, created_at, updated_at"
+          [(:status paatos) (generate-hash-id) (:reason paatos)]))]
       (execute! tx
                 "UPDATE virkailija.muutoshakemus
                 SET paatos_id = ?
