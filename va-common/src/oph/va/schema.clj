@@ -172,7 +172,7 @@
 
 (s/defschema MuutoshakemusStatus
   "Muutoshakemus status"
-  (s/enum "new" "accepted" "refused"))
+  (s/enum "new" "accepted" "rejected"))
 
 (s/defschema Muutoshakemus
   "Muutoshakemus for a specific hakemus"

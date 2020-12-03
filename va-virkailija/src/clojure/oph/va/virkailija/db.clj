@@ -57,7 +57,7 @@
                                                   (CASE
                                                     WHEN paatos_id IS NULL
                                                     THEN 'new'
-                                                    ELSE paatos::text
+                                                    ELSE status::text
                                                   END) as status,
                                                   haen_kayttoajan_pidennysta,
                                                   kayttoajan_pidennys_perustelut,
