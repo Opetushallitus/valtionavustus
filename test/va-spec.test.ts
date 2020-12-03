@@ -722,6 +722,8 @@ describe("Puppeteer tests", () => {
         await page.click('a.muutoshakemus__default-reason-link')
         await page.click('[data-test-id="muutoshakemus-submit"]')
 
+        await page.reload({ waitUntil: ["networkidle0", "domcontentloaded"] });
+
         // assert muutoshakemus is rejected
         await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
         const form = await countElements(page, '[data-test-id="muutoshakemus-form"]')
