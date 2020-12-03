@@ -52,21 +52,22 @@
                                              (jdbc/query
                                               connection
                                               ["SELECT
-                                                virkailija.muutoshakemus.id,
-                                                hakemus_id,
-                                                (CASE WHEN paatos_id IS NULL THEN
-                                                  'new'
-                                                   ELSE
-                                                   paatos::text
-                                                   END) as status,
-                                                haen_kayttoajan_pidennysta,
-                                                kayttoajan_pidennys_perustelut,
-                                                virkailija.muutoshakemus.created_at,
-                                                to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva
-                                                FROM virkailija.muutoshakemus LEFT JOIN
-                                                     virkailija.paatos ON
-                                               paatos_id = virkailija.paatos.id
-                                                WHERE   hakemus_id = ?
+                                                  m.id,
+                                                  m.hakemus_id,
+                                                  (CASE
+                                                    WHEN paatos_id IS NULL
+                                                    THEN 'new'
+                                                    ELSE paatos::text
+                                                  END) as status,
+                                                  haen_kayttoajan_pidennysta,
+                                                  kayttoajan_pidennys_perustelut,
+                                                  m.created_at,
+                                                  to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva,
+                                                  ee.created_at as paatos_sent_at
+                                                FROM virkailija.muutoshakemus m
+                                                LEFT JOIN virkailija.paatos ON paatos_id = virkailija.paatos.id
+                                                LEFT JOIN virkailija.email_event ee ON muutoshakemus_id = ee.muutoshakemus_id AND ee.email_type = 'muutoshakemus-paatos' AND success = true
+                                                WHERE m.hakemus_id = ?
                                                 ORDER BY id DESC" hakemus-id]
                                               {:identifiers #(.replace % \_ \-)}))]
     (log/info (str "Succesfully fetched muutoshaku with id: " hakemus-id))

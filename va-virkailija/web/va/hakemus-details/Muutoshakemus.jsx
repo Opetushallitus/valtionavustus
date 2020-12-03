@@ -24,7 +24,12 @@ export const Muutoshakemus = ({ muutoshakemukset, hakemus, controller }) => {
               <h2 className="muutoshakemus__paatos-status">
                 <span className={`muutoshakemus__paatos-icon muutoshakemus__paatos-icon--${a.status}`}>{MuutoshakemusStatuses.statusToFI(a.status)} TODO</span>
               </h2>
-              <h3 className="muutoshakemus__header">Päätös lähetetty hakijalle TODO</h3>
+              <h3 className="muutoshakemus__header">
+                {a['paatos-sent-at']
+                  ? `Päätös lähetetty hakijalle ${moment(a['paatos-sent-at']).format(datetimeFormat)}`
+                  : 'Päätöstä ei ole vielä lähetetty hakijalle'
+                }
+              </h3>
               <h3 className="muutoshakemus__header">Päätösdokumentti:</h3>
               <a>TODO</a>
             </div>

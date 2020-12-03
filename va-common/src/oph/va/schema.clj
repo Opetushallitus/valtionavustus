@@ -183,6 +183,7 @@
     :kayttoajan-pidennys-perustelut (s/maybe s/Str)
     :haettu-kayttoajan-paattymispaiva (s/maybe java.time.LocalDate)
     :status MuutoshakemusStatus
+    :paatos-sent-at (s/maybe s/Inst)
     :created-at s/Inst
     })
 
