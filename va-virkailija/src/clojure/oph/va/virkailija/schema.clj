@@ -8,6 +8,15 @@
   "Status from the opetushallitus point of view"
   (s/enum "unhandled", "processing", "plausible", "rejected", "accepted"))
 
+(s/defschema MuutoshakemusPaatos
+  "Muutoshakemus paatos"
+  {:id Long
+   :paatos s/Str
+   :user_key s/Str
+   :perustelut s/Str
+   :created-at s/Inst
+   :updated-at s/Inst})
+
 (s/defschema DbEmail
   "Email stored in database"
   {:formatted s/Str})

@@ -12,13 +12,37 @@
             [oph.va.budget :as va-budget])
   (:import [java.util Date]))
 
+(defn with-tx [func]
+  (jdbc/with-db-transaction [connection {:datasource (get-datasource :form-db)}]
+    (func connection)))
+
+(defn query
+  ([sql params] (with-tx (fn [tx] (query tx sql params))))
+  ([tx sql params] (jdbc/query tx (concat [sql] params) {:identifiers #(.replace % \_ \-)})))
+
+(defn execute!
+  ([sql params] (with-tx (fn [tx] (execute! tx sql params))))
+  ([tx sql params] (jdbc/execute! tx (concat [sql] params) {:identifiers #(.replace % \_ \-)})))
+
+(defn create-muutoshakemus-paatos [muutoshakemus-id paatos]
+  (with-tx (fn [tx]
+    (let [paatos (query tx
+     "INSERT INTO virkailija.paatos
+          (paatos, user_key perustelut)
+        VALUES
+          (?, ?, ?)
+        RETURN id, paatos, perustelut, user_key, created_at, updated_at"
+          [(:paatos paatos) (generate-hash-id) (:perustelut paatos)])]
+      (execute! tx
+                "UPDATE virkailija.muutoshakemus
+                SET paatos_id = ?
+                WHERE id = ?" [(:id paatos) muutoshakemus-id])
+      paatos
+      ))))
+
 (defn get-normalized-hakemus [hakemus-id]
   (log/info (str "Get normalized hakemus with id: " hakemus-id))
-  (let [hakemukset (jdbc/with-db-transaction [connection {:datasource (get-datasource :virkailija-db)}]
-                 (jdbc/query
-                   connection
-                   ["SELECT * from virkailija.normalized_hakemus WHERE hakemus_id = ?" hakemus-id]
-                  {:identifiers #(.replace % \_ \-)}))]
+  (let [hakemukset (query "SELECT * from virkailija.normalized_hakemus WHERE hakemus_id = ?" [hakemus-id])]
     (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
     (first hakemukset)))
 
