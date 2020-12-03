@@ -1,3 +1,4 @@
+ALTER TABLE email_event DROP CONSTRAINT fk_muutoshakemus;
 DROP TRIGGER update_muutoshakemus_updated_at_timestamp on muutoshakemus;
 DROP TABLE muutoshakemus;
 DROP TABLE paatos;
@@ -46,3 +47,5 @@ CREATE TRIGGER update_paatos_updated_at_timestamp
 BEFORE UPDATE ON paatos
 FOR EACH ROW
 EXECUTE PROCEDURE update_updated_at_timestamp();
+
+ALTER TABLE email_event ADD CONSTRAINT fk_muutoshakemus FOREIGN KEY (muutoshakemus_id) REFERENCES muutoshakemus (id);
