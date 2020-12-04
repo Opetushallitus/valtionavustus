@@ -3,7 +3,7 @@ SELECT
 FROM
   virkailija.arviot
 WHERE
-  status = :status::virkailija.status
+  status = :status::arvio_status
 GROUP BY
   year
 ORDER BY
