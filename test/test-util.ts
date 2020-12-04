@@ -660,6 +660,10 @@ export interface MuutoshakemusValues {
   jatkoaikaPerustelu?: string
 }
 
+export interface PaatosValues {
+  status: 'accepted' | 'rejected' | 'accepted_with_changes'
+}
+
 export async function fillAndSendMuutoshakemusIfNotExists(page: Page, avustushakuID: number, hakemusID: number, muutoshakemus: MuutoshakemusValues) {
   await navigate(page, `/avustushaku/${avustushakuID}/`)
   const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`
@@ -669,27 +673,13 @@ export async function fillAndSendMuutoshakemusIfNotExists(page: Page, avustushak
     return
   }
 
-  async function selectedDateHasBeenStoredToState(jatkoaika: Moment) {
-    const selectedDateInStateSelector = `[class=paattymispaiva][data-test-value="${jatkoaika.format('DD.MM.YYYY')}"]`
-    await page.waitForSelector(selectedDateInStateSelector, {visible: true, timeout: 5 * 1000})
-  }
-
-  async function waitForCalendarOpeningAnimationToComplete() {
-    const calendarOpenedSelector = `[class*="rw-popup-container"]:not([class*="rw-popup-transition-entering"]`
-    await page.waitForSelector(calendarOpenedSelector, {visible: true, timeout: 5 * 1000})
-  }
-
   const { jatkoaika, jatkoaikaPerustelu } = muutoshakemus
   await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
   if (jatkoaika) {
-    const calendarDateSelector = `[title="${jatkoaika.format('LL')}"]`
-    const calendarButtonSelector = `div[class="paattymispaiva"] button`
     await clickElement(page, '#checkbox-jatkoaika')
     await clearAndType(page, '#perustelut-jatkoaika', jatkoaikaPerustelu || '')
-    await clickElement(page, calendarButtonSelector)
-    await waitForCalendarOpeningAnimationToComplete()
-    await clickElement(page, calendarDateSelector)
-    await selectedDateHasBeenStoredToState(jatkoaika)
+    await clickElement(page, `div[class="paattymispaiva"] button`)
+    await clearAndType(page, 'div.paattymispaiva input', jatkoaika.format('DD.MM.YYYY'))
     await clickElement(page, '#send-muutospyynto-button')
   }
 
@@ -698,12 +688,21 @@ export async function fillAndSendMuutoshakemusIfNotExists(page: Page, avustushak
   expect(notification).toBe('Muutokset tallennettu')
 }
 
-export async function validateMuutoshakemusValues(page: Page, muutoshakemus: MuutoshakemusValues) {
+export async function validateMuutoshakemusValues(page: Page, muutoshakemus: MuutoshakemusValues, paatos?: PaatosValues) {
   await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
   const jatkoaika = await page.$eval('[data-test-id=muutoshakemus-jatkoaika]', el => el.textContent)
   expect(jatkoaika).toEqual(muutoshakemus.jatkoaika?.format('DD.MM.YYYY'))
   const jatkoaikaPerustelu = await page.$eval('[data-test-id=muutoshakemus-jatkoaika-perustelu]', el => el.textContent)
   expect(jatkoaikaPerustelu).toEqual(muutoshakemus.jatkoaikaPerustelu)
+
+  if (paatos) {
+    await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+    const form = await countElements(page, '[data-test-id="muutoshakemus-form"]')
+    expect(form).toEqual(0)
+    await page.waitForSelector(`span.muutoshakemus__paatos-icon--${paatos.status}`)
+  } else {
+    await page.waitForSelector('[data-test-id="muutoshakemus-form"]')
+  }
 }
 
 export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number) {
@@ -711,13 +710,6 @@ export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: n
   const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`
   await page.waitForSelector(muutoshakemusStatusField)
   await page.click(muutoshakemusStatusField)
-}
-
-export async function expectMuutoshakemusHasPaatos(page: Page, status: string) {
-  await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
-  const form = await countElements(page, '[data-test-id="muutoshakemus-form"]')
-  expect(form).toEqual(0)
-  await page.waitForSelector(`span.muutoshakemus__paatos-icon--${status}`)
 }
 
 export async function makePaatosForMuutoshakemusIfNew(page: Page, status: string) {

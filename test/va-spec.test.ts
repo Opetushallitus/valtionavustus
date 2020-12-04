@@ -61,7 +61,6 @@ import {
   TEST_Y_TUNNUS,
   fillAndSendMuutoshakemusIfNotExists,
   validateMuutoshakemusValues,
-  expectMuutoshakemusHasPaatos,
   makePaatosForMuutoshakemusIfNew
 } from "./test-util"
 
@@ -674,6 +673,22 @@ describe("Puppeteer tests", () => {
         jatkoaikaPerustelu: 'Ei kyl millään ehdi deadlineen mennessä ku mun koira söi ne tutkimustulokset'
       }
 
+      const muutoshakemus2: MuutoshakemusValues = {
+        jatkoaika: moment(new Date())
+          .add(1, 'months')
+          .add(3, 'days')
+          .locale('fi'),
+        jatkoaikaPerustelu: 'Kerkeehän sittenkin'
+      }
+
+      const muutoshakemus3: MuutoshakemusValues = {
+        jatkoaika: moment(new Date())
+          .add(4, 'months')
+          .add(6, 'days')
+          .locale('fi'),
+        jatkoaikaPerustelu: 'Jaa ei kyllä kerkeekkään'
+      }
+
       beforeAll(async () => {
         const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
         avustushakuID = avustushakuId
@@ -718,7 +733,7 @@ describe("Puppeteer tests", () => {
         await clickElement(page, 'span.muutoshakemus-tab')
         await makePaatosForMuutoshakemusIfNew(page, 'rejected')
 
-        await expectMuutoshakemusHasPaatos(page, 'rejected')
+        await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected'})
 
         await navigate(page, `/avustushaku/${avustushakuID}/`)
         const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`
@@ -728,7 +743,36 @@ describe("Puppeteer tests", () => {
 
         await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
         await clickElement(page, 'span.muutoshakemus-tab')
-        await expectMuutoshakemusHasPaatos(page, 'rejected')
+        await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected'})
+      })
+
+      it('can see values of multiple muutoshakemus', async () => {
+        // create paatos for existing and two new muutoshakemus
+        await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+        await clickElement(page, 'span.muutoshakemus-tab')
+        await makePaatosForMuutoshakemusIfNew(page, 'rejected')
+        await fillAndSendMuutoshakemusIfNotExists(page, avustushakuID, hakemusID, muutoshakemus2)
+        await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+        await clickElement(page, 'span.muutoshakemus-tab')
+        await makePaatosForMuutoshakemusIfNew(page, 'rejected')
+        await fillAndSendMuutoshakemusIfNotExists(page, avustushakuID, hakemusID, muutoshakemus3)
+
+        // assert newest muutoshakemus is new
+        await navigate(page, `/avustushaku/${avustushakuID}/`)
+        const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`
+        await page.waitForSelector(muutoshakemusStatusField)
+        const muutoshakemusStatus = await page.$eval(muutoshakemusStatusField, el => el.textContent)
+        expect(muutoshakemusStatus).toEqual('☆ Uusi')
+
+        // assert tabs work and data can be seen
+        await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+        await page.waitForFunction(() => (document.querySelector('[data-test-id=number-of-pending-muutoshakemukset]') as HTMLInputElement).innerText === '3')
+        await clickElement(page, 'span.muutoshakemus-tab')
+        await validateMuutoshakemusValues(page, muutoshakemus3)
+        await clickElement(page, 'button.muutoshakemus-tabs__tab:nth-child(2)')
+        await validateMuutoshakemusValues(page, muutoshakemus2, { status: 'rejected' })
+        await clickElement(page, 'button.muutoshakemus-tabs__tab:nth-child(3)')
+        await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected' })
       })
     })
 
