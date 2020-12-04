@@ -713,6 +713,20 @@ export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: n
   await page.click(muutoshakemusStatusField)
 }
 
+export async function expectMuutoshakemusHasPaatos(page: Page, status: string) {
+  await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+  const form = await countElements(page, '[data-test-id="muutoshakemus-form"]')
+  expect(form).toEqual(0)
+  await page.waitForSelector(`span.muutoshakemus__paatos-icon--${status}`)
+}
+
+export async function makePaatosForMuutoshakemusIfNew(page: Page, status: string) {
+  await page.click(`label[for="${status}"]`)
+  await page.click('a.muutoshakemus__default-reason-link')
+  await page.click('[data-test-id="muutoshakemus-submit"]')
+  await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+}
+
 interface Answers {
   avustushakuName: string
   projectName: string

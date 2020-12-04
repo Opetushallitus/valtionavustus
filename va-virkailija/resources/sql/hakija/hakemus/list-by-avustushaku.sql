@@ -14,14 +14,13 @@ select  h.id,
         h.status_loppuselvitys,
         h.status_valiselvitys,
         (select  
-          (CASE WHEN paatos_id IS NULL THEN
-            'new'
-          ELSE
-            paatos::text
+          (CASE
+            WHEN paatos_id IS NULL
+            THEN 'new'
+            ELSE status::text
           END) as status_muutoshakemus
-          from  virkailija.muutoshakemus m LEFT JOIN
-                virkailija.paatos ON
-                m.paatos_id = virkailija.paatos.id
+          from  virkailija.muutoshakemus m
+          LEFT JOIN virkailija.paatos ON m.paatos_id = virkailija.paatos.id
           where m.hakemus_id = h.id
           order by m.created_at desc limit 1),
         h.refused,

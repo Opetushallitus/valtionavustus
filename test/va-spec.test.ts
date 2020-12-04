@@ -61,7 +61,8 @@ import {
   TEST_Y_TUNNUS,
   fillAndSendMuutoshakemusIfNotExists,
   validateMuutoshakemusValues,
-  countElements
+  expectMuutoshakemusHasPaatos,
+  makePaatosForMuutoshakemusIfNew
 } from "./test-util"
 
 jest.setTimeout(100_000)
@@ -713,23 +714,21 @@ describe("Puppeteer tests", () => {
       })
 
       it('can reject a muutoshakemus', async () => {
-        // navigate to muutoshakemus tab
         await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
-        await page.click('span.muutoshakemus-tab')
+        await clickElement(page, 'span.muutoshakemus-tab')
+        await makePaatosForMuutoshakemusIfNew(page, 'rejected')
 
-        // reject muutoshakemus with default text
-        await page.click('label[for="rejected"]')
-        await page.click('a.muutoshakemus__default-reason-link')
-        await page.click('[data-test-id="muutoshakemus-submit"]')
+        await expectMuutoshakemusHasPaatos(page, 'rejected')
 
-        await page.reload({ waitUntil: ["networkidle0", "domcontentloaded"] });
+        await navigate(page, `/avustushaku/${avustushakuID}/`)
+        const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`
+        await page.waitForSelector(muutoshakemusStatusField)
+        const muutoshakemusStatus = await page.$eval(muutoshakemusStatusField, el => el.textContent)
+        expect(muutoshakemusStatus).toEqual('Hylätty')
 
-        // assert muutoshakemus is rejected
-        await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
-        const form = await countElements(page, '[data-test-id="muutoshakemus-form"]')
-        expect(form).toEqual(0)
-        await page.waitForFunction(() => (document.querySelector('[data-test-id=number-of-pending-muutoshakemukset]') as HTMLInputElement).innerText === '1')
-        await page.waitForSelector('span.muutoshakemus__paatos-icon--rejected')
+        await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+        await clickElement(page, 'span.muutoshakemus-tab')
+        await expectMuutoshakemusHasPaatos(page, 'rejected')
       })
     })
 
