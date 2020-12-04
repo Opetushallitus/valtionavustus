@@ -4,7 +4,6 @@
       [compojure.api.sweet :as compojure-api]
       [oph.va.hakija.api :as hakija-api]
       [oph.soresu.form.formutil :as formutil]
-      [oph.va.virkailija.muutospaatosprosessi :as muutospaatosprosessi]
       [oph.va.decision-liitteet :as decision-liitteet]
       [oph.va.virkailija.email :as email]
       [oph.common.email :refer [refuse-url]]
@@ -241,7 +240,6 @@
                      (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
                            avustushaku-name (-> avustushaku :content :name :fi)
                            sent-status (get-sent-status avustushaku-id)
-                           muutospaatosprosessi-enabled? (get-in config [:muutospaatosprosessi :enabled?])
                            first-hakemus-id (first (:ids sent-status))
                            first-hakemus (hakija-api/get-hakemus first-hakemus-id)
                            first-hakemus-user-key (:user_key first-hakemus)
@@ -256,19 +254,11 @@
                                                  :url              "URL_PLACEHOLDER"
                                                  :refuse-url       "REFUSE_URL_PLACEHOLDER"
                                                  :register-number  (:register_number first-hakemus)
-                                                 :project-name     (:project_name first-hakemus)
-                                                 :muutospaatosprosessi-enabled (muutospaatosprosessi/hakemus-can-be-normalized? first-hakemus)
-                                                 :modify-url       "MODIFY_URL_PLACEHOLDER"})
+                                                 :project-name     (:project_name first-hakemus)})
                                  :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)
                                  :example-refuse-url
                                               (refuse-url
-                                                avustushaku-id first-hakemus-user-key :fi first-hakemus-token)
-                                 :example-modify-url (email/modify-url
-                                                       avustushaku-id
-                                                       first-hakemus-token
-                                                       :fi
-                                                       first-hakemus-token
-                                                       muutospaatosprosessi-enabled?)}
+                                                avustushaku-id first-hakemus-user-key :fi first-hakemus-token)}
                                 (select-keys sent-status [:sent :count :sent-time :paatokset])))))
 
   (compojure-api/GET "/views/:hakemus-id" []
