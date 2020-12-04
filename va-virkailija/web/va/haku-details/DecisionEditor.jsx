@@ -477,7 +477,6 @@ class DecisionDateAndSend extends React.Component {
         sentTime: res['sent-time'],
         exampleUrl: res['example-url'],
         exampleRefuseUrl: res['example-refuse-url'],
-        exampleModifyUrl: res['example-modify-url'],
         paatokset: res.paatokset
       })
     })
@@ -628,15 +627,10 @@ class DecisionDateAndSend extends React.Component {
 
   emailPreview() {
     const mailContent = () => {
-          let content = this.state.mail.content.replace(
+          const content = this.state.mail.content.replace(
             "URL_PLACEHOLDER",
             `<a href=${this.state.exampleUrl}>${this.state.exampleUrl}</a>`
           )
-          content = content.replace(
-            "MODIFY_URL_PLACEHOLDER",
-            `<a href=${this.state.exampleModifyUrl}>${this.state.exampleModifyUrl}</a>`
-          )
-
       if (this.state.refuseEnabled) {
         return content.replace(
             "REFUSE_URL_PLACEHOLDER",
