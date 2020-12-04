@@ -1,7 +1,16 @@
 readonly repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
-
 readonly node_version="12.13.1"
 readonly npm_version="6.13.4"
+
+function parse_env_from_script_name {
+  local FILE_NAME=$(basename "$0")
+  if echo ${FILE_NAME}| grep -E -q '.+-[^-]{2,4}\.sh$'; then
+    export ENV=$(echo ${FILE_NAME}| sed -E -e 's|.+-([^-]{2,4})\.sh$|\1|g')
+  else
+    echo >&2 "Don't call this script directly"
+    exit 1
+  fi
+}
 
 function init_nodejs {
   export NVM_DIR="${NVM_DIR:-$HOME/.cache/nvm}"
