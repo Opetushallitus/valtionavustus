@@ -716,11 +716,10 @@ describe("Puppeteer tests", () => {
 
       it('gets an email with link to hakemus', async () => {
           const emails = await getValmistelijaEmails(avustushakuID, hakemusID)
-          console.log(JSON.stringify(emails, undefined, 2))
 
           const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
           expectToBeDefined(title)
-          expect(title).toEqual(`Hanke: ${hakemusID}/${answers.registerNumber} - ${answers.projectName}`)
+          expect(title).toContain(`${answers.registerNumber} - ${answers.projectName}`)
 
           const linkToHakemus = await getLinkToHakemusFromSentEmails(avustushakuID, hakemusID)
           expect(linkToHakemus).toEqual(`${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
@@ -772,12 +771,11 @@ describe("Puppeteer tests", () => {
 
       it('hakija gets an email with link to paatos and link to new muutoshakemus', async () => {
           const emails = await getMuutoshakemusPaatosEmails(avustushakuID, hakemusID)
-          console.log(JSON.stringify(emails, undefined, 2))
           const userKey = await getUserKey(avustushakuID, hakemusID)
 
           const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
           expectToBeDefined(title)
-          expect(title).toEqual(`Hanke: ${hakemusID}/${answers.registerNumber} - ${answers.projectName}`)
+          expect(title).toContain(`${answers.registerNumber} - ${answers.projectName}`)
 
           const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshaku.*/
           const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
