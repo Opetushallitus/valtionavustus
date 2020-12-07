@@ -7,6 +7,7 @@ import {
   createValidCopyOfEsimerkkihakuAndReturnTheNewId,
   getLinkToHakemusFromSentEmails,
   mkBrowser,
+  getMuutoshakemusPaatosEmails,
   getFirstPage,
   getUserKey,
   ratkaiseAvustushaku,
@@ -59,9 +60,9 @@ import {
   navigateToHakemus,
   MuutoshakemusValues,
   TEST_Y_TUNNUS,
-  fillAndSendMuutoshakemusIfNotExists,
+  fillAndSendMuutoshakemus,
   validateMuutoshakemusValues,
-  makePaatosForMuutoshakemusIfNew
+  makePaatosForMuutoshakemus
 } from "./test-util"
 
 jest.setTimeout(100_000)
@@ -693,11 +694,7 @@ describe("Puppeteer tests", () => {
         const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
         avustushakuID = avustushakuId
         hakemusID = hakemusId
-      })
-
-
-      beforeEach(async () => {
-        await fillAndSendMuutoshakemusIfNotExists(page, avustushakuID, hakemusID, muutoshakemus1)
+        await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus1)
       })
 
       it('can see values of a new muutoshakemus', async () => {
@@ -731,7 +728,7 @@ describe("Puppeteer tests", () => {
       it('can reject a muutoshakemus', async () => {
         await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
         await clickElement(page, 'span.muutoshakemus-tab')
-        await makePaatosForMuutoshakemusIfNew(page, 'rejected')
+        await makePaatosForMuutoshakemus(page, 'rejected')
 
         await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected'})
 
@@ -747,15 +744,12 @@ describe("Puppeteer tests", () => {
       })
 
       it('can see values of multiple muutoshakemus', async () => {
-        // create paatos for existing and two new muutoshakemus
+        // create paatos for two new muutoshakemus
+        await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus2)
         await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
         await clickElement(page, 'span.muutoshakemus-tab')
-        await makePaatosForMuutoshakemusIfNew(page, 'rejected')
-        await fillAndSendMuutoshakemusIfNotExists(page, avustushakuID, hakemusID, muutoshakemus2)
-        await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
-        await clickElement(page, 'span.muutoshakemus-tab')
-        await makePaatosForMuutoshakemusIfNew(page, 'rejected')
-        await fillAndSendMuutoshakemusIfNotExists(page, avustushakuID, hakemusID, muutoshakemus3)
+        await makePaatosForMuutoshakemus(page, 'rejected')
+        await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus3)
 
         // assert newest muutoshakemus is new
         await navigate(page, `/avustushaku/${avustushakuID}/`)
@@ -773,6 +767,20 @@ describe("Puppeteer tests", () => {
         await validateMuutoshakemusValues(page, muutoshakemus2, { status: 'rejected' })
         await clickElement(page, 'button.muutoshakemus-tabs__tab:nth-child(3)')
         await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected' })
+      })
+
+      it('hakija gets an email with link to paatos and link to new muutoshakemus', async () => {
+          const emails = await getMuutoshakemusPaatosEmails(avustushakuID, hakemusID)
+          const userKey = await getUserKey(avustushakuID, hakemusID)
+
+          const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
+          expectToBeDefined(title)
+          expect(title).toEqual(`Hanke: ${answers.registerNumber} - ${answers.projectName}`)
+
+          const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshaku.*/
+          const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
+          expectToBeDefined(linkToMuutoshakemus)
+          expect(linkToMuutoshakemus).toContain(`${HAKIJA_URL}/muutoshaku?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`)
       })
     })
 

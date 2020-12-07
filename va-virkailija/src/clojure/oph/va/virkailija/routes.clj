@@ -123,7 +123,15 @@
                         :body [paatos (compojure-api/describe virkailija-schema/MuutoshakemusPaatosRequest "Muutoshakemus paatos")]
                         :return virkailija-schema/MuutoshakemusPaatos
                         :summary "Create a paatos for muutoshaku"
-                        (ok (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos))))
+                        (let [hakemus (hakija-api/get-hakemus hakemus-id)
+                              avustushaku (hakija-api/get-avustushaku avustushaku-id)
+                              roles (hakija-api/get-avustushaku-roles avustushaku-id)
+                              arvio (virkailija-db/get-arvio hakemus-id)
+                              contact-email (:contact-email (virkailija-db/get-normalized-hakemus hakemus-id))
+                              token (when (get-in config [:application-change :refuse-enabled?])
+                                      (virkailija-db/create-application-token (:id hakemus)))]
+                          (email/send-muutoshakemus-paatos [contact-email] avustushaku hakemus arvio roles token)
+                          (ok (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos)))))
 
 (defn- get-muutoshakemukset []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/" [hakemus-id]
@@ -235,7 +243,7 @@
   (let [emails (jdbc/with-db-transaction [connection {:datasource (get-datasource)}]
                  (jdbc/query
                    connection
-                   ["SELECT formatted from virkailija.email WHERE id = (SELECT email_id from virkailija.email_event WHERE hakemus_id = ? AND email_type = ?::virkailija.email_type)" hakemus-id, email-type]
+                   ["SELECT formatted from virkailija.email WHERE id IN (SELECT email_id from virkailija.email_event WHERE hakemus_id = ? AND email_type = ?::virkailija.email_type)" hakemus-id, email-type]
                    {:identifiers #(.replace % \_ \-)}))]
     (log/info (str "Succesfully fetched email for hakemus with hakemus-id: " hakemus-id))
     emails))

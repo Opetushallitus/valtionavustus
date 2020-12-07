@@ -58,6 +58,10 @@ export const getValmistelijaEmails = (avustushakuID: number, hakemusID: number) 
   axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email/notify-valmistelija-of-new-muutoshakemus`)
     .then(r => emailSchema.validate(r.data))
 
+export const getMuutoshakemusPaatosEmails = (avustushakuID: number, hakemusID: number) =>
+  axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email/muutoshakemus-paatos`)
+    .then(r => emailSchema.validate(r.data))
+
 export const getMuutoshakemusEmails = (avustushakuID: number, hakemusID: number) =>
   axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email/paatos-refuse`)
     .then(r => emailSchema.validate(r.data))
@@ -664,15 +668,7 @@ export interface PaatosValues {
   status: 'accepted' | 'rejected' | 'accepted_with_changes'
 }
 
-export async function fillAndSendMuutoshakemusIfNotExists(page: Page, avustushakuID: number, hakemusID: number, muutoshakemus: MuutoshakemusValues) {
-  await navigate(page, `/avustushaku/${avustushakuID}/`)
-  const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`
-  await page.waitForSelector(muutoshakemusStatusField)
-  const muutoshakemusStatus = await page.$eval(muutoshakemusStatusField, el => el.textContent)
-  if (muutoshakemusStatus === '☆ Uusi') {
-    return
-  }
-
+export async function fillAndSendMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, muutoshakemus: MuutoshakemusValues) {
   const { jatkoaika, jatkoaikaPerustelu } = muutoshakemus
   await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
   if (jatkoaika) {
@@ -712,7 +708,7 @@ export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: n
   await page.click(muutoshakemusStatusField)
 }
 
-export async function makePaatosForMuutoshakemusIfNew(page: Page, status: string) {
+export async function makePaatosForMuutoshakemus(page: Page, status: string) {
   await page.click(`label[for="${status}"]`)
   await page.click('a.muutoshakemus__default-reason-link')
   await page.click('[data-test-id="muutoshakemus-submit"]')
