@@ -36,23 +36,14 @@
          (-> (:db config)
              (dissoc :schema))))
 
-(defonce datasource (atom {}))
+(def datasource
+  (delay (make-datasource (datasource-spec))))
 
 (defn get-datasource []
-  (swap! datasource (fn [datasources]
-                      (if (not (contains? datasources :db))
-                        (let [ds (make-datasource (datasource-spec))]
-                          (assoc datasources :db ds))
-                        datasources)))
-  (:db @datasource))
+  @datasource)
 
 (defn close-datasource! []
-  (swap! datasource (fn [datasources]
-                      (if (contains? datasources :db)
-                        (let [ds (:db datasources)]
-                          (close-datasource ds)
-                          (dissoc datasources :db))
-                        datasources))))
+  (close-datasource @datasource))
 
 (defn get-next-exception-or-original [original-exception]
   (try (.getNextException original-exception)
