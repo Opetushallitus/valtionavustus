@@ -4,24 +4,12 @@
         [clojure.tools.trace :only [trace]])
   (:require [clojure.java.io :as io]
             [clojure.tools.logging :as log]
-            [oph.soresu.common.db :refer [exec get-datasource]]
+            [oph.soresu.common.db :refer [exec get-datasource with-tx query execute!]]
             [clojure.java.jdbc :as jdbc]
             [oph.soresu.common.jdbc.extensions :refer :all]
             [oph.soresu.form.formutil :as form-util]
             [oph.va.jdbc.extensions :refer :all]
             [oph.va.hakija.db.queries :as queries]))
-
-(defn with-tx [func]
-  (jdbc/with-db-transaction [connection {:datasource (get-datasource)}]
-    (func connection)))
-
-(defn query
-  ([sql params] (with-tx (fn [tx] (query tx sql params))))
-  ([tx sql params] (jdbc/query tx (concat [sql] params) {:identifiers #(.replace % \_ \-)})))
-
-(defn execute!
-  ([sql params] (with-tx (fn [tx] (execute! tx sql params))))
-  ([tx sql params] (jdbc/execute! tx (concat [sql] params) {:identifiers #(.replace % \_ \-)})))
 
 (defn slurp-binary-file! [file]
   (io! (with-open [reader (io/input-stream file)]

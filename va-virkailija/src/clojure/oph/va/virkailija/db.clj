@@ -12,18 +12,6 @@
             [oph.va.budget :as va-budget])
   (:import [java.util Date]))
 
-(defn with-tx [func]
-  (jdbc/with-db-transaction [connection {:datasource (get-datasource)}]
-    (func connection)))
-
-(defn query
-  ([sql params] (with-tx (fn [tx] (query tx sql params))))
-  ([tx sql params] (jdbc/query tx (concat [sql] params) {:identifiers #(.replace % \_ \-)})))
-
-(defn execute!
-  ([sql params] (with-tx (fn [tx] (execute! tx sql params))))
-  ([tx sql params] (jdbc/execute! tx (concat [sql] params) {:identifiers #(.replace % \_ \-)})))
-
 (defn create-muutoshakemus-paatos [muutoshakemus-id paatos]
   (with-tx (fn [tx]
     (let [paatos (first (query tx
