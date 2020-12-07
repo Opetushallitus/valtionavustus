@@ -220,7 +220,7 @@
     (let [hakemus (hakija-db/get-hakemus user-key)
           avustushaku-id (:avustushaku hakemus)
           haku-id (:id hakemus)
-          register-number (:register_number (hakija-db/get-avustushaku avustushaku-id))
+          register-number (:register_number hakemus)
           hanke (:project-name (hakija-db/get-normalized-hakemus user-key))
           valmistelija-email (presenting-officer-email avustushaku-id)]
     (log/info "Hanke: " hanke)

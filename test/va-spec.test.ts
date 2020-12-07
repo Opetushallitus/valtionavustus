@@ -719,7 +719,7 @@ describe("Puppeteer tests", () => {
 
           const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
           expectToBeDefined(title)
-          expect(title).toEqual(`Hanke: ${answers.registerNumber} - ${answers.projectName}`)
+          expect(title).toEqual(`Hanke: ${hakemusID}/${answers.registerNumber} - ${answers.projectName}`)
 
           const linkToHakemus = await getLinkToHakemusFromSentEmails(avustushakuID, hakemusID)
           expect(linkToHakemus).toEqual(`${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
@@ -775,7 +775,7 @@ describe("Puppeteer tests", () => {
 
           const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
           expectToBeDefined(title)
-          expect(title).toEqual(`Hanke: ${answers.registerNumber} - ${answers.projectName}`)
+          expect(title).toEqual(`Hanke: ${hakemusID}/${answers.registerNumber} - ${answers.projectName}`)
 
           const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshaku.*/
           const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
