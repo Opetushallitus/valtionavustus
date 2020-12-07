@@ -223,7 +223,6 @@
           register-number (:register_number hakemus)
           hanke (:project-name (hakija-db/get-normalized-hakemus user-key))
           valmistelija-email (presenting-officer-email avustushaku-id)]
-    (log/info "Hanke: " hanke)
     (hakija-db/on-muutoshakemus user-key muutoshakemus)
     (va-email/notify-valmistelija-of-new-muutoshakemus [valmistelija-email] avustushaku-id register-number hanke haku-id)
     (ok (hakija-db/get-normalized-hakemus user-key)))))
