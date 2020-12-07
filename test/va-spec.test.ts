@@ -691,9 +691,9 @@ describe("Puppeteer tests", () => {
       }
 
       beforeAll(async () => {
-        const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
-        avustushakuID = avustushakuId
-        hakemusID = hakemusId
+        const hakemusIdAvustushakuId = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
+        avustushakuID = hakemusIdAvustushakuId.avustushakuID 
+        hakemusID = hakemusIdAvustushakuId.hakemusID 
         await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus1)
       })
 
@@ -716,6 +716,7 @@ describe("Puppeteer tests", () => {
 
       it('gets an email with link to hakemus', async () => {
           const emails = await getValmistelijaEmails(avustushakuID, hakemusID)
+          console.log(JSON.stringify(emails, undefined, 2))
 
           const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
           expectToBeDefined(title)
@@ -771,6 +772,7 @@ describe("Puppeteer tests", () => {
 
       it('hakija gets an email with link to paatos and link to new muutoshakemus', async () => {
           const emails = await getMuutoshakemusPaatosEmails(avustushakuID, hakemusID)
+          console.log(JSON.stringify(emails, undefined, 2))
           const userKey = await getUserKey(avustushakuID, hakemusID)
 
           const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
