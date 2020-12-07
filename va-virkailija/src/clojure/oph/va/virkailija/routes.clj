@@ -123,8 +123,7 @@
                         :body [paatos (compojure-api/describe virkailija-schema/MuutoshakemusPaatosRequest "Muutoshakemus paatos")]
                         :return virkailija-schema/MuutoshakemusPaatos
                         :summary "Create a paatos for muutoshaku"
-                        (let [hakemus (hakija-api/get-hakemus hakemus-id)
-                              avustushaku (hakija-api/get-avustushaku avustushaku-id)
+                        (let [{:keys [avustushaku hakemus]} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)
                               roles (hakija-api/get-avustushaku-roles avustushaku-id)
                               arvio (virkailija-db/get-arvio hakemus-id)
                               contact-email (:contact-email (virkailija-db/get-normalized-hakemus hakemus-id))
