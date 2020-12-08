@@ -12,7 +12,6 @@ export const datetimeFormat = 'D.M.YYYY [klo] HH.mm'
 export const Muutoshakemus = ({ avustushaku, muutoshakemukset, hakemus, controller }) => {
   const [a, setActiveMuutoshakemus] = useState(muutoshakemukset[0])
   const projectEndAnswer = hakemus.answers.find(a => a.key === 'project-end')
-  console.log(avustushaku)
   return (
     <React.Fragment>
       {muutoshakemukset.length > 1 && <MuutoshakemusTabs muutoshakemukset={muutoshakemukset} activeMuutoshakemus={a} setActiveMuutoshakemus={setActiveMuutoshakemus} />}
