@@ -7,6 +7,7 @@
             [clojure.java.io :as io]
             [clostache.parser :refer [render]]
             [oph.soresu.common.config :refer [config]]
+            [oph.soresu.common.db :refer [query execute!]]
             [oph.common.email-utils :as email-utils]
             [oph.common.string :as common-string]
             [oph.common.background-job-supervisor :as job-supervisor])
@@ -53,7 +54,7 @@
     (MultiPartEmail.)
     (SimpleEmail.)))
 
-(defn store-email [ msg format-plaintext-message data-source]
+(defn store-email [msg format-plaintext-message]
   (let [from            (common-string/trim-ws (:from msg))
     sender          (common-string/trim-ws (:sender msg))
     to              (mapv common-string/trim-ws (:to msg))
@@ -70,10 +71,9 @@
                             subject)
       email-msg (format-plaintext-message msg)]
   (log/info "Storing email: " msg-description)
-  (let [email_id (jdbc/with-db-transaction [connection {:datasource data-source }]
-        (jdbc/query
-               connection
-                    ["INSERT INTO virkailija.email (formatted, from_address, sender, to_address, bcc, reply_to, subject, attachment_contents, attachment_title, attachment_description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id", email-msg, from, sender, to, bcc, reply-to, subject, (:contents attachment), (:title attachment), (:description attachment)]))]
+  (let [email_id (query "INSERT INTO virkailija.email (formatted, from_address, sender, to_address, bcc, reply_to, subject, attachment_contents, attachment_title, attachment_description)
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id"
+                        [email-msg from sender to bcc reply-to subject (:contents attachment) (:title attachment) (:description attachment)])]
   (log/info (str "Succesfully stored email with id: " email_id))
   (:id (first email_id)))))
 
@@ -147,41 +147,40 @@
                                      email-msg)))))]
       [msg-description send-fn])))
 
-(defn- create-email-event [email-id success msg data-source]
+(defn- create-email-event [email-id success msg]
   (let [msg-type (:type msg)
         hakemus-id (:hakemus-id msg)
         muutoshakemus-id (:muutoshakemus-id msg)]
   (log/info "Storing email event for email: " email-id)
-  (jdbc/with-db-transaction [connection {:datasource data-source }]
-    (jdbc/execute!
-            connection
-                ["INSERT INTO virkailija.email_event (hakemus_id, muutoshakemus_id, email_id, email_type, success) VALUES (?, ?, ?, ?::virkailija.email_type, ?)" hakemus-id muutoshakemus-id email-id (name msg-type) success]))
+  (execute! "INSERT INTO virkailija.email_event (hakemus_id, muutoshakemus_id, email_id, email_type, success)
+             VALUES (?, ?, ?, ?::virkailija.email_type, ?)"
+            [hakemus-id muutoshakemus-id email-id (name msg-type) success])
   (log/info (str "Succesfully stored email event for email: " email-id))))
 
-(defn- send-msg! [msg format-plaintext-message data-source]
+(defn- send-msg! [msg format-plaintext-message]
   (let [[msg-description send-fn] (create-mail-send-fn msg format-plaintext-message)
-        email-id (store-email msg format-plaintext-message data-source)
+        email-id (store-email msg format-plaintext-message)
         ]
     (if (not (try-send! (:retry-initial-wait smtp-config)
                           (:retry-multiplier smtp-config)
                           (:retry-max-time smtp-config)
                           send-fn))
       ((log/error "Failed sending email:" msg-description)
-       (create-email-event email-id false msg data-source))
-      (create-email-event email-id true msg data-source))))
+       (create-email-event email-id false msg))
+      (create-email-event email-id true msg))))
 
-(defn try-send-msg-once [msg format-plaintext-message data-source]
+(defn try-send-msg-once [msg format-plaintext-message]
   (let [[msg-description send-fn] (create-mail-send-fn msg format-plaintext-message)
-        email-id (store-email msg format-plaintext-message data-source)]
+        email-id (store-email msg format-plaintext-message)]
     (try
       (send-fn)
-      (create-email-event email-id true msg data-source)
+      (create-email-event email-id true msg)
       (catch Exception e
         (log/error e (format "Failed to send message: %s" (.getMessage e)))
-        (create-email-event email-id false msg data-source)
+        (create-email-event email-id false msg)
         (throw e)))))
 
-(defn start-loop-send-mails [mail-templates data-source]
+(defn start-loop-send-mails [mail-templates]
   (go
     (log/info "Starting background job: send mails...")
     (loop []
@@ -190,8 +189,7 @@
                     :stop true
                     :send (do
                             (try
-                              (send-msg! msg
-                                       (partial render (get-in mail-templates [(:type msg) (:lang msg)])) data-source)
+                              (send-msg! msg (partial render (get-in mail-templates [(:type msg) (:lang msg)])))
                             (catch Exception e
                               (log/error e "Failed to send email")))
                             false))]
@@ -199,9 +197,9 @@
           (recur))))
     (log/info "Stopped background job: send mails.")))
 
-(defn start-background-job-send-mails [mail-templates data-source]
+(defn start-background-job-send-mails [mail-templates]
   (job-supervisor/start-background-job :send-mails
-                                       (partial start-loop-send-mails mail-templates data-source)
+                                       (partial start-loop-send-mails mail-templates)
                                        #(>!! mail-chan {:operation :stop})))
 
 (defn stop-background-job-send-mails []

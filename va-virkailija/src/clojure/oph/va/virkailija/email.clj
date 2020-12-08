@@ -53,7 +53,7 @@
    :sender (-> email/smtp-config :sender)})
 
 (defn start-background-job-send-mails []
-  (email/start-background-job-send-mails mail-templates (get-datasource)))
+  (email/start-background-job-send-mails mail-templates))
 
 (defn stop-background-job-send-mails []
   (email/stop-background-job-send-mails))
@@ -142,8 +142,7 @@
                           :register-number (:register_number hakemus)
                           :project-name (:project_name hakemus)}
 
-                           (partial render (get-in mail-templates [:muutoshakemus-paatos lang]))
-                           (get-datasource))))
+                           (partial render (get-in mail-templates [:muutoshakemus-paatos lang])))))
 
 (defn send-paatos! [to avustushaku hakemus reply-to]
   (let [lang-str (:language hakemus)
@@ -165,8 +164,7 @@
                           :register-number (:register_number hakemus)
                           :project-name (:project_name hakemus)}
 
-                           (partial render (get-in mail-templates [:paatos lang]))
-                           (get-datasource))))
+                           (partial render (get-in mail-templates [:paatos lang])))))
 
 (defn could-normalize-necessary-fields [hakemus]
   (let [id (:id hakemus)
@@ -210,7 +208,7 @@
         ]
     (log/info "Sending decision email with refuse link")
     (log/info "Urls would be: " url "\n" paatos-refuse-url)
-    (email/try-send-msg-once msg format-plaintext-message (get-datasource))
+    (email/try-send-msg-once msg format-plaintext-message)
     ))
 
 (defn send-selvitys! [to hakemus mail-subject mail-message]
