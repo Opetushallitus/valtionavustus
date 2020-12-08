@@ -43,21 +43,21 @@ h4.muutoshakemus__header {
     content: "";
     height: 100%;
     width: 2rem;
-    left: 0px;
-    top: 0px;
+    left: 0;
+    top: 0;
     background-size: 2rem;
   }
 }
 
 .muutoshakemus__paatos-icon--accepted {
   &:before {
-    background: url("../img/accepted.svg") no-repeat 50% 50%;
+    background: url("../img/icon_accepted.svg") no-repeat 50% 50%;
   }
 }
 
 .muutoshakemus__paatos-icon--rejected {
   &:before {
-    background: url("../img/rejected.svg") no-repeat 50% 50%;
+    background: url("../img/icon_rejected.svg") no-repeat 50% 50%;
   }
 }
 
@@ -80,9 +80,9 @@ h4.muutoshakemus__header {
     content: "";
     height: 3rem;
     width: 3rem;
-    left: 0px;
-    top: 0px;
-    background: url("../img/exclamation_mark.svg") no-repeat 50% 50%;
+    left: 0;
+    top: 0;
+    background: url("../img/icon_exclamation_mark.svg") no-repeat 50% 50%;
     background-size: 1.5rem;
   }
 }
@@ -100,4 +100,22 @@ input.muutoshakemus__error:enabled {
 div.muutoshakemus__error {
   font-size: 0.8rem;
   color: @bright-red;
+}
+
+.muutoshakemus__preview-row {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.muutoshakemus__paatos-preview-link {
+  &:before {
+    position: absolute;
+    content: "";
+    height: 2rem;
+    width: 2rem;
+    left: 0;
+    top: -0.3rem;
+    background: url("../img/icon_preview.svg") no-repeat 50% 50%;
+    background-size: 1.2rem;
+  }
 }

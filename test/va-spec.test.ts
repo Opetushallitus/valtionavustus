@@ -776,6 +776,31 @@ etunimi.sukunimi@oph.fi
         await validateMuutoshakemusValues(page, muutoshakemus1)
       }, 150 * 1000)
 
+      it('can preview paatos of a new muutoshakemus', async () => {
+        await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+        await clickElement(page, 'span.muutoshakemus-tab')
+        await clickElement(page, 'a.muutoshakemus__default-reason-link')
+
+        // accepted preview
+        await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
+        await page.waitForSelector('div.hakemus-details-modal__wrapper')
+        const acceptedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
+        expect(acceptedPaatos).toEqual('Opetushallitus hyväksyy muutokset hakemuksen mukaisesti.')
+        const acceptedReason = await page.$eval('[data-test-id="paatos-reason"]', el => el.textContent)
+        expect(acceptedReason).toEqual('huh huh pitkä teksti')
+        await clickElement(page, 'button.hakemus-details-modal__close-button')
+
+        // rejected preview
+        await clickElement(page, 'label[for="rejected"]')
+        await clearAndType(page, '#reason', 'hyläty')
+        await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
+        await page.waitForSelector('div.hakemus-details-modal__wrapper')
+        const rejectedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
+        expect(rejectedPaatos).toEqual('Opetushallitus hylkää muutoshakemuksen.')
+        const rejectedReason = await page.$eval('[data-test-id="paatos-reason"]', el => el.textContent)
+        expect(rejectedReason).toEqual('hyläty')
+      })
+
       it('gets an email with link to hakemus', async () => {
           const emails = await getValmistelijaEmails(avustushakuID, hakemusID)
 

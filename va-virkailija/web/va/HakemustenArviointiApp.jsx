@@ -22,6 +22,25 @@ import './style/main.less'
 import './style/switcher.less'
 
 export default class App extends Component {
+  constructor(props) {
+    super(props)
+    this.escFunction = this.escFunction.bind(this)
+  }
+
+  escFunction(event) {
+    if(event.keyCode === 27) {
+      controller.setModal(undefined)
+    }
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.escFunction, false)
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.escFunction, false)
+  }
+
   render() {
     const state = this.props.state
     const hakuData = state.hakuData
@@ -83,6 +102,7 @@ export default class App extends Component {
             <HakemusDecisionLink hakemus={selectedHakemus} avustushaku={avustushaku} />
           </div>
         </section>
+        {state.modal}
       </section>
     )
   }

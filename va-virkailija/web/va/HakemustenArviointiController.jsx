@@ -27,6 +27,7 @@ const events = {
   beforeUnload: 'beforeUnload',
   initialState: 'initialState',
   reRender: 'reRender',
+  setModal: 'setModal',
   refreshAttachments: 'refreshAttachments',
   refreshHakemukset: 'refreshHakemukset',
   setFilter: 'setFilter',
@@ -97,6 +98,7 @@ export default class HakemustenArviointiController {
       hakemusSorter: [
         {field: "score", order: "desc"}
       ],
+      modal: undefined,
       personSelectHakemusId:undefined,
       selectedHakemus: undefined,
       selectedHakemusAccessControl: {},
@@ -124,6 +126,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload,
       [dispatcher.stream(events.initialState)], this.onInitialState,
       [dispatcher.stream(events.reRender)], this.onReRender,
+      [dispatcher.stream(events.setModal)], this.onSetModal,
       [dispatcher.stream(events.refreshAttachments)], this.onRefreshAttachments,
       [dispatcher.stream(events.refreshHakemukset)], this.onRefreshHakemukset,
       [dispatcher.stream(events.selectHakemus)], this.onHakemusSelection,
@@ -221,6 +224,10 @@ export default class HakemustenArviointiController {
 
   onReRender(state) {
     return state
+  }
+
+  onSetModal(state, modal) {
+    return { ...state, modal }
   }
 
   onBeforeUnload(state) {
@@ -1128,6 +1135,10 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
 
   setPaatos(paatos) {
     dispatcher.push(events.setPaatos, paatos)
+  }
+
+  setModal(modal) {
+    dispatcher.push(events.setModal, modal)
   }
 
   setScore(selectionCriteriaIndex, newScore) {
