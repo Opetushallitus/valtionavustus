@@ -25,10 +25,14 @@ export const TEST_Y_TUNNUS = "2050864-5"
 
 interface Email {
   formatted: string
+  "to-address": string[]
+  bcc?: string
 }
 
 const emailSchema = yup.array().of(yup.object().shape<Email>({
-  "formatted": yup.string().required()
+  formatted: yup.string().required(),
+  "to-address": yup.array().of(yup.string().required()).defined(),
+  bcc: yup.string().optional(),
 }).required()).defined()
 
 export async function navigateToHakijaMuutoshakemusPage(page: Page, avustushakuID: number, hakemusID: number) {
@@ -141,10 +145,7 @@ export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page
 
   await copyEsimerkkihaku(page)
 
-  const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku")).then(id => {
-    expectToBeDefined(id)
-    return parseInt(id)
-  })
+  const avustushakuID = parseInt(await expectQueryParameter(page, "avustushaku"))
   console.log(`Avustushaku ID: ${avustushakuID}`)
 
   await clearAndType(page, "#register-number", registerNumber || "230/2015")
@@ -196,7 +197,7 @@ export async function fillAndSendHakemus(page: Page, avustushakuID: number, befo
   await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Hakemus lähetetty")
 }
 
-export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void) {
+export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void): Promise<{ userKey: string }> {
   await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
 
   await clearAndType(page, "#primary-email", answers.contactPersonEmail)
@@ -255,6 +256,14 @@ export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustus
   await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).disabled === false)
   await clickElement(page, "#topbar #form-controls button#submit")
   await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Hakemus lähetetty")
+  const userKey = await expectQueryParameter(page, "hakemus")
+  return { userKey }
+}
+
+export async function expectQueryParameter(page: Page, paramName: string): Promise<string> {
+  const value = await page.evaluate(param => (new URLSearchParams(window.location.search)).get(param), paramName)
+  if (!value) throw Error(`Expected page url '${page.url()}' to have query parameter '${paramName}'`)
+  return value
 }
 
 export async function uploadFile(page: Page, selector: string, filePath: string) {
@@ -388,7 +397,7 @@ export async function createValidCopyOfLukioEsimerkkihakuWithValintaperusteetAnd
 
   await copyEsimerkkihaku(page)
 
-  const avustushakuID = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("avustushaku"))
+  const avustushakuID = await expectQueryParameter(page, "avustushaku")
 
   expectToBeDefined(avustushakuID)
 
@@ -584,7 +593,7 @@ export async function fillAndSendHakemusAndReturnHakemusId(page: Page, avustusha
   let hakemusID
 
   async function fn() {
-    const token = await page.evaluate(() => (new URLSearchParams(window.location.search)).get("hakemus"))
+    const token = await expectQueryParameter(page, "hakemus")
     const url = `${VIRKAILIJA_URL}/api/v2/external/hakemus/id/${token}`
     hakemusID = await axios.get(url).then(r => r.data.id)
 
@@ -740,12 +749,12 @@ export interface Haku {
   avustushakuName: string
 }
 
-export async function publishAndFillMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers): Promise<{ avustushakuID: number }> {
+export async function publishAndFillMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers): Promise<{ avustushakuID: number, userKey: string }> {
   const { avustushakuID } = await createMuutoshakemusEnabledEsimerkkihakuAndReturnId(page, haku.avustushakuName, haku.registerNumber)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
-  await fillAndSendMuutoshakemusEnabledHakemus(page, avustushakuID, answers)
-  return { avustushakuID }
+  const { userKey } = await fillAndSendMuutoshakemusEnabledHakemus(page, avustushakuID, answers)
+  return { avustushakuID, userKey }
 }
 
 export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers) {

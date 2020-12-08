@@ -6,7 +6,7 @@
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
-            [oph.soresu.common.db :refer [exec get-datasource]]
+            [oph.soresu.common.db :refer [exec query]]
             [clojure.java.jdbc :as jdbc]
             [compojure.core :as compojure]
             [compojure.route :as compojure-route]
@@ -239,11 +239,10 @@
 
 (defn get-emails [hakemus-id email-type]
   (log/info (str "Fetching emails for hakemus with id: " hakemus-id))
-  (let [emails (jdbc/with-db-transaction [connection {:datasource (get-datasource)}]
-                 (jdbc/query
-                   connection
-                   ["SELECT formatted from virkailija.email WHERE id IN (SELECT email_id from virkailija.email_event WHERE hakemus_id = ? AND email_type = ?::virkailija.email_type)" hakemus-id, email-type]
-                   {:identifiers #(.replace % \_ \-)}))]
+  (let [emails (query "SELECT formatted, to_address, bcc FROM virkailija.email
+                       JOIN email_event ON (email.id = email_event.email_id)
+                       WHERE hakemus_id = ? AND email_type = ?::email_type"
+                      [hakemus-id email-type])]
     (log/info (str "Succesfully fetched email for hakemus with hakemus-id: " hakemus-id))
     emails))
 

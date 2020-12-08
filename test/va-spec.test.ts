@@ -514,9 +514,10 @@ describe("Puppeteer tests", () => {
   })
 
   it("allows sending täydennyspyyntö to hakija", async () => {
-    const { avustushakuID } = await publishAndFillMuutoshakemusEnabledAvustushaku(page, {
+    const randomId = randomString()
+    const { avustushakuID, userKey } = await publishAndFillMuutoshakemusEnabledAvustushaku(page, {
       registerNumber: "1620/2020",
-      avustushakuName: `Täydennyspyyntöavustushaku ${randomString()}`,
+      avustushakuName: `Täydennyspyyntöavustushaku ${randomId}`,
     }, {
       contactPersonEmail: "lotta.lomake@example.com",
       contactPersonName: "Lotta Lomake",
@@ -540,7 +541,29 @@ describe("Puppeteer tests", () => {
 
     const emails = await getTäydennyspyyntöEmails(avustushakuID, hakemusID)
     expect(emails).toHaveLength(1)
-    console.log(emails)
+    expect(emails[0]['to-address']).toHaveLength(1)
+    expect(emails[0]['to-address']).toContain("lotta.lomake@example.com")
+    expect(emails[0]['bcc']).toStrictEqual("santeri.horttanainen@reaktor.com")
+    expect(emails[0].formatted).toStrictEqual(`Avustushakemus: Täydennyspyyntöavustushaku ${randomId}
+
+Täydennyspyyntö:
+"Joo ei tosta hakemuksesta ota mitään tolkkua. Voisitko tarkentaa?"
+
+Pääset täydentämään avustushakemusta tästä linkistä: ${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=${userKey}&lang=fi
+Muokkaa vain pyydettyjä kohtia.
+
+Lisätietoja voitte kysyä sähköpostitse osoitteesta valtionavustukset@oph.fi
+
+Hausta vastaava valmistelija on mainittu hakutiedotteessa.
+
+Opetushallitus
+Hakaniemenranta 6
+PL 380, 00531 Helsinki
+
+puhelin 029 533 1000
+faksi 029 533 1035
+etunimi.sukunimi@oph.fi
+`)
   })
 
   async function pyydäTäydennystä(page: Page, avustushakuID: number, hakemusID: number, täydennyspyyntöText: string): Promise<void> {

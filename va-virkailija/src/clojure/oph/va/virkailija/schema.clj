@@ -24,7 +24,9 @@
 
 (s/defschema DbEmail
   "Email stored in database"
-  {:formatted s/Str})
+  {:formatted s/Str
+   :to-address [s/Str]
+   (s/optional-key :bcc) s/Str})
 
 (s/defschema DbEmails
   "Emails stored in database"
