@@ -62,7 +62,7 @@ import {
   TEST_Y_TUNNUS,
   fillAndSendMuutoshakemus,
   validateMuutoshakemusValues,
-  makePaatosForMuutoshakemus
+  makePaatosForMuutoshakemus,
 } from "./test-util"
 
 jest.setTimeout(100_000)
@@ -636,17 +636,22 @@ describe("Puppeteer tests", () => {
   })
 
   describe("Muutospäätösprosessi", () => {
+    function createRandomHakuValues() {
+      return {
+        registerNumber: "230/2015",
+        avustushakuName: `Testiavustushaku (Muutospäätösprosessi) ${randomString()} - ${moment(new Date()).format('YYYY-MM-DD hh:mm:ss:SSSS')}`
+      }
+    }
+
     const answers = {
       contactPersonEmail: "erkki.esimerkki@example.com",
       contactPersonName: "Erkki Esimerkki",
       contactPersonPhoneNumber: "666",
-      registerNumber: "230/2015",
       projectName: "Rahassa kylpijät Ky Ay Oy",
-      avustushakuName: `Testiavustushaku (Muutospäätösprosessi) ${randomString()}`
     }
 
     it("Avustushaun ratkaisu should send an email with link to muutoshaku", async () => {
-      const { avustushakuID, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
+      const { avustushakuID, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, createRandomHakuValues(), answers)
 
       const userKey = await getUserKey(avustushakuID, hakemusID)
 
@@ -663,6 +668,7 @@ describe("Puppeteer tests", () => {
     })
 
     describe('Virkailija', () => {
+      const haku = createRandomHakuValues()
       let avustushakuID: number
       let hakemusID: number
 
@@ -691,9 +697,9 @@ describe("Puppeteer tests", () => {
       }
 
       beforeAll(async () => {
-        const hakemusIdAvustushakuId = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
-        avustushakuID = hakemusIdAvustushakuId.avustushakuID 
-        hakemusID = hakemusIdAvustushakuId.hakemusID 
+        const hakemusIdAvustushakuId = await ratkaiseMuutoshakemusEnabledAvustushaku(page, haku, answers)
+        avustushakuID = hakemusIdAvustushakuId.avustushakuID
+        hakemusID = hakemusIdAvustushakuId.hakemusID
         await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus1)
       })
 
@@ -719,7 +725,7 @@ describe("Puppeteer tests", () => {
 
           const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
           expectToBeDefined(title)
-          expect(title).toContain(`${answers.registerNumber} - ${answers.projectName}`)
+          expect(title).toContain(`${haku.registerNumber} - ${answers.projectName}`)
 
           const linkToHakemus = await getLinkToHakemusFromSentEmails(avustushakuID, hakemusID)
           expect(linkToHakemus).toEqual(`${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
@@ -775,7 +781,7 @@ describe("Puppeteer tests", () => {
 
           const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
           expectToBeDefined(title)
-          expect(title).toContain(`${answers.registerNumber} - ${answers.projectName}`)
+          expect(title).toContain(`${haku.registerNumber} - ${answers.projectName}`)
 
           const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshaku.*/
           const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
@@ -790,9 +796,10 @@ describe("Puppeteer tests", () => {
       const newName = randomString()
       const newEmail = "uusi.email@reaktor.com"
       const newPhone = "0901967632"
+      const haku = createRandomHakuValues()
 
       beforeAll(async () => {
-        const { avustushakuID: avustushakuId, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, answers)
+        const { avustushakuID: avustushakuId, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, haku, answers)
         avustushakuID = avustushakuId
 
         linkToMuutoshaku = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
@@ -820,9 +827,9 @@ describe("Puppeteer tests", () => {
         const contactPersonPhoneInput = await page.waitForSelector("#muutoshaku__phone", { visible: true })
         const contactPersonPhoneNumber = await page.evaluate(element => element.value, contactPersonPhoneInput)
 
-        expect(avustushakuName).toEqual(answers.avustushakuName)
+        expect(avustushakuName).toEqual(haku.avustushakuName)
         expect(projectName).toEqual(answers.projectName)
-        expect(registerNumber).toEqual(answers.registerNumber)
+        expect(registerNumber).toEqual(haku.registerNumber)
         expect(contactPerson).toEqual(answers.contactPersonName)
         expect(contactPersonEmail).toEqual(answers.contactPersonEmail)
         expect(contactPersonPhoneNumber).toEqual(answers.contactPersonPhoneNumber)

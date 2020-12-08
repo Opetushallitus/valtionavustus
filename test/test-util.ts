@@ -716,16 +716,19 @@ export async function makePaatosForMuutoshakemus(page: Page, status: string) {
 }
 
 interface Answers {
-  avustushakuName: string
   projectName: string
   contactPersonName: string
   contactPersonEmail: string
   contactPersonPhoneNumber: string
-  registerNumber: string
 }
 
-export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, answers: Answers) {
-  const avustushakuID = await createMuutoshakemusEnabledEsimerkkihakuAndReturnId(page, answers.avustushakuName, answers.registerNumber)
+export interface Haku {
+  registerNumber: string
+  avustushakuName: string
+}
+
+export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers) {
+  const avustushakuID = await createMuutoshakemusEnabledEsimerkkihakuAndReturnId(page, haku.avustushakuName, haku.registerNumber)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
   await fillAndSendMuutoshakemusEnabledHakemus(page, avustushakuID, answers)
@@ -751,8 +754,8 @@ async function acceptAvustushaku(page: Page, avustushakuID: number) {
     clickElementWithText(page, "td", "Akaan kaupunki"),
   ])
 
-  const hakemusID = await page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1]).then(possibleHakemusID => { 
-    expectToBeDefined(possibleHakemusID) 
+  const hakemusID = await page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1]).then(possibleHakemusID => {
+    expectToBeDefined(possibleHakemusID)
     return parseInt(possibleHakemusID)
   })
 
