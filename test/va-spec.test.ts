@@ -63,6 +63,9 @@ import {
   fillAndSendMuutoshakemus,
   validateMuutoshakemusValues,
   makePaatosForMuutoshakemus,
+  publishAndFillMuutoshakemusEnabledAvustushaku,
+  navigateToHakemuksenArviointi,
+  getTäydennyspyyntöEmails
 } from "./test-util"
 
 jest.setTimeout(100_000)
@@ -107,16 +110,7 @@ describe("Puppeteer tests", () => {
     await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
 
     // Accept the hakemus
-    await navigate(page, `/avustushaku/${avustushakuID}/`)
-    await Promise.all([
-      page.waitForNavigation(),
-      clickElementWithText(page, "td", "Akaan kaupunki"),
-    ])
-
-    const hakemusID = await page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1]).then( assumedHakemusID => {
-      expectToBeDefined(assumedHakemusID)
-      return parseInt(assumedHakemusID)
-    })
+    const { hakemusID } = await navigateToHakemuksenArviointi(page, avustushakuID, "Akaan kaupunki")
 
     console.log("Hakemus ID:", hakemusID)
 
@@ -519,7 +513,46 @@ describe("Puppeteer tests", () => {
     expect(actualResponse).toMatchObject(expectedResponse)
   })
 
-  it("Allows modification of applications after they've been resolved", async function() {
+  it("allows sending täydennyspyyntö to hakija", async () => {
+    const { avustushakuID } = await publishAndFillMuutoshakemusEnabledAvustushaku(page, {
+      registerNumber: "1620/2020",
+      avustushakuName: `Täydennyspyyntöavustushaku ${randomString()}`,
+    }, {
+      contactPersonEmail: "lotta.lomake@example.com",
+      contactPersonName: "Lotta Lomake",
+      contactPersonPhoneNumber: "666",
+      projectName: "Lomakkeentäyttörajoitteiset Ry",
+    })
+    await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
+    const { hakemusID } = await navigateToHakemuksenArviointi(page, avustushakuID, "Akaan kaupunki")
+
+    expect(await getTäydennyspyyntöEmails(avustushakuID, hakemusID)).toHaveLength(0)
+
+    const täydennyspyyntöText = "Joo ei tosta hakemuksesta ota mitään tolkkua. Voisitko tarkentaa?"
+    await pyydäTäydennystä(page, avustushakuID, hakemusID, täydennyspyyntöText)
+
+    expect(await textContent(page, "#arviointi-tab .change-request-title"))
+      .toMatch(/\* Täydennyspyyntö lähetetty \d{1,2}\.\d{1,2}\.\d{4} \d{1,2}\.\d{1,2}/)
+    // The quotes around täydennyspyyntö message are done with CSS :before
+    // and :after pseudo elements and not shown in Node.textContent
+    expect(await textContent(page, "#arviointi-tab .change-request-text"))
+      .toStrictEqual(täydennyspyyntöText)
+
+    const emails = await getTäydennyspyyntöEmails(avustushakuID, hakemusID)
+    expect(emails).toHaveLength(1)
+    console.log(emails)
+  })
+
+  async function pyydäTäydennystä(page: Page, avustushakuID: number, hakemusID: number, täydennyspyyntöText: string): Promise<void> {
+    await clickElementWithText(page, "button", "Pyydä täydennystä")
+    await page.type("[data-test-id='täydennyspyyntö__textarea']", täydennyspyyntöText)
+    await Promise.all([
+      page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/change-requests`),
+      page.click("[data-test-id='täydennyspyyntö__lähetä']"),
+    ])
+  }
+
+  it("Allows modification of applications after they've been resolved", async function () {
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
     const { fieldId } = await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "project-nutshell", "textField")

@@ -29,7 +29,7 @@ interface Email {
 
 const emailSchema = yup.array().of(yup.object().shape<Email>({
   "formatted": yup.string().required()
-}).required()).required()
+}).required()).defined()
 
 export async function navigateToHakijaMuutoshakemusPage(page: Page, avustushakuID: number, hakemusID: number) {
   const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
@@ -54,17 +54,15 @@ export async function countElements(page: Page, selector: string) {
   return await page.evaluate((selector: string) => document.querySelectorAll(selector).length, selector)
 }
 
-export const getValmistelijaEmails = (avustushakuID: number, hakemusID: number) =>
-  axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email/notify-valmistelija-of-new-muutoshakemus`)
+const getEmails = (emailType: string) => (avustushakuID: number, hakemusID: number): Promise<Email[]> =>
+  axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email/${emailType}`)
+    .then(r => { console.log(`getEmails(${emailType})`, r.data); return r })
     .then(r => emailSchema.validate(r.data))
 
-export const getMuutoshakemusPaatosEmails = (avustushakuID: number, hakemusID: number) =>
-  axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email/muutoshakemus-paatos`)
-    .then(r => emailSchema.validate(r.data))
-
-export const getMuutoshakemusEmails = (avustushakuID: number, hakemusID: number) =>
-  axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email/paatos-refuse`)
-    .then(r => emailSchema.validate(r.data))
+export const getValmistelijaEmails = getEmails("notify-valmistelija-of-new-muutoshakemus")
+export const getMuutoshakemusPaatosEmails = getEmails("muutoshakemus-paatos")
+export const getMuutoshakemusEmails = getEmails("paatos-refuse")
+export const getTäydennyspyyntöEmails: (avustushakuID: number, hakemusID: number) => Promise<Email[]> = getEmails("change-request")
 
 export async function getLinkToMuutoshakemusFromSentEmails(avustushakuID: number, hakemusID: number) {
   const emails = await getMuutoshakemusEmails(avustushakuID, hakemusID)
@@ -113,13 +111,28 @@ export async function navigateHakija(page: Page, path: string) {
   await page.goto(`${HAKIJA_URL}${path}`, { waitUntil: "networkidle0" })
 }
 
-export async function createMuutoshakemusEnabledEsimerkkihakuAndReturnId(page: Page, hakuName?: string, registerNumber?: string) {
+export async function navigateToHakemuksenArviointi(page: Page, avustushakuID: number, hakijaName: string): Promise<{ hakemusID: number }> {
+  await navigate(page, `/avustushaku/${avustushakuID}/`)
+  await Promise.all([
+    page.waitForNavigation(),
+    clickElementWithText(page, "td", hakijaName),
+  ])
+
+  const hakemusID = await page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1]).then(assumedHakemusID => {
+    expectToBeDefined(assumedHakemusID)
+    return parseInt(assumedHakemusID)
+  })
+
+  return { hakemusID }
+}
+
+export async function createMuutoshakemusEnabledEsimerkkihakuAndReturnId(page: Page, hakuName?: string, registerNumber?: string): Promise<{ avustushakuID: number }> {
   const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, hakuName, registerNumber)
 
   await clickElementWithText(page, "span", "Hakulomake")
   await clearAndSet(page, ".form-json-editor textarea", hakulomakeJson)
   await clickFormSaveAndWait(page, avustushakuID)
-  return avustushakuID
+  return { avustushakuID }
 }
 
 export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page, hakuName?: string, registerNumber?: string) {
@@ -727,12 +740,16 @@ export interface Haku {
   avustushakuName: string
 }
 
-export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers) {
-  const avustushakuID = await createMuutoshakemusEnabledEsimerkkihakuAndReturnId(page, haku.avustushakuName, haku.registerNumber)
+export async function publishAndFillMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers): Promise<{ avustushakuID: number }> {
+  const { avustushakuID } = await createMuutoshakemusEnabledEsimerkkihakuAndReturnId(page, haku.avustushakuName, haku.registerNumber)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
   await fillAndSendMuutoshakemusEnabledHakemus(page, avustushakuID, answers)
+  return { avustushakuID }
+}
 
+export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers) {
+  const { avustushakuID } = await publishAndFillMuutoshakemusEnabledAvustushaku(page, haku, answers)
   return await acceptAvustushaku(page, avustushakuID)
 }
 

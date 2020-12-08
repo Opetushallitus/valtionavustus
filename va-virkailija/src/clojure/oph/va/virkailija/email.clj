@@ -58,13 +58,14 @@
 (defn stop-background-job-send-mails []
   (email/stop-background-job-send-mails))
 
-(defn send-change-request-message! [lang to avustushaku-id avustushaku-name user-key change-request presenting-officer-email]
+(defn send-change-request-message! [lang to avustushaku-id hakemus-id avustushaku-name user-key change-request presenting-officer-email]
   (let [lang-str (or (clojure.core/name lang) "fi")
         url (email/generate-url avustushaku-id lang lang-str user-key false)]
     (log/info "Url would be: " url)
     (>!! email/mail-chan {:operation :send
                           :type :change-request
                           :lang lang
+                          :hakemus-id hakemus-id
                           :from (-> email/smtp-config :from lang)
                           :reply-to presenting-officer-email
                           :bcc presenting-officer-email
