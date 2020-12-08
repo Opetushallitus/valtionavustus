@@ -26,13 +26,13 @@ export const TEST_Y_TUNNUS = "2050864-5"
 interface Email {
   formatted: string
   "to-address": string[]
-  bcc?: string
+  bcc: string | null
 }
 
 const emailSchema = yup.array().of(yup.object().shape<Email>({
   formatted: yup.string().required(),
   "to-address": yup.array().of(yup.string().required()).defined(),
-  bcc: yup.string().optional(),
+  bcc: yup.string().defined().nullable(),
 }).required()).defined()
 
 export async function navigateToHakijaMuutoshakemusPage(page: Page, avustushakuID: number, hakemusID: number) {
