@@ -129,7 +129,7 @@
                               contact-email (:contact-email (virkailija-db/get-normalized-hakemus hakemus-id))
                               token (when (get-in config [:application-change :refuse-enabled?])
                                       (virkailija-db/create-application-token (:id hakemus)))]
-                          (email/send-muutoshakemus-paatos [contact-email] avustushaku hakemus arvio roles token)
+                          (email/send-muutoshakemus-paatos [contact-email] avustushaku hakemus arvio roles token muutoshakemus-id)
                           (ok (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos)))))
 
 (defn- get-muutoshakemukset []

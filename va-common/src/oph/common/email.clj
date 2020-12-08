@@ -149,12 +149,13 @@
 
 (defn- create-email-event [email-id success msg data-source]
   (let [msg-type (:type msg)
-        hakemus-id (:hakemus-id msg)]
+        hakemus-id (:hakemus-id msg)
+        muutoshakemus-id (:muutoshakemus-id msg)]
   (log/info "Storing email event for email: " email-id)
   (jdbc/with-db-transaction [connection {:datasource data-source }]
     (jdbc/execute!
             connection
-                ["INSERT INTO virkailija.email_event (hakemus_id, email_id, email_type, success) VALUES (?, ?, ?::virkailija.email_type, ?)", hakemus-id, email-id, (name msg-type), success]))
+                ["INSERT INTO virkailija.email_event (hakemus_id, muutoshakemus_id, email_id, email_type, success) VALUES (?, ?, ?, ?::virkailija.email_type, ?)" hakemus-id muutoshakemus-id email-id (name msg-type) success]))
   (log/info (str "Succesfully stored email event for email: " email-id))))
 
 (defn- send-msg! [msg format-plaintext-message data-source]

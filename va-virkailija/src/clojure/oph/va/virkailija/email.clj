@@ -117,7 +117,7 @@
          false))))
 
 
-(defn send-muutoshakemus-paatos [to avustushaku hakemus arvio roles token]
+(defn send-muutoshakemus-paatos [to avustushaku hakemus arvio roles token muutoshakemus-id]
   (let [lang-str (:language hakemus)
         hakemus-id (:id hakemus)
         lang (keyword lang-str)
@@ -130,6 +130,7 @@
     (email/try-send-msg-once {
                           :type :muutoshakemus-paatos
                           :lang lang
+                          :muutoshakemus-id muutoshakemus-id
                           :from (-> email/smtp-config :from lang)
                           :sender (-> email/smtp-config :sender)
                           :subject mail-subject
