@@ -29,3 +29,4 @@ secret-dev.edn
 dist
 .rebel_readline_history
 .package-lock.json.checksum
+git-HEAD.txt
