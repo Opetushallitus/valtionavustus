@@ -118,7 +118,7 @@
       :else {:avustushaku avustushaku :hakemus hakemus})))
 
 (defn- post-muutoshakemus-paatos []
-    (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/:muutoshakemus-id/paatos" []
+    (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/:muutoshakemus-id/paatos" request
                         :path-params [avustushaku-id :- Long hakemus-id :- Long muutoshakemus-id :- Long]
                         :body [paatos (compojure-api/describe virkailija-schema/MuutoshakemusPaatosRequest "Muutoshakemus paatos")]
                         :return virkailija-schema/MuutoshakemusPaatos
@@ -127,10 +127,12 @@
                               roles (hakija-api/get-avustushaku-roles avustushaku-id)
                               arvio (virkailija-db/get-arvio hakemus-id)
                               contact-email (:contact-email (virkailija-db/get-normalized-hakemus hakemus-id))
+                              identity (authentication/get-request-identity request)
+                              decider (str (:first-name identity) " " (:surname identity))
                               token (when (get-in config [:application-change :refuse-enabled?])
                                       (virkailija-db/create-application-token (:id hakemus)))]
                           (email/send-muutoshakemus-paatos [contact-email] avustushaku hakemus arvio roles token muutoshakemus-id)
-                          (ok (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos)))))
+                          (ok (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider)))))
 
 (defn- get-muutoshakemukset []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/" [hakemus-id]

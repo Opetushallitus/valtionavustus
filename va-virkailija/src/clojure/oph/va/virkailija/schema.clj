@@ -14,6 +14,7 @@
    :status s/Str
    :user-key s/Str
    :reason s/Str
+   :decider s/Str
    :created-at s/Inst
    :updated-at s/Inst})
 

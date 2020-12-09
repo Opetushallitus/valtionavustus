@@ -12,20 +12,20 @@
             [oph.va.budget :as va-budget])
   (:import [java.util Date]))
 
-(defn create-muutoshakemus-paatos [muutoshakemus-id paatos]
+(defn create-muutoshakemus-paatos [muutoshakemus-id paatos decider]
   (with-tx (fn [tx]
-    (let [paatos (first (query tx
+    (let [created-paatos (first (query tx
      "INSERT INTO virkailija.paatos
-          (status, user_key, reason)
+          (status, user_key, reason, decider)
         VALUES
-          (?::virkailija.paatos_type, ?, ?)
-        RETURNING id, status, reason, user_key, created_at, updated_at"
-          [(:status paatos) (generate-hash-id) (:reason paatos)]))]
+          (?::virkailija.paatos_type, ?, ?, ?)
+        RETURNING id, status, reason, decider, user_key, created_at, updated_at"
+          [(:status paatos) (generate-hash-id) (:reason paatos) decider]))]
       (execute! tx
                 "UPDATE virkailija.muutoshakemus
                 SET paatos_id = ?
-                WHERE id = ?" [(:id paatos) muutoshakemus-id])
-      paatos
+                WHERE id = ?" [(:id created-paatos) muutoshakemus-id])
+      created-paatos
       ))))
 
 (defn get-normalized-hakemus [hakemus-id]
