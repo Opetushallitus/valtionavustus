@@ -202,7 +202,7 @@
   (compojure-api/GET "/:user-key" [user-key]
                      :path-params [user-key :- s/Str]
                      :return  Muutoshakemus
-                     :summary "Get muutoshaku"
+                     :summary "Get muutoshakemus"
                      (ok (hakija-db/get-muutoshakemus user-key))))
 
 (defn presenting-officer-email [avustushaku-id]
@@ -328,7 +328,7 @@
 
    ;; Finnish subcontext
    (when (get-in config [:muutospaatosprosessi :enabled?])
-     (compojure/GET "/muutoshaku" [hakemus-id] (return-html "muutoshakemus.html")))
+     (compojure/GET "/muutoshakemus" [hakemus-id] (return-html "muutoshakemus.html")))
    (compojure/GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "index.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "selvitys.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "selvitys.html"))
@@ -347,7 +347,7 @@
         :body decision}))
 
    (compojure-route/resources "/avustushaku/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
-   (compojure-route/resources "/muutoshaku" {:mime-types {"html" "text/html; charset=utf-8"}})
+   (compojure-route/resources "/muutoshakemus" {:mime-types {"html" "text/html; charset=utf-8"}})
 
    ;;; Swedish subcontext
    (compojure/GET "/statsunderstod/:avustushaku-id/visa" [avustushaku-id] (return-html "index.html"))
@@ -369,7 +369,7 @@
         (ok organisation-info)
         (not-found)))))
 
-(compojure-api/defroutes muutoshaku-routes
+(compojure-api/defroutes muutoshakemus-routes
   "APIs for requesting changes for hakemus after it has already been approved"
   (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemus))
   (when (get-in config [:muutospaatosprosessi :enabled?]) (post-muutoshakemus))
@@ -408,7 +408,7 @@
 
   (compojure-api/context "/api/avustushaku" [] :tags ["avustushaut"] avustushaku-routes)
 
-  (compojure-api/context "/api/muutoshakemus" [] :tags ["muutoshakemukset"] muutoshaku-routes)
+  (compojure-api/context "/api/muutoshakemus" [] :tags ["muutoshakemukset"] muutoshakemus-routes)
 
   (compojure-api/context "/api/organisations" [] :tags ["organisations"] organisation-routes)
 
@@ -436,7 +436,7 @@
 
   (compojure-api/context "/api/junction-hackathon" [] :tags ["junction-hackathon"] junction-hackathon-routes)
 
-  (compojure-api/context "/api/muutoshakemus" [] :tags ["muutoshakemukset"] muutoshaku-routes)
+  (compojure-api/context "/api/muutoshakemus" [] :tags ["muutoshakemukset"] muutoshakemus-routes)
 
 
   va-routes/config-routes

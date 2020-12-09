@@ -60,42 +60,42 @@ export const ContactPerson = ({ avustushakuName, projectName, registerNumber}: C
 
   return (
   <section>
-    <div className="muutoshaku__page-title">
-      <h1 className="muutoshaku__title">{t.contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushakuName}</span></h1>
+    <div className="muutoshakemus__page-title">
+      <h1 className="muutoshakemus__title">{t.contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushakuName}</span></h1>
       <span className="va-register-number">
-        <span className="muutoshaku__register-number">{t.contactPersonEdit.registerNumberTitle}: </span>
+        <span className="muutoshakemus__register-number">{t.contactPersonEdit.registerNumberTitle}: </span>
         <span data-test-id="register-number">{registerNumber}</span>
       </span>
     </div>
-    <div className="muutoshaku__form">
-      <div className="muutoshaku__form-row">
-        <div className="muutoshaku__form-cell">
+    <div className="muutoshakemus__form">
+      <div className="muutoshakemus__form-row">
+        <div className="muutoshakemus__form-cell">
           <div>{t.contactPersonEdit.hanke}</div>
           <div data-test-id="project-name">{projectName}</div>
         </div>
       </div>
-      <div className="muutoshaku__form-row">
-        <div className="muutoshaku__form-cell">
-          <label htmlFor="muutoshaku__contact-person">{t.contactPersonEdit.contactPerson}</label>
+      <div className="muutoshakemus__form-row">
+        <div className="muutoshakemus__form-cell">
+          <label htmlFor="muutoshakemus__contact-person">{t.contactPersonEdit.contactPerson}</label>
           <input
-            id="muutoshaku__contact-person"
+            id="muutoshakemus__contact-person"
             type="text"
             onChange={onChangeContactPersonName}
             value={getContactPersonNameFromLocalOrServerState()} />
         </div>
-        <div className="muutoshaku__form-cell">
-          <label htmlFor="muutoshaku__email">{t.contactPersonEdit.email}</label>
+        <div className="muutoshakemus__form-cell">
+          <label htmlFor="muutoshakemus__email">{t.contactPersonEdit.email}</label>
           <input
-            id="muutoshaku__email"
+            id="muutoshakemus__email"
             type="text"
             className={ hasEmailValidationError() ? "error" : undefined}
             onChange={onChangeContactPersonEmail}
             value={getContactPersonEmailFromLocalOrServerState()} />
         </div>
-        <div className="muutoshaku__form-cell">
-          <label htmlFor="muutoshaku__phone">{t.contactPersonEdit.phone}</label>
+        <div className="muutoshakemus__form-cell">
+          <label htmlFor="muutoshakemus__phone">{t.contactPersonEdit.phone}</label>
           <input
-            id="muutoshaku__phone"
+            id="muutoshakemus__phone"
             type="text"
             onChange={onChangeContactPersonPhone}
             value={getContactPersonPhoneFromLocalOrServerState()}/>

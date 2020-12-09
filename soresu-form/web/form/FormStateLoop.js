@@ -53,7 +53,7 @@ export default class FormStateLoop {
   initialize(controller, formOperations, initialValues, urlContent) {
     const query = urlContent.parsedQuery
     const queryParams = {
-      embedForMuutoshaku: query.embedForMuutoshaku || false,
+      embedForMuutoshakemus: query.embedForMuutoshakemus || false,
       preview: query.preview || false,
       devel: query.devel || false
     }
@@ -89,8 +89,8 @@ export default class FormStateLoop {
       },
       configuration: {
         form: formP,
-        embedForMuutoshaku: queryParams.embedForMuutoshaku === 'true',
-        preview: queryParams.embedForMuutoshaku === 'true' || queryParams.preview === 'true',
+        embedForMuutoshakemus: queryParams.embedForMuutoshakemus === 'true',
+        preview: queryParams.embedForMuutoshakemus === 'true' || queryParams.preview === 'true',
         develMode: queryParams.devel === 'true',
         lang: lang,
         translations: translationsP

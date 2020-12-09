@@ -706,20 +706,20 @@ etunimi.sukunimi@oph.fi
       projectName: "Rahassa kylpijät Ky Ay Oy",
     }
 
-    it("Avustushaun ratkaisu should send an email with link to muutoshaku", async () => {
+    it("Avustushaun ratkaisu should send an email with link to muutoshakemus", async () => {
       const { avustushakuID, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, createRandomHakuValues(), answers)
 
       const userKey = await getUserKey(avustushakuID, hakemusID)
 
       const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
-      expect(linkToMuutoshakemus).toContain(`${HAKIJA_URL}/muutoshaku?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`)
+      expect(linkToMuutoshakemus).toContain(`${HAKIJA_URL}/muutoshakemus?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`)
     })
 
-    it("Avustushaun ratkaisu should send an email without link to muutoshaku if storing normalized hakemus fields is not possible", async () => {
+    it("Avustushaun ratkaisu should send an email without link to muutoshakemus if storing normalized hakemus fields is not possible", async () => {
       const { avustushakuID, hakemusID } = await ratkaiseAvustushaku(page)
       const emails = await getMuutoshakemusEmails(avustushakuID, hakemusID)
       emails.forEach(email => {
-        expect(email.formatted).not.toContain(`${HAKIJA_URL}/muutoshaku`)
+        expect(email.formatted).not.toContain(`${HAKIJA_URL}/muutoshakemus`)
       })
     })
 
@@ -869,15 +869,15 @@ etunimi.sukunimi@oph.fi
           expectToBeDefined(title)
           expect(title).toContain(`${haku.registerNumber} - ${answers.projectName}`)
 
-          const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshaku.*/
+          const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshakemus.*/
           const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
           expectToBeDefined(linkToMuutoshakemus)
-          expect(linkToMuutoshakemus).toContain(`${HAKIJA_URL}/muutoshaku?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`)
+          expect(linkToMuutoshakemus).toContain(`${HAKIJA_URL}/muutoshakemus?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`)
       })
     })
 
     describe("Changing contact person details", () => {
-      let linkToMuutoshaku: string
+      let linkToMuutoshakemus: string
       let avustushakuID: number
       const newName = randomString()
       const newEmail = "uusi.email@reaktor.com"
@@ -888,13 +888,13 @@ etunimi.sukunimi@oph.fi
         const { avustushakuID: avustushakuId, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, haku, answers)
         avustushakuID = avustushakuId
 
-        linkToMuutoshaku = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
+        linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
       })
 
       it("should show avustushaku name, project name, and registration number as well as name, email and phone number for contact person", async () => {
 
-        expectToBeDefined(linkToMuutoshaku)
-        await page.goto(linkToMuutoshaku, { waitUntil: "networkidle0" })
+        expectToBeDefined(linkToMuutoshakemus)
+        await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
         const avustushakuNameSpan = await page.waitForSelector("[data-test-id=avustushaku-name]", { visible: true })
         const avustushakuName = await page.evaluate(element => element.textContent, avustushakuNameSpan)
 
@@ -904,13 +904,13 @@ etunimi.sukunimi@oph.fi
         const registerNumberSpan = await page.waitForSelector("[data-test-id=register-number]", { visible: true })
         const registerNumber = await page.evaluate(element => element.textContent, registerNumberSpan)
 
-        const contactPersonInput = await page.waitForSelector("#muutoshaku__contact-person", { visible: true })
+        const contactPersonInput = await page.waitForSelector("#muutoshakemus__contact-person", { visible: true })
         const contactPerson = await page.evaluate(element => element.value, contactPersonInput)
 
-        const contactPersonEmailInput = await page.waitForSelector("#muutoshaku__email", { visible: true })
+        const contactPersonEmailInput = await page.waitForSelector("#muutoshakemus__email", { visible: true })
         const contactPersonEmail = await page.evaluate(element => element.value, contactPersonEmailInput)
 
-        const contactPersonPhoneInput = await page.waitForSelector("#muutoshaku__phone", { visible: true })
+        const contactPersonPhoneInput = await page.waitForSelector("#muutoshakemus__phone", { visible: true })
         const contactPersonPhoneNumber = await page.evaluate(element => element.value, contactPersonPhoneInput)
 
         expect(avustushakuName).toEqual(haku.avustushakuName)
@@ -922,8 +922,8 @@ etunimi.sukunimi@oph.fi
       })
 
       it("should show original hakemus", async() => {
-        expectToBeDefined(linkToMuutoshaku)
-        await page.goto(linkToMuutoshaku, { waitUntil: "networkidle0" })
+        expectToBeDefined(linkToMuutoshakemus)
+        await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
         const iframe = await page.waitForSelector("iframe[data-test-id=original-hakemus]")
         if (!iframe) throw Error("Original hakemus iframe not found on page :mad:")
         const frameContent = await iframe.contentFrame()
@@ -936,45 +936,45 @@ etunimi.sukunimi@oph.fi
       })
 
       it("Save button deactivates when contact person email does not validate", async () => {
-        await page.goto(linkToMuutoshaku, { waitUntil: "networkidle0" })
+        await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
 
         await page.waitForSelector("#send-muutospyynto-button", { visible: true })
 
         const sendMuutospyyntoButtonIsDisabled = await hasElementAttribute(page, "#send-muutospyynto-button", "disabled")
         expect(sendMuutospyyntoButtonIsDisabled).toBeTruthy()
 
-        await clearAndType(page, '#muutoshaku__contact-person', newName)
-        await clearAndType(page, '#muutoshaku__email', "not-email")
-        await clearAndType(page, '#muutoshaku__phone', newPhone)
+        await clearAndType(page, '#muutoshakemus__contact-person', newName)
+        await clearAndType(page, '#muutoshakemus__email', "not-email")
+        await clearAndType(page, '#muutoshakemus__phone', newPhone)
 
         const sendMuutospyyntoButtonIsDisabledAfterInvalidEmail = await hasElementAttribute(page, "#send-muutospyynto-button", "disabled")
         expect(sendMuutospyyntoButtonIsDisabledAfterInvalidEmail).toBeTruthy()
 
-        const emailInputFieldClassWhenInvalidEmail = await getElementAttribute(page, "#muutoshaku__email", "class")
+        const emailInputFieldClassWhenInvalidEmail = await getElementAttribute(page, "#muutoshakemus__email", "class")
         expectToBeDefined(emailInputFieldClassWhenInvalidEmail)
         expect(emailInputFieldClassWhenInvalidEmail).toContain("error")
 
-        await clearAndType(page, '#muutoshaku__email', newEmail)
+        await clearAndType(page, '#muutoshakemus__email', newEmail)
 
         const sendMuutospyyntoButtonIsDisabledAfterChange = await hasElementAttribute(page, "#send-muutospyynto-button", "disabled")
         expect(sendMuutospyyntoButtonIsDisabledAfterChange).toBeFalsy()
 
-        const emailInputFieldClassWithValidEmail = await getElementAttribute(page, "#muutoshaku__email", "class")
+        const emailInputFieldClassWithValidEmail = await getElementAttribute(page, "#muutoshakemus__email", "class")
         expect(emailInputFieldClassWithValidEmail).toBeFalsy()
       })
 
 
       it("Save button activates when contact person details are changed", async () => {
-        await page.goto(linkToMuutoshaku, { waitUntil: "networkidle0" })
+        await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
 
         await page.waitForSelector("#send-muutospyynto-button", { visible: true })
 
         const sendMuutospyyntoButtonIsDisabled = await hasElementAttribute(page, "#send-muutospyynto-button", "disabled")
         expect(sendMuutospyyntoButtonIsDisabled).toBeTruthy()
 
-        await clearAndType(page, '#muutoshaku__contact-person', newName)
-        await clearAndType(page, '#muutoshaku__email', newEmail)
-        await clearAndType(page, '#muutoshaku__phone', newPhone)
+        await clearAndType(page, '#muutoshakemus__contact-person', newName)
+        await clearAndType(page, '#muutoshakemus__email', newEmail)
+        await clearAndType(page, '#muutoshakemus__phone', newPhone)
 
         const sendMuutospyyntoButtonIsDisabledAfterChange = await hasElementAttribute(page, "#send-muutospyynto-button", "disabled")
         expect(sendMuutospyyntoButtonIsDisabledAfterChange).toBeFalsy()

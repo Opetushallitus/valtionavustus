@@ -71,7 +71,7 @@ export const getTäydennyspyyntöEmails: (avustushakuID: number, hakemusID: numb
 export async function getLinkToMuutoshakemusFromSentEmails(avustushakuID: number, hakemusID: number) {
   const emails = await getMuutoshakemusEmails(avustushakuID, hakemusID)
 
-  const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshaku.*/
+  const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshakemus.*/
   const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
   expectToBeDefined(linkToMuutoshakemus)
   return linkToMuutoshakemus

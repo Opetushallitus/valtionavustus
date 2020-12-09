@@ -10,14 +10,14 @@
         url-parameters  (form-encode {:avustushaku avustushaku-id :hakemus user-key :lang lang-str :preview preview :token token :refuse-grant refuse :modify-application modify})]
 (str va-url "avustushaku/" avustushaku-id "/nayta?" url-parameters)))
 
-(defn muutoshaku-url-generator [va-url avustushaku-id user-key lang]
+(defn muutoshakemus-url-generator [va-url avustushaku-id user-key lang]
   (let [lang-str (or (clojure.core/name lang) "fi")
         url-parameters  (form-encode { :lang lang-str :user-key user-key :avustushaku-id avustushaku-id})]
-(str va-url "muutoshaku?" url-parameters)))
+(str va-url "muutoshakemus?" url-parameters)))
 
  (defn modify-url [va-url avustushaku-id user-key lang token muutospaatosprosessi-enabled?]
    (if muutospaatosprosessi-enabled?
-     (muutoshaku-url-generator va-url avustushaku-id user-key lang)
+     (muutoshakemus-url-generator va-url avustushaku-id user-key lang)
      (url-generator va-url avustushaku-id user-key lang token "modify")))
 
   (defn refuse-url [va-url avustushaku-id user-key lang token]

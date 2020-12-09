@@ -121,7 +121,7 @@
 
 (defn get-muutoshakemus [user-key]
   (log/info (str "Get muutoshakemus with user-key: " user-key))
-  (let [muutoshaku (query "SELECT
+  (let [muutoshakemus (query "SELECT
                                                 virkailija.muutoshakemus.id,
                                                 hakemus_id,
                                                 (CASE WHEN paatos_id IS NULL THEN
@@ -138,8 +138,8 @@
                                                paatos_id = virkailija.paatos.id
                                                 WHERE   hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)
                                               ORDER BY id DESC" [user-key])]
-    (log/info (str "Succesfully fetched muutoshaku with user-key: " user-key))
-    (first muutoshaku)))
+    (log/info (str "Succesfully fetched muutoshakemus with user-key: " user-key))
+    (first muutoshakemus)))
 
 (defn add-muutoshakemus [tx user-key jatkoaika]
   (log/info (str "Inserting muutoshakemus for user-key: " user-key))

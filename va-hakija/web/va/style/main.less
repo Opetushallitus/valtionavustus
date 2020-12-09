@@ -1,44 +1,44 @@
 @import "~va-common/web/va/style/soresu-va.less";
 @import "topbar";
 
-.muutoshaku__page-title {
+.muutoshakemus__page-title {
   display: flex;
   justify-content: space-between;
 }
 
-.muutoshaku__title {
+.muutoshakemus__title {
   text-transform: uppercase;
   margin: 1rem 0 !important;
 }
 
-.muutoshaku__register-number {
+.muutoshakemus__register-number {
   font-weight: 700;
 }
 
-.muutoshaku__form {
+.muutoshakemus__form {
   padding-left: 15%;
 }
 
-.muutoshaku__form-row {
+.muutoshakemus__form-row {
   display: flex;
   margin: 1rem 0;
 }
 
-.muutoshaku__form-cell {
+.muutoshakemus__form-cell {
   display: flex;
   flex-direction: column;
   margin-right: 5vw;
 }
 
-#muutoshaku__contact-person {
+#muutoshakemus__contact-person {
   min-width: 240px;
 }
 
-#muutoshaku__email {
+#muutoshakemus__email {
   min-width: 340px;
 }
 
-.muutoshaku__application-edit-cell {
+.muutoshakemus__application-edit-cell {
   display: flex;
   flex-direction: column;
   padding: 1rem 0 1rem 5vw;
@@ -68,13 +68,13 @@
       padding-left: 2rem;
     }
 
-    .muutoshaku__current-amount {
+    .muutoshakemus__current-amount {
       display: flex;
       justify-content: space-between;
       width: 100%;
     }
 
-    .muutoshaku__currency-input {
+    .muutoshakemus__currency-input {
       width: 100px;
     }
 
@@ -98,18 +98,18 @@
   }
 }
 
-.muutoshaku__application-content {
+.muutoshakemus__application-content {
   display: flex;
   width: 500px;
   margin-bottom: 1rem;
   text-transform: uppercase;
 
-  div.muutoshaku__content-left {
+  div.muutoshakemus__content-left {
     padding-right: 2rem;
     border-right: 2px solid @darker-gray;
   }
 
-  div.muutoshaku__content-right {
+  div.muutoshakemus__content-right {
     padding-left: 2rem;
   }
 
@@ -208,9 +208,7 @@ div.notification-container {
     &.auto-hide {
       visibility: hidden;
       opacity: 0;
-      transition:
-        opacity 1s linear 5s,
-        visibility 1s linear 5s;
+      transition: opacity 1s linear 5s, visibility 1s linear 5s;
     }
 
     &.success {
@@ -228,7 +226,7 @@ div.notification-container {
   height: 43px;
 
   background: @mantis-green;
-  color: #FFFFFF;
+  color: #ffffff;
 
   &:disabled {
     background: @silver;

@@ -36,7 +36,7 @@
 
 (defn get-muutoshakemukset [hakemus-id]
   (log/info (str "Get muutoshakemus with hakemus id: " hakemus-id))
-  (let [muutoshaku (jdbc/with-db-transaction [connection {:datasource (get-datasource)}]
+  (let [muutoshakemukset (jdbc/with-db-transaction [connection {:datasource (get-datasource)}]
                                              (jdbc/query
                                               connection
                                               ["SELECT
@@ -60,8 +60,8 @@
                                                 WHERE m.hakemus_id = ?
                                                 ORDER BY id DESC" hakemus-id]
                                               {:identifiers #(.replace % \_ \-)}))]
-    (log/info (str "Succesfully fetched muutoshaku with id: " hakemus-id))
-    muutoshaku))
+    (log/info (str "Succesfully fetched muutoshakemukset with id: " hakemus-id))
+    muutoshakemukset))
 
 (defn get-arviot [hakemus-ids]
   (if (empty? hakemus-ids)

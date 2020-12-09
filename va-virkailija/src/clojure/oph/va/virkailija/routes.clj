@@ -122,7 +122,7 @@
                         :path-params [avustushaku-id :- Long hakemus-id :- Long muutoshakemus-id :- Long]
                         :body [paatos (compojure-api/describe virkailija-schema/MuutoshakemusPaatosRequest "Muutoshakemus paatos")]
                         :return virkailija-schema/MuutoshakemusPaatos
-                        :summary "Create a paatos for muutoshaku"
+                        :summary "Create a paatos for muutoshakemus"
                         (let [{:keys [avustushaku hakemus]} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)
                               roles (hakija-api/get-avustushaku-roles avustushaku-id)
                               arvio (virkailija-db/get-arvio hakemus-id)

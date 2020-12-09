@@ -93,7 +93,7 @@ export default class FormPreview extends React.Component {
     const controller = this.props.controller
     const infoElementValues = this.props.infoElementValues.content
     const state = this.props.state
-    const fields = state.configuration.embedForMuutoshaku
+    const fields = state.configuration.embedForMuutoshakemus
       ? dropFirstInfoFields(state.form.content)
       : state.form.content
 

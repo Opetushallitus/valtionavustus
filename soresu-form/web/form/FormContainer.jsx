@@ -15,9 +15,9 @@ export default class FormContainer extends React.Component {
       modifyApplication: this.props.modifyApplication
     }
     const formElement = React.createElement(formContainerClass, formElementProps)
-    const { embedForMuutoshaku } = state.configuration
+    const { embedForMuutoshakemus } = state.configuration
 
-    if (embedForMuutoshaku) {
+    if (embedForMuutoshakemus) {
       return (
         <section id={containerId} style={{marginTop: '0px'}}>
           {formElement}

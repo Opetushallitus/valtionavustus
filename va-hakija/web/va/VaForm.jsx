@@ -39,7 +39,7 @@ export default class VaForm extends React.Component {
           && state.token && allowedStatuses.indexOf(saveStatus.savedObject.status) > -1 && (refuseGrant === "true")
     const isInApplicantEditMode = () => "applicant_edit" === _.get(saveStatus.savedObject, "status")
     const showOpenContactsEditButton = !showGrantRefuse && modifyApplication && !isInApplicantEditMode()
-    const { embedForMuutoshaku } = configuration
+    const { embedForMuutoshakemus } = configuration
 
 
     return(
@@ -48,16 +48,16 @@ export default class VaForm extends React.Component {
                              translations={configuration.translations.warning}
                              devel={configuration.develMode}
         />
-        {!embedForMuutoshaku && <VaFormTopbar controller={controller}
+        {!embedForMuutoshakemus && <VaFormTopbar controller={controller}
                       state={state}
                       hakemusType={hakemusType}
                       isExpired={isExpired} />}
-        {!embedForMuutoshaku && showGrantRefuse &&
+        {!embedForMuutoshakemus && showGrantRefuse &&
           <GrantRefuse controller={controller} state={state}
                        onSubmit={controller.refuseApplication}
                        isTokenValid={state.tokenValidation
                          ? state.tokenValidation.valid : false}/>}
-        {!embedForMuutoshaku && showOpenContactsEditButton &&
+        {!embedForMuutoshakemus && showOpenContactsEditButton &&
           <OpenContactsEdit controller={controller} state={state}
                        onSubmit={controller.refuseApplication}
                        isTokenValid={state.tokenValidation
