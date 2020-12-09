@@ -25,6 +25,7 @@ export default class HakemusDetails extends Component {
     const userRole = hakuData.roles.find(r => r.oid === userOid)
     const isPresentingOfficer =
             userOid && userRole && userRole.role === "presenting_officer"
+    const presenter = hakuData.roles.find(r => r.role === 'presenting_officer')
 
     if (hidden) {
       return null
@@ -87,7 +88,7 @@ export default class HakemusDetails extends Component {
           if (!muutoshakemukset || muutoshakemukset.length === 0)
             return <h2>Hankkeella ei ole muutoshakemuksia</h2>
           else
-            return <Muutoshakemus avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakemus={hakemus} controller={controller} />
+            return <Muutoshakemus avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakemus={hakemus} controller={controller} userInfo={userInfo} presenter={presenter} />
         case 'seuranta':
           return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selectedHakemusAccessControl={selectedHakemusAccessControl} helpTexts={helpTexts}/>
         default:

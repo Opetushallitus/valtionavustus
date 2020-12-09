@@ -25,7 +25,7 @@ const PaatosSchema = Yup.object().shape({
     .required('Perustelu on pakollinen kenttä')
 })
 
-export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, controller }) => {
+export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, controller, userInfo, presenter }) => {
   const f = useFormik({
     initialValues: {
       status: 'accepted',
@@ -51,11 +51,12 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
   const onPaatosPreviewClick = () => {
     const paatos = {
       'created-at': new Date(),
+      decider: `${userInfo['first-name']} ${userInfo['surname']}`,
       ...f.values
     }
     controller.setModal(
       <Modal title="ESIKATSELU" controller={controller}>
-        <MuutoshakemusPaatos paatos={paatos} muutoshakemus={muutoshakemus} hakemus={hakemus} />
+        <MuutoshakemusPaatos paatos={paatos} muutoshakemus={muutoshakemus} hakemus={hakemus} presenter={presenter} />
       </Modal>
     )
   }

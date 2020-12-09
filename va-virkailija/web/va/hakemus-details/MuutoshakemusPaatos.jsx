@@ -9,7 +9,7 @@ const paatosText = {
   'accepted-with-changes': 'Opetushallitus hyväksyy hakemuksen alla olevin muutoksin.'
 }
 
-export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos }) => {
+export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter }) => {
   const projectEndAnswer = hakemus.answers.find(a => a.key === 'project-end')
   return (
     <div className="muutoshakemus-paatos__content">
@@ -53,12 +53,25 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos }) => {
         <div data-test-id="paatos-reason">{paatos.reason}</div>
       </section>
       <section className="muutoshakemus-paatos__section">
-        <div>Hyväksyjä</div>
-        <div>TODO</div>
+        <div>Päätöksen tekijä</div>
+        <div data-test-id="paatos-decider">
+          {paatos.decider}
+          {paatos.decider !== presenter.name
+            ? <div className="muutoshakemus-paatos__presenter">
+                Esittelijä<br/>
+                {presenter.name}
+              </div>
+            : ''
+          }
+        </div>
       </section>
       <section className="muutoshakemus-paatos__section">
         <div>Lisätietoja</div>
-        <div>TODO</div>
+        <div data-test-id="paatos-additional-info">
+          {presenter.name}<br/>
+          {presenter.email}<br/>
+          029 533 1000 (vaihde)
+        </div>
       </section>
     </div>
   )

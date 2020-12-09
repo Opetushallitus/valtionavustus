@@ -788,7 +788,12 @@ etunimi.sukunimi@oph.fi
         expect(acceptedPaatos).toEqual('Opetushallitus hyväksyy muutokset hakemuksen mukaisesti.')
         const acceptedReason = await page.$eval('[data-test-id="paatos-reason"]', el => el.textContent)
         expect(acceptedReason).toEqual('huh huh pitkä teksti')
+        const decider = await page.$eval('[data-test-id="paatos-decider"]', el => el.textContent)
+        expect(decider).toEqual('_ valtionavustus')
+        const info = await page.$eval('[data-test-id="paatos-additional-info"]', el => el.textContent)
+        expect(info).toEqual('_ valtionavustussanteri.horttanainen@reaktor.com029 533 1000 (vaihde)')
         await clickElement(page, 'button.hakemus-details-modal__close-button')
+
 
         // rejected preview
         await clickElement(page, 'label[for="rejected"]')
