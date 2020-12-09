@@ -6,9 +6,9 @@
           :require-https? false}
  :api {:restricted-routes? false}
  :nrepl-enabled? true
- :email {:enabled? false
+ :email {:enabled? true 
          :host "localhost"
-         :port 2500
+         :port 42069
          :to-finance ["test@test.com"]}
  :payments {:enabled? true
             :delete-payments? true}

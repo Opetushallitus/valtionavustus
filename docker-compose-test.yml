@@ -38,5 +38,13 @@ services:
       POSTGRES_PASSWORD: 'va'
       PGDATA: '/tmp/'
 
+  fakesmtp:
+    image: munkyboy/fakesmtp
+    container_name: fakesmtp 
+    volumes:
+      - ./mail:/var/mail
+    ports:
+      - '42069:25'
+
 networks:
   subnet-private:
