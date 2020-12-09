@@ -248,6 +248,15 @@
     (log/info (str "Succesfully fetched email for hakemus with hakemus-id: " hakemus-id))
     emails))
 
+(defn get-avustushaku-emails [avustushaku-id email-type]
+  (log/info (str "Fetching emails for avustushaku with id: " avustushaku-id))
+  (let [emails (query "SELECT formatted, to_address, bcc FROM virkailija.email
+                       JOIN email_event ON (email.id = email_event.email_id)
+                       WHERE avustushaku_id = ? AND email_type = ?::virkailija.email_type"
+                       [avustushaku-id email-type])]
+    (log/info (str "Succesfully fetched emails for avustushaku with id: " avustushaku-id))
+    emails))
+
 (defn- get-normalized-hakemus []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/normalized" [haku-id hakemus-id]
     :path-params [haku-id :- Long hakemus-id :- Long]
@@ -264,6 +273,13 @@
                      :return virkailija-schema/DbEmails
                      :summary "Return emails related to the hakemus"
                      (ok (get-emails hakemus-id email-type))))
+
+(defn- get-avustushaku-email []
+  (compojure-api/GET "/:avustushaku-id/email/:email-type" []
+                     :path-params [avustushaku-id :- Long email-type :- s/Str]
+                     :return virkailija-schema/DbEmails
+                     :summary "Return emails related to the avustushaku"
+                     (ok (get-avustushaku-emails avustushaku-id email-type))))
 
 (defn- get-selvitys []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/selvitys" request
@@ -602,6 +618,7 @@
                          (post-avustushaku)
                          (get-avustushaku)
                          (when (get-in config [:email-api :enabled?]) (get-hakemus-email))
+                         (when (get-in config [:email-api :enabled?]) (get-avustushaku-email))
                          (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemukset))
                          (when (get-in config [:muutospaatosprosessi :enabled?]) (post-muutoshakemus-paatos))
                          (get-selvitys)

@@ -6,6 +6,9 @@ scriptdir="$repodir/scripts"
 
 function stop() {
   ./scripts/stop_database.sh
+  pushd "$repodir/fakesmtp"
+  docker-compose down || true
+  popd
 }
 trap stop EXIT
 
@@ -48,6 +51,9 @@ tmux send-keys "$scriptdir/run_frontend.sh" C-m
 
 tmux select-pane -t 4
 tmux send-keys "$scriptdir/run_virkailija_server.sh" C-m
+
+tmux splitw
+tmux send-keys "$scriptdir/run_fakesmtp.sh" C-m
 
 tmux select-pane -t 0
 tmux attach-session -t $session

@@ -5,8 +5,8 @@
  :api {:restricted-routes? false}
  :db {:database-name "va-dev"}
  :nrepl-enabled? true
- :email {:enabled? false
+ :email {:enabled? true
          :host "localhost"
-         :port 2500}
+         :port 42069}
  :applications-ui {:enabled? true}
  :application-change {:change-enabled? true}}

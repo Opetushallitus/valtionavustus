@@ -78,7 +78,7 @@
   (:id (first email_id)))))
 
 (defn create-mail-send-fn [msg format-plaintext-message]
-    (let [from            (common-string/trim-ws (:from msg))
+    (let [from          (common-string/trim-ws (:from msg))
         sender          (common-string/trim-ws (:sender msg))
         to              (mapv common-string/trim-ws (:to msg))
         bcc             (trim-ws-or-nil (:bcc msg))
@@ -150,11 +150,12 @@
 (defn- create-email-event [email-id success msg]
   (let [msg-type (:type msg)
         hakemus-id (:hakemus-id msg)
+        avustushaku-id (:avustushaku-id msg)
         muutoshakemus-id (:muutoshakemus-id msg)]
   (log/info "Storing email event for email: " email-id)
-  (execute! "INSERT INTO virkailija.email_event (hakemus_id, muutoshakemus_id, email_id, email_type, success)
-             VALUES (?, ?, ?, ?::virkailija.email_type, ?)"
-            [hakemus-id muutoshakemus-id email-id (name msg-type) success])
+  (execute! "INSERT INTO virkailija.email_event (avustushaku_id, hakemus_id, muutoshakemus_id, email_id, email_type, success)
+             VALUES (?, ?, ?, ?, ?::virkailija.email_type, ?)"
+            [avustushaku-id hakemus-id muutoshakemus-id email-id (name msg-type) success])
   (log/info (str "Succesfully stored email event for email: " email-id))))
 
 (defn- send-msg! [msg format-plaintext-message]

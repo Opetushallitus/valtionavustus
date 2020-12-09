@@ -22,6 +22,7 @@ scripts/postgres-docker/postgres-data/
 scripts/postgres-docker/postgres-data-12-2/
 target/
 servers/site.retry
+fakesmtp/mail
 *~
 \#*
 .#*

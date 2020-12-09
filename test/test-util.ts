@@ -68,6 +68,25 @@ export const getMuutoshakemusPaatosEmails = getEmails("muutoshakemus-paatos")
 export const getMuutoshakemusEmails = getEmails("paatos-refuse")
 export const getTäydennyspyyntöEmails: (avustushakuID: number, hakemusID: number) => Promise<Email[]> = getEmails("change-request")
 
+export const getNewHakemusEmails = (avustushakuID: number) =>
+  axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/email/new-hakemus`)
+    .then(r => emailSchema.validate(r.data))
+
+export async function waitUntilNewHakemusEmailArrives(page: Page, avustushakuID: number, timeout = 10000): Promise<Email[]> {
+  if (timeout > 0) {
+    try {
+      const emails = await getNewHakemusEmails(avustushakuID)
+      if (emails.length > 0) {
+        return emails
+      }
+    } catch (e) {
+    }
+    await page.waitFor(1000)
+    return await waitUntilNewHakemusEmailArrives(page, avustushakuID, timeout - 1000)
+  }
+  return await getNewHakemusEmails(avustushakuID)
+}
+
 export async function getLinkToMuutoshakemusFromSentEmails(avustushakuID: number, hakemusID: number) {
   const emails = await getMuutoshakemusEmails(avustushakuID, hakemusID)
 
@@ -202,6 +221,12 @@ export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustus
 
   await clearAndType(page, "#primary-email", answers.contactPersonEmail)
   await clickElement(page, "#submit:not([disabled])")
+
+  const receivedEmail = await waitUntilNewHakemusEmailArrives(page, avustushakuID)
+  const hakemusUrl = receivedEmail[0].formatted.match(/https?:\/\/.*\/avustushaku.*/)?.[0]
+  expectToBeDefined(hakemusUrl)
+
+  await page.goto(hakemusUrl, { waitUntil: "networkidle0" })
 
   await clearAndType(page, "#finnish-business-id", TEST_Y_TUNNUS)
   await clickElement(page, "input.get-business-id")

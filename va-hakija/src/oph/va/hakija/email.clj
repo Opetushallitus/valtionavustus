@@ -65,6 +65,7 @@
                           :subject (get-in mail-titles [:new-hakemus lang])
                           :to to
                           :avustushaku avustushaku
+                          :avustushaku-id avustushaku-id 
                           :start-date start-date-string
                           :start-time start-time-string
                           :end-date end-date-string
