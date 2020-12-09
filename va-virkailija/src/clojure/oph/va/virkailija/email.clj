@@ -8,7 +8,8 @@
             [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
             [clostache.parser :refer [render]])
-  (:use [clojure.java.io]))
+  (:use [clojure.java.io]
+        [oph.va.decision-liitteet]))
 
 (def mail-titles
   {:change-request {:fi "Täydennyspyyntö avustushakemukseesi"
@@ -117,6 +118,23 @@
          (log/info "Could not normalize necessary hakemus fields for hakemus: " id " Error: " (.getMessage e))
          false))))
 
+(defn stream-to-bytearray [is]
+  (let [baos (java.io.ByteArrayOutputStream.)]
+    (copy is baos)
+    (let [bytearray (.toByteArray baos)]
+      (log/info bytearray)
+      bytearray)))
+
+(defn read-oikaisuvaatimusosoitus-into-byte-array [attachment-id lang]
+  (let [oikaisuvaatimus-pdf (resource  (str "public/liitteet/" attachment-id "_" (name lang) ".pdf"))]
+    (with-open [in (input-stream oikaisuvaatimus-pdf)]
+      (stream-to-bytearray in))))
+
+(defn find-oikaisuvaatimusosoitus-attachments []
+(:attachments (first (filter (fn [x] (= (:group x) "Oikaisuvaatimusosoitus")) Liitteet))))
+
+(defn find-3a-oikaisuvaatimusosoitus-attachment []
+  (first (filter #(= (:id %1) "3a_oikaisuvaatimusosoitus_valtionavustuslaki") (find-oikaisuvaatimusosoitus-attachments))))
 
 (defn send-muutoshakemus-paatos [to avustushaku hakemus arvio roles token muutoshakemus-id]
   (let [lang-str (:language hakemus)
@@ -126,6 +144,9 @@
         muutoshakemus-url (email/modify-url (:id avustushaku) (:user_key hakemus) lang token true)
         mail-subject (get-in mail-titles [:muutoshakemus-paatos lang])
         presenter-role-id (:presenter_role_id arvio)
+        oikaisuvaatimusosoitus (find-3a-oikaisuvaatimusosoitus-attachment)
+        attachment-title (get (:langs oikaisuvaatimusosoitus) lang)
+        attachment-contents (read-oikaisuvaatimusosoitus-into-byte-array (:id oikaisuvaatimusosoitus) lang)
         selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
         presenter (if (nil? selected-presenter) (first roles) selected-presenter)]
     (email/try-send-msg-once {
@@ -141,7 +162,11 @@
                           :paatos-url muutoshakemus-paatos-url
                           :muutoshakemus-url muutoshakemus-url
                           :register-number (:register_number hakemus)
-                          :project-name (:project_name hakemus)}
+                          :project-name (:project_name hakemus)
+                          :attachment-title attachment-title
+                          :attachment {:title attachment-title 
+                                       :description attachment-title 
+                                       :contents attachment-contents}}
 
                            (partial render (get-in mail-templates [:muutoshakemus-paatos lang])))))
 
