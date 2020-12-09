@@ -32,11 +32,9 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
       reason: ''
     },
     validationSchema: PaatosSchema,
-    onSubmit: async (values, formik) => {
+    onSubmit: async (values) => {
       const storedPaatos = await HttpUtil.post(`/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/muutoshakemus/${muutoshakemus.id}/paatos`, values)
-
       controller.setPaatos({ muutoshakemusId: muutoshakemus.id, hakemusId: hakemus.id, ...storedPaatos })
-      formik.setSubmitting(false)
     }
   })
 
@@ -48,6 +46,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
       </React.Fragment>
     )
   }
+
   const onPaatosPreviewClick = () => {
     const paatos = {
       'created-at': new Date(),

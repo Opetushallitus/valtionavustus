@@ -45,15 +45,17 @@
                                                   (CASE
                                                     WHEN paatos_id IS NULL
                                                     THEN 'new'
-                                                    ELSE status::text
+                                                    ELSE p.status::text
                                                   END) as status,
                                                   haen_kayttoajan_pidennysta,
                                                   kayttoajan_pidennys_perustelut,
                                                   m.created_at,
                                                   to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva,
+                                                  p.user_key as paatos_user_key,
+                                                  p.created_at as paatos_created_at,
                                                   ee.created_at as paatos_sent_at
                                                 FROM virkailija.muutoshakemus m
-                                                LEFT JOIN virkailija.paatos ON paatos_id = virkailija.paatos.id
+                                                LEFT JOIN virkailija.paatos p ON m.paatos_id = p.id
                                                 LEFT JOIN virkailija.email_event ee ON m.id = ee.muutoshakemus_id AND ee.email_type = 'muutoshakemus-paatos' AND success = true
                                                 WHERE m.hakemus_id = ?
                                                 ORDER BY id DESC" hakemus-id]

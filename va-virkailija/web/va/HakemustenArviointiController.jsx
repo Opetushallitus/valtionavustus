@@ -600,6 +600,8 @@ export default class HakemustenArviointiController {
     const { muutoshakemusId, status } = paatos
     const muutoshakemus = state.selectedHakemus.muutoshakemukset.find(m => m.id === muutoshakemusId)
     if (muutoshakemus) {
+      muutoshakemus['paatos-created-at'] = paatos['created-at']
+      muutoshakemus['paatos-user-key'] = paatos['user-key']
       muutoshakemus.status = status
       state.selectedHakemus["status-muutoshakemus"] = status
     }

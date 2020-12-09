@@ -718,6 +718,8 @@ export async function validateMuutoshakemusValues(page: Page, muutoshakemus: Muu
     const form = await countElements(page, '[data-test-id="muutoshakemus-form"]')
     expect(form).toEqual(0)
     await page.waitForSelector(`span.muutoshakemus__paatos-icon--${paatos.status}`)
+    const muutospaatosLink = await page.$eval('a.muutoshakemus__paatos-link', el => el.textContent)
+    expect(muutospaatosLink).toMatch(/https?:\/\/[^\/]+\/avustushaku\/[0-9]+\/hakemus\/[0-9]+\/paatos\/[a-f0-9]{64}/)
   } else {
     await page.waitForSelector('[data-test-id="muutoshakemus-form"]')
   }

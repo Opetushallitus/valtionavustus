@@ -9,9 +9,10 @@ import './Muutoshakemus.less'
 
 export const datetimeFormat = 'D.M.YYYY [klo] HH.mm'
 
-export const Muutoshakemus = ({ avustushaku, muutoshakemukset, hakemus, controller, userInfo, presenter }) => {
+export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hakemus, controller, userInfo, presenter }) => {
   const [a, setActiveMuutoshakemus] = useState(muutoshakemukset[0])
   const projectEndAnswer = hakemus.answers.find(a => a.key === 'project-end')
+  const paatosUrl = `${environment['hakija-server'].url.fi}avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/paatos/${a['paatos-user-key']}`
   return (
     <React.Fragment>
       {muutoshakemukset.length > 1 && <MuutoshakemusTabs muutoshakemukset={muutoshakemukset} activeMuutoshakemus={a} setActiveMuutoshakemus={setActiveMuutoshakemus} />}
@@ -21,7 +22,10 @@ export const Muutoshakemus = ({ avustushaku, muutoshakemukset, hakemus, controll
           <section className="muutoshakemus-section" data-test-id="muutoshakemus-paatos">
             <div className="muutoshakemus__paatos">
               <h2 className="muutoshakemus__paatos-status">
-                <span className={`muutoshakemus__paatos-icon muutoshakemus__paatos-icon--${a.status}`}>{MuutoshakemusStatuses.statusToFI(a.status)} TODO</span>
+                <span className={`muutoshakemus__paatos-icon muutoshakemus__paatos-icon--${a.status}`}>
+                  {MuutoshakemusStatuses.statusToFI(a.status)}
+                  {a['paatos-created-at'] && ` ${moment(a['paatos-created-at']).format(datetimeFormat)}`}
+                </span>
               </h2>
               <h3 className="muutoshakemus__header">
                 {a['paatos-sent-at']
@@ -30,7 +34,7 @@ export const Muutoshakemus = ({ avustushaku, muutoshakemukset, hakemus, controll
                 }
               </h3>
               <h3 className="muutoshakemus__header">Päätösdokumentti:</h3>
-              <a>TODO</a>
+              <a href={paatosUrl} target="_blank" rel="noopener noreferrer" className="muutoshakemus__paatos-link">{paatosUrl}</a>
             </div>
           </section>
         }
