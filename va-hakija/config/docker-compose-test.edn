@@ -7,7 +7,7 @@
       :server-name "va-postgres"}
  :nrepl-enabled? true
  :email {:enabled? true 
-         :host "localhost"
+         :host "fakesmtp"
          :port 42069}
  :applications-ui {:enabled? true}
  :application-change {:change-enabled? true}}

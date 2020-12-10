@@ -9,6 +9,7 @@ services:
       - '8081:8081'
     depends_on:
       - hakija
+      - fakesmtp
     networks:
       - subnet-private
 
@@ -20,6 +21,7 @@ services:
       - '8080:8080'
     depends_on:
       - db
+      - fakesmtp
     networks:
       - subnet-private
 
@@ -40,9 +42,12 @@ services:
 
   fakesmtp:
     image: munkyboy/fakesmtp
-    container_name: fakesmtp 
+    container_name: fakesmtp
+    hostname: fakesmtp
     ports:
       - '42069:25'
+    networks:
+      - subnet-private
 
 networks:
   subnet-private:
