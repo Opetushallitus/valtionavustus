@@ -744,10 +744,24 @@ export async function validateMuutoshakemusValues(page: Page, muutoshakemus: Muu
     expect(form).toEqual(0)
     await page.waitForSelector(`span.muutoshakemus__paatos-icon--${paatos.status}`)
     const muutospaatosLink = await page.$eval('a.muutoshakemus__paatos-link', el => el.textContent)
-    expect(muutospaatosLink).toMatch(/https?:\/\/[^\/]+\/avustushaku\/[0-9]+\/hakemus\/[0-9]+\/paatos\/[a-f0-9]{64}/)
+    expect(muutospaatosLink).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\/paatos\?user-key=[a-f0-9]{64}/)
   } else {
     await page.waitForSelector('[data-test-id="muutoshakemus-form"]')
   }
+}
+
+export async function validateMuutoshakemusPaatosCommonValues(page: Page) {
+  await page.waitForSelector('div.muutoshakemus-paatos__content')
+  const register = await page.$eval('[data-test-id="paatos-register-number"]', el => el.textContent)
+  expect(register).toMatch(/[0-9]{3}\/[0-9]{3}\/[0-9]{4}/)
+  const project = await page.$eval('[data-test-id="paatos-project-name"]', el => el.textContent)
+  expect(project).toEqual('Rahassa kylpijät Ky Ay Oy')
+  const org = await page.$eval('h1.muutoshakemus-paatos__org', el => el.textContent)
+  expect(org).toEqual('Akaan kaupunki')
+  const decider = await page.$eval('[data-test-id="paatos-decider"]', el => el.textContent)
+  expect(decider).toEqual('_ valtionavustus')
+  const info = await page.$eval('[data-test-id="paatos-additional-info"]', el => el.textContent)
+  expect(info).toEqual('_ valtionavustussanteri.horttanainen@reaktor.com029 533 1000 (vaihde)')
 }
 
 export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number) {
@@ -757,7 +771,13 @@ export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: n
   await page.click(muutoshakemusStatusField)
 }
 
-export async function makePaatosForMuutoshakemus(page: Page, status: string) {
+export async function makePaatosForMuutoshakemusIfNotExists(page: Page, status: string, avustushakuID: number, hakemusID: number) {
+  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+  await clickElement(page, 'span.muutoshakemus-tab')
+  if (await countElements(page, '[data-test-id="muutoshakemus-paatos"]')) {
+    return
+  }
+
   await page.click(`label[for="${status}"]`)
   await page.click('a.muutoshakemus__default-reason-link')
   await page.click('[data-test-id="muutoshakemus-submit"]')

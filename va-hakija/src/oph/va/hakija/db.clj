@@ -119,27 +119,46 @@
     (log/info (str "Succesfully fetched hakemus with user-key: " user-key))
     (first hakemukset)))
 
-(defn get-muutoshakemus [user-key]
-  (log/info (str "Get muutoshakemus with user-key: " user-key))
-  (let [muutoshakemus (query "SELECT
-                                                virkailija.muutoshakemus.id,
-                                                hakemus_id,
-                                                (CASE WHEN paatos_id IS NULL THEN
-                                                  'new'
-                                                   ELSE
-                                                   paatos::text
-                                                   END) as status,
-                                                haen_kayttoajan_pidennysta,
-                                                kayttoajan_pidennys_perustelut,
-                                                virkailija.muutoshakemus.created_at,
-                                                to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva
-                                                FROM virkailija.muutoshakemus LEFT JOIN
-                                                     virkalija.paatos ON
-                                               paatos_id = virkailija.paatos.id
-                                                WHERE   hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)
-                                              ORDER BY id DESC" [user-key])]
-    (log/info (str "Succesfully fetched muutoshakemus with user-key: " user-key))
-    (first muutoshakemus)))
+(defn get-normalized-hakemus-by-id [id]
+  (log/info (str "Get normalized hakemus with id: " id))
+  (let [hakemukset (query "SELECT * from virkailija.normalized_hakemus WHERE hakemus_id = ?" [id])]
+    (log/info (str "Succesfully fetched hakemus with id: " id))
+    (first hakemukset)))
+
+(defn get-paatos [user-key]
+  (let [paatokset (query "SELECT * from virkailija.paatos WHERE user_key = ?" [user-key])]
+    (first paatokset)))
+
+(defn get-muutoshakemus-by-paatos-id [paatos-id]
+  (let [muutoshakemukset (query "SELECT
+                                  m.id,
+                                  m.hakemus_id,
+                                  (CASE
+                                    WHEN paatos_id IS NULL
+                                    THEN 'new'
+                                    ELSE p.status::text
+                                  END) as status,
+                                  haen_kayttoajan_pidennysta,
+                                  kayttoajan_pidennys_perustelut,
+                                  m.created_at,
+                                  to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva,
+                                  p.user_key as paatos_user_key,
+                                  p.created_at as paatos_created_at,
+                                  ee.created_at as paatos_sent_at
+                                FROM virkailija.muutoshakemus m
+                                LEFT JOIN virkailija.paatos p ON m.paatos_id = p.id
+                                LEFT JOIN virkailija.email_event ee ON m.id = ee.muutoshakemus_id AND ee.email_type = 'muutoshakemus-paatos' AND success = true
+                                WHERE m.paatos_id = ?
+                                ORDER BY id DESC" [paatos-id])]
+    (first muutoshakemukset)))
+
+(defn get-presenter-by-hakemus-id [hakemus-id]
+  (let [presenters (query "SELECT ar.name, ar.email
+                           FROM avustushaku_roles ar
+                           LEFT JOIN hakemukset h ON ar.avustushaku = h.avustushaku
+                           LEFT JOIN muutoshakemus m ON h.id = m.hakemus_id
+                           WHERE m.hakemus_id = ?" [hakemus-id])]
+    (first presenters)))
 
 (defn add-muutoshakemus [tx user-key jatkoaika]
   (log/info (str "Inserting muutoshakemus for user-key: " user-key))

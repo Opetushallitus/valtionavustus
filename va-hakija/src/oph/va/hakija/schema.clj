@@ -26,6 +26,34 @@
     (s/optional-key :yhteyshenkilo) ContactPersonDetails
   })
 
+(s/defschema Paatos
+  "Paatos"
+  {
+    :id Long
+    :status s/Str
+    :user-key s/Str
+    :reason s/Str
+    :created-at s/Inst
+    :updated-at s/Inst
+    :decider s/Str
+  })
+
+(s/defschema Presenter
+  "Presenter"
+  {
+    :name s/Str
+    :email s/Str
+  })
+
+(s/defschema MuutoshakemusPaatosDocument
+  "Data for rendering a muutoshakemus paatos document"
+  {
+    :paatos Paatos
+    :muutoshakemus Muutoshakemus
+    :presenter Presenter
+    :hakemus NormalizedHakemus
+  })
+
 (s/defschema Hakemus
   "Hakemus contains hakemus, last submission and server validation error info about it"
   {:id     (s/maybe s/Str)

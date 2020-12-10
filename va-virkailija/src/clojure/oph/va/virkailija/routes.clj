@@ -129,10 +129,11 @@
                               contact-email (:contact-email (virkailija-db/get-normalized-hakemus hakemus-id))
                               identity (authentication/get-request-identity request)
                               decider (str (:first-name identity) " " (:surname identity))
+                              paatos (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider)
                               token (when (get-in config [:application-change :refuse-enabled?])
                                       (virkailija-db/create-application-token (:id hakemus)))]
-                          (email/send-muutoshakemus-paatos [contact-email] avustushaku hakemus arvio roles token muutoshakemus-id)
-                          (ok (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider)))))
+                          (email/send-muutoshakemus-paatos [contact-email] avustushaku hakemus arvio roles token muutoshakemus-id paatos)
+                          (ok paatos))))
 
 (defn- get-muutoshakemukset []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/" [hakemus-id]

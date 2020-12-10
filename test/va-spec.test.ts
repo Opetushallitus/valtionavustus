@@ -62,10 +62,11 @@ import {
   TEST_Y_TUNNUS,
   fillAndSendMuutoshakemus,
   validateMuutoshakemusValues,
-  makePaatosForMuutoshakemus,
+  makePaatosForMuutoshakemusIfNotExists,
   publishAndFillMuutoshakemusEnabledAvustushaku,
   navigateToHakemuksenArviointi,
-  getTäydennyspyyntöEmails
+  getTäydennyspyyntöEmails,
+  validateMuutoshakemusPaatosCommonValues
 } from "./test-util"
 
 jest.setTimeout(100_000)
@@ -783,23 +784,18 @@ etunimi.sukunimi@oph.fi
 
         // accepted preview
         await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
-        await page.waitForSelector('div.hakemus-details-modal__wrapper')
+        await validateMuutoshakemusPaatosCommonValues(page)
         const acceptedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
         expect(acceptedPaatos).toEqual('Opetushallitus hyväksyy muutokset hakemuksen mukaisesti.')
         const acceptedReason = await page.$eval('[data-test-id="paatos-reason"]', el => el.textContent)
         expect(acceptedReason).toEqual('huh huh pitkä teksti')
-        const decider = await page.$eval('[data-test-id="paatos-decider"]', el => el.textContent)
-        expect(decider).toEqual('_ valtionavustus')
-        const info = await page.$eval('[data-test-id="paatos-additional-info"]', el => el.textContent)
-        expect(info).toEqual('_ valtionavustussanteri.horttanainen@reaktor.com029 533 1000 (vaihde)')
         await clickElement(page, 'button.hakemus-details-modal__close-button')
-
 
         // rejected preview
         await clickElement(page, 'label[for="rejected"]')
         await clearAndType(page, '#reason', 'hyläty')
         await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
-        await page.waitForSelector('div.hakemus-details-modal__wrapper')
+        await validateMuutoshakemusPaatosCommonValues(page)
         const rejectedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
         expect(rejectedPaatos).toEqual('Opetushallitus hylkää muutoshakemuksen.')
         const rejectedReason = await page.$eval('[data-test-id="paatos-reason"]', el => el.textContent)
@@ -818,10 +814,7 @@ etunimi.sukunimi@oph.fi
       })
 
       it('can reject a muutoshakemus', async () => {
-        await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
-        await clickElement(page, 'span.muutoshakemus-tab')
-        await makePaatosForMuutoshakemus(page, 'rejected')
-
+        await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
         await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected'})
 
         await navigate(page, `/avustushaku/${avustushakuID}/`)
@@ -833,14 +826,22 @@ etunimi.sukunimi@oph.fi
         await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
         await clickElement(page, 'span.muutoshakemus-tab')
         await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected'})
+
+        const paatosUrl = await page.$eval('a.muutoshakemus__paatos-link', el => el.textContent) || ''
+        await page.goto(paatosUrl, { waitUntil: "networkidle0" })
+        await validateMuutoshakemusPaatosCommonValues(page)
+        const rejectedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
+        expect(rejectedPaatos).toEqual('Opetushallitus hylkää muutoshakemuksen.')
+        const rejectedReason = await page.$eval('[data-test-id="paatos-reason"]', el => el.textContent)
+        expect(rejectedReason).toEqual('huh huh pitkä teksti')
       })
 
       it('can see values of multiple muutoshakemus', async () => {
-        // create paatos for two new muutoshakemus
+        await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
+
+        // create two new muutoshakemus
         await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus2)
-        await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
-        await clickElement(page, 'span.muutoshakemus-tab')
-        await makePaatosForMuutoshakemus(page, 'rejected')
+        await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
         await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus3)
 
         // assert newest muutoshakemus is new
@@ -862,17 +863,17 @@ etunimi.sukunimi@oph.fi
       })
 
       it('hakija gets an email with link to paatos and link to new muutoshakemus', async () => {
-          const emails = await getMuutoshakemusPaatosEmails(avustushakuID, hakemusID)
-          const userKey = await getUserKey(avustushakuID, hakemusID)
+        await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
+        const emails = await getMuutoshakemusPaatosEmails(avustushakuID, hakemusID)
 
-          const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
-          expectToBeDefined(title)
-          expect(title).toContain(`${haku.registerNumber} - ${answers.projectName}`)
+        const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
+        expectToBeDefined(title)
+        expect(title).toContain(`${haku.registerNumber} - ${answers.projectName}`)
 
-          const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshakemus.*/
-          const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
-          expectToBeDefined(linkToMuutoshakemus)
-          expect(linkToMuutoshakemus).toContain(`${HAKIJA_URL}/muutoshakemus?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`)
+        const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshakemus.*/
+        const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
+        expectToBeDefined(linkToMuutoshakemus)
+        expect(linkToMuutoshakemus).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\/paatos\?user-key=[a-f0-9]{64}/)
       })
     })
 

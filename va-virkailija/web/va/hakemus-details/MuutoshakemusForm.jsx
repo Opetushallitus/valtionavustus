@@ -3,10 +3,11 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
+import { MuutoshakemusPaatos } from 'va-common/web/va/MuutoshakemusPaatos'
+
 import { copyToClipboard } from '../copyToClipboard'
 import { isSubmitDisabled, isError } from '../formikHelpers'
 import { Modal } from './Modal'
-import { MuutoshakemusPaatos } from './MuutoshakemusPaatos'
 
 import './Muutoshakemus.less'
 
@@ -33,8 +34,8 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
     },
     validationSchema: PaatosSchema,
     onSubmit: async (values) => {
-      const storedPaatos = await HttpUtil.post(`/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/muutoshakemus/${muutoshakemus.id}/paatos`, values)
-      controller.setPaatos({ muutoshakemusId: muutoshakemus.id, hakemusId: hakemus.id, ...storedPaatos })
+      const storedPaatos = await HttpUtil.post(`/api/avustushaku/${avustushaku.id}/hakemus/${hakemus['hakemus-id']}/muutoshakemus/${muutoshakemus.id}/paatos`, values)
+      controller.setPaatos({ muutoshakemusId: muutoshakemus.id, hakemusId: hakemus['hakemus-id'], ...storedPaatos })
     }
   })
 

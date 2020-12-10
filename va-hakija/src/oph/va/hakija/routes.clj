@@ -198,12 +198,19 @@
     :summary "Open application for applicant edit"
     (ok (on-hakemus-applicant-edit-open haku-id hakemus-id))))
 
-(defn- get-muutoshakemus []
-  (compojure-api/GET "/:user-key" [user-key]
+(defn- get-muutoshakemus-paatos []
+  (compojure-api/GET "/paatos/:user-key" [user-key]
                      :path-params [user-key :- s/Str]
-                     :return  Muutoshakemus
-                     :summary "Get muutoshakemus"
-                     (ok (hakija-db/get-muutoshakemus user-key))))
+                     :return MuutoshakemusPaatosDocument
+                     :summary "Get data for rendering a muutoshakemus paatos document"
+                     (let [paatos (hakija-db/get-paatos user-key)
+                           muutoshakemus (hakija-db/get-muutoshakemus-by-paatos-id (:id paatos))
+                           presenter (hakija-db/get-presenter-by-hakemus-id (:hakemus-id muutoshakemus))
+                           hakemus (hakija-db/get-normalized-hakemus-by-id (:hakemus-id muutoshakemus))]
+                       (ok {:paatos paatos :muutoshakemus muutoshakemus :presenter presenter :hakemus hakemus})
+                     )
+  )
+)
 
 (defn presenting-officer-email [avustushaku-id]
   (let [roles (hakija-db/get-avustushaku-roles avustushaku-id)
@@ -328,7 +335,9 @@
 
    ;; Finnish subcontext
    (when (get-in config [:muutospaatosprosessi :enabled?])
-     (compojure/GET "/muutoshakemus" [hakemus-id] (return-html "muutoshakemus.html")))
+     (compojure/GET "/muutoshakemus" [] (return-html "muutoshakemus.html")))
+   (when (get-in config [:muutospaatosprosessi :enabled?])
+     (compojure/GET "/muutoshakemus/paatos" [] (return-html "muutoshakemus.html")))
    (compojure/GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "index.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "selvitys.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "selvitys.html"))
@@ -348,6 +357,7 @@
 
    (compojure-route/resources "/avustushaku/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
    (compojure-route/resources "/muutoshakemus" {:mime-types {"html" "text/html; charset=utf-8"}})
+   (compojure-route/resources "/muutoshakemus/paatos" {:mime-types {"html" "text/html; charset=utf-8"}})
 
    ;;; Swedish subcontext
    (compojure/GET "/statsunderstod/:avustushaku-id/visa" [avustushaku-id] (return-html "index.html"))
@@ -370,8 +380,8 @@
         (not-found)))))
 
 (compojure-api/defroutes muutoshakemus-routes
-  "APIs for requesting changes for hakemus after it has already been approved"
-  (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemus))
+  "APIs for hakemus changes after the hakemus has already been approved"
+  (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemus-paatos))
   (when (get-in config [:muutospaatosprosessi :enabled?]) (post-muutoshakemus))
   )
 

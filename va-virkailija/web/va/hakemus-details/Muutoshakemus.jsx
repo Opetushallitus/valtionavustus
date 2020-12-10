@@ -11,8 +11,7 @@ export const datetimeFormat = 'D.M.YYYY [klo] HH.mm'
 
 export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hakemus, controller, userInfo, presenter }) => {
   const [a, setActiveMuutoshakemus] = useState(muutoshakemukset[0])
-  const projectEndAnswer = hakemus.answers.find(a => a.key === 'project-end')
-  const paatosUrl = `${environment['hakija-server'].url.fi}avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/paatos/${a['paatos-user-key']}`
+  const paatosUrl = `${environment['hakija-server'].url.fi}muutoshakemus/paatos?user-key=${a['paatos-user-key']}`
   return (
     <React.Fragment>
       {muutoshakemukset.length > 1 && <MuutoshakemusTabs muutoshakemukset={muutoshakemukset} activeMuutoshakemus={a} setActiveMuutoshakemus={setActiveMuutoshakemus} />}
@@ -43,7 +42,7 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
             <div className="muutoshakemus-row muutoshakemus__project-end-row">
               <div>
                 <h3 className="muutoshakemus__header">Voimassaoleva päättymisaika</h3>
-                <div>{projectEndAnswer && projectEndAnswer.value}</div>
+                <div>{hakemus['project-end']}</div>
               </div>
               <div>
                 <h3 className="muutoshakemus__header">Haettu muutos</h3>

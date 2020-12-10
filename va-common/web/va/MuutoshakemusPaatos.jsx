@@ -10,7 +10,6 @@ const paatosText = {
 }
 
 export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter }) => {
-  const projectEndAnswer = hakemus.answers.find(a => a.key === 'project-end')
   return (
     <div className="muutoshakemus-paatos__content">
       <header className="muutoshakemus-paatos__header">
@@ -19,13 +18,13 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter 
           PÄÄTÖS<br/>
           {moment(paatos['created-at']).format('D.M.YYYY')}
         </div>
-        <div>{hakemus['register-number']}</div>
+        <div data-test-id="paatos-register-number">{hakemus['register-number']}</div>
       </header>
       <h1 className="muutoshakemus-paatos__org">{hakemus['organization-name']}</h1>
       <section className="muutoshakemus-paatos__section">
         <div>Asia</div>
         <div>
-          <div className="muutoshakemus-paatos__project-name">Hanke: <i>{hakemus['project-name']}</i></div>
+          <div className="muutoshakemus-paatos__project-name">Hanke: <i data-test-id="paatos-project-name">{hakemus['project-name']}</i></div>
           {muutoshakemus['haen-kayttoajan-pidennysta'] && <div>Hakemus avustuksen käyttöajan pidennykselle.</div>}
         </div>
       </section>
@@ -39,7 +38,7 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter 
         <div className="muutoshakemus-paatos__accepted-changes">
           <div>
             <h3 className="muutoshakemus-paatos__change-header">Vanha päättymisaika</h3>
-            <div>{projectEndAnswer && projectEndAnswer.value}</div>
+            <div data-test-id="paatos-project-end">{hakemus['project-end']}</div>
           </div>
           <div>
             <h3 className="muutoshakemus-paatos__change-header">Hyväksytty muutos</h3>
