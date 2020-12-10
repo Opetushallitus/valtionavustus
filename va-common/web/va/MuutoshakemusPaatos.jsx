@@ -15,7 +15,7 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter 
       <header className="muutoshakemus-paatos__header">
         <img id="logo" src="/img/logo.png" height="50" alt="Opetushallitus / Utbildningsstyrelsen" />
         <div>
-          PÄÄTÖS<br/>
+          Päätös<br/>
           {moment(paatos['created-at']).format('D.M.YYYY')}
         </div>
         <div data-test-id="paatos-register-number">{hakemus['register-number']}</div>
@@ -49,7 +49,7 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter 
       }
       <section className="muutoshakemus-paatos__section">
         <div>Päätöksen perustelut</div>
-        <div data-test-id="paatos-reason">{paatos.reason}</div>
+        <div className="muutoshakemus-paatos__reason" data-test-id="paatos-reason">{paatos.reason}</div>
       </section>
       <section className="muutoshakemus-paatos__section">
         <div>Päätöksen tekijä</div>
