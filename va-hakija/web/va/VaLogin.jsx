@@ -87,7 +87,7 @@ export default class VaLogin extends React.Component {
       <section id="container" className="soresu-fieldset">
         <H1InfoElement htmlId="name" lang={lang} values={content} />
         <DateRangeInfoElement htmlId="duration" translations={translations} translationKey="label" lang={lang} values={content} />
-        <p><LocalizedString className="text-red" translations={translations.login} translationKey="notopen" lang={lang} hidden={isOpen} /></p>
+        <p><LocalizedString htmlId="haku-not-open" className="text-red" translations={translations.login} translationKey="notopen" lang={lang} hidden={isOpen} /></p>
         <p><LocalizedString translations={translations.login} translationKey="preview" lang={lang} /> <a target="preview" href={hakemusPreviewUrl}><LocalizedString translations={translations.login} translationKey="preview-link" lang={lang} /></a></p>
         <h2><LocalizedString translations={translations.login} translationKey="heading" lang={lang} /><HelpTooltip content={translations.login.help} lang={lang}/></h2>
         <form onSubmit={this.submit.bind(this)}>

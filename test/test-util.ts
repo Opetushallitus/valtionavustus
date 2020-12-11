@@ -186,6 +186,7 @@ export async function publishAvustushaku(page: Page) {
 export async function fillAndSendHakemus(page: Page, avustushakuID: number, beforeSubmitFn?: () => void) {
   await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
 
+  await page.waitForSelector('#haku-not-open', { hidden: true, timeout: 500 })
   await clearAndType(page, "#primary-email", "erkki.esimerkki@example.com")
   await clickElement(page, "#submit")
 
@@ -219,6 +220,7 @@ export async function fillAndSendHakemus(page: Page, avustushakuID: number, befo
 export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void): Promise<{ userKey: string }> {
   await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
 
+  await page.waitForSelector('#haku-not-open', { hidden: true, timeout: 500 })
   await clearAndType(page, "#primary-email", answers.contactPersonEmail)
   await clickElement(page, "#submit:not([disabled])")
 
@@ -850,3 +852,4 @@ async function acceptAvustushaku(page: Page, avustushakuID: number) {
   expect(logEntryCount).toEqual(1)
   return { avustushakuID, hakemusID}
 }
+
