@@ -212,6 +212,13 @@
   )
 )
 
+(defn- get-muutoshakemukset []
+  (compojure-api/GET "/:avustushaku-id/hakemus/:user-key/muutoshakemus" [user-key]
+                     :path-params [user-key :- s/Str]
+                     :return MuutoshakemusList
+                     :summary "Get muutoshakemukset"
+                     (ok (hakija-db/get-muutoshakemukset user-key))))
+
 (defn presenting-officer-email [avustushaku-id]
   (let [roles (hakija-db/get-avustushaku-roles avustushaku-id)
         presenting-officers (filter (fn [x] (= (:role x) "presenting_officer")) roles)
@@ -299,6 +306,7 @@
   "Avustushaku routes"
   (get-id)
   (when (get-in config [:email-api :enabled?]) (get-normalized-hakemus))
+  (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemukset))
   (get-hakemus)
   (get-selvitys)
   (get-selvitys-init)

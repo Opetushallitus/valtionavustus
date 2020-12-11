@@ -66,7 +66,8 @@ import {
   publishAndFillMuutoshakemusEnabledAvustushaku,
   navigateToHakemuksenArviointi,
   getTäydennyspyyntöEmails,
-  validateMuutoshakemusPaatosCommonValues
+  validateMuutoshakemusPaatosCommonValues,
+  countElements
 } from "./test-util"
 
 jest.setTimeout(100_000)
@@ -707,6 +708,30 @@ etunimi.sukunimi@oph.fi
       projectName: "Rahassa kylpijät Ky Ay Oy",
     }
 
+    const muutoshakemus1: MuutoshakemusValues = {
+      jatkoaika: moment(new Date())
+        .add(2, 'months')
+        .add(1, 'days')
+        .locale('fi'),
+      jatkoaikaPerustelu: 'Ei kyl millään ehdi deadlineen mennessä ku mun koira söi ne tutkimustulokset'
+    }
+
+    const muutoshakemus2: MuutoshakemusValues = {
+      jatkoaika: moment(new Date())
+        .add(1, 'months')
+        .add(3, 'days')
+        .locale('fi'),
+      jatkoaikaPerustelu: 'Kerkeehän sittenkin'
+    }
+
+    const muutoshakemus3: MuutoshakemusValues = {
+      jatkoaika: moment(new Date())
+        .add(4, 'months')
+        .add(6, 'days')
+        .locale('fi'),
+      jatkoaikaPerustelu: 'Jaa ei kyllä kerkeekkään'
+    }
+
     it("Avustushaun ratkaisu should send an email with link to muutoshakemus", async () => {
       const { avustushakuID, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, createRandomHakuValues(), answers)
 
@@ -729,30 +754,6 @@ etunimi.sukunimi@oph.fi
       let avustushakuID: number
       let hakemusID: number
 
-      const muutoshakemus1: MuutoshakemusValues = {
-        jatkoaika: moment(new Date())
-          .add(2, 'months')
-          .add(1, 'days')
-          .locale('fi'),
-        jatkoaikaPerustelu: 'Ei kyl millään ehdi deadlineen mennessä ku mun koira söi ne tutkimustulokset'
-      }
-
-      const muutoshakemus2: MuutoshakemusValues = {
-        jatkoaika: moment(new Date())
-          .add(1, 'months')
-          .add(3, 'days')
-          .locale('fi'),
-        jatkoaikaPerustelu: 'Kerkeehän sittenkin'
-      }
-
-      const muutoshakemus3: MuutoshakemusValues = {
-        jatkoaika: moment(new Date())
-          .add(4, 'months')
-          .add(6, 'days')
-          .locale('fi'),
-        jatkoaikaPerustelu: 'Jaa ei kyllä kerkeekkään'
-      }
-
       beforeAll(async () => {
         const hakemusIdAvustushakuId = await ratkaiseMuutoshakemusEnabledAvustushaku(page, haku, answers)
         avustushakuID = hakemusIdAvustushakuId.avustushakuID
@@ -774,6 +775,7 @@ etunimi.sukunimi@oph.fi
         expect(color).toBe('rgb(255, 0, 0)') // red
 
         await clickElement(page, 'span.muutoshakemus-tab')
+        await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
         await validateMuutoshakemusValues(page, muutoshakemus1)
       }, 150 * 1000)
 
@@ -815,6 +817,7 @@ etunimi.sukunimi@oph.fi
 
       it('can reject a muutoshakemus', async () => {
         await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
+        await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
         await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected'})
 
         await navigate(page, `/avustushaku/${avustushakuID}/`)
@@ -825,6 +828,7 @@ etunimi.sukunimi@oph.fi
 
         await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
         await clickElement(page, 'span.muutoshakemus-tab')
+        await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
         await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected'})
 
         const paatosUrl = await page.$eval('a.muutoshakemus__paatos-link', el => el.textContent) || ''
@@ -855,6 +859,7 @@ etunimi.sukunimi@oph.fi
         await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
         await page.waitForFunction(() => (document.querySelector('[data-test-id=number-of-pending-muutoshakemukset]') as HTMLInputElement).innerText === '3')
         await clickElement(page, 'span.muutoshakemus-tab')
+        await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
         await validateMuutoshakemusValues(page, muutoshakemus3)
         await clickElement(page, 'button.muutoshakemus-tabs__tab:nth-child(2)')
         await validateMuutoshakemusValues(page, muutoshakemus2, { status: 'rejected' })
@@ -880,15 +885,16 @@ etunimi.sukunimi@oph.fi
     describe("Changing contact person details", () => {
       let linkToMuutoshakemus: string
       let avustushakuID: number
+      let hakemusID: number
       const newName = randomString()
       const newEmail = "uusi.email@reaktor.com"
       const newPhone = "0901967632"
       const haku = createRandomHakuValues()
 
       beforeAll(async () => {
-        const { avustushakuID: avustushakuId, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, haku, answers)
+        const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, haku, answers)
         avustushakuID = avustushakuId
-
+        hakemusID = hakemusId
         linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
       })
 
@@ -995,6 +1001,22 @@ etunimi.sukunimi@oph.fi
         expect(contactPersonNameOnPage).toEqual(newName)
         expect(contactPersonPhoneOnPage).toEqual(newPhone)
         expect(contactPersonEmailOnPage).toEqual(newEmail)
+      })
+
+      it('shows existing muutoshakemuses', async () => {
+        await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus1)
+        await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
+        await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus2)
+        await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
+        await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus3)
+
+        await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
+        const muutoshakemuses = await page.$$('[data-test-class="existing-muutoshakemus"]')
+        expect(muutoshakemuses.length).toEqual(3)
+
+        const firstTitle = await muutoshakemuses[0].$eval('.muutoshakemus__title', el => el.textContent)
+        expect(firstTitle).toContain('- Odottaa käsittelyä')
+        expect(await countElements(page, `span.muutoshakemus__paatos-icon--rejected`)).toEqual(2)
       })
     })
   })

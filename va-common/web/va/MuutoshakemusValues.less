@@ -1,0 +1,76 @@
+@import "~soresu-form/web/form/style/variables.less";
+
+.muutoshakemus__header {
+  color: #000;
+  font-weight: 700;
+  margin: 0;
+}
+
+h1.muutoshakemus__paatos-status {
+  color: #00516d;
+  font-weight: 700 !important;
+  font-size: 1.4rem !important;
+}
+
+h3.muutoshakemus__header {
+  font-size: 1.2rem;
+  margin: 1rem 0;
+}
+
+h4.muutoshakemus__header {
+  font-size: 1rem;
+}
+
+.muutoshakemus-section {
+  margin: 2rem 0;
+}
+
+.muutoshakemus-row {
+  margin: 2rem 0;
+}
+
+.muutoshakemus__reason {
+  white-space: pre-wrap;
+}
+
+.muutoshakemus__paatos {
+  border-left: 3px solid @bright-blue;
+  padding-left: 1rem;
+}
+
+.muutoshakemus__paatos-status {
+  position: relative;
+  padding-left: 3rem;
+}
+
+.muutoshakemus__paatos-icon {
+  &:before {
+    position: absolute;
+    content: "";
+    height: 100%;
+    width: 2rem;
+    left: 0;
+    top: 0;
+    background-size: 2rem;
+  }
+}
+
+.muutoshakemus__paatos-icon--accepted {
+  &:before {
+    background: url("/img/icon_accepted.svg") no-repeat 50% 50%;
+  }
+}
+
+.muutoshakemus__paatos-icon--rejected {
+  &:before {
+    background: url("/img/icon_rejected.svg") no-repeat 50% 50%;
+  }
+}
+
+.muutoshakemus__project-end-row {
+  display: flex;
+
+  div:not(:first-of-type) {
+    margin-left: 1vw;
+  }
+}

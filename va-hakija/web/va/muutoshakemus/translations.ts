@@ -2,9 +2,13 @@ import { Language, Translations } from './types'
 
 export const translationsFi = {
   hakemus: 'Hakemus',
+  muutoshakemus: 'Muutoshakemus',
+  waitingForDecision: 'Odottaa käsittelyä',
   loading: 'Ladataan lomaketta...',
-  send: 'Lähetä käsiteltäväksi',
-  sentNotification: 'Muutokset tallennettu',
+  sendMuutoshakemus: 'Lähetä käsiteltäväksi',
+  sendContactDetails: 'Tallenna muutokset',
+  savedNotification: 'Muutokset tallennettu',
+  sentNotification: 'Muutoshakemus lähetetty',
   errorNotification: 'Muutoksien tallentaminen epäonnistui',
   originalHakemus: 'Alkuperäinen hakemus',
   contactPersonEdit: {

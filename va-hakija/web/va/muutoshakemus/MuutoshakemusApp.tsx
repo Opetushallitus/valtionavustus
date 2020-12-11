@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import { Muutoshakemus } from './Muutoshakemus'
+import { MuutoshakemusComponent } from './Muutoshakemus'
 import { Paatos } from './Paatos'
 
 const app = location.pathname.endsWith('/paatos')
   ? <Paatos />
-  : <Muutoshakemus />
+  : <MuutoshakemusComponent />
 
 ReactDOM.render(app, document.getElementById('app'))

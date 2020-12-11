@@ -45,7 +45,7 @@ export const createFormikHook = (userKey: string, lang: Language) => useFormik({
   validationSchema: getMuutoshakemusSchema(lang),
   onSubmit: async (values, formik) => {
     try {
-      formik.setStatus({})
+      formik.setStatus({ success: undefined })
       await postMuutoshakemus({ userKey, values })
       formik.resetForm({ values })
       formik.setStatus({ success: true })

@@ -14,9 +14,9 @@ import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
 
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
+import { HakemusSelvitysStatuses, MuutoshakemusStatuses } from 'va-common/web/va/hakemus-statuses'
 
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses'
-import { HakemusSelvitysStatuses, MuutoshakemusStatuses } from './hakemus-details/hakemus-statuses'
 import RahoitusalueSelections from './hakemus-details/RahoitusalueSelections'
 
 const dispatcher = new Dispatcher()

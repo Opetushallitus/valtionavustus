@@ -11,6 +11,7 @@ type TopBarProps = {
 
 export function TopBar({ env, f }: TopBarProps) {
   const { t } = useTranslations()
+  const buttonText = f.values.haenKayttoajanPidennysta ? t.sendMuutoshakemus : t.sendContactDetails
   const submitDisabled = f.isSubmitting || f.isValidating || !(f.isValid && f.dirty)
   return (
     <section id="topbar">
@@ -29,7 +30,7 @@ export function TopBar({ env, f }: TopBarProps) {
           </div>
         </div>
         <div className="muutospyynto-button-container">
-          <button disabled={submitDisabled} id="send-muutospyynto-button" type="submit">{t.send}</button>
+          <button disabled={submitDisabled} id="send-muutospyynto-button" type="submit">{buttonText}</button>
           <TopBarNotification f={f} />
         </div>
       </div>

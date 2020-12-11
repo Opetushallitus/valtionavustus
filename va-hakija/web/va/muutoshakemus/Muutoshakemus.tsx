@@ -4,11 +4,12 @@ import momentLocalizer from 'react-widgets-moment'
 import moment from 'moment'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
+import { MuutoshakemusValues } from 'va-common/web/va/MuutoshakemusValues'
 
 import {AvustuksenKayttoajanPidennys} from './components/jatkoaika/AvustuksenKayttoajanPidennys'
 import {ContactPerson} from './components/contact-person/ContactPerson'
 import {TopBar} from './components/TopBar'
-import {Language, MuutoshakemusProps} from './types'
+import {Language, Muutoshakemus, MuutoshakemusProps} from './types'
 import {translations} from './translations'
 import {TranslationContext} from './TranslationContext'
 import OriginalHakemusIframe from './OriginalHakemusIframe'
@@ -28,28 +29,32 @@ function validateLanguage(s: unknown): Language {
   return s
 }
 
-const query = queryString.parse(location.search)
-const lang = validateLanguage(query.lang) || 'fi'
-const userKey = query['user-key']
-const avustushakuId = query['avustushaku-id']
-
 let initialState: MuutoshakemusProps = {
   status: 'LOADING',
   environment: undefined,
   avustushaku: undefined,
-  hakemus: undefined
+  hakemus: undefined,
+  muutoshakemukset: []
 }
 
-export const Muutoshakemus = () => {
+
+export const MuutoshakemusComponent = () => {
+  const query = queryString.parse(location.search)
+  const lang = validateLanguage(query.lang) || 'fi'
+  const userKey = query['user-key']
+  const avustushakuId = query['avustushaku-id']
   const [state, setState] = useState<MuutoshakemusProps>(initialState)
   const f = createFormikHook(userKey, lang)
+  const translationContext = { t: translations[lang], lang }
+  const existingNewMuutoshakemus = state.muutoshakemukset.find(m => m.status === 'new')
 
   useEffect(() => {
     const fetchProps = async () => {
       const environmentP = HttpUtil.get(`/environment`)
       const avustushakuP = HttpUtil.get(`/api/avustushaku/${avustushakuId}`)
       const hakemusP = HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}/normalized`)
-      const [environment, avustushaku, hakemus] = await Promise.all([environmentP, avustushakuP, hakemusP])
+      const muutoshakemuksetP = HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}/muutoshakemus`)
+      const [environment, avustushaku, hakemus, muutoshakemukset] = await Promise.all([environmentP, avustushakuP, hakemusP, muutoshakemuksetP])
       const currentProjectEnd = moment(hakemus?.['project-end'])
 
       f.resetForm({
@@ -63,15 +68,33 @@ export const Muutoshakemus = () => {
         }
       })
 
-      setState({environment, avustushaku, hakemus, status: 'LOADED'})
+      setState({environment, avustushaku, hakemus, muutoshakemukset, status: 'LOADED'})
     }
 
     fetchProps()
   }, [])
 
-  const translationContext = {
-    t: translations[lang],
-    lang
+  useEffect(() => {
+    const fetchMuutoshakemukset = async () => {
+      if (f.status.success) {
+        const muutoshakemukset: Muutoshakemus[] = await HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}/muutoshakemus`)
+        setState({ ...state, muutoshakemukset })
+      }
+    }
+    fetchMuutoshakemukset()
+  }, [f.status])
+
+  const existingMuutoshakemus = (m: Muutoshakemus) => {
+    const topic = `${translations[lang].muutoshakemus} ${moment(m['created-at']).format('D.M.YYYY')}`
+    const waitingForDecision = m.status === 'new' ? ` - ${translations[lang].waitingForDecision}` : ''
+    return (
+      <section className="muutoshakemus__section" data-test-class="existing-muutoshakemus">
+        <h1 className="muutoshakemus__title">{`${topic}${waitingForDecision}`}</h1>
+        <div className="muutoshakemus__form">
+          <MuutoshakemusValues muutoshakemus={m} hakemus={state.hakemus} hakijaUrl={state.environment?.['hakija-server'].url[lang]} simplePaatos={true} />
+        </div>
+      </section>
+    )
   }
 
   return (
@@ -88,7 +111,8 @@ export const Muutoshakemus = () => {
                   registerNumber={state.avustushaku["register-number"]}
                   f={f}
                 />
-                <AvustuksenKayttoajanPidennys f={f} projectEnd={state.hakemus?.['project-end'] || ''} />
+                {!existingNewMuutoshakemus && <AvustuksenKayttoajanPidennys f={f} projectEnd={state.hakemus?.['project-end'] || ''} />}
+                {state.muutoshakemukset.map(existingMuutoshakemus)}
                 <OriginalHakemusIframe avustushakuId={avustushakuId} userKey={userKey} />
               </ErrorBoundary>
             </section>

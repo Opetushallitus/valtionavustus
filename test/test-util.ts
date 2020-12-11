@@ -729,14 +729,14 @@ export async function fillAndSendMuutoshakemus(page: Page, avustushakuID: number
   if (jatkoaika) {
     await clickElement(page, '#checkbox-jatkoaika')
     await clearAndType(page, '#perustelut-jatkoaika', jatkoaikaPerustelu || '')
-    await clickElement(page, `div[class="paattymispaiva"] button`)
-    await clearAndType(page, 'div.paattymispaiva input', jatkoaika.format('DD.MM.YYYY'))
+    await clearAndType(page, 'div.datepicker input', jatkoaika.format('DD.MM.YYYY'))
     await clickElement(page, '#send-muutospyynto-button')
   }
 
   const successNotificationSelector = 'div[class="auto-hide success"]'
   const notification = await textContent(page, successNotificationSelector)
-  expect(notification).toBe('Muutokset tallennettu')
+  const notificationText = jatkoaika ? 'Muutoshakemus lähetetty' : 'Muutokset tallennettu'
+  expect(notification).toBe(notificationText)
 }
 
 export async function validateMuutoshakemusValues(page: Page, muutoshakemus: MuutoshakemusValues, paatos?: PaatosValues) {

@@ -2,8 +2,9 @@ import _ from 'lodash'
 import ClassNames from 'classnames'
 import React, { Component } from 'react'
 
+import { HakemusSelvitysStatuses, MuutoshakemusStatuses } from 'va-common/web/va/hakemus-statuses'
+
 import HakemusArviointiStatuses from '../hakemus-details/HakemusArviointiStatuses.js'
-import { HakemusSelvitysStatuses, MuutoshakemusStatuses } from '../hakemus-details/hakemus-statuses.js'
 import ScoreResolver from '../ScoreResolver.js'
 import PersonFilterButton from './PersonFilterButton.jsx'
 import PersonSelectButton from './PersonSelectButton.jsx'

@@ -7,6 +7,12 @@ export type FormErrors = typeof translationsFi.formErrors
 
 export type EnvironmentApiResponse = {
   name: string
+  'hakija-server': {
+    url: {
+      fi: string,
+      sv: string
+    }
+  }
 }
 
 export type MuutoshakemusProps = {
@@ -14,6 +20,7 @@ export type MuutoshakemusProps = {
   avustushaku?: any
   environment?: EnvironmentApiResponse
   hakemus?: NormalizedHakemus
+  muutoshakemukset: Muutoshakemus[]
 }
 
 export type PaatosState = {
