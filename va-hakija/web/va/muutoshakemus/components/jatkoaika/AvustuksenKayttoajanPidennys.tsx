@@ -14,27 +14,23 @@ type AvustuksenKayttoajanPidennysProps = {
 export const AvustuksenKayttoajanPidennys = ({ f, projectEnd }: AvustuksenKayttoajanPidennysProps) => {
   const { t } = useTranslations()
   return (
-    <section className="section" id="section-muutosten-hakeminen-checkbox">
-      <h2>{t.applicationEdit.title}</h2>
-      <div className="content muutoksenhaku">
-        <div className="kayttoajan-pidennys">
-
-          <div className="checkbox-jatkoaika-container">
-            <input
-              name="haenKayttoajanPidennysta"
-              type="checkbox"
-              id="checkbox-jatkoaika"
-              onChange={f.handleChange}
-              onBlur={f.handleBlur}
-              checked={f.values.haenKayttoajanPidennysta}
-            />
-            <label htmlFor="checkbox-jatkoaika">
-              {t.kayttoajanPidennys.checkboxTitle}
-            </label>
-          </div>
-
-          {f.values.haenKayttoajanPidennysta && <AvustuksenKayttoaikaInput f={f} projectEnd={projectEnd} />}
+    <section className="muutoshakemus__section" id="section-muutosten-hakeminen-checkbox">
+      <h1 className="muutoshakemus__title">{t.applicationEdit.title}</h1>
+      <div className="muutoshakemus__form">
+        <div className="muutoshakemus__section-checkbox-row">
+          <input
+            name="haenKayttoajanPidennysta"
+            type="checkbox"
+            id="checkbox-jatkoaika"
+            onChange={f.handleChange}
+            onBlur={f.handleBlur}
+            checked={f.values.haenKayttoajanPidennysta}
+          />
+          <label htmlFor="checkbox-jatkoaika">
+            {t.kayttoajanPidennys.checkboxTitle}
+          </label>
         </div>
+        {f.values.haenKayttoajanPidennysta && <AvustuksenKayttoaikaInput f={f} projectEnd={projectEnd} />}
       </div>
     </section>
   )

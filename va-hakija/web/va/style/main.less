@@ -1,6 +1,36 @@
 @import "~va-common/web/va/style/soresu-va.less";
 @import "topbar";
 
+.muutoshakemus__section-checkbox-row {
+  display: flex;
+  margin-bottom: 1rem;
+
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+
+  label {
+    padding-left: 9px;
+    cursor: pointer;
+  }
+}
+
+.muutoshakemus__checked-form {
+  margin-left: 2rem;
+}
+
+.muutoshakemus__input-error {
+  border: 1px solid @bright-red !important;
+}
+
+.muutoshakemus__error-message {
+  font-size: 0.8rem;
+  color: @bright-red;
+  height: 0.8rem;
+}
+
 .muutoshakemus__page-title {
   display: flex;
   justify-content: space-between;
@@ -8,7 +38,11 @@
 
 .muutoshakemus__title {
   text-transform: uppercase;
-  margin: 1rem 0 !important;
+  margin: 0 0 1rem !important;
+}
+
+.muutoshakemus__section {
+  margin-bottom: 2rem;
 }
 
 .muutoshakemus__register-number {

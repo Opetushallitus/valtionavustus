@@ -34,6 +34,11 @@ export const translationsFi = {
     existingExpirationDateTitle: 'Voimassaoleva päättymisaika',
     newExpirationDateTitle: 'Uusi päättymisaika',
     reasonsTitle: 'Perustelut'
+  },
+  formErrors: {
+    required: 'Pakollinen kenttä',
+    email: 'Sähköposti ei ole validi',
+    haettuKayttoajanPaattymispaiva: 'Päättymispäivän pitää olla tuleva päivämäärä'
   }
 }
 

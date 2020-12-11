@@ -1,4 +1,6 @@
 import React from 'react'
+import { ErrorMessage } from '../../ErrorMessage'
+import { getInputErrorClass } from '../../formikHelpers'
 
 import { useTranslations } from '../../TranslationContext'
 import { FormikHook } from '../../types'
@@ -14,7 +16,7 @@ export const ContactPerson = ({ avustushakuName, projectName, registerNumber, f}
   const { t } = useTranslations()
 
   return (
-  <section>
+  <section className="muutoshakemus__section">
     <div className="muutoshakemus__page-title">
       <h1 className="muutoshakemus__title">{t.contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushakuName}</span></h1>
       <span className="va-register-number">
@@ -46,10 +48,11 @@ export const ContactPerson = ({ avustushakuName, projectName, registerNumber, f}
             id="muutoshakemus__email"
             name="email"
             type="text"
-            className={ f.errors.email ? "error" : undefined}
+            className={getInputErrorClass(f, 'email')}
             onChange={f.handleChange}
             onBlur={f.handleBlur}
             value={f.values.email} />
+          <ErrorMessage text={f.errors.email} />
         </div>
         <div className="muutoshakemus__form-cell">
           <label htmlFor="muutoshakemus__phone">{t.contactPersonEdit.phone}</label>

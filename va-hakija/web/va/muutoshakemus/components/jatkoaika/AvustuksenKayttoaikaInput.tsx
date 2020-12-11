@@ -1,7 +1,10 @@
 import React from 'react'
 import { DateTimePicker } from 'react-widgets'
+import moment from 'moment'
 
 import { useTranslations } from '../../TranslationContext'
+import { ErrorMessage } from '../../ErrorMessage'
+import { getInputErrorClass } from '../../formikHelpers'
 import { FormikHook } from '../../types'
 
 import 'react-widgets/dist/css/react-widgets.css'
@@ -13,25 +16,35 @@ type AvustuksenKayttoaikaInputProps = {
 
 export const AvustuksenKayttoaikaInput = ({ f, projectEnd }: AvustuksenKayttoaikaInputProps) => {
   const { t } = useTranslations()
+  const datepickerError = getInputErrorClass(f, 'haettuKayttoajanPaattymispaiva')
+  const reasonError = getInputErrorClass(f, 'kayttoajanPidennysPerustelut')
 
   return (
-    <div>
-      <div className="input twocolumns">
+    <div className="muutoshakemus__checked-form">
+      <div className="twocolumns">
         <div>
           <div className="h3">{t.kayttoajanPidennys.existingExpirationDateTitle}</div>
-          <div className="paattymispaiva">{projectEnd}</div>
+          <div className="muutoshakemus__current-project-end"><span>{projectEnd}</span></div>
         </div>
         <div>
           <div className='h3'>
             {t.kayttoajanPidennys.newExpirationDateTitle}
           </div>
-          <div className="paattymispaiva">
+          <div>
             <DateTimePicker
               name="haettuKayttoajanPaattymispaiva"
-              onChange={(newDate?: Date) => { f.setFieldValue('haettuKayttoajanPaattymispaiva', newDate) }}
-              containerClassName={f.errors.haettuKayttoajanPaattymispaiva ? 'datepicker dp-error' : 'datepicker'}
-              defaultValue={new Date()}
+              onChange={(newDate?: Date) => {
+                const d = moment(newDate)
+                if (d.isValid()) {
+                  f.setFieldValue('haettuKayttoajanPaattymispaiva', newDate)
+                } else {
+                  f.setFieldValue('haettuKayttoajanPaattymispaiva', undefined)
+                }
+              }}
+              containerClassName={`datepicker ${datepickerError}`}
+              defaultValue={f.initialValues.haettuKayttoajanPaattymispaiva}
               time={false} />
+            <ErrorMessage text={f.errors.haettuKayttoajanPaattymispaiva} />
           </div>
         </div>
       </div>
@@ -40,12 +53,14 @@ export const AvustuksenKayttoaikaInput = ({ f, projectEnd }: AvustuksenKayttoaik
         <textarea
           id="perustelut-jatkoaika"
           name="kayttoajanPidennysPerustelut"
-          className={f.errors.kayttoajanPidennysPerustelut ? 'error' : ''}
+          className={reasonError}
           rows={5}
+          cols={53}
           onChange={f.handleChange}
           onBlur={f.handleBlur}
           value={f.values.kayttoajanPidennysPerustelut}
         />
+        <ErrorMessage text={f.errors.kayttoajanPidennysPerustelut} />
       </div>
     </div>
   )

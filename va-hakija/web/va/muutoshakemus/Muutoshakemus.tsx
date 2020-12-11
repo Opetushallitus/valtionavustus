@@ -42,7 +42,7 @@ let initialState: MuutoshakemusProps = {
 
 export const Muutoshakemus = () => {
   const [state, setState] = useState<MuutoshakemusProps>(initialState)
-  const f = createFormikHook(userKey)
+  const f = createFormikHook(userKey, lang)
 
   useEffect(() => {
     const fetchProps = async () => {
