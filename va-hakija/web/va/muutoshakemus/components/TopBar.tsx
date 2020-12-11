@@ -1,34 +1,17 @@
 import React from 'react'
+
+import { FormikHook } from '../types'
 import { useTranslations } from '../TranslationContext'
 import { TopBarNotification } from './TopBarNotification'
-import {AppContext} from '../store/context'
-import { isEqual, omit } from 'lodash'
 
 type TopBarProps = {
   env: string
-  onSend: () => void
+  f: FormikHook
 }
 
-export function TopBar({ env, onSend }: TopBarProps) {
+export function TopBar({ env, f }: TopBarProps) {
   const { t } = useTranslations()
-  const { state } = React.useContext(AppContext)
-
-  function isSavedYhteyshenkiloStateEqualToLocalYhteyshenkilo(): boolean {
-    return isEqual(
-      omit(state.yhteyshenkilo, ['validationError']),
-      omit(state.lastSave?.yhteyshenkilo, ['validationError'])
-    )
-  }
-
-  function allChangesSaved(): boolean {
-    if (!state.jatkoaika && !state.yhteyshenkilo) return true
-    return isEqual(state.jatkoaika, state.lastSave?.jatkoaika) && isSavedYhteyshenkiloStateEqualToLocalYhteyshenkilo()
-  }
-
-  function formContainsValidationError(): boolean {
-    return !!state.yhteyshenkilo?.validationError
-  }
-
+  const submitDisabled = f.isSubmitting || f.isValidating || !(f.isValid && f.dirty)
   return (
     <section id="topbar">
       <div id="top-container">
@@ -46,14 +29,8 @@ export function TopBar({ env, onSend }: TopBarProps) {
           </div>
         </div>
         <div className="muutospyynto-button-container">
-          <button
-            disabled={allChangesSaved() || formContainsValidationError()}
-            id="send-muutospyynto-button"
-            type="submit"
-            onClick={onSend}>
-            {t.send}
-          </button>
-          <TopBarNotification />
+          <button disabled={submitDisabled} id="send-muutospyynto-button" type="submit">{t.send}</button>
+          <TopBarNotification f={f} />
         </div>
       </div>
     </section>

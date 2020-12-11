@@ -1,62 +1,17 @@
-import React, {ChangeEvent} from 'react'
-import {useTranslations} from '../../TranslationContext'
-import {
-  AppContext,
-} from '../../store/context'
-import {Types} from '../../store/reducers'
-import { Language, EmailValidationError } from '../../types'
+import React from 'react'
+
+import { useTranslations } from '../../TranslationContext'
+import { FormikHook } from '../../types'
 
 interface ContactPersonProps {
   avustushakuName: string
   projectName: string
   registerNumber: string
-  lang: Language
+  f: FormikHook
 }
 
-export const ContactPerson = ({ avustushakuName, projectName, registerNumber}: ContactPersonProps) => {
+export const ContactPerson = ({ avustushakuName, projectName, registerNumber, f}: ContactPersonProps) => {
   const { t } = useTranslations()
-  const { state, dispatch } = React.useContext(AppContext)
-
-  function getContactPersonNameFromLocalOrServerState() {
-    return state.yhteyshenkilo?.name || state.lastSave?.yhteyshenkilo?.name
-  }
-
-  function onChangeContactPersonName(event: ChangeEvent<HTMLInputElement>): void {
-    const name = event.currentTarget.value
-    dispatch({
-      type: Types.ContactPersonFormChange,
-      payload: { formState: { name }, validationError: state.yhteyshenkilo?.validationError }
-    })
-  }
-
-  function getContactPersonEmailFromLocalOrServerState() {
-    return state.yhteyshenkilo?.email || state.lastSave?.yhteyshenkilo?.email
-  }
-
-  function onChangeContactPersonEmail(event: ChangeEvent<HTMLInputElement>): void {
-    const email = event.currentTarget.value
-    const isValid = !!email.match(/^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/)
-    dispatch({
-      type: Types.ContactPersonFormChange,
-      payload: { formState: { email }, validationError: isValid ? undefined : new EmailValidationError(`Invalid email: ${email}`) }
-    })
-  }
-
-  function hasEmailValidationError() {
-    return state.yhteyshenkilo?.validationError instanceof EmailValidationError
-  }
-
-  function getContactPersonPhoneFromLocalOrServerState() {
-    return state.yhteyshenkilo?.phone || state.lastSave?.yhteyshenkilo?.phone
-  }
-
-  function onChangeContactPersonPhone(event: ChangeEvent<HTMLInputElement>): void {
-    const phone = event.currentTarget.value
-    dispatch({
-      type: Types.ContactPersonFormChange,
-      payload: { formState: { phone }, validationError: state.yhteyshenkilo?.validationError }
-    })
-  }
 
   return (
   <section>
@@ -79,26 +34,32 @@ export const ContactPerson = ({ avustushakuName, projectName, registerNumber}: C
           <label htmlFor="muutoshakemus__contact-person">{t.contactPersonEdit.contactPerson}</label>
           <input
             id="muutoshakemus__contact-person"
+            name="name"
             type="text"
-            onChange={onChangeContactPersonName}
-            value={getContactPersonNameFromLocalOrServerState()} />
+            onChange={f.handleChange}
+            onBlur={f.handleBlur}
+            value={f.values.name} />
         </div>
         <div className="muutoshakemus__form-cell">
           <label htmlFor="muutoshakemus__email">{t.contactPersonEdit.email}</label>
           <input
             id="muutoshakemus__email"
+            name="email"
             type="text"
-            className={ hasEmailValidationError() ? "error" : undefined}
-            onChange={onChangeContactPersonEmail}
-            value={getContactPersonEmailFromLocalOrServerState()} />
+            className={ f.errors.email ? "error" : undefined}
+            onChange={f.handleChange}
+            onBlur={f.handleBlur}
+            value={f.values.email} />
         </div>
         <div className="muutoshakemus__form-cell">
           <label htmlFor="muutoshakemus__phone">{t.contactPersonEdit.phone}</label>
           <input
             id="muutoshakemus__phone"
+            name="phone"
             type="text"
-            onChange={onChangeContactPersonPhone}
-            value={getContactPersonPhoneFromLocalOrServerState()}/>
+            onChange={f.handleChange}
+            onBlur={f.handleBlur}
+            value={f.values.phone} />
         </div>
       </div>
     </div>

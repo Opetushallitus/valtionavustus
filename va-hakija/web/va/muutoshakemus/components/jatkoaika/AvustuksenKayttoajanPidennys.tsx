@@ -1,45 +1,40 @@
 import React from 'react'
+
 import { AvustuksenKayttoaikaInput } from './AvustuksenKayttoaikaInput'
-import './jatkoaika.less'
 import {useTranslations} from '../../TranslationContext'
-import {AppContext} from '../../store/context'
-import {Types} from '../../store/reducers'
+import { FormikHook } from '../../types'
+
+import './jatkoaika.less'
 
 type AvustuksenKayttoajanPidennysProps = {
-  nykyinenPaattymisPaiva: Date
+  f: FormikHook
+  projectEnd: string
 }
 
-export const AvustuksenKayttoajanPidennys = (props: AvustuksenKayttoajanPidennysProps) => {
+export const AvustuksenKayttoajanPidennys = ({ f, projectEnd }: AvustuksenKayttoajanPidennysProps) => {
   const { t } = useTranslations()
-  const { state, dispatch } = React.useContext(AppContext)
-
-  function toggleHaenKayttoajanPidennysta() {
-    dispatch({
-      type: Types.JatkoaikaFormChange,
-      payload: { formState: {
-        haenKayttoajanPidennysta: !state.jatkoaika?.haenKayttoajanPidennysta,
-      }}
-    })
-  }
-
   return (
     <section className="section" id="section-muutosten-hakeminen-checkbox">
       <h2>{t.applicationEdit.title}</h2>
       <div className="content muutoksenhaku">
-        <form>
+        <div className="kayttoajan-pidennys">
 
           <div className="checkbox-jatkoaika-container">
-            <input type="checkbox" value="Submit" id="checkbox-jatkoaika" onClick={toggleHaenKayttoajanPidennysta} />
+            <input
+              name="haenKayttoajanPidennysta"
+              type="checkbox"
+              id="checkbox-jatkoaika"
+              onChange={f.handleChange}
+              onBlur={f.handleBlur}
+              checked={f.values.haenKayttoajanPidennysta}
+            />
             <label htmlFor="checkbox-jatkoaika">
               {t.kayttoajanPidennys.checkboxTitle}
             </label>
           </div>
 
-          <AvustuksenKayttoaikaInput
-            open={!!state.jatkoaika?.haenKayttoajanPidennysta}
-            nykyinenPaattymisPaiva={props.nykyinenPaattymisPaiva} />
-
-        </form>
+          {f.values.haenKayttoajanPidennysta && <AvustuksenKayttoaikaInput f={f} projectEnd={projectEnd} />}
+        </div>
       </div>
     </section>
   )

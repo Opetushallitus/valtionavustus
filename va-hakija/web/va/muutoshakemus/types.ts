@@ -1,8 +1,19 @@
-import * as yup from 'yup'
+import { FormikProps } from 'formik'
 import { translationsFi } from './translations'
 
 export type Language = 'fi' | 'sv'
 export type Translations = typeof translationsFi
+
+export type EnvironmentApiResponse = {
+  name: string
+}
+
+export type MuutoshakemusProps = {
+  status: 'LOADED' | 'LOADING'
+  avustushaku?: any
+  environment?: EnvironmentApiResponse
+  hakemus?: NormalizedHakemus
+}
 
 export type PaatosState = {
   hakemus: NormalizedHakemus
@@ -39,32 +50,19 @@ export interface Paatos {
   "updated-at": string
 }
 
-export interface NormalizedHakemus extends Hakemus {
-  "organization-name": string
-  "register-number": string
-  "project-end": string
-  "created-at": string
-  "updated-at": string
-}
-
-
-export interface Hakemus {
+export interface NormalizedHakemus {
   id: number
   "hakemus-id": number
   "project-name": string
   "contact-person": string
   "contact-email": string
   "contact-phone": string
+  "organization-name": string
+  "register-number": string
+  "project-end": string
+  "created-at": string
+  "updated-at": string
 }
-
-export const hakemusSchema = yup.object().shape<Hakemus>({
-  "id": yup.number().required(),
-  "hakemus-id": yup.number().required(),
-  "project-name": yup.string().required(),
-  "contact-person": yup.string().required(),
-  "contact-email": yup.string().required(),
-  "contact-phone": yup.string().required()
-}).required()
 
 export class EmailValidationError extends Error {
   constructor(message: string) {
@@ -74,3 +72,13 @@ export class EmailValidationError extends Error {
   }
 }
 
+export type FormValues = {
+  name: string
+  email: string
+  phone: string
+  haenKayttoajanPidennysta: boolean
+  haettuKayttoajanPaattymispaiva?: Date,
+  kayttoajanPidennysPerustelut?: string
+}
+
+export type FormikHook = FormikProps<FormValues>

@@ -1,32 +1,32 @@
 import axios from 'axios'
-import {AvustuksenKayttoajanPidennys, ChangingContactPersonDetails} from './store/context'
 import moment from 'moment'
+
+import { FormValues } from './types'
 
 const timeout = 10000 // 10 seconds
 const client = axios.create({ timeout })
 
 type MuutoshakemusProps = {
-  avustushakuId: number
   userKey: string
-  jatkoaika?: Partial<AvustuksenKayttoajanPidennys>
-  yhteyshenkilo?: ChangingContactPersonDetails
-}
-
-function convertDateToDateString(jatkoaika: Partial<AvustuksenKayttoajanPidennys>) {
-  const { haettuKayttoajanPaattymispaiva: paiva } = jatkoaika
-  return {
-    ...jatkoaika,
-    haettuKayttoajanPaattymispaiva: paiva ? moment(paiva).format('YYYY-MM-DD') : null
-  }
+  values: FormValues
 }
 
 export async function postMuutoshakemus(props: MuutoshakemusProps) {
-  const {userKey, jatkoaika, yhteyshenkilo} = props
-
+  const { userKey, values } = props
   const url = `api/muutoshakemus/${userKey}`
 
   return client.post(url, {
-    ...jatkoaika?.haenKayttoajanPidennysta && { jatkoaika: convertDateToDateString(jatkoaika) },
-    ...yhteyshenkilo && { yhteyshenkilo: yhteyshenkilo },
+    ...values.haenKayttoajanPidennysta && {
+      jatkoaika: {
+        haenKayttoajanPidennysta: true,
+        haettuKayttoajanPaattymispaiva: moment(values.haettuKayttoajanPaattymispaiva).format('YYYY-MM-DD'),
+        kayttoajanPidennysPerustelut: values.kayttoajanPidennysPerustelut,
+      }
+    },
+    yhteyshenkilo: {
+      name: values.name,
+      email: values.email,
+      phone: values.phone
+    },
   })
 }

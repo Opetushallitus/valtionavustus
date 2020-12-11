@@ -1,112 +1,36 @@
-import React, {ChangeEvent, useEffect} from 'react'
+import React from 'react'
 import { DateTimePicker } from 'react-widgets'
-import momentLocalizer from 'react-widgets-moment'
-import moment from 'moment'
-import {useTranslations} from '../../TranslationContext'
-import {
-  AppContext,
-  AvustuksenKayttoajanPidennys,
-  SaveState
-} from '../../store/context'
-import {Types} from '../../store/reducers'
+
+import { useTranslations } from '../../TranslationContext'
+import { FormikHook } from '../../types'
+
 import 'react-widgets/dist/css/react-widgets.css'
 
-
-moment.locale('fi')
-momentLocalizer()
-
-
 type AvustuksenKayttoaikaInputProps = {
-  open: boolean
-  nykyinenPaattymisPaiva: Date
+  f: FormikHook
+  projectEnd: string
 }
 
-export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps) => {
-  if (!props.open) return null
-
+export const AvustuksenKayttoaikaInput = ({ f, projectEnd }: AvustuksenKayttoaikaInputProps) => {
   const { t } = useTranslations()
-  const { state, dispatch } = React.useContext(AppContext)
-
-  useEffect(() => {
-    if (props.open && !state.jatkoaika?.haettuKayttoajanPaattymispaiva) {
-      setUusiPaattymispaivaToState(defaultUusiPaattymisaika(props.nykyinenPaattymisPaiva))
-    }
-  }, [props.open])
-
-  function toString(date?: Date): string {
-    if (!date) return ''
-    return moment(date).format('DD.MM.YYYY')
-  }
-
-  function defaultUusiPaattymisaika(date: Date): Date {
-    return moment(date).add(2, 'months').toDate()
-  }
-
-  function getPaattymispaivaFromStateOrDefault() {
-    return state.jatkoaika?.haettuKayttoajanPaattymispaiva ||
-          defaultUusiPaattymisaika(props.nykyinenPaattymisPaiva)
-  }
-
-  function onChangePerustelut(event: ChangeEvent<HTMLTextAreaElement>): void {
-    setPerustelutToState(event.currentTarget.value)
-  }
-
-  function onDateChange(date?: Date) {
-    setUusiPaattymispaivaToState(date)
-  }
-
-  function setPerustelutToState(perustelut: string) {
-    dispatch({
-      type: Types.JatkoaikaFormChange,
-      payload: { formState: {
-        haenKayttoajanPidennysta: true,
-        kayttoajanPidennysPerustelut: perustelut
-      }}
-    })
-  }
-
-  function setUusiPaattymispaivaToState(paiva?: Date) {
-    dispatch({
-      type: Types.JatkoaikaFormChange,
-      payload: { formState: {
-        haenKayttoajanPidennysta: true,
-        haettuKayttoajanPaattymispaiva: paiva
-      }}
-    })
-  }
-
-  function hasInputValidationError(name: keyof AvustuksenKayttoajanPidennys): boolean {
-    if (state.lastSave?.status !== SaveState.SAVE_FAILED) return false
-    if (!state.lastSave.errorState) return false
-
-    const { errorState: error } = state.lastSave
-    return 'response' in error && error.response?.data.errors?.jatkoaika?.[name] !== undefined
-  }
-
-  function hasDateError(): boolean {
-    return hasInputValidationError('haettuKayttoajanPaattymispaiva')
-  }
-
-  function hasPerusteluError(): boolean {
-    return hasInputValidationError('kayttoajanPidennysPerustelut')
-  }
 
   return (
     <div>
       <div className="input twocolumns">
         <div>
           <div className="h3">{t.kayttoajanPidennys.existingExpirationDateTitle}</div>
-          <div className="paattymispaiva">{toString(props.nykyinenPaattymisPaiva)}</div>
+          <div className="paattymispaiva">{projectEnd}</div>
         </div>
         <div>
           <div className='h3'>
             {t.kayttoajanPidennys.newExpirationDateTitle}
           </div>
-          <div className="paattymispaiva" data-test-value={toString(state.jatkoaika?.haettuKayttoajanPaattymispaiva)}>
+          <div className="paattymispaiva">
             <DateTimePicker
-              onChange={onDateChange}
-              containerClassName={hasDateError() ? 'datepicker dp-error' : 'datepicker'}
-              defaultValue={getPaattymispaivaFromStateOrDefault()}
+              name="haettuKayttoajanPaattymispaiva"
+              onChange={(newDate?: Date) => { f.setFieldValue('haettuKayttoajanPaattymispaiva', newDate) }}
+              containerClassName={f.errors.haettuKayttoajanPaattymispaiva ? 'datepicker dp-error' : 'datepicker'}
+              defaultValue={new Date()}
               time={false} />
           </div>
         </div>
@@ -115,10 +39,12 @@ export const AvustuksenKayttoaikaInput = (props: AvustuksenKayttoaikaInputProps)
         <label htmlFor="perustelut-jatkoaika">{t.kayttoajanPidennys.reasonsTitle}</label>
         <textarea
           id="perustelut-jatkoaika"
-          className={hasPerusteluError() ? 'error' : ''}
+          name="kayttoajanPidennysPerustelut"
+          className={f.errors.kayttoajanPidennysPerustelut ? 'error' : ''}
           rows={5}
-          onChange={onChangePerustelut}
-          value={state.jatkoaika?.kayttoajanPidennysPerustelut}
+          onChange={f.handleChange}
+          onBlur={f.handleBlur}
+          value={f.values.kayttoajanPidennysPerustelut}
         />
       </div>
     </div>

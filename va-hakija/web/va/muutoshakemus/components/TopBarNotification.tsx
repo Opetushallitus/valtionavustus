@@ -1,29 +1,24 @@
 import React, {useEffect, useState} from 'react'
-import {AppContext, SaveState} from '../store/context'
+
+import { FormikHook } from '../types'
 import {useTranslations} from '../TranslationContext'
 
-export function TopBarNotification() {
+type TopBarNotificationProps = {
+  f: FormikHook
+}
 
+export function TopBarNotification({ f }: TopBarNotificationProps) {
   const { t } = useTranslations()
-  const { state } = React.useContext(AppContext)
-
-  function lastSaveWasAnError(): boolean {
-    return state.lastSave?.status === SaveState.SAVE_FAILED
-  }
-
-  function lastSaveSucceeded(): boolean {
-    return state.lastSave?.status === SaveState.SAVE_SUCCEEDED
-  }
 
   function getNotificationText() {
-    if (lastSaveWasAnError()) return t.errorNotification
-    if (lastSaveSucceeded()) return t.sentNotification
+    if (f.status?.success === false) return t.errorNotification
+    if (f.status?.success) return t.sentNotification
     return undefined
   }
 
   function getClassNames(): string {
-    if (lastSaveWasAnError()) return 'auto-hide error'
-    if (lastSaveSucceeded()) return 'auto-hide success'
+    if (f.status?.success === false) return 'auto-hide error'
+    if (f.status?.success) return 'auto-hide success'
     return ''
   }
 
@@ -34,7 +29,9 @@ export function TopBarNotification() {
     setTimeout(() => setClassNames(getClassNames()), 400)
   }
 
-  useEffect(() => forceAnimation(), [state.lastSave?.timestamp])
+  useEffect(() => {
+    f.status?.success !== undefined && forceAnimation()
+  }, [f.status])
 
   return (
     <div className='notification-container'>
