@@ -8,7 +8,7 @@
  :nrepl-enabled? true
  :email {:enabled? true 
          :host "fakesmtp"
-         :port 42069
+         :port 25
          :to-finance ["test@test.com"]}
  :payments {:enabled? true
             :delete-payments? true}

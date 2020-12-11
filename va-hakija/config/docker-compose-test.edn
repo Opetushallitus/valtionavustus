@@ -8,6 +8,6 @@
  :nrepl-enabled? true
  :email {:enabled? true 
          :host "fakesmtp"
-         :port 42069}
+         :port 25}
  :applications-ui {:enabled? true}
  :application-change {:change-enabled? true}}

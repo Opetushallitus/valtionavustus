@@ -44,8 +44,6 @@ services:
     image: munkyboy/fakesmtp
     container_name: fakesmtp
     hostname: fakesmtp
-    ports:
-      - '42069:25'
     networks:
       - subnet-private
 
