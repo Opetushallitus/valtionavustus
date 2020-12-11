@@ -753,7 +753,7 @@ export async function validateMuutoshakemusValues(page: Page, muutoshakemus: Muu
 export async function validateMuutoshakemusPaatosCommonValues(page: Page) {
   await page.waitForSelector('div.muutoshakemus-paatos__content')
   const register = await page.$eval('[data-test-id="paatos-register-number"]', el => el.textContent)
-  expect(register).toMatch(/[0-9]{3}\/[0-9]{3}\/[0-9]{4}/)
+  expect(register).toMatch(/[0-9]{1,3}\/[0-9]{3}\/[0-9]{4}/)
   const project = await page.$eval('[data-test-id="paatos-project-name"]', el => el.textContent)
   expect(project).toEqual('Rahassa kylpijät Ky Ay Oy')
   const org = await page.$eval('h1.muutoshakemus-paatos__org', el => el.textContent)
