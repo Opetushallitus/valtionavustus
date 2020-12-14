@@ -8,6 +8,7 @@ import {
   getLinkToHakemusFromSentEmails,
   mkBrowser,
   getMuutoshakemusPaatosEmails,
+  linkToMuutoshakemusRegex,
   getFirstPage,
   getUserKey,
   ratkaiseAvustushaku,
@@ -875,10 +876,14 @@ etunimi.sukunimi@oph.fi
         expectToBeDefined(title)
         expect(title).toContain(`${haku.registerNumber} - ${answers.projectName}`)
 
-        const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshakemus.*/
+        const linkToMuutoshakemusPaatosRegex = /https?:\/\/.*\/muutoshakemus\/paatos.*/
+        const linkToMuutoshakemusPaatos = emails[0]?.formatted.match(linkToMuutoshakemusPaatosRegex)?.[0]
+        expectToBeDefined(linkToMuutoshakemusPaatos)
+        expect(linkToMuutoshakemusPaatos).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\/paatos\?user-key=[a-f0-9]{64}/)
+
         const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
         expectToBeDefined(linkToMuutoshakemus)
-        expect(linkToMuutoshakemus).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\/paatos\?user-key=[a-f0-9]{64}/)
+        expect(linkToMuutoshakemus).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\?.*/)
       })
     })
 

@@ -87,10 +87,10 @@ export async function waitUntilNewHakemusEmailArrives(page: Page, avustushakuID:
   return await getNewHakemusEmails(avustushakuID)
 }
 
+export const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshakemus\?.*/
 export async function getLinkToMuutoshakemusFromSentEmails(avustushakuID: number, hakemusID: number) {
   const emails = await getMuutoshakemusEmails(avustushakuID, hakemusID)
 
-  const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshakemus.*/
   const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
   expectToBeDefined(linkToMuutoshakemus)
   return linkToMuutoshakemus
