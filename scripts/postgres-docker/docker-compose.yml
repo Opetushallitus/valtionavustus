@@ -2,12 +2,9 @@ version: '3.3'
 
 services:
   server:
-    user: ${MY_UID}:${MY_GID}
     image: postgres:12.2
     container_name: va-postgres
     volumes:
-      - ./${PG_DATA_DIR}:/var/lib/postgresql/data
-      - /etc/passwd:/etc/passwd:ro
       - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - '5432:5432'
@@ -20,3 +17,4 @@ services:
     environment:
       POSTGRES_USER: va
       POSTGRES_PASSWORD: va
+      PGDATA: '/tmp/'

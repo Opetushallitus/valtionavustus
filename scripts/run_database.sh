@@ -6,18 +6,8 @@ docker ps > /dev/null 2>&1 || { echo >&2 "Running 'docker ps' failed. Is docker 
 
 scriptdir="$( cd "$( dirname "$0" )" && pwd )"
 
-PG_DATA_DIR=postgres-data-12-2
-MY_UID=`id -u`
-MY_GID=`id -g`
-
 function main {
   cd "$scriptdir/postgres-docker"
-  docker build -t va-postgres:12.2 .
-  mkdir -p ${PG_DATA_DIR}
-
-  export PG_DATA_DIR
-  export MY_UID
-  export MY_GID
 
   docker-compose down || true
   docker-compose up --force-recreate
