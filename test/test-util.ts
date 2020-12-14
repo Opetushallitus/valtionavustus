@@ -190,6 +190,8 @@ export async function fillAndSendHakemus(page: Page, avustushakuID: number, befo
   await clearAndType(page, "#primary-email", "erkki.esimerkki@example.com")
   await clickElement(page, "#submit")
 
+  await navigateToNewHakemusPage(page, avustushakuID)
+
   await clearAndType(page, "#finnish-business-id", TEST_Y_TUNNUS)
   await clickElement(page, "input.get-business-id")
 
@@ -217,6 +219,14 @@ export async function fillAndSendHakemus(page: Page, avustushakuID: number, befo
   await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Hakemus lähetetty")
 }
 
+async function navigateToNewHakemusPage(page: Page, avustushakuID: number) {
+  const receivedEmail = await waitUntilNewHakemusEmailArrives(page, avustushakuID)
+  const hakemusUrl = receivedEmail[0].formatted.match(/https?:\/\/.*\/avustushaku.*/)?.[0]
+  expectToBeDefined(hakemusUrl)
+
+  await page.goto(hakemusUrl, { waitUntil: "networkidle0" })
+}
+
 export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void): Promise<{ userKey: string }> {
   await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
 
@@ -224,11 +234,7 @@ export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustus
   await clearAndType(page, "#primary-email", answers.contactPersonEmail)
   await clickElement(page, "#submit:not([disabled])")
 
-  const receivedEmail = await waitUntilNewHakemusEmailArrives(page, avustushakuID)
-  const hakemusUrl = receivedEmail[0].formatted.match(/https?:\/\/.*\/avustushaku.*/)?.[0]
-  expectToBeDefined(hakemusUrl)
-
-  await page.goto(hakemusUrl, { waitUntil: "networkidle0" })
+  await navigateToNewHakemusPage(page, avustushakuID)
 
   await clearAndType(page, "#finnish-business-id", TEST_Y_TUNNUS)
   await clickElement(page, "input.get-business-id")
