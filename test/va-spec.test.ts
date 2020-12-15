@@ -76,9 +76,16 @@ describe("Puppeteer tests", () => {
   let browser: Browser
   let page: Page
 
+  beforeEach(() => {
+    console.log(`Starting test: ${expect.getState().currentTestName}`)
+  })
+
   beforeAll(async () => {
     browser = await mkBrowser()
     page = await getFirstPage(browser)
+
+  afterEach(() => {
+    console.log(`Finished test: ${expect.getState().currentTestName}`)
   })
 
   afterAll(async () => {
