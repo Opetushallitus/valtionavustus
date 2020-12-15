@@ -23,7 +23,7 @@
                            :timeout 5000
                            :interval-minutes 15}
  :tasmaytysraportti-create {:enabled? true}
- :tasmaytysraportti-send {:enabled? false}
+ :tasmaytysraportti-send {:enabled? true}
  :muutospaatosprosessi {:enabled? false}
  :email-api {:enabled? false}
  :normalized-hakemus-api {:enabled? false}}
