@@ -76,6 +76,16 @@ describe("Puppeteer tests", () => {
   let browser: Browser
   let page: Page
 
+  function setPageErrorConsoleLogger(page: Page) {
+    page.on('error', err => {
+      console.log('error in page: ', err)
+    })
+
+    page.on('pageerror', pageerr => {
+      console.log('pageerror: ', pageerr)
+    })
+  }
+
   beforeEach(() => {
     console.log(`Starting test: ${expect.getState().currentTestName}`)
   })
@@ -83,6 +93,8 @@ describe("Puppeteer tests", () => {
   beforeAll(async () => {
     browser = await mkBrowser()
     page = await getFirstPage(browser)
+    setPageErrorConsoleLogger(page)
+  })
 
   afterEach(() => {
     console.log(`Finished test: ${expect.getState().currentTestName}`)
