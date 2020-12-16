@@ -72,13 +72,14 @@ import {
 } from "./test-util"
 
 jest.setTimeout(100_000)
+
+export function log(...args: any[]) {
+  console.log(moment().format('YYYY-MM-DD HH:mm:ss.SSSS'), ...args)
+}
+
 describe("Puppeteer tests", () => {
   let browser: Browser
   let page: Page
-
-  function log(...args: any[]) {
-    console.log(moment().format('YYYY-MM-DD HH:mm:ss.SSSS'), ...args)
-  }
 
   function setPageErrorConsoleLogger(page: Page) {
     page.on('error', err => {

@@ -7,6 +7,7 @@ import * as assert from "assert"
 import * as fs from "fs"
 import { Moment } from "moment"
 import * as querystring from "querystring"
+import { log } from "./va-spec.test"
 const {randomBytes} = require("crypto")
 
 const HAKIJA_HOSTNAME = process.env.HAKIJA_HOSTNAME || 'localhost'
@@ -72,20 +73,27 @@ export const getNewHakemusEmails = (avustushakuID: number) =>
   axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/email/new-hakemus`)
     .then(r => emailSchema.validate(r.data))
 
-export async function waitUntilNewHakemusEmailArrives(page: Page, avustushakuID: number, timeout = 10000): Promise<Email[]> {
-  if (timeout > 0) {
+async function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+export async function pollUntilNewHakemusEmailArrives(avustushakuID: number): Promise<Email[]> {
+  while(true) {
     try {
       const emails = await getNewHakemusEmails(avustushakuID)
       if (emails.length > 0) {
+        log(`Received emails`, JSON.stringify(emails, null, 2))
         return emails
+      } else {
+        log('No emails received')
+        await sleep(1000)
       }
-    } catch (e) {
+    } catch(e) {
+      console.log(`Failed to get hakemus emails: ${e.message}`)
     }
-    await page.waitFor(1000)
-    return await waitUntilNewHakemusEmailArrives(page, avustushakuID, timeout - 1000)
   }
-  return await getNewHakemusEmails(avustushakuID)
 }
+
 
 export const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshakemus\?.*/
 export async function getLinkToMuutoshakemusFromSentEmails(avustushakuID: number, hakemusID: number) {
@@ -220,7 +228,7 @@ export async function fillAndSendHakemus(page: Page, avustushakuID: number, befo
 }
 
 async function navigateToNewHakemusPage(page: Page, avustushakuID: number) {
-  const receivedEmail = await waitUntilNewHakemusEmailArrives(page, avustushakuID)
+  const receivedEmail = await pollUntilNewHakemusEmailArrives(avustushakuID)
   const hakemusUrl = receivedEmail[0].formatted.match(/https?:\/\/.*\/avustushaku.*/)?.[0]
   expectToBeDefined(hakemusUrl)
 
