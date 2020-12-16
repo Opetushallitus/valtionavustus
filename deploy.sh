@@ -30,7 +30,7 @@ function start_system_under_test {
   docker build -t "va-virkailija:latest" -f ./Dockerfile.virkailija ./
   docker build -t "va-hakija:latest" -f ./Dockerfile.hakija ./
 
-  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
+  docker-compose -f ${DOCKER_COMPOSE_FILE} up &
 
   waitport ${HAKIJA_HOSTNAME} 8080 150
   waitport ${VIRKAILIJA_HOSTNAME} 8081 150
