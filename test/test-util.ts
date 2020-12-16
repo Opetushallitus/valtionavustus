@@ -69,9 +69,15 @@ export const getMuutoshakemusPaatosEmails = getEmails("muutoshakemus-paatos")
 export const getMuutoshakemusEmails = getEmails("paatos-refuse")
 export const getTäydennyspyyntöEmails: (avustushakuID: number, hakemusID: number) => Promise<Email[]> = getEmails("change-request")
 
-export const getNewHakemusEmails = (avustushakuID: number) =>
-  axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/email/new-hakemus`)
-    .then(r => emailSchema.validate(r.data))
+export async function getNewHakemusEmails(avustushakuID: number): Promise<Email[]> {
+  try {
+    const emails = await axios.get<Email>(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/email/new-hakemus`)
+    return emailSchema.validate(emails.data)
+  } catch (e) {
+    log(`Failed to get emails for avustushaku ${avustushakuID}`, e)
+    throw e
+  }
+}
 
 async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -196,7 +202,7 @@ export async function fillAndSendHakemus(page: Page, avustushakuID: number, befo
 
   await page.waitForSelector('#haku-not-open', { hidden: true, timeout: 500 })
   await clearAndType(page, "#primary-email", "erkki.esimerkki@example.com")
-  await clickElement(page, "#submit")
+  await clickElement(page, "#submit:not([disabled])")
 
   await navigateToNewHakemusPage(page, avustushakuID)
 
@@ -738,7 +744,7 @@ export async function fillAndSendMuutoshakemus(page: Page, avustushakuID: number
     await clickElement(page, '#checkbox-jatkoaika')
     await clearAndType(page, '#perustelut-jatkoaika', jatkoaikaPerustelu || '')
     await clearAndType(page, 'div.datepicker input', jatkoaika.format('DD.MM.YYYY'))
-    await clickElement(page, '#send-muutospyynto-button')
+    await clickElement(page, '#send-muutospyynto-button:not([disabled])')
   }
 
   const successNotificationSelector = 'div[class="auto-hide success"]'
