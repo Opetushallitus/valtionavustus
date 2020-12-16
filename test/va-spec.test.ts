@@ -71,7 +71,7 @@ import {
   countElements
 } from "./test-util"
 
-jest.setTimeout(100_000)
+jest.setTimeout(200_000)
 
 export function log(...args: any[]) {
   console.log(moment().format('YYYY-MM-DD HH:mm:ss.SSSS'), ...args)
