@@ -76,18 +76,34 @@ describe("Puppeteer tests", () => {
   let browser: Browser
   let page: Page
 
+  function log(...args: any[]) {
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss.SSSS'), ...args)
+  }
+
   function setPageErrorConsoleLogger(page: Page) {
     page.on('error', err => {
-      console.log('error in page: ', err)
+      log('error in page: ', err)
     })
 
     page.on('pageerror', pageerr => {
-      console.log('pageerror: ', pageerr)
+      log('pageerror: ', pageerr)
+    })
+
+    page.on('request', async (request) => {
+      if (!request.url().startsWith('data:image')) {
+        log(`Outgoing request to ${request.url()}, navigation: ${request.isNavigationRequest()}`)
+      }
+    })
+
+    page.on('requestfailed', request => {
+      log(`Request failed to url: ${request.url()},
+       errorText: ${request.failure()?.errorText},
+       method: ${request.method()}`, request)
     })
   }
 
   beforeEach(() => {
-    console.log(`Starting test: ${expect.getState().currentTestName}`)
+    log(`Starting test: ${expect.getState().currentTestName}`)
   })
 
   beforeAll(async () => {
@@ -97,7 +113,7 @@ describe("Puppeteer tests", () => {
   })
 
   afterEach(() => {
-    console.log(`Finished test: ${expect.getState().currentTestName}`)
+    log(`Finished test: ${expect.getState().currentTestName}`)
   })
 
   afterAll(async () => {
@@ -134,7 +150,7 @@ describe("Puppeteer tests", () => {
     // Accept the hakemus
     const { hakemusID } = await navigateToHakemuksenArviointi(page, avustushakuID, "Akaan kaupunki")
 
-    console.log("Hakemus ID:", hakemusID)
+    log("Hakemus ID:", hakemusID)
 
     await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
     await clearAndType(page, "#budget-edit-project-budget .amount-column input", "100000")
@@ -477,7 +493,7 @@ describe("Puppeteer tests", () => {
     await waitForElementWithText(page, "span", "Lähetetty 1 viestiä")
     const response: any = await (responseP.then(_ => _.json()))
     const väliselvitysKey = response.hakemukset[0].user_key
-    console.log(`Väliselvitys user_key: ${väliselvitysKey}`)
+    log(`Väliselvitys user_key: ${väliselvitysKey}`)
 
     await fillAndSendVäliselvityspyyntö(page, avustushakuID, väliselvitysKey)
 
