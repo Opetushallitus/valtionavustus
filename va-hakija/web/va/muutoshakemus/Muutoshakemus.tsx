@@ -76,7 +76,7 @@ export const MuutoshakemusComponent = () => {
 
   useEffect(() => {
     const fetchMuutoshakemukset = async () => {
-      if (f.status.success) {
+      if (f.status && f.status.success) {
         const muutoshakemukset: Muutoshakemus[] = await HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}/muutoshakemus`)
         setState({ ...state, muutoshakemukset })
       }
