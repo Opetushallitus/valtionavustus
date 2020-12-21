@@ -730,7 +730,7 @@ export async function clickCodeVisibilityButton(page: Page, code: number, visibi
 
 export interface MuutoshakemusValues {
   jatkoaika?: Moment,
-  jatkoaikaPerustelu?: string
+  jatkoaikaPerustelu: string
 }
 
 export interface PaatosValues {
@@ -742,7 +742,7 @@ export async function fillAndSendMuutoshakemus(page: Page, avustushakuID: number
   await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
   if (jatkoaika) {
     await clickElement(page, '#checkbox-jatkoaika')
-    await clearAndType(page, '#perustelut-jatkoaika', jatkoaikaPerustelu || '')
+    await clearAndType(page, '#perustelut-jatkoaika', jatkoaikaPerustelu)
     await clearAndType(page, 'div.datepicker input', jatkoaika.format('DD.MM.YYYY'))
     await clickElement(page, '#send-muutospyynto-button:not([disabled])')
   }
