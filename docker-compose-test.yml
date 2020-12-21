@@ -35,6 +35,7 @@ services:
       - '5432:5432'
     networks:
       - subnet-private
+    command: ["postgres", "-c", "log_statement=all"]
     environment:
       POSTGRES_USER: 'va'
       POSTGRES_PASSWORD: 'va'
