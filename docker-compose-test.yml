@@ -5,6 +5,8 @@ services:
     image: va-virkailija:latest
     container_name: va-virkailija
     hostname: va-virkailija
+    volumes:
+      - /dev/urandom:/dev/random
     ports:
       - '8081:8081'
     depends_on:
@@ -17,6 +19,8 @@ services:
     image: va-hakija:latest
     container_name: va-hakija
     hostname: va-hakija
+    volumes:
+      - /dev/urandom:/dev/random
     ports:
       - '8080:8080'
     depends_on:
