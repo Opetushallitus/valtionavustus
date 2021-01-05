@@ -801,9 +801,13 @@ export async function makePaatosForMuutoshakemusIfNotExists(page: Page, status: 
   }
 
   await page.click(`label[for="${status}"]`)
-  await page.click('a.muutoshakemus__default-reason-link')
+  await selectVakioperustelu(page)
   await page.click('[data-test-id="muutoshakemus-submit"]')
   await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+}
+
+export async function selectVakioperustelu(page: Page): Promise<void> {
+  await clickElement(page, 'a.muutoshakemus__default-reason-link')
 }
 
 interface Answers {

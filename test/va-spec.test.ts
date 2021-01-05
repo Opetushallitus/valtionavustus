@@ -68,7 +68,8 @@ import {
   navigateToHakemuksenArviointi,
   getTäydennyspyyntöEmails,
   validateMuutoshakemusPaatosCommonValues,
-  countElements
+  countElements,
+  selectVakioperustelu
 } from "./test-util"
 
 jest.setTimeout(200_000)
@@ -819,27 +820,38 @@ etunimi.sukunimi@oph.fi
       it('can preview paatos of a new muutoshakemus', async () => {
         await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
         await clickElement(page, 'span.muutoshakemus-tab')
-        await clickElement(page, 'a.muutoshakemus__default-reason-link')
+        await selectVakioperustelu(page)
 
         // accepted preview
         await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
         await validateMuutoshakemusPaatosCommonValues(page)
         const acceptedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
         expect(acceptedPaatos).toEqual('Opetushallitus hyväksyy muutokset hakemuksen mukaisesti.')
-        const acceptedReason = await page.$eval('[data-test-id="paatos-reason"]', el => el.textContent)
-        expect(acceptedReason).toEqual('huh huh pitkä teksti')
+        await assertAcceptedPäätösHasVakioperustelu(page)
         await clickElement(page, 'button.hakemus-details-modal__close-button')
 
         // rejected preview
         await clickElement(page, 'label[for="rejected"]')
-        await clearAndType(page, '#reason', 'hyläty')
+        await selectVakioperustelu(page)
         await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
         await validateMuutoshakemusPaatosCommonValues(page)
         const rejectedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
         expect(rejectedPaatos).toEqual('Opetushallitus hylkää muutoshakemuksen.')
-        const rejectedReason = await page.$eval('[data-test-id="paatos-reason"]', el => el.textContent)
-        expect(rejectedReason).toEqual('hyläty')
+        await assertRejectedPäätösHasVakioperustelu(page)
       })
+
+      async function assertAcceptedPäätösHasVakioperustelu(page: Page): Promise<void> {
+        await assertPäätösHasPerustelu(page, 'Opetushallitus katsoo, että päätöksessä hyväksytyt muutokset tukevat hankkeen tavoitteiden saavuttamista.')
+      }
+
+      async function assertRejectedPäätösHasVakioperustelu(page: Page): Promise<void> {
+        await assertPäätösHasPerustelu(page, 'Opetushallitus on arvioinut hakemuksen. Asiantuntija-arvioinnin perusteella on Opetushallitus asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.')
+      }
+
+      async function assertPäätösHasPerustelu(page: Page, perustelu: string): Promise<void> {
+        const acceptedReason = await page.$eval('[data-test-id="paatos-reason"]', el => el.textContent)
+        expect(acceptedReason).toEqual(perustelu)
+      }
 
       it('gets an email with link to hakemus', async () => {
           const emails = await getValmistelijaEmails(avustushakuID, hakemusID)
@@ -873,8 +885,7 @@ etunimi.sukunimi@oph.fi
         await validateMuutoshakemusPaatosCommonValues(page)
         const rejectedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
         expect(rejectedPaatos).toEqual('Opetushallitus hylkää muutoshakemuksen.')
-        const rejectedReason = await page.$eval('[data-test-id="paatos-reason"]', el => el.textContent)
-        expect(rejectedReason).toEqual('huh huh pitkä teksti')
+        await assertRejectedPäätösHasVakioperustelu(page)
       })
 
       it('can see values of multiple muutoshakemus', async () => {

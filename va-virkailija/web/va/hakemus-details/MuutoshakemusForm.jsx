@@ -11,11 +11,13 @@ import { Modal } from './Modal'
 
 import './Muutoshakemus.less'
 
-const defaultReason = 'huh huh pitkä teksti'
+const defaultReasonAccepted = 'Opetushallitus katsoo, että päätöksessä hyväksytyt muutokset tukevat hankkeen tavoitteiden saavuttamista.'
+const defaultReasonRejected = 'Opetushallitus on arvioinut hakemuksen. Asiantuntija-arvioinnin perusteella on Opetushallitus asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.'
+
 const paatosStatuses = [
-  { value: 'accepted', text: 'Hyväksytään' },
-  { value: 'accepted_with_changes', text: 'Hyväksytään muutettuna' },
-  { value: 'rejected', text: 'Hylätään' }
+  { value: 'accepted', text: 'Hyväksytään', defaultReason: defaultReasonAccepted },
+  { value: 'accepted_with_changes', text: 'Hyväksytään muutettuna', defaultReason: defaultReasonAccepted },
+  { value: 'rejected', text: 'Hylätään', defaultReason: defaultReasonRejected }
 ]
 
 const PaatosSchema = Yup.object().shape({
@@ -79,7 +81,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
         </div>
         <div className="muutoshakemus-row">
           <h4 className="muutoshakemus__header">
-            Perustelut <a className="muutoshakemus__default-reason-link" onClick={() => f.setFieldValue('reason', defaultReason)}>Lisää vakioperustelu</a>
+            Perustelut <a className="muutoshakemus__default-reason-link" onClick={() => setDefaultReason(f)}>Lisää vakioperustelu</a>
           </h4>
           <textarea id="reason" name="reason" rows="5" cols="53" onChange={f.handleChange} onBlur={f.handleBlur} value={f.values.reason} className={isError(f, 'reason') && "muutoshakemus__error"} />
           {isError(f, 'reason') && <div className="muutoshakemus__error">Perustelu on pakollinen kenttä!</div>}
@@ -93,4 +95,9 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
       </section>
     </form>
   )
+}
+
+function setDefaultReason(f) {
+  const status = paatosStatuses.find(_ => _.value === f.values.status)
+  f.setFieldValue('reason', status.defaultReason)
 }
