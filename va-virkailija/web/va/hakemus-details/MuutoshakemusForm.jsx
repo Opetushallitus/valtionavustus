@@ -16,7 +16,6 @@ const defaultReasonRejected = 'Opetushallitus on arvioinut hakemuksen. Asiantunt
 
 const paatosStatuses = [
   { value: 'accepted', text: 'Hyväksytään', defaultReason: defaultReasonAccepted },
-  { value: 'accepted_with_changes', text: 'Hyväksytään muutettuna', defaultReason: defaultReasonAccepted },
   { value: 'rejected', text: 'Hylätään', defaultReason: defaultReasonRejected }
 ]
 
