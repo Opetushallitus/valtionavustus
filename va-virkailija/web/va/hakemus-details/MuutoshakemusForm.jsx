@@ -50,6 +50,13 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
     )
   }
 
+  const voimassaolevaTalousarvio = () => {
+    return (
+      <div className="muutoshakemus-row">
+        <h4 className="muutoshakemus__header">Voimassaoleva talousarvio</h4>
+      </div>
+    )}
+
   const onPaatosPreviewClick = () => {
     const paatos = {
       'created-at': new Date(),
@@ -79,6 +86,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
             {paatosStatuses.map(paatosStatusRadioButton)}
           </fieldset>
         </div>
+        {isAcceptedWithChanges(f) && voimassaolevaTalousarvio()}
         <div className="muutoshakemus-row">
           <h4 className="muutoshakemus__header">
             Perustelut <a className="muutoshakemus__default-reason-link" onClick={() => setDefaultReason(f)}>Lisää vakioperustelu</a>
@@ -95,6 +103,10 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
       </section>
     </form>
   )
+}
+
+function isAcceptedWithChanges(formik) {
+  return formik.values.status === 'accepted_with_changes'
 }
 
 function setDefaultReason(f) {
