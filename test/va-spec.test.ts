@@ -770,6 +770,14 @@ etunimi.sukunimi@oph.fi
       jatkoaikaPerustelu: 'Jaa ei kyllä kerkeekkään'
     }
 
+    const muutoshakemus4: MuutoshakemusValues = {
+      jatkoaika: moment(new Date())
+        .add(3, 'months')
+        .add(8, 'days')
+        .locale('fi'),
+      jatkoaikaPerustelu: 'Final muutoshakemus koira 2'
+    }
+
     it("Avustushaun ratkaisu should send an email with link to muutoshakemus", async () => {
       const { avustushakuID, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, createRandomHakuValues(), answers)
 
@@ -888,6 +896,33 @@ etunimi.sukunimi@oph.fi
         await assertRejectedPäätösHasVakioperustelu(page)
       })
 
+      it('can accept a muutoshakemus', async () => {
+        await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
+
+        await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus4)
+        await makePaatosForMuutoshakemusIfNotExists(page, 'accepted', avustushakuID, hakemusID)
+        await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
+        await validateMuutoshakemusValues(page, muutoshakemus4, { status: 'accepted'})
+
+        await navigate(page, `/avustushaku/${avustushakuID}/`)
+        const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`
+        await page.waitForSelector(muutoshakemusStatusField)
+        const muutoshakemusStatus = await page.$eval(muutoshakemusStatusField, el => el.textContent)
+        expect(muutoshakemusStatus).toEqual('Hyväksytty')
+
+        await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+        await clickElement(page, 'span.muutoshakemus-tab')
+        await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
+        await validateMuutoshakemusValues(page, muutoshakemus4, { status: 'accepted'})
+
+        const paatosUrl = await page.$eval('a.muutoshakemus__paatos-link', el => el.textContent) || ''
+        await page.goto(paatosUrl, { waitUntil: "networkidle0" })
+        await validateMuutoshakemusPaatosCommonValues(page)
+        const acceptedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
+        expect(acceptedPaatos).toEqual('Opetushallitus hyväksyy muutokset hakemuksen mukaisesti.')
+        await assertAcceptedPäätösHasVakioperustelu(page)
+      })
+
       it('can see values of multiple muutoshakemus', async () => {
         await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
 
@@ -905,13 +940,15 @@ etunimi.sukunimi@oph.fi
 
         // assert tabs work and data can be seen
         await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
-        await page.waitForFunction(() => (document.querySelector('[data-test-id=number-of-pending-muutoshakemukset]') as HTMLInputElement).innerText === '3')
+        await page.waitForFunction(() => (document.querySelector('[data-test-id=number-of-pending-muutoshakemukset]') as HTMLInputElement).innerText === '4')
         await clickElement(page, 'span.muutoshakemus-tab')
         await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
         await validateMuutoshakemusValues(page, muutoshakemus3)
         await clickElement(page, 'button.muutoshakemus-tabs__tab:nth-child(2)')
         await validateMuutoshakemusValues(page, muutoshakemus2, { status: 'rejected' })
         await clickElement(page, 'button.muutoshakemus-tabs__tab:nth-child(3)')
+        await validateMuutoshakemusValues(page, muutoshakemus4, { status: 'accepted' })
+        await clickElement(page, 'button.muutoshakemus-tabs__tab:nth-child(4)')
         await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected' })
       })
 
