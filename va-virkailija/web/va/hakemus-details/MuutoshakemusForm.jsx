@@ -1,6 +1,10 @@
 import React from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import moment from 'moment'
+import { DateTimePicker } from 'react-widgets'
+import momentLocalizer from 'react-widgets-moment'
+
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusPaatos } from 'va-common/web/va/MuutoshakemusPaatos'
@@ -10,6 +14,10 @@ import { isSubmitDisabled, isError } from '../formikHelpers'
 import { Modal } from './Modal'
 
 import './Muutoshakemus.less'
+import 'react-widgets/dist/css/react-widgets.css'
+
+moment.locale('fi')
+momentLocalizer()
 
 const defaultReasonAccepted = 'Opetushallitus katsoo, että päätöksessä hyväksytyt muutokset tukevat hankkeen tavoitteiden saavuttamista.'
 const defaultReasonRejected = 'Opetushallitus on arvioinut hakemuksen. Asiantuntija-arvioinnin perusteella on Opetushallitus asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.'
@@ -50,12 +58,48 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
     )
   }
 
-  const voimassaolevaTalousarvio = () => {
+  const ErrorMessage = (text) => {
+    return <span className="muutoshakemus__error-message">{text || ' '}</span>
+  }
+
+  const voimassaolevaPaattymisaika = () => {
+    const haettuPaiva = hakemus['haettu-kayttoajan-paattymispaiva']
+
     return (
-      <div className="muutoshakemus-row">
-        <h4 className="muutoshakemus__header">Voimassaoleva talousarvio</h4>
-      </div>
-    )}
+      <section className="muutoshakemus-section">
+        <div className="muutoshakemus-row muutoshakemus__project-end-row">
+          <div>
+            <h3 className="muutoshakemus__header">Voimassaoleva päättymisaika</h3>
+            <div>{hakemus['project-end']}</div>
+          </div>
+          <div>
+            <h3 className="muutoshakemus__header">Haettu muutos</h3>
+            <div data-test-id="approve-with-changes-muutoshakemus-jatkoaika">
+              {moment(haettuPaiva).format('DD.MM.YYYY')}
+            </div>
+          </div>
+          <div>
+            <h3 className="muutoshakemus__header">OPH:n hyväksymä</h3>
+            <div id="approve-with-changes-muutoshakemus-jatkoaika-oph">
+              <DateTimePicker
+                name="haettuKayttoajanPaattymispaiva"
+                onChange={(newDate) => {
+                  const d = moment(newDate)
+                  if (d.isValid()) {
+                  f.setFieldValue('haettuKayttoajanPaattymispaiva', newDate)
+                } else {
+                  f.setFieldValue('haettuKayttoajanPaattymispaiva', undefined)
+                }
+                }}
+                defaultValue={haettuPaiva}
+                containerClassName={`datepicker`}
+                time={false} />
+
+            </div>
+          </div>
+        </div>
+      </section>
+  )}
 
   const onPaatosPreviewClick = () => {
     const paatos = {
@@ -86,7 +130,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
             {paatosStatuses.map(paatosStatusRadioButton)}
           </fieldset>
         </div>
-        {isAcceptedWithChanges(f) && voimassaolevaTalousarvio()}
+        {isAcceptedWithChanges(f) && voimassaolevaPaattymisaika()}
         <div className="muutoshakemus-row">
           <h4 className="muutoshakemus__header">
             Perustelut <a className="muutoshakemus__default-reason-link" onClick={() => setDefaultReason(f)}>Lisää vakioperustelu</a>
