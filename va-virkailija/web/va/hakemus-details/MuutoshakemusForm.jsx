@@ -14,7 +14,6 @@ import { isSubmitDisabled, isError } from '../formikHelpers'
 import { Modal } from './Modal'
 
 import './Muutoshakemus.less'
-import 'react-widgets/dist/css/react-widgets.css'
 
 moment.locale('fi')
 momentLocalizer()
