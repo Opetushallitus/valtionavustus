@@ -802,7 +802,7 @@ export async function makePaatosForMuutoshakemusIfNotExists(page: Page, status: 
 
   await page.click(`label[for="${status}"]`)
   await selectVakioperustelu(page)
-  await page.click('[data-test-id="muutoshakemus-submit"]')
+  await page.click('[data-test-id="muutoshakemus-submit"]:not([disabled])')
   await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
 }
 

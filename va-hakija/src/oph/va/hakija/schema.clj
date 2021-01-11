@@ -35,6 +35,7 @@
     :reason s/Str
     :created-at s/Inst
     :updated-at s/Inst
+    (s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
     :decider s/Str
   })
 

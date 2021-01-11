@@ -40,24 +40,38 @@ export const MuutoshakemusValues = ({ muutoshakemus, hakemus, hakijaUrl, simpleP
           }
         </section>
       }
-      {a['haettu-kayttoajan-paattymispaiva'] &&
-        <section className="muutoshakemus-section">
-          <div className="muutoshakemus-row muutoshakemus__project-end-row">
-            <div>
-              <h3 className="muutoshakemus__header">Voimassaoleva päättymisaika</h3>
-              <div>{hakemus['project-end']}</div>
-            </div>
-            <div>
-              <h3 className="muutoshakemus__header">Haettu muutos</h3>
-              <div data-test-id="muutoshakemus-jatkoaika">{moment(a['haettu-kayttoajan-paattymispaiva']).format('DD.MM.YYYY')}</div>
-            </div>
-          </div>
-          <div className="muutoshakemus-row">
-            <h4 className="muutoshakemus__header">Hakijan perustelut</h4>
-            <div className="muutoshakemus__reason" data-test-id="muutoshakemus-jatkoaika-perustelu">{a['kayttoajan-pidennys-perustelut']}</div>
-          </div>
-        </section>
-      }
+      <PaattymispaivaValues hakemus={hakemus} muutoshakemus={muutoshakemus} />
     </React.Fragment>
+  )
+}
+
+const PaattymispaivaValues = ({ hakemus, muutoshakemus }) => {
+  if (!muutoshakemus['haettu-kayttoajan-paattymispaiva']) return null
+
+  const isAcceptedWithChanges = muutoshakemus.status === 'accepted_with_changes'
+
+  const currentEndDateTitle = isAcceptedWithChanges ? 'Vanha päättymisaika' : 'Voimassaoleva päättymisaika'
+  const currentEndDateValue = hakemus['project-end']
+  const newEndDateTitle = isAcceptedWithChanges ? 'Hyväksytty muutos' : 'Haettu muutos'
+  const newEndDateValue = isAcceptedWithChanges ? muutoshakemus['paatos-hyvaksytty-paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']
+  const perustelut = muutoshakemus['kayttoajan-pidennys-perustelut']
+
+  return (
+    <section className="muutoshakemus-section">
+      <div className="muutoshakemus-row muutoshakemus__project-end-row">
+        <div>
+          <h3 className="muutoshakemus__header">{currentEndDateTitle}</h3>
+          <div>{currentEndDateValue}</div>
+        </div>
+        <div>
+          <h3 className="muutoshakemus__header">{newEndDateTitle}</h3>
+          <div data-test-id="muutoshakemus-jatkoaika">{moment(newEndDateValue).format('DD.MM.YYYY')}</div>
+        </div>
+      </div>
+      <div className="muutoshakemus-row">
+        <h4 className="muutoshakemus__header">Hakijan perustelut</h4>
+        <div className="muutoshakemus__reason" data-test-id="muutoshakemus-jatkoaika-perustelu">{perustelut}</div>
+      </div>
+    </section>
   )
 }

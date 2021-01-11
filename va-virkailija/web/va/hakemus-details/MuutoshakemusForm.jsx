@@ -1,6 +1,10 @@
 import React from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import moment from 'moment'
+import { DateTimePicker } from 'react-widgets'
+import momentLocalizer from 'react-widgets-moment'
+
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusPaatos } from 'va-common/web/va/MuutoshakemusPaatos'
@@ -10,6 +14,9 @@ import { isSubmitDisabled, isError } from '../formikHelpers'
 import { Modal } from './Modal'
 
 import './Muutoshakemus.less'
+
+moment.locale('fi')
+momentLocalizer()
 
 const defaultReasonAccepted = 'Opetushallitus katsoo, että päätöksessä hyväksytyt muutokset tukevat hankkeen tavoitteiden saavuttamista.'
 const defaultReasonRejected = 'Opetushallitus on arvioinut hakemuksen. Asiantuntija-arvioinnin perusteella on Opetushallitus asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.'
@@ -25,18 +32,32 @@ const PaatosSchema = Yup.object().shape({
     .oneOf(paatosStatuses.map(s => s.value))
     .required(),
   reason: Yup.string()
-    .required('Perustelu on pakollinen kenttä')
+    .required('Perustelu on pakollinen kenttä'),
+  paattymispaiva: Yup.date().when('status', {
+    is: 'accepted_with_changes',
+    then: (s) => s.required('Päättymispäivä on pakollinen kenttä'),
+  })
 })
+
+function formToPayload(values) {
+  if (!values.paattymispaiva) return values
+
+  return {
+    ...values,
+    paattymispaiva: moment(values.paattymispaiva).format('YYYY-MM-DD')
+  }
+}
 
 export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, controller, userInfo, presenter }) => {
   const f = useFormik({
     initialValues: {
       status: 'accepted',
-      reason: ''
+      reason: '',
+      paattymispaiva: undefined,
     },
     validationSchema: PaatosSchema,
     onSubmit: async (values) => {
-      const storedPaatos = await HttpUtil.post(`/api/avustushaku/${avustushaku.id}/hakemus/${hakemus['hakemus-id']}/muutoshakemus/${muutoshakemus.id}/paatos`, values)
+      const storedPaatos = await HttpUtil.post(`/api/avustushaku/${avustushaku.id}/hakemus/${hakemus['hakemus-id']}/muutoshakemus/${muutoshakemus.id}/paatos`, formToPayload(values))
       controller.setPaatos({ muutoshakemusId: muutoshakemus.id, hakemusId: hakemus['hakemus-id'], ...storedPaatos })
     }
   })
@@ -49,6 +70,50 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
       </React.Fragment>
     )
   }
+
+  const ErrorMessage = (text) => {
+    return <span className="muutoshakemus__error-message">{text || ' '}</span>
+  }
+
+  const voimassaolevaPaattymisaika = () => {
+    const haettuPaiva = hakemus['haettu-kayttoajan-paattymispaiva']
+
+    return (
+      <section className="muutoshakemus-section">
+        <div className="muutoshakemus-row muutoshakemus__project-end-row">
+          <div>
+            <h3 className="muutoshakemus__header">Voimassaoleva päättymisaika</h3>
+            <div>{hakemus['project-end']}</div>
+          </div>
+          <div>
+            <h3 className="muutoshakemus__header">Haettu muutos</h3>
+            <div data-test-id="approve-with-changes-muutoshakemus-jatkoaika">
+              {moment(haettuPaiva).format('DD.MM.YYYY')}
+            </div>
+          </div>
+          <div>
+            <h3 className="muutoshakemus__header">OPH:n hyväksymä</h3>
+            <div id="approve-with-changes-muutoshakemus-jatkoaika-oph">
+              <DateTimePicker
+                name="paattymispaiva"
+                onBlur={() => f.setFieldTouched('paattymispaiva')}
+                onChange={(newDate) => {
+                  const d = moment(newDate)
+                  if (d.isValid()) {
+                    f.setFieldValue('paattymispaiva', newDate)
+                  } else {
+                    f.setFieldValue('paattymispaiva', undefined)
+                  }
+                }}
+                defaultValue={f.values['paattymispaiva'] || haettuPaiva}
+                containerClassName={`datepicker`}
+                time={false} />
+            </div>
+            {isError(f, 'paattymispaiva') && <div className="muutoshakemus__error">Päättymispäivä on pakollinen kenttä!</div>}
+          </div>
+        </div>
+      </section>
+  )}
 
   const onPaatosPreviewClick = () => {
     const paatos = {
@@ -79,6 +144,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
             {paatosStatuses.map(paatosStatusRadioButton)}
           </fieldset>
         </div>
+        {isAcceptedWithChanges(f) && voimassaolevaPaattymisaika()}
         <div className="muutoshakemus-row">
           <h4 className="muutoshakemus__header">
             Perustelut <a className="muutoshakemus__default-reason-link" onClick={() => setDefaultReason(f)}>Lisää vakioperustelu</a>
@@ -95,6 +161,10 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
       </section>
     </form>
   )
+}
+
+function isAcceptedWithChanges(formik) {
+  return formik.values.status === 'accepted_with_changes'
 }
 
 function setDefaultReason(f) {

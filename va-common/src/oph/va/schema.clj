@@ -175,7 +175,7 @@
 
 (s/defschema MuutoshakemusStatus
   "Muutoshakemus status"
-  (s/enum "new" "accepted" "rejected"))
+  (s/enum "new" "accepted" "rejected", "accepted_with_changes"))
 
 (s/defschema Muutoshakemus
   "Muutoshakemus for a specific hakemus"
@@ -187,6 +187,7 @@
     :haettu-kayttoajan-paattymispaiva (s/maybe java.time.LocalDate)
     :status MuutoshakemusStatus
     :paatos-user-key (s/maybe s/Str)
+    (s/optional-key :paatos-hyvaksytty-paattymispaiva) (s/maybe java.time.LocalDate)
     :paatos-created-at (s/maybe s/Inst)
     :paatos-sent-at (s/maybe s/Inst)
     :created-at s/Inst

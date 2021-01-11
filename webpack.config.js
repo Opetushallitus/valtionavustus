@@ -48,15 +48,7 @@ const makeConfig = basedir => {
         },
         {
           test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
-          use: [
-            {
-              loader: 'file-loader',
-              options: {
-                name: '[name].[ext]',
-                outputPath: 'fonts/'
-              }
-            }
-          ]
+          use: 'url-loader?name=[name].[ext]',
         },
         {
           test: /\.(?:png|gif|jpe?g|svg)$/,

@@ -1,5 +1,8 @@
 @import "~soresu-form/web/form/style/variables.less";
 
+@import '~react-widgets/lib/less/react-widgets';
+@font-path: '~react-widgets/lib/fonts';
+
 .muutoshakemus-content {
   padding-left: 0.5rem;
 }
@@ -50,6 +53,12 @@ h4.muutoshakemus__header {
 }
 
 .muutoshakemus__paatos-icon--accepted {
+  &:before {
+    background: url("../img/icon_accepted.svg") no-repeat 50% 50%;
+  }
+}
+
+.muutoshakemus__paatos-icon--accepted_with_changes {
   &:before {
     background: url("../img/icon_accepted.svg") no-repeat 50% 50%;
   }
@@ -123,4 +132,34 @@ div.muutoshakemus__error {
 .muutoshakemus__paatos-link {
   width: 100%;
   overflow-wrap: break-word;
+}
+
+.datepicker {
+  width: 200px !important;
+  max-height: 22px;
+  border: 1px inset black !important;
+  border-image: initial;
+  border-radius: 3px;
+  box-sizing: border-box;
+  padding: 1px 2px;
+  height: auto;
+  box-shadow: none !important;
+
+  input {
+    border: 0 !important;
+    padding: 0;
+    margin-top: 2px;
+    box-shadow: none !important;
+  }
+}
+
+#approve-with-changes-muutoshakemus-jatkoaika-oph {
+
+  div.rw-calendar-popup {
+    left: unset;
+  }
+
+  div.rw-datetime-picker, div.rw-widget-picker {
+    height: unset;
+  }
 }

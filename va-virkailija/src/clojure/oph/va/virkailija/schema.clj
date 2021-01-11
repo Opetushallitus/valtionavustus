@@ -15,13 +15,16 @@
    :user-key s/Str
    :reason s/Str
    :decider s/Str
+   (s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
    :created-at s/Inst
    :updated-at s/Inst})
 
 (s/defschema MuutoshakemusPaatosRequest
   "Muutoshakemus paatos"
   {:status s/Str
-   :reason s/Str})
+   :reason s/Str
+   (s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
+   })
 
 (s/defschema DbEmail
   "Email stored in database"
