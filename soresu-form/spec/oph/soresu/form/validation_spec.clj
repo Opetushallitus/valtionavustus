@@ -123,7 +123,10 @@
   (it "validates non-empty decimal"
       (should= {:decimal []} (validate-field (answers-for decimal-field "7") [] decimal-field))
       (should= {:decimal []} (validate-field (answers-for decimal-field "7.1") [] decimal-field))
-      (should= {:decimal [{:error "decimal"}]} (validate-field (answers-for decimal-field "7,1") [] decimal-field))
+      (should= {:decimal []} (validate-field (answers-for decimal-field "7,1") [] decimal-field))
+      (should= {:decimal []} (validate-field (answers-for decimal-field "-7,1") [] decimal-field))
+      (should= {:decimal [{:error "decimal"}]} (validate-field (answers-for decimal-field ",1") [] decimal-field))
+      (should= {:decimal [{:error "decimal"}]} (validate-field (answers-for decimal-field "7,") [] decimal-field))
       (should= {:decimal [{:error "decimal"}]} (validate-field (answers-for decimal-field "7x") [] decimal-field)))
 
   (it "validates empty decimal as required"

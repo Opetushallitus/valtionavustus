@@ -9,11 +9,8 @@
     (catch NumberFormatException e false)))
 
 (defn parseable-as-decimal? [s]
-  (try
-    (do
-      (Double. s)
-      true)
-    (catch NumberFormatException e false)))
+  (and (string? s)
+       (some? (re-matches #"^-?[0-9]+((,|\.)[0-9]+)?$" s))))
 
 (defn email-address? [s]
   (and (string? s)
