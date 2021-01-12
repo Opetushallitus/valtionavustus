@@ -16,11 +16,11 @@
   (with-tx (fn [tx]
     (let [created-paatos (first (query tx
      "INSERT INTO virkailija.paatos
-          (status, user_key, reason, decider)
+          (status, user_key, reason, decider, paattymispaiva)
         VALUES
-          (?::virkailija.paatos_type, ?, ?, ?)
-        RETURNING id, status, reason, decider, user_key, created_at, updated_at"
-          [(:status paatos) (generate-hash-id) (:reason paatos) decider]))]
+          (?::virkailija.paatos_type, ?, ?, ?, ?)
+        RETURNING id, status, reason, decider, user_key, to_char(paattymispaiva, 'YYYY-MM-DD') as paattymispaiva, created_at, updated_at"
+          [(:status paatos) (generate-hash-id) (:reason paatos) decider (:paattymispaiva paatos)]))]
       (execute! tx
                 "UPDATE virkailija.muutoshakemus
                 SET paatos_id = ?

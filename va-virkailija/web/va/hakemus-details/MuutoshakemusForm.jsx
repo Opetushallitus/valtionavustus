@@ -39,6 +39,15 @@ const PaatosSchema = Yup.object().shape({
   })
 })
 
+function formToPayload(values) {
+  if (!values.paattymispaiva) return values
+
+  return {
+    ...values,
+    paattymispaiva: moment(values.paattymispaiva).format('YYYY-MM-DD')
+  }
+}
+
 export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, controller, userInfo, presenter }) => {
   const f = useFormik({
     initialValues: {
@@ -48,7 +57,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
     },
     validationSchema: PaatosSchema,
     onSubmit: async (values) => {
-      const storedPaatos = await HttpUtil.post(`/api/avustushaku/${avustushaku.id}/hakemus/${hakemus['hakemus-id']}/muutoshakemus/${muutoshakemus.id}/paatos`, values)
+      const storedPaatos = await HttpUtil.post(`/api/avustushaku/${avustushaku.id}/hakemus/${hakemus['hakemus-id']}/muutoshakemus/${muutoshakemus.id}/paatos`, formToPayload(values))
       controller.setPaatos({ muutoshakemusId: muutoshakemus.id, hakemusId: hakemus['hakemus-id'], ...storedPaatos })
     }
   })

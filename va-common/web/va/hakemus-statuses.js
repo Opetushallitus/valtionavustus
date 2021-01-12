@@ -15,7 +15,7 @@ export class HakemusSelvitysStatuses {
 
 export class MuutoshakemusStatuses {
   static allStatuses() {
-    return ['missing', 'new', 'rejected', 'accepted']
+    return ['missing', 'new', 'rejected', 'accepted', 'accepted_with_changes']
   }
 
   static statusToFI(status) {
@@ -23,7 +23,8 @@ export class MuutoshakemusStatuses {
       missing: '',
       new: 'Uusi',
       rejected: 'Hylätty',
-      accepted: 'Hyväksytty'
+      accepted: 'Hyväksytty',
+      accepted_with_changes: 'Hyväksytty'
     }
     return translations[status] !== undefined ? translations[status] : status
   }
