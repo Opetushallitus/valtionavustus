@@ -32,14 +32,19 @@ const PaatosSchema = Yup.object().shape({
     .oneOf(paatosStatuses.map(s => s.value))
     .required(),
   reason: Yup.string()
-    .required('Perustelu on pakollinen kenttä')
+    .required('Perustelu on pakollinen kenttä'),
+  paattymispaiva: Yup.date().when('status', {
+    is: 'accepted_with_changes',
+    then: (s) => s.required('Päättymispäivä on pakollinen kenttä'),
+  })
 })
 
 export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, controller, userInfo, presenter }) => {
   const f = useFormik({
     initialValues: {
       status: 'accepted',
-      reason: ''
+      reason: '',
+      paattymispaiva: undefined,
     },
     validationSchema: PaatosSchema,
     onSubmit: async (values) => {
@@ -81,20 +86,28 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
             <h3 className="muutoshakemus__header">OPH:n hyväksymä</h3>
             <div id="approve-with-changes-muutoshakemus-jatkoaika-oph">
               <DateTimePicker
-                name="haettuKayttoajanPaattymispaiva"
+                name="paattymispaiva"
                 onChange={(newDate) => {
+                  console.log(newDate)
                   const d = moment(newDate)
+                  f.setFieldTouched('paattymispaiva')
                   if (d.isValid()) {
-                  f.setFieldValue('haettuKayttoajanPaattymispaiva', newDate)
-                } else {
-                  f.setFieldValue('haettuKayttoajanPaattymispaiva', undefined)
-                }
+                    f.setFieldValue('paattymispaiva', newDate)
+                  } else {
+                    f.setFieldValue('paattymispaiva', undefined)
+                  }
                 }}
                 defaultValue={haettuPaiva}
                 containerClassName={`datepicker`}
                 time={false} />
-
+              {
+                console.log(JSON.stringify(f.errors['paattymispaiva']))
+              }
+              {
+                console.log(JSON.stringify(f.touched['paattymispaiva']))
+              }
             </div>
+            {isError(f, 'paattymispaiva') && <div className="muutoshakemus__error">Diibadaaba lallallaa!</div>}
           </div>
         </div>
       </section>
