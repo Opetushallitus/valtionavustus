@@ -187,6 +187,7 @@
     :haettu-kayttoajan-paattymispaiva (s/maybe java.time.LocalDate)
     :status MuutoshakemusStatus
     :paatos-user-key (s/maybe s/Str)
+    :paatos-hyvaksytty-paattymispaiva (s/maybe java.time.LocalDate)
     :paatos-created-at (s/maybe s/Inst)
     :paatos-sent-at (s/maybe s/Inst)
     :created-at s/Inst
