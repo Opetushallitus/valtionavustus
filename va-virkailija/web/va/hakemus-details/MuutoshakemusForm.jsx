@@ -96,7 +96,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
                     f.setFieldValue('paattymispaiva', undefined)
                   }
                 }}
-                defaultValue={haettuPaiva}
+                defaultValue={f.values['paattymispaiva'] || haettuPaiva}
                 containerClassName={`datepicker`}
                 time={false} />
             </div>
