@@ -87,10 +87,9 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
             <div id="approve-with-changes-muutoshakemus-jatkoaika-oph">
               <DateTimePicker
                 name="paattymispaiva"
+                onBlur={() => f.setFieldTouched('paattymispaiva')}
                 onChange={(newDate) => {
-                  console.log(newDate)
                   const d = moment(newDate)
-                  f.setFieldTouched('paattymispaiva')
                   if (d.isValid()) {
                     f.setFieldValue('paattymispaiva', newDate)
                   } else {
@@ -100,14 +99,8 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
                 defaultValue={haettuPaiva}
                 containerClassName={`datepicker`}
                 time={false} />
-              {
-                console.log(JSON.stringify(f.errors['paattymispaiva']))
-              }
-              {
-                console.log(JSON.stringify(f.touched['paattymispaiva']))
-              }
             </div>
-            {isError(f, 'paattymispaiva') && <div className="muutoshakemus__error">Diibadaaba lallallaa!</div>}
+            {isError(f, 'paattymispaiva') && <div className="muutoshakemus__error">Päättymispäivä on pakollinen kenttä!</div>}
           </div>
         </div>
       </section>
