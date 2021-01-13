@@ -40,36 +40,22 @@ export const MuutoshakemusValues = ({ muutoshakemus, hakemus, hakijaUrl, simpleP
           }
         </section>
       }
-      <HakemusFields hakemus={hakemus} muutoshakemus={muutoshakemus} />
+      <PaattymispaivaValues hakemus={hakemus} muutoshakemus={muutoshakemus} />
     </React.Fragment>
   )
 }
 
-const HakemusFields = ({ hakemus, muutoshakemus }) => {
+const PaattymispaivaValues = ({ hakemus, muutoshakemus }) => {
   if (!muutoshakemus['haettu-kayttoajan-paattymispaiva']) return null
 
-  const isApprovedWithChanges = muutoshakemus.status === 'accepted_with_changes'
+  const isAcceptedWithChanges = muutoshakemus.status === 'accepted_with_changes'
 
-  const texts = isApprovedWithChanges ?
-    {
-      currentEndDateTitle: 'Vanha päättymisaika',
-      currentEndDateValue: hakemus['project-end'],
-      newEndDateTitle: 'Hyväksytty muutos',
-      newEndDateValue: muutoshakemus['paatos-hyvaksytty-paattymispaiva']
-    } :
-    {
-      currentEndDateTitle: 'Voimassaoleva päättymisaika',
-      currentEndDateValue: hakemus['project-end'],
-      newEndDateTitle: 'Haettu muutos',
-      newEndDateValue: muutoshakemus['haettu-kayttoajan-paattymispaiva'],
-    }
+  const currentEndDateTitle = isAcceptedWithChanges ? 'Vanha päättymisaika' : 'Voimassaoleva päättymisaika'
+  const currentEndDateValue = hakemus['project-end']
+  const newEndDateTitle = isAcceptedWithChanges ? 'Hyväksytty muutos' : 'Haettu muutos'
+  const newEndDateValue = isAcceptedWithChanges ? muutoshakemus['paatos-hyvaksytty-paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']
+  const perustelut = muutoshakemus['kayttoajan-pidennys-perustelut']
 
-  return (
-    <Asd {...texts} perustelut={muutoshakemus['kayttoajan-pidennys-perustelut'] } />
-  )
-}
-
-const Asd = ({ currentEndDateTitle, currentEndDateValue, newEndDateTitle, newEndDateValue, perustelut }) => {
   return (
     <section className="muutoshakemus-section">
       <div className="muutoshakemus-row muutoshakemus__project-end-row">
