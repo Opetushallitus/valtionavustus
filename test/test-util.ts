@@ -737,13 +737,21 @@ export interface PaatosValues {
   status: 'accepted' | 'rejected' | 'accepted_with_changes'
 }
 
+async function setCalendarDate(page: Page, jatkoaika: string) {
+  // For whatever reason, sometimes when running tests locally the date is reset after after input, which disables the send button and breaks tests.
+  const selector = 'div.datepicker input'
+  while(await getElementAttribute(page, selector, 'value') !== jatkoaika) {
+    await clearAndType(page, selector, jatkoaika)
+  }
+}
+
 export async function fillAndSendMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, muutoshakemus: MuutoshakemusValues) {
   const { jatkoaika, jatkoaikaPerustelu } = muutoshakemus
   await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
   if (jatkoaika) {
     await clickElement(page, '#checkbox-jatkoaika')
     await clearAndType(page, '#perustelut-jatkoaika', jatkoaikaPerustelu)
-    await clearAndType(page, 'div.datepicker input', jatkoaika.format('DD.MM.YYYY'))
+    await setCalendarDate(page, jatkoaika.format('DD.MM.YYYY'))
     await clickElement(page, '#send-muutospyynto-button:not([disabled])')
   }
 
