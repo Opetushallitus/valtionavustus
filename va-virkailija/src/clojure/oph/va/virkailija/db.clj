@@ -19,7 +19,7 @@
           (status, user_key, reason, decider, paattymispaiva)
         VALUES
           (?::virkailija.paatos_type, ?, ?, ?, ?)
-        RETURNING id, status, reason, decider, user_key, to_char(paattymispaiva, 'YYYY-MM-DD') as paattymispaiva, created_at, updated_at"
+        RETURNING id, status, reason, decider, user_key, to_char(paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva, created_at, updated_at"
           [(:status paatos) (generate-hash-id) (:reason paatos) decider (:paattymispaiva paatos)]))]
       (execute! tx
                 "UPDATE virkailija.muutoshakemus
