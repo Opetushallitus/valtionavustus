@@ -71,9 +71,11 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
     )
   }
 
-  const ErrorMessage = (text) => {
-    return <span className="muutoshakemus__error-message">{text || ' '}</span>
-  }
+  const ErrorMessage = ({ text }) => (
+    <React.Fragment><
+      span className="muutoshakemus__error-message">{text || ' '}</span>
+    </React.Fragment>
+  )
 
   const voimassaolevaPaattymisaika = () => {
     const haettuPaiva = hakemus['haettu-kayttoajan-paattymispaiva']
@@ -109,7 +111,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
                 containerClassName={`datepicker`}
                 time={false} />
             </div>
-            {isError(f, 'paattymispaiva') && <div className="muutoshakemus__error">Päättymispäivä on pakollinen kenttä!</div>}
+            {isError(f, 'paattymispaiva') && <ErrorMessage text={'Päättymispäivä on pakollinen kenttä!'} />}
           </div>
         </div>
       </section>

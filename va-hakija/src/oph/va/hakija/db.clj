@@ -126,7 +126,17 @@
     (first hakemukset)))
 
 (defn get-paatos [user-key]
-  (let [paatokset (query "SELECT * from virkailija.paatos WHERE user_key = ?" [user-key])]
+  (let [paatokset (query "SELECT
+                            id,
+                            status,
+                            user_key,
+                            reason,
+                            created_at,
+                            updated_at,
+                            decider,
+                            to_char(paattymispaiva, 'YYYY-MM-DD') as paattymispaiva
+                          FROM virkailija.paatos
+                          WHERE user_key = ?" [user-key])]
     (first paatokset)))
 
 (defn get-muutoshakemus-by-paatos-id [paatos-id]

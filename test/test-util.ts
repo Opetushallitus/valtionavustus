@@ -737,7 +737,7 @@ export interface PaatosValues {
   status: 'accepted' | 'rejected' | 'accepted_with_changes'
 }
 
-async function setCalendarDate(page: Page, jatkoaika: string) {
+export async function setCalendarDate(page: Page, jatkoaika: string) {
   // For whatever reason, sometimes when running tests locally the date is reset after after input, which disables the send button and breaks tests.
   const selector = 'div.datepicker input'
   while(await getElementAttribute(page, selector, 'value') !== jatkoaika) {

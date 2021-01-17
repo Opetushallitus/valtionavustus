@@ -69,7 +69,8 @@ import {
   getTäydennyspyyntöEmails,
   validateMuutoshakemusPaatosCommonValues,
   countElements,
-  selectVakioperustelu
+  selectVakioperustelu,
+  setCalendarDate
 } from "./test-util"
 
 jest.setTimeout(200_000)
@@ -647,7 +648,7 @@ etunimi.sukunimi@oph.fi
     const newPagePromise = new Promise<Page>(x => browser.once('targetcreated', target => x(target.page())))
     await clickElementWithText(page, "button", "Siirry muokkaamaan")
     const modificationPage = await newPagePromise
-    modificationPage.bringToFront()
+    await modificationPage.bringToFront()
     await clickElement(modificationPage, kesayliopistoButtonSelector)
     await clickElement(modificationPage, enabledSubmitButtonSelector)
 
@@ -968,6 +969,50 @@ etunimi.sukunimi@oph.fi
         const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
         expectToBeDefined(linkToMuutoshakemus)
         expect(linkToMuutoshakemus).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\?.*/)
+      })
+
+      describe('When approving muutoshakemus with changed päättymispäivä', () => {
+
+        beforeAll(async () => {
+          await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
+          const muutoshakemus = { ...muutoshakemus4, ...{ jatkoaikaPerustelu: 'Voit laittaa lisäaikaa ihan omantunnon mukaan.' }}
+          await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus)
+
+          await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+          await clickElement(page, 'span.muutoshakemus-tab')
+          await page.click(`label[for="accepted_with_changes"]`)
+          await setCalendarDate(page, '20.04.2400')
+          await selectVakioperustelu(page)
+        })
+
+        it('Correct päättymispäivä is displayed in päätös preview', async () => {
+          await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
+          const acceptedDate = await page.$eval('[data-test-id="paattymispaiva-value"]', el => el.textContent)
+          expect(acceptedDate).toBe('20.4.2400')
+          await clickElement(page, 'button.hakemus-details-modal__close-button')
+        })
+
+        describe('After sending päätös', () => {
+          beforeAll( async () => {
+            await page.click('[data-test-id="muutoshakemus-submit"]:not([disabled])')
+            await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+          })
+
+          it('Correct päättymispäivä is displayed to virkailija', async () => {
+            const acceptedDate = await page.$eval('[data-test-id="muutoshakemus-jatkoaika"]', el => el.textContent)
+            expect(acceptedDate).toBe('20.04.2400')
+          })
+
+          it('Correct päättymispäivä is displayed in päätösdokumentti', async () => {
+            const newPagePromise = new Promise<Page>(x => browser.once('targetcreated', target => x(target.page())))
+            await clickElement(page, 'a.muutoshakemus__paatos-link')
+            const paatosPage = await newPagePromise
+            await paatosPage.bringToFront()
+            const acceptedDate = await textContent(paatosPage, '[data-test-id="paattymispaiva-value"]')
+            expect(acceptedDate).toBe('20.4.2400')
+            await page.bringToFront()
+          })
+        })
       })
     })
 
