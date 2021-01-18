@@ -70,7 +70,8 @@ import {
   validateMuutoshakemusPaatosCommonValues,
   countElements,
   selectVakioperustelu,
-  setCalendarDate
+  setCalendarDate,
+  navigateToHakijaMuutoshakemusPage
 } from "./test-util"
 
 jest.setTimeout(200_000)
@@ -1012,6 +1013,13 @@ etunimi.sukunimi@oph.fi
             expect(acceptedDate).toBe('20.4.2400')
             await page.bringToFront()
           })
+
+          it('Correct päättymispäivä is displayed when creating a new muutoshakemus', async () => {
+            await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+            const acceptedDate = await textContent(page, '[data-test-id="muutoshakemus-jatkoaika"]')
+            expect(acceptedDate).toBe('20.04.2400')
+          })
+
         })
       })
     })

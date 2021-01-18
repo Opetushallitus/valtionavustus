@@ -177,6 +177,7 @@
                                   m.created_at,
                                   to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva,
                                   p.user_key as paatos_user_key,
+                                  to_char(p.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva,
                                   p.created_at as paatos_created_at,
                                   ee.created_at as paatos_sent_at
                                 FROM virkailija.muutoshakemus m

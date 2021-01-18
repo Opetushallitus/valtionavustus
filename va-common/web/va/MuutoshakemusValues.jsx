@@ -45,6 +45,13 @@ export const MuutoshakemusValues = ({ muutoshakemus, hakemus, hakijaUrl, simpleP
   )
 }
 
+function formatDate(date) {
+  if (!date) return ''
+  const parsedDate = moment(date)
+
+  return parsedDate.isValid ? parsedDate.format('DD.MM.YYYY') : ''
+}
+
 const PaattymispaivaValues = ({ hakemus, muutoshakemus }) => {
   if (!muutoshakemus['haettu-kayttoajan-paattymispaiva']) return null
 
@@ -56,6 +63,7 @@ const PaattymispaivaValues = ({ hakemus, muutoshakemus }) => {
   const newEndDateValue = isAcceptedWithChanges ? muutoshakemus['paatos-hyvaksytty-paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']
   const perustelut = muutoshakemus['kayttoajan-pidennys-perustelut']
 
+
   return (
     <section className="muutoshakemus-section">
       <div className="muutoshakemus-row muutoshakemus__project-end-row">
@@ -65,7 +73,7 @@ const PaattymispaivaValues = ({ hakemus, muutoshakemus }) => {
         </div>
         <div>
           <h3 className="muutoshakemus__header">{newEndDateTitle}</h3>
-          <div data-test-id="muutoshakemus-jatkoaika">{moment(newEndDateValue).format('DD.MM.YYYY')}</div>
+          <div data-test-id="muutoshakemus-jatkoaika">{formatDate(newEndDateValue)}</div>
         </div>
       </div>
       <div className="muutoshakemus-row">
