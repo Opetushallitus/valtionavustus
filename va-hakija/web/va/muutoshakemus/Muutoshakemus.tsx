@@ -88,10 +88,14 @@ export const MuutoshakemusComponent = () => {
     const topic = `${translations[lang].muutoshakemus} ${moment(m['created-at']).format('D.M.YYYY')}`
     const waitingForDecision = m.status === 'new' ? ` - ${translations[lang].waitingForDecision}` : ''
     return (
-      <section className="muutoshakemus__section" data-test-class="existing-muutoshakemus">
+      <section className="muutoshakemus__section" data-test-class="existing-muutoshakemus" key={m['id']}>
         <h1 className="muutoshakemus__title">{`${topic}${waitingForDecision}`}</h1>
         <div className="muutoshakemus__form">
-          <MuutoshakemusValues muutoshakemus={m} hakemus={state.hakemus} hakijaUrl={state.environment?.['hakija-server'].url[lang]} simplePaatos={true} />
+          <MuutoshakemusValues
+            muutoshakemus={m}
+            hakemus={state.hakemus}
+            hakijaUrl={state.environment?.['hakija-server'].url[lang]}
+            simplePaatos={true} />
         </div>
       </section>
     )
