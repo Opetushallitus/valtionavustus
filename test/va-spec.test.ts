@@ -1004,13 +1004,21 @@ etunimi.sukunimi@oph.fi
             expect(acceptedDate).toBe('20.04.2400')
           })
 
-          it('Correct päättymispäivä is displayed in päätösdokumentti', async () => {
+          it('"Hyväksytty muutettuna" is displayed to virkailija', async () => {
+            const paatosStatusText = await page.$eval('[data-test-id="paatos-status-text"]', el => el.textContent)
+            expect(paatosStatusText).toBe('Hyväksytty muutettuna')
+          })
+
+          it('Changes are visible in päätösdokumentti', async () => {
             const newPagePromise = new Promise<Page>(x => browser.once('targetcreated', target => x(target.page())))
             await clickElement(page, 'a.muutoshakemus__paatos-link')
             const paatosPage = await newPagePromise
             await paatosPage.bringToFront()
             const acceptedDate = await textContent(paatosPage, '[data-test-id="paattymispaiva-value"]')
+            const paatos = await textContent(paatosPage, '[data-test-id="paatos-paatos"]')
+
             expect(acceptedDate).toBe('20.4.2400')
+            expect(paatos).toBe('Opetushallitus hyväksyy hakemuksen alla olevin muutoksin.')
             await page.bringToFront()
           })
 

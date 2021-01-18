@@ -17,14 +17,14 @@ export const MuutoshakemusValues = ({ muutoshakemus, hakemus, hakijaUrl, simpleP
           {simplePaatos
             ? <h1 className="muutoshakemus__paatos-status">
                 <span className={`muutoshakemus__paatos-icon muutoshakemus__paatos-icon--${a.status}`}>
-                  {MuutoshakemusStatuses.statusToFI(a.status)}
+                  <span data-test-id="paatos-status-text">{MuutoshakemusStatuses.statusToFI(a.status)}</span>
                   {a['paatos-created-at'] && ` ${moment(a['paatos-created-at']).format(datetimeFormat)}`}
                 </span>
               </h1>
             : <div className="muutoshakemus__paatos">
                 <h2 className="muutoshakemus__paatos-status">
                   <span className={`muutoshakemus__paatos-icon muutoshakemus__paatos-icon--${a.status}`}>
-                    {MuutoshakemusStatuses.statusToFI(a.status)}
+                    <span data-test-id="paatos-status-text">{MuutoshakemusStatuses.statusToFI(a.status)}</span>
                     {a['paatos-created-at'] && ` ${moment(a['paatos-created-at']).format(datetimeFormat)}`}
                   </span>
                 </h2>

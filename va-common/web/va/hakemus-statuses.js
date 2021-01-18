@@ -24,7 +24,7 @@ export class MuutoshakemusStatuses {
       new: 'Uusi',
       rejected: 'Hylätty',
       accepted: 'Hyväksytty',
-      accepted_with_changes: 'Hyväksytty'
+      accepted_with_changes: 'Hyväksytty muutettuna'
     }
     return translations[status] !== undefined ? translations[status] : status
   }
