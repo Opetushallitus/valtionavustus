@@ -7,6 +7,8 @@ export type HakemusFormState = {
   changeRequests: any
   attachmentVersions: any
   extensionApi: any
+  koodistos?: any
+  koodistosLoader?: any
 }
 
 export type AnswersDelta = {
