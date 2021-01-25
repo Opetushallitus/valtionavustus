@@ -9,5 +9,4 @@
  :email {:enabled? true
          :host "localhost"
          :port 42069}
- :applications-ui {:enabled? true}
- :application-change {:change-enabled? true}}
+ :applications-ui {:enabled? true}}

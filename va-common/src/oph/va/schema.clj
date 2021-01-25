@@ -57,8 +57,7 @@
    (s/optional-key :opintopolku) {:url s/Str
                                   :permission-request s/Str}
    (s/optional-key :application-change)
-   (s/maybe {(s/optional-key :change-enabled?) s/Bool
-             (s/optional-key :refuse-enabled?) s/Bool})
+   (s/maybe {(s/optional-key :refuse-enabled?) s/Bool})
    (s/optional-key :multibatch-payments) (s/maybe {:enabled? s/Bool})
    (s/optional-key :va-code-values) (s/maybe {:enabled? s/Bool})
    (s/optional-key :muutospaatosprosessi) (s/maybe {:enabled? s/Bool})
