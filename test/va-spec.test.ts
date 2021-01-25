@@ -73,6 +73,7 @@ import {
   setCalendarDate,
   navigateToHakijaMuutoshakemusPage
 } from "./test-util"
+import axios from 'axios'
 
 jest.setTimeout(200_000)
 
@@ -1179,6 +1180,13 @@ etunimi.sukunimi@oph.fi
         expect(firstTitle).toContain('- Odottaa käsittelyä')
         expect(await countElements(page, `span.muutoshakemus__paatos-icon--rejected`)).toEqual(2)
       })
+    })
+  })
+
+  describe("Details schmetails", () => {
+    it("The /environment endpoint returns true for refuse-enabled in case someone has old version of the web page still open", async () => {
+      const response = await axios.get(`${VIRKAILIJA_URL}/environment`).then(r => r.data)
+      expect(response["application-change"]["refuse-enabled?"]).toStrictEqual(true)
     })
   })
 })

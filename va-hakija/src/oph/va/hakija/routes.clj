@@ -137,8 +137,6 @@
     :return  Hakemus
     :body [refuse-data (compojure-api/describe RefuseData "Refuse data")]
     :summary "Update application status to refused"
-    (when-not (get-in config [:application-change :refuse-enabled?])
-      (throw (Exception. "Refuse application is not enabled")))
     (on-refuse-application
       grant-id application-id base-version (:comment refuse-data) token)))
 

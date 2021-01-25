@@ -42,8 +42,7 @@
             presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)
             decision (decision/paatos-html hakemus-id)
             arvio (virkailija-db/get-arvio hakemus-id)
-            token (when (get-in config [:application-change :refuse-enabled?])
-                        (create-application-token (:id hakemus)))]
+            token (create-application-token (:id hakemus))]
            (log/info "Sending paatos email for hakemus" hakemus-id " to " emails)
            (try
              (if (and (some? token) (not= (:status arvio) "rejected"))
@@ -69,8 +68,7 @@
             presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)
             decision (decision/paatos-html hakemus-id)
             arvio (virkailija-db/get-arvio hakemus-id)
-            token (when (get-in config [:application-change :refuse-enabled?])
-                        (create-application-token (:id hakemus)))]
+            token (create-application-token (:id hakemus))]
            (log/info "Resending paatos email for hakemus" hakemus-id " to " emails)
 
            (try
@@ -97,8 +95,7 @@
             avustushaku (hakija-api/get-avustushaku avustushaku-id)
             presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)
             arvio (virkailija-db/get-arvio hakemus-id)
-            token (when (get-in config [:application-change :refuse-enabled?])
-                        (create-application-token (:id hakemus)))]
+            token (create-application-token (:id hakemus))]
 
            (try
              (if (and (some? token) (not= (:status arvio) "rejected"))
@@ -247,9 +244,7 @@
                           (ok (merge
                                 {:status      "ok"
                                  :mail        (email/mail-example
-                                                (if (get-in config [:application-change :refuse-enabled?])
-                                                  :paatos-refuse
-                                                  :paatos)
+                                                :paatos-refuse
                                                 {:avustushaku-name avustushaku-name
                                                  :url              "URL_PLACEHOLDER"
                                                  :refuse-url       "REFUSE_URL_PLACEHOLDER"

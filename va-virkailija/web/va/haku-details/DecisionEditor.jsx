@@ -409,7 +409,6 @@ class DecisionDateAndSend extends React.Component {
   static initialState(props) {
     return {
       currentAvustushakuId: props.avustushaku.id,
-      refuseEnabled: props.environment["application-change"]["refuse-enabled?"],
       preview: false,
       count: undefined,
       sending:false,
@@ -440,12 +439,10 @@ class DecisionDateAndSend extends React.Component {
   sendEmailSection() {
     return <div>
       <span className="decision-row">Päätösten lähettäminen sähköpostilla</span>
-      {this.state.refuseEnabled &&
-         <span>
-          Huomaathan, että linkkiä avustuksen hylkäämiseen ei lisätä hylättyyn
-          päätökseen.
-        </span>
-      }
+       <span>
+        Huomaathan, että linkkiä avustuksen hylkäämiseen ei lisätä hylättyyn
+        päätökseen.
+      </span>
       <div className="decision-separator"/>
       {this.sendControls(this.rerenderParentCallback)}
     </div>
@@ -631,14 +628,9 @@ class DecisionDateAndSend extends React.Component {
             "URL_PLACEHOLDER",
             `<a href=${this.state.exampleUrl}>${this.state.exampleUrl}</a>`
           )
-      if (this.state.refuseEnabled) {
         return content.replace(
             "REFUSE_URL_PLACEHOLDER",
             `<a href=${this.state.exampleRefuseUrl}>${this.state.exampleRefuseUrl}</a>`)
-        }
-      else {
-      return content
-      }
     }
 
 

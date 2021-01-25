@@ -17,7 +17,7 @@
          :paatos-path (:paatos-path (:ui config))
          :payments (:payments config)
          :notice (get-notice)
-         :application-change (:application-change config)
+         :application-change {:refuse-enabled? true}
          :multibatch-payments (:multibatch-payments config)
          :reports (:reports config)
          :va-code-values (:va-code-values config)
