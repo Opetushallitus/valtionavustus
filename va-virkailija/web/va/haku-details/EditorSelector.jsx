@@ -3,7 +3,7 @@ import React from 'react'
 import ClassNames from 'classnames'
 
 import HakuEdit from './HakuEdit.jsx'
-import FormEditorContainer from './FormEditorContainer.jsx'
+import FormEditorContainer from './FormEditorContainer'
 import DecisionEditor from './DecisionEditor.jsx'
 import SelvitysFormEditor from './SelvitysFormEditor.jsx'
 import HelpTooltip from '../HelpTooltip.jsx'

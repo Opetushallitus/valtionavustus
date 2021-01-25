@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 
+// @ts-ignore
 import DateUtil from 'soresu-form/web/DateUtil'
 
 import FormEditor from './FormEditor.jsx'
 import FormJsonEditor from './FormJsonEditor.jsx'
 
-export default class FormEditorContainer extends Component {
+export default class FormEditorContainer extends Component<{ avustushaku: any, translations: any, koodistos: any, formDraft: any, controller: any, helpTexts: any, environment: any}> {
   render() {
     const avustushaku = this.props.avustushaku
     const translations = this.props.translations
@@ -30,8 +31,10 @@ export default class FormEditorContainer extends Component {
     const scrollToEditor = () =>
     {
         const textArea = document.querySelector(".form-json-editor textarea")
+      if (textArea && textArea instanceof HTMLElement) {
         textArea.scrollIntoView({block: "start", behavior: "smooth"})
         textArea.focus()
+      }
     }
 
     const mainHelp = { __html: helpTexts["hakujen_hallinta__hakulomake___ohje"] }

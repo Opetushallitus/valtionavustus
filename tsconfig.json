@@ -13,7 +13,8 @@
     }
   },
   "include": [
-    "./va-hakija/**/*"
+    "./va-hakija/**/*",
+    "./va-virkailija/**/*"
   ],
   "exclude": ["node_modules"]
 }
