@@ -1,8 +1,21 @@
 import Immutable from 'seamless-immutable'
 import _ from 'lodash'
 
+// @ts-ignore
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
+// @ts-ignore
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
+import { HakemusFormState } from '../types'
+
+type InitialFakeFormState = {
+  translations: any
+  avustushaku: any
+  formContent: any
+  formOperations?: any
+  hakemus: any
+  attachments?: any
+  savedHakemus?: any
+}
 
 export default class FakeFormState {
 
@@ -31,7 +44,7 @@ export default class FakeFormState {
     hakemus,
     attachments,
     savedHakemus
-  }) {
+  }: InitialFakeFormState): HakemusFormState {
     const getFixedSelfFinancingRatioOrNull = () => {
       const ophShareFromHakemus = hakemus["budget-oph-share"]
       const totalFromHakemus = hakemus["budget-total"]
@@ -40,7 +53,7 @@ export default class FakeFormState {
         : null
     }
 
-    const formState = {
+    const formState: HakemusFormState = {
       avustushaku: {
         content: {
           "self-financing-percentage": avustushaku.content["self-financing-percentage"]
@@ -65,6 +78,10 @@ export default class FakeFormState {
       extensionApi: {
         formOperations: formOperations,
         customFieldSyntaxValidator: VaSyntaxValidator
+      },
+      answersDelta: {
+        changedAnswers: [],
+        newAnswers: []
       }
     }
 

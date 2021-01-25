@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 
-import HakemusPreview from './HakemusPreview.jsx'
+import HakemusPreview from './HakemusPreview'
 import HakemusArviointi from './HakemusArviointi.jsx'
 import { Muutoshakemus } from './Muutoshakemus.jsx'
 import Selvitys from './Selvitys.jsx'

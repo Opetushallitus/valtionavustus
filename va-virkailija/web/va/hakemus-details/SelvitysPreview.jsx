@@ -6,7 +6,7 @@ import FormRules from "soresu-form/web/form/FormRules"
 import FormBranchGrower from "soresu-form/web/form/FormBranchGrower"
 import VaComponentFactory from "va-common/web/va/VaComponentFactory"
 import VaPreviewComponentFactory from "va-common/web/va/VaPreviewComponentFactory"
-import EditsDisplayingFormView from "./EditsDisplayingFormView.jsx"
+import EditsDisplayingFormView from "./EditsDisplayingFormView"
 import FakeFormController from "../form/FakeFormController"
 import FakeFormState from "../form/FakeFormState"
 

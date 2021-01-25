@@ -1,32 +1,52 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 
+// @ts-ignore
 import DateUtil from 'soresu-form/web/DateUtil'
-import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
+// @ts-ignore
+import FormContainer from 'soresu-form/web/form/FormContainer'
+// @ts-ignore
 import FormRules from 'soresu-form/web/form/FormRules'
+// @ts-ignore
 import FormBranchGrower from 'soresu-form/web/form/FormBranchGrower'
+// @ts-ignore
 import VaComponentFactory from 'va-common/web/va/VaComponentFactory'
+// @ts-ignore
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
-import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber.jsx'
-import VaChangeRequest from 'va-common/web/va/VaChangeRequest.jsx'
+// @ts-ignore
+import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber'
+// @ts-ignore
+import VaChangeRequest from 'va-common/web/va/VaChangeRequest'
 import GrantRefusedNotice from './GrantRefusedNotice.jsx'
 
-import EditsDisplayingFormView from './EditsDisplayingFormView.jsx'
+import EditsDisplayingFormView, { getProjectEnd } from './EditsDisplayingFormView'
 import FakeFormController from '../form/FakeFormController'
 import FakeFormState from '../form/FakeFormState'
+import { Answer, Hakemus, HakemusFormState, Muutoshakemus } from '../types'
 
 import '../style/formpreview.less'
 
-function replaceContactPersonInformationWithLatestNormalizedData(currentAnswers, normalizedData) {
-  const contactPersonName = currentAnswers.find(el => el.key === "applicant-name")
-  const contactPersonEmail = currentAnswers.find(el => el.key === "primary-email")
-  const contactPersonPhone = currentAnswers.find(el => el.key === "textField-0")
-  contactPersonName.value = normalizedData["contact-person"]
-  contactPersonEmail.value = normalizedData["contact-email"]
-  contactPersonPhone.value = normalizedData["contact-phone"]
+function getCurrentAnswers(hakemus: Hakemus): Answer[] {
+  const { answers, muutoshakemukset, normalizedData } = hakemus
+  const acceptedMuutoshakemus = muutoshakemukset?.find(m => m.status === 'accepted' || m.status === 'accepted_with_changes')
+  const projectEnd = getProjectEnd(acceptedMuutoshakemus)
+  return JSON.parse(JSON.stringify(answers)).map((a: Answer) => {
+    switch (a.key) {
+      case 'project-end':
+        return projectEnd ? { ...a, value: projectEnd } : a
+      case 'applicant-name':
+        return normalizedData ? { ...a, value: normalizedData['contact-person'] } : a
+      case 'primary-email':
+        return normalizedData ? { ...a, value: normalizedData['contact-email'] } : a
+      case 'textField-0':
+        return normalizedData ? { ...a, value: normalizedData['contact-phone'] } : a
+      default:
+        return a
+    }
+  })
 }
 
-export default class HakemusPreview extends Component {
+export default class HakemusPreview extends Component<{ hakemus: Hakemus, avustushaku: any, hakuData: any, translations: any }> {
   render() {
     const hakemus = this.props.hakemus
     const registerNumber = _.get(hakemus, "register-number", "")
@@ -67,7 +87,7 @@ export default class HakemusPreview extends Component {
     }
     return <FormContainer {...formElementProps} />
 
-    function createPreviewHakemusFormState() {
+    function createPreviewHakemusFormState(): HakemusFormState {
       const hakemusFormState = FakeFormState.createHakemusFormState({
         translations,
         avustushaku,
@@ -79,38 +99,41 @@ export default class HakemusPreview extends Component {
       effectiveForm.content = _.filter(effectiveForm.content, field => field.fieldClass !== "infoElement")
       const formSpecification = hakuData.form
       const currentAnswers = hakemus.answers
+      hakemusFormState.answersDelta = EditsDisplayingFormView.resolveChangedFields(currentAnswers, hakemusFormState.changeRequests, hakemusFormState.attachmentVersions, hakemus.muutoshakemukset, hakemus.normalizedData)
 
-      if (hakemus.normalizedData) {
-        replaceContactPersonInformationWithLatestNormalizedData(currentAnswers, hakemus.normalizedData)
-      }
-
-      hakemusFormState.answersDelta = EditsDisplayingFormView.resolveChangedFields(currentAnswers, hakemusFormState.changeRequests, hakemusFormState.attachmentVersions)
-      const oldestAnswers = (hakemusFormState.changeRequests && hakemusFormState.changeRequests.length > 0) ? hakemusFormState.changeRequests[0].answers : {}
+      const oldestAnswers = (hakemusFormState.changeRequests && hakemusFormState.changeRequests.length > 0)
+        ? hakemusFormState.changeRequests[0].answers
+        : hakemus.muutoshakemukset?.length
+          ? hakemus.answers
+          : {}
       const combinedAnswersForPopulatingGrowingFieldsets = _.mergeWith(_.cloneDeep(currentAnswers), _.cloneDeep(oldestAnswers), (a, b) => {
         return _.isArray(a) ? uniqueUnion(a, b) : undefined
 
-        function uniqueUnion(firstAnswerArray, secondAnswerArray) {
-          return _.uniqBy(_.union(firstAnswerArray, secondAnswerArray), answer => { return answer.key })
+        function uniqueUnion(firstAnswerArray: Answer[], secondAnswerArray: Answer[]) {
+          return _.uniqBy(_.union(firstAnswerArray, secondAnswerArray), (answer: Answer) => { return answer.key })
         }
       })
 
       FormRules.applyRulesToForm(formSpecification, effectiveForm, currentAnswers)
       FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, combinedAnswersForPopulatingGrowingFieldsets, false)
+      hakemusFormState.saveStatus.values = getCurrentAnswers(hakemus)
+      console.log('hakemus', hakemus)
       return hakemusFormState
     }
   }
 }
 
-class VaChangeRequests extends Component {
+class VaChangeRequests extends Component<any> {
   render() {
-    const changeRequests = this.props.changeRequests
-    let changeRequestElements = []
-    if (changeRequests) {
-      changeRequestElements = _.map(changeRequests, cr => <VaChangeRequest hakemus={cr}
-                                                                           key={cr.version}
-                                                                           translations={this.props.translations}
-                                                                           lang={this.props.lang}/>).reverse()
-    }
+    const changeRequestElements = this.props.changeRequests
+      ? _.map(this.props.changeRequests, cr => <VaChangeRequest
+            hakemus={cr}
+            key={cr.version}
+            translations={this.props.translations}
+            lang={this.props.lang}
+          />)
+          .reverse()
+      : []
 
     return <div>{changeRequestElements}</div>
   }

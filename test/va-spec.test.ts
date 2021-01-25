@@ -906,6 +906,11 @@ etunimi.sukunimi@oph.fi
         await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
         await validateMuutoshakemusValues(page, muutoshakemus4, { status: 'accepted'})
 
+        const oldProjectEnd = await getElementInnerText(page, ".answer-old-value #project-end div")
+        expect(oldProjectEnd).toEqual("13.03.2032")
+        const newProjectEnd = await getElementInnerText(page, ".answer-new-value #project-end div")
+        expect(newProjectEnd).toEqual(muutoshakemus4.jatkoaika?.format('DD.MM.YYYY'))
+
         await navigate(page, `/avustushaku/${avustushakuID}/`)
         const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`
         await page.waitForSelector(muutoshakemusStatusField)
@@ -1145,11 +1150,17 @@ etunimi.sukunimi@oph.fi
           page.waitForNavigation(),
           clickElementWithText(page, "td", "Akaan kaupunki"),
         ])
-        const contactPersonNameOnPage = await getElementInnerText(page, "#applicant-name")
-        const contactPersonPhoneOnPage = await getElementInnerText(page, "#textField-0")
-        const contactPersonEmailOnPage = await getElementInnerText(page, "#primary-email div")
+        const oldContactPersonNameOnPage = await getElementInnerText(page, ".answer-old-value #applicant-name div")
+        expect(oldContactPersonNameOnPage).toEqual("Erkki Esimerkki")
+        const contactPersonNameOnPage = await getElementInnerText(page, ".answer-new-value #applicant-name div")
         expect(contactPersonNameOnPage).toEqual(newName)
+        const oldContactPersonPhoneOnPage = await getElementInnerText(page, ".answer-old-value #textField-0 div")
+        expect(oldContactPersonPhoneOnPage).toEqual("666")
+        const contactPersonPhoneOnPage = await getElementInnerText(page, ".answer-new-value #textField-0 div")
         expect(contactPersonPhoneOnPage).toEqual(newPhone)
+        const oldContactPersonEmailOnPage = await getElementInnerText(page, ".answer-old-value #primary-email div")
+        expect(oldContactPersonEmailOnPage).toEqual("erkki.esimerkki@example.com")
+        const contactPersonEmailOnPage = await getElementInnerText(page, ".answer-new-value #primary-email div")
         expect(contactPersonEmailOnPage).toEqual(newEmail)
       })
 

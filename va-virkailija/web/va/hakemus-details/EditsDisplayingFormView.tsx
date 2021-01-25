@@ -1,11 +1,57 @@
 import React from 'react'
 import _ from 'lodash'
+import moment from 'moment'
 
+// @ts-ignore
 import JsUtil from 'soresu-form/web/JsUtil'
-import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
+// @ts-ignore
+import FormPreview from 'soresu-form/web/form/FormPreview'
+import { Answer, AnswersDelta, HakemusFormState, Muutoshakemus, NormalizedHakemusData } from '../types'
 
-export default class EditsDisplayingFormView extends React.Component {
-  static renderField(controller, formEditController, state, infoElementValues, field) {
+export function getProjectEnd(muutoshakemus?: Muutoshakemus) {
+  if (muutoshakemus?.status === 'accepted') {
+    return muutoshakemus?.['haen-kayttoajan-pidennysta'] && moment(muutoshakemus?.['haettu-kayttoajan-paattymispaiva']).format('DD.MM.YYYY')
+  }
+  if (muutoshakemus?.status === 'accepted_with_changes') {
+    return muutoshakemus?.['paatos-hyvaksytty-paattymispaiva'] && moment(muutoshakemus?.['paatos-hyvaksytty-paattymispaiva']).format('DD.MM.YYYY')
+  }
+  return undefined
+}
+
+function addOrMutateAnswer(answers: Answer[], key: string, newValue: any) {
+  const answer = answers.find(a => a.key === key)
+  if (answer) {
+    answer.value = newValue
+    return answers
+  } else {
+    return [ ...answers, { key, value: newValue } ]
+  }
+}
+
+function mutateAnswersDeltaWithKey(answersDelta: AnswersDelta, answers: Answer[], key: string, newValue: any) {
+  const oldValue = answers.find(a => a.key === key)?.value
+  if (oldValue !== newValue) {
+    answersDelta.changedAnswers = addOrMutateAnswer(answersDelta.changedAnswers, key, oldValue)
+    answersDelta.newAnswers = addOrMutateAnswer(answersDelta.newAnswers, key, newValue)
+  }
+}
+
+function mutateDeltaFromNormalizedData(answersDelta: AnswersDelta, answers: Answer[], normalizedData: NormalizedHakemusData) {
+  mutateAnswersDeltaWithKey(answersDelta, answers, 'applicant-name', normalizedData['contact-person'])
+  mutateAnswersDeltaWithKey(answersDelta, answers, 'primary-email', normalizedData['contact-email'])
+  mutateAnswersDeltaWithKey(answersDelta, answers, 'textField-0', normalizedData['textField-0'])
+}
+
+function mutateDeltaFromMuutoshakemukset(answersDelta: AnswersDelta, answers: Answer[], muutoshakemukset: Muutoshakemus[]) {
+  const acceptedMuutoshakemus = muutoshakemukset?.find(m => m.status === 'accepted' || m.status === 'accepted_with_changes')
+  const projectEnd = getProjectEnd(acceptedMuutoshakemus)
+  if (projectEnd) {
+    mutateAnswersDeltaWithKey(answersDelta, answers, 'project-end', projectEnd)
+  }
+}
+
+export default class EditsDisplayingFormView extends React.Component<any> {
+  static renderField(controller, formEditController, state: HakemusFormState, infoElementValues, field) {
     const fields = state.form.content
     const translations = state.configuration.translations
     const htmlId = controller.constructHtmlId(fields, field.id)
@@ -28,6 +74,7 @@ export default class EditsDisplayingFormView extends React.Component {
     } else if (field.fieldClass === "wrapperElement") {
       return FormPreview.createWrapperComponent(EditsDisplayingFormView.renderField, controller, formEditController, state, infoElementValues, field, fieldProperties)
     }
+    return undefined
   }
 
   render() {
@@ -45,18 +92,27 @@ export default class EditsDisplayingFormView extends React.Component {
             </div>
   }
 
-  static resolveChangedFields(currentAnswers, changeRequests, attachmentVersions) {
-    if (!changeRequests || changeRequests.length === 0) {
-      return { changedAnswers: [], newAnswers: [] }
+  static resolveChangedFields(currentAnswers: Answer[], changeRequests, attachmentVersions, muutoshakemukset?: Muutoshakemus[], normalizedData?: NormalizedHakemusData): AnswersDelta {
+    const answersDelta = !changeRequests || changeRequests.length === 0
+      ? { changedAnswers: [] as Answer[], newAnswers: [] as Answer[] }
+      : createDelta(changeRequests, attachmentVersions, currentAnswers)
+    if (normalizedData) {
+      mutateDeltaFromNormalizedData(answersDelta, currentAnswers, normalizedData)
     }
-    const oldestAnswers = changeRequests[0].answers
-    const answersDelta = createDeltaFromUpdatedAttachments(attachmentVersions, changeRequests[0].version)
-    addDeltaFromChangedAnswers(answersDelta, oldestAnswers, currentAnswers)
-    addDeltaFromNewAnswers(currentAnswers, oldestAnswers, answersDelta)
+    if (muutoshakemukset?.length) {
+      mutateDeltaFromMuutoshakemukset(answersDelta, currentAnswers, muutoshakemukset)
+    }
     return answersDelta
 
+    function createDelta(changeRequests, attachmentVersions, currentAnswers): AnswersDelta {
+      const oldestAnswers = changeRequests[0].answers
+      const answersDelta = createDeltaFromUpdatedAttachments(attachmentVersions, changeRequests[0].version)
+      addDeltaFromChangedAnswers(answersDelta, oldestAnswers, currentAnswers)
+      addDeltaFromNewAnswers(currentAnswers, oldestAnswers, answersDelta)
+      return answersDelta
+    }
 
-    function createDeltaFromUpdatedAttachments(attachmentVersions, oldestHakemusVersion) {
+    function createDeltaFromUpdatedAttachments(attachmentVersions, oldestHakemusVersion): AnswersDelta {
       const versionsByFieldId = _.groupBy(attachmentVersions, v => { return v["field-id"] })
       _.forEach(_.keys(versionsByFieldId), fieldId => {
         versionsByFieldId[fieldId] = stripNonSubmittedVersions(versionsByFieldId[fieldId])
@@ -76,7 +132,7 @@ export default class EditsDisplayingFormView extends React.Component {
         const beforeAndAfterSubmission = _.partition(versionsOfAttachment, v => { return v["hakemus-version"] <= oldestHakemusVersion })
         const originalSubmittedAttachmentVersion = _.head(_.orderBy(beforeAndAfterSubmission[0], "version", "desc"))
         const attachmentVersionsAfterSubmissions = beforeAndAfterSubmission[1]
-        const result = []
+        const result = [] as any[]
         if (originalSubmittedAttachmentVersion) {
           result.push(originalSubmittedAttachmentVersion)
         }
@@ -84,9 +140,9 @@ export default class EditsDisplayingFormView extends React.Component {
       }
     }
 
-    function addDeltaFromChangedAnswers(answersDelta, oldestAnswers, currentAnswers) {
-      const originalValuesOfChangedOldFields = JsUtil.flatFilter(oldestAnswers, oldAnswer => {
-        const newAnswerArray = JsUtil.flatFilter(currentAnswers, newAnswer => newAnswer.key === oldAnswer.key)
+    function addDeltaFromChangedAnswers(answersDelta: AnswersDelta, oldestAnswers: Answer[], currentAnswers: Answer[]) {
+      const originalValuesOfChangedOldFields = JsUtil.flatFilter(oldestAnswers, (oldAnswer: Answer) => {
+        const newAnswerArray = JsUtil.flatFilter(currentAnswers, (newAnswer: Answer) => newAnswer.key === oldAnswer.key)
         return newAnswerArray.length === 0 || valuesDiffer(newAnswerArray[0], oldAnswer)
       })
       _.forEach(originalValuesOfChangedOldFields, originalValue => {
@@ -94,9 +150,9 @@ export default class EditsDisplayingFormView extends React.Component {
       })
     }
 
-    function addDeltaFromNewAnswers(currentAnswers, oldestAnswers, answersDelta) {
-      const newValuesOfNewFields = JsUtil.flatFilter(currentAnswers, currentAnswer => {
-        const oldAnswerArray = JsUtil.flatFilter(oldestAnswers, oldAnswer => oldAnswer.key === currentAnswer.key)
+    function addDeltaFromNewAnswers(currentAnswers: Answer[], oldestAnswers: Answer[], answersDelta: AnswersDelta) {
+      const newValuesOfNewFields = JsUtil.flatFilter(currentAnswers, (currentAnswer: Answer) => {
+        const oldAnswerArray = JsUtil.flatFilter(oldestAnswers, (oldAnswer: Answer) => oldAnswer.key === currentAnswer.key)
         return oldAnswerArray.length === 0 || valuesDiffer(oldAnswerArray[0], currentAnswer)
       })
       _.forEach(newValuesOfNewFields, newValue => {
@@ -104,7 +160,7 @@ export default class EditsDisplayingFormView extends React.Component {
       })
     }
 
-    function valuesDiffer(firstAnswer, secondAnswer) {
+    function valuesDiffer(firstAnswer: Answer, secondAnswer: Answer) {
       const firstValue = firstAnswer.value
       const secondValue = secondAnswer.value
       if (firstValue === secondValue) {
@@ -118,7 +174,7 @@ export default class EditsDisplayingFormView extends React.Component {
   }
 }
 
-class DiffDisplayingField extends React.Component {
+class DiffDisplayingField extends React.Component<any> {
   render() {
     const field = this.props.field
     const oldAnswer = this.props.oldAnswer
