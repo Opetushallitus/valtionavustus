@@ -22,7 +22,7 @@ import GrantRefusedNotice from './GrantRefusedNotice.jsx'
 import EditsDisplayingFormView, { getProjectEnd } from './EditsDisplayingFormView'
 import FakeFormController from '../form/FakeFormController'
 import FakeFormState from '../form/FakeFormState'
-import { Answer, Hakemus, HakemusFormState, Muutoshakemus } from '../types'
+import { Answer, Hakemus, HakemusFormState } from '../types'
 
 import '../style/formpreview.less'
 
