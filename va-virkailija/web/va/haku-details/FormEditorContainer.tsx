@@ -1,12 +1,11 @@
 import React from 'react'
 import _ from 'lodash'
 
-// @ts-ignore
 import DateUtil from 'soresu-form/web/DateUtil'
 
 import { FormEditor } from './FormEditor'
 import FormJsonEditor from './FormJsonEditor'
-import { FormikHook } from './types'
+import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
 
 interface FormEditorContainerProps { 
   avustushaku: any

@@ -7,14 +7,13 @@
     "jsx": "react",
     "outDir": "dist",
     "sourceMap": true,
-    "baseUrl": ".",
-    "paths": {
-      "soresu-form/*": ["soresu-form/*"]
-    }
+    "baseUrl": "."
   },
   "include": [
     "./va-hakija/**/*",
-    "./va-virkailija/**/*"
+    "./va-virkailija/**/*",
+    "./va-common/**/*",
+    "./soresu-form/**/*"
   ],
   "exclude": ["node_modules"]
 }

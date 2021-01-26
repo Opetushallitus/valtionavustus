@@ -5,17 +5,25 @@ import ReactDOM from "react-dom"
 import Bacon from "baconjs"
 import queryString from "query-string"
 
+// @ts-ignore
 import HttpUtil from "soresu-form/web/HttpUtil"
 
+// @ts-ignore
 import FormController from "soresu-form/web/form/FormController"
+// @ts-ignore
 import FieldUpdateHandler from "soresu-form/web/form/FieldUpdateHandler"
+// @ts-ignore
 import ResponseParser from "soresu-form/web/form/ResponseParser"
 
-import VaForm from "./VaForm.jsx"
+import { VaForm } from "./VaForm"
 import VaUrlCreator from "./VaUrlCreator"
+// @ts-ignore
 import VaComponentFactory from "va-common/web/va/VaComponentFactory"
+// @ts-ignore
 import VaSyntaxValidator from "va-common/web/va/VaSyntaxValidator"
+// @ts-ignore
 import VaPreviewComponentFactory from "va-common/web/va/VaPreviewComponentFactory"
+// @ts-ignore
 import VaBudgetCalculator from "va-common/web/va/VaBudgetCalculator"
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
@@ -87,6 +95,8 @@ function onInitialStateLoaded(initialState) {
   if (!modifyApplication && initialState.avustushaku.phase !== "current" &&
       !initialState.configuration.preview &&
       !isEmptyOrReopenedHakemus(initialState.saveStatus.savedObject)) {
+
+// @ts-ignore
     window.location.href = urlCreator.existingSubmissionPreviewUrl(
       initialState.avustushaku.id,
       initialState.saveStatus.hakemusId,
@@ -98,6 +108,7 @@ function onInitialStateLoaded(initialState) {
 }
 
 function initVaFormController() {
+// @ts-ignore
   const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(HttpUtil.get(urlCreator.formApiUrl(avustusHaku.form)))})
   const controller = new FormController({
     "initialStateTemplateTransformation": initialStateTemplateTransformation,
@@ -122,7 +133,7 @@ function initVaFormController() {
   const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state) {
-    return <VaForm controller={controller} state={state} hakemusType="hakemus" useBusinessIdSearch={true} refuseGrant={urlContent.parsedQuery["refuse-grant"]} modifyApplication={urlContent.parsedQuery["modify-application"]}/>
+    return <VaForm controller={controller} isExpired={false} state={state} hakemusType="hakemus" useBusinessIdSearch={true} refuseGrant={urlContent.parsedQuery["refuse-grant"] === "true"} modifyApplication={urlContent.parsedQuery["modify-application"]}/>
   }}
 }
 

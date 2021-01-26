@@ -9,3 +9,9 @@ export interface StandardizedFormValues {
 }
 
 export type FormikHook = FormikProps<StandardizedFormValues>
+
+export type StandardizedFieldsState = {
+  status: 'LOADED' | 'LOADING'
+  helpText?: string
+}
+export type Language = 'fi' | 'sv'

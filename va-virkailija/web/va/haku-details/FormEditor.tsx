@@ -1,21 +1,15 @@
 import React from 'react'
 
-// @ts-ignore
 import 'va-common/web/va/style/soresu-va.less'
-// @ts-ignore
 import 'soresu-form/web/form/style/formedit.less'
-// @ts-ignore
 import FormEdit from 'soresu-form/web/form/edit/FormEdit.jsx'
-// @ts-ignore
 import FormEditorController from 'soresu-form/web/form/edit/FormEditController'
-// @ts-ignore
 import VaComponentFactory from 'va-common/web/va/VaComponentFactory'
-// @ts-ignore
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 
 import FakeFormController from '../form/FakeFormController'
 import FakeFormState from '../form/FakeFormState'
-import { FormikHook } from './types'
+import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
 import { StandardizedFormFields } from './StandardizedFormFields'
 
 function parseJson(string) {

@@ -8,7 +8,7 @@ import DecisionEditor from './DecisionEditor.jsx'
 import SelvitysFormEditor from './SelvitysFormEditor'
 import HelpTooltip from '../HelpTooltip.jsx'
 
-import { createFormikHook } from './formik'
+import { createFormikHook } from 'va-common/web/va/standardized-form-fields/formik'
 
 function createRedirectTo(url) {
   return (e) => {

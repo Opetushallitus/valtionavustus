@@ -5,14 +5,16 @@ import BusinessIdSearch from "./component/BusinessIdSearch.jsx"
 
 export default class FormContainer extends React.Component {
   render() {
-    const {state, controller, formContainerClass, useBusinessIdSearch} = this.props
+    const {state, controller, formContainerClass, useBusinessIdSearch, environment, f} = this.props
     const headerElements = _.get(this.props, "headerElements", "")
     const containerId = _.get(this.props, "containerId", "container")
     const formElementProps = {
-      controller: this.props.controller,
-      state: state,
+      controller,
+      state,
       infoElementValues: this.props.infoElementValues,
-      modifyApplication: this.props.modifyApplication
+      modifyApplication: this.props.modifyApplication,
+      environment,
+      f
     }
     const formElement = React.createElement(formContainerClass, formElementProps)
     const { embedForMuutoshakemus } = state.configuration

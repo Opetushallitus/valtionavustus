@@ -95,7 +95,7 @@ const hakijaConfig = Object.assign(
   makeConfig(path.resolve(__dirname, "va-hakija")),
   {
     entry: {
-      app: path.resolve(__dirname, "va-hakija/web/va/VaApp.jsx"),
+      app: path.resolve(__dirname, "va-hakija/web/va/VaApp.tsx"),
       selvitysApp: path.resolve(__dirname, "va-hakija/web/va/SelvitysApp.jsx"),
       login: path.resolve(__dirname, "va-hakija/web/va/VaLogin.jsx"),
       muutoshakemusApp: path.resolve(__dirname, "va-hakija/web/va/muutoshakemus/MuutoshakemusApp.tsx"),

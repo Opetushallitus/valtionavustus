@@ -1,13 +1,11 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 
-//@ts-ignore
 import HttpUtil from "soresu-form/web/HttpUtil"
-//@ts-ignore
 import DateUtil from 'soresu-form/web/DateUtil'
 
 import { FormEditor } from './FormEditor'
-import { FormikHook } from './types'
+import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
 
 interface SelvitysFormProps { 
   avustushaku: any

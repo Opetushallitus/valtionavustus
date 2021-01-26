@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormikHook } from './types'
+import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
 
 interface StandardizedFormFieldsProps {
   f: FormikHook

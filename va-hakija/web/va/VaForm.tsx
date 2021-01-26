@@ -1,5 +1,8 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
+
+// @ts-ignore
+import HttpUtil from 'soresu-form/web/HttpUtil'
 
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
@@ -16,11 +19,52 @@ import OpenContactsEdit from './OpenContactsEdit.jsx'
 
 import './style/main.less'
 
+import { createFormikHook } from 'va-common/web/va/standardized-form-fields/formik'
+import { StandardizedFieldsState } from 'va-common/web/va/standardized-form-fields/types'
+
 const allowedStatuses = ["officer_edit", "submitted", "pending_change_request", "applicant_edit"]
 
-export default class VaForm extends React.Component {
-  render() {
-    const {controller, state, hakemusType, isExpired, refuseGrant, modifyApplication} = this.props
+interface VaFormProps {
+  controller: any
+  state: any
+  hakemusType: string
+  isExpired: boolean
+  refuseGrant: boolean
+  modifyApplication: boolean
+  useBusinessIdSearch: boolean
+}
+
+let initialStandardizedFieldsState: StandardizedFieldsState = {
+  status: 'LOADING',
+  helpText: undefined
+}
+
+export const VaForm = ({controller, state, hakemusType, isExpired, refuseGrant, modifyApplication, useBusinessIdSearch }: VaFormProps) => {
+  const [standardizedFieldsState, setState] = useState<StandardizedFieldsState>(initialStandardizedFieldsState)
+  const f = createFormikHook()
+  const environment =  state.configuration.environment
+
+  useEffect(() => {
+    const fetchProps = async () => {
+      const helpText = "HelpText response"
+
+      f.resetForm({
+        values: { 
+          fi: {
+            helpText 
+          },
+          sv: {
+            helpText
+          }
+        }
+      })
+
+      setState({helpText, status: 'LOADED'})
+    }
+
+    fetchProps()
+  }, [])
+
     const registerNumber = _.get(state.saveStatus.savedObject, "register-number", undefined)
     const {saveStatus, configuration} = state
     const registerNumberDisplay = <VaHakemusRegisterNumber key="register-number"
@@ -33,14 +77,16 @@ export default class VaForm extends React.Component {
                                             lang={configuration.lang} />
     const headerElements = [registerNumberDisplay, changeRequest]
     const formContainerClass = configuration.preview ? FormPreview : Form
-    const showGrantRefuse = configuration.preview && state.token && allowedStatuses.indexOf(saveStatus.savedObject.status) > -1 && (refuseGrant === "true")
+    const showGrantRefuse = configuration.preview && state.token && allowedStatuses.indexOf(saveStatus.savedObject.status) > -1 && refuseGrant
     const isInApplicantEditMode = () => "applicant_edit" === _.get(saveStatus.savedObject, "status")
     const showOpenContactsEditButton = !showGrantRefuse && modifyApplication && !isInApplicantEditMode()
     const { embedForMuutoshakemus } = configuration
 
 
     return(
-      <div>
+      standardizedFieldsState.status === 'LOADING'
+      ? <p>Loading</p>
+      : <div>
         <VaOldBrowserWarning lang={configuration.lang}
                              translations={configuration.translations.warning}
                              devel={configuration.develMode}
@@ -64,11 +110,12 @@ export default class VaForm extends React.Component {
                        formContainerClass={formContainerClass}
                        headerElements={headerElements}
                        infoElementValues={state.avustushaku}
-                       hakemusType={this.props.hakemusType}
-                       useBusinessIdSearch={this.props.useBusinessIdSearch}
+                       hakemusType={hakemusType}
+                       useBusinessIdSearch={useBusinessIdSearch}
                        modifyApplication={modifyApplication}
+                       environment={environment}
+                       f={f}
         />
       </div>
     )
-  }
  }
