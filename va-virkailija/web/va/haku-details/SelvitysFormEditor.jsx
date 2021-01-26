@@ -4,7 +4,7 @@ import _ from 'lodash'
 import HttpUtil from "soresu-form/web/HttpUtil"
 import DateUtil from 'soresu-form/web/DateUtil'
 
-import FormEditor from './FormEditor'
+import { FormEditor } from './FormEditor'
 
 export default class SelvitysFormEditor extends React.Component {
   constructor(props) {
