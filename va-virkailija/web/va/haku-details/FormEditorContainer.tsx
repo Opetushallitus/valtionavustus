@@ -1,12 +1,12 @@
 import React from 'react'
 import _ from 'lodash'
-import { createFormikHook } from './formik'
 
 // @ts-ignore
 import DateUtil from 'soresu-form/web/DateUtil'
 
 import { FormEditor } from './FormEditor'
 import FormJsonEditor from './FormJsonEditor'
+import { FormikHook } from './types'
 
 interface FormEditorContainerProps { 
   avustushaku: any
@@ -16,6 +16,7 @@ interface FormEditorContainerProps {
   controller: any
   helpTexts: any
   environment: any
+  f: FormikHook
 }
 
 export const FormEditorContainer = (props: FormEditorContainerProps) => {
@@ -27,8 +28,8 @@ export const FormEditorContainer = (props: FormEditorContainerProps) => {
   const updatedAt = _.get(avustushaku, "formContent.updated_at")
   const helpTexts = props.helpTexts
   const environment = props.environment
+  const f = props.f
 
-  const f = createFormikHook()
   const hakuUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/?lang=fi"
   const hakuUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/?lang=sv"
   const previewUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/nayta?lang=fi"

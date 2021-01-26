@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { Component } from 'react'
 
-export default class HelpTooltip extends React.Component {
+export default class HelpTooltip extends Component {
 
   render() {
     return <a className={`soresu-tooltip soresu-tooltip-${this.props.direction || "up"} soresu-help-icon`}

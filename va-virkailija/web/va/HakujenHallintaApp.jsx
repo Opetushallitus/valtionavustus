@@ -7,7 +7,7 @@ import queryString from 'query-string'
 import TopBar from './TopBar.jsx'
 import HakujenHallintaController from './HakujenHallintaController.jsx'
 import HakuListing from './haku-list/HakuListing.jsx'
-import EditorSelector from './haku-details/EditorSelector.jsx'
+import { EditorSelector } from './haku-details/EditorSelector'
 import LocalStorage from './LocalStorage'
 
 import './style/virkailija.less'

@@ -1,12 +1,28 @@
-import React from 'react'
+import React, { Component } from 'react'
 import _ from 'lodash'
 
+//@ts-ignore
 import HttpUtil from "soresu-form/web/HttpUtil"
+//@ts-ignore
 import DateUtil from 'soresu-form/web/DateUtil'
 
 import { FormEditor } from './FormEditor'
+import { FormikHook } from './types'
 
-export default class SelvitysFormEditor extends React.Component {
+interface SelvitysFormProps { 
+  avustushaku: any
+  controller: any
+  translations: any
+  koodistos: any
+  selvitysType: any
+  environment: any
+  helpTexts: any
+  valiselvitysFormDraft: any
+  loppuselvitysFormDraft: any
+  f: FormikHook
+}
+
+export default class SelvitysFormEditor extends Component<SelvitysFormProps> {
   constructor(props) {
     super(props)
     this.state = SelvitysFormEditor.initialState(props)
@@ -29,7 +45,7 @@ export default class SelvitysFormEditor extends React.Component {
   }
 
   render(){
-    const {avustushaku, controller, translations, koodistos, selvitysType,environment, helpTexts} = this.props
+    const {avustushaku, controller, translations, koodistos, selvitysType, environment, helpTexts, f} = this.props
     const formDraft = this.props[selvitysType + "FormDraft"]
     const formContent = avustushaku[selvitysType + "Form"]
     const updatedAtElementId = `${selvitysType}UpdatedAt`
@@ -126,7 +142,7 @@ export default class SelvitysFormEditor extends React.Component {
             </a>
           </div>
         </div>
-        <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} />
+        <FormEditor environment={environment} avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} f={f} />
         <div className="form-json-editor">
           <h3>Hakulomakkeen sisältö</h3>
           <span className="error">{parseError}</span>

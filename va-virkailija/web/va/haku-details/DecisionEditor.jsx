@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import _ from 'lodash'
 import Bacon from 'baconjs'
 
@@ -655,7 +655,7 @@ class DecisionDateAndSend extends React.Component {
   }
 }
 
-export default class DecisionEditor extends React.Component {
+export default class DecisionEditor extends Component {
   render() {
     const {
       avustushaku,

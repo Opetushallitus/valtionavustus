@@ -5,8 +5,10 @@ import ClassNames from 'classnames'
 import HakuEdit from './HakuEdit.jsx'
 import { FormEditorContainer } from './FormEditorContainer'
 import DecisionEditor from './DecisionEditor.jsx'
-import SelvitysFormEditor from './SelvitysFormEditor.jsx'
+import SelvitysFormEditor from './SelvitysFormEditor'
 import HelpTooltip from '../HelpTooltip.jsx'
+
+import { createFormikHook } from './formik'
 
 function createRedirectTo(url) {
   return (e) => {
@@ -15,9 +17,24 @@ function createRedirectTo(url) {
   }
 }
 
-export default class EditorSelector extends React.Component {
-  render() {
-    const {
+interface EditorSelectorProps {
+  subTab
+  controller
+  avustushaku
+  decisionLiitteet
+  formDraft
+  vaUserSearch
+  koodistos
+  userInfo
+  environment
+  translations
+  valiselvitysFormDraft
+  loppuselvitysFormDraft
+  codeOptions
+  helpTexts
+}
+
+export const EditorSelector = ({
       subTab,
       controller,
       avustushaku,
@@ -32,7 +49,10 @@ export default class EditorSelector extends React.Component {
       loppuselvitysFormDraft,
       codeOptions,
       helpTexts
-    } = this.props
+    }: EditorSelectorProps) => {
+
+    const f = createFormikHook()
+
     let subTabContent
     switch (subTab) {
       case "haku-editor":
@@ -50,7 +70,8 @@ export default class EditorSelector extends React.Component {
                                              koodistos={koodistos}
                                              formDraft={formDraft}
                                              controller={controller}
-                                             helpTexts={helpTexts} />
+                                             helpTexts={helpTexts} 
+                                             f={f} />
         break
       case "decision":
         subTabContent = <DecisionEditor avustushaku={avustushaku}
@@ -66,6 +87,7 @@ export default class EditorSelector extends React.Component {
                                         avustushaku={avustushaku}
                                         controller={controller}
                                         koodistos={koodistos}
+                                        f={f}
                                         valiselvitysFormDraft={valiselvitysFormDraft}
                                         loppuselvitysFormDraft={loppuselvitysFormDraft}
                                         translations={translations}
@@ -79,6 +101,7 @@ export default class EditorSelector extends React.Component {
                                             avustushaku={avustushaku}
                                             controller={controller}
                                             koodistos={koodistos}
+                                            f={f}
                                             valiselvitysFormDraft={valiselvitysFormDraft}
                                             loppuselvitysFormDraft={loppuselvitysFormDraft}
                                             translations={translations}
@@ -136,5 +159,4 @@ export default class EditorSelector extends React.Component {
         <div className="section-container">{subTabContent}</div>
       </section>
     )
-  }
 }
