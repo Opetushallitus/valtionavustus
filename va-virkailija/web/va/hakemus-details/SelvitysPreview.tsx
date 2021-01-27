@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import React from 'react'
 import _ from "lodash"
 
 import FormContainer from "soresu-form/web/form/FormContainer.jsx"
@@ -10,10 +10,20 @@ import EditsDisplayingFormView from "./EditsDisplayingFormView"
 import FakeFormController from "../form/FakeFormController"
 import FakeFormState from "../form/FakeFormState"
 
-export default class SelvitysPreview extends Component {
+import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
 
-  render() {
-    const {hakemus, selvitysType, avustushaku, translations, selvitysHakemus, form} = this.props
+interface SelvitysPreviewProps {
+  hakemus: any
+  selvitysType: any
+  avustushaku: any
+  translations: any
+  selvitysHakemus: any
+  form: any
+  environment: any
+  f: FormikHook
+}
+
+export const SelvitysPreview = ({hakemus, selvitysType, avustushaku, translations, selvitysHakemus, form, environment, f}: SelvitysPreviewProps) => {
     const selvitys = hakemus.selvitys
     const formState = createPreviewHakemusFormState()
     const formElementProps = {
@@ -22,9 +32,13 @@ export default class SelvitysPreview extends Component {
       infoElementValues: avustushaku,
       controller: new FakeFormController(new VaComponentFactory(), new VaPreviewComponentFactory(), avustushaku, selvitysHakemus),
       containerId: `preview-container-${selvitysType}`,
-      headerElements: []
+      headerElements: [],
+      f,
+      environment
     }
-    return <FormContainer {...formElementProps} />
+    return  (
+      <FormContainer {...formElementProps} />
+      )
 
     function createPreviewHakemusFormState() {
       const hakemusFormState = FakeFormState.createHakemusFormState({
@@ -46,6 +60,7 @@ export default class SelvitysPreview extends Component {
         return _.isArray(a) ? uniqueUnion(a, b) : undefined
 
         function uniqueUnion(firstAnswerArray, secondAnswerArray) {
+          //@ts-ignore
           return _.uniqBy(_.union(firstAnswerArray, secondAnswerArray), answer => { return answer.key })
         }
       })
@@ -54,5 +69,4 @@ export default class SelvitysPreview extends Component {
       FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, combinedAnswersForPopulatingGrowingFieldsets, false)
       return hakemusFormState
     }
-  }
 }

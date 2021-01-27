@@ -26,6 +26,8 @@ import { Answer, Hakemus, HakemusFormState } from '../types'
 
 import '../style/formpreview.less'
 
+import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
+
 function getCurrentAnswers(hakemus: Hakemus): Answer[] {
   const { answers, muutoshakemukset, normalizedData } = hakemus
   const acceptedMuutoshakemus = muutoshakemukset?.find(m => m.status === 'accepted' || m.status === 'accepted_with_changes')
@@ -46,13 +48,18 @@ function getCurrentAnswers(hakemus: Hakemus): Answer[] {
   })
 }
 
-export default class HakemusPreview extends Component<{ hakemus: Hakemus, avustushaku: any, hakuData: any, translations: any }> {
-  render() {
-    const hakemus = this.props.hakemus
+interface HakemusPreviewProps { 
+  hakemus: Hakemus
+  avustushaku: any
+  environment: any
+  hakuData: any
+  translations: any,
+  f: FormikHook
+}
+
+export const HakemusPreview = ({ hakemus, avustushaku, hakuData, translations, environment, f }: HakemusPreviewProps) => {
+
     const registerNumber = _.get(hakemus, "register-number", "")
-    const avustushaku = this.props.avustushaku
-    const hakuData = this.props.hakuData
-    const translations = this.props.translations
     const formState = createPreviewHakemusFormState()
     const registerNumberDisplay = <VaHakemusRegisterNumber key="register-number"
                                                            registerNumber={registerNumber}
@@ -83,9 +90,14 @@ export default class HakemusPreview extends Component<{ hakemus: Hakemus, avustu
                          </span>
                        </small>,
                        <GrantRefusedNotice application={hakemus}
-                                           key="grant-refused" />]
+                                           key="grant-refused" />],
+      f,
+      environment
     }
-    return <FormContainer {...formElementProps} />
+
+    return  (
+      <FormContainer {...formElementProps} />
+      )
 
     function createPreviewHakemusFormState(): HakemusFormState {
       const hakemusFormState = FakeFormState.createHakemusFormState({
@@ -121,7 +133,6 @@ export default class HakemusPreview extends Component<{ hakemus: Hakemus, avustu
       return hakemusFormState
     }
   }
-}
 
 class VaChangeRequests extends Component<any> {
   render() {

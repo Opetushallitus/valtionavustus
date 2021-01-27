@@ -5,12 +5,12 @@ import Bacon from 'baconjs'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import DateUtil from 'soresu-form/web/DateUtil'
 
-import HakemusBudgetEditing from '../budgetedit/HakemusBudgetEditing.jsx'
+import { HakemusBudgetEditing } from '../budgetedit/HakemusBudgetEditing'
 
 import HakemusScoring from './HakemusScoring.jsx'
 import HakemusComments from './HakemusComments.jsx'
 import HakemusArviointiStatuses from "./HakemusArviointiStatuses"
-import TraineeDayEditing from '../traineeday/TraineeDayEditing.jsx'
+import { TraineeDayEditing } from '../traineeday/TraineeDayEditing'
 import ChooseRahoitusalueAndTalousarviotili from './ChooseRahoitusalueAndTalousarviotili.jsx'
 import SpecifyOppilaitos from './SpecifyOppilaitos.jsx'
 import AcademySize from './AcademySize.jsx'
@@ -23,18 +23,32 @@ import HelpTooltip from '../HelpTooltip.jsx'
 
 import '../style/admin.less'
 
-export default class HakemusArviointi extends Component {
-  render() {
-    const {controller, hakemus, avustushaku, hakuData, translations,
-           userInfo, loadingComments, showOthersScores,
-           multibatchEnabled, helpTexts} = this.props
+import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
+
+interface HakemustenArviointiProps {
+  controller: any
+  hakemus: any
+  avustushaku: any
+  hakuData: any
+  translations: any
+  userInfo: any
+  loadingComments: any
+  showOthersScores: any
+  multibatchEnabled: any
+  helpTexts: any
+  f: FormikHook
+  environment: any
+  selectedHakemusAccessControl: any
+}
+
+export const HakemusArviointi = ({controller, selectedHakemusAccessControl, hakemus, avustushaku, hakuData, translations, userInfo, loadingComments, showOthersScores, multibatchEnabled, helpTexts, f, environment}: HakemustenArviointiProps) => {
     const {
       allowHakemusCommenting,
       allowHakemusStateChanges,
       allowHakemusScoring,
       allowHakemusOfficerEditing,
       allowHakemusCancellation
-    } = this.props.selectedHakemusAccessControl
+    } = selectedHakemusAccessControl
     const comments = hakemus.comments
 
     return (
@@ -58,7 +72,7 @@ export default class HakemusArviointi extends Component {
        <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
-       <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
+       <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} f={f} environment={environment} />
        {multibatchEnabled && avustushaku.content["multiplemaksuera"] &&
          <ApplicationPayments application={hakemus}
                               grant={avustushaku}
@@ -67,20 +81,21 @@ export default class HakemusArviointi extends Component {
                               onAddPayment={controller.addPayment}
                               onRemovePayment={controller.removePayment}
                               readonly={true}/>}
-       <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
+       <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} f={f} environment={environment} />
        <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusOfficerEditing} status="officer_edit" helpTexts={helpTexts} />
        <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusCancellation} status="cancelled" helpTexts={helpTexts} />
        <ReSendDecisionEmail  avustushaku={avustushaku} hakemus={hakemus} hakuData={hakuData} helpTexts={helpTexts} />
        <ChangeLog hakemus={hakemus}/>
      </div>
     )
-  }
 }
 
-class ChangeLog extends React.Component{
-  render(){
-    const hakemus = this.props.hakemus
-    const changelogs = _.get(this.props.hakemus, "arvio.changelog")
+interface ChangeLogProps {
+  hakemus: any
+}
+
+const ChangeLog = ({hakemus}: ChangeLogProps) => {
+    const changelogs = _.get(hakemus, "arvio.changelog")
     if (!changelogs) {
       return null
     }
@@ -96,10 +111,14 @@ class ChangeLog extends React.Component{
         )}
       </div>
     )
-  }
 }
 
-class ChangeLogRow extends React.Component{
+interface ChangeLogRowProps {
+  hakemus: any
+  changelog: any
+}
+
+class ChangeLogRow extends Component<ChangeLogRowProps, {open: any}>{
   constructor(props){
     super(props)
     this.state = ChangeLogRow.initialState(props)
@@ -147,7 +166,7 @@ class ChangeLogRow extends React.Component{
         </tr>
         <tr>
           {this.state.open && (
-           <td colSpan="3">
+           <td colSpan={3}>
              <pre className="changelog__data">{JSON.stringify(changelog.data)}</pre>
            </td>
           )}
@@ -157,15 +176,17 @@ class ChangeLogRow extends React.Component{
   }
 }
 
-class SetArviointiStatus extends React.Component {
-  render() {
-    const hakemus = this.props.hakemus
-    const allowEditing = this.props.allowEditing
+interface SetArviointiStatusProps {
+  hakemus: any
+  allowEditing: any
+  controller: any
+  helpTexts: any
+}
+
+const SetArviointiStatus = ({hakemus, allowEditing, controller, helpTexts}: SetArviointiStatusProps) => {
     const arvio = hakemus.arvio
     const status = arvio ? arvio.status : undefined
-    const controller = this.props.controller
-    const helpTexts = this.props.helpTexts
-    const statuses = []
+    const statuses: any[] = []
     const statusValues = HakemusArviointiStatuses.allStatuses()
     for (let i = 0; i < statusValues.length; i++) {
       const htmlId = "set-arvio-status-" + statusValues[i]
@@ -196,11 +217,9 @@ class SetArviointiStatus extends React.Component {
         </fieldset>
       </div>
     )
-  }
 }
 
-
-class ChangeRequest extends React.Component {
+class ChangeRequest extends Component<any, any> {
 
   constructor(props){
     super(props)
@@ -230,7 +249,7 @@ class ChangeRequest extends React.Component {
     const hasChangeRequired = status === 'pending_change_request' || status === 'officer_edit'
     const changeRequestTitle = status === 'pending_change_request' ? "Täydennyspyyntö lähetetty" : "Virkailijan muokkaus avattu"
     const allowEditing = this.props.allowEditing
-    const lastChangeRequest = _.last(hakemus.changeRequests)
+    const lastChangeRequest: any = _.last(hakemus.changeRequests)
     const lastChangeRequestText = lastChangeRequest ? lastChangeRequest["status-comment"] : ""
     const lastChangeRequestTime = lastChangeRequest ? DateUtil.asDateString(lastChangeRequest["version-date"]) + " " + DateUtil.asTimeString(lastChangeRequest["version-date"]) : ""
     const controller = this.props.controller
@@ -244,7 +263,7 @@ class ChangeRequest extends React.Component {
 
     const onPreview = () =>{
       const sendS = Bacon.fromPromise(HttpUtil.post(`/api/avustushaku/${avustushaku.id}/change-request-email`,{text:hakemus.changeRequest}))
-      sendS.onValue((res)=>{
+      sendS.onValue((res: any)=>{
         this.setState({preview:true,mail:res.mail})
       })
     }
@@ -261,7 +280,7 @@ class ChangeRequest extends React.Component {
         <div hidden={!newChangeRequest}>
           <label>Lähetä täydennyspyyntö</label>
           <span onClick={closeEdit} className="close"></span>
-          <textarea data-test-id='täydennyspyyntö__textarea' placeholder="Täydennyspyyntö hakijalle" onChange={onTextChange} rows="4" disabled={!allowEditing} value={hakemus.changeRequest}/>
+          <textarea data-test-id='täydennyspyyntö__textarea' placeholder="Täydennyspyyntö hakijalle" onChange={onTextChange} rows={4} disabled={!allowEditing} value={hakemus.changeRequest}/>
           <button data-test-id='täydennyspyyntö__lähetä' type="button" disabled={_.isEmpty(hakemus.changeRequest)} onClick={sendChangeRequest}>Lähetä</button>
           <a onClick={onPreview} style={{position:'relative'}}>Esikatsele</a>
           {this.state.preview && <div className="panel email-preview-panel">
@@ -282,11 +301,13 @@ class ChangeRequest extends React.Component {
   }
 }
 
-class SummaryComment extends React.Component {
+class SummaryComment extends Component<any, any> {
   constructor(props) {
     super(props)
     this.state = SummaryComment.initialState(props)
+    //@ts-ignore
     this.summaryCommentBus = new Bacon.Bus()
+    //@ts-ignore
     this.summaryCommentBus.debounce(1000).onValue(([hakemus, newSummaryComment]) => this.props.controller.setHakemusSummaryComment(hakemus, newSummaryComment))
   }
 
@@ -313,6 +334,7 @@ class SummaryComment extends React.Component {
 
   summaryCommentUpdated(newSummaryComment) {
     this.setState({summaryComment: newSummaryComment})
+    //@ts-ignore
     this.summaryCommentBus.push([this.props.hakemus, newSummaryComment])
   }
 
@@ -323,8 +345,8 @@ class SummaryComment extends React.Component {
     return <div className="value-edit summary-comment">
       <label htmlFor="summary-comment">Huomautus päätöslistaan</label>
       <HelpTooltip testId={"tooltip-huomautus"} content={helpTexts["hankkeen_sivu__arviointi___huomautus_päätöslistaan"]} direction={"arviointi-slim"} />
-      <textarea id="summary-comment" rows="1" disabled={!allowEditing} value={this.state.summaryComment}
-             onChange={evt => this.summaryCommentUpdated(evt.target.value) } maxLength="128" />
+      <textarea id="summary-comment" rows={1} disabled={!allowEditing} value={this.state.summaryComment}
+             onChange={evt => this.summaryCommentUpdated(evt.target.value) } maxLength={128} />
     </div>
   }
 }

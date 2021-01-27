@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import React, { Component } from 'react'
+import React from 'react'
 
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
@@ -12,14 +12,20 @@ import TraineeDayEditComponentFactory from './TraineeDayEditComponentFactory'
 
 import '../style/traineeday.less'
 
-export default class TraineeDayEditing extends Component {
-  render() {
-    const controller = this.props.controller
-    const avustushaku = this.props.avustushaku
-    const hakuData = this.props.hakuData
-    const hakemus = this.props.hakemus
-    const translations = this.props.translations
-    const allowEditing = this.props.allowEditing
+import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
+
+interface TraineeDayEditingProps {
+  controller: any
+  avustushaku: any
+  hakuData: any
+  hakemus: any
+  translations: any
+  allowEditing: any
+  environment: any
+  f: FormikHook
+}
+
+export const TraineeDayEditing = ({controller, avustushaku, hakuData, hakemus, translations, allowEditing, environment, f}: TraineeDayEditingProps) => {
     const traineeDayCalcs = VaTraineeDayUtil.collectCalculatorSpecifications(hakuData.form.content, hakemus.answers)
 
     if (_.isEmpty(traineeDayCalcs)) {
@@ -58,7 +64,9 @@ export default class TraineeDayEditing extends Component {
       infoElementValues: avustushaku,
       controller: new TraineeDayEditFormController(controller, new TraineeDayEditComponentFactory(), avustushaku, traineeDayEditFormState.form, hakemus, allowEditing),
       containerId: "trainee-day-edit-container",
-      headerElements: []
+      headerElements: [],
+      f,
+      environment
     }
 
     return (
@@ -67,4 +75,3 @@ export default class TraineeDayEditing extends Component {
       </div>
     )
   }
-}

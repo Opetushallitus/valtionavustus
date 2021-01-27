@@ -2,16 +2,26 @@ import React from 'react'
 import PresenterComment from './PresenterComment.jsx'
 import SeurantaLiitteet from './SeurantaLiitteet.jsx'
 import SeurantaTags from './SeurantaTags.jsx'
-import SeurantaBudgetEditing
-  from '../seurantabudgetedit/SeurantaBudgetEditing.jsx'
+import { SeurantaBudgetEditing } from '../seurantabudgetedit/SeurantaBudgetEditing'
 import ShouldPay from './ShouldPay.jsx'
 import AllowVisibilityInExternalSystem from './AllowVisibilityInExternalSystem.jsx'
 import ShouldPayComments from './ShouldPayComments.jsx'
 
-export default class Seuranta extends React.Component {
-  render() {
-    const {controller, hakemus, avustushaku,
-           translations, hakuData, helpTexts} = this.props
+import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
+
+interface SeurantaProps {
+  controller: any
+  hakemus: any
+  avustushaku: any
+  translations: any
+  hakuData: any
+  helpTexts: any
+  f: FormikHook
+  environment: any
+}
+
+export const Seuranta = ({controller, hakemus, avustushaku,
+           translations, hakuData, helpTexts, f, environment}: SeurantaProps) => {
     return (
       <div className="seuranta">
         <AllowVisibilityInExternalSystem controller={controller}
@@ -31,7 +41,9 @@ export default class Seuranta extends React.Component {
                                  hakuData={hakuData}
                                  translations={translations}
                                  controller={controller}
-                                 hakemus={hakemus}/>
+                                 hakemus={hakemus}
+                                 environment={environment}
+                                 f={f}/>
         </div>
         <div className="seuranta-section">
           <SeurantaLiitteet avustushaku={avustushaku}
@@ -49,4 +61,3 @@ export default class Seuranta extends React.Component {
       </div>
     )
   }
-}

@@ -1,18 +1,64 @@
-import React, {Component} from 'react'
+import React, { useEffect, useState } from 'react'
 
-import HakemusPreview from './HakemusPreview'
-import HakemusArviointi from './HakemusArviointi.jsx'
+import { HakemusPreview } from './HakemusPreview'
+import { HakemusArviointi } from './HakemusArviointi'
 import { Muutoshakemus } from './Muutoshakemus.jsx'
-import Selvitys from './Selvitys.jsx'
-import Seuranta from './Seuranta.jsx'
+import { Selvitys } from './Selvitys'
+import { Seuranta } from './Seuranta'
 
 import './hakemusDetails.less'
 
-export default class HakemusDetails extends Component {
-  render() {
-    const {hidden, controller, hakemus, avustushaku, hakuData, userInfo,
-           loadingComments, showOthersScores, translations, environment,
-           selectedHakemusAccessControl, subTab, helpTexts} = this.props
+let initialStandardizedFieldsState: StandardizedFieldsState = {
+  status: 'LOADING',
+  helpText: undefined
+}
+
+interface HakemusDetailsProps {
+  hidden: any
+  controller: any
+  hakemus: any
+  avustushaku: any
+  hakuData: any
+  userInfo: any
+  loadingComments: any
+  showOthersScores: any
+  translations: any
+  environment: any
+  selectedHakemusAccessControl: any
+  subTab: any
+  helpTexts: any
+}
+
+import { createFormikHook } from 'va-common/web/va/standardized-form-fields/formik'
+import { StandardizedFieldsState } from 'va-common/web/va/standardized-form-fields/types'
+
+
+export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuData, userInfo, loadingComments, showOthersScores, translations, environment, selectedHakemusAccessControl, subTab, helpTexts}: HakemusDetailsProps) => {
+
+  const [standardizedFieldsState, setState] = useState<StandardizedFieldsState>(initialStandardizedFieldsState)
+  const f = createFormikHook()
+
+  useEffect(() => {
+    const fetchProps = async () => {
+      const helpText = "HelpText response"
+
+      f.resetForm({
+        values: { 
+          fi: {
+            helpText 
+          },
+          sv: {
+            helpText
+          }
+        }
+      })
+
+      setState({helpText, status: 'LOADED'})
+    }
+
+    fetchProps()
+  }, [])
+
     const multibatchEnabled =
           (environment["multibatch-payments"] &&
            environment["multibatch-payments"]["enabled?"]) || false
@@ -41,7 +87,9 @@ export default class HakemusDetails extends Component {
       if(document.body.classList.contains('split-view')) {
         const container = document.querySelector('.hakemus-list tbody.has-selected')
         const selected = document.querySelector('#list-container tbody.has-selected .overview-row.selected')
-        container.scrollTop = selected.offsetTop - 100
+        if (container && selected && selected instanceof HTMLElement ) {
+          container.scrollTop = selected.offsetTop - 100
+        }
       }
       e.preventDefault()
       return false
@@ -61,9 +109,10 @@ export default class HakemusDetails extends Component {
                                    userInfo={userInfo}
                                    loadingComments={loadingComments}
                                    showOthersScores={showOthersScores}
-                                   subTab={subTab}
                                    controller={controller}
-                                   multibatchEnabled={multibatchEnabled}
+                                   environment={environment}
+                                   f={f} multibatchEnabled={multibatchEnabled}
+
                                    helpTexts={helpTexts}/>
 
         case 'valiselvitys':
@@ -73,6 +122,8 @@ export default class HakemusDetails extends Component {
                            selvitysType="valiselvitys"
                            multibatchEnabled={multibatchEnabled}
                            isPresentingOfficer={isPresentingOfficer}
+                           f={f}
+                           environment={environment}
    selvitysLinkHelpText={helpTexts["hankkeen_sivu__väliselvitys___linkki_lomakkeelle"]}
    presenterCommentHelpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}/>
         case 'loppuselvitys':
@@ -81,6 +132,8 @@ export default class HakemusDetails extends Component {
                            translations={translations}
                            selvitysType="loppuselvitys"
                            multibatchEnabled={multibatchEnabled}
+                           f={f}
+                           environment={environment} 
                            isPresentingOfficer={isPresentingOfficer}
    selvitysLinkHelpText={helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"]}
    presenterCommentHelpText={helpTexts["hankkeen_sivu__loppuselvitys___valmistelijan_huomiot"]}/>
@@ -90,12 +143,12 @@ export default class HakemusDetails extends Component {
           else
             return <Muutoshakemus environment={environment} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakemus={hakemus.normalizedData} controller={controller} userInfo={userInfo} presenter={presenter} />
         case 'seuranta':
-          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selectedHakemusAccessControl={selectedHakemusAccessControl} helpTexts={helpTexts}/>
+          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} helpTexts={helpTexts} environment={environment} f={f}/>
         default:
           throw new Error("Bad subTab selection '" + tabName + "'")
       }
     }
-    const tab = (name, label, testId) => <span className={subTab === name ? 'selected' : ''} data-test-id={testId} onClick={createSubTabSelector(name)}>{label}</span>
+    const tab = (name, label, testId?: string) => <span className={subTab === name ? 'selected' : ''} data-test-id={testId} onClick={createSubTabSelector(name)}>{label}</span>
 
     function createSubTabSelector(subTabToSelect) {
       return e => {
@@ -116,7 +169,9 @@ export default class HakemusDetails extends Component {
       </span>
 
     return (
-      <div id="hakemus-details">
+      standardizedFieldsState.status === 'LOADING'
+      ? <p>Loading</p>
+      : <div id="hakemus-details">
         <CloseButton/>
         <ToggleButton/>
         <div id="editor-subtab-selector"
@@ -127,7 +182,7 @@ export default class HakemusDetails extends Component {
           {muutospaatosprosessiEnabled && tab('muutoshakemukset', <MuutoshakemuksetLabel/>)}
           {tab('seuranta', 'Seuranta', 'tab-seuranta')}
         </div>
-        <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
+        <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} environment={environment} f={f}/>
         <div id="hakemus-arviointi" className="fixed-content">
           <div id="tab-content"
                className={hakemus.refused ? "disabled" : ""}>
@@ -137,4 +192,3 @@ export default class HakemusDetails extends Component {
       </div>
     )
   }
-}

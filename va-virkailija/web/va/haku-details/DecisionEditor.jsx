@@ -27,7 +27,7 @@ const DecisionFields = ({title,avustushaku,id,onChange,helpText, dataTestId}) =>
   </div>
 
 
-class DateField extends React.Component {
+class DateField extends Component {
   constructor(props) {
     super(props)
     this.state = DateField.initialState(props)
@@ -73,7 +73,7 @@ class DateField extends React.Component {
   }
 }
 
-class LiitteetSelection extends React.Component {
+class LiitteetSelection extends Component {
   constructor(props) {
     super(props)
     const selectedLiitteet = _.get(this.props.avustushaku, "decision.liitteet", [])
@@ -238,7 +238,7 @@ class LiitteetSelection extends React.Component {
   }
 }
 
-class RegenerateDecisions extends React.Component {
+class RegenerateDecisions extends Component {
   constructor(props){
     super(props)
     this.state = {completed:false,confirm:false}
@@ -276,7 +276,7 @@ class RegenerateDecisions extends React.Component {
   }
 }
 
-class ResendDecisions extends React.Component {
+class ResendDecisions extends Component {
   constructor(props){
     super(props)
     this.state = {completed:false,confirm:false}
@@ -327,7 +327,7 @@ class ResendDecisions extends React.Component {
   }
 }
 
-class TapahtumaLoki extends React.Component {
+class TapahtumaLoki extends Component {
 
   dateTime(d) {
     return `${DateUtil.asDateString(d)} ${DateUtil.asTimeString(d)}`
@@ -385,7 +385,7 @@ class TapahtumaLoki extends React.Component {
   }
 }
 
-class DecisionDateAndSend extends React.Component {
+class DecisionDateAndSend extends Component {
   constructor(props){
     super(props)
     this.state = DecisionDateAndSend.initialState(props)
