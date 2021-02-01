@@ -209,6 +209,7 @@
                    operation-id
                    operational-unit-id
                    created-at)]
+    (virkailija-db/copy-standardized-avustushaku-fields base-haku-id (:id new-haku))
     (hakija-api/create-avustushaku-role {:avustushaku (:id new-haku)
                                          :role "presenting_officer"
                                          :name (str (:first-name identity) " "

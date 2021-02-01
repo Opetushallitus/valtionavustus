@@ -28,6 +28,11 @@
       created-paatos
       ))))
 
+(defn copy-standardized-avustushaku-fields [from-haku-id to-haku-id]
+  (execute! "INSERT INTO virkailija.standardized_avustushaku
+              (avustushaku_id, help_text_fi, help_text_sv)
+              SELECT ?, help_text_fi, help_text_sv FROM virkailija.standardized_avustushaku WHERE avustushaku_id = ?" [to-haku-id from-haku-id ]))
+
 (defn update-avustushaku-standardized-fields [avustushaku-id standardized-fields]
   (with-tx (fn [tx]
     (let [updated-fields (first (query tx
