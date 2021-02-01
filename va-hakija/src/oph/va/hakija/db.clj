@@ -131,12 +131,11 @@
 
 (defn create-standardized-hakemus-fields [avustushaku-id user-key]
   (log/info (str "Creating standardized hakemus fields with user-key: " user-key))
-  (execute! "WITH hakemus_id (SELECT id from hakija.hakemukset WHERE user_key = ? LIMIT 1),
-                  help_texts (SELECT help_text_fi, help_text_sv FROM virkailija.standardized_avustushaku WHERE avustushaku_id = ? LIMIT 1)
+  (execute! "WITH h_id AS (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1),
+                  help_texts AS (SELECT help_text_fi, help_text_sv FROM virkailija.standardized_avustushaku WHERE avustushaku_id = ? LIMIT 1)
             INSERT INTO virkailija.standardized_hakemus
             (hakemus_id, help_text_fi, help_text_sv)
-          VALUES
-            (hakemus_id, help_texts.help_text_fi, help_texts.help_text_sv)" [user-key avustushaku-id]))
+            SELECT * FROM h_id CROSS JOIN help_texts" [user-key avustushaku-id]))
 
 (defn get-normalized-hakemus [user-key]
   (log/info (str "Get normalized hakemus with user-key: " user-key))
