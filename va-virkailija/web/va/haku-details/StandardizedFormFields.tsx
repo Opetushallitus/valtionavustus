@@ -31,18 +31,18 @@ export const StandardizedFormFields = ({f, environment}: StandardizedFormFieldsP
                   <td>
                     <textarea
                       className="larger-textarea"
-                      name="standardized-duration-help-text-fi"
+                      name="help-text-fi"
                       onChange={f.handleChange}
                       onBlur={f.handleBlur}
-                      value={f.values.fi.helpText}/>
+                      value={f.values["help-text-fi"]}/>
                   </td>
                   <td>
                     <textarea
                       className="larger-textarea"
-                      name="standardized-duration-help-text-sv"
+                      name="help-text-sv"
                       onChange={f.handleChange}
                       onBlur={f.handleBlur}
-                      value={f.values.sv.helpText}/>
+                      value={f.values["help-text-sv"]}/>
                   </td>
                 </tr>
               </tbody>

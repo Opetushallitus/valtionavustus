@@ -21,7 +21,7 @@ export const StandardizedFormFields = ({f, environment, lang}: StandardizedFormF
       environment["muutospaatosprosessi"]["enabled?"]) || false
   return (
     muutospaatosprosessiEnabled
-    ? <p className="soresu-info-element">{f.values[validatedLang].helpText}</p>
+    ? <p className="soresu-info-element">{f.values["help-text-" + validatedLang]}</p>
     : <span/>
   )
 }

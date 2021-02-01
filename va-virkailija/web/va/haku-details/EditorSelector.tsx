@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import ClassNames from 'classnames'
 
@@ -9,6 +9,8 @@ import SelvitysFormEditor from './SelvitysFormEditor'
 import HelpTooltip from '../HelpTooltip.jsx'
 
 import { createFormikHook } from 'va-common/web/va/standardized-form-fields/formik'
+import { StandardizedFieldsState } from 'va-common/web/va/standardized-form-fields/types'
+import { getStandardizedFields } from 'va-common/web/va/standardized-form-fields/client'
 
 function createRedirectTo(url) {
   return (e) => {
@@ -18,20 +20,25 @@ function createRedirectTo(url) {
 }
 
 interface EditorSelectorProps {
-  subTab
-  controller
-  avustushaku
-  decisionLiitteet
-  formDraft
-  vaUserSearch
-  koodistos
-  userInfo
-  environment
-  translations
-  valiselvitysFormDraft
-  loppuselvitysFormDraft
-  codeOptions
-  helpTexts
+  subTab: any
+  controller: any
+  avustushaku: any
+  decisionLiitteet: any
+  formDraft: any
+  vaUserSearch: any
+  koodistos: any
+  userInfo: any
+  environment: any
+  translations: any
+  valiselvitysFormDraft: any
+  loppuselvitysFormDraft: any
+  codeOptions: any
+  helpTexts: any
+}
+
+let initialStandardizedFieldsState: StandardizedFieldsState = {
+  status: 'LOADING',
+  values: undefined
 }
 
 export const EditorSelector = ({
@@ -51,7 +58,21 @@ export const EditorSelector = ({
       helpTexts
     }: EditorSelectorProps) => {
 
-    const f = createFormikHook()
+    const [standardizedFieldsState, setState] = useState<StandardizedFieldsState>(initialStandardizedFieldsState)
+    const f = createFormikHook(avustushaku.id)
+    useEffect(() => {
+      const fetchProps = async () => {
+        const values = await getStandardizedFields(avustushaku.id)
+
+        f.resetForm({
+          values
+        })
+
+        setState({values, status: 'LOADED'})
+      }
+
+      fetchProps()
+    }, [])
 
     let subTabContent
     switch (subTab) {
@@ -121,7 +142,9 @@ export const EditorSelector = ({
     }
 
     return (
-      <section id="editor-section">
+      standardizedFieldsState.status === 'LOADING'
+      ? <p>Loading</p>
+      : <section id="editor-section">
         <div id="editor-subtab-selector" className="section-container">
           <span onClick={createSubTabSelector("haku-editor")}
                 className={ClassNames({"selected": subTab === "haku-editor"})}>

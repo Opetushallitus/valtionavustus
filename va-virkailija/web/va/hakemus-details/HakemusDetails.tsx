@@ -5,12 +5,13 @@ import { HakemusArviointi } from './HakemusArviointi'
 import { Muutoshakemus } from './Muutoshakemus.jsx'
 import { Selvitys } from './Selvitys'
 import { Seuranta } from './Seuranta'
+import { getStandardizedFields } from 'va-common/web/va/standardized-form-fields/client'
 
 import './hakemusDetails.less'
 
 let initialStandardizedFieldsState: StandardizedFieldsState = {
   status: 'LOADING',
-  helpText: undefined
+  values: undefined
 }
 
 interface HakemusDetailsProps {
@@ -36,24 +37,17 @@ import { StandardizedFieldsState } from 'va-common/web/va/standardized-form-fiel
 export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuData, userInfo, loadingComments, showOthersScores, translations, environment, selectedHakemusAccessControl, subTab, helpTexts}: HakemusDetailsProps) => {
 
   const [standardizedFieldsState, setState] = useState<StandardizedFieldsState>(initialStandardizedFieldsState)
-  const f = createFormikHook()
+  const f = createFormikHook(avustushaku.id)
 
   useEffect(() => {
     const fetchProps = async () => {
-      const helpText = "HelpText response"
+      const values = await getStandardizedFields(avustushaku.id)
 
       f.resetForm({
-        values: { 
-          fi: {
-            helpText 
-          },
-          sv: {
-            helpText
-          }
-        }
+        values
       })
 
-      setState({helpText, status: 'LOADED'})
+      setState({values, status: 'LOADED'})
     }
 
     fetchProps()

@@ -229,6 +229,25 @@
                         (ok response)
                         (not-found))))
 
+(defn- post-avustushaku-standardized-fields []
+  (compojure-api/POST "/:avustushaku-id/standardized-fields" []
+                      :path-params [avustushaku-id :- Long]
+                      :body [avustushaku-standardized-fields (compojure-api/describe va-schema/AvustushakuStandardizedFields "Standardized avustushaku fields")]
+                      :return va-schema/AvustushakuStandardizedFields
+                      :summary "Update avustushaku standardized fields"
+                      (if-let [response (virkailija-db/update-avustushaku-standardized-fields avustushaku-id avustushaku-standardized-fields)]
+                        (ok response)
+                        (not-found))))
+
+(defn- get-avustushaku-standardized-fields []
+  (compojure-api/GET "/:avustushaku-id/standardized-fields" [] 
+                     :path-params [avustushaku-id :- Long]
+                     :return va-schema/AvustushakuStandardizedFields 
+                     :summary "Return avustushaku standardized fields"
+                       (if-let [response (virkailija-db/get-avustushaku-standardized-fields avustushaku-id)]
+                         (ok response)
+                         (not-found))))
+
 (defn- get-avustushaku []
   (compojure-api/GET "/:avustushaku-id" request
                      :path-params [avustushaku-id :- Long]
@@ -617,6 +636,8 @@
                          (put-avustushaku)
                          (post-avustushaku)
                          (get-avustushaku)
+                         (when (get-in config [:muutospaatosprosessi :enabled?]) (post-avustushaku-standardized-fields))
+                         (when (get-in config [:muutospaatosprosessi :enabled?]) (get-avustushaku-standardized-fields))
                          (when (get-in config [:email-api :enabled?]) (get-hakemus-email))
                          (when (get-in config [:email-api :enabled?]) (get-avustushaku-email))
                          (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemukset))

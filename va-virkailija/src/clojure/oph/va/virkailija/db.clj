@@ -28,6 +28,27 @@
       created-paatos
       ))))
 
+(defn update-avustushaku-standardized-fields [avustushaku-id standardized-fields]
+  (with-tx (fn [tx]
+    (let [updated-fields (first (query tx
+     "INSERT INTO virkailija.standardized_avustushaku
+          (avustushaku_id, help_text_fi, help_text_sv)
+        VALUES
+          (?, ?, ?)
+        ON CONFLICT (avustushaku_id) DO UPDATE 
+          SET help_text_fi = excluded.help_text_fi, 
+              help_text_sv = excluded.help_text_sv
+        RETURNING help_text_fi, help_text_sv"
+          [avustushaku-id (:help-text-fi standardized-fields) (:help-text-sv standardized-fields)]))]
+      updated-fields
+      ))))
+
+(defn get-avustushaku-standardized-fields [avustushaku-id]
+  (log/info (str "Get standardized avustushaku fields with id: " avustushaku-id))
+  (let [standardized-fields (query "SELECT help_text_fi, help_text_sv from virkailija.standardized_avustushaku WHERE avustushaku_id = ?" [avustushaku-id])]
+    (log/info (str "Succesfully fetched standardized avustushaku fields with id: " avustushaku-id))
+    (first standardized-fields)))
+
 (defn get-normalized-hakemus [hakemus-id]
   (log/info (str "Get normalized hakemus with id: " hakemus-id))
   (let [hakemukset (query "SELECT * from virkailija.normalized_hakemus WHERE hakemus_id = ?" [hakemus-id])]

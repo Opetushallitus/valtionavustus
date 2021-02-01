@@ -138,6 +138,12 @@
                           (s/optional-key :operational-unit-id) (s/maybe s/Int)
                           (s/optional-key :project-id) (s/maybe s/Int)})
 
+
+(s/defschema AvustushakuStandardizedFields {
+                                            :help-text-fi s/Str
+                                            :help-text-sv s/Str
+                                            })
+
 (s/defschema HakemusStatus
   "Status from the applicant point of view"
   (s/enum "new" "draft" "submitted" "pending_change_request"

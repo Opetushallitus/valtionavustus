@@ -30,6 +30,7 @@ interface FormEditorProps {
   onFormChange: any 
   controller: any
   f: FormikHook
+  disableStandardizedFields: boolean
 }
 
 export const FormEditor = (props: FormEditorProps) => {
@@ -41,7 +42,8 @@ export const FormEditor = (props: FormEditorProps) => {
     onFormChange,
     environment,
     controller: hakuAdminController,
-    f
+    f,
+    disableStandardizedFields
   } = props
 
   const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
@@ -73,7 +75,7 @@ export const FormEditor = (props: FormEditorProps) => {
 
   return formState ?
     <div id="form-editor">
-    <StandardizedFormFields f={f} environment={environment}/>
+    {!disableStandardizedFields && <StandardizedFormFields f={f} environment={environment}/>}
       <FormEdit {...formElementProps} />
     </div> : <span/>
 }

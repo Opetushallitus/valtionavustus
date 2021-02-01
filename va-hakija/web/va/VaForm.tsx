@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import * as queryString from 'query-string'
 import _ from 'lodash'
 
 // @ts-ignore
@@ -21,6 +22,7 @@ import './style/main.less'
 
 import { createFormikHook } from 'va-common/web/va/standardized-form-fields/formik'
 import { StandardizedFieldsState } from 'va-common/web/va/standardized-form-fields/types'
+import { getStandardizedHakemusFields } from 'va-common/web/va/standardized-form-fields/client'
 
 const allowedStatuses = ["officer_edit", "submitted", "pending_change_request", "applicant_edit"]
 
@@ -36,30 +38,27 @@ interface VaFormProps {
 
 let initialStandardizedFieldsState: StandardizedFieldsState = {
   status: 'LOADING',
-  helpText: undefined
+  values: undefined
 }
 
 export const VaForm = ({controller, state, hakemusType, isExpired, refuseGrant, modifyApplication, useBusinessIdSearch }: VaFormProps) => {
   const [standardizedFieldsState, setState] = useState<StandardizedFieldsState>(initialStandardizedFieldsState)
-  const f = createFormikHook()
+  const f = createFormikHook(state.avustushaku.id)
   const environment =  state.configuration.environment
+  const query = queryString.parse(location.search)
+  const userKey = query.hakemus
 
   useEffect(() => {
     const fetchProps = async () => {
-      const helpText = "HelpText response"
+
+
+      const values = await getStandardizedHakemusFields(state.avustushaku.id, userKey)
 
       f.resetForm({
-        values: { 
-          fi: {
-            helpText 
-          },
-          sv: {
-            helpText
-          }
-        }
+        values
       })
 
-      setState({helpText, status: 'LOADED'})
+      setState({values, status: 'LOADED'})
     }
 
     fetchProps()

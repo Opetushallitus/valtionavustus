@@ -1,17 +1,14 @@
 import { FormikProps } from 'formik'
 
-interface StandardizedFormValuesPerLanguage {
-  helpText: string
-}
 export interface StandardizedFormValues {
-  fi: StandardizedFormValuesPerLanguage
-  sv: StandardizedFormValuesPerLanguage
+  "help-text-fi": string 
+  "help-text-sv": string
 }
 
 export type FormikHook = FormikProps<StandardizedFormValues>
 
 export type StandardizedFieldsState = {
   status: 'LOADED' | 'LOADING'
-  helpText?: string
+  values?: StandardizedFormValues
 }
 export type Language = 'fi' | 'sv'
