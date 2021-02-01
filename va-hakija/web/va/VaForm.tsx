@@ -51,8 +51,15 @@ export const VaForm = ({controller, state, hakemusType, isExpired, refuseGrant, 
   useEffect(() => {
     const fetchProps = async () => {
 
-
-      const values = await getStandardizedHakemusFields(state.avustushaku.id, userKey)
+      let values;
+      try {
+      values = await getStandardizedHakemusFields(state.avustushaku.id, userKey)
+      } catch (err) {
+        values = {
+          "help-text-fi": "ERROR LOADING STANDARDIZED FIELD",
+          "help-text-sv": "ERROR LOADING STANDARDIZED FIELD",
+        }
+      }
 
       f.resetForm({
         values
