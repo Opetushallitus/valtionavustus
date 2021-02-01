@@ -1,4 +1,7 @@
 adminusers:
+  kenkku:
+    state: present
+    name: Tero Keinänen
   maximilian:
     state: absent
     name: Maximilian Remming
