@@ -66,7 +66,7 @@ export const FormEditorContainer = (props: FormEditorContainerProps) => {
         </div>
       </div>
       <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} f={f} environment={environment} disableStandardizedFields={false}/>
-      { formDraft ? <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraft={formDraft} saveStandardizedFields={f.handleSubmit} /> : null }
+      { formDraft ? <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraft={formDraft} f={f} /> : null }
     </section>
   )
 }
