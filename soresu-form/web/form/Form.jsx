@@ -19,6 +19,7 @@ export default class Form extends React.Component {
     const values = state.saveStatus.values
     const modifyApplication = this.props.modifyApplication
     const environment = this.props.environment
+    const standardizedFormFieldsEnabled = this.props.standardizedFormFieldsEnabled
 
     const renderField = function(field, renderingParameters) {
       const htmlId = controller.constructHtmlId(fields, field.id)
@@ -70,11 +71,11 @@ export default class Form extends React.Component {
       }
     }
 
-    const muutospaatosprosessiEnabled =
+    const enableStandardizedFormFields =
       (environment["muutospaatosprosessi"] &&
-        environment["muutospaatosprosessi"]["enabled?"]) || false
+        environment["muutospaatosprosessi"]["enabled?"]) && standardizedFormFieldsEnabled
     return ( 
-      muutospaatosprosessiEnabled
+      enableStandardizedFormFields
       ? <form className="soresu-form">
           {renderField(fields[0])}
           {renderField(fields[1])}

@@ -5,7 +5,7 @@ import BusinessIdSearch from "./component/BusinessIdSearch.jsx"
 
 export default class FormContainer extends React.Component {
   render() {
-    const {state, controller, formContainerClass, useBusinessIdSearch, environment, f} = this.props
+    const { state, controller, formContainerClass, useBusinessIdSearch, environment, standardizedFormFieldsEnabled } = this.props
     const headerElements = _.get(this.props, "headerElements", "")
     const containerId = _.get(this.props, "containerId", "container")
     const formElementProps = {
@@ -13,7 +13,8 @@ export default class FormContainer extends React.Component {
       state,
       infoElementValues: this.props.infoElementValues,
       modifyApplication: this.props.modifyApplication,
-      environment
+      environment,
+      standardizedFormFieldsEnabled
     }
     const formElement = React.createElement(formContainerClass, formElementProps)
     const { embedForMuutoshakemus } = state.configuration

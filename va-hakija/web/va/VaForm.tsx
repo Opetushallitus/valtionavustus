@@ -82,6 +82,7 @@ export const VaForm = ({controller, state, hakemusType, isExpired, refuseGrant, 
                        useBusinessIdSearch={useBusinessIdSearch}
                        modifyApplication={modifyApplication}
                        environment={environment}
+                       standardizedFormFieldsEnabled={true}
         />
       </div>
     )

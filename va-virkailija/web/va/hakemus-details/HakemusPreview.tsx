@@ -88,7 +88,7 @@ export const HakemusPreview = ({ hakemus, avustushaku, hakuData, translations, e
                        </small>,
                        <GrantRefusedNotice application={hakemus}
                                            key="grant-refused" />],
-      environment
+      environment,
     }
 
     return  (
@@ -125,7 +125,6 @@ export const HakemusPreview = ({ hakemus, avustushaku, hakuData, translations, e
       FormRules.applyRulesToForm(formSpecification, effectiveForm, currentAnswers)
       FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, combinedAnswersForPopulatingGrowingFieldsets, false)
       hakemusFormState.saveStatus.values = getCurrentAnswers(hakemus)
-      console.log('hakemus', hakemus)
       return hakemusFormState
     }
   }
