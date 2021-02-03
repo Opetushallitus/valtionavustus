@@ -29,9 +29,10 @@ interface VaFormProps {
   refuseGrant: boolean
   modifyApplication: boolean
   useBusinessIdSearch: boolean
+  standardizedFormFieldsEnabled?: boolean
 }
 
-export const VaForm = ({controller, state, hakemusType, isExpired, refuseGrant, modifyApplication, useBusinessIdSearch }: VaFormProps) => {
+export const VaForm = ({controller, state, hakemusType, isExpired, refuseGrant, modifyApplication, useBusinessIdSearch, standardizedFormFieldsEnabled }: VaFormProps) => {
   const environment =  state.configuration.environment
 
 
@@ -82,7 +83,7 @@ export const VaForm = ({controller, state, hakemusType, isExpired, refuseGrant, 
                        useBusinessIdSearch={useBusinessIdSearch}
                        modifyApplication={modifyApplication}
                        environment={environment}
-                       standardizedFormFieldsEnabled={true}
+                       standardizedFormFieldsEnabled={standardizedFormFieldsEnabled}
         />
       </div>
     )

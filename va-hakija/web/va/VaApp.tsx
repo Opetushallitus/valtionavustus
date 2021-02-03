@@ -129,7 +129,7 @@ function initVaFormController() {
   const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state) {
-    return <VaForm controller={controller} isExpired={false} state={state} hakemusType="hakemus" useBusinessIdSearch={true} refuseGrant={urlContent.parsedQuery["refuse-grant"] === "true"} modifyApplication={urlContent.parsedQuery["modify-application"]}/>
+    return <VaForm controller={controller} isExpired={false} state={state} hakemusType="hakemus" useBusinessIdSearch={true} refuseGrant={urlContent.parsedQuery["refuse-grant"] === "true"} modifyApplication={urlContent.parsedQuery["modify-application"]} standardizedFormFieldsEnabled={true}/>
   }}
 }
 

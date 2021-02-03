@@ -12,7 +12,7 @@ import FormController from 'soresu-form/web/form/FormController'
 import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
 import ResponseParser from 'soresu-form/web/form/ResponseParser'
 
-import VaForm from './VaForm'
+import { VaForm } from './VaForm'
 import VaUrlCreator from './VaUrlCreator'
 import VaComponentFactory from 'va-common/web/va/VaComponentFactory'
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
