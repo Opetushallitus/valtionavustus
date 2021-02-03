@@ -29,7 +29,7 @@ interface FormEditorProps {
   formDraft: any 
   onFormChange: any 
   controller: any
-  disableStandardizedFields: boolean
+  standardizedFormFieldsEnabled?: boolean
   standardizedFormValues: StandardizedFormValues
 }
 
@@ -42,7 +42,7 @@ export const FormEditor = (props: FormEditorProps) => {
     onFormChange,
     environment,
     controller: hakuAdminController,
-    disableStandardizedFields,
+    standardizedFormFieldsEnabled,
     standardizedFormValues
   } = props
 
@@ -75,7 +75,7 @@ export const FormEditor = (props: FormEditorProps) => {
 
   return formState ?
     <div id="form-editor">
-    {!disableStandardizedFields && <StandardizedFormFields controller={hakuAdminController} environment={environment} standardizedFormValues={standardizedFormValues}/>}
+    {standardizedFormFieldsEnabled && <StandardizedFormFields controller={hakuAdminController} environment={environment} standardizedFormValues={standardizedFormValues}/>}
       <FormEdit {...formElementProps} />
     </div> : <span/>
 }

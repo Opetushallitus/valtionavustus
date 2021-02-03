@@ -142,7 +142,7 @@ export default class SelvitysFormEditor extends Component<SelvitysFormProps> {
             </a>
           </div>
         </div>
-        <FormEditor environment={environment} avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} disableStandardizedFields={true} standardizedFormValues={standardizedFormValues}/>
+        <FormEditor environment={environment} avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} standardizedFormValues={standardizedFormValues}/>
         <div className="form-json-editor">
           <h3>Hakulomakkeen sisältö</h3>
           <span className="error">{parseError}</span>

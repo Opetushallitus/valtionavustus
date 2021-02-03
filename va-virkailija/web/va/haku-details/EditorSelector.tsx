@@ -73,6 +73,7 @@ export const EditorSelector = ({
                                              controller={controller}
                                              helpTexts={helpTexts} 
                                              standardizedFormValues={standardizedFormValues}
+                                             standardizedFormFieldsEnabled={true}
                                              />
         break
       case "decision":

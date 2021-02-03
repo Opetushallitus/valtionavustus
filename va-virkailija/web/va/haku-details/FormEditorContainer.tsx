@@ -16,6 +16,7 @@ interface FormEditorContainerProps {
   controller: any
   helpTexts: any
   environment: any
+  standardizedFormFieldsEnabled?: boolean
   standardizedFormValues: StandardizedFormValues
 }
 
@@ -28,6 +29,7 @@ export const FormEditorContainer = (props: FormEditorContainerProps) => {
   const updatedAt = _.get(avustushaku, "formContent.updated_at")
   const helpTexts = props.helpTexts
   const environment = props.environment
+  const standardizedFormFieldsEnabled = props.standardizedFormFieldsEnabled
   const standardizedFormValues = props.standardizedFormValues
 
   const hakuUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/?lang=fi"
@@ -66,7 +68,7 @@ export const FormEditorContainer = (props: FormEditorContainerProps) => {
           <a target="haku-preview-fi" href={previewUrlFi}>Suomeksi</a><span className="link-divider"/><a target="haku-preview-sv" href={previewUrlSv}>Ruotsiksi</a>
         </div>
       </div>
-      <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} environment={environment} disableStandardizedFields={false} standardizedFormValues={standardizedFormValues}/>
+      <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} environment={environment} standardizedFormFieldsEnabled={standardizedFormFieldsEnabled} standardizedFormValues={standardizedFormValues}/>
       { formDraft ? <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraft={formDraft} /> : null }
     </section>
   )
