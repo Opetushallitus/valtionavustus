@@ -60,6 +60,9 @@
     (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
     (first hakemukset)))
 
+(defn get-normalized-hakemus-contact-email [hakemus-id]
+  (:contact-email (get-normalized-hakemus hakemus-id)))
+
 (defn get-muutoshakemukset [hakemus-id]
   (log/info (str "Get muutoshakemus with hakemus id: " hakemus-id))
   (let [muutoshakemukset (jdbc/with-db-transaction [connection {:datasource (get-datasource)}]

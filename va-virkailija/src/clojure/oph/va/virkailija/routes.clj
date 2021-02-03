@@ -126,7 +126,7 @@
                         (let [{:keys [avustushaku hakemus]} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)
                               roles (hakija-api/get-avustushaku-roles avustushaku-id)
                               arvio (virkailija-db/get-arvio hakemus-id)
-                              contact-email (:contact-email (virkailija-db/get-normalized-hakemus hakemus-id))
+                              contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
                               identity (authentication/get-request-identity request)
                               decider (str (:first-name identity) " " (:surname identity))
                               paatos (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider)

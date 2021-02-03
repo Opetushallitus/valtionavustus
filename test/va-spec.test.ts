@@ -1,10 +1,11 @@
-import { Page, Browser } from "puppeteer"
+import { Browser, Page } from "puppeteer"
 import * as moment from 'moment'
 
 import {
   VIRKAILIJA_URL,
   HAKIJA_URL,
   createValidCopyOfEsimerkkihakuAndReturnTheNewId,
+  getAcceptedPäätösEmails,
   getLinkToHakemusFromSentEmails,
   mkBrowser,
   getMuutoshakemusPaatosEmails,
@@ -54,6 +55,7 @@ import {
   typeValueInFieldAndExpectNoValidationError,
   gotoVäliselvitysTab,
   waitForElementWithText,
+  waitForElementWIthTestId,
   fillAndSendVäliselvityspyyntö,
   downloadExcelExport,
   clickFormSaveAndWait,
@@ -616,6 +618,60 @@ etunimi.sukunimi@oph.fi
       page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/change-requests`),
       page.click("[data-test-id='täydennyspyyntö__lähetä']"),
     ])
+  }
+
+  it("allows resending päätös emails from päätös tab", async () => {
+    const { avustushakuID, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, {
+      registerNumber: "420/2021",
+      avustushakuName: `Testiavustushaku ${randomString()} - ${moment(new Date()).format('YYYY-MM-DD hh:mm:ss:SSSS')}`
+    }, {
+      contactPersonEmail: "yrjo.yhteyshenkilo@example.com",
+      contactPersonName: "Yrjö Yhteyshenkilö",
+      contactPersonPhoneNumber: "0501234567",
+      projectName: "Hanke päätöksen uudelleenlähetyksen testaamiseksi",
+    })
+    const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
+
+    let emails = await getAcceptedPäätösEmails(avustushakuID, hakemusID)
+    expect(emails).toHaveLength(1)
+    let email = lastOrFail(emails)
+    expect(email["to-address"]).toEqual([
+      "yrjo.yhteyshenkilo@example.com",
+      "akaan.kaupunki@akaa.fi"
+    ])
+
+    await resendPäätökset(avustushakuID)
+    emails = await getAcceptedPäätösEmails(avustushakuID, hakemusID)
+    expect(emails).toHaveLength(2)
+    email = lastOrFail(emails)
+    expect(email["to-address"]).toEqual([
+      "yrjo.yhteyshenkilo@example.com",
+      "akaan.kaupunki@akaa.fi"
+    ])
+
+    await changeContactPersonEmail(page, linkToMuutoshakemus, "uusi.yhteyshenkilo@example.com")
+    await resendPäätökset(avustushakuID)
+
+    emails = await getAcceptedPäätösEmails(avustushakuID, hakemusID)
+    expect(emails).toHaveLength(3)
+    email = lastOrFail(emails)
+    expect(email["to-address"]).toEqual([
+      "uusi.yhteyshenkilo@example.com",
+      "akaan.kaupunki@akaa.fi"
+    ])
+  })
+
+  async function resendPäätökset(avustushakuID: number): Promise<void> {
+    await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
+    await clickElementWithText(page, "button", "Lähetä 1 päätöstä uudelleen")
+    await clickElementWithText(page, "button", "Vahvista päätösten uudellenlähetys")
+    await waitForElementWIthTestId(page, "resend-completed-message")
+  }
+
+  async function changeContactPersonEmail(page: Page, linkToMuutoshakemus: string, email: string): Promise<void> {
+    await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
+    await clearAndType(page, '#muutoshakemus__email', email)
+    await clickElement(page, "#send-muutospyynto-button")
   }
 
   it("Allows modification of applications after they've been resolved", async function () {
@@ -1190,3 +1246,9 @@ etunimi.sukunimi@oph.fi
     })
   })
 })
+
+
+function lastOrFail<T>(xs: ReadonlyArray<T>): T {
+  if (xs.length === 0) throw Error("Can't get last element of empty list")
+  return xs[xs.length - 1]
+}

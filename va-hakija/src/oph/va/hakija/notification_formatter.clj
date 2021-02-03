@@ -2,10 +2,8 @@
   (:use [clojure.tools.trace :only [trace]]
         [clojure.pprint :only [pprint]])
    (:require [oph.common.datetime :as datetime]
+             [oph.common.email :refer [legacy-email-field-ids]]
              [oph.soresu.form.formutil :refer :all]))
-
-(def legacy-email-field-ids
-  ["organization-email" "primary-email" "signature-email"])
 
 (defn is-notification-email-field [field]
   (or

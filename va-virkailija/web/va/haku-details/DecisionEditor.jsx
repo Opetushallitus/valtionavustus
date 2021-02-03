@@ -312,7 +312,7 @@ class ResendDecisions extends Component {
     return (
       <div>
         {this.state.resending && <div><img src="/img/ajax-loader.gif"/>&nbsp;<strong>Päätöksiä lähetetään uudelleen...</strong></div>}
-        {this.state.completed && <div style={{fontWeight:'bold',marginBottom:10,marginTop:10}}>Päätökset lähetetty uudelleen</div>
+        {this.state.completed && <div style={{fontWeight:'bold',marginBottom:10,marginTop:10}} data-test-id="resend-completed-message">Päätökset lähetetty uudelleen</div>
         }
         {!this.state.completed &&
           <div>

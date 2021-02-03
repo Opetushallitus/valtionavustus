@@ -2,7 +2,14 @@ import * as xlsx from"xlsx"
 import * as path from "path"
 import * as yup from "yup"
 import axios from "axios"
-import { launch, Browser, Page, FrameBase } from "puppeteer"
+import {
+  launch,
+  Browser,
+  Page,
+  FrameBase,
+  ConsoleMessage,
+  ElementHandle
+} from "puppeteer"
 import * as assert from "assert"
 import * as fs from "fs"
 import { Moment } from "moment"
@@ -67,6 +74,7 @@ const getEmails = (emailType: string) => (avustushakuID: number, hakemusID: numb
 export const getValmistelijaEmails = getEmails("notify-valmistelija-of-new-muutoshakemus")
 export const getMuutoshakemusPaatosEmails = getEmails("muutoshakemus-paatos")
 export const getMuutoshakemusEmails = getEmails("paatos-refuse")
+export const getAcceptedPäätösEmails = getMuutoshakemusEmails
 export const getTäydennyspyyntöEmails: (avustushakuID: number, hakemusID: number) => Promise<Email[]> = getEmails("change-request")
 
 export async function getNewHakemusEmails(avustushakuID: number): Promise<Email[]> {
@@ -678,8 +686,12 @@ export async function acceptHakemus(page: Page, avustushakuID: number, hakemusID
 }
 
 export async function clickElementWithTestId(page: Page, testId: string) {
-  const element = await page.waitForSelector(`[data-test-id='${testId}']`, {visible: true, timeout: 5 * 1000})
+  const element = await waitForElementWIthTestId(page, testId)
   await element.click()
+}
+
+export async function waitForElementWIthTestId(page: Page, testId: string): Promise<ElementHandle> {
+  return await page.waitForSelector(`[data-test-id='${testId}']`, {visible: true, timeout: 5 * 1000})
 }
 
 export async function expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID: number, hakemusID: number, valueForNutshellField: string) {

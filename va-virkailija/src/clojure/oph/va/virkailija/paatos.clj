@@ -6,7 +6,7 @@
       [oph.soresu.form.formutil :as formutil]
       [oph.va.decision-liitteet :as decision-liitteet]
       [oph.va.virkailija.email :as email]
-      [oph.common.email :refer [refuse-url]]
+      [oph.common.email :refer [refuse-url legacy-email-field-ids legacy-email-field-ids-without-contact-email]]
       [oph.va.virkailija.schema :as virkailija-schema]
       [oph.va.virkailija.hakudata :as hakudata]
       [oph.va.virkailija.db :as virkailija-db]
@@ -19,21 +19,32 @@
       [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]
       [oph.va.virkailija.authentication :as authentication]))
 
-(defn is-notification-email-field? [field]
+(defn is-notification-email-field? [field has-normalized-contact-email?]
+  (let [email-fields (if has-normalized-contact-email?
+                       legacy-email-field-ids-without-contact-email
+                       legacy-email-field-ids)]
       (or
         (formutil/has-field-type? "vaEmailNotification" field)
         ;;This array is for old-style email-fields which did not yet have the :vaEmailNotification field-type
-        (some #(= (:key field) %) ["organization-email" "primary-email" "signature-email"])))
+        (some #(= (:key field) %) email-fields))))
 
-(defn- emails-from-answers [answers]
-       (map :value (formutil/filter-values #(is-notification-email-field? %) (answers :value))))
+(defn- emails-from-answers [answers has-normalized-contact-email?]
+  (let [email-answers (formutil/filter-values #(is-notification-email-field? % has-normalized-contact-email?) (answers :value))
+        emails (vec (remove nil? (distinct (map :value email-answers))))]
+    emails))
+
+(defn- emails-for-hakemus [hakemus contact-email]
+  (let [submission (hakija-api/get-hakemus-submission hakemus)
+        emails (emails-from-answers (:answers submission) (some? contact-email))]
+    (if (some? contact-email)
+      (concat [contact-email] emails)
+      emails)))
 
 (defn- paatos-emails [hakemus-id]
        (let [hakemus (hakija-api/get-hakemus hakemus-id)
-             submission (hakija-api/get-hakemus-submission hakemus)
-             answers (:answers submission)
-             emails (vec (remove nil? (distinct (emails-from-answers answers))))]
-            emails))
+             contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
+             emails (emails-for-hakemus hakemus contact-email)]
+         emails))
 
 (defn send-paatos [hakemus-id emails batch-id identity]
       (let [hakemus (hakija-api/get-hakemus hakemus-id)
@@ -134,12 +145,11 @@
 (defn send-selvitys-for-all [avustushaku-id selvitys-type hakemus-id]
       (log/info "send-loppuselvitys-for-all" hakemus-id)
       (let [hakemus (hakija-api/get-hakemus hakemus-id)
-            submission (hakija-api/get-hakemus-submission hakemus)
+            contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
             avustushaku (hakija-api/get-avustushaku avustushaku-id)
             roles (hakija-api/get-avustushaku-roles avustushaku-id)
             arvio (virkailija-db/get-arvio hakemus-id)
-            answers (:answers submission)
-            emails (vec (remove nil? (distinct (emails-from-answers answers))))]
+            emails (emails-for-hakemus hakemus contact-email)]
            (email/send-selvitys-notification! emails avustushaku hakemus selvitys-type arvio roles)))
 
 (defn get-paatos-email-status

@@ -27,6 +27,12 @@
 
 (def mail-chan (chan (:queue-size smtp-config)))
 
+(def contact-email-field-id "primary-email")
+(def legacy-email-field-ids
+  ["organization-email" contact-email-field-id "signature-email"])
+(def legacy-email-field-ids-without-contact-email
+  (remove #(= contact-email-field-id %) legacy-email-field-ids))
+
 (defn- try-send! [time multiplier max-time send-fn]
   (if (>= time max-time)
     (do
