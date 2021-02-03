@@ -8,8 +8,6 @@ import InfoElement from './component/InfoElement.jsx'
 import WrapperComponent from './component/wrapper/WrapperComponent.jsx'
 import InputValueStorage from './InputValueStorage.js'
 
-import { StandardizedFormFields } from './StandardizedFormFields'
-
 export default class Form extends React.Component {
   render() {
     const infoElementValues = this.props.infoElementValues.content
@@ -72,12 +70,21 @@ export default class Form extends React.Component {
       }
     }
 
+    const muutospaatosprosessiEnabled =
+      (environment["muutospaatosprosessi"] &&
+        environment["muutospaatosprosessi"]["enabled?"]) || false
     return ( 
-      <form className="soresu-form">
-      <StandardizedFormFields standardizedFormValues={standardizedFormValues} environment={environment} controller={controller} lang={state.configuration.lang}/>
-
+      muutospaatosprosessiEnabled
+      ? <form className="soresu-form">
+          {renderField(fields[0])}
+          {renderField(fields[1])}
+          <p className="soresu-info-element">{standardizedFormValues["help-text-" + state.configuration.lang]}</p>
+          { _.map(fields.slice(3), f => renderField(f))}
+          
+        </form>
+      : <form className="soresu-form">
       { _.map(fields, f => renderField(f))}
-    </form>)
+        </form>)
 
     function createInfoElement(fieldProperties) {
       return <InfoElement {...fieldProperties} values={infoElementValues} answersObject={values}/>
