@@ -15,13 +15,12 @@ export default class Form extends React.Component {
     const infoElementValues = this.props.infoElementValues.content
     const controller = this.props.controller
     const state = this.props.state
-    const standardizedFields = state.form.standardizedFields
+    const standardizedFormValues = state.standardizedFormValues
     const fields = state.form.content
     const validationErrors = state.form.validationErrors
     const values = state.saveStatus.values
     const modifyApplication = this.props.modifyApplication
     const environment = this.props.environment
-    const f = this.props.f
 
     const renderField = function(field, renderingParameters) {
       const htmlId = controller.constructHtmlId(fields, field.id)
@@ -75,7 +74,7 @@ export default class Form extends React.Component {
 
     return ( 
       <form className="soresu-form">
-      <StandardizedFormFields f={f} environment={environment} lang={state.configuration.lang}/>
+      <StandardizedFormFields standardizedFormValues={standardizedFormValues} environment={environment} controller={controller} lang={state.configuration.lang}/>
 
       { _.map(fields, f => renderField(f))}
     </form>)

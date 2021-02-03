@@ -12,8 +12,6 @@ import TraineeDayEditComponentFactory from './TraineeDayEditComponentFactory'
 
 import '../style/traineeday.less'
 
-import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
-
 interface TraineeDayEditingProps {
   controller: any
   avustushaku: any
@@ -22,10 +20,9 @@ interface TraineeDayEditingProps {
   translations: any
   allowEditing: any
   environment: any
-  f: FormikHook
 }
 
-export const TraineeDayEditing = ({controller, avustushaku, hakuData, hakemus, translations, allowEditing, environment, f}: TraineeDayEditingProps) => {
+export const TraineeDayEditing = ({controller, avustushaku, hakuData, hakemus, translations, allowEditing, environment}: TraineeDayEditingProps) => {
     const traineeDayCalcs = VaTraineeDayUtil.collectCalculatorSpecifications(hakuData.form.content, hakemus.answers)
 
     if (_.isEmpty(traineeDayCalcs)) {
@@ -65,7 +62,6 @@ export const TraineeDayEditing = ({controller, avustushaku, hakuData, hakemus, t
       controller: new TraineeDayEditFormController(controller, new TraineeDayEditComponentFactory(), avustushaku, traineeDayEditFormState.form, hakemus, allowEditing),
       containerId: "trainee-day-edit-container",
       headerElements: [],
-      f,
       environment
     }
 

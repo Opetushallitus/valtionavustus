@@ -5,7 +5,8 @@ import DateUtil from 'soresu-form/web/DateUtil'
 
 import { FormEditor } from './FormEditor'
 import FormJsonEditor from './FormJsonEditor'
-import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
+
+import { StandardizedFormValues } from 'va-common/web/va/standardized-form-fields/types'
 
 interface FormEditorContainerProps { 
   avustushaku: any
@@ -15,7 +16,7 @@ interface FormEditorContainerProps {
   controller: any
   helpTexts: any
   environment: any
-  f: FormikHook
+  standardizedFormValues: StandardizedFormValues
 }
 
 export const FormEditorContainer = (props: FormEditorContainerProps) => {
@@ -27,7 +28,7 @@ export const FormEditorContainer = (props: FormEditorContainerProps) => {
   const updatedAt = _.get(avustushaku, "formContent.updated_at")
   const helpTexts = props.helpTexts
   const environment = props.environment
-  const f = props.f
+  const standardizedFormValues = props.standardizedFormValues
 
   const hakuUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/?lang=fi"
   const hakuUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/?lang=sv"
@@ -65,8 +66,8 @@ export const FormEditorContainer = (props: FormEditorContainerProps) => {
           <a target="haku-preview-fi" href={previewUrlFi}>Suomeksi</a><span className="link-divider"/><a target="haku-preview-sv" href={previewUrlSv}>Ruotsiksi</a>
         </div>
       </div>
-      <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} f={f} environment={environment} disableStandardizedFields={false}/>
-      { formDraft ? <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraft={formDraft} f={f} /> : null }
+      <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} environment={environment} disableStandardizedFields={false} standardizedFormValues={standardizedFormValues}/>
+      { formDraft ? <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraft={formDraft} /> : null }
     </section>
   )
 }

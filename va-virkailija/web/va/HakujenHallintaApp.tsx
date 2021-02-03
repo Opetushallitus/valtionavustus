@@ -1,6 +1,6 @@
 import "soresu-form/web/polyfills"
 
-import React, { Component } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
 import queryString from 'query-string'
 
@@ -14,14 +14,19 @@ import './style/virkailija.less'
 import './style/topbar.less'
 import './style/admin.less'
 
-export default class AdminApp extends Component {
-  render() {
-    const {state, controller} = this.props
+
+interface AdminAppProps {
+  state: any
+  controller: any
+}
+
+export const AdminApp = ({state, controller}: AdminAppProps) => {
     const environment =  state.environment
     const selectedHaku = state.selectedHaku ? state.selectedHaku : {}
     const translations = state.translations
     const codeOptions = state.codeOptions
     const helpTexts = state.helpTexts
+
     return (
       <section>
         <TopBar activeTab="admin" environment={environment} state={state}/>
@@ -44,11 +49,11 @@ export default class AdminApp extends Component {
                           controller={controller}
                           translations={translations}
                           codeOptions={codeOptions}
+                          standardizedFormValues={state.standardizedFormValues}
                           helpTexts={helpTexts} />
         </section>
       </section>
     )
-  }
 }
 
 const develMode = queryString.parse(location.search).devel === 'true'

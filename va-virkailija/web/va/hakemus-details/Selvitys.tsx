@@ -7,8 +7,6 @@ import SelvitysEmail from './SelvitysEmail.jsx'
 import PresenterComment from './PresenterComment.jsx'
 import ApplicationPayments from './ApplicationPayments.jsx'
 
-import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
-
 interface SelvitysProps {
   controller: any
   hakemus: any
@@ -21,10 +19,9 @@ interface SelvitysProps {
   presenterCommentHelpText: any
   selvitysLinkHelpText: any
   environment: any
-  f: FormikHook
 }
 
-export const Selvitys = ({controller, hakemus, avustushaku, translations, selvitysType, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText, environment, f}: SelvitysProps) => {
+export const Selvitys = ({controller, hakemus, avustushaku, translations, selvitysType, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText, environment}: SelvitysProps) => {
     const hasSelvitys = _.has(hakemus,`selvitys.${selvitysType}.answers`)
     const preview = _.isEqual(selvitysType, 'valiselvitys')
     const selvitysHakemus = _.get(hakemus,`selvitys.${selvitysType}`)
@@ -40,7 +37,6 @@ export const Selvitys = ({controller, hakemus, avustushaku, translations, selvit
                                          selvitysHakemus={selvitysHakemus}
                                          form={form}
                                          environment={environment}
-                                         f={f}
         />}
         {multibatchEnabled && avustushaku.content["multiplemaksuera"] &&
           <ApplicationPayments application={hakemus}

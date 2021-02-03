@@ -5,26 +5,20 @@ import ReactDOM from "react-dom"
 import Bacon from "baconjs"
 import queryString from "query-string"
 
-// @ts-ignore
 import HttpUtil from "soresu-form/web/HttpUtil"
 
-// @ts-ignore
 import FormController from "soresu-form/web/form/FormController"
-// @ts-ignore
 import FieldUpdateHandler from "soresu-form/web/form/FieldUpdateHandler"
-// @ts-ignore
 import ResponseParser from "soresu-form/web/form/ResponseParser"
 
 import { VaForm } from "./VaForm"
 import VaUrlCreator from "./VaUrlCreator"
-// @ts-ignore
 import VaComponentFactory from "va-common/web/va/VaComponentFactory"
-// @ts-ignore
 import VaSyntaxValidator from "va-common/web/va/VaSyntaxValidator"
-// @ts-ignore
 import VaPreviewComponentFactory from "va-common/web/va/VaPreviewComponentFactory"
-// @ts-ignore
 import VaBudgetCalculator from "va-common/web/va/VaBudgetCalculator"
+
+import { getStandardizedHakemusFields } from "va-common/web/va/standardized-form-fields/client"
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 
@@ -72,14 +66,16 @@ const query = queryString.parse(location.search)
 const urlContent = { parsedQuery: query, location: location }
 const develMode =  query.devel === "true"
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
+const userKey = query.hakemus
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
 const environmentP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.environmentConfigUrl()))
-
+const standardizedFormValuesP = Bacon.fromPromise(getStandardizedHakemusFields(avustusHakuId, userKey))
 
 function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP
+  template.standardizedFormValues = standardizedFormValuesP
   template.configuration.environment = environmentP
-  template.saveStatus.hakemusId = query.hakemus
+  template.saveStatus.hakemusId = userKey
   template.token = query.token
 }
 

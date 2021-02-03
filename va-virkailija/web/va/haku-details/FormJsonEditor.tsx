@@ -1,18 +1,14 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 
-import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
-
 interface FormJsonEditorProps {
   controller: any
   avustushaku: any
   formDraft: any
-  f: FormikHook
 }
 
 export default class FormJsonEditor extends Component<FormJsonEditorProps> {
   render() {
-    const f = this.props.f
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
     const formDraft = this.props.formDraft
@@ -21,7 +17,6 @@ export default class FormJsonEditor extends Component<FormJsonEditorProps> {
       controller.formOnChangeListener(avustushaku, e.target.value)
     }
     const onClick = async () => {
-      await f.handleSubmit()
       controller.saveForm(avustushaku, formDraft)
     }
     const scrollToTop = () => {
@@ -35,8 +30,7 @@ export default class FormJsonEditor extends Component<FormJsonEditorProps> {
     } catch (error) {
       parseError = error.toString()
     }
-    const submitDisabled = f.isSubmitting || f.isValidating || !(f.isValid && f.dirty)
-    const disableSave = (!allowSave() || !formHasBeenEdited()) && submitDisabled
+    const disableSave = !allowSave() || !formHasBeenEdited()
 
     return formDraft ?
       <div className="form-json-editor">

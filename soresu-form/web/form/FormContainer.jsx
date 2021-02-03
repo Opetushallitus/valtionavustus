@@ -13,8 +13,7 @@ export default class FormContainer extends React.Component {
       state,
       infoElementValues: this.props.infoElementValues,
       modifyApplication: this.props.modifyApplication,
-      environment,
-      f
+      environment
     }
     const formElement = React.createElement(formContainerClass, formElementProps)
     const { embedForMuutoshakemus } = state.configuration

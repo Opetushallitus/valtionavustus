@@ -16,6 +16,11 @@ import HakuStatuses from './haku-details/HakuStatuses'
 import HakuPhases from './haku-details/HakuPhases'
 import queryString from 'query-string'
 
+import { 
+  getStandardizedFormValues,
+  postStandardizedFields 
+} from 'va-common/web/va/standardized-form-fields/client'
+
 const dispatcher = new Dispatcher()
 
 const events = {
@@ -32,11 +37,13 @@ const events = {
   roleDeleted: 'roleDeleted',
   privilegesLoaded: 'privilegesLoaded',
   formLoaded: 'formLoaded',
+  standardizedFormLoaded: 'standardizedFormLoaded',
   selvitysFormLoaded: 'selvitysFormLoaded',
   updateSelvitysForm: 'updateSelvitysForm',
   saveSelvitysForm: 'saveSelvitysForm',
   selvitysFormSaveCompleted: 'selvitysFormSaveCompleted',
   updateForm: 'updateForm',
+  updateStandardizedForm: 'updateStandardizedForm',
   saveForm: 'saveForm',
   formSaveCompleted: 'formSaveCompleted',
   reRender: 'reRender',
@@ -194,11 +201,13 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.roleDeleted)], this.onRoleDeleted,
       [dispatcher.stream(events.privilegesLoaded)], this.onPrivilegesLoaded,
       [dispatcher.stream(events.formLoaded)], this.onFormLoaded,
+      [dispatcher.stream(events.standardizedFormLoaded)], this.onStandardizedFormLoaded,
       [dispatcher.stream(events.selvitysFormLoaded)], this.onSelvitysFormLoaded,
       [dispatcher.stream(events.updateSelvitysForm)], this.onUpdateSelvitysForm,
       [dispatcher.stream(events.saveSelvitysForm)], this.onSaveSelvitysForm,
       [dispatcher.stream(events.selvitysFormSaveCompleted)], this.onSelvitysFormSaveCompleted,
       [dispatcher.stream(events.updateForm)], this.onFormUpdated,
+      [dispatcher.stream(events.updateStandardizedForm)], this.onStandardizedFormUpdated,
       [dispatcher.stream(events.saveForm)], this.onFormSaved,
       [dispatcher.stream(events.formSaveCompleted)], this.onFormSaveCompleted,
       [dispatcher.stream(events.reRender)], this.onReRender,
@@ -495,6 +504,7 @@ export default class HakujenHallintaController {
     this.loadRoles(hakuToSelect)
     this.loadPayments(hakuToSelect)
     this.loadForm(hakuToSelect)
+    this.loadStandardizedForm(hakuToSelect)
     LocalStorage.saveAvustushakuId(hakuToSelect.id)
     window.history.pushState(null, null, `?avustushaku=${hakuToSelect.id}`)
     return state
@@ -550,6 +560,15 @@ export default class HakujenHallintaController {
 
   onPrivilegesLoaded(state, loadedPrivileges) {
     loadedPrivileges.haku.privileges = loadedPrivileges.privileges
+    return state
+  }
+
+  loadStandardizedForm(selectedHaku) {
+    getStandardizedFormValues(selectedHaku.id).then (standardizedFormValues => dispatcher.push(events.standardizedFormLoaded, standardizedFormValues))
+  }
+
+  onStandardizedFormLoaded(state, standardizedFormValues) {
+    state.standardizedFormValues = standardizedFormValues
     return state
   }
 
@@ -702,6 +721,10 @@ export default class HakujenHallintaController {
     dispatcher.push(events.updateForm, {avustushaku: avustushaku, newFormJson: newFormJson})
   }
 
+  handleStandardizedFormChange(key, value) {
+    dispatcher.push(events.updateStandardizedForm, { key, value })
+  }
+
   ensureKoodistosLoaded() {
     dispatcher.push(events.ensureKoodistosLoaded)
   }
@@ -735,6 +758,11 @@ export default class HakujenHallintaController {
     return state
   }
 
+  onStandardizedFormUpdated(state, standardizedFormKeyValue) {
+    state.standardizedFormValues[standardizedFormKeyValue.key] = standardizedFormKeyValue.value
+    return state
+  }
+
   onFormSaved(state, formSaveObject) {
     const avustushaku = formSaveObject.haku
     const editedForm = formSaveObject.form
@@ -743,6 +771,7 @@ export default class HakujenHallintaController {
       .then(function (response) {
         dispatcher.push(events.formSaveCompleted, {avustusHakuId: avustushaku.id, fromFromServer: response})
       })
+    .then(() => postStandardizedFields(avustushaku.id, state.standardizedFormValues))
       .catch(function (error) {
         if (error && error.response.status === 400) {
           dispatcher.push(events.saveCompleted, {error: "validation-error"})

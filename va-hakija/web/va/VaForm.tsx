@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import * as queryString from 'query-string'
+import React from 'react'
 import _ from 'lodash'
 
 // @ts-ignore
@@ -20,10 +19,6 @@ import OpenContactsEdit from './OpenContactsEdit.jsx'
 
 import './style/main.less'
 
-import { createFormikHook } from 'va-common/web/va/standardized-form-fields/formik'
-import { StandardizedFieldsState } from 'va-common/web/va/standardized-form-fields/types'
-import { getStandardizedHakemusFields } from 'va-common/web/va/standardized-form-fields/client'
-
 const allowedStatuses = ["officer_edit", "submitted", "pending_change_request", "applicant_edit"]
 
 interface VaFormProps {
@@ -36,40 +31,9 @@ interface VaFormProps {
   useBusinessIdSearch: boolean
 }
 
-let initialStandardizedFieldsState: StandardizedFieldsState = {
-  status: 'LOADING',
-  values: undefined
-}
-
 export const VaForm = ({controller, state, hakemusType, isExpired, refuseGrant, modifyApplication, useBusinessIdSearch }: VaFormProps) => {
-  const [standardizedFieldsState, setState] = useState<StandardizedFieldsState>(initialStandardizedFieldsState)
-  const f = createFormikHook(state.avustushaku.id)
   const environment =  state.configuration.environment
-  const query = queryString.parse(location.search)
-  const userKey = query.hakemus
 
-  useEffect(() => {
-    const fetchProps = async () => {
-
-      let values;
-      try {
-      values = await getStandardizedHakemusFields(state.avustushaku.id, userKey)
-      } catch (err) {
-        values = {
-          "help-text-fi": "ERROR LOADING STANDARDIZED FIELD",
-          "help-text-sv": "ERROR LOADING STANDARDIZED FIELD",
-        }
-      }
-
-      f.resetForm({
-        values
-      })
-
-      setState({values, status: 'LOADED'})
-    }
-
-    fetchProps()
-  }, [])
 
     const registerNumber = _.get(state.saveStatus.savedObject, "register-number", undefined)
     const {saveStatus, configuration} = state
@@ -90,9 +54,7 @@ export const VaForm = ({controller, state, hakemusType, isExpired, refuseGrant, 
 
 
     return(
-      standardizedFieldsState.status === 'LOADING'
-      ? <p>Loading</p>
-      : <div>
+      <div>
         <VaOldBrowserWarning lang={configuration.lang}
                              translations={configuration.translations.warning}
                              devel={configuration.develMode}
@@ -120,7 +82,6 @@ export const VaForm = ({controller, state, hakemusType, isExpired, refuseGrant, 
                        useBusinessIdSearch={useBusinessIdSearch}
                        modifyApplication={modifyApplication}
                        environment={environment}
-                       f={f}
         />
       </div>
     )

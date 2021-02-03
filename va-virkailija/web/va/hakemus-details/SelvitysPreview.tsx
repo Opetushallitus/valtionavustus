@@ -10,8 +10,6 @@ import EditsDisplayingFormView from "./EditsDisplayingFormView"
 import FakeFormController from "../form/FakeFormController"
 import FakeFormState from "../form/FakeFormState"
 
-import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
-
 interface SelvitysPreviewProps {
   hakemus: any
   selvitysType: any
@@ -20,10 +18,9 @@ interface SelvitysPreviewProps {
   selvitysHakemus: any
   form: any
   environment: any
-  f: FormikHook
 }
 
-export const SelvitysPreview = ({hakemus, selvitysType, avustushaku, translations, selvitysHakemus, form, environment, f}: SelvitysPreviewProps) => {
+export const SelvitysPreview = ({hakemus, selvitysType, avustushaku, translations, selvitysHakemus, form, environment}: SelvitysPreviewProps) => {
     const selvitys = hakemus.selvitys
     const formState = createPreviewHakemusFormState()
     const formElementProps = {
@@ -33,7 +30,6 @@ export const SelvitysPreview = ({hakemus, selvitysType, avustushaku, translation
       controller: new FakeFormController(new VaComponentFactory(), new VaPreviewComponentFactory(), avustushaku, selvitysHakemus),
       containerId: `preview-container-${selvitysType}`,
       headerElements: [],
-      f,
       environment
     }
     return  (

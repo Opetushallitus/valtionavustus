@@ -5,7 +5,8 @@ import HttpUtil from "soresu-form/web/HttpUtil"
 import DateUtil from 'soresu-form/web/DateUtil'
 
 import { FormEditor } from './FormEditor'
-import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
+
+import { StandardizedFormValues } from 'va-common/web/va/standardized-form-fields/types'
 
 interface SelvitysFormProps { 
   avustushaku: any
@@ -17,7 +18,7 @@ interface SelvitysFormProps {
   helpTexts: any
   valiselvitysFormDraft: any
   loppuselvitysFormDraft: any
-  f: FormikHook
+  standardizedFormValues: StandardizedFormValues
 }
 
 export default class SelvitysFormEditor extends Component<SelvitysFormProps> {
@@ -43,8 +44,9 @@ export default class SelvitysFormEditor extends Component<SelvitysFormProps> {
   }
 
   render(){
-    const {avustushaku, controller, translations, koodistos, selvitysType, environment, helpTexts, f} = this.props
+    const {avustushaku, controller, translations, koodistos, selvitysType, environment, helpTexts} = this.props
     const formDraft = this.props[selvitysType + "FormDraft"]
+    const standardizedFormValues = this.props.standardizedFormValues
     const formContent = avustushaku[selvitysType + "Form"]
     const updatedAtElementId = `${selvitysType}UpdatedAt`
     const updatedAt = formContent.updated_at
@@ -140,7 +142,7 @@ export default class SelvitysFormEditor extends Component<SelvitysFormProps> {
             </a>
           </div>
         </div>
-        <FormEditor environment={environment} avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} f={f} disableStandardizedFields={true} />
+        <FormEditor environment={environment} avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} disableStandardizedFields={true} standardizedFormValues={standardizedFormValues}/>
         <div className="form-json-editor">
           <h3>Hakulomakkeen sisältö</h3>
           <span className="error">{parseError}</span>

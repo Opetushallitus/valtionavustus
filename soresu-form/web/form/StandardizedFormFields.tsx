@@ -1,10 +1,10 @@
 import React from 'react'
-import { FormikHook, Language } from 'va-common/web/va/standardized-form-fields/types'
+import { Language, StandardizedFormValues } from 'va-common/web/va/standardized-form-fields/types'
 
 interface StandardizedFormFieldsProps {
-  f: FormikHook
   environment: any
   lang: Language
+  standardizedFormValues: StandardizedFormValues
 }
 
 function validateLanguage(s: unknown): Language {
@@ -14,14 +14,14 @@ function validateLanguage(s: unknown): Language {
   return s
 }
 
-export const StandardizedFormFields = ({f, environment, lang}: StandardizedFormFieldsProps) => {
+export const StandardizedFormFields = ({standardizedFormValues, environment, lang}: StandardizedFormFieldsProps) => {
   const validatedLang = validateLanguage(lang) || 'fi'
   const muutospaatosprosessiEnabled =
     (environment["muutospaatosprosessi"] &&
       environment["muutospaatosprosessi"]["enabled?"]) || false
   return (
     muutospaatosprosessiEnabled
-    ? <p className="soresu-info-element">{f.values["help-text-" + validatedLang]}</p>
+    ? <p className="soresu-info-element">{standardizedFormValues["help-text-" + validatedLang]}</p>
     : <span/>
   )
 }

@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { Component } from 'react'
 import ClassNames from 'classnames'
 
 import EnvironmentInfo from 'va-common/web/va/EnvironmentInfo.jsx'
 import NameFormatter from 'va-common/web/va/util/NameFormatter'
 
-export default class TopBar extends React.Component {
+export default class TopBar extends Component {
   render() {
     const environment = this.props.environment
     const state = this.props.state

@@ -10,8 +10,8 @@ import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactor
 import FakeFormController from '../form/FakeFormController'
 import FakeFormState from '../form/FakeFormState'
 
-import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
 import { StandardizedFormFields } from './StandardizedFormFields'
+import { StandardizedFormValues } from 'va-common/web/va/standardized-form-fields/types'
 
 function parseJson(string) {
   try {
@@ -29,8 +29,8 @@ interface FormEditorProps {
   formDraft: any 
   onFormChange: any 
   controller: any
-  f: FormikHook
   disableStandardizedFields: boolean
+  standardizedFormValues: StandardizedFormValues
 }
 
 export const FormEditor = (props: FormEditorProps) => {
@@ -42,8 +42,8 @@ export const FormEditor = (props: FormEditorProps) => {
     onFormChange,
     environment,
     controller: hakuAdminController,
-    f,
-    disableStandardizedFields
+    disableStandardizedFields,
+    standardizedFormValues
   } = props
 
   const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
@@ -75,7 +75,7 @@ export const FormEditor = (props: FormEditorProps) => {
 
   return formState ?
     <div id="form-editor">
-    {!disableStandardizedFields && <StandardizedFormFields f={f} environment={environment}/>}
+    {!disableStandardizedFields && <StandardizedFormFields controller={hakuAdminController} environment={environment} standardizedFormValues={standardizedFormValues}/>}
       <FormEdit {...formElementProps} />
     </div> : <span/>
 }

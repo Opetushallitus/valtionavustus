@@ -12,7 +12,6 @@ import SeurantaBudgetEditFormController from './SeurantaBudgetEditFormController
 import SeurantaBudgetEditComponentFactory from './SeurantaBudgetEditComponentFactory.jsx'
 
 import '../style/budgetedit.less'
-import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
 
 interface SeurantaBudgetEditingProps {
   controller: any
@@ -20,11 +19,10 @@ interface SeurantaBudgetEditingProps {
   hakuData: any
   avustushaku: any
   translations: any
-  f: FormikHook
   environment: any
 }
 
-export const SeurantaBudgetEditing = ({controller, hakemus, hakuData, avustushaku, translations, f, environment}: SeurantaBudgetEditingProps) => {
+export const SeurantaBudgetEditing = ({controller, hakemus, hakuData, avustushaku, translations, environment}: SeurantaBudgetEditingProps) => {
 
   function validateFields(form, answers) {
     const budgetItems = FormUtil.findFieldsByFieldType(form.content, 'vaBudgetItemElement')
@@ -75,7 +73,6 @@ export const SeurantaBudgetEditing = ({controller, hakemus, hakuData, avustushak
       controller: new SeurantaBudgetEditFormController(controller, new SeurantaBudgetEditComponentFactory(), avustushaku, budgetEditFormState.form, hakemus),
       containerId: "budget-edit-container",
       headerElements: [],
-      f,
       environment
     }
     return (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 import ClassNames from 'classnames'
 
@@ -8,9 +8,7 @@ import DecisionEditor from './DecisionEditor.jsx'
 import SelvitysFormEditor from './SelvitysFormEditor'
 import HelpTooltip from '../HelpTooltip.jsx'
 
-import { createFormikHook } from 'va-common/web/va/standardized-form-fields/formik'
-import { StandardizedFieldsState } from 'va-common/web/va/standardized-form-fields/types'
-import { getStandardizedFields } from 'va-common/web/va/standardized-form-fields/client'
+import { StandardizedFormValues } from 'va-common/web/va/standardized-form-fields/types'
 
 function createRedirectTo(url) {
   return (e) => {
@@ -34,11 +32,7 @@ interface EditorSelectorProps {
   loppuselvitysFormDraft: any
   codeOptions: any
   helpTexts: any
-}
-
-let initialStandardizedFieldsState: StandardizedFieldsState = {
-  status: 'LOADING',
-  values: undefined
+  standardizedFormValues: StandardizedFormValues
 }
 
 export const EditorSelector = ({
@@ -55,24 +49,10 @@ export const EditorSelector = ({
       valiselvitysFormDraft,
       loppuselvitysFormDraft,
       codeOptions,
-      helpTexts
+      helpTexts,
+      standardizedFormValues
     }: EditorSelectorProps) => {
 
-    const [standardizedFieldsState, setState] = useState<StandardizedFieldsState>(initialStandardizedFieldsState)
-    const f = createFormikHook(avustushaku.id)
-    useEffect(() => {
-      const fetchProps = async () => {
-        const values = await getStandardizedFields(avustushaku.id)
-
-        f.resetForm({
-          values
-        })
-
-        setState({values, status: 'LOADED'})
-      }
-
-      fetchProps()
-    }, [])
 
     let subTabContent
     switch (subTab) {
@@ -92,7 +72,8 @@ export const EditorSelector = ({
                                              formDraft={formDraft}
                                              controller={controller}
                                              helpTexts={helpTexts} 
-                                             f={f} />
+                                             standardizedFormValues={standardizedFormValues}
+                                             />
         break
       case "decision":
         subTabContent = <DecisionEditor avustushaku={avustushaku}
@@ -108,11 +89,11 @@ export const EditorSelector = ({
                                         avustushaku={avustushaku}
                                         controller={controller}
                                         koodistos={koodistos}
-                                        f={f}
                                         valiselvitysFormDraft={valiselvitysFormDraft}
                                         loppuselvitysFormDraft={loppuselvitysFormDraft}
                                         translations={translations}
                                         helpTexts={helpTexts}
+                                        standardizedFormValues={standardizedFormValues}
 
         />
         break
@@ -122,12 +103,11 @@ export const EditorSelector = ({
                                             avustushaku={avustushaku}
                                             controller={controller}
                                             koodistos={koodistos}
-                                            f={f}
                                             valiselvitysFormDraft={valiselvitysFormDraft}
                                             loppuselvitysFormDraft={loppuselvitysFormDraft}
                                             translations={translations}
                                             helpTexts={helpTexts}
-
+                                            standardizedFormValues={standardizedFormValues}
         />
         break
       default:
@@ -142,9 +122,7 @@ export const EditorSelector = ({
     }
 
     return (
-      standardizedFieldsState.status === 'LOADING'
-      ? <p>Loading</p>
-      : <section id="editor-section">
+      <section id="editor-section">
         <div id="editor-subtab-selector" className="section-container">
           <span onClick={createSubTabSelector("haku-editor")}
                 className={ClassNames({"selected": subTab === "haku-editor"})}>

@@ -7,8 +7,6 @@ import ShouldPay from './ShouldPay.jsx'
 import AllowVisibilityInExternalSystem from './AllowVisibilityInExternalSystem.jsx'
 import ShouldPayComments from './ShouldPayComments.jsx'
 
-import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
-
 interface SeurantaProps {
   controller: any
   hakemus: any
@@ -16,12 +14,11 @@ interface SeurantaProps {
   translations: any
   hakuData: any
   helpTexts: any
-  f: FormikHook
   environment: any
 }
 
 export const Seuranta = ({controller, hakemus, avustushaku,
-           translations, hakuData, helpTexts, f, environment}: SeurantaProps) => {
+           translations, hakuData, helpTexts, environment}: SeurantaProps) => {
     return (
       <div className="seuranta">
         <AllowVisibilityInExternalSystem controller={controller}
@@ -43,7 +40,7 @@ export const Seuranta = ({controller, hakemus, avustushaku,
                                  controller={controller}
                                  hakemus={hakemus}
                                  environment={environment}
-                                 f={f}/>
+                                 />
         </div>
         <div className="seuranta-section">
           <SeurantaLiitteet avustushaku={avustushaku}

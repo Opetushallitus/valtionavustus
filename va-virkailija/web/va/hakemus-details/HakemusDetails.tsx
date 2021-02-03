@@ -1,18 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 import { HakemusPreview } from './HakemusPreview'
 import { HakemusArviointi } from './HakemusArviointi'
 import { Muutoshakemus } from './Muutoshakemus.jsx'
 import { Selvitys } from './Selvitys'
 import { Seuranta } from './Seuranta'
-import { getStandardizedFields } from 'va-common/web/va/standardized-form-fields/client'
 
 import './hakemusDetails.less'
-
-let initialStandardizedFieldsState: StandardizedFieldsState = {
-  status: 'LOADING',
-  values: undefined
-}
 
 interface HakemusDetailsProps {
   hidden: any
@@ -30,28 +24,8 @@ interface HakemusDetailsProps {
   helpTexts: any
 }
 
-import { createFormikHook } from 'va-common/web/va/standardized-form-fields/formik'
-import { StandardizedFieldsState } from 'va-common/web/va/standardized-form-fields/types'
-
 
 export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuData, userInfo, loadingComments, showOthersScores, translations, environment, selectedHakemusAccessControl, subTab, helpTexts}: HakemusDetailsProps) => {
-
-  const [standardizedFieldsState, setState] = useState<StandardizedFieldsState>(initialStandardizedFieldsState)
-  const f = createFormikHook(avustushaku.id)
-
-  useEffect(() => {
-    const fetchProps = async () => {
-      const values = await getStandardizedFields(avustushaku.id)
-
-      f.resetForm({
-        values
-      })
-
-      setState({values, status: 'LOADED'})
-    }
-
-    fetchProps()
-  }, [])
 
     const multibatchEnabled =
           (environment["multibatch-payments"] &&
@@ -105,8 +79,7 @@ export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuDa
                                    showOthersScores={showOthersScores}
                                    controller={controller}
                                    environment={environment}
-                                   f={f} multibatchEnabled={multibatchEnabled}
-
+                                   multibatchEnabled={multibatchEnabled}
                                    helpTexts={helpTexts}/>
 
         case 'valiselvitys':
@@ -116,7 +89,6 @@ export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuDa
                            selvitysType="valiselvitys"
                            multibatchEnabled={multibatchEnabled}
                            isPresentingOfficer={isPresentingOfficer}
-                           f={f}
                            environment={environment}
    selvitysLinkHelpText={helpTexts["hankkeen_sivu__väliselvitys___linkki_lomakkeelle"]}
    presenterCommentHelpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}/>
@@ -126,7 +98,6 @@ export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuDa
                            translations={translations}
                            selvitysType="loppuselvitys"
                            multibatchEnabled={multibatchEnabled}
-                           f={f}
                            environment={environment} 
                            isPresentingOfficer={isPresentingOfficer}
    selvitysLinkHelpText={helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"]}
@@ -137,7 +108,7 @@ export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuDa
           else
             return <Muutoshakemus environment={environment} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakemus={hakemus.normalizedData} controller={controller} userInfo={userInfo} presenter={presenter} />
         case 'seuranta':
-          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} helpTexts={helpTexts} environment={environment} f={f}/>
+          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} helpTexts={helpTexts} environment={environment}/>
         default:
           throw new Error("Bad subTab selection '" + tabName + "'")
       }
@@ -163,9 +134,7 @@ export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuDa
       </span>
 
     return (
-      standardizedFieldsState.status === 'LOADING'
-      ? <p>Loading</p>
-      : <div id="hakemus-details">
+      <div id="hakemus-details">
         <CloseButton/>
         <ToggleButton/>
         <div id="editor-subtab-selector"
@@ -176,7 +145,7 @@ export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuDa
           {muutospaatosprosessiEnabled && tab('muutoshakemukset', <MuutoshakemuksetLabel/>)}
           {tab('seuranta', 'Seuranta', 'tab-seuranta')}
         </div>
-        <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} environment={environment} f={f}/>
+        <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} environment={environment}/>
         <div id="hakemus-arviointi" className="fixed-content">
           <div id="tab-content"
                className={hakemus.refused ? "disabled" : ""}>

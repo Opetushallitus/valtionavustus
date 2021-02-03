@@ -26,8 +26,6 @@ import { Answer, Hakemus, HakemusFormState } from '../types'
 
 import '../style/formpreview.less'
 
-import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
-
 function getCurrentAnswers(hakemus: Hakemus): Answer[] {
   const { answers, muutoshakemukset, normalizedData } = hakemus
   const acceptedMuutoshakemus = muutoshakemukset?.find(m => m.status === 'accepted' || m.status === 'accepted_with_changes')
@@ -54,10 +52,9 @@ interface HakemusPreviewProps {
   environment: any
   hakuData: any
   translations: any,
-  f: FormikHook
 }
 
-export const HakemusPreview = ({ hakemus, avustushaku, hakuData, translations, environment, f }: HakemusPreviewProps) => {
+export const HakemusPreview = ({ hakemus, avustushaku, hakuData, translations, environment }: HakemusPreviewProps) => {
 
     const registerNumber = _.get(hakemus, "register-number", "")
     const formState = createPreviewHakemusFormState()
@@ -91,7 +88,6 @@ export const HakemusPreview = ({ hakemus, avustushaku, hakuData, translations, e
                        </small>,
                        <GrantRefusedNotice application={hakemus}
                                            key="grant-refused" />],
-      f,
       environment
     }
 

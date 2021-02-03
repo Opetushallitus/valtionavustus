@@ -1,12 +1,14 @@
 import React from 'react'
-import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
+
+import { StandardizedFormValues } from 'va-common/web/va/standardized-form-fields/types'
 
 interface StandardizedFormFieldsProps {
-  f: FormikHook
+  controller: any
   environment: any
+  standardizedFormValues: StandardizedFormValues
 }
 
-export const StandardizedFormFields = ({f, environment}: StandardizedFormFieldsProps) => {
+export const StandardizedFormFields = ({controller, standardizedFormValues, environment}: StandardizedFormFieldsProps) => {
   const muutospaatosprosessiEnabled =
     (environment["muutospaatosprosessi"] &&
       environment["muutospaatosprosessi"]["enabled?"]) || false
@@ -32,17 +34,15 @@ export const StandardizedFormFields = ({f, environment}: StandardizedFormFieldsP
                     <textarea
                       className="larger-textarea"
                       name="help-text-fi"
-                      onChange={f.handleChange}
-                      onBlur={f.handleBlur}
-                      value={f.values["help-text-fi"]}/>
+                      onChange={(e) => controller.handleStandardizedFormChange("help-text-fi", e.target.value)}
+                      value={standardizedFormValues["help-text-fi"]}/>
                   </td>
                   <td>
                     <textarea
                       className="larger-textarea"
                       name="help-text-sv"
-                      onChange={f.handleChange}
-                      onBlur={f.handleBlur}
-                      value={f.values["help-text-sv"]}/>
+                      onChange={(e) => controller.handleStandardizedFormChange("help-text-sv", e.target.value)}
+                      value={standardizedFormValues["help-text-sv"]}/>
                   </td>
                 </tr>
               </tbody>

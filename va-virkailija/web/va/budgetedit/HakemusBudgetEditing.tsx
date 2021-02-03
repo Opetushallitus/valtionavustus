@@ -13,8 +13,6 @@ import FakeFormState from '../form/FakeFormState'
 
 import '../style/budgetedit.less'
 
-import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
-
 interface HakemusBudgetEditingProps {
   controller: any
   hakemus: any
@@ -24,10 +22,9 @@ interface HakemusBudgetEditingProps {
   allowEditing: any
   helpTexts: any
   environment: any
-  f: FormikHook
 }
 
-export const HakemusBudgetEditing = ({controller, hakemus, hakuData, avustushaku, translations, allowEditing, helpTexts, environment, f}: HakemusBudgetEditingProps) => {
+export const HakemusBudgetEditing = ({controller, hakemus, hakuData, avustushaku, translations, allowEditing, helpTexts, environment}: HakemusBudgetEditingProps) => {
   function isEditingAllowed(allowEditingArvio, formContent, fieldId) {
     if(!allowEditingArvio) {
       return false
@@ -92,7 +89,6 @@ export const HakemusBudgetEditing = ({controller, hakemus, hakuData, avustushaku
       controller: new BudgetEditFormController(controller, new BudgetEditComponentFactory(), avustushaku, budgetEditFormState.form, hakemus, helpTexts),
       containerId: "budget-edit-container",
       headerElements: [],
-      f,
       environment
     }
     return (

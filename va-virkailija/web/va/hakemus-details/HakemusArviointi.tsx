@@ -23,8 +23,6 @@ import HelpTooltip from '../HelpTooltip.jsx'
 
 import '../style/admin.less'
 
-import { FormikHook } from 'va-common/web/va/standardized-form-fields/types'
-
 interface HakemustenArviointiProps {
   controller: any
   hakemus: any
@@ -36,12 +34,11 @@ interface HakemustenArviointiProps {
   showOthersScores: any
   multibatchEnabled: any
   helpTexts: any
-  f: FormikHook
   environment: any
   selectedHakemusAccessControl: any
 }
 
-export const HakemusArviointi = ({controller, selectedHakemusAccessControl, hakemus, avustushaku, hakuData, translations, userInfo, loadingComments, showOthersScores, multibatchEnabled, helpTexts, f, environment}: HakemustenArviointiProps) => {
+export const HakemusArviointi = ({controller, selectedHakemusAccessControl, hakemus, avustushaku, hakuData, translations, userInfo, loadingComments, showOthersScores, multibatchEnabled, helpTexts, environment}: HakemustenArviointiProps) => {
     const {
       allowHakemusCommenting,
       allowHakemusStateChanges,
@@ -72,7 +69,7 @@ export const HakemusArviointi = ({controller, selectedHakemusAccessControl, hake
        <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
-       <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} f={f} environment={environment} />
+       <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} environment={environment} />
        {multibatchEnabled && avustushaku.content["multiplemaksuera"] &&
          <ApplicationPayments application={hakemus}
                               grant={avustushaku}
@@ -81,7 +78,7 @@ export const HakemusArviointi = ({controller, selectedHakemusAccessControl, hake
                               onAddPayment={controller.addPayment}
                               onRemovePayment={controller.removePayment}
                               readonly={true}/>}
-       <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} f={f} environment={environment} />
+       <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} environment={environment} />
        <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusOfficerEditing} status="officer_edit" helpTexts={helpTexts} />
        <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusCancellation} status="cancelled" helpTexts={helpTexts} />
        <ReSendDecisionEmail  avustushaku={avustushaku} hakemus={hakemus} hakuData={hakuData} helpTexts={helpTexts} />
