@@ -57,14 +57,4 @@
 
   :target-path "target/%s"
 
-  :aliases {"dbmigrate"  ["run" "-m" "oph.va.virkailija.db.migrations/migrate" "virkailija-db" "db.migration" "oph.va.virkailija.db.migrations"]
-
-            "dbclear"    ["run" "-m" "oph.soresu.common.db/clear-db!" "virkailija-db" "virkailija"]
-
-            "checkall" ["do"
-                        ["check"]
-                        ["kibit"]
-                        ["eastwood"
-                         "{:exclude-namespaces [oph.va.virkailija.db.migrations oph.soresu.common.db.migrations] :namespaces [:source-paths]}"]
-                        ["bikeshed"]]}
 )

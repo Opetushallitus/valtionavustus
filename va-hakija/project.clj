@@ -37,16 +37,4 @@
 
   :target-path "target/%s"
 
-  :aliases {"dbmigrate"  ["run" "-m" "oph.va.hakija.db.migrations/migrate" "form-db" "db.migration" "oph.va.hakija.db.migrations"]
-
-            "dbclear"    ["run" "-m" "oph.soresu.common.db/clear-db!" "form-db" "hakija"]
-
-            "populate"   ^{:doc "Generate applications"} ["run" "-m" "oph.va.hakija.cmd.populate"]
-
-            "checkall" ["do"
-                        ["check"]
-                        ["kibit"]
-                        ["eastwood"
-                         "{:exclude-namespaces [oph.va.hakija.db.migrations oph.soresu.common.db.migrations] :namespaces [:source-paths]}"]
-                        ["bikeshed"]]}
 )
