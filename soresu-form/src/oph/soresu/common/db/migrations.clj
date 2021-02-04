@@ -9,7 +9,7 @@
           [org.flywaydb.core.api.migration MigrationInfoProvider]
           [org.flywaydb.core.api MigrationVersion]))
 
-(defn migrate [schema-name & migration-paths]
+(defn migrate [schema-name migration-paths]
   (log/info "Running db migrations, if any...")
   (let [flyway (doto (Flyway.)
                  (.setSchemas (into-array String [schema-name]))

@@ -4,8 +4,8 @@
             [yesql.core :refer [defquery]])
   (:gen-class))
 
-(defn migrate [ds-key schema-name & migration-paths]
-  (apply (partial migrations/migrate ds-key schema-name) migration-paths))
+(defn migrate [& migration-paths]
+  (migrations/migrate "virkailija" migration-paths))
 
 (defn- create-rahoitusalue-json [rahoitusalue]
   {:rahoitusalue (:rahoitusalue rahoitusalue)

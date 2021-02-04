@@ -9,13 +9,15 @@
             [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :as db]
             [oph.va.hakija.db.migrations :as dbmigrations]
+            [oph.va.virkailija.db.migrations :as virkailija-dbmigrations]
             [oph.va.hakija.email :as email]))
 
 (defn- startup [config]
   (log/info "Startup, with configuration:" config)
-  (dbmigrations/migrate "hakija"
-                        "db.migration"
+  (dbmigrations/migrate "db.migration.hakija"
                         "oph.va.hakija.db.migrations")
+  (virkailija-dbmigrations/migrate "db.migration.virkailija"
+                        "oph.va.virkailija.db.migrations")
   (email/start-background-job-send-mails))
 
 (defn- shutdown []

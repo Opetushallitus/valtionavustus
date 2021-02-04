@@ -29,7 +29,7 @@
 
   :main oph.va.hakija.main
 
-  :aot [oph.va.hakija.db.migrations]
+  :aot [oph.va.hakija.db.migrations oph.va.virkailija.db.migrations]
 
   :uberjar-exclusions [#"public/test"]
 

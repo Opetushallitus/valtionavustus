@@ -9,8 +9,8 @@
             [yesql.core :refer [defquery]])
   (:gen-class))
 
-(defn migrate [ds-key schema-name & migration-paths]
-  (apply (partial migrations/migrate ds-key schema-name) migration-paths))
+(defn migrate [& migration-paths]
+  (migrations/migrate "hakija" migration-paths))
 
 (defn update-forms! [forms-to-transform transformation]
   (doseq [form forms-to-transform]
