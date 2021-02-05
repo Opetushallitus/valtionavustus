@@ -34,6 +34,7 @@ export const StandardizedFormFields = ({controller, standardizedFormValues, envi
                     <textarea
                       className="larger-textarea"
                       name="help-text-fi"
+                      data-test-id="standardized-help-text-fi"
                       onChange={(e) => controller.handleStandardizedFormChange("help-text-fi", e.target.value)}
                       value={standardizedFormValues["help-text-fi"]}/>
                   </td>
@@ -41,6 +42,7 @@ export const StandardizedFormFields = ({controller, standardizedFormValues, envi
                     <textarea
                       className="larger-textarea"
                       name="help-text-sv"
+                      data-test-id="standardized-help-text-sv"
                       onChange={(e) => controller.handleStandardizedFormChange("help-text-sv", e.target.value)}
                       value={standardizedFormValues["help-text-sv"]}/>
                   </td>

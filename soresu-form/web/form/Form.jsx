@@ -79,7 +79,7 @@ export default class Form extends React.Component {
       ? <form className="soresu-form">
           {renderField(fields[0])}
           {renderField(fields[1])}
-          <p className="soresu-info-element">{standardizedFormValues["help-text-" + state.configuration.lang]}</p>
+          <p className="soresu-info-element" data-test-id={`standardized-help-text-${state.configuration.lang}`}>{standardizedFormValues["help-text-" + state.configuration.lang]}</p>
           { _.map(fields.slice(3), f => renderField(f))}
           
         </form>
