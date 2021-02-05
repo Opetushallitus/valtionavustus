@@ -7,7 +7,6 @@ import {
   Browser,
   Page,
   FrameBase,
-  ConsoleMessage,
   ElementHandle
 } from "puppeteer"
 import * as assert from "assert"
