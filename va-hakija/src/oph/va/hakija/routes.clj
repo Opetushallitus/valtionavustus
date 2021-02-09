@@ -80,23 +80,6 @@
     :summary "Get normalized answers"
       (ok (hakija-db/get-normalized-hakemus user-key))))
 
-(defn- get-avustushaku-standardized-help-texts []
-  (compojure-api/GET "/:avustushaku-id/standardized-help-texts" [] 
-                     :path-params [avustushaku-id :- Long]
-                     :return AvustushakuStandardizedHelpTexts 
-                     :summary "Return avustushaku standardized help texts"
-                       (if-let [response (hakija-db/get-avustushaku-standardized-help-texts avustushaku-id)]
-                         (ok response)
-                         (not-found))))
-
-(defn- update-hakemus-normalized-fields []
-  (compojure-api/POST "/:avustushaku-id/hakemus/:user-key/normalized-fields" [ user-key :as request]
-    :path-params [user-key :- s/Str]
-    :return NormalizedHakemus
-    :body [normalized-fields (compojure-api/describe NormalizedHakemus "Avustushaku normalized fields")]
-    :summary "Update normalized hakemus fields"
-    (ok (hakija-db/update-hakemus-normalized-fields user-key normalized-fields))))
-
 (defn- get-hakemus []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
     :path-params [haku-id :- Long hakemus-id :- s/Str]
@@ -322,8 +305,6 @@
   (get-id)
   (when (get-in config [:email-api :enabled?]) (get-normalized-hakemus))
   (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemukset))
-  (when (get-in config [:muutospaatosprosessi :enabled?]) (get-avustushaku-standardized-help-texts))
-  (when (get-in config [:muutospaatosprosessi :enabled?]) (update-hakemus-normalized-fields))
   (get-hakemus)
   (get-selvitys)
   (get-selvitys-init)

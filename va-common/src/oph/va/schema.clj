@@ -138,24 +138,6 @@
                           (s/optional-key :operational-unit-id) (s/maybe s/Int)
                           (s/optional-key :project-id) (s/maybe s/Int)})
 
-
-(s/defschema AvustushakuStandardizedHelpTexts {
-                                            (s/optional-key :id) Long
-                                            (s/optional-key :avustushaku-id) Long
-
-                                            :ohjeteksti-fi s/Str
-                                            :ohjeteksti-sv s/Str
-
-                                            :hakija-name-fi s/Str
-                                            :hakija-name-sv s/Str
-
-                                            :hakija-email-fi s/Str
-                                            :hakija-email-sv s/Str
-
-                                            (s/optional-key :created-at) s/Inst
-                                            (s/optional-key :updated-at) s/Inst
-                                            })
-
 (s/defschema HakemusStatus
   "Status from the applicant point of view"
   (s/enum "new" "draft" "submitted" "pending_change_request"
@@ -188,8 +170,6 @@
    :project-end s/Str
    :organization-name s/Str
    :register-number s/Str
-   (s/optional-key :hakija-name) (s/maybe s/Str)
-   (s/optional-key :hakija-email) (s/maybe s/Str)
    })
 
 (s/defschema MuutoshakemusStatus

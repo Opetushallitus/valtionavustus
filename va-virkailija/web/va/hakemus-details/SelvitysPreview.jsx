@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from "react"
 import _ from "lodash"
 
 import FormContainer from "soresu-form/web/form/FormContainer.jsx"
@@ -10,17 +10,10 @@ import EditsDisplayingFormView from "./EditsDisplayingFormView"
 import FakeFormController from "../form/FakeFormController"
 import FakeFormState from "../form/FakeFormState"
 
-interface SelvitysPreviewProps {
-  hakemus: any
-  selvitysType: any
-  avustushaku: any
-  translations: any
-  selvitysHakemus: any
-  form: any
-  environment: any
-}
+export default class SelvitysPreview extends Component {
 
-export const SelvitysPreview = ({hakemus, selvitysType, avustushaku, translations, selvitysHakemus, form, environment}: SelvitysPreviewProps) => {
+  render() {
+    const {hakemus, selvitysType, avustushaku, translations, selvitysHakemus, form} = this.props
     const selvitys = hakemus.selvitys
     const formState = createPreviewHakemusFormState()
     const formElementProps = {
@@ -29,12 +22,9 @@ export const SelvitysPreview = ({hakemus, selvitysType, avustushaku, translation
       infoElementValues: avustushaku,
       controller: new FakeFormController(new VaComponentFactory(), new VaPreviewComponentFactory(), avustushaku, selvitysHakemus),
       containerId: `preview-container-${selvitysType}`,
-      headerElements: [],
-      environment
+      headerElements: []
     }
-    return  (
-      <FormContainer {...formElementProps} />
-      )
+    return <FormContainer {...formElementProps} />
 
     function createPreviewHakemusFormState() {
       const hakemusFormState = FakeFormState.createHakemusFormState({
@@ -56,7 +46,6 @@ export const SelvitysPreview = ({hakemus, selvitysType, avustushaku, translation
         return _.isArray(a) ? uniqueUnion(a, b) : undefined
 
         function uniqueUnion(firstAnswerArray, secondAnswerArray) {
-          //@ts-ignore
           return _.uniqBy(_.union(firstAnswerArray, secondAnswerArray), answer => { return answer.key })
         }
       })
@@ -65,4 +54,5 @@ export const SelvitysPreview = ({hakemus, selvitysType, avustushaku, translation
       FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, combinedAnswersForPopulatingGrowingFieldsets, false)
       return hakemusFormState
     }
+  }
 }

@@ -13,18 +13,8 @@ import SeurantaBudgetEditComponentFactory from './SeurantaBudgetEditComponentFac
 
 import '../style/budgetedit.less'
 
-interface SeurantaBudgetEditingProps {
-  controller: any
-  hakemus: any
-  hakuData: any
-  avustushaku: any
-  translations: any
-  environment: any
-}
-
-export const SeurantaBudgetEditing = ({controller, hakemus, hakuData, avustushaku, translations, environment}: SeurantaBudgetEditingProps) => {
-
-  function validateFields(form, answers) {
+export default class SeurantaBudgetEditing extends React.Component {
+  static validateFields(form, answers) {
     const budgetItems = FormUtil.findFieldsByFieldType(form.content, 'vaBudgetItemElement')
     budgetItems.map(budgetItem => {
       const amountField = budgetItem.children[1]
@@ -33,6 +23,9 @@ export const SeurantaBudgetEditing = ({controller, hakemus, hakuData, avustushak
       form.validationErrors = form.validationErrors.merge({[amountField.id]: validationErrors})
     })
   }
+
+  render() {
+    const {controller, hakemus, hakuData, avustushaku, translations} = this.props
 
     const vaBudget = FormUtil.findFieldByFieldType(hakuData.form.content, "vaBudget")
 
@@ -65,15 +58,14 @@ export const SeurantaBudgetEditing = ({controller, hakemus, hakuData, avustushak
       hakemus: fakeHakemus,
       savedHakemus: hakemus
     })
-    validateFields(budgetEditFormState.form, fakeHakemus.answers)
+    SeurantaBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers)
     const formElementProps = {
       state: budgetEditFormState,
       formContainerClass: Form,
       infoElementValues: avustushaku,
       controller: new SeurantaBudgetEditFormController(controller, new SeurantaBudgetEditComponentFactory(), avustushaku, budgetEditFormState.form, hakemus),
       containerId: "budget-edit-container",
-      headerElements: [],
-      environment
+      headerElements: []
     }
     return (
       <div className="budget-edit">
@@ -82,4 +74,5 @@ export const SeurantaBudgetEditing = ({controller, hakemus, hakuData, avustushak
       </div>
     )
   }
+}
 

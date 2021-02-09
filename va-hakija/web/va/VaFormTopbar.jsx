@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import _ from 'lodash'
 
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
@@ -12,7 +12,7 @@ import ToggleLanguageButton from 'soresu-form/web/form/component/ToggleLanguageB
 import FormErrorSummary from 'soresu-form/web/form/component/FormErrorSummary.jsx'
 import ServerError from 'soresu-form/web/form/component/ServerError.jsx'
 
-export default class VaFormTopbar extends Component {
+export default class VaFormTopbar extends React.Component {
   render() {
     const {controller, state, hakemusType, isExpired} = this.props
     const saveStatus = state.saveStatus

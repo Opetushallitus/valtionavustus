@@ -27,7 +27,6 @@ export const HAKIJA_URL = `http://${HAKIJA_HOSTNAME}:${HAKIJA_PORT}`
 
 export const dummyPdfPath = path.join(__dirname, 'dummy.pdf')
 const hakulomakeJson = fs.readFileSync(path.join(__dirname, 'prod.hakulomake.json'), 'utf8')
-export const hakulomakeWithoutOhjetekstiJson = fs.readFileSync(path.join(__dirname, 'hakulomake-without-ohjeteksti.json'), 'utf8')
 
 export const TEST_Y_TUNNUS = "2050864-5"
 
@@ -241,7 +240,7 @@ export async function fillAndSendHakemus(page: Page, avustushakuID: number, befo
   await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Hakemus lähetetty")
 }
 
-export async function navigateToNewHakemusPage(page: Page, avustushakuID: number) {
+async function navigateToNewHakemusPage(page: Page, avustushakuID: number) {
   const receivedEmail = await pollUntilNewHakemusEmailArrives(avustushakuID)
   const hakemusUrl = receivedEmail[0].formatted.match(/https?:\/\/.*\/avustushaku.*/)?.[0]
   expectToBeDefined(hakemusUrl)
@@ -544,7 +543,7 @@ function fieldJson(type: string, id: string, label: string) {
     ]}
 }
 
-export async function clearAndSet(page: Page, selector: string, text: string) {
+async function clearAndSet(page: Page, selector: string, text: string) {
   const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
   await page.evaluate((e, t) => e.value = t, element, text)
   await page.focus(selector);

@@ -1,7 +1,9 @@
 import Immutable from 'seamless-immutable'
 import _ from 'lodash'
 
+// @ts-ignore
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
+// @ts-ignore
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 import { HakemusFormState } from '../types'
 

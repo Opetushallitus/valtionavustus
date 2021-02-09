@@ -113,23 +113,6 @@
         hakemus (exec queries/create-hakemus<! params)]
     {:hakemus hakemus :submission submission}))
 
-(defn update-hakemus-normalized-fields [user-key normalized-fields]
-  (with-tx (fn [tx]
-    (let [updated-fields (first (query tx
-     "UPDATE virkailija.normalized_hakemus SET
-          hakija_name = ?,
-          hakija_email = ?
-        WHERE hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)"
-          [(:hakija-name normalized-fields) (:hakija-email normalized-fields) user-key]))]
-      updated-fields
-      ))))
-
-(defn get-avustushaku-standardized-help-texts [avustushaku-id]
-  (log/info (str "Get standardized avustushaku help texts with id: " avustushaku-id))
-  (let [standardized-fields (query "SELECT * from virkailija.standardized_avustushaku_help_text WHERE avustushaku_id = ?" [avustushaku-id])]
-    (log/info (str "Succesfully fetched standardized avustushaku help texts with id: " avustushaku-id))
-    (first standardized-fields)))
-
 (defn get-normalized-hakemus [user-key]
   (log/info (str "Get normalized hakemus with user-key: " user-key))
   (let [hakemukset (query "SELECT * from virkailija.normalized_hakemus WHERE hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)" [user-key])]

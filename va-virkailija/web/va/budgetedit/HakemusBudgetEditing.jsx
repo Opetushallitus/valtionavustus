@@ -13,28 +13,17 @@ import FakeFormState from '../form/FakeFormState'
 
 import '../style/budgetedit.less'
 
-interface HakemusBudgetEditingProps {
-  controller: any
-  hakemus: any
-  hakuData: any
-  avustushaku: any
-  translations: any
-  allowEditing: any
-  helpTexts: any
-  environment: any
-}
-
-export const HakemusBudgetEditing = ({controller, hakemus, hakuData, avustushaku, translations, allowEditing, helpTexts, environment}: HakemusBudgetEditingProps) => {
-  function isEditingAllowed(allowEditingArvio, formContent, fieldId) {
+export default class HakemusBudgetEditing extends React.Component {
+  static isEditingAllowed(allowEditingArvio, formContent, fieldId) {
     if(!allowEditingArvio) {
       return false
     }
-    const parentElem: any = FormUtil.findFieldWithDirectChild(formContent, fieldId)
+    const parentElem = FormUtil.findFieldWithDirectChild(formContent, fieldId)
     const isAmountField = parentElem && parentElem.fieldType === 'vaBudgetItemElement'  && parentElem.children[1].id === fieldId
     return isAmountField ? parentElem.params.incrementsTotal : true
   }
 
-  function validateFields(form, answers, originalHakemus) {
+  static validateFields(form, answers, originalHakemus) {
     const budgetItems = FormUtil.findFieldsByFieldType(form.content, 'vaBudgetItemElement')
     budgetItems.map(budgetItem => {
       const amountField = budgetItem.children[1]
@@ -50,6 +39,8 @@ export const HakemusBudgetEditing = ({controller, hakemus, hakuData, avustushaku
     })
   }
 
+  render() {
+    const {controller, hakemus, hakuData, avustushaku, translations, allowEditing, helpTexts} = this.props
     const vaBudget = FormUtil.findFieldByFieldType(hakuData.form.content, "vaBudget")
 
     if (!vaBudget) {
@@ -64,7 +55,7 @@ export const HakemusBudgetEditing = ({controller, hakemus, hakuData, avustushaku
     const formOperations = {
       chooseInitialLanguage: () => "fi",
       containsExistingEntityId: undefined,
-      isFieldEnabled: (_saved, fieldId) => isEditingAllowed(allowEditing, vaBudget, fieldId),
+      isFieldEnabled: (saved, fieldId) => HakemusBudgetEditing.isEditingAllowed(allowEditing, vaBudget, fieldId),
       onFieldUpdate: undefined,
       isSaveDraftAllowed: () => allowEditing,
       isNotFirstEdit: () => true,
@@ -81,19 +72,19 @@ export const HakemusBudgetEditing = ({controller, hakemus, hakuData, avustushaku
       hakemus: fakeHakemus,
       savedHakemus: hakemus
     })
-    validateFields(budgetEditFormState.form, fakeHakemus.answers, hakemus)
+    HakemusBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers, hakemus)
     const formElementProps = {
       state: budgetEditFormState,
       formContainerClass: Form,
       infoElementValues: avustushaku,
       controller: new BudgetEditFormController(controller, new BudgetEditComponentFactory(), avustushaku, budgetEditFormState.form, hakemus, helpTexts),
       containerId: "budget-edit-container",
-      headerElements: [],
-      environment
+      headerElements: []
     }
     return (
       <div className="budget-edit">
         <FormContainer {...formElementProps} />
       </div>
     )
+  }
 }

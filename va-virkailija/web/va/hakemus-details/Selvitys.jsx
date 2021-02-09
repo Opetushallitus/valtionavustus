@@ -1,27 +1,16 @@
-import React from 'react'
+import React, {Component} from 'react'
 import _ from 'lodash'
-import { SelvitysPreview } from './SelvitysPreview'
+import SelvitysPreview from './SelvitysPreview.jsx'
 import SelvitysNotFilled from './SelvitysNotFilled.jsx'
 import SelvitysLink from './SelvitysLink.jsx'
 import SelvitysEmail from './SelvitysEmail.jsx'
 import PresenterComment from './PresenterComment.jsx'
 import ApplicationPayments from './ApplicationPayments.jsx'
 
-interface SelvitysProps {
-  controller: any
-  hakemus: any
-  avustushaku: any
-  translations: any
-  selvitysType: any
-  userInfo: any
-  multibatchEnabled: any
-  isPresentingOfficer: any
-  presenterCommentHelpText: any
-  selvitysLinkHelpText: any
-  environment: any
-}
-
-export const Selvitys = ({controller, hakemus, avustushaku, translations, selvitysType, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText, environment}: SelvitysProps) => {
+export default class Selvitys extends Component {
+  render() {
+    const {controller, hakemus, avustushaku, translations, selvitysType,
+           userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText} = this.props
     const hasSelvitys = _.has(hakemus,`selvitys.${selvitysType}.answers`)
     const preview = _.isEqual(selvitysType, 'valiselvitys')
     const selvitysHakemus = _.get(hakemus,`selvitys.${selvitysType}`)
@@ -36,7 +25,7 @@ export const Selvitys = ({controller, hakemus, avustushaku, translations, selvit
                                          selvitysType={selvitysType}
                                          selvitysHakemus={selvitysHakemus}
                                          form={form}
-                                         environment={environment}
+
         />}
         {multibatchEnabled && avustushaku.content["multiplemaksuera"] &&
           <ApplicationPayments application={hakemus}
@@ -58,3 +47,4 @@ export const Selvitys = ({controller, hakemus, avustushaku, translations, selvit
       </div>
     )
   }
+}

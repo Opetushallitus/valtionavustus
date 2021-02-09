@@ -1,13 +1,7 @@
-import React, { Component } from 'react'
+import React from 'react'
 import _ from 'lodash'
 
-interface FormJsonEditorProps {
-  controller: any
-  avustushaku: any
-  formDraft: any
-}
-
-export default class FormJsonEditor extends Component<FormJsonEditorProps> {
+export default class FormJsonEditor extends React.Component {
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
@@ -16,7 +10,7 @@ export default class FormJsonEditor extends Component<FormJsonEditorProps> {
     const onChange = e => {
       controller.formOnChangeListener(avustushaku, e.target.value)
     }
-    const onClick = async () => {
+    const onClick = () => {
       controller.saveForm(avustushaku, formDraft)
     }
     const scrollToTop = () => {

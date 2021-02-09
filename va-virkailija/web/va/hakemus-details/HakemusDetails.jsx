@@ -1,32 +1,18 @@
-import React from 'react'
+import React, {Component} from 'react'
 
-import { HakemusPreview } from './HakemusPreview'
-import { HakemusArviointi } from './HakemusArviointi'
+import HakemusPreview from './HakemusPreview'
+import HakemusArviointi from './HakemusArviointi.jsx'
 import { Muutoshakemus } from './Muutoshakemus.jsx'
-import { Selvitys } from './Selvitys'
-import { Seuranta } from './Seuranta'
+import Selvitys from './Selvitys.jsx'
+import Seuranta from './Seuranta.jsx'
 
 import './hakemusDetails.less'
 
-interface HakemusDetailsProps {
-  hidden: any
-  controller: any
-  hakemus: any
-  avustushaku: any
-  hakuData: any
-  userInfo: any
-  loadingComments: any
-  showOthersScores: any
-  translations: any
-  environment: any
-  selectedHakemusAccessControl: any
-  subTab: any
-  helpTexts: any
-}
-
-
-export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuData, userInfo, loadingComments, showOthersScores, translations, environment, selectedHakemusAccessControl, subTab, helpTexts}: HakemusDetailsProps) => {
-
+export default class HakemusDetails extends Component {
+  render() {
+    const {hidden, controller, hakemus, avustushaku, hakuData, userInfo,
+           loadingComments, showOthersScores, translations, environment,
+           selectedHakemusAccessControl, subTab, helpTexts} = this.props
     const multibatchEnabled =
           (environment["multibatch-payments"] &&
            environment["multibatch-payments"]["enabled?"]) || false
@@ -55,9 +41,7 @@ export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuDa
       if(document.body.classList.contains('split-view')) {
         const container = document.querySelector('.hakemus-list tbody.has-selected')
         const selected = document.querySelector('#list-container tbody.has-selected .overview-row.selected')
-        if (container && selected && selected instanceof HTMLElement ) {
-          container.scrollTop = selected.offsetTop - 100
-        }
+        container.scrollTop = selected.offsetTop - 100
       }
       e.preventDefault()
       return false
@@ -77,8 +61,8 @@ export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuDa
                                    userInfo={userInfo}
                                    loadingComments={loadingComments}
                                    showOthersScores={showOthersScores}
+                                   subTab={subTab}
                                    controller={controller}
-                                   environment={environment}
                                    multibatchEnabled={multibatchEnabled}
                                    helpTexts={helpTexts}/>
 
@@ -89,7 +73,6 @@ export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuDa
                            selvitysType="valiselvitys"
                            multibatchEnabled={multibatchEnabled}
                            isPresentingOfficer={isPresentingOfficer}
-                           environment={environment}
    selvitysLinkHelpText={helpTexts["hankkeen_sivu__väliselvitys___linkki_lomakkeelle"]}
    presenterCommentHelpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}/>
         case 'loppuselvitys':
@@ -98,7 +81,6 @@ export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuDa
                            translations={translations}
                            selvitysType="loppuselvitys"
                            multibatchEnabled={multibatchEnabled}
-                           environment={environment} 
                            isPresentingOfficer={isPresentingOfficer}
    selvitysLinkHelpText={helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"]}
    presenterCommentHelpText={helpTexts["hankkeen_sivu__loppuselvitys___valmistelijan_huomiot"]}/>
@@ -108,12 +90,12 @@ export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuDa
           else
             return <Muutoshakemus environment={environment} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakemus={hakemus.normalizedData} controller={controller} userInfo={userInfo} presenter={presenter} />
         case 'seuranta':
-          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} helpTexts={helpTexts} environment={environment}/>
+          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selectedHakemusAccessControl={selectedHakemusAccessControl} helpTexts={helpTexts}/>
         default:
           throw new Error("Bad subTab selection '" + tabName + "'")
       }
     }
-    const tab = (name, label, testId?: string) => <span className={subTab === name ? 'selected' : ''} data-test-id={testId} onClick={createSubTabSelector(name)}>{label}</span>
+    const tab = (name, label, testId) => <span className={subTab === name ? 'selected' : ''} data-test-id={testId} onClick={createSubTabSelector(name)}>{label}</span>
 
     function createSubTabSelector(subTabToSelect) {
       return e => {
@@ -145,7 +127,7 @@ export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuDa
           {muutospaatosprosessiEnabled && tab('muutoshakemukset', <MuutoshakemuksetLabel/>)}
           {tab('seuranta', 'Seuranta', 'tab-seuranta')}
         </div>
-        <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} environment={environment}/>
+        <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
         <div id="hakemus-arviointi" className="fixed-content">
           <div id="tab-content"
                className={hakemus.refused ? "disabled" : ""}>
@@ -155,3 +137,4 @@ export const HakemusDetails = ({hidden, controller, hakemus, avustushaku, hakuDa
       </div>
     )
   }
+}

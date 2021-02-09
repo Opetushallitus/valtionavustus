@@ -1,6 +1,5 @@
 import { Browser, Page } from "puppeteer"
 import * as moment from 'moment'
-import * as querystring from "querystring"
 
 import {
   VIRKAILIJA_URL,
@@ -10,10 +9,6 @@ import {
   getLinkToHakemusFromSentEmails,
   mkBrowser,
   getMuutoshakemusPaatosEmails,
-  clearAndSet,
-  hakulomakeWithoutOhjetekstiJson,
-  navigateHakija,
-  navigateToNewHakemusPage,
   linkToMuutoshakemusRegex,
   getFirstPage,
   getUserKey,
@@ -1290,55 +1285,6 @@ etunimi.sukunimi@oph.fi
         expect(firstTitle).toContain('- Odottaa käsittelyä')
         expect(await countElements(page, `span.muutoshakemus__paatos-icon--rejected`)).toEqual(2)
       })
-    })
-  })
-
-  describe("Standardized fields", () => {
-    const helpTextFi = "Voit täyttää tämän lomakkeen halutessasi rahaa."
-    const helpTextSv = "Du kan sjöppäs i hoppas hurlumhej pengar"
-    let avustushakuID: number
-
-    test("Virkailija can fill help-text", async () => {
-      avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, "standardoitu haku", "69/2021")
-
-      await clickElementWithText(page, "span", "Hakulomake")
-      await clearAndSet(page, ".form-json-editor textarea", hakulomakeWithoutOhjetekstiJson)
-
-      await clearAndType(page, '[data-test-id=standardized-ohjeteksti-help-fi]', helpTextFi)
-      await clearAndType(page, '[data-test-id=standardized-ohjeteksti-help-sv]', helpTextSv)
-
-      await clickFormSaveAndWait(page, avustushakuID)
-      await clickElementWithText(page, "button", "Takaisin ylös")
-
-      await clickElementWithText(page, "span", "Haun tiedot")
-      await publishAvustushaku(page)
-    })
-
-    test("Hakija can see help-text", async () => {
-      await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
-
-      await page.waitForSelector('#haku-not-open', { hidden: true, timeout: 500 })
-      await clearAndType(page, "#primary-email", "email@schmemail.sch")
-      await clickElement(page, "#submit:not([disabled])")
-
-      await navigateToNewHakemusPage(page, avustushakuID)
-
-      await clearAndType(page, "#finnish-business-id", TEST_Y_TUNNUS)
-      await clickElement(page, "input.get-business-id")
-
-      const helpTextFiSeenByHakija = await getElementInnerText(page,  '[data-test-id=standardized-ohjeteksti-help-fi]')
-
-      const userKey = querystring.parse(page.url().split('?')[1])['hakemus']
-
-      await navigateHakija(page, `/avustushaku/${avustushakuID}/nayta?lang=sv&hakemus=${userKey}`)
-
-      await clearAndType(page, "#finnish-business-id", TEST_Y_TUNNUS)
-      await clickElement(page, "input.get-business-id")
-
-      const helpTextSvSeenByHakija = await getElementInnerText(page,  '[data-test-id=standardized-ohjeteksti-help-sv]')
-
-      expect(helpTextFiSeenByHakija).toEqual(helpTextFi)
-      expect(helpTextSvSeenByHakija).toEqual(helpTextSv)
     })
   })
 

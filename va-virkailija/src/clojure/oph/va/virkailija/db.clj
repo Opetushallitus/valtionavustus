@@ -28,50 +28,6 @@
       created-paatos
       ))))
 
-(defn copy-standardized-avustushaku-help-texts [from-haku-id to-haku-id]
-  (execute! "INSERT INTO virkailija.standardized_avustushaku_help_text
-              ( avustushaku_id,
-                ohjeteksti_fi,
-                ohjeteksti_sv,
-                hakija_name_fi,
-                hakija_name_sv,
-                hakija_email_fi,
-                hakija_email_sv)
-              SELECT 
-                    ?,
-                    ohjeteksti_fi,
-                    ohjeteksti_sv,
-                    hakija_name_fi,
-                    hakija_name_sv,
-                    hakija_email_fi,
-                    hakija_email_sv
-            FROM virkailija.standardized_avustushaku_help_text WHERE avustushaku_id = ?" [to-haku-id from-haku-id ]))
-
-(defn update-avustushaku-standardized-help-texts [avustushaku-id standardized-fields]
-  (with-tx (fn [tx]
-    (let [updated-fields (first (query tx
-     "INSERT INTO virkailija.standardized_avustushaku_help_text
-          (avustushaku_id, ohjeteksti_fi, ohjeteksti_sv, hakija_name_fi, hakija_name_sv, hakija_email_fi, hakija_email_sv)
-        VALUES
-          (?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT (avustushaku_id) DO UPDATE 
-          SET ohjeteksti_fi = excluded.ohjeteksti_fi, 
-              ohjeteksti_sv = excluded.ohjeteksti_sv,
-              hakija_name_fi = excluded.hakija_name_fi, 
-              hakija_name_sv = excluded.hakija_name_sv,
-              hakija_email_fi = excluded.hakija_email_fi, 
-              hakija_email_sv = excluded.hakija_email_sv
-        RETURNING *"
-          [avustushaku-id (:ohjeteksti-fi standardized-fields) (:ohjeteksti-sv standardized-fields) (:hakija-name-fi standardized-fields) (:hakija-name-sv standardized-fields) (:hakija-email-fi standardized-fields) (:hakija-email-sv standardized-fields)]))]
-      updated-fields
-      ))))
-
-(defn get-avustushaku-standardized-help-texts [avustushaku-id]
-  (log/info (str "Get standardized avustushaku help texts with id: " avustushaku-id))
-  (let [standardized-fields (query "SELECT * from virkailija.standardized_avustushaku_help_text WHERE avustushaku_id = ?" [avustushaku-id])]
-    (log/info (str "Succesfully fetched standardized avustushaku help texts with id: " avustushaku-id))
-    (first standardized-fields)))
-
 (defn get-normalized-hakemus [hakemus-id]
   (log/info (str "Get normalized hakemus with id: " hakemus-id))
   (let [hakemukset (query "SELECT * from virkailija.normalized_hakemus WHERE hakemus_id = ?" [hakemus-id])]

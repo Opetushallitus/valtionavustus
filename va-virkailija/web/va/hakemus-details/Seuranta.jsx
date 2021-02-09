@@ -2,23 +2,16 @@ import React from 'react'
 import PresenterComment from './PresenterComment.jsx'
 import SeurantaLiitteet from './SeurantaLiitteet.jsx'
 import SeurantaTags from './SeurantaTags.jsx'
-import { SeurantaBudgetEditing } from '../seurantabudgetedit/SeurantaBudgetEditing'
+import SeurantaBudgetEditing
+  from '../seurantabudgetedit/SeurantaBudgetEditing.jsx'
 import ShouldPay from './ShouldPay.jsx'
 import AllowVisibilityInExternalSystem from './AllowVisibilityInExternalSystem.jsx'
 import ShouldPayComments from './ShouldPayComments.jsx'
 
-interface SeurantaProps {
-  controller: any
-  hakemus: any
-  avustushaku: any
-  translations: any
-  hakuData: any
-  helpTexts: any
-  environment: any
-}
-
-export const Seuranta = ({controller, hakemus, avustushaku,
-           translations, hakuData, helpTexts, environment}: SeurantaProps) => {
+export default class Seuranta extends React.Component {
+  render() {
+    const {controller, hakemus, avustushaku,
+           translations, hakuData, helpTexts} = this.props
     return (
       <div className="seuranta">
         <AllowVisibilityInExternalSystem controller={controller}
@@ -38,9 +31,7 @@ export const Seuranta = ({controller, hakemus, avustushaku,
                                  hakuData={hakuData}
                                  translations={translations}
                                  controller={controller}
-                                 hakemus={hakemus}
-                                 environment={environment}
-                                 />
+                                 hakemus={hakemus}/>
         </div>
         <div className="seuranta-section">
           <SeurantaLiitteet avustushaku={avustushaku}
@@ -58,3 +49,4 @@ export const Seuranta = ({controller, hakemus, avustushaku,
       </div>
     )
   }
+}

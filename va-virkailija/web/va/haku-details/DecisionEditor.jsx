@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import _ from 'lodash'
 import Bacon from 'baconjs'
 
@@ -27,7 +27,7 @@ const DecisionFields = ({title,avustushaku,id,onChange,helpText, dataTestId}) =>
   </div>
 
 
-class DateField extends Component {
+class DateField extends React.Component {
   constructor(props) {
     super(props)
     this.state = DateField.initialState(props)
@@ -73,7 +73,7 @@ class DateField extends Component {
   }
 }
 
-class LiitteetSelection extends Component {
+class LiitteetSelection extends React.Component {
   constructor(props) {
     super(props)
     const selectedLiitteet = _.get(this.props.avustushaku, "decision.liitteet", [])
@@ -238,7 +238,7 @@ class LiitteetSelection extends Component {
   }
 }
 
-class RegenerateDecisions extends Component {
+class RegenerateDecisions extends React.Component {
   constructor(props){
     super(props)
     this.state = {completed:false,confirm:false}
@@ -276,7 +276,7 @@ class RegenerateDecisions extends Component {
   }
 }
 
-class ResendDecisions extends Component {
+class ResendDecisions extends React.Component {
   constructor(props){
     super(props)
     this.state = {completed:false,confirm:false}
@@ -327,7 +327,7 @@ class ResendDecisions extends Component {
   }
 }
 
-class TapahtumaLoki extends Component {
+class TapahtumaLoki extends React.Component {
 
   dateTime(d) {
     return `${DateUtil.asDateString(d)} ${DateUtil.asTimeString(d)}`
@@ -385,7 +385,7 @@ class TapahtumaLoki extends Component {
   }
 }
 
-class DecisionDateAndSend extends Component {
+class DecisionDateAndSend extends React.Component {
   constructor(props){
     super(props)
     this.state = DecisionDateAndSend.initialState(props)
@@ -655,7 +655,7 @@ class DecisionDateAndSend extends Component {
   }
 }
 
-export default class DecisionEditor extends Component {
+export default class DecisionEditor extends React.Component {
   render() {
     const {
       avustushaku,

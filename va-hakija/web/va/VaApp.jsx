@@ -11,14 +11,12 @@ import FormController from "soresu-form/web/form/FormController"
 import FieldUpdateHandler from "soresu-form/web/form/FieldUpdateHandler"
 import ResponseParser from "soresu-form/web/form/ResponseParser"
 
-import { VaForm } from "./VaForm"
+import VaForm from "./VaForm.jsx"
 import VaUrlCreator from "./VaUrlCreator"
 import VaComponentFactory from "va-common/web/va/VaComponentFactory"
 import VaSyntaxValidator from "va-common/web/va/VaSyntaxValidator"
 import VaPreviewComponentFactory from "va-common/web/va/VaPreviewComponentFactory"
 import VaBudgetCalculator from "va-common/web/va/VaBudgetCalculator"
-
-import { getStandardizedFormHelpTexts } from "va-common/web/va/standardized-form-fields/client"
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 
@@ -66,16 +64,14 @@ const query = queryString.parse(location.search)
 const urlContent = { parsedQuery: query, location: location }
 const develMode =  query.devel === "true"
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
-const userKey = query.hakemus
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
 const environmentP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.environmentConfigUrl()))
-const standardizedFormHelpTextsP = Bacon.fromPromise(getStandardizedFormHelpTexts(avustusHakuId))
+
 
 function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP
-  template.standardizedFormHelpTexts = standardizedFormHelpTextsP
   template.configuration.environment = environmentP
-  template.saveStatus.hakemusId = userKey
+  template.saveStatus.hakemusId = query.hakemus
   template.token = query.token
 }
 
@@ -91,8 +87,6 @@ function onInitialStateLoaded(initialState) {
   if (!modifyApplication && initialState.avustushaku.phase !== "current" &&
       !initialState.configuration.preview &&
       !isEmptyOrReopenedHakemus(initialState.saveStatus.savedObject)) {
-
-// @ts-ignore
     window.location.href = urlCreator.existingSubmissionPreviewUrl(
       initialState.avustushaku.id,
       initialState.saveStatus.hakemusId,
@@ -104,7 +98,6 @@ function onInitialStateLoaded(initialState) {
 }
 
 function initVaFormController() {
-// @ts-ignore
   const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(HttpUtil.get(urlCreator.formApiUrl(avustusHaku.form)))})
   const controller = new FormController({
     "initialStateTemplateTransformation": initialStateTemplateTransformation,
@@ -129,7 +122,7 @@ function initVaFormController() {
   const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state) {
-    return <VaForm controller={controller} isExpired={false} state={state} hakemusType="hakemus" useBusinessIdSearch={true} refuseGrant={urlContent.parsedQuery["refuse-grant"] === "true"} modifyApplication={urlContent.parsedQuery["modify-application"]} standardizedFormFieldsEnabled={true}/>
+    return <VaForm controller={controller} state={state} hakemusType="hakemus" useBusinessIdSearch={true} refuseGrant={urlContent.parsedQuery["refuse-grant"]} modifyApplication={urlContent.parsedQuery["modify-application"]}/>
   }}
 }
 

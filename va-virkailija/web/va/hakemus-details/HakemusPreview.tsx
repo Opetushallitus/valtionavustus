@@ -46,17 +46,13 @@ function getCurrentAnswers(hakemus: Hakemus): Answer[] {
   })
 }
 
-interface HakemusPreviewProps { 
-  hakemus: Hakemus
-  avustushaku: any
-  environment: any
-  hakuData: any
-  translations: any,
-}
-
-export const HakemusPreview = ({ hakemus, avustushaku, hakuData, translations, environment }: HakemusPreviewProps) => {
-
+export default class HakemusPreview extends Component<{ hakemus: Hakemus, avustushaku: any, hakuData: any, translations: any }> {
+  render() {
+    const hakemus = this.props.hakemus
     const registerNumber = _.get(hakemus, "register-number", "")
+    const avustushaku = this.props.avustushaku
+    const hakuData = this.props.hakuData
+    const translations = this.props.translations
     const formState = createPreviewHakemusFormState()
     const registerNumberDisplay = <VaHakemusRegisterNumber key="register-number"
                                                            registerNumber={registerNumber}
@@ -87,13 +83,9 @@ export const HakemusPreview = ({ hakemus, avustushaku, hakuData, translations, e
                          </span>
                        </small>,
                        <GrantRefusedNotice application={hakemus}
-                                           key="grant-refused" />],
-      environment,
+                                           key="grant-refused" />]
     }
-
-    return  (
-      <FormContainer {...formElementProps} />
-      )
+    return <FormContainer {...formElementProps} />
 
     function createPreviewHakemusFormState(): HakemusFormState {
       const hakemusFormState = FakeFormState.createHakemusFormState({
@@ -125,9 +117,11 @@ export const HakemusPreview = ({ hakemus, avustushaku, hakuData, translations, e
       FormRules.applyRulesToForm(formSpecification, effectiveForm, currentAnswers)
       FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, combinedAnswersForPopulatingGrowingFieldsets, false)
       hakemusFormState.saveStatus.values = getCurrentAnswers(hakemus)
+      console.log('hakemus', hakemus)
       return hakemusFormState
     }
   }
+}
 
 class VaChangeRequests extends Component<any> {
   render() {

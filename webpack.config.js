@@ -83,7 +83,7 @@ const virkailijaConfig = Object.assign(
   {
     entry: {
       app: path.resolve(__dirname, "va-virkailija/web/va/HakemustenArviointiApp.jsx"),
-      adminApp: path.resolve(__dirname, "va-virkailija/web/va/HakujenHallintaApp.tsx"),
+      adminApp: path.resolve(__dirname, "va-virkailija/web/va/HakujenHallintaApp.jsx"),
       summaryApp: path.resolve(__dirname, "va-virkailija/web/va/YhteenvetoApp.jsx"),
       login: path.resolve(__dirname, "va-virkailija/web/va/Login.jsx"),
     }
@@ -95,7 +95,7 @@ const hakijaConfig = Object.assign(
   makeConfig(path.resolve(__dirname, "va-hakija")),
   {
     entry: {
-      app: path.resolve(__dirname, "va-hakija/web/va/VaApp.tsx"),
+      app: path.resolve(__dirname, "va-hakija/web/va/VaApp.jsx"),
       selvitysApp: path.resolve(__dirname, "va-hakija/web/va/SelvitysApp.jsx"),
       login: path.resolve(__dirname, "va-hakija/web/va/VaLogin.jsx"),
       muutoshakemusApp: path.resolve(__dirname, "va-hakija/web/va/muutoshakemus/MuutoshakemusApp.tsx"),

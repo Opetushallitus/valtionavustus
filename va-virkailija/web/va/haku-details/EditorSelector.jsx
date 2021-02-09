@@ -3,12 +3,10 @@ import React from 'react'
 import ClassNames from 'classnames'
 
 import HakuEdit from './HakuEdit.jsx'
-import { FormEditorContainer } from './FormEditorContainer'
+import FormEditorContainer from './FormEditorContainer.jsx'
 import DecisionEditor from './DecisionEditor.jsx'
-import SelvitysFormEditor from './SelvitysFormEditor'
+import SelvitysFormEditor from './SelvitysFormEditor.jsx'
 import HelpTooltip from '../HelpTooltip.jsx'
-
-import { StandardizedFormHelpTexts } from 'va-common/web/va/standardized-form-fields/types'
 
 function createRedirectTo(url) {
   return (e) => {
@@ -17,25 +15,9 @@ function createRedirectTo(url) {
   }
 }
 
-interface EditorSelectorProps {
-  subTab: any
-  controller: any
-  avustushaku: any
-  decisionLiitteet: any
-  formDraft: any
-  vaUserSearch: any
-  koodistos: any
-  userInfo: any
-  environment: any
-  translations: any
-  valiselvitysFormDraft: any
-  loppuselvitysFormDraft: any
-  codeOptions: any
-  helpTexts: any
-  standardizedFormHelpTexts: StandardizedFormHelpTexts
-}
-
-export const EditorSelector = ({
+export default class EditorSelector extends React.Component {
+  render() {
+    const {
       subTab,
       controller,
       avustushaku,
@@ -49,11 +31,8 @@ export const EditorSelector = ({
       valiselvitysFormDraft,
       loppuselvitysFormDraft,
       codeOptions,
-      helpTexts,
-      standardizedFormHelpTexts
-    }: EditorSelectorProps) => {
-
-
+      helpTexts
+    } = this.props
     let subTabContent
     switch (subTab) {
       case "haku-editor":
@@ -71,10 +50,7 @@ export const EditorSelector = ({
                                              koodistos={koodistos}
                                              formDraft={formDraft}
                                              controller={controller}
-                                             helpTexts={helpTexts} 
-                                             standardizedFormHelpTexts={standardizedFormHelpTexts}
-                                             standardizedFormFieldsEnabled={true}
-                                             />
+                                             helpTexts={helpTexts} />
         break
       case "decision":
         subTabContent = <DecisionEditor avustushaku={avustushaku}
@@ -94,7 +70,6 @@ export const EditorSelector = ({
                                         loppuselvitysFormDraft={loppuselvitysFormDraft}
                                         translations={translations}
                                         helpTexts={helpTexts}
-                                        standardizedFormHelpTexts={standardizedFormHelpTexts}
 
         />
         break
@@ -108,7 +83,7 @@ export const EditorSelector = ({
                                             loppuselvitysFormDraft={loppuselvitysFormDraft}
                                             translations={translations}
                                             helpTexts={helpTexts}
-                                            standardizedFormHelpTexts={standardizedFormHelpTexts}
+
         />
         break
       default:
@@ -161,4 +136,5 @@ export const EditorSelector = ({
         <div className="section-container">{subTabContent}</div>
       </section>
     )
+  }
 }

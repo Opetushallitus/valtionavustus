@@ -13,13 +13,10 @@ export default class Form extends React.Component {
     const infoElementValues = this.props.infoElementValues.content
     const controller = this.props.controller
     const state = this.props.state
-    const standardizedFormHelpTexts = state.standardizedFormHelpTexts
     const fields = state.form.content
     const validationErrors = state.form.validationErrors
     const values = state.saveStatus.values
     const modifyApplication = this.props.modifyApplication
-    const environment = this.props.environment
-    const standardizedFormFieldsEnabled = this.props.standardizedFormFieldsEnabled
 
     const renderField = function(field, renderingParameters) {
       const htmlId = controller.constructHtmlId(fields, field.id)
@@ -56,6 +53,7 @@ export default class Form extends React.Component {
         fieldDisabled =  !formOperations.isFieldEnabled(saved, field.id) || field.forceDisabled === true
         }
 
+
         const extendedProperties = _.extend(fieldProperties, {
           disabled: fieldDisabled,
           renderingParameters: renderingParameters,
@@ -71,21 +69,9 @@ export default class Form extends React.Component {
       }
     }
 
-    const enableStandardizedFormFields =
-      (environment["muutospaatosprosessi"] &&
-        environment["muutospaatosprosessi"]["enabled?"]) && standardizedFormFieldsEnabled
-    return ( 
-      enableStandardizedFormFields
-      ? <form className="soresu-form">
-          {renderField(fields[0])}
-          {renderField(fields[1])}
-          <p className="soresu-info-element" data-test-id={`standardized-ohjeteksti-help-${state.configuration.lang}`}>{standardizedFormHelpTexts["ohjeteksti-" + state.configuration.lang]}</p>
-          { _.map(fields.slice(3), f => renderField(f))}
-          
-        </form>
-      : <form className="soresu-form">
-      { _.map(fields, f => renderField(f))}
-        </form>)
+    return (<form className="soresu-form">
+      {_.map(fields, f => renderField(f))}
+    </form>)
 
     function createInfoElement(fieldProperties) {
       return <InfoElement {...fieldProperties} values={infoElementValues} answersObject={values}/>

@@ -1,27 +1,12 @@
-import React, { Component } from 'react'
+import React from 'react'
 import _ from 'lodash'
 
 import HttpUtil from "soresu-form/web/HttpUtil"
 import DateUtil from 'soresu-form/web/DateUtil'
 
-import { FormEditor } from './FormEditor'
+import FormEditor from './FormEditor.jsx'
 
-import { StandardizedFormHelpTexts } from 'va-common/web/va/standardized-form-fields/types'
-
-interface SelvitysFormProps { 
-  avustushaku: any
-  controller: any
-  translations: any
-  koodistos: any
-  selvitysType: any
-  environment: any
-  helpTexts: any
-  valiselvitysFormDraft: any
-  loppuselvitysFormDraft: any
-  standardizedFormHelpTexts: StandardizedFormHelpTexts
-}
-
-export default class SelvitysFormEditor extends Component<SelvitysFormProps> {
+export default class SelvitysFormEditor extends React.Component {
   constructor(props) {
     super(props)
     this.state = SelvitysFormEditor.initialState(props)
@@ -44,9 +29,8 @@ export default class SelvitysFormEditor extends Component<SelvitysFormProps> {
   }
 
   render(){
-    const {avustushaku, controller, translations, koodistos, selvitysType, environment, helpTexts} = this.props
+    const {avustushaku, controller, translations, koodistos, selvitysType,environment, helpTexts} = this.props
     const formDraft = this.props[selvitysType + "FormDraft"]
-    const standardizedFormHelpTexts = this.props.standardizedFormHelpTexts
     const formContent = avustushaku[selvitysType + "Form"]
     const updatedAtElementId = `${selvitysType}UpdatedAt`
     const updatedAt = formContent.updated_at
@@ -142,7 +126,7 @@ export default class SelvitysFormEditor extends Component<SelvitysFormProps> {
             </a>
           </div>
         </div>
-        <FormEditor environment={environment} avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} standardizedFormHelpTexts={standardizedFormHelpTexts}/>
+        <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} />
         <div className="form-json-editor">
           <h3>Hakulomakkeen sisältö</h3>
           <span className="error">{parseError}</span>
