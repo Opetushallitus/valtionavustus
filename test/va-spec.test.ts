@@ -1255,8 +1255,8 @@ etunimi.sukunimi@oph.fi
       await clickElementWithText(page, "span", "Hakulomake")
       await clearAndSet(page, ".form-json-editor textarea", hakulomakeWithoutOhjetekstiJson)
 
-      await clearAndType(page, '[data-test-id=standardized-help-text-fi]', helpTextFi)
-      await clearAndType(page, '[data-test-id=standardized-help-text-sv]', helpTextSv)
+      await clearAndType(page, '[data-test-id=standardized-ohjeteksti-help-fi]', helpTextFi)
+      await clearAndType(page, '[data-test-id=standardized-ohjeteksti-help-sv]', helpTextSv)
 
       await clickFormSaveAndWait(page, avustushakuID)
       await clickElementWithText(page, "button", "Takaisin ylös")
@@ -1277,7 +1277,7 @@ etunimi.sukunimi@oph.fi
       await clearAndType(page, "#finnish-business-id", TEST_Y_TUNNUS)
       await clickElement(page, "input.get-business-id")
 
-      const helpTextFiSeenByHakija = await getElementInnerText(page,  '[data-test-id=standardized-help-text-fi]')
+      const helpTextFiSeenByHakija = await getElementInnerText(page,  '[data-test-id=standardized-ohjeteksti-help-fi]')
 
       const userKey = querystring.parse(page.url().split('?')[1])['hakemus']
 
@@ -1286,7 +1286,7 @@ etunimi.sukunimi@oph.fi
       await clearAndType(page, "#finnish-business-id", TEST_Y_TUNNUS)
       await clickElement(page, "input.get-business-id")
 
-      const helpTextSvSeenByHakija = await getElementInnerText(page,  '[data-test-id=standardized-help-text-sv]')
+      const helpTextSvSeenByHakija = await getElementInnerText(page,  '[data-test-id=standardized-ohjeteksti-help-sv]')
 
       expect(helpTextFiSeenByHakija).toEqual(helpTextFi)
       expect(helpTextSvSeenByHakija).toEqual(helpTextSv)

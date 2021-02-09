@@ -8,7 +8,7 @@ import DecisionEditor from './DecisionEditor.jsx'
 import SelvitysFormEditor from './SelvitysFormEditor'
 import HelpTooltip from '../HelpTooltip.jsx'
 
-import { StandardizedFormValues } from 'va-common/web/va/standardized-form-fields/types'
+import { StandardizedFormHelpTexts } from 'va-common/web/va/standardized-form-fields/types'
 
 function createRedirectTo(url) {
   return (e) => {
@@ -32,7 +32,7 @@ interface EditorSelectorProps {
   loppuselvitysFormDraft: any
   codeOptions: any
   helpTexts: any
-  standardizedFormValues: StandardizedFormValues
+  standardizedFormHelpTexts: StandardizedFormHelpTexts
 }
 
 export const EditorSelector = ({
@@ -50,7 +50,7 @@ export const EditorSelector = ({
       loppuselvitysFormDraft,
       codeOptions,
       helpTexts,
-      standardizedFormValues
+      standardizedFormHelpTexts
     }: EditorSelectorProps) => {
 
 
@@ -72,7 +72,7 @@ export const EditorSelector = ({
                                              formDraft={formDraft}
                                              controller={controller}
                                              helpTexts={helpTexts} 
-                                             standardizedFormValues={standardizedFormValues}
+                                             standardizedFormHelpTexts={standardizedFormHelpTexts}
                                              standardizedFormFieldsEnabled={true}
                                              />
         break
@@ -94,7 +94,7 @@ export const EditorSelector = ({
                                         loppuselvitysFormDraft={loppuselvitysFormDraft}
                                         translations={translations}
                                         helpTexts={helpTexts}
-                                        standardizedFormValues={standardizedFormValues}
+                                        standardizedFormHelpTexts={standardizedFormHelpTexts}
 
         />
         break
@@ -108,7 +108,7 @@ export const EditorSelector = ({
                                             loppuselvitysFormDraft={loppuselvitysFormDraft}
                                             translations={translations}
                                             helpTexts={helpTexts}
-                                            standardizedFormValues={standardizedFormValues}
+                                            standardizedFormHelpTexts={standardizedFormHelpTexts}
         />
         break
       default:

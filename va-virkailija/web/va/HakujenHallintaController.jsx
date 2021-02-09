@@ -17,8 +17,8 @@ import HakuPhases from './haku-details/HakuPhases'
 import queryString from 'query-string'
 
 import { 
-  getStandardizedFormValues,
-  postStandardizedFields 
+  getStandardizedFormHelpTexts,
+  postStandardizedFormHelpTexts
 } from 'va-common/web/va/standardized-form-fields/client'
 
 const dispatcher = new Dispatcher()
@@ -564,11 +564,11 @@ export default class HakujenHallintaController {
   }
 
   loadStandardizedForm(selectedHaku) {
-    getStandardizedFormValues(selectedHaku.id).then (standardizedFormValues => dispatcher.push(events.standardizedFormLoaded, standardizedFormValues))
+    getStandardizedFormHelpTexts(selectedHaku.id).then (standardizedFormHelpTexts => dispatcher.push(events.standardizedFormLoaded, standardizedFormHelpTexts))
   }
 
-  onStandardizedFormLoaded(state, standardizedFormValues) {
-    state.standardizedFormValues = standardizedFormValues
+  onStandardizedFormLoaded(state, standardizedFormHelpTexts) {
+    state.standardizedFormHelpTexts = standardizedFormHelpTexts
     return state
   }
 
@@ -759,7 +759,7 @@ export default class HakujenHallintaController {
   }
 
   onStandardizedFormUpdated(state, standardizedFormKeyValue) {
-    state.standardizedFormValues[standardizedFormKeyValue.key] = standardizedFormKeyValue.value
+    state.standardizedFormHelpTexts[standardizedFormKeyValue.key] = standardizedFormKeyValue.value
     return state
   }
 
@@ -771,7 +771,7 @@ export default class HakujenHallintaController {
       .then(function (response) {
         dispatcher.push(events.formSaveCompleted, {avustusHakuId: avustushaku.id, fromFromServer: response})
       })
-    .then(() => postStandardizedFields(avustushaku.id, state.standardizedFormValues))
+    .then(() => postStandardizedFormHelpTexts(avustushaku.id, state.standardizedFormHelpTexts))
       .catch(function (error) {
         if (error && error.response.status === 400) {
           dispatcher.push(events.saveCompleted, {error: "validation-error"})

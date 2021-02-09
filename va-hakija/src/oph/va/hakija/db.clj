@@ -113,29 +113,22 @@
         hakemus (exec queries/create-hakemus<! params)]
     {:hakemus hakemus :submission submission}))
 
-(defn update-hakemus-standardized-fields [user-key standardized-fields]
+(defn update-hakemus-normalized-fields [user-key normalized-fields]
   (with-tx (fn [tx]
     (let [updated-fields (first (query tx
-     "UPDATE virkailija.standardized_hakemus SET
-          help_text_fi = ?, help_text_sv = ?
+     "UPDATE virkailija.normalized_hakemus SET
+          hakija_name = ?,
+          hakija_email = ?
         WHERE hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)"
-          [(:help-text-fi standardized-fields) (:help-text-sv standardized-fields) user-key]))]
+          [(:hakija-name normalized-fields) (:hakija-email normalized-fields) user-key]))]
       updated-fields
       ))))
 
-(defn get-avustushaku-standardized-fields [user-key]
-  (log/info (str "Get standardized hakemus fields with user-key: " user-key))
-  (let [standardized-fields (query "SELECT help_text_fi, help_text_sv from virkailija.standardized_hakemus WHERE hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)" [user-key])]
-    (log/info (str "Succesfully fetched standardized hakemus fields with user-key: " user-key))
+(defn get-avustushaku-standardized-help-texts [avustushaku-id]
+  (log/info (str "Get standardized avustushaku help texts with id: " avustushaku-id))
+  (let [standardized-fields (query "SELECT * from virkailija.standardized_avustushaku_help_text WHERE avustushaku_id = ?" [avustushaku-id])]
+    (log/info (str "Succesfully fetched standardized avustushaku help texts with id: " avustushaku-id))
     (first standardized-fields)))
-
-(defn create-standardized-hakemus-fields [avustushaku-id user-key]
-  (log/info (str "Creating standardized hakemus fields with user-key: " user-key))
-  (execute! "WITH h_id AS (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1),
-                  help_texts AS (SELECT help_text_fi, help_text_sv FROM virkailija.standardized_avustushaku WHERE avustushaku_id = ? LIMIT 1)
-            INSERT INTO virkailija.standardized_hakemus
-            (hakemus_id, help_text_fi, help_text_sv)
-            SELECT * FROM h_id CROSS JOIN help_texts" [user-key avustushaku-id]))
 
 (defn get-normalized-hakemus [user-key]
   (log/info (str "Get normalized hakemus with user-key: " user-key))

@@ -229,22 +229,22 @@
                         (ok response)
                         (not-found))))
 
-(defn- post-avustushaku-standardized-fields []
-  (compojure-api/POST "/:avustushaku-id/standardized-fields" []
+(defn- post-avustushaku-standardized-help-texts []
+  (compojure-api/POST "/:avustushaku-id/standardized-help-texts" []
                       :path-params [avustushaku-id :- Long]
-                      :body [avustushaku-standardized-fields (compojure-api/describe va-schema/AvustushakuStandardizedFields "Standardized avustushaku fields")]
-                      :return va-schema/AvustushakuStandardizedFields
-                      :summary "Update avustushaku standardized fields"
-                      (if-let [response (virkailija-db/update-avustushaku-standardized-fields avustushaku-id avustushaku-standardized-fields)]
+                      :body [avustushaku-standardized-fields (compojure-api/describe va-schema/AvustushakuStandardizedHelpTexts "Standardized avustushaku help texts")]
+                      :return va-schema/AvustushakuStandardizedHelpTexts
+                      :summary "Update avustushaku standardized help texts"
+                      (if-let [response (virkailija-db/update-avustushaku-standardized-help-texts avustushaku-id avustushaku-standardized-fields)]
                         (ok response)
                         (not-found))))
 
-(defn- get-avustushaku-standardized-fields []
-  (compojure-api/GET "/:avustushaku-id/standardized-fields" [] 
+(defn- get-avustushaku-standardized-help-texts []
+  (compojure-api/GET "/:avustushaku-id/standardized-help-texts" [] 
                      :path-params [avustushaku-id :- Long]
-                     :return va-schema/AvustushakuStandardizedFields 
-                     :summary "Return avustushaku standardized fields"
-                       (if-let [response (virkailija-db/get-avustushaku-standardized-fields avustushaku-id)]
+                     :return va-schema/AvustushakuStandardizedHelpTexts 
+                     :summary "Return avustushaku standardized help texts"
+                       (if-let [response (virkailija-db/get-avustushaku-standardized-help-texts avustushaku-id)]
                          (ok response)
                          (not-found))))
 
@@ -636,8 +636,8 @@
                          (put-avustushaku)
                          (post-avustushaku)
                          (get-avustushaku)
-                         (when (get-in config [:muutospaatosprosessi :enabled?]) (post-avustushaku-standardized-fields))
-                         (when (get-in config [:muutospaatosprosessi :enabled?]) (get-avustushaku-standardized-fields))
+                         (when (get-in config [:muutospaatosprosessi :enabled?]) (post-avustushaku-standardized-help-texts))
+                         (when (get-in config [:muutospaatosprosessi :enabled?]) (get-avustushaku-standardized-help-texts))
                          (when (get-in config [:email-api :enabled?]) (get-hakemus-email))
                          (when (get-in config [:email-api :enabled?]) (get-avustushaku-email))
                          (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemukset))

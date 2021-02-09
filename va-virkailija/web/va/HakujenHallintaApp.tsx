@@ -49,7 +49,7 @@ export const AdminApp = ({state, controller}: AdminAppProps) => {
                           controller={controller}
                           translations={translations}
                           codeOptions={codeOptions}
-                          standardizedFormValues={state.standardizedFormValues}
+                          standardizedFormHelpTexts={state.standardizedFormHelpTexts}
                           helpTexts={helpTexts} />
         </section>
       </section>

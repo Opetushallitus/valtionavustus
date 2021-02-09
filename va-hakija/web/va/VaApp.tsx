@@ -18,7 +18,7 @@ import VaSyntaxValidator from "va-common/web/va/VaSyntaxValidator"
 import VaPreviewComponentFactory from "va-common/web/va/VaPreviewComponentFactory"
 import VaBudgetCalculator from "va-common/web/va/VaBudgetCalculator"
 
-import { getStandardizedHakemusFields } from "va-common/web/va/standardized-form-fields/client"
+import { getStandardizedFormHelpTexts } from "va-common/web/va/standardized-form-fields/client"
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 
@@ -69,11 +69,11 @@ const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
 const userKey = query.hakemus
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
 const environmentP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.environmentConfigUrl()))
-const standardizedFormValuesP = Bacon.fromPromise(getStandardizedHakemusFields(avustusHakuId, userKey))
+const standardizedFormHelpTextsP = Bacon.fromPromise(getStandardizedFormHelpTexts(avustusHakuId))
 
 function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP
-  template.standardizedFormValues = standardizedFormValuesP
+  template.standardizedFormHelpTexts = standardizedFormHelpTextsP
   template.configuration.environment = environmentP
   template.saveStatus.hakemusId = userKey
   template.token = query.token

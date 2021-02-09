@@ -6,7 +6,7 @@ import DateUtil from 'soresu-form/web/DateUtil'
 
 import { FormEditor } from './FormEditor'
 
-import { StandardizedFormValues } from 'va-common/web/va/standardized-form-fields/types'
+import { StandardizedFormHelpTexts } from 'va-common/web/va/standardized-form-fields/types'
 
 interface SelvitysFormProps { 
   avustushaku: any
@@ -18,7 +18,7 @@ interface SelvitysFormProps {
   helpTexts: any
   valiselvitysFormDraft: any
   loppuselvitysFormDraft: any
-  standardizedFormValues: StandardizedFormValues
+  standardizedFormHelpTexts: StandardizedFormHelpTexts
 }
 
 export default class SelvitysFormEditor extends Component<SelvitysFormProps> {
@@ -46,7 +46,7 @@ export default class SelvitysFormEditor extends Component<SelvitysFormProps> {
   render(){
     const {avustushaku, controller, translations, koodistos, selvitysType, environment, helpTexts} = this.props
     const formDraft = this.props[selvitysType + "FormDraft"]
-    const standardizedFormValues = this.props.standardizedFormValues
+    const standardizedFormHelpTexts = this.props.standardizedFormHelpTexts
     const formContent = avustushaku[selvitysType + "Form"]
     const updatedAtElementId = `${selvitysType}UpdatedAt`
     const updatedAt = formContent.updated_at
@@ -142,7 +142,7 @@ export default class SelvitysFormEditor extends Component<SelvitysFormProps> {
             </a>
           </div>
         </div>
-        <FormEditor environment={environment} avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} standardizedFormValues={standardizedFormValues}/>
+        <FormEditor environment={environment} avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} standardizedFormHelpTexts={standardizedFormHelpTexts}/>
         <div className="form-json-editor">
           <h3>Hakulomakkeen sisältö</h3>
           <span className="error">{parseError}</span>

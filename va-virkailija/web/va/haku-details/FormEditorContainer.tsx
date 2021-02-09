@@ -6,7 +6,7 @@ import DateUtil from 'soresu-form/web/DateUtil'
 import { FormEditor } from './FormEditor'
 import FormJsonEditor from './FormJsonEditor'
 
-import { StandardizedFormValues } from 'va-common/web/va/standardized-form-fields/types'
+import { StandardizedFormHelpTexts } from 'va-common/web/va/standardized-form-fields/types'
 
 interface FormEditorContainerProps { 
   avustushaku: any
@@ -17,7 +17,7 @@ interface FormEditorContainerProps {
   helpTexts: any
   environment: any
   standardizedFormFieldsEnabled?: boolean
-  standardizedFormValues: StandardizedFormValues
+  standardizedFormHelpTexts: StandardizedFormHelpTexts
 }
 
 export const FormEditorContainer = (props: FormEditorContainerProps) => {
@@ -30,7 +30,7 @@ export const FormEditorContainer = (props: FormEditorContainerProps) => {
   const helpTexts = props.helpTexts
   const environment = props.environment
   const standardizedFormFieldsEnabled = props.standardizedFormFieldsEnabled
-  const standardizedFormValues = props.standardizedFormValues
+  const standardizedFormHelpTexts = props.standardizedFormHelpTexts
 
   const hakuUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/?lang=fi"
   const hakuUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/?lang=sv"
@@ -68,7 +68,7 @@ export const FormEditorContainer = (props: FormEditorContainerProps) => {
           <a target="haku-preview-fi" href={previewUrlFi}>Suomeksi</a><span className="link-divider"/><a target="haku-preview-sv" href={previewUrlSv}>Ruotsiksi</a>
         </div>
       </div>
-      <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} environment={environment} standardizedFormFieldsEnabled={standardizedFormFieldsEnabled} standardizedFormValues={standardizedFormValues}/>
+      <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} environment={environment} standardizedFormFieldsEnabled={standardizedFormFieldsEnabled} standardizedFormHelpTexts={standardizedFormHelpTexts}/>
       { formDraft ? <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraft={formDraft} /> : null }
     </section>
   )

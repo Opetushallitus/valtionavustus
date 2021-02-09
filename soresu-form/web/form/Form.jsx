@@ -13,7 +13,7 @@ export default class Form extends React.Component {
     const infoElementValues = this.props.infoElementValues.content
     const controller = this.props.controller
     const state = this.props.state
-    const standardizedFormValues = state.standardizedFormValues
+    const standardizedFormHelpTexts = state.standardizedFormHelpTexts
     const fields = state.form.content
     const validationErrors = state.form.validationErrors
     const values = state.saveStatus.values
@@ -79,7 +79,7 @@ export default class Form extends React.Component {
       ? <form className="soresu-form">
           {renderField(fields[0])}
           {renderField(fields[1])}
-          <p className="soresu-info-element" data-test-id={`standardized-help-text-${state.configuration.lang}`}>{standardizedFormValues["help-text-" + state.configuration.lang]}</p>
+          <p className="soresu-info-element" data-test-id={`standardized-ohjeteksti-help-${state.configuration.lang}`}>{standardizedFormHelpTexts["ohjeteksti-" + state.configuration.lang]}</p>
           { _.map(fields.slice(3), f => renderField(f))}
           
         </form>

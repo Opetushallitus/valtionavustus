@@ -1,24 +1,28 @@
 import axios from 'axios'
 
-import { StandardizedFormValues } from './types'
-import { standardizedFormValuesSchema } from './types'
+import { StandardizedFormHelpTexts } from './types'
+import { standardizedFormHelpTextsSchema } from './types'
 
 const timeout = 10000 // 10 seconds
 const client = axios.create({ timeout })
 
-export const initialValues: StandardizedFormValues = {
-  "help-text-fi": '',
-  "help-text-sv": ''
+export const initialValues: StandardizedFormHelpTexts = {
+  "ohjeteksti-fi": '',
+  "ohjeteksti-sv": '',
+  "hakija-name-fi": '',
+  "hakija-name-sv": '',
+  "hakija-email-fi": '',
+  "hakija-email-sv": '',
 }
 
-export async function postStandardizedFields(avustushakuId: number, values: StandardizedFormValues) {
-  const url = `/api/avustushaku/${avustushakuId}/standardized-fields`
+export async function postStandardizedFormHelpTexts(avustushakuId: number, values: StandardizedFormHelpTexts) {
+  const url = `/api/avustushaku/${avustushakuId}/standardized-help-texts`
 
   return client.post(url, values)
 }
 
-export async function getStandardizedFormValues(avustushakuId: number) {
-  const url = `/api/avustushaku/${avustushakuId}/standardized-fields`
+export async function getStandardizedFormHelpTexts(avustushakuId: number) {
+  const url = `/api/avustushaku/${avustushakuId}/standardized-help-texts`
 
   const response = await client.get(url).catch(err => {
 
@@ -30,22 +34,7 @@ export async function getStandardizedFormValues(avustushakuId: number) {
     throw err
   })
 
-  const values = await standardizedFormValuesSchema.validate(response.data)
+  const values = await standardizedFormHelpTextsSchema.validate(response.data)
   return values
 }
 
-export async function getStandardizedHakemusFields(avustushakuId: number, userKey: string) {
-  const url = `/api/avustushaku/${avustushakuId}/hakemus/${userKey}/standardized-fields`
-
-  const response = await client.get(url).catch(err => {
-
-    if (err.response.status === 404) {
-      return {
-        data: initialValues
-      }
-    }
-    throw err
-  })
-  const values = await standardizedFormValuesSchema.validate(response.data)
-  return values
-}

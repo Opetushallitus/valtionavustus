@@ -73,7 +73,6 @@
                                           (datetime/parse))
                 email (find-answer-value answers "primary-email")
                 user-key (-> new-hakemus :hakemus :user_key)]
-            (va-db/create-standardized-hakemus-fields haku-id user-key)
             (va-email/send-new-hakemus-message! language
                                                 [email]
                                                 haku-id
