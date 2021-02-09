@@ -563,6 +563,51 @@ describe("Puppeteer tests", () => {
     expect(actualResponse).toMatchObject(expectedResponse)
   })
 
+  it("allows previewing täydennyspyyntö to hakija", async () => {
+    const randomId = randomString()
+    const { avustushakuID } = await publishAndFillMuutoshakemusEnabledAvustushaku(page, {
+      registerNumber: "1621/2020",
+      avustushakuName: `Täydennyspyyntöavustushaku ${randomId}`,
+    }, {
+      contactPersonEmail: "lotta.lomake@example.com",
+      contactPersonName: "Lotta Lomake",
+      contactPersonPhoneNumber: "666",
+      projectName: "Lomakkeentäyttörajoitteiset Ry",
+    })
+    await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
+    await navigateToHakemuksenArviointi(page, avustushakuID, "Akaan kaupunki")
+
+    const täydennyspyyntöText = "Jaahas miltäköhän tämä täydennyspyyntö mahtaa näyttää sähköpostissa?"
+    await fillTäydennyspyyntöField(page, täydennyspyyntöText)
+    await clickElementWithText(page, "a", "Esikatsele")
+
+    expect(await textContent(page, "[data-test-id='change-request-preview-subject']"))
+      .toStrictEqual(`Otsikko: Täydennyspyyntö avustushakemukseesi`)
+    expect(await textContent(page, "[data-test-id='change-request-preview-sender']"))
+      .toStrictEqual(`Lähettäjä: no-reply@csc.fi`)
+    expect(await textContent(page, "[data-test-id='change-request-preview-content']"))
+      .toStrictEqual(`Avustushakemus: Täydennyspyyntöavustushaku ${randomId}
+
+Täydennyspyyntö:
+"${täydennyspyyntöText}"
+
+Pääset täydentämään avustushakemusta tästä linkistä: [linkki hakemukseen]
+Muokkaa vain pyydettyjä kohtia.
+
+Lisätietoja voitte kysyä sähköpostitse osoitteesta valtionavustukset@oph.fi
+
+Hausta vastaava valmistelija on mainittu hakutiedotteessa.
+
+Opetushallitus
+Hakaniemenranta 6
+PL 380, 00531 Helsinki
+
+puhelin 029 533 1000
+faksi 029 533 1035
+etunimi.sukunimi@oph.fi
+`)
+  })
+
   it("allows sending täydennyspyyntö to hakija", async () => {
     const randomId = randomString()
     const { avustushakuID, userKey } = await publishAndFillMuutoshakemusEnabledAvustushaku(page, {
@@ -580,7 +625,8 @@ describe("Puppeteer tests", () => {
     expect(await getTäydennyspyyntöEmails(avustushakuID, hakemusID)).toHaveLength(0)
 
     const täydennyspyyntöText = "Joo ei tosta hakemuksesta ota mitään tolkkua. Voisitko tarkentaa?"
-    await pyydäTäydennystä(page, avustushakuID, hakemusID, täydennyspyyntöText)
+    await fillTäydennyspyyntöField(page, täydennyspyyntöText)
+    await clickToSendTäydennyspyyntö(page, avustushakuID, hakemusID)
 
     expect(await textContent(page, "#arviointi-tab .change-request-title"))
       .toMatch(/\* Täydennyspyyntö lähetetty \d{1,2}\.\d{1,2}\.\d{4} \d{1,2}\.\d{1,2}/)
@@ -616,9 +662,12 @@ etunimi.sukunimi@oph.fi
 `)
   })
 
-  async function pyydäTäydennystä(page: Page, avustushakuID: number, hakemusID: number, täydennyspyyntöText: string): Promise<void> {
+  async function fillTäydennyspyyntöField(page: Page, täydennyspyyntöText: string): Promise<void> {
     await clickElementWithText(page, "button", "Pyydä täydennystä")
     await page.type("[data-test-id='täydennyspyyntö__textarea']", täydennyspyyntöText)
+  }
+
+  async function clickToSendTäydennyspyyntö(page: Page, avustushakuID: number, hakemusID: number) {
     await Promise.all([
       page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/change-requests`),
       page.click("[data-test-id='täydennyspyyntö__lähetä']"),

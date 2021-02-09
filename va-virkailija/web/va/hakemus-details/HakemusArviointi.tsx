@@ -216,22 +216,33 @@ const SetArviointiStatus = ({hakemus, allowEditing, controller, helpTexts}: SetA
     )
 }
 
-class ChangeRequest extends Component<any, any> {
+type ChangeRequestState = {
+  currentHakemusId: number
+  preview: boolean
+  mail?: ChangeRequestEmailPreviewData
+}
 
+type ChangeRequestEmailPreviewData = {
+  content: string
+  sender: string
+  subject: string
+}
+
+class ChangeRequest extends Component<any, ChangeRequestState> {
   constructor(props){
     super(props)
     this.state = ChangeRequest.initialState(props)
   }
 
-  static getDerivedStateFromProps(props, state) {
-    if (props.hakemus.id !== state.currentHakemusuId) {
+  static getDerivedStateFromProps(props, state: ChangeRequestState): ChangeRequestState | null {
+    if (props.hakemus.id !== state.currentHakemusId) {
       return ChangeRequest.initialState(props)
     } else {
       return null
     }
   }
 
-  static initialState(props) {
+  static initialState(props): ChangeRequestState {
     return {
       currentHakemusId: props.hakemus.id,
       preview: false
@@ -259,13 +270,13 @@ class ChangeRequest extends Component<any, any> {
     const newChangeRequest = typeof hakemus.changeRequest !== 'undefined' && !hasChangeRequired
 
     const onPreview = () =>{
-      const sendS = Bacon.fromPromise(HttpUtil.post(`/api/avustushaku/${avustushaku.id}/change-request-email`,{text:hakemus.changeRequest}))
-      sendS.onValue((res: any)=>{
-        this.setState({preview:true,mail:res.mail})
+      const sendS = Bacon.fromPromise<unknown, { mail: ChangeRequestEmailPreviewData }>(HttpUtil.post(`/api/avustushaku/${avustushaku.id}/change-request-email`,{text:hakemus.changeRequest}))
+      sendS.onValue((res)=>{
+        this.setState({ ...this.state, preview:true, mail: res.mail })
       })
     }
 
-    const closePreview = () => this.setState({preview:false})
+    const closePreview = () => this.setState({...this.state, preview:false})
     const mail = this.state.mail
     return (
       <div className="value-edit">
@@ -280,11 +291,15 @@ class ChangeRequest extends Component<any, any> {
           <textarea data-test-id='täydennyspyyntö__textarea' placeholder="Täydennyspyyntö hakijalle" onChange={onTextChange} rows={4} disabled={!allowEditing} value={hakemus.changeRequest}/>
           <button data-test-id='täydennyspyyntö__lähetä' type="button" disabled={_.isEmpty(hakemus.changeRequest)} onClick={sendChangeRequest}>Lähetä</button>
           <a onClick={onPreview} style={{position:'relative'}}>Esikatsele</a>
-          {this.state.preview && <div className="panel email-preview-panel">
+          {(this.state.preview && mail) && <div className="panel email-preview-panel">
             <span className="close" onClick={closePreview}></span>
-            <strong>Otsikko:</strong> {mail.subject}<br/>
-            <strong>Lähettäjä:</strong> {mail.sender}<br/><br/>
-            <div style={{whiteSpace:'pre-line'}}>
+            <div data-test-id="change-request-preview-subject">
+              <strong>Otsikko:</strong> {mail.subject}<br/>
+            </div>
+            <div data-test-id="change-request-preview-sender">
+              <strong>Lähettäjä:</strong> {mail.sender}<br/><br/>
+            </div>
+            <div data-test-id="change-request-preview-content" style={{whiteSpace:'pre-line'}}>
             {mail.content}
             </div>
           </div>}
