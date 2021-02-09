@@ -1,0 +1,2 @@
+DROP TRIGGER update_standardized_hakemus_updated_at_timestamp ON standardized_hakemus;
+DROP TABLE standardized_hakemus;
