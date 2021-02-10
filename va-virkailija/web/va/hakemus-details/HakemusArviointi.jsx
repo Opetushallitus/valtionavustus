@@ -199,16 +199,13 @@ class SetArviointiStatus extends React.Component {
   }
 }
 
-
-class ChangeRequest extends React.Component {
-
-class ChangeRequest extends Component<any, ChangeRequestState> {
+class ChangeRequest extends Component {
   constructor(props){
     super(props)
     this.state = ChangeRequest.initialState(props)
   }
 
-  static getDerivedStateFromProps(props, state: ChangeRequestState): ChangeRequestState | null {
+  static getDerivedStateFromProps(props, state) {
     if (props.hakemus.id !== state.currentHakemusId) {
       return ChangeRequest.initialState(props)
     } else {
@@ -216,7 +213,7 @@ class ChangeRequest extends Component<any, ChangeRequestState> {
     }
   }
 
-  static initialState(props): ChangeRequestState {
+  static initialState(props) {
     return {
       currentHakemusId: props.hakemus.id,
       preview: false
@@ -244,15 +241,9 @@ class ChangeRequest extends Component<any, ChangeRequestState> {
     const newChangeRequest = typeof hakemus.changeRequest !== 'undefined' && !hasChangeRequired
 
     const onPreview = () =>{
-<<<<<<< HEAD:va-virkailija/web/va/hakemus-details/HakemusArviointi.tsx
-      const sendS = Bacon.fromPromise<unknown, { mail: ChangeRequestEmailPreviewData }>(HttpUtil.post(`/api/avustushaku/${avustushaku.id}/change-request-email`,{text:hakemus.changeRequest}))
-      sendS.onValue((res)=>{
-        this.setState({ ...this.state, preview:true, mail: res.mail })
-=======
       const sendS = Bacon.fromPromise(HttpUtil.post(`/api/avustushaku/${avustushaku.id}/change-request-email`,{text:hakemus.changeRequest}))
       sendS.onValue((res)=>{
-        this.setState({preview:true,mail:res.mail})
->>>>>>> Revert VA-40-14 except migrations and a couple of useful fixes:va-virkailija/web/va/hakemus-details/HakemusArviointi.jsx
+        this.setState({ ...this.state, preview:true, mail: res.mail })
       })
     }
 
