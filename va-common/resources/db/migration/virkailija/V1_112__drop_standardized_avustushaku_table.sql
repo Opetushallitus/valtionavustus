@@ -1,0 +1,4 @@
+DROP TRIGGER update_standardized_avustushaku_updated_at_timestamp ON standardized_avustushaku_help_text;
+
+DROP TABLE standardized_avustushaku_help_text;
+
