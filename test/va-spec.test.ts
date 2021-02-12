@@ -10,6 +10,10 @@ import {
   mkBrowser,
   getMuutoshakemusPaatosEmails,
   linkToMuutoshakemusRegex,
+  clearAndSet,
+  navigateHakija,
+  navigateToNewHakemusPage,
+  standardizedHakulomakeJson,
   getFirstPage,
   getUserKey,
   ratkaiseAvustushaku,
@@ -1285,6 +1289,77 @@ etunimi.sukunimi@oph.fi
         expect(firstTitle).toContain('- Odottaa käsittelyä')
         expect(await countElements(page, `span.muutoshakemus__paatos-icon--rejected`)).toEqual(2)
       })
+    })
+  })
+
+  describe("Standardized avustushaku", () => {
+    it("Create and fill standardized avustushaku", async () => {
+      // Create standardized avustushaku
+      const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, "standardized avustushaku", "69/420")
+      await clickElementWithText(page, "span", "Hakulomake")
+      await clearAndSet(page, ".form-json-editor textarea", standardizedHakulomakeJson)
+      await clickFormSaveAndWait(page, avustushakuID)
+
+      await clickElementWithText(page, "span", "Haun tiedot")
+      await publishAvustushaku(page)
+
+      // Hakija fill standardized avustushaku
+      await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
+
+      await page.waitForSelector('#haku-not-open', { hidden: true, timeout: 500 })
+      await clearAndType(page, "#primary-email", "ahmo.mischelangelisch@turkles.fi")
+      await clickElement(page, "#submit:not([disabled])")
+
+      await navigateToNewHakemusPage(page, avustushakuID)
+
+      await clearAndType(page, "#finnish-business-id", TEST_Y_TUNNUS)
+      await clickElement(page, "input.get-business-id")
+
+      await clickElementWithText(page, '*[@id="financing-plan"]/div/div/label[2]', "Kyllä")
+
+      await clearAndType(page, "#applicant-name", "ahmo")
+      await clearAndType(page, "[id='textField-0']", "666")
+      await clearAndType(page, "[id='textField-2']", "Höyrykuja")
+      await clearAndType(page, "[id='textField-3']", "420")
+      await clearAndType(page, "[id='textField-4']", "Helvetti")
+
+      await clearAndType(page, "[id='signatories-fieldset-1.name']", "Mestari Tikku")
+      await clearAndType(page, "[id='signatories-fieldset-1.email']", "kelarotta@hotmail.com")
+
+      await clickElementWithText(page, "label", "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko")
+
+      await clickElement(page, "[id='koodistoField-1_input']")
+      await clickElementWithText(page, "li", "Kainuu")
+
+      await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")
+      await clearAndType(page, "#bank-bic", "OKOYFIHH")
+
+      await clearAndType(page, "#project-name", "Turkles")
+
+      await clickElement(page, "[for='language.radio.0']")
+
+      await clickElementWithText(page, '*[@id="project-plan"]/div/div[2]/label[2]', "Kyllä")
+      await clearAndType(page, "[id='precise-former-project']", "Turkles 1, 2 ja 3")
+      await clearAndType(page, "[id='project-description.project-description-1.goal']", "Minimoida yöllinen väkivalta maksimaalisella väkivallalla.")
+      await clearAndType(page, "[id='project-description.project-description-1.activity']", "Syömme pizzaa, treenaamme vatsalihaksia ja välillä vedämme rikollisua turpaan")
+      await clearAndType(page, "[id='project-description.project-description-1.result']", "Tarkoituksemme on lietsoa pelkoa retaleiden sydämiin. YEAAAH passaa se pizza veli!!")
+
+      await clearAndType(page, "[id='us-project-effectiveness']", "Rikollisuuden vähentyminen")
+      await clearAndType(page, "[id='textArea-0']", "Emme arvioi, tutki tai selvitä mitään. Toimintatapamme on välitön turpaanveto.")
+      await clearAndType(page, "[id='textArea-1']", "Oletko kuuro tai täysi idiootti? Hankeellamme ei ole mitään tekemistä opetussuunnitelman kanssa, ellei rikollisten läksyttämisestä lasketa tälläiseksi. Turkles!!!!")
+      await clearAndType(page, "[id='project-spreading-plan']", "Tuotoksemme on ruhjoutuneet kasvot kulmakuppiloissa. Näiden tuotosten levittämiseksi tarvitsemme Apache XIV taisteluhelikopteria.")
+      await clearAndType(page, "[id='textArea-2']", "Nunchucks, tri-blade, katana, pizza, apache taisteluhelikopteri, mac-10 konepistooli")
+      await clearAndType(page, "[id='project-nutshell']", "Enemmänkin KILPIKONNAN KUORESSA HAHA!!! COWABUNGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!!!!")
+
+
+      await clearAndType(page, "[id='personnel-costs-row.description']", "Pieninä seteleinä kiitos.")
+      await clearAndType(page, "[id='personnel-costs-row.amount']", "69420666")
+
+      await clearAndType(page, "[id='self-financing-amount']", "1")
+
+      await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).disabled === false)
+      await clickElement(page, "#topbar #form-controls button#submit")
+      await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Hakemus lähetetty")
     })
   })
 
