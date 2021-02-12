@@ -863,7 +863,7 @@ export async function ratkaiseAvustushaku(page: Page) {
   return await acceptAvustushaku(page, avustushakuID)
 }
 
-async function acceptAvustushaku(page: Page, avustushakuID: number) {
+export async function acceptAvustushaku(page: Page, avustushakuID: number) {
   await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
 
   // Accept the hakemus

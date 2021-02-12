@@ -9,6 +9,7 @@ import {
   getLinkToHakemusFromSentEmails,
   mkBrowser,
   getMuutoshakemusPaatosEmails,
+  acceptAvustushaku,
   linkToMuutoshakemusRegex,
   clearAndSet,
   navigateHakija,
@@ -1292,7 +1293,7 @@ etunimi.sukunimi@oph.fi
     })
   })
 
-  describe("Standardized avustushaku", () => {
+  describe.skip("Standardized avustushaku", () => {
     it("Create and fill standardized avustushaku", async () => {
       // Create standardized avustushaku
       const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, "standardized avustushaku", "69/420")
@@ -1360,6 +1361,9 @@ etunimi.sukunimi@oph.fi
       await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).disabled === false)
       await clickElement(page, "#topbar #form-controls button#submit")
       await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Hakemus lähetetty")
+    
+      const { hakemusID } = await acceptAvustushaku(page, avustushakuID)
+      await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
     })
   })
 
