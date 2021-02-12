@@ -3,6 +3,8 @@ import "soresu-form/web/polyfills"
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import queryString from 'query-string'
+import moment from 'moment'
+import momentLocalizer from 'react-widgets-moment'
 
 import TopBar from './TopBar.jsx'
 import HakujenHallintaController from './HakujenHallintaController.jsx'
@@ -13,6 +15,9 @@ import LocalStorage from './LocalStorage'
 import './style/virkailija.less'
 import './style/topbar.less'
 import './style/admin.less'
+
+moment.locale('fi')
+momentLocalizer()
 
 export default class AdminApp extends Component {
   render() {

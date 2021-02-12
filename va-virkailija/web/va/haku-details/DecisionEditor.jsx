@@ -8,6 +8,7 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import PaatosUrl from '../hakemus-details/PaatosUrl'
 import Selvitys from './Selvitys.jsx'
 import HelpTooltip from '../HelpTooltip.jsx'
+import { Kayttoaika } from './Kayttoaika'
 
 const DecisionField = ({avustushaku, title, id,language, onChange, helpText, dataTestId}) => {
   const fieldId= `decision.${id}.${language}`
@@ -696,6 +697,7 @@ export default class DecisionEditor extends React.Component {
         }
         {fields.map((field)=><DecisionFields key={field.id} title={field.title} avustushaku={avustushaku} id={field.id} onChange={onChange} helpText={field.helpText} dataTestId={field.dataTestId}/>)}
         <DecisionFields key="maksu" title="Avustuksen maksuaika" avustushaku={avustushaku} id="maksu" onChange={onChange} helpText={helpTexts["hakujen_hallinta__päätös___avustuksen_maksuaika"]} dataTestId={"maksu"} />
+        <Kayttoaika avustushaku={avustushaku} controller={controller} />
         <Selvitys {...this.props}/>
         {avustushaku.content.multiplemaksuera===true && <DateField avustushaku={avustushaku} controller={controller} field="maksudate" label="Viimeinen maksuerä" helpTexts={helpTexts} />}
         <LiitteetSelection environment={environment} avustushaku={avustushaku} decisionLiitteet={decisionLiitteet} controller={controller} helpTexts={helpTexts}/>
