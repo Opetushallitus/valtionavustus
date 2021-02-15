@@ -3,7 +3,7 @@
    jsonb field instead of json field"
   (:require [clojure.java.jdbc :as jdbc]
             [cheshire.core :as json])
-  (:import org.postgresql.util.PGobject))
+  (:import org.postgresql.util.PGobject [java.time LocalDate] ))
 
 (extend-protocol jdbc/ISQLValue
   clojure.lang.IPersistentCollection
@@ -13,6 +13,9 @@
       (.setValue (json/generate-string value)))))
 
 (extend-protocol jdbc/IResultSetReadColumn
+ java.sql.Date
+ (result-set-read-column [v _ _]
+                         (.toLocalDate v))
   PGobject
   (result-set-read-column [pgobj metadata idx]
     (let [type  (.getType pgobj)

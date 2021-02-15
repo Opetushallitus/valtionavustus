@@ -18,8 +18,8 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
   function onChangeHandlerFor(id: string) {
     return function onChangeHandler(newDate?: Date) {
       const d = moment(newDate)
+      controller.onChangeListener(avustushaku, {id: id}, d.format('YYYY-MM-DD'))
       if (d.isValid()) {
-        controller.onChangeListener(avustushaku, {id: id}, d.format('YYYY-MM-DD'))
         console.log(`Valid date for ${id}:`, d)
       } else {
         console.log(`NOT valid date for ${id}:`, d)
@@ -35,7 +35,7 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
         <div>Hankkeen alkamispäivä</div>
         <DateTimePicker
           name="hankkeen-alkamispaiva"
-          onChange={onChangeHandlerFor('decision.hankkeen-alkamispaiva')}
+          onChange={onChangeHandlerFor('hankkeen-alkamispaiva')}
           containerClassName={`datepicker`}
           time={false} />
       </div>
@@ -44,7 +44,7 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
         <div>Hankkeen päättymipäivä</div>
         <DateTimePicker
           name="hankkeen-paattymispaiva"
-          onChange={onChangeHandlerFor('decision.hankkeen-paattymispaiva')}
+          onChange={onChangeHandlerFor('hankkeen-paattymispaiva')}
           containerClassName={`datepicker`}
           time={false} />
       </div>
