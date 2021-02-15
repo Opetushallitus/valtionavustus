@@ -78,6 +78,8 @@
                                    :is_academysize (:is_academysize avustushaku)
                                    :haku_type (new HakuType (:haku-type avustushaku))
                                    :project_id (:project-id avustushaku)
+                                   :hankkeen_alkamispaiva (:hankkeen-alkamispaiva avustushaku)
+                                   :hankkeen_paattymispaiva (:hankkeen-paattymispaiva avustushaku)
                                    :operation_id (:operation-id avustushaku)
                                    :operational_unit_id (:operational-unit-id avustushaku))]
 

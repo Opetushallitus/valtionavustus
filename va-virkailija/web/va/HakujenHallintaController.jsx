@@ -289,6 +289,8 @@ export default class HakujenHallintaController {
         return state
       }
       update.avustushaku.content.duration[startOrEnd] = newDate.toDate()
+    } else if (fieldId === 'hankkeen-alkamispaiva' || fieldId === 'hankkeen-paattymispaiva') {
+      update.avustushaku[fieldId] = update.newValue
     } else if (fieldId.startsWith("set-haku-type-")) {
       update.avustushaku["haku-type"] = update.newValue
     } else if (fieldId.startsWith("set-is_academysize-")) {
