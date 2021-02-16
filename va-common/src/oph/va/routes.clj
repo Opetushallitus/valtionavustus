@@ -59,6 +59,8 @@
    :phase       (avustushaku-phase avustushaku)
    :content     (:content avustushaku)
    :decision    (:decision avustushaku)
+   :hankkeen-alkamispaiva (:hankkeen_alkamispaiva avustushaku)
+   :hankkeen-paattymispaiva (:hankkeen_paattymispaiva avustushaku)
    :valiselvitysdate (:valiselvitysdate avustushaku)
    :loppuselvitysdate (:loppuselvitysdate avustushaku)
    :form        (:form avustushaku)
