@@ -29,7 +29,7 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
 
   return (
     <div className='kayttoaika'>
-      <h4>Avustuksen käyttöaika</h4> {/* TODO: Teksteihin */}
+      <h4>Avustuksen käyttöaika</h4>
 
         <div className='date-input-container'>
           <div>Hankkeen alkamispäivä</div>

@@ -14,6 +14,7 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos }) => {
 
   const isAcceptedWithChanges = paatos.status === 'accepted_with_changes'
   const paattymispaiva = isAcceptedWithChanges ? paatos['paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']
+  // TODO: EI hakemus['project-end']
 
   return (
     <section className="muutoshakemus-paatos__section">
