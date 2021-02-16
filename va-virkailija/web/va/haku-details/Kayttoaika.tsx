@@ -15,10 +15,16 @@ interface KayttoaikaProps {
 export const Kayttoaika = (props: KayttoaikaProps) => {
   const {avustushaku, controller} = props
 
+  function getStoredDateFor(field: string): Date | undefined {
+    if (!avustushaku[field]) return undefined
+    if (!moment(avustushaku[field]).isValid()) return undefined
+    return moment(avustushaku[field]).toDate()
+  }
+
   function onChangeHandlerFor(id: string) {
     return function onChangeHandler(newDate?: Date) {
       const d = moment(newDate)
-      controller.onChangeListener(avustushaku, {id: id}, d.format('YYYY-MM-DD'))
+      controller.onChangeListener(avustushaku, {id: id}, d.format('YYYY-MM-DD')) /* TODO: Mieti, mitä epävalideille tehdään */
       if (d.isValid()) {
         console.log(`Valid date for ${id}:`, d)
       } else {
@@ -36,6 +42,7 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
         <DateTimePicker
           name="hankkeen-alkamispaiva"
           onChange={onChangeHandlerFor('hankkeen-alkamispaiva')}
+          defaultValue={getStoredDateFor('hankkeen-alkamispaiva')}
           containerClassName={`datepicker`}
           time={false} />
       </div>
@@ -45,11 +52,10 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
         <DateTimePicker
           name="hankkeen-paattymispaiva"
           onChange={onChangeHandlerFor('hankkeen-paattymispaiva')}
+          defaultValue={getStoredDateFor('hankkeen-paattymispaiva')}
           containerClassName={`datepicker`}
           time={false} />
       </div>
     </div>
   )
 }
-
-
