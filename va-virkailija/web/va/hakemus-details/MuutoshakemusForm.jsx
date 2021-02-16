@@ -77,6 +77,8 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
     </React.Fragment>
   )
 
+  // TODO: Tätä pitää muokata! Ei hakemus['project-end']
+
   const voimassaolevaPaattymisaika = () => {
     const haettuPaiva = hakemus['haettu-kayttoajan-paattymispaiva']
 

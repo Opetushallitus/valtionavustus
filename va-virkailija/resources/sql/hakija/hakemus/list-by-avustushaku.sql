@@ -1,5 +1,5 @@
 select  h.id,
-        h.version, 
+        h.version,
         h.created_at,
         h.organization_name,
         h.project_name,
@@ -13,7 +13,7 @@ select  h.id,
         h.register_number,
         h.status_loppuselvitys,
         h.status_valiselvitys,
-        (select  
+        (select
           (CASE
             WHEN paatos_id IS NULL
             THEN 'new'

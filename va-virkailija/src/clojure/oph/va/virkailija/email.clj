@@ -135,8 +135,8 @@
                           :register-number (:register_number hakemus)
                           :project-name (:project_name hakemus)
                           :attachment-title attachment-title
-                          :attachment {:title attachment-title 
-                                       :description attachment-title 
+                          :attachment {:title attachment-title
+                                       :description attachment-title
                                        :contents attachment-contents}}
 
                            (partial render (get-in mail-templates [:muutoshakemus-paatos lang])))))

@@ -1,3 +1,4 @@
+-- TODO: Muista lisätä archiveen!
 insert into archived_avustushaut (
     avustushaku_id,
     form_id,
