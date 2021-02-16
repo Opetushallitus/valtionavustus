@@ -31,7 +31,7 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
     <div className='kayttoaika'>
       <h4>Avustuksen käyttöaika</h4>
 
-        <div className='date-input-container'>
+        <div className='date-input-container' data-test-id='hankkeen-alkamispaiva'>
           <div>Hankkeen alkamispäivä</div>
           <DateInput
             id='hankkeen-alkamispaiva'
@@ -39,7 +39,7 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
             defaultValue={getStoredDateFor('hankkeen-alkamispaiva')} />
         </div>
 
-        <div className='date-input-container'>
+        <div className='date-input-container' data-test-id='hankkeen-paattymispaiva'>
           <div>Hankkeen päättymispäivä</div>
           <DateInput
             id='hankkeen-paattymispaiva'
