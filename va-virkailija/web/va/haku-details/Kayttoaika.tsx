@@ -48,7 +48,7 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
         </div>
 
         <div className='date-input-container'>
-          <div>Hankkeen päättymipäivä</div>
+          <div>Hankkeen päättymispäivä</div>
           <DateTimePicker
             name="hankkeen-paattymispaiva"
             onChange={onChangeHandlerFor('hankkeen-paattymispaiva')}
