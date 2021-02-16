@@ -1,15 +1,18 @@
 div.kayttoaika {
 
-  width: 50%;
+    div.date-input-container {
+      display: grid;
+      grid-template-columns: 1fr 3fr;
 
-  div.date-input-container {
-    display: flex;
-    margin: auto;
-    justify-content: space-between;
-    align-items: center;
+      align-items: center;
 
-    &:not(:first-of-type) {
-      margin-top: 1em;
+      &:not(:first-of-type) {
+        margin-top: 1em;
+      }
+
+      .datepicker {
+        max-width: 250px;
+      }
     }
-  }
+
 }
