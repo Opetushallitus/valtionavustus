@@ -37,25 +37,26 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
     <div className='kayttoaika'>
       <h4>Avustuksen käyttöaika</h4> {/* TODO: Teksteihin */}
 
-      <div className='date-input-container'>
-        <div>Hankkeen alkamispäivä</div>
-        <DateTimePicker
-          name="hankkeen-alkamispaiva"
-          onChange={onChangeHandlerFor('hankkeen-alkamispaiva')}
-          defaultValue={getStoredDateFor('hankkeen-alkamispaiva')}
-          containerClassName={`datepicker`}
-          time={false} />
-      </div>
+        <div className='date-input-container'>
+          <div>Hankkeen alkamispäivä</div>
+          <DateTimePicker
+            name="hankkeen-alkamispaiva"
+            onChange={onChangeHandlerFor('hankkeen-alkamispaiva')}
+            defaultValue={getStoredDateFor('hankkeen-alkamispaiva')}
+            containerClassName={`datepicker`}
+            time={false} />
+        </div>
 
-      <div className='date-input-container'>
-        <div>Hankkeen päättymipäivä</div>
-        <DateTimePicker
-          name="hankkeen-paattymispaiva"
-          onChange={onChangeHandlerFor('hankkeen-paattymispaiva')}
-          defaultValue={getStoredDateFor('hankkeen-paattymispaiva')}
-          containerClassName={`datepicker`}
-          time={false} />
-      </div>
+        <div className='date-input-container'>
+          <div>Hankkeen päättymipäivä</div>
+          <DateTimePicker
+            name="hankkeen-paattymispaiva"
+            onChange={onChangeHandlerFor('hankkeen-paattymispaiva')}
+            defaultValue={getStoredDateFor('hankkeen-paattymispaiva')}
+            containerClassName={`datepicker`}
+            time={false} />
+        </div>
+
     </div>
   )
 }
