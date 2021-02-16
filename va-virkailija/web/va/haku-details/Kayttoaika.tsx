@@ -1,6 +1,6 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { DateTimePicker } from 'react-widgets'
-import moment from 'moment'
+import moment, {Moment} from 'moment'
 
 import '../style/kayttoaika.less'
 import 'react-widgets/dist/css/react-widgets.css'
@@ -18,19 +18,13 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
   function getStoredDateFor(field: string): Date | undefined {
     if (!avustushaku[field]) return undefined
     if (!moment(avustushaku[field]).isValid()) return undefined
+
     return moment(avustushaku[field]).toDate()
   }
 
-  function onChangeHandlerFor(id: string) {
-    return function onChangeHandler(newDate?: Date) {
-      const d = moment(newDate)
-      controller.onChangeListener(avustushaku, {id: id}, d.format('YYYY-MM-DD')) /* TODO: Mieti, mitä epävalideille tehdään */
-      if (d.isValid()) {
-        console.log(`Valid date for ${id}:`, d)
-      } else {
-        console.log(`NOT valid date for ${id}:`, d)
-      }
-    }
+  function onChange(id: string, date: Moment) {
+    const value = date.isValid() ? date.format('YYYY-MM-DD') : ''
+    controller.onChangeListener(avustushaku, { id: id }, value)
   }
 
   return (
@@ -39,24 +33,51 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
 
         <div className='date-input-container'>
           <div>Hankkeen alkamispäivä</div>
-          <DateTimePicker
-            name="hankkeen-alkamispaiva"
-            onChange={onChangeHandlerFor('hankkeen-alkamispaiva')}
-            defaultValue={getStoredDateFor('hankkeen-alkamispaiva')}
-            containerClassName={`datepicker`}
-            time={false} />
+          <DateInput
+            id='hankkeen-alkamispaiva'
+            onChange={onChange}
+            defaultValue={getStoredDateFor('hankkeen-alkamispaiva')} />
         </div>
 
         <div className='date-input-container'>
           <div>Hankkeen päättymispäivä</div>
-          <DateTimePicker
-            name="hankkeen-paattymispaiva"
-            onChange={onChangeHandlerFor('hankkeen-paattymispaiva')}
-            defaultValue={getStoredDateFor('hankkeen-paattymispaiva')}
-            containerClassName={`datepicker`}
-            time={false} />
+          <DateInput
+            id='hankkeen-paattymispaiva'
+            onChange={onChange}
+            defaultValue={getStoredDateFor('hankkeen-paattymispaiva')} />
         </div>
-
     </div>
+  )
+}
+
+interface DateInputProps {
+  id: string
+  defaultValue: Date | undefined
+  onChange: (id: string, date: Moment) => void
+}
+
+const DateInput = (props: DateInputProps) => {
+  const { id, defaultValue, onChange} = props
+  const [isValid, setIsValid] = useState(defaultValue !== undefined)
+
+  function onChangeHandlerFor(id: string) {
+    return function onChangeHandler(newDate?: Date) {
+      const date = moment(newDate)
+      setIsValid(date.isValid())
+      onChange(id, date)
+    }
+  }
+
+  function getClassNames(): string {
+    return isValid ? 'datepicker' : 'datepicker error'
+  }
+
+  return (
+    <DateTimePicker
+      name={id}
+      onChange={onChangeHandlerFor(id)}
+      defaultValue={defaultValue}
+      containerClassName={getClassNames()}
+      time={false} />
   )
 }
