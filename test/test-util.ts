@@ -195,6 +195,12 @@ export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page
 
   const nextYear = (new Date()).getFullYear() + 1
   await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
+
+  await clickElement(page, '[data-test-id="päätös-välilehti"]')
+  await setCalendarDateForSelector(page, '20.04.1969', '[data-test-id="hankkeen-alkamispaiva"] div.datepicker input')
+  await setCalendarDateForSelector(page, '20.04.4200', '[data-test-id="hankkeen-paattymispaiva"] div.datepicker input')
+  await clickElementWithText(page, "span", "Haun tiedot")
+
   await waitForSave(page)
 
   return avustushakuID
@@ -471,6 +477,12 @@ export async function createValidCopyOfLukioEsimerkkihakuWithValintaperusteetAnd
 
   const nextYear = (new Date()).getFullYear() + 1
   await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
+
+  await clickElement(page, '[data-test-id="päätös-välilehti"]')
+  await setCalendarDateForSelector(page, '20.04.1969', '[data-test-id="hankkeen-alkamispaiva"] div.datepicker input')
+  await setCalendarDateForSelector(page, '20.04.4200', '[data-test-id="hankkeen-paattymispaiva"] div.datepicker input')
+  await clickElementWithText(page, "span", "Haun tiedot")
+
   await waitForSave(page)
 
   return parseInt(avustushakuID)
@@ -750,10 +762,13 @@ export interface PaatosValues {
 }
 
 export async function setCalendarDate(page: Page, jatkoaika: string) {
+  return await setCalendarDateForSelector(page, jatkoaika, 'div.datepicker input')
+}
+
+export async function setCalendarDateForSelector(page: Page, date: string, selector: string) {
   // For whatever reason, sometimes when running tests locally the date is reset after after input, which disables the send button and breaks tests.
-  const selector = 'div.datepicker input'
-  while(await getElementAttribute(page, selector, 'value') !== jatkoaika) {
-    await clearAndType(page, selector, jatkoaika)
+  while(await getElementAttribute(page, selector, 'value') !== date) {
+    await clearAndType(page, selector, date)
   }
 }
 
