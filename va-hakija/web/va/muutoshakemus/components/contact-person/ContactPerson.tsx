@@ -3,7 +3,7 @@ import { ErrorMessage } from '../../ErrorMessage'
 import { getInputErrorClass } from '../../formikHelpers'
 
 import { useTranslations } from '../../TranslationContext'
-import { FormikHook } from '../../types'
+import { FormikHook } from '../../../../../../va-common/web/va/types/muutoshakemus'
 
 interface ContactPersonProps {
   avustushakuName: string

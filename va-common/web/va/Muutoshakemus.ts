@@ -1,9 +1,20 @@
 import moment, {Moment} from 'moment'
-import { Muutoshakemus } from '../../../va-hakija/web/va/muutoshakemus/types' // TODO: Move to common
+import { Muutoshakemus } from './types/muutoshakemus'
 
 const format = 'YYYY-MM-DD'
 
-export function getLatestApprovedMuutoshakemusDate(muutoshakemukset: Muutoshakemus[]): Moment | undefined {
+interface Avustushaku {
+  'hankkeen-paattymispaiva' : string
+}
+
+export function getProjectEndDate(avustushaku: Avustushaku, muutoshakemukset: Muutoshakemus[]): string {
+  const latestAcceptedMuutoshakemus = getLatestApprovedMuutoshakemusDate(muutoshakemukset)
+
+  const date = latestAcceptedMuutoshakemus ? latestAcceptedMuutoshakemus : moment(avustushaku['hankkeen-paattymispaiva'], format)
+  return toFinnishDateFormat(date)
+}
+
+function getLatestApprovedMuutoshakemusDate(muutoshakemukset: Muutoshakemus[]): Moment | undefined {
   if (!muutoshakemukset) return undefined
 
   function first(muutoshakemukset: Muutoshakemus[]): Muutoshakemus | undefined {
@@ -22,4 +33,8 @@ export function getLatestApprovedMuutoshakemusDate(muutoshakemukset: Muutoshakem
   return latestAcceptedMuutoshakemus.status === 'accepted_with_changes' ?
     moment(latestAcceptedMuutoshakemus["paatos-hyvaksytty-paattymispaiva"], format) :
     moment(latestAcceptedMuutoshakemus["haettu-kayttoajan-paattymispaiva"], format)
+}
+
+function toFinnishDateFormat(date: { isValid: () => boolean, format: (string) => string  }): string {
+  return date.isValid() ? date.format('DD.MM.YYYY') : ''
 }

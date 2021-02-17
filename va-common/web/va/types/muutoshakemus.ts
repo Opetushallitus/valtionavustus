@@ -1,9 +1,4 @@
 import { FormikProps } from 'formik'
-import { translationsFi } from './translations'
-
-export type Language = 'fi' | 'sv'
-export type Translations = typeof translationsFi
-export type FormErrors = typeof translationsFi.formErrors
 
 export type EnvironmentApiResponse = {
   name: string
@@ -70,14 +65,6 @@ export interface NormalizedHakemus {
   "project-end": string
   "created-at": string
   "updated-at": string
-}
-
-export class EmailValidationError extends Error {
-  constructor(message: string) {
-    super()
-    this.name = 'EmailValidationError'
-    this.message = message
-  }
 }
 
 export type FormValues = {

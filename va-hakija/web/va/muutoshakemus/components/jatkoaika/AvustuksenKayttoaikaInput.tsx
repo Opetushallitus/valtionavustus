@@ -5,7 +5,7 @@ import moment from 'moment'
 import { useTranslations } from '../../TranslationContext'
 import { ErrorMessage } from '../../ErrorMessage'
 import { getInputErrorClass } from '../../formikHelpers'
-import { FormikHook } from '../../types'
+import { FormikHook } from '../../../../../../va-common/web/va/types/muutoshakemus'
 
 import 'react-widgets/dist/css/react-widgets.css'
 

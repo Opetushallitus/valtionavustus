@@ -1,6 +1,5 @@
 import React from 'react'
 import moment from 'moment'
-
 import { MuutoshakemusStatuses } from './hakemus-statuses'
 
 import './MuutoshakemusValues.less'
@@ -65,7 +64,6 @@ const PaattymispaivaValues = ({ muutoshakemus, projectEndDate }) => {
   const newEndDateTitle = isAcceptedWithChanges ? 'Hyväksytty muutos' : 'Haettu muutos'
   const newEndDateValue = isAcceptedWithChanges ? muutoshakemus['paatos-hyvaksytty-paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']
   const perustelut = muutoshakemus['kayttoajan-pidennys-perustelut']
-
 
   return (
     <section className="muutoshakemus-section">

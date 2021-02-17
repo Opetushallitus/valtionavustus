@@ -2,7 +2,7 @@ import React from 'react'
 
 import { AvustuksenKayttoaikaInput } from './AvustuksenKayttoaikaInput'
 import {useTranslations} from '../../TranslationContext'
-import { FormikHook } from '../../types'
+import { FormikHook } from '../../../../../../va-common/web/va/types/muutoshakemus'
 
 import './jatkoaika.less'
 

@@ -1,9 +1,9 @@
 import * as yup from 'yup'
 import { useFormik } from 'formik'
 
-import { FormValues, Language } from './types'
+import { FormValues } from '../../../../va-common/web/va/types/muutoshakemus'
 import { postMuutoshakemus } from './client'
-import { translations } from './translations'
+import { Language, translations } from './translations'
 
 const getMuutoshakemusSchema = (lang: Language) => {
   const t = translations[lang]

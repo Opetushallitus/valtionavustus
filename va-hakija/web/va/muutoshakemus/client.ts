@@ -1,7 +1,7 @@
 import axios from 'axios'
 import moment from 'moment'
 
-import { FormValues } from './types'
+import { FormValues } from '../../../../va-common/web/va/types/muutoshakemus'
 
 const timeout = 10000 // 10 seconds
 const client = axios.create({ timeout })
