@@ -2,13 +2,12 @@ import React from 'react'
 import moment from 'moment'
 
 import { MuutoshakemusStatuses } from './hakemus-statuses'
-import { getLatestApprovedMuutoshakemusDate } from './Muutoshakemus'
 
 import './MuutoshakemusValues.less'
 
 export const datetimeFormat = 'D.M.YYYY [klo] HH.mm'
 
-export const MuutoshakemusValues = ({ muutoshakemus, hakijaUrl, simplePaatos, previousMuutoshakemuses, hankkeenPaattymispaiva }) => {
+export const MuutoshakemusValues = ({ muutoshakemus, hakijaUrl, simplePaatos, projectEndDate }) => {
   const a = muutoshakemus
   const paatosUrl = `${hakijaUrl}muutoshakemus/paatos?user-key=${a['paatos-user-key']}`
   return (
@@ -44,8 +43,7 @@ export const MuutoshakemusValues = ({ muutoshakemus, hakijaUrl, simplePaatos, pr
 
       <PaattymispaivaValues
         muutoshakemus={muutoshakemus}
-        previousMuutoshakemuses={previousMuutoshakemuses}
-        hankkeenPaattymispaiva={hankkeenPaattymispaiva} />
+        projectEndDate={projectEndDate} />
 
     </React.Fragment>
   )
@@ -58,20 +56,8 @@ function formatDate(date) {
   return parsedDate.isValid ? parsedDate.format('DD.MM.YYYY') : ''
 }
 
-const PaattymispaivaValues = ({ muutoshakemus, previousMuutoshakemuses, hankkeenPaattymispaiva }) => {
+const PaattymispaivaValues = ({ muutoshakemus, projectEndDate }) => {
   if (!muutoshakemus['haettu-kayttoajan-paattymispaiva']) return null
-
-  function getPaattymispaiva() {
-    const latestApprovedMuutoshakemusDate = getLatestApprovedMuutoshakemusDate(previousMuutoshakemuses)
-
-    if (latestApprovedMuutoshakemusDate && latestApprovedMuutoshakemusDate.isValid()) {
-      return latestApprovedMuutoshakemusDate.format('DD.MM.YYYY')
-    }
-    if (hankkeenPaattymispaiva && hankkeenPaattymispaiva.isValid()) {
-      return hankkeenPaattymispaiva.format('DD.MM.YYYY')
-    }
-    return ''
-  }
 
   const isAcceptedWithChanges = muutoshakemus.status === 'accepted_with_changes'
 
@@ -86,7 +72,7 @@ const PaattymispaivaValues = ({ muutoshakemus, previousMuutoshakemuses, hankkeen
       <div className="muutoshakemus-row muutoshakemus__project-end-row">
         <div>
           <h3 className="muutoshakemus__header">{currentEndDateTitle}</h3>
-          <div>{getPaattymispaiva()}</div>
+          <div>{projectEndDate}</div>
         </div>
         <div>
           <h3 className="muutoshakemus__header">{newEndDateTitle}</h3>
