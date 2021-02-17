@@ -4,6 +4,7 @@ import { Muutoshakemus } from '../../../va-hakija/web/va/muutoshakemus/types' //
 const format = 'YYYY-MM-DD'
 
 export function getLatestApprovedMuutoshakemusDate(muutoshakemukset: Muutoshakemus[]): Moment | undefined {
+  if (!muutoshakemukset) return undefined
 
   function first(muutoshakemukset: Muutoshakemus[]): Muutoshakemus | undefined {
     return [...muutoshakemukset].shift()
