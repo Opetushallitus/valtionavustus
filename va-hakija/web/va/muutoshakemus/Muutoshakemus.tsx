@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import * as queryString from 'query-string'
 import momentLocalizer from 'react-widgets-moment'
-import moment, {Moment} from 'moment'
+import moment, { Moment } from 'moment'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusValues } from 'va-common/web/va/MuutoshakemusValues'
@@ -18,6 +18,7 @@ import { createFormikHook } from './formik'
 
 import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
+import {getLatestApprovedMuutoshakemusDate} from "../../../../va-common/web/va/Muutoshakemus"
 
 moment.locale('fi')
 momentLocalizer()
@@ -84,12 +85,12 @@ export const MuutoshakemusComponent = () => {
     fetchMuutoshakemukset()
   }, [f.status])
 
-  const existingMuutoshakemus = (m: Muutoshakemus, _: number, allMuutoshakemus: Muutoshakemus[]) => {
-    const previousMuutoshakemus = allMuutoshakemus.filter(i => i["created-at"] < m["created-at"])
+  const existingMuutoshakemus = (m: Muutoshakemus, index: number, allMuutoshakemus: Muutoshakemus[]) => {
+    const previousMuutoshakemus = allMuutoshakemus.filter(i => i["created-at"] < m["created-at"]) // TODO: Älä passaa tätä, vaan oikea päättymispäivä
     const topic = `${translations[lang].muutoshakemus} ${moment(m['created-at']).format('D.M.YYYY')}`
     const waitingForDecision = m.status === 'new' ? ` - ${translations[lang].waitingForDecision}` : ''
     return (
-      <section className="muutoshakemus__section" data-test-class="existing-muutoshakemus" key={m['id']}>
+      <section className="muutoshakemus__section" data-test-class="existing-muutoshakemus" key={index}>
         <h1 className="muutoshakemus__title">{`${topic}${waitingForDecision}`}</h1>
         <div className="muutoshakemus__form">
           <MuutoshakemusValues
@@ -103,35 +104,19 @@ export const MuutoshakemusComponent = () => {
     )
   }
 
-  const format = 'YYYY-MM-DD'
+  function getProjectEndDate(): string {
+    const latestAcceptedMuutoshakemus = getLatestApprovedMuutoshakemusDate(state.muutoshakemukset)
 
-  function getProjectEndDate(): Moment { // TODO: Käytä apufunktiota
-
-    function first(muutoshakemukset: Muutoshakemus[]): Muutoshakemus | undefined {
-      return [...muutoshakemukset].shift()
-    }
-
-    function sortByCreatedAtDescending(muutoshakemukset: Muutoshakemus[]): Muutoshakemus[] {
-      return [...muutoshakemukset].sort((m1, m2) => m1["created-at"] > m2["created-at"] ? -1 : 1)
-    }
-
-    const acceptedMuutoshakemukset = state.muutoshakemukset.filter(m => m.status === 'accepted' || m.status === 'accepted_with_changes')
-    const latestAcceptedMuutoshakemus = first(sortByCreatedAtDescending(acceptedMuutoshakemukset))
-
-    if (!latestAcceptedMuutoshakemus) {
-      return getHankkeenPaattymispaiva()
-    }
-
-    return latestAcceptedMuutoshakemus.status === 'accepted_with_changes' ?
-      moment(latestAcceptedMuutoshakemus["paatos-hyvaksytty-paattymispaiva"], format) :
-      moment(latestAcceptedMuutoshakemus["haettu-kayttoajan-paattymispaiva"], format)
+    return latestAcceptedMuutoshakemus ?
+      toFinnishDateFormat(latestAcceptedMuutoshakemus) :
+      toFinnishDateFormat(getHankkeenPaattymispaiva())
   }
 
   function getHankkeenPaattymispaiva(): Moment {
-    return moment(state.avustushaku['hankkeen-paattymispaiva'], format)
+    return moment(state.avustushaku['hankkeen-paattymispaiva'], 'YYYY-MM-DD')
   }
 
-  function toFinnishDateFormat(date: Moment): string {
+  function toFinnishDateFormat(date: { isValid: () => boolean, format: (string) => string  }): string {
     return date.isValid() ? date.format('DD.MM.YYYY') : ''
   }
 
@@ -149,7 +134,7 @@ export const MuutoshakemusComponent = () => {
                   registerNumber={state.avustushaku["register-number"]}
                   f={f}
                 />
-                {!existingNewMuutoshakemus && <AvustuksenKayttoajanPidennys f={f} projectEnd={toFinnishDateFormat(getProjectEndDate())} />}
+                {!existingNewMuutoshakemus && <AvustuksenKayttoajanPidennys f={f} projectEnd={getProjectEndDate()} />}
                 {state.muutoshakemukset.map(existingMuutoshakemus)}
                 <OriginalHakemusIframe avustushakuId={avustushakuId} userKey={userKey} />
               </ErrorBoundary>
