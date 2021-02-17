@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { FormikHook } from '../types'
+import { FormikHook } from '../../../../../va-common/web/va/types/muutoshakemus'
 import { useTranslations } from '../TranslationContext'
 import { TopBarNotification } from './TopBarNotification'
 

@@ -1,5 +1,3 @@
-import { Language, Translations } from './types'
-
 export const translationsFi = {
   hakemus: 'Hakemus',
   muutoshakemus: 'Muutoshakemus',
@@ -55,3 +53,6 @@ export const translations: { [key in Language]: typeof translationsFi } = {
   fi: translationsFi,
   sv: translationsSv
 }
+
+export type Language = 'fi' | 'sv'
+export type Translations = typeof translationsFi

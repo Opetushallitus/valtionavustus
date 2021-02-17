@@ -1,7 +1,5 @@
 import React, { useContext } from 'react'
-
-import { translations } from './translations'
-import { Language, Translations } from './types'
+import {Language, Translations, translations} from './translations'
 
 export interface TranslationContext {
   t: Translations

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import * as queryString from 'query-string'
 import momentLocalizer from 'react-widgets-moment'
-import moment, { Moment } from 'moment'
+import moment from 'moment'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusValues } from 'va-common/web/va/MuutoshakemusValues'
@@ -9,16 +9,16 @@ import { MuutoshakemusValues } from 'va-common/web/va/MuutoshakemusValues'
 import {AvustuksenKayttoajanPidennys} from './components/jatkoaika/AvustuksenKayttoajanPidennys'
 import {ContactPerson} from './components/contact-person/ContactPerson'
 import {TopBar} from './components/TopBar'
-import {Language, Muutoshakemus, MuutoshakemusProps} from './types'
-import {translations} from './translations'
+import {Muutoshakemus, MuutoshakemusProps} from '../../../../va-common/web/va/types/muutoshakemus'
+import {Language, translations} from './translations'
 import {TranslationContext} from './TranslationContext'
 import OriginalHakemusIframe from './OriginalHakemusIframe'
 import ErrorBoundary from './ErrorBoundary'
 import { createFormikHook } from './formik'
+import { getProjectEndDate } from '../../../../va-common/web/va/Muutoshakemus'
 
 import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
-import {getLatestApprovedMuutoshakemusDate} from "../../../../va-common/web/va/Muutoshakemus"
 
 moment.locale('fi')
 momentLocalizer()
@@ -87,7 +87,7 @@ export const MuutoshakemusComponent = () => {
 
   const existingMuutoshakemus = (m: Muutoshakemus, index: number, allMuutoshakemus: Muutoshakemus[]) => {
     const previousMuutoshakemus = allMuutoshakemus.filter(i => i["created-at"] < m["created-at"])
-    const projectEndDate = getProjectEndDate(previousMuutoshakemus)
+    const projectEndDate = getProjectEndDate(state.avustushaku, previousMuutoshakemus)
 
     const topic = `${translations[lang].muutoshakemus} ${moment(m['created-at']).format('D.M.YYYY')}`
     const waitingForDecision = m.status === 'new' ? ` - ${translations[lang].waitingForDecision}` : ''
@@ -105,22 +105,6 @@ export const MuutoshakemusComponent = () => {
     )
   }
 
-  function getProjectEndDate(muutoshakemukset: Muutoshakemus[]): string {
-    const latestAcceptedMuutoshakemus = getLatestApprovedMuutoshakemusDate(muutoshakemukset)
-
-    return latestAcceptedMuutoshakemus ?
-      toFinnishDateFormat(latestAcceptedMuutoshakemus) :
-      toFinnishDateFormat(getHankkeenPaattymispaiva())
-  }
-
-  function getHankkeenPaattymispaiva(): Moment {
-    return moment(state.avustushaku['hankkeen-paattymispaiva'], 'YYYY-MM-DD')
-  }
-
-  function toFinnishDateFormat(date: { isValid: () => boolean, format: (string) => string  }): string {
-    return date.isValid() ? date.format('DD.MM.YYYY') : ''
-  }
-
   return (
     state.status === 'LOADING'
       ? <p>{translations[lang].loading}</p>
@@ -135,7 +119,7 @@ export const MuutoshakemusComponent = () => {
                   registerNumber={state.avustushaku["register-number"]}
                   f={f}
                 />
-                {!existingNewMuutoshakemus && <AvustuksenKayttoajanPidennys f={f} projectEnd={getProjectEndDate(state.muutoshakemukset)} />}
+                {!existingNewMuutoshakemus && <AvustuksenKayttoajanPidennys f={f} projectEnd={getProjectEndDate(state.avustushaku, state.muutoshakemukset)} />}
                 {state.muutoshakemukset.map(existingMuutoshakemus)}
                 <OriginalHakemusIframe avustushakuId={avustushakuId} userKey={userKey} />
               </ErrorBoundary>
