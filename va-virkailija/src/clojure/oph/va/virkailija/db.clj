@@ -60,7 +60,8 @@
                                                   ee.created_at as paatos_sent_at
                                                 FROM virkailija.muutoshakemus m
                                                 LEFT JOIN virkailija.paatos p ON m.paatos_id = p.id
-                                                LEFT JOIN virkailija.email_event ee ON m.id = ee.muutoshakemus_id AND ee.email_type = 'muutoshakemus-paatos' AND success = true
+                                                LEFT JOIN virkailija.email_event ee
+                                                  ON ee.id = (SELECT max(id) FROM virkailija.email_event WHERE muutoshakemus_id = m.id AND email_type = 'muutoshakemus-paatos' AND success = true)
                                                 WHERE m.hakemus_id = ?
                                                 ORDER BY id DESC" hakemus-id]
                                               {:identifiers #(.replace % \_ \-)}))]
