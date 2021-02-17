@@ -86,7 +86,9 @@ export const MuutoshakemusComponent = () => {
   }, [f.status])
 
   const existingMuutoshakemus = (m: Muutoshakemus, index: number, allMuutoshakemus: Muutoshakemus[]) => {
-    const previousMuutoshakemus = allMuutoshakemus.filter(i => i["created-at"] < m["created-at"]) // TODO: Älä passaa tätä, vaan oikea päättymispäivä
+    const previousMuutoshakemus = allMuutoshakemus.filter(i => i["created-at"] < m["created-at"])
+    const projectEndDate = getProjectEndDate(previousMuutoshakemus)
+
     const topic = `${translations[lang].muutoshakemus} ${moment(m['created-at']).format('D.M.YYYY')}`
     const waitingForDecision = m.status === 'new' ? ` - ${translations[lang].waitingForDecision}` : ''
     return (
@@ -97,15 +99,14 @@ export const MuutoshakemusComponent = () => {
             muutoshakemus={m}
             hakijaUrl={state.environment?.['hakija-server'].url[lang]}
             simplePaatos={true}
-            previousMuutoshakemuses={previousMuutoshakemus}
-            hankkeenPaattymispaiva={getHankkeenPaattymispaiva()} />
+            projectEndDate={projectEndDate} />
         </div>
       </section>
     )
   }
 
-  function getProjectEndDate(): string {
-    const latestAcceptedMuutoshakemus = getLatestApprovedMuutoshakemusDate(state.muutoshakemukset)
+  function getProjectEndDate(muutoshakemukset: Muutoshakemus[]): string {
+    const latestAcceptedMuutoshakemus = getLatestApprovedMuutoshakemusDate(muutoshakemukset)
 
     return latestAcceptedMuutoshakemus ?
       toFinnishDateFormat(latestAcceptedMuutoshakemus) :
@@ -134,7 +135,7 @@ export const MuutoshakemusComponent = () => {
                   registerNumber={state.avustushaku["register-number"]}
                   f={f}
                 />
-                {!existingNewMuutoshakemus && <AvustuksenKayttoajanPidennys f={f} projectEnd={getProjectEndDate()} />}
+                {!existingNewMuutoshakemus && <AvustuksenKayttoajanPidennys f={f} projectEnd={getProjectEndDate(state.muutoshakemukset)} />}
                 {state.muutoshakemukset.map(existingMuutoshakemus)}
                 <OriginalHakemusIframe avustushakuId={avustushakuId} userKey={userKey} />
               </ErrorBoundary>
