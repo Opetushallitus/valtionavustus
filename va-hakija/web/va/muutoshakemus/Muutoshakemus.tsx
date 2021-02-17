@@ -84,7 +84,8 @@ export const MuutoshakemusComponent = () => {
     fetchMuutoshakemukset()
   }, [f.status])
 
-  const existingMuutoshakemus = (m: Muutoshakemus) => {
+  const existingMuutoshakemus = (m: Muutoshakemus, _: number, allMuutoshakemus: Muutoshakemus[]) => {
+    const previousMuutoshakemus = allMuutoshakemus.filter(i => i["created-at"] < m["created-at"])
     const topic = `${translations[lang].muutoshakemus} ${moment(m['created-at']).format('D.M.YYYY')}`
     const waitingForDecision = m.status === 'new' ? ` - ${translations[lang].waitingForDecision}` : ''
     return (
@@ -93,17 +94,18 @@ export const MuutoshakemusComponent = () => {
         <div className="muutoshakemus__form">
           <MuutoshakemusValues
             muutoshakemus={m}
-            hakemus={state.hakemus}
             hakijaUrl={state.environment?.['hakija-server'].url[lang]}
-            simplePaatos={true} />
+            simplePaatos={true}
+            previousMuutoshakemuses={previousMuutoshakemus}
+            hankkeenPaattymispaiva={getHankkeenPaattymispaiva()} />
         </div>
       </section>
     )
   }
 
+  const format = 'YYYY-MM-DD'
 
-  function getProjectEndDate(): Moment {
-    const format = 'YYYY-MM-DD'
+  function getProjectEndDate(): Moment { // TODO: Käytä apufunktiota
 
     function first(muutoshakemukset: Muutoshakemus[]): Muutoshakemus | undefined {
       return [...muutoshakemukset].shift()
@@ -117,12 +119,16 @@ export const MuutoshakemusComponent = () => {
     const latestAcceptedMuutoshakemus = first(sortByCreatedAtDescending(acceptedMuutoshakemukset))
 
     if (!latestAcceptedMuutoshakemus) {
-      return moment(state.avustushaku['hankkeen-paattymispaiva'], format)
+      return getHankkeenPaattymispaiva()
     }
 
     return latestAcceptedMuutoshakemus.status === 'accepted_with_changes' ?
       moment(latestAcceptedMuutoshakemus["paatos-hyvaksytty-paattymispaiva"], format) :
       moment(latestAcceptedMuutoshakemus["haettu-kayttoajan-paattymispaiva"], format)
+  }
+
+  function getHankkeenPaattymispaiva(): Moment {
+    return moment(state.avustushaku['hankkeen-paattymispaiva'], format)
   }
 
   function toFinnishDateFormat(date: Moment): string {
