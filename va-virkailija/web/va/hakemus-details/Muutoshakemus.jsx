@@ -10,7 +10,8 @@ import './Muutoshakemus.less'
 
 export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hakemus, controller, userInfo, presenter }) => {
   const [a, setActiveMuutoshakemus] = useState(muutoshakemukset[0])
-  const projectEndDate = getProjectEndDate(avustushaku, muutoshakemukset)
+  const previousMuutoshakemus = muutoshakemukset.filter(i => i["created-at"] < a["created-at"])
+  const projectEndDate = getProjectEndDate(avustushaku, previousMuutoshakemus)
 
   return (
     <React.Fragment>
