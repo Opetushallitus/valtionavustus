@@ -30,7 +30,28 @@
 
 (defn get-normalized-hakemus [hakemus-id]
   (log/info (str "Get normalized hakemus with id: " hakemus-id))
-  (let [hakemukset (query "SELECT * from virkailija.normalized_hakemus WHERE hakemus_id = ?" [hakemus-id])]
+  (let [hakemukset
+        (query
+          "SELECT
+            h.id,
+            h.hakemus_id,
+            h.contact_person,
+            h.contact_email,
+            h.contact_phone,
+            h.project_name,
+            h.created_at,
+            h.updated_at,
+            h.organization_name,
+            h.register_number,
+            TO_CHAR(ha.hankkeen_paattymispaiva, 'DD.MM.YYYY') as project_end
+          FROM
+            virkailija.normalized_hakemus h
+          LEFT JOIN
+            hakija.hakemukset AS hh ON h.hakemus_id = hh.id AND version_closed IS NULL
+          LEFT JOIN
+            hakija.avustushaut AS ha ON hh.avustushaku = ha.id
+          WHERE h.hakemus_id = ?" [hakemus-id])]
+
     (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
     (first hakemukset)))
 
