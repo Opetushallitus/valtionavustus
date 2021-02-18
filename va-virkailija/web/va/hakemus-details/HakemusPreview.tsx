@@ -80,7 +80,7 @@ export default class HakemusPreview extends Component<{ hakemus: Hakemus, avustu
       effectiveForm.content = _.filter(effectiveForm.content, field => field.fieldClass !== "infoElement")
       const formSpecification = hakuData.form
       const currentAnswers = hakemus.answers
-      hakemusFormState.answersDelta = EditsDisplayingFormView.resolveChangedFields(currentAnswers, hakemusFormState.changeRequests, hakemusFormState.attachmentVersions, hakemus.muutoshakemukset, hakemus.normalizedData)
+      hakemusFormState.answersDelta = EditsDisplayingFormView.resolveChangedFields(avustushaku, currentAnswers, hakemusFormState.changeRequests, hakemusFormState.attachmentVersions, hakemus.muutoshakemukset, hakemus.normalizedData)
 
       const oldestAnswers = (hakemusFormState.changeRequests && hakemusFormState.changeRequests.length > 0)
         ? hakemusFormState.changeRequests[0].answers

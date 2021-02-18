@@ -5,8 +5,8 @@ import _ from 'lodash'
 import JsUtil from 'soresu-form/web/JsUtil'
 // @ts-ignore
 import FormPreview from 'soresu-form/web/form/FormPreview'
-import { getProjectEnd } from 'va-common/web/va/MuutoshakemusMapper'
-import { Answer, AnswersDelta, HakemusFormState, Muutoshakemus, NormalizedHakemusData } from 'va-common/web/va/types'
+import { Answer, AnswersDelta, HakemusFormState, Muutoshakemus, NormalizedHakemusData } from '../types'
+import { getProjectEndDate } from 'va-common/web/va/Muutoshakemus'
 
 function addOrMutateAnswer(answers: Answer[], key: string, newValue: any) {
   const answer = answers.find(a => a.key === key)
@@ -32,9 +32,8 @@ function mutateDeltaFromNormalizedData(answersDelta: AnswersDelta, answers: Answ
   mutateAnswersDeltaWithKey(answersDelta, answers, 'textField-0', normalizedData['textField-0'])
 }
 
-function mutateDeltaFromMuutoshakemukset(answersDelta: AnswersDelta, answers: Answer[], muutoshakemukset: Muutoshakemus[]) {
-  const acceptedMuutoshakemus = muutoshakemukset?.find(m => m.status === 'accepted' || m.status === 'accepted_with_changes')
-  const projectEnd = getProjectEnd(acceptedMuutoshakemus)
+function mutateDeltaFromMuutoshakemukset(avustushaku, answersDelta: AnswersDelta, answers: Answer[], muutoshakemukset: Muutoshakemus[]) {
+  const projectEnd = getProjectEndDate(avustushaku, muutoshakemukset)
   if (projectEnd) {
     mutateAnswersDeltaWithKey(answersDelta, answers, 'project-end', projectEnd)
   }
@@ -82,7 +81,7 @@ export default class EditsDisplayingFormView extends React.Component<any> {
             </div>
   }
 
-  static resolveChangedFields(currentAnswers: Answer[], changeRequests, attachmentVersions, muutoshakemukset?: Muutoshakemus[], normalizedData?: NormalizedHakemusData): AnswersDelta {
+  static resolveChangedFields(avustushaku, currentAnswers: Answer[], changeRequests, attachmentVersions, muutoshakemukset?: Muutoshakemus[], normalizedData?: NormalizedHakemusData): AnswersDelta {
     const answersDelta = !changeRequests || changeRequests.length === 0
       ? { changedAnswers: [] as Answer[], newAnswers: [] as Answer[] }
       : createDelta(changeRequests, attachmentVersions, currentAnswers)
@@ -90,7 +89,7 @@ export default class EditsDisplayingFormView extends React.Component<any> {
       mutateDeltaFromNormalizedData(answersDelta, currentAnswers, normalizedData)
     }
     if (muutoshakemukset?.length) {
-      mutateDeltaFromMuutoshakemukset(answersDelta, currentAnswers, muutoshakemukset)
+      mutateDeltaFromMuutoshakemukset(avustushaku, answersDelta, currentAnswers, muutoshakemukset)
     }
     return answersDelta
 

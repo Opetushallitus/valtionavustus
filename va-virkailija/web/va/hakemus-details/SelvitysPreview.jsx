@@ -40,7 +40,7 @@ export default class SelvitysPreview extends Component {
       const formSpecification = form
       const currentAnswers = selvitysHakemus.answers
 
-      hakemusFormState.answersDelta = EditsDisplayingFormView.resolveChangedFields(currentAnswers, hakemusFormState.changeRequests, hakemusFormState.attachmentVersions)
+      hakemusFormState.answersDelta = EditsDisplayingFormView.resolveChangedFields(avustushaku, currentAnswers, hakemusFormState.changeRequests, hakemusFormState.attachmentVersions)
       const oldestAnswers = (hakemusFormState.changeRequests && hakemusFormState.changeRequests.length > 0) ? hakemusFormState.changeRequests[0].answers : {}
       const combinedAnswersForPopulatingGrowingFieldsets = _.mergeWith(_.cloneDeep(currentAnswers), _.cloneDeep(oldestAnswers), (a, b) => {
         return _.isArray(a) ? uniqueUnion(a, b) : undefined
