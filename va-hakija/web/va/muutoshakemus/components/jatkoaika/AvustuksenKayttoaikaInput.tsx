@@ -11,7 +11,7 @@ import 'react-widgets/dist/css/react-widgets.css'
 
 type AvustuksenKayttoaikaInputProps = {
   f: FormikHook
-  projectEnd: string
+  projectEnd: string | undefined
 }
 
 export const AvustuksenKayttoaikaInput = ({ f, projectEnd }: AvustuksenKayttoaikaInputProps) => {

@@ -7,7 +7,7 @@ interface Avustushaku {
   'hankkeen-paattymispaiva' : string
 }
 
-export function getProjectEndDate(avustushaku: Avustushaku, muutoshakemukset: Muutoshakemus[] | undefined): string {
+export function getProjectEndDate(avustushaku: Avustushaku, muutoshakemukset: Muutoshakemus[] | undefined): string | undefined {
   const latestAcceptedMuutoshakemus = getLatestApprovedMuutoshakemusDate(muutoshakemukset)
 
   const date = latestAcceptedMuutoshakemus ? latestAcceptedMuutoshakemus : moment(avustushaku['hankkeen-paattymispaiva'], format)
@@ -35,6 +35,6 @@ function getLatestApprovedMuutoshakemusDate(muutoshakemukset: Muutoshakemus[] | 
     moment(latestAcceptedMuutoshakemus["haettu-kayttoajan-paattymispaiva"], format)
 }
 
-function toFinnishDateFormat(date: { isValid: () => boolean, format: (string) => string  }): string {
-  return date.isValid() ? date.format('DD.MM.YYYY') : ''
+function toFinnishDateFormat(date: { isValid: () => boolean, format: (string) => string  }): string | undefined {
+  return date.isValid() ? date.format('DD.MM.YYYY') : undefined
 }

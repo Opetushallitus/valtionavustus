@@ -8,7 +8,7 @@ import './jatkoaika.less'
 
 type AvustuksenKayttoajanPidennysProps = {
   f: FormikHook
-  projectEnd: string
+  projectEnd: string | undefined
 }
 
 export const AvustuksenKayttoajanPidennys = ({ f, projectEnd }: AvustuksenKayttoajanPidennysProps) => {
