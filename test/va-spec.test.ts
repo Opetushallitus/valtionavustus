@@ -1261,6 +1261,7 @@ etunimi.sukunimi@oph.fi
           page.waitForNavigation(),
           clickElementWithText(page, "td", "Akaan kaupunki"),
         ])
+        await page.waitForSelector('.answer-old-value #applicant-name div')
         const oldContactPersonNameOnPage = await getElementInnerText(page, ".answer-old-value #applicant-name div")
         expect(oldContactPersonNameOnPage).toEqual("Erkki Esimerkki")
         const contactPersonNameOnPage = await getElementInnerText(page, ".answer-new-value #applicant-name div")
@@ -1273,6 +1274,39 @@ etunimi.sukunimi@oph.fi
         expect(oldContactPersonEmailOnPage).toEqual("erkki.esimerkki@example.com")
         const contactPersonEmailOnPage = await getElementInnerText(page, ".answer-new-value #primary-email div")
         expect(contactPersonEmailOnPage).toEqual(newEmail)
+      })
+
+      it('Re-sending paatos doesn\'t override changed contact person details', async () => {
+        await navigate(page, `/avustushaku/${avustushakuID}/`)
+        await Promise.all([
+          page.waitForNavigation(),
+          clickElementWithText(page, "td", "Akaan kaupunki"),
+        ])
+        await page.waitForSelector('.answer-old-value #applicant-name div')
+        const oldNameOnPage = await getElementInnerText(page, ".answer-old-value #applicant-name div")
+        const nameOnPage = await getElementInnerText(page, ".answer-new-value #applicant-name div")
+        const oldPhoneOnPage = await getElementInnerText(page, ".answer-old-value #textField-0 div")
+        const phoneOnPage = await getElementInnerText(page, ".answer-new-value #textField-0 div")
+        const oldEmailOnPage = await getElementInnerText(page, ".answer-old-value #primary-email div")
+        const emailOnPage = await getElementInnerText(page, ".answer-new-value #primary-email div")
+
+        page.on('dialog', async dialog => { dialog.accept() })
+        await page.click('[data-test-id=resend-paatos]')
+        await page.waitForSelector('[data-test-id=paatos-resent]')
+
+        // reload to see possibly changed values
+        await navigate(page, `/avustushaku/${avustushakuID}/`)
+        await Promise.all([
+          page.waitForNavigation(),
+          clickElementWithText(page, "td", "Akaan kaupunki"),
+        ])
+        await page.waitForSelector('.answer-old-value #applicant-name div')
+        expect(await getElementInnerText(page, ".answer-old-value #applicant-name div")).toEqual(oldNameOnPage)
+        expect(await getElementInnerText(page, ".answer-new-value #applicant-name div")).toEqual(nameOnPage)
+        expect(await getElementInnerText(page, ".answer-old-value #textField-0 div")).toEqual(oldPhoneOnPage)
+        expect(await getElementInnerText(page, ".answer-new-value #textField-0 div")).toEqual(phoneOnPage)
+        expect(await getElementInnerText(page, ".answer-old-value #primary-email div")).toEqual(oldEmailOnPage)
+        expect(await getElementInnerText(page, ".answer-new-value #primary-email div")).toEqual(emailOnPage)
       })
 
       it('shows existing muutoshakemuses', async () => {

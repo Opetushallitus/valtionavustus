@@ -175,6 +175,13 @@
         (hakemus-ok-response verified-hakemus submission validation))
       (hakemus-ok-response hakemus submission validation))))
 
+(defn try-store-normalized-hakemus [hakemus-id hakemus answers]
+  (try (va-db/store-normalized-hakemus hakemus-id hakemus answers)
+    true
+    (catch Exception e
+      (log/info "Could not normalize necessary hakemus fields for hakemus: " hakemus-id " Error: " (.getMessage e))
+      false)))
+
 (defn on-hakemus-update [haku-id hakemus-id base-version answers]
   (let [hakemus (va-db/get-hakemus hakemus-id)
         avustushaku (get-open-avustushaku haku-id hakemus)
@@ -194,7 +201,8 @@
                                                        (:version updated-submission)
                                                        (:register_number hakemus)
                                                        answers
-                                                       budget-totals)]
+                                                       budget-totals)
+              normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers)]
           (hakemus-ok-response updated-hakemus updated-submission validation))
         (hakemus-conflict-response hakemus))
       (bad-request! security-validation))))
@@ -271,7 +279,8 @@
                                                       submission-version
                                                       (:register_number hakemus)
                                                       answers
-                                                      budget-totals)]
+                                                      budget-totals)
+              normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers)]
           (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku)
           (hakemus-ok-response submitted-hakemus saved-submission validation))
         (hakemus-conflict-response hakemus))

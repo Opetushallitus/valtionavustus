@@ -28,9 +28,9 @@ export default class ReSendDecisionEmail extends Component {
       <div className="value-edit">
         {isResolved &&
           <div>
-            <button onClick={onSubmit} disabled={this.state.submitting}>Lähetä päätössähköposti uudestaan</button>
+            <button onClick={onSubmit} disabled={this.state.submitting} data-test-id="resend-paatos">Lähetä päätössähköposti uudestaan</button>
             <HelpTooltip testId={"tooltip-laheta-email-uudestaan"} content={helpTexts["hankkeen_sivu__arviointi___lähetä_päätössähköposti_uudelleen"]} direction={"arviointi-slim"} />
-            {this.state.submitted && <span>Sähköposti lähetetty</span>}
+            {this.state.submitted && <span data-test-id="paatos-resent">Sähköposti lähetetty</span>}
           </div>
         }
       </div>

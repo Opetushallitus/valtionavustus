@@ -208,6 +208,30 @@
           [user-key haen-kayttoajan-pidennysta, kayttoajan-pidennys-perustelut, haettu-kayttoajan-paattymispaiva ])
 ))
 
+(defn store-normalized-hakemus [id hakemus answers]
+  (log/info (str "Storing normalized fields for hakemus: " id))
+  (with-tx (fn [tx]
+    (execute! tx
+      "INSERT INTO virkailija.normalized_hakemus (hakemus_id, project_name, contact_person, contact_email, contact_phone, project_end, organization_name, register_number)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT (hakemus_id) DO UPDATE SET
+          project_name = EXCLUDED.project_name,
+          contact_person = EXCLUDED.contact_person,
+          contact_email = EXCLUDED.contact_email,
+          contact_phone = EXCLUDED.contact_phone,
+          project_end = EXCLUDED.project_end,
+          organization_name = EXCLUDED.organization_name,
+          register_number = EXCLUDED.register_number"
+        [ id,
+          (form-util/find-answer-value answers "project-name"),
+          (form-util/find-answer-value answers "applicant-name"),
+          (form-util/find-answer-value answers "primary-email"),
+          (form-util/find-answer-value answers "textField-0"),
+          (form-util/find-answer-value answers "project-end"),
+          (:organization_name hakemus),
+          (:register_number hakemus) ])))
+  (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
+
 (defn change-normalized-hakemus-contact-person-details [tx user-key, contact-person-details]
   (log/info (str "Change normalized contact person details with user-key: " user-key))
   (let [ contact-person (:name contact-person-details)
