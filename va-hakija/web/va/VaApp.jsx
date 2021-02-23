@@ -66,10 +66,14 @@ const develMode =  query.devel === "true"
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
 const environmentP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.environmentConfigUrl()))
+const normalizedHakemusP = Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustusHakuId}/hakemus/${query.hakemus}/normalized`).catch(e => undefined))
+const muutoshakemuksetP = Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustusHakuId}/hakemus/${query.hakemus}/muutoshakemus`).catch(e => []))
 
 
 function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP
+  template.normalizedHakemus = normalizedHakemusP
+  template.muutoshakemukset = muutoshakemuksetP
   template.configuration.environment = environmentP
   template.saveStatus.hakemusId = query.hakemus
   template.token = query.token

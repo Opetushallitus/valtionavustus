@@ -13,7 +13,8 @@ export default class HakemusHakijaSidePreviewLink extends Component {
         <a href={previewUrl}
            className="preview-links"
            target="_blank"
-           rel="noopener noreferrer">
+           rel="noopener noreferrer"
+           data-test-id="hakemus-printable-link">
           Tulostusversio
         </a>|
         <a href={previewUrl + "?decision-version=true"}

@@ -5,7 +5,7 @@ import _ from 'lodash'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 // @ts-ignore
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
-import { HakemusFormState } from '../types'
+import { HakemusFormState } from 'va-common/web/va/types'
 
 type InitialFakeFormState = {
   translations: any

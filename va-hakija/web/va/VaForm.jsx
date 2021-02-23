@@ -7,6 +7,7 @@ import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
 
 import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber.jsx'
 import VaChangeRequest from 'va-common/web/va/VaChangeRequest.jsx'
+import { mapAnswersWithMuutoshakemusData } from 'va-common/web/va/MuutoshakemusMapper'
 
 import VaFormTopbar from './VaFormTopbar.jsx'
 import VaOldBrowserWarning from './VaOldBrowserWarning.jsx'
@@ -23,6 +24,7 @@ export default class VaForm extends React.Component {
     const {controller, state, hakemusType, isExpired, refuseGrant, modifyApplication} = this.props
     const registerNumber = _.get(state.saveStatus.savedObject, "register-number", undefined)
     const {saveStatus, configuration} = state
+    const { embedForMuutoshakemus, preview } = configuration
     const registerNumberDisplay = <VaHakemusRegisterNumber key="register-number"
                                                            registerNumber={registerNumber}
                                                            translations={configuration.translations}
@@ -32,12 +34,13 @@ export default class VaForm extends React.Component {
                                             translations={configuration.translations}
                                             lang={configuration.lang} />
     const headerElements = [registerNumberDisplay, changeRequest]
-    const formContainerClass = configuration.preview ? FormPreview : Form
-    const showGrantRefuse = configuration.preview && state.token && allowedStatuses.indexOf(saveStatus.savedObject.status) > -1 && (refuseGrant === "true")
+    const formContainerClass = preview ? FormPreview : Form
+    const showGrantRefuse = preview && state.token && allowedStatuses.indexOf(saveStatus.savedObject.status) > -1 && (refuseGrant === "true")
     const isInApplicantEditMode = () => "applicant_edit" === _.get(saveStatus.savedObject, "status")
     const showOpenContactsEditButton = !showGrantRefuse && modifyApplication && !isInApplicantEditMode()
-    const { embedForMuutoshakemus } = configuration
-
+    if (!embedForMuutoshakemus && preview) {
+      saveStatus.values.value = mapAnswersWithMuutoshakemusData(saveStatus.values.value, state.muutoshakemukset, state.normalizedHakemus)
+    }
 
     return(
       <div>

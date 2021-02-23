@@ -1324,6 +1324,25 @@ etunimi.sukunimi@oph.fi
         expect(firstTitle).toContain('- Odottaa käsittelyä')
         expect(await countElements(page, `span.muutoshakemus__paatos-icon--rejected`)).toEqual(2)
       })
+
+      it('printable version shows new values', async () => {
+        await navigate(page, `/avustushaku/${avustushakuID}/`)
+        await Promise.all([
+          page.waitForNavigation(),
+          clickElementWithText(page, "td", "Akaan kaupunki"),
+        ])
+
+        await page.waitForSelector('[data-test-id="hakemus-printable-link"]')
+        const printableVersionTab = new Promise(x => browser.once('targetcreated', target => x(target.page()))) as Promise<Page>
+        await page.click('[data-test-id="hakemus-printable-link"]')
+
+        const printablePage = await printableVersionTab
+        await printablePage.waitForSelector('#applicant-name div')
+        expect(await getElementInnerText(printablePage, "#applicant-name div")).toEqual(newName)
+        expect(await getElementInnerText(printablePage, "#primary-email div")).toEqual(newEmail)
+        expect(await getElementInnerText(printablePage, "#textField-0 div")).toEqual(newPhone)
+        printablePage.close()
+      })
     })
   })
 

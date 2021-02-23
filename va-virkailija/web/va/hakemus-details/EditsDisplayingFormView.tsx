@@ -1,22 +1,12 @@
 import React from 'react'
 import _ from 'lodash'
-import moment from 'moment'
 
 // @ts-ignore
 import JsUtil from 'soresu-form/web/JsUtil'
 // @ts-ignore
 import FormPreview from 'soresu-form/web/form/FormPreview'
-import { Answer, AnswersDelta, HakemusFormState, Muutoshakemus, NormalizedHakemusData } from '../types'
-
-export function getProjectEnd(muutoshakemus?: Muutoshakemus) {
-  if (muutoshakemus?.status === 'accepted') {
-    return muutoshakemus?.['haen-kayttoajan-pidennysta'] && moment(muutoshakemus?.['haettu-kayttoajan-paattymispaiva']).format('DD.MM.YYYY')
-  }
-  if (muutoshakemus?.status === 'accepted_with_changes') {
-    return muutoshakemus?.['paatos-hyvaksytty-paattymispaiva'] && moment(muutoshakemus?.['paatos-hyvaksytty-paattymispaiva']).format('DD.MM.YYYY')
-  }
-  return undefined
-}
+import { getProjectEnd } from 'va-common/web/va/MuutoshakemusMapper'
+import { Answer, AnswersDelta, HakemusFormState, Muutoshakemus, NormalizedHakemusData } from 'va-common/web/va/types'
 
 function addOrMutateAnswer(answers: Answer[], key: string, newValue: any) {
   const answer = answers.find(a => a.key === key)

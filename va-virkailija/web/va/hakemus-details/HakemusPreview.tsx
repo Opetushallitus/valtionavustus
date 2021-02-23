@@ -17,34 +17,15 @@ import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactor
 import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber'
 // @ts-ignore
 import VaChangeRequest from 'va-common/web/va/VaChangeRequest'
+import { mapAnswersWithMuutoshakemusData } from 'va-common/web/va/MuutoshakemusMapper'
 import GrantRefusedNotice from './GrantRefusedNotice.jsx'
 
-import EditsDisplayingFormView, { getProjectEnd } from './EditsDisplayingFormView'
+import EditsDisplayingFormView from './EditsDisplayingFormView'
 import FakeFormController from '../form/FakeFormController'
 import FakeFormState from '../form/FakeFormState'
-import { Answer, Hakemus, HakemusFormState } from '../types'
+import { Answer, Hakemus, HakemusFormState } from 'va-common/web/va/types'
 
 import '../style/formpreview.less'
-
-function getCurrentAnswers(hakemus: Hakemus): Answer[] {
-  const { answers, muutoshakemukset, normalizedData } = hakemus
-  const acceptedMuutoshakemus = muutoshakemukset?.find(m => m.status === 'accepted' || m.status === 'accepted_with_changes')
-  const projectEnd = getProjectEnd(acceptedMuutoshakemus)
-  return JSON.parse(JSON.stringify(answers)).map((a: Answer) => {
-    switch (a.key) {
-      case 'project-end':
-        return projectEnd ? { ...a, value: projectEnd } : a
-      case 'applicant-name':
-        return normalizedData ? { ...a, value: normalizedData['contact-person'] } : a
-      case 'primary-email':
-        return normalizedData ? { ...a, value: normalizedData['contact-email'] } : a
-      case 'textField-0':
-        return normalizedData ? { ...a, value: normalizedData['contact-phone'] } : a
-      default:
-        return a
-    }
-  })
-}
 
 export default class HakemusPreview extends Component<{ hakemus: Hakemus, avustushaku: any, hakuData: any, translations: any }> {
   render() {
@@ -116,7 +97,7 @@ export default class HakemusPreview extends Component<{ hakemus: Hakemus, avustu
 
       FormRules.applyRulesToForm(formSpecification, effectiveForm, currentAnswers)
       FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, combinedAnswersForPopulatingGrowingFieldsets, false)
-      hakemusFormState.saveStatus.values = getCurrentAnswers(hakemus)
+      hakemusFormState.saveStatus.values = mapAnswersWithMuutoshakemusData(hakemus.answers, hakemus.muutoshakemukset, hakemus.normalizedData)
       console.log('hakemus', hakemus)
       return hakemusFormState
     }
