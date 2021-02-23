@@ -9,8 +9,7 @@ Jos päätätte olla ottamatta avustusta vastaan, voitte tehdä ilmoituksen täs
 {{^muutospaatosprosessi-enabled}}Jos haluatte muuttaa yhteyshenkilön tiedot, voitte tehdä ilmoituksen tästä linkistä:{{/muutospaatosprosessi-enabled}}
 {{#muutospaatosprosessi-enabled}}Allaolevasta linkistä voitte tehdä seuraavat muutokset:
 - Päivittää yhteyshenkilön tiedot
-- Hakea pidennystä avustuksen käyttöaikaan
-- Hakea muutosta hankkeen talouden käyttösuunnitelmaan, sisältöön tai toteutustapaan{{/muutospaatosprosessi-enabled}}
+- Hakea pidennystä avustuksen käyttöaikaan{{/muutospaatosprosessi-enabled}}
 {{& modify-url }}
 
 Ilmoitus tulee tehdä päätöksessä mainittuun päivämäärään mennessä.
