@@ -40,6 +40,25 @@ function npm_ci_if_package_lock_has_changed {
   fi
 }
 
+function wait_until_port_is_listening {
+  require_command nc
+  local -r port="$1"
+
+  info "Waiting until port $port is listening"
+  while ! nc -z localhost "$port"; do
+    sleep 1
+  done
+}
+function wait_for_container_to_be_healthy {
+  require_command docker
+  local -r container_name="$1"
+
+  info "Waiting for docker container $container_name to be healthy"
+  until [ "$(docker inspect -f {{.State.Health.Status}} "$container_name" 2>/dev/null || echo "not-running")" == "healthy" ]; do
+    sleep 2;
+  done;
+}
+
 function require_command {
   if ! command -v "$1" > /dev/null; then
     fatal "I require $1 but it's not installed. Aborting."

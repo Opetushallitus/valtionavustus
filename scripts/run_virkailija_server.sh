@@ -1,24 +1,16 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
-scriptdir="$( cd "$( dirname "$0" )" && pwd )"
-repo="$scriptdir/.."
+source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/common-functions.sh"
 
 function main {
-  command -v nc > /dev/null 2>&1 || { echo >&2 "I require nc but it's not installed. Aborting."; exit 1; }
+  wait_for_container_to_be_healthy va-postgres
 
-  wait_for_hakija_server_to_be_started
+  info "Waiting for hakija server to start..."
+  wait_until_port_is_listening 8080
 
   cd "$repo/va-virkailija"
+  info "Starting virkailija server"
   ../lein run
-}
-
-function wait_for_hakija_server_to_be_started {
-  local -r hakija_server_port="8080"
-
-  echo "wating for hakija server to accept connections on port $hakija_server_port"
-  while ! nc -z localhost $hakija_server_port; do
-    sleep 1
-  done
 }
 
 main "$@"
