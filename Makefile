@@ -38,6 +38,7 @@ npm-clean: npm-clean-modules npm-clean-frontends
 .PHONY: npm-clean-modules
 npm-clean-modules: check-node
 	rm -rf node_modules
+	rm .package-lock.json.checksum
 
 .PHONY: npm-clean-frontends
 npm-clean-frontends: check-node
