@@ -985,7 +985,7 @@ etunimi.sukunimi@oph.fi
           expect(linkToHakemus).toEqual(`${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
       })
 
-      it('can reject a muutoshakemus', async () => {
+      it.only('can reject a muutoshakemus', async () => {
         await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
         await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
         await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected'})
@@ -1009,7 +1009,7 @@ etunimi.sukunimi@oph.fi
         await assertRejectedPäätösHasVakioperustelu(page)
       })
 
-      it('can accept a muutoshakemus', async () => {
+      it.only('can accept a muutoshakemus', async () => {
         await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
 
         await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus4)
@@ -1041,7 +1041,7 @@ etunimi.sukunimi@oph.fi
         await assertAcceptedPäätösHasVakioperustelu(page)
       })
 
-      it('can see values of multiple muutoshakemus', async () => {
+      it.only('can see values of multiple muutoshakemus', async () => {
         await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
 
         // create two new muutoshakemus
@@ -1062,12 +1062,19 @@ etunimi.sukunimi@oph.fi
         await clickElement(page, 'span.muutoshakemus-tab')
         await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
         await validateMuutoshakemusValues(page, muutoshakemus3)
+        expect(await getElementInnerText(page, '[data-test-id="project-end-date"]')).toBe(muutoshakemus4.jatkoaika?.format('DD.MM.YYYY'))
+
         await clickElement(page, 'button.muutoshakemus-tabs__tab:nth-child(2)')
         await validateMuutoshakemusValues(page, muutoshakemus2, { status: 'rejected' })
+        expect(await getElementInnerText(page, '[data-test-id="project-end-date"]')).toBe(muutoshakemus4.jatkoaika?.format('DD.MM.YYYY'))
+
         await clickElement(page, 'button.muutoshakemus-tabs__tab:nth-child(3)')
         await validateMuutoshakemusValues(page, muutoshakemus4, { status: 'accepted' })
+        expect(await getElementInnerText(page, '[data-test-id="project-end-date"]')).toBe('20.04.4200')
+
         await clickElement(page, 'button.muutoshakemus-tabs__tab:nth-child(4)')
         await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected' })
+        expect(await getElementInnerText(page, '[data-test-id="project-end-date"]')).toBe('20.04.4200')
       })
 
       it('hakija gets an email with link to paatos and link to new muutoshakemus', async () => {

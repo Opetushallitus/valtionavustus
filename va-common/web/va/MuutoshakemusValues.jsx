@@ -70,7 +70,7 @@ const PaattymispaivaValues = ({ muutoshakemus, projectEndDate }) => {
       <div className="muutoshakemus-row muutoshakemus__project-end-row">
         <div>
           <h3 className="muutoshakemus__header">{currentEndDateTitle}</h3>
-          <div>{projectEndDate}</div>
+          <div data-test-id="project-end-date">{projectEndDate}</div>
         </div>
         <div>
           <h3 className="muutoshakemus__header">{newEndDateTitle}</h3>
