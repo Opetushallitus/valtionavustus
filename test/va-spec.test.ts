@@ -1075,6 +1075,8 @@ etunimi.sukunimi@oph.fi
         await clickElement(page, 'button.muutoshakemus-tabs__tab:nth-child(4)')
         await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected' })
         expect(await getElementInnerText(page, '[data-test-id="project-end-date"]')).toBe('20.04.4200')
+
+        expect(await getElementInnerText(page, '.answer-new-value #project-end')).toBe(muutoshakemus4.jatkoaika?.format('DD.MM.YYYY'))
       })
 
       it('hakija gets an email with link to paatos and link to new muutoshakemus', async () => {
