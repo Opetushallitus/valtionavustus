@@ -1018,7 +1018,7 @@ etunimi.sukunimi@oph.fi
         await validateMuutoshakemusValues(page, muutoshakemus4, { status: 'accepted'})
 
         const oldProjectEnd = await getElementInnerText(page, ".answer-old-value #project-end div")
-        expect(oldProjectEnd).toEqual("13.03.2032")
+        expect(oldProjectEnd).toEqual("20.04.4200")
         const newProjectEnd = await getElementInnerText(page, ".answer-new-value #project-end div")
         expect(newProjectEnd).toEqual(muutoshakemus4.jatkoaika?.format('DD.MM.YYYY'))
 

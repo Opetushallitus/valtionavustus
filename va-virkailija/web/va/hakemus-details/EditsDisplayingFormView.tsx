@@ -7,6 +7,7 @@ import JsUtil from 'soresu-form/web/JsUtil'
 import FormPreview from 'soresu-form/web/form/FormPreview'
 import { Answer, AnswersDelta, HakemusFormState, Muutoshakemus, NormalizedHakemusData } from '../types'
 import { getProjectEndDate } from 'va-common/web/va/Muutoshakemus'
+import moment from 'moment'
 
 function addOrMutateAnswer(answers: Answer[], key: string, newValue: any) {
   const answer = answers.find(a => a.key === key)
@@ -37,6 +38,32 @@ function mutateDeltaFromMuutoshakemukset(avustushaku, answersDelta: AnswersDelta
   if (projectEnd) {
     mutateAnswersDeltaWithKey(answersDelta, answers, 'project-end', projectEnd)
   }
+}
+
+function upsertAnswer(answers: Answer[], key: string, value: string | undefined, fieldType: string = 'textField') {
+  if (!value) return
+
+  const answer = answers.find(a => a.key === key)
+
+  if (answer) {
+    answer.value = value
+  } else {
+    answers.push({
+      key: key,
+      value: value,
+      fieldType: fieldType
+    })
+  }
+}
+
+function mutateAnswersSetProjectStartAndEndDateFromPaatos(avustushaku, currentAnswers: Answer[]) {
+  upsertAnswer(currentAnswers, 'project-begin', toFinnishDateFormat(avustushaku['hankkeen-alkamispaiva']))
+  upsertAnswer(currentAnswers, 'project-end', toFinnishDateFormat(avustushaku['hankkeen-paattymispaiva']))
+}
+
+function toFinnishDateFormat(dateStamp: string): string | undefined {
+  const date = moment(dateStamp, 'YYYY-MM-DD')
+  return date.isValid() ? date.format('DD.MM.YYYY') : undefined
 }
 
 export default class EditsDisplayingFormView extends React.Component<any> {
@@ -91,6 +118,8 @@ export default class EditsDisplayingFormView extends React.Component<any> {
     if (muutoshakemukset?.length) {
       mutateDeltaFromMuutoshakemukset(avustushaku, answersDelta, currentAnswers, muutoshakemukset)
     }
+    mutateAnswersSetProjectStartAndEndDateFromPaatos(avustushaku, currentAnswers)
+
     return answersDelta
 
     function createDelta(changeRequests, attachmentVersions, currentAnswers): AnswersDelta {
