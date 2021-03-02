@@ -391,7 +391,7 @@
               :register-number (s/maybe s/Str)})
 
 (s/defschema ExternalGrant
-  "Avustushaun tiedot ulkopuolisia järjestlemiä varten"
+  "Avustushaun tiedot ulkopuolisia järjestelmiä varten"
   {:id s/Int
    :form-loppuselvitys s/Any
    :content s/Any
@@ -408,6 +408,8 @@
    :register-number (s/maybe s/Str)
    :loppuselvitysdate (s/maybe s/Str)
    :valmistelija (s/maybe IncompleteLocalizedString)
+   :hankkeen-alkamispaiva (s/maybe LocalDate)
+   :hankkeen-paattymispaiva (s/maybe LocalDate)
    :created-at s/Inst})
 
 (s/defschema ExternalApplication
