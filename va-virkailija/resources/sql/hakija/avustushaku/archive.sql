@@ -1,4 +1,3 @@
--- TODO: Muista lisätä archiveen!
 insert into archived_avustushaut (
     avustushaku_id,
     form_id,
@@ -11,6 +10,8 @@ insert into archived_avustushaut (
     decision,
     operational_unit_id,
     project_id,
+    hankkeen_alkamispaiva,
+    hankkeen_paattymispaiva,
     operation_id)
   select
     id,
@@ -24,6 +25,8 @@ insert into archived_avustushaut (
     decision,
     operational_unit_id,
     project_id,
+    hankkeen_alkamispaiva,
+    hankkeen_paattymispaiva,
     operation_id
   from avustushaut
   where id = :id
