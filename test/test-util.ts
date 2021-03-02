@@ -188,7 +188,7 @@ export async function createMuutoshakemusEnabledEsimerkkihakuAndReturnId(page: P
   return { avustushakuID }
 }
 
-export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page, hakuName?: string, registerNumber?: string) {
+export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page, hakuName?: string, registerNumber?: string): Promise<number> {
   const avustushakuName = hakuName || mkAvustushakuName()
   console.log(`Avustushaku name for test: ${avustushakuName}`)
 
