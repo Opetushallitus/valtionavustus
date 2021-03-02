@@ -78,7 +78,8 @@ import {
   countElements,
   selectVakioperustelu,
   setCalendarDate,
-  navigateToHakijaMuutoshakemusPage
+  navigateToHakijaMuutoshakemusPage,
+  waitUntilMinEmails
 } from "./test-util"
 import axios from 'axios'
 
@@ -610,6 +611,7 @@ etunimi.sukunimi@oph.fi
 
   it("allows sending täydennyspyyntö to hakija", async () => {
     const randomId = randomString()
+
     const { avustushakuID, userKey } = await publishAndFillMuutoshakemusEnabledAvustushaku(page, {
       registerNumber: "1620/2020",
       avustushakuName: `Täydennyspyyntöavustushaku ${randomId}`,
@@ -619,6 +621,7 @@ etunimi.sukunimi@oph.fi
       contactPersonPhoneNumber: "666",
       projectName: "Lomakkeentäyttörajoitteiset Ry",
     })
+
     await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
     const { hakemusID } = await navigateToHakemuksenArviointi(page, avustushakuID, "Akaan kaupunki")
 
@@ -635,7 +638,7 @@ etunimi.sukunimi@oph.fi
     expect(await textContent(page, "#arviointi-tab .change-request-text"))
       .toStrictEqual(täydennyspyyntöText)
 
-    const emails = await getTäydennyspyyntöEmails(avustushakuID, hakemusID)
+    const emails = await waitUntilMinEmails(getTäydennyspyyntöEmails, 1, avustushakuID, hakemusID)
     expect(emails).toHaveLength(1)
     expect(emails[0]['to-address']).toHaveLength(1)
     expect(emails[0]['to-address']).toContain("lotta.lomake@example.com")
@@ -686,7 +689,7 @@ etunimi.sukunimi@oph.fi
     })
     const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
 
-    let emails = await getAcceptedPäätösEmails(avustushakuID, hakemusID)
+    let emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
     expect(emails).toHaveLength(1)
     let email = lastOrFail(emails)
     expect(email["to-address"]).toEqual([
@@ -695,7 +698,7 @@ etunimi.sukunimi@oph.fi
     ])
 
     await resendPäätökset(avustushakuID)
-    emails = await getAcceptedPäätösEmails(avustushakuID, hakemusID)
+    emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 2, avustushakuID, hakemusID)
     expect(emails).toHaveLength(2)
     email = lastOrFail(emails)
     expect(email["to-address"]).toEqual([
@@ -706,7 +709,7 @@ etunimi.sukunimi@oph.fi
     await changeContactPersonEmail(page, linkToMuutoshakemus, "uusi.yhteyshenkilo@example.com")
     await resendPäätökset(avustushakuID)
 
-    emails = await getAcceptedPäätösEmails(avustushakuID, hakemusID)
+    emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 3, avustushakuID, hakemusID)
     expect(emails).toHaveLength(3)
     email = lastOrFail(emails)
     expect(email["to-address"]).toEqual([
@@ -902,7 +905,7 @@ etunimi.sukunimi@oph.fi
 
     it("Avustushaun ratkaisu should send an email without link to muutoshakemus if storing normalized hakemus fields is not possible", async () => {
       const { avustushakuID, hakemusID } = await ratkaiseAvustushaku(page)
-      const emails = await getMuutoshakemusEmails(avustushakuID, hakemusID)
+      const emails = await waitUntilMinEmails(getMuutoshakemusEmails, 1, avustushakuID, hakemusID)
       emails.forEach(email => {
         expect(email.formatted).not.toContain(`${HAKIJA_URL}/muutoshakemus`)
       })
@@ -975,7 +978,7 @@ etunimi.sukunimi@oph.fi
       }
 
       it('gets an email with link to hakemus', async () => {
-          const emails = await getValmistelijaEmails(avustushakuID, hakemusID)
+          const emails = await waitUntilMinEmails(getValmistelijaEmails, 1, avustushakuID, hakemusID)
 
           const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
           expectToBeDefined(title)
@@ -985,7 +988,7 @@ etunimi.sukunimi@oph.fi
           expect(linkToHakemus).toEqual(`${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
       })
 
-      it.only('can reject a muutoshakemus', async () => {
+      it('can reject a muutoshakemus', async () => {
         await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
         await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
         await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected'})
@@ -1009,7 +1012,7 @@ etunimi.sukunimi@oph.fi
         await assertRejectedPäätösHasVakioperustelu(page)
       })
 
-      it.only('can accept a muutoshakemus', async () => {
+      it('can accept a muutoshakemus', async () => {
         await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
 
         await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus4)
@@ -1041,7 +1044,7 @@ etunimi.sukunimi@oph.fi
         await assertAcceptedPäätösHasVakioperustelu(page)
       })
 
-      it.only('can see values of multiple muutoshakemus', async () => {
+      it('can see values of multiple muutoshakemus', async () => {
         await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
 
         // create two new muutoshakemus
@@ -1081,7 +1084,7 @@ etunimi.sukunimi@oph.fi
 
       it('hakija gets an email with link to paatos and link to new muutoshakemus', async () => {
         await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
-        const emails = await getMuutoshakemusPaatosEmails(avustushakuID, hakemusID)
+        const emails = await waitUntilMinEmails(getMuutoshakemusPaatosEmails, 1, avustushakuID, hakemusID)
 
         const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
         expectToBeDefined(title)
