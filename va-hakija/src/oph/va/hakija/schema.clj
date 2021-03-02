@@ -46,6 +46,13 @@
     :email s/Str
   })
 
+(s/defschema Avustushaku
+             "Avustushaku"
+             {
+              :hankkeen-alkamispaiva (s/maybe java.time.LocalDate)
+              :hankkeen-paattymispaiva (s/maybe java.time.LocalDate)
+              })
+
 (s/defschema MuutoshakemusPaatosDocument
   "Data for rendering a muutoshakemus paatos document"
   {
@@ -53,6 +60,8 @@
     :muutoshakemus Muutoshakemus
     :presenter Presenter
     :hakemus NormalizedHakemus
+    :avustushaku Avustushaku
+    :muutoshakemukset MuutoshakemusList
   })
 
 (s/defschema Hakemus

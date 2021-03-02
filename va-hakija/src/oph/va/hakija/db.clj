@@ -100,6 +100,7 @@
   {:budget_total (or (:total-needed budget-totals) 0)
    :budget_oph_share (or (:oph-share budget-totals) 0)})
 
+
 (defn create-hakemus! [avustushaku-id form-id answers hakemus-type register-number budget-totals]
   (let [submission (form-db/create-submission! form-id answers)
         user-key (generate-hash-id)
@@ -186,6 +187,40 @@
                                 WHERE m.hakemus_id = (SELECT id FROM hakemukset WHERE user_key = ? LIMIT 1)
                                 ORDER BY id DESC" [user-key])]
     muutoshakemukset))
+
+(defn get-muutoshakemukset-by-hakemus-id [hakemus-id]
+  (let [muutoshakemukset (query "SELECT
+                                  m.id,
+                                  m.hakemus_id,
+                                  (CASE
+                                    WHEN paatos_id IS NULL
+                                    THEN 'new'
+                                    ELSE p.status::text
+                                  END) as status,
+                                  haen_kayttoajan_pidennysta,
+                                  kayttoajan_pidennys_perustelut,
+                                  m.created_at,
+                                  to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva,
+                                  p.user_key as paatos_user_key,
+                                  to_char(p.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva,
+                                  p.created_at as paatos_created_at,
+                                  ee.created_at as paatos_sent_at
+                                FROM virkailija.muutoshakemus m
+                                LEFT JOIN virkailija.paatos p ON m.paatos_id = p.id
+                                LEFT JOIN virkailija.email_event ee ON m.id = ee.muutoshakemus_id AND ee.email_type = 'muutoshakemus-paatos' AND success = true
+                                WHERE m.hakemus_id = ?
+                                ORDER BY id DESC" [hakemus-id])]
+    muutoshakemukset))
+
+(defn get-avustushaku-by-paatos-user-key [user-key]
+      (let [avustushaut (query "SELECT a.hankkeen_alkamispaiva, a.hankkeen_paattymispaiva
+                                FROM virkailija.muutoshakemus mh
+                                LEFT JOIN virkailija.paatos p on mh.paatos_id = p.id
+                                LEFT JOIN hakija.hakemukset h on mh.hakemus_id = h.id
+                                LEFT JOIN hakija.avustushaut a on h.avustushaku = a.id
+                                WHERE h.version_closed IS NULL
+                                AND p.user_key = ?" [user-key])]
+           (first avustushaut)))
 
 (defn get-presenter-by-hakemus-id [hakemus-id]
   (let [presenters (query "SELECT ar.name, ar.email

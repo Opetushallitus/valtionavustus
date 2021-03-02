@@ -1,8 +1,6 @@
 import moment, {Moment} from 'moment'
 import { Muutoshakemus } from './types/muutoshakemus'
 
-const format = 'YYYY-MM-DD'
-
 interface Avustushaku {
   'hankkeen-paattymispaiva' : string
 }
@@ -10,7 +8,7 @@ interface Avustushaku {
 export function getProjectEndDate(avustushaku: Avustushaku, muutoshakemukset: Muutoshakemus[] | undefined): string | undefined {
   const latestAcceptedMuutoshakemus = getLatestApprovedMuutoshakemusDate(muutoshakemukset)
 
-  const date = latestAcceptedMuutoshakemus ? latestAcceptedMuutoshakemus : moment(avustushaku['hankkeen-paattymispaiva'], format)
+  const date = latestAcceptedMuutoshakemus ? latestAcceptedMuutoshakemus : dateStringToMoment(avustushaku['hankkeen-paattymispaiva'])
   return toFinnishDateFormat(date)
 }
 
@@ -31,8 +29,12 @@ function getLatestApprovedMuutoshakemusDate(muutoshakemukset: Muutoshakemus[] | 
   if (!latestAcceptedMuutoshakemus) return undefined
 
   return latestAcceptedMuutoshakemus.status === 'accepted_with_changes' ?
-    moment(latestAcceptedMuutoshakemus["paatos-hyvaksytty-paattymispaiva"], format) :
-    moment(latestAcceptedMuutoshakemus["haettu-kayttoajan-paattymispaiva"], format)
+    dateStringToMoment(latestAcceptedMuutoshakemus["paatos-hyvaksytty-paattymispaiva"]) :
+    dateStringToMoment(latestAcceptedMuutoshakemus["haettu-kayttoajan-paattymispaiva"])
+}
+
+function dateStringToMoment(date: string | undefined): Moment {
+  return moment(date, 'YYYY-MM-DD')
 }
 
 function toFinnishDateFormat(date: { isValid: () => boolean, format: (string) => string  }): string | undefined {

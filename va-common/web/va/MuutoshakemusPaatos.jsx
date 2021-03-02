@@ -1,5 +1,6 @@
 import React from 'react'
 import moment from 'moment'
+import { getProjectEndDate } from 'va-common/web/va/Muutoshakemus'
 
 import './MuutoshakemusPaatos.less'
 
@@ -9,12 +10,14 @@ const paatosText = {
   'accepted_with_changes': 'Opetushallitus hyväksyy hakemuksen alla olevin muutoksin.'
 }
 
-const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos }) => {
+const HyvaksytytMuutokset = ({ muutoshakemus, paatos, avustushaku, muutoshakemukset }) => {
   if (paatos.status === 'rejected') return null
 
   const isAcceptedWithChanges = paatos.status === 'accepted_with_changes'
   const paattymispaiva = isAcceptedWithChanges ? paatos['paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']
-  // TODO: EI hakemus['project-end']
+
+  const previousMuutoshakemus = muutoshakemukset.filter(i => i["created-at"] < muutoshakemus["created-at"])
+  const projectEndDate = getProjectEndDate(avustushaku, previousMuutoshakemus)
 
   return (
     <section className="muutoshakemus-paatos__section">
@@ -22,7 +25,7 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos }) => {
       <div className="muutoshakemus-paatos__accepted-changes">
         <div>
           <h3 className="muutoshakemus-paatos__change-header" data-test-id="h-old-end-date">Vanha päättymisaika</h3>
-          <div data-test-id="paatos-project-end">{hakemus['project-end']}</div>
+          <div data-test-id="paatos-project-end">{projectEndDate}</div>
         </div>
         <div>
           <h3 className="muutoshakemus-paatos__change-header" data-test-id="h-new-end-date">Hyväksytty muutos</h3>
@@ -33,7 +36,7 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos }) => {
   )
 }
 
-export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter }) => {
+export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset }) => {
   return (
     <div className="muutoshakemus-paatos__content">
       <header className="muutoshakemus-paatos__header">
@@ -57,7 +60,11 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter 
         <div data-test-id="paatos-paatos">{paatosText[paatos.status]}</div>
       </section>
 
-      <HyvaksytytMuutokset hakemus={hakemus} muutoshakemus={muutoshakemus} paatos={paatos} />
+      <HyvaksytytMuutokset
+        muutoshakemus={muutoshakemus}
+        muutoshakemukset={muutoshakemukset}
+        paatos={paatos}
+        avustushaku={avustushaku} />
 
       <section className="muutoshakemus-paatos__section">
         <div>Päätöksen perustelut</div>
