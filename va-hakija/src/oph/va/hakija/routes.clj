@@ -197,15 +197,23 @@
     (ok (on-hakemus-applicant-edit-open haku-id hakemus-id))))
 
 (defn- get-muutoshakemus-paatos []
+
   (compojure-api/GET "/paatos/:user-key" [user-key]
                      :path-params [user-key :- s/Str]
                      :return MuutoshakemusPaatosDocument
                      :summary "Get data for rendering a muutoshakemus paatos document"
                      (let [paatos (hakija-db/get-paatos user-key)
                            muutoshakemus (hakija-db/get-muutoshakemus-by-paatos-id (:id paatos))
+                           muutoshakemukset (hakija-db/get-muutoshakemukset-by-hakemus-id (:hakemus-id muutoshakemus))
                            presenter (hakija-db/get-presenter-by-hakemus-id (:hakemus-id muutoshakemus))
+                           avustushaku (hakija-db/get-avustushaku-by-paatos-user-key user-key)
                            hakemus (hakija-db/get-normalized-hakemus-by-id (:hakemus-id muutoshakemus))]
-                       (ok {:paatos paatos :muutoshakemus muutoshakemus :presenter presenter :hakemus hakemus})
+                       (ok {:paatos paatos
+                            :muutoshakemus muutoshakemus
+                            :muutoshakemukset muutoshakemukset
+                            :presenter presenter
+                            :avustushaku avustushaku
+                            :hakemus hakemus})
                      )
   )
 )
