@@ -76,6 +76,14 @@ export const getMuutoshakemusPaatosEmails = getEmails("muutoshakemus-paatos")
 export const getMuutoshakemusEmails = getEmails("paatos-refuse")
 export const getAcceptedPäätösEmails = getMuutoshakemusEmails
 export const getTäydennyspyyntöEmails: (avustushakuID: number, hakemusID: number) => Promise<Email[]> = getEmails("change-request")
+export async function waitUntilMinEmails(f: any, minEmails: number, ...params: any) {
+  let emails: Email[] = await f(...params)
+
+  while (emails.length < minEmails ) {
+    emails = await f(...params)
+  }
+  return emails
+}
 
 export async function getNewHakemusEmails(avustushakuID: number): Promise<Email[]> {
   try {
@@ -111,7 +119,7 @@ export async function pollUntilNewHakemusEmailArrives(avustushakuID: number): Pr
 
 export const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshakemus\?.*/
 export async function getLinkToMuutoshakemusFromSentEmails(avustushakuID: number, hakemusID: number) {
-  const emails = await getMuutoshakemusEmails(avustushakuID, hakemusID)
+  const emails = await waitUntilMinEmails(getMuutoshakemusEmails, 1, avustushakuID, hakemusID)
 
   const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
   expectToBeDefined(linkToMuutoshakemus)
@@ -119,7 +127,7 @@ export async function getLinkToMuutoshakemusFromSentEmails(avustushakuID: number
 }
 
 export async function getLinkToHakemusFromSentEmails(avustushakuID: number, hakemusID: number) {
-  const emails = await getValmistelijaEmails(avustushakuID, hakemusID)
+  const emails = await waitUntilMinEmails(getValmistelijaEmails, 1, avustushakuID, hakemusID)
 
   const linkToHakemusRegex = /https?:\/\/.*\/avustushaku.*/
   const linkToHakemus = emails[0]?.formatted.match(linkToHakemusRegex)?.[0]
