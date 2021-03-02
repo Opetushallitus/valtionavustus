@@ -21,8 +21,16 @@ export type MuutoshakemusProps = {
 export type PaatosState = {
   hakemus: NormalizedHakemus
   muutoshakemus: Muutoshakemus
+  muutoshakemukset: Muutoshakemus[]
+  avustushaku: Avustushaku
   paatos: Paatos
   presenter: Presenter
+
+}
+
+export interface Avustushaku {
+  "hankkeen-alkamispaiva"?: string
+  "hankkeen-paattymispaiva"?: string
 }
 
 export interface Presenter {
@@ -41,6 +49,7 @@ export interface Muutoshakemus {
   "paatos-created-at"?: string
   "paatos-sent-at"?: string
   "paatos-user-key"?: string
+  "paatos-hyvaksytty-paattymispaiva"?: string
 }
 
 export interface Paatos {
