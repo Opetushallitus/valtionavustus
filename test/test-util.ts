@@ -448,7 +448,13 @@ export async function verifyText(page: Page, selector: string, regex: RegExp) {
   assert.ok(regex.test(text), `Text ${regex.source} found from: ${text}`)
 }
 
+async function removePreviousHoverEffect(page: Page) {
+  /* Move mouse away from current position, hopefully to a place with no hover effects */
+  await page.mouse.move(0, 0)
+}
+
 export async function verifyTooltipText(page: Page, tooltipAnchorSelector: string, tooltipTextRegex: RegExp) {
+  await removePreviousHoverEffect(page)
   const tooltipContentSelector = `${tooltipAnchorSelector} span`
   await page.evaluate((tooltipAnchorSelector) => {
     document.querySelector(tooltipAnchorSelector).scrollIntoView({ block: 'center' });
