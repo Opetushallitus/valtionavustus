@@ -48,7 +48,7 @@ function formToPayload(values) {
   }
 }
 
-export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, controller, userInfo, presenter, projectEndDate }) => {
+export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, controller, userInfo, presenter, projectEndDate, muutoshakemukset }) => {
   const f = useFormik({
     initialValues: {
       status: 'accepted',
@@ -126,7 +126,13 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
     }
     controller.setModal(
       <Modal title="ESIKATSELU" controller={controller}>
-        <MuutoshakemusPaatos paatos={paatos} muutoshakemus={muutoshakemus} hakemus={hakemus} presenter={presenter} />
+        <MuutoshakemusPaatos
+          avustushaku={avustushaku}
+          paatos={paatos}
+          muutoshakemus={muutoshakemus}
+          hakemus={hakemus}
+          presenter={presenter}
+          muutoshakemukset={muutoshakemukset} />
       </Modal>
     )
   }
