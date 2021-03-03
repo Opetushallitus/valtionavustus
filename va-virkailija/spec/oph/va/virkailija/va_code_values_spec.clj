@@ -8,6 +8,7 @@
             [oph.va.virkailija.va-code-values-data :as data]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.grant-data :as grant-data]
+            [clj-time.coerce :as c]
             [oph.va.virkailija.common-utils
              :refer [user-authentication post! add-mock-authentication
                      remove-mock-authentication]]))
@@ -92,13 +93,16 @@
                    {:value-type "operational-unit"
                     :year 2018
                     :code "1234567"
-                    :code-value "Some value"})]
+                    :code-value "Some value"})
+            sdf (java.text.SimpleDateFormat. "yyyy-MM-dd")]
         (->
           (grant-data/get-grants)
           first
           :id
           (hakija-api/get-avustushaku)
           (assoc :operational-unit-id (:id code)
+                 :hankkeen-paattymispaiva (c/to-sql-date (.parse sdf "4200-04-20"))
+                 :hankkeen-alkamispaiva (c/to-sql-date (.parse sdf "1969-04-20"))
                  :haku-type "yleisavustus")
           hakija-api/update-avustushaku)
         (should (data/code-used? (:id code))))))
