@@ -15,7 +15,7 @@ import {TranslationContext} from './TranslationContext'
 import OriginalHakemusIframe from './OriginalHakemusIframe'
 import ErrorBoundary from './ErrorBoundary'
 import { createFormikHook } from './formik'
-import { getProjectEndDate } from '../../../../va-common/web/va/Muutoshakemus'
+import { getProjectEndDate, getProjectEndMoment } from '../../../../va-common/web/va/Muutoshakemus'
 
 import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
@@ -56,7 +56,7 @@ export const MuutoshakemusComponent = () => {
       const hakemusP = HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}/normalized`)
       const muutoshakemuksetP = HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}/muutoshakemus`)
       const [environment, avustushaku, hakemus, muutoshakemukset] = await Promise.all([environmentP, avustushakuP, hakemusP, muutoshakemuksetP])
-      const currentProjectEnd = moment(hakemus?.['project-end']) // TODO: Ei project-end
+      const currentProjectEnd = await getProjectEndMoment(avustushaku, muutoshakemukset)
 
       f.resetForm({
         values: {
