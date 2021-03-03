@@ -17,7 +17,8 @@
    :first-name "Initial"
    :surname "payment"})
 
-(defn from-sql-date [d] (.toLocalDate d))
+(defn from-sql-date [d]
+  (if (instance? java.time.LocalDate d) d (.toLocalDate d)))
 
 (defn convert-timestamps-from-sql [p]
   (-> p
