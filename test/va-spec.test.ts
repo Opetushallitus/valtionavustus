@@ -547,6 +547,46 @@ describe("Puppeteer tests", () => {
 
     beforeAll(async () => {
       avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+      fieldId = (await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "project-goals", "textField")).fieldId
+
+      await clickElementWithText(page, "span", "Haun tiedot")
+      await publishAvustushaku(page)
+    })
+
+    describe('And new hakemus has been created', () => {
+      beforeAll(async () => {
+        hakemusID = await fillAndSendHakemusAndReturnHakemusId(page, avustushakuID, async () => {
+          await typeValueInFieldAndExpectNoValidationError(page, fieldId, randomValueForProjectNutshell)
+        })
+      })
+
+      describe('And hakemus has been approved', () => {
+        beforeAll(async () => {
+          await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
+          await acceptHakemus(page, avustushakuID, hakemusID, async () => {
+            await clickElementWithTestId(page, 'tab-seuranta')
+            await clickElementWithTestId(page, 'set-allow-visibility-in-external-system-true')
+            await waitForSave(page)
+          })
+        })
+
+        it("shows the contents of the project-goals -field of a hakemus in external api as 'nutshell'", async () => {
+          const expectedResponse = await expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID, hakemusID, randomValueForProjectNutshell)
+          const actualResponse = await actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID)
+          expect(actualResponse).toMatchObject(expectedResponse)
+        })
+      })
+    })
+  })
+
+  describe('When new haku has been created and published', () => {
+    let fieldId: string
+    let avustushakuID: number
+    let hakemusID: number
+    const randomValueForProjectNutshell = randomString()
+
+    beforeAll(async () => {
+      avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
       fieldId = (await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "project-nutshell", "textField")).fieldId
 
       await clickElementWithText(page, "span", "Haun tiedot")
@@ -586,6 +626,34 @@ describe("Puppeteer tests", () => {
           const expectedResponse = await expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID, hakemusID, randomValueForProjectNutshell)
           const actualResponse = await actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID)
           expect(actualResponse).toMatchObject(expectedResponse)
+        })
+
+        describe('When modifying hakemus after they have been approved', () => {
+          let modificationPage: Page
+
+          beforeAll(async () => {
+            const enabledSubmitButtonSelector = '#virkailija-edit-submit:not([disabled])'
+            const kesayliopistoButtonSelector = `[for="type-of-organization.radio.1"]`
+
+            await navigateToHakemus(page, avustushakuID, hakemusID)
+            await clickElementWithText(page, "button", "Muokkaa hakemusta")
+            const newPagePromise = new Promise<Page>(x => browser.once('targetcreated', target => x(target.page())))
+            await clickElementWithText(page, "button", "Siirry muokkaamaan")
+            modificationPage = await newPagePromise
+            await modificationPage.bringToFront()
+            await clickElement(modificationPage, kesayliopistoButtonSelector)
+            await clickElement(modificationPage, enabledSubmitButtonSelector)
+          })
+
+          afterAll(async () => {
+            await page.bringToFront()
+          })
+
+          it('The changes are persisted', async () => {
+            const organizationType = await textContent(modificationPage, '[id=type-of-organization] span')
+            expect(organizationType).toBe('Kesäyliopisto')
+          })
+
         })
       })
     })
@@ -757,71 +825,6 @@ etunimi.sukunimi@oph.fi
     await clearAndType(page, '#muutoshakemus__email', email)
     await clickElement(page, "#send-muutospyynto-button")
   }
-
-  it("Allows modification of applications after they've been resolved", async function () {
-
-    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
-    const { fieldId } = await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "project-nutshell", "textField")
-
-    await clickElementWithText(page, "span", "Haun tiedot")
-    await publishAvustushaku(page)
-
-    const randomValueForProjectNutshell = randomString()
-    const hakemusID = await fillAndSendHakemusAndReturnHakemusId(page, avustushakuID, async () => {
-      await typeValueInFieldAndExpectNoValidationError(page, fieldId, randomValueForProjectNutshell)
-    })
-
-    await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
-    await acceptHakemus(page, avustushakuID, hakemusID, async () => {
-      await clickElementWithTestId(page, 'tab-seuranta')
-      await clickElementWithTestId(page, 'set-allow-visibility-in-external-system-true')
-      await waitForSave(page)
-    })
-
-    const expectedResponse = await expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID, hakemusID, randomValueForProjectNutshell)
-    const actualResponse = await actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID)
-    expect(actualResponse).toMatchObject(expectedResponse)
-
-    const enabledSubmitButtonSelector = '#virkailija-edit-submit:not([disabled])'
-    const kesayliopistoButtonSelector = `[for="type-of-organization.radio.1"]`
-
-    await navigateToHakemus(page, avustushakuID, hakemusID)
-    await clickElementWithText(page, "button", "Muokkaa hakemusta")
-    const newPagePromise = new Promise<Page>(x => browser.once('targetcreated', target => x(target.page())))
-    await clickElementWithText(page, "button", "Siirry muokkaamaan")
-    const modificationPage = await newPagePromise
-    await modificationPage.bringToFront()
-    await clickElement(modificationPage, kesayliopistoButtonSelector)
-    await clickElement(modificationPage, enabledSubmitButtonSelector)
-
-    const organizationType = await textContent(modificationPage, '[id=type-of-organization] span')
-    expect(organizationType).toBe('Kesäyliopisto')
-  })
-
-  it("shows the contents of the project-goals -field of a hakemus in external api as 'nutshell'", async function() {
-
-    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
-    const { fieldId } = await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "project-goals", "textField")
-
-    await clickElementWithText(page, "span", "Haun tiedot")
-    await publishAvustushaku(page)
-
-    const randomValueForProjectNutshell = randomString()
-    const hakemusID = await fillAndSendHakemusAndReturnHakemusId(page, avustushakuID, async () => {
-      await typeValueInFieldAndExpectNoValidationError(page, fieldId, randomValueForProjectNutshell)
-    })
-
-    await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
-    await acceptHakemus(page, avustushakuID, hakemusID, async () => {
-      await clickElementWithTestId(page, 'tab-seuranta')
-      await clickElementWithTestId(page, 'set-allow-visibility-in-external-system-true')
-      await waitForSave(page)
-    })
-
-    const expectedResponse = await expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID, hakemusID, randomValueForProjectNutshell)
-    const actualResponse = await actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID)
-    expect(actualResponse).toMatchObject(expectedResponse)
-  })
 
   it("creates a new koodi", async function() {
 
@@ -1174,17 +1177,29 @@ etunimi.sukunimi@oph.fi
             expect(paatosStatusText).toBe('Hyväksytty muutettuna')
           })
 
-          it('Changes are visible in päätösdokumentti', async () => {
-            const newPagePromise = new Promise<Page>(x => browser.once('targetcreated', target => x(target.page())))
-            await clickElement(page, 'a.muutoshakemus__paatos-link')
-            const paatosPage = await newPagePromise
-            await paatosPage.bringToFront()
-            const acceptedDate = await textContent(paatosPage, '[data-test-id="paattymispaiva-value"]')
-            const paatos = await textContent(paatosPage, '[data-test-id="paatos-paatos"]')
+          describe('When opening päätösdokumentti', () => {
+            let paatosPage: Page
 
-            expect(acceptedDate).toBe('20.4.2400')
-            expect(paatos).toBe('Opetushallitus hyväksyy hakemuksen alla olevin muutoksin.')
-            await page.bringToFront()
+            beforeAll(async () => {
+              const newPagePromise = new Promise<Page>(x => browser.once('targetcreated', target => x(target.page())))
+              await clickElement(page, 'a.muutoshakemus__paatos-link')
+              paatosPage = await newPagePromise
+              await paatosPage.bringToFront()
+            })
+
+            it('Correct päättymispäivä is displayed', async () => {
+              const acceptedDate = await textContent(paatosPage, '[data-test-id="paattymispaiva-value"]')
+              expect(acceptedDate).toBe('20.4.2400')
+            })
+
+            it('Correct title is displayed', async () => {
+              const paatos = await textContent(paatosPage, '[data-test-id="paatos-paatos"]')
+              expect(paatos).toBe('Opetushallitus hyväksyy hakemuksen alla olevin muutoksin.')
+            })
+
+            afterAll(async () => {
+              await page.bringToFront()
+            })
           })
 
           it('Correct päättymispäivä is displayed when creating a new muutoshakemus', async () => {
