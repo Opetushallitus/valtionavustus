@@ -23,7 +23,7 @@ import GrantRefusedNotice from './GrantRefusedNotice.jsx'
 import EditsDisplayingFormView from './EditsDisplayingFormView'
 import FakeFormController from '../form/FakeFormController'
 import FakeFormState from '../form/FakeFormState'
-import { Answer, Hakemus, HakemusFormState } from '../types'
+import { Answer, Hakemus, HakemusFormState } from '../../../../va-common/web/va/types'
 
 import '../style/formpreview.less'
 
@@ -97,7 +97,7 @@ export default class HakemusPreview extends Component<{ hakemus: Hakemus, avustu
 
       FormRules.applyRulesToForm(formSpecification, effectiveForm, currentAnswers)
       FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, combinedAnswersForPopulatingGrowingFieldsets, false)
-      hakemusFormState.saveStatus.values = mapAnswersWithMuutoshakemusData(hakemus.answers, hakemus.muutoshakemukset, hakemus.normalizedData)
+      hakemusFormState.saveStatus.values = mapAnswersWithMuutoshakemusData(avustushaku, hakemus.answers, hakemus.muutoshakemukset, hakemus.normalizedData)
       return hakemusFormState
     }
   }

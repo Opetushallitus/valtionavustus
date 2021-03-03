@@ -1,7 +1,7 @@
 import moment, {Moment} from 'moment'
 import { Muutoshakemus } from './types/muutoshakemus'
 
-interface Avustushaku {
+export interface Avustushaku {
   'hankkeen-paattymispaiva' : string
 }
 
