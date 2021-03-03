@@ -24,7 +24,7 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
           hakijaUrl={environment['hakija-server'].url.fi}
           projectEndDate={projectEndDate} />
 
-        {a.status === 'new' && <MuutoshakemusForm avustushaku={avustushaku} muutoshakemus={a} hakemus={hakemus} controller={controller} userInfo={userInfo} presenter={presenter} />}
+        {a.status === 'new' && <MuutoshakemusForm avustushaku={avustushaku} muutoshakemus={a} hakemus={hakemus} controller={controller} userInfo={userInfo} presenter={presenter} projectEndDate={projectEndDate} />}
       </div>
     </React.Fragment>
   )

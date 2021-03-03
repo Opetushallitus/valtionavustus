@@ -8,7 +8,7 @@ import momentLocalizer from 'react-widgets-moment'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusPaatos } from 'va-common/web/va/MuutoshakemusPaatos'
-
+import { toFinnishDateFormat, dateStringToMoment } from 'va-common/web/va/Muutoshakemus'
 import { copyToClipboard } from '../copyToClipboard'
 import { isSubmitDisabled, isError } from '../formikHelpers'
 import { Modal } from './Modal'
@@ -48,7 +48,7 @@ function formToPayload(values) {
   }
 }
 
-export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, controller, userInfo, presenter }) => {
+export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, controller, userInfo, presenter, projectEndDate }) => {
   const f = useFormik({
     initialValues: {
       status: 'accepted',
@@ -77,22 +77,21 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
     </React.Fragment>
   )
 
-  // TODO: Tätä pitää muokata! Ei hakemus['project-end']
-
   const voimassaolevaPaattymisaika = () => {
-    const haettuPaiva = hakemus['haettu-kayttoajan-paattymispaiva']
+
+    const haettuPaiva = dateStringToMoment(muutoshakemus['haettu-kayttoajan-paattymispaiva'])
 
     return (
       <section className="muutoshakemus-section">
         <div className="muutoshakemus-row muutoshakemus__project-end-row">
           <div>
             <h3 className="muutoshakemus__header">Voimassaoleva päättymisaika</h3>
-            <div>{hakemus['project-end']}</div>
+            <div data-test-id="current-project-end-date">{projectEndDate}</div>
           </div>
           <div>
             <h3 className="muutoshakemus__header">Haettu muutos</h3>
             <div data-test-id="approve-with-changes-muutoshakemus-jatkoaika">
-              {moment(haettuPaiva).format('DD.MM.YYYY')}
+              {toFinnishDateFormat(haettuPaiva)}
             </div>
           </div>
           <div>
@@ -109,7 +108,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
                     f.setFieldValue('paattymispaiva', undefined)
                   }
                 }}
-                defaultValue={f.values['paattymispaiva'] || haettuPaiva}
+                defaultValue={f.values['paattymispaiva'] || haettuPaiva.toDate()}
                 containerClassName={`datepicker`}
                 time={false} />
             </div>

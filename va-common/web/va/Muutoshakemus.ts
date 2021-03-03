@@ -35,10 +35,10 @@ function getLatestApprovedMuutoshakemusDate(muutoshakemukset: Muutoshakemus[] | 
     dateStringToMoment(latestAcceptedMuutoshakemus["haettu-kayttoajan-paattymispaiva"])
 }
 
-function dateStringToMoment(date: string | undefined): Moment {
+export function dateStringToMoment(date: string | undefined): Moment {
   return moment(date, 'YYYY-MM-DD')
 }
 
-function toFinnishDateFormat(date: { isValid: () => boolean, format: (string) => string  }): string | undefined {
+export function toFinnishDateFormat(date: { isValid: () => boolean, format: (string) => string  }): string | undefined {
   return date.isValid() ? date.format('DD.MM.YYYY') : undefined
 }

@@ -1141,6 +1141,16 @@ etunimi.sukunimi@oph.fi
           await selectVakioperustelu(page)
         })
 
+        it('Correct current project end date is displayed', async () => {
+          const currentProjectEndDate = await getElementInnerText(page, '[data-test-id="current-project-end-date"]')
+          expect(currentProjectEndDate).toBe(muutoshakemus4.jatkoaika?.format('DD.MM.YYYY'))
+        })
+
+        it('Correct applied change date is displayed', async () => {
+          const appliedProjectEndDate = await getElementInnerText(page, '[data-test-id="approve-with-changes-muutoshakemus-jatkoaika"]')
+          expect(appliedProjectEndDate).toBe(muutoshakemus4.jatkoaika?.format('DD.MM.YYYY'))
+        })
+
         it('Correct päättymispäivä is displayed in päätös preview', async () => {
           await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
           const acceptedDate = await page.$eval('[data-test-id="paattymispaiva-value"]', el => el.textContent)
@@ -1453,7 +1463,7 @@ etunimi.sukunimi@oph.fi
       await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).disabled === false)
       await clickElement(page, "#topbar #form-controls button#submit")
       await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Hakemus lähetetty")
-    
+
       const { hakemusID } = await acceptAvustushaku(page, avustushakuID)
       await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
     })
