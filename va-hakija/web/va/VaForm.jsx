@@ -39,7 +39,7 @@ export default class VaForm extends React.Component {
     const isInApplicantEditMode = () => "applicant_edit" === _.get(saveStatus.savedObject, "status")
     const showOpenContactsEditButton = !showGrantRefuse && modifyApplication && !isInApplicantEditMode()
     if (!embedForMuutoshakemus && preview) {
-      saveStatus.values.value = mapAnswersWithMuutoshakemusData(saveStatus.values.value, state.muutoshakemukset, state.normalizedHakemus)
+      saveStatus.values.value = mapAnswersWithMuutoshakemusData(state.avustushaku, saveStatus.values.value, state.muutoshakemukset, state.normalizedHakemus)
     }
 
     return(

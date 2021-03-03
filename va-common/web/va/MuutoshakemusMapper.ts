@@ -1,21 +1,8 @@
-
-import moment from 'moment'
-
 import { Answer, Muutoshakemus, NormalizedHakemusData } from './types'
+import { Avustushaku, getProjectEndDate } from "./Muutoshakemus"
 
-export function getProjectEnd(muutoshakemus?: Muutoshakemus) {
-  if (muutoshakemus?.status === 'accepted') {
-    return muutoshakemus?.['haen-kayttoajan-pidennysta'] && moment(muutoshakemus?.['haettu-kayttoajan-paattymispaiva']).format('DD.MM.YYYY')
-  }
-  if (muutoshakemus?.status === 'accepted_with_changes') {
-    return muutoshakemus?.['paatos-hyvaksytty-paattymispaiva'] && moment(muutoshakemus?.['paatos-hyvaksytty-paattymispaiva']).format('DD.MM.YYYY')
-  }
-  return undefined
-}
-
-export function mapAnswersWithMuutoshakemusData(answers: Answer[], muutoshakemukset: Muutoshakemus[] | undefined, normalizedData: NormalizedHakemusData | undefined): Answer[] {
-  const acceptedMuutoshakemus = muutoshakemukset?.find(m => m.status === 'accepted' || m.status === 'accepted_with_changes')
-  const projectEnd = getProjectEnd(acceptedMuutoshakemus)
+export function mapAnswersWithMuutoshakemusData(avustushaku: Avustushaku, answers: Answer[], muutoshakemukset: Muutoshakemus[] | undefined, normalizedData: NormalizedHakemusData | undefined): Answer[] {
+  const projectEnd = getProjectEndDate(avustushaku, muutoshakemukset)
   return JSON.parse(JSON.stringify(answers)).map((a: Answer) => {
     switch (a.key) {
       case 'project-end':

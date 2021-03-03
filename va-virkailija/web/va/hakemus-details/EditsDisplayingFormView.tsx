@@ -5,7 +5,7 @@ import _ from 'lodash'
 import JsUtil from 'soresu-form/web/JsUtil'
 // @ts-ignore
 import FormPreview from 'soresu-form/web/form/FormPreview'
-import { Answer, AnswersDelta, HakemusFormState, Muutoshakemus, NormalizedHakemusData } from '../types'
+import { Answer, AnswersDelta, HakemusFormState, Muutoshakemus, NormalizedHakemusData } from '../../../../va-common/web/va/types'
 import { getProjectEndDate } from 'va-common/web/va/Muutoshakemus'
 import moment from 'moment'
 
