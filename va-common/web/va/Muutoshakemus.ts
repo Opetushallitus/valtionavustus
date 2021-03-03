@@ -6,10 +6,12 @@ interface Avustushaku {
 }
 
 export function getProjectEndDate(avustushaku: Avustushaku, muutoshakemukset: Muutoshakemus[] | undefined): string | undefined {
-  const latestAcceptedMuutoshakemus = getLatestApprovedMuutoshakemusDate(muutoshakemukset)
+  return toFinnishDateFormat(getProjectEndMoment(avustushaku, muutoshakemukset))
+}
 
-  const date = latestAcceptedMuutoshakemus ? latestAcceptedMuutoshakemus : dateStringToMoment(avustushaku['hankkeen-paattymispaiva'])
-  return toFinnishDateFormat(date)
+export function getProjectEndMoment(avustushaku: Avustushaku, muutoshakemukset: Muutoshakemus[] | undefined): Moment {
+  const latestAcceptedMuutoshakemus = getLatestApprovedMuutoshakemusDate(muutoshakemukset)
+  return latestAcceptedMuutoshakemus ? latestAcceptedMuutoshakemus : dateStringToMoment(avustushaku['hankkeen-paattymispaiva'])
 }
 
 function getLatestApprovedMuutoshakemusDate(muutoshakemukset: Muutoshakemus[] | undefined): Moment | undefined {
