@@ -160,8 +160,23 @@ export default class HakujenHallintaController {
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
 
+    function appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing(avustushaku) {
+      const fieldsToAppend = ['hankkeen-alkamispaiva', 'hankkeen-paattymispaiva']
+      const today = moment().format('YYYY-MM-DD')
+
+      return fieldsToAppend.reduce((haku, field) => appendFieldIfMissing(haku, field, today), avustushaku)
+    }
+
+    function appendFieldIfMissing(avustushaku, field, value) {
+      if (avustushaku[field] !== undefined && avustushaku[field] !== null) return avustushaku
+
+      return {...avustushaku, ...{ [field] : value }}
+    }
+
     initialState.onValue(state => {
-      dispatcher.push(events.initialState, state)
+      const hakuList = state.hakuList.map(appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing)
+      const modifiedState = {...state, ...{ hakuList: hakuList }}
+      dispatcher.push(events.initialState, modifiedState)
     })
     this.autoSave = _.debounce(function () {
       dispatcher.push(events.saveHaku)
