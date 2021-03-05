@@ -1,4 +1,4 @@
-import * as xlsx from"xlsx"
+import * as xlsx from "xlsx"
 import * as path from "path"
 import * as yup from "yup"
 import axios from "axios"
@@ -11,9 +11,8 @@ import {
 } from "puppeteer"
 import * as assert from "assert"
 import * as fs from "fs"
-import { Moment } from "moment"
+import moment, {Moment} from 'moment'
 import * as querystring from "querystring"
-import { log } from "./va-spec.test"
 const {randomBytes} = require("crypto")
 
 const HAKIJA_HOSTNAME = process.env.HAKIJA_HOSTNAME || 'localhost'
@@ -42,6 +41,28 @@ const emailSchema = yup.array().of(yup.object().shape<Email>({
   "to-address": yup.array().of(yup.string().required()).defined(),
   bcc: yup.string().defined().nullable(),
 }).required()).defined()
+
+export function setPageErrorConsoleLogger(page: Page) {
+  page.on('error', err => {
+    log('error in page: ', err)
+  })
+
+  page.on('pageerror', pageerr => {
+    log('pageerror: ', pageerr)
+  })
+
+  page.on('request', async (request) => {
+    if (!request.url().startsWith('data:image')) {
+      log(`Outgoing request to ${request.url()}, navigation: ${request.isNavigationRequest()}`)
+    }
+  })
+
+  page.on('requestfailed', request => {
+    log(`Request failed to url: ${request.url()},
+       errorText: ${request.failure()?.errorText},
+       method: ${request.method()}`, request)
+  })
+}
 
 export async function navigateToHakijaMuutoshakemusPage(page: Page, avustushakuID: number, hakemusID: number) {
   const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
@@ -354,6 +375,10 @@ export function mkAvustushakuName() {
 
 export function randomString() {
   return randomBytes(8).toString("hex")
+}
+
+export function log(...args: any[]) {
+  console.log(moment().format('YYYY-MM-DD HH:mm:ss.SSSS'), ...args)
 }
 
 export function expectToBeDefined<T>(val: T): asserts val is NonNullable<T> {
