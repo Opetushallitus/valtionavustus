@@ -30,7 +30,7 @@ export const standardizedHakulomakeJson = fs.readFileSync(path.join(__dirname, '
 
 export const TEST_Y_TUNNUS = "2050864-5"
 
-interface Email {
+export interface Email {
   formatted: string
   "to-address": string[]
   bcc: string | null
