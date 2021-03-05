@@ -58,6 +58,19 @@ const events = {
 
 const basicFields = ["loppuselvitysdate", "valiselvitysdate", "register-number"]
 
+function appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing(avustushaku) {
+  const fieldsToAppend = ['hankkeen-alkamispaiva', 'hankkeen-paattymispaiva']
+  const today = moment().format('YYYY-MM-DD')
+
+  return fieldsToAppend.reduce((haku, field) => appendFieldIfMissing(haku, field, today), avustushaku)
+}
+
+function appendFieldIfMissing(avustushaku, field, value) {
+  if (avustushaku[field] !== undefined && avustushaku[field] !== null) return avustushaku
+
+  return {...avustushaku, ...{ [field] : value }}
+}
+
 function appendBudgetComponent(selvitysType, avustushaku) {
   const form = selvitysType === "valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
   const originalVaBudget = FormUtil.findFieldByFieldType(avustushaku.formContent.content, "vaBudget")
@@ -159,19 +172,6 @@ export default class HakujenHallintaController {
     }
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
-
-    function appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing(avustushaku) {
-      const fieldsToAppend = ['hankkeen-alkamispaiva', 'hankkeen-paattymispaiva']
-      const today = moment().format('YYYY-MM-DD')
-
-      return fieldsToAppend.reduce((haku, field) => appendFieldIfMissing(haku, field, today), avustushaku)
-    }
-
-    function appendFieldIfMissing(avustushaku, field, value) {
-      if (avustushaku[field] !== undefined && avustushaku[field] !== null) return avustushaku
-
-      return {...avustushaku, ...{ [field] : value }}
-    }
 
     initialState.onValue(state => {
       const hakuList = state.hakuList.map(appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing)
@@ -275,10 +275,11 @@ export default class HakujenHallintaController {
   }
 
   onHakuCreated(state, newHaku) {
-    state.hakuList.unshift(newHaku)
-    state = this.onHakuSelection(state, newHaku)
+    const appendedHaku = appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing(newHaku)
+    state.hakuList.unshift(appendedHaku)
+    state = this.onHakuSelection(state, appendedHaku)
     setTimeout(function () {
-      document.getElementById("haku-" + newHaku.id).scrollIntoView({block: "start", behavior: "smooth"})
+      document.getElementById("haku-" + appendedHaku.id).scrollIntoView({block: "start", behavior: "smooth"})
       document.getElementById("haku-name-fi").focus()
     }, 300)
     return state
