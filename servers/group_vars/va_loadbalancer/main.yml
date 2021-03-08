@@ -35,8 +35,8 @@ loadbalancer_acl:
     condition: hdr(host) -i dev.valtionavustukset.oph.fi
   - name: va_ip_test
     condition: hdr(host) -i 86.50.28.144
-  - name: source_ip_is_oph_vpn
-    condition: src 178.217.128.38/32
+  - name: source_ip_is_reaktor
+    condition: src 62.165.154.10/32
   - name: letsencrypt_acl
     condition: path_beg /.well-known/acme-challenge/
 
@@ -60,9 +60,9 @@ loadbalancer_acl_mapping:
   - name: va_virkailija_backend_prod
     condition: if va_virkailija_backend_prod
   - name: va_build
-    condition: if va_build source_ip_is_oph_vpn
+    condition: if va_build source_ip_is_reaktor
   - name: va_ip_test
-    condition: if va_ip_test source_ip_is_oph_vpn
+    condition: if va_ip_test source_ip_is_reaktor
 
 # Define backends
 
