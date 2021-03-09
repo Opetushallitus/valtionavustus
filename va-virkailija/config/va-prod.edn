@@ -24,6 +24,5 @@
                            :interval-minutes 15}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
- :muutospaatosprosessi {:enabled? false}
  :email-api {:enabled? false}
  :normalized-hakemus-api {:enabled? false}}
