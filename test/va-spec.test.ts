@@ -657,7 +657,7 @@ etunimi.sukunimi@oph.fi
     })
   })
 
-  describe.skip("Standardized avustushaku", () => {
+  describe("Standardized avustushaku", () => {
     it("Create and fill standardized avustushaku", async () => {
       // Create standardized avustushaku
       const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, "standardized avustushaku", "69/420")

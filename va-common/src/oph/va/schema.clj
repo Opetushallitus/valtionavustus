@@ -169,7 +169,6 @@
    :contact-person s/Str
    :contact-email s/Str
    :contact-phone s/Str
-   :project-end s/Str
    :organization-name s/Str
    :register-number s/Str
    })
