@@ -101,10 +101,16 @@ export async function waitUntilMinEmails(f: any, minEmails: number, ...params: a
   let emails: Email[] = await f(...params)
 
   while (emails.length < minEmails ) {
+    await waitFor(1000)
     emails = await f(...params)
   }
   return emails
 }
+
+async function waitFor(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 
 export async function getNewHakemusEmails(avustushakuID: number): Promise<Email[]> {
   try {
