@@ -3,9 +3,9 @@ import moment from 'moment'
 
 import {
   VIRKAILIJA_URL,
-  getMuutoshakemusEmails,
   getMuutoshakemusPaatosEmails,
   getValmistelijaEmails,
+  getAcceptedPäätösEmails,
   HAKIJA_URL,
   linkToMuutoshakemusRegex,
   TEST_Y_TUNNUS,
@@ -131,7 +131,7 @@ describe('Muutospäätösprosessi', () => {
     let emails: Email[]
     beforeAll(async () => {
       const { avustushakuID, hakemusID } = await ratkaiseAvustushaku(page)
-      emails = await waitUntilMinEmails(getMuutoshakemusEmails, 1, avustushakuID, hakemusID)
+      emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
     })
 
     it('Hakija does not get email to muutoshakemus', () => {
