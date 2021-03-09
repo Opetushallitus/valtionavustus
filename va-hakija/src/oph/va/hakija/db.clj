@@ -247,7 +247,7 @@
   (log/info (str "Storing normalized fields for hakemus: " id))
   (with-tx (fn [tx]
     (execute! tx
-      "INSERT INTO virkailija.normalized_hakemus (hakemus_id, project_name, contact_person, contact_email, contact_phone, project_end, organization_name, register_number)
+      "INSERT INTO virkailija.normalized_hakemus (hakemus_id, project_name, contact_person, contact_email, contact_phone, organization_name, register_number)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT (hakemus_id) DO UPDATE SET
           project_name = EXCLUDED.project_name,
