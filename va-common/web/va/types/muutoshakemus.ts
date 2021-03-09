@@ -71,7 +71,6 @@ export interface NormalizedHakemus {
   "contact-phone": string
   "organization-name": string
   "register-number": string
-  "project-end": string
   "created-at": string
   "updated-at": string
 }

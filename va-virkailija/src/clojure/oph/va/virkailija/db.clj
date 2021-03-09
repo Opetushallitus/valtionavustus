@@ -42,14 +42,9 @@
             h.created_at,
             h.updated_at,
             h.organization_name,
-            h.register_number,
-            TO_CHAR(ha.hankkeen_paattymispaiva, 'DD.MM.YYYY') as project_end
+            h.register_number
           FROM
             virkailija.normalized_hakemus h
-          LEFT JOIN
-            hakija.hakemukset AS hh ON h.hakemus_id = hh.id AND version_closed IS NULL
-          LEFT JOIN
-            hakija.avustushaut AS ha ON hh.avustushaku = ha.id
           WHERE h.hakemus_id = ?" [hakemus-id])]
 
     (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
