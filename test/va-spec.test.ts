@@ -60,7 +60,8 @@ import {
   waitUntilMinEmails,
   setPageErrorConsoleLogger,
   randomString,
-  log
+  log,
+  getUserKey
 } from './test-util'
 import axios from 'axios'
 
@@ -369,26 +370,21 @@ describe("Puppeteer tests", () => {
           let modificationPage: Page
 
           beforeAll(async () => {
-            const enabledSubmitButtonSelector = '#virkailija-edit-submit:not([disabled])'
-            const kesayliopistoButtonSelector = `[for="type-of-organization.radio.1"]`
-
             await navigateToHakemus(page, avustushakuID, hakemusID)
             await clickElementWithText(page, "button", "Muokkaa hakemusta")
             const newPagePromise = new Promise<Page>(x => browser.once('targetcreated', target => x(target.page())))
             await clickElementWithText(page, "button", "Siirry muokkaamaan")
             modificationPage = await newPagePromise
             await modificationPage.bringToFront()
-            await clickElement(modificationPage, kesayliopistoButtonSelector)
-            await clickElement(modificationPage, enabledSubmitButtonSelector)
           })
 
           afterAll(async () => {
             await page.bringToFront()
           })
 
-          it('The changes are persisted', async () => {
-            const organizationType = await textContent(modificationPage, '[id=type-of-organization] span')
-            expect(organizationType).toBe('Kesäyliopisto')
+          it('opens the muutoshakemus form', async () => {
+            const userKey = await getUserKey(avustushakuID, hakemusID)
+            expect(modificationPage.url()).toContain(`/muutoshakemus?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`)
           })
 
         })

@@ -90,9 +90,14 @@
 
 (defn- on-hakemus-edit [avustushaku-id hakemus-user-key]
   (let [hakemus (hakija-api/get-hakemus-by-user-key hakemus-user-key)
+        arvio (virkailija-db/get-arvio (:id hakemus))
+        normalized-hakemus (virkailija-db/get-normalized-hakemus (:id hakemus))
         language (keyword (:language hakemus))
         hakija-app-url (-> config :server :url language)
-        preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key)]
+        preview-url (if (and normalized-hakemus (= "accepted" (:status arvio)))
+          (str hakija-app-url "muutoshakemus?lang=fi&user-key=" hakemus-user-key "&avustushaku-id=" avustushaku-id)
+          (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key)
+          )]
     (resp/redirect preview-url)))
 
 (defn- on-paatos-preview [avustushaku-id user-key]
