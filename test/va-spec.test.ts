@@ -51,7 +51,6 @@ import {
   downloadExcelExport,
   clickFormSaveAndWait,
   addFieldToFormAndReturnElementIdAndLabel,
-  navigateToHakemus,
   TEST_Y_TUNNUS,
   publishAndFillMuutoshakemusEnabledAvustushaku,
   navigateToHakemuksenArviointi,
@@ -60,8 +59,7 @@ import {
   waitUntilMinEmails,
   setPageErrorConsoleLogger,
   randomString,
-  log,
-  getUserKey
+  log
 } from './test-util'
 import axios from 'axios'
 
@@ -364,29 +362,6 @@ describe("Puppeteer tests", () => {
           const expectedResponse = await expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID, hakemusID, randomValueForProjectNutshell)
           const actualResponse = await actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID)
           expect(actualResponse).toMatchObject(expectedResponse)
-        })
-
-        describe('When modifying hakemus after they have been approved', () => {
-          let modificationPage: Page
-
-          beforeAll(async () => {
-            await navigateToHakemus(page, avustushakuID, hakemusID)
-            await clickElementWithText(page, "button", "Muokkaa hakemusta")
-            const newPagePromise = new Promise<Page>(x => browser.once('targetcreated', target => x(target.page())))
-            await clickElementWithText(page, "button", "Siirry muokkaamaan")
-            modificationPage = await newPagePromise
-            await modificationPage.bringToFront()
-          })
-
-          afterAll(async () => {
-            await page.bringToFront()
-          })
-
-          it('opens the muutoshakemus form', async () => {
-            const userKey = await getUserKey(avustushakuID, hakemusID)
-            expect(modificationPage.url()).toContain(`/muutoshakemus?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`)
-          })
-
         })
       })
     })

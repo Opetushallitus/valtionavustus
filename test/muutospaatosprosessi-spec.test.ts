@@ -26,6 +26,7 @@ import {
   makePaatosForMuutoshakemusIfNotExists,
   mkBrowser,
   navigate,
+  navigateToHakemus,
   navigateToHakijaMuutoshakemusPage,
   randomString,
   ratkaiseAvustushaku,
@@ -150,6 +151,17 @@ describe('Muutospäätösprosessi', () => {
       const hakemusIdAvustushakuId = await ratkaiseMuutoshakemusEnabledAvustushaku(page, haku, answers)
       avustushakuID = hakemusIdAvustushakuId.avustushakuID
       hakemusID = hakemusIdAvustushakuId.hakemusID
+    })
+
+    it('virkailija opens muutoshakemus form when editing the hakemus', async () => {
+      await navigateToHakemus(page, avustushakuID, hakemusID)
+      await clickElementWithText(page, "button", "Muokkaa hakemusta")
+      const newPagePromise = new Promise<Page>(x => browser.once('targetcreated', target => x(target.page())))
+      await clickElementWithText(page, "button", "Siirry muokkaamaan")
+      const modificationPage = await newPagePromise
+      await modificationPage.bringToFront()
+      expect(modificationPage.url()).toContain(`/muutoshakemus?lang=fi&user-key=`)
+      await page.bringToFront()
     })
 
     describe('And muutoshakemus #1 has been submitted', () => {
