@@ -475,6 +475,7 @@ class DecisionDateAndSend extends React.Component {
         sentTime: res['sent-time'],
         exampleUrl: res['example-url'],
         exampleRefuseUrl: res['example-refuse-url'],
+        exampleModifyUrl: res['example-modify-url'],
         paatokset: res.paatokset
       })
     })
@@ -624,16 +625,10 @@ class DecisionDateAndSend extends React.Component {
   }
 
   emailPreview() {
-    const mailContent = () => {
-          const content = this.state.mail.content.replace(
-            "URL_PLACEHOLDER",
-            `<a href=${this.state.exampleUrl}>${this.state.exampleUrl}</a>`
-          )
-        return content.replace(
-            "REFUSE_URL_PLACEHOLDER",
-            `<a href=${this.state.exampleRefuseUrl}>${this.state.exampleRefuseUrl}</a>`)
-    }
-
+    const mailContent = this.state.mail.content
+      .replace("URL_PLACEHOLDER", `<a href=${this.state.exampleUrl}>${this.state.exampleUrl}</a>`)
+      .replace("REFUSE_URL_PLACEHOLDER", `<a href=${this.state.exampleRefuseUrl}>${this.state.exampleRefuseUrl}</a>`)
+      .replace("MODIFY_URL_PLACEHOLDER", `<a href=${this.state.exampleModifyUrl}>${this.state.exampleModifyUrl}</a>`)
 
     return <div className="decision-email-preview">
       <div className="decision-email-row">
@@ -650,7 +645,7 @@ class DecisionDateAndSend extends React.Component {
       </div>
       <div className="decision-email-row">
         <strong className="decision-email-field-label">Viesti:</strong>
-        <div className="decision-email-field-value decision-email-content" dangerouslySetInnerHTML={{__html: mailContent()}}></div>
+        <div className="decision-email-field-value decision-email-content" dangerouslySetInnerHTML={{__html: mailContent}}></div>
       </div>
     </div>
   }

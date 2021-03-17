@@ -50,6 +50,11 @@
     (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
     (first hakemukset)))
 
+(defn has-normalized-hakemus [hakemus-id]
+  (with-tx (fn [tx]
+    (let [result (first (query tx "SELECT COUNT(id) FROM normalized_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
+      (> (:count result) 0)))))
+
 (defn get-normalized-hakemus-contact-email [hakemus-id]
   (:contact-email (get-normalized-hakemus hakemus-id)))
 

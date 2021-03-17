@@ -852,6 +852,13 @@ describe('Muutospäätösprosessi', () => {
               expect(contactPersonEmailOnPage).toEqual(newEmail)
             })
 
+            it('virkailija sees paatos email preview with the muutoshakemus link', async () => {
+              await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
+              await page.waitForSelector('.decision-email-content')
+              const emailContent = await getElementInnerText(page, '.decision-email-content')
+              expect(emailContent).toContain('/muutoshakemus?lang=fi&user-key=')
+            })
+
             async function navigateToAkaanKaupunkiHakemus(page: Page) {
               await navigate(page, `/avustushaku/${avustushakuID}/`)
               await Promise.all([

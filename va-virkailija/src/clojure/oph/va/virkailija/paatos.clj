@@ -6,7 +6,7 @@
       [oph.soresu.form.formutil :as formutil]
       [oph.va.decision-liitteet :as decision-liitteet]
       [oph.va.virkailija.email :as email]
-      [oph.common.email :refer [refuse-url legacy-email-field-ids legacy-email-field-ids-without-contact-email]]
+      [oph.common.email :refer [refuse-url modify-url legacy-email-field-ids legacy-email-field-ids-without-contact-email]]
       [oph.va.virkailija.schema :as virkailija-schema]
       [oph.va.virkailija.hakudata :as hakudata]
       [oph.va.virkailija.db :as virkailija-db]
@@ -250,7 +250,8 @@
                            first-hakemus-id (first (:ids sent-status))
                            first-hakemus (hakija-api/get-hakemus first-hakemus-id)
                            first-hakemus-user-key (:user_key first-hakemus)
-                           first-hakemus-token (get-application-token first-hakemus-id)]
+                           first-hakemus-token (get-application-token first-hakemus-id)
+                           muutospaatosprosessi-enabled (virkailija-db/has-normalized-hakemus first-hakemus-id)]
                           (ok (merge
                                 {:status      "ok"
                                  :mail        (email/mail-example
@@ -259,8 +260,11 @@
                                                  :url              "URL_PLACEHOLDER"
                                                  :refuse-url       "REFUSE_URL_PLACEHOLDER"
                                                  :register-number  (:register_number first-hakemus)
-                                                 :project-name     (:project_name first-hakemus)})
+                                                 :project-name     (:project_name first-hakemus)
+                                                 :muutospaatosprosessi-enabled muutospaatosprosessi-enabled
+                                                 :modify-url       (when muutospaatosprosessi-enabled "MODIFY_URL_PLACEHOLDER")})
                                  :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)
+                                 :example-modify-url (modify-url avustushaku-id first-hakemus-user-key :fi first-hakemus-token true)
                                  :example-refuse-url
                                               (refuse-url
                                                 avustushaku-id first-hakemus-user-key :fi first-hakemus-token)}
