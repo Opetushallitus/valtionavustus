@@ -29,9 +29,6 @@ clean: npm-clean lein-clean
 .PHONY: build
 build: npm-build lein-build
 
-.PHONY: test
-test: npm-test lein-test
-
 .PHONY: npm-clean
 npm-clean: npm-clean-modules npm-clean-frontends
 
@@ -52,11 +49,6 @@ npm-build: check-node
 
 .PHONY: npm-test
 npm-test: check-node
-	npm run puppeteer:test
-	npm run soresu-form:test
-	npm run common:test
-	npm run hakija:test
-	npm run virkailija:test
 
 .PHONY: npm-outdated-dependencies
 npm-outdated-dependencies: check-node
