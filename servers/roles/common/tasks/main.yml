@@ -107,11 +107,11 @@
   when: ansible_os_family == 'RedHat'
   notify: Init alias db
 
-- name: Disallow automatic system reboot, send mail instead
+- name: Allow automatic system reboot for updates
   lineinfile:
     dest: '{{ csc_host_info_config_path }}'
     regexp: '^REBOOT='
-    line: 'REBOOT=0'
+    line: 'REBOOT=1'
     state: present
   when: ansible_os_family == 'RedHat'
 
