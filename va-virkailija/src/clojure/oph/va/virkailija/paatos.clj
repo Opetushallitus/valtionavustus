@@ -143,7 +143,7 @@
            (resend-paatos hakemus-id emails batch-id identity)))
 
 (defn send-selvitys-for-all [avustushaku-id selvitys-type hakemus-id]
-      (log/info "send-loppuselvitys-for-all" hakemus-id)
+      (log/info "send-" selvitys-type "-for-all" hakemus-id)
       (let [hakemus (hakija-api/get-hakemus hakemus-id)
             contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
             avustushaku (hakija-api/get-avustushaku avustushaku-id)
@@ -183,7 +183,7 @@
             json-ids (list-selvitys avustushaku-id)
             ids (map :id json-ids)
             accepted-ids (virkailija-db/get-accepted-hakemus-ids ids)]
-           (log/info "Send all paatos ids " accepted-ids)
+           (log/info "Send" selvitys-type "request to ids" accepted-ids)
            (run! (partial send-selvitys-for-all avustushaku-id selvitys-type) accepted-ids)
            (ok {:count (count accepted-ids)
                 :hakemukset json-ids})))

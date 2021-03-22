@@ -226,6 +226,8 @@
         presenter (if (nil? selected-presenter) (first roles) selected-presenter)]
     (log/info "Url would be: " url)
     (>!! email/mail-chan {:operation :send
+                          :hakemus-id (:id hakemus)
+                          :avustushaku-id (:id avustushaku)
                           :type (keyword (str selvitys-type "-notification"))
                           :lang lang
                           :from (-> email/smtp-config :from lang)

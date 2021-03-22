@@ -95,6 +95,8 @@ const getEmails = (emailType: string) => (avustushakuID: number, hakemusID: numb
 export const getValmistelijaEmails = getEmails("notify-valmistelija-of-new-muutoshakemus")
 export const getMuutoshakemusPaatosEmails = getEmails("muutoshakemus-paatos")
 export const getMuutoshakemusEmails = getEmails("paatos-refuse")
+export const getValiselvitysEmails = getEmails("valiselvitys-notification")
+export const getLoppuselvitysEmails = getEmails("loppuselvitys-notification")
 export const getAcceptedPäätösEmails = getMuutoshakemusEmails
 export const getTäydennyspyyntöEmails: (avustushakuID: number, hakemusID: number) => Promise<Email[]> = getEmails("change-request")
 export async function waitUntilMinEmails(f: any, minEmails: number, ...params: any) {

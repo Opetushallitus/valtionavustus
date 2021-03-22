@@ -87,7 +87,7 @@ export default class SelvitysFormEditor extends React.Component {
       <p>Väliselvityspyynnöt lähetetään niille hakijoille, joiden hakemukset on hyväksytty ja jotka eivät ole vielä toimittaneet väliselvitystä.</p>
       <div data-test-id='valiselvitys-ohje' dangerouslySetInnerHTML={{__html: helpTexts["hakujen_hallinta__väliselvitys___ohje"]}} />
       <p>
-        <button disabled={sending} onClick={onSendSelvitys}>Lähetä väliselvityspyynnöt</button>
+        <button data-test-id='send-valiselvitys' disabled={sending} onClick={onSendSelvitys}>Lähetä väliselvityspyynnöt</button>
         {!isNaN(count) && <span> Lähetetty {count} viestiä</span>}
       </p>
       <h1>Väliselvityslomake</h1>
@@ -99,7 +99,7 @@ export default class SelvitysFormEditor extends React.Component {
       <p>Loppuselvityspyynnöt lähetetään niille hakijoille, joiden hakemukset on hyväksytty ja jotka eivät ole vielä toimittaneet loppuselvitystä.</p>
       <div data-test-id='loppuselvitys-ohje' dangerouslySetInnerHTML={{__html: helpTexts["hakujen_hallinta__loppuselvitys___ohje"]}} />
       <p>
-        <button disabled={sending} onClick={onSendSelvitys}>Lähetä loppuselvityspyynnöt</button>
+        <button data-test-id='send-loppuselvitys' disabled={sending} onClick={onSendSelvitys}>Lähetä loppuselvityspyynnöt</button>
         {!isNaN(count) && <span> Lähetetty {count} viestiä</span>}
       </p>
       <h1>Loppuselvityslomake</h1>

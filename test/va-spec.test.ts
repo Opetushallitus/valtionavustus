@@ -6,6 +6,8 @@ import {
   HAKIJA_URL,
   createValidCopyOfEsimerkkihakuAndReturnTheNewId,
   getAcceptedPäätösEmails,
+  getValiselvitysEmails,
+  getLoppuselvitysEmails,
   mkBrowser,
   acceptAvustushaku,
   clearAndSet,
@@ -480,7 +482,7 @@ etunimi.sukunimi@oph.fi
     ])
   }
 
-  it("allows resending päätös emails from päätös tab", async () => {
+  it("sends päätös, väliselvityspyyntö, and loppuselvityspyyntö emails to correct contact and hakemus emails", async () => {
     const { avustushakuID, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, {
       registerNumber: "420/2021",
       avustushakuName: `Testiavustushaku ${randomString()} - ${moment(new Date()).format('YYYY-MM-DD hh:mm:ss:SSSS')}`
@@ -514,6 +516,28 @@ etunimi.sukunimi@oph.fi
 
     emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 3, avustushakuID, hakemusID)
     expect(emails).toHaveLength(3)
+    email = lastOrFail(emails)
+    expect(email["to-address"]).toEqual([
+      "uusi.yhteyshenkilo@example.com",
+      "akaan.kaupunki@akaa.fi"
+    ])
+
+    await navigate(page, `/admin/valiselvitys/?avustushaku=${avustushakuID}`)
+    await clickElement(page, '[data-test-id=send-valiselvitys]')
+
+    emails = await waitUntilMinEmails(getValiselvitysEmails, 1, avustushakuID, hakemusID)
+    expect(emails).toHaveLength(1)
+    email = lastOrFail(emails)
+    expect(email["to-address"]).toEqual([
+      "uusi.yhteyshenkilo@example.com",
+      "akaan.kaupunki@akaa.fi"
+    ])
+
+    await navigate(page, `/admin/loppuselvitys/?avustushaku=${avustushakuID}`)
+    await clickElement(page, '[data-test-id=send-loppuselvitys]')
+
+    emails = await waitUntilMinEmails(getLoppuselvitysEmails, 1, avustushakuID, hakemusID)
+    expect(emails).toHaveLength(1)
     email = lastOrFail(emails)
     expect(email["to-address"]).toEqual([
       "uusi.yhteyshenkilo@example.com",
