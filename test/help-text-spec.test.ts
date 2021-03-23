@@ -267,7 +267,7 @@ describe("Tooltips", () => {
           await verifyTooltipText(
             page,
             `[data-test-id="tooltip-kommentit"]`,
-            /Hankehakemusta arvioiva virkailija kirjoittaa avustuksen arviointiin liittyvät kommentit tähän kenttään ja tallentaa kommentin järjestelmään painamalla Lisää-painiketta. Mahdolliset muiden virkailijoiden kommentit tulevat näkyviin vasta oman kommentin lisäämisen jälkeen. Kommentit näkyvät vain OPH:n virkailijoille.*/
+            /Hankehakemusta arvioiva virkailija kirjoittaa avustuksen arviointiin liittyvät kommentit tähän kenttään ja tallentaa kommentin järjestelmään painamalla Lisää-painiketta. Kommentit näkyvät vain OPH:n virkailijoille.*/
           )
         })
 

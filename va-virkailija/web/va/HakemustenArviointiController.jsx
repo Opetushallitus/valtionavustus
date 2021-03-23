@@ -385,8 +385,7 @@ export default class HakemustenArviointiController {
   }
 
   onLoadComments(state) {
-    if (!state.loadingComments && state.selectedHakemus) {
-      state.loadingComments = true
+    if (state.selectedHakemus) {
       HttpUtil.get(HakemustenArviointiController.commentsUrl(state)).then(comments => {
         dispatcher.push(events.commentsLoaded, comments)
       })
@@ -398,7 +397,6 @@ export default class HakemustenArviointiController {
     if (state.selectedHakemus) {
       state.selectedHakemus.comments = comments
     }
-    state.loadingComments = false
     return state
   }
 

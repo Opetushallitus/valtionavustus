@@ -1,88 +1,36 @@
-import React, { Component } from 'react'
-import _ from 'lodash'
+import React, { useState } from 'react'
 
 import DateUtil from 'soresu-form/web/DateUtil'
-
 import NameFormatter from 'va-common/web/va/util/NameFormatter'
+
 import HelpTooltip from '../HelpTooltip.jsx'
 
-export default class HakemusComments extends Component {
-
-  constructor(props){
-    super(props)
-    this.state = {comment:"",added:false}
+const HakemusComments = ({ controller, helpTexts, allowHakemusCommenting, comments }) => {
+  const [comment, setComment] = useState('')
+  const [added, setAdded] = useState(false)
+  const addComment = () => {
+    controller.addComment(comment)
+    setComment('')
+    setAdded(true)
   }
 
-  checkComments() {
-    const loadingComments = this.props.loadingComments
-    if (!loadingComments && this.props.hakemus.id) {
-      this.props.controller.loadComments()
-    }
-  }
-
-  shouldComponentUpdate (nextProps) {
-    if (this.props.hakemus.id !== nextProps.hakemus.id) {
-      this.checkComments()
-      this.setState({comment:"",added:false})
-    }
-    return true
-  }
-
-  componentDidMount() {
-    this.checkComments()
-  }
-
-  render() {
-    const controller = this.props.controller
-    const userOid = this.props.user["person-oid"]
-    const allowHakemusCommenting = this.props.allowHakemusCommenting
-    const helpTexts = this.props.helpTexts
-
-    let commentsToRender = []
-    const commentsInState = this.props.comments
-    if (_.isArray(commentsInState)) {
-      commentsToRender = commentsInState
-    }
-
-    const handleChange = (event) => this.setState({comment: event.target.value})
-
-    const addComment = () =>{
-      controller.addComment(this.state.comment)
-      this.setState({comment:"",added:true})
-    }
-
-    const commentComponents = commentsToRender.map(c => <Comment comment={c} key={c.id}/>)
-    const noComments = commentsToRender.length === 0
-    const showComments = this.props.grantState === "resolved" ||
-          commentsToRender.find(
-            c => !c["person_oid"] || c["person_oid"] === userOid)
-    return (
-      <div id="hakemus-comment-container" className="hakemus-arviointi-section">
-        <label>Kommentit</label>
-        <HelpTooltip testId={"tooltip-kommentit"} content={helpTexts["hankkeen_sivu__arviointi___kommentit"]} direction={"arviointi"} />
-        {showComments ?
-          <div>
-            {noComments ?
-              <div>Ei kommentteja</div> :
-              <div className="comment-list">
-                {commentComponents}
-              </div>}
-          </div> :
-          <div>
-            Mahdolliset muiden käyttäjien jättämät kommentit näytetään, kun
-            olet kirjoittanut oman kommenttisi tai haku on ratkaistu tilassa.
-          </div>
-        }
-        <textarea rows="3" className="comment-input" id="comment-input"
-                  value={this.state.comment}
-                  onChange={handleChange}
-                  hidden={!allowHakemusCommenting} disabled={!allowHakemusCommenting}/>
-        <button type="button" disabled={this.state.comment.length === 0} onClick={addComment}>Lisää</button>
-        <span hidden={!this.state.added}>Kommentti lisätty</span>
-      </div>
-    )
-  }
-
+  const hasComments = comments && comments.length
+  return (
+    <div id="hakemus-comment-container" className="hakemus-arviointi-section">
+      <label>Kommentit</label>
+      <HelpTooltip testId={"tooltip-kommentit"} content={helpTexts["hankkeen_sivu__arviointi___kommentit"]} direction={"arviointi"} />
+      {hasComments
+        ? <div className="comment-list">{comments.map(c => <Comment comment={c} key={c.id}/>)}</div>
+        : <div>Ei kommentteja</div>
+      }
+      <textarea rows="3" className="comment-input" id="comment-input"
+                value={comment}
+                onChange={(event) => setComment(event.target.value)}
+                hidden={!allowHakemusCommenting} disabled={!allowHakemusCommenting}/>
+      <button type="button" disabled={comment.length === 0} onClick={addComment} data-test-id="send-comment">Lisää</button>
+      <span hidden={!added}>Kommentti lisätty</span>
+    </div>
+  )
 }
 
 const Comment = ({comment})=>{
@@ -101,3 +49,5 @@ const Comment = ({comment})=>{
       </div>
     )
 }
+
+export default HakemusComments

@@ -11,7 +11,7 @@ import './hakemusDetails.less'
 export default class HakemusDetails extends Component {
   render() {
     const {hidden, controller, hakemus, avustushaku, hakuData, userInfo,
-           loadingComments, showOthersScores, translations, environment,
+           showOthersScores, translations, environment,
            selectedHakemusAccessControl, subTab, helpTexts} = this.props
     const multibatchEnabled =
           (environment["multibatch-payments"] &&
@@ -59,7 +59,6 @@ export default class HakemusDetails extends Component {
                                    translations={translations}
                                    selectedHakemusAccessControl={selectedHakemusAccessControl}
                                    userInfo={userInfo}
-                                   loadingComments={loadingComments}
                                    showOthersScores={showOthersScores}
                                    subTab={subTab}
                                    controller={controller}

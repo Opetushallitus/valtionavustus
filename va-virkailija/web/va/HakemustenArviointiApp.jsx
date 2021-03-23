@@ -51,7 +51,6 @@ export default class App extends Component {
     const previouslySelectedHakemus = state.previouslySelectedHakemus
     const translations = state.translations
     const selectedHakemusAccessControl = state.selectedHakemusAccessControl
-    const loadingComments = state.loadingComments
     const avustushakuList = state.avustushakuList
     const subTab = state.subTab
     const environment = hakuData.environment
@@ -91,7 +90,6 @@ export default class App extends Component {
                           translations={translations}
                           selectedHakemusAccessControl={selectedHakemusAccessControl}
                           userInfo={state.userInfo}
-                          loadingComments={loadingComments}
                           showOthersScores={state.showOthersScores}
                           subTab={subTab}
                           controller={controller}

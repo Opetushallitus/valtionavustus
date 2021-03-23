@@ -61,7 +61,10 @@ import {
   waitUntilMinEmails,
   setPageErrorConsoleLogger,
   randomString,
-  log
+  log,
+  navigateToHakemus,
+  countElements,
+  getElementInnerText
 } from './test-util'
 import axios from 'axios'
 
@@ -296,11 +299,23 @@ describe("Puppeteer tests", () => {
         hakemusID = await fillAndSendHakemusAndReturnHakemusId(page, avustushakuID, async () => {
           await typeValueInFieldAndExpectNoValidationError(page, fieldId, randomValueForProjectNutshell)
         })
+        await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
+      })
+
+      it('virkailija can add comments', async () => {
+        await navigateToHakemus(page, avustushakuID, hakemusID)
+        await clearAndType(page, '#comment-input', 'ei jatkoon')
+        await clickElement(page, '[data-test-id=send-comment]')
+
+        await page.waitForSelector('.comment-list')
+        const comments = await countElements(page, '.single-comment')
+        expect(comments).toEqual(1)
+        const comment = await getElementInnerText(page, '.single-comment > div')
+        expect(comment).toContain('ei jatkoon')
       })
 
       describe('And hakemus has been approved', () => {
         beforeAll(async () => {
-          await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
           await acceptHakemus(page, avustushakuID, hakemusID, async () => {
             await clickElementWithTestId(page, 'tab-seuranta')
             await clickElementWithTestId(page, 'set-allow-visibility-in-external-system-true')

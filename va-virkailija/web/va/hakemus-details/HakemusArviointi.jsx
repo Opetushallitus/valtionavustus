@@ -26,7 +26,7 @@ import '../style/admin.less'
 export default class HakemusArviointi extends Component {
   render() {
     const {controller, hakemus, avustushaku, hakuData, translations,
-           userInfo, loadingComments, showOthersScores,
+           userInfo, showOthersScores,
            multibatchEnabled, helpTexts} = this.props
     const {
       allowHakemusCommenting,
@@ -47,13 +47,9 @@ export default class HakemusArviointi extends Component {
                        allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
        <HakemusComments
          controller={controller}
-         hakemus={hakemus}
          comments={comments}
-         loadingComments={loadingComments}
          allowHakemusCommenting={allowHakemusCommenting}
-         user={userInfo}
-         helpTexts={helpTexts}
-         grantState={avustushaku.status}/>
+         helpTexts={helpTexts}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
