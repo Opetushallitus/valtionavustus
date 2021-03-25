@@ -179,6 +179,9 @@
         liitteet-list (liitteet-list avustushaku hakemus translate language has-kayttosuunnitelma)
         koulutusosio (koulutusosio/koulutusosio hakemus answers translate)
         has-koulutusosio (:has-koulutusosio koulutusosio)
+        kayttoaika (if (or (nil? (:hankkeen-alkamispaiva avustushaku)) (nil? (:hankkeen-paattymispaiva avustushaku)))
+                    (optional-section decision :valtionavustuksen-kayttoaika :kayttoaika translate language)
+                    (kayttoaika-section avustushaku translate language))
 
         params {
                 :avustushaku                   avustushaku
@@ -188,7 +191,7 @@
                 :section-asia                  (asia-section avustushaku-name translate)
                 :section-taustaa               (optional-section decision :taustaa :taustaa translate language)
                 :section-sovelletut-saannokset (optional-section decision :sovelletut-saannokset :sovelletutsaannokset translate language)
-                :section-kayttoaika            (kayttoaika-section avustushaku translate language)
+                :section-kayttoaika            kayttoaika
                 :section-kayttotarkoitus       (optional-section decision :avustuksen-kayttotarkoitus :kayttotarkoitus translate language)
                 :section-selvitysvelvollisuus  (optional-section decision :selvitysvelvollisuus :selvitysvelvollisuus translate language)
                 :section-kayttooikeudet        (optional-section decision :kayttooikeudet :kayttooikeudet translate language)
