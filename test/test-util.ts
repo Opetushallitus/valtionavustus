@@ -208,6 +208,16 @@ export async function navigateToHakemuksenArviointi(page: Page, avustushakuID: n
   return { hakemusID }
 }
 
+export async function navigateToPaatos(page: Page, avustushakuID: number, hakemusID: number) {
+  const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
+  const linkToPaatos = emails[0]?.formatted.match(/https?:\/\/.*\/paatos\/.*/)?.[0]
+  if (linkToPaatos) {
+    await page.goto(linkToPaatos, { waitUntil: "networkidle0" })
+  } else {
+    throw new Error('did not find link to päätös')
+  }
+}
+
 export async function createMuutoshakemusEnabledEsimerkkihakuAndReturnId(page: Page, hakuName?: string, registerNumber?: string): Promise<{ avustushakuID: number }> {
   const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, hakuName, registerNumber)
 

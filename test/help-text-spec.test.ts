@@ -122,14 +122,6 @@ describe("Tooltips", () => {
         )
       })
 
-      it('Hovering over "Avustuksen käyttöaika" displays correct help text', async () => {
-        await verifyTooltipText(
-          page,
-          `[data-test-id="kayttoaika"] label a`,
-          /Kuvataan milloin avustuksen käyttöaika alkaa ja päättyy. Useimmiten käyttöaika alkaa avustuspäätöstä seuraavasta päivästä, vaikka avustusta ei olisikaan vielä maksettu avustuksen saajan tilille. Avustuksen käyttöaika asetetaan päättyväksi siten kuin on hakutiedotteessa ilmoitettu.*/
-        )
-      })
-
       it('Hovering over "Selvitysvelvollisuus" displays correct help text', async () => {
         await verifyTooltipText(
           page,

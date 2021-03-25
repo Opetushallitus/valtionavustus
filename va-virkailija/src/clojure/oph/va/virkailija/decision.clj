@@ -12,7 +12,8 @@
             [schema.core :as s]
             [hiccup.core :refer [html]]
             [clojure.tools.logging :as log]
-            [oph.va.virkailija.payments-data :as payments-data]))
+            [oph.va.virkailija.payments-data :as payments-data])
+  (:import  [java.time.format DateTimeFormatter]))
 
 (defn decision-translation [translations lang translation-key]
   (get-in translations [:paatos (keyword translation-key) lang]))
@@ -134,6 +135,12 @@
           (section :liitteet content translate false)
           "")))
 
+(defn kayttoaika-section [avustushaku translate language]
+  (let [first-day (.format (:hankkeen-alkamispaiva avustushaku) (DateTimeFormatter/ofPattern "dd.MM.YYYY"))
+        last-day (.format (:hankkeen-paattymispaiva avustushaku) (DateTimeFormatter/ofPattern "dd.MM.YYYY"))
+        content [:span [:p (str (translate :ensimmainen-kayttopaiva) " " first-day)] [:p (str (translate :viimeinen-kayttopaiva) " " last-day)]]]
+    (section :valtionavustuksen-kayttoaika content translate false)))
+
 (defn paatos-html [hakemus-id]
   (let [haku-data (hakudata/get-combined-paatos-data hakemus-id)
         avustushaku (:avustushaku haku-data)
@@ -181,7 +188,7 @@
                 :section-asia                  (asia-section avustushaku-name translate)
                 :section-taustaa               (optional-section decision :taustaa :taustaa translate language)
                 :section-sovelletut-saannokset (optional-section decision :sovelletut-saannokset :sovelletutsaannokset translate language)
-                :section-kayttoaika            (optional-section decision :valtionavustuksen-kayttoaika :kayttoaika translate language)
+                :section-kayttoaika            (kayttoaika-section avustushaku translate language)
                 :section-kayttotarkoitus       (optional-section decision :avustuksen-kayttotarkoitus :kayttotarkoitus translate language)
                 :section-selvitysvelvollisuus  (optional-section decision :selvitysvelvollisuus :selvitysvelvollisuus translate language)
                 :section-kayttooikeudet        (optional-section decision :kayttooikeudet :kayttooikeudet translate language)

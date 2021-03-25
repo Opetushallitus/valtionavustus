@@ -665,7 +665,6 @@ export default class DecisionEditor extends React.Component {
       {id:"sovelletutsaannokset",title:"Sovelletut säännökset", helpText: helpTexts["hakujen_hallinta__päätös___sovelletut_säännökset"], dataTestId:"sovelletutsaannokset"},
       {id:"kayttooikeudet",title:"Tekijänoikeudet", helpText:helpTexts["hakujen_hallinta__päätös___tekijänoikeudet"], dataTestId:"kayttooikeudet"},
       {id:"kayttotarkoitus",title:"Avustuksen käyttötarkoitus", helpText:helpTexts["hakujen_hallinta__päätös___avustuksen_käyttötarkoitus"], dataTestId:"kayttotarkoitus"},
-      {id:"kayttoaika",title:"Avustuksen käyttöaika", helpText:helpTexts["hakujen_hallinta__päätös___avustuksen_käyttöaika"], dataTestId:"kayttoaika"},
       {id:"selvitysvelvollisuus",title:"Selvitysvelvollisuus", helpText:helpTexts["hakujen_hallinta__päätös___selvitysvelvollisuus"], dataTestId:"selvitysvelvollisuus"},
       {id:"hyvaksyminen",title:"Päätöksen hyväksyminen", helpText:helpTexts["hakujen_hallinta__päätös___päätöksen_hyväksyminen"], dataTestId:"hyvaksyminen"},
       {id:"johtaja",title:"Johtaja", helpText:helpTexts["hakujen_hallinta__päätös___johtaja"], dataTestId:"johtaja"},

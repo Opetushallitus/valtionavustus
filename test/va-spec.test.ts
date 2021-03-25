@@ -64,7 +64,8 @@ import {
   log,
   navigateToHakemus,
   countElements,
-  getElementInnerText
+  getElementInnerText,
+  navigateToPaatos
 } from './test-util'
 import axios from 'axios'
 
@@ -327,6 +328,23 @@ describe("Puppeteer tests", () => {
           const expectedResponse = await expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID, hakemusID, randomValueForProjectNutshell)
           const actualResponse = await actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID)
           expect(actualResponse).toMatchObject(expectedResponse)
+        })
+
+        describe('And päätös has been created', () => {
+          beforeAll(async () => {
+            await resolveAvustushaku(page, avustushakuID)
+            await selectValmistelijaForHakemus(page, avustushakuID, hakemusID, "_ valtionavustus")
+            await sendPäätös(page, avustushakuID)
+          })
+
+          it('shows the standardized käyttöaika on päätös', async () => {
+            await navigateToPaatos(page, avustushakuID, hakemusID)
+            await page.waitForXPath("//h2[contains(text(), 'Avustuksen käyttöaika')]")
+            const firstDay = await page.$x("//p[contains(text(), 'Avustuksen ensimmäinen käyttöpäivä 20.04.1969')]")
+            expect(firstDay.length).toEqual(1)
+            const lastDay = await page.$x("//p[contains(text(), 'Avustuksen viimeinen käyttöpäivä 20.04.4200')]")
+            expect(lastDay.length).toEqual(1)
+          })
         })
       })
     })
