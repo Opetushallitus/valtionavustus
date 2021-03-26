@@ -72,8 +72,8 @@ export const Tapahtumaloki = ({ lahetykset }: TapahtumalokiProps) => {
         groupedLahetykset.map((l, i) => (
           <div key={i} className={'entry'}>
             <span className={'timestamp'}>{timestamp(l)}</span>
-            <span className={'sender'}>{sender(l)}</span>
-            <span className={'sentCount'}>{sentMails(l)}</span>
+            <span className={'sender'} data-test-id={`sender-${i}`}>{sender(l)}</span>
+            <span className={'sentCount'} data-test-id={`sent-${i}`}>{sentMails(l)}</span>
             <span className={'failedCount'}>{failedMails(l)}</span>
           </div>
         ))
