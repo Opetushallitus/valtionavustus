@@ -5,7 +5,7 @@ import ClassNames from 'classnames'
 import HakuEdit from './HakuEdit.jsx'
 import FormEditorContainer from './FormEditorContainer.jsx'
 import DecisionEditor from './DecisionEditor.jsx'
-import SelvitysFormEditor from './SelvitysFormEditor.jsx'
+import { SelvitysFormEditor } from './SelvitysFormEditor'
 import HelpTooltip from '../HelpTooltip.jsx'
 
 function createRedirectTo(url) {
@@ -61,28 +61,15 @@ export default class EditorSelector extends React.Component {
                                         helpTexts={helpTexts} />
         break
       case "valiselvitys":
-        subTabContent = <SelvitysFormEditor selvitysType="valiselvitys"
+      case "loppuselvitys":
+        subTabContent = <SelvitysFormEditor selvitysType={subTab}
                                         environment={environment}
                                         avustushaku={avustushaku}
                                         controller={controller}
                                         koodistos={koodistos}
-                                        valiselvitysFormDraft={valiselvitysFormDraft}
-                                        loppuselvitysFormDraft={loppuselvitysFormDraft}
+                                        formDraft={valiselvitysFormDraft}
                                         translations={translations}
                                         helpTexts={helpTexts}
-
-        />
-        break
-      case "loppuselvitys":
-        subTabContent = <SelvitysFormEditor selvitysType="loppuselvitys"
-                                            environment={environment}
-                                            avustushaku={avustushaku}
-                                            controller={controller}
-                                            koodistos={koodistos}
-                                            valiselvitysFormDraft={valiselvitysFormDraft}
-                                            loppuselvitysFormDraft={loppuselvitysFormDraft}
-                                            translations={translations}
-                                            helpTexts={helpTexts}
 
         />
         break

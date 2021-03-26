@@ -142,7 +142,7 @@
       (let [emails (paatos-emails hakemus-id)]
            (resend-paatos hakemus-id emails batch-id identity)))
 
-(defn send-selvitys-for-all [avustushaku-id selvitys-type hakemus-id]
+(defn send-selvitys-for-all [avustushaku-id selvitys-type uuid identity hakemus-id]
       (log/info "send-" selvitys-type "-for-all" hakemus-id)
       (let [hakemus (hakija-api/get-hakemus hakemus-id)
             contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
@@ -150,7 +150,7 @@
             roles (hakija-api/get-avustushaku-roles avustushaku-id)
             arvio (virkailija-db/get-arvio hakemus-id)
             emails (emails-for-hakemus hakemus contact-email)]
-           (email/send-selvitys-notification! emails avustushaku hakemus selvitys-type arvio roles)))
+           (email/send-selvitys-notification! emails avustushaku hakemus selvitys-type arvio roles uuid identity)))
 
 (defn get-paatos-email-status
       "Returns only data related to those hakemus ids which are rejected or accepted,
@@ -177,14 +177,14 @@
             :paatokset hakemukset-email-status
             :sent-time (:sent-time (first hakemukset-email-status))}))
 
-(defn send-selvitys-emails [avustushaku-id selvitys-type]
+(defn send-selvitys-emails [avustushaku-id selvitys-type uuid identity]
       (let [is-loppuselvitys (= selvitys-type "loppuselvitys")
             list-selvitys (if is-loppuselvitys hakija-api/list-loppuselvitys-hakemus-ids hakija-api/list-valiselvitys-hakemus-ids)
             json-ids (list-selvitys avustushaku-id)
             ids (map :id json-ids)
             accepted-ids (virkailija-db/get-accepted-hakemus-ids ids)]
            (log/info "Send" selvitys-type "request to ids" accepted-ids)
-           (run! (partial send-selvitys-for-all avustushaku-id selvitys-type) accepted-ids)
+           (run! (partial send-selvitys-for-all avustushaku-id selvitys-type uuid identity) accepted-ids)
            (ok {:count (count accepted-ids)
                 :hakemukset json-ids})))
 
@@ -236,11 +236,6 @@
                            (log/info "Regenereate " ids)
                            (run! regenerate-paatos ids)
                            (ok {:status "ok"})))
-
-  (compojure-api/GET
-    "/tapahtuma/lahetys/:avustushaku-id" []
-    :path-params [avustushaku-id :- Long]
-    (ok (tapahtumaloki/get-paatoksen-lahetys-entries avustushaku-id)))
 
   (compojure-api/GET "/sent/:avustushaku-id" []
                      :path-params [avustushaku-id :- Long]

@@ -345,6 +345,26 @@ describe("Puppeteer tests", () => {
             const lastDay = await page.$x("//p[contains(text(), 'Avustuksen viimeinen käyttöpäivä 20.04.4200')]")
             expect(lastDay.length).toEqual(1)
           })
+
+          it('shows the väliselvitys log', async () => {
+            await navigate(page, `/admin/valiselvitys/?avustushaku=${avustushakuID}`)
+            await clickElement(page, '[data-test-id=send-valiselvitys]')
+            await page.waitForSelector('div.tapahtumaloki')
+            const sender = await textContent(page, 'span.sender')
+            expect(sender).toEqual('_ valtionavustus')
+            const sent = await textContent(page, 'span.sentCount')
+            expect(sent).toEqual('1')
+          })
+
+          it('shows the loppuselvitys log', async () => {
+            await navigate(page, `/admin/loppuselvitys/?avustushaku=${avustushakuID}`)
+            await clickElement(page, '[data-test-id=send-loppuselvitys]')
+            await page.waitForSelector('div.tapahtumaloki')
+            const sender = await textContent(page, 'span.sender')
+            expect(sender).toEqual('_ valtionavustus')
+            const sent = await textContent(page, 'span.sentCount')
+            expect(sent).toEqual('1')
+          })
         })
       })
     })

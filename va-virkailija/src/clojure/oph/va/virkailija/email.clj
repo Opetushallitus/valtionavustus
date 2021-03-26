@@ -4,6 +4,7 @@
             [clojure.java.jdbc :as jdbc]
             [oph.common.email :as email]
             [oph.soresu.common.config :refer [config]]
+            [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]
             [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
             [clostache.parser :refer [render]])
@@ -215,7 +216,7 @@
                           :to to
                           :body mail-message})))
 
-(defn send-selvitys-notification! [to avustushaku hakemus selvitys-type arvio roles]
+(defn send-selvitys-notification! [to avustushaku hakemus selvitys-type arvio roles uuid identity]
   (let [lang-str (:language hakemus)
         lang (keyword lang-str)
         presenter-role-id (:presenter_role_id arvio)
@@ -223,8 +224,10 @@
         avustushaku-name (get-in avustushaku [:content :name lang])
         mail-subject (str (get-in mail-titles [(keyword (str selvitys-type "-notification")) lang]) " " avustushaku-name)
         selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
+        log-type (str selvitys-type "_lahetys")
         presenter (if (nil? selected-presenter) (first roles) selected-presenter)]
     (log/info "Url would be: " url)
+    (tapahtumaloki/create-log-entry log-type (:id avustushaku) (:id hakemus) identity uuid to true)
     (>!! email/mail-chan {:operation :send
                           :hakemus-id (:id hakemus)
                           :avustushaku-id (:id avustushaku)

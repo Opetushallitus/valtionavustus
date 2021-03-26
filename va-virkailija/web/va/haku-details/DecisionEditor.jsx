@@ -6,9 +6,10 @@ import DateUtil from 'soresu-form/web/DateUtil'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 
 import PaatosUrl from '../hakemus-details/PaatosUrl'
-import Selvitys from './Selvitys.jsx'
-import HelpTooltip from '../HelpTooltip.jsx'
+import Selvitys from './Selvitys'
+import HelpTooltip from '../HelpTooltip'
 import { Kayttoaika } from './Kayttoaika'
+import { Tapahtumaloki } from './Tapahtumaloki'
 
 const DecisionField = ({avustushaku, title, id,language, onChange, helpText, dataTestId}) => {
   const fieldId= `decision.${id}.${language}`
@@ -328,64 +329,6 @@ class ResendDecisions extends React.Component {
   }
 }
 
-class TapahtumaLoki extends React.Component {
-
-  dateTime(d) {
-    return `${DateUtil.asDateString(d)} ${DateUtil.asTimeString(d)}`
-  }
-
-  groupBy(key) {
-    return (array) => (
-      array.reduce((objectsByKeyValue, obj) => {
-        const value = obj[key];
-        objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
-        return objectsByKeyValue;
-      }, {})
-    )
-  }
-
-  render() {
-
-    const latestFirst = (a, b) => {
-      if (a[0].created_at > b[0].created_at) return -1
-      if (a[0].created_at < b[0].created_at) return 1
-      return 0
-    }
-
-    const timestamp = (entries) => this.dateTime(entries[0].created_at) // Assume mails have same approx sent time
-    const sender = (entries) => entries[0].user_name // Assume that all entries within same batch have the same sender
-    const sentMails = (entries) => entries.filter(e => e.success).length
-    const failedMails = (entries) => entries.filter(e => !e.success).length
-
-    // List of lists, each of which contain all sent emails sent by one transaction (i.e. batch_id), e.g. "lähetä päätökset"
-    const groupedLahetykset = Object.values(this.groupBy('batch_id')(this.props.lahetykset)).sort(latestFirst)
-
-    return (
-      <div className={'tapahtumaloki'}>
-        <div className={'header'}>Lähetetyt päätökset</div>
-        <div className={'entries'}>
-          <div className={'header-row'}>
-            <span className={'timestamp header'}>Lähetysaika</span>
-            <span className={'sender header'}>Lähettäjä</span>
-            <span className={'sentCount header'}>Lähetettyjä viestejä</span>
-            <span className={'failedCount header'}>Epäonnistuneita lähetyksiä</span>
-          </div>
-        {
-          groupedLahetykset.map((l, i) => (
-            <div key={i} className={'entry'}>
-              <span className={'timestamp'}>{timestamp(l)}</span>
-              <span className={'sender'}>{sender(l)}</span>
-              <span className={'sentCount'}>{sentMails(l)}</span>
-              <span className={'failedCount'}>{failedMails(l)}</span>
-            </div>
-          ))
-        }
-        </div>
-      </div>
-    )
-  }
-}
-
 class DecisionDateAndSend extends React.Component {
   constructor(props){
     super(props)
@@ -482,7 +425,7 @@ class DecisionDateAndSend extends React.Component {
   }
 
   fetchLahetetytPaatokset(avustushakuId) {
-    const sendS = Bacon.fromPromise(HttpUtil.get(`/api/paatos/tapahtuma/lahetys/${avustushakuId}`,{}))
+    const sendS = Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}/tapahtumaloki/paatoksen_lahetys`,{}))
     sendS.onValue(lahetykset => {
       this.setState({ lahetykset })
     })
@@ -496,7 +439,7 @@ class DecisionDateAndSend extends React.Component {
 
   showTapahtumaLokiOrViimeisinLahetys() {
     return this.hasLahetetytPaatokset() ?
-      <TapahtumaLoki lahetykset={this.state.lahetykset} /> :
+      <Tapahtumaloki lahetykset={this.state.lahetykset} /> :
       <strong>{this.state.sent} päätöstä lähetetty {this.sentTimeStamp()}</strong>
   }
 

@@ -30,6 +30,7 @@
             [oph.va.virkailija.schema :as virkailija-schema]
             [oph.va.virkailija.scoring :as scoring]
             [oph.va.virkailija.saved-search :refer :all]
+            [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.va.virkailija.export :as export]
             [oph.va.virkailija.email :as email]
@@ -314,12 +315,14 @@
                         (ok {:status "ok"}))))
 
 (defn- send-selvitys-email []
-  (compojure-api/POST "/:avustushaku-id/selvitys/:selvitys-type/send-notification" []
+  (compojure-api/POST "/:avustushaku-id/selvitys/:selvitys-type/send-notification" request
                       :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
                       :return s/Any
                       :summary "Sends loppuselvitys emails"
-                      (log/info  (str "Send emails for avustushaku " avustushaku-id))
-                      (paatos/send-selvitys-emails avustushaku-id selvitys-type)))
+                      (let [uuid (.toString (java.util.UUID/randomUUID))
+                            identity (authentication/get-request-identity request)]
+                        (log/info  (str "Send emails for avustushaku " avustushaku-id))
+                        (paatos/send-selvitys-emails avustushaku-id selvitys-type uuid identity))))
 
 (defn- re-send-paatos-email []
   (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/re-send-paatos" request
@@ -608,6 +611,11 @@
                      (let [saved-search (get-saved-search avustushaku-id saved-search-id)]
                        (ok (:query saved-search)))))
 
+(defn- get-tapahtumaloki []
+  (compojure-api/GET "/:avustushaku-id/tapahtumaloki/:tyyppi" []
+                     :path-params [avustushaku-id :- Long, tyyppi :- s/Str]
+                     (ok (tapahtumaloki/get-tapahtumaloki-entries tyyppi avustushaku-id))))
+
 (compojure-api/defroutes avustushaku-routes
                          "Hakemus listing and filtering"
 
@@ -653,7 +661,8 @@
                          (delete-score)
                          (post-hakemus-status)
                          (put-searches)
-                         (get-search))
+                         (get-search)
+                         (get-tapahtumaloki))
 
 (compojure-api/defroutes public-routes
                          "Public API"
