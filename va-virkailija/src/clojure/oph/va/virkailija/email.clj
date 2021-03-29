@@ -219,19 +219,19 @@
 (defn send-selvitys-notification! [to avustushaku hakemus selvitys-type arvio roles uuid identity]
   (let [lang-str (:language hakemus)
         lang (keyword lang-str)
+        type (str selvitys-type "-notification")
         presenter-role-id (:presenter_role_id arvio)
         url (selvitys-url (:id avustushaku) (:user_key hakemus) lang selvitys-type)
         avustushaku-name (get-in avustushaku [:content :name lang])
-        mail-subject (str (get-in mail-titles [(keyword (str selvitys-type "-notification")) lang]) " " avustushaku-name)
+        mail-subject (str (get-in mail-titles [(keyword type) lang]) " " avustushaku-name)
         selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
-        log-type (str selvitys-type "_lahetys")
         presenter (if (nil? selected-presenter) (first roles) selected-presenter)]
     (log/info "Url would be: " url)
-    (tapahtumaloki/create-log-entry log-type (:id avustushaku) (:id hakemus) identity uuid to true)
+    (tapahtumaloki/create-log-entry type (:id avustushaku) (:id hakemus) identity uuid to true)
     (>!! email/mail-chan {:operation :send
                           :hakemus-id (:id hakemus)
                           :avustushaku-id (:id avustushaku)
-                          :type (keyword (str selvitys-type "-notification"))
+                          :type (keyword type)
                           :lang lang
                           :from (-> email/smtp-config :from lang)
                           :sender (-> email/smtp-config :sender)

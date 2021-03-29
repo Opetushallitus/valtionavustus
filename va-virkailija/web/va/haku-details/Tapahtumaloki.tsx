@@ -18,7 +18,7 @@ export type Lahetys = {
   user_oid: string
 }
 
-type LahetysType = "paatoksen_lahetys" | "valiselvitys_lahetys" | "loppuselvitys_lahetys"
+type LahetysType = "paatoksen_lahetys" | "valiselvitys-notification" | "loppuselvitys-notification"
 
 type TapahtumalokiProps = {
   lahetykset: Lahetys[]
@@ -27,8 +27,8 @@ type TapahtumalokiProps = {
 const typeTranslation = (type: LahetysType) => {
   return {
     paatoksen_lahetys: 'päätökset',
-    valiselvitys_lahetys: 'väliselvitykset',
-    loppuselvitys_lahetys: 'loppuselvitykset'
+    'valiselvitys-notification': 'väliselvitykset',
+    'loppuselvitys-notification': 'loppuselvitykset'
   }[type]
 }
 

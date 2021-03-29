@@ -79,7 +79,7 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
 
   const fetchTapahtumaloki = () => {
     setLahetykset([])
-    const tapahtumaloki = Bacon.fromPromise<any, Lahetys[]>(HttpUtil.get(`/api/avustushaku/${avustushaku.id}/tapahtumaloki/${selvitysType}_lahetys`))
+    const tapahtumaloki = Bacon.fromPromise<any, Lahetys[]>(HttpUtil.get(`/api/avustushaku/${avustushaku.id}/tapahtumaloki/${selvitysType}-notification`))
     tapahtumaloki.onValue(setLahetykset)
   }
 
