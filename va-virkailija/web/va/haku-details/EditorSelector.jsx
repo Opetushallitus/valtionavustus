@@ -67,11 +67,9 @@ export default class EditorSelector extends React.Component {
                                         avustushaku={avustushaku}
                                         controller={controller}
                                         koodistos={koodistos}
-                                        formDraft={valiselvitysFormDraft}
+                                        formDraft={subTab === 'valiselvitys' ? valiselvitysFormDraft : loppuselvitysFormDraft}
                                         translations={translations}
-                                        helpTexts={helpTexts}
-
-        />
+                                        helpTexts={helpTexts} />
         break
       default:
         throw new Error("Bad subTab selection '" + subTab + "'")
