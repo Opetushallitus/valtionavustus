@@ -14,5 +14,6 @@
             :delete-payments? true}
  :va-users {:use-cache? false }
  :tasmaytysraportti-create {:enabled? true}
+ :budjettimuutoshakemus {:enabled? true}
  :db {:server-name "va-postgres"
       :database-name "va-dev"}}

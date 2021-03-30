@@ -38,4 +38,5 @@
          :retry-max-time 60000}
  :selvitys-limit {:enabled? false}
  :email-api {:enabled? true}
+ :budjettimuutoshakemus {:enabled? false}
  :muutospaatosprosessi {:enabled? true}}

@@ -14,5 +14,6 @@
          :to-finance ["test@test.com"]}
  :payments {:enabled? true
             :delete-payments? true}
+ :budjettimuutoshakemus {:enabled? true}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}}
