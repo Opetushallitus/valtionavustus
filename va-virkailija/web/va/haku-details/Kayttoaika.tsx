@@ -76,7 +76,7 @@ const DateInput = (props: DateInputProps) => {
     <DateTimePicker
       name={id}
       onChange={onChangeHandlerFor(id)}
-      defaultValue={defaultValue}
+      value={defaultValue}
       containerClassName={getClassNames()}
       time={false} />
   )
