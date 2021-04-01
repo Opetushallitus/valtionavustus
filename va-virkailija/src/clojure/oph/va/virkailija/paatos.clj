@@ -259,6 +259,7 @@
                                                  :refuse-url       "REFUSE_URL_PLACEHOLDER"
                                                  :register-number  (:register_number first-hakemus)
                                                  :project-name     (:project_name first-hakemus)
+                                                 :budjettimuutoshakemus-enabled budjettimuutoshakemus-enabled
                                                  :muutospaatosprosessi-enabled muutospaatosprosessi-enabled
                                                  :modify-url       (when muutospaatosprosessi-enabled "MODIFY_URL_PLACEHOLDER")})
                                  :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)

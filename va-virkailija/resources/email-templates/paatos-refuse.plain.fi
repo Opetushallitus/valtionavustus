@@ -10,7 +10,7 @@ Jos päätätte olla ottamatta avustusta vastaan, voitte tehdä ilmoituksen täs
 {{#muutospaatosprosessi-enabled}}Allaolevasta linkistä voitte tehdä seuraavat muutokset:
 - Päivittää yhteyshenkilön tiedot
 - Hakea pidennystä avustuksen käyttöaikaan
-{{#budjettimuutoshakemus-enabled}}- Hakea muutosta hankkeen talouden käyttösuunnitelmaan, sisältöön ja toteutustapaan{{/budjettimuutoshakemus-enabled}}{{/muutospaatosprosessi-enabled}}
+{{#budjettimuutoshakemus-enabled}}- Hakea muutosta hankkeen talouden käyttösuunnitelmaan{{/budjettimuutoshakemus-enabled}}{{/muutospaatosprosessi-enabled}}
 {{& modify-url }}
 
 Ilmoitus tulee tehdä päätöksessä mainittuun päivämäärään mennessä.
