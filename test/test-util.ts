@@ -236,7 +236,24 @@ async function createBudjettimuutoshakemusEnabledHaku(page: Page, hakuName?: str
 }
 
 export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page, hakuName?: string, registerNumber?: string): Promise<number> {
-  const avustushakuName = hakuName || mkAvustushakuName()
+  return await createHakuFromEsimerkkihaku(page, {
+    name: hakuName,
+    registerNumber: registerNumber
+  })
+}
+
+interface HakuProps {
+  name?: string
+  registerNumber?: string
+  hakuaikaStart?: string
+  hakuaikaEnd?: string
+  hankkeenAlkamispaiva?: string
+  hankkeenPaattymispaiva?: string
+}
+
+export async function createHakuFromEsimerkkihaku(page: Page, props: HakuProps): Promise<number> {
+  const { name, registerNumber, hakuaikaStart, hakuaikaEnd, hankkeenAlkamispaiva, hankkeenPaattymispaiva } = props
+  const avustushakuName = name || mkAvustushakuName()
   console.log(`Avustushaku name for test: ${avustushakuName}`)
 
   await copyEsimerkkihaku(page)
@@ -246,14 +263,14 @@ export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page
 
   await clearAndType(page, "#register-number", registerNumber || "230/2015")
   await clearAndType(page, "#haku-name-fi", avustushakuName)
-  await clearAndType(page, "#hakuaika-start", "1.1.1970 0.00")
+  await clearAndType(page, "#hakuaika-start", hakuaikaStart || "1.1.1970 0.00")
 
   const nextYear = (new Date()).getFullYear() + 1
-  await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`)
+  await clearAndType(page, "#hakuaika-end", hakuaikaEnd || `31.12.${nextYear} 23.59`)
 
   await clickElement(page, '[data-test-id="päätös-välilehti"]')
-  await setCalendarDateForSelector(page, '20.04.1969', '[data-test-id="hankkeen-alkamispaiva"] div.datepicker input')
-  await setCalendarDateForSelector(page, '20.04.4200', '[data-test-id="hankkeen-paattymispaiva"] div.datepicker input')
+  await setCalendarDateForSelector(page, hankkeenAlkamispaiva || '20.04.1969', '[data-test-id="hankkeen-alkamispaiva"] div.datepicker input')
+  await setCalendarDateForSelector(page, hankkeenPaattymispaiva || '20.04.4200', '[data-test-id="hankkeen-paattymispaiva"] div.datepicker input')
   await clickElementWithText(page, "span", "Haun tiedot")
 
   await waitForSave(page)

@@ -39,7 +39,9 @@ import {
   validateMuutoshakemusPaatosCommonValues,
   validateMuutoshakemusValues,
   waitUntilMinEmails,
-  MuutoshakemusValues, Email,
+  MuutoshakemusValues,
+  Email,
+  createHakuFromEsimerkkihaku,
 } from './test-util'
 
 jest.setTimeout(400_000)
@@ -664,6 +666,46 @@ describe('Muutospäätösprosessi', () => {
 
         })
 
+      })
+    })
+  })
+
+  describe('When virkailija creates avustushaku #1', () => {
+    const name = `Hakuna matata - haku ${randomString()}`
+    const hankkeenAlkamispaiva = '20.04.1969'
+    const hankkeenPaattymispaiva = '29.12.1969'
+
+    beforeAll(async () => {
+      await createHakuFromEsimerkkihaku(page, {
+        name,
+        hankkeenAlkamispaiva,
+        hankkeenPaattymispaiva,
+      })
+    })
+
+    describe('And creates avustushaku #2', () => {
+      beforeAll(async () => {
+        await createHakuFromEsimerkkihaku(page, {
+          name: `Makuulla hatata - haku ${randomString()}`
+        })
+      })
+
+      describe('And navigates from avustushaku #2 to avustushaku #1 päätös tab', () => {
+        beforeAll(async () => {
+          await clickElementWithText(page, 'td', name)
+          await clickElement(page, '[data-test-id="päätös-välilehti"]')
+          await page.waitForSelector('[data-test-id="hankkeen-alkamispaiva"] div.datepicker input', {visible: true, timeout: 5 * 1000})
+        })
+
+        it('Correct avustushaku start date is displayed', async () => {
+          const val = await getElementAttribute(page, '[data-test-id="hankkeen-alkamispaiva"] div.datepicker input', 'value')
+          expect(val).toBe(hankkeenAlkamispaiva)
+        })
+
+        it('Correct avustushaku end date is displayed', async () => {
+          const val = await getElementAttribute(page, '[data-test-id="hankkeen-paattymispaiva"] div.datepicker input', 'value')
+          expect(val).toBe(hankkeenPaattymispaiva)
+        })
       })
     })
   })
