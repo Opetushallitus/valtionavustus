@@ -31,6 +31,7 @@ import {
   randomString,
   ratkaiseAvustushaku,
   ratkaiseMuutoshakemusEnabledAvustushaku,
+  ratkaiseBudjettimuutoshakemusEnabledAvustushaku,
   selectVakioperustelu,
   setCalendarDate,
   setPageErrorConsoleLogger,
@@ -128,7 +129,7 @@ describe('Muutospäätösprosessi', () => {
     expect(acceptedReason).toEqual(perustelu)
   }
 
-  describe('When haku has been created and hakemus has been submitted, but fields cannot be normalized', () => {
+  describe('When haku has been published and hakemus has been submitted, but fields cannot be normalized', () => {
     let emails: Email[]
     beforeAll(async () => {
       const { avustushakuID, hakemusID } = await ratkaiseAvustushaku(page)
@@ -142,7 +143,7 @@ describe('Muutospäätösprosessi', () => {
     })
   })
 
-  describe('When haku has been published and hakemus has been submitted', () => {
+  describe('When muutoshakemus enabled haku has been published, a hakemus has been submitted, and päätös has been sent', () => {
     const haku = createRandomHakuValues()
     let avustushakuID: number
     let hakemusID: number
@@ -151,6 +152,17 @@ describe('Muutospäätösprosessi', () => {
       const hakemusIdAvustushakuId = await ratkaiseMuutoshakemusEnabledAvustushaku(page, haku, answers)
       avustushakuID = hakemusIdAvustushakuId.avustushakuID
       hakemusID = hakemusIdAvustushakuId.hakemusID
+    })
+
+    it('hakija gets the correct email content', async () => {
+      const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
+      emails.forEach(email => {
+        const emailContent = email.formatted
+        expect(emailContent).toContain(`${HAKIJA_URL}/muutoshakemus`)
+        expect(emailContent).toContain('- Päivittää yhteyshenkilön tiedot')
+        expect(emailContent).toContain('- Hakea pidennystä avustuksen käyttöaikaan')
+        expect(emailContent).not.toContain('- Hakea muutosta hankkeen talouden käyttösuunnitelmaan')
+      })
     })
 
     it('virkailija opens muutoshakemus form when editing the hakemus', async () => {
@@ -656,7 +668,7 @@ describe('Muutospäätösprosessi', () => {
     })
   })
 
-  describe("When another haku has been published and hakemus has been submitted", () => {
+  describe("When budjettimuutoshakemus enabled haku has been published, a hakemus has been submitted, and päätös has been sent", () => {
     let linkToMuutoshakemus: string
     let avustushakuID: number
     let hakemusID: number
@@ -666,7 +678,7 @@ describe('Muutospäätösprosessi', () => {
     const haku = createRandomHakuValues()
 
     beforeAll(async () => {
-      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, haku, answers)
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page, haku, answers)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
       linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
@@ -675,6 +687,17 @@ describe('Muutospäätösprosessi', () => {
     it('hakija gets an email with a link to muutoshakemus', async () => {
       const userKey = await getUserKey(avustushakuID, hakemusID)
       expect(linkToMuutoshakemus).toContain(`${HAKIJA_URL}/muutoshakemus?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`)
+    })
+
+    it('hakija gets the correct email content', async () => {
+      const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
+      emails.forEach(email => {
+        const emailContent = email.formatted
+        expect(emailContent).toContain(`${HAKIJA_URL}/muutoshakemus`)
+        expect(emailContent).toContain('- Päivittää yhteyshenkilön tiedot')
+        expect(emailContent).toContain('- Hakea pidennystä avustuksen käyttöaikaan')
+        expect(emailContent).toContain('- Hakea muutosta hankkeen talouden käyttösuunnitelmaan')
+      })
     })
 
     describe('And user navigates to muutoshakemus page', () => {

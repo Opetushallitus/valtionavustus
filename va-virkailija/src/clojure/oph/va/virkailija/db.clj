@@ -50,10 +50,13 @@
     (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
     (first hakemukset)))
 
+(defn has-multiple-menoluokka-rows [hakemus-id]
+  (let [result (first (query "SELECT COUNT(id) FROM menoluokka_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
+    (> (:count result) 1)))
+
 (defn has-normalized-hakemus [hakemus-id]
-  (with-tx (fn [tx]
-    (let [result (first (query tx "SELECT COUNT(id) FROM normalized_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
-      (> (:count result) 0)))))
+  (let [result (first (query "SELECT COUNT(id) FROM normalized_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
+    (> (:count result) 0)))
 
 (defn get-normalized-hakemus-contact-email [hakemus-id]
   (:contact-email (get-normalized-hakemus hakemus-id)))
@@ -436,3 +439,41 @@
       (first
        (exec hakija-queries/create-application-token
              {:application_id application-id :token (generate-hash-id)})))))
+
+(defn- budget->menoluokka [budget-elem]
+  {:type (:id budget-elem)
+   :translation_fi (:fi (:label budget-elem))
+   :translation_se (:se (:label budget-elem))})
+
+(defn- form->menoluokka [form]
+  (let [content         (:content form)
+        plan            (if content (first (filter #(when (= (:id %) "financing-plan") %) content)))
+        budget          (if (:children plan) (first (filter #(when (= (:id %) "budget") %) (:children plan))))
+        project-budget  (if (:children budget) (first (filter #(when (= (:id %) "project-budget") %) (:children budget))))
+        menoluokka-rows (if (:children project-budget) (map budget->menoluokka (:children project-budget)))]
+    menoluokka-rows))
+
+(defn- upsert-menoluokka [tx application-id menoluokka]
+  (let [id-rows (query tx
+              "INSERT INTO virkailija.menoluokka (avustushaku_id, type, translation_fi, translation_se)
+              VALUES (?, ?, ?, ?)
+              ON CONFLICT (avustushaku_id, type) DO UPDATE SET
+                translation_fi = EXCLUDED.translation_fi,
+                translation_se = EXCLUDED.translation_se
+              RETURNING id"
+              [application-id (:type menoluokka) (:translation_fi menoluokka) (:translation_se menoluokka)])]
+    (:id (first id-rows))))
+
+(defn- parameter-list [list]
+  (clojure.string/join ", " (take (count list) (repeat "?"))))
+
+(defn- remove-old-menoluokka-rows [tx application-id current-menoluokka-ids]
+  (execute! tx
+    (str "DELETE FROM virkailija.menoluokka WHERE avustushaku_id = ? AND id NOT IN (" (parameter-list current-menoluokka-ids) ")")
+    (conj current-menoluokka-ids application-id)))
+
+(defn upsert-menoluokka-rows [application-id form]
+  (if-let [menoluokka-rows (form->menoluokka form)]
+    (with-tx (fn [tx]
+      (let [current-menoluokka-ids (map (partial upsert-menoluokka tx application-id) menoluokka-rows)]
+        (remove-old-menoluokka-rows tx application-id current-menoluokka-ids))))))

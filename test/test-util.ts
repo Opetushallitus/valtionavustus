@@ -25,7 +25,8 @@ export const VIRKAILIJA_URL = `http://${VIRKAILIJA_HOSTNAME}:${VIRKAILIJA_PORT}`
 export const HAKIJA_URL = `http://${HAKIJA_HOSTNAME}:${HAKIJA_PORT}`
 
 export const dummyPdfPath = path.join(__dirname, 'dummy.pdf')
-const hakulomakeJson = fs.readFileSync(path.join(__dirname, 'prod.hakulomake.json'), 'utf8')
+const muutoshakemusEnabledHakuLomakeJson = fs.readFileSync(path.join(__dirname, 'prod.hakulomake.json'), 'utf8')
+const budjettimuutoshakemusEnabledLomakeJson = fs.readFileSync(path.join(__dirname, 'budjettimuutos.hakulomake.json'), 'utf8')
 export const standardizedHakulomakeJson = fs.readFileSync(path.join(__dirname, 'vakioitu-hakulomake.json'), 'utf8')
 
 export const TEST_Y_TUNNUS = "2050864-5"
@@ -218,13 +219,20 @@ export async function navigateToPaatos(page: Page, avustushakuID: number, hakemu
   }
 }
 
-export async function createMuutoshakemusEnabledEsimerkkihakuAndReturnId(page: Page, hakuName?: string, registerNumber?: string): Promise<{ avustushakuID: number }> {
+async function createHakuWithLomakeJson(page: Page, lomakeJson: string, hakuName?: string, registerNumber?: string): Promise<{ avustushakuID: number }> {
   const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, hakuName, registerNumber)
-
   await clickElementWithText(page, "span", "Hakulomake")
-  await clearAndSet(page, ".form-json-editor textarea", hakulomakeJson)
+  await clearAndSet(page, ".form-json-editor textarea", lomakeJson)
   await clickFormSaveAndWait(page, avustushakuID)
   return { avustushakuID }
+}
+
+async function createMuutoshakemusEnabledHaku(page: Page, hakuName?: string, registerNumber?: string): Promise<{ avustushakuID: number }> {
+  return await createHakuWithLomakeJson(page, muutoshakemusEnabledHakuLomakeJson, hakuName, registerNumber)
+}
+
+async function createBudjettimuutoshakemusEnabledHaku(page: Page, hakuName?: string, registerNumber?: string): Promise<{ avustushakuID: number }> {
+  return await createHakuWithLomakeJson(page, budjettimuutoshakemusEnabledLomakeJson, hakuName, registerNumber)
 }
 
 export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page, hakuName?: string, registerNumber?: string): Promise<number> {
@@ -313,48 +321,90 @@ export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustus
 
   await clearAndType(page, "#finnish-business-id", TEST_Y_TUNNUS)
   await clickElement(page, "input.get-business-id")
-
   await clearAndType(page, "#applicant-name", answers.contactPersonName)
   await clearAndType(page, "[id='textField-0']", answers.contactPersonPhoneNumber)
-
   await clearAndType(page, "[id='signatories-fieldset-1.name']", "Erkki Esimerkki")
   await clearAndType(page, "[id='signatories-fieldset-1.email']", "erkki.esimerkki@example.com")
-
   await clickElementWithText(page, "label", "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko")
-
   await clickElement(page, "[id='koodistoField-1_input']")
   await clickElementWithText(page, "li", "Kainuu")
-
   await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")
   await clearAndType(page, "#bank-bic", "OKOYFIHH")
-
   await clearAndType(page, "#textField-2", "2")
   await clearAndType(page, "#textField-1", "20")
-
   await clearAndType(page, "#project-name", answers.projectName)
-
   await clickElement(page, "[for='language.radio.0']")
-
   await clickElement(page, "[for='checkboxButton-0.checkbox.0']")
-
   await clickElementWithText(page, "label", "Opetuksen lisääminen")
-
   await clearAndType(page, "[id='project-description.project-description-1.goal']", "Tarvitsemme kuutio tonneittain rahaa jotta voimme kylpeä siinä.")
-
   await clearAndType(page, "[id='project-description.project-description-1.activity']", "Kylvemme rahassa ja rahoitamme rahapuita.")
-
   await clearAndType(page, "[id='project-description.project-description-1.result']", "Koko budjetti käytetään ja lisää aiotaan hakea.")
-
   await clearAndType(page, "[id='project-effectiveness']", "Hanke vaikuttaa ylempään ja keskikorkeaan johtoportaaseen.")
-
   await clearAndType(page, "[id='project-begin']", "13.03.1992")
   await clearAndType(page, "[id='project-end']", "13.03.2032")
-
   await clickElementWithText(page, "label", "Kyllä")
-
   await clearAndType(page, "[id='personnel-costs-row.description']", "Pieninä seteleinä kiitos.")
   await clearAndType(page, "[id='personnel-costs-row.amount']", "69420666")
+  await clearAndType(page, "[id='self-financing-amount']", "1")
 
+  if (beforeSubmitFn) {
+    await beforeSubmitFn()
+  }
+
+  await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).disabled === false)
+  await clickElement(page, "#topbar #form-controls button#submit")
+  await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Hakemus lähetetty")
+  const userKey = await expectQueryParameter(page, "hakemus")
+  return { userKey }
+}
+
+export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void): Promise<{ userKey: string }> {
+  await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
+
+  await page.waitForSelector('#haku-not-open', { hidden: true, timeout: 500 })
+  await clearAndType(page, "#primary-email", answers.contactPersonEmail)
+  await clickElement(page, "#submit:not([disabled])")
+
+  await navigateToNewHakemusPage(page, avustushakuID)
+
+  await clearAndType(page, "#finnish-business-id", TEST_Y_TUNNUS)
+  await clickElement(page, "input.get-business-id")
+  await clearAndType(page, "#applicant-name", answers.contactPersonName)
+  await clearAndType(page, "[id='textField-0']", answers.contactPersonPhoneNumber)
+  await clearAndType(page, "[id='signatories-fieldset-1.name']", "Erkki Esimerkki")
+  await clearAndType(page, "[id='signatories-fieldset-1.email']", "erkki.esimerkki@example.com")
+  await clickElementWithText(page, "label", "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko")
+  await clickElement(page, "[id='koodistoField-1_input']")
+  await clickElementWithText(page, "li", "Kainuu")
+  await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")
+  await clearAndType(page, "#bank-bic", "OKOYFIHH")
+  await clearAndType(page, "#textField-2", "2")
+  await clearAndType(page, "#textField-1", "20")
+  await clearAndType(page, "#project-name", answers.projectName)
+  await clickElement(page, "[for='language.radio.0']")
+  await clickElement(page, "[for='checkboxButton-0.checkbox.0']")
+  await clickElementWithText(page, "label", "Opetuksen lisääminen")
+  await clearAndType(page, "[id='project-description.project-description-1.goal']", "Jonain päivänä teemme maailman suurimman aallon.")
+  await clearAndType(page, "[id='project-description.project-description-1.activity']", "Teemme aaltoja joka dailyssa aina kun joku on saanut tehtyä edes jotain.")
+  await clearAndType(page, "[id='project-description.project-description-1.result']", "Hankkeeseen osallistuneiden hartiat vetreytyvät suunnattomasti.")
+  await clearAndType(page, "[id='project-effectiveness']", "Käsienheiluttelu kasvaa suhteessa muuhun tekemiseen huomattavasti")
+  await clearAndType(page, "[id='project-begin']", "13.03.1992")
+  await clearAndType(page, "[id='project-end']", "13.03.2032")
+  await clickElementWithText(page, "label", "Kyllä")
+  await clearAndType(page, "[id='personnel-costs-row.description']", "Tarvitsemme ihmisiä aaltoihin.")
+  await clearAndType(page, "[id='personnel-costs-row.amount']", "200000")
+  await clearAndType(page, "[id='material-costs-row.description']", "Jari Sarasvuon aalto-VHS-kasetteja.")
+  await clearAndType(page, "[id='material-costs-row.amount']", "3000")
+  await clearAndType(page, "[id='equipment-costs-row.description']", "Hankimme aaltokoneen toimistolle.")
+  await clearAndType(page, "[id='equipment-costs-row.amount']", "10000")
+  await clearAndType(page, "[id='service-purchase-costs-row.description']", "Ostamme alihankkijoita jatkamaan aaltojamme.")
+  await clearAndType(page, "[id='service-purchase-costs-row.amount']", "100")
+  await clearAndType(page, "[id='rent-costs-row.description']", "Vuokraamme Aalto-yliopistolta seminaaritiloja.")
+  await clearAndType(page, "[id='rent-costs-row.amount']", "161616")
+  await clearAndType(page, "[id='steamship-costs-row.description']", "Taksikyydit Otaniemeen.")
+  await clearAndType(page, "[id='steamship-costs-row.amount']", "100")
+  await clearAndType(page, "[id='other-costs-row.description']", "Vähän ylimääräistä pahan päivän varalle.")
+  await clearAndType(page, "[id='other-costs-row.amount']", "10000000")
   await clearAndType(page, "[id='self-financing-amount']", "1")
 
   if (beforeSubmitFn) {
@@ -915,7 +965,7 @@ export interface Haku {
 }
 
 export async function publishAndFillMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers): Promise<{ avustushakuID: number, userKey: string }> {
-  const { avustushakuID } = await createMuutoshakemusEnabledEsimerkkihakuAndReturnId(page, haku.avustushakuName, haku.registerNumber)
+  const { avustushakuID } = await createMuutoshakemusEnabledHaku(page, haku.avustushakuName, haku.registerNumber)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
   const { userKey } = await fillAndSendMuutoshakemusEnabledHakemus(page, avustushakuID, answers)
@@ -923,7 +973,18 @@ export async function publishAndFillMuutoshakemusEnabledAvustushaku(page: Page, 
 }
 
 export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers) {
-  const { avustushakuID } = await publishAndFillMuutoshakemusEnabledAvustushaku(page, haku, answers)
+  const { avustushakuID } = await createMuutoshakemusEnabledHaku(page, haku.avustushakuName, haku.registerNumber)
+  await clickElementWithText(page, "span", "Haun tiedot")
+  await publishAvustushaku(page)
+  await fillAndSendMuutoshakemusEnabledHakemus(page, avustushakuID, answers)
+  return await acceptAvustushaku(page, avustushakuID)
+}
+
+export async function ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers) {
+  const { avustushakuID } = await createBudjettimuutoshakemusEnabledHaku(page, haku.avustushakuName, haku.registerNumber)
+  await clickElementWithText(page, "span", "Haun tiedot")
+  await publishAvustushaku(page)
+  await fillAndSendBudjettimuutoshakemusEnabledHakemus(page, avustushakuID, answers)
   return await acceptAvustushaku(page, avustushakuID)
 }
 
@@ -968,4 +1029,3 @@ export async function acceptAvustushaku(page: Page, avustushakuID: number) {
   expect(logEntryCount).toEqual(1)
   return { avustushakuID, hakemusID}
 }
-

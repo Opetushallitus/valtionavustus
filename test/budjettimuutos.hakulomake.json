@@ -865,12 +865,310 @@
                     "incrementsTotal": true
                   },
                   "label": {
-                    "fi": "Henkilöstömenot 1",
-                    "sv": "Personalkostnader 1"
+                    "fi": "Henkilöstömenot",
+                    "sv": "Personalkostnader"
                   },
                   "helpText": {
-                    "fi": "Hyväksyttäviä kustannuksia ovat kohtuulliset palkkakustannukset, jotka aiheutuvat suoraan hankkeesta sekä palkan maksusta aiheutuvat erilaiset lakisääteiset henkilöstösivukulut. Osa-aikaisesti hankkeelle työskentelevien henkilöiden on pidettävä tuntiseurantaa. Selite-kohdassa kerrotaan, kuinka monta henkilöä hankkeen piirissä työskentelee koko- ja osa- aikaisesti.",
-                    "sv": "Godtagbara kostnader är skäliga lönekostnader som direkt ansluter sig till genomförandet av projektet och lagstadgade personbikostnader för utbetalning av lönen. Över de personer som arbetar inom projektet på deltid ska föras arbetstidsuppföljning. I förklaringspunkten ska anges hur många personer som arbetar inom projektet på heltid och på deltid."
+                    "fi": "Hyväksyttäviä kustannuksia ovat kohtuulliset palkkakustannukset, jotka aiheutuvat suoraan hankkeesta sekä palkan maksusta aiheutuvat erilaiset lakisääteiset henkilöstösivukulut. Osa-aikaisesti työskentelevien henkilöiden työajan käytöstä on tehtävä kokonaistyöajanseuranta ja päiväkohtainen kokonaistyöajanseuranta. Selite-kohdassa kerrotaan, kuinka monta henkilöä hankkeen piirissä työskentelee koko- ja osa- aikaisesti.",
+                    "sv": "Godtagbara kostnader är skäliga lönekostnader som direkt ansluter sig till genomförandet av projektet och lagstadgade personbikostnader för utbetalning av lönen. Över de personer som arbetar inom projektet på deltid ska föras total arbetstidsuppföljning och daglig total arbetstidsuppföljning. I förklaringspunkten ska anges hur många personer som arbetar inom projektet på heltid och på deltid."
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "material-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "material-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "material-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Aineet, tarvikkeet ja tavarat",
+                    "sv": "Material, utrustning och varor"
+                  },
+                  "helpText": {
+                    "fi": "Menoluokkaan kuuluvat kohderyhmälle järjestettyyn toimintaan liittyvät opetus- ja koulutusmateriaalit sekä muut materiaalikustannukset, elintarvikkeet (pl. kokoustarjoilut), kalusteet ja toimistotarvikkeet sekä muut vastaavat fyysiset tavarat ja tarvikkeet. Myös pienet TVT-tarvikkeet, joita ei lueta laitteiksi, kirjataan tähän menoluokkaan.",
+                    "sv": "Till utgiftsposten hör undervisnings- och utbildningsmaterial med anknytning till verksamheten som ordnats för målgruppen samt övriga materialkostnader, livsmedel (med undantag av mötesservering), möbler och kontorsmaterial samt övriga motsvarande fysiska varor och material. Även mindre tekniska redskap, som inte räknas som apparatur, ska anges i denna utgiftspost."
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "equipment-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "equipment-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "equipment-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Laitehankinnat",
+                    "sv": "Anskaffning av utrustning"
+                  },
+                  "helpText": {
+                    "fi": "Laitehankintoihin kirjataan TVT-laitteet, kuten tietokoneet, tabletit, matkapuhelimet, näytöt, televisiot, älytaulut, 3D-tulostimet, virtuaalilasit, tulostimet, verkkolaitteet ja muut vastaavat. Ohjelmistojen lisenssimaksut kirjataan kohtaa Muut kulut ja TVT-pientarvikkeet kohtaan Aineet, tavarat ja tarvikkeet. Mikäli laitteet hankitaan leasing-sopimuksella, hyväksytään hankkeen käytössä olevien laitteiden leasing-menot hankkeen keston ajalta. Osassa valtionavustuksia laitehankintojen enimmäisosuutta kokonaiskustannuksista on rajoitettu. Mahdolliset rajoitukset kuvataan hakudokumenteissa.",
+                    "sv": "Som anskaffning av apparatur bokförs digitala verktyg, såsom datorer, pekplattor, mobiltelefoner, skärmar, televisioner, interaktiva skrivtavlor, 3D-skrivare, virtuella glasögon, skrivare, adaptrar och övrig motsvarande utrustning. Licensavgifter för program ska anges under Övriga kostnader och mindre tekniska redskap ska anges under Material, utrustning och varor. Om apparatur skaffas med leasing-avtal ska leasing-utgifterna för sådan teknisk utrustning som används inom projektet godkännas för hela den tiden projektet pågår. För en del statsunderstöd finns en begränsning för hur stor andel anskaffningen av apparatur får utgöra av de totala kostnaderna. Eventuella begränsningar beskrivs i ansökningsdokumenten."
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "service-purchase-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "service-purchase-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "service-purchase-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Palvelut",
+                    "sv": "Tjänster"
+                  },
+                  "helpText": {
+                    "fi": "Ulkopuolisilta palveluntuottajilta ostettavat palvelut. Hankkeen toteuttamiseen liittyvien asiantuntija- ja koulutuspalvelujen menot sekä muut maksut välittömästi hankkeen toteuttamiseen liittyvistä ostetuista palveluista (esim. mainos- ja markkinointikulut). Tähän menoluokkaan kuuluvat myös kokouspalvelut, mikäli ne ostetaan pakettina (sis. kokouksen tilavuokrat, tarjoilut ja muut kokouspalvelut).",
+                    "sv": "Tjänster som köps av utomstående serviceproducenter. Utgifter för sakkunnig- och utbildningstjänster som behövts för att  genomföra projektet, samt andra kostnader för köpta tjänster som direkt anknyter till genomförandet av projektet (t.ex. reklam- och marknadsföringskostnader). Till den här utgiftsposten hör också mötestjänster ifall de skaffas som en helhet (som innehåller hyror för mötesrum, servering och andra mötestjänster)."
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "rent-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "rent-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "rent-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Vuokrat",
+                    "sv": "Hyror"
+                  },
+                  "helpText": {
+                    "fi": "Tilavuokrakulut aiheuttamisperiaatteen mukaisesti; esimerkiksi koulutussuunnittelijan työtilan vuokra käytetyn työajan suhteessa. Selite-kohdassa kerrotaan, mistä vuokrakuluista on kyse. Jos kokoukselle on vuokrattu pelkästään kokoustila ilman erillistä kokouspakettia, ilmoitetaan vuokramenot tässä menoluokassa.",
+                    "sv": "Hyreskostnader för lokaler i enlighet med orsaksprinipcen; till exempel hyra för arbetsrum för utbildningsplanerare, i förhållande till arbetstiden. I förklaringspunkten ska anges vilka hyreskostnader det är frågan om. Om man för ett möte enbart har hyrt ett mötesrum utan övriga mötestjänster, ska hyresutgifterna anges under denna utgiftspost."
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "steamship-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "steamship-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "steamship-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Matkamenot",
+                    "sv": "Resekostnader"
+                  },
+                  "helpText": {
+                    "fi": "Henkilöstön kohtuulliset matka- ja majoituskustannukset, auton vuokraaminen, polttoainekustannukset, kilometrikorvaukset sekä päivärahat valtion yleisen virka- ja työehtosopimuksen matkustusliitteen mukaisesti. Tehtyjen matkojen on liityttävä oleellisesti hankkeen toteutukseen. Selite-kohdassa kerrotaan, mistä matkakustannukset syntyvät (esim. KV-hankkeiden ulkomaan matkat, kokousmatkat tai koulutusmatkat.) Mikäli avustusta ei voida käyttää esimerkiksi ulkomaille suuntautuviin matkoihin, on tämä kuvattu avoimen haun osalta hakudokumenteissa ja hyväksytyn hankkeen osalta avustuspäätöksessä.",
+                    "sv": "Skäliga rese- och inkvarteringskostnader för personalen, hyra för bil, bränslekostnader, kilometerersättning och dagpenning enligt resebilagan till statens tjänste- och arbetskollektivavtal. De resor som gjorts måste på ett väsentligt sätt ansluta sig till projektets genomförande. I förklaringspunkten ska anges hur resekostnaderna har uppkommit (t.ex. utlandsresor inom internationella projekt, resor i anslutning till möten eller utbildningar). Om understödet inte till exempel kan användas för resor utomlands, anges detta i ansökningsdokumenten i samband med att ansökan är öppen samt i understödsbeslutet för ett godkänt projekt."
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "other-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "other-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "other-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Muut menot",
+                    "sv": "Övriga kostnader"
+                  },
+                  "helpText": {
+                    "fi": "Muut kulut -kohtaan kirjataan kaikki ne kustannukset, joita ei kirjata muille tililuokille. Muihin kuluihin kuuluvat puhelinliittymäkulut, ohjelmistokulut ja lisenssimaksut sekä muut vastaavat käyttömaksut.",
+                    "sv": "Under punkten Övriga kostnader anges alla sådana kostnader som inte ska anges under de övriga bokföringskategorierna. Till övriga utgifter hör kostnader för telefonabonnemang, kostnader för program och licenser samt övriga motsvarande driftskostnader."
                   }
                 }
               ],

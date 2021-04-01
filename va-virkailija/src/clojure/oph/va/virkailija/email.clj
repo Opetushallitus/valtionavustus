@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.email
   (:require [clojure.core.async :refer [<! >!! go chan]]
-            [oph.soresu.common.db :refer [with-tx query]]
+            [oph.soresu.common.db :refer [query]]
             [clojure.java.jdbc :as jdbc]
             [oph.common.email :as email]
             [oph.soresu.common.config :refer [config]]
@@ -164,22 +164,26 @@
 
                            (partial render (get-in mail-templates [:paatos lang])))))
 
-(defn has-normalized-hakemus [hakemus-id]
-  (with-tx (fn [tx]
-    (let [result (first (query tx "SELECT COUNT(id) FROM normalized_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
-      (> (:count result) 0)))))
+(defn- has-multiple-menoluokka-rows [hakemus-id]
+  (let [result (first (query "SELECT COUNT(id) FROM menoluokka_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
+    (> (:count result) 1)))
+
+(defn- has-normalized-hakemus [hakemus-id]
+  (let [result (first (query "SELECT COUNT(id) FROM normalized_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
+    (> (:count result) 0)))
 
 (defn send-paatos-refuse! [to avustushaku hakemus reply-to token]
   (let [lang-str (:language hakemus)
         lang (keyword lang-str)
         url (paatos-url (:id avustushaku) (:user_key hakemus) (keyword lang-str))
-        paatos-refuse-url
-        (email/refuse-url (:id avustushaku) (:user_key hakemus) lang token)
+        paatos-refuse-url (email/refuse-url (:id avustushaku) (:user_key hakemus) lang token)
+        budjettimuutoshakemus-enabled? (and
+                                        (get-in config [:budjettimuutoshakemus :enabled?])
+                                        (has-multiple-menoluokka-rows (:id hakemus)))
         muutospaatosprosessi-enabled? (and
                                        (get-in config [:muutospaatosprosessi :enabled?])
                                        (has-normalized-hakemus (:id hakemus)))
-        paatos-modify-url
-        (email/modify-url (:id avustushaku) (:user_key hakemus) lang token muutospaatosprosessi-enabled?)
+        paatos-modify-url (email/modify-url (:id avustushaku) (:user_key hakemus) lang token muutospaatosprosessi-enabled?)
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])
         msg {
@@ -197,6 +201,7 @@
              :modify-url paatos-modify-url
              :register-number (:register_number hakemus)
              :project-name (:project_name hakemus)
+             :budjettimuutoshakemus-enabled budjettimuutoshakemus-enabled?
              :muutospaatosprosessi-enabled muutospaatosprosessi-enabled?}
         format-plaintext-message (partial render (get-in mail-templates [:paatos-refuse lang]))
         ]

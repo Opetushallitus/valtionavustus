@@ -202,7 +202,8 @@
                                                        (:register_number hakemus)
                                                        answers
                                                        budget-totals)
-              normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers)]
+              normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers)
+              budgets (va-db/store-menoluokka-hakemus-rows haku-id (:id hakemus) answers)]
           (hakemus-ok-response updated-hakemus updated-submission validation))
         (hakemus-conflict-response hakemus))
       (bad-request! security-validation))))
@@ -280,7 +281,8 @@
                                                       (:register_number hakemus)
                                                       answers
                                                       budget-totals)
-              normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers)]
+              normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers)
+              budgets (va-db/store-menoluokka-hakemus-rows haku-id (:id hakemus) answers)]
           (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku)
           (hakemus-ok-response submitted-hakemus saved-submission validation))
         (hakemus-conflict-response hakemus))
