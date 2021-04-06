@@ -14,9 +14,7 @@ type AvustuksenKayttoajanPidennysProps = {
 export const AvustuksenKayttoajanPidennys = ({ f, projectEnd }: AvustuksenKayttoajanPidennysProps) => {
   const { t } = useTranslations()
   return (
-    <section className="muutoshakemus__section" id="section-muutosten-hakeminen-checkbox">
-      <h1 className="muutoshakemus__title">{t.applicationEdit.title}</h1>
-      <div className="muutoshakemus__form">
+    <>
         <div className="muutoshakemus__section-checkbox-row">
           <input
             name="haenKayttoajanPidennysta"
@@ -31,7 +29,6 @@ export const AvustuksenKayttoajanPidennys = ({ f, projectEnd }: AvustuksenKaytto
           </label>
         </div>
         {f.values.haenKayttoajanPidennysta && <AvustuksenKayttoaikaInput f={f} projectEnd={projectEnd} />}
-      </div>
-    </section>
+    </>
   )
 }

@@ -7,6 +7,7 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusValues } from 'va-common/web/va/MuutoshakemusValues'
 
 import {AvustuksenKayttoajanPidennys} from './components/jatkoaika/AvustuksenKayttoajanPidennys'
+import { MuutosTaloudenKayttosuunnitelmaan } from './components/talous/MuutosTaloudenKayttosuunnitelmaan'
 import {ContactPerson} from './components/contact-person/ContactPerson'
 import {TopBar} from './components/TopBar'
 import {Muutoshakemus, MuutoshakemusProps} from '../../../../va-common/web/va/types/muutoshakemus'
@@ -16,6 +17,7 @@ import OriginalHakemusIframe from './OriginalHakemusIframe'
 import ErrorBoundary from './ErrorBoundary'
 import { createFormikHook } from './formik'
 import { getProjectEndDate, getProjectEndMoment } from '../../../../va-common/web/va/Muutoshakemus'
+import {useTranslations} from './TranslationContext'
 
 import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
@@ -64,6 +66,7 @@ export const MuutoshakemusComponent = () => {
           email: hakemus["contact-email"],
           phone: hakemus["contact-phone"],
           haenKayttoajanPidennysta: false,
+          haenMuutostaTaloudenKayttosuunnitelmaan: false,
           haettuKayttoajanPaattymispaiva: currentProjectEnd.isValid() ? currentProjectEnd.toDate() : new Date(),
           kayttoajanPidennysPerustelut: ''
         }
@@ -105,6 +108,7 @@ export const MuutoshakemusComponent = () => {
     )
   }
 
+  const { t } = useTranslations()
   return (
     state.status === 'LOADING'
       ? <p>{translations[lang].loading}</p>
@@ -119,7 +123,13 @@ export const MuutoshakemusComponent = () => {
                   registerNumber={state.avustushaku["register-number"]}
                   f={f}
                 />
-                {!existingNewMuutoshakemus && <AvustuksenKayttoajanPidennys f={f} projectEnd={getProjectEndDate(state.avustushaku, state.muutoshakemukset)} />}
+              <section className="muutoshakemus__section" id="section-muutosten-hakeminen-talouden-kayttosuunnitelmaan-checkbox">
+                <h1 className="muutoshakemus__title">{t.applicationEdit.title}</h1>
+                <div className="muutoshakemus__form">
+                  {!existingNewMuutoshakemus && <AvustuksenKayttoajanPidennys f={f} projectEnd={getProjectEndDate(state.avustushaku, state.muutoshakemukset)} />}
+                  {state.environment?.budjettimuutoshakemus["enabled?"] && !existingNewMuutoshakemus && <MuutosTaloudenKayttosuunnitelmaan f={f} talousarvio={state.hakemus?.talousarvio || []} />}
+                </div>
+              </section>
                 {state.muutoshakemukset.map(existingMuutoshakemus)}
                 <OriginalHakemusIframe avustushakuId={avustushakuId} userKey={userKey} />
               </ErrorBoundary>

@@ -16,6 +16,7 @@ const getMuutoshakemusSchema = (lang: Language) => {
       .required(e.required),
     phone: yup.string().required(e.required),
     haenKayttoajanPidennysta: yup.boolean().required(e.required),
+    haenMuutostaTaloudenKayttosuunnitelmaan: yup.boolean().required(e.required),
     haettuKayttoajanPaattymispaiva: yup.date().when('haenKayttoajanPidennysta', {
       is: true,
       then: yup.date()
@@ -36,6 +37,7 @@ const initialValues: FormValues = {
   email: '',
   phone: '',
   haenKayttoajanPidennysta: false,
+  haenMuutostaTaloudenKayttosuunnitelmaan: false,
   haettuKayttoajanPaattymispaiva: new Date(),
   kayttoajanPidennysPerustelut: ''
 }

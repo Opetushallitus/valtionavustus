@@ -8,6 +8,9 @@ export type EnvironmentApiResponse = {
       sv: string
     }
   }
+  budjettimuutoshakemus: {
+    enabled: boolean
+  }
 }
 
 export type MuutoshakemusProps = {
@@ -62,6 +65,14 @@ export interface Paatos {
   "updated-at": string
 }
 
+export interface Meno {
+  type: string
+  "translation-fi": string
+  "translation-sv": string
+  amount: number
+}
+export type Talousarvio = Meno[]
+
 export interface NormalizedHakemus {
   id: number
   "hakemus-id": number
@@ -73,6 +84,7 @@ export interface NormalizedHakemus {
   "register-number": string
   "created-at": string
   "updated-at": string
+  talousarvio: Talousarvio
 }
 
 export type FormValues = {
@@ -80,8 +92,10 @@ export type FormValues = {
   email: string
   phone: string
   haenKayttoajanPidennysta: boolean
+  haenMuutostaTaloudenKayttosuunnitelmaan: boolean
   haettuKayttoajanPaattymispaiva?: Date,
   kayttoajanPidennysPerustelut?: string
 }
 
 export type FormikHook = FormikProps<FormValues>
+

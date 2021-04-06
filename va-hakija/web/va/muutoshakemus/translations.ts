@@ -37,6 +37,9 @@ export const translationsFi = {
     newExpirationDateTitle: 'Uusi päättymisaika',
     reasonsTitle: 'Perustelut'
   },
+  muutosTaloudenKayttosuunnitelmaan: {
+    checkboxTitle: 'Haen muutosta hankkeen talouden käyttösuunnitelmaan',
+  },
   formErrors: {
     required: 'Pakollinen kenttä',
     email: 'Sähköposti ei ole validi',
