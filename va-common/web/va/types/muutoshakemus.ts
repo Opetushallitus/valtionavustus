@@ -9,7 +9,7 @@ export type EnvironmentApiResponse = {
     }
   }
   budjettimuutoshakemus: {
-    enabled: boolean
+    "enabled?": boolean
   }
 }
 

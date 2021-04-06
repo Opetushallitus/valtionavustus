@@ -21,7 +21,6 @@ export const translationsFi = {
     title: 'Muutosten hakeminen',
     contentEdit: 'Haen muutosta hankkeen sisältöön tai toteutustapaan',
     contentEditDetails: 'Kuvaile muutokset hankkeen sisältöön tai toteutustapaan',
-    financeEdit: 'Haen muutosta hankkeen talouden käyttösuunnitelmaan',
     currentFinanceEstimation: 'Voimassaoleva talousarvio',
     newFinanceEstimation: 'Uusi talousarvio',
     expenses: 'Menot',
