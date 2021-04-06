@@ -116,9 +116,36 @@
 
 (defn get-normalized-hakemus [user-key]
   (log/info (str "Get normalized hakemus with user-key: " user-key))
-  (let [hakemukset (query "SELECT * from virkailija.normalized_hakemus WHERE hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)" [user-key])]
+  (let [hakemukset (query "SELECT h.*, mh.amount, m.type, m.translation_fi, m.translation_se 
+                           FROM virkailija.normalized_hakemus as h, 
+                                virkailija.menoluokka_hakemus as mh, 
+                                virkailija.menoluokka as m 
+                           WHERE m.id = mh.menoluokka_id 
+                          AND h.hakemus_id = mh.hakemus_id 
+                          AND h.hakemus_id = (SELECT id 
+                                              FROM hakija.hakemukset
+                                              WHERE user_key = ?
+                                              LIMIT 1)" [user-key])]
     (log/info (str "Succesfully fetched hakemus with user-key: " user-key))
-    (first hakemukset)))
+    (let [first-row (first hakemukset)
+          menot (map (fn [row] {:type (:type row)
+                                :amount (:amount row)
+                                :translation-fi (:translation-fi row)
+                                :translation-sv (:translation-se row)
+                                }) hakemukset)]
+      {
+        :id (:id first-row)
+        :hakemus-id (:hakemus-id first-row)
+        :updated-at (:updated-at first-row)
+        :created-at (:created-at first-row)
+        :project-name (:project-name first-row)
+        :contact-person (:contact-person first-row)
+        :contact-email (:contact-email first-row)
+        :contact-phone (:contact-phone first-row)
+        :organization-name (:organization-name first-row)
+        :register-number (:register-number first-row)
+        :talousarvio menot
+       })))
 
 (defn get-normalized-hakemus-by-id [id]
   (log/info (str "Get normalized hakemus with id: " id))
