@@ -706,6 +706,17 @@ describe('Muutospäätösprosessi', () => {
           const val = await getElementAttribute(page, '[data-test-id="hankkeen-paattymispaiva"] div.datepicker input', 'value')
           expect(val).toBe(hankkeenPaattymispaiva)
         })
+
+        it('Correct start date label is displayed', async () => {
+          const label = await getElementInnerText(page, '[data-test-id="hankkeen-alkamispaiva"] [data-test-id="label"]')
+          expect(label).toBe('Avustuksen ensimmäinen käyttöpäivä')
+        })
+
+        it('Correct end date label is displayed', async () => {
+          const label = await getElementInnerText(page, '[data-test-id="hankkeen-paattymispaiva"] [data-test-id="label"]')
+          expect(label).toBe('Avustuksen viimeinen käyttöpäivä')
+        })
+
       })
     })
   })

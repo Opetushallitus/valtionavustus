@@ -32,7 +32,7 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
       <h4>Avustuksen käyttöaika</h4>
 
         <div className='date-input-container' data-test-id='hankkeen-alkamispaiva'>
-          <div>Hankkeen alkamispäivä</div>
+          <div data-test-id='label'>Avustuksen ensimmäinen käyttöpäivä</div>
           <DateInput
             id='hankkeen-alkamispaiva'
             onChange={onChange}
@@ -40,7 +40,7 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
         </div>
 
         <div className='date-input-container' data-test-id='hankkeen-paattymispaiva'>
-          <div>Hankkeen päättymispäivä</div>
+          <div data-test-id='label'>Avustuksen viimeinen käyttöpäivä</div>
           <DateInput
             id='hankkeen-paattymispaiva'
             onChange={onChange}
