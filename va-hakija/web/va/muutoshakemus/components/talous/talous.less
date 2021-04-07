@@ -1,0 +1,35 @@
+.muutoshakemus_taloudenKayttosuunnitelma {
+  &_row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    min-height: 38px;
+
+    .description {
+      width: 240px;
+    }
+
+    .existingAmount {
+      width: 100px;
+      text-align: right;
+    }
+
+    .separator {
+      align-self: stretch;
+      margin-left: 17px;
+      border-right: 1px solid #979797;
+      margin-right: 13px;
+    }
+
+    .changedAmount {
+      width: 120px;
+      display: flex;
+      align-items: center;
+
+      input {
+        width: 80px;
+        margin-right: 5px;
+      }
+    }
+  }
+}
