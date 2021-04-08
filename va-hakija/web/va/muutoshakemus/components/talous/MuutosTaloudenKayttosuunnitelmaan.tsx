@@ -38,7 +38,7 @@ export const MuutosTaloudenKayttosuunnitelmaan = ({ f, talousarvio }: MuutosTalo
             onBlur={f.handleBlur}
             checked={f.values.haenMuutostaTaloudenKayttosuunnitelmaan}
           />
-          <label htmlFor="checkbox-jatkoaika">
+          <label htmlFor="checkbox-talous">
             {t.muutosTaloudenKayttosuunnitelmaan.checkboxTitle}
           </label>
         </div>
