@@ -27,6 +27,8 @@ const answers = {
   projectName: "Rahassa kylpijät Ky Ay Oy",
 }
 
+jest.setTimeout(400_000)
+
 describe('Talousarvion muuttaminen', () => {
   let browser: Browser
   let page: Page
@@ -69,7 +71,7 @@ describe('Talousarvion muuttaminen', () => {
       const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
       emails.forEach(email => {
         const emailContent = email.formatted
-        expect(emailContent).not.toContain('- Hakea muutosta hankkeen talouden käyttösuunnitelmaan')
+        expect(emailContent).toContain('- Hakea muutosta hankkeen talouden käyttösuunnitelmaan')
       })
     })
 
