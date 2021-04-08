@@ -44,7 +44,7 @@ export const MuutosTaloudenKayttosuunnitelmaan = ({ f, talousarvio }: MuutosTalo
         </div>
         {f.values.haenMuutostaTaloudenKayttosuunnitelmaan && (
           <div className="muutoshakemus_taloudenKayttosuunnitelma">
-            {talousarvio.map(meno => <MenoRow lang={lang} meno={meno} key={meno["translation-fi"]} />)}
+            {talousarvio.map(meno => <MenoRow lang={lang} meno={meno} key={meno["type"]} />)}
           </div>
         )}
     </>
