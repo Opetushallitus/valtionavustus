@@ -6,7 +6,8 @@ import moment from 'moment'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusValues } from 'va-common/web/va/MuutoshakemusValues'
 
-import {AvustuksenKayttoajanPidennys} from './components/jatkoaika/AvustuksenKayttoajanPidennys'
+import { MuutoshakemusFormSection } from './components/MuutoshakemusFormSection'
+import { AvustuksenKayttoaikaInput } from './components/jatkoaika/AvustuksenKayttoaikaInput'
 import { MuutosTaloudenKayttosuunnitelmaan } from './components/talous/MuutosTaloudenKayttosuunnitelmaan'
 import {ContactPerson} from './components/contact-person/ContactPerson'
 import {TopBar} from './components/TopBar'
@@ -123,13 +124,21 @@ export const MuutoshakemusComponent = () => {
                   registerNumber={state.avustushaku["register-number"]}
                   f={f}
                 />
-              <section className="muutoshakemus__section" id="section-muutosten-hakeminen-talouden-kayttosuunnitelmaan-checkbox">
-                <h1 className="muutoshakemus__title">{t.applicationEdit.title}</h1>
-                <div className="muutoshakemus__form">
-                  {!existingNewMuutoshakemus && <AvustuksenKayttoajanPidennys f={f} projectEnd={getProjectEndDate(state.avustushaku, state.muutoshakemukset)} />}
-                  {state.environment?.budjettimuutoshakemus["enabled?"] && !existingNewMuutoshakemus && <MuutosTaloudenKayttosuunnitelmaan f={f} talousarvio={state.hakemus?.talousarvio || []} />}
-                </div>
-              </section>
+                {!existingNewMuutoshakemus &&
+                  <section className="muutoshakemus__section">
+                    <h1 className="muutoshakemus__title">{t.applicationEdit.title}</h1>
+                    <div className="muutoshakemus__form">
+                      <MuutoshakemusFormSection f={f} name="haenKayttoajanPidennysta" title={t.kayttoajanPidennys.checkboxTitle}>
+                        <AvustuksenKayttoaikaInput f={f} projectEnd={getProjectEndDate(state.avustushaku, state.muutoshakemukset)} />
+                      </MuutoshakemusFormSection>
+                      {state.environment?.budjettimuutoshakemus["enabled?"] &&
+                        <MuutoshakemusFormSection f={f} name="haenMuutostaTaloudenKayttosuunnitelmaan" title={t.muutosTaloudenKayttosuunnitelmaan.checkboxTitle}>
+                          <MuutosTaloudenKayttosuunnitelmaan f={f} talousarvio={state.hakemus?.talousarvio || []} />
+                        </MuutoshakemusFormSection>
+                      }
+                    </div>
+                  </section>
+                }
                 {state.muutoshakemukset.map(existingMuutoshakemus)}
                 <OriginalHakemusIframe avustushakuId={avustushakuId} userKey={userKey} />
               </ErrorBoundary>

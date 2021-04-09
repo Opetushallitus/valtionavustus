@@ -88,7 +88,7 @@ describe('Talousarvion muuttaminen', () => {
         { description: 'Muut menot', amount: '10000000 €' }
       ]
 
-      await clickElement(page, '#checkbox-talous')
+      await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
       await page.waitForSelector(budgetRowSelector)
 
       const budgetRows = await page.$$eval(budgetRowSelector, elements => {

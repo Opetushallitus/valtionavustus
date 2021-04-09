@@ -8,6 +8,7 @@ import { getInputErrorClass } from '../../formikHelpers'
 import { FormikHook } from '../../../../../../va-common/web/va/types/muutoshakemus'
 
 import 'react-widgets/dist/css/react-widgets.css'
+import './jatkoaika.less'
 
 type AvustuksenKayttoaikaInputProps = {
   f: FormikHook
@@ -20,7 +21,7 @@ export const AvustuksenKayttoaikaInput = ({ f, projectEnd }: AvustuksenKayttoaik
   const reasonError = getInputErrorClass(f, 'kayttoajanPidennysPerustelut')
 
   return (
-    <div className="muutoshakemus__checked-form">
+    <>
       <div className="twocolumns">
         <div>
           <div className="h3">{t.kayttoajanPidennys.existingExpirationDateTitle}</div>
@@ -62,6 +63,6 @@ export const AvustuksenKayttoaikaInput = ({ f, projectEnd }: AvustuksenKayttoaik
         />
         <ErrorMessage text={f.errors.kayttoajanPidennysPerustelut} />
       </div>
-    </div>
+    </>
   )
 }

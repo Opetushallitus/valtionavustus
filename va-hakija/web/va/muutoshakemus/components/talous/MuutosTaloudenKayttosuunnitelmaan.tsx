@@ -26,27 +26,10 @@ const MenoRow = ({ meno, lang }: { meno: Meno, lang: Language }) => {
 }
 
 export const MuutosTaloudenKayttosuunnitelmaan = ({ f, talousarvio }: MuutosTaloudenKayttosuunnitelmaanProps) => {
-  const { t, lang } = useTranslations()
+  const { lang } = useTranslations()
   return (
-    <>
-        <div className="muutoshakemus__section-checkbox-row">
-          <input
-            name="haenMuutostaTaloudenKayttosuunnitelmaan"
-            type="checkbox"
-            id="checkbox-talous"
-            onChange={f.handleChange}
-            onBlur={f.handleBlur}
-            checked={f.values.haenMuutostaTaloudenKayttosuunnitelmaan}
-          />
-          <label htmlFor="checkbox-talous">
-            {t.muutosTaloudenKayttosuunnitelmaan.checkboxTitle}
-          </label>
-        </div>
-        {f.values.haenMuutostaTaloudenKayttosuunnitelmaan && (
-          <div className="muutoshakemus_taloudenKayttosuunnitelma">
-            {talousarvio.map(meno => <MenoRow lang={lang} meno={meno} key={meno["type"]} />)}
-          </div>
-        )}
-    </>
+    <div className="muutoshakemus_taloudenKayttosuunnitelma">
+      {talousarvio.map(meno => <MenoRow lang={lang} meno={meno} key={meno["type"]} />)}
+    </div>
   )
 }
