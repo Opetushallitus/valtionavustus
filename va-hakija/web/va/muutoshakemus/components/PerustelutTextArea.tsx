@@ -17,7 +17,7 @@ export const PerustelutTextArea = ({ f, name }: PerustelutTextAreaProps) => {
 
   return (
     <div className="muutoshakemus__perustelut">
-      <label htmlFor={id}>{t.applicationEdit.reasoning}</label>
+      <label htmlFor={id}>{t.muutosTaloudenKayttosuunnitelmaan.reasoning}</label>
       <textarea
         id={id}
         name={name}

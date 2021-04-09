@@ -20,12 +20,7 @@ export const translationsFi = {
   applicationEdit: {
     title: 'Muutosten hakeminen',
     contentEdit: 'Haen muutosta hankkeen sisältöön tai toteutustapaan',
-    contentEditDetails: 'Kuvaile muutokset hankkeen sisältöön tai toteutustapaan',
-    currentFinanceEstimation: 'Voimassaoleva talousarvio',
-    newFinanceEstimation: 'Uusi talousarvio',
-    expenses: 'Menot',
-    expensesInTotal: 'Menot yhteensä',
-    reasoning: 'Perustelut'
+    contentEditDetails: 'Kuvaile muutokset hankkeen sisältöön tai toteutustapaan'
   },
   kayttoajanPidennys: {
     checkboxTitle: 'Haen pidennystä avustuksen käyttöajalle',
@@ -36,18 +31,65 @@ export const translationsFi = {
     checkboxTitle: 'Haen muutosta hankkeen talouden käyttösuunnitelmaan',
     currentBudget: 'Voimassaoleva talousarvio',
     modifiedBudget: 'Uusi talousarvio',
-    expenses: 'Menot'
+    expenses: 'Menot',
+    expensesInTotal: 'Menot yhteensä',
+    reasoning: 'Perustelut'
   },
   formErrors: {
     required: 'Pakollinen kenttä',
-    email: 'Sähköposti ei ole validi',
+    email: 'Tarkista sähköpostiosoite',
     haettuKayttoajanPaattymispaiva: 'Päättymispäivän pitää olla tuleva päivämäärä'
   }
 }
 
 const translationsSv: Translations = {
   ...translationsFi,
-  hakemus: 'Ansökan'
+  hakemus: 'Ansökan',
+  //muutoshakemus: 'Muutoshakemus',
+  //waitingForDecision: 'Odottaa käsittelyä',
+  //loading: 'Ladataan lomaketta...',
+  sendMuutoshakemus: 'Sänd för behandling',
+  sendContactDetails: 'Spara ändringen',
+  //savedNotification: 'Muutokset tallennettu',
+  //sentNotification: 'Muutoshakemus lähetetty',
+  //errorNotification: 'Muutoksien tallentaminen epäonnistui',
+  //originalHakemus: 'Alkuperäinen hakemus',
+  contactPersonEdit: {
+    ...translationsFi.contactPersonEdit,
+    //haku: 'Haku',
+    registerNumberTitle: 'Ärendenummer',
+    hanke: 'Projekt',
+    //contactPerson: 'Yhteyshenkilö',
+    email: 'E-postadress',
+    phone: 'Telefon'
+  },
+  applicationEdit: {
+    ...translationsFi.applicationEdit,
+    //title: 'Muutosten hakeminen',
+    //contentEdit: 'Haen muutosta hankkeen sisältöön tai toteutustapaan',
+    //contentEditDetails: 'Kuvaile muutokset hankkeen sisältöön tai toteutustapaan',
+  },
+  kayttoajanPidennys: {
+    ...translationsFi.kayttoajanPidennys,
+    //checkboxTitle: 'Haen pidennystä avustuksen käyttöajalle',
+    //existingExpirationDateTitle: 'Voimassaoleva päättymisaika',
+    //newExpirationDateTitle: 'Uusi päättymisaika',
+  },
+  muutosTaloudenKayttosuunnitelmaan: {
+    ...translationsFi.muutosTaloudenKayttosuunnitelmaan,
+    //checkboxTitle: 'Haen muutosta hankkeen talouden käyttösuunnitelmaan',
+    //currentBudget: 'Voimassaoleva talousarvio',
+    //modifiedBudget: 'Uusi talousarvio',
+    expenses: 'Utgifter',
+    //expensesInTotal: 'Menot yhteensä',
+    //reasoning: 'Perustelut'
+  },
+  formErrors: {
+    ...translationsFi.formErrors,
+    required: 'Obligatorisk uppgift',
+    email: 'Kontrollera e-postadress',
+    //haettuKayttoajanPaattymispaiva: 'Päättymispäivän pitää olla tuleva päivämäärä'
+  }
 }
 
 export const translations: { [key in Language]: typeof translationsFi } = {
