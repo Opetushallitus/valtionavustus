@@ -38,6 +38,9 @@ export const translationsFi = {
   },
   muutosTaloudenKayttosuunnitelmaan: {
     checkboxTitle: 'Haen muutosta hankkeen talouden käyttösuunnitelmaan',
+    currentBudget: 'Voimassaoleva talousarvio',
+    modifiedBudget: 'Uusi talousarvio',
+    expenses: 'Menot'
   },
   formErrors: {
     required: 'Pakollinen kenttä',

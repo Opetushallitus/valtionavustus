@@ -1,4 +1,35 @@
+
+@descriptionWidth: 240px;
+@existingAmountWidth: 100px;
+
+@separatorLeftMargin: 17px;
+@separatorBorder: 1px;
+@separatorRightMargin: 13px;
+@separatorWidth: @separatorLeftMargin + @separatorBorder + @separatorRightMargin;
+
+@leftColumnWidth: @descriptionWidth + @existingAmountWidth + @separatorWidth;
+
 .muutoshakemus_taloudenKayttosuunnitelma {
+
+  .headerContainer {
+    display: flex;
+    margin-bottom: 20px;
+
+    .currentBudget {
+      width: @leftColumnWidth;
+      text-transform: uppercase;
+    }
+
+    .modifiedBudget {
+      text-transform: uppercase;
+    }
+  }
+
+  .expensesHeader {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
   &_row {
     display: flex;
     flex-direction: row;
@@ -6,19 +37,19 @@
     min-height: 38px;
 
     .description {
-      width: 240px;
+      width: @descriptionWidth;
     }
 
     .existingAmount {
-      width: 100px;
+      width: @existingAmountWidth;
       text-align: right;
     }
 
     .separator {
       align-self: stretch;
-      margin-left: 17px;
-      border-right: 1px solid #979797;
-      margin-right: 13px;
+      margin-left: @separatorLeftMargin;
+      border-right: @separatorBorder solid #979797;
+      margin-right: @separatorRightMargin;
     }
 
     .changedAmount {

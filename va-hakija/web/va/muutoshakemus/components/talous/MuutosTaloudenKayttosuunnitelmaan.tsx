@@ -26,9 +26,14 @@ const MenoRow = ({ meno, lang }: { meno: Meno, lang: Language }) => {
 }
 
 export const MuutosTaloudenKayttosuunnitelmaan = ({ talousarvio }: MuutosTaloudenKayttosuunnitelmaanProps) => {
-  const { lang } = useTranslations()
+  const { t, lang } = useTranslations()
   return (
     <div className="muutoshakemus_taloudenKayttosuunnitelma">
+      <div className="headerContainer">
+        <div className="currentBudget">{t.muutosTaloudenKayttosuunnitelmaan.currentBudget}</div>
+        <div className="modifiedBudget">{t.muutosTaloudenKayttosuunnitelmaan.modifiedBudget}</div>
+      </div>
+      <div className="expensesHeader">{t.muutosTaloudenKayttosuunnitelmaan.expenses}</div>
       {talousarvio.map(meno => <MenoRow lang={lang} meno={meno} key={meno["type"]} />)}
     </div>
   )
