@@ -4,8 +4,8 @@ import { useTranslations } from './TranslationContext'
 export type OriginalHakemusIframeProps = { avustushakuId: number, userKey: string }
 
 export default function OriginalHakemusIframe({ avustushakuId, userKey }: OriginalHakemusIframeProps) {
-  const { t } = useTranslations()
-  const iframeUrl = `/avustushaku/${avustushakuId}/nayta?hakemus=${userKey}&decision-version=true&preview=true&embedForMuutoshakemus=true`
+  const { t, lang } = useTranslations()
+  const iframeUrl = `/avustushaku/${avustushakuId}/nayta?hakemus=${userKey}&lang=${lang}&decision-version=true&preview=true&embedForMuutoshakemus=true`
 
   // Beautiful solution to make the iframe the same height as its content
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
