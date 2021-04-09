@@ -7,3 +7,10 @@ export const getInputErrorClass = (f: FormikProps<FormValues>, valueName: keyof 
     ? 'muutoshakemus__input-error'
     : ''
 }
+
+export const getNestedInputErrorClass = (f: FormikProps<FormValues>, nestedName: string[]): string => {
+  const hasError = nestedName.reduce((acc, name) => acc ? acc[name] : undefined, f.errors)
+  return hasError
+    ? 'muutoshakemus__input-error'
+    : ''
+}

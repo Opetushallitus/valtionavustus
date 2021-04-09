@@ -5,13 +5,13 @@ import moment from 'moment'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusValues } from 'va-common/web/va/MuutoshakemusValues'
+import { Meno, Muutoshakemus, MuutoshakemusProps } from 'va-common/web/va/types/muutoshakemus'
 
 import { MuutoshakemusFormSection } from './components/MuutoshakemusFormSection'
 import { AvustuksenKayttoaikaInput } from './components/jatkoaika/AvustuksenKayttoaikaInput'
 import { MuutosTaloudenKayttosuunnitelmaan } from './components/talous/MuutosTaloudenKayttosuunnitelmaan'
 import {ContactPerson} from './components/contact-person/ContactPerson'
 import {TopBar} from './components/TopBar'
-import {Muutoshakemus, MuutoshakemusProps} from '../../../../va-common/web/va/types/muutoshakemus'
 import {Language, translations} from './translations'
 import {TranslationContext} from './TranslationContext'
 import OriginalHakemusIframe from './OriginalHakemusIframe'
@@ -59,7 +59,7 @@ export const MuutoshakemusComponent = () => {
       const hakemusP = HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}/normalized`)
       const muutoshakemuksetP = HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}/muutoshakemus`)
       const [environment, avustushaku, hakemus, muutoshakemukset] = await Promise.all([environmentP, avustushakuP, hakemusP, muutoshakemuksetP])
-      const currentProjectEnd = await getProjectEndMoment(avustushaku, muutoshakemukset)
+      const currentProjectEnd = getProjectEndMoment(avustushaku, muutoshakemukset)
 
       f.resetForm({
         values: {
@@ -69,7 +69,9 @@ export const MuutoshakemusComponent = () => {
           haenKayttoajanPidennysta: false,
           haenMuutostaTaloudenKayttosuunnitelmaan: false,
           haettuKayttoajanPaattymispaiva: currentProjectEnd.isValid() ? currentProjectEnd.toDate() : new Date(),
-          kayttoajanPidennysPerustelut: ''
+          kayttoajanPidennysPerustelut: '',
+          taloudenKayttosuunnitelmanPerustelut: '',
+          talousarvio: hakemus.talousarvio.reduce((acc: object, meno: Meno) => ({ ...acc, [meno.type]: meno.amount }), {})
         }
       })
 

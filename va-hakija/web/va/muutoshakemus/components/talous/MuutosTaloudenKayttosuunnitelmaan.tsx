@@ -6,13 +6,17 @@ import './talous.less'
 import { Language } from '../../translations'
 import { useTranslations } from '../../TranslationContext'
 import { PerustelutTextArea } from '../PerustelutTextArea'
+import { getNestedInputErrorClass } from '../../formikHelpers'
 
 type MuutosTaloudenKayttosuunnitelmaanProps = {
   f: FormikHook
   talousarvio: Talousarvio
 }
 
-const MenoRow = ({ meno, lang }: { meno: Meno, lang: Language }) => {
+const MenoRow = ({ f, meno, lang }: { f: FormikHook, meno: Meno, lang: Language }) => {
+  const name = `talousarvio.${meno.type}`
+  const className = getNestedInputErrorClass(f, ['talousarvio', meno.type])
+  const value = f.values.talousarvio[meno.type]
 
   return (
     <div className="muutoshakemus_taloudenKayttosuunnitelma_row">
@@ -20,7 +24,7 @@ const MenoRow = ({ meno, lang }: { meno: Meno, lang: Language }) => {
       <div className="existingAmount">{meno.amount} €</div>
       <div className="separator" />
       <div className="changedAmount">
-        <input type="text" /> €
+        <input name={name} className={className} type="text" onChange={f.handleChange} onBlur={f.handleBlur} value={value} /> €
       </div>
     </div>
   )
@@ -36,7 +40,7 @@ export const MuutosTaloudenKayttosuunnitelmaan = ({ f, talousarvio }: MuutosTalo
           <div className="modifiedBudget">{t.muutosTaloudenKayttosuunnitelmaan.modifiedBudget}</div>
         </div>
         <div className="expensesHeader">{t.muutosTaloudenKayttosuunnitelmaan.expenses}</div>
-        {talousarvio.map(meno => <MenoRow lang={lang} meno={meno} key={meno["type"]} />)}
+        {talousarvio.map((meno: Meno) => <MenoRow f={f} lang={lang} meno={meno} key={meno["type"]} />)}
       </div>
       <PerustelutTextArea f={f} name='taloudenKayttosuunnitelmanPerustelut' />
     </>

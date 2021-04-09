@@ -103,6 +103,26 @@ describe('Talousarvion muuttaminen', () => {
       expect(budgetRows).toEqual(budgetExpectedItems)
     })
 
+    it('ja nähdä esitäytetyt menoluokat', async () => {
+      const expectedBudgetInputs = [
+        { name: 'talousarvio.personnel-costs-row', amount: 200000 },
+        { name: 'talousarvio.material-costs-row', amount: 3000 },
+        { name: 'talousarvio.equipment-costs-row', amount: 10000 },
+        { name: 'talousarvio.service-purchase-costs-row', amount: 100 },
+        { name: 'talousarvio.rent-costs-row', amount: 161616 },
+        { name: 'talousarvio.steamship-costs-row', amount: 100 },
+        { name: 'talousarvio.other-costs-row', amount: 10000000 }
+      ]
+
+      const budgetRows = await page.$$eval('.changedAmount', elements => {
+        return elements.map(elem => ({
+          name: elem.querySelector('input')?.getAttribute('name'),
+          amount: parseInt(elem.querySelector('input')?.getAttribute('value') || '')
+        }))
+      })
+      expect(budgetRows).toEqual(expectedBudgetInputs)
+    })
+
     it('requires perustelut', async () => {
       const sendDisabled = await hasElementAttribute(page, '#send-muutospyynto-button', 'disabled')
       expect(sendDisabled).toEqual(true)

@@ -96,6 +96,7 @@ export type FormValues = {
   haettuKayttoajanPaattymispaiva?: Date,
   kayttoajanPidennysPerustelut?: string
   taloudenKayttosuunnitelmanPerustelut?: string
+  talousarvio: object
 }
 
 export type FormikHook = FormikProps<FormValues>

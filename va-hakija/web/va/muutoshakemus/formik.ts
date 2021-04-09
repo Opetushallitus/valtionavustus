@@ -33,6 +33,11 @@ const getMuutoshakemusSchema = (lang: Language) => {
       is: true,
       then: yup.string().required(e.required),
       otherwise: yup.string()
+    }),
+    talousarvio: yup.object().when('haenMuutostaTaloudenKayttosuunnitelmaan', {
+      is: true,
+      then: yup.lazy((talousarvio: object) => yup.object(Object.keys(talousarvio).reduce((acc, key) => ({ ...acc, [key]: yup.number().required(e.required) }), {}))),
+      otherwise: yup.object()
     })
   }).required()
 }
@@ -45,7 +50,8 @@ const initialValues: FormValues = {
   haettuKayttoajanPaattymispaiva: new Date(),
   kayttoajanPidennysPerustelut: '',
   haenMuutostaTaloudenKayttosuunnitelmaan: false,
-  taloudenKayttosuunnitelmanPerustelut: ''
+  taloudenKayttosuunnitelmanPerustelut: '',
+  talousarvio: {}
 }
 
 export const createFormikHook = (userKey: string, lang: Language) => useFormik({
