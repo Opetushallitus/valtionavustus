@@ -25,7 +25,7 @@ const MenoRow = ({ meno, lang }: { meno: Meno, lang: Language }) => {
   )
 }
 
-export const MuutosTaloudenKayttosuunnitelmaan = ({ f, talousarvio }: MuutosTaloudenKayttosuunnitelmaanProps) => {
+export const MuutosTaloudenKayttosuunnitelmaan = ({ talousarvio }: MuutosTaloudenKayttosuunnitelmaanProps) => {
   const { lang } = useTranslations()
   return (
     <div className="muutoshakemus_taloudenKayttosuunnitelma">
