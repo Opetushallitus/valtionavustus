@@ -6,6 +6,7 @@ import { useTranslations } from '../../TranslationContext'
 import { ErrorMessage } from '../../ErrorMessage'
 import { getInputErrorClass } from '../../formikHelpers'
 import { FormikHook } from '../../../../../../va-common/web/va/types/muutoshakemus'
+import { PerustelutTextArea } from '../PerustelutTextArea'
 
 import 'react-widgets/dist/css/react-widgets.css'
 import './jatkoaika.less'
@@ -18,14 +19,13 @@ type AvustuksenKayttoaikaInputProps = {
 export const AvustuksenKayttoaikaInput = ({ f, projectEnd }: AvustuksenKayttoaikaInputProps) => {
   const { t } = useTranslations()
   const datepickerError = getInputErrorClass(f, 'haettuKayttoajanPaattymispaiva')
-  const reasonError = getInputErrorClass(f, 'kayttoajanPidennysPerustelut')
 
   return (
     <>
       <div className="twocolumns">
         <div>
           <div className="h3">{t.kayttoajanPidennys.existingExpirationDateTitle}</div>
-          <div className="muutoshakemus__current-project-end"><span>{projectEnd}</span></div>
+          <div className="muutoshakemus__current-project-end">{projectEnd}</div>
         </div>
         <div>
           <div className='h3'>
@@ -49,20 +49,7 @@ export const AvustuksenKayttoaikaInput = ({ f, projectEnd }: AvustuksenKayttoaik
           </div>
         </div>
       </div>
-      <div className="textareacontainer">
-        <label htmlFor="perustelut-jatkoaika">{t.kayttoajanPidennys.reasonsTitle}</label>
-        <textarea
-          id="perustelut-jatkoaika"
-          name="kayttoajanPidennysPerustelut"
-          className={reasonError}
-          rows={5}
-          cols={53}
-          onChange={f.handleChange}
-          onBlur={f.handleBlur}
-          value={f.values.kayttoajanPidennysPerustelut}
-        />
-        <ErrorMessage text={f.errors.kayttoajanPidennysPerustelut} />
-      </div>
+      <PerustelutTextArea f={f} name='kayttoajanPidennysPerustelut' />
     </>
   )
 }

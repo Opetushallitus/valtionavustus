@@ -901,7 +901,7 @@ export async function fillAndSendMuutoshakemus(page: Page, avustushakuID: number
   await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
   if (jatkoaika) {
     await clickElement(page, '#checkbox-haenKayttoajanPidennysta')
-    await clearAndType(page, '#perustelut-jatkoaika', jatkoaikaPerustelu)
+    await clearAndType(page, '#perustelut-kayttoajanPidennysPerustelut', jatkoaikaPerustelu)
     await setCalendarDate(page, jatkoaika.format('DD.MM.YYYY'))
     await clickElement(page, '#send-muutospyynto-button:not([disabled])')
   }

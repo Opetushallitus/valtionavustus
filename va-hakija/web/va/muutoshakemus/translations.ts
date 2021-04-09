@@ -25,16 +25,12 @@ export const translationsFi = {
     newFinanceEstimation: 'Uusi talousarvio',
     expenses: 'Menot',
     expensesInTotal: 'Menot yhteensä',
-    periodEdit: 'Haen pidennystä avustuksen käyttöajalle',
-    currentPeriodEnd: 'Voimassaoleva päättymisaika',
-    newPeriodEnd: 'Uusi päättymisaika',
     reasoning: 'Perustelut'
   },
   kayttoajanPidennys: {
     checkboxTitle: 'Haen pidennystä avustuksen käyttöajalle',
     existingExpirationDateTitle: 'Voimassaoleva päättymisaika',
     newExpirationDateTitle: 'Uusi päättymisaika',
-    reasonsTitle: 'Perustelut'
   },
   muutosTaloudenKayttosuunnitelmaan: {
     checkboxTitle: 'Haen muutosta hankkeen talouden käyttösuunnitelmaan',

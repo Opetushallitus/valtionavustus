@@ -11,7 +11,10 @@ import {
   randomString,
   getLinkToMuutoshakemusFromSentEmails,
   ratkaiseBudjettimuutoshakemusEnabledAvustushaku,
-  clickElement
+  clickElement,
+  hasElementAttribute,
+  getElementInnerText,
+  clearAndType
 } from './test-util'
 
 function createRandomHakuValues() {
@@ -66,6 +69,7 @@ describe('Talousarvion muuttaminen', () => {
       linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
       expectToBeDefined(linkToMuutoshakemus)
       await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
+      await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
     })
 
     it('ja oppia mahdollisuudesta tehdä muutoksia talouden käyttösuunnitelmaa hakemuksen päätöksen s.postista', async () => {
@@ -88,7 +92,6 @@ describe('Talousarvion muuttaminen', () => {
         { description: 'Muut menot', amount: '10000000 €' }
       ]
 
-      await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
       await page.waitForSelector(budgetRowSelector)
 
       const budgetRows = await page.$$eval(budgetRowSelector, elements => {
@@ -98,6 +101,20 @@ describe('Talousarvion muuttaminen', () => {
         }))
       })
       expect(budgetRows).toEqual(budgetExpectedItems)
+    })
+
+    it('requires perustelut', async () => {
+      const sendDisabled = await hasElementAttribute(page, '#send-muutospyynto-button', 'disabled')
+      expect(sendDisabled).toEqual(true)
+      const errorMessage = await getElementInnerText(page, '#perustelut-taloudenKayttosuunnitelmanPerustelut + .muutoshakemus__error-message')
+      expect(errorMessage).toEqual('Pakollinen kenttä')
+
+      await clearAndType(page, '#perustelut-taloudenKayttosuunnitelmanPerustelut', 'perustelu')
+
+      const sendEnabled = !(await hasElementAttribute(page, '#send-muutospyynto-button', 'disabled'))
+      expect(sendEnabled).toEqual(true)
+      const noErrorMessage = await getElementInnerText(page, '#perustelut-taloudenKayttosuunnitelmanPerustelut + .muutoshakemus__error-message')
+      expect(noErrorMessage).toEqual('')
     })
   })
 })

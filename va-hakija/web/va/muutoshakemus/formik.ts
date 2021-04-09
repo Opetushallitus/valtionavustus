@@ -16,7 +16,6 @@ const getMuutoshakemusSchema = (lang: Language) => {
       .required(e.required),
     phone: yup.string().required(e.required),
     haenKayttoajanPidennysta: yup.boolean().required(e.required),
-    haenMuutostaTaloudenKayttosuunnitelmaan: yup.boolean().required(e.required),
     haettuKayttoajanPaattymispaiva: yup.date().when('haenKayttoajanPidennysta', {
       is: true,
       then: yup.date()
@@ -25,6 +24,12 @@ const getMuutoshakemusSchema = (lang: Language) => {
       otherwise: yup.date()
     }),
     kayttoajanPidennysPerustelut: yup.string().when('haenKayttoajanPidennysta', {
+      is: true,
+      then: yup.string().required(e.required),
+      otherwise: yup.string()
+    }),
+    haenMuutostaTaloudenKayttosuunnitelmaan: yup.boolean().required(e.required),
+    taloudenKayttosuunnitelmanPerustelut: yup.string().when('haenMuutostaTaloudenKayttosuunnitelmaan', {
       is: true,
       then: yup.string().required(e.required),
       otherwise: yup.string()
@@ -37,9 +42,10 @@ const initialValues: FormValues = {
   email: '',
   phone: '',
   haenKayttoajanPidennysta: false,
-  haenMuutostaTaloudenKayttosuunnitelmaan: false,
   haettuKayttoajanPaattymispaiva: new Date(),
-  kayttoajanPidennysPerustelut: ''
+  kayttoajanPidennysPerustelut: '',
+  haenMuutostaTaloudenKayttosuunnitelmaan: false,
+  taloudenKayttosuunnitelmanPerustelut: ''
 }
 
 export const createFormikHook = (userKey: string, lang: Language) => useFormik({

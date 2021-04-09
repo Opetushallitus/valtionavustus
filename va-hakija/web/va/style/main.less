@@ -28,6 +28,18 @@
   margin-bottom: 2rem;
 }
 
+.muutoshakemus__perustelut {
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+
+  textarea {
+    width: 70%;
+    padding: 6px 7px 6px 8px;
+    font-size: 0.9rem;
+  }
+}
+
 .muutoshakemus__input-error {
   border: 1px solid @bright-red !important;
 }
@@ -77,86 +89,6 @@
 
 #muutoshakemus__email {
   min-width: 340px;
-}
-
-.muutoshakemus__application-edit-cell {
-  display: flex;
-  flex-direction: column;
-  padding: 1rem 0 1rem 5vw;
-
-  textarea {
-    width: 700px;
-  }
-
-  table {
-    width: 500px;
-    text-align: left;
-    font-weight: 400;
-    margin-bottom: 2rem;
-    border: 1px;
-
-    th,
-    td {
-      padding: 0.5rem 2rem 0.5rem 0;
-    }
-
-    td:first-child {
-      border-right: 2px solid @darker-gray;
-    }
-
-    th:not(:first-child),
-    td:not(:first-child) {
-      padding-left: 2rem;
-    }
-
-    .muutoshakemus__current-amount {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-    }
-
-    .muutoshakemus__currency-input {
-      width: 100px;
-    }
-
-    thead {
-      text-transform: uppercase;
-      padding-bottom: 1rem;
-
-      th {
-        font-weight: 400;
-      }
-    }
-
-    tfoot {
-      padding-top: 1rem;
-      border-top: 2px solid @darker-gray;
-
-      th {
-        padding-right: 2rem;
-      }
-    }
-  }
-}
-
-.muutoshakemus__application-content {
-  display: flex;
-  width: 500px;
-  margin-bottom: 1rem;
-  text-transform: uppercase;
-
-  div.muutoshakemus__content-left {
-    padding-right: 2rem;
-    border-right: 2px solid @darker-gray;
-  }
-
-  div.muutoshakemus__content-right {
-    padding-left: 2rem;
-  }
-
-  div:first-child {
-    margin-bottom: 1rem;
-  }
 }
 
 .va-old-browser-warning {
