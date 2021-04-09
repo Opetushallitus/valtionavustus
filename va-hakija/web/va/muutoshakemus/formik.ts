@@ -3,7 +3,11 @@ import { useFormik } from 'formik'
 
 import { FormValues } from '../../../../va-common/web/va/types/muutoshakemus'
 import { postMuutoshakemus } from './client'
-import { Language, translations } from './translations'
+import { FormErrors, Language, translations } from './translations'
+
+const getTalousarvioSchema = (talousarvio: object, e: FormErrors) => {
+  return Object.keys(talousarvio).reduce((acc, key) => ({ ...acc, [key]: yup.number().required(e.required) }), {})
+}
 
 const getMuutoshakemusSchema = (lang: Language) => {
   const t = translations[lang]
@@ -36,7 +40,7 @@ const getMuutoshakemusSchema = (lang: Language) => {
     }),
     talousarvio: yup.object().when('haenMuutostaTaloudenKayttosuunnitelmaan', {
       is: true,
-      then: yup.lazy((talousarvio: object) => yup.object(Object.keys(talousarvio).reduce((acc, key) => ({ ...acc, [key]: yup.number().required(e.required) }), {}))),
+      then: yup.lazy((talousarvio: object) => yup.object(getTalousarvioSchema(talousarvio, e)).required()),
       otherwise: yup.object()
     })
   }).required()

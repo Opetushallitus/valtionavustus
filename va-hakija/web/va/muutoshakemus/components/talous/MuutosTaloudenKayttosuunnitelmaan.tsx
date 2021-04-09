@@ -16,7 +16,7 @@ type MuutosTaloudenKayttosuunnitelmaanProps = {
 const MenoRow = ({ f, meno, lang }: { f: FormikHook, meno: Meno, lang: Language }) => {
   const name = `talousarvio.${meno.type}`
   const className = getNestedInputErrorClass(f, ['talousarvio', meno.type])
-  const value = f.values.talousarvio[meno.type]
+  const value = f.values.talousarvio?.[meno.type]
 
   return (
     <div className="muutoshakemus_taloudenKayttosuunnitelma_row">
