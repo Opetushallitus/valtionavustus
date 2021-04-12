@@ -87,6 +87,12 @@ export interface NormalizedHakemus {
   talousarvio: Talousarvio
 }
 
+export type TalousarvioValues = {
+  [key: string]: number
+  originalSum: number
+  currentSum: number
+}
+
 export type FormValues = {
   name: string
   email: string
@@ -96,7 +102,7 @@ export type FormValues = {
   haettuKayttoajanPaattymispaiva?: Date,
   kayttoajanPidennysPerustelut?: string
   taloudenKayttosuunnitelmanPerustelut?: string
-  talousarvio?: object
+  talousarvio?: TalousarvioValues
 }
 
 export type FormikHook = FormikProps<FormValues>

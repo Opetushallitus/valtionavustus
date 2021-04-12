@@ -19,8 +19,7 @@ export const translationsFi = {
   },
   applicationEdit: {
     title: 'Muutosten hakeminen',
-    contentEdit: 'Haen muutosta hankkeen sisältöön tai toteutustapaan',
-    contentEditDetails: 'Kuvaile muutokset hankkeen sisältöön tai toteutustapaan'
+    reasoning: 'Perustelut'
   },
   kayttoajanPidennys: {
     checkboxTitle: 'Haen pidennystä avustuksen käyttöajalle',
@@ -32,13 +31,13 @@ export const translationsFi = {
     currentBudget: 'Voimassaoleva talousarvio',
     modifiedBudget: 'Uusi talousarvio',
     expenses: 'Menot',
-    expensesInTotal: 'Menot yhteensä',
-    reasoning: 'Perustelut'
+    expensesTotal: 'Menot yhteensä'
   },
   formErrors: {
     required: 'Pakollinen kenttä',
-    email: 'Tarkista sähköpostiosoite',
-    haettuKayttoajanPaattymispaiva: 'Päättymispäivän pitää olla tuleva päivämäärä'
+    email: 'Sähköposti ei ole validi',
+    haettuKayttoajanPaattymispaiva: 'Päättymispäivän pitää olla tuleva päivämäärä',
+    talousarvioSum: (sum: number) => `Loppusumman on oltava ${sum}`
   }
 }
 
@@ -66,8 +65,7 @@ const translationsSv: Translations = {
   applicationEdit: {
     ...translationsFi.applicationEdit,
     //title: 'Muutosten hakeminen',
-    //contentEdit: 'Haen muutosta hankkeen sisältöön tai toteutustapaan',
-    //contentEditDetails: 'Kuvaile muutokset hankkeen sisältöön tai toteutustapaan',
+    //reasoning: 'Perustelut',
   },
   kayttoajanPidennys: {
     ...translationsFi.kayttoajanPidennys,
@@ -81,8 +79,7 @@ const translationsSv: Translations = {
     //currentBudget: 'Voimassaoleva talousarvio',
     //modifiedBudget: 'Uusi talousarvio',
     expenses: 'Utgifter',
-    //expensesInTotal: 'Menot yhteensä',
-    //reasoning: 'Perustelut'
+    //expensesTotal: 'Menot yhteensä'
   },
   formErrors: {
     ...translationsFi.formErrors,

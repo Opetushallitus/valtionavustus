@@ -1,12 +1,34 @@
 import * as yup from 'yup'
 import { useFormik } from 'formik'
 
-import { FormValues } from '../../../../va-common/web/va/types/muutoshakemus'
+import { FormValues, Meno, TalousarvioValues } from '../../../../va-common/web/va/types/muutoshakemus'
 import { postMuutoshakemus } from './client'
 import { FormErrors, Language, translations } from './translations'
 
-const getTalousarvioSchema = (talousarvio: object, e: FormErrors) => {
-  return Object.keys(talousarvio).reduce((acc, key) => ({ ...acc, [key]: yup.number().required(e.required) }), {})
+export const getTalousarvioValues = (talousarvio: Meno[]): TalousarvioValues => {
+  const menos = talousarvio.reduce((acc: object, meno: Meno) => ({ ...acc, [meno.type]: meno.amount }), {})
+  const sum = talousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
+  return {
+    ...menos,
+    originalSum: sum,
+    currentSum: sum
+  }
+}
+
+const getTalousarvioSchema = (talousarvio: TalousarvioValues, e: FormErrors) => {
+  const menos = Object.keys(talousarvio).reduce((acc, key) => {
+    if (key !== 'originalSum' && key !== 'currentSum') {
+      return ({ ...acc, [key]: yup.number().required(e.required) })
+    } else {
+      return acc
+    }
+  }, {})
+
+  return {
+    ...menos,
+    originalSum: yup.number().required(e.required),
+    currentSum: yup.number().test('current-sum', e.talousarvioSum(talousarvio.originalSum), s => s === talousarvio.originalSum).required(e.required)
+  }
 }
 
 const getMuutoshakemusSchema = (lang: Language) => {
@@ -38,9 +60,9 @@ const getMuutoshakemusSchema = (lang: Language) => {
       then: yup.string().required(e.required),
       otherwise: yup.string()
     }),
-    talousarvio: yup.object().when('haenMuutostaTaloudenKayttosuunnitelmaan', {
+    talousarvio: yup.object<TalousarvioValues>().when('haenMuutostaTaloudenKayttosuunnitelmaan', {
       is: true,
-      then: yup.lazy((talousarvio: object) => yup.object(getTalousarvioSchema(talousarvio, e)).required()),
+      then: yup.lazy((talousarvio: TalousarvioValues) => yup.object<TalousarvioValues>(getTalousarvioSchema(talousarvio, e)).required()),
       otherwise: yup.object()
     })
   }).required()
@@ -55,7 +77,10 @@ const initialValues: FormValues = {
   kayttoajanPidennysPerustelut: '',
   haenMuutostaTaloudenKayttosuunnitelmaan: false,
   taloudenKayttosuunnitelmanPerustelut: '',
-  talousarvio: {}
+  talousarvio: {
+    originalSum: 0,
+    currentSum: 0
+  }
 }
 
 export const createFormikHook = (userKey: string, lang: Language) => useFormik({

@@ -5,7 +5,7 @@ import moment from 'moment'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusValues } from 'va-common/web/va/MuutoshakemusValues'
-import { Meno, Muutoshakemus, MuutoshakemusProps } from 'va-common/web/va/types/muutoshakemus'
+import { Muutoshakemus, MuutoshakemusProps } from 'va-common/web/va/types/muutoshakemus'
 
 import { MuutoshakemusFormSection } from './components/MuutoshakemusFormSection'
 import { AvustuksenKayttoaikaInput } from './components/jatkoaika/AvustuksenKayttoaikaInput'
@@ -16,7 +16,7 @@ import {Language, translations} from './translations'
 import {TranslationContext} from './TranslationContext'
 import OriginalHakemusIframe from './OriginalHakemusIframe'
 import ErrorBoundary from './ErrorBoundary'
-import { createFormikHook } from './formik'
+import { createFormikHook, getTalousarvioValues } from './formik'
 import { getProjectEndDate, getProjectEndMoment } from '../../../../va-common/web/va/Muutoshakemus'
 import {useTranslations} from './TranslationContext'
 
@@ -40,7 +40,6 @@ let initialState: MuutoshakemusProps = {
   hakemus: undefined,
   muutoshakemukset: []
 }
-
 
 export const MuutoshakemusComponent = () => {
   const query = queryString.parse(location.search)
@@ -71,7 +70,7 @@ export const MuutoshakemusComponent = () => {
           haettuKayttoajanPaattymispaiva: currentProjectEnd.isValid() ? currentProjectEnd.toDate() : new Date(),
           kayttoajanPidennysPerustelut: '',
           taloudenKayttosuunnitelmanPerustelut: '',
-          talousarvio: hakemus.talousarvio.reduce((acc: object, meno: Meno) => ({ ...acc, [meno.type]: meno.amount }), {})
+          talousarvio: getTalousarvioValues(hakemus.talousarvio)
         }
       })
 
