@@ -261,18 +261,26 @@
                            WHERE m.hakemus_id = ?" [hakemus-id])]
     (first presenters)))
 
-(defn add-muutoshakemus [tx user-key jatkoaika]
+(defn- add-muutoshakemus [tx user-key hakemus-id muutoshakemus]
   (log/info (str "Inserting muutoshakemus for user-key: " user-key))
-  (let [ haen-kayttoajan-pidennysta (:haenKayttoajanPidennysta jatkoaika)
-         kayttoajan-pidennys-perustelut (:kayttoajanPidennysPerustelut jatkoaika)
-         haettu-kayttoajan-paattymispaiva (:haettuKayttoajanPaattymispaiva jatkoaika)]
+  (let [haen-kayttoajan-pidennysta (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta] false)
+        kayttoajan-pidennys-perustelut (get-in muutoshakemus [:jatkoaika :kayttoajanPidennysPerustelut])
+        haettu-kayttoajan-paattymispaiva (get-in muutoshakemus [:jatkoaika :haettuKayttoajanPaattymispaiva])
+        talousarvio-perustelut (:talousarvioPerustelut muutoshakemus)
+        id-rows (query tx
+                      "INSERT INTO virkailija.muutoshakemus
+                            (hakemus_id, haen_kayttoajan_pidennysta, kayttoajan_pidennys_perustelut, haettu_kayttoajan_paattymispaiva, talousarvio_perustelut)
+                        VALUES (?, ?, ?, ?, ?)
+                        RETURNING id"
+                      [hakemus-id haen-kayttoajan-pidennysta kayttoajan-pidennys-perustelut haettu-kayttoajan-paattymispaiva talousarvio-perustelut])]
+    (:id (first id-rows))))
+
+(defn- add-muutoshakemus-menoluokkas [tx muutoshakemus-id avustushaku-id talousarvio]
+  (doseq [[type amount] (seq talousarvio)]
     (execute! tx
-     "INSERT INTO virkailija.muutoshakemus
-          (hakemus_id, haen_kayttoajan_pidennysta, kayttoajan_pidennys_perustelut, haettu_kayttoajan_paattymispaiva)
-        VALUES
-          ((SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1),?,?,?)"
-          [user-key haen-kayttoajan-pidennysta, kayttoajan-pidennys-perustelut, haettu-kayttoajan-paattymispaiva ])
-))
+      "INSERT INTO menoluokka_muutoshakemus (menoluokka_id, muutoshakemus_id, amount)
+       VALUES ((SELECT id FROM menoluokka WHERE avustushaku_id = ? AND type = ?), ?, ?)"
+      [avustushaku-id (name type) muutoshakemus-id amount])))
 
 (defn- answer->menoluokka-row [answers hakemus-id menoluokka]
   {:menoluokka_id (:id menoluokka)
@@ -313,25 +321,27 @@
           (:register_number hakemus) ])))
   (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
 
-(defn change-normalized-hakemus-contact-person-details [tx user-key, contact-person-details]
+(defn- change-normalized-hakemus-contact-person-details [tx user-key hakemus-id contact-person-details]
   (log/info (str "Change normalized contact person details with user-key: " user-key))
   (let [ contact-person (:name contact-person-details)
          contact-phone (:phone contact-person-details)
          contact-email (:email contact-person-details)]
     (execute! tx
      "UPDATE virkailija.normalized_hakemus SET
-      contact_person = ?, contact_email = ?, contact_phone = ? WHERE hakemus_id = (SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1)"
-      [contact-person, contact-email, contact-phone, user-key]
+      contact_person = ?, contact_email = ?, contact_phone = ? WHERE hakemus_id = ?"
+      [contact-person contact-email contact-phone hakemus-id]
      ))
     (log/info (str "Succesfully changed contact person details with user-key: " user-key)))
 
-(defn on-muutoshakemus [user-key, muutoshakemus]
+(defn on-muutoshakemus [user-key hakemus-id avustushaku-id muutoshakemus]
   (with-tx (fn [tx]
-    (when (contains? muutoshakemus :jatkoaika)
-          (add-muutoshakemus tx user-key (get muutoshakemus :jatkoaika)))
+    (when (or (:talousarvio muutoshakemus) (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta] false))
+      (let [muutoshakemus-id (add-muutoshakemus tx user-key hakemus-id muutoshakemus)]
+        (when (:talousarvio muutoshakemus)
+          (add-muutoshakemus-menoluokkas tx muutoshakemus-id avustushaku-id (:talousarvio muutoshakemus)))))
     (when (contains? muutoshakemus :yhteyshenkilo)
       (log/info (str "Change normalized contact person details with user-key: " user-key))
-      (change-normalized-hakemus-contact-person-details tx user-key (get muutoshakemus :yhteyshenkilo))
+      (change-normalized-hakemus-contact-person-details tx user-key hakemus-id (get muutoshakemus :yhteyshenkilo))
       (log/info (str "Succesfully changed contact person details with user-key: " user-key))))))
 
 (defn update-hakemus-parent-id [hakemus-id parent-id]

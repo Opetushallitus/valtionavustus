@@ -239,12 +239,13 @@
     :summary "Apply for changes to application"
     (let [hakemus (hakija-db/get-hakemus user-key)
           avustushaku-id (:avustushaku hakemus)
-          haku-id (:id hakemus)
+          hakemus-id (:id hakemus)
           register-number (:register_number hakemus)
-          hanke (:project-name (hakija-db/get-normalized-hakemus user-key))
+          normalized-hakemus (hakija-db/get-normalized-hakemus user-key)
+          hanke (:project-name normalized-hakemus)
           valmistelija-email (presenting-officer-email avustushaku-id)]
-    (hakija-db/on-muutoshakemus user-key muutoshakemus)
-    (va-email/notify-valmistelija-of-new-muutoshakemus [valmistelija-email] avustushaku-id register-number hanke haku-id)
+    (hakija-db/on-muutoshakemus user-key hakemus-id avustushaku-id muutoshakemus)
+    (va-email/notify-valmistelija-of-new-muutoshakemus [valmistelija-email] avustushaku-id register-number hanke hakemus-id)
     (ok (hakija-db/get-normalized-hakemus user-key)))))
 
 (defn- get-attachments []

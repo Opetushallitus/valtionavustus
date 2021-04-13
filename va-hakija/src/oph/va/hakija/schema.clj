@@ -19,10 +19,16 @@
    :phone s/Str
    })
 
+(s/defschema TalousarvioMuutos
+  "TalousarvioMuutos contains a list of menoluokka amounts"
+  {s/Keyword s/Int})
+
 (s/defschema MuutoshakemusRequest
   "MuutoshakemusRequest is the payload for applying for changes to application"
   {
     (s/optional-key :jatkoaika) JatkoaikaHakemus
+    (s/optional-key :talousarvio) TalousarvioMuutos
+    (s/optional-key :talousarvioPerustelut) s/Str
     (s/optional-key :yhteyshenkilo) ContactPersonDetails
   })
 

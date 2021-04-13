@@ -1,5 +1,6 @@
 import axios from 'axios'
 import moment from 'moment'
+import { omit } from 'lodash'
 
 import { FormValues } from '../../../../va-common/web/va/types/muutoshakemus'
 
@@ -15,14 +16,22 @@ export async function postMuutoshakemus(props: MuutoshakemusProps) {
   const { userKey, values } = props
   const url = `api/muutoshakemus/${userKey}`
 
+  const jatkoaika = values.haenKayttoajanPidennysta && {
+    jatkoaika: {
+      haenKayttoajanPidennysta: true,
+      haettuKayttoajanPaattymispaiva: moment(values.haettuKayttoajanPaattymispaiva).format('YYYY-MM-DD'),
+      kayttoajanPidennysPerustelut: values.kayttoajanPidennysPerustelut,
+    }
+  }
+
+  const talousarvio = values.haenMuutostaTaloudenKayttosuunnitelmaan && {
+    talousarvio: omit(values.talousarvio, ['currentSum', 'originalSum']),
+    talousarvioPerustelut: values.taloudenKayttosuunnitelmanPerustelut
+  }
+
   return client.post(url, {
-    ...values.haenKayttoajanPidennysta && {
-      jatkoaika: {
-        haenKayttoajanPidennysta: true,
-        haettuKayttoajanPaattymispaiva: moment(values.haettuKayttoajanPaattymispaiva).format('YYYY-MM-DD'),
-        kayttoajanPidennysPerustelut: values.kayttoajanPidennysPerustelut,
-      }
-    },
+    ...jatkoaika,
+    ...talousarvio,
     yhteyshenkilo: {
       name: values.name,
       email: values.email,
