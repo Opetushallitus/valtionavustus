@@ -20,8 +20,9 @@ const calculateCurrentSum = (talousarvio: TalousarvioValues): number => {
 
 const MenoRow = ({ f, meno, lang }: { f: FormikHook, meno: Meno, lang: Language }) => {
   const name = `talousarvio.${meno.type}`
-  const className = getNestedInputErrorClass(f, ['talousarvio', meno.type])
+  const inputClass = getNestedInputErrorClass(f, ['talousarvio', meno.type])
   const value = f.values.talousarvio?.[meno.type]
+  const amountClass = value === meno.amount ? '' : 'linethrough'
 
   const handleChange = (e) => {
     f.handleChange(e)
@@ -33,10 +34,10 @@ const MenoRow = ({ f, meno, lang }: { f: FormikHook, meno: Meno, lang: Language 
   return (
     <div className="muutoshakemus_taloudenKayttosuunnitelma_row" data-test-id="meno-input-row">
       <div className="description">{meno[`translation-${lang}`]}</div>
-      <div className="existingAmount">{meno.amount} €</div>
+      <div className="existingAmount"><span className={amountClass}>{meno.amount}</span> €</div>
       <div className="separator" />
       <div className="changedAmount" data-test-id="meno-input">
-        <input name={name} className={className} type="number" onChange={handleChange} onBlur={f.handleBlur} value={value} />
+        <input name={name} className={inputClass} type="number" onChange={handleChange} onBlur={f.handleBlur} value={value} />
       </div>
       <div className="changedAmountEur">€</div>
     </div>
