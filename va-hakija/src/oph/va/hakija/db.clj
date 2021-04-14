@@ -169,21 +169,6 @@
                           WHERE user_key = ?" [user-key])]
     (first paatokset)))
 
-(defn get-muutoshakemukset-by-paatos-user-key [user-key]
-  (let [hakemus-id-rows (query "SELECT h.*
-                                FROM paatos p
-                                LEFT JOIN muutoshakemus mh ON mh.paatos_id = p.id
-                                LEFT JOIN hakemukset h ON h.id = mh.hakemus_id
-                                WHERE p.user_key = ?
-                                LIMIT 1" [user-key])
-        hakemus-id (:id (first hakemus-id-rows))]
-    (get-muutoshakemukset hakemus-id)))
-
-(defn get-muutoshakemukset-by-user-key [user-key]
-  (let [hakemus-id-rows (query "SELECT id FROM hakemukset WHERE user_key = ? LIMIT 1" [user-key])
-        hakemus-id (:id (first hakemus-id-rows))]
-    (get-muutoshakemukset hakemus-id)))
-
 (defn get-muutoshakemukset [hakemus-id]
   (let [muutoshakemukset (query "SELECT
                                   m.id,
@@ -209,6 +194,21 @@
                                 ORDER BY id DESC" [hakemus-id])
         muutoshakemukset-with-talousarvios (map #(assoc % :talousarvio (get-talousarvio (:id %) "muutoshakemus")) muutoshakemukset)]
     muutoshakemukset-with-talousarvios))
+
+(defn get-muutoshakemukset-by-paatos-user-key [user-key]
+  (let [hakemus-id-rows (query "SELECT h.*
+                                FROM paatos p
+                                LEFT JOIN muutoshakemus mh ON mh.paatos_id = p.id
+                                LEFT JOIN hakemukset h ON h.id = mh.hakemus_id
+                                WHERE p.user_key = ?
+                                LIMIT 1" [user-key])
+        hakemus-id (:id (first hakemus-id-rows))]
+    (get-muutoshakemukset hakemus-id)))
+
+(defn get-muutoshakemukset-by-user-key [user-key]
+  (let [hakemus-id-rows (query "SELECT id FROM hakemukset WHERE user_key = ? LIMIT 1" [user-key])
+        hakemus-id (:id (first hakemus-id-rows))]
+    (get-muutoshakemukset hakemus-id)))
 
 (defn get-avustushaku-by-paatos-user-key [user-key]
       (let [avustushaut (query "SELECT a.hankkeen_alkamispaiva, a.hankkeen_paattymispaiva
