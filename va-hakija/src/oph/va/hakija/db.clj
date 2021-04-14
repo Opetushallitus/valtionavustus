@@ -114,6 +114,18 @@
         hakemus (exec queries/create-hakemus<! params)]
     {:hakemus hakemus :submission submission}))
 
+(defn- get-talousarvio [id entity]
+  (let [menot (query (str "SELECT mh.amount, m.type, m.translation_fi, m.translation_se
+                           FROM virkailija.menoluokka_" entity " as mh, virkailija.menoluokka as m
+                           WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
+                     [id])]
+    (map
+      (fn [row] {:type (:type row)
+                :amount (:amount row)
+                :translation-fi (:translation-fi row)
+                :translation-sv (:translation-se row)})
+      menot)))
+
 (defn get-normalized-hakemus [user-key]
   (log/info (str "Get normalized hakemus with user-key: " user-key))
   (let [hakemus (first
@@ -123,21 +135,7 @@
                                                 WHERE user_key = ?
                                                 LIMIT 1)"
                         [user-key]))
-        menot (query "SELECT mh.amount, m.type, m.translation_fi, m.translation_se
-                      FROM virkailija.menoluokka_hakemus as mh,
-                           virkailija.menoluokka as m
-                      WHERE m.id = mh.menoluokka_id
-                      AND mh.hakemus_id = (SELECT id
-                                           FROM hakija.hakemukset
-                                           WHERE user_key = ?
-                                           LIMIT 1)"
-                     [user-key])
-        talousarvio (map
-                     (fn [row] {:type (:type row)
-                                :amount (:amount row)
-                                :translation-fi (:translation-fi row)
-                                :translation-sv (:translation-se row)})
-                     menot)]
+        talousarvio (get-talousarvio (:hakemus-id hakemus) "hakemus")]
     (log/info (str "Succesfully fetched hakemus with user-key: " user-key))
     {:id (:id hakemus)
      :hakemus-id (:hakemus-id hakemus)
@@ -208,6 +206,7 @@
                                   kayttoajan_pidennys_perustelut,
                                   m.created_at,
                                   to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva,
+                                  talousarvio_perustelut,
                                   p.user_key as paatos_user_key,
                                   to_char(p.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva,
                                   p.created_at as paatos_created_at,
@@ -216,8 +215,9 @@
                                 LEFT JOIN virkailija.paatos p ON m.paatos_id = p.id
                                 LEFT JOIN virkailija.email_event ee ON m.id = ee.muutoshakemus_id AND ee.email_type = 'muutoshakemus-paatos' AND success = true
                                 WHERE m.hakemus_id = (SELECT id FROM hakemukset WHERE user_key = ? LIMIT 1)
-                                ORDER BY id DESC" [user-key])]
-    muutoshakemukset))
+                                ORDER BY id DESC" [user-key])
+        muutoshakemukset-with-talousarvios (map #(assoc % :talousarvio (get-talousarvio (:id %) "muutoshakemus")) muutoshakemukset)]
+    muutoshakemukset-with-talousarvios))
 
 (defn get-muutoshakemukset-by-hakemus-id [hakemus-id]
   (let [muutoshakemukset (query "SELECT

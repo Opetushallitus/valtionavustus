@@ -61,36 +61,47 @@
 (defn get-normalized-hakemus-contact-email [hakemus-id]
   (:contact-email (get-normalized-hakemus hakemus-id)))
 
+(defn- get-muutoshakemus-talousarvio [muutoshakemus-id]
+  (let [menot (query (str "SELECT mh.amount, m.type, m.translation_fi, m.translation_se
+                           FROM virkailija.menoluokka_muutoshakemus as mh, virkailija.menoluokka as m
+                           WHERE m.id = mh.menoluokka_id AND mh.muutoshakemus_id = ?")
+                     [muutoshakemus-id])]
+    (map
+      (fn [row] {:type (:type row)
+                :amount (:amount row)
+                :translation-fi (:translation-fi row)
+                :translation-sv (:translation-se row)})
+      menot)))
+
 (defn get-muutoshakemukset [hakemus-id]
   (log/info (str "Get muutoshakemus with hakemus id: " hakemus-id))
-  (let [muutoshakemukset (jdbc/with-db-transaction [connection {:datasource (get-datasource)}]
-                                             (jdbc/query
-                                              connection
-                                              ["SELECT
-                                                  m.id,
-                                                  m.hakemus_id,
-                                                  (CASE
-                                                    WHEN paatos_id IS NULL
-                                                    THEN 'new'
-                                                    ELSE p.status::text
-                                                  END) as status,
-                                                  haen_kayttoajan_pidennysta,
-                                                  kayttoajan_pidennys_perustelut,
-                                                  m.created_at,
-                                                  to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva,
-                                                  p.user_key as paatos_user_key,
-                                                  p.created_at as paatos_created_at,
-                                                  to_char(p.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva,
-                                                  ee.created_at as paatos_sent_at
-                                                FROM virkailija.muutoshakemus m
-                                                LEFT JOIN virkailija.paatos p ON m.paatos_id = p.id
-                                                LEFT JOIN virkailija.email_event ee
-                                                  ON ee.id = (SELECT max(id) FROM virkailija.email_event WHERE muutoshakemus_id = m.id AND email_type = 'muutoshakemus-paatos' AND success = true)
-                                                WHERE m.hakemus_id = ?
-                                                ORDER BY id DESC" hakemus-id]
-                                              {:identifiers #(.replace % \_ \-)}))]
+  (let [muutoshakemukset (query
+                            "SELECT
+                                m.id,
+                                m.hakemus_id,
+                                (CASE
+                                  WHEN paatos_id IS NULL
+                                  THEN 'new'
+                                  ELSE p.status::text
+                                END) as status,
+                                haen_kayttoajan_pidennysta,
+                                kayttoajan_pidennys_perustelut,
+                                m.created_at,
+                                to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva,
+                                talousarvio_perustelut,
+                                p.user_key as paatos_user_key,
+                                p.created_at as paatos_created_at,
+                                to_char(p.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva,
+                                ee.created_at as paatos_sent_at
+                              FROM virkailija.muutoshakemus m
+                              LEFT JOIN virkailija.paatos p ON m.paatos_id = p.id
+                              LEFT JOIN virkailija.email_event ee
+                                ON ee.id = (SELECT max(id) FROM virkailija.email_event WHERE muutoshakemus_id = m.id AND email_type = 'muutoshakemus-paatos' AND success = true)
+                              WHERE m.hakemus_id = ?
+                              ORDER BY id DESC" [hakemus-id])
+        muutoshakemukset-with-talousarvio (map #(assoc % :talousarvio (get-muutoshakemus-talousarvio (:id %))) muutoshakemukset)]
     (log/info (str "Succesfully fetched muutoshakemukset with id: " hakemus-id))
-    muutoshakemukset))
+    muutoshakemukset-with-talousarvio))
 
 (defn get-arviot [hakemus-ids]
   (if (empty? hakemus-ids)

@@ -211,6 +211,8 @@
     :haen-kayttoajan-pidennysta s/Bool
     :kayttoajan-pidennys-perustelut (s/maybe s/Str)
     :haettu-kayttoajan-paattymispaiva (s/maybe java.time.LocalDate)
+    :talousarvio [Meno]
+    :talousarvio-perustelut (s/maybe s/Str)
     :status MuutoshakemusStatus
     :paatos-user-key (s/maybe s/Str)
     (s/optional-key :paatos-hyvaksytty-paattymispaiva) (s/maybe java.time.LocalDate)
