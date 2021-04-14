@@ -1,0 +1,97 @@
+@import "~soresu-form/web/form/style/variables.less";
+
+@descriptionWidth: 240px;
+@existingAmountWidth: 100px;
+
+@separatorLeftMargin: 17px;
+@separatorBorder: 1px;
+@separatorRightMargin: 13px;
+@separatorWidth: @separatorLeftMargin + @separatorBorder + @separatorRightMargin;
+
+@leftColumnWidth: @descriptionWidth + @existingAmountWidth + @separatorWidth;
+
+@changedAmountWidth: 120px;
+@eurWidth: 15px;
+
+@totalWidth: @leftColumnWidth + @changedAmountWidth + @eurWidth;
+
+.muutoshakemus_taloudenKayttosuunnitelma {
+  .headerContainer {
+    display: flex;
+    margin-bottom: 20px;
+
+    .currentBudget {
+      width: @leftColumnWidth;
+      text-transform: uppercase;
+    }
+
+    .modifiedBudget {
+      text-transform: uppercase;
+    }
+  }
+
+  .expensesHeader {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  &_horizontalSeparator {
+    background-color: @darkish-gray;
+    border: 0;
+    height: @separatorBorder;
+    width: @totalWidth;
+    margin: 19px auto 0 0;
+  }
+
+  &_row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    min-height: 38px;
+
+    .description {
+      width: @descriptionWidth;
+    }
+
+    .existingAmount {
+      width: @existingAmountWidth;
+      text-align: right;
+    }
+
+    .linethrough {
+      text-decoration: line-through;
+    }
+
+    .separator {
+      align-self: stretch;
+      margin-left: @separatorLeftMargin;
+      border-right: @separatorBorder solid @darkish-gray;
+      margin-right: @separatorRightMargin;
+    }
+
+    .noborder {
+      border: 0;
+    }
+
+    .changedAmount {
+      width: @changedAmountWidth;
+      display: flex;
+      align-items: center;
+      overflow: visible;
+      white-space: nowrap;
+
+      input {
+        width: 100px;
+        margin-right: 5px;
+      }
+    }
+
+    .changedAmountEur {
+      width: @eurWidth;
+    }
+
+    .currentSumError {
+      color: @bright-red;
+    }
+  }
+}

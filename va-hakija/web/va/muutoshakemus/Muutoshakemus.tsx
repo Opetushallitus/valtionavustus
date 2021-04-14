@@ -101,9 +101,11 @@ export const MuutoshakemusComponent = () => {
         <h1 className="muutoshakemus__title">{`${topic}${waitingForDecision}`}</h1>
         <div className="muutoshakemus__form">
           <MuutoshakemusValues
+            talousarvio={state.hakemus?.talousarvio}
             muutoshakemus={m}
             hakijaUrl={state.environment?.['hakija-server'].url[lang]}
             simplePaatos={true}
+            t={t}
             projectEndDate={projectEndDate} />
         </div>
       </section>

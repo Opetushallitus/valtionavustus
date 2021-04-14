@@ -1,3 +1,5 @@
+import {Talousarvio} from "./types/muutoshakemus"
+
 export type HakemusFormState = {
   avustushaku: any
   form: any
@@ -35,6 +37,8 @@ export type Muutoshakemus = {
   'hakemus-id': number
   id: number
   'kayttoajan-pidennys-perustelut': string
+  "talousarvio-perustelut"?: string
+  talousarvio: Talousarvio
   'paatos-created-at': string
   'paatos-sent-at': string
   'paatos-user-key': string

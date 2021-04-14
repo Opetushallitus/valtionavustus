@@ -1,12 +1,13 @@
 import React from 'react'
 import moment from 'moment'
 import { MuutoshakemusStatuses } from './hakemus-statuses'
+import { MuutosTaloudenKayttosuunnitelmaan } from './muutoshakemus/components/talous/MuutosTaloudenKayttosuunnitelmaan'
 
 import './MuutoshakemusValues.less'
 
 export const datetimeFormat = 'D.M.YYYY [klo] HH.mm'
 
-export const MuutoshakemusValues = ({ muutoshakemus, hakijaUrl, simplePaatos, projectEndDate }) => {
+export const MuutoshakemusValues = ({ talousarvio, muutoshakemus, hakijaUrl, simplePaatos, projectEndDate, t }) => {
   const a = muutoshakemus
   const paatosUrl = `${hakijaUrl}muutoshakemus/paatos?user-key=${a['paatos-user-key']}`
   return (
@@ -39,6 +40,11 @@ export const MuutoshakemusValues = ({ muutoshakemus, hakijaUrl, simplePaatos, pr
           }
         </section>
       }
+      <MuutosTaloudenKayttosuunnitelmaan
+        originalTalousarvio={talousarvio}
+        muutoshakemus={muutoshakemus}
+        lang={'fi'}
+        t={t} />
 
       <PaattymispaivaValues
         muutoshakemus={muutoshakemus}
