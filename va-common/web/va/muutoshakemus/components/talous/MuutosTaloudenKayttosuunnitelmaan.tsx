@@ -11,10 +11,9 @@ type MenoRowProps = {
   originalTalousarvio: Talousarvio
 }
 
-const MenoRow = ({ talousarvio, meno, lang, originalTalousarvio }: MenoRowProps) => {
-  const value = talousarvio?.[meno.type]
-  const amountClass = value === meno.amount ? '' : 'linethrough'
+const MenoRow = ({ meno, lang, originalTalousarvio }: MenoRowProps) => {
   const originalAmount = originalTalousarvio.find(t => t.type === meno.type)?.amount
+  const amountClass = meno.amount === originalAmount ? '' : 'linethrough'
 
   return (
     <div className="muutoshakemus_taloudenKayttosuunnitelma_row" data-test-id="meno-input-row">
@@ -37,7 +36,6 @@ export const MuutosTaloudenKayttosuunnitelmaan = ( props: MuutosTaloudenKayttosu
   const { originalTalousarvio, muutoshakemus, lang } = props
   const currentSum = muutoshakemus.talousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
   const originalSum = originalTalousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
-  const talousarvio = muutoshakemus.talousarvio || []
 
   const isAccepted = ['accepted_with_changes', 'accepted'].includes(muutoshakemus.status)
   const originalTitle = isAccepted ? 'Vanha talousarvio' : 'Voimassaoleva talousarvio'
@@ -52,7 +50,7 @@ export const MuutosTaloudenKayttosuunnitelmaan = ( props: MuutosTaloudenKayttosu
             <h3 className="muutoshakemus__header">{newTitle}</h3>
           </div>
           <div className="expensesHeader">Menot</div>
-          {talousarvio.map((meno: Meno) => <MenoRow lang={lang} meno={meno} key={meno["type"]} originalTalousarvio={originalTalousarvio} />)}
+          {muutoshakemus.talousarvio.map((meno: Meno) => <MenoRow lang={lang} meno={meno} key={meno["type"]} originalTalousarvio={originalTalousarvio} />)}
         </div>
         <hr className="muutoshakemus_taloudenKayttosuunnitelma_horizontalSeparator" />
         <div className="muutoshakemus_taloudenKayttosuunnitelma_row">
