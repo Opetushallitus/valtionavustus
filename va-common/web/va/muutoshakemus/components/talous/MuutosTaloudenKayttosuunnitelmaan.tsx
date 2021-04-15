@@ -46,6 +46,7 @@ export const MuutosTaloudenKayttosuunnitelmaan = ( props: MuutosTaloudenKayttosu
   const { originalTalousarvio, muutoshakemus, lang, t } = props
 
   if (!muutoshakemus.talousarvio || muutoshakemus.talousarvio.length < 1) return null
+  if (!originalTalousarvio || originalTalousarvio.length < 1) return null
 
   const currentSum = muutoshakemus.talousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
   const originalSum = originalTalousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
