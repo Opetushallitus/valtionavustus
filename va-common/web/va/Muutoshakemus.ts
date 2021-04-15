@@ -1,5 +1,5 @@
 import moment, { Moment } from 'moment'
-import { Muutoshakemus } from './types/muutoshakemus'
+import {Muutoshakemus, Talousarvio} from './types/muutoshakemus'
 
 export interface Avustushaku {
   'hankkeen-paattymispaiva' : string
@@ -12,6 +12,22 @@ export function getProjectEndDate(avustushaku: Avustushaku, muutoshakemukset: Mu
 export function getProjectEndMoment(avustushaku: Avustushaku, muutoshakemukset: Muutoshakemus[] | undefined): Moment {
   const latestAcceptedMuutoshakemus = getLatestApprovedProjectEndDate(muutoshakemukset)
   return latestAcceptedMuutoshakemus ? latestAcceptedMuutoshakemus : dateStringToMoment(avustushaku['hankkeen-paattymispaiva'])
+}
+
+function acceptedTalousarvioFilter(m: Muutoshakemus) {
+  return m.talousarvio && (m.status === 'accepted' || m.status === 'accepted_with_changes')
+}
+
+function getLatestApprovedMuutoshakemusWithTalousarvio(muutoshakemukset: Muutoshakemus[]): Muutoshakemus | undefined {
+  const acceptedMuutoshakemukset = muutoshakemukset.filter(acceptedTalousarvioFilter)
+  if (acceptedMuutoshakemukset.length < 1) return undefined
+
+  return sortByCreatedAtDescending(acceptedMuutoshakemukset)[0]
+}
+
+export function getLatestApprovedTalousarvio(hakemus: { talousarvio?: Talousarvio } | undefined, muutoshakemukset: Muutoshakemus[] | undefined): Talousarvio | undefined {
+  const latestAcceptedMuutoshakemus = getLatestApprovedMuutoshakemusWithTalousarvio(muutoshakemukset || [])
+  return latestAcceptedMuutoshakemus?.talousarvio || hakemus?.talousarvio || undefined
 }
 
 function sortByCreatedAtDescending(muutoshakemukset: Muutoshakemus[]): Muutoshakemus[] {

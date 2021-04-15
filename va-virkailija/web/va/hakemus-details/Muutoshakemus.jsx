@@ -20,7 +20,7 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
       <h2>Muutoshakemus {moment(a['created-at']).format(datetimeFormat)}</h2>
       <div className="muutoshakemus-content">
         <MuutoshakemusValues
-          talousarvio={[]}
+          currentTalousarvio={[]}
           muutoshakemus={a}
           hakijaUrl={environment['hakija-server'].url.fi}
           projectEndDate={projectEndDate} />
