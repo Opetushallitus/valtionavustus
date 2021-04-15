@@ -7,7 +7,7 @@ import './MuutoshakemusValues.less'
 
 export const datetimeFormat = 'D.M.YYYY [klo] HH.mm'
 
-export const MuutoshakemusValues = ({ talousarvio, muutoshakemus, hakijaUrl, simplePaatos, projectEndDate, t }) => {
+export const MuutoshakemusValues = ({ talousarvio, muutoshakemus, hakijaUrl, simplePaatos, projectEndDate, t, enableBudget = false }) => {
   const a = muutoshakemus
   const paatosUrl = `${hakijaUrl}muutoshakemus/paatos?user-key=${a['paatos-user-key']}`
   return (
@@ -40,11 +40,13 @@ export const MuutoshakemusValues = ({ talousarvio, muutoshakemus, hakijaUrl, sim
           }
         </section>
       }
-      <MuutosTaloudenKayttosuunnitelmaan
-        originalTalousarvio={talousarvio}
-        muutoshakemus={muutoshakemus}
-        lang={'fi'}
-        t={t} />
+      {enableBudget &&
+        <MuutosTaloudenKayttosuunnitelmaan
+          originalTalousarvio={talousarvio}
+          muutoshakemus={muutoshakemus}
+          lang={'fi'}
+          t={t} />
+      }
 
       <PaattymispaivaValues
         muutoshakemus={muutoshakemus}
