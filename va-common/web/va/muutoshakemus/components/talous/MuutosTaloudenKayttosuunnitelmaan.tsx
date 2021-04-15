@@ -1,10 +1,6 @@
 import React from 'react'
-import {
-  Language,
-  Meno,
-  Translations,
-  Muutoshakemus, Talousarvio
-} from 'va-common/web/va/types/muutoshakemus'
+
+import { Language, Meno, Muutoshakemus, Talousarvio } from 'va-common/web/va/types/muutoshakemus'
 
 import './talous.less'
 
