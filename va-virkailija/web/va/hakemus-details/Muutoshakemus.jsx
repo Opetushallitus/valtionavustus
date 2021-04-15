@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import moment from 'moment'
 
 import { MuutoshakemusValues, datetimeFormat } from 'va-common/web/va/MuutoshakemusValues'
+import { getProjectEndDate } from 'va-common/web/va/Muutoshakemus'
+
 import { MuutoshakemusForm } from './MuutoshakemusForm'
 import { MuutoshakemusTabs } from './MuutoshakemusTabs'
-import { getProjectEndDate } from '../../../../va-common/web/va/Muutoshakemus'
 
 import './Muutoshakemus.less'
 

@@ -1,9 +1,10 @@
 import React from 'react'
 
+import { FormikHook, FormValues } from 'va-common/web/va/types/muutoshakemus'
+
 import { useTranslations } from '../TranslationContext'
 import { ErrorMessage } from '../ErrorMessage'
 import { getInputErrorClass } from '../formikHelpers'
-import { FormikHook, FormValues } from '../../../../../va-common/web/va/types/muutoshakemus'
 
 type PerustelutTextAreaProps = {
   f: FormikHook

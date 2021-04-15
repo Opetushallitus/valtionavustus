@@ -3,8 +3,7 @@ import * as queryString from 'query-string'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusPaatos } from 'va-common/web/va/MuutoshakemusPaatos'
-
-import { PaatosState } from '../../../../va-common/web/va/types/muutoshakemus'
+import { PaatosState } from 'va-common/web/va/types/muutoshakemus'
 
 import '../style/paatos.less'
 

@@ -1,29 +1,21 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 
-// @ts-ignore
 import DateUtil from 'soresu-form/web/DateUtil'
-// @ts-ignore
 import FormContainer from 'soresu-form/web/form/FormContainer'
-// @ts-ignore
 import FormRules from 'soresu-form/web/form/FormRules'
-// @ts-ignore
 import FormBranchGrower from 'soresu-form/web/form/FormBranchGrower'
-// @ts-ignore
 import VaComponentFactory from 'va-common/web/va/VaComponentFactory'
-// @ts-ignore
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
-// @ts-ignore
 import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber'
-// @ts-ignore
 import VaChangeRequest from 'va-common/web/va/VaChangeRequest'
 import { mapAnswersWithMuutoshakemusData } from 'va-common/web/va/MuutoshakemusMapper'
-import GrantRefusedNotice from './GrantRefusedNotice.jsx'
+import { Answer, Hakemus, HakemusFormState } from 'va-common/web/va/types'
 
+import GrantRefusedNotice from './GrantRefusedNotice.jsx'
 import EditsDisplayingFormView from './EditsDisplayingFormView'
 import FakeFormController from '../form/FakeFormController'
 import FakeFormState from '../form/FakeFormState'
-import { Answer, Hakemus, HakemusFormState } from '../../../../va-common/web/va/types'
 
 import '../style/formpreview.less'
 

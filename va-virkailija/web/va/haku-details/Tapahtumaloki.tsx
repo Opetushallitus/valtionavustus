@@ -1,6 +1,5 @@
 import React from 'react'
 
-// @ts-ignore
 import DateUtil from 'soresu-form/web/DateUtil'
 
 export type Lahetys = {

@@ -1,13 +1,11 @@
 import React from 'react'
+import moment from 'moment'
 import _ from 'lodash'
 
-// @ts-ignore
 import JsUtil from 'soresu-form/web/JsUtil'
-// @ts-ignore
 import FormPreview from 'soresu-form/web/form/FormPreview'
-import { Answer, AnswersDelta, HakemusFormState, Muutoshakemus, NormalizedHakemusData } from '../../../../va-common/web/va/types'
+import { Answer, AnswersDelta, HakemusFormState, Muutoshakemus, NormalizedHakemusData } from 'va-common/web/va/types'
 import { getProjectEndDate } from 'va-common/web/va/Muutoshakemus'
-import moment from 'moment'
 
 function addOrMutateAnswer(answers: Answer[], key: string, newValue: any) {
   const answer = answers.find(a => a.key === key)

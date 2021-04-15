@@ -1,7 +1,7 @@
 import * as yup from 'yup'
 import { useFormik } from 'formik'
 
-import { FormValues, Meno, TalousarvioValues } from '../../../../va-common/web/va/types/muutoshakemus'
+import { FormValues, Meno, TalousarvioValues } from 'va-common/web/va/types/muutoshakemus'
 import { postMuutoshakemus } from './client'
 import { FormErrors, Language, translations } from './translations'
 

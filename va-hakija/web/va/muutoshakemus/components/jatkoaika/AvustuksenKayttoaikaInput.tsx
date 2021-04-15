@@ -2,10 +2,11 @@ import React from 'react'
 import { DateTimePicker } from 'react-widgets'
 import moment from 'moment'
 
+import { FormikHook } from 'va-common/web/va/types/muutoshakemus'
+
 import { useTranslations } from '../../TranslationContext'
 import { ErrorMessage } from '../../ErrorMessage'
 import { getInputErrorClass } from '../../formikHelpers'
-import { FormikHook } from '../../../../../../va-common/web/va/types/muutoshakemus'
 import { PerustelutTextArea } from '../PerustelutTextArea'
 
 import 'react-widgets/dist/css/react-widgets.css'
