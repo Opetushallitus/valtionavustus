@@ -7,7 +7,7 @@ import './MuutoshakemusValues.less'
 
 export const datetimeFormat = 'D.M.YYYY [klo] HH.mm'
 
-export const MuutoshakemusValues = ({ talousarvio, muutoshakemus, hakijaUrl, simplePaatos, projectEndDate, t, enableBudget = false }) => {
+export const MuutoshakemusValues = ({ talousarvio, muutoshakemus, hakijaUrl, simplePaatos, projectEndDate }) => {
   const a = muutoshakemus
   const paatosUrl = `${hakijaUrl}muutoshakemus/paatos?user-key=${a['paatos-user-key']}`
   return (
@@ -40,18 +40,17 @@ export const MuutoshakemusValues = ({ talousarvio, muutoshakemus, hakijaUrl, sim
           }
         </section>
       }
-      {enableBudget &&
+      {!!muutoshakemus.talousarvio.length &&
         <MuutosTaloudenKayttosuunnitelmaan
           originalTalousarvio={talousarvio}
           muutoshakemus={muutoshakemus}
-          lang={'fi'}
-          t={t} />
+          lang={'fi'} />
       }
-
-      <PaattymispaivaValues
+      {muutoshakemus['haettu-kayttoajan-paattymispaiva'] &&
+        <PaattymispaivaValues
         muutoshakemus={muutoshakemus}
         projectEndDate={projectEndDate} />
-
+      }
     </React.Fragment>
   )
 }
@@ -64,10 +63,7 @@ function formatDate(date) {
 }
 
 const PaattymispaivaValues = ({ muutoshakemus, projectEndDate }) => {
-  if (!muutoshakemus['haettu-kayttoajan-paattymispaiva']) return null
-
   const isAcceptedWithChanges = muutoshakemus.status === 'accepted_with_changes'
-
   const currentEndDateTitle = isAcceptedWithChanges ? 'Vanha päättymisaika' : 'Voimassaoleva päättymisaika'
   const newEndDateTitle = isAcceptedWithChanges ? 'Hyväksytty muutos' : 'Haettu muutos'
   const newEndDateValue = isAcceptedWithChanges ? muutoshakemus['paatos-hyvaksytty-paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']

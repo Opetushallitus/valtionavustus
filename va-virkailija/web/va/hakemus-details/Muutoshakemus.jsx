@@ -21,7 +21,6 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
         <MuutoshakemusValues
           talousarvio={[]}
           muutoshakemus={a}
-          hakemus={hakemus}
           hakijaUrl={environment['hakija-server'].url.fi}
           projectEndDate={projectEndDate} />
 

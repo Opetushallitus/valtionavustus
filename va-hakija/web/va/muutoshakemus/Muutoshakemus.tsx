@@ -105,8 +105,6 @@ export const MuutoshakemusComponent = () => {
             muutoshakemus={m}
             hakijaUrl={state.environment?.['hakija-server'].url[lang]}
             simplePaatos={true}
-            t={t}
-            enableBudget={state.environment?.budjettimuutoshakemus["enabled?"]}
             projectEndDate={projectEndDate} />
         </div>
       </section>

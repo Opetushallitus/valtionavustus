@@ -110,7 +110,3 @@ export type FormValues = {
 export type FormikHook = FormikProps<FormValues>
 
 export type Language = 'fi' | 'sv'
-
-export type Translations = {
-  [key: string]: any
-}
