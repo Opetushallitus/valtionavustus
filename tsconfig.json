@@ -14,7 +14,18 @@
   },
   "include": [
     "./va-hakija/**/*",
-    "./va-virkailija/**/*"
+    "./va-virkailija/**/*",
+    "./va-common/**/*"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "va-admin-ui/target",
+    "va-common/target",
+    "va-hakija/target",
+    "va-virkailija/target",
+    "va-admin-ui/resources",
+    "va-common/resources",
+    "va-hakija/resources",
+    "va-virkailija/resources",
+  ]
 }
