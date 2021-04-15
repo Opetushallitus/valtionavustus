@@ -39,7 +39,7 @@ export const MuutosTaloudenKayttosuunnitelmaan = ( props: MuutosTaloudenKayttosu
 
   const isAccepted = ['accepted_with_changes', 'accepted'].includes(muutoshakemus.status)
   const originalTitle = isAccepted ? 'Vanha talousarvio' : 'Voimassaoleva talousarvio'
-  const newTitle = isAccepted ? 'Uusi talousarvio' : 'Haetut muutokset'
+  const newTitle = isAccepted ? 'Hyväksytyt muutokset' : 'Haetut muutokset'
 
   return (
     <section className="muutoshakemus-section">
