@@ -71,7 +71,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
     )
   }
 
-  const ErrorMessage = ({ text }) => (<span className="muutoshakemus__error-message">{text || ' '}</span>)
+  const ErrorMessage = ({ text }) => (<span className="muutoshakemus__error">{text}</span>)
 
   const voimassaolevaPaattymisaika = () => {
     const haettuPaiva = dateStringToMoment(muutoshakemus['haettu-kayttoajan-paattymispaiva'])
@@ -104,7 +104,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
                   }
                 }}
                 defaultValue={f.values['paattymispaiva'] || haettuPaiva.toDate()}
-                containerClassName={`datepicker`}
+                containerClassName={`datepicker ${isError(f, 'paattymispaiva') ? 'muutoshakemus__error' : ''}`}
                 time={false} />
             </div>
             {isError(f, 'paattymispaiva') && <ErrorMessage text={'Päättymispäivä on pakollinen kenttä!'} />}

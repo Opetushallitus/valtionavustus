@@ -102,11 +102,13 @@ h4.muutoshakemus__header {
 }
 
 textarea.muutoshakemus__error:enabled,
-input.muutoshakemus__error:enabled {
-  border: 1px solid @bright-red;
+input.muutoshakemus__error:enabled,
+.datepicker.muutoshakemus__error {
+  border: 1px solid @bright-red !important;
 }
 
-div.muutoshakemus__error {
+div.muutoshakemus__error,
+span.muutoshakemus__error {
   font-size: 0.8rem;
   color: @bright-red;
 }
