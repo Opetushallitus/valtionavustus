@@ -132,6 +132,11 @@ function do_deploy_jar {
   echo "Checking that application responds to healthcheck ($HEALTH_CHECK_COMMAND)..."
   $HEALTH_CHECK_COMMAND
   echo "Success in starting $module_name"
+  echo "Archiving old deployments"
+  ARCHIVE_DIR=${BASE_DIR}/archive
+  $SSH "mkdir -p ${ARCHIVE_DIR}"
+  $SSH "find ${BASE_DIR} -type d -name \"*${module_name}*\" -not -path ${TARGET_DIR} | while read dir; do mv ${dir} ${ARCHIVE_DIR}; done"
+  echo "Finished old deployments"
 }
 
 function restart_application {
