@@ -10,7 +10,7 @@ import { getProjectEndDate, getProjectEndMoment, getLatestApprovedTalousarvio } 
 
 import { MuutoshakemusFormSection } from './components/MuutoshakemusFormSection'
 import { AvustuksenKayttoaikaInput } from './components/jatkoaika/AvustuksenKayttoaikaInput'
-import { MuutosTaloudenKayttosuunnitelmaan } from './components/talous/MuutosTaloudenKayttosuunnitelmaan'
+import { TalousarvioForm } from './components/talous/TalousarvioForm'
 import {ContactPerson} from './components/contact-person/ContactPerson'
 import {TopBar} from './components/TopBar'
 import {Language, translations} from './translations'
@@ -135,7 +135,7 @@ export const MuutoshakemusComponent = () => {
                       </MuutoshakemusFormSection>
                       {state.environment?.budjettimuutoshakemus["enabled?"] &&
                         <MuutoshakemusFormSection f={f} name="haenMuutostaTaloudenKayttosuunnitelmaan" title={t.muutosTaloudenKayttosuunnitelmaan.checkboxTitle}>
-                          <MuutosTaloudenKayttosuunnitelmaan f={f} talousarvio={state.hakemus?.talousarvio || []} />
+                          <TalousarvioForm f={f} talousarvio={state.hakemus?.talousarvio || []} />
                         </MuutoshakemusFormSection>
                       }
                     </div>

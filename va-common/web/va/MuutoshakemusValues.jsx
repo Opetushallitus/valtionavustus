@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment'
 import { MuutoshakemusStatuses } from './hakemus-statuses'
-import { MuutosTaloudenKayttosuunnitelmaan } from './muutoshakemus/components/talous/MuutosTaloudenKayttosuunnitelmaan'
+import { MuutosTaloudenKayttosuunnitelmaan } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
 
 import './MuutoshakemusValues.less'
 

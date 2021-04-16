@@ -15,18 +15,13 @@
 
 @totalWidth: @leftColumnWidth + @changedAmountWidth + @eurWidth;
 
-.muutoshakemus_taloudenKayttosuunnitelma {
+.muutoshakemus_talousarvio {
   .headerContainer {
     display: flex;
     margin-bottom: 20px;
 
     .currentBudget {
       width: @leftColumnWidth;
-      text-transform: uppercase;
-    }
-
-    .modifiedBudget {
-      text-transform: uppercase;
     }
   }
 
@@ -60,6 +55,10 @@
 
     .linethrough {
       text-decoration: line-through;
+    }
+
+    .uppercase {
+      text-decoration: uppercase;
     }
 
     .separator {

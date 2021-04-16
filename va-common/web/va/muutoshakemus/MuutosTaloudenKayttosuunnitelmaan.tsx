@@ -16,7 +16,7 @@ const MenoRow = ({ meno, lang, currentTalousarvio }: MenoRowProps) => {
   const amountClass = meno.amount === currentAmount ? '' : 'linethrough'
 
   return (
-    <div className="muutoshakemus_taloudenKayttosuunnitelma_row" data-test-id="meno-input-row">
+    <div className="muutoshakemus_talousarvio_row" data-test-id="meno-input-row">
       <div className="description">{meno[`translation-${lang}`]}</div>
       <div className="existingAmount"><span className={amountClass}>{currentAmount}</span> €</div>
       <div className="separator" />
@@ -44,7 +44,7 @@ export const MuutosTaloudenKayttosuunnitelmaan = ( props: MuutosTaloudenKayttosu
   return (
     <section className="muutoshakemus-section">
       <div className="muutoshakemus-row">
-        <div className="muutoshakemus__talousarvio">
+        <div className="muutoshakemus_talousarvio">
           <div className="headerContainer">
             <h3 className="muutoshakemus__header currentBudget">{originalTitle}</h3>
             <h3 className="muutoshakemus__header">{newTitle}</h3>
@@ -52,8 +52,8 @@ export const MuutosTaloudenKayttosuunnitelmaan = ( props: MuutosTaloudenKayttosu
           <div className="expensesHeader">Menot</div>
           {muutoshakemus.talousarvio.map((meno: Meno) => <MenoRow lang={lang} meno={meno} key={meno["type"]} currentTalousarvio={currentTalousarvio} />)}
         </div>
-        <hr className="muutoshakemus_taloudenKayttosuunnitelma_horizontalSeparator" />
-        <div className="muutoshakemus_taloudenKayttosuunnitelma_row">
+        <hr className="muutoshakemus_talousarvio_horizontalSeparator" />
+        <div className="muutoshakemus_talousarvio_row">
           <div className="description"></div>
           <div className="existingAmount" data-test-id="current-sum"><b>{currentSum} €</b></div>
           <div className="separator noborder" />

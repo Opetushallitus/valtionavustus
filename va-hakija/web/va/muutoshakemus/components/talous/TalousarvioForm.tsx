@@ -2,7 +2,8 @@ import React from 'react'
 
 import { FormikHook, Meno, Talousarvio, TalousarvioValues } from 'va-common/web/va/types/muutoshakemus'
 
-import './talous.less'
+import 'va-common/web/va/muutoshakemus/talous.less'
+
 import { Language } from '../../translations'
 import { useTranslations } from '../../TranslationContext'
 import { PerustelutTextArea } from '../PerustelutTextArea'
@@ -32,7 +33,7 @@ const MenoRow = ({ f, meno, lang }: { f: FormikHook, meno: Meno, lang: Language 
   }
 
   return (
-    <div className="muutoshakemus_taloudenKayttosuunnitelma_row" data-test-id="meno-input-row">
+    <div className="muutoshakemus_talousarvio_row" data-test-id="meno-input-row">
       <div className="description">{meno[`translation-${lang}`]}</div>
       <div className="existingAmount"><span className={amountClass}>{meno.amount}</span> €</div>
       <div className="separator" />
@@ -44,7 +45,7 @@ const MenoRow = ({ f, meno, lang }: { f: FormikHook, meno: Meno, lang: Language 
   )
 }
 
-export const MuutosTaloudenKayttosuunnitelmaan = ({ f, talousarvio }: MuutosTaloudenKayttosuunnitelmaanProps) => {
+export const TalousarvioForm = ({ f, talousarvio }: MuutosTaloudenKayttosuunnitelmaanProps) => {
   const { t, lang } = useTranslations()
   // @ts-ignore Formik provides incorrect error type
   const currentSumErrorClass = f.errors.talousarvio?.currentSum ? 'currentSumError' : ''
@@ -52,23 +53,23 @@ export const MuutosTaloudenKayttosuunnitelmaan = ({ f, talousarvio }: MuutosTalo
   const currentSumErrorElem = f.errors.talousarvio?.currentSum && <ErrorMessage text={f.errors.talousarvio?.currentSum} />
   return (
     <>
-      <div className="muutoshakemus_taloudenKayttosuunnitelma">
+      <div className="muutoshakemus_talousarvio">
         <div className="headerContainer">
-          <div className="currentBudget">{t.muutosTaloudenKayttosuunnitelmaan.currentBudget}</div>
-          <div className="modifiedBudget">{t.muutosTaloudenKayttosuunnitelmaan.modifiedBudget}</div>
+          <div className="currentBudget uppercase">{t.muutosTaloudenKayttosuunnitelmaan.currentBudget}</div>
+          <div className="modifiedBudget uppercase">{t.muutosTaloudenKayttosuunnitelmaan.modifiedBudget}</div>
         </div>
         <div className="expensesHeader">{t.muutosTaloudenKayttosuunnitelmaan.expenses}</div>
         {talousarvio.map((meno: Meno) => <MenoRow f={f} lang={lang} meno={meno} key={meno["type"]} />)}
       </div>
-      <hr className="muutoshakemus_taloudenKayttosuunnitelma_horizontalSeparator" />
-      <div className="muutoshakemus_taloudenKayttosuunnitelma_row">
+      <hr className="muutoshakemus_talousarvio_horizontalSeparator" />
+      <div className="muutoshakemus_talousarvio_row">
         <div className="description"><b>{t.muutosTaloudenKayttosuunnitelmaan.expensesTotal}</b></div>
         <div className="existingAmount" data-test-id="original-sum"><b>{f.values.talousarvio?.originalSum} €</b></div>
         <div className="separator noborder" />
         <div className="changedAmount" data-test-id="current-sum"><b className={currentSumErrorClass}>{f.values.talousarvio?.currentSum}</b></div>
         <div className="changedAmountEur"><b>€</b></div>
       </div>
-      <div className="muutoshakemus_taloudenKayttosuunnitelma_row">
+      <div className="muutoshakemus_talousarvio_row">
         <div className="description" />
         <div className="existingAmount" />
         <div className="separator noborder" />
