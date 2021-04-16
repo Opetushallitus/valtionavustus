@@ -1,5 +1,6 @@
-import {Browser, Page} from 'puppeteer'
+import { Browser, Page } from 'puppeteer'
 import moment from 'moment'
+
 import {
   mkBrowser,
   log,
@@ -14,7 +15,8 @@ import {
   clickElement,
   getElementInnerText,
   clearAndType,
-  hasElementAttribute
+  hasElementAttribute,
+  navigate
 } from './test-util'
 
 function createRandomHakuValues() {
@@ -177,6 +179,83 @@ describe('Talousarvion muuttaminen', () => {
       await busywaitForSendButton(true)
       const noSumErrorMessage = await getElementInnerText(page, '[data-test-id=current-sum-error]')
       expect(noSumErrorMessage).toEqual('')
+    })
+  })
+
+
+  describe("Virkailija käsittelee muutoshakemuksen talouden käyttösuunnitelmaan", () => {
+    let linkToMuutoshakemus: string
+    let avustushakuID: number
+    let hakemusID: number
+    const haku = createRandomHakuValues()
+
+    beforeAll(async () => {
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page, haku, answers)
+      avustushakuID = avustushakuId
+      hakemusID = hakemusId
+      linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
+      expectToBeDefined(linkToMuutoshakemus)
+      await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
+      await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
+      await clearAndType(page, 'input[name="talousarvio.equipment-costs-row"]', '8999')
+      await clearAndType(page, 'input[name="talousarvio.material-costs-row"]', '4001')
+      await clearAndType(page, 'input[name="talousarvio.personnel-costs-row"]', '200100')
+      await clearAndType(page, 'input[name="talousarvio.steamship-costs-row"]', '0')
+      await clearAndType(page, '#perustelut-taloudenKayttosuunnitelmanPerustelut', 'perustelu')
+      await clickElement(page, "#send-muutospyynto-button")
+      await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+      await clickElement(page, 'span.muutoshakemus-tab')
+    })
+
+    it('näkee nykyisen talouden käyttösuunnitelman', async () => {
+      const budgetRowSelector = '[data-test-id=meno-input-row]'
+      const budgetExpectedItems = [
+        { description: 'Henkilöstömenot', amount: '200000 €' },
+        { description: 'Aineet, tarvikkeet ja tavarat', amount: '3000 €' },
+        { description: 'Laitehankinnat', amount: '10000 €' },
+        { description: 'Palvelut', amount: '100 €' },
+        { description: 'Vuokrat', amount: '161616 €' },
+        { description: 'Matkamenot', amount: '100 €' },
+        { description: 'Muut menot', amount: '10000000 €' }
+      ]
+
+      await page.waitForSelector(budgetRowSelector)
+      const budgetRows = await page.$$eval(budgetRowSelector, elements => {
+        return elements.map(elem => ({
+          description: elem.querySelector('.description')?.textContent,
+          amount: elem.querySelector('.existingAmount')?.textContent
+        }))
+      })
+      expect(budgetRows).toEqual(budgetExpectedItems)
+    })
+
+    it('näkee haetun talouden käyttösuunnitelman', async () => {
+      const budgetRowSelector = '[data-test-id=meno-input-row]'
+      const budgetExpectedItems = [
+        { description: 'Henkilöstömenot', amount: '200100' },
+        { description: 'Aineet, tarvikkeet ja tavarat', amount: '4001' },
+        { description: 'Laitehankinnat', amount: '8999' },
+        { description: 'Palvelut', amount: '100' },
+        { description: 'Vuokrat', amount: '161616' },
+        { description: 'Matkamenot', amount: '0' },
+        { description: 'Muut menot', amount: '10000000' }
+      ]
+
+      await page.waitForSelector(budgetRowSelector)
+      const budgetRows = await page.$$eval(budgetRowSelector, elements => {
+        return elements.map(elem => ({
+          description: elem.querySelector('.description')?.textContent,
+          amount: elem.querySelector('.changedAmount')?.textContent
+        }))
+      })
+      expect(budgetRows).toEqual(budgetExpectedItems)
+    })
+
+    it('näkee talouden käyttösuunnitelman muutoksen perustelut', async () => {
+      const budgetReason = '[data-test-id="muutoshakemus-talousarvio-perustelu"]'
+      await page.waitForSelector(budgetReason)
+      const perustelu = await getElementInnerText(page, budgetReason)
+      expect(perustelu).toEqual('perustelu')
     })
   })
 })
