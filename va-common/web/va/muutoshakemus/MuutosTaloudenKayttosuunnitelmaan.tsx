@@ -32,7 +32,7 @@ export type MuutosTaloudenKayttosuunnitelmaanProps = {
   lang: Language
 }
 
-export const MuutosTaloudenKayttosuunnitelmaan = ( props: MuutosTaloudenKayttosuunnitelmaanProps) => {
+export const MuutosTaloudenKayttosuunnitelmaan = (props: MuutosTaloudenKayttosuunnitelmaanProps) => {
   const { currentTalousarvio, muutoshakemus, lang } = props
   const muutoshakemusSum = muutoshakemus.talousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
   const currentSum = currentTalousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)

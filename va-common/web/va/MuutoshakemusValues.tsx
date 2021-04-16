@@ -1,13 +1,24 @@
 import React from 'react'
 import moment from 'moment'
+
 import { MuutoshakemusStatuses } from './hakemus-statuses'
 import { MuutosTaloudenKayttosuunnitelmaan } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
+import { Muutoshakemus, Talousarvio } from './types/muutoshakemus'
 
 import './MuutoshakemusValues.less'
 
 export const datetimeFormat = 'D.M.YYYY [klo] HH.mm'
 
-export const MuutoshakemusValues = ({ currentTalousarvio, muutoshakemus, hakijaUrl, simplePaatos, projectEndDate }) => {
+type MuutoshakemusValuesProps = {
+  currentTalousarvio: Talousarvio
+  muutoshakemus: Muutoshakemus
+  hakijaUrl?: string
+  simplePaatos: boolean
+  projectEndDate?: string
+}
+
+export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
+  const { currentTalousarvio, muutoshakemus, hakijaUrl, simplePaatos, projectEndDate } = props
   const a = muutoshakemus
   const paatosUrl = `${hakijaUrl}muutoshakemus/paatos?user-key=${a['paatos-user-key']}`
   return (
@@ -55,14 +66,19 @@ export const MuutoshakemusValues = ({ currentTalousarvio, muutoshakemus, hakijaU
   )
 }
 
-function formatDate(date) {
+function formatDate(date?: string) {
   if (!date) return ''
   const parsedDate = moment(date)
-
-  return parsedDate.isValid ? parsedDate.format('DD.MM.YYYY') : ''
+  return parsedDate.isValid() ? parsedDate.format('DD.MM.YYYY') : ''
 }
 
-const PaattymispaivaValues = ({ muutoshakemus, projectEndDate }) => {
+type PaattymispaivaValuesProps = {
+  muutoshakemus: Muutoshakemus
+  projectEndDate?: string
+}
+
+const PaattymispaivaValues = (props: PaattymispaivaValuesProps) => {
+  const { muutoshakemus, projectEndDate } = props
   const isAcceptedWithChanges = muutoshakemus.status === 'accepted_with_changes'
   const currentEndDateTitle = isAcceptedWithChanges ? 'Vanha päättymisaika' : 'Voimassaoleva päättymisaika'
   const newEndDateTitle = isAcceptedWithChanges ? 'Hyväksytty muutos' : 'Haettu muutos'

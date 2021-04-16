@@ -6,7 +6,7 @@ import moment from 'moment'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusValues } from 'va-common/web/va/MuutoshakemusValues'
 import { Muutoshakemus, MuutoshakemusProps } from 'va-common/web/va/types/muutoshakemus'
-import { getProjectEndDate, getProjectEndMoment, getLatestApprovedTalousarvio } from 'va-common/web/va/Muutoshakemus'
+import { getProjectEndDate, getProjectEndMoment, getTalousarvio } from 'va-common/web/va/Muutoshakemus'
 
 import { MuutoshakemusFormSection } from './components/MuutoshakemusFormSection'
 import { AvustuksenKayttoaikaInput } from './components/jatkoaika/AvustuksenKayttoaikaInput'
@@ -101,7 +101,7 @@ export const MuutoshakemusComponent = () => {
         <h1 className="muutoshakemus__title">{`${topic}${waitingForDecision}`}</h1>
         <div className="muutoshakemus__form">
           <MuutoshakemusValues
-            currentTalousarvio={getLatestApprovedTalousarvio(state.hakemus, previousMuutoshakemus)}
+            currentTalousarvio={getTalousarvio(previousMuutoshakemus, state.hakemus)}
             muutoshakemus={m}
             hakijaUrl={state.environment?.['hakija-server'].url[lang]}
             simplePaatos={true}
