@@ -406,7 +406,7 @@ describe('Talousarvion muuttaminen', () => {
       expect(perustelu).toEqual('perustelu')
     })
 
-    describe('avaa esikatselun, kun "muutoshakemus hyväksytty" on valittuna', async () => {
+    describe('avaa esikatselun, kun "muutoshakemus hyväksytty" on valittuna', () => {
       const previewContentSelector = '.muutoshakemus-paatos__content'
 
       beforeAll(async () => {

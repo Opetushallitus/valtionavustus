@@ -605,6 +605,7 @@ describe('Muutospäätösprosessi', () => {
 
               it('Correct päättymispäivä is displayed in päätös preview', async () => {
                 await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
+                await page.waitForSelector('.muutoshakemus-paatos__content')
                 const acceptedDate = await page.$eval('[data-test-id="paattymispaiva-value"]', el => el.textContent)
                 expect(acceptedDate).toBe('20.4.2400')
                 await clickElement(page, 'button.hakemus-details-modal__close-button')
