@@ -28,27 +28,38 @@
       created-paatos
       ))))
 
+(defn- get-talousarvio [id entity]
+  (let [menot (query (str "SELECT mh.amount, m.type, m.translation_fi, m.translation_se
+                           FROM virkailija.menoluokka_" entity " as mh, virkailija.menoluokka as m
+                           WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
+                     [id])]
+    (map
+      (fn [row] {:type (:type row)
+                :amount (:amount row)
+                :translation-fi (:translation-fi row)
+                :translation-sv (:translation-se row)})
+      menot)))
+
 (defn get-normalized-hakemus [hakemus-id]
   (log/info (str "Get normalized hakemus with id: " hakemus-id))
-  (let [hakemukset
-        (query
-          "SELECT
-            h.id,
-            h.hakemus_id,
-            h.contact_person,
-            h.contact_email,
-            h.contact_phone,
-            h.project_name,
-            h.created_at,
-            h.updated_at,
-            h.organization_name,
-            h.register_number
-          FROM
-            virkailija.normalized_hakemus h
-          WHERE h.hakemus_id = ?" [hakemus-id])]
-
+  (let [hakemukset (query "SELECT
+                            h.id,
+                            h.hakemus_id,
+                            h.contact_person,
+                            h.contact_email,
+                            h.contact_phone,
+                            h.project_name,
+                            h.created_at,
+                            h.updated_at,
+                            h.organization_name,
+                            h.register_number
+                          FROM
+                            virkailija.normalized_hakemus h
+                          WHERE h.hakemus_id = ?" [hakemus-id])
+        hakemus (first hakemukset)
+        talousarvio (get-talousarvio hakemus-id "hakemus")]
     (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
-    (first hakemukset)))
+    (assoc hakemus :talousarvio talousarvio)))
 
 (defn has-multiple-menoluokka-rows [hakemus-id]
   (let [result (first (query "SELECT COUNT(id) FROM menoluokka_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
@@ -61,11 +72,11 @@
 (defn get-normalized-hakemus-contact-email [hakemus-id]
   (:contact-email (get-normalized-hakemus hakemus-id)))
 
-(defn- get-muutoshakemus-talousarvio [muutoshakemus-id]
+(defn- get-talousarvio [id entity]
   (let [menot (query (str "SELECT mh.amount, m.type, m.translation_fi, m.translation_se
-                           FROM virkailija.menoluokka_muutoshakemus as mh, virkailija.menoluokka as m
-                           WHERE m.id = mh.menoluokka_id AND mh.muutoshakemus_id = ?")
-                     [muutoshakemus-id])]
+                           FROM virkailija.menoluokka_" entity " as mh, virkailija.menoluokka as m
+                           WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
+                     [id])]
     (map
       (fn [row] {:type (:type row)
                 :amount (:amount row)
@@ -99,7 +110,7 @@
                                 ON ee.id = (SELECT max(id) FROM virkailija.email_event WHERE muutoshakemus_id = m.id AND email_type = 'muutoshakemus-paatos' AND success = true)
                               WHERE m.hakemus_id = ?
                               ORDER BY id DESC" [hakemus-id])
-        muutoshakemukset-with-talousarvio (map #(assoc % :talousarvio (get-muutoshakemus-talousarvio (:id %))) muutoshakemukset)]
+        muutoshakemukset-with-talousarvio (map #(assoc % :talousarvio (get-talousarvio (:id %) "muutoshakemus")) muutoshakemukset)]
     (log/info (str "Succesfully fetched muutoshakemukset with id: " hakemus-id))
     muutoshakemukset-with-talousarvio))
 
