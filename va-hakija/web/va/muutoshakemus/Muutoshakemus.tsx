@@ -97,7 +97,7 @@ export const MuutoshakemusComponent = () => {
     const topic = `${translations[lang].muutoshakemus} ${moment(m['created-at']).format('D.M.YYYY')}`
     const waitingForDecision = m.status === 'new' ? ` - ${translations[lang].waitingForDecision}` : ''
     return (
-      <section className="muutoshakemus__section" data-test-class="existing-muutoshakemus" key={index}>
+      <section className="muutoshakemus__section" data-test-class="existing-muutoshakemus" data-test-state={m.status} key={index}>
         <h1 className="muutoshakemus__title">{`${topic}${waitingForDecision}`}</h1>
         <div className="muutoshakemus__form">
           <MuutoshakemusValues

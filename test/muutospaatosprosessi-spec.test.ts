@@ -33,7 +33,6 @@ import {
   ratkaiseMuutoshakemusEnabledAvustushaku,
   ratkaiseBudjettimuutoshakemusEnabledAvustushaku,
   selectVakioperustelu,
-  setCalendarDate,
   setPageErrorConsoleLogger,
   textContent,
   validateMuutoshakemusPaatosCommonValues,
@@ -42,6 +41,8 @@ import {
   MuutoshakemusValues,
   Email,
   createHakuFromEsimerkkihaku,
+  fillMuutoshakemusPaatosWithVakioperustelu,
+  acceptMuutoshakemusAndSendPaatosToHakija,
 } from './test-util'
 
 jest.setTimeout(400_000)
@@ -589,11 +590,7 @@ describe('Muutospäätösprosessi', () => {
 
             describe('And virkailija accepts muutoshakemus' , () => {
               beforeAll(async () => {
-                await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
-                await clickElement(page, 'span.muutoshakemus-tab')
-                await page.click(`label[for="accepted_with_changes"]`)
-                await setCalendarDate(page, '20.04.2400')
-                await selectVakioperustelu(page)
+                await fillMuutoshakemusPaatosWithVakioperustelu(page, avustushakuID, hakemusID)
               })
 
               it('Correct current project end date is displayed', async () => {
@@ -615,8 +612,7 @@ describe('Muutospäätösprosessi', () => {
 
               describe('After sending päätös', () => {
                 beforeAll(async () => {
-                  await page.click('[data-test-id="muutoshakemus-submit"]:not([disabled])')
-                  await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+                  await acceptMuutoshakemusAndSendPaatosToHakija(page)
                 })
 
                 it('Correct päättymispäivä is displayed to virkailija', async () => {

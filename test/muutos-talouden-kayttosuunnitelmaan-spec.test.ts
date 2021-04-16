@@ -16,7 +16,13 @@ import {
   getElementInnerText,
   clearAndType,
   hasElementAttribute,
-  navigate
+  fillMuutoshakemusPaatosWithVakioperustelu,
+  navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
+  acceptMuutoshakemusAndSendPaatosToHakija,
+  countElements,
+  navigate,
+  Budget,
+  BudgetAmount
 } from './test-util'
 
 function createRandomHakuValues() {
@@ -58,7 +64,149 @@ describe('Talousarvion muuttaminen', () => {
     await browser.close()
   })
 
-  describe("Hakija haluaa tehdä muutoshakemuksen talouden käyttösuunnitelmaan", () => {
+
+  describe('When avustushaku has been created and hakemus has been submitted', () => {
+    let avustushakuID: number
+    let hakemusID: number
+    const haku = createRandomHakuValues()
+    const budget: Budget = {
+      amount: {
+        personnel: '300',
+        material: '420',
+        equipment: '1337',
+        'service-purchase': '5318008',
+        rent: '69',
+        steamship: '0',
+        other: '9000',
+      },
+      description: {
+        personnel: 'One euro for each of our Spartan workers',
+        material: 'Generic materials for innovation',
+        equipment: 'We need elite level equipment',
+        'service-purchase': 'We need some afterwork fun',
+        rent: 'More afterwork fun',
+        steamship: 'No need for steamship, we have our own yacht',
+        other: 'For power ups',
+      },
+      selfFinancing: '1',
+    }
+
+    beforeAll(async () => {
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page, haku, answers, budget)
+      avustushakuID = avustushakuId
+      hakemusID = hakemusId
+    })
+
+    describe('And muutoshakemus #1 has been submitted with jatkoaika and budget changes', () => {
+      const muutoshakemus1Budget = {
+        personnel: '301',
+        material: '421',
+        equipment: '1338',
+        'service-purchase': '5318007',
+        rent: '68',
+        steamship: '0',
+        other: '8999',
+      }
+
+      const muutoshakemus1Perustelut = 'Pitäis päästä poistaa jotain akuuttii.... koodaile jotai jos mitää ois poistaa palaillaa sit mo'
+
+      const jatkoaika = {
+        jatkoaika: moment(new Date()).add(1, 'days').locale('fi'),
+        jatkoaikaPerustelu: 'Duubiduubi-laa'
+      }
+
+      beforeAll(async () => {
+        await navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges(page, avustushakuID, hakemusID, jatkoaika, muutoshakemus1Budget, muutoshakemus1Perustelut)
+      })
+
+      async function getNewHakemusExistingBudget() {
+        return getNewHakemusBudget('current')
+      }
+      async function getNewHakemusMuutoshakemusBudget() {
+        return getNewHakemusBudget('muutoshakemus')
+      }
+
+      type BudgetRow = {
+        name: string
+        amount: string
+      }
+
+      function budgetRowsToBudgetAmount(rows: BudgetRow[]): BudgetAmount {
+        return rows.reduce((p, c) => ({...p, ...{[c.name]: c.amount}}), {}) as BudgetAmount
+      }
+
+      async function getNewHakemusBudget(type: 'current' | 'muutoshakemus'): Promise<BudgetAmount> {
+        const numberFieldSelector = type === 'current' ? '[class="existingAmount"] span' : '[class="changedAmount"][data-test-id="meno-input"]'
+        const budgetRows = await page.$$eval('[data-test-class="existing-muutoshakemus"][data-test-state="new"] [data-test-id="meno-input-row"]', (elements, inputSelector) => {
+          return elements.map(elem => ({
+            name: elem.getAttribute('data-test-type')?.replace('-costs-row', '') || '',
+            amount: elem.querySelector(inputSelector)?.innerHTML || ''
+          }))
+        }, numberFieldSelector) as BudgetRow[]
+
+        return budgetRowsToBudgetAmount(budgetRows)
+      }
+
+      it('budget from hakemus is displayed to hakija as current budget', async () => {
+        expect(await getNewHakemusExistingBudget()).toMatchObject(budget.amount)
+      })
+
+      it('haetut muutokset budget is displayed to hakija', async () => {
+        expect(await getNewHakemusMuutoshakemusBudget()).toMatchObject(muutoshakemus1Budget)
+      })
+
+      it('perustelut is displayed to hakija', async () => {
+        const perustelut = await getElementInnerText(page, '[data-test-id="muutoshakemus-talousarvio-perustelu"]')
+        expect(perustelut).toBe(muutoshakemus1Perustelut)
+      })
+
+      it('jatkoaika is displayed to hakija', async () => {
+        const date = await page.$eval('[data-test-id="muutoshakemus-jatkoaika"]', e => e.textContent)
+        expect(date).toBe(jatkoaika.jatkoaika.format('DD.MM.YYYY'))
+      })
+
+      describe('And muutoshakemus #1 has been approved', () => {
+        beforeAll(async () => {
+          await fillMuutoshakemusPaatosWithVakioperustelu(page, avustushakuID, hakemusID)
+          await acceptMuutoshakemusAndSendPaatosToHakija(page)
+        })
+
+        describe('And muutoshakemus #2 has been submitted with budget changes', () => {
+          const muutoshakemus2Budget = {...muutoshakemus1Budget, ...{ personnel: '302', other: '8998' }}
+          const muutoshakemus2Perustelut = 'Fattan fossiilit taas sniiduili ja oon akuutis likviditettivajees, pydeeks vippaa vähän hilui'
+
+          beforeAll(async () => {
+            await navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges(page, avustushakuID, hakemusID, jatkoaika, muutoshakemus2Budget, muutoshakemus2Perustelut)
+          })
+
+          it('accepted budget changes from muutoshakemus #1 are displayed as current budget', async () => {
+            expect(await getNewHakemusExistingBudget()).toMatchObject(muutoshakemus1Budget)
+          })
+
+          it('haetut muutokset budget is displayed to hakija', async () => {
+            expect(await getNewHakemusMuutoshakemusBudget()).toMatchObject(muutoshakemus2Budget)
+          })
+
+          it('perustelut is displayed to hakija', async () => {
+            const perustelut = await getElementInnerText(page, '[data-test-class="existing-muutoshakemus"][data-test-state="new"] [data-test-id="muutoshakemus-talousarvio-perustelu"]')
+            expect(perustelut).toBe(muutoshakemus2Perustelut)
+          })
+
+          it('two muutoshakemuses are visible to hakija', async () => {
+            expect(await countElements(page, '[class="muutoshakemus_talousarvio"]')).toBe(2)
+          })
+
+          it('muutoshakemus #2 is in read-only state', async () => {
+            const budgetInput = await page.$$('[data-test-type="personnel-costs-row"] input')
+            expect(budgetInput).toEqual([])
+          })
+        })
+      })
+    })
+  })
+
+
+  describe.skip("Hakija haluaa tehdä muutoshakemuksen talouden käyttösuunnitelmaan", () => {
     let linkToMuutoshakemus: string
     let avustushakuID: number
     let hakemusID: number

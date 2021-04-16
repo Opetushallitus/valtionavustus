@@ -283,6 +283,20 @@ export async function publishAvustushaku(page: Page) {
   await waitForSave(page)
 }
 
+export async function navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges(
+  page: Page, avustushakuID: number, hakemusID: number, jatkoaika: MuutoshakemusValues, budjetti: BudgetAmount, budjettiPerustelut: string) {
+
+  const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
+  expectToBeDefined(linkToMuutoshakemus)
+  await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
+  await fillJatkoaikaValues(page, jatkoaika)
+  await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
+  await fillMuutoshakemusBudgetAmount(page, budjetti)
+  await fillBudgetPerustelut(page, budjettiPerustelut)
+  await clickSendMuutoshakemusButton(page)
+  await page.waitForSelector('[data-test-class="existing-muutoshakemus"][data-test-state="new"]')
+}
+
 export async function fillAndSendHakemus(page: Page, avustushakuID: number, beforeSubmitFn?: () => void) {
   await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
 
@@ -398,6 +412,7 @@ const defaultBudget = {
 }
 
 export type Budget = typeof defaultBudget
+export type BudgetAmount = typeof defaultBudget.amount
 
 export async function fillBudget(page: Page, budget: Budget = defaultBudget) {
   await clearAndType(page, "[id='personnel-costs-row.description']", budget.description.personnel)
@@ -417,7 +432,7 @@ export async function fillBudget(page: Page, budget: Budget = defaultBudget) {
   await clearAndType(page, "[id='self-financing-amount']", budget.selfFinancing)
 }
 
-export async function fillMuutoshakemusBudgetAmount(page: Page, budget: typeof defaultBudget.amount) {
+export async function fillMuutoshakemusBudgetAmount(page: Page, budget: BudgetAmount) {
   await clearAndType(page, "input[name='talousarvio.personnel-costs-row'][type='number']", budget.personnel)
   await clearAndType(page, "input[name='talousarvio.material-costs-row'][type='number']", budget.material)
   await clearAndType(page, "input[name='talousarvio.equipment-costs-row'][type='number']", budget.equipment)
@@ -429,6 +444,19 @@ export async function fillMuutoshakemusBudgetAmount(page: Page, budget: typeof d
 
 export async function fillBudgetPerustelut(page: Page, perustelut: string) {
   await clearAndType(page, '#perustelut-taloudenKayttosuunnitelmanPerustelut', perustelut)
+}
+
+export async function fillMuutoshakemusPaatosWithVakioperustelu(page: Page, avustushakuID: number, hakemusID: number, jatkoaika = '20.04.2400') {
+  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+  await clickElement(page, 'span.muutoshakemus-tab')
+  await page.click(`label[for="accepted_with_changes"]`)
+  await setCalendarDate(page, jatkoaika)
+  await selectVakioperustelu(page)
+}
+
+export async function acceptMuutoshakemusAndSendPaatosToHakija(page: Page) {
+  await page.click('[data-test-id="muutoshakemus-submit"]:not([disabled])')
+  await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
 }
 
 export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, budget?: Budget, beforeSubmitFn?: () => void): Promise<{ userKey: string }> {

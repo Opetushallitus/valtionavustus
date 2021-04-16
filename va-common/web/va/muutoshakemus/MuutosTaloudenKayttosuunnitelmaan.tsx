@@ -16,7 +16,7 @@ const MenoRow = ({ meno, lang, currentTalousarvio }: MenoRowProps) => {
   const amountClass = meno.amount === currentAmount ? '' : 'linethrough'
 
   return (
-    <div className="muutoshakemus_talousarvio_row" data-test-id="meno-input-row">
+    <div className="muutoshakemus_talousarvio_row" data-test-id="meno-input-row" data-test-type={meno.type}>
       <div className="description">{meno[`translation-${lang}`]}</div>
       <div className="existingAmount"><span className={amountClass}>{currentAmount}</span> €</div>
       <div className="separator" />
