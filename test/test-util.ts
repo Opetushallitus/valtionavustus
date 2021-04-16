@@ -375,7 +375,63 @@ export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustus
   return { userKey }
 }
 
-export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void): Promise<{ userKey: string }> {
+const defaultBudget = {
+  amount: {
+    personnel: "200000",
+    material: "3000",
+    equipment: "10000",
+    'service-purchase': "100",
+    rent: "161616",
+    steamship: "100",
+    other: "10000000",
+  },
+  description: {
+    personnel: "Tarvitsemme ihmisiä aaltoihin.",
+    material: "Jari Sarasvuon aalto-VHS-kasetteja.",
+    equipment: "Hankimme aaltokoneen toimistolle.",
+    'service-purchase': "Ostamme alihankkijoita jatkamaan aaltojamme.",
+    rent: "Vuokraamme Aalto-yliopistolta seminaaritiloja.",
+    steamship: "Taksikyydit Otaniemeen.",
+    other: "Vähän ylimääräistä pahan päivän varalle.",
+  },
+  selfFinancing: "1",
+}
+
+export type Budget = typeof defaultBudget
+
+export async function fillBudget(page: Page, budget: Budget = defaultBudget) {
+  await clearAndType(page, "[id='personnel-costs-row.description']", budget.description.personnel)
+  await clearAndType(page, "[id='personnel-costs-row.amount']", budget.amount.personnel)
+  await clearAndType(page, "[id='material-costs-row.description']", budget.description.material)
+  await clearAndType(page, "[id='material-costs-row.amount']", budget.amount.material)
+  await clearAndType(page, "[id='equipment-costs-row.description']", budget.description.equipment)
+  await clearAndType(page, "[id='equipment-costs-row.amount']", budget.amount.equipment)
+  await clearAndType(page, "[id='service-purchase-costs-row.description']", budget.description['service-purchase'])
+  await clearAndType(page, "[id='service-purchase-costs-row.amount']", budget.amount['service-purchase'])
+  await clearAndType(page, "[id='rent-costs-row.description']", budget.description.rent)
+  await clearAndType(page, "[id='rent-costs-row.amount']", budget.amount.rent)
+  await clearAndType(page, "[id='steamship-costs-row.description']", budget.description.steamship)
+  await clearAndType(page, "[id='steamship-costs-row.amount']", budget.amount.steamship)
+  await clearAndType(page, "[id='other-costs-row.description']", budget.description.other)
+  await clearAndType(page, "[id='other-costs-row.amount']", budget.amount.other)
+  await clearAndType(page, "[id='self-financing-amount']", budget.selfFinancing)
+}
+
+export async function fillMuutoshakemusBudgetAmount(page: Page, budget: typeof defaultBudget.amount) {
+  await clearAndType(page, "input[name='talousarvio.personnel-costs-row'][type='number']", budget.personnel)
+  await clearAndType(page, "input[name='talousarvio.material-costs-row'][type='number']", budget.material)
+  await clearAndType(page, "input[name='talousarvio.equipment-costs-row'][type='number']", budget.equipment)
+  await clearAndType(page, "input[name='talousarvio.service-purchase-costs-row'][type='number']", budget['service-purchase'])
+  await clearAndType(page, "input[name='talousarvio.rent-costs-row'][type='number']", budget.rent)
+  await clearAndType(page, "input[name='talousarvio.steamship-costs-row'][type='number']", budget.steamship)
+  await clearAndType(page, "input[name='talousarvio.other-costs-row'][type='number']", budget.other)
+}
+
+export async function fillBudgetPerustelut(page: Page, perustelut: string) {
+  await clearAndType(page, '#perustelut-taloudenKayttosuunnitelmanPerustelut', perustelut)
+}
+
+export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, budget?: Budget, beforeSubmitFn?: () => void): Promise<{ userKey: string }> {
   await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
 
   await page.waitForSelector('#haku-not-open', { hidden: true, timeout: 500 })
@@ -408,21 +464,7 @@ export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page,
   await clearAndType(page, "[id='project-begin']", "13.03.1992")
   await clearAndType(page, "[id='project-end']", "13.03.2032")
   await clickElementWithText(page, "label", "Kyllä")
-  await clearAndType(page, "[id='personnel-costs-row.description']", "Tarvitsemme ihmisiä aaltoihin.")
-  await clearAndType(page, "[id='personnel-costs-row.amount']", "200000")
-  await clearAndType(page, "[id='material-costs-row.description']", "Jari Sarasvuon aalto-VHS-kasetteja.")
-  await clearAndType(page, "[id='material-costs-row.amount']", "3000")
-  await clearAndType(page, "[id='equipment-costs-row.description']", "Hankimme aaltokoneen toimistolle.")
-  await clearAndType(page, "[id='equipment-costs-row.amount']", "10000")
-  await clearAndType(page, "[id='service-purchase-costs-row.description']", "Ostamme alihankkijoita jatkamaan aaltojamme.")
-  await clearAndType(page, "[id='service-purchase-costs-row.amount']", "100")
-  await clearAndType(page, "[id='rent-costs-row.description']", "Vuokraamme Aalto-yliopistolta seminaaritiloja.")
-  await clearAndType(page, "[id='rent-costs-row.amount']", "161616")
-  await clearAndType(page, "[id='steamship-costs-row.description']", "Taksikyydit Otaniemeen.")
-  await clearAndType(page, "[id='steamship-costs-row.amount']", "100")
-  await clearAndType(page, "[id='other-costs-row.description']", "Vähän ylimääräistä pahan päivän varalle.")
-  await clearAndType(page, "[id='other-costs-row.amount']", "10000000")
-  await clearAndType(page, "[id='self-financing-amount']", "1")
+  await fillBudget(page, budget)
 
   if (beforeSubmitFn) {
     await beforeSubmitFn()
@@ -896,19 +938,28 @@ export async function setCalendarDateForSelector(page: Page, date: string, selec
   }
 }
 
+export async function fillJatkoaikaValues(page: Page, muutoshakemus: MuutoshakemusValues) {
+  if (!muutoshakemus.jatkoaika) throw new Error('Jatkoaika is required')
+
+  await clickElement(page, '#checkbox-haenKayttoajanPidennysta')
+  await clearAndType(page, '#perustelut-kayttoajanPidennysPerustelut', muutoshakemus.jatkoaikaPerustelu)
+  await setCalendarDate(page, muutoshakemus.jatkoaika.format('DD.MM.YYYY'))
+}
+
+export async function clickSendMuutoshakemusButton(page: Page) {
+  await clickElement(page, '#send-muutospyynto-button:not([disabled])')
+}
+
 export async function fillAndSendMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, muutoshakemus: MuutoshakemusValues) {
-  const { jatkoaika, jatkoaikaPerustelu } = muutoshakemus
   await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
-  if (jatkoaika) {
-    await clickElement(page, '#checkbox-haenKayttoajanPidennysta')
-    await clearAndType(page, '#perustelut-kayttoajanPidennysPerustelut', jatkoaikaPerustelu)
-    await setCalendarDate(page, jatkoaika.format('DD.MM.YYYY'))
-    await clickElement(page, '#send-muutospyynto-button:not([disabled])')
+  if (muutoshakemus.jatkoaika) {
+    await fillJatkoaikaValues(page, muutoshakemus)
+    await clickSendMuutoshakemusButton(page)
   }
 
   const successNotificationSelector = 'div[class="auto-hide success"]'
   const notification = await textContent(page, successNotificationSelector)
-  const notificationText = jatkoaika ? 'Muutoshakemus lähetetty' : 'Muutokset tallennettu'
+  const notificationText = muutoshakemus.jatkoaika ? 'Muutoshakemus lähetetty' : 'Muutokset tallennettu'
   expect(notification).toBe(notificationText)
 }
 
@@ -997,11 +1048,11 @@ export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: 
   return await acceptAvustushaku(page, avustushakuID)
 }
 
-export async function ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers) {
+export async function ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers, budget?: Budget) {
   const { avustushakuID } = await createBudjettimuutoshakemusEnabledHaku(page, haku.avustushakuName, haku.registerNumber)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
-  await fillAndSendBudjettimuutoshakemusEnabledHakemus(page, avustushakuID, answers)
+  await fillAndSendBudjettimuutoshakemusEnabledHakemus(page, avustushakuID, answers, budget)
   return await acceptAvustushaku(page, avustushakuID)
 }
 
