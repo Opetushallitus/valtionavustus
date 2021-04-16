@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Language, Meno, Muutoshakemus, Talousarvio } from 'va-common/web/va/types/muutoshakemus'
+import { Language, Meno, MuutoshakemusStatus, Talousarvio } from 'va-common/web/va/types/muutoshakemus'
 
 import './talous.less'
 
@@ -9,11 +9,12 @@ type MenoRowProps = {
   lang: Language
   talousarvio?: { [key: string]: number }
   currentTalousarvio: Talousarvio
+  linethrough: boolean
 }
 
-const MenoRow = ({ meno, lang, currentTalousarvio }: MenoRowProps) => {
+const MenoRow = ({ meno, lang, currentTalousarvio, linethrough }: MenoRowProps) => {
   const currentAmount = currentTalousarvio.find(t => t.type === meno.type)?.amount
-  const amountClass = meno.amount === currentAmount ? '' : 'linethrough'
+  const amountClass = meno.amount === currentAmount || !linethrough ? '' : 'linethrough'
 
   return (
     <div className="muutoshakemus_talousarvio_row" data-test-id="meno-input-row" data-test-type={meno.type}>
@@ -28,42 +29,54 @@ const MenoRow = ({ meno, lang, currentTalousarvio }: MenoRowProps) => {
 
 export type MuutosTaloudenKayttosuunnitelmaanProps = {
   currentTalousarvio: Talousarvio
-  muutoshakemus: Muutoshakemus
+  newTalousarvio: Talousarvio
+  status: MuutoshakemusStatus
   lang: Language
+  reason?: string
+  paatos?: boolean
+}
+
+export const TalousarvioTable = (props: MuutosTaloudenKayttosuunnitelmaanProps) => {
+  const { currentTalousarvio, status, newTalousarvio, lang, paatos } = props
+  const muutoshakemusSum = newTalousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
+  const currentSum = currentTalousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
+
+  const isAccepted = ['accepted_with_changes', 'accepted'].includes(status)
+  const originalTitle = isAccepted ? 'Vanha talousarvio' : 'Voimassaoleva talousarvio'
+  const newTitle = isAccepted ? 'Hyväksytyt muutokset' : 'Haetut muutokset'
+  const headerClass = paatos ? 'muutoshakemus-paatos__change-header' : 'muutoshakemus__header'
+  const wrapperClass = paatos ? 'muutoshakemus-paatos__talousarvio' : 'muutoshakemus-row'
+
+  return (
+    <div className={wrapperClass}>
+      <div className="muutoshakemus_talousarvio">
+        <div className="headerContainer">
+          <h3 className={`${headerClass} currentBudget`}>{originalTitle}</h3>
+          <h3 className={headerClass}>{newTitle}</h3>
+        </div>
+        <div className="expensesHeader">Menot</div>
+        {newTalousarvio.map((meno: Meno) => <MenoRow linethrough={!paatos} lang={lang} meno={meno} key={meno["type"]} currentTalousarvio={currentTalousarvio} />)}
+      </div>
+      <hr className="muutoshakemus_talousarvio_horizontalSeparator" />
+      <div className="muutoshakemus_talousarvio_row">
+        <div className="description">{paatos && <b>Menot yhteensä</b>}</div>
+        <div className="existingAmount" data-test-id="current-sum"><b>{currentSum} €</b></div>
+        <div className="separator noborder" />
+        <div className="changedAmount" data-test-id="muutoshakemus-sum"><b>{muutoshakemusSum}</b></div>
+        <div className="changedAmountEur"><b>€</b></div>
+      </div>
+    </div>
+  )
 }
 
 export const MuutosTaloudenKayttosuunnitelmaan = (props: MuutosTaloudenKayttosuunnitelmaanProps) => {
-  const { currentTalousarvio, muutoshakemus, lang } = props
-  const muutoshakemusSum = muutoshakemus.talousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
-  const currentSum = currentTalousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
-
-  const isAccepted = ['accepted_with_changes', 'accepted'].includes(muutoshakemus.status)
-  const originalTitle = isAccepted ? 'Vanha talousarvio' : 'Voimassaoleva talousarvio'
-  const newTitle = isAccepted ? 'Hyväksytyt muutokset' : 'Haetut muutokset'
-
+  const { reason } = props
   return (
     <section className="muutoshakemus-section">
-      <div className="muutoshakemus-row">
-        <div className="muutoshakemus_talousarvio">
-          <div className="headerContainer">
-            <h3 className="muutoshakemus__header currentBudget">{originalTitle}</h3>
-            <h3 className="muutoshakemus__header">{newTitle}</h3>
-          </div>
-          <div className="expensesHeader">Menot</div>
-          {muutoshakemus.talousarvio.map((meno: Meno) => <MenoRow lang={lang} meno={meno} key={meno["type"]} currentTalousarvio={currentTalousarvio} />)}
-        </div>
-        <hr className="muutoshakemus_talousarvio_horizontalSeparator" />
-        <div className="muutoshakemus_talousarvio_row">
-          <div className="description"></div>
-          <div className="existingAmount" data-test-id="current-sum"><b>{currentSum} €</b></div>
-          <div className="separator noborder" />
-          <div className="changedAmount" data-test-id="muutoshakemus-sum"><b>{muutoshakemusSum}</b></div>
-          <div className="changedAmountEur"><b>€</b></div>
-        </div>
-      </div>
+      <TalousarvioTable {...props} />
       <div className="muutoshakemus-row">
         <h4 className="muutoshakemus__header">Hakijan perustelut</h4>
-        <div className="muutoshakemus__reason" data-test-id="muutoshakemus-talousarvio-perustelu">{muutoshakemus["talousarvio-perustelut"]}</div>
+        <div className="muutoshakemus__reason" data-test-id="muutoshakemus-talousarvio-perustelu">{reason}</div>
       </div>
     </section>
   )

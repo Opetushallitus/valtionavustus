@@ -405,5 +405,60 @@ describe('Talousarvion muuttaminen', () => {
       const perustelu = await getElementInnerText(page, budgetReason)
       expect(perustelu).toEqual('perustelu')
     })
+
+    describe('avaa esikatselun, kun "muutoshakemus hyväksytty" on valittuna', async () => {
+      const previewContentSelector = '.muutoshakemus-paatos__content'
+
+      beforeAll(async () => {
+        await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
+        await page.waitForSelector(previewContentSelector)
+      })
+
+      afterAll(async () => {
+        await clickElement(page, '.hakemus-details-modal__close-button')
+      })
+
+      it('näkee esikatselussa vanhan talousarvion', async () => {
+        const budgetRowSelector = '.muutoshakemus-paatos__content [data-test-id=meno-input-row]'
+        const budgetExpectedItems = [
+          { description: 'Henkilöstömenot', amount: '200000 €' },
+          { description: 'Aineet, tarvikkeet ja tavarat', amount: '3000 €' },
+          { description: 'Laitehankinnat', amount: '10000 €' },
+          { description: 'Palvelut', amount: '100 €' },
+          { description: 'Vuokrat', amount: '161616 €' },
+          { description: 'Matkamenot', amount: '100 €' },
+          { description: 'Muut menot', amount: '10000000 €' }
+        ]
+
+        const budgetRows = await page.$$eval(budgetRowSelector, elements => {
+          return elements.map(elem => ({
+            description: elem.querySelector('.description')?.textContent,
+            amount: elem.querySelector('.existingAmount')?.textContent
+          }))
+        })
+        expect(budgetRows).toEqual(budgetExpectedItems)
+      })
+
+      it('näkee esikatselussa hyväksytyn talousarvion', async () => {
+        const budgetRowSelector = '.muutoshakemus-paatos__content [data-test-id=meno-input-row]'
+        const budgetExpectedItems = [
+          { description: 'Henkilöstömenot', amount: '200100' },
+          { description: 'Aineet, tarvikkeet ja tavarat', amount: '4001' },
+          { description: 'Laitehankinnat', amount: '8999' },
+          { description: 'Palvelut', amount: '100' },
+          { description: 'Vuokrat', amount: '161616' },
+          { description: 'Matkamenot', amount: '0' },
+          { description: 'Muut menot', amount: '10000000' }
+        ]
+
+        const budgetRows = await page.$$eval(budgetRowSelector, elements => {
+          return elements.map(elem => ({
+            description: elem.querySelector('.description')?.textContent,
+            amount: elem.querySelector('.changedAmount')?.textContent
+          }))
+        })
+        expect(budgetRows).toEqual(budgetExpectedItems)
+      })
+    })
   })
 })

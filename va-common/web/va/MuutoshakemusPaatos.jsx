@@ -1,6 +1,8 @@
 import React from 'react'
 import moment from 'moment'
-import { getProjectEndDate } from 'va-common/web/va/Muutoshakemus'
+
+import { getProjectEndDate, getTalousarvio } from './Muutoshakemus'
+import { TalousarvioTable } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
 
 import './MuutoshakemusPaatos.less'
 
@@ -10,27 +12,34 @@ const paatosText = {
   'accepted_with_changes': 'Opetushallitus hyväksyy hakemuksen alla olevin muutoksin.'
 }
 
-const HyvaksytytMuutokset = ({ muutoshakemus, paatos, avustushaku, muutoshakemukset }) => {
+const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muutoshakemukset }) => {
   if (paatos.status === 'rejected') return null
 
   const isAcceptedWithChanges = paatos.status === 'accepted_with_changes'
-  const paattymispaiva = isAcceptedWithChanges ? paatos['paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']
+  const paattymispaiva = isAcceptedWithChanges ? paatos.paattymispaiva : muutoshakemus['haettu-kayttoajan-paattymispaiva']
+  const newTalousarvio = isAcceptedWithChanges ? paatos.talousarvio : muutoshakemus.talousarvio
 
   const previousMuutoshakemus = muutoshakemukset.filter(i => i["created-at"] < muutoshakemus["created-at"])
   const projectEndDate = getProjectEndDate(avustushaku, previousMuutoshakemus)
+  const currentTalousarvio = getTalousarvio(previousMuutoshakemus, hakemus)
 
   return (
     <section className="muutoshakemus-paatos__section">
       <div>Hyväksytyt muutokset</div>
-      <div className="muutoshakemus-paatos__accepted-changes">
-        <div>
-          <h3 className="muutoshakemus-paatos__change-header" data-test-id="h-old-end-date">Vanha päättymisaika</h3>
-          <div data-test-id="paatos-project-end">{projectEndDate}</div>
-        </div>
-        <div>
-          <h3 className="muutoshakemus-paatos__change-header" data-test-id="h-new-end-date">Hyväksytty muutos</h3>
-          <div data-test-id="paattymispaiva-value">{moment(paattymispaiva).format('D.M.YYYY')}</div>
-        </div>
+      <div>
+        {newTalousarvio.length && <TalousarvioTable paatos={true} currentTalousarvio={currentTalousarvio} newTalousarvio={newTalousarvio} status={paatos.status} lang="fi" />}
+        {muutoshakemus['haen-kayttoajan-pidennysta'] &&
+          <div className="muutoshakemus-paatos__accepted-changes">
+            <div>
+              <h3 className="muutoshakemus-paatos__change-header" data-test-id="h-old-end-date">Vanha päättymisaika</h3>
+              <div data-test-id="paatos-project-end">{projectEndDate}</div>
+            </div>
+            <div>
+              <h3 className="muutoshakemus-paatos__change-header" data-test-id="h-new-end-date">Hyväksytty muutos</h3>
+              <div data-test-id="paattymispaiva-value">{moment(paattymispaiva).format('D.M.YYYY')}</div>
+            </div>
+          </div>
+        }
       </div>
     </section>
   )
@@ -61,6 +70,7 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
       </section>
 
       <HyvaksytytMuutokset
+        hakemus={hakemus}
         muutoshakemus={muutoshakemus}
         muutoshakemukset={muutoshakemukset}
         paatos={paatos}

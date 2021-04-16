@@ -41,9 +41,11 @@ export interface Presenter {
   email: string
 }
 
+export type MuutoshakemusStatus = "new" | "accepted" | "rejected" | "accepted_with_changes"
+
 export interface Muutoshakemus {
   id: number
-  status: "new" | "accepted" | "rejected" | "accepted_with_changes"
+  status: MuutoshakemusStatus
   "hakemus-id": number
   "haen-kayttoajan-pidennysta": boolean
   "kayttoajan-pidennys-perustelut"?: string

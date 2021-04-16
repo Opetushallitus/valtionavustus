@@ -54,7 +54,9 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
       {!!muutoshakemus.talousarvio.length &&
         <MuutosTaloudenKayttosuunnitelmaan
           currentTalousarvio={currentTalousarvio}
-          muutoshakemus={muutoshakemus}
+          newTalousarvio={muutoshakemus.talousarvio}
+          status={muutoshakemus.status}
+          reason={muutoshakemus["talousarvio-perustelut"]}
           lang={'fi'} />
       }
       {muutoshakemus['haettu-kayttoajan-paattymispaiva'] &&
