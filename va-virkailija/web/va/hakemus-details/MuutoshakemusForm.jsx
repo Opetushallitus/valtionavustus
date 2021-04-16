@@ -27,7 +27,7 @@ const paatosStatuses = [
   { value: 'rejected', text: 'Hylätään', defaultReason: defaultReasonRejected }
 ]
 
-const PaatosSchema = Yup.object().shape({
+const getPaatosSchema = (muutoshakemus) => Yup.object().shape({
   status: Yup.string()
     .oneOf(paatosStatuses.map(s => s.value))
     .required(),
@@ -35,7 +35,7 @@ const PaatosSchema = Yup.object().shape({
     .required('Perustelu on pakollinen kenttä'),
   paattymispaiva: Yup.date().when('status', {
     is: 'accepted_with_changes',
-    then: (s) => s.required('Päättymispäivä on pakollinen kenttä'),
+    then: muutoshakemus['haen-kayttoajan-pidennysta'] ? Yup.date().required('Päättymispäivä on pakollinen kenttä') : Yup.date(),
   })
 })
 
@@ -55,7 +55,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
       reason: '',
       paattymispaiva: undefined,
     },
-    validationSchema: PaatosSchema,
+    validationSchema: getPaatosSchema(muutoshakemus),
     onSubmit: async (values) => {
       const storedPaatos = await HttpUtil.post(`/api/avustushaku/${avustushaku.id}/hakemus/${hakemus['hakemus-id']}/muutoshakemus/${muutoshakemus.id}/paatos`, formToPayload(values))
       controller.setPaatos({ muutoshakemusId: muutoshakemus.id, hakemusId: hakemus['hakemus-id'], ...storedPaatos })
@@ -71,18 +71,13 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
     )
   }
 
-  const ErrorMessage = ({ text }) => (
-    <React.Fragment><
-      span className="muutoshakemus__error-message">{text || ' '}</span>
-    </React.Fragment>
-  )
+  const ErrorMessage = ({ text }) => (<span className="muutoshakemus__error-message">{text || ' '}</span>)
 
   const voimassaolevaPaattymisaika = () => {
-
     const haettuPaiva = dateStringToMoment(muutoshakemus['haettu-kayttoajan-paattymispaiva'])
 
     return (
-      <section className="muutoshakemus-section">
+      <React.Fragment>
         <div className="muutoshakemus-row muutoshakemus__project-end-row">
           <div>
             <h3 className="muutoshakemus__header">Voimassaoleva päättymisaika</h3>
@@ -115,7 +110,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
             {isError(f, 'paattymispaiva') && <ErrorMessage text={'Päättymispäivä on pakollinen kenttä!'} />}
           </div>
         </div>
-      </section>
+      </React.Fragment>
   )}
 
   const onPaatosPreviewClick = () => {
@@ -153,7 +148,11 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
             {paatosStatuses.map(paatosStatusRadioButton)}
           </fieldset>
         </div>
-        {isAcceptedWithChanges(f) && voimassaolevaPaattymisaika()}
+        {isAcceptedWithChanges(f) && (
+          <React.Fragment>
+            {muutoshakemus['haen-kayttoajan-pidennysta'] && voimassaolevaPaattymisaika()}
+          </React.Fragment>
+        )}
         <div className="muutoshakemus-row">
           <h4 className="muutoshakemus__header">
             Perustelut <a className="muutoshakemus__default-reason-link" onClick={() => setDefaultReason(f)}>Lisää vakioperustelu</a>
