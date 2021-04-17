@@ -135,7 +135,7 @@ function do_deploy_jar {
   echo "Archiving old deployments"
   ARCHIVE_DIR=${BASE_DIR}/archive
   $SSH "mkdir -p ${ARCHIVE_DIR}"
-  $SSH "find ${BASE_DIR} -type d -name \"*${module_name}*\" -not -path ${TARGET_DIR} -exec mv {} ${ARCHIVE_DIR} \;"
+  $SSH "find ${BASE_DIR} -maxdepth 1 -type d -name \"*${module_name}*\" -not -path ${TARGET_DIR} -exec mv {} ${ARCHIVE_DIR} \;"
   echo "Finished old deployments"
 }
 
