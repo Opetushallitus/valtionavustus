@@ -49,7 +49,7 @@ export const TalousarvioTable = (props: MuutosTaloudenKayttosuunnitelmaanProps) 
 
   return (
     <div className={wrapperClass}>
-      <div className="muutoshakemus_talousarvio">
+      <div className="muutoshakemus_talousarvio" data-accepted={isAccepted ? 'true' : 'false'}>
         <div className="headerContainer">
           <h3 className={`${headerClass} currentBudget`}>{originalTitle}</h3>
           <h3 className={headerClass}>{newTitle}</h3>

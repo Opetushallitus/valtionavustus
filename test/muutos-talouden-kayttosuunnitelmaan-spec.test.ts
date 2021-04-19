@@ -21,6 +21,7 @@ import {
   acceptMuutoshakemusAndSendPaatosToHakija,
   countElements,
   navigate,
+  navigateToNthMuutoshakemus,
   Budget,
   BudgetAmount
 } from './test-util'
@@ -200,6 +201,31 @@ describe('Talousarvion muuttaminen', () => {
             const budgetInput = await page.$$('[data-test-type="personnel-costs-row"] input')
             expect(budgetInput).toEqual([])
           })
+
+          describe('When virkailija views approved muutoshakemus #1', () => {
+            beforeAll(async () => {
+              await navigateToNthMuutoshakemus(page, avustushakuID, hakemusID, 1)
+            })
+
+            it('Budget changes are not displayed as linethrough', async () => {
+              const existingAmount = await page.waitForSelector('[data-test-type="personnel-costs-row"] [class="existingAmount"] span', { visible: true })
+              const textDecoration = await page.evaluate(e => getComputedStyle(e).textDecorationLine, existingAmount)
+              expect(textDecoration).toBe('none')
+            })
+          })
+
+          describe('When virkailija views unapproved muutoshakemus #2', () => {
+            beforeAll(async () => {
+              await navigateToNthMuutoshakemus(page, avustushakuID, hakemusID, 2)
+            })
+
+            it('Budget changes are displayed as linethrough', async () => {
+              const existingAmount = await page.waitForSelector('[data-test-type="personnel-costs-row"] [class="existingAmount"] span', { visible: true })
+              const textDecoration = await page.evaluate(e => getComputedStyle(e).textDecorationLine, existingAmount)
+              expect(textDecoration).toBe('line-through')
+            })
+          })
+
         })
       })
     })

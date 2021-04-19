@@ -446,6 +446,13 @@ export async function fillBudgetPerustelut(page: Page, perustelut: string) {
   await clearAndType(page, '#perustelut-taloudenKayttosuunnitelmanPerustelut', perustelut)
 }
 
+export async function navigateToNthMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, n: number) {
+  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+  await clickElement(page, '[class="muutoshakemus-tab"]')
+  await clickElement(page, `.muutoshakemus-tabs button:nth-last-child(${n})`)
+  await page.waitForSelector('div[class="muutoshakemus-content"]')
+}
+
 export async function fillMuutoshakemusPaatosWithVakioperustelu(page: Page, avustushakuID: number, hakemusID: number, jatkoaika = '20.04.2400') {
   await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
   await clickElement(page, 'span.muutoshakemus-tab')
