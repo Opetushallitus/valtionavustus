@@ -59,7 +59,9 @@
         hakemus (first hakemukset)
         talousarvio (get-talousarvio hakemus-id "hakemus")]
     (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
-    (assoc hakemus :talousarvio talousarvio)))
+    (if hakemus
+      (assoc hakemus :talousarvio talousarvio)
+      nil)))
 
 (defn has-multiple-menoluokka-rows [hakemus-id]
   (let [result (first (query "SELECT COUNT(id) FROM menoluokka_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
