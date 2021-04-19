@@ -135,9 +135,9 @@
           (section :liitteet content translate false)
           "")))
 
-(defn kayttoaika-section [avustushaku translate language]
-  (let [first-day (.format (:hankkeen-alkamispaiva avustushaku) (DateTimeFormatter/ofPattern "dd.MM.YYYY"))
-        last-day (.format (:hankkeen-paattymispaiva avustushaku) (DateTimeFormatter/ofPattern "dd.MM.YYYY"))
+(defn kayttoaika-section [avustushaku translate]
+  (let [first-day (.format (:hankkeen-alkamispaiva avustushaku) (DateTimeFormatter/ofPattern "dd.MM.yyyy"))
+        last-day (.format (:hankkeen-paattymispaiva avustushaku) (DateTimeFormatter/ofPattern "dd.MM.yyyy"))
         content [:span [:p (str (translate :ensimmainen-kayttopaiva) " " first-day)] [:p (str (translate :viimeinen-kayttopaiva) " " last-day)]]]
     (section :valtionavustuksen-kayttoaika content translate false)))
 
@@ -181,7 +181,7 @@
         has-koulutusosio (:has-koulutusosio koulutusosio)
         kayttoaika (if (or (nil? (:hankkeen-alkamispaiva avustushaku)) (nil? (:hankkeen-paattymispaiva avustushaku)))
                     (optional-section decision :valtionavustuksen-kayttoaika :kayttoaika translate language)
-                    (kayttoaika-section avustushaku translate language))
+                    (kayttoaika-section avustushaku translate))
 
         params {
                 :avustushaku                   avustushaku

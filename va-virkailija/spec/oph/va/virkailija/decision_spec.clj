@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.decision-spec
   (:require [speclj.core
-             :refer [describe it should= tags run-specs around-all]]
+             :refer [describe it should= should-contain tags run-specs around-all]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.server :refer [start-server]]
             [oph.va.virkailija.grant-data :as grant-data]
@@ -144,6 +144,13 @@
               {:grant (merge grant grant-payment-fields-multi)
                :application (assoc-in (:hakemus data)
                                       [:arvio :budget-granted] 200000)
-               :translate translate}))))))
+               :translate translate})))))
+
+  (it "gets correct start and end dates in Käyttöaika section"
+      (let [avustushaku {:hankkeen-alkamispaiva (java.time.LocalDate/parse "2020-12-31")
+                         :hankkeen-paattymispaiva (java.time.LocalDate/parse "2021-12-31")}
+            actual (d/kayttoaika-section avustushaku translate)]
+        (should-contain "Avustuksen ensimmäinen käyttöpäivä 31.12.2020" actual)
+        (should-contain "Avustuksen viimeinen käyttöpäivä 31.12.2021" actual))))
 
 (run-specs)
