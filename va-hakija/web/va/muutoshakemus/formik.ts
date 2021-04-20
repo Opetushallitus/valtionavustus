@@ -18,7 +18,7 @@ export const getTalousarvioValues = (talousarvio: Meno[]): TalousarvioValues => 
 const getTalousarvioSchema = (talousarvio: TalousarvioValues, e: FormErrors) => {
   const menos = Object.keys(talousarvio).reduce((acc, key) => {
     if (key !== 'originalSum' && key !== 'currentSum') {
-      return ({ ...acc, [key]: yup.number().required(e.required) })
+      return ({ ...acc, [key]: yup.number().min(0).required(e.required) })
     } else {
       return acc
     }
