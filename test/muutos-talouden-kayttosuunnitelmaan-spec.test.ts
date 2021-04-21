@@ -232,7 +232,7 @@ describe('Talousarvion muuttaminen', () => {
   })
 
 
-  describe.skip("Hakija haluaa tehdä muutoshakemuksen talouden käyttösuunnitelmaan", () => {
+  describe("Hakija haluaa tehdä muutoshakemuksen talouden käyttösuunnitelmaan", () => {
     let linkToMuutoshakemus: string
     let avustushakuID: number
     let hakemusID: number
