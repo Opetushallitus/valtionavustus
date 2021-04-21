@@ -8,6 +8,10 @@
   "Status from the opetushallitus point of view"
   (s/enum "unhandled", "processing", "plausible", "rejected", "accepted"))
 
+(s/defschema TalousarvioMuutos
+  "TalousarvioMuutos contains a list of menoluokka amounts"
+  {s/Keyword s/Int})
+
 (s/defschema MuutoshakemusPaatos
   "Muutoshakemus paatos"
   {:id Long
@@ -16,6 +20,7 @@
    :reason s/Str
    :decider s/Str
    (s/optional-key :paatos-hyvaksytty-paattymispaiva) (s/maybe java.time.LocalDate)
+   (s/optional-key :talousarvio) (s/maybe TalousarvioMuutos)
    :created-at s/Inst
    :updated-at s/Inst})
 
@@ -24,6 +29,7 @@
   {:status s/Str
    :reason s/Str
    (s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
+   (s/optional-key :talousarvio) (s/maybe TalousarvioMuutos)
    })
 
 (s/defschema DbEmail

@@ -486,5 +486,64 @@ describe('Talousarvion muuttaminen', () => {
         expect(budgetRows).toEqual(budgetExpectedItems)
       })
     })
+
+    describe('hyväksyy muutoshakemuksen', () => {
+      beforeAll(async () => {
+        await clickElement(page, 'a.muutoshakemus__default-reason-link')
+        await clickElement(page, '[data-test-id="muutoshakemus-submit"]')
+        await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+      })
+
+      it('näkee vanhan talouden käyttösuunnitelman', async () => {
+        const budgetRowSelector = '[data-test-id=meno-input-row]'
+        const budgetExpectedItems = [
+          { description: 'Henkilöstömenot', amount: '200000 €' },
+          { description: 'Aineet, tarvikkeet ja tavarat', amount: '3000 €' },
+          { description: 'Laitehankinnat', amount: '10000 €' },
+          { description: 'Palvelut', amount: '100 €' },
+          { description: 'Vuokrat', amount: '161616 €' },
+          { description: 'Matkamenot', amount: '100 €' },
+          { description: 'Muut menot', amount: '10000000 €' }
+        ]
+
+        await page.waitForSelector(budgetRowSelector)
+        const budgetRows = await page.$$eval(budgetRowSelector, elements => {
+          return elements.map(elem => ({
+            description: elem.querySelector('.description')?.textContent,
+            amount: elem.querySelector('.existingAmount')?.textContent
+          }))
+        })
+        expect(budgetRows).toEqual(budgetExpectedItems)
+      })
+
+      it('näkee hyväksytyn talouden käyttösuunnitelman', async () => {
+        const budgetRowSelector = '[data-test-id=meno-input-row]'
+        const budgetExpectedItems = [
+          { description: 'Henkilöstömenot', amount: '200100' },
+          { description: 'Aineet, tarvikkeet ja tavarat', amount: '4001' },
+          { description: 'Laitehankinnat', amount: '8999' },
+          { description: 'Palvelut', amount: '100' },
+          { description: 'Vuokrat', amount: '161616' },
+          { description: 'Matkamenot', amount: '0' },
+          { description: 'Muut menot', amount: '10000000' }
+        ]
+
+        await page.waitForSelector(budgetRowSelector)
+        const budgetRows = await page.$$eval(budgetRowSelector, elements => {
+          return elements.map(elem => ({
+            description: elem.querySelector('.description')?.textContent,
+            amount: elem.querySelector('.changedAmount')?.textContent
+          }))
+        })
+        expect(budgetRows).toEqual(budgetExpectedItems)
+      })
+
+      it('näkee talouden käyttösuunnitelman muutoksen perustelut', async () => {
+        const budgetReason = '[data-test-id="muutoshakemus-talousarvio-perustelu"]'
+        await page.waitForSelector(budgetReason)
+        const perustelu = await getElementInnerText(page, budgetReason)
+        expect(perustelu).toEqual('perustelu')
+      })
+    })
   })
 })

@@ -4,11 +4,12 @@ import * as Yup from 'yup'
 import moment from 'moment'
 import { DateTimePicker } from 'react-widgets'
 import momentLocalizer from 'react-widgets-moment'
-
+import { omit } from 'lodash'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusPaatos } from 'va-common/web/va/MuutoshakemusPaatos'
-import { toFinnishDateFormat, dateStringToMoment } from 'va-common/web/va/Muutoshakemus'
+import { toFinnishDateFormat, dateStringToMoment, getTalousarvioSchema, getTalousarvioValues } from 'va-common/web/va/Muutoshakemus'
+
 import { copyToClipboard } from '../copyToClipboard'
 import { isSubmitDisabled, isError } from '../formikHelpers'
 import { Modal } from './Modal'
@@ -27,12 +28,18 @@ const paatosStatuses = [
   { value: 'rejected', text: 'Hylätään', defaultReason: defaultReasonRejected }
 ]
 
+const errors = {
+  required: 'Pakollinen kenttä',
+  talousarvioSum: sum => `Loppusumman on oltava ${sum}`
+}
+
 const getPaatosSchema = (muutoshakemus) => Yup.object().shape({
   status: Yup.string()
     .oneOf(paatosStatuses.map(s => s.value))
     .required(),
   reason: Yup.string()
     .required('Perustelu on pakollinen kenttä'),
+  talousarvio: Yup.lazy(talousarvio => talousarvio ? Yup.object(getTalousarvioSchema(talousarvio, errors)) : Yup.object()),
   paattymispaiva: Yup.date().when('status', {
     is: 'accepted_with_changes',
     then: muutoshakemus['haen-kayttoajan-pidennysta'] ? Yup.date().required('Päättymispäivä on pakollinen kenttä') : Yup.date(),
@@ -40,11 +47,10 @@ const getPaatosSchema = (muutoshakemus) => Yup.object().shape({
 })
 
 function formToPayload(values) {
-  if (!values.paattymispaiva) return values
-
   return {
     ...values,
-    paattymispaiva: moment(values.paattymispaiva).format('YYYY-MM-DD')
+    talousarvio: values.talousarvio && omit(values.talousarvio, ['currentSum', 'originalSum']),
+    paattymispaiva: values.paattymispaiva && moment(values.paattymispaiva).format('YYYY-MM-DD')
   }
 }
 
@@ -54,10 +60,12 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
       status: 'accepted',
       reason: '',
       paattymispaiva: undefined,
+      talousarvio: getTalousarvioValues(muutoshakemus.talousarvio),
     },
     validationSchema: getPaatosSchema(muutoshakemus),
     onSubmit: async (values) => {
-      const storedPaatos = await HttpUtil.post(`/api/avustushaku/${avustushaku.id}/hakemus/${hakemus['hakemus-id']}/muutoshakemus/${muutoshakemus.id}/paatos`, formToPayload(values))
+      const payload = formToPayload(values)
+      const storedPaatos = await HttpUtil.post(`/api/avustushaku/${avustushaku.id}/hakemus/${hakemus['hakemus-id']}/muutoshakemus/${muutoshakemus.id}/paatos`, payload)
       controller.setPaatos({ muutoshakemusId: muutoshakemus.id, hakemusId: hakemus['hakemus-id'], ...storedPaatos })
     }
   })

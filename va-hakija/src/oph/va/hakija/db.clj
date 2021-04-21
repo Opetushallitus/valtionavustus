@@ -135,7 +135,7 @@
                                                 WHERE user_key = ?
                                                 LIMIT 1)"
                         [user-key]))
-        talousarvio (get-talousarvio (:hakemus-id hakemus) "hakemus")]
+        talousarvio (when hakemus (get-talousarvio (:hakemus-id hakemus) "hakemus"))]
     (log/info (str "Succesfully fetched hakemus with user-key: " user-key))
     {:id (:id hakemus)
      :hakemus-id (:hakemus-id hakemus)
@@ -166,11 +166,16 @@
                             decider,
                             to_char(paattymispaiva, 'YYYY-MM-DD') as paattymispaiva
                           FROM virkailija.paatos
-                          WHERE user_key = ?" [user-key])]
-    (first paatokset)))
+                          WHERE user_key = ?" [user-key])
+        paatos (first paatokset)
+        talousarvio (when paatos (get-talousarvio (:id paatos) "paatos"))]
+    (if (and paatos (count talousarvio))
+      (assoc paatos :talousarvio talousarvio)
+      paatos)))
 
 (defn get-muutoshakemukset [hakemus-id]
-  (let [muutoshakemukset (query "SELECT
+  (let [basic-muutoshakemukset (query
+                                "SELECT
                                   m.id,
                                   m.hakemus_id,
                                   (CASE
@@ -183,6 +188,7 @@
                                   m.created_at,
                                   to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva,
                                   talousarvio_perustelut,
+                                  p.id as paatos_id,
                                   p.user_key as paatos_user_key,
                                   to_char(p.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva,
                                   p.created_at as paatos_created_at,
@@ -192,8 +198,10 @@
                                 LEFT JOIN virkailija.email_event ee ON m.id = ee.muutoshakemus_id AND ee.email_type = 'muutoshakemus-paatos' AND success = true
                                 WHERE m.hakemus_id = ?
                                 ORDER BY id DESC" [hakemus-id])
-        muutoshakemukset-with-talousarvios (map #(assoc % :talousarvio (get-talousarvio (:id %) "muutoshakemus")) muutoshakemukset)]
-    muutoshakemukset-with-talousarvios))
+        muutoshakemukset-talousarvio (map #(assoc % :talousarvio (get-talousarvio (:id %) "muutoshakemus")) basic-muutoshakemukset)
+        muutoshakemukset-paatos-talousarvio (map #(assoc % :paatos-talousarvio (get-talousarvio (:paatos-id %) "paatos")) muutoshakemukset-talousarvio)
+        muutoshakemukset (map #(dissoc % :paatos-id) muutoshakemukset-paatos-talousarvio)]
+    muutoshakemukset))
 
 (defn get-muutoshakemukset-by-paatos-user-key [user-key]
   (let [hakemus-id-rows (query "SELECT h.*

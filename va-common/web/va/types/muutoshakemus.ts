@@ -57,6 +57,7 @@ export interface Muutoshakemus {
   "paatos-sent-at"?: string
   "paatos-user-key"?: string
   "paatos-hyvaksytty-paattymispaiva"?: string
+  "paatos-talousarvio"?: Talousarvio
 }
 
 export interface Paatos {

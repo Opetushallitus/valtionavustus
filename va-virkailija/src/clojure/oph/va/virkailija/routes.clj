@@ -135,7 +135,7 @@
                               contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
                               identity (authentication/get-request-identity request)
                               decider (str (:first-name identity) " " (:surname identity))
-                              paatos (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider)
+                              paatos (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)
                               token (virkailija-db/create-application-token (:id hakemus))]
                           (email/send-muutoshakemus-paatos [contact-email] avustushaku hakemus arvio roles token muutoshakemus-id paatos)
                           (ok paatos))))

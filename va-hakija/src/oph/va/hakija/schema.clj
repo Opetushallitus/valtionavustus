@@ -42,6 +42,7 @@
     :created-at s/Inst
     :updated-at s/Inst
     (s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
+    (s/optional-key :talousarvio) (s/maybe [Meno])
     :decider s/Str
   })
 

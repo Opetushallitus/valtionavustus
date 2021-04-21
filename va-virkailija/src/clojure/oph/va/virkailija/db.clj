@@ -12,19 +12,26 @@
             [oph.va.budget :as va-budget])
   (:import [java.util Date]))
 
-(defn create-muutoshakemus-paatos [muutoshakemus-id paatos decider]
+(defn- add-paatos-menoluokkas [tx paatos-id avustushaku-id talousarvio]
+  (doseq [[type amount] (seq talousarvio)]
+    (execute! tx
+      "INSERT INTO menoluokka_paatos (menoluokka_id, paatos_id, amount)
+       VALUES ((SELECT id FROM menoluokka WHERE avustushaku_id = ? AND type = ?), ?, ?)"
+      [avustushaku-id (name type) paatos-id amount])))
+
+(defn create-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
   (with-tx (fn [tx]
     (let [created-paatos (first (query tx
-     "INSERT INTO virkailija.paatos
-          (status, user_key, reason, decider, paattymispaiva)
-        VALUES
-          (?::virkailija.paatos_type, ?, ?, ?, ?)
-        RETURNING id, status, reason, decider, user_key, to_char(paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva, created_at, updated_at"
-          [(:status paatos) (generate-hash-id) (:reason paatos) decider (:paattymispaiva paatos)]))]
+            "INSERT INTO virkailija.paatos (status, user_key, reason, decider, paattymispaiva)
+             VALUES (?::virkailija.paatos_type, ?, ?, ?, ?)
+             RETURNING id, status, reason, decider, user_key, to_char(paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva, created_at, updated_at"
+            [(:status paatos) (generate-hash-id) (:reason paatos) decider (:paattymispaiva paatos)]))]
       (execute! tx
                 "UPDATE virkailija.muutoshakemus
                 SET paatos_id = ?
                 WHERE id = ?" [(:id created-paatos) muutoshakemus-id])
+      (when (:talousarvio paatos)
+        (add-paatos-menoluokkas tx (:id created-paatos) avustushaku-id (:talousarvio paatos)))
       created-paatos
       ))))
 
@@ -88,7 +95,7 @@
 
 (defn get-muutoshakemukset [hakemus-id]
   (log/info (str "Get muutoshakemus with hakemus id: " hakemus-id))
-  (let [muutoshakemukset (query
+  (let [basic-muutoshakemukset (query
                             "SELECT
                                 m.id,
                                 m.hakemus_id,
@@ -102,6 +109,7 @@
                                 m.created_at,
                                 to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva,
                                 talousarvio_perustelut,
+                                p.id as paatos_id,
                                 p.user_key as paatos_user_key,
                                 p.created_at as paatos_created_at,
                                 to_char(p.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva,
@@ -112,9 +120,11 @@
                                 ON ee.id = (SELECT max(id) FROM virkailija.email_event WHERE muutoshakemus_id = m.id AND email_type = 'muutoshakemus-paatos' AND success = true)
                               WHERE m.hakemus_id = ?
                               ORDER BY id DESC" [hakemus-id])
-        muutoshakemukset-with-talousarvio (map #(assoc % :talousarvio (get-talousarvio (:id %) "muutoshakemus")) muutoshakemukset)]
+        muutoshakemukset-talousarvio (map #(assoc % :talousarvio (get-talousarvio (:id %) "muutoshakemus")) basic-muutoshakemukset)
+        muutoshakemukset-paatos-talousarvio (map #(assoc % :paatos-talousarvio (get-talousarvio (:paatos-id %) "paatos")) muutoshakemukset-talousarvio)
+        muutoshakemukset (map #(dissoc % :paatos-id) muutoshakemukset-paatos-talousarvio)]
     (log/info (str "Succesfully fetched muutoshakemukset with id: " hakemus-id))
-    muutoshakemukset-with-talousarvio))
+    muutoshakemukset))
 
 (defn get-arviot [hakemus-ids]
   (if (empty? hakemus-ids)

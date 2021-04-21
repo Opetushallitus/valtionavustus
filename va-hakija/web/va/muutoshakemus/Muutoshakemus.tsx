@@ -6,7 +6,7 @@ import moment from 'moment'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusValues } from 'va-common/web/va/MuutoshakemusValues'
 import { Muutoshakemus, MuutoshakemusProps } from 'va-common/web/va/types/muutoshakemus'
-import { getProjectEndDate, getProjectEndMoment, getTalousarvio } from 'va-common/web/va/Muutoshakemus'
+import { getProjectEndDate, getProjectEndMoment, getTalousarvio, getTalousarvioValues } from 'va-common/web/va/Muutoshakemus'
 
 import { MuutoshakemusFormSection } from './components/MuutoshakemusFormSection'
 import { AvustuksenKayttoaikaInput } from './components/jatkoaika/AvustuksenKayttoaikaInput'
@@ -17,7 +17,7 @@ import {Language, translations} from './translations'
 import {TranslationContext} from './TranslationContext'
 import OriginalHakemusIframe from './OriginalHakemusIframe'
 import ErrorBoundary from './ErrorBoundary'
-import { createFormikHook, getTalousarvioValues } from './formik'
+import { createFormikHook } from './formik'
 import {useTranslations} from './TranslationContext'
 
 import 'soresu-form/web/form/style/main.less'
@@ -59,6 +59,7 @@ export const MuutoshakemusComponent = () => {
       const muutoshakemuksetP = HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}/muutoshakemus`)
       const [environment, avustushaku, hakemus, muutoshakemukset] = await Promise.all([environmentP, avustushakuP, hakemusP, muutoshakemuksetP])
       const currentProjectEnd = getProjectEndMoment(avustushaku, muutoshakemukset)
+      const talousarvio = getTalousarvio(muutoshakemukset, hakemus)
 
       f.resetForm({
         values: {
@@ -70,7 +71,7 @@ export const MuutoshakemusComponent = () => {
           haettuKayttoajanPaattymispaiva: currentProjectEnd.isValid() ? currentProjectEnd.toDate() : new Date(),
           kayttoajanPidennysPerustelut: '',
           taloudenKayttosuunnitelmanPerustelut: '',
-          talousarvio: getTalousarvioValues(hakemus.talousarvio)
+          talousarvio: getTalousarvioValues(talousarvio)
         }
       })
 
@@ -91,9 +92,7 @@ export const MuutoshakemusComponent = () => {
   }, [f.status])
 
   const existingMuutoshakemus = (m: Muutoshakemus, index: number, allMuutoshakemus: Muutoshakemus[]) => {
-    const previousMuutoshakemus = allMuutoshakemus.filter(i => i["created-at"] < m["created-at"])
-    const projectEndDate = getProjectEndDate(state.avustushaku, previousMuutoshakemus)
-
+    const projectEndDate = getProjectEndDate(state.avustushaku, allMuutoshakemus, m)
     const topic = `${translations[lang].muutoshakemus} ${moment(m['created-at']).format('D.M.YYYY')}`
     const waitingForDecision = m.status === 'new' ? ` - ${translations[lang].waitingForDecision}` : ''
     return (
@@ -101,7 +100,7 @@ export const MuutoshakemusComponent = () => {
         <h1 className="muutoshakemus__title">{`${topic}${waitingForDecision}`}</h1>
         <div className="muutoshakemus__form">
           <MuutoshakemusValues
-            currentTalousarvio={getTalousarvio(previousMuutoshakemus, state.hakemus)}
+            currentTalousarvio={getTalousarvio(allMuutoshakemus, state.hakemus, m)}
             muutoshakemus={m}
             hakijaUrl={state.environment?.['hakija-server'].url[lang]}
             simplePaatos={true}
@@ -135,7 +134,7 @@ export const MuutoshakemusComponent = () => {
                       </MuutoshakemusFormSection>
                       {state.environment?.budjettimuutoshakemus["enabled?"] &&
                         <MuutoshakemusFormSection f={f} name="haenMuutostaTaloudenKayttosuunnitelmaan" title={t.muutosTaloudenKayttosuunnitelmaan.checkboxTitle}>
-                          <TalousarvioForm f={f} talousarvio={state.hakemus?.talousarvio || []} />
+                          <TalousarvioForm f={f} talousarvio={getTalousarvio(state.muutoshakemukset, state.hakemus)} />
                         </MuutoshakemusFormSection>
                       }
                     </div>

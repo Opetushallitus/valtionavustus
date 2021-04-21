@@ -1,57 +1,73 @@
 import moment, { Moment } from 'moment'
-import {Muutoshakemus, NormalizedHakemus, Talousarvio} from './types/muutoshakemus'
+import * as yup from 'yup'
+
+import { Meno, Muutoshakemus, NormalizedHakemus, Talousarvio, TalousarvioValues } from './types/muutoshakemus'
+
+export const getTalousarvioSchema = (talousarvio: TalousarvioValues, e: any) => {
+  const menos = Object.keys(talousarvio).reduce((acc, key) => {
+    if (key !== 'originalSum' && key !== 'currentSum') {
+      return ({ ...acc, [key]: yup.number().min(0).required(e.required) })
+    } else {
+      return acc
+    }
+  }, {})
+
+  return {
+    ...menos,
+    originalSum: yup.number().required(e.required),
+    currentSum: yup.number().test('current-sum', e.talousarvioSum(talousarvio.originalSum), s => s === talousarvio.originalSum).required(e.required)
+  }
+}
+
+export const getTalousarvioValues = (talousarvio: Meno[]): TalousarvioValues => {
+  const menos = talousarvio.reduce((acc: object, meno: Meno) => ({ ...acc, [meno.type]: meno.amount }), {})
+  const sum = talousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
+  return {
+    ...menos,
+    originalSum: sum,
+    currentSum: sum
+  }
+}
 
 export interface Avustushaku {
   'hankkeen-paattymispaiva' : string
 }
 
-export function getProjectEndDate(avustushaku: Avustushaku, muutoshakemukset?: Muutoshakemus[]): string | undefined {
-  return toFinnishDateFormat(getProjectEndMoment(avustushaku, muutoshakemukset))
+export function getProjectEndDate(avustushaku: Avustushaku, muutoshakemukset?: Muutoshakemus[], beforeMuutoshakemus?: Muutoshakemus): string | undefined {
+  return toFinnishDateFormat(getProjectEndMoment(avustushaku, muutoshakemukset, beforeMuutoshakemus))
 }
 
-export function getSecondLatestProjectEndDate(avustushaku: Avustushaku, muutoshakemukset?: Muutoshakemus[]): string | undefined {
-  const secondLatestFromMuutoshakemukset = getNthLatestProjectEndDate(muutoshakemukset, 1)
-  const secondLatest = secondLatestFromMuutoshakemukset ? secondLatestFromMuutoshakemukset : dateStringToMoment(avustushaku['hankkeen-paattymispaiva'])
-  return toFinnishDateFormat(secondLatest)
-}
-
-export function getProjectEndMoment(avustushaku: Avustushaku, muutoshakemukset?: Muutoshakemus[]): Moment {
-  const latestAcceptedMuutoshakemus = getNthLatestProjectEndDate(muutoshakemukset)
+export function getProjectEndMoment(avustushaku: Avustushaku, muutoshakemukset?: Muutoshakemus[], beforeMuutoshakemus?: Muutoshakemus): Moment {
+  const filteredMuutoshakemukset = beforeMuutoshakemus && muutoshakemukset
+    ? muutoshakemukset.filter(m => m['created-at'] < beforeMuutoshakemus['created-at'])
+    : muutoshakemukset
+  const latestAcceptedMuutoshakemus = getLatestProjectEndDate(filteredMuutoshakemukset)
   return latestAcceptedMuutoshakemus ? latestAcceptedMuutoshakemus : dateStringToMoment(avustushaku['hankkeen-paattymispaiva'])
 }
 
 function acceptedTalousarvioFilter(m: Muutoshakemus) {
-  return m.talousarvio && (m.status === 'accepted' || m.status === 'accepted_with_changes')
+  return m['paatos-talousarvio']?.length && (m.status === 'accepted' || m.status === 'accepted_with_changes')
 }
 
-function getNthApprovedMuutoshakemusWithTalousarvio(muutoshakemukset: Muutoshakemus[], nth?: number): Muutoshakemus | undefined {
-  const index = nth || 0
-  const acceptedMuutoshakemukset = muutoshakemukset.filter(acceptedTalousarvioFilter)
-  if (acceptedMuutoshakemukset.length < index + 1) return undefined
-
-  return sortByCreatedAtDescending(acceptedMuutoshakemukset)[index]
-}
-
-export function getTalousarvio(muutoshakemukset: Muutoshakemus[], hakemus?: NormalizedHakemus): Talousarvio {
-  const latestAcceptedMuutoshakemus = getNthApprovedMuutoshakemusWithTalousarvio(muutoshakemukset)
-  return latestAcceptedMuutoshakemus?.talousarvio || hakemus?.talousarvio || []
-}
-
-export function getSecondLatestTalousarvio(muutoshakemukset: Muutoshakemus[], hakemus?: NormalizedHakemus): Talousarvio {
-  const secondLatestAcceptedMuutoshakemus = getNthApprovedMuutoshakemusWithTalousarvio(muutoshakemukset, 1)
-  return secondLatestAcceptedMuutoshakemus?.talousarvio || hakemus?.talousarvio || []
+export function getTalousarvio(muutoshakemukset: Muutoshakemus[], hakemus?: NormalizedHakemus, beforeMuutoshakemus?: Muutoshakemus): Talousarvio {
+  const sortedMuutoshakemukset = sortByCreatedAtDescending(muutoshakemukset)
+  const muutoshakemuksetBeforeCurrent = beforeMuutoshakemus
+    ? sortedMuutoshakemukset.filter(m => m['created-at'] < beforeMuutoshakemus['created-at'])
+    : sortedMuutoshakemukset
+  const acceptedTalousarvioMuutoshakemuses = muutoshakemuksetBeforeCurrent.filter(acceptedTalousarvioFilter)
+  const paatosTalousarvios = acceptedTalousarvioMuutoshakemuses.map(m => m['paatos-talousarvio'])
+  return [...paatosTalousarvios, hakemus?.talousarvio][0] || []
 }
 
 function sortByCreatedAtDescending(muutoshakemukset: Muutoshakemus[]): Muutoshakemus[] {
   return [...muutoshakemukset].sort((m1, m2) => m1["created-at"] > m2["created-at"] ? -1 : 1)
 }
 
-function getNthLatestProjectEndDate(muutoshakemukset: Muutoshakemus[] | undefined, nth?: number): Moment | undefined {
+function getLatestProjectEndDate(muutoshakemukset: Muutoshakemus[] | undefined): Moment | undefined {
   if (!muutoshakemukset) return undefined
-  const index = nth || 0
   const acceptedWithProjectEnd = muutoshakemukset.filter(m => (m.status === 'accepted' || m.status === 'accepted_with_changes') && m['haen-kayttoajan-pidennysta'])
-  if (acceptedWithProjectEnd.length >= index + 1) {
-    const latestAcceptedMuutoshakemus = sortByCreatedAtDescending(acceptedWithProjectEnd)[index]
+  if (acceptedWithProjectEnd.length) {
+    const latestAcceptedMuutoshakemus = sortByCreatedAtDescending(acceptedWithProjectEnd)[0]
     return latestAcceptedMuutoshakemus.status === 'accepted_with_changes'
       ? dateStringToMoment(latestAcceptedMuutoshakemus["paatos-hyvaksytty-paattymispaiva"])
       : dateStringToMoment(latestAcceptedMuutoshakemus["haettu-kayttoajan-paattymispaiva"])

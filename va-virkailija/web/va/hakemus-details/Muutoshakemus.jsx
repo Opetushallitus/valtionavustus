@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import moment from 'moment'
 
 import { MuutoshakemusValues, datetimeFormat } from 'va-common/web/va/MuutoshakemusValues'
-import { getTalousarvio, getSecondLatestTalousarvio, getProjectEndDate, getSecondLatestProjectEndDate } from 'va-common/web/va/Muutoshakemus'
+import { getTalousarvio, getProjectEndDate } from 'va-common/web/va/Muutoshakemus'
 
 import { MuutoshakemusForm } from './MuutoshakemusForm'
 import { MuutoshakemusTabs } from './MuutoshakemusTabs'
@@ -11,13 +11,9 @@ import './Muutoshakemus.less'
 
 export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hakemus, controller, userInfo, presenter }) => {
   const [a, setActiveMuutoshakemus] = useState(muutoshakemukset[0])
-  const previousMuutoshakemus = muutoshakemukset.filter(i => i["created-at"] < a["created-at"])
-  const projectEndDate = a.status === 'new' || a.status === 'rejected'
-    ? getProjectEndDate(avustushaku, previousMuutoshakemus)
-    : getSecondLatestProjectEndDate(avustushaku, previousMuutoshakemus)
-  const currentTalousarvio = a.status === 'new' || a.status === 'rejected'
-    ? getTalousarvio(muutoshakemukset, hakemus)
-    : getSecondLatestTalousarvio(muutoshakemukset, hakemus)
+  const isAccepted = a.status === 'accepted' || a.status === 'accepted_with_changes'
+  const projectEndDate = getProjectEndDate(avustushaku, muutoshakemukset, a)
+  const currentTalousarvio = getTalousarvio(muutoshakemukset, hakemus, isAccepted ? a : undefined)
 
   return (
     <React.Fragment>

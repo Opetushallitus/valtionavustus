@@ -1,35 +1,10 @@
 import * as yup from 'yup'
 import { useFormik } from 'formik'
 
-import { FormValues, Meno, TalousarvioValues } from 'va-common/web/va/types/muutoshakemus'
+import { FormValues, TalousarvioValues } from 'va-common/web/va/types/muutoshakemus'
+import { getTalousarvioSchema } from 'va-common/web/va/Muutoshakemus'
 import { postMuutoshakemus } from './client'
-import { FormErrors, Language, translations } from './translations'
-
-export const getTalousarvioValues = (talousarvio: Meno[]): TalousarvioValues => {
-  const menos = talousarvio.reduce((acc: object, meno: Meno) => ({ ...acc, [meno.type]: meno.amount }), {})
-  const sum = talousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
-  return {
-    ...menos,
-    originalSum: sum,
-    currentSum: sum
-  }
-}
-
-const getTalousarvioSchema = (talousarvio: TalousarvioValues, e: FormErrors) => {
-  const menos = Object.keys(talousarvio).reduce((acc, key) => {
-    if (key !== 'originalSum' && key !== 'currentSum') {
-      return ({ ...acc, [key]: yup.number().min(0).required(e.required) })
-    } else {
-      return acc
-    }
-  }, {})
-
-  return {
-    ...menos,
-    originalSum: yup.number().required(e.required),
-    currentSum: yup.number().test('current-sum', e.talousarvioSum(talousarvio.originalSum), s => s === talousarvio.originalSum).required(e.required)
-  }
-}
+import { Language, translations } from './translations'
 
 const getMuutoshakemusSchema = (lang: Language) => {
   const t = translations[lang]
