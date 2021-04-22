@@ -175,8 +175,10 @@
         (hakemus-ok-response verified-hakemus submission validation))
       (hakemus-ok-response hakemus submission validation))))
 
-(defn try-store-normalized-hakemus [hakemus-id hakemus answers]
-  (try (va-db/store-normalized-hakemus hakemus-id hakemus answers)
+(defn try-store-normalized-hakemus [hakemus-id hakemus answers haku-id]
+  (try
+    (va-db/store-normalized-hakemus hakemus-id hakemus answers)
+    (va-db/store-menoluokka-hakemus-rows haku-id (:id hakemus) answers)
     true
     (catch Exception e
       (log/info "Could not normalize necessary hakemus fields for hakemus: " hakemus-id " Error: " (.getMessage e))
@@ -202,8 +204,7 @@
                                                        (:register_number hakemus)
                                                        answers
                                                        budget-totals)
-              normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers)
-              budgets (va-db/store-menoluokka-hakemus-rows haku-id (:id hakemus) answers)]
+              normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers haku-id)]
           (hakemus-ok-response updated-hakemus updated-submission validation))
         (hakemus-conflict-response hakemus))
       (bad-request! security-validation))))
@@ -281,8 +282,7 @@
                                                       (:register_number hakemus)
                                                       answers
                                                       budget-totals)
-              normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers)
-              budgets (va-db/store-menoluokka-hakemus-rows haku-id (:id hakemus) answers)]
+              normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers haku-id)]
           (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku)
           (hakemus-ok-response submitted-hakemus saved-submission validation))
         (hakemus-conflict-response hakemus))
