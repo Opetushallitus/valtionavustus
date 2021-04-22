@@ -53,7 +53,7 @@ export const TalousarvioForm = ({ f, talousarvio }: MuutosTaloudenKayttosuunnite
   const currentSumErrorElem = f.errors.talousarvio?.currentSum && <ErrorMessage text={f.errors.talousarvio?.currentSum} />
   return (
     <>
-      <div className="muutoshakemus_talousarvio">
+      <div className="muutoshakemus_talousarvio" data-test-id="talousarvio-form">
         <div className="headerContainer">
           <div className="currentBudget uppercase">{t.muutosTaloudenKayttosuunnitelmaan.currentBudget}</div>
           <div className="modifiedBudget uppercase">{t.muutosTaloudenKayttosuunnitelmaan.modifiedBudget}</div>

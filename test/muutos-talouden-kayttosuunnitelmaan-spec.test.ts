@@ -42,6 +42,9 @@ const answers = {
 
 jest.setTimeout(400_000)
 
+type TalousarvioFormInputs = Array<{ name: string, amount: number }>
+type TalousarvioFormTable = Array<{ description: string, amount: string }>
+
 describe('Talousarvion muuttaminen', () => {
   let browser: Browser
   let page: Page
@@ -65,6 +68,37 @@ describe('Talousarvion muuttaminen', () => {
     await browser.close()
   })
 
+  async function validateBudgetInputFields(expectedBudget: TalousarvioFormInputs) {
+    const budgetRows = await page.$$eval('[data-test-id=talousarvio-form] [data-test-id=meno-input]', elements => {
+      return elements.map(elem => ({
+        name: elem.querySelector('input')?.getAttribute('name'),
+        amount: parseInt(elem.querySelector('input')?.getAttribute('value') || '')
+      }))
+    })
+    expect(budgetRows).toEqual(expectedBudget)
+  }
+
+  async function validateExistingBudgetTableCells(budgetRowSelector: string, expectedBudget: TalousarvioFormTable) {
+    await page.waitForSelector(budgetRowSelector)
+    const budgetRows = await page.$$eval(budgetRowSelector, elements => {
+      return elements.map(elem => ({
+        description: elem.querySelector('.description')?.textContent,
+        amount: elem.querySelector(`.existingAmount`)?.textContent
+      }))
+    })
+    expect(budgetRows).toEqual(expectedBudget)
+  }
+
+  async function validateChangedBudgetTableCells(budgetRowSelector: string, expectedBudget: TalousarvioFormTable) {
+    await page.waitForSelector(budgetRowSelector)
+    const budgetRows = await page.$$eval(budgetRowSelector, elements => {
+      return elements.map(elem => ({
+        description: elem.querySelector('.description')?.textContent,
+        amount: elem.querySelector(`.changedAmount`)?.textContent
+      }))
+    })
+    expect(budgetRows).toEqual(expectedBudget)
+  }
 
   describe('When avustushaku has been created and hakemus has been submitted', () => {
     let avustushakuID: number
@@ -170,6 +204,22 @@ describe('Talousarvion muuttaminen', () => {
         beforeAll(async () => {
           await fillMuutoshakemusPaatosWithVakioperustelu(page, avustushakuID, hakemusID)
           await acceptMuutoshakemusAndSendPaatosToHakija(page)
+        })
+
+        it('newest approved budget is prefilled on the new muutoshakemus form', async () => {
+          const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
+          await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
+          await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
+          const expectedBudgetInputs = [
+            { name: 'talousarvio.personnel-costs-row', amount: 301 },
+            { name: 'talousarvio.material-costs-row', amount: 421 },
+            { name: 'talousarvio.equipment-costs-row', amount: 1338 },
+            { name: 'talousarvio.service-purchase-costs-row', amount: 5318007 },
+            { name: 'talousarvio.rent-costs-row', amount: 68 },
+            { name: 'talousarvio.steamship-costs-row', amount: 0 },
+            { name: 'talousarvio.other-costs-row', amount: 8999 }
+          ]
+          await validateBudgetInputFields(expectedBudgetInputs)
         })
 
         describe('And muutoshakemus #2 has been submitted with budget changes', () => {
@@ -289,14 +339,7 @@ describe('Talousarvion muuttaminen', () => {
         { name: 'talousarvio.steamship-costs-row', amount: 100 },
         { name: 'talousarvio.other-costs-row', amount: 10000000 }
       ]
-
-      const budgetRows = await page.$$eval('[data-test-id=meno-input]', elements => {
-        return elements.map(elem => ({
-          name: elem.querySelector('input')?.getAttribute('name'),
-          amount: parseInt(elem.querySelector('input')?.getAttribute('value') || '')
-        }))
-      })
-      expect(budgetRows).toEqual(expectedBudgetInputs)
+      await validateBudgetInputFields(expectedBudgetInputs)
     })
 
     it('ja nähdä talousarvion yhteissumman muuttuvan', async () => {
@@ -392,15 +435,7 @@ describe('Talousarvion muuttaminen', () => {
         { description: 'Matkamenot', amount: '100 €' },
         { description: 'Muut menot', amount: '10000000 €' }
       ]
-
-      await page.waitForSelector(budgetRowSelector)
-      const budgetRows = await page.$$eval(budgetRowSelector, elements => {
-        return elements.map(elem => ({
-          description: elem.querySelector('.description')?.textContent,
-          amount: elem.querySelector('.existingAmount')?.textContent
-        }))
-      })
-      expect(budgetRows).toEqual(budgetExpectedItems)
+      await validateExistingBudgetTableCells(budgetRowSelector, budgetExpectedItems)
     })
 
     it('näkee haetun talouden käyttösuunnitelman', async () => {
@@ -414,15 +449,7 @@ describe('Talousarvion muuttaminen', () => {
         { description: 'Matkamenot', amount: '0' },
         { description: 'Muut menot', amount: '10000000' }
       ]
-
-      await page.waitForSelector(budgetRowSelector)
-      const budgetRows = await page.$$eval(budgetRowSelector, elements => {
-        return elements.map(elem => ({
-          description: elem.querySelector('.description')?.textContent,
-          amount: elem.querySelector('.changedAmount')?.textContent
-        }))
-      })
-      expect(budgetRows).toEqual(budgetExpectedItems)
+      await validateChangedBudgetTableCells(budgetRowSelector, budgetExpectedItems)
     })
 
     it('näkee talouden käyttösuunnitelman muutoksen perustelut', async () => {
@@ -455,14 +482,7 @@ describe('Talousarvion muuttaminen', () => {
           { description: 'Matkamenot', amount: '100 €' },
           { description: 'Muut menot', amount: '10000000 €' }
         ]
-
-        const budgetRows = await page.$$eval(budgetRowSelector, elements => {
-          return elements.map(elem => ({
-            description: elem.querySelector('.description')?.textContent,
-            amount: elem.querySelector('.existingAmount')?.textContent
-          }))
-        })
-        expect(budgetRows).toEqual(budgetExpectedItems)
+        await validateExistingBudgetTableCells(budgetRowSelector, budgetExpectedItems)
       })
 
       it('näkee esikatselussa hyväksytyn talousarvion', async () => {
@@ -476,14 +496,7 @@ describe('Talousarvion muuttaminen', () => {
           { description: 'Matkamenot', amount: '0' },
           { description: 'Muut menot', amount: '10000000' }
         ]
-
-        const budgetRows = await page.$$eval(budgetRowSelector, elements => {
-          return elements.map(elem => ({
-            description: elem.querySelector('.description')?.textContent,
-            amount: elem.querySelector('.changedAmount')?.textContent
-          }))
-        })
-        expect(budgetRows).toEqual(budgetExpectedItems)
+        await validateChangedBudgetTableCells(budgetRowSelector, budgetExpectedItems)
       })
     })
 
@@ -505,15 +518,7 @@ describe('Talousarvion muuttaminen', () => {
           { description: 'Matkamenot', amount: '100 €' },
           { description: 'Muut menot', amount: '10000000 €' }
         ]
-
-        await page.waitForSelector(budgetRowSelector)
-        const budgetRows = await page.$$eval(budgetRowSelector, elements => {
-          return elements.map(elem => ({
-            description: elem.querySelector('.description')?.textContent,
-            amount: elem.querySelector('.existingAmount')?.textContent
-          }))
-        })
-        expect(budgetRows).toEqual(budgetExpectedItems)
+        await validateExistingBudgetTableCells(budgetRowSelector, budgetExpectedItems)
       })
 
       it('näkee hyväksytyn talouden käyttösuunnitelman', async () => {
@@ -527,15 +532,7 @@ describe('Talousarvion muuttaminen', () => {
           { description: 'Matkamenot', amount: '0' },
           { description: 'Muut menot', amount: '10000000' }
         ]
-
-        await page.waitForSelector(budgetRowSelector)
-        const budgetRows = await page.$$eval(budgetRowSelector, elements => {
-          return elements.map(elem => ({
-            description: elem.querySelector('.description')?.textContent,
-            amount: elem.querySelector('.changedAmount')?.textContent
-          }))
-        })
-        expect(budgetRows).toEqual(budgetExpectedItems)
+        await validateChangedBudgetTableCells(budgetRowSelector, budgetExpectedItems)
       })
 
       it('näkee talouden käyttösuunnitelman muutoksen perustelut', async () => {
