@@ -78,7 +78,9 @@
     :path-params [haku-id :- Long user-key :- s/Str]
     :return  NormalizedHakemusWithTalousarvio
     :summary "Get normalized answers"
-      (ok (hakija-db/get-normalized-hakemus user-key))))
+      (if-let [hakemus (hakija-db/get-normalized-hakemus user-key)]
+        (ok hakemus)
+        (not-found))))
 
 (defn- get-hakemus []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]

@@ -137,17 +137,19 @@
                         [user-key]))
         talousarvio (when hakemus (get-talousarvio (:hakemus-id hakemus) "hakemus"))]
     (log/info (str "Succesfully fetched hakemus with user-key: " user-key))
-    {:id (:id hakemus)
-     :hakemus-id (:hakemus-id hakemus)
-     :updated-at (:updated-at hakemus)
-     :created-at (:created-at hakemus)
-     :project-name (:project-name hakemus)
-     :contact-person (:contact-person hakemus)
-     :contact-email (:contact-email hakemus)
-     :contact-phone (:contact-phone hakemus)
-     :organization-name (:organization-name hakemus)
-     :register-number (:register-number hakemus)
-     :talousarvio talousarvio}))
+    (if hakemus
+      {:id (:id hakemus)
+        :hakemus-id (:hakemus-id hakemus)
+        :updated-at (:updated-at hakemus)
+        :created-at (:created-at hakemus)
+        :project-name (:project-name hakemus)
+        :contact-person (:contact-person hakemus)
+        :contact-email (:contact-email hakemus)
+        :contact-phone (:contact-phone hakemus)
+        :organization-name (:organization-name hakemus)
+        :register-number (:register-number hakemus)
+        :talousarvio talousarvio}
+      nil)))
 
 (defn get-normalized-hakemus-by-id [id]
   (log/info (str "Get normalized hakemus with id: " id))
