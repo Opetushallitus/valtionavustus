@@ -286,9 +286,7 @@ export async function publishAvustushaku(page: Page) {
 export async function navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges(
   page: Page, avustushakuID: number, hakemusID: number, jatkoaika: MuutoshakemusValues, budjetti: BudgetAmount, budjettiPerustelut: string) {
 
-  const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
-  expectToBeDefined(linkToMuutoshakemus)
-  await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
+  await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
   await fillJatkoaikaValues(page, jatkoaika)
   await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
   await fillMuutoshakemusBudgetAmount(page, budjetti)
@@ -461,7 +459,11 @@ export async function fillMuutoshakemusPaatosWithVakioperustelu(page: Page, avus
   await selectVakioperustelu(page)
 }
 
-export async function acceptMuutoshakemusAndSendPaatosToHakija(page: Page) {
+export async function submitMuutoshakemusDecision(page: Page, status?: 'accepted' | 'accepted_with_changes' | 'rejected') {
+  if (status) {
+    await page.click(`label[for="${status}"]`)
+  }
+
   await page.click('[data-test-id="muutoshakemus-submit"]:not([disabled])')
   await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
 }

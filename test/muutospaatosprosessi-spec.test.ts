@@ -42,7 +42,7 @@ import {
   Email,
   createHakuFromEsimerkkihaku,
   fillMuutoshakemusPaatosWithVakioperustelu,
-  acceptMuutoshakemusAndSendPaatosToHakija,
+  submitMuutoshakemusDecision,
 } from './test-util'
 
 jest.setTimeout(400_000)
@@ -474,8 +474,7 @@ describe('Muutospäätösprosessi', () => {
             let muutoshakemuses: ElementHandle[]
 
             beforeAll(async () => {
-              const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
-              await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
+              await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
               muutoshakemuses = await page.$$('[data-test-class="existing-muutoshakemus"]')
             })
 
@@ -613,7 +612,7 @@ describe('Muutospäätösprosessi', () => {
 
               describe('After sending päätös', () => {
                 beforeAll(async () => {
-                  await acceptMuutoshakemusAndSendPaatosToHakija(page)
+                  await submitMuutoshakemusDecision(page)
                 })
 
                 it('Correct päättymispäivä is displayed to virkailija', async () => {

@@ -8,9 +8,9 @@ import {
   getAcceptedPäätösEmails,
   getFirstPage,
   setPageErrorConsoleLogger,
-  expectToBeDefined,
+  selectVakioperustelu,
   randomString,
-  getLinkToMuutoshakemusFromSentEmails,
+  navigateToHakijaMuutoshakemusPage,
   ratkaiseBudjettimuutoshakemusEnabledAvustushaku,
   clickElement,
   getElementInnerText,
@@ -18,7 +18,7 @@ import {
   hasElementAttribute,
   fillMuutoshakemusPaatosWithVakioperustelu,
   navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
-  acceptMuutoshakemusAndSendPaatosToHakija,
+  submitMuutoshakemusDecision,
   countElements,
   navigate,
   navigateToNthMuutoshakemus,
@@ -200,15 +200,14 @@ describe('Talousarvion muuttaminen', () => {
         expect(date).toBe(jatkoaika.jatkoaika.format('DD.MM.YYYY'))
       })
 
-      describe('And muutoshakemus #1 has been approved', () => {
+      describe('And muutoshakemus #1 has been accepted with changes', () => {
         beforeAll(async () => {
           await fillMuutoshakemusPaatosWithVakioperustelu(page, avustushakuID, hakemusID)
-          await acceptMuutoshakemusAndSendPaatosToHakija(page)
+          await submitMuutoshakemusDecision(page)
         })
 
         it('newest approved budget is prefilled on the new muutoshakemus form', async () => {
-          const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
-          await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
+          await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
           await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
           const expectedBudgetInputs = [
             { name: 'talousarvio.personnel-costs-row', amount: 301 },
@@ -252,9 +251,14 @@ describe('Talousarvion muuttaminen', () => {
             expect(budgetInput).toEqual([])
           })
 
-          describe('When virkailija views approved muutoshakemus #1', () => {
+          describe('When virkailija views muutoshakemus #1', () => {
             beforeAll(async () => {
               await navigateToNthMuutoshakemus(page, avustushakuID, hakemusID, 1)
+            })
+
+            it('budget is shown as a decision instead of a muutoshakemus', async () => {
+              const currentBudgetHeader = await getElementInnerText(page, '.currentBudget')
+              expect(currentBudgetHeader).toEqual('Vanha talousarvio')
             })
 
             it('Budget changes are not displayed as linethrough', async () => {
@@ -276,14 +280,42 @@ describe('Talousarvion muuttaminen', () => {
             })
           })
 
+          describe('And muutoshakemus #2 has been rejected', () => {
+            beforeAll(async () => {
+              await navigateToNthMuutoshakemus(page, avustushakuID, hakemusID, 2)
+              await selectVakioperustelu(page)
+              await submitMuutoshakemusDecision(page, 'rejected')
+            })
+
+            it('budget is shown as a muutoshakemus instead of a decision', async () => {
+              const currentBudgetHeader = await getElementInnerText(page, '.currentBudget')
+              expect(currentBudgetHeader).toEqual('Voimassaoleva talousarvio')
+              const existingAmount = await page.waitForSelector('[data-test-type="personnel-costs-row"] [class="existingAmount"] span', { visible: true })
+              const textDecoration = await page.evaluate(e => getComputedStyle(e).textDecorationLine, existingAmount)
+              expect(textDecoration).toBe('line-through')
+            })
+
+            it('prefilled budget for next muutoshakemus is still the one accepted for muutoshakemus #1', async () => {
+              await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+              await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
+              const expectedBudgetInputs = [
+                { name: 'talousarvio.personnel-costs-row', amount: 301 },
+                { name: 'talousarvio.material-costs-row', amount: 421 },
+                { name: 'talousarvio.equipment-costs-row', amount: 1338 },
+                { name: 'talousarvio.service-purchase-costs-row', amount: 5318007 },
+                { name: 'talousarvio.rent-costs-row', amount: 68 },
+                { name: 'talousarvio.steamship-costs-row', amount: 0 },
+                { name: 'talousarvio.other-costs-row', amount: 8999 }
+              ]
+              await validateBudgetInputFields(expectedBudgetInputs)
+            })
+          })
         })
       })
     })
   })
 
-
   describe("Hakija haluaa tehdä muutoshakemuksen talouden käyttösuunnitelmaan", () => {
-    let linkToMuutoshakemus: string
     let avustushakuID: number
     let hakemusID: number
     const haku = createRandomHakuValues()
@@ -292,9 +324,7 @@ describe('Talousarvion muuttaminen', () => {
       const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page, haku, answers)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
-      linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
-      expectToBeDefined(linkToMuutoshakemus)
-      await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
+      await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
       await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
     })
 
@@ -401,7 +431,6 @@ describe('Talousarvion muuttaminen', () => {
 
 
   describe("Virkailija käsittelee muutoshakemuksen talouden käyttösuunnitelmaan", () => {
-    let linkToMuutoshakemus: string
     let avustushakuID: number
     let hakemusID: number
     const haku = createRandomHakuValues()
@@ -410,9 +439,7 @@ describe('Talousarvion muuttaminen', () => {
       const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page, haku, answers)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
-      linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
-      expectToBeDefined(linkToMuutoshakemus)
-      await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
+      await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
       await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
       await clearAndType(page, 'input[name="talousarvio.equipment-costs-row"]', '8999')
       await clearAndType(page, 'input[name="talousarvio.material-costs-row"]', '4001')
@@ -460,11 +487,10 @@ describe('Talousarvion muuttaminen', () => {
     })
 
     describe('avaa esikatselun, kun "muutoshakemus hyväksytty" on valittuna', () => {
-      const previewContentSelector = '.muutoshakemus-paatos__content'
-
       beforeAll(async () => {
+        await clickElement(page, 'label[for=accepted]')
         await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
-        await page.waitForSelector(previewContentSelector)
+        await page.waitForSelector('.muutoshakemus-paatos__content')
       })
 
       afterAll(async () => {
@@ -500,8 +526,26 @@ describe('Talousarvion muuttaminen', () => {
       })
     })
 
+    describe('avaa esikatselun, kun "muutoshakemus hylätty" on valittuna', () => {
+      beforeAll(async () => {
+        await clickElement(page, 'label[for=rejected]')
+        await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
+        await page.waitForSelector('.muutoshakemus-paatos__content')
+      })
+
+      afterAll(async () => {
+        await clickElement(page, '.hakemus-details-modal__close-button')
+      })
+
+      it('ei näe esikatselussa talousarvioita', async () => {
+        const talousarvioElems = await countElements(page, '.muutoshakemus-paatos__content .muutoshakemus_talousarvio')
+        expect(talousarvioElems).toEqual(0)
+      })
+    })
+
     describe('hyväksyy muutoshakemuksen', () => {
       beforeAll(async () => {
+        await clickElement(page, 'label[for=accepted]')
         await clickElement(page, 'a.muutoshakemus__default-reason-link')
         await clickElement(page, '[data-test-id="muutoshakemus-submit"]')
         await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')

@@ -28,7 +28,7 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muut
       <div>
         {!!newTalousarvio.length && <TalousarvioTable paatos={true} currentTalousarvio={currentTalousarvio} newTalousarvio={newTalousarvio} status={paatos.status} lang="fi" />}
         {muutoshakemus['haen-kayttoajan-pidennysta'] &&
-          <div className="muutoshakemus-paatos__accepted-changes">
+          <div className="muutoshakemus-paatos__jatkoaika">
             <div>
               <h3 className="muutoshakemus-paatos__change-header" data-test-id="h-old-end-date">Vanha päättymisaika</h3>
               <div data-test-id="paatos-project-end">{projectEndDate}</div>
