@@ -8,7 +8,7 @@
 
 (def ^:private cas-client
   (when-not *compile-files*
-    (delay (CasClient. (str (-> config :opintopolku :url) "/cas") @http/blaze-client caller-id))))
+    (delay (CasClient. (-> config :opintopolku :url) @http/blaze-client))))
 
 (defn make-cas-authenticating-client
   ([^String service-url]
