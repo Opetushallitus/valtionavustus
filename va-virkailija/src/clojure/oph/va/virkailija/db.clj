@@ -270,6 +270,27 @@
                                                                          (:costsGranted arvio))]
             (:oph-share calculated-budget))))
 
+(defn- answer->menoluokka-row [answers hakemus-id menoluokka]
+  {:menoluokka_id (:id menoluokka)
+   :hakemus_id hakemus-id
+   :amount (Integer/parseInt (formutil/find-answer-value answers (str (:type menoluokka) ".amount")))})
+
+(defn store-menoluokka-hakemus-rows [avustushaku-id hakemus-id answers]
+  (with-tx (fn [tx]
+             (let [menoluokka-types (query tx "SELECT id, type FROM virkailija.menoluokka WHERE avustushaku_id = ?" [avustushaku-id])
+                   menoluokka-rows (map (partial answer->menoluokka-row answers hakemus-id) menoluokka-types)]
+               (doseq [menoluokka menoluokka-rows]
+                 (execute! tx
+                           "INSERT INTO virkailija.menoluokka_hakemus (menoluokka_id, hakemus_id, amount)
+                            VALUES (?, ?, ?)
+                            ON CONFLICT (hakemus_id, menoluokka_id) DO UPDATE SET
+                              amount = EXCLUDED.amount"
+                           [(:menoluokka_id menoluokka) (:hakemus_id menoluokka) (:amount menoluokka)]))))))
+
+(defn delete-menoluokka-hakemus-rows [hakemus-id]
+  (with-tx (fn [tx]
+             (execute! tx "DELETE FROM virkailija.menoluokka_hakemus WHERE hakemus_id = ?" [hakemus-id]))))
+
 (defn update-or-create-hakemus-arvio [avustushaku hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
         costs-granted (:costsGranted arvio)
@@ -302,6 +323,10 @@
         existing (get-arvio hakemus-id)
         changelog (update-changelog identity existing arvio-to-save)
         arvio-with-changelog (assoc arvio-to-save :changelog [changelog])]
+
+    (if use-detailed-costs
+      (store-menoluokka-hakemus-rows (:id avustushaku) hakemus-id overridden-answers)
+      (delete-menoluokka-hakemus-rows hakemus-id))
     (if existing
       (exec queries/update-arvio<! arvio-with-changelog)
       (exec queries/create-arvio<! arvio-with-changelog))))
