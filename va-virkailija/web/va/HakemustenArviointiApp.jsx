@@ -19,7 +19,6 @@ import LocalStorage from './LocalStorage'
 
 import './style/topbar.less'
 import './style/main.less'
-import './style/switcher.less'
 
 import './hakemusten-arviointi.less'
 

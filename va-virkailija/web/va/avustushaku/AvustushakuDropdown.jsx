@@ -2,8 +2,9 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 
 import DropdownList from 'react-widgets/lib/DropdownList';
-
 import moment from 'moment-timezone'
+
+import './avustushaku-dropdown.less'
 
 export default class AvustushakuDropdown extends Component {
   render() {
