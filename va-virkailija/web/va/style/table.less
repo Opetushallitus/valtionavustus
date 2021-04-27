@@ -1,12 +1,14 @@
 @import "~soresu-form/web/form/style/variables.less";
 @import "mixins.less";
 
+@listing-table-width: @content-width - 30px; // save room for the scroll bar
+
 .listing-table {
   text-align: left;
   overflow-y: auto;
 
   table {
-    width: @content-width - 30px;
+    width: @listing-table-width;
 
     thead {
       #va-virkailija .no-select();
@@ -29,7 +31,11 @@
           padding-left: 7px;
         }
         td {
-          padding: 5px 0;
+          padding: 5px 2px;
+        }
+
+        &.overview-row {
+          cursor: pointer;
         }
 
         &.unselected:hover {
@@ -45,6 +51,14 @@
             color: #fff;
           }
         }
+      }
+    }
+
+    tfoot {
+      td {
+        position: sticky;
+        bottom: 0;
+        background-color: @lighterer-gray;
       }
     }
   }

@@ -3,7 +3,7 @@ import HakemusListing from './HakemusListing.jsx'
 
 const ShouldPayIcon = ({hakemus, show}) => {
   if (!show) {
-    return <span/>
+    return null
   }
 
   const shouldPayGrantIcon =
