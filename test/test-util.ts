@@ -412,22 +412,28 @@ const defaultBudget = {
 export type Budget = typeof defaultBudget
 export type BudgetAmount = typeof defaultBudget.amount
 
-export async function fillBudget(page: Page, budget: Budget = defaultBudget) {
-  await clearAndType(page, "[id='personnel-costs-row.description']", budget.description.personnel)
-  await clearAndType(page, "[id='personnel-costs-row.amount']", budget.amount.personnel)
-  await clearAndType(page, "[id='material-costs-row.description']", budget.description.material)
-  await clearAndType(page, "[id='material-costs-row.amount']", budget.amount.material)
-  await clearAndType(page, "[id='equipment-costs-row.description']", budget.description.equipment)
-  await clearAndType(page, "[id='equipment-costs-row.amount']", budget.amount.equipment)
-  await clearAndType(page, "[id='service-purchase-costs-row.description']", budget.description['service-purchase'])
-  await clearAndType(page, "[id='service-purchase-costs-row.amount']", budget.amount['service-purchase'])
-  await clearAndType(page, "[id='rent-costs-row.description']", budget.description.rent)
-  await clearAndType(page, "[id='rent-costs-row.amount']", budget.amount.rent)
-  await clearAndType(page, "[id='steamship-costs-row.description']", budget.description.steamship)
-  await clearAndType(page, "[id='steamship-costs-row.amount']", budget.amount.steamship)
-  await clearAndType(page, "[id='other-costs-row.description']", budget.description.other)
-  await clearAndType(page, "[id='other-costs-row.amount']", budget.amount.other)
-  await clearAndType(page, "[id='self-financing-amount']", budget.selfFinancing)
+export async function fillBudget(page: Page, budget: Budget = defaultBudget, type: 'hakija' | 'virkailija') {
+
+  const prefix = type === 'virkailija' ? 'budget-edit-' : ''
+
+  await clearAndType(page, `[id='${prefix}personnel-costs-row.description']`, budget.description.personnel)
+  await clearAndType(page, `[id='${prefix}personnel-costs-row.amount']`, budget.amount.personnel)
+  await clearAndType(page, `[id='${prefix}material-costs-row.description']`, budget.description.material)
+  await clearAndType(page, `[id='${prefix}material-costs-row.amount']`, budget.amount.material)
+  await clearAndType(page, `[id='${prefix}equipment-costs-row.description']`, budget.description.equipment)
+  await clearAndType(page, `[id='${prefix}equipment-costs-row.amount']`, budget.amount.equipment)
+  await clearAndType(page, `[id='${prefix}service-purchase-costs-row.description']`, budget.description['service-purchase'])
+  await clearAndType(page, `[id='${prefix}service-purchase-costs-row.amount']`, budget.amount['service-purchase'])
+  await clearAndType(page, `[id='${prefix}rent-costs-row.description']`, budget.description.rent)
+  await clearAndType(page, `[id='${prefix}rent-costs-row.amount']`, budget.amount.rent)
+  await clearAndType(page, `[id='${prefix}steamship-costs-row.description']`, budget.description.steamship)
+  await clearAndType(page, `[id='${prefix}steamship-costs-row.amount']`, budget.amount.steamship)
+  await clearAndType(page, `[id='${prefix}other-costs-row.description']`, budget.description.other)
+  await clearAndType(page, `[id='${prefix}other-costs-row.amount']`, budget.amount.other)
+
+  if (type === 'hakija') {
+    await clearAndType(page, `[id='${prefix}self-financing-amount']`, budget.selfFinancing)
+  }
 }
 
 export async function fillMuutoshakemusBudgetAmount(page: Page, budget: BudgetAmount) {
@@ -501,7 +507,7 @@ export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page,
   await clearAndType(page, "[id='project-begin']", "13.03.1992")
   await clearAndType(page, "[id='project-end']", "13.03.2032")
   await clickElementWithText(page, "label", "Kyllä")
-  await fillBudget(page, budget)
+  await fillBudget(page, budget, 'hakija')
 
   if (beforeSubmitFn) {
     await beforeSubmitFn()
@@ -1098,7 +1104,7 @@ export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwrit
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
   await fillAndSendBudjettimuutoshakemusEnabledHakemus(page, avustushakuID, answers, budget)
-  return await acceptAvustushaku(page, avustushakuID)
+  return await acceptAvustushaku(page, avustushakuID, budget)
 }
 
 export async function ratkaiseAvustushaku(page: Page) {
@@ -1109,7 +1115,18 @@ export async function ratkaiseAvustushaku(page: Page) {
   return await acceptAvustushaku(page, avustushakuID)
 }
 
-export async function acceptAvustushaku(page: Page, avustushakuID: number) {
+type AcceptedBudget = string | Budget
+
+async function acceptBudget(page: Page, budget: AcceptedBudget) {
+  if (typeof budget === 'string') {
+    await clearAndType(page, "#budget-edit-project-budget .amount-column input", budget)
+  } else {
+    await clickElement(page, 'label[for="useDetailedCosts-true"]')
+    await fillBudget(page, budget, 'virkailija')
+  }
+}
+
+export async function acceptAvustushaku(page: Page, avustushakuID: number, budget: AcceptedBudget = "100000") {
   await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
 
   // Accept the hakemus
@@ -1128,7 +1145,7 @@ export async function acceptAvustushaku(page: Page, avustushakuID: number) {
   console.log("Hakemus ID:", hakemusID)
 
   await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
-  await clearAndType(page, "#budget-edit-project-budget .amount-column input", "100000")
+  await acceptBudget(page, budget)
   await clickElement(page, "#arviointi-tab label[for='set-arvio-status-accepted']")
   await waitForArvioSave(page, avustushakuID, hakemusID)
 
