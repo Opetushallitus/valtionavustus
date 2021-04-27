@@ -33,6 +33,7 @@ export default class AvustushakuDropdown extends Component {
     }
     return <div id="avustushaku-dropdown">
              <DropdownList valueField="id"
+                           containerClassName="dropdown-list"
                            textField={avustushakuToText}
                            data={avustushakuList}
                            defaultValue={avustushaku}

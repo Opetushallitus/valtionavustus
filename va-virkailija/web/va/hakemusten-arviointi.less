@@ -1,8 +1,10 @@
 @import "~soresu-form/web/form/style/common.less";
 @import "~soresu-form/web/form/style/variables.less";
+@import "./style/virkailija.less";
 
 #list-heading {
   position: relative;
+  height: 50px;
 
   .rw-dropdownlist {
     color: @light-blue;
@@ -39,6 +41,7 @@
   position: fixed;
   top: @topbar-height;
   display: none;
+  height: @overview-list-height;
 }
 
 .split-view #list-container.has-selected {
