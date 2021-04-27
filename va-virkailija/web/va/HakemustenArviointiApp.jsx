@@ -21,6 +21,8 @@ import './style/topbar.less'
 import './style/main.less'
 import './style/switcher.less'
 
+import './hakemusten-arviointi.less'
+
 export default class App extends Component {
   constructor(props) {
     super(props)
