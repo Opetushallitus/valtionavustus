@@ -2,7 +2,9 @@ import { Browser, Page } from 'puppeteer'
 import moment from 'moment'
 
 import {
+  Email,
   mkBrowser,
+  HAKIJA_URL,
   log,
   waitUntilMinEmails,
   getAcceptedPäätösEmails,
@@ -12,6 +14,7 @@ import {
   randomString,
   navigateToHakijaMuutoshakemusPage,
   ratkaiseBudjettimuutoshakemusEnabledAvustushaku,
+  ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
   clickElement,
   getElementInnerText,
   clearAndType,
@@ -99,6 +102,59 @@ describe('Talousarvion muuttaminen', () => {
     })
     expect(budgetRows).toEqual(expectedBudget)
   }
+
+  describe("When virkailija accepts hakemus without menoluokat", () => {
+    let avustushakuID: number
+    let hakemusID: number
+    let emails: Email[]
+    const haku = createRandomHakuValues()
+    const budget: Budget = {
+      amount: {
+        personnel: '300',
+        material: '420',
+        equipment: '1337',
+        'service-purchase': '5318008',
+        rent: '69',
+        steamship: '0',
+        other: '9000',
+      },
+      description: {
+        personnel: 'One euro for each of our Spartan workers',
+        material: 'Generic materials for innovation',
+        equipment: 'We need elite level equipment',
+        'service-purchase': 'We need some afterwork fun',
+        rent: 'More afterwork fun',
+        steamship: 'No need for steamship, we have our own yacht',
+        other: 'For power ups',
+      },
+      selfFinancing: '1',
+    }
+
+    beforeAll(async () => {
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, budget)
+      avustushakuID = avustushakuId
+      hakemusID = hakemusId
+      emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
+    })
+
+    it('päätös email does not mention possibility of changing talousvaatimukset', async () => {
+      emails.forEach(email => {
+        expect(email.formatted).toContain(`${HAKIJA_URL}/muutoshakemus`)
+        expect(email.formatted).not.toContain(`Hakea muutosta hankkeen talouden käyttösuunnitelmaan`)
+      })
+    })
+
+    it('muutoshakemus page does not allow hakija to change menoluokat', async () => {
+      await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+      await page.waitForSelector('#checkbox-haenKayttoajanPidennysta', {
+          visible: true,
+      })
+      await page.waitForSelector('#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan', {
+          visible: false,
+      })
+    })
+  })
+
 
   describe('When avustushaku has been created and hakemus has been submitted', () => {
     let avustushakuID: number
