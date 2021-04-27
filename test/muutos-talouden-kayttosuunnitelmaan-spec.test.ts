@@ -150,7 +150,7 @@ describe('Talousarvion muuttaminen', () => {
           visible: true,
       })
       await page.waitForSelector('#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan', {
-          visible: false,
+          hidden: true,
       })
     })
   })
