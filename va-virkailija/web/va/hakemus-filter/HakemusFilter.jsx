@@ -4,6 +4,8 @@ import ClassNames from 'classnames'
 
 import FormUtil from 'soresu-form/web/form/FormUtil'
 
+import './hakemus-filter.less'
+
 const ToggleFilterButton  = ({controller,hakemusFilter}) => {
   const activeFilterCount = hakemusFilter.answers.length
   const hasActiveFilters = activeFilterCount>0
