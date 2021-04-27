@@ -8,7 +8,7 @@
 
 (def ^:private cas-client
   (when-not *compile-files*
-    (delay (CasClient. (-> config :opintopolku :url) @http/blaze-client))))
+    (delay (CasClient. (str (-> config :opintopolku :url) "/cas") @http/blaze-client caller-id))))
 
 (defn make-cas-authenticating-client
   ([^String service-url]
@@ -35,5 +35,5 @@
 
 (defn validate-service-ticket [^String virkailija-login-url ^String cas-ticket]
   (-> @cas-client
-      (.validateServiceTicket virkailija-login-url cas-ticket)
+      (.validateServiceTicketWithVirkailijaUsername virkailija-login-url cas-ticket)
       .run))
