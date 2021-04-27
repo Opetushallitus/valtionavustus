@@ -1,0 +1,32 @@
+@import "~soresu-form/web/form/style/variables.less";
+
+.haku-list {
+  height: 260px;
+
+  table {
+    .name-column {
+      width: 806px;
+      max-width: 806px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .status-column {
+      width: 100px;
+    }
+    .phase-column {
+      width: 100px;
+    }
+    .start-column, .end-column {
+      width: 140px;
+    }
+  }
+
+  .list-total {
+    position: sticky;
+    bottom: -1px;
+    padding: 10px 0;
+    font-size: 13px;
+    background-color: @lighterer-gray;
+  }
+}

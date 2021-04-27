@@ -1,0 +1,51 @@
+@import "~soresu-form/web/form/style/variables.less";
+@import "mixins.less";
+
+.listing-table {
+  text-align: left;
+  overflow-y: auto;
+
+  table {
+    width: @content-width - 30px;
+
+    thead {
+      #va-virkailija .no-select();
+
+      th {
+        position: sticky;
+        top: -1px;
+        padding: 7px 0;
+        border-bottom: 1px solid @light-gray;
+
+        font-weight: normal;
+        color: @form-label-black;
+        background-color: @lighterer-gray;
+      }
+    }
+
+    tbody {
+      tr {
+        td:first-child {
+          padding-left: 7px;
+        }
+        td {
+          padding: 5px 0;
+        }
+
+        &.unselected:hover {
+          background-color: @lighter-blue;
+        }
+        &.selected {
+          background-color: @light-blue;
+          color: white;
+          .btn-role{
+            border-color: #fff;
+          }
+          .btn-role__count{
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}

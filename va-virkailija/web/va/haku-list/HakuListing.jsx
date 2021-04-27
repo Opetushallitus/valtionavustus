@@ -10,6 +10,9 @@ import HakuStatuses from '../haku-details/HakuStatuses'
 import HakuPhases from '../haku-details/HakuPhases'
 import HakemusListing from '../hakemus-list/HakemusListing.jsx'
 
+import '../style/table.less'
+import './haku-listing.less'
+
 export default class HakuListing extends Component {
 
   static _fieldGetter(fieldName) {
@@ -74,8 +77,8 @@ export default class HakuListing extends Component {
     const hakuElements = _.map(filteredHakuList, haku => {
       return <HakuRow haku={haku} key={haku.id} selectedHaku={selectedHaku} controller={controller}/> })
     return (
-      <div className="section-container">
-        <table key="hakuListing" className="haku-list overview-list">
+      <div className="section-container listing-table haku-list">
+        <table key="hakuListing">
           <thead><tr>
             <th className="name-column">
               <input className="text-filter" style={{width:300}} placeholder="Avustushaku" onChange={onFilterChange("avustushaku")} value={filter.avustushaku}></input>
@@ -116,11 +119,11 @@ export default class HakuListing extends Component {
                           filterField="enddate"/>
             </th>
           </tr></thead>
-          <tbody className="has-selected">
+          <tbody>
             {hakuElements}
           </tbody>
         </table>
-        <p style={{fontSize:13}}>{filteredHakuList.length}/{hakuList.length} {} hakua</p>
+        <div className="list-total">{filteredHakuList.length}/{hakuList.length} {} hakua</div>
       </div>
     )
   }
