@@ -46,7 +46,13 @@ type TopBarTabsProps = {
 
 
 type UserInfo = {
+  email: string
+  "first-name": string
+  lang: string
+  "person-oid": string
   privileges: string[]
+  surname: string
+  username: string
 }
 
 class TopBarTabs extends React.Component<TopBarTabsProps, {}> {
