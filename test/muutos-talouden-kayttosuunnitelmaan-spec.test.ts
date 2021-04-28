@@ -13,7 +13,6 @@ import {
   selectVakioperustelu,
   randomString,
   navigateToHakijaMuutoshakemusPage,
-  ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
   clickElement,
   getElementInnerText,
@@ -26,7 +25,8 @@ import {
   navigate,
   navigateToNthMuutoshakemus,
   Budget,
-  BudgetAmount
+  BudgetAmount,
+  defaultBudget
 } from './test-util'
 
 function createRandomHakuValues() {
@@ -183,7 +183,7 @@ describe('Talousarvion muuttaminen', () => {
     }
 
     beforeAll(async () => {
-      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(page, haku, answers, budget)
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, budget)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
     })
@@ -377,7 +377,7 @@ describe('Talousarvion muuttaminen', () => {
     const haku = createRandomHakuValues()
 
     beforeAll(async () => {
-      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(page, haku, answers)
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, defaultBudget)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
       await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
@@ -492,7 +492,7 @@ describe('Talousarvion muuttaminen', () => {
     const haku = createRandomHakuValues()
 
     beforeAll(async () => {
-      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(page, haku, answers)
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, defaultBudget)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
       await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
