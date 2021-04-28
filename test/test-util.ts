@@ -387,7 +387,7 @@ export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustus
   return { userKey }
 }
 
-const defaultBudget = {
+export const defaultBudget = {
   amount: {
     personnel: "200000",
     material: "3000",
@@ -1091,7 +1091,7 @@ export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: 
   return await acceptAvustushaku(page, avustushakuID)
 }
 
-export async function ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers, budget?: Budget) {
+export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(page: Page, haku: Haku, answers: Answers, budget?: Budget) {
   const { avustushakuID } = await createBudjettimuutoshakemusEnabledHaku(page, haku.avustushakuName, haku.registerNumber)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)

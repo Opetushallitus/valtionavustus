@@ -13,7 +13,7 @@ import {
   selectVakioperustelu,
   randomString,
   navigateToHakijaMuutoshakemusPage,
-  ratkaiseBudjettimuutoshakemusEnabledAvustushaku,
+  ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
   clickElement,
   getElementInnerText,
@@ -183,7 +183,7 @@ describe('Talousarvion muuttaminen', () => {
     }
 
     beforeAll(async () => {
-      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page, haku, answers, budget)
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(page, haku, answers, budget)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
     })
@@ -377,7 +377,7 @@ describe('Talousarvion muuttaminen', () => {
     const haku = createRandomHakuValues()
 
     beforeAll(async () => {
-      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page, haku, answers)
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(page, haku, answers)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
       await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
@@ -492,7 +492,7 @@ describe('Talousarvion muuttaminen', () => {
     const haku = createRandomHakuValues()
 
     beforeAll(async () => {
-      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page, haku, answers)
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(page, haku, answers)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
       await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)

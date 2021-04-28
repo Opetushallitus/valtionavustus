@@ -31,7 +31,6 @@ import {
   randomString,
   ratkaiseAvustushaku,
   ratkaiseMuutoshakemusEnabledAvustushaku,
-  ratkaiseBudjettimuutoshakemusEnabledAvustushaku,
   selectVakioperustelu,
   setPageErrorConsoleLogger,
   textContent,
@@ -43,6 +42,8 @@ import {
   createHakuFromEsimerkkihaku,
   fillMuutoshakemusPaatosWithVakioperustelu,
   submitMuutoshakemusDecision,
+  defaultBudget,
+  ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
 } from './test-util'
 
 jest.setTimeout(400_000)
@@ -727,7 +728,7 @@ describe('Muutospäätösprosessi', () => {
     const haku = createRandomHakuValues()
 
     beforeAll(async () => {
-      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page, haku, answers)
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, defaultBudget)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
       linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
