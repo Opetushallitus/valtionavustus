@@ -1091,6 +1091,14 @@ export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: 
   return await acceptAvustushaku(page, avustushakuID)
 }
 
+export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(page: Page, haku: Haku, answers: Answers, budget: Budget) {
+  const { avustushakuID } = await createBudjettimuutoshakemusEnabledHaku(page, haku.avustushakuName, haku.registerNumber)
+  await clickElementWithText(page, "span", "Haun tiedot")
+  await publishAvustushaku(page)
+  await fillAndSendBudjettimuutoshakemusEnabledHakemus(page, avustushakuID, answers, budget)
+  return await acceptAvustushaku(page, avustushakuID)
+}
+
 export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page: Page, haku: Haku, answers: Answers, budget: Budget) {
   const { avustushakuID } = await createBudjettimuutoshakemusEnabledHaku(page, haku.avustushakuName, haku.registerNumber)
   await clickElementWithText(page, "span", "Haun tiedot")

@@ -26,7 +26,8 @@ import {
   navigateToNthMuutoshakemus,
   Budget,
   BudgetAmount,
-  defaultBudget
+  defaultBudget,
+  ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget
 } from './test-util'
 
 function createRandomHakuValues() {
@@ -131,7 +132,7 @@ describe('Talousarvion muuttaminen', () => {
     }
 
     beforeAll(async () => {
-      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, budget)
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(page, haku, answers, budget)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
       emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
