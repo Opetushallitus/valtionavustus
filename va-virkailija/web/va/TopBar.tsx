@@ -3,8 +3,22 @@ import ClassNames from 'classnames'
 
 import EnvironmentInfo from 'va-common/web/va/EnvironmentInfo.jsx'
 import NameFormatter from 'va-common/web/va/util/NameFormatter'
+import { EnvironmentApiResponse } from '../../../va-common/web/va/types/environment'
 
-export default class TopBar extends React.Component {
+type TopBarProps = {
+  environment: EnvironmentApiResponse
+  activeTab?: string
+  state?: {
+    userInfo: UserInfo
+    saveStatus: {
+      saveInProgress: boolean
+      saveTime: Date | null
+      serverError: string
+    }
+  }
+}
+
+export default class TopBar extends React.Component<TopBarProps, {}> {
   render() {
     const environment = this.props.environment
     const state = this.props.state
@@ -14,7 +28,7 @@ export default class TopBar extends React.Component {
         <div id="top-container">
           <img id="logo" src="/img/logo-176x50@2x.png" width="176" height="50" alt="Opetushallitus / Utbildningsstyrelsen" />
           <TopBarTabs disabled={!state} activeTab={this.props.activeTab}
-                      config={environment} userInfo={state.userInfo}/>
+                      config={environment} userInfo={state?.userInfo}/>
           {controls}
           <EnvironmentInfo environment={environment} lang="fi"/>
         </div>
@@ -23,15 +37,28 @@ export default class TopBar extends React.Component {
   }
 }
 
-class TopBarTabs extends React.Component {
+type TopBarTabsProps = {
+  disabled: boolean
+  activeTab?: string
+  config: EnvironmentApiResponse
+  userInfo?: UserInfo
+}
 
-  isEnabled(config, k ) {
-    return config[k] && config[k]["enabled?"]
+
+type UserInfo = {
+  privileges: string[]
+}
+
+class TopBarTabs extends React.Component<TopBarTabsProps, {}> {
+
+  isEnabled(config: EnvironmentApiResponse, k: keyof EnvironmentApiResponse): boolean {
+    return config[k]["enabled?"]
   }
 
   render() {
     const {activeTab, disabled, config, userInfo} = this.props
-    const isAdmin = userInfo.privileges.indexOf("va-admin") > -1
+    const privileges = userInfo?.privileges ?? []
+    const isAdmin = privileges.indexOf("va-admin") > -1
     return (
       <div id="tabs">
         <TopBarTab id="admin"
@@ -57,7 +84,15 @@ class TopBarTabs extends React.Component {
   }
 }
 
-class TopBarTab extends React.Component {
+type TopBarTabProps = {
+  id: string
+  label: string
+  href: string
+  activeTab?: string
+  disabled: boolean
+}
+
+class TopBarTab extends React.Component<TopBarTabProps, {}> {
   render() {
     const id = this.props.id
     const label = this.props.label
@@ -72,7 +107,11 @@ class TopBarTab extends React.Component {
   }
 }
 
-class TopBarControls extends React.Component {
+type TopBarControlsProps = {
+  state: NonNullable<TopBarProps["state"]>
+}
+
+class TopBarControls extends React.Component<TopBarControlsProps, {}> {
 
   getStatus(errorId, okStatus) {
     switch (errorId) {

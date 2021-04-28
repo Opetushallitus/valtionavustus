@@ -6,7 +6,7 @@ import queryString from 'query-string'
 import moment from 'moment'
 import momentLocalizer from 'react-widgets-moment'
 
-import TopBar from './TopBar.jsx'
+import TopBar from './TopBar.tsx'
 import HakujenHallintaController from './HakujenHallintaController.jsx'
 import HakuListing from './haku-list/HakuListing.jsx'
 import EditorSelector from './haku-details/EditorSelector.jsx'

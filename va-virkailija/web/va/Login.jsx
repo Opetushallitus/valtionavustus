@@ -11,7 +11,7 @@ import './style/virkailija.less'
 import './style/topbar.less'
 import './style/login.less'
 
-import TopBar from './TopBar.jsx'
+import TopBar from './TopBar.tsx'
 
 export default class Login extends React.Component {
   render() {

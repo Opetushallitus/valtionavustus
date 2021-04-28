@@ -6,7 +6,7 @@ import _ from 'lodash'
 import RouteParser from 'route-parser'
 import queryString from 'query-string'
 
-import TopBar from './TopBar.jsx'
+import TopBar from './TopBar.tsx'
 import HakemustenArviointiController from './HakemustenArviointiController.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusDetails from './hakemus-details/HakemusDetails'

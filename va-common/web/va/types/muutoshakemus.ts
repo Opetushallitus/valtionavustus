@@ -1,17 +1,5 @@
 import { FormikProps } from 'formik'
-
-export type EnvironmentApiResponse = {
-  name: string
-  'hakija-server': {
-    url: {
-      fi: string,
-      sv: string
-    }
-  }
-  budjettimuutoshakemus: {
-    "enabled?": boolean
-  }
-}
+import { EnvironmentApiResponse } from './environment'
 
 export type MuutoshakemusProps = {
   status: 'LOADED' | 'LOADING'
