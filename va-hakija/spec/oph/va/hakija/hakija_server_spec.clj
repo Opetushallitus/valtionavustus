@@ -697,12 +697,4 @@
                 (should= 200 (:status result))
                 (should= {:valid false} (json->map (:body result))))))
 
-(describe "HTTP server at any point"
-  (tags :server)
-  (around-all
-   [_] (with-test-server! "hakija" #(start-server "localhost" test-server-port false) (_)))
-  (it "should produce 200 response for Junction Hackathon"
-      (let [result (get! "/api/junction-hackathon/dump")]
-        (should= 200 (:status result)))))
-
 (run-specs)

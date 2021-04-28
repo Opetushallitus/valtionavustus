@@ -401,14 +401,6 @@
   (when (get-in config [:muutospaatosprosessi :enabled?]) (post-muutoshakemus))
   )
 
-(compojure-api/defroutes junction-hackathon-routes
-  "API for fetching data for Junction Hackathon"
-
-  (compojure-api/GET "/dump" []
-    {:status 200
-     :headers {"Content-Type" "application/json; charset=utf-8"}
-     :body (hakija-db/junction-hackathon-dump)}))
-
 (def api-config
   {:formats [:json-kw]
    :exceptions {:handlers {::compojure-ex/response-validation compojure-error-handler
@@ -440,8 +432,6 @@
 
   (compojure-api/context "/api/v2/applications" [] :tags ["applications"] applications-routes)
 
-  (compojure-api/context "/api/junction-hackathon" [] :tags ["junction-hackathon"] junction-hackathon-routes)
-
   va-routes/config-routes
   resource-routes)
 
@@ -459,8 +449,6 @@
   (compojure-api/context "/api/organisations" [] :tags ["organisations"] organisation-routes)
 
   (compojure-api/context "/api/v2/applications" [] :tags ["applications"] applications-routes)
-
-  (compojure-api/context "/api/junction-hackathon" [] :tags ["junction-hackathon"] junction-hackathon-routes)
 
   (compojure-api/context "/api/muutoshakemus" [] :tags ["muutoshakemukset"] muutoshakemus-routes)
 
