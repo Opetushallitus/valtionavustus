@@ -1,4 +1,4 @@
-import {Talousarvio} from "./types/muutoshakemus"
+import { Talousarvio } from "./types/muutoshakemus"
 
 export type HakemusFormState = {
   avustushaku: any
@@ -24,10 +24,25 @@ export type Answer = {
   attachmentVersion?: any
 }
 
+type Arvio = {
+  "budget-granted"?: number
+  costsGranted?: number
+  "overridden-answers"?: {
+    value: Answer[]
+  }
+}
+
 export type NormalizedHakemusData = {
   "contact-person": string
   "contact-email": string
   "contact-phone": string
+  "hakemus-id": number
+  id: number
+  "organization-name": string
+  "project-name": string
+  "register-number": string
+  talousarvio: Talousarvio
+  "updated-at": string
 }
 
 export type Muutoshakemus = {
@@ -47,8 +62,20 @@ export type Muutoshakemus = {
 
 export type Hakemus = {
   answers: Answer[]
+  arvio: Arvio
+  'budget-oph-share': number
   changeRequests: any
   muutoshakemukset?: Muutoshakemus[]
   normalizedData?: NormalizedHakemusData
+  selvitys?: {
+    loppuselvitys: {
+      "budget-oph-share"?: string
+      answers?: Answer[]
+    },
+    valiselvitys: {
+      "budget-oph-share"?: string
+      answers?: Answer[]
+    }
+  }
   version: any
 }

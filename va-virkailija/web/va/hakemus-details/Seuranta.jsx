@@ -10,8 +10,7 @@ import ShouldPayComments from './ShouldPayComments.jsx'
 
 export default class Seuranta extends React.Component {
   render() {
-    const {controller, hakemus, avustushaku,
-           translations, hakuData, helpTexts} = this.props
+    const {controller, hakemus, avustushaku, translations, hakuData, helpTexts, muutoshakemukset} = this.props
     return (
       <div className="seuranta">
         <AllowVisibilityInExternalSystem controller={controller}
@@ -31,7 +30,8 @@ export default class Seuranta extends React.Component {
                                  hakuData={hakuData}
                                  translations={translations}
                                  controller={controller}
-                                 hakemus={hakemus}/>
+                                 hakemus={hakemus}
+                                 muutoshakemukset={muutoshakemukset}/>
         </div>
         <div className="seuranta-section">
           <SeurantaLiitteet avustushaku={avustushaku}

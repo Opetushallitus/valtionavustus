@@ -191,6 +191,12 @@
    :score-hakemus s/Bool
    :change-hakemus-state s/Bool})
 
+(s/defschema Menoluokka
+  "Menoluokka description for avustushaku"
+  {:type s/Str
+   :translation-fi (s/maybe s/Str)
+   :translation-sv (s/maybe s/Str)})
+
 (s/defschema HakuData
   "Avustushaku structured response with related form, roles, hakemukset etc"
   {:avustushaku AvustusHaku
@@ -206,7 +212,8 @@
    :budget-granted-sum s/Int
    (s/optional-key :operation-id) (s/maybe s/Int)
    (s/optional-key :operational-unit-id) (s/maybe s/Int)
-   (s/optional-key :project-id) (s/maybe s/Int)})
+   (s/optional-key :project-id) (s/maybe s/Int)
+   (s/optional-key :talousarvio) (s/maybe [Menoluokka])})
 
 (s/defschema PaatosData
   "Decision response with related avustushaku, form, roles, hakemus"

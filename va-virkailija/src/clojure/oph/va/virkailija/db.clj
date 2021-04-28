@@ -35,6 +35,15 @@
       created-paatos
       ))))
 
+(defn get-menoluokkas [avustushaku-id]
+  (let [menot (query "SELECT * FROM virkailija.menoluokka WHERE avustushaku_id = ?" [avustushaku-id])]
+    (map
+      (fn [row]
+        { :type (:type row)
+          :translation-fi (:translation-fi row)
+          :translation-sv (:translation-se row) })
+      menot)))
+
 (defn- get-talousarvio [id entity]
   (let [menot (query (str "SELECT mh.amount, m.type, m.translation_fi, m.translation_se
                            FROM virkailija.menoluokka_" entity " as mh, virkailija.menoluokka as m

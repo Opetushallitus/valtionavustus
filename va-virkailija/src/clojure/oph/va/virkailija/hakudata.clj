@@ -94,10 +94,14 @@
            :privileges
            (authorization/resolve-user-privileges user-identity user-haku-role))))
 
+(defn- add-talousarvio [avustushaku-id haku-data]
+  (assoc haku-data :talousarvio (virkailija-db/get-menoluokkas avustushaku-id)))
+
 (defn get-combined-avustushaku-data [avustushaku-id]
   (when-let [avustushaku (hakija-api/get-hakudata avustushaku-id)]
     (->> avustushaku
          add-arviot
+         (add-talousarvio avustushaku-id)
          (add-scores (scoring/get-avustushaku-scores avustushaku-id)))))
 
 (defn- hakemus->hakemus-simple [hakemus]

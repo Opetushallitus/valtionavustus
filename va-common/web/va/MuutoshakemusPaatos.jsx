@@ -17,10 +17,10 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muut
 
   const isAcceptedWithChanges = paatos.status === 'accepted_with_changes'
   const paattymispaiva = isAcceptedWithChanges ? paatos.paattymispaiva : muutoshakemus['haettu-kayttoajan-paattymispaiva']
-  const newTalousarvio = isAcceptedWithChanges ? (paatos.talousarvio || []): muutoshakemus.talousarvio
+  const newTalousarvio = isAcceptedWithChanges ? (paatos.talousarvio || []) : muutoshakemus.talousarvio
 
   const projectEndDate = getProjectEndDate(avustushaku, muutoshakemukset, muutoshakemus)
-  const currentTalousarvio = getTalousarvio(muutoshakemukset, hakemus, muutoshakemus)
+  const currentTalousarvio = getTalousarvio(muutoshakemukset, hakemus && hakemus.talousarvio, muutoshakemus)
 
   return (
     <section className="muutoshakemus-paatos__section">

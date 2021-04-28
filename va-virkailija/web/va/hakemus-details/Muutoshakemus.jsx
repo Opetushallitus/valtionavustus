@@ -13,7 +13,7 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
   const [a, setActiveMuutoshakemus] = useState(muutoshakemukset[0])
   const isAccepted = a.status === 'accepted' || a.status === 'accepted_with_changes'
   const projectEndDate = getProjectEndDate(avustushaku, muutoshakemukset, a)
-  const currentTalousarvio = getTalousarvio(muutoshakemukset, hakemus, isAccepted ? a : undefined)
+  const currentTalousarvio = getTalousarvio(muutoshakemukset, hakemus && hakemus.talousarvio, isAccepted ? a : undefined)
 
   return (
     <React.Fragment>

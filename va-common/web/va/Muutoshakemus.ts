@@ -49,14 +49,14 @@ function acceptedTalousarvioFilter(m: Muutoshakemus) {
   return m['paatos-talousarvio']?.length && (m.status === 'accepted' || m.status === 'accepted_with_changes')
 }
 
-export function getTalousarvio(muutoshakemukset: Muutoshakemus[], hakemus?: NormalizedHakemus, beforeMuutoshakemus?: Muutoshakemus): Talousarvio {
+export function getTalousarvio(muutoshakemukset: Muutoshakemus[], hakemusTalousarvio?: Talousarvio, beforeMuutoshakemus?: Muutoshakemus): Talousarvio {
   const sortedMuutoshakemukset = sortByCreatedAtDescending(muutoshakemukset)
   const muutoshakemuksetBeforeCurrent = beforeMuutoshakemus
     ? sortedMuutoshakemukset.filter(m => m['created-at'] < beforeMuutoshakemus['created-at'])
     : sortedMuutoshakemukset
   const acceptedTalousarvioMuutoshakemuses = muutoshakemuksetBeforeCurrent.filter(acceptedTalousarvioFilter)
   const paatosTalousarvios = acceptedTalousarvioMuutoshakemuses.map(m => m['paatos-talousarvio'])
-  return [...paatosTalousarvios, hakemus?.talousarvio][0] || []
+  return [...paatosTalousarvios, hakemusTalousarvio][0] || []
 }
 
 function sortByCreatedAtDescending(muutoshakemukset: Muutoshakemus[]): Muutoshakemus[] {

@@ -61,7 +61,7 @@ export const MuutoshakemusComponent = () => {
       const muutoshakemuksetP = HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${userKey}/muutoshakemus`)
       const [environment, avustushaku, hakemus, muutoshakemukset] = await Promise.all([environmentP, avustushakuP, hakemusP, muutoshakemuksetP])
       const currentProjectEnd = getProjectEndMoment(avustushaku, muutoshakemukset)
-      const talousarvio = getTalousarvio(muutoshakemukset, hakemus)
+      const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
 
       f.resetForm({
         values: {
@@ -102,7 +102,7 @@ export const MuutoshakemusComponent = () => {
         <h1 className="muutoshakemus__title">{`${topic}${waitingForDecision}`}</h1>
         <div className="muutoshakemus__form">
           <MuutoshakemusValues
-            currentTalousarvio={getTalousarvio(allMuutoshakemus, state.hakemus, m)}
+            currentTalousarvio={getTalousarvio(allMuutoshakemus, state.hakemus?.talousarvio, m)}
             muutoshakemus={m}
             hakijaUrl={state.environment?.['hakija-server'].url[lang]}
             simplePaatos={true}
@@ -135,7 +135,7 @@ export const MuutoshakemusComponent = () => {
                       </MuutoshakemusFormSection>
                       {enableBudgetChange &&
                         <MuutoshakemusFormSection f={f} name="haenMuutostaTaloudenKayttosuunnitelmaan" title={t.muutosTaloudenKayttosuunnitelmaan.checkboxTitle}>
-                          <TalousarvioForm f={f} talousarvio={getTalousarvio(state.muutoshakemukset, state.hakemus)} />
+                          <TalousarvioForm f={f} talousarvio={getTalousarvio(state.muutoshakemukset, state.hakemus?.talousarvio)} />
                         </MuutoshakemusFormSection>
                       }
                     </div>

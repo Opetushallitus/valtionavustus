@@ -7,6 +7,7 @@ import Form from 'soresu-form/web/form/Form.jsx'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 
+import { BudgetTable } from './BudgetTable'
 import FakeFormState from '../form/FakeFormState'
 import SeurantaBudgetEditFormController from './SeurantaBudgetEditFormController'
 import SeurantaBudgetEditComponentFactory from './SeurantaBudgetEditComponentFactory.jsx'
@@ -25,7 +26,7 @@ export default class SeurantaBudgetEditing extends React.Component {
   }
 
   render() {
-    const {controller, hakemus, hakuData, avustushaku, translations} = this.props
+    const {controller, hakemus, hakuData, avustushaku, translations, muutoshakemukset} = this.props
 
     const vaBudget = FormUtil.findFieldByFieldType(hakuData.form.content, "vaBudget")
 
@@ -33,10 +34,16 @@ export default class SeurantaBudgetEditing extends React.Component {
       return null
     }
 
-    const budgetSpec = FormUtil.mergeDeepFieldTrees(
+    const budgetSpecWithSelvityses = FormUtil.mergeDeepFieldTrees(
       vaBudget,
       FormUtil.findFieldByFieldType(_.get(hakemus, "selvitys.valiselvitysForm.content", []), "vaBudget") || {},
       FormUtil.findFieldByFieldType(_.get(hakemus, "selvitys.loppuselvitysForm.content", []), "vaBudget") || {})
+
+    const budgetChangeEnabled = hakuData.environment.budjettimuutoshakemus['enabled?']
+    const budgetSpec = budgetSpecWithSelvityses //budgetChangeEnabled
+    //  ? { ...budgetSpecWithSelvityses, children: budgetSpecWithSelvityses.children.filter(c => c.id !== 'project-budget') }
+    //  : budgetSpecWithSelvityses
+    console.log(hakemus)
     const fakeHakemus = {answers: hakemus.arvio["seuranta-answers"]}
     const formOperations = {
       chooseInitialLanguage: () => "fi",
@@ -70,6 +77,7 @@ export default class SeurantaBudgetEditing extends React.Component {
     return (
       <div className="budget-edit">
         <h2>Budjetti</h2>
+        {budgetChangeEnabled && <BudgetTable muutoshakemukset={muutoshakemukset} hakemus={hakemus} hakuData={hakuData} />}
         <FormContainer {...formElementProps} />
       </div>
     )
