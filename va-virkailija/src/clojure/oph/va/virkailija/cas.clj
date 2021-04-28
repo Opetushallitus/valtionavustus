@@ -3,8 +3,7 @@
             [oph.va.virkailija.http :as http]
             [oph.common.caller-id :refer [caller-id]])
   (:import [org.http4s.client Client]
-           [fi.vm.sade.utils.cas CasClient]
-           [oph.va.virkailija.http BlazeClients CasClients JavaClient]))
+           [fi.vm.sade.utils.cas CasAuthenticatingClient CasClient CasParams]))
 
 (def ^:private cas-client
   (when-not *compile-files*
@@ -26,12 +25,7 @@
     ^String password
     ^Client service-client]
    {:pre [(seq service-url) (seq username) (seq password)]}
-   (CasClients/newCasAuthenticatingClient service-url
-                                          username
-                                          password
-                                          @cas-client
-                                          service-client
-                                          caller-id)))
+   (CasAuthenticatingClient/apply @cas-client (CasParams/apply service-url username password) service-client caller-id "JSESSIONID")))
 
 (defn validate-service-ticket [^String virkailija-login-url ^String cas-ticket]
   (-> @cas-client
