@@ -103,7 +103,7 @@ describe('Talousarvion muuttaminen', () => {
     expect(budgetRows).toEqual(expectedBudget)
   }
 
-  describe("When virkailija accepts hakemus without menoluokat", () => {
+  describe.skip("When virkailija accepts hakemus without menoluokat", () => {
     let avustushakuID: number
     let hakemusID: number
     let emails: Email[]
