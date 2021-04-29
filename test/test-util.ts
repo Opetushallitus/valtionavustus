@@ -409,8 +409,12 @@ export const defaultBudget = {
   selfFinancing: "1",
 }
 
-export type Budget = typeof defaultBudget
 export type BudgetAmount = typeof defaultBudget.amount
+export type Budget = {
+  amount: BudgetAmount
+  description: { [k in keyof BudgetAmount]: string }
+  selfFinancing: string
+}
 
 export async function fillBudget(page: Page, budget: Budget = defaultBudget, type: 'hakija' | 'virkailija') {
 

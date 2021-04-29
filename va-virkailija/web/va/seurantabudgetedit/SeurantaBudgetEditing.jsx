@@ -40,10 +40,9 @@ export default class SeurantaBudgetEditing extends React.Component {
       FormUtil.findFieldByFieldType(_.get(hakemus, "selvitys.loppuselvitysForm.content", []), "vaBudget") || {})
 
     const budgetChangeEnabled = hakuData.environment.budjettimuutoshakemus['enabled?']
-    const budgetSpec = budgetSpecWithSelvityses //budgetChangeEnabled
-    //  ? { ...budgetSpecWithSelvityses, children: budgetSpecWithSelvityses.children.filter(c => c.id !== 'project-budget') }
-    //  : budgetSpecWithSelvityses
-    console.log(hakemus)
+    const budgetSpec = budgetChangeEnabled
+      ? { ...budgetSpecWithSelvityses, children: budgetSpecWithSelvityses.children.filter(c => c.id !== 'project-budget') }
+      : budgetSpecWithSelvityses
     const fakeHakemus = {answers: hakemus.arvio["seuranta-answers"]}
     const formOperations = {
       chooseInitialLanguage: () => "fi",

@@ -25,7 +25,7 @@ const renderBudgetRow = (avustushakuMeno: AvustushakuMeno, hakemus?: Hakemus, ta
   const loppuselvitysMeno = hakemus?.selvitys?.loppuselvitys.answers?.find(a => a.key === `${avustushakuMeno.type}.amount`)?.value
   const loppuselvitysDescription = hakemus?.selvitys?.valiselvitys.answers?.find(a => a.key === `${avustushakuMeno.type}.description`)?.value
   return (
-    <tr key={avustushakuMeno?.type} id="budget-edit-personnel-costs-row" className="budget-item">
+    <tr key={avustushakuMeno.type} id="budget-edit-personnel-costs-row" className="budget-item" data-test-id={avustushakuMeno.type}>
       <td className="label-column"><span>{avustushakuMeno["translation-fi"]}</span></td>
       <td className="granted-amount-column" title={grantedDescription ?? ''}>
         {grantedMeno !== undefined ? <span className="money">{grantedMeno}</span> : ''}
@@ -50,7 +50,7 @@ export const BudgetTable = (props: BudgetTableProps) => {
   const { hakuData, hakemus, muutoshakemukset } = props
   const talousarvio = muutoshakemukset ? getTalousarvio(muutoshakemukset, hakemus.normalizedData?.talousarvio) : hakemus.normalizedData?.talousarvio
   const grantedSum = hakemus.normalizedData?.talousarvio.reduce((acc, cur) => acc + cur.amount, 0)
-  const amount = talousarvio?.reduce((acc, cur) => acc + cur.amount, 0)
+  const amount = talousarvio?.length ? talousarvio?.reduce((acc, cur) => acc + cur.amount, 0) : hakemus.arvio.costsGranted
   const isValiselvitys = hakemus.selvitys?.valiselvitys.answers?.length
   const isLoppuselvitys = hakemus.selvitys?.loppuselvitys.answers?.length
   return (
@@ -78,15 +78,15 @@ export const BudgetTable = (props: BudgetTableProps) => {
               </tr>
             </thead>
             <tbody>
-              {hakuData.talousarvio?.map((m: AvustushakuMeno) => renderBudgetRow(m, hakemus, talousarvio))}
+              {!!hakemus.normalizedData?.talousarvio.length && hakuData.talousarvio?.map((m: AvustushakuMeno) => renderBudgetRow(m, hakemus, talousarvio))}
             </tbody>
             <tfoot>
               <tr>
                 <td className="label-column"><span>Menot yhteensä</span></td>
-                <td className="granted-amount-column"><span className="money">{hakemus.arvio.costsGranted || grantedSum}</span></td>
+                <td className="granted-amount-column" data-test-id="granted-total"><span className="money">{hakemus.arvio.costsGranted || grantedSum}</span></td>
                 {isValiselvitys && <td className="valiselvitys-amount-column"><span className="money">{hakemus.selvitys?.valiselvitys['budget-oph-share']}</span></td>}
                 {isLoppuselvitys && <td className="loppuselvitys-amount-column"><span className="money">{hakemus.selvitys?.loppuselvitys['budget-oph-share']}</span></td>}
-                <td className="amount-column"><span className="money sum">{amount}</span></td>
+                <td className="amount-column" data-test-id="amount-total"><span className="money sum">{amount}</span></td>
                 <td className="description-column"></td>
               </tr>
             </tfoot>

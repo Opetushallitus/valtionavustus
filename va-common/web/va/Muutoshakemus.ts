@@ -1,7 +1,7 @@
 import moment, { Moment } from 'moment'
 import * as yup from 'yup'
 
-import { Meno, Muutoshakemus, NormalizedHakemus, Talousarvio, TalousarvioValues } from './types/muutoshakemus'
+import { Meno, Muutoshakemus, Talousarvio, TalousarvioValues } from './types/muutoshakemus'
 
 export const getTalousarvioSchema = (talousarvio: TalousarvioValues, e: any) => {
   const menos = Object.keys(talousarvio).reduce((acc, key) => {

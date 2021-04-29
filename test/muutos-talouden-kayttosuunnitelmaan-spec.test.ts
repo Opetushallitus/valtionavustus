@@ -13,6 +13,7 @@ import {
   selectVakioperustelu,
   randomString,
   navigateToHakijaMuutoshakemusPage,
+  navigateToLatestMuutoshakemus,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
   clickElement,
   getElementInnerText,
@@ -148,14 +149,22 @@ describe('Talousarvion muuttaminen', () => {
     it('muutoshakemus page does not allow hakija to change menoluokat', async () => {
       await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
       await page.waitForSelector('#checkbox-haenKayttoajanPidennysta', {
-          visible: true,
+        visible: true,
       })
       await page.waitForSelector('#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan', {
-          hidden: true,
+        hidden: true,
       })
     })
-  })
 
+    it('seuranta tab shows the accepted lump sum', async () => {
+      await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
+      await clickElement(page, '[data-test-id=tab-seuranta]')
+      const grantedTotal = await getElementInnerText(page, '[data-test-id=granted-total]')
+      expect(grantedTotal).toEqual("100000")
+      const amountTotal = await getElementInnerText(page, '[data-test-id=amount-total]')
+      expect(amountTotal).toEqual("100000")
+    })
+  })
 
   describe('When avustushaku has been created and hakemus has been submitted', () => {
     let avustushakuID: number
@@ -190,7 +199,7 @@ describe('Talousarvion muuttaminen', () => {
     })
 
     describe('And muutoshakemus #1 has been submitted with jatkoaika and budget changes', () => {
-      const muutoshakemus1Budget = {
+      const muutoshakemus1Budget: BudgetAmount = {
         personnel: '301',
         material: '421',
         equipment: '1338',
@@ -257,6 +266,22 @@ describe('Talousarvion muuttaminen', () => {
         expect(date).toBe(jatkoaika.jatkoaika.format('DD.MM.YYYY'))
       })
 
+      it('virkailija seuranta tab shows the granted budget as accepted by OPH', async () => {
+        await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
+        await clickElement(page, '[data-test-id=tab-seuranta]')
+        await Promise.all(Object.keys(budget.description).map(async (k: string) => {
+          const budgetAmount = budget.amount[k as keyof BudgetAmount]
+          const granted = await getElementInnerText(page, `[data-test-id=${k}-costs-row] td.granted-amount-column`)
+          expect(granted).toEqual(budgetAmount)
+          const amount = await getElementInnerText(page, `[data-test-id=${k}-costs-row] td.amount-column`)
+          expect(amount).toEqual(budgetAmount)
+        }))
+        const grantedTotal = await getElementInnerText(page, '[data-test-id=granted-total]')
+        expect(grantedTotal).toEqual("5329134")
+        const amountTotal = await getElementInnerText(page, '[data-test-id=amount-total]')
+        expect(amountTotal).toEqual("5329134")
+      })
+
       describe('And muutoshakemus #1 has been accepted with changes', () => {
         beforeAll(async () => {
           await fillMuutoshakemusPaatosWithVakioperustelu(page, avustushakuID, hakemusID)
@@ -276,6 +301,22 @@ describe('Talousarvion muuttaminen', () => {
             { name: 'talousarvio.other-costs-row', amount: 8999 }
           ]
           await validateBudgetInputFields(expectedBudgetInputs)
+        })
+
+        it('virkailija seuranta tab shows the accepted muutoshakemus budget as accepted by OPH', async () => {
+          await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
+          await clickElement(page, '[data-test-id=tab-seuranta]')
+          await Promise.all(Object.keys(budget.description).map(async (k: string) => {
+            const grantedSelector = `[data-test-id=${k}-costs-row] td.granted-amount-column`
+            const granted = await getElementInnerText(page, grantedSelector)
+            expect(granted).toEqual(budget.amount[k as keyof BudgetAmount])
+            const amount = await getElementInnerText(page, `[data-test-id=${k}-costs-row] td.amount-column`)
+            expect(amount).toEqual(muutoshakemus1Budget[k as keyof BudgetAmount])
+          }))
+          const grantedTotal = await getElementInnerText(page, '[data-test-id=granted-total]')
+          expect(grantedTotal).toEqual("5329134")
+          const amountTotal = await getElementInnerText(page, '[data-test-id=amount-total]')
+          expect(amountTotal).toEqual("5329134")
         })
 
         describe('And muutoshakemus #2 has been submitted with budget changes', () => {
