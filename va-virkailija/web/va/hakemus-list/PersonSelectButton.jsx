@@ -16,11 +16,13 @@ const RoleButton = ({role,roleField,controller,hakemus}) => {
 }
 
 const RoleContainer = ({roleName,roleField,roles,controller,hakemus}) => {
-  return(
-    <div className="role-container">
+  return (
+    <React.Fragment>
       <div className="role-title">{roleName}</div>
-      {roles.map((role)=>(<RoleButton key={role.id} role={role} roleField={roleField} controller={controller} hakemus={hakemus}/>))}
-    </div>
+      <div className="role-container">
+        {roles.map((role)=>(<RoleButton key={role.id} role={role} roleField={roleField} controller={controller} hakemus={hakemus}/>))}
+      </div>
+    </React.Fragment>
   )
 }
 
