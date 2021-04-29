@@ -13,7 +13,6 @@ import {
   selectVakioperustelu,
   randomString,
   navigateToHakijaMuutoshakemusPage,
-  ratkaiseBudjettimuutoshakemusEnabledAvustushaku,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
   clickElement,
   getElementInnerText,
@@ -26,7 +25,9 @@ import {
   navigate,
   navigateToNthMuutoshakemus,
   Budget,
-  BudgetAmount
+  BudgetAmount,
+  defaultBudget,
+  ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget
 } from './test-util'
 
 function createRandomHakuValues() {
@@ -103,7 +104,7 @@ describe('Talousarvion muuttaminen', () => {
     expect(budgetRows).toEqual(expectedBudget)
   }
 
-  describe.skip("When virkailija accepts hakemus without menoluokat", () => {
+  describe("When virkailija accepts hakemus without menoluokat", () => {
     let avustushakuID: number
     let hakemusID: number
     let emails: Email[]
@@ -131,7 +132,7 @@ describe('Talousarvion muuttaminen', () => {
     }
 
     beforeAll(async () => {
-      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, budget)
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(page, haku, answers, budget)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
       emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
@@ -150,7 +151,7 @@ describe('Talousarvion muuttaminen', () => {
           visible: true,
       })
       await page.waitForSelector('#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan', {
-          visible: false,
+          hidden: true,
       })
     })
   })
@@ -183,7 +184,7 @@ describe('Talousarvion muuttaminen', () => {
     }
 
     beforeAll(async () => {
-      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page, haku, answers, budget)
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, budget)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
     })
@@ -377,7 +378,7 @@ describe('Talousarvion muuttaminen', () => {
     const haku = createRandomHakuValues()
 
     beforeAll(async () => {
-      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page, haku, answers)
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, defaultBudget)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
       await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
@@ -492,7 +493,7 @@ describe('Talousarvion muuttaminen', () => {
     const haku = createRandomHakuValues()
 
     beforeAll(async () => {
-      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushaku(page, haku, answers)
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, defaultBudget)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
       await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)

@@ -47,9 +47,11 @@ export const MuutoshakemusComponent = () => {
   const userKey = query['user-key']
   const avustushakuId = query['avustushaku-id']
   const [state, setState] = useState<MuutoshakemusProps>(initialState)
+  const { t } = useTranslations()
   const f = createFormikHook(userKey, lang)
   const translationContext = { t: translations[lang], lang }
   const existingNewMuutoshakemus = state.muutoshakemukset.find(m => m.status === 'new')
+  const enableBudgetChange = state.environment?.budjettimuutoshakemus["enabled?"] && state.hakemus?.talousarvio && state.hakemus.talousarvio.length > 1
 
   useEffect(() => {
     const fetchProps = async () => {
@@ -110,7 +112,6 @@ export const MuutoshakemusComponent = () => {
     )
   }
 
-  const { t } = useTranslations()
   return (
     state.status === 'LOADING'
       ? <p>{translations[lang].loading}</p>
@@ -132,7 +133,7 @@ export const MuutoshakemusComponent = () => {
                       <MuutoshakemusFormSection f={f} name="haenKayttoajanPidennysta" title={t.kayttoajanPidennys.checkboxTitle}>
                         <AvustuksenKayttoaikaInput f={f} projectEnd={getProjectEndDate(state.avustushaku, state.muutoshakemukset)} />
                       </MuutoshakemusFormSection>
-                      {state.environment?.budjettimuutoshakemus["enabled?"] &&
+                      {enableBudgetChange &&
                         <MuutoshakemusFormSection f={f} name="haenMuutostaTaloudenKayttosuunnitelmaan" title={t.muutosTaloudenKayttosuunnitelmaan.checkboxTitle}>
                           <TalousarvioForm f={f} talousarvio={getTalousarvio(state.muutoshakemukset, state.hakemus)} />
                         </MuutoshakemusFormSection>

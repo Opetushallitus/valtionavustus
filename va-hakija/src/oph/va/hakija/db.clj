@@ -253,23 +253,6 @@
        VALUES ((SELECT id FROM menoluokka WHERE avustushaku_id = ? AND type = ?), ?, ?)"
       [avustushaku-id (name type) muutoshakemus-id amount])))
 
-(defn- answer->menoluokka-row [answers hakemus-id menoluokka]
-  {:menoluokka_id (:id menoluokka)
-   :hakemus_id hakemus-id
-   :amount (Integer/parseInt (form-util/find-answer-value answers (str (:type menoluokka) ".amount")))})
-
-(defn store-menoluokka-hakemus-rows [avustushaku-id hakemus-id answers]
-  (with-tx (fn [tx]
-    (let [menoluokka-types (query tx "SELECT id, type FROM virkailija.menoluokka WHERE avustushaku_id = ?" [avustushaku-id])
-          menoluokka-rows (map (partial answer->menoluokka-row answers hakemus-id) menoluokka-types)]
-      (doseq [menoluokka menoluokka-rows]
-        (execute! tx
-          "INSERT INTO virkailija.menoluokka_hakemus (menoluokka_id, hakemus_id, amount)
-           VALUES (?, ?, ?)
-           ON CONFLICT (hakemus_id, menoluokka_id) DO UPDATE SET
-             amount = EXCLUDED.amount"
-          [(:menoluokka_id menoluokka) (:hakemus_id menoluokka) (:amount menoluokka)]))))))
-
 (defn store-normalized-hakemus [id hakemus answers]
   (log/info (str "Storing normalized fields for hakemus: " id))
   (with-tx (fn [tx]

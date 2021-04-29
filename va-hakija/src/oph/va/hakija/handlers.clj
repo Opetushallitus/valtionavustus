@@ -178,7 +178,6 @@
 (defn try-store-normalized-hakemus [hakemus-id hakemus answers haku-id]
   (try
     (va-db/store-normalized-hakemus hakemus-id hakemus answers)
-    (va-db/store-menoluokka-hakemus-rows haku-id (:id hakemus) answers)
     true
     (catch Exception e
       (log/info "Could not normalize necessary hakemus fields for hakemus: " hakemus-id " Error: " (.getMessage e))
