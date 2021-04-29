@@ -245,6 +245,7 @@
                           :presenter-name (:name presenter)
                           :avustushaku-name avustushaku-name
                           :to to
+                          :bcc (:email identity)
                           :url url
                           :register-number (:register_number hakemus)
                           :project-name (:project_name hakemus)})))
