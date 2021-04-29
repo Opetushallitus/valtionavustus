@@ -219,4 +219,5 @@
                                                     (:surname identity))
                                          :email (:email identity)
                                          :oid (:person-oid identity)})
+    (virkailija-db/copy-menoluokka-rows base-haku-id (:id new-haku))
     new-haku))

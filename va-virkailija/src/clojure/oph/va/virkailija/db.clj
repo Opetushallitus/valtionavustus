@@ -297,8 +297,7 @@
                            [(:menoluokka_id menoluokka) (:hakemus_id menoluokka) (:amount menoluokka)]))))))
 
 (defn delete-menoluokka-hakemus-rows [hakemus-id]
-  (with-tx (fn [tx]
-             (execute! tx "DELETE FROM virkailija.menoluokka_hakemus WHERE hakemus_id = ?" [hakemus-id]))))
+  (execute! "DELETE FROM virkailija.menoluokka_hakemus WHERE hakemus_id = ?" [hakemus-id]))
 
 (defn update-or-create-hakemus-arvio [avustushaku hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
@@ -545,3 +544,10 @@
     (with-tx (fn [tx]
       (let [current-menoluokka-ids (map (partial upsert-menoluokka tx application-id) menoluokka-rows)]
         (remove-old-menoluokka-rows tx application-id current-menoluokka-ids))))))
+
+(defn copy-menoluokka-rows [from-application-id to-application-id]
+  (execute! "INSERT INTO virkailija.menoluokka (avustushaku_id, type, translation_fi, translation_se)
+            SELECT ?, type, translation_fi, translation_se
+            FROM virkailija.menoluokka
+            WHERE avustushaku_id = ?"
+            [to-application-id from-application-id]))
