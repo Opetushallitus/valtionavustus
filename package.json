@@ -84,7 +84,7 @@
     "soresu-form:test-watch": "cd soresu-form && mocha --watch --require babel-register $MOCHA_ARGS web/test/*Test.js",
     "soresu-form:snyk-protect": "cd soresu-form && snyk protect",
     "soresu-form:prepare": "npm run soresu-form:snyk-protect",
-    "build": "webpack --bail",
+    "build": "webpack",
     "build-production": "NODE_ENV=production npm run build",
     "build-watch": "node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --progress --watch",
     "hakija:test": "cd va-hakija && mocha --require web/test/babelhook $MOCHA_ARGS ./web/test/*Test.js",
