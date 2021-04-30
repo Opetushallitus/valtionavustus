@@ -780,13 +780,6 @@ etunimi.sukunimi@oph.fi
       await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
     })
   })
-
-  describe("Details schmetails", () => {
-    it("The /environment endpoint returns true for refuse-enabled in case someone has old version of the web page still open", async () => {
-      const response = await axios.get(`${VIRKAILIJA_URL}/environment`).then(r => r.data)
-      expect(response["application-change"]["refuse-enabled?"]).toStrictEqual(true)
-    })
-  })
 })
 
 
