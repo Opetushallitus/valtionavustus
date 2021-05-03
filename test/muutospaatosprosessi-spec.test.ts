@@ -609,7 +609,7 @@ describe('Muutospäätösprosessi', () => {
 
               describe('After sending päätös', () => {
                 beforeAll(async () => {
-                  await fillAndSendMuutoshakemusDecision(page)
+                  await fillAndSendMuutoshakemusDecision(page, 'accepted_with_changes', '20.04.2400')
                 })
 
                 it('Correct päättymispäivä is displayed to virkailija', async () => {
