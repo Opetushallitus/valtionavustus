@@ -12,7 +12,7 @@ type TopBarProps = {
 
 export function TopBar({ env, f }: TopBarProps) {
   const { t } = useTranslations()
-  const buttonText = f.values.haenKayttoajanPidennysta ? t.sendMuutoshakemus : t.sendContactDetails
+  const buttonText = f.values.haenKayttoajanPidennysta || f.values.haenMuutostaTaloudenKayttosuunnitelmaan ? t.sendMuutoshakemus : t.sendContactDetails
   const submitDisabled = f.isSubmitting || f.isValidating || !(f.isValid && f.dirty)
   return (
     <section id="topbar">
