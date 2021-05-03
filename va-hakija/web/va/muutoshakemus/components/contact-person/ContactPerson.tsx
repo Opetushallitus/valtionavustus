@@ -1,9 +1,9 @@
 import React from 'react'
 
 import { FormikHook } from 'va-common/web/va/types/muutoshakemus'
+import { getInputErrorClass } from 'va-common/web/va/formikHelpers'
 
 import { ErrorMessage } from '../../ErrorMessage'
-import { getInputErrorClass } from '../../formikHelpers'
 import { useTranslations } from '../../TranslationContext'
 
 interface ContactPersonProps {

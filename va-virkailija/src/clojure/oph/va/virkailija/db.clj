@@ -14,12 +14,25 @@
 
 (defn- add-paatos-menoluokkas [tx paatos-id avustushaku-id talousarvio]
   (doseq [[type amount] (seq talousarvio)]
+    (log/info (str "INSERTING EINFWIROGMW " (name type) " " amount " " paatos-id))
     (execute! tx
       "INSERT INTO menoluokka_paatos (menoluokka_id, paatos_id, amount)
        VALUES ((SELECT id FROM menoluokka WHERE avustushaku_id = ? AND type = ?), ?, ?)"
       [avustushaku-id (name type) paatos-id amount])))
 
-(defn create-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
+(defn- get-talousarvio [id entity]
+  (let [menot (query (str "SELECT mh.amount, m.type, m.translation_fi, m.translation_se
+                           FROM virkailija.menoluokka_" entity " as mh, virkailija.menoluokka as m
+                           WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
+                     [id])]
+    (map
+      (fn [row] {:type (:type row)
+                :amount (:amount row)
+                :translation-fi (:translation-fi row)
+                :translation-sv (:translation-se row)})
+      menot)))
+
+(defn- store-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
   (with-tx (fn [tx]
     (let [created-paatos (first (query tx
             "INSERT INTO virkailija.paatos (status, user_key, reason, decider, paattymispaiva)
@@ -32,8 +45,11 @@
                 WHERE id = ?" [(:id created-paatos) muutoshakemus-id])
       (when (:talousarvio paatos)
         (add-paatos-menoluokkas tx (:id created-paatos) avustushaku-id (:talousarvio paatos)))
-      created-paatos
-      ))))
+      created-paatos))))
+
+(defn create-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
+  (if-let [created-paatos (store-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)]
+    (assoc created-paatos :talousarvio (get-talousarvio (:id created-paatos) "paatos"))))
 
 (defn get-menoluokkas [avustushaku-id]
   (let [menot (query "SELECT * FROM virkailija.menoluokka WHERE avustushaku_id = ?" [avustushaku-id])]
@@ -42,18 +58,6 @@
         { :type (:type row)
           :translation-fi (:translation-fi row)
           :translation-sv (:translation-se row) })
-      menot)))
-
-(defn- get-talousarvio [id entity]
-  (let [menot (query (str "SELECT mh.amount, m.type, m.translation_fi, m.translation_se
-                           FROM virkailija.menoluokka_" entity " as mh, virkailija.menoluokka as m
-                           WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
-                     [id])]
-    (map
-      (fn [row] {:type (:type row)
-                :amount (:amount row)
-                :translation-fi (:translation-fi row)
-                :translation-sv (:translation-se row)})
       menot)))
 
 (defn get-normalized-hakemus [hakemus-id]

@@ -601,6 +601,7 @@ export default class HakemustenArviointiController {
       muutoshakemus['paatos-created-at'] = paatos['created-at']
       muutoshakemus['paatos-user-key'] = paatos['user-key']
       muutoshakemus['paatos-hyvaksytty-paattymispaiva'] = paatos['paatos-hyvaksytty-paattymispaiva']
+      muutoshakemus.talousarvio = paatos.talousarvio
       muutoshakemus.status = status
       state.selectedHakemus["status-muutoshakemus"] = status
     }

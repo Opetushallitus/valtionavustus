@@ -1,13 +1,13 @@
 import React from 'react'
 
 import { FormikHook, Meno, Talousarvio, TalousarvioValues } from 'va-common/web/va/types/muutoshakemus'
+import { getNestedInputErrorClass } from 'va-common/web/va/formikHelpers'
 
 import 'va-common/web/va/muutoshakemus/talous.less'
 
 import { Language } from '../../translations'
 import { useTranslations } from '../../TranslationContext'
 import { PerustelutTextArea } from '../PerustelutTextArea'
-import { getNestedInputErrorClass } from '../../formikHelpers'
 import { ErrorMessage } from '../../ErrorMessage'
 
 type MuutosTaloudenKayttosuunnitelmaanProps = {

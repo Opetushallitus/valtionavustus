@@ -469,11 +469,12 @@ export async function fillMuutoshakemusPaatosWithVakioperustelu(page: Page, avus
   await selectVakioperustelu(page)
 }
 
-export async function submitMuutoshakemusDecision(page: Page, status?: 'accepted' | 'accepted_with_changes' | 'rejected') {
-  if (status) {
-    await page.click(`label[for="${status}"]`)
-  }
-
+export async function fillAndSendMuutoshakemusDecision(page: Page, status?: 'accepted' | 'accepted_with_changes' | 'rejected', jatkoaika?: string, budget?: BudgetAmount) {
+  const selectedStatus = status ?? 'accepted'
+  await page.click(`label[for="${selectedStatus}"]`)
+  jatkoaika && await setCalendarDate(page, jatkoaika)
+  budget && await fillMuutoshakemusBudgetAmount(page, budget)
+  await selectVakioperustelu(page)
   await page.click('[data-test-id="muutoshakemus-submit"]:not([disabled])')
   await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
 }

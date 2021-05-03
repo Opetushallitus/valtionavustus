@@ -21,6 +21,7 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
   const { currentTalousarvio, muutoshakemus, hakijaUrl, simplePaatos, projectEndDate } = props
   const a = muutoshakemus
   const paatosUrl = `${hakijaUrl}muutoshakemus/paatos?user-key=${a['paatos-user-key']}`
+  const talousarvio = muutoshakemus["paatos-talousarvio"]?.length ? muutoshakemus["paatos-talousarvio"] : muutoshakemus.talousarvio
   return (
     <React.Fragment>
       {a.status !== 'new' &&
@@ -51,10 +52,10 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
           }
         </section>
       }
-      {!!muutoshakemus.talousarvio.length &&
+      {!!talousarvio.length &&
         <MuutosTaloudenKayttosuunnitelmaan
           currentTalousarvio={currentTalousarvio}
-          newTalousarvio={muutoshakemus.talousarvio}
+          newTalousarvio={talousarvio}
           status={muutoshakemus.status}
           reason={muutoshakemus["talousarvio-perustelut"]}
           lang={'fi'} />

@@ -19,9 +19,8 @@ import {
   getElementInnerText,
   clearAndType,
   hasElementAttribute,
-  fillMuutoshakemusPaatosWithVakioperustelu,
   navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
-  submitMuutoshakemusDecision,
+  fillAndSendMuutoshakemusDecision,
   countElements,
   navigate,
   navigateToNthMuutoshakemus,
@@ -283,22 +282,33 @@ describe('Talousarvion muuttaminen', () => {
       })
 
       describe('And muutoshakemus #1 has been accepted with changes', () => {
+        const acceptedBudget: BudgetAmount = {
+          personnel: '1301',
+          material: '1421',
+          equipment: '2338',
+          'service-purchase': '5312007',
+          rent: '1068',
+          steamship: '1000',
+          other: '9999',
+        }
+
         beforeAll(async () => {
-          await fillMuutoshakemusPaatosWithVakioperustelu(page, avustushakuID, hakemusID)
-          await submitMuutoshakemusDecision(page)
+          await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+          await clickElement(page, 'span.muutoshakemus-tab')
+          await fillAndSendMuutoshakemusDecision(page, 'accepted_with_changes', '01.01.2099', acceptedBudget)
         })
 
         it('newest approved budget is prefilled on the new muutoshakemus form', async () => {
           await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
           await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
           const expectedBudgetInputs = [
-            { name: 'talousarvio.personnel-costs-row', amount: 301 },
-            { name: 'talousarvio.material-costs-row', amount: 421 },
-            { name: 'talousarvio.equipment-costs-row', amount: 1338 },
-            { name: 'talousarvio.service-purchase-costs-row', amount: 5318007 },
-            { name: 'talousarvio.rent-costs-row', amount: 68 },
-            { name: 'talousarvio.steamship-costs-row', amount: 0 },
-            { name: 'talousarvio.other-costs-row', amount: 8999 }
+            { name: 'talousarvio.personnel-costs-row', amount: 1301 },
+            { name: 'talousarvio.material-costs-row', amount: 1421 },
+            { name: 'talousarvio.equipment-costs-row', amount: 2338 },
+            { name: 'talousarvio.service-purchase-costs-row', amount: 5312007 },
+            { name: 'talousarvio.rent-costs-row', amount: 1068 },
+            { name: 'talousarvio.steamship-costs-row', amount: 1000 },
+            { name: 'talousarvio.other-costs-row', amount: 9999 }
           ]
           await validateBudgetInputFields(expectedBudgetInputs)
         })
@@ -311,7 +321,7 @@ describe('Talousarvion muuttaminen', () => {
             const granted = await getElementInnerText(page, grantedSelector)
             expect(granted).toEqual(budget.amount[k as keyof BudgetAmount])
             const amount = await getElementInnerText(page, `[data-test-id=${k}-costs-row] td.amount-column`)
-            expect(amount).toEqual(muutoshakemus1Budget[k as keyof BudgetAmount])
+            expect(amount).toEqual(acceptedBudget[k as keyof BudgetAmount])
           }))
           const grantedTotal = await getElementInnerText(page, '[data-test-id=granted-total]')
           expect(grantedTotal).toEqual("5329134")
@@ -328,7 +338,7 @@ describe('Talousarvion muuttaminen', () => {
           })
 
           it('accepted budget changes from muutoshakemus #1 are displayed as current budget', async () => {
-            expect(await getNewHakemusExistingBudget()).toMatchObject(muutoshakemus1Budget)
+            expect(await getNewHakemusExistingBudget()).toMatchObject(acceptedBudget)
           })
 
           it('haetut muutokset budget is displayed to hakija', async () => {
@@ -382,7 +392,7 @@ describe('Talousarvion muuttaminen', () => {
             beforeAll(async () => {
               await navigateToNthMuutoshakemus(page, avustushakuID, hakemusID, 2)
               await selectVakioperustelu(page)
-              await submitMuutoshakemusDecision(page, 'rejected')
+              await fillAndSendMuutoshakemusDecision(page, 'rejected')
             })
 
             it('budget is shown as a muutoshakemus instead of a decision', async () => {
@@ -397,13 +407,13 @@ describe('Talousarvion muuttaminen', () => {
               await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
               await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
               const expectedBudgetInputs = [
-                { name: 'talousarvio.personnel-costs-row', amount: 301 },
-                { name: 'talousarvio.material-costs-row', amount: 421 },
-                { name: 'talousarvio.equipment-costs-row', amount: 1338 },
-                { name: 'talousarvio.service-purchase-costs-row', amount: 5318007 },
-                { name: 'talousarvio.rent-costs-row', amount: 68 },
-                { name: 'talousarvio.steamship-costs-row', amount: 0 },
-                { name: 'talousarvio.other-costs-row', amount: 8999 }
+                { name: 'talousarvio.personnel-costs-row', amount: 1301 },
+                { name: 'talousarvio.material-costs-row', amount: 1421 },
+                { name: 'talousarvio.equipment-costs-row', amount: 2338 },
+                { name: 'talousarvio.service-purchase-costs-row', amount: 5312007 },
+                { name: 'talousarvio.rent-costs-row', amount: 1068 },
+                { name: 'talousarvio.steamship-costs-row', amount: 1000 },
+                { name: 'talousarvio.other-costs-row', amount: 9999 }
               ]
               await validateBudgetInputFields(expectedBudgetInputs)
             })

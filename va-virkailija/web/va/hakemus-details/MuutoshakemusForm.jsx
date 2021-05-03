@@ -8,11 +8,19 @@ import { omit } from 'lodash'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusPaatos } from 'va-common/web/va/MuutoshakemusPaatos'
-import { toFinnishDateFormat, dateStringToMoment, getTalousarvioSchema, getTalousarvioValues } from 'va-common/web/va/Muutoshakemus'
+import {
+  toFinnishDateFormat,
+  dateStringToMoment,
+  getTalousarvioSchema,
+  getTalousarvioValues,
+  getTalousarvio,
+  mapTalousarvioValuesToTalousarvio
+} from 'va-common/web/va/Muutoshakemus'
 
 import { copyToClipboard } from '../copyToClipboard'
 import { isSubmitDisabled, isError } from '../formikHelpers'
 import { Modal } from './Modal'
+import { TalousarvioAcceptWithChangesForm } from './TalousarvioAcceptWithChangesForm'
 
 import './Muutoshakemus.less'
 
@@ -60,7 +68,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
       status: 'accepted',
       reason: '',
       paattymispaiva: undefined,
-      talousarvio: getTalousarvioValues(muutoshakemus.talousarvio),
+      talousarvio: muutoshakemus.talousarvio.length ? getTalousarvioValues(muutoshakemus.talousarvio) : undefined,
     },
     validationSchema: getPaatosSchema(muutoshakemus),
     onSubmit: async (values) => {
@@ -69,6 +77,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
       controller.setPaatos({ muutoshakemusId: muutoshakemus.id, hakemusId: hakemus['hakemus-id'], ...storedPaatos })
     }
   })
+  const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
 
   const paatosStatusRadioButton = ({ value, text }) => {
     return (
@@ -85,47 +94,46 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
     const haettuPaiva = dateStringToMoment(muutoshakemus['haettu-kayttoajan-paattymispaiva'])
 
     return (
-      <React.Fragment>
-        <div className="muutoshakemus-row muutoshakemus__project-end-row">
-          <div>
-            <h3 className="muutoshakemus__header">Voimassaoleva päättymisaika</h3>
-            <div data-test-id="current-project-end-date">{projectEndDate}</div>
-          </div>
-          <div>
-            <h3 className="muutoshakemus__header">Haettu muutos</h3>
-            <div data-test-id="approve-with-changes-muutoshakemus-jatkoaika">
-              {toFinnishDateFormat(haettuPaiva)}
-            </div>
-          </div>
-          <div>
-            <h3 className="muutoshakemus__header">OPH:n hyväksymä</h3>
-            <div id="approve-with-changes-muutoshakemus-jatkoaika-oph">
-              <DateTimePicker
-                name="paattymispaiva"
-                onBlur={() => f.setFieldTouched('paattymispaiva')}
-                onChange={(newDate) => {
-                  const d = moment(newDate)
-                  if (d.isValid()) {
-                    f.setFieldValue('paattymispaiva', newDate)
-                  } else {
-                    f.setFieldValue('paattymispaiva', undefined)
-                  }
-                }}
-                defaultValue={f.values['paattymispaiva'] || haettuPaiva.toDate()}
-                containerClassName={`datepicker ${isError(f, 'paattymispaiva') ? 'muutoshakemus__error' : ''}`}
-                time={false} />
-            </div>
-            {isError(f, 'paattymispaiva') && <ErrorMessage text={'Päättymispäivä on pakollinen kenttä!'} />}
+      <div className="muutoshakemus-row muutoshakemus__project-end-row">
+        <div>
+          <h3 className="muutoshakemus__header">Voimassaoleva päättymisaika</h3>
+          <div data-test-id="current-project-end-date">{projectEndDate}</div>
+        </div>
+        <div>
+          <h3 className="muutoshakemus__header">Haettu muutos</h3>
+          <div data-test-id="approve-with-changes-muutoshakemus-jatkoaika">
+            {toFinnishDateFormat(haettuPaiva)}
           </div>
         </div>
-      </React.Fragment>
+        <div>
+          <h3 className="muutoshakemus__header">OPH:n hyväksymä</h3>
+          <div id="approve-with-changes-muutoshakemus-jatkoaika-oph">
+            <DateTimePicker
+              name="paattymispaiva"
+              onBlur={() => f.setFieldTouched('paattymispaiva')}
+              onChange={(newDate) => {
+                const d = moment(newDate)
+                if (d.isValid()) {
+                  f.setFieldValue('paattymispaiva', newDate)
+                } else {
+                  f.setFieldValue('paattymispaiva', undefined)
+                }
+              }}
+              defaultValue={f.values['paattymispaiva'] || haettuPaiva.toDate()}
+              containerClassName={`datepicker ${isError(f, 'paattymispaiva') ? 'muutoshakemus__error' : ''}`}
+              time={false} />
+          </div>
+          {isError(f, 'paattymispaiva') && <ErrorMessage text={'Päättymispäivä on pakollinen kenttä!'} />}
+        </div>
+      </div>
   )}
 
   const onPaatosPreviewClick = () => {
     const paatos = {
       'created-at': new Date(),
       decider: `${userInfo['first-name']} ${userInfo['surname']}`,
-      ...f.values
+      ...f.values,
+      talousarvio: muutoshakemus.talousarvio.map(meno => ({ ...meno, amount: f.values.talousarvio[meno.type] }))
     }
     controller.setModal(
       <Modal title="ESIKATSELU" controller={controller}>
@@ -158,6 +166,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
         </div>
         {isAcceptedWithChanges(f) && (
           <React.Fragment>
+            {!!muutoshakemus.talousarvio.length && <TalousarvioAcceptWithChangesForm f={f} talousarvio={talousarvio} requestedTalousarvio={muutoshakemus.talousarvio} />}
             {muutoshakemus['haen-kayttoajan-pidennysta'] && voimassaolevaPaattymisaika()}
           </React.Fragment>
         )}

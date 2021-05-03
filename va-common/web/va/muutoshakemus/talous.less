@@ -1,7 +1,10 @@
 @import "~soresu-form/web/form/style/variables.less";
 
+@currentBudgetWidth: 300px;
 @descriptionWidth: 240px;
 @existingAmountWidth: 100px;
+@requestedAmountWidth: 80px;
+@requestedAmountMargin: 30px;
 
 @separatorLeftMargin: 17px;
 @separatorBorder: 1px;
@@ -14,6 +17,9 @@
 @eurWidth: 15px;
 
 @totalWidth: @leftColumnWidth + @changedAmountWidth + @eurWidth;
+@totalWithRequestedAmountWidth: @currentBudgetWidth + @separatorWidth +
+  @requestedAmountWidth + @requestedAmountMargin + @changedAmountWidth +
+  @eurWidth;
 
 .muutoshakemus_talousarvio {
   .headerContainer {
@@ -38,14 +44,39 @@
     margin: 19px auto 0 0;
   }
 
+  &_horizontalSeparatorWithRequestedAmount {
+    background-color: @darkish-gray;
+    border: 0;
+    height: @separatorBorder;
+    width: @totalWithRequestedAmountWidth;
+    margin: 19px auto 0 0;
+  }
+
   &_row {
     display: flex;
     flex-direction: row;
     align-items: center;
     min-height: 38px;
 
+    .currentBudget {
+      display: flex;
+      justify-content: space-between;
+      width: @currentBudgetWidth;
+    }
+
     .description {
       width: @descriptionWidth;
+    }
+
+    .requestedHeader {
+      width: @requestedAmountWidth;
+      margin-right: @requestedAmountMargin;
+    }
+
+    .requestedAmount {
+      width: @requestedAmountWidth;
+      margin-right: @requestedAmountMargin;
+      text-align: right;
     }
 
     .existingAmount {
@@ -95,6 +126,8 @@
   }
 }
 
-#hakemus-arviointi [class="muutoshakemus_talousarvio"][data-accepted="true"] .linethrough {
+#hakemus-arviointi
+  [class="muutoshakemus_talousarvio"][data-accepted="true"]
+  .linethrough {
   text-decoration: none;
 }

@@ -41,7 +41,7 @@ import {
   Email,
   createHakuFromEsimerkkihaku,
   fillMuutoshakemusPaatosWithVakioperustelu,
-  submitMuutoshakemusDecision,
+  fillAndSendMuutoshakemusDecision,
   defaultBudget,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
 } from './test-util'
@@ -262,11 +262,7 @@ describe('Muutospäätösprosessi', () => {
                 it('Correct vakioperustelu is displayed', async () => {
                   await assertAcceptedPäätösHasVakioperustelu(page)
                 })
-
               })
-
-
-
             })
 
             describe('When virkailija clicks reject button and selects vakioperustelut', () => {
@@ -613,7 +609,7 @@ describe('Muutospäätösprosessi', () => {
 
               describe('After sending päätös', () => {
                 beforeAll(async () => {
-                  await submitMuutoshakemusDecision(page)
+                  await fillAndSendMuutoshakemusDecision(page)
                 })
 
                 it('Correct päättymispäivä is displayed to virkailija', async () => {

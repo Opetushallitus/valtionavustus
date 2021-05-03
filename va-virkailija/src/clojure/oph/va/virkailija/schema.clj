@@ -20,7 +20,7 @@
    :reason s/Str
    :decider s/Str
    (s/optional-key :paatos-hyvaksytty-paattymispaiva) (s/maybe java.time.LocalDate)
-   (s/optional-key :talousarvio) (s/maybe TalousarvioMuutos)
+   (s/optional-key :talousarvio) (s/maybe [Meno])
    :created-at s/Inst
    :updated-at s/Inst})
 

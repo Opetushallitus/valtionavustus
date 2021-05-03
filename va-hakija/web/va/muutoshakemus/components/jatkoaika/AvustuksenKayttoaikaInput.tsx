@@ -3,10 +3,10 @@ import { DateTimePicker } from 'react-widgets'
 import moment from 'moment'
 
 import { FormikHook } from 'va-common/web/va/types/muutoshakemus'
+import { getInputErrorClass } from 'va-common/web/va/formikHelpers'
 
 import { useTranslations } from '../../TranslationContext'
 import { ErrorMessage } from '../../ErrorMessage'
-import { getInputErrorClass } from '../../formikHelpers'
 import { PerustelutTextArea } from '../PerustelutTextArea'
 
 import 'react-widgets/dist/css/react-widgets.css'
