@@ -313,8 +313,9 @@
 (compojure-api/defroutes avustushaku-routes
   "Avustushaku routes"
   (get-id)
-  (when (get-in config [:muutospaatosprosessi :enabled?]) (get-normalized-hakemus))
-  (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemukset))
+  (when (get-in config [:muutospaatosprosessi :enabled?])
+    (get-normalized-hakemus)
+    (get-muutoshakemukset))
   (get-hakemus)
   (get-selvitys)
   (get-selvitys-init)
