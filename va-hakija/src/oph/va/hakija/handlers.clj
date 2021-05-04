@@ -208,6 +208,9 @@
         (hakemus-conflict-response hakemus))
       (bad-request! security-validation))))
 
+(defn get-assigned-virkailijas-for-avustushaku [avustushaku-id]
+  (filter #(= (:role %) "presenting_officer") (va-db/get-avustushaku-roles avustushaku-id)))
+
 (defn on-refuse-application [grant-id application-id base-version comment token]
   (let [application (va-db/get-hakemus application-id)
         grant (va-db/get-avustushaku (:avustushaku application))
@@ -222,11 +225,10 @@
            (not (:refused application)))
       (do
         (va-db/refuse-application application comment)
-        (let [roles (filter #(= (:role %) "presenting_officer")
-                            (va-db/get-avustushaku-roles (:id grant)))]
-          (when (some #(when (some? (:email %)) true) roles)
+        (let [virkailija-roles (get-assigned-virkailijas-for-avustushaku (:id grant))]
+          (when (some #(when (some? (:email %)) true) virkailija-roles)
             (va-email/send-refused-message-to-presenter!
-             (map :email (filter #(some? (:email %)) roles))
+             (map :email (filter #(some? (:email %)) virkailija-roles))
              grant
              (:id application))))
         (when-let [email (find-answer-value
