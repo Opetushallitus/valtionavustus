@@ -159,6 +159,15 @@
    :hakemus-version Long
    :filename s/Str})
 
+(s/defschema Meno 
+  "Meno contains a single menoluokka from talousarvio"
+  {
+   :type s/Str
+   :amount Long
+   :translation-fi s/Str
+   :translation-sv (s/maybe  s/Str)
+   })
+
 (s/defschema NormalizedHakemus
   "NormalizedHakemus contains hakemus answers in normalized format"
   {
@@ -172,31 +181,7 @@
    :contact-phone s/Str
    :organization-name s/Str
    :register-number s/Str
-   })
-
-(s/defschema Meno 
-  "Meno contains a single menoluokka from talousarvio"
-  {
-   :type s/Str
-   :amount Long
-   :translation-fi s/Str
-   :translation-sv (s/maybe  s/Str)
-   })
-
-(s/defschema NormalizedHakemusWithTalousarvio
-  "NormalizedHakemus contains hakemus answers in normalized format"
-  {
-   :id Long
-   :hakemus-id Long
-   :updated-at s/Inst
-   :created-at s/Inst
-   :project-name s/Str
-   :contact-person s/Str
-   :contact-email s/Str
-   :contact-phone s/Str
-   :organization-name s/Str
-   :register-number s/Str
-   :talousarvio [Meno]
+   (s/optional-key :talousarvio) [Meno]
    })
 
 (s/defschema MuutoshakemusStatus

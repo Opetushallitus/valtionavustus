@@ -14,6 +14,7 @@ import {
   randomString,
   navigateToHakijaMuutoshakemusPage,
   navigateToLatestMuutoshakemus,
+  navigateToLatestMuutoshakemusPaatos,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
   clickElement,
   getElementInnerText,
@@ -73,36 +74,44 @@ describe('Talousarvion muuttaminen', () => {
     await browser.close()
   })
 
+  const sortedInputFields = (budgetList: TalousarvioFormInputs) => {
+    return [...budgetList].sort((a, b) => a.name < b.name ? 1 : -1)
+  }
+
   async function validateBudgetInputFields(expectedBudget: TalousarvioFormInputs) {
     const budgetRows = await page.$$eval('[data-test-id=talousarvio-form] [data-test-id=meno-input]', elements => {
       return elements.map(elem => ({
-        name: elem.querySelector('input')?.getAttribute('name'),
+        name: elem.querySelector('input')?.getAttribute('name') || '',
         amount: parseInt(elem.querySelector('input')?.getAttribute('value') || '')
       }))
     })
-    expect(budgetRows).toEqual(expectedBudget)
+    expect(sortedInputFields(budgetRows)).toEqual(sortedInputFields(expectedBudget))
+  }
+
+  const sortedFormTable = (budgetList: TalousarvioFormTable) => {
+    return [...budgetList].sort((a, b) => a.description < b.description ? 1 : -1)
   }
 
   async function validateExistingBudgetTableCells(budgetRowSelector: string, expectedBudget: TalousarvioFormTable) {
     await page.waitForSelector(budgetRowSelector)
     const budgetRows = await page.$$eval(budgetRowSelector, elements => {
       return elements.map(elem => ({
-        description: elem.querySelector('.description')?.textContent,
-        amount: elem.querySelector(`.existingAmount`)?.textContent
+        description: elem.querySelector('.description')?.textContent || '',
+        amount: elem.querySelector(`.existingAmount`)?.textContent || ''
       }))
     })
-    expect(budgetRows).toEqual(expectedBudget)
+    expect(sortedFormTable(budgetRows)).toEqual(sortedFormTable(expectedBudget))
   }
 
   async function validateChangedBudgetTableCells(budgetRowSelector: string, expectedBudget: TalousarvioFormTable) {
     await page.waitForSelector(budgetRowSelector)
     const budgetRows = await page.$$eval(budgetRowSelector, elements => {
       return elements.map(elem => ({
-        description: elem.querySelector('.description')?.textContent,
-        amount: elem.querySelector(`.changedAmount`)?.textContent
+        description: elem.querySelector('.description')?.textContent || '',
+        amount: elem.querySelector(`.changedAmount`)?.textContent || ''
       }))
     })
-    expect(budgetRows).toEqual(expectedBudget)
+    expect(sortedFormTable(budgetRows)).toEqual(sortedFormTable(expectedBudget))
   }
 
   describe("When virkailija accepts hakemus without menoluokat", () => {
@@ -328,6 +337,45 @@ describe('Talousarvion muuttaminen', () => {
           expect(grantedTotal).toEqual("5329134")
           const amountTotal = await getElementInnerText(page, '[data-test-id=amount-total]')
           expect(amountTotal).toEqual("5329134")
+        })
+
+        describe('Hakija views the muutoshakemus päätös', () => {
+          beforeAll(async () => {
+            await navigateToLatestMuutoshakemusPaatos(page, avustushakuID, hakemusID)
+          })
+
+          it('budget change is mentioned in the info section', async () => {
+            const budgetChangeText = await getElementInnerText(page, '[data-test-id="budget-change"]')
+            expect(budgetChangeText).toEqual('Muutoshakemus talouden käyttösuunnitelmaan.')
+          })
+
+          it('the old budget is shown on the päätös', async () => {
+            const budgetRowSelector = '.muutoshakemus-paatos__content [data-test-id=meno-input-row]'
+            const budgetExpectedItems = [
+              { description: 'Henkilöstömenot', amount: '300 €' },
+              { description: 'Aineet, tarvikkeet ja tavarat', amount: '420 €' },
+              { description: 'Laitehankinnat', amount: '1337 €' },
+              { description: 'Palvelut', amount: '5318008 €' },
+              { description: 'Vuokrat', amount: '69 €' },
+              { description: 'Matkamenot', amount: '0 €' },
+              { description: 'Muut menot', amount: '9000 €' }
+            ]
+            await validateExistingBudgetTableCells(budgetRowSelector, budgetExpectedItems)
+          })
+
+          it('the "accepted with changes" budget is shown on the päätös', async () => {
+            const budgetRowSelector = '.muutoshakemus-paatos__content [data-test-id=meno-input-row]'
+            const budgetExpectedItems = [
+              { description: 'Henkilöstömenot', amount: '1301' },
+              { description: 'Aineet, tarvikkeet ja tavarat', amount: '1421' },
+              { description: 'Laitehankinnat', amount: '2338' },
+              { description: 'Palvelut', amount: '5312007' },
+              { description: 'Vuokrat', amount: '1068' },
+              { description: 'Matkamenot', amount: '1000' },
+              { description: 'Muut menot', amount: '9999' }
+            ]
+            await validateChangedBudgetTableCells(budgetRowSelector, budgetExpectedItems)
+          })
         })
 
         describe('And muutoshakemus #2 has been submitted with budget changes', () => {
@@ -744,6 +792,45 @@ describe('Talousarvion muuttaminen', () => {
         await page.waitForSelector(budgetReason)
         const perustelu = await getElementInnerText(page, budgetReason)
         expect(perustelu).toEqual('perustelu')
+      })
+
+      describe('Hakija views the muutoshakemus päätös', () => {
+        beforeAll(async () => {
+          await navigateToLatestMuutoshakemusPaatos(page, avustushakuID, hakemusID)
+        })
+
+        it('budget change is mentioned in the info section', async () => {
+          const budgetChangeText = await getElementInnerText(page, '[data-test-id="budget-change"]')
+          expect(budgetChangeText).toEqual('Muutoshakemus talouden käyttösuunnitelmaan.')
+        })
+
+        it('the old budget is shown on the päätös', async () => {
+          const budgetRowSelector = '.muutoshakemus-paatos__content [data-test-id=meno-input-row]'
+          const budgetExpectedItems = [
+            { description: 'Henkilöstömenot', amount: '200000 €' },
+            { description: 'Aineet, tarvikkeet ja tavarat', amount: '3000 €' },
+            { description: 'Laitehankinnat', amount: '10000 €' },
+            { description: 'Palvelut', amount: '100 €' },
+            { description: 'Vuokrat', amount: '161616 €' },
+            { description: 'Matkamenot', amount: '100 €' },
+            { description: 'Muut menot', amount: '10000000 €' }
+          ]
+          await validateExistingBudgetTableCells(budgetRowSelector, budgetExpectedItems)
+        })
+
+        it('the accepted budget is shown on the päätös', async () => {
+          const budgetRowSelector = '.muutoshakemus-paatos__content [data-test-id=meno-input-row]'
+          const budgetExpectedItems = [
+            { description: 'Henkilöstömenot', amount: '200100' },
+            { description: 'Aineet, tarvikkeet ja tavarat', amount: '4001' },
+            { description: 'Laitehankinnat', amount: '8999' },
+            { description: 'Palvelut', amount: '100' },
+            { description: 'Vuokrat', amount: '161616' },
+            { description: 'Matkamenot', amount: '0' },
+            { description: 'Muut menot', amount: '10000000' }
+          ]
+          await validateChangedBudgetTableCells(budgetRowSelector, budgetExpectedItems)
+        })
       })
     })
   })

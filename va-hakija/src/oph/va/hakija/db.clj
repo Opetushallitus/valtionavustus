@@ -147,9 +147,13 @@
 
 (defn get-normalized-hakemus-by-id [id]
   (log/info (str "Get normalized hakemus with id: " id))
-  (let [hakemukset (query "SELECT * from virkailija.normalized_hakemus WHERE hakemus_id = ?" [id])]
+  (let [hakemukset (query "SELECT * from virkailija.normalized_hakemus WHERE hakemus_id = ?" [id])
+        hakemus (first hakemukset)
+        talousarvio (when hakemus (get-talousarvio (:hakemus-id hakemus) "hakemus"))]
     (log/info (str "Succesfully fetched hakemus with id: " id))
-    (first hakemukset)))
+    (if (and hakemus (count talousarvio))
+      (assoc hakemus :talousarvio talousarvio)
+      hakemus)))
 
 (defn get-paatos [user-key]
   (let [paatokset (query "SELECT

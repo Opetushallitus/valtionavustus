@@ -110,6 +110,8 @@ export async function waitUntilMinEmails(f: any, minEmails: number, ...params: a
   return emails
 }
 
+export const linkToMuutoshakemusPaatosRegex = /https?:\/\/.*\/muutoshakemus\/paatos.*/
+
 async function waitFor(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -216,6 +218,17 @@ export async function navigateToPaatos(page: Page, avustushakuID: number, hakemu
     await page.goto(linkToPaatos, { waitUntil: "networkidle0" })
   } else {
     throw new Error('did not find link to päätös')
+  }
+}
+
+export async function navigateToLatestMuutoshakemusPaatos(page: Page, avustushakuID: number, hakemusID: number) {
+  const emails = await waitUntilMinEmails(getMuutoshakemusPaatosEmails, 1, avustushakuID, hakemusID)
+  const linkToMuutoshakemusPaatos = emails[0]?.formatted.match(linkToMuutoshakemusPaatosRegex)?.[0]
+  expect(linkToMuutoshakemusPaatos).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\/paatos\?user-key=[a-f0-9]{64}/)
+  if (linkToMuutoshakemusPaatos) {
+    await page.goto(linkToMuutoshakemusPaatos, { waitUntil: "networkidle0" })
+  } else {
+    throw new Error('did not find link to muutoshakemus päätös')
   }
 }
 

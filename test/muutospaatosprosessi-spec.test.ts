@@ -44,6 +44,7 @@ import {
   fillAndSendMuutoshakemusDecision,
   defaultBudget,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
+  linkToMuutoshakemusPaatosRegex,
 } from './test-util'
 
 jest.setTimeout(400_000)
@@ -321,7 +322,6 @@ describe('Muutospäätösprosessi', () => {
           })
 
           it('email has link to päätös', async () => {
-            const linkToMuutoshakemusPaatosRegex = /https?:\/\/.*\/muutoshakemus\/paatos.*/
             const linkToMuutoshakemusPaatos = emails[0]?.formatted.match(linkToMuutoshakemusPaatosRegex)?.[0]
             expectToBeDefined(linkToMuutoshakemusPaatos)
             expect(linkToMuutoshakemusPaatos).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\/paatos\?user-key=[a-f0-9]{64}/)

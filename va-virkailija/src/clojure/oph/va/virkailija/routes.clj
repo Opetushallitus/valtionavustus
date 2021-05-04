@@ -266,7 +266,7 @@
 (defn- get-normalized-hakemus []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/normalized" [haku-id hakemus-id]
     :path-params [haku-id :- Long hakemus-id :- Long]
-    :return  va-schema/NormalizedHakemusWithTalousarvio
+    :return  va-schema/NormalizedHakemus
     :summary "Get normalized answers"
     (if-let [normalized-hakemus (virkailija-db/get-normalized-hakemus hakemus-id)]
       (ok normalized-hakemus)

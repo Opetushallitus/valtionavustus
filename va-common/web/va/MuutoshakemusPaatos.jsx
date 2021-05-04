@@ -60,7 +60,7 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
         <div>Asia</div>
         <div>
           <div className="muutoshakemus-paatos__project-name">Hanke: <i data-test-id="paatos-project-name">{hakemus['project-name']}</i></div>
-          {muutoshakemus.talousarvio && !!muutoshakemus.talousarvio.length && <div>Muutoshakemus talouden käyttösuunnitelmaan.</div>}
+          {muutoshakemus.talousarvio && !!muutoshakemus.talousarvio.length && <div data-test-id="budget-change">Muutoshakemus talouden käyttösuunnitelmaan.</div>}
           {muutoshakemus['haen-kayttoajan-pidennysta'] && <div>Hakemus avustuksen käyttöajan pidennykselle.</div>}
         </div>
       </section>
