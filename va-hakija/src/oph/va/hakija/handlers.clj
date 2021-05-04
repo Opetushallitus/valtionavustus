@@ -211,32 +211,32 @@
 (defn get-assigned-virkailijas-for-avustushaku [avustushaku-id]
   (filter #(= (:role %) "presenting_officer") (va-db/get-avustushaku-roles avustushaku-id)))
 
-(defn on-refuse-application [grant-id application-id base-version comment token]
-  (let [application (va-db/get-hakemus application-id)
-        grant (va-db/get-avustushaku (:avustushaku application))
+(defn on-refuse-application [avustushaku-id hakemus-id base-version comment token]
+  (let [hakemus (va-db/get-hakemus hakemus-id)
+        avustushaku (va-db/get-avustushaku (:avustushaku hakemus))
         submission (:body (get-form-submission
-                           (:form grant)
-                           (:form_submission_id application)))
-        lang (keyword (get-in application [:hakemus :language] "fi"))]
+                           (:form avustushaku)
+                           (:form_submission_id hakemus)))
+        lang (keyword (get-in hakemus [:hakemus :language] "fi"))]
     (cond
-      (not (va-db/valid-token? token (:id application)))
+      (not (va-db/valid-token? token (:id hakemus)))
       (unauthorized "Incorrect token")
-      (and (= (:version application) base-version)
-           (not (:refused application)))
+      (and (= (:version hakemus) base-version)
+           (not (:refused hakemus)))
       (do
-        (va-db/refuse-application application comment)
-        (let [virkailija-roles (get-assigned-virkailijas-for-avustushaku (:id grant))]
+        (va-db/refuse-application hakemus comment)
+        (let [virkailija-roles (get-assigned-virkailijas-for-avustushaku (:id avustushaku))]
           (when (some #(when (some? (:email %)) true) virkailija-roles)
             (va-email/send-refused-message-to-presenter!
              (map :email (filter #(some? (:email %)) virkailija-roles))
-             grant
-             (:id application))))
+             avustushaku
+             (:id hakemus))))
         (when-let [email (find-answer-value
                           (:answers submission) "primary-email")]
           (va-email/send-refused-message!
-           lang [email] (get-in grant [:content :name lang])))
-        (hakemus-ok-response (va-db/get-hakemus application-id) submission {}))
-      :else (hakemus-conflict-response application))))
+           lang [email] (get-in avustushaku [:content :name lang])))
+        (hakemus-ok-response (va-db/get-hakemus hakemus-id) submission {}))
+      :else (hakemus-conflict-response hakemus))))
 
 (defn on-selvitys-update [haku-id hakemus-id base-version answers form-key]
   (let [hakemus (va-db/get-hakemus hakemus-id)
