@@ -63,12 +63,14 @@ function formToPayload(values) {
 }
 
 export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, controller, userInfo, presenter, projectEndDate, muutoshakemukset }) => {
+  const talousarvioValues = muutoshakemus.talousarvio.length ? getTalousarvioValues(muutoshakemus.talousarvio) : undefined
+  const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
   const f = useFormik({
     initialValues: {
       status: 'accepted',
       reason: '',
       paattymispaiva: undefined,
-      talousarvio: muutoshakemus.talousarvio.length ? getTalousarvioValues(muutoshakemus.talousarvio) : undefined,
+      talousarvio: talousarvioValues,
     },
     validationSchema: getPaatosSchema(muutoshakemus),
     onSubmit: async (values) => {
@@ -77,12 +79,18 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
       controller.setPaatos({ muutoshakemusId: muutoshakemus.id, hakemusId: hakemus['hakemus-id'], ...storedPaatos })
     }
   })
-  const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
 
   const paatosStatusRadioButton = ({ value, text }) => {
+    const handleChange = e => {
+      if (talousarvioValues) {
+        f.setFieldValue('talousarvio', talousarvioValues, true)
+      }
+      f.handleChange(e)
+    }
+
     return (
       <React.Fragment key={`paatos-status-${value}`}>
-        <input id={value} name="status" type="radio" value={value} onChange={f.handleChange} checked={f.values.status === value} />
+        <input id={value} name="status" type="radio" value={value} onChange={handleChange} checked={f.values.status === value} />
         <label htmlFor={value}>{text}</label>
       </React.Fragment>
     )
