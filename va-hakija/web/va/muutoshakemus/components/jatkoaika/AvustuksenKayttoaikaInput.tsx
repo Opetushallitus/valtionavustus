@@ -5,7 +5,7 @@ import moment from 'moment'
 import { FormikHook } from 'va-common/web/va/types/muutoshakemus'
 import { getInputErrorClass } from 'va-common/web/va/formikHelpers'
 
-import { useTranslations } from '../../TranslationContext'
+import { useTranslations } from '../../../../../../va-common/web/va/i18n/TranslationContext'
 import { ErrorMessage } from '../../ErrorMessage'
 import { PerustelutTextArea } from '../PerustelutTextArea'
 

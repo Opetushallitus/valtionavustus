@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useTranslations } from './TranslationContext'
+import { useTranslations } from '../../../../va-common/web/va/i18n/TranslationContext'
 
 export type OriginalHakemusIframeProps = { avustushakuId: number, userKey: string }
 
