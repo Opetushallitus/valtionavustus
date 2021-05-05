@@ -2,7 +2,7 @@ import _ from 'lodash'
 import ClassNames from 'classnames'
 import React, { Component } from 'react'
 
-import { HakemusSelvitysStatuses, MuutoshakemusStatuses } from 'va-common/web/va/hakemus-statuses'
+import { HakemusSelvitys, Muutoshakemus } from 'va-common/web/va/status'
 
 import HakemusArviointiStatuses from '../hakemus-details/HakemusArviointiStatuses.js'
 import ScoreResolver from '../ScoreResolver.js'
@@ -237,7 +237,7 @@ export default class HakemusListing extends Component {
       }
     }
 
-    
+
     const hakemusListingClass = ClassNames('hakemus-list',{
       'hakemus-list--academysize': !isResolved && isAcademysize,
       'hakemus-list--resolved': isResolved
@@ -272,8 +272,8 @@ export default class HakemusListing extends Component {
                               hakemusList={hakemusList}
                               filter={filter}
                               label="Muutosh."
-                              statusValues={MuutoshakemusStatuses.allStatuses()}
-                              statusToFi={MuutoshakemusStatuses.statusToFI}
+                              statusValues={Muutoshakemus.statuses}
+                              statusToFi={Muutoshakemus.statusToFI}
                               filterField="status_muutoshakemus"/>
                 <HakemusSorter field="status_muutoshakemus" sorter={sorter} controller={controller}/>
               </th>}
@@ -291,8 +291,8 @@ export default class HakemusListing extends Component {
                                   hakemusList={hakemusList}
                                   filter={filter}
                                   label="Välis."
-                                  statusValues={HakemusSelvitysStatuses.allStatuses()}
-                                  statusToFi={HakemusSelvitysStatuses.statusToFI}
+                                  statusValues={HakemusSelvitys.statuses}
+                                  statusToFi={HakemusSelvitys.statusToFI}
                                   filterField="status_valiselvitys"/>
                     <HakemusSorter field="status_valiselvitys" sorter={sorter} controller={controller}/>
               </th>}
@@ -301,8 +301,8 @@ export default class HakemusListing extends Component {
                                   hakemusList={hakemusList}
                                   filter={filter}
                                   label="Loppus."
-                                  statusValues={HakemusSelvitysStatuses.allStatuses()}
-                                  statusToFi={HakemusSelvitysStatuses.statusToFI}
+                                  statusValues={HakemusSelvitys.statuses}
+                                  statusToFi={HakemusSelvitys.statusToFI}
                                   filterField="status_loppuselvitys"/>
                     <HakemusSorter field="status_loppuselvitys" sorter={sorter} controller={controller}/>
               </th>}
@@ -503,10 +503,10 @@ class HakemusRow extends Component {
     const thisIsSelected = hakemus === selectedHakemus || hakemus === previouslySelectedHakemus
     const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
     const statusFI = HakemusArviointiStatuses.statusToFI(hakemus.arvio.status)
-    const statusLoppuselvitys = HakemusSelvitysStatuses.statusToFI(hakemus["status-loppuselvitys"])
-    const statusValiselvitys = HakemusSelvitysStatuses.statusToFI(hakemus["status-valiselvitys"])
+    const statusLoppuselvitys = HakemusSelvitys.statusToFI(hakemus["status-loppuselvitys"])
+    const statusValiselvitys = HakemusSelvitys.statusToFI(hakemus["status-valiselvitys"])
     const muutoshakemusStatus = HakemusListing._fieldGetter("status_muutoshakemus")(hakemus)
-    const decoratedMuutoshakemusStatus = `${muutoshakemusStatus === 'new' ? '&#9734; ' : ''}${MuutoshakemusStatuses.statusToFI(muutoshakemusStatus)}`
+    const decoratedMuutoshakemusStatus = `${muutoshakemusStatus === 'new' ? '&#9734; ' : ''}${Muutoshakemus.statusToFI(muutoshakemusStatus)}`
     const changeRequest = HakemusListing._fieldGetter("change-request")(hakemus)
     const statusComment = hakemus["status-comment"] ? ":\n" + hakemus["status-comment"] : ""
     const changeRequestTitle = changeRequest ? "Odottaa täydennystä" + statusComment : ""

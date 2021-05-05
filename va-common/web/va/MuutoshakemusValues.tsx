@@ -1,11 +1,12 @@
 import React from 'react'
 import moment from 'moment'
 
-import { MuutoshakemusStatuses } from './hakemus-statuses'
+import { Muutoshakemus as MuutoshakemusStatuses } from './status'
 import { MuutosTaloudenKayttosuunnitelmaan } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
 import { Muutoshakemus, Talousarvio } from './types/muutoshakemus'
 
 import './MuutoshakemusValues.less'
+import {useTranslations} from "./i18n/TranslationContext"
 
 export const datetimeFormat = 'D.M.YYYY [klo] HH.mm'
 
@@ -19,6 +20,7 @@ type MuutoshakemusValuesProps = {
 
 export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
   const { currentTalousarvio, muutoshakemus, hakijaUrl, simplePaatos, projectEndDate } = props
+  const { t } = useTranslations()
   const a = muutoshakemus
   const paatosUrl = `${hakijaUrl}muutoshakemus/paatos?user-key=${a['paatos-user-key']}`
   const talousarvio = muutoshakemus["paatos-talousarvio"]?.length ? muutoshakemus["paatos-talousarvio"] : muutoshakemus.talousarvio
@@ -42,11 +44,11 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
                 </h2>
                 <h3 className="muutoshakemus__header">
                   {a['paatos-sent-at']
-                    ? `Päätös lähetetty hakijalle ${moment(a['paatos-sent-at']).format(datetimeFormat)}`
-                    : 'Päätöstä ei ole vielä lähetetty hakijalle'
+                    ? `${t.email.paatos.status.sent} ${moment(a['paatos-sent-at']).format(datetimeFormat)}`
+                    : t.email.paatos.status.pending
                   }
                 </h3>
-                <h3 className="muutoshakemus__header">Päätösdokumentti:</h3>
+                <h3 className="muutoshakemus__header">{t.muutoshakemus.paatos.paatosDokumentti}:</h3>
                 <a href={paatosUrl} target="_blank" rel="noopener noreferrer" className="muutoshakemus__paatos-link">{paatosUrl}</a>
               </div>
           }
@@ -81,10 +83,12 @@ type PaattymispaivaValuesProps = {
 }
 
 const PaattymispaivaValues = (props: PaattymispaivaValuesProps) => {
+  const { t } = useTranslations()
+
   const { muutoshakemus, projectEndDate } = props
   const isAcceptedWithChanges = muutoshakemus.status === 'accepted_with_changes'
-  const currentEndDateTitle = isAcceptedWithChanges ? 'Vanha päättymisaika' : 'Voimassaoleva päättymisaika'
-  const newEndDateTitle = isAcceptedWithChanges ? 'Hyväksytty muutos' : 'Haettu muutos'
+  const currentEndDateTitle = isAcceptedWithChanges ? t.muutoshakemus.previousProjectEndDate : t.muutoshakemus.currentProjectEndDate
+  const newEndDateTitle = isAcceptedWithChanges ? t.muutoshakemus.acceptedChange : t.muutoshakemus.appliedChange
   const newEndDateValue = isAcceptedWithChanges ? muutoshakemus['paatos-hyvaksytty-paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']
   const perustelut = muutoshakemus['kayttoajan-pidennys-perustelut']
 
@@ -92,16 +96,16 @@ const PaattymispaivaValues = (props: PaattymispaivaValuesProps) => {
     <section className="muutoshakemus-section">
       <div className="muutoshakemus-row muutoshakemus__project-end-row">
         <div>
-          <h3 className="muutoshakemus__header">{currentEndDateTitle}</h3>
+          <h3 className="muutoshakemus__header" data-test-id='muutoshakemus-current-end-date-title'>{currentEndDateTitle}</h3>
           <div data-test-id="project-end-date">{projectEndDate}</div>
         </div>
         <div>
-          <h3 className="muutoshakemus__header">{newEndDateTitle}</h3>
+          <h3 className="muutoshakemus__header" data-test-id='muutoshakemus-new-end-date-title'>{newEndDateTitle}</h3>
           <div data-test-id="muutoshakemus-jatkoaika">{formatDate(newEndDateValue)}</div>
         </div>
       </div>
       <div className="muutoshakemus-row">
-        <h4 className="muutoshakemus__header">Hakijan perustelut</h4>
+        <h4 className="muutoshakemus__header" data-test-id='muutoshakemus-reasoning-title'>{t.muutoshakemus.applicantReasoning}</h4>
         <div className="muutoshakemus__reason" data-test-id="muutoshakemus-jatkoaika-perustelu">{perustelut}</div>
       </div>
     </section>

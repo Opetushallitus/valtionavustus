@@ -14,7 +14,7 @@ import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
 
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
-import { HakemusSelvitysStatuses, MuutoshakemusStatuses } from 'va-common/web/va/hakemus-statuses'
+import { Muutoshakemus, HakemusSelvitys } from 'va-common/web/va/status'
 
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses'
 import RahoitusalueSelections from './hakemus-details/RahoitusalueSelections'
@@ -86,9 +86,9 @@ export default class HakemustenArviointiController {
         name: "",
         openQuestions:[],
         status: HakemusArviointiStatuses.allStatuses(),
-        status_valiselvitys: HakemusSelvitysStatuses.allStatuses(),
-        status_loppuselvitys: HakemusSelvitysStatuses.allStatuses(),
-        status_muutoshakemus: MuutoshakemusStatuses.allStatuses(),
+        status_valiselvitys: HakemusSelvitys.statuses,
+        status_loppuselvitys: HakemusSelvitys.statuses,
+        status_muutoshakemus: Muutoshakemus.statuses,
         organization: "",
         roleIsOpen:false,
         evaluator:evaluator,
@@ -1042,7 +1042,7 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
 
   onMuutoshakemukset(state, muutoshakemukset) {
     if (state.selectedHakemus) {
-      state.selectedHakemus.muutoshakemukset = muutoshakemukset 
+      state.selectedHakemus.muutoshakemukset = muutoshakemukset
     }
     return state
   }

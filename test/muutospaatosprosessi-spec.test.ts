@@ -3,11 +3,9 @@ import moment from 'moment'
 
 import {
   VIRKAILIJA_URL,
-  getMuutoshakemusPaatosEmails,
   getValmistelijaEmails,
   getAcceptedPäätösEmails,
   HAKIJA_URL,
-  linkToMuutoshakemusRegex,
   TEST_Y_TUNNUS,
   clearAndType,
   clickElement,
@@ -44,7 +42,7 @@ import {
   fillAndSendMuutoshakemusDecision,
   defaultBudget,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
-  linkToMuutoshakemusPaatosRegex,
+  parseMuutoshakemusPaatosFromEmails,
 } from './test-util'
 
 jest.setTimeout(400_000)
@@ -309,28 +307,25 @@ describe('Muutospäätösprosessi', () => {
         })
 
         describe('And hakija gets an email', () => {
-          let emails: Email[]
+          let parsedMail: { title: string | undefined, linkToMuutoshakemusPaatos?: string | undefined, linkToMuutoshakemus?: string | undefined }
 
           beforeAll(async () => {
-            emails = await waitUntilMinEmails(getMuutoshakemusPaatosEmails, 1, avustushakuID, hakemusID)
+            parsedMail = await parseMuutoshakemusPaatosFromEmails(avustushakuID, hakemusID)
           })
 
           it('email has correct title', () => {
-            const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
-            expectToBeDefined(title)
-            expect(title).toContain(`${haku.registerNumber} - ${answers.projectName}`)
+            expectToBeDefined(parsedMail.title)
+            expect(parsedMail.title).toContain(`${haku.registerNumber} - ${answers.projectName}`)
           })
 
           it('email has link to päätös', async () => {
-            const linkToMuutoshakemusPaatos = emails[0]?.formatted.match(linkToMuutoshakemusPaatosRegex)?.[0]
-            expectToBeDefined(linkToMuutoshakemusPaatos)
-            expect(linkToMuutoshakemusPaatos).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\/paatos\?user-key=[a-f0-9]{64}/)
+            expectToBeDefined(parsedMail.linkToMuutoshakemusPaatos)
+            expect(parsedMail.linkToMuutoshakemusPaatos).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\/paatos\?user-key=[a-f0-9]{64}/)
           })
 
           it('email has link to muutoshakemus', () => {
-            const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
-            expectToBeDefined(linkToMuutoshakemus)
-            expect(linkToMuutoshakemus).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\?.*/)
+            expectToBeDefined(parsedMail.linkToMuutoshakemus)
+            expect(parsedMail.linkToMuutoshakemus).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\?.*/)
           })
         })
 
@@ -615,6 +610,21 @@ describe('Muutospäätösprosessi', () => {
                 it('Correct päättymispäivä is displayed to virkailija', async () => {
                   const acceptedDate = await page.$eval('[data-test-id="muutoshakemus-jatkoaika"]', el => el.textContent)
                   expect(acceptedDate).toBe('20.04.2400')
+                })
+
+                it('New project end date title is displayed to virkailija in finnish', async () => {
+                  const title = await page.$eval('[data-test-id="muutoshakemus-new-end-date-title"]', el => el.textContent)
+                  expect(title).toBe('Hyväksytty muutos')
+                })
+
+                it('Old project end date title is displayed to virkailija in finnish', async () => {
+                  const title = await page.$eval('[data-test-id="muutoshakemus-current-end-date-title"]', el => el.textContent)
+                  expect(title).toBe('Vanha päättymisaika')
+                })
+
+                it('Reasoning title is displayed to virkailija in finnish', async () => {
+                  const title = await page.$eval('[data-test-id="muutoshakemus-reasoning-title"]', el => el.textContent)
+                  expect(title).toBe('Hakijan perustelut')
                 })
 
                 it('"Hyväksytty muutettuna" is displayed to virkailija', async () => {

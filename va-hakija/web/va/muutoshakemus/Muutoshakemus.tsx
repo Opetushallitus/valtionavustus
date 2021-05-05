@@ -95,7 +95,7 @@ export const MuutoshakemusComponent = () => {
 
   const existingMuutoshakemus = (m: Muutoshakemus, index: number, allMuutoshakemus: Muutoshakemus[]) => {
     const projectEndDate = getProjectEndDate(state.avustushaku, allMuutoshakemus, m)
-    const topic = `${translations[lang].muutoshakemus} ${moment(m['created-at']).format('D.M.YYYY')}`
+    const topic = `${translations[lang].muutoshakemus.title} ${moment(m['created-at']).format('D.M.YYYY')}`
     const waitingForDecision = m.status === 'new' ? ` - ${translations[lang].waitingForDecision}` : ''
     return (
       <section className="muutoshakemus__section" data-test-class="existing-muutoshakemus" data-test-state={m.status} key={index}>

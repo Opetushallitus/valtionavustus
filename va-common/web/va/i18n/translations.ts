@@ -1,6 +1,5 @@
 export const translationsFi = {
   hakemus: 'Hakemus',
-  muutoshakemus: 'Muutoshakemus',
   waitingForDecision: 'Odottaa käsittelyä',
   loading: 'Ladataan lomaketta...',
   sendMuutoshakemus: 'Lähetä käsiteltäväksi',
@@ -31,7 +30,65 @@ export const translationsFi = {
     currentBudget: 'Voimassaoleva talousarvio',
     modifiedBudget: 'Uusi talousarvio',
     expenses: 'Menot',
-    expensesTotal: 'Menot yhteensä'
+    expensesTotal: 'Menot yhteensä',
+    budget: {
+      budgetOriginalTitle: (isAccepted: boolean) => isAccepted ? 'Vanha talousarvio' : 'Voimassaoleva talousarvio',
+      budgetChangeTitle: (isAccepted: boolean) => isAccepted ? 'Hyväksytyt muutokset' : 'Haetut muutokset',
+    },
+    applicantReasoning: 'Hakijan perustelut',
+  },
+  muutoshakemus: {
+    title: 'Muutoshakemus',
+    acceptedChanges: 'Hyväksytyt muutokset',
+    previousProjectEndDate: 'Vanha päättymisaika',
+    currentProjectEndDate: 'Voimassaoleva päättymisaika',
+    acceptedChange: 'Hyväksytty muutos',
+    appliedChange: 'Haettu muutos',
+    applicantReasoning: 'Hakijan perustelut',
+    paatos: {
+      paatos: 'Päätös',
+      asia: 'Asia',
+      hanke: 'Hanke',
+      title: 'Hyväksytyt muutokset',
+      muutoshakemusTaloudenKayttosuunnitelmaan: 'Muutoshakemus talouden käyttösuunnitelmaan.',
+      hakemusKayttoajanPidennykselle: 'Hakemus avustuksen käyttöajan pidennykselle.',
+      perustelut: 'Päätöksen perustelut',
+      paatoksenTekija: 'Päätöksen tekijä',
+      esittelija: 'Esittelijä',
+      lisatietoja: 'Lisätietoja',
+      phoneNumber: '029 533 1000 (vaihde)',
+      paatosDokumentti: 'Päätösdokumentti',
+      status: {
+        accepted: 'Opetushallitus hyväksyy muutokset hakemuksen mukaisesti.',
+        rejected: 'Opetushallitus hylkää muutoshakemuksen.',
+        accepted_with_changes: 'Opetushallitus hyväksyy hakemuksen alla olevin muutoksin.',
+      },
+    },
+    status: {
+      missing: '',
+      new: 'Uusi',
+      rejected: 'Hylätty',
+      accepted: 'Hyväksytty',
+      accepted_with_changes: 'Hyväksytty muutettuna'
+    },
+  },
+  selvitys: {
+    status: {
+      missing: 'Puuttuu',
+      submitted: 'Tarkastamatta',
+      accepted: 'Hyväksytty',
+    },
+  },
+  logo: {
+    alt: 'Opetushallitus',
+  },
+  email: {
+    paatos: {
+      status: {
+        sent: 'Päätös lähetetty hakijalle',
+        pending: 'Päätöstä ei ole vielä lähetetty hakijalle',
+      },
+    },
   },
   formErrors: {
     required: 'Pakollinen kenttä',
@@ -86,6 +143,9 @@ const translationsSv: Translations = {
     required: 'Obligatorisk uppgift',
     email: 'Kontrollera e-postadress',
     //haettuKayttoajanPaattymispaiva: 'Päättymispäivän pitää olla tuleva päivämäärä'
+  },
+  logo: {
+    alt: 'Utbildningsstyrelsen',
   }
 }
 

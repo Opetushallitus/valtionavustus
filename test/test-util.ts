@@ -222,13 +222,23 @@ export async function navigateToPaatos(page: Page, avustushakuID: number, hakemu
 }
 
 export async function navigateToLatestMuutoshakemusPaatos(page: Page, avustushakuID: number, hakemusID: number) {
+  const mail = await parseMuutoshakemusPaatosFromEmails(avustushakuID, hakemusID)
+  if (mail.linkToMuutoshakemusPaatos === undefined) throw new Error('No muutoshakemus päätös link found from email')
+
+  await page.goto(mail.linkToMuutoshakemusPaatos, { waitUntil: "networkidle0" })
+}
+
+export async function parseMuutoshakemusPaatosFromEmails(avustushakuID: number, hakemusID: number) {
   const emails = await waitUntilMinEmails(getMuutoshakemusPaatosEmails, 1, avustushakuID, hakemusID)
+  const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
+  const linkToMuutoshakemusPaatosRegex = /https?:\/\/.*\/muutoshakemus\/paatos.*/
   const linkToMuutoshakemusPaatos = emails[0]?.formatted.match(linkToMuutoshakemusPaatosRegex)?.[0]
-  expect(linkToMuutoshakemusPaatos).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\/paatos\?user-key=[a-f0-9]{64}/)
-  if (linkToMuutoshakemusPaatos) {
-    await page.goto(linkToMuutoshakemusPaatos, { waitUntil: "networkidle0" })
-  } else {
-    throw new Error('did not find link to muutoshakemus päätös')
+  const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
+
+  return {
+    title,
+    linkToMuutoshakemusPaatos,
+    linkToMuutoshakemus
   }
 }
 

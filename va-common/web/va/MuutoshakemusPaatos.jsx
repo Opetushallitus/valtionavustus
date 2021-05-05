@@ -5,15 +5,11 @@ import { getProjectEndDate, getTalousarvio } from './Muutoshakemus'
 import { TalousarvioTable } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
 
 import './MuutoshakemusPaatos.less'
-
-const paatosText = {
-  'accepted': 'Opetushallitus hyväksyy muutokset hakemuksen mukaisesti.',
-  'rejected': 'Opetushallitus hylkää muutoshakemuksen.',
-  'accepted_with_changes': 'Opetushallitus hyväksyy hakemuksen alla olevin muutoksin.'
-}
+import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
 
 const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muutoshakemukset }) => {
   if (paatos.status === 'rejected') return null
+  const { t } = useTranslations()
 
   const isAcceptedWithChanges = paatos.status === 'accepted_with_changes'
   const paattymispaiva = isAcceptedWithChanges ? paatos.paattymispaiva : muutoshakemus['haettu-kayttoajan-paattymispaiva']
@@ -24,17 +20,17 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muut
 
   return (
     <section className="muutoshakemus-paatos__section">
-      <div>Hyväksytyt muutokset</div>
+      <div data-test-id="accepted-changes-title">{t.muutoshakemus.acceptedChanges}</div>
       <div>
         {!!newTalousarvio.length && <TalousarvioTable paatos={true} currentTalousarvio={currentTalousarvio} newTalousarvio={newTalousarvio} status={paatos.status} lang="fi" />}
         {muutoshakemus['haen-kayttoajan-pidennysta'] &&
           <div className="muutoshakemus-paatos__jatkoaika">
             <div>
-              <h3 className="muutoshakemus-paatos__change-header" data-test-id="h-old-end-date">Vanha päättymisaika</h3>
+              <h3 className="muutoshakemus-paatos__change-header" data-test-id="h-old-end-date">{t.muutoshakemus.previousProjectEndDate}</h3>
               <div data-test-id="paatos-project-end">{projectEndDate}</div>
             </div>
             <div>
-              <h3 className="muutoshakemus-paatos__change-header" data-test-id="h-new-end-date">Hyväksytty muutos</h3>
+              <h3 className="muutoshakemus-paatos__change-header" data-test-id="h-new-end-date">{t.muutoshakemus.acceptedChange}</h3>
               <div data-test-id="paattymispaiva-value">{moment(paattymispaiva).format('D.M.YYYY')}</div>
             </div>
           </div>
@@ -45,28 +41,29 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muut
 }
 
 export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset }) => {
+  const { t } = useTranslations()
+
   return (
     <div className="muutoshakemus-paatos__content">
       <header className="muutoshakemus-paatos__header">
-        <img id="logo" src="/img/logo.png" height="50" alt="Opetushallitus / Utbildningsstyrelsen" />
-        <div>
-          Päätös<br/>
+        <img id="logo" src="/img/logo.png" height="50" alt={t.logo.alt} />
+        <div><span data-test-id="muutoshakemus-paatos-title">{t.muutoshakemus.paatos.paatos}</span><br/>
           {moment(paatos['created-at']).format('D.M.YYYY')}
         </div>
         <div data-test-id="paatos-register-number">{hakemus['register-number']}</div>
       </header>
       <h1 className="muutoshakemus-paatos__org">{hakemus['organization-name']}</h1>
       <section className="muutoshakemus-paatos__section">
-        <div>Asia</div>
+        <div data-test-id="muutospaatos-asia-title">{t.muutoshakemus.paatos.asia}</div>
         <div>
-          <div className="muutoshakemus-paatos__project-name">Hanke: <i data-test-id="paatos-project-name">{hakemus['project-name']}</i></div>
-          {muutoshakemus.talousarvio && !!muutoshakemus.talousarvio.length && <div data-test-id="budget-change">Muutoshakemus talouden käyttösuunnitelmaan.</div>}
-          {muutoshakemus['haen-kayttoajan-pidennysta'] && <div>Hakemus avustuksen käyttöajan pidennykselle.</div>}
+          <div className="muutoshakemus-paatos__project-name">{t.muutoshakemus.paatos.hanke}: <i data-test-id="paatos-project-name">{hakemus['project-name']}</i></div>
+          {muutoshakemus.talousarvio && !!muutoshakemus.talousarvio.length && <div data-test-id="budget-change">{t.muutoshakemus.paatos.muutoshakemusTaloudenKayttosuunnitelmaan}</div>}
+          {muutoshakemus['haen-kayttoajan-pidennysta'] && <div data-test-id="jatkoaika-asia">{t.muutoshakemus.paatos.hakemusKayttoajanPidennykselle}</div>}
         </div>
       </section>
       <section className="muutoshakemus-paatos__section">
-        <div>Päätös</div>
-        <div data-test-id="paatos-paatos">{paatosText[paatos.status]}</div>
+        <div data-test-id="muutoshakemus-paatos-section-title">{t.muutoshakemus.paatos.paatos}</div>
+        <div data-test-id="paatos-paatos">{t.muutoshakemus.paatos.status[paatos.status]}</div>
       </section>
 
       <HyvaksytytMuutokset
@@ -77,16 +74,16 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
         avustushaku={avustushaku} />
 
       <section className="muutoshakemus-paatos__section">
-        <div>Päätöksen perustelut</div>
+        <div data-test-id="muutoshakemus-paatos-perustelut-title">{t.muutoshakemus.paatos.perustelut}</div>
         <div className="muutoshakemus-paatos__reason" data-test-id="paatos-reason">{paatos.reason}</div>
       </section>
       <section className="muutoshakemus-paatos__section">
-        <div>Päätöksen tekijä</div>
+        <div data-test-id="muutoshakemus-paatos-tekija-title">{t.muutoshakemus.paatos.paatoksenTekija}</div>
         <div data-test-id="paatos-decider">
           {paatos.decider}
           {paatos.decider !== presenter.name
             ? <div className="muutoshakemus-paatos__presenter">
-                Esittelijä<br/>
+                {t.muutoshakemus.paatos.esittelija}<br/>
                 {presenter.name}
               </div>
             : ''
@@ -94,11 +91,11 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
         </div>
       </section>
       <section className="muutoshakemus-paatos__section">
-        <div>Lisätietoja</div>
+        <div data-test-id="muutoshakemus-paatos-lisatietoja-title">{t.muutoshakemus.paatos.lisatietoja}</div>
         <div data-test-id="paatos-additional-info">
           {presenter.name}<br/>
           {presenter.email}<br/>
-          029 533 1000 (vaihde)
+          {t.muutoshakemus.paatos.phoneNumber}
         </div>
       </section>
     </div>
