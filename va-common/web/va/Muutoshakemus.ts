@@ -3,10 +3,6 @@ import * as yup from 'yup'
 
 import { Meno, Muutoshakemus, Talousarvio, TalousarvioValues } from './types/muutoshakemus'
 
-export const mapTalousarvioValuesToTalousarvio = (values: TalousarvioValues, talousarvio: Talousarvio): Talousarvio => {
-  return talousarvio.map(meno => ({ ...meno, amount: values[meno.type] }))
-}
-
 export const getTalousarvioSchema = (talousarvio: TalousarvioValues, e: any) => {
   const menos = Object.keys(talousarvio).reduce((acc, key) => {
     if (key !== 'originalSum' && key !== 'currentSum') {

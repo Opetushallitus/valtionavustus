@@ -13,8 +13,7 @@ import {
   dateStringToMoment,
   getTalousarvioSchema,
   getTalousarvioValues,
-  getTalousarvio,
-  mapTalousarvioValuesToTalousarvio
+  getTalousarvio
 } from 'va-common/web/va/Muutoshakemus'
 
 import { copyToClipboard } from '../copyToClipboard'
