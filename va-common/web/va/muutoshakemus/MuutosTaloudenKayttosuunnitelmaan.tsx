@@ -1,9 +1,9 @@
 import React from 'react'
 
 import { Language, Meno, MuutoshakemusStatus, Talousarvio } from 'va-common/web/va/types/muutoshakemus'
+import { useTranslations } from '../i18n/TranslationContext'
 
 import './talous.less'
-import {useTranslations} from "../i18n/TranslationContext"
 
 type MenoRowProps = {
   meno: Meno

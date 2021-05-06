@@ -3,9 +3,9 @@ import moment from 'moment'
 
 import { getProjectEndDate, getTalousarvio } from './Muutoshakemus'
 import { TalousarvioTable } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
+import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
 
 import './MuutoshakemusPaatos.less'
-import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
 
 const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muutoshakemukset }) => {
   if (paatos.status === 'rejected') return null

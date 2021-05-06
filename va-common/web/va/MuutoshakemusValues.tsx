@@ -4,9 +4,9 @@ import moment from 'moment'
 import { Muutoshakemus as MuutoshakemusStatuses } from './status'
 import { MuutosTaloudenKayttosuunnitelmaan } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
 import { Muutoshakemus, Talousarvio } from './types/muutoshakemus'
+import { useTranslations } from "./i18n/TranslationContext"
 
 import './MuutoshakemusValues.less'
-import {useTranslations} from "./i18n/TranslationContext"
 
 export const datetimeFormat = 'D.M.YYYY [klo] HH.mm'
 
