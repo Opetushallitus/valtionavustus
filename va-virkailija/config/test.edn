@@ -8,4 +8,5 @@
  :email {:print-mail-on-disable? false}
  :va-users {:use-cache? false}
  :budjettimuutoshakemus {:enabled? true}
- :payments {:enabled? true :delete-payments? true}}
+ :payments {:enabled? true :delete-payments? true}
+ :test-apis {:enabled? true}}

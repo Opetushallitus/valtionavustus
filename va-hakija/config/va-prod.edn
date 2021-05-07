@@ -14,5 +14,4 @@
          :bounce-address "valtionavustukset@oph.fi"
          :retry-initial-wait 2000
          :retry-multiplier 4
-         :retry-max-time 60000}
- :test-apis {:enabled? false}}
+         :retry-max-time 60000}}

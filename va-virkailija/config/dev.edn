@@ -16,4 +16,5 @@
             :delete-payments? true}
  :budjettimuutoshakemus {:enabled? true}
  :tasmaytysraportti-create {:enabled? true}
- :tasmaytysraportti-send {:enabled? true}}
+ :tasmaytysraportti-send {:enabled? true}
+ :test-apis {:enabled? true}}
