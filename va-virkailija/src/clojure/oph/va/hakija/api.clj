@@ -42,11 +42,12 @@
        :?column?
        (= 1)))
 
-(defn create-avustushaku [avustushaku-content template-form-id decision haku-type project-id operation-id operational-unit-id created-at]
-  (let [form-id (:id (exec hakija-queries/copy-form<!
+(defn create-avustushaku [tx avustushaku-content template-form-id decision haku-type project-id operation-id operational-unit-id created-at]
+  (let [form-id (:id (hakija-queries/copy-form<!
                            {:id template-form-id
-                            :created_at (datetime/datetime->str created-at)}))
-        avustushaku-id (exec hakija-queries/create-avustushaku<!
+                            :created_at (datetime/datetime->str created-at)}
+                           {:connection tx}))
+        avustushaku-id (hakija-queries/create-avustushaku<!
                               {:form form-id
                                :content avustushaku-content
                                :haku_type (new HakuType haku-type)
@@ -56,9 +57,9 @@
                                :operation_id operation-id
                                :operational_unit_id operational-unit-id
                                :created_at (datetime/datetime->str created-at)
-                               })]
-    (->> avustushaku-id
-         (exec hakija-queries/get-avustushaku)
+                               }
+                              {:connection tx})]
+    (->> (hakija-queries/get-avustushaku avustushaku-id {:connection tx})
          (map avustushaku-response-content)
          first)))
 
@@ -126,12 +127,11 @@
    :role (:role role)
    :oid (:oid role)})
 
-(defn create-avustushaku-role [role]
+(defn create-avustushaku-role [tx role]
   (let [role-enum (new HakuRole (:role role))
         role-to-save (assoc role :role role-enum)
-        role-id (exec hakija-queries/create-avustushaku-role<! role-to-save)]
-    (->> role-id
-         (exec hakija-queries/get-avustushaku-role)
+        role-id (hakija-queries/create-avustushaku-role<! role-to-save {:connection tx})]
+    (->> (hakija-queries/get-avustushaku-role role-id {:connection tx})
          (map role->json)
          first)))
 

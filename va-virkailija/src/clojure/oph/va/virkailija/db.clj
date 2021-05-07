@@ -549,8 +549,9 @@
       (let [current-menoluokka-ids (map (partial upsert-menoluokka tx application-id) menoluokka-rows)]
         (remove-old-menoluokka-rows tx application-id current-menoluokka-ids))))))
 
-(defn copy-menoluokka-rows [from-application-id to-application-id]
-  (execute! "INSERT INTO virkailija.menoluokka (avustushaku_id, type, translation_fi, translation_se)
+(defn copy-menoluokka-rows [tx from-application-id to-application-id]
+  (execute! tx
+            "INSERT INTO virkailija.menoluokka (avustushaku_id, type, translation_fi, translation_se)
             SELECT ?, type, translation_fi, translation_se
             FROM virkailija.menoluokka
             WHERE avustushaku_id = ?"

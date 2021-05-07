@@ -6,7 +6,7 @@
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
-            [oph.soresu.common.db :refer [exec query]]
+            [oph.soresu.common.db :refer [exec query with-tx]]
             [clojure.java.jdbc :as jdbc]
             [compojure.core :as compojure]
             [compojure.route :as compojure-route]
@@ -223,7 +223,8 @@
                      :body [base-haku-id-wrapper (compojure-api/describe {:baseHakuId Long} "id of avustushaku to use as base")]
                      :return va-schema/AvustusHaku
                      :summary "Copy existing avustushaku as new one by id of the existing avustushaku"
-                     (ok (hakudata/create-new-avustushaku (:baseHakuId base-haku-id-wrapper) (authentication/get-request-identity request)))))
+                     (with-tx (fn [tx]
+                       (ok (hakudata/create-new-avustushaku tx (:baseHakuId base-haku-id-wrapper) (authentication/get-request-identity request)))))))
 
 (defn- post-avustushaku []
   (compojure-api/POST "/:avustushaku-id" []
@@ -371,11 +372,13 @@
                      :body [new-role (compojure-api/describe virkailija-schema/NewRole "New role to add to avustushaku")]
                      :return virkailija-schema/Role
                      :summary "Create new role for avustushaku"
-                     (ok (hakija-api/create-avustushaku-role {:avustushaku avustushaku-id
-                                                              :role (or (:role new-role) "presenting_officer")
-                                                              :name (:name new-role)
-                                                              :email (:email new-role)
-                                                              :oid (:oid new-role)}))))
+                     (with-tx (fn [tx]
+                       (ok (hakija-api/create-avustushaku-role tx
+                                                               {:avustushaku avustushaku-id
+                                                                :role (or (:role new-role) "presenting_officer")
+                                                                :name (:name new-role)
+                                                                :email (:email new-role)
+                                                                :oid (:oid new-role)}))))))
 
 (defn- post-avustushaku-role []
   (compojure-api/POST "/:avustushaku-id/role/:role-id" []

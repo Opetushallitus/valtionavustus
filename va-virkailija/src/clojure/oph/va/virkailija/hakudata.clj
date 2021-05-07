@@ -2,6 +2,7 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.scoring :as scoring]
+            [oph.soresu.common.db]
             [oph.soresu.form.formutil :as formutil]
             [oph.va.routes :as va-routes]
             [oph.va.hakija.api :as hakija-api]
@@ -185,7 +186,7 @@
         presenting-officer-emails (map :email presenting-officers)
         first-email (first presenting-officer-emails)] first-email))
 
-(defn create-new-avustushaku [base-haku-id identity]
+(defn create-new-avustushaku [tx base-haku-id identity]
   (let [created-at (clj-time/now)
         base-haku (-> base-haku-id
                       (hakija-api/get-hakudata)
@@ -198,6 +199,7 @@
         operation-id (:operation-id base-haku)
         operational-unit-id (:operational-unit-id base-haku)
         new-haku (hakija-api/create-avustushaku
+                   tx
                    {:name (add-copy-suffixes name)
                     :duration {:start (clj-time/plus created-at (clj-time/months 1))
                                :end (clj-time/plus created-at (clj-time/months 2))
@@ -213,11 +215,12 @@
                    operation-id
                    operational-unit-id
                    created-at)]
-    (hakija-api/create-avustushaku-role {:avustushaku (:id new-haku)
+    (hakija-api/create-avustushaku-role tx
+                                        {:avustushaku (:id new-haku)
                                          :role "presenting_officer"
                                          :name (str (:first-name identity) " "
                                                     (:surname identity))
                                          :email (:email identity)
                                          :oid (:person-oid identity)})
-    (virkailija-db/copy-menoluokka-rows base-haku-id (:id new-haku))
+    (virkailija-db/copy-menoluokka-rows tx base-haku-id (:id new-haku))
     new-haku))
