@@ -20,3 +20,16 @@ export const useTranslations = () => {
   }
   return context
 }
+
+export function getTranslationContextFromQuery(query: any): TranslationContext {
+  const lang = validateLanguage(query.lang) || 'fi'
+
+  return { t: translations[lang], lang }
+}
+
+function validateLanguage(s: unknown): Language {
+  if (s !== 'fi' && s !== 'sv') {
+    throw new Error(`Unrecognized language: ${s}`)
+  }
+  return s
+}

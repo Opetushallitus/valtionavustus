@@ -13,8 +13,8 @@ import { AvustuksenKayttoaikaInput } from './components/jatkoaika/AvustuksenKayt
 import { TalousarvioForm } from './components/talous/TalousarvioForm'
 import {ContactPerson} from './components/contact-person/ContactPerson'
 import {TopBar} from './components/TopBar'
-import {Language, translations} from '../../../../va-common/web/va/i18n/translations'
-import {TranslationContext} from '../../../../va-common/web/va/i18n/TranslationContext'
+import { translations } from '../../../../va-common/web/va/i18n/translations'
+import { getTranslationContextFromQuery, TranslationContext } from '../../../../va-common/web/va/i18n/TranslationContext'
 import OriginalHakemusIframe from './OriginalHakemusIframe'
 import ErrorBoundary from './ErrorBoundary'
 import { createFormikHook } from './formik'
@@ -26,13 +26,6 @@ import '../style/main.less'
 moment.locale('fi')
 momentLocalizer()
 
-function validateLanguage(s: unknown): Language {
-  if (s !== 'fi' && s !== 'sv') {
-    throw new Error(`Unrecognized language: ${s}`)
-  }
-  return s
-}
-
 let initialState: MuutoshakemusProps = {
   status: 'LOADING',
   environment: undefined,
@@ -43,13 +36,13 @@ let initialState: MuutoshakemusProps = {
 
 export const MuutoshakemusComponent = () => {
   const query = queryString.parse(location.search)
-  const lang = validateLanguage(query.lang) || 'fi'
+  const translationContext = getTranslationContextFromQuery(query)
+  const { lang } = translationContext
   const userKey = query['user-key']
   const avustushakuId = query['avustushaku-id']
   const [state, setState] = useState<MuutoshakemusProps>(initialState)
   const { t } = useTranslations()
   const f = createFormikHook(userKey, lang)
-  const translationContext = { t: translations[lang], lang }
   const existingNewMuutoshakemus = state.muutoshakemukset.find(m => m.status === 'new')
   const enableBudgetChange = state.environment?.budjettimuutoshakemus["enabled?"] && state.hakemus?.talousarvio && state.hakemus.talousarvio.length > 1
 
