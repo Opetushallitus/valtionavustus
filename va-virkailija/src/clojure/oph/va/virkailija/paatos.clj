@@ -249,7 +249,7 @@
                            budjettimuutoshakemus-enabled (and
                                                           (get-in config [:budjettimuutoshakemus :enabled?])
                                                           (virkailija-db/has-multiple-menoluokka-rows first-hakemus-id))
-                           muutospaatosprosessi-enabled (virkailija-db/has-normalized-hakemus first-hakemus-id)]
+                           include-muutoshaku-link? (email/should-include-muutoshaku-link-in-paatos-email? avustushaku-id first-hakemus-id)]
                           (ok (merge
                                 {:status      "ok"
                                  :mail        (email/mail-example
@@ -260,8 +260,8 @@
                                                  :register-number  (:register_number first-hakemus)
                                                  :project-name     (:project_name first-hakemus)
                                                  :budjettimuutoshakemus-enabled budjettimuutoshakemus-enabled
-                                                 :muutospaatosprosessi-enabled muutospaatosprosessi-enabled
-                                                 :modify-url       (when muutospaatosprosessi-enabled "MODIFY_URL_PLACEHOLDER")})
+                                                 :include-muutoshaku-link include-muutoshaku-link?
+                                                 :modify-url       (when include-muutoshaku-link? "MODIFY_URL_PLACEHOLDER")})
                                  :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)
                                  :example-modify-url (modify-url avustushaku-id first-hakemus-user-key :fi first-hakemus-token true)
                                  :example-refuse-url

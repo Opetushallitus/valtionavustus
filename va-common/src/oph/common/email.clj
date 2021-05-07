@@ -242,6 +242,6 @@
   (email-utils/refuse-url
    (get-in config [:server :url lang]) avustushaku-id user-key lang token))
 
-(defn modify-url [avustushaku-id user-key lang token muutospaatosprosessi-enabled?]
+(defn modify-url [avustushaku-id user-key lang token include-muutoshaku-link?]
   (email-utils/modify-url
-   (get-in config [:server :url lang]) avustushaku-id user-key lang token muutospaatosprosessi-enabled?))
+   (get-in config [:server :url lang]) avustushaku-id user-key lang token include-muutoshaku-link?))

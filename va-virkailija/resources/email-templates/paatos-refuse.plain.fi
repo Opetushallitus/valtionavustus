@@ -6,11 +6,11 @@ Päätöstä voitte tarkastella tästä linkistä: {{& url }}
 
 Jos päätätte olla ottamatta avustusta vastaan, voitte tehdä ilmoituksen tästä linkistä: {{& refuse-url }}
 
-{{^muutospaatosprosessi-enabled}}Jos haluatte muuttaa yhteyshenkilön tiedot, voitte tehdä ilmoituksen tästä linkistä:{{/muutospaatosprosessi-enabled}}
-{{#muutospaatosprosessi-enabled}}Allaolevasta linkistä voitte tehdä seuraavat muutokset:
+{{^include-muutoshaku-link}}Jos haluatte muuttaa yhteyshenkilön tiedot, voitte tehdä ilmoituksen tästä linkistä:{{/include-muutoshaku-link}}
+{{#include-muutoshaku-link}}Allaolevasta linkistä voitte tehdä seuraavat muutokset:
 - Päivittää yhteyshenkilön tiedot
 - Hakea pidennystä avustuksen käyttöaikaan
-{{#budjettimuutoshakemus-enabled}}- Hakea muutosta hankkeen talouden käyttösuunnitelmaan{{/budjettimuutoshakemus-enabled}}{{/muutospaatosprosessi-enabled}}
+{{#budjettimuutoshakemus-enabled}}- Hakea muutosta hankkeen talouden käyttösuunnitelmaan{{/budjettimuutoshakemus-enabled}}{{/include-muutoshaku-link}}
 {{& modify-url }}
 
 Ilmoitus tulee tehdä päätöksessä mainittuun päivämäärään mennessä.

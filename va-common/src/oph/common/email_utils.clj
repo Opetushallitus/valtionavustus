@@ -15,8 +15,8 @@
         url-parameters  (form-encode { :lang lang-str :user-key user-key :avustushaku-id avustushaku-id})]
 (str va-url "muutoshakemus?" url-parameters)))
 
- (defn modify-url [va-url avustushaku-id user-key lang token muutospaatosprosessi-enabled?]
-   (if muutospaatosprosessi-enabled?
+ (defn modify-url [va-url avustushaku-id user-key lang token include-muutoshaku-link?]
+   (if include-muutoshaku-link?
      (muutoshakemus-url-generator va-url avustushaku-id user-key lang)
      (url-generator va-url avustushaku-id user-key lang token "modify")))
 
