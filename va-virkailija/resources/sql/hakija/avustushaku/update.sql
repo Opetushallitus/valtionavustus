@@ -12,5 +12,6 @@ set content = :content,
     valiselvitysdate = :valiselvitysdate,
     project_id = :project_id,
     operation_id = :operation_id,
-    operational_unit_id = :operational_unit_id
+    operational_unit_id = :operational_unit_id,
+    muutoshakukelpoinen = :muutoshakukelpoinen
 where id = :id

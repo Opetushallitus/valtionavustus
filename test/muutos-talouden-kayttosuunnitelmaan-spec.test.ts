@@ -145,7 +145,7 @@ describe('Talousarvion muuttaminen', () => {
       const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(page, haku, answers, budget)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
-      emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
+      emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
     })
 
     it('päätös email does not mention possibility of changing talousvaatimukset', async () => {
@@ -592,7 +592,7 @@ describe('Talousarvion muuttaminen', () => {
     })
 
     it('ja oppia mahdollisuudesta tehdä muutoksia talouden käyttösuunnitelmaa hakemuksen päätöksen s.postista', async () => {
-      const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
+      const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
       emails.forEach(email => {
         const emailContent = email.formatted
         expect(emailContent).toContain('- Hakea muutosta hankkeen talouden käyttösuunnitelmaan')

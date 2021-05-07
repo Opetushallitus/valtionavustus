@@ -50,6 +50,6 @@
  :tasmaytysraportti-send {:enabled? false}
  :muutospaatosprosessi {:enabled? true}
  :budjettimuutoshakemus {:enabled? false}
- :email-api {:enabled? true}
+ :test-apis {:enabled? true}
  :normalized-hakemus-api {:enabled? true}
  }

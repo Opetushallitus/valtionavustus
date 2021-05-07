@@ -87,10 +87,6 @@
   (let [result (first (query "SELECT COUNT(id) FROM menoluokka_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
     (> (:count result) 1)))
 
-(defn has-normalized-hakemus [hakemus-id]
-  (let [result (first (query "SELECT COUNT(id) FROM normalized_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
-    (> (:count result) 0)))
-
 (defn is-avustushaku-muutoshakukelpoinen? [avustushaku-id]
   (if-some [row (first (query "SELECT muutoshakukelpoinen FROM avustushaut WHERE id = ?" [avustushaku-id]))]
     (:muutoshakukelpoinen row)))

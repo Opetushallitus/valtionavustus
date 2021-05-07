@@ -88,8 +88,21 @@ export async function countElements(page: Page, selector: string) {
   return await page.evaluate((selector: string) => document.querySelectorAll(selector).length, selector)
 }
 
-const getEmails = (emailType: string) => (avustushakuID: number, hakemusID: number): Promise<Email[]> =>
-  axios.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/email/${emailType}`)
+export async function getApplicationToken(hakemusId: number): Promise<string> {
+  const applicationTokenSchema = yup.object().shape<{ token: string }>({
+    token: yup.string().required(),
+  })
+
+  return await axios.get(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusId}/application-token`)
+    .then(r => applicationTokenSchema.validate(r.data))
+    .then(r => r.token)
+}
+export async function markAvustushakuAsMuutoshakukelvoton(avustushakuId: number): Promise<void> {
+  await axios.post(`${VIRKAILIJA_URL}/api/test/avustushaku/${avustushakuId}/set-muutoshakukelpoisuus`, { muutoshakukelpoinen: false })
+}
+
+const getEmails = (emailType: string) => (hakemusID: number): Promise<Email[]> =>
+  axios.get(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusID}/email/${emailType}`)
     .then(r => { console.log(`getEmails(${emailType})`, r.data); return r })
     .then(r => emailSchema.validate(r.data))
 
@@ -99,13 +112,13 @@ export const getMuutoshakemusEmails = getEmails("paatos-refuse")
 export const getValiselvitysEmails = getEmails("valiselvitys-notification")
 export const getLoppuselvitysEmails = getEmails("loppuselvitys-notification")
 export const getAcceptedPäätösEmails = getMuutoshakemusEmails
-export const getTäydennyspyyntöEmails: (avustushakuID: number, hakemusID: number) => Promise<Email[]> = getEmails("change-request")
-export async function waitUntilMinEmails(f: any, minEmails: number, ...params: any) {
-  let emails: Email[] = await f(...params)
+export const getTäydennyspyyntöEmails = getEmails("change-request")
+export async function waitUntilMinEmails(f: (hakemusId: number) => Promise<Email[]>, minEmails: number, hakemusId: number) {
+  let emails: Email[] = await f(hakemusId)
 
-  while (emails.length < minEmails ) {
+  while (emails.length < minEmails) {
     await waitFor(1000)
-    emails = await f(...params)
+    emails = await f(hakemusId)
   }
   return emails
 }
@@ -119,7 +132,7 @@ async function waitFor(ms: number) {
 
 export async function getNewHakemusEmails(avustushakuID: number): Promise<Email[]> {
   try {
-    const emails = await axios.get<Email>(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/email/new-hakemus`)
+    const emails = await axios.get<Email>(`${VIRKAILIJA_URL}/api/test/avustushaku/${avustushakuID}/email/new-hakemus`)
     return emailSchema.validate(emails.data)
   } catch (e) {
     log(`Failed to get emails for avustushaku ${avustushakuID}`, e)
@@ -151,7 +164,7 @@ export async function pollUntilNewHakemusEmailArrives(avustushakuID: number): Pr
 
 export const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshakemus\?.*/
 export async function getLinkToMuutoshakemusFromSentEmails(avustushakuID: number, hakemusID: number) {
-  const emails = await waitUntilMinEmails(getMuutoshakemusEmails, 1, avustushakuID, hakemusID)
+  const emails = await waitUntilMinEmails(getMuutoshakemusEmails, 1, hakemusID)
 
   const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
   expectToBeDefined(linkToMuutoshakemus)
@@ -159,7 +172,7 @@ export async function getLinkToMuutoshakemusFromSentEmails(avustushakuID: number
 }
 
 export async function getLinkToHakemusFromSentEmails(avustushakuID: number, hakemusID: number) {
-  const emails = await waitUntilMinEmails(getValmistelijaEmails, 1, avustushakuID, hakemusID)
+  const emails = await waitUntilMinEmails(getValmistelijaEmails, 1, hakemusID)
 
   const linkToHakemusRegex = /https?:\/\/.*\/avustushaku.*/
   const linkToHakemus = emails[0]?.formatted.match(linkToHakemusRegex)?.[0]
@@ -212,7 +225,7 @@ export async function navigateToHakemuksenArviointi(page: Page, avustushakuID: n
 }
 
 export async function navigateToPaatos(page: Page, avustushakuID: number, hakemusID: number) {
-  const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
+  const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
   const linkToPaatos = emails[0]?.formatted.match(/https?:\/\/.*\/paatos\/.*/)?.[0]
   if (linkToPaatos) {
     await page.goto(linkToPaatos, { waitUntil: "networkidle0" })
@@ -229,7 +242,7 @@ export async function navigateToLatestMuutoshakemusPaatos(page: Page, avustushak
 }
 
 export async function parseMuutoshakemusPaatosFromEmails(avustushakuID: number, hakemusID: number) {
-  const emails = await waitUntilMinEmails(getMuutoshakemusPaatosEmails, 1, avustushakuID, hakemusID)
+  const emails = await waitUntilMinEmails(getMuutoshakemusPaatosEmails, 1, hakemusID)
   const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
   const linkToMuutoshakemusPaatosRegex = /https?:\/\/.*\/muutoshakemus\/paatos.*/
   const linkToMuutoshakemusPaatos = emails[0]?.formatted.match(linkToMuutoshakemusPaatosRegex)?.[0]
@@ -1112,11 +1125,16 @@ export async function publishAndFillMuutoshakemusEnabledAvustushaku(page: Page, 
 }
 
 export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers) {
+  const { avustushakuID } = await createMuutoshakemusEnabledAvustushakuAndFillHakemus(page, haku, answers)
+  return await acceptAvustushaku(page, avustushakuID)
+}
+
+export async function createMuutoshakemusEnabledAvustushakuAndFillHakemus(page: Page, haku: Haku, answers: Answers): Promise<{ avustushakuID: number, userKey: string }> {
   const { avustushakuID } = await createMuutoshakemusEnabledHaku(page, haku.avustushakuName, haku.registerNumber)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
-  await fillAndSendMuutoshakemusEnabledHakemus(page, avustushakuID, answers)
-  return await acceptAvustushaku(page, avustushakuID)
+  const { userKey } = await fillAndSendMuutoshakemusEnabledHakemus(page, avustushakuID, answers)
+  return { avustushakuID, userKey }
 }
 
 export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(page: Page, haku: Haku, answers: Answers, budget: Budget) {
@@ -1186,4 +1204,9 @@ export async function acceptAvustushaku(page: Page, avustushakuID: number, budge
   const logEntryCount = await tapahtumaloki.evaluate(e => e.querySelectorAll(".entry").length)
   expect(logEntryCount).toEqual(1)
   return { avustushakuID, hakemusID}
+}
+
+export function lastOrFail<T>(xs: ReadonlyArray<T>): T {
+  if (xs.length === 0) throw Error("Can't get last element of empty list")
+  return xs[xs.length - 1]
 }

@@ -43,6 +43,13 @@ import {
   defaultBudget,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
   parseMuutoshakemusPaatosFromEmails,
+  publishAvustushaku,
+  fillAndSendMuutoshakemusEnabledHakemus,
+  acceptAvustushaku,
+  createMuutoshakemusEnabledAvustushakuAndFillHakemus,
+  markAvustushakuAsMuutoshakukelvoton,
+  lastOrFail,
+  getApplicationToken,
 } from './test-util'
 
 jest.setTimeout(400_000)
@@ -136,7 +143,7 @@ describe('Muutospäätösprosessi', () => {
     let emails: Email[]
     beforeAll(async () => {
       const { avustushakuID, hakemusID } = await ratkaiseAvustushaku(page)
-      emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
+      emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
     })
 
     it('Hakija does not get email to muutoshakemus', () => {
@@ -145,6 +152,43 @@ describe('Muutospäätösprosessi', () => {
       })
     })
   })
+
+  describe('When avustushaku is marked as muutoshakukelvoton', function () {
+    const haku = createRandomHakuValues()
+
+    it('does not send link to muutoshaku page with päätös', async () => {
+      const { avustushakuID, userKey } = await createMuutoshakemusEnabledAvustushakuAndFillHakemus(page, haku, answers)
+      await markAvustushakuAsMuutoshakukelvoton(avustushakuID)
+      const { hakemusID } = await acceptAvustushaku(page, avustushakuID)
+
+      const applicationToken = await getApplicationToken(hakemusID)
+      const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
+      const email = lastOrFail(emails)
+      expect(email.formatted).toEqual( `${hakemusID}/${haku.registerNumber} - ${answers.projectName}
+
+${haku.avustushakuName}
+
+Päätöstä voitte tarkastella tästä linkistä: ${HAKIJA_URL}/paatos/avustushaku/${avustushakuID}/hakemus/${userKey}
+
+Jos päätätte olla ottamatta avustusta vastaan, voitte tehdä ilmoituksen tästä linkistä: ${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?avustushaku=${avustushakuID}&hakemus=${userKey}&lang=fi&preview=true&token=${applicationToken}&refuse-grant=true&modify-application=false
+
+Jos haluatte muuttaa yhteyshenkilön tiedot, voitte tehdä ilmoituksen tästä linkistä:
+${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?avustushaku=${avustushakuID}&hakemus=${userKey}&lang=fi&preview=false&token=${applicationToken}&refuse-grant=false&modify-application=true
+
+Ilmoitus tulee tehdä päätöksessä mainittuun päivämäärään mennessä.
+
+Jos otatte avustuksen vastaan, ei siitä tarvitse ilmoittaa erikseen.
+
+Hausta vastaava valmistelija on mainittu päätöksessä.
+
+Opetushallitus
+Hakaniemenranta 6
+PL 380, 00531 Helsinki
+
+puhelin 029 533 1000
+etunimi.sukunimi@oph.fi`)
+    })
+  });
 
   describe('When muutoshakemus enabled haku has been published, a hakemus has been submitted, and päätös has been sent', () => {
     const haku = createRandomHakuValues()
@@ -158,7 +202,7 @@ describe('Muutospäätösprosessi', () => {
     })
 
     it('hakija gets the correct email content', async () => {
-      const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
+      const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
       emails.forEach(email => {
         const emailContent = email.formatted
         expect(emailContent).toContain(`${HAKIJA_URL}/muutoshakemus`)
@@ -187,7 +231,7 @@ describe('Muutospäätösprosessi', () => {
       describe('And valmistelija gets an email', () => {
 
         it('email has correct title', async () => {
-          const emails = await waitUntilMinEmails(getValmistelijaEmails, 1, avustushakuID, hakemusID)
+          const emails = await waitUntilMinEmails(getValmistelijaEmails, 1, hakemusID)
           const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
           expectToBeDefined(title)
           expect(title).toContain(`${haku.registerNumber} - ${answers.projectName}`)
@@ -746,7 +790,7 @@ describe('Muutospäätösprosessi', () => {
     })
 
     it('hakija gets the correct email content', async () => {
-      const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
+      const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
       emails.forEach(email => {
         const emailContent = email.formatted
         expect(emailContent).toContain(`${HAKIJA_URL}/muutoshakemus`)

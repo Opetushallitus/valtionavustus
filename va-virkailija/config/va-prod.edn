@@ -24,5 +24,5 @@
                            :interval-minutes 15}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
- :email-api {:enabled? false}
+ :test-apis {:enabled? false}
  :normalized-hakemus-api {:enabled? false}}

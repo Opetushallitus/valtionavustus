@@ -283,19 +283,6 @@
       (not-found)
       )))
 
-(defn- get-hakemus-email []
-  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/email/:email-type" []
-                     :path-params [avustushaku-id :- Long hakemus-id :- Long email-type :- s/Str]
-                     :return virkailija-schema/DbEmails
-                     :summary "Return emails related to the hakemus"
-                     (ok (get-emails hakemus-id email-type))))
-
-(defn- get-avustushaku-email []
-  (compojure-api/GET "/:avustushaku-id/email/:email-type" []
-                     :path-params [avustushaku-id :- Long email-type :- s/Str]
-                     :return virkailija-schema/DbEmails
-                     :summary "Return emails related to the avustushaku"
-                     (ok (get-avustushaku-emails avustushaku-id email-type))))
 
 (defn- get-selvitys []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/selvitys" request
@@ -630,6 +617,39 @@
                      :path-params [avustushaku-id :- Long, tyyppi :- s/Str]
                      (ok (tapahtumaloki/get-tapahtumaloki-entries tyyppi avustushaku-id))))
 
+(compojure-api/defroutes test-api-routes
+  (compojure-api/POST "/avustushaku/:avustushaku-id/set-muutoshakukelpoisuus" []
+    :path-params [avustushaku-id :- Long]
+    :body  [body (compojure-api/describe { :muutoshakukelpoinen s/Bool } "Juuh")]
+    :return va-schema/AvustusHaku
+    (log/info "Setting avustushaku" avustushaku-id "muutoshakukelpoisuus to" (:muutoshakukelpoinen body))
+    (if-let [avustushaku (hakija-api/get-avustushaku avustushaku-id)]
+      (ok (-> avustushaku
+              (va-routes/avustushaku-response-content)
+              (assoc :muutoshakukelpoinen (:muutoshakukelpoinen body))
+              (hakija-api/update-avustushaku)))
+      (not-found)))
+
+  (compojure-api/GET "/hakemus/:hakemus-id/application-token" []
+    :path-params [hakemus-id :- Long]
+    :return { :token s/Str }
+    :summary "Returns token used for authenticating access to päätös document"
+    (if-some [row (first (query "SELECT token FROM application_tokens WHERE application_id = ?" [hakemus-id]))]
+      (ok row)
+      (not-found)))
+
+  (compojure-api/GET "/hakemus/:hakemus-id/email/:email-type" []
+    :path-params [hakemus-id :- Long email-type :- s/Str]
+    :return virkailija-schema/DbEmails
+    :summary "Return emails related to the hakemus"
+    (ok (get-emails hakemus-id email-type)))
+
+  (compojure-api/GET "/avustushaku/:avustushaku-id/email/:email-type" []
+    :path-params [avustushaku-id :- Long email-type :- s/Str]
+    :return virkailija-schema/DbEmails
+    :summary "Return emails related to the avustushaku"
+    (ok (get-avustushaku-emails avustushaku-id email-type))))
+
 (compojure-api/defroutes avustushaku-routes
                          "Hakemus listing and filtering"
 
@@ -644,8 +664,6 @@
                          (put-avustushaku)
                          (post-avustushaku)
                          (get-avustushaku)
-                         (when (get-in config [:email-api :enabled?]) (get-hakemus-email))
-                         (when (get-in config [:email-api :enabled?]) (get-avustushaku-email))
                          (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemukset))
                          (when (get-in config [:muutospaatosprosessi :enabled?]) (post-muutoshakemus-paatos))
                          (get-selvitys)
@@ -821,6 +839,8 @@
 (compojure-api/defapi all-routes
                       api-config
 
+                      (when (get-in config [:test-apis :enabled?])
+                        (compojure-api/context "/api/test" [] :tags ["test"] test-api-routes))
                       (compojure-api/context "/public/api" [] :tags ["public"] public-routes)
                       (compojure-api/context "/api/avustushaku" [] :tags ["avustushaku"] avustushaku-routes)
                       (compojure-api/context "/login" [] :tags ["login"] login-routes)

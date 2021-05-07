@@ -65,7 +65,8 @@ import {
   navigateToHakemus,
   countElements,
   getElementInnerText,
-  navigateToPaatos
+  navigateToPaatos,
+  lastOrFail
 } from './test-util'
 import axios from 'axios'
 
@@ -483,7 +484,7 @@ etunimi.sukunimi@oph.fi
     await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
     const { hakemusID } = await navigateToHakemuksenArviointi(page, avustushakuID, "Akaan kaupunki")
 
-    expect(await getTäydennyspyyntöEmails(avustushakuID, hakemusID)).toHaveLength(0)
+    expect(await getTäydennyspyyntöEmails(hakemusID)).toHaveLength(0)
 
     const täydennyspyyntöText = "Joo ei tosta hakemuksesta ota mitään tolkkua. Voisitko tarkentaa?"
     await fillTäydennyspyyntöField(page, täydennyspyyntöText)
@@ -496,7 +497,7 @@ etunimi.sukunimi@oph.fi
     expect(await textContent(page, "#arviointi-tab .change-request-text"))
       .toStrictEqual(täydennyspyyntöText)
 
-    const emails = await waitUntilMinEmails(getTäydennyspyyntöEmails, 1, avustushakuID, hakemusID)
+    const emails = await waitUntilMinEmails(getTäydennyspyyntöEmails, 1, hakemusID)
     expect(emails).toHaveLength(1)
     expect(emails[0]['to-address']).toHaveLength(1)
     expect(emails[0]['to-address']).toContain("lotta.lomake@example.com")
@@ -547,7 +548,7 @@ etunimi.sukunimi@oph.fi
     })
     const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
 
-    let emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, avustushakuID, hakemusID)
+    let emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
     expect(emails).toHaveLength(1)
     let email = lastOrFail(emails)
     expect(email["to-address"]).toEqual([
@@ -556,7 +557,7 @@ etunimi.sukunimi@oph.fi
     ])
 
     await resendPäätökset(avustushakuID)
-    emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 2, avustushakuID, hakemusID)
+    emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 2, hakemusID)
     expect(emails).toHaveLength(2)
     email = lastOrFail(emails)
     expect(email["to-address"]).toEqual([
@@ -567,7 +568,7 @@ etunimi.sukunimi@oph.fi
     await changeContactPersonEmail(page, linkToMuutoshakemus, "uusi.yhteyshenkilo@example.com")
     await resendPäätökset(avustushakuID)
 
-    emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 3, avustushakuID, hakemusID)
+    emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 3, hakemusID)
     expect(emails).toHaveLength(3)
     email = lastOrFail(emails)
     expect(email["to-address"]).toEqual([
@@ -578,7 +579,7 @@ etunimi.sukunimi@oph.fi
     await navigate(page, `/admin/valiselvitys/?avustushaku=${avustushakuID}`)
     await clickElement(page, '[data-test-id=send-valiselvitys]')
 
-    emails = await waitUntilMinEmails(getValiselvitysEmails, 1, avustushakuID, hakemusID)
+    emails = await waitUntilMinEmails(getValiselvitysEmails, 1, hakemusID)
     expect(emails).toHaveLength(1)
     email = lastOrFail(emails)
     expect(email["to-address"]).toEqual([
@@ -590,7 +591,7 @@ etunimi.sukunimi@oph.fi
     await navigate(page, `/admin/loppuselvitys/?avustushaku=${avustushakuID}`)
     await clickElement(page, '[data-test-id=send-loppuselvitys]')
 
-    emails = await waitUntilMinEmails(getLoppuselvitysEmails, 1, avustushakuID, hakemusID)
+    emails = await waitUntilMinEmails(getLoppuselvitysEmails, 1, hakemusID)
     expect(emails).toHaveLength(1)
     email = lastOrFail(emails)
     expect(email["to-address"]).toEqual([
@@ -781,9 +782,3 @@ etunimi.sukunimi@oph.fi
     })
   })
 })
-
-
-function lastOrFail<T>(xs: ReadonlyArray<T>): T {
-  if (xs.length === 0) throw Error("Can't get last element of empty list")
-  return xs[xs.length - 1]
-}
