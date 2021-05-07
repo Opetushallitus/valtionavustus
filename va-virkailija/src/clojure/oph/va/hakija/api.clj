@@ -42,7 +42,7 @@
        :?column?
        (= 1)))
 
-(defn create-avustushaku [tx avustushaku-content template-form-id decision haku-type project-id operation-id operational-unit-id created-at]
+(defn create-avustushaku [tx avustushaku-content template-form-id decision haku-type project-id operation-id operational-unit-id muutoshakukelpoinen created-at]
   (let [form-id (:id (hakija-queries/copy-form<!
                            {:id template-form-id
                             :created_at (datetime/datetime->str created-at)}
@@ -56,6 +56,7 @@
                                :project_id project-id
                                :operation_id operation-id
                                :operational_unit_id operational-unit-id
+                               :muutoshakukelpoinen muutoshakukelpoinen
                                :created_at (datetime/datetime->str created-at)
                                }
                               {:connection tx})]

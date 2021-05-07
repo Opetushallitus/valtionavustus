@@ -12,7 +12,8 @@ insert into archived_avustushaut (
     project_id,
     hankkeen_alkamispaiva,
     hankkeen_paattymispaiva,
-    operation_id)
+    operation_id,
+    muutoshakukelpoinen)
   select
     id,
     form,
@@ -27,6 +28,7 @@ insert into archived_avustushaut (
     project_id,
     hankkeen_alkamispaiva,
     hankkeen_paattymispaiva,
-    operation_id
+    operation_id,
+    muutoshakukelpoinen
   from avustushaut
   where id = :id

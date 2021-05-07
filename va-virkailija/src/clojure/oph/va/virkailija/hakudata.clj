@@ -198,6 +198,7 @@
         project-id (:project-id base-haku)
         operation-id (:operation-id base-haku)
         operational-unit-id (:operational-unit-id base-haku)
+        muutoshakukelpoinen (:muutoshakukelpoinen base-haku)
         new-haku (hakija-api/create-avustushaku
                    tx
                    {:name (add-copy-suffixes name)
@@ -214,6 +215,7 @@
                    project-id
                    operation-id
                    operational-unit-id
+                   muutoshakukelpoinen
                    created-at)]
     (hakija-api/create-avustushaku-role tx
                                         {:avustushaku (:id new-haku)

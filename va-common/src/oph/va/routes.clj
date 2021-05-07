@@ -68,4 +68,5 @@
    :form_valiselvitys         (:form_valiselvitys avustushaku)
    :project-id                   (:project_id avustushaku)
    :operation-id (:operation_id avustushaku)
-   :operational-unit-id (:operational_unit_id avustushaku)})
+   :operational-unit-id (:operational_unit_id avustushaku)
+   :muutoshakukelpoinen (:muutoshakukelpoinen avustushaku)})

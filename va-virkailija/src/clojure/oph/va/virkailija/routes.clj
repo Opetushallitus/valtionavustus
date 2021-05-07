@@ -218,11 +218,15 @@
                        (ok response)
                        (not-found))))
 
+(defn identity->str [{:keys [first-name surname person-oid]}]
+  (str first-name " " surname " (" person-oid ")"))
+
 (defn- put-avustushaku []
   (compojure-api/PUT "/" request
                      :body [base-haku-id-wrapper (compojure-api/describe {:baseHakuId Long} "id of avustushaku to use as base")]
                      :return va-schema/AvustusHaku
                      :summary "Copy existing avustushaku as new one by id of the existing avustushaku"
+                     (log/info "User" (identity->str identity) "copies avustushaku" (:baseHakuId base-haku-id-wrapper))
                      (with-tx (fn [tx]
                        (ok (hakudata/create-new-avustushaku tx (:baseHakuId base-haku-id-wrapper) (authentication/get-request-identity request)))))))
 

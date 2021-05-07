@@ -139,7 +139,8 @@
                           (s/optional-key :form_valiselvitys) (s/maybe Long)
                           (s/optional-key :operation-id) (s/maybe s/Int)
                           (s/optional-key :operational-unit-id) (s/maybe s/Int)
-                          (s/optional-key :project-id) (s/maybe s/Int)})
+                          (s/optional-key :project-id) (s/maybe s/Int)
+                          :muutoshakukelpoinen s/Bool})
 
 (s/defschema HakemusStatus
   "Status from the applicant point of view"
