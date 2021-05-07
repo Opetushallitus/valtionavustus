@@ -172,14 +172,10 @@
   (let [result (first (query "SELECT COUNT(id) FROM normalized_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
     (> (:count result) 0)))
 
-(defn is-muutoshakukelpoinen? [avustushaku-id]
-  (if-some [row (first (query "SELECT muutoshakukelpoinen FROM avustushaut WHERE id = ?" [avustushaku-id]))]
-    (:muutoshakukelpoinen row)))
-
-(defn should-include-muutoshaku-link-in-paatos-email? [avustushaku-id hakemus-id]
+(defn should-include-muutoshaku-link-in-paatos-email? [avustushaku hakemus-id]
   (and
     (get-in config [:muutospaatosprosessi :enabled?])
-    (is-muutoshakukelpoinen? avustushaku-id)
+    (:muutoshakukelpoinen avustushaku)
     (has-normalized-hakemus hakemus-id)))
 
 (defn send-paatos-refuse! [to avustushaku hakemus reply-to token]
@@ -190,7 +186,7 @@
         budjettimuutoshakemus-enabled? (and
                                         (get-in config [:budjettimuutoshakemus :enabled?])
                                         (has-multiple-menoluokka-rows (:id hakemus)))
-        include-muutoshaku-link? (should-include-muutoshaku-link-in-paatos-email? (:id avustushaku) (:id hakemus))
+        include-muutoshaku-link? (should-include-muutoshaku-link-in-paatos-email? avustushaku (:id hakemus))
         paatos-modify-url (email/modify-url (:id avustushaku) (:user_key hakemus) lang token include-muutoshaku-link?)
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])

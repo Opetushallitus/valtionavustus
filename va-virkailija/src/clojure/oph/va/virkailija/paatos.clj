@@ -249,7 +249,7 @@
                            budjettimuutoshakemus-enabled (and
                                                           (get-in config [:budjettimuutoshakemus :enabled?])
                                                           (virkailija-db/has-multiple-menoluokka-rows first-hakemus-id))
-                           include-muutoshaku-link? (email/should-include-muutoshaku-link-in-paatos-email? avustushaku-id first-hakemus-id)]
+                           include-muutoshaku-link? (email/should-include-muutoshaku-link-in-paatos-email? avustushaku first-hakemus-id)]
                           (ok (merge
                                 {:status      "ok"
                                  :mail        (email/mail-example
