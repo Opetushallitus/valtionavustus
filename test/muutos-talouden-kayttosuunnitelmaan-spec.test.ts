@@ -11,7 +11,6 @@ import {
   getFirstPage,
   setPageErrorConsoleLogger,
   selectVakioperustelu,
-  randomString,
   navigateToHakijaMuutoshakemusPage,
   navigateToLatestMuutoshakemus,
   navigateToLatestMuutoshakemusPaatos,
@@ -29,22 +28,11 @@ import {
   BudgetAmount,
   defaultBudget,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget,
-  fillMuutoshakemusBudgetAmount
+  fillMuutoshakemusBudgetAmount,
+  createRandomHakuValues,
 } from './test-util'
 
-function createRandomHakuValues() {
-  return {
-    registerNumber: "230/2015",
-    avustushakuName: `Testiavustushaku (Muutospäätösprosessi) ${randomString()} - ${moment(new Date()).format('YYYY-MM-DD hh:mm:ss:SSSS')}`
-  }
-}
-
-const answers = {
-  contactPersonEmail: "erkki.esimerkki@example.com",
-  contactPersonName: "Erkki Esimerkki",
-  contactPersonPhoneNumber: "666",
-  projectName: "Rahassa kylpijät Ky Ay Oy",
-}
+import { budget, answers } from './constants'
 
 jest.setTimeout(400_000)
 
@@ -119,27 +107,6 @@ describe('Talousarvion muuttaminen', () => {
     let hakemusID: number
     let emails: Email[]
     const haku = createRandomHakuValues()
-    const budget: Budget = {
-      amount: {
-        personnel: '300',
-        material: '420',
-        equipment: '1337',
-        'service-purchase': '5318008',
-        rent: '69',
-        steamship: '0',
-        other: '9000',
-      },
-      description: {
-        personnel: 'One euro for each of our Spartan workers',
-        material: 'Generic materials for innovation',
-        equipment: 'We need elite level equipment',
-        'service-purchase': 'We need some afterwork fun',
-        rent: 'More afterwork fun',
-        steamship: 'No need for steamship, we have our own yacht',
-        other: 'For power ups',
-      },
-      selfFinancing: '1',
-    }
 
     beforeAll(async () => {
       const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(page, haku, answers, budget)

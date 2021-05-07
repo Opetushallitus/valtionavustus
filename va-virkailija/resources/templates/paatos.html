@@ -47,7 +47,7 @@
   <section>
     <header>
       <img id="logo" src="/img/logo.png" height="50" alt="Opetushallitus / Utbildningsstyrelsen" />
-      <div class="title">
+      <div class="title" data-test-id="paatos-header-title">
         {{#t}}paatos{{/t}}
         <br/>{{avustushaku.decision.date}}
       </div>
@@ -59,10 +59,10 @@
   {{{section-taustaa}}}
   {{#accepted}}
     <section class='section'>
-      <h2>{{#t}}paatos{{/t}}</h2>
+      <h2 data-test-id="paatos-title">{{#t}}paatos{{/t}}</h2>
       <div class="content">
         {{#is-erityisavustus}}
-          <p>{{#t}}erityisavustus-myonnetty-title{{/t}}</p>
+          <p data-test-id="paatos-accepted-title">{{#t}}erityisavustus-myonnetty-title{{/t}}</p>
           <p>{{hakemus.register-number}} {{hakemus.project-name}}</p>
           <div>
             {{#has-kayttosuunnitelma}}
@@ -104,14 +104,14 @@
 
   {{#rejected}}
     <section class='section'>
-      <h2>{{#t}}paatos{{/t}}</h2>
+      <h2 data-test-id="paatos-title">{{#t}}paatos{{/t}}</h2>
       <div class='content'>
         {{#is-erityisavustus}}
-          <p>{{#t}}erityisavustus-hylatty-title{{/t}}</p>
+          <p data-test-id="paatos-rejected-title">{{#t}}erityisavustus-hylatty-title{{/t}}</p>
           <p>{{hakemus.register-number}} {{hakemus.project-name}}</p>
         {{/#is-erityisavustus}}
         {{#is-yleisavustus}}
-          <p>{{#t}}yleisavustus-hylatty-title{{/t}}</p>
+          <p data-test-id="paatos-rejected-title">{{#t}}yleisavustus-hylatty-title{{/t}}</p>
           <p>{{#t}}hakija{{/t}}: {{hakemus.organization-name}}</p>
         {{/#is-yleisavustus}}
       </div>
@@ -120,13 +120,13 @@
     {{{section-sovelletut-saannokset}}}
   {{/rejected}}
   <section class='section'>
-    <h2>{{#t}}muutoksenhaku{{/t}}</h2>
+    <h2 data-test-id="muutoksenhaku-title">{{#t}}muutoksenhaku{{/t}}</h2>
     <div class='content'>
       {{#t}}lisatietoja-sisalto{{/t}}
     </div>
   </section>
   <section class='section'>
-    <h2>{{#t}}lisatietoja{{/t}}</h2>
+    <h2 data-test-id="lisatietoja-title">{{#t}}lisatietoja{{/t}}</h2>
     <div class='content'>
       <p>{{role.name}}, {{role.email}}<br/>
          {{#t}}puhelin{{/t}} 029 533 1000 ({{#t}}keskus{{/t}}).

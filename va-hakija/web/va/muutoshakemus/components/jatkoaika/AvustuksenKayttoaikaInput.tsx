@@ -25,11 +25,11 @@ export const AvustuksenKayttoaikaInput = ({ f, projectEnd }: AvustuksenKayttoaik
     <>
       <div className="twocolumns">
         <div>
-          <div className="h3">{t.kayttoajanPidennys.existingExpirationDateTitle}</div>
+          <div className="h3" data-test-id="jatkoaika-title-existing">{t.kayttoajanPidennys.existingExpirationDateTitle}</div>
           <div className="muutoshakemus__current-project-end">{projectEnd}</div>
         </div>
         <div>
-          <div className='h3'>
+          <div className='h3' data-test-id="jatkoaika-title-new">
             {t.kayttoajanPidennys.newExpirationDateTitle}
           </div>
           <div>

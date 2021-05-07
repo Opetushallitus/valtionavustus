@@ -63,7 +63,7 @@ export const TalousarvioForm = ({ f, talousarvio }: MuutosTaloudenKayttosuunnite
       </div>
       <hr className="muutoshakemus_talousarvio_horizontalSeparator" />
       <div className="muutoshakemus_talousarvio_row">
-        <div className="description"><b>{t.muutosTaloudenKayttosuunnitelmaan.expensesTotal}</b></div>
+        <div className="description" data-test-id="expenses-total-title"><b>{t.muutosTaloudenKayttosuunnitelmaan.expensesTotal}</b></div>
         <div className="existingAmount" data-test-id="original-sum"><b>{f.values.talousarvio?.originalSum} €</b></div>
         <div className="separator noborder" />
         <div className="changedAmount" data-test-id="current-sum"><b className={currentSumErrorClass}>{f.values.talousarvio?.currentSum}</b></div>

@@ -376,6 +376,13 @@ export async function navigateToNewHakemusPage(page: Page, avustushakuID: number
   await page.goto(hakemusUrl, { waitUntil: "networkidle0" })
 }
 
+export function createRandomHakuValues() {
+  return {
+    registerNumber: "230/2015",
+    avustushakuName: `Testiavustushaku (Muutospäätösprosessi) ${randomString()} - ${moment(new Date()).format('YYYY-MM-DD hh:mm:ss:SSSS')}`
+  }
+}
+
 export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void): Promise<{ userKey: string }> {
   await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
 
@@ -525,6 +532,11 @@ export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page,
 
   await navigateToNewHakemusPage(page, avustushakuID)
 
+  async function clickCorrectLanguageSelector() {
+    const index = answers.lang && answers.lang === 'sv' ? 1 : 0
+    await clickElement(page, `[for='language.radio.${index}']`)
+  }
+
   await clearAndType(page, "#finnish-business-id", TEST_Y_TUNNUS)
   await clickElement(page, "input.get-business-id")
   await clearAndType(page, "#applicant-name", answers.contactPersonName)
@@ -539,7 +551,7 @@ export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page,
   await clearAndType(page, "#textField-2", "2")
   await clearAndType(page, "#textField-1", "20")
   await clearAndType(page, "#project-name", answers.projectName)
-  await clickElement(page, "[for='language.radio.0']")
+  await clickCorrectLanguageSelector()
   await clickElement(page, "[for='checkboxButton-0.checkbox.0']")
   await clickElementWithText(page, "label", "Opetuksen lisääminen")
   await clearAndType(page, "[id='project-description.project-description-1.goal']", "Jonain päivänä teemme maailman suurimman aallon.")
@@ -1105,11 +1117,12 @@ export async function selectVakioperustelu(page: Page): Promise<void> {
   await clickElement(page, 'a.muutoshakemus__default-reason-link')
 }
 
-interface Answers {
+export interface Answers {
   projectName: string
   contactPersonName: string
   contactPersonEmail: string
   contactPersonPhoneNumber: string
+  lang?: 'fi' | 'sv'
 }
 
 export interface Haku {

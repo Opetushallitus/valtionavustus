@@ -32,8 +32,8 @@ export const translationsFi = {
     expenses: 'Menot',
     expensesTotal: 'Menot yhteensä',
     budget: {
-      budgetOriginalTitle: (isAccepted: boolean) => isAccepted ? 'Vanha talousarvio' : 'Voimassaoleva talousarvio',
-      budgetChangeTitle: (isAccepted: boolean) => isAccepted ? 'Hyväksytyt muutokset' : 'Haetut muutokset',
+      budgetOriginalTitle: (isAccepted: boolean): string => isAccepted ? 'Vanha talousarvio' : 'Voimassaoleva talousarvio',
+      budgetChangeTitle: (isAccepted: boolean): string => isAccepted ? 'Hyväksytyt muutokset' : 'Haetut muutokset',
     },
     applicantReasoning: 'Hakijan perustelut',
   },
@@ -104,12 +104,12 @@ const translationsSv: Translations = {
   muutoshakemus: {
     ...translationsFi.muutoshakemus,
     title: 'Ändringsansökan',
-    // acceptedChanges: 'Hyväksytyt muutokset',
-    // previousProjectEndDate: 'Vanha päättymisaika',
+    acceptedChanges: 'Godkända ändringar',
+    previousProjectEndDate: 'Den tidigare sista användningsdagen',
     // currentProjectEndDate: 'Voimassaoleva päättymisaika',
-    // acceptedChange: 'Hyväksytty muutos',
+    acceptedChange: 'Godkänd ny sista användningsdag',
     // appliedChange: 'Haettu muutos',
-    // applicantReasoning: 'Hakijan perustelut',
+    applicantReasoning: 'Den sökandes motiveringar',
     paatos: {
       ...translationsFi.muutoshakemus.paatos,
       paatos: 'Beslut',
@@ -161,7 +161,6 @@ const translationsSv: Translations = {
     reasoning: 'Motivering',
   },
   kayttoajanPidennys: {
-    ...translationsFi.kayttoajanPidennys,
     checkboxTitle: 'Jag ansöker om förlängd användningstid för statsunderstödet',
     existingExpirationDateTitle: 'Nuvarande sista användningdag',
     newExpirationDateTitle: 'Ny sista användningsdag',
@@ -172,7 +171,12 @@ const translationsSv: Translations = {
     currentBudget: 'Nuvarande budget',
     modifiedBudget: 'Ny budget',
     expenses: 'Utgifter',
-    expensesTotal: 'Sammanlagt'
+    expensesTotal: 'Sammanlagt',
+    applicantReasoning: 'Den sökandes motiveringar',
+    budget: {
+      budgetOriginalTitle: (isAccepted: boolean) => isAccepted ? 'Den tidigare budgeten' : 'Nuvarande budget',
+      budgetChangeTitle: (isAccepted: boolean) => isAccepted ? 'Godkänd ny budget' : 'Den ansökta nya budgeten',
+    },
   },
   formErrors: {
     required: 'Obligatorisk uppgift',

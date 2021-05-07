@@ -59,7 +59,7 @@ export const TalousarvioTable = (props: MuutosTaloudenKayttosuunnitelmaanProps) 
       </div>
       <hr className="muutoshakemus_talousarvio_horizontalSeparator" />
       <div className="muutoshakemus_talousarvio_row">
-        <div className="description">{paatos && <b>{t.muutosTaloudenKayttosuunnitelmaan.expensesTotal}</b>}</div>
+        <div className="description" data-test-id="expenses-total-title">{paatos && <b>{t.muutosTaloudenKayttosuunnitelmaan.expensesTotal}</b>}</div>
         <div className="existingAmount" data-test-id="current-sum"><b>{currentSum} €</b></div>
         <div className="separator noborder" />
         <div className="changedAmount" data-test-id="muutoshakemus-sum"><b>{muutoshakemusSum}</b></div>
