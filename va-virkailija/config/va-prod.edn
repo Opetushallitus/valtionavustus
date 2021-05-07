@@ -23,5 +23,4 @@
                            :timeout 5000
                            :interval-minutes 15}
  :tasmaytysraportti-create {:enabled? true}
- :tasmaytysraportti-send {:enabled? true}
- :normalized-hakemus-api {:enabled? false}}
+ :tasmaytysraportti-send {:enabled? true}}
