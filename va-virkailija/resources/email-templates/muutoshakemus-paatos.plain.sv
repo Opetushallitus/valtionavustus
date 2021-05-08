@@ -5,12 +5,12 @@ muutoshakemuksenne on käsitelty.
 Hanke: {{ register-number }} - {{ project-name }}
 
 Päätöstä voitte tarkastella tästä linkistä:
-{{ & paatos-url }}
+{{& paatos-url }}
 
 Tarvittaessa uuden muutoshakemuksen pääsette tekemään tästä linkistä:
-{{ & muutoshakemus-url }}
+{{& muutoshakemus-url }}
 
-Liite: {{ attachment-title }
+Liite: {{ attachment-title }}
 
 Terveisin,
 {{ presenter-name }}
