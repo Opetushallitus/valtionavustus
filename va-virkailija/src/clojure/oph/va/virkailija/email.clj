@@ -105,8 +105,9 @@
   (first (filter #(= (:id %1) "3a_oikaisuvaatimusosoitus_valtionavustuslaki") (find-oikaisuvaatimusosoitus-attachments))))
 
 (defn muutoshakemus-paatos-url [user-key lang]
-  (let [va-url (-> config :server :url lang)]
-  (str va-url "muutoshakemus/paatos?user-key=" user-key)))
+  (let [va-url (-> config :server :url lang)
+        lang-str (or (clojure.core/name lang) "fi")]
+  (str va-url "muutoshakemus/paatos?user-key=" user-key "&lang=" lang-str)))
 
 (defn send-muutoshakemus-paatos [to avustushaku hakemus arvio roles token muutoshakemus-id paatos]
   (let [lang-str (:language hakemus)
