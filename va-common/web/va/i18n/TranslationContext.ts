@@ -27,9 +27,8 @@ export function getTranslationContextFromQuery(query: any): TranslationContext {
   return { t: translations[lang], lang }
 }
 
-function validateLanguage(s: unknown): Language {
-  if (s !== 'fi' && s !== 'sv') {
-    throw new Error(`Unrecognized language: ${s}`)
-  }
-  return s
+function validateLanguage(s: unknown): Language | undefined {
+  if (s === 'fi') return 'fi'
+  if (s === 'sv') return 'sv'
+  return undefined
 }
