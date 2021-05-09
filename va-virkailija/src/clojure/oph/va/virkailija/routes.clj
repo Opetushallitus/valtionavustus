@@ -630,13 +630,14 @@
               (hakija-api/update-avustushaku)))
       (not-found)))
 
-  (compojure-api/GET "/hakemus/:hakemus-id/application-token" []
+  (compojure-api/GET "/hakemus/:hakemus-id/token-and-register-number" []
     :path-params [hakemus-id :- Long]
-    :return { :token s/Str }
-    :summary "Returns token used for authenticating access to päätös document"
-    (if-some [row (first (query "SELECT token FROM application_tokens WHERE application_id = ?" [hakemus-id]))]
-      (ok row)
-      (not-found)))
+    :return { :token s/Str :register-number s/Str }
+    (let [sql "SELECT (SELECT register_number FROM hakemukset WHERE version_closed IS null AND id = ?),
+                      (SELECT token FROM application_tokens WHERE application_id = ?)"]
+      (if-some [row (first (query sql [hakemus-id hakemus-id]))]
+        (ok row)
+        (not-found))))
 
   (compojure-api/GET "/hakemus/:hakemus-id/email/:email-type" []
     :path-params [hakemus-id :- Long email-type :- s/Str]

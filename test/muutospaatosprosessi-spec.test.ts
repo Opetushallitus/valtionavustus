@@ -43,13 +43,11 @@ import {
   defaultBudget,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
   parseMuutoshakemusPaatosFromEmails,
-  publishAvustushaku,
-  fillAndSendMuutoshakemusEnabledHakemus,
   acceptAvustushaku,
   createMuutoshakemusEnabledAvustushakuAndFillHakemus,
   markAvustushakuAsMuutoshakukelvoton,
   lastOrFail,
-  getApplicationToken,
+  getHakemusTokenAndRegisterNumber,
 } from './test-util'
 
 jest.setTimeout(400_000)
@@ -161,19 +159,20 @@ describe('Muutospäätösprosessi', () => {
       await markAvustushakuAsMuutoshakukelvoton(avustushakuID)
       const { hakemusID } = await acceptAvustushaku(page, avustushakuID)
 
-      const applicationToken = await getApplicationToken(hakemusID)
+      const { token, 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
       const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
       const email = lastOrFail(emails)
-      expect(email.formatted).toEqual( `${hakemusID}/${haku.registerNumber} - ${answers.projectName}
+      expect(email.formatted).toEqual( `${registerNumber} - ${answers.projectName}
 
 ${haku.avustushakuName}
 
 Päätöstä voitte tarkastella tästä linkistä: ${HAKIJA_URL}/paatos/avustushaku/${avustushakuID}/hakemus/${userKey}
 
-Jos päätätte olla ottamatta avustusta vastaan, voitte tehdä ilmoituksen tästä linkistä: ${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?avustushaku=${avustushakuID}&hakemus=${userKey}&lang=fi&preview=true&token=${applicationToken}&refuse-grant=true&modify-application=false
+Jos päätätte olla ottamatta avustusta vastaan, voitte tehdä ilmoituksen tästä linkistä: ${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?avustushaku=${avustushakuID}&hakemus=${userKey}&lang=fi&preview=true&token=${token}&refuse-grant=true&modify-application=false
 
 Jos haluatte muuttaa yhteyshenkilön tiedot, voitte tehdä ilmoituksen tästä linkistä:
-${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?avustushaku=${avustushakuID}&hakemus=${userKey}&lang=fi&preview=false&token=${applicationToken}&refuse-grant=false&modify-application=true
+
+${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?avustushaku=${avustushakuID}&hakemus=${userKey}&lang=fi&preview=false&token=${token}&refuse-grant=false&modify-application=true
 
 Ilmoitus tulee tehdä päätöksessä mainittuun päivämäärään mennessä.
 
@@ -186,7 +185,8 @@ Hakaniemenranta 6
 PL 380, 00531 Helsinki
 
 puhelin 029 533 1000
-etunimi.sukunimi@oph.fi`)
+etunimi.sukunimi@oph.fi
+`)
     })
   });
 

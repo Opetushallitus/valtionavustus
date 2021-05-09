@@ -88,14 +88,15 @@ export async function countElements(page: Page, selector: string) {
   return await page.evaluate((selector: string) => document.querySelectorAll(selector).length, selector)
 }
 
-export async function getApplicationToken(hakemusId: number): Promise<string> {
-  const applicationTokenSchema = yup.object().shape<{ token: string }>({
+type HakemusTokenAndRegisterNumber = { token: string, 'register-number': string }
+export async function getHakemusTokenAndRegisterNumber(hakemusId: number): Promise<HakemusTokenAndRegisterNumber> {
+  const applicationGeneratedValuesSchema = yup.object().required().shape<HakemusTokenAndRegisterNumber>({
     token: yup.string().required(),
+    'register-number': yup.string().required(),
   })
 
-  return await axios.get(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusId}/application-token`)
-    .then(r => applicationTokenSchema.validate(r.data))
-    .then(r => r.token)
+  return await axios.get(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusId}/token-and-register-number`)
+    .then(r => applicationGeneratedValuesSchema.validate(r.data))
 }
 export async function markAvustushakuAsMuutoshakukelvoton(avustushakuId: number): Promise<void> {
   await axios.post(`${VIRKAILIJA_URL}/api/test/avustushaku/${avustushakuId}/set-muutoshakukelpoisuus`, { muutoshakukelpoinen: false })
