@@ -65,8 +65,8 @@ export function setPageErrorConsoleLogger(page: Page) {
   })
 }
 
-export async function navigateToHakijaMuutoshakemusPage(page: Page, avustushakuID: number, hakemusID: number) {
-  const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
+export async function navigateToHakijaMuutoshakemusPage(page: Page, hakemusID: number) {
+  const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(hakemusID)
   await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
 }
 
@@ -164,7 +164,7 @@ export async function pollUntilNewHakemusEmailArrives(avustushakuID: number): Pr
 
 
 export const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshakemus\?.*/
-export async function getLinkToMuutoshakemusFromSentEmails(avustushakuID: number, hakemusID: number) {
+export async function getLinkToMuutoshakemusFromSentEmails(hakemusID: number) {
   const emails = await waitUntilMinEmails(getMuutoshakemusEmails, 1, hakemusID)
 
   const linkToMuutoshakemus = emails[0]?.formatted.match(linkToMuutoshakemusRegex)?.[0]
@@ -172,7 +172,7 @@ export async function getLinkToMuutoshakemusFromSentEmails(avustushakuID: number
   return linkToMuutoshakemus
 }
 
-export async function getLinkToHakemusFromSentEmails(avustushakuID: number, hakemusID: number) {
+export async function getLinkToHakemusFromSentEmails(hakemusID: number) {
   const emails = await waitUntilMinEmails(getValmistelijaEmails, 1, hakemusID)
 
   const linkToHakemusRegex = /https?:\/\/.*\/avustushaku.*/
@@ -181,8 +181,8 @@ export async function getLinkToHakemusFromSentEmails(avustushakuID: number, hake
   return linkToHakemus
 }
 
-export async function getUserKey(avustushakuID: number, hakemusID: number): Promise<string> {
-  const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
+export async function getUserKey(hakemusID: number): Promise<string> {
+  const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(hakemusID)
   const userKey = querystring.parse(linkToMuutoshakemus)['user-key'] as string
   return userKey
 }
@@ -225,7 +225,7 @@ export async function navigateToHakemuksenArviointi(page: Page, avustushakuID: n
   return { hakemusID }
 }
 
-export async function navigateToPaatos(page: Page, avustushakuID: number, hakemusID: number) {
+export async function navigateToPaatos(page: Page, hakemusID: number) {
   const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
   const linkToPaatos = emails[0]?.formatted.match(/https?:\/\/.*\/paatos\/.*/)?.[0]
   if (linkToPaatos) {
@@ -235,14 +235,14 @@ export async function navigateToPaatos(page: Page, avustushakuID: number, hakemu
   }
 }
 
-export async function navigateToLatestMuutoshakemusPaatos(page: Page, avustushakuID: number, hakemusID: number) {
-  const mail = await parseMuutoshakemusPaatosFromEmails(avustushakuID, hakemusID)
+export async function navigateToLatestMuutoshakemusPaatos(page: Page, hakemusID: number) {
+  const mail = await parseMuutoshakemusPaatosFromEmails(hakemusID)
   if (mail.linkToMuutoshakemusPaatos === undefined) throw new Error('No muutoshakemus päätös link found from email')
 
   await page.goto(mail.linkToMuutoshakemusPaatos, { waitUntil: "networkidle0" })
 }
 
-export async function parseMuutoshakemusPaatosFromEmails(avustushakuID: number, hakemusID: number) {
+export async function parseMuutoshakemusPaatosFromEmails(hakemusID: number) {
   const emails = await waitUntilMinEmails(getMuutoshakemusPaatosEmails, 1, hakemusID)
   const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
   const linkToMuutoshakemusPaatosRegex = /https?:\/\/.*\/muutoshakemus\/paatos.*/
@@ -321,9 +321,9 @@ export async function publishAvustushaku(page: Page) {
 }
 
 export async function navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges(
-  page: Page, avustushakuID: number, hakemusID: number, jatkoaika: MuutoshakemusValues, budjetti: BudgetAmount, budjettiPerustelut: string) {
+  page: Page, hakemusID: number, jatkoaika: MuutoshakemusValues, budjetti: BudgetAmount, budjettiPerustelut: string) {
 
-  await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+  await navigateToHakijaMuutoshakemusPage(page, hakemusID)
   await fillJatkoaikaValues(page, jatkoaika)
   await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
   await fillMuutoshakemusBudgetAmount(page, budjetti)
@@ -1035,8 +1035,8 @@ export async function clickSendMuutoshakemusButton(page: Page) {
   await clickElement(page, '#send-muutospyynto-button:not([disabled])')
 }
 
-export async function fillAndSendMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, muutoshakemus: MuutoshakemusValues) {
-  await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+export async function fillAndSendMuutoshakemus(page: Page, hakemusID: number, muutoshakemus: MuutoshakemusValues) {
+  await navigateToHakijaMuutoshakemusPage(page, hakemusID)
   if (muutoshakemus.jatkoaika) {
     await fillJatkoaikaValues(page, muutoshakemus)
     await clickSendMuutoshakemusButton(page)

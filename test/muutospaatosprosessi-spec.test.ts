@@ -140,7 +140,7 @@ describe('Muutospäätösprosessi', () => {
   describe('When haku has been published and hakemus has been submitted, but fields cannot be normalized', () => {
     let emails: Email[]
     beforeAll(async () => {
-      const { avustushakuID, hakemusID } = await ratkaiseAvustushaku(page)
+      const { hakemusID } = await ratkaiseAvustushaku(page)
       emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
     })
 
@@ -225,7 +225,7 @@ etunimi.sukunimi@oph.fi
 
     describe('And muutoshakemus #1 has been submitted', () => {
       beforeAll(async () => {
-        await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus1)
+        await fillAndSendMuutoshakemus(page, hakemusID, muutoshakemus1)
       })
 
       describe('And valmistelija gets an email', () => {
@@ -238,7 +238,7 @@ etunimi.sukunimi@oph.fi
         })
 
         it('email has correct avustushaku link', async () => {
-          const linkToHakemus = await getLinkToHakemusFromSentEmails(avustushakuID, hakemusID)
+          const linkToHakemus = await getLinkToHakemusFromSentEmails(hakemusID)
           expect(linkToHakemus).toEqual(`${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
         })
       })
@@ -354,7 +354,7 @@ etunimi.sukunimi@oph.fi
           let parsedMail: { title: string | undefined, linkToMuutoshakemusPaatos?: string | undefined, linkToMuutoshakemus?: string | undefined }
 
           beforeAll(async () => {
-            parsedMail = await parseMuutoshakemusPaatosFromEmails(avustushakuID, hakemusID)
+            parsedMail = await parseMuutoshakemusPaatosFromEmails(hakemusID)
           })
 
           it('email has correct title', () => {
@@ -425,7 +425,7 @@ etunimi.sukunimi@oph.fi
       describe('And muutoshakemus #2 has been submitted', () => {
         beforeAll(async () => {
           await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
-          await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus2)
+          await fillAndSendMuutoshakemus(page, hakemusID, muutoshakemus2)
         })
 
         describe('And virkailija accepts the muutoshakemus', () => {
@@ -501,16 +501,16 @@ etunimi.sukunimi@oph.fi
             await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
 
             // create two new muutoshakemus
-            await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus3)
+            await fillAndSendMuutoshakemus(page, hakemusID, muutoshakemus3)
             await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
-            await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus4)
+            await fillAndSendMuutoshakemus(page, hakemusID, muutoshakemus4)
           })
 
           describe('And hakija navigates to muutoshakemus', () => {
             let muutoshakemuses: ElementHandle[]
 
             beforeAll(async () => {
-              await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+              await navigateToHakijaMuutoshakemusPage(page, hakemusID)
               muutoshakemuses = await page.$$('[data-test-class="existing-muutoshakemus"]')
             })
 
@@ -620,7 +620,7 @@ etunimi.sukunimi@oph.fi
             const muutoshakemus = { ...muutoshakemus2, ...{ jatkoaikaPerustelu: 'Voit laittaa lisäaikaa ihan omantunnon mukaan.' }}
             beforeAll(async () => {
               await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
-              await fillAndSendMuutoshakemus(page, avustushakuID, hakemusID, muutoshakemus)
+              await fillAndSendMuutoshakemus(page, hakemusID, muutoshakemus)
             })
 
             describe('And virkailija accepts muutoshakemus' , () => {
@@ -702,7 +702,7 @@ etunimi.sukunimi@oph.fi
                 })
 
                 it('Correct päättymispäivä is displayed when creating a new muutoshakemus', async () => {
-                  await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+                  await navigateToHakijaMuutoshakemusPage(page, hakemusID)
                   const acceptedDate = await textContent(page, '[data-test-id="muutoshakemus-jatkoaika"]')
                   expect(acceptedDate).toBe('20.04.2400')
                 })
@@ -781,11 +781,11 @@ etunimi.sukunimi@oph.fi
       const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, defaultBudget)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
-      linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
+      linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(hakemusID)
     })
 
     it('hakija gets an email with a link to muutoshakemus', async () => {
-      const userKey = await getUserKey(avustushakuID, hakemusID)
+      const userKey = await getUserKey(hakemusID)
       expect(linkToMuutoshakemus).toContain(`${HAKIJA_URL}/muutoshakemus?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`)
     })
 

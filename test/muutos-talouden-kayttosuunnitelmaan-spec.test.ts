@@ -156,7 +156,7 @@ describe('Talousarvion muuttaminen', () => {
     })
 
     it('muutoshakemus page does not allow hakija to change menoluokat', async () => {
-      await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+      await navigateToHakijaMuutoshakemusPage(page, hakemusID)
       await page.waitForSelector('#checkbox-haenKayttoajanPidennysta', {
         visible: true,
       })
@@ -226,7 +226,7 @@ describe('Talousarvion muuttaminen', () => {
       }
 
       beforeAll(async () => {
-        await navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges(page, avustushakuID, hakemusID, jatkoaika, muutoshakemus1Budget, muutoshakemus1Perustelut)
+        await navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges(page, hakemusID, jatkoaika, muutoshakemus1Budget, muutoshakemus1Perustelut)
       })
 
       async function getNewHakemusExistingBudget() {
@@ -324,7 +324,7 @@ describe('Talousarvion muuttaminen', () => {
         })
 
         it('newest approved budget is prefilled on the new muutoshakemus form', async () => {
-          await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+          await navigateToHakijaMuutoshakemusPage(page, hakemusID)
           await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
           const expectedBudgetInputs = [
             { name: 'talousarvio.personnel-costs-row', amount: 1301 },
@@ -356,7 +356,7 @@ describe('Talousarvion muuttaminen', () => {
 
         describe('And hakija navigates to muutoshakemus page', () => {
           beforeAll(async () => {
-            await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+            await navigateToHakijaMuutoshakemusPage(page, hakemusID)
           })
 
           it('Muutoshakemus title states that it has been approved with changes', async () => {
@@ -377,7 +377,7 @@ describe('Talousarvion muuttaminen', () => {
 
         describe('Hakija views the muutoshakemus päätös', () => {
           beforeAll(async () => {
-            await navigateToLatestMuutoshakemusPaatos(page, avustushakuID, hakemusID)
+            await navigateToLatestMuutoshakemusPaatos(page, hakemusID)
           })
 
           it('Decision title is shown in finnish', async () => {
@@ -474,7 +474,7 @@ describe('Talousarvion muuttaminen', () => {
           const muutoshakemus2Perustelut = 'Fattan fossiilit taas sniiduili ja oon akuutis likviditettivajees, pydeeks vippaa vähän hilui'
 
           beforeAll(async () => {
-            await navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges(page, avustushakuID, hakemusID, jatkoaika, muutoshakemus2Budget, muutoshakemus2Perustelut)
+            await navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges(page, hakemusID, jatkoaika, muutoshakemus2Budget, muutoshakemus2Perustelut)
           })
 
           it('accepted budget changes from muutoshakemus #1 are displayed as current budget', async () => {
@@ -559,7 +559,7 @@ describe('Talousarvion muuttaminen', () => {
             })
 
             it('prefilled budget for next muutoshakemus is still the one accepted for muutoshakemus #1', async () => {
-              await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+              await navigateToHakijaMuutoshakemusPage(page, hakemusID)
               await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
               const expectedBudgetInputs = [
                 { name: 'talousarvio.personnel-costs-row', amount: 1301 },
@@ -579,15 +579,13 @@ describe('Talousarvion muuttaminen', () => {
   })
 
   describe("Hakija haluaa tehdä muutoshakemuksen talouden käyttösuunnitelmaan", () => {
-    let avustushakuID: number
     let hakemusID: number
     const haku = createRandomHakuValues()
 
     beforeAll(async () => {
-      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, defaultBudget)
-      avustushakuID = avustushakuId
+      const { hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, defaultBudget)
       hakemusID = hakemusId
-      await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+      await navigateToHakijaMuutoshakemusPage(page, hakemusID)
       await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
     })
 
@@ -702,7 +700,7 @@ describe('Talousarvion muuttaminen', () => {
       const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, defaultBudget)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
-      await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+      await navigateToHakijaMuutoshakemusPage(page, hakemusID)
       await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
       await clearAndType(page, 'input[name="talousarvio.equipment-costs-row"]', '8999')
       await clearAndType(page, 'input[name="talousarvio.material-costs-row"]', '4001')
@@ -902,7 +900,7 @@ describe('Talousarvion muuttaminen', () => {
 
       describe('Hakija views the muutoshakemus päätös', () => {
         beforeAll(async () => {
-          await navigateToLatestMuutoshakemusPaatos(page, avustushakuID, hakemusID)
+          await navigateToLatestMuutoshakemusPaatos(page, hakemusID)
         })
 
         it('budget change is mentioned in the info section', async () => {

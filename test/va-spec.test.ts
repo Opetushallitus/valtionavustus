@@ -339,7 +339,7 @@ describe("Puppeteer tests", () => {
           })
 
           it('shows the standardized käyttöaika on päätös', async () => {
-            await navigateToPaatos(page, avustushakuID, hakemusID)
+            await navigateToPaatos(page, hakemusID)
             await page.waitForXPath("//h2[contains(text(), 'Avustuksen käyttöaika')]")
             const firstDay = await page.$x("//p[contains(text(), 'Avustuksen ensimmäinen käyttöpäivä 20.04.1969')]")
             expect(firstDay.length).toEqual(1)
@@ -546,7 +546,7 @@ etunimi.sukunimi@oph.fi
       contactPersonPhoneNumber: "0501234567",
       projectName: "Hanke päätöksen uudelleenlähetyksen testaamiseksi",
     })
-    const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(avustushakuID, hakemusID)
+    const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(hakemusID)
 
     let emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
     expect(emails).toHaveLength(1)
@@ -778,7 +778,7 @@ etunimi.sukunimi@oph.fi
       await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Hakemus lähetetty")
 
       const { hakemusID } = await acceptAvustushaku(page, avustushakuID)
-      await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+      await navigateToHakijaMuutoshakemusPage(page, hakemusID)
     })
   })
 })
