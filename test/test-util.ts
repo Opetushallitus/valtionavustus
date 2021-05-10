@@ -528,7 +528,7 @@ export async function fillAndSendMuutoshakemusDecision(page: Page, status?: 'acc
 }
 
 export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, budget?: Budget, beforeSubmitFn?: () => void): Promise<{ userKey: string }> {
-  const { lang } = answers
+  const lang = answers.lang || 'fi'
   await navigateHakija(page, `/avustushaku/${avustushakuID}/?lang=${lang || 'fi'}`)
 
   await page.waitForSelector('#haku-not-open', { hidden: true, timeout: 500 })
