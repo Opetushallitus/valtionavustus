@@ -48,6 +48,7 @@ import {
   markAvustushakuAsMuutoshakukelvoton,
   lastOrFail,
   getHakemusTokenAndRegisterNumber,
+  navigateToHakemuksenArviointi,
 } from './test-util'
 
 jest.setTimeout(400_000)
@@ -153,12 +154,20 @@ describe('Muutospäätösprosessi', () => {
 
   describe('When avustushaku is marked as muutoshakukelvoton', function () {
     const haku = createRandomHakuValues()
+    let avustushakuID: number
+    let hakemusID: number
+    let userKey: string
+
+    beforeAll(async () => {
+      const { avustushakuID: aid, userKey: uk } = await createMuutoshakemusEnabledAvustushakuAndFillHakemus(page, haku, answers)
+      avustushakuID = aid
+      userKey = uk
+      await markAvustushakuAsMuutoshakukelvoton(avustushakuID)
+      const { hakemusID: hid } = await acceptAvustushaku(page, avustushakuID)
+      hakemusID = hid
+    })
 
     it('does not send link to muutoshaku page with päätös', async () => {
-      const { avustushakuID, userKey } = await createMuutoshakemusEnabledAvustushakuAndFillHakemus(page, haku, answers)
-      await markAvustushakuAsMuutoshakukelvoton(avustushakuID)
-      const { hakemusID } = await acceptAvustushaku(page, avustushakuID)
-
       const { token, 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
       const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
       const email = lastOrFail(emails)
@@ -188,7 +197,59 @@ puhelin 029 533 1000
 etunimi.sukunimi@oph.fi
 `)
     })
-  });
+
+    it('navigates to the old virkailija edit view', async () => {
+      await navigateToHakemuksenArviointi(page, avustushakuID, answers.projectName)
+      await clickElementWithText(page, 'button', 'Muokkaa hakemusta')
+      await page.type('[data-test-id="virkailija-edit-comment"]', 'Kuhan tässä nyt muokkaillaan')
+      await clickElementWithText(page, 'button', 'Siirry muokkaamaan')
+
+      const newPage = await waitForTabToOpen(page)
+      expect(await newPage.evaluate(() => window.location.href))
+        .toEqual(`${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=${userKey}`)
+    })
+
+    it('does not show link to muutoshaku in email preview', async () => {
+      await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
+      expect(await textContent(page, '.decision-email-content'))
+        // Concatenation to preserve the trailing space on the line ":D"
+        .toEqual(' - ' + `
+
+${haku.avustushakuName}
+
+Päätöstä voitte tarkastella tästä linkistä: ${HAKIJA_URL}/paatos/avustushaku/${avustushakuID}/hakemus/
+
+Jos päätätte olla ottamatta avustusta vastaan, voitte tehdä ilmoituksen tästä linkistä: ${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?avustushaku=${avustushakuID}&hakemus=&lang=fi&preview=true&token=&refuse-grant=true&modify-application=false
+
+Jos haluatte muuttaa yhteyshenkilön tiedot, voitte tehdä ilmoituksen tästä linkistä:
+
+
+
+Ilmoitus tulee tehdä päätöksessä mainittuun päivämäärään mennessä.
+
+Jos otatte avustuksen vastaan, ei siitä tarvitse ilmoittaa erikseen.
+
+Hausta vastaava valmistelija on mainittu päätöksessä.
+
+Opetushallitus
+Hakaniemenranta 6
+PL 380, 00531 Helsinki
+
+puhelin 029 533 1000
+etunimi.sukunimi@oph.fi
+`)
+    })
+  })
+
+  async function waitForTabToOpen(page: Page): Promise<Page> {
+    let newPage
+    do {
+      const pages = await page.browser().pages()
+      await page.waitFor(500)
+      newPage = pages[1]
+    } while (!newPage)
+    return newPage
+  }
 
   describe('When muutoshakemus enabled haku has been published, a hakemus has been submitted, and päätös has been sent', () => {
     const haku = createRandomHakuValues()

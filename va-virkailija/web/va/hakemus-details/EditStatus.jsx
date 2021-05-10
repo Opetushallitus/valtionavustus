@@ -83,7 +83,7 @@ export default class EditStatus extends Component {
       <div className="value-edit">
         {open &&
           <div>
-            <textarea onChange={onStatusCommentChange} placeholder="Kommentti"></textarea>
+            <textarea data-test-id="virkailija-edit-comment" onChange={onStatusCommentChange} placeholder="Kommentti"></textarea>
             <span>
               <button className={cancelled ? "btn-danger" : ""} onClick={onSubmit} disabled={this.state.submitting}>{cancelled ? 'Peruuta hakemus' : 'Siirry muokkaamaan'}</button>
               { tooltip() }
