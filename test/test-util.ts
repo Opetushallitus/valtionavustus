@@ -368,9 +368,13 @@ export async function fillAndSendHakemus(page: Page, avustushakuID: number, befo
   await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Hakemus lähetetty")
 }
 
+function getHakemusUrlFromEmail(email: Email) {
+  return email.formatted.match(/https?:\/\/.*\/avustushaku.*/)?.[0] || email.formatted.match(/https?:\/\/.*\/statsunderstod.*/)?.[0]
+}
+
 export async function navigateToNewHakemusPage(page: Page, avustushakuID: number) {
   const receivedEmail = await pollUntilNewHakemusEmailArrives(avustushakuID)
-  const hakemusUrl = receivedEmail[0].formatted.match(/https?:\/\/.*\/avustushaku.*/)?.[0]
+  const hakemusUrl = getHakemusUrlFromEmail(receivedEmail[0])
   expectToBeDefined(hakemusUrl)
 
   await page.goto(hakemusUrl, { waitUntil: "networkidle0" })
@@ -524,7 +528,8 @@ export async function fillAndSendMuutoshakemusDecision(page: Page, status?: 'acc
 }
 
 export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, budget?: Budget, beforeSubmitFn?: () => void): Promise<{ userKey: string }> {
-  await navigateHakija(page, `/avustushaku/${avustushakuID}/`)
+  const { lang } = answers
+  await navigateHakija(page, `/avustushaku/${avustushakuID}/?lang=${lang || 'fi'}`)
 
   await page.waitForSelector('#haku-not-open', { hidden: true, timeout: 500 })
   await clearAndType(page, "#primary-email", answers.contactPersonEmail)
@@ -533,7 +538,7 @@ export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page,
   await navigateToNewHakemusPage(page, avustushakuID)
 
   async function clickCorrectLanguageSelector() {
-    const index = answers.lang && answers.lang === 'sv' ? 1 : 0
+    const index = lang && lang === 'sv' ? 1 : 0
     await clickElement(page, `[for='language.radio.${index}']`)
   }
 
@@ -543,9 +548,9 @@ export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page,
   await clearAndType(page, "[id='textField-0']", answers.contactPersonPhoneNumber)
   await clearAndType(page, "[id='signatories-fieldset-1.name']", "Erkki Esimerkki")
   await clearAndType(page, "[id='signatories-fieldset-1.email']", "erkki.esimerkki@example.com")
-  await clickElementWithText(page, "label", "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko")
+  await clickElementWithText(page, "label", lang === 'fi' ? "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko" : "Kommun/samkommun, kommunalt ägda bolag, kyrkan")
   await clickElement(page, "[id='koodistoField-1_input']")
-  await clickElementWithText(page, "li", "Kainuu")
+  await clickElementWithText(page, "li", lang === 'fi' ? "Kainuu" : 'Åland')
   await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")
   await clearAndType(page, "#bank-bic", "OKOYFIHH")
   await clearAndType(page, "#textField-2", "2")
@@ -553,14 +558,15 @@ export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page,
   await clearAndType(page, "#project-name", answers.projectName)
   await clickCorrectLanguageSelector()
   await clickElement(page, "[for='checkboxButton-0.checkbox.0']")
-  await clickElementWithText(page, "label", "Opetuksen lisääminen")
+  await clickElementWithText(page, "label", lang === 'fi' ? "Opetuksen lisääminen" : "Ordnande av extra undervisning")
   await clearAndType(page, "[id='project-description.project-description-1.goal']", "Jonain päivänä teemme maailman suurimman aallon.")
   await clearAndType(page, "[id='project-description.project-description-1.activity']", "Teemme aaltoja joka dailyssa aina kun joku on saanut tehtyä edes jotain.")
   await clearAndType(page, "[id='project-description.project-description-1.result']", "Hankkeeseen osallistuneiden hartiat vetreytyvät suunnattomasti.")
   await clearAndType(page, "[id='project-effectiveness']", "Käsienheiluttelu kasvaa suhteessa muuhun tekemiseen huomattavasti")
   await clearAndType(page, "[id='project-begin']", "13.03.1992")
   await clearAndType(page, "[id='project-end']", "13.03.2032")
-  await clickElementWithText(page, "label", "Kyllä")
+  await clickElement(page, '[for="vat-included.radio.0"]')
+
   await fillBudget(page, budget, 'hakija')
 
   if (beforeSubmitFn) {
@@ -569,7 +575,8 @@ export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page,
 
   await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).disabled === false)
   await clickElement(page, "#topbar #form-controls button#submit")
-  await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Hakemus lähetetty")
+  const sentText = lang === 'fi' ? "Hakemus lähetetty" : "Ansökan sänd"
+  await page.waitForFunction((text) => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === text, undefined, sentText)
   const userKey = await expectQueryParameter(page, "hakemus")
   return { userKey }
 }
