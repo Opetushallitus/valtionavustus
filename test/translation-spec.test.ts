@@ -63,7 +63,7 @@ describe('Translations', () => {
 
     describe('And hakija navigates to päätös', () => {
       beforeAll(async () => {
-        await navigateToPaatos(page, avustushakuID, hakemusID)
+        await navigateToPaatos(page, hakemusID)
       })
 
       it('päätös header title is in swedish', async () => {
@@ -89,7 +89,7 @@ describe('Translations', () => {
 
     describe('And hakija navigates to muutoshakemus page', () => {
       beforeAll(async () => {
-        await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+        await navigateToHakijaMuutoshakemusPage(page, hakemusID)
       })
 
       it('register number title is in swedish', async () => {
@@ -195,7 +195,7 @@ describe('Translations', () => {
         }
 
         beforeAll(async () => {
-          await navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges(page, avustushakuID, hakemusID, jatkoaika, muutoshakemus1Budget, muutoshakemus1Perustelut)
+          await navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges(page, hakemusID, jatkoaika, muutoshakemus1Budget, muutoshakemus1Perustelut)
         })
 
         it('perustelut title is displayed to hakija in swedish', async () => {
@@ -253,7 +253,7 @@ describe('Translations', () => {
 
             describe('And hakija navigates to muutoshakemus page', () => {
               beforeAll(async () => {
-                await navigateToHakijaMuutoshakemusPage(page, avustushakuID, hakemusID)
+                await navigateToHakijaMuutoshakemusPage(page, hakemusID)
               })
 
               it('Muutoshakemus title states in swedish that it has been approved with changes', async () => {
@@ -274,7 +274,7 @@ describe('Translations', () => {
 
             describe('And hakija navigates to muutoshakemus päätös page', () => {
               beforeAll(async () => {
-                await navigateToLatestMuutoshakemusPaatos(page, avustushakuID, hakemusID)
+                await navigateToLatestMuutoshakemusPaatos(page, hakemusID)
               })
 
               it('Decision title is shown in swedish', async () => {
