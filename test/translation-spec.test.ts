@@ -1,6 +1,5 @@
 import { Browser, Page } from 'puppeteer'
 import {
-  Answers,
   BudgetAmount,
   clickElement,
   fillAndSendMuutoshakemusDecision,
@@ -15,13 +14,44 @@ import {
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
   setPageErrorConsoleLogger,
   createRandomHakuValues,
-  navigateToPaatos
+  navigateToPaatos,
+  Budget,
+  Answers
 } from './test-util'
-import { budget, answers } from './constants'
 
 import moment from 'moment'
 
 jest.setTimeout(400_000)
+
+export const answers: Answers = {
+  contactPersonEmail: "erik.eksampletten@example.com",
+  contactPersonName: "Erik Eksampletten",
+  contactPersonPhoneNumber: "555",
+  projectName: "Badet pengaren i Ankdammen",
+  lang: 'sv'
+}
+
+export const budget: Budget = {
+  amount: {
+    personnel: '300',
+    material: '420',
+    equipment: '1337',
+    'service-purchase': '5318008',
+    rent: '69',
+    steamship: '0',
+    other: '9000',
+  },
+  description: {
+    personnel: 'tjänare',
+    material: 'båterna',
+    equipment: 'champagne visp',
+    'service-purchase': 'servitörena',
+    rent: 'villa',
+    steamship: 'ånga',
+    other: 'Kalle Anka',
+  },
+  selfFinancing: '1',
+}
 
 describe('Translations', () => {
   let browser: Browser
@@ -50,13 +80,9 @@ describe('Translations', () => {
     let avustushakuID: number
     let hakemusID: number
     const haku = createRandomHakuValues()
-    const answersInSwedish: Answers = {
-      ...answers,
-      lang: 'sv'
-    }
 
     beforeAll(async () => {
-      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answersInSwedish, budget)
+      const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, budget)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
     })
