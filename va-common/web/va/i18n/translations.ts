@@ -2,6 +2,7 @@ export const translationsFi = {
   hakemus: 'Hakemus',
   waitingForDecision: 'Odottaa käsittelyä',
   loading: 'Ladataan lomaketta...',
+  loadingDecision: 'Ladataan päätöstä...',
   sendMuutoshakemus: 'Lähetä käsiteltäväksi',
   sendContactDetails: 'Tallenna muutokset',
   savedNotification: 'Muutokset tallennettu',
@@ -101,6 +102,7 @@ export const translationsFi = {
 const translationsSv: Translations = {
   ...translationsFi,
   hakemus: 'Ansökan',
+  loadingDecision: 'Beslutet laddas ner…',
   muutoshakemus: {
     ...translationsFi.muutoshakemus,
     title: 'Ändringsansökan',
