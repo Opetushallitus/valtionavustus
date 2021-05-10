@@ -1,19 +1,19 @@
 import React from 'react'
 
-import { Language, Meno, MuutoshakemusStatus, Talousarvio } from 'va-common/web/va/types/muutoshakemus'
+import { Meno, MuutoshakemusStatus, Talousarvio } from 'va-common/web/va/types/muutoshakemus'
 import { useTranslations } from '../i18n/TranslationContext'
 
 import './talous.less'
 
 type MenoRowProps = {
   meno: Meno
-  lang: Language
   talousarvio?: { [key: string]: number }
   currentTalousarvio: Talousarvio
   linethrough: boolean
 }
 
-const MenoRow = ({ meno, lang, currentTalousarvio, linethrough }: MenoRowProps) => {
+const MenoRow = ({ meno, currentTalousarvio, linethrough }: MenoRowProps) => {
+  const { lang } = useTranslations()
   const currentAmount = currentTalousarvio.find(t => t.type === meno.type)?.amount
   const amountClass = meno.amount === currentAmount || !linethrough ? '' : 'linethrough'
 
@@ -32,13 +32,12 @@ export type MuutosTaloudenKayttosuunnitelmaanProps = {
   currentTalousarvio: Talousarvio
   newTalousarvio: Talousarvio
   status: MuutoshakemusStatus
-  lang: Language
   reason?: string
   paatos?: boolean
 }
 
 export const TalousarvioTable = (props: MuutosTaloudenKayttosuunnitelmaanProps) => {
-  const { currentTalousarvio, status, newTalousarvio, lang, paatos } = props
+  const { currentTalousarvio, status, newTalousarvio, paatos } = props
   const { t } = useTranslations()
   const muutoshakemusSum = newTalousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
   const currentSum = currentTalousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
@@ -55,7 +54,7 @@ export const TalousarvioTable = (props: MuutosTaloudenKayttosuunnitelmaanProps) 
           <h3 className={headerClass} data-test-id='budget-change-title'>{t.muutosTaloudenKayttosuunnitelmaan.budget.budgetChangeTitle(isAccepted)}</h3>
         </div>
         <div className="expensesHeader">{t.muutosTaloudenKayttosuunnitelmaan.expenses}</div>
-        {newTalousarvio.map((meno: Meno) => <MenoRow linethrough={!paatos} lang={lang} meno={meno} key={meno["type"]} currentTalousarvio={currentTalousarvio} />)}
+        {newTalousarvio.map((meno: Meno) => <MenoRow linethrough={!paatos} meno={meno} key={meno["type"]} currentTalousarvio={currentTalousarvio} />)}
       </div>
       <hr className="muutoshakemus_talousarvio_horizontalSeparator" />
       <div className="muutoshakemus_talousarvio_row">
