@@ -4,6 +4,7 @@ SET
   deleted = now()
 WHERE
   deleted IS NULL AND
+  state < 2 AND
   application_id
     IN
       (SELECT DISTINCT
