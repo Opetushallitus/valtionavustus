@@ -1,7 +1,6 @@
 (ns oph.va.virkailija.payments-data
   (:require
    [oph.soresu.common.db :refer [exec exec-all]]
-   [clojure.tools.logging :refer [spy]]
    [oph.va.virkailija.utils
     :refer [convert-to-dash-keys convert-to-underscore-keys update-some]]
    [clj-time.coerce :as c]
@@ -193,7 +192,7 @@
      (doall
        (map
          #(create-payment
-            (spy (create-payment-values % (get-first-payment-sum % grant) phase))
+            (create-payment-values % (get-first-payment-sum % grant) phase)
             identity)
          (filter
            valid-for-payment?
