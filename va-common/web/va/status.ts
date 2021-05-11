@@ -10,7 +10,7 @@ export const Muutoshakemus = {
 
 export const HakemusSelvitys = {
   statuses: ['missing', 'submitted', 'accepted'],
-  statusToFI: (status: keyof typeof t.selvitys.status) => {
-    return t.selvitys.status[status] !== undefined ? t.selvitys[status] : status
+  statusToFI: (status: keyof typeof t.selvitys.status): string => {
+    return t.selvitys.status[status]
   }
 }
