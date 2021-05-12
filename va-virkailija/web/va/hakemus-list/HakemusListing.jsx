@@ -573,8 +573,8 @@ class HakemusRow extends Component {
           <span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span>
         </td>
       )}
-      {isResolved && <td className="selvitys-column">{statusValiselvitys}</td>}
-      {isResolved && <td className="selvitys-column">{statusLoppuselvitys}</td>}
+      {isResolved && <td data-test-id="väliselvitys-column" className="selvitys-column">{statusValiselvitys}</td>}
+      {isResolved && <td data-test-id="loppuselvitys-column" className="selvitys-column">{statusLoppuselvitys}</td>}
       <td className="granted-sum-column">
         <span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span>
       </td>

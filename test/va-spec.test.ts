@@ -347,24 +347,48 @@ describe("Puppeteer tests", () => {
             expect(lastDay.length).toEqual(1)
           })
 
-          it('shows the väliselvitys log', async () => {
-            await navigate(page, `/admin/valiselvitys/?avustushaku=${avustushakuID}`)
-            await clickElement(page, '[data-test-id=send-valiselvitys]')
-            await page.waitForSelector('div.tapahtumaloki')
-            const sender = await textContent(page, '[data-test-id="sender-0"]')
-            expect(sender).toEqual('_ valtionavustus')
-            const sent = await textContent(page, '[data-test-id="sent-0"]')
-            expect(sent).toEqual('1')
+          describe('when väliselvityspyyntö is sent', () => {
+            beforeAll(async () => {
+              await navigate(page, `/admin/valiselvitys/?avustushaku=${avustushakuID}`)
+              await clickElement(page, '[data-test-id=send-valiselvitys]')
+            })
+
+            it('shows the väliselvitys log', async () => {
+              await navigate(page, `/admin/valiselvitys/?avustushaku=${avustushakuID}`)
+              await page.waitForSelector('div.tapahtumaloki')
+              const sender = await textContent(page, '[data-test-id="sender-0"]')
+              expect(sender).toEqual('_ valtionavustus')
+              const sent = await textContent(page, '[data-test-id="sent-0"]')
+              expect(sent).toEqual('1')
+            })
+
+            it('shows väliselvitys as missing on Hakemusten arviointi view', async () => {
+              await navigate(page, `/avustushaku/${avustushakuID}/`)
+              expect(await textContent(page, `#hakemus-${hakemusID} [data-test-id="väliselvitys-column"]`))
+                .toEqual('Puuttuu')
+            })
           })
 
-          it('shows the loppuselvitys log', async () => {
-            await navigate(page, `/admin/loppuselvitys/?avustushaku=${avustushakuID}`)
-            await clickElement(page, '[data-test-id=send-loppuselvitys]')
-            await page.waitForSelector('div.tapahtumaloki')
-            const sender = await textContent(page, '[data-test-id="sender-0"]')
-            expect(sender).toEqual('_ valtionavustus')
-            const sent = await textContent(page, '[data-test-id="sent-0"]')
-            expect(sent).toEqual('1')
+          describe('when loppuselvityspyyntö is sent', () => {
+            beforeAll(async () => {
+              await navigate(page, `/admin/loppuselvitys/?avustushaku=${avustushakuID}`)
+              await clickElement(page, '[data-test-id=send-loppuselvitys]')
+            })
+
+            it('shows the loppuselvitys log', async () => {
+              await navigate(page, `/admin/loppuselvitys/?avustushaku=${avustushakuID}`)
+              await page.waitForSelector('div.tapahtumaloki')
+              const sender = await textContent(page, '[data-test-id="sender-0"]')
+              expect(sender).toEqual('_ valtionavustus')
+              const sent = await textContent(page, '[data-test-id="sent-0"]')
+              expect(sent).toEqual('1')
+            })
+
+            it('shows loppuselvitys as missing on Hakemusten arviointi view', async () => {
+              await navigate(page, `/avustushaku/${avustushakuID}/`)
+              expect(await textContent(page, `#hakemus-${hakemusID} [data-test-id="loppuselvitys-column"]`))
+                .toEqual('Puuttuu')
+            })
           })
         })
       })
