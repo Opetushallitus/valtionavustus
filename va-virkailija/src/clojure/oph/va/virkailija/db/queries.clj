@@ -31,6 +31,8 @@
 (defquery find-grants "sql/virkailija/grants/find-grants.sql")
 (defquery find-grants-asc "sql/virkailija/grants/find-grants-asc.sql")
 (defquery get-grant "sql/virkailija/grants/get-grant.sql")
+(defquery delete-all-grant-payments
+  "sql/virkailija/grants/delete-all-grant-payments.sql")
 (defquery delete-grant-payments
   "sql/virkailija/grants/delete-grant-payments.sql")
 (defquery get-grant-batches "sql/virkailija/grants/get-batches.sql")

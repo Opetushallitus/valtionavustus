@@ -130,7 +130,7 @@
                                    :local-path "/tmp"}
                     test-service (create-test-service configuration)
                     grant (first (grant-data/get-grants))
-                    result (payments-data/delete-grant-payments (:id grant))
+                    result (payments-data/delete-all-grant-payments (:id grant))
                     application (application-data/find-application-by-register-number "123/456/78")
                     batch (payment-batches-data/create-batch
                            {:receipt-date invoice-date
@@ -159,7 +159,7 @@
                                    :local-path "/tmp"}
                     test-service (create-test-service configuration)
                     grant (first (grant-data/get-grants))]
-                (payments-data/delete-grant-payments (:id grant))
+                (payments-data/delete-all-grant-payments (:id grant))
                 (should= nil (rondo-scheduling/get-state-of-payments test-service)))
                 (should= nil @deleted-remote-files)
                 (should= nil @reported-exceptions))
