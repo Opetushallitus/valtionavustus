@@ -80,7 +80,9 @@
 .muutoshakemus__form-cell {
   display: flex;
   flex-direction: column;
-  margin-right: 5vw;
+  &:not(:last-of-type) {
+    margin-right: 5vw;
+  }
 }
 
 #muutoshakemus__contact-person {
