@@ -161,6 +161,9 @@
 (defn delete-grant-payments [id]
   (exec queries/delete-grant-payments {:id id}))
 
+(defn delete-all-grant-payments [id]
+  (exec queries/delete-all-grant-payments {:id id}))
+
 (defn delete-payment [id]
   (exec queries/delete-payment {:id id}))
 
