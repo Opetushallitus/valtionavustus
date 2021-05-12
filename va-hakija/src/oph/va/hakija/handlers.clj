@@ -84,6 +84,40 @@
           (internal-server-error!)))
       (bad-request! security-validation))))
 
+(defn- sum-normalized-hakemus-budget [hakemus]
+  (when-let [talousarvio (:talousarvio hakemus)]
+    (reduce (fn [sum menoluokka] (+ sum (:amount menoluokka))) 0 talousarvio)))
+
+(defn- sum-muutoshakemus-budget [muutoshakemus]
+  (when-let [talousarvio (:talousarvio muutoshakemus)]
+    (reduce (fn [sum [type amount]] (+ sum amount)) 0 talousarvio)))
+
+(defn validate-muutoshakemus [user-key muutoshakemus]
+  (let [muutoshakemus-budget (sum-muutoshakemus-budget muutoshakemus)
+        hakemus (when muutoshakemus-budget (va-db/get-normalized-hakemus user-key))
+        hakemus-budget (when hakemus (sum-normalized-hakemus-budget hakemus))]
+    (when (and muutoshakemus-budget (not= hakemus-budget muutoshakemus-budget))
+      [(str "muutoshakemus budget was " muutoshakemus-budget " (should be " hakemus-budget ")")])))
+
+(defn- presenting-officer-email [avustushaku-id]
+  (let [roles (va-db/get-avustushaku-roles avustushaku-id)
+        presenting-officers (filter (fn [x] (= (:role x) "presenting_officer")) roles)
+        presenting-officer-emails (map :email presenting-officers)
+        first-email (first presenting-officer-emails)]
+    first-email))
+
+(defn on-post-muutoshakemus [user-key muutoshakemus]
+  (let [hakemus (va-db/get-hakemus user-key)
+        avustushaku-id (:avustushaku hakemus)
+        hakemus-id (:id hakemus)
+        register-number (:register_number hakemus)
+        normalized-hakemus (va-db/get-normalized-hakemus user-key)
+        hanke (:project-name normalized-hakemus)
+        valmistelija-email (presenting-officer-email avustushaku-id)]
+    (va-db/on-muutoshakemus user-key hakemus-id avustushaku-id muutoshakemus)
+    (va-email/notify-valmistelija-of-new-muutoshakemus [valmistelija-email] avustushaku-id register-number hanke hakemus-id)
+    (ok (va-db/get-normalized-hakemus user-key))))
+
 (defn- ok-id [hakemus]
   (ok {:id (:user_key hakemus)
        :language (:language hakemus)}))
