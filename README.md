@@ -588,12 +588,7 @@ parsittaessa oletetaan, että kyseessä on maksatuksen 1. erä.
 
 ### Maksatuksen tila
 
-Tila      | Tunniste tietokannassa | Huomiot
-----------|------------------------|---------------------------------------
-Luotu     | 0                      | Haku on ratkaistu ja maksatukset luotu
-Odottaa   | 1                      | Ei käytössä
-Lähetetty | 2                      | Maksatus on lähetetty maksatuspalveluun
-Maksettu  | 3                      | Maksatuspalvelusta on tullut maksupalaute
+Maksatusten mahdolliset tilat ja niiden selitteet löytyvät tietokannasta taulusta `paymentstatus`.
 
 ## Muutoksenhaku
 

@@ -16,10 +16,10 @@
    :version 1})
 
 (def payments
-  [{:id 1 :state 0}
-   {:id 2 :state 1}
-   {:id 3 :state 2}
-   {:id 4 :state 1}])
+  [{:id 1 :paymentstatus-id "created"}
+   {:id 2 :paymentstatus-id "waiting"}
+   {:id 3 :paymentstatus-id "sent"}
+   {:id 4 :paymentstatus-id "waiting"}])
 
 (describe "Create filename"
           (tags :paymentbatch)

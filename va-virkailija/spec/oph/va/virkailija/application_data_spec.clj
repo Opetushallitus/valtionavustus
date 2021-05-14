@@ -88,7 +88,7 @@
                       {:application-id (:id application)
                        :payment-sum 26000
                        :batch-id nil
-                       :state 0
+                       :paymentstatus-id "created"
                        :phase 0}
                       user)
             unsent-payments (application-data/get-application-unsent-payments
@@ -107,7 +107,7 @@
                       {:application-id (:id application)
                        :payment-sum 26000
                        :batch-id nil
-                       :state 0
+                       :paymentstatus-id "created"
                        :phase 0}
                       user)
             updated (payments-data/update-payment
@@ -132,11 +132,11 @@
                       {:application-id (:id application)
                        :payment-sum 26000
                        :batch-id nil
-                       :state 0
+                       :paymentstatus-id "created"
                        :phase 0}
                       user)
             updated (payments-data/update-payment
-                      (assoc payment :state 2 :filename "file.xml") user)]
+                      (assoc payment :paymentstatus-id "sent" :filename "file.xml") user)]
         (should= 0 (count (application-data/get-application-unsent-payments
                             (:id application)))))))
 

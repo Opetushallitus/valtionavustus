@@ -103,7 +103,7 @@
             {:application_id (:id application)
              :phase (:phase parsed)}))))
 
-(defn update-state-by-response [xml]
+(defn update-paymentstatus-by-response [xml]
   (let [response-values (invoice/read-response-xml xml)
         payments (find-payments-by-response response-values)
         payment (first payments)]
@@ -124,24 +124,24 @@
            (format "Multiple payments found with the same register
                     number and invoice date: %s"
                    response-values)}))
-      (= (:state payment) 3)
+      (= (:paymentstatus-id payment) "paid")
       (throw
         (ex-info
           "Payment already paid"
           {:cause "already-paid"
            :error-message
            (format "Payment (id %d) is already paid." (:id payment))}))
-      (not= (:state payment) 2)
+      (not= (:paymentstatus-id payment) "sent")
       (throw
         (ex-info
-          "State not valid"
-          {:cause "state-not-valid"
+          "Payment status not valid"
+          {:cause "paymentstatus-not-valid"
            :error-message
            (format
-             "Payment (id %d) is not sent to Rondo or it's state
+             "Payment (id %d) is not sent to Rondo or it's paymentstatus
               (%d) is not valid. It should be 2 in this stage."
-             (:id payment) (:state payment))})))
-    (update-payment (assoc payment :state 3)
+             (:id payment) (:paymentstatus-id payment))})))
+    (update-payment (assoc payment :paymentstatus-id "paid")
                     {:person-oid "-" :first-name "Rondo" :surname ""})))
 
 (defn get-valid-grant-payments [id]
@@ -184,7 +184,7 @@
 (defn create-payment-values [application sum phase]
   {:application-id (:id application)
    :application-version (:version application)
-   :state 0
+   :paymentstatus-id "created"
    :batch-id nil
    :payment-sum sum
    :phase phase})

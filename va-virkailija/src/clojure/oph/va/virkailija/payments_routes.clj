@@ -19,9 +19,9 @@
   (compojure-api/DELETE
     "/:id/" [id :as request]
     :path-params [id :- Long]
-    :summary "Delete payment with state 1"
+    :summary "Delete payment with paymentstatus waiting"
     (if-let [payment (payments-data/get-payment id)]
-      (if (= (:state payment) 1)
+      (if (= (:paymentstatus-id payment) "waiting")
         (do (payments-data/delete-payment id)
             (ok ""))
         (bad-request "Only newly created is allowed to be deleted"))

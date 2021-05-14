@@ -72,7 +72,7 @@ export default class ApplicationPayments extends Component {
           {this.localeString(p["payment-sum"])} €
         </td>
         <td>
-          {p.state === 1 &&
+          {p["paymentstatus-id"] === "waiting" &&
             <button type="button"
                     onClick={onRemoveCurrentPayment}
                     className="remove delete-payment-button"

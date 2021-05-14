@@ -38,7 +38,7 @@
               {:application-id (:id application)
                :payment-sum 20000
                :batch-id (:id batch)
-               :state 1
+               :paymentstatus-id "waiting"
                :phase 0}
               {:person-oid "12345"
                :first-name "Test"
@@ -72,7 +72,7 @@
                       {:application-id (:id application)
                        :payment-sum 20000
                        :batch-id (:id batch)
-                       :state 1
+                       :paymentstatus-id "waiting"
                        :phase 1}
                       {:person-oid "12345"
                        :first-name "Test"
@@ -110,7 +110,7 @@
                        {:application-id (:id application)
                         :payment-sum 20000
                         :batch-id (:id batch)
-                        :state 1
+                        :paymentstatus-id "waiting"
                         :phase 0}
                        {:person-oid "12345"
                         :first-name "Test"
@@ -119,7 +119,7 @@
                        {:application-id (:id application)
                         :payment-sum 20000
                         :batch-id (:id batch)
-                        :state 1
+                        :paymentstatus-id "waiting"
                         :phase 1}
                        {:person-oid "12345"
                         :first-name "Test"
@@ -161,7 +161,7 @@
                       {:application-id (:id application)
                        :payment-sum 20000
                        :batch-id (:id batch)
-                       :state 1
+                       :paymentstatus-id "waiting"
                        :phase 0}
                       {:person-oid "12345"
                        :first-name "Test"
@@ -191,7 +191,7 @@
                       {:application-id (:id application)
                        :payment-sum 20000
                        :batch-id (:id batch)
-                       :state 1
+                       :paymentstatus-id "waiting"
                        :phase 0}
                       {:person-oid "12345"
                        :first-name "Test"
@@ -280,7 +280,7 @@
             (post! "/api/v2/payments/" payment-values)
             payment
             (payments-data/update-payment
-              (assoc (json->map body) :state 2 :filename "")
+              (assoc (json->map body) :paymentstatus-id "sent" :filename "")
               {:person-oid "" :first-name "" :surname ""})
             {:keys [status body]}
             (delete! (format "/api/v2/payments/%d/" (:id payment)))]
@@ -317,7 +317,7 @@
               {:application-id (:id application)
                :payment-sum 20000
                :batch-id nil
-               :state 1
+               :paymentstatus-id "waiting"
                :phase 0}
               {:person-oid "12345"
                :first-name "Test"
@@ -391,14 +391,14 @@
             updated-payment-raw
             (payments-data/update-payment
               (assoc payment
-                     :state 1
+                     :paymentstatus-id "waiting"
                      :filename "example.xml")
               example-identity)
             updated-payment (payments-data/get-payment
                               (:id updated-payment-raw))]
         (should (some? payment))
         (should (some? updated-payment))
-        (should= 1 (:state updated-payment))
+        (should= "waiting" (:paymentstatus-id updated-payment))
         (should (nil? (:version-closed
                        (payments-data/get-payment (:id updated-payment)))))
         (should (some? (:version-closed

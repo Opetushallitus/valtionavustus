@@ -4,7 +4,7 @@ SET
   deleted = now()
 WHERE
   deleted IS NULL AND
-  state < 2 AND
+  paymentstatus_id IN ('created', 'waiting') AND
   application_id
     IN
       (SELECT DISTINCT

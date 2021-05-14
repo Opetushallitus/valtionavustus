@@ -317,7 +317,7 @@
     (let [c (dialogs/conn-with-err-dialog!
               "Päivitetään maksatuksia"
               "Maksatusten päivityksessä ongelma"
-              connection/set-batch-payments-state id 3)]
+              connection/set-batch-payments-paymentstatus id "paid")]
       (when (some? (<! c))
         (update-grant-payments! (:id grant) payments)))))
 
@@ -329,6 +329,15 @@
         (set-batch-payments-paid!
           (:id batch)
           grant payments)))))
+
+(defn in? [coll item]
+  (some #(= item %) coll))
+
+(defn sent? [payment]
+  (in? ["sent" "paid"] (:paymentstatus-id payment)))
+
+(defn unsent? [payment]
+  (in? ["created" "waiting"] (:paymentstatus-id payment)))
 
 (defn home-page [data]
   (let [{:keys [user-info delete-payments?]} data
@@ -368,9 +377,9 @@
         (grant-info @selected-grant)]
        [(fn [data]
           (let [unsent-payments?
-                (some? (some #(when (< (:state %) 2) %) flatten-payments))
+                (some? (some unsent? flatten-payments))
                 new-sent-payments
-                (filter #(and (> (:state %) 1)
+                (filter #(and (sent? %)
                               (is-today? (:created-at %))) flatten-payments)]
             [:div {:class
                    (when (not= (:status @selected-grant) "resolved")
@@ -384,7 +393,7 @@
                      {:value "outgoing"
                       :label "Lähtevät maksatukset"}
                      [(let [outgoing-payments
-                            (filter #(< (:state %) 2) flatten-payments)
+                            (filter unsent? flatten-payments)
                             available-phases
                             (find-available-phases
                               outgoing-payments
@@ -457,7 +466,7 @@
                                  (str (count new-sent-payments) " uutta")])]}
 
                      (let [sent-payments
-                           (filter #(> (:state %) 1) flatten-payments)]
+                           (filter sent? flatten-payments)]
                        [:div
                         [payments-ui/batches-table {:batches @batches
                                                     :payments sent-payments}]

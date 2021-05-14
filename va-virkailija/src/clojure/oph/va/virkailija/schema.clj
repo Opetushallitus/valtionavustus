@@ -245,6 +245,10 @@
   "Find avustushaut by organization name (minimum string length: 3)"
   (s/conditional (fn [s] (> (count s) 2)) s/Str))
 
+(s/defschema PaymentStatus
+  "Payment status"
+  (s/enum "created" "waiting" "sent" "paid"))
+
 (s/defschema Payment
   "Payment"
   {(s/optional-key :id) s/Int
@@ -253,7 +257,7 @@
    (s/optional-key :created-at) s/Inst
    :application-id  s/Int
    (s/optional-key :application-version) s/Int
-   :state s/Int
+   :paymentstatus-id PaymentStatus
    (s/optional-key :filename) (s/maybe s/Str)
    (s/optional-key :user-name) s/Str
    (s/optional-key :batch-id) (s/maybe s/Int)
@@ -262,7 +266,7 @@
 
 (s/defschema SimplePayment
   "Simple payment"
-  {:state s/Int})
+  {:paymentstatus-id PaymentStatus})
 
 (s/defschema GrantPayment
   "Grant Payment (for creating grant payments)"

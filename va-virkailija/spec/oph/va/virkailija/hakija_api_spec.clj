@@ -8,18 +8,18 @@
 
 (def payments-with-dash
   [{:amount 2000 :application-id 41 :takp-account "521"
-    :grant-id 3 :state 0 :lkp-account "" :currency "EUR"
+    :grant-id 3 :paymentstatus-id "created" :lkp-account "" :currency "EUR"
     :application-version 1 :long-ref "1234"}
    {:amount 4000 :transaction-account "12345" :application-id 40 :takp-account "518"
-    :grant-id 2 :state 1 :lkp-account "214" :document-type "XA" :currency "EUR"
+    :grant-id 2 :paymentstatus-id "waiting" :lkp-account "214" :document-type "XA" :currency "EUR"
     :application-version 1 :long-ref "12345"}])
 
 (def payments-with-underscore
   [{:amount 3000 :application_id 41 :takp_account "521"
-    :grant_id 3 :state 0 :lkp_account "" :currency "EUR"
+    :grant_id 3 :paymentstatus_id "created" :lkp_account "" :currency "EUR"
     :application_version 1 :long_ref "1234"}
    {:amount 2500 :application_id 40 :takp_account "518"
-    :grant_id 2 :state 1 :lkp_account "214" :currency "EUR"
+    :grant_id 2 :paymentstatus_id "waiting" :lkp_account "214" :currency "EUR"
     :application_version 1 :long_ref "12345"}])
 
 (describe

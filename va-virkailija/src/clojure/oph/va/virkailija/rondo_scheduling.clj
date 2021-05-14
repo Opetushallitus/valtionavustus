@@ -21,7 +21,7 @@
   (doseq [filename list-of-files]
     (get-remote-file remote-service filename)
     (try
-      (payments-data/update-state-by-response
+      (payments-data/update-paymentstatus-by-response
         (invoice/read-xml (get-local-file remote-service filename)))
 
       (delete-remote-file! remote-service filename)
@@ -45,7 +45,7 @@
       {:success true}
       {:success false :value result})))
 
-(defn get-state-of-payments [remote-service]
+(defn get-statuses-of-payments [remote-service]
   (let [c (a/chan)]
     (a/go
       (try
@@ -57,7 +57,7 @@
          (when-not (:success v)
            (throw (or (:exception v)
                       (Exception. (str (:value v))))))
-         (log/debug "Succesfully fetched state from Rondo!"))
+         (log/debug "Succesfully fetched statuses from Rondo!"))
       (a/timeout timeout-limit) ([_] (log/warn "Timeout from Rondo!")))))
 
 (defjob RondoJob
@@ -65,7 +65,7 @@
   (log/info "Running scheduled fetch of payments now from rondo!")
   (let [remote-service (rondo-service/create-service
                          (get-in config [:server :rondo-sftp]))]
-    (get-state-of-payments remote-service)))
+          (get-statuses-of-payments remote-service)))
 
 (defn schedule-fetch-from-rondo []
   (let [s (qs/start (qs/initialize))

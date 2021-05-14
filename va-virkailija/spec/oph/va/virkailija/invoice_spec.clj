@@ -39,7 +39,7 @@
               :invoice-date (f/parse "2017-12-20T10:24:59.750Z")
               :organisation "6600"
               :receipt-date (f/parse "2017-12-20T10:24:59.750Z")
-              :state 0
+              :paymentstatus-id "created"
               :transaction-account "5000"
               :partner ""
               :batch-number 13})
@@ -214,7 +214,7 @@
                       {:application-id (:id application)
                        :payment-sum 20000
                        :batch-id (:id batch)
-                       :state 1
+                       :paymentstatus-id "waiting"
                        :phase 0}
                       {:person-oid "12345"
                        :first-name "Test"

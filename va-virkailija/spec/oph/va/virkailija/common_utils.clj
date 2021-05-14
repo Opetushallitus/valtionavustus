@@ -30,7 +30,7 @@
 (defn json->map [body] (parse-string body true))
 
 (def valid-payment-values
-  {:state 1
+  {:paymentstatus-id "waiting"
    :batch-id nil
    :payment-sum 50000
    :phase 0})
@@ -163,7 +163,7 @@
       {:application-id (:id application)
        :payment-sum sum
        :batch-id (:id batch)
-       :state 1
+       :paymentstatus-id "waiting"
        :phase phase}
       {:person-oid "12345"
        :first-name "Test"

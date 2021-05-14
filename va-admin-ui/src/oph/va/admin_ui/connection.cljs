@@ -96,10 +96,10 @@
   (http/post (format "/%s/payment-batches/%d/payments/" api-path id)
              {:with-credentials? true}))
 
-(defn set-batch-payments-state [id state]
+(defn set-batch-payments-paymentstatus [id paymentstatus]
   (http/put (format "/%s/payment-batches/%d/payments/" api-path id)
              {:with-credentials? true
-              :json-params {:state state}}))
+              :json-params {:paymentstatus-id paymentstatus}}))
 
 (defn get-va-code-values-by-type [value-type]
   (get-cached (format "/%s/va-code-values?value-type=%s"

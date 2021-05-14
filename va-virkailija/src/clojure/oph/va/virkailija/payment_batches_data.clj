@@ -90,7 +90,7 @@
                 (when (:success result)
                   (payments-data/update-payment
                     (assoc (:payment result)
-                           :state 2 :filename (:filename result)) identity)
+                           :paymentstatus-id "sent" :filename (:filename result)) identity)
                   (application-data/revoke-application-tokens
                     (:id application)))
                 (a/>! c result))))))
@@ -106,7 +106,7 @@
             (application-data/get-application-unsent-payments
               (:id application))]
       (payments-data/update-payment
-        (assoc payment :state 3 :filename "") identity)
+        (assoc payment :paymentstatus-id "paid" :filename "") identity)
       (application-data/revoke-application-tokens
         (:id application)))))
 

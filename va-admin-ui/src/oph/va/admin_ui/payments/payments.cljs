@@ -4,11 +4,11 @@
             [cljs-time.coerce :as tc]
             [cljs-time.format :as tf]))
 
-(def state-str
-  {0 "Luotu"
-   1 "Odottaa"
-   2 "Lähetetty"
-   3 "Maksettu"})
+(def paymentstatus-str
+  {"created" "Luotu"
+   "waiting" "Odottaa"
+   "sent" "Lähetetty"
+   "paid" "Maksettu"})
 
 (defn valid-batch-values? [values]
   (no-nils? values [:due-date :invoice-date :receipt-date]))
@@ -25,7 +25,7 @@
                   :inspector-email
                   :batch-number
                   :receipt-date])
-    :state 0
+    :paymentstatus-id "created"
     :batch-id (:id batch)))
 
 (defn- batch-payable? [pred applications]
@@ -39,7 +39,7 @@
 (defn multibatch-payable? [applications]
   (batch-payable?
     (fn [application]
-      (some (fn [payment] (= (:state payment) 1))
+      (some (fn [payment] (= (:paymentstatus-id payment) "waiting"))
             (:payments application)))
     applications))
 
@@ -75,8 +75,8 @@
 (defn get-error-messages [errors default-value]
   (map #(get error-messages % default-value) errors))
 
-(defn- set-state-str [p]
-  (assoc p :state-str (get state-str (:state p))))
+(defn- set-paymentstatus-str [p]
+  (assoc p :paymentstatus-str (get paymentstatus-str (:paymentstatus-id p))))
 
 (defn- convert-application-payments [application payments]
   (let [application-info
@@ -88,7 +88,7 @@
           :bank-iban (get-answer-value (:answers application) "bank-iban"))]
     (map
       #(-> %
-           set-state-str
+           set-paymentstatus-str
            (merge application-info))
       payments)))
 

@@ -16,7 +16,7 @@
     (:register-number payment)]
    [table/table-row-column
     {:style theme/narrow-column}
-    (:state-str payment)]
+    (:paymentstatus-str payment)]
    [table/table-row-column {:title (:organization-name payment)}
     (:organization-name payment)]
    [table/table-row-column
@@ -105,7 +105,7 @@
               :on-filter #(update-filters! filters %1 %2)}]
             [table/sortable-header-column
              {:title "Tila"
-              :column-key :state-str
+              :column-key :paymentstatus-str
               :sort-params @sort-params
               :style theme/narrow-column
               :on-sort #(sort-column! sort-params %)

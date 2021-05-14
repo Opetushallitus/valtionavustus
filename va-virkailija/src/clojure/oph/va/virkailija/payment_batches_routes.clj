@@ -38,16 +38,15 @@
   (compojure-api/PUT
     "/:id/payments/" [id :as request]
     :path-params [id :- Long]
-    :body [data (compojure-api/describe
-                  schema/SimplePayment "Payment update values")]
+    :body [data (compojure-api/describe schema/SimplePayment "Payment update values")]
     :summary "Update batch payments"
-    (if (= (:state data) 3)
+    (if (= (:paymentstatus-id data) "paid")
       (let [batch (data/get-batch id)]
         (data/set-payments-paid
           {:identity (authentication/get-request-identity request)
            :grant-id (:grant-id batch)})
         (ok ""))
-      (bad-request "Only updating state to paid is allowed"))))
+      (bad-request "Only updating paymentstatus to paid is allowed"))))
 
 (defn- send-payments []
   (compojure-api/POST

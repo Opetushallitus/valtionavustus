@@ -4,7 +4,7 @@ FROM
   virkailija.payments
 WHERE
   application_id = :application_id AND
-  state < 2 AND
+  paymentstatus_id IN ('created', 'waiting') AND
   version_closed IS NULL AND
   deleted IS NULL
 ORDER BY

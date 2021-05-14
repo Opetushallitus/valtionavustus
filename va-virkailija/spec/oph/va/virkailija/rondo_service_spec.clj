@@ -100,7 +100,7 @@
             (reset! deleted-remote-files nil)
             (reset! reported-exceptions nil))
 
-          (it "Gets state of payments from a remote server"
+          (it "Gets paymentstatus of payments from a remote server"
               (let [test-service (create-test-service configuration)
                     grant (first (grant-data/get-grants))
                     submission (create-submission (:form grant) {})
@@ -119,11 +119,11 @@
                               :payment-sum 26000
                               :batch-id (:id batch)
                               :phase 0
-                              :state 2
+                              :paymentstatus-id "sent"
                               :invoice-date invoice-date}
                              user)
-                    result  (rondo-scheduling/get-state-of-payments test-service)]
-                (should= 3  (:state (payments-data/get-payment (:id payment))))))
+                    result  (rondo-scheduling/get-statuses-of-payments test-service)]
+                (should= "paid" (:paymentstatus-id (payments-data/get-payment (:id payment))))))
 
           (it "If payment is already paid ignore exception and delete remote file"
               (let [configuration {:enabled true
@@ -145,12 +145,12 @@
                              {:application-id (:id application)
                               :payment-sum 26000
                               :batch-id (:id batch)
-                              :state 3
+                              :paymentstatus-id "paid"
                               :phase 0
                               :invoice-date invoice-date}
                              user)]
                 (should=
-                 nil (rondo-scheduling/get-state-of-payments test-service)))
+                  nil (rondo-scheduling/get-statuses-of-payments test-service)))
                 (should= '("file.xml") @deleted-remote-files)
                 (should= nil @reported-exceptions))
 
@@ -160,13 +160,13 @@
                     test-service (create-test-service configuration)
                     grant (first (grant-data/get-grants))]
                 (payments-data/delete-all-grant-payments (:id grant))
-                (should= nil (rondo-scheduling/get-state-of-payments test-service)))
+                (should= nil (rondo-scheduling/get-statuses-of-payments test-service)))
                 (should= nil @deleted-remote-files)
                 (should= nil @reported-exceptions))
 
           (it "If xml is malformed, report exception and don't delete remote file"
               (let [test-service (create-wrong-test-service configuration)]
-                (should= nil (rondo-scheduling/get-state-of-payments test-service)))
+                (should= nil (rondo-scheduling/get-statuses-of-payments test-service)))
                 (should= nil @deleted-remote-files)
                 (should= 1 (count @reported-exceptions))))
 
