@@ -33,10 +33,12 @@ export default class EditorSelector extends React.Component {
       codeOptions,
       helpTexts
     } = this.props
+    const muutospaatosprosessiEnabled = environment.muutospaatosprosessi && environment.muutospaatosprosessi["enabled?"] || false
     let subTabContent
     switch (subTab) {
       case "haku-editor":
         subTabContent = <HakuEdit avustushaku={avustushaku}
+                                  muutospaatosprosessiEnabled={muutospaatosprosessiEnabled}
                                   vaUserSearch={vaUserSearch}
                                   userInfo={userInfo}
                                   controller={controller}

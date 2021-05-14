@@ -167,6 +167,15 @@ describe('Muutospäätösprosessi', () => {
       hakemusID = hid
     })
 
+    it('shows warning on Haun tiedot tab', async () => {
+      await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
+      expect(await textContent(page, '[data-test-id="muutoshakukelvoton-warning"]')).toEqual(
+        'Huom.! Uusi muutoshakutoiminnallisuus ei ole käytössä tälle avustushaulle.' +
+        'Avustushaun päätöksiin ei tule linkkiä uudelle muutoshakusivulle' +
+        'Uusi muutoshakutoiminnallisuus ei ole käytössä tästä avustushausta luoduille kopioille'
+      )
+    })
+
     it('does not send link to muutoshaku page with päätös', async () => {
       const { token, 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
       const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
