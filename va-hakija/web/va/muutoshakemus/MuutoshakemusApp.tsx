@@ -1,20 +1,54 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import * as queryString from 'query-string'
+import momentLocalizer from 'react-widgets-moment'
+import moment from 'moment'
+
+import { getTranslationContext, TranslationContext } from 'va-common/web/va/i18n/TranslationContext'
+import { Language } from 'va-common/web/va/i18n/translations'
 
 import { MuutoshakemusComponent } from './Muutoshakemus'
 import { Paatos } from './Paatos'
-import * as queryString from "query-string"
-import {
-  getTranslationContextFromQuery,
-  TranslationContext
-} from "../../../../va-common/web/va/i18n/TranslationContext"
 
-const query = queryString.parse(location.search)
-const translationContext = getTranslationContextFromQuery(query)
+export type Query = {
+  lang?: Language
+  'user-key'?: string
+  'avustushaku-id'?: string
+}
+
+function getLanguage(s: unknown): Language {
+  if (s === 'sv') return 'sv'
+  return 'fi'
+}
+
+const query = queryString.parse(location.search) as Query
+const lang = getLanguage(query.lang)
+const translationContext = getTranslationContext(lang)
+
+if (lang === 'fi') {
+  moment.locale(lang)
+} else {
+  moment.locale(`${lang}-with-finnish-date-format`, {
+    parentLocale: lang,
+    longDateFormat: {
+      LT: 'HH.mm',
+      LTS: 'HH.mm.ss',
+      L: 'DD.MM.YYYY',
+      LL: 'Do MMMM YYYY',
+      LLL: 'Do MMMM YYYY, HH.mm',
+      LLLL: 'dddd, Do MMMM YYYY, HH.mm',
+      l: 'D.M.YYYY',
+      ll: 'Do MMM YYYY',
+      lll: 'Do MMM YYYY, HH.mm',
+      llll: 'ddd, Do MMM YYYY, HH.mm',
+    }
+  })
+}
+momentLocalizer()
 
 const app = (
   <TranslationContext.Provider value={translationContext}>
-    {location.pathname.endsWith('/paatos') ? <Paatos /> : <MuutoshakemusComponent /> }
+    {location.pathname.endsWith('/paatos') ? <Paatos query={query} /> : <MuutoshakemusComponent query={query} /> }
   </TranslationContext.Provider>
 )
 ReactDOM.render(app, document.getElementById('app'))

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import * as queryString from 'query-string'
-import momentLocalizer from 'react-widgets-moment'
 import moment from 'moment'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusValues } from 'va-common/web/va/MuutoshakemusValues'
 import { Muutoshakemus, MuutoshakemusProps } from 'va-common/web/va/types/muutoshakemus'
 import { getProjectEndDate, getProjectEndMoment, getTalousarvio, getTalousarvioValues } from 'va-common/web/va/Muutoshakemus'
+import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
 
 import { MuutoshakemusFormSection } from './components/MuutoshakemusFormSection'
 import { AvustuksenKayttoaikaInput } from './components/jatkoaika/AvustuksenKayttoaikaInput'
@@ -16,13 +15,10 @@ import {TopBar} from './components/TopBar'
 import OriginalHakemusIframe from './OriginalHakemusIframe'
 import ErrorBoundary from './ErrorBoundary'
 import { createFormikHook } from './formik'
-import {useTranslations} from '../../../../va-common/web/va/i18n/TranslationContext'
+import { Query } from './MuutoshakemusApp'
 
 import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
-
-moment.locale('fi')
-momentLocalizer()
 
 let initialState: MuutoshakemusProps = {
   status: 'LOADING',
@@ -32,11 +28,10 @@ let initialState: MuutoshakemusProps = {
   muutoshakemukset: []
 }
 
-export const MuutoshakemusComponent = () => {
+export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
   const { t, lang } = useTranslations()
-  const query = queryString.parse(location.search)
-  const userKey = query['user-key']
-  const avustushakuId = query['avustushaku-id']
+  const userKey = query['user-key'] || ''
+  const avustushakuId = query['avustushaku-id'] ? parseInt(query['avustushaku-id']) : 0
   const [state, setState] = useState<MuutoshakemusProps>(initialState)
   const f = createFormikHook(userKey, lang)
   const existingNewMuutoshakemus = state.muutoshakemukset.find(m => m.status === 'new')

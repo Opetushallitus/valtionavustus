@@ -16,7 +16,8 @@ import {
   createRandomHakuValues,
   navigateToPaatos,
   Budget,
-  Answers
+  Answers,
+  clearAndType
 } from './test-util'
 
 import moment from 'moment'
@@ -171,6 +172,15 @@ describe('Translations', () => {
         it('error message is in swedish', async () => {
           const title = await getElementInnerText(page, '.muutoshakemus__perustelut .muutoshakemus__error-message')
           expect(title).toBe('Obligatorisk uppgift')
+        })
+
+        it('calendar component is in Swedish', async () => {
+          const monthButtonSelector = '#rw_1_date_calendar_label'
+          await clearAndType(page, '[name=haettuKayttoajanPaattymispaiva]', '13.06.2021')
+          await clickElement(page, 'button[title="Select date"]')
+          await page.waitForSelector(monthButtonSelector)
+          const title = await getElementInnerText(page, monthButtonSelector)
+          expect(title).toBe('juni 2021')
         })
       })
 

@@ -21,14 +21,6 @@ export const useTranslations = () => {
   return context
 }
 
-export function getTranslationContextFromQuery(query: any): TranslationContext {
-  const lang = validateLanguage(query.lang) || 'fi'
-
+export function getTranslationContext(lang: Language): TranslationContext {
   return { t: translations[lang], lang }
-}
-
-function validateLanguage(s: unknown): Language | undefined {
-  if (s === 'fi') return 'fi'
-  if (s === 'sv') return 'sv'
-  return undefined
 }
