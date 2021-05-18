@@ -728,12 +728,12 @@ etunimi.sukunimi@oph.fi
 
                 it('New project end date title is displayed to virkailija in finnish', async () => {
                   const title = await page.$eval('[data-test-id="muutoshakemus-new-end-date-title"]', el => el.textContent)
-                  expect(title).toBe('Hyväksytty muutos')
+                  expect(title).toBe('Hyväksytty uusi viimeinen käyttöpäivä')
                 })
 
                 it('Old project end date title is displayed to virkailija in finnish', async () => {
                   const title = await page.$eval('[data-test-id="muutoshakemus-current-end-date-title"]', el => el.textContent)
-                  expect(title).toBe('Vanha päättymisaika')
+                  expect(title).toBe('Vanha viimeinen käyttöpäivä')
                 })
 
                 it('Reasoning title is displayed to virkailija in finnish', async () => {

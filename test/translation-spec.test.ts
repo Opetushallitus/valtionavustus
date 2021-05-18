@@ -280,12 +280,12 @@ describe('Translations', () => {
 
           it('current budget title is in finnish', async () => {
             const title = await getElementInnerText(page, '.currentBudget')
-            expect(title).toBe('Voimassaoleva talousarvio')
+            expect(title).toBe('Voimassaoleva budjetti')
           })
 
           it('applied budget title is in finnish', async () => {
             const title = await getElementInnerText(page, '[data-test-id="budget-change-title"]')
-            expect(title).toBe('Haetut muutokset')
+            expect(title).toBe('Haettu uusi budjetti')
           })
 
           it('reasoning title is in finnish', async () => {
