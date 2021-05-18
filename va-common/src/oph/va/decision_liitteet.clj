@@ -41,4 +41,6 @@
                               {:id          "_2018-03"
                                :description "Voimassa 12.3.2018 alkaen"}
                               {:id          "_2020-12"
-                               :description "Voimassa 17.12.2020 alkaen"}]}]}])
+                               :description "Voimassa 17.12.2020 alkaen"}
+                              {:id          "_2021-05"
+                               :description "Voimassa 11.5.2021 alkaen"}]}]}])
