@@ -60,7 +60,6 @@ export const TalousarvioAcceptWithChangesForm = ({ f, talousarvio, requestedTalo
         <div className="changedAmountEur" />
       </div>
       <div className="muutoshakemus_talousarvio">
-        <div className="expensesHeader"><b>Menot</b></div>
         {talousarvio.map(meno => <MenoRow f={f} meno={meno} key={meno["type"]} requestedTalousarvio={requestedTalousarvio} />)}
       </div>
       <hr className="muutoshakemus_talousarvio_horizontalSeparatorWithRequestedAmount" />

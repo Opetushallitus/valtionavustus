@@ -199,11 +199,6 @@ describe('Translations', () => {
           expect(title).toBe('Ny budget')
         })
 
-        it('Expenses header title is in swedish', async () => {
-          const title = await getElementInnerText(page, '.expensesHeader')
-          expect(title).toBe('Utgifter')
-        })
-
         it('Total sum title is in swedish', async () => {
           const title = await getElementInnerText(page, '[data-test-id="expenses-total-title"]')
           expect(title).toBe('Sammanlagt')

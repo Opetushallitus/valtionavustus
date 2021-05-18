@@ -58,7 +58,6 @@ export const TalousarvioForm = ({ f, talousarvio }: MuutosTaloudenKayttosuunnite
           <div className="currentBudget uppercase">{t.muutosTaloudenKayttosuunnitelmaan.currentBudget}</div>
           <div className="modifiedBudget uppercase">{t.muutosTaloudenKayttosuunnitelmaan.modifiedBudget}</div>
         </div>
-        <div className="expensesHeader">{t.muutosTaloudenKayttosuunnitelmaan.expenses}</div>
         {talousarvio.map((meno: Meno) => <MenoRow f={f} lang={lang} meno={meno} key={meno["type"]} />)}
       </div>
       <hr className="muutoshakemus_talousarvio_horizontalSeparator" />

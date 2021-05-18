@@ -53,7 +53,6 @@ export const TalousarvioTable = (props: MuutosTaloudenKayttosuunnitelmaanProps) 
           <h3 className={`${headerClass} currentBudget`}>{t.muutosTaloudenKayttosuunnitelmaan.budget.budgetOriginalTitle(isAccepted)}</h3>
           <h3 className={headerClass} data-test-id='budget-change-title'>{t.muutosTaloudenKayttosuunnitelmaan.budget.budgetChangeTitle(isAccepted)}</h3>
         </div>
-        <div className="expensesHeader">{t.muutosTaloudenKayttosuunnitelmaan.expenses}</div>
         {newTalousarvio.map((meno: Meno) => <MenoRow linethrough={!paatos} meno={meno} key={meno["type"]} currentTalousarvio={currentTalousarvio} />)}
       </div>
       <hr className="muutoshakemus_talousarvio_horizontalSeparator" />

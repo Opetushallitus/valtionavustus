@@ -30,7 +30,6 @@ export const translationsFi = {
     checkboxTitle: 'Haen muutosta hankkeen talouden käyttösuunnitelmaan',
     currentBudget: 'Voimassaoleva talousarvio',
     modifiedBudget: 'Uusi talousarvio',
-    expenses: 'Menot',
     expensesTotal: 'Menot yhteensä',
     budget: {
       budgetOriginalTitle: (isAccepted: boolean): string => isAccepted ? 'Vanha talousarvio' : 'Voimassaoleva talousarvio',
@@ -172,7 +171,6 @@ const translationsSv: Translations = {
     checkboxTitle: 'Jag ansöker om ändringar i projektets budget',
     currentBudget: 'Nuvarande budget',
     modifiedBudget: 'Ny budget',
-    expenses: 'Utgifter',
     expensesTotal: 'Sammanlagt',
     applicantReasoning: 'Den sökandes motiveringar',
     budget: {
