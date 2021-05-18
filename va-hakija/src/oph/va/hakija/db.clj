@@ -109,16 +109,10 @@
     {:hakemus hakemus :submission submission}))
 
 (defn- get-talousarvio [id entity]
-  (let [menot (query (str "SELECT mh.amount, m.type, m.translation_fi, m.translation_se
-                           FROM virkailija.menoluokka_" entity " as mh, virkailija.menoluokka as m
-                           WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
-                     [id])]
-    (map
-      (fn [row] {:type (:type row)
-                :amount (:amount row)
-                :translation-fi (:translation-fi row)
-                :translation-sv (:translation-se row)})
-      menot)))
+  (query (str "SELECT mh.amount, m.type, m.translation_fi, m.translation_sv
+               FROM virkailija.menoluokka_" entity " as mh, virkailija.menoluokka as m
+               WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
+         [id]))
 
 (defn get-normalized-hakemus [user-key]
   (log/info (str "Get normalized hakemus with user-key: " user-key))

@@ -21,16 +21,10 @@
       [avustushaku-id (name type) paatos-id amount])))
 
 (defn- get-talousarvio [id entity]
-  (let [menot (query (str "SELECT mh.amount, m.type, m.translation_fi, m.translation_se
-                           FROM virkailija.menoluokka_" entity " as mh, virkailija.menoluokka as m
-                           WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
-                     [id])]
-    (map
-      (fn [row] {:type (:type row)
-                :amount (:amount row)
-                :translation-fi (:translation-fi row)
-                :translation-sv (:translation-se row)})
-      menot)))
+  (query (str "SELECT mh.amount, m.type, m.translation_fi, m.translation_sv
+               FROM virkailija.menoluokka_" entity " as mh, virkailija.menoluokka as m
+               WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
+         [id]))
 
 (defn- store-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
   (with-tx (fn [tx]
@@ -52,13 +46,7 @@
     (assoc created-paatos :talousarvio (get-talousarvio (:id created-paatos) "paatos"))))
 
 (defn get-menoluokkas [avustushaku-id]
-  (let [menot (query "SELECT * FROM virkailija.menoluokka WHERE avustushaku_id = ?" [avustushaku-id])]
-    (map
-      (fn [row]
-        { :type (:type row)
-          :translation-fi (:translation-fi row)
-          :translation-sv (:translation-se row) })
-      menot)))
+  (query "SELECT type, translation_fi, translation_sv FROM virkailija.menoluokka WHERE avustushaku_id = ?" [avustushaku-id]))
 
 (defn get-normalized-hakemus [hakemus-id]
   (log/info (str "Get normalized hakemus with id: " hakemus-id))
@@ -95,16 +83,10 @@
   (:contact-email (get-normalized-hakemus hakemus-id)))
 
 (defn- get-talousarvio [id entity]
-  (let [menot (query (str "SELECT mh.amount, m.type, m.translation_fi, m.translation_se
-                           FROM virkailija.menoluokka_" entity " as mh, virkailija.menoluokka as m
-                           WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
-                     [id])]
-    (map
-      (fn [row] {:type (:type row)
-                :amount (:amount row)
-                :translation-fi (:translation-fi row)
-                :translation-sv (:translation-se row)})
-      menot)))
+  (query (str "SELECT mh.amount, m.type, m.translation_fi, m.translation_sv
+               FROM virkailija.menoluokka_" entity " as mh, virkailija.menoluokka as m
+               WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
+         [id]))
 
 (defn get-muutoshakemukset [hakemus-id]
   (log/info (str "Get muutoshakemus with hakemus id: " hakemus-id))
@@ -514,7 +496,7 @@
 (defn- budget->menoluokka [budget-elem]
   {:type (:id budget-elem)
    :translation_fi (:fi (:label budget-elem))
-   :translation_se (:se (:label budget-elem))})
+   :translation_sv (:sv (:label budget-elem))})
 
 (defn- form->menoluokka [form]
   (let [content         (:content form)
@@ -526,13 +508,13 @@
 
 (defn- upsert-menoluokka [tx application-id menoluokka]
   (let [id-rows (query tx
-              "INSERT INTO virkailija.menoluokka (avustushaku_id, type, translation_fi, translation_se)
+              "INSERT INTO virkailija.menoluokka (avustushaku_id, type, translation_fi, translation_sv)
               VALUES (?, ?, ?, ?)
               ON CONFLICT (avustushaku_id, type) DO UPDATE SET
                 translation_fi = EXCLUDED.translation_fi,
-                translation_se = EXCLUDED.translation_se
+                translation_sv = EXCLUDED.translation_sv
               RETURNING id"
-              [application-id (:type menoluokka) (:translation_fi menoluokka) (:translation_se menoluokka)])]
+              [application-id (:type menoluokka) (:translation_fi menoluokka) (:translation_sv menoluokka)])]
     (:id (first id-rows))))
 
 (defn- parameter-list [list]
@@ -551,8 +533,8 @@
 
 (defn copy-menoluokka-rows [tx from-application-id to-application-id]
   (execute! tx
-            "INSERT INTO virkailija.menoluokka (avustushaku_id, type, translation_fi, translation_se)
-            SELECT ?, type, translation_fi, translation_se
+            "INSERT INTO virkailija.menoluokka (avustushaku_id, type, translation_fi, translation_sv)
+            SELECT ?, type, translation_fi, translation_sv
             FROM virkailija.menoluokka
             WHERE avustushaku_id = ?"
             [to-application-id from-application-id]))

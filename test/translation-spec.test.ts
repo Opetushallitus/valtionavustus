@@ -54,6 +54,18 @@ export const budget: Budget = {
   selfFinancing: '1',
 }
 
+const swedishBudgetRowNames = [
+  'Personalkostnader',
+  'Material, utrustning och varor',
+  'Anskaffning av utrustning',
+  'Tjänster',
+  'Hyror',
+  'Resekostnader',
+  'Övriga kostnader'
+]
+
+const sortFn = (a: any, b: any) => a - b
+
 describe('Translations', () => {
   let browser: Browser
   let page: Page
@@ -204,12 +216,18 @@ describe('Translations', () => {
           expect(title).toBe('Sammanlagt')
         })
 
-        it('Perustelut title is in swedish', async () => {
+        it('Reasoning title is in swedish', async () => {
           const title = await getElementInnerText(page, 'label[for="perustelut-taloudenKayttosuunnitelmanPerustelut"]')
           expect(title).toBe('Motivering')
         })
-      })
 
+        it('Budget rows are in Swedish', async () => {
+          const budgetRows = await page.$$eval('[data-test-id=meno-input-row]', elements => {
+            return elements.map(elem => elem.querySelector('.description')?.textContent || '')
+          })
+          expect(budgetRows.sort(sortFn)).toEqual(swedishBudgetRowNames.sort(sortFn))
+        })
+      })
 
       describe('And hakija submits muutoshakemus #1 with jatkoaika and budget changes', () => {
         const muutoshakemus1Budget = {
@@ -366,6 +384,13 @@ describe('Translations', () => {
               it.skip('budget change is mentioned in the info section', async () => {
                 const budgetChangeText = await getElementInnerText(page, '[data-test-id="budget-change"]')
                 expect(budgetChangeText).toEqual('Och samma på svenska! - translations have not been provided')
+              })
+
+              it('Budget rows are in Swedish', async () => {
+                const budgetRows = await page.$$eval('[data-test-id=meno-input-row]', elements => {
+                  return elements.map(elem => elem.querySelector('.description')?.textContent || '')
+                })
+                expect(budgetRows.sort(sortFn)).toEqual(swedishBudgetRowNames.sort(sortFn))
               })
             })
           })

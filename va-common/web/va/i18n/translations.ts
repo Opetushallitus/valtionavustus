@@ -148,7 +148,6 @@ const translationsSv: Translations = {
   errorNotification: 'Det gick inte att spara ändringarna',
   originalHakemus: 'Ursprunglig ansökan',
   contactPersonEdit: {
-    ...translationsFi.contactPersonEdit,
     haku: 'Statsunderstöd',
     registerNumberTitle: 'Ärendenummer',
     hanke: 'Projekt',
@@ -157,7 +156,6 @@ const translationsSv: Translations = {
     phone: 'Kontaktpersonens telefonnummer'
   },
   applicationEdit: {
-    ...translationsFi.applicationEdit,
     title: 'Ändringar som ändringsansökan gäller',
     reasoning: 'Motivering',
   },
@@ -167,7 +165,6 @@ const translationsSv: Translations = {
     newExpirationDateTitle: 'Ny sista användningsdag',
   },
   muutosTaloudenKayttosuunnitelmaan: {
-    ...translationsFi.muutosTaloudenKayttosuunnitelmaan,
     checkboxTitle: 'Jag ansöker om ändringar i projektets budget',
     currentBudget: 'Nuvarande budget',
     modifiedBudget: 'Ny budget',
