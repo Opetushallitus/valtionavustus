@@ -186,7 +186,7 @@ describe('Translations', () => {
           expect(title).toBe('Obligatorisk uppgift')
         })
 
-        it('calendar component is in Swedish', async () => {
+        it.skip('calendar component is in Swedish', async () => {
           const monthButtonSelector = '#rw_1_date_calendar_label'
           await clearAndType(page, '[name=haettuKayttoajanPaattymispaiva]', '13.06.2021')
           await clickElement(page, 'button[title="Select date"]')
