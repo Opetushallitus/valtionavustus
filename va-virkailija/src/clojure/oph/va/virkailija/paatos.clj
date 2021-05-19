@@ -246,9 +246,7 @@
                            first-hakemus (hakija-api/get-hakemus first-hakemus-id)
                            first-hakemus-user-key (:user_key first-hakemus)
                            first-hakemus-token (get-application-token first-hakemus-id)
-                           budjettimuutoshakemus-enabled (and
-                                                          (get-in config [:budjettimuutoshakemus :enabled?])
-                                                          (virkailija-db/has-multiple-menoluokka-rows first-hakemus-id))
+                           budjettimuutoshakemus-enabled (virkailija-db/has-multiple-menoluokka-rows first-hakemus-id)
                            include-muutoshaku-link? (email/should-include-muutoshaku-link-in-paatos-email? avustushaku first-hakemus-id)]
                           (ok (merge
                                 {:status      "ok"

@@ -6,8 +6,7 @@
  :db {:database-name "va-dev"
       :server-name "va-postgres"}
  :nrepl-enabled? true
- :email {:enabled? true 
+ :email {:enabled? true
          :host "fakesmtp"
          :port 25}
- :applications-ui {:enabled? true}
- :budjettimuutoshakemus {:enabled? true}}
+ :applications-ui {:enabled? true}}

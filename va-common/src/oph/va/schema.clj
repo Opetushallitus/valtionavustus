@@ -61,7 +61,6 @@
    (s/optional-key :multibatch-payments) (s/maybe {:enabled? s/Bool})
    (s/optional-key :va-code-values) (s/maybe {:enabled? s/Bool})
    (s/optional-key :muutospaatosprosessi) (s/maybe {:enabled? s/Bool})
-   (s/optional-key :budjettimuutoshakemus) (s/maybe {:enabled? s/Bool})
    (s/optional-key :reports) (s/maybe {:enabled? s/Bool})
    (s/optional-key :selvitys-limit) (s/maybe {:enabled? s/Bool})})
 
@@ -160,7 +159,7 @@
    :hakemus-version Long
    :filename s/Str})
 
-(s/defschema Meno 
+(s/defschema Meno
   "Meno contains a single menoluokka from talousarvio"
   {
    :type s/Str

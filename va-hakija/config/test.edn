@@ -5,5 +5,4 @@
                 :sv "http://localhost:8081/"}}
  :api {:restricted-routes? false}
  :db {:database-name "va-test"}
- :budjettimuutoshakemus {:enabled? true}
  :email {:print-mail-on-disable? false}}

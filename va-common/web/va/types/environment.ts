@@ -8,7 +8,6 @@ export type EnvironmentApiResponse = {
       sv: string
     }
   }
-  budjettimuutoshakemus: FeatureFlag
   "va-code-values": FeatureFlag
   reports: FeatureFlag
 }

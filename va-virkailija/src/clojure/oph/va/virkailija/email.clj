@@ -184,9 +184,7 @@
         lang (keyword lang-str)
         url (paatos-url (:id avustushaku) (:user_key hakemus) (keyword lang-str))
         paatos-refuse-url (email/refuse-url (:id avustushaku) (:user_key hakemus) lang token)
-        budjettimuutoshakemus-enabled? (and
-                                        (get-in config [:budjettimuutoshakemus :enabled?])
-                                        (has-multiple-menoluokka-rows (:id hakemus)))
+        budjettimuutoshakemus-enabled? (has-multiple-menoluokka-rows (:id hakemus))
         include-muutoshaku-link? (should-include-muutoshaku-link-in-paatos-email? avustushaku (:id hakemus))
         paatos-modify-url (email/modify-url (:id avustushaku) (:user_key hakemus) lang token include-muutoshaku-link?)
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])

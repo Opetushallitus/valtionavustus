@@ -49,5 +49,4 @@
  :tasmaytysraportti-create {:enabled? false}
  :tasmaytysraportti-send {:enabled? false}
  :muutospaatosprosessi {:enabled? true}
- :budjettimuutoshakemus {:enabled? true}
  :test-apis {:enabled? false}}

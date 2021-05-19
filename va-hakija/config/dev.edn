@@ -9,5 +9,4 @@
  :email {:enabled? true
          :host "localhost"
          :port 42069}
- :budjettimuutoshakemus {:enabled? true}
  :applications-ui {:enabled? true}}

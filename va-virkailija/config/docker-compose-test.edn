@@ -6,7 +6,7 @@
           :require-https? false}
  :api {:restricted-routes? false}
  :nrepl-enabled? true
- :email {:enabled? true 
+ :email {:enabled? true
          :host "fakesmtp"
          :port 25
          :to-finance ["test@test.com"]}
@@ -14,7 +14,6 @@
             :delete-payments? true}
  :va-users {:use-cache? false }
  :tasmaytysraportti-create {:enabled? true}
- :budjettimuutoshakemus {:enabled? true}
  :db {:server-name "va-postgres"
       :database-name "va-dev"}
  :test-apis {:enabled? true}}

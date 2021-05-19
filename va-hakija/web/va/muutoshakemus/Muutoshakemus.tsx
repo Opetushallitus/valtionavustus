@@ -35,7 +35,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
   const [state, setState] = useState<MuutoshakemusProps>(initialState)
   const f = createFormikHook(userKey, lang)
   const existingNewMuutoshakemus = state.muutoshakemukset.find(m => m.status === 'new')
-  const enableBudgetChange = state.environment?.budjettimuutoshakemus["enabled?"] && state.hakemus?.talousarvio && state.hakemus.talousarvio.length > 1
+  const enableBudgetChange = state.hakemus?.talousarvio && state.hakemus.talousarvio.length > 1
 
   useEffect(() => {
     const fetchProps = async () => {

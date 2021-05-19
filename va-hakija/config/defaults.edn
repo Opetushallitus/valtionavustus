@@ -37,5 +37,4 @@
          :retry-multiplier 4
          :retry-max-time 60000}
  :selvitys-limit {:enabled? false}
- :budjettimuutoshakemus {:enabled? true}
  :muutospaatosprosessi {:enabled? true}}
