@@ -406,7 +406,7 @@ describe('Talousarvion muuttaminen', () => {
 
           it('Approved budget title is shown in finnish', async () => {
             const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="budget-change-title"]')
-            expect(currentBudgetHeader).toEqual('Hyväksytyt muutokset')
+            expect(currentBudgetHeader).toEqual('Hyväksytty uusi budjetti')
           })
 
           it('Asia is shown in finnish', async () => {
@@ -421,7 +421,7 @@ describe('Talousarvion muuttaminen', () => {
 
           it('Päätöksen tekijä is shown in finnish', async () => {
             const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="muutoshakemus-paatos-tekija-title"]')
-            expect(currentBudgetHeader).toEqual('Päätöksen tekijä')
+            expect(currentBudgetHeader).toEqual('Hyväksyjä')
           })
 
           it('Lisätietoja title is shown in finnish', async () => {
@@ -500,12 +500,12 @@ describe('Talousarvion muuttaminen', () => {
 
             it('budget is shown as a decision instead of a muutoshakemus', async () => {
               const currentBudgetHeader = await getElementInnerText(page, '.currentBudget')
-              expect(currentBudgetHeader).toEqual('Vanha talousarvio')
+              expect(currentBudgetHeader).toEqual('Vanha budjetti')
             })
 
             it('budget is shown as approved', async () => {
               const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="budget-change-title"]')
-              expect(currentBudgetHeader).toEqual('Hyväksytyt muutokset')
+              expect(currentBudgetHeader).toEqual('Hyväksytty uusi budjetti')
             })
 
             it('Budget changes are not displayed as linethrough', async () => {
@@ -528,12 +528,12 @@ describe('Talousarvion muuttaminen', () => {
 
             it('Current budget is shown as muutoshakemus', async () => {
               const currentBudgetHeader = await getElementInnerText(page, '.currentBudget')
-              expect(currentBudgetHeader).toEqual('Voimassaoleva talousarvio')
+              expect(currentBudgetHeader).toEqual('Voimassaoleva budjetti')
             })
 
             it('Applied budget is shown as muutoshakemus', async () => {
               const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="budget-change-title"]')
-              expect(currentBudgetHeader).toEqual('Haetut muutokset')
+              expect(currentBudgetHeader).toEqual('Haettu uusi budjetti')
             })
           })
 
@@ -546,7 +546,7 @@ describe('Talousarvion muuttaminen', () => {
 
             it('budget is shown as a muutoshakemus instead of a decision', async () => {
               const currentBudgetHeader = await getElementInnerText(page, '.currentBudget')
-              expect(currentBudgetHeader).toEqual('Voimassaoleva talousarvio')
+              expect(currentBudgetHeader).toEqual('Voimassaoleva budjetti')
               const existingAmount = await page.waitForSelector('[data-test-type="personnel-costs-row"] [class="existingAmount"] span', { visible: true })
               const textDecoration = await page.evaluate(e => getComputedStyle(e).textDecorationLine, existingAmount)
               expect(textDecoration).toBe('line-through')
