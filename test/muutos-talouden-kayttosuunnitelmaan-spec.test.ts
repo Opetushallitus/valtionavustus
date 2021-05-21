@@ -142,10 +142,9 @@ describe('Talousarvion muuttaminen', () => {
       emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
     })
 
-    it('päätös email does not mention possibility of changing talousvaatimukset', async () => {
+    it('päätös email contains a link to muutoshakemus', async () => {
       emails.forEach(email => {
         expect(email.formatted).toContain(`${HAKIJA_URL}/muutoshakemus`)
-        expect(email.formatted).not.toContain(`Hakea muutosta hankkeen talouden käyttösuunnitelmaan`)
       })
     })
 
