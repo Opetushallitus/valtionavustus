@@ -220,33 +220,7 @@ etunimi.sukunimi@oph.fi
 
     it('does not show link to muutoshaku in email preview', async () => {
       await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
-      expect(await textContent(page, '.decision-email-content'))
-        // Concatenation to preserve the trailing space on the line ":D"
-        .toEqual(' - ' + `
-
-${haku.avustushakuName}
-
-Päätöstä voitte tarkastella tästä linkistä: ${HAKIJA_URL}/paatos/avustushaku/${avustushakuID}/hakemus/
-
-Jos päätätte olla ottamatta avustusta vastaan, voitte tehdä ilmoituksen tästä linkistä: ${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?avustushaku=${avustushakuID}&hakemus=&lang=fi&preview=true&token=&refuse-grant=true&modify-application=false
-
-Jos haluatte muuttaa yhteyshenkilön tiedot, voitte tehdä ilmoituksen tästä linkistä:
-
-
-
-Ilmoitus tulee tehdä päätöksessä mainittuun päivämäärään mennessä.
-
-Jos otatte avustuksen vastaan, ei siitä tarvitse ilmoittaa erikseen.
-
-Hausta vastaava valmistelija on mainittu päätöksessä.
-
-Opetushallitus
-Hakaniemenranta 6
-PL 380, 00531 Helsinki
-
-puhelin 029 533 1000
-etunimi.sukunimi@oph.fi
-`)
+      expect(await textContent(page, '.decision-email-content')).not.toContain(`${HAKIJA_URL}/muutoshakemus`)
     })
   })
 
