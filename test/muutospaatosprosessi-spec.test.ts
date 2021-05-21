@@ -276,9 +276,7 @@ etunimi.sukunimi@oph.fi
       emails.forEach(email => {
         const emailContent = email.formatted
         expect(emailContent).toContain(`${HAKIJA_URL}/muutoshakemus`)
-        expect(emailContent).toContain('- Päivittää yhteyshenkilön tiedot')
-        expect(emailContent).toContain('- Hakea pidennystä avustuksen käyttöaikaan')
-        expect(emailContent).not.toContain('- Hakea muutosta hankkeen talouden käyttösuunnitelmaan')
+        expect(emailContent).toContain('Pääsette tekemään muutoshakemuksen sekä muuttamaan yhteyshenkilöä ja hänen yhteystietojaan koko hankekauden ajan tästä linkistä')
       })
     })
 
@@ -864,9 +862,7 @@ etunimi.sukunimi@oph.fi
       emails.forEach(email => {
         const emailContent = email.formatted
         expect(emailContent).toContain(`${HAKIJA_URL}/muutoshakemus`)
-        expect(emailContent).toContain('- Päivittää yhteyshenkilön tiedot')
-        expect(emailContent).toContain('- Hakea pidennystä avustuksen käyttöaikaan')
-        expect(emailContent).toContain('- Hakea muutosta hankkeen talouden käyttösuunnitelmaan')
+        expect(emailContent).toContain('Pääsette tekemään muutoshakemuksen sekä muuttamaan yhteyshenkilöä ja hänen yhteystietojaan koko hankekauden ajan tästä linkistä')
       })
     })
 

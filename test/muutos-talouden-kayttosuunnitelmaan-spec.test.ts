@@ -587,7 +587,7 @@ describe('Talousarvion muuttaminen', () => {
       const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
       emails.forEach(email => {
         const emailContent = email.formatted
-        expect(emailContent).toContain('- Hakea muutosta hankkeen talouden käyttösuunnitelmaan')
+        expect(emailContent).toContain('Pääsette tekemään muutoshakemuksen sekä muuttamaan yhteyshenkilöä ja hänen yhteystietojaan koko hankekauden ajan tästä linkistä')
       })
     })
 
