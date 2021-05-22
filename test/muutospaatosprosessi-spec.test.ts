@@ -223,34 +223,38 @@ etunimi.sukunimi@oph.fi`)
     })
 
     it('does not show link to muutoshaku in email preview', async () => {
+      const { token, 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
       await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
       expect(await textContent(page, '.decision-email-content'))
-        // Concatenation to preserve the trailing space on the line ":D"
-        .toEqual(' - ' + `
+        .toEqual(`${registerNumber} - ${answers.projectName}
 
 ${haku.avustushakuName}
 
-Päätöstä voitte tarkastella tästä linkistä: ${HAKIJA_URL}/paatos/avustushaku/${avustushakuID}/hakemus/
+Avustuspäätöstä voitte tarkastella tästä linkistä: ${HAKIJA_URL}/paatos/avustushaku/${avustushakuID}/hakemus/${userKey}
 
-Jos päätätte olla ottamatta avustusta vastaan, voitte tehdä ilmoituksen tästä linkistä: ${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?avustushaku=${avustushakuID}&hakemus=&lang=fi&preview=true&token=&refuse-grant=true&modify-application=false
+Avustuksen saajan tulee noudattaa avustuspäätöksessä sekä sen liitteissä kuvattuja ehtoja ja rajoituksia.
 
-Jos haluatte muuttaa yhteyshenkilön tiedot, voitte tehdä ilmoituksen tästä linkistä:
+Mikäli otatte päätöksen mukaisen avustuksen vastaan, voitte käynnistää hankkeen. Avustussumma maksetaan päätöksessä ilmoitettuun päivämäärään mennessä.
+
+Mikäli ette ota päätöksen mukaista avustusta vastaan, tulee siitä ilmoittaa Opetushallitukselle päätöksessä mainittuun päivämäärään mennessä. Ilmoitus asiasta tehdään valtionavustusjärjestelmään tästä linkistä: ${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?avustushaku=${avustushakuID}&hakemus=${userKey}&lang=fi&preview=true&token=${token}&refuse-grant=true&modify-application=false
+
+Avustuksen saaja vastaa siitä, että valtionavustusjärjestelmään kirjatut yhteyshenkilön yhteystiedot ovat aina ajan tasalla. Yhteyshenkilö vaihdetaan oheisen linkin kautta, joka on käytettävissä läpi avustuksen käyttöajan:
 
 
 
-Ilmoitus tulee tehdä päätöksessä mainittuun päivämäärään mennessä.
+Selvityspyynnöt sekä muut valtionavustusjärjestelmästä hankkeille osoitetut viestit saapuvat osoitteesta no-reply@valtionavustukset.oph.fi, ja ne lähetetään sekä hankkeen yhteyshenkilölle että hakijan ilmoittamaan viralliseen sähköpostiosoitteeseen.
 
-Jos otatte avustuksen vastaan, ei siitä tarvitse ilmoittaa erikseen.
+Avustuksen saajan tulee säilyttää tämä viesti sekä viestin sisältämät linkit.
 
-Hausta vastaava valmistelija on mainittu päätöksessä.
+Tarvittaessa tarkempia lisätietoja antaa avustuspäätöksessä nimetty lisätietojen antaja.
+
+
 
 Opetushallitus
 Hakaniemenranta 6
 PL 380, 00531 Helsinki
-
 puhelin 029 533 1000
-etunimi.sukunimi@oph.fi
-`)
+etunimi.sukunimi@oph.fi`)
     })
   })
 
