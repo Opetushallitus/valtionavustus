@@ -7,10 +7,12 @@ Hanke: {{ register-number }} - {{ project-name }}
 Päätöstä voitte tarkastella tästä linkistä:
 {{& paatos-url }}
 
-Tarvittaessa uuden muutoshakemuksen pääsette tekemään tästä linkistä:
+Tarvittaessa voitte tehdä uuden muutoshakemuksen tästä linkistä:
 {{& muutoshakemus-url }}
 
 Liite: {{ attachment-title }}
+
+Tarvittaessa lisätietoja antaa avustuspäätöksessä nimetty lisätietojen antaja.
 
 Terveisin,
 {{ presenter-name }}
