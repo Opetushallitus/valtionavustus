@@ -1,16 +1,31 @@
-import React, { Component } from 'react'
+import React from 'react'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import HelpTooltip from '../HelpTooltip.jsx'
+import { Avustushaku, Hakemus, HakemusStatus, HelpTexts } from '../../../../va-common/web/va/types'
 
+type EditStatusProps = {
+  avustushaku: Avustushaku
+  hakemus: Hakemus
+  allowEditing: boolean
+  status: Extract<'officer_edit' | 'cancelled', HakemusStatus>
+  helpTexts: HelpTexts
+}
 
-export default class EditStatus extends Component {
+type EditStatusState = {
+  currentHakemusId?: unknown
+  open: boolean
+  comment: string
+  submitted?: boolean
+  submitting?: boolean
+}
 
+export default class EditStatus extends React.Component<EditStatusProps, EditStatusState> {
   constructor(props){
     super(props)
     this.state = EditStatus.initialState(props)
   }
 
-  static getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps(props, state): null | EditStatusState {
     if (props.hakemus.id !== state.currentHakemusId) {
       return EditStatus.initialState(props)
     } else {
@@ -18,7 +33,7 @@ export default class EditStatus extends Component {
     }
   }
 
-  static initialState(props) {
+  static initialState(props): EditStatusState {
     return {
       currentHakemusId: props.hakemus.id,
       open: false,
@@ -40,17 +55,22 @@ export default class EditStatus extends Component {
 
     const onSubmit = () => {
       this.setState({submitting: true})
-      const url = `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/status`
-      const request = {
-        "status": status,
-        "comment": this.state.comment
-      }
-      HttpUtil.post(url, request).then(() => {
-        this.setState({submitting: false, submitted: true})
-        if(!cancelled){
-          window.open(editUrl,'_blank')
-        }
-      })
+
+      const previousStatus = hakemus.status
+      updateHakemusStatus(avustushakuId, hakemus.id, status, this.state.comment)
+        .then(() => {
+          if (status === 'officer_edit' && avustushaku.muutoshakukelpoinen) {
+            return updateHakemusStatus(avustushakuId, hakemus.id, previousStatus, this.state.comment)
+          } else {
+            return Promise.resolve()
+          }
+        })
+        .then(() => {
+          this.setState({ submitting: false, submitted: true })
+          if(!cancelled){
+            window.open(editUrl,'_blank')
+          }
+        })
     }
 
     const onStatusCommentChange = (event) =>{
@@ -99,4 +119,9 @@ export default class EditStatus extends Component {
       </div>
     )
   }
+}
+
+async function updateHakemusStatus(avustushakuId: number, hakemusId: number, status: string, comment: string): Promise<void> {
+  const url = `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/status`
+  return HttpUtil.post(url, { status, comment })
 }

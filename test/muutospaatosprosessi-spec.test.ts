@@ -49,6 +49,7 @@ import {
   lastOrFail,
   getHakemusTokenAndRegisterNumber,
   navigateToHakemuksenArviointi,
+  waitForElementWithText,
 } from './test-util'
 
 jest.setTimeout(400_000)
@@ -215,11 +216,15 @@ etunimi.sukunimi@oph.fi`)
       await navigateToHakemuksenArviointi(page, avustushakuID, answers.projectName)
       await clickElementWithText(page, 'button', 'Muokkaa hakemusta')
       await page.type('[data-test-id="virkailija-edit-comment"]', 'Kuhan tässä nyt muokkaillaan')
-      await clickElementWithText(page, 'button', 'Siirry muokkaamaan')
 
-      const newPage = await waitForTabToOpen(page)
-      expect(await newPage.evaluate(() => window.location.href))
+      const newPagePromise = waitForNewTabToOpen(page)
+      await clickElementWithText(page, 'button', 'Siirry muokkaamaan')
+      const modificationPage = await newPagePromise
+
+      await modificationPage.bringToFront()
+      expect(await modificationPage.evaluate(() => window.location.href))
         .toEqual(`${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=${userKey}`)
+      await page.bringToFront()
     })
 
     it('does not show link to muutoshaku in email preview', async () => {
@@ -257,14 +262,9 @@ etunimi.sukunimi@oph.fi`)
     })
   })
 
-  async function waitForTabToOpen(page: Page): Promise<Page> {
-    let newPage
-    do {
-      const pages = await page.browser().pages()
-      await page.waitFor(500)
-      newPage = pages[1]
-    } while (!newPage)
-    return newPage
+  async function waitForNewTabToOpen(page: Page): Promise<Page> {
+    return await new Promise<Page>(resolve =>
+      browser.once('targetcreated', target => resolve(target.page())))
   }
 
   describe('When muutoshakemus enabled haku has been published, a hakemus has been submitted, and päätös has been sent', () => {
@@ -287,16 +287,24 @@ etunimi.sukunimi@oph.fi`)
       })
     })
 
-    it('virkailija opens muutoshakemus form when editing the hakemus', async () => {
+    it('virkailija opens muutoshakemus form when editing the hakemus and hakemus stays in submitted status', async () => {
       await navigateToHakemus(page, avustushakuID, hakemusID)
       await clickElementWithText(page, "button", "Muokkaa hakemusta")
-      const newPagePromise = new Promise<Page>(x => browser.once('targetcreated', target => x(target.page())))
+      const newPagePromise = waitForNewTabToOpen(page)
       await clickElementWithText(page, "button", "Siirry muokkaamaan")
       const modificationPage = await newPagePromise
       await modificationPage.bringToFront()
       expect(modificationPage.url()).toContain(`/muutoshakemus?lang=fi&user-key=`)
       await page.bringToFront()
+
+      // Expect "Siirry muokkkaamaan" link to not exist since the hakemus should still be in submitted status instead of officer_edit
+      await reload(page)
+      await waitForElementWithText(page, "a", "Siirry muokkaamaan", { hidden: true, timeout: 1000 })
     })
+
+    async function reload(page: Page) {
+      await page.reload({ waitUntil: ["load", "networkidle0"] })
+    }
 
     describe('And muutoshakemus #1 has been submitted', () => {
       beforeAll(async () => {

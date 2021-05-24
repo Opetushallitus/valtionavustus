@@ -1,5 +1,6 @@
 import { FormikProps } from 'formik'
 import { EnvironmentApiResponse } from './environment'
+import { Avustushaku } from '../types'
 
 export type MuutoshakemusProps = {
   status: 'LOADED' | 'LOADING'
@@ -16,12 +17,6 @@ export type PaatosState = {
   avustushaku: Avustushaku
   paatos: Paatos
   presenter: Presenter
-
-}
-
-export interface Avustushaku {
-  "hankkeen-alkamispaiva"?: string
-  "hankkeen-paattymispaiva"?: string
 }
 
 export interface Presenter {
@@ -99,5 +94,3 @@ export type FormValues = {
 }
 
 export type FormikHook = FormikProps<FormValues>
-
-export type Language = 'fi' | 'sv'

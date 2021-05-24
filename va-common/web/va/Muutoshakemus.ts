@@ -2,6 +2,7 @@ import moment, { Moment } from 'moment'
 import * as yup from 'yup'
 
 import { Meno, Muutoshakemus, Talousarvio, TalousarvioValues } from './types/muutoshakemus'
+import { Avustushaku } from './types'
 
 export const getTalousarvioSchema = (talousarvio: TalousarvioValues, e: any) => {
   const menos = Object.keys(talousarvio).reduce((acc, key) => {
@@ -27,10 +28,6 @@ export const getTalousarvioValues = (talousarvio: Meno[]): TalousarvioValues => 
     originalSum: sum,
     currentSum: sum
   }
-}
-
-export interface Avustushaku {
-  'hankkeen-paattymispaiva' : string
 }
 
 export function getProjectEndDate(avustushaku: Avustushaku, muutoshakemukset?: Muutoshakemus[], beforeMuutoshakemus?: Muutoshakemus): string | undefined {

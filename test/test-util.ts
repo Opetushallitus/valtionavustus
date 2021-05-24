@@ -7,7 +7,8 @@ import {
   Browser,
   Page,
   FrameBase,
-  ElementHandle
+  ElementHandle,
+  WaitForSelectorOptions,
 } from "puppeteer"
 import * as assert from "assert"
 import * as fs from "fs"
@@ -640,8 +641,8 @@ export async function clickElementWithText(page: Page, elementType: string, text
   await element.click()
 }
 
-export async function waitForElementWithText(page: Page, elementType: string, text: string) {
-  return await page.waitForXPath(`//${elementType}[contains(., '${text}')]`, {visible: true})
+export async function waitForElementWithText(page: Page, elementType: string, text: string, waitForSelectorOptions: WaitForSelectorOptions = {visible: true}) {
+  return await page.waitForXPath(`//${elementType}[contains(., '${text}')]`, waitForSelectorOptions)
 }
 
 export async function clearAndType(page: Page, selector: string, text: string) {
