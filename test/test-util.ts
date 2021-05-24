@@ -300,6 +300,7 @@ export async function createHakuFromEsimerkkihaku(page: Page, props: HakuProps):
 
   await clearAndType(page, "#register-number", registerNumber || "230/2015")
   await clearAndType(page, "#haku-name-fi", avustushakuName)
+  await clearAndType(page, "#haku-name-sv", avustushakuName + ' på svenska')
   await clearAndType(page, "#hakuaika-start", hakuaikaStart || "1.1.1970 0.00")
 
   const nextYear = (new Date()).getFullYear() + 1
@@ -1170,8 +1171,9 @@ export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwrit
   const { avustushakuID } = await createBudjettimuutoshakemusEnabledHaku(page, haku.avustushakuName, haku.registerNumber)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
-  await fillAndSendBudjettimuutoshakemusEnabledHakemus(page, avustushakuID, answers, budget)
-  return await acceptAvustushaku(page, avustushakuID, budget)
+  const { userKey } = await fillAndSendBudjettimuutoshakemusEnabledHakemus(page, avustushakuID, answers, budget)
+  const { hakemusID } = await acceptAvustushaku(page, avustushakuID, budget)
+  return { avustushakuID, hakemusID, userKey }
 }
 
 export async function ratkaiseAvustushaku(page: Page) {

@@ -1,23 +1,26 @@
-Hyvä vastaanottaja,
+Bästa mottagare,
 
-muutoshakemuksenne on käsitelty.
+er ändringsansökan har behandlats.
 
-Hanke: {{ register-number }} - {{ project-name }}
+Projekt: {{ register-number }} - {{ project-name }}
 
-Päätöstä voitte tarkastella tästä linkistä:
+Ni kan granska beslutet via denna länk:
 {{& paatos-url }}
 
-Tarvittaessa uuden muutoshakemuksen pääsette tekemään tästä linkistä:
+Ni kan vid behov göra en ny ändringsansökan via denna länk:
 {{& muutoshakemus-url }}
 
-Liite: {{ attachment-title }}
+Bilaga: {{ attachment-title }}
 
-Terveisin,
+Mera information ges vid behov av kontaktpersonen som anges i understödsbeslutet.
+
+Hälsningar,
 {{ presenter-name }}
 
-Opetushallitus
-Hakaniemenranta 6
-PL 380, 00531 Helsinki
+Utbildningsstyrelsen
+Hagnäskajen 6
+PB 380, 00531 Helsingfors
 
-puhelin 029 533 1000
-etunimi.sukunimi@oph.fi
+telefon 029 533 1000
+fornamn.efternamn@oph.fi
+

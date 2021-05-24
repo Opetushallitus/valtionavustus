@@ -10,8 +10,6 @@ Om ni tar emot understödet i enlighet med beslutet, kan ni påbörja projektet.
 
 Om ni inte tar emot understödet i enlighet med beslutet, ska ni meddela om detta till Utbildningsstyrelsen inom den tidsfrist som anges i beslutet. Anmälan ska göras i statsunderstödssystemet via denna länk: {{& refuse-url }}
 
-Jos ei muutoshakukelpoinen haku, niin:
-
 {{^include-muutoshaku-link}}Understödsmottagaren ansvarar för att kontaktuppgifterna till den som angetts som kontaktperson i statsunderstödssystemet är uppdaterade. Kontaktpersonen kan bytas ut via länken intill under hela understödets användningstid:{{/include-muutoshaku-link}}
 {{#include-muutoshaku-link}}Om det uppstår förändringar som inverkar på användningen av statsunderstödet ska man genast göra en skriftlig ändringsansökan. Man ska framföra tillräckliga motiveringar för ändringarna som ingår i ändringsansökan. I oklara situationer kan understödsmottagaren vara i kontakt med kontaktpersonen som anges i understödsbeslutet innan en ändringsansökan görs.
 
