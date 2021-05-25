@@ -217,7 +217,7 @@ etunimi.sukunimi@oph.fi`)
       await clickElementWithText(page, 'button', 'Muokkaa hakemusta')
       await page.type('[data-test-id="virkailija-edit-comment"]', 'Kuhan tässä nyt muokkaillaan')
 
-      const newPagePromise = waitForNewTabToOpen(page)
+      const newPagePromise = waitForNewTabToOpen(browser)
       await clickElementWithText(page, 'button', 'Siirry muokkaamaan')
       const modificationPage = await newPagePromise
 
@@ -262,7 +262,7 @@ etunimi.sukunimi@oph.fi`)
     })
   })
 
-  async function waitForNewTabToOpen(page: Page): Promise<Page> {
+  async function waitForNewTabToOpen(browser: Browser): Promise<Page> {
     return await new Promise<Page>(resolve =>
       browser.once('targetcreated', target => resolve(target.page())))
   }
@@ -290,7 +290,7 @@ etunimi.sukunimi@oph.fi`)
     it('virkailija opens muutoshakemus form when editing the hakemus and hakemus stays in submitted status', async () => {
       await navigateToHakemus(page, avustushakuID, hakemusID)
       await clickElementWithText(page, "button", "Muokkaa hakemusta")
-      const newPagePromise = waitForNewTabToOpen(page)
+      const newPagePromise = waitForNewTabToOpen(browser)
       await clickElementWithText(page, "button", "Siirry muokkaamaan")
       const modificationPage = await newPagePromise
       await modificationPage.bringToFront()
