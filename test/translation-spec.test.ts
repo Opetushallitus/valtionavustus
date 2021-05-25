@@ -23,7 +23,8 @@ import {
   lastOrFail,
   Email,
   getHakemusTokenAndRegisterNumber,
-  HAKIJA_URL
+  HAKIJA_URL,
+  parseMuutoshakemusPaatosFromEmails
 } from './test-util'
 
 import moment from 'moment'
@@ -115,7 +116,7 @@ describe('Translations', () => {
         email = lastOrFail(emails)
       })
 
-      it('email is in swedish', async () => {
+      it('päätös email is in swedish', async () => {
         const { token, 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
         expect(email.formatted).toBe(`${registerNumber} - ${answers.projectName}
 
@@ -349,6 +350,49 @@ fornamn.efternamn@oph.fi
               await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
               await clickElement(page, 'span.muutoshakemus-tab')
               await fillAndSendMuutoshakemusDecision(page, 'accepted_with_changes', '01.01.2099', acceptedBudget)
+            })
+
+            describe('And hakija receives an email', () => {
+              let email: { formatted: string; "to-address": string[]; bcc: string | null; title: string | undefined; linkToMuutoshakemusPaatos: string | undefined; linkToMuutoshakemus: string | undefined }
+
+              beforeAll(async () => {
+                email = await parseMuutoshakemusPaatosFromEmails(hakemusID)
+              })
+
+              it(`muutoshakemus is sent to hakija's address`, () => {
+                expect(email["to-address"]).toBe(answers.contactPersonEmail)
+              })
+
+              it('muutoshakemus päätös email is in swedish', async () => {
+                const { 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
+                expect(email.formatted).toBe(`Bästa mottagare,
+
+er ändringsansökan har behandlats.
+
+Projekt: ${registerNumber} - ${answers.projectName}
+
+Ni kan granska beslutet via denna länk:
+${email.linkToMuutoshakemusPaatos}
+
+Ni kan vid behov göra en ny ändringsansökan via denna länk:
+${HAKIJA_URL}/muutoshakemus?lang=sv&user-key=${userKey}&avustushaku-id=${avustushakuID}
+
+Bilaga: Rättelseyrkande
+
+Mera information ges vid behov av kontaktpersonen som anges i understödsbeslutet.
+
+Hälsningar,
+_ valtionavustus
+
+Utbildningsstyrelsen
+Hagnäskajen 6
+PB 380, 00531 Helsingfors
+
+telefon 029 533 1000
+fornamn.efternamn@oph.fi
+
+`)
+              })
             })
 
             describe('And hakija navigates to muutoshakemus page', () => {

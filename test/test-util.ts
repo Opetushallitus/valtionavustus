@@ -252,7 +252,8 @@ export async function parseMuutoshakemusPaatosFromEmails(hakemusID: number) {
   return {
     title,
     linkToMuutoshakemusPaatos,
-    linkToMuutoshakemus
+    linkToMuutoshakemus,
+    ...emails[0]
   }
 }
 
