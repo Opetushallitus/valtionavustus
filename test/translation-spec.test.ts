@@ -360,7 +360,7 @@ fornamn.efternamn@oph.fi
               })
 
               it(`muutoshakemus is sent to hakija's address`, () => {
-                expect(email["to-address"]).toBe(answers.contactPersonEmail)
+                expect(email["to-address"]).toContain(answers.contactPersonEmail)
               })
 
               it('muutoshakemus päätös email is in swedish', async () => {
