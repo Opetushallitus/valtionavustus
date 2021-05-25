@@ -17,14 +17,14 @@ import {
   navigateToPaatos,
   Budget,
   Answers,
-  clearAndType,
   waitUntilMinEmails,
   getAcceptedPäätösEmails,
   lastOrFail,
   Email,
   getHakemusTokenAndRegisterNumber,
   HAKIJA_URL,
-  parseMuutoshakemusPaatosFromEmails
+  parseMuutoshakemusPaatosFromEmails,
+  setCalendarDateForSelector
 } from './test-util'
 
 import moment from 'moment'
@@ -238,9 +238,9 @@ fornamn.efternamn@oph.fi
           expect(title).toBe('Obligatorisk uppgift')
         })
 
-        it.skip('calendar component is in Swedish', async () => {
+        it('calendar component is in Swedish', async () => {
           const monthButtonSelector = '#rw_1_date_calendar_label'
-          await clearAndType(page, '[name=haettuKayttoajanPaattymispaiva]', '13.06.2021')
+          await setCalendarDateForSelector(page, '13.06.2021', '[name=haettuKayttoajanPaattymispaiva]')
           await clickElement(page, 'button[title="Select date"]')
           await page.waitForSelector(monthButtonSelector)
           const title = await getElementInnerText(page, monthButtonSelector)
