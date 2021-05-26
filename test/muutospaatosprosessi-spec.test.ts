@@ -370,10 +370,10 @@ etunimi.sukunimi@oph.fi`)
 
               describe('And virkailija opens the päätös preview', () => {
                 beforeAll(async () => {
-                  await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
+                  await clickElementWithText(page, 'a', 'Esikatsele päätösdokumentti')
                 })
                 afterAll(async () => {
-                  await clickElement(page, 'button.hakemus-details-modal__close-button')
+                  await clickElementWithText(page, 'button', 'Sulje')
                 })
 
                 it('Muutoshakemus has correct values', async () => {
@@ -399,10 +399,10 @@ etunimi.sukunimi@oph.fi`)
 
               describe('And opens päätös preview', () => {
                 beforeAll(async () => {
-                  await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
+                  await clickElementWithText(page, 'a', 'Esikatsele päätösdokumentti')
                 })
                 afterAll(async () => {
-                  await clickElement(page, 'button.hakemus-details-modal__close-button')
+                  await clickElementWithText(page, 'button', 'Sulje')
                 })
 
                 it('Correct päätös values are displayed', async () => {
@@ -722,11 +722,11 @@ etunimi.sukunimi@oph.fi`)
               })
 
               it('Correct päättymispäivä is displayed in päätös preview', async () => {
-                await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
+                await clickElementWithText(page, 'a', 'Esikatsele päätösdokumentti')
                 await page.waitForSelector('.muutoshakemus-paatos__content')
                 const acceptedDate = await page.$eval('[data-test-id="paattymispaiva-value"]', el => el.textContent)
                 expect(acceptedDate).toBe('20.4.2400')
-                await clickElement(page, 'button.hakemus-details-modal__close-button')
+                await clickElementWithText(page, 'button', 'Sulje')
               })
 
               describe('After sending päätös', () => {

@@ -30,6 +30,7 @@ import {
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget,
   fillMuutoshakemusBudgetAmount,
   createRandomHakuValues,
+  clickElementWithText,
 } from './test-util'
 
 jest.setTimeout(400_000)
@@ -754,12 +755,12 @@ describe('Talousarvion muuttaminen', () => {
       beforeAll(async () => {
         await clickElement(page, 'label[for=accepted_with_changes]')
         await fillMuutoshakemusBudgetAmount(page, budget)
-        await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
+        await clickElementWithText(page, 'a', 'Esikatsele päätösdokumentti')
         await page.waitForSelector('.muutoshakemus-paatos__content')
       })
 
       afterAll(async () => {
-        await clickElement(page, '.hakemus-details-modal__close-button')
+        await clickElementWithText(page, 'button', 'Sulje')
       })
 
       it('sees the old budget in the preview', async () => {
@@ -794,12 +795,12 @@ describe('Talousarvion muuttaminen', () => {
     describe('opens the paatos preview when "accepted" is chosen', () => {
       beforeAll(async () => {
         await clickElement(page, 'label[for=accepted]')
-        await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
+        await clickElementWithText(page, 'a', 'Esikatsele päätösdokumentti')
         await page.waitForSelector('.muutoshakemus-paatos__content')
       })
 
       afterAll(async () => {
-        await clickElement(page, '.hakemus-details-modal__close-button')
+        await clickElementWithText(page, 'button', 'Sulje')
       })
 
       it('sees the old budget in the preview', async () => {
@@ -834,12 +835,12 @@ describe('Talousarvion muuttaminen', () => {
     describe('opens the paatos preview when "rejected" is chosen', () => {
       beforeAll(async () => {
         await clickElement(page, 'label[for=rejected]')
-        await clickElement(page, 'a.muutoshakemus__paatos-preview-link')
+        await clickElementWithText(page, 'a', 'Esikatsele päätösdokumentti')
         await page.waitForSelector('.muutoshakemus-paatos__content')
       })
 
       afterAll(async () => {
-        await clickElement(page, '.hakemus-details-modal__close-button')
+        await clickElementWithText(page, 'button', 'Sulje')
       })
 
       it('does not see a budget table in the preview', async () => {

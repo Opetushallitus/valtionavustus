@@ -25,7 +25,8 @@ import {
   HAKIJA_URL,
   parseMuutoshakemusPaatosFromEmails,
   setCalendarDateForSelector,
-  MailWithLinks
+  MailWithLinks,
+  clickElementWithText,
 } from './test-util'
 
 import moment from 'moment'
@@ -344,6 +345,27 @@ fornamn.efternamn@oph.fi
           it('reasoning title is in finnish', async () => {
             const title = await getElementInnerText(page, '[data-test-id="muutoshakemus-reasoning-title"]')
             expect(title).toBe('Hakijan perustelut')
+          })
+
+          describe('preview muutoshakemus päätös in swedish', () => {
+            beforeAll(async () => {
+              await clickElementWithText(page, 'a', 'Esikatsele päätösdokumentti')
+              await page.waitForSelector('.muutoshakemus-paatos__content')
+            })
+
+            afterAll(async () => {
+              await clickElementWithText(page, 'button', 'Sulje')
+            })
+
+            it('modal title is still in finnish', async () => {
+              expect(await getElementInnerText(page, '.hakemus-details-modal__title-row > span'))
+                .toBe('ESIKATSELU')
+            })
+
+            it('päätös preview content is in swedish', async () => {
+              expect(await getElementInnerText(page, '[data-test-id="muutoshakemus-paatos-title"]'))
+                .toBe('BESLUT')
+            })
           })
 
           describe('And accepts muutoshakemus #1 changes', () => {

@@ -9,7 +9,8 @@ import { MuutoshakemusTabs } from './MuutoshakemusTabs'
 
 import './Muutoshakemus.less'
 
-export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hakemus, controller, userInfo, presenter }) => {
+export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hakemusVersion, controller, userInfo, presenter }) => {
+  const hakemus = hakemusVersion.normalizedData
   const [a, setActiveMuutoshakemus] = useState(muutoshakemukset[0])
   const isAccepted = a.status === 'accepted' || a.status === 'accepted_with_changes'
   const projectEndDate = getProjectEndDate(avustushaku, muutoshakemukset, a)
@@ -31,6 +32,7 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
                                 muutoshakemus={a}
                                 muutoshakemukset={muutoshakemukset}
                                 hakemus={hakemus}
+                                hakemusVersion={hakemusVersion}
                                 controller={controller}
                                 userInfo={userInfo}
                                 presenter={presenter}

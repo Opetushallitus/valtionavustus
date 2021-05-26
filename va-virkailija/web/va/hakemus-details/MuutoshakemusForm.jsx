@@ -6,6 +6,7 @@ import { DateTimePicker } from 'react-widgets'
 import momentLocalizer from 'react-widgets-moment'
 import { omit } from 'lodash'
 import { translations } from 'va-common/web/va/i18n/translations'
+import { TranslationContext, getTranslationContext } from 'va-common/web/va/i18n/TranslationContext'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusPaatos } from 'va-common/web/va/MuutoshakemusPaatos'
@@ -80,7 +81,7 @@ function formToPayload(values) {
   }
 }
 
-export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, controller, userInfo, presenter, projectEndDate, muutoshakemukset }) => {
+export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemusVersion, controller, userInfo, presenter, projectEndDate, muutoshakemukset }) => {
   const talousarvioValues = muutoshakemus.talousarvio.length ? getTalousarvioValues(muutoshakemus.talousarvio) : undefined
   const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
   const f = useFormik({
@@ -163,6 +164,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
     }
     controller.setModal(
       <Modal title="ESIKATSELU" controller={controller}>
+        <TranslationContext.Provider value={getTranslationContext(hakemusVersion.language)}>
         <MuutoshakemusPaatos
           avustushaku={avustushaku}
           paatos={paatos}
@@ -170,6 +172,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
           hakemus={hakemus}
           presenter={presenter}
           muutoshakemukset={muutoshakemukset} />
+        </TranslationContext.Provider>
       </Modal>
     )
   }
