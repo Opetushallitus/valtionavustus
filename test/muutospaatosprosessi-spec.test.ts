@@ -29,7 +29,7 @@ import {
   randomString,
   ratkaiseAvustushaku,
   ratkaiseMuutoshakemusEnabledAvustushaku,
-  selectVakioperustelu,
+  selectVakioperusteluInFinnish,
   setPageErrorConsoleLogger,
   textContent,
   validateMuutoshakemusPaatosCommonValues,
@@ -365,7 +365,7 @@ etunimi.sukunimi@oph.fi`)
 
             describe('When vakioperustelut have been selected', () => {
               beforeAll(async () => {
-                await selectVakioperustelu(page)
+                await selectVakioperusteluInFinnish(page)
               })
 
               describe('And virkailija opens the päätös preview', () => {
@@ -394,7 +394,7 @@ etunimi.sukunimi@oph.fi`)
             describe('When virkailija clicks reject button and selects vakioperustelut', () => {
               beforeAll(async () => {
                 await clickElement(page, 'label[for="rejected"]')
-                await selectVakioperustelu(page)
+                await selectVakioperusteluInFinnish(page)
               })
 
               describe('And opens päätös preview', () => {

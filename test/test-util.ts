@@ -525,7 +525,7 @@ export async function fillMuutoshakemusPaatosWithVakioperustelu(page: Page, avus
   await clickElement(page, 'span.muutoshakemus-tab')
   await page.click(`label[for="accepted_with_changes"]`)
   await setCalendarDate(page, jatkoaika)
-  await selectVakioperustelu(page)
+  await selectVakioperusteluInFinnish(page)
 }
 
 export async function fillAndSendMuutoshakemusDecision(page: Page, status?: 'accepted' | 'accepted_with_changes' | 'rejected', jatkoaika?: string, budget?: BudgetAmount) {
@@ -533,7 +533,7 @@ export async function fillAndSendMuutoshakemusDecision(page: Page, status?: 'acc
   await page.click(`label[for="${selectedStatus}"]`)
   jatkoaika && await setCalendarDate(page, jatkoaika)
   budget && await fillMuutoshakemusBudgetAmount(page, budget)
-  await selectVakioperustelu(page)
+  await selectVakioperusteluInFinnish(page)
   await page.click('[data-test-id="muutoshakemus-submit"]:not([disabled])')
   await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
 }
@@ -1126,13 +1126,13 @@ export async function makePaatosForMuutoshakemusIfNotExists(page: Page, status: 
   }
 
   await page.click(`label[for="${status}"]`)
-  await selectVakioperustelu(page)
+  await selectVakioperusteluInFinnish(page)
   await page.click('[data-test-id="muutoshakemus-submit"]:not([disabled])')
   await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
 }
 
-export async function selectVakioperustelu(page: Page): Promise<void> {
-  await clickElement(page, 'a.muutoshakemus__default-reason-link')
+export async function selectVakioperusteluInFinnish(page: Page): Promise<void> {
+  await clickElementWithText(page, 'a', 'Lisää vakioperustelu suomeksi')
 }
 
 export interface Answers {

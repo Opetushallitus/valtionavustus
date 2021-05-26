@@ -5,6 +5,7 @@ import moment from 'moment'
 import { DateTimePicker } from 'react-widgets'
 import momentLocalizer from 'react-widgets-moment'
 import { omit } from 'lodash'
+import { translations } from 'va-common/web/va/i18n/translations'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusPaatos } from 'va-common/web/va/MuutoshakemusPaatos'
@@ -26,13 +27,31 @@ import './Muutoshakemus.less'
 moment.locale('fi')
 momentLocalizer()
 
-const defaultReasonAccepted = 'Opetushallitus katsoo, että päätöksessä hyväksytyt muutokset tukevat hankkeen tavoitteiden saavuttamista.'
-const defaultReasonRejected = 'Opetushallitus on arvioinut hakemuksen. Asiantuntija-arvioinnin perusteella on Opetushallitus asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.'
-
 const paatosStatuses = [
-  { value: 'accepted', text: 'Hyväksytään', defaultReason: defaultReasonAccepted },
-  { value: 'accepted_with_changes', text: 'Hyväksytään muutettuna', defaultReason: defaultReasonAccepted },
-  { value: 'rejected', text: 'Hylätään', defaultReason: defaultReasonRejected }
+  {
+    value: 'accepted',
+    text: 'Hyväksytään',
+    defaultReason: {
+      fi: translations.fi.muutoshakemus.paatos.vakioperustelut.accepted,
+      sv: translations.sv.muutoshakemus.paatos.vakioperustelut.accepted,
+    }
+  },
+  {
+    value: 'accepted_with_changes',
+    text: 'Hyväksytään muutettuna',
+    defaultReason: {
+      fi: translations.fi.muutoshakemus.paatos.vakioperustelut.accepted_with_changes,
+      sv: translations.sv.muutoshakemus.paatos.vakioperustelut.accepted_with_changes,
+    }
+  },
+  {
+    value: 'rejected',
+    text: 'Hylätään',
+    defaultReason: {
+      fi: translations.fi.muutoshakemus.paatos.vakioperustelut.rejected,
+      sv: translations.sv.muutoshakemus.paatos.vakioperustelut.rejected,
+    }
+  }
 ]
 
 const errors = {
@@ -179,7 +198,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, control
         )}
         <div className="muutoshakemus-row">
           <h4 className="muutoshakemus__header">
-            Perustelut <a className="muutoshakemus__default-reason-link" onClick={() => setDefaultReason(f)}>Lisää vakioperustelu</a>
+            Perustelut <span className="muutoshakemus__default-reason-link"><a onClick={() => setDefaultReason(f, 'fi')}>Lisää vakioperustelu suomeksi</a> | <a onClick={() => setDefaultReason(f, 'sv')}>Lisää vakioperustelu ruotsiksi</a></span>
           </h4>
           <textarea id="reason" name="reason" rows="5" cols="53" onChange={f.handleChange} onBlur={f.handleBlur} value={f.values.reason} className={isError(f, 'reason') && "muutoshakemus__error"} />
           {isError(f, 'reason') && <div className="muutoshakemus__error">Perustelu on pakollinen kenttä!</div>}
@@ -199,7 +218,7 @@ function isAcceptedWithChanges(formik) {
   return formik.values.status === 'accepted_with_changes'
 }
 
-function setDefaultReason(f) {
+function setDefaultReason(f, lang) {
   const status = paatosStatuses.find(_ => _.value === f.values.status)
-  f.setFieldValue('reason', status.defaultReason)
+  f.setFieldValue('reason', status.defaultReason[lang])
 }

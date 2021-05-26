@@ -10,7 +10,7 @@ import {
   getAcceptedPäätösEmails,
   getFirstPage,
   setPageErrorConsoleLogger,
-  selectVakioperustelu,
+  selectVakioperusteluInFinnish,
   navigateToHakijaMuutoshakemusPage,
   navigateToLatestMuutoshakemus,
   navigateToLatestMuutoshakemusPaatos,
@@ -539,7 +539,7 @@ describe('Talousarvion muuttaminen', () => {
           describe('And muutoshakemus #2 has been rejected', () => {
             beforeAll(async () => {
               await navigateToNthMuutoshakemus(page, avustushakuID, hakemusID, 2)
-              await selectVakioperustelu(page)
+              await selectVakioperusteluInFinnish(page)
               await fillAndSendMuutoshakemusDecision(page, 'rejected')
             })
 
@@ -851,7 +851,7 @@ describe('Talousarvion muuttaminen', () => {
     describe('accepts the muutoshakemus', () => {
       beforeAll(async () => {
         await clickElement(page, 'label[for=accepted]')
-        await clickElement(page, 'a.muutoshakemus__default-reason-link')
+        await selectVakioperusteluInFinnish(page)
         await clickElement(page, '[data-test-id="muutoshakemus-submit"]')
         await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
       })

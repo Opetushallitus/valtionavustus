@@ -63,6 +63,11 @@ export const translationsFi = {
         rejected: 'Opetushallitus hylkää muutoshakemuksen.',
         accepted_with_changes: 'Opetushallitus hyväksyy hakemuksen alla olevin muutoksin.',
       },
+      vakioperustelut: {
+        accepted: 'Opetushallitus katsoo, että päätöksessä hyväksytyt muutokset tukevat hankkeen tavoitteiden saavuttamista.',
+        accepted_with_changes: 'Opetushallitus katsoo, että päätöksessä hyväksytyt muutokset tukevat hankkeen tavoitteiden saavuttamista.',
+        rejected: 'Opetushallitus on arvioinut hakemuksen. Asiantuntija-arvioinnin perusteella on Opetushallitus asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.',
+      },
     },
     status: {
       missing: '',
@@ -124,6 +129,7 @@ const translationsSv: Translations = {
       phoneNumber: '029 533 1000 (växel)',
       paatosDokumentti: 'Beslutshandling',
       status: translationsFi.muutoshakemus.paatos.status,
+      vakioperustelut: translationsFi.muutoshakemus.paatos.vakioperustelut,
     },
     status: {
       missing: '',
