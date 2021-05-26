@@ -28,7 +28,8 @@
                  [ring/ring-defaults]]
 
   :aot [oph.common.log4j
-        oph.va.jdbc.enums]
+        oph.va.jdbc.enums
+        oph.va.virkailija.db.migrations]
 
   :test-paths ["spec"]
 

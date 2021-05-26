@@ -43,8 +43,6 @@
 
   :main oph.va.virkailija.main
 
-  :aot [oph.va.virkailija.db.migrations]
-
   :uberjar-exclusions [#"public/test"]
 
   :prep-tasks ["javac" "compile"]
