@@ -24,7 +24,8 @@ import {
   getHakemusTokenAndRegisterNumber,
   HAKIJA_URL,
   parseMuutoshakemusPaatosFromEmails,
-  setCalendarDateForSelector
+  setCalendarDateForSelector,
+  MailWithLinks
 } from './test-util'
 
 import moment from 'moment'
@@ -353,13 +354,17 @@ fornamn.efternamn@oph.fi
             })
 
             describe('And hakija receives an email', () => {
-              let email: { formatted: string; "to-address": string[]; bcc: string | null; title: string | undefined; linkToMuutoshakemusPaatos: string | undefined; linkToMuutoshakemus: string | undefined }
+              let email: MailWithLinks
 
               beforeAll(async () => {
                 email = await parseMuutoshakemusPaatosFromEmails(hakemusID)
               })
 
-              it(`muutoshakemus is sent to hakija's address`, () => {
+              it('päätös email subject is in swedish', () => {
+                expect(email.subject).toBe('Automatiskt meddelande: Er ändringsansökan har behandlats - Länk till beslutet')
+              })
+
+              it(`muutoshakemus päätös is sent to hakija's address`, () => {
                 expect(email["to-address"]).toContain(answers.contactPersonEmail)
               })
 

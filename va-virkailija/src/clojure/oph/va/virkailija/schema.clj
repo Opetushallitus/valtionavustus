@@ -36,6 +36,7 @@
   "Email stored in database"
   {:formatted s/Str
    :to-address [s/Str]
+   (s/optional-key :subject) (s/maybe s/Str)
    :bcc (s/maybe s/Str)})
 
 (s/defschema DbEmails

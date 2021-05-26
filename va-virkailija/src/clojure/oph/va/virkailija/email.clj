@@ -17,7 +17,7 @@
    :paatos {:fi "Automaattinen viesti: organisaationne avustushakemus on käsitelty - Linkki päätösasiakirjaan"
             :sv "Automatiskt meddelande: Er ansökan om understöd har behandlats – Länk till beslutet"}
    :muutoshakemus-paatos {:fi "Automaattinen viesti: organisaationne muutoshakemus on käsitelty - Linkki päätösasiakirjaan"
-            :sv "Automaattinen viesti: organisaationne muutoshakemus on käsitelty - Linkki päätösasiakirjaan"}
+            :sv "Automatiskt meddelande: Er ändringsansökan har behandlats - Länk till beslutet"}
    :selvitys {:fi "Väliselvitys käsitelty"
               :sv "Mellanredovisning behandlat"}
    :valiselvitys-notification {:fi "Väliselvitys täytettävissä haulle"

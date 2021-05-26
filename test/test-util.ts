@@ -36,12 +36,14 @@ export interface Email {
   formatted: string
   "to-address": string[]
   bcc: string | null
+  subject?: string
 }
 
 const emailSchema = yup.array().of(yup.object().shape<Email>({
   formatted: yup.string().required(),
   "to-address": yup.array().of(yup.string().required()).defined(),
   bcc: yup.string().defined().nullable(),
+  subject: yup.string().optional(),
 }).required()).defined()
 
 export function setPageErrorConsoleLogger(page: Page) {
@@ -243,7 +245,13 @@ export async function navigateToLatestMuutoshakemusPaatos(page: Page, hakemusID:
   await page.goto(mail.linkToMuutoshakemusPaatos, { waitUntil: "networkidle0" })
 }
 
-export async function parseMuutoshakemusPaatosFromEmails(hakemusID: number) {
+export interface MailWithLinks extends Email {
+  title: string | undefined
+  linkToMuutoshakemusPaatos: string | undefined
+  linkToMuutoshakemus: string | undefined
+}
+
+export async function parseMuutoshakemusPaatosFromEmails(hakemusID: number): Promise<MailWithLinks> {
   const emails = await waitUntilMinEmails(getMuutoshakemusPaatosEmails, 1, hakemusID)
   const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
   const linkToMuutoshakemusPaatosRegex = /https?:\/\/.*\/muutoshakemus\/paatos.*/
