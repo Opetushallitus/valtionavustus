@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.db.migrations
   (:require [oph.soresu.common.db.migrations :as migrations]
             [oph.soresu.common.db :as common-db]
+            [oph.va.menoluokka.db :as menoluokka-db]
             [clojure.tools.logging :as log]
             [yesql.core :refer [defquery]])
   (:gen-class))
@@ -85,3 +86,23 @@
                          "Add menoluokkas to avustushaut starting from id 324"
                          (doseq [avustushaku-id (map :id (common-db/query "SELECT id FROM avustushaut WHERE id >= 324 AND status <> 'deleted'" []))]
                            (fix-menoluokkas-for-avustushaku avustushaku-id)))
+
+
+(defn avustushaut-324-and-over-without-menoluokka-with-use-detailed-costs []
+  (common-db/query "select distinct
+                      hakemukset.id as hakemus_id,
+                      avustushaku as avustushaku_id,
+                      overridden_answers from hakemukset
+                    join arviot on arviot.hakemus_id = hakemukset.id
+                    where avustushaku >= 324 and use_overridden_detailed_costs = true" []))
+
+
+(migrations/defmigration migrate-lisaa-menoluokat-hakemusten-arvioille "1.120"
+                         "Lisää menoluokat hakemusten arvioille id 324 eteenpäin"
+                         (doseq [hakemus-info (avustushaut-324-and-over-without-menoluokka-with-use-detailed-costs)]
+                           (log/info "Creating menoluokka_hakemus rows for hakemus id " (:hakemus-id hakemus-info))
+                           (menoluokka-db/store-menoluokka-hakemus-rows
+                            (:avustushaku-id hakemus-info)
+                            (:hakemus-id hakemus-info)
+                            (:overridden-answers hakemus-info))))
+
