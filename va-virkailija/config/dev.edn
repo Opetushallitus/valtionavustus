@@ -16,4 +16,5 @@
             :delete-payments? true}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
+ :sisaltomuutos {:enabled? true}
  :test-apis {:enabled? true}}

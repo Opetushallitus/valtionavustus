@@ -9,4 +9,5 @@
  :email {:enabled? true
          :host "fakesmtp"
          :port 25}
+ :sisaltomuutos {:enabled? true}
  :applications-ui {:enabled? true}}

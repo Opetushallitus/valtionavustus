@@ -8,4 +8,5 @@
  :email {:print-mail-on-disable? false}
  :va-users {:use-cache? false}
  :payments {:enabled? true :delete-payments? true}
+ :sisaltomuutos {:enabled? true}
  :test-apis {:enabled? true}}

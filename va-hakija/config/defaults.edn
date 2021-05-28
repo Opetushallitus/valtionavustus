@@ -37,4 +37,5 @@
          :retry-multiplier 4
          :retry-max-time 60000}
  :selvitys-limit {:enabled? false}
+ :sisaltomuutos {:enabled? false}
  :muutospaatosprosessi {:enabled? true}}
