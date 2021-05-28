@@ -10,6 +10,17 @@ function stop() {
 }
 trap stop EXIT
 
+RESTORE_FILE=""
+RUN_DATABASE_ARGS=""
+
+while getopts "r:" opt
+do
+    case $opt in
+    (r) RUN_DATABASE_ARGS="-r"; RESTORE_FILE="$OPTARG" ;;
+    (*) printf "Illegal option '-%s'\n" "$opt" && exit 1 ;;
+    esac
+done
+
 require_command tmux
 require_command nc
 require_command docker
@@ -26,7 +37,7 @@ tmux splitw -h
 tmux splitw -h
 
 tmux select-pane -t 0
-tmux send-keys "$repo/scripts/run_database.sh" C-m
+tmux send-keys "$repo/scripts/run_database.sh ${RUN_DATABASE_ARGS}" C-m
 
 tmux splitw -v
 tmux send-keys "$repo/scripts/run_admin_ui.sh" C-m
@@ -42,6 +53,11 @@ tmux send-keys "$repo/scripts/run_virkailija_server.sh" C-m
 
 tmux splitw
 tmux send-keys "$repo/scripts/run_fakesmtp.sh" C-m
+
+if [ ! -z $RESTORE_FILE ]; then
+  tmux new-window
+  tmux send-keys "$repo/scripts/restore_dump.sh $RESTORE_FILE" C-m
+fi
 
 tmux select-pane -t 0
 tmux attach-session -t $session

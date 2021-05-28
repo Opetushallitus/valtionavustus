@@ -6,11 +6,20 @@ docker ps > /dev/null 2>&1 || { echo >&2 "Running 'docker ps' failed. Is docker 
 
 scriptdir="$( cd "$( dirname "$0" )" && pwd )"
 
+PROFILE="dev"
+while getopts "r" opt
+do
+    case $opt in
+    (r) PROFILE="restore-backup" ;;
+    (*) printf "Illegal option '-%s'\n" "$opt" && exit 1 ;;
+    esac
+done
+
 function main {
   cd "$scriptdir/postgres-docker"
 
   docker-compose down || true
-  docker-compose up --force-recreate
+  docker-compose --profile $PROFILE up --force-recreate
 }
 
 main "$@"
