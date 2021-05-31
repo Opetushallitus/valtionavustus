@@ -20,6 +20,9 @@ adminusers:
   rce:
     state: present
     name: Henry Heikkinen
+  spkerkela:
+    state: present
+    name: Simo-Pekka Kerkelä
   juusostr:
     state: absent
     name: Juuso Strömberg
