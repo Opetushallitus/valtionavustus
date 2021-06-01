@@ -483,11 +483,6 @@ fornamn.efternamn@oph.fi
                 expect(currentBudgetHeader).toEqual('Godkänd ny budget')
               })
 
-              it.skip('asia is shown in swedish', async () => {
-                const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="budget-change"]')
-                expect(currentBudgetHeader).toEqual('Och samma på svenska! - translations have not been provided')
-              })
-
               it('päätöksen perustelut is shown in swedish', async () => {
                 const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="muutoshakemus-paatos-perustelut-title"]')
                 expect(currentBudgetHeader).toEqual('Motiveringar för beslutet')
@@ -503,9 +498,9 @@ fornamn.efternamn@oph.fi
                 expect(currentBudgetHeader).toEqual('Mer information')
               })
 
-              it.skip('budget change is mentioned in the info section', async () => {
+              it('budget change is mentioned in the info section', async () => {
                 const budgetChangeText = await getElementInnerText(page, '[data-test-id="budget-change"]')
-                expect(budgetChangeText).toEqual('Och samma på svenska! - translations have not been provided')
+                expect(budgetChangeText).toEqual('Ändringsansökan som gäller projektets budget')
               })
 
               it('Budget rows are in Swedish', async () => {
