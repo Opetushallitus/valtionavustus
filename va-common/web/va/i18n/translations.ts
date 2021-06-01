@@ -104,7 +104,6 @@ export const translationsFi = {
 }
 
 const translationsSv: Translations = {
-  ...translationsFi,
   hakemus: 'Ansökan',
   loadingDecision: 'Beslutet laddas ner…',
   muutoshakemus: {
@@ -180,6 +179,18 @@ const translationsSv: Translations = {
     email: 'Kontrollera e-postadress',
     haettuKayttoajanPaattymispaiva: 'Den nya sista användningsdagen ska vara ett senare datum än den nuvarande sista användningsdagen.',
     talousarvioSum: (sum: number) => `Det sammanlagda beloppet ska vara ${sum}`
+  },
+  selvitys: {
+    status: {
+      ...translationsFi.selvitys.status
+    },
+  },
+  email: {
+    paatos: {
+      status: {
+        ...translationsFi.email.paatos.status
+      },
+    },
   },
   logo: {
     alt: 'Utbildningsstyrelsen',
