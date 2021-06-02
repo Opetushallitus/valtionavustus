@@ -26,7 +26,7 @@ export default class SeurantaBudgetEditing extends React.Component {
   }
 
   render() {
-    const {controller, hakemus, hakuData, avustushaku, translations, muutoshakemukset} = this.props
+    const {controller, hakemus, hakuData, avustushaku, translations, muutoshakemukset} = this.props as any
 
     const vaBudget = FormUtil.findFieldByFieldType(hakuData.form.content, "vaBudget")
 
@@ -39,7 +39,10 @@ export default class SeurantaBudgetEditing extends React.Component {
       FormUtil.findFieldByFieldType(_.get(hakemus, "selvitys.valiselvitysForm.content", []), "vaBudget") || {},
       FormUtil.findFieldByFieldType(_.get(hakemus, "selvitys.loppuselvitysForm.content", []), "vaBudget") || {})
 
-    const budgetSpec = { ...budgetSpecWithSelvityses, children: budgetSpecWithSelvityses.children.filter(c => c.id !== 'project-budget') }
+    const budgetChangeEnabled = Array.isArray(hakemus.normalizedData?.talousarvio)
+    const budgetSpec = budgetChangeEnabled
+      ? { ...budgetSpecWithSelvityses, children: budgetSpecWithSelvityses.children.filter(c => c.id !== 'project-budget') }
+      : budgetSpecWithSelvityses
     const fakeHakemus = {answers: hakemus.arvio["seuranta-answers"]}
     const formOperations = {
       chooseInitialLanguage: () => "fi",
@@ -73,7 +76,7 @@ export default class SeurantaBudgetEditing extends React.Component {
     return (
       <div className="budget-edit">
         <h2>Budjetti</h2>
-        <BudgetTable muutoshakemukset={muutoshakemukset} hakemus={hakemus} hakuData={hakuData} />
+        {budgetChangeEnabled && <BudgetTable muutoshakemukset={muutoshakemukset} hakemus={hakemus} hakuData={hakuData} />}
         <FormContainer {...formElementProps} />
       </div>
     )
