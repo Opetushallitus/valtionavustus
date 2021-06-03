@@ -233,15 +233,17 @@
 (defn- add-muutoshakemus [tx user-key hakemus-id muutoshakemus]
   (log/info (str "Inserting muutoshakemus for user-key: " user-key))
   (let [haen-kayttoajan-pidennysta (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta] false)
+        haen-sisaltomuutosta (get-in muutoshakemus [:sisaltomuutos :haenSisaltomuutosta] false)
+        sisaltomuutos-perustelut (get-in muutoshakemus [:sisaltomuutos :sisaltomuutosPerustelut])
         kayttoajan-pidennys-perustelut (get-in muutoshakemus [:jatkoaika :kayttoajanPidennysPerustelut])
         haettu-kayttoajan-paattymispaiva (get-in muutoshakemus [:jatkoaika :haettuKayttoajanPaattymispaiva])
         talousarvio-perustelut (:talousarvioPerustelut muutoshakemus)
         id-rows (query tx
                       "INSERT INTO virkailija.muutoshakemus
-                            (hakemus_id, haen_kayttoajan_pidennysta, kayttoajan_pidennys_perustelut, haettu_kayttoajan_paattymispaiva, talousarvio_perustelut)
-                        VALUES (?, ?, ?, ?, ?)
+                            (hakemus_id, haen_kayttoajan_pidennysta, kayttoajan_pidennys_perustelut, haettu_kayttoajan_paattymispaiva, talousarvio_perustelut, haen_sisaltomuutosta, sisaltomuutos_perustelut)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
                         RETURNING id"
-                      [hakemus-id haen-kayttoajan-pidennysta kayttoajan-pidennys-perustelut haettu-kayttoajan-paattymispaiva talousarvio-perustelut])]
+                      [hakemus-id haen-kayttoajan-pidennysta kayttoajan-pidennys-perustelut haettu-kayttoajan-paattymispaiva talousarvio-perustelut, haen-sisaltomuutosta, sisaltomuutos-perustelut])]
     (:id (first id-rows))))
 
 (defn- add-muutoshakemus-menoluokkas [tx muutoshakemus-id avustushaku-id talousarvio]
@@ -287,7 +289,7 @@
 
 (defn on-muutoshakemus [user-key hakemus-id avustushaku-id muutoshakemus]
   (with-tx (fn [tx]
-    (when (or (:talousarvio muutoshakemus) (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta] false))
+    (when (or (:talousarvio muutoshakemus) (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta]) (get-in muutoshakemus [:sisaltomuutos :haenSisaltomuutosta]))
       (let [muutoshakemus-id (add-muutoshakemus tx user-key hakemus-id muutoshakemus)]
         (when (:talousarvio muutoshakemus)
           (add-muutoshakemus-menoluokkas tx muutoshakemus-id avustushaku-id (:talousarvio muutoshakemus)))))

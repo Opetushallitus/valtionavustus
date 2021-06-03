@@ -11,6 +11,13 @@
     :haettuKayttoajanPaattymispaiva java.time.LocalDate
     })
 
+(s/defschema Sisaltomuutos
+  "JatkoaikaHakemus contains fields for applying for deadline extension"
+  {
+    :haenSisaltomuutosta s/Bool
+    :sisaltomuutosPerustelut s/Str
+    })
+
 (s/defschema ContactPersonDetails
   "ContactPersonDetails contains contact person details in normalized format"
   {
@@ -30,6 +37,7 @@
     (s/optional-key :talousarvio) TalousarvioMuutos
     (s/optional-key :talousarvioPerustelut) s/Str
     (s/optional-key :yhteyshenkilo) ContactPersonDetails
+    (s/optional-key :sisaltomuutos) Sisaltomuutos
   })
 
 (s/defschema Paatos

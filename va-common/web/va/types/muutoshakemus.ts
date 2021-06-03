@@ -86,6 +86,8 @@ export type FormValues = {
   email: string
   phone: string
   haenKayttoajanPidennysta: boolean
+  haenSisaltomuutosta: boolean
+  sisaltomuutosPerustelut?: string
   haenMuutostaTaloudenKayttosuunnitelmaan: boolean
   haettuKayttoajanPaattymispaiva?: Date,
   kayttoajanPidennysPerustelut?: string

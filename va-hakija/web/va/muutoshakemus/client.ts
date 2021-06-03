@@ -29,9 +29,17 @@ export async function postMuutoshakemus(props: MuutoshakemusProps) {
     talousarvioPerustelut: values.taloudenKayttosuunnitelmanPerustelut
   }
 
+  const sisaltomuutos = values.haenSisaltomuutosta && {
+    sisaltomuutos: {
+      haenSisaltomuutosta: true,
+      sisaltomuutosPerustelut: values.sisaltomuutosPerustelut
+    }
+  }
+
   return client.post(url, {
     ...jatkoaika,
     ...talousarvio,
+    ...sisaltomuutos,
     yhteyshenkilo: {
       name: values.name,
       email: values.email,

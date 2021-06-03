@@ -8,6 +8,7 @@ import { getProjectEndDate, getProjectEndMoment, getTalousarvio, getTalousarvioV
 import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
 
 import { MuutoshakemusFormSection } from './components/MuutoshakemusFormSection'
+import { PerustelutTextArea } from './components/PerustelutTextArea'
 import { AvustuksenKayttoaikaInput } from './components/jatkoaika/AvustuksenKayttoaikaInput'
 import { TalousarvioForm } from './components/talous/TalousarvioForm'
 import {ContactPerson} from './components/contact-person/ContactPerson'
@@ -36,6 +37,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
   const f = createFormikHook(userKey, lang)
   const existingNewMuutoshakemus = state.muutoshakemukset.find(m => m.status === 'new')
   const enableBudgetChange = state.hakemus?.talousarvio && state.hakemus.talousarvio.length > 1
+  const enableSisaltomuutos = state.environment?.sisaltomuutos?.["enabled?"]
 
   useEffect(() => {
     const fetchProps = async () => {
@@ -52,9 +54,11 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
           name: hakemus["contact-person"],
           email: hakemus["contact-email"],
           phone: hakemus["contact-phone"],
+          haenSisaltomuutosta: false,
           haenKayttoajanPidennysta: false,
           haenMuutostaTaloudenKayttosuunnitelmaan: false,
           haettuKayttoajanPaattymispaiva: currentProjectEnd.isValid() ? currentProjectEnd.toDate() : new Date(),
+          sisaltomuutosPerustelut: '',
           kayttoajanPidennysPerustelut: '',
           taloudenKayttosuunnitelmanPerustelut: '',
           talousarvio: getTalousarvioValues(talousarvio)
@@ -113,6 +117,11 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
                 <section className="muutoshakemus__section">
                   <h1 className="muutoshakemus__title">{t.applicationEdit.title}</h1>
                   <div className="muutoshakemus__form">
+                    {enableSisaltomuutos &&
+                      <MuutoshakemusFormSection f={f} name="haenSisaltomuutosta" title={t.sisaltomuutos.checkboxTitle}>
+                      <PerustelutTextArea f={f} name='sisaltomuutosPerustelut' title={t.sisaltomuutos.title} />
+                      </MuutoshakemusFormSection>
+                    }
                     <MuutoshakemusFormSection f={f} name="haenKayttoajanPidennysta" title={t.kayttoajanPidennys.checkboxTitle}>
                       <AvustuksenKayttoaikaInput f={f} projectEnd={getProjectEndDate(state.avustushaku, state.muutoshakemukset)} />
                     </MuutoshakemusFormSection>

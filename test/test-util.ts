@@ -603,6 +603,11 @@ export async function fillMuutoshakemusBudgetAmount(page: Page, budget: BudgetAm
   await clearAndType(page, "input[name='talousarvio.other-costs-row'][type='number']", budget.other)
 }
 
+export async function fillSisaltomuutosPerustelut(page: Page, perustelut: string) {
+  await clearAndType(page, '#perustelut-sisaltomuutosPerustelut', perustelut)
+}
+
+
 export async function fillBudgetPerustelut(page: Page, perustelut: string) {
   await clearAndType(page, '#perustelut-taloudenKayttosuunnitelmanPerustelut', perustelut)
 }

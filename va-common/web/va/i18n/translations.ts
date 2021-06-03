@@ -26,6 +26,10 @@ export const translationsFi = {
     existingExpirationDateTitle: 'Voimassaoleva viimeinen käyttöpäivä',
     newExpirationDateTitle: 'Uusi viimeinen käyttöpäivä',
   },
+  sisaltomuutos: {
+    checkboxTitle: 'Haen muutosta hankkeen sisältöön tai toimitustapaan',
+    title: 'Kuvaile muutokset hankkeen sisältöön tai toimitustapaan'
+  },
   muutosTaloudenKayttosuunnitelmaan: {
     checkboxTitle: 'Haen muutosta hankkeen budjettiin',
     currentBudget: 'Voimassaoleva budjetti',
@@ -162,6 +166,10 @@ const translationsSv: Translations = {
     checkboxTitle: 'Jag ansöker om förlängd användningstid för statsunderstödet',
     existingExpirationDateTitle: 'Nuvarande sista användningdag',
     newExpirationDateTitle: 'Ny sista användningsdag',
+  },
+  sisaltomuutos: {
+    checkboxTitle: 'Haen muutosta hankkeen sisältöön tai toimitustapaan',
+    title: 'Kuvaile muutokset hankkeen sisältöön tai toimitustapaan'
   },
   muutosTaloudenKayttosuunnitelmaan: {
     checkboxTitle: 'Jag ansöker om ändringar i projektets budget',

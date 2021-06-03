@@ -9,16 +9,17 @@ import { ErrorMessage } from '../ErrorMessage'
 type PerustelutTextAreaProps = {
   f: FormikHook
   name: keyof FormValues
+  title?: string
 }
 
-export const PerustelutTextArea = ({ f, name }: PerustelutTextAreaProps) => {
+export const PerustelutTextArea = ({ f, name, title }: PerustelutTextAreaProps) => {
   const { t } = useTranslations()
   const reasonError = getInputErrorClass(f, name)
   const id = `perustelut-${name}`
 
   return (
     <div className="muutoshakemus__perustelut">
-      <label htmlFor={id}>{t.applicationEdit.reasoning}</label>
+      <label htmlFor={id}>{title || t.applicationEdit.reasoning}</label>
       <textarea
         id={id}
         name={name}

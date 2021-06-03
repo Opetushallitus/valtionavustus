@@ -30,6 +30,12 @@ const getMuutoshakemusSchema = (lang: Language) => {
       otherwise: yup.string()
     }),
     haenMuutostaTaloudenKayttosuunnitelmaan: yup.boolean().required(e.required),
+    haenSisaltomuutosta: yup.boolean().required(e.required),
+    sisaltomuutosPerustelut: yup.string().when('haenSisaltomuutosta', {
+      is: true,
+      then: yup.string().required(e.required),
+      otherwise: yup.string()
+    }),
     taloudenKayttosuunnitelmanPerustelut: yup.string().when('haenMuutostaTaloudenKayttosuunnitelmaan', {
       is: true,
       then: yup.string().required(e.required),
@@ -48,10 +54,12 @@ const initialValues: FormValues = {
   email: '',
   phone: '',
   haenKayttoajanPidennysta: false,
+  haenSisaltomuutosta: false,
   haettuKayttoajanPaattymispaiva: new Date(),
   kayttoajanPidennysPerustelut: '',
   haenMuutostaTaloudenKayttosuunnitelmaan: false,
   taloudenKayttosuunnitelmanPerustelut: '',
+  sisaltomuutosPerustelut: '',
   talousarvio: {
     originalSum: 0,
     currentSum: 0
