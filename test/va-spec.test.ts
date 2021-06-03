@@ -66,7 +66,10 @@ import {
   countElements,
   getElementInnerText,
   navigateToPaatos,
-  lastOrFail
+  lastOrFail,
+  createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku,
+  fillAndSendMuutoshakemusDisabledMenoluokiteltuHakemus,
+  navigateToSeurantaTab,
 } from './test-util'
 import axios from 'axios'
 
@@ -442,6 +445,53 @@ describe("Puppeteer tests", () => {
           const expectedResponse = await expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID, hakemusID, randomValueForProjectNutshell)
           const actualResponse = await actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID)
           expect(actualResponse).toMatchObject(expectedResponse)
+        })
+      })
+    })
+  })
+
+  describe('When muutoshakukelvoton avustushaku with menoluokat has been created', () => {
+    let avustushakuID: number
+    let hakemusID: number
+    const haku = {
+      registerNumber: "230/2015",
+      avustushakuName: `Muutoshakukelvoton menoluokallinen haku - ${moment(new Date()).format('YYYY-MM-DD HH:mm:ss:SSSS')}`
+    }
+
+    beforeAll(async () => {
+      avustushakuID = await createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku(page, haku)
+    })
+
+    describe('And menoluokallinen hakemus has been submitted', () => {
+      const answers = {
+        contactPersonEmail: "aku.ankka@example.com",
+        contactPersonName: "Aku Ankka",
+        contactPersonPhoneNumber: "313",
+        projectName: "Akuutin budjettivajeen jeesaus",
+      }
+      beforeAll(async () => {
+        hakemusID = await fillAndSendMuutoshakemusDisabledMenoluokiteltuHakemus(page, avustushakuID, answers)
+      })
+
+      describe('And hakemus has been approved with lump sum and päätös has been sent', () => {
+        beforeAll(async () => {
+          await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
+          await acceptHakemus(page, avustushakuID, hakemusID, async () => {})
+          await sendPäätös(page, avustushakuID)
+        })
+
+        describe('And virkailija navigates to seuranta', () => {
+          beforeAll(async () => {
+            await navigateToSeurantaTab(page, avustushakuID, hakemusID)
+          })
+
+          it('myönnetty amount is displayed correctly', async () => {
+            expect(await getElementInnerText(page, '[data-test-id="granted-total"]')).toBe('100000')
+          })
+
+          it('OPH:n hyväksymä amount is displayed correctly', async () => {
+            expect(await getElementInnerText(page, '[data-test-id="amount-total"]')).toBe('100000')
+          })
         })
       })
     })

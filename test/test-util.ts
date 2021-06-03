@@ -26,8 +26,10 @@ export const VIRKAILIJA_URL = `http://${VIRKAILIJA_HOSTNAME}:${VIRKAILIJA_PORT}`
 export const HAKIJA_URL = `http://${HAKIJA_HOSTNAME}:${HAKIJA_PORT}`
 
 export const dummyPdfPath = path.join(__dirname, 'dummy.pdf')
+export const dummyExcelPath = path.join(__dirname, 'dummy.xls')
 const muutoshakemusEnabledHakuLomakeJson = fs.readFileSync(path.join(__dirname, 'prod.hakulomake.json'), 'utf8')
 const budjettimuutoshakemusEnabledLomakeJson = fs.readFileSync(path.join(__dirname, 'budjettimuutos.hakulomake.json'), 'utf8')
+const muutoshakuDisabledMenoluokiteltuLomakeJson = fs.readFileSync(path.join(__dirname, 'muutoshakemus-disabled-menoluokiteltu.hakulomake.json'), 'utf8')
 export const standardizedHakulomakeJson = fs.readFileSync(path.join(__dirname, 'vakioitu-hakulomake.json'), 'utf8')
 
 export const TEST_Y_TUNNUS = "2050864-5"
@@ -280,6 +282,98 @@ async function createMuutoshakemusEnabledHaku(page: Page, hakuName?: string, reg
 
 async function createBudjettimuutoshakemusEnabledHaku(page: Page, hakuName?: string, registerNumber?: string): Promise<{ avustushakuID: number }> {
   return await createHakuWithLomakeJson(page, budjettimuutoshakemusEnabledLomakeJson, hakuName, registerNumber)
+}
+
+export async function createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku(page: Page, haku: Haku): Promise<number> {
+  const { avustushakuID } = await createMuutoshakemusDisabledMenoluokiteltuHaku(page, haku.avustushakuName, haku.registerNumber)
+  await clickElementWithText(page, "span", "Haun tiedot")
+  await publishAvustushaku(page)
+  return avustushakuID
+}
+
+export async function fillAndSendMuutoshakemusDisabledMenoluokiteltuHakemus(page: Page, avustushakuID: number, answers: Answers): Promise<number> {
+  const lang = answers.lang || 'fi'
+  await navigateHakija(page, `/avustushaku/${avustushakuID}/?lang=${lang || 'fi'}`)
+
+  await page.waitForSelector('#haku-not-open', { hidden: true, timeout: 500 })
+  await clearAndType(page, "#primary-email", answers.contactPersonEmail)
+  await clickElement(page, "#submit:not([disabled])")
+
+  await navigateToNewHakemusPage(page, avustushakuID)
+
+  await clearAndType(page, "#finnish-business-id", TEST_Y_TUNNUS)
+  await clickElement(page, "input.get-business-id")
+  await clearAndType(page, "#applicant-name", answers.contactPersonName)
+  await clearAndType(page, "[id='textField-5']", answers.contactPersonPhoneNumber)
+  await clearAndType(page, "[id='textField-2']", 'Paratiisitie 13') // postiosoite
+  await clearAndType(page, "[id='textField-3']", '00313') // postinumero
+  await clearAndType(page, "[id='textField-4']", 'Ankkalinna') // postitoimipaikka
+  await clickElement(page, "[id='koodistoField-1_input']") // maakunta
+  await clickElementWithText(page, "li", 'Kainuu')
+
+  await clickElement(page, 'label[for="radioButton-0.radio.0"]') // Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko
+  await clearAndType(page, "[id='textField-0']", 'Kommandoyhtiö') // Yritys- tai yhteisömuoto
+  await clearAndType(page, "[id='signatories-fieldset-1.name']", "Teppo Testityyppi")
+  await clearAndType(page, "[id='signatories-fieldset-1.email']", "teppo.testityyppi@example.com")
+  await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")
+  await clearAndType(page, "#bank-bic", "OKOYFIHH")
+
+  await clearAndType(page, "#project-name", answers.projectName)
+  await clickElement(page, 'label[for="combined-effort.radio.1"]') // yhteishanke = ei
+
+  await clearAndType(page, "#textArea-2", "Ei osaamista") // Hakijayhteisön osaaminen ja kokemus opetustoimen henkilöstökoulutuksesta
+  await clearAndType(page, "#textArea-3", "Ei osaamista") // Koulutushankkeen kouluttajat, heidän osaamisensa ja kokemuksensa opetustoimen ja varhaiskasvatuksen henkilöstökoulutuksesta
+  await clickElement(page, 'label[for="radioButton-1.radio.0"]') // Teema: Johtamisosaamisen ja yhteisöllisen kehittämisen vahvistaminen
+  await clickElement(page, 'label[for="radioButton-2.radio.0"]') // Mistä muista kohderyhmistä koulutukseen voi osallistua: Varhaiskasvatus
+  await clearAndType(page, "#project-goals", "Ostetaan Pelle Pelottomalle uusi aikakone") // Hanke pähkinänkuoressa
+  await clearAndType(page, "#textArea-7", "Jälki-istunto. Iltakoulu. Kannettu vesi.") // kolme koulutuksen sisältöä kuvaavaa asiasanaa tai sanaparia
+  await clearAndType(page, "#textArea-4", "Ei mitenkään") // Miksi hanke tarvitaan? Miten koulutustarve on kartoitettu?
+  await clearAndType(page, "#textArea-5", "Päästä matkustamaan tulevaisuuteen") // Hankkeen tavoitteet, toteutustapa ja tulokset
+  await clearAndType(page, "#textArea-6", "Minä ja Pelle Peloton. Minä makaan riippumatossa ja kannustan Pelleä työntekoon") // Hankkeen osapuolet ja työnjako
+  await clearAndType(page, "#textArea-1", "Ankkalinna") // Toteuttamispaikkakunnat
+  await clearAndType(page, "#project-announce", "Uhkailemalla") // Miten osallistujat rekrytoidaan koulutukseen?
+  await clearAndType(page, "#project-effectiveness", "Vahditaan ettei työntekijät laiskottele") // Miten hankkeen tavoitteiden toteutumista seurataan?
+  await clearAndType(page, "#project-spreading-plan", "Hanke tulee luultavasti leviämään käsiin itsestään") // Hankkeen tulosten levittämissuunnitelma
+
+  await clearAndType(page, "[id='koulutusosiot.koulutusosio-1.nimi']", "Eka osa") // Koulutusosion nimi
+  await clearAndType(page, "[id='koulutusosiot.koulutusosio-1.keskeiset-sisallot']", "Kaadetaan tietoa osallistujien päähän") // Keskeiset sisällöt ja toteuttamistapa
+  await clearAndType(page, "[id='koulutusosiot.koulutusosio-1.kohderyhmat']", "Veljenpojat") // Kohderyhmät
+  await clearAndType(page, "[id='koulutusosiot.koulutusosio-1.koulutettavapaivat.scope']", "100") // Laajuus
+  await clearAndType(page, "[id='koulutusosiot.koulutusosio-1.koulutettavapaivat.person-count']", "2") // Osallistujamäärä
+
+  await clickElement(page, 'label[for="vat-included.radio.0"]') // Onko kustannukset ilmoitettu arvonlisäverollisina
+
+  await uploadFile(page, "[name='namedAttachment-0']", dummyExcelPath)
+
+  // Henkilöstökustannukset
+  await clearAndType(page, "[id='personnel-costs-row.description']", "Liksat")
+  await clearAndType(page, "[id='personnel-costs-row.amount']", "666")
+  // Aineet, tarvikkeet ja tavarat
+  await clearAndType(page, "[id='material-costs-row.description']", "Lakupiippuja")
+  await clearAndType(page, "[id='material-costs-row.amount']", "4")
+  // Vuokrat
+  await clearAndType(page, "[id='rent-costs-row.description']", "Pasikuikan Bajamaja")
+  await clearAndType(page, "[id='rent-costs-row.amount']", "14")
+  // Palvelut
+  await clearAndType(page, "[id='service-purchase-costs-row.description']", "Shampanjan vispaajat")
+  await clearAndType(page, "[id='service-purchase-costs-row.amount']", "1000")
+  // Matkakustannukset
+  await clearAndType(page, "[id='steamship-costs-row.description']", "Apostolin kyyti")
+  await clearAndType(page, "[id='steamship-costs-row.amount']", "0")
+  // Muut kulut
+  await clearAndType(page, "[id='other-costs-row.description']", "Banaani")
+  await clearAndType(page, "[id='other-costs-row.amount']", "10")
+
+  await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).disabled === false)
+  await clickElement(page, "#topbar #form-controls button#submit")
+  const sentText = lang === 'fi' ? "Hakemus lähetetty" : "Ansökan sänd"
+  await page.waitForFunction((text) => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === text, undefined, sentText)
+
+  return await getHakemusIDFromHakemusTokenURLParameter(page)
+}
+
+async function createMuutoshakemusDisabledMenoluokiteltuHaku(page: Page, hakuName?: string, registerNumber?: string): Promise<{ avustushakuID: number }> {
+  return await createHakuWithLomakeJson(page, muutoshakuDisabledMenoluokiteltuLomakeJson, hakuName, registerNumber)
 }
 
 export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page, hakuName?: string, registerNumber?: string): Promise<number> {
@@ -937,13 +1031,17 @@ async function downloadFile(page: Page, resource: string) {
   return Buffer.from(data.url.split(",")[1], "base64")
 }
 
+export async function getHakemusIDFromHakemusTokenURLParameter(page: Page): Promise<number> {
+  const token = await expectQueryParameter(page, "hakemus")
+  const url = `${VIRKAILIJA_URL}/api/v2/external/hakemus/id/${token}`
+  return await axios.get(url).then(r => r.data.id)
+}
+
 export async function fillAndSendHakemusAndReturnHakemusId(page: Page, avustushakuID: number, beforeSubmitFn?: () => void) {
   let hakemusID
 
   async function fn() {
-    const token = await expectQueryParameter(page, "hakemus")
-    const url = `${VIRKAILIJA_URL}/api/v2/external/hakemus/id/${token}`
-    hakemusID = await axios.get(url).then(r => r.data.id)
+    hakemusID = await getHakemusIDFromHakemusTokenURLParameter(page)
 
     if (beforeSubmitFn)
       await beforeSubmitFn()
@@ -1109,6 +1207,11 @@ export async function validateMuutoshakemusPaatosCommonValues(page: Page) {
   expect(decider).toEqual('_ valtionavustus')
   const info = await page.$eval('[data-test-id="paatos-additional-info"]', el => el.textContent)
   expect(info).toEqual('_ valtionavustussanteri.horttanainen@reaktor.com029 533 1000 (vaihde)')
+}
+
+export async function navigateToSeurantaTab(page: Page, avustushakuID: number, hakemusID: number) {
+  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/seuranta/`)
+  await page.waitForSelector('#set-allow-visibility-in-external-system', { visible: true })
 }
 
 export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number) {
