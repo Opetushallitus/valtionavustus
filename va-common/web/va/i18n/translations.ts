@@ -63,9 +63,9 @@ export const translationsFi = {
       phoneNumber: '029 533 1000 (vaihde)',
       paatosDokumentti: 'Päätösdokumentti',
       status: {
-        accepted: 'Opetushallitus hyväksyy muutokset hakemuksen mukaisesti.',
-        rejected: 'Opetushallitus hylkää muutoshakemuksen.',
-        accepted_with_changes: 'Opetushallitus hyväksyy hakemuksen alla olevin muutoksin.',
+        accepted: 'Opetushallitus on hyväksynyt haetut muutokset.',
+        rejected: 'Opetushallitus on hylännyt haetut muutokset.',
+        accepted_with_changes: 'Opetushallitus on hyväksynyt haetut muutokset tässä päätöksessä kuvatuin muutoksin.',
       },
       vakioperustelut: {
         accepted: 'Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt hyväksyä haetut muutokset hakemuksen mukaisesti.',
@@ -131,7 +131,11 @@ const translationsSv: Translations = {
       lisatietoja: 'Mer information',
       phoneNumber: '029 533 1000 (växel)',
       paatosDokumentti: 'Beslutshandling',
-      status: translationsFi.muutoshakemus.paatos.status,
+      status: {
+        accepted: 'Utbildningsstyrelsen har godkänt ändringarna enligt ändringsansökan.',
+        accepted_with_changes: 'Utbildningsstyrelsen har godkänt ändringarna med vissa justeringar som beskrivs i detta beslut.',
+        rejected: 'Utbildningsstyrelsen har inte godkänt ändringarna enligt ändringsansökan.',
+      },
       vakioperustelut: {
         accepted: 'Utbildningsstyrelsen har bedömt ansökan. Utbildningsstyrelsen har utifrån en bedömning som gjorts av sakkunniga och efter övervägande beslutat att godkänna ändringarna i enlighet med ändringsansökan.',
         accepted_with_changes: 'Utbildningsstyrelsen har bedömt ansökan. Utbildningsstyrelsen har utifrån en bedömning som gjorts av sakkunniga och efter övervägande beslutat att godkänna ändringarna med vissa justeringar på det sätt som beskrivs i understödsbeslutet.',
