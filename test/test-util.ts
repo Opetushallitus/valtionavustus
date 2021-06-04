@@ -288,6 +288,7 @@ export async function createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku(pa
   const { avustushakuID } = await createMuutoshakemusDisabledMenoluokiteltuHaku(page, haku.avustushakuName, haku.registerNumber)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
+  await markAvustushakuAsMuutoshakukelvoton(avustushakuID)
   return avustushakuID
 }
 
