@@ -68,9 +68,9 @@ export const translationsFi = {
         accepted_with_changes: 'Opetushallitus hyväksyy hakemuksen alla olevin muutoksin.',
       },
       vakioperustelut: {
-        accepted: 'Opetushallitus katsoo, että päätöksessä hyväksytyt muutokset tukevat hankkeen tavoitteiden saavuttamista.',
-        accepted_with_changes: 'Opetushallitus katsoo, että päätöksessä hyväksytyt muutokset tukevat hankkeen tavoitteiden saavuttamista.',
-        rejected: 'Opetushallitus on arvioinut hakemuksen. Asiantuntija-arvioinnin perusteella on Opetushallitus asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.',
+        accepted: 'Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt hyväksyä haetut muutokset hakemuksen mukaisesti.',
+        accepted_with_changes: 'Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt hyväksyä haetut muutokset muutettuna, siten kuin ne kuvataan tässä avustuspäätöksessä.',
+        rejected: 'Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.',
       },
     },
     status: {
@@ -132,7 +132,11 @@ const translationsSv: Translations = {
       phoneNumber: '029 533 1000 (växel)',
       paatosDokumentti: 'Beslutshandling',
       status: translationsFi.muutoshakemus.paatos.status,
-      vakioperustelut: translationsFi.muutoshakemus.paatos.vakioperustelut,
+      vakioperustelut: {
+        accepted: 'Utbildningsstyrelsen har bedömt ansökan. Utbildningsstyrelsen har utifrån en bedömning som gjorts av sakkunniga och efter övervägande beslutat att godkänna ändringarna i enlighet med ändringsansökan.',
+        accepted_with_changes: 'Utbildningsstyrelsen har bedömt ansökan. Utbildningsstyrelsen har utifrån en bedömning som gjorts av sakkunniga och efter övervägande beslutat att godkänna ändringarna med vissa justeringar på det sätt som beskrivs i understödsbeslutet.',
+        rejected: 'Utbildningsstyrelsen har bedömt ansökan. Utbildningsstyrelsen har utifrån en bedömning som gjorts av sakkunniga och efter övervägande beslutat att inte godkänna de ansökta ändringarna.',
+      },
     },
     status: {
       missing: '',
