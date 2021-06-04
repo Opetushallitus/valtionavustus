@@ -485,12 +485,14 @@ describe("Puppeteer tests", () => {
             await navigateToSeurantaTab(page, avustushakuID, hakemusID)
           })
 
-          it('myönnetty amount is displayed correctly', async () => {
-            expect(await getElementInnerText(page, '[data-test-id="granted-total"]')).toBe('100000')
+          it('total myönnetty amount is displayed correctly', async () => {
+            expect(await getElementInnerText(page, '#budget-edit-project-budget [class="granted-amount-column"] [class="money"]'))
+              .toBe('100000')
           })
 
           it('OPH:n hyväksymä amount is displayed correctly', async () => {
-            expect(await getElementInnerText(page, '[data-test-id="amount-total"]')).toBe('100000')
+            expect(await getElementInnerText(page, '#budget-edit-project-budget [class="amount-column"] [class="money sum"]'))
+              .toBe('0')
           })
         })
       })

@@ -313,7 +313,6 @@ export async function fillAndSendMuutoshakemusDisabledMenoluokiteltuHakemus(page
   await clickElementWithText(page, "li", 'Kainuu')
 
   await clickElement(page, 'label[for="radioButton-0.radio.0"]') // Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko
-  await clearAndType(page, "[id='textField-0']", 'Kommandoyhtiö') // Yritys- tai yhteisömuoto
   await clearAndType(page, "[id='signatories-fieldset-1.name']", "Teppo Testityyppi")
   await clearAndType(page, "[id='signatories-fieldset-1.email']", "teppo.testityyppi@example.com")
   await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")

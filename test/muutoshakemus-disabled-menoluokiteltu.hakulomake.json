@@ -339,24 +339,6 @@
                 "fi": "Ryhmään ”Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko” kuuluvat kunnat ja kuntayhtymät sekä muut paikallishallinnon yksiköt, kuten esimerkiksi kuntien keskusjärjestöt ja paikallishallinnon valvomat osakeyhtiöt. Ammattikorkeakoulut kuuluvat tähän ryhmään.\n\nLiiketaloudellisin perustein toimiva yhtiö on esimerkiksi osakeyhtiö ja kommandiittiyhtiö. \n\nVoittoa tavoittelemattomia yhteisöjä ovat esimerkiksi rekisteröidyt yhdistykset, osuuskunnat ja säätiöt.\n\nYliopistolla tarkoitetaan yliopistolain mukaisia korkeakouluja.\n\nRyhmään ”Valtio” kuuluvat esimerkiksi valtion alaisuudessa toimivat koulut.\n",
                 "sv": "Till gruppen ”Kommun/samkommun, kommunalt ägda bolag, kyrkan” hör kommuner och samkommuner samt andra enheter inom lokalförvaltningen, t.ex. kommunernas centralorganisationer och aktiebolag som övervakas av lokalförvaltningen. Även yrkeshögskolorna hör till denna grupp.\n\nBolag som drivs på företagsekonomiska grunder är. t.ex. aktiebolag och kommanditbolag.\n\nIcke-vinstdrivande sammanslutningar är t.ex. registrerade föreningar, andelslag och stiftelser.\n\nMed universitet avses högskolor i enlighet med universitetslagen.\n\nTill gruppen ”Staten” hör t.ex. skolor som lyder under staten.\n"
               }
-            },
-            {
-              "label": {
-                "fi": "Yritys- tai yhteisömuoto",
-                "sv": "Företags- eller sammanslutningsform"
-              },
-              "fieldClass": "formField",
-              "helpText": {
-                "fi": "Ilmoita hakijan yhtiö- eli yritysmuoto tai minkälainen (voittoa tavoittelematon) yhteisö on kyseessä. Käytä vakiintuneita termejä, ei lyhenteitä.",
-                "sv": "Uppge i vilken form sökandes bolag eller sammanslutning (icke-vinstdrivande) bedrivs. Använd etablerade termer, inte förkortninngar."
-              },
-              "id": "textField-0",
-              "params": {
-                "size": "small",
-                "maxlength": 100
-              },
-              "required": true,
-              "fieldType": "textField"
             }
           ]
         },
