@@ -126,11 +126,11 @@ describe('Muutospäätösprosessi', () => {
 
 
   async function assertAcceptedPäätösHasVakioperustelu(page: Page): Promise<void> {
-    await assertPäätösHasPerustelu(page, 'Opetushallitus katsoo, että päätöksessä hyväksytyt muutokset tukevat hankkeen tavoitteiden saavuttamista.')
+    await assertPäätösHasPerustelu(page, 'Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt hyväksyä haetut muutokset hakemuksen mukaisesti.')
   }
 
   async function assertRejectedPäätösHasVakioperustelu(page: Page): Promise<void> {
-    await assertPäätösHasPerustelu(page, 'Opetushallitus on arvioinut hakemuksen. Asiantuntija-arvioinnin perusteella on Opetushallitus asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.')
+    await assertPäätösHasPerustelu(page, 'Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.')
   }
 
   async function assertPäätösHasPerustelu(page: Page, perustelu: string): Promise<void> {
@@ -373,7 +373,7 @@ etunimi.sukunimi@oph.fi`)
 
                 it('Correct päätös is displayed', async () => {
                   const acceptedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
-                  expect(acceptedPaatos).toEqual('Opetushallitus hyväksyy muutokset hakemuksen mukaisesti.')
+                  expect(acceptedPaatos).toEqual('Opetushallitus on hyväksynyt haetut muutokset.')
                 })
 
                 it('Correct vakioperustelu is displayed', async () => {
@@ -402,7 +402,7 @@ etunimi.sukunimi@oph.fi`)
 
                 it('Correct päätös is displayed', async () => {
                   const rejectedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
-                  expect(rejectedPaatos).toEqual('Opetushallitus hylkää muutoshakemuksen.')
+                  expect(rejectedPaatos).toEqual('Opetushallitus on hylännyt haetut muutokset.')
                 })
 
                 it('Correct vakioperustelu is displayed', async () => {
@@ -486,7 +486,7 @@ etunimi.sukunimi@oph.fi`)
 
             it('muutoshakemus päätös is rejected', async () => {
               const rejectedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
-              expect(rejectedPaatos).toEqual('Opetushallitus hylkää muutoshakemuksen.')
+              expect(rejectedPaatos).toEqual('Opetushallitus on hylännyt haetut muutokset.')
             })
 
             it('päätös has vakioperustelu', async () => {
@@ -558,7 +558,7 @@ etunimi.sukunimi@oph.fi`)
 
               it('muutoshakemus has hyväksytty päätös', async () => {
                 const acceptedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
-                expect(acceptedPaatos).toEqual('Opetushallitus hyväksyy muutokset hakemuksen mukaisesti.')
+                expect(acceptedPaatos).toEqual('Opetushallitus on hyväksynyt haetut muutokset.')
               })
 
               it('päätös has vakioperustelu', async () => {
@@ -767,7 +767,7 @@ etunimi.sukunimi@oph.fi`)
 
                   it('Correct title is displayed', async () => {
                     const paatos = await textContent(paatosPage, '[data-test-id="paatos-paatos"]')
-                    expect(paatos).toBe('Opetushallitus hyväksyy hakemuksen alla olevin muutoksin.')
+                    expect(paatos).toBe('Opetushallitus on hyväksynyt haetut muutokset tässä päätöksessä kuvatuin muutoksin.')
                   })
 
                   afterAll(async () => {

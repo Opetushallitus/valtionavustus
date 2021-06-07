@@ -391,7 +391,7 @@ describe('Talousarvion muuttaminen', () => {
 
           it('Decision is shown in finnish', async () => {
             const title = await getElementInnerText(page, '[data-test-id="paatos-paatos"]')
-            expect(title).toEqual('Opetushallitus hyväksyy hakemuksen alla olevin muutoksin.')
+            expect(title).toEqual('Opetushallitus on hyväksynyt haetut muutokset tässä päätöksessä kuvatuin muutoksin.')
           })
 
           it('Accepted changes title is shown in finnish', async () => {
