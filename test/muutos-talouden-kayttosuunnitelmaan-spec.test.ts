@@ -244,7 +244,7 @@ describe('Talousarvion muuttaminen', () => {
         const budgetRows = await page.$$eval('[data-test-class="existing-muutoshakemus"][data-test-state="new"] [data-test-id="meno-input-row"]', (elements, inputSelector) => {
           return elements.map(elem => ({
             name: elem.getAttribute('data-test-type')?.replace('-costs-row', '') || '',
-            amount: elem.querySelector(inputSelector)?.innerHTML || ''
+            amount: elem.querySelector(inputSelector as string)?.innerHTML || ''
           }))
         }, numberFieldSelector) as BudgetRow[]
 
