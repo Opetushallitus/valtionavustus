@@ -3,10 +3,10 @@ import _ from 'lodash'
 import Bacon from 'baconjs'
 
 import HttpUtil from "soresu-form/web/HttpUtil"
-import DateUtil from 'soresu-form/web/DateUtil'
 
 import FormEditor from './FormEditor'
 import { Lahetys, Tapahtumaloki } from './Tapahtumaloki'
+import { LastUpdated } from './LastUpdated'
 
 type SelvitysFormEditorProps = {
   avustushaku: any
@@ -28,7 +28,6 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
   const formContent = avustushaku[selvitysType + "Form"]
   const updatedAtElementId = `${selvitysType}UpdatedAt`
   const updatedAt = formContent?.updated_at
-  const formattedUpdatedDate = `${DateUtil.asDateString(updatedAt)} klo ${DateUtil.asTimeString(updatedAt)}`
 
   const previewUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/" + selvitysType
   const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/" + selvitysType + "?lang=sv"
@@ -113,7 +112,7 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
     <div>
       {selvitysType === 'valiselvitys' ? valiselvitysSection : loppuSelvitysSection}
       <button style={{float:'right'}} onClick={recreateForm}>Palauta alkuperäiset kysymykset</button>
-      {updatedAt && <div id={updatedAtElementId} style={{float:'right',marginRight:20}}>Päivitetty: {formattedUpdatedDate}</div>}
+      <LastUpdated updatedAt={updatedAt} id={updatedAtElementId} />
       <div className="link-list">
         <div className="link-list-item">
           <h3>Lomakkeen esikatselu</h3>
