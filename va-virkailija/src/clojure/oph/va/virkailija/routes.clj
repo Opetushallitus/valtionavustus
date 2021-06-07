@@ -89,22 +89,11 @@
                      "&preview=true")]
     (resp/redirect preview-url)))
 
-(defn should-edit-on-muutoshaku-page? [avustushaku-id hakemus]
-  (let [arvio (virkailija-db/get-arvio (:id hakemus))
-        normalized-hakemus (virkailija-db/get-normalized-hakemus (:id hakemus))]
-    (and normalized-hakemus
-         (= "accepted" (:status arvio))
-         (virkailija-db/is-avustushaku-muutoshakukelpoinen? avustushaku-id))))
-
 (defn- on-hakemus-edit [avustushaku-id hakemus-user-key]
   (let [hakemus (hakija-api/get-hakemus-by-user-key hakemus-user-key)
         language (keyword (:language hakemus))
-        hakija-app-url (-> config :server :url language)
-        preview-url (if (should-edit-on-muutoshaku-page? avustushaku-id hakemus)
-          (str hakija-app-url "muutoshakemus?lang=fi&user-key=" hakemus-user-key "&avustushaku-id=" avustushaku-id)
-          (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key)
-          )]
-    (resp/redirect preview-url)))
+        hakija-app-url (-> config :server :url language)]
+    (resp/redirect (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key))))
 
 (defn- on-paatos-preview [avustushaku-id user-key]
   (let [hakemus (hakija-api/get-hakemus-by-user-key user-key)

@@ -49,7 +49,6 @@ import {
   lastOrFail,
   getHakemusTokenAndRegisterNumber,
   navigateToHakemuksenArviointi,
-  waitForElementWithText,
 } from './test-util'
 
 jest.setTimeout(400_000)
@@ -287,24 +286,16 @@ etunimi.sukunimi@oph.fi`)
       })
     })
 
-    it('virkailija opens muutoshakemus form when editing the hakemus and hakemus stays in submitted status', async () => {
+    it('allows virkailija to edit the original hakemus', async () => {
       await navigateToHakemus(page, avustushakuID, hakemusID)
       await clickElementWithText(page, "button", "Muokkaa hakemusta")
       const newPagePromise = waitForNewTabToOpen(browser)
       await clickElementWithText(page, "button", "Siirry muokkaamaan")
       const modificationPage = await newPagePromise
       await modificationPage.bringToFront()
-      expect(modificationPage.url()).toContain(`/muutoshakemus?lang=fi&user-key=`)
+      expect(await modificationPage.url()).toContain(`${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=`)
       await page.bringToFront()
-
-      // Expect "Siirry muokkkaamaan" link to not exist since the hakemus should still be in submitted status instead of officer_edit
-      await reload(page)
-      await waitForElementWithText(page, "a", "Siirry muokkaamaan", { hidden: true, timeout: 1000 })
     })
-
-    async function reload(page: Page) {
-      await page.reload({ waitUntil: ["load", "networkidle0"] })
-    }
 
     describe('And muutoshakemus #1 has been submitted', () => {
       beforeAll(async () => {

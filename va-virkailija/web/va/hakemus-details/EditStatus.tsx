@@ -55,16 +55,7 @@ export default class EditStatus extends React.Component<EditStatusProps, EditSta
 
     const onSubmit = () => {
       this.setState({submitting: true})
-
-      const previousStatus = hakemus.status
       updateHakemusStatus(avustushakuId, hakemus.id, status, this.state.comment)
-        .then(() => {
-          if (status === 'officer_edit' && avustushaku.muutoshakukelpoinen) {
-            return updateHakemusStatus(avustushakuId, hakemus.id, previousStatus, this.state.comment)
-          } else {
-            return Promise.resolve()
-          }
-        })
         .then(() => {
           this.setState({ submitting: false, submitted: true })
           if(!cancelled){
