@@ -728,12 +728,15 @@ export function expectToBeDefined<T>(val: T): asserts val is NonNullable<T> {
 }
 
 export async function copyEsimerkkihaku(page: Page) {
-  // Copy esimerkkihaku
   await navigate(page, "/admin/haku-editor/")
   await clickElement(page, ".haku-filter-remove")
-  await clickElementWithText(page, "td", "Yleisavustus - esimerkkihaku")
+  const element = await clickElementWithText(page, "td", "Yleisavustus - esimerkkihaku") as ElementHandle
+  const currentHakuTitle = await (await element.getProperty('textContent'))?.jsonValue() as string
   await clickElementWithText(page, "a", "Kopioi uuden pohjaksi")
-  await page.waitFor(2000) // :|
+
+  const newHakuTitle = `${currentHakuTitle} (kopio)`
+  await page.waitForFunction((name: string) =>
+    document.querySelector("#haku-name-fi")?.textContent === name, {}, newHakuTitle)
 }
 
 export async function clickElement(page: Page, selector: string) {
@@ -745,6 +748,7 @@ export async function clickElementWithText(page: Page, elementType: string, text
   const element = await waitForElementWithText(page, elementType, text)
   assert.ok(element, `Could not find ${elementType} element with text '${text}'`)
   await element.click()
+  return element
 }
 
 export async function waitForElementWithText(page: Page, elementType: string, text: string, waitForSelectorOptions: WaitForSelectorOptions = {visible: true}) {
