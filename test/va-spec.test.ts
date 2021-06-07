@@ -160,13 +160,13 @@ describe("Puppeteer tests", () => {
     await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
 
     await clickElementWithText(page, "span", "Päätös")
-    const paatosUpdatedAt = textContent(page, "#paatosUpdatedAt")
+    const paatosUpdatedAt = getElementInnerText(page, "#paatosUpdatedAt")
 
     await clickElementWithText(page, "span", "Väliselvitys")
-    const valiselvitysUpdatedAt = textContent(page, "#valiselvitysUpdatedAt")
+    const valiselvitysUpdatedAt = getElementInnerText(page, "#valiselvitysUpdatedAt")
 
     await clickElementWithText(page, "span", "Loppuselvitys")
-    const loppuselvitysUpdatedAt = textContent(page, "#loppuselvitysUpdatedAt")
+    const loppuselvitysUpdatedAt = getElementInnerText(page, "#loppuselvitysUpdatedAt")
 
     return Promise.all([paatosUpdatedAt, valiselvitysUpdatedAt, loppuselvitysUpdatedAt])
       .then(([paatos, valiselvitys, loppuselvitys]) => {

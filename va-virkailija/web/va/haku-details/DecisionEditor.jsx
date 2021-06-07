@@ -10,6 +10,7 @@ import Selvitys from './Selvitys'
 import HelpTooltip from '../HelpTooltip'
 import { Kayttoaika } from './Kayttoaika'
 import { Tapahtumaloki } from './Tapahtumaloki'
+import { LastUpdated } from './LastUpdated'
 
 const DecisionField = ({avustushaku, title, id,language, onChange, helpText, dataTestId}) => {
   const fieldId= `decision.${id}.${language}`
@@ -614,7 +615,6 @@ export default class DecisionEditor extends React.Component {
       {id:"valmistelija",title:"Esittelijä", helpText:helpTexts["hakujen_hallinta__päätös___esittelijä"], dataTestId:"valmistelija"}
     ]
     const updatedAt = avustushaku.decision.updatedAt
-    const formattedUpdatedAt = `${DateUtil.asDateString(updatedAt)} klo ${DateUtil.asTimeString(updatedAt)}`
     const rahoitusAlueDecisionSubfields = _.isEmpty(avustushaku.content.rahoitusalueet)
       ? []
       : avustushaku.content.rahoitusalueet.map(row => <DecisionFields key={row.rahoitusalue} title={"Myönteisen päätöksen lisäteksti - " + row.rahoitusalue} avustushaku={avustushaku} id={"myonteinenlisateksti-" + row.rahoitusalue.replace(/[\s.]/g, "_")} onChange={onChange}/>)
@@ -624,7 +624,7 @@ export default class DecisionEditor extends React.Component {
     return (
       <div className="decision-editor">
         <div data-test-id="paatos-ohje" dangerouslySetInnerHTML={mainHelp} />
-        { updatedAt && <div style={{'textAlign':'right'}} id="paatosUpdatedAt">Päivitetty: {formattedUpdatedAt}</div> }
+        <LastUpdated updatedAt={updatedAt} id={'paatosUpdatedAt'} />
         <DecisionFields key="taustaa" title="Taustaa" avustushaku={avustushaku} id="taustaa" onChange={onChange} helpText={helpTexts["hakujen_hallinta__päätös___taustaa"]} dataTestId="taustaa" />
         <DecisionFields key="myonteinenlisateksti" title="Myönteisen päätöksen lisäteksti" avustushaku={avustushaku} id="myonteinenlisateksti" onChange={onChange} helpText={helpTexts["hakujen_hallinta__päätös___myönteisen_päätöksen_lisäteksti"]} dataTestId="myonteinenlisateksti" />
         {rahoitusAlueDecisionSubfields.length > 0  &&
