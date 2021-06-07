@@ -6,7 +6,6 @@ import {
   launch,
   Browser,
   Page,
-  FrameBase,
   ElementHandle,
   WaitForSelectorOptions,
 } from "puppeteer"
@@ -75,7 +74,7 @@ export async function navigateToHakijaMuutoshakemusPage(page: Page, hakemusID: n
   await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
 }
 
-export async function getElementInnerText(page: FrameBase, selector: string) {
+export async function getElementInnerText(page: Page, selector: string) {
     return await page.evaluate((s: string) => (document.querySelector(s) && document.querySelector(s) as HTMLElement)?.innerText, selector)
 }
 
