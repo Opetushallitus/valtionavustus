@@ -18,7 +18,7 @@ export const LastUpdated = (props: LastUpdatedProps) => {
   const seconds = updated.format(secondsAndMillisFormat)
 
   return (
-    <div style={{'textAlign':'right'}} id={props.id}>
+    <div id={props.id}>
       Päivitetty: {formattedUpdatedAt}<span style={{display: 'none'}}>.{seconds}</span>
     </div>
   )
