@@ -146,7 +146,7 @@ describe("Puppeteer tests", () => {
 
     await sendPäätös(page, avustushakuID)
     const tapahtumaloki = await page.waitForSelector(".tapahtumaloki")
-    const logEntryCount = await tapahtumaloki.evaluate(e => e.querySelectorAll(".entry").length)
+    const logEntryCount = await tapahtumaloki?.evaluate(e => e.querySelectorAll(".entry").length)
     expect(logEntryCount).toEqual(1)
   }
 
@@ -175,28 +175,55 @@ describe("Puppeteer tests", () => {
       })
   })
 
-  it("updates only the update date on Päätös tab when päätös is modified", async function() {
+  describe('When virkailija creates avustushaku', () => {
+    let originalPaatosTimestamp: string
+    let originalValiselvitysTimestamp: string
+    let originalLoppuselvitysTimestamp: string
 
-    await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
-    await clickElementWithText(page, "span", "Päätös")
+    beforeAll(async () => {
+      await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+      await clickElementWithText(page, "span", "Päätös")
+      originalPaatosTimestamp = await textContent(page, "#paatosUpdatedAt")
 
-    await page.waitFor(70000)
-    await clearAndType(page, "#decision\\.taustaa\\.fi", "Burger Time")
-    await waitForSave(page)
+      await clickElementWithText(page, "span", "Väliselvitys")
+      originalValiselvitysTimestamp = await textContent(page, "#valiselvitysUpdatedAt")
 
-    const paatosUpdatedAt = textContent(page, "#paatosUpdatedAt")
+      await clickElementWithText(page, "span", "Loppuselvitys")
+      originalLoppuselvitysTimestamp = await textContent(page, "#loppuselvitysUpdatedAt")
+    })
 
-    await clickElementWithText(page, "span", "Väliselvitys")
-    const valiselvitysUpdatedAt = textContent(page, "#valiselvitysUpdatedAt")
 
-    await clickElementWithText(page, "span", "Loppuselvitys")
-    const loppuselvitysUpdatedAt = textContent(page, "#loppuselvitysUpdatedAt")
-
-    return Promise.all([paatosUpdatedAt, valiselvitysUpdatedAt, loppuselvitysUpdatedAt])
-      .then(([paatos, valiselvitys, loppuselvitys]) => {
-        expect(valiselvitys).toEqual(loppuselvitys)
-        expect(paatos).not.toEqual(valiselvitys)
+    describe('And modifies päätös', () => {
+      beforeAll(async () => {
+        await clickElementWithText(page, "span", "Päätös")
+        await clearAndType(page, "#decision\\.taustaa\\.fi", "Burger Time")
+        await waitForSave(page)
       })
+
+      it('päätös modified timestamp has changed', async () => {
+        expect(await textContent(page, "#paatosUpdatedAt")).not.toEqual(originalPaatosTimestamp)
+      })
+
+      describe('And navigates to loppuselvitys', () => {
+        beforeAll(async () => {
+          await clickElementWithText(page, "span", "Loppuselvitys")
+        })
+
+        it('loppuselvitys modified timestamp has not changed', async () => {
+          expect(await textContent(page, "#loppuselvitysUpdatedAt")).toEqual(originalLoppuselvitysTimestamp)
+        })
+      })
+
+      describe('And navigates to väliselvitys', () => {
+        beforeAll(async () => {
+          await clickElementWithText(page, "span", "Väliselvitys")
+        })
+
+        it('väliselvitys modified timestamp has not changed', async () => {
+          expect(await textContent(page, "#valiselvitysUpdatedAt")).toEqual(originalValiselvitysTimestamp)
+        })
+      })
+    })
   })
 
   it("supports fields that accept only decimals", async function() {
@@ -277,6 +304,7 @@ describe("Puppeteer tests", () => {
     await clickElementWithText(page, "a", "Koodistokenttä")
     // Select koodisto for the field
     const input = await page.waitFor(".koodisto-dropdown input")
+    // @ts-ignore
     await input.type("automaatio")
     await clickElementWithText(page, "li", "automaatioyliasentajan eat järjestys")
     // Select input type for the field
