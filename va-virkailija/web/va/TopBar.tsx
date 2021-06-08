@@ -140,7 +140,7 @@ class TopBarControls extends React.Component<TopBarControlsProps, {}> {
 
     return (
       <div id="form-controls">
-        <div className="status">{status}</div>
+        <div className="status" aria-live="polite" data-test-id="save-status">{status}</div>
         <div className="user">{username}</div>
         <form action="/login/logout" name="logout" method="get">
           <button type="submit">Kirjaudu ulos</button>

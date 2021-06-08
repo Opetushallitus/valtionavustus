@@ -737,6 +737,8 @@ export async function copyEsimerkkihaku(page: Page) {
   const newHakuTitle = `${currentHakuTitle} (kopio)`
   await page.waitForFunction((name: string) =>
     document.querySelector("#haku-name-fi")?.textContent === name, {}, newHakuTitle)
+  await page.waitForFunction(() => document.querySelector('[data-test-id="save-status"]')?.textContent === 'Kaikki tiedot tallennettu')
+  await page.waitForTimeout(2000)
 }
 
 export async function clickElement(page: Page, selector: string) {
