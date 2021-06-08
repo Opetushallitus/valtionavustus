@@ -8,6 +8,7 @@ import {
   Page,
   ElementHandle,
   WaitForSelectorOptions,
+  Frame,
 } from "puppeteer"
 import * as assert from "assert"
 import * as fs from "fs"
@@ -74,7 +75,7 @@ export async function navigateToHakijaMuutoshakemusPage(page: Page, hakemusID: n
   await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
 }
 
-export async function getElementInnerText(page: Page, selector: string) {
+export async function getElementInnerText(page: Page | Frame, selector: string) {
     return await page.evaluate((s: string) => (document.querySelector(s) && document.querySelector(s) as HTMLElement)?.innerText, selector)
 }
 
@@ -366,7 +367,7 @@ export async function fillAndSendMuutoshakemusDisabledMenoluokiteltuHakemus(page
   await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).disabled === false)
   await clickElement(page, "#topbar #form-controls button#submit")
   const sentText = lang === 'fi' ? "Hakemus lähetetty" : "Ansökan sänd"
-  await page.waitForFunction((text) => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === text, undefined, sentText)
+  await page.waitForFunction((text: string) => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === text, undefined, sentText)
 
   return await getHakemusIDFromHakemusTokenURLParameter(page)
 }
@@ -685,7 +686,7 @@ export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page,
   await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).disabled === false)
   await clickElement(page, "#topbar #form-controls button#submit")
   const sentText = lang === 'fi' ? "Hakemus lähetetty" : "Ansökan sänd"
-  await page.waitForFunction((text) => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === text, undefined, sentText)
+  await page.waitForFunction((text: string) => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === text, undefined, sentText)
   const userKey = await expectQueryParameter(page, "hakemus")
   return { userKey }
 }
@@ -743,13 +744,14 @@ export async function copyEsimerkkihaku(page: Page) {
 
 export async function clickElement(page: Page, selector: string) {
   const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
+  if (!element) throw new Error(`Could not click element with selector: ${selector}`)
   await element.click()
 }
 
 export async function clickElementWithText(page: Page, elementType: string, text: string) {
   const element = await waitForElementWithText(page, elementType, text)
   assert.ok(element, `Could not find ${elementType} element with text '${text}'`)
-  await element.click()
+  await element?.click()
   return element
 }
 
@@ -759,6 +761,7 @@ export async function waitForElementWithText(page: Page, elementType: string, te
 
 export async function clearAndType(page: Page, selector: string, text: string) {
   const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
+  if (!element) throw new Error(`Could not type text to element with selector: ${selector}`)
   await element.click()
   await page.evaluate(e => e.value = "", element)
   await page.keyboard.type(text)
@@ -800,6 +803,7 @@ export async function selectValmistelijaForHakemus(page: Page, avustushakuID: nu
 
   const xpath = `//table[contains(@class, 'hakemus-list')]/tbody//tr[contains(@class, 'selected')]//button[contains(., '${valmistelijaName}')]`
   const valmistelijaButton = await page.waitForXPath(xpath, {visible: true})
+  if (!valmistelijaButton) throw new Error(`Valmistelija button not found with XPath: ${xpath}`)
 
   await Promise.all([
     page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`),
@@ -971,7 +975,7 @@ export async function typeValueInFieldAndExpectNoValidationError(page: Page, fie
   const selector = '#' + fieldId
   const errorSummarySelector = 'a.validation-errors-summary'
   await clearAndType(page, selector, value)
-  await page.waitForFunction(s => document.querySelector(s) == null, {}, errorSummarySelector)
+  await page.waitForFunction((s: string) => document.querySelector(s) == null, {}, errorSummarySelector)
   await page.waitForSelector('#submit:enabled')
 }
 
@@ -1087,11 +1091,10 @@ export async function acceptHakemus(page: Page, avustushakuID: number, hakemusID
 }
 
 export async function clickElementWithTestId(page: Page, testId: string) {
-  const element = await waitForElementWIthTestId(page, testId)
-  await element.click()
+  await clickElement(page, `[data-test-id='${testId}']`)
 }
 
-export async function waitForElementWIthTestId(page: Page, testId: string): Promise<ElementHandle> {
+export async function waitForElementWIthTestId(page: Page, testId: string): Promise<ElementHandle | null> {
   return await page.waitForSelector(`[data-test-id='${testId}']`, {visible: true, timeout: 5 * 1000})
 }
 
@@ -1137,8 +1140,7 @@ export async function assertCodeIsVisible(page: Page, code: number, visibility: 
 export async function clickCodeVisibilityButton(page: Page, code: number, visibility: boolean) {
   const buttonId = visibility ? 'code-row__show-button' : 'code-row__hide-button'
   const selector = `tr[data-test-id='${code}'] [data-test-id=${buttonId}]`
-  const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
-  await element.click()
+  await clickElement(page, selector)
 }
 
 export interface MuutoshakemusValues {
@@ -1347,7 +1349,7 @@ export async function acceptAvustushaku(page: Page, avustushakuID: number, budge
 
   await sendPäätös(page, avustushakuID)
   const tapahtumaloki = await page.waitForSelector(".tapahtumaloki")
-  const logEntryCount = await tapahtumaloki.evaluate(e => e.querySelectorAll(".entry").length)
+  const logEntryCount = await tapahtumaloki?.evaluate(e => e.querySelectorAll(".entry").length)
   expect(logEntryCount).toEqual(1)
   return { avustushakuID, hakemusID}
 }
