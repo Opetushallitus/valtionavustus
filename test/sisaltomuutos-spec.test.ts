@@ -83,11 +83,5 @@ describe('Sisaltomuutos', () => {
     await clickSendMuutoshakemusButton(page)
   })
 
-  it("shows sisältömuutos-related information in päätös", async () => {
-    await navigateToHakijaMuutoshakemusPage(page, hakemusID)
-    await clickElement(page, '#checkbox-haenSisaltomuutosta')
-    await fillSisaltomuutosPerustelut(page, 'Muutamme kaiken muuttamisen ilosta')
-    await clickSendMuutoshakemusButton(page)
-  })
 })
 
