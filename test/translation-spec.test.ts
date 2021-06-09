@@ -34,6 +34,7 @@ import {
 } from './muutoshakemus/muutoshakemus-util'
 
 import moment from 'moment'
+import { openPaatosPreview } from './hakemuksen-arviointi-util'
 
 jest.setTimeout(400_000)
 
@@ -353,8 +354,7 @@ fornamn.efternamn@oph.fi
 
           describe('preview muutoshakemus päätös in swedish', () => {
             beforeAll(async () => {
-              await clickElementWithText(page, 'a', 'Esikatsele päätösdokumentti')
-              await page.waitForSelector('.muutoshakemus-paatos__content')
+              await openPaatosPreview(page)
             })
 
             afterAll(async () => {

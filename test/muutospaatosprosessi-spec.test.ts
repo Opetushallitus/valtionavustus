@@ -54,6 +54,7 @@ import {
   navigateToHakijaMuutoshakemusPage,
   fillAndSendMuutoshakemus,
 } from './muutoshakemus/muutoshakemus-util'
+import { openPaatosPreview } from './hakemuksen-arviointi-util'
 
 jest.setTimeout(400_000)
 
@@ -365,7 +366,7 @@ etunimi.sukunimi@oph.fi`)
 
               describe('And virkailija opens the päätös preview', () => {
                 beforeAll(async () => {
-                  await clickElementWithText(page, 'a', 'Esikatsele päätösdokumentti')
+                  await openPaatosPreview(page)
                 })
                 afterAll(async () => {
                   await clickElementWithText(page, 'button', 'Sulje')
@@ -394,7 +395,7 @@ etunimi.sukunimi@oph.fi`)
 
               describe('And opens päätös preview', () => {
                 beforeAll(async () => {
-                  await clickElementWithText(page, 'a', 'Esikatsele päätösdokumentti')
+                  await openPaatosPreview(page)
                 })
                 afterAll(async () => {
                   await clickElementWithText(page, 'button', 'Sulje')
@@ -717,8 +718,7 @@ etunimi.sukunimi@oph.fi`)
               })
 
               it('Correct päättymispäivä is displayed in päätös preview', async () => {
-                await clickElementWithText(page, 'a', 'Esikatsele päätösdokumentti')
-                await page.waitForSelector('.muutoshakemus-paatos__content')
+                await openPaatosPreview(page)
                 const acceptedDate = await page.$eval('[data-test-id="paattymispaiva-value"]', el => el.textContent)
                 expect(acceptedDate).toBe('20.4.2400')
                 await clickElementWithText(page, 'button', 'Sulje')

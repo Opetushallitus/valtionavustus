@@ -36,6 +36,7 @@ import {
   navigateToHakijaMuutoshakemusPage,
   navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
 } from './muutoshakemus/muutoshakemus-util'
+import { openPaatosPreview } from './hakemuksen-arviointi-util'
 
 jest.setTimeout(400_000)
 
@@ -759,8 +760,7 @@ describe('Talousarvion muuttaminen', () => {
       beforeAll(async () => {
         await clickElement(page, 'label[for=accepted_with_changes]')
         await fillMuutoshakemusBudgetAmount(page, budget)
-        await clickElementWithText(page, 'a', 'Esikatsele päätösdokumentti')
-        await page.waitForSelector('.muutoshakemus-paatos__content')
+        await openPaatosPreview(page)
       })
 
       afterAll(async () => {
@@ -799,8 +799,7 @@ describe('Talousarvion muuttaminen', () => {
     describe('opens the paatos preview when "accepted" is chosen', () => {
       beforeAll(async () => {
         await clickElement(page, 'label[for=accepted]')
-        await clickElementWithText(page, 'a', 'Esikatsele päätösdokumentti')
-        await page.waitForSelector('.muutoshakemus-paatos__content')
+        await openPaatosPreview(page)
       })
 
       afterAll(async () => {
@@ -839,8 +838,7 @@ describe('Talousarvion muuttaminen', () => {
     describe('opens the paatos preview when "rejected" is chosen', () => {
       beforeAll(async () => {
         await clickElement(page, 'label[for=rejected]')
-        await clickElementWithText(page, 'a', 'Esikatsele päätösdokumentti')
-        await page.waitForSelector('.muutoshakemus-paatos__content')
+        await openPaatosPreview(page)
       })
 
       afterAll(async () => {
