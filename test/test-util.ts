@@ -316,10 +316,10 @@ export async function navigateToNewHakemusPage(page: Page, avustushakuID: number
   await page.goto(hakemusUrl, { waitUntil: "networkidle0" })
 }
 
-export function createRandomHakuValues() {
+export function createRandomHakuValues(name: string = 'Muutospäätösprosessi') {
   return {
     registerNumber: "230/2015",
-    avustushakuName: `Testiavustushaku (Muutospäätösprosessi) ${randomString()} - ${moment(new Date()).format('YYYY-MM-DD hh:mm:ss:SSSS')}`
+    avustushakuName: `Testiavustushaku (${name}) ${randomString()} - ${moment(new Date()).format('YYYY-MM-DD hh:mm:ss:SSSS')}`
   }
 }
 

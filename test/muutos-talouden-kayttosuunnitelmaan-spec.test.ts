@@ -139,7 +139,7 @@ describe('Talousarvion muuttaminen', () => {
     let avustushakuID: number
     let hakemusID: number
     let emails: Email[]
-    const haku = createRandomHakuValues()
+    const haku = createRandomHakuValues('Budjettimuutos')
 
     beforeAll(async () => {
       const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(page, haku, answers, budget)
@@ -177,7 +177,7 @@ describe('Talousarvion muuttaminen', () => {
   describe('When avustushaku has been created and hakemus has been submitted', () => {
     let avustushakuID: number
     let hakemusID: number
-    const haku = createRandomHakuValues()
+    const haku = createRandomHakuValues('Budjettimuutos')
     const budget: Budget = {
       amount: {
         personnel: '300',
@@ -579,7 +579,7 @@ describe('Talousarvion muuttaminen', () => {
 
   describe("Hakija haluaa tehdä muutoshakemuksen talouden käyttösuunnitelmaan", () => {
     let hakemusID: number
-    const haku = createRandomHakuValues()
+    const haku = createRandomHakuValues('Budjettimuutos')
 
     beforeAll(async () => {
       const { hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, defaultBudget)
@@ -693,7 +693,7 @@ describe('Talousarvion muuttaminen', () => {
   describe("Virkailija handles a budget change", () => {
     let avustushakuID: number
     let hakemusID: number
-    const haku = createRandomHakuValues()
+    const haku = createRandomHakuValues('Budjettimuutos')
 
     beforeAll(async () => {
       const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, defaultBudget)

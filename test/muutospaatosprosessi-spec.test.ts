@@ -35,6 +35,7 @@ import {
   lastOrFail,
   getHakemusTokenAndRegisterNumber,
   navigateToHakemuksenArviointi,
+  createRandomHakuValues,
 } from './test-util'
 import {
   ratkaiseMuutoshakemusEnabledAvustushaku,
@@ -80,14 +81,6 @@ describe('Muutospäätösprosessi', () => {
     await page.close()
     await browser.close()
   })
-
-
-  function createRandomHakuValues() {
-    return {
-      registerNumber: "230/2015",
-      avustushakuName: `Testiavustushaku (Muutospäätösprosessi) ${randomString()} - ${moment(new Date()).format('YYYY-MM-DD hh:mm:ss:SSSS')}`
-    }
-  }
 
   const answers = {
     contactPersonEmail: "erkki.esimerkki@example.com",

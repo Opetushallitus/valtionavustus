@@ -40,7 +40,7 @@ describe('Sisaltomuutos', () => {
 
   let avustushakuID: number
   let hakemusID: number
-  const haku = createRandomHakuValues()
+  const haku = createRandomHakuValues('Sisältömuutos')
   const sisaltomuutosPerustelut = 'Muutamme kaiken muuttamisen ilosta'
   const budget: Budget = {
     amount: {
