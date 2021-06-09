@@ -57,8 +57,8 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
       {muutoshakemus['haen-sisaltomuutosta'] && (
         <section className="muutoshakemus-section">
           <div className="muutoshakemus-row">
-            <h4 className="muutoshakemus__header" data-test-id='muutoshakemus-reasoning-title'>{t.sisaltomuutos.appliedChange}</h4>
-            <div className="muutoshakemus__reason" data-test-id="muutoshakemus-jatkoaika-perustelu">{muutoshakemus['sisaltomuutos-perustelut']}</div>
+            <h4 className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
+            <div className="muutoshakemus__reason" data-test-id="sisaltomuutos-perustelut">{muutoshakemus['sisaltomuutos-perustelut']}</div>
           </div>
         </section>
       )}

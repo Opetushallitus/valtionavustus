@@ -296,10 +296,8 @@ export async function validateMuutoshakemusPaatosCommonValues(page: Page) {
 }
 
 export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number) {
-  await navigate(page, `/avustushaku/${avustushakuID}/`)
-  const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`
-  await page.waitForSelector(muutoshakemusStatusField)
-  await page.click(muutoshakemusStatusField)
+  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`)
+  await page.waitForSelector('#tab-content')
 }
 
 export async function navigateToLatestMuutoshakemusPaatos(page: Page, hakemusID: number) {

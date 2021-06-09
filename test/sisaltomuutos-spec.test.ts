@@ -8,8 +8,10 @@ import {
   clickElement,
   Budget,
   createRandomHakuValues,
+  getElementInnerText,
 } from './test-util'
 import {
+  navigateToLatestMuutoshakemus,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
 } from './muutospaatosprosessi-util'
 import {
@@ -32,8 +34,10 @@ describe('Sisaltomuutos', () => {
   let browser: Browser
   let page: Page
 
+  let avustushakuID: number
   let hakemusID: number
   const haku = createRandomHakuValues()
+  const sisaltomuutosPerustelut = 'Muutamme kaiken muuttamisen ilosta'
   const budget: Budget = {
     amount: {
       personnel: '300',
@@ -66,8 +70,9 @@ describe('Sisaltomuutos', () => {
     page = await getFirstPage(browser)
     setPageErrorConsoleLogger(page)
 
-    const { hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, budget)
-    hakemusID = hakemusId
+    const result = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, budget)
+    avustushakuID = result.avustushakuID
+    hakemusID = result.hakemusID
   })
 
   afterEach(() => {
@@ -84,15 +89,30 @@ describe('Sisaltomuutos', () => {
       beforeAll(async () => {
         await navigateToHakijaMuutoshakemusPage(page, hakemusID)
         await clickElement(page, '#checkbox-haenSisaltomuutosta')
-        await fillSisaltomuutosPerustelut(page, 'Muutamme kaiken muuttamisen ilosta')
+        await fillSisaltomuutosPerustelut(page, sisaltomuutosPerustelut)
         await clickSendMuutoshakemusButton(page)
       })
 
       it('Shows that the muutoshakemus was submitted successfully', async () => {
         await expectMuutoshakemusToBeSubmittedSuccessfully(page, true)
       })
+
+      it('Shows the sisältömuutos in the existing muutoshakemus', async () => {
+        const sisaltomuutos = await getElementInnerText(page, '[data-test-class="existing-muutoshakemus"] [data-test-id="sisaltomuutos-perustelut"]')
+        expect(sisaltomuutos).toEqual(sisaltomuutosPerustelut)
+      })
     })
 
+    describe('Handling muutoshakemus', () => {
+      beforeAll(async () => {
+        await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
+      })
+
+      it('Virkailija sees the sisältömuutos', async () => {
+        const sisaltomuutos = await getElementInnerText(page, '[data-test-id="sisaltomuutos-perustelut"]')
+        expect(sisaltomuutos).toEqual(sisaltomuutosPerustelut)
+      })
+    })
   })
 })
 
