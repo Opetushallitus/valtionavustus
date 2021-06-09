@@ -55,10 +55,19 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
       <h1 className="muutoshakemus-paatos__org">{hakemus['organization-name']}</h1>
       <section className="muutoshakemus-paatos__section">
         <div data-test-id="muutospaatos-asia-title">{t.muutoshakemus.paatos.asia}</div>
-        <div>
-          <div className="muutoshakemus-paatos__project-name">{t.muutoshakemus.paatos.hanke}: <i data-test-id="paatos-project-name">{hakemus['project-name']}</i></div>
-          {muutoshakemus.talousarvio && !!muutoshakemus.talousarvio.length && <div data-test-id="budget-change">{t.muutoshakemus.paatos.muutoshakemusTaloudenKayttosuunnitelmaan}</div>}
-          {muutoshakemus['haen-kayttoajan-pidennysta'] && <div data-test-id="jatkoaika-asia">{t.muutoshakemus.paatos.hakemusKayttoajanPidennykselle}</div>}
+        <div data-test-id="muutospaatos-asia-content">
+          <div className="muutoshakemus-paatos__project-name">
+            {t.muutoshakemus.paatos.hanke}: <i data-test-id="paatos-project-name">{hakemus['project-name']}</i>
+          </div>
+          {muutoshakemus.talousarvio && !!muutoshakemus.talousarvio.length && (
+            <div data-test-id="budget-change">{t.muutoshakemus.paatos.muutoshakemusTaloudenKayttosuunnitelmaan}</div>
+          )}
+          {muutoshakemus['haen-kayttoajan-pidennysta'] && (
+            <div data-test-id="jatkoaika-asia">{t.muutoshakemus.paatos.hakemusKayttoajanPidennykselle}</div>
+          )}
+          {muutoshakemus['haen-sisaltomuutosta'] && (
+            <div>{t.muutoshakemus.paatos.muutoshakemusSisaltoonTaiToteutustapaan}</div>
+          )}
         </div>
       </section>
       <section className="muutoshakemus-paatos__section">

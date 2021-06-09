@@ -9,6 +9,7 @@ import {
   Budget,
   createRandomHakuValues,
   getElementInnerText,
+  textContent,
 } from './test-util'
 import {
   navigateToLatestMuutoshakemus,
@@ -20,6 +21,7 @@ import {
   clickSendMuutoshakemusButton,
   expectMuutoshakemusToBeSubmittedSuccessfully
 } from './muutoshakemus/muutoshakemus-util'
+import { closePaatosPreview, openPaatosPreview } from './hakemuksen-arviointi-util'
 
 jest.setTimeout(400_000)
 
@@ -111,6 +113,21 @@ describe('Sisaltomuutos', () => {
       it('Virkailija sees the sisältömuutos', async () => {
         const sisaltomuutos = await getElementInnerText(page, '[data-test-id="sisaltomuutos-perustelut"]')
         expect(sisaltomuutos).toEqual(sisaltomuutosPerustelut)
+      })
+
+      describe('preview for virkailija', () => {
+        beforeAll(async () => {
+          await openPaatosPreview(page)
+        })
+
+        it('should include sisältömuutos in asia section', async () => {
+          const asiaSectionContent = await textContent(page, '[data-test-id=muutospaatos-asia-content]')
+          expect(asiaSectionContent).toContain('Muutoshakemus hankesuunnitelman sisältöön tai toteutustapaan')
+        })
+
+        afterAll(async () => {
+          await closePaatosPreview(page)
+        })
       })
     })
   })
