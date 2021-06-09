@@ -31,6 +31,15 @@ export async function clickSendMuutoshakemusButton(page: Page) {
   await clickElement(page, '#send-muutospyynto-button:not([disabled])')
 }
 
+export async function expectMuutoshakemusToBeSubmittedSuccessfully(page: Page, isApplication: boolean) {
+  const successNotificationSelector = 'div[class="auto-hide success"]'
+  const notification = await textContent(page, successNotificationSelector)
+
+  // The text is different if we are actually applying for jatkoaika/budjettimuutos/sisältömuutos
+  const notificationText = isApplication ? 'Muutoshakemus lähetetty' : 'Muutokset tallennettu'
+  expect(notification).toBe(notificationText)
+}
+
 export async function fillAndSendMuutoshakemus(page: Page, hakemusID: number, muutoshakemus: MuutoshakemusValues) {
   await navigateToHakijaMuutoshakemusPage(page, hakemusID)
   if (muutoshakemus.jatkoaika) {
@@ -38,10 +47,7 @@ export async function fillAndSendMuutoshakemus(page: Page, hakemusID: number, mu
     await clickSendMuutoshakemusButton(page)
   }
 
-  const successNotificationSelector = 'div[class="auto-hide success"]'
-  const notification = await textContent(page, successNotificationSelector)
-  const notificationText = muutoshakemus.jatkoaika ? 'Muutoshakemus lähetetty' : 'Muutokset tallennettu'
-  expect(notification).toBe(notificationText)
+  expectMuutoshakemusToBeSubmittedSuccessfully(page, !!muutoshakemus.jatkoaika)
 }
 
 export async function fillSisaltomuutosPerustelut(page: Page, perustelut: string) {

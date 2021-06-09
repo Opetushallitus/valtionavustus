@@ -15,7 +15,8 @@ import {
 import {
   navigateToHakijaMuutoshakemusPage,
   fillSisaltomuutosPerustelut,
-  clickSendMuutoshakemusButton
+  clickSendMuutoshakemusButton,
+  expectMuutoshakemusToBeSubmittedSuccessfully
 } from './muutoshakemus/muutoshakemus-util'
 
 jest.setTimeout(400_000)
@@ -78,12 +79,20 @@ describe('Sisaltomuutos', () => {
     await browser.close()
   })
 
-  it("hakija can submit sisaltomuutos", async () => {
-    await navigateToHakijaMuutoshakemusPage(page, hakemusID)
-    await clickElement(page, '#checkbox-haenSisaltomuutosta')
-    await fillSisaltomuutosPerustelut(page, 'Muutamme kaiken muuttamisen ilosta')
-    await clickSendMuutoshakemusButton(page)
-  })
+  describe('Approved sisältömuutos', () => {
+    describe('Sending muutoshakemus', () => {
+      beforeAll(async () => {
+        await navigateToHakijaMuutoshakemusPage(page, hakemusID)
+        await clickElement(page, '#checkbox-haenSisaltomuutosta')
+        await fillSisaltomuutosPerustelut(page, 'Muutamme kaiken muuttamisen ilosta')
+        await clickSendMuutoshakemusButton(page)
+      })
 
+      it('Shows that the muutoshakemus was submitted successfully', async () => {
+        await expectMuutoshakemusToBeSubmittedSuccessfully(page, true)
+      })
+    })
+
+  })
 })
 

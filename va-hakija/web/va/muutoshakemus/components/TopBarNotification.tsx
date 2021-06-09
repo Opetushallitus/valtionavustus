@@ -14,7 +14,10 @@ export function TopBarNotification({ f }: TopBarNotificationProps) {
   function getNotificationText() {
     if (f.status?.success === false) return t.errorNotification
     if (f.status?.success) {
-      return f.values.haenKayttoajanPidennysta ? t.sentNotification : t.savedNotification
+      const isApplication = f.values.haenKayttoajanPidennysta ||
+        f.values.haenMuutostaTaloudenKayttosuunnitelmaan ||
+        f.values.haenSisaltomuutosta
+      return isApplication ? t.sentNotification : t.savedNotification
     }
     return undefined
   }
