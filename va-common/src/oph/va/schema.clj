@@ -197,6 +197,8 @@
     :haen-kayttoajan-pidennysta s/Bool
     :kayttoajan-pidennys-perustelut (s/maybe s/Str)
     :haettu-kayttoajan-paattymispaiva (s/maybe java.time.LocalDate)
+    :haen-sisaltomuutosta s/Bool
+    :sisaltomuutos-perustelut (s/maybe s/Str)
     :talousarvio [Meno]
     :talousarvio-perustelut (s/maybe s/Str)
     :status MuutoshakemusStatus

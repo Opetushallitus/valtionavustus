@@ -4,7 +4,8 @@ import _ from 'lodash'
 
 import JsUtil from 'soresu-form/web/JsUtil'
 import FormPreview from 'soresu-form/web/form/FormPreview'
-import { Answer, AnswersDelta, HakemusFormState, Muutoshakemus, NormalizedHakemusData } from 'va-common/web/va/types'
+import { Answer, AnswersDelta, HakemusFormState, NormalizedHakemusData } from 'va-common/web/va/types'
+import { Muutoshakemus } from 'va-common/web/va/types/muutoshakemus'
 import { getProjectEndDate } from 'va-common/web/va/Muutoshakemus'
 
 function addOrMutateAnswer(answers: Answer[], key: string, newValue: any) {

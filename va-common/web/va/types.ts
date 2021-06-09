@@ -1,4 +1,4 @@
-import { MuutoshakemusStatus, Talousarvio } from "./types/muutoshakemus"
+import { Muutoshakemus, MuutoshakemusStatus, Talousarvio } from "./types/muutoshakemus"
 
 export type Language = 'fi' | 'sv'
 
@@ -45,21 +45,6 @@ export type NormalizedHakemusData = {
   "register-number": string
   talousarvio: Talousarvio
   "updated-at": string
-}
-
-export type Muutoshakemus = {
-  'created-at': string
-  'haen-kayttoajan-pidennysta': boolean
-  'haettu-kayttoajan-paattymispaiva': string
-  'hakemus-id': number
-  id: number
-  'kayttoajan-pidennys-perustelut': string
-  "talousarvio-perustelut"?: string
-  talousarvio: Talousarvio
-  'paatos-created-at': string
-  'paatos-sent-at': string
-  'paatos-user-key': string
-  status: 'accepted' | 'rejected' | 'accepted_with_changes'
 }
 
 export type HakemusStatus = 'new' | 'draft' | 'submitted' | 'pending_change_request' | 'officer_edit' | 'cancelled' | 'refused' | 'applicant_edit'

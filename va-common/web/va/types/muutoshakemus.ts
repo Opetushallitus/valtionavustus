@@ -32,6 +32,8 @@ export interface Muutoshakemus {
   "hakemus-id": number
   "haen-kayttoajan-pidennysta": boolean
   "kayttoajan-pidennys-perustelut"?: string
+  "haen-sisaltomuutosta": boolean
+  "sisaltomuutos-perustelut"?: string
   "talousarvio-perustelut"?: string
   talousarvio: Talousarvio
   "haettu-kayttoajan-paattymispaiva"?: string

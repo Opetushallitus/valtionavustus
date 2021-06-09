@@ -102,6 +102,8 @@
                                 END) as status,
                                 haen_kayttoajan_pidennysta,
                                 kayttoajan_pidennys_perustelut,
+                                haen_sisaltomuutosta,
+                                sisaltomuutos_perustelut,
                                 m.created_at,
                                 to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva,
                                 talousarvio_perustelut,

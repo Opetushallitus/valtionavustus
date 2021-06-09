@@ -54,6 +54,14 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
           }
         </section>
       }
+      {muutoshakemus['haen-sisaltomuutosta'] && (
+        <section className="muutoshakemus-section">
+          <div className="muutoshakemus-row">
+            <h4 className="muutoshakemus__header" data-test-id='muutoshakemus-reasoning-title'>{t.sisaltomuutos.appliedChange}</h4>
+            <div className="muutoshakemus__reason" data-test-id="muutoshakemus-jatkoaika-perustelu">{muutoshakemus['sisaltomuutos-perustelut']}</div>
+          </div>
+        </section>
+      )}
       {!!talousarvio.length &&
         <MuutosTaloudenKayttosuunnitelmaan
           currentTalousarvio={currentTalousarvio}
@@ -61,11 +69,7 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
           status={muutoshakemus.status}
           reason={muutoshakemus["talousarvio-perustelut"]} />
       }
-      {muutoshakemus['haettu-kayttoajan-paattymispaiva'] &&
-        <PaattymispaivaValues
-        muutoshakemus={muutoshakemus}
-        projectEndDate={projectEndDate} />
-      }
+      {muutoshakemus['haettu-kayttoajan-paattymispaiva'] && <PaattymispaivaValues muutoshakemus={muutoshakemus} projectEndDate={projectEndDate} />}
     </React.Fragment>
   )
 }

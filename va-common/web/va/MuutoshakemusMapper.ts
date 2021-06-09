@@ -1,4 +1,5 @@
-import { Answer, Avustushaku, Muutoshakemus, NormalizedHakemusData } from './types'
+import { Answer, Avustushaku, NormalizedHakemusData } from './types'
+import { Muutoshakemus } from './types/muutoshakemus'
 import { getProjectEndDate } from "./Muutoshakemus"
 
 export function mapAnswersWithMuutoshakemusData(avustushaku: Avustushaku, answers: Answer[], muutoshakemukset: Muutoshakemus[] | undefined, normalizedData: NormalizedHakemusData | undefined): Answer[] {
