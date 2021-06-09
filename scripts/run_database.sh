@@ -18,7 +18,7 @@ done
 function main {
   cd "$scriptdir/postgres-docker"
 
-  docker-compose down || true
+  docker-compose down --remove-orphans || true
   docker-compose --profile $PROFILE up --force-recreate
 }
 
