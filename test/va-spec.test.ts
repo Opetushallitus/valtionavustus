@@ -70,10 +70,12 @@ import {
   createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku,
   fillAndSendMuutoshakemusDisabledMenoluokiteltuHakemus,
   publishAndFillMuutoshakemusEnabledAvustushaku,
-  navigateToHakijaMuutoshakemusPage,
   ratkaiseMuutoshakemusEnabledAvustushaku,
   getLinkToMuutoshakemusFromSentEmails,
-} from './muutoshakemus-util'
+} from './muutospaatosprosessi-util'
+import {
+  navigateToHakijaMuutoshakemusPage,
+} from './muutoshakemus/muutoshakemus-util'
 
 jest.setTimeout(400_000)
 

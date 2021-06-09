@@ -37,9 +37,7 @@ import {
   navigateToHakemuksenArviointi,
 } from './test-util'
 import {
-  navigateToHakijaMuutoshakemusPage,
   ratkaiseMuutoshakemusEnabledAvustushaku,
-  fillAndSendMuutoshakemus,
   getLinkToMuutoshakemusFromSentEmails,
   getUserKeyFromPaatosEmail,
   validateMuutoshakemusPaatosCommonValues,
@@ -51,7 +49,11 @@ import {
   parseMuutoshakemusPaatosFromEmails,
   createMuutoshakemusEnabledAvustushakuAndFillHakemus,
   markAvustushakuAsMuutoshakukelvoton,
-} from './muutoshakemus-util'
+} from './muutospaatosprosessi-util'
+import {
+  navigateToHakijaMuutoshakemusPage,
+  fillAndSendMuutoshakemus,
+} from './muutoshakemus/muutoshakemus-util'
 
 jest.setTimeout(400_000)
 

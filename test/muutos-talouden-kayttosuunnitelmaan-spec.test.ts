@@ -26,14 +26,16 @@ import {
 import {
   fillAndSendMuutoshakemusDecision,
   fillMuutoshakemusBudgetAmount,
-  navigateToHakijaMuutoshakemusPage,
   navigateToLatestMuutoshakemus,
   navigateToLatestMuutoshakemusPaatos,
-  navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
   navigateToNthMuutoshakemus,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget,
-} from './muutoshakemus-util'
+} from './muutospaatosprosessi-util'
+import {
+  navigateToHakijaMuutoshakemusPage,
+  navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
+} from './muutoshakemus/muutoshakemus-util'
 
 jest.setTimeout(400_000)
 

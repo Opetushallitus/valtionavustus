@@ -24,12 +24,14 @@ import {
 import {
   Answers,
   fillAndSendMuutoshakemusDecision,
-  navigateToHakijaMuutoshakemusPage,
   navigateToLatestMuutoshakemusPaatos,
-  navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
   parseMuutoshakemusPaatosFromEmails,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
-} from './muutoshakemus-util'
+} from './muutospaatosprosessi-util'
+import {
+  navigateToHakijaMuutoshakemusPage,
+  navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
+} from './muutoshakemus/muutoshakemus-util'
 
 import moment from 'moment'
 

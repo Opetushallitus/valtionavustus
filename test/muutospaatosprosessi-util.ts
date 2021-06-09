@@ -4,7 +4,37 @@ import {Moment} from 'moment'
 import * as path from "path"
 import { Page } from "puppeteer"
 import * as querystring from "querystring"
-import { acceptAvustushaku, Budget, BudgetAmount, clearAndSet, clearAndType, clickElement, clickElementWithText, clickFormSaveAndWait, countElements, createValidCopyOfEsimerkkihakuAndReturnTheNewId, dummyExcelPath, expectQueryParameter, expectToBeDefined, fillBudget, getHakemusIDFromHakemusTokenURLParameter, getMuutoshakemusEmails, getMuutoshakemusPaatosEmails, MailWithLinks, navigate, navigateHakija, navigateToNewHakemusPage, PaatosValues, publishAvustushaku, selectVakioperusteluInFinnish, setCalendarDate, TEST_Y_TUNNUS, textContent, uploadFile, VIRKAILIJA_URL, waitUntilMinEmails } from "./test-util"
+import {
+  acceptAvustushaku,
+  Budget,
+  BudgetAmount,
+  clearAndSet,
+  clearAndType,
+  clickElement,
+  clickElementWithText,
+  clickFormSaveAndWait,
+  countElements,
+  createValidCopyOfEsimerkkihakuAndReturnTheNewId,
+  dummyExcelPath,
+  expectQueryParameter,
+  expectToBeDefined,
+  fillBudget,
+  getHakemusIDFromHakemusTokenURLParameter,
+  getMuutoshakemusEmails,
+  getMuutoshakemusPaatosEmails,
+  MailWithLinks,
+  navigate,
+  navigateHakija,
+  navigateToNewHakemusPage,
+  PaatosValues,
+  publishAvustushaku,
+  selectVakioperusteluInFinnish,
+  setCalendarDate,
+  TEST_Y_TUNNUS,
+  uploadFile,
+  VIRKAILIJA_URL,
+  waitUntilMinEmails
+} from "./test-util"
 
 export interface Answers {
   projectName: string
@@ -232,48 +262,6 @@ export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwrit
   return { avustushakuID, hakemusID, userKey }
 }
 
-export async function navigateToHakijaMuutoshakemusPage(page: Page, hakemusID: number) {
-  const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(hakemusID)
-  await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
-}
-
-export async function navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges(
-  page: Page, hakemusID: number, jatkoaika: MuutoshakemusValues, budjetti: BudgetAmount, budjettiPerustelut: string) {
-
-  await navigateToHakijaMuutoshakemusPage(page, hakemusID)
-  await fillJatkoaikaValues(page, jatkoaika)
-  await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
-  await fillMuutoshakemusBudgetAmount(page, budjetti)
-  await fillBudgetPerustelut(page, budjettiPerustelut)
-  await clickSendMuutoshakemusButton(page)
-  await page.waitForSelector('[data-test-class="existing-muutoshakemus"][data-test-state="new"]')
-}
-
-export async function fillJatkoaikaValues(page: Page, muutoshakemus: MuutoshakemusValues) {
-  if (!muutoshakemus.jatkoaika) throw new Error('Jatkoaika is required')
-
-  await clickElement(page, '#checkbox-haenKayttoajanPidennysta')
-  await clearAndType(page, '#perustelut-kayttoajanPidennysPerustelut', muutoshakemus.jatkoaikaPerustelu)
-  await setCalendarDate(page, muutoshakemus.jatkoaika.format('DD.MM.YYYY'))
-}
-
-export async function clickSendMuutoshakemusButton(page: Page) {
-  await clickElement(page, '#send-muutospyynto-button:not([disabled])')
-}
-
-export async function fillAndSendMuutoshakemus(page: Page, hakemusID: number, muutoshakemus: MuutoshakemusValues) {
-  await navigateToHakijaMuutoshakemusPage(page, hakemusID)
-  if (muutoshakemus.jatkoaika) {
-    await fillJatkoaikaValues(page, muutoshakemus)
-    await clickSendMuutoshakemusButton(page)
-  }
-
-  const successNotificationSelector = 'div[class="auto-hide success"]'
-  const notification = await textContent(page, successNotificationSelector)
-  const notificationText = muutoshakemus.jatkoaika ? 'Muutoshakemus lähetetty' : 'Muutokset tallennettu'
-  expect(notification).toBe(notificationText)
-}
-
 export async function validateMuutoshakemusValues(page: Page, muutoshakemus: MuutoshakemusValues, paatos?: PaatosValues) {
   await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
   const jatkoaika = await page.$eval('[data-test-id=muutoshakemus-jatkoaika]', el => el.textContent)
@@ -353,15 +341,6 @@ export async function fillMuutoshakemusBudgetAmount(page: Page, budget: BudgetAm
   await clearAndType(page, "input[name='talousarvio.rent-costs-row'][type='number']", budget.rent)
   await clearAndType(page, "input[name='talousarvio.steamship-costs-row'][type='number']", budget.steamship)
   await clearAndType(page, "input[name='talousarvio.other-costs-row'][type='number']", budget.other)
-}
-
-export async function fillSisaltomuutosPerustelut(page: Page, perustelut: string) {
-  await clearAndType(page, '#perustelut-sisaltomuutosPerustelut', perustelut)
-}
-
-
-export async function fillBudgetPerustelut(page: Page, perustelut: string) {
-  await clearAndType(page, '#perustelut-taloudenKayttosuunnitelmanPerustelut', perustelut)
 }
 
 export async function navigateToNthMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, n: number) {

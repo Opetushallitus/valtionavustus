@@ -10,11 +10,13 @@ import {
   createRandomHakuValues,
 } from './test-util'
 import {
-  navigateToHakijaMuutoshakemusPage,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
+} from './muutospaatosprosessi-util'
+import {
+  navigateToHakijaMuutoshakemusPage,
   fillSisaltomuutosPerustelut,
   clickSendMuutoshakemusButton
-} from './muutoshakemus-util'
+} from './muutoshakemus/muutoshakemus-util'
 
 jest.setTimeout(400_000)
 
