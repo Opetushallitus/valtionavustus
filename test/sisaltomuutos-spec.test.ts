@@ -10,9 +10,11 @@ import {
   createRandomHakuValues,
   getElementInnerText,
   textContent,
+  selectVakioperusteluInFinnish,
 } from './test-util'
 import {
   navigateToLatestMuutoshakemus,
+  navigateToLatestMuutoshakemusPaatos,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
 } from './muutospaatosprosessi-util'
 import {
@@ -128,6 +130,30 @@ describe('Sisaltomuutos', () => {
         afterAll(async () => {
           await closePaatosPreview(page)
         })
+      })
+
+      describe('sending decision', () => {
+        beforeAll(async () => {
+          await selectVakioperusteluInFinnish(page)
+          await clickElement(page, '[data-test-id="muutoshakemus-submit"]')
+          await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+        })
+
+        it('shows the original application text', async () => {
+          const sentApplicationInformation = await textContent(page, '[data-test-id="sisaltomuutos-perustelut"]')
+          expect(sentApplicationInformation).toContain(sisaltomuutosPerustelut)
+        })
+      })
+    })
+
+    describe('Viewing päätös for hakija', () => {
+      beforeAll(async () => {
+        await navigateToLatestMuutoshakemusPaatos(page, hakemusID)
+      })
+
+      it('should include sisältömuutos in asia section', async () => {
+        const asiaSectionContent = await textContent(page, '[data-test-id=muutospaatos-asia-content]')
+        expect(asiaSectionContent).toContain('Muutoshakemus hankesuunnitelman sisältöön tai toteutustapaan')
       })
     })
   })
