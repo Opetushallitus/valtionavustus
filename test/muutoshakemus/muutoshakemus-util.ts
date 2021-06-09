@@ -47,7 +47,7 @@ export async function fillAndSendMuutoshakemus(page: Page, hakemusID: number, mu
     await clickSendMuutoshakemusButton(page)
   }
 
-  expectMuutoshakemusToBeSubmittedSuccessfully(page, !!muutoshakemus.jatkoaika)
+  await expectMuutoshakemusToBeSubmittedSuccessfully(page, !!muutoshakemus.jatkoaika)
 }
 
 export async function fillSisaltomuutosPerustelut(page: Page, perustelut: string) {
