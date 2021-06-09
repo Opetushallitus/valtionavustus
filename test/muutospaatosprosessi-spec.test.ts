@@ -12,44 +12,46 @@ import {
   clickElementWithText,
   countElements,
   expectToBeDefined,
-  fillAndSendMuutoshakemus,
   getElementAttribute,
   getElementInnerText,
   getFirstPage,
   getLinkToHakemusFromSentEmails,
-  getLinkToMuutoshakemusFromSentEmails,
-  getUserKey,
   hasElementAttribute,
   log,
   makePaatosForMuutoshakemusIfNotExists,
   mkBrowser,
   navigate,
   navigateToHakemus,
-  navigateToHakijaMuutoshakemusPage,
   randomString,
   ratkaiseAvustushaku,
-  ratkaiseMuutoshakemusEnabledAvustushaku,
   selectVakioperusteluInFinnish,
   setPageErrorConsoleLogger,
   textContent,
-  validateMuutoshakemusPaatosCommonValues,
-  validateMuutoshakemusValues,
   waitUntilMinEmails,
-  MuutoshakemusValues,
   Email,
   createHakuFromEsimerkkihaku,
-  fillMuutoshakemusPaatosWithVakioperustelu,
-  fillAndSendMuutoshakemusDecision,
   defaultBudget,
-  ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
-  parseMuutoshakemusPaatosFromEmails,
   acceptAvustushaku,
-  createMuutoshakemusEnabledAvustushakuAndFillHakemus,
-  markAvustushakuAsMuutoshakukelvoton,
   lastOrFail,
   getHakemusTokenAndRegisterNumber,
   navigateToHakemuksenArviointi,
 } from './test-util'
+import {
+  navigateToHakijaMuutoshakemusPage,
+  ratkaiseMuutoshakemusEnabledAvustushaku,
+  fillAndSendMuutoshakemus,
+  getLinkToMuutoshakemusFromSentEmails,
+  getUserKeyFromPaatosEmail,
+  validateMuutoshakemusPaatosCommonValues,
+  validateMuutoshakemusValues,
+  MuutoshakemusValues,
+  fillMuutoshakemusPaatosWithVakioperustelu,
+  fillAndSendMuutoshakemusDecision,
+  ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
+  parseMuutoshakemusPaatosFromEmails,
+  createMuutoshakemusEnabledAvustushakuAndFillHakemus,
+  markAvustushakuAsMuutoshakukelvoton,
+} from './muutoshakemus-util'
 
 jest.setTimeout(400_000)
 
@@ -859,7 +861,7 @@ etunimi.sukunimi@oph.fi`)
     })
 
     it('hakija gets an email with a link to muutoshakemus', async () => {
-      const userKey = await getUserKey(hakemusID)
+      const userKey = await getUserKeyFromPaatosEmail(hakemusID)
       expect(linkToMuutoshakemus).toContain(`${HAKIJA_URL}/muutoshakemus?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`)
     })
 

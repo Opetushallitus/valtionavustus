@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { Browser, Page } from "puppeteer"
 import moment from 'moment'
 
@@ -16,7 +17,6 @@ import {
   standardizedHakulomakeJson,
   getFirstPage,
   ratkaiseAvustushaku,
-  ratkaiseMuutoshakemusEnabledAvustushaku,
   publishAvustushaku,
   fillAndSendHakemus,
   acceptHakemus,
@@ -24,7 +24,6 @@ import {
   clickElementWithTestId,
   assertCodeIsVisible,
   expectedResponseFromExternalAPIhakemuksetForAvustushaku,
-  getLinkToMuutoshakemusFromSentEmails,
   actualResponseFromExternalAPIhakemuksetForAvustushaku,
   createUniqueCode,
   closeAvustushakuByChangingEndDateToPast,
@@ -54,10 +53,8 @@ import {
   clickFormSaveAndWait,
   addFieldToFormAndReturnElementIdAndLabel,
   TEST_Y_TUNNUS,
-  publishAndFillMuutoshakemusEnabledAvustushaku,
   navigateToHakemuksenArviointi,
   getTäydennyspyyntöEmails,
-  navigateToHakijaMuutoshakemusPage,
   waitUntilMinEmails,
   setPageErrorConsoleLogger,
   randomString,
@@ -67,11 +64,16 @@ import {
   getElementInnerText,
   navigateToPaatos,
   lastOrFail,
-  createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku,
-  fillAndSendMuutoshakemusDisabledMenoluokiteltuHakemus,
   navigateToSeurantaTab,
 } from './test-util'
-import axios from 'axios'
+import {
+  createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku,
+  fillAndSendMuutoshakemusDisabledMenoluokiteltuHakemus,
+  publishAndFillMuutoshakemusEnabledAvustushaku,
+  navigateToHakijaMuutoshakemusPage,
+  ratkaiseMuutoshakemusEnabledAvustushaku,
+  getLinkToMuutoshakemusFromSentEmails,
+} from './muutoshakemus-util'
 
 jest.setTimeout(400_000)
 

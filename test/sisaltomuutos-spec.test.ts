@@ -5,14 +5,16 @@ import {
   log,
   getFirstPage,
   setPageErrorConsoleLogger,
-  navigateToHakijaMuutoshakemusPage,
-  ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
   clickElement,
   Budget,
-  fillSisaltomuutosPerustelut,
   createRandomHakuValues,
-  clickSendMuutoshakemusButton
 } from './test-util'
+import {
+  navigateToHakijaMuutoshakemusPage,
+  ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
+  fillSisaltomuutosPerustelut,
+  clickSendMuutoshakemusButton
+} from './muutoshakemus-util'
 
 jest.setTimeout(400_000)
 
@@ -75,6 +77,13 @@ describe('Sisaltomuutos', () => {
   })
 
   it("hakija can submit sisaltomuutos", async () => {
+    await navigateToHakijaMuutoshakemusPage(page, hakemusID)
+    await clickElement(page, '#checkbox-haenSisaltomuutosta')
+    await fillSisaltomuutosPerustelut(page, 'Muutamme kaiken muuttamisen ilosta')
+    await clickSendMuutoshakemusButton(page)
+  })
+
+  it("shows sisältömuutos-related information in päätös", async () => {
     await navigateToHakijaMuutoshakemusPage(page, hakemusID)
     await clickElement(page, '#checkbox-haenSisaltomuutosta')
     await fillSisaltomuutosPerustelut(page, 'Muutamme kaiken muuttamisen ilosta')

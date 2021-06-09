@@ -11,27 +11,29 @@ import {
   getFirstPage,
   setPageErrorConsoleLogger,
   selectVakioperusteluInFinnish,
-  navigateToHakijaMuutoshakemusPage,
-  navigateToLatestMuutoshakemus,
-  navigateToLatestMuutoshakemusPaatos,
-  ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
   clickElement,
   getElementInnerText,
   clearAndType,
   hasElementAttribute,
-  navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
-  fillAndSendMuutoshakemusDecision,
   countElements,
   navigate,
-  navigateToNthMuutoshakemus,
   Budget,
   BudgetAmount,
   defaultBudget,
-  ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget,
-  fillMuutoshakemusBudgetAmount,
   createRandomHakuValues,
   clickElementWithText,
 } from './test-util'
+import {
+  fillAndSendMuutoshakemusDecision,
+  fillMuutoshakemusBudgetAmount,
+  navigateToHakijaMuutoshakemusPage,
+  navigateToLatestMuutoshakemus,
+  navigateToLatestMuutoshakemusPaatos,
+  navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
+  navigateToNthMuutoshakemus,
+  ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
+  ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget,
+} from './muutoshakemus-util'
 
 jest.setTimeout(400_000)
 

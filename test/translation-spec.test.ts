@@ -2,32 +2,34 @@ import { Browser, Page } from 'puppeteer'
 import {
   BudgetAmount,
   clickElement,
-  fillAndSendMuutoshakemusDecision,
   getElementInnerText,
   getFirstPage,
   log,
   mkBrowser,
   navigate,
-  navigateToHakijaMuutoshakemusPage,
-  navigateToLatestMuutoshakemusPaatos,
-  navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
-  ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
   setPageErrorConsoleLogger,
   createRandomHakuValues,
   navigateToPaatos,
   Budget,
-  Answers,
   waitUntilMinEmails,
   getAcceptedPäätösEmails,
   lastOrFail,
   Email,
   getHakemusTokenAndRegisterNumber,
   HAKIJA_URL,
-  parseMuutoshakemusPaatosFromEmails,
   setCalendarDateForSelector,
   MailWithLinks,
   clickElementWithText,
 } from './test-util'
+import {
+  Answers,
+  fillAndSendMuutoshakemusDecision,
+  navigateToHakijaMuutoshakemusPage,
+  navigateToLatestMuutoshakemusPaatos,
+  navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
+  parseMuutoshakemusPaatosFromEmails,
+  ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
+} from './muutoshakemus-util'
 
 import moment from 'moment'
 
