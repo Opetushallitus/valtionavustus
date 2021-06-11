@@ -4,7 +4,8 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/common-functions.sh"
 
 function main {
   if [[ $# -lt 2 ]]; then
-    echo "USAGE: $0 qa 666"
+    echo "USAGE: $0 <env> <avustuhaku_id>"
+    echo "e.g. $0 qa 666"
     exit 0
   fi
 
