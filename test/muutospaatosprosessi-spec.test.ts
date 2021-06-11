@@ -165,14 +165,28 @@ describe('Muutospäätösprosessi', () => {
       hakemusID = hid
     })
 
+    it('copying it results in muutoshakukelpoinen avustushaku', async () => {
+      await gotoHaunTiedot(page, avustushakuID)
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: 'networkidle0' }),
+        page.click('aria/Kopioi uuden pohjaksi'),
+      ])
+
+      expect(await page.$('[data-test-id="muutoshakukelvoton-warning"]')).toBeNull()
+    })
+
     it('shows warning on Haun tiedot tab', async () => {
-      await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
+      await gotoHaunTiedot(page, avustushakuID)
       expect(await textContent(page, '[data-test-id="muutoshakukelvoton-warning"]')).toEqual(
         'Huom.! Uusi muutoshakutoiminnallisuus ei ole käytössä tälle avustushaulle.' +
         'Avustushaun päätöksiin ei tule linkkiä uudelle muutoshakusivulle' +
         'Uusi muutoshakutoiminnallisuus ei ole käytössä tästä avustushausta luoduille kopioille'
       )
     })
+
+    async function gotoHaunTiedot(page: Page, avustushakuID: number): Promise<void> {
+      await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
+    }
 
     it('does not send link to muutoshaku page with päätös', async () => {
       const { token, 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
