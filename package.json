@@ -30,7 +30,6 @@
     "react-widgets-moment": "^4.0.30",
     "route-parser": "^0.0.4",
     "seamless-immutable": "^2.4.2",
-    "snyk": "^1.305.1",
     "speakingurl": "7.0.0",
     "ts-loader": "8.2.0",
     "yup": "^0.29.3"
@@ -77,22 +76,13 @@
     "puppeteer:test": "jest --config=test/jest.config.js --verbose --forceExit --runInBand",
     "common:test": "cd va-common && mocha --require web/test/babelhook $MOCHA_ARGS web/test/*Test.js",
     "common:test-watch": "cd va-common && mocha --watch --require web/test/babelhook $MOCHA_ARGS web/test/*Test.js",
-    "common:snyk-protect": "cd va-common && snyk protect",
-    "common:prepare": "npm run common:snyk-protect",
     "soresu-form:test": "cd soresu-form && mocha --require babel-register $MOCHA_ARGS web/test/*Test.js",
     "soresu-form:test-watch": "cd soresu-form && mocha --watch --require babel-register $MOCHA_ARGS web/test/*Test.js",
-    "soresu-form:snyk-protect": "cd soresu-form && snyk protect",
-    "soresu-form:prepare": "npm run soresu-form:snyk-protect",
     "build": "webpack",
     "build-production": "NODE_ENV=production npm run build",
     "build-watch": "node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --progress --watch",
     "hakija:test": "cd va-hakija && mocha --require web/test/babelhook $MOCHA_ARGS ./web/test/*Test.js",
     "hakija:test-watch": "cd va-hakija && mocha --watch --require web/test/babelhook $MOCHA_ARGS web/test/*Test.js",
-    "hakija:snyk-protect": "cd va-hakija && snyk protect",
-    "hakija:prepare": "npm run hakija:snyk-protect",
-    "virkailija:test": "cd va-virkailija && true",
-    "virkailija:snyk-protect": "cd va-virkailija && snyk protect",
-    "virkailija:prepare": "npm run virkailija:snyk-protect"
-  },
-  "snyk": true
+    "virkailija:test": "cd va-virkailija && true"
+  }
 }
