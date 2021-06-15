@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 
-import DropdownList from 'react-widgets/lib/DropdownList';
+import DropdownList from 'react-widgets/DropdownList'
 import moment from 'moment-timezone'
 
 import './avustushaku-dropdown.less'
@@ -31,17 +31,15 @@ export default class AvustushakuDropdown extends Component {
         }, 100)
       }
     }
+
     return <div id="avustushaku-dropdown">
-             <DropdownList valueField="id"
+             <DropdownList dataKey="id"
                            containerClassName="dropdown-list"
                            textField={avustushakuToText}
                            data={avustushakuList}
                            defaultValue={avustushaku}
-                           valueComponent={AvustushakuEntry}
-                           caseSensitive={false}
-                           minLength={3}
+                           renderValue={AvustushakuEntry}
                            filter='contains'
-                           duration={0}
                            onChange={onChange}
                            messages={messages}
                            onToggle={scrollListToTopForIE}/>
@@ -49,12 +47,12 @@ export default class AvustushakuDropdown extends Component {
   }
 }
 
-class AvustushakuEntry extends React.Component {
-  render() {
-    const name = this.props.item.content.name.fi
-    const date = moment(this.props.item.content.duration.start).tz('Europe/Helsinki').format('D.M.YYYY')
-    return <span>
-             {name}&nbsp;({date})
-           </span>
-  }
+function AvustushakuEntry({ item }) {
+  const name = item.content.name.fi
+  const date = moment(item.content.duration.start).tz('Europe/Helsinki').format('D.M.YYYY')
+  return (
+    <span>
+      {name}&nbsp;({date})
+     </span>
+  )
 }

@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 
-import DropdownList from 'react-widgets/lib/DropdownList';
+import DropdownList from 'react-widgets/DropdownList'
+import 'react-widgets/styles.css'
 
 import {EditComponent, FieldEditComponent} from './EditComponent.jsx'
 
@@ -83,17 +84,15 @@ export class KoodistoDropdown extends Component {
       emptyList: 'Ei koodistoja',
       emptyFilter: 'Ei tuloksia'
     }
+
     return <div className="koodisto-dropdown">
              <DropdownList defaultOpen={defaultOpen}
-                           valueField="uri"
+                           dataKey="uri"
                            textField="name"
                            data={koodistosList}
                            defaultValue={koodisto}
-                           valueComponent={KoodistoEntry}
-                           caseSensitive={false}
-                           minLength={3}
+                           renderValue={KoodistoEntry}
                            filter='contains'
-                           duration={0}
                            onChange={onChange}
                            messages={messages}
                            placeholder="Valitse koodisto"/>
@@ -101,9 +100,6 @@ export class KoodistoDropdown extends Component {
   }
 }
 
-class KoodistoEntry extends React.Component {
-  render() {
-    const name = this.props.item.name
-    return <span>{name}</span>
-  }
+function KoodistoEntry({item}) {
+  return <span>{item.name}</span>
 }

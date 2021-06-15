@@ -2,8 +2,8 @@ import React from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import moment from 'moment'
-import { DateTimePicker } from 'react-widgets'
-import momentLocalizer from 'react-widgets-moment'
+import DatePicker from 'react-widgets/DatePicker'
+import MomentLocalizer from 'react-widgets-moment'
 import { omit } from 'lodash'
 import { translations } from 'va-common/web/va/i18n/translations'
 import { TranslationContext, getTranslationContext } from 'va-common/web/va/i18n/TranslationContext'
@@ -26,7 +26,7 @@ import { TalousarvioAcceptWithChangesForm } from './TalousarvioAcceptWithChanges
 import './Muutoshakemus.less'
 
 moment.locale('fi')
-momentLocalizer()
+const localizer = new MomentLocalizer(moment)
 
 const paatosStatuses = [
   {
@@ -135,20 +135,21 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
         <div>
           <h3 className="muutoshakemus__header">OPH:n hyväksymä</h3>
           <div id="approve-with-changes-muutoshakemus-jatkoaika-oph">
-            <DateTimePicker
-              name="paattymispaiva"
-              onBlur={() => f.setFieldTouched('paattymispaiva')}
-              onChange={(newDate) => {
-                const d = moment(newDate)
-                if (d.isValid()) {
-                  f.setFieldValue('paattymispaiva', newDate)
-                } else {
-                  f.setFieldValue('paattymispaiva', undefined)
-                }
-              }}
-              defaultValue={f.values['paattymispaiva'] || haettuPaiva.toDate()}
-              containerClassName={`datepicker ${isError(f, 'paattymispaiva') ? 'muutoshakemus__error' : ''}`}
-              time={false} />
+            <Localization date={momentLocalizer}>
+              <DatePicker
+                name="paattymispaiva"
+                onBlur={() => f.setFieldTouched('paattymispaiva')}
+                onChange={(newDate) => {
+                  const d = moment(newDate)
+                  if (d.isValid()) {
+                    f.setFieldValue('paattymispaiva', newDate)
+                  } else {
+                    f.setFieldValue('paattymispaiva', undefined)
+                  }
+                }}
+                defaultValue={f.values['paattymispaiva'] || haettuPaiva.toDate()}
+                containerClassName={`datepicker ${isError(f, 'paattymispaiva') ? 'muutoshakemus__error' : ''}`} />
+            </Localization>
           </div>
           {isError(f, 'paattymispaiva') && <ErrorMessage text={'Päättymispäivä on pakollinen kenttä!'} />}
         </div>

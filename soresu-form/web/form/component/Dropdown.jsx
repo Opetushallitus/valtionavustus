@@ -1,7 +1,7 @@
 import React from 'react'
 import ClassNames from 'classnames'
 
-import DropdownList from 'react-widgets/lib/DropdownList';
+import DropdownList from 'react-widgets/DropdownList';
 
 import Translator from '../Translator'
 import BasicFieldComponent from './BasicFieldComponent.jsx'
@@ -37,13 +37,10 @@ export default class Dropdown extends BasicFieldComponent {
                       onChange={props.onChange}
                       data={props.options}
                       defaultValue={props.value}
-                      valueField="value"
+                      dataKey="value"
                       textField={optionToText}
-                      valueComponent={OptionEntry}
-                      caseSensitive={false}
-                      minLength={1}
-                      filter="contains"
-                      duration={0}
+                      renderValue={OptionEntry}
+                      filter='contains'
                       messages={messages}
                       onToggle={null}/>
       </div>

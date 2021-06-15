@@ -1,5 +1,5 @@
 import React from 'react'
-import { DateTimePicker } from 'react-widgets'
+import DatePicker from 'react-widgets/DatePicker'
 import moment from 'moment'
 
 import { FormikHook } from 'va-common/web/va/types/muutoshakemus'
@@ -9,7 +9,7 @@ import { useTranslations } from '../../../../../../va-common/web/va/i18n/Transla
 import { ErrorMessage } from '../../ErrorMessage'
 import { PerustelutTextArea } from '../PerustelutTextArea'
 
-import 'react-widgets/dist/css/react-widgets.css'
+import 'react-widgets/styles.css'
 import './jatkoaika.less'
 
 type AvustuksenKayttoaikaInputProps = {
@@ -33,9 +33,9 @@ export const AvustuksenKayttoaikaInput = ({ f, projectEnd }: AvustuksenKayttoaik
             {t.kayttoajanPidennys.newExpirationDateTitle}
           </div>
           <div>
-            <DateTimePicker
+            <DatePicker
               name="haettuKayttoajanPaattymispaiva"
-              onChange={(newDate?: Date) => {
+              onChange={(newDate: Date | null | undefined) => {
                 const d = moment(newDate)
                 if (d.isValid()) {
                   f.setFieldValue('haettuKayttoajanPaattymispaiva', newDate)
@@ -44,8 +44,7 @@ export const AvustuksenKayttoaikaInput = ({ f, projectEnd }: AvustuksenKayttoaik
                 }
               }}
               containerClassName={`datepicker ${datepickerError}`}
-              defaultValue={f.initialValues.haettuKayttoajanPaattymispaiva}
-              time={false} />
+              defaultValue={f.initialValues.haettuKayttoajanPaattymispaiva} />
             <ErrorMessage text={f.errors.haettuKayttoajanPaattymispaiva} />
           </div>
         </div>

@@ -1,9 +1,9 @@
 import React, {useState} from 'react'
-import { DateTimePicker } from 'react-widgets'
+import DatePicker from 'react-widgets/DatePicker'
 import moment, {Moment} from 'moment'
 
 import '../style/kayttoaika.less'
-import 'react-widgets/dist/css/react-widgets.css'
+import 'react-widgets/styles.css'
 
 interface KayttoaikaProps {
   avustushaku: object
@@ -61,7 +61,7 @@ const DateInput = (props: DateInputProps) => {
   const [isValid, setIsValid] = useState(defaultValue !== undefined)
 
   function onChangeHandlerFor(id: string) {
-    return function onChangeHandler(newDate?: Date) {
+    return function onChangeHandler(newDate: Date | null | undefined) {
       const date = moment(newDate)
       setIsValid(date.isValid())
       onChange(id, date)
@@ -73,11 +73,10 @@ const DateInput = (props: DateInputProps) => {
   }
 
   return (
-    <DateTimePicker
+    <DatePicker
       name={id}
       onChange={onChangeHandlerFor(id)}
       value={defaultValue}
-      containerClassName={getClassNames()}
-      time={false} />
+      containerClassName={getClassNames()} />
   )
 }
