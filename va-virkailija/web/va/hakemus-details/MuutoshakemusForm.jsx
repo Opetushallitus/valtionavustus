@@ -4,9 +4,11 @@ import * as Yup from 'yup'
 import moment from 'moment'
 import DatePicker from 'react-widgets/DatePicker'
 import MomentLocalizer from 'react-widgets-moment'
+import Localization from 'react-widgets/Localization'
 import { omit } from 'lodash'
 import { translations } from 'va-common/web/va/i18n/translations'
 import { TranslationContext, getTranslationContext } from 'va-common/web/va/i18n/TranslationContext'
+import { translationsFi } from 'va-common/web/va/i18n/translations'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusPaatos } from 'va-common/web/va/MuutoshakemusPaatos'
@@ -135,7 +137,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
         <div>
           <h3 className="muutoshakemus__header">OPH:n hyväksymä</h3>
           <div id="approve-with-changes-muutoshakemus-jatkoaika-oph">
-            <Localization date={momentLocalizer}>
+            <Localization date={localizer} messages={translationsFi.calendar}>
               <DatePicker
                 name="paattymispaiva"
                 onBlur={() => f.setFieldTouched('paattymispaiva')}

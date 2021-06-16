@@ -4,20 +4,21 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import queryString from 'query-string'
 import moment from 'moment'
-import momentLocalizer from 'react-widgets-moment'
-
+import MomentLocalizer from 'react-widgets-moment'
+import Localization from 'react-widgets/Localization'
 import TopBar from './TopBar.tsx'
 import HakujenHallintaController from './HakujenHallintaController.jsx'
 import HakuListing from './haku-list/HakuListing.jsx'
 import EditorSelector from './haku-details/EditorSelector.jsx'
 import LocalStorage from './LocalStorage'
+import { translationsFi } from 'va-common/web/va/i18n/translations'
 
 import './style/virkailija.less'
 import './style/topbar.less'
 import './style/admin.less'
 
 moment.locale('fi')
-momentLocalizer()
+const momentLocalizer = new MomentLocalizer(moment)
 
 export default class AdminApp extends Component {
   render() {
@@ -28,30 +29,32 @@ export default class AdminApp extends Component {
     const codeOptions = state.codeOptions
     const helpTexts = state.helpTexts
     return (
-      <section>
-        <TopBar activeTab="admin" environment={environment} state={state}/>
-        <section id="container">
-          <HakuListing hakuList={state.hakuList}
-                       selectedHaku={state.selectedHaku}
-                       filter={state.filter}
-                       controller={controller}
-          />
-          <EditorSelector subTab={state.subTab}
-                          avustushaku={selectedHaku}
-                          decisionLiitteet={state.decisionLiitteet}
-                          formDraft={state.formDrafts[selectedHaku.id]}
-                          valiselvitysFormDraft={state.valiselvitysFormDrafts[selectedHaku.id]}
-                          loppuselvitysFormDraft={state.loppuselvitysFormDrafts[selectedHaku.id]}
-                          environment={environment}
-                          vaUserSearch={state.vaUserSearch}
-                          koodistos={state.koodistos}
-                          userInfo={state.userInfo}
-                          controller={controller}
-                          translations={translations}
-                          codeOptions={codeOptions}
-                          helpTexts={helpTexts} />
+      <Localization date={momentLocalizer} messages={translationsFi.calendar}>
+        <section>
+          <TopBar activeTab="admin" environment={environment} state={state}/>
+          <section id="container">
+            <HakuListing hakuList={state.hakuList}
+                         selectedHaku={state.selectedHaku}
+                         filter={state.filter}
+                         controller={controller}
+            />
+            <EditorSelector subTab={state.subTab}
+                            avustushaku={selectedHaku}
+                            decisionLiitteet={state.decisionLiitteet}
+                            formDraft={state.formDrafts[selectedHaku.id]}
+                            valiselvitysFormDraft={state.valiselvitysFormDrafts[selectedHaku.id]}
+                            loppuselvitysFormDraft={state.loppuselvitysFormDrafts[selectedHaku.id]}
+                            environment={environment}
+                            vaUserSearch={state.vaUserSearch}
+                            koodistos={state.koodistos}
+                            userInfo={state.userInfo}
+                            controller={controller}
+                            translations={translations}
+                            codeOptions={codeOptions}
+                            helpTexts={helpTexts} />
+          </section>
         </section>
-      </section>
+      </Localization>
     )
   }
 }

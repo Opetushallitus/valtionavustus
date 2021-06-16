@@ -106,6 +106,9 @@ export const translationsFi = {
     email: 'Sähköposti ei ole validi',
     haettuKayttoajanPaattymispaiva: 'Uuden viimeisen käyttöpäivän tulee olla myöhemmin kuin ovimassaoleva viimeinen käyttöpäivä',
     talousarvioSum: (sum: number) => `Loppusumman on oltava ${sum}`
+  },
+  calendar: {
+    moveToday: 'tänään'
   }
 }
 
@@ -199,6 +202,9 @@ const translationsSv: Translations = {
     email: 'Kontrollera e-postadress',
     haettuKayttoajanPaattymispaiva: 'Den nya sista användningsdagen ska vara ett senare datum än den nuvarande sista användningsdagen.',
     talousarvioSum: (sum: number) => `Det sammanlagda beloppet ska vara ${sum}`
+  },
+  calendar: {
+    moveToday: 'idag'
   },
   selvitys: {
     status: {

@@ -1,14 +1,17 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import * as queryString from 'query-string'
-import momentLocalizer from 'react-widgets-moment'
+import MomentLocalizer from 'react-widgets-moment'
 import moment from 'moment'
-
-import { getTranslationContext, TranslationContext } from 'va-common/web/va/i18n/TranslationContext'
+import {
+  getTranslationContext,
+  TranslationContext,
+  useTranslations
+} from 'va-common/web/va/i18n/TranslationContext'
 import { Language } from 'va-common/web/va/i18n/translations'
-
 import { MuutoshakemusComponent } from './Muutoshakemus'
 import { Paatos } from './Paatos'
+import Localization from 'react-widgets/Localization'
 
 export type Query = {
   lang?: Language
@@ -44,11 +47,13 @@ if (lang === 'fi') {
     }
   })
 }
-momentLocalizer()
+const localizer = new MomentLocalizer(moment)
 
 const app = (
   <TranslationContext.Provider value={translationContext}>
-    {location.pathname.endsWith('/paatos') ? <Paatos query={query} /> : <MuutoshakemusComponent query={query} /> }
+    <Localization date={localizer} messages={useTranslations().t.calendar}>
+      {location.pathname.endsWith('/paatos') ? <Paatos query={query} /> : <MuutoshakemusComponent query={query} /> }
+    </Localization>
   </TranslationContext.Provider>
 )
 ReactDOM.render(app, document.getElementById('app'))
