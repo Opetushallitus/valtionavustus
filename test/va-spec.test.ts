@@ -65,6 +65,7 @@ import {
   navigateToPaatos,
   lastOrFail,
   navigateToSeurantaTab,
+  clickDropdownElementWithText,
 } from './test-util'
 import {
   createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku,
@@ -853,7 +854,7 @@ etunimi.sukunimi@oph.fi
       await clickElementWithText(page, "label", "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko")
 
       await clickElement(page, "[id='koodistoField-1_input']")
-      await clickElementWithText(page, "li", "Kainuu")
+      await clickDropdownElementWithText(page, "Kainuu")
 
       await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")
       await clearAndType(page, "#bank-bic", "OKOYFIHH")

@@ -440,8 +440,23 @@ export async function clickElementWithText(page: Page, elementType: string, text
   return element
 }
 
+export async function clickDropdownElementWithText(page: Page, text: string) {
+  const element = await waitForDropdownElementWithText(page, text)
+  assert.ok(element, `Could not find dropdown element with text '${text}'`)
+  await element?.click()
+  return element
+}
+
 export async function waitForElementWithText(page: Page, elementType: string, text: string, waitForSelectorOptions: WaitForSelectorOptions = {visible: true}) {
   return await page.waitForXPath(`//${elementType}[contains(., '${text}')]`, waitForSelectorOptions)
+}
+
+export async function waitForDropdownElementWithText(page: Page, text: string) {
+  return waitForElementWithAttribute(page, 'role', 'option', text)
+}
+
+async function waitForElementWithAttribute(page: Page, attribute: string, attributeValue: string, text: string, waitForSelectorOptions: WaitForSelectorOptions = {visible: true}) {
+  return await page.waitForXPath(`//*[@${attribute}='${attributeValue}'][contains(., '${text}')]`, waitForSelectorOptions)
 }
 
 export async function clearAndType(page: Page, selector: string, text: string) {

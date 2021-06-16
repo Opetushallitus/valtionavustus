@@ -9,7 +9,7 @@ import {
   Budget,
   BudgetAmount,
   clearAndSet,
-  clearAndType,
+  clearAndType, clickDropdownElementWithText,
   clickElement,
   clickElementWithText,
   clickFormSaveAndWait,
@@ -110,7 +110,7 @@ export async function fillAndSendMuutoshakemusDisabledMenoluokiteltuHakemus(page
   await clearAndType(page, "[id='textField-3']", '00313') // postinumero
   await clearAndType(page, "[id='textField-4']", 'Ankkalinna') // postitoimipaikka
   await clickElement(page, "[id='koodistoField-1_input']") // maakunta
-  await clickElementWithText(page, "li", 'Kainuu')
+  await clickDropdownElementWithText(page, "Kainuu")
 
   await clickElement(page, 'label[for="radioButton-0.radio.0"]') // Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko
   await clearAndType(page, "[id='signatories-fieldset-1.name']", "Teppo Testityyppi")
@@ -193,7 +193,7 @@ export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustus
   await clearAndType(page, "[id='signatories-fieldset-1.email']", "erkki.esimerkki@example.com")
   await clickElementWithText(page, "label", "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko")
   await clickElement(page, "[id='koodistoField-1_input']")
-  await clickElementWithText(page, "li", "Kainuu")
+  await clickDropdownElementWithText(page, "Kainuu")
   await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")
   await clearAndType(page, "#bank-bic", "OKOYFIHH")
   await clearAndType(page, "#textField-2", "2")
@@ -389,7 +389,7 @@ export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page,
   await clearAndType(page, "[id='signatories-fieldset-1.email']", "erkki.esimerkki@example.com")
   await clickElementWithText(page, "label", lang === 'fi' ? "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko" : "Kommun/samkommun, kommunalt ägda bolag, kyrkan")
   await clickElement(page, "[id='koodistoField-1_input']")
-  await clickElementWithText(page, "li", lang === 'fi' ? "Kainuu" : 'Åland')
+  await clickDropdownElementWithText(page, lang === 'fi' ? "Kainuu" : 'Åland')
   await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")
   await clearAndType(page, "#bank-bic", "OKOYFIHH")
   await clearAndType(page, "#textField-2", "2")
