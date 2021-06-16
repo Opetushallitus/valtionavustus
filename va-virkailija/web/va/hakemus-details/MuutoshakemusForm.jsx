@@ -9,6 +9,7 @@ import { omit } from 'lodash'
 import { translations } from 'va-common/web/va/i18n/translations'
 import { TranslationContext, getTranslationContext } from 'va-common/web/va/i18n/TranslationContext'
 import { translationsFi } from 'va-common/web/va/i18n/translations'
+import { parseDateString } from 'va-common/web/va/i18n/dateformat'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusPaatos } from 'va-common/web/va/MuutoshakemusPaatos'
@@ -149,6 +150,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
                     f.setFieldValue('paattymispaiva', undefined)
                   }
                 }}
+                parse={parseDateString}
                 defaultValue={f.values['paattymispaiva'] || haettuPaiva.toDate()}
                 containerClassName={`datepicker ${isError(f, 'paattymispaiva') ? 'muutoshakemus__error' : ''}`} />
             </Localization>

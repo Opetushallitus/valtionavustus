@@ -1,11 +1,10 @@
 import React from 'react'
 import DatePicker from 'react-widgets/DatePicker'
 import moment from 'moment'
-
 import { FormikHook } from 'va-common/web/va/types/muutoshakemus'
 import { getInputErrorClass } from 'va-common/web/va/formikHelpers'
-
 import { useTranslations } from '../../../../../../va-common/web/va/i18n/TranslationContext'
+import { parseDateString } from 'va-common/web/va/i18n/dateformat'
 import { ErrorMessage } from '../../ErrorMessage'
 import { PerustelutTextArea } from '../PerustelutTextArea'
 
@@ -43,6 +42,7 @@ export const AvustuksenKayttoaikaInput = ({ f, projectEnd }: AvustuksenKayttoaik
                   f.setFieldValue('haettuKayttoajanPaattymispaiva', undefined)
                 }
               }}
+              parse={parseDateString}
               containerClassName={`datepicker ${datepickerError}`}
               defaultValue={f.initialValues.haettuKayttoajanPaattymispaiva} />
             <ErrorMessage text={f.errors.haettuKayttoajanPaattymispaiva} />

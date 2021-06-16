@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import DatePicker from 'react-widgets/DatePicker'
 import moment, {Moment} from 'moment'
+import { parseDateString } from 'va-common/web/va/i18n/dateformat'
 
 import '../style/kayttoaika.less'
 import 'react-widgets/styles.css'
@@ -75,6 +76,7 @@ const DateInput = (props: DateInputProps) => {
   return (
     <DatePicker
       name={id}
+      parse={parseDateString}
       onChange={onChangeHandlerFor(id)}
       value={defaultValue}
       containerClassName={getClassNames()} />
