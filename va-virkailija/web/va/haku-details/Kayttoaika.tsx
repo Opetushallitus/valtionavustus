@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import DatePicker from 'react-widgets/DatePicker'
 import moment, {Moment} from 'moment'
-import { parseDateString } from 'va-common/web/va/i18n/dateformat'
+import { parseDateString, isoFormat } from 'va-common/web/va/i18n/dateformat'
 
 import '../style/kayttoaika.less'
 import 'react-widgets/styles.css'
@@ -24,7 +24,7 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
   }
 
   function onChange(id: string, date: Moment) {
-    const value = date.isValid() ? date.format('YYYY-MM-DD') : ''
+    const value = date.isValid() ? date.format(isoFormat) : ''
     controller.onChangeListener(avustushaku, { id: id }, value)
   }
 

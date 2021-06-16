@@ -4,6 +4,7 @@ import moment from 'moment'
 import { getProjectEndDate, getTalousarvio } from './Muutoshakemus'
 import { TalousarvioTable } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
 import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
+import { fiShortFormat } from 'va-common/web/va/i18n/dateformat'
 
 import './MuutoshakemusPaatos.less'
 
@@ -31,7 +32,7 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muut
             </div>
             <div>
               <h3 className="muutoshakemus-paatos__change-header" data-test-id="h-new-end-date">{t.muutoshakemus.acceptedChange}</h3>
-              <div data-test-id="paattymispaiva-value">{moment(paattymispaiva).format('D.M.YYYY')}</div>
+              <div data-test-id="paattymispaiva-value">{moment(paattymispaiva).format(fiShortFormat)}</div>
             </div>
           </div>
         }
@@ -48,7 +49,7 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
       <header className="muutoshakemus-paatos__header">
         <img id="logo" src="/img/logo.png" height="50" alt={t.logo.alt} />
         <div><span data-test-id="muutoshakemus-paatos-title">{t.muutoshakemus.paatos.paatos}</span><br/>
-          {moment(paatos['created-at']).format('D.M.YYYY')}
+          {moment(paatos['created-at']).format(fiShortFormat)}
         </div>
         <div data-test-id="paatos-register-number">{hakemus['register-number']}</div>
       </header>

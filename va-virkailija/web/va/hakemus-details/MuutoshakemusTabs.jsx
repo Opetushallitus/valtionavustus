@@ -1,5 +1,6 @@
 import React from 'react'
 import moment from 'moment'
+import { fiShortFormat } from 'va-common/web/va/i18n/dateformat'
 
 import './MuutoshakemusTabs.less'
 
@@ -13,7 +14,7 @@ export const MuutoshakemusTabs = ({ muutoshakemukset, activeMuutoshakemus, setAc
           onClick={() => setActiveMuutoshakemus(m)}
           data-test-id={`muutoshakemus-tab-${m.id}`}
         >
-          Muutoshakemus {moment(m['created-at']).format('D.M.YYYY')}
+          Muutoshakemus {moment(m['created-at']).format(fiShortFormat)}
         </button>
       ))}
     </div>

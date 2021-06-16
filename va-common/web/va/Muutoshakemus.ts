@@ -2,6 +2,7 @@ import moment, { Moment } from 'moment'
 import * as yup from 'yup'
 
 import { Meno, Muutoshakemus, Talousarvio, TalousarvioValues } from './types/muutoshakemus'
+import { isoFormat, fiLongFormat } from 'va-common/web/va/i18n/dateformat'
 import { Avustushaku } from './types'
 
 export const getTalousarvioSchema = (talousarvio: TalousarvioValues, e: any) => {
@@ -74,9 +75,9 @@ function getLatestProjectEndDate(muutoshakemukset: Muutoshakemus[] | undefined):
 }
 
 export function dateStringToMoment(date: string | undefined): Moment {
-  return moment(date, 'YYYY-MM-DD')
+  return moment(date, isoFormat)
 }
 
 export function toFinnishDateFormat(date: Moment): string | undefined {
-  return date.isValid() ? date.format('DD.MM.YYYY') : undefined
+  return date.isValid() ? date.format(fiLongFormat) : undefined
 }

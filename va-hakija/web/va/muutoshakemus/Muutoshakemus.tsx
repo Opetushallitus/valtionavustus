@@ -17,6 +17,7 @@ import OriginalHakemusIframe from './OriginalHakemusIframe'
 import ErrorBoundary from './ErrorBoundary'
 import { createFormikHook } from './formik'
 import { Query } from './MuutoshakemusApp'
+import { fiShortFormat } from 'va-common/web/va/i18n/dateformat'
 
 import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
@@ -83,7 +84,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
 
   const existingMuutoshakemus = (m: Muutoshakemus, index: number, allMuutoshakemus: Muutoshakemus[]) => {
     const projectEndDate = getProjectEndDate(state.avustushaku, allMuutoshakemus, m)
-    const topic = `${t.muutoshakemus.title} ${moment(m['created-at']).format('D.M.YYYY')}`
+    const topic = `${t.muutoshakemus.title} ${moment(m['created-at']).format(fiShortFormat)}`
     const waitingForDecision = m.status === 'new' ? ` - ${t.waitingForDecision}` : ''
     return (
       <section className="muutoshakemus__section" data-test-class="existing-muutoshakemus" data-test-state={m.status} key={index}>

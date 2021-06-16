@@ -9,7 +9,7 @@ import { omit } from 'lodash'
 import { translations } from 'va-common/web/va/i18n/translations'
 import { TranslationContext, getTranslationContext } from 'va-common/web/va/i18n/TranslationContext'
 import { translationsFi } from 'va-common/web/va/i18n/translations'
-import { parseDateString } from 'va-common/web/va/i18n/dateformat'
+import { isoFormat, parseDateString } from 'va-common/web/va/i18n/dateformat'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusPaatos } from 'va-common/web/va/MuutoshakemusPaatos'
@@ -80,7 +80,7 @@ function formToPayload(values) {
   return {
     ...values,
     talousarvio: values.talousarvio && omit(values.talousarvio, ['currentSum', 'originalSum']),
-    paattymispaiva: values.paattymispaiva && moment(values.paattymispaiva).format('YYYY-MM-DD')
+    paattymispaiva: values.paattymispaiva && moment(values.paattymispaiva).format(isoFormat)
   }
 }
 

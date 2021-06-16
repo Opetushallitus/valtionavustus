@@ -15,6 +15,7 @@ import ValiselvitysForm from './data/ValiselvitysForm.json'
 import HakuStatuses from './haku-details/HakuStatuses'
 import HakuPhases from './haku-details/HakuPhases'
 import queryString from 'query-string'
+import { isoFormat, fiShortFormat, fiLongDateTimeFormat } from 'va-common/web/va/i18n/dateformat'
 
 const dispatcher = new Dispatcher()
 
@@ -60,7 +61,7 @@ const basicFields = ["loppuselvitysdate", "valiselvitysdate", "register-number"]
 
 function appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing(avustushaku) {
   const fieldsToAppend = ['hankkeen-alkamispaiva', 'hankkeen-paattymispaiva']
-  const today = moment().format('YYYY-MM-DD')
+  const today = moment().format(isoFormat)
 
   return fieldsToAppend.reduce((haku, field) => appendFieldIfMissing(haku, field, today), avustushaku)
 }
@@ -166,7 +167,7 @@ export default class HakujenHallintaController {
         avustushaku: "",
         startdatestart:"",
         startdateend:"",
-        enddatestart:moment().subtract(2, 'year').format('D.M.YYYY'),
+        enddatestart:moment().subtract(2, 'year').format(fiShortFormat),
         enddateend:""
       }
     }
@@ -300,7 +301,7 @@ export default class HakujenHallintaController {
     } else if (fieldId.startsWith("hakuaika-")) {
       const hakuaika = /hakuaika-(\w+)/.exec(fieldId)
       const startOrEnd = hakuaika[1]
-      const newDate = moment(update.newValue, "DD.MM.YYYY HH.mm")
+      const newDate = moment(update.newValue, fiLongDateTimeFormat)
       if(newDate.isSame(update.avustushaku.content.duration[startOrEnd])) {
         return state
       }

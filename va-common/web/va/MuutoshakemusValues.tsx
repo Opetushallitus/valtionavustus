@@ -5,6 +5,7 @@ import { Muutoshakemus as MuutoshakemusStatuses } from './status'
 import { MuutosTaloudenKayttosuunnitelmaan } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
 import { Muutoshakemus, Talousarvio } from './types/muutoshakemus'
 import { useTranslations } from "./i18n/TranslationContext"
+import { fiLongFormat, parseDateStringToMoment } from 'va-common/web/va/i18n/dateformat'
 
 import './MuutoshakemusValues.less'
 
@@ -75,9 +76,9 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
 }
 
 function formatDate(date?: string) {
-  if (!date) return ''
-  const parsedDate = moment(date)
-  return parsedDate.isValid() ? parsedDate.format('DD.MM.YYYY') : ''
+  const d = parseDateStringToMoment(date)
+
+  return d && d.isValid() ? d.format(fiLongFormat) : ''
 }
 
 type PaattymispaivaValuesProps = {

@@ -3,6 +3,7 @@ import moment from 'moment'
 import { omit } from 'lodash'
 
 import { FormValues } from 'va-common/web/va/types/muutoshakemus'
+import { isoFormat } from 'va-common/web/va/i18n/dateformat'
 
 const timeout = 10000 // 10 seconds
 const client = axios.create({ timeout })
@@ -19,7 +20,7 @@ export async function postMuutoshakemus(props: MuutoshakemusProps) {
   const jatkoaika = values.haenKayttoajanPidennysta && {
     jatkoaika: {
       haenKayttoajanPidennysta: true,
-      haettuKayttoajanPaattymispaiva: moment(values.haettuKayttoajanPaattymispaiva).format('YYYY-MM-DD'),
+      haettuKayttoajanPaattymispaiva: moment(values.haettuKayttoajanPaattymispaiva).format(isoFormat),
       kayttoajanPidennysPerustelut: values.kayttoajanPidennysPerustelut,
     }
   }

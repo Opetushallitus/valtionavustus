@@ -1,6 +1,7 @@
 import React from 'react'
 import moment from 'moment'
 import HelpTooltip from '../HelpTooltip.jsx'
+import { fiShortFormat } from 'va-common/web/va/i18n/dateformat'
 
 export default class Selvitys extends React.Component{
   render(){
@@ -58,7 +59,7 @@ class DateField extends React.Component {
 
   onBlur(event) {
     const value = event.target.value
-    const isValid = moment(value, ["D.M.YYYY"], true).isValid() || value === ""
+    const isValid = moment(value, [fiShortFormat], true).isValid() || value === ""
     if (isValid) {
       this.props.controller.onChangeListener(this.props.avustushaku, event.target, value)
     } else {

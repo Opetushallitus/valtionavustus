@@ -9,6 +9,7 @@ import HakuPhase from '../avustushaku/HakuPhase.jsx'
 import HakuStatuses from '../haku-details/HakuStatuses'
 import HakuPhases from '../haku-details/HakuPhases'
 import HakemusListing from '../hakemus-list/HakemusListing.jsx'
+import { fiLongFormat, fiShortFormat } from 'va-common/web/va/i18n/dateformat'
 
 import '../style/table.less'
 import './haku-listing.less'
@@ -38,8 +39,8 @@ export default class HakuListing extends Component {
     }
     return function(hakemus) {
       const value = fieldGetter(hakemus)
-      const filterStartDate = _.isEmpty(filterStart) ? "" : moment(filterStart, "DD.MM.YYYY")
-      const filterEndDate = _.isEmpty(filterEnd) ? "" : moment(filterEnd, "DD.MM.YYYY")
+      const filterStartDate = _.isEmpty(filterStart) ? "" : moment(filterStart, fiLongFormat)
+      const filterEndDate = _.isEmpty(filterEnd) ? "" : moment(filterEnd, fiLongFormat)
       return moment(value).startOf('day').isBetween(filterStartDate, filterEndDate, null, '[]')
     }
   }
@@ -232,7 +233,7 @@ class DateFilter extends Component {
 
     const updateFilter = (type,event) => {
       const value = event.target.value
-      const isValid = moment(value, ["D.M.YYYY"],true).isValid() || value === ""
+      const isValid = moment(value, [fiShortFormat],true).isValid() || value === ""
       if (isValid) {
         controller.setFilter(filterField + type, value)
       }

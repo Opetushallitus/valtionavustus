@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import DropdownList from 'react-widgets/DropdownList'
 import moment from 'moment-timezone'
+import { fiShortFormat } from 'va-common/web/va/i18n/dateformat'
 
 import './avustushaku-dropdown.less'
 
@@ -12,7 +13,7 @@ export default class AvustushakuDropdown extends Component {
     const avustushakuList = this.props.avustushakuList
     const avustushakuToText = (avustushaku) => {
       const name = _.get(avustushaku, 'content.name.fi', "")
-      const date = moment(_.get(avustushaku, 'content.duration.start', "")).tz('Europe/Helsinki').format('D.M.YYYY')
+      const date = moment(_.get(avustushaku, 'content.duration.start', "")).tz('Europe/Helsinki').format(fiShortFormat)
       return name + " (" + date + ")"
     }
     const onChange = (value) => {
@@ -51,7 +52,7 @@ export default class AvustushakuDropdown extends Component {
 
 function AvustushakuEntry({ item }) {
   const name = item.content.name.fi
-  const date = moment(item.content.duration.start).tz('Europe/Helsinki').format('D.M.YYYY')
+  const date = moment(item.content.duration.start).tz('Europe/Helsinki').format(fiShortFormat)
   return (
     <span>
       {name}&nbsp;({date})
