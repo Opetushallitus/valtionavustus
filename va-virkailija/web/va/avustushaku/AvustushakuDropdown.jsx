@@ -27,7 +27,9 @@ export default class AvustushakuDropdown extends Component {
     const scrollListToTopForIE = opening => {
       if (opening) {
         setTimeout(() => {
-          document.getElementById('rw_1__listbox').scrollTop = 0
+          if (document.getElementById('rw_1_input')) {
+            document.getElementById('rw_1_input').scrollTop = 0
+          }
         }, 100)
       }
     }
