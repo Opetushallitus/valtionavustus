@@ -1,7 +1,8 @@
 import React from 'react'
 import ClassNames from 'classnames'
 
-import DropdownList from 'react-widgets/DropdownList';
+import DropdownList from 'react-widgets/DropdownList'
+import 'react-widgets/styles.css'
 
 import Translator from '../Translator'
 import BasicFieldComponent from './BasicFieldComponent.jsx'
@@ -32,6 +33,7 @@ export default class Dropdown extends BasicFieldComponent {
       <div className={classStr}>
         {this.label()}
         <DropdownList id={props.htmlId}
+                      containerClassName="dropdown-list"
                       name={props.htmlId}
                       disabled={props.disabled}
                       onChange={props.onChange}
