@@ -246,12 +246,11 @@ fornamn.efternamn@oph.fi
         })
 
         it('calendar component is in Swedish', async () => {
-          const monthButtonSelector = '#rw_1_date_calendar_label'
-          await setCalendarDateForSelector(page, '13.06.2021', '[name=haettuKayttoajanPaattymispaiva]')
+          await setCalendarDateForSelector(page, '13.05.2021', '[name=haettuKayttoajanPaattymispaiva]')
           await clickElement(page, 'button[title="Select date"]')
-          await page.waitForSelector(monthButtonSelector)
-          const title = await getElementInnerText(page, monthButtonSelector)
-          expect(title).toBe('juni 2021')
+          const monthLabel = await page.waitForXPath('//button[contains(@id,"_calendar_label")]')
+          const monthName = (await page.evaluate(button => button.textContent, monthLabel)).trim()
+          expect(monthName).toBe('maj 2021')
         })
       })
 
