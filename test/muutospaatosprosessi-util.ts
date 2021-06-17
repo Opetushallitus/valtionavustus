@@ -9,7 +9,7 @@ import {
   Budget,
   BudgetAmount,
   clearAndSet,
-  clearAndType, clickDropdownElementWithText,
+  clearAndType,
   clickElement,
   clickElementWithText,
   clickFormSaveAndWait,
@@ -28,6 +28,7 @@ import {
   navigateToNewHakemusPage,
   PaatosValues,
   publishAvustushaku,
+  selectMaakuntaFromDropdown,
   selectVakioperusteluInFinnish,
   setCalendarDate,
   TEST_Y_TUNNUS,
@@ -110,7 +111,7 @@ export async function fillAndSendMuutoshakemusDisabledMenoluokiteltuHakemus(page
   await clearAndType(page, "[id='textField-3']", '00313') // postinumero
   await clearAndType(page, "[id='textField-4']", 'Ankkalinna') // postitoimipaikka
   await clickElement(page, "[id='koodistoField-1_input']") // maakunta
-  await clickDropdownElementWithText(page, "Kainuu")
+  await selectMaakuntaFromDropdown(page, "Kainuu")
 
   await clickElement(page, 'label[for="radioButton-0.radio.0"]') // Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko
   await clearAndType(page, "[id='signatories-fieldset-1.name']", "Teppo Testityyppi")
@@ -138,7 +139,9 @@ export async function fillAndSendMuutoshakemusDisabledMenoluokiteltuHakemus(page
   await clearAndType(page, "[id='koulutusosiot.koulutusosio-1.nimi']", "Eka osa") // Koulutusosion nimi
   await clearAndType(page, "[id='koulutusosiot.koulutusosio-1.keskeiset-sisallot']", "Kaadetaan tietoa osallistujien päähän") // Keskeiset sisällöt ja toteuttamistapa
   await clearAndType(page, "[id='koulutusosiot.koulutusosio-1.kohderyhmat']", "Veljenpojat") // Kohderyhmät
-  await clearAndType(page, "[id='koulutusosiot.koulutusosio-1.koulutettavapaivat.scope']", "100") // Laajuus
+
+  await clickElement(page, 'label[for="koulutusosiot.koulutusosio-1.koulutettavapaivat.scope-type.radio.1"]') // Laajuus ilmoitettu koulutuspäivinä
+  await clearAndType(page, "[id='koulutusosiot.koulutusosio-1.koulutettavapaivat.scope']", "10") // Laajuus
   await clearAndType(page, "[id='koulutusosiot.koulutusosio-1.koulutettavapaivat.person-count']", "2") // Osallistujamäärä
 
   await clickElement(page, 'label[for="vat-included.radio.0"]') // Onko kustannukset ilmoitettu arvonlisäverollisina
@@ -193,7 +196,7 @@ export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustus
   await clearAndType(page, "[id='signatories-fieldset-1.email']", "erkki.esimerkki@example.com")
   await clickElementWithText(page, "label", "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko")
   await clickElement(page, "[id='koodistoField-1_input']")
-  await clickDropdownElementWithText(page, "Kainuu")
+  await selectMaakuntaFromDropdown(page, "Kainuu")
   await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")
   await clearAndType(page, "#bank-bic", "OKOYFIHH")
   await clearAndType(page, "#textField-2", "2")
@@ -389,7 +392,7 @@ export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page,
   await clearAndType(page, "[id='signatories-fieldset-1.email']", "erkki.esimerkki@example.com")
   await clickElementWithText(page, "label", lang === 'fi' ? "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko" : "Kommun/samkommun, kommunalt ägda bolag, kyrkan")
   await clickElement(page, "[id='koodistoField-1_input']")
-  await clickDropdownElementWithText(page, lang === 'fi' ? "Kainuu" : 'Åland')
+  await selectMaakuntaFromDropdown(page, lang === 'fi' ? "Kainuu" : 'Åland')
   await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")
   await clearAndType(page, "#bank-bic", "OKOYFIHH")
   await clearAndType(page, "#textField-2", "2")

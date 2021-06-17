@@ -431,6 +431,7 @@ export async function clickElement(page: Page, selector: string) {
   const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
   if (!element) throw new Error(`Could not click element with selector: ${selector}`)
   await element.click()
+  return element
 }
 
 export async function clickElementWithText(page: Page, elementType: string, text: string) {
@@ -438,6 +439,12 @@ export async function clickElementWithText(page: Page, elementType: string, text
   assert.ok(element, `Could not find ${elementType} element with text '${text}'`)
   await element?.click()
   return element
+}
+
+export async function selectMaakuntaFromDropdown(page: Page, text: string) {
+  const maakuntainput = await clickElement(page,'#koodistoField-1_input .rw-dropdown-list-input')
+  await maakuntainput.type(text)
+  await clickDropdownElementWithText(page, text)
 }
 
 export async function clickDropdownElementWithText(page: Page, text: string) {
