@@ -78,6 +78,49 @@ h4.muutoshakemus__header {
   }
 }
 
+.muutoshakemus__accept-with-changes {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1rem;
+  align-items: center;
+
+  h3, div {
+    margin: 0;
+  }
+
+  .calendar {
+    width: 240px;
+  }
+
+  div:not(:first-of-type) {
+    margin-left: 0;
+  }
+
+  .row1 {
+    grid-row: 1;
+  }
+
+  .row2 {
+    grid-row: 2;
+  }
+
+  .row3 {
+    grid-row: 3;
+  }
+
+  .col1 {
+    grid-column: 1;
+  }
+
+  .col2 {
+    grid-column: 2;
+  }
+
+  .col3 {
+    grid-column: 3;
+  }
+}
+
 .muutoshakemus__copy-link-row {
   position: relative;
   padding-left: 3rem;

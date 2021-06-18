@@ -118,45 +118,50 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
     )
   }
 
-  const ErrorMessage = ({ text }) => (<span className="muutoshakemus__error">{text}</span>)
+  const Error = () => {
+    if (!isError(f, 'paattymispaiva')) return null
+
+    return (
+      <span className="muutoshakemus__error row3 col3">Päättymispäivä on pakollinen kenttä!</span>
+    )
+  }
 
   const voimassaolevaPaattymisaika = () => {
     const haettuPaiva = dateStringToMoment(muutoshakemus['haettu-kayttoajan-paattymispaiva'])
 
     return (
-      <div className="muutoshakemus-row muutoshakemus__project-end-row">
-        <div>
-          <h3 className="muutoshakemus__header">Voimassaoleva päättymisaika</h3>
-          <div data-test-id="current-project-end-date">{projectEndDate}</div>
+      <div className="muutoshakemus-row muutoshakemus__project-end-row muutoshakemus__accept-with-changes">
+
+        <h3 className="muutoshakemus__header row1 col1">Voimassaoleva päättymisaika</h3>
+        <div data-test-id="current-project-end-date" className="row2 col1">{projectEndDate}</div>
+
+
+        <h3 className="muutoshakemus__header row1 col2">Haettu muutos</h3>
+        <div data-test-id="approve-with-changes-muutoshakemus-jatkoaika" className="row2 col2">
+          {toFinnishDateFormat(haettuPaiva)}
         </div>
-        <div>
-          <h3 className="muutoshakemus__header">Haettu muutos</h3>
-          <div data-test-id="approve-with-changes-muutoshakemus-jatkoaika">
-            {toFinnishDateFormat(haettuPaiva)}
-          </div>
+
+
+        <h3 className="muutoshakemus__header row1 col3">OPH:n hyväksymä</h3>
+        <div id="approve-with-changes-muutoshakemus-jatkoaika-oph" className="row2 col3 calendar">
+          <Localization date={localizer} messages={translationsFi.calendar}>
+            <DatePicker
+              name="paattymispaiva"
+              onBlur={() => f.setFieldTouched('paattymispaiva')}
+              onChange={(newDate) => {
+                const d = moment(newDate)
+                if (d.isValid()) {
+                  f.setFieldValue('paattymispaiva', newDate)
+                } else {
+                  f.setFieldValue('paattymispaiva', undefined)
+                }
+              }}
+              parse={parseDateString}
+              defaultValue={f.values['paattymispaiva'] || haettuPaiva.toDate()}
+              containerClassName={`datepicker ${isError(f, 'paattymispaiva') ? 'muutoshakemus__error' : ''}`} />
+          </Localization>
         </div>
-        <div>
-          <h3 className="muutoshakemus__header">OPH:n hyväksymä</h3>
-          <div id="approve-with-changes-muutoshakemus-jatkoaika-oph">
-            <Localization date={localizer} messages={translationsFi.calendar}>
-              <DatePicker
-                name="paattymispaiva"
-                onBlur={() => f.setFieldTouched('paattymispaiva')}
-                onChange={(newDate) => {
-                  const d = moment(newDate)
-                  if (d.isValid()) {
-                    f.setFieldValue('paattymispaiva', newDate)
-                  } else {
-                    f.setFieldValue('paattymispaiva', undefined)
-                  }
-                }}
-                parse={parseDateString}
-                defaultValue={f.values['paattymispaiva'] || haettuPaiva.toDate()}
-                containerClassName={`datepicker ${isError(f, 'paattymispaiva') ? 'muutoshakemus__error' : ''}`} />
-            </Localization>
-          </div>
-          {isError(f, 'paattymispaiva') && <ErrorMessage text={'Päättymispäivä on pakollinen kenttä!'} />}
-        </div>
+        <Error />
       </div>
   )}
 
