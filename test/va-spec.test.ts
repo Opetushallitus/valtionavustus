@@ -309,6 +309,8 @@ describe("Puppeteer tests", () => {
     await page.hover(".soresu-field-add-header")
     await clickElementWithText(page, "a", "Koodistokenttä")
     const inputfield = await clickElementWithText(page, 'span', 'Valitse koodisto')
+    const inputWidth =  await page.evaluate(e => e.offsetWidth, inputfield)
+    expect(inputWidth).toBeGreaterThanOrEqual(200)
     await inputfield?.type('automaatio')
     // Select koodisto for the field
     await clickDropdownElementWithText(page, 'automaatioyliasentajan eat järjestys')
