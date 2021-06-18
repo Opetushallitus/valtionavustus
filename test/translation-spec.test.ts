@@ -78,8 +78,6 @@ const swedishBudgetRowNames = [
   'Övriga kostnader'
 ]
 
-const sortFn = (a: any, b: any) => a - b
-
 describe('Translations', () => {
   let browser: Browser
   let page: Page
@@ -283,7 +281,7 @@ fornamn.efternamn@oph.fi
           const budgetRows = await page.$$eval('[data-test-id=meno-input-row]', elements => {
             return elements.map(elem => elem.querySelector('.description')?.textContent || '')
           })
-          expect(budgetRows.sort(sortFn)).toEqual(swedishBudgetRowNames.sort(sortFn))
+          expect(budgetRows.sort()).toEqual(swedishBudgetRowNames.sort())
         })
       })
 
@@ -510,7 +508,7 @@ fornamn.efternamn@oph.fi
                 const budgetRows = await page.$$eval('[data-test-id=meno-input-row]', elements => {
                   return elements.map(elem => elem.querySelector('.description')?.textContent || '')
                 })
-                expect(budgetRows.sort(sortFn)).toEqual(swedishBudgetRowNames.sort(sortFn))
+                expect(budgetRows.sort()).toEqual(swedishBudgetRowNames.sort())
               })
             })
           })
