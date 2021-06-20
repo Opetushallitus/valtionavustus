@@ -447,6 +447,12 @@ export async function selectMaakuntaFromDropdown(page: Page, text: string) {
   await clickDropdownElementWithText(page, text)
 }
 
+export async function selectAvustushakuFromDropdown(page: Page, text: string) {
+  const input = await clickElement(page,'#avustushaku-dropdown .dropdown-list .rw-dropdown-list-input')
+  await input.type(text)
+  await clickDropdownElementWithText(page, text)
+}
+
 export async function clickDropdownElementWithText(page: Page, text: string) {
   const element = await waitForDropdownElementWithText(page, text)
   assert.ok(element, `Could not find dropdown element with text '${text}'`)
