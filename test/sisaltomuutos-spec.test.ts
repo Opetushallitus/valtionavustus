@@ -123,8 +123,11 @@ describe('Sisaltomuutos', () => {
         })
 
         it('should include sisältömuutos in asia section', async () => {
-          const asiaSectionContent = await textContent(page, '[data-test-id=muutospaatos-asia-content]')
-          expect(asiaSectionContent).toContain('Muutoshakemus hankesuunnitelman sisältöön tai toteutustapaan')
+          expectAsiaSectionToContainSisaltomuutos(page)
+        })
+
+        it('should include text about accepted sisältömuutos in Hyväksytyt muutokset section', async () => {
+          expectAcceptedSisaltomuutosInPaatos(page)
         })
 
         afterAll(async () => {
@@ -152,10 +155,22 @@ describe('Sisaltomuutos', () => {
       })
 
       it('should include sisältömuutos in asia section', async () => {
-        const asiaSectionContent = await textContent(page, '[data-test-id=muutospaatos-asia-content]')
-        expect(asiaSectionContent).toContain('Muutoshakemus hankesuunnitelman sisältöön tai toteutustapaan')
+        expectAsiaSectionToContainSisaltomuutos(page)
+      })
+
+      it('should include text about accepted sisältömuutos in Hyväksytyt muutokset section', async () => {
+        expectAcceptedSisaltomuutosInPaatos(page)
       })
     })
   })
 })
 
+async function expectAsiaSectionToContainSisaltomuutos(page: Page) {
+  const asiaSectionContent = await textContent(page, '[data-test-id=muutospaatos-asia-content]')
+  expect(asiaSectionContent).toContain('Muutoshakemus hankesuunnitelman sisältöön tai toteutustapaan')
+}
+
+async function expectAcceptedSisaltomuutosInPaatos(page: Page) {
+  const asiaSectionContent = await textContent(page, '[data-test-id=accepted-changes-content]')
+  expect(asiaSectionContent).toContain('Haettu muutos hankkeen sisältöön tai toteutustapaan')
+}

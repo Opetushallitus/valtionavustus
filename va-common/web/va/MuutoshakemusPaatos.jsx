@@ -22,7 +22,7 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muut
   return (
     <section className="muutoshakemus-paatos__section">
       <div data-test-id="accepted-changes-title">{t.muutoshakemus.acceptedChanges}</div>
-      <div>
+      <div data-test-id="accepted-changes-content">
         {!!newTalousarvio.length && <TalousarvioTable paatos={true} currentTalousarvio={currentTalousarvio} newTalousarvio={newTalousarvio} status={paatos.status} lang="fi" />}
         {muutoshakemus['haen-kayttoajan-pidennysta'] &&
           <div className="muutoshakemus-paatos__jatkoaika">
@@ -36,6 +36,9 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muut
             </div>
           </div>
         }
+        {muutoshakemus['haen-sisaltomuutosta'] && (
+          <div>{t.sisaltomuutos.appliedChange}</div>
+        )}
       </div>
     </section>
   )
