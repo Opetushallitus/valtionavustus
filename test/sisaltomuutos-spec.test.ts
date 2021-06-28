@@ -123,11 +123,11 @@ describe('Sisaltomuutos', () => {
         })
 
         it('should include sisältömuutos in asia section', async () => {
-          expectAsiaSectionToContainSisaltomuutos(page)
+          await expectAsiaSectionToContainSisaltomuutos(page)
         })
 
         it('should include text about accepted sisältömuutos in Hyväksytyt muutokset section', async () => {
-          expectAcceptedSisaltomuutosInPaatos(page)
+          await expectAcceptedSisaltomuutosInPaatos(page)
         })
 
         afterAll(async () => {
@@ -155,11 +155,11 @@ describe('Sisaltomuutos', () => {
       })
 
       it('should include sisältömuutos in asia section', async () => {
-        expectAsiaSectionToContainSisaltomuutos(page)
+        await expectAsiaSectionToContainSisaltomuutos(page)
       })
 
       it('should include text about accepted sisältömuutos in Hyväksytyt muutokset section', async () => {
-        expectAcceptedSisaltomuutosInPaatos(page)
+        await expectAcceptedSisaltomuutosInPaatos(page)
       })
     })
   })
