@@ -14,7 +14,6 @@ import {
   clickElement,
   getElementInnerText,
   clearAndType,
-  hasElementAttribute,
   countElements,
   navigate,
   Budget,
@@ -649,41 +648,40 @@ describe('Talousarvion muuttaminen', () => {
       expect(currentSum3).toEqual('10374816')
     })
 
-    async function busywaitForSendButton(enabled: boolean) {
-      while (true) {
-        const isDisabled = await hasElementAttribute(page, '#send-muutospyynto-button', 'disabled')
-        if (isDisabled !== enabled) {
-          return true
-        }
-      }
+    async function waitForSendButtonEnabled() {
+      await page.waitForSelector('#send-muutospyynto-button:not([disabled])')
+    }
+
+    async function waitForSendButtonDisabled() {
+      await page.waitForSelector('#send-muutospyynto-button[disabled]')
     }
 
     it('requires perustelut', async () => {
       await clearAndType(page, '#perustelut-taloudenKayttosuunnitelmanPerustelut', '')
-      await busywaitForSendButton(false)
+      await waitForSendButtonDisabled()
       const errorMessage = await getElementInnerText(page, '#perustelut-taloudenKayttosuunnitelmanPerustelut + .muutoshakemus__error-message')
       expect(errorMessage).toEqual('Pakollinen kenttä')
 
       await clearAndType(page, '#perustelut-taloudenKayttosuunnitelmanPerustelut', 'perustelu')
 
-      await busywaitForSendButton(true)
+      await waitForSendButtonEnabled()
       const noErrorMessage = await getElementInnerText(page, '#perustelut-taloudenKayttosuunnitelmanPerustelut + .muutoshakemus__error-message')
       expect(noErrorMessage).toEqual('')
     })
 
     it('requires current sum to match the original sum', async () => {
       await clearAndType(page, '#perustelut-taloudenKayttosuunnitelmanPerustelut', 'perustelu')
-      await busywaitForSendButton(true)
+      await waitForSendButtonEnabled()
 
       await clearAndType(page, 'input[name="talousarvio.equipment-costs-row"]', '9999')
 
-      await busywaitForSendButton(false)
+      await waitForSendButtonDisabled()
       const sumErrorMessage = await getElementInnerText(page, '[data-test-id=current-sum-error]')
       expect(sumErrorMessage).toEqual('Loppusumman on oltava 10374816')
 
       await clearAndType(page, 'input[name="talousarvio.material-costs-row"]', '3001')
 
-      await busywaitForSendButton(true)
+      await waitForSendButtonEnabled()
       const noSumErrorMessage = await getElementInnerText(page, '[data-test-id=current-sum-error]')
       expect(noSumErrorMessage).toEqual('')
     })

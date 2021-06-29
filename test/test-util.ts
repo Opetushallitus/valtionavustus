@@ -420,9 +420,8 @@ export async function copyEsimerkkihaku(page: Page) {
   const currentHakuTitle = await (await element.getProperty('textContent'))?.jsonValue() as string
   await clickElementWithText(page, "a", "Kopioi uuden pohjaksi")
 
-  const newHakuTitle = `${currentHakuTitle} (kopio)`
   await page.waitForFunction((name: string) =>
-    document.querySelector("#haku-name-fi")?.textContent === name, {}, newHakuTitle)
+    document.querySelector("#haku-name-fi")?.textContent !== name, {}, currentHakuTitle)
   await page.waitForFunction(() => document.querySelector('[data-test-id="save-status"]')?.textContent === 'Kaikki tiedot tallennettu')
   await page.waitForTimeout(2000)
 }
