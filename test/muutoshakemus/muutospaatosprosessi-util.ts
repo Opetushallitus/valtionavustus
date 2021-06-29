@@ -35,7 +35,7 @@ import {
   uploadFile,
   VIRKAILIJA_URL,
   waitUntilMinEmails
-} from "./test-util"
+} from "../test-util"
 
 export interface Answers {
   projectName: string

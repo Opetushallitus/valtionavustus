@@ -74,7 +74,7 @@ import {
   publishAndFillMuutoshakemusEnabledAvustushaku,
   ratkaiseMuutoshakemusEnabledAvustushaku,
   getLinkToMuutoshakemusFromSentEmails,
-} from './muutospaatosprosessi-util'
+} from './muutoshakemus/muutospaatosprosessi-util'
 import {
   navigateToHakijaMuutoshakemusPage,
 } from './muutoshakemus/muutoshakemus-util'

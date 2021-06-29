@@ -36,7 +36,7 @@ import {
   getHakemusTokenAndRegisterNumber,
   navigateToHakemuksenArviointi,
   createRandomHakuValues,
-} from './test-util'
+} from '../test-util'
 import {
   ratkaiseMuutoshakemusEnabledAvustushaku,
   getLinkToMuutoshakemusFromSentEmails,
@@ -54,8 +54,8 @@ import {
 import {
   navigateToHakijaMuutoshakemusPage,
   fillAndSendMuutoshakemus,
-} from './muutoshakemus/muutoshakemus-util'
-import { openPaatosPreview } from './hakemuksen-arviointi-util'
+} from './muutoshakemus-util'
+import { openPaatosPreview } from '../hakemuksen-arviointi-util'
 
 jest.setTimeout(400_000)
 

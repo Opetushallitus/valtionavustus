@@ -22,7 +22,7 @@ import {
   defaultBudget,
   createRandomHakuValues,
   clickElementWithText,
-} from './test-util'
+} from '../test-util'
 import {
   fillAndSendMuutoshakemusDecision,
   fillMuutoshakemusBudgetAmount,
@@ -35,8 +35,8 @@ import {
 import {
   navigateToHakijaMuutoshakemusPage,
   navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
-} from './muutoshakemus/muutoshakemus-util'
-import { openPaatosPreview } from './hakemuksen-arviointi-util'
+} from './muutoshakemus-util'
+import { openPaatosPreview } from '../hakemuksen-arviointi-util'
 
 jest.setTimeout(400_000)
 

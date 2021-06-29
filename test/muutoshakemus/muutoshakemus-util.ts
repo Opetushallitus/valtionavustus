@@ -1,6 +1,16 @@
 import { Page } from "puppeteer"
-import { fillMuutoshakemusBudgetAmount, getLinkToMuutoshakemusFromSentEmails, MuutoshakemusValues } from "../muutospaatosprosessi-util"
-import { BudgetAmount, clearAndType, clickElement, setCalendarDate, textContent } from "../test-util"
+import {
+  fillMuutoshakemusBudgetAmount,
+  getLinkToMuutoshakemusFromSentEmails,
+  MuutoshakemusValues
+} from "./muutospaatosprosessi-util"
+import {
+  BudgetAmount,
+  clearAndType,
+  clickElement,
+  setCalendarDate,
+  textContent
+} from "../test-util"
 
 export async function navigateToHakijaMuutoshakemusPage(page: Page, hakemusID: number) {
   const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(hakemusID)

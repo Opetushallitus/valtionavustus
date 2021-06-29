@@ -27,7 +27,7 @@ import {
   navigateToLatestMuutoshakemusPaatos,
   parseMuutoshakemusPaatosFromEmails,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
-} from './muutospaatosprosessi-util'
+} from './muutoshakemus/muutospaatosprosessi-util'
 import {
   navigateToHakijaMuutoshakemusPage,
   navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
