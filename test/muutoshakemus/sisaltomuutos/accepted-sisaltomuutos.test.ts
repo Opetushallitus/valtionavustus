@@ -91,16 +91,17 @@ describe('Sisaltomuutos (accepted)', () => {
   describe('Sending muutoshakemus', () => {
     beforeAll(async () => {
       await navigateToHakijaMuutoshakemusPage(page, hakemusID)
+    })
+
+    it('shows correct send button, successfully sent text, and existing muutoshakemus', async () => {
       await clickElement(page, '#checkbox-haenSisaltomuutosta')
       await fillSisaltomuutosPerustelut(page, sisaltomuutosPerustelut)
+      const sendButtonText = await getElementInnerText(page, '#send-muutospyynto-button')
+      expect(sendButtonText).toEqual('Lähetä käsiteltäväksi')
+
       await clickSendMuutoshakemusButton(page)
-    })
-
-    it('Shows that the muutoshakemus was submitted successfully', async () => {
       await expectMuutoshakemusToBeSubmittedSuccessfully(page, true)
-    })
 
-    it('Shows the sisältömuutos in the existing muutoshakemus', async () => {
       const sisaltomuutos = await getElementInnerText(page, '[data-test-class="existing-muutoshakemus"] [data-test-id="sisaltomuutos-perustelut"]')
       expect(sisaltomuutos).toEqual(sisaltomuutosPerustelut)
     })
