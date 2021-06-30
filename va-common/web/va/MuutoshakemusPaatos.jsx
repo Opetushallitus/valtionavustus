@@ -92,16 +92,7 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
       </section>
       <section className="muutoshakemus-paatos__section">
         <div data-test-id="muutoshakemus-paatos-tekija-title">{t.muutoshakemus.paatos.paatoksenTekija}</div>
-        <div data-test-id="paatos-decider">
-          {paatos.decider}
-          {paatos.decider !== presenter.name
-            ? <div className="muutoshakemus-paatos__presenter">
-                {t.muutoshakemus.paatos.esittelija}<br/>
-                {presenter.name}
-              </div>
-            : ''
-          }
-        </div>
+        <div data-test-id="paatos-decider">{paatos.decider}</div>
       </section>
       <section className="muutoshakemus-paatos__section">
         <div data-test-id="muutoshakemus-paatos-lisatietoja-title">{t.muutoshakemus.paatos.lisatietoja}</div>
