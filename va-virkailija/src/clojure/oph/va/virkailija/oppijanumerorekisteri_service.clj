@@ -21,12 +21,13 @@
     (or found "fi")))
 
 (defn- find-person-email [person]
-  (->> (:yhteystiedotRyhma person)
-       (mapcat :yhteystieto)
-       (filter (fn [c] (and (= (:yhteystietoTyyppi c) "YHTEYSTIETO_SAHKOPOSTI")
-                            (seq (:yhteystietoArvo c)))))
-       (map :yhteystietoArvo)
-       first))
+  (let [emails    (->> (:yhteystiedotRyhma person)
+                       (mapcat :yhteystieto)
+                       (filter (fn [c] (and (= (:yhteystietoTyyppi c) "YHTEYSTIETO_SAHKOPOSTI")
+                                            (seq (:yhteystietoArvo c)))))
+                       (map :yhteystietoArvo))
+        oph-email (some #(when (re-find #"(?i)@oph\.fi" %) %) emails)]
+    (or oph-email (first emails))))
 
 (defn make-person-url [person-oid]
   (str service-base-url

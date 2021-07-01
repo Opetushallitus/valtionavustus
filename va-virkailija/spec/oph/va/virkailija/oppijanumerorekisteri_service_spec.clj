@@ -62,7 +62,15 @@
         (with-fake-service-client {(onrs/make-person-url person-oid-1) user-data}
           (should= "fi" (:lang (onrs/get-person person-oid-1))))))
 
-  (it "fetching person selects first email available"
+  (it "fetching person selects oph.fi email if available"
+      (let [user-data (make-user-data {:person-oid    person-oid-1
+                                       :contact-infos [{:value "0501001001"         :type :phone}
+                                                       {:value "pvirt1@example.com" :type :email}
+                                                       {:value "pvirt2@oph.fi" :type :email}]})]
+        (with-fake-service-client {(onrs/make-person-url person-oid-1) user-data}
+          (should= "pvirt2@oph.fi" (:email (onrs/get-person person-oid-1))))))
+
+  (it "fetching person selects first email if oph.fi address not available"
       (let [user-data (make-user-data {:person-oid    person-oid-1
                                        :contact-infos [{:value "0501001001"         :type :phone}
                                                        {:value "pvirt1@example.com" :type :email}
