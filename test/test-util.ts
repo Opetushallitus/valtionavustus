@@ -959,3 +959,7 @@ export function lastOrFail<T>(xs: ReadonlyArray<T>): T {
   if (xs.length === 0) throw Error("Can't get last element of empty list")
   return xs[xs.length - 1]
 }
+
+export async function waitForNewTab(currentPage: Page): Promise<Page> {
+  return new Promise((resolve) => currentPage.once('popup', (newPage) => resolve(newPage)))
+}

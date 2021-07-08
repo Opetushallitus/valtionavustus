@@ -7,7 +7,8 @@ import {
   navigateToValiselvitysTab,
   ratkaiseAvustushaku,
   setPageErrorConsoleLogger,
-  waitForElementWithText
+  waitForElementWithText,
+  waitForNewTab
 } from "../test-util"
 
 jest.setTimeout(400_000)
@@ -44,8 +45,10 @@ describe("Väliselvitys tab in hakemuksen arviointi", () => {
   })
 
   it('should have link to correct väliselvitys form for the hakemus', async () => {
-    await clickElementWithText(page, 'a', 'Linkki lomakkeelle')
-    const [, valiselvitysFormPage] = await browser.pages()
+    const [valiselvitysFormPage] = await Promise.all([
+      waitForNewTab(page),
+      clickElementWithText(page, 'a', 'Linkki lomakkeelle'),
+    ])
     await valiselvitysFormPage.waitForNavigation()
     
     await waitForElementWithText(valiselvitysFormPage, 'h1', 'Väliselvitys') 

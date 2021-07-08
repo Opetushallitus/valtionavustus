@@ -7,7 +7,8 @@ import {
   navigateToLoppuselvitysTab,
   ratkaiseAvustushaku,
   setPageErrorConsoleLogger,
-  waitForElementWithText
+  waitForElementWithText,
+  waitForNewTab
 } from "../test-util"
 
 jest.setTimeout(400_000)
@@ -45,8 +46,10 @@ describe("Loppuselvitys tab in hakemuksen arviointi", () => {
   })
 
   it('should have link to correct loppuselvitys form for the hakemus', async () => {
-    await clickElementWithText(page, 'a', 'Linkki lomakkeelle')
-    const [, loppuselvitysFormPage] = await browser.pages()
+    const [loppuselvitysFormPage] = await Promise.all([
+      waitForNewTab(page),
+      clickElementWithText(page, 'a', 'Linkki lomakkeelle'),
+    ])
     await loppuselvitysFormPage.waitForNavigation()
     
     await waitForElementWithText(loppuselvitysFormPage, 'h1', 'Loppuselvitys') 
