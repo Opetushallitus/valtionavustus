@@ -2,7 +2,7 @@ import Bacon from 'baconjs'
 import React from 'react'
 import _ from "lodash"
 import rejectedReasonsByLanguage from './rejectedReasonsByLanguage.json'
-import HelpTooltip from '../HelpTooltip.jsx'
+import HelpTooltip from '../HelpTooltip'
 export default class Perustelut extends React.Component {
 
   constructor(props) {

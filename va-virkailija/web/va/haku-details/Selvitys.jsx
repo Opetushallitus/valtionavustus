@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment'
-import HelpTooltip from '../HelpTooltip.jsx'
+import HelpTooltip from '../HelpTooltip'
 import { fiShortFormat } from 'va-common/web/va/i18n/dateformat'
 
 export default class Selvitys extends React.Component{

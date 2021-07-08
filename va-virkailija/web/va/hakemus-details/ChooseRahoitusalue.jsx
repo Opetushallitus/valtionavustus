@@ -1,5 +1,5 @@
 import React from 'react'
-import HelpTooltip from "../HelpTooltip.jsx"
+import HelpTooltip from "../HelpTooltip"
 import RadioRow from './RadioRow.jsx'
 
 export default class ChooseRahoitusalue extends React.Component {

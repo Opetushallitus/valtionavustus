@@ -1,6 +1,12 @@
 import React from 'react'
 
-export default class HelpTooltip extends React.Component {
+type HelpTooltipProps = {
+  content: string
+  direction?: string
+  testId?: string
+}
+
+export default class HelpTooltip extends React.Component<HelpTooltipProps> {
 
   render() {
     return <a className={`soresu-tooltip soresu-tooltip-${this.props.direction || "up"} soresu-help-icon`}

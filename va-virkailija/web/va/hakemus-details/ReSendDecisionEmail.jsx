@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import HelpTooltip from '../HelpTooltip.jsx'
+import HelpTooltip from '../HelpTooltip'
 
 export default class ReSendDecisionEmail extends Component {
 

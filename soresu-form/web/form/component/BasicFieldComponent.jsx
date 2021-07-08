@@ -3,7 +3,7 @@ import ClassNames from 'classnames'
 import _ from 'lodash'
 
 import LocalizedString from './LocalizedString.jsx'
-import HelpTooltip from './HelpTooltip.jsx'
+import HelpTooltip from './HelpTooltip'
 
 export default class BasicFieldComponent extends React.Component {
   constructor(props) {

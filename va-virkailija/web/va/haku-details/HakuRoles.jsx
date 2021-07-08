@@ -5,7 +5,7 @@ import _ from 'lodash'
 import CSSTransitionGroup from 'soresu-form/web/form/component/wrapper/CSSTransitionGroup.jsx'
 import NameFormatter from 'va-common/web/va/util/NameFormatter'
 import VaUserSearchParameters from './VaUserSearchParameters'
-import HelpTooltip from '../HelpTooltip.jsx'
+import HelpTooltip from '../HelpTooltip'
 
 export default class HakuRoles extends Component {
   render() {

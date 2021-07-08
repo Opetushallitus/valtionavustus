@@ -19,7 +19,7 @@ import PresenterComment from './PresenterComment.jsx'
 import EditStatus from './EditStatus.tsx'
 import ReSendDecisionEmail from './ReSendDecisionEmail.jsx'
 import ApplicationPayments from './ApplicationPayments.jsx'
-import HelpTooltip from '../HelpTooltip.jsx'
+import HelpTooltip from '../HelpTooltip'
 
 import '../style/admin.less'
 

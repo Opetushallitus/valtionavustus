@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import DateUtil from 'soresu-form/web/DateUtil'
 import NameFormatter from 'va-common/web/va/util/NameFormatter'
 
-import HelpTooltip from '../HelpTooltip.jsx'
+import HelpTooltip from '../HelpTooltip'
 
 const HakemusComments = ({ controller, helpTexts, allowHakemusCommenting, comments }) => {
   const [comment, setComment] = useState('')

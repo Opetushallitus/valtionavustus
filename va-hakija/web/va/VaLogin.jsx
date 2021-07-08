@@ -11,7 +11,7 @@ import './style/va-login.less'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import {DateRangeInfoElement, H1InfoElement} from 'soresu-form/web/form/component/InfoElement.jsx'
-import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
+import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip'
 
 import VaLoginTopbar from './VaLoginTopbar.jsx'
 import VaUrlCreator from './VaUrlCreator.js'

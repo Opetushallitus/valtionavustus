@@ -1,6 +1,6 @@
 import React from 'react'
 import _ from "lodash"
-import HelpTooltip from "../HelpTooltip.jsx"
+import HelpTooltip from "../HelpTooltip"
 
 export default class ShouldPay extends React.Component {
   constructor(props){

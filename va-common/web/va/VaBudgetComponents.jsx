@@ -3,7 +3,7 @@ import _ from 'lodash'
 import ClassNames from 'classnames'
 
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
-import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
+import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip'
 import MathUtil from 'soresu-form/web/MathUtil'
 import Translator from 'soresu-form/web/form/Translator'
 

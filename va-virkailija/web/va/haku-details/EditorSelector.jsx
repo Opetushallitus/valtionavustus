@@ -6,7 +6,7 @@ import HakuEdit from './HakuEdit.jsx'
 import FormEditorContainer from './FormEditorContainer.jsx'
 import DecisionEditor from './DecisionEditor.jsx'
 import { SelvitysFormEditor } from './SelvitysFormEditor'
-import HelpTooltip from '../HelpTooltip.jsx'
+import HelpTooltip from '../HelpTooltip'
 
 function createRedirectTo(url) {
   return (e) => {

@@ -1,5 +1,5 @@
 import React from 'react'
-import HelpTooltip from '../HelpTooltip.jsx'
+import HelpTooltip from '../HelpTooltip'
 
 export const educationLevels = [
   {title: "Yleissivistävä koulutus, ml. varhaiskasvatus",

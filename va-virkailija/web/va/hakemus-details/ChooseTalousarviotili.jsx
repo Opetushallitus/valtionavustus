@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 
 import RadioRow from './RadioRow.jsx'
-import HelpTooltip from "../HelpTooltip.jsx"
+import HelpTooltip from "../HelpTooltip"
 
 export default class ChooseTalousarviotili extends React.Component {
   constructor(props) {

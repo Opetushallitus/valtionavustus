@@ -3,7 +3,7 @@ import _ from 'lodash'
 import ClassNames from 'classnames'
 
 import ScoreResolver from '../ScoreResolver.js'
-import HelpTooltip from '../HelpTooltip.jsx'
+import HelpTooltip from '../HelpTooltip'
 
 export default class HakemusScoring extends Component {
   render() {

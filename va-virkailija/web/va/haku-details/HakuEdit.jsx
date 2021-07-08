@@ -7,7 +7,7 @@ import HakuStatus from "../avustushaku/HakuStatus.jsx"
 import HakuRoles from "./HakuRoles.jsx"
 import EducationLevels from "./EducationLevels.jsx"
 import AutoCompleteCodeValue from "./AutoCompleteCodeValue.jsx"
-import HelpTooltip from '../HelpTooltip.jsx'
+import HelpTooltip from '../HelpTooltip'
 import WarningBanner from "../WarningBanner";
 
 export default class HakuEdit extends Component {

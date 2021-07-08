@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
-import HelpTooltip from "../HelpTooltip.jsx"
+import HelpTooltip from "../HelpTooltip"
 
 import AttachmentField from 'soresu-form/web/form/component/AttachmentField.jsx'
 import HttpUtil from 'soresu-form/web/HttpUtil'

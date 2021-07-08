@@ -4,7 +4,7 @@ import ClassNames from 'classnames'
 
 import TableFieldUtil from './TableFieldUtil.jsx'
 import TableValidator from '../TableValidator'
-import HelpTooltip from './HelpTooltip.jsx'
+import HelpTooltip from './HelpTooltip'
 import LocalizedString from './LocalizedString.jsx'
 
 export default class TableField extends React.Component {
