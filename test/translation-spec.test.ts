@@ -34,7 +34,7 @@ import {
 } from './muutoshakemus/muutoshakemus-util'
 
 import moment from 'moment'
-import { openPaatosPreview } from './hakemuksen-arviointi-util'
+import { openPaatosPreview } from './hakemuksen-arviointi/hakemuksen-arviointi-util'
 
 jest.setTimeout(400_000)
 

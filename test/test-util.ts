@@ -875,6 +875,16 @@ export async function navigateToSeurantaTab(page: Page, avustushakuID: number, h
   await page.waitForSelector('#set-allow-visibility-in-external-system', { visible: true })
 }
 
+export async function navigateToValiselvitysTab(page: Page, avustushakuID: number, hakemusID: number) {
+  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/valiselvitys/`)
+  await page.waitForSelector('[data-test-id="hakemus-details-valiselvitys"]', { visible: true })
+}
+
+export async function navigateToLoppuselvitysTab(page: Page, avustushakuID: number, hakemusID: number) {
+  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/loppuselvitys/`)
+  await page.waitForSelector('[data-test-id="hakemus-details-loppuselvitys"]', { visible: true })
+}
+
 export async function makePaatosForMuutoshakemusIfNotExists(page: Page, status: string, avustushakuID: number, hakemusID: number) {
   await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
   await clickElement(page, 'span.muutoshakemus-tab')

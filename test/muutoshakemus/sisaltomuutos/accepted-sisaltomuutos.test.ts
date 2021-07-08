@@ -23,7 +23,7 @@ import {
   clickSendMuutoshakemusButton,
   expectMuutoshakemusToBeSubmittedSuccessfully
 } from '../muutoshakemus-util'
-import { closePaatosPreview, openPaatosPreview } from '../../hakemuksen-arviointi-util'
+import { closePaatosPreview, openPaatosPreview } from '../../hakemuksen-arviointi/hakemuksen-arviointi-util'
 
 jest.setTimeout(400_000)
 

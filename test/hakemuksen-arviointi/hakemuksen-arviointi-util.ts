@@ -1,5 +1,5 @@
 import { Page } from "puppeteer"
-import { clickElementWithText } from "./test-util"
+import { clickElementWithText } from "../test-util"
 
 export async function openPaatosPreview(page: Page) {
   await clickElementWithText(page, 'a', 'Esikatsele päätösdokumentti')
