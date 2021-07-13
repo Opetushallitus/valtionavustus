@@ -88,6 +88,7 @@ export default class EditorSelector extends React.Component {
       <section id="editor-section">
         <div id="editor-subtab-selector" className="section-container">
           <span onClick={createSubTabSelector("haku-editor")}
+                data-test-id="haun-tiedot-välilehti"
                 className={ClassNames({"selected": subTab === "haku-editor"})}>
             Haun tiedot <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___valilehden_infopallo"]} direction="left" />
           </span>

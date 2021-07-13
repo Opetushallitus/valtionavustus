@@ -42,12 +42,17 @@
        :?column?
        (= 1)))
 
-(defn create-avustushaku [tx avustushaku-content template-form-id decision haku-type project-id operation-id operational-unit-id muutoshakukelpoinen created-at]
-  (let [form-id (:id (hakija-queries/copy-form<!
-                           {:id template-form-id
-                            :created_at (datetime/datetime->str created-at)}
-                           {:connection tx}))
-        avustushaku-id (hakija-queries/create-avustushaku<!
+(defn- copy-form [tx id created-at]
+  (:id (hakija-queries/copy-form<! {:id id :created_at created-at} {:connection tx})))
+
+(defn create-avustushaku [tx avustushaku-content template-form-id loppuselvitys-id valiselvitys-id decision haku-type project-id operation-id operational-unit-id muutoshakukelpoinen created-at]
+  (let [created-timestamp    (datetime/datetime->str created-at)
+        form-id              (copy-form tx template-form-id created-timestamp)
+        new-loppuselvitys-id (when loppuselvitys-id
+                               (copy-form tx loppuselvitys-id created-timestamp))
+        new-valiselvitys-id  (when valiselvitys-id
+                               (copy-form tx valiselvitys-id created-timestamp))
+        avustushaku-id       (hakija-queries/create-avustushaku<!
                               {:form form-id
                                :content avustushaku-content
                                :haku_type (new HakuType haku-type)
@@ -56,6 +61,8 @@
                                :project_id project-id
                                :operation_id operation-id
                                :operational_unit_id operational-unit-id
+                               :form_loppuselvitys new-loppuselvitys-id
+                               :form_valiselvitys new-valiselvitys-id
                                :muutoshakukelpoinen muutoshakukelpoinen
                                :created_at (datetime/datetime->str created-at)
                                }

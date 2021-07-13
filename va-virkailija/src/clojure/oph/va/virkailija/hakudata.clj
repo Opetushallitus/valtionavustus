@@ -198,6 +198,9 @@
         project-id (:project-id base-haku)
         operation-id (:operation-id base-haku)
         operational-unit-id (:operational-unit-id base-haku)
+        avustushaku (hakija-api/get-avustushaku base-haku-id)
+        loppuselvitys-id (:form_loppuselvitys avustushaku)
+        valiselvitys-id (:form_valiselvitys avustushaku)
         muutoshakukelpoinen true
         new-haku (hakija-api/create-avustushaku
                    tx
@@ -210,6 +213,8 @@
                     :self-financing-percentage self-financing-percentage
                     :focus-areas focus-areas}
                    form-id
+                   loppuselvitys-id
+                   valiselvitys-id
                    decision
                    haku-type
                    project-id

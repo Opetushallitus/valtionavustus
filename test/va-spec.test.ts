@@ -188,9 +188,10 @@ describe("Puppeteer tests", () => {
     let originalPaatosTimestamp: string
     let originalValiselvitysTimestamp: string
     let originalLoppuselvitysTimestamp: string
+    let avustushakuId: number
 
     beforeAll(async () => {
-      await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+      avustushakuId = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
       await clickElementWithText(page, "span", "Päätös")
       originalPaatosTimestamp = await textContent(page, "#paatosUpdatedAt")
 
@@ -231,6 +232,47 @@ describe("Puppeteer tests", () => {
         it('väliselvitys modified timestamp has not changed', async () => {
           expect(await textContent(page, "#valiselvitysUpdatedAt")).toEqual(originalValiselvitysTimestamp)
         })
+      })
+    })
+
+    describe('changes väliselvitys and loppuselvitys values and creates a copy of the avustushaku', () => {
+      beforeAll(async () => {
+        await clickElement(page, '[data-test-id="väliselvitys-välilehti"]')
+        await clearAndType(page, '[name="applicant-info-label-fi"]', 'Muokattu väliselvitys')
+        await clickElementWithText(page, 'button', 'Tallenna')
+
+        await waitForElementWithText(page, 'span', 'Loppuselvitys')
+        await clickElement(page, '[data-test-id="loppuselvitys-välilehti"]')
+        await clearAndType(page, '[name="applicant-info-label-fi"]', 'Muokattu loppuselvitys')
+        await clickElementWithText(page, 'button', 'Tallenna')
+
+        await clickElement(page, '[data-test-id="haun-tiedot-välilehti"]')
+        await clickElement(page, '#create-haku')
+      })
+
+      it('väliselvitys and loppuselvitys are copied to the new avustushaku', async () => {
+        await clickElement(page, '[data-test-id="väliselvitys-välilehti"]')
+        expect(await textContent(page, '[name="applicant-info-label-fi"]')).toEqual('Muokattu väliselvitys')
+
+        await clickElement(page, '[data-test-id="loppuselvitys-välilehti"]')
+        expect(await textContent(page, '[name="applicant-info-label-fi"]')).toEqual('Muokattu loppuselvitys')
+      })
+
+      it('changing väliselvitys and loppuselvitys on the copied avustushaku does not change the original selvitys values', async () => {
+        await clickElement(page, '[data-test-id="väliselvitys-välilehti"]')
+        await clearAndType(page, '[name="applicant-info-label-fi"]', 'Uudelleen muokattu väliselvitys')
+        await clickElementWithText(page, 'button', 'Tallenna')
+
+        await waitForElementWithText(page, 'span', 'Loppuselvitys')
+        await clickElement(page, '[data-test-id="loppuselvitys-välilehti"]')
+        await clearAndType(page, '[name="applicant-info-label-fi"]', 'Uudelleen muokattu loppuselvitys')
+        await clickElementWithText(page, 'button', 'Tallenna')
+
+        await navigate(page, `/admin/valiselvitys/?avustushaku=${avustushakuId}`)
+        expect(await textContent(page, '[name="applicant-info-label-fi"]')).toEqual('Muokattu väliselvitys')
+
+        await clickElement(page, '[data-test-id="loppuselvitys-välilehti"]')
+        expect(await textContent(page, '[name="applicant-info-label-fi"]')).toEqual('Muokattu loppuselvitys')
       })
     })
   })

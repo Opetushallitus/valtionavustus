@@ -8,6 +8,8 @@ insert into avustushaut (
     operation_id,
     operational_unit_id,
     muutoshakukelpoinen,
+    form_loppuselvitys,
+    form_valiselvitys,
     created_at
 ) values (
     :form,
@@ -19,5 +21,7 @@ insert into avustushaut (
     :operation_id,
     :operational_unit_id,
     :muutoshakukelpoinen,
+    :form_loppuselvitys,
+    :form_valiselvitys,
     :created_at::timestamptz
 )
