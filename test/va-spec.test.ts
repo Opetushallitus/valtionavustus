@@ -47,7 +47,6 @@ import {
   typeValueInFieldAndExpectNoValidationError,
   gotoVäliselvitysTab,
   waitForElementWithText,
-  waitForElementWIthTestId,
   fillAndSendVäliselvityspyyntö,
   downloadExcelExport,
   clickFormSaveAndWait,
@@ -67,6 +66,10 @@ import {
   navigateToSeurantaTab,
   clickDropdownElementWithText,
   selectMaakuntaFromDropdown,
+  fillTäydennyspyyntöField,
+  clickToSendTäydennyspyyntö,
+  resendPäätökset,
+  changeContactPersonEmail,
 } from './test-util'
 import {
   createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku,
@@ -114,49 +117,49 @@ describe("Puppeteer tests", () => {
     })
   })
 
-  const allowBasicAvustushakuFlowAndCheckEachHakemusHasValmistelija = (getPage: () => Page, multiplePaymentBatches: boolean) => async () => {
-    const page = getPage()
-    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
-
-    if (multiplePaymentBatches) {
-      await clickElement(page, "label[for='set-maksuera-true']")
-    } else {
-      await clickElement(page, "label[for='set-maksuera-false']")
-    }
-    await waitForSave(page)
-
-    await publishAvustushaku(page)
-    await fillAndSendHakemus(page, avustushakuID)
-
-    await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
-
-    // Accept the hakemus
-    const { hakemusID } = await navigateToHakemuksenArviointi(page, avustushakuID, "Akaan kaupunki")
-
-    log("Hakemus ID:", hakemusID)
-
-    await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
-    await clearAndType(page, "#budget-edit-project-budget .amount-column input", "100000")
-    await Promise.all([
-      clickElement(page, "#arviointi-tab label[for='set-arvio-status-accepted']"),
-      waitForArvioSave(page, avustushakuID, hakemusID),
-    ])
-
-    await resolveAvustushaku(page, avustushakuID)
-
-    // Sending päätös should give error because the hakemus is missing valmistelija
-    await sendPäätös(page, avustushakuID)
-    expect(await textContent(page, "#päätös-send-error")).toEqual(`Hakemukselle numero ${hakemusID} ei ole valittu valmistelijaa. Päätöksiä ei lähetetty.`)
-
-    await selectValmistelijaForHakemus(page, avustushakuID, hakemusID, "_ valtionavustus")
-
-    await sendPäätös(page, avustushakuID)
-    const tapahtumaloki = await page.waitForSelector(".tapahtumaloki")
-    const logEntryCount = await tapahtumaloki?.evaluate(e => e.querySelectorAll(".entry").length)
-    expect(logEntryCount).toEqual(1)
-  }
-
   describe("should allow basic avustushaku flow and check each hakemus has valmistelija", () => {
+    const allowBasicAvustushakuFlowAndCheckEachHakemusHasValmistelija = (getPage: () => Page, multiplePaymentBatches: boolean) => async () => {
+      const page = getPage()
+      const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+  
+      if (multiplePaymentBatches) {
+        await clickElement(page, "label[for='set-maksuera-true']")
+      } else {
+        await clickElement(page, "label[for='set-maksuera-false']")
+      }
+      await waitForSave(page)
+  
+      await publishAvustushaku(page)
+      await fillAndSendHakemus(page, avustushakuID)
+  
+      await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
+  
+      // Accept the hakemus
+      const { hakemusID } = await navigateToHakemuksenArviointi(page, avustushakuID, "Akaan kaupunki")
+  
+      log("Hakemus ID:", hakemusID)
+  
+      await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
+      await clearAndType(page, "#budget-edit-project-budget .amount-column input", "100000")
+      await Promise.all([
+        clickElement(page, "#arviointi-tab label[for='set-arvio-status-accepted']"),
+        waitForArvioSave(page, avustushakuID, hakemusID),
+      ])
+  
+      await resolveAvustushaku(page, avustushakuID)
+  
+      // Sending päätös should give error because the hakemus is missing valmistelija
+      await sendPäätös(page, avustushakuID)
+      expect(await textContent(page, "#päätös-send-error")).toEqual(`Hakemukselle numero ${hakemusID} ei ole valittu valmistelijaa. Päätöksiä ei lähetetty.`)
+  
+      await selectValmistelijaForHakemus(page, avustushakuID, hakemusID, "_ valtionavustus")
+  
+      await sendPäätös(page, avustushakuID)
+      const tapahtumaloki = await page.waitForSelector(".tapahtumaloki")
+      const logEntryCount = await tapahtumaloki?.evaluate(e => e.querySelectorAll(".entry").length)
+      expect(logEntryCount).toEqual(1)
+    }
+
     it("when the avustushaku has a single payment batch", allowBasicAvustushakuFlowAndCheckEachHakemusHasValmistelija(() => page, false))
     it("when the avustushaku has multiple payment batches", allowBasicAvustushakuFlowAndCheckEachHakemusHasValmistelija(() => page, true))
   })
@@ -635,18 +638,6 @@ etunimi.sukunimi@oph.fi
 `)
   })
 
-  async function fillTäydennyspyyntöField(page: Page, täydennyspyyntöText: string): Promise<void> {
-    await clickElementWithText(page, "button", "Pyydä täydennystä")
-    await page.type("[data-test-id='täydennyspyyntö__textarea']", täydennyspyyntöText)
-  }
-
-  async function clickToSendTäydennyspyyntö(page: Page, avustushakuID: number, hakemusID: number) {
-    await Promise.all([
-      page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/change-requests`),
-      page.click("[data-test-id='täydennyspyyntö__lähetä']"),
-    ])
-  }
-
   it("sends päätös, väliselvityspyyntö, and loppuselvityspyyntö emails to correct contact and hakemus emails", async () => {
     const { avustushakuID, hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, {
       registerNumber: "420/2021",
@@ -667,7 +658,7 @@ etunimi.sukunimi@oph.fi
       "akaan.kaupunki@akaa.fi"
     ])
 
-    await resendPäätökset(avustushakuID)
+    await resendPäätökset(page, avustushakuID)
     emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 2, hakemusID)
     expect(emails).toHaveLength(2)
     email = lastOrFail(emails)
@@ -677,7 +668,7 @@ etunimi.sukunimi@oph.fi
     ])
 
     await changeContactPersonEmail(page, linkToMuutoshakemus, "uusi.yhteyshenkilo@example.com")
-    await resendPäätökset(avustushakuID)
+    await resendPäätökset(page, avustushakuID)
 
     emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 3, hakemusID)
     expect(emails).toHaveLength(3)
@@ -711,19 +702,6 @@ etunimi.sukunimi@oph.fi
     ])
     expect(email.bcc).toEqual("santeri.horttanainen@reaktor.com")
   })
-
-  async function resendPäätökset(avustushakuID: number): Promise<void> {
-    await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
-    await clickElementWithText(page, "button", "Lähetä 1 päätöstä uudelleen")
-    await clickElementWithText(page, "button", "Vahvista päätösten uudellenlähetys")
-    await waitForElementWIthTestId(page, "resend-completed-message")
-  }
-
-  async function changeContactPersonEmail(page: Page, linkToMuutoshakemus: string, email: string): Promise<void> {
-    await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
-    await clearAndType(page, '#muutoshakemus__email', email)
-    await clickElement(page, "#send-muutospyynto-button")
-  }
 
   describe('When virkailija navigates to codes page', () => {
     beforeAll(async () => {
