@@ -126,7 +126,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
     )
   }
 
-  const voimassaolevaPaattymisaika = () => {
+  const käyttöajanPidennysAcceptWithChangesForm = () => {
     const haettuPaiva = dateStringToMoment(muutoshakemus['haettu-kayttoajan-paattymispaiva'])
 
     return (
@@ -206,7 +206,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
         {isAcceptedWithChanges(f) && (
           <React.Fragment>
             {!!muutoshakemus.talousarvio.length && <TalousarvioAcceptWithChangesForm f={f} talousarvio={talousarvio} requestedTalousarvio={muutoshakemus.talousarvio} />}
-            {muutoshakemus['haen-kayttoajan-pidennysta'] && voimassaolevaPaattymisaika()}
+            {muutoshakemus['haen-kayttoajan-pidennysta'] && käyttöajanPidennysAcceptWithChangesForm()}
           </React.Fragment>
         )}
         <div className="muutoshakemus-row">
