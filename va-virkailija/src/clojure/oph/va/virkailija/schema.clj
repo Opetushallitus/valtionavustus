@@ -19,6 +19,7 @@
    :user-key s/Str
    :reason s/Str
    :decider s/Str
+   (s/optional-key :hyvaksytyt-sisaltomuutokset) (s/maybe s/Str)
    (s/optional-key :paatos-hyvaksytty-paattymispaiva) (s/maybe java.time.LocalDate)
    (s/optional-key :talousarvio) (s/maybe [Meno])
    :created-at s/Inst
@@ -28,6 +29,7 @@
   "Muutoshakemus paatos"
   {:status s/Str
    :reason s/Str
+   (s/optional-key :hyvaksytyt-sisaltomuutokset) (s/maybe s/Str)
    (s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
    (s/optional-key :talousarvio) (s/maybe TalousarvioMuutos)
    })

@@ -37,7 +37,10 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muut
           </div>
         }
         {muutoshakemus['haen-sisaltomuutosta'] && (
-          <div>{t.sisaltomuutos.appliedChange}</div>
+          <div className="muutoshakemus-paatos__sisaltomuutos">
+            <h3 className="muutoshakemus-paatos__change-header">{t.sisaltomuutos.acceptedChanges}</h3>
+            <div>{paatos['hyvaksytyt-sisaltomuutokset']}</div>
+          </div>
         )}
       </div>
     </section>

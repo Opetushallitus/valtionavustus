@@ -29,7 +29,8 @@ export const translationsFi = {
   sisaltomuutos: {
     checkboxTitle: 'Haen muutosta hankkeen sisältöön tai toteutustapaan',
     title: 'Kuvaile muutokset hankkeen sisältöön tai toteutustapaan',
-    appliedChange: 'Haettu muutos hankkeen sisältöön tai toteutustapaan'
+    appliedChange: 'Haettu muutos hankkeen sisältöön tai toteutustapaan',
+    acceptedChanges: 'Hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan',
   },
   muutosTaloudenKayttosuunnitelmaan: {
     checkboxTitle: 'Haen muutosta hankkeen budjettiin',
@@ -184,7 +185,8 @@ const translationsSv: Translations = {
   sisaltomuutos: {
     checkboxTitle: 'Haen muutosta hankkeen sisältöön tai toteutustapaan',
     title: 'Kuvaile muutokset hankkeen sisältöön tai toteutustapaan',
-    appliedChange: 'Haettu muutos hankkeen sisältöön tai toteutustapaan'
+    appliedChange: 'Haettu muutos hankkeen sisältöön tai toteutustapaan',
+    acceptedChanges: 't.sisaltomuutos.acceptedChanges',
   },
   muutosTaloudenKayttosuunnitelmaan: {
     checkboxTitle: 'Jag ansöker om ändringar i projektets budget',

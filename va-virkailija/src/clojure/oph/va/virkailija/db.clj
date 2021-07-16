@@ -27,6 +27,14 @@
                WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
          [id]))
 
+(defn- add-paatos-hyväksytyt-sisältömuutokset [tx paatos-id hyvaksytyt-sisältömuutokset]
+  (execute! tx "insert into paatos_sisaltomuutos (paatos_id, hyvaksytyt_sisaltomuutokset) values (?, ?)"
+            [paatos-id hyvaksytyt-sisältömuutokset]))
+
+(defn- get-hyvaksytyt-sisaltomuutokset [id]
+  (let [rows (query "SELECT hyvaksytyt_sisaltomuutokset FROM paatos_sisaltomuutos WHERE paatos_id = ?" [id])]
+    (:hyvaksytyt-sisaltomuutokset (first rows))))
+
 (defn- store-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
   (with-tx (fn [tx]
     (let [created-paatos (first (query tx
@@ -40,11 +48,15 @@
                 WHERE id = ?" [(:id created-paatos) muutoshakemus-id])
       (when (:talousarvio paatos)
         (add-paatos-menoluokkas tx (:id created-paatos) avustushaku-id (:talousarvio paatos)))
+      (when (not= "rejected" (:status paatos))
+        (add-paatos-hyväksytyt-sisältömuutokset tx (:id created-paatos) (:hyvaksytyt-sisaltomuutokset paatos)))
       created-paatos))))
 
 (defn create-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
   (if-let [created-paatos (store-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)]
-    (assoc created-paatos :talousarvio (get-talousarvio (:id created-paatos) "paatos"))))
+    (-> created-paatos
+        (assoc :talousarvio (get-talousarvio (:id created-paatos) "paatos"))
+        (assoc :hyvaksytyt-sisaltomuutokset (get-hyvaksytyt-sisaltomuutokset (:id created-paatos))))))
 
 (defn get-menoluokkas [avustushaku-id]
   (query "SELECT type, translation_fi, translation_sv FROM virkailija.menoluokka WHERE avustushaku_id = ?" [avustushaku-id]))
@@ -96,7 +108,7 @@
                                 m.id,
                                 m.hakemus_id,
                                 (CASE
-                                  WHEN paatos_id IS NULL
+                                  WHEN m.paatos_id IS NULL
                                   THEN 'new'
                                   ELSE p.status::text
                                 END) as status,
@@ -110,10 +122,12 @@
                                 p.id as paatos_id,
                                 p.user_key as paatos_user_key,
                                 p.created_at as paatos_created_at,
+                                hyvaksytyt_sisaltomuutokset,
                                 to_char(p.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva,
                                 ee.created_at as paatos_sent_at
                               FROM virkailija.muutoshakemus m
                               LEFT JOIN virkailija.paatos p ON m.paatos_id = p.id
+                              LEFT JOIN virkailija.paatos_sisaltomuutos ON (paatos_sisaltomuutos.paatos_id = p.id)
                               LEFT JOIN virkailija.email_event ee
                                 ON ee.id = (SELECT max(id) FROM virkailija.email_event WHERE muutoshakemus_id = m.id AND email_type = 'muutoshakemus-paatos' AND success = true)
                               WHERE m.hakemus_id = ?

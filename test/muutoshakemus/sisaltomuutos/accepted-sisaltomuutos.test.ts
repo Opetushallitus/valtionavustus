@@ -11,6 +11,7 @@ import {
   getElementInnerText,
   textContent,
   selectVakioperusteluInFinnish,
+  clearAndType,
 } from '../../test-util'
 import {
   navigateToLatestMuutoshakemus,
@@ -137,6 +138,7 @@ describe('Sisaltomuutos (accepted)', () => {
 
     describe('sending decision', () => {
       beforeAll(async () => {
+        await writeSisältömuutosPäätös(page, 'Muutokset hankkeen sisältöön tai toteutustapaan hyväksytään  hakemuksen mukaisesti.')
         await selectVakioperusteluInFinnish(page)
         await clickElement(page, '[data-test-id="muutoshakemus-submit"]')
         await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
@@ -164,6 +166,10 @@ describe('Sisaltomuutos (accepted)', () => {
   })
 })
 
+async function writeSisältömuutosPäätös(page: Page, text: string) {
+  await clearAndType(page, '[name=hyvaksytyt-sisaltomuutokset]', text)
+}
+
 async function expectAsiaSectionToContainSisaltomuutos(page: Page) {
   const asiaSectionContent = await textContent(page, '[data-test-id=muutospaatos-asia-content]')
   expect(asiaSectionContent).toContain('Muutoshakemus hankesuunnitelman sisältöön tai toteutustapaan')
@@ -171,5 +177,5 @@ async function expectAsiaSectionToContainSisaltomuutos(page: Page) {
 
 async function expectAcceptedSisaltomuutosInPaatos(page: Page) {
   const asiaSectionContent = await textContent(page, '[data-test-id=accepted-changes-content]')
-  expect(asiaSectionContent).toContain('Haettu muutos hankkeen sisältöön tai toteutustapaan')
+  expect(asiaSectionContent).toContain('Hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan')
 }

@@ -61,6 +61,12 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
             <h4 className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
             <div className="muutoshakemus__reason" data-test-id="sisaltomuutos-perustelut">{muutoshakemus['sisaltomuutos-perustelut']}</div>
           </div>
+          {muutoshakemus['hyvaksytyt-sisaltomuutokset'] && (
+            <div className="muutoshakemus-row">
+              <h4 className="muutoshakemus__header">{t.sisaltomuutos.acceptedChanges}</h4>
+              <div className="muutoshakemus__reason">{muutoshakemus['hyvaksytyt-sisaltomuutokset']}</div>
+            </div>
+          )}
         </section>
       )}
       {!!talousarvio.length &&

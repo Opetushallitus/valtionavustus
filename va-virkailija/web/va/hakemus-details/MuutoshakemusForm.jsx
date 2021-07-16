@@ -6,9 +6,8 @@ import DatePicker from 'react-widgets/DatePicker'
 import MomentLocalizer from 'react-widgets-moment'
 import Localization from 'react-widgets/Localization'
 import { omit } from 'lodash'
-import { translations } from 'va-common/web/va/i18n/translations'
+import { translations, translationsFi } from 'va-common/web/va/i18n/translations'
 import { TranslationContext, getTranslationContext } from 'va-common/web/va/i18n/TranslationContext'
-import { translationsFi } from 'va-common/web/va/i18n/translations'
 import { isoFormat, parseDateString } from 'va-common/web/va/i18n/dateformat'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -25,6 +24,7 @@ import { copyToClipboard } from '../copyToClipboard'
 import { isSubmitDisabled, isError } from '../formikHelpers'
 import { Modal } from './Modal'
 import { TalousarvioAcceptWithChangesForm } from './TalousarvioAcceptWithChangesForm'
+import { HyväksytytSisältömuutoksetForm } from './HyväksytytSisältömuutoksetForm'
 
 import './Muutoshakemus.less'
 
@@ -73,12 +73,17 @@ const getPaatosSchema = (muutoshakemus) => Yup.object().shape({
   paattymispaiva: Yup.date().when('status', {
     is: 'accepted_with_changes',
     then: muutoshakemus['haen-kayttoajan-pidennysta'] ? Yup.date().required('Päättymispäivä on pakollinen kenttä') : Yup.date(),
+  }),
+  'hyvaksytyt-sisaltomuutokset': Yup.string().when('status', {
+    is: value => value !== 'rejected',
+    then: muutoshakemus['haen-sisaltomuutosta'] ? Yup.string().required('Kuvaile hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan on pakollinen kenttä!') : Yup.string(),
   })
 })
 
 function formToPayload(values) {
   return {
     ...values,
+    'hyvaksytyt-sisaltomuutokset': values.status !== 'rejected' ? values['hyvaksytyt-sisaltomuutokset'] : undefined,
     talousarvio: values.talousarvio && omit(values.talousarvio, ['currentSum', 'originalSum']),
     paattymispaiva: values.paattymispaiva && moment(values.paattymispaiva).format(isoFormat)
   }
@@ -92,6 +97,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
       status: 'accepted',
       reason: '',
       paattymispaiva: undefined,
+      'hyvaksytyt-sisaltomuutokset': undefined,
       talousarvio: talousarvioValues,
     },
     validationSchema: getPaatosSchema(muutoshakemus),
@@ -209,6 +215,8 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
             {muutoshakemus['haen-kayttoajan-pidennysta'] && käyttöajanPidennysAcceptWithChangesForm()}
           </React.Fragment>
         )}
+        {(!isRejected(f) && muutoshakemus['haen-sisaltomuutosta']) &&
+          <HyväksytytSisältömuutoksetForm f={f} muutoshakemus={muutoshakemus} />}
         <div className="muutoshakemus-row">
           <h4 className="muutoshakemus__header">
             Perustelut <span className="muutoshakemus__default-reason-link"><a onClick={() => setDefaultReason(f, 'fi')}>Lisää vakioperustelu suomeksi</a> | <a onClick={() => setDefaultReason(f, 'sv')}>Lisää vakioperustelu ruotsiksi</a></span>
@@ -229,6 +237,10 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
 
 function isAcceptedWithChanges(formik) {
   return formik.values.status === 'accepted_with_changes'
+}
+
+function isRejected(formik) {
+  return formik.values.status === 'rejected'
 }
 
 function setDefaultReason(f, lang) {
