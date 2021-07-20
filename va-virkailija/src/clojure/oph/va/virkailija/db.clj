@@ -48,7 +48,7 @@
                 WHERE id = ?" [(:id created-paatos) muutoshakemus-id])
       (when (:talousarvio paatos)
         (add-paatos-menoluokkas tx (:id created-paatos) avustushaku-id (:talousarvio paatos)))
-      (when (not= "rejected" (:status paatos))
+      (when (some? (:hyvaksytyt-sisaltomuutokset paatos))
         (add-paatos-hyväksytyt-sisältömuutokset tx (:id created-paatos) (:hyvaksytyt-sisaltomuutokset paatos)))
       created-paatos))))
 

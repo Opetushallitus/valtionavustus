@@ -166,10 +166,6 @@ describe('Sisaltomuutos (accepted)', () => {
   })
 })
 
-async function writeSisältömuutosPäätös(page: Page, text: string) {
-  await clearAndType(page, '[name=hyvaksytyt-sisaltomuutokset]', text)
-}
-
 async function expectAsiaSectionToContainSisaltomuutos(page: Page) {
   const asiaSectionContent = await textContent(page, '[data-test-id=muutospaatos-asia-content]')
   expect(asiaSectionContent).toContain('Muutoshakemus hankesuunnitelman sisältöön tai toteutustapaan')
@@ -178,4 +174,8 @@ async function expectAsiaSectionToContainSisaltomuutos(page: Page) {
 async function expectAcceptedSisaltomuutosInPaatos(page: Page) {
   const asiaSectionContent = await textContent(page, '[data-test-id=accepted-changes-content]')
   expect(asiaSectionContent).toContain('Hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan')
+}
+
+async function writeSisältömuutosPäätös(page: Page, text: string) {
+  await clearAndType(page, '[name=hyvaksytyt-sisaltomuutokset]', text)
 }
