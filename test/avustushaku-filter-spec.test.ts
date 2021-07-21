@@ -62,7 +62,6 @@ describe('Avustushaku filtering', () => {
       describe('And virkailija selects avustushaku #1 from the filter', () => {
         beforeAll(async () => {
           await selectAvustushakuFromDropdown(page, haku1.avustushakuName)
-          await page.waitForNavigation()
         })
 
         it('Virkailija is sent to avustushaku #1 page', async () => {

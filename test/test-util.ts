@@ -453,7 +453,10 @@ export async function selectMaakuntaFromDropdown(page: Page, text: string) {
 export async function selectAvustushakuFromDropdown(page: Page, text: string) {
   const input = await clickElement(page,'#avustushaku-dropdown .dropdown-list .rw-dropdown-list-input')
   await input.type(text)
-  await clickDropdownElementWithText(page, text)
+  await Promise.all([
+    page.waitForNavigation(),
+    clickDropdownElementWithText(page, text),
+  ])
 }
 
 export async function clickDropdownElementWithText(page: Page, text: string) {
