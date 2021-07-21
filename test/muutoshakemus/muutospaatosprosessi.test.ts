@@ -179,8 +179,7 @@ describe('Muutospäätösprosessi', () => {
       await gotoHaunTiedot(page, avustushakuID)
       expect(await textContent(page, '[data-test-id="muutoshakukelvoton-warning"]')).toEqual(
         'Huom.! Uusi muutoshakutoiminnallisuus ei ole käytössä tälle avustushaulle.' +
-        'Avustushaun päätöksiin ei tule linkkiä uudelle muutoshakusivulle' +
-        'Uusi muutoshakutoiminnallisuus ei ole käytössä tästä avustushausta luoduille kopioille'
+        'Avustushaun päätöksiin ei tule linkkiä uudelle muutoshakusivulle'
       )
     })
 

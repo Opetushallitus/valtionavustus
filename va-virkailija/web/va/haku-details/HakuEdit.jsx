@@ -51,7 +51,6 @@ export default class HakuEdit extends Component {
               <p><b>Huom.!</b> Uusi muutoshakutoiminnallisuus ei ole käytössä tälle avustushaulle.</p>
               <ul>
                 <li>Avustushaun päätöksiin ei tule linkkiä uudelle muutoshakusivulle</li>
-                <li>Uusi muutoshakutoiminnallisuus ei ole käytössä tästä avustushausta luoduille kopioille</li>
               </ul>
             </div>
           </WarningBanner>}
