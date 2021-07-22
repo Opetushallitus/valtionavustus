@@ -207,12 +207,14 @@
                            muutoshakemus (first (filter #(= user-key (:paatos-user-key %)) muutoshakemukset))
                            presenter (hakija-db/get-presenter-by-hakemus-id (:hakemus-id muutoshakemus))
                            avustushaku (hakija-db/get-avustushaku-by-paatos-user-key user-key)
-                           hakemus (hakija-db/get-normalized-hakemus-by-id (:hakemus-id muutoshakemus))]
+                           hakemus (hakija-db/get-normalized-hakemus-by-id (:hakemus-id muutoshakemus))
+                           is-presenting-officer (hakija-db/is-presenting-officer (:id avustushaku) (:oid presenter))]
                        (ok {:paatos paatos
                             :muutoshakemus muutoshakemus
                             :muutoshakemukset muutoshakemukset
-                            :presenter presenter
-                            :avustushaku avustushaku
+                            :presenter {:name (:name presenter) :email (:email presenter)}
+                            :isPresentingOfficer is-presenting-officer
+                            :avustushaku {:hankkeen-alkamispaiva (:hankkeen-alkamispaiva avustushaku) :hankkeen-paattymispaiva (:hankkeen-paattymispaiva avustushaku)}
                             :hakemus hakemus})
                      )
   )

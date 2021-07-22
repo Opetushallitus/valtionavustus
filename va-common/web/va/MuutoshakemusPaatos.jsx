@@ -47,7 +47,7 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muut
   )
 }
 
-export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset }) => {
+export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset, isPresentingOfficer }) => {
   const { t } = useTranslations()
 
   return (
@@ -95,7 +95,17 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
       </section>
       <section className="muutoshakemus-paatos__section">
         <div data-test-id="muutoshakemus-paatos-tekija-title">{t.muutoshakemus.paatos.paatoksenTekija}</div>
-        <div data-test-id="paatos-decider">{paatos.decider}</div>
+        {isPresentingOfficer
+          ? <div data-test-id="paatos-decider">{paatos.decider}</div>
+          : <div>
+              <div data-test-id="paatos-decider">{paatos.decider}</div>
+              <br/>
+              <div data-test-id="muutoshakemus-paatos-esittelija-title">{t.muutoshakemus.paatos.esittelija}</div>
+              <div data-test-id="paatos-esittelija">
+                {presenter.name}
+              </div>
+            </div>
+        }
       </section>
       <section className="muutoshakemus-paatos__section">
         <div data-test-id="muutoshakemus-paatos-lisatietoja-title">{t.muutoshakemus.paatos.lisatietoja}</div>

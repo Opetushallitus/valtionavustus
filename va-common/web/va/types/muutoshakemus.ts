@@ -16,6 +16,7 @@ export type PaatosState = {
   muutoshakemukset: Muutoshakemus[]
   avustushaku: Avustushaku
   paatos: Paatos
+  isPresentingOfficer: boolean
   presenter: Presenter
 }
 

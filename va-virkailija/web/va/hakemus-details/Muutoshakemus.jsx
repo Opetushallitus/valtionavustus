@@ -9,7 +9,7 @@ import { MuutoshakemusTabs } from './MuutoshakemusTabs'
 
 import './Muutoshakemus.less'
 
-export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hakemusVersion, controller, userInfo, presenter }) => {
+export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hakemusVersion, controller, userInfo, presenter, isPresentingOfficer }) => {
   const hakemus = hakemusVersion.normalizedData
   const [a, setActiveMuutoshakemus] = useState(muutoshakemukset[0])
   const isAccepted = a.status === 'accepted' || a.status === 'accepted_with_changes'
@@ -36,6 +36,7 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
                                 controller={controller}
                                 userInfo={userInfo}
                                 presenter={presenter}
+                                isPresentingOfficer={isPresentingOfficer}
                                 projectEndDate={projectEndDate} />}
       </div>
     </React.Fragment>

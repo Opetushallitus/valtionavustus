@@ -25,11 +25,12 @@ export default class HakemusDetails extends Component {
     const userRole = hakuData.roles.find(r => r.oid === userOid)
     const isPresentingOfficer =
             userOid && userRole && userRole.role === "presenting_officer"
-    const presenter = hakuData.roles.find(r => r.role === 'presenting_officer')
-
     if (hidden) {
       return null
     }
+
+    const fallbackPresenter = hakuData.roles.find(r => r.role === 'presenting_officer')
+    const presenter = hakuData.roles.find(r => r.id === hakemus.arvio["presenter-role-id"]) || fallbackPresenter
 
     const onClose = () => {
       document.body.classList.remove('split-view')
@@ -87,7 +88,7 @@ export default class HakemusDetails extends Component {
           if (!muutoshakemukset || muutoshakemukset.length === 0)
             return <h2>Hankkeella ei ole muutoshakemuksia</h2>
           else
-            return <Muutoshakemus environment={environment} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakemusVersion={hakemus} controller={controller} userInfo={userInfo} presenter={presenter} />
+            return <Muutoshakemus environment={environment} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakemusVersion={hakemus} controller={controller} userInfo={userInfo} presenter={presenter} isPresentingOfficer={isPresentingOfficer} />
         case 'seuranta':
           return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakuData={hakuData} translations={translations} selectedHakemusAccessControl={selectedHakemusAccessControl} helpTexts={helpTexts}/>
         default:

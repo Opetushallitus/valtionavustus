@@ -516,18 +516,42 @@ export async function textContent(page: Page, selector: string) {
   return await page.evaluate(_ => _.textContent, element)
 }
 
-export async function selectValmistelijaForHakemus(page: Page, avustushakuID: number, hakemusID: number, valmistelijaName: string) {
+async function prepareSelectingValmistelijaForHakemus(page: Page, avustushakuID: number, hakemusID: number, valmistelijaName: string) {
   await navigate(page, `/avustushaku/${avustushakuID}/`)
   await clickElement(page, `#hakemus-${hakemusID} .btn-role`)
 
   const xpath = `//table[contains(@class, 'hakemus-list')]/tbody//tr[contains(@class, 'selected')]//button[contains(., '${valmistelijaName}')]`
   const valmistelijaButton = await page.waitForXPath(xpath, {visible: true})
-  if (!valmistelijaButton) throw new Error(`Valmistelija button not found with XPath: ${xpath}`)
+  if (!valmistelijaButton) {
+    throw new Error(`Valmistelija button not found with XPath: ${xpath}`)
+  }
+  return valmistelijaButton
+}
 
-  await Promise.all([
-    page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`),
-    valmistelijaButton.click(),
-  ])
+export async function selectValmistelijaForHakemus(page: Page, avustushakuID: number, hakemusID: number, valmistelijaName: string) {
+  const valmistelijaButton = await prepareSelectingValmistelijaForHakemus(page, avustushakuID, hakemusID, valmistelijaName)
+
+  const valmistelijaButtonClass = await (await valmistelijaButton.getProperty('className'))?.jsonValue() as string
+
+  if (!valmistelijaButtonClass.includes('selected')) {
+    await Promise.all([
+      page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`),
+      valmistelijaButton.click(),
+    ])
+  }
+}
+
+export async function deselectValmistelijaForHakemus(page: Page, avustushakuID: number, hakemusID: number, valmistelijaName: string) {
+  const valmistelijaButton = await prepareSelectingValmistelijaForHakemus(page, avustushakuID, hakemusID, valmistelijaName)
+
+  const valmistelijaButtonClass = await (await valmistelijaButton.getProperty('className'))?.jsonValue() as string
+
+  if (valmistelijaButtonClass.includes('selected')) {
+    await Promise.all([
+      page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`),
+      valmistelijaButton.click(),
+    ])
+  }
 }
 
 export async function deleteAttachment(page: Page, attachmentFieldId: string) {

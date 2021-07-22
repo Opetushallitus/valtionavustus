@@ -75,6 +75,7 @@
     :paatos Paatos
     :muutoshakemus Muutoshakemus
     :presenter Presenter
+    :isPresentingOfficer s/Bool
     :hakemus NormalizedHakemus
     :avustushaku Avustushaku
     :muutoshakemukset MuutoshakemusList

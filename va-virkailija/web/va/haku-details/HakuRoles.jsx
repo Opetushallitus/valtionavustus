@@ -173,7 +173,7 @@ class RoleRow extends React.Component {
         <td className="haku-roles-name-column"><input type="text" value={role.name} name="name" onChange={this.handleChange} disabled={disableEditing}/></td>
         <td className="haku-roles-email-column">
           <input type="email" value={role.email || ""} name="email" onChange={this.handleChange} disabled={disableEditing}/>
-          <button type="button" onClick={onDelete} className="remove haku-roles-remove" alt="Poista" title={removeTitleText} tabIndex="-1" disabled={disableEditing} />
+          <button type="button" onClick={onDelete} className="remove haku-roles-remove" alt="Poista" title={removeTitleText} data-test-id={`remove-role-${role.name.toLowerCase().replace(" ","-")}`} tabIndex="-1" disabled={disableEditing} />
         </td>
       </tr>
     )

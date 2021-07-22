@@ -219,7 +219,7 @@
     (get-muutoshakemukset hakemus-id)))
 
 (defn get-avustushaku-by-paatos-user-key [user-key]
-      (let [avustushaut (query "SELECT a.hankkeen_alkamispaiva, a.hankkeen_paattymispaiva
+      (let [avustushaut (query "SELECT a.id, a.hankkeen_alkamispaiva, a.hankkeen_paattymispaiva
                                 FROM virkailija.muutoshakemus mh
                                 LEFT JOIN virkailija.paatos p on mh.paatos_id = p.id
                                 LEFT JOIN hakija.hakemukset h on mh.hakemus_id = h.id
@@ -228,8 +228,19 @@
                                 AND p.user_key = ?" [user-key])]
            (first avustushaut)))
 
+(defn get-avustushaku-roles-with-oid [avustushaku-id]
+  (query "SELECT oid, role
+                      FROM hakija.avustushaku_roles
+                      WHERE avustushaku = ?" [avustushaku-id]))
+
+(defn is-presenting-officer [avustushaku-id oid] 
+  (let [avustushaku-roles (get-avustushaku-roles-with-oid avustushaku-id)]
+    (nil? (first (filter (fn [role] (and (= (:oid role) oid)
+                                             (= (:role role) "presenting_officer")))
+                             avustushaku-roles)))))
+
 (defn get-presenter-by-hakemus-id [hakemus-id]
-  (let [presenters (query "SELECT ar.name, ar.email
+  (let [presenters (query "SELECT ar.name, ar.email, ar.oid
                            FROM avustushaku_roles ar
                            LEFT JOIN hakemukset h ON ar.avustushaku = h.avustushaku
                            LEFT JOIN muutoshakemus m ON h.id = m.hakemus_id

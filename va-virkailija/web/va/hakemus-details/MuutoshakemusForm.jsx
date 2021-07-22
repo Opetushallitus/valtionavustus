@@ -89,7 +89,7 @@ function formToPayload(values) {
   }
 }
 
-export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemusVersion, controller, userInfo, presenter, projectEndDate, muutoshakemukset }) => {
+export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemusVersion, controller, userInfo, presenter, projectEndDate, muutoshakemukset, isPresentingOfficer }) => {
   const talousarvioValues = muutoshakemus.talousarvio.length ? getTalousarvioValues(muutoshakemus.talousarvio) : undefined
   const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
   const f = useFormik({
@@ -187,6 +187,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
           muutoshakemus={muutoshakemus}
           hakemus={hakemus}
           presenter={presenter}
+          isPresentingOfficer={isPresentingOfficer}
           muutoshakemukset={muutoshakemukset} />
         </TranslationContext.Provider>
       </Modal>
