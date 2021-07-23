@@ -38,7 +38,7 @@ export const answers = {
   projectName: "Rahassa kylpijät Ky Ay Oy",
 }
 
-describe('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen, hyvaksyjaksi tulee hyvaksyja, esittelijaksi ukotettu valmistelija ja lisatietoja osioon tulee ukotettu valmistelija', () => {
+describe.skip('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen, hyvaksyjaksi tulee hyvaksyja, esittelijaksi ukotettu valmistelija ja lisatietoja osioon tulee ukotettu valmistelija', () => {
   let browser: Browser
   let page: Page
 
