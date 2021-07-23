@@ -97,16 +97,16 @@ describe('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen,
       await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
       await Promise.all([
         page.waitForResponse(`${VIRKAILIJA_URL}/api/va-user/search`),
-        clearAndType(page, '#va-user-search-input', 'matti')
+        clearAndType(page, '#va-user-search-input', 'Matti')
       ])
       await Promise.all([
         page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/role`),
-        clickElementWithText(page, "a", "Ranta")
+        clickElementWithText(page, "a", "Matti")
       ])
     })
     describe('ukota Matti for hakemus', () => {
       beforeAll(async () => {
-        await selectValmistelijaForHakemus(page, avustushakuID, hakemusID, "Matti Ranta")
+        await selectValmistelijaForHakemus(page, avustushakuID, hakemusID, "Matti")
       })
       describe('remove current user from avustushaku valmistelijat', () => {
         beforeAll(async () => {
@@ -148,14 +148,14 @@ describe('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen,
                 expect(hyvaksyja).toEqual("_ valtionavustus")
               })
 
-              it('should have Matti Ranta as esittelijä', async () => {
+              it('should have Matti as esittelijä', async () => {
                 const esittelija = await getElementInnerText(page, '[data-test-id="paatos-esittelija"]')
-                expect(esittelija).toEqual("Matti Ranta")
+                expect(esittelija).toContain("Matti")
               })
 
-              it('should have Matti Ranta in lisatietoja section', async () => {
+              it('should have Matti in lisatietoja section', async () => {
                 const lisatietoja = await getElementInnerText(page, '[data-test-id="paatos-additional-info"]')
-                expect(lisatietoja).toContain("Matti Ranta")
+                expect(lisatietoja).toContain("Matti")
               })
 
               afterAll(async () => {
@@ -179,14 +179,14 @@ describe('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen,
                   expect(hyvaksyja).toEqual("_ valtionavustus")
                 })
 
-                it('should have Matti Ranta as esittelijä', async () => {
+                it('should have Matti as esittelijä', async () => {
                   const esittelija = await getElementInnerText(page, '[data-test-id="paatos-esittelija"]')
-                  expect(esittelija).toEqual("Matti Ranta")
+                  expect(esittelija).toContain("Matti")
                 })
 
-                it('should have Matti Ranta in lisatietoja section', async () => {
+                it('should have Matti in lisatietoja section', async () => {
                   const lisatietoja = await getElementInnerText(page, '[data-test-id="paatos-additional-info"]')
-                  expect(lisatietoja).toContain("Matti Ranta")
+                  expect(lisatietoja).toContain("Matti")
                 })
               })
             })
