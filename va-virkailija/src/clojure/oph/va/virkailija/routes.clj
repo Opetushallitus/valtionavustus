@@ -628,6 +628,12 @@
         (ok row)
         (not-found))))
 
+  (compojure-api/POST "/user-cache" []
+    :body  [body (compojure-api/describe virkailija-schema/PopulateUserCachePayload "Juuh")]
+    :return s/Any
+    :summary "Juuh"
+    (ok (virkailija-db/update-va-users-cache body)))
+
   (compojure-api/GET "/hakemus/:hakemus-id/email/:email-type" []
     :path-params [hakemus-id :- Long email-type :- s/Str]
     :return virkailija-schema/DbEmails

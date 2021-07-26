@@ -244,6 +244,20 @@
   "Complete results of VA user search"
   {:results [VaUserSearchResult]})
 
+(s/defschema UserInUserCache
+  "Juuh"
+  {:person-oid s/Str
+   :first-name (s/maybe s/Str)
+   :surname (s/maybe s/Str)
+   :email (s/maybe s/Str)
+   :lang s/Str
+   :privileges [s/Str]
+   })
+
+(s/defschema PopulateUserCachePayload
+  "Juuh"
+  [UserInUserCache])
+
 (s/defschema AvustushakuOrganizationNameQuery
   "Find avustushaut by organization name (minimum string length: 3)"
   (s/conditional (fn [s] (> (count s) 2)) s/Str))

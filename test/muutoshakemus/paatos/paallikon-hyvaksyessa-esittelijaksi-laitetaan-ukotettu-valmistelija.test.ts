@@ -1,4 +1,5 @@
 import { Browser, Page } from 'puppeteer'
+import axios from "axios"
 
 import {
   mkBrowser,
@@ -37,6 +38,39 @@ export const answers = {
   contactPersonPhoneNumber: "666",
   projectName: "Rahassa kylpijät Ky Ay Oy",
 }
+
+interface User {
+  "person-oid": string
+  "first-name": string
+  surname: string
+  email: string
+  lang: string
+  privileges: string[]
+}
+
+async function populateUserCache(users: User[]) {
+  await axios.post(`${VIRKAILIJA_URL}/api/test/user-cache`, users)
+}
+
+const users = [
+  {
+    "person-oid": "oid",
+    "first-name": "Matti",
+    surname: "Mattilainen",
+    email: "email@email.com",
+    lang: "fi",
+    privileges: ["va-admin"]
+  },
+  {
+    "person-oid": "oid2",
+    "first-name": "_",
+    surname: "valtionavustus",
+    email: "email2@email.com",
+    lang: "fi",
+    privileges: ["va-admin"]
+  }
+]
+
 
 describe('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen, hyvaksyjaksi tulee hyvaksyja, esittelijaksi ukotettu valmistelija ja lisatietoja osioon tulee ukotettu valmistelija', () => {
   let browser: Browser
@@ -77,6 +111,8 @@ describe('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen,
     browser = await mkBrowser()
     page = await getFirstPage(browser)
     setPageErrorConsoleLogger(page)
+
+    await populateUserCache(users)
 
     const result = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, budget)
     avustushakuID = result.avustushakuID
