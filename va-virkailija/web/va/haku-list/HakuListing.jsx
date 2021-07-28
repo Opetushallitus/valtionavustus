@@ -4,7 +4,7 @@ import moment from 'moment'
 
 import DateUtil from 'soresu-form/web/DateUtil'
 
-import HakuStatus from '../avustushaku/HakuStatus.jsx'
+import HakuStatus from '../avustushaku/HakuStatus.tsx'
 import HakuPhase from '../avustushaku/HakuPhase.jsx'
 import HakuStatuses from '../haku-details/HakuStatuses'
 import HakuPhases from '../haku-details/HakuPhases'

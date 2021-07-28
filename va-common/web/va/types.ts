@@ -95,7 +95,7 @@ export type Hakemus = {
   'selvitys-email'?: unknown
 }
 
-export type AvustushakuStatus = 'new' | 'draft' | 'published' | 'resolved'
+export type AvustushakuStatus = 'new' | 'draft' | 'published' | 'resolved' | 'deleted'
 
 export type AvustushakuPhase = 'upcoming' | 'current' | 'ended' | 'unpublished'
 

@@ -1,9 +1,16 @@
-import React, { Component } from 'react'
+import React from 'react'
+import { AvustushakuStatus } from '../../../../va-common/web/va/types'
 
-export default class HakuStatus extends Component {
+type HakuStatusProps = {
+  status: AvustushakuStatus
+}
+
+type HakuStatusState = never
+
+export default class HakuStatus extends React.Component<HakuStatusProps, HakuStatusState> {
   render() {
     const status = this.props.status
-    let value = status
+    let value: string = status
     switch(status) {
       case "new":
         value = "Uusi"
