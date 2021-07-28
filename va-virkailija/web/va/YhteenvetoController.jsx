@@ -1,4 +1,4 @@
-import Bacon from 'baconjs'
+import * as Bacon from 'baconjs'
 import _ from 'lodash'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'

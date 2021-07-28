@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "baconjs": "^0.7.59",
+    "baconjs": "3.0.17",
     "big.js": "^3.1.3",
     "bluebird": "^3.7.2",
     "bowser": "^0.7.3",
@@ -35,7 +35,6 @@
     "yup": "^0.29.3"
   },
   "devDependencies": {
-    "@types/baconjs": "^0.7.34",
     "@types/jest": "^26.0.14",
     "@types/lodash": "^4.14.162",
     "@types/puppeteer": "^3.0.2",

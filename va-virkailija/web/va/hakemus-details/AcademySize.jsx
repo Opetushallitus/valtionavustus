@@ -1,6 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
-import Bacon from 'baconjs'
+import * as Bacon from 'baconjs'
 
 export default class AcademySize extends React.Component {
   constructor(props) {

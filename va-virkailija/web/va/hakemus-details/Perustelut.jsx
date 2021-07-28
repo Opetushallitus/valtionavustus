@@ -1,4 +1,4 @@
-import Bacon from 'baconjs'
+import * as Bacon from 'baconjs'
 import React from 'react'
 import _ from "lodash"
 import rejectedReasonsByLanguage from './rejectedReasonsByLanguage.json'

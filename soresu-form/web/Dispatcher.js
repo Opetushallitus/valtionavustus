@@ -1,4 +1,4 @@
-import Bacon from 'baconjs'
+import * as Bacon from 'baconjs'
 
 export default class InternalBus {
 

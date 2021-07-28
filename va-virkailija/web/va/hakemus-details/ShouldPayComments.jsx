@@ -1,4 +1,4 @@
-import Bacon from 'baconjs'
+import * as Bacon from 'baconjs'
 import React from 'react'
 
 export default class ShouldPayComments extends React.Component {

@@ -1,6 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
-import Bacon from 'baconjs'
+import * as Bacon from 'baconjs'
 import HelpTooltip from '../HelpTooltip'
 
 export default class PresenterComment extends React.Component {

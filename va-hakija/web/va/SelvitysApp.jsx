@@ -2,7 +2,7 @@ import "soresu-form/web/polyfills"
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Bacon from 'baconjs'
+import * as Bacon from 'baconjs'
 import queryString from 'query-string'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
-import Bacon from 'baconjs'
+import * as Bacon from 'baconjs'
 
 import HttpUtil from "soresu-form/web/HttpUtil"
 
@@ -76,7 +76,7 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
 
   const fetchTapahtumaloki = () => {
     setLahetykset([])
-    const tapahtumaloki = Bacon.fromPromise<any, Lahetys[]>(HttpUtil.get(`/api/avustushaku/${avustushaku.id}/tapahtumaloki/${selvitysType}-notification`))
+    const tapahtumaloki = Bacon.fromPromise<Lahetys[]>(HttpUtil.get(`/api/avustushaku/${avustushaku.id}/tapahtumaloki/${selvitysType}-notification`))
     tapahtumaloki.onValue(setLahetykset)
   }
 

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
-import Bacon from 'baconjs'
+import * as Bacon from 'baconjs'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import DateUtil from 'soresu-form/web/DateUtil'

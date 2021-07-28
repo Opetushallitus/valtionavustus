@@ -3,7 +3,7 @@ import "soresu-form/web/polyfills"
 import React from 'react'
 import ReactDOM from 'react-dom'
 import QueryString from 'query-string'
-import Bacon from 'baconjs'
+import * as Bacon from 'baconjs'
 
 import 'soresu-form/web/form/style/main.less'
 import './style/va-login.less'
