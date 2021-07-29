@@ -435,6 +435,7 @@
                                    (seq errors)
                                    (not unsent-payments?))
                                  :label "Lähetä maksatukset"
+                                 :data-test-id "lähetä-maksatukset-button"
                                  :style theme/button
                                  :on-click
                                  #(on-send-payments!
@@ -460,6 +461,7 @@
                     [va-ui/tab
                      {:value "sent"
                       :label [:span
+                              {:data-test-id "sent-payments-tab"}
                               "Lähetetyt maksatukset"
                               (when (not (empty? new-sent-payments))
                                 [va-ui/badge

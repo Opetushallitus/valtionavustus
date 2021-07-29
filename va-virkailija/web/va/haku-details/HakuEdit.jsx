@@ -103,7 +103,7 @@ export default class HakuEdit extends Component {
               }
               selectedValue={selectedValueOperationalUnit}/>
           </div>
-          <div className="editor-row-element">
+          <div className="editor-row-element" data-test-id="code-value-dropdown__project">
             <h3 className="required">Projekti <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___projekti"]} /></h3>
             <AutoCompleteCodeValue
               id="project-id"
@@ -117,7 +117,7 @@ export default class HakuEdit extends Component {
               }
               selectedValue={selectedValueProject}/>
           </div>
-          <div className="editor-row-element">
+          <div className="editor-row-element" data-test-id="code-value-dropdown__operation">
             <h3 className="required">Toiminto <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___toiminto"]} /></h3>
             <AutoCompleteCodeValue
               id="operation-id"

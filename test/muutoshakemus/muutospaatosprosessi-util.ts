@@ -13,7 +13,9 @@ import {
   clickElement,
   clickElementWithText,
   clickFormSaveAndWait,
+  clickClojureScriptKäliTab,
   countElements,
+  createUniqueCode,
   createValidCopyOfEsimerkkihakuAndReturnTheNewId,
   dummyExcelPath,
   expectQueryParameter,
@@ -33,6 +35,7 @@ import {
   setCalendarDate,
   TEST_Y_TUNNUS,
   uploadFile,
+  VaCodeValues,
   VIRKAILIJA_URL,
   waitUntilMinEmails
 } from "../test-util"
@@ -65,16 +68,16 @@ export async function getUserKeyFromPaatosEmail(hakemusID: number): Promise<stri
   return userKey
 }
 
-async function createHakuWithLomakeJson(page: Page, lomakeJson: string, hakuName?: string, registerNumber?: string): Promise<{ avustushakuID: number }> {
-  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, hakuName, registerNumber)
+async function createHakuWithLomakeJson(page: Page, lomakeJson: string, hakuName?: string, registerNumber?: string, codes?: VaCodeValues): Promise<{ avustushakuID: number }> {
+  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, hakuName, registerNumber, codes)
   await clickElementWithText(page, "span", "Hakulomake")
   await clearAndSet(page, ".form-json-editor textarea", lomakeJson)
   await clickFormSaveAndWait(page, avustushakuID)
   return { avustushakuID }
 }
 
-async function createMuutoshakemusEnabledHaku(page: Page, hakuName?: string, registerNumber?: string): Promise<{ avustushakuID: number }> {
-  return await createHakuWithLomakeJson(page, muutoshakemusEnabledHakuLomakeJson, hakuName, registerNumber)
+async function createMuutoshakemusEnabledHaku(page: Page, hakuName?: string, registerNumber?: string, codes?: VaCodeValues): Promise<{ avustushakuID: number }> {
+  return await createHakuWithLomakeJson(page, muutoshakemusEnabledHakuLomakeJson, hakuName, registerNumber, codes)
 }
 
 async function createBudjettimuutoshakemusEnabledHaku(page: Page, hakuName?: string, registerNumber?: string): Promise<{ avustushakuID: number }> {
@@ -235,13 +238,29 @@ export async function publishAndFillMuutoshakemusEnabledAvustushaku(page: Page, 
   return { avustushakuID, userKey }
 }
 
-export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers) {
-  const { avustushakuID } = await createMuutoshakemusEnabledAvustushakuAndFillHakemus(page, haku, answers)
-  return await acceptAvustushaku(page, avustushakuID)
+export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers): Promise<{ avustushakuID: number, hakemusID: number }> {
+  const codes = await createCodeValuesForTest(page)
+  const { avustushakuID } = await createMuutoshakemusEnabledAvustushakuAndFillHakemus(page, haku, answers, codes)
+  return await acceptAvustushaku(page, avustushakuID, "100000", "Ammatillinen koulutus")
 }
 
-export async function createMuutoshakemusEnabledAvustushakuAndFillHakemus(page: Page, haku: Haku, answers: Answers): Promise<{ avustushakuID: number, userKey: string }> {
-  const { avustushakuID } = await createMuutoshakemusEnabledHaku(page, haku.avustushakuName, haku.registerNumber)
+async function createCodeValuesForTest(page: Page): Promise<VaCodeValues> {
+  await navigate(page, '/admin-ui/va-code-values/')
+
+
+  const operationalUnit = await createUniqueCode(page, "Toimintayksikkö")
+
+  await clickClojureScriptKäliTab(page, "code-value-tab-project")
+  const project = await createUniqueCode(page, "Projekti")
+
+  await clickClojureScriptKäliTab(page, "code-value-tab-operation")
+  const operation = await createUniqueCode(page, "Toiminto")
+
+  return { operationalUnit, project, operation }
+}
+
+export async function createMuutoshakemusEnabledAvustushakuAndFillHakemus(page: Page, haku: Haku, answers: Answers, codes?: VaCodeValues): Promise<{ avustushakuID: number, userKey: string }> {
+  const { avustushakuID } = await createMuutoshakemusEnabledHaku(page, haku.avustushakuName, haku.registerNumber, codes)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
   const { userKey } = await fillAndSendMuutoshakemusEnabledHakemus(page, avustushakuID, answers)

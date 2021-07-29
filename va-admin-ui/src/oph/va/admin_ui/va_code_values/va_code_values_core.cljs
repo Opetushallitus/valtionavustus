@@ -230,6 +230,7 @@
          (map-indexed
            (fn [i [k v]]
              [:a {:key i
+                  :data-test-id (str "code-value-tab-" (name k))
                   :style theme/tab-header-link
                   :on-click (fn [_]
                               (reset! code-values [])

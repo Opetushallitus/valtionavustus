@@ -83,6 +83,7 @@
          :on-change #(swap! value assoc :phase (js/parseInt %))}]
        [va-ui/text-field
         {:floating-label-text "ASHA-tunniste"
+         :data-test-id "maksatukset-asiakirja--asha-tunniste"
          :value (:document-id @value)
          :on-change (fn [e]
                       (let [document-id (-> e .-target .-value)]
@@ -90,6 +91,7 @@
                           (swap! value assoc :document-id document-id))))}]
        [va-ui/search-field
         {:floating-label-text "Esittelijän sähköpostiosoite"
+         :data-test-id "maksatukset-asiakirja--esittelijan-sahkopostiosoite"
          :value (:presenter-email @value)
          :type "email"
          :error (and (not-empty? (:presenter-email @value))
@@ -108,6 +110,7 @@
                                  assoc-in [:presenter :searching] false))))}]
        [va-ui/search-field
         {:floating-label-text "Hyväksyjän sähköpostiosoite"
+         :data-test-id "maksatukset-asiakirja--hyvaksyjan-sahkopostiosoite"
          :value (:acceptor-email @value)
          :type "email"
          :error (and (not-empty? (:acceptor-email @value))
@@ -126,6 +129,7 @@
                                  [:acceptor :searching] false))))}]
        [va-ui/raised-button
         {:primary true
+         :data-test-id "maksatukset-asiakirja--lisaa-asiakirja"
          :disabled (not (valid-document? @value))
          :label "Lisää asiakirja"
          :on-click #(do ((:on-change props) @value)

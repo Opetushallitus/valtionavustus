@@ -2,17 +2,11 @@ import * as xlsx from "xlsx"
 import * as path from "path"
 import * as yup from "yup"
 import axios from "axios"
-import {
-  launch,
-  Browser,
-  Page,
-  ElementHandle,
-  WaitForSelectorOptions,
-  Frame,
-} from "puppeteer"
+import { Browser, ElementHandle, Frame, launch, Page, WaitForSelectorOptions, WaitForOptions } from "puppeteer"
 import * as assert from "assert"
 import * as fs from "fs"
 import moment from 'moment'
+
 const {randomBytes} = require("crypto")
 
 const HAKIJA_HOSTNAME = process.env.HAKIJA_HOSTNAME || 'localhost'
@@ -70,8 +64,17 @@ export function setPageErrorConsoleLogger(page: Page) {
   })
 }
 
-export async function getElementInnerText(page: Page | Frame, selector: string) {
-    return await page.evaluate((s: string) => (document.querySelector(s) && document.querySelector(s) as HTMLElement)?.innerText, selector)
+export async function clickClojureScriptKäliTab(page: Page, testId: string): Promise<void> {
+  // For some mysterious reason clicking too fast on tab doesn't work
+  // and I don't know of any indication when the tab link/button starts working
+  await page.waitForTimeout(5000)
+  await clickElementWithTestId(page, testId)
+  await page.waitForTimeout(1000)
+}
+
+export async function getElementInnerText(page: Page | Frame, selector: string): Promise<string | undefined> {
+  const element = await page.waitForSelector(selector)
+  return await element?.evaluate(node => (node as HTMLElement).innerText)
 }
 
 export async function getElementAttribute(page: Page, selector: string, attribute: string) {
@@ -184,8 +187,8 @@ export const getFirstPage = (browser: Browser) =>
   browser.pages().then(pages => pages[0])
 
 
-export async function navigate(page: Page, path: string) {
-  await page.goto(`${VIRKAILIJA_URL}${path}`, { waitUntil: "networkidle0" })
+export async function navigate(page: Page, path: string, waitForOptions?: WaitForOptions) {
+  await page.goto(`${VIRKAILIJA_URL}${path}`, waitForOptions ?? { waitUntil: "networkidle0" })
 }
 
 export async function navigateHakija(page: Page, path: string) {
@@ -223,10 +226,11 @@ export interface MailWithLinks extends Email {
   linkToMuutoshakemus: string | undefined
 }
 
-export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page, hakuName?: string, registerNumber?: string): Promise<number> {
+export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page, hakuName?: string, registerNumber?: string, vaCodes?: VaCodeValues): Promise<number> {
   return await createHakuFromEsimerkkihaku(page, {
     name: hakuName,
-    registerNumber: registerNumber
+    registerNumber: registerNumber,
+    vaCodes: vaCodes,
   })
 }
 
@@ -237,7 +241,24 @@ interface HakuProps {
   hakuaikaEnd?: string
   hankkeenAlkamispaiva?: string
   hankkeenPaattymispaiva?: string
+  vaCodes?: VaCodeValues
 }
+
+export type VaCodeValues = {
+  operationalUnit: string
+  project: string
+  operation: string
+}
+
+type Rahoitusalue = {
+  koulutusaste: string
+  talousarviotili: string
+}
+
+const defaultRahoitusalueet: Rahoitusalue[] = [{
+  koulutusaste: "Ammatillinen koulutus",
+  talousarviotili: "29.10.30.20"
+}]
 
 export async function createHakuFromEsimerkkihaku(page: Page, props: HakuProps): Promise<number> {
   const { name, registerNumber, hakuaikaStart, hakuaikaEnd, hankkeenAlkamispaiva, hankkeenPaattymispaiva } = props
@@ -252,8 +273,20 @@ export async function createHakuFromEsimerkkihaku(page: Page, props: HakuProps):
   await clearAndType(page, "#register-number", registerNumber || "230/2015")
   await clearAndType(page, "#haku-name-fi", avustushakuName)
   await clearAndType(page, "#haku-name-sv", avustushakuName + ' på svenska')
-  await clearAndType(page, "#hakuaika-start", hakuaikaStart || "1.1.1970 0.00")
 
+  if (props.vaCodes) {
+    await selectCode(page, 'operational-unit', props.vaCodes.operationalUnit)
+    await selectCode(page, 'project', props.vaCodes.project)
+    await selectCode(page, 'operation', props.vaCodes.operation)
+  }
+
+  await selectTositelaji(page, 'XE')
+
+  for (const rahoitusalue of defaultRahoitusalueet) {
+    await inputTalousarviotili(page, rahoitusalue)
+  }
+
+  await clearAndType(page, "#hakuaika-start", hakuaikaStart || "1.1.1970 0.00")
   const nextYear = (new Date()).getFullYear() + 1
   await clearAndType(page, "#hakuaika-end", hakuaikaEnd || `31.12.${nextYear} 23.59`)
 
@@ -265,6 +298,15 @@ export async function createHakuFromEsimerkkihaku(page: Page, props: HakuProps):
   await waitForSave(page)
 
   return avustushakuID
+}
+
+async function inputTalousarviotili(page: Page, { koulutusaste, talousarviotili }: Rahoitusalue): Promise<void> {
+  await clearAndType(page, `input[name="education-levels"][data-title="${koulutusaste}"]`, talousarviotili)
+}
+
+async function selectTositelaji(page: Page, value: 'XE' | 'XB'): Promise<void> {
+  await page.waitForSelector('select#document-type', { visible: true })
+  await page.select('select#document-type', value)
 }
 
 export async function publishAvustushaku(page: Page) {
@@ -403,7 +445,7 @@ export function mkAvustushakuName() {
   return "Testiavustushaku " + randomString()
 }
 
-export function randomString() {
+export function randomString(): string {
   return randomBytes(8).toString("hex")
 }
 
@@ -438,7 +480,7 @@ export async function clickElement(page: Page, selector: string) {
 }
 
 export async function clickElementWithText(page: Page, elementType: string, text: string) {
-  const element = await waitForElementWithText(page, elementType, text)
+  const element = await waitForElementWithText(page, elementType, text, { visible: true })
   assert.ok(element, `Could not find ${elementType} element with text '${text}'`)
   await element?.click()
   return element
@@ -864,23 +906,36 @@ export async function actualResponseFromExternalAPIhakemuksetForAvustushaku(avus
   return await axios.get(url).then(r => r.data)
 }
 
-export async function createUniqueCode(page: Page) {
-  const uniqueCode = (new Date()).getTime()
+export async function createUniqueCode(page: Page, name: string = 'Test code'): Promise<string> {
+  const uniqueCode = randomString().substring(0, 13)
   await clearAndType(page, '[data-test-id=code-form__year', '2020')
   await clearAndType(page, '[data-test-id=code-form__code', `${uniqueCode}`)
-  await clearAndType(page, '[data-test-id=code-form__name', `Test code ${uniqueCode}`)
+  await clearAndType(page, '[data-test-id=code-form__name', `${name} ${uniqueCode}`)
   await clickElementWithTestId(page, 'code-form__add-button')
   await page.waitForSelector(`tr[data-test-id="${uniqueCode}"]`)
   return uniqueCode
 }
 
-export async function assertCodeIsVisible(page: Page, code: number, visibility: boolean) {
+export async function expectingLoadingProgressBar<T>(page: Page, text: string, func: () => Promise<T>): Promise<T> {
+  const loadingBarVisiblePromise =  waitForElementWithText(page, "span", text, { visible: true })
+  const result = await func()
+  await loadingBarVisiblePromise
+  await waitForElementWithText(page, "span", text, { hidden: true })
+  return result
+}
+
+async function selectCode(page: Page, codeType: 'operational-unit' | 'project' | 'operation', code: string): Promise<void> {
+  await clearAndType(page, `[data-test-id=code-value-dropdown__${codeType}] > div`, code)
+  await clickElementWithTestId(page, code)
+}
+
+export async function assertCodeIsVisible(page: Page, code: string, visibility: boolean) {
   const buttonId = visibility ? 'code-row__hide-button' : 'code-row__show-button'
   const selector = `tr[data-test-id='${code}'] [data-test-id=${buttonId}]`
   await page.waitForSelector(selector)
 }
 
-export async function clickCodeVisibilityButton(page: Page, code: number, visibility: boolean) {
+export async function clickCodeVisibilityButton(page: Page, code: string, visibility: boolean) {
   const buttonId = visibility ? 'code-row__show-button' : 'code-row__hide-button'
   const selector = `tr[data-test-id='${code}'] [data-test-id=${buttonId}]`
   await clickElement(page, selector)
@@ -933,12 +988,13 @@ export async function selectVakioperusteluInFinnish(page: Page): Promise<void> {
   await clickElementWithText(page, 'a', 'Lisää vakioperustelu suomeksi')
 }
 
-export async function ratkaiseAvustushaku(page: Page) {
-  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+/** @deprecated Tää tekee jonku hädin tuskin toimivan avustushaun :DD */
+export async function ratkaiseAvustushaku(page: Page, hakuName?: string, vaCodes?: VaCodeValues) {
+  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, hakuName, undefined, vaCodes)
   await publishAvustushaku(page)
   await fillAndSendHakemus(page, avustushakuID)
 
-  return await acceptAvustushaku(page, avustushakuID)
+  return await acceptAvustushaku(page, avustushakuID, "100000", "Ammatillinen koulutus")
 }
 
 type AcceptedBudget = string | Budget
@@ -952,7 +1008,12 @@ async function acceptBudget(page: Page, budget: AcceptedBudget) {
   }
 }
 
-export async function acceptAvustushaku(page: Page, avustushakuID: number, budget: AcceptedBudget = "100000") {
+export async function acceptAvustushaku(
+  page: Page,
+  avustushakuID: number,
+  budget: AcceptedBudget = "100000",
+  rahoitusalue?: string,
+): Promise<{ avustushakuID: number, hakemusID: number }> {
   await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
 
   // Accept the hakemus
@@ -969,6 +1030,10 @@ export async function acceptAvustushaku(page: Page, avustushakuID: number, budge
 
   expectToBeDefined(hakemusID)
   console.log("Hakemus ID:", hakemusID)
+
+  if (rahoitusalue) {
+    await aria(page, rahoitusalue, "radio").then(e => e.click())
+  }
 
   await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
   await acceptBudget(page, budget)
@@ -1018,4 +1083,14 @@ export async function changeContactPersonEmail(page: Page, linkToMuutoshakemus: 
   await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
   await clearAndType(page, '#muutoshakemus__email', email)
   await clickElement(page, "#send-muutospyynto-button")
+}
+
+export async function aria(page: Page, text: string, role?: string): Promise<ElementHandle<Element>> {
+  let selector = "aria/" + text
+  if (role) selector += `[role="${role}"]`
+  const element = await page.waitForSelector(selector, { visible: true })
+  if (element === null) {
+    throw new Error(`Could not find element with selector ${selector}`)
+  }
+  return element
 }

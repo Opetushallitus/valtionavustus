@@ -5,7 +5,7 @@ const RadioRow = ({name, value, isSelected, allowEditing, onChange}) => {
 
   return (
     <div className={classes}>
-      <label>{value}
+      <label role="radio">{value}
         <input type="radio"
                name={name}
                value={value}

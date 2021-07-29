@@ -751,7 +751,7 @@ etunimi.sukunimi@oph.fi
     })
 
     describe('And creates new koodi', () => {
-      let code: number
+      let code: string
       beforeAll(async () => {
         code = await createUniqueCode(page)
       })
