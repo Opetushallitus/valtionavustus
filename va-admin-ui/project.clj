@@ -64,9 +64,7 @@
       :source-map true
       :optimizations :none
       :pretty-print  true}
-     :figwheel
-     {:on-jsload "oph.va.admin-ui.core/mount-root"
-      :open-urls ["http://localhost:8081/admin-ui/"]}}
+     }
     :release
     {:source-paths ["src" "env/prod/cljs"]
      :compiler
