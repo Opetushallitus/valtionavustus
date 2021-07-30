@@ -13,8 +13,10 @@ import {
   mkBrowser,
   navigate,
   setPageErrorConsoleLogger,
+  VIRKAILIJA_URL,
 } from '../test-util'
 import { ratkaiseMuutoshakemusEnabledAvustushaku } from '../muutoshakemus/muutospaatosprosessi-util'
+import axios from 'axios'
 
 jest.setTimeout(400_000)
 
@@ -78,8 +80,30 @@ describe("Maksatukset", () => {
     expect(await getBatchLKPTili(page, 1)).toEqual("82010000")
     expect(await getBatchTaKpTili(page, 1)).toEqual("29103020")
     expect(await getTiliönti(page, 1)).toEqual("99,999 €")
+
+
+    await simulateResponseXmlFromHandi(`
+      <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+      <VA-invoice>
+        <Header>
+          <Pitkaviite>${registerNumber}</Pitkaviite>
+          <Maksupvm>2018-06-08</Maksupvm>
+        </Header>
+      </VA-invoice>
+    `)
+
+    await page.reload()
+    await gotoLähetetytMaksatuksetTab(page)
+    expect(await getBatchStatus(page, 1)).toEqual("Maksettu")
   })
 })
+
+async function simulateResponseXmlFromHandi(xml: string): Promise<void> {
+  await axios.post(`${VIRKAILIJA_URL}/api/test/handle-payment-xml`, {
+    // The XML parser fails if the input doesn't start with "<?xml " hence the trimLeft
+    xml: xml.trimLeft(),
+  })
+}
 
 const getBatchPitkäViite = getSentPaymentBatchColumn(1)
 const getBatchStatus = getSentPaymentBatchColumn(2)

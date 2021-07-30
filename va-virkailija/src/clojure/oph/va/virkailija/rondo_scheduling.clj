@@ -16,13 +16,17 @@
 
 (def timeout-limit 600000)
 
+(defn handle-payment-response-xml [xml-string]
+  (payments-data/update-paymentstatus-by-response
+    (invoice/read-xml-string xml-string)))
+
 (defn pop-remote-files [list-of-files remote-service]
   (log/info "Will fetch the following files from Rondo: " list-of-files)
   (doseq [filename list-of-files]
     (get-remote-file remote-service filename)
     (try
       (payments-data/update-paymentstatus-by-response
-        (invoice/read-xml (get-local-file remote-service filename)))
+        (invoice/read-xml-file (get-local-file remote-service filename)))
 
       (delete-remote-file! remote-service filename)
       (clojure.java.io/delete-file (get-local-file remote-service filename))

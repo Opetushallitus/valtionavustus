@@ -57,3 +57,6 @@
 
 (defn either? [x coll]
   (true? (some #(= % x) coll)))
+
+(defn remove-white-spaces [str]
+  (clojure.string/replace str #"\s" ""))

@@ -4,6 +4,7 @@
             [clojure.set :as clj-set]
             [clojure.string :as string]
             [clojure.tools.logging :as log]
+            [oph.va.virkailija.utils :refer [remove-white-spaces]]
             [clj-time.core :as clj-time]
             [clj-time.format :as clj-time-format]
             [dk.ative.docjure.spreadsheet :as spreadsheet]
@@ -241,9 +242,6 @@
               (assoc answer-map field-name (lookup-fn hakemus)))
             answers
             fixed-fields)))
-
-(defn remove-white-spaces [str]
-  (string/replace str #"\s" ""))
 
 (defn- comma-to-dot [str]
   (string/replace str "," "."))

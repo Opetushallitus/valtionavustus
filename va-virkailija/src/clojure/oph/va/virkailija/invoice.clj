@@ -5,7 +5,9 @@
             [clj-time.core :as t]
             [clj-time.coerce :as c]
             [clj-time.format :as f]
-            [clojure.string :as c-str]))
+            [oph.va.virkailija.utils :refer [remove-white-spaces]]
+            [clojure.string :as c-str]
+            [clojure.java.io :as io]))
 
 (def organisations {"XA" 6600
                     "XE" 6600
@@ -102,7 +104,7 @@
          [:postingAmount (:payment-sum payment)]
          [:accountingObject01
             (let [toimintayksikko (get-in grant [:operational-unit :code])]
-              (if toimintayksikko (oph.va.virkailija.export/remove-white-spaces toimintayksikko) toimintayksikko))]
+              (if toimintayksikko (remove-white-spaces toimintayksikko) toimintayksikko))]
          [:accountingObject02 (:takp-account application)]
          [:accountingObject04 (get-in grant [:project :code])]
          [:accountingObject05 (get-in grant [:operation :code])]
@@ -149,8 +151,12 @@
   (with-open [out-file (java.io.FileWriter. file)]
     (emit tags out-file)))
 
-(defn read-xml [file]
+(defn read-xml-file [file]
   "Reads XML from file path and returns xml document of
   clojure.data.xml.elements."
   (with-open [input (java.io.FileInputStream. file)]
+    (parse input)))
+
+(defn read-xml-string [s]
+  (with-open [input (io/input-stream (.getBytes s "UTF-8"))]
     (parse input)))

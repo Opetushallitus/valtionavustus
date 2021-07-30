@@ -10,16 +10,16 @@ function initialize {
 
 function run_tests {
 	npm run puppeteer:test "$@"
-	npm run soresu-form:test "$@"
-	npm run common:test "$@"
-	npm run hakija:test "$@"
-	npm run virkailija:test "$@"
+	#npm run soresu-form:test "$@"
+	#npm run common:test "$@"
+	#npm run hakija:test "$@"
+	#npm run virkailija:test "$@"
 }
 
 function main {
   initialize
   run_tests "$@"
-  make lein-test
+  #make lein-test
 }
 
 main "$@"

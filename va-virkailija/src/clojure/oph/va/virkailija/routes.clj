@@ -25,6 +25,7 @@
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.authentication :as authentication]
             [oph.va.virkailija.authorization :as authorization]
+            [oph.va.virkailija.rondo-scheduling :refer [handle-payment-response-xml]]
             [oph.soresu.form.schema :as form-schema]
             [oph.va.schema :as va-schema]
             [oph.va.virkailija.schema :as virkailija-schema]
@@ -607,6 +608,17 @@
                      (ok (tapahtumaloki/get-tapahtumaloki-entries tyyppi avustushaku-id))))
 
 (compojure-api/defroutes test-api-routes
+  (compojure-api/POST "/handle-payment-xml" []
+    :body  [body { :xml s/Str }]
+    :return {:message s/Str}
+    (log/info "test-api: handling payment xml file")
+    (try
+       (handle-payment-response-xml (:xml body))
+       (ok {:message "SUCCESS"})
+       (catch Exception e
+         (log/error e)
+         (internal-server-error {:message "error"}))))
+
   (compojure-api/POST "/avustushaku/:avustushaku-id/set-muutoshakukelpoisuus" []
     :path-params [avustushaku-id :- Long]
     :body  [body (compojure-api/describe { :muutoshakukelpoinen s/Bool } "Juuh")]
