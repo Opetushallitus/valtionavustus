@@ -67,9 +67,9 @@ export function setPageErrorConsoleLogger(page: Page) {
 export async function clickClojureScriptKäliTab(page: Page, testId: string): Promise<void> {
   // For some mysterious reason clicking too fast on tab doesn't work
   // and I don't know of any indication when the tab link/button starts working
-  await page.waitForTimeout(5000)
+  await page.waitForTimeout(10000)
   await clickElementWithTestId(page, testId)
-  await page.waitForTimeout(1000)
+  await page.waitForTimeout(10000)
 }
 
 export async function getElementInnerText(page: Page | Frame, selector: string): Promise<string | undefined> {
