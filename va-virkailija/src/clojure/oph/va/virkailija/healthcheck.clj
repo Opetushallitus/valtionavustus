@@ -41,7 +41,7 @@
 
 (defn check-rondo-status []
   (let [rondo-service (rondo-service/create-service
-                        (get-in config [:server :rondo-sftp]))
+                        (get-in config [:server :payment-service-sftp]))
         result (with-timeout
                  #(try
                     (get-remote-file-list rondo-service)

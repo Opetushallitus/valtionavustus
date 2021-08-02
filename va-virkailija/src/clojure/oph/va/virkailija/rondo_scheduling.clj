@@ -68,7 +68,7 @@
   [ctx]
   (log/info "Running scheduled fetch of payments now from rondo!")
   (let [remote-service (rondo-service/create-service
-                         (get-in config [:server :rondo-sftp]))]
+                         (get-in config [:server :payment-service-sftp]))]
           (get-statuses-of-payments remote-service)))
 
 (defn schedule-fetch-from-rondo []

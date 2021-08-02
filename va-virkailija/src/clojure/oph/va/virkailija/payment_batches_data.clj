@@ -50,7 +50,7 @@
 
 (defn send-to-rondo! [payment application grant filename batch]
   (let [rondo-service (rondo-service/create-service
-                        (get-in config [:server :rondo-sftp]))]
+                        (get-in config [:server :payment-service-sftp]))]
   (with-timeout
     #(try
        (send-payment-to-rondo! rondo-service
