@@ -12,8 +12,9 @@
 (defn- render-payment [i payment]
   [table/table-row {:key i}
    [table/table-row-column
-    {:style (assoc theme/narrow-column :text-align "right")}
-    (:register-number payment)]
+    {:style (assoc theme/semi-narrow-column :text-align "right")
+     :title (:pitkaviite payment)}
+    (:pitkaviite payment)]
    [table/table-row-column
     {:style theme/narrow-column}
     (:paymentstatus-str payment)]
@@ -99,9 +100,9 @@
            [table/table-row
             [table/sortable-header-column
              {:title "Pitkäviite"
-              :column-key :register-number
+              :column-key :pitkaviite
               :sort-params @sort-params
-              :style theme/narrow-column
+              :style theme/semi-narrow-column
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
             [table/sortable-header-column

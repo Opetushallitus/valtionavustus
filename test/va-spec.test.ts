@@ -70,6 +70,7 @@ import {
   clickToSendTäydennyspyyntö,
   resendPäätökset,
   changeContactPersonEmail,
+  randomAsiatunnus,
 } from './test-util'
 import {
   createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku,
@@ -108,7 +109,7 @@ describe("Puppeteer tests", () => {
   })
 
   it("should allow removing attachment from hakemus", async function() {
-    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
 
     await publishAvustushaku(page)
     await fillAndSendHakemus(page, avustushakuID, async function() {
@@ -120,7 +121,7 @@ describe("Puppeteer tests", () => {
   describe("should allow basic avustushaku flow and check each hakemus has valmistelija", () => {
     const allowBasicAvustushakuFlowAndCheckEachHakemusHasValmistelija = (getPage: () => Page, multiplePaymentBatches: boolean) => async () => {
       const page = getPage()
-      const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+      const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
   
       if (multiplePaymentBatches) {
         await clickElement(page, "label[for='set-maksuera-true']")
@@ -166,7 +167,7 @@ describe("Puppeteer tests", () => {
 
   it("shows the same updated date on the Päätös tab as on the Väliselvitys and Loppuselvitys tabs", async function() {
 
-    await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+    await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
 
     await clickElementWithText(page, "span", "Päätös")
     const paatosUpdatedAt = getElementInnerText(page, "#paatosUpdatedAt")
@@ -191,7 +192,7 @@ describe("Puppeteer tests", () => {
     let avustushakuId: number
 
     beforeAll(async () => {
-      avustushakuId = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+      avustushakuId = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
       await clickElementWithText(page, "span", "Päätös")
       originalPaatosTimestamp = await textContent(page, "#paatosUpdatedAt")
 
@@ -279,7 +280,7 @@ describe("Puppeteer tests", () => {
 
   it("supports fields that accept only decimals", async function() {
 
-    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
     const { fieldId, fieldLabel } = await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, avustushakuID, "decimalField")
 
     await clickElementWithText(page, "span", "Haun tiedot")
@@ -293,7 +294,7 @@ describe("Puppeteer tests", () => {
 
   it("supports fields that accept only whole numbers", async function() {
 
-    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
     const { fieldId, fieldLabel } = await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, avustushakuID, "integerField")
 
     await clickElementWithText(page, "span", "Haun tiedot")
@@ -307,7 +308,7 @@ describe("Puppeteer tests", () => {
 
   it("supports editing and saving the values of the fields", async function() {
 
-    await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+    await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
     await clickElementWithText(page, "span", "Hakulomake")
     await page.waitForFunction(() => (document.querySelector("button#saveForm") as HTMLInputElement).disabled === true)
     await clearAndType(page, "textarea[name='duration-help-text-fi']", "Gimblegamble")
@@ -348,7 +349,7 @@ describe("Puppeteer tests", () => {
 
   it("should allow user to add koodistokenttä to form and save it", async function() {
 
-    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
     await navigate(page, `/admin/form-editor/?avustushaku=${avustushakuID}`)
     // Add new Koodistokenttä
     await page.hover(".soresu-field-add-header")
@@ -372,7 +373,7 @@ describe("Puppeteer tests", () => {
     const randomValueForProjectNutshell = randomString()
 
     beforeAll(async () => {
-      avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+      avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
       fieldId = (await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "project-goals", "textField")).fieldId
 
       await clickElementWithText(page, "span", "Haun tiedot")
@@ -485,7 +486,7 @@ describe("Puppeteer tests", () => {
     const randomValueForProjectNutshell = randomString()
 
     beforeAll(async () => {
-      avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+      avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
       fieldId = (await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "project-nutshell", "textField")).fieldId
 
       await clickElementWithText(page, "span", "Haun tiedot")
@@ -534,7 +535,7 @@ describe("Puppeteer tests", () => {
     let avustushakuID: number
     let hakemusID: number
     const haku = {
-      registerNumber: "230/2015",
+      registerNumber: randomAsiatunnus(),
       avustushakuName: `Muutoshakukelvoton menoluokallinen haku - ${moment(new Date()).format('YYYY-MM-DD HH:mm:ss:SSSS')}`
     }
 
@@ -842,7 +843,7 @@ etunimi.sukunimi@oph.fi
   describe("Standardized avustushaku", () => {
     it("Create and fill standardized avustushaku", async () => {
       // Create standardized avustushaku
-      const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, "standardized avustushaku", "69/420")
+      const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus(), "standardized avustushaku")
       await clickElementWithText(page, "span", "Hakulomake")
       await clearAndSet(page, ".form-json-editor textarea", standardizedHakulomakeJson)
       await clickFormSaveAndWait(page, avustushakuID)

@@ -276,6 +276,7 @@
    (s/optional-key :application-version) s/Int
    :paymentstatus-id PaymentStatus
    (s/optional-key :filename) (s/maybe s/Str)
+   :pitkaviite s/Str
    (s/optional-key :user-name) s/Str
    (s/optional-key :batch-id) (s/maybe s/Int)
    :phase (s/maybe s/Int)

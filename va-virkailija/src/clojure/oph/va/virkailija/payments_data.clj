@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.payments-data
   (:require
-   [oph.soresu.common.db :refer [exec exec-all]]
+   [oph.soresu.common.db :refer [exec exec-all query]]
+   [oph.soresu.common.config :refer [feature-enabled?]]
    [oph.va.virkailija.utils
     :refer [convert-to-dash-keys convert-to-underscore-keys update-some]]
    [clj-time.coerce :as c]
@@ -77,12 +78,26 @@
 (defn- store-payment [payment]
   (exec queries/create-payment payment))
 
+(defn generate-pitkaviite-for-payment [hakemus payment]
+  (let [contact-person (application-data/get-application-contact-person-name (:id hakemus))]
+    (if (and (feature-enabled? :contact-person-name-in-pitkaviite)
+             (some? contact-person))
+      (format "%s_%s %s"
+              (:register-number hakemus)
+              (inc (:phase payment))
+              contact-person)
+      (format "%s_%s"
+              (:register-number hakemus)
+              (inc (:phase payment))))))
+
 (defn create-payment [payment-data identity]
   (let [application (application-data/get-application
-                      (:application-id payment-data))]
+                      (:application-id payment-data))
+        pitkaviite (generate-pitkaviite-for-payment application payment-data)]
     (-> payment-data
         (assoc :application-version (:version application)
-               :grant-id (:grant-id application))
+               :grant-id (:grant-id application)
+               :pitkaviite pitkaviite)
         (merge (get-user-info identity))
         convert-to-underscore-keys
         store-payment

@@ -36,6 +36,7 @@ import {
   getHakemusTokenAndRegisterNumber,
   navigateToHakemuksenArviointi,
   createRandomHakuValues,
+  randomAsiatunnus,
 } from '../test-util'
 import {
   ratkaiseMuutoshakemusEnabledAvustushaku,
@@ -811,13 +812,15 @@ etunimi.sukunimi@oph.fi`)
         name,
         hankkeenAlkamispaiva,
         hankkeenPaattymispaiva,
+        registerNumber: randomAsiatunnus(),
       })
     })
 
     describe('And creates avustushaku #2', () => {
       beforeAll(async () => {
         await createHakuFromEsimerkkihaku(page, {
-          name: `Makuulla hatata - haku ${randomString()}`
+          name: `Makuulla hatata - haku ${randomString()}`,
+          registerNumber: randomAsiatunnus(),
         })
       })
 

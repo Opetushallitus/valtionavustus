@@ -226,7 +226,7 @@ export interface MailWithLinks extends Email {
   linkToMuutoshakemus: string | undefined
 }
 
-export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page, hakuName?: string, registerNumber?: string, vaCodes?: VaCodeValues): Promise<number> {
+export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page, registerNumber: string, hakuName?: string, vaCodes?: VaCodeValues): Promise<number> {
   return await createHakuFromEsimerkkihaku(page, {
     name: hakuName,
     registerNumber: registerNumber,
@@ -236,7 +236,7 @@ export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(page: Page
 
 interface HakuProps {
   name?: string
-  registerNumber?: string
+  registerNumber: string
   hakuaikaStart?: string
   hakuaikaEnd?: string
   hankkeenAlkamispaiva?: string
@@ -270,7 +270,7 @@ export async function createHakuFromEsimerkkihaku(page: Page, props: HakuProps):
   const avustushakuID = parseInt(await expectQueryParameter(page, "avustushaku"))
   console.log(`Avustushaku ID: ${avustushakuID}`)
 
-  await clearAndType(page, "#register-number", registerNumber || "230/2015")
+  await clearAndType(page, "#register-number", registerNumber || randomAsiatunnus())
   await clearAndType(page, "#haku-name-fi", avustushakuName)
   await clearAndType(page, "#haku-name-sv", avustushakuName + ' på svenska')
 
@@ -364,7 +364,7 @@ export async function navigateToNewHakemusPage(page: Page, avustushakuID: number
 
 export function createRandomHakuValues(name: string = 'Muutospäätösprosessi') {
   return {
-    registerNumber: "230/2015",
+    registerNumber: randomAsiatunnus(),
     avustushakuName: `Testiavustushaku (${name}) ${randomString()} - ${moment(new Date()).format('YYYY-MM-DD hh:mm:ss:SSSS')}`
   }
 }
@@ -443,6 +443,14 @@ export async function closeAvustushakuByChangingEndDateToPast(page: Page, avustu
 
 export function mkAvustushakuName() {
   return "Testiavustushaku " + randomString()
+}
+
+export function randomAsiatunnus(): string {
+  return `${randomInt(1,99999)}/${randomInt(10,999999)}`
+}
+
+function randomInt(min: number, max: number): number {
+  return min + Math.ceil(Math.random() * (max - min))
 }
 
 export function randomString(): string {
@@ -638,7 +646,7 @@ export async function createValidCopyOfLukioEsimerkkihakuWithValintaperusteetAnd
 
   console.log(`Avustushaku ID: ${avustushakuID}`)
 
-  await clearAndType(page, "#register-number", "230/2015")
+  await clearAndType(page, "#register-number", randomAsiatunnus())
   await clearAndType(page, "#haku-name-fi", avustushakuName)
   await clearAndType(page, "#hakuaika-start", "1.1.1970 0.00")
 
@@ -990,7 +998,7 @@ export async function selectVakioperusteluInFinnish(page: Page): Promise<void> {
 
 /** @deprecated Tää tekee jonku hädin tuskin toimivan avustushaun :DD */
 export async function ratkaiseAvustushaku(page: Page, hakuName?: string, vaCodes?: VaCodeValues) {
-  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, hakuName, undefined, vaCodes)
+  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus(), hakuName, vaCodes)
   await publishAvustushaku(page)
   await fillAndSendHakemus(page, avustushakuID)
 

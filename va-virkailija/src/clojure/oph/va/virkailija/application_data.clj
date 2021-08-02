@@ -1,5 +1,5 @@
 (ns oph.va.virkailija.application-data
-  (:require [oph.soresu.common.db :refer [exec]]
+  (:require [oph.soresu.common.db :refer [exec query]]
             [oph.va.virkailija.db :as va-db]
             [oph.va.virkailija.utils :refer [convert-to-dash-keys]]
             [clj-time.core :as t]
@@ -16,6 +16,23 @@
   (convert-to-dash-keys
     (first (exec virkailija-queries/get-application-full-evaluation
                  {:application_id application-id}))))
+
+(defn get-application-contact-person-name [hakemus-id]
+  (:contact-person (first (query
+    "SELECT
+       coalesce(
+         normalized_hakemus.contact_person,
+         answer->>'value'
+       ) as contact_person
+     FROM hakemukset
+       LEFT JOIN normalized_hakemus ON (normalized_hakemus.hakemus_id = hakemukset.id)
+       JOIN form_submissions ON (
+         hakemukset.form_submission_id = form_submissions.id
+         AND hakemukset.form_submission_version = form_submissions.version
+       )
+       JOIN jsonb_array_elements(answers->'value') answer ON (answer.value->>'key' = 'applicant-name')
+     WHERE hakemukset.id = ? AND hakemukset.version_closed IS NULL"
+    [hakemus-id]))))
 
 (defn get-application [id]
   (convert-to-dash-keys

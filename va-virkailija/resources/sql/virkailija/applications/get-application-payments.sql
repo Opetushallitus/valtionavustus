@@ -1,11 +1,30 @@
 SELECT
-  id, version, version_closed, created_at, application_id, application_version,
-  paymentstatus_id, filename, user_name, batch_id, payment_sum, phase
+  payments.id,
+  payments.version,
+  payments.version_closed,
+  payments.created_at,
+  payments.application_id,
+  payments.application_version,
+  payments.paymentstatus_id,
+  payments.filename,
+  payments.user_name,
+  payments.batch_id,
+  payments.payment_sum,
+  payments.phase,
+  coalesce(
+    payments.pitkaviite,
+    hakemukset.register_number
+  ) as pitkaviite
 FROM
   virkailija.payments
+JOIN
+  hakija.hakemukset ON (
+    hakemukset.id = payments.application_id
+    AND hakemukset.version = payments.application_version
+  )
 WHERE
   application_id = :application_id AND
-  version_closed IS NULL AND
+  payments.version_closed IS NULL AND
   deleted IS NULL
 ORDER
   BY id;

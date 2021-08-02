@@ -43,6 +43,14 @@
        (mod (t/year (c/to-date-time (:created-at batch))) 100)
        (:batch-number batch)))))
 
+(defn generate-implicit-pitkäviite [payment application]
+  (format "%s_%s" (:register-number application) (inc (:phase payment))))
+
+(defn get-pitkäviite [payment application]
+  (if-some [pitkaviite (:pitkaviite payment)]
+    pitkaviite
+    (generate-implicit-pitkäviite payment application)))
+
 (defn payment-to-invoice [{:keys [payment application grant batch]}]
   (let [answers (:answers application)
         document (some
@@ -65,9 +73,7 @@
       [:invoiceNumber (format
                         "%s_%s"
                         (:register-number application) (inc (:phase payment)))]
-      [:longReference (format
-                     "%s_%s"
-                     (:register-number application) (inc (:phase payment)))]
+      [:longReference (get-pitkäviite payment application)]
       [:documentDate (.toString (:invoice-date batch))]
       [:dueDate (.toString (:due-date batch))]
       [:paymentTerm "Z001"]
@@ -114,13 +120,18 @@
 
 (defn valid-pitkaviite? [pitkaviite]
   (and pitkaviite
-       (re-seq #"^\d+\/\d+\/\d+(_\d+)?$" pitkaviite)))
+       (re-seq #"^\d+\/\d+\/\d+(_\d+)?( .+)?$" pitkaviite)))
+
+(defn strip-contact-person-name [s]
+  (if (c-str/includes? s " ")
+    (first (c-str/split s #" "))
+    s))
 
 (defn parse-pitkaviite
   ([pitkaviite default-phase]
   (when-not (valid-pitkaviite? pitkaviite)
     (throw (ex-info "Invalid pitkäviite" {:value pitkaviite})))
-  (let [[body phase] (c-str/split pitkaviite #"_")]
+  (let [[body phase] (c-str/split (strip-contact-person-name pitkaviite) #"_")]
     {:register-number body
      :phase (if (seq phase)
               (dec (Integer/parseInt phase))

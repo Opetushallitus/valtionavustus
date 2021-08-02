@@ -68,24 +68,24 @@ export async function getUserKeyFromPaatosEmail(hakemusID: number): Promise<stri
   return userKey
 }
 
-async function createHakuWithLomakeJson(page: Page, lomakeJson: string, hakuName?: string, registerNumber?: string, codes?: VaCodeValues): Promise<{ avustushakuID: number }> {
-  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, hakuName, registerNumber, codes)
+async function createHakuWithLomakeJson(page: Page, lomakeJson: string, registerNumber: string, hakuName?: string, codes?: VaCodeValues): Promise<{ avustushakuID: number }> {
+  const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, registerNumber, hakuName, codes)
   await clickElementWithText(page, "span", "Hakulomake")
   await clearAndSet(page, ".form-json-editor textarea", lomakeJson)
   await clickFormSaveAndWait(page, avustushakuID)
   return { avustushakuID }
 }
 
-async function createMuutoshakemusEnabledHaku(page: Page, hakuName?: string, registerNumber?: string, codes?: VaCodeValues): Promise<{ avustushakuID: number }> {
-  return await createHakuWithLomakeJson(page, muutoshakemusEnabledHakuLomakeJson, hakuName, registerNumber, codes)
+async function createMuutoshakemusEnabledHaku(page: Page, registerNumber: string, hakuName?: string, codes?: VaCodeValues): Promise<{ avustushakuID: number }> {
+  return await createHakuWithLomakeJson(page, muutoshakemusEnabledHakuLomakeJson, registerNumber, hakuName, codes)
 }
 
-async function createBudjettimuutoshakemusEnabledHaku(page: Page, hakuName?: string, registerNumber?: string): Promise<{ avustushakuID: number }> {
-  return await createHakuWithLomakeJson(page, budjettimuutoshakemusEnabledLomakeJson, hakuName, registerNumber)
+async function createBudjettimuutoshakemusEnabledHaku(page: Page, registerNumber: string, hakuName?: string): Promise<{ avustushakuID: number }> {
+  return await createHakuWithLomakeJson(page, budjettimuutoshakemusEnabledLomakeJson, registerNumber, hakuName)
 }
 
 export async function createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku(page: Page, haku: Haku): Promise<number> {
-  const { avustushakuID } = await createMuutoshakemusDisabledMenoluokiteltuHaku(page, haku.avustushakuName, haku.registerNumber)
+  const { avustushakuID } = await createMuutoshakemusDisabledMenoluokiteltuHaku(page, haku.registerNumber, haku.avustushakuName)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
   await markAvustushakuAsMuutoshakukelvoton(avustushakuID)
@@ -178,8 +178,8 @@ export async function fillAndSendMuutoshakemusDisabledMenoluokiteltuHakemus(page
   return await getHakemusIDFromHakemusTokenURLParameter(page)
 }
 
-async function createMuutoshakemusDisabledMenoluokiteltuHaku(page: Page, hakuName?: string, registerNumber?: string): Promise<{ avustushakuID: number }> {
-  return await createHakuWithLomakeJson(page, muutoshakuDisabledMenoluokiteltuLomakeJson, hakuName, registerNumber)
+async function createMuutoshakemusDisabledMenoluokiteltuHaku(page: Page, registerNumber: string, hakuName?: string): Promise<{ avustushakuID: number }> {
+  return await createHakuWithLomakeJson(page, muutoshakuDisabledMenoluokiteltuLomakeJson, registerNumber, hakuName)
 }
 
 export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void): Promise<{ userKey: string }> {
@@ -231,7 +231,7 @@ export async function fillAndSendMuutoshakemusEnabledHakemus(page: Page, avustus
 }
 
 export async function publishAndFillMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers): Promise<{ avustushakuID: number, userKey: string }> {
-  const { avustushakuID } = await createMuutoshakemusEnabledHaku(page, haku.avustushakuName, haku.registerNumber)
+  const { avustushakuID } = await createMuutoshakemusEnabledHaku(page, haku.registerNumber, haku.avustushakuName)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
   const { userKey } = await fillAndSendMuutoshakemusEnabledHakemus(page, avustushakuID, answers)
@@ -260,7 +260,7 @@ async function createCodeValuesForTest(page: Page): Promise<VaCodeValues> {
 }
 
 export async function createMuutoshakemusEnabledAvustushakuAndFillHakemus(page: Page, haku: Haku, answers: Answers, codes?: VaCodeValues): Promise<{ avustushakuID: number, userKey: string }> {
-  const { avustushakuID } = await createMuutoshakemusEnabledHaku(page, haku.avustushakuName, haku.registerNumber, codes)
+  const { avustushakuID } = await createMuutoshakemusEnabledHaku(page, haku.registerNumber, haku.avustushakuName, codes)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
   const { userKey } = await fillAndSendMuutoshakemusEnabledHakemus(page, avustushakuID, answers)
@@ -268,7 +268,7 @@ export async function createMuutoshakemusEnabledAvustushakuAndFillHakemus(page: 
 }
 
 export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(page: Page, haku: Haku, answers: Answers, budget: Budget) {
-  const { avustushakuID } = await createBudjettimuutoshakemusEnabledHaku(page, haku.avustushakuName, haku.registerNumber)
+  const { avustushakuID } = await createBudjettimuutoshakemusEnabledHaku(page, haku.registerNumber, haku.avustushakuName)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
   await fillAndSendBudjettimuutoshakemusEnabledHakemus(page, avustushakuID, answers, budget)
@@ -276,7 +276,7 @@ export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSum
 }
 
 export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page: Page, haku: Haku, answers: Answers, budget: Budget) {
-  const { avustushakuID } = await createBudjettimuutoshakemusEnabledHaku(page, haku.avustushakuName, haku.registerNumber)
+  const { avustushakuID } = await createBudjettimuutoshakemusEnabledHaku(page, haku.registerNumber, haku.avustushakuName)
   await clickElementWithText(page, "span", "Haun tiedot")
   await publishAvustushaku(page)
   const { userKey } = await fillAndSendBudjettimuutoshakemusEnabledHakemus(page, avustushakuID, answers, budget)
@@ -306,7 +306,7 @@ export async function validateMuutoshakemusValues(page: Page, muutoshakemus: Muu
 export async function validateMuutoshakemusPaatosCommonValues(page: Page) {
   await page.waitForSelector('div.muutoshakemus-paatos__content')
   const register = await page.$eval('[data-test-id="paatos-register-number"]', el => el.textContent)
-  expect(register).toMatch(/[0-9]{1,3}\/[0-9]{3}\/[0-9]{4}/)
+  expect(register).toMatch(/[0-9]{1,3}\/[0-9]{1,5}\/[0-9]{2,6}/)
   const project = await page.$eval('[data-test-id="paatos-project-name"]', el => el.textContent)
   expect(project).toEqual('Rahassa kylpijät Ky Ay Oy')
   const org = await page.$eval('h1.muutoshakemus-paatos__org', el => el.textContent)

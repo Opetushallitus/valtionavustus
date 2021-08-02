@@ -11,6 +11,7 @@ import {
   mkBrowser,
   navigate,
   publishAvustushaku,
+  randomAsiatunnus,
   setPageErrorConsoleLogger,
   verifyText,
   verifyTooltipText
@@ -45,7 +46,7 @@ describe("Tooltips", () => {
     let avustushakuID: number
 
     beforeAll(async () => {
-      avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page)
+      avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
     })
 
     describe('And user navigates to admin page', () => {

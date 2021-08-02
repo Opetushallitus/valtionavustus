@@ -17,6 +17,7 @@
                     :scheduling "0 00 04 ? * *"
                     :strict-host-key-checking :yes}
  :payments {:enabled? true :delete-payments? true}
+ :contact-person-name-in-pitkaviite {:enabled? false}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
  :sisaltomuutos {:enabled? true}

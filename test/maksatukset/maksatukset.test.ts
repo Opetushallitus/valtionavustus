@@ -24,6 +24,7 @@ describe("Maksatukset", () => {
   let browser: Browser
   let page: Page
   let hakemusID: number
+  let avustushakuID: number
 
   beforeAll(async () => {
     browser = await mkBrowser()
@@ -44,7 +45,7 @@ describe("Maksatukset", () => {
     log(`Finished test: ${expect.getState().currentTestName}`)
   })
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const x = await ratkaiseMuutoshakemusEnabledAvustushaku(page, createRandomHakuValues("Maksatukset"), {
       contactPersonEmail: "erkki.esimerkki@example.com",
       contactPersonName: "Erkki Esimerkki",
@@ -52,11 +53,12 @@ describe("Maksatukset", () => {
       projectName: "Rahassa kylpijät Ky Ay Oy",
     })
     hakemusID = x.hakemusID
+    avustushakuID = x.avustushakuID
 
     await navigate(page, "/admin-ui/payments/")
   })
 
-  it("should work", async () => {
+  it("work with pitkaviite without contact person name", async () => {
     await clickElement(page, "#Tositepäivämäärä")
     await page.keyboard.press("Enter")
 
@@ -68,10 +70,14 @@ describe("Maksatukset", () => {
     await expectingLoadingProgressBar(page, "Lähetetään maksatuksia", () =>
       aria(page, "Lähetä maksatukset").then(e => e.click()))
 
+    await removeStoredPitkäviiteFromAllAvustushakuPayments(avustushakuID)
+    await page.reload({ waitUntil: ["load", "networkidle0"]})
+
     await gotoLähetetytMaksatuksetTab(page)
     const { "register-number": registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
+    const pitkaviite = registerNumber
 
-    expect(await getBatchPitkäViite(page, 1)).toEqual(registerNumber)
+    expect(await getBatchPitkäViite(page, 1)).toEqual(pitkaviite)
     expect(await getBatchStatus(page, 1)).toEqual("Lähetetty")
     expect(await getBatchToimittajanNimi(page, 1)).toEqual("Akaan kaupunki")
     expect(await getBatchHanke(page, 1)).toEqual("Rahassa kylpijät Ky Ay Oy")
@@ -86,7 +92,49 @@ describe("Maksatukset", () => {
       <?xml version="1.0" encoding="UTF-8" standalone="no"?>
       <VA-invoice>
         <Header>
-          <Pitkaviite>${registerNumber}</Pitkaviite>
+          <Pitkaviite>${pitkaviite}</Pitkaviite>
+          <Maksupvm>2018-06-08</Maksupvm>
+        </Header>
+      </VA-invoice>
+    `)
+
+    await page.reload()
+    await gotoLähetetytMaksatuksetTab(page)
+    expect(await getBatchStatus(page, 1)).toEqual("Maksettu")
+  })
+
+  it("work with pitkaviite with contact person name", async () => {
+    await clickElement(page, "#Tositepäivämäärä")
+    await page.keyboard.press("Enter")
+
+    await clearAndType(page, "[data-test-id=maksatukset-asiakirja--asha-tunniste]", "asha pasha")
+    await clearAndType(page, "[data-test-id=maksatukset-asiakirja--esittelijan-sahkopostiosoite]", "essi.esittelija@example.com")
+    await clearAndType(page, "[data-test-id=maksatukset-asiakirja--hyvaksyjan-sahkopostiosoite]", "hygge.hyvaksyja@example.com")
+    await clickElement(page, "[data-test-id=maksatukset-asiakirja--lisaa-asiakirja]")
+
+    await expectingLoadingProgressBar(page, "Lähetetään maksatuksia", () =>
+      aria(page, "Lähetä maksatukset").then(e => e.click()))
+
+    await gotoLähetetytMaksatuksetTab(page)
+    const { "register-number": registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
+    const pitkaviite = `${registerNumber}_1 Erkki Esimerkki`
+
+    expect(await getBatchPitkäViite(page, 1)).toEqual(pitkaviite)
+    expect(await getBatchStatus(page, 1)).toEqual("Lähetetty")
+    expect(await getBatchToimittajanNimi(page, 1)).toEqual("Akaan kaupunki")
+    expect(await getBatchHanke(page, 1)).toEqual("Rahassa kylpijät Ky Ay Oy")
+    expect(await getBatchMaksuun(page, 1)).toEqual("99,999 €")
+    expect(await getBatchIBAN(page, 1)).toEqual("FI95 6682 9530 0087 65")
+    expect(await getBatchLKPTili(page, 1)).toEqual("82010000")
+    expect(await getBatchTaKpTili(page, 1)).toEqual("29103020")
+    expect(await getTiliönti(page, 1)).toEqual("99,999 €")
+
+
+    await simulateResponseXmlFromHandi(`
+      <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+      <VA-invoice>
+        <Header>
+          <Pitkaviite>${pitkaviite}</Pitkaviite>
           <Maksupvm>2018-06-08</Maksupvm>
         </Header>
       </VA-invoice>
@@ -103,6 +151,10 @@ async function simulateResponseXmlFromHandi(xml: string): Promise<void> {
     // The XML parser fails if the input doesn't start with "<?xml " hence the trimLeft
     xml: xml.trimLeft(),
   })
+}
+
+async function removeStoredPitkäviiteFromAllAvustushakuPayments(avustushakuId: number): Promise<void> {
+  await axios.post(`${VIRKAILIJA_URL}/api/test/remove-stored-pitkaviite-from-all-avustushaku-payments`, { avustushakuId })
 }
 
 const getBatchPitkäViite = getSentPaymentBatchColumn(1)

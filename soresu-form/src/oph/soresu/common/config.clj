@@ -46,6 +46,9 @@
          (merge-with-secrets)
          (merge-with-defaults))))
 
+(defn feature-enabled? [flag]
+  (get-in config [flag :enabled?]))
+
 (defn without-authentication? []
   (let [use-fake-auth (-> config :server :without-authentication?)]
     (when (and use-fake-auth (not= "dev" environment))

@@ -195,6 +195,7 @@
                [{:key "business-id" :value "1234567-1" :fieldType "textArea"}
                 {:key "bank-iban" :value "FI4250001510000023" :fieldType "textArea"}
                 {:key "bank-bic" :value "OKOYFIHH" :fieldType "textArea"}
+                {:key "applicant-name" :value "Teppo Testaaja" :fieldType "textField"}
                 {:key "bank-country" :value "FI" :fieldType "textArea"}
                 {:key "address" :value "Someroad 1" :fieldType "textArea"}
                 {:key "city" :value "Some City" :fieldType "textArea"}
@@ -249,7 +250,7 @@
                [:bic "OKOYFIHH"]
                [:bankAccount "FI4250001510000023"]
                [:invoiceNumber "123/456/78_1"]
-               [:longReference "123/456/78_1"]
+               [:longReference "123/456/78_1 Teppo Testaaja"]
                [:documentDate "2017-12-20"]
                [:dueDate "2017-12-27"]
                [:paymentTerm "Z001"]

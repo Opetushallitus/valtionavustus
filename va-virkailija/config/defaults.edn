@@ -42,6 +42,7 @@
             :cache-max-refresh-interval-in-s 10800}
  :rondo-scheduler {:enabled? false}
  :payments {:enabled? true}
+ :contact-person-name-in-pitkaviite {:enabled? false}
  :multibatch-payments {:enabled? true}
  :va-code-values {:enabled? true}
  :reports {:enabled? true}

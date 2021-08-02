@@ -40,7 +40,7 @@ describe('Avustushaku filtering', () => {
     let avustushaku1ID: number
 
     beforeAll(async () => {
-      avustushaku1ID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, haku1.avustushakuName, haku1.registerNumber)
+      avustushaku1ID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, haku1.registerNumber, haku1.avustushakuName)
       await publishAvustushaku(page)
     })
 
@@ -48,7 +48,7 @@ describe('Avustushaku filtering', () => {
       const haku2 = createRandomHakuValues('filter')
 
       beforeAll(async () => {
-        const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, haku2.avustushakuName, haku2.registerNumber)
+        const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, haku2.registerNumber, haku2.avustushakuName)
         await publishAvustushaku(page)
         await navigate(page, `/avustushaku/${avustushakuID}/`)
       })

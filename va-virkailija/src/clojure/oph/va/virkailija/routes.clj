@@ -6,7 +6,7 @@
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
-            [oph.soresu.common.db :refer [exec query with-tx]]
+            [oph.soresu.common.db :refer [exec query execute! with-tx]]
             [clojure.java.jdbc :as jdbc]
             [compojure.core :as compojure]
             [compojure.route :as compojure-route]
@@ -618,6 +618,24 @@
        (catch Exception e
          (log/error e)
          (internal-server-error {:message "error"}))))
+
+  (compojure-api/POST "/remove-stored-pitkaviite-from-all-avustushaku-payments" []
+    :body  [body { :avustushakuId s/Num }]
+    :return {:message s/Str}
+    (log/info "test-api: Removing stored pitkäviite from all payments on avustushaku " (:avustushakuId body))
+    (try
+      (execute! "UPDATE payments
+                 SET pitkaviite = null
+                 FROM hakemukset
+                 WHERE
+                   hakemukset.avustushaku = ?
+                   AND payments.application_id = hakemukset.id
+                   AND payments.application_version = hakemukset.version"
+                [(:avustushakuId body)])
+      (ok {:message "SUCCESS"})
+      (catch Exception e
+        (log/error e)
+        (internal-server-error {:message "error"}))))
 
   (compojure-api/POST "/avustushaku/:avustushaku-id/set-muutoshakukelpoisuus" []
     :path-params [avustushaku-id :- Long]
