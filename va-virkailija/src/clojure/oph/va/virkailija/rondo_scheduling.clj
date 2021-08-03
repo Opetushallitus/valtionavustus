@@ -25,8 +25,9 @@
   (doseq [filename list-of-files]
     (get-remote-file remote-service filename)
     (try
-      (payments-data/update-paymentstatus-by-response
-        (invoice/read-xml-file (get-local-file remote-service filename)))
+      (let [xml (slurp (get-local-file remote-service filename))]
+        (log/info "Handling payment response XML: " xml)
+        (handle-payment-response-xml xml))
 
       (delete-remote-file! remote-service filename)
       (clojure.java.io/delete-file (get-local-file remote-service filename))
