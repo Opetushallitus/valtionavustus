@@ -65,11 +65,11 @@ export function setPageErrorConsoleLogger(page: Page) {
 }
 
 export async function clickClojureScriptKäliTab(page: Page, testId: string): Promise<void> {
-  // For some mysterious reason clicking too fast on tab doesn't work
-  // and I don't know of any indication when the tab link/button starts working
-  await page.waitForTimeout(10000)
-  await clickElementWithTestId(page, testId)
-  await page.waitForTimeout(10000)
+  await Promise.all([
+    clickElementWithTestId(page, testId),
+    waitForClojureScriptLoadingDialogVisible(page)
+  ])
+  await waitForClojureScriptLoadingDialogHidden(page)
 }
 
 export async function getElementInnerText(page: Page | Frame, selector: string): Promise<string | undefined> {
@@ -914,13 +914,23 @@ export async function actualResponseFromExternalAPIhakemuksetForAvustushaku(avus
   return await axios.get(url).then(r => r.data)
 }
 
+export async function waitForClojureScriptLoadingDialogVisible(page: Page) {
+  return page.waitForSelector("[data-test-id=loading-dialog]", { visible: true })
+}
+
+export async function waitForClojureScriptLoadingDialogHidden(page: Page) {
+  return page.waitForSelector("[data-test-id=loading-dialog]", { hidden: true })
+}
+
 export async function createUniqueCode(page: Page, name: string = 'Test code'): Promise<string> {
   const uniqueCode = randomString().substring(0, 13)
   await clearAndType(page, '[data-test-id=code-form__year', '2020')
   await clearAndType(page, '[data-test-id=code-form__code', `${uniqueCode}`)
   await clearAndType(page, '[data-test-id=code-form__name', `${name} ${uniqueCode}`)
   await clickElementWithTestId(page, 'code-form__add-button')
-  await page.waitForSelector(`tr[data-test-id="${uniqueCode}"]`)
+
+  await page.waitForSelector(`tr[data-test-id="${uniqueCode}"]`),
+  await waitForClojureScriptLoadingDialogHidden(page)
   return uniqueCode
 }
 

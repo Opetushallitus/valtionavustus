@@ -2,7 +2,6 @@ import { Browser, Page } from 'puppeteer'
 import {
   aria,
   clearAndType,
-  clickClojureScriptKäliTab,
   clickElement,
   createRandomHakuValues,
   expectingLoadingProgressBar,
@@ -14,6 +13,8 @@ import {
   navigate,
   setPageErrorConsoleLogger,
   VIRKAILIJA_URL,
+  waitForClojureScriptLoadingDialogHidden,
+  waitForClojureScriptLoadingDialogVisible,
 } from '../test-util'
 import { ratkaiseMuutoshakemusEnabledAvustushaku } from '../muutoshakemus/muutospaatosprosessi-util'
 import axios from 'axios'
@@ -71,7 +72,7 @@ describe("Maksatukset", () => {
       aria(page, "Lähetä maksatukset").then(e => e.click()))
 
     await removeStoredPitkäviiteFromAllAvustushakuPayments(avustushakuID)
-    await page.reload({ waitUntil: ["load", "networkidle0"]})
+    await reloadPaymentPage(page)
 
     await gotoLähetetytMaksatuksetTab(page)
     const { "register-number": registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
@@ -98,7 +99,7 @@ describe("Maksatukset", () => {
       </VA-invoice>
     `)
 
-    await page.reload()
+    await reloadPaymentPage(page)
     await gotoLähetetytMaksatuksetTab(page)
     expect(await getBatchStatus(page, 1)).toEqual("Maksettu")
   })
@@ -114,6 +115,7 @@ describe("Maksatukset", () => {
 
     await expectingLoadingProgressBar(page, "Lähetetään maksatuksia", () =>
       aria(page, "Lähetä maksatukset").then(e => e.click()))
+    await reloadPaymentPage(page)
 
     await gotoLähetetytMaksatuksetTab(page)
     const { "register-number": registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
@@ -140,7 +142,7 @@ describe("Maksatukset", () => {
       </VA-invoice>
     `)
 
-    await page.reload()
+    await reloadPaymentPage(page)
     await gotoLähetetytMaksatuksetTab(page)
     expect(await getBatchStatus(page, 1)).toEqual("Maksettu")
   })
@@ -168,7 +170,15 @@ const getBatchTaKpTili = getSentPaymentBatchColumn(8)
 const getTiliönti = getSentPaymentBatchColumn(9)
 
 async function gotoLähetetytMaksatuksetTab(page: Page): Promise<void> {
-  await clickClojureScriptKäliTab(page, "sent-payments-tab")
+  await page.click('[data-test-id=sent-payments-tab]')
+}
+
+async function reloadPaymentPage(page: Page) {
+  await Promise.all([
+    page.reload({ waitUntil: ['load', 'networkidle0'] }),
+    waitForClojureScriptLoadingDialogVisible(page)
+  ])
+  await waitForClojureScriptLoadingDialogHidden(page)
 }
 
 function getSentPaymentBatchColumn(column: number) {
