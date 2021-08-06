@@ -247,7 +247,6 @@ export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: 
 async function createCodeValuesForTest(page: Page): Promise<VaCodeValues> {
   await navigate(page, '/admin-ui/va-code-values/')
 
-
   const operationalUnit = await createUniqueCode(page, "Toimintayksikkö")
 
   await clickClojureScriptKäliTab(page, "code-value-tab-project")
