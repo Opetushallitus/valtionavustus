@@ -78,8 +78,6 @@
                                           {:color (color :white)}]])}]])
      :open (:open generic)
      :content-style {:width "95%" :max-width "none"}}]
-
-   ; loading dialog
    [ui/dialog
     {:children
      (r/as-element
@@ -99,10 +97,7 @@
             loading))])
      :modal true
      :open (> (count loading) 0)
-     :content-style {:width "95%" :max-width "none"}
-     :paper-props {:data-test-id "loading-dialog"}}]
-
-   ; error dialog
+     :content-style {:width "95%" :max-width "none"}}]
    [ui/dialog
     {:modal true
      :open (:open error-dialog)
