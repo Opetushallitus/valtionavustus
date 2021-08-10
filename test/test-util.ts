@@ -66,8 +66,8 @@ export function setPageErrorConsoleLogger(page: Page) {
 
 export async function clickClojureScriptKäliTab(page: Page, testId: string): Promise<void> {
   await Promise.all([
+    waitForClojureScriptLoadingDialogVisible(page),
     clickElementWithTestId(page, testId),
-    waitForClojureScriptLoadingDialogVisible(page)
   ])
   await waitForClojureScriptLoadingDialogHidden(page)
 }

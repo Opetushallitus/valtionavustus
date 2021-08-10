@@ -175,8 +175,8 @@ async function gotoLähetetytMaksatuksetTab(page: Page): Promise<void> {
 
 async function reloadPaymentPage(page: Page) {
   await Promise.all([
+    waitForClojureScriptLoadingDialogVisible(page),
     page.reload({ waitUntil: ['load', 'networkidle0'] }),
-    waitForClojureScriptLoadingDialogVisible(page)
   ])
   await waitForClojureScriptLoadingDialogHidden(page)
 }
