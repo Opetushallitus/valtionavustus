@@ -916,11 +916,11 @@ export async function actualResponseFromExternalAPIhakemuksetForAvustushaku(avus
 
 export async function waitForClojureScriptLoadingDialogVisible(page: Page) {
   try {
-    return page.waitForSelector("[data-test-id=loading-dialog]", { visible: true })
+    return await page.waitForSelector("[data-test-id=loading-dialog]", { visible: true })
   } catch (e) {
-    const id = randomString()
-    await page.screenshot({ path: `${__dirname}/${id}.png`, fullPage: true })
-    fs.writeFileSync(`${__dirname}/${id}.json`, JSON.stringify(expect.getState()))
+    const screenshotFilePath = `${__dirname}/screenshot_${randomString()}.png`
+    await page.screenshot({ path: `${screenshotFilePath}.png`, fullPage: true })
+    fs.writeFileSync(`${screenshotFilePath}.json`, JSON.stringify(expect.getState()))
     throw e
   }
 }
