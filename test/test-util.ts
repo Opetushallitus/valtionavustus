@@ -915,7 +915,14 @@ export async function actualResponseFromExternalAPIhakemuksetForAvustushaku(avus
 }
 
 export async function waitForClojureScriptLoadingDialogVisible(page: Page) {
-  return page.waitForSelector("[data-test-id=loading-dialog]", { visible: true })
+  try {
+    return page.waitForSelector("[data-test-id=loading-dialog]", { visible: true })
+  } catch (e) {
+    const id = randomString()
+    await page.screenshot({ path: `${__dirname}/${id}.png`, fullPage: true })
+    fs.writeFileSync(`${__dirname}/${id}.json`, JSON.stringify(expect.getState()))
+    throw e
+  }
 }
 
 export async function waitForClojureScriptLoadingDialogHidden(page: Page) {
