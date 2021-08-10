@@ -918,7 +918,7 @@ export async function waitForClojureScriptLoadingDialogVisible(page: Page) {
   try {
     return await page.waitForSelector("[data-test-id=loading-dialog]", { visible: true })
   } catch (e) {
-    const screenshotFilePath = `${__dirname}/screenshot_${randomString()}.png`
+    const screenshotFilePath = `${__dirname}/screenshot_${randomString()}`
     await page.screenshot({ path: `${screenshotFilePath}.png`, fullPage: true })
     fs.writeFileSync(`${screenshotFilePath}.json`, JSON.stringify(expect.getState()))
     throw e
