@@ -4,6 +4,7 @@ import {Moment} from 'moment'
 import * as path from "path"
 import { Page } from "puppeteer"
 import * as querystring from "querystring"
+import { clickKoodienhallintaTab } from "../koodienhallinta-util"
 import {
   acceptAvustushaku,
   Budget,
@@ -13,7 +14,6 @@ import {
   clickElement,
   clickElementWithText,
   clickFormSaveAndWait,
-  clickClojureScriptKäliTab,
   countElements,
   createUniqueCode,
   createValidCopyOfEsimerkkihakuAndReturnTheNewId,
@@ -249,10 +249,10 @@ async function createCodeValuesForTest(page: Page): Promise<VaCodeValues> {
 
   const operationalUnit = await createUniqueCode(page, "Toimintayksikkö")
 
-  await clickClojureScriptKäliTab(page, "code-value-tab-project")
+  await clickKoodienhallintaTab(page, 'project')
   const project = await createUniqueCode(page, "Projekti")
 
-  await clickClojureScriptKäliTab(page, "code-value-tab-operation")
+  await clickKoodienhallintaTab(page, 'operation')
   const operation = await createUniqueCode(page, "Toiminto")
 
   return { operationalUnit, project, operation }
