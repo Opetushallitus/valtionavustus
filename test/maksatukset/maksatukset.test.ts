@@ -2,7 +2,6 @@ import * as fs from 'fs'
 import { Browser, Page } from 'puppeteer'
 import {
   aria,
-  clearAndType,
   clickElement,
   clickElementWithText,
   createRandomHakuValues,
@@ -171,9 +170,12 @@ async function fillInMaksueranTiedot(page: Page, ashaTunniste: string, esittelij
   await clickElement(page, "#Tositepäivämäärä")
   await clickElementWithText(page, 'button', 'OK')
 
-  await clearAndType(page, "[data-test-id=maksatukset-asiakirja--asha-tunniste]", ashaTunniste, true)
-  await clearAndType(page, "[data-test-id=maksatukset-asiakirja--esittelijan-sahkopostiosoite]", esittelijanOsoite, true)
-  await clearAndType(page, "[data-test-id=maksatukset-asiakirja--hyvaksyjan-sahkopostiosoite]", hyvaksyjanOsoite, true)
+  async function clearAndType(page: Page, selector: string, content: string) {
+    await page.type(selector, content, { delay: 50 })
+  }
+  await clearAndType(page, "[data-test-id=maksatukset-asiakirja--asha-tunniste]", ashaTunniste)
+  await clearAndType(page, "[data-test-id=maksatukset-asiakirja--esittelijan-sahkopostiosoite]", esittelijanOsoite)
+  await clearAndType(page, "[data-test-id=maksatukset-asiakirja--hyvaksyjan-sahkopostiosoite]", hyvaksyjanOsoite)
   await clickElement(page, "button:not(disabled)[data-test-id=maksatukset-asiakirja--lisaa-asiakirja]")
 }
 
