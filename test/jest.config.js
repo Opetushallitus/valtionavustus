@@ -1,6 +1,6 @@
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  testEnvironment: './jest-environment.js',
   testRunner: 'jest-circus/runner',
   testMatch: ['./**/?(*.)test.ts'],
   testTimeout: 10000,
