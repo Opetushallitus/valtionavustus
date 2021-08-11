@@ -4,6 +4,7 @@ import {
   aria,
   clearAndType,
   clickElement,
+  clickElementWithText,
   createRandomHakuValues,
   expectingLoadingProgressBar,
   getElementInnerText,
@@ -90,13 +91,7 @@ describe("Maksatukset", () => {
   })
 
   it("work with pitkaviite without contact person name", async () => {
-    await clickElement(page, "#Tositepäivämäärä")
-    await page.keyboard.press("Enter")
-
-    await clearAndType(page, "[data-test-id=maksatukset-asiakirja--asha-tunniste]", "asha pasha")
-    await clearAndType(page, "[data-test-id=maksatukset-asiakirja--esittelijan-sahkopostiosoite]", "essi.esittelija@example.com")
-    await clearAndType(page, "[data-test-id=maksatukset-asiakirja--hyvaksyjan-sahkopostiosoite]", "hygge.hyvaksyja@example.com")
-    await clickElement(page, "button:not(disabled)[data-test-id=maksatukset-asiakirja--lisaa-asiakirja]")
+    await fillInMaksueranTiedot(page, "asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
 
     await expectingLoadingProgressBar(page, "Lähetetään maksatuksia", () =>
       aria(page, "Lähetä maksatukset").then(e => e.click()))
@@ -135,13 +130,7 @@ describe("Maksatukset", () => {
   })
 
   it("work with pitkaviite with contact person name", async () => {
-    await clickElement(page, "#Tositepäivämäärä")
-    await page.keyboard.press("Enter")
-
-    await clearAndType(page, "[data-test-id=maksatukset-asiakirja--asha-tunniste]", "asha pasha")
-    await clearAndType(page, "[data-test-id=maksatukset-asiakirja--esittelijan-sahkopostiosoite]", "essi.esittelija@example.com")
-    await clearAndType(page, "[data-test-id=maksatukset-asiakirja--hyvaksyjan-sahkopostiosoite]", "hygge.hyvaksyja@example.com")
-    await clickElement(page, "button:not(disabled)[data-test-id=maksatukset-asiakirja--lisaa-asiakirja]")
+    await fillInMaksueranTiedot(page, "asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
 
     await expectingLoadingProgressBar(page, "Lähetetään maksatuksia", () =>
       aria(page, "Lähetä maksatukset").then(e => e.click()))
@@ -177,6 +166,16 @@ describe("Maksatukset", () => {
     expect(await getBatchStatus(page, 1)).toEqual("Maksettu")
   })
 })
+
+async function fillInMaksueranTiedot(page: Page, ashaTunniste: string, esittelijanOsoite: string, hyvaksyjanOsoite: string) {
+  await clickElement(page, "#Tositepäivämäärä")
+  await clickElementWithText(page, 'button', 'OK')
+
+  await clearAndType(page, "[data-test-id=maksatukset-asiakirja--asha-tunniste]", ashaTunniste, true)
+  await clearAndType(page, "[data-test-id=maksatukset-asiakirja--esittelijan-sahkopostiosoite]", esittelijanOsoite, true)
+  await clearAndType(page, "[data-test-id=maksatukset-asiakirja--hyvaksyjan-sahkopostiosoite]", hyvaksyjanOsoite, true)
+  await clickElement(page, "button:not(disabled)[data-test-id=maksatukset-asiakirja--lisaa-asiakirja]")
+}
 
 async function simulateResponseXmlFromHandi(xml: string): Promise<void> {
   await axios.post(`${VIRKAILIJA_URL}/api/test/handle-payment-xml`, {

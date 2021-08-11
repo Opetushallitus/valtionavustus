@@ -935,9 +935,9 @@ export async function waitForClojureScriptLoadingDialogHidden(page: Page) {
 
 export async function createUniqueCode(page: Page, name: string = 'Test code'): Promise<string> {
   const uniqueCode = randomString().substring(0, 13)
-  await clearAndType(page, '[data-test-id=code-form__year', '2020')
-  await clearAndType(page, '[data-test-id=code-form__code', `${uniqueCode}`)
-  await clearAndType(page, '[data-test-id=code-form__name', `${name} ${uniqueCode}`)
+  await clearAndType(page, '[data-test-id=code-form__year]', '2020')
+  await clearAndType(page, '[data-test-id=code-form__code]', `${uniqueCode}`)
+  await clearAndType(page, '[data-test-id=code-form__name]', `${name} ${uniqueCode}`)
   await clickElementWithTestId(page, 'code-form__add-button')
 
   await page.waitForSelector(`tr[data-test-id="${uniqueCode}"]`),
