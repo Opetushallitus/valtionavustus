@@ -3,7 +3,8 @@ import { Browser, Page } from 'puppeteer'
 import {
   aria,
   clearAndType,
-  waitForElementWithText,
+  clickElement,
+  clickElementWithText,
   createRandomHakuValues,
   expectingLoadingProgressBar,
   getElementInnerText,
@@ -167,13 +168,13 @@ describe("Maksatukset", () => {
 })
 
 async function fillInMaksueranTiedot(page: Page, ashaTunniste: string, esittelijanOsoite: string, hyvaksyjanOsoite: string) {
-  await htmlClickElement(page, "#Tositepäivämäärä")
-  await htmlClickElementWithText(page, 'button', 'OK')
+  await clickElement(page, "#Tositepäivämäärä")
+  await clickElementWithText(page, 'button', 'OK')
 
   await clearAndType(page, "[data-test-id=maksatukset-asiakirja--asha-tunniste]", ashaTunniste, true)
   await clearAndType(page, "[data-test-id=maksatukset-asiakirja--esittelijan-sahkopostiosoite]", esittelijanOsoite, true)
   await clearAndType(page, "[data-test-id=maksatukset-asiakirja--hyvaksyjan-sahkopostiosoite]", hyvaksyjanOsoite, true)
-  await htmlClickElement(page, "button:not(disabled)[data-test-id=maksatukset-asiakirja--lisaa-asiakirja]")
+  await clickElement(page, "button:not(disabled)[data-test-id=maksatukset-asiakirja--lisaa-asiakirja]")
 }
 
 async function simulateResponseXmlFromHandi(xml: string): Promise<void> {
@@ -215,14 +216,3 @@ function getSentPaymentBatchColumn(column: number) {
     return await getElementInnerText(page, `${rowSelector(paymentBatchRow)} > td:nth-child(${column})`)
   }
 }
-
-export async function htmlClickElement(page: Page, selector: string) {
-  await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
-  await page.$eval(selector, elem => (elem as HTMLElement).click())
-}
-
-export async function htmlClickElementWithText(page: Page, elementType: string, text: string) {
-  await waitForElementWithText(page, elementType, text, { visible: true })
-  await page.$eval(`//${elementType}[contains(., '${text}')]`, elem => (elem as HTMLElement).click())
-}
-
