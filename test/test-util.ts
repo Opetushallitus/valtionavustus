@@ -489,8 +489,8 @@ export async function clickElement(page: Page, selector: string) {
 
 export async function clickElementWithText(page: Page, elementType: string, text: string) {
   const element = await waitForElementWithText(page, elementType, text, { visible: true })
-  assert.ok(element, `Could not find ${elementType} element with text '${text}'`)
-  await element?.click()
+  if (!element) throw new Error('The world is broken because visible: true should never return null')
+  await element.click()
   return element
 }
 
