@@ -96,7 +96,7 @@ describe("Maksatukset", () => {
     await clearAndType(page, "[data-test-id=maksatukset-asiakirja--asha-tunniste]", "asha pasha")
     await clearAndType(page, "[data-test-id=maksatukset-asiakirja--esittelijan-sahkopostiosoite]", "essi.esittelija@example.com")
     await clearAndType(page, "[data-test-id=maksatukset-asiakirja--hyvaksyjan-sahkopostiosoite]", "hygge.hyvaksyja@example.com")
-    await clickElement(page, "[data-test-id=maksatukset-asiakirja--lisaa-asiakirja]")
+    await clickElement(page, "button:not(disabled)[data-test-id=maksatukset-asiakirja--lisaa-asiakirja]")
 
     await expectingLoadingProgressBar(page, "Lähetetään maksatuksia", () =>
       aria(page, "Lähetä maksatukset").then(e => e.click()))
@@ -141,7 +141,7 @@ describe("Maksatukset", () => {
     await clearAndType(page, "[data-test-id=maksatukset-asiakirja--asha-tunniste]", "asha pasha")
     await clearAndType(page, "[data-test-id=maksatukset-asiakirja--esittelijan-sahkopostiosoite]", "essi.esittelija@example.com")
     await clearAndType(page, "[data-test-id=maksatukset-asiakirja--hyvaksyjan-sahkopostiosoite]", "hygge.hyvaksyja@example.com")
-    await clickElement(page, "[data-test-id=maksatukset-asiakirja--lisaa-asiakirja]")
+    await clickElement(page, "button:not(disabled)[data-test-id=maksatukset-asiakirja--lisaa-asiakirja]")
 
     await expectingLoadingProgressBar(page, "Lähetetään maksatuksia", () =>
       aria(page, "Lähetä maksatukset").then(e => e.click()))
