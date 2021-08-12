@@ -122,7 +122,7 @@
             [lein-kibit "0.1.6"]
             [jonase/eastwood "0.2.9"]
             [lein-bikeshed "0.5.1"]
-            [lein-nvd "1.5.0"]]
+            [lein-nvd "1.5.0" :exclusions [org.clojure/clojure commons-io org.apache.httpcomponents/httpclient org.clojure/tools.reader trptcolin/versioneer org.slf4j/slf4j-api org.clojure/tools.cli]]]
 
   :uberjar-exclusions [#"^\."]
 
