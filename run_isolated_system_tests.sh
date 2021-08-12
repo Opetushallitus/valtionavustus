@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
-repo="$( cd "$( dirname "$0" )" && pwd )"
-
-function initialize {
-  export ADBLOCK=1
-  cd "$repo"
-  . ./init_nodejs.sh
-}
+source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 
 function run_tests {
 	npm run puppeteer:test "$@"
@@ -17,7 +11,7 @@ function run_tests {
 }
 
 function main {
-  initialize
+  init_nodejs
   run_tests "$@"
   make lein-test
 }

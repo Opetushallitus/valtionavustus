@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
-node_version="12.13.1"
-npm_version="6.13.4"
-repo="$( cd "$( dirname "$0" )" && pwd )"
+source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 
 HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}
 VIRKAILIJA_HOSTNAME=${VIRKAILIJA_HOSTNAME:-"localhost"}
@@ -157,15 +155,6 @@ function set_env_vars {
   else
     echo "Invalid environment $ENV" >&2
     exit 1
-  fi
-}
-
-function init_nodejs {
-  export NVM_DIR="${NVM_DIR:-$HOME/.cache/nvm}"
-  source "$repo/nvm.sh"
-  nvm use "$node_version" || nvm install "$node_version"
-  if [ "$(npm --version)" != "$npm_version" ]; then
-    npm install -g "npm@${npm_version}"
   fi
 }
 
