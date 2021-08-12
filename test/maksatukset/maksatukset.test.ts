@@ -171,8 +171,13 @@ async function fillInMaksueranTiedot(page: Page, ashaTunniste: string, esittelij
   await clickElementWithText(page, 'button', 'OK')
 
   async function clearAndType(page: Page, selector: string, content: string) {
-    await page.type(selector, content, { delay: 50 })
+    let value = await page.$eval(selector, input => input.getAttribute("value"))
+    while (value !== content) {
+      await page.type(selector, content, { delay: 50 })
+      value = await page.$eval(selector, input => input.getAttribute("value"))
+    }
   }
+
   await clearAndType(page, "[data-test-id=maksatukset-asiakirja--asha-tunniste]", ashaTunniste)
   await clearAndType(page, "[data-test-id=maksatukset-asiakirja--esittelijan-sahkopostiosoite]", esittelijanOsoite)
   await clearAndType(page, "[data-test-id=maksatukset-asiakirja--hyvaksyjan-sahkopostiosoite]", hyvaksyjanOsoite)
