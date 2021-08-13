@@ -38,13 +38,13 @@
                          [ring/ring-session-timeout "0.2.0"]
 
                          ;; json
-                         [cheshire "5.8.0"]
+                         [cheshire "5.10.1"]
                          [org.clojure/data.json "0.2.6"]
-                         [com.fasterxml.jackson.core/jackson-core "2.9.8"]
-                         [com.fasterxml.jackson.core/jackson-databind "2.9.8"]
-                         [com.fasterxml.jackson.core/jackson-annotations "2.9.8"]
-                         [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor "2.9.8"]
-                         [com.fasterxml.jackson.dataformat/jackson-dataformat-smile "2.9.8"]
+                         [com.fasterxml.jackson.core/jackson-core "2.12.4"]
+                         [com.fasterxml.jackson.core/jackson-databind "2.12.4"]
+                         [com.fasterxml.jackson.core/jackson-annotations "2.12.4"]
+                         [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor "2.12.4"]
+                         [com.fasterxml.jackson.dataformat/jackson-dataformat-smile "2.12.4"]
                          [prismatic/schema "1.1.6"]
 
                          ;; database
