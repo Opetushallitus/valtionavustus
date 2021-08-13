@@ -69,8 +69,8 @@
                          [org.log4s/log4s_2.11 "1.4.0"]
 
                          ;; cryptography
-                         [org.bouncycastle/bcpkix-jdk15on "1.58"]
-                         [org.bouncycastle/bcprov-jdk15on "1.58"]
+                         [org.bouncycastle/bcpkix-jdk15on "1.69"]
+                         [org.bouncycastle/bcprov-jdk15on "1.69"]
                          [buddy/buddy-core "1.4.0"]
 
                          ;; cas
