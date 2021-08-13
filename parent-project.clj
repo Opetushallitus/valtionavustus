@@ -25,10 +25,10 @@
                          ;; http
                          [buddy/buddy-auth "2.1.0"]
                          [clout "2.2.1"]
-                         [com.novemberain/pantomime "2.9.0"]
+                         [com.novemberain/pantomime "2.11.0"]
                          [compojure "1.6.1"]
                          [http-kit "2.4.0"]
-                         [metosin/compojure-api "1.1.12"]
+                         [metosin/compojure-api "1.1.13"]
                          [ring/ring-codec "1.1.1"]
                          [ring/ring-core "1.6.3"]
                          [ring/ring-devel "1.6.3"]
@@ -50,7 +50,7 @@
                          ;; database
                          [hikari-cp "1.8.1"]
                          [org.flywaydb/flyway-core "4.2.0"]
-                         [org.postgresql/postgresql "42.2.18"]
+                         [org.postgresql/postgresql "42.2.23"]
                          [yesql "0.5.3"]
 
                          ;; testing
@@ -92,7 +92,7 @@
                          [com.cemerick/piggieback "0.2.2"]
                          [binaryage/devtools "0.9.10"]
                          [figwheel-sidecar "0.5.16"]
-                         [com.google.guava/guava "23.6-jre"
+                         [com.google.guava/guava "30.1.1-jre"
                           :exclusions [com.google.code.findbugs/jsr305]]
 
                          ;; other
@@ -104,14 +104,16 @@
                          [dk.ative/docjure "1.12.0"]
                          [instaparse "1.4.7"]
                          [org.apache.commons/commons-email "1.5"]
-                         [org.clojure/core.async "0.4.474"]
+                         [org.clojure/core.async "0.4.500"]
                          [org.clojure/tools.reader "1.1.0"]
                          [org.clojure/tools.trace "0.7.9"]
+                         [org.clojure/tools.analyzer.jvm "0.7.3"]
                          [org.scala-lang.modules/scala-xml_2.11 "1.0.6"]
                          [org.scala-lang/scala-library "2.11.11"]
                          [org.clojure/data.xml "0.0.8"]
                          [clj-ssh "0.5.14"]
-                         [clojurewerkz/quartzite "2.0.0"]]
+                         [clojurewerkz/quartzite "2.0.0"]
+                         [org.checkerframework/checker-qual "3.17.0"]]
 
   :pedantic? :abort
 
