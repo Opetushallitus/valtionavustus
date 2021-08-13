@@ -40,11 +40,11 @@
                          ;; json
                          [cheshire "5.8.0"]
                          [org.clojure/data.json "0.2.6"]
-                         [com.fasterxml.jackson.core/jackson-core "2.9.1"]
-                         [com.fasterxml.jackson.core/jackson-databind "2.9.1"]
-                         [com.fasterxml.jackson.core/jackson-annotations "2.9.1"]
-                         [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor "2.9.1"]
-                         [com.fasterxml.jackson.dataformat/jackson-dataformat-smile "2.9.1"]
+                         [com.fasterxml.jackson.core/jackson-core "2.9.8"]
+                         [com.fasterxml.jackson.core/jackson-databind "2.9.8"]
+                         [com.fasterxml.jackson.core/jackson-annotations "2.9.8"]
+                         [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor "2.9.8"]
+                         [com.fasterxml.jackson.dataformat/jackson-dataformat-smile "2.9.8"]
                          [prismatic/schema "1.1.6"]
 
                          ;; database
