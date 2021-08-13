@@ -99,7 +99,7 @@
                          [clj-time "0.14.0"]
                          [com.cemerick/url "0.1.1"]
                          [commons-codec "1.10"]
-                         [commons-io "2.5"]
+                         [commons-io "2.11.0"]
                          [de.ubercode.clostache/clostache "1.4.0"]
                          [dk.ative/docjure "1.12.0"]
                          [instaparse "1.4.7"]
