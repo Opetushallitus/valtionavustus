@@ -1,6 +1,5 @@
 (ns oph.va.hakija.email
-  (:require [clojure.core.async :refer [<! >!! go chan]]
-            [oph.common.datetime :as datetime]
+  (:require [oph.common.datetime :as datetime]
             [oph.soresu.common.db :refer [exec get-datasource]]
             [oph.common.email :as email]
             [clojure.tools.trace :refer [trace]]
@@ -57,20 +56,20 @@
         end-time-string (datetime/time-string end-date)
         url (email/generate-url avustushaku-id lang lang-str user-key false)]
     (log/info "Url would be: " url)
-    (>!! email/mail-chan {:operation :send
-                          :type :new-hakemus
-                          :lang lang
-                          :from (-> email/smtp-config :from lang)
-                          :sender (-> email/smtp-config :sender)
-                          :subject (get-in mail-titles [:new-hakemus lang])
-                          :to to
-                          :avustushaku avustushaku
-                          :avustushaku-id avustushaku-id 
-                          :start-date start-date-string
-                          :start-time start-time-string
-                          :end-date end-date-string
-                          :end-time end-time-string
-                          :url url})))
+    (email/enqueue-message-to-be-send {:operation :send
+                                       :type :new-hakemus
+                                       :lang lang
+                                       :from (-> email/smtp-config :from lang)
+                                       :sender (-> email/smtp-config :sender)
+                                       :subject (get-in mail-titles [:new-hakemus lang])
+                                       :to to
+                                       :avustushaku avustushaku
+                                       :avustushaku-id avustushaku-id
+                                       :start-date start-date-string
+                                       :start-time start-time-string
+                                       :end-date end-date-string
+                                       :end-time end-time-string
+                                       :url url})))
 
 (defn generate-refused-email [lang recipients grant-name]
   {:operation :send
@@ -83,7 +82,7 @@
    :grant-name grant-name})
 
 (defn send-refused-message! [lang recipients grant-name]
-  (>!! email/mail-chan
+  (email/enqueue-message-to-be-send
        (generate-refused-email lang recipients grant-name)))
 
 (defn generate-presenter-refused-email [recipients grant application-id]
@@ -100,7 +99,7 @@
      :url url}))
 
 (defn send-refused-message-to-presenter! [recipients grant application-id]
-  (>!! email/mail-chan
+  (email/enqueue-message-to-be-send
        (generate-presenter-refused-email recipients grant application-id)))
 
 (defn generate-applicant-edit-email [lang recipients grant-name hakemus]
@@ -117,7 +116,7 @@
    :organization-name (:organization_name hakemus)})
 
 (defn send-applicant-edit-message! [lang recipients grant-name hakemus]
-  (>!! email/mail-chan
+  (email/enqueue-message-to-be-send
        (generate-applicant-edit-email lang recipients grant-name hakemus)))
 
 (defn generate-presenter-applicant-edit-email [recipients lang application-id grant-name hakemus]
@@ -134,7 +133,7 @@
    :organization-name (:organization_name hakemus)})
 
 (defn send-applicant-edit-message-to-presenter! [recipients lang application-id grant-name hakemus]
-  (>!! email/mail-chan
+  (email/enqueue-message-to-be-send
        (generate-presenter-applicant-edit-email recipients lang application-id grant-name hakemus)))
 
 (defn notify-valmistelija-of-new-muutoshakemus [to avustushaku-id register-number hanke hakemus-id]
@@ -153,21 +152,21 @@
                           :url url}
         formatted-message (render (get-in mail-templates [:notify-valmistelija-of-new-muutoshakemus lang]) msg)]
     (log/info "Notifying valmistelija of new muutoshakemus: " url)
-    (>!! email/mail-chan msg)))
+    (email/enqueue-message-to-be-send msg)))
 
 (defn send-change-request-responded-message-to-virkailija! [to avustushaku-id avustushaku-name-fi hakemus-db-id]
   (let [lang :fi
         url (email/generate-virkailija-url avustushaku-id hakemus-db-id)]
     (log/info "Url would be: " url)
-    (>!! email/mail-chan {:operation :send
-                          :type :hakemus-change-request-responded
-                          :lang lang
-                          :from (-> email/smtp-config :from lang)
-                          :sender (-> email/smtp-config :sender)
-                          :subject (get-in mail-titles [:hakemus-change-request-responded lang])
-                          :to to
-                          :avustushaku avustushaku-name-fi
-                          :url url})))
+    (email/enqueue-message-to-be-send {:operation :send
+                                       :type :hakemus-change-request-responded
+                                       :lang lang
+                                       :from (-> email/smtp-config :from lang)
+                                       :sender (-> email/smtp-config :sender)
+                                       :subject (get-in mail-titles [:hakemus-change-request-responded lang])
+                                       :to to
+                                       :avustushaku avustushaku-name-fi
+                                       :url url})))
 
 (defn send-hakemus-submitted-message! [is-change-request-response? lang to avustushaku-id avustushaku user-key start-date end-date]
   (let [lang-str (or (clojure.core/name lang) "fi")
@@ -190,4 +189,4 @@
                       :end-time end-time-string
                       :url url}]
     (log/info "Urls would be: " url)
-    (>!! email/mail-chan user-message)))
+    (email/enqueue-message-to-be-send user-message)))

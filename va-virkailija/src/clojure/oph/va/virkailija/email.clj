@@ -1,6 +1,5 @@
 (ns oph.va.virkailija.email
-  (:require [clojure.core.async :refer [<! >!! go chan]]
-            [oph.soresu.common.db :refer [query]]
+  (:require [oph.soresu.common.db :refer [query]]
             [clojure.java.jdbc :as jdbc]
             [oph.common.email :as email]
             [oph.soresu.common.config :refer [config]]
@@ -63,19 +62,19 @@
   (let [lang-str (or (clojure.core/name lang) "fi")
         url (email/generate-url avustushaku-id lang lang-str user-key false)]
     (log/info "Url would be: " url)
-    (>!! email/mail-chan {:operation :send
-                          :type :change-request
-                          :lang lang
-                          :hakemus-id hakemus-id
-                          :from (-> email/smtp-config :from lang)
-                          :reply-to presenting-officer-email
-                          :bcc presenting-officer-email
-                          :sender (-> email/smtp-config :sender)
-                          :subject (get-in mail-titles [:change-request lang])
-                          :to [to]
-                          :avustushaku avustushaku-name
-                          :url url
-                          :change-request change-request})))
+    (email/enqueue-message-to-be-send {:operation :send
+                                       :type :change-request
+                                       :lang lang
+                                       :hakemus-id hakemus-id
+                                       :from (-> email/smtp-config :from lang)
+                                       :reply-to presenting-officer-email
+                                       :bcc presenting-officer-email
+                                       :sender (-> email/smtp-config :sender)
+                                       :subject (get-in mail-titles [:change-request lang])
+                                       :to [to]
+                                       :avustushaku avustushaku-name
+                                       :url url
+                                       :change-request change-request})))
 
 (defn paatos-url [avustushaku-id user-key lang]
   (let [va-url (-> config :server :url lang)]
@@ -215,14 +214,14 @@
 
 (defn send-selvitys! [to hakemus mail-subject mail-message]
   (let [lang (keyword (:language hakemus))]
-    (>!! email/mail-chan {:operation :send
-                          :type :selvitys
-                          :lang lang
-                          :from (-> email/smtp-config :from lang)
-                          :sender (-> email/smtp-config :sender)
-                          :subject mail-subject
-                          :to to
-                          :body mail-message})))
+    (email/enqueue-message-to-be-send {:operation :send
+                                       :type :selvitys
+                                       :lang lang
+                                       :from (-> email/smtp-config :from lang)
+                                       :sender (-> email/smtp-config :sender)
+                                       :subject mail-subject
+                                       :to to
+                                       :body mail-message})))
 
 (defn send-selvitys-notification! [to avustushaku hakemus selvitys-type arvio roles uuid identity]
   (let [lang-str (:language hakemus)
@@ -236,22 +235,22 @@
         presenter (if (nil? selected-presenter) (first roles) selected-presenter)]
     (log/info "Url would be: " url)
     (tapahtumaloki/create-log-entry type (:id avustushaku) (:id hakemus) identity uuid to true)
-    (>!! email/mail-chan {:operation :send
-                          :hakemus-id (:id hakemus)
-                          :avustushaku-id (:id avustushaku)
-                          :type (keyword type)
-                          :lang lang
-                          :from (-> email/smtp-config :from lang)
-                          :sender (-> email/smtp-config :sender)
-                          :subject mail-subject
-                          :selvitysdate ((keyword (str selvitys-type "date")) avustushaku)
-                          :presenter-name (:name presenter)
-                          :avustushaku-name avustushaku-name
-                          :to to
-                          :bcc (:email identity)
-                          :url url
-                          :register-number (:register_number hakemus)
-                          :project-name (:project_name hakemus)})))
+    (email/enqueue-message-to-be-send {:operation :send
+                                       :hakemus-id (:id hakemus)
+                                       :avustushaku-id (:id avustushaku)
+                                       :type (keyword type)
+                                       :lang lang
+                                       :from (-> email/smtp-config :from lang)
+                                       :sender (-> email/smtp-config :sender)
+                                       :subject mail-subject
+                                       :selvitysdate ((keyword (str selvitys-type "date")) avustushaku)
+                                       :presenter-name (:name presenter)
+                                       :avustushaku-name avustushaku-name
+                                       :to to
+                                       :bcc (:email identity)
+                                       :url url
+                                       :register-number (:register_number hakemus)
+                                       :project-name (:project_name hakemus)})))
 
 (defn send-payments-info! [payments-info]
   (let [lang :fi
@@ -259,14 +258,14 @@
         mail-subject
         (format (get-in mail-titles [:payments-info-notification lang])
                 grant-title)]
-    (>!! email/mail-chan {:operation :send
-                          :type :payments-info-notification
-                          :lang lang
-                          :from (-> email/smtp-config :from lang)
-                          :sender (-> email/smtp-config :sender)
-                          :subject mail-subject
-                          :to (:receivers payments-info)
-                          :date (:date payments-info)
-                          :batch-key (:batch-key payments-info)
-                          :count (:count payments-info)
-                          :total-granted (:total-granted payments-info)})))
+    (email/enqueue-message-to-be-send {:operation :send
+                                       :type :payments-info-notification
+                                       :lang lang
+                                       :from (-> email/smtp-config :from lang)
+                                       :sender (-> email/smtp-config :sender)
+                                       :subject mail-subject
+                                       :to (:receivers payments-info)
+                                       :date (:date payments-info)
+                                       :batch-key (:batch-key payments-info)
+                                       :count (:count payments-info)
+                                       :total-granted (:total-granted payments-info)})))

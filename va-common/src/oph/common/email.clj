@@ -245,3 +245,6 @@
 (defn modify-url [avustushaku-id user-key lang token include-muutoshaku-link?]
   (email-utils/modify-url
    (get-in config [:server :url lang]) avustushaku-id user-key lang token include-muutoshaku-link?))
+
+(defn enqueue-message-to-be-send [msg]
+  (>!! mail-chan msg))
