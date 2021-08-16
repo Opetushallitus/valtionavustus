@@ -235,6 +235,13 @@
                         (ok response)
                         (not-found))))
 
+(defn- get-onko-muutoshakukelpoinen-avustushaku-ok []
+  (compojure-api/GET "/:avustushaku-id/onko-muutoshakukelpoinen-avustushaku-ok" []
+                     :path-params [avustushaku-id :- Long]
+                     :return virkailija-schema/OnkoMuutoshakukelpoinenAvustushakuOk
+                     :summary "Juuh"
+                     (ok (virkailija-db/onko-muutoshakukelpoinen-avustushaku-ok avustushaku-id))))
+
 (defn- get-avustushaku []
   (compojure-api/GET "/:avustushaku-id" request
                      :path-params [avustushaku-id :- Long]
@@ -690,6 +697,7 @@
                          (put-avustushaku)
                          (post-avustushaku)
                          (get-avustushaku)
+                         (when (get-in config [:muutospaatosprosessi :enabled?]) (get-onko-muutoshakukelpoinen-avustushaku-ok))
                          (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemukset))
                          (when (get-in config [:muutospaatosprosessi :enabled?]) (post-muutoshakemus-paatos))
                          (get-selvitys)

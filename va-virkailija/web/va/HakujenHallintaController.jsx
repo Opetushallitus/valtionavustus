@@ -112,6 +112,10 @@ export default class HakujenHallintaController {
   static roleUrl(avustushaku) {
     return `/api/avustushaku/${avustushaku.id}/role`
   }
+  
+  static onkoMuutoshakukelpoinenAvustushakuOkUrl(avustushaku) {
+    return `/api/avustushaku/${avustushaku.id}/onko-muutoshakukelpoinen-avustushaku-ok`
+  }
 
   static privilegesUrl(avustushaku) {
     return `/api/avustushaku/${avustushaku.id}/privileges`
@@ -510,6 +514,7 @@ export default class HakujenHallintaController {
       state = this.onHakuSave(state)
     }
     state.selectedHaku = hakuToSelect
+    this.onkoMuutoshakukelpoinenAvustushakuOk(hakuToSelect)
     this.loadPrivileges(hakuToSelect)
     this.loadRoles(hakuToSelect)
     this.loadPayments(hakuToSelect)
@@ -532,6 +537,14 @@ export default class HakujenHallintaController {
   onPaymentsLoaded(state, {grant, payments}) {
     grant.payments = payments
     return state
+  }
+
+  onkoMuutoshakukelpoinenAvustushakuOk(selectedHaku) {
+    if(!selectedHaku.muutoshakukelpoisuus) {
+      HttpUtil.get(HakujenHallintaController.onkoMuutoshakukelpoinenAvustushakuOkUrl(selectedHaku)).then(isOk => {
+        selectedHaku.muutoshakukelpoisuus = isOk
+      })
+    }
   }
 
   loadRoles(selectedHaku) {

@@ -84,6 +84,41 @@
       (assoc hakemus :talousarvio talousarvio)
       nil)))
 
+(defn onko-muutoshakukelpoinen-avustushaku-ok [avustushaku-id]
+  (let [found-fields 
+        (query "with recursive formfield(form_id, formfield_id, label, children) as (
+                  select
+                    forms.id as form_id,
+                    e.value->>'id' as formfield_id,
+                    e.value->'label'->>'fi' as label,
+                    e.value->'children' as children
+                  from forms
+                  join jsonb_array_elements(forms.content) e on true
+                  union all
+                  select
+                    parent.form_id,
+                    child->>'id' as formfield_id,
+                    child->'label'->>'fi' as label,
+                    child->'children' as children
+                  from formfield parent
+                  join jsonb_array_elements(parent.children) child on true
+                )
+                select formfield.formfield_id as id, formfield.label
+                from avustushaut
+                join formfield on formfield.form_id = avustushaut.form
+                where avustushaut.id = ?
+                and formfield.formfield_id = ANY(ARRAY['project-name','applicant-name','primary-email','textField-0'])", [avustushaku-id])
+        required-fields [{:id "project-name"}
+                         {:id "applicant-name"}
+                         {:id "primary-email"}
+                         {:id "textField-0"}]
+        found-field-ids (map (fn [x] (:id x)) found-fields)
+        missing-fields (remove (fn [x] (.contains found-field-ids (:id x))) required-fields)
+        is-ok (empty? missing-fields)]
+    {:is-ok is-ok
+     :ok-fields found-fields
+     :erroneous-fields missing-fields}))
+
 (defn has-multiple-menoluokka-rows [hakemus-id]
   (let [result (first (query "SELECT COUNT(id) FROM menoluokka_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
     (> (:count result) 1)))
