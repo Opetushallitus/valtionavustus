@@ -1,4 +1,3 @@
-import * as fs from 'fs'
 import { Browser, Page } from 'puppeteer'
 import {
   aria,
@@ -9,10 +8,10 @@ import {
   getElementInnerText,
   getFirstPage,
   getHakemusTokenAndRegisterNumber,
-  log,
   mkBrowser,
   navigate,
   setPageErrorConsoleLogger,
+  setupTestLoggingAndScreenshots,
   VIRKAILIJA_URL,
   waitForClojureScriptLoadingDialogHidden,
   waitForClojureScriptLoadingDialogVisible,
@@ -21,29 +20,6 @@ import { ratkaiseMuutoshakemusEnabledAvustushaku } from '../muutoshakemus/muutos
 import axios from 'axios'
 
 jest.setTimeout(400_000)
-
-async function saveScreenshot(page: Page, currentTest: string) {
-  const dir = `${__dirname}/screenshots`
-  function toFileName(s: string) {
-    return s.replace(/[^a-z0-9]/gi, '_').toLowerCase()
-  }
-
-  function makeScreenshotDirectoryIfNotExists() {
-    if (!fs.existsSync(dir)){
-      fs.mkdirSync(dir, {recursive: true})
-    }
-  }
-
-  if (!page) {
-    log('Page is not defined, cannot take screenshot')
-    return
-  }
-
-  makeScreenshotDirectoryIfNotExists()
-  const path = `${dir}/${toFileName(currentTest)}.png`
-  log(`Saving Puppeteer screenshot to ${path}`)
-  await page.screenshot({ path, fullPage: true })
-}
 
 describe("Maksatukset", () => {
   let browser: Browser
@@ -62,19 +38,7 @@ describe("Maksatukset", () => {
     await browser.close()
   })
 
-  beforeEach(() => {
-    log(`Starting test: ${expect.getState().currentTestName}`)
-  })
-
-  afterEach(async () => {
-    const currentTestName = expect.getState().currentTestName
-    const previousTestFailed = (global as any).previousTestFailed
-    log('Previous test failed', previousTestFailed)
-    if (previousTestFailed) {
-      await saveScreenshot(page, currentTestName)
-    }
-    log(`Finished test: ${currentTestName}`)
-  })
+  setupTestLoggingAndScreenshots(() => page)
 
   beforeEach(async () => {
     const x = await ratkaiseMuutoshakemusEnabledAvustushaku(page, createRandomHakuValues("Maksatukset"), {
