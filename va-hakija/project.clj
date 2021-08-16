@@ -15,7 +15,8 @@
                              :uberjar-exclusions
                              :auto-clean
                              :prep-tasks
-                             :jvm-opts]}
+                             :jvm-opts
+                             :nvd]}
 
   :dependencies [[oph-va/common]
                  [com.novemberain/pantomime]

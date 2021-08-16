@@ -14,7 +14,8 @@
                              :plugins
                              :uberjar-exclusions
                              :auto-clean
-                             :prep-tasks]}
+                             :prep-tasks
+                             :nvd]}
 
   :dependencies [[org.clojure/clojure]
                  [oph/soresu]

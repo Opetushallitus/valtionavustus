@@ -21,7 +21,8 @@
                              :plugins
                              :uberjar-exclusions
                              :auto-clean
-                             :javac-options]}
+                             :javac-options
+                             :nvd]}
 
   :dependencies [[org.clojure/clojure]
                  [org.clojure/clojurescript]

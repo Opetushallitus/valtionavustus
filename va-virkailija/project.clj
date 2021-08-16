@@ -15,7 +15,8 @@
                              :uberjar-exclusions
                              :auto-clean
                              :javac-options
-                             :jvm-opts]}
+                             :jvm-opts
+                             :nvd]}
 
   :dependencies [[oph-va/common]
                  [buddy/buddy-auth]
