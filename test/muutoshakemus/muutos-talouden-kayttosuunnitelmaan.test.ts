@@ -5,7 +5,6 @@ import {
   Email,
   mkBrowser,
   HAKIJA_URL,
-  log,
   waitUntilMinEmails,
   getAcceptedPäätösEmails,
   getFirstPage,
