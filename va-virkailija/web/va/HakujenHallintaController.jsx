@@ -475,7 +475,7 @@ export default class HakujenHallintaController {
       url,
       _.omit(state.selectedHaku,
              ["roles", "formContent", "privileges",
-              "valiselvitysForm", "loppuselvitysForm", "payments"]))
+              "valiselvitysForm", "loppuselvitysForm", "payments", "muutoshakukelpoisuus"]))
       .then(function (response) {
         dispatcher.push(events.saveCompleted, response)
       })
