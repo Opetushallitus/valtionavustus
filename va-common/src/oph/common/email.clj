@@ -164,10 +164,8 @@
             [avustushaku-id hakemus-id muutoshakemus-id email-id (name msg-type) success])
   (log/info (str "Succesfully stored email event for email: " email-id))))
 
-(defn- send-msg! [msg format-plaintext-message]
-  (let [[msg-description send-fn] (create-mail-send-fn msg format-plaintext-message)
-        email-id (store-email msg format-plaintext-message)
-        ]
+(defn- send-msg! [msg format-plaintext-message email-id]
+  (let [[msg-description send-fn] (create-mail-send-fn msg format-plaintext-message)]
     (if (not (try-send! (:retry-initial-wait smtp-config)
                           (:retry-multiplier smtp-config)
                           (:retry-max-time smtp-config)
@@ -187,7 +185,10 @@
         (create-email-event email-id false msg)
         (throw e)))))
 
-(defn start-loop-send-mails [mail-templates]
+(def mail-templates (atom {}))
+
+(defn start-loop-send-mails [new-templates]
+  (swap! mail-templates (fn [old  new] (merge old new)) new-templates)
   (go
     (log/info "Starting background job: send mails...")
     (loop []
@@ -196,7 +197,7 @@
                     :stop true
                     :send (do
                             (try
-                              (send-msg! msg (partial render (get-in mail-templates [(:type msg) (:lang msg)])))
+                              (send-msg! (:msg msg) (:format-plaintext-message msg) (:email-id msg))
                             (catch Exception e
                               (log/error e "Failed to send email")))
                             false))]
@@ -247,4 +248,6 @@
    (get-in config [:server :url lang]) avustushaku-id user-key lang token include-muutoshaku-link?))
 
 (defn enqueue-message-to-be-send [msg]
-  (>!! mail-chan msg))
+  (let [format-plaintext-message (partial render (get-in @mail-templates [(:type msg) (:lang msg)]))
+        email-id (store-email msg format-plaintext-message)]
+    (>!! mail-chan {:operation :send, :msg msg, :format-plaintext-message format-plaintext-message, :email-id email-id})))
