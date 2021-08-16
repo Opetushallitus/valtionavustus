@@ -80,7 +80,7 @@
                          [org.http4s/http4s-dsl_2.11 "0.16.5"]
 
                          ;; ClojureScript
-                         [org.clojure/clojurescript "1.10.339"]
+                         [org.clojure/clojurescript "1.10.879"]
                          [reagent "0.8.1"]
                          [cljsjs/react-dom "16.4.1-0"]
                          [cljs-react-material-ui "0.2.50"]
