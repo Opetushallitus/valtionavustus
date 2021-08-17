@@ -17,7 +17,7 @@ function main {
   local env="$1"
   local server_name="$2"
 
-  local -r ssh_args="-M -F $repo/servers/ssh.config"
+  local -r ssh_args="-F $repo/servers/ssh.config"
 
   case "$env-$server_name" in
     qa-ci)
