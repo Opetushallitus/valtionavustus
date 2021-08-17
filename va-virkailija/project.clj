@@ -22,7 +22,7 @@
                  [buddy/buddy-auth]
                  [ring/ring-session-timeout]
                  [com.cemerick/url :exclusions [com.cemerick/clojurescript.test]]
-                 [dk.ative/docjure]
+                 [dk.ative/docjure "1.16.0"]
                  [fi.vm.sade/scala-cas_2.11]
                  [org.http4s/http4s-blaze-client_2.11]
                  [org.clojure/data.json]
