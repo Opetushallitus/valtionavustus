@@ -12,7 +12,8 @@
                                     :sign-releases false
                                     :snapshots false}]
                  ["snapshots"      {:url "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"
-                                    :releases false}]]
+                                    :releases false}]
+                 ["public-github"  {:url "git://github.com"}]]
 
   :managed-dependencies [[org.clojure/clojure "1.8.0"]
                          [nrepl "0.8.3"]
@@ -132,7 +133,8 @@
             [lein-kibit "0.1.6"]
             [jonase/eastwood "0.2.9"]
             [lein-bikeshed "0.5.1"]
-            [lein-nvd "1.5.0" :exclusions [org.clojure/clojure commons-io org.apache.httpcomponents/httpclient org.clojure/tools.reader trptcolin/versioneer org.slf4j/slf4j-api org.clojure/tools.cli]]]
+            [reifyhealth/lein-git-down "0.4.0"]
+            [lein-nvd "1.5.0" :exclusions [org.clojure/clojure commons-io org.apache.httpcomponents/httpclient org.clojure/tools.reader trptcolin/versioneer org.slf4j/slf4j-api org.clojure/tools.gitlibs org.clojure/tools.cli]]]
 
   :nvd {:suppression-file "../dependency-check-suppressionlist.xml"}
 
