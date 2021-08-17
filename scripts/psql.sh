@@ -10,7 +10,7 @@ function main {
   parse_env_from_script_name
 
   trap cleanup EXIT
-  "$repo/ssh.sh" $ENV app -M -S "$SSH_SOCKET" -fN -L $SSH_TUNNEL_PORT:localhost:5432
+  "$repo/ssh.sh" $ENV app -S "$SSH_SOCKET" -fN -L $SSH_TUNNEL_PORT:localhost:5432
 
   [ ! -f "$PSQLRC" ] && fatal "psqlrc is missing"
   PGOPTIONS="--search-path=public,hakija,virkailija" \
