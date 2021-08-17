@@ -50,5 +50,6 @@
  :tasmaytysraportti-create {:enabled? false}
  :tasmaytysraportti-send {:enabled? false}
  :muutospaatosprosessi {:enabled? true}
+ :muutoshakukelpoisuus {:enabled? true}
  :sisaltomuutos {:enabled? false}
  :test-apis {:enabled? false}}

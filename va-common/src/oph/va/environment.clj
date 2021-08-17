@@ -22,6 +22,7 @@
          :reports (:reports config)
          :va-code-values (:va-code-values config)
          :muutospaatosprosessi (:muutospaatosprosessi config)
+         :muutoshakukelpoisuus (:muutoshakukelpoisuus config)
          :sisaltomuutos (:sisaltomuutos config)
          :selvitys-limit (:selvitys-limit config)}
         opintopolku (:opintopolku config)]

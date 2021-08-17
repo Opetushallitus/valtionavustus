@@ -24,4 +24,5 @@
                            :interval-minutes 15}
  :contact-person-name-in-pitkaviite {:enabled? true}
  :tasmaytysraportti-create {:enabled? true}
+ :muutoshakukelpoisuus {:enabled? false}
  :tasmaytysraportti-send {:enabled? true}}

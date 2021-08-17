@@ -39,7 +39,7 @@ export default class FormEditorContainer extends Component {
 
     return (
       <section>
-        {(avustushaku.muutoshakukelpoinen && avustushaku.muutoshakukelpoisuus && !avustushaku.muutoshakukelpoisuus["is-ok"]) && <MuutoshakukelpoisuusContainer muutoshakukelpoisuus={avustushaku.muutoshakukelpoisuus}/>}
+        {(environment.muutoshakukelpoisuus?.["enabled?"] && avustushaku.muutoshakukelpoisuus && !avustushaku.muutoshakukelpoisuus["is-ok"]) && <MuutoshakukelpoisuusContainer muutoshakukelpoisuus={avustushaku.muutoshakukelpoisuus}/>}
         <div dangerouslySetInnerHTML={mainHelp}></div>
         <div style={{float:'right'}}><button className="btn btn-blue btn-sm" onClick={scrollToEditor}>JSON editoriin</button></div>
         {updatedAt && <div style={{float:'right',marginRight:20}}>Päivitetty: {formattedUpdatedDate}</div>}
