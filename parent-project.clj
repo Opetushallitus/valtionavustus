@@ -81,9 +81,12 @@
 
                          ;; ClojureScript
                          [org.clojure/clojurescript "1.10.879"]
-                         [reagent "0.8.1"]
-                         [cljsjs/react-dom "16.4.1-0"]
-                         [cljs-react-material-ui "0.2.50"]
+                         [reagent "0.8.1"
+                          :exclusions [cljsjs/react cljsjs/react-dom cljsjs/react-dom-server]]
+                         [cljsjs/react "16.4.2-0"]
+                         [cljsjs/react-dom "16.4.2-0"]
+                         [cljs-react-material-ui "0.2.50"
+                          :exclusions [cljsjs/react]]
                          [cljs-http "0.1.45"]
                          [com.andrewmcveigh/cljs-time "0.5.2"]
                          [cljsjs/chartjs "2.7.0-0"]
