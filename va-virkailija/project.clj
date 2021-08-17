@@ -28,7 +28,7 @@
                  [org.clojure/data.json]
                  [org.clojure/data.xml]
                  [clj-ssh]
-                 [clojurewerkz/quartzite]
+                 [gov.nasa.earthdata/quartzite "2.2.1-SNAPSHOT"]
                  [clj-pdf "2.4.0"]
                  [nrepl]
                  [cider/cider-nrepl]]
