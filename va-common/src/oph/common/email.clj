@@ -77,11 +77,12 @@
                             subject)
       email-msg (format-plaintext-message msg)]
   (log/info "Storing email: " msg-description)
-  (let [email_id (query "INSERT INTO virkailija.email (formatted, from_address, sender, to_address, bcc, reply_to, subject, attachment_contents, attachment_title, attachment_description)
+  (let [result (query "INSERT INTO virkailija.email (formatted, from_address, sender, to_address, bcc, reply_to, subject, attachment_contents, attachment_title, attachment_description)
                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id"
-                        [email-msg from sender to bcc reply-to subject (:contents attachment) (:title attachment) (:description attachment)])]
-  (log/info (str "Succesfully stored email with id: " email_id))
-  (:id (first email_id)))))
+                      [email-msg from sender to bcc reply-to subject (:contents attachment) (:title attachment) (:description attachment)])
+        email_id (:id (first result))]
+    (log/info (str "Succesfully stored email with id: " email_id))
+    email_id)))
 
 (defn create-mail-send-fn [msg format-plaintext-message]
     (let [from          (common-string/trim-ws (:from msg))
