@@ -55,6 +55,8 @@ import {
 import {
   navigateToHakijaMuutoshakemusPage,
   fillAndSendMuutoshakemus,
+  clickSendMuutoshakemusButton,
+  expectMuutoshakemusToBeSubmittedSuccessfully
 } from './muutoshakemus-util'
 import { openPaatosPreview } from '../hakemuksen-arviointi/hakemuksen-arviointi-util'
 
@@ -307,6 +309,16 @@ etunimi.sukunimi@oph.fi`)
       await modificationPage.bringToFront()
       expect(await modificationPage.url()).toContain(`${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=`)
       await page.bringToFront()
+    })
+
+    describe('And hakija changes only contact details', () => {
+      it('valmistelija does not get an email', async () => {
+        await navigateToHakijaMuutoshakemusPage(page, hakemusID)
+        await clearAndType(page, '#muutoshakemus__email', "a@b.c")
+        await clickSendMuutoshakemusButton(page)
+        await expectMuutoshakemusToBeSubmittedSuccessfully(page, false)
+        expect((await getValmistelijaEmails(hakemusID)).length).toBe(0)
+      })
     })
 
     describe('And muutoshakemus #1 has been submitted', () => {

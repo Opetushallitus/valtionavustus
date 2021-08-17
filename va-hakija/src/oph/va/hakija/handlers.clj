@@ -106,6 +106,11 @@
         first-email (first presenting-officer-emails)]
     first-email))
 
+(defn- should-notify-valimistelija-of-new-muutoshakemus [muutoshakemus]
+  (or (:talousarvio muutoshakemus)
+      (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta])
+      (get-in muutoshakemus [:sisaltomuutos :haenSisaltomuutosta])))
+
 (defn on-post-muutoshakemus [user-key muutoshakemus]
   (let [hakemus (va-db/get-hakemus user-key)
         avustushaku-id (:avustushaku hakemus)
@@ -115,7 +120,8 @@
         hanke (:project-name normalized-hakemus)
         valmistelija-email (presenting-officer-email avustushaku-id)]
     (va-db/on-muutoshakemus user-key hakemus-id avustushaku-id muutoshakemus)
-    (va-email/notify-valmistelija-of-new-muutoshakemus [valmistelija-email] avustushaku-id register-number hanke hakemus-id)
+    (if (should-notify-valimistelija-of-new-muutoshakemus muutoshakemus)
+      (va-email/notify-valmistelija-of-new-muutoshakemus [valmistelija-email] avustushaku-id register-number hanke hakemus-id))
     (ok (va-db/get-normalized-hakemus user-key))))
 
 (defn- ok-id [hakemus]
