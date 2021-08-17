@@ -631,7 +631,7 @@ export default class HakujenHallintaController {
       .then(function (response) {
         dispatcher.push(events.selvitysFormSaveCompleted, {
           avustusHakuId: avustushaku.id,
-          fromFromServer: response,
+          formFromServer: response,
           selvitysType: selvitysType
         })
       })
@@ -649,7 +649,7 @@ export default class HakujenHallintaController {
 
   onSelvitysFormSaveCompleted(state, hakuIdAndForm) {
     const avustusHakuId = hakuIdAndForm.avustusHakuId
-    const formFromServer = hakuIdAndForm.fromFromServer
+    const formFromServer = hakuIdAndForm.formFromServer
     const selvitysType = hakuIdAndForm.selvitysType
     const haku = _.find(state.hakuList, haku => haku.id === avustusHakuId)
     haku[selvitysType + "Form"] = formFromServer
@@ -773,7 +773,7 @@ export default class HakujenHallintaController {
     const url = "/api/avustushaku/" + avustushaku.id + "/form"
     HttpUtil.post(url, editedForm)
       .then(function (response) {
-        dispatcher.push(events.formSaveCompleted, {avustusHakuId: avustushaku.id, fromFromServer: response})
+        dispatcher.push(events.formSaveCompleted, {avustusHakuId: avustushaku.id, formFromServer: response})
       })
       .catch(function (error) {
         if (error && error.response.status === 400) {
@@ -788,9 +788,10 @@ export default class HakujenHallintaController {
 
   onFormSaveCompleted(state, hakuIdAndForm) {
     const avustusHakuId = hakuIdAndForm.avustusHakuId
-    const formFromServer = hakuIdAndForm.fromFromServer
+    const formFromServer = hakuIdAndForm.formFromServer
     const haku = _.find(state.hakuList, haku => haku.id === avustusHakuId)
     haku.formContent = formFromServer
+    state.formDrafts[haku.id] = JSON.stringify(formFromServer, null, 2)
     return state
   }
 
