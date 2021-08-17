@@ -19,6 +19,15 @@
                   :port (:port config)
                   :strict-host-key-checking (:strict-host-key-checking config)})))
 
+(defn put-maksupalaute-to-maksatuspalvelu [file config]
+    (let [session (create-session config)
+          remote (:remote_path_from config)]
+      (ssh/with-connection session
+        (let [channel (ssh/ssh-sftp session)]
+          (ssh/with-channel-connection channel
+             (ssh/sftp channel {} :put file remote)))))
+)
+
 (defn do-sftp! [& {:keys [file method path config]}]
   (let [session (create-session config)
         remote (:remote_path config)]

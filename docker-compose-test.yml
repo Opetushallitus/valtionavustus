@@ -12,6 +12,7 @@ services:
     depends_on:
       - hakija
       - fakesmtp
+      - maksatuspalvelu
     networks:
       - subnet-private
 
@@ -49,6 +50,19 @@ services:
     image: munkyboy/fakesmtp
     container_name: fakesmtp
     hostname: fakesmtp
+    networks:
+      - subnet-private
+
+  maksatuspalvelu:
+    image: atmoz/sftp
+    hostname: maksatuspalvelu
+    volumes:
+      - ./maksatuspalvelu/initialize-maksatuspalvelu.sh:/etc/sftp.d/initialize-maksatuspalvelu.sh
+      - ./maksatuspalvelu/identity/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
+      - ./maksatuspalvelu/identity/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
+    ports:
+      - '42022:22'
+    command: demo:pass:1001:100
     networks:
       - subnet-private
 

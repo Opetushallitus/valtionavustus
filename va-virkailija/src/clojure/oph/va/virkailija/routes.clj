@@ -26,6 +26,8 @@
             [oph.va.virkailija.authentication :as authentication]
             [oph.va.virkailija.authorization :as authorization]
             [oph.va.virkailija.rondo-scheduling :refer [handle-payment-response-xml]]
+            [oph.va.virkailija.rondo-scheduling :refer [put-maksupalaute-to-maksatuspalvelu]]
+            [oph.va.virkailija.rondo-scheduling :refer [processMaksupalaute]]
             [oph.soresu.form.schema :as form-schema]
             [oph.va.schema :as va-schema]
             [oph.va.virkailija.schema :as virkailija-schema]
@@ -612,16 +614,17 @@
                      (ok (tapahtumaloki/get-tapahtumaloki-entries tyyppi avustushaku-id))))
 
 (compojure-api/defroutes test-api-routes
-  (compojure-api/POST "/handle-payment-xml" []
-    :body  [body { :xml s/Str }]
+  (compojure-api/POST "/process-maksupalaute" []
+    :body  [body { :xml s/Str :filename s/Str }]
     :return {:message s/Str}
-    (log/info "test-api: handling payment xml file")
+    (log/info "test-api: put maksupalaute xml to maksatuspalvelu and process it")
     (try
-       (handle-payment-response-xml (:xml body))
-       (ok {:message "SUCCESS"})
-       (catch Exception e
-         (log/error e)
-         (internal-server-error {:message "error"}))))
+      (put-maksupalaute-to-maksatuspalvelu (:filename body) (:xml body))
+      (processMaksupalaute)
+      (ok {:message "SUCCESS"})
+      (catch Exception e
+        (log/error e)
+        (internal-server-error {:message "error"}))))
 
   (compojure-api/POST "/remove-stored-pitkaviite-from-all-avustushaku-payments" []
     :body  [body { :avustushakuId s/Num }]

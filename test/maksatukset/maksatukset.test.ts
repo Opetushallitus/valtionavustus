@@ -76,8 +76,7 @@ describe("Maksatukset", () => {
     expect(await getBatchTaKpTili(page, 1)).toEqual("29103020")
     expect(await getTiliönti(page, 1)).toEqual("99,999 €")
 
-
-    await simulateResponseXmlFromHandi(`
+    await putMaksupalauteToMaksatuspalveluAndProcessIt(`
       <?xml version="1.0" encoding="UTF-8" standalone="no"?>
       <VA-invoice>
         <Header>
@@ -114,7 +113,7 @@ describe("Maksatukset", () => {
     expect(await getTiliönti(page, 1)).toEqual("99,999 €")
 
 
-    await simulateResponseXmlFromHandi(`
+    await putMaksupalauteToMaksatuspalveluAndProcessIt(`
       <?xml version="1.0" encoding="UTF-8" standalone="no"?>
       <VA-invoice>
         <Header>
@@ -148,10 +147,15 @@ async function fillInMaksueranTiedot(page: Page, ashaTunniste: string, esittelij
   await clickElement(page, "button:not(disabled)[data-test-id=maksatukset-asiakirja--lisaa-asiakirja]")
 }
 
-async function simulateResponseXmlFromHandi(xml: string): Promise<void> {
-  await axios.post(`${VIRKAILIJA_URL}/api/test/handle-payment-xml`, {
+function getUniqueFileName(): string {
+  return `va_${new Date().getTime()}.xml`
+}
+
+async function putMaksupalauteToMaksatuspalveluAndProcessIt(xml: string): Promise<void> {
+  await axios.post(`${VIRKAILIJA_URL}/api/test/process-maksupalaute`, {
     // The XML parser fails if the input doesn't start with "<?xml " hence the trimLeft
     xml: xml.trimLeft(),
+    filename: getUniqueFileName()
   })
 }
 
@@ -159,8 +163,8 @@ async function removeStoredPitkäviiteFromAllAvustushakuPayments(avustushakuId: 
   await axios.post(`${VIRKAILIJA_URL}/api/test/remove-stored-pitkaviite-from-all-avustushaku-payments`, { avustushakuId })
 }
 
-const getBatchPitkäViite = getSentPaymentBatchColumn(1)
 const getBatchStatus = getSentPaymentBatchColumn(2)
+const getBatchPitkäViite = getSentPaymentBatchColumn(1)
 const getBatchToimittajanNimi = getSentPaymentBatchColumn(3)
 const getBatchHanke = getSentPaymentBatchColumn(4)
 const getBatchMaksuun = getSentPaymentBatchColumn(5)

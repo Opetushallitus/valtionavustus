@@ -3,7 +3,15 @@
                 :sv "http://localhost:8080/"}
           :enable-access-log? false
           :without-authentication? true
-          :require-https? false}
+          :require-https? false
+          :payment-service-sftp {:enabled? true
+                                 :host-ip "maksatuspalvelu"
+                                 :port 22
+                                 :local-path "/tmp/"
+                                 :remote_path "./to_handi/va/"
+                                 :remote_path_from "./from_handi/va/"
+                                 :username "demo"
+                                 :password "pass"}}
  :api {:restricted-routes? false}
  :nrepl-enabled? true
  :email {:enabled? true

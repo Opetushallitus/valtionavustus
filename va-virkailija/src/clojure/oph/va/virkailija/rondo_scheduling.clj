@@ -20,6 +20,15 @@
   (payments-data/update-paymentstatus-by-response
     (invoice/read-xml-string xml-string)))
 
+(defn put-maksupalaute-to-maksatuspalvelu [filename xml-string]
+  (let [file (format "%s/%s" (rondo-service/get-local-file-path config) filename)
+        rondo-service (rondo-service/create-service
+                        (get-in config [:server :payment-service-sftp]))]
+
+    (spit file xml-string)
+    (rondo-service/put-maksupalaute-to-maksatuspalvelu file (:configuration rondo-service)))
+)
+
 (defn pop-remote-files [list-of-files remote-service]
   (log/info "Will fetch the following files from Rondo: " list-of-files)
   (doseq [filename list-of-files]
@@ -65,12 +74,15 @@
          (log/debug "Succesfully fetched statuses from Rondo!"))
       (a/timeout timeout-limit) ([_] (log/warn "Timeout from Rondo!")))))
 
+(defn processMaksupalaute []
+  (let [remote-service (rondo-service/create-service
+                         (get-in config [:server :payment-service-sftp]))]
+    (get-statuses-of-payments remote-service)))
+
 (defjob RondoJob
   [ctx]
   (log/info "Running scheduled fetch of payments now from rondo!")
-  (let [remote-service (rondo-service/create-service
-                         (get-in config [:server :payment-service-sftp]))]
-          (get-statuses-of-payments remote-service)))
+        (processMaksupalaute))
 
 (defn schedule-fetch-from-rondo []
   (let [s (qs/start (qs/initialize))

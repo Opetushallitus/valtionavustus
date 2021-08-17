@@ -54,6 +54,9 @@ tmux send-keys "$repo/scripts/run_virkailija_server.sh" C-m
 tmux splitw
 tmux send-keys "$repo/scripts/run_fakesmtp.sh" C-m
 
+tmux splitw
+tmux send-keys "$repo/scripts/run_maksatuspalvelu.sh" C-m
+
 if [ ! -z $RESTORE_FILE ]; then
   tmux new-window
   tmux send-keys "$repo/scripts/restore_dump.sh $RESTORE_FILE" C-m
