@@ -14,4 +14,11 @@
     <packageUrl regex="true">^pkg:maven/org\.clojure/google\-closure\-library\-third\-party@.*$</packageUrl>
     <cve>CVE-2020-8910</cve>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+   file name: closure-compiler-unshaded-v20210505.jar (shaded: com.google.guava:guava:27.1-jre)
+   ]]></notes>
+    <filePath regex="true">.*\bclosure\-compiler\-unshaded\-v20210505\.jar\/META-INF\/maven\/com\.google\.guava\/guava\/pom\.xml</filePath>
+    <cve>CVE-2020-8908</cve>
+  </suppress>
 </suppressions>
