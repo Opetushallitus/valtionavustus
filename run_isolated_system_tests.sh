@@ -8,12 +8,12 @@ function run_tests {
 	npm run common:test "$@"
 	npm run hakija:test "$@"
 	npm run virkailija:test "$@"
+	make lein-test
 }
 
 function main {
   init_nodejs
   run_tests "$@"
-  make lein-test
 }
 
 main "$@"
