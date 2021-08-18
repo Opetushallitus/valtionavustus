@@ -21,6 +21,7 @@ const dispatcher = new Dispatcher()
 
 const events = {
   initialState: 'initialState',
+  onOnkoMuutoshakukelpoinenAvustushakuOkLoaded: 'onkoMuutoshakukelpoinenAvustushakuOkLoaded',
   selectHaku: 'selectHaku',
   createHaku: 'createHaku',
   hakuCreated: 'hakuCreated',
@@ -113,8 +114,8 @@ export default class HakujenHallintaController {
     return `/api/avustushaku/${avustushaku.id}/role`
   }
   
-  static onkoMuutoshakukelpoinenAvustushakuOkUrl(avustushaku) {
-    return `/api/avustushaku/${avustushaku.id}/onko-muutoshakukelpoinen-avustushaku-ok`
+  static onkoMuutoshakukelpoinenAvustushakuOkUrl(avustushakuId) {
+    return `/api/avustushaku/${avustushakuId}/onko-muutoshakukelpoinen-avustushaku-ok`
   }
 
   static privilegesUrl(avustushaku) {
@@ -191,7 +192,7 @@ export default class HakujenHallintaController {
     }, VaUserSearchParameters.searchDebounceMillis())
     this._bind('onInitialState', 'onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection',
       'onHakuSave', 'onAddTalousarviotili', 'onDeleteTalousarviotili', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onAddFocusArea', 'onDeleteFocusArea',
-      'onBeforeUnload', 'onPaymentsLoaded', 'onRolesLoaded', 'onRoleCreated', 'onRoleDeleted', 'saveRole')
+      'onBeforeUnload', 'onPaymentsLoaded', 'onRolesLoaded', 'onRoleCreated', 'onRoleDeleted', 'saveRole', 'onFormSaveCompleted', 'onOnkoMuutoshakukelpoinenAvustushakuOkLoaded')
 
     Bacon.fromEvent(window, "beforeunload").onValue(function() {
       // For some odd reason Safari always displays a dialog here
@@ -221,6 +222,7 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.updateForm)], this.onFormUpdated,
       [dispatcher.stream(events.saveForm)], this.onFormSaved,
       [dispatcher.stream(events.formSaveCompleted)], this.onFormSaveCompleted,
+      [dispatcher.stream(events.onOnkoMuutoshakukelpoinenAvustushakuOkLoaded)], this.onOnkoMuutoshakukelpoinenAvustushakuOkLoaded,
       [dispatcher.stream(events.reRender)], this.onReRender,
       [dispatcher.stream(events.addTalousarviotili)], this.onAddTalousarviotili,
       [dispatcher.stream(events.deleteTalousarviotili)], this.onDeleteTalousarviotili,
@@ -514,7 +516,7 @@ export default class HakujenHallintaController {
       state = this.onHakuSave(state)
     }
     state.selectedHaku = hakuToSelect
-    this.onkoMuutoshakukelpoinenAvustushakuOk(hakuToSelect)
+    this.onkoMuutoshakukelpoinenAvustushakuOk(hakuToSelect.id)
     this.loadPrivileges(hakuToSelect)
     this.loadRoles(hakuToSelect)
     this.loadPayments(hakuToSelect)
@@ -539,12 +541,10 @@ export default class HakujenHallintaController {
     return state
   }
 
-  onkoMuutoshakukelpoinenAvustushakuOk(selectedHaku) {
-    if(!selectedHaku.muutoshakukelpoisuus) {
-      HttpUtil.get(HakujenHallintaController.onkoMuutoshakukelpoinenAvustushakuOkUrl(selectedHaku)).then(isOk => {
-        selectedHaku.muutoshakukelpoisuus = isOk
-      })
-    }
+  onkoMuutoshakukelpoinenAvustushakuOk(avustushakuId) {
+    HttpUtil.get(HakujenHallintaController.onkoMuutoshakukelpoinenAvustushakuOkUrl(avustushakuId)).then(isOk => {
+      dispatcher.push(events.onOnkoMuutoshakukelpoinenAvustushakuOkLoaded, isOk)
+    })
   }
 
   loadRoles(selectedHaku) {
@@ -792,6 +792,12 @@ export default class HakujenHallintaController {
     const haku = _.find(state.hakuList, haku => haku.id === avustusHakuId)
     haku.formContent = formFromServer
     state.formDrafts[haku.id] = JSON.stringify(formFromServer, null, 2)
+    this.onkoMuutoshakukelpoinenAvustushakuOk(haku.id)
+    return state
+  }
+
+  onOnkoMuutoshakukelpoinenAvustushakuOkLoaded(state, isOk) {
+    state.selectedHaku.muutoshakukelpoisuus = isOk
     return state
   }
 
