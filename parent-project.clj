@@ -25,6 +25,7 @@
                          ;; http
                          [buddy/buddy-auth "2.1.0"]
                          [clout "2.2.1"]
+                         [org.apache.commons/commons-compress "1.21"]
                          [com.novemberain/pantomime "2.11.0"]
                          [compojure "1.6.1"]
                          [http-kit "2.4.0"]
