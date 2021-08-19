@@ -4,14 +4,14 @@
     <notes><![CDATA[
    file name: google-closure-library-0.0-20201211-3e6c510d.jar
    ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.clojure/google\-closure\-library@.*$</packageUrl>
+    <packageUrl regex="true">^pkg:maven/org\.clojure/google\-closure\-library@0.0-20201211-3e6c510d$</packageUrl>
     <cve>CVE-2020-8910</cve>
   </suppress>
   <suppress>
     <notes><![CDATA[
    file name: google-closure-library-third-party-0.0-20201211-3e6c510d.jar
    ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.clojure/google\-closure\-library\-third\-party@.*$</packageUrl>
+    <packageUrl regex="true">^pkg:maven/org\.clojure/google\-closure\-library\-third\-party@0.0-20201211-3e6c510d$</packageUrl>
     <cve>CVE-2020-8910</cve>
   </suppress>
   <suppress>
