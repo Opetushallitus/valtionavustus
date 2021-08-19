@@ -21,4 +21,11 @@
     <filePath regex="true">.*\bclosure\-compiler\-unshaded\-v20210505\.jar\/META-INF\/maven\/com\.google\.guava\/guava\/pom\.xml</filePath>
     <cve>CVE-2020-8908</cve>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+   file name: vorbis-java-tika-0.8.jar
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.gagravarr/vorbis\-java\-tika@0.8$</packageUrl>
+    <cve>CVE-2017-6888</cve>
+  </suppress>
 </suppressions>
