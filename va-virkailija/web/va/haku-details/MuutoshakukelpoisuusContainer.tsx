@@ -28,10 +28,10 @@ export const MuutoshakukelpoisuusWarning = ( {muutoshakukelpoisuus, controlDropd
     : `Lomakkeesta puuttuu muutoshakemukselle tarpeellinen kenttä. Muutoshaku ei ole mahdollista.`
   return (
     <div className="muutoshakukelpoisuus-warning" >
-      <div>
+      <div data-test-id="muutoshakukelpoisuus-warning">
         {warningText}
       </div>
-      <div className="muutoshakukelpoisuus-warning-button" onClick={controlDropdown}>
+      <div className="muutoshakukelpoisuus-warning-button" data-test-id="muutoshakukelpoisuus-warning-button" onClick={controlDropdown}>
         <u>Näytä lisätietoja</u>
       </div>
     </div>
@@ -47,7 +47,7 @@ const MuutoshakukelpoisuusDropdown = ({muutoshakukelpoisuus}: Muutoshakukelpoisu
     return (
       <div className="muutoshakukelpoisuus-dropdown-item">
         <div className="muutoshakukelpoisuus-dropdown-item-brown-box">
-          <b>Id</b> <span>{field.id}</span>
+          <b>Id</b> <span className="muutoshakukelpoisuus-dropdown-item-id">{field.id}</span>
         </div>
       </div>
     )

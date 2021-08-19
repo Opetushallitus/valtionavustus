@@ -76,7 +76,7 @@ async function createHakuWithLomakeJson(page: Page, lomakeJson: string, register
   return { avustushakuID }
 }
 
-async function createMuutoshakemusEnabledHaku(page: Page, registerNumber: string, hakuName?: string, codes?: VaCodeValues): Promise<{ avustushakuID: number }> {
+export async function createMuutoshakemusEnabledHaku(page: Page, registerNumber: string, hakuName?: string, codes?: VaCodeValues): Promise<{ avustushakuID: number }> {
   return await createHakuWithLomakeJson(page, muutoshakemusEnabledHakuLomakeJson, registerNumber, hakuName, codes)
 }
 
@@ -244,7 +244,7 @@ export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: 
   return await acceptAvustushaku(page, avustushakuID, "100000", "Ammatillinen koulutus")
 }
 
-async function createCodeValuesForTest(page: Page): Promise<VaCodeValues> {
+export async function createCodeValuesForTest(page: Page): Promise<VaCodeValues> {
   await navigate(page, '/admin-ui/va-code-values/')
 
   const operationalUnit = await createUniqueCode(page, "Toimintayksikkö")
