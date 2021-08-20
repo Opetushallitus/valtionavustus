@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="warn">
   <Appenders>
-    <RollingFile name="ApplicationLog" append="true" fileName="{{ logs_dir }}/valtionavustus/{{ item }}_application.log" filePattern="/tmp/valtionavustus/{{ item }}_application.%i.log">
+    <RollingFile name="ApplicationLog" append="true" fileName="{{ logs_dir }}/valtionavustus/{{ item }}_application.log" filePattern="{{ logs_dir }}/valtionavustus/{{ item }}_application.%i.log">
       <PatternLayout pattern="%d{ISO8601} %-5p [%t] %c: %m%n"/>
       <Policies>
         <SizeBasedTriggeringPolicy size="10MB"/>
