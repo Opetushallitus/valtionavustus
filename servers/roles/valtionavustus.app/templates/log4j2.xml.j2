@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+  <Appenders>
+    <RollingFile name="ApplicationLog" append="true" fileName="{{ logs_dir }}/valtionavustus/{{ item }}_application.log">
+      <PatternLayout pattern="%d{ISO8601} %-5p [%t] %c: %m%n"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="10MB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="100"/>
+    </RollingFile>
+    <RollingFile name="AccessLog" append="true" fileName="{{ logs_dir }}/valtionavustus/{{ item }}_access.log" filePattern="{{ logs_dir }}/valtionavustus/{{ item }}_access.%d{yyyy-MM-dd}.log">
+      <PatternLayout pattern="%d{ISO8601} %-5p [%t]: %m%n"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="24"/>
+      </Policies>
+    </RollingFile>
+    <SMTP name="Mail" subject="[${log4j.email.environment}] Virhe palvelimella" to="{{ logs_mail_recipient }}" from="{{ logs_mail_recipient }}" smtpHost="smtp.sdn.csc.fi" bufferSize="20">
+      <BurstFilter level="error" rate="1" maxBurst="5"/>
+      <PatternLayout pattern="%d{ISO8601} %-5p [%t] %c: %m%n"/>
+    </SMTP>
+  </Appenders>
+  <Loggers>
+    <Logger name="ring" level="info" additivity="false">
+      <AppenderRef ref="AccessLog"/>
+    </Logger>
+    <Root level="info">
+      <AppenderRef ref="ApplicationLog"/>
+      <AppenderRef ref="Mail" level="error"/>
+    </Root>
+  </Loggers>
+</Configuration>

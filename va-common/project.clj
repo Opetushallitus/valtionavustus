@@ -22,14 +22,13 @@
                  [de.ubercode.clostache/clostache]
                  [org.apache.commons/commons-email]
                  [org.clojure/core.async]
-                 [org.slf4j/slf4j-log4j12]
-                 [log4j]
+                 [org.apache.logging.log4j/log4j-core]
+                 [org.apache.logging.log4j/log4j-slf4j-impl]
                  [ring.middleware.conditional :exclusions [ring]]
-                 [ring.middleware.logger]
+                 [radicalzephyr/ring.middleware.logger]
                  [ring/ring-defaults]]
 
-  :aot [oph.common.log4j
-        oph.va.jdbc.enums
+  :aot [oph.va.jdbc.enums
         oph.va.virkailija.db.migrations]
 
   :test-paths ["spec"]

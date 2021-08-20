@@ -94,6 +94,7 @@ command=/usr/bin/java
   -Djava.net.preferIPv4Stack=true
   -Djava.rmi.server.hostname=127.0.0.1
   -Dlog4j.configuration=file:{{ data_dir }}/www/config/%(program_name)s-log4j.properties
+  -Dlog4j.configurationFile=file:{{ data_dir }}/www/config/%(program_name)s-log4j2.xml
   -Dlog4j.email.environment="%(host_node_name)s %(program_name)s"
   -Doph.common.log4j.SMTPThrottle.waitIntervalS={{ log4j_smtp_throttle_wait_interval_s }}
   {{ data_dir }}/www/%(program_name)s-current/%(program_name)s.jar
@@ -141,6 +142,7 @@ command=/usr/bin/java
   -Djava.net.preferIPv4Stack=true
   -Djava.rmi.server.hostname=127.0.0.1
   -Dlog4j.configuration=file:{{ data_dir }}/www/config/%(program_name)s-log4j.properties
+  -Dlog4j.configurationFile=file:{{ data_dir }}/www/config/%(program_name)s-log4j2.xml
   -Dlog4j.email.environment="%(host_node_name)s %(program_name)s"
   -Doph.common.log4j.SMTPThrottle.waitIntervalS={{ log4j_smtp_throttle_wait_interval_s }}
   {{ data_dir }}/www/%(program_name)s-current/%(program_name)s.jar

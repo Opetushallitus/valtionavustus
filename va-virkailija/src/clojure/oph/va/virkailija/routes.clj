@@ -40,14 +40,11 @@
             [oph.va.virkailija.hakemus-search :as hakemus-search]
             [oph.va.virkailija.va-users :as va-users]
             [oph.soresu.common.koodisto :as koodisto]
-            [clojure.tools.logging :as log]
             [oph.va.virkailija.grant-routes :as grant-routes]
             [oph.va.virkailija.application-routes :as application-routes]
             [oph.va.virkailija.reporting-data :as reporting]
-            [oph.va.virkailija.payment-batches-routes
-             :as payment-batches-routes]
-            [oph.va.virkailija.va-code-values-routes
-             :as va-code-values-routes]
+            [oph.va.virkailija.payment-batches-routes :as payment-batches-routes]
+            [oph.va.virkailija.va-code-values-routes :as va-code-values-routes]
             [oph.va.virkailija.payments-routes :as payments-routes]
             [oph.va.virkailija.healthcheck :as healthcheck]
             [oph.va.virkailija.reporting-routes :as reporting-routes]

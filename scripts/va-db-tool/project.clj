@@ -18,8 +18,8 @@
 
   :dependencies [[org.clojure/clojure]
                  [oph/soresu]
-                 [org.slf4j/slf4j-log4j12]
-                 [log4j]]
+                 [org.apache.logging.log4j/log4j-core]
+                 [org.apache.logging.log4j/log4j-slf4j-impl]]
 
   :profiles {:uberjar {:aot [oph.va.db-tool.main]}}
 

@@ -15,8 +15,8 @@
                                     :releases false}]]
 
   :managed-dependencies [[org.clojure/clojure "1.8.0"]
-                         [nrepl "0.6.0"]
-                         [cider/cider-nrepl "0.22.4"]
+                         [nrepl "0.8.3"]
+                         [cider/cider-nrepl "0.26.0"]
 
                          ;; our child projects
                          [oph/soresu "0.1.0-SNAPSHOT"]
@@ -29,15 +29,15 @@
                          [org.apache.tika/tika-core "1.27"]
                          [org.apache.tika/tika-parsers "1.27"]
                          [com.novemberain/pantomime "2.11.0"]
-                         [compojure "1.6.1"]
-                         [http-kit "2.4.0"]
+                         [compojure "1.6.2"]
+                         [http-kit "2.5.3"]
                          [metosin/compojure-api "1.1.13"]
-                         [ring/ring-codec "1.1.1"]
-                         [ring/ring-core "1.6.3"]
-                         [ring/ring-devel "1.6.3"]
+                         [ring/ring-codec "1.1.3"]
+                         [ring/ring-core "1.8.1"]
+                         [ring/ring-devel "1.8.1"]
                          [ring.middleware.conditional "0.2.0"]
-                         [ring.middleware.logger "0.5.0"]
-                         [ring/ring-defaults "0.3.1"]
+                         [radicalzephyr/ring.middleware.logger "0.6.0"]
+                         [ring/ring-defaults "0.3.3"]
                          [ring/ring-session-timeout "0.2.0"]
 
                          ;; json
@@ -57,19 +57,19 @@
                          [yesql "0.5.3"]
 
                          ;; testing
-                         [speclj "3.3.1"]
+                         [speclj "3.3.2"]
                          [speclj-junit "0.0.11"]
 
                          ;; configuration
-                         [environ "1.1.0"]
+                         [environ "1.2.0"]
 
                          ;; logging
-                         [log4j "1.2.17"]
-                         [org.clojure/tools.logging "0.4.0"]
-                         [org.slf4j/slf4j-log4j12 "1.7.25"]
-                         [org.slf4j/slf4j-api "1.7.25"]
+                         [org.apache.logging.log4j/log4j-core "2.14.1"]
+                         [org.apache.logging.log4j/log4j-slf4j-impl "2.14.1"]
+                         [org.clojure/tools.logging "1.1.0"]
+                         [org.slf4j/slf4j-api "1.7.32"]
                          [commons-logging "1.2"]
-                         [org.log4s/log4s_2.11 "1.4.0"]
+                         [org.log4s/log4s_2.11 "1.10.0"]
 
                          ;; cryptography
                          [org.bouncycastle/bcpkix-jdk15on "1.69"]
@@ -107,8 +107,8 @@
                          [commons-codec "1.10"]
                          [commons-io "2.11.0"]
                          [de.ubercode.clostache/clostache "1.4.0"]
-                         [dk.ative/docjure "1.12.0"]
-                         [instaparse "1.4.7"]
+                         [dk.ative/docjure "1.16.0"]
+                         [instaparse "1.4.10"]
                          [org.apache.commons/commons-email "1.5"]
                          [org.clojure/core.async "0.4.500"]
                          [org.clojure/tools.reader "1.1.0"]
