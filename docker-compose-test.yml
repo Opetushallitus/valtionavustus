@@ -34,7 +34,6 @@ services:
     image: postgres:12.2
     volumes:
       - ./scripts/postgres-docker/init-db.sql:/docker-entrypoint-initdb.d/init.sql
-    container_name: va-postgres
     hostname: va-postgres
     ports:
       - '5432:5432'
@@ -48,7 +47,6 @@ services:
 
   fakesmtp:
     image: munkyboy/fakesmtp
-    container_name: fakesmtp
     hostname: fakesmtp
     networks:
       - subnet-private
