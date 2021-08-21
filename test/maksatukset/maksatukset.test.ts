@@ -5,6 +5,7 @@ import {
   clickElementWithText,
   createRandomHakuValues,
   expectingLoadingProgressBar,
+  getElementAttribute,
   getElementInnerText,
   getFirstPage,
   getHakemusTokenAndRegisterNumber,
@@ -129,9 +130,32 @@ describe("Maksatukset", () => {
   })
 })
 
+async function fillTositepaivamaara(page: Page) {
+  async function isFilledWithDateValue() {
+    try {
+      const inputValue = await getElementAttribute(page, '[id="Tositepäivämäärä"]', 'value')
+
+      if (typeof inputValue !== 'string') return false
+
+      return /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(inputValue)
+    } catch (e) {
+      console.log('Failed to get tositepäivämäärä', e.message)
+      return false
+    }
+  }
+
+  while(! await isFilledWithDateValue()) {
+    try {
+      await clickElement(page, "#Tositepäivämäärä")
+      await clickElementWithText(page, 'button', 'OK')
+    } catch (e) {
+      console.log('Failed to set tositepäivämäärä calendar date', e.message)
+    }
+  }
+}
+
 async function fillInMaksueranTiedot(page: Page, ashaTunniste: string, esittelijanOsoite: string, hyvaksyjanOsoite: string) {
-  await clickElement(page, "#Tositepäivämäärä")
-  await clickElementWithText(page, 'button', 'OK')
+  await fillTositepaivamaara(page)
 
   async function clearAndType(page: Page, selector: string, content: string) {
     let value = await page.$eval(selector, input => input.getAttribute("value"))
