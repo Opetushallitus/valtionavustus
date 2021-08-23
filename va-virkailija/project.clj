@@ -30,7 +30,7 @@
                  [clj-ssh]
                  [com.jcraft/jsch "0.1.55"]
                  [gov.nasa.earthdata/quartzite "2.2.1-SNAPSHOT"]
-                 [clj-pdf "2.4.0"]
+                 [clj-pdf "2.5.8"]
                  [nrepl]
                  [cider/cider-nrepl]]
 
