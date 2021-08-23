@@ -31,7 +31,9 @@
                  [com.jcraft/jsch "0.1.55"]
                  [gov.nasa.earthdata/quartzite "2.2.1-SNAPSHOT"]
                  [clj-pdf "2.5.8"]
-                 [org.apache.xmlgraphics/batik-css "1.14" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
+                 [org.apache.xmlgraphics/batik-codec "1.14" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
+                 [org.apache.xmlgraphics/batik-bridge "1.14" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
+                 [org.apache.xmlgraphics/batik-anim "1.14" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
                  [nrepl]
                  [cider/cider-nrepl]]
 
