@@ -34,6 +34,7 @@
                  [org.apache.xmlgraphics/batik-codec "1.14" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
                  [org.apache.xmlgraphics/batik-bridge "1.14" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
                  [org.apache.xmlgraphics/batik-anim "1.14" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
+                 [org.apache.xmlgraphics/xmlgraphics-commons "2.6"]
                  [nrepl]
                  [cider/cider-nrepl]]
 
