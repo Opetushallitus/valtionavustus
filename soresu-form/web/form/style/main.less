@@ -142,9 +142,10 @@ section.soresu-theme {
 // FIELDSETS / WRAPPERS
 .soresu-fieldset,
 .soresu-growing-fieldset {
-  div {
+  max-width: @section-width + 11px;
+
+  & > div {
     display: inline-block;
-    max-width: @section-width + 11px;
   }
 
   >div .soresu-dropdown {

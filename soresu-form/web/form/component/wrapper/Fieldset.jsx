@@ -6,9 +6,7 @@ export default class Fieldset extends React.Component {
     const htmlId = this.props.htmlId
     return (
       <fieldset className="soresu-fieldset" id={htmlId}>
-        <div>
-          {children}
-        </div>
+        {children}
       </fieldset>
     )
   }
