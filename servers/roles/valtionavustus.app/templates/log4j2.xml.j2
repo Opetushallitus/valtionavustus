@@ -11,7 +11,7 @@
     <RollingFile name="AccessLog" append="true" fileName="{{ logs_dir }}/valtionavustus/{{ item }}_access.log" filePattern="{{ logs_dir }}/valtionavustus/{{ item }}_access.%d{yyyy-MM-dd}.log">
       <PatternLayout pattern="%d{ISO8601} %-5p [%t]: %m%n"/>
       <Policies>
-        <TimeBasedTriggeringPolicy interval="24"/>
+        <TimeBasedTriggeringPolicy interval="1"/>
       </Policies>
     </RollingFile>
     <SMTP name="Mail" subject="[${sys:log4j.email.environment}] Virhe palvelimella" to="{{ logs_mail_recipient }}" from="{{ logs_mail_recipient }}" smtpHost="smtp.sdn.csc.fi" bufferSize="20">
