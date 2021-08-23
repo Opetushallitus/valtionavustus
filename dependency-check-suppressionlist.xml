@@ -35,4 +35,15 @@
     <packageUrl regex="true">^pkg:maven/org\.jdom/jdom2@.*$</packageUrl>
     <cve>CVE-2021-33813</cve>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+    file name: alpn-api-1.1.3.v20160715.jar
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.alpn/alpn-api.*</packageUrl>
+    <cve>CVE-2005-3747</cve>
+    <cve>CVE-2009-5049</cve>
+    <cve>CVE-2009-5048</cve>
+    <cve>CVE-2009-1523</cve>
+    <cve>CVE-2009-1524</cve>
+  </suppress>
 </suppressions>
