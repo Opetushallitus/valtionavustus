@@ -22,6 +22,7 @@
   <Loggers>
     <Logger name="ring" level="info" additivity="false">
       <AppenderRef ref="AccessLog"/>
+      <AppenderRef ref="Mail" level="error"/>
     </Logger>
     <Root level="info">
       <AppenderRef ref="ApplicationLog"/>
