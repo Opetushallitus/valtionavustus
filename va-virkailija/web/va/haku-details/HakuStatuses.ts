@@ -1,8 +1,9 @@
 export default class HakuStatuses {
   static allStatuses() {
-    return ['new','draft', 'published', 'resolved']
+    return ['new', 'draft', 'published', 'resolved']
   }
-  static statusToFI(status) {
+
+  static statusToFI(status: string): string {
     const translations = {
       "new": "Uusi",
       "draft": "Luonnos",
