@@ -13,10 +13,11 @@ type SelvitysFormEditorProps = {
   controller: any
   translations: any
   koodistos: any
-  selvitysType: any
+  selvitysType: 'valiselvitys' | 'loppuselvitys'
   environment: any
   helpTexts: any
   formDraft: any
+  formDraftJson: string
 }
 
 export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
@@ -24,19 +25,26 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
   const [sending, setSending] = useState(false)
   const [lahetykset, setLahetykset] = useState<Lahetys[]>([])
 
-  const { avustushaku, controller, translations, koodistos, selvitysType, environment, helpTexts, formDraft } = props
+  const { avustushaku, controller, translations, koodistos, selvitysType, environment, helpTexts, formDraft, formDraftJson } = props
   const formContent = avustushaku[selvitysType + "Form"]
   const updatedAtElementId = `${selvitysType}UpdatedAt`
   const updatedAt = formContent?.updated_at
 
   const previewUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/" + selvitysType
   const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/" + selvitysType + "?lang=sv"
-  const onFormChange = (avustushaku, newDraftJson) =>{
-    controller.selvitysFormOnChangeListener(avustushaku, newDraftJson, selvitysType)
+  const onFormChange = (avustushaku, newDraft) =>{
+    controller.selvitysFormOnChangeListener(avustushaku, newDraft, selvitysType)
+    controller.selvitysJsonFormOnChangeListener(avustushaku, JSON.stringify(newDraft, null, 2), selvitysType)
   }
 
   const onJsonChange = e => {
-    controller.selvitysFormOnChangeListener(avustushaku, e.target.value, selvitysType)
+    controller.selvitysJsonFormOnChangeListener(avustushaku, e.target.value, selvitysType)
+    try {
+      const parsedDraft = JSON.parse(e.target.value)
+      controller.selvitysFormOnChangeListener(avustushaku, parsedDraft, selvitysType)
+    } catch (e)
+    {
+    }
   }
 
   const onSaveForm = () => {
@@ -49,7 +57,7 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
   let parsedForm = formDraft
   let parseError = false
   try {
-    parsedForm = JSON.parse(formDraft)
+    parsedForm = JSON.parse(formDraftJson)
   } catch (error) {
     parseError = error.toString()
   }
@@ -58,7 +66,7 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
     return formDraft && formContent && !_.isEqual(parsedForm, formContent)
   }
 
-  const disableSave = parseError !== false || !formHasBeenEdited()
+  const disableSave = parseError || !formHasBeenEdited()
 
   const recreateForm = () => {
     controller.selvitysFormOnRecreate(avustushaku, selvitysType)
@@ -132,12 +140,12 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
       <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} />
       <div className="form-json-editor">
         <h3>Hakulomakkeen sisältö</h3>
-        <span className="error">{parseError}</span>
+        {parseError && <span className="error">{parseError}</span>}
         <div className="btn-fixed-container">
           <button className="btn-fixed" type="button" onClick={scrollToTop}>Takaisin ylös</button>
           <button className="btn-fixed" type="button" onClick={onSaveForm} disabled={disableSave}>Tallenna</button>
         </div>
-        <textarea onChange={onJsonChange} value={formDraft}/>
+        <textarea onChange={onJsonChange} value={formDraftJson}/>
       </div>
     </div>
   )

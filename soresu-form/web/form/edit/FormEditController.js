@@ -27,7 +27,7 @@ export default class FormEditorController {
   }
 
   constructor(props) {
-    this.formDraftJson = props.formDraftJson
+    this.formDraft = props.formDraft
     this.onEditCallback = props.onFormEdited
     this.allowEditing = props.allowEditing
     this.readOnlyNotificationText = props.readOnlyNotificationText
@@ -36,13 +36,13 @@ export default class FormEditorController {
   doEdit(operation) {
     if (this.allowEditing) {
       const result = operation()
-      this.onEditCallback(JSON.stringify(this.formDraftJson, null, 2), result)
+      this.onEditCallback(this.formDraft, result)
     }
   }
 
   editField(fieldId, valueContainerGetter, valueName, newValue) {
     this.doEdit(() => {
-      const fieldFromJson = FormUtil.findField(this.formDraftJson.content, fieldId)
+      const fieldFromJson = FormUtil.findField(this.formDraft.content, fieldId)
       valueContainerGetter(fieldFromJson)[valueName] = newValue
     })
   }
@@ -50,19 +50,19 @@ export default class FormEditorController {
   removeField(field) {
     this.doEdit(() => {
       const fieldMatcher = f => { return f.id === field.id }
-      const parent = FormUtil.findFieldWithDirectChild(this.formDraftJson.content, field.id)
+      const parent = FormUtil.findFieldWithDirectChild(this.formDraft.content, field.id)
       if (parent) {
         _.remove(parent.children, fieldMatcher)
       } else {
-        _.remove(this.formDraftJson.content, fieldMatcher)
+        _.remove(this.formDraft.content, fieldMatcher)
       }
     })
   }
 
   moveField(field, indexDelta) {
     this.doEdit(() => {
-      const parent = FormUtil.findFieldWithDirectChild(this.formDraftJson.content, field.id)
-      const fields = parent ? parent.children : this.formDraftJson.content
+      const parent = FormUtil.findFieldWithDirectChild(this.formDraft.content, field.id)
+      const fields = parent ? parent.children : this.formDraft.content
       const oldIndex = fields.findIndex(f => f.id === field.id)
       const newIndex = oldIndex + indexDelta
 
@@ -78,7 +78,7 @@ export default class FormEditorController {
       if (parent) {
         parent.children = updatedFields
       } else {
-        this.formDraftJson.content = updatedFields
+        this.formDraft.content = updatedFields
       }
     })
   }
@@ -175,7 +175,7 @@ export default class FormEditorController {
 
   findElementsById(id) {
     return JsUtil.flatFilter(
-      this.formDraftJson.content, n => n.id === id)
+      this.formDraft.content, n => n.id === id)
   }
 
   generateUniqueId(baseId, index, delimiter = "-") {
@@ -188,7 +188,7 @@ export default class FormEditorController {
 
   addChildFieldAfter(fieldToAddAfter, newFieldType) {
     this.doEdit(() => {
-      const formDraftJson = this.formDraftJson
+      const formDraftJson = this.formDraft
       const parentField = FormUtil.findFieldWithDirectChild(formDraftJson.content, fieldToAddAfter.id)
       const childArray = parentField ? parentField.children : formDraftJson.content
       const fieldToAddAfterOnForm = FormUtil.findField(formDraftJson.content, fieldToAddAfter.id)
@@ -217,14 +217,14 @@ export default class FormEditorController {
 
   appendOption(radioButtonField) {
     this.doEdit(() => {
-      const fieldInForm = FormUtil.findField(this.formDraftJson.content, radioButtonField.id)
+      const fieldInForm = FormUtil.findField(this.formDraft.content, radioButtonField.id)
       fieldInForm.options.push(FormEditorController.createEmptyOption())
     })
   }
 
   removeOption(radioButtonField, optionToRemove) {
     this.doEdit(() => {
-      const fieldInForm = FormUtil.findField(this.formDraftJson.content, radioButtonField.id)
+      const fieldInForm = FormUtil.findField(this.formDraft.content, radioButtonField.id)
       _.remove(fieldInForm.options, optionToRemove)
     })
   }

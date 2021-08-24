@@ -16,20 +16,19 @@ export default class FormEditor extends Component {
     const {avustushaku, translations, koodistos, formDraft, onFormChange} = this.props
     const hakuAdminController = this.props.controller
     const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
-    const formDraftJson = this.parseJson(formDraft)
-    const formEditedCallback = (newDraftJson, operationResult) => {
+    const formEditedCallback = (newDraft, operationResult) => {
       if (operationResult && operationResult.fieldType === "koodistoField") {
         hakuAdminController.ensureKoodistosLoaded()
       }
-      onFormChange(avustushaku, newDraftJson)
+      onFormChange(avustushaku, newDraft)
     }
     const formEditorController = new FormEditorController({
-      formDraftJson: formDraftJson,
+      formDraft,
       onFormEdited: formEditedCallback,
       allowEditing: userHasEditPrivilege,
       readOnlyNotificationText: "Käyttäjätunnuksellasi ei ole oikeuksia muokata tätä hakua. Haun valmistelija voi lisätä sinulle oikeudet."})
-    const formState = formDraftJson
-      ? FakeFormState.createEditFormState(avustushaku, translations, formDraftJson.content)
+    const formState = formDraft
+      ? FakeFormState.createEditFormState(avustushaku, translations, formDraft.content)
       : undefined
     if (formState) {
       formState.koodistos = koodistos
@@ -46,13 +45,5 @@ export default class FormEditor extends Component {
       <div id="form-editor">
         <FormEdit {...formElementProps} />
       </div> : <span/>
-  }
-
-  parseJson(string) {
-    try {
-      return JSON.parse(string)
-    } catch (e) {
-      return false
-    }
   }
 }

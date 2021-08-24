@@ -13,6 +13,7 @@ export default class FormEditorContainer extends Component {
     const translations = this.props.translations
     const koodistos = this.props.koodistos
     const formDraft = this.props.formDraft
+    const formDraftJson = this.props.formDraftJson
     const controller = this.props.controller
     const updatedAt = _.get(avustushaku, "formContent.updated_at")
     const helpTexts = this.props.helpTexts
@@ -24,8 +25,9 @@ export default class FormEditorContainer extends Component {
     const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/nayta?lang=sv"
     const formattedUpdatedDate = `${DateUtil.asDateString(updatedAt)} klo ${DateUtil.asTimeString(updatedAt)}`
 
-    const onFormChange = (avustushaku, newDraftJson) =>{
-      controller.formOnChangeListener(avustushaku, newDraftJson)
+    const onFormChange = (avustushaku, newDraft) =>{
+      controller.formOnChangeListener(avustushaku, newDraft)
+      controller.formOnJsonChangeListener(avustushaku, JSON.stringify(newDraft, null, 2))
     }
 
     const scrollToEditor = () =>
@@ -39,9 +41,9 @@ export default class FormEditorContainer extends Component {
 
     return (
       <section>
-        {(environment.muutoshakukelpoisuus 
-          && environment.muutoshakukelpoisuus["enabled?"] 
-          && avustushaku.muutoshakukelpoisuus 
+        {(environment.muutoshakukelpoisuus
+          && environment.muutoshakukelpoisuus["enabled?"]
+          && avustushaku.muutoshakukelpoisuus
           && !avustushaku.muutoshakukelpoisuus["is-ok"])
           && <MuutoshakukelpoisuusContainer muutoshakukelpoisuus={avustushaku.muutoshakukelpoisuus}/>}
         <div dangerouslySetInnerHTML={mainHelp}></div>
@@ -58,7 +60,7 @@ export default class FormEditorContainer extends Component {
           </div>
         </div>
         <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange}/>
-        { formDraft ? <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraft={formDraft} /> : null }
+        <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraftJson={formDraftJson} />
       </section>
     )
   }

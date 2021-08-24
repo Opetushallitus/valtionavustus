@@ -122,39 +122,39 @@ describe("Puppeteer tests", () => {
     const allowBasicAvustushakuFlowAndCheckEachHakemusHasValmistelija = (getPage: () => Page, multiplePaymentBatches: boolean) => async () => {
       const page = getPage()
       const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
-  
+
       if (multiplePaymentBatches) {
         await clickElement(page, "label[for='set-maksuera-true']")
       } else {
         await clickElement(page, "label[for='set-maksuera-false']")
       }
       await waitForSave(page)
-  
+
       await publishAvustushaku(page)
       await fillAndSendHakemus(page, avustushakuID)
-  
+
       await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
-  
+
       // Accept the hakemus
       const { hakemusID } = await navigateToHakemuksenArviointi(page, avustushakuID, "Akaan kaupunki")
-  
+
       log("Hakemus ID:", hakemusID)
-  
+
       await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
       await clearAndType(page, "#budget-edit-project-budget .amount-column input", "100000")
       await Promise.all([
         clickElement(page, "#arviointi-tab label[for='set-arvio-status-accepted']"),
         waitForArvioSave(page, avustushakuID, hakemusID),
       ])
-  
+
       await resolveAvustushaku(page, avustushakuID)
-  
+
       // Sending päätös should give error because the hakemus is missing valmistelija
       await sendPäätös(page, avustushakuID)
       expect(await textContent(page, "#päätös-send-error")).toEqual(`Hakemukselle numero ${hakemusID} ei ole valittu valmistelijaa. Päätöksiä ei lähetetty.`)
-  
+
       await selectValmistelijaForHakemus(page, avustushakuID, hakemusID, "_ valtionavustus")
-  
+
       await sendPäätös(page, avustushakuID)
       const tapahtumaloki = await page.waitForSelector(".tapahtumaloki")
       const logEntryCount = await tapahtumaloki?.evaluate(e => e.querySelectorAll(".entry").length)

@@ -36,9 +36,11 @@ const events = {
   formLoaded: 'formLoaded',
   selvitysFormLoaded: 'selvitysFormLoaded',
   updateSelvitysForm: 'updateSelvitysForm',
+  updateSelvitysFormJson: 'updateSelvitysFormJson',
   saveSelvitysForm: 'saveSelvitysForm',
   selvitysFormSaveCompleted: 'selvitysFormSaveCompleted',
   updateForm: 'updateForm',
+  updateFormJson: 'updateFormJson',
   saveForm: 'saveForm',
   formSaveCompleted: 'formSaveCompleted',
   reRender: 'reRender',
@@ -113,7 +115,7 @@ export default class HakujenHallintaController {
   static roleUrl(avustushaku) {
     return `/api/avustushaku/${avustushaku.id}/role`
   }
-  
+
   static onkoMuutoshakukelpoinenAvustushakuOkUrl(avustushakuId) {
     return `/api/avustushaku/${avustushakuId}/onko-muutoshakukelpoinen-avustushaku-ok`
   }
@@ -153,8 +155,11 @@ export default class HakujenHallintaController {
         serverError: ""
       },
       formDrafts: {},
+      formDraftsJson: {},
       loppuselvitysFormDrafts: {},
+      loppuselvitysFormDraftsJson: {},
       valiselvitysFormDrafts: {},
+      valiselvitysFormDraftsJson: {},
       subTab: subTab,
       vaUserSearch: {
         input: "",
@@ -217,9 +222,11 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.formLoaded)], this.onFormLoaded,
       [dispatcher.stream(events.selvitysFormLoaded)], this.onSelvitysFormLoaded,
       [dispatcher.stream(events.updateSelvitysForm)], this.onUpdateSelvitysForm,
+      [dispatcher.stream(events.updateSelvitysFormJson)], this.onUpdateSelvitysJsonForm,
       [dispatcher.stream(events.saveSelvitysForm)], this.onSaveSelvitysForm,
       [dispatcher.stream(events.selvitysFormSaveCompleted)], this.onSelvitysFormSaveCompleted,
       [dispatcher.stream(events.updateForm)], this.onFormUpdated,
+      [dispatcher.stream(events.updateFormJson)], this.onFormJsonUpdated,
       [dispatcher.stream(events.saveForm)], this.onFormSaved,
       [dispatcher.stream(events.formSaveCompleted)], this.onFormSaveCompleted,
       [dispatcher.stream(events.onOnkoMuutoshakukelpoinenAvustushakuOkLoaded)], this.onOnkoMuutoshakukelpoinenAvustushakuOkLoaded,
@@ -595,8 +602,9 @@ export default class HakujenHallintaController {
 
   onFormLoaded(state, loadFormResult) {
     const haku = loadFormResult.haku
-    state.formDrafts[haku.id] = JSON.stringify(loadFormResult.form, null, 2)
-    loadFormResult.haku.formContent = loadFormResult.form
+    state.formDrafts[haku.id] = loadFormResult.form
+    state.formDraftsJson[haku.id] = JSON.stringify(loadFormResult.form, null, 2)
+    state.selectedHaku.formContent = _.cloneDeep(loadFormResult.form)
     HakujenHallintaController.loadSelvitysForm(state.selectedHaku, "loppuselvitys")
     HakujenHallintaController.loadSelvitysForm(state.selectedHaku, "valiselvitys")
     return state
@@ -613,13 +621,14 @@ export default class HakujenHallintaController {
   onSelvitysFormLoaded(state, loadFormResult) {
     const haku = loadFormResult.haku
     const selvitysType = loadFormResult.selvitysType
-    state[selvitysType + "FormDrafts"][haku.id] = JSON.stringify(loadFormResult.form, null, 2)
-    loadFormResult.haku[loadFormResult.selvitysType + "Form"] = loadFormResult.form
+    state[selvitysType + "FormDrafts"][haku.id] = loadFormResult.form
+    state[selvitysType + "FormDraftsJson"][haku.id] = JSON.stringify(loadFormResult.form, null, 2)
+    state.selectedHaku[loadFormResult.selvitysType + "Form"] = _.cloneDeep(loadFormResult.form)
     return state
   }
 
   saveSelvitysForm(avustushaku, form, selvitysType) {
-    dispatcher.push(events.saveSelvitysForm, {haku: avustushaku, form: JSON.parse(form), selvitysType: selvitysType})
+    dispatcher.push(events.saveSelvitysForm, {haku: avustushaku, form: form, selvitysType: selvitysType})
   }
 
   onSaveSelvitysForm(state, formSaveObject) {
@@ -656,8 +665,16 @@ export default class HakujenHallintaController {
     return state
   }
 
-  selvitysFormOnChangeListener(avustushaku, newFormJson, selvitysType) {
+  selvitysFormOnChangeListener(avustushaku, newForm, selvitysType) {
     dispatcher.push(events.updateSelvitysForm, {
+      avustushaku: avustushaku,
+      newForm: newForm,
+      selvitysType: selvitysType
+    })
+  }
+
+  selvitysJsonFormOnChangeListener(avustushaku, newFormJson, selvitysType) {
+    dispatcher.push(events.updateSelvitysFormJson, {
       avustushaku: avustushaku,
       newFormJson: newFormJson,
       selvitysType: selvitysType
@@ -678,9 +695,14 @@ export default class HakujenHallintaController {
 
   selvitysFormOnRecreate(avustushaku, selvitysType) {
     const form = appendBudgetComponent(selvitysType, avustushaku)
-    dispatcher.push(events.updateSelvitysForm, {
+    dispatcher.push(events.updateSelvitysFormJson, {
       avustushaku: avustushaku,
       newFormJson: JSON.stringify(form),
+      selvitysType: selvitysType
+    })
+    dispatcher.push(events.updateSelvitysForm, {
+      avustushaku: avustushaku,
+      newForm: form,
       selvitysType: selvitysType
     })
   }
@@ -688,7 +710,14 @@ export default class HakujenHallintaController {
   onUpdateSelvitysForm(state, formContentUpdateObject) {
     const selvitysType = formContentUpdateObject.selvitysType
     const avustushaku = formContentUpdateObject.avustushaku
-    state[selvitysType + "FormDrafts"][avustushaku.id] = formContentUpdateObject.newFormJson
+    state[selvitysType + "FormDrafts"][avustushaku.id] = formContentUpdateObject.newForm
+    return state
+  }
+
+  onUpdateSelvitysJsonForm(state, formContentUpdateObject) {
+    const selvitysType = formContentUpdateObject.selvitysType
+    const avustushaku = formContentUpdateObject.avustushaku
+    state[selvitysType + "FormDraftsJson"][avustushaku.id] = formContentUpdateObject.newFormJson
     return state
   }
 
@@ -730,8 +759,12 @@ export default class HakujenHallintaController {
     dispatcher.push(events.updateField, {avustushaku: avustushaku, field: field, newValue: newValue})
   }
 
-  formOnChangeListener(avustushaku, newFormJson) {
-    dispatcher.push(events.updateForm, {avustushaku: avustushaku, newFormJson: newFormJson})
+  formOnChangeListener(avustushaku, newForm) {
+    dispatcher.push(events.updateForm, {avustushaku: avustushaku, newForm: newForm})
+  }
+
+  formOnJsonChangeListener(avustushaku, newFormJson) {
+    dispatcher.push(events.updateFormJson, {avustushaku: avustushaku, newFormJson: newFormJson})
   }
 
   ensureKoodistosLoaded() {
@@ -763,7 +796,14 @@ export default class HakujenHallintaController {
 
   onFormUpdated(state, formContentUpdateObject) {
     const avustushaku = formContentUpdateObject.avustushaku
-    state.formDrafts[avustushaku.id] = formContentUpdateObject.newFormJson
+    state.formDrafts[avustushaku.id] = formContentUpdateObject.newForm
+    state.saveStatus.saveTime = null
+    return state
+  }
+
+  onFormJsonUpdated(state, formContentUpdateObject) {
+    const avustushaku = formContentUpdateObject.avustushaku
+    state.formDraftsJson[avustushaku.id] = formContentUpdateObject.newFormJson
     state.saveStatus.saveTime = null
     return state
   }
@@ -793,8 +833,9 @@ export default class HakujenHallintaController {
     const avustusHakuId = hakuIdAndForm.avustusHakuId
     const formFromServer = hakuIdAndForm.formFromServer
     const haku = _.find(state.hakuList, haku => haku.id === avustusHakuId)
-    haku.formContent = formFromServer
-    state.formDrafts[haku.id] = JSON.stringify(formFromServer, null, 2)
+    haku.formContent = _.cloneDeep(formFromServer)
+    state.formDrafts[haku.id] = formFromServer
+    state.formDraftsJson[haku.id] = JSON.stringify(formFromServer, null, 2)
     this.onkoMuutoshakukelpoinenAvustushakuOk(haku.id)
     return state
   }

@@ -8,21 +8,27 @@ export default class FormJsonEditor extends React.Component {
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
-    const formDraft = this.props.formDraft
+    const formDraftJson = this.props.formDraftJson
     const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
     const hakuIsDraft = avustushaku.status === "draft"
 
     const onChange = e => {
-      controller.formOnChangeListener(avustushaku, e.target.value)
+      controller.formOnJsonChangeListener(avustushaku, e.target.value)
+      try {
+        const parsedDraft = JSON.parse(e.target.value)
+        controller.formOnChangeListener(avustushaku, parsedDraft)
+      } catch (e)
+      {
+      }
     }
     const onClick = () => {
-      controller.saveForm(avustushaku, formDraft)
+      controller.saveForm(avustushaku, formDraftJson)
     }
 
-    let parsedForm = formDraft
+    let parsedForm = formDraftJson
     let parseError = false
     try {
-      parsedForm = JSON.parse(formDraft)
+      parsedForm = JSON.parse(formDraftJson)
     } catch (error) {
       parseError = error.toString()
     }
@@ -39,11 +45,10 @@ export default class FormJsonEditor extends React.Component {
       return null
     })()
     const allowSave = userHasEditPrivilege && parseError === false && hakuIsDraft
-    const formHasBeenEdited = (formDraft && avustushaku.formContent) && !_.isEqual(parsedForm, avustushaku.formContent)
+    const formHasBeenEdited = (formDraftJson && avustushaku.formContent) && !_.isEqual(parsedForm, avustushaku.formContent)
     const disableSave = !allowSave || !formHasBeenEdited
 
-    return formDraft ?
-      <div className="form-json-editor">
+    return <div className="form-json-editor">
         <h3>Hakulomakkeen sisältö</h3>
         <div className="btn-fixed-container">
           {saveDisabledError && <span>{saveDisabledError}</span>}
@@ -51,8 +56,7 @@ export default class FormJsonEditor extends React.Component {
           <button id="saveForm" className="btn-fixed" type="button" disabled={disableSave} onClick={onClick}>Tallenna</button>
         </div>
         <span className="error">{parseError}</span>
-        <textarea onChange={onChange} disabled={!userHasEditPrivilege || avustushaku.status === "published"} value={formDraft}/>
+        <textarea onChange={onChange} disabled={!userHasEditPrivilege || avustushaku.status === "published"} value={formDraftJson}/>
       </div>
-      : <span/>
   }
 }

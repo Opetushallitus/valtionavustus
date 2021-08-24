@@ -42,8 +42,11 @@ export default class AdminApp extends Component {
                             avustushaku={selectedHaku}
                             decisionLiitteet={state.decisionLiitteet}
                             formDraft={state.formDrafts[selectedHaku.id]}
+                            formDraftJson={state.formDraftsJson[selectedHaku.id]}
                             valiselvitysFormDraft={state.valiselvitysFormDrafts[selectedHaku.id]}
+                            valiselvitysFormDraftJson={state.valiselvitysFormDraftsJson[selectedHaku.id]}
                             loppuselvitysFormDraft={state.loppuselvitysFormDrafts[selectedHaku.id]}
+                            loppuselvitysFormDraftJson={state.loppuselvitysFormDraftsJson[selectedHaku.id]}
                             environment={environment}
                             vaUserSearch={state.vaUserSearch}
                             koodistos={state.koodistos}

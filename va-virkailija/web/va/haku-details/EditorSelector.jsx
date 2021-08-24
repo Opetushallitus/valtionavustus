@@ -23,13 +23,16 @@ export default class EditorSelector extends React.Component {
       avustushaku,
       decisionLiitteet,
       formDraft,
+      formDraftJson,
       vaUserSearch,
       koodistos,
       userInfo,
       environment,
       translations,
       valiselvitysFormDraft,
+      valiselvitysFormDraftJson,
       loppuselvitysFormDraft,
+      loppuselvitysFormDraftJson,
       codeOptions,
       helpTexts
     } = this.props
@@ -51,6 +54,7 @@ export default class EditorSelector extends React.Component {
                                              translations={translations}
                                              koodistos={koodistos}
                                              formDraft={formDraft}
+                                             formDraftJson={formDraftJson}
                                              controller={controller}
                                              helpTexts={helpTexts} />
         break
@@ -70,6 +74,7 @@ export default class EditorSelector extends React.Component {
                                         controller={controller}
                                         koodistos={koodistos}
                                         formDraft={subTab === 'valiselvitys' ? valiselvitysFormDraft : loppuselvitysFormDraft}
+                                        formDraftJson={subTab === 'valiselvitys' ? valiselvitysFormDraftJson : loppuselvitysFormDraftJson}
                                         translations={translations}
                                         helpTexts={helpTexts} />
         break
