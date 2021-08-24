@@ -27,7 +27,7 @@
                  [org.http4s/http4s-blaze-client_2.11 "0.16.6"]
                  [org.clojure/data.json]
                  [org.clojure/data.xml]
-                 [nivekuil/clj-ssh "d11634acf9857da4c7fc98258719a333af523cb8"]
+                 [nivekuil/clj-ssh "d11634acf9857da4c7fc98258719a333af523cb8" :exclusions [com.jcraft/jsch.agentproxy.usocket-nc]]
                  [com.jcraft/jsch "0.1.55"]
                  [gov.nasa.earthdata/quartzite "2.2.1-SNAPSHOT"]
                  [clj-pdf "2.5.8"]
