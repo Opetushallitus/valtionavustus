@@ -1,16 +1,19 @@
 import * as Bacon from 'baconjs'
 
 export default class InternalBus {
+  private readonly busCache: {
+    [key: string]: Bacon.Bus<any>
+  };
 
   constructor() {
     this.busCache = {}
   }
 
-  stream(name) {
+  stream(name: string): Bacon.Bus<any> {
     return this.bus(name)
   }
 
-  push(name, value) {
+  push(name: string, value: any): void {
     try {
       this.bus(name).push(value)
     } catch (e) {
@@ -18,11 +21,11 @@ export default class InternalBus {
     }
   }
 
-  plug(name, value) {
+  plug(name: string, value: any): void {
     this.bus(name).plug(value)
   }
 
-  bus(name) {
+  bus(name: string): Bacon.Bus<any> {
     return this.busCache[name] = this.busCache[name] || new Bacon.Bus()
   }
 }
