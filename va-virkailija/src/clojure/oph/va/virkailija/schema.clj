@@ -26,12 +26,10 @@
    :updated-at s/Inst})
 
 (s/defschema MuutoshakemuksenVaatimaKentta
-  "Jahuu jippii kirjoitetaan näitä kommentteja, joita ei missään näy"
   {:id s/Str
    (s/optional-key :label) (s/maybe s/Str)})
 
 (s/defschema OnkoMuutoshakukelpoinenAvustushakuOk
-  "Jahuy"
   {:is-ok s/Bool
    :ok-fields [MuutoshakemuksenVaatimaKentta]
    :erroneous-fields [MuutoshakemuksenVaatimaKentta]})
