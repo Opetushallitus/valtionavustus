@@ -150,13 +150,16 @@ export class EditComponent extends React.Component {
         <span onClick={this.handleOnRemoveFieldClick.bind(this)}
           className="soresu-field-remove soresu-field-edit-button">Poista</span>
       </div>) : null
-
+    
     return (
       <div key={htmlId} className={this.className()}>
         <div className="soresu-field-header">
           <span className="soresu-field-title">
             <h3>{EditComponent.fieldTypeInFI(field.fieldType)}</h3>
           </span>
+          <div className="soresu-field-id-grey-box">
+            <b>Id</b> <span className="soresu-field-id">{field.id}</span>
+          </div>
           <span>
             {editFields}
           </span>
