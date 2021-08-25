@@ -59,9 +59,10 @@ describe("Muutoshakukelpoisuus", () => {
     await clickElementWithTestId(page, "muutoshakukelpoisuus-warning-button")
 
     const missingFieldIds = await getElementInnerTexts(page,  "muutoshakukelpoisuus-dropdown-item-id")
-
     expect(missingFieldIds).toContain("applicant-name")
-    
+
+    const missingFieldLabels = await getElementInnerTexts(page,  "muutoshakukelpoisuus-dropdown-item-label")
+    expect(missingFieldLabels).toContain("Yhteyshenkilön nimi")
   })
 
   it("tells user about multiple missing fields", async () => {
@@ -76,9 +77,12 @@ describe("Muutoshakukelpoisuus", () => {
     await clickElementWithTestId(page, "muutoshakukelpoisuus-warning-button")
 
     const missingFieldIds = await getElementInnerTexts(page,  "muutoshakukelpoisuus-dropdown-item-id")
-
     expect(missingFieldIds).toContain("applicant-name")
     expect(missingFieldIds).toContain("textField-0")
+
+    const missingFieldLabels = await getElementInnerTexts(page,  "muutoshakukelpoisuus-dropdown-item-label")
+    expect(missingFieldLabels).toContain("Yhteyshenkilön nimi")
+    expect(missingFieldLabels).toContain("Yhteyshenkilön puhelinnumero")
   })
 })
 
