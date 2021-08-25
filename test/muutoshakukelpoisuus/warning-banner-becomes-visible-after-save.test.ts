@@ -27,7 +27,6 @@ const puuttuvaYhteyshenkilonNimiJaPuhelinnumeroJson = fs.readFileSync(path.join(
 describe("Muutoshakukelpoisuus", () => {
   let browser: Browser
   let page: Page
-  let avustushakuID: number
 
   beforeAll(async () => {
     browser = await mkBrowser()
@@ -45,17 +44,15 @@ describe("Muutoshakukelpoisuus", () => {
   beforeEach(async () => {
     const randomHakuValues = createRandomHakuValues("Muutoshakukelpoisuus")
     const codes = await createCodeValuesForTest(page)
-    const x = await createMuutoshakemusEnabledHaku(page, randomHakuValues.registerNumber, randomHakuValues.avustushakuName, codes)
-
-    avustushakuID = x.avustushakuID
+    await createMuutoshakemusEnabledHaku(page, randomHakuValues.registerNumber, randomHakuValues.avustushakuName, codes)
   })
 
   it("tells user about one missing field", async () => {
     await clickElementWithText(page, "span", "Hakulomake")
     await clearAndSet(page, ".form-json-editor textarea", puuttuvaYhteyshenkilonNimiJson)
-    await clickFormSaveAndWait(page, avustushakuID)
+    await clickFormSaveAndWait(page)
     
-    const warningBannerText = await getElementInnerText(page,  '[data-test-id="muutoshakukelpoisuus-warning"]')
+    const warningBannerText = await getElementInnerText(page, '[data-test-id="muutoshakukelpoisuus-warning"]')
 
     expect(warningBannerText).toEqual("Lomakkeesta puuttuu muutoshakemukselle tarpeellinen kenttä. Muutoshaku ei ole mahdollista.")
 
@@ -70,7 +67,7 @@ describe("Muutoshakukelpoisuus", () => {
   it("tells user about multiple missing fields", async () => {
     await clickElementWithText(page, "span", "Hakulomake")
     await clearAndSet(page, ".form-json-editor textarea", puuttuvaYhteyshenkilonNimiJaPuhelinnumeroJson)
-    await clickFormSaveAndWait(page, avustushakuID)
+    await clickFormSaveAndWait(page)
     
     const warningBannerText = await getElementInnerText(page,  '[data-test-id="muutoshakukelpoisuus-warning"]')
 

@@ -281,7 +281,7 @@ describe("Puppeteer tests", () => {
   it("supports fields that accept only decimals", async function() {
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
-    const { fieldId, fieldLabel } = await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, avustushakuID, "decimalField")
+    const { fieldId, fieldLabel } = await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, "decimalField")
 
     await clickElementWithText(page, "span", "Haun tiedot")
     await publishAvustushaku(page)
@@ -295,7 +295,7 @@ describe("Puppeteer tests", () => {
   it("supports fields that accept only whole numbers", async function() {
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
-    const { fieldId, fieldLabel } = await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, avustushakuID, "integerField")
+    const { fieldId, fieldLabel } = await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, "integerField")
 
     await clickElementWithText(page, "span", "Haun tiedot")
     await publishAvustushaku(page)
@@ -363,7 +363,7 @@ describe("Puppeteer tests", () => {
     // Select input type for the field
     await clickElementWithText(page, "label", "Pudotusvalikko")
 
-    await clickFormSaveAndWait(page, avustushakuID)
+    await clickFormSaveAndWait(page)
   })
 
   describe('When haku #1 has been created and published', () => {
@@ -374,7 +374,7 @@ describe("Puppeteer tests", () => {
 
     beforeAll(async () => {
       avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
-      fieldId = (await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "project-goals", "textField")).fieldId
+      fieldId = (await addFieldToFormAndReturnElementIdAndLabel(page, "project-goals", "textField")).fieldId
 
       await clickElementWithText(page, "span", "Haun tiedot")
       await publishAvustushaku(page)
@@ -487,7 +487,7 @@ describe("Puppeteer tests", () => {
 
     beforeAll(async () => {
       avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
-      fieldId = (await addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, "project-nutshell", "textField")).fieldId
+      fieldId = (await addFieldToFormAndReturnElementIdAndLabel(page, "project-nutshell", "textField")).fieldId
 
       await clickElementWithText(page, "span", "Haun tiedot")
       await publishAvustushaku(page)
@@ -846,7 +846,7 @@ etunimi.sukunimi@oph.fi
       const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus(), "standardized avustushaku")
       await clickElementWithText(page, "span", "Hakulomake")
       await clearAndSet(page, ".form-json-editor textarea", standardizedHakulomakeJson)
-      await clickFormSaveAndWait(page, avustushakuID)
+      await clickFormSaveAndWait(page)
 
       await clickElementWithText(page, "span", "Haun tiedot")
       await publishAvustushaku(page)

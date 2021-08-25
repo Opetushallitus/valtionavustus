@@ -24,7 +24,6 @@ const puuttuvaYhteyshenkilonNimiJson = fs.readFileSync(path.join(__dirname, '../
 describe("Tallennus", () => {
   let browser: Browser
   let page: Page
-  let avustushakuID: number
 
   beforeAll(async () => {
     browser = await mkBrowser()
@@ -42,9 +41,7 @@ describe("Tallennus", () => {
   beforeEach(async () => {
     const randomHakuValues = createRandomHakuValues("Muutoshakukelpoisuus")
     const codes = await createCodeValuesForTest(page)
-    const x = await createMuutoshakemusEnabledHaku(page, randomHakuValues.registerNumber, randomHakuValues.avustushakuName, codes)
-
-    avustushakuID = x.avustushakuID
+    await createMuutoshakemusEnabledHaku(page, randomHakuValues.registerNumber, randomHakuValues.avustushakuName, codes)
   })
 
   it("save button becomes disabled after save", async () => {
@@ -56,7 +53,7 @@ describe("Tallennus", () => {
 
     await page.waitForXPath("//button[contains(., 'Tallenna')][not(@disabled='')]")
 
-    await clickFormSaveAndWait(page, avustushakuID)
+    await clickFormSaveAndWait(page)
 
     await page.waitForXPath("//button[contains(., 'Tallenna')][@disabled='']")
   })

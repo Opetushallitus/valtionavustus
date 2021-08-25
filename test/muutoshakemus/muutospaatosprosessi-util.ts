@@ -72,7 +72,7 @@ async function createHakuWithLomakeJson(page: Page, lomakeJson: string, register
   const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, registerNumber, hakuName, codes)
   await clickElementWithText(page, "span", "Hakulomake")
   await clearAndSet(page, ".form-json-editor textarea", lomakeJson)
-  await clickFormSaveAndWait(page, avustushakuID)
+  await clickFormSaveAndWait(page)
   return { avustushakuID }
 }
 

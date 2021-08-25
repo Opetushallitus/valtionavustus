@@ -764,6 +764,7 @@ export default class HakujenHallintaController {
   onFormUpdated(state, formContentUpdateObject) {
     const avustushaku = formContentUpdateObject.avustushaku
     state.formDrafts[avustushaku.id] = formContentUpdateObject.newFormJson
+    state.saveStatus.saveTime = null
     return state
   }
 
@@ -771,8 +772,10 @@ export default class HakujenHallintaController {
     const avustushaku = formSaveObject.haku
     const editedForm = formSaveObject.form
     const url = "/api/avustushaku/" + avustushaku.id + "/form"
+    state.saveStatus.saveInProgress = true
     HttpUtil.post(url, editedForm)
       .then(function (response) {
+        dispatcher.push(events.saveCompleted, response)
         dispatcher.push(events.formSaveCompleted, {avustusHakuId: avustushaku.id, formFromServer: response})
       })
       .catch(function (error) {

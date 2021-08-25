@@ -473,6 +473,18 @@ export function expectToBeDefined<T>(val: T): asserts val is NonNullable<T> {
   }
 }
 
+async function waitForSaveStatusSaving(page: Page) {
+  return page.waitForFunction(
+    () => document.querySelector('[data-test-id="save-status"]')?.textContent === 'Tallennetaan'
+  )
+}
+
+async function waitForSaveStatusOk(page: Page) {
+  return page.waitForFunction(
+    () => document.querySelector('[data-test-id="save-status"]')?.textContent === 'Kaikki tiedot tallennettu'
+  )
+}
+
 export async function copyEsimerkkihaku(page: Page) {
   await navigate(page, "/admin/haku-editor/")
   await clickElement(page, ".haku-filter-remove")
@@ -482,7 +494,7 @@ export async function copyEsimerkkihaku(page: Page) {
 
   await page.waitForFunction((name: string) =>
     document.querySelector("#haku-name-fi")?.textContent !== name, {}, currentHakuTitle)
-  await page.waitForFunction(() => document.querySelector('[data-test-id="save-status"]')?.textContent === 'Kaikki tiedot tallennettu')
+  await waitForSaveStatusOk(page)
   await page.waitForTimeout(2000)
 }
 
@@ -691,14 +703,14 @@ export async function gotoPäätösTab(page: Page, avustushakuID: number) {
   await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
 }
 
-export async function addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page: Page, avustushakuID: number, fieldType: string) {
+export async function addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page: Page, fieldType: string) {
   const fieldId = "fieldId" + randomString()
-  return addFieldToFormAndReturnElementIdAndLabel(page, avustushakuID, fieldId, fieldType)
+  return addFieldToFormAndReturnElementIdAndLabel(page, fieldId, fieldType)
 }
 
-export async function addFieldToFormAndReturnElementIdAndLabel(page: Page, avustushakuID: number, fieldId: string, fieldType: string) {
+export async function addFieldToFormAndReturnElementIdAndLabel(page: Page, fieldId: string, fieldType: string) {
   const fields = [{fieldId: fieldId, fieldType: fieldType}]
-  const augmentedFields = await addFieldsToFormAndReturnElementIdsAndLabels(page, avustushakuID, fields)
+  const augmentedFields = await addFieldsToFormAndReturnElementIdsAndLabels(page, fields)
   return augmentedFields[0]
 }
 
@@ -707,7 +719,7 @@ interface Field {
   fieldType: string
 }
 
-async function addFieldsToFormAndReturnElementIdsAndLabels(page: Page, avustushakuID: number, fields: Field[]) {
+async function addFieldsToFormAndReturnElementIdsAndLabels(page: Page, fields: Field[]) {
   await clickElementWithText(page, "span", "Hakulomake")
   const jsonString = await textContent(page, ".form-json-editor textarea")
   const json = JSON.parse(jsonString)
@@ -723,7 +735,7 @@ async function addFieldsToFormAndReturnElementIdsAndLabels(page: Page, avustusha
   const newJson = JSON.stringify(Object.assign({}, json, { content: content.concat(fieldsJson) }))
   await clearAndSet(page, ".form-json-editor textarea", newJson)
 
-  await clickFormSaveAndWait(page, avustushakuID)
+  await clickFormSaveAndWait(page)
 
   return fieldsWithIdAndLabel
 }
@@ -763,11 +775,12 @@ export async function clearAndSet(page: Page, selector: string, text: string) {
   await page.keyboard.press('Backspace')
 }
 
-export async function clickFormSaveAndWait(page: Page, avustushakuID: number) {
+export async function clickFormSaveAndWait(page: Page) {
   await Promise.all([
-    page.waitForResponse(response => response.url() === `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/form` && response.status() === 200),
+    waitForSaveStatusSaving(page),
     clickElementWithText(page, "button", "Tallenna")
   ])
+  await waitForSaveStatusOk(page)
 }
 
 export async function typeValueInFieldAndExpectValidationError(page: Page, fieldId: string, value: string, fieldLabel: string, errorMessage: string) {
