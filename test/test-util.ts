@@ -51,10 +51,16 @@ export function setPageErrorConsoleLogger(page: Page) {
     log('pageerror: ', pageerr)
   })
 
-  page.on('request', async (request) => {
-    if (!request.url().startsWith('data:image')) {
-      log(`Outgoing request to ${request.url()}, navigation: ${request.isNavigationRequest()}`)
+  page.on('request', request => {
+    const url = request.url()
+    const isLocalApiRequest = (url.includes(VIRKAILIJA_HOSTNAME) || url.includes(HAKIJA_HOSTNAME)) && url.includes('/api/')
+    if (!url.startsWith('data:image') && isLocalApiRequest) {
+      log(`Outgoing API request ${request.method()} ${url}, navigation: ${request.isNavigationRequest()}`)
     }
+  })
+
+  page.on('framenavigated', frame => {
+    log(`Navigated to ${frame.url()}`)
   })
 
   page.on('requestfailed', request => {
