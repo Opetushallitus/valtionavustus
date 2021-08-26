@@ -6,6 +6,7 @@ import {
   setPageErrorConsoleLogger,
   setupTestLoggingAndScreenshots,
   clickElementWithText,
+  toInnerText,
 } from '../test-util'
 
 import {
@@ -41,15 +42,13 @@ describe("Muutoshakukelpoisuus", () => {
   it("every field header has a corresponding field id", async () => {
     await clickElementWithText(page, "span", "Hakulomake")
 
-    const fieldHeaders = await page.$$(".soresu-field-header")
+    const fieldHeaders = await page.$$(".soresu-field-title")
     const fieldIds = await page.$$(".soresu-field-id")
+    const fieldIdInnerTexts = await Promise.all(fieldIds.map(el => el.evaluate(toInnerText)))
 
-    expect(fieldIds).toHaveLength(fieldHeaders.length)
+    expect(fieldIdInnerTexts).toHaveLength(fieldHeaders.length)
 
-    const fieldIdInnerTextPromises = fieldIds.map(el => el.evaluate(node => (node as HTMLElement).innerText))
-    const fieldIdInnerTexts = await Promise.all(fieldIdInnerTextPromises);
-    const applicantNameId = await fieldIdInnerTexts.find(innerText => innerText === "applicant-name")
-
+    const applicantNameId = fieldIdInnerTexts.find(innerText => innerText === "applicant-name")
     expect(applicantNameId).toBeDefined()
   })
 })

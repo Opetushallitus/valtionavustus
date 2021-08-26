@@ -78,9 +78,13 @@ export async function clickClojureScriptKäliTab(page: Page, testId: string): Pr
   await waitForClojureScriptLoadingDialogHidden(page)
 }
 
+export function toInnerText(node: Element) {
+  return (node as HTMLElement).innerText
+}
+
 export async function getElementInnerText(page: Page | Frame, selector: string): Promise<string | undefined> {
   const element = await page.waitForSelector(selector)
-  return await element?.evaluate(node => (node as HTMLElement).innerText)
+  return await element?.evaluate(toInnerText)
 }
 
 export async function getElementAttribute(page: Page, selector: string, attribute: string) {

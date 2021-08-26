@@ -11,7 +11,8 @@ import {
   clickFormSaveAndWait,
   clearAndSet,
   clickElementWithTestId,
-  getElementInnerText
+  getElementInnerText,
+  toInnerText
 } from '../test-util'
 
 import {
@@ -87,5 +88,5 @@ describe("Muutoshakukelpoisuus", () => {
 })
 
 async function getElementInnerTexts(page: Page, selector: string) {
-  return await page.evaluate((selector: string) => Array.from(document.getElementsByClassName(selector)).map((element: Element) => (element as HTMLElement).innerText), selector);
+  return await page.evaluate((selector: string) => Array.from(document.getElementsByClassName(selector)).map(toInnerText), selector);
 }
