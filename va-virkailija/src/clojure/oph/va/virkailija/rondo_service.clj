@@ -69,9 +69,26 @@
 (defrecord RondoFileService [configuration]
   RemoteFileService
   (send-payment-to-rondo! [service payment-values] (send-payment! (assoc payment-values :config (:configuration service) :func do-sftp!)))
+
+  (get-all-maksatukset-from-maksatuspalvelu [service]
+    (let [list-of-files (get-sent-maksatukset-file-list service)]
+      (for [filename list-of-files]
+        (let [xml-file-path (format "%s/%s" (get-local-file-path (:configuration service)) filename)]
+          (do-sftp! :method :get
+                    :file xml-file-path
+                    :path (:remote_path (:configuration service))
+                    :config (:configuration service))
+
+          (slurp (get-local-file service filename)))
+        )))
   (get-remote-file-list [service]
     (let [result (do-sftp! :method :cdls
                            :path (:remote_path_from (:configuration service))
+                           :config (:configuration service))]
+      (map #(last (strc/split (str %) #"\s")) result)))
+  (get-sent-maksatukset-file-list [service]
+    (let [result (do-sftp! :method :cdls
+                           :path (:remote_path (:configuration service))
                            :config (:configuration service))]
       (map #(last (strc/split (str %) #"\s")) result)))
   (get-local-path [service] (get-in (:configuration service) [:local-path] (System/getProperty "java.io.tmpdir")))

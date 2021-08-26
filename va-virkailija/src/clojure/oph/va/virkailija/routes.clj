@@ -28,6 +28,8 @@
             [oph.va.virkailija.rondo-scheduling :refer [handle-payment-response-xml]]
             [oph.va.virkailija.rondo-scheduling :refer [put-maksupalaute-to-maksatuspalvelu]]
             [oph.va.virkailija.rondo-scheduling :refer [processMaksupalaute]]
+            [oph.va.virkailija.rondo-service :as rondo-service]
+            [oph.va.virkailija.remote-file-service :refer [get-all-maksatukset-from-maksatuspalvelu]]
             [oph.soresu.form.schema :as form-schema]
             [oph.va.schema :as va-schema]
             [oph.va.virkailija.schema :as virkailija-schema]
@@ -622,6 +624,18 @@
       (put-maksupalaute-to-maksatuspalvelu (:filename body) (:xml body))
       (processMaksupalaute)
       (ok {:message "SUCCESS"})
+      (catch Exception e
+        (log/error e)
+        (internal-server-error {:message "error"}))))
+
+  (compojure-api/GET "/get-sent-maksatukset" []
+    :return {:maksatukset [s/Str]}
+    (log/info "test-api: get all maksatukset we have sent to maksatuspalvelu")
+    (try
+      (let [rondo-service (rondo-service/create-service
+                            (get-in config [:server :payment-service-sftp]))]
+        (ok {:maksatukset (get-all-maksatukset-from-maksatuspalvelu rondo-service)})
+      )
       (catch Exception e
         (log/error e)
         (internal-server-error {:message "error"}))))

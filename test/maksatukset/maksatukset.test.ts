@@ -19,6 +19,7 @@ import {
 } from '../test-util'
 import { ratkaiseMuutoshakemusEnabledAvustushaku } from '../muutoshakemus/muutospaatosprosessi-util'
 import axios from 'axios'
+import moment from "moment"
 
 jest.setTimeout(400_000)
 
@@ -27,6 +28,9 @@ describe("Maksatukset", () => {
   let page: Page
   let hakemusID: number
   let avustushakuID: number
+  let operationalUnit: string
+  let project: string
+  let operation: string
 
   beforeAll(async () => {
     browser = await mkBrowser()
@@ -50,6 +54,9 @@ describe("Maksatukset", () => {
     })
     hakemusID = x.hakemusID
     avustushakuID = x.avustushakuID
+    operationalUnit = x.operationalUnit
+    project = x.project
+    operation = x.operation
 
     await navigate(page, "/admin-ui/payments/")
   })
@@ -94,6 +101,8 @@ describe("Maksatukset", () => {
 
   it("work with pitkaviite with contact person name", async () => {
     await fillInMaksueranTiedot(page, "asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
+    const dueDate = await getElementAttribute(page, '[id="Eräpäivä"]', 'value')
+    if (!dueDate) throw new Error('Cannot find due date from form')
 
     await expectingLoadingProgressBar(page, "Lähetetään maksatuksia", () =>
       aria(page, "Lähetä maksatukset").then(e => e.click()))
@@ -127,6 +136,9 @@ describe("Maksatukset", () => {
     await reloadPaymentPage(page)
     await gotoLähetetytMaksatuksetTab(page)
     expect(await getBatchStatus(page, 1)).toEqual("Maksettu")
+
+    const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu()
+    expect(maksatukset).toContainEqual(getExpectedPaymentXML(project, operation, operationalUnit, pitkaviite, `${registerNumber}_1`, dueDate))
   })
 })
 
@@ -183,6 +195,11 @@ async function putMaksupalauteToMaksatuspalveluAndProcessIt(xml: string): Promis
   })
 }
 
+async function getAllMaksatuksetFromMaksatuspalvelu(): Promise<string[]> {
+  const resp = await axios.get<{maksatukset: string[]}>(`${VIRKAILIJA_URL}/api/test/get-sent-maksatukset`)
+  return resp.data.maksatukset
+}
+
 async function removeStoredPitkäviiteFromAllAvustushakuPayments(avustushakuId: number): Promise<void> {
   await axios.post(`${VIRKAILIJA_URL}/api/test/remove-stored-pitkaviite-from-all-avustushaku-payments`, { avustushakuId })
 }
@@ -214,4 +231,9 @@ function getSentPaymentBatchColumn(column: number) {
     const rowSelector = (n: number) => `[data-test-id=sent-payment-batches-table] tbody > tr:nth-child(${n})`
     return await getElementInnerText(page, `${rowSelector(paymentBatchRow)} > td:nth-child(${column})`)
   }
+}
+
+function getExpectedPaymentXML(projekti: string, toiminto: string, toimintayksikko: string, pitkaviite: string, invoiceNumber: string, dueDate: string): string {
+  const today = moment(new Date()).format('YYYY-MM-DD')
+  return `<?xml version="1.0" encoding="UTF-8"?><objects><object><header><toEdiID>003727697901</toEdiID><invoiceType>INVOICE</invoiceType><vendorName>Akaan kaupunki</vendorName><addressFields><addressField1></addressField1><addressField2></addressField2><addressField5></addressField5></addressFields><vendorRegistrationId>2050864-5</vendorRegistrationId><bic>OKOYFIHH</bic><bankAccount>FI95 6682 9530 0087 65</bankAccount><invoiceNumber>${invoiceNumber}</invoiceNumber><longReference>${pitkaviite}</longReference><documentDate>${today}</documentDate><dueDate>${dueDate}</dueDate><paymentTerm>Z001</paymentTerm><currencyCode>EUR</currencyCode><grossAmount>99999</grossAmount><netamount>99999</netamount><vatamount>0</vatamount><voucherSeries>XE</voucherSeries><postingDate>${today}</postingDate><ownBankShortKeyCode></ownBankShortKeyCode><handler><verifierName>essi.esittelija@example.com</verifierName><verifierEmail>essi.esittelija@example.com</verifierEmail><approverName>hygge.hyvaksyja@example.com</approverName><approverEmail>hygge.hyvaksyja@example.com</approverEmail><verifyDate>${today}</verifyDate><approvedDate>${today}</approvedDate></handler><otsData><otsBankCountryKeyCode></otsBankCountryKeyCode></otsData><invoicesource>VA</invoicesource></header><postings><postingRows><postingRow><rowId>1</rowId><generalLedgerAccount>82010000</generalLedgerAccount><postingAmount>99999</postingAmount><accountingObject01>${toimintayksikko}</accountingObject01><accountingObject02>29103020</accountingObject02><accountingObject04>${projekti}</accountingObject04><accountingObject05>${toiminto}</accountingObject05><accountingObject08></accountingObject08></postingRow></postingRows></postings></object></objects>`
 }

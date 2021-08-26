@@ -238,10 +238,11 @@ export async function publishAndFillMuutoshakemusEnabledAvustushaku(page: Page, 
   return { avustushakuID, userKey }
 }
 
-export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers): Promise<{ avustushakuID: number, hakemusID: number }> {
+export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers): Promise<{ avustushakuID: number, hakemusID: number } & VaCodeValues> {
   const codes = await createCodeValuesForTest(page)
   const { avustushakuID } = await createMuutoshakemusEnabledAvustushakuAndFillHakemus(page, haku, answers, codes)
-  return await acceptAvustushaku(page, avustushakuID, "100000", "Ammatillinen koulutus")
+  const avustushaku = await acceptAvustushaku(page, avustushakuID, "100000", "Ammatillinen koulutus")
+  return { ...avustushaku, ...codes }
 }
 
 export async function createCodeValuesForTest(page: Page): Promise<VaCodeValues> {
