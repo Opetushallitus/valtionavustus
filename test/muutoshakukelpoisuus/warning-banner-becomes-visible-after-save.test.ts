@@ -11,7 +11,6 @@ import {
   clearAndSet,
   clickElementWithTestId,
   getElementInnerText,
-  toInnerText,
   navigate
 } from '../test-util'
 
