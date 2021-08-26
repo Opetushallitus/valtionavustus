@@ -963,7 +963,7 @@ export async function createUniqueCode(page: Page, name: string = 'Test code'): 
   await clearAndType(page, '[data-test-id=code-form__name]', `${name} ${uniqueCode}`)
   await clickElementWithTestId(page, 'code-form__add-button')
 
-  await page.waitForSelector(`tr[data-test-id="${uniqueCode}"]`),
+  await page.waitForSelector(`tr[data-test-id="${uniqueCode}"]`)
   await waitForClojureScriptLoadingDialogHidden(page)
   return uniqueCode
 }
