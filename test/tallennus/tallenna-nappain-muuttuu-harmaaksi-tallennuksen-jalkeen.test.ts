@@ -7,9 +7,9 @@ import {
   mkBrowser,
   setPageErrorConsoleLogger,
   setupTestLoggingAndScreenshots,
-  clickElementWithText,
   clickFormSaveAndWait,
   clearAndSet,
+  navigate,
 } from '../test-util'
 
 import {
@@ -24,6 +24,7 @@ const puuttuvaYhteyshenkilonNimiJson = fs.readFileSync(path.join(__dirname, '../
 describe("Tallennus", () => {
   let browser: Browser
   let page: Page
+  let avustushakuId: number
 
   beforeAll(async () => {
     browser = await mkBrowser()
@@ -41,11 +42,12 @@ describe("Tallennus", () => {
   beforeEach(async () => {
     const randomHakuValues = createRandomHakuValues("Muutoshakukelpoisuus")
     const codes = await createCodeValuesForTest(page)
-    await createMuutoshakemusEnabledHaku(page, randomHakuValues.registerNumber, randomHakuValues.avustushakuName, codes)
+    const { avustushakuID } = await createMuutoshakemusEnabledHaku(page, randomHakuValues.registerNumber, randomHakuValues.avustushakuName, codes)
+    avustushakuId = avustushakuID
   })
 
   it("save button becomes disabled after save", async () => {
-    await clickElementWithText(page, "span", "Hakulomake")
+    await navigate(page, `/admin/form-editor/?avustushaku=${avustushakuId}`)
 
     await page.waitForXPath("//button[contains(., 'Tallenna')][@disabled='']")
 
