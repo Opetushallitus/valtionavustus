@@ -3,9 +3,9 @@ import {
   createRandomHakuValues,
   getFirstPage,
   mkBrowser,
+  navigate,
   setPageErrorConsoleLogger,
   setupTestLoggingAndScreenshots,
-  clickElementWithText,
   toInnerText,
 } from '../test-util'
 
@@ -19,6 +19,7 @@ jest.setTimeout(400_000)
 describe("Muutoshakukelpoisuus", () => {
   let browser: Browser
   let page: Page
+  let avustushakuId: number
 
   beforeAll(async () => {
     browser = await mkBrowser()
@@ -36,11 +37,12 @@ describe("Muutoshakukelpoisuus", () => {
   beforeEach(async () => {
     const randomHakuValues = createRandomHakuValues("Muutoshakukelpoisuus")
     const codes = await createCodeValuesForTest(page)
-    await createMuutoshakemusEnabledHaku(page, randomHakuValues.registerNumber, randomHakuValues.avustushakuName, codes)
+    const { avustushakuID } = await createMuutoshakemusEnabledHaku(page, randomHakuValues.registerNumber, randomHakuValues.avustushakuName, codes)
+    avustushakuId = avustushakuID
   })
 
   it("every field header has a corresponding field id", async () => {
-    await clickElementWithText(page, "span", "Hakulomake")
+    await navigate(page, `/admin/form-editor/?avustushaku=${avustushakuId}`)
 
     const fieldHeaders = await page.$$(".soresu-field-title")
     const fieldIds = await page.$$(".soresu-field-id")

@@ -7,12 +7,12 @@ import {
   mkBrowser,
   setPageErrorConsoleLogger,
   setupTestLoggingAndScreenshots,
-  clickElementWithText,
   clickFormSaveAndWait,
   clearAndSet,
   clickElementWithTestId,
   getElementInnerText,
-  toInnerText
+  toInnerText,
+  navigate
 } from '../test-util'
 
 import {
@@ -28,6 +28,7 @@ const puuttuvaYhteyshenkilonNimiJaPuhelinnumeroJson = fs.readFileSync(path.join(
 describe("Muutoshakukelpoisuus", () => {
   let browser: Browser
   let page: Page
+  let avustushakuId: number
 
   beforeAll(async () => {
     browser = await mkBrowser()
@@ -45,11 +46,12 @@ describe("Muutoshakukelpoisuus", () => {
   beforeEach(async () => {
     const randomHakuValues = createRandomHakuValues("Muutoshakukelpoisuus")
     const codes = await createCodeValuesForTest(page)
-    await createMuutoshakemusEnabledHaku(page, randomHakuValues.registerNumber, randomHakuValues.avustushakuName, codes)
+    const { avustushakuID } = await createMuutoshakemusEnabledHaku(page, randomHakuValues.registerNumber, randomHakuValues.avustushakuName, codes)
+    avustushakuId = avustushakuID
   })
 
   it("tells user about one missing field", async () => {
-    await clickElementWithText(page, "span", "Hakulomake")
+    await navigate(page, `/admin/form-editor/?avustushaku=${avustushakuId}`)
     await clearAndSet(page, ".form-json-editor textarea", puuttuvaYhteyshenkilonNimiJson)
     await clickFormSaveAndWait(page)
     
@@ -67,7 +69,7 @@ describe("Muutoshakukelpoisuus", () => {
   })
 
   it("tells user about multiple missing fields", async () => {
-    await clickElementWithText(page, "span", "Hakulomake")
+    await navigate(page, `/admin/form-editor/?avustushaku=${avustushakuId}`)
     await clearAndSet(page, ".form-json-editor textarea", puuttuvaYhteyshenkilonNimiJaPuhelinnumeroJson)
     await clickFormSaveAndWait(page)
     
