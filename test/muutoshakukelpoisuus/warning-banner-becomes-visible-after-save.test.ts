@@ -90,5 +90,5 @@ describe("Muutoshakukelpoisuus", () => {
 })
 
 async function getElementInnerTexts(page: Page, selector: string) {
-  return await page.evaluate((selector: string) => Array.from(document.getElementsByClassName(selector)).map(toInnerText), selector);
+  return await page.evaluate((selector: string) => Array.from(document.getElementsByClassName(selector)).map((node: Element) => (node as HTMLElement).innerText), selector);
 }
