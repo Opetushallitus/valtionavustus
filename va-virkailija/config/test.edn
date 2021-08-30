@@ -9,5 +9,4 @@
  :va-users {:use-cache? false}
  :payments {:enabled? true :delete-payments? true}
  :contact-person-name-in-pitkaviite {:enabled? true}
- :sisaltomuutos {:enabled? true}
  :test-apis {:enabled? true}}

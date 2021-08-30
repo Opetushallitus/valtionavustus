@@ -10,5 +10,4 @@ export type EnvironmentApiResponse = {
   }
   "va-code-values": FeatureFlag
   reports: FeatureFlag
-  sisaltomuutos: FeatureFlag
 }

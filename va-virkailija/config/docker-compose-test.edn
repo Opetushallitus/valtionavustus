@@ -25,5 +25,4 @@
  :tasmaytysraportti-create {:enabled? true}
  :db {:server-name "va-postgres"
       :database-name "va-dev"}
- :sisaltomuutos {:enabled? true}
  :test-apis {:enabled? true}}

@@ -20,7 +20,6 @@
  :contact-person-name-in-pitkaviite {:enabled? true}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
- :sisaltomuutos {:enabled? true}
  :integration-healthcheck {:enabled? true
                            :timeout 5000
                            :interval-minutes 15}}
