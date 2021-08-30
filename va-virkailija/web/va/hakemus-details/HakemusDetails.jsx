@@ -17,9 +17,6 @@ export default class HakemusDetails extends Component {
           (environment["multibatch-payments"] &&
            environment["multibatch-payments"]["enabled?"]) || false
     const muutoshakemukset = hakemus.muutoshakemukset
-    const muutospaatosprosessiEnabled =
-          (environment["muutospaatosprosessi"] &&
-           environment["muutospaatosprosessi"]["enabled?"]) || false
 
     const userOid = userInfo["person-oid"]
     const userRole = hakuData.roles.find(r => r.oid === userOid)
@@ -124,7 +121,7 @@ export default class HakemusDetails extends Component {
           {tab('arviointi', 'Arviointi')}
           {tab('valiselvitys', 'Väliselvitys')}
           {tab('loppuselvitys', 'Loppuselvitys')}
-          {muutospaatosprosessiEnabled && tab('muutoshakemukset', <MuutoshakemuksetLabel/>)}
+          {tab('muutoshakemukset', <MuutoshakemuksetLabel/>)}
           {tab('seuranta', 'Seuranta', 'tab-seuranta')}
         </div>
         <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>

@@ -25,7 +25,6 @@ export default class HakuEdit extends Component {
     const selectedValueProject = this.props.codeOptions.filter(k => k.id===avustushaku["project-id"] && !k.hidden)[0] || ""
     const selectedValueOperation = this.props.codeOptions.filter(k => k.id===avustushaku["operation-id"] && !k.hidden)[0] || ""
     const selectedValueOperationalUnit = this.props.codeOptions.filter(k => k.id===avustushaku["operational-unit-id"] && !k.hidden)[0] || ""
-    const muutoshakuDisabled = this.props.muutospaatosprosessiEnabled && !avustushaku.muutoshakukelpoinen
     const helpTexts = this.props.helpTexts
 
     const onChangeListener = (target, value) => {
@@ -45,7 +44,7 @@ export default class HakuEdit extends Component {
     return (
       <div id="haku-edit">
         <div dangerouslySetInnerHTML={mainHelp}></div>
-        {muutoshakuDisabled &&
+        {!avustushaku.muutoshakukelpoinen &&
           <WarningBanner>
             <div data-test-id="muutoshakukelvoton-warning">
               <p><b>Huom.!</b> Uusi muutoshakutoiminnallisuus ei ole käytössä tälle avustushaulle.</p>

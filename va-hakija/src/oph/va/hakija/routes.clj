@@ -303,8 +303,8 @@
 (compojure-api/defroutes avustushaku-routes
   "Avustushaku routes"
   (get-id)
-  (when (get-in config [:muutospaatosprosessi :enabled?]) (get-normalized-hakemus))
-  (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemukset))
+  (get-normalized-hakemus)
+  (get-muutoshakemukset)
   (get-hakemus)
   (get-selvitys)
   (get-selvitys-init)
@@ -340,10 +340,8 @@
            (resp/redirect "http://oph.fi/rahoitus/valtionavustukset"))))
 
    ;; Finnish subcontext
-   (when (get-in config [:muutospaatosprosessi :enabled?])
-     (compojure/GET "/muutoshakemus" [] (return-html "muutoshakemus.html")))
-   (when (get-in config [:muutospaatosprosessi :enabled?])
-     (compojure/GET "/muutoshakemus/paatos" [] (return-html "muutoshakemus.html")))
+   (compojure/GET "/muutoshakemus" [] (return-html "muutoshakemus.html"))
+   (compojure/GET "/muutoshakemus/paatos" [] (return-html "muutoshakemus.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "index.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "selvitys.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "selvitys.html"))
@@ -387,9 +385,8 @@
 
 (compojure-api/defroutes muutoshakemus-routes
   "APIs for hakemus changes after the hakemus has already been approved"
-  (when (get-in config [:muutospaatosprosessi :enabled?]) (get-muutoshakemus-paatos))
-  (when (get-in config [:muutospaatosprosessi :enabled?]) (post-muutoshakemus))
-  )
+  (get-muutoshakemus-paatos)
+  (post-muutoshakemus))
 
 (def api-config
   {:formats [:json-kw]

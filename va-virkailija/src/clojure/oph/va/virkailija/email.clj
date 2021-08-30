@@ -174,7 +174,6 @@
 
 (defn should-include-muutoshaku-link-in-paatos-email? [avustushaku hakemus-id]
   (and
-    (get-in config [:muutospaatosprosessi :enabled?])
     (:muutoshakukelpoinen avustushaku)
     (has-normalized-hakemus hakemus-id)))
 

@@ -199,7 +199,6 @@ export default class HakemusListing extends Component {
     const allowHakemusScoring = privileges["score-hakemus"]
     const allowChangeHakemusState = privileges["change-hakemus-state"]
     const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter, userInfo, allowHakemusScoring)
-    const muutospaatosprosessiEnabled = (environment["muutospaatosprosessi"] && environment["muutospaatosprosessi"]["enabled?"]) || false
 
     const notPayable = hakemusList.filter(
       h => h.arvio["should-pay"] === false || h.refused === true)
@@ -267,7 +266,7 @@ export default class HakemusListing extends Component {
                               filterField="status"/>
                 <HakemusSorter field="status" sorter={sorter} controller={controller}/>
               </th>
-              {muutospaatosprosessiEnabled && <th className="muutoshakemus-column">
+              <th className="muutoshakemus-column">
                 <StatusFilter controller={controller}
                               hakemusList={hakemusList}
                               filter={filter}
@@ -276,7 +275,7 @@ export default class HakemusListing extends Component {
                               statusToFi={Muutoshakemus.statusToFI}
                               filterField="status_muutoshakemus"/>
                 <HakemusSorter field="status_muutoshakemus" sorter={sorter} controller={controller}/>
-              </th>}
+              </th>
               {!isResolved && <ChangeRequestHeader field="change-request" sorter={sorter} controller={controller} hakemusList={filteredHakemusList} />}
               {!isResolved && isAcademysize && <th className="academysize-column">Koko<HakemusSorter field="academysize" sorter={sorter} controller={controller}/></th>}
               {includesShouldNotPay && (
@@ -513,7 +512,6 @@ class HakemusRow extends Component {
     const postSubmitModified = hakemus["submitted-version"]
           && hakemus["submitted-version"] !== hakemus.version
     let hakemusName = ""
-    const muutospaatosprosessiEnabled = (environment["muutospaatosprosessi"] && environment["muutospaatosprosessi"]["enabled?"]) || false
 
     if (_.isEmpty(hakemus["project-name"])) {
       hakemusName = hakemus["register-number"]
@@ -537,13 +535,11 @@ class HakemusRow extends Component {
       <td className="status-column">
         {statusFI}
       </td>
-      {muutospaatosprosessiEnabled && (
-        <td
-          className={`muutoshakemus-values ${muutoshakemusStatus}`}
-          dangerouslySetInnerHTML={{ __html: decoratedMuutoshakemusStatus }}
-          data-test-id={`muutoshakemus-status-${hakemus.id}`}
-        />
-      )}
+      <td
+        className={`muutoshakemus-values ${muutoshakemusStatus}`}
+        dangerouslySetInnerHTML={{ __html: decoratedMuutoshakemusStatus }}
+        data-test-id={`muutoshakemus-status-${hakemus.id}`}
+      />
       {!isResolved && (
         <td className="change-request-column" title={changeRequestTitle}>
           {changeRequest}

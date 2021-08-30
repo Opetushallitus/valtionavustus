@@ -21,7 +21,7 @@
          :multibatch-payments (:multibatch-payments config)
          :reports (:reports config)
          :va-code-values (:va-code-values config)
-         :muutospaatosprosessi (:muutospaatosprosessi config)
+         :muutospaatosprosessi {:enabled? true}
          :muutoshakukelpoisuus (:muutoshakukelpoisuus config)
          :sisaltomuutos (:sisaltomuutos config)
          :selvitys-limit (:selvitys-limit config)}
