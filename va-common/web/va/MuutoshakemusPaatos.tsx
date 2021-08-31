@@ -5,16 +5,19 @@ import { getProjectEndDate, getTalousarvio } from './Muutoshakemus'
 import { TalousarvioTable } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
 import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
 import { fiShortFormat } from 'va-common/web/va/i18n/dateformat'
+import {PaatosState} from "./types/muutoshakemus";
 
 import './MuutoshakemusPaatos.less'
 
-const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muutoshakemukset }) => {
+type HyvaksytytMuutoksetProps = Omit<PaatosState, 'presenter' | 'isPresentingOfficer'>
+
+const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muutoshakemukset }: HyvaksytytMuutoksetProps) => {
   if (paatos.status === 'rejected') return null
   const { t } = useTranslations()
 
   const isAcceptedWithChanges = paatos.status === 'accepted_with_changes'
   const paattymispaiva = isAcceptedWithChanges ? paatos.paattymispaiva : muutoshakemus['haettu-kayttoajan-paattymispaiva']
-  const newTalousarvio = isAcceptedWithChanges ? (paatos.talousarvio || []) : muutoshakemus.talousarvio
+  const newTalousarvio = isAcceptedWithChanges ? (paatos.talousarvio || []) : muutoshakemus.talousarvio
 
   const projectEndDate = getProjectEndDate(avustushaku, muutoshakemukset, muutoshakemus)
   const currentTalousarvio = getTalousarvio(muutoshakemukset, hakemus && hakemus.talousarvio, muutoshakemus)
@@ -23,7 +26,7 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muut
     <section className="muutoshakemus-paatos__section">
       <div data-test-id="accepted-changes-title">{t.muutoshakemus.acceptedChanges}</div>
       <div data-test-id="accepted-changes-content">
-        {!!newTalousarvio.length && <TalousarvioTable paatos={true} currentTalousarvio={currentTalousarvio} newTalousarvio={newTalousarvio} status={paatos.status} lang="fi" />}
+        {!!newTalousarvio.length && <TalousarvioTable paatos={true} currentTalousarvio={currentTalousarvio} newTalousarvio={newTalousarvio} status={paatos.status} />}
         {muutoshakemus['haen-kayttoajan-pidennysta'] &&
           <div className="muutoshakemus-paatos__jatkoaika">
             <div>
@@ -47,7 +50,7 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muut
   )
 }
 
-export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset, isPresentingOfficer }) => {
+export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset, isPresentingOfficer }: PaatosState) => {
   const { t } = useTranslations()
 
   return (

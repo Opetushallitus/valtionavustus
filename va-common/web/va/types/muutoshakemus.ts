@@ -52,6 +52,8 @@ export interface Paatos {
   status: "accepted" | "rejected" | "accepted_with_changes"
   decider: string
   reason: string
+  talousarvio?: Talousarvio
+  paattymispaiva?: string
   "user-key": string
   "created-at": string
   "updated-at": string
