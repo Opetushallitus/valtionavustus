@@ -554,6 +554,14 @@ etunimi.sukunimi@oph.fi`)
               email = await parseMuutoshakemusPaatosFromEmails(hakemusID)
             })
 
+            it('email has correct subject', async () => {
+              expect(email.subject).toBe('Automaattinen viesti: organisaationne muutoshakemus on käsitelty - Linkki päätösasiakirjaan')
+            })
+
+            it('email has correct recipient', async () => {
+              expect(email["to-address"]).toContain(answers.contactPersonEmail)
+            })
+
             it('email has correct body', async () => {
               const { 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
               expect(email.formatted).toBe(`Hyvä vastaanottaja,
