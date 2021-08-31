@@ -4,15 +4,13 @@ muutoshakemuksenne on käsitelty.
 
 Hanke: {{ register-number }} - {{ project-name }}
 
-Päätöstä voitte tarkastella tästä linkistä:
-{{& paatos-url }}
+Päätös muutoshakemukseenne: {{& paatos-url }}
 
-Tarvittaessa voitte tehdä uuden muutoshakemuksen tästä linkistä:
-{{& muutoshakemus-url }}
+Selaa aiempia muutoshakemuksia ja tee tarvittaessa uusi muutoshakemus: {{& muutoshakemus-url }}
 
-Liite: {{ attachment-title }}
+Liitteet: {{ attachment-title }}
 
-Tarvittaessa lisätietoja antaa avustuspäätöksessä nimetty lisätietojen antaja.
+Tarvittaessa lisätietoja antaa päätöksessä nimetty lisätietojen antaja.
 
 Terveisin,
 {{ presenter-name }}

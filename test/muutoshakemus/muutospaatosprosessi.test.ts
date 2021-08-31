@@ -37,6 +37,7 @@ import {
   navigateToHakemuksenArviointi,
   createRandomHakuValues,
   randomAsiatunnus,
+  MailWithLinks,
 } from '../test-util'
 import {
   ratkaiseMuutoshakemusEnabledAvustushaku,
@@ -544,6 +545,42 @@ etunimi.sukunimi@oph.fi`)
           it('displays correct new project end date', async () => {
             const newProjectEnd = await getElementInnerText(page, ".answer-new-value #project-end div")
             expect(newProjectEnd).toEqual(muutoshakemus2.jatkoaika?.format('DD.MM.YYYY'))
+          })
+
+          describe('And hakija receives muutoshakemus päätös email', () => {
+            let email: MailWithLinks
+
+            beforeAll(async () => {
+              email = await parseMuutoshakemusPaatosFromEmails(hakemusID)
+            })
+
+            it('email has correct body', async () => {
+              const { 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
+              expect(email.formatted).toBe(`Hyvä vastaanottaja,
+
+muutoshakemuksenne on käsitelty.
+
+Hanke: ${registerNumber} - ${answers.projectName}
+
+Päätös muutoshakemukseenne: ${email.linkToMuutoshakemusPaatos}
+
+Selaa aiempia muutoshakemuksia ja tee tarvittaessa uusi muutoshakemus: ${email.linkToMuutoshakemus}
+
+Liitteet: Oikaisuvaatimusosoitus
+
+Tarvittaessa lisätietoja antaa päätöksessä nimetty lisätietojen antaja.
+
+Terveisin,
+_ valtionavustus
+
+Opetushallitus
+Hakaniemenranta 6
+PL 380, 00531 Helsinki
+
+puhelin 029 533 1000
+etunimi.sukunimi@oph.fi
+`)
+            })
           })
 
           describe('Navigating to avustushaku', () => {
