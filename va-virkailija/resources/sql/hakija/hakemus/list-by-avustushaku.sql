@@ -15,12 +15,18 @@ select  h.id,
         h.status_valiselvitys,
         (select
           (CASE
-            WHEN paatos_id IS NULL
+            WHEN m.paatos_id IS NULL
             THEN 'new'
-            ELSE status::text
+            ELSE
+              -- Tää toimii ns. oikein eli wanhalla tavalla kun kaikille osioille on
+              -- annettu sama hyväksytty/hylätty päätös
+              coalesce(pj.status, pt.status, ps.status)::text
           END) as status_muutoshakemus
           from  virkailija.muutoshakemus m
           LEFT JOIN virkailija.paatos ON m.paatos_id = virkailija.paatos.id
+          LEFT JOIN virkailija.paatos_jatkoaika pj ON pj.paatos_id = paatos.id
+          LEFT JOIN virkailija.paatos_talousarvio pt ON pt.paatos_id = paatos.id
+          LEFT JOIN virkailija.paatos_sisaltomuutos ps ON ps.paatos_id = paatos.id
           where m.hakemus_id = h.id
           order by m.created_at desc limit 1),
         h.refused,

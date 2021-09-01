@@ -27,34 +27,68 @@
                WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
          [id]))
 
-(defn- add-paatos-hyväksytyt-sisältömuutokset [tx paatos-id hyvaksytyt-sisältömuutokset]
-  (execute! tx "insert into paatos_sisaltomuutos (paatos_id, hyvaksytyt_sisaltomuutokset) values (?, ?)"
-            [paatos-id hyvaksytyt-sisältömuutokset]))
+(defn- store-paatos-sisaltomuutos [tx paatos-id status, hyvaksytyt-sisältömuutokset]
+  (execute! tx "insert into paatos_sisaltomuutos (paatos_id, ?::virkailija.paatos_type, hyvaksytyt_sisaltomuutokset) values (?, ?, ?)"
+            [paatos-id status hyvaksytyt-sisältömuutokset]))
 
 (defn- get-hyvaksytyt-sisaltomuutokset [id]
   (let [rows (query "SELECT hyvaksytyt_sisaltomuutokset FROM paatos_sisaltomuutos WHERE paatos_id = ?" [id])]
     (:hyvaksytyt-sisaltomuutokset (first rows))))
 
+(defn store-paatos-jatkoaika [tx paatos-id status paattymispaiva]
+  (execute! tx "INSERT INTO paatos_jatkoaika (paatos_id, status, paattymispaiva)
+                VALUES (?, ?::virkailija.paatos_type, ?)"
+            [paatos-id status paattymispaiva]))
+
+(defn store-paatos-talousarvio [tx paatos-id status]
+  (execute! tx "INSERT INTO paatos_talousarvio (paatos_id, status)
+                VALUES (?, ?::virkailija.paatos_type)"
+            [paatos-id status]))
+
+(defn muutoshakemus-has-talousarvio? [tx muutoshakemus-id]
+  (let [rows (query tx "SELECT count(*) FROM menoluokka_muutoshakemus WHERE muutoshakemus_id = ?" [muutoshakemus-id])]
+    (> 0 (:count (first rows)))))
+
 (defn- store-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
   (with-tx (fn [tx]
-    (let [created-paatos (first (query tx
-            "INSERT INTO virkailija.paatos (status, user_key, reason, decider, paattymispaiva)
-             VALUES (?::virkailija.paatos_type, ?, ?, ?, ?)
-             RETURNING id, status, reason, decider, user_key, to_char(paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva, created_at, updated_at"
-            [(:status paatos) (generate-hash-id) (:reason paatos) decider (:paattymispaiva paatos)]))]
+    (let [muutoshakemus (first (query tx "SELECT * FROM muutoshakemus WHERE id = ?" [muutoshakemus-id]))
+          created-paatos (first (query tx
+            "INSERT INTO virkailija.paatos (user_key, reason, decider)
+             VALUES (?, ?, ?)
+             RETURNING id, reason, decider, user_key, created_at, updated_at"
+            [(generate-hash-id) (:reason paatos) decider]))
+          paatos-id (:id created-paatos)]
       (execute! tx
                 "UPDATE virkailija.muutoshakemus
                 SET paatos_id = ?
-                WHERE id = ?" [(:id created-paatos) muutoshakemus-id])
-      (when (:talousarvio paatos)
-        (add-paatos-menoluokkas tx (:id created-paatos) avustushaku-id (:talousarvio paatos)))
+                WHERE id = ?" [paatos-id muutoshakemus-id])
+
+      (when (:haen-kayttoajan-pidennysta muutoshakemus)
+        (store-paatos-jatkoaika tx paatos-id (:status paatos) (:paattymispaiva paatos)))
+
+      (when (muutoshakemus-has-talousarvio? tx muutoshakemus-id)
+        (store-paatos-talousarvio tx paatos-id (:status paatos))
+        (when (:talousarvio paatos)
+          (add-paatos-menoluokkas tx paatos-id avustushaku-id (:talousarvio paatos))))
+
       (when (some? (:hyvaksytyt-sisaltomuutokset paatos))
-        (add-paatos-hyväksytyt-sisältömuutokset tx (:id created-paatos) (:hyvaksytyt-sisaltomuutokset paatos)))
-      created-paatos))))
+        (store-paatos-sisaltomuutos tx paatos-id (:status paatos) (:hyvaksytyt-sisaltomuutokset paatos)))
+
+      (assoc created-paatos :status (:status paatos))))))
+
+(defn get-hyvaksytty-paattymispaiva [paatos-id]
+  (-> (query "SELECT to_char(pj.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva
+              FROM paatos p
+              JOIN paatos_jatkoaika pj ON pj.paatos_id = p.id
+              WHERe p.id = ?"
+             [paatos-id])
+      first
+      :paatos-hyvaksytty-paattymispaiva))
 
 (defn create-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
   (if-let [created-paatos (store-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)]
     (-> created-paatos
+        (assoc :paatos-hyvaksytty-paattymispaiva (get-hyvaksytty-paattymispaiva (:id created-paatos)))
         (assoc :talousarvio (get-talousarvio (:id created-paatos) "paatos"))
         (assoc :hyvaksytyt-sisaltomuutokset (get-hyvaksytyt-sisaltomuutokset (:id created-paatos))))))
 
@@ -145,7 +179,10 @@
                                 (CASE
                                   WHEN m.paatos_id IS NULL
                                   THEN 'new'
-                                  ELSE p.status::text
+                                  ELSE
+                                    -- Tää toimii ns. oikein eli wanhalla tavalla kun kaikille osioille on
+                                    -- annettu sama hyväksytty/hylätty päätös
+                                    coalesce(pj.status, ps.status, pt.status)::text
                                 END) as status,
                                 haen_kayttoajan_pidennysta,
                                 kayttoajan_pidennys_perustelut,
@@ -158,11 +195,13 @@
                                 p.user_key as paatos_user_key,
                                 p.created_at as paatos_created_at,
                                 hyvaksytyt_sisaltomuutokset,
-                                to_char(p.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva,
+                                to_char(pj.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva,
                                 ee.created_at as paatos_sent_at
                               FROM virkailija.muutoshakemus m
                               LEFT JOIN virkailija.paatos p ON m.paatos_id = p.id
-                              LEFT JOIN virkailija.paatos_sisaltomuutos ON (paatos_sisaltomuutos.paatos_id = p.id)
+                              LEFT JOIN virkailija.paatos_jatkoaika pj ON pj.paatos_id = p.id
+                              LEFT JOIN virkailija.paatos_talousarvio pt ON pt.paatos_id = p.id
+                              LEFT JOIN virkailija.paatos_sisaltomuutos ps ON ps.paatos_id = p.id
                               LEFT JOIN virkailija.email_event ee
                                 ON ee.id = (SELECT max(id) FROM virkailija.email_event WHERE muutoshakemus_id = m.id AND email_type = 'muutoshakemus-paatos' AND success = true)
                               WHERE m.hakemus_id = ?
