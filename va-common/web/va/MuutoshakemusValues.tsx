@@ -8,6 +8,7 @@ import { useTranslations } from "./i18n/TranslationContext"
 import { fiLongFormat, parseDateStringToMoment } from 'va-common/web/va/i18n/dateformat'
 
 import './MuutoshakemusValues.less'
+import {MuutoshakemusSection} from "./MuutoshakemusSection";
 
 export const datetimeFormat = 'D.M.YYYY [klo] HH.mm'
 
@@ -55,8 +56,16 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
           }
         </section>
       }
+      {muutoshakemus['haettu-kayttoajan-paattymispaiva'] && <PaattymispaivaValues muutoshakemus={muutoshakemus} projectEndDate={projectEndDate} />}
+      {!!talousarvio.length &&
+        <MuutosTaloudenKayttosuunnitelmaan
+          currentTalousarvio={currentTalousarvio}
+          newTalousarvio={talousarvio}
+          status={muutoshakemus.status}
+          reason={muutoshakemus["talousarvio-perustelut"]} />
+      }
       {muutoshakemus['haen-sisaltomuutosta'] && (
-        <section className="muutoshakemus-section">
+        <MuutoshakemusSection>
           <div className="muutoshakemus-row">
             <h4 className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
             <div className="muutoshakemus__reason" data-test-id="sisaltomuutos-perustelut">{muutoshakemus['sisaltomuutos-perustelut']}</div>
@@ -67,16 +76,8 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
               <div className="muutoshakemus__reason">{muutoshakemus['hyvaksytyt-sisaltomuutokset']}</div>
             </div>
           )}
-        </section>
+        </MuutoshakemusSection>
       )}
-      {!!talousarvio.length &&
-        <MuutosTaloudenKayttosuunnitelmaan
-          currentTalousarvio={currentTalousarvio}
-          newTalousarvio={talousarvio}
-          status={muutoshakemus.status}
-          reason={muutoshakemus["talousarvio-perustelut"]} />
-      }
-      {muutoshakemus['haettu-kayttoajan-paattymispaiva'] && <PaattymispaivaValues muutoshakemus={muutoshakemus} projectEndDate={projectEndDate} />}
     </React.Fragment>
   )
 }
@@ -103,7 +104,7 @@ const PaattymispaivaValues = (props: PaattymispaivaValuesProps) => {
   const perustelut = muutoshakemus['kayttoajan-pidennys-perustelut']
 
   return (
-    <section className="muutoshakemus-section">
+    <MuutoshakemusSection>
       <div className="muutoshakemus-row muutoshakemus__project-end-row">
         <div>
           <h3 className="muutoshakemus__header" data-test-id='muutoshakemus-current-end-date-title'>{currentEndDateTitle}</h3>
@@ -118,6 +119,6 @@ const PaattymispaivaValues = (props: PaattymispaivaValuesProps) => {
         <h4 className="muutoshakemus__header" data-test-id='muutoshakemus-reasoning-title'>{t.muutoshakemus.applicantReasoning}</h4>
         <div className="muutoshakemus__reason" data-test-id="muutoshakemus-jatkoaika-perustelu">{perustelut}</div>
       </div>
-    </section>
+    </MuutoshakemusSection>
   )
 }

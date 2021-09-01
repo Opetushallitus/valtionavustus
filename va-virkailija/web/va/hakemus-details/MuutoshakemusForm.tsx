@@ -40,6 +40,7 @@ import {
   Hakemus,
   UserInfo
 } from "../../../../va-common/web/va/types";
+import {MuutoshakemusSection} from "../../../../va-common/web/va/MuutoshakemusSection";
 
 moment.locale('fi')
 const localizer = new MomentLocalizer(moment)
@@ -234,16 +235,14 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
       </Modal>
     )
   }
-
+  const submitButton = <button type="submit" disabled={isSubmitDisabled(f)} data-test-id="muutoshakemus-submit">Tee päätös ja lähetä hakijalle</button>
   return (
     <form onSubmit={f.handleSubmit} data-test-id="muutoshakemus-form">
-      <section className="muutoshakemus-section">
+      <MuutoshakemusSection bottomComponent={submitButton}>
         <div className="muutoshakemus-row">
-          <h3 className="muutoshakemus__header">Päätös</h3>
-          <div className="muutoshakemus__copy-link-row">
-            <div className="muutoshakemus__copy-link-text">Jos päätös tarvitsee päällikön hyväksynnän, pyydä häntä katsomaan hakemus ja tekemään päätös.</div>
-            <a onClick={() => copyToClipboard(window.location.href)}>Kopioi leikepöydälle linkki hakemukseen</a>
-          </div>
+          <h3 className="muutoshakemus__header">Yhteiset perustelut ja päätöksen lähettäminen</h3>
+          <div>Jos päätös tarvitsee päällikön hyväksynnän, pyydä häntä katsomaan hakemus ja tekemään päätös.</div>
+          <a onClick={() => copyToClipboard(window.location.href)}>Kopioi leikepöydälle linkki hakemukseen</a>
         </div>
         <div className="muutoshakemus-row">
           <h4 className="muutoshakemus__header">Muutoshakemus</h4>
@@ -269,10 +268,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
         <div className="muutoshakemus-row muutoshakemus__preview-row">
           <a className="muutoshakemus__paatos-preview-link" onClick={onPaatosPreviewClick}>Esikatsele päätösdokumentti</a>
         </div>
-        <div className="muutoshakemus-row">
-          <button type="submit" disabled={isSubmitDisabled(f)} data-test-id="muutoshakemus-submit">Tee päätös ja lähetä hakijalle</button>
-        </div>
-      </section>
+      </MuutoshakemusSection>
     </form>
   )
 }

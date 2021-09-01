@@ -20,7 +20,7 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
     <React.Fragment>
       {muutoshakemukset.length > 1 && <MuutoshakemusTabs muutoshakemukset={muutoshakemukset} activeMuutoshakemus={a} setActiveMuutoshakemus={setActiveMuutoshakemus} />}
       <h2>Muutoshakemus {moment(a['created-at']).format(datetimeFormat)}</h2>
-      <div className="muutoshakemus-content">
+      <div data-test-id="muutoshakemus-sisalto">
         <MuutoshakemusValues
           currentTalousarvio={currentTalousarvio}
           muutoshakemus={a}

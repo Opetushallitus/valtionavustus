@@ -367,7 +367,7 @@ export async function navigateToNthMuutoshakemus(page: Page, avustushakuID: numb
   await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
   await clickElement(page, '[class="muutoshakemus-tab"]')
   await clickElement(page, `.muutoshakemus-tabs button:nth-last-child(${n})`)
-  await page.waitForSelector('div[class="muutoshakemus-content"]')
+  await page.waitForSelector('[data-test-id="muutoshakemus-sisalto"]')
 }
 
 export async function fillMuutoshakemusPaatosWithVakioperustelu(page: Page, avustushakuID: number, hakemusID: number, jatkoaika = '20.04.2400') {
