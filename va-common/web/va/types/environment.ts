@@ -9,5 +9,6 @@ export type EnvironmentApiResponse = {
     }
   }
   "va-code-values": FeatureFlag
+  "muutoshakemus-osiokohtainen-hyvaksynta": FeatureFlag
   reports: FeatureFlag
 }

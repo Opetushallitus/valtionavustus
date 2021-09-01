@@ -22,6 +22,7 @@
          :reports (:reports config)
          :va-code-values (:va-code-values config)
          :muutoshakukelpoisuus (:muutoshakukelpoisuus config)
+         :muutoshakemus-osiokohtainen-hyvaksynta (:muutoshakemus-osiokohtainen-hyvaksynta config)
          :selvitys-limit (:selvitys-limit config)}
         opintopolku (:opintopolku config)]
     (if-let [opintopolku-url (:url opintopolku)]
