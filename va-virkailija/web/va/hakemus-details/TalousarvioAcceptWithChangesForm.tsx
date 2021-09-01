@@ -1,12 +1,13 @@
 import React from 'react'
 
 import { getNestedInputErrorClass } from 'va-common/web/va/formikHelpers'
-import { FormikHook, Meno, Talousarvio, TalousarvioValues } from 'va-common/web/va/types/muutoshakemus'
+import { Meno, Talousarvio, TalousarvioValues } from 'va-common/web/va/types/muutoshakemus'
+import { MuutoshakemusPaatosFormValues } from "./hakemusTypes"
 
 import 'va-common/web/va/muutoshakemus/talous.less'
 
-type TalousarvioAcceptWithChangesFormProps = {
-  f: FormikHook
+interface TalousarvioAcceptWithChangesFormProps {
+  f: MuutoshakemusPaatosFormValues
   talousarvio: Talousarvio
   requestedTalousarvio: Talousarvio
 }
@@ -15,7 +16,7 @@ const calculateCurrentSum = (talousarvio: TalousarvioValues): number => {
   return Object.keys(talousarvio).reduce((acc, cur) => (cur !== 'currentSum' && cur !== 'originalSum') ? acc + talousarvio[cur] : acc, 0)
 }
 
-const MenoRow = ({ f, meno, requestedTalousarvio }: { f: FormikHook, meno: Meno, requestedTalousarvio: Talousarvio }) => {
+const MenoRow = ({ f, meno, requestedTalousarvio }: { f: MuutoshakemusPaatosFormValues, meno: Meno, requestedTalousarvio: Talousarvio }) => {
   const name = `talousarvio.${meno.type}`
   const inputClass = getNestedInputErrorClass(f, ['talousarvio', meno.type])
   const value = f.values.talousarvio?.[meno.type]

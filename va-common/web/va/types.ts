@@ -126,3 +126,10 @@ export type Avustushaku = {
 }
 
 export type HelpTexts = { [k: string]: string }
+
+export interface UserInfo {
+  'first-name': string
+  'surname': string
+  email: string
+  'person-oid': string
+}

@@ -1,4 +1,4 @@
-import { FormikProps } from "formik"
+import {FormikProps} from "formik"
 
 import { FormValues } from "va-common/web/va/types/muutoshakemus"
 
@@ -8,8 +8,8 @@ export const getInputErrorClass = (f: FormikProps<FormValues>, valueName: keyof 
     : ''
 }
 
-export const getNestedInputErrorClass = (f: FormikProps<FormValues>, nestedName: string[]): string => {
-  const hasError = nestedName.reduce((acc, name) => acc ? acc[name] : undefined, f.errors)
+export const getNestedInputErrorClass = <F extends FormikProps<any>>(f: F, nestedName: string[]): string => {
+  const hasError = nestedName.reduce((acc, name) => acc ? (acc[name] as any) : undefined, f.errors)
   return hasError
     ? 'muutoshakemus__input-error'
     : ''

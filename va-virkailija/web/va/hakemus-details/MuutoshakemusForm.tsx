@@ -25,8 +25,21 @@ import { isSubmitDisabled, isError } from '../formikHelpers'
 import { Modal } from './Modal'
 import { TalousarvioAcceptWithChangesForm } from './TalousarvioAcceptWithChangesForm'
 import { HyväksytytSisältömuutoksetForm } from './HyväksytytSisältömuutoksetForm'
+import {
+  Meno,
+  Muutoshakemus, NormalizedHakemus, Presenter,
+} from "../../../../va-common/web/va/types/muutoshakemus"
+import {
+  MuutoshakemusPaatosFormValues,
+  MuutoshakemusPaatosRequest
+} from "./hakemusTypes"
 
 import './Muutoshakemus.less'
+import {
+  Avustushaku,
+  Hakemus,
+  UserInfo
+} from "../../../../va-common/web/va/types";
 
 moment.locale('fi')
 const localizer = new MomentLocalizer(moment)
@@ -56,20 +69,20 @@ const paatosStatuses = [
       sv: translations.sv.muutoshakemus.paatos.vakioperustelut.rejected,
     }
   }
-]
+] as const
 
 const errors = {
   required: 'Pakollinen kenttä',
   talousarvioSum: sum => `Loppusumman on oltava ${sum}`
 }
 
-const getPaatosSchema = (muutoshakemus) => Yup.object().shape({
+const getPaatosSchema = (muutoshakemus: Muutoshakemus) => Yup.object().shape({
   status: Yup.string()
     .oneOf(paatosStatuses.map(s => s.value))
     .required(),
   reason: Yup.string()
     .required('Perustelu on pakollinen kenttä'),
-  talousarvio: Yup.lazy(talousarvio => talousarvio ? Yup.object(getTalousarvioSchema(talousarvio, errors)) : Yup.object()),
+  talousarvio: Yup.lazy<any>(talousarvio => talousarvio ? Yup.object(getTalousarvioSchema(talousarvio, errors)) : Yup.object()),
   paattymispaiva: Yup.date().when('status', {
     is: 'accepted_with_changes',
     then: muutoshakemus['haen-kayttoajan-pidennysta'] ? Yup.date().required('Päättymispäivä on pakollinen kenttä') : Yup.date(),
@@ -80,7 +93,7 @@ const getPaatosSchema = (muutoshakemus) => Yup.object().shape({
   })
 })
 
-function formToPayload(values) {
+function formToPayload(values: MuutoshakemusPaatosRequest) {
   return {
     ...values,
     'hyvaksytyt-sisaltomuutokset': values.status !== 'rejected' ? values['hyvaksytyt-sisaltomuutokset'] : undefined,
@@ -89,17 +102,31 @@ function formToPayload(values) {
   }
 }
 
-export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemusVersion, controller, userInfo, presenter, projectEndDate, muutoshakemukset, isPresentingOfficer }) => {
+interface MuutoshakemusFormProps {
+  avustushaku: Avustushaku
+  muutoshakemus: Muutoshakemus
+  muutoshakemukset: Muutoshakemus[]
+  hakemus: NormalizedHakemus
+  hakemusVersion: Hakemus
+  controller: any
+  userInfo: UserInfo
+  presenter: Presenter
+  projectEndDate: string | undefined
+  isPresentingOfficer: boolean
+}
+
+export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemusVersion, controller, userInfo, presenter, projectEndDate, muutoshakemukset, isPresentingOfficer }: MuutoshakemusFormProps) => {
   const talousarvioValues = muutoshakemus.talousarvio.length ? getTalousarvioValues(muutoshakemus.talousarvio) : undefined
   const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
+  const initialValues: MuutoshakemusPaatosRequest = {
+    status: 'accepted',
+    reason: '',
+    paattymispaiva: undefined,
+    'hyvaksytyt-sisaltomuutokset': undefined,
+    talousarvio: talousarvioValues,
+  }
   const f = useFormik({
-    initialValues: {
-      status: 'accepted',
-      reason: '',
-      paattymispaiva: undefined,
-      'hyvaksytyt-sisaltomuutokset': undefined,
-      talousarvio: talousarvioValues,
-    },
+    initialValues,
     validationSchema: getPaatosSchema(muutoshakemus),
     onSubmit: async (values) => {
       const payload = formToPayload(values)
@@ -108,7 +135,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
     }
   })
 
-  const paatosStatusRadioButton = ({ value, text }) => {
+  const paatosStatusRadioButton: React.FC<typeof paatosStatuses[number]> = ({ value, text }) => {
     const handleChange = e => {
       if (talousarvioValues) {
         f.setFieldValue('talousarvio', talousarvioValues, true)
@@ -124,7 +151,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
     )
   }
 
-  const Error = () => {
+  const Error = (): JSX.Element | null => {
     if (!isError(f, 'paattymispaiva')) return null
 
     return (
@@ -132,7 +159,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
     )
   }
 
-  const käyttöajanPidennysAcceptWithChangesForm = () => {
+  const käyttöajanPidennysAcceptWithChangesForm = (): JSX.Element => {
     const haettuPaiva = dateStringToMoment(muutoshakemus['haettu-kayttoajan-paattymispaiva'])
 
     return (
@@ -157,13 +184,17 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
               onChange={(newDate) => {
                 const d = moment(newDate)
                 if (d.isValid()) {
-                  f.setFieldValue('paattymispaiva', newDate)
+                  f.setFieldValue('paattymispaiva', d.toDate().toISOString())
                 } else {
                   f.setFieldValue('paattymispaiva', undefined)
                 }
               }}
               parse={parseDateString}
-              defaultValue={f.values['paattymispaiva'] || haettuPaiva.toDate()}
+              defaultValue={
+                f.values['paattymispaiva']
+                  ? moment(f.values['paattymispaiva']).toDate()
+                  : haettuPaiva.toDate()
+              }
               containerClassName={`datepicker ${isError(f, 'paattymispaiva') ? 'muutoshakemus__error' : ''}`} />
           </Localization>
         </div>
@@ -173,10 +204,20 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
 
   const onPaatosPreviewClick = () => {
     const paatos = {
-      'created-at': new Date(),
+      'created-at': new Date().toISOString(),
       decider: `${userInfo['first-name']} ${userInfo['surname']}`,
       ...f.values,
-      talousarvio: muutoshakemus.talousarvio.map(meno => ({ ...meno, amount: f.values.talousarvio[meno.type] }))
+      talousarvio: muutoshakemus.talousarvio.reduce<Meno[]>((acc, meno) => {
+        const formTalousArvio = f.values.talousarvio
+        if (!formTalousArvio) {
+          return acc
+        }
+        const amount = formTalousArvio[meno.type]
+        if (amount) {
+          acc.push({ ...meno, amount })
+        }
+        return acc
+      }, [])
     }
     controller.setModal(
       <Modal title="ESIKATSELU" controller={controller}>
@@ -222,7 +263,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
           <h4 className="muutoshakemus__header">
             Perustelut <span className="muutoshakemus__default-reason-link"><a onClick={() => setDefaultReason(f, 'fi')}>Lisää vakioperustelu suomeksi</a> | <a onClick={() => setDefaultReason(f, 'sv')}>Lisää vakioperustelu ruotsiksi</a></span>
           </h4>
-          <textarea id="reason" name="reason" rows="5" cols="53" onChange={f.handleChange} onBlur={f.handleBlur} value={f.values.reason} className={isError(f, 'reason') && "muutoshakemus__error"} />
+          <textarea id="reason" name="reason" rows={5} cols={53} onChange={f.handleChange} onBlur={f.handleBlur} value={f.values.reason} className={isError(f, 'reason') && "muutoshakemus__error"} />
           {isError(f, 'reason') && <div className="muutoshakemus__error">Perustelu on pakollinen kenttä!</div>}
         </div>
         <div className="muutoshakemus-row muutoshakemus__preview-row">
@@ -236,15 +277,15 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
   )
 }
 
-function isAcceptedWithChanges(formik) {
+function isAcceptedWithChanges(formik: MuutoshakemusPaatosFormValues) {
   return formik.values.status === 'accepted_with_changes'
 }
 
-function isRejected(formik) {
+function isRejected(formik: MuutoshakemusPaatosFormValues) {
   return formik.values.status === 'rejected'
 }
 
-function setDefaultReason(f, lang) {
+function setDefaultReason(f: MuutoshakemusPaatosFormValues, lang: 'fi' | 'sv') {
   const status = paatosStatuses.find(_ => _.value === f.values.status)
-  f.setFieldValue('reason', status.defaultReason[lang])
+  f.setFieldValue('reason', status?.defaultReason[lang])
 }

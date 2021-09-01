@@ -5,11 +5,15 @@ import { getProjectEndDate, getTalousarvio } from './Muutoshakemus'
 import { TalousarvioTable } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
 import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
 import { fiShortFormat } from 'va-common/web/va/i18n/dateformat'
-import {PaatosState} from "./types/muutoshakemus";
+import {Paatos, PaatosState} from "./types/muutoshakemus";
 
 import './MuutoshakemusPaatos.less'
 
-type HyvaksytytMuutoksetProps = Omit<PaatosState, 'presenter' | 'isPresentingOfficer'>
+type MuutoshakemusPaatosProps = Omit<PaatosState, 'paatos'> & {
+  paatos: Omit<Paatos, 'id' | 'user-key' | 'updated-at'>
+}
+
+type HyvaksytytMuutoksetProps = Omit<MuutoshakemusPaatosProps, 'presenter' | 'isPresentingOfficer'>
 
 const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muutoshakemukset }: HyvaksytytMuutoksetProps) => {
   if (paatos.status === 'rejected') return null
@@ -50,7 +54,7 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muut
   )
 }
 
-export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset, isPresentingOfficer }: PaatosState) => {
+export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset, isPresentingOfficer }: MuutoshakemusPaatosProps) => {
   const { t } = useTranslations()
 
   return (

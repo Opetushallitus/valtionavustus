@@ -1,22 +1,14 @@
 import React from 'react'
 
-import { Muutoshakemus, TalousarvioValues } from 'va-common/web/va/types/muutoshakemus'
+import { Muutoshakemus } from 'va-common/web/va/types/muutoshakemus'
 
 import 'va-common/web/va/muutoshakemus/talous.less'
 import { isError } from '../formikHelpers'
 import { translationsFi } from '../../../../va-common/web/va/i18n/translations'
-import { FormikProps } from 'formik'
-
-type MuutoshakemusPaatosFormValues = {
-  status: 'accepted' | 'accepted_with_changes' | 'rejected',
-  reason: string,
-  paattymispaiva?: string,
-  'hyvaksytyt-sisaltomuutokset'?: string,
-  talousarvio?: TalousarvioValues,
-}
+import {MuutoshakemusPaatosFormValues} from "./hakemusTypes"
 
 type HyväksytytSisältömuutoksetFormProps = {
-  f: FormikProps<MuutoshakemusPaatosFormValues>
+  f: MuutoshakemusPaatosFormValues
   muutoshakemus: Muutoshakemus
 }
 
