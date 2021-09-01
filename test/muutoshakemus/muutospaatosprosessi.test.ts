@@ -313,6 +313,13 @@ etunimi.sukunimi@oph.fi`)
     })
 
     describe('And hakija changes only contact details', () => {
+      afterAll(async () => {
+        await navigateToHakijaMuutoshakemusPage(page, hakemusID)
+        await clearAndType(page, '#muutoshakemus__email', answers.contactPersonEmail)
+        await clickSendMuutoshakemusButton(page)
+        await expectMuutoshakemusToBeSubmittedSuccessfully(page, false)
+      })
+
       it('valmistelija does not get an email', async () => {
         await navigateToHakijaMuutoshakemusPage(page, hakemusID)
         await clearAndType(page, '#muutoshakemus__email', "a@b.c")
