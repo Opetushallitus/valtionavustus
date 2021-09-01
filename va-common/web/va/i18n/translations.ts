@@ -105,7 +105,7 @@ export const translationsFi = {
   formErrors: {
     required: 'Pakollinen kenttä',
     email: 'Sähköposti ei ole validi',
-    haettuKayttoajanPaattymispaiva: 'Uuden viimeisen käyttöpäivän tulee olla myöhemmin kuin ovimassaoleva viimeinen käyttöpäivä',
+    haettuKayttoajanPaattymispaiva: 'Uuden viimeisen käyttöpäivän tulee olla myöhemmin kuin voimassaoleva viimeinen käyttöpäivä',
     talousarvioSum: (sum: number) => `Loppusumman on oltava ${sum}`
   },
   calendar: {
