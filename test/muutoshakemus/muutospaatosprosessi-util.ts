@@ -384,7 +384,7 @@ export async function fillAndSendMuutoshakemusDecision(page: Page, status?: 'acc
   jatkoaika && await setCalendarDate(page, jatkoaika)
   budget && await fillMuutoshakemusBudgetAmount(page, budget)
   await selectVakioperusteluInFinnish(page)
-  await page.click('[data-test-id="muutoshakemus-submit"]:not([disabled])')
+  await clickElement(page, '[data-test-id="muutoshakemus-submit"]:not([disabled])')
   await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
 }
 
