@@ -47,7 +47,7 @@
 
 (defn muutoshakemus-has-talousarvio? [tx muutoshakemus-id]
   (let [rows (query tx "SELECT count(*) FROM menoluokka_muutoshakemus WHERE muutoshakemus_id = ?" [muutoshakemus-id])]
-    (> 0 (:count (first rows)))))
+    (> (:count (first rows)) 0)))
 
 (defn- store-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
   (with-tx (fn [tx]
