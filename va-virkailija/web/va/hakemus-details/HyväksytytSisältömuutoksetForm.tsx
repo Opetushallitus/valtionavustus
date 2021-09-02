@@ -30,7 +30,7 @@ export const HyväksytytSisältömuutoksetForm = ({ f, muutoshakemus }: Hyväksy
                     onChange={f.handleChange}
                     onBlur={f.handleBlur}
                     value={f.values['hyvaksytyt-sisaltomuutokset']}
-                    className={isError(f, 'hyvaksytyt-sisaltomuutokset') && "muutoshakemus__error"} />
+                    className={isError(f, 'hyvaksytyt-sisaltomuutokset') ? "muutoshakemus__error" : undefined} />
           {isError(f, "hyvaksytyt-sisaltomuutokset") && <div className="muutoshakemus__error">Hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan on pakollinen kenttä!</div>}
         </div>
       </section>

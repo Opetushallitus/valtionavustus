@@ -27,7 +27,7 @@ import { TalousarvioAcceptWithChangesForm } from './TalousarvioAcceptWithChanges
 import { HyväksytytSisältömuutoksetForm } from './HyväksytytSisältömuutoksetForm'
 import {
   Meno,
-  Muutoshakemus, NormalizedHakemus, Presenter,
+  Muutoshakemus, NormalizedHakemus, Presenter, TalousarvioValues,
 } from "../../../../va-common/web/va/types/muutoshakemus"
 import {
   MuutoshakemusPaatosFormValues,
@@ -136,73 +136,6 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
     }
   })
 
-  const paatosStatusRadioButton: React.FC<typeof paatosStatuses[number]> = ({ value, text }) => {
-    const handleChange = e => {
-      if (talousarvioValues) {
-        f.setFieldValue('talousarvio', talousarvioValues, true)
-      }
-      f.handleChange(e)
-    }
-
-    return (
-      <React.Fragment key={`paatos-status-${value}`}>
-        <input id={value} name="status" type="radio" value={value} onChange={handleChange} checked={f.values.status === value} />
-        <label htmlFor={value}>{text}</label>
-      </React.Fragment>
-    )
-  }
-
-  const Error = (): JSX.Element | null => {
-    if (!isError(f, 'paattymispaiva')) return null
-
-    return (
-      <span className="muutoshakemus__error row3 col3">Päättymispäivä on pakollinen kenttä!</span>
-    )
-  }
-
-  const käyttöajanPidennysAcceptWithChangesForm = (): JSX.Element => {
-    const haettuPaiva = dateStringToMoment(muutoshakemus['haettu-kayttoajan-paattymispaiva'])
-
-    return (
-      <div className="muutoshakemus-row muutoshakemus__project-end-row muutoshakemus__accept-with-changes">
-
-        <h3 className="muutoshakemus__header row1 col1">Voimassaoleva päättymisaika</h3>
-        <div data-test-id="current-project-end-date" className="row2 col1">{projectEndDate}</div>
-
-
-        <h3 className="muutoshakemus__header row1 col2">Haettu muutos</h3>
-        <div data-test-id="approve-with-changes-muutoshakemus-jatkoaika" className="row2 col2">
-          {toFinnishDateFormat(haettuPaiva)}
-        </div>
-
-
-        <h3 className="muutoshakemus__header row1 col3">OPH:n hyväksymä</h3>
-        <div id="approve-with-changes-muutoshakemus-jatkoaika-oph" className="row2 col3 calendar">
-          <Localization date={localizer} messages={translationsFi.calendar}>
-            <DatePicker
-              name="paattymispaiva"
-              onBlur={() => f.setFieldTouched('paattymispaiva')}
-              onChange={(newDate) => {
-                const d = moment(newDate)
-                if (d.isValid()) {
-                  f.setFieldValue('paattymispaiva', d.toDate().toISOString())
-                } else {
-                  f.setFieldValue('paattymispaiva', undefined)
-                }
-              }}
-              parse={parseDateString}
-              defaultValue={
-                f.values['paattymispaiva']
-                  ? moment(f.values['paattymispaiva']).toDate()
-                  : haettuPaiva.toDate()
-              }
-              containerClassName={`datepicker ${isError(f, 'paattymispaiva') ? 'muutoshakemus__error' : ''}`} />
-          </Localization>
-        </div>
-        <Error />
-      </div>
-  )}
-
   const onPaatosPreviewClick = () => {
     const paatos = {
       'created-at': new Date().toISOString(),
@@ -235,10 +168,10 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
       </Modal>
     )
   }
-  const submitButton = <button type="submit" disabled={isSubmitDisabled(f)} data-test-id="muutoshakemus-submit">Tee päätös ja lähetä hakijalle</button>
+
   return (
     <form onSubmit={f.handleSubmit} data-test-id="muutoshakemus-form">
-      <MuutoshakemusSection bottomComponent={submitButton}>
+      <MuutoshakemusSection bottomComponent={<button type="submit" disabled={isSubmitDisabled(f)} data-test-id="muutoshakemus-submit">Tee päätös ja lähetä hakijalle</button>}>
         <div className="muutoshakemus-row">
           <h3 className="muutoshakemus__header">Yhteiset perustelut ja päätöksen lähettäminen</h3>
           <div>Jos päätös tarvitsee päällikön hyväksynnän, pyydä häntä katsomaan hakemus ja tekemään päätös.</div>
@@ -247,22 +180,22 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
         <div className="muutoshakemus-row">
           <h4 className="muutoshakemus__header">Muutoshakemus</h4>
           <fieldset className="soresu-radiobutton-group">
-            {paatosStatuses.map(paatosStatusRadioButton)}
+            {paatosStatuses.map(status => <PaatosStatusRadioButton key={status.value} paatosStatus={status} f={f} talousarvioValues={talousarvioValues} />)}
           </fieldset>
         </div>
         {isAcceptedWithChanges(f) && (
           <React.Fragment>
             {!!muutoshakemus.talousarvio.length && <TalousarvioAcceptWithChangesForm f={f} talousarvio={talousarvio} requestedTalousarvio={muutoshakemus.talousarvio} />}
-            {muutoshakemus['haen-kayttoajan-pidennysta'] && käyttöajanPidennysAcceptWithChangesForm()}
+            {muutoshakemus['haen-kayttoajan-pidennysta'] && <KayttoajanPidennysAcceptWithChangesForm f={f} muutoshakemus={muutoshakemus} projectEndDate={projectEndDate} />}
           </React.Fragment>
         )}
         {(!isRejected(f) && muutoshakemus['haen-sisaltomuutosta']) &&
-          <HyväksytytSisältömuutoksetForm f={f} muutoshakemus={muutoshakemus} />}
+        <HyväksytytSisältömuutoksetForm f={f} muutoshakemus={muutoshakemus} />}
         <div className="muutoshakemus-row">
           <h4 className="muutoshakemus__header">
             Perustelut <span className="muutoshakemus__default-reason-link"><a onClick={() => setDefaultReason(f, 'fi')}>Lisää vakioperustelu suomeksi</a> | <a onClick={() => setDefaultReason(f, 'sv')}>Lisää vakioperustelu ruotsiksi</a></span>
           </h4>
-          <textarea id="reason" name="reason" rows={5} cols={53} onChange={f.handleChange} onBlur={f.handleBlur} value={f.values.reason} className={isError(f, 'reason') && "muutoshakemus__error"} />
+          <textarea id="reason" name="reason" rows={5} cols={53} onChange={f.handleChange} onBlur={f.handleBlur} value={f.values.reason} className={isError(f, 'reason') ? "muutoshakemus__error" : undefined} />
           {isError(f, 'reason') && <div className="muutoshakemus__error">Perustelu on pakollinen kenttä!</div>}
         </div>
         <div className="muutoshakemus-row muutoshakemus__preview-row">
@@ -285,3 +218,82 @@ function setDefaultReason(f: MuutoshakemusPaatosFormValues, lang: 'fi' | 'sv') {
   const status = paatosStatuses.find(_ => _.value === f.values.status)
   f.setFieldValue('reason', status?.defaultReason[lang])
 }
+
+interface PaatosStatusRadioButtonProps {
+  paatosStatus: typeof paatosStatuses[number]
+  f: MuutoshakemusPaatosFormValues
+  talousarvioValues: TalousarvioValues | undefined
+}
+
+const PaatosStatusRadioButton: React.FC<PaatosStatusRadioButtonProps> = ({paatosStatus:{ value, text }, f, talousarvioValues}) => {
+  const handleChange = e => {
+    if (talousarvioValues) {
+      f.setFieldValue('talousarvio', talousarvioValues, true)
+    }
+    f.handleChange(e)
+  }
+
+  return (
+    <React.Fragment key={`paatos-status-${value}`}>
+      <input id={value} name="status" type="radio" value={value} onChange={handleChange} checked={f.values.status === value} />
+      <label htmlFor={value}>{text}</label>
+    </React.Fragment>
+  )
+}
+
+const Error = ({f}: {f: MuutoshakemusPaatosFormValues}): JSX.Element | null => {
+  if (!isError(f, 'paattymispaiva')) return null
+
+  return (
+    <span className="muutoshakemus__error row3 col3">Päättymispäivä on pakollinen kenttä!</span>
+  )
+}
+
+interface KayttoajanPidennysAcceptWithChangesFormProps {
+  f: MuutoshakemusPaatosFormValues
+  muutoshakemus: Muutoshakemus
+  projectEndDate: string | undefined
+}
+
+const KayttoajanPidennysAcceptWithChangesForm = ({f, muutoshakemus, projectEndDate}: KayttoajanPidennysAcceptWithChangesFormProps): JSX.Element => {
+  const haettuPaiva = dateStringToMoment(muutoshakemus['haettu-kayttoajan-paattymispaiva'])
+
+  return (
+    <div className="muutoshakemus-row muutoshakemus__project-end-row muutoshakemus__accept-with-changes">
+
+      <h3 className="muutoshakemus__header row1 col1">Voimassaoleva päättymisaika</h3>
+      <div data-test-id="current-project-end-date" className="row2 col1">{projectEndDate}</div>
+
+
+      <h3 className="muutoshakemus__header row1 col2">Haettu muutos</h3>
+      <div data-test-id="approve-with-changes-muutoshakemus-jatkoaika" className="row2 col2">
+        {toFinnishDateFormat(haettuPaiva)}
+      </div>
+
+
+      <h3 className="muutoshakemus__header row1 col3">OPH:n hyväksymä</h3>
+      <div id="approve-with-changes-muutoshakemus-jatkoaika-oph" className="row2 col3 calendar">
+        <Localization date={localizer} messages={translationsFi.calendar}>
+          <DatePicker
+            name="paattymispaiva"
+            onBlur={() => f.setFieldTouched('paattymispaiva')}
+            onChange={(newDate) => {
+              const d = moment(newDate)
+              if (d.isValid()) {
+                f.setFieldValue('paattymispaiva', d.toDate().toISOString())
+              } else {
+                f.setFieldValue('paattymispaiva', undefined)
+              }
+            }}
+            parse={parseDateString}
+            defaultValue={
+              f.values['paattymispaiva']
+                ? moment(f.values['paattymispaiva']).toDate()
+                : haettuPaiva.toDate()
+            }
+            containerClassName={`datepicker ${isError(f, 'paattymispaiva') ? 'muutoshakemus__error' : ''}`} />
+        </Localization>
+      </div>
+      <Error f={f} />
+    </div>
+  )}
