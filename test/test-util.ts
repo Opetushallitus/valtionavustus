@@ -559,6 +559,7 @@ export async function isElementActive(page: Page, elem: ElementHandle<Element>):
 export async function clearAndType(page: Page, selector: string, text: string, checkElementIsActive = false) {
   const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
   if (!element) throw new Error('The world is broken because visible: true should never return null')
+  await element.evaluate(e => e.scrollIntoView({block: 'end'}))
   await element.click()
 
   if (checkElementIsActive && !isElementActive(page, element)) {
