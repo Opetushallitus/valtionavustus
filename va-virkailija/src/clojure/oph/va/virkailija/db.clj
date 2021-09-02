@@ -28,7 +28,7 @@
          [id]))
 
 (defn- store-paatos-sisaltomuutos [tx paatos-id status, hyvaksytyt-sisältömuutokset]
-  (execute! tx "insert into paatos_sisaltomuutos (paatos_id, ?::virkailija.paatos_type, hyvaksytyt_sisaltomuutokset) values (?, ?, ?)"
+  (execute! tx "insert into paatos_sisaltomuutos (paatos_id, status, hyvaksytyt_sisaltomuutokset) values (?, ?::virkailija.paatos_type, ?)"
             [paatos-id status hyvaksytyt-sisältömuutokset]))
 
 (defn- get-hyvaksytyt-sisaltomuutokset [id]
