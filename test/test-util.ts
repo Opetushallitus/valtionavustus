@@ -558,19 +558,19 @@ async function waitForElementWithAttribute(page: Page, attribute: string, attrib
   return await page.waitForXPath(`//*[@${attribute}='${attributeValue}'][contains(., '${text}')]`, waitForSelectorOptions)
 }
 
-export async function isElementActive(page: Page, elem: ElementHandle<Element>): Promise<boolean> {
+export async function isElementActive(page: Page, elem: ElementHandle): Promise<boolean> {
   return page.evaluate(
     (expectedElement) => expectedElement === document.activeElement, elem
   )
 }
 
-export async function clearAndType(page: Page, selector: string, text: string, checkElementIsActive = false) {
+export async function clearAndType(page: Page, selector: string, text: string) {
   const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
   if (!element) throw new Error('The world is broken because visible: true should never return null')
   await element.evaluate(e => e.scrollIntoView({block: 'end'}))
   await element.click()
-
-  if (checkElementIsActive && !isElementActive(page, element)) {
+  const isActive = await isElementActive(page, element)
+  if (!isActive) {
     throw new Error(`clearAndType: element ${selector} is not the active element after clicking. Is something covering the element?`)
   }
 
