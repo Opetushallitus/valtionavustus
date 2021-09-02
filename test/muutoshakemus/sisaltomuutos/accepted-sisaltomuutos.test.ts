@@ -12,6 +12,7 @@ import {
   textContent,
   selectVakioperusteluInFinnish,
   clearAndType,
+  saveMuutoshakemus,
 } from '../../test-util'
 import {
   navigateToLatestMuutoshakemus,
@@ -140,8 +141,7 @@ describe('Sisaltomuutos (accepted)', () => {
       beforeAll(async () => {
         await writeSisältömuutosPäätös(page, 'Muutokset hankkeen sisältöön tai toteutustapaan hyväksytään  hakemuksen mukaisesti.')
         await selectVakioperusteluInFinnish(page)
-        await clickElement(page, '[data-test-id="muutoshakemus-submit"]')
-        await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+        await saveMuutoshakemus(page)
       })
 
       it('shows the original application text', async () => {

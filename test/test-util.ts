@@ -2,7 +2,15 @@ import * as xlsx from "xlsx"
 import * as path from "path"
 import * as yup from "yup"
 import axios from "axios"
-import { Browser, ElementHandle, Frame, launch, Page, WaitForSelectorOptions, WaitForOptions } from "puppeteer"
+import {
+  Browser,
+  ElementHandle,
+  Frame,
+  launch,
+  Page,
+  WaitForOptions,
+  WaitForSelectorOptions
+} from "puppeteer"
 import * as assert from "assert"
 import * as fs from "fs"
 import moment from 'moment'
@@ -1024,6 +1032,11 @@ export async function navigateToLoppuselvitysTab(page: Page, avustushakuID: numb
   await page.waitForSelector('[data-test-id="hakemus-details-loppuselvitys"]', { visible: true })
 }
 
+export async function saveMuutoshakemus(page: Page) {
+  await clickElement(page, '[data-test-id="muutoshakemus-submit"]:not([disabled])')
+  await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+}
+
 export async function makePaatosForMuutoshakemusIfNotExists(page: Page, status: string, avustushakuID: number, hakemusID: number) {
   await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
   await clickElement(page, 'span.muutoshakemus-tab')
@@ -1033,8 +1046,7 @@ export async function makePaatosForMuutoshakemusIfNotExists(page: Page, status: 
 
   await page.click(`label[for="${status}"]`)
   await selectVakioperusteluInFinnish(page)
-  await page.click('[data-test-id="muutoshakemus-submit"]:not([disabled])')
-  await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+  await saveMuutoshakemus(page)
 }
 
 export async function selectVakioperusteluInFinnish(page: Page): Promise<void> {

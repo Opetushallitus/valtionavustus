@@ -20,7 +20,7 @@ import {
   defaultBudget,
   createRandomHakuValues,
   clickElementWithText,
-  setupTestLoggingAndScreenshots,
+  setupTestLoggingAndScreenshots, saveMuutoshakemus,
 } from '../test-util'
 import {
   fillAndSendMuutoshakemusDecision,
@@ -34,6 +34,7 @@ import {
 import {
   navigateToHakijaMuutoshakemusPage,
   navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
+
 } from './muutoshakemus-util'
 import { openPaatosPreview } from '../hakemuksen-arviointi/hakemuksen-arviointi-util'
 
@@ -847,8 +848,7 @@ describe('Talousarvion muuttaminen', () => {
       beforeAll(async () => {
         await clickElement(page, 'label[for=accepted]')
         await selectVakioperusteluInFinnish(page)
-        await clickElement(page, '[data-test-id="muutoshakemus-submit"]')
-        await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+        await saveMuutoshakemus(page)
       })
 
       it('sees the old budget on the accepted muutoshakemus', async () => {

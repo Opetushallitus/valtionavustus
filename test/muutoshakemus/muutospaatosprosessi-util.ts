@@ -29,7 +29,7 @@ import {
   navigateHakija,
   navigateToNewHakemusPage,
   PaatosValues,
-  publishAvustushaku,
+  publishAvustushaku, saveMuutoshakemus,
   selectMaakuntaFromDropdown,
   selectVakioperusteluInFinnish,
   setCalendarDate,
@@ -384,8 +384,7 @@ export async function fillAndSendMuutoshakemusDecision(page: Page, status?: 'acc
   jatkoaika && await setCalendarDate(page, jatkoaika)
   budget && await fillMuutoshakemusBudgetAmount(page, budget)
   await selectVakioperusteluInFinnish(page)
-  await clickElement(page, '[data-test-id="muutoshakemus-submit"]:not([disabled])')
-  await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+  await saveMuutoshakemus(page)
 }
 
 export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, budget?: Budget, beforeSubmitFn?: () => void): Promise<{ userKey: string }> {

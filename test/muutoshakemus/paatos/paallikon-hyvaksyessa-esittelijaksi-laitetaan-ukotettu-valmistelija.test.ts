@@ -15,7 +15,8 @@ import {
   selectVakioperusteluInFinnish,
   clearAndType,
   navigate,
-  selectValmistelijaForHakemus
+  selectValmistelijaForHakemus,
+  saveMuutoshakemus
 } from '../../test-util'
 import {
   navigateToLatestMuutoshakemus,
@@ -203,8 +204,7 @@ describe('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen,
               beforeAll(async () => {
                 await writeSisältömuutosPäätös(page, 'Muutokset hankkeen sisältöön tai toteutustapaan hyväksytään  hakemuksen mukaisesti.')
                 await selectVakioperusteluInFinnish(page)
-                await clickElement(page, '[data-test-id="muutoshakemus-submit"]')
-                await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+                await saveMuutoshakemus(page)
               })
               describe('Viewing päätös for hakija', () => {
                 beforeAll(async () => {
