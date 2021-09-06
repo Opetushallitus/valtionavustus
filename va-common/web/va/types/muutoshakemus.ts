@@ -1,17 +1,17 @@
 import { FormikProps } from 'formik'
 import { EnvironmentApiResponse } from './environment'
-import { Avustushaku } from '../types'
+import {Avustushaku, NormalizedHakemusData} from '../types'
 
 export type MuutoshakemusProps = {
   status: 'LOADED' | 'LOADING'
   avustushaku?: any
   environment?: EnvironmentApiResponse
-  hakemus?: NormalizedHakemus
+  hakemus?: NormalizedHakemusData
   muutoshakemukset: Muutoshakemus[]
 }
 
 export type PaatosState = {
-  hakemus: NormalizedHakemus
+  hakemus: NormalizedHakemusData
   muutoshakemus: Muutoshakemus
   muutoshakemukset: Muutoshakemus[]
   avustushaku: Avustushaku
@@ -66,20 +66,6 @@ export interface Meno {
   amount: number
 }
 export type Talousarvio = Meno[]
-
-export interface NormalizedHakemus {
-  id: number
-  "hakemus-id": number
-  "project-name": string
-  "contact-person": string
-  "contact-email": string
-  "contact-phone": string
-  "organization-name": string
-  "register-number": string
-  "created-at": string
-  "updated-at": string
-  talousarvio: Talousarvio
-}
 
 export type TalousarvioValues = {
   [key: string]: number

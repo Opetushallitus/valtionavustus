@@ -27,7 +27,7 @@ import { TalousarvioAcceptWithChangesForm } from './TalousarvioAcceptWithChanges
 import { HyväksytytSisältömuutoksetForm } from './HyväksytytSisältömuutoksetForm'
 import {
   Meno,
-  Muutoshakemus, NormalizedHakemus, Presenter, TalousarvioValues,
+  Muutoshakemus, Presenter, TalousarvioValues,
 } from "../../../../va-common/web/va/types/muutoshakemus"
 import {
   MuutoshakemusPaatosFormValues,
@@ -37,7 +37,7 @@ import {
 import './Muutoshakemus.less'
 import {
   Avustushaku,
-  Hakemus,
+  Hakemus, NormalizedHakemusData,
   UserInfo
 } from "../../../../va-common/web/va/types";
 import {MuutoshakemusSection} from "../../../../va-common/web/va/MuutoshakemusSection";
@@ -107,7 +107,7 @@ interface MuutoshakemusFormProps {
   avustushaku: Avustushaku
   muutoshakemus: Muutoshakemus
   muutoshakemukset: Muutoshakemus[]
-  hakemus: NormalizedHakemus
+  hakemus: NormalizedHakemusData
   hakemusVersion: Hakemus
   controller: any
   userInfo: UserInfo

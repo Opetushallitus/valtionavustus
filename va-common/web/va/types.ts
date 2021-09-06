@@ -34,7 +34,7 @@ type Arvio = {
   }
 }
 
-export type NormalizedHakemusData = {
+export interface NormalizedHakemusData {
   "contact-person": string
   "contact-email": string
   "contact-phone": string
@@ -43,7 +43,8 @@ export type NormalizedHakemusData = {
   "organization-name": string
   "project-name": string
   "register-number": string
-  talousarvio: Talousarvio
+  talousarvio?: Talousarvio
+  "created-at": string
   "updated-at": string
 }
 

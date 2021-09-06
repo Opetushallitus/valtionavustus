@@ -49,7 +49,7 @@ const renderBudgetRow = (avustushakuMeno: AvustushakuMeno, hakemus?: Hakemus, ta
 export const BudgetTable = (props: BudgetTableProps) => {
   const { hakuData, hakemus, muutoshakemukset } = props
   const talousarvio = muutoshakemukset ? getTalousarvio(muutoshakemukset, hakemus.normalizedData?.talousarvio) : hakemus.normalizedData?.talousarvio
-  const grantedSum = hakemus.normalizedData?.talousarvio.reduce((acc, cur) => acc + cur.amount, 0)
+  const grantedSum = (hakemus.normalizedData?.talousarvio ?? []).reduce((acc, cur) => acc + cur.amount, 0)
   const amount = talousarvio?.length ? talousarvio?.reduce((acc, cur) => acc + cur.amount, 0) : hakemus.arvio.costsGranted
   const isValiselvitys = hakemus.selvitys?.valiselvitys.answers?.length
   const isLoppuselvitys = hakemus.selvitys?.loppuselvitys.answers?.length
@@ -78,7 +78,7 @@ export const BudgetTable = (props: BudgetTableProps) => {
               </tr>
             </thead>
             <tbody>
-              {!!hakemus.normalizedData?.talousarvio.length && hakuData.talousarvio?.map((m: AvustushakuMeno) => renderBudgetRow(m, hakemus, talousarvio))}
+              {!!hakemus.normalizedData?.talousarvio?.length && hakuData.talousarvio?.map((m: AvustushakuMeno) => renderBudgetRow(m, hakemus, talousarvio))}
             </tbody>
             <tfoot>
               <tr>
