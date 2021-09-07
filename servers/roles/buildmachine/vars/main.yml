@@ -31,7 +31,11 @@ jenkins_apt_packages: []
 jenkins_http_host: "{{ ansible_nodename }}"
 jenkins_http_port: 8000
 
-jenkins_plugins: [github, git, greenballs]
+jenkins_plugins:
+  - github
+  - git
+  - greenballs
+  - email-ext
 
 # System config
 # =============
