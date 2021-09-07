@@ -28,6 +28,10 @@ jenkins_apt_repository: deb http://pkg.jenkins-ci.org/debian-stable binary/
 
 jenkins_apt_packages: []
 
+jenkins_proxy: true
+jenkins_proxy_ssl: true
+jenkins_proxy_hostname: "dev.valtionavustukset.oph.fi"
+jenkins_proxy_port: 443
 jenkins_http_host: "{{ ansible_nodename }}"
 jenkins_http_port: 8000
 
