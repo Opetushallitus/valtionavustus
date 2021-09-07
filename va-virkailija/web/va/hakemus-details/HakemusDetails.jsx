@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 
 import HakemusPreview from './HakemusPreview'
 import HakemusArviointi from './HakemusArviointi.jsx'
-import { Muutoshakemus } from './Muutoshakemus.jsx'
+import { Muutoshakemus } from './Muutoshakemus'
 import Selvitys from './Selvitys.jsx'
 import Seuranta from './Seuranta.jsx'
 
