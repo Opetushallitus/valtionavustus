@@ -54,7 +54,7 @@ export const PaatosStatusRadioButton: React.FC<PaatosStatusRadioButtonProps> = (
   const key = `${group}-${value}`
   return (
     <React.Fragment key={`paatos-status-${key}`}>
-      <input id={key} name="status" type="radio" value={value}
+      <input id={key} name={key} type="radio" value={value}
              onChange={handleChange} checked={f.values[group]?.status === value}/>
       <label htmlFor={key}>{text}</label>
     </React.Fragment>
