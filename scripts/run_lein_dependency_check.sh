@@ -11,10 +11,17 @@ function lein_dep_check_for_project () {
   return $EXIT
 }
 
+function download_temp_db_to_workspace_in_jenkins() {
+  if [[ ! -z ${WORKSPACE} ]]; then
+    export JAVA_TOOL_OPTIONS=-Djava.io.tmpdir=${WORKSPACE}
+  fi
+}
+
 function main {
   local EXIT=0
 
   set +o errexit
+  download_temp_db_to_workspace_in_jenkins
   lein_dep_check_for_project "soresu-form" || EXIT=$?
   lein_dep_check_for_project "va-admin-ui" || EXIT=$?
   lein_dep_check_for_project "va-common" || EXIT=$?
