@@ -62,9 +62,9 @@ export const PaatosStatusRadioButton: React.FC<PaatosStatusRadioButtonProps> = (
 }
 
 interface GroupProps {
-  talousarvioValues: TalousarvioValues | undefined
   group: keyof Omit<OsiokohtainenMuutoshakemusPaatosFormValues["values"], 'reason'>
   f: OsiokohtainenMuutoshakemusPaatosFormValues
+  talousarvioValues?: TalousarvioValues
 }
 
 

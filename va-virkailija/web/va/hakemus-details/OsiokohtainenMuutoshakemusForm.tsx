@@ -35,6 +35,7 @@ import {translationsFi} from "../../../../va-common/web/va/i18n/translations";
 import DatePicker from "react-widgets/DatePicker";
 import moment from "moment";
 import MomentLocalizer from 'react-widgets-moment'
+import {getNestedInputErrorClass} from "../../../../va-common/web/va/formikHelpers";
 
 moment.locale('fi')
 const localizer = new MomentLocalizer(moment)
@@ -88,14 +89,20 @@ const errors = {
 const getPaatosSchema = (muutoshakemus: Muutoshakemus) => Yup.object().shape({
   reason: Yup.string()
     .required('Perustelu on pakollinen kenttä'),
-  talousarvio: Yup.lazy<any>(talousarvio => talousarvio.talousarvio ? Yup.object().shape({
+  talousarvio: Yup.lazy<any>(talousarvio => talousarvio?.talousarvio ? Yup.object().shape({
     status: Yup.string(),
     talousarvio: Yup.object(getTalousarvioSchema(talousarvio.talousarvio, errors))
   }) : Yup.object()),
-  paattymispaiva: Yup.date().when('keys.status', {
-    is: 'accepted_with_changes',
-    then: muutoshakemus['haen-kayttoajan-pidennysta'] ? Yup.date().required('Päättymispäivä on pakollinen kenttä') : Yup.date(),
-  }),
+  'haen-kayttoajan-pidennysta': Yup.lazy<any>(paattymispaiva => {
+    return muutoshakemus['haen-kayttoajan-pidennysta'] && paattymispaiva?.status === 'accepted_with_changes'
+      ? Yup.object({
+        status: Yup.string().required(),
+        paattymispaiva: Yup.date().required('Päättymispäivä on pakollinen kenttä')
+      }) : Yup.object({
+        status: Yup.string().required()
+      })
+    }
+  ),
   'hyvaksytyt-sisaltomuutokset': Yup.string().when('keys.status', {
     is: value => value !== 'rejected',
     then: muutoshakemus['haen-sisaltomuutosta'] ? Yup.string().required('Kuvaile hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan on pakollinen kenttä!') : Yup.string(),
@@ -161,9 +168,12 @@ export const OsiokohtainenMuutoshakemusForm = ({currentTalousarvio, muutoshakemu
     <form onSubmit={f.handleSubmit} data-test-id="muutoshakemus-form">
       {muutoshakemus['haettu-kayttoajan-paattymispaiva'] &&
       <MuutoshakemusSection
-        blueMiddleComponent={<PaatosStatusRadioButtonGroup f={f}
-                                                           group="haen-kayttoajan-pidennysta"
-                                                           talousarvioValues={talousarvioValues}/>}
+          blueMiddleComponent={<PaatosStatusRadioButtonGroup f={f} group="haen-kayttoajan-pidennysta" />}
+          bottomComponent={isAcceptedWithChanges(f.values["haen-kayttoajan-pidennysta"]?.status)
+            ? <KayttoajanPidennysAcceptWithChangesForm f={f} muutoshakemus={muutoshakemus} projectEndDate={projectEndDate} />
+            : undefined
+          }
+          datepickerFix
       >
         <PaattymispaivaValues muutoshakemus={muutoshakemus}
                               projectEndDate={projectEndDate}/>
@@ -257,7 +267,7 @@ function setDefaultReason(f: OsiokohtainenMuutoshakemusPaatosFormValues, lang: '
     f.values.talousarvio?.status,
     f.values["hyvaksytyt-sisaltomuutokset"]?.status,
     f.values["haen-kayttoajan-pidennysta"]?.status
-  ]
+  ].filter(status => status !== undefined)
   if (currentStatuses.some(status => status === 'accepted_with_changes')) {
     return f.setFieldValue('reason', paatosStatuses[1].defaultReason[lang])
   }
@@ -270,15 +280,6 @@ function setDefaultReason(f: OsiokohtainenMuutoshakemusPaatosFormValues, lang: '
   return f.setFieldValue('reason', '')
 }
 
-const Error = ({f}: {f: OsiokohtainenMuutoshakemusPaatosFormValues}): JSX.Element | null => {
-  if (!isError(f, 'paattymispaiva')) return null
-
-  return (
-    <span className="muutoshakemus__error row3 col3">Päättymispäivä on pakollinen kenttä!</span>
-  )
-}
-
-
 interface KayttoajanPidennysAcceptWithChangesFormProps {
   f: OsiokohtainenMuutoshakemusPaatosFormValues
   muutoshakemus: Muutoshakemus
@@ -287,7 +288,7 @@ interface KayttoajanPidennysAcceptWithChangesFormProps {
 
 const KayttoajanPidennysAcceptWithChangesForm = ({f, muutoshakemus, projectEndDate}: KayttoajanPidennysAcceptWithChangesFormProps): JSX.Element => {
   const haettuPaiva = dateStringToMoment(muutoshakemus['haettu-kayttoajan-paattymispaiva'])
-
+  const errorInPaattymispaiva = f.touched['haen-kayttoajan-pidennysta'] && getNestedInputErrorClass(f, ['haen-kayttoajan-pidennysta', 'paattymispaiva'])
   return (
     <div className="muutoshakemus-row muutoshakemus__project-end-row muutoshakemus__accept-with-changes">
 
@@ -306,13 +307,13 @@ const KayttoajanPidennysAcceptWithChangesForm = ({f, muutoshakemus, projectEndDa
         <Localization date={localizer} messages={translationsFi.calendar}>
           <DatePicker
             name="paattymispaiva"
-            onBlur={() => f.setFieldTouched('paattymispaiva')}
+            onBlur={() => f.setFieldTouched('haen-kayttoajan-pidennysta')}
             onChange={(newDate) => {
               const d = moment(newDate)
               if (d.isValid()) {
-                f.setFieldValue('paattymispaiva', d.toDate().toISOString())
+                f.setFieldValue('haen-kayttoajan-pidennysta.paattymispaiva', d.toDate().toISOString())
               } else {
-                f.setFieldValue('paattymispaiva', undefined)
+                f.setFieldValue('haen-kayttoajan-pidennysta.paattymispaiva', undefined)
               }
             }}
             parse={parseDateString}
@@ -321,9 +322,9 @@ const KayttoajanPidennysAcceptWithChangesForm = ({f, muutoshakemus, projectEndDa
                 ? moment(f.values['haen-kayttoajan-pidennysta']?.paattymispaiva).toDate()
                 : haettuPaiva.toDate()
             }
-            containerClassName={`datepicker ${isError(f, 'paattymispaiva') ? 'muutoshakemus__error' : ''}`} />
+            containerClassName={`datepicker ${errorInPaattymispaiva ? 'muutoshakemus__error' : ''}`} />
         </Localization>
       </div>
-      <Error f={f} />
+      {errorInPaattymispaiva && <span className="muutoshakemus__error row3 col3">Päättymispäivä on pakollinen kenttä!</span>}
     </div>
   )}
