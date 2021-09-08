@@ -1,8 +1,16 @@
 import {TalousarvioValues} from "../../../../va-common/web/va/types/muutoshakemus";
 import {FormikProps} from "formik";
 
+const PAATOS_ACCEPTED = 'accepted'
+const PAATOS_ACCEPTED_WITH_CHANGES = 'accepted_with_changes'
+const PAATOS_REJECTED = 'rejected'
+
+const PAATOS_STATUSES = [PAATOS_ACCEPTED, PAATOS_ACCEPTED_WITH_CHANGES, PAATOS_REJECTED] as const
+
+export type PaatosStatus = typeof PAATOS_STATUSES[number]
+
 export interface MuutoshakemusPaatosRequest {
-  status: 'accepted' | 'accepted_with_changes' | 'rejected',
+  status: PaatosStatus,
   reason: string,
   paattymispaiva?: string,
   'hyvaksytyt-sisaltomuutokset'?: string,
@@ -10,3 +18,21 @@ export interface MuutoshakemusPaatosRequest {
 }
 
 export type MuutoshakemusPaatosFormValues = FormikProps<MuutoshakemusPaatosRequest>
+
+export interface OsioKohtainenMuutoshakemusPaatosRequest {
+  'haen-kayttoajan-pidennysta'?: {
+    status: PaatosStatus
+    paattymispaiva?: string
+  }
+  'hyvaksytyt-sisaltomuutokset'?: {
+    status: PaatosStatus
+    'hyvaksytyt-sisaltomuutokset'?: string
+  }
+  talousarvio?: {
+    status: PaatosStatus
+    talousarvio?: TalousarvioValues
+  }
+  reason: string
+}
+
+export type OsiokohtainenMuutoshakemusPaatosFormValues = FormikProps<OsioKohtainenMuutoshakemusPaatosRequest>

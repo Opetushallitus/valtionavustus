@@ -6,7 +6,7 @@ import DatePicker from 'react-widgets/DatePicker'
 import MomentLocalizer from 'react-widgets-moment'
 import Localization from 'react-widgets/Localization'
 import { omit } from 'lodash'
-import { translations, translationsFi } from 'va-common/web/va/i18n/translations'
+import { translationsFi } from 'va-common/web/va/i18n/translations'
 import { TranslationContext, getTranslationContext } from 'va-common/web/va/i18n/TranslationContext'
 import { isoFormat, parseDateString } from 'va-common/web/va/i18n/dateformat'
 
@@ -41,36 +41,10 @@ import {
   UserInfo
 } from "../../../../va-common/web/va/types";
 import {MuutoshakemusSection} from "../../../../va-common/web/va/MuutoshakemusSection";
+import {paatosStatuses} from "./PaatosStatus";
 
 moment.locale('fi')
 const localizer = new MomentLocalizer(moment)
-
-const paatosStatuses = [
-  {
-    value: 'accepted',
-    text: 'Hyväksytään',
-    defaultReason: {
-      fi: translations.fi.muutoshakemus.paatos.vakioperustelut.accepted,
-      sv: translations.sv.muutoshakemus.paatos.vakioperustelut.accepted,
-    }
-  },
-  {
-    value: 'accepted_with_changes',
-    text: 'Hyväksytään muutettuna',
-    defaultReason: {
-      fi: translations.fi.muutoshakemus.paatos.vakioperustelut.accepted_with_changes,
-      sv: translations.sv.muutoshakemus.paatos.vakioperustelut.accepted_with_changes,
-    }
-  },
-  {
-    value: 'rejected',
-    text: 'Hylätään',
-    defaultReason: {
-      fi: translations.fi.muutoshakemus.paatos.vakioperustelut.rejected,
-      sv: translations.sv.muutoshakemus.paatos.vakioperustelut.rejected,
-    }
-  }
-] as const
 
 const errors = {
   required: 'Pakollinen kenttä',
@@ -171,7 +145,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
 
   return (
     <form onSubmit={f.handleSubmit} data-test-id="muutoshakemus-form">
-      <MuutoshakemusSection bottomComponent={<button type="submit" disabled={isSubmitDisabled(f)} data-test-id="muutoshakemus-submit">Tee päätös ja lähetä hakijalle</button>}>
+      <MuutoshakemusSection blueMiddleComponent={<button type="submit" disabled={isSubmitDisabled(f)} data-test-id="muutoshakemus-submit">Tee päätös ja lähetä hakijalle</button>}>
         <div className="muutoshakemus-row">
           <h3 className="muutoshakemus__header">Yhteiset perustelut ja päätöksen lähettäminen</h3>
           <div>Jos päätös tarvitsee päällikön hyväksynnän, pyydä häntä katsomaan hakemus ja tekemään päätös.</div>

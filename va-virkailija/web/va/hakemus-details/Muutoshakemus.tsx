@@ -12,25 +12,22 @@ import './Muutoshakemus.less'
 import {
   Avustushaku,
   Hakemus,
-  NormalizedHakemusData,
   UserInfo
 } from "../../../../va-common/web/va/types";
 import {
   Presenter,
   Muutoshakemus as MuutoshakemusType
 } from "../../../../va-common/web/va/types/muutoshakemus";
+import {OsiokohtainenMuutoshakemusForm} from "./OsiokohtainenMuutoshakemusForm";
 
 interface MuutoshakemusProps {
   environment: EnvironmentApiResponse
   avustushaku: Avustushaku
-  muutoshakemus: MuutoshakemusType
   muutoshakemukset: MuutoshakemusType[]
-  hakemus: NormalizedHakemusData
   hakemusVersion: Hakemus
   controller: any
   userInfo: UserInfo
   presenter: Presenter
-  projectEndDate: string | undefined
   isPresentingOfficer: boolean
 }
 
@@ -40,7 +37,28 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
   const isAccepted = a.status === 'accepted' || a.status === 'accepted_with_changes'
   const projectEndDate = getProjectEndDate(avustushaku, muutoshakemukset, a)
   const currentTalousarvio = getTalousarvio(muutoshakemukset, hakemus && hakemus.talousarvio, isAccepted ? a : undefined)
-
+  const osiokohtainenEnabled = environment["muutoshakemus-osiokohtainen-hyvaksynta"]["enabled?"]
+  if (hakemus && osiokohtainenEnabled) {
+    return (
+      <React.Fragment>
+        <h2>Muutoshakemus {moment(a['created-at']).format(datetimeFormat)}</h2>
+        <div data-test-id="muutoshakemus-sisalto">
+          <OsiokohtainenMuutoshakemusForm
+            avustushaku={avustushaku}
+            muutoshakemus={a}
+            muutoshakemukset={muutoshakemukset}
+            hakemus={hakemus}
+            hakemusVersion={hakemusVersion}
+            controller={controller}
+            userInfo={userInfo}
+            presenter={presenter}
+            projectEndDate={projectEndDate}
+            isPresentingOfficer={isPresentingOfficer}
+            currentTalousarvio={currentTalousarvio} />
+        </div>
+      </React.Fragment>
+    )
+  }
   return (
     <React.Fragment>
       {muutoshakemukset.length > 1 && <MuutoshakemusTabs muutoshakemukset={muutoshakemukset} activeMuutoshakemus={a} setActiveMuutoshakemus={setActiveMuutoshakemus} />}

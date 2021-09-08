@@ -58,11 +58,13 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
       }
       {muutoshakemus['haettu-kayttoajan-paattymispaiva'] && <PaattymispaivaValues muutoshakemus={muutoshakemus} projectEndDate={projectEndDate} />}
       {!!talousarvio.length &&
-        <MuutosTaloudenKayttosuunnitelmaan
-          currentTalousarvio={currentTalousarvio}
-          newTalousarvio={talousarvio}
-          status={muutoshakemus.status}
-          reason={muutoshakemus["talousarvio-perustelut"]} />
+        <MuutoshakemusSection>
+          <MuutosTaloudenKayttosuunnitelmaan
+            currentTalousarvio={currentTalousarvio}
+            newTalousarvio={talousarvio}
+            status={muutoshakemus.status}
+            reason={muutoshakemus["talousarvio-perustelut"]} />
+        </MuutoshakemusSection>
       }
       {muutoshakemus['haen-sisaltomuutosta'] && (
         <MuutoshakemusSection>

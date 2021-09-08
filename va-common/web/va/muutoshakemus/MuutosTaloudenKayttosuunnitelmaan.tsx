@@ -4,7 +4,6 @@ import { Meno, MuutoshakemusStatus, Talousarvio } from 'va-common/web/va/types/m
 import { useTranslations } from '../i18n/TranslationContext'
 
 import './talous.less'
-import {MuutoshakemusSection} from "../MuutoshakemusSection";
 
 type MenoRowProps = {
   meno: Meno
@@ -73,12 +72,12 @@ export const MuutosTaloudenKayttosuunnitelmaan = (props: MuutosTaloudenKayttosuu
   const { t } = useTranslations()
 
   return (
-    <MuutoshakemusSection>
+    <React.Fragment>
       <TalousarvioTable {...props} />
       <div className="muutoshakemus-row">
         <h4 className="muutoshakemus__header" data-test-id="reasoning-title">{t.muutosTaloudenKayttosuunnitelmaan.applicantReasoning}</h4>
         <div className="muutoshakemus__reason" data-test-id="muutoshakemus-talousarvio-perustelu">{reason}</div>
       </div>
-    </MuutoshakemusSection>
+    </React.Fragment>
   )
 }
