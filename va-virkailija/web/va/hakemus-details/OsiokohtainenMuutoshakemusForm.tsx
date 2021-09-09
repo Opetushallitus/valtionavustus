@@ -101,14 +101,14 @@ const getPaatosSchema = (muutoshakemus: Muutoshakemus) => Yup.object().shape({
       ? Yup.object({
         status: Yup.string().required(),
         paattymispaiva: Yup.date().required('Päättymispäivä on pakollinen kenttä')
-      }) : Yup.object({
-        status: Yup.string().required()
-      })
+      }) : Yup.object()
     }
   ),
-  'hyvaksytyt-sisaltomuutokset': Yup.string().when('keys.status', {
-    is: value => value !== 'rejected',
-    then: muutoshakemus['haen-sisaltomuutosta'] ? Yup.string().required('Kuvaile hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan on pakollinen kenttä!') : Yup.string(),
+  'hyvaksytyt-sisaltomuutokset': Yup.lazy<any>(haenSisaltomuutosta => {
+    const sisaltomuutosStatus = haenSisaltomuutosta?.status
+    return sisaltomuutosStatus !== undefined && sisaltomuutosStatus !== 'rejected'
+      ? Yup.string().required('Kuvaile hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan on pakollinen kenttä!')
+      : Yup.string()
   })
 })
 
@@ -167,6 +167,8 @@ export const OsiokohtainenMuutoshakemusForm = ({currentTalousarvio, muutoshakemu
     }
   })
   const onPaatosPreviewClick = () => {}
+  const sisaltomuutoksetStatus = f.values["hyvaksytyt-sisaltomuutokset"]?.status
+  const hyvaksyttySisaltomuutokset = sisaltomuutoksetStatus !== undefined && sisaltomuutoksetStatus !== 'rejected'
   return (
     <form onSubmit={f.handleSubmit} data-test-id="muutoshakemus-form">
       {muutoshakemus['haettu-kayttoajan-paattymispaiva'] &&
@@ -206,7 +208,7 @@ export const OsiokohtainenMuutoshakemusForm = ({currentTalousarvio, muutoshakemu
           blueMiddleComponent={<PaatosStatusRadioButtonGroup
             talousarvioValues={talousarvioValues}
             group="hyvaksytyt-sisaltomuutokset" f={f}/>}
-          bottomComponent={isAcceptedWithChanges(f.values["hyvaksytyt-sisaltomuutokset"]?.status)
+          bottomComponent={hyvaksyttySisaltomuutokset
             ? <HyvaksytytSisaltomuutoksetForm f={f} />
             : undefined
           }
