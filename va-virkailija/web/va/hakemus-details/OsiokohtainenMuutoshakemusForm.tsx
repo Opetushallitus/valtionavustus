@@ -182,7 +182,7 @@ export const OsiokohtainenMuutoshakemusForm = ({currentTalousarvio, muutoshakemu
                               projectEndDate={projectEndDate}/>
       </MuutoshakemusSection>
       }
-      {!!talousarvio.length &&
+      {!!muutoshakemus.talousarvio.length &&
       <MuutoshakemusSection
         blueMiddleComponent={<PaatosStatusRadioButtonGroup f={f} group="talousarvio"
                                                            talousarvioValues={talousarvioValues}/>}
