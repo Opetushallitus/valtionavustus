@@ -6,14 +6,21 @@ HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}
 VIRKAILIJA_HOSTNAME=${VIRKAILIJA_HOSTNAME:-"localhost"}
 DOCKER_COMPOSE_FILE=./docker-compose-test.yml
 
+function current-commit-is-not-tested {
+  ! git tag --contains | grep -q "green-qa"
+}
+
 function main {
   check_requirements
   init_nodejs
   set_env_vars
   clean
   build
-  start_system_under_test
-  run_tests
+  if current-commit-is-not-tested;
+  then
+    start_system_under_test
+    run_tests
+  fi
   deploy_jars
 }
 
