@@ -18,7 +18,7 @@ export const HyväksytytSisältömuutoksetForm = ({ f, muutoshakemus }: Hyväksy
       <section className="muutoshakemus-section">
         <div className="muutoshakemus-row">
           <h4 className="muutoshakemus__header">{translationsFi.sisaltomuutos.appliedChange}</h4>
-          <div className="muutoshakemus__reason" data-test-id="sisaltomuutos-perustelut">{muutoshakemus['sisaltomuutos-perustelut']}</div>
+          <div className="muutoshakemus-description-box" data-test-id="sisaltomuutos-perustelut">{muutoshakemus['sisaltomuutos-perustelut']}</div>
         </div>
         <div className="muutoshakemus-row">
           <h4 className="muutoshakemus__header">

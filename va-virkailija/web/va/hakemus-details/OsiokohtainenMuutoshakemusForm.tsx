@@ -67,16 +67,16 @@ const PaattymispaivaValues = ({ muutoshakemus, projectEndDate }: PaattymispaivaV
       <div className="muutoshakemus-row muutoshakemus__project-end-row">
         <div>
           <h3 className="muutoshakemus__header" data-test-id='muutoshakemus-current-end-date-title'>{currentEndDateTitle}</h3>
-          <div data-test-id="project-end-date">{projectEndDate}</div>
+          <div data-test-id="project-end-date" className="muutoshakemus-description-box">{projectEndDate}</div>
         </div>
         <div>
           <h3 className="muutoshakemus__header" data-test-id='muutoshakemus-new-end-date-title'>{newEndDateTitle}</h3>
-          <div data-test-id="muutoshakemus-jatkoaika">{formatDate(newEndDateValue)}</div>
+          <div data-test-id="muutoshakemus-jatkoaika" className="muutoshakemus-description-box">{formatDate(newEndDateValue)}</div>
         </div>
       </div>
       <div className="muutoshakemus-row">
         <h4 className="muutoshakemus__header" data-test-id='muutoshakemus-reasoning-title'>{t.muutoshakemus.applicantReasoning}</h4>
-        <div className="muutoshakemus__reason" data-test-id="muutoshakemus-jatkoaika-perustelu">{perustelut}</div>
+        <div className="muutoshakemus-description-box" data-test-id="muutoshakemus-jatkoaika-perustelu">{perustelut}</div>
       </div>
     </React.Fragment>
   )
@@ -216,7 +216,7 @@ export const OsiokohtainenMuutoshakemusForm = ({currentTalousarvio, muutoshakemu
           <div className="muutoshakemus-row">
             <h4
               className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
-            <div className="muutoshakemus__reason"
+            <div className="muutoshakemus-description-box"
                  data-test-id="sisaltomuutos-perustelut">{muutoshakemus['sisaltomuutos-perustelut']}</div>
           </div>
           {muutoshakemus['hyvaksytyt-sisaltomuutokset'] && (
@@ -224,7 +224,7 @@ export const OsiokohtainenMuutoshakemusForm = ({currentTalousarvio, muutoshakemu
               <h4
                 className="muutoshakemus__header">{t.sisaltomuutos.acceptedChanges}</h4>
               <div
-                className="muutoshakemus__reason">{muutoshakemus['hyvaksytyt-sisaltomuutokset']}</div>
+                className="muutoshakemus-description-box">{muutoshakemus['hyvaksytyt-sisaltomuutokset']}</div>
             </div>
           )}
           {isAcceptedWithChanges(f.values["hyvaksytyt-sisaltomuutokset"]?.status) && (
@@ -301,11 +301,11 @@ const KayttoajanPidennysAcceptWithChangesForm = ({f, muutoshakemus, projectEndDa
     <div className="muutoshakemus-row muutoshakemus__project-end-row muutoshakemus__accept-with-changes">
 
       <h3 className="muutoshakemus__header row1 col1">Voimassaoleva päättymisaika</h3>
-      <div data-test-id="current-project-end-date" className="row2 col1">{projectEndDate}</div>
+      <div data-test-id="current-project-end-date" className="row2 col1 muutoshakemus-description-box">{projectEndDate}</div>
 
 
       <h3 className="muutoshakemus__header row1 col2">Haettu muutos</h3>
-      <div data-test-id="approve-with-changes-muutoshakemus-jatkoaika" className="row2 col2">
+      <div data-test-id="approve-with-changes-muutoshakemus-jatkoaika" className="row2 col2 muutoshakemus-description-box">
         {toFinnishDateFormat(haettuPaiva)}
       </div>
 
