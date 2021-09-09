@@ -21,7 +21,8 @@
   :dependencies [[oph-va/common]
                  [com.novemberain/pantomime]
                  [nrepl]
-                 [cider/cider-nrepl]]
+                 [cider/cider-nrepl]
+                 [org.jsoup/jsoup "1.14.2"]]
 
   :profiles {:uberjar {:aot [oph.va.hakija.main]}
              :dev     {:env {:config "config/dev.edn"}}
