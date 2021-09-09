@@ -38,23 +38,33 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
   const projectEndDate = getProjectEndDate(avustushaku, muutoshakemukset, a)
   const currentTalousarvio = getTalousarvio(muutoshakemukset, hakemus && hakemus.talousarvio, isAccepted ? a : undefined)
   const osiokohtainenEnabled = environment["muutoshakemus-osiokohtainen-hyvaksynta"]["enabled?"]
-  if (hakemus && osiokohtainenEnabled) {
+  if (osiokohtainenEnabled) {
+    const content = a.status === 'new' && hakemus
+      ? <OsiokohtainenMuutoshakemusForm
+        avustushaku={avustushaku}
+        muutoshakemus={a}
+        muutoshakemukset={muutoshakemukset}
+        hakemus={hakemus}
+        hakemusVersion={hakemusVersion}
+        controller={controller}
+        userInfo={userInfo}
+        presenter={presenter}
+        projectEndDate={projectEndDate}
+        isPresentingOfficer={isPresentingOfficer}
+        currentTalousarvio={currentTalousarvio} />
+      : <MuutoshakemusValues
+        currentTalousarvio={currentTalousarvio}
+        muutoshakemus={a}
+        hakijaUrl={environment['hakija-server'].url.fi}
+        projectEndDate={projectEndDate}
+        simplePaatos={false} />
+
     return (
       <React.Fragment>
+        {muutoshakemukset.length > 1 && <MuutoshakemusTabs muutoshakemukset={muutoshakemukset} activeMuutoshakemus={a} setActiveMuutoshakemus={setActiveMuutoshakemus} />}
         <h2>Muutoshakemus {moment(a['created-at']).format(datetimeFormat)}</h2>
         <div data-test-id="muutoshakemus-sisalto">
-          <OsiokohtainenMuutoshakemusForm
-            avustushaku={avustushaku}
-            muutoshakemus={a}
-            muutoshakemukset={muutoshakemukset}
-            hakemus={hakemus}
-            hakemusVersion={hakemusVersion}
-            controller={controller}
-            userInfo={userInfo}
-            presenter={presenter}
-            projectEndDate={projectEndDate}
-            isPresentingOfficer={isPresentingOfficer}
-            currentTalousarvio={currentTalousarvio} />
+          {content}
         </div>
       </React.Fragment>
     )
