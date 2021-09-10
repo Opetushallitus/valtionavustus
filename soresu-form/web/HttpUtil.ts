@@ -13,7 +13,7 @@ export default class HttpUtil {
     return HttpUtil.handleResponse(axios.post(url, jsonData))
   }
 
-  static put(url: string, requestData?: FormData, options?: any) {
+  static put(url: string, requestData?: any, options?: any) {
     return HttpUtil.handleResponse(axios.put(url, requestData, options))
   }
 

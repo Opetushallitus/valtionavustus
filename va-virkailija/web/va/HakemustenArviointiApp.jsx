@@ -7,7 +7,7 @@ import RouteParser from 'route-parser'
 import queryString from 'query-string'
 
 import TopBar from './TopBar.tsx'
-import HakemustenArviointiController from './HakemustenArviointiController.jsx'
+import HakemustenArviointiController from './HakemustenArviointiController.ts'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusDetails from './hakemus-details/HakemusDetails'
 import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink.jsx'

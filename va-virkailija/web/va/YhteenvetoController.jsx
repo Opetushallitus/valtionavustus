@@ -4,7 +4,7 @@ import _ from 'lodash'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import Dispatcher from 'soresu-form/web/Dispatcher'
 
-import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
+import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses'
 
 const dispatcher = new Dispatcher()
 

@@ -1,22 +1,22 @@
-import { Browser, Page } from 'puppeteer'
+import {Browser, Page} from 'puppeteer'
 import axios from "axios"
 
 import {
-  mkBrowser,
-  log,
-  getFirstPage,
-  clickElementWithText,
-  setPageErrorConsoleLogger,
-  clickElement,
-  VIRKAILIJA_URL,
   Budget,
+  clearAndType,
+  clickElement,
+  clickElementWithText,
   createRandomHakuValues,
   getElementInnerText,
-  selectVakioperusteluInFinnish,
-  clearAndType,
+  getFirstPage,
+  log,
+  mkBrowser,
   navigate,
+  saveMuutoshakemus,
+  selectVakioperusteluInFinnish,
   selectValmistelijaForHakemus,
-  saveMuutoshakemus
+  setPageErrorConsoleLogger,
+  VIRKAILIJA_URL
 } from '../../test-util'
 import {
   navigateToLatestMuutoshakemus,
@@ -24,12 +24,16 @@ import {
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
 } from '../muutospaatosprosessi-util'
 import {
-  navigateToHakijaMuutoshakemusPage,
-  fillSisaltomuutosPerustelut,
   clickSendMuutoshakemusButton,
-  expectMuutoshakemusToBeSubmittedSuccessfully
+  expectMuutoshakemusToBeSubmittedSuccessfully,
+  fillSisaltomuutosPerustelut,
+  navigateToHakijaMuutoshakemusPage
 } from '../muutoshakemus-util'
-import { closePaatosPreview, openPaatosPreview } from '../../hakemuksen-arviointi/hakemuksen-arviointi-util'
+import {
+  closePaatosPreview,
+  openPaatosPreview
+} from '../../hakemuksen-arviointi/hakemuksen-arviointi-util'
+import {User} from "../../../va-virkailija/web/va/types";
 
 jest.setTimeout(400_000)
 
@@ -38,15 +42,6 @@ export const answers = {
   contactPersonName: "Erkki Esimerkki",
   contactPersonPhoneNumber: "666",
   projectName: "Rahassa kylpijät Ky Ay Oy",
-}
-
-interface User {
-  "person-oid": string
-  "first-name": string
-  surname: string
-  email: string
-  lang: string
-  privileges: string[]
 }
 
 async function populateUserCache(users: User[]) {

@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 
 import { HakemusSelvitys, Muutoshakemus } from 'va-common/web/va/status'
 
-import HakemusArviointiStatuses from '../hakemus-details/HakemusArviointiStatuses.js'
+import HakemusArviointiStatuses from '../hakemus-details/HakemusArviointiStatuses'
 import ScoreResolver from '../ScoreResolver.js'
 import PersonFilterButton from './PersonFilterButton.jsx'
 import PersonSelectButton from './PersonSelectButton.jsx'

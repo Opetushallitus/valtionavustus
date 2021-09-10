@@ -1,4 +1,7 @@
-import {TalousarvioValues} from "../../../../va-common/web/va/types/muutoshakemus";
+import {
+  Meno,
+  TalousarvioValues
+} from "../../../../va-common/web/va/types/muutoshakemus";
 import {FormikProps} from "formik";
 
 const PAATOS_ACCEPTED = 'accepted'
@@ -8,6 +11,19 @@ const PAATOS_REJECTED = 'rejected'
 const PAATOS_STATUSES = [PAATOS_ACCEPTED, PAATOS_ACCEPTED_WITH_CHANGES, PAATOS_REJECTED] as const
 
 export type PaatosStatus = typeof PAATOS_STATUSES[number]
+
+export interface MuutoshakemusPaatos {
+  id: number
+  status: PaatosStatus
+  'user-key': string
+  reason: string
+  decider: string
+  'hyvaksytyt-sisaltomuutokset'?: string
+  'paatos-hyvaksytty-paattymispaiva'?: string
+  'talousarvio': Meno[]
+  muutoshakemusId: number
+  hakemusId: number
+}
 
 export interface MuutoshakemusPaatosRequest {
   status: PaatosStatus,

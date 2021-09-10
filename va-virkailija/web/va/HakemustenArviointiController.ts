@@ -14,10 +14,24 @@ import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
 
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
-import { Muutoshakemus, HakemusSelvitys } from 'va-common/web/va/status'
+import {HakemusSelvitys, Muutoshakemus} from 'va-common/web/va/status'
 
-import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses'
+import HakemusArviointiStatuses
+  from './hakemus-details/HakemusArviointiStatuses'
 import RahoitusalueSelections from './hakemus-details/RahoitusalueSelections'
+import {
+  Avustushaku,
+  Hakemus,
+  HakemusStatus,
+  NormalizedHakemusData,
+  Payment,
+  Score,
+  Scoring,
+  Comment
+} from "../../../va-common/web/va/types";
+import {HakuData, User} from "./types";
+import {MuutoshakemusPaatos} from "./hakemus-details/hakemusTypes";
+import {Muutoshakemus as MuutoshakemusType} from "../../../va-common/web/va/types/muutoshakemus";
 
 const dispatcher = new Dispatcher()
 
@@ -63,23 +77,70 @@ const events = {
   removePayment: 'removePayment',
   paymentRemoved: 'paymentRemoved',
   appendPayment: 'appendPayment'
+} as const
+
+interface HakemusFilter {
+  answers: any[]
+  isOpen: boolean
+  name: string
+  openQuestions: any[]
+  status: string[]
+  status_valiselvitys: typeof HakemusSelvitys.statuses
+  status_loppuselvitys: typeof HakemusSelvitys.statuses
+  status_muutoshakemus: typeof HakemusSelvitys.statuses
+  organization: string
+  roleIsOpen: boolean
+  evaluator: number | undefined
+  presenter?: any
+}
+
+interface HakemusSorter {
+  field: string
+  order: string
+}
+
+interface State {
+  avustushakuList: Avustushaku[]
+  hakuData: HakuData
+  hakemusFilter: HakemusFilter
+  helpTexts: any
+  hakemusSorter: HakemusSorter[]
+  modal: JSX.Element | undefined
+  personSelectHakemusId: number | undefined
+  selectedHakemus: Hakemus | undefined
+  selectedHakemusAccessControl: Partial<{
+    allowHakemusCommenting: boolean
+    allowHakemusStateChanges: boolean
+    allowHakemusScoring: boolean
+    allowHakemusOfficerEditing: boolean
+    allowHakemusCancellation: boolean
+  }>
+  showOthersScores: boolean
+  saveStatus: {
+    saveInProgress: boolean
+    saveTime: Date | null
+    serverError: string
+  }
+  translations: any
+  userInfo: User
+  subTab: string
+  loadingSelvitys?: boolean
 }
 
 export default class HakemustenArviointiController {
 
-  initializeState(avustushakuId,evaluator) {
-    this._bind('onInitialState', 'onHakemusSelection', 'onUpdateHakemusStatus', 'onUpdateHakemusArvio', 'onSaveHakemusArvio', 'onBeforeUnload','onRefreshHakemukset')
-    this.autoSaveHakemusArvio = _.debounce(function(updatedHakemus){ dispatcher.push(events.saveHakemusArvio, updatedHakemus) }, 3000)
+  initializeState(avustushakuId: number, evaluator: number | undefined) {
+    this._bind('onInitialState', 'onHakemusSelection', 'onUpdateHakemusStatus', 'onUpdateHakemusArvio', 'onSaveHakemusArvio', 'onBeforeUnload','onRefreshHakemukset', 'autoSaveHakemusArvio')
 
     Bacon.fromEvent(window, "beforeunload").onValue(function() {
       // For some odd reason Safari always displays a dialog here
       // But it's probably safer to always save the document anyway
-      dispatcher.push(events.beforeUnload)
+      dispatcher.push(events.beforeUnload, {})
     })
 
     const initialStateTemplate = {
-      avustushakuList: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/?status=published&status=resolved")),
-      hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId)),
+      avustushakuList: Bacon.fromPromise<Avustushaku[]>(HttpUtil.get("/api/avustushaku/?status=published&status=resolved")),
+      hakuData: Bacon.fromPromise<HakuData>(HttpUtil.get("/api/avustushaku/" + avustushakuId)),
       hakemusFilter: {
         answers:[],
         isOpen:false,
@@ -94,7 +155,7 @@ export default class HakemustenArviointiController {
         evaluator:evaluator,
         presenter:undefined
       },
-      helpTexts: Bacon.fromPromise(HttpUtil.get("/api/help-texts/all")),
+      helpTexts: Bacon.fromPromise<any>(HttpUtil.get("/api/help-texts/all")),
       hakemusSorter: [
         {field: "score", order: "desc"}
       ],
@@ -108,8 +169,8 @@ export default class HakemustenArviointiController {
         saveTime: null,
         serverError: ""
       },
-      translations: Bacon.fromPromise(HttpUtil.get("/translations.json")).map(Immutable),
-      userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
+      translations: Bacon.fromPromise<any>(HttpUtil.get("/translations.json")).map(Immutable),
+      userInfo: Bacon.fromPromise<User>(HttpUtil.get("/api/userinfo")),
       subTab: 'arviointi'
     }
 
@@ -120,96 +181,98 @@ export default class HakemustenArviointiController {
     })
 
     return Bacon.update(
-      {},
-      [dispatcher.stream(events.onNormalizedData)], this.onNormalizedData,
-      [dispatcher.stream(events.onMuutoshakemukset)], this.onMuutoshakemukset,
-      [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload,
-      [dispatcher.stream(events.initialState)], this.onInitialState,
-      [dispatcher.stream(events.reRender)], this.onReRender,
-      [dispatcher.stream(events.setModal)], this.onSetModal,
-      [dispatcher.stream(events.refreshAttachments)], this.onRefreshAttachments,
-      [dispatcher.stream(events.refreshHakemukset)], this.onRefreshHakemukset,
-      [dispatcher.stream(events.selectHakemus)], this.onHakemusSelection,
-      [dispatcher.stream(events.closeHakemus)], this.onCloseHakemus,
-      [dispatcher.stream(events.updateHakemusArvio)], this.onUpdateHakemusArvio,
-      [dispatcher.stream(events.updateHakemusStatus)], this.onUpdateHakemusStatus,
-      [dispatcher.stream(events.saveHakemusArvio)], this.onSaveHakemusArvio,
-      [dispatcher.stream(events.saveCompleted)], this.onSaveCompleted,
-      [dispatcher.stream(events.loadComments)], this.onLoadComments,
-      [dispatcher.stream(events.commentsLoaded)], this.onCommentsLoaded,
-      [dispatcher.stream(events.loadSelvitys)], this.onLoadSelvitys,
-      [dispatcher.stream(events.selvitysLoaded)], this.onSelvitysLoaded,
-      [dispatcher.stream(events.addComment)], this.onAddComment,
-      [dispatcher.stream(events.scoresLoaded)], this.onScoresLoaded,
-      [dispatcher.stream(events.setOverriddenAnswerValue)], this.onSetOverriddenAnswerValue,
-      [dispatcher.stream(events.setSeurantaAnswerValue)], this.onSetSeurantaAnswerValue,
-      [dispatcher.stream(events.changeRequestsLoaded)], this.onChangeRequestsLoaded,
-      [dispatcher.stream(events.attachmentVersionsLoaded)], this.onAttachmentVersionsLoaded,
-      [dispatcher.stream(events.setPaatos)], this.onSetPaatos,
-      [dispatcher.stream(events.setScore)], this.onSetScore,
-      [dispatcher.stream(events.removeScore)], this.onRemoveScore,
-      [dispatcher.stream(events.loadScores)], this.loadScores,
-      [dispatcher.stream(events.toggleOthersScoresDisplay)], this.onToggleOthersScoresDisplay,
-      [dispatcher.stream(events.togglePersonSelect)], this.onTogglePersonSelect,
-      [dispatcher.stream(events.setFilter)], this.onSetFilter,
-      [dispatcher.stream(events.setSorter)], this.onSorterSet,
-      [dispatcher.stream(events.gotoSavedSearch)], this.onGotoSavedSearch,
-      [dispatcher.stream(events.toggleHakemusFilter)], this.onToggleHakemusFilter,
-      [dispatcher.stream(events.clearFilters)], this.onClearFilters,
-      [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab,
-      [dispatcher.stream(events.paymentsLoaded)], this.onPaymentsLoaded,
-      [dispatcher.stream(events.addPayment)], this.onAddPayment,
-      [dispatcher.stream(events.removePayment)], this.onRemovePayment,
-      [dispatcher.stream(events.paymentRemoved)], this.onPaymentRemoved,
-      [dispatcher.stream(events.appendPayment)], this.onAppendPayment
+      {} as any,
+      [dispatcher.stream(events.onNormalizedData), this.onNormalizedData],
+      [dispatcher.stream(events.onMuutoshakemukset), this.onMuutoshakemukset],
+      [dispatcher.stream(events.beforeUnload), this.onBeforeUnload],
+      [dispatcher.stream(events.initialState), this.onInitialState],
+      [dispatcher.stream(events.reRender), this.onReRender],
+      [dispatcher.stream(events.setModal), this.onSetModal],
+      [dispatcher.stream(events.refreshAttachments), this.onRefreshAttachments],
+      [dispatcher.stream(events.refreshHakemukset), this.onRefreshHakemukset],
+      [dispatcher.stream(events.selectHakemus), this.onHakemusSelection],
+      [dispatcher.stream(events.closeHakemus), this.onCloseHakemus],
+      [dispatcher.stream(events.updateHakemusArvio), this.onUpdateHakemusArvio],
+      [dispatcher.stream(events.updateHakemusStatus), this.onUpdateHakemusStatus],
+      [dispatcher.stream(events.saveHakemusArvio), this.onSaveHakemusArvio],
+      [dispatcher.stream(events.saveCompleted), this.onSaveCompleted],
+      [dispatcher.stream(events.loadComments), this.onLoadComments],
+      [dispatcher.stream(events.commentsLoaded), this.onCommentsLoaded],
+      [dispatcher.stream(events.loadSelvitys), this.onLoadSelvitys],
+      [dispatcher.stream(events.selvitysLoaded), this.onSelvitysLoaded],
+      [dispatcher.stream(events.addComment), this.onAddComment],
+      [dispatcher.stream(events.scoresLoaded), this.onScoresLoaded],
+      [dispatcher.stream(events.setOverriddenAnswerValue), this.onSetOverriddenAnswerValue],
+      [dispatcher.stream(events.setSeurantaAnswerValue), this.onSetSeurantaAnswerValue],
+      [dispatcher.stream(events.changeRequestsLoaded), this.onChangeRequestsLoaded],
+      [dispatcher.stream(events.attachmentVersionsLoaded), this.onAttachmentVersionsLoaded],
+      [dispatcher.stream(events.setPaatos), this.onSetPaatos],
+      [dispatcher.stream(events.setScore), this.onSetScore],
+      [dispatcher.stream(events.removeScore), this.onRemoveScore],
+      [dispatcher.stream(events.loadScores), this.loadScores],
+      [dispatcher.stream(events.toggleOthersScoresDisplay), this.onToggleOthersScoresDisplay],
+      [dispatcher.stream(events.togglePersonSelect), this.onTogglePersonSelect],
+      [dispatcher.stream(events.setFilter), this.onSetFilter],
+      [dispatcher.stream(events.setSorter), this.onSorterSet],
+      [dispatcher.stream(events.gotoSavedSearch), this.onGotoSavedSearch],
+      [dispatcher.stream(events.toggleHakemusFilter), this.onToggleHakemusFilter],
+      [dispatcher.stream(events.clearFilters), this.onClearFilters],
+      [dispatcher.stream(events.selectEditorSubTab), this.onSelectEditorSubTab],
+      [dispatcher.stream(events.paymentsLoaded), this.onPaymentsLoaded],
+      [dispatcher.stream(events.addPayment), this.onAddPayment],
+      [dispatcher.stream(events.removePayment), this.onRemovePayment],
+      [dispatcher.stream(events.paymentRemoved), this.onPaymentRemoved],
+      [dispatcher.stream(events.appendPayment), this.onAppendPayment],
     )
   }
 
-  _bind(...methods) {
+  _bind(...methods: any[]) {
     methods.forEach((method) => this[method] = this[method].bind(this))
   }
 
-  static commentsUrl(state) {
-    return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + state.selectedHakemus.id + "/comments"
+  static commentsUrl(state: State) {
+    return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + state.selectedHakemus?.id + "/comments"
   }
 
-  static selvitysUrl(state) {
-    return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + state.selectedHakemus.id + "/selvitys"
+  static selvitysUrl(state: State) {
+    return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + state.selectedHakemus?.id + "/selvitys"
   }
 
-  static scoresUrl(state, hakemusId) {
+  static scoresUrl(state: State, hakemusId: number) {
     return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + hakemusId + "/scores"
   }
 
-  static removeScoreUrl(state, evaluationId, scoreIndex) {
+  static removeScoreUrl(_state: State, evaluationId: number, scoreIndex: number) {
     return "/api/avustushaku/evaluations/"
       + evaluationId + "/scores/" + scoreIndex + "/"
   }
 
-  static changeRequestsUrl(state, hakemusId) {
+  static changeRequestsUrl(state: State, hakemusId: number) {
     return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + hakemusId + "/change-requests"
   }
 
-  static attachmentVersionsUrl(state, hakemusId) {
+  static attachmentVersionsUrl(state: State, hakemusId: number) {
     return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + hakemusId + "/attachments/versions"
   }
 
-  static savedSearchUrl(state) {
-    return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/searches"
+  static savedSearchUrl(state: State) {
+    return "/api/avustushaku/" + state.hakuData.avustushaku?.id + "/searches"
   }
 
-  static paymentsUrl(state) {
-    return "/api/v2/applications/" + state.selectedHakemus.id + "/payments/"
+  static paymentsUrl(state: State) {
+    return "/api/v2/applications/" + state.selectedHakemus?.id + "/payments/"
   }
 
-  static filterHakemukset(hakemukset){
+  static filterHakemukset(hakemukset: Hakemus[]){
     return _.filter(hakemukset, (hakemus) => {
       const status = hakemus.status
       return status === "submitted" || status === "pending_change_request" || status === "officer_edit" || status === "applicant_edit"
     })
   }
 
-  onInitialState(emptyState, realInitialState) {
+  autoSaveHakemusArvio = _.debounce((updatedHakemus: Hakemus) => { dispatcher.push(events.saveHakemusArvio, updatedHakemus) }, 3000)
+
+  onInitialState(_emptyState: State, realInitialState: State) {
     const query = queryString.parse(location.search)
     if (query.showAll !== "true") {
       realInitialState.hakuData.hakemukset = HakemustenArviointiController.filterHakemukset(realInitialState.hakuData.hakemukset)
@@ -222,20 +285,20 @@ export default class HakemustenArviointiController {
     return realInitialState
   }
 
-  onReRender(state) {
+  onReRender(state: State) {
     return state
   }
 
-  onSetModal(state, modal) {
+  onSetModal(state: State, modal: JSX.Element | undefined) {
     return { ...state, modal }
   }
 
-  onBeforeUnload(state) {
-    return this.onSaveHakemusArvio(state, state.selectedHakemus)
+  onBeforeUnload(state: State) {
+    return this.onSaveHakemusArvio(state, state.selectedHakemus!)
   }
 
-  onHakemusSelection(state, hakemusIdToSelect) {
-    state = this.onSaveHakemusArvio(state, state.selectedHakemus)
+  onHakemusSelection(state: State, hakemusIdToSelect: number) {
+    state = this.onSaveHakemusArvio(state, state.selectedHakemus!)
     state.selectedHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdToSelect)
     const avustushakuId = state.hakuData.avustushaku.id
     const normalizedStream = Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId + "/hakemus/" + hakemusIdToSelect + "/normalized")).mapError(undefined)
@@ -256,7 +319,7 @@ export default class HakemustenArviointiController {
     state.subTab = subTab
     if (!_.isUndefined(history.pushState) && parsedUrl.hakemus_id !== hakemusIdToSelect.toString()) {
       const newUrl = "/avustushaku/" + parsedUrl.avustushaku_id + "/hakemus/" + hakemusIdToSelect + "/" + subTab + "/" + location.search
-      history.pushState({}, window.title, newUrl)
+      history.pushState({}, window.document.title, newUrl)
     }
     this.setSelectedHakemusAccessControl(state)
     this.setDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(state)
@@ -275,7 +338,7 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  setSelectedHakemusAccessControl(state) {
+  setSelectedHakemusAccessControl(state: State) {
     const avustushaku = state.hakuData.avustushaku
     const privileges = state.hakuData.privileges
 
@@ -290,7 +353,7 @@ export default class HakemustenArviointiController {
     }
   }
 
-  onCloseHakemus(state) {
+  onCloseHakemus(state: State) {
     if (state.selectedHakemus) {
       const previouslySelectedHakemusId = state.selectedHakemus.id
       setTimeout(() => {
@@ -304,16 +367,16 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  selectEditorSubtab(subTabToSelect) {
+  selectEditorSubtab(subTabToSelect: string) {
     dispatcher.push(events.selectEditorSubTab, subTabToSelect)
   }
 
-  onToggleHakemusFilter(state){
+  onToggleHakemusFilter(state: State){
     state.hakemusFilter.isOpen = !state.hakemusFilter.isOpen
     return state
   }
 
-  onUpdateHakemusArvio(state, updatedHakemus) {
+  onUpdateHakemusArvio(state: State, updatedHakemus: Hakemus) {
     state.saveStatus.saveInProgress = true
     updatedHakemus.arvio.hasChanges = true
     if (_.isUndefined(updatedHakemus.arvio.scoring)) {
@@ -323,7 +386,7 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onSaveHakemusArvio(state, updatedHakemus) {
+  onSaveHakemusArvio(state: State, updatedHakemus: Hakemus) {
     const arvio = updatedHakemus ? updatedHakemus.arvio : undefined
     if(arvio && arvio.hasChanges) {
       const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + updatedHakemus.id + "/arvio"
@@ -335,7 +398,7 @@ export default class HakemustenArviointiController {
                 relevantHakemus.arvio.hasChanges = false
                 relevantHakemus.arvio["budget-granted"] = response["budget-granted"]
               }
-              dispatcher.push(events.saveCompleted)
+              dispatcher.push(events.saveCompleted, "")
             }
             else {
               dispatcher.push(events.saveCompleted, "unexpected-save-error")
@@ -349,7 +412,7 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onUpdateHakemusStatus(state, statusChange) {
+  onUpdateHakemusStatus(state: State, statusChange: {hakemusId: number; status: HakemusStatus; comment: string}) {
     const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + statusChange.hakemusId + "/status"
     state.saveStatus.saveInProgress = true
     const request = {"status": statusChange.status, "comment": statusChange.comment}
@@ -357,7 +420,7 @@ export default class HakemustenArviointiController {
     HttpUtil.post(updateUrl, request)
         .then(function(response) {
           if(response instanceof Object) {
-            dispatcher.push(events.saveCompleted)
+            dispatcher.push(events.saveCompleted, "")
             self.loadChangeRequests(state, statusChange.hakemusId)
           }
           else {
@@ -372,7 +435,7 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onSaveCompleted(state, error) {
+  onSaveCompleted(state: State, error: string) {
     state.saveStatus.saveInProgress = false
     if(error) {
       state.saveStatus.serverError = error
@@ -384,7 +447,7 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onLoadComments(state) {
+  onLoadComments(state: State) {
     if (state.selectedHakemus) {
       HttpUtil.get(HakemustenArviointiController.commentsUrl(state)).then(comments => {
         dispatcher.push(events.commentsLoaded, comments)
@@ -393,7 +456,7 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onCommentsLoaded(state, comments) {
+  onCommentsLoaded(state: State, comments: Comment[]) {
     if (state.selectedHakemus) {
       state.selectedHakemus.comments = comments
     }
@@ -401,10 +464,10 @@ export default class HakemustenArviointiController {
   }
 
   loadSelvitys(){
-    dispatcher.push(events.loadSelvitys)
+    dispatcher.push(events.loadSelvitys, {})
   }
 
-  onLoadSelvitys(state) {
+  onLoadSelvitys(state: State) {
     if (!state.loadingSelvitys && state.selectedHakemus) {
       state.loadingSelvitys = true
       HttpUtil.get(HakemustenArviointiController.selvitysUrl(state)).then(selvitys => {
@@ -414,24 +477,24 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onSelvitysLoaded(state, selvitys) {
+  onSelvitysLoaded(state: State, selvitys: Hakemus['selvitys']) {
     if (state.selectedHakemus) {
       state.selectedHakemus.selvitys = selvitys
-      state.selectedHakemus.selvitys.loppuselvitysForm = Immutable(state.selectedHakemus.selvitys.loppuselvitysForm)
-      state.selectedHakemus.selvitys.valiselvitysForm = Immutable(state.selectedHakemus.selvitys.valiselvitysForm)
+      state.selectedHakemus.selvitys!.loppuselvitysForm = Immutable(state.selectedHakemus.selvitys!.loppuselvitysForm)
+      state.selectedHakemus.selvitys!.valiselvitysForm = Immutable(state.selectedHakemus.selvitys!.valiselvitysForm)
     }
     state.loadingSelvitys = false
     return state
   }
 
-  onAddComment(state, newComment) {
+  onAddComment(state: State, newComment: string) {
     state.saveStatus.saveInProgress = true
     const url = HakemustenArviointiController.commentsUrl(state)
     HttpUtil.post(url, { comment: newComment })
       .then(comments => {
         if(comments instanceof Object) {
           dispatcher.push(events.commentsLoaded, comments)
-          dispatcher.push(events.saveCompleted)
+          dispatcher.push(events.saveCompleted, "")
         }
         else {
           dispatcher.push(events.saveCompleted, "unexpected-save-error")
@@ -448,24 +511,24 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.saveCompleted, "unexpected-save-error")
   }
 
-  onSetFilter(state, newFilter) {
+  onSetFilter(state: State, newFilter: any) {
     state.hakemusFilter[newFilter.filterId] = newFilter.filter
     if (newFilter.filterId === "evaluator") {
       const avustushakuId = state.hakuData.avustushaku.id
       const evaluatorId = newFilter.filter
       const avustushakuUrl =  `/avustushaku/${avustushakuId}/`
       const url = evaluatorId ? `${avustushakuUrl}?arvioija=${evaluatorId}` : avustushakuUrl
-      history.pushState({}, window.title, url)
+      history.pushState({}, window.document.title, url)
     }
     return state
   }
 
-  onSorterSet(state, newSorter) {
+  onSorterSet(state: State, newSorter: HakemusSorter[]) {
     state.hakemusSorter = newSorter
     return state
   }
 
-  onGotoSavedSearch(state, hakemusList) {
+  onGotoSavedSearch(state: State, hakemusList: Hakemus[]) {
     const idsToList = _.map(hakemusList, h => { return h.id })
     const url = HakemustenArviointiController.savedSearchUrl(state)
     HttpUtil.put(url, { "hakemus-ids": idsToList })
@@ -484,7 +547,7 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  loadScores(state, hakemusId) {
+  loadScores(state: State, hakemusId: number) {
     HttpUtil.get(HakemustenArviointiController.scoresUrl(state, hakemusId)).then(response => {
       dispatcher.push(events.scoresLoaded, {hakemusId: hakemusId,
                                             scoring: response.scoring,
@@ -493,16 +556,16 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  loadPayments(state, applicationId) {
+  loadPayments(state: State, applicationId: number) {
     HttpUtil.get(HakemustenArviointiController.paymentsUrl(
-      state, applicationId)).then(response => {
+      state)).then(response => {
         dispatcher.push(events.paymentsLoaded,
                         {applicationId: applicationId, payments: response})
     })
     return state
   }
 
-  loadChangeRequests(state, hakemusId) {
+  loadChangeRequests(state: State, hakemusId: number) {
     HttpUtil.get(HakemustenArviointiController.changeRequestsUrl(state, hakemusId)).then(response => {
       dispatcher.push(events.changeRequestsLoaded, {hakemusId: hakemusId,
                                                     changeRequests: response})
@@ -510,18 +573,18 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  loadAttachmentVersions(state, hakemusId) {
+  loadAttachmentVersions(state: State, hakemusId: number) {
     HttpUtil.get(HakemustenArviointiController.attachmentVersionsUrl(state, hakemusId)).then(response => {
       dispatcher.push(events.attachmentVersionsLoaded, { hakemusId: hakemusId, attachmentVersions: response})
     })
     return state
   }
 
-  static findHakemus(state, hakemusId) {
+  static findHakemus(state: State, hakemusId: number) {
     return _.find(state.hakuData.hakemukset, h => h.id === hakemusId)
   }
 
-  onScoresLoaded(state, hakemusIdWithScoring) {
+  onScoresLoaded(state: State, hakemusIdWithScoring: {hakemusId: number; scores: Score[]; scoring: Scoring}) {
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdWithScoring.hakemusId)
     if (relevantHakemus) {
       relevantHakemus.scores = hakemusIdWithScoring.scores
@@ -530,7 +593,7 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  static doOnAnswerValue(state,value,field){
+  static doOnAnswerValue(state: State, value, field: string){
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, value.hakemusId)
     if (relevantHakemus) {
       InputValueStorage.writeValue([value.field], relevantHakemus.arvio[field], FieldUpdateHandler.createFieldUpdate(value.field, value.newValue, VaSyntaxValidator))
@@ -539,15 +602,15 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onSetOverriddenAnswerValue(state, value) {
+  onSetOverriddenAnswerValue(state: State, value: any) {
     return HakemustenArviointiController.doOnAnswerValue(state, value, "overridden-answers" )
   }
 
-  onSetSeurantaAnswerValue(state, value) {
+  onSetSeurantaAnswerValue(state: State, value: any) {
     return HakemustenArviointiController.doOnAnswerValue(state, value, "seuranta-answers" )
   }
 
-  onChangeRequestsLoaded(state, hakemusIdWithChangeRequests) {
+  onChangeRequestsLoaded(state: State, hakemusIdWithChangeRequests: { hakemusId: number; changeRequests: unknown[] }) {
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdWithChangeRequests.hakemusId)
     if (relevantHakemus) {
       relevantHakemus.changeRequests = hakemusIdWithChangeRequests.changeRequests
@@ -555,7 +618,7 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onAttachmentVersionsLoaded(state, hakemusIdWithAttachmentVersions) {
+  onAttachmentVersionsLoaded(state: State, hakemusIdWithAttachmentVersions: { hakemusId: number, attachmentVersions: unknown[]}) {
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdWithAttachmentVersions.hakemusId)
     if (relevantHakemus) {
       relevantHakemus.attachmentVersions = hakemusIdWithAttachmentVersions.attachmentVersions
@@ -563,7 +626,7 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onPaymentsLoaded(state, data) {
+  onPaymentsLoaded(state: State, data: { applicationId: number; payments: Payment[] }) {
     const application = HakemustenArviointiController.findHakemus(
       state, data.applicationId)
     if (application) {
@@ -572,14 +635,14 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onRemoveScore(state, index) {
+  onRemoveScore(state: State, index: number) {
     const hakemus = state.selectedHakemus
     const removeUrl = HakemustenArviointiController.removeScoreUrl(
-      state, hakemus.arvio.id, index)
+      state, hakemus!.arvio.id, index)
     state.saveStatus.saveInProgress = true
     HttpUtil.delete(removeUrl)
       .then(function() {
-        dispatcher.push(events.loadScores, hakemus.id)
+        dispatcher.push(events.loadScores, hakemus!.id)
         return null
       })
       .catch(function(error) {
@@ -590,13 +653,13 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onSetPaatos(state, paatos) {
+  onSetPaatos(state: State, paatos: MuutoshakemusPaatos) {
     if (!state.selectedHakemus) {
       return state
     }
 
     const { muutoshakemusId, status } = paatos
-    const muutoshakemus = state.selectedHakemus.muutoshakemukset.find(m => m.id === muutoshakemusId)
+    const muutoshakemus = state.selectedHakemus.muutoshakemukset?.find(m => m.id === muutoshakemusId)
     if (muutoshakemus) {
       muutoshakemus['paatos-created-at'] = paatos['created-at']
       muutoshakemus['paatos-user-key'] = paatos['user-key']
@@ -608,18 +671,18 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onSetScore(state, indexAndScore) {
+  onSetScore(state: State, indexAndScore: {selectionCriteriaIndex: number, newScore: number}) {
     const { selectionCriteriaIndex, newScore } = indexAndScore
     const hakemus = state.selectedHakemus
-    const updateUrl = HakemustenArviointiController.scoresUrl(state, hakemus.id)
+    const updateUrl = HakemustenArviointiController.scoresUrl(state, hakemus!.id)
     state.saveStatus.saveInProgress = true
     HttpUtil.post(updateUrl, { "selection-criteria-index": selectionCriteriaIndex, "score": newScore })
       .then(function(response) {
         if(response instanceof Object) {
-          dispatcher.push(events.scoresLoaded, {hakemusId: hakemus.id,
+          dispatcher.push(events.scoresLoaded, {hakemusId: hakemus!.id,
                                                 scoring: response.scoring,
                                                 scores: response.scores})
-          dispatcher.push(events.saveCompleted)
+          dispatcher.push(events.saveCompleted, "")
         }
         else {
           dispatcher.push(events.saveCompleted, "unexpected-save-error")
@@ -632,30 +695,30 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onToggleOthersScoresDisplay(state) {
+  onToggleOthersScoresDisplay(state: State) {
     state.showOthersScores = !state.showOthersScores
     return state
   }
 
-  onTogglePersonSelect(state,hakemusId) {
+  onTogglePersonSelect(state: State, hakemusId: number) {
     state.personSelectHakemusId = hakemusId
     return state
   }
 
-  onClearFilters(state){
+  onClearFilters(state: State) {
     state.hakemusFilter.answers = []
     state.hakemusFilter.evaluator = undefined
     state.hakemusFilter.presenter = undefined
     return state
   }
 
-  onAddPayment(state, {paymentSum, index}) {
+  onAddPayment(state: State, {paymentSum, index}: {paymentSum: number, index: number}) {
     const hakemus = state.selectedHakemus
     const url = "/api/v2/payments/"
     state.saveStatus.saveInProgress = true
     HttpUtil.post(url,
-                  { "application-id": hakemus.id,
-                    "application-version": hakemus.version,
+                  { "application-id": hakemus!.id,
+                    "application-version": hakemus!.version,
                     "state": 1,
                     "batch-id": null,
                     "payment-sum": paymentSum,
@@ -663,7 +726,7 @@ export default class HakemustenArviointiController {
       .then(function(response) {
         if(response instanceof Object) {
           dispatcher.push(events.appendPayment, response)
-          dispatcher.push(events.saveCompleted)
+          dispatcher.push(events.saveCompleted, "")
         }
         else {
           dispatcher.push(events.saveCompleted, "unexpected-save-error")
@@ -676,13 +739,13 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onRemovePayment(state, id) {
+  onRemovePayment(state: State, id: number) {
     const url = `/api/v2/payments/${id}/`
     state.saveStatus.saveInProgress = true
     HttpUtil.delete(url)
       .then(function() {
         dispatcher.push(events.paymentRemoved, id)
-        dispatcher.push(events.saveCompleted)
+        dispatcher.push(events.saveCompleted, "")
       })
       .catch(function(error) {
         console.error(`Error removing payment, DELETE ${url}`, error)
@@ -691,33 +754,33 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onPaymentRemoved(state, id) {
-    _.remove(state.selectedHakemus.payments, p => p.id === id)
+  onPaymentRemoved(state: State, id: number) {
+    _.remove(state.selectedHakemus!.payments, p => p.id === id)
     return state
   }
 
-  onAppendPayment(state, payment) {
-    state.selectedHakemus.payments.push(payment)
+  onAppendPayment(state: State, payment: Payment) {
+    state.selectedHakemus!.payments.push(payment)
     return state
   }
 
-  setDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(state) {
+  setDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(state: State) {
     if (!state.selectedHakemusAccessControl.allowHakemusStateChanges) {
       return
     }
 
-    const budgetElement = FormUtil.findFieldByFieldType(state.hakuData.form.content, "vaBudget")
+    const budgetElement: any = FormUtil.findFieldByFieldType(state.hakuData.form.content, "vaBudget")
 
     if (!budgetElement) {
       return
     }
 
     const selectedHakemus = state.selectedHakemus
-    const hakemusAnswers = selectedHakemus.answers
-    const overriddenAnswers = selectedHakemus.arvio["overridden-answers"]
+    const hakemusAnswers = selectedHakemus!.answers
+    const overriddenAnswers = selectedHakemus!.arvio["overridden-answers"]
 
     const findSelfFinancingSpecField = () => {
-      const budgetSummaryElement = _.find(budgetElement.children, n => n.fieldType === "vaBudgetSummaryElement")
+      const budgetSummaryElement = budgetElement?.children.find( n => n.fieldType === "vaBudgetSummaryElement")
       return budgetSummaryElement
         ? FormUtil.findFieldByFieldType(budgetSummaryElement, "vaSelfFinancingField")
         : null
@@ -756,7 +819,7 @@ export default class HakemustenArviointiController {
         acc.answerCostFieldsToCopy.push(valueField)
       }
       return acc
-    }, {emptyDescriptions: {}, answerCostFieldsToCopy: []})
+    }, {emptyDescriptions: {}, answerCostFieldsToCopy: ([] as unknown[])})
 
     FormStateLoop.initDefaultValues(
       overriddenAnswers,
@@ -776,7 +839,7 @@ export default class HakemustenArviointiController {
     }
   }
 
-  setDefaultBudgetValuesForSelectedHakemusSeurantaAnswers(state) {
+  setDefaultBudgetValuesForSelectedHakemusSeurantaAnswers(state: State) {
     const budgetElement = FormUtil.findFieldByFieldType(state.hakuData.form.content, "vaBudget")
 
     if (!budgetElement) {
@@ -784,7 +847,7 @@ export default class HakemustenArviointiController {
     }
 
     const selectedHakemus = state.selectedHakemus
-    const hakemusAnswers = selectedHakemus.answers
+    const hakemusAnswers = selectedHakemus!.answers
     const defaultValues = _.reduce(FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement"), (acc, budgetItem) => {
       const descriptionField = budgetItem.children[0]
       acc[descriptionField.id] = ''
@@ -796,23 +859,23 @@ export default class HakemustenArviointiController {
     }, {})
 
     FormStateLoop.initDefaultValues(
-      selectedHakemus.arvio["seuranta-answers"],
+      selectedHakemus!.arvio["seuranta-answers"],
       defaultValues,
       budgetElement,
       null
     )
   }
 
-  setDefaultTraineeDayValuesForSelectedHakemusOverriddenAnswers(state) {
+  setDefaultTraineeDayValuesForSelectedHakemusOverriddenAnswers(state: State) {
     if (!state.selectedHakemusAccessControl.allowHakemusStateChanges) {
       return
     }
 
     const selectedHakemus = state.selectedHakemus
-    const hakemusAnswers = selectedHakemus.answers
-    const overriddenAnswers = selectedHakemus.arvio["overridden-answers"]
+    const hakemusAnswers = selectedHakemus!.answers
+    const overriddenAnswers = selectedHakemus!.arvio["overridden-answers"]
 
-    const defaultFields = _.reduce(
+    const defaultFields: any = _.reduce(
       VaTraineeDayUtil.collectCalculatorSpecifications(state.hakuData.form.content, hakemusAnswers),
       (acc, field) => {
         acc[field.id] = _.assign(
@@ -873,7 +936,7 @@ export default class HakemustenArviointiController {
     }
 
     const deleteStaleOverriddenAnswers = () => {
-      const overriddenAnswerIds = _.chain(overriddenAnswers.value)
+      const overriddenAnswerIds = _.chain((overriddenAnswers?.value || []))
         .filter(ans => ans.fieldType === "vaTraineeDayCalculator")
         .map('key')
         .value()
@@ -886,7 +949,7 @@ export default class HakemustenArviointiController {
         return false
       }
 
-      overriddenAnswers.value = _.filter(overriddenAnswers.value, ans => !_.includes(overriddenAnswerIdsToDelete, ans.key))
+      overriddenAnswers!.value = _.filter(overriddenAnswers!.value, ans => !_.includes(overriddenAnswerIdsToDelete, ans.key))
 
       return true
     }
@@ -944,12 +1007,12 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.closeHakemus, {})
   }
 
-  setFilter(filterId, newFilter) {
+  setFilter(filterId: any, newFilter: any) {
     dispatcher.push(events.setFilter, {filterId: filterId,
                                        filter: newFilter})
   }
 
-  setSorter(newSorter) {
+  setSorter(newSorter: HakemusSorter[]) {
     dispatcher.push(events.setSorter, newSorter)
   }
 
@@ -1007,47 +1070,47 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
 
 
 
-  setChangeRequestText(hakemus, text) {
+  setChangeRequestText(hakemus: Hakemus, text: string) {
     return function() {
       hakemus.changeRequest = text
-      dispatcher.push(events.reRender)
+      dispatcher.push(events.reRender, {})
     }
   }
 
-  refreshAttachments(avustushakuId){
+  refreshAttachments(avustushakuId: number){
     const s = Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId))
     s.onValue((hakuData)=>
       dispatcher.push(events.refreshAttachments,hakuData)
     )
   }
 
-  refreshHakemukset(avustushakuId){
+  refreshHakemukset(avustushakuId: number){
     const s = Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId))
     s.onValue((hakuData)=>
       dispatcher.push(events.refreshHakemukset,hakuData)
     )
   }
 
-  onRefreshAttachments(state,hakuData){
+  onRefreshAttachments(state: State, hakuData: HakuData){
     state.hakuData.attachments = hakuData.attachments
     return state
   }
 
-  onNormalizedData(state, normalizedData) {
+  onNormalizedData(state: State, normalizedData: NormalizedHakemusData) {
     if (state.selectedHakemus) {
       state.selectedHakemus.normalizedData = normalizedData
     }
     return state
   }
 
-  onMuutoshakemukset(state, muutoshakemukset) {
+  onMuutoshakemukset(state: State, muutoshakemukset: MuutoshakemusType[]) {
     if (state.selectedHakemus) {
       state.selectedHakemus.muutoshakemukset = muutoshakemukset
     }
     return state
   }
 
-  onRefreshHakemukset(state,hakuData){
+  onRefreshHakemukset(state: State, hakuData: HakuData){
     state.hakuData.hakemukset = HakemustenArviointiController.filterHakemukset(hakuData.hakemukset)
     if(state.selectedHakemus){
       this.onHakemusSelection(state,state.selectedHakemus.id)
@@ -1056,7 +1119,7 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
 
   }
 
-  setHakemusStatus(hakemus, newStatus, commentGetter) {
+  setHakemusStatus(hakemus: Hakemus, newStatus: HakemusStatus, commentGetter: () => string) {
     return function() {
       hakemus.status = newStatus
       const statusChange = {
@@ -1074,7 +1137,7 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  setOppilaitos(hakemus, index, oppilaitos) {
+  setOppilaitos(hakemus: Hakemus, index: number, oppilaitos: string) {
     if(!hakemus.arvio["oppilaitokset"]) {
       hakemus.arvio["oppilaitokset"] = {names: []}
     }
@@ -1086,81 +1149,81 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  removeOppilaitos(hakemus, index) {
+  removeOppilaitos(hakemus: Hakemus, index: number) {
     if(hakemus.arvio["oppilaitokset"] && index >= 0 && index < hakemus.arvio["oppilaitokset"].names.length) {
       hakemus.arvio["oppilaitokset"].names.splice(index, 1)
       dispatcher.push(events.updateHakemusArvio, hakemus)
     }
   }
 
-  setHakemusAcademysize(hakemus, size) {
+  setHakemusAcademysize(hakemus: Hakemus, size: number) {
     hakemus.arvio.academysize = size
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  setTags(hakemus, tags) {
+  setTags(hakemus: Hakemus, tags: string[]) {
     hakemus.arvio.tags = {value:tags}
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  setHakemusArvioBudgetGranted(hakemus, newBudgetGranted) {
+  setHakemusArvioBudgetGranted(hakemus: Hakemus, newBudgetGranted: number) {
     hakemus.arvio["budget-granted"] = newBudgetGranted
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  setHakemusSummaryComment(hakemus, newSummaryComment) {
+  setHakemusSummaryComment(hakemus: Hakemus, newSummaryComment: string) {
     hakemus.arvio["summary-comment"] = newSummaryComment
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  setArvioPerustelut(hakemus, perustelut) {
+  setArvioPerustelut(hakemus: Hakemus, perustelut: string) {
     hakemus.arvio.perustelut = perustelut
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  setPresenterComment(hakemus, value) {
+  setPresenterComment(hakemus: Hakemus, value: string) {
     hakemus.arvio.presentercomment = value
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
   loadComments() {
-    dispatcher.push(events.loadComments)
+    dispatcher.push(events.loadComments, {})
   }
 
-  addComment(newComment) {
+  addComment(newComment: string) {
     dispatcher.push(events.addComment, newComment)
   }
 
-  removeScore(index) {
+  removeScore(index: number) {
     dispatcher.push(events.removeScore, index)
   }
 
-  setPaatos(paatos) {
+  setPaatos(paatos: MuutoshakemusPaatos) {
     dispatcher.push(events.setPaatos, paatos)
   }
 
-  setModal(modal) {
+  setModal(modal: JSX.Element | undefined) {
     dispatcher.push(events.setModal, modal)
   }
 
-  setScore(selectionCriteriaIndex, newScore) {
+  setScore(selectionCriteriaIndex: number, newScore: number) {
     dispatcher.push(events.setScore, { selectionCriteriaIndex: selectionCriteriaIndex, newScore: newScore })
   }
 
   toggleOthersScoresDisplay() {
-    dispatcher.push(events.toggleOthersScoresDisplay)
+    dispatcher.push(events.toggleOthersScoresDisplay, {})
   }
 
-  gotoSavedSearch(hakemusList) {
+  gotoSavedSearch(hakemusList: Hakemus[]) {
     dispatcher.push(events.gotoSavedSearch, hakemusList)
   }
 
   toggleHakemusFilter() {
-    dispatcher.push(events.toggleHakemusFilter)
+    dispatcher.push(events.toggleHakemusFilter, {})
   }
 
-  togglePersonSelect(hakemusId) {
-    dispatcher.push(events.togglePersonSelect,hakemusId)
+  togglePersonSelect(hakemusId: number) {
+    dispatcher.push(events.togglePersonSelect, hakemusId)
   }
 
   toggleHakemusRole(roleId,hakemus,roleField) {
@@ -1174,24 +1237,24 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
   }
 
   clearFilters() {
-    dispatcher.push(events.clearFilters)
+    dispatcher.push(events.clearFilters, {})
   }
 
-  addPayment(paymentSum, index) {
+  addPayment(paymentSum: number, index: number) {
     dispatcher.push(events.addPayment, {paymentSum, index})
   }
 
-  removePayment(id) {
+  removePayment(id: number) {
     dispatcher.push(events.removePayment, id)
   }
 
-  onSelectEditorSubTab(state, subTabToSelect) {
+  onSelectEditorSubTab(state: State, subTabToSelect: string) {
     state.subTab = subTabToSelect
     if (!_.isUndefined(history.pushState)) {
       const haku = state.hakuData.avustushaku.id
-      const hakemusId = state.selectedHakemus.id
+      const hakemusId = state.selectedHakemus?.id
       const newUrl = `/avustushaku/${haku}/hakemus/${hakemusId}/${subTabToSelect}/${location.search}`
-      history.pushState({}, window.title, newUrl)
+      history.pushState({}, window.document.title, newUrl)
     }
     return state
   }

@@ -26,12 +26,54 @@ export type Answer = {
   attachmentVersion?: any
 }
 
+interface PersonScoreAverage {
+  'person-oid': string
+  'first-name': string
+  'last-name': string
+  'email'?: string
+  'score-average': number
+}
+
+export interface Scoring {
+  'arvio-id': number
+  'score-total-average': number
+  'score-averages-by-user': PersonScoreAverage[]
+}
+
+export interface Score {
+  'arvio-id': number
+  'person-oid': string
+  'first-name': string
+  'last-name': string
+  'email'?: string
+  'selection-criteria-index': number
+  'score': number
+  'created-at': string
+  'modified-at': string
+}
+
+interface Tag {
+  value: string[]
+}
+
+interface Oppilaitokset {
+  names: string[]
+}
+
 type Arvio = {
+  id: number
   "budget-granted"?: number
   costsGranted?: number
   "overridden-answers"?: {
     value: Answer[]
   }
+  hasChanges?: boolean
+  scoring?: Scoring
+  'presentercomment'?: string
+  academysize?: number
+  tags?: Tag
+  perustelut?: string
+  oppilaitokset?: Oppilaitokset
 }
 
 export interface NormalizedHakemusData {
@@ -50,7 +92,36 @@ export interface NormalizedHakemusData {
 
 export type HakemusStatus = 'new' | 'draft' | 'submitted' | 'pending_change_request' | 'officer_edit' | 'cancelled' | 'refused' | 'applicant_edit'
 
-export type Hakemus = {
+type PaymentStatus = 'created' | 'waiting' | 'sent' | 'paid'
+
+export interface Payment {
+  id?: number
+  version?: number
+  'version-closed'?: string
+  'created-at': string
+  'application-id': number
+  'application-version?': number
+  'paymentstatus-id': PaymentStatus
+  'file-name'?: string
+  'pitkaviite': string
+  'user-name'?: string
+  'batch-id'?: number
+  'phase'?: number
+  'payment-sum': number
+}
+
+export interface Comment {
+  id: number
+  'arvio_id': number
+  'created_at': string
+  'first_name': string
+  'last_name': string
+  email?: string
+  comment: string
+  'person-oid'?: string
+}
+
+export interface Hakemus {
   id: number
   answers: Answer[]
   arvio: Arvio
@@ -63,7 +134,7 @@ export type Hakemus = {
   'budget-total': number
   attachmentVersions: unknown[]
   changeRequests: unknown[]
-  comments: unknown[]
+  comments?: Comment[]
   language: Language
   muutoshakemukset?: Muutoshakemus[]
   normalizedData?: NormalizedHakemusData
@@ -91,9 +162,10 @@ export type Hakemus = {
   refused?: unknown
   'refused-at'?: unknown
   'refused-comment'?: unknown
-  payments: unknown[]
+  payments: Payment[]
   scores: unknown[]
   'selvitys-email'?: unknown
+  changeRequest?: string
 }
 
 export type AvustushakuStatus = 'new' | 'draft' | 'published' | 'resolved' | 'deleted'
