@@ -177,7 +177,7 @@ function check_env {
   fi
 }
 
-if [ "${JENKINS_HOME:-}" != "" ]; then
+if running_on_jenkins; then
   docker image prune --force
   remove_all_files_ignored_by_git
 fi

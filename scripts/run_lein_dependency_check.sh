@@ -12,11 +12,9 @@ function lein_dep_check_for_project () {
 }
 
 function download_temp_db_to_workspace_in_jenkins() {
-  set +u
-  if [[ ! -z ${WORKSPACE} ]]; then
+  if running_on_jenkins; then
     export JAVA_TOOL_OPTIONS=-Djava.io.tmpdir=${WORKSPACE}
   fi
-  set -u
 }
 
 function main {

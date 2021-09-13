@@ -12,6 +12,10 @@ function parse_env_from_script_name {
   fi
 }
 
+function running_on_jenkins {
+  [ "${JENKINS_HOME:-}" != "" ]
+}
+
 function init_nodejs {
   export NVM_DIR="${NVM_DIR:-$HOME/.cache/nvm}"
   source "$repo/nvm.sh"
@@ -49,6 +53,7 @@ function wait_until_port_is_listening {
     sleep 1
   done
 }
+
 function wait_for_container_to_be_healthy {
   require_command docker
   local -r container_name="$1"
