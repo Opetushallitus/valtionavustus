@@ -82,7 +82,7 @@ const virkailijaConfig = Object.assign(
   makeConfig(path.resolve(__dirname, "va-virkailija")),
   {
     entry: {
-      app: path.resolve(__dirname, "va-virkailija/web/va/HakemustenArviointiApp.jsx"),
+      app: path.resolve(__dirname, "va-virkailija/web/va/HakemustenArviointiApp.tsx"),
       adminApp: path.resolve(__dirname, "va-virkailija/web/va/HakujenHallintaApp.jsx"),
       summaryApp: path.resolve(__dirname, "va-virkailija/web/va/YhteenvetoApp.jsx"),
       login: path.resolve(__dirname, "va-virkailija/web/va/Login.jsx"),

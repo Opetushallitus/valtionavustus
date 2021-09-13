@@ -21,15 +21,15 @@ import HakemusArviointiStatuses
 import RahoitusalueSelections from './hakemus-details/RahoitusalueSelections'
 import {
   Avustushaku,
+  Comment,
   Hakemus,
   HakemusStatus,
   NormalizedHakemusData,
   Payment,
   Score,
-  Scoring,
-  Comment
+  Scoring
 } from "../../../va-common/web/va/types";
-import {HakuData, User} from "./types";
+import {HakemusSorter, HakuData, State, UserInfo} from "./types";
 import {MuutoshakemusPaatos} from "./hakemus-details/hakemusTypes";
 import {Muutoshakemus as MuutoshakemusType} from "../../../va-common/web/va/types/muutoshakemus";
 
@@ -79,54 +79,6 @@ const events = {
   appendPayment: 'appendPayment'
 } as const
 
-interface HakemusFilter {
-  answers: any[]
-  isOpen: boolean
-  name: string
-  openQuestions: any[]
-  status: string[]
-  status_valiselvitys: typeof HakemusSelvitys.statuses
-  status_loppuselvitys: typeof HakemusSelvitys.statuses
-  status_muutoshakemus: typeof HakemusSelvitys.statuses
-  organization: string
-  roleIsOpen: boolean
-  evaluator: number | undefined
-  presenter?: any
-}
-
-interface HakemusSorter {
-  field: string
-  order: string
-}
-
-interface State {
-  avustushakuList: Avustushaku[]
-  hakuData: HakuData
-  hakemusFilter: HakemusFilter
-  helpTexts: any
-  hakemusSorter: HakemusSorter[]
-  modal: JSX.Element | undefined
-  personSelectHakemusId: number | undefined
-  selectedHakemus: Hakemus | undefined
-  selectedHakemusAccessControl: Partial<{
-    allowHakemusCommenting: boolean
-    allowHakemusStateChanges: boolean
-    allowHakemusScoring: boolean
-    allowHakemusOfficerEditing: boolean
-    allowHakemusCancellation: boolean
-  }>
-  showOthersScores: boolean
-  saveStatus: {
-    saveInProgress: boolean
-    saveTime: Date | null
-    serverError: string
-  }
-  translations: any
-  userInfo: User
-  subTab: string
-  loadingSelvitys?: boolean
-}
-
 export default class HakemustenArviointiController {
 
   initializeState(avustushakuId: number, evaluator: number | undefined) {
@@ -170,7 +122,7 @@ export default class HakemustenArviointiController {
         serverError: ""
       },
       translations: Bacon.fromPromise<any>(HttpUtil.get("/translations.json")).map(Immutable),
-      userInfo: Bacon.fromPromise<User>(HttpUtil.get("/api/userinfo")),
+      userInfo: Bacon.fromPromise<UserInfo>(HttpUtil.get("/api/userinfo")),
       subTab: 'arviointi'
     }
 

@@ -33,7 +33,7 @@ import {
   closePaatosPreview,
   openPaatosPreview
 } from '../../hakemuksen-arviointi/hakemuksen-arviointi-util'
-import {User} from "../../../va-virkailija/web/va/types";
+import {UserInfo} from "../../../va-virkailija/web/va/types";
 
 jest.setTimeout(400_000)
 
@@ -44,7 +44,7 @@ export const answers = {
   projectName: "Rahassa kylpijät Ky Ay Oy",
 }
 
-async function populateUserCache(users: User[]) {
+async function populateUserCache(users: UserInfo[]) {
   await axios.post(`${VIRKAILIJA_URL}/api/test/user-cache`, users)
 }
 

@@ -1,49 +1,34 @@
 import "soresu-form/web/polyfills"
 
-import React, { Component } from 'react'
+import React, {useEffect} from 'react'
 import ReactDOM from 'react-dom'
 import _ from 'lodash'
 import RouteParser from 'route-parser'
 import queryString from 'query-string'
 
-import TopBar from './TopBar.tsx'
+import TopBar from './TopBar'
 import HakemustenArviointiController from './HakemustenArviointiController'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusDetails from './hakemus-details/HakemusDetails'
-import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink.jsx'
-import HakemusDecisionLink from './hakemus-details/HakemusDecisionLink.jsx'
-import AvustushakuDropdown from './avustushaku/AvustushakuDropdown.jsx'
-import ExcelExportLink from './avustushaku/ExcelExportLink.jsx'
-import HakemusFilter from './hakemus-filter/HakemusFilter.jsx'
+import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink'
+import HakemusDecisionLink from './hakemus-details/HakemusDecisionLink'
+import AvustushakuDropdown from './avustushaku/AvustushakuDropdown'
+import ExcelExportLink from './avustushaku/ExcelExportLink'
+import HakemusFilter from './hakemus-filter/HakemusFilter'
 import LocalStorage from './LocalStorage'
 
 import './style/topbar.less'
 import './style/main.less'
 
 import './hakemusten-arviointi.less'
+import {State} from "./types";
 
-export default class App extends Component {
-  constructor(props) {
-    super(props)
-    this.escFunction = this.escFunction.bind(this)
-  }
+interface Props {
+  state: State
+  controller: HakemustenArviointiController
+}
 
-  escFunction(event) {
-    if(event.keyCode === 27) {
-      controller.setModal(undefined)
-    }
-  }
-
-  componentDidMount() {
-    document.addEventListener('keydown', this.escFunction, false)
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.escFunction, false)
-  }
-
-  render() {
-    const state = this.props.state
+const App = ({state, controller}: Props) => {
     const hakuData = state.hakuData
     const avustushaku = hakuData.avustushaku
     const hakemusList = hakuData.hakemukset
@@ -56,6 +41,18 @@ export default class App extends Component {
     const subTab = state.subTab
     const environment = hakuData.environment
     const helpTexts = state.helpTexts
+
+    useEffect(() => {
+      const escFunction = (event: KeyboardEvent) => {
+        if(event.keyCode === 27) {
+          controller.setModal(undefined)
+        }
+      }
+      document.addEventListener('keydown', escFunction, false)
+      return () => {
+        document.removeEventListener('keydown', escFunction, false)
+      }
+    }, [])
 
     return (
       <section>
@@ -104,7 +101,6 @@ export default class App extends Component {
         {state.modal}
       </section>
     )
-  }
 }
 
 const defaultHakuId = LocalStorage.avustushakuId() || 1

@@ -4,18 +4,12 @@ import ClassNames from 'classnames'
 import EnvironmentInfo from 'va-common/web/va/EnvironmentInfo.jsx'
 import NameFormatter from 'va-common/web/va/util/NameFormatter'
 import { EnvironmentApiResponse } from '../../../va-common/web/va/types/environment'
+import {State, UserInfo} from "./types";
 
 type TopBarProps = {
   environment: EnvironmentApiResponse
   activeTab?: string
-  state?: {
-    userInfo: UserInfo
-    saveStatus: {
-      saveInProgress: boolean
-      saveTime: Date | null
-      serverError: string
-    }
-  }
+  state?: State
 }
 
 export default class TopBar extends React.Component<TopBarProps, {}> {
@@ -42,17 +36,6 @@ type TopBarTabsProps = {
   activeTab?: string
   config: EnvironmentApiResponse
   userInfo?: UserInfo
-}
-
-
-type UserInfo = {
-  email: string
-  "first-name": string
-  lang: string
-  "person-oid": string
-  privileges: string[]
-  surname: string
-  username: string
 }
 
 class TopBarTabs extends React.Component<TopBarTabsProps, {}> {
