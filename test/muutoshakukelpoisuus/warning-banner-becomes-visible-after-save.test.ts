@@ -15,7 +15,7 @@ import {
 } from '../test-util'
 
 import {
-  createCodeValuesForTest,
+  createRandomCodeValues,
   createMuutoshakemusEnabledHaku
 } from '../muutoshakemus/muutospaatosprosessi-util'
 
@@ -44,7 +44,7 @@ describe("Muutoshakukelpoisuus", () => {
 
   beforeEach(async () => {
     const randomHakuValues = createRandomHakuValues("Muutoshakukelpoisuus")
-    const codes = await createCodeValuesForTest(page)
+    const codes = await createRandomCodeValues(page)
     const { avustushakuID } = await createMuutoshakemusEnabledHaku(page, randomHakuValues.registerNumber, randomHakuValues.avustushakuName, codes)
     avustushakuId = avustushakuID
   })

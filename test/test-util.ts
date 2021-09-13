@@ -273,10 +273,12 @@ type Rahoitusalue = {
   talousarviotili: string
 }
 
-const defaultRahoitusalueet: Rahoitusalue[] = [{
-  koulutusaste: "Ammatillinen koulutus",
-  talousarviotili: "29.10.30.20"
-}]
+const defaultRahoitusalueet: Rahoitusalue[] = [
+  {
+    koulutusaste: "Ammatillinen koulutus",
+    talousarviotili: "29.10.30.20"
+  }
+]
 
 export async function createHakuFromEsimerkkihaku(page: Page, props: HakuProps): Promise<number> {
   const { name, registerNumber, hakuaikaStart, hakuaikaEnd, hankkeenAlkamispaiva, hankkeenPaattymispaiva } = props
@@ -298,12 +300,13 @@ export async function createHakuFromEsimerkkihaku(page: Page, props: HakuProps):
     await selectCode(page, 'operation', props.vaCodes.operation)
   }
 
-  await selectTositelaji(page, 'XE')
+  await page.waitFor(2000)
 
   for (const rahoitusalue of defaultRahoitusalueet) {
     await inputTalousarviotili(page, rahoitusalue)
   }
 
+  await selectTositelaji(page, 'XE')
   await clearAndType(page, "#hakuaika-start", hakuaikaStart || "1.1.1970 0.00")
   const nextYear = (new Date()).getFullYear() + 1
   await clearAndType(page, "#hakuaika-end", hakuaikaEnd || `31.12.${nextYear} 23.59`)
@@ -967,14 +970,19 @@ export async function waitForClojureScriptLoadingDialogHidden(page: Page) {
 
 export async function createUniqueCode(page: Page, name: string = 'Test code'): Promise<string> {
   const uniqueCode = randomString().substring(0, 13)
+  return createCode(page, name, uniqueCode)
+}
+
+export async function createCode(page: Page, name: string = 'Test code', code: string): Promise<string> {
   await clearAndType(page, '[data-test-id=code-form__year]', '2020')
-  await clearAndType(page, '[data-test-id=code-form__code]', `${uniqueCode}`)
-  await clearAndType(page, '[data-test-id=code-form__name]', `${name} ${uniqueCode}`)
+  await clearAndType(page, '[data-test-id=code-form__code]', `${code}`)
+  await clearAndType(page, '[data-test-id=code-form__name]', `${name} ${code}`)
   await clickElementWithTestId(page, 'code-form__add-button')
 
-  await page.waitForSelector(`tr[data-test-id="${uniqueCode}"]`)
+  await page.waitForSelector(`tr[data-test-id="${code}"]`)
+  await waitForClojureScriptLoadingDialogVisible(page)
   await waitForClojureScriptLoadingDialogHidden(page)
-  return uniqueCode
+  return code
 }
 
 export async function expectingLoadingProgressBar<T>(page: Page, text: string, func: () => Promise<T>): Promise<T> {

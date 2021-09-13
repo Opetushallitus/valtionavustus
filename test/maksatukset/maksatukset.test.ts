@@ -26,11 +26,12 @@ jest.setTimeout(400_000)
 describe("Maksatukset", () => {
   let browser: Browser
   let page: Page
-  let hakemusID: number
-  let avustushakuID: number
-  let operationalUnit: string
-  let project: string
-  let operation: string
+  const answers = {
+    contactPersonEmail: "erkki.esimerkki@example.com",
+    contactPersonName: "Erkki Esimerkki",
+    contactPersonPhoneNumber: "666",
+    projectName: "Rahassa kylpijät Ky Ay Oy",
+  }
 
   beforeAll(async () => {
     browser = await mkBrowser()
@@ -45,23 +46,56 @@ describe("Maksatukset", () => {
 
   setupTestLoggingAndScreenshots(() => page)
 
-  beforeEach(async () => {
-    const x = await ratkaiseMuutoshakemusEnabledAvustushaku(page, createRandomHakuValues("Maksatukset"), {
-      contactPersonEmail: "erkki.esimerkki@example.com",
-      contactPersonName: "Erkki Esimerkki",
-      contactPersonPhoneNumber: "666",
-      projectName: "Rahassa kylpijät Ky Ay Oy",
-    })
-    hakemusID = x.hakemusID
-    avustushakuID = x.avustushakuID
-    operationalUnit = x.operationalUnit
-    project = x.project
-    operation = x.operation
+  it('uses correct OVT when the operational unit is Palvelukeskus (6600105300)', async () => {
+    const codeValues = { operationalUnit: '6600105300', operation: '3425324634', project: '523452346' }
+    const { hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, createRandomHakuValues("OVT"), answers, codeValues)
 
     await navigate(page, "/admin-ui/payments/")
+    await fillInMaksueranTiedot(page, "asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
+    const dueDate = await getElementAttribute(page, '[id="Eräpäivä"]', 'value')
+    if (!dueDate) throw new Error('Cannot find due date from form')
+
+    await expectingLoadingProgressBar(page, "Lähetetään maksatuksia", () =>
+      aria(page, "Lähetä maksatukset").then(e => e.click()))
+    await reloadPaymentPage(page)
+
+    await gotoLähetetytMaksatuksetTab(page)
+    const { "register-number": registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
+    const pitkaviite = `${registerNumber}_1 Erkki Esimerkki`
+
+    expect(await getBatchPitkäViite(page, 1)).toEqual(pitkaviite)
+    expect(await getBatchStatus(page, 1)).toEqual("Lähetetty")
+    expect(await getBatchToimittajanNimi(page, 1)).toEqual("Akaan kaupunki")
+    expect(await getBatchHanke(page, 1)).toEqual("Rahassa kylpijät Ky Ay Oy")
+    expect(await getBatchMaksuun(page, 1)).toEqual("99,999 €")
+    expect(await getBatchIBAN(page, 1)).toEqual("FI95 6682 9530 0087 65")
+    expect(await getBatchLKPTili(page, 1)).toEqual("82010000")
+    expect(await getBatchTaKpTili(page, 1)).toEqual("29103020")
+    expect(await getTiliönti(page, 1)).toEqual("99,999 €")
+
+
+    await putMaksupalauteToMaksatuspalveluAndProcessIt(`
+      <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+      <VA-invoice>
+        <Header>
+          <Pitkaviite>${pitkaviite}</Pitkaviite>
+          <Maksupvm>2018-06-08</Maksupvm>
+        </Header>
+      </VA-invoice>
+    `)
+
+    await reloadPaymentPage(page)
+    await gotoLähetetytMaksatuksetTab(page)
+    expect(await getBatchStatus(page, 1)).toEqual("Maksettu")
+
+    const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu()
+    expect(maksatukset).toContainEqual(getExpectedPaymentXML(codeValues.project, codeValues.operation, codeValues.operationalUnit, pitkaviite, `${registerNumber}_1`, dueDate, '00372769790122'))
   })
 
   it("work with pitkaviite without contact person name", async () => {
+    const { hakemusID, avustushakuID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, createRandomHakuValues("Maksatukset"), answers)
+    await navigate(page, "/admin-ui/payments/")
+
     await fillInMaksueranTiedot(page, "asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
 
     await expectingLoadingProgressBar(page, "Lähetetään maksatuksia", () =>
@@ -100,6 +134,9 @@ describe("Maksatukset", () => {
   })
 
   it("work with pitkaviite with contact person name", async () => {
+    const { hakemusID, operationalUnit, project, operation } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, createRandomHakuValues("Maksatukset"), answers)
+    await navigate(page, "/admin-ui/payments/")
+
     await fillInMaksueranTiedot(page, "asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
     const dueDate = await getElementAttribute(page, '[id="Eräpäivä"]', 'value')
     if (!dueDate) throw new Error('Cannot find due date from form')
@@ -233,7 +270,7 @@ function getSentPaymentBatchColumn(column: number) {
   }
 }
 
-function getExpectedPaymentXML(projekti: string, toiminto: string, toimintayksikko: string, pitkaviite: string, invoiceNumber: string, dueDate: string): string {
+function getExpectedPaymentXML(projekti: string, toiminto: string, toimintayksikko: string, pitkaviite: string, invoiceNumber: string, dueDate: string, ovt: string = '003727697901'): string {
   const today = moment(new Date()).format('YYYY-MM-DD')
-  return `<?xml version="1.0" encoding="UTF-8"?><objects><object><header><toEdiID>003727697901</toEdiID><invoiceType>INVOICE</invoiceType><vendorName>Akaan kaupunki</vendorName><addressFields><addressField1></addressField1><addressField2></addressField2><addressField5></addressField5></addressFields><vendorRegistrationId>2050864-5</vendorRegistrationId><bic>OKOYFIHH</bic><bankAccount>FI95 6682 9530 0087 65</bankAccount><invoiceNumber>${invoiceNumber}</invoiceNumber><longReference>${pitkaviite}</longReference><documentDate>${today}</documentDate><dueDate>${dueDate}</dueDate><paymentTerm>Z001</paymentTerm><currencyCode>EUR</currencyCode><grossAmount>99999</grossAmount><netamount>99999</netamount><vatamount>0</vatamount><voucherSeries>XE</voucherSeries><postingDate>${today}</postingDate><ownBankShortKeyCode></ownBankShortKeyCode><handler><verifierName>essi.esittelija@example.com</verifierName><verifierEmail>essi.esittelija@example.com</verifierEmail><approverName>hygge.hyvaksyja@example.com</approverName><approverEmail>hygge.hyvaksyja@example.com</approverEmail><verifyDate>${today}</verifyDate><approvedDate>${today}</approvedDate></handler><otsData><otsBankCountryKeyCode></otsBankCountryKeyCode></otsData><invoicesource>VA</invoicesource></header><postings><postingRows><postingRow><rowId>1</rowId><generalLedgerAccount>82010000</generalLedgerAccount><postingAmount>99999</postingAmount><accountingObject01>${toimintayksikko}</accountingObject01><accountingObject02>29103020</accountingObject02><accountingObject04>${projekti}</accountingObject04><accountingObject05>${toiminto}</accountingObject05><accountingObject08></accountingObject08></postingRow></postingRows></postings></object></objects>`
+  return `<?xml version="1.0" encoding="UTF-8"?><objects><object><header><toEdiID>${ovt}</toEdiID><invoiceType>INVOICE</invoiceType><vendorName>Akaan kaupunki</vendorName><addressFields><addressField1></addressField1><addressField2></addressField2><addressField5></addressField5></addressFields><vendorRegistrationId>2050864-5</vendorRegistrationId><bic>OKOYFIHH</bic><bankAccount>FI95 6682 9530 0087 65</bankAccount><invoiceNumber>${invoiceNumber}</invoiceNumber><longReference>${pitkaviite}</longReference><documentDate>${today}</documentDate><dueDate>${dueDate}</dueDate><paymentTerm>Z001</paymentTerm><currencyCode>EUR</currencyCode><grossAmount>99999</grossAmount><netamount>99999</netamount><vatamount>0</vatamount><voucherSeries>XE</voucherSeries><postingDate>${today}</postingDate><ownBankShortKeyCode></ownBankShortKeyCode><handler><verifierName>essi.esittelija@example.com</verifierName><verifierEmail>essi.esittelija@example.com</verifierEmail><approverName>hygge.hyvaksyja@example.com</approverName><approverEmail>hygge.hyvaksyja@example.com</approverEmail><verifyDate>${today}</verifyDate><approvedDate>${today}</approvedDate></handler><otsData><otsBankCountryKeyCode></otsBankCountryKeyCode></otsData><invoicesource>VA</invoicesource></header><postings><postingRows><postingRow><rowId>1</rowId><generalLedgerAccount>82010000</generalLedgerAccount><postingAmount>99999</postingAmount><accountingObject01>${toimintayksikko}</accountingObject01><accountingObject02>29103020</accountingObject02><accountingObject04>${projekti}</accountingObject04><accountingObject05>${toiminto}</accountingObject05><accountingObject08></accountingObject08></postingRow></postingRows></postings></object></objects>`
 }

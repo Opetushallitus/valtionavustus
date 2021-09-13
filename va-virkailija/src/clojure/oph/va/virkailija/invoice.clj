@@ -7,6 +7,7 @@
             [clj-time.format :as f]
             [oph.va.virkailija.utils :refer [remove-white-spaces]]
             [clojure.string :as c-str]
+            [clojure.tools.logging :as log]
             [clojure.java.io :as io]))
 
 (def organisations {"XA" 6600
@@ -51,6 +52,11 @@
     pitkaviite
     (generate-implicit-pitkäviite payment application)))
 
+(defn- get-ovt [grant]
+  (if (= (get-in grant [:operational-unit :code]) "6600105300")
+    "00372769790122"
+    "003727697901"))
+
 (defn payment-to-invoice [{:keys [payment application grant batch]}]
   (let [answers (:answers application)
         document (some
@@ -59,7 +65,7 @@
     [:objects
      [:object
      [:header
-      [:toEdiID "003727697901"]
+      [:toEdiID (get-ovt grant)]
       [:invoiceType "INVOICE"]
       [:vendorName (:organization-name application)]
       [:addressFields

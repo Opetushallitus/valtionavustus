@@ -15,7 +15,7 @@ import {
   clickElementWithText,
   clickFormSaveAndWait,
   countElements,
-  createUniqueCode,
+  createCode,
   createValidCopyOfEsimerkkihakuAndReturnTheNewId,
   dummyExcelPath,
   expectQueryParameter,
@@ -29,7 +29,7 @@ import {
   navigateHakija,
   navigateToNewHakemusPage,
   PaatosValues,
-  publishAvustushaku, saveMuutoshakemus,
+  publishAvustushaku, randomString, saveMuutoshakemus,
   selectMaakuntaFromDropdown,
   selectVakioperusteluInFinnish,
   setCalendarDate,
@@ -238,25 +238,27 @@ export async function publishAndFillMuutoshakemusEnabledAvustushaku(page: Page, 
   return { avustushakuID, userKey }
 }
 
-export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers): Promise<{ avustushakuID: number, hakemusID: number } & VaCodeValues> {
-  const codes = await createCodeValuesForTest(page)
+export async function ratkaiseMuutoshakemusEnabledAvustushaku(page: Page, haku: Haku, answers: Answers, codeValues?: VaCodeValues): Promise<{ avustushakuID: number, hakemusID: number } & VaCodeValues> {
+  const codes = codeValues ? await createCodeValues(page, codeValues) : await createRandomCodeValues(page)
   const { avustushakuID } = await createMuutoshakemusEnabledAvustushakuAndFillHakemus(page, haku, answers, codes)
   const avustushaku = await acceptAvustushaku(page, avustushakuID, "100000", "Ammatillinen koulutus")
   return { ...avustushaku, ...codes }
 }
 
-export async function createCodeValuesForTest(page: Page): Promise<VaCodeValues> {
+export async function createRandomCodeValues(page: Page): Promise<VaCodeValues> {
+  const uniqueCode = () => randomString().substring(0, 13)
+  const codeValues = { operationalUnit: uniqueCode(), project: uniqueCode(), operation: uniqueCode() }
+  return createCodeValues(page, codeValues)
+}
+
+export async function createCodeValues(page: Page, codeValues: VaCodeValues): Promise<VaCodeValues> {
   await navigate(page, '/admin-ui/va-code-values/')
-
-  const operationalUnit = await createUniqueCode(page, "Toimintayksikkö")
-
+  await createCode(page, "Toimintayksikkö", codeValues.operationalUnit)
   await clickKoodienhallintaTab(page, 'project')
-  const project = await createUniqueCode(page, "Projekti")
-
+  await createCode(page, "Projekti", codeValues.project)
   await clickKoodienhallintaTab(page, 'operation')
-  const operation = await createUniqueCode(page, "Toiminto")
-
-  return { operationalUnit, project, operation }
+  await createCode(page, "Toiminto", codeValues.operation)
+  return codeValues
 }
 
 export async function createMuutoshakemusEnabledAvustushakuAndFillHakemus(page: Page, haku: Haku, answers: Answers, codes?: VaCodeValues): Promise<{ avustushakuID: number, userKey: string }> {
