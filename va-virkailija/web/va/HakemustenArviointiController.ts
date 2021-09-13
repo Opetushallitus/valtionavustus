@@ -294,11 +294,11 @@ export default class HakemustenArviointiController {
   }
 
   onBeforeUnload(state: State) {
-    return this.onSaveHakemusArvio(state, state.selectedHakemus!)
+    return this.onSaveHakemusArvio(state, state.selectedHakemus)
   }
 
   onHakemusSelection(state: State, hakemusIdToSelect: number) {
-    state = this.onSaveHakemusArvio(state, state.selectedHakemus!)
+    state = this.onSaveHakemusArvio(state, state.selectedHakemus)
     state.selectedHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdToSelect)
     const avustushakuId = state.hakuData.avustushaku.id
     const normalizedStream = Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId + "/hakemus/" + hakemusIdToSelect + "/normalized")).mapError(undefined)
@@ -386,9 +386,9 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onSaveHakemusArvio(state: State, updatedHakemus: Hakemus) {
+  onSaveHakemusArvio(state: State, updatedHakemus: Hakemus | undefined) {
     const arvio = updatedHakemus ? updatedHakemus.arvio : undefined
-    if(arvio && arvio.hasChanges) {
+    if(updatedHakemus && arvio && arvio.hasChanges) {
       const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + updatedHakemus.id + "/arvio"
       HttpUtil.post(updateUrl, _.omit(arvio, "hasChanges"))
           .then(function(response) {
