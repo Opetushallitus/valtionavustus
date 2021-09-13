@@ -4,7 +4,7 @@ import {
 } from "../../../../va-common/web/va/types";
 import {
   Muutoshakemus,
-  Presenter, Talousarvio, TalousarvioValues,
+  Talousarvio, TalousarvioValues,
 } from "../../../../va-common/web/va/types/muutoshakemus";
 import React, {useMemo} from "react";
 import {MuutosTaloudenKayttosuunnitelmaan} from "../../../../va-common/web/va/muutoshakemus/MuutosTaloudenKayttosuunnitelmaan";
@@ -39,6 +39,7 @@ import {
   getNestedFormikError,
   getNestedInputErrorClass
 } from "../../../../va-common/web/va/formikHelpers";
+import {Role} from "../types";
 
 moment.locale('fi')
 const localizer = new MomentLocalizer(moment)
@@ -120,7 +121,7 @@ interface OsiokohtainenMuutoshakemusFormProps {
   hakemusVersion: Hakemus
   controller: any
   userInfo: UserInfo
-  presenter: Presenter
+  presenter: Role | undefined
   projectEndDate: string | undefined
   isPresentingOfficer: boolean
   currentTalousarvio: Talousarvio

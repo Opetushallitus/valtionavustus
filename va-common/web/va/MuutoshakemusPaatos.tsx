@@ -8,9 +8,11 @@ import { fiShortFormat } from 'va-common/web/va/i18n/dateformat'
 import {Paatos, PaatosState} from "./types/muutoshakemus";
 
 import './MuutoshakemusPaatos.less'
+import {Role} from "../../../va-virkailija/web/va/types";
 
-type MuutoshakemusPaatosProps = Omit<PaatosState, 'paatos'> & {
+type MuutoshakemusPaatosProps = Omit<PaatosState, 'paatos' | 'presenter'> & {
   paatos: Omit<Paatos, 'id' | 'user-key' | 'updated-at'>
+  presenter: Role | undefined
 }
 
 type HyvaksytytMuutoksetProps = Omit<MuutoshakemusPaatosProps, 'presenter' | 'isPresentingOfficer'>
@@ -109,7 +111,7 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
               <br/>
               <div data-test-id="muutoshakemus-paatos-esittelija-title">{t.muutoshakemus.paatos.esittelija}</div>
               <div data-test-id="paatos-esittelija">
-                {presenter.name}
+                {presenter?.name}
               </div>
             </div>
         }
@@ -117,8 +119,8 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
       <section className="muutoshakemus-paatos__section">
         <div data-test-id="muutoshakemus-paatos-lisatietoja-title">{t.muutoshakemus.paatos.lisatietoja}</div>
         <div data-test-id="paatos-additional-info">
-          {presenter.name}<br/>
-          {presenter.email}<br/>
+          {presenter?.name}<br/>
+          {presenter?.email}<br/>
           {t.muutoshakemus.paatos.phoneNumber}
         </div>
       </section>

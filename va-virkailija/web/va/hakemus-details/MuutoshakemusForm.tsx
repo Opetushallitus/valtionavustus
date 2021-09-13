@@ -27,7 +27,7 @@ import { TalousarvioAcceptWithChangesForm } from './TalousarvioAcceptWithChanges
 import { HyväksytytSisältömuutoksetForm } from './HyväksytytSisältömuutoksetForm'
 import {
   Meno,
-  Muutoshakemus, Presenter, TalousarvioValues,
+  Muutoshakemus, TalousarvioValues,
 } from "../../../../va-common/web/va/types/muutoshakemus"
 import {
   MuutoshakemusPaatosFormValues,
@@ -42,6 +42,7 @@ import {
 } from "../../../../va-common/web/va/types";
 import {MuutoshakemusSection} from "../../../../va-common/web/va/MuutoshakemusSection";
 import {paatosStatuses} from "./PaatosStatus";
+import {Role} from "../types";
 
 moment.locale('fi')
 const localizer = new MomentLocalizer(moment)
@@ -85,7 +86,7 @@ interface MuutoshakemusFormProps {
   hakemusVersion: Hakemus
   controller: any
   userInfo: UserInfo
-  presenter: Presenter
+  presenter: Role | undefined
   projectEndDate: string | undefined
   isPresentingOfficer: boolean
 }

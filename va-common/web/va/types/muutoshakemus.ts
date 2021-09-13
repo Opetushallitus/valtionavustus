@@ -1,6 +1,7 @@
 import { FormikProps } from 'formik'
 import { EnvironmentApiResponse } from './environment'
 import {Avustushaku, NormalizedHakemusData} from '../types'
+import {Role} from "../../../../va-virkailija/web/va/types";
 
 export type MuutoshakemusProps = {
   status: 'LOADED' | 'LOADING'
@@ -17,12 +18,7 @@ export type PaatosState = {
   avustushaku: Avustushaku
   paatos: Paatos
   isPresentingOfficer: boolean
-  presenter: Presenter
-}
-
-export interface Presenter {
-  name: string
-  email: string
+  presenter: Role
 }
 
 export type MuutoshakemusStatus = "new" | "accepted" | "rejected" | "accepted_with_changes"

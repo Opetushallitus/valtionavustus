@@ -44,7 +44,7 @@ export const answers = {
   projectName: "Rahassa kylpijät Ky Ay Oy",
 }
 
-async function populateUserCache(users: UserInfo[]) {
+async function populateUserCache(users: Omit<UserInfo, 'username'>[]) {
   await axios.post(`${VIRKAILIJA_URL}/api/test/user-cache`, users)
 }
 

@@ -14,7 +14,7 @@ export interface UserInfo {
 
 type RoleType = 'presenting_officer' | 'evaluator'
 
-interface Role {
+export interface Role {
     id: number
     name: string
     email?: string
@@ -75,6 +75,14 @@ export interface HakemusSorter {
     order: string
 }
 
+export type SelectedHakemusAccessControl = Partial<{
+  allowHakemusCommenting: boolean
+  allowHakemusStateChanges: boolean
+  allowHakemusScoring: boolean
+  allowHakemusOfficerEditing: boolean
+  allowHakemusCancellation: boolean
+}>
+
 export interface State {
     avustushakuList: Avustushaku[]
     hakuData: HakuData
@@ -85,13 +93,7 @@ export interface State {
     personSelectHakemusId: number | undefined
     selectedHakemus: Hakemus | undefined
     previouslySelectedHakemus?: Hakemus
-    selectedHakemusAccessControl: Partial<{
-        allowHakemusCommenting: boolean
-        allowHakemusStateChanges: boolean
-        allowHakemusScoring: boolean
-        allowHakemusOfficerEditing: boolean
-        allowHakemusCancellation: boolean
-    }>
+    selectedHakemusAccessControl: SelectedHakemusAccessControl
     showOthersScores: boolean
     saveStatus: {
         saveInProgress: boolean

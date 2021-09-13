@@ -14,11 +14,9 @@ import {
   Hakemus,
   UserInfo
 } from "../../../../va-common/web/va/types";
-import {
-  Presenter,
-  Muutoshakemus as MuutoshakemusType
-} from "../../../../va-common/web/va/types/muutoshakemus";
+import {Muutoshakemus as MuutoshakemusType} from "../../../../va-common/web/va/types/muutoshakemus";
 import {OsiokohtainenMuutoshakemusForm} from "./OsiokohtainenMuutoshakemusForm";
+import {Role} from "../types";
 
 interface MuutoshakemusProps {
   environment: EnvironmentApiResponse
@@ -27,7 +25,7 @@ interface MuutoshakemusProps {
   hakemusVersion: Hakemus
   controller: any
   userInfo: UserInfo
-  presenter: Presenter
+  presenter: Role | undefined
   isPresentingOfficer: boolean
 }
 

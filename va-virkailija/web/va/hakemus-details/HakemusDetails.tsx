@@ -1,30 +1,47 @@
-import React, {Component} from 'react'
+import React from 'react'
 
 import HakemusPreview from './HakemusPreview'
-import HakemusArviointi from './HakemusArviointi.jsx'
+import HakemusArviointi from './HakemusArviointi'
 import { Muutoshakemus } from './Muutoshakemus'
-import Selvitys from './Selvitys.jsx'
-import Seuranta from './Seuranta.jsx'
+import Selvitys from './Selvitys'
+import Seuranta from './Seuranta'
+import {HakuData, SelectedHakemusAccessControl, UserInfo} from "../types";
+import {Avustushaku, Hakemus} from "../../../../va-common/web/va/types";
+import HakemustenArviointiController from "../HakemustenArviointiController";
+import {EnvironmentApiResponse} from "../../../../va-common/web/va/types/environment";
 
 import './hakemusDetails.less'
 
-export default class HakemusDetails extends Component {
-  render() {
-    const {hidden, controller, hakemus, avustushaku, hakuData, userInfo,
+interface Props {
+  hakuData: HakuData
+  avustushaku: Avustushaku
+  hakemus: Hakemus | undefined
+  selectedHakemusAccessControl: SelectedHakemusAccessControl
+  translations: any
+  userInfo: UserInfo
+  showOthersScores: boolean
+  subTab: string
+  controller: HakemustenArviointiController
+  environment: EnvironmentApiResponse
+  helpTexts: any
+}
+
+export const HakemusDetails = (props: Props) => {
+    const {controller, hakemus, avustushaku, hakuData, userInfo,
            showOthersScores, translations, environment,
-           selectedHakemusAccessControl, subTab, helpTexts} = this.props
+           selectedHakemusAccessControl, subTab, helpTexts} = props
     const multibatchEnabled =
           (environment["multibatch-payments"] &&
            environment["multibatch-payments"]["enabled?"]) || false
-    const muutoshakemukset = hakemus.muutoshakemukset
 
     const userOid = userInfo["person-oid"]
     const userRole = hakuData.roles.find(r => r.oid === userOid)
     const isPresentingOfficer =
-            userOid && userRole && userRole.role === "presenting_officer"
-    if (hidden) {
+            !!userOid && !!userRole && userRole.role === "presenting_officer"
+    if (!(typeof hakemus === 'object')) {
       return null
     }
+    const muutoshakemukset = hakemus.muutoshakemukset
 
     const fallbackPresenter = hakuData.roles.find(r => r.role === 'presenting_officer')
     const presenter = hakuData.roles.find(r => r.id === hakemus.arvio["presenter-role-id"]) || fallbackPresenter
@@ -34,12 +51,14 @@ export default class HakemusDetails extends Component {
       controller.closeHakemusDetail()
     }
 
-    const onToggle = (e) => {
+    const onToggle = (e: React.MouseEvent) => {
       document.body.classList.toggle('split-view')
       if(document.body.classList.contains('split-view')) {
         const container = document.querySelector('.hakemus-list tbody.has-selected')
-        const selected = document.querySelector('#list-container tbody.has-selected .overview-row.selected')
-        container.scrollTop = selected.offsetTop - 100
+        const selected = document.querySelector<HTMLTableRowElement>('#list-container tbody.has-selected .overview-row.selected')
+        if (container && selected?.offsetTop) {
+          container.scrollTop = selected.offsetTop - 100
+        }
       }
       e.preventDefault()
       return false
@@ -48,7 +67,7 @@ export default class HakemusDetails extends Component {
     const CloseButton = () => <button id="close-hakemus-button" onClick={onClose}>&times;</button>
     const ToggleButton = () => <button id="toggle-hakemus-list-button" onClick={onToggle}>↕</button>
 
-    const getSubTab = tabName => {
+    const getSubTab = (tabName: string) => {
       switch (tabName) {
         case 'arviointi':
           return <HakemusArviointi hakemus={hakemus}
@@ -92,9 +111,9 @@ export default class HakemusDetails extends Component {
           throw new Error("Bad subTab selection '" + tabName + "'")
       }
     }
-    const tab = (name, label, testId) => <span className={subTab === name ? 'selected' : ''} data-test-id={testId} onClick={createSubTabSelector(name)}>{label}</span>
+    const tab = (name: string, label: string | JSX.Element, testId?: string) => <span className={subTab === name ? 'selected' : ''} data-test-id={testId} onClick={createSubTabSelector(name)}>{label}</span>
 
-    function createSubTabSelector(subTabToSelect) {
+    function createSubTabSelector(subTabToSelect: string) {
       return e => {
         e.preventDefault()
         controller.selectEditorSubtab(subTabToSelect)
@@ -133,5 +152,6 @@ export default class HakemusDetails extends Component {
         </div>
       </div>
     )
-  }
 }
+
+export default HakemusDetails

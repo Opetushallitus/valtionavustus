@@ -81,10 +81,9 @@ const App = ({state, controller}: Props) => {
                             environment={environment}
                             state={state}/>
           </div>
-          <HakemusDetails hidden={!hasSelected}
-                          hakuData={hakuData}
+          <HakemusDetails hakuData={hakuData}
                           avustushaku={avustushaku}
-                          hakemus={selectedHakemus}
+                          hakemus={state.selectedHakemus}
                           translations={translations}
                           selectedHakemusAccessControl={selectedHakemusAccessControl}
                           userInfo={state.userInfo}
