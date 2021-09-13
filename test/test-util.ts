@@ -300,8 +300,6 @@ export async function createHakuFromEsimerkkihaku(page: Page, props: HakuProps):
     await selectCode(page, 'operation', props.vaCodes.operation)
   }
 
-  await page.waitFor(2000)
-
   for (const rahoitusalue of defaultRahoitusalueet) {
     await inputTalousarviotili(page, rahoitusalue)
   }
