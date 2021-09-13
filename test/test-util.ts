@@ -978,7 +978,6 @@ export async function createCode(page: Page, name: string = 'Test code', code: s
   await clickElementWithTestId(page, 'code-form__add-button')
 
   await page.waitForSelector(`tr[data-test-id="${code}"]`)
-  await waitForClojureScriptLoadingDialogVisible(page)
   await waitForClojureScriptLoadingDialogHidden(page)
   return code
 }
