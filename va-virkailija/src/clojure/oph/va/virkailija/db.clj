@@ -452,9 +452,7 @@
                 :email                    (:email identity)
                 :selection_criteria_index selection-criteria-index
                 :score                    score}]
-    (if-let [updated (exec queries/update-score<! params)]
-      updated
-      (exec queries/create-score<! params))))
+      (exec queries/upsert-score<! params)))
 
 (defn delete-score [arvio-id selection-criteria-index identity]
   (exec queries/delete-score!

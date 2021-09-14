@@ -14,8 +14,7 @@
 (defquery create-comment<! "sql/virkailija/comment/create.sql")
 (defquery list-comments "sql/virkailija/comment/list.sql")
 
-(defquery create-score<! "sql/virkailija/score/create.sql")
-(defquery update-score<! "sql/virkailija/score/update.sql")
+(defquery upsert-score<! "sql/virkailija/score/upsert.sql")
 (defquery list-scores "sql/virkailija/score/list.sql")
 (defquery list-avustushaku-scores "sql/virkailija/score/list-by-avustushaku.sql")
 (defquery delete-score! "sql/virkailija/score/delete.sql")
