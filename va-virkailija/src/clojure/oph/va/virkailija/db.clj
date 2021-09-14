@@ -395,9 +395,7 @@
     (if use-detailed-costs
       (store-menoluokka-hakemus-rows (:id avustushaku) hakemus-id overridden-answers)
       (delete-menoluokka-hakemus-rows hakemus-id))
-    (if existing
-      (exec queries/update-arvio<! arvio-with-changelog)
-      (exec queries/create-arvio<! arvio-with-changelog))))
+      (exec queries/upsert-arvio<! arvio-with-changelog)))
 
 (defn health-check []
   (->> {}

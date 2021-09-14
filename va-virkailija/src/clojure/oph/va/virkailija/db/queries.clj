@@ -4,8 +4,7 @@
 (defquery health-check "sql/healthcheck.sql")
 
 (defquery create-empty-arvio<! "sql/virkailija/arvio/create-empty.sql")
-(defquery create-arvio<! "sql/virkailija/arvio/create.sql")
-(defquery update-arvio<! "sql/virkailija/arvio/update.sql")
+(defquery upsert-arvio<! "sql/virkailija/arvio/upsert.sql")
 (defquery get-arviot "sql/virkailija/arvio/get-by-ids.sql")
 (defquery get-accepted-or-rejected-hakemus-ids "sql/virkailija/arvio/accepted-or-rejected-hakemus-ids-by-ids.sql")
 (defquery get-accepted-hakemus-ids "sql/virkailija/arvio/get-accepted-hakemus-ids.sql")
