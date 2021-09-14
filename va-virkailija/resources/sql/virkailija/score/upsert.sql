@@ -25,4 +25,3 @@ ON CONFLICT ON CONSTRAINT scores_pkey DO UPDATE SET
   score = EXCLUDED.score,
   modified_at = now(),
   deleted = FALSE
-)

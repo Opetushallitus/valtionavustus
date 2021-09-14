@@ -56,4 +56,4 @@ ON CONFLICT (hakemus_id) DO UPDATE SET
   oppilaitokset = EXCLUDED.oppilaitokset,
   allow_visibility_in_external_system = EXCLUDED.allow_visibility_in_external_system,
   should_pay = EXCLUDED.should_pay,
-  should_pay_comments = EXCLUDED.should_pay_comments)
+  should_pay_comments = EXCLUDED.should_pay_comments
