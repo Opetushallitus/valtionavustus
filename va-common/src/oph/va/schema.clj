@@ -206,6 +206,9 @@
     (s/optional-key :hyvaksytyt-sisaltomuutokset) (s/maybe s/Str)
     (s/optional-key :paatos-hyvaksytty-paattymispaiva) (s/maybe java.time.LocalDate)
     (s/optional-key :paatos-talousarvio) (s/maybe [Meno])
+    (s/optional-key :paatos-status-jatkoaika) (s/maybe s/Str)
+    (s/optional-key :paatos-status-talousarvio) (s/maybe s/Str)
+    (s/optional-key :paatos-status-sisaltomuutos) (s/maybe s/Str)
     :paatos-created-at (s/maybe s/Inst)
     :paatos-sent-at (s/maybe s/Inst)
     :created-at s/Inst

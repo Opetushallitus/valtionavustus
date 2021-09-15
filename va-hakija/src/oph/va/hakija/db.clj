@@ -186,6 +186,9 @@
                                       -- annettu sama hyväksytty/hylätty päätös
                                       coalesce(pj.status, ps.status, pt.status)::text
                                   END) as status,
+                                  pj.status as paatos_status_jatkoaika,
+                                  pt.status as paatos_status_talousarvio,
+                                  ps.status as paatos_status_sisaltomuutos,
                                   haen_kayttoajan_pidennysta,
                                   kayttoajan_pidennys_perustelut,
                                   haen_sisaltomuutosta,

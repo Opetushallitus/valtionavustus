@@ -28,7 +28,7 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
   const talousarvio = muutoshakemus["paatos-talousarvio"]?.length ? muutoshakemus["paatos-talousarvio"] : muutoshakemus.talousarvio
   return (
     <React.Fragment>
-      {a.status !== 'new' &&
+      {a.status !== undefined && a.status !== 'new' &&
         <section className="muutoshakemus-section" data-test-id="muutoshakemus-paatos">
           {simplePaatos
             ? <h1 className="muutoshakemus__paatos-status">
@@ -62,7 +62,7 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
           <MuutosTaloudenKayttosuunnitelmaan
             currentTalousarvio={currentTalousarvio}
             newTalousarvio={talousarvio}
-            status={muutoshakemus.status}
+            status={muutoshakemus["paatos-status-talousarvio"]}
             reason={muutoshakemus["talousarvio-perustelut"]} />
         </MuutoshakemusSection>
       }
@@ -99,7 +99,7 @@ const PaattymispaivaValues = (props: PaattymispaivaValuesProps) => {
   const { t } = useTranslations()
 
   const { muutoshakemus, projectEndDate } = props
-  const isAcceptedWithChanges = muutoshakemus.status === 'accepted_with_changes'
+  const isAcceptedWithChanges = muutoshakemus["paatos-status-jatkoaika"] === 'accepted_with_changes'
   const currentEndDateTitle = isAcceptedWithChanges ? t.muutoshakemus.previousProjectEndDate : t.muutoshakemus.currentProjectEndDate
   const newEndDateTitle = isAcceptedWithChanges ? t.muutoshakemus.acceptedChange : t.muutoshakemus.appliedChange
   const newEndDateValue = isAcceptedWithChanges ? muutoshakemus['paatos-hyvaksytty-paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']

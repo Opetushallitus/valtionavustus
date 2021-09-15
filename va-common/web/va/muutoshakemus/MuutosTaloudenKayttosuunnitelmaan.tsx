@@ -31,7 +31,7 @@ const MenoRow = ({ meno, currentTalousarvio, linethrough }: MenoRowProps) => {
 export type MuutosTaloudenKayttosuunnitelmaanProps = {
   currentTalousarvio: Talousarvio
   newTalousarvio: Talousarvio
-  status: MuutoshakemusStatus
+  status: MuutoshakemusStatus | undefined
   reason?: string
   paatos?: boolean
 }
@@ -42,7 +42,7 @@ export const TalousarvioTable = (props: MuutosTaloudenKayttosuunnitelmaanProps) 
   const muutoshakemusSum = newTalousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
   const currentSum = currentTalousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
 
-  const isAccepted = ['accepted_with_changes', 'accepted'].includes(status)
+  const isAccepted = !!status && ['accepted_with_changes', 'accepted'].includes(status)
   const headerClass = paatos ? 'muutoshakemus-paatos__change-header' : 'muutoshakemus__header'
   const wrapperClass = paatos ? 'muutoshakemus-paatos__talousarvio' : 'muutoshakemus-row'
 

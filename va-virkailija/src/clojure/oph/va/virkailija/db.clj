@@ -35,6 +35,10 @@
   (let [rows (query "SELECT hyvaksytyt_sisaltomuutokset FROM paatos_sisaltomuutos WHERE paatos_id = ?" [id])]
     (:hyvaksytyt-sisaltomuutokset (first rows))))
 
+(defn- get-sisaltomuutos-paatos-status [id]
+  (let [rows (query "SELECT status FROM paatos_sisaltomuutos WHERE paatos_id = ?" [id])]
+    (:status (first rows))))
+
 (defn store-paatos-jatkoaika [tx paatos-id status paattymispaiva]
   (execute! tx "INSERT INTO paatos_jatkoaika (paatos_id, status, paattymispaiva)
                 VALUES (?, ?::virkailija.paatos_type, ?)"
@@ -85,10 +89,31 @@
       first
       :paatos-hyvaksytty-paattymispaiva))
 
+(defn- get-talousarvio-paatos-status [paatos-id]
+  (-> (query "SELECT pt.status
+               FROM paatos_talousarvio pt
+               JOIN paatos ON paatos.id = pt.paatos_id
+               where paatos.id = ?"
+         [paatos-id])
+      first
+      :status))
+
+(defn get-jatkoaika-paatos-status [paatos-id]
+  (-> (query "SELECT status
+              FROM paatos p
+              JOIN paatos_jatkoaika pj ON pj.paatos_id = p.id
+              WHERe p.id = ?"
+             [paatos-id])
+      first
+      :status))
+
 (defn create-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
   (if-let [created-paatos (store-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)]
     (-> created-paatos
         (assoc :paatos-hyvaksytty-paattymispaiva (get-hyvaksytty-paattymispaiva (:id created-paatos)))
+        (assoc :status-jatkoaika (get-jatkoaika-paatos-status (:id created-paatos)))
+        (assoc :status-sisaltomuutos (get-sisaltomuutos-paatos-status (:id created-paatos)))
+        (assoc :status-talousarvio (get-talousarvio-paatos-status (:id created-paatos)))
         (assoc :talousarvio (get-talousarvio (:id created-paatos) "paatos"))
         (assoc :hyvaksytyt-sisaltomuutokset (get-hyvaksytyt-sisaltomuutokset (:id created-paatos))))))
 
@@ -184,6 +209,9 @@
                                     -- annettu sama hyväksytty/hylätty päätös
                                     coalesce(pj.status, ps.status, pt.status)::text
                                 END) as status,
+                                pj.status as paatos_status_jatkoaika,
+                                pt.status as paatos_status_talousarvio,
+                                ps.status as paatos_status_sisaltomuutos,
                                 haen_kayttoajan_pidennysta,
                                 kayttoajan_pidennys_perustelut,
                                 haen_sisaltomuutosta,

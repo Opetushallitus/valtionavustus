@@ -21,11 +21,11 @@ export type PaatosState = {
   presenter: Role
 }
 
-export type MuutoshakemusStatus = "new" | "accepted" | "rejected" | "accepted_with_changes"
+export type MuutoshakemusStatus = "accepted" | "rejected" | "accepted_with_changes"
 
 export interface Muutoshakemus {
   id: number
-  status: MuutoshakemusStatus
+  status?: "new" | MuutoshakemusStatus
   "hakemus-id": number
   "haen-kayttoajan-pidennysta": boolean
   "kayttoajan-pidennys-perustelut"?: string
@@ -39,8 +39,11 @@ export interface Muutoshakemus {
   "paatos-sent-at"?: string
   "paatos-user-key"?: string
   "paatos-hyvaksytty-paattymispaiva"?: string
+  "paatos-status-jatkoaika"?: MuutoshakemusStatus
   "paatos-talousarvio"?: Talousarvio
+  "paatos-status-talousarvio"?: MuutoshakemusStatus
   "paatos-hyvaksytty-sisaltomuutos"?: string
+  "paatos-status-sisaltomuutos"?: MuutoshakemusStatus
 }
 
 export interface Paatos {
