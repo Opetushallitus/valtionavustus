@@ -15,16 +15,13 @@
 (s/defschema MuutoshakemusPaatos
   "Muutoshakemus paatos"
   {:id Long
-   (s/optional-key :status) (s/maybe s/Str)
+   :status s/Str
    :user-key s/Str
    :reason s/Str
    :decider s/Str
    (s/optional-key :hyvaksytyt-sisaltomuutokset) (s/maybe s/Str)
-   (s/optional-key :status-sisaltomuutos) (s/maybe s/Str)
    (s/optional-key :paatos-hyvaksytty-paattymispaiva) (s/maybe java.time.LocalDate)
-   (s/optional-key :status-jatkoaika) (s/maybe s/Str)
    (s/optional-key :talousarvio) (s/maybe [Meno])
-   (s/optional-key :status-talousarvio) (s/maybe s/Str)
    :created-at s/Inst
    :updated-at s/Inst})
 

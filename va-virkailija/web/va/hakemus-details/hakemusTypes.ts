@@ -12,21 +12,15 @@ const PAATOS_STATUSES = [PAATOS_ACCEPTED, PAATOS_ACCEPTED_WITH_CHANGES, PAATOS_R
 
 export type PaatosStatus = typeof PAATOS_STATUSES[number]
 
-export interface MuutoshakemusPaatosResponse {
+export interface MuutoshakemusPaatos {
   id: number
-  status?: PaatosStatus
+  status: PaatosStatus
   'user-key': string
   reason: string
   decider: string
-  'status-sisaltomuutos'?: PaatosStatus
   'hyvaksytyt-sisaltomuutokset'?: string
-  'status-jatkoaika'?: PaatosStatus
   'paatos-hyvaksytty-paattymispaiva'?: string
-  'status-talousarvio'?: PaatosStatus
   'talousarvio': Meno[]
-}
-
-export interface MuutoshakemusPaatos extends MuutoshakemusPaatosResponse {
   muutoshakemusId: number
   hakemusId: number
 }

@@ -57,7 +57,7 @@ interface PaattymispaivaValuesProps {
 const PaattymispaivaValues = ({ muutoshakemus, projectEndDate }: PaattymispaivaValuesProps) => {
   const { t } = useTranslations()
 
-  const isAcceptedWithChanges = muutoshakemus["paatos-status-jatkoaika"] === 'accepted_with_changes'
+  const isAcceptedWithChanges = muutoshakemus.status === 'accepted_with_changes'
   const currentEndDateTitle = isAcceptedWithChanges ? t.muutoshakemus.previousProjectEndDate : t.muutoshakemus.currentProjectEndDate
   const newEndDateTitle = isAcceptedWithChanges ? t.muutoshakemus.acceptedChange : t.muutoshakemus.appliedChange
   const newEndDateValue = isAcceptedWithChanges ? muutoshakemus['paatos-hyvaksytty-paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']
@@ -200,7 +200,7 @@ export const OsiokohtainenMuutoshakemusForm = ({currentTalousarvio, muutoshakemu
         <MuutosTaloudenKayttosuunnitelmaan
           currentTalousarvio={currentTalousarvio}
           newTalousarvio={talousarvio}
-          status={muutoshakemus["paatos-status-talousarvio"]}
+          status={muutoshakemus.status}
           reason={muutoshakemus["talousarvio-perustelut"]}/>
       </MuutoshakemusSection>
       }
