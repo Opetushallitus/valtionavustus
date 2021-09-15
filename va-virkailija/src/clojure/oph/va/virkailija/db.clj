@@ -80,6 +80,29 @@
 
       (assoc created-paatos :status (:status paatos))))))
 
+(defn- store-osiokohtainen-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
+  (with-tx (fn [tx]
+             (let [muutoshakemus (first (query tx "SELECT * FROM muutoshakemus WHERE id = ?" [muutoshakemus-id]))
+                   created-paatos (first (query tx
+                                                "INSERT INTO virkailija.paatos (user_key, reason, decider)
+                                                 VALUES (?, ?, ?)
+                                                 RETURNING id, reason, decider, user_key, created_at, updated_at"
+                                                [(generate-hash-id) (:reason paatos) decider]))
+                   paatos-id (:id created-paatos)]
+               (execute! tx
+                         "UPDATE virkailija.muutoshakemus
+                         SET paatos_id = ?
+                         WHERE id = ?" [paatos-id muutoshakemus-id])
+               (when (:haen-kayttoajan-pidennysta muutoshakemus)
+                     (store-paatos-jatkoaika tx paatos-id (get-in paatos [:haen-kayttoajan-pidennysta :status]) (get-in paatos [:haen-kayttoajan-pidennysta :paattymispaiva])))
+               (when (muutoshakemus-has-talousarvio? tx muutoshakemus-id)
+                     (store-paatos-talousarvio tx paatos-id (get-in paatos [:talousarvio :status])))
+               (when (:talousarvio paatos)
+                     (add-paatos-menoluokkas tx paatos-id avustushaku-id (get-in paatos [:talousarvio :talousarvio])))
+               (when (some? (:haen-sisaltomuutosta paatos))
+                     (store-paatos-sisaltomuutos tx paatos-id (get-in paatos [:haen-sisaltomuutosta :status]) (get-in paatos [:haen-sisaltomuutosta :hyvaksytyt-sisaltomuutokset])))
+               created-paatos))))
+
 (defn get-hyvaksytty-paattymispaiva [paatos-id]
   (-> (query "SELECT to_char(pj.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva
               FROM paatos p
@@ -109,6 +132,16 @@
 
 (defn create-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
   (if-let [created-paatos (store-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)]
+    (-> created-paatos
+        (assoc :paatos-hyvaksytty-paattymispaiva (get-hyvaksytty-paattymispaiva (:id created-paatos)))
+        (assoc :status-jatkoaika (get-jatkoaika-paatos-status (:id created-paatos)))
+        (assoc :status-sisaltomuutos (get-sisaltomuutos-paatos-status (:id created-paatos)))
+        (assoc :status-talousarvio (get-talousarvio-paatos-status (:id created-paatos)))
+        (assoc :talousarvio (get-talousarvio (:id created-paatos) "paatos"))
+        (assoc :hyvaksytyt-sisaltomuutokset (get-hyvaksytyt-sisaltomuutokset (:id created-paatos))))))
+
+(defn create-osiokohtainen-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
+  (if-let [created-paatos (store-osiokohtainen-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)]
     (-> created-paatos
         (assoc :paatos-hyvaksytty-paattymispaiva (get-hyvaksytty-paattymispaiva (:id created-paatos)))
         (assoc :status-jatkoaika (get-jatkoaika-paatos-status (:id created-paatos)))

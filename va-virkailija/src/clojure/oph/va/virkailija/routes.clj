@@ -136,6 +136,23 @@
                           (email/send-muutoshakemus-paatos [contact-email] avustushaku hakemus arvio roles token muutoshakemus-id paatos)
                           (ok paatos))))
 
+(defn- post-osiokohtainen-muutoshakemus-paatos []
+  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/osiokohtainenmuutoshakemus/:muutoshakemus-id/paatos" request
+                      :path-params [avustushaku-id :- Long hakemus-id :- Long muutoshakemus-id :- Long]
+                      :body [paatos (compojure-api/describe virkailija-schema/OsiokohtainenmuutoshakemusPaatosRequest "Osiokohtainen muutoshakemus paatos")]
+                      :return virkailija-schema/MuutoshakemusPaatos
+                      :summary "Create a paatos for muutoshakemus with osiokohtainen status"
+                      (let [{:keys [avustushaku hakemus]} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)
+                            roles (hakija-api/get-avustushaku-roles avustushaku-id)
+                            arvio (virkailija-db/get-arvio hakemus-id)
+                            contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
+                            identity (authentication/get-request-identity request)
+                            decider (str (:first-name identity) " " (:surname identity))
+                            paatos (virkailija-db/create-osiokohtainen-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)
+                            token (virkailija-db/create-application-token (:id hakemus))]
+                        (email/send-muutoshakemus-paatos [contact-email] avustushaku hakemus arvio roles token muutoshakemus-id paatos)
+                        (ok paatos))))
+
 (defn- get-muutoshakemukset []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/" [hakemus-id]
                      :path-params [hakemus-id :- Long]
@@ -714,6 +731,7 @@
                          (get-onko-muutoshakukelpoinen-avustushaku-ok)
                          (get-muutoshakemukset)
                          (post-muutoshakemus-paatos)
+                         (post-osiokohtainen-muutoshakemus-paatos)
                          (get-selvitys)
                          (send-selvitys)
                          (send-selvitys-email)

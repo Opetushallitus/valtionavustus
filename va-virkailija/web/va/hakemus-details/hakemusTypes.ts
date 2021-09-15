@@ -46,7 +46,7 @@ export interface OsioKohtainenMuutoshakemusPaatosRequest {
     status: PaatosStatus
     paattymispaiva?: string
   }
-  'hyvaksytyt-sisaltomuutokset'?: {
+  'haen-sisaltomuutosta'?: {
     status: PaatosStatus
     'hyvaksytyt-sisaltomuutokset'?: string
   }

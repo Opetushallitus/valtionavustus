@@ -46,6 +46,23 @@
    (s/optional-key :talousarvio) (s/maybe TalousarvioMuutos)
    })
 
+ (s/defschema OsiokohtainenmuutoshakemusPaatosRequest
+   "Osiokohtainen muutoshakemus paatos"
+   {:reason s/Str
+    (s/optional-key :haen-sisaltomuutosta) (s/maybe {
+      :status s/Str
+      (s/optional-key :hyvaksytyt-sisaltomuutokset) (s/maybe s/Str)
+    })
+    (s/optional-key :haen-kayttoajan-pidennysta) (s/maybe {
+      (s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
+      :status s/Str
+    })
+    (s/optional-key :talousarvio) (s/maybe {
+      :talousarvio TalousarvioMuutos
+      :status s/Str
+    })
+    })
+
 (s/defschema DbEmail
   "Email stored in database"
   {:formatted s/Str
