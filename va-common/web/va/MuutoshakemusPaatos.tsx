@@ -1,7 +1,12 @@
 import React from 'react'
 import moment from 'moment'
 
-import { getProjectEndDate, getTalousarvio } from './Muutoshakemus'
+import {
+  getProjectEndDate,
+  getTalousarvio,
+  isAcceptedWithChanges,
+  isRejected
+} from './Muutoshakemus'
 import { TalousarvioTable } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
 import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
 import { fiShortFormat } from 'va-common/web/va/i18n/dateformat'
@@ -18,12 +23,12 @@ type MuutoshakemusPaatosProps = Omit<PaatosState, 'paatos' | 'presenter'> & {
 type HyvaksytytMuutoksetProps = Omit<MuutoshakemusPaatosProps, 'presenter' | 'isPresentingOfficer'>
 
 const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muutoshakemukset }: HyvaksytytMuutoksetProps) => {
-  if (paatos.status === 'rejected') return null
+  if (isRejected(paatos.status)) return null
   const { t } = useTranslations()
 
-  const isAcceptedWithChanges = paatos.status === 'accepted_with_changes'
-  const paattymispaiva = isAcceptedWithChanges ? paatos.paattymispaiva : muutoshakemus['haettu-kayttoajan-paattymispaiva']
-  const newTalousarvio = isAcceptedWithChanges ? (paatos.talousarvio || []) : muutoshakemus.talousarvio
+  const acceptedWithChanges = isAcceptedWithChanges(paatos.status)
+  const paattymispaiva = acceptedWithChanges ? paatos.paattymispaiva : muutoshakemus['haettu-kayttoajan-paattymispaiva']
+  const newTalousarvio = acceptedWithChanges ? (paatos.talousarvio || []) : muutoshakemus.talousarvio
 
   const projectEndDate = getProjectEndDate(avustushaku, muutoshakemukset, muutoshakemus)
   const currentTalousarvio = getTalousarvio(muutoshakemukset, hakemus && hakemus.talousarvio, muutoshakemus)

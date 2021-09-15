@@ -17,7 +17,7 @@ import {
   dateStringToMoment,
   getTalousarvioSchema,
   getTalousarvioValues,
-  getTalousarvio
+  getTalousarvio, isAcceptedWithChanges, isRejected
 } from 'va-common/web/va/Muutoshakemus'
 
 import { copyToClipboard } from '../copyToClipboard'
@@ -64,7 +64,7 @@ const getPaatosSchema = (muutoshakemus: Muutoshakemus) => Yup.object().shape({
     then: muutoshakemus['haen-kayttoajan-pidennysta'] ? Yup.date().required('Päättymispäivä on pakollinen kenttä') : Yup.date(),
   }),
   'hyvaksytyt-sisaltomuutokset': Yup.string().when('status', {
-    is: value => value !== 'rejected',
+    is: value => !isRejected(value),
     then: muutoshakemus['haen-sisaltomuutosta'] ? Yup.string().required('Kuvaile hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan on pakollinen kenttä!') : Yup.string(),
   })
 })
@@ -72,7 +72,7 @@ const getPaatosSchema = (muutoshakemus: Muutoshakemus) => Yup.object().shape({
 function formToPayload(values: MuutoshakemusPaatosRequest) {
   return {
     ...values,
-    'hyvaksytyt-sisaltomuutokset': values.status !== 'rejected' ? values['hyvaksytyt-sisaltomuutokset'] : undefined,
+    'hyvaksytyt-sisaltomuutokset': !isRejected(values.status) ? values['hyvaksytyt-sisaltomuutokset'] : undefined,
     talousarvio: values.talousarvio && omit(values.talousarvio, ['currentSum', 'originalSum']),
     paattymispaiva: values.paattymispaiva && moment(values.paattymispaiva).format(isoFormat)
   }
@@ -158,13 +158,13 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
             {paatosStatuses.map(status => <PaatosStatusRadioButton key={status.value} paatosStatus={status} f={f} talousarvioValues={talousarvioValues} />)}
           </fieldset>
         </div>
-        {isAcceptedWithChanges(f) && (
+        {isAcceptedWithChanges(f.values.status) && (
           <React.Fragment>
             {!!muutoshakemus.talousarvio.length && <TalousarvioAcceptWithChangesForm f={f} talousarvio={talousarvio} requestedTalousarvio={muutoshakemus.talousarvio} />}
             {muutoshakemus['haen-kayttoajan-pidennysta'] && <KayttoajanPidennysAcceptWithChangesForm f={f} muutoshakemus={muutoshakemus} projectEndDate={projectEndDate} />}
           </React.Fragment>
         )}
-        {(!isRejected(f) && muutoshakemus['haen-sisaltomuutosta']) &&
+        {(!isRejected(f.values.status) && muutoshakemus['haen-sisaltomuutosta']) &&
         <HyväksytytSisältömuutoksetForm f={f} muutoshakemus={muutoshakemus} />}
         <div className="muutoshakemus-row">
           <h4 className="muutoshakemus__header">
@@ -179,14 +179,6 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
       </MuutoshakemusSection>
     </form>
   )
-}
-
-function isAcceptedWithChanges(formik: MuutoshakemusPaatosFormValues) {
-  return formik.values.status === 'accepted_with_changes'
-}
-
-function isRejected(formik: MuutoshakemusPaatosFormValues) {
-  return formik.values.status === 'rejected'
 }
 
 function setDefaultReason(f: MuutoshakemusPaatosFormValues, lang: 'fi' | 'sv') {

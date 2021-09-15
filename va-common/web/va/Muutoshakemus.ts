@@ -1,7 +1,13 @@
 import moment, { Moment } from 'moment'
 import * as yup from 'yup'
 
-import { Meno, Muutoshakemus, Talousarvio, TalousarvioValues } from './types/muutoshakemus'
+import {
+  Meno,
+  Muutoshakemus,
+  MuutoshakemusStatus,
+  Talousarvio,
+  TalousarvioValues
+} from './types/muutoshakemus'
 import { isoFormat, fiLongFormat } from 'va-common/web/va/i18n/dateformat'
 import { Avustushaku } from './types'
 
@@ -43,8 +49,20 @@ export function getProjectEndMoment(avustushaku: Avustushaku, muutoshakemukset?:
   return latestAcceptedMuutoshakemus ? latestAcceptedMuutoshakemus : dateStringToMoment(avustushaku['hankkeen-paattymispaiva'])
 }
 
+export const isAcceptedWithChanges = (status: MuutoshakemusStatus | undefined): boolean =>
+  status === 'accepted_with_changes'
+
+export const isAccepted = (status: MuutoshakemusStatus | undefined): boolean =>
+  status === 'accepted'
+
+export const isAcceptedWithOrWithoutChanges = (status: MuutoshakemusStatus | undefined): boolean =>
+  isAccepted(status) || isAcceptedWithChanges(status)
+
+export const isRejected = (status: MuutoshakemusStatus | undefined): boolean =>
+  status === 'rejected'
+
 function acceptedTalousarvioFilter(m: Muutoshakemus) {
-  return m['paatos-talousarvio']?.length && (m["paatos-status-talousarvio"] === 'accepted' || m["paatos-status-talousarvio"] === 'accepted_with_changes')
+  return m['paatos-talousarvio']?.length && isAcceptedWithOrWithoutChanges(m["paatos-status-talousarvio"])
 }
 
 export function getTalousarvio(muutoshakemukset: Muutoshakemus[], hakemusTalousarvio?: Talousarvio, beforeMuutoshakemus?: Muutoshakemus): Talousarvio {
@@ -63,10 +81,10 @@ function sortByCreatedAtDescending(muutoshakemukset: Muutoshakemus[]): Muutoshak
 
 function getLatestProjectEndDate(muutoshakemukset: Muutoshakemus[] | undefined): Moment | undefined {
   if (!muutoshakemukset) return undefined
-  const acceptedWithProjectEnd = muutoshakemukset.filter(m => (m["paatos-status-jatkoaika"] === 'accepted' || m["paatos-status-jatkoaika"] === 'accepted_with_changes') && m['haen-kayttoajan-pidennysta'])
+  const acceptedWithProjectEnd = muutoshakemukset.filter(m => isAcceptedWithOrWithoutChanges(m["paatos-status-jatkoaika"]) && m['haen-kayttoajan-pidennysta'])
   if (acceptedWithProjectEnd.length) {
     const latestAcceptedMuutoshakemus = sortByCreatedAtDescending(acceptedWithProjectEnd)[0]
-    return latestAcceptedMuutoshakemus["paatos-status-jatkoaika"] === 'accepted_with_changes'
+    return isAcceptedWithChanges(latestAcceptedMuutoshakemus["paatos-status-jatkoaika"])
       ? dateStringToMoment(latestAcceptedMuutoshakemus["paatos-hyvaksytty-paattymispaiva"])
       : dateStringToMoment(latestAcceptedMuutoshakemus["haettu-kayttoajan-paattymispaiva"])
   } else {

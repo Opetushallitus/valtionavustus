@@ -2,6 +2,7 @@ import React from 'react'
 
 import { Meno, MuutoshakemusStatus, Talousarvio } from 'va-common/web/va/types/muutoshakemus'
 import { useTranslations } from '../i18n/TranslationContext'
+import {isAcceptedWithOrWithoutChanges} from "../Muutoshakemus";
 
 import './talous.less'
 
@@ -42,7 +43,7 @@ export const TalousarvioTable = (props: MuutosTaloudenKayttosuunnitelmaanProps) 
   const muutoshakemusSum = newTalousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
   const currentSum = currentTalousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
 
-  const isAccepted = !!status && ['accepted_with_changes', 'accepted'].includes(status)
+  const isAccepted = isAcceptedWithOrWithoutChanges(status)
   const headerClass = paatos ? 'muutoshakemus-paatos__change-header' : 'muutoshakemus__header'
   const wrapperClass = paatos ? 'muutoshakemus-paatos__talousarvio' : 'muutoshakemus-row'
 

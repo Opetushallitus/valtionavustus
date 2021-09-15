@@ -14,13 +14,17 @@ import {copyToClipboard} from "../copyToClipboard";
 import {useTranslations} from "../../../../va-common/web/va/i18n/TranslationContext";
 import {
   dateStringToMoment,
-  getTalousarvio, getTalousarvioSchema,
-  getTalousarvioValues, toFinnishDateFormat
+  getTalousarvio,
+  getTalousarvioSchema,
+  getTalousarvioValues,
+  isAccepted,
+  isAcceptedWithChanges, isAcceptedWithOrWithoutChanges,
+  isRejected,
+  toFinnishDateFormat
 } from "../../../../va-common/web/va/Muutoshakemus";
 import {
   OsioKohtainenMuutoshakemusPaatosRequest,
   OsiokohtainenMuutoshakemusPaatosFormValues,
-  PaatosStatus
 } from "./hakemusTypes";
 import {useFormik} from "formik";
 import * as Yup from "yup";
@@ -57,10 +61,10 @@ interface PaattymispaivaValuesProps {
 const PaattymispaivaValues = ({ muutoshakemus, projectEndDate }: PaattymispaivaValuesProps) => {
   const { t } = useTranslations()
 
-  const isAcceptedWithChanges = muutoshakemus["paatos-status-jatkoaika"] === 'accepted_with_changes'
-  const currentEndDateTitle = isAcceptedWithChanges ? t.muutoshakemus.previousProjectEndDate : t.muutoshakemus.currentProjectEndDate
-  const newEndDateTitle = isAcceptedWithChanges ? t.muutoshakemus.acceptedChange : t.muutoshakemus.appliedChange
-  const newEndDateValue = isAcceptedWithChanges ? muutoshakemus['paatos-hyvaksytty-paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']
+  const acceptedWithChanges = isAcceptedWithChanges(muutoshakemus["paatos-status-jatkoaika"])
+  const currentEndDateTitle = acceptedWithChanges ? t.muutoshakemus.previousProjectEndDate : t.muutoshakemus.currentProjectEndDate
+  const newEndDateTitle = acceptedWithChanges ? t.muutoshakemus.acceptedChange : t.muutoshakemus.appliedChange
+  const newEndDateValue = acceptedWithChanges ? muutoshakemus['paatos-hyvaksytty-paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']
   const perustelut = muutoshakemus['kayttoajan-pidennys-perustelut']
 
   return (
@@ -82,8 +86,6 @@ const PaattymispaivaValues = ({ muutoshakemus, projectEndDate }: PaattymispaivaV
     </React.Fragment>
   )
 }
-
-const isAcceptedWithChanges = (status: PaatosStatus | undefined) => status === 'accepted_with_changes'
 
 const errors = {
   required: 'Pakollinen kenttä',
@@ -107,7 +109,7 @@ const getPaatosSchema = (muutoshakemus: Muutoshakemus) => Yup.object().shape({
   ),
   'hyvaksytyt-sisaltomuutokset': Yup.lazy<any>(haenSisaltomuutosta => {
     const sisaltomuutosStatus = haenSisaltomuutosta?.status
-    return sisaltomuutosStatus !== undefined && sisaltomuutosStatus !== 'rejected'
+    return isAcceptedWithOrWithoutChanges(sisaltomuutosStatus)
       ? Yup.string().required('Kuvaile hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan on pakollinen kenttä!')
       : Yup.string()
   })
@@ -169,7 +171,7 @@ export const OsiokohtainenMuutoshakemusForm = ({currentTalousarvio, muutoshakemu
   })
   const onPaatosPreviewClick = () => {}
   const sisaltomuutoksetStatus = f.values["hyvaksytyt-sisaltomuutokset"]?.status
-  const hyvaksyttySisaltomuutokset = sisaltomuutoksetStatus !== undefined && sisaltomuutoksetStatus !== 'rejected'
+  const hyvaksyttySisaltomuutokset = isAcceptedWithOrWithoutChanges(sisaltomuutoksetStatus)
   return (
     <form onSubmit={f.handleSubmit} data-test-id="muutoshakemus-form">
       {muutoshakemus['haettu-kayttoajan-paattymispaiva'] &&
@@ -277,13 +279,13 @@ function setDefaultReason(f: OsiokohtainenMuutoshakemusPaatosFormValues, lang: '
     f.values["hyvaksytyt-sisaltomuutokset"]?.status,
     f.values["haen-kayttoajan-pidennysta"]?.status
   ].filter(status => status !== undefined)
-  if (currentStatuses.some(status => status === 'accepted_with_changes')) {
+  if (currentStatuses.some(isAcceptedWithChanges)) {
     return f.setFieldValue('reason', paatosStatuses[1].defaultReason[lang])
   }
-  if (currentStatuses.every(status => status === 'accepted')) {
+  if (currentStatuses.every(isAccepted)) {
     return f.setFieldValue('reason', paatosStatuses[0].defaultReason[lang])
   }
-  if (currentStatuses.every(status => status === 'rejected')) {
+  if (currentStatuses.every(isRejected)) {
     return f.setFieldValue('reason', paatosStatuses[2].defaultReason[lang])
   }
   return f.setFieldValue('reason', '')

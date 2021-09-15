@@ -9,6 +9,7 @@ import { fiLongFormat, parseDateStringToMoment } from 'va-common/web/va/i18n/dat
 
 import './MuutoshakemusValues.less'
 import {MuutoshakemusSection} from "./MuutoshakemusSection";
+import {isAcceptedWithChanges} from "./Muutoshakemus";
 
 export const datetimeFormat = 'D.M.YYYY [klo] HH.mm'
 
@@ -99,10 +100,10 @@ const PaattymispaivaValues = (props: PaattymispaivaValuesProps) => {
   const { t } = useTranslations()
 
   const { muutoshakemus, projectEndDate } = props
-  const isAcceptedWithChanges = muutoshakemus["paatos-status-jatkoaika"] === 'accepted_with_changes'
-  const currentEndDateTitle = isAcceptedWithChanges ? t.muutoshakemus.previousProjectEndDate : t.muutoshakemus.currentProjectEndDate
-  const newEndDateTitle = isAcceptedWithChanges ? t.muutoshakemus.acceptedChange : t.muutoshakemus.appliedChange
-  const newEndDateValue = isAcceptedWithChanges ? muutoshakemus['paatos-hyvaksytty-paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']
+  const acceptedWithChanges = isAcceptedWithChanges(muutoshakemus["paatos-status-jatkoaika"])
+  const currentEndDateTitle = acceptedWithChanges ? t.muutoshakemus.previousProjectEndDate : t.muutoshakemus.currentProjectEndDate
+  const newEndDateTitle = acceptedWithChanges ? t.muutoshakemus.acceptedChange : t.muutoshakemus.appliedChange
+  const newEndDateValue = acceptedWithChanges ? muutoshakemus['paatos-hyvaksytty-paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']
   const perustelut = muutoshakemus['kayttoajan-pidennys-perustelut']
 
   return (
