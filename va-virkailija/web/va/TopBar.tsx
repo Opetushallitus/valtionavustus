@@ -41,7 +41,7 @@ type TopBarTabsProps = {
 class TopBarTabs extends React.Component<TopBarTabsProps, {}> {
 
   isEnabled(config: EnvironmentApiResponse, k: keyof EnvironmentApiResponse): boolean {
-    return config[k]["enabled?"]
+    return config[k]?.["enabled?"] === true
   }
 
   render() {
