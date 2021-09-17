@@ -81,6 +81,22 @@ describe('Sisaltomuutos (accepted)', () => {
     hakemusID = result.hakemusID
   })
 
+  const sendMuutoshakemusWithSisaltomuutos = async () => {
+    await navigateToHakijaMuutoshakemusPage(page, hakemusID)
+    await clickElement(page, '#checkbox-haenSisaltomuutosta')
+    await fillSisaltomuutosPerustelut(page, sisaltomuutosPerustelut)
+    const sendButtonText = await getElementInnerText(page, '#send-muutospyynto-button')
+    expect(sendButtonText).toEqual('Lähetä käsiteltäväksi')
+
+    await clickSendMuutoshakemusButton(page)
+    await expectMuutoshakemusToBeSubmittedSuccessfully(page, true)
+
+    const sisaltomuutos = await getElementInnerText(page, '[data-test-class="existing-muutoshakemus"] [data-test-id="sisaltomuutos-perustelut"]')
+    expect(sisaltomuutos).toEqual(sisaltomuutosPerustelut)
+  }
+
+  beforeAll(sendMuutoshakemusWithSisaltomuutos)
+
   afterEach(() => {
     log(`Finished test: ${expect.getState().currentTestName}`)
   })
@@ -88,25 +104,6 @@ describe('Sisaltomuutos (accepted)', () => {
   afterAll(async () => {
     await page.close()
     await browser.close()
-  })
-
-  describe('Sending muutoshakemus', () => {
-    beforeAll(async () => {
-      await navigateToHakijaMuutoshakemusPage(page, hakemusID)
-    })
-
-    it('shows correct send button, successfully sent text, and existing muutoshakemus', async () => {
-      await clickElement(page, '#checkbox-haenSisaltomuutosta')
-      await fillSisaltomuutosPerustelut(page, sisaltomuutosPerustelut)
-      const sendButtonText = await getElementInnerText(page, '#send-muutospyynto-button')
-      expect(sendButtonText).toEqual('Lähetä käsiteltäväksi')
-
-      await clickSendMuutoshakemusButton(page)
-      await expectMuutoshakemusToBeSubmittedSuccessfully(page, true)
-
-      const sisaltomuutos = await getElementInnerText(page, '[data-test-class="existing-muutoshakemus"] [data-test-id="sisaltomuutos-perustelut"]')
-      expect(sisaltomuutos).toEqual(sisaltomuutosPerustelut)
-    })
   })
 
   describe('Handling muutoshakemus', () => {
@@ -148,20 +145,20 @@ describe('Sisaltomuutos (accepted)', () => {
         const sentApplicationInformation = await textContent(page, '[data-test-id="sisaltomuutos-perustelut"]')
         expect(sentApplicationInformation).toContain(sisaltomuutosPerustelut)
       })
-    })
-  })
 
-  describe('Viewing päätös for hakija', () => {
-    beforeAll(async () => {
-      await navigateToLatestMuutoshakemusPaatos(page, hakemusID)
-    })
+      describe('Viewing päätös for hakija', () => {
+        beforeAll(async () => {
+          await navigateToLatestMuutoshakemusPaatos(page, hakemusID)
+        })
 
-    it('should include sisältömuutos in asia section', async () => {
-      await expectAsiaSectionToContainSisaltomuutos(page)
-    })
+        it('should include sisältömuutos in asia section', async () => {
+          await expectAsiaSectionToContainSisaltomuutos(page)
+        })
 
-    it('should include text about accepted sisältömuutos in Hyväksytyt muutokset section', async () => {
-      await expectAcceptedSisaltomuutosInPaatos(page)
+        it('should include text about accepted sisältömuutos in Hyväksytyt muutokset section', async () => {
+          await expectAcceptedSisaltomuutosInPaatos(page)
+        })
+      })
     })
   })
 })
