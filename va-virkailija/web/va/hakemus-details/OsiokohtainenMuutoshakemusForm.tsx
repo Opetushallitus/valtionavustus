@@ -197,7 +197,7 @@ export const OsiokohtainenMuutoshakemusForm = ({avustushaku, currentTalousarvio,
     }
   })
   const onPaatosPreviewClick = () => {}
-  const sisaltomuutoksetStatus = f.values["hyvaksytyt-sisaltomuutokset"]?.status
+  const sisaltomuutoksetStatus = f.values["haen-sisaltomuutosta"]?.status
   const hyvaksyttySisaltomuutokset = isAcceptedWithOrWithoutChanges(sisaltomuutoksetStatus)
   return (
     <form onSubmit={f.handleSubmit} data-test-id="muutoshakemus-form">

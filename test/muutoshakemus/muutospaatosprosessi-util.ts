@@ -319,8 +319,9 @@ export async function validateMuutoshakemusPaatosCommonValues(page: Page) {
   expect(info).toEqual('_ valtionavustussanteri.horttanainen@reaktor.com029 533 1000 (vaihde)')
 }
 
-export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number) {
-  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`)
+export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, enableOsiokohtainen?: boolean) {
+  const searchParams = enableOsiokohtainen ? '?muutoshakemus-osiokohtainen-hyvaksynta=true' : ''
+  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/${searchParams}`)
   await page.waitForSelector('#tab-content')
 }
 

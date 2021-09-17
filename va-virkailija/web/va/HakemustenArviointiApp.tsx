@@ -121,6 +121,13 @@ stateP.onValue((state) => {
     if (develMode) {
       console.log("Updating UI with state:", state)
     }
+    const overridingFlagEnabled = state.hakuData.environment['allow-overriding-feature-flag-from-url-params']?.["enabled?"]
+    if (overridingFlagEnabled) {
+      const osiokohtainenFlagInQuery = query['muutoshakemus-osiokohtainen-hyvaksynta']
+      if (osiokohtainenFlagInQuery === 'true') {
+        state.hakuData.environment['muutoshakemus-osiokohtainen-hyvaksynta']['enabled?'] = true
+      }
+    }
     ReactDOM.render(<App state={state} controller={controller}/>, document.getElementById('app'))
   }
 })
