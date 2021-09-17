@@ -52,3 +52,4 @@
  :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? false}
  :muutoshakukelpoisuus {:enabled? true}
  :test-apis {:enabled? false}}
+ :allow-overriding-feature-flag-from-url-params {:enabled? false}

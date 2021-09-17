@@ -11,4 +11,5 @@ export type EnvironmentApiResponse = {
   "va-code-values": FeatureFlag
   "muutoshakemus-osiokohtainen-hyvaksynta": FeatureFlag
   reports: FeatureFlag
+  "allow-overriding-feature-flag-from-url-params"?: FeatureFlag
 }
