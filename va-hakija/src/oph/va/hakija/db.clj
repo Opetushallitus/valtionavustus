@@ -213,6 +213,7 @@
                                   to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva,
                                   talousarvio_perustelut,
                                   p.id as paatos_id,
+                                  p.reason as paatos_reason,
                                   p.user_key as paatos_user_key,
                                   hyvaksytyt_sisaltomuutokset,
                                   to_char(pj.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva,

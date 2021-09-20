@@ -1,10 +1,10 @@
 @import "~va-common/web/va/style/soresu-va.less";
 @import "topbar";
 
-#container h3.muutoshakemus__header,
-#container h4.muutoshakemus__header {
+#muutoshakemus__container h3.muutoshakemus__header,
+#muutoshakemus__container h4.muutoshakemus__header {
   font-weight: 700;
-  color: black;
+  color: @text-black;
 }
 
 .muutoshakemus__section-checkbox-row {
@@ -55,13 +55,198 @@
   justify-content: space-between;
 }
 
+.muutoshakemus__top-content {
+  background-color: white;
+  padding: 160px 80px 10px;
+}
+
+.osiokohtainen-muutoshakemus__title {
+  font-family: Open Sans, sans-serif;
+  font-style: normal;
+  font-weight: bold !important;
+  font-size: 28px !important;
+  line-height: 27px;
+}
+
+.osiokohtainen-muutoshakemus__sub-title {
+  font-family: Open Sans, sans-serif;
+  font-style: normal;
+  font-weight: bold !important;
+  font-size: 19px !important;
+  line-height: 27px;
+  margin-bottom: 13px !important;
+}
+
+.osiokohtainen-muutoshakemus__label {
+  font-family: Open Sans, sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.025em;
+}
+
+.osiokohtainen-muutoshakemus__input {
+  border: 1px solid #817C7B;
+  border-radius: 4px;
+  padding: 8px;
+}
+.osiokohtainen-muutoshakemus__input-error {
+  border: 2px solid @bright-red !important;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+
 .muutoshakemus__title {
-  text-transform: uppercase;
   margin: 0 0 1rem !important;
+  font-family: Open Sans, sans-serif;
+  font-style: normal;
+  font-weight: bold !important;
+  font-size: 28px;
+  line-height: 27px;
+}
+
+.muutoshakemus__hanke-name__title {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.muutoshakemus__hanke-name__name {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 19px;
+  line-height: 27px;
 }
 
 .muutoshakemus__section {
   margin-bottom: 2rem;
+}
+
+.osiokohtainen-existing-muutoshakemus__section {
+  padding-top: 56px;
+  display: flex;
+  flex-direction: row;
+}
+
+.osiokohtainen-existing-muutoshakemus__title {
+  margin-right: 2rem;
+  font-family: Open Sans, sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 19px;
+  line-height: 27px;
+  width: 256px;
+}
+.osiokohtainen-existing-muutoshakemus__form {
+  flex-grow: 1;
+}
+
+.osiokohtainen-muutoshakemus__paatos-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.osiokohtainen-muutoshakemus__kasitelty-date {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.035em;
+  color: @dark-blue;
+}
+
+.osiokohtainen-muutoshakemus__osio-accepted-changes {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.osiokohtainen-muutoshakemus__accepted-changes {
+  margin: 24px 0 24px 16px;
+}
+
+.osiokohtainen-muutoshakemus__paatos {
+  margin-top: 17px;
+}
+
+.osiokohtainen-muutoshakemus__paatos-link {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.035em;
+  text-decoration-line: underline;
+}
+
+.osiokohtainen-muutoshakemus__osiot-container {
+  background-color: white;
+  border: 1px solid #EAEAEA;
+  box-sizing: border-box;
+  padding: 8px;
+}
+
+.osiokohtainen-muutoshakemus__osio-paatos {
+  margin-top: 24px;
+  background: #F9F9F9;
+  border: 1px solid #EAEAEA;
+  box-sizing: border-box;
+  display: flex;
+  flex-grow: 1;
+  padding: 1rem;
+  align-items: center;
+
+  > svg {
+    padding-right: 1rem;
+  }
+}
+
+.osiokohtainen-muutoshakemus__date {
+  border: 1px solid #EAEAEA;
+  box-sizing: border-box;
+  padding: 1rem;
+}
+
+.osiokohtainen-muutoshakemus__overridden-date {
+  text-decoration: line-through;
+}
+
+.osiokohtainen-muutoshakemus__description-box {
+  border: 1px solid #EAEAEA;
+  box-sizing: border-box;
+  padding: 1rem;
+}
+
+.osiokohtainen-muutoshakemus__project-end-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  max-width: 90%;
+}
+
+.osiokohtainen-muutoshakemus__header {
+  font-style: normal;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  line-height: 24px;
+  display: flex;
+  align-items: flex-end;
+  letter-spacing: -0.025em;
+  color: @text-black !important;
+}
+
+.osiokohtainen-muutoshakemus__osio-container {
+  background: white;
+  border: 1px solid #EAEAEA;
+  box-sizing: border-box;
+  filter: drop-shadow(0px 3px 8px rgba(0, 0, 0, 0.25));
+  padding: 16px;
+  &:not(:last-of-type) {
+    margin-bottom: 16px;
+  }
 }
 
 .muutoshakemus__register-number {
@@ -69,7 +254,6 @@
 }
 
 .muutoshakemus__form {
-  padding-left: 15%;
 }
 
 .muutoshakemus__form-row {
@@ -82,6 +266,14 @@
   flex-direction: column;
   &:not(:last-of-type) {
     margin-right: 5vw;
+  }
+}
+
+.osiokohtainen-muutoshakemus__form-cell {
+  display: flex;
+  flex-direction: column;
+  &:not(:last-of-type) {
+    margin-right: 1vw;
   }
 }
 

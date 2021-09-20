@@ -3,6 +3,7 @@ import moment from 'moment'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusValues } from 'va-common/web/va/MuutoshakemusValues'
+import { OsiokohtainenMuutoshakemusValues } from 'va-common/web/va/OsiokohtainenMuutoshakemusValues'
 import { Muutoshakemus, MuutoshakemusProps } from 'va-common/web/va/types/muutoshakemus'
 import { getProjectEndDate, getProjectEndMoment, getTalousarvio, getTalousarvioValues } from 'va-common/web/va/Muutoshakemus'
 import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
@@ -32,13 +33,13 @@ let initialState: MuutoshakemusProps = {
 
 export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
   const { t, lang } = useTranslations()
-  const userKey = query['user-key'] || ''
+  const userKey = query['user-key'] || ''
   const avustushakuId = query['avustushaku-id'] ? parseInt(query['avustushaku-id']) : 0
   const [state, setState] = useState<MuutoshakemusProps>(initialState)
   const f = createFormikHook(userKey, lang)
   const existingNewMuutoshakemus = state.muutoshakemukset.find(m => m.status === 'new')
   const enableBudgetChange = state.hakemus?.talousarvio && state.hakemus.talousarvio.length > 1
-
+  const osiokohtainenEnabled = state.environment? state.environment["muutoshakemus-osiokohtainen-hyvaksynta"]["enabled?"] : false
   useEffect(() => {
     const fetchProps = async () => {
       const environmentP = HttpUtil.get(`/environment`)
@@ -81,10 +82,30 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
     fetchMuutoshakemukset()
   }, [f.status])
 
+  const existingOsiokohtainenMuutoshakemus = (m: Muutoshakemus, index: number, allMuutoshakemus: Muutoshakemus[]) => {
+    const projectEndDate = getProjectEndDate(state.avustushaku, allMuutoshakemus, m)
+    const topic = `${t.muutoshakemus.title} ${moment(m['created-at']).format(fiShortFormat)}`
+    const waitingForDecision = m.status === 'new' ? ` - ${t.waitingForDecision}` : ''
+    return (
+      <section className="osiokohtainen-existing-muutoshakemus__section" data-test-class="existing-muutoshakemus" data-test-state={m.status} key={index}>
+        <div className="osiokohtainen-existing-muutoshakemus__title">{`${topic}${waitingForDecision}`}</div>
+        <div className="osiokohtainen-existing-muutoshakemus__form">
+          <OsiokohtainenMuutoshakemusValues
+            currentTalousarvio={getTalousarvio(allMuutoshakemus, state.hakemus?.talousarvio, m)}
+            muutoshakemus={m}
+            hakijaUrl={state.environment?.['hakija-server'].url[lang]}
+            projectEndDate={projectEndDate}
+          />
+        </div>
+      </section>
+    )
+  }
+
   const existingMuutoshakemus = (m: Muutoshakemus, index: number, allMuutoshakemus: Muutoshakemus[]) => {
     const projectEndDate = getProjectEndDate(state.avustushaku, allMuutoshakemus, m)
     const topic = `${t.muutoshakemus.title} ${moment(m['created-at']).format(fiShortFormat)}`
     const waitingForDecision = m.status === 'new' ? ` - ${t.waitingForDecision}` : ''
+
     return (
       <section className="muutoshakemus__section" data-test-class="existing-muutoshakemus" data-test-state={m.status} key={index}>
         <h1 className="muutoshakemus__title">{`${topic}${waitingForDecision}`}</h1>
@@ -100,41 +121,78 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
     )
   }
 
-  return (
-    state.status === 'LOADING'
-      ? <p>{t.loading}</p>
-      : <form onSubmit={f.handleSubmit}>
-          <TopBar env={state.environment?.name || ''} f={f} />
-          <section className="soresu-form" id="container">
-            <ErrorBoundary>
-              <ContactPerson
-                avustushakuName={state.avustushaku.content.name[lang]}
-                projectName={state.hakemus?.["project-name"] || ''}
-                registerNumber={state.avustushaku["register-number"]}
-                f={f}
-              />
-              {!existingNewMuutoshakemus &&
-                <section className="muutoshakemus__section">
-                  <h1 className="muutoshakemus__title">{t.applicationEdit.title}</h1>
-                  <div className="muutoshakemus__form">
-                    <MuutoshakemusFormSection f={f} name="haenSisaltomuutosta" title={t.sisaltomuutos.checkboxTitle}>
-                    <PerustelutTextArea f={f} name='sisaltomuutosPerustelut' title={t.sisaltomuutos.title} />
-                    </MuutoshakemusFormSection>
-                    <MuutoshakemusFormSection f={f} name="haenKayttoajanPidennysta" title={t.kayttoajanPidennys.checkboxTitle}>
-                      <AvustuksenKayttoaikaInput f={f} projectEnd={getProjectEndDate(state.avustushaku, state.muutoshakemukset)} />
-                    </MuutoshakemusFormSection>
-                    {enableBudgetChange &&
-                      <MuutoshakemusFormSection f={f} name="haenMuutostaTaloudenKayttosuunnitelmaan" title={t.muutosTaloudenKayttosuunnitelmaan.checkboxTitle}>
-                        <TalousarvioForm f={f} talousarvio={getTalousarvio(state.muutoshakemukset, state.hakemus?.talousarvio)} />
-                      </MuutoshakemusFormSection>
-                    }
-                  </div>
-                </section>
+  if(state.status === 'LOADING') {
+    return <p>t.loading</p>
+  }
+
+  const osiokohtainenMuutoshakemusForm = (
+    <form onSubmit={f.handleSubmit}>
+      <TopBar env={state.environment?.name || ''} f={f} />
+      <section id="container" >
+        <ErrorBoundary>
+          <ContactPerson
+            avustushakuName={state.avustushaku.content.name[lang]}
+            projectName={state.hakemus?.["project-name"] || ''}
+            registerNumber={state.avustushaku["register-number"]}
+            f={f}
+            osiokohtainenEnabled={osiokohtainenEnabled}
+          />
+          {!existingNewMuutoshakemus &&
+          <section >
+            <h1 className="osiokohtainen-muutoshakemus__sub-title">{t.applicationEdit.title}</h1>
+            <div >
+              <MuutoshakemusFormSection f={f} name="haenSisaltomuutosta" title={t.sisaltomuutos.checkboxTitle}>
+                <PerustelutTextArea f={f} name='sisaltomuutosPerustelut' title={t.sisaltomuutos.title} />
+              </MuutoshakemusFormSection>
+              <MuutoshakemusFormSection f={f} name="haenKayttoajanPidennysta" title={t.kayttoajanPidennys.checkboxTitle}>
+                <AvustuksenKayttoaikaInput f={f} projectEnd={getProjectEndDate(state.avustushaku, state.muutoshakemukset)} />
+              </MuutoshakemusFormSection>
+              {enableBudgetChange &&
+              <MuutoshakemusFormSection f={f} name="haenMuutostaTaloudenKayttosuunnitelmaan" title={t.muutosTaloudenKayttosuunnitelmaan.checkboxTitle}>
+                <TalousarvioForm f={f} talousarvio={getTalousarvio(state.muutoshakemukset, state.hakemus?.talousarvio)} />
+              </MuutoshakemusFormSection>
               }
-              {state.muutoshakemukset.map(existingMuutoshakemus)}
-              <OriginalHakemusIframe avustushakuId={avustushakuId} userKey={userKey} />
-            </ErrorBoundary>
+            </div>
           </section>
-        </form>
+          }
+          {state.muutoshakemukset.map(existingOsiokohtainenMuutoshakemus)}
+        </ErrorBoundary>
+      </section>
+    </form>)
+  return osiokohtainenEnabled ? osiokohtainenMuutoshakemusForm : (
+    <form onSubmit={f.handleSubmit}>
+      <TopBar env={state.environment?.name || ''} f={f} />
+      <section className="soresu-form" id="container">
+        <ErrorBoundary>
+          <ContactPerson
+            avustushakuName={state.avustushaku.content.name[lang]}
+            projectName={state.hakemus?.["project-name"] || ''}
+            registerNumber={state.avustushaku["register-number"]}
+            f={f}
+            osiokohtainenEnabled={osiokohtainenEnabled}
+          />
+          {!existingNewMuutoshakemus &&
+          <section className="muutoshakemus__section">
+            <h1 className="muutoshakemus__title">{t.applicationEdit.title}</h1>
+            <div className="muutoshakemus__form">
+              <MuutoshakemusFormSection f={f} name="haenSisaltomuutosta" title={t.sisaltomuutos.checkboxTitle}>
+                <PerustelutTextArea f={f} name='sisaltomuutosPerustelut' title={t.sisaltomuutos.title} />
+              </MuutoshakemusFormSection>
+              <MuutoshakemusFormSection f={f} name="haenKayttoajanPidennysta" title={t.kayttoajanPidennys.checkboxTitle}>
+                <AvustuksenKayttoaikaInput f={f} projectEnd={getProjectEndDate(state.avustushaku, state.muutoshakemukset)} />
+              </MuutoshakemusFormSection>
+              {enableBudgetChange &&
+              <MuutoshakemusFormSection f={f} name="haenMuutostaTaloudenKayttosuunnitelmaan" title={t.muutosTaloudenKayttosuunnitelmaan.checkboxTitle}>
+                <TalousarvioForm f={f} talousarvio={getTalousarvio(state.muutoshakemukset, state.hakemus?.talousarvio)} />
+              </MuutoshakemusFormSection>
+              }
+            </div>
+          </section>
+          }
+          {state.muutoshakemukset.map(existingMuutoshakemus)}
+          <OriginalHakemusIframe avustushakuId={avustushakuId} userKey={userKey} />
+        </ErrorBoundary>
+      </section>
+    </form>
   )
 }

@@ -874,8 +874,10 @@ etunimi.sukunimi@oph.fi
       await clickElement(page, "[id='koodistoField-1_input']")
       await selectMaakuntaFromDropdown(page, "Kainuu")
 
-      await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65")
-      await clearAndType(page, "#bank-bic", "OKOYFIHH")
+      const iban = "FI95 6682 9530 0087 65";
+      await clearAndType(page, "#bank-iban", iban)
+      const bic = "OKOYFIHH";
+      await clearAndType(page, "#bank-bic", bic)
 
       await clearAndType(page, "#project-name", "Turkles")
 
