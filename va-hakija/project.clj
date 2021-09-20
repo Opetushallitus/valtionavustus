@@ -19,7 +19,7 @@
                              :nvd]}
 
   :dependencies [[oph-va/common]
-                 [com.novemberain/pantomime]
+                 [org.apache.tika/tika-core]
                  [nrepl]
                  [cider/cider-nrepl]
                  [org.jsoup/jsoup "1.14.2"]]
