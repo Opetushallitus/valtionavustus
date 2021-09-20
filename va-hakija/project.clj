@@ -26,7 +26,8 @@
 
   :profiles {:uberjar {:aot [oph.va.hakija.main]}
              :dev     {:env {:config "config/dev.edn"}}
-             :test    {:env {:config "config/test.edn"}}
+             :test    {:env {:config "config/test.edn"}
+                       :resource-paths ["test-resources"]}
              :prod    {:env {:config "config/prod.edn"}}}
 
   :main oph.va.hakija.main
