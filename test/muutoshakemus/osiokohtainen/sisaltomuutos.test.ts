@@ -114,7 +114,7 @@ describe('Sisaltomuutos osiokohtainen', () => {
 
   describe('Handling muutoshakemus', () => {
     beforeAll(async () => {
-      await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
+      await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
     })
 
     it('Virkailija sees the sisältömuutos', async () => {

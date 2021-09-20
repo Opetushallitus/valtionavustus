@@ -167,7 +167,7 @@ describe('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen,
           })
           describe('Handle muutoshakemus', () => {
             beforeAll(async () => {
-              await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
+              await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
             })
 
             describe('preview for virkailija', () => {

@@ -319,8 +319,8 @@ export async function validateMuutoshakemusPaatosCommonValues(page: Page) {
   expect(info).toEqual('_ valtionavustussanteri.horttanainen@reaktor.com029 533 1000 (vaihde)')
 }
 
-export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, enableOsiokohtainen?: boolean) {
-  const searchParams = enableOsiokohtainen ? '?muutoshakemus-osiokohtainen-hyvaksynta=true' : ''
+export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, disableOsiokohtainen = true) {
+  const searchParams = disableOsiokohtainen ? '?muutoshakemus-osiokohtainen-hyvaksynta=false' : ''
   await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/${searchParams}`)
   await page.waitForSelector('#tab-content')
 }
@@ -366,15 +366,17 @@ export async function fillMuutoshakemusBudgetAmount(page: Page, budget: BudgetAm
   await clearAndType(page, "input[name='talousarvio.other-costs-row'][type='number']", budget.other)
 }
 
-export async function navigateToNthMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, n: number) {
-  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+export async function navigateToNthMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, n: number, disableOsiokohtainen = false) {
+  const searchParams = disableOsiokohtainen ? '?muutoshakemus-osiokohtainen-hyvaksynta=false' : ''
+  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/${searchParams}`)
   await clickElement(page, '[class="muutoshakemus-tab"]')
   await clickElement(page, `.muutoshakemus-tabs button:nth-last-child(${n})`)
   await page.waitForSelector('[data-test-id="muutoshakemus-sisalto"]')
 }
 
-export async function fillMuutoshakemusPaatosWithVakioperustelu(page: Page, avustushakuID: number, hakemusID: number, jatkoaika = '20.04.2400') {
-  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+export async function fillMuutoshakemusPaatosWithVakioperustelu(page: Page, avustushakuID: number, hakemusID: number, jatkoaika = '20.04.2400', disableOsiokohtainen = false) {
+  const searchParams = disableOsiokohtainen ? '?muutoshakemus-osiokohtainen-hyvaksynta=false' : ''
+  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/${searchParams}`)
   await clickElement(page, 'span.muutoshakemus-tab')
   await page.click(`label[for="accepted_with_changes"]`)
   await setCalendarDate(page, jatkoaika)

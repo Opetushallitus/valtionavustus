@@ -126,6 +126,8 @@ stateP.onValue((state) => {
       const osiokohtainenFlagInQuery = query['muutoshakemus-osiokohtainen-hyvaksynta']
       if (osiokohtainenFlagInQuery === 'true') {
         state.hakuData.environment['muutoshakemus-osiokohtainen-hyvaksynta']['enabled?'] = true
+      } else if (osiokohtainenFlagInQuery === 'false') {
+        state.hakuData.environment['muutoshakemus-osiokohtainen-hyvaksynta']['enabled?'] = false
       }
     }
     ReactDOM.render(<App state={state} controller={controller}/>, document.getElementById('app'))

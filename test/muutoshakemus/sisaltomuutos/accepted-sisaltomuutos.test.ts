@@ -108,7 +108,7 @@ describe('Sisaltomuutos (accepted)', () => {
 
   describe('Handling muutoshakemus', () => {
     beforeAll(async () => {
-      await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
+      await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
     })
 
     it('Virkailija sees the sisältömuutos', async () => {

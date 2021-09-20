@@ -52,6 +52,7 @@ import {
   parseMuutoshakemusPaatosFromEmails,
   createMuutoshakemusEnabledAvustushakuAndFillHakemus,
   markAvustushakuAsMuutoshakukelvoton,
+  navigateToLatestMuutoshakemus,
 } from './muutospaatosprosessi-util'
 import {
   navigateToHakijaMuutoshakemusPage,
@@ -497,8 +498,7 @@ etunimi.sukunimi@oph.fi`)
           let paatosUrl: string
 
           beforeAll(async () => {
-            await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
-            await clickElement(page, 'span.muutoshakemus-tab')
+            await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
             await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
             paatosUrl = await page.$eval('a.muutoshakemus__paatos-link', el => el.textContent) || ''
           })
@@ -613,8 +613,7 @@ etunimi.sukunimi@oph.fi
 
           describe('Navigating to hakemus and clicking "jatkoaika" tab', () => {
             beforeAll(async () => {
-              await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
-              await clickElement(page, 'span.muutoshakemus-tab')
+              await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
               await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
             })
 
@@ -775,7 +774,7 @@ etunimi.sukunimi@oph.fi
 
             describe('And virkailija accepts muutoshakemus' , () => {
               beforeAll(async () => {
-                await fillMuutoshakemusPaatosWithVakioperustelu(page, avustushakuID, hakemusID)
+                await fillMuutoshakemusPaatosWithVakioperustelu(page, avustushakuID, hakemusID, undefined, true)
               })
 
               it('Correct current project end date is displayed', async () => {

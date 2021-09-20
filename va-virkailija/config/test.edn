@@ -11,3 +11,4 @@
  :contact-person-name-in-pitkaviite {:enabled? true}
  :test-apis {:enabled? true}}
  :allow-overriding-feature-flag-from-url-params {:enabled? true}
+ :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? true}
