@@ -11,6 +11,8 @@ import {
   getElementInnerText,
   textContent,
   selectVakioperusteluInFinnish,
+  clearAndType,
+  saveMuutoshakemus,
 } from '../../test-util'
 import {
   navigateToLatestMuutoshakemus,
@@ -25,22 +27,14 @@ import {
 } from '../muutoshakemus-util'
 import { closePaatosPreview, openPaatosPreview } from '../../hakemuksen-arviointi/hakemuksen-arviointi-util'
 
+jest.setTimeout(400_000)
+
 export const answers = {
   contactPersonEmail: "erkki.esimerkki@example.com",
   contactPersonName: "Erkki Esimerkki",
   contactPersonPhoneNumber: "666",
   projectName: "Rahassa kylpijät Ky Ay Oy",
 }
-
-const muutosButtonSelector = '[data-test-id="muutoshakemus-submit"]'
-
-const muutosSendButtonDisabled = async (page: Page) =>
-  await page.waitForSelector(`${muutosButtonSelector}:disabled`, {visible: true})
-
-const muutosSendButtonEnabled = async (page: Page) =>
-  await page.waitForSelector(`${muutosButtonSelector}:not([disabled])`, {visible: true})
-
-jest.setTimeout(30000)
 
 describe('Sisaltomuutos (accepted)', () => {
   let browser: Browser
@@ -85,7 +79,7 @@ describe('Sisaltomuutos (accepted)', () => {
     const result = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, budget)
     avustushakuID = result.avustushakuID
     hakemusID = result.hakemusID
-  }, 120000)
+  })
 
   const sendMuutoshakemusWithSisaltomuutos = async () => {
     await navigateToHakijaMuutoshakemusPage(page, hakemusID)
@@ -101,7 +95,7 @@ describe('Sisaltomuutos (accepted)', () => {
     expect(sisaltomuutos).toEqual(sisaltomuutosPerustelut)
   }
 
-  beforeAll(sendMuutoshakemusWithSisaltomuutos, 60000)
+  beforeAll(sendMuutoshakemusWithSisaltomuutos)
 
   afterEach(() => {
     log(`Finished test: ${expect.getState().currentTestName}`)
@@ -114,7 +108,7 @@ describe('Sisaltomuutos (accepted)', () => {
 
   describe('Handling muutoshakemus', () => {
     beforeAll(async () => {
-      await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
+      await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
     })
 
     it('Virkailija sees the sisältömuutos', async () => {
@@ -122,16 +116,7 @@ describe('Sisaltomuutos (accepted)', () => {
       expect(sisaltomuutos).toEqual(sisaltomuutosPerustelut)
     })
 
-    it('should require sisältömuutospäätös', async () => {
-      await selectVakioperusteluInFinnish(page)
-      await muutosSendButtonDisabled(page)
-      await writeSisältömuutosPäätös(page, 'Testing')
-      await muutosSendButtonEnabled(page)
-      await writeSisältömuutosPäätös(page, '')
-      await muutosSendButtonDisabled(page)
-    })
-
-    describe.skip('preview for virkailija', () => {
+    describe('preview for virkailija', () => {
       beforeAll(async () => {
         await openPaatosPreview(page)
       })
@@ -153,11 +138,7 @@ describe('Sisaltomuutos (accepted)', () => {
       beforeAll(async () => {
         await writeSisältömuutosPäätös(page, 'Muutokset hankkeen sisältöön tai toteutustapaan hyväksytään  hakemuksen mukaisesti.')
         await selectVakioperusteluInFinnish(page)
-        await clickElement(page, '[data-test-id="muutoshakemus-submit"]:not([disabled])')
-      }, 60000)
-
-      it.skip('shows muutoshakemus as käsitelty', async () => {
-
+        await saveMuutoshakemus(page)
       })
 
       it('shows the original application text', async () => {
@@ -193,18 +174,5 @@ async function expectAcceptedSisaltomuutosInPaatos(page: Page) {
 }
 
 async function writeSisältömuutosPäätös(page: Page, text: string) {
-  const selector = '[name=hyvaksytyt-sisaltomuutokset]'
-  const sisalto = await page.waitForSelector(selector, {visible: true})
-  if (text === '') {
-    const text = await page.$eval(selector, (a) => (a as HTMLTextAreaElement).value)
-    const backspaceAmount = text?.length ?? 0
-    await sisalto?.click()
-    for (let i = 0; i < backspaceAmount ?? 0; i++) {
-      await page.keyboard.press('Backspace')
-    }
-  } else {
-    await sisalto?.click({clickCount: 3})
-    await page.keyboard.type(text)
-  }
-  await page.evaluate(e => e.blur(), sisalto)
+  await clearAndType(page, '[name=hyvaksytyt-sisaltomuutokset]', text)
 }
