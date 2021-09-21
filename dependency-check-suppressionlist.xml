@@ -28,6 +28,13 @@
     <packageUrl regex="true">^pkg:maven/org\.gagravarr/vorbis\-java\-tika@0.8$</packageUrl>
     <cve>CVE-2017-6888</cve>
   </suppress>
+  <suppress until="2021-09-19Z">
+    <notes><![CDATA[
+   file name: jdom2-2.0.6.jar
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.jdom/jdom2@.*$</packageUrl>
+    <cve>CVE-2021-33813</cve>
+  </suppress>
   <suppress>
     <notes><![CDATA[
     file name: alpn-api-1.1.3.v20160715.jar
