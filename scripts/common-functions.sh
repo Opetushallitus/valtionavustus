@@ -1,6 +1,6 @@
 readonly repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
-readonly node_version="12.13.1"
-readonly npm_version="6.13.4"
+readonly node_version="16.9.1"
+readonly npm_version="7.24.0"
 
 function parse_env_from_script_name {
   local FILE_NAME=$(basename "$0")
