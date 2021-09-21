@@ -71,6 +71,7 @@ import {
   resendPäätökset,
   changeContactPersonEmail,
   randomAsiatunnus,
+  setupTestLoggingAndScreenshots,
 } from './test-util'
 import {
   createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku,
@@ -89,19 +90,13 @@ describe("Puppeteer tests", () => {
   let browser: Browser
   let page: Page
 
-  beforeEach(() => {
-    log(`Starting test: ${expect.getState().currentTestName}`)
-  })
-
   beforeAll(async () => {
     browser = await mkBrowser()
     page = await getFirstPage(browser)
     setPageErrorConsoleLogger(page)
   })
 
-  afterEach(() => {
-    log(`Finished test: ${expect.getState().currentTestName}`)
-  })
+  setupTestLoggingAndScreenshots(() => page)
 
   afterAll(async () => {
     await page.close()
