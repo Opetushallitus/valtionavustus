@@ -792,7 +792,7 @@ export async function clearAndSet(page: Page, selector: string, text: string) {
 export async function clickFormSaveAndWait(page: Page) {
   await Promise.all([
     waitForSaveStatusSaving(page),
-    clickElementWithText(page, "button", "Tallenna")
+    clickElement(page, "#saveForm:not(disabled)")
   ])
   await waitForSaveStatusOk(page)
 }
