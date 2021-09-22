@@ -252,7 +252,7 @@ const getBatchTaKpTili = getSentPaymentBatchColumn(8)
 const getTiliönti = getSentPaymentBatchColumn(9)
 
 async function gotoLähetetytMaksatuksetTab(page: Page): Promise<void> {
-  await page.click('[data-test-id=sent-payments-tab]')
+  await clickElement(page, '[data-test-id=sent-payments-tab]')
 }
 
 async function reloadPaymentPage(page: Page) {

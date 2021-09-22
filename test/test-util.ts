@@ -1049,7 +1049,7 @@ export async function makePaatosForMuutoshakemusIfNotExists(page: Page, status: 
     return
   }
 
-  await page.click(`label[for="${status}"]`)
+  await clickElement(page, `label[for="${status}"]`)
   await selectVakioperusteluInFinnish(page)
   await saveMuutoshakemus(page)
 }
@@ -1142,7 +1142,7 @@ export async function fillTäydennyspyyntöField(page: Page, täydennyspyyntöTe
 export async function clickToSendTäydennyspyyntö(page: Page, avustushakuID: number, hakemusID: number) {
   await Promise.all([
     page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/change-requests`),
-    page.click("[data-test-id='täydennyspyyntö__lähetä']"),
+    clickElement(page, "[data-test-id='täydennyspyyntö__lähetä']"),
   ])
 }
 

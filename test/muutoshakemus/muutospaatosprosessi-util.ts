@@ -379,14 +379,14 @@ export async function fillMuutoshakemusPaatosWithVakioperustelu(page: Page, avus
   const searchParams = disableOsiokohtainen ? '?muutoshakemus-osiokohtainen-hyvaksynta=false' : ''
   await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/${searchParams}`)
   await clickElement(page, 'span.muutoshakemus-tab')
-  await page.click(`label[for="accepted_with_changes"]`)
+  await clickElement(page, `label[for="accepted_with_changes"]`)
   await setCalendarDate(page, jatkoaika)
   await selectVakioperusteluInFinnish(page)
 }
 
 export async function fillAndSendMuutoshakemusDecision(page: Page, status?: 'accepted' | 'accepted_with_changes' | 'rejected', jatkoaika?: string, budget?: BudgetAmount) {
   const selectedStatus = status ?? 'accepted'
-  await page.click(`label[for="${selectedStatus}"]`)
+  await clickElement(page, `label[for="${selectedStatus}"]`)
   jatkoaika && await setCalendarDate(page, jatkoaika)
   budget && await fillMuutoshakemusBudgetAmount(page, budget)
   await selectVakioperusteluInFinnish(page)
@@ -402,13 +402,13 @@ interface FillOpts {
 export async function fillOsiotAndSendMuutoshakemusDecision(page: Page, opts: FillOpts) {
  const {jatkoaika, budget, selectVakioperustelu = true} = opts ?? {}
   if (jatkoaika?.status) {
-    await page.click(`label[for="haen-kayttoajan-pidennysta-${jatkoaika.status}"]`)
+    await clickElement(page, `label[for="haen-kayttoajan-pidennysta-${jatkoaika.status}"]`)
   }
   if (jatkoaika?.value) {
     await setCalendarDate(page, jatkoaika?.value)
   }
   if (budget?.status) {
-    await page.click(`label[for="talousarvio-${budget.status}"]`)
+    await clickElement(page, `label[for="talousarvio-${budget.status}"]`)
   }
   if (budget?.value) {
     await fillMuutoshakemusBudgetAmount(page, budget.value)

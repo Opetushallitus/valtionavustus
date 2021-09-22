@@ -174,7 +174,7 @@ describe('Muutospäätösprosessi', () => {
       await gotoHaunTiedot(page, avustushakuID)
       await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle0' }),
-        page.click('aria/Kopioi uuden pohjaksi'),
+        clickElement(page, 'aria/Kopioi uuden pohjaksi'),
       ])
 
       expect(await page.$('[data-test-id="muutoshakukelvoton-warning"]')).toBeNull()
@@ -245,7 +245,7 @@ etunimi.sukunimi@oph.fi`)
     it('does not show link to muutoshaku in email preview', async () => {
       await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
       expect(await textContent(page, '.decision-email-content'))
-        .toEqual(` - 
+        .toEqual(` -
 
 ${haku.avustushakuName}
 
@@ -367,7 +367,7 @@ etunimi.sukunimi@oph.fi`)
 
         describe('When virkailija clicks muutoshakemus status field', () => {
           beforeAll(async () => {
-            await page.click(muutoshakemusStatusField())
+            await clickElement(page, muutoshakemusStatusField())
           })
 
           it('Shows the number of pending muutoshakemus in red', async () => {
@@ -1146,7 +1146,7 @@ etunimi.sukunimi@oph.fi
                 await navigateToAkaanKaupunkiHakemus(page)
                 await page.waitForSelector('[data-test-id="hakemus-printable-link"]')
                 const printableVersionTab = new Promise(x => browser.once('targetcreated', target => x(target.page()))) as Promise<Page>
-                await page.click('[data-test-id="hakemus-printable-link"]')
+                await clickElement(page, '[data-test-id="hakemus-printable-link"]')
 
                 printablePage = await printableVersionTab
                 await printablePage.waitForSelector('#applicant-name div')
@@ -1188,7 +1188,7 @@ etunimi.sukunimi@oph.fi
                 emailOnPage = await getElementInnerText(page, ".answer-new-value #primary-email div")
 
                 page.on('dialog', async dialog => { dialog.accept() })
-                await page.click('[data-test-id=resend-paatos]')
+                await clickElement(page, '[data-test-id=resend-paatos]')
                 await page.waitForSelector('[data-test-id=paatos-resent]')
 
                 // reload to see possibly changed values
