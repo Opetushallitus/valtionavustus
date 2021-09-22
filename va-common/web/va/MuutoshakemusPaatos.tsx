@@ -93,7 +93,7 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
       </section>
       <section className="muutoshakemus-paatos__section">
         <div data-test-id="muutoshakemus-paatos-section-title">{t.muutoshakemus.paatos.paatos}</div>
-        <div data-test-id="paatos-paatos">{t.muutoshakemus.paatos.status[paatos.status]}</div>
+        {paatos.status && <div data-test-id="paatos-paatos">{t.muutoshakemus.paatos.status[paatos.status]}</div>}
       </section>
 
       <HyvaksytytMuutokset

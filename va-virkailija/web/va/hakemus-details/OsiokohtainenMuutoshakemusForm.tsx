@@ -49,6 +49,9 @@ import HttpUtil from "soresu-form/web/HttpUtil";
 import {omit} from "lodash";
 import HakemustenArviointiController from "../HakemustenArviointiController";
 
+import 'soresu-form/web/form/style/main.less'
+import '../style/main.less'
+
 moment.locale('fi')
 const localizer = new MomentLocalizer(moment)
 
@@ -228,7 +231,7 @@ export const OsiokohtainenMuutoshakemusForm = ({avustushaku, currentTalousarvio,
         }>
         <MuutosTaloudenKayttosuunnitelmaan
           currentTalousarvio={currentTalousarvio}
-          newTalousarvio={talousarvio}
+          newTalousarvio={muutoshakemus.talousarvio}
           status={muutoshakemus["paatos-status-talousarvio"]}
           reason={muutoshakemus["talousarvio-perustelut"]}/>
       </MuutoshakemusSection>

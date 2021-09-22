@@ -19,11 +19,11 @@ import {
   defaultBudget,
   createRandomHakuValues,
   clickElementWithText,
-  setupTestLoggingAndScreenshots, saveMuutoshakemus, typePerustelu,
+  setupTestLoggingAndScreenshots, saveMuutoshakemus,
 } from '../test-util'
 import {
+  fillAndSendMuutoshakemusDecision,
   fillMuutoshakemusBudgetAmount,
-  fillOsiotAndSendMuutoshakemusDecision,
   navigateToLatestMuutoshakemus,
   navigateToLatestMuutoshakemusPaatos,
   navigateToNthMuutoshakemus,
@@ -37,7 +37,7 @@ import {
 } from './muutoshakemus-util'
 import { openPaatosPreview } from '../hakemuksen-arviointi/hakemuksen-arviointi-util'
 
-const twoMinutes = 120000
+jest.setTimeout(400_000)
 
 type TalousarvioFormInputs = Array<{ name: string, amount: number }>
 type TalousarvioFormTable = Array<{ description: string, amount: string }>
@@ -71,7 +71,7 @@ export const budget: Budget = {
   selfFinancing: '1',
 }
 
-describe('Talousarvion muuttaminen', () => {
+describe('legacy Talousarvion muuttaminen', () => {
   let browser: Browser
   let page: Page
 
@@ -139,7 +139,7 @@ describe('Talousarvion muuttaminen', () => {
       avustushakuID = avustushakuId
       hakemusID = hakemusId
       emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
-    }, twoMinutes)
+    })
 
     it('päätös email contains a link to muutoshakemus', async () => {
       emails.forEach(email => {
@@ -158,7 +158,7 @@ describe('Talousarvion muuttaminen', () => {
     })
 
     it('seuranta tab shows the accepted lump sum', async () => {
-      await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
+      await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
       await clickElement(page, '[data-test-id=tab-seuranta]')
       const grantedTotal = await getElementInnerText(page, '[data-test-id=granted-total]')
       expect(grantedTotal).toEqual("100000")
@@ -197,7 +197,7 @@ describe('Talousarvion muuttaminen', () => {
       const { avustushakuID: avustushakuId, hakemusID: hakemusId } = await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(page, haku, answers, budget)
       avustushakuID = avustushakuId
       hakemusID = hakemusId
-    }, twoMinutes)
+    })
 
     describe('And muutoshakemus #1 has been submitted with jatkoaika and budget changes', () => {
       const muutoshakemus1Budget: BudgetAmount = {
@@ -219,7 +219,7 @@ describe('Talousarvion muuttaminen', () => {
 
       beforeAll(async () => {
         await navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges(page, hakemusID, jatkoaika, muutoshakemus1Budget, muutoshakemus1Perustelut)
-      }, twoMinutes)
+      })
 
       async function getNewHakemusExistingBudget() {
         return getNewHakemusBudget('current')
@@ -283,7 +283,7 @@ describe('Talousarvion muuttaminen', () => {
       })
 
       it('virkailija seuranta tab shows the granted budget as accepted by OPH', async () => {
-        await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
+        await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
         await clickElement(page, '[data-test-id=tab-seuranta]')
         await Promise.all(Object.keys(budget.description).map(async (k: string) => {
           const budgetAmount = budget.amount[k as keyof BudgetAmount]
@@ -310,12 +310,9 @@ describe('Talousarvion muuttaminen', () => {
         }
 
         beforeAll(async () => {
-          await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
-          await fillOsiotAndSendMuutoshakemusDecision(page, {
-            jatkoaika: {status: 'accepted_with_changes', value: '01.01.2099'},
-            budget: {status: 'accepted_with_changes', value: acceptedBudget}
-          })
-        }, twoMinutes)
+          await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
+          await fillAndSendMuutoshakemusDecision(page, 'accepted_with_changes', '01.01.2099', acceptedBudget)
+        })
 
         it('newest approved budget is prefilled on the new muutoshakemus form', async () => {
           await navigateToHakijaMuutoshakemusPage(page, hakemusID)
@@ -333,7 +330,7 @@ describe('Talousarvion muuttaminen', () => {
         })
 
         it('virkailija seuranta tab shows the accepted muutoshakemus budget as accepted by OPH', async () => {
-          await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
+          await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
           await clickElement(page, '[data-test-id=tab-seuranta]')
           await Promise.all(Object.keys(budget.description).map(async (k: string) => {
             const grantedSelector = `[data-test-id=${k}-costs-row] td.granted-amount-column`
@@ -384,17 +381,17 @@ describe('Talousarvion muuttaminen', () => {
             expect(title).toEqual('Asia')
           })
 
-          it.skip('Decision section title is shown in finnish', async () => {
+          it('Decision section title is shown in finnish', async () => {
             const title = await getElementInnerText(page, '[data-test-id="muutoshakemus-paatos-section-title"]')
             expect(title).toEqual('Päätös')
           })
 
-          it.skip('Decision is shown in finnish', async () => {
+          it('Decision is shown in finnish', async () => {
             const title = await getElementInnerText(page, '[data-test-id="paatos-paatos"]')
             expect(title).toEqual('Opetushallitus on hyväksynyt haetut muutokset tässä päätöksessä kuvatuin muutoksin.')
           })
 
-          it.skip('Accepted changes title is shown in finnish', async () => {
+          it('Accepted changes title is shown in finnish', async () => {
             const title = await getElementInnerText(page, '[data-test-id="accepted-changes-title"]')
             expect(title).toEqual('Hyväksytyt muutokset')
           })
@@ -469,7 +466,7 @@ describe('Talousarvion muuttaminen', () => {
 
           beforeAll(async () => {
             await navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges(page, hakemusID, jatkoaika, muutoshakemus2Budget, muutoshakemus2Perustelut)
-          }, twoMinutes)
+          })
 
           it('accepted budget changes from muutoshakemus #1 are displayed as current budget', async () => {
             expect(await getNewHakemusExistingBudget()).toMatchObject(acceptedBudget)
@@ -495,7 +492,7 @@ describe('Talousarvion muuttaminen', () => {
 
           describe('When virkailija views muutoshakemus #1', () => {
             beforeAll(async () => {
-              await navigateToNthMuutoshakemus(page, avustushakuID, hakemusID, 1)
+              await navigateToNthMuutoshakemus(page, avustushakuID, hakemusID, 1, true)
             })
 
             it('budget is shown as a decision instead of a muutoshakemus', async () => {
@@ -517,7 +514,7 @@ describe('Talousarvion muuttaminen', () => {
 
           describe('When virkailija views unapproved muutoshakemus #2', () => {
             beforeAll(async () => {
-              await navigateToNthMuutoshakemus(page, avustushakuID, hakemusID, 2)
+              await navigateToNthMuutoshakemus(page, avustushakuID, hakemusID, 2, true)
             })
 
             it('Budget changes are displayed as linethrough', async () => {
@@ -537,12 +534,12 @@ describe('Talousarvion muuttaminen', () => {
             })
           })
 
-          describe('And muutoshakemus #2 budget has been rejected', () => {
+          describe('And muutoshakemus #2 has been rejected', () => {
             beforeAll(async () => {
-              await navigateToNthMuutoshakemus(page, avustushakuID, hakemusID, 2)
-              await typePerustelu(page, 'Budjettimuutosta ei hyväksytä')
-              await fillOsiotAndSendMuutoshakemusDecision(page, {budget: {status: 'rejected'}, selectVakioperustelu: false})
-            }, twoMinutes)
+              await navigateToNthMuutoshakemus(page, avustushakuID, hakemusID, 2, true)
+              await selectVakioperusteluInFinnish(page)
+              await fillAndSendMuutoshakemusDecision(page, 'rejected')
+            })
 
             it('budget is shown as a muutoshakemus instead of a decision', async () => {
               const currentBudgetHeader = await getElementInnerText(page, '.currentBudget')
@@ -581,7 +578,7 @@ describe('Talousarvion muuttaminen', () => {
       hakemusID = hakemusId
       await navigateToHakijaMuutoshakemusPage(page, hakemusID)
       await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
-    }, twoMinutes)
+    })
 
     it('ja oppia mahdollisuudesta tehdä muutoksia talouden käyttösuunnitelmaa hakemuksen päätöksen s.postista', async () => {
       const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
@@ -701,8 +698,8 @@ describe('Talousarvion muuttaminen', () => {
       await clearAndType(page, 'input[name="talousarvio.steamship-costs-row"]', '0')
       await clearAndType(page, '#perustelut-taloudenKayttosuunnitelmanPerustelut', 'perustelu')
       await clickElement(page, "#send-muutospyynto-button")
-      await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
-    }, twoMinutes)
+      await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
+    })
 
     it('sees the current budget', async () => {
       const budgetRowSelector = '[data-test-id=meno-input-row]'
@@ -739,7 +736,7 @@ describe('Talousarvion muuttaminen', () => {
       expect(perustelu).toEqual('perustelu')
     })
 
-    describe.skip('opens the paatos preview when "accepted with changes" is chosen', () => {
+    describe('opens the paatos preview when "accepted with changes" is chosen', () => {
       const budget: BudgetAmount = {
         personnel: '200000',
         material: '3001',
@@ -789,7 +786,7 @@ describe('Talousarvion muuttaminen', () => {
       })
     })
 
-    describe.skip('opens the paatos preview when "accepted" is chosen', () => {
+    describe('opens the paatos preview when "accepted" is chosen', () => {
       beforeAll(async () => {
         await clickElement(page, 'label[for=accepted]')
         await openPaatosPreview(page)
@@ -828,7 +825,7 @@ describe('Talousarvion muuttaminen', () => {
       })
     })
 
-    describe.skip('opens the paatos preview when "rejected" is chosen', () => {
+    describe('opens the paatos preview when "rejected" is chosen', () => {
       beforeAll(async () => {
         await clickElement(page, 'label[for=rejected]')
         await openPaatosPreview(page)
@@ -846,6 +843,7 @@ describe('Talousarvion muuttaminen', () => {
 
     describe('accepts the muutoshakemus', () => {
       beforeAll(async () => {
+        await clickElement(page, 'label[for=accepted]')
         await selectVakioperusteluInFinnish(page)
         await saveMuutoshakemus(page)
       })
@@ -888,7 +886,7 @@ describe('Talousarvion muuttaminen', () => {
       describe('Hakija views the muutoshakemus päätös', () => {
         beforeAll(async () => {
           await navigateToLatestMuutoshakemusPaatos(page, hakemusID)
-        }, twoMinutes)
+        })
 
         it('budget change is mentioned in the info section', async () => {
           const budgetChangeText = await getElementInnerText(page, '[data-test-id="budget-change"]')

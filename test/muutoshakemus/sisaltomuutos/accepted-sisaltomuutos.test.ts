@@ -156,8 +156,9 @@ describe('Sisaltomuutos (accepted)', () => {
         await clickElement(page, '[data-test-id="muutoshakemus-submit"]:not([disabled])')
       }, 60000)
 
-      it.skip('shows muutoshakemus as käsitelty', async () => {
-
+      it('shows muutoshakemus as käsitelty', async () => {
+        const statusText = await textContent(page, '[data-test-id="paatos-status-text"]')
+        expect(statusText).toEqual('Käsitelty')
       })
 
       it('shows the original application text', async () => {

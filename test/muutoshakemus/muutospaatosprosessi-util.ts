@@ -39,6 +39,7 @@ import {
   VIRKAILIJA_URL,
   waitUntilMinEmails
 } from "../test-util"
+import {PaatosStatus} from "../../va-virkailija/web/va/hakemus-details/hakemusTypes";
 
 export interface Answers {
   projectName: string
@@ -319,7 +320,7 @@ export async function validateMuutoshakemusPaatosCommonValues(page: Page) {
   expect(info).toEqual('_ valtionavustussanteri.horttanainen@reaktor.com029 533 1000 (vaihde)')
 }
 
-export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, disableOsiokohtainen = true) {
+export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, disableOsiokohtainen = false) {
   const searchParams = disableOsiokohtainen ? '?muutoshakemus-osiokohtainen-hyvaksynta=false' : ''
   await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/${searchParams}`)
   await page.waitForSelector('#tab-content')
@@ -389,6 +390,32 @@ export async function fillAndSendMuutoshakemusDecision(page: Page, status?: 'acc
   jatkoaika && await setCalendarDate(page, jatkoaika)
   budget && await fillMuutoshakemusBudgetAmount(page, budget)
   await selectVakioperusteluInFinnish(page)
+  await saveMuutoshakemus(page)
+}
+
+interface FillOpts {
+  jatkoaika?: { status: PaatosStatus; value?: string }
+  budget?: {status: PaatosStatus; value?: BudgetAmount }
+  selectVakioperustelu?: boolean
+}
+
+export async function fillOsiotAndSendMuutoshakemusDecision(page: Page, opts: FillOpts) {
+ const {jatkoaika, budget, selectVakioperustelu = true} = opts ?? {}
+  if (jatkoaika?.status) {
+    await page.click(`label[for="haen-kayttoajan-pidennysta-${jatkoaika.status}"]`)
+  }
+  if (jatkoaika?.value) {
+    await setCalendarDate(page, jatkoaika?.value)
+  }
+  if (budget?.status) {
+    await page.click(`label[for="talousarvio-${budget.status}"]`)
+  }
+  if (budget?.value) {
+    await fillMuutoshakemusBudgetAmount(page, budget.value)
+  }
+  if (selectVakioperustelu) {
+    await selectVakioperusteluInFinnish(page)
+  }
   await saveMuutoshakemus(page)
 }
 

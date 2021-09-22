@@ -48,7 +48,7 @@ export interface Muutoshakemus {
 
 export interface Paatos {
   id: number
-  status: "accepted" | "rejected" | "accepted_with_changes"
+  status?: MuutoshakemusStatus
   decider: string
   reason: string
   talousarvio?: Talousarvio
@@ -56,6 +56,9 @@ export interface Paatos {
   "user-key": string
   "created-at": string
   "updated-at": string
+  "paatos-status-jatkoaika"?: MuutoshakemusStatus
+  "paatos-status-talousarvio"?: MuutoshakemusStatus
+  "paatos-status-sisaltomuutos"?: MuutoshakemusStatus
 }
 
 export interface Meno {

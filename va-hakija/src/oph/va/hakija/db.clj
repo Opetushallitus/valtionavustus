@@ -155,6 +155,9 @@
                             -- Tää toimii ns. oikein eli wanhalla tavalla kun kaikille osioille on
                             -- annettu sama hyväksytty/hylätty päätös
                             coalesce(pj.status, pt.status, ps.status) as status,
+                            pj.status as paatos_status_jatkoaika,
+                            pt.status as paatos_status_talousarvio,
+                            ps.status as paatos_status_sisaltomuutos,
                             user_key,
                             reason,
                             created_at,

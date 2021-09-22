@@ -3,6 +3,7 @@ import React from 'react'
 import { Meno, MuutoshakemusStatus, Talousarvio } from 'va-common/web/va/types/muutoshakemus'
 import { useTranslations } from '../i18n/TranslationContext'
 import {isAcceptedWithOrWithoutChanges} from "../Muutoshakemus";
+import {OsioPaatos} from "../OsioPaatos";
 
 import './talous.less'
 
@@ -34,10 +35,9 @@ export type MuutosTaloudenKayttosuunnitelmaanProps = {
   newTalousarvio: Talousarvio
   status: MuutoshakemusStatus | undefined
   reason?: string
-  paatos?: boolean
 }
 
-export const TalousarvioTable = (props: MuutosTaloudenKayttosuunnitelmaanProps) => {
+export const TalousarvioTable = (props: MuutosTaloudenKayttosuunnitelmaanProps & {paatos?: boolean}) => {
   const { currentTalousarvio, status, newTalousarvio, paatos } = props
   const { t } = useTranslations()
   const muutoshakemusSum = newTalousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
@@ -58,7 +58,6 @@ export const TalousarvioTable = (props: MuutosTaloudenKayttosuunnitelmaanProps) 
       </div>
       <hr className="muutoshakemus_talousarvio_horizontalSeparator" />
       <div className="muutoshakemus_talousarvio_row">
-        <div className="description" data-test-id="expenses-total-title">{paatos && <b>{t.muutosTaloudenKayttosuunnitelmaan.expensesTotal}</b>}</div>
         <div className="existingAmount" data-test-id="current-sum"><b>{currentSum} €</b></div>
         <div className="separator noborder" />
         <div className="changedAmount" data-test-id="muutoshakemus-sum"><b>{muutoshakemusSum}</b></div>
@@ -69,7 +68,7 @@ export const TalousarvioTable = (props: MuutosTaloudenKayttosuunnitelmaanProps) 
 }
 
 export const MuutosTaloudenKayttosuunnitelmaan = (props: MuutosTaloudenKayttosuunnitelmaanProps) => {
-  const { reason } = props
+  const { reason, status } = props
   const { t } = useTranslations()
 
   return (
@@ -79,6 +78,11 @@ export const MuutosTaloudenKayttosuunnitelmaan = (props: MuutosTaloudenKayttosuu
         <h4 className="muutoshakemus__header" data-test-id="reasoning-title">{t.muutosTaloudenKayttosuunnitelmaan.applicantReasoning}</h4>
         <div className="muutoshakemus-description-box" data-test-id="muutoshakemus-talousarvio-perustelu">{reason}</div>
       </div>
+      {status && (
+        <div className="muutoshakemus-row">
+          <OsioPaatos osio="paatos-talousarvio" paatosStatus={status} />
+        </div>
+       )}
     </React.Fragment>
   )
 }

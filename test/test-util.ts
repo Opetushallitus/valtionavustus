@@ -1058,6 +1058,10 @@ export async function selectVakioperusteluInFinnish(page: Page): Promise<void> {
   await clickElementWithText(page, 'a', 'Lisää vakioperustelu suomeksi')
 }
 
+export async function typePerustelu(page: Page, perustelu: string) {
+  await clearAndType(page, '#reason', perustelu)
+}
+
 /** @deprecated Tää tekee jonku hädin tuskin toimivan avustushaun :DD */
 export async function ratkaiseAvustushaku(page: Page, hakuName?: string, vaCodes?: VaCodeValues) {
   const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus(), hakuName, vaCodes)

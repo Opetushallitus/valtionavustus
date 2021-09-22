@@ -52,6 +52,9 @@
     (s/optional-key :hyvaksytyt-sisaltomuutokset) (s/maybe s/Str)
     (s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
     (s/optional-key :talousarvio) (s/maybe [Meno])
+    (s/optional-key :paatos-status-jatkoaika) (s/maybe s/Str)
+    (s/optional-key :paatos-status-talousarvio) (s/maybe s/Str)
+    (s/optional-key :paatos-status-sisaltomuutos) (s/maybe s/Str)
     :decider s/Str
   })
 

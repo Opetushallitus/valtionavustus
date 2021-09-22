@@ -70,6 +70,27 @@ export const translationsFi = {
         rejected: 'Opetushallitus on hylännyt haetut muutokset.',
         accepted_with_changes: 'Opetushallitus on hyväksynyt haetut muutokset tässä päätöksessä kuvatuin muutoksin.',
       },
+      'paatos-talousarvio': {
+        status: {
+          accepted: 'Hyväksytään haetut muutokset budjettiin',
+          rejected: 'Hylätään haetut muutokset budjettiin',
+          accepted_with_changes: 'Hyväksytään haetut muutokset budjettiin muutettuna',
+        }
+      },
+      'paatos-jatkoaika': {
+        status: {
+          accepted: 'Hyväksytään haetut muutokset käyttöaikaan',
+          rejected: 'Hylätään haetut muutokset käyttöaikaan',
+          accepted_with_changes: 'Hyväksytään haetut muutokset käyttöaikaan muutettuna',
+        }
+      },
+      'paatos-sisaltomuutos': {
+        status: {
+          accepted: 'Hyväksytään haetut muutokset sisältöön ja toteutustapaan',
+          rejected: 'Hylätään haetut muutokset sisältöön ja toteutustapaan',
+          accepted_with_changes: 'Hyväksytään haetut muutokset sisältöön ja toteutustapaan muutettuna',
+        }
+      },
       vakioperustelut: {
         accepted: 'Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt hyväksyä haetut muutokset hakemuksen mukaisesti.',
         accepted_with_changes: 'Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt hyväksyä haetut muutokset muutettuna, siten kuin ne kuvataan tässä avustuspäätöksessä.',
@@ -142,6 +163,27 @@ const translationsSv: Translations = {
         accepted: 'Utbildningsstyrelsen har godkänt ändringarna enligt ändringsansökan.',
         accepted_with_changes: 'Utbildningsstyrelsen har godkänt ändringarna med vissa justeringar som beskrivs i detta beslut.',
         rejected: 'Utbildningsstyrelsen har inte godkänt ändringarna enligt ändringsansökan.',
+      },
+      'paatos-talousarvio': {
+        status: {
+          accepted: 'De ändringar som ni ansökt om i budgeten godkänns',
+          rejected: 'De ändringar som ni ansökt om i budgeten godkänns inte',
+          accepted_with_changes: 'De ändringar som ni ansökt om i budgeten godkänns med vissa ändringar',
+        }
+      },
+      'paatos-jatkoaika': {
+        status: {
+          accepted: 'De ändringar som ni ansökt om gällande understödets användningstid godkänns',
+          rejected: 'De ändringar som ni ansökt om gällande understödets användningstid godkänns inte',
+          accepted_with_changes: 'De ändringar som ni ansökt om gällande understödets användningstid godkänns med vissa ändringar',
+        }
+      },
+      'paatos-sisaltomuutos': {
+        status: {
+          accepted: 'De ändringar som ni ansökt om i projektets innehåll och genomförande godkänns',
+          rejected: 'De ändringar som ni ansökt om i projektets innehåll och genomförande godkänns inte',
+          accepted_with_changes: 'De ändringar som ni ansökt om i projektets innehåll och genomförande godkänns med vissa ändringar',
+        }
       },
       vakioperustelut: {
         accepted: 'Utbildningsstyrelsen har bedömt ansökan. Utbildningsstyrelsen har utifrån en bedömning som gjorts av sakkunniga och efter övervägande beslutat att godkänna ändringarna i enlighet med ändringsansökan.',
