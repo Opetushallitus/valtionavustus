@@ -1162,7 +1162,7 @@ export async function changeContactPersonEmail(page: Page, linkToMuutoshakemus: 
 export async function aria(page: Page, text: string, role?: string): Promise<ElementHandle<Element>> {
   let selector = "aria/" + text
   if (role) selector += `[role="${role}"]`
-  const element = await page.waitForSelector(selector, { visible: true })
+  const element = await page.waitForSelector(selector, { visible: true, timeout: 5000 })
   if (element === null) {
     throw new Error(`Could not find element with selector ${selector}`)
   }
