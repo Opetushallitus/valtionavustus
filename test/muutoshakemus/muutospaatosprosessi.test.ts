@@ -62,7 +62,7 @@ import {
 } from './muutoshakemus-util'
 import { openPaatosPreview } from '../hakemuksen-arviointi/hakemuksen-arviointi-util'
 
-jest.setTimeout(400_000)
+jest.setTimeout(120000)
 
 describe('Muutospäätösprosessi', () => {
   let browser: Browser
@@ -352,7 +352,7 @@ etunimi.sukunimi@oph.fi`)
 
       describe('And virkailija navigates to avustushaku', () => {
         beforeAll(async () => {
-          await navigate(page, `/avustushaku/${avustushakuID}/`)
+          await navigate(page, `/avustushaku/${avustushakuID}/?muutoshakemus-osiokohtainen-hyvaksynta=false`)
         })
 
         function muutoshakemusStatusField() {
@@ -449,7 +449,7 @@ etunimi.sukunimi@oph.fi`)
 
       describe('When virkailija rejects muutoshakemus', () => {
         beforeAll(async () => {
-          await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
+          await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID, true)
         })
 
         it('muutoshakemus has correct values', async () => {
@@ -482,7 +482,7 @@ etunimi.sukunimi@oph.fi`)
 
         describe('And virkailija navigates to avustushaku', () => {
           beforeAll(async () => {
-            await navigate(page, `/avustushaku/${avustushakuID}/`)
+            await navigate(page, `/avustushaku/${avustushakuID}/?muutoshakemus-osiokohtainen-hyvaksynta=false`)
           })
 
           it('muutoshakemus status is shown as "Hylätty"', async () => {
@@ -536,7 +536,7 @@ etunimi.sukunimi@oph.fi`)
 
         describe('And virkailija accepts the muutoshakemus', () => {
           beforeAll(async () => {
-            await makePaatosForMuutoshakemusIfNotExists(page, 'accepted', avustushakuID, hakemusID)
+            await makePaatosForMuutoshakemusIfNotExists(page, 'accepted', avustushakuID, hakemusID, true)
             await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
           })
 
@@ -600,7 +600,7 @@ etunimi.sukunimi@oph.fi
 
           describe('Navigating to avustushaku', () => {
             beforeAll(async () => {
-              await navigate(page, `/avustushaku/${avustushakuID}/`)
+              await navigate(page, `/avustushaku/${avustushakuID}/?muutoshakemus-osiokohtainen-hyvaksynta=false`)
             })
 
             it('muutoshakemus status is "hyväksytty"', async () => {
@@ -647,11 +647,11 @@ etunimi.sukunimi@oph.fi
 
         describe('And muutoshakemus #3 has been submitted and rejected and #4 has been submitted', () => {
           beforeAll(async () => {
-            await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
+            await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID, true)
 
             // create two new muutoshakemus
             await fillAndSendMuutoshakemus(page, hakemusID, muutoshakemus3)
-            await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
+            await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID, true)
             await fillAndSendMuutoshakemus(page, hakemusID, muutoshakemus4)
           })
 
@@ -768,7 +768,7 @@ etunimi.sukunimi@oph.fi
           describe('And muutoshakemus #5 has been submitted', () => {
             const muutoshakemus = { ...muutoshakemus2, ...{ jatkoaikaPerustelu: 'Voit laittaa lisäaikaa ihan omantunnon mukaan.' }}
             beforeAll(async () => {
-              await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
+              await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID, true)
               await fillAndSendMuutoshakemus(page, hakemusID, muutoshakemus)
             })
 
@@ -820,8 +820,8 @@ etunimi.sukunimi@oph.fi
                 })
 
                 it('"Hyväksytty muutettuna" is displayed to virkailija', async () => {
-                  const paatosStatusText = await page.$eval('[data-test-id="paatos-status-text"]', el => el.textContent)
-                  expect(paatosStatusText).toBe('Hyväksytty muutettuna')
+                  const paatosStatusText = await page.$eval('[data-test-id="paatos-jatkoaika"]', el => el.textContent)
+                  expect(paatosStatusText).toBe('Hyväksytään haetut muutokset käyttöaikaan muutettuna')
                 })
 
                 describe('When opening päätösdokumentti', () => {
@@ -1085,7 +1085,7 @@ etunimi.sukunimi@oph.fi
 
           describe('And virkailija navigates to avustushaku', () => {
             beforeAll(async () => {
-              await navigate(page, `/avustushaku/${avustushakuID}/`)
+              await navigate(page, `/avustushaku/${avustushakuID}/?muutoshakemus-osiokohtainen-hyvaksynta=false`)
               await Promise.all([
                 page.waitForNavigation(),
                 clickElementWithText(page, "td", "Akaan kaupunki"),

@@ -1042,8 +1042,9 @@ export async function saveMuutoshakemus(page: Page) {
   await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
 }
 
-export async function makePaatosForMuutoshakemusIfNotExists(page: Page, status: string, avustushakuID: number, hakemusID: number) {
-  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+export async function makePaatosForMuutoshakemusIfNotExists(page: Page, status: string, avustushakuID: number, hakemusID: number, disableOsiokohtainen = false) {
+  const searchParams = disableOsiokohtainen ? '?muutoshakemus-osiokohtainen-hyvaksynta=false' : ''
+  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/${searchParams}`)
   await clickElement(page, 'span.muutoshakemus-tab')
   if (await countElements(page, '[data-test-id="muutoshakemus-paatos"]')) {
     return
