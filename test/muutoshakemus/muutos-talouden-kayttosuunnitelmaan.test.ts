@@ -311,6 +311,7 @@ describe('Talousarvion muuttaminen', () => {
 
         beforeAll(async () => {
           await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
+          await page.waitForSelector('[data-test-id="muutoshakemus-sisalto"]', {visible: true, timeout: 5000})
           await fillOsiotAndSendMuutoshakemusDecision(page, {
             jatkoaika: {status: 'accepted_with_changes', value: '01.01.2099'},
             budget: {status: 'accepted_with_changes', value: acceptedBudget}
