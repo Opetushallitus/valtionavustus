@@ -245,7 +245,7 @@ etunimi.sukunimi@oph.fi`)
     it('does not show link to muutoshaku in email preview', async () => {
       await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
       expect(await textContent(page, '.decision-email-content'))
-        .toEqual(` -
+        .toEqual(` - 
 
 ${haku.avustushakuName}
 
