@@ -511,8 +511,8 @@ export async function copyEsimerkkihaku(page: Page) {
   await page.waitForTimeout(2000)
 }
 
-export async function clickElement(page: Page, selector: string) {
-  const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
+export async function clickElement(page: Page, selector: string, timeout = 5000) {
+  const element = await page.waitForSelector(selector, {visible: true, timeout})
   if (!element) throw new Error('The world is broken because visible: true should never return null')
   await element.click()
   return element

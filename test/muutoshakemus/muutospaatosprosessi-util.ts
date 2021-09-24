@@ -401,7 +401,7 @@ interface FillOpts {
 export async function fillOsiotAndSendMuutoshakemusDecision(page: Page, opts: FillOpts) {
  const {jatkoaika, budget, selectVakioperustelu = true} = opts ?? {}
   if (jatkoaika?.status) {
-    await clickElement(page, `label[for="haen-kayttoajan-pidennysta-${jatkoaika.status}"]`)
+    await clickElement(page, `label[for="haen-kayttoajan-pidennysta-${jatkoaika.status}"]`, 10000)
   }
   if (jatkoaika?.value) {
     await setCalendarDate(page, jatkoaika?.value)
