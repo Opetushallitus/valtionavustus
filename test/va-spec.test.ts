@@ -71,7 +71,7 @@ import {
   resendPäätökset,
   changeContactPersonEmail,
   randomAsiatunnus,
-  setupTestLoggingAndScreenshots,
+  setupTestLogging,
 } from './test-util'
 import {
   createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku,
@@ -96,7 +96,7 @@ describe("Puppeteer tests", () => {
     setPageErrorConsoleLogger(page)
   })
 
-  setupTestLoggingAndScreenshots(() => page)
+  setupTestLogging()
 
   afterAll(async () => {
     await page.close()

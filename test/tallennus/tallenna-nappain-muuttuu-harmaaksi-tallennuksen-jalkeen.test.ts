@@ -6,7 +6,7 @@ import {
   getFirstPage,
   mkBrowser,
   setPageErrorConsoleLogger,
-  setupTestLoggingAndScreenshots,
+  setupTestLogging,
   clickFormSaveAndWait,
   clearAndSet,
   navigate,
@@ -37,9 +37,9 @@ describe("Tallennus", () => {
     await browser.close()
   })
 
-  setupTestLoggingAndScreenshots(() => page)
+  setupTestLogging()
 
-  beforeEach(async () => {
+    beforeEach(async () => {
     const randomHakuValues = createRandomHakuValues("Muutoshakukelpoisuus")
     const codes = await createRandomCodeValues(page)
     const { avustushakuID } = await createMuutoshakemusEnabledHaku(page, randomHakuValues.registerNumber, randomHakuValues.avustushakuName, codes)

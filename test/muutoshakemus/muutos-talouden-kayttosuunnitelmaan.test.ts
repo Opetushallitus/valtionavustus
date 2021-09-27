@@ -19,7 +19,7 @@ import {
   defaultBudget,
   createRandomHakuValues,
   clickElementWithText,
-  setupTestLoggingAndScreenshots, saveMuutoshakemus, typePerustelu,
+  setupTestLogging, saveMuutoshakemus, typePerustelu,
 } from '../test-util'
 import {
   fillMuutoshakemusBudgetAmount,
@@ -81,7 +81,7 @@ describe('Talousarvion muuttaminen', () => {
     setPageErrorConsoleLogger(page)
   })
 
-  setupTestLoggingAndScreenshots(() => page)
+  setupTestLogging()
 
   afterAll(async () => {
     await page.close()

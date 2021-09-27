@@ -6,7 +6,7 @@ import {
   getFirstPage,
   mkBrowser,
   setPageErrorConsoleLogger,
-  setupTestLoggingAndScreenshots,
+  setupTestLogging,
   clickFormSaveAndWait,
   clearAndSet,
   clickElementWithTestId,
@@ -40,9 +40,9 @@ describe("Muutoshakukelpoisuus", () => {
     await browser.close()
   })
 
-  setupTestLoggingAndScreenshots(() => page)
+  setupTestLogging()
 
-  beforeEach(async () => {
+    beforeEach(async () => {
     const randomHakuValues = createRandomHakuValues("Muutoshakukelpoisuus")
     const codes = await createRandomCodeValues(page)
     const { avustushakuID } = await createMuutoshakemusEnabledHaku(page, randomHakuValues.registerNumber, randomHakuValues.avustushakuName, codes)
@@ -71,7 +71,7 @@ describe("Muutoshakukelpoisuus", () => {
     await navigate(page, `/admin/form-editor/?avustushaku=${avustushakuId}`)
     await clearAndSet(page, ".form-json-editor textarea", puuttuvaYhteyshenkilonNimiJaPuhelinnumeroJson)
     await clickFormSaveAndWait(page)
-    
+
     const warningBannerText = await getElementInnerText(page,  '[data-test-id="muutoshakukelpoisuus-warning"]')
 
     expect(warningBannerText).toEqual("Lomakkeesta puuttuu 2 muutoshakemukselle tarpeellista kenttää. Muutoshaku ei ole mahdollista.")

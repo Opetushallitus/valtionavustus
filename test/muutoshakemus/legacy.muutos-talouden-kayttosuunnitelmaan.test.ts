@@ -19,7 +19,7 @@ import {
   defaultBudget,
   createRandomHakuValues,
   clickElementWithText,
-  setupTestLoggingAndScreenshots, saveMuutoshakemus,
+  setupTestLogging, saveMuutoshakemus,
 } from '../test-util'
 import {
   fillAndSendMuutoshakemusDecision,
@@ -81,7 +81,7 @@ describe('legacy Talousarvion muuttaminen', () => {
     setPageErrorConsoleLogger(page)
   })
 
-  setupTestLoggingAndScreenshots(() => page)
+  setupTestLogging()
 
   afterAll(async () => {
     await page.close()

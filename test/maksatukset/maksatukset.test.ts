@@ -12,7 +12,7 @@ import {
   mkBrowser,
   navigate,
   setPageErrorConsoleLogger,
-  setupTestLoggingAndScreenshots,
+  setupTestLogging,
   VIRKAILIJA_URL,
   waitForClojureScriptLoadingDialogHidden,
   waitForClojureScriptLoadingDialogVisible,
@@ -44,7 +44,7 @@ describe("Maksatukset", () => {
     await browser.close()
   })
 
-  setupTestLoggingAndScreenshots(() => page)
+  setupTestLogging()
 
   it('uses correct OVT when the operational unit is Palvelukeskus (6600105300)', async () => {
     const codeValues = { operationalUnit: '6600105300', operation: '3425324634', project: '523452346' }

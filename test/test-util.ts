@@ -200,9 +200,18 @@ export function mkBrowser() {
     defaultViewport: { width: 1920, height: 1080 },
   })
 }
-
-export const getFirstPage = (browser: Browser) =>
-  browser.pages().then(pages => pages[0])
+declare global {
+  namespace NodeJS {
+    interface Global {
+      puppeteerPage?: Page;
+    }
+  }
+}
+export const getFirstPage = async (browser: Browser) => {
+  const firstPage: Page = await browser.pages().then(pages => pages[0])
+  global.puppeteerPage = firstPage
+  return firstPage
+}
 
 
 export async function navigate(page: Page, path: string, waitForOptions?: WaitForOptions) {
@@ -1170,43 +1179,8 @@ export async function aria(page: Page, text: string, role?: string): Promise<Ele
   return element
 }
 
-async function saveScreenshot(page: Page, currentTest: string) {
-  const dir = `${__dirname}/screenshots`
-  function toFileName(s: string) {
-    return s.replace(/[^a-z0-9]/gi, '_').toLowerCase()
-  }
-
-  function makeScreenshotDirectoryIfNotExists() {
-    if (!fs.existsSync(dir)){
-      fs.mkdirSync(dir, {recursive: true})
-    }
-  }
-
-  if (!page) {
-    log('Page is not defined, cannot take screenshot')
-    return
-  }
-
-  makeScreenshotDirectoryIfNotExists()
-  const path = `${dir}/${toFileName(currentTest)}.png`
-  log(`Saving Puppeteer screenshot to ${path}`)
-  await page.screenshot({ path, fullPage: true })
-}
-
-export function setupTestLoggingAndScreenshots(getPage: () => Page) {
+export function setupTestLogging() {
   beforeEach(() => {
     log(`Starting test: ${expect.getState().currentTestName}`)
-  })
-
-  afterEach(async () => {
-    const currentTestName = expect.getState().currentTestName
-    const previousTestFailed = (global as any).previousTestFailed
-    const previousHookFailed = (global as any).previousHookFailed
-    if (previousHookFailed) {
-      await saveScreenshot(getPage(), `hook-${currentTestName}`)
-    }
-    if (previousTestFailed) {
-      await saveScreenshot(getPage(), currentTestName)
-    }
   })
 }
