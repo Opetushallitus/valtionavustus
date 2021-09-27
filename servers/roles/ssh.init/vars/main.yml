@@ -5,6 +5,9 @@ adminusers:
   maximilian:
     state: absent
     name: Maximilian Remming
+  vllle:
+    state: present
+    name: Ville Aaltonen
   tokarls:
     state: present
     name: Tomi Karlstedt
