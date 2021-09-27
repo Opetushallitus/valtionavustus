@@ -23,6 +23,8 @@
  :contact-person-name-in-pitkaviite {:enabled? true}
  :va-users {:use-cache? false }
  :tasmaytysraportti-create {:enabled? true}
+ :allow-overriding-feature-flag-from-url-params {:enabled? true}
+ :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? true}
  :db {:server-name "va-postgres"
       :database-name "va-dev"}
  :test-apis {:enabled? true}}
