@@ -141,6 +141,11 @@
         content [:span [:p (str (translate :ensimmainen-kayttopaiva) " " first-day)] [:p (str (translate :viimeinen-kayttopaiva) " " last-day)]]]
     (section :valtionavustuksen-kayttoaika content translate false)))
 
+(defn html-escape [value]
+  (if (map? value)
+    (reduce (fn [a i] (merge a i)) {} (map (fn [[k v]] [k (html-escape v)]) value))
+    {:html value}))
+
 (defn paatos-html [hakemus-id]
   (let [haku-data (hakudata/get-combined-paatos-data hakemus-id)
         avustushaku (:avustushaku haku-data)
@@ -217,7 +222,7 @@
                 :has-koulutusosio              has-koulutusosio
                 :oppilaitokset                 oppilaitokset
                 }
-        body (render template params)]
+        body (render template (html-escape params))]
     body))
 
 (compojure-api/defroutes decision-routes
