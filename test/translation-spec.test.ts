@@ -23,7 +23,7 @@ import {
 } from './test-util'
 import {
   Answers,
-  fillAndSendMuutoshakemusDecision,
+  fillAndSendMuutoshakemusDecision, navigateToLatestMuutoshakemus,
   navigateToLatestMuutoshakemusPaatos,
   parseMuutoshakemusPaatosFromEmails,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
@@ -330,7 +330,7 @@ fornamn.efternamn@oph.fi
           }
 
           beforeAll(async () => {
-            await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+            await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/?muutoshakemus-osiokohtainen-hyvaksynta=false`)
             await clickElement(page, 'span.muutoshakemus-tab')
           })
 
@@ -371,8 +371,7 @@ fornamn.efternamn@oph.fi
 
           describe('And accepts muutoshakemus #1 changes', () => {
             beforeAll(async () => {
-              await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
-              await clickElement(page, 'span.muutoshakemus-tab')
+              await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
               await fillAndSendMuutoshakemusDecision(page, 'accepted_with_changes', '01.01.2099', acceptedBudget)
             })
 
