@@ -150,10 +150,6 @@ function restart_application {
   $SSH "supervisorctl start $module_name"
 }
 
-function remove_all_files_ignored_by_git {
-  git clean -xdf
-}
-
 function set_env_vars {
   if [ "$ENV" = "qa" ]; then
     export APP_HOSTNAME="oph-va-app-test01"

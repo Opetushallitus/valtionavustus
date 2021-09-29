@@ -2,6 +2,10 @@ readonly repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 readonly node_version="16.9.1"
 readonly npm_version="7.24.0"
 
+function remove_all_files_ignored_by_git {
+  git clean -xdf
+}
+
 function parse_env_from_script_name {
   local FILE_NAME=$(basename "$0")
   if echo ${FILE_NAME}| grep -E -q '.+-[^-]{2,4}\.sh$'; then
