@@ -2,7 +2,7 @@ readonly repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 readonly node_version="16.9.1"
 readonly npm_version="7.24.0"
 
-function remove_all_files_ignored_by_git {
+function remove_all_files_ignored_or_untracked_by_git {
   git clean -xdf
 }
 

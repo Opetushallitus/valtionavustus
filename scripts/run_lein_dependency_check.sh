@@ -13,7 +13,7 @@ function lein_dep_check_for_project () {
 
 function download_temp_db_to_workspace_in_jenkins() {
   if running_on_jenkins; then
-    remove_all_files_ignored_by_git
+    remove_all_files_ignored_or_untracked_by_git
     export JAVA_TOOL_OPTIONS=-Djava.io.tmpdir=${WORKSPACE}
   fi
 }
