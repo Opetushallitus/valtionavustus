@@ -66,6 +66,7 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
       {muutoshakemus['haettu-kayttoajan-paattymispaiva'] && <PaattymispaivaValues muutoshakemus={muutoshakemus} projectEndDate={projectEndDate} />}
       {!!talousarvio.length &&
         <MuutoshakemusSection>
+          <h2 className="muutoshakemus-section-title">Budjetti</h2>
           <MuutosTaloudenKayttosuunnitelmaan
             currentTalousarvio={currentTalousarvio}
             newTalousarvio={talousarvio}
@@ -75,6 +76,7 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
       }
       {muutoshakemus['haen-sisaltomuutosta'] && (
         <MuutoshakemusSection>
+          <h2 className="muutoshakemus-section-title">Sisältö ja toteutustapa</h2>
           <div className="muutoshakemus-row">
             <h4 className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
             <div className="muutoshakemus-description-box" data-test-id="sisaltomuutos-perustelut">{muutoshakemus['sisaltomuutos-perustelut']}</div>
@@ -91,6 +93,12 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
             </div>
            )}
         </MuutoshakemusSection>
+      )}
+      {muutoshakemus["paatos-reason"] && (
+        <div className="muutoshakemus-paatos-reason">
+          <h2 className="muutoshakemus__header">Päätöksen perustelut</h2>
+          <div data-test-id="muutoshakemus-form-paatos-reason">{muutoshakemus["paatos-reason"]}</div>
+        </div>
       )}
     </React.Fragment>
   )
@@ -119,7 +127,8 @@ const PaattymispaivaValues = (props: PaattymispaivaValuesProps) => {
 
   return (
     <MuutoshakemusSection>
-      <div className="muutoshakemus-row muutoshakemus__project-end-row">
+      <h2 className="muutoshakemus-section-title">Käyttöaika</h2>
+      <div className="muutoshakemus__project-end-row">
         <div>
           <h3 className="muutoshakemus__header" data-test-id='muutoshakemus-current-end-date-title'>{currentEndDateTitle}</h3>
           <div data-test-id="project-end-date">{projectEndDate}</div>

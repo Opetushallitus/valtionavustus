@@ -148,8 +148,8 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
     <form onSubmit={f.handleSubmit} data-test-id="muutoshakemus-form">
       <MuutoshakemusSection blueMiddleComponent={<button type="submit" disabled={isSubmitDisabled(f)} data-test-id="muutoshakemus-submit">Tee päätös ja lähetä hakijalle</button>}>
         <div className="muutoshakemus-row">
-          <h3 className="muutoshakemus__header">Yhteiset perustelut ja päätöksen lähettäminen</h3>
-          <div>Jos päätös tarvitsee päällikön hyväksynnän, pyydä häntä katsomaan hakemus ja tekemään päätös.</div>
+          <h2 className="muutoshakemus-section-title">Yhteiset perustelut ja päätöksen lähettäminen</h2>
+          <div className="muutoshakemus-paatos-notice">Jos päätös tarvitsee päällikön hyväksynnän, pyydä häntä katsomaan hakemus ja tekemään päätös.</div>
           <a onClick={() => copyToClipboard(window.location.href)}>Kopioi leikepöydälle linkki hakemukseen</a>
         </div>
         <div className="muutoshakemus-row">

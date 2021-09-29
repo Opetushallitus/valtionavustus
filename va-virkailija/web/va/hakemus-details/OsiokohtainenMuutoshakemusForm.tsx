@@ -76,7 +76,7 @@ const PaattymispaivaValues = ({ muutoshakemus, projectEndDate }: PaattymispaivaV
 
   return (
     <React.Fragment>
-      <div className="muutoshakemus-row muutoshakemus__project-end-row">
+      <div className="muutoshakemus__project-end-row">
         <div>
           <h3 className="muutoshakemus__header" data-test-id='muutoshakemus-current-end-date-title'>{currentEndDateTitle}</h3>
           <div data-test-id="project-end-date" className="muutoshakemus-description-box">{projectEndDate}</div>
@@ -213,6 +213,7 @@ export const OsiokohtainenMuutoshakemusForm = ({avustushaku, currentTalousarvio,
           }
           datepickerFix
       >
+        <h2 className="muutoshakemus-section-title">Käyttöaika</h2>
         <PaattymispaivaValues muutoshakemus={muutoshakemus}
                               projectEndDate={projectEndDate}/>
       </MuutoshakemusSection>
@@ -229,6 +230,7 @@ export const OsiokohtainenMuutoshakemusForm = ({avustushaku, currentTalousarvio,
               requestedTalousarvio={muutoshakemus.talousarvio}/>
             : undefined
         }>
+        <h2 className="muutoshakemus-section-title">Budjetti</h2>
         <MuutosTaloudenKayttosuunnitelmaan
           currentTalousarvio={currentTalousarvio}
           newTalousarvio={muutoshakemus.talousarvio}
@@ -246,6 +248,7 @@ export const OsiokohtainenMuutoshakemusForm = ({avustushaku, currentTalousarvio,
             : undefined
           }
         >
+          <h2 className="muutoshakemus-section-title">Sisältö ja toteutustapa</h2>
           <div className="muutoshakemus-row">
             <h4
               className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
@@ -271,10 +274,9 @@ export const OsiokohtainenMuutoshakemusForm = ({avustushaku, currentTalousarvio,
         blueMiddleComponent={<button type="submit" disabled={isSubmitDisabled(f)}
                                      data-test-id="muutoshakemus-submit">Tee päätös
           ja lähetä hakijalle</button>}>
-        <div className="muutoshakemus-row">
-          <h3 className="muutoshakemus__header">Yhteiset perustelut ja päätöksen
-            lähettäminen</h3>
-          <div>Jos päätös tarvitsee päällikön hyväksynnän, pyydä häntä katsomaan
+        <div>
+          <h2 className="muutoshakemus-section-title">Yhteiset perustelut ja päätöksen lähettäminen</h2>
+          <div className="muutoshakemus-paatos-notice">Jos päätös tarvitsee päällikön hyväksynnän, pyydä häntä katsomaan
             hakemus ja tekemään päätös.
           </div>
           <a onClick={() => copyToClipboard(window.location.href)}>Kopioi

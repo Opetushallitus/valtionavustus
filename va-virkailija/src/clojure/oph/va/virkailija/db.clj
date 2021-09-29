@@ -177,7 +177,7 @@
       nil)))
 
 (defn onko-muutoshakukelpoinen-avustushaku-ok [avustushaku-id]
-  (let [found-fields 
+  (let [found-fields
         (query "with recursive formfield(form_id, formfield_id, label, children) as (
                   select
                     forms.id as form_id,
@@ -255,6 +255,7 @@
                                 p.id as paatos_id,
                                 p.user_key as paatos_user_key,
                                 p.created_at as paatos_created_at,
+                                p.reason as paatos_reason,
                                 hyvaksytyt_sisaltomuutokset,
                                 to_char(pj.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva,
                                 ee.created_at as paatos_sent_at

@@ -210,6 +210,7 @@
     (s/optional-key :paatos-status-jatkoaika) (s/maybe s/Str)
     (s/optional-key :paatos-status-talousarvio) (s/maybe s/Str)
     (s/optional-key :paatos-status-sisaltomuutos) (s/maybe s/Str)
+    (s/optional-key :paatos-reason) (s/maybe s/Str)
     :paatos-created-at (s/maybe s/Inst)
     :paatos-sent-at (s/maybe s/Inst)
     :created-at s/Inst

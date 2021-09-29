@@ -38,6 +38,7 @@ import {
 import { openPaatosPreview } from '../hakemuksen-arviointi/hakemuksen-arviointi-util'
 
 const twoMinutes = 120000
+jest.setTimeout(30000)
 
 type TalousarvioFormInputs = Array<{ name: string, amount: number }>
 type TalousarvioFormTable = Array<{ description: string, amount: string }>

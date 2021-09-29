@@ -45,7 +45,7 @@ export const TalousarvioTable = (props: MuutosTaloudenKayttosuunnitelmaanProps &
 
   const isAccepted = isAcceptedWithOrWithoutChanges(status)
   const headerClass = paatos ? 'muutoshakemus-paatos__change-header' : 'muutoshakemus__header'
-  const wrapperClass = paatos ? 'muutoshakemus-paatos__talousarvio' : 'muutoshakemus-row'
+  const wrapperClass = paatos ? 'muutoshakemus-paatos__talousarvio' : ''
 
   return (
     <div className={wrapperClass}>

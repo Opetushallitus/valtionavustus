@@ -33,7 +33,7 @@ import {
   selectMaakuntaFromDropdown,
   selectVakioperusteluInFinnish,
   setCalendarDate,
-  TEST_Y_TUNNUS,
+  TEST_Y_TUNNUS, textContent,
   uploadFile,
   VaCodeValues,
   VIRKAILIJA_URL,
@@ -303,6 +303,11 @@ export async function validateMuutoshakemusValues(page: Page, muutoshakemus: Muu
   } else {
     await page.waitForSelector('[data-test-id="muutoshakemus-form"]')
   }
+}
+
+export async function expectMuutoshakemusPaatosReason(page: Page, reason: string) {
+  const text = await textContent(page, '[data-test-id="muutoshakemus-form-paatos-reason"]')
+  expect(text).toEqual(reason)
 }
 
 export async function validateMuutoshakemusPaatosCommonValues(page: Page) {

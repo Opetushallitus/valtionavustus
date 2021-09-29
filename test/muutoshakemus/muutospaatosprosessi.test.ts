@@ -52,7 +52,7 @@ import {
   parseMuutoshakemusPaatosFromEmails,
   createMuutoshakemusEnabledAvustushakuAndFillHakemus,
   markAvustushakuAsMuutoshakukelvoton,
-  navigateToLatestMuutoshakemus,
+  navigateToLatestMuutoshakemus, expectMuutoshakemusPaatosReason,
 } from './muutospaatosprosessi-util'
 import {
   navigateToHakijaMuutoshakemusPage,
@@ -724,6 +724,11 @@ etunimi.sukunimi@oph.fi
                   expect(await getElementInnerText(page, '[data-test-id="project-end-date"]')).toBe(muutoshakemus2.jatkoaika?.format('DD.MM.YYYY'))
                 })
 
+                it('shows rejected reasoning', async () => {
+                  const reason = 'Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.'
+                  await expectMuutoshakemusPaatosReason(page, reason)
+                })
+
               })
 
               describe('And clicks the 3rd most recent muutoshakemus', () => {
@@ -739,6 +744,10 @@ etunimi.sukunimi@oph.fi
                   expect(await getElementInnerText(page, '[data-test-id="project-end-date"]')).toBe('20.04.4200')
                 })
 
+                it('shows accepted reasoning', async () => {
+                  const reason = 'Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt hyväksyä haetut muutokset hakemuksen mukaisesti.'
+                  await expectMuutoshakemusPaatosReason(page, reason)
+                })
 
               })
 
@@ -759,6 +768,10 @@ etunimi.sukunimi@oph.fi
                   expect(await getElementInnerText(page, '.answer-new-value #project-end')).toBe(muutoshakemus2.jatkoaika?.format('DD.MM.YYYY'))
                 })
 
+                it('shows correct reasoning', async () => {
+                  const reason = 'Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.'
+                  await expectMuutoshakemusPaatosReason(page, reason)
+                })
               })
 
             })

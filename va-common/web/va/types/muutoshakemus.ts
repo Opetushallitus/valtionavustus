@@ -44,6 +44,7 @@ export interface Muutoshakemus {
   "paatos-status-talousarvio"?: MuutoshakemusStatus
   "paatos-hyvaksytty-sisaltomuutos"?: string
   "paatos-status-sisaltomuutos"?: MuutoshakemusStatus
+  "paatos-reason"?: string
 }
 
 export interface Paatos {
