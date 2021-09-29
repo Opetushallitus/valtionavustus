@@ -222,7 +222,7 @@
                 :has-koulutusosio              has-koulutusosio
                 :oppilaitokset                 oppilaitokset
                 }
-        body (render template (html-escape params))]
+        body (render template params)]
     body))
 
 (compojure-api/defroutes decision-routes
