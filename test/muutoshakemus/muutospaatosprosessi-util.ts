@@ -2,9 +2,9 @@ import axios from "axios"
 import * as fs from "fs"
 import {Moment} from 'moment'
 import * as path from "path"
-import { Page } from "puppeteer"
+import {Page} from "puppeteer"
 import * as querystring from "querystring"
-import { clickKoodienhallintaTab } from "../koodienhallinta-util"
+import {clickKoodienhallintaTab} from "../koodienhallinta-util"
 import {
   acceptAvustushaku,
   Budget,
@@ -29,11 +29,14 @@ import {
   navigateHakija,
   navigateToNewHakemusPage,
   PaatosValues,
-  publishAvustushaku, randomString, saveMuutoshakemus,
+  publishAvustushaku,
+  randomString,
+  saveMuutoshakemus,
   selectMaakuntaFromDropdown,
   selectVakioperusteluInFinnish,
   setCalendarDate,
-  TEST_Y_TUNNUS, textContent,
+  TEST_Y_TUNNUS,
+  textContent,
   uploadFile,
   VaCodeValues,
   VIRKAILIJA_URL,
@@ -379,15 +382,6 @@ export async function navigateToNthMuutoshakemus(page: Page, avustushakuID: numb
   await page.waitForSelector('[data-test-id="muutoshakemus-sisalto"]')
 }
 
-export async function fillMuutoshakemusPaatosWithVakioperustelu(page: Page, avustushakuID: number, hakemusID: number, jatkoaika = '20.04.2400', disableOsiokohtainen = false) {
-  const searchParams = disableOsiokohtainen ? '?muutoshakemus-osiokohtainen-hyvaksynta=false' : ''
-  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/${searchParams}`)
-  await clickElement(page, 'span.muutoshakemus-tab')
-  await clickElement(page, `label[for="accepted_with_changes"]`)
-  await setCalendarDate(page, jatkoaika)
-  await selectVakioperusteluInFinnish(page)
-}
-
 export async function fillAndSendMuutoshakemusDecision(page: Page, status?: 'accepted' | 'accepted_with_changes' | 'rejected', jatkoaika?: string, budget?: BudgetAmount) {
   const selectedStatus = status ?? 'accepted'
   await clickElement(page, `label[for="${selectedStatus}"]`)
@@ -395,6 +389,16 @@ export async function fillAndSendMuutoshakemusDecision(page: Page, status?: 'acc
   budget && await fillMuutoshakemusBudgetAmount(page, budget)
   await selectVakioperusteluInFinnish(page)
   await saveMuutoshakemus(page)
+}
+
+
+export async function setMuutoshakemusJatkoaikaDecision(page: Page, status: PaatosStatus, value?: string) {
+  if (status) {
+    await clickElement(page, `label[for="haen-kayttoajan-pidennysta-${status}"]`)
+  }
+  if (value) {
+    await setCalendarDate(page, value)
+  }
 }
 
 interface FillOpts {
@@ -411,17 +415,15 @@ export async function fillOsiotAndSendMuutoshakemusDecision(page: Page, opts: Fi
   if (budget?.value) {
     await fillMuutoshakemusBudgetAmount(page, budget.value)
   }
-  if (jatkoaika?.status) {
-    await clickElement(page, `label[for="haen-kayttoajan-pidennysta-${jatkoaika.status}"]`)
-  }
-  if (jatkoaika?.value) {
-    await setCalendarDate(page, jatkoaika?.value)
+  if (jatkoaika) {
+    await setMuutoshakemusJatkoaikaDecision(page, jatkoaika.status, jatkoaika.value)
   }
   if (selectVakioperustelu) {
     await selectVakioperusteluInFinnish(page)
   }
   await saveMuutoshakemus(page)
 }
+
 
 export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, budget?: Budget, beforeSubmitFn?: () => void): Promise<{ userKey: string }> {
   const lang = answers.lang || 'fi'

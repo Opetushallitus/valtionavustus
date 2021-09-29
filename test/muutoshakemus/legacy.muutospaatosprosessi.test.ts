@@ -2,66 +2,88 @@ import {Browser, ElementHandle, Frame, Page} from 'puppeteer'
 import moment from 'moment'
 
 import {
-  VIRKAILIJA_URL,
-  getValmistelijaEmails,
-  getAcceptedPäätösEmails,
-  HAKIJA_URL,
-  TEST_Y_TUNNUS,
+  acceptAvustushaku,
   clearAndType,
   clickElement,
   clickElementWithText,
   countElements,
+  createHakuFromEsimerkkihaku,
+  createRandomHakuValues,
+  defaultBudget,
+  Email,
   expectToBeDefined,
+  getAcceptedPäätösEmails,
   getElementAttribute,
   getElementInnerText,
   getFirstPage,
+  getHakemusTokenAndRegisterNumber,
   getLinkToHakemusFromSentEmails,
+  getValmistelijaEmails,
+  HAKIJA_URL,
   hasElementAttribute,
+  lastOrFail,
   log,
+  MailWithLinks,
   mkBrowser,
   navigate,
+  navigateToHakemuksenArviointi,
   navigateToHakemus,
+  randomAsiatunnus,
   randomString,
   ratkaiseAvustushaku,
+  saveMuutoshakemus,
   selectVakioperusteluInFinnish,
+  setCalendarDate,
   setPageErrorConsoleLogger,
+  TEST_Y_TUNNUS,
   textContent,
+  VIRKAILIJA_URL,
   waitUntilMinEmails,
-  Email,
-  createHakuFromEsimerkkihaku,
-  defaultBudget,
-  acceptAvustushaku,
-  lastOrFail,
-  getHakemusTokenAndRegisterNumber,
-  navigateToHakemuksenArviointi,
-  createRandomHakuValues,
-  randomAsiatunnus,
-  MailWithLinks, saveMuutoshakemus,
 } from '../test-util'
 import {
-  ratkaiseMuutoshakemusEnabledAvustushaku,
+  createMuutoshakemusEnabledAvustushakuAndFillHakemus,
+  expectMuutoshakemusPaatosReason,
+  fillAndSendMuutoshakemusDecision,
   getLinkToMuutoshakemusFromSentEmails,
   getUserKeyFromPaatosEmail,
+  markAvustushakuAsMuutoshakukelvoton,
+  MuutoshakemusValues,
+  navigateToLatestMuutoshakemus,
+  parseMuutoshakemusPaatosFromEmails,
+  ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
+  ratkaiseMuutoshakemusEnabledAvustushaku,
   validateMuutoshakemusPaatosCommonValues,
   validateMuutoshakemusValues,
-  MuutoshakemusValues,
-  ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
-  parseMuutoshakemusPaatosFromEmails,
-  createMuutoshakemusEnabledAvustushakuAndFillHakemus,
-  markAvustushakuAsMuutoshakukelvoton,
-  navigateToLatestMuutoshakemus,
-  expectMuutoshakemusPaatosReason,
-  setMuutoshakemusJatkoaikaDecision,
 } from './muutospaatosprosessi-util'
 import {
-  navigateToHakijaMuutoshakemusPage,
-  fillAndSendMuutoshakemus,
   clickSendMuutoshakemusButton,
-  expectMuutoshakemusToBeSubmittedSuccessfully
+  expectMuutoshakemusToBeSubmittedSuccessfully,
+  fillAndSendMuutoshakemus,
+  navigateToHakijaMuutoshakemusPage
 } from './muutoshakemus-util'
-import { openPaatosPreview } from '../hakemuksen-arviointi/hakemuksen-arviointi-util'
+import {openPaatosPreview} from '../hakemuksen-arviointi/hakemuksen-arviointi-util'
 
 jest.setTimeout(120000)
+
+async function makePaatosForMuutoshakemusIfNotExists(page: Page, status: string, avustushakuID: number, hakemusID: number) {
+  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/?muutoshakemus-osiokohtainen-hyvaksynta=false`)
+  await clickElement(page, 'span.muutoshakemus-tab')
+  if (await countElements(page, '[data-test-id="muutoshakemus-paatos"]')) {
+    return
+  }
+
+  await clickElement(page, `label[for="${status}"]`)
+  await selectVakioperusteluInFinnish(page)
+  await saveMuutoshakemus(page)
+}
+
+async function fillMuutoshakemusPaatosWithVakioperustelu(page: Page, avustushakuID: number, hakemusID: number, jatkoaika = '20.04.2400') {
+  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/?muutoshakemus-osiokohtainen-hyvaksynta=false`)
+  await clickElement(page, 'span.muutoshakemus-tab')
+  await clickElement(page, `label[for="accepted_with_changes"]`)
+  await setCalendarDate(page, jatkoaika)
+  await selectVakioperusteluInFinnish(page)
+}
 
 describe('Muutospäätösprosessi', () => {
   let browser: Browser
@@ -351,7 +373,7 @@ etunimi.sukunimi@oph.fi`)
 
       describe('And virkailija navigates to avustushaku', () => {
         beforeAll(async () => {
-          await navigate(page, `/avustushaku/${avustushakuID}/`)
+          await navigate(page, `/avustushaku/${avustushakuID}/?muutoshakemus-osiokohtainen-hyvaksynta=false`)
         })
 
         function muutoshakemusStatusField() {
@@ -391,7 +413,7 @@ etunimi.sukunimi@oph.fi`)
                 await selectVakioperusteluInFinnish(page)
               })
 
-              describe.skip('And virkailija opens the päätös preview', () => {
+              describe('And virkailija opens the päätös preview', () => {
                 beforeAll(async () => {
                   await openPaatosPreview(page)
                 })
@@ -416,11 +438,11 @@ etunimi.sukunimi@oph.fi`)
 
             describe('When virkailija clicks reject button and selects vakioperustelut', () => {
               beforeAll(async () => {
-                await setMuutoshakemusJatkoaikaDecision(page, 'rejected')
+                await clickElement(page, 'label[for="rejected"]')
                 await selectVakioperusteluInFinnish(page)
               })
 
-              describe.skip('And opens päätös preview', () => {
+              describe('And opens päätös preview', () => {
                 beforeAll(async () => {
                   await openPaatosPreview(page)
                 })
@@ -448,10 +470,7 @@ etunimi.sukunimi@oph.fi`)
 
       describe('When virkailija rejects muutoshakemus', () => {
         beforeAll(async () => {
-          await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
-          await setMuutoshakemusJatkoaikaDecision(page, 'rejected')
-          await selectVakioperusteluInFinnish(page)
-          await saveMuutoshakemus(page)
+          await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
         })
 
         it('muutoshakemus has correct values', async () => {
@@ -484,7 +503,7 @@ etunimi.sukunimi@oph.fi`)
 
         describe('And virkailija navigates to avustushaku', () => {
           beforeAll(async () => {
-            await navigate(page, `/avustushaku/${avustushakuID}/`)
+            await navigate(page, `/avustushaku/${avustushakuID}/?muutoshakemus-osiokohtainen-hyvaksynta=false`)
           })
 
           it('muutoshakemus status is shown as "Hylätty"', async () => {
@@ -500,7 +519,7 @@ etunimi.sukunimi@oph.fi`)
           let paatosUrl: string
 
           beforeAll(async () => {
-            await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
+            await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
             await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
             paatosUrl = await page.$eval('a.muutoshakemus__paatos-link', el => el.textContent) || ''
           })
@@ -532,15 +551,13 @@ etunimi.sukunimi@oph.fi`)
 
       describe('And muutoshakemus #2 has been submitted', () => {
         beforeAll(async () => {
+          await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
           await fillAndSendMuutoshakemus(page, hakemusID, muutoshakemus2)
         })
 
         describe('And virkailija accepts the muutoshakemus', () => {
           beforeAll(async () => {
-            await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
-            await setMuutoshakemusJatkoaikaDecision(page, 'accepted')
-            await selectVakioperusteluInFinnish(page)
-            await saveMuutoshakemus(page)
+            await makePaatosForMuutoshakemusIfNotExists(page, 'accepted', avustushakuID, hakemusID)
             await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
           })
 
@@ -604,7 +621,7 @@ etunimi.sukunimi@oph.fi
 
           describe('Navigating to avustushaku', () => {
             beforeAll(async () => {
-              await navigate(page, `/avustushaku/${avustushakuID}/`)
+              await navigate(page, `/avustushaku/${avustushakuID}/?muutoshakemus-osiokohtainen-hyvaksynta=false`)
             })
 
             it('muutoshakemus status is "hyväksytty"', async () => {
@@ -617,7 +634,7 @@ etunimi.sukunimi@oph.fi
 
           describe('Navigating to hakemus and clicking "jatkoaika" tab', () => {
             beforeAll(async () => {
-              await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
+              await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
               await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
             })
 
@@ -647,15 +664,15 @@ etunimi.sukunimi@oph.fi
             })
 
           })
+        })
 
         describe('And muutoshakemus #3 has been submitted and rejected and #4 has been submitted', () => {
           beforeAll(async () => {
+            await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
+
             // create two new muutoshakemus
             await fillAndSendMuutoshakemus(page, hakemusID, muutoshakemus3)
-            await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
-            await setMuutoshakemusJatkoaikaDecision(page, 'rejected')
-            await selectVakioperusteluInFinnish(page)
-            await saveMuutoshakemus(page)
+            await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
             await fillAndSendMuutoshakemus(page, hakemusID, muutoshakemus4)
           })
 
@@ -784,20 +801,14 @@ etunimi.sukunimi@oph.fi
 
           describe('And muutoshakemus #5 has been submitted', () => {
             const muutoshakemus = { ...muutoshakemus2, ...{ jatkoaikaPerustelu: 'Voit laittaa lisäaikaa ihan omantunnon mukaan.' }}
-            const newAcceptedJatkoaika = '20.04.2400' as const
             beforeAll(async () => {
-              await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
-              await setMuutoshakemusJatkoaikaDecision(page, 'rejected')
-              await selectVakioperusteluInFinnish(page)
-              await saveMuutoshakemus(page)
+              await makePaatosForMuutoshakemusIfNotExists(page, 'rejected', avustushakuID, hakemusID)
               await fillAndSendMuutoshakemus(page, hakemusID, muutoshakemus)
             })
 
             describe('And virkailija accepts muutoshakemus' , () => {
               beforeAll(async () => {
-                await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
-                await setMuutoshakemusJatkoaikaDecision(page, 'accepted_with_changes', newAcceptedJatkoaika)
-                await selectVakioperusteluInFinnish(page)
+                await fillMuutoshakemusPaatosWithVakioperustelu(page, avustushakuID, hakemusID, undefined)
               })
 
               it('Correct current project end date is displayed', async () => {
@@ -810,7 +821,7 @@ etunimi.sukunimi@oph.fi
                 expect(appliedProjectEndDate).toBe(muutoshakemus2.jatkoaika?.format('DD.MM.YYYY'))
               })
 
-              it.skip('Correct päättymispäivä is displayed in päätös preview', async () => {
+              it('Correct päättymispäivä is displayed in päätös preview', async () => {
                 await openPaatosPreview(page)
                 const acceptedDate = await page.$eval('[data-test-id="paattymispaiva-value"]', el => el.textContent)
                 expect(acceptedDate).toBe('20.4.2400')
@@ -818,14 +829,13 @@ etunimi.sukunimi@oph.fi
               })
 
               describe('After sending päätös', () => {
-
                 beforeAll(async () => {
-                  await saveMuutoshakemus(page)
+                  await fillAndSendMuutoshakemusDecision(page, 'accepted_with_changes', '20.04.2400')
                 })
 
                 it('Correct päättymispäivä is displayed to virkailija', async () => {
                   const acceptedDate = await page.$eval('[data-test-id="muutoshakemus-jatkoaika"]', el => el.textContent)
-                  expect(acceptedDate).toBe(newAcceptedJatkoaika)
+                  expect(acceptedDate).toBe('20.04.2400')
                 })
 
                 it('New project end date title is displayed to virkailija in finnish', async () => {
@@ -876,14 +886,13 @@ etunimi.sukunimi@oph.fi
                 it('Correct päättymispäivä is displayed when creating a new muutoshakemus', async () => {
                   await navigateToHakijaMuutoshakemusPage(page, hakemusID)
                   const acceptedDate = await textContent(page, '[data-test-id="muutoshakemus-jatkoaika"]')
-                  expect(acceptedDate).toBe(newAcceptedJatkoaika)
+                  expect(acceptedDate).toBe('20.04.2400')
                 })
 
               })
             })
           })
 
-        })
         })
 
       })
@@ -1110,7 +1119,7 @@ etunimi.sukunimi@oph.fi
 
           describe('And virkailija navigates to avustushaku', () => {
             beforeAll(async () => {
-              await navigate(page, `/avustushaku/${avustushakuID}/`)
+              await navigate(page, `/avustushaku/${avustushakuID}/?muutoshakemus-osiokohtainen-hyvaksynta=false`)
               await Promise.all([
                 page.waitForNavigation(),
                 clickElementWithText(page, "td", "Akaan kaupunki"),

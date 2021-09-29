@@ -527,9 +527,12 @@ export async function clickElement(page: Page, selector: string, timeout = 5000)
   return element
 }
 
-export async function clickElementWithText(page: Page, elementType: string, text: string) {
+export async function clickElementWithText(page: Page, elementType: string, text: string, scrollVisibleBeforeClick = false) {
   const element = await waitForElementWithText(page, elementType, text, { visible: true })
   assert.ok(element, `Could not find ${elementType} element with text '${text}'`)
+  if (scrollVisibleBeforeClick) {
+    await element?.evaluate(e => e.scrollIntoView({block: 'end'}))
+  }
   await element?.click()
   return element
 }
@@ -1051,21 +1054,8 @@ export async function saveMuutoshakemus(page: Page) {
   await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
 }
 
-export async function makePaatosForMuutoshakemusIfNotExists(page: Page, status: string, avustushakuID: number, hakemusID: number, disableOsiokohtainen = false) {
-  const searchParams = disableOsiokohtainen ? '?muutoshakemus-osiokohtainen-hyvaksynta=false' : ''
-  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/${searchParams}`)
-  await clickElement(page, 'span.muutoshakemus-tab')
-  if (await countElements(page, '[data-test-id="muutoshakemus-paatos"]')) {
-    return
-  }
-
-  await clickElement(page, `label[for="${status}"]`)
-  await selectVakioperusteluInFinnish(page)
-  await saveMuutoshakemus(page)
-}
-
 export async function selectVakioperusteluInFinnish(page: Page): Promise<void> {
-  await clickElementWithText(page, 'a', 'Lisää vakioperustelu suomeksi')
+  await clickElementWithText(page, 'a', 'Lisää vakioperustelu suomeksi', true)
 }
 
 export async function typePerustelu(page: Page, perustelu: string) {
