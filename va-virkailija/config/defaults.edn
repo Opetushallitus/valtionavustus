@@ -51,5 +51,5 @@
  :tasmaytysraportti-send {:enabled? false}
  :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? false}
  :muutoshakukelpoisuus {:enabled? true}
- :test-apis {:enabled? false}}
  :allow-overriding-feature-flag-from-url-params {:enabled? false}
+ :test-apis {:enabled? false}}
