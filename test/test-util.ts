@@ -577,18 +577,19 @@ export async function isElementActive(page: Page, elem: ElementHandle<Element>):
   )
 }
 
-export async function clearAndType(page: Page, selector: string, text: string, checkElementIsActive = false) {
+export async function clearAndType(page: Page, selector: string, text: string, opts?: { scrollIntoView?: boolean; checkElementIsActive?: boolean }) {
   const element = await page.waitForSelector(selector, {visible: true, timeout: 5 * 1000})
   if (!element) throw new Error('The world is broken because visible: true should never return null')
-  await element.evaluate(e => e.scrollIntoView({block: 'end'}))
+  const {scrollIntoView = true, checkElementIsActive = false} = opts ?? {}
+  if (scrollIntoView) {
+    await element.evaluate(e => e.scrollIntoView({block: 'end'}))
+  }
   await element.click()
-
-  if (checkElementIsActive && !isElementActive(page, element)) {
+  if (checkElementIsActive && !(await isElementActive(page, element))) {
     throw new Error(`clearAndType: element ${selector} is not the active element after clicking. Is something covering the element?`)
   }
-
-  await page.evaluate(e => e.value = "", element)
-  await page.keyboard.type(text)
+  await element.click({clickCount: 3})
+  await element.type(text)
   await page.evaluate(e => e.blur(), element)
 }
 
@@ -1028,10 +1029,7 @@ export async function setCalendarDate(page: Page, jatkoaika: string) {
 }
 
 export async function setCalendarDateForSelector(page: Page, date: string, selector: string) {
-  // For whatever reason, sometimes when running tests locally the date is reset after after input, which disables the send button and breaks tests.
-  while(await getElementAttribute(page, selector, 'value') !== date) {
-    await clearAndType(page, selector, date)
-  }
+  await clearAndType(page, selector, date, {checkElementIsActive: true})
 }
 
 export async function navigateToSeurantaTab(page: Page, avustushakuID: number, hakemusID: number) {
