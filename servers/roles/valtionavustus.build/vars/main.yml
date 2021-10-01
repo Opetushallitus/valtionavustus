@@ -9,3 +9,5 @@ jenkins_jobs:
      template: roles/valtionavustus.build/templates/valtionavustus-dump-database-contents-job.xml.j2
    - name: valtionavustus-dependencycheck
      template: roles/valtionavustus.build/templates/valtionavustus-dependencycheck-job.xml.j2
+   - name: upload-buildstatus
+     template: roles/valtionavustus.build/templates/upload-buildstatus-job.xml.j2
