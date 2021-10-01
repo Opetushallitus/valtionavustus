@@ -51,3 +51,50 @@
 
 - name: Install chromium so that we get the libs needed by puppeteer
   yum: state=installed pkg=chromium
+
+- name: Add horttiksen upload script 
+  blockinfile:
+    dest: /home/jenkins/horttiksen-upload-skripti.sh
+    block: |
+      #!/usr/bin/env bash
+      set -o errexit -o nounset -o pipefail
+
+      function aws {
+        docker run \
+          --env AWS_PROFILE --env AWS_REGION --env AWS_DEFAULT_REGION \
+          --env AWS_CONTAINER_CREDENTIALS_RELATIVE_URI \
+          --volume ${HOME}/.aws:/root/.aws \
+          --volume "$( pwd ):/aws" \
+          --rm -i amazon/aws-cli:2.0.6 "$@"
+      }
+      
+      function main {
+        curl -X GET --user "{{ jenkins_username }}:{{ jenkins_password }}" http://localhost:80/api/json?pretty=true > buildstatus.json
+
+        AWS_PROFILE=rcs-helsinki aws s3 cp /aws/buildstatus.json s3://buildstatus/buildstatus/valtionavustus/buildstatus.json
+      }
+
+      main "$@"
+    owner: jenkins
+    group: jenkins
+    mode: 0700
+    create: yes
+    state: present
+  tags: buildstatus
+
+- name: Add AWS credentials for rcs-helsinki buildstatus upload
+  blockinfile:
+    dest: /home/jenkins/.aws/credentials
+    block: |
+      [rcs-helsinki-source]
+      aws_access_key_id={{ aws_rcs_s3_upload_access_key }}
+      aws_secret_access_key={{ aws_rcs_s3_upload_secret_access_key }}
+      [rcs-helsinki]
+      role_arn = arn:aws:iam::{{ aws_rcs_account_id }}:role/BuildStatusUploaderValtionavustus
+      source_profile = rcs-helsinki-source
+    owner: jenkins
+    group: jenkins
+    mode: 0600
+    create: yes
+    state: present
+  tags: buildstatus
