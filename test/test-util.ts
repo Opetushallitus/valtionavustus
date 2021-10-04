@@ -1088,7 +1088,9 @@ export async function acceptAvustushaku(
   console.log("Hakemus ID:", hakemusID)
 
   if (rahoitusalue) {
-    await aria(page, rahoitusalue, "radio").then(e => e.click())
+    const rahoitusalueSelector = `aria/${rahoitusalue}[role="radio"]`
+    await page.waitForSelector(rahoitusalueSelector, { timeout: 5000 })
+    await page.click(rahoitusalueSelector)
   }
 
   await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
@@ -1139,16 +1141,6 @@ export async function changeContactPersonEmail(page: Page, linkToMuutoshakemus: 
   await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
   await clearAndType(page, '#muutoshakemus__email', email)
   await clickElement(page, "#send-muutospyynto-button")
-}
-
-export async function aria(page: Page, text: string, role?: string): Promise<ElementHandle<Element>> {
-  let selector = "aria/" + text
-  if (role) selector += `[role="${role}"]`
-  const element = await page.waitForSelector(selector, { visible: true, timeout: 5000 })
-  if (element === null) {
-    throw new Error(`Could not find element with selector ${selector}`)
-  }
-  return element
 }
 
 export function setupTestLogging() {

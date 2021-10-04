@@ -1,6 +1,5 @@
 import { Browser, Page } from 'puppeteer'
 import {
-  aria,
   clickElement,
   clickElementWithText,
   createRandomHakuValues,
@@ -273,10 +272,11 @@ function getExpectedPaymentXML(projekti: string, toiminto: string, toimintayksik
 
 async function sendMaksatukset(page: Page): Promise<void> {
   const text = "Lähetetään maksatuksia"
-  const sendButton = await aria(page, "Lähetä maksatukset")
+  const sendButtonSelector = "aria/Lähetä maksatukset"
+  await page.waitForSelector(sendButtonSelector, { timeout: 5000 })
   await Promise.all([
-    sendButton.click(),
-    waitForElementWithText(page, "span", text, { visible: true })
+    waitForElementWithText(page, "span", text, { visible: true }),
+    page.click(sendButtonSelector),
   ])
   await waitForElementWithText(page, "span", text, { hidden: true })
 }
