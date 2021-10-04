@@ -78,14 +78,6 @@ export function setPageErrorConsoleLogger(page: Page) {
   })
 }
 
-export async function clickClojureScriptKäliTab(page: Page, testId: string): Promise<void> {
-  await Promise.all([
-    waitForClojureScriptLoadingDialogVisible(page),
-    clickElementWithTestId(page, testId),
-  ])
-  await waitForClojureScriptLoadingDialogHidden(page)
-}
-
 export function toInnerText(node: Element) {
   return (node as HTMLElement).innerText
 }
@@ -988,11 +980,8 @@ export async function createCode(page: Page, name: string = 'Test code', code: s
   await clearAndType(page, '[data-test-id=code-form__year]', '2020')
   await clearAndType(page, '[data-test-id=code-form__code]', `${code}`)
   await clearAndType(page, '[data-test-id=code-form__name]', `${name} ${code}`)
-  await Promise.all([
-    waitForClojureScriptLoadingDialogVisible(page),
-    clickElementWithTestId(page, 'code-form__add-button')
-  ])
-
+  await clickElementWithTestId(page, 'code-form__add-button')
+  await page.waitForNetworkIdle()
   await waitForClojureScriptLoadingDialogHidden(page)
   await page.waitForSelector(`tr[data-test-id="${code}"]`)
   return code
