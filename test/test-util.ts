@@ -988,19 +988,14 @@ export async function createCode(page: Page, name: string = 'Test code', code: s
   await clearAndType(page, '[data-test-id=code-form__year]', '2020')
   await clearAndType(page, '[data-test-id=code-form__code]', `${code}`)
   await clearAndType(page, '[data-test-id=code-form__name]', `${name} ${code}`)
-  await clickElementWithTestId(page, 'code-form__add-button')
+  await Promise.all([
+    waitForClojureScriptLoadingDialogVisible(page),
+    clickElementWithTestId(page, 'code-form__add-button')
+  ])
 
-  await page.waitForSelector(`tr[data-test-id="${code}"]`)
   await waitForClojureScriptLoadingDialogHidden(page)
+  await page.waitForSelector(`tr[data-test-id="${code}"]`)
   return code
-}
-
-export async function expectingLoadingProgressBar<T>(page: Page, text: string, func: () => Promise<T>): Promise<T> {
-  const loadingBarVisiblePromise =  waitForElementWithText(page, "span", text, { visible: true })
-  const result = await func()
-  await loadingBarVisiblePromise
-  await waitForElementWithText(page, "span", text, { hidden: true })
-  return result
 }
 
 async function selectCode(page: Page, codeType: 'operational-unit' | 'project' | 'operation', code: string): Promise<void> {

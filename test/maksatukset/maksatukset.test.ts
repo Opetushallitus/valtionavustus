@@ -4,7 +4,6 @@ import {
   clickElement,
   clickElementWithText,
   createRandomHakuValues,
-  expectingLoadingProgressBar,
   getElementAttribute,
   getElementInnerText,
   getFirstPage,
@@ -15,7 +14,7 @@ import {
   setupTestLogging,
   VIRKAILIJA_URL,
   waitForClojureScriptLoadingDialogHidden,
-  waitForClojureScriptLoadingDialogVisible,
+  waitForClojureScriptLoadingDialogVisible, waitForElementWithText,
 } from '../test-util'
 import { ratkaiseMuutoshakemusEnabledAvustushaku } from '../muutoshakemus/muutospaatosprosessi-util'
 import axios from 'axios'
@@ -55,8 +54,7 @@ describe("Maksatukset", () => {
     const dueDate = await getElementAttribute(page, '[id="Eräpäivä"]', 'value')
     if (!dueDate) throw new Error('Cannot find due date from form')
 
-    await expectingLoadingProgressBar(page, "Lähetetään maksatuksia", () =>
-      aria(page, "Lähetä maksatukset").then(e => e.click()))
+    await sendMaksatukset(page)
     await reloadPaymentPage(page)
 
     await gotoLähetetytMaksatuksetTab(page)
@@ -98,8 +96,7 @@ describe("Maksatukset", () => {
 
     await fillInMaksueranTiedot(page, "asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
 
-    await expectingLoadingProgressBar(page, "Lähetetään maksatuksia", () =>
-      aria(page, "Lähetä maksatukset").then(e => e.click()))
+    await sendMaksatukset(page)
 
     await removeStoredPitkäviiteFromAllAvustushakuPayments(avustushakuID)
     await reloadPaymentPage(page)
@@ -141,8 +138,7 @@ describe("Maksatukset", () => {
     const dueDate = await getElementAttribute(page, '[id="Eräpäivä"]', 'value')
     if (!dueDate) throw new Error('Cannot find due date from form')
 
-    await expectingLoadingProgressBar(page, "Lähetetään maksatuksia", () =>
-      aria(page, "Lähetä maksatukset").then(e => e.click()))
+    await sendMaksatukset(page)
     await reloadPaymentPage(page)
 
     await gotoLähetetytMaksatuksetTab(page)
@@ -273,4 +269,14 @@ function getSentPaymentBatchColumn(column: number) {
 function getExpectedPaymentXML(projekti: string, toiminto: string, toimintayksikko: string, pitkaviite: string, invoiceNumber: string, dueDate: string, ovt: string = '003727697901'): string {
   const today = moment(new Date()).format('YYYY-MM-DD')
   return `<?xml version="1.0" encoding="UTF-8"?><objects><object><header><toEdiID>${ovt}</toEdiID><invoiceType>INVOICE</invoiceType><vendorName>Akaan kaupunki</vendorName><addressFields><addressField1></addressField1><addressField2></addressField2><addressField5></addressField5></addressFields><vendorRegistrationId>2050864-5</vendorRegistrationId><bic>OKOYFIHH</bic><bankAccount>FI95 6682 9530 0087 65</bankAccount><invoiceNumber>${invoiceNumber}</invoiceNumber><longReference>${pitkaviite}</longReference><documentDate>${today}</documentDate><dueDate>${dueDate}</dueDate><paymentTerm>Z001</paymentTerm><currencyCode>EUR</currencyCode><grossAmount>99999</grossAmount><netamount>99999</netamount><vatamount>0</vatamount><voucherSeries>XE</voucherSeries><postingDate>${today}</postingDate><ownBankShortKeyCode></ownBankShortKeyCode><handler><verifierName>essi.esittelija@example.com</verifierName><verifierEmail>essi.esittelija@example.com</verifierEmail><approverName>hygge.hyvaksyja@example.com</approverName><approverEmail>hygge.hyvaksyja@example.com</approverEmail><verifyDate>${today}</verifyDate><approvedDate>${today}</approvedDate></handler><otsData><otsBankCountryKeyCode></otsBankCountryKeyCode></otsData><invoicesource>VA</invoicesource></header><postings><postingRows><postingRow><rowId>1</rowId><generalLedgerAccount>82010000</generalLedgerAccount><postingAmount>99999</postingAmount><accountingObject01>${toimintayksikko}</accountingObject01><accountingObject02>29103020</accountingObject02><accountingObject04>${projekti}</accountingObject04><accountingObject05>${toiminto}</accountingObject05><accountingObject08></accountingObject08></postingRow></postingRows></postings></object></objects>`
+}
+
+async function sendMaksatukset(page: Page): Promise<void> {
+  const text = "Lähetetään maksatuksia"
+  const sendButton = await aria(page, "Lähetä maksatukset")
+  await Promise.all([
+    sendButton.click(),
+    waitForElementWithText(page, "span", text, { visible: true })
+  ])
+  await waitForElementWithText(page, "span", text, { hidden: true })
 }
