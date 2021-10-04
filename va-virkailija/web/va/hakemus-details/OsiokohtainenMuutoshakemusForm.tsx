@@ -263,7 +263,7 @@ export const OsiokohtainenMuutoshakemusForm = ({avustushaku, currentTalousarvio,
                 className="muutoshakemus-description-box">{muutoshakemus['hyvaksytyt-sisaltomuutokset']}</div>
             </div>
           )}
-          {isAcceptedWithChanges(f.values["hyvaksytyt-sisaltomuutokset"]?.status) && (
+          {isAcceptedWithChanges(f.values["haen-sisaltomuutosta"]?.status) && (
             <div className="muutoshakemus-notice">
               Olet tekemässä päätöksen, jossa haetut sisältömuutokset hyväksytään muutettuna. Varmista, että perusteluissa hakijalle kuvataan mitkä haetuista sisältömuutoksista hyväksytään ja mitkä hylätään.
             </div>

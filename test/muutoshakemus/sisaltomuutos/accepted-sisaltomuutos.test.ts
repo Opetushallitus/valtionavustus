@@ -1,29 +1,35 @@
-import { Browser, Page } from 'puppeteer'
+import {Browser, Page} from 'puppeteer'
 
 import {
-  mkBrowser,
-  log,
-  getFirstPage,
-  setPageErrorConsoleLogger,
-  clickElement,
   Budget,
+  clickElement,
   createRandomHakuValues,
   getElementInnerText,
-  textContent,
+  getFirstPage,
+  log,
+  mkBrowser,
+  saveMuutoshakemus,
   selectVakioperusteluInFinnish,
+  setPageErrorConsoleLogger,
+  textContent,
 } from '../../test-util'
 import {
   navigateToLatestMuutoshakemus,
   navigateToLatestMuutoshakemusPaatos,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
+  setMuutoshakemusSisaltoDecision,
+  writeSisältömuutosPäätös,
 } from '../muutospaatosprosessi-util'
 import {
-  navigateToHakijaMuutoshakemusPage,
-  fillSisaltomuutosPerustelut,
   clickSendMuutoshakemusButton,
-  expectMuutoshakemusToBeSubmittedSuccessfully
+  expectMuutoshakemusToBeSubmittedSuccessfully,
+  fillSisaltomuutosPerustelut,
+  navigateToHakijaMuutoshakemusPage
 } from '../muutoshakemus-util'
-import { closePaatosPreview, openPaatosPreview } from '../../hakemuksen-arviointi/hakemuksen-arviointi-util'
+import {
+  closePaatosPreview,
+  openPaatosPreview
+} from '../../hakemuksen-arviointi/hakemuksen-arviointi-util'
 
 export const answers = {
   contactPersonEmail: "erkki.esimerkki@example.com",
@@ -131,6 +137,13 @@ describe('Sisaltomuutos (accepted)', () => {
       await muutosSendButtonDisabled(page)
     })
 
+    it('shows disclaimer if accepting with changes', async () => {
+      await setMuutoshakemusSisaltoDecision(page, 'accepted_with_changes')
+      const disclaimer =  await getElementInnerText(page, '.muutoshakemus-notice')
+      expect(disclaimer).toEqual('Olet tekemässä päätöksen, jossa haetut sisältömuutokset hyväksytään muutettuna. Varmista, että perusteluissa hakijalle kuvataan mitkä haetuista sisältömuutoksista hyväksytään ja mitkä hylätään.')
+      await setMuutoshakemusSisaltoDecision(page, 'accepted')
+    })
+
     describe.skip('preview for virkailija', () => {
       beforeAll(async () => {
         await openPaatosPreview(page)
@@ -153,7 +166,7 @@ describe('Sisaltomuutos (accepted)', () => {
       beforeAll(async () => {
         await writeSisältömuutosPäätös(page, 'Muutokset hankkeen sisältöön tai toteutustapaan hyväksytään  hakemuksen mukaisesti.')
         await selectVakioperusteluInFinnish(page)
-        await clickElement(page, '[data-test-id="muutoshakemus-submit"]:not([disabled])')
+        await saveMuutoshakemus(page)
       }, 60000)
 
       it('shows muutoshakemus as käsitelty', async () => {
@@ -191,21 +204,4 @@ async function expectAsiaSectionToContainSisaltomuutos(page: Page) {
 async function expectAcceptedSisaltomuutosInPaatos(page: Page) {
   const asiaSectionContent = await textContent(page, '[data-test-id=accepted-changes-content]')
   expect(asiaSectionContent).toContain('Hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan')
-}
-
-async function writeSisältömuutosPäätös(page: Page, text: string) {
-  const selector = '[name=hyvaksytyt-sisaltomuutokset]'
-  const sisalto = await page.waitForSelector(selector, {visible: true})
-  if (text === '') {
-    const text = await page.$eval(selector, (a) => (a as HTMLTextAreaElement).value)
-    const backspaceAmount = text?.length ?? 0
-    await sisalto?.click()
-    for (let i = 0; i < backspaceAmount ?? 0; i++) {
-      await page.keyboard.press('Backspace')
-    }
-  } else {
-    await sisalto?.click({clickCount: 3})
-    await page.keyboard.type(text)
-  }
-  await page.evaluate(e => e.blur(), sisalto)
 }
