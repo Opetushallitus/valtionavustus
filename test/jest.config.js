@@ -10,7 +10,11 @@ module.exports = {
       "jest-junit",
       {
         outputDirectory: "./target",
-        outputName: "junit-jest-js-unit.xml"
+        outputName: "junit-jest-js-unit.xml",
+        includeShortConsoleOutput: "true",
+        suiteNameTemplate: "Puppeteer tests",
+        classNameTemplate: "{filepath}",
+        titleTemplate: "{classname} {title}",
       }
     ]
   ]
