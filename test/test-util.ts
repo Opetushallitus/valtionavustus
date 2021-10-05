@@ -518,7 +518,7 @@ export async function clickElement(page: Page, selector: string) {
 
   for (let i = 0; i <= CLICK_RETRIES; i++) {
     try {
-      page.click(selector)
+      await page.click(selector)
       break
     } catch (e) {
       // Sometimes nodes get removed, especially in the Reagent app
