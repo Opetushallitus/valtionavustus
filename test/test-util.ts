@@ -512,11 +512,21 @@ export async function copyEsimerkkihaku(page: Page) {
   await page.waitForTimeout(2000)
 }
 
-export async function clickElement(page: Page, selector: string, timeout = 5000) {
-  const element = await page.waitForSelector(selector, {visible: true, timeout})
-  if (!element) throw new Error('The world is broken because visible: true should never return null')
-  await element.click()
-  return element
+const CLICK_RETRIES = 5
+export async function clickElement(page: Page, selector: string) {
+  await page.waitForSelector(selector, {visible: true, timeout: 5000 })
+
+  for (let i = 0; i <= CLICK_RETRIES; i++) {
+    try {
+      page.click(selector)
+      break
+    } catch (e) {
+      // Sometimes nodes get removed, especially in the Reagent app
+      if (e.message !== 'Node is detached from document' || i === CLICK_RETRIES) {
+        throw e
+      }
+    }
+  }
 }
 
 export async function clickElementWithText(page: Page, elementType: string, text: string, scrollVisibleBeforeClick = false) {
@@ -530,14 +540,16 @@ export async function clickElementWithText(page: Page, elementType: string, text
 }
 
 export async function selectMaakuntaFromDropdown(page: Page, text: string) {
-  const maakuntainput = await clickElement(page,'#koodistoField-1_input .rw-dropdown-list-input')
-  await maakuntainput.type(text)
+  const maakuntaInputSelector = '#koodistoField-1_input .rw-dropdown-list-input'
+  await clickElement(page, maakuntaInputSelector)
+  await page.type(maakuntaInputSelector, text)
   await clickDropdownElementWithText(page, text)
 }
 
 export async function selectAvustushakuFromDropdown(page: Page, text: string) {
-  const input = await clickElement(page,'#avustushaku-dropdown .dropdown-list .rw-dropdown-list-input')
-  await input.type(text)
+  const inputSelector = '#avustushaku-dropdown .dropdown-list .rw-dropdown-list-input'
+  await clickElement(page, inputSelector)
+  await page.type(inputSelector, text)
   await Promise.all([
     page.waitForNavigation(),
     clickDropdownElementWithText(page, text),

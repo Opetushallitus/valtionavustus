@@ -273,10 +273,9 @@ function getExpectedPaymentXML(projekti: string, toiminto: string, toimintayksik
 async function sendMaksatukset(page: Page): Promise<void> {
   const text = "Lähetetään maksatuksia"
   const sendButtonSelector = "aria/Lähetä maksatukset"
-  await page.waitForSelector(sendButtonSelector, { timeout: 5000 })
   await Promise.all([
     waitForElementWithText(page, "span", text, { visible: true }),
-    page.click(sendButtonSelector),
+    clickElement(page, sendButtonSelector),
   ])
   await waitForElementWithText(page, "span", text, { hidden: true })
 }
