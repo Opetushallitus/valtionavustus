@@ -101,9 +101,7 @@ export const MuutoshakukelpoisuusContainer = ( {muutoshakukelpoisuus}: Muutoshak
   return (
     <div className="muutoshakukelpoisuus-container">
       <MuutoshakukelpoisuusWarning muutoshakukelpoisuus={muutoshakukelpoisuus} controlDropdown={controlDropdown} />
-      { state.open && 
-        <MuutoshakukelpoisuusDropdown muutoshakukelpoisuus={muutoshakukelpoisuus} />
-      }
+      {state.open && <MuutoshakukelpoisuusDropdown muutoshakukelpoisuus={muutoshakukelpoisuus} />}
     </div>
   )
 }

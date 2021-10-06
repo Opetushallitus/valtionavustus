@@ -41,9 +41,7 @@ export default class FormEditorContainer extends Component {
 
     return (
       <section>
-        {(environment.muutoshakukelpoisuus
-          && environment.muutoshakukelpoisuus["enabled?"]
-          && avustushaku.muutoshakukelpoisuus
+        {(avustushaku.muutoshakukelpoisuus
           && !avustushaku.muutoshakukelpoisuus["is-ok"])
           && <MuutoshakukelpoisuusContainer muutoshakukelpoisuus={avustushaku.muutoshakukelpoisuus}/>}
         <div dangerouslySetInnerHTML={mainHelp}></div>

@@ -62,7 +62,6 @@
    (s/optional-key :va-code-values) (s/maybe {:enabled? s/Bool})
    :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? s/Bool}
    (s/optional-key :allow-overriding-feature-flag-from-url-params) (s/maybe {:enabled? s/Bool})
-   (s/optional-key :muutoshakukelpoisuus) (s/maybe {:enabled? s/Bool})
    (s/optional-key :reports) (s/maybe {:enabled? s/Bool})
    (s/optional-key :selvitys-limit) (s/maybe {:enabled? s/Bool})})
 

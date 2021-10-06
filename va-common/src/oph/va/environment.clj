@@ -21,7 +21,6 @@
          :multibatch-payments (:multibatch-payments config)
          :reports (:reports config)
          :va-code-values (:va-code-values config)
-         :muutoshakukelpoisuus (:muutoshakukelpoisuus config)
          :muutoshakemus-osiokohtainen-hyvaksynta (:muutoshakemus-osiokohtainen-hyvaksynta config)
          :allow-overriding-feature-flag-from-url-params (:allow-overriding-feature-flag-from-url-params config)
          :selvitys-limit (:selvitys-limit config)}
