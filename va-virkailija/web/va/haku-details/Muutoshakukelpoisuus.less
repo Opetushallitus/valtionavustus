@@ -3,40 +3,65 @@
   top: 130px;
   z-index: 100;
 
-  background-color: #fffae2;
-
   display: flex;
   flex-direction: column;
-
-  color: #956a14;
   box-sizing: border-box;
-  border: 1px solid #deb335;
   border-radius: 4px;
 }
 
 .muutoshakukelpoisuus-warning {
+  background-color: #fffae2;
+  color: #956a14;
+  border: 1px solid #deb335;
+}
+
+.muutoshakukelpoisuus-ok {
+  background-color: #dcf8e7;
+  color: #108046;
+  border: 1px solid #108046;
+}
+
+.muutoshakukelpoisuus-info {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 
   padding: 13px;
-
-  box-shadow: 0 0 0 1px #deb335;
   border-radius: 4px;
 }
 
-.muutoshakukelpoisuus-warning-icon {
+.muutoshakukelpoisuus-warning-shadow {
+  box-shadow: 0 0 0 1px #deb335;
+}
+
+.muutoshakukelpoisuus-ok-shadow {
+  box-shadow: 0 0 0 1px #108046;
+}
+
+.muutoshakukelpoisuus-icon-warning {
   position: relative;
   top: 2px;
   vertical-align: middle;
   display: inline-block;
 }
 
-.muutoshakukelpoisuus-warning-text {
+.muutoshakukelpoisuus-icon-ok {
+  position: relative;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.muutoshakukelpoisuus-text-bold {
   vertical-align: middle;
   display: inline-block;
   margin-left: 8px;
   font-weight: bold;
+}
+
+.muutoshakukelpoisuus-text {
+  vertical-align: middle;
+  display: inline-block;
+  margin-left: 8px;
 }
 
 .muutoshakukelpoisuus-warning-button {
