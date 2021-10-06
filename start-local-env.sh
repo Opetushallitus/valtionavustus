@@ -62,6 +62,14 @@ if [ ! -z $RESTORE_FILE ]; then
   tmux send-keys "$repo/scripts/restore_dump.sh $RESTORE_FILE" C-m
 fi
 
+#rename panes to match the script they run
+tmux select-pane -t 0 -T run_database
+tmux select-pane -t 1 -T run_admin_ui
+tmux select-pane -t 2 -T run_hakija_server
+tmux select-pane -t 3 -T run_frontend
+tmux select-pane -t 4 -T run_virkailija_server
+tmux select-pane -t 5 -T run_fakesmtp
+tmux select-pane -t 6 -T run_maksatuspalvelu
+
 tmux select-pane -t 0
 tmux attach-session -t $session
-
