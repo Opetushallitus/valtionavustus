@@ -19,6 +19,7 @@ export default class SelvitysLink extends Component<SelvitysLinkProps> {
     return hakemus && hakemus["user-key"] ?
       <span className="decision">
         <a href={publicUrl}
+           data-test-id="selvitys-link"
            target="_blank"
            rel="noopener noreferrer">
           {label}

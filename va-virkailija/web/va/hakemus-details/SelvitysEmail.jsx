@@ -198,7 +198,7 @@ export default class SelvitysEmail extends React.Component {
     const areAllEmailsValid = !_.some(recipientEmails, email => !email.isValid)
 
     return (
-      <div>
+      <div data-test-id={sentSelvitysEmail ? "selvitys-unsent" : "selvitys-sent"}>
         <h2>{title}</h2>
         <table className="selvitys-email-header">
           <tbody>
@@ -245,7 +245,7 @@ export default class SelvitysEmail extends React.Component {
               <td className="selvitys-email-header__value">
                 {sentSelvitysEmail && sentSelvitysEmail.subject}
                 {!sentSelvitysEmail && (
-                  <input className="selvitys-email-header__value-input" type="text" value={subject} onChange={this.onSubjectChange}/>
+                  <input id="selvitys-email-title" className="selvitys-email-header__value-input" type="text" value={subject} onChange={this.onSubjectChange}/>
                 )}
               </td>
             </tr>
@@ -257,7 +257,7 @@ export default class SelvitysEmail extends React.Component {
         {!sentSelvitysEmail && (
           <div>
             <textarea className="selvitys-email-message selvitys-email-message--unsent" value={message} onChange={this.onMessageChange}/>
-            <button onClick={this.onSendMessage} disabled={!recipientEmails.length || !areAllEmailsValid}>Lähetä viesti</button>
+            <button id="submit-selvitys" onClick={this.onSendMessage} disabled={!recipientEmails.length || !areAllEmailsValid}>Lähetä viesti</button>
           </div>
         )}
       </div>
