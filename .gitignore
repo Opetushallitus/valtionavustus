@@ -33,5 +33,3 @@ dist
 .package-lock.json.checksum
 git-HEAD.txt
 .python-version
-playwright/tests/test-results
-junit-playwright-js-unit.xml
