@@ -2,7 +2,6 @@ import {Browser, ElementHandle, Frame, Page} from 'puppeteer'
 import moment from 'moment'
 
 import {
-  VIRKAILIJA_URL,
   getValmistelijaEmails,
   getAcceptedPäätösEmails,
   HAKIJA_URL,
@@ -15,12 +14,10 @@ import {
   getElementAttribute,
   getElementInnerText,
   getFirstPage,
-  getLinkToHakemusFromSentEmails,
   hasElementAttribute,
   log,
   mkBrowser,
   navigate,
-  navigateToHakemus,
   randomString,
   ratkaiseAvustushaku,
   selectVakioperusteluInFinnish,
@@ -42,7 +39,6 @@ import {
   ratkaiseMuutoshakemusEnabledAvustushaku,
   getLinkToMuutoshakemusFromSentEmails,
   getUserKeyFromPaatosEmail,
-  validateMuutoshakemusPaatosCommonValues,
   validateMuutoshakemusValues,
   MuutoshakemusValues,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
@@ -59,7 +55,6 @@ import {
   clickSendMuutoshakemusButton,
   expectMuutoshakemusToBeSubmittedSuccessfully
 } from './muutoshakemus-util'
-import { openPaatosPreview } from '../hakemuksen-arviointi/hakemuksen-arviointi-util'
 
 jest.setTimeout(120000)
 
@@ -123,21 +118,6 @@ describe('Muutospäätösprosessi', () => {
       .add(6, 'days')
       .locale('fi'),
     jatkoaikaPerustelu: 'Jaa ei kyllä kerkeekkään'
-  }
-
-
-
-  async function assertAcceptedPäätösHasVakioperustelu(page: Page): Promise<void> {
-    await assertPäätösHasPerustelu(page, 'Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt hyväksyä haetut muutokset hakemuksen mukaisesti.')
-  }
-
-  async function assertRejectedPäätösHasVakioperustelu(page: Page): Promise<void> {
-    await assertPäätösHasPerustelu(page, 'Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.')
-  }
-
-  async function assertPäätösHasPerustelu(page: Page, perustelu: string): Promise<void> {
-    const acceptedReason = await page.$eval('[data-test-id="paatos-reason"]', el => el.textContent)
-    expect(acceptedReason).toEqual(perustelu)
   }
 
   describe('When haku has been published and hakemus has been submitted, but fields cannot be normalized', () => {
@@ -244,7 +224,7 @@ etunimi.sukunimi@oph.fi`)
     it('does not show link to muutoshaku in email preview', async () => {
       await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
       expect(await textContent(page, '.decision-email-content'))
-        .toEqual(` - 
+        .toEqual(` -
 
 ${haku.avustushakuName}
 
@@ -292,26 +272,6 @@ etunimi.sukunimi@oph.fi`)
       hakemusID = hakemusIdAvustushakuId.hakemusID
     })
 
-    it('hakija gets the correct email content', async () => {
-      const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
-      emails.forEach(email => {
-        const emailContent = email.formatted
-        expect(emailContent).toContain(`${HAKIJA_URL}/muutoshakemus`)
-        expect(emailContent).toContain('Pääsette tekemään muutoshakemuksen sekä muuttamaan yhteyshenkilöä ja hänen yhteystietojaan koko hankekauden ajan tästä linkistä')
-      })
-    })
-
-    it('allows virkailija to edit the original hakemus', async () => {
-      await navigateToHakemus(page, avustushakuID, hakemusID)
-      await clickElementWithText(page, "button", "Muokkaa hakemusta")
-      const newPagePromise = waitForNewTabToOpen(browser)
-      await clickElementWithText(page, "button", "Siirry muokkaamaan")
-      const modificationPage = await newPagePromise
-      await modificationPage.bringToFront()
-      expect(await modificationPage.url()).toContain(`${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=`)
-      await page.bringToFront()
-    })
-
     describe('And hakija changes only contact details', () => {
       afterAll(async () => {
         await navigateToHakijaMuutoshakemusPage(page, hakemusID)
@@ -332,118 +292,6 @@ etunimi.sukunimi@oph.fi`)
     describe('And muutoshakemus #1 has been submitted', () => {
       beforeAll(async () => {
         await fillAndSendMuutoshakemus(page, hakemusID, muutoshakemus1)
-      })
-
-      describe('And valmistelija gets an email', () => {
-
-        it('email has correct title', async () => {
-          const emails = await waitUntilMinEmails(getValmistelijaEmails, 1, hakemusID)
-          const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
-          expectToBeDefined(title)
-          expect(title).toContain(`${haku.registerNumber} - ${answers.projectName}`)
-        })
-
-        it('email has correct avustushaku link', async () => {
-          const linkToHakemus = await getLinkToHakemusFromSentEmails(hakemusID)
-          expect(linkToHakemus).toEqual(`${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
-        })
-      })
-
-      describe('And virkailija navigates to avustushaku', () => {
-        beforeAll(async () => {
-          await navigate(page, `/avustushaku/${avustushakuID}/`)
-        })
-
-        function muutoshakemusStatusField() {
-          return `[data-test-id=muutoshakemus-status-${hakemusID}]`
-        }
-
-        it('Muutoshakemus status is ☆ Uusi', async () => {
-          await page.waitForSelector(muutoshakemusStatusField())
-          const muutoshakemusStatus = await page.$eval(muutoshakemusStatusField(), el => el.textContent)
-          expect(muutoshakemusStatus).toEqual('☆ Uusi')
-        })
-
-        describe('When virkailija clicks muutoshakemus status field', () => {
-          beforeAll(async () => {
-            await clickElement(page, muutoshakemusStatusField())
-          })
-
-          it('Shows the number of pending muutoshakemus in red', async () => {
-            await page.waitForFunction(() => (document.querySelector('[data-test-id=number-of-pending-muutoshakemukset]') as HTMLInputElement).innerText === '1')
-            const numOfMuutosHakemuksetElement = await page.waitForSelector('[data-test-id=number-of-pending-muutoshakemukset]', { visible: true })
-            const color = await page.evaluate(e => getComputedStyle(e).color, numOfMuutosHakemuksetElement)
-            expect(color).toBe('rgb(255, 0, 0)') // red
-          })
-
-          describe('When virkailija clicks muutoshakemus tab', () => {
-            beforeAll(async () => {
-              await clickElement(page, 'span.muutoshakemus-tab')
-              await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
-            })
-
-            it('Displays valid muutoshakemus values', async () => {
-              await validateMuutoshakemusValues(page, muutoshakemus1)
-            })
-
-            describe('When vakioperustelut have been selected', () => {
-              beforeAll(async () => {
-                await selectVakioperusteluInFinnish(page)
-              })
-
-              describe.skip('And virkailija opens the päätös preview', () => {
-                beforeAll(async () => {
-                  await openPaatosPreview(page)
-                })
-                afterAll(async () => {
-                  await clickElementWithText(page, 'button', 'Sulje')
-                })
-
-                it('Muutoshakemus has correct values', async () => {
-                  await validateMuutoshakemusPaatosCommonValues(page)
-                })
-
-                it('Correct päätös is displayed', async () => {
-                  const acceptedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
-                  expect(acceptedPaatos).toEqual('Opetushallitus on hyväksynyt haetut muutokset.')
-                })
-
-                it('Correct vakioperustelu is displayed', async () => {
-                  await assertAcceptedPäätösHasVakioperustelu(page)
-                })
-              })
-            })
-
-            describe('When virkailija clicks reject button and selects vakioperustelut', () => {
-              beforeAll(async () => {
-                await setMuutoshakemusJatkoaikaDecision(page, 'rejected')
-                await selectVakioperusteluInFinnish(page)
-              })
-
-              describe.skip('And opens päätös preview', () => {
-                beforeAll(async () => {
-                  await openPaatosPreview(page)
-                })
-                afterAll(async () => {
-                  await clickElementWithText(page, 'button', 'Sulje')
-                })
-
-                it('Correct päätös values are displayed', async () => {
-                  await validateMuutoshakemusPaatosCommonValues(page)
-                })
-
-                it('Correct päätös is displayed', async () => {
-                  const rejectedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
-                  expect(rejectedPaatos).toEqual('Opetushallitus on hylännyt haetut muutokset.')
-                })
-
-                it('Correct vakioperustelu is displayed', async () => {
-                  await assertRejectedPäätösHasVakioperustelu(page)
-                })
-              })
-            })
-          })
-        })
       })
 
       describe('When virkailija rejects muutoshakemus', () => {
@@ -497,35 +345,14 @@ etunimi.sukunimi@oph.fi`)
         })
 
         describe('And virkailija navigates to hakemus and clicks muutoshakemus tab', () => {
-          let paatosUrl: string
 
           beforeAll(async () => {
             await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
             await page.waitForSelector('[data-test-id=muutoshakemus-jatkoaika]')
-            paatosUrl = await page.$eval('a.muutoshakemus__paatos-link', el => el.textContent) || ''
           })
 
           it('muutoshakemus status is "rejected"', async () => {
             await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected'})
-          })
-
-          describe('And virkailija navigates to päätös', () => {
-            beforeAll(async () => {
-              await page.goto(paatosUrl, { waitUntil: "networkidle0" })
-            })
-
-            it('muutoshakemus has correct values', async () => {
-              await validateMuutoshakemusPaatosCommonValues(page)
-            })
-
-            it('muutoshakemus päätös is rejected', async () => {
-              const rejectedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
-              expect(rejectedPaatos).toEqual('Opetushallitus on hylännyt haetut muutokset.')
-            })
-
-            it('päätös has vakioperustelu', async () => {
-              await assertRejectedPäätösHasVakioperustelu(page)
-            })
           })
         })
       })
@@ -623,27 +450,6 @@ etunimi.sukunimi@oph.fi
 
             it('muutoshakemus has correct values', async () => {
               await validateMuutoshakemusValues(page, muutoshakemus2, { status: 'accepted'})
-            })
-
-            describe('Navigating to päätös page', () => {
-              beforeAll(async () => {
-                const paatosUrl = await page.$eval('a.muutoshakemus__paatos-link', el => el.textContent) || ''
-                await page.goto(paatosUrl, { waitUntil: "networkidle0" })
-              })
-
-              it('päätös has correct values', async () => {
-                await validateMuutoshakemusPaatosCommonValues(page)
-              })
-
-              it('muutoshakemus has hyväksytty päätös', async () => {
-                const acceptedPaatos = await page.$eval('[data-test-id="paatos-paatos"]', el => el.textContent)
-                expect(acceptedPaatos).toEqual('Opetushallitus on hyväksynyt haetut muutokset.')
-              })
-
-              it('päätös has vakioperustelu', async () => {
-                await assertAcceptedPäätösHasVakioperustelu(page)
-              })
-
             })
 
           })
@@ -810,13 +616,6 @@ etunimi.sukunimi@oph.fi
                 expect(appliedProjectEndDate).toBe(muutoshakemus2.jatkoaika?.format('DD.MM.YYYY'))
               })
 
-              it.skip('Correct päättymispäivä is displayed in päätös preview', async () => {
-                await openPaatosPreview(page)
-                const acceptedDate = await page.$eval('[data-test-id="paattymispaiva-value"]', el => el.textContent)
-                expect(acceptedDate).toBe('20.4.2400')
-                await clickElementWithText(page, 'button', 'Sulje')
-              })
-
               describe('After sending päätös', () => {
 
                 beforeAll(async () => {
@@ -846,31 +645,6 @@ etunimi.sukunimi@oph.fi
                 it('"Hyväksytty muutettuna" is displayed to virkailija', async () => {
                   const paatosStatusText = await page.$eval('[data-test-id="paatos-jatkoaika"]', el => el.textContent)
                   expect(paatosStatusText).toBe('Hyväksytään haetut muutokset käyttöaikaan muutettuna')
-                })
-
-                describe('When opening päätösdokumentti', () => {
-                  let paatosPage: Page
-
-                  beforeAll(async () => {
-                    const newPagePromise = new Promise<Page>(x => browser.once('targetcreated', target => x(target.page())))
-                    await clickElement(page, 'a.muutoshakemus__paatos-link')
-                    paatosPage = await newPagePromise
-                    await paatosPage.bringToFront()
-                  })
-
-                  it('Correct päättymispäivä is displayed', async () => {
-                    const acceptedDate = await textContent(paatosPage, '[data-test-id="paattymispaiva-value"]')
-                    expect(acceptedDate).toBe('20.4.2400')
-                  })
-
-                  it('Correct title is displayed', async () => {
-                    const paatos = await textContent(paatosPage, '[data-test-id="paatos-paatos"]')
-                    expect(paatos).toBe('Opetushallitus on hyväksynyt haetut muutokset tässä päätöksessä kuvatuin muutoksin.')
-                  })
-
-                  afterAll(async () => {
-                    await page.bringToFront()
-                  })
                 })
 
                 it('Correct päättymispäivä is displayed when creating a new muutoshakemus', async () => {

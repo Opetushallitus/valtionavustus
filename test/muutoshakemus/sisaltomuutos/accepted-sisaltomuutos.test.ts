@@ -26,10 +26,6 @@ import {
   fillSisaltomuutosPerustelut,
   navigateToHakijaMuutoshakemusPage
 } from '../muutoshakemus-util'
-import {
-  closePaatosPreview,
-  openPaatosPreview
-} from '../../hakemuksen-arviointi/hakemuksen-arviointi-util'
 
 export const answers = {
   contactPersonEmail: "erkki.esimerkki@example.com",
@@ -142,24 +138,6 @@ describe('Sisaltomuutos (accepted)', () => {
       const disclaimer =  await getElementInnerText(page, '.muutoshakemus-notice')
       expect(disclaimer).toEqual('Olet tekemässä päätöksen, jossa haetut sisältömuutokset hyväksytään muutettuna. Varmista, että perusteluissa hakijalle kuvataan mitkä haetuista sisältömuutoksista hyväksytään ja mitkä hylätään.')
       await setMuutoshakemusSisaltoDecision(page, 'accepted')
-    })
-
-    describe.skip('preview for virkailija', () => {
-      beforeAll(async () => {
-        await openPaatosPreview(page)
-      })
-
-      it('should include sisältömuutos in asia section', async () => {
-        await expectAsiaSectionToContainSisaltomuutos(page)
-      })
-
-      it('should include text about accepted sisältömuutos in Hyväksytyt muutokset section', async () => {
-        await expectAcceptedSisaltomuutosInPaatos(page)
-      })
-
-      afterAll(async () => {
-        await closePaatosPreview(page)
-      })
     })
 
     describe('sending decision', () => {

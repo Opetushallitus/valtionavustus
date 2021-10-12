@@ -413,7 +413,7 @@ etunimi.sukunimi@oph.fi`)
                 await selectVakioperusteluInFinnish(page)
               })
 
-              describe('And virkailija opens the päätös preview', () => {
+              describe.skip('And virkailija opens the päätös preview', () => {
                 beforeAll(async () => {
                   await openPaatosPreview(page)
                 })
@@ -442,7 +442,7 @@ etunimi.sukunimi@oph.fi`)
                 await selectVakioperusteluInFinnish(page)
               })
 
-              describe('And opens päätös preview', () => {
+              describe.skip('And opens päätös preview', () => {
                 beforeAll(async () => {
                   await openPaatosPreview(page)
                 })
@@ -528,7 +528,7 @@ etunimi.sukunimi@oph.fi`)
             await validateMuutoshakemusValues(page, muutoshakemus1, { status: 'rejected'})
           })
 
-          describe('And virkailija navigates to päätös', () => {
+          describe.skip('And virkailija navigates to päätös', () => {
             beforeAll(async () => {
               await page.goto(paatosUrl, { waitUntil: "networkidle0" })
             })
@@ -642,7 +642,7 @@ etunimi.sukunimi@oph.fi
               await validateMuutoshakemusValues(page, muutoshakemus2, { status: 'accepted'})
             })
 
-            describe('Navigating to päätös page', () => {
+            describe.skip('Navigating to päätös page', () => {
               beforeAll(async () => {
                 const paatosUrl = await page.$eval('a.muutoshakemus__paatos-link', el => el.textContent) || ''
                 await page.goto(paatosUrl, { waitUntil: "networkidle0" })
@@ -858,7 +858,7 @@ etunimi.sukunimi@oph.fi
                   expect(paatosStatusText).toBe('Hyväksytään haetut muutokset käyttöaikaan muutettuna')
                 })
 
-                describe('When opening päätösdokumentti', () => {
+                describe.skip('When opening päätösdokumentti', () => {
                   let paatosPage: Page
 
                   beforeAll(async () => {
