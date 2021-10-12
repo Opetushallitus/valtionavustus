@@ -18,9 +18,11 @@ import {
   BudgetAmount,
   defaultBudget,
   createRandomHakuValues,
+  clickElementWithText,
   setupTestLogging, saveMuutoshakemus, typePerustelu,
 } from '../test-util'
 import {
+  fillMuutoshakemusBudgetAmount,
   fillOsiotAndSendMuutoshakemusDecision,
   navigateToLatestMuutoshakemus,
   navigateToLatestMuutoshakemusPaatos,
@@ -33,6 +35,7 @@ import {
   navigateToMuutoshakemusAndApplyForJatkoaikaAndBudgetChanges,
 
 } from './muutoshakemus-util'
+import { openPaatosPreview } from '../hakemuksen-arviointi/hakemuksen-arviointi-util'
 
 const twoMinutes = 120000
 jest.setTimeout(30000)
@@ -368,6 +371,100 @@ describe('Talousarvion muuttaminen', () => {
           })
         })
 
+        describe('Hakija views the muutoshakemus päätös', () => {
+          beforeAll(async () => {
+            await navigateToLatestMuutoshakemusPaatos(page, hakemusID)
+          })
+
+          it('Decision title is shown in finnish', async () => {
+            const title = await getElementInnerText(page, '[data-test-id="muutoshakemus-paatos-title"]')
+            expect(title).toEqual('PÄÄTÖS')
+          })
+
+          it('Asia title is shown in finnish', async () => {
+            const title = await getElementInnerText(page, '[data-test-id="muutospaatos-asia-title"]')
+            expect(title).toEqual('Asia')
+          })
+
+          it.skip('Decision section title is shown in finnish', async () => {
+            const title = await getElementInnerText(page, '[data-test-id="muutoshakemus-paatos-section-title"]')
+            expect(title).toEqual('Päätös')
+          })
+
+          it.skip('Decision is shown in finnish', async () => {
+            const title = await getElementInnerText(page, '[data-test-id="paatos-paatos"]')
+            expect(title).toEqual('Opetushallitus on hyväksynyt haetut muutokset tässä päätöksessä kuvatuin muutoksin.')
+          })
+
+          it.skip('Accepted changes title is shown in finnish', async () => {
+            const title = await getElementInnerText(page, '[data-test-id="accepted-changes-title"]')
+            expect(title).toEqual('Hyväksytyt muutokset')
+          })
+
+          it('Current budget title is shown in finnish', async () => {
+            const currentBudgetHeader = await getElementInnerText(page, '.currentBudget')
+            expect(currentBudgetHeader).toEqual('Vanha budjetti')
+          })
+
+          it('Approved budget title is shown in finnish', async () => {
+            const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="budget-change-title"]')
+            expect(currentBudgetHeader).toEqual('Hyväksytty uusi budjetti')
+          })
+
+          it('Asia is shown in finnish', async () => {
+            const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="budget-change"]')
+            expect(currentBudgetHeader).toEqual('Muutoshakemus talouden käyttösuunnitelmaan.')
+          })
+
+          it('Päätöksen perustelut is shown in finnish', async () => {
+            const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="muutoshakemus-paatos-perustelut-title"]')
+            expect(currentBudgetHeader).toEqual('Päätöksen perustelut')
+          })
+
+          it('Päätöksen tekijä is shown in finnish', async () => {
+            const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="muutoshakemus-paatos-tekija-title"]')
+            expect(currentBudgetHeader).toEqual('Hyväksyjä')
+          })
+
+          it('Lisätietoja title is shown in finnish', async () => {
+            const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="muutoshakemus-paatos-lisatietoja-title"]')
+            expect(currentBudgetHeader).toEqual('Lisätietoja')
+          })
+
+          it('budget change is mentioned in the info section', async () => {
+            const budgetChangeText = await getElementInnerText(page, '[data-test-id="budget-change"]')
+            expect(budgetChangeText).toEqual('Muutoshakemus talouden käyttösuunnitelmaan.')
+          })
+
+          it('the old budget is shown on the päätös', async () => {
+            const budgetRowSelector = '.muutoshakemus-paatos__content [data-test-id=meno-input-row]'
+            const budgetExpectedItems = [
+              { description: 'Henkilöstömenot', amount: '300 €' },
+              { description: 'Aineet, tarvikkeet ja tavarat', amount: '420 €' },
+              { description: 'Laitehankinnat', amount: '1337 €' },
+              { description: 'Palvelut', amount: '5318008 €' },
+              { description: 'Vuokrat', amount: '69 €' },
+              { description: 'Matkamenot', amount: '0 €' },
+              { description: 'Muut menot', amount: '9000 €' }
+            ]
+            await validateExistingBudgetTableCells(budgetRowSelector, budgetExpectedItems)
+          })
+
+          it('the "accepted with changes" budget is shown on the päätös', async () => {
+            const budgetRowSelector = '.muutoshakemus-paatos__content [data-test-id=meno-input-row]'
+            const budgetExpectedItems = [
+              { description: 'Henkilöstömenot', amount: '1301' },
+              { description: 'Aineet, tarvikkeet ja tavarat', amount: '1421' },
+              { description: 'Laitehankinnat', amount: '2338' },
+              { description: 'Palvelut', amount: '5312007' },
+              { description: 'Vuokrat', amount: '1068' },
+              { description: 'Matkamenot', amount: '1000' },
+              { description: 'Muut menot', amount: '9999' }
+            ]
+            await validateChangedBudgetTableCells(budgetRowSelector, budgetExpectedItems)
+          })
+        })
+
         describe('And muutoshakemus #2 has been submitted with budget changes', () => {
           const muutoshakemus2Budget = {...muutoshakemus1Budget, ...{ personnel: '302', other: '8998' }}
           const muutoshakemus2Perustelut = 'Fattan fossiilit taas sniiduili ja oon akuutis likviditettivajees, pydeeks vippaa vähän hilui'
@@ -642,6 +739,111 @@ describe('Talousarvion muuttaminen', () => {
       await page.waitForSelector(budgetReason)
       const perustelu = await getElementInnerText(page, budgetReason)
       expect(perustelu).toEqual('perustelu')
+    })
+
+    describe.skip('opens the paatos preview when "accepted with changes" is chosen', () => {
+      const budget: BudgetAmount = {
+        personnel: '200000',
+        material: '3001',
+        equipment: '9999',
+        'service-purchase': '1100',
+        rent: '160616',
+        steamship: '100',
+        other: '10000000',
+      }
+
+      beforeAll(async () => {
+        await clickElement(page, 'label[for=accepted_with_changes]')
+        await fillMuutoshakemusBudgetAmount(page, budget)
+        await openPaatosPreview(page)
+      })
+
+      afterAll(async () => {
+        await clickElementWithText(page, 'button', 'Sulje')
+      })
+
+      it('sees the old budget in the preview', async () => {
+        const budgetRowSelector = '.muutoshakemus-paatos__content [data-test-id=meno-input-row]'
+        const budgetExpectedItems = [
+          { description: 'Henkilöstömenot', amount: '200000 €' },
+          { description: 'Aineet, tarvikkeet ja tavarat', amount: '3000 €' },
+          { description: 'Laitehankinnat', amount: '10000 €' },
+          { description: 'Palvelut', amount: '100 €' },
+          { description: 'Vuokrat', amount: '161616 €' },
+          { description: 'Matkamenot', amount: '100 €' },
+          { description: 'Muut menot', amount: '10000000 €' }
+        ]
+        await validateExistingBudgetTableCells(budgetRowSelector, budgetExpectedItems)
+      })
+
+      it('sees the changed budget in the preview', async () => {
+        const budgetRowSelector = '.muutoshakemus-paatos__content [data-test-id=meno-input-row]'
+        const budgetExpectedItems = [
+          { description: 'Henkilöstömenot', amount: '200000' },
+          { description: 'Aineet, tarvikkeet ja tavarat', amount: '3001' },
+          { description: 'Laitehankinnat', amount: '9999' },
+          { description: 'Palvelut', amount: '1100' },
+          { description: 'Vuokrat', amount: '160616' },
+          { description: 'Matkamenot', amount: '100' },
+          { description: 'Muut menot', amount: '10000000' }
+        ]
+        await validateChangedBudgetTableCells(budgetRowSelector, budgetExpectedItems)
+      })
+    })
+
+    describe.skip('opens the paatos preview when "accepted" is chosen', () => {
+      beforeAll(async () => {
+        await clickElement(page, 'label[for=accepted]')
+        await openPaatosPreview(page)
+      })
+
+      afterAll(async () => {
+        await clickElementWithText(page, 'button', 'Sulje')
+      })
+
+      it('sees the old budget in the preview', async () => {
+        const budgetRowSelector = '.muutoshakemus-paatos__content [data-test-id=meno-input-row]'
+        const budgetExpectedItems = [
+          { description: 'Henkilöstömenot', amount: '200000 €' },
+          { description: 'Aineet, tarvikkeet ja tavarat', amount: '3000 €' },
+          { description: 'Laitehankinnat', amount: '10000 €' },
+          { description: 'Palvelut', amount: '100 €' },
+          { description: 'Vuokrat', amount: '161616 €' },
+          { description: 'Matkamenot', amount: '100 €' },
+          { description: 'Muut menot', amount: '10000000 €' }
+        ]
+        await validateExistingBudgetTableCells(budgetRowSelector, budgetExpectedItems)
+      })
+
+      it('sees the proposed budget in the preview', async () => {
+        const budgetRowSelector = '.muutoshakemus-paatos__content [data-test-id=meno-input-row]'
+        const budgetExpectedItems = [
+          { description: 'Henkilöstömenot', amount: '200100' },
+          { description: 'Aineet, tarvikkeet ja tavarat', amount: '4001' },
+          { description: 'Laitehankinnat', amount: '8999' },
+          { description: 'Palvelut', amount: '100' },
+          { description: 'Vuokrat', amount: '161616' },
+          { description: 'Matkamenot', amount: '0' },
+          { description: 'Muut menot', amount: '10000000' }
+        ]
+        await validateChangedBudgetTableCells(budgetRowSelector, budgetExpectedItems)
+      })
+    })
+
+    describe.skip('opens the paatos preview when "rejected" is chosen', () => {
+      beforeAll(async () => {
+        await clickElement(page, 'label[for=rejected]')
+        await openPaatosPreview(page)
+      })
+
+      afterAll(async () => {
+        await clickElementWithText(page, 'button', 'Sulje')
+      })
+
+      it('does not see a budget table in the preview', async () => {
+        const talousarvioElems = await countElements(page, '.muutoshakemus-paatos__content .muutoshakemus_talousarvio')
+        expect(talousarvioElems).toEqual(0)
+      })
     })
 
     describe('accepts the muutoshakemus', () => {

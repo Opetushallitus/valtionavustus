@@ -3,7 +3,6 @@ import {
   NormalizedHakemusData, UserInfo
 } from "../../../../va-common/web/va/types";
 import {
-  Meno,
   Muutoshakemus,
   Talousarvio, TalousarvioValues,
 } from "../../../../va-common/web/va/types/muutoshakemus";
@@ -12,11 +11,7 @@ import {MuutosTaloudenKayttosuunnitelmaan} from "../../../../va-common/web/va/mu
 import {MuutoshakemusSection} from "../../../../va-common/web/va/MuutoshakemusSection";
 import {isError, isSubmitDisabled} from "../formikHelpers";
 import {copyToClipboard} from "../copyToClipboard";
-import {
-  getTranslationContext,
-  TranslationContext,
-  useTranslations
-} from "../../../../va-common/web/va/i18n/TranslationContext";
+import {useTranslations} from "../../../../va-common/web/va/i18n/TranslationContext";
 import {
   dateStringToMoment,
   getTalousarvio,
@@ -56,8 +51,6 @@ import HakemustenArviointiController from "../HakemustenArviointiController";
 
 import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
-import {Modal} from "./Modal";
-import {MuutoshakemusPaatos} from "../../../../va-common/web/va/MuutoshakemusPaatos";
 
 moment.locale('fi')
 const localizer = new MomentLocalizer(moment)
@@ -191,9 +184,7 @@ const formToPayload = (values: OsioKohtainenMuutoshakemusPaatosRequest) => {
   }
 }
 
-
-
-export const OsiokohtainenMuutoshakemusForm = ({avustushaku, currentTalousarvio, muutoshakemus, muutoshakemukset, projectEndDate, hakemus, controller, presenter, isPresentingOfficer, hakemusVersion, userInfo}: OsiokohtainenMuutoshakemusFormProps) => {
+export const OsiokohtainenMuutoshakemusForm = ({avustushaku, currentTalousarvio, muutoshakemus, muutoshakemukset, projectEndDate, hakemus, controller}: OsiokohtainenMuutoshakemusFormProps) => {
   const { t } = useTranslations()
   const talousarvioValues = muutoshakemus.talousarvio.length ? getTalousarvioValues(muutoshakemus.talousarvio) : undefined
   const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
@@ -208,45 +199,7 @@ export const OsiokohtainenMuutoshakemusForm = ({avustushaku, currentTalousarvio,
       controller.setPaatos({ muutoshakemusId: muutoshakemus.id, hakemusId: hakemus['hakemus-id'], ...storedPaatos })
     }
   })
-
-  const onPaatosPreviewClick = () => {
-    const paatos = {
-      'paatos-status-jatkoaika': f.values["haen-kayttoajan-pidennysta"]?.status,
-      paattymispaiva: f.values["haen-kayttoajan-pidennysta"]?.paattymispaiva,
-      'paatos-status-sisaltomuutos': f.values["haen-sisaltomuutosta"]?.status,
-      'hyvaksytyt-sisaltomuutokset': f.values["haen-sisaltomuutosta"]?.["hyvaksytyt-sisaltomuutokset"],
-      'paatos-status-talousarvio': f.values.talousarvio?.status,
-      reason: f.values.reason,
-      'created-at': new Date().toISOString(),
-      decider: `${userInfo['first-name']} ${userInfo['surname']}`,
-      talousarvio: muutoshakemus.talousarvio.reduce<Meno[]>((acc, meno) => {
-        const formTalousArvio = f.values.talousarvio?.talousarvio
-        if (!formTalousArvio) {
-          return acc
-        }
-        const amount = formTalousArvio[meno.type]
-        if (amount) {
-          acc.push({ ...meno, amount })
-        }
-        return acc
-      }, []),
-      status: undefined
-    }
-    controller.setModal(
-      <Modal title="ESIKATSELU" controller={controller}>
-        <TranslationContext.Provider value={getTranslationContext(hakemusVersion.language)}>
-          <MuutoshakemusPaatos
-            avustushaku={avustushaku}
-            paatos={paatos}
-            muutoshakemus={muutoshakemus}
-            hakemus={hakemus}
-            presenter={presenter}
-            isPresentingOfficer={isPresentingOfficer}
-            muutoshakemukset={muutoshakemukset} />
-        </TranslationContext.Provider>
-      </Modal>
-    )
-  }
+  const onPaatosPreviewClick = () => {}
   const sisaltomuutoksetStatus = f.values["haen-sisaltomuutosta"]?.status
   const hyvaksyttySisaltomuutokset = isAcceptedWithOrWithoutChanges(sisaltomuutoksetStatus)
   return (

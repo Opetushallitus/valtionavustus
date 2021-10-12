@@ -112,7 +112,6 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
   })
 
   const onPaatosPreviewClick = () => {
-    const status = f.values.status
     const paatos = {
       'created-at': new Date().toISOString(),
       decider: `${userInfo['first-name']} ${userInfo['surname']}`,
@@ -127,10 +126,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
           acc.push({ ...meno, amount })
         }
         return acc
-      }, []),
-      'paatos-status-jatkoaika': status,
-      'paatos-status-talousarvio': status,
-      'paatos-status-sisaltomuutos': status
+      }, [])
     }
     controller.setModal(
       <Modal title="ESIKATSELU" controller={controller}>
