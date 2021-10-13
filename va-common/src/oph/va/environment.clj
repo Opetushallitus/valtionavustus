@@ -22,6 +22,7 @@
          :reports (:reports config)
          :va-code-values (:va-code-values config)
          :muutoshakemus-osiokohtainen-hyvaksynta (:muutoshakemus-osiokohtainen-hyvaksynta config)
+         :loppuselvitys-verification (:loppuselvitys-verification config)
          :allow-overriding-feature-flag-from-url-params (:allow-overriding-feature-flag-from-url-params config)
          :selvitys-limit (:selvitys-limit config)}
         opintopolku (:opintopolku config)]

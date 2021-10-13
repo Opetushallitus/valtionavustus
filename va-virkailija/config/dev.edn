@@ -35,5 +35,6 @@
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
  :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? true}
+ :loppuselvitys-verification {:enabled? true}
  :allow-overriding-feature-flag-from-url-params {:enabled? true}
  :test-apis {:enabled? true}}

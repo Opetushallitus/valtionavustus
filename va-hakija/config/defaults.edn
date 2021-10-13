@@ -40,4 +40,5 @@
          :retry-multiplier 4
          :retry-max-time 60000}
  :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? false}
+ :loppuselvitys-verification {:enabled? false}
  :selvitys-limit {:enabled? false}}
