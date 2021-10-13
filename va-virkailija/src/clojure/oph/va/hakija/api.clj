@@ -3,6 +3,7 @@
         [clojure.data :as data]
         [clojure.pprint :only [pprint]])
   (:require [clojure.java.io :as io]
+            [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :refer :all]
             [oph.soresu.form.formhandler :as formhandler]
             [oph.va.jdbc.enums]
@@ -70,6 +71,16 @@
     (->> (hakija-queries/get-avustushaku avustushaku-id {:connection tx})
          (map avustushaku-response-content)
          first)))
+
+(defn get-hakemus [hakemus-id]
+  (first (exec hakija-queries/get-hakemus {:id hakemus-id})))
+
+(defn get-hakemus-by-user-key [user-key]
+  (first (exec hakija-queries/get-hakemus-by-user-key {:user_key user-key})))
+
+(defn get-hakemus-submission [hakemus]
+  (first (exec hakija-queries/get-submission {:id (:form_submission_id hakemus)
+                                              :version (:form_submission_version hakemus)})))
 
 (defn diff-paatos [old new]
   (data/diff (dissoc old :updatedAt)
@@ -189,6 +200,9 @@
    :user-key (:user_key hakemus)
    :selvitys-email (:selvitys_email hakemus)
    :status-loppuselvitys (:status_loppuselvitys hakemus)
+   :loppuselvitys-information-verified-by (:loppuselvitys_information_verified_by hakemus)
+   :loppuselvitys-information-verified-at (:loppuselvitys_information_verified_at hakemus)
+   :loppuselvitys-information-verification (:loppuselvitys_information_verification hakemus)
    :status-valiselvitys (:status_valiselvitys hakemus)
    :status-muutoshakemus (:status_muutoshakemus hakemus)
    :answers (:answer_values hakemus)
@@ -307,7 +321,6 @@
         ]
     (exec hakija-queries/update-hakemus-selvitys-email! {:selvitys_email email :id hakemus-id})))
 
-
 (defn update-loppuselvitys-status [hakemus-id status]
   (->> {:id hakemus-id :status status}
        (exec hakija-queries/update-loppuselvitys-status<! )))
@@ -315,6 +328,44 @@
 (defn update-valiselvitys-status [hakemus-id status]
   (->> {:id hakemus-id :status status}
        (exec hakija-queries/update-valiselvitys-status<! )))
+
+(defn set-selvitys-accepted [selvitys-type selvitys-email]
+  (let [validated-email         (assoc selvitys-email :to (distinct (:to selvitys-email)))
+        selvitys-hakemus-id     (:selvitys-hakemus-id selvitys-email)
+        hakemus                 (get-hakemus selvitys-hakemus-id)
+        parent_id               (:parent_id hakemus)
+        is-loppuselvitys        (= selvitys-type "loppuselvitys")
+        is-verified             (= (:status_loppuselvitys hakemus) "information_verified")
+        is-verification-enabled (:enabled? (:loppuselvitys-verification config))
+        can-set-selvitys        (or (not is-loppuselvitys) (not is-verification-enabled) is-verified)]
+    (if can-set-selvitys
+      (do
+        (send-selvitys hakemus validated-email)
+        (update-selvitys-message validated-email)
+        (if is-loppuselvitys
+          (update-loppuselvitys-status parent_id "accepted")
+          (update-valiselvitys-status parent_id "accepted"))
+        true)
+      false)))
+
+(defn verify-loppuselvitys-information [hakemus-id verify-information identity]
+  (let [hakemus  (get-hakemus hakemus-id)
+        status   (:status_loppuselvitys hakemus)
+        message  (:message verify-information)
+        verifier (str (:first-name identity) " " (:surname identity))]
+    (if (= status "submitted")
+      (do
+        (execute!
+          "UPDATE hakemukset
+           SET
+             status_loppuselvitys = 'information_verified',
+             loppuselvitys_information_verification = ?,
+             loppuselvitys_information_verified_by = ?,
+             loppuselvitys_information_verified_at = now()
+           WHERE id = ? and version_closed is null"
+          [message verifier hakemus-id])
+        {:loppuselvitys-information-verified-by verifier
+         :loppuselvitys-information-verification message}))))
 
 (defn get-hakemusdata [hakemus-id]
   (let [hakemus (first (exec hakija-queries/get-hakemus-with-answers {:id hakemus-id}))
@@ -405,16 +456,6 @@
     (try (update-form! form-id form-to-save)
          (catch Exception e (throw (get-next-exception-or-original e))))
     (get-form-by-id form-id)))
-
-(defn get-hakemus [hakemus-id]
-  (first (exec hakija-queries/get-hakemus {:id hakemus-id})))
-
-(defn get-hakemus-by-user-key [user-key]
-  (first (exec hakija-queries/get-hakemus-by-user-key {:user_key user-key})))
-
-(defn get-hakemus-submission [hakemus]
-  (first (exec hakija-queries/get-submission {:id (:form_submission_id hakemus)
-                                                         :version (:form_submission_version hakemus)})))
 
 (defn update-hakemus-status [hakemus status status-comment identity]
   (let [updated-hakemus (merge hakemus {:status (keyword status)

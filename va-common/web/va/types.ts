@@ -121,14 +121,22 @@ export interface Comment {
   'person-oid'?: string
 }
 
+export interface Selvitys {
+  "budget-oph-share"?: string
+  answers?: Answer[]
+  language: 'fi' | 'sv'
+}
+
+export type SelvitysStatus = 'missing' | 'submitted' | 'information_verified' | 'accepted'
+
 export interface Hakemus {
   id: number
   answers: Answer[]
   arvio: Arvio
   status: HakemusStatus
   'status-comment'?: unknown
-  'status-loppuselvitys'?: unknown
-  'status-valiselvitys'?: unknown
+  'status-loppuselvitys': SelvitysStatus
+  'status-valiselvitys': SelvitysStatus
   'status-muutoshakemus'?: MuutoshakemusStatus
   'budget-oph-share': number
   'budget-total': number
@@ -142,15 +150,9 @@ export interface Hakemus {
   selvitys?: {
     attachments: unknown
     loppuselvitysForm: unknown
-    loppuselvitys: {
-      "budget-oph-share"?: string
-      answers?: Answer[]
-    },
+    loppuselvitys: Selvitys,
     valiselvitysForm: unknown
-    valiselvitys: {
-      "budget-oph-share"?: string
-      answers?: Answer[]
-    }
+    valiselvitys: Selvitys
   }
   version: number
   'submitted-version'?: number
@@ -167,6 +169,9 @@ export interface Hakemus {
   scores: unknown[]
   'selvitys-email'?: unknown
   changeRequest?: string
+  'loppuselvitys-information-verified-by'?: string
+  'loppuselvitys-information-verified-at'?: string
+  'loppuselvitys-information-verification'?: string
 }
 
 export type AvustushakuStatus = 'new' | 'draft' | 'published' | 'resolved' | 'deleted'

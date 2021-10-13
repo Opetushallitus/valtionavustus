@@ -13,6 +13,9 @@ select  h.id,
         h.register_number,
         h.status_loppuselvitys,
         h.status_valiselvitys,
+        h.loppuselvitys_information_verified_by,
+        h.loppuselvitys_information_verified_at,
+        h.loppuselvitys_information_verification,
         (select
           (CASE
             WHEN m.paatos_id IS NULL

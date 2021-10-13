@@ -310,23 +310,27 @@
                        (ok response)
                        (not-found))))
 
+(defn- verify-loppuselvitys-information []
+  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/loppuselvitys/verify-information" request
+                      :path-params [avustushaku-id :- Long hakemus-id :- Long]
+                      :body [verify-information {:message s/Str}]
+                      :return s/Any
+                      :summary "Set loppuselvitys information verified"
+                      (let [identity (authentication/get-request-identity request)
+                            response (hakija-api/verify-loppuselvitys-information hakemus-id verify-information identity)]
+                        (if response
+                          (ok response)
+                          (bad-request!)))))
+
 (defn- send-selvitys []
   (compojure-api/POST "/:avustushaku-id/selvitys/:selvitys-type/send" []
                       :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
                       :body [selvitys-email (compojure-api/describe virkailija-schema/SelvitysEmail "Selvitys email")]
                       :return s/Any
                       :summary "Send selvitys and update state to sent"
-                      (let [validated-email     (assoc selvitys-email :to (distinct (:to selvitys-email)))
-                            selvitys-hakemus-id (:selvitys-hakemus-id selvitys-email)
-                            hakemus             (hakija-api/get-hakemus selvitys-hakemus-id)
-                            parent_id           (:parent_id hakemus)
-                            is-loppuselvitys    (= selvitys-type "loppuselvitys")]
-                        (hakija-api/send-selvitys hakemus validated-email)
-                        (hakija-api/update-selvitys-message validated-email)
-                        (if is-loppuselvitys
-                          (hakija-api/update-loppuselvitys-status parent_id "accepted")
-                          (hakija-api/update-valiselvitys-status parent_id "accepted"))
-                        (ok {:status "ok"}))))
+                      (if (hakija-api/set-selvitys-accepted selvitys-type selvitys-email)
+                        (ok {:status "ok"})
+                        (bad-request!))))
 
 (defn- send-selvitys-email []
   (compojure-api/POST "/:avustushaku-id/selvitys/:selvitys-type/send-notification" request
@@ -735,6 +739,7 @@
                          (post-muutoshakemus-paatos)
                          (post-osiokohtainen-muutoshakemus-paatos)
                          (get-selvitys)
+                         (verify-loppuselvitys-information)
                          (send-selvitys)
                          (send-selvitys-email)
                          (re-send-paatos-email)
