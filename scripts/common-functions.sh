@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set -o errexit -o nounset -o pipefail
+
 readonly repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 readonly node_version="16.9.1"
 readonly npm_version="7.24.0"
@@ -22,8 +25,10 @@ function running_on_jenkins {
 
 function init_nodejs {
   export NVM_DIR="${NVM_DIR:-$HOME/.cache/nvm}"
+  set +o errexit
   source "$repo/nvm.sh"
   nvm use "${node_version}" || nvm install "${node_version}"
+  set -o errexit
   npm install -g "npm@${npm_version}"
 }
 
