@@ -4,15 +4,13 @@ er ändringsansökan har behandlats.
 
 Projekt: {{ register-number }} - {{ project-name }}
 
-Ni kan granska beslutet via denna länk:
-{{& paatos-url }}
+Beslut om ändringsansökan: {{& paatos-url }}
 
-Ni kan vid behov göra en ny ändringsansökan via denna länk:
-{{& muutoshakemus-url }}
+Se tidigare ändringsansökningar och gör vid behov en ny ändringsansökan: {{& muutoshakemus-url }}
 
 Bilaga: {{ attachment-title }}
 
-Mera information ges vid behov av kontaktpersonen som anges i understödsbeslutet.
+Mera information ges vid behov av kontaktpersonen som anges i beslutet. 
 
 Hälsningar,
 {{ presenter-name }}
