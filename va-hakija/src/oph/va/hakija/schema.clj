@@ -77,6 +77,7 @@
   {
     :paatos Paatos
     :muutoshakemus Muutoshakemus
+    :muutoshakemusUrl s/Str
     :presenter Presenter
     :isPresentingOfficer s/Bool
     :hakemus NormalizedHakemus

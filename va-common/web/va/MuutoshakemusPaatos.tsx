@@ -17,10 +17,11 @@ import {Role} from "../../../va-virkailija/web/va/types";
 
 type MuutoshakemusPaatosProps = Omit<PaatosState, 'paatos' | 'presenter'> & {
   paatos: Omit<Paatos, 'id' | 'user-key' | 'updated-at'>
+  muutoshakemusUrl: string
   presenter: Role | undefined
 }
 
-type HyvaksytytMuutoksetProps = Omit<MuutoshakemusPaatosProps, 'presenter' | 'isPresentingOfficer'>
+type HyvaksytytMuutoksetProps = Omit<MuutoshakemusPaatosProps, 'presenter' | 'isPresentingOfficer' | 'muutoshakemusUrl'>
 
 const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muutoshakemukset }: HyvaksytytMuutoksetProps) => {
   if (isRejected(paatos.status)) return null
@@ -61,9 +62,9 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muut
   )
 }
 
-export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset, isPresentingOfficer }: MuutoshakemusPaatosProps) => {
-  const { t } = useTranslations()
-
+export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset, isPresentingOfficer, muutoshakemusUrl }: MuutoshakemusPaatosProps) => {
+  const { t, lang } = useTranslations()
+  
   return (
     <div className="muutoshakemus-paatos__content">
       <header className="muutoshakemus-paatos__header">
@@ -89,6 +90,9 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
           {muutoshakemus['haen-sisaltomuutosta'] && (
             <div>{t.muutoshakemus.paatos.muutoshakemusSisaltoonTaiToteutustapaan}</div>
           )}
+        <p>
+          <a data-test-id="link-to-muutoshakemus" href={`${muutoshakemusUrl}&lang=${lang}`}>{t.muutoshakemus.paatos.linkkiMuutoshakemukseen}</a>
+        </p>
         </div>
       </section>
       <section className="muutoshakemus-paatos__section">

@@ -54,6 +54,7 @@ export const translationsFi = {
     paatos: {
       paatos: 'Päätös',
       asia: 'Asia',
+      linkkiMuutoshakemukseen: 'Näytä kaikki haetut muutokset perusteluineen',
       hanke: 'Hanke',
       title: 'Hyväksytyt muutokset',
       muutoshakemusSisaltoonTaiToteutustapaan: 'Muutoshakemus hankesuunnitelman sisältöön tai toteutustapaan.',
@@ -148,6 +149,7 @@ const translationsSv: Translations = {
     paatos: {
       paatos: 'Beslut',
       asia: 'Ärende',
+      linkkiMuutoshakemukseen: 'Visa alla ändringar som ni ansökt om inklusive motiveringar',
       hanke: 'Projekt',
       title: 'Godkända ändringar',
       muutoshakemusSisaltoonTaiToteutustapaan: 'Ändringsansökan som gäller projektplanens innehåll eller genomförande',

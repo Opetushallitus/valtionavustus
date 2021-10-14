@@ -4,11 +4,13 @@
         [clojure.tools.trace :only [trace]])
   (:require [clojure.java.io :as io]
             [clojure.tools.logging :as log]
+            [ring.util.codec :refer [form-encode]]
             [oph.soresu.common.db :refer [exec get-datasource with-tx query execute!]]
             [clojure.java.jdbc :as jdbc]
             [oph.soresu.common.jdbc.extensions :refer :all]
             [oph.soresu.form.formutil :as form-util]
             [oph.va.jdbc.extensions :refer :all]
+            [oph.soresu.common.config :refer [config]]
             [oph.va.hakija.db.queries :as queries]))
 
 (defn slurp-binary-file! [file]
@@ -138,6 +140,17 @@
         :register-number (:register-number hakemus)
         :talousarvio talousarvio}
       nil)))
+
+(defn create-muutoshakemus-url [va-url avustushaku-id user-key]
+  (let [ url-parameters  (form-encode { :user-key user-key :avustushaku-id avustushaku-id})]
+(str va-url "muutoshakemus?" url-parameters)))
+
+(defn get-muutoshakemus-url-by-hakemus-id [id]
+  (let [hakemukset (query "SELECT user_key, avustushaku from hakija.hakemukset WHERE id = ?" [id])
+        hakemus (first hakemukset)
+        va-url (get-in config [:server :url :fi])
+        muutoshakemus-url (create-muutoshakemus-url va-url (:avustushaku hakemus) (:user-key hakemus))]
+      muutoshakemus-url))
 
 (defn get-normalized-hakemus-by-id [id]
   (log/info (str "Get normalized hakemus with id: " id))

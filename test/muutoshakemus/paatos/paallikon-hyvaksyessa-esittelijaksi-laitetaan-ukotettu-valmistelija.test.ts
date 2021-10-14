@@ -16,7 +16,8 @@ import {
   selectVakioperusteluInFinnish,
   selectValmistelijaForHakemus,
   setPageErrorConsoleLogger,
-  VIRKAILIJA_URL
+  VIRKAILIJA_URL,
+  HAKIJA_URL
 } from '../../test-util'
 import {
   navigateToLatestMuutoshakemus,
@@ -218,6 +219,18 @@ describe('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen,
                 it('should have Matti in lisatietoja section', async () => {
                   const lisatietoja = await getElementInnerText(page, '[data-test-id="paatos-additional-info"]')
                   expect(lisatietoja).toContain("Matti")
+                })
+
+                describe('Clicking link in asia section', () => {
+                  beforeAll(async () => {
+                    await Promise.all([
+                      page.waitForNavigation(),
+                      clickElement(page, '[data-test-id="link-to-muutoshakemus"]') 
+                    ])
+                  })
+                  it('navigates user to muutoshakemus', async () => {
+                    expect(page.url()).toMatch(new RegExp(`${HAKIJA_URL}/muutoshakemus\\?user-key=.*&avustushaku-id=${avustushakuID}&lang=fi`))
+                  })
                 })
               })
             })

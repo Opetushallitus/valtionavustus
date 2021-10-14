@@ -18,8 +18,8 @@ export const Paatos = ({ query }: { query: Query }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await HttpUtil.get(`/api/muutoshakemus/paatos/${query['user-key']}`) as PaatosState
-      setPaatosState(response)
+      const paatosState = await HttpUtil.get(`/api/muutoshakemus/paatos/${query['user-key']}`) as PaatosState
+      setPaatosState(paatosState)
       setLoading(false)
     }
 

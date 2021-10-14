@@ -205,12 +205,14 @@
                      (let [paatos (hakija-db/get-paatos user-key)
                            muutoshakemukset (hakija-db/get-muutoshakemukset-by-paatos-user-key user-key)
                            muutoshakemus (first (filter #(= user-key (:paatos-user-key %)) muutoshakemukset))
+                           muutoshakemus-url (hakija-db/get-muutoshakemus-url-by-hakemus-id (:hakemus-id muutoshakemus))
                            presenter (hakija-db/get-presenter-by-hakemus-id (:hakemus-id muutoshakemus))
                            avustushaku (hakija-db/get-avustushaku-by-paatos-user-key user-key)
                            hakemus (hakija-db/get-normalized-hakemus-by-id (:hakemus-id muutoshakemus))
                            is-presenting-officer (hakija-db/is-presenting-officer (:id avustushaku) (:oid presenter))]
                        (ok {:paatos paatos
                             :muutoshakemus muutoshakemus
+                            :muutoshakemusUrl muutoshakemus-url
                             :muutoshakemukset muutoshakemukset
                             :presenter {:name (:name presenter) :email (:email presenter)}
                             :isPresentingOfficer is-presenting-officer

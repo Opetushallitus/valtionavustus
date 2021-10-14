@@ -14,6 +14,7 @@ export type MuutoshakemusProps = {
 export type PaatosState = {
   hakemus: NormalizedHakemusData
   muutoshakemus: Muutoshakemus
+  muutoshakemusUrl: string
   muutoshakemukset: Muutoshakemus[]
   avustushaku: Avustushaku
   paatos: Paatos
