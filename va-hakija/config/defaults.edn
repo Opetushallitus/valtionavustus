@@ -14,7 +14,8 @@
                                   "application/vnd.ms-excel"
                                   "application/x-tika-msoffice",
                                   "application/x-tika-ooxml",
-                                  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]
+                                  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                  "application/zip"]
           :threads 16
           :virkailija-url "http://localhost:8081"}
  :ui {:show-environment? true
