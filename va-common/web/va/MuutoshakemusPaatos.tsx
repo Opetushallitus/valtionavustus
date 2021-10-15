@@ -34,7 +34,7 @@ const Muutospaatos: React.FC<{osio: PaatosOsio; paatosStatus: MuutoshakemusStatu
   return (
     <section className="muutoshakemus-paatos__section muutoshakemus-paatos__section-paatos">
       <div className="muutoshakemus-paatos__section-container">
-        <div data-test-id="muutospaatos-asia-title" className="muutoshakemus-paatos__title">{t.muutoshakemus.paatos.asia}</div>
+        <div data-test-id="muutospaatos-asia-title" className="muutoshakemus-paatos__title">{t.muutoshakemus.paatos.haettuMuutos}</div>
         <div data-test-id="muutospaatos-asia-content">
           {children}
         </div>
