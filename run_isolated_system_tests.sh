@@ -3,6 +3,7 @@ set -o errexit -o nounset -o pipefail
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 
 function run_tests {
+	npm run playwright:test "$@"
 	npm run puppeteer:test "$@"
 	npm run soresu-form:test "$@"
 	npm run common:test "$@"
