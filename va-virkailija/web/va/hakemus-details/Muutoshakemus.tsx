@@ -80,6 +80,7 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
           simplePaatos={false} />
 
         {a.status === 'new' && hakemus && <MuutoshakemusForm
+                                environment={environment}
                                 avustushaku={avustushaku}
                                 muutoshakemus={a}
                                 muutoshakemukset={muutoshakemukset}

@@ -13,4 +13,5 @@
          :sender "no-reply@csc.fi"
          :retry-initial-wait 2000
          :retry-multiplier 4
+ :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? true}
          :retry-max-time 60000}}

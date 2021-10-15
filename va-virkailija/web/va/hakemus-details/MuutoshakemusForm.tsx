@@ -29,6 +29,7 @@ import {
   Meno,
   Muutoshakemus, TalousarvioValues,
 } from "../../../../va-common/web/va/types/muutoshakemus"
+import { EnvironmentApiResponse } from "../../../../va-common/web/va/types/environment"
 import {
   MuutoshakemusPaatosFormValues,
   MuutoshakemusPaatosRequest
@@ -89,9 +90,10 @@ interface MuutoshakemusFormProps {
   presenter: Role | undefined
   projectEndDate: string | undefined
   isPresentingOfficer: boolean
+  environment: EnvironmentApiResponse
 }
 
-export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemusVersion, controller, userInfo, presenter, projectEndDate, muutoshakemukset, isPresentingOfficer }: MuutoshakemusFormProps) => {
+export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemusVersion, controller, userInfo, presenter, projectEndDate, muutoshakemukset, isPresentingOfficer, environment }: MuutoshakemusFormProps) => {
   const talousarvioValues = muutoshakemus.talousarvio.length ? getTalousarvioValues(muutoshakemus.talousarvio) : undefined
   const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
   const initialValues: MuutoshakemusPaatosRequest = {
@@ -112,6 +114,7 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
   })
 
   const onPaatosPreviewClick = () => {
+    const muutoshakemusUrl = hakemusVersion.muutoshakemusUrl
     const paatos = {
       'created-at': new Date().toISOString(),
       decider: `${userInfo['first-name']} ${userInfo['surname']}`,
@@ -132,6 +135,8 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
       <Modal title="ESIKATSELU" controller={controller}>
         <TranslationContext.Provider value={getTranslationContext(hakemusVersion.language)}>
         <MuutoshakemusPaatos
+          environment={environment}
+          muutoshakemusUrl={muutoshakemusUrl}
           avustushaku={avustushaku}
           paatos={paatos}
           muutoshakemus={muutoshakemus}

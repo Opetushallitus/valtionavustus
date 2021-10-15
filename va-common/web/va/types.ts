@@ -136,6 +136,7 @@ export interface Hakemus {
   changeRequests: unknown[]
   comments?: Comment[]
   language: Language
+  muutoshakemusUrl: string
   muutoshakemukset?: Muutoshakemus[]
   normalizedData?: NormalizedHakemusData
   selvitys?: {

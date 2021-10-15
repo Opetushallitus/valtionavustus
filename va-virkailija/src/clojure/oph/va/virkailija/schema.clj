@@ -19,6 +19,7 @@
    :user-key s/Str
    :reason s/Str
    :decider s/Str
+   :muutoshakemusUrl s/Str
    (s/optional-key :hyvaksytyt-sisaltomuutokset) (s/maybe s/Str)
    (s/optional-key :status-sisaltomuutos) (s/maybe s/Str)
    (s/optional-key :paatos-hyvaksytty-paattymispaiva) (s/maybe java.time.LocalDate)

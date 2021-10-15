@@ -623,6 +623,7 @@ export default class HakemustenArviointiController {
       muutoshakemus.status = status
       state.selectedHakemus["status-muutoshakemus"] = status
     }
+    state.selectedHakemus.muutoshakemusUrl = paatos.muutoshakemusUrl
     return state
   }
 

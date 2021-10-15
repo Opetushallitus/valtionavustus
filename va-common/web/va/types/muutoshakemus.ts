@@ -11,7 +11,7 @@ export type MuutoshakemusProps = {
   muutoshakemukset: Muutoshakemus[]
 }
 
-export type PaatosState = {
+export type MuutoshakemusPaatosResponse = {
   hakemus: NormalizedHakemusData
   muutoshakemus: Muutoshakemus
   muutoshakemusUrl: string
@@ -20,6 +20,10 @@ export type PaatosState = {
   paatos: Paatos
   isPresentingOfficer: boolean
   presenter: Role
+}
+
+export interface PaatosState extends MuutoshakemusPaatosResponse {
+  environment: EnvironmentApiResponse
 }
 
 export type MuutoshakemusStatus = "accepted" | "rejected" | "accepted_with_changes"

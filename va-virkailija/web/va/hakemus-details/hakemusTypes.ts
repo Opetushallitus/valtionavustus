@@ -18,6 +18,7 @@ export interface MuutoshakemusPaatosResponse {
   'user-key': string
   reason: string
   decider: string
+  muutoshakemusUrl: string
   'status-sisaltomuutos'?: PaatosStatus
   'hyvaksytyt-sisaltomuutokset'?: string
   'status-jatkoaika'?: PaatosStatus

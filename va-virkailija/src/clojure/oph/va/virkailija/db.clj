@@ -5,6 +5,9 @@
         [clojure.tools.trace :only [trace]])
   (:require [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.db.queries :as queries]
+            [oph.soresu.common.config :refer [config]]
+            [oph.soresu.common.routes :refer :all]
+            [ring.util.codec :refer [form-encode]]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.hakija.api :as hakija-api]
             [clojure.string :as string]
@@ -26,6 +29,17 @@
                FROM virkailija.menoluokka_" entity " as mh, virkailija.menoluokka as m
                WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
          [id]))
+
+(defn create-muutoshakemus-url [va-url avustushaku-id user-key]
+  (let [ url-parameters  (form-encode { :user-key user-key :avustushaku-id avustushaku-id})]
+(str va-url "muutoshakemus?" url-parameters)))
+
+(defn get-muutoshakemus-url-by-hakemus-id [id]
+  (let [hakemukset (query "SELECT user_key, avustushaku from hakija.hakemukset WHERE id = ?" [id])
+        hakemus (first hakemukset)
+        va-url (get-in config [:server :url :fi])
+        muutoshakemus-url (create-muutoshakemus-url va-url (:avustushaku hakemus) (:user-key hakemus))]
+      muutoshakemus-url))
 
 (defn- store-paatos-sisaltomuutos [tx paatos-id status, hyvaksytyt-sisältömuutokset]
   (execute! tx "insert into paatos_sisaltomuutos (paatos_id, status, hyvaksytyt_sisaltomuutokset) values (?, ?::virkailija.paatos_type, ?)"

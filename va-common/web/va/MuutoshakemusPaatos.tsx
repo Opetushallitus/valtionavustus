@@ -21,7 +21,7 @@ type MuutoshakemusPaatosProps = Omit<PaatosState, 'paatos' | 'presenter'> & {
   presenter: Role | undefined
 }
 
-type HyvaksytytMuutoksetProps = Omit<MuutoshakemusPaatosProps, 'presenter' | 'isPresentingOfficer' | 'muutoshakemusUrl'>
+type HyvaksytytMuutoksetProps = Omit<MuutoshakemusPaatosProps, 'presenter' | 'isPresentingOfficer' | 'muutoshakemusUrl' | 'environment'>
 
 const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muutoshakemukset }: HyvaksytytMuutoksetProps) => {
   if (isRejected(paatos.status)) return null
@@ -62,8 +62,9 @@ const HyvaksytytMuutokset = ({ hakemus, muutoshakemus, paatos, avustushaku, muut
   )
 }
 
-export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset, isPresentingOfficer, muutoshakemusUrl }: MuutoshakemusPaatosProps) => {
+export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset, isPresentingOfficer, muutoshakemusUrl, environment }: MuutoshakemusPaatosProps) => {
   const { t, lang } = useTranslations()
+  console.log(environment)
   
   return (
     <div className="muutoshakemus-paatos__content">
@@ -90,9 +91,11 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
           {muutoshakemus['haen-sisaltomuutosta'] && (
             <div>{t.muutoshakemus.paatos.muutoshakemusSisaltoonTaiToteutustapaan}</div>
           )}
-        <p>
-          <a data-test-id="link-to-muutoshakemus" href={`${muutoshakemusUrl}&lang=${lang}`}>{t.muutoshakemus.paatos.linkkiMuutoshakemukseen}</a>
-        </p>
+        { environment["muutoshakemus-osiokohtainen-hyvaksynta"]["enabled?"] &&
+          <p>
+            <a data-test-id="link-to-muutoshakemus" href={`${muutoshakemusUrl}&lang=${lang}`}>{t.muutoshakemus.paatos.linkkiMuutoshakemukseen}</a>
+          </p>
+        }
         </div>
       </section>
       <section className="muutoshakemus-paatos__section">
