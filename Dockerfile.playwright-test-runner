@@ -1,0 +1,9 @@
+FROM mcr.microsoft.com/playwright:focal
+RUN apt update
+RUN apt install netcat -y
+ADD playwright playwright/
+ADD test test/
+ADD run_playwright_tests_in_container.sh run_playwright_tests_in_container.sh
+ADD package.json package.json
+ADD package-lock.json package-lock.json
+RUN npm ci

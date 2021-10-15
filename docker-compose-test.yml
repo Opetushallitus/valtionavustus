@@ -1,6 +1,18 @@
 version: '3.3'
 
 services:
+  test-runner:
+    image: playwright-test-runner:latest
+    depends_on:
+      - virkailija
+      - hakija
+    networks:
+      - subnet-private
+    environment:
+      HEADLESS: 'true'
+      VIRKAILIJA_HOSTNAME: virkailija
+      HAKIJA_HOSTNAME: hakija
+      PLAYWRIGHT_WORKERS: 1
   virkailija:
     image: va-virkailija:latest
     container_name: va-virkailija

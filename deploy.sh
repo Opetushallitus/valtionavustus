@@ -30,10 +30,15 @@ function stop_system_under_test {
 }
 trap stop_system_under_test EXIT
 
-function start_system_under_test {
-  echo "Starting system under test"
+function build_docker_images {
   docker build -t "va-virkailija:latest" -f ./Dockerfile.virkailija ./
   docker build -t "va-hakija:latest" -f ./Dockerfile.hakija ./
+  docker build -t "playwright-test-runner:latest" -f ./Dockerfile.playwright-test-runner ./
+}
+
+function start_system_under_test {
+  echo "Starting system under test"
+  build_docker_images
 
   docker-compose -f ${DOCKER_COMPOSE_FILE} up -d hakija
   waitport ${HAKIJA_HOSTNAME} 8080 150
