@@ -150,9 +150,10 @@
                             identity (authentication/get-request-identity request)
                             decider (str (:first-name identity) " " (:surname identity))
                             paatos (virkailija-db/create-osiokohtainen-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)
+                            muutoshakemus-url (virkailija-db/get-muutoshakemus-url-by-hakemus-id (:id hakemus))
                             token (virkailija-db/create-application-token (:id hakemus))]
                         (email/send-muutoshakemus-paatos [contact-email] avustushaku hakemus arvio roles token muutoshakemus-id paatos)
-                        (ok paatos))))
+                        (ok (assoc paatos :muutoshakemusUrl muutoshakemus-url)))))
 
 (defn- get-muutoshakemukset []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/" [hakemus-id]
