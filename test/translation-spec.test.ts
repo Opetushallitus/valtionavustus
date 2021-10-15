@@ -398,15 +398,13 @@ er ändringsansökan har behandlats.
 
 Projekt: ${registerNumber} - ${answers.projectName}
 
-Ni kan granska beslutet via denna länk:
-${email.linkToMuutoshakemusPaatos}
+Beslut om ändringsansökan: ${email.linkToMuutoshakemusPaatos}
 
-Ni kan vid behov göra en ny ändringsansökan via denna länk:
-${HAKIJA_URL}/muutoshakemus?lang=sv&user-key=${userKey}&avustushaku-id=${avustushakuID}
+Se tidigare ändringsansökningar och gör vid behov en ny ändringsansökan: ${HAKIJA_URL}/muutoshakemus?lang=sv&user-key=${userKey}&avustushaku-id=${avustushakuID}
 
 Bilaga: Rättelseyrkande
 
-Mera information ges vid behov av kontaktpersonen som anges i understödsbeslutet.
+Mera information ges vid behov av kontaktpersonen som anges i beslutet.
 
 Hälsningar,
 _ valtionavustus
