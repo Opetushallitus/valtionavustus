@@ -261,7 +261,7 @@
                       FROM hakija.avustushaku_roles
                       WHERE avustushaku = ?" [avustushaku-id]))
 
-(defn is-presenting-officer [avustushaku-id oid] 
+(defn is-presenting-officer [avustushaku-id oid]
   (let [avustushaku-roles (get-avustushaku-roles-with-oid avustushaku-id)]
     (nil? (first (filter (fn [role] (and (= (:oid role) oid)
                                              (= (:role role) "presenting_officer")))

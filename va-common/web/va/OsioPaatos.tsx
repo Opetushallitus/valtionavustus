@@ -16,9 +16,10 @@ export type PaatosOsio = 'paatos-talousarvio' | 'paatos-jatkoaika' | 'paatos-sis
 interface Props {
   osio: PaatosOsio
   paatosStatus: PaatosStatus
+  color?: 'dark' | 'darker'
 }
 
-export const OsioPaatos: React.FC<Props> = ({osio, paatosStatus}) => {
+export const OsioPaatos: React.FC<Props> = ({osio, paatosStatus, color = 'dark'}) => {
   const { t } = useTranslations()
   const text = t.muutoshakemus.paatos[osio].status[paatosStatus]
   const icon: JSX.Element = isAccepted(paatosStatus)
@@ -27,7 +28,7 @@ export const OsioPaatos: React.FC<Props> = ({osio, paatosStatus}) => {
       ? <IconRejected fill={black} />
       : <IconAcceptedWithChanges fill={black} />
   return (
-    <div data-test-id={osio} className="muutoshakemus-osio-paatos">
+    <div data-test-id={osio} className={`muutoshakemus-osio-paatos ${color}`}>
       {icon}
       {text}
     </div>

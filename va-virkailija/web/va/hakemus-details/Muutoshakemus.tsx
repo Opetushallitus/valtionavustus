@@ -49,7 +49,8 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
         presenter={presenter}
         projectEndDate={projectEndDate}
         isPresentingOfficer={isPresentingOfficer}
-        currentTalousarvio={currentTalousarvio} />
+        currentTalousarvio={currentTalousarvio}
+        environment={environment} />
       : <MuutoshakemusValues
         currentTalousarvio={currentTalousarvio}
         muutoshakemus={a}

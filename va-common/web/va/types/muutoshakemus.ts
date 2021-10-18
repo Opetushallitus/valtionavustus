@@ -11,7 +11,7 @@ export type MuutoshakemusProps = {
   muutoshakemukset: Muutoshakemus[]
 }
 
-export type MuutoshakemusPaatosResponse = {
+export interface MuutoshakemusPaatosResponse {
   hakemus: NormalizedHakemusData
   muutoshakemus: Muutoshakemus
   muutoshakemusUrl: string
