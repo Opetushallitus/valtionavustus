@@ -6,13 +6,12 @@ type SelvitysLinkProps = {
   hakemus: Hakemus
   avustushaku: Avustushaku
   selvitysType: 'valiselvitys' | 'loppuselvitys'
-  label: string
   helpText: string
 }
 
 export default class SelvitysLink extends Component<SelvitysLinkProps> {
   render() {
-    const {hakemus, avustushaku, selvitysType, label, helpText} = this.props
+    const {hakemus, avustushaku, selvitysType, helpText} = this.props
     const userKey = hakemus["user-key"]
     const publicUrl = `/selvitys/avustushaku/${avustushaku.id}/${selvitysType}?hakemus=${userKey}`
 
@@ -22,7 +21,7 @@ export default class SelvitysLink extends Component<SelvitysLinkProps> {
            data-test-id="selvitys-link"
            target="_blank"
            rel="noopener noreferrer">
-          {label}
+          Linkki lomakkeelle
         </a>
         <HelpTooltip content={helpText} direction={"arviointi"}/>
       </span>

@@ -1,20 +1,25 @@
 import {Browser, Page} from "puppeteer"
+import moment from "moment"
 
 import { ratkaiseMuutoshakemusEnabledAvustushaku } from "../muutoshakemus/muutospaatosprosessi-util"
 
 import {
+  clearAndSet,
   clearAndType,
   clickElement,
   clickElementWithText,
+  countElements,
   createRandomHakuValues,
   dummyPdfPath,
   getElementAttribute,
   getElementInnerText,
   getFirstPage,
+  isDisabled,
   mkBrowser,
   navigate,
   navigateToLoppuselvitysTab,
   setPageErrorConsoleLogger,
+  textContent,
   uploadFile,
   waitForElementWithText,
   waitForNewTab
@@ -95,11 +100,11 @@ describe("Loppuselvitys", () => {
   
       await clickElement(page, 'button#submit:not([disabled])')
       await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Loppuselvitys lähetetty")
+
+      await navigateToLoppuselvitysTab(page, avustushakuID, hakemusID)
     })
 
     it('virkailija sees loppuselvitys answers', async () => {
-      await navigateToLoppuselvitysTab(page, avustushakuID, hakemusID)
-
       expect(await getElementInnerText(page, '#preview-container-loppuselvitys #textArea-0')).toEqual('Yhteenveto')
       expect(await getElementInnerText(page, '#preview-container-loppuselvitys #textArea-2')).toEqual('Työn jako')
       expect(await getElementInnerText(page, '#preview-container-loppuselvitys [id="project-description.project-description-1.goal"]')).toEqual('Tavoite')
@@ -116,18 +121,40 @@ describe("Loppuselvitys", () => {
       expect(await getElementInnerText(page, '#preview-container-loppuselvitys #textArea-4')).toEqual('Lisätietoja')
     })
 
-    it('virkailija accepts loppuselvitys', async () => {
-      await navigateToLoppuselvitysTab(page, avustushakuID, hakemusID)
+    it('virkailija can not accept loppuselvitys while it is not verified', async () => {
+      expect(await countElements(page, '[data-test-id="selvitys-email"]')).toEqual(0)
+    })
 
-      await clearAndType(page, '#selvitys-email-title', 'Hieno homma')
-      await clearAndType(page, '.selvitys-email-message', 'Hyvä juttu')
-      await clickElement(page, '#submit-selvitys')
+    describe('virkailija verifies loppuselvitys information', () => {
+      const textareaSelector = 'textarea[name="information-verification"]'
 
-      await page.waitForSelector('[data-test-id="selvitys-sent"]')
+      beforeAll(async () => {
+        await navigateToLoppuselvitysTab(page, avustushakuID, hakemusID)
 
-      await navigate(page, `/avustushaku/${avustushakuID}/`)
-      const loppuselvitysStatus = await getElementInnerText(page, '[data-test-id="loppuselvitys-column"]')
-      expect(loppuselvitysStatus).toEqual('Hyväksytty')
+        await clearAndType(page, textareaSelector, 'Hyvältä näyttääpi')
+        await clickElement(page, 'button[name="submit-verification"]')
+
+        await page.waitForSelector('[data-test-id="selvitys-email"]')
+      })
+
+      it('information verification is shown', async () => {
+        expect(await textContent(page, textareaSelector)).toEqual('Hyvältä näyttääpi')
+        expect(await isDisabled(page, textareaSelector)).toEqual(true)
+        expect(await getElementInnerText(page, '[data-test-id=verifier]')).toEqual('_ valtionavustus')
+        expect(moment(await getElementInnerText(page, '[data-test-id=verified-at]'), 'D.M.YYYY [klo] H.mm').isSameOrBefore()).toBeTruthy()
+      })
+
+      it('virkailija accepts loppuselvitys', async () => {
+        await clearAndType(page, '#selvitys-email-title', 'Hieno homma')
+        await clearAndSet(page, '.selvitys-email-message', 'Hyvä juttu')
+        await clickElement(page, '#submit-selvitys')
+
+        await page.waitForSelector('.selvitys-email-message--sent')
+
+        await navigate(page, `/avustushaku/${avustushakuID}/`)
+        const loppuselvitysStatus = await getElementInnerText(page, '[data-test-id="loppuselvitys-column"]')
+        expect(loppuselvitysStatus).toEqual('Hyväksytty')
+      })
     })
   })
 })

@@ -333,9 +333,10 @@
   (let [validated-email         (assoc selvitys-email :to (distinct (:to selvitys-email)))
         selvitys-hakemus-id     (:selvitys-hakemus-id selvitys-email)
         hakemus                 (get-hakemus selvitys-hakemus-id)
-        parent_id               (:parent_id hakemus)
+        parent-id               (:parent_id hakemus)
+        parent-hakemus          (get-hakemus parent-id)
         is-loppuselvitys        (= selvitys-type "loppuselvitys")
-        is-verified             (= (:status_loppuselvitys hakemus) "information_verified")
+        is-verified             (= (:status_loppuselvitys parent-hakemus) "information_verified")
         is-verification-enabled (:enabled? (:loppuselvitys-verification config))
         can-set-selvitys        (or (not is-loppuselvitys) (not is-verification-enabled) is-verified)]
     (if can-set-selvitys
@@ -343,8 +344,8 @@
         (send-selvitys hakemus validated-email)
         (update-selvitys-message validated-email)
         (if is-loppuselvitys
-          (update-loppuselvitys-status parent_id "accepted")
-          (update-valiselvitys-status parent_id "accepted"))
+          (update-loppuselvitys-status parent-id "accepted")
+          (update-valiselvitys-status parent-id "accepted"))
         true)
       false)))
 

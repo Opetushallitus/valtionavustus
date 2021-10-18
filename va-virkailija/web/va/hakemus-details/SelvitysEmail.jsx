@@ -198,7 +198,7 @@ export default class SelvitysEmail extends React.Component {
     const areAllEmailsValid = !_.some(recipientEmails, email => !email.isValid)
 
     return (
-      <div data-test-id={sentSelvitysEmail ? "selvitys-unsent" : "selvitys-sent"}>
+      <div data-test-id="selvitys-email">
         <h2>{title}</h2>
         <table className="selvitys-email-header">
           <tbody>

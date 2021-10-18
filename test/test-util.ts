@@ -627,6 +627,11 @@ export async function textContent(page: Page, selector: string) {
   return await page.evaluate(_ => _.textContent, element)
 }
 
+export async function isDisabled(page: Page, selector: string): Promise<boolean> {
+  const isDisabled = await page.$eval(selector, (elem: Element) => (elem as any).disabled)
+  return isDisabled
+}
+
 async function prepareSelectingValmistelijaForHakemus(page: Page, avustushakuID: number, hakemusID: number, valmistelijaName: string) {
   await navigate(page, `/avustushaku/${avustushakuID}/`)
   await clickElement(page, `#hakemus-${hakemusID} .btn-role`)

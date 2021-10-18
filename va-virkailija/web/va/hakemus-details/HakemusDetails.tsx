@@ -30,9 +30,7 @@ export const HakemusDetails = (props: Props) => {
     const {controller, hakemus, avustushaku, hakuData, userInfo,
            showOthersScores, translations, environment,
            selectedHakemusAccessControl, subTab, helpTexts} = props
-    const multibatchEnabled =
-          (environment["multibatch-payments"] &&
-           environment["multibatch-payments"]["enabled?"]) || false
+    const multibatchEnabled = Boolean(environment["multibatch-payments"]?.["enabled?"])
 
     const userOid = userInfo["person-oid"]
     const userRole = hakuData.roles.find(r => r.oid === userOid)
@@ -83,23 +81,23 @@ export const HakemusDetails = (props: Props) => {
                                    helpTexts={helpTexts}/>
 
         case 'valiselvitys':
-          return <Selvitys controller={controller} hakemus={hakemus}
+          return <Selvitys environment={environment} controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo}
                            translations={translations}
                            selvitysType="valiselvitys"
                            multibatchEnabled={multibatchEnabled}
                            isPresentingOfficer={isPresentingOfficer}
-   selvitysLinkHelpText={helpTexts["hankkeen_sivu__väliselvitys___linkki_lomakkeelle"]}
-   presenterCommentHelpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}/>
+                           selvitysLinkHelpText={helpTexts["hankkeen_sivu__väliselvitys___linkki_lomakkeelle"]}
+                           presenterCommentHelpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}/>
         case 'loppuselvitys':
-          return <Selvitys controller={controller} hakemus={hakemus}
+          return <Selvitys environment={environment} controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo}
                            translations={translations}
                            selvitysType="loppuselvitys"
                            multibatchEnabled={multibatchEnabled}
                            isPresentingOfficer={isPresentingOfficer}
-   selvitysLinkHelpText={helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"]}
-   presenterCommentHelpText={helpTexts["hankkeen_sivu__loppuselvitys___valmistelijan_huomiot"]}/>
+                           selvitysLinkHelpText={helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"]}
+                           presenterCommentHelpText={helpTexts["hankkeen_sivu__loppuselvitys___valmistelijan_huomiot"]}/>
         case 'muutoshakemukset':
           if (!muutoshakemukset || muutoshakemukset.length === 0)
             return <h2>Hankkeella ei ole muutoshakemuksia</h2>
