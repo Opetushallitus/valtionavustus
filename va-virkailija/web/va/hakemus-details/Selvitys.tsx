@@ -9,7 +9,7 @@ import PresenterComment from './PresenterComment'
 import ApplicationPayments from './ApplicationPayments'
 import { Avustushaku, Hakemus } from 'va-common/web/va/types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
-import { UserInfo } from '../types'
+import { Role, UserInfo } from '../types'
 import { EnvironmentApiResponse } from 'va-common/web/va/types/environment'
 
 type SelvitysProps = {
@@ -24,9 +24,10 @@ type SelvitysProps = {
   presenterCommentHelpText: any
   selvitysLinkHelpText: any
   environment: EnvironmentApiResponse
+  presenter?: Role
 }
 
-const Selvitys = ({ environment, controller, hakemus, avustushaku, translations, selvitysType, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText }: SelvitysProps) => {
+const Selvitys = ({ presenter, environment, controller, hakemus, avustushaku, translations, selvitysType, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText }: SelvitysProps) => {
   const hasSelvitys = !!hakemus.selvitys?.[selvitysType]?.answers
   const selvitysHakemus = hakemus.selvitys?.[selvitysType]
   const form = hakemus.selvitys?.[`${selvitysType}Form`]
@@ -35,6 +36,7 @@ const Selvitys = ({ environment, controller, hakemus, avustushaku, translations,
     selvitysType === 'valiselvitys' ||
     !environment["loppuselvitys-verification"]["enabled?"] ||
     hakemus["status-loppuselvitys"] === 'accepted' || hakemus["status-loppuselvitys"] === 'information_verified')
+
   return (
     <div className="selvitys-container" data-test-id={`hakemus-details-${selvitysType}`}>
       <PresenterComment controller={controller} hakemus={hakemus} helpText={presenterCommentHelpText}/>
@@ -55,7 +57,7 @@ const Selvitys = ({ environment, controller, hakemus, avustushaku, translations,
                               onRemovePayment={controller.removePayment}
                               readonly={!isPresentingOfficer}/>}
       <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType={selvitysType} helpText={selvitysLinkHelpText} />
-      {renderLoppuselvitysForm && <LoppuselvitysForm controller={controller} hakemus={hakemus} avustushaku={avustushaku} />}
+      {renderLoppuselvitysForm && <LoppuselvitysForm controller={controller} hakemus={hakemus} avustushaku={avustushaku} presenter={presenter} userInfo={userInfo} />}
       {renderSelvitysEmail && <SelvitysEmail controller={controller}
                                             selvitysType={selvitysType}
                                             hakemus={hakemus}

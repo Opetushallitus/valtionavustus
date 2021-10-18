@@ -5,6 +5,7 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import { fiLongDateTimeFormatWithKlo } from 'va-common/web/va/i18n/dateformat'
 import { Avustushaku, Hakemus } from 'va-common/web/va/types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
+import { Role, UserInfo } from '../types'
 
 import './LoppuselvitysForm.less'
 
@@ -12,6 +13,8 @@ type LoppuselvitysFormProps = {
   avustushaku: Avustushaku
   controller: HakemustenArviointiController
   hakemus: Hakemus
+  userInfo: UserInfo
+  presenter?: Role
 }
 
 const formatDate = (date?: string) => {
@@ -19,7 +22,7 @@ const formatDate = (date?: string) => {
   return d?.format(fiLongDateTimeFormatWithKlo)
 }
 
-export const LoppuselvitysForm = ({ avustushaku, hakemus, controller }: LoppuselvitysFormProps) => {
+export const LoppuselvitysForm = ({ avustushaku, hakemus, controller, userInfo, presenter }: LoppuselvitysFormProps) => {
   const [message, setMessage] = useState('')
   const status = hakemus['status-loppuselvitys']
 
@@ -32,14 +35,14 @@ export const LoppuselvitysForm = ({ avustushaku, hakemus, controller }: Loppusel
 
   return (
     <div className="information-verification">
-      {status === 'submitted' &&
+      {status === 'submitted' && presenter?.oid && presenter?.oid === userInfo["person-oid"] &&
         <form onSubmit={onSubmit}>
           <div className="verification-comment">
             <h2 className="verification-header">Asiatarkastus</h2>
             <textarea onChange={(e) => setMessage(e.target.value)} rows={5} name="information-verification" placeholder="Kirjaa tähän mahdolliset huomiot asiatarkastuksesta" />
           </div>
           <div className="verification-footer">
-            <button type="submit" name="submit-verification">Hyväksy asiatarkastus ja lähetä taloustarkastukseen</button>
+            <button type="submit" name="submit-verification" disabled={!message}>Hyväksy asiatarkastus ja lähetä taloustarkastukseen</button>
           </div>
         </form>}
       {(status === 'information_verified' || status === 'accepted') &&

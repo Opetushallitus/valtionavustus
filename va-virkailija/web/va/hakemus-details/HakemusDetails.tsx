@@ -82,7 +82,7 @@ export const HakemusDetails = (props: Props) => {
 
         case 'valiselvitys':
           return <Selvitys environment={environment} controller={controller} hakemus={hakemus}
-                           avustushaku={avustushaku} userInfo={userInfo}
+                           avustushaku={avustushaku} userInfo={userInfo} presenter={presenter}
                            translations={translations}
                            selvitysType="valiselvitys"
                            multibatchEnabled={multibatchEnabled}
@@ -91,7 +91,7 @@ export const HakemusDetails = (props: Props) => {
                            presenterCommentHelpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}/>
         case 'loppuselvitys':
           return <Selvitys environment={environment} controller={controller} hakemus={hakemus}
-                           avustushaku={avustushaku} userInfo={userInfo}
+                           avustushaku={avustushaku} userInfo={userInfo} presenter={presenter}
                            translations={translations}
                            selvitysType="loppuselvitys"
                            multibatchEnabled={multibatchEnabled}

@@ -351,10 +351,11 @@
 
 (defn verify-loppuselvitys-information [hakemus-id verify-information identity]
   (let [hakemus  (get-hakemus hakemus-id)
+        role     (get-avustushaku-role-by-avustushaku-id-and-person-oid (:avustushaku hakemus) (:person-oid identity))
         status   (:status_loppuselvitys hakemus)
         message  (:message verify-information)
         verifier (str (:first-name identity) " " (:surname identity))]
-    (if (= status "submitted")
+    (if (and (= status "submitted") (= "presenting_officer" (:role role)))
       (do
         (execute!
           "UPDATE hakemukset
