@@ -15,7 +15,6 @@
             [oph.soresu.common.config :refer [config environment]]
             [oph.soresu.common.db :as db]
             [oph.va.virkailija.authentication :as auth]
-            [oph.va.virkailija.db.migrations :as dbmigrations]
             [oph.va.virkailija.email :as email]
             [oph.va.virkailija.va-users :as va-users]
             [oph.va.virkailija.rondo-scheduling :as rondo-scheduling]
@@ -24,9 +23,6 @@
 
 (defn- startup [config]
   (log/info "Startup, with configuration: " config)
-  (dbmigrations/migrate "virkailija"
-                        "db.migration"
-                        "oph.va.virkailija.db.migrations")
   (email/start-background-job-send-mails)
   (auth/start-background-job-timeout-sessions)
   (when (get-in config [:va-users :use-cache?])

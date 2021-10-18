@@ -9,8 +9,8 @@ function main {
   ../lein install
   cd "$repo/va-common"
   ../lein install
-  cd "$repo/va-hakija"
-  ../lein run
+  cd "$repo"
+  lein with-profile hakija-dev run -m oph.va.hakija.main
 }
 
 main "$@"

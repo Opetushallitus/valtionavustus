@@ -87,16 +87,15 @@ lein-build-frontends:
 
 .PHONY: lein-build-backends
 lein-build-backends:
-	$(call lein_build_backend,va-hakija)
-	$(call lein_build_backend,va-virkailija)
+	lein uberjar
 
 .PHONY: lein-test
 lein-test:
 	$(call lein_speclj,soresu-form)
 	$(call lein_speclj,va-common)
-	$(call lein_speclj,va-hakija)
+	lein with-profile hakija-test spec $(SPECLJ_ARGS)
 	$(call lein_doo,va-admin-ui)
-	$(call lein_speclj,va-virkailija)
+	lein with-profile virkailija-test spec $(SPECLJ_ARGS)
 
 .PHONY: lein-outdated-dependencies
 lein-outdated-dependencies:
@@ -195,10 +194,6 @@ endef
 
 define lein_doo
 cd '$(1)' && $(LEIN) doo once
-endef
-
-define lein_build_backend
-cd '$(1)' && $(LEIN) uberjar
 endef
 
 define lein_build_frontend
