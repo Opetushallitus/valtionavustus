@@ -11,4 +11,4 @@ export const answers = {
   contactPersonName: "Erkki Esimerkki",
   contactPersonPhoneNumber: "666",
   projectName: "Rahassa kylpijät Ky Ay Oy",
-} as const
+}

@@ -11,6 +11,7 @@ import {
   parseMuutoshakemusPaatosFromEmails
 } from "../utils/emails";
 import {HakijaMuutoshakemusPaatosPage} from "../pages/hakijaMuutoshakemusPaatosPage";
+import {svBudjettimuutoshakemusTest} from "../fixtures/swedishHakemusTest";
 
 const budget: Budget = {
   amount: {
@@ -62,10 +63,8 @@ const acceptedBudget: BudgetAmount = {
 }
 
 const test = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixtures & {hakijaMuutoshakemusPaatosPage: HakijaMuutoshakemusPaatosPage}>({
-  budget: async ({}, use) => {
-    await use(budget)
-  },
-  hakijaMuutoshakemusPaatosPage: async ({page, hakemusID, avustushakuID}, use) => {
+  budget,
+  hakijaMuutoshakemusPaatosPage: async ({page, hakemus: {hakemusID}, avustushakuID}, use) => {
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
     await hakijaMuutoshakemusPage.navigate(hakemusID)
     await hakijaMuutoshakemusPage.fillJatkoaikaValues(jatkoaika)
@@ -158,5 +157,131 @@ test('Hakija views muutoshakemus page', async ({hakijaMuutoshakemusPaatosPage}) 
     ]
     const currentValues = await hakijaMuutoshakemusPaatosPage.changedBudgetTableCells()
     expect(sortedFormTable(currentValues)).toEqual(sortedFormTable(budgetExpectedItems))
+  })
+})
+
+export const svBudget: Budget = {
+  amount: {
+    personnel: '300',
+    material: '420',
+    equipment: '1337',
+    'service-purchase': '5318008',
+    rent: '69',
+    steamship: '0',
+    other: '9000',
+  },
+  description: {
+    personnel: 'tjänare',
+    material: 'båterna',
+    equipment: 'champagne visp',
+    'service-purchase': 'servitörena',
+    rent: 'villa',
+    steamship: 'ånga',
+    other: 'Kalle Anka',
+  },
+  selfFinancing: '1',
+}
+
+const svMuutoshakemusBudget = {
+  ...budget.amount,
+  personnel: '299',
+  material: '421',
+}
+
+const svMuutoshakemusPerustelut = 'Ska få ta bort något akut .... koda något om något ois ta bort bit sit mo'
+
+const svJatkoaika = {
+  jatkoaika: moment(new Date()).add(1, 'days').locale('fi'),
+  jatkoaikaPerustelu: 'Dubbel dubbel-laa'
+}
+
+const svTest = svBudjettimuutoshakemusTest.extend<{hakijaMuutoshakemusPaatosPage: HakijaMuutoshakemusPaatosPage}>({
+  budget: svBudget,
+  hakijaMuutoshakemusPaatosPage: async ({page, avustushakuID, hakemus: {hakemusID}}, use) => {
+    const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
+    await hakijaMuutoshakemusPage.navigate(hakemusID)
+    await hakijaMuutoshakemusPage.fillJatkoaikaValues(svJatkoaika)
+    await hakijaMuutoshakemusPage.clickHaenMuutostaTaloudenKayttosuunnitelmaan()
+    await hakijaMuutoshakemusPage.fillTalousarvioValues(svMuutoshakemusBudget, svMuutoshakemusPerustelut)
+    await hakijaMuutoshakemusPage.sendMuutoshakemus(true, true)
+    const acceptedBudget: BudgetAmount = {
+      personnel: '1301',
+      material: '1421',
+      equipment: '2338',
+      'service-purchase': '5312007',
+      rent: '1068',
+      steamship: '1000',
+      other: '9999',
+    }
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    await hakemustenArviointiPage.navigateToLatestMuutoshakemus(avustushakuID, hakemusID)
+    await hakemustenArviointiPage.setMuutoshakemusBudgetDecision('accepted_with_changes', acceptedBudget)
+    await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision('accepted_with_changes', '01.01.2099')
+    await hakemustenArviointiPage.selectVakioperusteluInFinnish()
+    await hakemustenArviointiPage.saveMuutoshakemus()
+    const links = await parseMuutoshakemusPaatosFromEmails(hakemusID)
+    if (!links.linkToMuutoshakemusPaatos) {
+      throw Error('No linkToMuutoshakemusPaatos found')
+    }
+    const hakijaMuutoshakemusPaatosPage = new HakijaMuutoshakemusPaatosPage(page)
+    await hakijaMuutoshakemusPaatosPage.navigate(links.linkToMuutoshakemusPaatos)
+    await use(hakijaMuutoshakemusPaatosPage)
+  }
+})
+
+svTest('Hakija views swedish muutoshakemus paatos', async ({hakijaMuutoshakemusPaatosPage}) => {
+  await svTest.step('Decision title is shown in swedish', async () => {
+    const title = await hakijaMuutoshakemusPaatosPage.title()
+    expect(title).toEqual('Beslut')
+  })
+
+  await svTest.step('jatkoaika decision is shown in swedish', async () => {
+    const title = await hakijaMuutoshakemusPaatosPage.jatkoaikaPaatos()
+    expect(title).toEqual('De ändringar som ni ansökt om gällande understödets användningstid godkänns med vissa ändringar')
+  })
+
+  await svTest.step('budget decision is shown in swedish', async () => {
+    const title = await hakijaMuutoshakemusPaatosPage.talousarvioPaatos()
+    expect(title).toEqual('De ändringar som ni ansökt om i budgeten godkänns med vissa ändringar')
+  })
+
+  await svTest.step('current budget title is shown in swedish', async () => {
+    const currentBudgetHeader = await hakijaMuutoshakemusPaatosPage.currentBudgetTitle()
+    expect(currentBudgetHeader).toEqual('Den tidigare budgeten')
+  })
+
+  await svTest.step('päätöksen perustelut is shown in swedish', async () => {
+    const currentBudgetHeader = await hakijaMuutoshakemusPaatosPage.paatoksetPerustelutTitle()
+    expect(currentBudgetHeader).toEqual('Motiveringar för beslutet')
+  })
+
+  await svTest.step('päätöksen tekijä is shown in swedish', async () => {
+    const currentBudgetHeader = await hakijaMuutoshakemusPaatosPage.paatoksetTekija()
+    expect(currentBudgetHeader).toEqual('Har godkänts av')
+  })
+
+  await svTest.step('lisätietoja title is shown in swedish', async () => {
+    const currentBudgetHeader = await hakijaMuutoshakemusPaatosPage.lisatietojaTitle()
+    expect(currentBudgetHeader).toEqual('Mer information')
+  })
+
+  await svTest.step('budget change is mentioned in the info section', async () => {
+    const budgetChangeText = await hakijaMuutoshakemusPaatosPage.infoSection()
+    expect(budgetChangeText).toEqual('Ändringsansökan som gäller projektets budget')
+  })
+
+  await svTest.step('Budget rows are in Swedish', async () => {
+    const budgetRows = await hakijaMuutoshakemusPaatosPage.existingBudgetTableCells()
+    const swedishBudgetRowDescriptions = budgetRows.map(s => s.description)
+    const swedishBudgetRowNames = [
+      'Personalkostnader',
+      'Material, utrustning och varor',
+      'Anskaffning av utrustning',
+      'Tjänster',
+      'Hyror',
+      'Resekostnader',
+      'Övriga kostnader'
+    ]
+    expect(swedishBudgetRowDescriptions.sort()).toEqual(swedishBudgetRowNames.sort())
   })
 })

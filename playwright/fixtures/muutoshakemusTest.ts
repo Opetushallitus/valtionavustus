@@ -5,15 +5,19 @@ import {KoodienhallintaPage} from "../pages/koodienHallintaPage";
 import {HakujenHallintaPage} from "../pages/hakujenHallintaPage";
 import {HakijaAvustusHakuPage} from "../pages/hakijaAvustusHakuPage";
 import {answers} from "../utils/constants";
+import {Answers} from "../utils/types";
 
 export interface MuutoshakemusFixtures {
   avustushakuID: number
-  hakemusID: number
+  hakemus: {
+    hakemusID: number
+    userKey: string
+  }
   haku: {
     registerNumber: string
     avustushakuName: string
   }
-  answers
+  answers: Answers
 }
 
 /**
@@ -32,10 +36,10 @@ export const muutoshakemusTest = test.extend<MuutoshakemusFixtures>({
     const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(haku.registerNumber, haku.avustushakuName, codes)
     await use(avustushakuID)
   },
-  hakemusID: async ({avustushakuID, page}, use) => {
+  hakemus: async ({avustushakuID, page, answers}, use) => {
     const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
-    await hakijaAvustusHakuPage.navigate(avustushakuID)
-    await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(avustushakuID, answers)
+    await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
+    const {userKey} = await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(avustushakuID, answers)
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigate(avustushakuID)
     await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast()
@@ -48,6 +52,6 @@ export const muutoshakemusTest = test.extend<MuutoshakemusFixtures>({
     await hakemustenArviointiPage.selectValmistelijaForHakemus(avustushakuID, hakemusID, "_ valtionavustus")
     await hakujenHallintaPage.navigateToPaatos(avustushakuID)
     await hakujenHallintaPage.sendPaatos(avustushakuID)
-    await use(hakemusID)
+    await use({hakemusID, userKey})
   }
 })

@@ -8,8 +8,8 @@ import {
   BudjettimuutoshakemusFixtures,
   budjettimuutoshakemusTest
 } from "../fixtures/budjettimuutoshakemusTest";
-import {BudgetAmount} from "../../test/test-util";
-import {sortedFormTable} from "../utils/budget";
+import {BudgetAmount, sortedFormTable} from "../utils/budget";
+import {answers as svAnswers} from "../fixtures/swedishHakemusTest";
 
 const muutoshakemus1: MuutoshakemusValues = {
   jatkoaika: moment(new Date())
@@ -22,7 +22,7 @@ const muutoshakemus1: MuutoshakemusValues = {
 const sisaltomuutosPerustelut = 'Muutamme kaiken muuttamisen ilosta'
 
 const test = muutoshakemusTest.extend<{hakemustenArviointiPage: HakemustenArviointiPage}>({
-  hakemustenArviointiPage: async ({hakemusID, avustushakuID, page}, use) => {
+  hakemustenArviointiPage: async ({hakemus: {hakemusID}, avustushakuID, page}, use) => {
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
     await hakijaMuutoshakemusPage.navigate(hakemusID)
     await hakijaMuutoshakemusPage.clickHaenSisaltomuutosta()
@@ -39,91 +39,72 @@ const test = muutoshakemusTest.extend<{hakemustenArviointiPage: HakemustenArvioi
 
 test.setTimeout(180000)
 
-test.describe.parallel('muutoshakemus päätös preview', () => {
-
-  test('accepted päätös', async ({hakemustenArviointiPage}) => {
-    await hakemustenArviointiPage.selectVakioperusteluInFinnish()
-    const decision = 'Ei huomioitavaa'
-    await hakemustenArviointiPage.setMuutoshakemusSisaltoDecision('accepted', decision)
+test.describe.parallel('muutoshakemus päätös preview', async () => {
+  test('has correct basic information', async ({hakemustenArviointiPage}) => {
     await hakemustenArviointiPage.openPaatosPreview()
-    await test.step('has correct values', async () => {
-      await hakemustenArviointiPage.validateMuutoshakemusPaatosCommonValues()
-    })
-    await test.step('correct jatkoaika päätös', async () => {
-      const acceptedPaatos = await hakemustenArviointiPage.paatosPreviewJatkoaikaPaatos()
-      expect(acceptedPaatos).toEqual('Hyväksytään haetut muutokset käyttöaikaan')
-    })
-    await test.step('correct sisältö päätös', async () => {
-      const paatos = await hakemustenArviointiPage.paatosPreviewSisaltoPaatos()
-      expect(paatos).toEqual('Hyväksytään haetut muutokset sisältöön ja toteutustapaan')
-    })
-    await test.step('correct sisältö content', async () => {
-      const content = await hakemustenArviointiPage.paatosPreviewSisaltoContent()
-      expect(content).toBe(decision)
-    })
-    await test.step('correct vakioperustelu', async () => {
-      const perustelu = await hakemustenArviointiPage.paatosPreviewPerustelu()
-      expect(perustelu).toEqual('Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt hyväksyä haetut muutokset hakemuksen mukaisesti.')
-    })
+    expect(await hakemustenArviointiPage.paatosPreviewMuutoshakemusPaatosTitle()).toBe('Päätös')
+    const register = await hakemustenArviointiPage.paatosPreviewRegisterNumber()
+    expect(register).toMatch(/[0-9]{1,3}\/[0-9]{1,5}\/[0-9]{2,6}/)
+    const project = await hakemustenArviointiPage.paatosPreviewProjectName()
+    expect(project).toEqual('Rahassa kylpijät Ky Ay Oy')
+    const org = await hakemustenArviointiPage.paatosPreviewOrg()
+    expect(org).toEqual('Akaan kaupunki')
+    const decider = await hakemustenArviointiPage.paatosPreviewHyvaksyja()
+    expect(decider).toEqual('_ valtionavustus')
+    const info = await hakemustenArviointiPage.paatosPreviewLisatietoja()
+    expect(info).toEqual('_ valtionavustussanteri.horttanainen@reaktor.com029 533 1000 (vaihde)')
   })
 
-  test('rejected päätös', async ({hakemustenArviointiPage}) => {
+  test('accepted', async ({hakemustenArviointiPage}) => {
+    const decision = 'Ei huomioitavaa'
+    await hakemustenArviointiPage.setMuutoshakemusSisaltoDecision('accepted', decision)
+    await hakemustenArviointiPage.selectVakioperusteluInFinnish()
+    await hakemustenArviointiPage.openPaatosPreview()
+    const acceptedPaatos = await hakemustenArviointiPage.paatosPreviewJatkoaikaPaatos()
+    expect(acceptedPaatos).toEqual('Hyväksytään haetut muutokset käyttöaikaan')
+    const paatos = await hakemustenArviointiPage.paatosPreviewSisaltoPaatos()
+    expect(paatos).toEqual('Hyväksytään haetut muutokset sisältöön ja toteutustapaan')
+    const content = await hakemustenArviointiPage.paatosPreviewSisaltoContent()
+    expect(content).toBe(decision)
+    const perustelu = await hakemustenArviointiPage.paatosPreviewPerustelu()
+    expect(perustelu).toEqual('Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt hyväksyä haetut muutokset hakemuksen mukaisesti.')
+  })
+
+  test('rejected', async ({hakemustenArviointiPage}) => {
     await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision('rejected')
     await hakemustenArviointiPage.setMuutoshakemusSisaltoDecision('rejected')
     await hakemustenArviointiPage.selectVakioperusteluInFinnish()
     await hakemustenArviointiPage.openPaatosPreview()
-    await test.step('has correct values', async () => {
-      await hakemustenArviointiPage.validateMuutoshakemusPaatosCommonValues()
-    })
-    await test.step('correct jatkoaika päätös', async () => {
-      const acceptedPaatos = await hakemustenArviointiPage.paatosPreviewJatkoaikaPaatos()
-      expect(acceptedPaatos).toEqual('Hylätään haetut muutokset käyttöaikaan')
-    })
-    await test.step('correct sisältö päätös', async () => {
-      const paatos = await hakemustenArviointiPage.paatosPreviewSisaltoPaatos()
-      expect(paatos).toEqual('Hylätään haetut muutokset sisältöön ja toteutustapaan')
-    })
-    await test.step('correct vakioperustelu', async () => {
-      const perustelu = await hakemustenArviointiPage.paatosPreviewPerustelu()
-      expect(perustelu).toEqual('Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.')
-    })
+    const acceptedPaatos = await hakemustenArviointiPage.paatosPreviewJatkoaikaPaatos()
+    expect(acceptedPaatos).toEqual('Hylätään haetut muutokset käyttöaikaan')
+    const paatos = await hakemustenArviointiPage.paatosPreviewSisaltoPaatos()
+    expect(paatos).toEqual('Hylätään haetut muutokset sisältöön ja toteutustapaan')
+    const perustelu = await hakemustenArviointiPage.paatosPreviewPerustelu()
+    expect(perustelu).toEqual('Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.')
   })
 
-  test('accepted with changes päätös', async ({hakemustenArviointiPage}) => {
+  test('accepted with changes', async ({hakemustenArviointiPage}) => {
     await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision('accepted_with_changes', '20.04.2400')
     const sisaltoDecision = 'Älä muuta ihan kaikkea'
     await hakemustenArviointiPage.setMuutoshakemusSisaltoDecision('accepted_with_changes', sisaltoDecision)
     await hakemustenArviointiPage.selectVakioperusteluInFinnish()
     await hakemustenArviointiPage.openPaatosPreview()
-    await test.step('has correct values', async () => {
-      await hakemustenArviointiPage.validateMuutoshakemusPaatosCommonValues()
-    })
-    await test.step('correct jatkoaika päätös', async () => {
-      const acceptedPaatos = await hakemustenArviointiPage.paatosPreviewJatkoaikaPaatos()
-      expect(acceptedPaatos).toEqual('Hyväksytään haetut muutokset käyttöaikaan muutettuna')
-    })
-    await test.step('correct new päättymispäivä', async () => {
-      const acceptedDate = await hakemustenArviointiPage.paatosPreviewJatkoaikaValue()
-      expect(acceptedDate).toBe('20.4.2400')
-    })
-    await test.step('correct sisältö päätös', async () => {
-      const paatos = await hakemustenArviointiPage.paatosPreviewSisaltoPaatos()
-      expect(paatos).toEqual('Hyväksytään haetut muutokset sisältöön ja toteutustapaan muutettuna')
-    })
-    await test.step('correct sisältö content', async () => {
-      const content = await hakemustenArviointiPage.paatosPreviewSisaltoContent()
-      expect(content).toBe(sisaltoDecision)
-    })
-    await test.step('correct vakioperustelu', async () => {
-      const perustelu = await hakemustenArviointiPage.paatosPreviewPerustelu()
-      expect(perustelu).toEqual('Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt hyväksyä haetut muutokset muutettuna, siten kuin ne kuvataan tässä avustuspäätöksessä.')
-    })
+    const acceptedPaatos = await hakemustenArviointiPage.paatosPreviewJatkoaikaPaatos()
+    expect(acceptedPaatos).toEqual('Hyväksytään haetut muutokset käyttöaikaan muutettuna')
+    const acceptedDate = await hakemustenArviointiPage.paatosPreviewJatkoaikaValue()
+    expect(acceptedDate).toBe('20.4.2400')
+    const paatos = await hakemustenArviointiPage.paatosPreviewSisaltoPaatos()
+    expect(paatos).toEqual('Hyväksytään haetut muutokset sisältöön ja toteutustapaan muutettuna')
+    const content = await hakemustenArviointiPage.paatosPreviewSisaltoContent()
+    expect(content).toBe(sisaltoDecision)
+    const perustelu = await hakemustenArviointiPage.paatosPreviewPerustelu()
+    expect(perustelu).toEqual('Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt hyväksyä haetut muutokset muutettuna, siten kuin ne kuvataan tässä avustuspäätöksessä.')
   })
 
 })
 
 const bTest = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixtures & {hakemustenArviointiPage: HakemustenArviointiPage}>({
-  hakemustenArviointiPage: async ({page, hakemusID, avustushakuID}, use) => {
+  hakemustenArviointiPage: async ({page, hakemus: {hakemusID}, avustushakuID}, use) => {
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
     await hakijaMuutoshakemusPage.navigate(hakemusID)
     await hakijaMuutoshakemusPage.clickHaenMuutostaTaloudenKayttosuunnitelmaan()
@@ -142,7 +123,7 @@ const bTest = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixtures & {
 
 bTest.setTimeout(180000)
 
-bTest.describe.parallel('budjettimuutos päätös preview', async () => {
+bTest.describe.parallel('budjettimuutoshakemus päätös preview', async () => {
 
   const budget: BudgetAmount = {
     personnel: '200000',
@@ -154,7 +135,7 @@ bTest.describe.parallel('budjettimuutos päätös preview', async () => {
     other: '10000000',
   }
 
-  bTest('opens the paatos preview when "accepted with changes" is chosen', async ({hakemustenArviointiPage}) => {
+  bTest('accepted with changes', async ({hakemustenArviointiPage}) => {
     await hakemustenArviointiPage.setMuutoshakemusBudgetDecision('accepted_with_changes', budget)
     await hakemustenArviointiPage.openPaatosPreview()
     const expectedExistingBudget = [
@@ -182,7 +163,7 @@ bTest.describe.parallel('budjettimuutos päätös preview', async () => {
     expect(paatos).toEqual('Hyväksytään haetut muutokset budjettiin muutettuna')
   })
 
-  bTest('päätös preview when "accepted" is chosen', async ({hakemustenArviointiPage}) => {
+  bTest('accepted', async ({hakemustenArviointiPage}) => {
     await hakemustenArviointiPage.setMuutoshakemusBudgetDecision('accepted')
     await hakemustenArviointiPage.openPaatosPreview()
     const expectedExistingBudget = [
@@ -210,7 +191,7 @@ bTest.describe.parallel('budjettimuutos päätös preview', async () => {
     expect(paatos).toEqual('Hyväksytään haetut muutokset budjettiin')
   })
 
-  bTest('päätös preview when "rejected" is chosen', async ({hakemustenArviointiPage}) => {
+  bTest('rejected', async ({hakemustenArviointiPage}) => {
     await hakemustenArviointiPage.setMuutoshakemusBudgetDecision('rejected')
     await hakemustenArviointiPage.openPaatosPreview()
     const paatos = await hakemustenArviointiPage.paatosPreviewTalousarvioPaatos()
@@ -218,3 +199,39 @@ bTest.describe.parallel('budjettimuutos päätös preview', async () => {
   })
 })
 
+const svJatkoaika = {
+  jatkoaika: moment(new Date()).add(1, 'days').locale('fi'),
+  jatkoaikaPerustelu: 'Dubbel dubbel-laa'
+}
+
+const svTest = muutoshakemusTest.extend<{hakemustenArviointiPage: HakemustenArviointiPage}>({
+  answers: async ({}, use) => {
+    await use(svAnswers)
+  },
+  hakemustenArviointiPage: async ({page, hakemus: {hakemusID}, avustushakuID}, use) => {
+    const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
+    await hakijaMuutoshakemusPage.navigate(hakemusID)
+    await hakijaMuutoshakemusPage.fillJatkoaikaValues(svJatkoaika)
+    await hakijaMuutoshakemusPage.sendMuutoshakemus(true, true)
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    await hakemustenArviointiPage.navigateToLatestMuutoshakemus(avustushakuID, hakemusID)
+    await hakemustenArviointiPage.openPaatosPreview()
+    await use(hakemustenArviointiPage)
+  }
+})
+
+svTest('muutoshakemus in swedish päätös preview', async ({hakemustenArviointiPage}) => {
+
+  await test.step('modal title is still in finnish', async () => {
+    expect(await hakemustenArviointiPage.paatosPreviewTitle())
+      .toBe('ESIKATSELU')
+  })
+
+  await test.step('päätös preview content is in swedish', async () => {
+    expect(await hakemustenArviointiPage.paatosPreviewMuutoshakemusPaatosTitle())
+      .toBe('Beslut')
+    expect(await hakemustenArviointiPage.paatosPreviewJatkoaikaPaatos())
+      .toBe('De ändringar som ni ansökt om gällande understödets användningstid godkänns')
+  })
+
+})

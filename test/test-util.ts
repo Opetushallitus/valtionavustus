@@ -201,6 +201,7 @@ declare global {
 }
 export const getFirstPage = async (browser: Browser) => {
   const firstPage: Page = await browser.pages().then(pages => pages[0])
+  // @ts-ignore
   global.puppeteerPage = firstPage
   return firstPage
 }

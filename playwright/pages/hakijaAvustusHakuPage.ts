@@ -11,14 +11,7 @@ import {
   pollUntilNewHakemusEmailArrives
 } from "../utils/emails";
 import {Budget, defaultBudget} from "../utils/budget";
-
-export interface Answers {
-  projectName: string
-  contactPersonName: string
-  contactPersonEmail: string
-  contactPersonPhoneNumber: string
-  lang?: 'fi' | 'sv'
-}
+import {Answers} from "../utils/types";
 
 export class HakijaAvustusHakuPage {
   readonly page: Page
@@ -28,7 +21,7 @@ export class HakijaAvustusHakuPage {
     this.page = page;
   }
 
-  async navigate(avustushakuID: number, lang?: 'fi' | 'sv') {
+  async navigate(avustushakuID: number, lang: 'fi' | 'sv' | undefined) {
     await navigateHakija(this.page, `/avustushaku/${avustushakuID}/?lang=${lang ?? 'fi'}`)
   }
 
@@ -47,7 +40,9 @@ export class HakijaAvustusHakuPage {
     await this.page.press('body', 'Enter')
   }
 
-  async fillAndSendMuutoshakemusEnabledHakemus(avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void): Promise<string> {
+  async fillAndSendMuutoshakemusEnabledHakemus(avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void) {
+    const lang = answers.lang || 'fi'
+
     await this.page.waitForSelector('#haku-not-open', { state: 'hidden' })
     await this.page.fill("#primary-email", answers.contactPersonEmail)
     await this.page.click("#submit:not([disabled])")
@@ -60,17 +55,17 @@ export class HakijaAvustusHakuPage {
     await this.page.fill("[id='textField-0']", answers.contactPersonPhoneNumber)
     await this.page.fill("[id='signatories-fieldset-1.name']", "Erkki Esimerkki")
     await this.page.fill("[id='signatories-fieldset-1.email']", "erkki.esimerkki@example.com")
-    await clickElementWithText(this.page, "label", "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko")
+    await clickElementWithText(this.page,"label", lang === 'fi' ? "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko" : "Kommun/samkommun, kommunalt ägda bolag, kyrkan")
     await this.page.click("[id='koodistoField-1_input']")
-    await this.selectMaakuntaFromDropdown("Kainuu")
+    await this.selectMaakuntaFromDropdown(lang === 'fi' ? "Kainuu" : 'Åland')
     await this.page.fill("#bank-iban", "FI95 6682 9530 0087 65")
     await this.page.fill("#bank-bic", "OKOYFIHH")
     await this.page.fill("#textField-2", "2")
     await this.page.fill("#textField-1", "20")
     await this.page.fill("#project-name", answers.projectName)
-    await this.page.click("[for='language.radio.0']")
+    await this.page.click( `[for='language.radio.${lang === 'sv' ? 1 : 0}']`)
     await this.page.click("[for='checkboxButton-0.checkbox.0']")
-    await clickElementWithText(this.page, "label", "Opetuksen lisääminen")
+    await clickElementWithText(this.page, "label", lang === 'fi' ? "Opetuksen lisääminen" : "Ordnande av extra undervisning")
     await this.page.fill("[id='project-description.project-description-1.goal']", "Tarvitsemme kuutio tonneittain rahaa jotta voimme kylpeä siinä.")
     await this.page.fill("[id='project-description.project-description-1.activity']", "Kylvemme rahassa ja rahoitamme rahapuita.")
     await this.page.fill("[id='project-description.project-description-1.result']", "Koko budjetti käytetään ja lisää aiotaan hakea.")
@@ -88,8 +83,10 @@ export class HakijaAvustusHakuPage {
 
 
     await this.page.click(this.sendHakemusButtonSelector)
-    await this.page.waitForSelector(`${this.sendHakemusButtonSelector}:has-text("Hakemus lähetetty")`)
-    return await expectQueryParameter(this.page, "hakemus")
+    const sentText = lang === 'fi' ? "Hakemus lähetetty" : "Ansökan sänd"
+    await this.page.waitForSelector(`${this.sendHakemusButtonSelector}:has-text("${sentText}")`)
+    const userKey = await expectQueryParameter(this.page, "hakemus")
+    return {userKey}
   }
 
   async fillBudget(budget: Budget = defaultBudget, type: 'hakija' | 'virkailija') {

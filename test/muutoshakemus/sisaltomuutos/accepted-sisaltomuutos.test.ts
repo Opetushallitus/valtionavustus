@@ -15,7 +15,6 @@ import {
 } from '../../test-util'
 import {
   navigateToLatestMuutoshakemus,
-  navigateToLatestMuutoshakemusPaatos,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
   setMuutoshakemusSisaltoDecision,
   writeSisältömuutosPäätös,
@@ -26,10 +25,6 @@ import {
   fillSisaltomuutosPerustelut,
   navigateToHakijaMuutoshakemusPage
 } from '../muutoshakemus-util'
-import {
-  closePaatosPreview,
-  openPaatosPreview
-} from '../../hakemuksen-arviointi/hakemuksen-arviointi-util'
 
 export const answers = {
   contactPersonEmail: "erkki.esimerkki@example.com",
@@ -144,24 +139,6 @@ describe('Sisaltomuutos (accepted)', () => {
       await setMuutoshakemusSisaltoDecision(page, 'accepted')
     })
 
-    describe.skip('preview for virkailija', () => {
-      beforeAll(async () => {
-        await openPaatosPreview(page)
-      })
-
-      it('should include sisältömuutos in asia section', async () => {
-        await expectAsiaSectionToContainSisaltomuutos(page)
-      })
-
-      it('should include text about accepted sisältömuutos in Hyväksytyt muutokset section', async () => {
-        await expectAcceptedSisaltomuutosInPaatos(page)
-      })
-
-      afterAll(async () => {
-        await closePaatosPreview(page)
-      })
-    })
-
     describe('sending decision', () => {
       beforeAll(async () => {
         await writeSisältömuutosPäätös(page, 'Muutokset hankkeen sisältöön tai toteutustapaan hyväksytään  hakemuksen mukaisesti.')
@@ -178,30 +155,8 @@ describe('Sisaltomuutos (accepted)', () => {
         const sentApplicationInformation = await textContent(page, '[data-test-id="sisaltomuutos-perustelut"]')
         expect(sentApplicationInformation).toContain(sisaltomuutosPerustelut)
       })
-
-      describe('Viewing päätös for hakija', () => {
-        beforeAll(async () => {
-          await navigateToLatestMuutoshakemusPaatos(page, hakemusID)
-        })
-
-        it('should include sisältömuutos in asia section', async () => {
-          await expectAsiaSectionToContainSisaltomuutos(page)
-        })
-
-        it('should include text about accepted sisältömuutos in Hyväksytyt muutokset section', async () => {
-          await expectAcceptedSisaltomuutosInPaatos(page)
-        })
-      })
     })
   })
 })
 
-async function expectAsiaSectionToContainSisaltomuutos(page: Page) {
-  const asiaSectionContent = await textContent(page, '[data-test-id=muutospaatos-asia-content]')
-  expect(asiaSectionContent).toContain('Muutoshakemus hankesuunnitelman sisältöön tai toteutustapaan')
-}
 
-async function expectAcceptedSisaltomuutosInPaatos(page: Page) {
-  const asiaSectionContent = await textContent(page, '[data-test-id=accepted-changes-content]')
-  expect(asiaSectionContent).toContain('Hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan')
-}

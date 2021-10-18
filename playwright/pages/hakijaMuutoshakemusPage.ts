@@ -22,13 +22,17 @@ export class HakijaMuutoshakemusPage {
   async fillJatkoaikaValues(muutoshakemus: MuutoshakemusValues) {
     if (!muutoshakemus.jatkoaika) throw new Error('Jatkoaika is required')
 
-    await this.page.click('#checkbox-haenKayttoajanPidennysta')
+    await this.clickHaenKayttoajanPidennysta()
     await this.page.fill('#perustelut-kayttoajanPidennysPerustelut', muutoshakemus.jatkoaikaPerustelu)
     await this.page.fill('div.datepicker input', muutoshakemus.jatkoaika.format('DD.MM.YYYY'))
   }
 
   async clickHaenSisaltomuutosta() {
     await this.page.click('#checkbox-haenSisaltomuutosta')
+  }
+
+  async clickHaenKayttoajanPidennysta() {
+    await this.page.click('#checkbox-haenKayttoajanPidennysta')
   }
 
   async fillSisaltomuutosPerustelut(perustelut: string) {
@@ -62,8 +66,13 @@ export class HakijaMuutoshakemusPage {
     expect(notification).toBe(notificationText)
   }
 
-  async sendMuutoshakemus(isApplication: boolean) {
-    await this.clickSendMuutoshakemus()
-    await this.expectMuutoshakemusToBeSubmittedSuccessfully(isApplication)
+  async sendMuutoshakemus(isApplication: boolean, swedish?: boolean) {
+    if (swedish) {
+      await this.page.click('#send-muutospyynto-button')
+      expect(await textContent(this.page, 'div[class="auto-hide success"]')).toEqual('Ändringsansökan har skickats')
+    } else {
+      await this.clickSendMuutoshakemus()
+      await this.expectMuutoshakemusToBeSubmittedSuccessfully(isApplication)
+    }
   }
 }

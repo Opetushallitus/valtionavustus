@@ -184,6 +184,14 @@ export class HakemustenArviointiPage {
     ])
   }
 
+  async paatosPreviewTitle() {
+    return await textContent(this.page, '.hakemus-details-modal__title-row > span')
+  }
+
+  async paatosPreviewMuutoshakemusPaatosTitle() {
+    return await textContent(this.page, '[data-test-id=muutoshakemus-paatos-title]')
+  }
+
   async paatosPreviewJatkoaikaPaatos() {
     return await textContent(this.page, '[data-test-id="paatos-jatkoaika"]')
   }
@@ -204,6 +212,18 @@ export class HakemustenArviointiPage {
     return await textContent(this.page, '[data-test-id="paattymispaiva-value"]')
   }
 
+  async paatosPreviewEsittelija() {
+    return await textContent(this.page, '[data-test-id="paatos-esittelija"]')
+  }
+
+  async paatosPreviewLisatietoja() {
+    return await textContent(this.page, '[data-test-id="paatos-additional-info"]')
+  }
+
+  async paatosPreviewHyvaksyja() {
+    return await textContent(this.page, '[data-test-id="paatos-decider"]')
+  }
+
   async closePaatosPreview() {
     await Promise.all([
       clickElementWithText(this.page, 'button', 'Sulje'),
@@ -211,18 +231,16 @@ export class HakemustenArviointiPage {
     ])
   }
 
-  async validateMuutoshakemusPaatosCommonValues() {
-    await this.page.waitForSelector('div.muutoshakemus-paatos__content')
-    const register = await textContent(this.page, '[data-test-id="paatos-register-number"]')
-    expect(register).toMatch(/[0-9]{1,3}\/[0-9]{1,5}\/[0-9]{2,6}/)
-    const project = await textContent(this.page, '[data-test-id="paatos-project-name"]')
-    expect(project).toEqual('Rahassa kylpijät Ky Ay Oy')
-    const org = await textContent(this.page, 'h1.muutoshakemus-paatos__org')
-    expect(org).toEqual('Akaan kaupunki')
-    const decider = await textContent(this.page, '[data-test-id="paatos-decider"]')
-    expect(decider).toEqual('_ valtionavustus')
-    const info = await textContent(this.page, '[data-test-id="paatos-additional-info"]')
-    expect(info).toEqual('_ valtionavustussanteri.horttanainen@reaktor.com029 533 1000 (vaihde)')
+  async paatosPreviewRegisterNumber() {
+    return await textContent(this.page, '[data-test-id="paatos-register-number"]')
+  }
+
+  async paatosPreviewProjectName() {
+    return await textContent(this.page, '[data-test-id="paatos-project-name"]')
+  }
+
+  async paatosPreviewOrg() {
+    return await textContent(this.page, 'h1.muutoshakemus-paatos__org')
   }
 
   async paatosPreviewPerustelu() {

@@ -7,6 +7,8 @@ import {randomString} from "../utils/random";
 
 type KoodienhallintaTab = 'operational-unit' | 'project' | 'operation'
 
+const clojureLoadingDialogSelector = "[data-test-id=loading-dialog]"
+
 export class KoodienhallintaPage {
   readonly page: Page
 
@@ -15,11 +17,19 @@ export class KoodienhallintaPage {
   }
 
   async navigate() {
-    await navigate(this.page, '/admin-ui/va-code-values/')
+    await Promise.all([
+      navigate(this.page, '/admin-ui/va-code-values/'),
+      this.waitForClojureScriptLoadingDialogVisible()
+    ])
+    await this.waitForClojureScriptLoadingDialogHidden()
+  }
+
+  async waitForClojureScriptLoadingDialogVisible() {
+    return this.page.waitForSelector(clojureLoadingDialogSelector)
   }
 
   async waitForClojureScriptLoadingDialogHidden() {
-    await this.page.waitForSelector("[data-test-id=loading-dialog]", { state: 'detached' })
+    await this.page.waitForSelector(clojureLoadingDialogSelector, { state: 'detached' })
   }
 
   async clickKoodienhallintaTab(tabName: KoodienhallintaTab) {

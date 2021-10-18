@@ -9,22 +9,15 @@ import {
   navigate,
   setPageErrorConsoleLogger,
   createRandomHakuValues,
-  navigateToPaatos,
   Budget,
-  waitUntilMinEmails,
-  getAcceptedPäätösEmails,
-  lastOrFail,
-  Email,
   getHakemusTokenAndRegisterNumber,
   HAKIJA_URL,
   setCalendarDateForSelector,
   MailWithLinks,
-  clickElementWithText,
 } from './test-util'
 import {
   Answers,
   fillAndSendMuutoshakemusDecision, navigateToLatestMuutoshakemus,
-  navigateToLatestMuutoshakemusPaatos,
   parseMuutoshakemusPaatosFromEmails,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
 } from './muutoshakemus/muutospaatosprosessi-util'
@@ -34,7 +27,6 @@ import {
 } from './muutoshakemus/muutoshakemus-util'
 
 import moment from 'moment'
-import { openPaatosPreview } from './hakemuksen-arviointi/hakemuksen-arviointi-util'
 
 jest.setTimeout(400_000)
 
@@ -112,75 +104,6 @@ describe('Translations', () => {
       avustushakuID = avustushakuId
       hakemusID = hakemusId
       userKey = userkey
-    })
-
-    describe('And hakija gets an email', () => {
-      let email: Email
-      beforeAll(async () => {
-        const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
-        email = lastOrFail(emails)
-      })
-
-      it('päätös email is in swedish', async () => {
-        const { token, 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
-        expect(email.formatted).toBe(`${registerNumber} - ${answers.projectName}
-
-${haku.avustushakuName} på svenska
-
-Ni kan granska understödsbeslutet via denna länk: ${HAKIJA_URL}/paatos/avustushaku/${avustushakuID}/hakemus/${userKey}
-
-Understödsmottagaren ska följa de villkor och begränsningar som beskrivs i understödsbeslutet och i dess bilagor.
-
-Om ni tar emot understödet i enlighet med beslutet, kan ni påbörja projektet. Understödsbeloppet betalas senast den dag som anges i beslutet.
-
-Om ni inte tar emot understödet i enlighet med beslutet, ska ni meddela om detta till Utbildningsstyrelsen inom den tidsfrist som anges i beslutet. Anmälan ska göras i statsunderstödssystemet via denna länk: ${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?avustushaku=${avustushakuID}&hakemus=${userKey}&lang=sv&preview=true&token=${token}&refuse-grant=true&modify-application=false
-
-
-Om det uppstår förändringar som inverkar på användningen av statsunderstödet ska man genast göra en skriftlig ändringsansökan. Man ska framföra tillräckliga motiveringar för ändringarna som ingår i ändringsansökan. I oklara situationer kan understödsmottagaren vara i kontakt med kontaktpersonen som anges i understödsbeslutet innan en ändringsansökan görs.
-
-Understödsmottagaren ansvarar för att kontaktuppgifterna till den person som angetts som kontaktperson i statsunderstödssystemet alltid är uppdaterade. Ni kan göra en ändringsansökan samt byta ut kontaktpersonen och göra ändringar i hens kontaktuppgifter under hela projektperiodens gång via följande länk:
-${HAKIJA_URL}/muutoshakemus?lang=sv&user-key=${userKey}&avustushaku-id=${avustushakuID}
-
-Begäranden om redovisningar och andra meddelanden som riktas till projektet skickas från adressen no-reply@valtionavustukset.oph.fi. De skickas både till projektets kontaktperson och till den officiella e-postadress som den sökande har angett.
-
-Mottagaren av understöd ska spara detta meddelande och länkarna som ingår i meddelandet.
-
-Vid behov ges närmare information av den person som angetts som kontaktperson i understödsbeslutet.
-
-Utbildningsstyrelsen
-Hagnäskajen 6
-PB 380, 00531 Helsingfors
-telefon 029 533 1000
-fornamn.efternamn@oph.fi
-`)
-
-      })
-    })
-
-    describe('And hakija navigates to päätös', () => {
-      beforeAll(async () => {
-        await navigateToPaatos(page, hakemusID)
-      })
-
-      it('päätös header title is in swedish', async () => {
-        const title = await getElementInnerText(page, '[data-test-id="paatos-header-title"]')
-        expect(title).toContain('BESLUT')
-      })
-
-      it('päätös title is in swedish', async () => {
-        const title = await getElementInnerText(page, '[data-test-id="paatos-title"]')
-        expect(title).toBe('BESLUT')
-      })
-
-      it('päätös accepted title is in swedish', async () => {
-        const title = await getElementInnerText(page, '[data-test-id="paatos-accepted-title"]')
-        expect(title).toBe('Utbildningsstyrelsen har beslutat att bevilja statsunderstöd till projektet')
-      })
-
-      it('lisätietoja title is in swedish', async () => {
-        const title = await getElementInnerText(page, '[data-test-id="lisatietoja-title"]')
-        expect(title).toBe('MER INFORMATION')
-      })
     })
 
     describe('And hakija navigates to muutoshakemus page', () => {
@@ -349,26 +272,6 @@ fornamn.efternamn@oph.fi
             expect(title).toBe('Hakijan perustelut')
           })
 
-          describe('preview muutoshakemus päätös in swedish', () => {
-            beforeAll(async () => {
-              await openPaatosPreview(page)
-            })
-
-            afterAll(async () => {
-              await clickElementWithText(page, 'button', 'Sulje')
-            })
-
-            it('modal title is still in finnish', async () => {
-              expect(await getElementInnerText(page, '.hakemus-details-modal__title-row > span'))
-                .toBe('ESIKATSELU')
-            })
-
-            it('päätös preview content is in swedish', async () => {
-              expect(await getElementInnerText(page, '[data-test-id="muutoshakemus-paatos-title"]'))
-                .toBe('BESLUT')
-            })
-          })
-
           describe('And accepts muutoshakemus #1 changes', () => {
             beforeAll(async () => {
               await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
@@ -438,74 +341,6 @@ fornamn.efternamn@oph.fi
               it('new budget is shown as approved in swedish', async () => {
                 const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="budget-change-title"]')
                 expect(currentBudgetHeader).toEqual('Godkänd ny budget')
-              })
-            })
-
-            describe('And hakija navigates to muutoshakemus päätös page', () => {
-              beforeAll(async () => {
-                await navigateToLatestMuutoshakemusPaatos(page, hakemusID)
-              })
-
-              it('Decision title is shown in swedish', async () => {
-                const title = await getElementInnerText(page, '[data-test-id="muutoshakemus-paatos-title"]')
-                expect(title).toEqual('BESLUT')
-              })
-
-              it('Asia title is shown in swedish', async () => {
-                const title = await getElementInnerText(page, '[data-test-id="muutospaatos-asia-title"]')
-                expect(title).toEqual('Ärende')
-              })
-
-              it('Decision section title is shown in swedish', async () => {
-                const title = await getElementInnerText(page, '[data-test-id="muutoshakemus-paatos-section-title"]')
-                expect(title).toEqual('Beslut')
-              })
-
-              it.skip('Decision is shown in swedish', async () => {
-                const title = await getElementInnerText(page, '[data-test-id="paatos-paatos"]')
-                expect(title).toEqual('Och samma på svenska! - translations have not been provided')
-              })
-
-              it('Accepted changes title is shown in swedish', async () => {
-                const title = await getElementInnerText(page, '[data-test-id="accepted-changes-title"]')
-                expect(title).toEqual('Godkända ändringar')
-              })
-
-              it('current budget title is shown in swedish', async () => {
-                const currentBudgetHeader = await getElementInnerText(page, '.currentBudget')
-                expect(currentBudgetHeader).toEqual('Den tidigare budgeten')
-              })
-
-              it('approved budget title is shown in swedish', async () => {
-                const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="budget-change-title"]')
-                expect(currentBudgetHeader).toEqual('Godkänd ny budget')
-              })
-
-              it('päätöksen perustelut is shown in swedish', async () => {
-                const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="muutoshakemus-paatos-perustelut-title"]')
-                expect(currentBudgetHeader).toEqual('Motiveringar för beslutet')
-              })
-
-              it('päätöksen tekijä is shown in swedish', async () => {
-                const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="muutoshakemus-paatos-tekija-title"]')
-                expect(currentBudgetHeader).toEqual('Har godkänts av')
-              })
-
-              it('lisätietoja title is shown in swedish', async () => {
-                const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="muutoshakemus-paatos-lisatietoja-title"]')
-                expect(currentBudgetHeader).toEqual('Mer information')
-              })
-
-              it('budget change is mentioned in the info section', async () => {
-                const budgetChangeText = await getElementInnerText(page, '[data-test-id="budget-change"]')
-                expect(budgetChangeText).toEqual('Ändringsansökan som gäller projektets budget')
-              })
-
-              it('Budget rows are in Swedish', async () => {
-                const budgetRows = await page.$$eval('[data-test-id=meno-input-row]', elements => {
-                  return elements.map(elem => elem.querySelector('.description')?.textContent || '')
-                })
-                expect(budgetRows.sort()).toEqual(swedishBudgetRowNames.sort())
               })
             })
           })

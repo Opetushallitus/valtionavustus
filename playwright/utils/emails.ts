@@ -114,3 +114,28 @@ export async function parseMuutoshakemusPaatosFromEmails(hakemusID: number): Pro
     ...emails[0]
   }
 }
+
+
+export async function getLinkToPaatosFromEmails(hakemusID: number) {
+  const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
+  const linkToPaatos = emails[0]?.formatted.match(/https?:\/\/.*\/paatos\/.*/)?.[0]
+  if (!linkToPaatos) {
+    throw new Error('did not find link to päätös')
+  }
+  return linkToPaatos
+}
+
+interface HakemusTokenAndRegisterNumber {
+  token: string
+  'register-number': string
+}
+
+export async function getHakemusTokenAndRegisterNumber(hakemusId: number): Promise<HakemusTokenAndRegisterNumber> {
+  const applicationGeneratedValuesSchema = yup.object().required().shape<HakemusTokenAndRegisterNumber>({
+    token: yup.string().required(),
+    'register-number': yup.string().required(),
+  })
+
+  return await axios.get(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusId}/token-and-register-number`)
+    .then(r => applicationGeneratedValuesSchema.validate(r.data))
+}

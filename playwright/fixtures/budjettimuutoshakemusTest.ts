@@ -1,18 +1,21 @@
-import {MuutoshakemusFixtures, muutoshakemusTest} from "./muutoshakemusTest";
+import {test} from "@playwright/test"
+import {MuutoshakemusFixtures} from "./muutoshakemusTest";
 import {createRandomHakuValues} from "../utils/random";
 import {KoodienhallintaPage} from "../pages/koodienHallintaPage";
 import {HakujenHallintaPage} from "../pages/hakujenHallintaPage";
 import {HakijaAvustusHakuPage} from "../pages/hakijaAvustusHakuPage";
 import {HakemustenArviointiPage} from "../pages/hakemustenArviointiPage";
-import {answers} from "../utils/constants";
 import {Budget, defaultBudget} from "../utils/budget";
+import {answers} from "../utils/constants";
 
-export type BudjettimuutoshakemusFixtures = MuutoshakemusFixtures & {budget: Budget}
+export interface BudjettimuutoshakemusFixtures extends MuutoshakemusFixtures {
+  budget: Budget
+  userKey: string
+}
 
-export const budjettimuutoshakemusTest = muutoshakemusTest.extend<BudjettimuutoshakemusFixtures>({
-  budget: async ({}, use) => {
-    await use(defaultBudget)
-  },
+export const budjettimuutoshakemusTest = test.extend<BudjettimuutoshakemusFixtures>({
+  answers,
+  budget: defaultBudget,
   haku: async ({}, use) => {
     const randomHakuValues = createRandomHakuValues('Budjettimuutos')
     await use(randomHakuValues)
@@ -24,10 +27,10 @@ export const budjettimuutoshakemusTest = muutoshakemusTest.extend<Budjettimuutos
     const avustushakuID = await hakujenHallintaPage.createBudjettimuutosEnabledHaku(haku.registerNumber, haku.avustushakuName, codes)
     await use(avustushakuID)
   },
-  hakemusID: async ({avustushakuID, page, budget}, use) => {
+  hakemus: async ({avustushakuID, page, budget, answers}, use) => {
     const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
-    await hakijaAvustusHakuPage.navigate(avustushakuID)
-    await hakijaAvustusHakuPage.fillAndSendBudjettimuutoshakemusEnabledHakemus(avustushakuID, answers, budget)
+    await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
+    const {userKey} = await hakijaAvustusHakuPage.fillAndSendBudjettimuutoshakemusEnabledHakemus(avustushakuID, answers, budget)
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigate(avustushakuID)
     await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast()
@@ -40,6 +43,6 @@ export const budjettimuutoshakemusTest = muutoshakemusTest.extend<Budjettimuutos
     await hakemustenArviointiPage.selectValmistelijaForHakemus(avustushakuID, hakemusID, "_ valtionavustus")
     await hakujenHallintaPage.navigateToPaatos(avustushakuID)
     await hakujenHallintaPage.sendPaatos(avustushakuID)
-    await use(hakemusID)
+    await use({hakemusID, userKey})
   }
 })
