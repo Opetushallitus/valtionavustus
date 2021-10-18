@@ -307,7 +307,7 @@ Se tidigare ändringsansökningar och gör vid behov en ny ändringsansökan: ${
 
 Bilaga: Rättelseyrkande
 
-Mera information ges vid behov av kontaktpersonen som anges i beslutet.
+Mera information ges vid behov av kontaktpersonen som anges i beslutet. 
 
 Hälsningar,
 _ valtionavustus
