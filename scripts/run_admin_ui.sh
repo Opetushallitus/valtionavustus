@@ -5,8 +5,6 @@ repo="$scriptdir/.."
 source "$scriptdir/common-functions.sh"
 
 function main {
-  init_nodejs
-
   cd "$repo/va-admin-ui"
   ../lein package
   ../lein figwheel
