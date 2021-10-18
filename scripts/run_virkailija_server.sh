@@ -10,7 +10,7 @@ function main {
 
   cd "$repo"
   info "Starting virkailija server"
-  lein with-profile virkailija-dev run -m oph.va.virkailija.main
+  ./lein with-profile virkailija-dev run -m oph.va.virkailija.main
 }
 
 main "$@"
