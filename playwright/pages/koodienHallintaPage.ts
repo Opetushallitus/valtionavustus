@@ -39,10 +39,28 @@ export class KoodienhallintaPage {
     await this.page.waitForSelector(`.oph-tab-item-is-active${tabSelector}`)
   }
 
+  /*
+    sometimes the value gets filled but the value isnt in the dom
+   */
+  async makeSureCodeFilled(selector: string, value: string) {
+    const isNotFilled = async (): Promise<boolean> => {
+      const currentValue = await this.page.locator(selector).inputValue()
+      return currentValue !== value
+    }
+    let count = 0
+    while (await isNotFilled()) {
+      count++
+      if (count > 10) {
+        throw Error(`Failed to fill ${selector} with ${value}`)
+      }
+      await this.page.fill(selector, value)
+    }
+  }
+
   async createCode(name: string = 'Test code', code: string): Promise<string> {
-    await this.page.fill('[data-test-id=code-form__year]', '2020')
-    await this.page.fill('[data-test-id=code-form__code]', `${code}`)
-    await this.page.fill('[data-test-id=code-form__name]', `${name} ${code}`)
+    await this.makeSureCodeFilled('[data-test-id=code-form__year]', '2020')
+    await this.makeSureCodeFilled('[data-test-id=code-form__code]', `${code}`)
+    await this.makeSureCodeFilled('[data-test-id=code-form__name]', `${name} ${code}`)
     await this.page.click('[data-test-id=code-form__add-button]')
     await this.waitForClojureScriptLoadingDialogHidden()
     await this.page.waitForSelector(`tr[data-test-id="${code}"]`)
