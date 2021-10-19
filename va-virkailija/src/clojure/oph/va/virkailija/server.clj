@@ -78,17 +78,17 @@
   (-> site
       (buddy-middleware/wrap-authentication (buddy-session/session-backend))
       (buddy-accessrules/wrap-access-rules
-       {:rules [{:pattern #"^/login.*$"
+       {:rules [{:pattern #"^/virkailija/login.*$"
                  :handler any-access}
                 {:pattern #"^/environment"
                  :handler any-access}
                 {:pattern #"^/errorlogger"
                  :handler any-access}
-                {:pattern #"^/js/.*"
+                {:pattern #"^/virkailija/js/.*"
                  :handler any-access}
-                {:pattern #"^/img/.*"
+                {:pattern #"^/virkailija/img/.*"
                  :handler any-access}
-                {:pattern #"^/css/.*"
+                {:pattern #"^/virkailija/css/.*"
                  :handler any-access}
                 {:pattern #"^/api/healthcheck"
                  :handler any-access}
