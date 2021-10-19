@@ -21,7 +21,7 @@
 
 (defn health-check []
   (->> {}
-       (exec queries/health-check)
+       (query "select 1")
        first
        :?column?
        (= 1)))
@@ -35,7 +35,6 @@
 
 (defn list-avustushaut []
   (exec queries/list-avustushaut {}))
-
 
 (defn add-paatos-view [hakemus-id headers remote-addr]
   (exec queries/create-paatos-view! {:hakemus_id hakemus-id :headers headers :remote_addr remote-addr}))
