@@ -30,7 +30,7 @@ export class HakijaAvustusHakuPage {
     const hakemusUrl = getHakemusUrlFromEmail(receivedEmail[0])
     expectToBeDefined(hakemusUrl)
 
-    await this.page.goto(hakemusUrl, {waitUntil: 'networkidle'})
+    await this.page.goto(hakemusUrl)
   }
 
   async selectMaakuntaFromDropdown(text: string) {

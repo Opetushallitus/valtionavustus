@@ -16,7 +16,7 @@ export class HakijaMuutoshakemusPage {
 
   async navigate(hakemusID: number) {
     const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(hakemusID)
-    await this.page.goto(linkToMuutoshakemus, { waitUntil: "networkidle" })
+    await this.page.goto(linkToMuutoshakemus)
   }
 
   async fillJatkoaikaValues(muutoshakemus: MuutoshakemusValues) {
