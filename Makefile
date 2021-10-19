@@ -59,9 +59,7 @@ npm-audit: check-node
 	npm audit || true
 
 .PHONY: lein-clean
-lein-clean: 
-	lein-clean-frontends 
-	lein-clean-targets
+lein-clean: lein-clean-frontends lein-clean-targets
 
 .PHONY: lein-clean-targets
 lein-clean-targets:
