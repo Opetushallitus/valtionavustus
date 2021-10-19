@@ -4,7 +4,7 @@ LEIN := ../lein
 SPECLJ_ARGS ?= -f d
 
 NPM_PROJECTS ?= va-hakija va-virkailija
-LEIN_PROJECTS ?= soresu-form va-common va-hakija va-admin-ui va-virkailija
+LEIN_PROJECTS ?= soresu-form va-common va-admin-ui
 
 LEIN_CHECKOUTS_BASEDIRS := va-hakija/checkouts va-virkailija/checkouts
 LEIN_CHECKOUTS := soresu-form va-common
@@ -59,12 +59,16 @@ npm-audit: check-node
 	npm audit || true
 
 .PHONY: lein-clean
-lein-clean: lein-clean-frontends lein-clean-targets
+lein-clean: 
+	lein-clean-frontends 
+	lein-clean-targets
 
 .PHONY: lein-clean-targets
 lein-clean-targets:
 	$(foreach lein_project,$(LEIN_PROJECTS),$(call lein_clean_target,$(lein_project))$(newline))
 	$(call lein_clean_target,scripts/va-db-tool)
+	rm -fr target
+
 
 .PHONY: lein-clean-frontends
 lein-clean-frontends:
@@ -100,6 +104,7 @@ lein-test:
 .PHONY: lein-outdated-dependencies
 lein-outdated-dependencies:
 	$(foreach lein_project,$(LEIN_PROJECTS),$(call lein_outdated_dependencies,$(lein_project))$(newline))
+	lein ancient || true
 
 $(LEIN_CHECKOUTS_BASEDIRS):
 	mkdir '$@'
