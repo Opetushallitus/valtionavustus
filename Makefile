@@ -89,7 +89,7 @@ lein-build-frontends:
 
 .PHONY: lein-build-backends
 lein-build-backends:
-	lein uberjar
+	./lein uberjar
 
 .PHONY: lein-test
 lein-test:
