@@ -29,6 +29,6 @@ done
 find "$DUMPS_DIR" \
      -mindepth 1 \
      -maxdepth 1 \
-     -mtime +1 \
+     -mmin +3600 \
      -exec echo 'Removing old dump: {}' \; \
      -exec rm -f -- '{}' \;
