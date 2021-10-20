@@ -108,14 +108,12 @@ run_tests() {
   ./run_isolated_system_tests.sh
 }
 
-va_hakija_jar="$repo"/va-hakija/target/*uberjar*/hakija-*-standalone.jar
-va_virkailija_jar="$repo"/va-virkailija/target/*uberjar*/virkailija-*-standalone.jar
+valtionavustus_jar="$repo"/va-virkailija/target/*uberjar*/valtionavustus-*-standalone.jar
 function deploy_jars {
-  ls ${va_hakija_jar}
-  ls ${va_virkailija_jar}
+  ls ${valtionavustus_jar}
 
-  do_deploy_jar $APP_HOSTNAME.csc.fi va-hakija ${va_hakija_jar} 8081
-  do_deploy_jar $APP_HOSTNAME.csc.fi va-virkailija ${va_virkailija_jar} 6071
+  do_deploy_jar $APP_HOSTNAME.csc.fi va-hakija ${valtionavustus_jar} 8081
+  do_deploy_jar $APP_HOSTNAME.csc.fi va-virkailija ${valtionavustus_jar} 6071
 }
 
 function do_deploy_jar {

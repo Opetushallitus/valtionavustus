@@ -8,4 +8,4 @@ WORKDIR /app/va-hakija
 ENV environment=dev
 ENV configdefaults=/app/va-hakija/config/defaults.edn
 ENV config=/app/va-hakija/config/docker-compose-test.edn
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-cp", "app.jar", "oph.va.hakija.main"]
