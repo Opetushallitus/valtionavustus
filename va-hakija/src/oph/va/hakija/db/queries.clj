@@ -1,8 +1,6 @@
 (ns oph.va.hakija.db.queries
   (:require [yesql.core :refer [defquery]]))
 
-(defquery health-check "sql/healthcheck.sql")
-
 (defquery create-hakemus<! "sql/hakemus/create.sql")
 (defquery update-hakemus-parent-id! "sql/hakemus/update-parent-id.sql")
 (defquery find-by-parent-id-and-hakemus-type "sql/hakemus/find-by-parent-id-and-hakemus-type.sql")

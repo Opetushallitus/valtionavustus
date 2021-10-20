@@ -475,7 +475,7 @@
 
 (defn health-check []
   (->> {}
-       (exec queries/health-check)
+       (query "select 1")
        first
        :?column?
        (= 1)))

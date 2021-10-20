@@ -36,13 +36,6 @@
        (map (fn [attachment] [(:field-id attachment) attachment]))
        (into {})))
 
-(defn health-check []
-  (->> {}
-       (exec hakija-queries/health-check)
-       first
-       :?column?
-       (= 1)))
-
 (defn- copy-form [tx id created-at]
   (:id (hakija-queries/copy-form<! {:id id :created_at created-at} {:connection tx})))
 

@@ -1,8 +1,6 @@
 (ns oph.va.virkailija.db.queries
   (:require [yesql.core :refer [defquery]]))
 
-(defquery health-check "sql/healthcheck.sql")
-
 (defquery create-empty-arvio<! "sql/virkailija/arvio/create-empty.sql")
 (defquery upsert-arvio<! "sql/virkailija/arvio/upsert.sql")
 (defquery get-arviot "sql/virkailija/arvio/get-by-ids.sql")
