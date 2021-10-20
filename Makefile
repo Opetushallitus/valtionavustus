@@ -4,10 +4,10 @@ LEIN := ../lein
 SPECLJ_ARGS ?= -f d
 
 NPM_PROJECTS ?= va-hakija va-virkailija
-LEIN_PROJECTS ?= soresu-form va-common va-admin-ui
+LEIN_PROJECTS ?= soresu-form va-admin-ui
 
 LEIN_CHECKOUTS_BASEDIRS := va-hakija/checkouts va-virkailija/checkouts
-LEIN_CHECKOUTS := soresu-form va-common
+LEIN_CHECKOUTS := soresu-form
 LEIN_CHECKOUT_DIRS := $(foreach basedir,$(LEIN_CHECKOUTS_BASEDIRS),$(addprefix $(basedir)/,$(LEIN_CHECKOUTS)))
 NODE_VERSION := $(shell node --version)
 REQUIRED_NODE := $(shell if [ $(NODE_VERSION) == "v16.9.1" ]; then echo true; else echo false; fi)
@@ -81,7 +81,6 @@ lein-build: lein-install-jar-commons lein-build-frontends lein-build-backends
 .PHONY: lein-install-jar-commons
 lein-install-jar-commons:
 	$(call lein_install_jar,soresu-form)
-	$(call lein_install_jar,va-common)
 
 .PHONY: lein-build-frontends
 lein-build-frontends:
@@ -94,15 +93,15 @@ lein-build-backends:
 .PHONY: lein-test
 lein-test:
 	$(call lein_speclj,soresu-form)
-	$(call lein_speclj,va-common)
-	lein with-profile hakija-test spec $(SPECLJ_ARGS)
+	./lein with-profile common-test spec $(SPECLJ_ARGS)
+	./lein with-profile hakija-test spec $(SPECLJ_ARGS)
 	$(call lein_doo,va-admin-ui)
-	lein with-profile virkailija-test spec $(SPECLJ_ARGS)
+	./lein with-profile virkailija-test spec $(SPECLJ_ARGS)
 
 .PHONY: lein-outdated-dependencies
 lein-outdated-dependencies:
 	$(foreach lein_project,$(LEIN_PROJECTS),$(call lein_outdated_dependencies,$(lein_project))$(newline))
-	lein ancient || true
+	./lein ancient || true
 
 $(LEIN_CHECKOUTS_BASEDIRS):
 	mkdir '$@'
