@@ -5,7 +5,7 @@ const workersEnv = Number(process.env['PLAYWRIGHT_WORKERS'])
 const workers = isNaN(workersEnv) ? undefined : workersEnv
 
 const config: PlaywrightTestConfig = {
-  retries: 0,
+  retries: 2,
   workers,
   testDir: 'tests',
   outputDir: 'test-results',
