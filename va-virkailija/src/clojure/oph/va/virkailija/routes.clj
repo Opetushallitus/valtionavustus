@@ -69,7 +69,8 @@
     (str (-> config :server :virkailija-url) "/login/cas")))
 
 (defn- on-healthcheck []
-  (if (virkailija-db/health-check)
+  (if (and (virkailija-db/health-check)
+           (hakija-api/health-check))
     (ok {})
     (not-found)))
 
@@ -186,11 +187,11 @@
                                             (va-routes/get-translations))
 
                          (compojure-api/undocumented
-                          (compojure/GET "/" [] (return-html "virkailija/index.html"))
+                          (compojure/GET "/" [] (return-html "index.html"))
 
-                          (compojure/GET "/admin/*" [] (return-html "virkailija/admin.html"))
+                          (compojure/GET "/admin/*" [] (return-html "admin.html"))
 
-                          (compojure/GET "/yhteenveto/*" [] (return-html "virkailija/summary.html"))
+                          (compojure/GET "/yhteenveto/*" [] (return-html "summary.html"))
 
                           (compojure-api/GET "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
                                              :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
@@ -210,7 +211,7 @@
                                              :query-params [{hakemus :- s/Str nil},{preview :- s/Str "false"}]
                                              (on-selvitys avustushaku-id hakemus selvitys-type preview))
 
-                          (compojure/GET "/avustushaku/:id/*" [id] (return-html "virkailija/index.html"))
+                          (compojure/GET "/avustushaku/:id/*" [id] (return-html "index.html"))
 
                           (compojure/GET "/admin-ui/*" [] (return-html "admin-ui/index.html"))
 
@@ -880,7 +881,7 @@
                                          (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
                                              (assoc :session nil)))
 
-                          (compojure/GET "/logged-out" [] (return-html "virkailija/login.html")))
+                          (compojure/GET "/logged-out" [] (return-html "login.html")))
 
                          (compojure-api/GET
                           "/sessions/" [:as request]

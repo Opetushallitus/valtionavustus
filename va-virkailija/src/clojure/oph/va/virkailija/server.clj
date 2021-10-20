@@ -15,6 +15,7 @@
             [oph.soresu.common.config :refer [config environment]]
             [oph.soresu.common.db :as db]
             [oph.va.virkailija.authentication :as auth]
+            [oph.va.virkailija.db.migrations :as dbmigrations]
             [oph.va.virkailija.email :as email]
             [oph.va.virkailija.va-users :as va-users]
             [oph.va.virkailija.rondo-scheduling :as rondo-scheduling]
@@ -23,6 +24,9 @@
 
 (defn- startup [config]
   (log/info "Startup, with configuration: " config)
+  (dbmigrations/migrate "virkailija"
+                        "db.migration"
+                        "oph.va.virkailija.db.migrations")
   (email/start-background-job-send-mails)
   (auth/start-background-job-timeout-sessions)
   (when (get-in config [:va-users :use-cache?])
@@ -78,17 +82,17 @@
   (-> site
       (buddy-middleware/wrap-authentication (buddy-session/session-backend))
       (buddy-accessrules/wrap-access-rules
-       {:rules [{:pattern #"^/virkailija/login.*$"
+       {:rules [{:pattern #"^/login.*$"
                  :handler any-access}
                 {:pattern #"^/environment"
                  :handler any-access}
                 {:pattern #"^/errorlogger"
                  :handler any-access}
-                {:pattern #"^/virkailija/js/.*"
+                {:pattern #"^/js/.*"
                  :handler any-access}
-                {:pattern #"^/virkailija/img/.*"
+                {:pattern #"^/img/.*"
                  :handler any-access}
-                {:pattern #"^/virkailija/css/.*"
+                {:pattern #"^/css/.*"
                  :handler any-access}
                 {:pattern #"^/api/healthcheck"
                  :handler any-access}

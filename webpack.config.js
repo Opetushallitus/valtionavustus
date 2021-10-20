@@ -2,11 +2,11 @@ const webpack = require("webpack")
 const path = require("path")
 const TerserPlugin = require('terser-webpack-plugin')
 
-const makeConfig = (basedir, componentName) => {
+const makeConfig = basedir => {
   return {
     mode: process.env.NODE_ENV || 'development',
     output: {
-      path: path.resolve(basedir,`resources/public/${componentName}`),
+      path: path.resolve(basedir, "resources/public"),
       filename: "js/[name].js"
     },
     module: {
@@ -79,7 +79,7 @@ const makeConfig = (basedir, componentName) => {
 
 const virkailijaConfig = Object.assign(
   {},
-  makeConfig(path.resolve(__dirname, "va-virkailija"), "virkailija"),
+  makeConfig(path.resolve(__dirname, "va-virkailija")),
   {
     entry: {
       app: path.resolve(__dirname, "va-virkailija/web/va/HakemustenArviointiApp.tsx"),
@@ -92,7 +92,7 @@ const virkailijaConfig = Object.assign(
 
 const hakijaConfig = Object.assign(
   {},
-  makeConfig(path.resolve(__dirname, "va-hakija"), "hakija"),
+  makeConfig(path.resolve(__dirname, "va-hakija")),
   {
     entry: {
       app: path.resolve(__dirname, "va-hakija/web/va/VaApp.jsx"),

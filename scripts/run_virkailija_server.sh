@@ -8,9 +8,9 @@ function main {
   info "Waiting for hakija server to start..."
   wait_until_port_is_listening 8080
 
-  cd "$repo"
+  cd "$repo/va-virkailija"
   info "Starting virkailija server"
-  ./lein with-profile virkailija-dev run -m oph.va.virkailija.main
+  ../lein run
 }
 
 main "$@"

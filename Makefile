@@ -4,7 +4,7 @@ LEIN := ../lein
 SPECLJ_ARGS ?= -f d
 
 NPM_PROJECTS ?= va-hakija va-virkailija
-LEIN_PROJECTS ?= soresu-form va-common va-admin-ui
+LEIN_PROJECTS ?= soresu-form va-common va-hakija va-admin-ui va-virkailija
 
 LEIN_CHECKOUTS_BASEDIRS := va-hakija/checkouts va-virkailija/checkouts
 LEIN_CHECKOUTS := soresu-form va-common
@@ -65,8 +65,6 @@ lein-clean: lein-clean-frontends lein-clean-targets
 lein-clean-targets:
 	$(foreach lein_project,$(LEIN_PROJECTS),$(call lein_clean_target,$(lein_project))$(newline))
 	$(call lein_clean_target,scripts/va-db-tool)
-	rm -fr target
-
 
 .PHONY: lein-clean-frontends
 lein-clean-frontends:
@@ -89,20 +87,20 @@ lein-build-frontends:
 
 .PHONY: lein-build-backends
 lein-build-backends:
-	./lein uberjar
+	$(call lein_build_backend,va-hakija)
+	$(call lein_build_backend,va-virkailija)
 
 .PHONY: lein-test
 lein-test:
 	$(call lein_speclj,soresu-form)
 	$(call lein_speclj,va-common)
-	lein with-profile hakija-test spec $(SPECLJ_ARGS)
+	$(call lein_speclj,va-hakija)
 	$(call lein_doo,va-admin-ui)
-	lein with-profile virkailija-test spec $(SPECLJ_ARGS)
+	$(call lein_speclj,va-virkailija)
 
 .PHONY: lein-outdated-dependencies
 lein-outdated-dependencies:
 	$(foreach lein_project,$(LEIN_PROJECTS),$(call lein_outdated_dependencies,$(lein_project))$(newline))
-	lein ancient || true
 
 $(LEIN_CHECKOUTS_BASEDIRS):
 	mkdir '$@'
@@ -197,6 +195,10 @@ endef
 
 define lein_doo
 cd '$(1)' && $(LEIN) doo once
+endef
+
+define lein_build_backend
+cd '$(1)' && $(LEIN) uberjar
 endef
 
 define lein_build_frontend
