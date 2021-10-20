@@ -18,7 +18,16 @@
                              :jvm-opts
                              :nvd]}
 
-  :dependencies [[oph-va/common]
+  :dependencies [[org.clojure/clojure]
+                 [oph/soresu]
+                 [de.ubercode.clostache/clostache]
+                 [org.apache.commons/commons-email]
+                 [org.clojure/core.async]
+                 [org.apache.logging.log4j/log4j-core]
+                 [org.apache.logging.log4j/log4j-slf4j-impl]
+                 [ring.middleware.conditional :exclusions [ring]]
+                 [radicalzephyr/ring.middleware.logger]
+                 [ring/ring-defaults]
                  [org.apache.tika/tika-core]
                  [nrepl]
                  [buddy/buddy-auth]
@@ -50,29 +59,31 @@
                               :environment "dev"
                               :configdefaults "va-virkailija/config/defaults.edn"}}
 
+             :common-test    {:env {:test-paths ["va-common/spec"]}}
+
+
              :hakija-test    {:env {:config "va-hakija/config/test.edn"
                               :environment "test"
                               :configdefaults "va-hakija/config/defaults.edn"}
-
-                             :test-paths ["va-hakija/spec"]
-                             :resource-paths ["va-hakija/test-resources"]}
+                              :test-paths ["va-hakija/spec"]
+                              :resource-paths ["va-hakija/test-resources"]}
 
              :virkailija-test {:env {:config "va-virkailija/config/test.edn"
                                      :environment "test"
                                      :configdefaults "va-virkailija/config/defaults.edn"}
-                       :test-paths ["va-virkailija/spec"]
-                       :resource-paths ["va-virkailija/test-resources"]}
+                                     :test-paths ["va-virkailija/spec"]
+                                     :resource-paths ["va-virkailija/test-resources"]}
 
              :hakija-prod     {:env {:config "va-hakija/config/prod.edn"}}
 
              :virkalija-prod  {:env {:config "va-virkailija/config/va-prod.edn"}}
              }
   
-  :aot [oph.va.hakija.db.migrations oph.va.virkailija.db.migrations]
+  :aot [oph.va.jdbc.enums oph.va.hakija.db.migrations oph.va.virkailija.db.migrations]
 
 
-  :source-paths ["va-hakija/src", "va-virkailija/src/clojure"]
-  :resource-paths ["va-hakija/resources", "va-virkailija/resources"]
+  :source-paths ["va-hakija/src", "va-virkailija/src/clojure" "va-common/src"]
+  :resource-paths ["va-hakija/resources", "va-virkailija/resources", "va-common/resources"]
 
   :java-source-paths ["va-virkailija/src/java"]
 
@@ -82,4 +93,6 @@
 
   :target-path "target/%s"
 
+  :auto {:default {:paths ["src", "resources", "spec"]
+                   :file-pattern #"\.(clj|sql|json)$"}}
 )
