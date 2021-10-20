@@ -8,4 +8,4 @@ WORKDIR /app/va-virkailija
 ENV environment=dev
 ENV configdefaults=/app/va-virkailija/config/defaults.edn
 ENV config=/app/va-virkailija/config/docker-compose-test.edn
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-cp", "app.jar", "oph.va.virkailija.main"]
