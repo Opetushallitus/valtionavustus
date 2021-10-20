@@ -8,8 +8,10 @@ function lein_dep_check_for_project () {
   local EXIT=0
   cd "$repo/$project_dir"
   ../lein nvd check || EXIT=$?
-  echo "Deleting nvd temp files at ${WORKSPACE}/dctemp*"
-  rm -rf ${WORKSPACE}/dctemp*
+  if running_on_jenkins; then
+    echo "Deleting nvd temp files at ${WORKSPACE}/dctemp*"
+    rm -rf ${WORKSPACE}/dctemp*
+  fi
   return $EXIT
 }
 
