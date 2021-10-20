@@ -8,6 +8,7 @@ function lein_dep_check_for_project () {
   local EXIT=0
   cd "$repo/$project_dir"
   ../lein nvd check || EXIT=$?
+  rm -rf "${WORKSPACE}/dctemp*"
   return $EXIT
 }
 
