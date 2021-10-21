@@ -1,8 +1,7 @@
 {:server {:allow-db-clear? true
-          :url {:fi "http://hakija:8080/"
-                :sv "http://hakija:8080/"}
+          :url {:fi "http://localhost:8080/"
+                :sv "http://localhost:8080/"}
           :enable-access-log? false
-          :virkailija-url "http://virkailija:8081"
           :without-authentication? true
           :require-https? false
           :payment-service-sftp {:enabled? true
