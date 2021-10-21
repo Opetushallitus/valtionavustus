@@ -93,7 +93,7 @@ const SisaltomuutosPaatosSection: React.FC<{status: MuutoshakemusStatus}> = ({st
 const ProjectSection: React.FC<{muutoshakemus: Muutoshakemus, projectName: string, muutoshakemusUrl: string, environment: EnvironmentApiResponse}> = ({projectName, muutoshakemus, muutoshakemusUrl, environment}) => {
   const { t, lang } = useTranslations()
   return (
-    <section className="muutoshakemus-paatos__section">
+    <section className="muutoshakemus-paatos__section no-border-top">
       <div data-test-id="muutospaatos-asia-title" className="muutoshakemus-paatos__title">{t.muutoshakemus.paatos.asia}</div>
       <div data-test-id="muutospaatos-asia-content">
         <div className="muutoshakemus-paatos__project-name">
@@ -177,7 +177,7 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
     <div className="muutoshakemus-paatos__content">
       <header className="muutoshakemus-paatos__header">
         <img id="logo" src="/img/logo.png" height="50" alt={t.logo.alt} />
-        <div><span data-test-id="muutoshakemus-paatos-title">{t.muutoshakemus.paatos.paatos}</span><br/>
+        <div className="muutoshakemus-paatos-title"><span data-test-id="muutoshakemus-paatos-title">{t.muutoshakemus.paatos.paatos}</span><br/>
           {moment(paatos['created-at']).format(fiShortFormat)}
         </div>
         <div data-test-id="paatos-register-number">{hakemus['register-number']}</div>
