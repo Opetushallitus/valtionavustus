@@ -8,6 +8,7 @@
             [ring.middleware.defaults :refer :all]
             [buddy.auth.middleware :as buddy-middleware]
             [buddy.auth.accessrules :as buddy-accessrules]
+            [oph.va.virkailija.db.migrations :as dbmigrations]
             [buddy.auth.backends.session :as buddy-session]
             [clojure.tools.logging :as log]
             [oph.common.server :as server]
@@ -23,6 +24,9 @@
 
 (defn- startup [config]
   (log/info "Startup, with configuration: " config)
+  (dbmigrations/migrate "virkailija"
+                        "db.migration.virkailija"
+                        "oph.va.virkailija.db.migrations")
   (email/start-background-job-send-mails)
   (auth/start-background-job-timeout-sessions)
   (when (get-in config [:va-users :use-cache?])
