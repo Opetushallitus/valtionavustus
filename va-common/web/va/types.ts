@@ -180,7 +180,12 @@ export type AvustushakuPhase = 'upcoming' | 'current' | 'ended' | 'unpublished'
 
 export type AvustushakuType = 'yleisavustus' | 'erityisavustus'
 
-export type AvustushakuContent = unknown
+export interface RahoitusAlue {
+  rahoitusalue: string
+  talousarviotilit: string[]
+}
+
+export type AvustushakuContent = any
 
 export type Avustushaku = {
   id: number
