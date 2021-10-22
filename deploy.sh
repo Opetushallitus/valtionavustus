@@ -40,6 +40,12 @@ function start_system_under_test {
   echo "Starting system under test"
   build_docker_images
 
+  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d hakija
+  wait_for_container_to_be_healthy va-hakija
+
+  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d virkailija
+  wait_for_container_to_be_healthy va-virkailija
+
   # Make sure all services are running and follow their logs
   docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
   docker-compose -f ${DOCKER_COMPOSE_FILE} logs --follow &
