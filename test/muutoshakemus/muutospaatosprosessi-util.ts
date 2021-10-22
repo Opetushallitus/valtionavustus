@@ -451,8 +451,8 @@ export async function fillOsiotAndSendMuutoshakemusDecision(page: Page, opts: Fi
 
 
 export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(page: Page, avustushakuID: number, answers: Answers, budget?: Budget, beforeSubmitFn?: () => void): Promise<{ userKey: string }> {
-  const lang = answers.lang || 'fi'
-  await navigateHakija(page, `/avustushaku/${avustushakuID}/?lang=${lang || 'fi'}`)
+  const lang = answers.lang || 'fi'
+  await navigateHakija(page, `/avustushaku/${avustushakuID}/?lang=${lang || 'fi'}`)
 
   await page.waitForSelector('#haku-not-open', { hidden: true, timeout: 500 })
   await clearAndType(page, "#primary-email", answers.contactPersonEmail)

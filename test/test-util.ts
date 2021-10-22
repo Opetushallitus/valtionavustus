@@ -392,13 +392,13 @@ export function createRandomHakuValues(name: string = 'Muutospäätösprosessi')
 
 export const defaultBudget = {
   amount: {
-    personnel: "200000",
+    personnel: "200",
     material: "3000",
-    equipment: "10000",
+    equipment: "1000",
     'service-purchase': "100",
-    rent: "161616",
+    rent: "1616",
     steamship: "100",
-    other: "10000000",
+    other: "1000",
   },
   description: {
     personnel: "Tarvitsemme ihmisiä aaltoihin.",

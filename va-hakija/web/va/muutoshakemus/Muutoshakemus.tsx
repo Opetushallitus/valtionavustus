@@ -156,6 +156,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
           </section>
           }
           {state.muutoshakemukset.map(existingOsiokohtainenMuutoshakemus)}
+          <OriginalHakemusIframe avustushakuId={avustushakuId} userKey={userKey} />
         </ErrorBoundary>
       </section>
     </form>)
