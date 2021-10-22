@@ -224,7 +224,7 @@ etunimi.sukunimi@oph.fi`)
     it('does not show link to muutoshaku in email preview', async () => {
       await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
       expect(await textContent(page, '.decision-email-content'))
-        .toEqual(` - 
+        .toEqual(` -
 
 ${haku.avustushakuName}
 
@@ -478,12 +478,12 @@ etunimi.sukunimi@oph.fi
             })
 
             it('muutoshakemus title contains "Odottaa käsittelyä"', async () => {
-              const firstTitle = await muutoshakemuses[0].$eval('.muutoshakemus__title', el => el.textContent)
+              const firstTitle = await muutoshakemuses[0].$eval('.osiokohtainen-existing-muutoshakemus__title', el => el.textContent)
               expect(firstTitle).toContain('- Odottaa käsittelyä')
             })
 
             it('shows correct amount of rejected muutoshakemuses', async () => {
-              expect(await countElements(page, `span.muutoshakemus__paatos-icon--rejected`)).toEqual(2)
+              expect(await countElements(page, '[data-test-id="icon-rejected"]')).toEqual(2)
             })
           })
 
