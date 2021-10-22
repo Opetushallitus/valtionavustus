@@ -27,6 +27,11 @@ services:
       - maksatuspalvelu
     networks:
       - subnet-private
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:8081/api/healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   hakija:
     image: va-hakija:latest
@@ -41,6 +46,11 @@ services:
       - fakesmtp
     networks:
       - subnet-private
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:8080/api/healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   db:
     image: postgres:12.2
@@ -57,6 +67,11 @@ services:
       POSTGRES_USER: 'va'
       POSTGRES_PASSWORD: 'va'
       PGDATA: '/tmp/'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   fakesmtp:
     image: munkyboy/fakesmtp

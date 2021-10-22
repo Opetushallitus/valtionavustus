@@ -40,12 +40,6 @@ function start_system_under_test {
   echo "Starting system under test"
   build_docker_images
 
-  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d hakija
-  waitport ${HAKIJA_HOSTNAME} 8080 150
-
-  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d virkailija
-  waitport ${VIRKAILIJA_HOSTNAME} 8081 150
-
   # Make sure all services are running and follow their logs
   docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
   docker-compose -f ${DOCKER_COMPOSE_FILE} logs --follow &
