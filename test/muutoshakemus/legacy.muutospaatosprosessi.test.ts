@@ -84,7 +84,7 @@ async function fillMuutoshakemusPaatosWithVakioperustelu(page: Page, avustushaku
   await selectVakioperusteluInFinnish(page)
 }
 
-describe('Muutospäätösprosessi', () => {
+describe.skip('Muutospäätösprosessi', () => {
   let browser: Browser
   let page: Page
 

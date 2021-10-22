@@ -112,7 +112,7 @@ describe('Translations', () => {
       })
 
       it('register number title is in swedish', async () => {
-        const title = await getElementInnerText(page, '.muutoshakemus__register-number')
+        const title = await getElementInnerText(page, '.osiokohtainen-muutoshakemus__register-number')
         expect(title).toContain('Ärendenummer')
       })
 
@@ -326,11 +326,6 @@ fornamn.efternamn@oph.fi
             describe('And hakija navigates to muutoshakemus page', () => {
               beforeAll(async () => {
                 await navigateToHakijaMuutoshakemusPage(page, hakemusID)
-              })
-
-              it('Muutoshakemus title states in swedish that it has been approved with changes', async () => {
-                const text = await getElementInnerText(page, '[data-test-id="paatos-status-text"')
-                expect(text).toBe('Hyväksytty muutettuna')
               })
 
               it('old budget title is shown in swedish', async () => {
