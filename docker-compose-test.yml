@@ -10,9 +10,10 @@ services:
       - subnet-private
     environment:
       HEADLESS: 'true'
-      VIRKAILIJA_HOSTNAME: virkailija
-      HAKIJA_HOSTNAME: hakija
+      VIRKAILIJA_HOSTNAME: va-virkailija
+      HAKIJA_HOSTNAME: va-hakija
       PLAYWRIGHT_WORKERS: 1
+
   virkailija:
     image: va-virkailija:latest
     container_name: va-virkailija
