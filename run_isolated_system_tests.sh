@@ -9,12 +9,12 @@ function run_tests {
 		else
 			npm run playwright:test
 	fi
-	# npm run puppeteer:test "$@"
-	# npm run soresu-form:test "$@"
-	# npm run common:test "$@"
-	# npm run hakija:test "$@"
-	# npm run virkailija:test "$@"
-	# make lein-test
+	npm run puppeteer:test "$@"
+	npm run soresu-form:test "$@"
+	npm run common:test "$@"
+	npm run hakija:test "$@"
+	npm run virkailija:test "$@"
+	make lein-test
 }
 
 function main {
