@@ -155,6 +155,7 @@ function restart_application {
 }
 
 function set_env_vars {
+  export JAVA_HOME
   if [ "$ENV" = "qa" ]; then
     export APP_HOSTNAME="oph-va-app-test01"
   elif [ "$ENV" = "prod" ]; then
