@@ -352,9 +352,9 @@ describe("Puppeteer tests", () => {
     const inputfield = await clickElementWithText(page, 'span', 'Valitse koodisto')
     const inputWidth =  await page.evaluate(e => e.offsetWidth, inputfield)
     expect(inputWidth).toBeGreaterThanOrEqual(200)
-    await inputfield?.type('automaatio')
+    await inputfield?.type('ammattil')
     // Select koodisto for the field
-    await clickDropdownElementWithText(page, 'automaatioyliasentajan eat järjestys')
+    await clickDropdownElementWithText(page, 'ammattiluokitus')
     // Select input type for the field
     await clickElementWithText(page, "label", "Pudotusvalikko")
 
