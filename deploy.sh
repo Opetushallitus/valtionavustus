@@ -108,7 +108,7 @@ run_tests() {
   ./run_isolated_system_tests.sh
 }
 
-valtionavustus_jar="$repo"/va-virkailija/target/*uberjar*/valtionavustus-*-standalone.jar
+valtionavustus_jar="$repo"/target/*uberjar*/valtionavustus-*-standalone.jar
 function deploy_jars {
   ls ${valtionavustus_jar}
 
