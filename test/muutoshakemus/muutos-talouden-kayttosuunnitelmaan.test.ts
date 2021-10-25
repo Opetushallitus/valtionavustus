@@ -534,13 +534,13 @@ describe('Talousarvion muuttaminen', () => {
       const currentSum = await getElementInnerText(page, '[data-test-id=current-sum]')
       expect(currentSum).toEqual('7016')
 
-      await clearAndType(page, 'input[name="talousarvio.personnel-costs-row"]', '200001')
+      await clearAndType(page, 'input[name="talousarvio.personnel-costs-row"]', '201')
       const originalSum2 = await getElementInnerText(page, '[data-test-id=original-sum]')
       expect(originalSum2).toEqual('7016 €')
       const currentSum2 = await getElementInnerText(page, '[data-test-id=current-sum]')
-      expect(currentSum2).toEqual('7016')
+      expect(currentSum2).toEqual('7017')
 
-      await clearAndType(page, 'input[name="talousarvio.personnel-costs-row"]', '200000')
+      await clearAndType(page, 'input[name="talousarvio.personnel-costs-row"]', '200')
       const currentSum3 = await getElementInnerText(page, '[data-test-id=current-sum]')
       expect(currentSum3).toEqual('7016')
     })
