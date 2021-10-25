@@ -21,6 +21,8 @@
                  [org.apache.logging.log4j/log4j-core]
                  [org.apache.logging.log4j/log4j-slf4j-impl]]
 
+  :nvd {:suppression-file "../dependency-check-suppressionlist.xml"}
+
   :profiles {:uberjar {:aot [oph.va.db-tool.main]}}
 
   :env {:config "config/defaults.edn"}

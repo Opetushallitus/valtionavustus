@@ -17,6 +17,8 @@
                              :prep-tasks
                              :nvd]}
 
+  :nvd {:suppression-file "../dependency-check-suppressionlist.xml"}
+
   :dependencies [[org.clojure/clojure]
 
                  [http-kit]

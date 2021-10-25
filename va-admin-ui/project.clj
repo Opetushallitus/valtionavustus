@@ -24,6 +24,8 @@
                              :javac-options
                              :nvd]}
 
+  :nvd {:suppression-file "../dependency-check-suppressionlist.xml"}
+
   :dependencies [[org.clojure/clojure]
                  [org.clojure/clojurescript]
                  [reagent]

@@ -135,8 +135,6 @@
             [reifyhealth/lein-git-down "0.4.0"]
             [lein-nvd "1.5.0" :exclusions [org.clojure/clojure commons-io org.apache.httpcomponents/httpclient org.clojure/tools.reader trptcolin/versioneer org.slf4j/slf4j-api org.clojure/tools.gitlibs org.clojure/tools.cli]]]
 
-  :nvd {:suppression-file "../dependency-check-suppressionlist.xml"}
-
   :uberjar-exclusions [#"^\."]
 
   :auto-clean true
