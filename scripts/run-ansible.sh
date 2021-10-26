@@ -94,6 +94,7 @@ function install_python_dependencies {
 
   pushd "$repo/servers"
   pip install pipenv==2020.11.15
+  python -m pipenv --rm
   python -m pipenv install > /dev/null
   source "$(python -m pipenv --venv)/bin/activate"
 
