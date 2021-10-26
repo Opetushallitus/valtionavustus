@@ -33,12 +33,12 @@ build: npm-build lein-build
 npm-clean: npm-clean-modules npm-clean-frontends
 
 .PHONY: npm-clean-modules
-npm-clean-modules: check-node
+npm-clean-modules:
 	rm -rf node_modules
 	rm -f .package-lock.json.checksum
 
 .PHONY: npm-clean-frontends
-npm-clean-frontends: check-node
+npm-clean-frontends:
 	$(call npm_clean_frontend,va-hakija)
 	$(call npm_clean_frontend,va-virkailija)
 

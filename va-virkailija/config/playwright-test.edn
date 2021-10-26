@@ -1,0 +1,32 @@
+{:server {:allow-db-clear? true
+          :url {:fi "http://va-hakija:8080/"
+                :sv "http://va-hakija:8080/"}
+          :virkailija-url "http://va-virkailija:8081"
+          :enable-access-log? false
+          :without-authentication? true
+          :require-https? false
+          :payment-service-sftp {:enabled? true
+                                 :host-ip "maksatuspalvelu"
+                                 :port 22
+                                 :local-path "/tmp/"
+                                 :remote_path "./to_handi/va/"
+                                 :remote_path_from "./from_handi/va/"
+                                 :username "demo"
+                                 :password "pass"}}
+ :api {:restricted-routes? false}
+ :nrepl-enabled? true
+ :email {:enabled? true
+         :host "fakesmtp"
+         :port 25
+         :to-finance ["test@test.com"]}
+ :payments {:enabled? true
+            :delete-payments? true}
+ :contact-person-name-in-pitkaviite {:enabled? true}
+ :va-users {:use-cache? false }
+ :tasmaytysraportti-create {:enabled? true}
+ :allow-overriding-feature-flag-from-url-params {:enabled? true}
+ :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? true}
+ :loppuselvitys-verification {:enabled? true}
+ :db {:server-name "va-postgres"
+      :database-name "va-dev"}
+ :test-apis {:enabled? true}}

@@ -1,10 +1,27 @@
 version: '3.3'
 
 services:
+  test-runner:
+    image: playwright-test-runner:latest
+    depends_on:
+      - virkailija
+      - hakija
+    networks:
+      - subnet-private
+    volumes:
+      - ./playwright-results:/playwright-results
+    environment:
+      HEADLESS: 'true'
+      VIRKAILIJA_HOSTNAME: va-virkailija
+      HAKIJA_HOSTNAME: va-hakija
+      PLAYWRIGHT_WORKERS: 1
+
   virkailija:
     image: va-virkailija:latest
     container_name: va-virkailija
     hostname: va-virkailija
+    environment:
+      config: "/app/va-virkailija/config/playwright-test.edn"
     volumes:
       - /dev/urandom:/dev/random
     ports:
@@ -25,6 +42,8 @@ services:
     image: va-hakija:latest
     container_name: va-hakija
     hostname: va-hakija
+    environment:
+      config: "/app/va-hakija/config/playwright-test.edn"
     volumes:
       - /dev/urandom:/dev/random
     ports:

@@ -5,6 +5,7 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functio
 HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}
 VIRKAILIJA_HOSTNAME=${VIRKAILIJA_HOSTNAME:-"localhost"}
 DOCKER_COMPOSE_FILE=./docker-compose-test.yml
+PLAYWRIGHT_COMPOSE_FILE=./docker-compose-playwright-test.yml
 
 function current-commit-is-not-tested {
   ! git tag --contains | grep -q "green-qa"
@@ -18,17 +19,32 @@ function main {
   build
   if current-commit-is-not-tested;
   then
-    start_system_under_test
+    build_docker_images
+    start_system_under_test ${DOCKER_COMPOSE_FILE}
     run_tests
+    if running_on_jenkins;
+    then
+      stop_system_under_test ${DOCKER_COMPOSE_FILE}
+      start_system_under_test ${PLAYWRIGHT_COMPOSE_FILE}
+
+      docker-compose -f ${PLAYWRIGHT_COMPOSE_FILE} run test-runner ./run_playwright_tests_in_container.sh
+      docker-compose -f ${PLAYWRIGHT_COMPOSE_FILE} down --remove-orphans
+    fi
   fi
   deploy_jars
 }
 
-function stop_system_under_test {
-  echo "Stopping system under test"
-  docker-compose -f ${DOCKER_COMPOSE_FILE} down --remove-orphans
+function stop_systems_under_test  {
+  echo "Stopping all systems under test"
+  stop_system_under_test ${DOCKER_COMPOSE_FILE}
+  stop_system_under_test ${PLAYWRIGHT_COMPOSE_FILE}
 }
-trap stop_system_under_test EXIT
+
+function stop_system_under_test () {
+  echo "Stopping system under test"
+  docker-compose -f "$1" down --remove-orphans
+}
+trap stop_systems_under_test EXIT
 
 function build_docker_images {
   docker build -t "va-virkailija:latest" -f ./Dockerfile.virkailija ./
@@ -36,19 +52,18 @@ function build_docker_images {
   docker build -t "playwright-test-runner:latest" -f ./Dockerfile.playwright-test-runner ./
 }
 
-function start_system_under_test {
+function start_system_under_test () {
   echo "Starting system under test"
-  build_docker_images
 
-  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d hakija
+  docker-compose -f "$1" up -d hakija
   wait_for_container_to_be_healthy va-hakija
 
-  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d virkailija
+  docker-compose -f "$1" up -d virkailija
   wait_for_container_to_be_healthy va-virkailija
 
   # Make sure all services are running and follow their logs
-  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
-  docker-compose -f ${DOCKER_COMPOSE_FILE} logs --follow &
+  docker-compose -f "$1" up -d
+  docker-compose -f "$1" logs --follow &
 }
 
 function check_requirements {

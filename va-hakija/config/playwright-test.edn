@@ -1,0 +1,15 @@
+{:server {:allow-db-clear? true
+          :enable-access-log? false
+          :host "hakija"
+          :url {:fi "http://va-hakija:8080/"
+                :sv "http://va-hakija:8080/"}
+          :virkailija-url "http://va-virkailija:8081"}
+ :api {:restricted-routes? false}
+ :db {:database-name "va-dev"
+      :server-name "va-postgres"}
+ :nrepl-enabled? true
+ :email {:enabled? true
+         :host "fakesmtp"
+         :port 25}
+ :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? true}
+ :applications-ui {:enabled? true}}

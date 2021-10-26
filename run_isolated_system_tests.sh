@@ -3,6 +3,10 @@ set -o errexit -o nounset -o pipefail
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 
 function run_tests {
+  if ! running_on_jenkins;
+    then
+      npm run playwright:test
+  fi
 	npm run puppeteer:test "$@"
 	npm run soresu-form:test "$@"
 	npm run common:test "$@"
