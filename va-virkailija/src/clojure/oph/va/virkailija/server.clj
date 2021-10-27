@@ -84,6 +84,8 @@
       (buddy-accessrules/wrap-access-rules
        {:rules [{:pattern #"^/virkailija/login.*$"
                  :handler any-access}
+                {:pattern #"^/login/.*$"
+                 :handler any-access}
                 {:pattern #"^/environment"
                  :handler any-access}
                 {:pattern #"^/errorlogger"
