@@ -27,7 +27,9 @@ function main {
       stop_system_under_test ${DOCKER_COMPOSE_FILE}
       start_system_under_test ${PLAYWRIGHT_COMPOSE_FILE}
 
-      docker-compose -f ${PLAYWRIGHT_COMPOSE_FILE} run test-runner ./run_playwright_tests_in_container.sh
+      JENKINS_ID="$(id -u jenkins)"
+      JENKINS_GID="$(id -g jenkins)"
+      docker-compose -f ${PLAYWRIGHT_COMPOSE_FILE} run --user="$JENKINS_ID:$JENKINS_GID" test-runner ./run_playwright_tests_in_container.sh
       docker-compose -f ${PLAYWRIGHT_COMPOSE_FILE} down --remove-orphans
     fi
   fi
