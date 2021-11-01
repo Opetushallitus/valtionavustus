@@ -1,0 +1,9 @@
+Hei!
+
+{{amount}} loppuselvitystä odottaa asiatarkastustasi valtionavustusjärjestelmässä. Tarkastamattomia loppuselvityksiä on seuraavissa valtionavustuksissa:
+
+{{#list}}
+- {{project-name}}: {{&link}}
+{{/list}}
+
+Tavoitteenamme on, että kaikki loppuselvitykset tarkastetaan kolmen kuukauden kuluessa selvityksen vastaanottamisesta. Huomaa, että hyväksyttyäsi asiatarkastuksen, lähtee tarkastuksesta automaattisesti tieto taloustarkastukseen, eikä erillistä ilmoitusta esimerkiksi taloustarkastajalle esimerkiksi sähköpostitse tarvita. Taloustarkastaja lähettää tiedon loppuselvityksen hyväksymisestä avustuksen saajalle, kun taloustarkastus on hyväksytty. Ohjeet loppuselvityksen käsittelyyn: https://intra.oph.fi/pages/viewpage.action?pageId=99516848

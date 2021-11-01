@@ -53,7 +53,8 @@
             [oph.va.virkailija.healthcheck :as healthcheck]
             [oph.va.virkailija.reporting-routes :as reporting-routes]
             [oph.va.virkailija.external :as external]
-            [oph.va.virkailija.help-texts :as help-texts])
+            [oph.va.virkailija.help-texts :as help-texts]
+            [oph.va.virkailija.virkailija-notifications :as virkailija-notifications])
   (:import [java.io ByteArrayInputStream]))
 
 (def opintopolku-login-url
@@ -282,12 +283,19 @@
 
 (defn get-avustushaku-emails [avustushaku-id email-type]
   (log/info (str "Fetching emails for avustushaku with id: " avustushaku-id))
-  (let [emails (query "SELECT formatted, to_address, bcc FROM virkailija.email
+  (let [emails (query "SELECT formatted, to_address, bcc, subject FROM virkailija.email
                        JOIN email_event ON (email.id = email_event.email_id)
                        WHERE avustushaku_id = ? AND email_type = ?::virkailija.email_type"
                        [avustushaku-id email-type])]
     (log/info (str "Succesfully fetched emails for avustushaku with id: " avustushaku-id))
     emails))
+
+(defn get-emails-by-type [type]
+  (query "SELECT formatted, to_address, bcc, subject FROM virkailija.email
+          JOIN email_event ON (email.id = email_event.email_id)
+          WHERE email_type = ?::virkailija.email_type
+          ORDER BY virkailija.email.id"
+          [type]))
 
 (defn- get-normalized-hakemus []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/normalized" [haku-id hakemus-id]
@@ -638,6 +646,11 @@
                      (ok (tapahtumaloki/get-tapahtumaloki-entries tyyppi avustushaku-id))))
 
 (compojure-api/defroutes test-api-routes
+  (compojure-api/POST "/send-loppuselvitys-asiatarkastamatta-notifications" []
+    :return {:ok s/Str}
+    (virkailija-notifications/send-loppuselvitys-asiatarkastamatta-notifications)
+    (ok {:ok "ok"}))
+
   (compojure-api/POST "/process-maksupalaute" []
     :body  [body { :xml s/Str :filename s/Str }]
     :return {:message s/Str}
@@ -706,6 +719,12 @@
     :return s/Any
     :summary "Juuh"
     (ok (virkailija-db/update-va-users-cache body)))
+
+  (compojure-api/GET "/email/:email-type" []
+    :path-params [email-type :- s/Str]
+    :return virkailija-schema/DbEmails
+    :summary "Return emails of the given type"
+    (ok (get-emails-by-type email-type)))
 
   (compojure-api/GET "/hakemus/:hakemus-id/email/:email-type" []
     :path-params [hakemus-id :- Long email-type :- s/Str]

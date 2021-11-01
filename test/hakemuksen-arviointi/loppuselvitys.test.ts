@@ -11,6 +11,7 @@ import {
   countElements,
   createRandomHakuValues,
   dummyPdfPath,
+  getAllEmails,
   getElementAttribute,
   getElementInnerText,
   getFirstPage,
@@ -18,9 +19,11 @@ import {
   mkBrowser,
   navigate,
   navigateToLoppuselvitysTab,
+  sendLoppuselvitysAsiatarkastamattaNotifications,
   setPageErrorConsoleLogger,
   textContent,
   uploadFile,
+  VIRKAILIJA_URL,
   waitForElementWithText,
   waitForNewTab
 } from "../test-util"
@@ -125,6 +128,17 @@ describe("Loppuselvitys", () => {
       expect(await countElements(page, '[data-test-id="selvitys-email"]')).toEqual(0)
     })
 
+    it('loppuselvitys-asiatarkastamatta notification is sent to virkailija', async () => {
+      const oldEmailCount = (await getAllEmails('loppuselvitys-asiatarkastamatta')).filter(e => e["to-address"].includes('santeri.horttanainen@reaktor.com')).length
+      await sendLoppuselvitysAsiatarkastamattaNotifications()
+
+      const emails = (await getAllEmails('loppuselvitys-asiatarkastamatta')).filter(e => e["to-address"].includes('santeri.horttanainen@reaktor.com'))
+      expect(emails.length).toEqual(oldEmailCount + 1)
+      const loppuselvitysAsiatarkastamattaNotification = emails.pop()
+      expect(loppuselvitysAsiatarkastamattaNotification?.subject).toEqual('Asiatarkastamattomia loppuselvityksiä')
+      expect(loppuselvitysAsiatarkastamattaNotification?.formatted).toContain(`- Rahassa kylpijät Ky Ay Oy: ${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+    })
+
     describe('virkailija verifies loppuselvitys information', () => {
       const textareaSelector = 'textarea[name="information-verification"]'
 
@@ -142,6 +156,22 @@ describe("Loppuselvitys", () => {
         expect(await isDisabled(page, textareaSelector)).toEqual(true)
         expect(await getElementInnerText(page, '[data-test-id=verifier]')).toEqual('_ valtionavustus')
         expect(moment(await getElementInnerText(page, '[data-test-id=verified-at]'), 'D.M.YYYY [klo] H.mm').isSameOrBefore()).toBeTruthy()
+      })
+
+      it('loppuselvitys-asiatarkastamatta notification is not sent to virkailija anymore', async () => {
+        const oldEmails = await getAllEmails('loppuselvitys-asiatarkastamatta')
+        const oldEmailCount = oldEmails.filter(e => e["to-address"].includes('santeri.horttanainen@reaktor.com')).length
+        await sendLoppuselvitysAsiatarkastamattaNotifications()
+
+        const allEmails = await getAllEmails('loppuselvitys-asiatarkastamatta')
+        const emails = allEmails.filter(e => e["to-address"].includes('santeri.horttanainen@reaktor.com'))
+        if (emails.length === oldEmailCount + 1) { // if user _ valtionavustus has other submitted loppuselvitys
+          const loppuselvitysAsiatarkastamattaNotification = emails.pop()
+          expect(loppuselvitysAsiatarkastamattaNotification?.subject).toEqual('Asiatarkastamattomia loppuselvityksiä')
+          expect(loppuselvitysAsiatarkastamattaNotification?.formatted).not.toContain(`- Rahassa kylpijät Ky Ay Oy: ${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+        } else {
+          expect(emails.length).toEqual(oldEmailCount)
+        }
       })
 
       it('virkailija accepts loppuselvitys', async () => {

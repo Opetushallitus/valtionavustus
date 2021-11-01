@@ -278,7 +278,6 @@
   {:results [VaUserSearchResult]})
 
 (s/defschema UserInUserCache
-  "Juuh"
   {:person-oid s/Str
    :first-name (s/maybe s/Str)
    :surname (s/maybe s/Str)
@@ -288,7 +287,6 @@
    })
 
 (s/defschema PopulateUserCachePayload
-  "Juuh"
   [UserInUserCache])
 
 (s/defschema AvustushakuOrganizationNameQuery

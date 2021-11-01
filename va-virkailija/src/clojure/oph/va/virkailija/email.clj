@@ -45,7 +45,8 @@
                                 :sv (email/load-template "email-templates/loppuselvitys-notification.plain.sv")}
    :payments-info-notification
    {:fi (email/load-template "email-templates/payments-info.fi")
-    :sv (email/load-template "email-templates/payments-info.fi")}})
+    :sv (email/load-template "email-templates/payments-info.fi")}
+   :loppuselvitys-asiatarkastamatta (email/load-template "email-templates/loppuselvitys-asiatarkastamatta.fi")})
 
 (defn mail-example [msg-type & [data]]
   {:content (render (:fi (msg-type mail-templates)) (if data data {}))
@@ -141,6 +142,24 @@
                                        :contents attachment-contents}}
 
                            (partial render (get-in mail-templates [:muutoshakemus-paatos lang])))))
+
+(defn- to-loppuselvitys-asiatarkastamatta [loppuselvitys]
+  {:project-name (:project-name loppuselvitys)
+   :link         (email/generate-virkailija-url (:avustushaku loppuselvitys) (:hakemus loppuselvitys))})
+
+(defn send-loppuselvitys-asiatarkastamatta [to loppuselvitys-list]
+  (let [lang     (keyword "fi")
+        template (:loppuselvitys-asiatarkastamatta mail-templates)
+        list     (seq (map to-loppuselvitys-asiatarkastamatta loppuselvitys-list))]
+    (email/try-send-msg-once {:type :loppuselvitys-asiatarkastamatta
+                              :lang lang
+                              :from (-> email/smtp-config :from lang)
+                              :sender (-> email/smtp-config :sender)
+                              :to to
+                              :subject "Asiatarkastamattomia loppuselvityksiä"
+                              :amount (count list)
+                              :list list}
+                             (partial render template))))
 
 (defn send-paatos! [to avustushaku hakemus reply-to]
   (let [lang-str (:language hakemus)

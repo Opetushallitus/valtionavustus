@@ -112,6 +112,13 @@ export async function getHakemusTokenAndRegisterNumber(hakemusId: number): Promi
     .then(r => applicationGeneratedValuesSchema.validate(r.data))
 }
 
+export const sendLoppuselvitysAsiatarkastamattaNotifications = () =>
+  axios.post(`${VIRKAILIJA_URL}/api/test/send-loppuselvitys-asiatarkastamatta-notifications`)
+
+export const getAllEmails = (emailType: string): Promise<Email[]> =>
+  axios.get(`${VIRKAILIJA_URL}/api/test/email/${emailType}`)
+    .then(r => emailSchema.validate(r.data))
+
 const getEmails = (emailType: string) => (hakemusID: number): Promise<Email[]> =>
   axios.get(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusID}/email/${emailType}`)
     .then(r => { console.log(`getEmails(${emailType})`, r.data); return r })
