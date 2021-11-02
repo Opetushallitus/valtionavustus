@@ -3,18 +3,18 @@ version: '3.3'
 services:
   test-runner:
     image: playwright-test-runner:latest
+    container_name: playwright-test-runner
     depends_on:
       - virkailija
       - hakija
     networks:
       - subnet-private
-    volumes:
-      - ./playwright-results:/playwright-results
     environment:
       HEADLESS: 'true'
       VIRKAILIJA_HOSTNAME: va-virkailija
       HAKIJA_HOSTNAME: va-hakija
       PLAYWRIGHT_WORKERS: 1
+    command: /run_playwright_tests_in_container.sh
 
   virkailija:
     image: va-virkailija:latest
