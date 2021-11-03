@@ -154,7 +154,19 @@ describe("Loppuselvitys", () => {
         await page.waitForSelector('[data-test-id="selvitys-email"]')
       })
 
+      it('hakija can not edit loppuselvitys after information has been verified', async () => {
+        if (!loppuselvitysFormUrl) {
+          throw new Error('could not find loppuselvitys form url')
+        }
+
+        await navigate(page, loppuselvitysFormUrl)
+        expect(await getElementInnerText(page, 'span[id="textArea-0"]')).toEqual('Yhteenveto')
+        await hasElementAttribute(page, 'button[id="submit"]', 'disabled')
+        await page.waitForSelector('textarea[id="textArea-0"]', { hidden: true })
+      })
+
       it('information verification is shown', async () => {
+        await navigateToLoppuselvitysTab(page, avustushakuID, hakemusID)
         expect(await textContent(page, textareaSelector)).toEqual('Hyvältä näyttääpi')
         expect(await isDisabled(page, textareaSelector)).toEqual(true)
         expect(await getElementInnerText(page, '[data-test-id=verifier]')).toEqual('_ valtionavustus')
@@ -187,17 +199,6 @@ describe("Loppuselvitys", () => {
         await navigate(page, `/avustushaku/${avustushakuID}/`)
         const loppuselvitysStatus = await getElementInnerText(page, '[data-test-id="loppuselvitys-column"]')
         expect(loppuselvitysStatus).toEqual('Hyväksytty')
-      })
-
-      it('hakija can not edit loppuselvitys after information has been verified', async () => {
-        if (!loppuselvitysFormUrl) {
-          throw new Error('could not find loppuselvitys form url')
-        }
-
-        await navigate(page, loppuselvitysFormUrl)
-        expect(await getElementInnerText(page, 'span[id="textArea-0"]')).toEqual('Yhteenveto')
-        await hasElementAttribute(page, 'button[id="submit"]', 'disabled')
-        await page.waitForSelector('textarea[id="textArea-0"]', { hidden: true })
       })
     })
   })
