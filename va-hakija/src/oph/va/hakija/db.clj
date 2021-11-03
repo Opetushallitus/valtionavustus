@@ -53,23 +53,26 @@
          (get-project-name answers)
          (get-language answers)))
 
-(defn get-hakemus [hakemus-id]
-  (->> {:user_key hakemus-id}
-       (exec queries/get-hakemus-by-user-id)
+(defn get-hakemus [user-key]
+  (->> {:user_key user-key}
+       (exec queries/get-hakemus-by-user-key)
        first))
 
-(defn get-hakemus-version [hakemus-id version]
+(defn get-hakemus-by-id [id]
+  (first (query "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL" [id])))
+
+(defn get-hakemus-version [user-key version]
   (first
     (exec queries/get-hakemus-version-by-user-id
-          {:user_key hakemus-id :version version})))
+          {:user_key user-key :version version})))
 
 (defn get-hakemus-paatos [hakemus-id]
   (->> {:hakemus_id hakemus-id}
        (exec queries/get-hakemus-paatokset)
        first))
 
-(defn list-hakemus-change-requests [hakemus-id]
-  (->> {:user_key hakemus-id}
+(defn list-hakemus-change-requests [user-key]
+  (->> {:user_key user-key}
        (exec queries/list-hakemus-change-requests-by-user-id)))
 
 (defn find-hakemus-by-parent-id-and-type [parent-id hakemus-type]

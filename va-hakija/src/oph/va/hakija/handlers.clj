@@ -278,21 +278,26 @@
         (hakemus-ok-response (va-db/get-hakemus hakemus-id) submission {}))
       :else (hakemus-conflict-response hakemus))))
 
-(defn on-selvitys-update [haku-id hakemus-id base-version answers form-key]
-  (let [hakemus (va-db/get-hakemus hakemus-id)
+(defn on-selvitys-update [haku-id user-key base-version answers form-key]
+  (let [hakemus (va-db/get-hakemus user-key)
+        parent-hakemus (va-db/get-hakemus-by-id (:parent_id hakemus))
         avustushaku (va-db/get-avustushaku haku-id)
         form-id (form-key avustushaku)
         form (form-db/get-form form-id)
-        security-validation (validation/validate-form-security form answers)]
+        security-validation (validation/validate-form-security form answers)
+        is-updateable-selvitys (or
+                                  (= (name form-key) "form_valiselvitys")
+                                  (not (:enabled? (:loppuselvitys-verification config)))
+                                  (not (:loppuselvitys-information-verified-at parent-hakemus)))]
     (if (every? empty? (vals security-validation))
-      (if (= base-version (:version hakemus))
+      (if (and is-updateable-selvitys (= base-version (:version hakemus)))
         (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
               budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
               validation (merge (validation/validate-form form answers attachments)
                                 (va-budget/validate-budget-hakija answers budget-totals form))
               updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
               updated-hakemus (va-db/update-submission haku-id
-                                                       hakemus-id
+                                                       user-key
                                                        (:form_submission_id hakemus)
                                                        (:version updated-submission)
                                                        (:register_number hakemus)
