@@ -34,7 +34,8 @@ export default class VaForm extends React.Component {
                                             translations={configuration.translations}
                                             lang={configuration.lang} />
     const headerElements = [registerNumberDisplay, changeRequest]
-    const formContainerClass = preview ? FormPreview : Form
+    const isLoppuselvitysInformationVerified = hakemusType === 'loppuselvitys' && state.saveStatus && state.saveStatus.savedObject && state.saveStatus.savedObject['loppuselvitys-information-verified-at']
+    const formContainerClass = preview || isLoppuselvitysInformationVerified ? FormPreview : Form
     const showGrantRefuse = preview && state.token && allowedStatuses.indexOf(saveStatus.savedObject.status) > -1 && (refuseGrant === "true")
     const isInApplicantEditMode = () => "applicant_edit" === _.get(saveStatus.savedObject, "status")
     const showOpenContactsEditButton = !showGrantRefuse && modifyApplication && !isInApplicantEditMode()

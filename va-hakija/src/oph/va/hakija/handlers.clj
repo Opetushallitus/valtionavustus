@@ -31,7 +31,7 @@
       avustushaku
       (method-not-allowed! {:phase phase}))))
 
-(defn- hakemus-ok-response [hakemus submission validation]
+(defn- hakemus-ok-response [hakemus submission validation parent-hakemus]
   (ok {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
        :created-at (:created_at hakemus)
        :status (:status hakemus)
@@ -43,7 +43,8 @@
        :validation-errors validation
        :refused (:refused hakemus)
        :refused-at (:refused_at hakemus)
-       :refused-comment (:refused_comment hakemus)}))
+       :refused-comment (:refused_comment hakemus)
+       :loppuselvitys-information-verified-at (:loppuselvitys-information-verified-at parent-hakemus)}))
 
 (defn on-hakemus-create [haku-id answers]
   (let [avustushaku (get-open-avustushaku haku-id {})
@@ -80,7 +81,7 @@
                                                 user-key
                                                 avustushaku-start-date
                                                 avustushaku-end-date)
-            (hakemus-ok-response (:hakemus new-hakemus) (without-id (:submission new-hakemus)) validation))
+            (hakemus-ok-response (:hakemus new-hakemus) (without-id (:submission new-hakemus)) validation nil))
           (internal-server-error!)))
       (bad-request! security-validation))))
 
@@ -174,7 +175,7 @@
             budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
             validation (merge (validation/validate-form form answers attachments)
                               (va-budget/validate-budget-hakija answers budget-totals form))]
-        (hakemus-ok-response hakemus submission validation)))))
+        (hakemus-ok-response hakemus submission validation nil)))))
 
 (defn on-hakemus-applicant-edit-open [haku-id hakemus-id]
   (let [hakemus (va-db/get-hakemus hakemus-id)
@@ -196,6 +197,7 @@
         form-id (form-key avustushaku)
         form (form-db/get-form form-id)
         hakemus (va-db/get-hakemus hakemus-id)
+        parent-hakemus (va-db/get-hakemus-by-id (:parent_id hakemus))
         submission-id (:form_submission_id hakemus)
         submission (:body (get-form-submission form-id submission-id))
         submission-version (:version submission)
@@ -212,8 +214,8 @@
                                                    (:register_number hakemus)
                                                    answers
                                                    budget-totals)]
-        (hakemus-ok-response verified-hakemus submission validation))
-      (hakemus-ok-response hakemus submission validation))))
+        (hakemus-ok-response verified-hakemus submission validation parent-hakemus))
+      (hakemus-ok-response hakemus submission validation parent-hakemus))))
 
 (defn try-store-normalized-hakemus [hakemus-id hakemus answers haku-id]
   (try
@@ -244,7 +246,7 @@
                                                        answers
                                                        budget-totals)
               normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers haku-id)]
-          (hakemus-ok-response updated-hakemus updated-submission validation))
+          (hakemus-ok-response updated-hakemus updated-submission validation nil))
         (hakemus-conflict-response hakemus))
       (bad-request! security-validation))))
 
@@ -275,7 +277,7 @@
                           (:answers submission) "primary-email")]
           (va-email/send-refused-message!
            lang [email] (get-in avustushaku [:content :name lang])))
-        (hakemus-ok-response (va-db/get-hakemus hakemus-id) submission {}))
+        (hakemus-ok-response (va-db/get-hakemus hakemus-id) submission {} nil))
       :else (hakemus-conflict-response hakemus))))
 
 (defn on-selvitys-update [haku-id user-key base-version answers form-key]
@@ -303,7 +305,7 @@
                                                        (:register_number hakemus)
                                                        answers
                                                        budget-totals)]
-          (hakemus-ok-response updated-hakemus updated-submission validation))
+          (hakemus-ok-response updated-hakemus updated-submission validation parent-hakemus))
         (hakemus-conflict-response hakemus))
       (bad-request! security-validation))))
 
@@ -330,7 +332,7 @@
                                                       budget-totals)
               normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers haku-id)]
           (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku)
-          (hakemus-ok-response submitted-hakemus saved-submission validation))
+          (hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
 
@@ -358,7 +360,7 @@
                                                       budget-totals)
               is-loppuselvitys (= selvitys-type "loppuselvitys")
               updated-selvitys-status (if is-loppuselvitys (va-db/update-loppuselvitys-status parent_id "submitted") (va-db/update-valiselvitys-status parent_id "submitted"))]
-          (hakemus-ok-response submitted-hakemus saved-submission validation))
+          (hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
 

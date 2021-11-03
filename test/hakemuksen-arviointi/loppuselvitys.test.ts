@@ -15,6 +15,7 @@ import {
   getElementAttribute,
   getElementInnerText,
   getFirstPage,
+  hasElementAttribute,
   isDisabled,
   mkBrowser,
   navigate,
@@ -74,9 +75,11 @@ describe("Loppuselvitys", () => {
   })
 
   describe('hakija fills and sends loppuselvitys form', () => {
+    let loppuselvitysFormUrl: string | null | undefined
+
     beforeAll(async () => {
       await navigateToLoppuselvitysTab(page, avustushakuID, hakemusID)
-      const loppuselvitysFormUrl = await getElementAttribute(page, '[data-test-id="selvitys-link"]', 'href')
+      loppuselvitysFormUrl = await getElementAttribute(page, '[data-test-id="selvitys-link"]', 'href')
       if (!loppuselvitysFormUrl) {
         throw new Error('could not find loppuselvitys form url')
       }
@@ -184,6 +187,17 @@ describe("Loppuselvitys", () => {
         await navigate(page, `/avustushaku/${avustushakuID}/`)
         const loppuselvitysStatus = await getElementInnerText(page, '[data-test-id="loppuselvitys-column"]')
         expect(loppuselvitysStatus).toEqual('Hyväksytty')
+      })
+
+      it('hakija can not edit loppuselvitys after information has been verified', async () => {
+        if (!loppuselvitysFormUrl) {
+          throw new Error('could not find loppuselvitys form url')
+        }
+
+        await navigate(page, loppuselvitysFormUrl)
+        expect(await getElementInnerText(page, 'span[id="textArea-0"]')).toEqual('Yhteenveto')
+        await hasElementAttribute(page, 'button[id="submit"]', 'disabled')
+        await page.waitForSelector('textarea[id="textArea-0"]', { hidden: true })
       })
     })
   })
