@@ -34,7 +34,7 @@ function main {
 
 function stop_systems_under_test  {
   echo "Stopping all systems under test"
-  docker cp 'playwright-test-runner:/junit-playwright-js-unit.xml' ./junit-playwright-js-unit.xml
+  docker cp -a 'va-playwright-tests:/test-results' ./playwright-test-results
   stop_system_under_test ${DOCKER_COMPOSE_FILE}
   stop_system_under_test ${PLAYWRIGHT_COMPOSE_FILE}
 }

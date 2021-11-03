@@ -3,7 +3,7 @@ version: '3.3'
 services:
   test-runner:
     image: playwright-test-runner:latest
-    container_name: playwright-test-runner
+    container_name: va-playwright-tests
     depends_on:
       virkailija:
         condition: service_healthy
