@@ -25,11 +25,8 @@ function main {
     if running_on_jenkins;
     then
       stop_system_under_test ${DOCKER_COMPOSE_FILE}
-      start_system_under_test ${PLAYWRIGHT_COMPOSE_FILE}
 
       docker-compose -f ${PLAYWRIGHT_COMPOSE_FILE} up --abort-on-container-exit
-      docker cp 'playwright-test-runner:/junit-playwright-js-unit.xml' ./junit-playwright-js-unit.xml
-      docker-compose -f ${PLAYWRIGHT_COMPOSE_FILE} down --remove-orphans
     fi
   fi
   deploy_jars
@@ -37,6 +34,7 @@ function main {
 
 function stop_systems_under_test  {
   echo "Stopping all systems under test"
+  docker cp 'playwright-test-runner:/junit-playwright-js-unit.xml' ./junit-playwright-js-unit.xml
   stop_system_under_test ${DOCKER_COMPOSE_FILE}
   stop_system_under_test ${PLAYWRIGHT_COMPOSE_FILE}
 }
