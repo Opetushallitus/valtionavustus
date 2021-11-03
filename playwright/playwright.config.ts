@@ -8,7 +8,7 @@ const config: PlaywrightTestConfig = {
   retries: 2,
   workers,
   testDir: 'tests',
-  outputDir: '/test-results',
+  outputDir: 'test-results',
   timeout: 60000,
   use: {
     actionTimeout: 10000,
@@ -27,7 +27,7 @@ const config: PlaywrightTestConfig = {
   reporter: [
     ['list'],
     ['junit', {
-      outputFile: '/test-results/junit-playwright-js-unit.xml'
+      outputFile: 'playwright-results/junit-playwright-js-unit.xml'
     }]
   ]
 };
