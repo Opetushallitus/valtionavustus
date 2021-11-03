@@ -5,8 +5,8 @@ services:
     image: playwright-test-runner:latest
     container_name: playwright-test-runner
     depends_on:
-      - virkailija
-      - hakija
+      virkailija:
+        condition: service_healthy
     networks:
       - subnet-private
     environment:
@@ -27,13 +27,16 @@ services:
     ports:
       - '8081:8081'
     depends_on:
-      - hakija
-      - fakesmtp
-      - maksatuspalvelu
+      hakija:
+        condition: service_healthy
+      fakesmtp:
+        condition: service_started
+      maksatuspalvelu:
+        condition: service_started
     networks:
       - subnet-private
     healthcheck:
-      test: ["CMD-SHELL", "curl http://localhost:8081/api/healthcheck"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8081/api/healthcheck"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -49,12 +52,14 @@ services:
     ports:
       - '8080:8080'
     depends_on:
-      - db
-      - fakesmtp
+      db:
+        condition: service_healthy
+      fakesmtp:
+        condition: service_started
     networks:
       - subnet-private
     healthcheck:
-      test: ["CMD-SHELL", "curl http://localhost:8080/api/healthcheck"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/api/healthcheck"]
       interval: 10s
       timeout: 5s
       retries: 5
