@@ -69,6 +69,7 @@ const test = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixtures & {h
     await hakijaMuutoshakemusPage.navigate(hakemusID)
     await hakijaMuutoshakemusPage.fillJatkoaikaValues(jatkoaika)
     await hakijaMuutoshakemusPage.clickHaenMuutostaTaloudenKayttosuunnitelmaan()
+    await test.step('Current budget is shown', hakijaMuutoshakemusPage.expectApprovedBudgetToBe(page, budget.amount))
     await hakijaMuutoshakemusPage.fillTalousarvioValues(muutoshakemus1Budget, muutoshakemus1Perustelut)
     await hakijaMuutoshakemusPage.clickSendMuutoshakemus()
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)

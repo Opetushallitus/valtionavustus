@@ -66,6 +66,31 @@ export class HakijaMuutoshakemusPage {
     expect(notification).toBe(notificationText)
   }
 
+  expectApprovedBudgetToBe(page, budget: BudgetAmount): () => Promise<void> {
+    return async function verifyBudget() {
+      const budgetRowSelector = '[data-test-id=meno-input-row]'
+      await page.waitForSelector(budgetRowSelector, {state: 'visible'})
+
+      const budgetExpectedItems = [
+        {description: 'Henkilöstömenot', amount: `${budget.personnel} €`},
+        {description: 'Aineet, tarvikkeet ja tavarat', amount: `${budget.material} €`},
+        {description: 'Laitehankinnat', amount: `${budget.equipment} €`},
+        {description: 'Palvelut', amount: `${budget['service-purchase']} €`},
+        {description: 'Vuokrat', amount: `${budget.rent} €`},
+        {description: 'Matkamenot', amount: `${budget.steamship} €`},
+        {description: 'Muut menot', amount: `${budget.other} €`}
+      ]
+
+      const budgetRows = await page.$$eval(budgetRowSelector, elements => {
+        return elements.map(elem => ({
+          description: elem.querySelector('.description')?.textContent,
+          amount: elem.querySelector('.existingAmount')?.textContent
+        }))
+      })
+      expect(budgetRows).toEqual(budgetExpectedItems)
+    }
+  }
+
   async sendMuutoshakemus(isApplication: boolean, swedish?: boolean) {
     if (swedish) {
       await this.page.click('#send-muutospyynto-button')

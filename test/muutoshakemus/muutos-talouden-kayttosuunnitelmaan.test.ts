@@ -492,29 +492,6 @@ describe('Talousarvion muuttaminen', () => {
       })
     })
 
-    it('ja nähdä voimassaolevan talousarvion klikattuaan “Haen muutosta hankkeen talouden käyttösuunnitelmaan” checkboksia', async () => {
-      const budgetRowSelector = '[data-test-id=meno-input-row]'
-      const budgetExpectedItems = [
-        { description: 'Henkilöstömenot', amount: '200000 €' },
-        { description: 'Aineet, tarvikkeet ja tavarat', amount: '3000 €' },
-        { description: 'Laitehankinnat', amount: '10000 €' },
-        { description: 'Palvelut', amount: '100 €' },
-        { description: 'Vuokrat', amount: '161616 €' },
-        { description: 'Matkamenot', amount: '100 €' },
-        { description: 'Muut menot', amount: '10000000 €' }
-      ]
-
-      await page.waitForSelector(budgetRowSelector)
-
-      const budgetRows = await page.$$eval(budgetRowSelector, elements => {
-        return elements.map(elem => ({
-          description: elem.querySelector('.description')?.textContent,
-          amount: elem.querySelector('.existingAmount')?.textContent
-        }))
-      })
-      expect(budgetRows).toEqual(budgetExpectedItems)
-    })
-
     it('ja nähdä esitäytetyt menoluokat', async () => {
       const expectedBudgetInputs = [
         { name: 'talousarvio.personnel-costs-row', amount: 200000 },
