@@ -5,7 +5,6 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functio
 HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}
 VIRKAILIJA_HOSTNAME=${VIRKAILIJA_HOSTNAME:-"localhost"}
 DOCKER_COMPOSE_FILE=./docker-compose-test.yml
-PLAYWRIGHT_COMPOSE_FILE=./docker-compose-playwright-test.yml
 
 function current-commit-is-not-tested {
   ! git tag --contains | grep -q "green-qa"
@@ -14,16 +13,12 @@ function current-commit-is-not-tested {
 function main {
   check_requirements
   init_nodejs
-  install_docker_compose
   set_env_vars
   clean
   build
   if current-commit-is-not-tested;
   then
     build_docker_images
-    if running_on_jenkins; then
-      scripts/docker-compose -f ${PLAYWRIGHT_COMPOSE_FILE} up --abort-on-container-exit
-    fi
     start_system_under_test ${DOCKER_COMPOSE_FILE}
     run_tests
     stop_system_under_test ${DOCKER_COMPOSE_FILE}
@@ -33,12 +28,7 @@ function main {
 
 function stop_systems_under_test  {
   echo "Stopping all systems under test"
-  set +e
-  docker cp -a 'va-playwright-tests:/playwright-results' ./playwright-test-results
-  docker cp -a 'va-playwright-tests:/playwright/tests/test-results' ./playwright-artefacts
-  set -e
   stop_system_under_test ${DOCKER_COMPOSE_FILE}
-  stop_system_under_test ${PLAYWRIGHT_COMPOSE_FILE}
 }
 
 function stop_system_under_test () {
@@ -50,7 +40,6 @@ trap stop_systems_under_test EXIT
 function build_docker_images {
   docker build -t "va-virkailija:latest" -f ./Dockerfile.virkailija ./
   docker build -t "va-hakija:latest" -f ./Dockerfile.hakija ./
-  docker build -t "playwright-test-runner:latest" -f ./Dockerfile.playwright-test-runner ./
 }
 
 function start_system_under_test () {
@@ -116,7 +105,6 @@ add_git_head_snippets() {
 run_tests() {
   echo "Running isolated system tests"
   export HEADLESS=true
-  export PLAYWRIGHT_WORKERS=2
   export MOCHA_ARGS="--reporter mocha-junit-reporter"
   export MOCHA_FILE="target/junit-mocha-js-unit.xml"
   export SPECLJ_ARGS="-f junit"
