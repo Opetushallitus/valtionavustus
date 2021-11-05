@@ -21,7 +21,7 @@ import moment from "moment"
 
 jest.setTimeout(400_000)
 
-describe("Maksatukset", () => {
+describe.skip("Maksatukset", () => {
   let browser: Browser
   let page: Page
   const answers = {
