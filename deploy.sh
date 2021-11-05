@@ -11,6 +11,22 @@ function current-commit-is-not-tested {
   ! git tag --contains | grep -q "green-qa"
 }
 
+function fix_directory_permissions_after_playwright_run {
+  echo "Fixing directory permissions after Playwright run"
+
+  set +e
+  JENKINS_ID="$(id -u jenkins)"
+  JENKINS_GID="$(id -g jenkins)"
+
+  docker run \
+    --env JENKINS_ID=${JENKINS_ID} \
+    --env JENKINS_GID=${JENKINS_GID} \
+    --rm \
+    -v ${PWD}/playwright-results:/playwright-results bash:latest bash -c "chown -R ${JENKINS_ID}:${JENKINS_GID} /playwright-results"
+
+  set -e
+}
+
 function main {
   check_requirements
   init_nodejs
@@ -33,10 +49,7 @@ function main {
 
 function stop_systems_under_test  {
   echo "Stopping all systems under test"
-  set +e
-  docker cp -a 'va-playwright-tests:/playwright-results' ./playwright-test-results
-  docker cp -a 'va-playwright-tests:/playwright/tests/test-results' ./playwright-artefacts
-  set -e
+  fix_directory_permissions_after_playwright_run
   stop_system_under_test ${DOCKER_COMPOSE_FILE}
   stop_system_under_test ${PLAYWRIGHT_COMPOSE_FILE}
 }
