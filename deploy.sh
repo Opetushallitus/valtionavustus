@@ -20,14 +20,12 @@ function main {
   if current-commit-is-not-tested;
   then
     build_docker_images
-    start_system_under_test ${DOCKER_COMPOSE_FILE}
-    run_tests
-    if running_on_jenkins;
-    then
-      stop_system_under_test ${DOCKER_COMPOSE_FILE}
-
+    if running_on_jenkins; then
       docker-compose -f ${PLAYWRIGHT_COMPOSE_FILE} up --abort-on-container-exit
     fi
+    start_system_under_test ${DOCKER_COMPOSE_FILE}
+    run_tests
+    stop_system_under_test ${DOCKER_COMPOSE_FILE}
   fi
   deploy_jars
 }
