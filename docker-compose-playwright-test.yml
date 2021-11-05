@@ -18,6 +18,7 @@ services:
       PLAYWRIGHT_WORKERS: 1
     command: /run_playwright_tests_in_container.sh
     logging:
+      driver: none
       options:
         mode: 'non-blocking'
 
@@ -46,6 +47,7 @@ services:
       timeout: 5s
       retries: 5
     logging:
+      driver: none
       options:
         mode: 'non-blocking'
 
@@ -72,6 +74,7 @@ services:
       timeout: 5s
       retries: 5
     logging:
+      driver: none
       options:
         mode: 'non-blocking'
 
@@ -85,7 +88,7 @@ services:
       - '5432:5432'
     networks:
       - subnet-private
-    command: ["postgres", "-c", "log_statement=none"]
+    command: ["postgres", "-c", "log_statement=all"]
     environment:
       POSTGRES_USER: 'va'
       POSTGRES_PASSWORD: 'va'
@@ -96,6 +99,7 @@ services:
       timeout: 5s
       retries: 5
     logging:
+      driver: none
       options:
         mode: 'non-blocking'
 
@@ -106,6 +110,7 @@ services:
     networks:
       - subnet-private
     logging:
+      driver: none
       options:
         mode: 'non-blocking'
 
@@ -122,6 +127,7 @@ services:
     networks:
       - subnet-private
     logging:
+      driver: none
       options:
         mode: 'non-blocking'
 
