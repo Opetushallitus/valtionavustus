@@ -15,6 +15,9 @@ services:
       HAKIJA_HOSTNAME: va-hakija
       PLAYWRIGHT_WORKERS: 1
     command: /run_playwright_tests_in_container.sh
+    logging:
+      options:
+        mode: 'non-blocking'
 
   virkailija:
     image: va-virkailija:latest
@@ -40,6 +43,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    logging:
+      options:
+        mode: 'non-blocking'
 
   hakija:
     image: va-hakija:latest
@@ -63,6 +69,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    logging:
+      options:
+        mode: 'non-blocking'
 
   db:
     image: postgres:12.2
@@ -94,6 +103,9 @@ services:
     hostname: fakesmtp
     networks:
       - subnet-private
+    logging:
+      options:
+        mode: 'non-blocking'
 
   maksatuspalvelu:
     image: atmoz/sftp
@@ -107,6 +119,9 @@ services:
     command: demo:pass:1001:100
     networks:
       - subnet-private
+    logging:
+      options:
+        mode: 'non-blocking'
 
 networks:
   subnet-private:
