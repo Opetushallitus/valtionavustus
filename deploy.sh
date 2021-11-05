@@ -14,6 +14,7 @@ function current-commit-is-not-tested {
 function main {
   check_requirements
   init_nodejs
+  install_docker_compose
   set_env_vars
   clean
   build
@@ -21,7 +22,6 @@ function main {
   then
     build_docker_images
     if running_on_jenkins; then
-      install_docker_compose
       scripts/docker-compose -f ${PLAYWRIGHT_COMPOSE_FILE} up --abort-on-container-exit
     fi
     start_system_under_test ${DOCKER_COMPOSE_FILE}
@@ -43,7 +43,7 @@ function stop_systems_under_test  {
 
 function stop_system_under_test () {
   echo "Stopping system under test"
-  docker-compose -f "$1" down --remove-orphans
+  scripts/docker-compose -f "$1" down --remove-orphans
 }
 trap stop_systems_under_test EXIT
 
@@ -56,15 +56,15 @@ function build_docker_images {
 function start_system_under_test () {
   echo "Starting system under test"
 
-  docker-compose -f "$1" up -d hakija
+  scripts/docker-compose -f "$1" up -d hakija
   wait_for_container_to_be_healthy va-hakija
 
-  docker-compose -f "$1" up -d virkailija
+  scripts/docker-compose -f "$1" up -d virkailija
   wait_for_container_to_be_healthy va-virkailija
 
   # Make sure all services are running and follow their logs
-  docker-compose -f "$1" up -d
-  docker-compose -f "$1" logs --follow &
+  scripts/docker-compose -f "$1" up -d
+  scripts/docker-compose -f "$1" logs --follow &
 }
 
 function check_requirements {
