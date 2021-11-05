@@ -33,8 +33,10 @@ function main {
 
 function stop_systems_under_test  {
   echo "Stopping all systems under test"
+  set +e
   docker cp -a 'va-playwright-tests:/playwright-results' ./playwright-test-results
   docker cp -a 'va-playwright-tests:/playwright/tests/test-results' ./playwright-artefacts
+  set -e
   stop_system_under_test ${DOCKER_COMPOSE_FILE}
   stop_system_under_test ${PLAYWRIGHT_COMPOSE_FILE}
 }
