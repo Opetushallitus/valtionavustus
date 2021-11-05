@@ -37,3 +37,4 @@ git-HEAD.txt
 .python-version
 playwright/tests/test-results
 junit-playwright-js-unit.xml
+scripts/docker-compose

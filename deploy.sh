@@ -21,7 +21,8 @@ function main {
   then
     build_docker_images
     if running_on_jenkins; then
-      docker-compose -f ${PLAYWRIGHT_COMPOSE_FILE} up --abort-on-container-exit
+      install_docker_compose
+      scripts/docker-compose -f ${PLAYWRIGHT_COMPOSE_FILE} up --abort-on-container-exit
     fi
     start_system_under_test ${DOCKER_COMPOSE_FILE}
     run_tests

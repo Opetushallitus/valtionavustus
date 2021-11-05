@@ -9,6 +9,15 @@ function remove_all_files_ignored_or_untracked_by_git {
   git clean -xdf
 }
 
+function install_docker_compose {
+  echo "Installing docker compose"
+  pushd "$repo/scripts"
+  curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o ./docker-compose
+  chmod u+x ./docker-compose
+  ./docker-compose --version
+  popd
+}
+
 function parse_env_from_script_name {
   local FILE_NAME=$(basename "$0")
   if echo ${FILE_NAME}| grep -E -q '.+-[^-]{2,4}\.sh$'; then
