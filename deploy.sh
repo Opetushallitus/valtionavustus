@@ -33,7 +33,7 @@ function stop_systems_under_test  {
 
 function stop_system_under_test () {
   echo "Stopping system under test"
-  scripts/docker-compose -f "$1" down --remove-orphans
+  docker-compose -f "$1" down --remove-orphans
 }
 trap stop_systems_under_test EXIT
 
@@ -45,15 +45,15 @@ function build_docker_images {
 function start_system_under_test () {
   echo "Starting system under test"
 
-  scripts/docker-compose -f "$1" up -d hakija
+  docker-compose -f "$1" up -d hakija
   wait_for_container_to_be_healthy va-hakija
 
-  scripts/docker-compose -f "$1" up -d virkailija
+  docker-compose -f "$1" up -d virkailija
   wait_for_container_to_be_healthy va-virkailija
 
   # Make sure all services are running and follow their logs
-  scripts/docker-compose -f "$1" up -d
-  scripts/docker-compose -f "$1" logs --follow &
+  docker-compose -f "$1" up -d
+  docker-compose -f "$1" logs --follow &
 }
 
 function check_requirements {
