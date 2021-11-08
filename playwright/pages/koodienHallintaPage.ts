@@ -1,4 +1,4 @@
-import {Page} from "@playwright/test";
+import {Page, Locator} from "@playwright/test";
 
 import {navigate} from "../utils/navigate";
 import {randomString} from "../utils/random";
@@ -10,17 +10,34 @@ const clojureLoadingDialogSelector = "[data-test-id=loading-dialog]"
 
 export class KoodienhallintaPage {
   readonly page: Page
+  readonly yearInput: Locator
+  readonly nameInput: Locator
+  readonly codeInput: Locator
+  readonly submitButton: Locator
+  readonly codeInputError: Locator
+  readonly codeList: Locator
 
   constructor(page: Page) {
     this.page = page;
+    this.yearInput = this.page.locator('[data-test-id=code-form__year]')
+    this.nameInput = this.page.locator('[data-test-id=code-form__name]')
+    this.codeInput = this.page.locator('[data-test-id=code-form__code]')
+    this.submitButton = this.page.locator('[data-test-id=code-form__add-button]')
+    this.codeInputError = this.page.locator('.code-input-error')
+    this.codeList = this.page.locator('table tbody')
   }
+
 
   async navigate() {
     await Promise.all([
-      navigate(this.page, '/admin-ui/va-code-values/'),
+      navigate(this.page, '/va-code-values/'),
       this.waitForClojureScriptLoadingDialogVisible()
     ])
     await this.waitForClojureScriptLoadingDialogHidden()
+  }
+
+  async navigateToTsVersion() {
+    await navigate(this.page, '/va-code-values2')
   }
 
   async waitForClojureScriptLoadingDialogVisible() {
@@ -60,7 +77,7 @@ export class KoodienhallintaPage {
     await this.makeSureCodeFilled('[data-test-id=code-form__year]', '2020')
     await this.makeSureCodeFilled('[data-test-id=code-form__code]', `${code}`)
     await this.makeSureCodeFilled('[data-test-id=code-form__name]', `${name} ${code}`)
-    await this.page.click('[data-test-id=code-form__add-button]')
+    await this.submitButton.click()
     await this.waitForClojureScriptLoadingDialogHidden()
     await this.page.waitForSelector(`tr[data-test-id="${code}"]`)
     return code
@@ -81,5 +98,13 @@ export class KoodienhallintaPage {
     const uniqueCode = () => randomString().substring(0, 13)
     const codeValues = { operationalUnit: uniqueCode(), project: uniqueCode(), operation: uniqueCode() }
     return this.createCodeValues(codeValues)
+  }
+
+  async codeInputFormHasError(errorText: string) {
+    await this.codeInputError.locator(`text="${errorText}"`)
+  }
+
+  async noCodeInputFormErrors() {
+    await this.codeInputError.waitFor({state: 'detached'})
   }
 }

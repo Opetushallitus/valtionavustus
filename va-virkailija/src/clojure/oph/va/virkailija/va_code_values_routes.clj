@@ -26,7 +26,7 @@
 (defn- create-va-code-value []
   (compojure-api/POST
     "/" [:as request]
-    :body [code-values (compojure-api/describe schema/VACodeValue
+    :body [code-values (compojure-api/describe schema/CreateVACodeValue
                                                "Create VA Code Value")]
     :return schema/VACodeValue
     :summary "Create new VA Code Value"

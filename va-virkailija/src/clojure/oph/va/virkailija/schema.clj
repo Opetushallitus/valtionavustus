@@ -402,12 +402,19 @@
 
 (s/defschema VACodeValue
   "VA Code Value"
-  {(s/optional-key :id) s/Int
+  {:id s/Int
    :value-type s/Str
    :year s/Int
    :code s/Str
    :code-value s/Str
    (s/optional-key :hidden) (s/maybe s/Bool)})
+
+(s/defschema CreateVACodeValue
+  "Create VA Code Value"
+  {:value-type s/Str
+   :year s/Int
+   :code s/Str
+   :code-value s/Str})
 
 (s/defschema VACodeValueEdit
   "VA Code Value Edit"

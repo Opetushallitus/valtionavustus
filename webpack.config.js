@@ -84,6 +84,7 @@ const virkailijaConfig = Object.assign(
       adminApp: path.resolve(__dirname, "va-virkailija/web/va/HakujenHallintaApp.tsx"),
       summaryApp: path.resolve(__dirname, "va-virkailija/web/va/YhteenvetoApp.jsx"),
       login: path.resolve(__dirname, "va-virkailija/web/va/Login.jsx"),
+      codeValues: path.resolve(__dirname, "va-virkailija/web/va/KoodienhallintaApp.tsx"),
     }
   }
 )

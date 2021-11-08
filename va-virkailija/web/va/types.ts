@@ -146,7 +146,7 @@ export interface OnkoMuutoshakukelpoinenAvustushakuOk {
 }
 
 export interface VaCodeValue {
-  id?: number
+  id: number
   'value-type': string
   year: number
   code: string
