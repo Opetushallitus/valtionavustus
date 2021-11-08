@@ -94,6 +94,8 @@
 
   :target-path "target/%s"
 
-  :auto {:default {:paths ["src", "resources", "spec"]
-                   :file-pattern #"\.(clj|sql|json)$"}}
+  :auto {:default {:paths ["va-common/src", "va-common/resources", "va-common/spec",
+                           "va-hakija/src", "va-hakija/resources", "va-hakija/spec",
+                           "va-virkailija/src", "va-virkailija/resources", "va-virkailija/spec"]
+                   :file-pattern #"\.(clj|sql|json|edn)$"}}
 )

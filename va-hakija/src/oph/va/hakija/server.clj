@@ -44,7 +44,7 @@
                   (server/wrap-cache-control h)
                   (wrap-not-modified h)
                   (if auto-reload?
-                    (wrap-reload h)
+                    (wrap-reload h {:dirs ["va-hakija/src" "va-common/src"]})
                     h))
         threads (or (-> config :server :threads) 16)
         attachment-max-size (or (-> config :server :attachment-max-size) 50)]
