@@ -1,0 +1,99 @@
+.koodienhallinta-body {
+  padding: 120px 5px 5px 0;
+  background-color: rgb(250, 250, 250);
+}
+
+.code-input-container {
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+}
+
+.code-input {
+  margin: 5px;
+
+  &__year {
+    max-width: 75px;
+  }
+
+  &__code {
+    max-width: 150px;
+  }
+
+  &__name {
+    max-width: 350px;
+  }
+}
+
+.code-input-error {
+  color: red;
+  padding-left: 0.5rem;
+}
+
+.code-input-saving {
+  margin: 0.6rem;
+}
+
+.code-input-submit {
+  margin: 0.4rem;
+}
+
+.code-cell {
+  &__hidden {
+    color: #e3e3e3;
+  }
+}
+
+.code-icon-button {
+  background: none !important;
+  border: none !important;
+}
+
+td, th {
+  height: 48px;
+  text-align: left;
+  padding: 1px 1.5rem;
+  width: 25%;
+}
+
+tr {
+  border-bottom: 1px solid rgb(224, 224, 224);
+}
+
+table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+td.loading {
+  > div {
+    height: 1em;
+    position: relative;
+    overflow: hidden;
+    background-color: #DDDBDD;
+
+    &::after {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      transform: translateX(-100%);
+      background-image: linear-gradient(
+        90deg,
+        rgba(#fff, 0) 0,
+        rgba(#fff, 0.2) 20%,
+        rgba(#fff, 0.5) 60%,
+        rgba(#fff, 0)
+      );
+      animation: shimmer 2s infinite;
+      content: '';
+    }
+  }
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
