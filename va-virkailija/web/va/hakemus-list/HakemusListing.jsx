@@ -589,7 +589,7 @@ class Scoring extends Component {
     const normalizedMeanScore = meanScore + 1
     const starElements = _.map(_.range(4), indexOfStar => {
       const isVisible = Math.ceil(meanScore) >= indexOfStar
-      const starImage = isVisible ? "/img/star_on.png" : "/img/star_off.png"
+      const starImage = isVisible ? "/virkailija/img/star_on.png" : "/virkailija/img/star_off.png"
 
       let className = "single-score"
 

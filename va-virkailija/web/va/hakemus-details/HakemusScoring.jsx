@@ -132,7 +132,7 @@ class StarElement extends Component {
     const allowHakemusScoring = this.props.allowHakemusScoring
     const selectionCriteriaIndex = this.props.selectionCriteriaIndex
     const starVisible = scoreOfUser && scoreOfUser.score >= indexOfStar
-    const starImage = starVisible ? "/img/star_on.png" : "/img/star_off.png"
+    const starImage = starVisible ? "/virkailija/img/star_on.png" : "/virkailija/img/star_off.png"
 
     const controller = this.props.controller
     const enableEditing = allowHakemusScoring && !_.isUndefined(controller)
@@ -140,7 +140,7 @@ class StarElement extends Component {
     const onClick = enableEditing ?
           this.createOnClickHandler(selectionCriteriaIndex, indexOfStar) :
           undefined
-    const showHover = enableEditing && !starVisible ? event => { event.target.setAttribute("src", "/img/star_hover.png") } : undefined
+    const showHover = enableEditing && !starVisible ? event => { event.target.setAttribute("src", "/virkailija/img/star_hover.png") } : undefined
     const hideHover = enableEditing && !starVisible ? event => { event.target.setAttribute("src", starImage)} : undefined
     return <img className={classNames}
                 src={starImage}
