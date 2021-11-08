@@ -17,7 +17,7 @@
                     :scheduling "0 00 04 ? * *"
                     :strict-host-key-checking :yes}
  :notification-scheduler {:enabled? true
-                          :loppuselvitys-asiatarkastamatta-schedule "0 0 12 ? * 2"}
+                          :loppuselvitys-asiatarkastamatta-schedule "0 0 14 ? * 1,2,3,4,5"}
  :payments {:enabled? true :delete-payments? true}
  :contact-person-name-in-pitkaviite {:enabled? true}
  :tasmaytysraportti-create {:enabled? true}
