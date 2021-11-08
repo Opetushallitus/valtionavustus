@@ -44,7 +44,7 @@ npm-clean-frontends:
 
 .PHONY: npm-build
 npm-build: check-node
-	npm install
+	npm ci
 	npm run build-production
 
 .PHONY: npm-test
