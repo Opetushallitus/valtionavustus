@@ -248,26 +248,32 @@ describe("Puppeteer tests", () => {
 
       it('väliselvitys and loppuselvitys are copied to the new avustushaku', async () => {
         await clickElement(page, '[data-test-id="väliselvitys-välilehti"]')
+        await page.waitForSelector('#valiselvitysUpdatedAt')
         expect(await textContent(page, '[name="applicant-info-label-fi"]')).toEqual('Muokattu väliselvitys')
 
         await clickElement(page, '[data-test-id="loppuselvitys-välilehti"]')
+        await page.waitForSelector('#loppuselvitysUpdatedAt')
         expect(await textContent(page, '[name="applicant-info-label-fi"]')).toEqual('Muokattu loppuselvitys')
       })
 
       it('changing väliselvitys and loppuselvitys on the copied avustushaku does not change the original selvitys values', async () => {
         await clickElement(page, '[data-test-id="väliselvitys-välilehti"]')
+        await page.waitForSelector('#valiselvitysUpdatedAt')
         await clearAndType(page, '[name="applicant-info-label-fi"]', 'Uudelleen muokattu väliselvitys')
         await clickElementWithText(page, 'button', 'Tallenna')
 
         await waitForElementWithText(page, 'span', 'Loppuselvitys')
         await clickElement(page, '[data-test-id="loppuselvitys-välilehti"]')
+        await page.waitForSelector('#loppuselvitysUpdatedAt')
         await clearAndType(page, '[name="applicant-info-label-fi"]', 'Uudelleen muokattu loppuselvitys')
         await clickElementWithText(page, 'button', 'Tallenna')
 
         await navigate(page, `/admin/valiselvitys/?avustushaku=${avustushakuId}`)
+        await page.waitForSelector('#valiselvitysUpdatedAt')
         expect(await textContent(page, '[name="applicant-info-label-fi"]')).toEqual('Muokattu väliselvitys')
 
         await clickElement(page, '[data-test-id="loppuselvitys-välilehti"]')
+        await page.waitForSelector('#loppuselvitysUpdatedAt')
         expect(await textContent(page, '[name="applicant-info-label-fi"]')).toEqual('Muokattu loppuselvitys')
       })
     })
