@@ -112,7 +112,7 @@ describe('Translations', () => {
       })
 
       it('register number title is in swedish', async () => {
-        const title = await getElementInnerText(page, '.osiokohtainen-muutoshakemus__register-number')
+        const title = await getElementInnerText(page, '.muutoshakemus__register-number')
         expect(title).toContain('Ärendenummer')
       })
 
@@ -178,16 +178,6 @@ describe('Translations', () => {
       describe('When user clicks "Haen muutosta hankkeen talouden käyttösuunnitelmaan"', () => {
         beforeAll(async () => {
           await clickElement(page, '#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan')
-        })
-
-        it('Current budget title is in swedish', async () => {
-          const title = await getElementInnerText(page, '[data-test-id="budget-old-title"]')
-          expect(title).toBe('Nuvarande budget')
-        })
-
-        it('Modified new budget title is in swedish', async () => {
-          const title = await getElementInnerText(page, '[data-test-id="budget-change-title"]')
-          expect(title).toBe('Ny budget')
         })
 
         it('Total sum title is in swedish', async () => {

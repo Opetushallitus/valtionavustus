@@ -859,7 +859,7 @@ etunimi.sukunimi@oph.fi
 
           it('email field class does not contain "error"', async () => {
             const emailInputFieldClassWithValidEmail = await getElementAttribute(page, "#muutoshakemus__email", "class")
-            expect(emailInputFieldClassWithValidEmail).toEqual("osiokohtainen-muutoshakemus__input")
+            expect(emailInputFieldClassWithValidEmail).not.toContain("error")
           })
 
         })
