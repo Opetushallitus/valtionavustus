@@ -50,7 +50,7 @@ export const OsiokohtainenMuutoshakemusValues = (props: OsiokohtainenMuutoshakem
         }
         {!!talousarvio.length &&
           <div className="osiokohtainen-muutoshakemus__osio-container">
-            <h1 className="osiokohtainen-muutoshakemus__sub-title">{t.muutoshakemus.paatos.budjetti}</h1>
+            <h2 className="osiokohtainen-muutoshakemus__sub-title">{t.muutoshakemus.paatos.budjetti}</h2>
             <MuutosTaloudenKayttosuunnitelmaan
               currentTalousarvio={currentTalousarvio}
               newTalousarvio={talousarvio}
@@ -63,7 +63,7 @@ export const OsiokohtainenMuutoshakemusValues = (props: OsiokohtainenMuutoshakem
         )}
         {muutoshakemus['paatos-reason'] && (
           <div className="osiokohtainen-muutoshakemus__accepted-changes">
-            <div className="osiokohtainen-muutoshakemus__sub-title">{t.muutoshakemus.paatos.perustelut}</div>
+            <h2 className="osiokohtainen-muutoshakemus__sub-title">{t.muutoshakemus.paatos.perustelut}</h2>
             <div>{muutoshakemus['paatos-reason']}</div>
           </div>
         )}
@@ -90,8 +90,8 @@ const SisaltoPaatosValues = (props: SisaltoPaatosProps) => {
   return (
     <>
       <div className="osiokohtainen-muutoshakemus__osio-container">
-        <h1
-          className="osiokohtainen-muutoshakemus__sub-title">{t.sisaltomuutos.sectionTitle}</h1>
+        <h2
+          className="osiokohtainen-muutoshakemus__sub-title">{t.sisaltomuutos.sectionTitle}</h2>
         <div className="muutoshakemus-row">
           <h4
             className="osiokohtainen-muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
@@ -107,7 +107,7 @@ const SisaltoPaatosValues = (props: SisaltoPaatosProps) => {
 
         {muutoshakemus['hyvaksytyt-sisaltomuutokset'] && (
           <div className="osiokohtainen-muutoshakemus__osio-accepted-changes">
-            <div className="osiokohtainen-muutoshakemus__sub-title">{t.sisaltomuutos.acceptedChanges}</div>
+            <h2 className="osiokohtainen-muutoshakemus__sub-title">{t.sisaltomuutos.acceptedChanges}</h2>
             <div>{muutoshakemus['hyvaksytyt-sisaltomuutokset']}</div>
           </div>
         )}
@@ -137,7 +137,7 @@ const PaattymispaivaValues = (props: PaattymispaivaValuesProps) => {
 
   return (
     <div className="osiokohtainen-muutoshakemus__osio-container">
-      <h1 className="osiokohtainen-muutoshakemus__sub-title">{t.muutoshakemus.acceptedChange}</h1>
+      <h2 className="osiokohtainen-muutoshakemus__sub-title">{t.muutoshakemus.acceptedChange}</h2>
       <div className="osiokohtainen-muutoshakemus__project-end-row">
         <div>
           <h3 className="osiokohtainen-muutoshakemus__header"

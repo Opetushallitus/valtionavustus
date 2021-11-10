@@ -23,7 +23,7 @@ export const MuutoshakemusFormSection = ({ f, name, title, children }: Avustukse
         />
         <label htmlFor={`checkbox-${name}`}>{title}</label>
       </div>
-      {f.values[name] && <div className="muutoshakemus__section-content">{children}</div>}
+      {f.values[name] && <div className="muutoshakemus__form-section-content">{children}</div>}
     </>
   )
 }

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+
 import { useTranslations } from '../../../../va-common/web/va/i18n/TranslationContext'
 
 export type OriginalHakemusIframeProps = { avustushakuId: number, userKey: string }
@@ -20,9 +21,9 @@ export default function OriginalHakemusIframe({ avustushakuId, userKey }: Origin
   }, [iframeRef])
 
   return (
-    <section className="muutoshakemus__section">
+    <>
       <h1 className="muutoshakemus__title">{t.originalHakemus}</h1>
       <iframe scrolling="no" src={iframeUrl} ref={iframeRef} width="100%" height={height} style={{border: '0'}} data-test-id="original-hakemus"/>
-    </section>
+    </>
   )
 }

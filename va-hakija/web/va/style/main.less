@@ -9,21 +9,22 @@
 
 .muutoshakemus__section-checkbox-row {
   display: flex;
+  align-items: center;
   margin-bottom: 1rem;
 
   input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
   }
 
   label {
-    padding-left: 9px;
+    padding-left: 1rem;
     cursor: pointer;
   }
 }
 
-.muutoshakemus__section-content {
+.muutoshakemus__form-section-content {
   margin-left: 2rem;
   margin-bottom: 2rem;
 }
@@ -37,6 +38,15 @@
     width: 70%;
     padding: 6px 7px 6px 8px;
     font-size: 0.9rem;
+  }
+}
+
+.muutoshakemus__input {
+  &--contact {
+    border: 1px solid @light-gray;
+    border-radius: 4px;
+    padding: 8px;
+    width: 280px;
   }
 }
 
@@ -60,14 +70,6 @@
   padding: 160px 80px 10px;
 }
 
-.osiokohtainen-muutoshakemus__title {
-  font-family: Open Sans, sans-serif;
-  font-style: normal;
-  font-weight: bold !important;
-  font-size: 28px !important;
-  line-height: 27px;
-}
-
 .osiokohtainen-muutoshakemus__sub-title {
   font-family: Open Sans, sans-serif;
   font-style: normal;
@@ -77,31 +79,19 @@
   margin-bottom: 13px !important;
 }
 
-.osiokohtainen-muutoshakemus__label {
-  font-family: Open Sans, sans-serif;
-  font-style: normal;
+.muutoshakemus__label {
   font-weight: 600;
-  font-size: 16px;
-  line-height: 24px;
   letter-spacing: -0.025em;
 }
 
-.osiokohtainen-muutoshakemus__input {
-  border: 1px solid #817C7B;
-  border-radius: 4px;
-  padding: 8px;
-}
 .osiokohtainen-muutoshakemus__input-error {
   border: 2px solid @bright-red !important;
   border-radius: 4px;
   padding: 8px;
 }
 
-
 .muutoshakemus__title {
   margin: 0 0 1rem !important;
-  font-family: Open Sans, sans-serif;
-  font-style: normal;
   font-weight: bold !important;
   font-size: 28px;
   line-height: 27px;
@@ -121,17 +111,8 @@
   line-height: 27px;
 }
 
-.muutoshakemus__section {
-  margin-bottom: 2rem;
-}
-
-.osiokohtainen-existing-muutoshakemus__section {
-  padding-top: 56px;
-  display: flex;
-  flex-direction: row;
-}
-
 .osiokohtainen-existing-muutoshakemus__title {
+  flex-shrink: 0;
   margin-right: 2rem;
   font-family: Open Sans, sans-serif;
   font-style: normal;
@@ -140,6 +121,7 @@
   line-height: 27px;
   width: 256px;
 }
+
 .osiokohtainen-existing-muutoshakemus__form {
   flex-grow: 1;
 }
@@ -184,15 +166,15 @@
 
 .osiokohtainen-muutoshakemus__osiot-container {
   background-color: white;
-  border: 1px solid #EAEAEA;
+  border: 1px solid #eaeaea;
   box-sizing: border-box;
   padding: 8px;
 }
 
 .osiokohtainen-muutoshakemus__osio-paatos {
   margin-top: 24px;
-  background: #F9F9F9;
-  border: 1px solid #EAEAEA;
+  background: #f9f9f9;
+  border: 1px solid #eaeaea;
   box-sizing: border-box;
   display: flex;
   flex-grow: 1;
@@ -205,7 +187,7 @@
 }
 
 .osiokohtainen-muutoshakemus__date {
-  border: 1px solid #EAEAEA;
+  border: 1px solid #eaeaea;
   box-sizing: border-box;
   padding: 1rem;
 }
@@ -215,7 +197,7 @@
 }
 
 .osiokohtainen-muutoshakemus__description-box {
-  border: 1px solid #EAEAEA;
+  border: 1px solid #eaeaea;
   box-sizing: border-box;
   padding: 1rem;
 }
@@ -240,7 +222,7 @@
 
 .osiokohtainen-muutoshakemus__osio-container {
   background: white;
-  border: 1px solid #EAEAEA;
+  border: 1px solid #eaeaea;
   box-sizing: border-box;
   filter: drop-shadow(0px 3px 8px rgba(0, 0, 0, 0.25));
   padding: 16px;
@@ -253,36 +235,47 @@
   font-weight: 700;
 }
 
-.muutoshakemus__form {
-}
-
 .muutoshakemus__form-row {
   display: flex;
-  margin: 1rem 0;
+  margin: 2rem 0;
 }
 
 .muutoshakemus__form-cell {
   display: flex;
   flex-direction: column;
   &:not(:last-of-type) {
-    margin-right: 5vw;
+    margin-right: 1rem;
   }
 }
 
-.osiokohtainen-muutoshakemus__form-cell {
+.muutoshakemus__form {
+  width: 100%;
+}
+
+.muutoshakemus__section {
   display: flex;
   flex-direction: column;
-  &:not(:last-of-type) {
-    margin-right: 1vw;
+  align-items: center;
+  width: 100%;
+  padding: 0 2rem;
+  box-sizing: border-box;
+  border-bottom: 1px solid @light-gray;
+}
+
+.muutoshakemus__section-content {
+  display: flex;
+  max-width: 1300px;
+  padding: 3rem 0;
+  width: 100%;
+}
+
+.muutoshakemus__top-form {
+  padding-top: 120px;
+  background: white;
+
+  .muutoshakemus__section-content {
+    flex-direction: column;
   }
-}
-
-#muutoshakemus__contact-person {
-  min-width: 240px;
-}
-
-#muutoshakemus__email {
-  min-width: 340px;
 }
 
 .va-old-browser-warning {

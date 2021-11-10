@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import moment from 'moment'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -30,6 +30,14 @@ let initialState: MuutoshakemusProps = {
   hakemus: undefined,
   muutoshakemukset: []
 }
+
+const MuutoshakemusSection = ({ children, className, ...props }: { children: ReactNode, className?: string }) => (
+  <section className={`muutoshakemus__section ${className ?? ''}`} {...props}>
+    <div className="muutoshakemus__section-content">
+      {children}
+    </div>
+  </section>
+)
 
 export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
   const { t, lang } = useTranslations()
@@ -87,7 +95,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
     const topic = `${t.muutoshakemus.title} ${moment(m['created-at']).format(fiShortFormat)}`
     const waitingForDecision = m.status === 'new' ? ` - ${t.waitingForDecision}` : ''
     return (
-      <section className="osiokohtainen-existing-muutoshakemus__section" data-test-class="existing-muutoshakemus" data-test-state={m.status} key={index}>
+      <MuutoshakemusSection className="osiokohtainen-existing-muutoshakemus__section" data-test-class="existing-muutoshakemus" data-test-state={m.status} key={index}>
         <div className="osiokohtainen-existing-muutoshakemus__title">{`${topic}${waitingForDecision}`}</div>
         <div className="osiokohtainen-existing-muutoshakemus__form">
           <OsiokohtainenMuutoshakemusValues
@@ -97,7 +105,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
             projectEndDate={projectEndDate}
           />
         </div>
-      </section>
+      </MuutoshakemusSection>
     )
   }
 
@@ -107,7 +115,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
     const waitingForDecision = m.status === 'new' ? ` - ${t.waitingForDecision}` : ''
 
     return (
-      <section className="muutoshakemus__section" data-test-class="existing-muutoshakemus" data-test-state={m.status} key={index}>
+      <MuutoshakemusSection data-test-class="existing-muutoshakemus" data-test-state={m.status} key={index}>
         <h1 className="muutoshakemus__title">{`${topic}${waitingForDecision}`}</h1>
         <div className="muutoshakemus__form">
           <MuutoshakemusValues
@@ -117,83 +125,51 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
             simplePaatos={true}
             projectEndDate={projectEndDate} />
         </div>
-      </section>
+      </MuutoshakemusSection>
     )
   }
 
+  const existingMuutoshakemusMapper = osiokohtainenEnabled ? existingOsiokohtainenMuutoshakemus : existingMuutoshakemus
+
   if(state.status === 'LOADING') {
-    return <p>t.loading</p>
+    return <p>{t.loading}</p>
   }
 
-  const osiokohtainenMuutoshakemusForm = (
-    <form onSubmit={f.handleSubmit}>
+  return (
+    <form className="muutoshakemus__form" onSubmit={f.handleSubmit}>
       <TopBar env={state.environment?.name || ''} f={f} />
-      <section id="container" >
-        <ErrorBoundary>
+      <ErrorBoundary>
+        <MuutoshakemusSection className="muutoshakemus__top-form">
           <ContactPerson
             avustushakuName={state.avustushaku.content.name[lang]}
             projectName={state.hakemus?.["project-name"] || ''}
             registerNumber={state.avustushaku["register-number"]}
             f={f}
-            osiokohtainenEnabled={osiokohtainenEnabled}
           />
-          {!existingNewMuutoshakemus &&
-          <section >
-            <h1 className="osiokohtainen-muutoshakemus__sub-title">{t.applicationEdit.title}</h1>
-            <div >
-              <MuutoshakemusFormSection f={f} name="haenSisaltomuutosta" title={t.sisaltomuutos.checkboxTitle}>
-                <PerustelutTextArea f={f} name='sisaltomuutosPerustelut' title={t.sisaltomuutos.title} />
-              </MuutoshakemusFormSection>
-              <MuutoshakemusFormSection f={f} name="haenKayttoajanPidennysta" title={t.kayttoajanPidennys.checkboxTitle}>
-                <AvustuksenKayttoaikaInput f={f} projectEnd={getProjectEndDate(state.avustushaku, state.muutoshakemukset)} />
-              </MuutoshakemusFormSection>
-              {enableBudgetChange &&
-              <MuutoshakemusFormSection f={f} name="haenMuutostaTaloudenKayttosuunnitelmaan" title={t.muutosTaloudenKayttosuunnitelmaan.checkboxTitle}>
-                <TalousarvioForm f={f} talousarvio={getTalousarvio(state.muutoshakemukset, state.hakemus?.talousarvio)} />
-              </MuutoshakemusFormSection>
-              }
-            </div>
-          </section>
-          }
-          {state.muutoshakemukset.map(existingOsiokohtainenMuutoshakemus)}
+          {!existingNewMuutoshakemus && (
+            <>
+              <h2 className="osiokohtainen-muutoshakemus__sub-title">{t.applicationEdit.title}</h2>
+              <div >
+                <MuutoshakemusFormSection f={f} name="haenSisaltomuutosta" title={t.sisaltomuutos.checkboxTitle}>
+                  <PerustelutTextArea f={f} name='sisaltomuutosPerustelut' title={t.sisaltomuutos.title} />
+                </MuutoshakemusFormSection>
+                <MuutoshakemusFormSection f={f} name="haenKayttoajanPidennysta" title={t.kayttoajanPidennys.checkboxTitle}>
+                  <AvustuksenKayttoaikaInput f={f} projectEnd={getProjectEndDate(state.avustushaku, state.muutoshakemukset)} />
+                </MuutoshakemusFormSection>
+                {enableBudgetChange &&
+                <MuutoshakemusFormSection f={f} name="haenMuutostaTaloudenKayttosuunnitelmaan" title={t.muutosTaloudenKayttosuunnitelmaan.checkboxTitle}>
+                  <TalousarvioForm f={f} talousarvio={getTalousarvio(state.muutoshakemukset, state.hakemus?.talousarvio)} />
+                </MuutoshakemusFormSection>
+                }
+              </div>
+            </>
+          )}
+        </MuutoshakemusSection>
+        {state.muutoshakemukset.map(existingMuutoshakemusMapper)}
+        <MuutoshakemusSection>
           <OriginalHakemusIframe avustushakuId={avustushakuId} userKey={userKey} />
-        </ErrorBoundary>
-      </section>
-    </form>)
-  return osiokohtainenEnabled ? osiokohtainenMuutoshakemusForm : (
-    <form onSubmit={f.handleSubmit}>
-      <TopBar env={state.environment?.name || ''} f={f} />
-      <section className="soresu-form" id="container">
-        <ErrorBoundary>
-          <ContactPerson
-            avustushakuName={state.avustushaku.content.name[lang]}
-            projectName={state.hakemus?.["project-name"] || ''}
-            registerNumber={state.avustushaku["register-number"]}
-            f={f}
-            osiokohtainenEnabled={osiokohtainenEnabled}
-          />
-          {!existingNewMuutoshakemus &&
-          <section className="muutoshakemus__section">
-            <h1 className="muutoshakemus__title">{t.applicationEdit.title}</h1>
-            <div className="muutoshakemus__form">
-              <MuutoshakemusFormSection f={f} name="haenSisaltomuutosta" title={t.sisaltomuutos.checkboxTitle}>
-                <PerustelutTextArea f={f} name='sisaltomuutosPerustelut' title={t.sisaltomuutos.title} />
-              </MuutoshakemusFormSection>
-              <MuutoshakemusFormSection f={f} name="haenKayttoajanPidennysta" title={t.kayttoajanPidennys.checkboxTitle}>
-                <AvustuksenKayttoaikaInput f={f} projectEnd={getProjectEndDate(state.avustushaku, state.muutoshakemukset)} />
-              </MuutoshakemusFormSection>
-              {enableBudgetChange &&
-              <MuutoshakemusFormSection f={f} name="haenMuutostaTaloudenKayttosuunnitelmaan" title={t.muutosTaloudenKayttosuunnitelmaan.checkboxTitle}>
-                <TalousarvioForm f={f} talousarvio={getTalousarvio(state.muutoshakemukset, state.hakemus?.talousarvio)} />
-              </MuutoshakemusFormSection>
-              }
-            </div>
-          </section>
-          }
-          {state.muutoshakemukset.map(existingMuutoshakemus)}
-          <OriginalHakemusIframe avustushakuId={avustushakuId} userKey={userKey} />
-        </ErrorBoundary>
-      </section>
+        </MuutoshakemusSection>
+      </ErrorBoundary>
     </form>
   )
 }

@@ -13,9 +13,9 @@ export const translationsFi = {
     haku: 'Avustushaku',
     registerNumberTitle: 'Asiatunnus',
     hanke: 'Hanke',
-    contactPerson: 'Yhteyshenkilö',
-    email: 'Yhteyshenkilön sähköposti',
-    phone: 'Yhteyshenkilön puhelin'
+    contactPerson: 'Yhteyshenkilön nimi',
+    email: 'Yhteyshenkilön sähköpostiosoite',
+    phone: 'Yhteyshenkilön puhelinumero'
   },
   applicationEdit: {
     title: 'Haettavat muutokset',

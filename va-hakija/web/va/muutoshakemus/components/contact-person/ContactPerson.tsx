@@ -11,58 +11,58 @@ interface ContactPersonProps {
   projectName: string
   registerNumber: string
   f: FormikHook
-  osiokohtainenEnabled: boolean
 }
 
-export const ContactPerson = ({ avustushakuName, projectName, registerNumber, f, osiokohtainenEnabled}: ContactPersonProps) => {
+export const ContactPerson = ({ avustushakuName, projectName, registerNumber, f }: ContactPersonProps) => {
   const { t } = useTranslations()
 
-  const className = osiokohtainenEnabled ? "osiokohtainen-muutoshakemus" : "muutoshakemus"
   return (
-  <section className={`${className}__section`}>
-    <div className={`${className}__page-title`}>
-      <h1 className={`${className}__title`}>{t.contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushakuName}</span></h1>
-      <span className="va-register-number">
-        <span className={`${className}__register-number`}>{t.contactPersonEdit.registerNumberTitle}: </span>
-        <span data-test-id="register-number">{registerNumber}</span>
-      </span>
+  <>
+    <div className="muutoshakemus__page-title">
+      <h1 className="muutoshakemus__title">{t.contactPersonEdit.haku}: <span data-test-id="avustushaku-name">{avustushakuName}</span></h1>
     </div>
     <div className="muutoshakemus__form">
       <div className="muutoshakemus__form-row">
-        <div className={`${className}__form-cell`}>
+        <div className="muutoshakemus__form-cell">
           <div className="muutoshakemus__hanke-name__title">{t.contactPersonEdit.hanke}</div>
           <div className="muutoshakemus__hanke-name__name" data-test-id="project-name">{projectName}</div>
         </div>
       </div>
       <div className="muutoshakemus__form-row">
-        <div className={`${className}__form-cell`}>
-          <label className={`${className}__label`} htmlFor="muutoshakemus__contact-person">{t.contactPersonEdit.contactPerson}</label>
+        <div className="muutoshakemus__form-cell">
+          <div className="muutoshakemus__hanke-name__title">{t.contactPersonEdit.registerNumberTitle}</div>
+          <div className="muutoshakemus__hanke-name__name" data-test-id="register-number">{registerNumber}</div>
+        </div>
+      </div>
+      <div className="muutoshakemus__form-row">
+        <div className="muutoshakemus__form-cell">
+          <label className="muutoshakemus__label" htmlFor="muutoshakemus__contact-person">{t.contactPersonEdit.contactPerson}</label>
           <input
             id="muutoshakemus__contact-person"
-            className={`${className}__input`}
+            className="muutoshakemus__input muutoshakemus__input--contact"
             name="name"
             type="text"
             onChange={f.handleChange}
             onBlur={f.handleBlur}
             value={f.values.name} />
         </div>
-        <div className={`${className}__form-cell`}>
-          <label className={`${className}__label`} htmlFor="muutoshakemus__email">{t.contactPersonEdit.email}</label>
+        <div className="muutoshakemus__form-cell">
+          <label className="muutoshakemus__label" htmlFor="muutoshakemus__email">{t.contactPersonEdit.email}</label>
           <input
             id="muutoshakemus__email"
             name="email"
             type="text"
-            className={getInputErrorClass(f, 'email', `${className}__input`, `${className}__input-error`)}
+            className={`${getInputErrorClass(f, 'email', 'muutoshakemus__input', 'muutoshakemus__input-error')}  muutoshakemus__input--contact`}
             onChange={f.handleChange}
             onBlur={f.handleBlur}
             value={f.values.email} />
           <ErrorMessage text={f.errors.email} />
         </div>
-        <div className={`${className}__form-cell`}>
-          <label className={`${className}__label`} htmlFor="muutoshakemus__phone">{t.contactPersonEdit.phone}</label>
+        <div className="muutoshakemus__form-cell">
+          <label className="muutoshakemus__label" htmlFor="muutoshakemus__phone">{t.contactPersonEdit.phone}</label>
           <input
             id="muutoshakemus__phone"
-            className={`${className}__input`}
+            className="muutoshakemus__input muutoshakemus__input--contact"
             name="phone"
             type="text"
             onChange={f.handleChange}
@@ -71,6 +71,6 @@ export const ContactPerson = ({ avustushakuName, projectName, registerNumber, f,
         </div>
       </div>
     </div>
-  </section>
+  </>
   )
 }
