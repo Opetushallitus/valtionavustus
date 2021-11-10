@@ -237,10 +237,10 @@ describe('Talousarvion muuttaminen', () => {
 
       async function getNewHakemusBudget(type: 'current' | 'muutoshakemus'): Promise<BudgetAmount> {
         const numberFieldSelector = type === 'current' ? '[data-test-id="current-value"]' : '[data-test-id="muutoshakemus-value"]'
-        const budgetRows = await page.$$eval('[data-test-class="existing-muutoshakemus"][data-test-state="new"] [class="talousarvio-rows"]', (elements, inputSelector) => {
+        const budgetRows = await page.$$eval('[data-test-state="new"] [data-test-id="meno-input-row"]', (elements, inputSelector) => {
           return elements.map(elem => ({
             name: elem.getAttribute('data-test-type')?.replace('-costs-row', '') || '',
-            amount: elem.querySelector(inputSelector as string)?.innerHTML || ''
+            amount: elem.querySelector(inputSelector as string)?.innerHTML.replace(' €', '') || ''
           }))
         }, numberFieldSelector) as BudgetRow[]
 
