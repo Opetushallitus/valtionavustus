@@ -30,7 +30,7 @@ export const ContactPerson = ({ avustushakuName, projectName, registerNumber, f 
       </div>
       <div className="muutoshakemus__form-row">
         <div className="muutoshakemus__form-cell">
-          <div className="muutoshakemus__hanke-name__title">{t.contactPersonEdit.registerNumberTitle}</div>
+          <div className="muutoshakemus__hanke-name__title" data-test-id="register-number-title">{t.contactPersonEdit.registerNumberTitle}</div>
           <div className="muutoshakemus__hanke-name__name" data-test-id="register-number">{registerNumber}</div>
         </div>
       </div>

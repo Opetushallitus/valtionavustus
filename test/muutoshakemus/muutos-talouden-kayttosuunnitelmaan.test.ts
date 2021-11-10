@@ -23,7 +23,6 @@ import {
 import {
   fillOsiotAndSendMuutoshakemusDecision,
   navigateToLatestMuutoshakemus,
-  navigateToLatestMuutoshakemusPaatos,
   navigateToNthMuutoshakemus,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget,

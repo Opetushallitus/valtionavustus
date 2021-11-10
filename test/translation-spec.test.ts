@@ -112,7 +112,7 @@ describe('Translations', () => {
       })
 
       it('register number title is in swedish', async () => {
-        const title = await getElementInnerText(page, '.muutoshakemus__register-number')
+        const title = await getElementInnerText(page, '[data-test-id="register-number-title"]')
         expect(title).toContain('Ärendenummer')
       })
 
