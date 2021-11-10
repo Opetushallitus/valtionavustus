@@ -1,6 +1,6 @@
 import {Page} from "playwright";
 import {expect} from "@playwright/test"
-import {textContent} from "../utils/util";
+import {getExistingBudgetTableCells, textContent} from "../utils/util";
 import {
   getLinkToMuutoshakemusFromSentEmails,
 } from "../utils/emails";
@@ -68,9 +68,6 @@ export class HakijaMuutoshakemusPage {
 
   expectApprovedBudgetToBe(page, budget: BudgetAmount): () => Promise<void> {
     return async function verifyBudget() {
-      const budgetRowSelector = '[data-test-id=meno-input-row]'
-      await page.waitForSelector(budgetRowSelector, {state: 'visible'})
-
       const budgetExpectedItems = [
         {description: 'Henkilöstömenot', amount: `${budget.personnel} €`},
         {description: 'Aineet, tarvikkeet ja tavarat', amount: `${budget.material} €`},
@@ -81,12 +78,7 @@ export class HakijaMuutoshakemusPage {
         {description: 'Muut menot', amount: `${budget.other} €`}
       ]
 
-      const budgetRows = await page.$$eval(budgetRowSelector, elements => {
-        return elements.map(elem => ({
-          description: elem.querySelector('.description')?.textContent,
-          amount: elem.querySelector('.existingAmount')?.textContent
-        }))
-      })
+      const budgetRows = await getExistingBudgetTableCells(page)
       expect(budgetRows).toEqual(budgetExpectedItems)
     }
   }

@@ -148,13 +148,13 @@ test('Hakija views muutoshakemus page', async ({hakijaMuutoshakemusPaatosPage}) 
 
   await test.step('the "accepted with changes" budget is shown on the päätös', async () => {
     const budgetExpectedItems = [
-      { description: 'Henkilöstömenot', amount: '1301' },
-      { description: 'Aineet, tarvikkeet ja tavarat', amount: '1421' },
-      { description: 'Laitehankinnat', amount: '2338' },
-      { description: 'Palvelut', amount: '5312007' },
-      { description: 'Vuokrat', amount: '1068' },
-      { description: 'Matkamenot', amount: '1000' },
-      { description: 'Muut menot', amount: '9999' }
+      { description: 'Henkilöstömenot', amount: '1301 €' },
+      { description: 'Aineet, tarvikkeet ja tavarat', amount: '1421 €' },
+      { description: 'Laitehankinnat', amount: '2338 €' },
+      { description: 'Palvelut', amount: '5312007 €' },
+      { description: 'Vuokrat', amount: '1068 €' },
+      { description: 'Matkamenot', amount: '1000 €' },
+      { description: 'Muut menot', amount: '9999 €' }
     ]
     const currentValues = await hakijaMuutoshakemusPaatosPage.changedBudgetTableCells()
     expect(sortedFormTable(currentValues)).toEqual(sortedFormTable(budgetExpectedItems))

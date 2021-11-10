@@ -147,18 +147,18 @@ bTest.describe.parallel('budjettimuutoshakemus päätös preview', async () => {
       { description: 'Matkamenot', amount: '100 €' },
       { description: 'Muut menot', amount: '10000000 €' }
     ]
-    const currentValues = await hakemustenArviointiPage.existingBudgetTableCells()
+    const currentValues = await hakemustenArviointiPage.existingBudgetTableCells('.muutoshakemus-paatos__content [data-test-id="meno-input-row"]')
     expect(sortedFormTable(currentValues)).toEqual(sortedFormTable(expectedExistingBudget))
     const expectedChangedBudget = [
-      { description: 'Henkilöstömenot', amount: '200000' },
-      { description: 'Aineet, tarvikkeet ja tavarat', amount: '3001' },
-      { description: 'Laitehankinnat', amount: '9999' },
-      { description: 'Palvelut', amount: '1100' },
-      { description: 'Vuokrat', amount: '160616' },
-      { description: 'Matkamenot', amount: '100' },
-      { description: 'Muut menot', amount: '10000000' }
+      { description: 'Henkilöstömenot', amount: '200000 €' },
+      { description: 'Aineet, tarvikkeet ja tavarat', amount: '3001 €' },
+      { description: 'Laitehankinnat', amount: '9999 €' },
+      { description: 'Palvelut', amount: '1100 €' },
+      { description: 'Vuokrat', amount: '160616 €' },
+      { description: 'Matkamenot', amount: '100 €' },
+      { description: 'Muut menot', amount: '10000000 €' }
     ]
-    expect(sortedFormTable(await hakemustenArviointiPage.changedBudgetTableCells())).toEqual(sortedFormTable(expectedChangedBudget))
+    expect(sortedFormTable(await hakemustenArviointiPage.changedBudgetTableCells('.muutoshakemus-paatos__content [data-test-id="meno-input-row"]'))).toEqual(sortedFormTable(expectedChangedBudget))
     const paatos = await hakemustenArviointiPage.paatosPreviewTalousarvioPaatos()
     expect(paatos).toEqual('Hyväksytään haetut muutokset budjettiin muutettuna')
   })
@@ -175,18 +175,18 @@ bTest.describe.parallel('budjettimuutoshakemus päätös preview', async () => {
       { description: 'Matkamenot', amount: '100 €' },
       { description: 'Muut menot', amount: '10000000 €' }
     ]
-    const currentValues = await hakemustenArviointiPage.existingBudgetTableCells()
+    const currentValues = await hakemustenArviointiPage.existingBudgetTableCells('.muutoshakemus-paatos__content [data-test-id="meno-input-row"]')
     expect(sortedFormTable(currentValues)).toEqual(sortedFormTable(expectedExistingBudget))
     const expectedChangedBudget = [
-      { description: 'Henkilöstömenot', amount: '200100' },
-      { description: 'Aineet, tarvikkeet ja tavarat', amount: '4001' },
-      { description: 'Laitehankinnat', amount: '8999' },
-      { description: 'Palvelut', amount: '100' },
-      { description: 'Vuokrat', amount: '161616' },
-      { description: 'Matkamenot', amount: '0' },
-      { description: 'Muut menot', amount: '10000000' }
+      { description: 'Henkilöstömenot', amount: '200100 €' },
+      { description: 'Aineet, tarvikkeet ja tavarat', amount: '4001 €' },
+      { description: 'Laitehankinnat', amount: '8999 €' },
+      { description: 'Palvelut', amount: '100 €' },
+      { description: 'Vuokrat', amount: '161616 €' },
+      { description: 'Matkamenot', amount: '0 €' },
+      { description: 'Muut menot', amount: '10000000 €' }
     ]
-    expect(sortedFormTable(await hakemustenArviointiPage.changedBudgetTableCells())).toEqual(sortedFormTable(expectedChangedBudget))
+    expect(sortedFormTable(await hakemustenArviointiPage.changedBudgetTableCells('.muutoshakemus-paatos__content [data-test-id="meno-input-row"]'))).toEqual(sortedFormTable(expectedChangedBudget))
     const paatos = await hakemustenArviointiPage.paatosPreviewTalousarvioPaatos()
     expect(paatos).toEqual('Hyväksytään haetut muutokset budjettiin')
   })

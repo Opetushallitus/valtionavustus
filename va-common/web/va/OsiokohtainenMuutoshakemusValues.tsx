@@ -45,28 +45,28 @@ export const OsiokohtainenMuutoshakemusValues = (props: OsiokohtainenMuutoshakem
       </section>
       }
       <section className="osiokohtainen-muutoshakemus__osiot-container">
-
-      {muutoshakemus['haettu-kayttoajan-paattymispaiva'] &&
-      <PaattymispaivaValues muutoshakemus={muutoshakemus}
-                            projectEndDate={projectEndDate}/>}
-      {!!talousarvio.length &&
-      <div>
-        <MuutosTaloudenKayttosuunnitelmaan
-          currentTalousarvio={currentTalousarvio}
-          newTalousarvio={talousarvio}
-          status={muutoshakemus["paatos-status-talousarvio"]}
-          reason={muutoshakemus["talousarvio-perustelut"]}/>
-      </div>
-      }
-      {muutoshakemus['haen-sisaltomuutosta'] && (
-        <SisaltoPaatosValues muutoshakemus={muutoshakemus} />
-      )}
-      {muutoshakemus['paatos-reason'] && (
-        <div className="osiokohtainen-muutoshakemus__accepted-changes">
-          <div className="osiokohtainen-muutoshakemus__sub-title">{t.sisaltomuutos.acceptedChanges}</div>
-          <div>{muutoshakemus['paatos-reason']}</div>
-        </div>
-      )}
+        {muutoshakemus['haettu-kayttoajan-paattymispaiva'] &&
+          <PaattymispaivaValues muutoshakemus={muutoshakemus} projectEndDate={projectEndDate}/>
+        }
+        {!!talousarvio.length &&
+          <div className="osiokohtainen-muutoshakemus__osio-container">
+            <h1 className="osiokohtainen-muutoshakemus__sub-title">{t.muutoshakemus.paatos.budjetti}</h1>
+            <MuutosTaloudenKayttosuunnitelmaan
+              currentTalousarvio={currentTalousarvio}
+              newTalousarvio={talousarvio}
+              status={muutoshakemus["paatos-status-talousarvio"]}
+              reason={muutoshakemus["talousarvio-perustelut"]}/>
+          </div>
+        }
+        {muutoshakemus['haen-sisaltomuutosta'] && (
+          <SisaltoPaatosValues muutoshakemus={muutoshakemus} />
+        )}
+        {muutoshakemus['paatos-reason'] && (
+          <div className="osiokohtainen-muutoshakemus__accepted-changes">
+            <div className="osiokohtainen-muutoshakemus__sub-title">{t.muutoshakemus.paatos.perustelut}</div>
+            <div>{muutoshakemus['paatos-reason']}</div>
+          </div>
+        )}
       </section>
     </React.Fragment>
   )

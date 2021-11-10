@@ -181,12 +181,12 @@ describe('Translations', () => {
         })
 
         it('Current budget title is in swedish', async () => {
-          const title = await getElementInnerText(page, '.currentBudget')
+          const title = await getElementInnerText(page, '[data-test-id="budget-old-title"]')
           expect(title).toBe('Nuvarande budget')
         })
 
         it('Modified new budget title is in swedish', async () => {
-          const title = await getElementInnerText(page, '.modifiedBudget')
+          const title = await getElementInnerText(page, '[data-test-id="budget-change-title"]')
           expect(title).toBe('Ny budget')
         })
 
@@ -232,7 +232,7 @@ describe('Translations', () => {
         })
 
         it('current budged title is displayed to hakija in swedish', async () => {
-          const perustelut = await getElementInnerText(page, '.currentBudget')
+          const perustelut = await getElementInnerText(page, '[data-test-id="budget-old-title"]')
           expect(perustelut).toBe('Nuvarande budget')
         })
 
@@ -258,7 +258,7 @@ describe('Translations', () => {
           })
 
           it('current budget title is in finnish', async () => {
-            const title = await getElementInnerText(page, '.currentBudget')
+            const title = await getElementInnerText(page, '[data-test-id="budget-old-title"]')
             expect(title).toBe('Voimassaoleva budjetti')
           })
 
@@ -329,7 +329,7 @@ fornamn.efternamn@oph.fi
               })
 
               it('old budget title is shown in swedish', async () => {
-                const currentBudgetHeader = await getElementInnerText(page, '.currentBudget')
+                const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="budget-old-title"]')
                 expect(currentBudgetHeader).toEqual('Den tidigare budgeten')
               })
 

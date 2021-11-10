@@ -48,22 +48,24 @@ export function log(...args: any[]) {
   console.log(moment().format('YYYY-MM-DD HH:mm:ss.SSSS'), ...args)
 }
 
-export async function getExistingBudgetTableCells(page: Page, budgetRowSelector:string) {
-  await page.waitForSelector(budgetRowSelector)
-  return await page.$$eval(budgetRowSelector, elements => {
+export async function getExistingBudgetTableCells(page: Page, budgetRowSelector?:string) {
+  const rowSelector = budgetRowSelector || '[data-test-id="meno-input-row"]'
+  await page.waitForSelector(rowSelector)
+  return await page.$$eval(rowSelector, elements => {
     return elements.map(elem => ({
-      description: elem.querySelector('.description')?.textContent ?? '',
-      amount: elem.querySelector(`.existingAmount`)?.textContent ?? ''
+      description: elem.querySelector('.meno-description')?.textContent ?? '',
+      amount: elem.querySelector('[data-test-id="current-value"]')?.textContent ?? ''
     }))
   })
 }
 
-export async function getChangedBudgetTableCells(page: Page, budgetRowSelector: string) {
-  await page.waitForSelector(budgetRowSelector)
-  return await page.$$eval(budgetRowSelector, elements => {
+export async function getChangedBudgetTableCells(page: Page, budgetRowSelector?: string) {
+  const rowSelector = budgetRowSelector || '[data-test-id="meno-input-row"]'
+  await page.waitForSelector(rowSelector)
+  return await page.$$eval(rowSelector, elements => {
     return elements.map(elem => ({
-      description: elem.querySelector('.description')?.textContent ?? '',
-      amount: elem.querySelector(`.changedAmount`)?.textContent ?? ''
+      description: elem.querySelector('.meno-description')?.textContent ?? '',
+      amount: elem.querySelector('[data-test-id="muutoshakemus-value"]')?.textContent ?? ''
     }))
   })
 }

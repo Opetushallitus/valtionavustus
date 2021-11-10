@@ -12,20 +12,19 @@ type MenoRowProps = {
   talousarvio?: { [key: string]: number }
   currentTalousarvio: Talousarvio
   linethrough: boolean
+  odd: boolean
 }
 
-const MenoRow = ({ meno, currentTalousarvio, linethrough }: MenoRowProps) => {
+const MenoRow = ({ meno, currentTalousarvio, linethrough, odd }: MenoRowProps) => {
   const { lang } = useTranslations()
   const currentAmount = currentTalousarvio.find(t => t.type === meno.type)?.amount
-  const amountClass = meno.amount === currentAmount || !linethrough ? '' : 'linethrough'
+  const amountClass = meno.amount === currentAmount || !linethrough ? '' : 'meno-amount--linethrough'
 
   return (
-    <div className="muutoshakemus_talousarvio_row" data-test-id="meno-input-row" data-test-type={meno.type}>
-      <div className="description">{meno[`translation-${lang}`]}</div>
-      <div className="existingAmount"><span className={amountClass}>{currentAmount}</span> €</div>
-      <div className="separator" />
-      <div className="changedAmount" data-test-id="meno-input">{meno.amount}</div>
-      <div className="changedAmountEur">€</div>
+    <div className={`meno-row ${odd ? '' : `meno-row-even`}`} data-test-id="meno-input-row" data-test-type={meno.type}>
+      <div className="meno-description">{meno[`translation-${lang}`]}</div>
+      <div className="meno-amount" data-test-id="current-value"><span className={amountClass}>{currentAmount} €</span></div>
+      <div className="meno-amount" data-test-id="muutoshakemus-value">{meno.amount} €</div>
     </div>
   )
 }
@@ -42,26 +41,21 @@ export const TalousarvioTable = (props: MuutosTaloudenKayttosuunnitelmaanProps &
   const { t } = useTranslations()
   const muutoshakemusSum = newTalousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
   const currentSum = currentTalousarvio.reduce((acc: number, meno: Meno) => acc + meno.amount, 0)
-
   const isAccepted = isAcceptedWithOrWithoutChanges(status)
-  const headerClass = paatos ? 'muutoshakemus-paatos__change-header' : 'muutoshakemus__header'
-  const wrapperClass = paatos ? 'muutoshakemus-paatos__talousarvio' : ''
 
   return (
-    <div className={wrapperClass}>
-      <div className="muutoshakemus_talousarvio" data-accepted={isAccepted ? 'true' : 'false'}>
-        <div className="headerContainer">
-          <h3 className={`${headerClass} currentBudget`}>{t.muutosTaloudenKayttosuunnitelmaan.budget.budgetOriginalTitle(isAccepted)}</h3>
-          <h3 className={headerClass} data-test-id='budget-change-title'>{t.muutosTaloudenKayttosuunnitelmaan.budget.budgetChangeTitle(isAccepted)}</h3>
-        </div>
-        {newTalousarvio.map((meno: Meno) => <MenoRow linethrough={!paatos} meno={meno} key={meno["type"]} currentTalousarvio={currentTalousarvio} />)}
+    <div className="talousarvio" data-accepted={isAccepted ? 'true' : 'false'}>
+      <div className="talousarvio_header">
+        <h4 className="talousarvio_header-column" data-test-id='budget-old-title'>{t.muutosTaloudenKayttosuunnitelmaan.budget.budgetOriginalTitle(isAccepted)}</h4>
+        <h4 className="talousarvio_header-column" data-test-id='budget-change-title'>{t.muutosTaloudenKayttosuunnitelmaan.budget.budgetChangeTitle(isAccepted)}</h4>
       </div>
-      <hr className="muutoshakemus_talousarvio_horizontalSeparator" />
-      <div className="muutoshakemus_talousarvio_row">
-        <div className="existingAmount" data-test-id="current-sum"><b>{currentSum} €</b></div>
-        <div className="separator noborder" />
-        <div className="changedAmount" data-test-id="muutoshakemus-sum"><b>{muutoshakemusSum}</b></div>
-        <div className="changedAmountEur"><b>€</b></div>
+      <div className="talousarvio_rows">
+        {newTalousarvio.map((meno: Meno, idx: number) => <MenoRow linethrough={!paatos} meno={meno} key={meno["type"]} currentTalousarvio={currentTalousarvio} odd={!(idx%2)} />)}
+        <div className={`summary-row ${newTalousarvio.length % 2 ? 'meno-row-even' : ''}`}>
+          <div className="meno-description" />
+          <div className="meno-amount" data-test-id="current-sum">{currentSum} €</div>
+          <div className="meno-amount" data-test-id="muutoshakemus-sum">{muutoshakemusSum} €</div>
+        </div>
       </div>
     </div>
   )
@@ -75,7 +69,7 @@ export const MuutosTaloudenKayttosuunnitelmaan = (props: MuutosTaloudenKayttosuu
     <React.Fragment>
       <TalousarvioTable {...props} />
       <div className="muutoshakemus-row">
-        <h4 className="muutoshakemus__header" data-test-id="reasoning-title">{t.muutosTaloudenKayttosuunnitelmaan.applicantReasoning}</h4>
+        <h4 className="osiokohtainen-muutoshakemus__header" data-test-id="reasoning-title">{t.muutosTaloudenKayttosuunnitelmaan.applicantReasoning}</h4>
         <div className="muutoshakemus-description-box" data-test-id="muutoshakemus-talousarvio-perustelu">{reason}</div>
       </div>
       {status && (

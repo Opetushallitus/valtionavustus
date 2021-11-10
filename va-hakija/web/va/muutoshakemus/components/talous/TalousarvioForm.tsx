@@ -34,8 +34,8 @@ const MenoRow = ({ f, meno, lang }: { f: FormikHook, meno: Meno, lang: Language 
 
   return (
     <div className="muutoshakemus_talousarvio_row" data-test-id="meno-input-row">
-      <div className="description">{meno[`translation-${lang}`]}</div>
-      <div className="existingAmount"><span className={amountClass}>{meno.amount}</span> €</div>
+      <div className="description meno-description">{meno[`translation-${lang}`]}</div>
+      <div className="existingAmount" data-test-id="current-value"><span className={amountClass}>{meno.amount}</span> €</div>
       <div className="separator" />
       <div className="changedAmount" data-test-id="meno-input">
         <input name={name} className={inputClass} type="number" onChange={handleChange} onBlur={f.handleBlur} value={value} min={0} />

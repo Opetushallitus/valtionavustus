@@ -108,8 +108,8 @@ describe('Talousarvion muuttaminen', () => {
     await page.waitForSelector(budgetRowSelector)
     const budgetRows = await page.$$eval(budgetRowSelector, elements => {
       return elements.map(elem => ({
-        description: elem.querySelector('.description')?.textContent || '',
-        amount: elem.querySelector(`.existingAmount`)?.textContent || ''
+        description: elem.querySelector('.meno-description')?.textContent || '',
+        amount: elem.querySelector(`[data-test-id="current-sum"]`)?.textContent || ''
       }))
     })
     expect(sortedFormTable(budgetRows)).toEqual(sortedFormTable(expectedBudget))
@@ -119,8 +119,8 @@ describe('Talousarvion muuttaminen', () => {
     await page.waitForSelector(budgetRowSelector)
     const budgetRows = await page.$$eval(budgetRowSelector, elements => {
       return elements.map(elem => ({
-        description: elem.querySelector('.description')?.textContent || '',
-        amount: elem.querySelector(`.changedAmount`)?.textContent || ''
+        description: elem.querySelector('.meno-description')?.textContent || '',
+        amount: elem.querySelector(`[data-test-id="muutoshakemus-sum"]`)?.textContent || ''
       }))
     })
     expect(sortedFormTable(budgetRows)).toEqual(sortedFormTable(expectedBudget))
@@ -236,8 +236,8 @@ describe('Talousarvion muuttaminen', () => {
       }
 
       async function getNewHakemusBudget(type: 'current' | 'muutoshakemus'): Promise<BudgetAmount> {
-        const numberFieldSelector = type === 'current' ? '[class="existingAmount"] span' : '[class="changedAmount"][data-test-id="meno-input"]'
-        const budgetRows = await page.$$eval('[data-test-class="existing-muutoshakemus"][data-test-state="new"] [data-test-id="meno-input-row"]', (elements, inputSelector) => {
+        const numberFieldSelector = type === 'current' ? '[data-test-id="current-value"]' : '[data-test-id="muutoshakemus-value"]'
+        const budgetRows = await page.$$eval('[data-test-class="existing-muutoshakemus"][data-test-state="new"] [class="talousarvio-rows"]', (elements, inputSelector) => {
           return elements.map(elem => ({
             name: elem.getAttribute('data-test-type')?.replace('-costs-row', '') || '',
             amount: elem.querySelector(inputSelector as string)?.innerHTML || ''
@@ -261,7 +261,7 @@ describe('Talousarvion muuttaminen', () => {
       })
 
       it('Current budged title is displayed to hakija', async () => {
-        const perustelut = await getElementInnerText(page, '.currentBudget')
+        const perustelut = await getElementInnerText(page, '[data-test-id="budget-old-title"]')
         expect(perustelut).toBe('Voimassaoleva budjetti')
       })
 
@@ -354,7 +354,7 @@ describe('Talousarvion muuttaminen', () => {
 
 
           it('budget is shown as a decision instead of a muutoshakemus', async () => {
-            const currentBudgetHeader = await getElementInnerText(page, '.currentBudget')
+            const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="budget-old-title"]')
             expect(currentBudgetHeader).toEqual('Vanha budjetti')
           })
 
@@ -386,7 +386,7 @@ describe('Talousarvion muuttaminen', () => {
           })
 
           it('two muutoshakemuses are visible to hakija', async () => {
-            expect(await countElements(page, '[class="muutoshakemus_talousarvio"]')).toBe(2)
+            expect(await countElements(page, '.talousarvio')).toBe(2)
           })
 
           it('muutoshakemus #2 is in read-only state', async () => {
@@ -400,19 +400,13 @@ describe('Talousarvion muuttaminen', () => {
             })
 
             it('budget is shown as a decision instead of a muutoshakemus', async () => {
-              const currentBudgetHeader = await getElementInnerText(page, '.currentBudget')
+              const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="budget-old-title"]')
               expect(currentBudgetHeader).toEqual('Vanha budjetti')
             })
 
             it('budget is shown as approved', async () => {
               const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="budget-change-title"]')
               expect(currentBudgetHeader).toEqual('Hyväksytty uusi budjetti')
-            })
-
-            it('Budget changes are not displayed as linethrough', async () => {
-              const existingAmount = await page.waitForSelector('[data-test-type="personnel-costs-row"] [class="existingAmount"] span', { visible: true })
-              const textDecoration = await page.evaluate(e => getComputedStyle(e).textDecorationLine, existingAmount)
-              expect(textDecoration).toBe('none')
             })
           })
 
@@ -421,14 +415,8 @@ describe('Talousarvion muuttaminen', () => {
               await navigateToNthMuutoshakemus(page, avustushakuID, hakemusID, 2)
             })
 
-            it('Budget changes are displayed as linethrough', async () => {
-              const existingAmount = await page.waitForSelector('[data-test-type="personnel-costs-row"] [class="existingAmount"] span', { visible: true })
-              const textDecoration = await page.evaluate(e => getComputedStyle(e).textDecorationLine, existingAmount)
-              expect(textDecoration).toBe('line-through')
-            })
-
             it('Current budget is shown as muutoshakemus', async () => {
-              const currentBudgetHeader = await getElementInnerText(page, '.currentBudget')
+              const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="budget-old-title"]')
               expect(currentBudgetHeader).toEqual('Voimassaoleva budjetti')
             })
 
@@ -446,10 +434,10 @@ describe('Talousarvion muuttaminen', () => {
             }, twoMinutes)
 
             it('budget is shown as a muutoshakemus instead of a decision', async () => {
-              const currentBudgetHeader = await getElementInnerText(page, '.currentBudget')
+              const currentBudgetHeader = await getElementInnerText(page, '[data-test-id="budget-old-title"]')
               expect(currentBudgetHeader).toEqual('Voimassaoleva budjetti')
-              const existingAmount = await page.waitForSelector('[data-test-type="personnel-costs-row"] [class="existingAmount"] span', { visible: true })
-              const textDecoration = await page.evaluate(e => getComputedStyle(e).textDecorationLine, existingAmount)
+              const currentAmount = await page.waitForSelector('[data-test-type="personnel-costs-row"] [data-test-id="current-value"]', { visible: true })
+              const textDecoration = await page.evaluate(e => getComputedStyle(e).textDecorationLine, currentAmount)
               expect(textDecoration).toBe('line-through')
             })
 

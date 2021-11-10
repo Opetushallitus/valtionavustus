@@ -17,7 +17,6 @@ import {
 } from "../utils/budget";
 
 const jatkoaikaSelector = '[data-test-id=muutoshakemus-jatkoaika]' as const
-const budgetRowSelector = '.muutoshakemus-paatos__content [data-test-id=meno-input-row]' as const
 
 export class HakemustenArviointiPage {
   readonly  page: Page
@@ -293,12 +292,12 @@ export class HakemustenArviointiPage {
     await this.page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
   }
 
-  async existingBudgetTableCells() {
-    return await getExistingBudgetTableCells(this.page, budgetRowSelector)
+  async existingBudgetTableCells(selector?: string) {
+    return await getExistingBudgetTableCells(this.page, selector)
   }
 
-  async changedBudgetTableCells() {
-    return await getChangedBudgetTableCells(this.page, budgetRowSelector)
+  async changedBudgetTableCells(selector?: string) {
+    return await getChangedBudgetTableCells(this.page, selector)
   }
 
 }

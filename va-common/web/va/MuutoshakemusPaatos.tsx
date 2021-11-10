@@ -35,10 +35,10 @@ const Muutospaatos: React.FC<{osio: PaatosOsio; paatosStatus: MuutoshakemusStatu
     <section className="muutoshakemus-paatos__section muutoshakemus-paatos__section-paatos">
       <div className="muutoshakemus-paatos__section-container">
         <div data-test-id="muutospaatos-asia-title" className="muutoshakemus-paatos__title">{t.muutoshakemus.paatos.haettuMuutos}</div>
-        <div data-test-id="muutospaatos-asia-content">
+        <div className="muutoshakemus-paatos__section-content" data-test-id="muutospaatos-asia-content">
           {children}
         </div>
-        </div>
+      </div>
       <div data-test-id={`${osio}-container`} className="muutoshakemus-paatos__section-container">
         <div data-test-id="muutospaatos-asia-title" className="muutoshakemus-paatos__title">{t.muutoshakemus.paatos.paatos}</div>
         <OsioPaatos osio={osio} paatosStatus={paatosStatus} color="darker" />

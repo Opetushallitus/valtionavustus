@@ -4,8 +4,6 @@ import {
   getExistingBudgetTableCells, textContent,
 } from "../utils/util";
 
-const budgetRowSelector = '.muutoshakemus-paatos__content [data-test-id=meno-input-row]'
-
 export class HakijaMuutoshakemusPaatosPage {
   readonly page: Page
 
@@ -22,7 +20,7 @@ export class HakijaMuutoshakemusPaatosPage {
   }
 
   async currentBudgetTitle() {
-    return await textContent(this.page,'.currentBudget')
+    return await textContent(this.page,'[data-test-id="budget-old-title"]')
   }
 
   async currentBudgetHeader() {
@@ -50,11 +48,11 @@ export class HakijaMuutoshakemusPaatosPage {
   }
 
   async existingBudgetTableCells() {
-    return await getExistingBudgetTableCells(this.page, budgetRowSelector)
+    return await getExistingBudgetTableCells(this.page)
   }
 
   async changedBudgetTableCells() {
-    return await getChangedBudgetTableCells(this.page, budgetRowSelector)
+    return await getChangedBudgetTableCells(this.page)
   }
 
   async jatkoaikaPaatos() {
