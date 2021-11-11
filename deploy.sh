@@ -61,6 +61,7 @@ function stop_system_under_test () {
 trap stop_systems_under_test EXIT
 
 function build_docker_images {
+  docker build -t "rcs-fakesmtp:latest" -f ./Dockerfile.rcs-fakesmtp ./
   docker build -t "va-virkailija:latest" -f ./Dockerfile.virkailija ./
   docker build -t "va-hakija:latest" -f ./Dockerfile.hakija ./
   docker build -t "playwright-test-runner:latest" -f ./Dockerfile.playwright-test-runner ./
