@@ -143,9 +143,13 @@
 
                            (partial render (get-in mail-templates [:muutoshakemus-paatos lang])))))
 
+(defn- generate-avustushaku-url [avustushaku-id]
+  (str (-> config :server :virkailija-url)
+       "/avustushaku/" avustushaku-id "/"))
+
 (defn- to-loppuselvitys-asiatarkastamatta [loppuselvitys]
-  {:project-name (:project-name loppuselvitys)
-   :link         (email/generate-virkailija-url (:avustushaku loppuselvitys) (:hakemus loppuselvitys))})
+  {:link (generate-avustushaku-url (:avustushaku loppuselvitys))
+   :count (:hakemus-count loppuselvitys)})
 
 (defn send-loppuselvitys-asiatarkastamatta [to loppuselvitys-list]
   (let [lang     (keyword "fi")

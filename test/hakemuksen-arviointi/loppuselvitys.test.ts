@@ -139,7 +139,7 @@ describe("Loppuselvitys", () => {
       expect(emails.length).toEqual(oldEmailCount + 1)
       const loppuselvitysAsiatarkastamattaNotification = emails.pop()
       expect(loppuselvitysAsiatarkastamattaNotification?.subject).toEqual('Asiatarkastamattomia loppuselvityksiä')
-      expect(loppuselvitysAsiatarkastamattaNotification?.formatted).toContain(`- Rahassa kylpijät Ky Ay Oy: ${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+      expect(loppuselvitysAsiatarkastamattaNotification?.formatted).toContain(`- Loppuselvityksiä 1 kpl: ${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/`)
     })
 
     describe('virkailija verifies loppuselvitys information', () => {
@@ -183,7 +183,7 @@ describe("Loppuselvitys", () => {
         if (emails.length === oldEmailCount + 1) { // if user _ valtionavustus has other submitted loppuselvitys
           const loppuselvitysAsiatarkastamattaNotification = emails.pop()
           expect(loppuselvitysAsiatarkastamattaNotification?.subject).toEqual('Asiatarkastamattomia loppuselvityksiä')
-          expect(loppuselvitysAsiatarkastamattaNotification?.formatted).not.toContain(`- Rahassa kylpijät Ky Ay Oy: ${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
+          expect(loppuselvitysAsiatarkastamattaNotification?.formatted).not.toContain(`- Loppuselvityksiä 1 kpl: ${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/`)
         } else {
           expect(emails.length).toEqual(oldEmailCount)
         }
