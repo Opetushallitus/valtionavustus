@@ -14,4 +14,6 @@
          :bounce-address "valtionavustukset@oph.fi"
          :retry-initial-wait 2000
          :retry-multiplier 4
-         :retry-max-time 60000}}
+         :retry-max-time 60000}
+ :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? true}
+}

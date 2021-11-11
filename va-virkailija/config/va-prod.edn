@@ -26,4 +26,6 @@
                            :interval-minutes 15}
  :contact-person-name-in-pitkaviite {:enabled? true}
  :tasmaytysraportti-create {:enabled? true}
- :tasmaytysraportti-send {:enabled? true}}
+ :tasmaytysraportti-send {:enabled? true}
+ :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? true}
+}
