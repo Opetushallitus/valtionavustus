@@ -100,8 +100,8 @@ services:
         mode: 'non-blocking'
 
   fakesmtp:
-    image: munkyboy/fakesmtp
-    container_name: fakesmtp
+    image: rcs-fakesmtp
+    container_name: rcs-fakesmtp
     hostname: fakesmtp
     networks:
       - subnet-private
