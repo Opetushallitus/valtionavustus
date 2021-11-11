@@ -251,7 +251,7 @@ describe("Puppeteer tests", () => {
         expect(await textContent(page, '[name="applicant-info-label-fi"]')).toEqual('Muokattu väliselvitys')
 
         await clickElement(page, '[data-test-id="loppuselvitys-välilehti"]')
-        await page.waitForSelector('#loppuselvitysUpdatedAt')
+        await page.waitForSelector('[data-test-id="loppuselvitys-ohje"]')
         expect(await textContent(page, '[name="applicant-info-label-fi"]')).toEqual('Muokattu loppuselvitys')
       })
 
@@ -262,7 +262,7 @@ describe("Puppeteer tests", () => {
 
         await waitForElementWithText(page, 'span', 'Loppuselvitys')
         await clickElement(page, '[data-test-id="loppuselvitys-välilehti"]')
-        await page.waitForSelector('#loppuselvitysUpdatedAt')
+        await page.waitForSelector('[data-test-id="loppuselvitys-ohje"]')
         await clearAndType(page, '[name="applicant-info-label-fi"]', 'Uudelleen muokattu loppuselvitys')
         await clickElementWithText(page, 'button', 'Tallenna')
 
@@ -270,7 +270,7 @@ describe("Puppeteer tests", () => {
         expect(await textContent(page, '[name="applicant-info-label-fi"]')).toEqual('Muokattu väliselvitys')
 
         await clickElement(page, '[data-test-id="loppuselvitys-välilehti"]')
-        await page.waitForSelector('#loppuselvitysUpdatedAt')
+        await page.waitForSelector('[data-test-id="loppuselvitys-ohje"]')
         expect(await textContent(page, '[name="applicant-info-label-fi"]')).toEqual('Muokattu loppuselvitys')
       })
     })
