@@ -9,7 +9,6 @@ import {
   getAcceptedPäätösEmails,
   getFirstPage,
   setPageErrorConsoleLogger,
-  selectVakioperusteluInFinnish,
   clickElement,
   getElementInnerText,
   clearAndType,
@@ -18,7 +17,8 @@ import {
   BudgetAmount,
   defaultBudget,
   createRandomHakuValues,
-  setupTestLogging, saveMuutoshakemus, typePerustelu,
+  setupTestLogging,
+  typePerustelu,
 } from '../test-util'
 import {
   fillOsiotAndSendMuutoshakemusDecision,
@@ -37,7 +37,6 @@ const twoMinutes = 120000
 jest.setTimeout(30000)
 
 type TalousarvioFormInputs = Array<{ name: string, amount: number }>
-type TalousarvioFormTable = Array<{ description: string, amount: string }>
 
 export const answers = {
   contactPersonEmail: "erkki.esimerkki@example.com",
@@ -97,32 +96,6 @@ describe('Talousarvion muuttaminen', () => {
       }))
     })
     expect(sortedInputFields(budgetRows)).toEqual(sortedInputFields(expectedBudget))
-  }
-
-  const sortedFormTable = (budgetList: TalousarvioFormTable) => {
-    return [...budgetList].sort((a, b) => a.description < b.description ? 1 : -1)
-  }
-
-  async function validateExistingBudgetTableCells(budgetRowSelector: string, expectedBudget: TalousarvioFormTable) {
-    await page.waitForSelector(budgetRowSelector)
-    const budgetRows = await page.$$eval(budgetRowSelector, elements => {
-      return elements.map(elem => ({
-        description: elem.querySelector('.meno-description')?.textContent || '',
-        amount: elem.querySelector(`[data-test-id="current-sum"]`)?.textContent || ''
-      }))
-    })
-    expect(sortedFormTable(budgetRows)).toEqual(sortedFormTable(expectedBudget))
-  }
-
-  async function validateChangedBudgetTableCells(budgetRowSelector: string, expectedBudget: TalousarvioFormTable) {
-    await page.waitForSelector(budgetRowSelector)
-    const budgetRows = await page.$$eval(budgetRowSelector, elements => {
-      return elements.map(elem => ({
-        description: elem.querySelector('.meno-description')?.textContent || '',
-        amount: elem.querySelector(`[data-test-id="muutoshakemus-sum"]`)?.textContent || ''
-      }))
-    })
-    expect(sortedFormTable(budgetRows)).toEqual(sortedFormTable(expectedBudget))
   }
 
   describe("When virkailija accepts hakemus without menoluokat", () => {
