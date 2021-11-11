@@ -23,6 +23,7 @@
          :va-code-values (:va-code-values config)
          :loppuselvitys-verification (:loppuselvitys-verification config)
          :allow-overriding-feature-flag-from-url-params (:allow-overriding-feature-flag-from-url-params config)
+         :dont-send-loppuselvityspyynto-to-virkailija (:dont-send-loppuselvityspyynto-to-virkailija config)
          :selvitys-limit (:selvitys-limit config)}
         opintopolku (:opintopolku config)]
     (if-let [opintopolku-url (:url opintopolku)]

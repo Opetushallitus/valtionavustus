@@ -12,4 +12,5 @@ export type EnvironmentApiResponse = {
   "loppuselvitys-verification": FeatureFlag
   reports: FeatureFlag
   "allow-overriding-feature-flag-from-url-params"?: FeatureFlag
+  "dont-send-loppuselvityspyynto-to-virkailija"?: FeatureFlag
 }
