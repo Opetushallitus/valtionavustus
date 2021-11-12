@@ -33,6 +33,7 @@ session="valtionavustus"
 tmux kill-session -t $session || true
 tmux start-server
 export JAVA_HOME
+export JAVA_CMD="${JAVA_CMD:-$JAVA_HOME/bin/java}"
 tmux new-session -d -s $session
 
 tmux splitw -h
