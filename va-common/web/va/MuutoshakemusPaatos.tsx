@@ -70,11 +70,11 @@ const JatkoaikaPaatosSection = ({status, paattymispaiva, projectEndDate}: {statu
       <div className="muutoshakemus-paatos__jatkoaika">
         <div>
           <h3 className="muutoshakemus-paatos__change-header" data-test-id="h-old-end-date">{t.muutoshakemus.previousProjectEndDate}</h3>
-          <div data-test-id="paatos-project-end">{projectEndDate}</div>
+          <div className="osiokohtainen-muutoshakemus__date" data-test-id="paatos-project-end">{projectEndDate}</div>
         </div>
         <div>
           <h3 className="muutoshakemus-paatos__change-header" data-test-id="h-new-end-date">{t.muutoshakemus.acceptedChange}</h3>
-          <div data-test-id="paattymispaiva-value">{moment(paattymispaiva).format(fiShortFormat)}</div>
+          <div className="osiokohtainen-muutoshakemus__date" data-test-id="paattymispaiva-value">{moment(paattymispaiva).format(fiShortFormat)}</div>
         </div>
       </div>
     </Muutospaatos>
