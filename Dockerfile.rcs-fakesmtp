@@ -1,11 +1,8 @@
 FROM openjdk:8
 
-RUN git clone https://github.com/Nilhcem/FakeSMTP.git
-RUN apt update
-RUN apt install maven -y
-WORKDIR /FakeSMTP
-RUN mvn package -X
+ADD https://nilhcem.github.io/FakeSMTP/downloads/fakeSMTP-latest.zip /fakeSMTP-latest.zip
+RUN unzip /fakeSMTP-latest.zip
 VOLUME ["/var/mail"]
 EXPOSE 25
 
-ENTRYPOINT ["java","-jar","target/fakeSMTP-2.1-SNAPSHOT.jar","--background", "--output-dir", "/var/mail", "--port", "25", "--start-server"]
+ENTRYPOINT ["java","-jar","/fakeSMTP-2.0.jar","--background", "--output-dir", "/var/mail", "--port", "25", "--start-server"]
