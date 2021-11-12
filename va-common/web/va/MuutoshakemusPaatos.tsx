@@ -41,7 +41,7 @@ const Muutospaatos: React.FC<{osio: PaatosOsio; paatosStatus: MuutoshakemusStatu
       </div>
       <div data-test-id={`${osio}-container`} className="muutoshakemus-paatos__section-container">
         <div data-test-id="muutospaatos-asia-title" className="muutoshakemus-paatos__title">{t.muutoshakemus.paatos.paatos}</div>
-        <OsioPaatos osio={osio} paatosStatus={paatosStatus} color="darker" />
+        <OsioPaatos osio={osio} paatosStatus={paatosStatus} />
       </div>
     </section>
   )
