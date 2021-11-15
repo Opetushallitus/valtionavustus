@@ -17,7 +17,8 @@ import {
 } from './test-util'
 import {
   Answers,
-  fillAndSendMuutoshakemusDecision, navigateToLatestMuutoshakemus,
+  fillOsiotAndSendMuutoshakemusDecision,
+  navigateToLatestMuutoshakemus,
   parseMuutoshakemusPaatosFromEmails,
   ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat,
 } from './muutoshakemus/muutospaatosprosessi-util'
@@ -265,7 +266,17 @@ describe('Translations', () => {
           describe('And accepts muutoshakemus #1 changes', () => {
             beforeAll(async () => {
               await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
-              await fillAndSendMuutoshakemusDecision(page, 'accepted_with_changes', '01.01.2099', acceptedBudget)
+              await fillOsiotAndSendMuutoshakemusDecision(page, {
+                budget: {
+                  status: 'accepted_with_changes',
+                  value: acceptedBudget
+                },
+                jatkoaika: {
+                  status: 'accepted_with_changes',
+                  value: '01.01.2099'
+                },
+                selectVakioperustelu: true
+              })
             })
 
             describe('And hakija receives an email', () => {

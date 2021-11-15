@@ -380,16 +380,6 @@ export async function navigateToNthMuutoshakemus(page: Page, avustushakuID: numb
   await page.waitForSelector('[data-test-id="muutoshakemus-sisalto"]')
 }
 
-export async function fillAndSendMuutoshakemusDecision(page: Page, status?: 'accepted' | 'accepted_with_changes' | 'rejected', jatkoaika?: string, budget?: BudgetAmount) {
-  const selectedStatus = status ?? 'accepted'
-  await clickElement(page, `label[for="${selectedStatus}"]`)
-  jatkoaika && await setCalendarDate(page, jatkoaika)
-  budget && await fillMuutoshakemusBudgetAmount(page, budget)
-  await selectVakioperusteluInFinnish(page)
-  await saveMuutoshakemus(page)
-}
-
-
 export async function setMuutoshakemusJatkoaikaDecision(page: Page, status: PaatosStatus, value?: string) {
   if (status) {
     await clickElement(page, `label[for="haen-kayttoajan-pidennysta-${status}"]`)
