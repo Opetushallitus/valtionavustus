@@ -3,57 +3,40 @@ import React from 'react'
 import { getNestedInputErrorClass } from 'va-common/web/va/formikHelpers'
 import { Meno, Talousarvio, TalousarvioValues } from 'va-common/web/va/types/muutoshakemus'
 import {
-  MuutoshakemusPaatosFormValues,
-  OsiokohtainenMuutoshakemusPaatosFormValues
+  MuutoshakemusPaatosFormValues
 } from "./hakemusTypes"
 
 import 'va-common/web/va/muutoshakemus/talous.less'
 
 interface TalousarvioAcceptWithChangesFormProps {
-  f: MuutoshakemusPaatosFormValues | OsiokohtainenMuutoshakemusPaatosFormValues
+  f: MuutoshakemusPaatosFormValues
   talousarvio: Talousarvio
   requestedTalousarvio: Talousarvio
 }
-
-const isOsiokohtainen = (f: MuutoshakemusPaatosFormValues | OsiokohtainenMuutoshakemusPaatosFormValues): f is OsiokohtainenMuutoshakemusPaatosFormValues =>
-  !!f.values.talousarvio && 'status' in f.values.talousarvio
 
 const calculateCurrentSum = (talousarvio: TalousarvioValues): number => {
   return Object.keys(talousarvio).reduce((acc, cur) => (cur !== 'currentSum' && cur !== 'originalSum') ? acc + talousarvio[cur] : acc, 0)
 }
 
-const getMenoValues = (f: MuutoshakemusPaatosFormValues | OsiokohtainenMuutoshakemusPaatosFormValues, meno: Meno) => {
-  if (isOsiokohtainen(f)) {
-    return {
-      inputClass: getNestedInputErrorClass(f, ['talousarvio', 'talousarvio', meno.type]),
-      value: f.values.talousarvio?.talousarvio?.[meno.type]
-    }
-  }
+const getMenoValues = (f: MuutoshakemusPaatosFormValues, meno: Meno) => {
   return {
-    inputClass: getNestedInputErrorClass(f, ['talousarvio', meno.type]),
-    value: f.values.talousarvio?.[meno.type]
+    inputClass: getNestedInputErrorClass(f, ['talousarvio', 'talousarvio', meno.type]),
+    value: f.values.talousarvio?.talousarvio?.[meno.type]
   }
 }
 
-const MenoRow = ({ f, meno, requestedTalousarvio }: { f: MuutoshakemusPaatosFormValues | OsiokohtainenMuutoshakemusPaatosFormValues, meno: Meno, requestedTalousarvio: Talousarvio }) => {
+const MenoRow = ({ f, meno, requestedTalousarvio }: { f: MuutoshakemusPaatosFormValues, meno: Meno, requestedTalousarvio: Talousarvio }) => {
   const name = `talousarvio.${meno.type}`
   const {inputClass, value} = getMenoValues(f, meno)
   const amountClass = value === meno.amount ? '' : 'linethrough'
   const requestedAmount = requestedTalousarvio.find(m => m.type === meno.type)?.amount
 
   const handleChange = (e) => {
-    if (isOsiokohtainen(f)) {
-      const value = parseInt(e.target.value)
-      const valueIsNaN = isNaN(value)
-      f.setFieldValue(`talousarvio.${name}`,  valueIsNaN ? '' : value)
-      if (f.values.talousarvio?.talousarvio && !valueIsNaN) {
-        f.setFieldValue('talousarvio.talousarvio.currentSum', calculateCurrentSum({ ...f.values.talousarvio.talousarvio, [meno.type]: value }))
-      }
-    } else {
-      f.handleChange(e)
-      if (f.values.talousarvio && !isNaN(parseInt(e.target.value))) {
-        f.setFieldValue('talousarvio.currentSum', calculateCurrentSum({ ...f.values.talousarvio, [meno.type]: parseInt(e.target.value) }))
-      }
+    const value = parseInt(e.target.value)
+    const valueIsNaN = isNaN(value)
+    f.setFieldValue(`talousarvio.${name}`,  valueIsNaN ? '' : value)
+    if (f.values.talousarvio?.talousarvio && !valueIsNaN) {
+      f.setFieldValue('talousarvio.talousarvio.currentSum', calculateCurrentSum({ ...f.values.talousarvio.talousarvio, [meno.type]: value }))
     }
   }
 
@@ -74,16 +57,11 @@ const MenoRow = ({ f, meno, requestedTalousarvio }: { f: MuutoshakemusPaatosForm
 }
 
 export const TalousarvioAcceptWithChangesForm = ({ f, talousarvio, requestedTalousarvio }: TalousarvioAcceptWithChangesFormProps) => {
-  const currentSumError = isOsiokohtainen(f)
   // @ts-ignore Formik provides incorrect error type
-   ? f.errors.talousarvio?.talousarvio?.currentSum
-  // @ts-ignore Formik provides incorrect error type
-   : f.errors.talousarvio?.currentSum
+  const currentSumError = f.errors.talousarvio?.talousarvio?.currentSum
   const currentSumErrorClass = currentSumError ? 'currentSumError' : ''
   const currentSumErrorElem = currentSumError && <span className="muutoshakemus__error">{currentSumError}</span>
-  const {originalSum, currentSum} = isOsiokohtainen(f)
-    ? f.values.talousarvio?.talousarvio ?? {}
-    : f.values.talousarvio ?? {}
+  const {originalSum, currentSum} = f.values.talousarvio?.talousarvio ?? {}
   return (
     <React.Fragment>
       <div className="muutoshakemus_talousarvio_row">

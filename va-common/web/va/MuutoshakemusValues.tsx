@@ -1,16 +1,15 @@
 import React from 'react'
 import moment from 'moment'
 
-import { Muutoshakemus as MuutoshakemusStatuses } from './status'
 import { MuutosTaloudenKayttosuunnitelmaan } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
+import {MuutoshakemusSection} from "./MuutoshakemusSection";
+import {isAcceptedWithChanges} from "./Muutoshakemus";
+import {OsioPaatos} from "./OsioPaatos";
 import { Muutoshakemus, Talousarvio } from './types/muutoshakemus'
 import { useTranslations } from "./i18n/TranslationContext"
 import { fiLongFormat, parseDateStringToMoment } from 'va-common/web/va/i18n/dateformat'
 
 import './MuutoshakemusValues.less'
-import {MuutoshakemusSection} from "./MuutoshakemusSection";
-import {isAcceptedWithChanges} from "./Muutoshakemus";
-import {OsioPaatos} from "./OsioPaatos";
 
 export const datetimeFormat = 'D.M.YYYY [klo] HH.mm'
 
@@ -18,12 +17,11 @@ type MuutoshakemusValuesProps = {
   currentTalousarvio: Talousarvio
   muutoshakemus: Muutoshakemus
   hakijaUrl?: string
-  simplePaatos: boolean
   projectEndDate?: string
 }
 
 export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
-  const { currentTalousarvio, muutoshakemus, hakijaUrl, simplePaatos, projectEndDate } = props
+  const { currentTalousarvio, muutoshakemus, hakijaUrl, projectEndDate } = props
   const { t } = useTranslations()
   const a = muutoshakemus
   const paatosUrl = `${hakijaUrl}muutoshakemus/paatos?user-key=${a['paatos-user-key']}`
@@ -31,20 +29,7 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
   const hasAnyPaatos = !!muutoshakemus["paatos-status-jatkoaika"] || !!muutoshakemus["paatos-status-talousarvio"] || !!muutoshakemus["paatos-status-sisaltomuutos"]
   return (
     <React.Fragment>
-      {simplePaatos && a.status !== undefined && a.status !== 'new' &&
-        <section className="muutoshakemus-section"
-                 data-test-id="muutoshakemus-paatos">
-          <h1 className="muutoshakemus__paatos-status">
-                  <span
-                    className={`muutoshakemus__paatos-icon muutoshakemus__paatos-icon--${a.status}`}>
-                    <span
-                      data-test-id="paatos-status-text">{MuutoshakemusStatuses.statusToFI(a.status)}</span>
-                    {a['paatos-created-at'] && ` ${moment(a['paatos-created-at']).format(datetimeFormat)}`}
-                  </span>
-          </h1>
-        </section>
-      }
-      {hasAnyPaatos && !simplePaatos &&
+      {hasAnyPaatos &&
         <section className="muutoshakemus-section"
                data-test-id="muutoshakemus-paatos">
             <div className="muutoshakemus__paatos">

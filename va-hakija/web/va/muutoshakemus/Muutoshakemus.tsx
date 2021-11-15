@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useState } from 'react'
 import moment from 'moment'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import { OsiokohtainenMuutoshakemusValues } from 'va-common/web/va/OsiokohtainenMuutoshakemusValues'
+import { MuutoshakemusValues } from 'va-common/web/va/MuutoshakemusValues'
 import { Muutoshakemus, MuutoshakemusProps } from 'va-common/web/va/types/muutoshakemus'
 import { getProjectEndDate, getProjectEndMoment, getTalousarvio, getTalousarvioValues } from 'va-common/web/va/Muutoshakemus'
 import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
@@ -89,15 +89,15 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
     fetchMuutoshakemukset()
   }, [f.status])
 
-  const existingOsiokohtainenMuutoshakemus = (m: Muutoshakemus, index: number, allMuutoshakemus: Muutoshakemus[]) => {
+  const existingMuutoshakemus = (m: Muutoshakemus, index: number, allMuutoshakemus: Muutoshakemus[]) => {
     const projectEndDate = getProjectEndDate(state.avustushaku, allMuutoshakemus, m)
     const topic = `${t.muutoshakemus.title} ${moment(m['created-at']).format(fiShortFormat)}`
     const waitingForDecision = m.status === 'new' ? ` - ${t.waitingForDecision}` : ''
     return (
-      <MuutoshakemusSection className="osiokohtainen-existing-muutoshakemus__section" data-test-class="existing-muutoshakemus" data-test-state={m.status} key={index}>
-        <div className="osiokohtainen-existing-muutoshakemus__title">{`${topic}${waitingForDecision}`}</div>
-        <div className="osiokohtainen-existing-muutoshakemus__form">
-          <OsiokohtainenMuutoshakemusValues
+      <MuutoshakemusSection data-test-class="existing-muutoshakemus" data-test-state={m.status} key={index}>
+        <div className="existing-muutoshakemus__title" data-test-id="existing-muutoshakemus-title">{`${topic}${waitingForDecision}`}</div>
+        <div className="existing-muutoshakemus__form">
+          <MuutoshakemusValues
             currentTalousarvio={getTalousarvio(allMuutoshakemus, state.hakemus?.talousarvio, m)}
             muutoshakemus={m}
             hakijaUrl={state.environment?.['hakija-server'].url[lang]}
@@ -125,7 +125,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
           />
           {!existingNewMuutoshakemus && (
             <>
-              <h2 className="osiokohtainen-muutoshakemus__sub-title">{t.applicationEdit.title}</h2>
+              <h2 className="muutoshakemus__sub-title">{t.applicationEdit.title}</h2>
               <div >
                 <MuutoshakemusFormSection f={f} name="haenSisaltomuutosta" title={t.sisaltomuutos.checkboxTitle}>
                   <PerustelutTextArea f={f} name='sisaltomuutosPerustelut' title={t.sisaltomuutos.title} />
@@ -142,7 +142,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
             </>
           )}
         </MuutoshakemusSection>
-        {state.muutoshakemukset.map(existingOsiokohtainenMuutoshakemus)}
+        {state.muutoshakemukset.map(existingMuutoshakemus)}
         <MuutoshakemusSection>
           <OriginalHakemusIframe avustushakuId={avustushakuId} userKey={userKey} />
         </MuutoshakemusSection>

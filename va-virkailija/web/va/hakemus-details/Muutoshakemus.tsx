@@ -11,7 +11,7 @@ import {
   UserInfo
 } from "../../../../va-common/web/va/types";
 
-import {OsiokohtainenMuutoshakemusForm} from "./OsiokohtainenMuutoshakemusForm";
+import {MuutoshakemusForm} from "./MuutoshakemusForm";
 import {Role} from "../types";
 import { MuutoshakemusTabs } from './MuutoshakemusTabs'
 
@@ -35,7 +35,7 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
   const projectEndDate = getProjectEndDate(avustushaku, muutoshakemukset, a)
   const currentTalousarvio = getTalousarvio(muutoshakemukset, hakemus && hakemus.talousarvio, isAccepted ? a : undefined)
   const content = a.status === 'new' && hakemus
-    ? <OsiokohtainenMuutoshakemusForm
+    ? <MuutoshakemusForm
       avustushaku={avustushaku}
       muutoshakemus={a}
       muutoshakemukset={muutoshakemukset}
@@ -52,8 +52,7 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
       currentTalousarvio={currentTalousarvio}
       muutoshakemus={a}
       hakijaUrl={environment['hakija-server'].url.fi}
-      projectEndDate={projectEndDate}
-      simplePaatos={false} />
+      projectEndDate={projectEndDate} />
 
   return (
     <React.Fragment>

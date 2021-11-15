@@ -478,7 +478,7 @@ etunimi.sukunimi@oph.fi
             })
 
             it('muutoshakemus title contains "Odottaa käsittelyä"', async () => {
-              const firstTitle = await muutoshakemuses[0].$eval('.osiokohtainen-existing-muutoshakemus__title', el => el.textContent)
+              const firstTitle = await muutoshakemuses[0].$eval('[data-test-id="existing-muutoshakemus-title"]', el => el.textContent)
               expect(firstTitle).toContain('- Odottaa käsittelyä')
             })
 

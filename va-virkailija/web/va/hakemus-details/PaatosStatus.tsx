@@ -1,7 +1,5 @@
 import {translations} from "../../../../va-common/web/va/i18n/translations";
-import {
-  OsiokohtainenMuutoshakemusPaatosFormValues
-} from "./hakemusTypes";
+import { MuutoshakemusPaatosFormValues } from "./hakemusTypes";
 import {TalousarvioValues} from "../../../../va-common/web/va/types/muutoshakemus";
 import React from "react";
 
@@ -34,8 +32,8 @@ export const paatosStatuses = [
 
 interface PaatosStatusRadioButtonProps {
   paatosStatus: typeof paatosStatuses[number]
-  f: OsiokohtainenMuutoshakemusPaatosFormValues
-  group: keyof Omit<OsiokohtainenMuutoshakemusPaatosFormValues["values"], 'reason'>
+  f: MuutoshakemusPaatosFormValues
+  group: keyof Omit<MuutoshakemusPaatosFormValues["values"], 'reason'>
   talousarvioValues: TalousarvioValues | undefined
 }
 
@@ -62,11 +60,10 @@ export const PaatosStatusRadioButton: React.FC<PaatosStatusRadioButtonProps> = (
 }
 
 interface GroupProps {
-  group: keyof Omit<OsiokohtainenMuutoshakemusPaatosFormValues["values"], 'reason'>
-  f: OsiokohtainenMuutoshakemusPaatosFormValues
+  group: keyof Omit<MuutoshakemusPaatosFormValues["values"], 'reason'>
+  f: MuutoshakemusPaatosFormValues
   talousarvioValues?: TalousarvioValues
 }
-
 
 export const PaatosStatusRadioButtonGroup: React.FC<GroupProps> = ({talousarvioValues, f, group}) => {
   return (

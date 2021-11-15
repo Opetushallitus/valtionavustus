@@ -69,7 +69,7 @@ export const MuutosTaloudenKayttosuunnitelmaan = (props: MuutosTaloudenKayttosuu
     <React.Fragment>
       <TalousarvioTable {...props} />
       <div className="muutoshakemus-row">
-        <h4 className="osiokohtainen-muutoshakemus__header" data-test-id="reasoning-title">{t.muutosTaloudenKayttosuunnitelmaan.applicantReasoning}</h4>
+        <h4 className="muutoshakemus__header" data-test-id="reasoning-title">{t.muutosTaloudenKayttosuunnitelmaan.applicantReasoning}</h4>
         <div className="muutoshakemus-description-box" data-test-id="muutoshakemus-talousarvio-perustelu">{reason}</div>
       </div>
       {status && (

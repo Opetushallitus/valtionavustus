@@ -1,52 +1,106 @@
-import React from 'react'
-import { useFormik } from 'formik'
-import * as Yup from 'yup'
-import moment from 'moment'
-import DatePicker from 'react-widgets/DatePicker'
-import MomentLocalizer from 'react-widgets-moment'
-import Localization from 'react-widgets/Localization'
-import { omit } from 'lodash'
-import { translationsFi } from 'va-common/web/va/i18n/translations'
-import { TranslationContext, getTranslationContext } from 'va-common/web/va/i18n/TranslationContext'
-import { isoFormat, parseDateString } from 'va-common/web/va/i18n/dateformat'
-
-import HttpUtil from 'soresu-form/web/HttpUtil'
-import { MuutoshakemusPaatos } from 'va-common/web/va/MuutoshakemusPaatos'
 import {
-  toFinnishDateFormat,
-  dateStringToMoment,
-  getTalousarvioSchema,
-  getTalousarvioValues,
-  getTalousarvio, isAcceptedWithChanges, isRejected
-} from 'va-common/web/va/Muutoshakemus'
-
-import { copyToClipboard } from '../copyToClipboard'
-import { isSubmitDisabled, isError } from '../formikHelpers'
-import { Modal } from './Modal'
-import { TalousarvioAcceptWithChangesForm } from './TalousarvioAcceptWithChangesForm'
-import { HyväksytytSisältömuutoksetForm } from './HyväksytytSisältömuutoksetForm'
+  Avustushaku, Hakemus,
+  NormalizedHakemusData, UserInfo
+} from "../../../../va-common/web/va/types";
 import {
   Meno,
-  Muutoshakemus, TalousarvioValues,
-} from "../../../../va-common/web/va/types/muutoshakemus"
-import { EnvironmentApiResponse } from "../../../../va-common/web/va/types/environment"
-import {
-  MuutoshakemusPaatosFormValues,
-  MuutoshakemusPaatosRequest
-} from "./hakemusTypes"
-
-import './Muutoshakemus.less'
-import {
-  Avustushaku,
-  Hakemus, NormalizedHakemusData,
-  UserInfo
-} from "../../../../va-common/web/va/types";
+  Muutoshakemus,
+  Talousarvio, TalousarvioValues,
+} from "../../../../va-common/web/va/types/muutoshakemus";
+import React, {useMemo} from "react";
+import {MuutosTaloudenKayttosuunnitelmaan} from "../../../../va-common/web/va/muutoshakemus/MuutosTaloudenKayttosuunnitelmaan";
 import {MuutoshakemusSection} from "../../../../va-common/web/va/MuutoshakemusSection";
-import {paatosStatuses} from "./PaatosStatus";
+import {isError, isSubmitDisabled} from "../formikHelpers";
+import {copyToClipboard} from "../copyToClipboard";
+import {
+  getTranslationContext,
+  TranslationContext,
+  useTranslations
+} from "../../../../va-common/web/va/i18n/TranslationContext";
+import {
+  dateStringToMoment,
+  getTalousarvio,
+  getTalousarvioSchema,
+  getTalousarvioValues,
+  isAccepted,
+  isAcceptedWithChanges, isAcceptedWithOrWithoutChanges,
+  isRejected,
+  toFinnishDateFormat
+} from "../../../../va-common/web/va/Muutoshakemus";
+import {
+  MuutoshakemusPaatosRequest,
+  MuutoshakemusPaatosFormValues,
+  MuutoshakemusPaatosResponse
+} from "./hakemusTypes";
+import {useFormik} from "formik";
+import * as Yup from "yup";
+import {
+  fiLongFormat, isoFormat, parseDateString,
+  parseDateStringToMoment
+} from "../../../../va-common/web/va/i18n/dateformat";
+import {paatosStatuses, PaatosStatusRadioButtonGroup} from "./PaatosStatus";
+import {TalousarvioAcceptWithChangesForm} from "./TalousarvioAcceptWithChangesForm";
+import Localization from "react-widgets/Localization";
+import {translationsFi} from "../../../../va-common/web/va/i18n/translations";
+import DatePicker from "react-widgets/DatePicker";
+import moment from "moment";
+import MomentLocalizer from 'react-widgets-moment'
+import {
+  getNestedFormikError,
+  getNestedInputErrorClass
+} from "../../../../va-common/web/va/formikHelpers";
 import {Role} from "../types";
+import HttpUtil from "soresu-form/web/HttpUtil";
+import {omit} from "lodash";
+import HakemustenArviointiController from "../HakemustenArviointiController";
+
+import 'soresu-form/web/form/style/main.less'
+import '../style/main.less'
+import {Modal} from "./Modal";
+import {MuutoshakemusPaatos} from "../../../../va-common/web/va/MuutoshakemusPaatos";
+import {EnvironmentApiResponse} from "../../../../va-common/web/va/types/environment";
 
 moment.locale('fi')
 const localizer = new MomentLocalizer(moment)
+
+const formatDate = (date?: string): string => {
+  const d = parseDateStringToMoment(date)
+  return d && d.isValid() ? d.format(fiLongFormat) : ''
+}
+
+interface PaattymispaivaValuesProps {
+  muutoshakemus: Muutoshakemus
+  projectEndDate?: string
+}
+
+const PaattymispaivaValues = ({ muutoshakemus, projectEndDate }: PaattymispaivaValuesProps) => {
+  const { t } = useTranslations()
+
+  const acceptedWithChanges = isAcceptedWithChanges(muutoshakemus["paatos-status-jatkoaika"])
+  const currentEndDateTitle = acceptedWithChanges ? t.muutoshakemus.previousProjectEndDate : t.muutoshakemus.currentProjectEndDate
+  const newEndDateTitle = acceptedWithChanges ? t.muutoshakemus.acceptedChange : t.muutoshakemus.appliedChange
+  const newEndDateValue = acceptedWithChanges ? muutoshakemus['paatos-hyvaksytty-paattymispaiva'] : muutoshakemus['haettu-kayttoajan-paattymispaiva']
+  const perustelut = muutoshakemus['kayttoajan-pidennys-perustelut']
+
+  return (
+    <React.Fragment>
+      <div className="muutoshakemus__project-end-row">
+        <div>
+          <h3 className="muutoshakemus__header" data-test-id='muutoshakemus-current-end-date-title'>{currentEndDateTitle}</h3>
+          <div data-test-id="project-end-date" className="muutoshakemus-description-box">{projectEndDate}</div>
+        </div>
+        <div>
+          <h3 className="muutoshakemus__header" data-test-id='muutoshakemus-new-end-date-title'>{newEndDateTitle}</h3>
+          <div data-test-id="muutoshakemus-jatkoaika" className="muutoshakemus-description-box">{formatDate(newEndDateValue)}</div>
+        </div>
+      </div>
+      <div className="muutoshakemus-row">
+        <h4 className="muutoshakemus__header" data-test-id='muutoshakemus-reasoning-title'>{t.muutoshakemus.applicantReasoning}</h4>
+        <div className="muutoshakemus-description-box" data-test-id="muutoshakemus-jatkoaika-perustelu">{perustelut}</div>
+      </div>
+    </React.Fragment>
+  )
+}
 
 const errors = {
   required: 'Pakollinen kenttä',
@@ -54,30 +108,30 @@ const errors = {
 }
 
 const getPaatosSchema = (muutoshakemus: Muutoshakemus) => Yup.object().shape({
-  status: Yup.string()
-    .oneOf(paatosStatuses.map(s => s.value))
-    .required(),
   reason: Yup.string()
     .required('Perustelu on pakollinen kenttä'),
-  talousarvio: Yup.lazy<any>(talousarvio => talousarvio ? Yup.object(getTalousarvioSchema(talousarvio, errors)) : Yup.object()),
-  paattymispaiva: Yup.date().when('status', {
-    is: 'accepted_with_changes',
-    then: muutoshakemus['haen-kayttoajan-pidennysta'] ? Yup.date().required('Päättymispäivä on pakollinen kenttä') : Yup.date(),
-  }),
-  'hyvaksytyt-sisaltomuutokset': Yup.string().when('status', {
-    is: value => !isRejected(value),
-    then: muutoshakemus['haen-sisaltomuutosta'] ? Yup.string().required('Kuvaile hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan on pakollinen kenttä!') : Yup.string(),
+  talousarvio: Yup.lazy<any>(talousarvio => talousarvio?.talousarvio ? Yup.object().shape({
+    status: Yup.string(),
+    talousarvio: Yup.object(getTalousarvioSchema(talousarvio.talousarvio, errors))
+  }) : Yup.object()),
+  'haen-kayttoajan-pidennysta': Yup.lazy<any>(paattymispaiva => {
+    return muutoshakemus['haen-kayttoajan-pidennysta'] && paattymispaiva?.status === 'accepted_with_changes'
+      ? Yup.object({
+        status: Yup.string().required(),
+        paattymispaiva: Yup.date().required('Päättymispäivä on pakollinen kenttä')
+      }) : Yup.object()
+    }
+  ),
+  'haen-sisaltomuutosta': Yup.lazy<any>(haenSisaltomuutosta => {
+    const sisaltomuutosStatus = haenSisaltomuutosta?.status
+    return isAcceptedWithOrWithoutChanges(sisaltomuutosStatus)
+      ? Yup.object({
+        status: Yup.string().required(),
+        'hyvaksytyt-sisaltomuutokset': Yup.string().required('Kuvaile hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan on pakollinen kenttä!')
+      })
+      : Yup.string()
   })
 })
-
-function formToPayload(values: MuutoshakemusPaatosRequest) {
-  return {
-    ...values,
-    'hyvaksytyt-sisaltomuutokset': !isRejected(values.status) ? values['hyvaksytyt-sisaltomuutokset'] : undefined,
-    talousarvio: values.talousarvio && omit(values.talousarvio, ['currentSum', 'originalSum']),
-    paattymispaiva: values.paattymispaiva && moment(values.paattymispaiva).format(isoFormat)
-  }
-}
 
 interface MuutoshakemusFormProps {
   avustushaku: Avustushaku
@@ -85,43 +139,90 @@ interface MuutoshakemusFormProps {
   muutoshakemukset: Muutoshakemus[]
   hakemus: NormalizedHakemusData
   hakemusVersion: Hakemus
-  controller: any
+  controller: HakemustenArviointiController
   userInfo: UserInfo
   presenter: Role | undefined
   projectEndDate: string | undefined
   isPresentingOfficer: boolean
+  currentTalousarvio: Talousarvio
   environment: EnvironmentApiResponse
 }
 
-export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemusVersion, controller, userInfo, presenter, projectEndDate, muutoshakemukset, isPresentingOfficer, environment }: MuutoshakemusFormProps) => {
+const getInitialValues = (talousarvioValues: TalousarvioValues | undefined, muutoshakemus: Muutoshakemus) => (): MuutoshakemusPaatosRequest => {
+  const initialTalousarvio: MuutoshakemusPaatosRequest['talousarvio'] = talousarvioValues
+    ? {
+      status: 'accepted',
+      talousarvio: talousarvioValues
+    }
+    : undefined
+  const initialPidennys: MuutoshakemusPaatosRequest['haen-kayttoajan-pidennysta'] = muutoshakemus["haen-kayttoajan-pidennysta"]
+    ? {
+      status: 'accepted'
+    }
+    : undefined
+  const initialSisaltomuutokset: MuutoshakemusPaatosRequest['haen-sisaltomuutosta'] = muutoshakemus['haen-sisaltomuutosta']
+    ? {
+      status: 'accepted'
+    }
+    : undefined
+  return {
+    talousarvio: initialTalousarvio,
+    "haen-kayttoajan-pidennysta": initialPidennys,
+    "haen-sisaltomuutosta": initialSisaltomuutokset,
+    reason: ''
+  }
+}
+
+const formToPayload = (values: MuutoshakemusPaatosRequest) => {
+  return {
+    reason: values.reason,
+    'haen-sisaltomuutosta': values['haen-sisaltomuutosta'] && {
+      'hyvaksytyt-sisaltomuutokset': values['haen-sisaltomuutosta']?.['hyvaksytyt-sisaltomuutokset'],
+      status: values["haen-sisaltomuutosta"]?.status
+    },
+    talousarvio: values.talousarvio && {
+      talousarvio: omit(values.talousarvio.talousarvio, ['currentSum', 'originalSum']),
+      status: values.talousarvio.status
+    },
+    'haen-kayttoajan-pidennysta': values["haen-kayttoajan-pidennysta"]?.status && {
+      paattymispaiva: values["haen-kayttoajan-pidennysta"].paattymispaiva
+        ? moment(values["haen-kayttoajan-pidennysta"].paattymispaiva).format(isoFormat)
+        : undefined,
+      status: values["haen-kayttoajan-pidennysta"].status
+    }
+  }
+}
+
+
+
+export const MuutoshakemusForm = ({avustushaku, currentTalousarvio, muutoshakemus, muutoshakemukset, projectEndDate, hakemus, controller, presenter, isPresentingOfficer, hakemusVersion, userInfo, environment}: MuutoshakemusFormProps) => {
+  const { t } = useTranslations()
   const talousarvioValues = muutoshakemus.talousarvio.length ? getTalousarvioValues(muutoshakemus.talousarvio) : undefined
   const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
-  const initialValues: MuutoshakemusPaatosRequest = {
-    status: 'accepted',
-    reason: '',
-    paattymispaiva: undefined,
-    'hyvaksytyt-sisaltomuutokset': undefined,
-    talousarvio: talousarvioValues,
-  }
+  const initialValues = useMemo<MuutoshakemusPaatosRequest>(getInitialValues(talousarvioValues, muutoshakemus), [])
   const f = useFormik({
     initialValues,
     validationSchema: getPaatosSchema(muutoshakemus),
     onSubmit: async (values) => {
       const payload = formToPayload(values)
-      const storedPaatos = await HttpUtil.post(`/api/avustushaku/${avustushaku.id}/hakemus/${hakemus['hakemus-id']}/muutoshakemus/${muutoshakemus.id}/paatos`, payload)
+      const url = `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus['hakemus-id']}/muutoshakemus/${muutoshakemus.id}/paatos`
+      const storedPaatos: MuutoshakemusPaatosResponse = await HttpUtil.post(url, payload)
       controller.setPaatos({ muutoshakemusId: muutoshakemus.id, hakemusId: hakemus['hakemus-id'], ...storedPaatos })
     }
   })
 
   const onPaatosPreviewClick = () => {
-    const muutoshakemusUrl = hakemusVersion.muutoshakemusUrl
-    const status = f.values.status
     const paatos = {
+      'paatos-status-jatkoaika': f.values["haen-kayttoajan-pidennysta"]?.status,
+      paattymispaiva: f.values["haen-kayttoajan-pidennysta"]?.paattymispaiva,
+      'paatos-status-sisaltomuutos': f.values["haen-sisaltomuutosta"]?.status,
+      'hyvaksytyt-sisaltomuutokset': f.values["haen-sisaltomuutosta"]?.["hyvaksytyt-sisaltomuutokset"],
+      'paatos-status-talousarvio': f.values.talousarvio?.status,
+      reason: f.values.reason,
       'created-at': new Date().toISOString(),
       decider: `${userInfo['first-name']} ${userInfo['surname']}`,
-      ...f.values,
       talousarvio: muutoshakemus.talousarvio.reduce<Meno[]>((acc, meno) => {
-        const formTalousArvio = f.values.talousarvio
+        const formTalousArvio = f.values.talousarvio?.talousarvio
         if (!formTalousArvio) {
           return acc
         }
@@ -131,59 +232,125 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
         }
         return acc
       }, []),
-      'paatos-status-jatkoaika': status,
-      'paatos-status-talousarvio': status,
-      'paatos-status-sisaltomuutos': status
+      status: undefined
     }
     controller.setModal(
       <Modal title="ESIKATSELU" controller={controller}>
         <TranslationContext.Provider value={getTranslationContext(hakemusVersion.language)}>
-        <MuutoshakemusPaatos
-          environment={environment}
-          muutoshakemusUrl={muutoshakemusUrl}
-          avustushaku={avustushaku}
-          paatos={paatos}
-          muutoshakemus={muutoshakemus}
-          hakemus={hakemus}
-          presenter={presenter}
-          isPresentingOfficer={isPresentingOfficer}
-          muutoshakemukset={muutoshakemukset} />
+          <MuutoshakemusPaatos
+            avustushaku={avustushaku}
+            paatos={paatos}
+            muutoshakemus={muutoshakemus}
+            hakemus={hakemus}
+            presenter={presenter}
+            isPresentingOfficer={isPresentingOfficer}
+            muutoshakemukset={muutoshakemukset}
+            environment={environment}
+            muutoshakemusUrl={hakemusVersion.muutoshakemusUrl}
+          />
         </TranslationContext.Provider>
       </Modal>
     )
   }
-
+  const sisaltomuutoksetStatus = f.values["haen-sisaltomuutosta"]?.status
+  const hyvaksyttySisaltomuutokset = isAcceptedWithOrWithoutChanges(sisaltomuutoksetStatus)
   return (
     <form onSubmit={f.handleSubmit} data-test-id="muutoshakemus-form">
-      <MuutoshakemusSection blueMiddleComponent={<button type="submit" disabled={isSubmitDisabled(f)} data-test-id="muutoshakemus-submit">Tee päätös ja lähetä hakijalle</button>}>
-        <div className="muutoshakemus-row">
+      {muutoshakemus['haettu-kayttoajan-paattymispaiva'] &&
+      <MuutoshakemusSection
+          blueMiddleComponent={<PaatosStatusRadioButtonGroup f={f} group="haen-kayttoajan-pidennysta" />}
+          bottomComponent={isAcceptedWithChanges(f.values["haen-kayttoajan-pidennysta"]?.status)
+            ? <KayttoajanPidennysAcceptWithChangesForm f={f} muutoshakemus={muutoshakemus} projectEndDate={projectEndDate} />
+            : undefined
+          }
+          datepickerFix
+      >
+        <h2 className="muutoshakemus-section-title">Käyttöaika</h2>
+        <PaattymispaivaValues muutoshakemus={muutoshakemus}
+                              projectEndDate={projectEndDate}/>
+      </MuutoshakemusSection>
+      }
+      {!!muutoshakemus.talousarvio.length &&
+      <MuutoshakemusSection
+        blueMiddleComponent={<PaatosStatusRadioButtonGroup f={f} group="talousarvio"
+                                                           talousarvioValues={talousarvioValues}/>}
+        bottomComponent={
+          isAcceptedWithChanges(f.values.talousarvio?.status)
+            ? <TalousarvioAcceptWithChangesForm
+              f={f}
+              talousarvio={talousarvio}
+              requestedTalousarvio={muutoshakemus.talousarvio}/>
+            : undefined
+        }>
+        <h2 className="muutoshakemus-section-title">Budjetti</h2>
+        <MuutosTaloudenKayttosuunnitelmaan
+          currentTalousarvio={currentTalousarvio}
+          newTalousarvio={muutoshakemus.talousarvio}
+          status={muutoshakemus["paatos-status-talousarvio"]}
+          reason={muutoshakemus["talousarvio-perustelut"]}/>
+      </MuutoshakemusSection>
+      }
+      {muutoshakemus['haen-sisaltomuutosta'] && (
+        <MuutoshakemusSection
+          blueMiddleComponent={<PaatosStatusRadioButtonGroup
+            talousarvioValues={talousarvioValues}
+            group="haen-sisaltomuutosta" f={f}/>}
+          bottomComponent={hyvaksyttySisaltomuutokset
+            ? <HyvaksytytSisaltomuutoksetForm f={f} />
+            : undefined
+          }
+        >
+          <h2 className="muutoshakemus-section-title">Sisältö ja toteutustapa</h2>
+          <div className="muutoshakemus-row">
+            <h4
+              className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
+            <div className="muutoshakemus-description-box"
+                 data-test-id="sisaltomuutos-perustelut">{muutoshakemus['sisaltomuutos-perustelut']}</div>
+          </div>
+          {muutoshakemus['hyvaksytyt-sisaltomuutokset'] && (
+            <div className="muutoshakemus-row">
+              <h4
+                className="muutoshakemus__header">{t.sisaltomuutos.acceptedChanges}</h4>
+              <div
+                className="muutoshakemus-description-box">{muutoshakemus['hyvaksytyt-sisaltomuutokset']}</div>
+            </div>
+          )}
+          {isAcceptedWithChanges(f.values["haen-sisaltomuutosta"]?.status) && (
+            <div className="muutoshakemus-notice">
+              Olet tekemässä päätöksen, jossa haetut sisältömuutokset hyväksytään muutettuna. Varmista, että perusteluissa hakijalle kuvataan mitkä haetuista sisältömuutoksista hyväksytään ja mitkä hylätään.
+            </div>
+          )}
+        </MuutoshakemusSection>
+      )}
+      <MuutoshakemusSection
+        blueMiddleComponent={<button type="submit" disabled={isSubmitDisabled(f)}
+                                     data-test-id="muutoshakemus-submit">Tee päätös
+          ja lähetä hakijalle</button>}>
+        <div>
           <h2 className="muutoshakemus-section-title">Yhteiset perustelut ja päätöksen lähettäminen</h2>
-          <div className="muutoshakemus-paatos-notice">Jos päätös tarvitsee päällikön hyväksynnän, pyydä häntä katsomaan hakemus ja tekemään päätös.</div>
-          <a onClick={() => copyToClipboard(window.location.href)}>Kopioi leikepöydälle linkki hakemukseen</a>
+          <div className="muutoshakemus-paatos-notice">Jos päätös tarvitsee päällikön hyväksynnän, pyydä häntä katsomaan
+            hakemus ja tekemään päätös.
+          </div>
+          <a onClick={() => copyToClipboard(window.location.href)}>Kopioi
+            leikepöydälle linkki hakemukseen</a>
         </div>
-        <div className="muutoshakemus-row">
-          <h4 className="muutoshakemus__header">Muutoshakemus</h4>
-          <fieldset className="soresu-radiobutton-group">
-            {paatosStatuses.map(status => <PaatosStatusRadioButton key={status.value} paatosStatus={status} f={f} talousarvioValues={talousarvioValues} />)}
-          </fieldset>
-        </div>
-        {isAcceptedWithChanges(f.values.status) && (
-          <React.Fragment>
-            {!!muutoshakemus.talousarvio.length && <TalousarvioAcceptWithChangesForm f={f} talousarvio={talousarvio} requestedTalousarvio={muutoshakemus.talousarvio} />}
-            {muutoshakemus['haen-kayttoajan-pidennysta'] && <KayttoajanPidennysAcceptWithChangesForm f={f} muutoshakemus={muutoshakemus} projectEndDate={projectEndDate} />}
-          </React.Fragment>
-        )}
-        {(!isRejected(f.values.status) && muutoshakemus['haen-sisaltomuutosta']) &&
-        <HyväksytytSisältömuutoksetForm f={f} muutoshakemus={muutoshakemus} />}
         <div className="muutoshakemus-row">
           <h4 className="muutoshakemus__header">
-            Perustelut <span className="muutoshakemus__default-reason-link"><a onClick={() => setDefaultReason(f, 'fi')}>Lisää vakioperustelu suomeksi</a> | <a onClick={() => setDefaultReason(f, 'sv')}>Lisää vakioperustelu ruotsiksi</a></span>
+            Perustelut <span className="muutoshakemus__default-reason-link"><a
+            onClick={() => setDefaultReason(f, 'fi')}>Lisää vakioperustelu suomeksi</a> | <a
+            onClick={() => setDefaultReason(f, 'sv')}>Lisää vakioperustelu ruotsiksi</a></span>
           </h4>
-          <textarea id="reason" name="reason" rows={5} cols={53} onChange={f.handleChange} onBlur={f.handleBlur} value={f.values.reason} className={isError(f, 'reason') ? "muutoshakemus__error" : undefined} />
-          {isError(f, 'reason') && <div className="muutoshakemus__error">Perustelu on pakollinen kenttä!</div>}
+          <textarea id="reason" name="reason" rows={5} cols={53}
+                    onChange={f.handleChange} onBlur={f.handleBlur}
+                    value={f.values.reason}
+                    className={isError(f, 'reason') ? "muutoshakemus__error" : undefined}/>
+          {isError(f, 'reason') &&
+          <div className="muutoshakemus__error">Perustelu on pakollinen
+            kenttä!</div>}
         </div>
         <div className="muutoshakemus-row muutoshakemus__preview-row">
-          <a className="muutoshakemus__paatos-preview-link" onClick={onPaatosPreviewClick}>Esikatsele päätösdokumentti</a>
+          <a className="muutoshakemus__paatos-preview-link"
+             onClick={onPaatosPreviewClick}>Esikatsele päätösdokumentti</a>
         </div>
       </MuutoshakemusSection>
     </form>
@@ -191,38 +358,21 @@ export const MuutoshakemusForm = ({ avustushaku, muutoshakemus, hakemus, hakemus
 }
 
 function setDefaultReason(f: MuutoshakemusPaatosFormValues, lang: 'fi' | 'sv') {
-  const status = paatosStatuses.find(_ => _.value === f.values.status)
-  f.setFieldValue('reason', status?.defaultReason[lang])
-}
-
-interface PaatosStatusRadioButtonProps {
-  paatosStatus: typeof paatosStatuses[number]
-  f: MuutoshakemusPaatosFormValues
-  talousarvioValues: TalousarvioValues | undefined
-}
-
-const PaatosStatusRadioButton: React.FC<PaatosStatusRadioButtonProps> = ({paatosStatus:{ value, text }, f, talousarvioValues}) => {
-  const handleChange = e => {
-    if (talousarvioValues) {
-      f.setFieldValue('talousarvio', talousarvioValues, true)
-    }
-    f.handleChange(e)
+  const currentStatuses = [
+    f.values.talousarvio?.status,
+    f.values["haen-kayttoajan-pidennysta"]?.status,
+    f.values["haen-sisaltomuutosta"]?.status
+  ].filter(status => status !== undefined)
+  if (currentStatuses.some(isAcceptedWithChanges)) {
+    return f.setFieldValue('reason', paatosStatuses[1].defaultReason[lang])
   }
-
-  return (
-    <React.Fragment key={`paatos-status-${value}`}>
-      <input id={value} name="status" type="radio" value={value} onChange={handleChange} checked={f.values.status === value} />
-      <label htmlFor={value}>{text}</label>
-    </React.Fragment>
-  )
-}
-
-const Error = ({f}: {f: MuutoshakemusPaatosFormValues}): JSX.Element | null => {
-  if (!isError(f, 'paattymispaiva')) return null
-
-  return (
-    <span className="muutoshakemus__error row3 col3">Päättymispäivä on pakollinen kenttä!</span>
-  )
+  if (currentStatuses.every(isAccepted)) {
+    return f.setFieldValue('reason', paatosStatuses[0].defaultReason[lang])
+  }
+  if (currentStatuses.every(isRejected)) {
+    return f.setFieldValue('reason', paatosStatuses[2].defaultReason[lang])
+  }
+  return f.setFieldValue('reason', '')
 }
 
 interface KayttoajanPidennysAcceptWithChangesFormProps {
@@ -233,16 +383,16 @@ interface KayttoajanPidennysAcceptWithChangesFormProps {
 
 const KayttoajanPidennysAcceptWithChangesForm = ({f, muutoshakemus, projectEndDate}: KayttoajanPidennysAcceptWithChangesFormProps): JSX.Element => {
   const haettuPaiva = dateStringToMoment(muutoshakemus['haettu-kayttoajan-paattymispaiva'])
-
+  const errorInPaattymispaiva = f.touched['haen-kayttoajan-pidennysta'] && getNestedInputErrorClass(f, ['haen-kayttoajan-pidennysta', 'paattymispaiva'])
   return (
     <div className="muutoshakemus-row muutoshakemus__project-end-row muutoshakemus__accept-with-changes">
 
       <h3 className="muutoshakemus__header row1 col1">Voimassaoleva päättymisaika</h3>
-      <div data-test-id="current-project-end-date" className="row2 col1">{projectEndDate}</div>
+      <div data-test-id="current-project-end-date" className="row2 col1 muutoshakemus-description-box">{projectEndDate}</div>
 
 
       <h3 className="muutoshakemus__header row1 col2">Haettu muutos</h3>
-      <div data-test-id="approve-with-changes-muutoshakemus-jatkoaika" className="row2 col2">
+      <div data-test-id="approve-with-changes-muutoshakemus-jatkoaika" className="row2 col2 muutoshakemus-description-box">
         {toFinnishDateFormat(haettuPaiva)}
       </div>
 
@@ -252,24 +402,47 @@ const KayttoajanPidennysAcceptWithChangesForm = ({f, muutoshakemus, projectEndDa
         <Localization date={localizer} messages={translationsFi.calendar}>
           <DatePicker
             name="paattymispaiva"
-            onBlur={() => f.setFieldTouched('paattymispaiva')}
+            onBlur={() => f.setFieldTouched('haen-kayttoajan-pidennysta')}
             onChange={(newDate) => {
               const d = moment(newDate)
               if (d.isValid()) {
-                f.setFieldValue('paattymispaiva', d.toDate().toISOString())
+                f.setFieldValue('haen-kayttoajan-pidennysta.paattymispaiva', d.toDate().toISOString())
               } else {
-                f.setFieldValue('paattymispaiva', undefined)
+                f.setFieldValue('haen-kayttoajan-pidennysta.paattymispaiva', undefined)
               }
             }}
             parse={parseDateString}
             defaultValue={
-              f.values['paattymispaiva']
-                ? moment(f.values['paattymispaiva']).toDate()
+              f.values['haen-kayttoajan-pidennysta']?.paattymispaiva
+                ? moment(f.values['haen-kayttoajan-pidennysta']?.paattymispaiva).toDate()
                 : haettuPaiva.toDate()
             }
-            containerClassName={`datepicker ${isError(f, 'paattymispaiva') ? 'muutoshakemus__error' : ''}`} />
+            containerClassName={`datepicker ${errorInPaattymispaiva ? 'muutoshakemus__error' : ''}`} />
         </Localization>
       </div>
-      <Error f={f} />
+      {errorInPaattymispaiva && <span className="muutoshakemus__error row3 col3">Päättymispäivä on pakollinen kenttä!</span>}
     </div>
   )}
+
+const HyvaksytytSisaltomuutoksetForm = ({f}: {
+  f: MuutoshakemusPaatosFormValues
+}) => {
+  const sisaltomuutosError = getNestedFormikError(f, ['haen-sisaltomuutosta', 'hyvaksytyt-sisaltomuutokset']) && f.touched['haen-sisaltomuutosta']
+  return (
+    <div className="muutoshakemus-row">
+      <h4 className="muutoshakemus__header">
+        Kuvaa hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan
+      </h4>
+      <textarea id="hyvaksytyt-sisaltomuutokset"
+                name="hyvaksytyt-sisaltomuutokset"
+                rows={5} cols={53}
+                onChange={event => {
+                  f.setFieldValue('haen-sisaltomuutosta.hyvaksytyt-sisaltomuutokset', event.target.value)
+                }}
+                onBlur={f.handleBlur}
+                value={f.values['haen-sisaltomuutosta']?.['hyvaksytyt-sisaltomuutokset']}
+                className={sisaltomuutosError ? "muutoshakemus__error" : undefined} />
+      {sisaltomuutosError && <div className="muutoshakemus__error">Hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan on pakollinen kenttä!</div>}
+    </div>
+  )
+}

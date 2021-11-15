@@ -120,36 +120,18 @@
       :else {:avustushaku avustushaku :hakemus hakemus})))
 
 (defn- post-muutoshakemus-paatos []
-    (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/:muutoshakemus-id/paatos" request
-                        :path-params [avustushaku-id :- Long hakemus-id :- Long muutoshakemus-id :- Long]
-                        :body [paatos (compojure-api/describe virkailija-schema/MuutoshakemusPaatosRequest "Muutoshakemus paatos")]
-                        :return virkailija-schema/MuutoshakemusPaatos
-                        :summary "Create a paatos for muutoshakemus"
-                        (let [{:keys [avustushaku hakemus]} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)
-                              roles (hakija-api/get-avustushaku-roles avustushaku-id)
-                              arvio (virkailija-db/get-arvio hakemus-id)
-                              contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
-                              identity (authentication/get-request-identity request)
-                              decider (str (:first-name identity) " " (:surname identity))
-                              paatos (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)
-                              muutoshakemus-url (virkailija-db/get-muutoshakemus-url-by-hakemus-id (:id hakemus))
-                              token (virkailija-db/create-application-token (:id hakemus))]
-                          (email/send-muutoshakemus-paatos [contact-email] avustushaku hakemus arvio roles token muutoshakemus-id paatos)
-                          (ok (assoc paatos :muutoshakemusUrl muutoshakemus-url)))))
-
-(defn- post-osiokohtainen-muutoshakemus-paatos []
-  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/osiokohtainenmuutoshakemus/:muutoshakemus-id/paatos" request
+  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/:muutoshakemus-id/paatos" request
                       :path-params [avustushaku-id :- Long hakemus-id :- Long muutoshakemus-id :- Long]
-                      :body [paatos (compojure-api/describe virkailija-schema/OsiokohtainenmuutoshakemusPaatosRequest "Osiokohtainen muutoshakemus paatos")]
+                      :body [paatos (compojure-api/describe virkailija-schema/MuutoshakemusPaatosRequest "Muutoshakemus paatos")]
                       :return virkailija-schema/MuutoshakemusPaatos
-                      :summary "Create a paatos for muutoshakemus with osiokohtainen status"
+                      :summary "Create a paatos for muutoshakemus"
                       (let [{:keys [avustushaku hakemus]} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)
                             roles (hakija-api/get-avustushaku-roles avustushaku-id)
                             arvio (virkailija-db/get-arvio hakemus-id)
                             contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
                             identity (authentication/get-request-identity request)
                             decider (str (:first-name identity) " " (:surname identity))
-                            paatos (virkailija-db/create-osiokohtainen-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)
+                            paatos (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)
                             muutoshakemus-url (virkailija-db/get-muutoshakemus-url-by-hakemus-id (:id hakemus))
                             token (virkailija-db/create-application-token (:id hakemus))]
                         (email/send-muutoshakemus-paatos [contact-email] avustushaku hakemus arvio roles token muutoshakemus-id paatos)
@@ -755,7 +737,6 @@
                          (get-onko-muutoshakukelpoinen-avustushaku-ok)
                          (get-muutoshakemukset)
                          (post-muutoshakemus-paatos)
-                         (post-osiokohtainen-muutoshakemus-paatos)
                          (get-selvitys)
                          (verify-loppuselvitys-information)
                          (send-selvitys)

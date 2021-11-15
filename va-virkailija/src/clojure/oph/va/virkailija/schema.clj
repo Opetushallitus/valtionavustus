@@ -38,17 +38,8 @@
    :ok-fields [MuutoshakemuksenVaatimaKentta]
    :erroneous-fields [MuutoshakemuksenVaatimaKentta]})
 
-(s/defschema MuutoshakemusPaatosRequest
-  "Muutoshakemus paatos"
-  {:status s/Str
-   :reason s/Str
-   (s/optional-key :hyvaksytyt-sisaltomuutokset) (s/maybe s/Str)
-   (s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
-   (s/optional-key :talousarvio) (s/maybe TalousarvioMuutos)
-   })
-
- (s/defschema OsiokohtainenmuutoshakemusPaatosRequest
-   "Osiokohtainen muutoshakemus paatos"
+ (s/defschema MuutoshakemusPaatosRequest
+   "Muutoshakemus paatos"
    {:reason s/Str
     (s/optional-key :haen-sisaltomuutosta) (s/maybe {
       :status s/Str

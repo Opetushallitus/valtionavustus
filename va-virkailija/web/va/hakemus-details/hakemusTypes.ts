@@ -33,16 +33,6 @@ export interface MuutoshakemusPaatos extends MuutoshakemusPaatosResponse {
 }
 
 export interface MuutoshakemusPaatosRequest {
-  status: PaatosStatus,
-  reason: string,
-  paattymispaiva?: string,
-  'hyvaksytyt-sisaltomuutokset'?: string,
-  talousarvio?: TalousarvioValues,
-}
-
-export type MuutoshakemusPaatosFormValues = FormikProps<MuutoshakemusPaatosRequest>
-
-export interface OsioKohtainenMuutoshakemusPaatosRequest {
   'haen-kayttoajan-pidennysta'?: {
     status: PaatosStatus
     paattymispaiva?: string
@@ -58,4 +48,4 @@ export interface OsioKohtainenMuutoshakemusPaatosRequest {
   reason: string
 }
 
-export type OsiokohtainenMuutoshakemusPaatosFormValues = FormikProps<OsioKohtainenMuutoshakemusPaatosRequest>
+export type MuutoshakemusPaatosFormValues = FormikProps<MuutoshakemusPaatosRequest>
