@@ -9,6 +9,5 @@
  :email {:enabled? true
          :host "localhost"
          :port 42069}
- :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? true}
  :loppuselvitys-verification {:enabled? true}
  :applications-ui {:enabled? true}}

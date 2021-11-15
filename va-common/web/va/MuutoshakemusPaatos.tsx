@@ -20,7 +20,6 @@ import {
 import './MuutoshakemusPaatos.less'
 import {Role} from "../../../va-virkailija/web/va/types";
 import {OsioPaatos, PaatosOsio} from "./OsioPaatos";
-import {EnvironmentApiResponse} from "./types/environment";
 
 type MuutoshakemusPaatosProps = Omit<PaatosState, 'paatos' | 'presenter'> & {
   paatos: Omit<Paatos, 'id' | 'user-key' | 'updated-at'>
@@ -90,7 +89,7 @@ const SisaltomuutosPaatosSection: React.FC<{status: MuutoshakemusStatus}> = ({st
   )
 }
 
-const ProjectSection: React.FC<{muutoshakemus: Muutoshakemus, projectName: string, muutoshakemusUrl: string, environment: EnvironmentApiResponse}> = ({projectName, muutoshakemus, muutoshakemusUrl, environment}) => {
+const ProjectSection: React.FC<{muutoshakemus: Muutoshakemus, projectName: string, muutoshakemusUrl: string}> = ({projectName, muutoshakemus, muutoshakemusUrl}) => {
   const { t, lang } = useTranslations()
   return (
     <section className="muutoshakemus-paatos__section no-border-top">
@@ -108,11 +107,9 @@ const ProjectSection: React.FC<{muutoshakemus: Muutoshakemus, projectName: strin
         {muutoshakemus['haen-sisaltomuutosta'] && (
           <div>{t.muutoshakemus.paatos.muutoshakemusSisaltoonTaiToteutustapaan}</div>
         )}
-        { environment["muutoshakemus-osiokohtainen-hyvaksynta"]["enabled?"] &&
         <p>
           <a data-test-id="link-to-muutoshakemus" href={`${muutoshakemusUrl}&lang=${lang}`}>{t.muutoshakemus.paatos.linkkiMuutoshakemukseen}</a>
         </p>
-        }
       </div>
     </section>
   )
@@ -166,7 +163,7 @@ const LisatietojaSection: React.FC<{presenter: Role | undefined}> = ({presenter}
   )
 }
 
-export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset, isPresentingOfficer, environment, muutoshakemusUrl }: MuutoshakemusPaatosProps) => {
+export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset, isPresentingOfficer, muutoshakemusUrl }: MuutoshakemusPaatosProps) => {
   const { t } = useTranslations()
   const paattymispaiva = isAcceptedWithChanges(paatos["paatos-status-jatkoaika"]) ? paatos.paattymispaiva : muutoshakemus['haettu-kayttoajan-paattymispaiva']
   const newTalousarvio = isAcceptedWithChanges(paatos["paatos-status-talousarvio"]) ? (paatos.talousarvio || []) : muutoshakemus.talousarvio
@@ -183,7 +180,7 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
         <div data-test-id="paatos-register-number">{hakemus['register-number']}</div>
       </header>
       <h1 className="muutoshakemus-paatos__org">{hakemus['organization-name']}</h1>
-      <ProjectSection muutoshakemus={muutoshakemus} projectName={hakemus['project-name']} muutoshakemusUrl={muutoshakemusUrl} environment={environment} />
+      <ProjectSection muutoshakemus={muutoshakemus} projectName={hakemus['project-name']} muutoshakemusUrl={muutoshakemusUrl} />
       {!!newTalousarvio.length && paatos["paatos-status-talousarvio"] &&
         <TalousarvioPaatosSection currentTalousarvio={currentTalousarvio} newTalousarvio={newTalousarvio} status={paatos["paatos-status-talousarvio"]} />
       }

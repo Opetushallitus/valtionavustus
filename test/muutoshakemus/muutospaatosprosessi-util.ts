@@ -327,9 +327,8 @@ export async function validateMuutoshakemusPaatosCommonValues(page: Page) {
   expect(info).toEqual('_ valtionavustussanteri.horttanainen@reaktor.com029 533 1000 (vaihde)')
 }
 
-export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, disableOsiokohtainen = false) {
-  const searchParams = disableOsiokohtainen ? '?muutoshakemus-osiokohtainen-hyvaksynta=false' : ''
-  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/${searchParams}`)
+export async function navigateToLatestMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number) {
+  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`)
   await page.waitForSelector('#tab-content')
 }
 
@@ -374,9 +373,8 @@ export async function fillMuutoshakemusBudgetAmount(page: Page, budget: BudgetAm
   await clearAndType(page, "input[name='talousarvio.other-costs-row'][type='number']", budget.other)
 }
 
-export async function navigateToNthMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, n: number, disableOsiokohtainen = false) {
-  const searchParams = disableOsiokohtainen ? '?muutoshakemus-osiokohtainen-hyvaksynta=false' : ''
-  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/${searchParams}`)
+export async function navigateToNthMuutoshakemus(page: Page, avustushakuID: number, hakemusID: number, n: number) {
+  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
   await clickElement(page, '[class="muutoshakemus-tab"]')
   await clickElement(page, `.muutoshakemus-tabs button:nth-last-child(${n})`)
   await page.waitForSelector('[data-test-id="muutoshakemus-sisalto"]')

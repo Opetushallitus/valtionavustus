@@ -11,6 +11,5 @@
  :payments {:enabled? true :delete-payments? true}
  :contact-person-name-in-pitkaviite {:enabled? true}
  :allow-overriding-feature-flag-from-url-params {:enabled? true}
- :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? true}
  :loppuselvitys-verification {:enabled? true}
  :test-apis {:enabled? true}}

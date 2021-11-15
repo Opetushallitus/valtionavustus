@@ -2,7 +2,6 @@ import React, { ReactNode, useEffect, useState } from 'react'
 import moment from 'moment'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import { MuutoshakemusValues } from 'va-common/web/va/MuutoshakemusValues'
 import { OsiokohtainenMuutoshakemusValues } from 'va-common/web/va/OsiokohtainenMuutoshakemusValues'
 import { Muutoshakemus, MuutoshakemusProps } from 'va-common/web/va/types/muutoshakemus'
 import { getProjectEndDate, getProjectEndMoment, getTalousarvio, getTalousarvioValues } from 'va-common/web/va/Muutoshakemus'
@@ -47,7 +46,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
   const f = createFormikHook(userKey, lang)
   const existingNewMuutoshakemus = state.muutoshakemukset.find(m => m.status === 'new')
   const enableBudgetChange = state.hakemus?.talousarvio && state.hakemus.talousarvio.length > 1
-  const osiokohtainenEnabled = state.environment? state.environment["muutoshakemus-osiokohtainen-hyvaksynta"]["enabled?"] : false
+
   useEffect(() => {
     const fetchProps = async () => {
       const environmentP = HttpUtil.get(`/environment`)
@@ -109,28 +108,6 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
     )
   }
 
-  const existingMuutoshakemus = (m: Muutoshakemus, index: number, allMuutoshakemus: Muutoshakemus[]) => {
-    const projectEndDate = getProjectEndDate(state.avustushaku, allMuutoshakemus, m)
-    const topic = `${t.muutoshakemus.title} ${moment(m['created-at']).format(fiShortFormat)}`
-    const waitingForDecision = m.status === 'new' ? ` - ${t.waitingForDecision}` : ''
-
-    return (
-      <MuutoshakemusSection data-test-class="existing-muutoshakemus" data-test-state={m.status} key={index}>
-        <h1 className="muutoshakemus__title">{`${topic}${waitingForDecision}`}</h1>
-        <div className="muutoshakemus__form">
-          <MuutoshakemusValues
-            currentTalousarvio={getTalousarvio(allMuutoshakemus, state.hakemus?.talousarvio, m)}
-            muutoshakemus={m}
-            hakijaUrl={state.environment?.['hakija-server'].url[lang]}
-            simplePaatos={true}
-            projectEndDate={projectEndDate} />
-        </div>
-      </MuutoshakemusSection>
-    )
-  }
-
-  const existingMuutoshakemusMapper = osiokohtainenEnabled ? existingOsiokohtainenMuutoshakemus : existingMuutoshakemus
-
   if(state.status === 'LOADING') {
     return <p>{t.loading}</p>
   }
@@ -165,7 +142,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
             </>
           )}
         </MuutoshakemusSection>
-        {state.muutoshakemukset.map(existingMuutoshakemusMapper)}
+        {state.muutoshakemukset.map(existingOsiokohtainenMuutoshakemus)}
         <MuutoshakemusSection>
           <OriginalHakemusIframe avustushakuId={avustushakuId} userKey={userKey} />
         </MuutoshakemusSection>

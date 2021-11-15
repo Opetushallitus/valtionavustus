@@ -25,7 +25,6 @@
  :va-users {:use-cache? false }
  :tasmaytysraportti-create {:enabled? true}
  :allow-overriding-feature-flag-from-url-params {:enabled? true}
- :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? true}
  :loppuselvitys-verification {:enabled? true}
  :db {:server-name "va-postgres"
       :database-name "va-dev"}

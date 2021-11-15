@@ -60,7 +60,6 @@
    (s/maybe {(s/optional-key :refuse-enabled?) s/Bool})
    (s/optional-key :multibatch-payments) (s/maybe {:enabled? s/Bool})
    (s/optional-key :va-code-values) (s/maybe {:enabled? s/Bool})
-   :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? s/Bool}
    :loppuselvitys-verification {:enabled? s/Bool}
    (s/optional-key :allow-overriding-feature-flag-from-url-params) (s/maybe {:enabled? s/Bool})
    (s/optional-key :reports) (s/maybe {:enabled? s/Bool})

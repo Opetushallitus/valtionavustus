@@ -243,7 +243,7 @@ describe('Translations', () => {
           }
 
           beforeAll(async () => {
-            await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/?muutoshakemus-osiokohtainen-hyvaksynta=false`)
+            await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
             await clickElement(page, 'span.muutoshakemus-tab')
           })
 
@@ -264,7 +264,7 @@ describe('Translations', () => {
 
           describe('And accepts muutoshakemus #1 changes', () => {
             beforeAll(async () => {
-              await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID, true)
+              await navigateToLatestMuutoshakemus(page, avustushakuID, hakemusID)
               await fillAndSendMuutoshakemusDecision(page, 'accepted_with_changes', '01.01.2099', acceptedBudget)
             })
 

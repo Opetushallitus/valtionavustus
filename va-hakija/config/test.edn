@@ -6,6 +6,5 @@
  :api {:restricted-routes? false}
  :db {:database-name "va-test"}
  :sisaltomuutos {:enabled? true}
- :muutoshakemus-osiokohtainen-hyvaksynta {:enabled? true}
  :loppuselvitys-verification {:enabled? true}
  :email {:print-mail-on-disable? false}}
