@@ -254,7 +254,8 @@
         avustushaku-name (get-in avustushaku [:content :name lang])
         mail-subject (str (get-in mail-titles [(keyword type) lang]) " " avustushaku-name)
         selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
-        presenter (if (nil? selected-presenter) (first roles) selected-presenter)]
+        presenter (if (nil? selected-presenter) (first roles) selected-presenter)
+        disable-selvitysmail-to-virkailija (-> config :dont-send-loppuselvityspyynto-to-virkailija :enabled?)]
     (log/info "Url would be: " url)
     (tapahtumaloki/create-log-entry type (:id avustushaku) (:id hakemus) identity uuid to true)
     (email/enqueue-message-to-be-send {:operation :send
@@ -269,7 +270,7 @@
                                        :presenter-name (:name presenter)
                                        :avustushaku-name avustushaku-name
                                        :to to
-                                       :bcc (:email identity)
+                                       :bcc (when-not disable-selvitysmail-to-virkailija (:email identity))
                                        :url url
                                        :register-number (:register_number hakemus)
                                        :project-name (:project_name hakemus)})))

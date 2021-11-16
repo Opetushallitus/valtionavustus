@@ -12,4 +12,5 @@
  :contact-person-name-in-pitkaviite {:enabled? true}
  :allow-overriding-feature-flag-from-url-params {:enabled? true}
  :loppuselvitys-verification {:enabled? true}
+ :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :test-apis {:enabled? true}}

@@ -729,7 +729,7 @@ etunimi.sukunimi@oph.fi
       "uusi.yhteyshenkilo@example.com",
       "akaan.kaupunki@akaa.fi"
     ])
-    expect(email.bcc).toEqual("santeri.horttanainen@reaktor.com")
+    expect(email.bcc).toBeNull()
 
     await navigate(page, `/admin/loppuselvitys/?avustushaku=${avustushakuID}`)
     await clickElement(page, '[data-test-id=send-loppuselvitys]')
