@@ -5,7 +5,7 @@ import {KoodienhallintaPage} from "../pages/koodienHallintaPage";
 import {HakujenHallintaPage} from "../pages/hakujenHallintaPage";
 import {HakijaAvustusHakuPage} from "../pages/hakijaAvustusHakuPage";
 import {answers} from "../utils/constants";
-import {Answers} from "../utils/types";
+import {Answers, VaCodeValues} from "../utils/types";
 
 export interface MuutoshakemusFixtures {
   avustushakuID: number
@@ -13,6 +13,7 @@ export interface MuutoshakemusFixtures {
     hakemusID: number
     userKey: string
   }
+  codes: VaCodeValues
   haku: {
     registerNumber: string
     avustushakuName: string
@@ -29,9 +30,12 @@ export const muutoshakemusTest = test.extend<MuutoshakemusFixtures>({
     const randomHakuValues = createRandomHakuValues()
     await use(randomHakuValues)
   },
-  avustushakuID: async ({page, haku}, use) => {
+  codes: async ({page}, use) => {
     const koodienHallintaPage = new KoodienhallintaPage(page)
     const codes = await koodienHallintaPage.createRandomCodeValues()
+    await use(codes)
+  },
+  avustushakuID: async ({codes, page, haku}, use) => {
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(haku.registerNumber, haku.avustushakuName, codes)
     await use(avustushakuID)

@@ -18,3 +18,10 @@ export interface Answers {
     contactPersonPhoneNumber: string
     lang?: 'fi' | 'sv'
 }
+
+export type VaCodeValues = {
+  operationalUnit: string
+  project: string
+  operation: string
+}
+

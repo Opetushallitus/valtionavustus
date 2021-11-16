@@ -5,7 +5,7 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functio
 function run_tests {
   if ! running_on_jenkins;
     then
-      npm run playwright:test
+      npm run playwright:test "$@"
   fi
 	npm run puppeteer:test "$@"
 	npm run soresu-form:test "$@"

@@ -15,6 +15,12 @@ export async function expectQueryParameter(page: Page, paramName: string): Promi
   return value
 }
 
+export async function clickElement(page: Page, selector: string) {
+  const handle = await page.waitForSelector(selector)
+  await handle.click()
+  return handle
+}
+
 export async function clickElementWithText(page: Page, elementType: string, text: string) {
   const selector = `${elementType}:has-text("${text}")`
   const handle = await page.waitForSelector(selector)
@@ -22,9 +28,23 @@ export async function clickElementWithText(page: Page, elementType: string, text
   return handle
 }
 
+export async function getElementAttribute(page: Page, selector: string, attribute: string) {
+  const handle = await page.waitForSelector(selector)
+  return await handle.getAttribute(attribute)
+}
+
+export async function getElementInnerText(page: Page, selector: string) {
+  const handle = await page.waitForSelector(selector)
+  return await handle.innerText()
+}
+
 function waitForElementWithAttribute(page: Page, attribute: string, attributeValue: string, text: string) {
   return page.waitForSelector(`[${attribute}='${attributeValue}']:has-text("${text}")`, {timeout: 5000})
   // return await page.waitForXPath(`//*[@${attribute}='${attributeValue}'][contains(., '${text}')]`, waitForSelectorOptions)
+}
+
+export async function waitForElementWithText(page: Page, elementType: string, text: string, state: "visible" | "hidden" = "visible" ) {
+  return page.waitForSelector(`${elementType}:has-text("${text}")`, { state, timeout: 5000})
 }
 
 export function waitForDropdownElementWithText(page: Page, text: string) {
@@ -33,6 +53,10 @@ export function waitForDropdownElementWithText(page: Page, text: string) {
 
 export async function waitForClojureScriptLoadingDialogHidden(page: Page) {
   return page.waitForSelector("[data-test-id=loading-dialog]", { state: 'detached' })
+}
+
+export async function waitForClojureScriptLoadingDialogVisible(page: Page) {
+  return page.waitForSelector("[data-test-id=loading-dialog]", { state: 'visible' })
 }
 
 export function expectToBeDefined<T>(val: T): asserts val is NonNullable<T> {

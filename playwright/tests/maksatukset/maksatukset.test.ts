@@ -1,52 +1,40 @@
-import { Browser, Page } from 'puppeteer'
+import {expect, Page} from "@playwright/test"
+import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
+import {KoodienhallintaPage} from "../../pages/koodienHallintaPage";
 import {
   clickElement,
   clickElementWithText,
-  createRandomHakuValues,
   getElementAttribute,
   getElementInnerText,
-  getFirstPage,
-  getHakemusTokenAndRegisterNumber,
-  mkBrowser,
-  navigate,
-  setPageErrorConsoleLogger,
-  setupTestLogging,
-  VIRKAILIJA_URL,
   waitForClojureScriptLoadingDialogHidden,
-  waitForClojureScriptLoadingDialogVisible, waitForElementWithText,
-} from '../test-util'
-import { ratkaiseMuutoshakemusEnabledAvustushaku } from '../muutoshakemus/muutospaatosprosessi-util'
+  waitForClojureScriptLoadingDialogVisible,
+  waitForElementWithText,
+} from '../../utils/util'
+import {
+  getHakemusTokenAndRegisterNumber
+} from '../../utils/emails'
+import {
+  VIRKAILIJA_URL
+} from '../../utils/constants'
+import {
+  navigate
+} from '../../utils/navigate'
 import axios from 'axios'
 import moment from "moment"
 
-jest.setTimeout(400_000)
+const correctOVTTest = test.extend({
+  codes: async ({page}, use) => {
+    const codes = { operationalUnit: '6600105300', operation: '3425324634', project: '523452346' }
+    const koodienHallintaPage = new KoodienhallintaPage(page)
+    await koodienHallintaPage.createCodeValues(codes)
+    await use(codes)
+  },
+})
 
-describe("Maksatukset", () => {
-  let browser: Browser
-  let page: Page
-  const answers = {
-    contactPersonEmail: "erkki.esimerkki@example.com",
-    contactPersonName: "Erkki Esimerkki",
-    contactPersonPhoneNumber: "666",
-    projectName: "Rahassa kylpijät Ky Ay Oy",
-  }
+test.setTimeout(400000)
+correctOVTTest.setTimeout(400000)
 
-  beforeAll(async () => {
-    browser = await mkBrowser()
-    page = await getFirstPage(browser)
-    setPageErrorConsoleLogger(page)
-  })
-
-  afterAll(async () => {
-    await page.close()
-    await browser.close()
-  })
-
-  setupTestLogging()
-
-  it('uses correct OVT when the operational unit is Palvelukeskus (6600105300)', async () => {
-    const codeValues = { operationalUnit: '6600105300', operation: '3425324634', project: '523452346' }
-    const { hakemusID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, createRandomHakuValues("OVT"), answers, codeValues)
+correctOVTTest('Maksatukset uses correct OVT when the operational unit is Palvelukeskus', async ({page, hakemus: {hakemusID}, codes: codeValues}) => {
 
     await navigate(page, "/admin-ui/payments/")
     await fillInMaksueranTiedot(page, "asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
@@ -89,8 +77,7 @@ describe("Maksatukset", () => {
     expect(maksatukset).toContainEqual(getExpectedPaymentXML(codeValues.project, codeValues.operation, codeValues.operationalUnit, pitkaviite, `${registerNumber}_1`, dueDate, '00372769790122'))
   })
 
-  it("work with pitkaviite without contact person name", async () => {
-    const { hakemusID, avustushakuID } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, createRandomHakuValues("Maksatukset"), answers)
+test('work with pitkaviite without contact person name', async ({page, avustushakuID, hakemus: {hakemusID}}) => {
     await navigate(page, "/admin-ui/payments/")
 
     await fillInMaksueranTiedot(page, "asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
@@ -129,8 +116,7 @@ describe("Maksatukset", () => {
     expect(await getBatchStatus(page, 1)).toEqual("Maksettu")
   })
 
-  it("work with pitkaviite with contact person name", async () => {
-    const { hakemusID, operationalUnit, project, operation } = await ratkaiseMuutoshakemusEnabledAvustushaku(page, createRandomHakuValues("Maksatukset"), answers)
+test('work with pitkaviite with contact person name', async ({page, hakemus: {hakemusID}, codes: { project, operation, operationalUnit}}) => {
     await navigate(page, "/admin-ui/payments/")
 
     await fillInMaksueranTiedot(page, "asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
@@ -172,7 +158,6 @@ describe("Maksatukset", () => {
     const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu()
     expect(maksatukset).toContainEqual(getExpectedPaymentXML(project, operation, operationalUnit, pitkaviite, `${registerNumber}_1`, dueDate))
   })
-})
 
 async function fillTositepaivamaara(page: Page) {
   async function isFilledWithDateValue() {
@@ -253,7 +238,7 @@ async function gotoLähetetytMaksatuksetTab(page: Page): Promise<void> {
 async function reloadPaymentPage(page: Page) {
   await Promise.all([
     waitForClojureScriptLoadingDialogVisible(page),
-    page.reload({ waitUntil: ['load', 'networkidle0'] }),
+    page.reload({ waitUntil: 'load' }),
   ])
   await waitForClojureScriptLoadingDialogHidden(page)
 }
@@ -272,10 +257,9 @@ function getExpectedPaymentXML(projekti: string, toiminto: string, toimintayksik
 
 async function sendMaksatukset(page: Page): Promise<void> {
   const text = "Lähetetään maksatuksia"
-  const sendButtonSelector = "aria/Lähetä maksatukset"
   await Promise.all([
-    waitForElementWithText(page, "span", text, { visible: true }),
-    clickElement(page, sendButtonSelector),
+    waitForElementWithText(page, "span", text, "visible"),
+    clickElementWithText(page, "button" , "Lähetä maksatukset"),
   ])
-  await waitForElementWithText(page, "span", text, { hidden: true })
+  await waitForElementWithText(page, "span", text, "hidden")
 }
