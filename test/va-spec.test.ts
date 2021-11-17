@@ -741,7 +741,7 @@ etunimi.sukunimi@oph.fi
       "uusi.yhteyshenkilo@example.com",
       "akaan.kaupunki@akaa.fi"
     ])
-    expect(email.bcc).toEqual("santeri.horttanainen@reaktor.com")
+    expect(email.bcc).toBeNull()
   })
 
   describe('When virkailija navigates to codes page', () => {
