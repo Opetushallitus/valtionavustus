@@ -28,4 +28,5 @@
  :loppuselvitys-verification {:enabled? true}
  :db {:server-name "va-postgres"
       :database-name "va-dev"}
+ :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :test-apis {:enabled? true}}
