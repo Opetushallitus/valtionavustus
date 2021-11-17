@@ -133,19 +133,22 @@
 (defn get-normalized-hakemus [hakemus-id]
   (log/info (str "Get normalized hakemus with id: " hakemus-id))
   (let [hakemukset (query "SELECT
-                            h.id,
-                            h.hakemus_id,
-                            h.contact_person,
-                            h.contact_email,
-                            h.contact_phone,
-                            h.project_name,
-                            h.created_at,
-                            h.updated_at,
-                            h.organization_name,
-                            h.register_number
-                          FROM
-                            virkailija.normalized_hakemus h
-                          WHERE h.hakemus_id = ?" [hakemus-id])
+                            n.id,
+                            n.hakemus_id,
+                            n.contact_person,
+                            n.contact_email,
+                            n.contact_phone,
+                            n.project_name,
+                            n.created_at,
+                            n.updated_at,
+                            n.organization_name,
+                            n.register_number
+                          FROM virkailija.normalized_hakemus n
+                          JOIN hakija.hakemukset h ON h.id = n.hakemus_id
+                          JOIN hakija.avustushaut a ON a.id = h.avustushaku
+                          WHERE h.version_closed IS NULL
+                          AND a.muutoshakukelpoinen = true
+                          AND n.hakemus_id = ?" [hakemus-id])
         hakemus (first hakemukset)
         talousarvio (get-talousarvio hakemus-id "hakemus")]
     (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
