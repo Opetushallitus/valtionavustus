@@ -1,4 +1,4 @@
-import {Page} from "playwright";
+import {ElementHandle, Page} from "playwright";
 import {expect} from "@playwright/test"
 import moment from "moment";
 
@@ -9,13 +9,7 @@ export async function expectQueryParameter(page: Page, paramName: string): Promi
   return value
 }
 
-export async function clickElement(page: Page, selector: string) {
-  const handle = await page.waitForSelector(selector)
-  await handle.click()
-  return handle
-}
-
-export async function clickElementWithText(page: Page, elementType: string, text: string) {
+export async function clickElementWithText(page: Page, elementType: string, text: string): Promise<ElementHandle> {
   const selector = `${elementType}:has-text("${text}")`
   const handle = await page.waitForSelector(selector)
   await handle.click()

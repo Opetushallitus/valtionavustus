@@ -2,7 +2,6 @@ import {expect, Page} from "@playwright/test"
 import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
 import {KoodienhallintaPage} from "../../pages/koodienHallintaPage";
 import {
-  clickElement,
   clickElementWithText,
   getElementAttribute,
   getElementInnerText,
@@ -175,7 +174,7 @@ async function fillTositepaivamaara(page: Page) {
 
   while(! await isFilledWithDateValue()) {
     try {
-      await clickElement(page, "#Tositepäivämäärä")
+      await page.click("#Tositepäivämäärä")
       await clickElementWithText(page, 'button', 'OK')
     } catch (e) {
       console.log('Failed to set tositepäivämäärä calendar date', e.message)
@@ -197,7 +196,7 @@ async function fillInMaksueranTiedot(page: Page, ashaTunniste: string, esittelij
   await clearAndType(page, "[data-test-id=maksatukset-asiakirja--asha-tunniste]", ashaTunniste)
   await clearAndType(page, "[data-test-id=maksatukset-asiakirja--esittelijan-sahkopostiosoite]", esittelijanOsoite)
   await clearAndType(page, "[data-test-id=maksatukset-asiakirja--hyvaksyjan-sahkopostiosoite]", hyvaksyjanOsoite)
-  await clickElement(page, "button:not(disabled)[data-test-id=maksatukset-asiakirja--lisaa-asiakirja]")
+  await page.click("button:not(disabled)[data-test-id=maksatukset-asiakirja--lisaa-asiakirja]")
 }
 
 function getUniqueFileName(): string {
@@ -232,7 +231,7 @@ const getBatchTaKpTili = getSentPaymentBatchColumn(8)
 const getTiliönti = getSentPaymentBatchColumn(9)
 
 async function gotoLähetetytMaksatuksetTab(page: Page): Promise<void> {
-  await clickElement(page, '[data-test-id=sent-payments-tab]')
+  await page.click('[data-test-id=sent-payments-tab]')
 }
 
 async function reloadPaymentPage(page: Page) {
