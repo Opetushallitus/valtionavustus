@@ -19,9 +19,8 @@ export interface Answers {
     lang?: 'fi' | 'sv'
 }
 
-export type VaCodeValues = {
+export interface VaCodeValues {
   operationalUnit: string
   project: string
   operation: string
 }
-

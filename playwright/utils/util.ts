@@ -2,12 +2,6 @@ import {Page} from "playwright";
 import {expect} from "@playwright/test"
 import moment from "moment";
 
-export interface VaCodeValues {
-  operationalUnit: string
-  project: string
-  operation: string
-}
-
 
 export async function expectQueryParameter(page: Page, paramName: string): Promise<string> {
   const value = await page.evaluate(param => (new URLSearchParams(window.location.search)).get(param), paramName)

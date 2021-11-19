@@ -2,14 +2,14 @@ import {Page} from "playwright";
 import {navigate} from "../utils/navigate";
 import {
   clickElementWithText,
-  expectQueryParameter,
-  VaCodeValues
+  expectQueryParameter
 } from "../utils/util";
 import {mkAvustushakuName} from "../utils/random";
 import fs from 'fs/promises'
 import path from "path";
 import {VIRKAILIJA_URL} from "../utils/constants";
 import {expect} from "@playwright/test";
+import {VaCodeValues} from "../utils/types";
 
 interface Rahoitusalue {
   koulutusaste: string

@@ -1,9 +1,7 @@
 import {Page} from "playwright";
-import {
-  VaCodeValues,
-} from "../utils/util";
 import {navigate} from "../utils/navigate";
 import {randomString} from "../utils/random";
+import {VaCodeValues} from "../utils/types";
 
 type KoodienhallintaTab = 'operational-unit' | 'project' | 'operation'
 
