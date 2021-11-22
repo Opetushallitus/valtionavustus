@@ -8,7 +8,7 @@ const config: PlaywrightTestConfig = {
   retries: 2,
   workers,
   testDir: 'tests',
-  outputDir: 'test-results',
+  outputDir: '../../playwright-results/test-results',
   timeout: 60000,
   use: {
     actionTimeout: 10000,
