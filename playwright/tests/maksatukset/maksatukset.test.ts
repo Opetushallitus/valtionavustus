@@ -4,7 +4,6 @@ import {KoodienhallintaPage} from "../../pages/koodienHallintaPage";
 import {
   clickElementWithText,
   getElementAttribute,
-  getElementInnerText,
   waitForClojureScriptLoadingDialogHidden,
   waitForClojureScriptLoadingDialogVisible,
   waitForElementWithText,
@@ -245,7 +244,7 @@ async function reloadPaymentPage(page: Page) {
 function getSentPaymentBatchColumn(column: number) {
   return async (page: Page, paymentBatchRow: number): Promise<string | undefined> => {
     const rowSelector = (n: number) => `[data-test-id=sent-payment-batches-table] tbody > tr:nth-child(${n})`
-    return await getElementInnerText(page, `${rowSelector(paymentBatchRow)} > td:nth-child(${column})`)
+    return await page.innerText(`${rowSelector(paymentBatchRow)} > td:nth-child(${column})`)
   }
 }
 

@@ -21,11 +21,6 @@ export async function getElementAttribute(page: Page, selector: string, attribut
   return await handle.getAttribute(attribute)
 }
 
-export async function getElementInnerText(page: Page, selector: string) {
-  const handle = await page.waitForSelector(selector)
-  return await handle.innerText()
-}
-
 function waitForElementWithAttribute(page: Page, attribute: string, attributeValue: string, text: string) {
   return page.waitForSelector(`[${attribute}='${attributeValue}']:has-text("${text}")`, {timeout: 5000})
   // return await page.waitForXPath(`//*[@${attribute}='${attributeValue}'][contains(., '${text}')]`, waitForSelectorOptions)

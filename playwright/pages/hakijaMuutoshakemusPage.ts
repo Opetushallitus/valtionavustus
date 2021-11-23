@@ -1,7 +1,6 @@
 import {Page} from "playwright";
 import {expect} from "@playwright/test"
 import {
-  getElementInnerText,
   getExistingBudgetTableCells,
 } from "../utils/util";
 import {
@@ -70,7 +69,7 @@ export class HakijaMuutoshakemusPage {
   }
 
   async getMuutoshakemusSisaltomuutosPerustelut() {
-    return getElementInnerText(this.page, '[data-test-class="existing-muutoshakemus"] [data-test-id="sisaltomuutos-perustelut"]')
+    return this.page.innerText('[data-test-class="existing-muutoshakemus"] [data-test-id="sisaltomuutos-perustelut"]')
   }
 
   expectApprovedBudgetToBe(page: Page, budget: BudgetAmount): () => Promise<void> {

@@ -4,7 +4,6 @@ import {
   clickElementWithText,
   expectToBeDefined,
   getChangedBudgetTableCells,
-  getElementInnerText,
   getExistingBudgetTableCells,
 } from "../utils/util";
 import {expect} from "@playwright/test";
@@ -179,15 +178,15 @@ export class HakemustenArviointiPage {
   }
 
   async getSisaltomuutosPerustelut() {
-    return getElementInnerText(this.page, '[data-test-id="sisaltomuutos-perustelut"]')
+    return this.page.innerText('[data-test-id="sisaltomuutos-perustelut"]')
   }
 
   async getMuutoshakemusNotice() {
-    return getElementInnerText(this.page, '.muutoshakemus-notice')
+    return this.page.innerText('.muutoshakemus-notice')
   }
 
   async getPaatosPerustelut() {
-    return getElementInnerText(this.page, '[data-test-id="muutoshakemus-form-paatos-reason"]')
+    return this.page.innerText('[data-test-id="muutoshakemus-form-paatos-reason"]')
   }
 
   async openPaatosPreview() {
