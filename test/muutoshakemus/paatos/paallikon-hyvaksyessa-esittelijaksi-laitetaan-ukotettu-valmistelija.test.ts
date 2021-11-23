@@ -198,7 +198,6 @@ describe('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen,
 
             describe('send decision', () => {
               beforeAll(async () => {
-                await writeSisältömuutosPäätös(page, 'Muutokset hankkeen sisältöön tai toteutustapaan hyväksytään  hakemuksen mukaisesti.')
                 await selectVakioperusteluInFinnish(page)
                 await saveMuutoshakemus(page)
               })
@@ -225,7 +224,7 @@ describe('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen,
                   beforeAll(async () => {
                     await Promise.all([
                       page.waitForNavigation(),
-                      clickElement(page, '[data-test-id="link-to-muutoshakemus"]') 
+                      clickElement(page, '[data-test-id="link-to-muutoshakemus"]')
                     ])
                   })
                   it('navigates user to muutoshakemus', async () => {
@@ -240,7 +239,3 @@ describe('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen,
     })
   })
 })
-
-async function writeSisältömuutosPäätös(page: Page, text: string) {
-  await clearAndType(page, '[name=hyvaksytyt-sisaltomuutokset]', text)
-}

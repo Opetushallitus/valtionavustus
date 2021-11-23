@@ -20,7 +20,6 @@
    :reason s/Str
    :decider s/Str
    :muutoshakemusUrl s/Str
-   (s/optional-key :hyvaksytyt-sisaltomuutokset) (s/maybe s/Str)
    (s/optional-key :status-sisaltomuutos) (s/maybe s/Str)
    (s/optional-key :paatos-hyvaksytty-paattymispaiva) (s/maybe java.time.LocalDate)
    (s/optional-key :status-jatkoaika) (s/maybe s/Str)
@@ -43,7 +42,6 @@
    {:reason s/Str
     (s/optional-key :haen-sisaltomuutosta) (s/maybe {
       :status s/Str
-      (s/optional-key :hyvaksytyt-sisaltomuutokset) (s/maybe s/Str)
     })
     (s/optional-key :haen-kayttoajan-pidennysta) (s/maybe {
       (s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)

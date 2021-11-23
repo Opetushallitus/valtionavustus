@@ -49,7 +49,6 @@
     :reason s/Str
     :created-at s/Inst
     :updated-at s/Inst
-    (s/optional-key :hyvaksytyt-sisaltomuutokset) (s/maybe s/Str)
     (s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
     (s/optional-key :talousarvio) (s/maybe [Meno])
     (s/optional-key :paatos-status-jatkoaika) (s/maybe s/Str)

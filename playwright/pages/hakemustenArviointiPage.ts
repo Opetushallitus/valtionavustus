@@ -203,10 +203,6 @@ export class HakemustenArviointiPage {
     return await textContent(this.page, '[data-test-id="paatos-talousarvio"]')
   }
 
-  async paatosPreviewSisaltoContent() {
-    return await textContent(this.page, '[data-test-id="sisaltomuutos-content"]')
-  }
-
   async paatosPreviewJatkoaikaValue() {
     return await textContent(this.page, '[data-test-id="paattymispaiva-value"]')
   }
@@ -255,16 +251,13 @@ export class HakemustenArviointiPage {
     }
   }
 
-  async writeSisaltomuutosPaatos(text: string) {
-    await this.page.fill('[name=hyvaksytyt-sisaltomuutokset]', text)
+  async writePerustelu(text: string) {
+    await this.page.fill('#reason', text)
   }
 
-  async setMuutoshakemusSisaltoDecision(status: PaatosStatus, value?: string) {
+  async setMuutoshakemusSisaltoDecision(status: PaatosStatus) {
     if (status) {
       await this.page.click(`label[for="haen-sisaltomuutosta-${status}"]`)
-    }
-    if (value) {
-      await this.writeSisaltomuutosPaatos(value)
     }
   }
 

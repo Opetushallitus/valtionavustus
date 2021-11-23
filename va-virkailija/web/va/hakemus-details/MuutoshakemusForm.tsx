@@ -46,7 +46,6 @@ import DatePicker from "react-widgets/DatePicker";
 import moment from "moment";
 import MomentLocalizer from 'react-widgets-moment'
 import {
-  getNestedFormikError,
   getNestedInputErrorClass
 } from "../../../../va-common/web/va/formikHelpers";
 import {Role} from "../types";
@@ -127,7 +126,6 @@ const getPaatosSchema = (muutoshakemus: Muutoshakemus) => Yup.object().shape({
     return isAcceptedWithOrWithoutChanges(sisaltomuutosStatus)
       ? Yup.object({
         status: Yup.string().required(),
-        'hyvaksytyt-sisaltomuutokset': Yup.string().required('Kuvaile hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan on pakollinen kenttä!')
       })
       : Yup.string()
   })
@@ -177,7 +175,6 @@ const formToPayload = (values: MuutoshakemusPaatosRequest) => {
   return {
     reason: values.reason,
     'haen-sisaltomuutosta': values['haen-sisaltomuutosta'] && {
-      'hyvaksytyt-sisaltomuutokset': values['haen-sisaltomuutosta']?.['hyvaksytyt-sisaltomuutokset'],
       status: values["haen-sisaltomuutosta"]?.status
     },
     talousarvio: values.talousarvio && {
@@ -216,7 +213,6 @@ export const MuutoshakemusForm = ({avustushaku, currentTalousarvio, muutoshakemu
       'paatos-status-jatkoaika': f.values["haen-kayttoajan-pidennysta"]?.status,
       paattymispaiva: f.values["haen-kayttoajan-pidennysta"]?.paattymispaiva,
       'paatos-status-sisaltomuutos': f.values["haen-sisaltomuutosta"]?.status,
-      'hyvaksytyt-sisaltomuutokset': f.values["haen-sisaltomuutosta"]?.["hyvaksytyt-sisaltomuutokset"],
       'paatos-status-talousarvio': f.values.talousarvio?.status,
       reason: f.values.reason,
       'created-at': new Date().toISOString(),
@@ -252,8 +248,7 @@ export const MuutoshakemusForm = ({avustushaku, currentTalousarvio, muutoshakemu
       </Modal>
     )
   }
-  const sisaltomuutoksetStatus = f.values["haen-sisaltomuutosta"]?.status
-  const hyvaksyttySisaltomuutokset = isAcceptedWithOrWithoutChanges(sisaltomuutoksetStatus)
+
   return (
     <form onSubmit={f.handleSubmit} data-test-id="muutoshakemus-form">
       {muutoshakemus['haettu-kayttoajan-paattymispaiva'] &&
@@ -294,10 +289,7 @@ export const MuutoshakemusForm = ({avustushaku, currentTalousarvio, muutoshakemu
         <MuutoshakemusSection
           blueMiddleComponent={<PaatosStatusRadioButtonGroup
             talousarvioValues={talousarvioValues}
-            group="haen-sisaltomuutosta" f={f}/>}
-          bottomComponent={hyvaksyttySisaltomuutokset
-            ? <HyvaksytytSisaltomuutoksetForm f={f} />
-            : undefined
+            group="haen-sisaltomuutosta" f={f}/>
           }
         >
           <h2 className="muutoshakemus-section-title">Sisältö ja toteutustapa</h2>
@@ -307,14 +299,6 @@ export const MuutoshakemusForm = ({avustushaku, currentTalousarvio, muutoshakemu
             <div className="muutoshakemus-description-box"
                  data-test-id="sisaltomuutos-perustelut">{muutoshakemus['sisaltomuutos-perustelut']}</div>
           </div>
-          {muutoshakemus['hyvaksytyt-sisaltomuutokset'] && (
-            <div className="muutoshakemus-row">
-              <h4
-                className="muutoshakemus__header">{t.sisaltomuutos.acceptedChanges}</h4>
-              <div
-                className="muutoshakemus-description-box">{muutoshakemus['hyvaksytyt-sisaltomuutokset']}</div>
-            </div>
-          )}
           {isAcceptedWithChanges(f.values["haen-sisaltomuutosta"]?.status) && (
             <div className="muutoshakemus-notice">
               Olet tekemässä päätöksen, jossa haetut sisältömuutokset hyväksytään muutettuna. Varmista, että perusteluissa hakijalle kuvataan mitkä haetuista sisältömuutoksista hyväksytään ja mitkä hylätään.
@@ -423,26 +407,3 @@ const KayttoajanPidennysAcceptWithChangesForm = ({f, muutoshakemus, projectEndDa
       {errorInPaattymispaiva && <span className="muutoshakemus__error row3 col3">Päättymispäivä on pakollinen kenttä!</span>}
     </div>
   )}
-
-const HyvaksytytSisaltomuutoksetForm = ({f}: {
-  f: MuutoshakemusPaatosFormValues
-}) => {
-  const sisaltomuutosError = getNestedFormikError(f, ['haen-sisaltomuutosta', 'hyvaksytyt-sisaltomuutokset']) && f.touched['haen-sisaltomuutosta']
-  return (
-    <div className="muutoshakemus-row">
-      <h4 className="muutoshakemus__header">
-        Kuvaa hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan
-      </h4>
-      <textarea id="hyvaksytyt-sisaltomuutokset"
-                name="hyvaksytyt-sisaltomuutokset"
-                rows={5} cols={53}
-                onChange={event => {
-                  f.setFieldValue('haen-sisaltomuutosta.hyvaksytyt-sisaltomuutokset', event.target.value)
-                }}
-                onBlur={f.handleBlur}
-                value={f.values['haen-sisaltomuutosta']?.['hyvaksytyt-sisaltomuutokset']}
-                className={sisaltomuutosError ? "muutoshakemus__error" : undefined} />
-      {sisaltomuutosError && <div className="muutoshakemus__error">Hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan on pakollinen kenttä!</div>}
-    </div>
-  )
-}

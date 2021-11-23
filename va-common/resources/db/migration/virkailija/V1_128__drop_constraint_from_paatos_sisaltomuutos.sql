@@ -1,0 +1,2 @@
+ALTER TABLE virkailija.paatos_sisaltomuutos
+  DROP CONSTRAINT hyvaksytyt_sisaltomuutokset_nullable_only_if_rejected;

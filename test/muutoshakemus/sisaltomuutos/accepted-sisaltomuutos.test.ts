@@ -9,7 +9,6 @@ import {
   log,
   mkBrowser,
   saveMuutoshakemus,
-  selectVakioperusteluInFinnish,
   setPageErrorConsoleLogger,
   textContent,
 } from '../../test-util'
@@ -124,7 +123,6 @@ describe('Sisaltomuutos (accepted)', () => {
     })
 
     it('should require sisältömuutospäätös', async () => {
-      await selectVakioperusteluInFinnish(page)
       await muutosSendButtonDisabled(page)
       await writeSisältömuutosPäätös(page, 'Testing')
       await muutosSendButtonEnabled(page)
@@ -142,7 +140,6 @@ describe('Sisaltomuutos (accepted)', () => {
     describe('sending decision', () => {
       beforeAll(async () => {
         await writeSisältömuutosPäätös(page, 'Muutokset hankkeen sisältöön tai toteutustapaan hyväksytään  hakemuksen mukaisesti.')
-        await selectVakioperusteluInFinnish(page)
         await saveMuutoshakemus(page)
       }, 60000)
 

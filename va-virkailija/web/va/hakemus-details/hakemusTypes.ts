@@ -20,7 +20,6 @@ export interface MuutoshakemusPaatosResponse {
   decider: string
   muutoshakemusUrl: string
   'status-sisaltomuutos'?: PaatosStatus
-  'hyvaksytyt-sisaltomuutokset'?: string
   'status-jatkoaika'?: PaatosStatus
   'paatos-hyvaksytty-paattymispaiva'?: string
   'status-talousarvio'?: PaatosStatus
@@ -39,7 +38,6 @@ export interface MuutoshakemusPaatosRequest {
   }
   'haen-sisaltomuutosta'?: {
     status: PaatosStatus
-    'hyvaksytyt-sisaltomuutokset'?: string
   }
   talousarvio?: {
     status: PaatosStatus

@@ -390,7 +390,7 @@ export async function setMuutoshakemusJatkoaikaDecision(page: Page, status: Paat
 }
 
 export async function writeSisältömuutosPäätös(page: Page, text: string) {
-  const selector = '[name=hyvaksytyt-sisaltomuutokset]'
+  const selector = '#reason'
   const sisalto = await page.waitForSelector(selector, {visible: true})
   await sisalto?.click({clickCount: 3})
   if (text === '') {

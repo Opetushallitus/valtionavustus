@@ -115,14 +115,13 @@ const ProjectSection: React.FC<{muutoshakemus: Muutoshakemus, projectName: strin
   )
 }
 
-const PerustelutSection: React.FC<{reason: string; sisaltomuutokset?: string}> = ({reason, sisaltomuutokset}) => {
+const PerustelutSection: React.FC<{reason: string;}> = ({reason}) => {
   const { t } = useTranslations()
   return (
     <section className="muutoshakemus-paatos__section">
       <div data-test-id="muutoshakemus-paatos-perustelut-title" className="muutoshakemus-paatos__title">{t.muutoshakemus.paatos.perustelut}</div>
       <div className="muutoshakemus-paatos__perustelut">
         <div className="muutoshakemus-paatos__reason" data-test-id="paatos-reason">{reason}</div>
-        {sisaltomuutokset && <div data-test-id="sisaltomuutos-content">{sisaltomuutokset}</div>}
       </div>
     </section>
   )
@@ -190,7 +189,7 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
       {muutoshakemus['haen-sisaltomuutosta'] && paatos["paatos-status-sisaltomuutos"] && (
         <SisaltomuutosPaatosSection status={paatos["paatos-status-sisaltomuutos"]} />
       )}
-      <PerustelutSection reason={paatos.reason} sisaltomuutokset={paatos['hyvaksytyt-sisaltomuutokset']} />
+      <PerustelutSection reason={paatos.reason} />
       <HyvaksyjaSection isPresentingOfficer={isPresentingOfficer} decider={paatos.decider} presenter={presenter} />
       <LisatietojaSection presenter={presenter} />
     </div>

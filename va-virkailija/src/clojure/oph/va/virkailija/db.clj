@@ -41,13 +41,9 @@
         muutoshakemus-url (create-muutoshakemus-url va-url (:avustushaku hakemus) (:user-key hakemus))]
       muutoshakemus-url))
 
-(defn- store-paatos-sisaltomuutos [tx paatos-id status, hyvaksytyt-sisältömuutokset]
-  (execute! tx "insert into paatos_sisaltomuutos (paatos_id, status, hyvaksytyt_sisaltomuutokset) values (?, ?::virkailija.paatos_type, ?)"
-            [paatos-id status hyvaksytyt-sisältömuutokset]))
-
-(defn- get-hyvaksytyt-sisaltomuutokset [id]
-  (let [rows (query "SELECT hyvaksytyt_sisaltomuutokset FROM paatos_sisaltomuutos WHERE paatos_id = ?" [id])]
-    (:hyvaksytyt-sisaltomuutokset (first rows))))
+(defn- store-paatos-sisaltomuutos [tx paatos-id status]
+  (execute! tx "insert into paatos_sisaltomuutos (paatos_id, status) values (?, ?::virkailija.paatos_type)"
+            [paatos-id status]))
 
 (defn- get-sisaltomuutos-paatos-status [id]
   (let [rows (query "SELECT status FROM paatos_sisaltomuutos WHERE paatos_id = ?" [id])]
@@ -87,7 +83,7 @@
                (when (:talousarvio paatos)
                      (add-paatos-menoluokkas tx paatos-id avustushaku-id (get-in paatos [:talousarvio :talousarvio])))
                (when (some? (:haen-sisaltomuutosta paatos))
-                     (store-paatos-sisaltomuutos tx paatos-id (get-in paatos [:haen-sisaltomuutosta :status]) (get-in paatos [:haen-sisaltomuutosta :hyvaksytyt-sisaltomuutokset])))
+                     (store-paatos-sisaltomuutos tx paatos-id (get-in paatos [:haen-sisaltomuutosta :status])))
                created-paatos))))
 
 (defn get-hyvaksytty-paattymispaiva [paatos-id]
@@ -124,8 +120,7 @@
         (assoc :status-jatkoaika (get-jatkoaika-paatos-status (:id created-paatos)))
         (assoc :status-sisaltomuutos (get-sisaltomuutos-paatos-status (:id created-paatos)))
         (assoc :status-talousarvio (get-talousarvio-paatos-status (:id created-paatos)))
-        (assoc :talousarvio (get-talousarvio (:id created-paatos) "paatos"))
-        (assoc :hyvaksytyt-sisaltomuutokset (get-hyvaksytyt-sisaltomuutokset (:id created-paatos))))))
+        (assoc :talousarvio (get-talousarvio (:id created-paatos) "paatos")))))
 
 (defn get-menoluokkas [avustushaku-id]
   (query "SELECT type, translation_fi, translation_sv FROM virkailija.menoluokka WHERE avustushaku_id = ?" [avustushaku-id]))
@@ -236,7 +231,6 @@
                                 p.user_key as paatos_user_key,
                                 p.created_at as paatos_created_at,
                                 p.reason as paatos_reason,
-                                hyvaksytyt_sisaltomuutokset,
                                 to_char(pj.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva,
                                 ee.created_at as paatos_sent_at
                               FROM virkailija.muutoshakemus m

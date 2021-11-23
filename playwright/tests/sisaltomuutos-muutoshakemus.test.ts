@@ -24,13 +24,13 @@ test('can reject sisaltomuutos muutoshakemus', async ({hakemustenArviointiPage})
 })
 
 test('can accept sisaltomuutos muutoshakemus', async ({hakemustenArviointiPage}) => {
-  await hakemustenArviointiPage.setMuutoshakemusSisaltoDecision('accepted', 'Ei kommentoitavaa')
+  await hakemustenArviointiPage.setMuutoshakemusSisaltoDecision('accepted')
   await hakemustenArviointiPage.selectVakioperusteluInFinnish()
   await hakemustenArviointiPage.saveMuutoshakemus()
 })
 
 test('can accept_with_changes sisaltomuutos muutoshakemus', async ({hakemustenArviointiPage}) => {
-  await hakemustenArviointiPage.setMuutoshakemusSisaltoDecision('accepted_with_changes', 'Ei kommentoitavaa')
+  await hakemustenArviointiPage.setMuutoshakemusSisaltoDecision('accepted_with_changes')
   await hakemustenArviointiPage.selectVakioperusteluInFinnish()
   await hakemustenArviointiPage.saveMuutoshakemus()
 })

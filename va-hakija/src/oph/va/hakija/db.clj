@@ -178,8 +178,7 @@
                             created_at,
                             updated_at,
                             decider,
-                            to_char(pj.paattymispaiva, 'YYYY-MM-DD') as paattymispaiva,
-                            hyvaksytyt_sisaltomuutokset
+                            to_char(pj.paattymispaiva, 'YYYY-MM-DD') as paattymispaiva
                           FROM virkailija.paatos
                           LEFT JOIN virkailija.paatos_jatkoaika pj ON (pj.paatos_id = paatos.id)
                           LEFT JOIN virkailija.paatos_talousarvio pt ON (pt.paatos_id = paatos.id)
@@ -217,7 +216,6 @@
                                   p.id as paatos_id,
                                   p.reason as paatos_reason,
                                   p.user_key as paatos_user_key,
-                                  hyvaksytyt_sisaltomuutokset,
                                   to_char(pj.paattymispaiva, 'YYYY-MM-DD') as paatos_hyvaksytty_paattymispaiva,
                                   p.created_at as paatos_created_at,
                                   ee.created_at as paatos_sent_at
