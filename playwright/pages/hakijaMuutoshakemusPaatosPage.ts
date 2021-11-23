@@ -39,8 +39,26 @@ export class HakijaMuutoshakemusPaatosPage {
     return await textContent(this.page,'[data-test-id="muutoshakemus-paatos-tekija-title"]')
   }
 
+  async paatoksenHyvaksyja() {
+    return this.page.textContent( '[data-test-id="paatos-decider"]')
+  }
+  async paatoksenEsittelija() {
+    return this.page.innerText('[data-test-id="paatos-esittelija"]')
+  }
+
   async lisatietojaTitle() {
     return await textContent(this.page,'[data-test-id="muutoshakemus-paatos-lisatietoja-title"]')
+  }
+
+  async lisatietoja() {
+    return this.page.innerText('[data-test-id="paatos-esittelija"]')
+  }
+
+  async clickLinkToMuutoshakemus() {
+    await Promise.all([
+      this.page.waitForNavigation(),
+      this.page.click('[data-test-id="link-to-muutoshakemus"]')
+    ])
   }
 
   async infoSection() {

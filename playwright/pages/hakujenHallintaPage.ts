@@ -52,6 +52,32 @@ export class HakujenHallintaPage {
     await this.page.waitForSelector('#form-controls .status .info:has-text("Kaikki tiedot tallennettu")')
   }
 
+  async searchUsers(user: string) {
+    await Promise.all([
+      this.page.waitForResponse(`${VIRKAILIJA_URL}/api/va-user/search`),
+      this.page.fill('#va-user-search-input', user)
+    ])
+  }
+
+  async selectUser(user: string, avustushakuID: number) {
+    await Promise.all([
+      this.page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/role`),
+      clickElementWithText(this.page, 'a', user)
+    ])
+  }
+
+  async removeUser(avustushakuID: number, role = '_-valtionavustus') {
+    await Promise.all([
+      this.page.waitForResponse(
+        response => {
+          const regex = new RegExp(`.*api/avustushaku/${avustushakuID}/role/*`, "g")
+          const matchResult = response.url().match(regex)
+          return !!matchResult && matchResult.length > 0
+        }),
+      this.page.click( `[data-test-id="remove-role-${role}"]`)
+    ])
+  }
+
   async sendPaatos(avustushakuID: number) {
     await clickElementWithText(this.page, "button", "Lähetä 1 päätöstä")
     await Promise.all([
