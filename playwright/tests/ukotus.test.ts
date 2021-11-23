@@ -1,6 +1,5 @@
 import {budjettimuutoshakemusTest as test} from "../fixtures/budjettimuutoshakemusTest";
 import axios from "axios";
-import {UserInfo} from "../../va-common/web/va/types";
 import {VIRKAILIJA_URL} from "../utils/constants";
 import {HakemustenArviointiPage} from "../pages/hakemustenArviointiPage";
 import {HakujenHallintaPage} from "../pages/hakujenHallintaPage";
@@ -10,33 +9,32 @@ import {parseMuutoshakemusPaatosFromEmails} from "../utils/emails";
 import {expect} from "@playwright/test";
 import {HAKIJA_URL} from "../../test/test-util";
 
-const users = [
-  {
-    "person-oid": "oid",
-    "first-name": "Matti",
-    surname: "Mattilainen",
-    email: "email@email.com",
-    lang: "fi",
-    privileges: ["va-admin"]
-  },
-  {
-    "person-oid": "oid2",
-    "first-name": "_",
-    surname: "valtionavustus",
-    email: "email2@email.com",
-    lang: "fi",
-    privileges: ["va-admin"]
-  }
-]
-
-async function populateUserCache(users: Omit<UserInfo, 'username'>[]) {
+async function populateUserCache() {
+  const users = [
+    {
+      "person-oid": "oid",
+      "first-name": "Matti",
+      surname: "Mattilainen",
+      email: "email@email.com",
+      lang: "fi",
+      privileges: ["va-admin"]
+    },
+    {
+      "person-oid": "oid2",
+      "first-name": "_",
+      surname: "valtionavustus",
+      email: "email2@email.com",
+      lang: "fi",
+      privileges: ["va-admin"]
+    }
+  ]
   await axios.post(`${VIRKAILIJA_URL}/api/test/user-cache`, users)
 }
 
 test.setTimeout(180000)
 
 test.beforeAll(async () => {
-  await populateUserCache(users)
+  await populateUserCache()
 })
 
 const sisaltomuutosPerustelut = 'Muutamme kaiken muuttamisen ilosta'
