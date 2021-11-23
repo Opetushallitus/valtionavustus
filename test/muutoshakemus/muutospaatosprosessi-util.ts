@@ -389,36 +389,14 @@ export async function setMuutoshakemusJatkoaikaDecision(page: Page, status: Paat
   }
 }
 
-export async function writeSisältömuutosPäätös(page: Page, text: string) {
-  const selector = '#reason'
-  const sisalto = await page.waitForSelector(selector, {visible: true})
-  await sisalto?.click({clickCount: 3})
-  if (text === '') {
-    await page.keyboard.press('Backspace')
-  } else {
-    await page.keyboard.type(text)
-  }
-  await page.evaluate(e => e.blur(), sisalto)
-}
-
-export async function setMuutoshakemusSisaltoDecision(page: Page, status: PaatosStatus, value?: string) {
-  if (status) {
-    await clickElement(page, `label[for="haen-sisaltomuutosta-${status}"]`)
-  }
-  if (value) {
-    await writeSisältömuutosPäätös(page, value)
-  }
-}
-
 interface FillOpts {
   jatkoaika?: { status: PaatosStatus; value?: string }
   budget?: {status: PaatosStatus; value?: BudgetAmount }
-  sisalto?: {status: PaatosStatus; value?: string}
   selectVakioperustelu?: boolean
 }
 
 export async function fillOsiotAndSendMuutoshakemusDecision(page: Page, opts: FillOpts) {
- const {jatkoaika, budget, sisalto, selectVakioperustelu = true} = opts ?? {}
+ const {jatkoaika, budget, selectVakioperustelu = true} = opts ?? {}
   if (budget?.status) {
     await clickElement(page, `label[for="talousarvio-${budget.status}"]`)
   }
@@ -427,9 +405,6 @@ export async function fillOsiotAndSendMuutoshakemusDecision(page: Page, opts: Fi
   }
   if (jatkoaika) {
     await setMuutoshakemusJatkoaikaDecision(page, jatkoaika.status, jatkoaika.value)
-  }
-  if (sisalto) {
-    await setMuutoshakemusSisaltoDecision(page, sisalto.status, sisalto.value)
   }
   if (selectVakioperustelu) {
     await selectVakioperusteluInFinnish(page)

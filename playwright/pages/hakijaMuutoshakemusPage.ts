@@ -1,6 +1,10 @@
 import {Page} from "playwright";
 import {expect} from "@playwright/test"
-import {getExistingBudgetTableCells, textContent} from "../utils/util";
+import {
+  getElementInnerText,
+  getExistingBudgetTableCells,
+  textContent
+} from "../utils/util";
 import {
   getLinkToMuutoshakemusFromSentEmails,
 } from "../utils/emails";
@@ -66,7 +70,11 @@ export class HakijaMuutoshakemusPage {
     expect(notification).toBe(notificationText)
   }
 
-  expectApprovedBudgetToBe(page, budget: BudgetAmount): () => Promise<void> {
+  async getMuutoshakemusSisaltomuutosPerustelut() {
+    return getElementInnerText(this.page, '[data-test-class="existing-muutoshakemus"] [data-test-id="sisaltomuutos-perustelut"]')
+  }
+
+  expectApprovedBudgetToBe(page: Page, budget: BudgetAmount): () => Promise<void> {
     return async function verifyBudget() {
       const budgetExpectedItems = [
         {description: 'Henkilöstömenot', amount: `${budget.personnel} €`},

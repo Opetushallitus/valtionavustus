@@ -2,7 +2,10 @@ import {ElementHandle, Page} from "playwright";
 import {navigate} from "../utils/navigate";
 import {
   clickElementWithText,
-  expectToBeDefined, getChangedBudgetTableCells, getExistingBudgetTableCells,
+  expectToBeDefined,
+  getChangedBudgetTableCells,
+  getElementInnerText,
+  getExistingBudgetTableCells,
   textContent
 } from "../utils/util";
 import {expect} from "@playwright/test";
@@ -176,6 +179,14 @@ export class HakemustenArviointiPage {
     await clickElementWithText(this.page, 'a', 'Lisää vakioperustelu suomeksi')
   }
 
+  async getSisaltomuutosPerustelut() {
+    return getElementInnerText(this.page, '[data-test-id="sisaltomuutos-perustelut"]')
+  }
+
+  async getMuutoshakemusNotice() {
+    return getElementInnerText(this.page, '.muutoshakemus-notice')
+  }
+
   async openPaatosPreview() {
     await Promise.all([
       clickElementWithText(this.page, 'a', 'Esikatsele päätösdokumentti'),
@@ -283,6 +294,8 @@ export class HakemustenArviointiPage {
   async saveMuutoshakemus() {
     await this.page.click('[data-test-id="muutoshakemus-submit"]')
     await this.page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
+    const statusText = await this.page.textContent('[data-test-id="paatos-status-text"]')
+    expect(statusText).toEqual('Käsitelty')
   }
 
   async existingBudgetTableCells(selector?: string) {
