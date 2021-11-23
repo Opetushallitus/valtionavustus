@@ -92,7 +92,7 @@ export class HakijaMuutoshakemusPage {
   async sendMuutoshakemus(isApplication: boolean, swedish?: boolean) {
     if (swedish) {
       await this.page.click('#send-muutospyynto-button')
-      expect(this.page.textContent('div[class="auto-hide success"]')).toEqual('Ändringsansökan har skickats')
+      expect(await this.page.textContent('div[class="auto-hide success"]')).toEqual('Ändringsansökan har skickats')
     } else {
       await this.clickSendMuutoshakemus()
       await this.expectMuutoshakemusToBeSubmittedSuccessfully(isApplication)
