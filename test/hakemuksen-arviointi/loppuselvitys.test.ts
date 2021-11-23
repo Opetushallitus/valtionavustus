@@ -139,7 +139,19 @@ describe("Loppuselvitys", () => {
       expect(emails.length).toEqual(oldEmailCount + 1)
       const loppuselvitysAsiatarkastamattaNotification = emails.pop()
       expect(loppuselvitysAsiatarkastamattaNotification?.subject).toEqual('Asiatarkastamattomia loppuselvityksiä')
-      expect(loppuselvitysAsiatarkastamattaNotification?.formatted).toContain(`- Loppuselvityksiä 1 kpl: ${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/`)
+      expect(loppuselvitysAsiatarkastamattaNotification?.formatted).toEqual(`Hei!
+
+1 loppuselvitystä odottaa asiatarkastustasi valtionavustusjärjestelmässä. Tarkastamattomia loppuselvityksiä on seuraavissa valtionavustuksissa:
+
+- Loppuselvityksiä 1 kpl: ${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/
+
+Hyväksyttyäsi asiatarkastuksen, lähtee tarkastuksesta automaattisesti tieto taloustarkastukseen, eikä järjestelmän ulkopuolista ilmoitusta asiatarkastuksesta tarvita.
+
+Taloustarkastaja lähettää tiedon loppuselvityksen hyväksymisestä avustuksen saajalle, kun taloustarkastus on hyväksytty. Tarkemmat ohjeet loppuselvityksen käsittelyyn: https://intra.oph.fi/pages/viewpage.action?pageId=99516848
+
+Huom! Mikäli olet jo tarkastanut loppuselvityksen, josta saat muistutuksen, voit kuitata loppuselvityksen tarkastetuksi klikkaamalla VA-järjestelmässä hankekohtaisesti Hyväksy asiatarkastus ja lähetä taloustarkastukseen. Tämän jälkeen et saa enää muistutusta kyseisestä asiatarkastuksesta.
+
+Ennen vuotta 2020 avattujen valtionavustusten osalta asiatarkastusten käsittely ja ilmoittaminen taloustarkastajalle tehdään toistaiseksi kuten aiemminkin.`)
     })
 
     describe('virkailija verifies loppuselvitys information', () => {
