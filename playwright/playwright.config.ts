@@ -3,9 +3,11 @@ import { PlaywrightTestConfig } from '@playwright/test';
 const headless = process.env['HEADLESS'] === 'true'
 const workersEnv = Number(process.env['PLAYWRIGHT_WORKERS'])
 const workers = isNaN(workersEnv) ? undefined : workersEnv
+const retriesEnv = Number(process.env['PLAYWRIGHT_RETRIES'])
+const retries = isNaN(retriesEnv) ? 2 : retriesEnv
 
 const config: PlaywrightTestConfig = {
-  retries: 2,
+  retries,
   workers,
   testDir: 'tests',
   outputDir: '../../playwright-results/test-results',
