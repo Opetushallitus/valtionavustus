@@ -1,4 +1,3 @@
-import {textContent} from "../utils/util";
 import {Page} from "playwright";
 import {getLinkToPaatosFromEmails} from "../utils/emails";
 
@@ -15,18 +14,18 @@ export class HakijaPaatosPage {
   }
 
   async paatosHeaderTitle() {
-    return await textContent(this.page, '[data-test-id="paatos-header-title"]')
+    return await this.page.textContent('[data-test-id="paatos-header-title"]')
   }
 
   async paatosTitle() {
-    return await textContent(this.page, '[data-test-id="paatos-title"]')
+    return await this.page.textContent('[data-test-id="paatos-title"]')
   }
 
   async acceptedTitle() {
-    return await textContent(this.page, '[data-test-id="paatos-accepted-title"]')
+    return await this.page.textContent('[data-test-id="paatos-accepted-title"]')
   }
 
   async lisatietojaTitle() {
-    return await textContent(this.page, '[data-test-id="lisatietoja-title"]')
+    return await this.page.textContent('[data-test-id="lisatietoja-title"]')
   }
 }

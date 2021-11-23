@@ -1,7 +1,7 @@
 import {Page} from "playwright";
 import {
   getChangedBudgetTableCells,
-  getExistingBudgetTableCells, textContent,
+  getExistingBudgetTableCells,
 } from "../utils/util";
 
 export class HakijaMuutoshakemusPaatosPage {
@@ -16,38 +16,38 @@ export class HakijaMuutoshakemusPaatosPage {
   }
 
   async title() {
-    return await textContent(this.page,'[data-test-id="muutoshakemus-paatos-title"]')
+    return await this.page.textContent('[data-test-id="muutoshakemus-paatos-title"]')
   }
 
   async currentBudgetTitle() {
-    return await textContent(this.page,'[data-test-id="budget-old-title"]')
+    return await this.page.textContent('[data-test-id="budget-old-title"]')
   }
 
   async currentBudgetHeader() {
-    return await textContent(this.page,'[data-test-id="budget-change-title"]')
+    return await this.page.textContent('[data-test-id="budget-change-title"]')
   }
 
   async paatoksetPerustelutTitle() {
-    return await textContent(this.page,'[data-test-id="muutoshakemus-paatos-perustelut-title"]')
+    return await this.page.textContent('[data-test-id="muutoshakemus-paatos-perustelut-title"]')
   }
 
   async paatoksenPerustelut() {
-    return await textContent(this.page,'[data-test-id="paatos-reason"]')
+    return await this.page.textContent('[data-test-id="paatos-reason"]')
   }
 
   async paatoksetTekija() {
-    return await textContent(this.page,'[data-test-id="muutoshakemus-paatos-tekija-title"]')
+    return await this.page.textContent('[data-test-id="muutoshakemus-paatos-tekija-title"]')
   }
 
   async paatoksenHyvaksyja() {
-    return this.page.textContent( '[data-test-id="paatos-decider"]')
+    return await this.page.textContent('[data-test-id="paatos-decider"]')
   }
   async paatoksenEsittelija() {
     return this.page.innerText('[data-test-id="paatos-esittelija"]')
   }
 
   async lisatietojaTitle() {
-    return await textContent(this.page,'[data-test-id="muutoshakemus-paatos-lisatietoja-title"]')
+    return await this.page.textContent('[data-test-id="muutoshakemus-paatos-lisatietoja-title"]')
   }
 
   async lisatietoja() {
@@ -62,7 +62,7 @@ export class HakijaMuutoshakemusPaatosPage {
   }
 
   async infoSection() {
-    return await textContent(this.page,'[data-test-id="budget-change"]')
+    return await this.page.textContent('[data-test-id="budget-change"]')
   }
 
   async existingBudgetTableCells() {
@@ -74,14 +74,14 @@ export class HakijaMuutoshakemusPaatosPage {
   }
 
   async jatkoaikaPaatos() {
-    return await textContent(this.page,'[data-test-id="paatos-jatkoaika"]')
+    return await this.page.textContent('[data-test-id="paatos-jatkoaika"]')
   }
 
   async sisaltoPaatos() {
-    return await textContent(this.page,'[data-test-id="paatos-sisaltomuutos"]')
+    return await this.page.textContent('[data-test-id="paatos-sisaltomuutos"]')
   }
 
   async talousarvioPaatos() {
-    return await textContent(this.page,'[data-test-id="paatos-talousarvio"]')
+    return await this.page.textContent('[data-test-id="paatos-talousarvio"]')
   }
 }

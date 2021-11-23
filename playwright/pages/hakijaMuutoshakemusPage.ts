@@ -3,7 +3,6 @@ import {expect} from "@playwright/test"
 import {
   getElementInnerText,
   getExistingBudgetTableCells,
-  textContent
 } from "../utils/util";
 import {
   getLinkToMuutoshakemusFromSentEmails,
@@ -63,7 +62,7 @@ export class HakijaMuutoshakemusPage {
   }
 
   async expectMuutoshakemusToBeSubmittedSuccessfully(isApplication: boolean) {
-    const notification = await textContent(this.page, 'div[class="auto-hide success"]')
+    const notification = this.page.textContent('div[class="auto-hide success"]')
 
     // The text is different if we are actually applying for jatkoaika/budjettimuutos/sisältömuutos
     const notificationText = isApplication ? 'Muutoshakemus lähetetty' : 'Muutokset tallennettu'
@@ -94,7 +93,7 @@ export class HakijaMuutoshakemusPage {
   async sendMuutoshakemus(isApplication: boolean, swedish?: boolean) {
     if (swedish) {
       await this.page.click('#send-muutospyynto-button')
-      expect(await textContent(this.page, 'div[class="auto-hide success"]')).toEqual('Ändringsansökan har skickats')
+      expect(this.page.textContent('div[class="auto-hide success"]')).toEqual('Ändringsansökan har skickats')
     } else {
       await this.clickSendMuutoshakemus()
       await this.expectMuutoshakemusToBeSubmittedSuccessfully(isApplication)

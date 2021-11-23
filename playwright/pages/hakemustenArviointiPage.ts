@@ -6,7 +6,6 @@ import {
   getChangedBudgetTableCells,
   getElementInnerText,
   getExistingBudgetTableCells,
-  textContent
 } from "../utils/util";
 import {expect} from "@playwright/test";
 import {VIRKAILIJA_URL} from "../utils/constants";
@@ -159,16 +158,16 @@ export class HakemustenArviointiPage {
   }
 
   async validateMuutoshakemusValues(muutoshakemus: MuutoshakemusValues, paatos?: PaatosValues) {
-    const jatkoaika = await textContent(this.page, jatkoaikaSelector)
+    const jatkoaika = this.page.textContent(jatkoaikaSelector)
     expect(jatkoaika).toEqual(muutoshakemus.jatkoaika?.format('DD.MM.YYYY'))
-    const jatkoaikaPerustelu = await textContent(this.page, '[data-test-id=muutoshakemus-jatkoaika-perustelu]')
+    const jatkoaikaPerustelu = this.page.textContent('[data-test-id=muutoshakemus-jatkoaika-perustelu]')
     expect(jatkoaikaPerustelu).toEqual(muutoshakemus.jatkoaikaPerustelu)
 
     if (paatos) {
       await this.page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
       const form = await this.page.evaluate((selector: string) => document.querySelectorAll(selector).length, '[data-test-id="muutoshakemus-form"]')
       expect(form).toEqual(0)
-      const muutospaatosLink = await textContent(this.page, 'a.muutoshakemus__paatos-link')
+      const muutospaatosLink = this.page.textContent('a.muutoshakemus__paatos-link')
       expect(muutospaatosLink).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\/paatos\?user-key=[a-f0-9]{64}/)
     } else {
       await this.page.waitForSelector('[data-test-id="muutoshakemus-form"]')
@@ -199,39 +198,39 @@ export class HakemustenArviointiPage {
   }
 
   async paatosPreviewTitle() {
-    return await textContent(this.page, '.hakemus-details-modal__title-row > span')
+    return await this.page.textContent('.hakemus-details-modal__title-row > span')
   }
 
   async paatosPreviewMuutoshakemusPaatosTitle() {
-    return await textContent(this.page, '[data-test-id=muutoshakemus-paatos-title]')
+    return await this.page.textContent('[data-test-id=muutoshakemus-paatos-title]')
   }
 
   async paatosPreviewJatkoaikaPaatos() {
-    return await textContent(this.page, '[data-test-id="paatos-jatkoaika"]')
+    return await this.page.textContent('[data-test-id="paatos-jatkoaika"]')
   }
 
   async paatosPreviewSisaltoPaatos() {
-    return await textContent(this.page, '[data-test-id="paatos-sisaltomuutos"]')
+    return await this.page.textContent('[data-test-id="paatos-sisaltomuutos"]')
   }
 
   async paatosPreviewTalousarvioPaatos() {
-    return await textContent(this.page, '[data-test-id="paatos-talousarvio"]')
+    return await this.page.textContent('[data-test-id="paatos-talousarvio"]')
   }
 
   async paatosPreviewJatkoaikaValue() {
-    return await textContent(this.page, '[data-test-id="paattymispaiva-value"]')
+    return await this.page.textContent('[data-test-id="paattymispaiva-value"]')
   }
 
   async paatosPreviewEsittelija() {
-    return await textContent(this.page, '[data-test-id="paatos-esittelija"]')
+    return await this.page.textContent('[data-test-id="paatos-esittelija"]')
   }
 
   async paatosPreviewLisatietoja() {
-    return await textContent(this.page, '[data-test-id="paatos-additional-info"]')
+    return await this.page.textContent('[data-test-id="paatos-additional-info"]')
   }
 
   async paatosPreviewHyvaksyja() {
-    return await textContent(this.page, '[data-test-id="paatos-decider"]')
+    return await this.page.textContent('[data-test-id="paatos-decider"]')
   }
 
   async closePaatosPreview() {
@@ -242,19 +241,19 @@ export class HakemustenArviointiPage {
   }
 
   async paatosPreviewRegisterNumber() {
-    return await textContent(this.page, '[data-test-id="paatos-register-number"]')
+    return await this.page.textContent('[data-test-id="paatos-register-number"]')
   }
 
   async paatosPreviewProjectName() {
-    return await textContent(this.page, '[data-test-id="paatos-project-name"]')
+    return await this.page.textContent('[data-test-id="paatos-project-name"]')
   }
 
   async paatosPreviewOrg() {
-    return await textContent(this.page, 'h1.muutoshakemus-paatos__org')
+    return await this.page.textContent('h1.muutoshakemus-paatos__org')
   }
 
   async paatosPreviewPerustelu() {
-    return await textContent(this.page, '[data-test-id="paatos-reason"]')
+    return await this.page.textContent('[data-test-id="paatos-reason"]')
   }
 
   async setMuutoshakemusJatkoaikaDecision(status: PaatosStatus, value?: string) {

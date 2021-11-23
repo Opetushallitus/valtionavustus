@@ -51,11 +51,6 @@ export function expectToBeDefined<T>(val: T): asserts val is NonNullable<T> {
   expect(val).toBeDefined();
 }
 
-export async function textContent(page: Page, selector: string) {
-  const handle = await page.waitForSelector(selector)
-  return await handle.textContent()
-}
-
 export function log(...args: any[]) {
   console.log(moment().format('YYYY-MM-DD HH:mm:ss.SSSS'), ...args)
 }
