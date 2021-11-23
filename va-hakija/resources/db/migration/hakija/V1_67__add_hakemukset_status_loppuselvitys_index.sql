@@ -1,0 +1,1 @@
+CREATE INDEX hakemukset_status_loppuselvitys ON hakija.hakemukset (status_loppuselvitys);
