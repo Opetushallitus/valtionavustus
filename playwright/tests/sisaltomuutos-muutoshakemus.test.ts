@@ -36,6 +36,8 @@ test('can reject sisaltomuutos muutoshakemus', async ({hakemustenArviointiPage})
   await hakemustenArviointiPage.saveMuutoshakemus()
   const hakijaPerustelut = await hakemustenArviointiPage.getSisaltomuutosPerustelut()
   expect(hakijaPerustelut).toEqual(sisaltomuutosPerustelut)
+  const virkailijaPerustelut = await hakemustenArviointiPage.getPaatosPerustelut()
+  expect(virkailijaPerustelut).toEqual('Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.')
 })
 
 test('can accept sisaltomuutos muutoshakemus', async ({hakemustenArviointiPage}) => {
@@ -44,6 +46,8 @@ test('can accept sisaltomuutos muutoshakemus', async ({hakemustenArviointiPage})
   await hakemustenArviointiPage.saveMuutoshakemus()
   const hakijaPerustelut = await hakemustenArviointiPage.getSisaltomuutosPerustelut()
   expect(hakijaPerustelut).toEqual(sisaltomuutosPerustelut)
+  const virkailijaPerustelut = await hakemustenArviointiPage.getPaatosPerustelut()
+  expect(virkailijaPerustelut).toEqual('Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt hyväksyä haetut muutokset hakemuksen mukaisesti.')
 })
 
 test('can accept_with_changes sisaltomuutos muutoshakemus', async ({hakemustenArviointiPage}) => {
@@ -56,4 +60,6 @@ test('can accept_with_changes sisaltomuutos muutoshakemus', async ({hakemustenAr
   await hakemustenArviointiPage.saveMuutoshakemus()
   const hakijaPerustelut = await hakemustenArviointiPage.getSisaltomuutosPerustelut()
   expect(hakijaPerustelut).toEqual(sisaltomuutosPerustelut)
+  const virkailijaPerustelut = await hakemustenArviointiPage.getPaatosPerustelut()
+  expect(virkailijaPerustelut).toEqual('Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt hyväksyä haetut muutokset muutettuna, siten kuin ne kuvataan tässä avustuspäätöksessä.')
 })

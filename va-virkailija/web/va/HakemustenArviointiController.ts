@@ -610,16 +610,17 @@ export default class HakemustenArviointiController {
       return state
     }
 
-    const { muutoshakemusId, status } = paatos
+    const { muutoshakemusId, status, reason, talousarvio } = paatos
     const muutoshakemus = state.selectedHakemus.muutoshakemukset?.find(m => m.id === muutoshakemusId)
     if (muutoshakemus) {
       muutoshakemus['paatos-created-at'] = paatos['created-at']
       muutoshakemus['paatos-user-key'] = paatos['user-key']
       muutoshakemus['paatos-hyvaksytty-paattymispaiva'] = paatos['paatos-hyvaksytty-paattymispaiva']
       muutoshakemus['paatos-status-jatkoaika'] = paatos['status-jatkoaika']
-      muutoshakemus.talousarvio = paatos.talousarvio
+      muutoshakemus.talousarvio = talousarvio
       muutoshakemus['paatos-status-talousarvio'] = paatos['status-talousarvio']
       muutoshakemus['paatos-status-sisaltomuutos'] = paatos['status-sisaltomuutos']
+      muutoshakemus['paatos-reason'] = reason
       muutoshakemus.status = status
       state.selectedHakemus["status-muutoshakemus"] = status
     }

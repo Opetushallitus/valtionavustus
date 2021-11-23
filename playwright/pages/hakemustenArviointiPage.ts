@@ -187,6 +187,10 @@ export class HakemustenArviointiPage {
     return getElementInnerText(this.page, '.muutoshakemus-notice')
   }
 
+  async getPaatosPerustelut() {
+    return getElementInnerText(this.page, '[data-test-id="muutoshakemus-form-paatos-reason"]')
+  }
+
   async openPaatosPreview() {
     await Promise.all([
       clickElementWithText(this.page, 'a', 'Esikatsele päätösdokumentti'),
