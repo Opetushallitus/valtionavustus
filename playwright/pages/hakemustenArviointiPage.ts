@@ -157,16 +157,16 @@ export class HakemustenArviointiPage {
   }
 
   async validateMuutoshakemusValues(muutoshakemus: MuutoshakemusValues, paatos?: PaatosValues) {
-    const jatkoaika = this.page.textContent(jatkoaikaSelector)
+    const jatkoaika = await this.page.textContent(jatkoaikaSelector)
     expect(jatkoaika).toEqual(muutoshakemus.jatkoaika?.format('DD.MM.YYYY'))
-    const jatkoaikaPerustelu = this.page.textContent('[data-test-id=muutoshakemus-jatkoaika-perustelu]')
+    const jatkoaikaPerustelu = await this.page.textContent('[data-test-id=muutoshakemus-jatkoaika-perustelu]')
     expect(jatkoaikaPerustelu).toEqual(muutoshakemus.jatkoaikaPerustelu)
 
     if (paatos) {
       await this.page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
       const form = await this.page.evaluate((selector: string) => document.querySelectorAll(selector).length, '[data-test-id="muutoshakemus-form"]')
       expect(form).toEqual(0)
-      const muutospaatosLink = this.page.textContent('a.muutoshakemus__paatos-link')
+      const muutospaatosLink = await this.page.textContent('a.muutoshakemus__paatos-link')
       expect(muutospaatosLink).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\/paatos\?user-key=[a-f0-9]{64}/)
     } else {
       await this.page.waitForSelector('[data-test-id="muutoshakemus-form"]')
