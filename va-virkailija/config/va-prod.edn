@@ -27,4 +27,5 @@
  :contact-person-name-in-pitkaviite {:enabled? true}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
+ :loppuselvitys-verification {:enabled? true}
 }

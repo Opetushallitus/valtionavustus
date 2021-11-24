@@ -15,4 +15,5 @@
          :retry-initial-wait 2000
          :retry-multiplier 4
          :retry-max-time 60000}
+ :loppuselvitys-verification {:enabled? true}
 }
