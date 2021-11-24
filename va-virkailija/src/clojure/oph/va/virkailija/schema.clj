@@ -103,6 +103,7 @@
    :tags Tag
    :oppilaitokset Oppilaitokset
    (s/optional-key :presenter-role-id) (s/maybe Long)
+   (s/optional-key :taloustarkastaja-role-id) (s/maybe Long)
    (s/optional-key :scoring) (s/maybe Scoring)
    (s/optional-key :summary-comment) (s/maybe s/Str)
    (s/optional-key :rahoitusalue) (s/maybe s/Str)
@@ -196,7 +197,7 @@
                       (s/optional-key :refused-at) (s/maybe s/Inst)})
 
 (s/defschema RoleType
-  (s/enum "presenting_officer" "evaluator"))
+  (s/enum "presenting_officer" "evaluator", "taloustarkastaja"))
 
 (s/defschema NewRole {:name s/Str
                       :email (s/maybe s/Str)

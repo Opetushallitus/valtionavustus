@@ -74,6 +74,8 @@ type Arvio = {
   tags?: Tag
   perustelut?: string
   oppilaitokset?: Oppilaitokset
+  "presenter-role-id"?: number
+  "taloustarkastaja-role-id"?: number
 }
 
 export interface NormalizedHakemusData {

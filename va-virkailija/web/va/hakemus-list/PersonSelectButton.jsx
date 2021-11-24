@@ -5,7 +5,15 @@ import ClassNames from 'classnames'
 const RoleButton = ({role,roleField,controller,hakemus}) => {
   const onClick = () => controller.toggleHakemusRole(role.id,hakemus,roleField)
   const currentRoles = hakemus.arvio.roles[roleField]
-  const active = roleField === "presenter" ? hakemus.arvio["presenter-role-id"] === role.id : _.includes(currentRoles,role.id)
+  let active = false;
+  if (roleField === "presenter") {
+    active = hakemus.arvio["presenter-role-id"] === role.id
+  } else if (roleField === "taloustarkastaja") {
+    active = hakemus.arvio["taloustarkastaja-role-id"] === role.id
+  } else {
+    active = _.includes(currentRoles,role.id)
+  }
+
   const buttonClass = ClassNames('btn btn-sm',{
     'btn-selected': active,
     'btn-simple': !active
@@ -35,12 +43,14 @@ const PersonSelectPanel = ({hakemus,state,controller}) => {
   const filterByRole = (roles,role)=> _.sortBy(roles.filter((currentRole)=>currentRole.role === role),'name')
   const presenters = filterByRole(roles,"presenting_officer")
   const evaluators = filterByRole(roles,"evaluator")
+  const taloustarkastajat = filterByRole(roles,"taloustarkastaja")
   const onCloseClick = () => controller.togglePersonSelect(undefined)
   return (
     <div className="panel person-panel person-panel--top">
       <button className="close" onClick={onCloseClick}>x</button>
       <RoleContainer roleName="Valmistelija" roleField="presenter" roles={presenters} controller={controller} hakemus={hakemus}/>
       <RoleContainer roleName="Arvioijat" roleField="evaluators" roles={evaluators} controller={controller} hakemus={hakemus}/>
+      <RoleContainer roleName="Taloustarkastaja" roleField="taloustarkastaja" roles={taloustarkastajat} controller={controller} hakemus={hakemus}/>
     </div>
   )
 }

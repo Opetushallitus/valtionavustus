@@ -25,6 +25,7 @@ type SelvitysProps = {
   selvitysLinkHelpText: any
   environment: EnvironmentApiResponse
   presenter?: Role
+  taloustarkastaja?: Role
 }
 
 const Selvitys = ({ presenter, environment, controller, hakemus, avustushaku, translations, selvitysType, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText }: SelvitysProps) => {

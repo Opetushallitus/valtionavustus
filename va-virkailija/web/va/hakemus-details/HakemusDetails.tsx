@@ -44,6 +44,9 @@ export const HakemusDetails = (props: Props) => {
     const fallbackPresenter = hakuData.roles.find(r => r.role === 'presenting_officer')
     const presenter = hakuData.roles.find(r => r.id === hakemus.arvio["presenter-role-id"]) || fallbackPresenter
 
+    const fallbackTaloustarkastaja = hakuData.roles.find(r => r.role === 'taloustarkastaja')
+    const taloustarkastaja = hakuData.roles.find(r => r.id === hakemus.arvio["taloustarkastaja-role-id"]) || fallbackTaloustarkastaja
+
     const onClose = () => {
       document.body.classList.remove('split-view')
       controller.closeHakemusDetail()
@@ -83,7 +86,7 @@ export const HakemusDetails = (props: Props) => {
         case 'valiselvitys':
           return <Selvitys environment={environment} controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo} presenter={presenter}
-                           translations={translations}
+                           translations={translations} taloustarkastaja={taloustarkastaja}
                            selvitysType="valiselvitys"
                            multibatchEnabled={multibatchEnabled}
                            isPresentingOfficer={isPresentingOfficer}

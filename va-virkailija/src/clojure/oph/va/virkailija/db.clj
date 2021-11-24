@@ -415,6 +415,7 @@
                         :presentercomment (:presentercomment arvio)
                         :roles (:roles arvio)
                         :presenter_role_id (:presenter-role-id arvio)
+                        :taloustarkastaja_role_id (:taloustarkastaja-role-id arvio)
                         :rahoitusalue (:rahoitusalue arvio)
                         :talousarviotili (:talousarviotili arvio)
                         :academysize academysize

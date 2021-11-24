@@ -1185,6 +1185,8 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
   toggleHakemusRole(roleId,hakemus,roleField) {
     if (roleField === "presenter"){
         hakemus.arvio["presenter-role-id"]=roleId
+    } else if (roleField === "taloustarkastaja") {
+        hakemus.arvio["taloustarkastaja-role-id"] = roleId
     } else {
       const currentRoles = hakemus.arvio.roles[roleField]
       hakemus.arvio.roles[roleField] = _.includes(currentRoles, roleId) ? _.without(currentRoles,roleId) : currentRoles.concat(roleId)

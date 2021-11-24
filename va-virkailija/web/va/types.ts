@@ -12,7 +12,7 @@ export interface UserInfo {
   username: string
 }
 
-type RoleType = 'presenting_officer' | 'evaluator'
+type RoleType = 'presenting_officer' | 'evaluator' | 'taloustarkastaja'
 
 export interface Role {
     id: number

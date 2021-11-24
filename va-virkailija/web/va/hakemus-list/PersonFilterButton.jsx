@@ -10,7 +10,7 @@ const RoleButton = ({role,roleField,controller,hakemusFilter}) => {
     controller.closeHakemusDetail()
   }
   const active = role.id === currentFilter
-  const buttonClass = ClassNames('btn btn-sm',{
+  const buttonClass = ClassNames('btn btn-sm', {
     'btn-selected': active,
     'btn-simple': !active
   })
@@ -39,6 +39,7 @@ const PersonSelectPanel = ({state,controller,hakemusFilter}) =>{
           'name')
   const presenters = filterByRole(roles,"presenting_officer")
   const evaluators = filterByRole(roles,"evaluator")
+  const taloustarkastajat = filterByRole(roles,"taloustarkastaja")
   const onCloseClick = () => {
     controller.setFilter("roleIsOpen",false)
   }
@@ -48,6 +49,7 @@ const PersonSelectPanel = ({state,controller,hakemusFilter}) =>{
       <button className="close" onClick={onCloseClick}>x</button>
       <RoleContainer roleName="Valmistelija" roleField="presenter" roles={presenters} controller={controller} hakemusFilter={hakemusFilter}/>
       <RoleContainer roleName="Arvioija" roleField="evaluator" roles={evaluators} controller={controller} hakemusFilter={hakemusFilter}/>
+      <RoleContainer roleName="Taloustarkastaja" roleField="taloustarkastaja" roles={taloustarkastajat} controller={controller} hakemusFilter={hakemusFilter}/>
     </div>
   )
 }

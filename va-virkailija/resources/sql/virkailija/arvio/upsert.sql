@@ -7,6 +7,7 @@ insert into arviot (
   changelog,
   roles,
   presenter_role_id,
+  taloustarkastaja_role_id
   rahoitusalue,
   talousarviotili,
   perustelut,
@@ -27,6 +28,7 @@ values (
   :changelog,
   :roles,
   :presenter_role_id,
+  :taloustarkastaja_role_id,
   :rahoitusalue,
   :talousarviotili,
   :perustelut,
@@ -46,6 +48,7 @@ ON CONFLICT (hakemus_id) DO UPDATE SET
   changelog = EXCLUDED.changelog,
   roles = EXCLUDED.roles,
   presenter_role_id = EXCLUDED.presenter_role_id,
+  taloustarkastaja_role_id = EXCLUDED.taloustarkastaja_role_id,
   rahoitusalue = EXCLUDED.rahoitusalue,
   talousarviotili = EXCLUDED.talousarviotili,
   perustelut = EXCLUDED.perustelut,

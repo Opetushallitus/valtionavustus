@@ -168,6 +168,7 @@ class RoleRow extends React.Component {
           <select onChange={this.handleChange} name="role" value={role.role} disabled={disableEditing}>
             <option value="presenting_officer">Valmistelija</option>
             <option value="evaluator">Arvioija</option>
+            <option value="taloustarkastaja">Taloustarkastaja</option>
           </select>
         </td>
         <td className="haku-roles-name-column"><input type="text" value={role.name} name="name" onChange={this.handleChange} disabled={disableEditing}/></td>
