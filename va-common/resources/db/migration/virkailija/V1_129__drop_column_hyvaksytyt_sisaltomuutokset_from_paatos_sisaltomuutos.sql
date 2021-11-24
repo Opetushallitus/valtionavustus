@@ -1,0 +1,2 @@
+ALTER TABLE virkailija.paatos_sisaltomuutos
+DROP COLUMN hyvaksytyt_sisaltomuutokset;
