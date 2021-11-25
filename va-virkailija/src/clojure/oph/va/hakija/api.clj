@@ -15,6 +15,7 @@
             [clojure.java.jdbc :as jdbc]
             [clj-time.core :as clj-time]
             [oph.soresu.form.formutil :as formutil]
+            [oph.va.virkailija.authorization :as authorization]
             [oph.va.virkailija.email :as email]
             [oph.common.datetime :as datetime])
   (:import (oph.va.jdbc.enums HakuStatus HakuRole HakuType)))
@@ -345,10 +346,12 @@
 (defn verify-loppuselvitys-information [hakemus-id verify-information identity]
   (let [hakemus  (get-hakemus hakemus-id)
         role     (get-avustushaku-role-by-avustushaku-id-and-person-oid (:avustushaku hakemus) (:person-oid identity))
+        allowed-to-verify (or (authorization/is-pääkäyttäjä? identity)
+                              (= "presenting_officer" (:role role)))
         status   (:status_loppuselvitys hakemus)
         message  (:message verify-information)
         verifier (str (:first-name identity) " " (:surname identity))]
-    (if (and (= status "submitted") (= "presenting_officer" (:role role)))
+    (if (and (= status "submitted") allowed-to-verify)
       (do
         (execute!
           "UPDATE hakemukset

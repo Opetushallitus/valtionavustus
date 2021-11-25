@@ -28,6 +28,7 @@ import {
   waitForElementWithText,
   waitForNewTab
 } from "../test-util"
+import axios from 'axios'
 
 jest.setTimeout(400_000)
 
@@ -154,6 +155,25 @@ Huom! Mikäli olet jo tarkastanut loppuselvityksen, josta saat muistutuksen, voi
 Ennen vuotta 2020 avattujen valtionavustusten osalta asiatarkastusten käsittely ja ilmoittaminen taloustarkastajalle tehdään toistaiseksi kuten aiemminkin.`)
     })
 
+    describe('permissions to asiatarkastus', () => {
+      afterAll(async () => {
+        await switchUserIdentityTo(page, "valtionavustus")
+        await navigateToLoppuselvitysTab(page, avustushakuID, hakemusID)
+      })
+
+      it('does not show asiatarkastus to a virkailja who is not valmistelija', async () => {
+        await switchUserIdentityTo(page, "viivivirkailija")
+        await navigateToLoppuselvitysTab(page, avustushakuID, hakemusID)
+        expect(await countElements(page, "button[name=submit-verification]")).toEqual(0)
+      })
+
+      it('shows asiatarkastus to pääkäyttäjä who is not valmistelija', async () => {
+        await switchUserIdentityTo(page, "paivipaakayttaja")
+        await navigateToLoppuselvitysTab(page, avustushakuID, hakemusID)
+        expect(await countElements(page, "button[name=submit-verification]")).toEqual(1)
+      })
+    })
+
     describe('virkailija verifies loppuselvitys information', () => {
       const textareaSelector = 'textarea[name="information-verification"]'
 
@@ -215,3 +235,8 @@ Ennen vuotta 2020 avattujen valtionavustusten osalta asiatarkastusten käsittely
     })
   })
 })
+
+async function switchUserIdentityTo(page: Page, identity: string): Promise<void> {
+  await axios.post(`${VIRKAILIJA_URL}/api/test/set-fake-identity/${identity}`)
+  await page.reload()
+}

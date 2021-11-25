@@ -74,7 +74,7 @@
       true)
     (log/warn "Login failed for CAS ticket " cas-ticket)))
 
-(def fake-admin-identity
+(def default-fake-admin-identity
   {:email "santeri.horttanainen@reaktor.com"
    :first-name "_"
    :lang "fi"
@@ -83,9 +83,37 @@
    :surname "valtionavustus"
    :username "valtionavustus"})
 
+(def fake-identity-paivi-paakayttaja
+  {:email "paivi.paakayttaja@example.com"
+   :first-name "Päivi"
+   :lang "fi"
+   :person-oid "1.2.246.562.24.99000000001"
+   :privileges ["va-admin"]
+   :surname "Pääkäyttäjä"
+   :username "paivipaakayttaja"})
+
+(def fake-identity-viivi-virkailija
+  {:email "viivi.virkailja@exmaple.com"
+   :first-name "Viivi"
+   :lang "fi"
+   :person-oid "1.2.246.562.24.99000000002"
+   :privileges ["va-user"]
+   :surname "Virkailija"
+   :username "viivivirkailija"})
+
+(def current-fake-identity (atom default-fake-admin-identity))
+;(def current-fake-identity (atom fake-identity-paivi-paakayttaja))
+;(def current-fake-identity (atom fake-identity-viivi-virkailija))
+
+(defn set-fake-identity [identity]
+  (reset! current-fake-identity identity))
+
+(defn reset-fake-identity []
+  (set-fake-identity default-fake-admin-identity))
+
 (defn- get-identity [cas-ticket]
   (if (without-authentication?)
-      fake-admin-identity
+      @current-fake-identity
       (get-in @session-store [cas-ticket :identity])))
 
 (defn get-request-identity [request]

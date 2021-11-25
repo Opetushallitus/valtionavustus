@@ -8,6 +8,7 @@ import HakemustenArviointiController from '../HakemustenArviointiController'
 import { Role, UserInfo } from '../types'
 
 import './LoppuselvitysForm.less'
+import _ from 'lodash'
 
 type LoppuselvitysFormProps = {
   avustushaku: Avustushaku
@@ -33,9 +34,11 @@ export const LoppuselvitysForm = ({ avustushaku, hakemus, controller, userInfo, 
     controller.refreshHakemukset(avustushaku.id)
   }
 
+  const allowedToDoAsiatarkastus = isPääkäyttäjä(userInfo) || (presenter?.oid && presenter?.oid === userInfo["person-oid"])
+
   return (
     <div className="information-verification">
-      {status === 'submitted' && presenter?.oid && presenter?.oid === userInfo["person-oid"] &&
+      {status === 'submitted' && allowedToDoAsiatarkastus &&
         <form onSubmit={onSubmit}>
           <div className="verification-comment">
             <h2 className="verification-header">Asiatarkastus</h2>
@@ -58,4 +61,8 @@ export const LoppuselvitysForm = ({ avustushaku, hakemus, controller, userInfo, 
           </div>
         </div>}
     </div>)
+}
+
+function isPääkäyttäjä(userInfo: UserInfo): boolean {
+  return _.includes(userInfo.privileges, "va-admin")
 }

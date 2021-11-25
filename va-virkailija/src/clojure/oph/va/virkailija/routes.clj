@@ -628,6 +628,15 @@
                      (ok (tapahtumaloki/get-tapahtumaloki-entries tyyppi avustushaku-id))))
 
 (compojure-api/defroutes test-api-routes
+  (compojure-api/POST "/set-fake-identity/:identity" []
+    :path-params [identity :- s/Str]
+    (cond (= identity "valtionavustus") (authentication/set-fake-identity authentication/default-fake-admin-identity)
+          (= identity "paivipaakayttaja") (authentication/set-fake-identity authentication/fake-identity-paivi-paakayttaja)
+          (= identity "viivivirkailija") (authentication/set-fake-identity authentication/fake-identity-viivi-virkailija)
+          :else (throw (RuntimeException. (str "Invalid fake identity '" identity "'"))))
+    (ok {:ok "ok"}))
+
+
   (compojure-api/POST "/send-loppuselvitys-asiatarkastamatta-notifications" []
     :return {:ok s/Str}
     (virkailija-notifications/send-loppuselvitys-asiatarkastamatta-notifications)
