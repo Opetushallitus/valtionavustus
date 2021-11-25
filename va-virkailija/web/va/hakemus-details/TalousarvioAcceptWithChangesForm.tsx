@@ -31,7 +31,7 @@ const MenoRow = ({ f, meno, requestedTalousarvio }: { f: MuutoshakemusPaatosForm
   const amountClass = value === meno.amount ? '' : 'linethrough'
   const requestedAmount = requestedTalousarvio.find(m => m.type === meno.type)?.amount
 
-  const handleChange = (e) => {
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const value = parseInt(e.target.value)
     const valueIsNaN = isNaN(value)
     f.setFieldValue(`talousarvio.${name}`,  valueIsNaN ? '' : value)
