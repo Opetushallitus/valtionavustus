@@ -52,5 +52,5 @@
  :tasmaytysraportti-send {:enabled? false}
  :loppuselvitys-verification {:enabled? false}
  :allow-overriding-feature-flag-from-url-params {:enabled? false}
- :dont-send-loppuselvityspyynto-to-virkailija {:enabled? false}
+ :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :test-apis {:enabled? false}}
