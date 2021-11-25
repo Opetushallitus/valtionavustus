@@ -3,14 +3,14 @@ import {
   getAcceptedPäätösEmails, getLinkToHakemusFromSentEmails,
   getValmistelijaEmails,
   waitUntilMinEmails
-} from "../utils/emails";
-import {clickElementWithText, expectToBeDefined} from "../utils/util";
-import {HAKIJA_URL, VIRKAILIJA_URL} from "../utils/constants";
+} from "../../utils/emails";
+import {clickElementWithText, expectToBeDefined} from "../../utils/util";
+import {HAKIJA_URL, VIRKAILIJA_URL} from "../../utils/constants";
 import moment from "moment";
-import {muutoshakemusTest as test} from "../fixtures/muutoshakemusTest";
-import {MuutoshakemusValues} from "../utils/types";
-import {HakemustenArviointiPage} from "../pages/hakemustenArviointiPage";
-import {HakijaMuutoshakemusPage} from "../pages/hakijaMuutoshakemusPage";
+import {muutoshakemusTest as test} from "../../fixtures/muutoshakemusTest";
+import {MuutoshakemusValues} from "../../utils/types";
+import {HakemustenArviointiPage} from "../../pages/hakemustenArviointiPage";
+import {HakijaMuutoshakemusPage} from "../../pages/hakijaMuutoshakemusPage";
 
 const muutoshakemus1: MuutoshakemusValues = {
   jatkoaika: moment(new Date())
