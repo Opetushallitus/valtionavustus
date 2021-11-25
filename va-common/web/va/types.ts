@@ -122,6 +122,7 @@ export interface Comment {
 }
 
 export interface Selvitys {
+  id: number
   "budget-oph-share"?: string
   answers?: Answer[]
   language: 'fi' | 'sv'
@@ -169,6 +170,8 @@ export interface Hakemus {
   scores: unknown[]
   'selvitys-email'?: unknown
   changeRequest?: string
+  'taloustarkastettu-by'?: string
+  'taloustarkastettu-at'?: string
   'loppuselvitys-information-verified-by'?: string
   'loppuselvitys-information-verified-at'?: string
   'loppuselvitys-information-verification'?: string

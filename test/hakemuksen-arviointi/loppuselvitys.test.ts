@@ -129,7 +129,7 @@ describe("Loppuselvitys", () => {
     })
 
     it('virkailija can not accept loppuselvitys while it is not verified', async () => {
-      expect(await countElements(page, '[data-test-id="selvitys-email"]')).toEqual(0)
+      expect(await countElements(page, '[data-test-id="taloustarkastus-email"]')).toEqual(0)
     })
 
     it('loppuselvitys-asiatarkastamatta notification is sent to virkailija', async () => {
@@ -179,11 +179,11 @@ Ennen vuotta 2020 avattujen valtionavustusten osalta asiatarkastusten käsittely
 
       beforeAll(async () => {
         await navigateToLoppuselvitysTab(page, avustushakuID, hakemusID)
-
+        
         await clearAndType(page, textareaSelector, 'Hyvältä näyttääpi')
         await clickElement(page, 'button[name="submit-verification"]')
 
-        await page.waitForSelector('[data-test-id="selvitys-email"]')
+        await page.waitForSelector('[data-test-id="taloustarkastus-email"]')
       })
 
       it('hakija can not edit loppuselvitys after information has been verified', async () => {
@@ -222,11 +222,11 @@ Ennen vuotta 2020 avattujen valtionavustusten osalta asiatarkastusten käsittely
       })
 
       it('virkailija accepts loppuselvitys', async () => {
-        await clearAndType(page, '#selvitys-email-title', 'Hieno homma')
-        await clearAndSet(page, '.selvitys-email-message', 'Hyvä juttu')
-        await clickElement(page, '#submit-selvitys')
+        await clearAndType(page, '[data-test-id="taloustarkastus-email-subject"]', 'Hieno homma')
+        await clearAndSet(page,  '[data-test-id="taloustarkastus-email-content"]', 'Hyvä juttu')
+        await clickElement(page,  '[data-test-id="taloustarkastus-submit"]')
 
-        await page.waitForSelector('.selvitys-email-message--sent')
+        await waitForElementWithText(page, "h3", 'Taloustarkastettu ja lähetetty hakijalle')
 
         await navigate(page, `/avustushaku/${avustushakuID}/`)
         const loppuselvitysStatus = await getElementInnerText(page, '[data-test-id="loppuselvitys-column"]')

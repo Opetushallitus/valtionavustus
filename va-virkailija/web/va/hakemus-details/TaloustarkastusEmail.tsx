@@ -1,0 +1,176 @@
+import React, {useState, useEffect} from 'react'
+import moment from 'moment'
+
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import HakemustenArviointiController from '../HakemustenArviointiController'
+import { fiLongDateTimeFormatWithKlo } from 'va-common/web/va/i18n/dateformat'
+import { UserInfo } from '../types'
+import { Language } from 'va-common/web/va/i18n/translations'
+import { Hakemus, Answer, Selvitys } from 'va-common/web/va/types'
+import { IconTrashcan } from "va-common/web/va/img/IconTrashcan";
+
+import './TaloustarkastusEmail.less'
+
+type TaloustarkastusEmailProps = {
+  controller: HakemustenArviointiController
+  avustushakuId: number
+  hakemus: Hakemus
+  loppuselvitys: Selvitys
+  userInfo: UserInfo
+  avustushakuName: string
+  lang: Language
+}
+
+const formatDate = (date?: string) => {
+  const d = moment(date)
+  return d?.format(fiLongDateTimeFormatWithKlo)
+}
+
+function createEmailSubjectFi(registerNumber: string ) {
+  return `Loppuselvitys ${registerNumber} käsitelty`
+}
+
+function createEmailSubjectSv(registerNumber: string ) {
+  return `Slutredovisningen ${registerNumber} är behandlad`
+}
+
+function createEmailContentFi(projectName: string, avustushakuName: string, senderName: string, senderEmail: string) {
+  return `Hyvä vastaanottaja,
+
+Opetushallitus on tarkastanut hankkeen "${projectName}" ("${avustushakuName}") valtionavustusta koskevan loppuselvityksen ja toteaa avustusta koskevan asian käsittelyn päättyneeksi.
+
+Opetushallitus voi asian käsittelyn päättämisestä huolimatta periä avustuksen tai osan siitä takaisin, jos sen tietoon tulee uusi seikka, joka valtionavustuslain 21 tai 22 §:n mukaisesti velvoittaa tai oikeuttaa takaisinperintään.
+
+Terveisin,
+${senderName}}
+${senderEmail}`
+}
+
+function createEmailContentSv(projectName: string, avustushakuName: string, senderName: string, senderEmail: string) {
+  return `Bästa mottagare
+
+Utbildningsstyrelsen har granskat slutredovisningen för projektet "${projectName}" ("${avustushakuName}") och bekräftar att ärendet nu är slutbehandlat.
+
+Utbildningsstyrelsen kan trots beslut om att ärendet är slutbehandlat kräva tillbaka understödet eller en del av det, om Utbildningsstyrelsen får ny information om ärendet som enligt 21 § eller 22 § i statsunderstödslagen förpliktar eller ger rätt till återkrav.
+
+Med vänlig hälsning,
+${senderName}
+${senderEmail}`
+}
+
+function createEmailContent(projectName: string, avustushakuName: string, senderName: string, senderEmail: string) {
+  return {
+    fi: createEmailContentFi(projectName, avustushakuName, senderName, senderEmail),
+    sv: createEmailContentSv(projectName, avustushakuName, senderName, senderEmail)
+  }
+}
+
+function createEmailSubject(registerNumber: string) {
+  return {
+    fi: createEmailSubjectFi(registerNumber),
+    sv: createEmailSubjectSv(registerNumber)
+  }
+}
+
+function flattenAnswers(answers: Answer[]) {
+  return answers.flatMap(a => Array.isArray(a.value) ? flattenAnswers(a.value) : a)
+}
+
+export const TaloustarkastusEmail = ({ hakemus, loppuselvitys, avustushakuName, avustushakuId, controller, userInfo, lang}: TaloustarkastusEmailProps) => {
+  const taloustarkastettu = hakemus['status-loppuselvitys'] === "accepted"
+  const senderName = userInfo["first-name"].split(" ")[0] + " " + userInfo["surname"]
+
+  const projectName = loppuselvitys["project-name"] || hakemus["project-name"] || ""
+  const registerNumber = loppuselvitys["register-number"] || "" 
+
+  const emailAnswers = flattenAnswers(loppuselvitys.answers?.concat(hakemus.answers) || []).filter(answer => answer.key && answer.key.includes("email"))
+  const organizationEmail = emailAnswers.find(a => a.key === "organization-email")
+  const primaryEmail = emailAnswers.find(a => a.key === "primary-email")
+
+  const [email, setEmail] = useState({
+    lang,
+    subject: createEmailSubject(registerNumber)[lang],
+    content: createEmailContent(projectName, avustushakuName, senderName, userInfo.email)[lang],
+    receivers: new Array<string>()
+  })
+
+  useEffect(() => {
+    const receivers: string[] = []
+    organizationEmail && receivers.push(organizationEmail.value)
+    primaryEmail && receivers.push(primaryEmail.value)
+
+    setEmail(email => ({...email, receivers}))
+
+  }, [organizationEmail, primaryEmail])
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    await HttpUtil.post(`/api/avustushaku/${avustushakuId}/selvitys/loppuselvitys/send`, {
+      message: email.content,
+      "selvitys-hakemus-id": loppuselvitys.id,
+      to: email.receivers, 
+      subject: email.subject
+    })
+    controller.loadSelvitys()
+    controller.refreshHakemukset(avustushakuId)
+  }
+
+  return (
+    <div data-test-id="taloustarkastus-email" className="taloustarkastus">
+      <form onSubmit={onSubmit} className="soresu-form">
+        <div className="taloustarkastus-body">
+          <h2 className="taloustarkastus-header">
+            Taloustarkastus ja loppuselvityksen hyväksyntä
+          </h2>
+          <fieldset>
+            <legend>Lähettäjä</legend>
+            <input type="text" name="sender" disabled={true} value="no-reply@oph.fi"/>
+          </fieldset>
+          <fieldset disabled={taloustarkastettu}>
+            <legend>Vastaanottajat</legend>
+            {
+              email.receivers.map((address, idx) => {
+                return  <div className={`taloustarkastus-receiver-row`} key={idx}>
+                          <input type="text" name="receiver" onChange={e => {
+                            const newReceivers = email.receivers
+                            newReceivers[idx] = e.target.value
+                            setEmail({...email, receivers: newReceivers })
+                          }} value={address}/>
+                          { !taloustarkastettu &&
+                          <span className={"taloustarkastus-trashcan"} onClick={() => {
+                              const newReceivers = email.receivers
+                              newReceivers.splice(idx, 1)
+                              setEmail({...email, receivers: newReceivers})
+                            }} >
+                            <IconTrashcan/>
+                          </span>
+                          }
+                        </div>
+              })
+            }
+            { !taloustarkastettu &&
+            <button className="taloustarkastus-add-receiver" onClick={() => setEmail({...email, receivers: [...email.receivers, ""]}) }>
+              + Lisää uusi vastaanottaja
+            </button>
+            }
+          </fieldset>
+          <fieldset disabled={taloustarkastettu}>
+            <legend>Aihe</legend>
+            <input data-test-id="taloustarkastus-email-subject" onChange={(e) => setEmail({...email, subject: e.target.value})} type="text" name="subject" value={email.subject}/>
+            <textarea data-test-id="taloustarkastus-email-content" onChange={(e) => setEmail({...email, content: e.target.value})} rows={13} name="content" value={email.content}/>
+          </fieldset>
+        </div>
+        <div className="taloustarkastus-footer">
+        { taloustarkastettu
+          ? <>
+              <h3 className="taloustarkastus-footer-header">Taloustarkastettu ja lähetetty hakijalle</h3>
+              <span className="taloustarkastus-footer-info" data-test-id="taloustarkastus-at">{formatDate(hakemus['taloustarkastus-at'])}</span>
+              <span className="taloustarkastus-footer-info" data-test-id="taloustarkastaja">{hakemus['taloustarkastus-by']}</span>
+            </>
+          : <button data-test-id="taloustarkastus-submit" type="submit" name="submit-taloustarkastus">Hyväksy taloustarkastus ja lähetä viesti</button>
+        }
+        </div>
+      </form>
+    </div>)
+}

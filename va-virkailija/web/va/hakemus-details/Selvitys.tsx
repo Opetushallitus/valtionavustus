@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { LoppuselvitysForm } from './LoppuselvitysForm'
+import { TaloustarkastusEmail } from './TaloustarkastusEmail'
 import SelvitysPreview from './SelvitysPreview'
 import SelvitysNotFilled from './SelvitysNotFilled'
 import SelvitysLink from './SelvitysLink'
@@ -31,12 +32,19 @@ const Selvitys = ({ presenter, environment, controller, hakemus, avustushaku, tr
   const hasSelvitys = !!hakemus.selvitys?.[selvitysType]?.answers
   const selvitysHakemus = hakemus.selvitys?.[selvitysType]
   const form = hakemus.selvitys?.[`${selvitysType}Form`]
-  const renderLoppuselvitysForm = hasSelvitys && environment["loppuselvitys-verification"]["enabled?"] && selvitysType === 'loppuselvitys'
-  const renderSelvitysEmail = hasSelvitys && (
-    selvitysType === 'valiselvitys' ||
-    !environment["loppuselvitys-verification"]["enabled?"] ||
-    hakemus["status-loppuselvitys"] === 'accepted' || hakemus["status-loppuselvitys"] === 'information_verified')
 
+  const renderLoppuselvitysForm = hasSelvitys && environment["loppuselvitys-verification"]["enabled?"] && selvitysType === 'loppuselvitys'
+
+  const loppuselvitysStatus = hakemus["status-loppuselvitys"]
+
+  const renderSelvitysEmail = hasSelvitys && !environment["taloustarkastus"]["enabled?"] && (
+    selvitysType === 'valiselvitys' ||
+    loppuselvitysStatus === 'accepted')
+
+  const loppuselvitys = hakemus.selvitys?.loppuselvitys
+  const renderTaloustarkastusEmail = environment["taloustarkastus"]["enabled?"] && (loppuselvitysStatus === 'information_verified' || loppuselvitysStatus === 'accepted')
+
+  const lang = loppuselvitys?.language || "fi"
   return (
     <div className="selvitys-container" data-test-id={`hakemus-details-${selvitysType}`}>
       <PresenterComment controller={controller} hakemus={hakemus} helpText={presenterCommentHelpText}/>
@@ -66,6 +74,15 @@ const Selvitys = ({ presenter, environment, controller, hakemus, avustushaku, tr
                                             userInfo={userInfo}
                                             lang={selvitysHakemus?.language}
                                             translations={translations["selvitys-email"]}/>}
+    {loppuselvitys && renderTaloustarkastusEmail && <TaloustarkastusEmail 
+      controller={controller}
+      avustushakuId={avustushaku.id}
+      hakemus={hakemus}
+      loppuselvitys={loppuselvitys}
+      lang={lang}
+      userInfo={userInfo}
+      avustushakuName={avustushaku.content.name[lang]} 
+      />}
     </div>
   )
 }
