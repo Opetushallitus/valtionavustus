@@ -2,16 +2,16 @@ import {expect} from "@playwright/test"
 import {
   BudjettimuutoshakemusFixtures,
   budjettimuutoshakemusTest
-} from "../fixtures/budjettimuutoshakemusTest";
-import {HakijaMuutoshakemusPage} from "../pages/hakijaMuutoshakemusPage";
-import {HakemustenArviointiPage} from "../pages/hakemustenArviointiPage";
+} from "../../fixtures/budjettimuutoshakemusTest";
+import {HakijaMuutoshakemusPage} from "../../pages/hakijaMuutoshakemusPage";
+import {HakemustenArviointiPage} from "../../pages/hakemustenArviointiPage";
 import moment from "moment";
-import {Budget, BudgetAmount, sortedFormTable} from "../utils/budget";
+import {Budget, BudgetAmount, sortedFormTable} from "../../utils/budget";
 import {
   parseMuutoshakemusPaatosFromEmails
-} from "../utils/emails";
-import {HakijaMuutoshakemusPaatosPage} from "../pages/hakijaMuutoshakemusPaatosPage";
-import {svBudjettimuutoshakemusTest} from "../fixtures/swedishHakemusTest";
+} from "../../utils/emails";
+import {HakijaMuutoshakemusPaatosPage} from "../../pages/hakijaMuutoshakemusPaatosPage";
+import {svBudjettimuutoshakemusTest} from "../../fixtures/swedishHakemusTest";
 
 const budget: Budget = {
   amount: {

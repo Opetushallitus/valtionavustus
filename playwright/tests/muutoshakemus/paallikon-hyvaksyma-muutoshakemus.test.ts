@@ -1,13 +1,13 @@
-import {budjettimuutoshakemusTest as test} from "../fixtures/budjettimuutoshakemusTest";
+import {budjettimuutoshakemusTest as test} from "../../fixtures/budjettimuutoshakemusTest";
 import axios from "axios";
-import {VIRKAILIJA_URL} from "../utils/constants";
-import {HakemustenArviointiPage} from "../pages/hakemustenArviointiPage";
-import {HakujenHallintaPage} from "../pages/hakujenHallintaPage";
-import {HakijaMuutoshakemusPage} from "../pages/hakijaMuutoshakemusPage";
-import {HakijaMuutoshakemusPaatosPage} from "../pages/hakijaMuutoshakemusPaatosPage";
-import {parseMuutoshakemusPaatosFromEmails} from "../utils/emails";
+import {VIRKAILIJA_URL} from "../../utils/constants";
+import {HakemustenArviointiPage} from "../../pages/hakemustenArviointiPage";
+import {HakujenHallintaPage} from "../../pages/hakujenHallintaPage";
+import {HakijaMuutoshakemusPage} from "../../pages/hakijaMuutoshakemusPage";
+import {HakijaMuutoshakemusPaatosPage} from "../../pages/hakijaMuutoshakemusPaatosPage";
+import {parseMuutoshakemusPaatosFromEmails} from "../../utils/emails";
 import {expect} from "@playwright/test";
-import {HAKIJA_URL} from "../../test/test-util";
+import {HAKIJA_URL} from "../../../test/test-util";
 
 async function populateUserCache() {
   const users = [

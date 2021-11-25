@@ -1,15 +1,15 @@
-import {MuutoshakemusValues} from "../utils/types";
+import {MuutoshakemusValues} from "../../utils/types";
 import moment from "moment";
-import {muutoshakemusTest} from "../fixtures/muutoshakemusTest";
+import {muutoshakemusTest} from "../../fixtures/muutoshakemusTest";
 import {expect} from "@playwright/test";
-import {HakemustenArviointiPage} from "../pages/hakemustenArviointiPage";
-import {HakijaMuutoshakemusPage} from "../pages/hakijaMuutoshakemusPage";
+import {HakemustenArviointiPage} from "../../pages/hakemustenArviointiPage";
+import {HakijaMuutoshakemusPage} from "../../pages/hakijaMuutoshakemusPage";
 import {
   BudjettimuutoshakemusFixtures,
   budjettimuutoshakemusTest
-} from "../fixtures/budjettimuutoshakemusTest";
-import {BudgetAmount, sortedFormTable} from "../utils/budget";
-import {answers as svAnswers} from "../fixtures/swedishHakemusTest";
+} from "../../fixtures/budjettimuutoshakemusTest";
+import {BudgetAmount, sortedFormTable} from "../../utils/budget";
+import {answers as svAnswers} from "../../fixtures/swedishHakemusTest";
 
 const muutoshakemus1: MuutoshakemusValues = {
   jatkoaika: moment(new Date())
