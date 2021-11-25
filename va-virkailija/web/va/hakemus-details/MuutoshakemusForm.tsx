@@ -196,8 +196,8 @@ export const MuutoshakemusForm = ({avustushaku, currentTalousarvio, muutoshakemu
   const { t } = useTranslations()
   const talousarvioValues = muutoshakemus.talousarvio.length ? getTalousarvioValues(muutoshakemus.talousarvio) : undefined
   const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
-  const initialValues = useMemo<MuutoshakemusPaatosRequest>(getInitialValues(talousarvioValues, muutoshakemus), [])
-  const f = useFormik({
+  const initialValues = useMemo(getInitialValues(talousarvioValues, muutoshakemus), [])
+  const f = useFormik<MuutoshakemusPaatosRequest>({
     initialValues,
     validationSchema: getPaatosSchema(muutoshakemus),
     onSubmit: async (values) => {
