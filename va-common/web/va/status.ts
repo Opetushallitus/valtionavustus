@@ -8,8 +8,15 @@ export const Muutoshakemus = {
 }
 
 export const HakemusSelvitys = {
-  statuses: ['missing', 'submitted', 'information_verified', 'accepted'],
+  statuses: ['missing', 'submitted', 'accepted'],
   statusToFI: (status: keyof typeof t.selvitys.status): string => {
     return t.selvitys.status[status]
+  }
+}
+
+export const Loppuselvitys = {
+  statuses: ['missing', 'submitted', 'information_verified', 'accepted'],
+  statusToFI: (status: keyof typeof t.loppuselvitys.status): string => {
+    return t.loppuselvitys.status[status]
   }
 }

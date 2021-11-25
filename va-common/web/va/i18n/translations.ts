@@ -118,6 +118,14 @@ export const translationsFi = {
       accepted: 'Hyväksytty',
     },
   },
+  loppuselvitys: {
+    status: {
+      missing: 'Puuttuu',
+      submitted: 'Asiatarkastuksessa',
+      information_verified: 'Taloustarkastuksessa',
+      accepted: 'Hyväksytty',
+    },
+  },
   logo: {
     alt: 'Opetushallitus',
   },
@@ -267,6 +275,7 @@ const translationsSv: Translations = {
       ...translationsFi.selvitys.status
     },
   },
+  loppuselvitys: translationsFi.loppuselvitys,
   email: {
     paatos: {
       status: {

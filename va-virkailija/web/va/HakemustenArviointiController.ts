@@ -14,7 +14,7 @@ import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
 
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
-import {HakemusSelvitys, Muutoshakemus} from 'va-common/web/va/status'
+import { HakemusSelvitys, Loppuselvitys, Muutoshakemus } from 'va-common/web/va/status'
 
 import HakemusArviointiStatuses
   from './hakemus-details/HakemusArviointiStatuses'
@@ -100,7 +100,7 @@ export default class HakemustenArviointiController {
         openQuestions:[],
         status: HakemusArviointiStatuses.allStatuses(),
         status_valiselvitys: HakemusSelvitys.statuses,
-        status_loppuselvitys: HakemusSelvitys.statuses,
+        status_loppuselvitys: Loppuselvitys.statuses,
         status_muutoshakemus: Muutoshakemus.statuses,
         organization: "",
         roleIsOpen:false,

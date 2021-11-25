@@ -2,7 +2,7 @@ import _ from 'lodash'
 import ClassNames from 'classnames'
 import React, { Component } from 'react'
 
-import { HakemusSelvitys, Muutoshakemus } from 'va-common/web/va/status'
+import { HakemusSelvitys, Loppuselvitys, Muutoshakemus } from 'va-common/web/va/status'
 
 import HakemusArviointiStatuses from '../hakemus-details/HakemusArviointiStatuses'
 import ScoreResolver from '../ScoreResolver.js'
@@ -300,8 +300,8 @@ export default class HakemusListing extends Component {
                                   hakemusList={hakemusList}
                                   filter={filter}
                                   label="Loppus."
-                                  statusValues={HakemusSelvitys.statuses}
-                                  statusToFi={HakemusSelvitys.statusToFI}
+                                  statusValues={Loppuselvitys.statuses}
+                                  statusToFi={Loppuselvitys.statusToFI}
                                   filterField="status_loppuselvitys"/>
                     <HakemusSorter field="status_loppuselvitys" sorter={sorter} controller={controller}/>
               </th>}

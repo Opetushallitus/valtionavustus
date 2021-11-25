@@ -1,6 +1,6 @@
 import {Avustushaku, Hakemus} from "../../../va-common/web/va/types";
 import {EnvironmentApiResponse} from "../../../va-common/web/va/types/environment";
-import {HakemusSelvitys} from "../../../va-common/web/va/status";
+import { HakemusSelvitys, Loppuselvitys } from "../../../va-common/web/va/status";
 
 export interface UserInfo {
   email: string
@@ -62,7 +62,7 @@ interface HakemusFilter {
     openQuestions: any[]
     status: string[]
     status_valiselvitys: typeof HakemusSelvitys.statuses
-    status_loppuselvitys: typeof HakemusSelvitys.statuses
+    status_loppuselvitys: typeof Loppuselvitys.statuses
     status_muutoshakemus: typeof HakemusSelvitys.statuses
     organization: string
     roleIsOpen: boolean
