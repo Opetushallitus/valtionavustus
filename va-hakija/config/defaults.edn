@@ -40,4 +40,5 @@
          :retry-multiplier 4
          :retry-max-time 60000}
  :loppuselvitys-verification {:enabled? false}
+ :taloustarkastus {:enabled? false}
  :selvitys-limit {:enabled? false}}

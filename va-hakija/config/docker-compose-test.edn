@@ -11,4 +11,5 @@
          :host "fakesmtp"
          :port 25}
  :loppuselvitys-verification {:enabled? true}
+ :taloustarkastus {:enabled? true}
  :applications-ui {:enabled? true}}

@@ -10,6 +10,7 @@ export type EnvironmentApiResponse = {
   }
   "va-code-values": FeatureFlag
   "loppuselvitys-verification": FeatureFlag
+  "taloustarkastus": FeatureFlag
   reports: FeatureFlag
   "allow-overriding-feature-flag-from-url-params"?: FeatureFlag
   "dont-send-loppuselvityspyynto-to-virkailija"?: FeatureFlag

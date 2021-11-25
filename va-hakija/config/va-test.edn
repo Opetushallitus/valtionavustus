@@ -8,6 +8,7 @@
  :db {:database-name "va-qa"
       :port-number 5432}
  :loppuselvitys-verification {:enabled? true}
+ :taloustarkastus {:enabled? true}
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25

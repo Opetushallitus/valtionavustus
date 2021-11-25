@@ -10,4 +10,5 @@
          :host "localhost"
          :port 42069}
  :loppuselvitys-verification {:enabled? true}
+ :taloustarkastus {:enabled? true}
  :applications-ui {:enabled? true}}
