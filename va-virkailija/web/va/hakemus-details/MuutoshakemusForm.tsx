@@ -286,12 +286,7 @@ export const MuutoshakemusForm = ({avustushaku, currentTalousarvio, muutoshakemu
       </MuutoshakemusSection>
       }
       {muutoshakemus['haen-sisaltomuutosta'] && (
-        <MuutoshakemusSection
-          blueMiddleComponent={<PaatosStatusRadioButtonGroup
-            talousarvioValues={talousarvioValues}
-            group="haen-sisaltomuutosta" f={f}/>
-          }
-        >
+        <MuutoshakemusSection blueMiddleComponent={<PaatosStatusRadioButtonGroup group="haen-sisaltomuutosta" f={f}/>}>
           <h2 className="muutoshakemus-section-title">Sisältö ja toteutustapa</h2>
           <div className="muutoshakemus-row">
             <h4

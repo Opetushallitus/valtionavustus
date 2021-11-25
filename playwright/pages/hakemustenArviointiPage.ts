@@ -308,4 +308,13 @@ export class HakemustenArviointiPage {
     return await getChangedBudgetTableCells(this.page, selector)
   }
 
+  async getAcceptedBudgetInputAmounts(): Promise<{ name: string; value: string }[]> {
+    const inputs = await this.page.$$('[data-test-id="muutoshakemus-form"] [data-test-id="meno-input"] > input')
+    return Promise.all(inputs.map(async (elem) => {
+      const name = (await elem.getAttribute('name'))?.replace('talousarvio.', '') || ''
+      const value = await elem.inputValue()
+      return { name, value }
+    }))
+  }
+
 }
