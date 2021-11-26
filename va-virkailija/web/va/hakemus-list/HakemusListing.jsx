@@ -502,7 +502,7 @@ class HakemusRow extends Component {
     const thisIsSelected = hakemus === selectedHakemus || hakemus === previouslySelectedHakemus
     const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
     const statusFI = HakemusArviointiStatuses.statusToFI(hakemus.arvio.status)
-    const statusLoppuselvitys = HakemusSelvitys.statusToFI(hakemus["status-loppuselvitys"])
+    const statusLoppuselvitys = Loppuselvitys.statusToFI(hakemus["status-loppuselvitys"])
     const statusValiselvitys = HakemusSelvitys.statusToFI(hakemus["status-valiselvitys"])
     const muutoshakemusStatus = HakemusListing._fieldGetter("status_muutoshakemus")(hakemus)
     const decoratedMuutoshakemusStatus = `${muutoshakemusStatus === 'new' ? '&#9734; ' : ''}${Muutoshakemus.statusToFI(muutoshakemusStatus)}`
