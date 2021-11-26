@@ -1,8 +1,10 @@
+const ALL_STATUSES = ['unhandled', 'processing', 'plausible', 'rejected', 'accepted'] as const
+type HakemusArviointiStatus = typeof ALL_STATUSES[number]
 export default class HakemusArviointiStatuses {
   static allStatuses() {
-    return ['unhandled', 'processing', 'plausible', 'rejected', 'accepted']
+    return ALL_STATUSES
   }
-  static statusToFI(status) {
+  static statusToFI(status: HakemusArviointiStatus) {
     const translations = {
       "unhandled": "Käsittelemättä",
       "processing": "Käsittelyssä",

@@ -31,17 +31,22 @@ const typeTranslation = (type: LahetysType) => {
   }[type]
 }
 
+type LahetyksetByBatchId = {
+  [batchId: string]: Lahetys[]
+}
+
+function groupLahetyksetByBatchId(array: Lahetys[]) {
+  return array.reduce<LahetyksetByBatchId>((lahetyksetByBatchId, lahetys) => {
+    const batchId = lahetys.batch_id
+    return {
+      ...lahetyksetByBatchId,
+      [batchId]: (lahetyksetByBatchId[batchId] ?? []).concat(lahetys)
+    }
+  }, {})
+}
+
 export const Tapahtumaloki = ({ lahetykset }: TapahtumalokiProps) => {
   const dateTime = (d: string) => `${DateUtil.asDateString(d)} ${DateUtil.asTimeString(d)}`
-  const groupBy = (key: string) => {
-    return (array: Lahetys[]): { [s in string]: Lahetys[] } => (
-      array.reduce((objectsByKeyValue, obj) => {
-        const value = obj[key];
-        objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
-        return objectsByKeyValue;
-      }, {})
-    )
-  }
 
   const latestFirst = (a: Lahetys[], b: Lahetys[]) => {
     if (a[0].created_at > b[0].created_at) return -1
@@ -55,7 +60,7 @@ export const Tapahtumaloki = ({ lahetykset }: TapahtumalokiProps) => {
   const failedMails = (entries: Lahetys[]) => entries.filter(e => !e.success).length
 
   // List of lists, each of which contain all sent emails sent by one transaction (i.e. batch_id), e.g. "lähetä päätökset"
-  const groupedLahetykset = Object.values(groupBy('batch_id')(lahetykset)).sort(latestFirst)
+  const groupedLahetykset = Object.values(groupLahetyksetByBatchId(lahetykset)).sort(latestFirst)
 
   return (
     <div className={'tapahtumaloki'}>

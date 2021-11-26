@@ -47,7 +47,7 @@ export default class HttpUtil {
 export class HttpResponseError extends Error {
   response: any;
 
-  constructor(message, response) {
+  constructor(message: string, response: any) {
     super(message);
     this.message = message
     this.name = "HttpResponseError"
