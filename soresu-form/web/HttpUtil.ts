@@ -1,5 +1,4 @@
 import axios, {AxiosResponse} from 'axios'
-import Promise from 'bluebird'
 
 const errorHasResponse = error =>
   !!error.response && (typeof error.response === "object")
