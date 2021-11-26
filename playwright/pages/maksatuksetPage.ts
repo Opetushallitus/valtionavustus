@@ -7,6 +7,7 @@ import {
   waitForClojureScriptLoadingDialogHidden,
   waitForClojureScriptLoadingDialogVisible,
   waitForElementWithText,
+  clearAndType
 } from '../utils/util'
 
 export function MaksatuksetPage (page: Page) {
@@ -37,14 +38,6 @@ export function MaksatuksetPage (page: Page) {
 
   async function fillInMaksueranTiedot(ashaTunniste: string, esittelijanOsoite: string, hyvaksyjanOsoite: string) {
     await fillTositepaivamaara()
-
-    const clearAndType = async (page: Page, selector: string, content: string) => {
-      let value = await page.$eval(selector, input => input.getAttribute("value"))
-      while (value !== content) {
-        await page.type(selector, content, { delay: 50 })
-        value = await page.$eval(selector, input => input.getAttribute("value"))
-      }
-    }
 
     await clearAndType(page, "[data-test-id=maksatukset-asiakirja--asha-tunniste]", ashaTunniste)
     await clearAndType(page, "[data-test-id=maksatukset-asiakirja--esittelijan-sahkopostiosoite]", esittelijanOsoite)
