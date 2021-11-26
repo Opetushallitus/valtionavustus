@@ -1,6 +1,6 @@
 import axios, {AxiosResponse} from 'axios'
 
-const errorHasResponse = error =>
+const errorHasResponse = (error: any) =>
   !!error.response && (typeof error.response === "object")
 
 export default class HttpUtil {
@@ -29,13 +29,17 @@ export default class HttpUtil {
   static handleResponse(httpCall: Promise<AxiosResponse<any>>) {
     return Promise.resolve(httpCall)
       .then(response => response.data)
-      .catch(errorHasResponse, error => {
-        const res = error.response
-        throw new HttpResponseError(error.toString(), {
-          status: res.status,
-          statusText: res.statusText,
-          data: res.data
-        })
+      .catch(error => {
+        if (errorHasResponse(error)) {
+          const res = error.response
+          throw new HttpResponseError(error.toString(), {
+            status: res.status,
+            statusText: res.statusText,
+            data: res.data
+          })
+        } else {
+          throw error
+        }
       })
   }
 }
