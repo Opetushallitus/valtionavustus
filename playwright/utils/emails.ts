@@ -17,6 +17,10 @@ const emailSchema = yup.array().of(yup.object().shape<Email>({
   subject: yup.string().optional(),
 }).required()).defined()
 
+export const getAllEmails = (emailType: string): Promise<Email[]> =>
+  axios.get(`${VIRKAILIJA_URL}/api/test/email/${emailType}`)
+    .then(r => emailSchema.validate(r.data))
+
 const getEmails = (emailType: string) => (hakemusID: number): Promise<Email[]> =>
   axios.get(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusID}/email/${emailType}`)
     .then(r => { console.log(`getEmails(${emailType})`, r.data); return r })

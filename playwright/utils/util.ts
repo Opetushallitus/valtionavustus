@@ -2,6 +2,18 @@ import {ElementHandle, Page} from "playwright";
 import {expect} from "@playwright/test"
 import moment from "moment";
 
+export async function clearAndType(page: Page, selector: string, content: string) {
+  await page.fill(selector, "")
+  await page.type(selector, content)
+}
+
+export async function uploadFile(page: Page, selector: string, filePath: string) {
+  await page.setInputFiles(selector, filePath)
+}
+
+export async function waitForNewTab(currentPage: Page): Promise<Page> {
+  return new Promise((resolve) => currentPage.once('popup', (newPage) => resolve(newPage)))
+}
 
 export async function expectQueryParameter(page: Page, paramName: string): Promise<string> {
   const value = await page.evaluate(param => (new URLSearchParams(window.location.search)).get(param), paramName)
@@ -19,6 +31,26 @@ export async function clickElementWithText(page: Page, elementType: string, text
 export async function getElementAttribute(page: Page, selector: string, attribute: string) {
   const handle = await page.waitForSelector(selector)
   return await handle.getAttribute(attribute)
+}
+
+export async function hasElementAttribute(page: Page, selector: string, attribute: string) {
+  const attributeValue = await getElementAttribute(page, selector, attribute) 
+    return attributeValue !== null
+}
+
+export async function getElementInnerText(page: Page, selector: string): Promise<string | undefined> {
+  const element = await page.waitForSelector(selector)
+  return await element.innerText()
+}
+
+export async function textContent(page: Page, selector: string) {
+  const element = await page.waitForSelector(selector)
+  return await element.textContent()
+}
+
+export async function isDisabled(page: Page, selector: string) {
+  const element = await page.waitForSelector(selector)
+  return await element.isDisabled();
 }
 
 function waitForElementWithAttribute(page: Page, attribute: string, attributeValue: string, text: string) {
@@ -70,4 +102,8 @@ export async function getChangedBudgetTableCells(page: Page, budgetRowSelector?:
       amount: elem.querySelector('[data-test-id="muutoshakemus-value"]')?.textContent ?? ''
     }))
   })
+}
+
+export async function countElements(page: Page, selector: string) {
+  return await page.evaluate((selector: string) => document.querySelectorAll(selector).length, selector)
 }
