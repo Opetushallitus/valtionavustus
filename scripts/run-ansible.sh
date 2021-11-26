@@ -84,6 +84,10 @@ function use_python_version {
 
   pushd "$repo"
   eval "$(pyenv init -)"
+  if pyenv init --path; then
+    # Newer pyenv versions that have --path flag require this to set PATH properly
+    eval "$(pyenv init --path)"
+  fi
   pyenv install --skip-existing "$python_version"
   pyenv local "$python_version"
   popd
