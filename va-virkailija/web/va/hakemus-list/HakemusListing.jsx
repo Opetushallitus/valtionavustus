@@ -457,7 +457,7 @@ class StatusFilter extends Component {
     for (let i = 0; i < statusValues.length; i++) {
       const status = statusValues[i]
       const checked = _.includes(statusFilter, status)
-      const htmlId = "filter-by-status-" + status
+      const htmlId = `filter-by-${filterField}-${status}`
       const kpl = _.filter(hakemusList, HakemusListing._filterWithArrayPredicate(HakemusListing._fieldGetter(filterField), [status])).length
       statuses.push(
         <div key={status}>
