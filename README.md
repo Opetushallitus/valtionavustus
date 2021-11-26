@@ -230,13 +230,6 @@ cd va-hakija
 ja sitten avaa [testien url](http://localhost:8081/test/runner.html)
 selaimessa.
 
-Vaihtoehtoisesti UI-testit voi ajaa PhantomJS:llä:
-
-``` shell
-cd va-hakija
-npm run test-browser
-```
-
 Kaikkien frontendin yksikkötestien ajo, projektin juurihakemistossa:
 
 ``` shell
