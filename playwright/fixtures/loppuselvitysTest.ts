@@ -1,4 +1,6 @@
-import {test} from "@playwright/test"
+import { expect } from "@playwright/test"
+
+import { muutoshakemusTest as test} from "./muutoshakemusTest"
 import {MuutoshakemusFixtures} from "./muutoshakemusTest";
 import {createRandomHakuValues} from "../utils/random";
 import { LoppuselvitysPage } from "../pages/loppuselvitysPage"
@@ -58,7 +60,8 @@ export const loppuselvitysTest = test.extend<LoppuselvitysFixtures>({
     await uploadFile(page, '[name="namedAttachment-0"]', dummyPdfPath)
 
     await page.click('button#submit:not([disabled])')
-    await page.waitForFunction(() => (document.querySelector("#topbar #form-controls button#submit") as HTMLInputElement).textContent === "Loppuselvitys lähetetty")
+    
+    await page.waitForSelector(`#submit:has-text("Loppuselvitys lähetetty")`)
 
     await use({
       loppuselvitysFormUrl,
@@ -66,8 +69,8 @@ export const loppuselvitysTest = test.extend<LoppuselvitysFixtures>({
     })
   },
   asiatarkastus: async ({page, avustushakuID, hakemus: {hakemusID}, loppuselvitys: {loppuselvitysFormFilled}}, use) => {
-    const loppuselvitysPage = LoppuselvitysPage(page)
     expect(loppuselvitysFormFilled)
+    const loppuselvitysPage = LoppuselvitysPage(page)
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
 
     const textareaSelector = 'textarea[name="information-verification"]'

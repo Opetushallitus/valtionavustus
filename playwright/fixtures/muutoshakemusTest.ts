@@ -1,6 +1,7 @@
+import { expect } from "@playwright/test"
 import {HakemustenArviointiPage} from "../pages/hakemustenArviointiPage";
 import {createRandomHakuValues} from "../utils/random";
-import {test} from "@playwright/test";
+import {rootTest as test} from "./rootFixture";
 import {KoodienhallintaPage} from "../pages/koodienHallintaPage";
 import {HakujenHallintaPage} from "../pages/hakujenHallintaPage";
 import {HakijaAvustusHakuPage} from "../pages/hakijaAvustusHakuPage";
@@ -30,7 +31,8 @@ export const muutoshakemusTest = test.extend<MuutoshakemusFixtures>({
     const randomHakuValues = createRandomHakuValues()
     await use(randomHakuValues)
   },
-  codes: async ({page}, use) => {
+  codes: async ({page, isLoggedInAsValtionavustus}, use) => {
+    expect(isLoggedInAsValtionavustus)
     const koodienHallintaPage = new KoodienhallintaPage(page)
     const codes = await koodienHallintaPage.createRandomCodeValues()
     await use(codes)

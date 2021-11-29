@@ -1,12 +1,14 @@
+import { expect } from "@playwright/test"
+
 import moment from 'moment'
 import { loppuselvitysTest as test } from "../../fixtures/loppuselvitysTest";
 
 import {
   VIRKAILIJA_URL
 } from "../../utils/constants"
+import { switchUserIdentityTo } from "../../utils/util"
 
 import {
-  switchUserIdentityTo,
   sendLoppuselvitysAsiatarkastamattaNotifications
 } from "../../utils/loppuselvitys"
 
@@ -86,43 +88,25 @@ test('loppuselvitys-asiatarkastamatta notification is sent to virkailija', async
   expect(emails.length).toEqual(oldEmailCount + 1)
   const loppuselvitysAsiatarkastamattaNotification = emails.pop()
   expect(loppuselvitysAsiatarkastamattaNotification?.subject).toEqual('Asiatarkastamattomia loppuselvityksiä')
-  expect(loppuselvitysAsiatarkastamattaNotification?.formatted).toEqual(`Hei!
-
-1 loppuselvitystä odottaa asiatarkastustasi valtionavustusjärjestelmässä. Tarkastamattomia loppuselvityksiä on seuraavissa valtionavustuksissa:
-
-- Loppuselvityksiä 1 kpl: ${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/
-
-Hyväksyttyäsi asiatarkastuksen, lähtee tarkastuksesta automaattisesti tieto taloustarkastukseen, eikä järjestelmän ulkopuolista ilmoitusta asiatarkastuksesta tarvita.
-
-Taloustarkastaja lähettää tiedon loppuselvityksen hyväksymisestä avustuksen saajalle, kun taloustarkastus on hyväksytty. Tarkemmat ohjeet loppuselvityksen käsittelyyn: https://intra.oph.fi/pages/viewpage.action?pageId=99516848
-
-Huom! Mikäli olet jo tarkastanut loppuselvityksen, josta saat muistutuksen, voit kuitata loppuselvityksen tarkastetuksi klikkaamalla VA-järjestelmässä hankekohtaisesti "Hyväksy asiatarkastus ja lähetä taloustarkastukseen". Tämän jälkeen et saa enää muistutusta kyseisestä asiatarkastuksesta.
-
-Ennen vuotta 2020 avattujen valtionavustusten osalta asiatarkastusten käsittely ja ilmoittaminen taloustarkastajalle tehdään toistaiseksi kuten aiemminkin.`)
+  expect(loppuselvitysAsiatarkastamattaNotification?.formatted).toContain(`${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/`)
 })
 
-test('permissions to asiatarkastus', () => {
-  test.afterAll(async ({page}) => {
-    await switchUserIdentityTo(page, "valtionavustus")
-  })
+test('does not show asiatarkastus to a virkailija who is not valmistelija', async ({page, avustushakuID, loppuselvitys: {loppuselvitysFormFilled}, hakemus: {hakemusID}}) => {
+  expect(loppuselvitysFormFilled)
+  const loppuselvitysPage = LoppuselvitysPage(page)
+  await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
+  await switchUserIdentityTo(page, "viivivirkailija")
+  await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
+  expect(await countElements(page, "button[name=submit-verification]")).toEqual(0)
+})
 
-  test('does not show asiatarkastus to a virkailija who is not valmistelija', async ({page, avustushakuID, loppuselvitys: {loppuselvitysFormFilled}, hakemus: {hakemusID}}) => {
-    expect(loppuselvitysFormFilled)
-    const loppuselvitysPage = LoppuselvitysPage(page)
-    await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
-    await switchUserIdentityTo(page, "viivivirkailija")
-    await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
-    expect(await countElements(page, "button[name=submit-verification]")).toEqual(0)
-  })
-
-  test('shows asiatarkastus to pääkäyttäjä who is not valmistelija', async ({page, avustushakuID, loppuselvitys: {loppuselvitysFormFilled}, hakemus: {hakemusID}}) => {
-    expect(loppuselvitysFormFilled)
-    const loppuselvitysPage = LoppuselvitysPage(page)
-    await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
-    await switchUserIdentityTo(page, "paivipaakayttaja")
-    await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
-    expect(await countElements(page, "button[name=submit-verification]")).toEqual(1)
-  })
+test('shows asiatarkastus to pääkäyttäjä who is not valmistelija', async ({page, avustushakuID, loppuselvitys: {loppuselvitysFormFilled}, hakemus: {hakemusID}}) => {
+  expect(loppuselvitysFormFilled)
+  const loppuselvitysPage = LoppuselvitysPage(page)
+  await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
+  await switchUserIdentityTo(page, "paivipaakayttaja")
+  await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
+  expect(await countElements(page, "button[name=submit-verification]")).toEqual(1)
 })
 
 test('hakija can not edit loppuselvitys after information has been verified', async ({page, loppuselvitys: { loppuselvitysFormUrl}, asiatarkastus: {asiatarkastettu} }) => {

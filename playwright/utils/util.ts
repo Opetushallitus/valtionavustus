@@ -1,6 +1,9 @@
+import moment from "moment";
+import axios from 'axios'
+
+import { VIRKAILIJA_URL } from "./constants"
 import {ElementHandle, Page} from "playwright";
 import {expect} from "@playwright/test"
-import moment from "moment";
 
 export async function clearAndType(page: Page, selector: string, content: string) {
   await page.fill(selector, "")
@@ -56,6 +59,11 @@ export async function isDisabled(page: Page, selector: string) {
 function waitForElementWithAttribute(page: Page, attribute: string, attributeValue: string, text: string) {
   return page.waitForSelector(`[${attribute}='${attributeValue}']:has-text("${text}")`, {timeout: 5000})
   // return await page.waitForXPath(`//*[@${attribute}='${attributeValue}'][contains(., '${text}')]`, waitForSelectorOptions)
+}
+
+export async function switchUserIdentityTo(page: Page, identity: string): Promise<void> {
+  await axios.post(`${VIRKAILIJA_URL}/api/test/set-fake-identity/${identity}`)
+  await page.reload()
 }
 
 export async function waitForElementWithText(page: Page, elementType: string, text: string, state: "visible" | "hidden" = "visible" ) {
