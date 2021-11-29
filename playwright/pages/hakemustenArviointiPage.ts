@@ -16,11 +16,12 @@ import {
   BudgetAmount,
   defaultBudget
 } from "../utils/budget";
+import { HakijaAvustusHakuPage } from "./hakijaAvustusHakuPage";
 
 const jatkoaikaSelector = '[data-test-id=muutoshakemus-jatkoaika]' as const
 
 export class HakemustenArviointiPage {
-  readonly  page: Page
+  readonly page: Page
 
   constructor(page: Page) {
     this.page = page;
@@ -28,6 +29,11 @@ export class HakemustenArviointiPage {
 
   async navigate(avustushakuID: number) {
     await navigate(this.page, `/avustushaku/${avustushakuID}/`)
+  }
+
+  async navigateToLatestHakemusArviointi(avustushakuID: number) {
+    await navigate(this.page, `/avustushaku/${avustushakuID}/`)
+    await this.page.click('.overview-row:first-of-type')
   }
 
   async navigateToLatestMuutoshakemus(avustushakuID: number, hakemusID: number) {
@@ -56,6 +62,17 @@ export class HakemustenArviointiPage {
       throw new Error(`Valmistelija button not found with selector: ${selector}`)
     }
     return valmistelijaButton
+  }
+
+  async openHakemusEditPage(reason: string = 'Kunhan editoin'): Promise<HakijaAvustusHakuPage> {
+    await this.page.click('[data-test-id=virkailija-edit-hakemus]')
+    await this.page.type('[data-test-id=virkailija-edit-comment]', reason)
+    const [newPage] = await Promise.all([
+      this.page.context().waitForEvent('page'),
+      this.page.click('[data-test-id=virkailija-edit-submit]')
+    ])
+    await newPage.bringToFront()
+    return new HakijaAvustusHakuPage(newPage)
   }
 
   async waitForArvioSave(avustushakuID: number, hakemusID: number) {
@@ -131,11 +148,15 @@ export class HakemustenArviointiPage {
       await this.page.click(`label:has-text("${rahoitusalue}")`)
     }
 
+    await this.acceptHakemus(budget)
+    await this.waitForArvioSave(avustushakuID, hakemusID)
+    return hakemusID
+  }
+
+  async acceptHakemus(budget: AcceptedBudget = "100000") {
     await this.page.click("#arviointi-tab label[for='set-arvio-status-plausible']")
     await this.acceptBudget(budget)
     await this.page.click("#arviointi-tab label[for='set-arvio-status-accepted']")
-    await this.waitForArvioSave(avustushakuID, hakemusID)
-    return hakemusID
   }
 
   statusFieldSelector(hakemusID: number) {

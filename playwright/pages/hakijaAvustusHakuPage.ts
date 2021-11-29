@@ -40,6 +40,11 @@ export class HakijaAvustusHakuPage {
     await this.page.press('body', 'Enter')
   }
 
+  async submitOfficerEdit() {
+    await this.page.click('#virkailija-edit-submit')
+    await this.page.waitForSelector('div.soresu-preview')
+  }
+
   async fillAndSendMuutoshakemusEnabledHakemus(avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void) {
     const lang = answers.lang || 'fi'
 

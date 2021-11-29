@@ -309,7 +309,7 @@ export default class HakemusListing extends Component {
               <th className="person-filter-column"><PersonFilterButton controller={controller} state={state}/></th>
             </tr>
           </thead>
-          <tbody className={hasSelected ? "has-selected" : ""}>
+          <tbody data-test-id="hakemus-list" className={hasSelected ? "has-selected" : ""}>
             {hakemusElements}
           </tbody>
         </table>

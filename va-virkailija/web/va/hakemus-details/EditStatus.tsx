@@ -20,12 +20,12 @@ type EditStatusState = {
 }
 
 export default class EditStatus extends React.Component<EditStatusProps, EditStatusState> {
-  constructor(props){
+  constructor(props: EditStatusProps){
     super(props)
     this.state = EditStatus.initialState(props)
   }
 
-  static getDerivedStateFromProps(props, state): null | EditStatusState {
+  static getDerivedStateFromProps(props: EditStatusProps, state: EditStatusState): null | EditStatusState {
     if (props.hakemus.id !== state.currentHakemusId) {
       return EditStatus.initialState(props)
     } else {
@@ -33,7 +33,7 @@ export default class EditStatus extends React.Component<EditStatusProps, EditSta
     }
   }
 
-  static initialState(props): EditStatusState {
+  static initialState(props: EditStatusProps): EditStatusState {
     return {
       currentHakemusId: props.hakemus.id,
       open: false,
@@ -56,7 +56,8 @@ export default class EditStatus extends React.Component<EditStatusProps, EditSta
     const onSubmit = () => {
       this.setState({submitting: true})
       updateHakemusStatus(avustushakuId, hakemus.id, status, this.state.comment)
-        .then(() => {
+        .then((res: UpdateStatusResponse) => {
+          console.log(res)
           this.setState({ submitting: false, submitted: true })
           if(!cancelled){
             window.open(editUrl,'_blank')
@@ -74,11 +75,8 @@ export default class EditStatus extends React.Component<EditStatusProps, EditSta
 
     if (hakemus.status === 'officer_edit' && status === 'officer_edit') {
       return (
-        <a href={editUrl}
-           target="_blank"
-           rel="noopener noreferrer">
-          Siirry muokkaamaan
-        </a>)
+        <a href={editUrl} target="_blank" rel="noopener noreferrer" data-test-id="virkailija-edit-link">Siirry muokkaamaan</a>
+      )
     }
 
     const tooltip = () => {
@@ -92,27 +90,33 @@ export default class EditStatus extends React.Component<EditStatusProps, EditSta
 
     return (
       <div className="value-edit">
-        {open &&
-          <div>
-            <textarea data-test-id="virkailija-edit-comment" onChange={onStatusCommentChange} placeholder="Kommentti"></textarea>
-            <span>
-              <button className={cancelled ? "btn-danger" : ""} onClick={onSubmit} disabled={this.state.submitting}>{cancelled ? 'Peruuta hakemus' : 'Siirry muokkaamaan'}</button>
+        {open
+          ? <div>
+              <textarea data-test-id="virkailija-edit-comment" onChange={onStatusCommentChange} placeholder="Kommentti" />
+              <span>
+                <button className={cancelled ? "btn-danger" : ""} onClick={onSubmit} disabled={this.state.submitting} data-test-id="virkailija-edit-submit">{cancelled ? 'Peruuta hakemus' : 'Siirry muokkaamaan'}</button>
+                { tooltip() }
+              </span>
+              {this.state.submitted && <span>{cancelled ? 'Hakemus peruutettu' : 'Tila muutettu'}</span>}
+            </div>
+          : <span>
+              <button className={cancelled ? "btn-danger" : ""} onClick={onOpen} data-test-id="virkailija-edit-hakemus">{cancelled ? 'Peruuta hakemus' : 'Muokkaa hakemusta'}</button>
               { tooltip() }
             </span>
-            {this.state.submitted && <span>{cancelled ? 'Hakemus peruutettu' : 'Tila muutettu'}</span>}
-          </div>
-        }
-        {!open && <span>
-          <button className={cancelled ? "btn-danger" : ""} onClick={onOpen}>{cancelled ? 'Peruuta hakemus' : 'Muokkaa hakemusta'}</button>
-          { tooltip() }
-        </span>
         }
       </div>
     )
   }
 }
 
-async function updateHakemusStatus(avustushakuId: number, hakemusId: number, status: string, comment: string): Promise<void> {
+type UpdateStatusResponse = {
+  'hakemus-id': string
+  status: string
+  'hakemus-edit-oid': string
+  'hakemus-edit-password': string
+}
+
+async function updateHakemusStatus(avustushakuId: number, hakemusId: number, status: string, comment: string): Promise<UpdateStatusResponse> {
   const url = `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/status`
-  return HttpUtil.post(url, { status, comment })
+  return await HttpUtil.post(url, { status, comment })
 }

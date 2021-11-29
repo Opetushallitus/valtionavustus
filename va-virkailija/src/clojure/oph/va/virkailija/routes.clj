@@ -19,6 +19,7 @@
             [oph.soresu.common.routes :refer :all]
             [oph.soresu.form.formutil :as formutil]
             [oph.common.datetime :as datetime]
+            [oph.common.string :refer [derive-token-hash]]
             [oph.va.routes :as va-routes]
             [oph.va.jdbc.enums :refer :all]
             [oph.va.hakija.api :as hakija-api]
@@ -91,11 +92,13 @@
                      "&preview=true")]
     (resp/redirect preview-url)))
 
-(defn- on-hakemus-edit [avustushaku-id hakemus-user-key]
+(defn- on-hakemus-edit [avustushaku-id hakemus-user-key identity]
   (let [hakemus (hakija-api/get-hakemus-by-user-key hakemus-user-key)
         language (keyword (:language hakemus))
-        hakija-app-url (-> config :server :url language)]
-    (resp/redirect (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key))))
+        hakija-app-url (-> config :server :url language)
+        token (apply str (repeatedly 32 #(rand-nth "abcdefghijklmnopqrstuvwxyz0123456789")))
+        hash (derive-token-hash token)]
+    (resp/redirect (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key "&officerToken=" token "&officerHash=" hash))))
 
 (defn- on-paatos-preview [avustushaku-id user-key]
   (let [hakemus (hakija-api/get-hakemus-by-user-key user-key)
@@ -180,9 +183,9 @@
                                              :query-params [{decision-version :- s/Bool false}]
                                              (on-hakemus-preview avustushaku-id hakemus-user-key decision-version))
 
-                          (compojure-api/GET "/hakemus-edit/:avustushaku-id/:hakemus-user-key" []
+                          (compojure-api/GET "/hakemus-edit/:avustushaku-id/:hakemus-user-key" request
                                              :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
-                                             (on-hakemus-edit avustushaku-id hakemus-user-key))
+                                             (on-hakemus-edit avustushaku-id hakemus-user-key (authentication/get-request-identity request)))
 
                           (compojure-api/GET "/public/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" []
                                              :path-params [avustushaku-id :- Long, user-key :- s/Str]

@@ -4,6 +4,7 @@
             [ring.util.http-response :refer :all]
             [oph.soresu.common.config :refer [config]]
             [oph.common.datetime :as datetime]
+            [oph.common.string :refer [derive-token-hash]]
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.validation :as validation]
             [oph.soresu.form.routes
@@ -224,6 +225,14 @@
     (catch Exception e
       (log/info "Could not normalize necessary hakemus fields for hakemus: " hakemus-id " Error: " (.getMessage e))
       false)))
+
+(defn can-update-hakemus [haku-id hakemus-id answers]
+  (let [officer-token (:officerToken answers)
+        officer-hash (:officerHash answers)
+        derived-hash (derive-token-hash officer-token)]
+    (or
+      true ; TODO tässä pitäis tsekata onko hakemus vielä käsittelemättä tai hakuaikaa jäljellä
+      (= officer-hash derived-hash))))
 
 (defn on-hakemus-update [haku-id hakemus-id base-version answers]
   (let [hakemus (va-db/get-hakemus hakemus-id)
