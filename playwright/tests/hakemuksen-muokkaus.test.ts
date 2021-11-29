@@ -9,8 +9,10 @@ import { waitForElementWithText } from "../utils/util"
 
 test.setTimeout(180000)
 
-test('virkailija can edit hakemus', async ({page, avustushakuID}) => {
+test('virkailija can edit hakemus', async ({page, avustushakuID, hakemus}) => {
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+  const hakujenHallintaPage = new HakujenHallintaPage(page)
+  hakemus.userKey = hakemus.userKey // here to ensure we have a hakemus :)
 
   const assertTokens = (assertedPage: Page) => {
     const tokens = new URLSearchParams(assertedPage.url())
@@ -32,7 +34,6 @@ test('virkailija can edit hakemus', async ({page, avustushakuID}) => {
   })
   
   await test.step('when the avustushaku has been closed', async () => {
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigate(avustushakuID)
     await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast()
     
