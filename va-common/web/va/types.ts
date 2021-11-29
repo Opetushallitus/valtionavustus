@@ -130,6 +130,13 @@ export interface Selvitys {
 
 export type SelvitysStatus = 'missing' | 'submitted' | 'information_verified' | 'accepted'
 
+export interface SelvitysEmail {
+  to: string[]
+  send: string
+  subject: string
+  message: string
+}
+
 export interface Hakemus {
   id: number
   answers: Answer[]
@@ -168,7 +175,7 @@ export interface Hakemus {
   'refused-comment'?: unknown
   payments: Payment[]
   scores: unknown[]
-  'selvitys-email'?: unknown
+  'selvitys-email'?: SelvitysEmail 
   changeRequest?: string
   'taloustarkastettu-by'?: string
   'taloustarkastettu-at'?: string

@@ -6,7 +6,7 @@ import HakemustenArviointiController from '../HakemustenArviointiController'
 import { fiLongDateTimeFormatWithKlo } from 'va-common/web/va/i18n/dateformat'
 import { UserInfo } from '../types'
 import { Language } from 'va-common/web/va/i18n/translations'
-import { Hakemus, Answer, Selvitys } from 'va-common/web/va/types'
+import { Hakemus, Answer, Selvitys, SelvitysEmail } from 'va-common/web/va/types'
 import { IconTrashcan } from "va-common/web/va/img/IconTrashcan";
 
 import './TaloustarkastusEmail.less'
@@ -21,61 +21,6 @@ type TaloustarkastusEmailProps = {
   lang: Language
 }
 
-const formatDate = (date?: string) => {
-  const d = moment(date)
-  return d?.format(fiLongDateTimeFormatWithKlo)
-}
-
-function createEmailSubjectFi(registerNumber: string ) {
-  return `Loppuselvitys ${registerNumber} käsitelty`
-}
-
-function createEmailSubjectSv(registerNumber: string ) {
-  return `Slutredovisningen ${registerNumber} är behandlad`
-}
-
-function createEmailContentFi(projectName: string, avustushakuName: string, senderName: string, senderEmail: string) {
-  return `Hyvä vastaanottaja,
-
-Opetushallitus on tarkastanut hankkeen "${projectName}" ("${avustushakuName}") valtionavustusta koskevan loppuselvityksen ja toteaa avustusta koskevan asian käsittelyn päättyneeksi.
-
-Opetushallitus voi asian käsittelyn päättämisestä huolimatta periä avustuksen tai osan siitä takaisin, jos sen tietoon tulee uusi seikka, joka valtionavustuslain 21 tai 22 §:n mukaisesti velvoittaa tai oikeuttaa takaisinperintään.
-
-Terveisin,
-${senderName}}
-${senderEmail}`
-}
-
-function createEmailContentSv(projectName: string, avustushakuName: string, senderName: string, senderEmail: string) {
-  return `Bästa mottagare
-
-Utbildningsstyrelsen har granskat slutredovisningen för projektet "${projectName}" ("${avustushakuName}") och bekräftar att ärendet nu är slutbehandlat.
-
-Utbildningsstyrelsen kan trots beslut om att ärendet är slutbehandlat kräva tillbaka understödet eller en del av det, om Utbildningsstyrelsen får ny information om ärendet som enligt 21 § eller 22 § i statsunderstödslagen förpliktar eller ger rätt till återkrav.
-
-Med vänlig hälsning,
-${senderName}
-${senderEmail}`
-}
-
-function createEmailContent(projectName: string, avustushakuName: string, senderName: string, senderEmail: string) {
-  return {
-    fi: createEmailContentFi(projectName, avustushakuName, senderName, senderEmail),
-    sv: createEmailContentSv(projectName, avustushakuName, senderName, senderEmail)
-  }
-}
-
-function createEmailSubject(registerNumber: string) {
-  return {
-    fi: createEmailSubjectFi(registerNumber),
-    sv: createEmailSubjectSv(registerNumber)
-  }
-}
-
-function flattenAnswers(answers: Answer[]) {
-  return answers.flatMap(a => Array.isArray(a.value) ? flattenAnswers(a.value) : a)
-}
-
 export const TaloustarkastusEmail = ({ hakemus, loppuselvitys, avustushakuName, avustushakuId, controller, userInfo, lang}: TaloustarkastusEmailProps) => {
   const taloustarkastettu = hakemus['status-loppuselvitys'] === "accepted"
   const senderName = userInfo["first-name"].split(" ")[0] + " " + userInfo["surname"]
@@ -87,21 +32,21 @@ export const TaloustarkastusEmail = ({ hakemus, loppuselvitys, avustushakuName, 
   const organizationEmail = emailAnswers.find(a => a.key === "organization-email")
   const primaryEmail = emailAnswers.find(a => a.key === "primary-email")
 
-  const [email, setEmail] = useState({
-    lang,
-    subject: createEmailSubject(registerNumber)[lang],
-    content: createEmailContent(projectName, avustushakuName, senderName, userInfo.email)[lang],
-    receivers: new Array<string>()
-  })
+  const selvitysEmail = loppuselvitys["selvitys-email"]
+
+  const [email, setEmail] = useState(taloustarkastettu && selvitysEmail ? sentEmail(lang, selvitysEmail) : initialEmail(lang, projectName, avustushakuName, registerNumber, senderName, userInfo))
 
   useEffect(() => {
-    const receivers: string[] = []
-    organizationEmail && receivers.push(organizationEmail.value)
-    primaryEmail && receivers.push(primaryEmail.value)
+    if (taloustarkastettu && selvitysEmail) {
+      setEmail(email => ({...email, receivers: selvitysEmail.to, subject: selvitysEmail.subject, message: selvitysEmail.message }))
+    } else {
+      const receivers: string[] = []
+      organizationEmail && receivers.push(organizationEmail.value)
+      primaryEmail && receivers.push(primaryEmail.value)
 
-    setEmail(email => ({...email, receivers}))
-
-  }, [organizationEmail, primaryEmail])
+      setEmail(email => ({...email, receivers }))
+    }
+  }, [organizationEmail, primaryEmail, selvitysEmail])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -174,3 +119,77 @@ export const TaloustarkastusEmail = ({ hakemus, loppuselvitys, avustushakuName, 
       </form>
     </div>)
 }
+
+const formatDate = (date?: string) => {
+  const d = moment(date)
+  return d?.format(fiLongDateTimeFormatWithKlo)
+}
+
+function createEmailSubjectFi(registerNumber: string ) {
+  return `Loppuselvitys ${registerNumber} käsitelty`
+}
+
+function createEmailSubjectSv(registerNumber: string ) {
+  return `Slutredovisningen ${registerNumber} är behandlad`
+}
+
+function createEmailContentFi(projectName: string, avustushakuName: string, senderName: string, senderEmail: string) {
+  return `Hyvä vastaanottaja,
+
+Opetushallitus on tarkastanut hankkeen "${projectName}" ("${avustushakuName}") valtionavustusta koskevan loppuselvityksen ja toteaa avustusta koskevan asian käsittelyn päättyneeksi.
+
+Opetushallitus voi asian käsittelyn päättämisestä huolimatta periä avustuksen tai osan siitä takaisin, jos sen tietoon tulee uusi seikka, joka valtionavustuslain 21 tai 22 §:n mukaisesti velvoittaa tai oikeuttaa takaisinperintään.
+
+Terveisin,
+${senderName}}
+${senderEmail}`
+}
+
+function createEmailContentSv(projectName: string, avustushakuName: string, senderName: string, senderEmail: string) {
+  return `Bästa mottagare
+
+Utbildningsstyrelsen har granskat slutredovisningen för projektet "${projectName}" ("${avustushakuName}") och bekräftar att ärendet nu är slutbehandlat.
+
+Utbildningsstyrelsen kan trots beslut om att ärendet är slutbehandlat kräva tillbaka understödet eller en del av det, om Utbildningsstyrelsen får ny information om ärendet som enligt 21 § eller 22 § i statsunderstödslagen förpliktar eller ger rätt till återkrav.
+
+Med vänlig hälsning,
+${senderName}
+${senderEmail}`
+}
+
+function createEmailContent(projectName: string, avustushakuName: string, senderName: string, senderEmail: string) {
+  return {
+    fi: createEmailContentFi(projectName, avustushakuName, senderName, senderEmail),
+    sv: createEmailContentSv(projectName, avustushakuName, senderName, senderEmail)
+  }
+}
+
+function createEmailSubject(registerNumber: string) {
+  return {
+    fi: createEmailSubjectFi(registerNumber),
+    sv: createEmailSubjectSv(registerNumber)
+  }
+}
+
+function flattenAnswers(answers: Answer[]) {
+  return answers.flatMap(a => Array.isArray(a.value) ? flattenAnswers(a.value) : a)
+}
+
+function initialEmail(lang: Language, projectName: string, avustushakuName: string, registerNumber: string, senderName: string, userInfo: UserInfo) {
+  return {
+    lang,
+    subject: createEmailSubject(registerNumber)[lang],
+    content: createEmailContent(projectName, avustushakuName, senderName, userInfo.email)[lang],
+    receivers: new Array<string>()
+  }
+}
+
+function sentEmail(lang, sentEmail: SelvitysEmail) {
+  return {
+    lang,
+    receivers: sentEmail.to,
+    subject: sentEmail.subject,
+    content: sentEmail.message
+  }
+}
+
