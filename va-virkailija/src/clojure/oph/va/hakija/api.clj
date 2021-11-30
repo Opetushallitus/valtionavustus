@@ -197,6 +197,8 @@
    :loppuselvitys-information-verified-by (:loppuselvitys_information_verified_by hakemus)
    :loppuselvitys-information-verified-at (:loppuselvitys_information_verified_at hakemus)
    :loppuselvitys-information-verification (:loppuselvitys_information_verification hakemus)
+   :loppuselvitys-taloustarkastanut-name (:loppuselvitys_taloustarkastanut_name hakemus)
+   :loppuselvitys-taloustarkastettu-at (:loppuselvitys_taloustarkastettu_at hakemus)
    :status-valiselvitys (:status_valiselvitys hakemus)
    :status-muutoshakemus (:status_muutoshakemus hakemus)
    :answers (:answer_values hakemus)
@@ -323,7 +325,7 @@
   (->> {:id hakemus-id :status status}
        (exec hakija-queries/update-valiselvitys-status<! )))
 
-(defn set-selvitys-accepted [selvitys-type selvitys-email]
+(defn set-selvitys-accepted [selvitys-type selvitys-email identity]
   (let [validated-email         (assoc selvitys-email :to (distinct (:to selvitys-email)))
         selvitys-hakemus-id     (:selvitys-hakemus-id selvitys-email)
         hakemus                 (get-hakemus selvitys-hakemus-id)
@@ -332,13 +334,24 @@
         is-loppuselvitys        (= selvitys-type "loppuselvitys")
         is-verified             (= (:status_loppuselvitys parent-hakemus) "information_verified")
         is-verification-enabled (:enabled? (:loppuselvitys-verification config))
+        verifier                (str (:first-name identity) " " (:surname identity))
+        verifier-oid            (:person-oid identity)
         can-set-selvitys        (or (not is-loppuselvitys) (not is-verification-enabled) is-verified)]
     (if can-set-selvitys
       (do
         (send-selvitys hakemus validated-email)
         (update-selvitys-message validated-email)
         (if is-loppuselvitys
-          (update-loppuselvitys-status parent-id "accepted")
+          (do
+            (update-loppuselvitys-status parent-id "accepted")
+            (execute!
+              "UPDATE hakemukset
+               SET
+                 loppuselvitys_taloustarkastanut_oid = ?,
+                 loppuselvitys_taloustarkastanut_name = ?,
+                 loppuselvitys_taloustarkastettu_at = now()
+               WHERE id = ? and version_closed is null"
+              [verifier-oid verifier parent-id]))
           (update-valiselvitys-status parent-id "accepted"))
         true)
       false)))

@@ -315,14 +315,16 @@
                           (bad-request!)))))
 
 (defn- send-selvitys []
-  (compojure-api/POST "/:avustushaku-id/selvitys/:selvitys-type/send" []
+  (compojure-api/POST "/:avustushaku-id/selvitys/:selvitys-type/send" request
                       :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
                       :body [selvitys-email (compojure-api/describe virkailija-schema/SelvitysEmail "Selvitys email")]
                       :return s/Any
                       :summary "Send selvitys and update state to sent"
-                      (if (hakija-api/set-selvitys-accepted selvitys-type selvitys-email)
-                        (ok {:status "ok"})
-                        (bad-request!))))
+                      (let [identity (authentication/get-request-identity request)]
+                         (if (hakija-api/set-selvitys-accepted selvitys-type selvitys-email identity)
+                           (ok {:status "ok"})
+                           (bad-request!)))
+                      ))
 
 (defn- send-selvitys-email []
   (compojure-api/POST "/:avustushaku-id/selvitys/:selvitys-type/send-notification" request

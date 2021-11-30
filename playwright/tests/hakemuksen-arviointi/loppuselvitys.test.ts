@@ -47,8 +47,8 @@ test('Loppuselvitys tab in hakemuksen arviointi should have link to correct lopp
   ])
   await loppuselvitysFormPage.waitForNavigation()
 
-  await waitForElementWithText(loppuselvitysFormPage, 'h1', 'Loppuselvitys') 
-  await waitForElementWithText(loppuselvitysFormPage, 'button', 'Lähetä käsiteltäväksi') 
+  await waitForElementWithText(loppuselvitysFormPage, 'h1', 'Loppuselvitys')
+  await waitForElementWithText(loppuselvitysFormPage, 'button', 'Lähetä käsiteltäväksi')
 
   await loppuselvitysFormPage.close()
 })
@@ -171,6 +171,16 @@ test('virkailija can accept loppuselvitys', async ({page, avustushakuID, asiatar
     expect(displayedSubject).toEqual(subject)
     expect(displayedContent).toEqual(content)
     expect(displayedThirdReceiver).toEqual(additionalReceiver)
+  })
+
+  await test.step('and sees that taloustarkastus has been made', async () => {
+    const title = await page.textContent('[data-test-id="taloustarkastus"] h3')
+    const date = await page.textContent('[data-test-id="taloustarkastus"] .date')
+    const verifier = await page.textContent('[data-test-id="taloustarkastus"] [data-test-id="verifier"]')
+
+    expect(title).toEqual('Taloustarkastettu ja lähetetty hakijalle')
+    expect(date).toEqual(moment().format('D.M.YYYY [klo] H.mm'))
+    expect(verifier).toEqual('_ valtionavustus')
   })
 
   await test.step('loppuselvitys is shown as hyväksytty in hakemus listing', async () => {

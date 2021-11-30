@@ -16,6 +16,8 @@ select  h.id,
         h.loppuselvitys_information_verified_by,
         h.loppuselvitys_information_verified_at,
         h.loppuselvitys_information_verification,
+        h.loppuselvitys_taloustarkastettu_at,
+        h.loppuselvitys_taloustarkastanut_name,
         (select
           (CASE
             WHEN m.paatos_id IS NULL

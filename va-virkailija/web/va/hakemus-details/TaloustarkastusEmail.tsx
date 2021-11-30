@@ -1,15 +1,13 @@
 import React, {useState, useEffect} from 'react'
-import moment from 'moment'
-
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import HakemustenArviointiController from '../HakemustenArviointiController'
-import { fiLongDateTimeFormatWithKlo } from 'va-common/web/va/i18n/dateformat'
 import { UserInfo } from '../types'
 import { Language } from 'va-common/web/va/i18n/translations'
 import { Hakemus, Answer, Selvitys, SelvitysEmail } from 'va-common/web/va/types'
 import { IconTrashcan } from "va-common/web/va/img/IconTrashcan";
 
 import './TaloustarkastusEmail.less'
+import {VerificationBox} from "./VerificationBox"
 
 type TaloustarkastusEmailProps = {
   controller: HakemustenArviointiController
@@ -26,7 +24,7 @@ export const TaloustarkastusEmail = ({ hakemus, loppuselvitys, avustushakuName, 
   const senderName = userInfo["first-name"].split(" ")[0] + " " + userInfo["surname"]
 
   const projectName = loppuselvitys["project-name"] || hakemus["project-name"] || ""
-  const registerNumber = loppuselvitys["register-number"] || "" 
+  const registerNumber = loppuselvitys["register-number"] || ""
 
   const emailAnswers = flattenAnswers(loppuselvitys.answers?.concat(hakemus.answers) || []).filter(answer => answer.key && answer.key.includes("email"))
   const organizationEmail = emailAnswers.find(a => a.key === "organization-email")
@@ -54,7 +52,7 @@ export const TaloustarkastusEmail = ({ hakemus, loppuselvitys, avustushakuName, 
     await HttpUtil.post(`/api/avustushaku/${avustushakuId}/selvitys/loppuselvitys/send`, {
       message: email.content,
       "selvitys-hakemus-id": loppuselvitys.id,
-      to: email.receivers, 
+      to: email.receivers,
       subject: email.subject
     })
     controller.loadSelvitys()
@@ -106,23 +104,19 @@ export const TaloustarkastusEmail = ({ hakemus, loppuselvitys, avustushakuName, 
             <textarea data-test-id="taloustarkastus-email-content" onChange={(e) => setEmail({...email, content: e.target.value})} rows={13} name="content" value={email.content}/>
           </fieldset>
         </div>
-        <div className="taloustarkastus-footer">
+        <div data-test-id='taloustarkastus'>
         { taloustarkastettu
-          ? <>
-              <h3 className="taloustarkastus-footer-header">Taloustarkastettu ja lähetetty hakijalle</h3>
-              <span className="taloustarkastus-footer-info" data-test-id="taloustarkastus-at">{formatDate(hakemus['taloustarkastus-at'])}</span>
-              <span className="taloustarkastus-footer-info" data-test-id="taloustarkastaja">{hakemus['taloustarkastus-by']}</span>
-            </>
-          : <button data-test-id="taloustarkastus-submit" type="submit" name="submit-taloustarkastus">Hyväksy taloustarkastus ja lähetä viesti</button>
+          ? <VerificationBox
+              title='Taloustarkastettu ja lähetetty hakijalle'
+              date={hakemus['loppuselvitys-taloustarkastettu-at']}
+              verifier={hakemus['loppuselvitys-taloustarkastanut-name']} />
+          : <div className="taloustarkastus-footer">
+              <button data-test-id="taloustarkastus-submit" type="submit" name="submit-taloustarkastus">Hyväksy taloustarkastus ja lähetä viesti</button>
+            </div>
         }
         </div>
       </form>
     </div>)
-}
-
-const formatDate = (date?: string) => {
-  const d = moment(date)
-  return d?.format(fiLongDateTimeFormatWithKlo)
 }
 
 function createEmailSubjectFi(registerNumber: string ) {

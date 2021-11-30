@@ -175,13 +175,15 @@ export interface Hakemus {
   'refused-comment'?: unknown
   payments: Payment[]
   scores: unknown[]
-  'selvitys-email'?: SelvitysEmail 
+  'selvitys-email'?: SelvitysEmail
   changeRequest?: string
   'taloustarkastettu-by'?: string
   'taloustarkastettu-at'?: string
   'loppuselvitys-information-verified-by'?: string
   'loppuselvitys-information-verified-at'?: string
   'loppuselvitys-information-verification'?: string
+  'loppuselvitys-taloustarkastanut-name'?: string
+  'loppuselvitys-taloustarkastettu-at'?: string
 }
 
 export type AvustushakuStatus = 'new' | 'draft' | 'published' | 'resolved' | 'deleted'
