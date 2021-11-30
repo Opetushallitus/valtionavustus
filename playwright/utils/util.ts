@@ -2,7 +2,7 @@ import moment from "moment";
 import axios from 'axios'
 
 import { VIRKAILIJA_URL } from "./constants"
-import {ElementHandle, Page} from "playwright";
+import {Page} from "playwright";
 import {expect} from "@playwright/test"
 
 export async function clearAndType(page: Page, selector: string, content: string) {
@@ -24,16 +24,18 @@ export async function expectQueryParameter(page: Page, paramName: string): Promi
   return value
 }
 
-export async function clickElementWithText(page: Page, elementType: string, text: string): Promise<ElementHandle> {
+export async function getElementWithText(page: Page, elementType: string, text: string) {
   const selector = `${elementType}:has-text("${text}")`
-  const handle = await page.waitForSelector(selector)
-  await handle.click()
-  return handle
+  return await page.waitForSelector(selector)
+}
+
+export async function clickElementWithText(page: Page, elementType: string, text: string) {
+  const selector = `${elementType}:has-text("${text}")`
+  await page.click(selector)
 }
 
 export async function getElementAttribute(page: Page, selector: string, attribute: string) {
-  const handle = await page.waitForSelector(selector)
-  return await handle.getAttribute(attribute)
+  return await page.getAttribute(selector, attribute)
 }
 
 export async function hasElementAttribute(page: Page, selector: string, attribute: string) {
@@ -42,18 +44,15 @@ export async function hasElementAttribute(page: Page, selector: string, attribut
 }
 
 export async function getElementInnerText(page: Page, selector: string): Promise<string | undefined> {
-  const element = await page.waitForSelector(selector)
-  return await element.innerText()
+  return await page.innerText(selector)
 }
 
 export async function textContent(page: Page, selector: string) {
-  const element = await page.waitForSelector(selector)
-  return await element.textContent()
+  return await page.textContent(selector)
 }
 
 export async function isDisabled(page: Page, selector: string) {
-  const element = await page.waitForSelector(selector)
-  return await element.isDisabled();
+  return await page.isDisabled(selector);
 }
 
 function waitForElementWithAttribute(page: Page, attribute: string, attributeValue: string, text: string) {

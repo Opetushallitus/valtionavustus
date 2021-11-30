@@ -2,7 +2,8 @@ import {Page} from "playwright";
 import {navigate} from "../utils/navigate";
 import {
   clickElementWithText,
-  expectQueryParameter
+  expectQueryParameter,
+  getElementWithText
 } from "../utils/util";
 import {mkAvustushakuName} from "../utils/random";
 import fs from 'fs/promises'
@@ -101,7 +102,8 @@ export class HakujenHallintaPage {
   async copyEsimerkkihaku() {
     await navigate(this.page, "/admin/haku-editor/")
     await this.page.click(".haku-filter-remove")
-    const element = await clickElementWithText(this.page, "td", "Yleisavustus - esimerkkihaku")
+    await clickElementWithText(this.page, "td", "Yleisavustus - esimerkkihaku")
+    const element = await getElementWithText(this.page, "td", "Yleisavustus - esimerkkihaku")
     const currentHakuTitle = await (await element.getProperty('textContent'))?.jsonValue() as string
     await clickElementWithText(this.page, "a", "Kopioi uuden pohjaksi")
 

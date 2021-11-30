@@ -77,7 +77,7 @@ export const TaloustarkastusEmail = ({ hakemus, loppuselvitys, avustushakuName, 
             {
               email.receivers.map((address, idx) => {
                 return  <div className={`taloustarkastus-receiver-row`} key={idx}>
-                          <input type="text" name="receiver" onChange={e => {
+                          <input data-test-id={`taloustarkastus-receiver-${idx}`} type="text" name="receiver" onChange={e => {
                             const newReceivers = email.receivers
                             newReceivers[idx] = e.target.value
                             setEmail({...email, receivers: newReceivers })
@@ -95,7 +95,7 @@ export const TaloustarkastusEmail = ({ hakemus, loppuselvitys, avustushakuName, 
               })
             }
             { !taloustarkastettu &&
-            <button className="taloustarkastus-add-receiver" onClick={() => setEmail({...email, receivers: [...email.receivers, ""]}) }>
+            <button data-test-id="taloustarkastus-add-receiver" className="taloustarkastus-add-receiver" onClick={() => setEmail({...email, receivers: [...email.receivers, ""]}) }>
               + Lisää uusi vastaanottaja
             </button>
             }
