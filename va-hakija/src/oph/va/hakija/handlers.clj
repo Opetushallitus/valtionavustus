@@ -4,7 +4,7 @@
             [ring.util.http-response :refer :all]
             [oph.soresu.common.config :refer [config]]
             [oph.common.datetime :as datetime]
-            [oph.common.string :refer [derive-token-hash]]
+            [oph.common.string :refer [verify-token-hash]]
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.validation :as validation]
             [oph.soresu.form.routes
@@ -227,12 +227,17 @@
       false)))
 
 (defn can-update-hakemus [haku-id hakemus-id answers]
-  (let [officer-token (:officerToken answers)
+  (let [hakemus (va-db/get-hakemus hakemus-id)
+        avustushaku (va-db/get-avustushaku haku-id)
+        phase (avustushaku-phase avustushaku)
+        officer-token (:officerToken answers)
         officer-hash (:officerHash answers)
-        derived-hash (derive-token-hash officer-token)]
+        token-verification (when officer-token (verify-token-hash officer-token officer-hash))]
     (or
-      true ; TODO tässä pitäis tsekata onko hakemus vielä käsittelemättä tai hakuaikaa jäljellä
-      (= officer-hash derived-hash))))
+      (= phase "current")
+      (= (:status hakemus) "pending_change_request")
+      (= (:status hakemus) "applicant_edit_open")
+      (:valid token-verification))))
 
 (defn on-hakemus-update [haku-id hakemus-id base-version answers]
   (let [hakemus (va-db/get-hakemus hakemus-id)

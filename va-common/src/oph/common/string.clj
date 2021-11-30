@@ -1,6 +1,7 @@
 (ns oph.common.string
   (:require [buddy.hashers :as hashers]
             [clojure.string :as string]
+            [oph.common.datetime :as datetime]
             [oph.soresu.common.config :refer [config]]))
 
 (defn trimmed-or-nil [s]
@@ -14,8 +15,11 @@
       string/trim
       (string/replace #"\s" " ")))
 
-(defn- date []
-  (.format (java.text.SimpleDateFormat. "yyyyMMdd") (new java.util.Date)))
+(defn- get-hashed-str [token]
+  (str token (datetime/date-string (datetime/now))))
 
 (defn derive-token-hash [token]
-  (subs (hashers/derive (str token (date) (:token-hash-secret config))) 14))
+  (subs (hashers/derive (get-hashed-str token) {:salt (:token-hash-secret config) :alg :bcrypt+sha512}) 14))
+
+(defn verify-token-hash [token hash]
+  (hashers/verify (get-hashed-str token) (str "bcrypt+sha512$" hash) {:salt (:token-hash-secret config)}))

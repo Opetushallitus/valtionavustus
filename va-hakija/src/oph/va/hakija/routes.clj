@@ -171,7 +171,9 @@
     :body    [answers (compojure-api/describe AuthenticatedAnswers "New answers")]
     :return  nil
     :summary "Submit response for hakemus change request"
-    (on-hakemus-change-request-response haku-id hakemus-id base-version (remove-authentication-keys answers))))
+    (if (can-update-hakemus haku-id hakemus-id answers)
+      (on-hakemus-change-request-response haku-id hakemus-id base-version (remove-authentication-keys answers))
+      (bad-request! { :error "can not update hakemus"}))))
 
 (defn- officer-edit-submit []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version/officer-edit-submit" [haku-id hakemus-id base-version :as request]

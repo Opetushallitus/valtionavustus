@@ -52,6 +52,7 @@
 
   :profiles {:uberjar {:aot [oph.va.hakija.main oph.va.virkailija.main]}
              :hakija-dev     {:env {:config "va-hakija/config/dev.edn"
+                              :configsecrets "../valtionavustus-secret/config/secret-dev.edn"
                               :environment "dev"
                               :configdefaults "va-hakija/config/defaults.edn"}}
 
