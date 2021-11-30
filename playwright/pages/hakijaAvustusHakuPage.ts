@@ -44,6 +44,12 @@ export class HakijaAvustusHakuPage {
     await this.page.press('body', 'Enter')
   }
 
+  async waitForEditSaved() {
+    return this.page.waitForFunction(
+      () => document.querySelector('div.save-message')?.textContent?.includes('Tallennettu')
+    )
+  }
+
   async submitOfficerEdit() {
     await this.page.click('#virkailija-edit-submit')
     await this.page.waitForSelector('div.soresu-preview')

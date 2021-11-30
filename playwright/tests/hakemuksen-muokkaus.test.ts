@@ -74,8 +74,8 @@ test('hakija can edit hakemus', async ({page, avustushakuID, hakemus}) => {
 
   await test.step('when hakemus has been submitted', async () => {
     await hakemusPage.navigateToExistingHakemusPage(avustushakuID, hakemus.userKey)
-    await hakemusPage.page.waitForResponse(/.*\/hakemus\/.*/) // wait for save
     await hakemusPage.selectMaakuntaFromDropdown('Etelä-Savo')
+    await hakemusPage.waitForEditSaved()
 
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
     await waitForElementWithText(page, 'span', 'Etelä-Savo')
