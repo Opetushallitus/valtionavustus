@@ -33,6 +33,10 @@ export class HakijaAvustusHakuPage {
     await this.page.goto(hakemusUrl)
   }
 
+  async navigateToExistingHakemusPage(avustushakuID: number, userKey: string) {
+    await navigateHakija(this.page, `/avustushaku/${avustushakuID}/nayta?hakemus=${userKey}`)
+  }
+
   async selectMaakuntaFromDropdown(text: string) {
     const maakuntaInputSelector = '#koodistoField-1_input .rw-dropdown-list-input input'
     await this.page.fill(maakuntaInputSelector, text)
@@ -42,6 +46,11 @@ export class HakijaAvustusHakuPage {
 
   async submitOfficerEdit() {
     await this.page.click('#virkailija-edit-submit')
+    await this.page.waitForSelector('div.soresu-preview')
+  }
+
+  async submitChangeRequestResponse() {
+    await this.page.click('#change-request-response')
     await this.page.waitForSelector('div.soresu-preview')
   }
 

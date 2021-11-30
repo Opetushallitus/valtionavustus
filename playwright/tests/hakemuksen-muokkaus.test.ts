@@ -4,6 +4,7 @@ import { URLSearchParams } from "url"
 
 import {hakemusTest as test} from "../fixtures/hakemusTest"
 import {HakemustenArviointiPage} from "../pages/hakemustenArviointiPage"
+import { HakijaAvustusHakuPage } from "../pages/hakijaAvustusHakuPage"
 import {HakujenHallintaPage} from "../pages/hakujenHallintaPage"
 import { waitForElementWithText } from "../utils/util"
 
@@ -63,5 +64,35 @@ test('virkailija can edit hakemus', async ({page, avustushakuID, hakemus}) => {
     await hakemustenArviointiPage.page.bringToFront()
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
     await waitForElementWithText(page, 'span', 'Etelä-Karjala')
+  })
+})
+
+test('hakija can edit hakemus', async ({page, avustushakuID, hakemus}) => {
+  const hakemusPage = new HakijaAvustusHakuPage(page)
+  const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+  const hakujenHallintaPage = new HakujenHallintaPage(page)
+
+  await test.step('when hakemus has been submitted', async () => {
+    await hakemusPage.navigateToExistingHakemusPage(avustushakuID, hakemus.userKey)
+    await hakemusPage.page.waitForResponse(/.*\/hakemus\/.*/) // wait for save
+    await hakemusPage.selectMaakuntaFromDropdown('Etelä-Savo')
+
+    await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
+    await waitForElementWithText(page, 'span', 'Etelä-Savo')
+  })
+
+  await test.step('when a change request has been made', async () => {
+    await hakujenHallintaPage.navigate(avustushakuID)
+    await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast()
+
+    await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
+    await hakemustenArviointiPage.createChangeRequest()
+
+    await hakemusPage.navigateToExistingHakemusPage(avustushakuID, hakemus.userKey)
+    await hakemusPage.selectMaakuntaFromDropdown('Ahvenanmaa')
+    await hakemusPage.submitChangeRequestResponse()
+
+    await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
+    await waitForElementWithText(page, 'span', 'Ahvenanmaa')
   })
 })

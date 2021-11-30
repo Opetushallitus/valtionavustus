@@ -75,6 +75,12 @@ export class HakemustenArviointiPage {
     return new HakijaAvustusHakuPage(newPage)
   }
 
+  async createChangeRequest(reason: string = "Täydennäppä") {
+    await this.page.click('[data-test-id="request-change-button"]')
+    await this.page.type('[data-test-id="täydennyspyyntö__textarea"]', reason)
+    await this.page.click('[data-test-id="täydennyspyyntö__lähetä"]')
+  }
+
   async waitForArvioSave(avustushakuID: number, hakemusID: number) {
     await this.page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`)
   }

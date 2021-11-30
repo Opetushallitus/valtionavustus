@@ -250,7 +250,8 @@ class ChangeRequest extends Component {
         <button type="button"
                 hidden={newChangeRequest || hasChangeRequired}
                 onClick={openEdit}
-                disabled={!allowEditing}>Pyydä täydennystä </button>
+                disabled={!allowEditing}
+                data-test-id="request-change-button">Pyydä täydennystä </button>
         <HelpTooltip testId={"tooltip-taydennys"} content={helpTexts["hankkeen_sivu__arviointi___pyydä_täydennystä"]} direction="arviointi" />
         <div hidden={!newChangeRequest}>
           <label>Lähetä täydennyspyyntö</label>
