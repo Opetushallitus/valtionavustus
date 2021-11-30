@@ -129,7 +129,7 @@ etunimi.sukunimi@oph.fi`)
 
     await modificationPage.bringToFront()
     expect(await modificationPage.evaluate(() => window.location.href))
-      .toEqual(`${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=${userKey}`)
+      .toMatch(`${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=${userKey}`)
     await page.bringToFront()
   })
 
