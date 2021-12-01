@@ -458,14 +458,12 @@
   (it "POST /api/avustushaku/1/hakemus/<id>/<baseversion> should fail"
     (let [{:keys [status headers body error] :as resp} (post! "/api/avustushaku/1/hakemus/hakemus-id/1" valid-answers)
           json (json->map body)]
-      (should= 405 status)
-      (should= "ended" (:phase json))))
+      (should= 400 status)))
 
   (it "POST /api/avustushaku/1/hakemus/<id>/<baseversion>/submit should fail"
       (let [{:keys [status headers body error] :as resp} (post! "/api/avustushaku/1/hakemus/hakemus-id/1/submit" valid-answers)
             json (json->map body)]
-        (should= 405 status)
-        (should= "ended" (:phase json)))))
+        (should= 400 status))))
 
 (describe "HTTP server before haku has started"
 
