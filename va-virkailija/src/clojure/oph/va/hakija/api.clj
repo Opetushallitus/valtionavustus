@@ -344,14 +344,16 @@
         (if is-loppuselvitys
           (do
             (update-loppuselvitys-status parent-id "accepted")
-            (execute!
-              "UPDATE hakemukset
-               SET
-                 loppuselvitys_taloustarkastanut_oid = ?,
-                 loppuselvitys_taloustarkastanut_name = ?,
-                 loppuselvitys_taloustarkastettu_at = now()
-               WHERE id = ? and version_closed is null"
-              [verifier-oid verifier parent-id]))
+            (when is-verification-enabled
+              (execute!
+                "UPDATE hakemukset
+                 SET
+                   loppuselvitys_taloustarkastanut_oid = ?,
+                   loppuselvitys_taloustarkastanut_name = ?,
+                   loppuselvitys_taloustarkastettu_at = now()
+                 WHERE id = ? and version_closed is null"
+                [verifier-oid verifier parent-id])
+              ))
           (update-valiselvitys-status parent-id "accepted"))
         true)
       false)))
