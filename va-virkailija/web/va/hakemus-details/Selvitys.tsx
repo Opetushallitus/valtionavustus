@@ -39,7 +39,9 @@ const Selvitys = ({ presenter, environment, controller, hakemus, avustushaku, tr
 
   const renderSelvitysEmail = hasSelvitys && !environment["taloustarkastus"]["enabled?"] && (
     selvitysType === 'valiselvitys' ||
-    loppuselvitysStatus === 'accepted')
+    loppuselvitysStatus === 'accepted' || 
+    hakemus["status-loppuselvitys"] === 'information_verified'
+  )
 
   const loppuselvitys = hakemus.selvitys?.loppuselvitys
   const renderTaloustarkastusEmail = environment["taloustarkastus"]["enabled?"] && (loppuselvitysStatus === 'information_verified' || loppuselvitysStatus === 'accepted')
