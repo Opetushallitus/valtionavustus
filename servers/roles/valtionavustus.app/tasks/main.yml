@@ -74,20 +74,6 @@
   tags:
     - app_secrets
 
-- name: Copy log4j.properties for apps to the server
-  template:
-    src: "log4j.properties.j2"
-    dest: "{{ data_dir }}/www/config/{{ item }}-log4j.properties"
-    owner: www
-    group: www
-    mode: 0600
-  with_items:
-    - va-hakija
-    - va-virkailija
-  notify:
-    - Restart va-hakija
-    - Restart va-virkailija
-
 - name: Copy log4j2.xml for apps to the server
   template:
     src: "log4j2.xml.j2"
