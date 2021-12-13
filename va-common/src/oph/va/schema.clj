@@ -65,6 +65,7 @@
    (s/optional-key :allow-overriding-feature-flag-from-url-params) (s/maybe {:enabled? s/Bool})
    (s/optional-key :dont-send-loppuselvityspyynto-to-virkailija) (s/maybe {:enabled? s/Bool})
    (s/optional-key :reports) (s/maybe {:enabled? s/Bool})
+   (s/optional-key :hakuaika-paattymassa-notification) (s/maybe {:enabed? s/Bool})
    (s/optional-key :selvitys-limit) (s/maybe {:enabled? s/Bool})})
 
 

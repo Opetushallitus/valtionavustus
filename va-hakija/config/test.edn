@@ -8,4 +8,5 @@
  :sisaltomuutos {:enabled? true}
  :loppuselvitys-verification {:enabled? true}
  :taloustarkastus {:enabled? true}
+ :hakuaika-paattymassa-notification {:enabled? true}
  :email {:print-mail-on-disable? false}}

@@ -11,4 +11,5 @@
          :port 42069}
  :loppuselvitys-verification {:enabled? true}
  :taloustarkastus {:enabled? true}
+ :hakuaika-paattymassa-notification {:enabled? true}
  :applications-ui {:enabled? true}}
