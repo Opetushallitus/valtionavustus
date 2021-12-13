@@ -1,3 +1,5 @@
+(def log4j-version "2.15.0")
+
 (defproject oph-va/root "0.1.0-SNAPSHOT"
   :description "OPH Valtionavustus"
 
@@ -64,8 +66,8 @@
                          [environ "1.2.0"]
 
                          ;; logging
-                         [org.apache.logging.log4j/log4j-core "2.14.1"]
-                         [org.apache.logging.log4j/log4j-slf4j-impl "2.14.1"]
+                         [org.apache.logging.log4j/log4j-core ~log4j-version]
+                         [org.apache.logging.log4j/log4j-slf4j-impl ~log4j-version]
                          [org.clojure/tools.logging "1.1.0"]
                          [org.slf4j/slf4j-api "1.7.32"]
                          [commons-logging "1.2"]
