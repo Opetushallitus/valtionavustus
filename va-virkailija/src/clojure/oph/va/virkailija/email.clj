@@ -156,7 +156,7 @@
   (let [lang     (keyword "fi")
         template (:loppuselvitys-taloustarkastamatta mail-templates)
         list     (seq (map to-loppuselvitys-tarkastamatta loppuselvitys-list))]
-    (email/try-send-msg-once {:type :loppuselvitys-asiatarkastamatta
+    (email/try-send-msg-once {:type :loppuselvitys-taloustarkastamatta
                               :lang lang
                               :from (-> email/smtp-config :from lang)
                               :sender (-> email/smtp-config :sender)
