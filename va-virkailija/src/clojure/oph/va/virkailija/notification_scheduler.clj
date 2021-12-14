@@ -20,6 +20,10 @@
   (log/info "Running Valiselvitys tarkastamatta")
   (send-valiselvitys-tarkastamatta-notifications))
 
+(defjob HakuaikaPaattymassaNotification [ctx]
+  (log/info "Running Hakuaika päättymässä")
+  (send-hakuaika-paattymassa-notifications))
+
 (defn- get-notification-jobs []
   (filter :enabled?
     [
@@ -44,6 +48,13 @@
         :schedule (schedule
                     (cron-schedule
                       (get-in config [:notifications :valiselvitys :schedule])))
+      }
+      { :enabled? (get-in config [:notifications :hakuaika-paattymassa :enabled?])
+        :key "HakuaikaPaattymassa"
+        :job HakuaikaPaattymassaNotification
+        :schedule (schedule
+                   (cron-schedule
+                    (get-in config [:notifications :hakuaika-paattymassa :schedule])))
       }
     ]))
 

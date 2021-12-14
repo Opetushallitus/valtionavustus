@@ -8,7 +8,8 @@
             [clojure.tools.logging :as log]
             [clostache.parser :refer [render]])
   (:use [clojure.java.io]
-        [oph.va.decision-liitteet]))
+        [oph.va.decision-liitteet])
+  (:import (java.time.format DateTimeFormatter)))
 
 (def mail-titles
   {:change-request {:fi "Täydennyspyyntö avustushakemukseesi"
@@ -48,7 +49,8 @@
     :sv (email/load-template "email-templates/payments-info.fi")}
    :loppuselvitys-asiatarkastamatta (email/load-template "email-templates/loppuselvitys-asiatarkastamatta.fi")
    :loppuselvitys-taloustarkastamatta (email/load-template "email-templates/loppuselvitys-taloustarkastamatta.fi")
-   :valiselvitys-tarkastamatta (email/load-template "email-templates/valiselvitys-tarkastamatta.fi")})
+   :valiselvitys-tarkastamatta (email/load-template "email-templates/valiselvitys-tarkastamatta.fi")
+   :hakuaika-paattymassa (email/load-template "email-templates/hakuaika-paattymassa.fi")})
 
 (defn mail-example [msg-type & [data]]
   {:content (render (:fi (msg-type mail-templates)) (if data data {}))
@@ -154,7 +156,7 @@
    :count (:hakemus-count selvitys)})
 
 (defn send-loppuselvitys-taloustarkastamatta [loppuselvitys-list]
-  (let [lang     (keyword "fi")
+  (let [lang     :fi
         template (:loppuselvitys-taloustarkastamatta mail-templates)
         list     (seq (map to-selvitys-tarkastamatta loppuselvitys-list))]
     (email/try-send-msg-once {:type :loppuselvitys-taloustarkastamatta
@@ -167,8 +169,24 @@
                               :list list}
                              (partial render template))))
 
+(defn send-hakuaika-paattymassa [hakemus]
+  (let [lang            :fi
+        template       (:hakuaika-paattymassa mail-templates)
+        to             (:contact-email hakemus)
+        paattymispaiva (.format (:paattymispaiva hakemus) (DateTimeFormatter/ofPattern "dd.MM.yyyy"))
+        url            (email/generate-url (:avustushaku-id hakemus) lang "fi" (:user-key hakemus) false) ]
+    (email/try-send-msg-once {:type :hakuaika-paattymassa
+                              :lang lang
+                              :from (-> email/smtp-config :from lang)
+                              :sender (-> email/smtp-config :sender)
+                              :to [to]
+                              :subject "Hakuaika päättymässä"
+                              :paattymispaiva paattymispaiva
+                              :url url}
+                             (partial render template))))
+
 (defn send-loppuselvitys-asiatarkastamatta [to loppuselvitys-list]
-  (let [lang     (keyword "fi")
+  (let [lang     :fi
         template (:loppuselvitys-asiatarkastamatta mail-templates)
         list     (seq (map to-selvitys-tarkastamatta loppuselvitys-list))]
     (email/try-send-msg-once {:type :loppuselvitys-asiatarkastamatta

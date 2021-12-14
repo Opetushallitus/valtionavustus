@@ -1,0 +1,7 @@
+Sinulla on keskeneräinen hakemus. Huomaa, että avustuksen hakuaika päättyy {{ paattymispaiva }}. Hakemus muokkauksineen
+tallentuu automaattisesti Opetushallituksen valtionavustusjärjestelmään, mutta tullakseen vireille on
+se tallennettava Lähetä käsiteltäväksi -painikkeella järjestelmään ennen hakuajan päättymistä. Määräajan ulkopuolella saapunut hakemus voidaan ottaa käsiteltäväksi vain erityisen painavista syistä.
+
+Hakemustanne voitte tarkastella tästä linkistä: {{& url }}
+
+https://www.oph.fi/fi/yleisia-ohjeita-valtionavustusten-hakijoille-ja-kayttajille

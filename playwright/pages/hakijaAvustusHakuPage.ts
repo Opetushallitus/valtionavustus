@@ -60,7 +60,7 @@ export class HakijaAvustusHakuPage {
     await this.page.waitForSelector('div.soresu-preview')
   }
 
-  async fillAndSendMuutoshakemusEnabledHakemus(avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void) {
+  async fillMuutoshakemusEnabledHakemus(avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void) {
     const lang = answers.lang || 'fi'
 
     await this.page.waitForSelector('#haku-not-open', { state: 'hidden' })
@@ -100,9 +100,11 @@ export class HakijaAvustusHakuPage {
     if (beforeSubmitFn) {
       await beforeSubmitFn()
     }
-
-
+  }
+  async fillAndSendMuutoshakemusEnabledHakemus(avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void) {
+    await this.fillMuutoshakemusEnabledHakemus(avustushakuID, answers, beforeSubmitFn)
     await this.page.click(this.sendHakemusButtonSelector)
+    const lang = answers.lang || 'fi'
     const sentText = lang === 'fi' ? "Hakemus lähetetty" : "Ansökan sänd"
     await this.page.waitForSelector(`${this.sendHakemusButtonSelector}:has-text("${sentText}")`)
     const userKey = await expectQueryParameter(this.page, "hakemus")

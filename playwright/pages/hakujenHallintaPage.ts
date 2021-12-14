@@ -222,6 +222,16 @@ export class HakujenHallintaPage {
     await this.waitForSave()
   }
 
+  async setAvustushakuEndDateToTomorrow() {
+    const today = new Date()
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const selector = "#hakuaika-end"
+    const tomorrowString = `${tomorrow.getDate()}.${tomorrow.getMonth()+1}.${tomorrow.getFullYear()} ${tomorrow.getHours()}.${tomorrow.getMinutes()}`
+    await this.page.fill(selector, tomorrowString, {})
+    await this.page.$eval(selector, (e => e.blur()))
+    await this.waitForSave()
+  }
   async closeAvustushakuByChangingEndDateToPast() {
     const previousYear = (new Date()).getFullYear() - 1
     const selector = "#hakuaika-end"
