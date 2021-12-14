@@ -303,7 +303,6 @@
         security-validation (validation/validate-form-security form answers)
         is-updateable-selvitys (or
                                   (= (name form-key) "form_valiselvitys")
-                                  (not (:enabled? (:loppuselvitys-verification config)))
                                   (not (:loppuselvitys-information-verified-at parent-hakemus)))]
     (if (every? empty? (vals security-validation))
       (if (and is-updateable-selvitys (= base-version (:version hakemus)))

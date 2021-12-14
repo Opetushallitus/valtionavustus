@@ -33,7 +33,7 @@ const Selvitys = ({ presenter, environment, controller, hakemus, avustushaku, tr
   const selvitysHakemus = hakemus.selvitys?.[selvitysType]
   const form = hakemus.selvitys?.[`${selvitysType}Form`]
 
-  const renderLoppuselvitysForm = hasSelvitys && environment["loppuselvitys-verification"]["enabled?"] && selvitysType === 'loppuselvitys'
+  const renderLoppuselvitysForm = hasSelvitys && selvitysType === 'loppuselvitys'
 
   const loppuselvitysStatus = hakemus["status-loppuselvitys"]
 

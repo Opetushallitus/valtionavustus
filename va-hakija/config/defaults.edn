@@ -39,7 +39,6 @@
          :retry-initial-wait 2000
          :retry-multiplier 4
          :retry-max-time 60000}
- :loppuselvitys-verification {:enabled? false}
  :taloustarkastus {:enabled? false}
  :hakuaika-paattymassa-notification {:enabled? false}
  :selvitys-limit {:enabled? false}}

@@ -60,7 +60,6 @@
    (s/maybe {(s/optional-key :refuse-enabled?) s/Bool})
    (s/optional-key :multibatch-payments) (s/maybe {:enabled? s/Bool})
    (s/optional-key :va-code-values) (s/maybe {:enabled? s/Bool})
-   :loppuselvitys-verification {:enabled? s/Bool}
    :taloustarkastus {:enabled? s/Bool}
    (s/optional-key :allow-overriding-feature-flag-from-url-params) (s/maybe {:enabled? s/Bool})
    (s/optional-key :dont-send-loppuselvityspyynto-to-virkailija) (s/maybe {:enabled? s/Bool})

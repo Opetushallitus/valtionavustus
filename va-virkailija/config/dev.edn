@@ -28,14 +28,12 @@
  :nrepl-enabled? true
  :email {:enabled? true
          :host "localhost"
-         :port 42069
-         :to-finance ["test@test.com"]}
+         :port 42069}
  :payments {:enabled? true
             :delete-payments? true}
  :contact-person-name-in-pitkaviite {:enabled? true}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
- :loppuselvitys-verification {:enabled? true}
  :taloustarkastus {:enabled? true}
  :allow-overriding-feature-flag-from-url-params {:enabled? true}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}

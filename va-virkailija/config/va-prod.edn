@@ -12,7 +12,8 @@
                     :scheduling "0 00 04 ? * *"
                     :strict-host-key-checking :yes}
  :notification-scheduler {:enabled? true
-                          :loppuselvitys-asiatarkastamatta-schedule "0 0 7 ? * 2"}
+                          :loppuselvitys-asiatarkastamatta-schedule "0 0 7 ? * 2"
+                          :loppuselvitys-taloustarkastamatta-schedule "0 0 7 ? * 2"}
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25
@@ -20,12 +21,12 @@
          :bounce-address "valtionavustukset@oph.fi"
          :retry-initial-wait 2000
          :retry-multiplier 4
-         :retry-max-time 60000}
+         :retry-max-time 60000
+         :to-taloustarkastaja ["taloustarkastaja@oph.fi"]}
  :integration-healthcheck {:enabled? true
                            :timeout 5000
                            :interval-minutes 15}
  :contact-person-name-in-pitkaviite {:enabled? true}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
- :loppuselvitys-verification {:enabled? true}
 }

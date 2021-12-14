@@ -333,10 +333,10 @@
         parent-hakemus          (get-hakemus parent-id)
         is-loppuselvitys        (= selvitys-type "loppuselvitys")
         is-verified             (= (:status_loppuselvitys parent-hakemus) "information_verified")
-        is-verification-enabled (:enabled? (:loppuselvitys-verification config))
+        is-verification-enabled (:enabled? (:taloustarkastus config))
         verifier                (str (:first-name identity) " " (:surname identity))
         verifier-oid            (:person-oid identity)
-        can-set-selvitys        (or (not is-loppuselvitys) (not is-verification-enabled) is-verified)]
+        can-set-selvitys        (or (not is-loppuselvitys) is-verified)]
     (if can-set-selvitys
       (do
         (send-selvitys hakemus validated-email)

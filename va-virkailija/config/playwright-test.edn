@@ -17,15 +17,13 @@
  :nrepl-enabled? true
  :email {:enabled? true
          :host "fakesmtp"
-         :port 25
-         :to-finance ["test@test.com"]}
+         :port 25}
  :payments {:enabled? true
             :delete-payments? true}
  :contact-person-name-in-pitkaviite {:enabled? true}
  :va-users {:use-cache? false }
  :tasmaytysraportti-create {:enabled? true}
  :allow-overriding-feature-flag-from-url-params {:enabled? true}
- :loppuselvitys-verification {:enabled? true}
  :taloustarkastus {:enabled? true}
  :db {:server-name "va-postgres"
       :database-name "va-dev"}

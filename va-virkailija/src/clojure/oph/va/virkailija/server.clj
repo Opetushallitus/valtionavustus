@@ -34,7 +34,7 @@
     (va-users/start-background-job-update-va-users-cache))
   (when (get-in config [:rondo-scheduler :enabled?])
     (rondo-scheduling/schedule-fetch-from-rondo))
-  (when (and (get-in config [:loppuselvitys-verification :enabled?]) (get-in config [:notification-scheduler :enabled?]))
+  (when (get-in config [:notification-scheduler :enabled?])
     (notification-scheduler/start-notification-scheduler))
   (when (get-in config [:integration-healthcheck :enabled?])
     (log/info "Starting scheduled healthcheck")
