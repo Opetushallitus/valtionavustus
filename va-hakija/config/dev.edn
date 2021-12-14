@@ -10,5 +10,4 @@
          :host "localhost"
          :port 42069}
  :taloustarkastus {:enabled? true}
- :hakuaika-paattymassa-notification {:enabled? true}
  :applications-ui {:enabled? true}}

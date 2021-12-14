@@ -37,4 +37,5 @@
  :taloustarkastus {:enabled? true}
  :allow-overriding-feature-flag-from-url-params {:enabled? true}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
+ :hakuaika-paattymassa-notification {:enabled? true}
  :test-apis {:enabled? true}}

@@ -8,7 +8,6 @@
  :db {:database-name "va-qa"
       :port-number 5432}
  :taloustarkastus {:enabled? true}
- :hakuaika-paattymassa-notification {:enabled? true}
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25

@@ -11,5 +11,4 @@
          :host "fakesmtp"
          :port 25}
  :taloustarkastus {:enabled? true}
- :hakuaika-paattymassa-notification {:enabled? true}
  :applications-ui {:enabled? true}}

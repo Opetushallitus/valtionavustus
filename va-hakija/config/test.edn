@@ -7,5 +7,4 @@
  :db {:database-name "va-test"}
  :sisaltomuutos {:enabled? true}
  :taloustarkastus {:enabled? true}
- :hakuaika-paattymassa-notification {:enabled? true}
  :email {:print-mail-on-disable? false}}
