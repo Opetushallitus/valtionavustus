@@ -19,3 +19,15 @@
         grouped (group-by :email rows)]
     (doseq [keyval grouped]
       (email/send-loppuselvitys-asiatarkastamatta [(key keyval)] (val keyval)))))
+
+(defn- get-loppuselvitys-taloustarkastamatta []
+  (query "SELECT avustushaku, count(id) as hakemus_count
+          FROM hakemukset
+          WHERE status_loppuselvitys = 'information_verified' AND version_closed IS NULL
+          GROUP BY avustushaku"
+         []))
+
+(defn send-loppuselvitys-taloustarkastamatta-notifications []
+  (let [loppuselvitys-list (get-loppuselvitys-taloustarkastamatta)]
+    (when (>= (count loppuselvitys-list) 1)
+      (email/send-loppuselvitys-taloustarkastamatta loppuselvitys-list))))

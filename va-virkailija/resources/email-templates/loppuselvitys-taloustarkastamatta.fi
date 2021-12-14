@@ -1,0 +1,9 @@
+Hei!
+
+{{amount}} loppuselvitystä odottaa taloustarkastustasi valtionavustusjärjestelmässä. Taloustarkastamattomia loppuselvityksiä on seuraavissa valtionavustuksissa:
+
+{{#list}}
+- Loppuselvityksiä {{count}} kpl: {{&link}}
+{{/list}}
+
+Taloustarkastaja lähettää tiedon loppuselvityksen hyväksymisestä avustuksen saajalle, kun taloustarkastus on hyväksytty.

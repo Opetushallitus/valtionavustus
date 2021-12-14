@@ -46,7 +46,8 @@
    :payments-info-notification
    {:fi (email/load-template "email-templates/payments-info.fi")
     :sv (email/load-template "email-templates/payments-info.fi")}
-   :loppuselvitys-asiatarkastamatta (email/load-template "email-templates/loppuselvitys-asiatarkastamatta.fi")})
+   :loppuselvitys-asiatarkastamatta (email/load-template "email-templates/loppuselvitys-asiatarkastamatta.fi")
+   :loppuselvitys-taloustarkastamatta (email/load-template "email-templates/loppuselvitys-taloustarkastamatta.fi")})
 
 (defn mail-example [msg-type & [data]]
   {:content (render (:fi (msg-type mail-templates)) (if data data {}))
@@ -147,14 +148,28 @@
   (str (-> config :server :virkailija-url)
        "/avustushaku/" avustushaku-id "/"))
 
-(defn- to-loppuselvitys-asiatarkastamatta [loppuselvitys]
+(defn- to-loppuselvitys-tarkastamatta [loppuselvitys]
   {:link (generate-avustushaku-url (:avustushaku loppuselvitys))
    :count (:hakemus-count loppuselvitys)})
+
+(defn send-loppuselvitys-taloustarkastamatta [loppuselvitys-list]
+  (let [lang     (keyword "fi")
+        template (:loppuselvitys-taloustarkastamatta mail-templates)
+        list     (seq (map to-loppuselvitys-tarkastamatta loppuselvitys-list))]
+    (email/try-send-msg-once {:type :loppuselvitys-asiatarkastamatta
+                              :lang lang
+                              :from (-> email/smtp-config :from lang)
+                              :sender (-> email/smtp-config :sender)
+                              :to (-> email/smtp-config :to-taloustarkastaja)
+                              :subject "Taloustarkastamattomia loppuselvityksiä"
+                              :amount (count list)
+                              :list list}
+                             (partial render template))))
 
 (defn send-loppuselvitys-asiatarkastamatta [to loppuselvitys-list]
   (let [lang     (keyword "fi")
         template (:loppuselvitys-asiatarkastamatta mail-templates)
-        list     (seq (map to-loppuselvitys-asiatarkastamatta loppuselvitys-list))]
+        list     (seq (map to-loppuselvitys-tarkastamatta loppuselvitys-list))]
     (email/try-send-msg-once {:type :loppuselvitys-asiatarkastamatta
                               :lang lang
                               :from (-> email/smtp-config :from lang)
