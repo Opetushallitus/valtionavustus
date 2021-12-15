@@ -10,16 +10,14 @@
          :host "smtp.sdn.csc.fi"
          :port 25
          :sender "no-reply@csc.fi"
-         :to-taloustarkastaja ["tomi.karlstedt@reaktor.com"]
          :retry-initial-wait 2000
          :retry-multiplier 4
          :retry-max-time 60000}
  :rondo-scheduler {:enabled? true
                     :scheduling "0 00 04 ? * *"
                     :strict-host-key-checking :yes}
- :notification-scheduler {:enabled? true
-                          :loppuselvitys-asiatarkastamatta-schedule "0 0 14 ? * 1,2,3,4,5"
-                          :loppuselvitys-taloustarkastamatta-schedule "0 0 * ? * 1,2,3,4,5"}
+ :notifications {:asiatarkastus {:enabled? true
+                                 :schedule "0 0 14 ? * 1,2,3,4,5"}}
  :payments {:enabled? true :delete-payments? true}
  :contact-person-name-in-pitkaviite {:enabled? true}
  :tasmaytysraportti-create {:enabled? true}

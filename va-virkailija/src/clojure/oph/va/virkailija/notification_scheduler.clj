@@ -13,28 +13,28 @@
   (send-loppuselvitys-asiatarkastamatta-notifications))
 
 (defjob LoppuselvitysTaloustarkastamattaNotification [ctx]
-  (when (:enabled? (:taloustarkastus config))
-    (do
-      (log/info "Running Loppuselvitys taloustarkastamatta")
-      (send-loppuselvitys-taloustarkastamatta-notifications))))
+  (log/info "Running Loppuselvitys taloustarkastamatta")
+  (send-loppuselvitys-taloustarkastamatta-notifications))
 
 (defn- get-notification-jobs []
-  [
-    {
-      :key "LoppuselvitysAsiatarkastamatta"
-      :job LoppuselvitysAsiatarkastamattaNotification
-      :schedule (schedule
-                  (cron-schedule
-                    (:loppuselvitys-asiatarkastamatta-schedule (:notification-scheduler config))))
-    }
-    {
-      :key "LoppuselvitysTaloustarkastamatta"
-      :job LoppuselvitysTaloustarkastamattaNotification
-      :schedule (schedule
-                  (cron-schedule
-                    (:loppuselvitys-taloustarkastamatta-schedule (:notification-scheduler config))))
-    }
-  ])
+  (filter :enabled?
+    [
+      {
+        :enabled? (get-in config [:notifications :asiatarkastus :enabled?])
+        :key "LoppuselvitysAsiatarkastamatta"
+        :job LoppuselvitysAsiatarkastamattaNotification
+        :schedule (schedule
+                    (cron-schedule
+                      (get-in config [:notifications :asiatarkastus :schedule])))
+      }
+      { :enabled? (and (get-in config [:notifications :taloustarkastus :enabled?]) (:enabled? (:taloustarkastus config)))
+        :key "LoppuselvitysTaloustarkastamatta"
+        :job LoppuselvitysTaloustarkastamattaNotification
+        :schedule (schedule
+                    (cron-schedule
+                      (get-in config [:notifications :taloustarkastus :schedule])))
+      }
+    ]))
 
 (defn- start-job [job]
   (qs/schedule
@@ -56,4 +56,4 @@
 
 (defn stop-notification-scheduler []
   (let [jobs (get-notification-jobs)]
-    (doseq [job jobs] (start-job job))))
+    (doseq [job jobs] (stop-job job))))
