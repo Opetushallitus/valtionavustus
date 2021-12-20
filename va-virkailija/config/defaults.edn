@@ -44,6 +44,8 @@
  :notifications {:asiatarkastus   {:enabled? false
                                    :schedule "0 0 7 ? * 2"}
                  :taloustarkastus {:enabled? false
+                                   :schedule "0 0 7 ? * 2"}
+                 :valiselvitys    {:enabled? false
                                    :schedule "0 0 7 ? * 2"}}
  :payments {:enabled? true}
  :contact-person-name-in-pitkaviite {:enabled? false}

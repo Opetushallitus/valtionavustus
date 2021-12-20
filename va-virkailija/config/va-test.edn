@@ -17,6 +17,8 @@
                     :scheduling "0 00 04 ? * *"
                     :strict-host-key-checking :yes}
  :notifications {:asiatarkastus {:enabled? true
+                                 :schedule "0 0 14 ? * 1,2,3,4,5"}
+                 :valiselvitys {:enabled? true
                                  :schedule "0 0 14 ? * 1,2,3,4,5"}}
  :payments {:enabled? true :delete-payments? true}
  :contact-person-name-in-pitkaviite {:enabled? true}

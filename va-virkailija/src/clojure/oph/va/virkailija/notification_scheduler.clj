@@ -16,6 +16,10 @@
   (log/info "Running Loppuselvitys taloustarkastamatta")
   (send-loppuselvitys-taloustarkastamatta-notifications))
 
+(defjob ValiselvitysTarkastamattaNotification [ctx]
+  (log/info "Running Valiselvitys tarkastamatta")
+  (send-valiselvitys-tarkastamatta-notifications))
+
 (defn- get-notification-jobs []
   (filter :enabled?
     [
@@ -33,6 +37,13 @@
         :schedule (schedule
                     (cron-schedule
                       (get-in config [:notifications :taloustarkastus :schedule])))
+      }
+      { :enabled? (get-in config [:notifications :valiselvitys :enabled?])
+        :key "ValiselvitysTarkastamatta"
+        :job ValiselvitysTarkastamattaNotification
+        :schedule (schedule
+                    (cron-schedule
+                      (get-in config [:notifications :valiselvitys :schedule])))
       }
     ]))
 

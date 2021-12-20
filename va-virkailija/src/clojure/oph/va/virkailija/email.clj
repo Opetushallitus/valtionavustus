@@ -47,7 +47,8 @@
    {:fi (email/load-template "email-templates/payments-info.fi")
     :sv (email/load-template "email-templates/payments-info.fi")}
    :loppuselvitys-asiatarkastamatta (email/load-template "email-templates/loppuselvitys-asiatarkastamatta.fi")
-   :loppuselvitys-taloustarkastamatta (email/load-template "email-templates/loppuselvitys-taloustarkastamatta.fi")})
+   :loppuselvitys-taloustarkastamatta (email/load-template "email-templates/loppuselvitys-taloustarkastamatta.fi")
+   :valiselvitys-tarkastamatta (email/load-template "email-templates/valiselvitys-tarkastamatta.fi")})
 
 (defn mail-example [msg-type & [data]]
   {:content (render (:fi (msg-type mail-templates)) (if data data {}))
@@ -148,14 +149,14 @@
   (str (-> config :server :virkailija-url)
        "/avustushaku/" avustushaku-id "/"))
 
-(defn- to-loppuselvitys-tarkastamatta [loppuselvitys]
-  {:link (generate-avustushaku-url (:avustushaku loppuselvitys))
-   :count (:hakemus-count loppuselvitys)})
+(defn- to-selvitys-tarkastamatta [selvitys]
+  {:link (generate-avustushaku-url (:avustushaku selvitys))
+   :count (:hakemus-count selvitys)})
 
 (defn send-loppuselvitys-taloustarkastamatta [loppuselvitys-list]
   (let [lang     (keyword "fi")
         template (:loppuselvitys-taloustarkastamatta mail-templates)
-        list     (seq (map to-loppuselvitys-tarkastamatta loppuselvitys-list))]
+        list     (seq (map to-selvitys-tarkastamatta loppuselvitys-list))]
     (email/try-send-msg-once {:type :loppuselvitys-taloustarkastamatta
                               :lang lang
                               :from (-> email/smtp-config :from lang)
@@ -169,13 +170,27 @@
 (defn send-loppuselvitys-asiatarkastamatta [to loppuselvitys-list]
   (let [lang     (keyword "fi")
         template (:loppuselvitys-asiatarkastamatta mail-templates)
-        list     (seq (map to-loppuselvitys-tarkastamatta loppuselvitys-list))]
+        list     (seq (map to-selvitys-tarkastamatta loppuselvitys-list))]
     (email/try-send-msg-once {:type :loppuselvitys-asiatarkastamatta
                               :lang lang
                               :from (-> email/smtp-config :from lang)
                               :sender (-> email/smtp-config :sender)
                               :to to
                               :subject "Asiatarkastamattomia loppuselvityksiä"
+                              :amount (count list)
+                              :list list}
+                             (partial render template))))
+
+(defn send-valiselvitys-tarkastamatta [to valiselvitys-list]
+  (let [lang     (keyword "fi")
+        template (:valiselvitys-tarkastamatta mail-templates)
+        list     (seq (map to-selvitys-tarkastamatta valiselvitys-list))]
+    (email/try-send-msg-once {:type :valiselvitys-tarkastamatta
+                              :lang lang
+                              :from (-> email/smtp-config :from lang)
+                              :sender (-> email/smtp-config :sender)
+                              :to to
+                              :subject "Tarkastamattomia väliselvityksiä"
                               :amount (count list)
                               :list list}
                              (partial render template))))
