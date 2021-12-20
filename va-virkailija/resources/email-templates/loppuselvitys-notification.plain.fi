@@ -4,6 +4,8 @@ hankkeen {{ register-number }} "{{ project-name }}" loppuselvityslomake on nyt t
 
 Loppuselvityslomake löytyy osoitteesta {{& url }} ja se tulee palauttaa {{ selvitysdate }} mennessä.
 
+Edellä kuvattu määräaika koskee hankkeita, joille ei ole myönnetty käyttöajan pidennystä. Käyttöajan pidennystä saaneiden hankkeiden tulee säilyttää oheinen loppuselvityslinkki ja palauttaa loppuselvitys muutospäätöksessä kuvatun aikataulun mukaisesti.
+
 Ystävällisin terveisin
 
 {{ presenter-name }}
