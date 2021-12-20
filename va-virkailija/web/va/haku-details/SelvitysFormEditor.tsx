@@ -55,18 +55,22 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
   }
 
   let parsedForm = formDraft
-  let parseError = false
+  let parseError: string | undefined = undefined
   try {
     parsedForm = JSON.parse(formDraftJson)
-  } catch (error) {
-    parseError = error.toString()
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      parseError = error.toString()
+    } else {
+      parseError = `Unknown error: ${error}`
+    }
   }
 
   function formHasBeenEdited() {
     return formDraft && formContent && !_.isEqual(parsedForm, formContent)
   }
 
-  const disableSave = parseError || !formHasBeenEdited()
+  const disableSave = !!parseError || !formHasBeenEdited()
 
   const recreateForm = () => {
     controller.selvitysFormOnRecreate(avustushaku, selvitysType)

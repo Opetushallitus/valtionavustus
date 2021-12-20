@@ -174,7 +174,11 @@ export async function pollUntilNewHakemusEmailArrives(avustushakuID: number): Pr
         await sleep(1000)
       }
     } catch(e) {
-      console.log(`Failed to get hakemus emails: ${e.message}`)
+      if (e instanceof Error) {
+        console.log(`Failed to get hakemus emails: ${e.message}`)
+      } else {
+        console.log(`Unknown error: ${e}`)
+      }
     }
   }
 }
@@ -530,7 +534,7 @@ export async function clickElement(page: Page, selector: string) {
       break
     } catch (e) {
       // Sometimes nodes get removed, especially in the Reagent app
-      if (e.message !== 'Node is detached from document' || i === CLICK_RETRIES) {
+      if (e instanceof Error && e.message !== 'Node is detached from document' || i === CLICK_RETRIES) {
         throw e
       }
     }
