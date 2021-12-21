@@ -26,7 +26,6 @@
   become: yes
   roles:
   - {role: ssh.init, tags: ['ssh']}
-  - {role: node, tags: ['nodejs']}
   - {role: common, tags: ['common']}
   - {role: buildmachine, tags: ['buildmachine']}
   - {role: valtionavustus.build, tags: ['build']}

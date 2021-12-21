@@ -12,10 +12,6 @@
   path: roles/3rdparty
   # version: not specified, contains local modifications :(
 
-- src: geerlingguy.nodejs
-  path: roles/3rdparty
-  version: 4.2.2
-
 - src: geerlingguy.nginx
   path: roles/3rdparty
   version: 1.7.0
