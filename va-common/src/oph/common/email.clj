@@ -21,7 +21,7 @@
        io/resource
        slurp))
 
-(def smtp-config
+(defn smtp-config
   (when-not *compile-files*
     (:email config)))
 
