@@ -14,6 +14,7 @@ test("sends an email to those whose hakemus is expiring tomorrow", async ({page,
   const oldEmailCount = (await getAllEmails('hakuaika-paattymassa'))
     .filter(e => e["to-address"].includes(hakemusDetails.email)).length
   await sendHakuaikaPaattymassaNotifications()
+  await page.waitForTimeout(5000)
 
   const emails = (await getAllEmails('hakuaika-paattymassa'))
     .filter(e => e["to-address"].includes(hakemusDetails.email))
