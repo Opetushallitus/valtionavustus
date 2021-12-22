@@ -14,6 +14,8 @@
  :notifications {:asiatarkastus   {:enabled? true
                                    :schedule "0 0 7 ? * 2"}
                  :taloustarkastus {:enabled? true
+                                   :schedule "0 0 7 ? * 2"}
+                 :valiselvitys    {:enabled? true
                                    :schedule "0 0 7 ? * 2"}}
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
