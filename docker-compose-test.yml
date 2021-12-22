@@ -5,6 +5,9 @@ services:
     image: va-virkailija:latest
     container_name: va-virkailija
     hostname: va-virkailija
+    environment:
+      log4j_smtp_port: "25"
+      log4j_smtp_host: "fakesmtp"
     volumes:
       - /dev/urandom:/dev/random
     ports:
@@ -25,6 +28,9 @@ services:
     image: va-hakija:latest
     container_name: va-hakija
     hostname: va-hakija
+    environment:
+      log4j_smtp_port: "25"
+      log4j_smtp_host: "fakesmtp"
     volumes:
       - /dev/urandom:/dev/random
     ports:

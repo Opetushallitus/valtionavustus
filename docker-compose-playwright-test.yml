@@ -27,6 +27,8 @@ services:
     hostname: va-virkailija
     environment:
       config: "/app/va-virkailija/config/playwright-test.edn"
+      log4j_smtp_port: "25"
+      log4j_smtp_host: "fakesmtp"
     volumes:
       - /dev/urandom:/dev/random
     ports:
@@ -55,6 +57,8 @@ services:
     hostname: va-hakija
     environment:
       config: "/app/va-hakija/config/playwright-test.edn"
+      log4j_smtp_port: "25"
+      log4j_smtp_host: "fakesmtp"
     volumes:
       - /dev/urandom:/dev/random
     ports:
