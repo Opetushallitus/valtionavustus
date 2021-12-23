@@ -24,6 +24,7 @@
             ON h.id = hakemus.id
           WHERE version_closed IS NULL
           AND hakemus_type = 'hakemus'
+          AND h.status = 'draft'
           AND date(avustushaku.content -> 'duration' ->> 'end') = date(now() + interval '1 DAY')"
          []))
 
@@ -46,8 +47,10 @@
       (email/send-loppuselvitys-taloustarkastamatta loppuselvitys-list))))
 
 (defn send-hakuaika-paattymassa-notifications []
-  (let [hakemukset-list (get-hakuaika-paattymassa-haut)]
-    (when (>= (count hakemukset-list) 1)
+  (let [hakemukset-list (get-hakuaika-paattymassa-haut)
+        hakemukset-paattymassa-count (count hakemukset-list)]
+    (when (>= hakemukset-paattymassa-count 1)
+      (log/info "sending email to" hakemukset-paattymassa-count" contacts")
       (doseq [hakemus hakemukset-list]
         (email/send-hakuaika-paattymassa hakemus)))))
 

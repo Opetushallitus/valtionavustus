@@ -175,6 +175,7 @@
         to             (:contact-email hakemus)
         paattymispaiva (.format (:paattymispaiva hakemus) (DateTimeFormatter/ofPattern "dd.MM.yyyy"))
         url            (email/generate-url (:avustushaku-id hakemus) lang "fi" (:user-key hakemus) false) ]
+    (log/info "sending to" to)
     (email/try-send-msg-once {:type :hakuaika-paattymassa
                               :lang lang
                               :from (-> email/smtp-config :from lang)

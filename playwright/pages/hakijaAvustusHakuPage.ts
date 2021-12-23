@@ -74,7 +74,7 @@ export class HakijaAvustusHakuPage {
     await this.page.fill("#applicant-name", answers.contactPersonName)
     await this.page.fill("[id='textField-0']", answers.contactPersonPhoneNumber)
     await this.page.fill("[id='signatories-fieldset-1.name']", "Erkki Esimerkki")
-    await this.page.fill("[id='signatories-fieldset-1.email']", "erkki.esimerkki@example.com")
+    await this.page.fill("[id='signatories-fieldset-1.email']", answers.contactPersonEmail)
     await clickElementWithText(this.page,"label", lang === 'fi' ? "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko" : "Kommun/samkommun, kommunalt ägda bolag, kyrkan")
     await this.page.click("[id='koodistoField-1_input']")
     await this.selectMaakuntaFromDropdown(lang === 'fi' ? "Kainuu" : 'Åland')
