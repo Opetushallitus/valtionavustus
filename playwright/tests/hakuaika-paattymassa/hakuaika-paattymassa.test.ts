@@ -11,12 +11,10 @@ import {
 
 test("sends an email to those whose hakemus is expiring tomorrow", async ({page, hakemusDetails}) => {
   await navigate(page, "/")
-  const oldEmailCount = (await getAllEmails('hakuaika-paattymassa'))
-    .filter(e => e["to-address"].includes(hakemusDetails.email)).length
+  const oldEmails = await getAllEmails('hakuaika-paattymassa')
   await sendHakuaikaPaattymassaNotifications()
   await page.waitForTimeout(5000)
 
-  const emails = (await getAllEmails('hakuaika-paattymassa'))
-    .filter(e => e["to-address"].includes(hakemusDetails.email))
-  expect(emails.length).toEqual(oldEmailCount + 1)
+  const emails = await getAllEmails('hakuaika-paattymassa')
+  expect(emails).toEqual(expect.arrayContaining([...oldEmails, expect.objectContaining({ 'to-address': [hakemusDetails.email] })]))
 })
