@@ -100,6 +100,8 @@ export class HakijaAvustusHakuPage {
     if (beforeSubmitFn) {
       await beforeSubmitFn()
     }
+
+    await this.page.waitForSelector( "#submit:not([disabled])")
   }
   async fillAndSendMuutoshakemusEnabledHakemus(avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void) {
     await this.fillMuutoshakemusEnabledHakemus(avustushakuID, answers, beforeSubmitFn)

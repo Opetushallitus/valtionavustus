@@ -21,7 +21,7 @@
           JOIN hakija.avustushaut avustushaku
             ON h.avustushaku = avustushaku.id
           JOIN virkailija.normalized_hakemus hakemus
-            ON h.id = hakemus.id
+            ON h.id = hakemus.hakemus_id
           WHERE version_closed IS NULL
           AND hakemus_type = 'hakemus'
           AND h.status = 'draft'
