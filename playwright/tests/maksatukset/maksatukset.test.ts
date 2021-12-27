@@ -1,4 +1,4 @@
-import {expect} from "@playwright/test"
+import { expect } from "@playwright/test"
 
 import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
 import {KoodienhallintaPage} from "../../pages/koodienHallintaPage";
@@ -31,7 +31,8 @@ const correctOVTTest = test.extend({
 test.setTimeout(400000)
 correctOVTTest.setTimeout(400000)
 
-correctOVTTest('Maksatukset uses correct OVT when the operational unit is Palvelukeskus', async ({page, avustushakuID, hakemus: {hakemusID}, codes: codeValues}) => {
+test.describe.parallel('Maksatukset', () => {
+  correctOVTTest('uses correct OVT when the operational unit is Palvelukeskus', async ({page, avustushakuID, hakemus: {hakemusID}, codes: codeValues}) => {
     const maksatuksetPage = MaksatuksetPage(page)
     await maksatuksetPage.goto(avustushakuID)
 
@@ -75,7 +76,7 @@ correctOVTTest('Maksatukset uses correct OVT when the operational unit is Palvel
     expect(maksatukset).toContainEqual(maksatuksetPage.getExpectedPaymentXML(codeValues.project, codeValues.operation, codeValues.operationalUnit, pitkaviite, `${registerNumber}_1`, dueDate, '00372769790122'))
   })
 
-test('work with pitkaviite without contact person name', async ({page, avustushakuID, hakemus: {hakemusID}}) => {
+  test('work with pitkaviite without contact person name', async ({page, avustushakuID, hakemus: {hakemusID}}) => {
     const maksatuksetPage = MaksatuksetPage(page)
     await maksatuksetPage.goto(avustushakuID)
 
@@ -115,7 +116,7 @@ test('work with pitkaviite without contact person name', async ({page, avustusha
     expect(await maksatuksetPage.getBatchStatus(1)).toEqual("Maksettu")
   })
 
-test('work with pitkaviite with contact person name', async ({page, avustushakuID, hakemus: {hakemusID}, codes: { project, operation, operationalUnit}}) => {
+  test('work with pitkaviite with contact person name', async ({page, avustushakuID, hakemus: {hakemusID}, codes: { project, operation, operationalUnit}}) => {
     const maksatuksetPage = MaksatuksetPage(page)
     await maksatuksetPage.goto(avustushakuID)
 
@@ -158,4 +159,4 @@ test('work with pitkaviite with contact person name', async ({page, avustushakuI
     const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu()
     expect(maksatukset).toContainEqual(maksatuksetPage.getExpectedPaymentXML(project, operation, operationalUnit, pitkaviite, `${registerNumber}_1`, dueDate))
   })
-
+})
