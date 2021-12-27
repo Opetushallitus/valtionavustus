@@ -9,9 +9,18 @@ import {
   waitForElementWithText,
   clearAndType
 } from '../utils/util'
+import { navigate } from "../utils/navigate"
 
 export function MaksatuksetPage (page: Page) {
-  
+
+  async function goto(avustushakuID?: number) {
+    if (avustushakuID) {
+      await navigate(page, `/admin-ui/payments/?grant-id=${avustushakuID}`)
+    } else {
+      await navigate(page, "/admin-ui/payments/")
+    }
+  }
+
   async function fillTositepaivamaara() {
     const isFilledWithDateValue = async () => {
       try {
@@ -26,10 +35,13 @@ export function MaksatuksetPage (page: Page) {
       }
     }
 
-    while(! await isFilledWithDateValue()) {
+    for (let tries = 0; tries < 3; tries++) {
       try {
-        await page.click("#Tositepäivämäärä")
+        await page.click("#Tositepäivämäärä", { timeout: 5000 })
         await clickElementWithText(page, 'button', 'OK')
+        if (await isFilledWithDateValue()) {
+          break;
+        }
       } catch (e) {
         console.log('Failed to set tositepäivämäärä calendar date', e.message)
       }
@@ -89,19 +101,20 @@ export function MaksatuksetPage (page: Page) {
   }
 
   return {
-    sendMaksatukset,
-    getExpectedPaymentXML,
-    reloadPaymentPage,
     fillInMaksueranTiedot,
-    getBatchTaKpTili,
-    getBatchLKPTili,
-    getBatchIBAN,
-    getBatchMaksuun,
     getBatchHanke,
-    getBatchToimittajanNimi,
-    getBatchStatus,
+    getBatchIBAN,
+    getBatchLKPTili,
+    getBatchMaksuun,
     getBatchPitkäViite,
+    getBatchStatus,
+    getBatchTaKpTili,
+    getBatchToimittajanNimi,
+    getExpectedPaymentXML,
     getTiliönti,
-    gotoLähetetytMaksatuksetTab
+    goto,
+    gotoLähetetytMaksatuksetTab,
+    reloadPaymentPage,
+    sendMaksatukset,
   }
 }

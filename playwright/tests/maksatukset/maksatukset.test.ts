@@ -9,9 +9,6 @@ import {
   getHakemusTokenAndRegisterNumber
 } from '../../utils/emails'
 import {
-  navigate
-} from '../../utils/navigate'
-import {
   MaksatuksetPage
 } from '../../pages/maksatuksetPage'
 
@@ -34,10 +31,10 @@ const correctOVTTest = test.extend({
 test.setTimeout(400000)
 correctOVTTest.setTimeout(400000)
 
-correctOVTTest('Maksatukset uses correct OVT when the operational unit is Palvelukeskus', async ({page, hakemus: {hakemusID}, codes: codeValues}) => {
+correctOVTTest('Maksatukset uses correct OVT when the operational unit is Palvelukeskus', async ({page, avustushakuID, hakemus: {hakemusID}, codes: codeValues}) => {
     const maksatuksetPage = MaksatuksetPage(page)
+    await maksatuksetPage.goto(avustushakuID)
 
-    await navigate(page, "/admin-ui/payments/")
     await maksatuksetPage.fillInMaksueranTiedot("asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
     const dueDate = await getElementAttribute(page, '[id="Eräpäivä"]', 'value')
     if (!dueDate) throw new Error('Cannot find due date from form')
@@ -80,7 +77,7 @@ correctOVTTest('Maksatukset uses correct OVT when the operational unit is Palvel
 
 test('work with pitkaviite without contact person name', async ({page, avustushakuID, hakemus: {hakemusID}}) => {
     const maksatuksetPage = MaksatuksetPage(page)
-    await navigate(page, "/admin-ui/payments/")
+    await maksatuksetPage.goto(avustushakuID)
 
     await maksatuksetPage.fillInMaksueranTiedot("asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
 
@@ -118,9 +115,9 @@ test('work with pitkaviite without contact person name', async ({page, avustusha
     expect(await maksatuksetPage.getBatchStatus(1)).toEqual("Maksettu")
   })
 
-test('work with pitkaviite with contact person name', async ({page, hakemus: {hakemusID}, codes: { project, operation, operationalUnit}}) => {
+test('work with pitkaviite with contact person name', async ({page, avustushakuID, hakemus: {hakemusID}, codes: { project, operation, operationalUnit}}) => {
     const maksatuksetPage = MaksatuksetPage(page)
-    await navigate(page, "/admin-ui/payments/")
+    await maksatuksetPage.goto(avustushakuID)
 
     await maksatuksetPage.fillInMaksueranTiedot("asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
     const dueDate = await getElementAttribute(page, '[id="Eräpäivä"]', 'value')
