@@ -92,12 +92,10 @@ export function MaksatuksetPage (page: Page) {
   }
 
   async function sendMaksatukset(): Promise<void> {
-    const text = "Lähetetään maksatuksia"
     await Promise.all([
-      waitForElementWithText(page, "span", text, "visible"),
+      page.waitForSelector(`text="Kaikki maksatukset lähetetty"`, { timeout: 10000 }),
       clickElementWithText(page, "button" , "Lähetä maksatukset"),
     ])
-    await waitForElementWithText(page, "span", text, "hidden")
   }
 
   return {
