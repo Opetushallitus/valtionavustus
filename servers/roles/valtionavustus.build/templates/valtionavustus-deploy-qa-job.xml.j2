@@ -76,7 +76,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>test/screenshots/*, playwright-results/*</artifacts>
+      <artifacts>test/screenshots/*, playwright-results/**/*</artifacts>
       <allowEmptyArchive>true</allowEmptyArchive>
       <onlyIfSuccessful>false</onlyIfSuccessful>
       <fingerprint>false</fingerprint>
