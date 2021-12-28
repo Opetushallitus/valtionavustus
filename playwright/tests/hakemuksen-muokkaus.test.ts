@@ -8,8 +8,6 @@ import { HakijaAvustusHakuPage } from "../pages/hakijaAvustusHakuPage"
 import {HakujenHallintaPage} from "../pages/hakujenHallintaPage"
 import { waitForElementWithText } from "../utils/util"
 
-test.setTimeout(180000)
-
 test('virkailija can edit hakemus', async ({page, avustushakuID, hakemus}) => {
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   const hakujenHallintaPage = new HakujenHallintaPage(page)
