@@ -188,7 +188,7 @@ export class HakujenHallintaPage {
     await this.waitForSaveStatusOk()
   }
 
-  async createHakuWithLomakeJson(lomakeJson: string, registerNumber: string, hakuName?: string, codes?: VaCodeValues): Promise<{ avustushakuID: number }> {
+  async createHakuWithLomakeJson(lomakeJson: string, registerNumber: string, hakuName: string, codes: VaCodeValues): Promise<{ avustushakuID: number }> {
     const avustushakuID = await this.createHakuFromEsimerkkihaku({
       registerNumber,
       name: hakuName,
@@ -242,7 +242,7 @@ export class HakujenHallintaPage {
     await this.setEndDate(`1.1.${previousYear} 0.00`)
   }
 
-  async createMuutoshakemusEnabledHaku(registerNumber: string, hakuName?: string, codes?: VaCodeValues) {
+  async createMuutoshakemusEnabledHaku(registerNumber: string, hakuName: string, codes: VaCodeValues) {
     const muutoshakemusEnabledHakuLomakeJson = await fs.readFile(path.join(__dirname, '../fixtures/prod.hakulomake.json'), 'utf8')
     const {avustushakuID} = await this.createHakuWithLomakeJson(muutoshakemusEnabledHakuLomakeJson, registerNumber, hakuName, codes)
     await clickElementWithText(this.page, "span", "Haun tiedot")
@@ -250,7 +250,7 @@ export class HakujenHallintaPage {
     return avustushakuID
   }
 
-  async createBudjettimuutosEnabledHaku(registerNumber: string, hakuName?: string, codes?: VaCodeValues) {
+  async createBudjettimuutosEnabledHaku(registerNumber: string, hakuName: string, codes: VaCodeValues) {
     const muutoshakemusEnabledHakuLomakeJson = await fs.readFile(path.join(__dirname, '../fixtures/budjettimuutos.hakulomake.json'), 'utf8')
     const {avustushakuID} = await this.createHakuWithLomakeJson(muutoshakemusEnabledHakuLomakeJson, registerNumber, hakuName, codes)
     await clickElementWithText(this.page, "span", "Haun tiedot")
