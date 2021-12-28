@@ -37,12 +37,6 @@ const Selvitys = ({ presenter, environment, controller, hakemus, avustushaku, tr
 
   const loppuselvitysStatus = hakemus["status-loppuselvitys"]
 
-  const renderSelvitysEmail = hasSelvitys && !environment["taloustarkastus"]["enabled?"] && (
-    selvitysType === 'valiselvitys' ||
-    loppuselvitysStatus === 'accepted' ||
-    hakemus["status-loppuselvitys"] === 'information_verified'
-  )
-
   const loppuselvitys = hakemus.selvitys?.loppuselvitys
   const renderTaloustarkastusEmail = loppuselvitysStatus === 'information_verified' || loppuselvitysStatus === 'accepted'
 
@@ -68,14 +62,6 @@ const Selvitys = ({ presenter, environment, controller, hakemus, avustushaku, tr
                               readonly={!isPresentingOfficer}/>}
       <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType={selvitysType} helpText={selvitysLinkHelpText} />
       {renderLoppuselvitysForm && <LoppuselvitysForm controller={controller} hakemus={hakemus} avustushaku={avustushaku} presenter={presenter} userInfo={userInfo} />}
-      {renderSelvitysEmail && <SelvitysEmail controller={controller}
-                                            selvitysType={selvitysType}
-                                            hakemus={hakemus}
-                                            avustushaku={avustushaku}
-                                            selvitysHakemus={selvitysHakemus}
-                                            userInfo={userInfo}
-                                            lang={selvitysHakemus?.language}
-                                            translations={translations["selvitys-email"]}/>}
     {loppuselvitys && renderTaloustarkastusEmail && <TaloustarkastusEmail
       controller={controller}
       avustushakuId={avustushaku.id}
