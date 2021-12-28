@@ -333,7 +333,6 @@
         parent-hakemus          (get-hakemus parent-id)
         is-loppuselvitys        (= selvitys-type "loppuselvitys")
         is-verified             (= (:status_loppuselvitys parent-hakemus) "information_verified")
-        is-verification-enabled (:enabled? (:taloustarkastus config))
         verifier                (str (:first-name identity) " " (:surname identity))
         verifier-oid            (:person-oid identity)
         can-set-selvitys        (or (not is-loppuselvitys) is-verified)]
@@ -344,16 +343,14 @@
         (if is-loppuselvitys
           (do
             (update-loppuselvitys-status parent-id "accepted")
-            (when is-verification-enabled
-              (execute!
-                "UPDATE hakemukset
-                 SET
-                   loppuselvitys_taloustarkastanut_oid = ?,
-                   loppuselvitys_taloustarkastanut_name = ?,
-                   loppuselvitys_taloustarkastettu_at = now()
-                 WHERE id = ? and version_closed is null"
-                [verifier-oid verifier parent-id])
-              ))
+            (execute!
+              "UPDATE hakemukset
+               SET
+                 loppuselvitys_taloustarkastanut_oid = ?,
+                 loppuselvitys_taloustarkastanut_name = ?,
+                 loppuselvitys_taloustarkastettu_at = now()
+               WHERE id = ? and version_closed is null"
+              [verifier-oid verifier parent-id]))
           (update-valiselvitys-status parent-id "accepted"))
         true)
       false)))

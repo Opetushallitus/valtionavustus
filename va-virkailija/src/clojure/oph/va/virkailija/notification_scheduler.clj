@@ -35,7 +35,7 @@
                     (cron-schedule
                       (get-in config [:notifications :asiatarkastus :schedule])))
       }
-      { :enabled? (and (get-in config [:notifications :taloustarkastus :enabled?]) (:enabled? (:taloustarkastus config)))
+      { :enabled? true
         :key "LoppuselvitysTaloustarkastamatta"
         :job LoppuselvitysTaloustarkastamattaNotification
         :schedule (schedule

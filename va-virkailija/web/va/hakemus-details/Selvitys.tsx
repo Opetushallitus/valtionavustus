@@ -39,12 +39,12 @@ const Selvitys = ({ presenter, environment, controller, hakemus, avustushaku, tr
 
   const renderSelvitysEmail = hasSelvitys && !environment["taloustarkastus"]["enabled?"] && (
     selvitysType === 'valiselvitys' ||
-    loppuselvitysStatus === 'accepted' || 
+    loppuselvitysStatus === 'accepted' ||
     hakemus["status-loppuselvitys"] === 'information_verified'
   )
 
   const loppuselvitys = hakemus.selvitys?.loppuselvitys
-  const renderTaloustarkastusEmail = environment["taloustarkastus"]["enabled?"] && (loppuselvitysStatus === 'information_verified' || loppuselvitysStatus === 'accepted')
+  const renderTaloustarkastusEmail = loppuselvitysStatus === 'information_verified' || loppuselvitysStatus === 'accepted'
 
   const lang = loppuselvitys?.language || "fi"
   return (
@@ -76,14 +76,14 @@ const Selvitys = ({ presenter, environment, controller, hakemus, avustushaku, tr
                                             userInfo={userInfo}
                                             lang={selvitysHakemus?.language}
                                             translations={translations["selvitys-email"]}/>}
-    {loppuselvitys && renderTaloustarkastusEmail && <TaloustarkastusEmail 
+    {loppuselvitys && renderTaloustarkastusEmail && <TaloustarkastusEmail
       controller={controller}
       avustushakuId={avustushaku.id}
       hakemus={hakemus}
       loppuselvitys={loppuselvitys}
       lang={lang}
       userInfo={userInfo}
-      avustushakuName={avustushaku.content.name[lang]} 
+      avustushakuName={avustushaku.content.name[lang]}
       />}
     </div>
   )

@@ -6,5 +6,4 @@
  :api {:restricted-routes? false}
  :db {:database-name "va-test"}
  :sisaltomuutos {:enabled? true}
- :taloustarkastus {:enabled? true}
  :email {:print-mail-on-disable? false}}

@@ -21,7 +21,6 @@
          :multibatch-payments (:multibatch-payments config)
          :reports (:reports config)
          :va-code-values (:va-code-values config)
-         :taloustarkastus (:taloustarkastus config)
          :allow-overriding-feature-flag-from-url-params (:allow-overriding-feature-flag-from-url-params config)
          :dont-send-loppuselvityspyynto-to-virkailija (:dont-send-loppuselvityspyynto-to-virkailija config)
          :selvitys-limit (:selvitys-limit config)}

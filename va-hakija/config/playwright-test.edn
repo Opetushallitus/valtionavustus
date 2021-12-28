@@ -11,5 +11,4 @@
  :email {:enabled? true
          :host "fakesmtp"
          :port 25}
- :taloustarkastus {:enabled? true}
  :applications-ui {:enabled? true}}

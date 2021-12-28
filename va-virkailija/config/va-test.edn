@@ -25,7 +25,6 @@
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
  :allow-overriding-feature-flag-from-url-params {:enabled? true}
- :taloustarkastus {:enabled? true}
  :integration-healthcheck {:enabled? true
                            :timeout 5000
                            :interval-minutes 15}}
