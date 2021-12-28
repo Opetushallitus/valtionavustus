@@ -1,15 +1,16 @@
+import {expect} from "@playwright/test";
 import {Page} from "playwright";
+import moment from "moment";
+import fs from 'fs/promises'
+import path from "path";
+
 import {navigate} from "../utils/navigate";
 import {
   clickElementWithText,
   expectQueryParameter,
   getElementWithText
 } from "../utils/util";
-import {mkAvustushakuName} from "../utils/random";
-import fs from 'fs/promises'
-import path from "path";
 import {VIRKAILIJA_URL} from "../utils/constants";
-import {expect} from "@playwright/test";
 import {VaCodeValues} from "../utils/types";
 
 interface Rahoitusalue {
@@ -24,15 +25,19 @@ const defaultRahoitusalueet: Rahoitusalue[] = [
   }
 ]
 
-interface HakuProps {
-  name?: string
+export interface HakuProps {
+  avustushakuName: string
   registerNumber: string
-  hakuaikaStart?: string
-  hakuaikaEnd?: string
-  hankkeenAlkamispaiva?: string
-  hankkeenPaattymispaiva?: string
-  vaCodes?: VaCodeValues
+  vaCodes: VaCodeValues
+  hakuaikaStart: Date
+  hakuaikaEnd: Date
+  hankkeenAlkamispaiva: string
+  hankkeenPaattymispaiva: string
 }
+
+const dateFormat = 'D.M.YYYY H.mm'
+const formatDate = (date: Date) => moment(date).format(dateFormat)
+export const parseDate = (input: string) => moment(input, dateFormat).toDate()
 
 export class HakujenHallintaPage {
   readonly page: Page
@@ -126,24 +131,15 @@ export class HakujenHallintaPage {
     await this.page.selectOption('select#document-type', value)
   }
 
-  randomInt(min: number, max: number): number {
-    return min + Math.ceil(Math.random() * (max - min))
-  }
-
-  randomAsiatunnus(): string {
-    return `${this.randomInt(1,99999)}/${this.randomInt(10,999999)}`
-  }
-
   async createHakuFromEsimerkkihaku(props: HakuProps): Promise<number> {
     const {
-      name,
+      avustushakuName,
       registerNumber,
       hakuaikaStart,
       hakuaikaEnd,
       hankkeenAlkamispaiva,
       hankkeenPaattymispaiva
     } = props
-    const avustushakuName = name || mkAvustushakuName()
     console.log(`Avustushaku name for test: ${avustushakuName}`)
 
     await this.copyEsimerkkihaku()
@@ -151,7 +147,7 @@ export class HakujenHallintaPage {
     const avustushakuID = parseInt(await expectQueryParameter(this.page, "avustushaku"))
     console.log(`Avustushaku ID: ${avustushakuID}`)
 
-    await this.page.fill("#register-number", registerNumber || this.randomAsiatunnus())
+    await this.page.fill("#register-number", registerNumber)
     await this.page.fill("#haku-name-fi", avustushakuName)
     await this.page.fill("#haku-name-sv", avustushakuName + ' på svenska')
 
@@ -166,13 +162,12 @@ export class HakujenHallintaPage {
     }
 
     await this.selectTositelaji('XE')
-    await this.page.fill("#hakuaika-start", hakuaikaStart || "1.1.1970 0.00")
-    const nextYear = (new Date()).getFullYear() + 1
-    await this.page.fill("#hakuaika-end", hakuaikaEnd || `31.12.${nextYear} 23.59`)
+    await this.page.fill("#hakuaika-start", formatDate(hakuaikaStart))
+    await this.page.fill("#hakuaika-end", formatDate(hakuaikaEnd))
 
     await this.page.click('[data-test-id="päätös-välilehti"]')
-    await this.page.fill('[data-test-id="hankkeen-alkamispaiva"] div.datepicker input', hankkeenAlkamispaiva || '20.04.1969')
-    await this.page.fill('[data-test-id="hankkeen-paattymispaiva"] div.datepicker input', hankkeenPaattymispaiva || '20.04.4200')
+    await this.page.fill('[data-test-id="hankkeen-alkamispaiva"] div.datepicker input', hankkeenAlkamispaiva)
+    await this.page.fill('[data-test-id="hankkeen-paattymispaiva"] div.datepicker input', hankkeenPaattymispaiva)
     await clickElementWithText(this.page, "span", "Haun tiedot")
 
     await this.waitForSave()
@@ -188,12 +183,8 @@ export class HakujenHallintaPage {
     await this.waitForSaveStatusOk()
   }
 
-  async createHakuWithLomakeJson(lomakeJson: string, registerNumber: string, hakuName: string, codes: VaCodeValues): Promise<{ avustushakuID: number }> {
-    const avustushakuID = await this.createHakuFromEsimerkkihaku({
-      registerNumber,
-      name: hakuName,
-      vaCodes: codes
-    })
+  async createHakuWithLomakeJson(lomakeJson: string, hakuProps: HakuProps): Promise<{ avustushakuID: number }> {
+    const avustushakuID = await this.createHakuFromEsimerkkihaku(hakuProps)
     await clickElementWithText(this.page, "span", "Hakulomake")
     /*
       for some reason
@@ -242,17 +233,17 @@ export class HakujenHallintaPage {
     await this.setEndDate(`1.1.${previousYear} 0.00`)
   }
 
-  async createMuutoshakemusEnabledHaku(registerNumber: string, hakuName: string, codes: VaCodeValues) {
+  async createMuutoshakemusEnabledHaku(hakuProps: HakuProps) {
     const muutoshakemusEnabledHakuLomakeJson = await fs.readFile(path.join(__dirname, '../fixtures/prod.hakulomake.json'), 'utf8')
-    const {avustushakuID} = await this.createHakuWithLomakeJson(muutoshakemusEnabledHakuLomakeJson, registerNumber, hakuName, codes)
+    const {avustushakuID} = await this.createHakuWithLomakeJson(muutoshakemusEnabledHakuLomakeJson, hakuProps)
     await clickElementWithText(this.page, "span", "Haun tiedot")
     await this.publishAvustushaku()
     return avustushakuID
   }
 
-  async createBudjettimuutosEnabledHaku(registerNumber: string, hakuName: string, codes: VaCodeValues) {
+  async createBudjettimuutosEnabledHaku(hakuProps: HakuProps) {
     const muutoshakemusEnabledHakuLomakeJson = await fs.readFile(path.join(__dirname, '../fixtures/budjettimuutos.hakulomake.json'), 'utf8')
-    const {avustushakuID} = await this.createHakuWithLomakeJson(muutoshakemusEnabledHakuLomakeJson, registerNumber, hakuName, codes)
+    const {avustushakuID} = await this.createHakuWithLomakeJson(muutoshakemusEnabledHakuLomakeJson, hakuProps)
     await clickElementWithText(this.page, "span", "Haun tiedot")
     await this.publishAvustushaku()
     return avustushakuID

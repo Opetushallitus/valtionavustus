@@ -1,30 +1,22 @@
-import {test} from "@playwright/test"
 import {MuutoshakemusFixtures} from "./muutoshakemusTest";
-import {createRandomHakuValues} from "../utils/random";
-import {KoodienhallintaPage} from "../pages/koodienHallintaPage";
 import {HakujenHallintaPage} from "../pages/hakujenHallintaPage";
 import {HakijaAvustusHakuPage} from "../pages/hakijaAvustusHakuPage";
 import {HakemustenArviointiPage} from "../pages/hakemustenArviointiPage";
 import {Budget, defaultBudget} from "../utils/budget";
 import {answers} from "../utils/constants";
+import { defaultValues } from "./defaultValues";
 
 export interface BudjettimuutoshakemusFixtures extends MuutoshakemusFixtures {
   budget: Budget
   userKey: string
 }
 
-export const budjettimuutoshakemusTest = test.extend<BudjettimuutoshakemusFixtures>({
+export const budjettimuutoshakemusTest = defaultValues.extend<BudjettimuutoshakemusFixtures>({
   answers,
   budget: defaultBudget,
-  haku: async ({}, use) => {
-    const randomHakuValues = createRandomHakuValues('Budjettimuutos')
-    await use(randomHakuValues)
-  },
-  avustushakuID: async ({page, haku}, use) => {
-    const koodienHallintaPage = new KoodienhallintaPage(page)
-    const codes = await koodienHallintaPage.createRandomCodeValues()
+  avustushakuID: async ({page, hakuProps}, use) => {
     const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const avustushakuID = await hakujenHallintaPage.createBudjettimuutosEnabledHaku(haku.registerNumber, haku.avustushakuName, codes)
+    const avustushakuID = await hakujenHallintaPage.createBudjettimuutosEnabledHaku(hakuProps)
     await use(avustushakuID)
   },
   hakemus: async ({avustushakuID, page, budget, answers}, use) => {

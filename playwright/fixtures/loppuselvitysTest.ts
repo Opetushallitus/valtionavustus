@@ -1,8 +1,6 @@
 import { expect } from "@playwright/test"
 
-import { muutoshakemusTest as test} from "./muutoshakemusTest"
-import {MuutoshakemusFixtures} from "./muutoshakemusTest";
-import {createRandomHakuValues} from "../utils/random";
+import { muutoshakemusTest} from "./muutoshakemusTest"
 import { LoppuselvitysPage } from "../pages/loppuselvitysPage"
 import { 
   clearAndType,
@@ -14,7 +12,7 @@ import {
   dummyPdfPath
 } from "../utils/constants"
 
-export interface LoppuselvitysFixtures extends MuutoshakemusFixtures {
+export interface LoppuselvitysFixtures {
   loppuselvitys: {
     loppuselvitysFormFilled: boolean
     loppuselvitysFormUrl: string
@@ -24,11 +22,7 @@ export interface LoppuselvitysFixtures extends MuutoshakemusFixtures {
   }
 }
 
-export const loppuselvitysTest = test.extend<LoppuselvitysFixtures>({
-  haku: async ({}, use) => {
-    const randomHakuValues = createRandomHakuValues('Loppuselvitys')
-    await use(randomHakuValues)
-  },
+export const loppuselvitysTest = muutoshakemusTest.extend<LoppuselvitysFixtures>({
   loppuselvitys: async ({page, avustushakuID, hakemus: {hakemusID}}, use) => {
     const loppuselvitysPage = LoppuselvitysPage(page)
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)

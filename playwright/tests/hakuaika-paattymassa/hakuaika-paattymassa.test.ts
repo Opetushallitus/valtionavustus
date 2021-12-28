@@ -1,10 +1,10 @@
 import axios from "axios"
 import { expect, test } from "@playwright/test"
+import moment from "moment"
 
 import { getAllEmails } from "../../utils/emails"
 import { VIRKAILIJA_URL } from "../../utils/constants"
 import { hakemusTest } from "../../fixtures/hakemusTest"
-import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage"
 import { HakijaAvustusHakuPage } from "../../pages/hakijaAvustusHakuPage"
 import { randomString } from "../../utils/random"
 
@@ -12,23 +12,12 @@ const sendHakuaikaPaattymassaNotifications = () =>
   axios.post(`${VIRKAILIJA_URL}/api/test/send-hakuaika-paattymassa-notifications`)
 
 type HakuaikaPaattymassaFixtures = {
-  hakuEndTime: Date
   hakemusDetails: {
     email: string
   }
 }
 
 const hakuaikaPaattymassaTest = hakemusTest.extend<HakuaikaPaattymassaFixtures>({
-  hakuEndTime: new Date(),
-  avustushakuID: async ({codes, page, haku, hakuEndTime}, use, testInfo) => {
-    testInfo.setTimeout(testInfo.timeout + 50_000)
-
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(haku.registerNumber, haku.avustushakuName, codes)
-    const endTimeString = `${hakuEndTime.getDate()}.${hakuEndTime.getMonth()+1}.${hakuEndTime.getFullYear()} ${hakuEndTime.getHours()}.${hakuEndTime.getMinutes()}`
-    await hakujenHallintaPage.setEndDate(endTimeString)
-    await use(avustushakuID)
-  },
   hakemusDetails: async ({avustushakuID, page, answers}, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 30_000)
 
@@ -47,14 +36,21 @@ test.describe('When avustushaku is closing tomorrow', () => {
   const tomorrow = new Date(today)
   tomorrow.setDate(tomorrow.getDate() + 1)
 
-  hakuaikaPaattymassaTest.use({ hakuEndTime: tomorrow })
+  hakuaikaPaattymassaTest.use({
+    hakuProps: ({hakuProps}, use) => {
+      use({
+        ...hakuProps,
+        hakuaikaEnd: tomorrow,
+      })
+    }
+  })
 
-  hakuaikaPaattymassaTest("sends an email to those whose hakemus is expiring tomorrow", async ({page, hakemusDetails, hakuEndTime}) => {
+  hakuaikaPaattymassaTest("sends an email to those whose hakemus is expiring tomorrow", async ({page, hakemusDetails, hakuProps}) => {
     await sendHakuaikaPaattymassaNotifications()
     await page.waitForTimeout(5000)
 
     const emails = await getAllEmails('hakuaika-paattymassa')
-    const endDate = `${hakuEndTime.getDate()}.${hakuEndTime.getMonth() + 1}.${hakuEndTime.getFullYear()}`
+    const endDate = moment(hakuProps.hakuaikaEnd).format('D.M.YYYY')
     const expectedEmail = expect.objectContaining({
       'to-address': [hakemusDetails.email],
       formatted: expect.stringContaining(`hakuaika päättyy ${endDate}`),
@@ -68,7 +64,14 @@ test.describe('When avustushaku is closing later than tomorrow', () => {
   const dayAfterTomorrow = new Date(today)
   dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2)
 
-  hakuaikaPaattymassaTest.use({ hakuEndTime: dayAfterTomorrow })
+  hakuaikaPaattymassaTest.use({
+    hakuProps: ({hakuProps}, use) => {
+      use({
+        ...hakuProps,
+        hakuaikaEnd: dayAfterTomorrow,
+      })
+    }
+  })
 
   hakuaikaPaattymassaTest("does not send an e-mail", async ({page, hakemusDetails}) => {
     await sendHakuaikaPaattymassaNotifications()

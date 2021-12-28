@@ -1,12 +1,9 @@
-import { expect } from "@playwright/test"
 import {HakemustenArviointiPage} from "../pages/hakemustenArviointiPage";
-import {createRandomHakuValues} from "../utils/random";
-import {rootTest as test} from "./rootFixture";
-import {KoodienhallintaPage} from "../pages/koodienHallintaPage";
 import {HakujenHallintaPage} from "../pages/hakujenHallintaPage";
 import {HakijaAvustusHakuPage} from "../pages/hakijaAvustusHakuPage";
 import {answers} from "../utils/constants";
-import {Answers, VaCodeValues} from "../utils/types";
+import {Answers} from "../utils/types";
+import { defaultValues } from "./defaultValues";
 
 export interface MuutoshakemusFixtures {
   avustushakuID: number
@@ -14,32 +11,17 @@ export interface MuutoshakemusFixtures {
     hakemusID: number
     userKey: string
   }
-  codes: VaCodeValues
-  haku: {
-    registerNumber: string
-    avustushakuName: string
-  }
   answers: Answers
 }
 
 /**
  * Creates a muutoshakuenabled hakemus with käyttöaika and sisältö, but no budjetti
  */
-export const muutoshakemusTest = test.extend<MuutoshakemusFixtures>({
+export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
   answers,
-  haku: async ({}, use) => {
-    const randomHakuValues = createRandomHakuValues()
-    await use(randomHakuValues)
-  },
-  codes: async ({page, isLoggedInAsValtionavustus}, use) => {
-    expect(isLoggedInAsValtionavustus)
-    const koodienHallintaPage = new KoodienhallintaPage(page)
-    const codes = await koodienHallintaPage.createRandomCodeValues()
-    await use(codes)
-  },
-  avustushakuID: async ({codes, page, haku}, use) => {
+  avustushakuID: async ({page, hakuProps}, use) => {
     const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(haku.registerNumber, haku.avustushakuName, codes)
+    const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
     await use(avustushakuID)
   },
   hakemus: async ({avustushakuID, page, answers}, use) => {

@@ -2,15 +2,10 @@ import {expect} from "@playwright/test";
 import {muutoshakemusTest} from "../../fixtures/muutoshakemusTest";
 import {HakijaMuutoshakemusPage} from "../../pages/hakijaMuutoshakemusPage";
 import {HakemustenArviointiPage} from "../../pages/hakemustenArviointiPage";
-import {createRandomHakuValues} from "../../utils/random";
 
 const sisaltomuutosPerustelut = 'Muutamme kaiken muuttamisen ilosta'
 
 const test = muutoshakemusTest.extend<{hakemustenArviointiPage: HakemustenArviointiPage}>({
-  haku: async ({}, use) => {
-    const haku = createRandomHakuValues('Sisältömuutos')
-    await use(haku)
-  },
   hakemustenArviointiPage: async ({page, hakemus: {hakemusID}, avustushakuID}, use) => {
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
     await hakijaMuutoshakemusPage.navigate(hakemusID)

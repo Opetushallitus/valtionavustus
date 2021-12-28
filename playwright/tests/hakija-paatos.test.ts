@@ -10,7 +10,7 @@ import {HAKIJA_URL} from "../utils/constants";
 
 svTest.setTimeout(180000)
 
-svTest('Swedish paatos', async ({page,  hakemus: {hakemusID}}) => {
+svTest('Swedish paatos', async ({page, hakemus: {hakemusID}}) => {
   const hakijaPaatosPage = new HakijaPaatosPage(page)
   await hakijaPaatosPage.navigate(hakemusID)
   const paatosHeaderTitle = await hakijaPaatosPage.paatosHeaderTitle()
@@ -20,13 +20,13 @@ svTest('Swedish paatos', async ({page,  hakemus: {hakemusID}}) => {
   expect(await hakijaPaatosPage.lisatietojaTitle()).toEqual('Mer information')
 })
 
-svTest('gets an email in swedish', async ({hakemus: {hakemusID, userKey}, avustushakuID, haku, answers}) => {
+svTest('gets an email in swedish', async ({hakemus: {hakemusID, userKey}, avustushakuID, hakuProps, answers}) => {
   const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
   const email = emails[emails.length - 1]
   const { token, 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
   expect(email.formatted).toEqual(`${registerNumber} - ${answers.projectName}
 
-${haku.avustushakuName} på svenska
+${hakuProps.avustushakuName} på svenska
 
 Ni kan granska understödsbeslutet via denna länk: ${HAKIJA_URL}/paatos/avustushaku/${avustushakuID}/hakemus/${userKey}
 

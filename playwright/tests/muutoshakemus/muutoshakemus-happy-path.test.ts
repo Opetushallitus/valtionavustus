@@ -1,4 +1,6 @@
 import {expect} from "@playwright/test"
+import moment from "moment";
+
 import {
   getAcceptedPäätösEmails, getLinkToHakemusFromSentEmails,
   getValmistelijaEmails,
@@ -6,7 +8,6 @@ import {
 } from "../../utils/emails";
 import {clickElementWithText, expectToBeDefined} from "../../utils/util";
 import {HAKIJA_URL, VIRKAILIJA_URL} from "../../utils/constants";
-import moment from "moment";
 import {muutoshakemusTest as test} from "../../fixtures/muutoshakemusTest";
 import {MuutoshakemusValues} from "../../utils/types";
 import {HakemustenArviointiPage} from "../../pages/hakemustenArviointiPage";
@@ -22,7 +23,9 @@ const muutoshakemus1: MuutoshakemusValues = {
 
 test.setTimeout(180000)
 
-test('When muutoshakemus enabled haku has been published, a hakemus has been submitted, and päätös has been sent', async ({page, avustushakuID, hakemus: {hakemusID}, context, haku, answers}) => {
+test('When muutoshakemus enabled haku has been published, a hakemus has been submitted, and päätös has been sent', async ({
+  page, avustushakuID, hakemus: {hakemusID}, context, hakuProps, answers
+}) => {
   await test.step('hakija gets the correct email content', async () => {
     const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
     emails.forEach(email => {
@@ -57,7 +60,7 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
       const emails = await waitUntilMinEmails(getValmistelijaEmails, 1, hakemusID)
       const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
       expectToBeDefined(title)
-      expect(title).toContain(`${haku.registerNumber} - ${answers.projectName}`)
+      expect(title).toContain(`${hakuProps.registerNumber} - ${answers.projectName}`)
     })
 
     await test.step('with correct avustushaku link', async () => {
