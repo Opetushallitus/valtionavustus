@@ -499,15 +499,15 @@ export function expectToBeDefined<T>(val: T): asserts val is NonNullable<T> {
   }
 }
 
-async function waitForSaveStatusSaving(page: Page) {
-  return page.waitForFunction(
-    () => document.querySelector('[data-test-id="save-status"]')?.textContent === 'Tallennetaan'
-  )
-}
-
 async function waitForSaveStatusOk(page: Page) {
   return page.waitForFunction(
     () => document.querySelector('[data-test-id="save-status"]')?.textContent === 'Kaikki tiedot tallennettu'
+  )
+}
+
+async function waitForSaveStatusOkOrSaving(page: Page) {
+  return page.waitForFunction(
+    () => document.querySelector('[data-test-id="save-status"]')?.textContent === 'Kaikki tiedot tallennettu' || document.querySelector('[data-test-id="save-status"]')?.textContent === 'Tallennetaan'
   )
 }
 
@@ -825,7 +825,7 @@ export async function clearAndSet(page: Page, selector: string, text: string) {
 
 export async function clickFormSaveAndWait(page: Page) {
   await Promise.all([
-    waitForSaveStatusSaving(page),
+    waitForSaveStatusOkOrSaving(page),
     clickElement(page, "#saveForm:not(disabled)")
   ])
   await waitForSaveStatusOk(page)
