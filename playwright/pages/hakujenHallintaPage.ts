@@ -222,22 +222,24 @@ export class HakujenHallintaPage {
     await this.waitForSave()
   }
 
+  async setEndDate(endTime: string) {
+    const selector = "#hakuaika-end"
+    await this.page.fill(selector, endTime)
+    await this.page.$eval(selector, (e => e.blur()))
+    await this.waitForSave()
+  }
+
   async setAvustushakuEndDateToTomorrow() {
     const today = new Date()
     const tomorrow = new Date(today)
     tomorrow.setDate(tomorrow.getDate() + 1)
-    const selector = "#hakuaika-end"
     const tomorrowString = `${tomorrow.getDate()}.${tomorrow.getMonth()+1}.${tomorrow.getFullYear()} ${tomorrow.getHours()}.${tomorrow.getMinutes()}`
-    await this.page.fill(selector, tomorrowString, {})
-    await this.page.$eval(selector, (e => e.blur()))
-    await this.waitForSave()
+    await this.setEndDate(tomorrowString)
   }
+
   async closeAvustushakuByChangingEndDateToPast() {
     const previousYear = (new Date()).getFullYear() - 1
-    const selector = "#hakuaika-end"
-    await this.page.fill(selector, `1.1.${previousYear} 0.00`, {})
-    await this.page.$eval(selector, (e => e.blur()))
-    await this.waitForSave()
+    await this.setEndDate(`1.1.${previousYear} 0.00`)
   }
 
   async createMuutoshakemusEnabledHaku(registerNumber: string, hakuName?: string, codes?: VaCodeValues) {
