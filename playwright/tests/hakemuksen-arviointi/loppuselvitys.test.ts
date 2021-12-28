@@ -1,3 +1,4 @@
+import axios from "axios"
 import { expect } from "@playwright/test"
 
 import moment from 'moment'
@@ -6,10 +7,6 @@ import { loppuselvitysTest as test } from "../../fixtures/loppuselvitysTest";
 import {
   VIRKAILIJA_URL
 } from "../../utils/constants"
-
-import {
-  sendLoppuselvitysAsiatarkastamattaNotifications
-} from "../../utils/loppuselvitys"
 
 import {
   navigate
@@ -36,6 +33,9 @@ import {
 import { LoppuselvitysPage } from "../../pages/loppuselvitysPage"
 
 test.setTimeout(400000)
+
+const sendLoppuselvitysAsiatarkastamattaNotifications = () =>
+  axios.post(`${VIRKAILIJA_URL}/api/test/send-loppuselvitys-asiatarkastamatta-notifications`)
 
 test('Loppuselvitys tab in hakemuksen arviointi should have link to correct loppuselvitys form for the hakemus', async ({page, avustushakuID, hakemus: {hakemusID}}) => {
   const loppuselvitysPage = LoppuselvitysPage(page)

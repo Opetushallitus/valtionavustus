@@ -1,3 +1,4 @@
+import axios from "axios"
 import { expect } from "@playwright/test"
 
 import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
@@ -8,15 +9,10 @@ import {
 import {
   getHakemusTokenAndRegisterNumber
 } from '../../utils/emails'
+import { VIRKAILIJA_URL } from '../../utils/constants'
 import {
   MaksatuksetPage
 } from '../../pages/maksatuksetPage'
-
-import {
-  putMaksupalauteToMaksatuspalveluAndProcessIt,
-  getAllMaksatuksetFromMaksatuspalvelu,
-  removeStoredPitkäviiteFromAllAvustushakuPayments
-} from '../../utils/maksatukset'
 
 
 const correctOVTTest = test.extend({
@@ -30,6 +26,28 @@ const correctOVTTest = test.extend({
 
 test.setTimeout(400000)
 correctOVTTest.setTimeout(400000)
+
+function getUniqueFileName(): string {
+  return `va_${new Date().getTime()}.xml`
+}
+
+export async function putMaksupalauteToMaksatuspalveluAndProcessIt(xml: string): Promise<void> {
+  await axios.post(`${VIRKAILIJA_URL}/api/test/process-maksupalaute`, {
+    // The XML parser fails if the input doesn't start with "<?xml " hence the trimLeft
+    xml: xml.trimStart(),
+    filename: getUniqueFileName()
+  })
+}
+
+export async function getAllMaksatuksetFromMaksatuspalvelu(): Promise<string[]> {
+  const resp = await axios.get<{maksatukset: string[]}>(`${VIRKAILIJA_URL}/api/test/get-sent-maksatukset`)
+  return resp.data.maksatukset
+}
+
+export async function removeStoredPitkäviiteFromAllAvustushakuPayments(avustushakuId: number): Promise<void> {
+  await axios.post(`${VIRKAILIJA_URL}/api/test/remove-stored-pitkaviite-from-all-avustushaku-payments`, { avustushakuId })
+}
+
 
 test.describe.parallel('Maksatukset', () => {
   correctOVTTest('uses correct OVT when the operational unit is Palvelukeskus', async ({page, avustushakuID, hakemus: {hakemusID}, codes: codeValues}) => {
