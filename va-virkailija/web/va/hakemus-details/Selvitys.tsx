@@ -5,7 +5,6 @@ import { TaloustarkastusEmail } from './TaloustarkastusEmail'
 import SelvitysPreview from './SelvitysPreview'
 import SelvitysNotFilled from './SelvitysNotFilled'
 import SelvitysLink from './SelvitysLink'
-import SelvitysEmail from './SelvitysEmail'
 import PresenterComment from './PresenterComment'
 import ApplicationPayments from './ApplicationPayments'
 import { Avustushaku, Hakemus } from 'va-common/web/va/types'
@@ -28,7 +27,7 @@ type SelvitysProps = {
   presenter?: Role
 }
 
-const Selvitys = ({ presenter, environment, controller, hakemus, avustushaku, translations, selvitysType, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText }: SelvitysProps) => {
+const Selvitys = ({ presenter, controller, hakemus, avustushaku, translations, selvitysType, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText }: SelvitysProps) => {
   const hasSelvitys = !!hakemus.selvitys?.[selvitysType]?.answers
   const selvitysHakemus = hakemus.selvitys?.[selvitysType]
   const form = hakemus.selvitys?.[`${selvitysType}Form`]
