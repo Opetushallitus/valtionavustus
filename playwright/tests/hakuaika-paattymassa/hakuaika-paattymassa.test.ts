@@ -1,13 +1,13 @@
-import {expect} from "@playwright/test"
-import {
-  getAllEmails
-} from "../../utils/emails"
+import axios from "axios"
+import { expect } from "@playwright/test"
 
-import {sendHakuaikaPaattymassaNotifications} from "../../utils/hakuaika-paattymassa";
-import {hakuaikaPaattymassaTest as test} from "../../fixtures/hakuaikaPaattymassaTest";
-import {
-  navigate
-} from "../../utils/navigate"
+import { getAllEmails } from "../../utils/emails"
+import { navigate } from "../../utils/navigate"
+import { VIRKAILIJA_URL } from "../../utils/constants"
+import { hakuaikaPaattymassaTest as test } from "../../fixtures/hakuaikaPaattymassaTest"
+
+const sendHakuaikaPaattymassaNotifications = () =>
+  axios.post(`${VIRKAILIJA_URL}/api/test/send-hakuaika-paattymassa-notifications`)
 
 test("sends an email to those whose hakemus is expiring tomorrow", async ({page, hakemusDetails}) => {
   await navigate(page, "/")
