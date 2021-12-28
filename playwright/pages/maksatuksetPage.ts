@@ -28,7 +28,7 @@ export function MaksatuksetPage (page: Page) {
 
         return /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(inputValue)
       } catch (e) {
-        console.log('Failed to get tositepäivämäärä', e.message)
+        console.log('Failed to get tositepäivämäärä', e)
         return false
       }
     }
@@ -41,7 +41,7 @@ export function MaksatuksetPage (page: Page) {
           break;
         }
       } catch (e) {
-        console.log('Failed to set tositepäivämäärä calendar date', e.message)
+        console.log('Failed to set tositepäivämäärä calendar date', e)
       }
     }
   }

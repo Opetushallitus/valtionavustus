@@ -71,7 +71,7 @@ export async function pollUntilNewHakemusEmailArrives(avustushakuID: number): Pr
         await sleep(1000)
       }
     } catch(e) {
-      console.log(`Failed to get hakemus emails: ${e.message}`)
+      console.log(`Failed to get hakemus emails: ${e}`)
     }
   }
 }
