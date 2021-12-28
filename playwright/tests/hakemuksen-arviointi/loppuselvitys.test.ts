@@ -14,16 +14,11 @@ import {
 
 import {
   switchUserIdentityTo,
-  getElementAttribute,
   clickElementWithText,
   waitForElementWithText,
   waitForNewTab,
-  getElementInnerText,
   countElements,
   clearAndType,
-  hasElementAttribute,
-  textContent,
-  isDisabled
 } from "../../utils/util"
 
 import {
@@ -57,20 +52,20 @@ test('virkailija sees loppuselvitys answers', async ({page, avustushakuID, hakem
   expect(loppuselvitysFormFilled)
   const loppuselvitysPage = LoppuselvitysPage(page)
   await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
-  expect(await getElementInnerText(page, '#preview-container-loppuselvitys #textArea-0')).toEqual('Yhteenveto')
-  expect(await getElementInnerText(page, '#preview-container-loppuselvitys #textArea-2')).toEqual('Työn jako')
-  expect(await getElementInnerText(page, '#preview-container-loppuselvitys [id="project-description.project-description-1.goal"]')).toEqual('Tavoite')
-  expect(await getElementInnerText(page, '#preview-container-loppuselvitys [id="project-description.project-description-1.activity"]')).toEqual('Toiminta')
-  expect(await getElementInnerText(page, '#preview-container-loppuselvitys [id="project-description.project-description-1.result"]')).toEqual('Tulokset')
-  expect(await getElementInnerText(page, '#preview-container-loppuselvitys #textArea-1')).toEqual('Arviointi')
-  expect(await getElementInnerText(page, '#preview-container-loppuselvitys #textArea-3')).toEqual('Tiedotus')
+  expect(await page.innerText('#preview-container-loppuselvitys #textArea-0')).toEqual('Yhteenveto')
+  expect(await page.innerText('#preview-container-loppuselvitys #textArea-2')).toEqual('Työn jako')
+  expect(await page.innerText('#preview-container-loppuselvitys [id="project-description.project-description-1.goal"]')).toEqual('Tavoite')
+  expect(await page.innerText('#preview-container-loppuselvitys [id="project-description.project-description-1.activity"]')).toEqual('Toiminta')
+  expect(await page.innerText('#preview-container-loppuselvitys [id="project-description.project-description-1.result"]')).toEqual('Tulokset')
+  expect(await page.innerText('#preview-container-loppuselvitys #textArea-1')).toEqual('Arviointi')
+  expect(await page.innerText('#preview-container-loppuselvitys #textArea-3')).toEqual('Tiedotus')
 
-  expect(await getElementInnerText(page, '#preview-container-loppuselvitys [id="project-outcomes.project-outcomes-1.outcome-type"]')).toEqual('Toimintamalli')
-  expect(await getElementInnerText(page, '#preview-container-loppuselvitys [id="project-outcomes.project-outcomes-1.description"]')).toEqual('Kuvaus')
-  expect(await getElementInnerText(page, '#preview-container-loppuselvitys [id="project-outcomes.project-outcomes-1.address"]')).toEqual('Saatavuustiedot')
+  expect(await page.innerText('#preview-container-loppuselvitys [id="project-outcomes.project-outcomes-1.outcome-type"]')).toEqual('Toimintamalli')
+  expect(await page.innerText('#preview-container-loppuselvitys [id="project-outcomes.project-outcomes-1.description"]')).toEqual('Kuvaus')
+  expect(await page.innerText('#preview-container-loppuselvitys [id="project-outcomes.project-outcomes-1.address"]')).toEqual('Saatavuustiedot')
 
-  expect(await getElementInnerText(page, '#preview-container-loppuselvitys #radioButton-good-practices')).toEqual('Ei')
-  expect(await getElementInnerText(page, '#preview-container-loppuselvitys #textArea-4')).toEqual('Lisätietoja')
+  expect(await page.innerText('#preview-container-loppuselvitys #radioButton-good-practices')).toEqual('Ei')
+  expect(await page.innerText('#preview-container-loppuselvitys #textArea-4')).toEqual('Lisätietoja')
 })
 
 test('virkailija can not accept loppuselvitys while it is not verified', async ({page, avustushakuID, hakemus: {hakemusID}, loppuselvitys: {loppuselvitysFormFilled}}) => {
@@ -113,9 +108,9 @@ test('shows asiatarkastus to pääkäyttäjä who is not valmistelija', async ({
 test('hakija can not edit loppuselvitys after information has been verified', async ({page, loppuselvitys: { loppuselvitysFormUrl}, asiatarkastus: {asiatarkastettu} }) => {
   expect(asiatarkastettu)
   await navigate(page, loppuselvitysFormUrl)
-  expect(await getElementInnerText(page, 'span[id="textArea-0"]')).toEqual('Yhteenveto')
-  await hasElementAttribute(page, 'button[id="submit"]', 'disabled')
-  await page.waitForSelector('textarea[id="textArea-0"]', { state: "hidden" })
+  expect(await page.innerText('span[id="textArea-0"]')).toEqual('Yhteenveto')
+  expect(await page.isDisabled('button[id="submit"]'))
+  expect(await page.isHidden('textarea[id="textArea-0"]'))
 })
 
 test('information verification is shown', async ({page, avustushakuID, hakemus: {hakemusID}, asiatarkastus: {asiatarkastettu}}) => {
@@ -123,10 +118,10 @@ test('information verification is shown', async ({page, avustushakuID, hakemus: 
   expect(asiatarkastettu)
   const loppuselvitysPage = LoppuselvitysPage(page)
   await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
-  expect(await textContent(page, textareaSelector)).toEqual('Hyvältä näyttääpi')
-  expect(await isDisabled(page, textareaSelector)).toEqual(true)
-  expect(await getElementInnerText(page, '[data-test-id=verifier]')).toEqual('_ valtionavustus')
-  expect(moment(await getElementInnerText(page, '[data-test-id=verified-at]'), 'D.M.YYYY [klo] H.mm').isSameOrBefore()).toBeTruthy()
+  expect(await page.textContent(textareaSelector)).toEqual('Hyvältä näyttääpi')
+  expect(await page.isDisabled(textareaSelector)).toEqual(true)
+  expect(await page.innerText('[data-test-id=verifier]')).toEqual('_ valtionavustus')
+  expect(moment(await page.innerText('[data-test-id=verified-at]'), 'D.M.YYYY [klo] H.mm').isSameOrBefore()).toBeTruthy()
 })
 
 test('loppuselvitys-asiatarkastamatta notification is not sent to virkailija anymore', async ({avustushakuID, asiatarkastus: { asiatarkastettu }}) => {
@@ -164,9 +159,9 @@ test('virkailija can accept loppuselvitys', async ({page, avustushakuID, asiatar
   })
 
   await test.step('and sees which email was sent to hakija afterward', async () => {
-    const displayedSubject = await getElementAttribute(page, '[data-test-id="taloustarkastus-email-subject"]', "value")
+    const displayedSubject = await page.getAttribute('[data-test-id="taloustarkastus-email-subject"]', 'value')
     const displayedContent = await page.textContent('[data-test-id="taloustarkastus-email-content"]')
-    const displayedThirdReceiver = await getElementAttribute(page, '[data-test-id="taloustarkastus-receiver-2"]', "value")
+    const displayedThirdReceiver = await page.getAttribute('[data-test-id="taloustarkastus-receiver-2"]', 'value')
 
     expect(displayedSubject).toEqual(subject)
     expect(displayedContent).toEqual(content)
@@ -185,7 +180,7 @@ test('virkailija can accept loppuselvitys', async ({page, avustushakuID, asiatar
 
   await test.step('loppuselvitys is shown as hyväksytty in hakemus listing', async () => {
     await navigate(page, `/avustushaku/${avustushakuID}/`)
-    const loppuselvitysStatus = await getElementInnerText(page, '[data-test-id="loppuselvitys-column"]')
+    const loppuselvitysStatus = await page.innerText('[data-test-id="loppuselvitys-column"]')
     expect(loppuselvitysStatus).toEqual('Hyväksytty')
   })
 })

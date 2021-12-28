@@ -10,6 +10,7 @@ export async function clearAndType(page: Page, selector: string, content: string
   await page.type(selector, content)
 }
 
+/** @deprecated use page.setInputFiles */
 export async function uploadFile(page: Page, selector: string, filePath: string) {
   await page.setInputFiles(selector, filePath)
 }
@@ -34,23 +35,28 @@ export async function clickElementWithText(page: Page, elementType: string, text
   await page.click(selector)
 }
 
+/** @deprecated use page.getAttribute */
 export async function getElementAttribute(page: Page, selector: string, attribute: string) {
   return await page.getAttribute(selector, attribute)
 }
 
+/** @deprecated use page.getAttribute !== null */
 export async function hasElementAttribute(page: Page, selector: string, attribute: string) {
   const attributeValue = await getElementAttribute(page, selector, attribute) 
     return attributeValue !== null
 }
 
+/** @deprecated use page.innerText */
 export async function getElementInnerText(page: Page, selector: string): Promise<string | undefined> {
   return await page.innerText(selector)
 }
 
+/** @deprecated use page.textContent */
 export async function textContent(page: Page, selector: string) {
   return await page.textContent(selector)
 }
 
+/** @deprecated use page.isDisabled */
 export async function isDisabled(page: Page, selector: string) {
   return await page.isDisabled(selector);
 }
@@ -90,7 +96,7 @@ export function log(...args: any[]) {
 }
 
 export async function getExistingBudgetTableCells(page: Page, budgetRowSelector?:string) {
-  const rowSelector = budgetRowSelector || '[data-test-id="meno-input-row"]'
+  const rowSelector = budgetRowSelector || '[data-test-id="meno-input-row"]'
   await page.waitForSelector(rowSelector)
   return await page.$$eval(rowSelector, elements => {
     return elements.map(elem => ({
@@ -101,7 +107,7 @@ export async function getExistingBudgetTableCells(page: Page, budgetRowSelector?
 }
 
 export async function getChangedBudgetTableCells(page: Page, budgetRowSelector?: string) {
-  const rowSelector = budgetRowSelector || '[data-test-id="meno-input-row"]'
+  const rowSelector = budgetRowSelector || '[data-test-id="meno-input-row"]'
   await page.waitForSelector(rowSelector)
   return await page.$$eval(rowSelector, elements => {
     return elements.map(elem => ({
@@ -112,5 +118,5 @@ export async function getChangedBudgetTableCells(page: Page, budgetRowSelector?:
 }
 
 export async function countElements(page: Page, selector: string) {
-  return await page.evaluate((selector: string) => document.querySelectorAll(selector).length, selector)
+  return (await page.$$(selector)).length
 }

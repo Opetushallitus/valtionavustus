@@ -3,10 +3,8 @@ import {Page} from "@playwright/test"
 
 import {
   clickElementWithText,
-  getElementAttribute,
   waitForClojureScriptLoadingDialogHidden,
   waitForClojureScriptLoadingDialogVisible,
-  waitForElementWithText,
   clearAndType
 } from '../utils/util'
 import { navigate } from "../utils/navigate"
@@ -24,7 +22,7 @@ export function MaksatuksetPage (page: Page) {
   async function fillTositepaivamaara() {
     const isFilledWithDateValue = async () => {
       try {
-        const inputValue = await getElementAttribute(page, '[id="Tositepäivämäärä"]', 'value')
+        const inputValue = await page.getAttribute('[id="Tositepäivämäärä"]', 'value')
 
         if (typeof inputValue !== 'string') return false
 

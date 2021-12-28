@@ -5,9 +5,7 @@ import {MuutoshakemusFixtures} from "./muutoshakemusTest";
 import {createRandomHakuValues} from "../utils/random";
 import { LoppuselvitysPage } from "../pages/loppuselvitysPage"
 import { 
-  getElementAttribute,
   clearAndType,
-  uploadFile
 } from "../utils/util"
 import {
   navigate
@@ -34,7 +32,7 @@ export const loppuselvitysTest = test.extend<LoppuselvitysFixtures>({
   loppuselvitys: async ({page, avustushakuID, hakemus: {hakemusID}}, use) => {
     const loppuselvitysPage = LoppuselvitysPage(page)
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
-    const loppuselvitysFormUrl = await getElementAttribute(page, '[data-test-id="selvitys-link"]', 'href')
+    const loppuselvitysFormUrl = await page.getAttribute('[data-test-id="selvitys-link"]', 'href')
     if (!loppuselvitysFormUrl) {
       throw new Error('could not find loppuselvitys form url')
     }
@@ -57,7 +55,7 @@ export const loppuselvitysTest = test.extend<LoppuselvitysFixtures>({
     await page.click('label[for="radioButton-good-practices.radio.1"]')
     await clearAndType(page, '[id="textArea-4"]', 'Lisätietoja')
 
-    await uploadFile(page, '[name="namedAttachment-0"]', dummyPdfPath)
+    await page.setInputFiles('[name="namedAttachment-0"]', dummyPdfPath)
 
     await page.click('button#submit:not([disabled])')
     

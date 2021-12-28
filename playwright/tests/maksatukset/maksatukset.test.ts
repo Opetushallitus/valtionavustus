@@ -4,9 +4,6 @@ import { expect } from "@playwright/test"
 import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
 import {KoodienhallintaPage} from "../../pages/koodienHallintaPage";
 import {
-  getElementAttribute,
-} from '../../utils/util'
-import {
   getHakemusTokenAndRegisterNumber
 } from '../../utils/emails'
 import { VIRKAILIJA_URL } from '../../utils/constants'
@@ -55,7 +52,7 @@ test.describe.parallel('Maksatukset', () => {
     await maksatuksetPage.goto(avustushakuID)
 
     await maksatuksetPage.fillInMaksueranTiedot("asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
-    const dueDate = await getElementAttribute(page, '[id="Eräpäivä"]', 'value')
+    const dueDate = await page.getAttribute('[id="Eräpäivä"]', 'value')
     if (!dueDate) throw new Error('Cannot find due date from form')
 
     await maksatuksetPage.sendMaksatukset()
@@ -139,7 +136,7 @@ test.describe.parallel('Maksatukset', () => {
     await maksatuksetPage.goto(avustushakuID)
 
     await maksatuksetPage.fillInMaksueranTiedot("asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
-    const dueDate = await getElementAttribute(page, '[id="Eräpäivä"]', 'value')
+    const dueDate = await page.getAttribute('[id="Eräpäivä"]', 'value')
     if (!dueDate) throw new Error('Cannot find due date from form')
 
     await maksatuksetPage.sendMaksatukset()
