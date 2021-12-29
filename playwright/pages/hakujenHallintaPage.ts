@@ -39,6 +39,41 @@ const dateFormat = 'D.M.YYYY H.mm'
 const formatDate = (date: Date) => moment(date).format(dateFormat)
 export const parseDate = (input: string) => moment(input, dateFormat).toDate()
 
+const waitForSaveStatusOk = (page: Page) => page.waitForSelector('[data-test-id="save-status"]:has-text("Kaikki tiedot tallennettu")')
+
+export function FormEditorPage(page: Page) {
+
+  const editorTextareaSelector = '.form-json-editor textarea'
+  async function changeLomakeJson(lomakeJson: string) {
+    /*
+      for some reason
+      await this.page.fill(".form-json-editor textarea", lomakeJson)
+      takes almost 50seconds
+     */
+    await page.waitForSelector(editorTextareaSelector)
+    await page.$eval(editorTextareaSelector, (textarea: HTMLTextAreaElement, lomakeJson) => {
+      textarea.value = lomakeJson
+    }, lomakeJson)
+
+    // trigger autosave by typing space in the end
+    await page.type('.form-json-editor textarea', ' ')
+    await page.keyboard.press('Backspace')
+  }
+
+  async function saveForm() {
+    await Promise.all([
+      page.waitForSelector('[data-test-id="save-status"]:has-text("Tallennetaan")'),
+      page.click("#saveForm:not(disabled)")
+    ])
+    await waitForSaveStatusOk(page)
+  }
+
+  return {
+    changeLomakeJson,
+    saveForm,
+  }
+}
+
 export class HakujenHallintaPage {
   readonly page: Page
 
@@ -54,8 +89,13 @@ export class HakujenHallintaPage {
     await navigate(this.page, `/admin/decision/?avustushaku=${avustushakuID}`)
   }
 
+  async navigateToFormEditor(avustushakuID: number) {
+    await navigate(this.page, `/admin/form-editor/?avustushaku=${avustushakuID}`)
+    return FormEditorPage(this.page)
+  }
+
   async waitForSave() {
-    await this.page.waitForSelector('#form-controls .status .info:has-text("Kaikki tiedot tallennettu")')
+    await waitForSaveStatusOk(this.page)
   }
 
   async searchUsers(user: string) {
@@ -100,10 +140,6 @@ export class HakujenHallintaPage {
     await this.waitForSave()
   }
 
-  async waitForSaveStatusOk() {
-    await this.page.waitForSelector('[data-test-id="save-status"]:has-text("Kaikki tiedot tallennettu")')
-  }
-
   async copyEsimerkkihaku() {
     await navigate(this.page, "/admin/haku-editor/")
     await this.page.click(".haku-filter-remove")
@@ -114,7 +150,7 @@ export class HakujenHallintaPage {
 
     await this.page.waitForFunction((name) =>
       document.querySelector("#haku-name-fi")?.textContent !== name, currentHakuTitle)
-    await this.waitForSaveStatusOk()
+    await this.waitForSave()
     // await this.page.waitForTimeout(2000)
   }
 
@@ -175,36 +211,11 @@ export class HakujenHallintaPage {
     return avustushakuID
   }
 
-  async clickFormSaveAndWait() {
-    await Promise.all([
-      this.page.waitForSelector('[data-test-id="save-status"]:has-text("Tallennetaan")'),
-      this.page.click("#saveForm:not(disabled)")
-    ])
-    await this.waitForSaveStatusOk()
-  }
-
   async createHakuWithLomakeJson(lomakeJson: string, hakuProps: HakuProps): Promise<{ avustushakuID: number }> {
     const avustushakuID = await this.createHakuFromEsimerkkihaku(hakuProps)
-    await clickElementWithText(this.page, "span", "Hakulomake")
-    /*
-      for some reason
-      await this.page.fill(".form-json-editor textarea", lomakeJson)
-      takes almost 50seconds
-     */
-    const changeLomakeWithJson = async () => {
-      await this.page.evaluate((text) => {
-        const textArea = document.querySelector<HTMLTextAreaElement>('.form-json-editor textarea')
-        if (!textArea) {
-          throw Error('textarea not found')
-        }
-        textArea.value = text
-      }, lomakeJson)
-      // trigger autosave by typing space in the end
-      await this.page.type('.form-json-editor textarea', ' ')
-      await this.page.keyboard.press('Backspace')
-    }
-    await changeLomakeWithJson()
-    await this.clickFormSaveAndWait()
+    const formEditorPage = await this.navigateToFormEditor(avustushakuID)
+    await formEditorPage.changeLomakeJson(lomakeJson)
+    await formEditorPage.saveForm()
     return { avustushakuID }
   }
 
