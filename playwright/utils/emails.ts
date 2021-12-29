@@ -21,6 +21,9 @@ export const getAllEmails = (emailType: string): Promise<Email[]> =>
   axios.get(`${VIRKAILIJA_URL}/api/test/email/${emailType}`)
     .then(r => emailSchema.validate(r.data))
 
+export const getLastEmail = (emailType: string): Promise<Email> =>
+  getAllEmails(emailType).then(lastOrFail)
+
 const getEmails = (emailType: string) => (hakemusID: number): Promise<Email[]> =>
   axios.get(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusID}/email/${emailType}`)
     .then(r => { console.log(`getEmails(${emailType})`, r.data); return r })
@@ -142,4 +145,9 @@ export async function getHakemusTokenAndRegisterNumber(hakemusId: number): Promi
 
   return await axios.get(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusId}/token-and-register-number`)
     .then(r => applicationGeneratedValuesSchema.validate(r.data))
+}
+
+function lastOrFail<T>(xs: ReadonlyArray<T>): T {
+  if (xs.length === 0) throw Error("Can't get last element of empty list")
+  return xs[xs.length - 1]
 }

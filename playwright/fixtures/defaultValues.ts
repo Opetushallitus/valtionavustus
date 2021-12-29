@@ -3,7 +3,7 @@ import moment from 'moment'
 
 import { HakuProps, parseDate } from '../pages/hakujenHallintaPage'
 import { KoodienhallintaPage } from '../pages/koodienHallintaPage'
-import { answers } from '../utils/constants'
+import { answers, swedishAnswers } from '../utils/constants'
 import { randomAsiatunnus, randomString } from '../utils/random'
 import { Answers, VaCodeValues } from '../utils/types'
 import { switchUserIdentityTo } from '../utils/util'
@@ -12,6 +12,7 @@ type DefaultValueFixtures = {
   codes: VaCodeValues
   hakuProps: HakuProps
   answers: Answers
+  swedishAnswers: Answers
 }
 
 type WorkerScopedDefaultValueFixtures = {
@@ -34,6 +35,7 @@ const workerScopedDefaultValues = test.extend<{}, WorkerScopedDefaultValueFixtur
 
 export const defaultValues = workerScopedDefaultValues.extend<DefaultValueFixtures>({
   answers,
+  swedishAnswers,
   codes: async ({defaultCodes}, use) => {
     use(defaultCodes)
   },

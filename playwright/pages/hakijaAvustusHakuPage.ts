@@ -109,8 +109,12 @@ export class HakijaAvustusHakuPage {
     const lang = answers.lang || 'fi'
     const sentText = lang === 'fi' ? "Hakemus lähetetty" : "Ansökan sänd"
     await this.page.waitForSelector(`${this.sendHakemusButtonSelector}:has-text("${sentText}")`)
-    const userKey = await expectQueryParameter(this.page, "hakemus")
+    const userKey = await this.getUserKey()
     return {userKey}
+  }
+
+  async getUserKey(): Promise<string> {
+    return await expectQueryParameter(this.page, "hakemus")
   }
 
   async fillBudget(budget: Budget = defaultBudget, type: 'hakija' | 'virkailija') {
@@ -175,7 +179,6 @@ export class HakijaAvustusHakuPage {
     await this.page.click(this.sendHakemusButtonSelector)
     const sentText = lang === 'fi' ? "Hakemus lähetetty" : "Ansökan sänd"
     await this.page.waitForSelector(`${this.sendHakemusButtonSelector}:has-text("${sentText}")`)
-    const userKey = await expectQueryParameter(this.page, "hakemus")
-    return { userKey }
+    return { userKey: await this.getUserKey() }
   }
 }

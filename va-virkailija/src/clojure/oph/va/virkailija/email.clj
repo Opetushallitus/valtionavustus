@@ -2,6 +2,7 @@
   (:require [oph.soresu.common.db :refer [query]]
             [clojure.java.jdbc :as jdbc]
             [oph.common.email :as email]
+            [oph.common.datetime :as datetime]
             [oph.soresu.common.config :refer [config]]
             [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]
             [clojure.tools.trace :refer [trace]]
@@ -24,6 +25,8 @@
                                :sv "Mellanredovisningnen redo att fyllas"}
    :loppuselvitys-notification {:fi "Loppuselvitys täytettävissä haulle"
                                 :sv "Slutredovisningen redo att fyllas"}
+   :hakuaika-paattymassa {:fi "Hakuaika päättymässä"
+                          :sv "Hakuaika päättymässä"}
    :payments-info-notification
    {:fi "Automaattinen viesti - Valtionavustuserän '%s' maksatus suoritettu"
     :sv "Automatiskt meddelande - Statsunderstöd '%s' betald"}})
@@ -50,7 +53,8 @@
    :loppuselvitys-asiatarkastamatta (email/load-template "email-templates/loppuselvitys-asiatarkastamatta.fi")
    :loppuselvitys-taloustarkastamatta (email/load-template "email-templates/loppuselvitys-taloustarkastamatta.fi")
    :valiselvitys-tarkastamatta (email/load-template "email-templates/valiselvitys-tarkastamatta.fi")
-   :hakuaika-paattymassa (email/load-template "email-templates/hakuaika-paattymassa.fi")
+   :hakuaika-paattymassa {:fi (email/load-template "email-templates/hakuaika-paattymassa.fi")
+                          :sv (email/load-template "email-templates/hakuaika-paattymassa.sv")}
    :loppuselvitys-palauttamatta (email/load-template "email-templates/loppuselvitys-palauttamatta.fi")})
 
 (defn mail-example [msg-type & [data]]
@@ -174,19 +178,25 @@
                              (partial render template))))
 
 (defn send-hakuaika-paattymassa [hakemus]
-  (let [lang            :fi
-        template       (:hakuaika-paattymassa mail-templates)
+  (let [lang-str       (:language hakemus)
+        lang           (keyword lang-str)
+        mail-subject   (get-in mail-titles [:hakuaika-paattymassa lang])
+        template       (get-in mail-templates [:hakuaika-paattymassa lang])
         to             (:contact-email hakemus)
-        paattymispaiva (.format (:paattymispaiva hakemus) (DateTimeFormatter/ofPattern "dd.MM.yyyy"))
-        url            (email/generate-url (:avustushaku-id hakemus) lang "fi" (:user-key hakemus) false) ]
+        paattymispaiva (datetime/date-string (datetime/from-sql-time (:paattymispaiva hakemus)))
+        paattymisaika  (datetime/time-string (datetime/from-sql-time (:paattymispaiva hakemus)))
+
+        url            (email/generate-url (:avustushaku-id hakemus) lang lang-str (:user-key hakemus) false) ]
     (log/info "sending to" to)
     (email/try-send-msg-once {:type :hakuaika-paattymassa
                               :lang lang
                               :from (-> email/smtp-config :from lang)
                               :sender (-> email/smtp-config :sender)
                               :to [to]
-                              :subject "Hakuaika päättymässä"
+                              :subject mail-subject
                               :paattymispaiva paattymispaiva
+                              :paattymisaika paattymisaika
+                              :avustushaku-name (:avustushaku-name hakemus)
                               :url url}
                              (partial render template))))
 

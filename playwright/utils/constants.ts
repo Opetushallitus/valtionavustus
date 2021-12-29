@@ -1,4 +1,5 @@
 import * as path from "path"
+import { Answers } from './types'
 
 const HAKIJA_HOSTNAME = process.env.HAKIJA_HOSTNAME || 'localhost'
 const HAKIJA_PORT = 8080
@@ -14,4 +15,12 @@ export const answers = {
   contactPersonName: "Erkki Esimerkki",
   contactPersonPhoneNumber: "666",
   projectName: "Rahassa kylpijät Ky Ay Oy",
+}
+
+export const swedishAnswers: Answers = {
+  contactPersonEmail: "lars.andersson@example.com",
+  contactPersonName: "Lars Andersson",
+  contactPersonPhoneNumber: "1337",
+  projectName: "Vi Simmar i Pengar Ab",
+  lang: 'sv'
 }

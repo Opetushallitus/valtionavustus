@@ -16,7 +16,9 @@
 
 (defn- get-hakuaika-paattymassa-haut []
   (query "SELECT h.avustushaku as avustushaku_id, h.user_key, hakemus.contact_email AS contact_email,
-            date(avustushaku.content -> 'duration' ->> 'end') AS paattymispaiva
+            h.language,
+            jsonb_extract_path_text(avustushaku.content, 'name', h.language) as avustushaku_name,
+            timestamptz(avustushaku.content -> 'duration' ->> 'end') AS paattymispaiva
             from hakija.hakemukset h
           JOIN hakija.avustushaut avustushaku
             ON h.avustushaku = avustushaku.id
