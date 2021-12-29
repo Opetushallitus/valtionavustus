@@ -4,9 +4,9 @@ import moment from "moment"
 
 import { getAllEmails } from "../../utils/emails"
 import { VIRKAILIJA_URL } from "../../utils/constants"
-import { avustushakuTest } from "../../fixtures/avustushakuTest"
 import { HakijaAvustusHakuPage } from "../../pages/hakijaAvustusHakuPage"
 import { randomString } from "../../utils/random"
+import { muutoshakemusTest } from "../../fixtures/muutoshakemusTest"
 
 const sendHakuaikaPaattymassaNotifications = () =>
   axios.post(`${VIRKAILIJA_URL}/api/test/send-hakuaika-paattymassa-notifications`)
@@ -17,7 +17,7 @@ type HakuaikaPaattymassaFixtures = {
   }
 }
 
-const hakuaikaPaattymassaTest = avustushakuTest.extend<HakuaikaPaattymassaFixtures>({
+const hakuaikaPaattymassaTest = muutoshakemusTest.extend<HakuaikaPaattymassaFixtures>({
   filledHakemus: async ({avustushakuID, page, answers}, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 30_000)
 

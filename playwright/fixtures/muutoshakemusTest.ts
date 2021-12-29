@@ -1,9 +1,10 @@
 import {HakemustenArviointiPage} from "../pages/hakemustenArviointiPage";
 import {HakujenHallintaPage} from "../pages/hakujenHallintaPage";
 import {HakijaAvustusHakuPage} from "../pages/hakijaAvustusHakuPage";
-import { avustushakuTest } from "./avustushakuTest";
+import { defaultValues } from "./defaultValues";
 
 export interface MuutoshakemusFixtures {
+  avustushakuID: number
   submittedHakemus: {
     userKey: string
   }
@@ -16,7 +17,14 @@ export interface MuutoshakemusFixtures {
 /**
  * Creates a muutoshakuenabled hakemus with käyttöaika and sisältö, but no budjetti
  */
-export const muutoshakemusTest = avustushakuTest.extend<MuutoshakemusFixtures>({
+export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
+  avustushakuID: async ({page, hakuProps}, use, testInfo) => {
+    testInfo.setTimeout(testInfo.timeout + 40_000)
+
+    const hakujenHallintaPage = new HakujenHallintaPage(page)
+    const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
+    await use(avustushakuID)
+  },
   submittedHakemus: async ({avustushakuID, answers, page}, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 15_000)
 
