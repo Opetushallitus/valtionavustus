@@ -1,0 +1,7 @@
+Hyvä vastaanottaja,
+
+loppuselvityksenne avustuksessa {{ avustushaku-name }} on palauttamatta. 
+
+Muistattehan lähettää loppuselvityksen käsiteltäväksi määräaikaan {{ loppuselvitysdate }} mennessä. Linkki selvityslomakkeellenne: {{ loppuselvityslomake-url }}
+
+Lisätietoja saatte tarvittaessa päätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi

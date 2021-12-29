@@ -47,7 +47,10 @@
                  :valiselvitys         {:enabled? false
                                         :schedule "0 0 7 ? * 2"}
                  :hakuaika-paattymassa {:enabled? false
-                                        :schedule "0 0 4 ? * *"}}
+                                        :schedule "0 0 4 ? * *"}
+                 :loppuselvitys-palauttamatta {:enabled? false
+                                        :schedule "0 0 8 ? * *"}
+                 }
  :payments {:enabled? true}
  :contact-person-name-in-pitkaviite {:enabled? false}
  :multibatch-payments {:enabled? true}

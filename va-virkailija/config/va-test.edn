@@ -19,7 +19,10 @@
  :notifications {:asiatarkastus {:enabled? true
                                  :schedule "0 0 14 ? * 1,2,3,4,5"}
                  :valiselvitys {:enabled? true
-                                 :schedule "0 0 14 ? * 1,2,3,4,5"}}
+                                 :schedule "0 0 14 ? * 1,2,3,4,5"}
+                 :loppuselvitys-palauttamatta {:enabled? true
+                                        :schedule "0 0 14 ? * 1,2,3,4,5"}
+                 }
  :payments {:enabled? true :delete-payments? true}
  :contact-person-name-in-pitkaviite {:enabled? true}
  :tasmaytysraportti-create {:enabled? true}

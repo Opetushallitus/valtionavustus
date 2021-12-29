@@ -50,7 +50,8 @@
    :loppuselvitys-asiatarkastamatta (email/load-template "email-templates/loppuselvitys-asiatarkastamatta.fi")
    :loppuselvitys-taloustarkastamatta (email/load-template "email-templates/loppuselvitys-taloustarkastamatta.fi")
    :valiselvitys-tarkastamatta (email/load-template "email-templates/valiselvitys-tarkastamatta.fi")
-   :hakuaika-paattymassa (email/load-template "email-templates/hakuaika-paattymassa.fi")})
+   :hakuaika-paattymassa (email/load-template "email-templates/hakuaika-paattymassa.fi")
+   :loppuselvitys-palauttamatta (email/load-template "email-templates/loppuselvitys-palauttamatta.fi")})
 
 (defn mail-example [msg-type & [data]]
   {:content (render (:fi (msg-type mail-templates)) (if data data {}))
@@ -89,6 +90,9 @@
   (let [va-url (-> config :server :url lang)
         lang-str (or (clojure.core/name lang) "fi")]
   (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" user-key "&lang=" lang-str)))
+
+(defn loppuselvitys-url [avustushaku-id user-key lang]
+  (selvitys-url avustushaku-id user-key lang "loppuselvitys"))
 
 (defn stream-to-bytearray [is]
   (let [baos (java.io.ByteArrayOutputStream.)]
@@ -212,6 +216,23 @@
                               :subject "Tarkastamattomia väliselvityksiä"
                               :amount (count list)
                               :list list}
+                             (partial render template))))
+
+(defn send-loppuselvitys-palauttamatta [to avustushaku hakemus]
+  (let [lang     :fi
+        template (:loppuselvitys-palauttamatta mail-templates)
+        avustushaku-name (get-in avustushaku [:content :name lang])
+        loppuselvityslomake-url (loppuselvitys-url (:id avustushaku) (:user_key hakemus) lang)
+        ]
+    (email/try-send-msg-once {:type :loppuselvitys-palauttamatta
+                              :lang lang
+                              :from (-> email/smtp-config :from lang)
+                              :sender (-> email/smtp-config :sender)
+                              :to to
+                              :subject "Loppuselvitys palauttamatta"
+                              :avustushaku-name avustushaku-name}
+                              :loppuselvitysdate (:loppuselvitysdate avustushaku)
+                              :loppuselvityslomake-url loppuselvityslomake-url
                              (partial render template))))
 
 (defn send-paatos! [to avustushaku hakemus reply-to]
