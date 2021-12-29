@@ -14,15 +14,28 @@ type DefaultValueFixtures = {
   answers: Answers
 }
 
-export const defaultValues = test.extend<DefaultValueFixtures>({
-  answers,
-  codes: async ({page}, use, testInfo) => {
-    testInfo.setTimeout(testInfo.timeout + 20_000)
+type WorkerScopedDefaultValueFixtures = {
+  defaultCodes: VaCodeValues
+}
+
+/** Default values created only once (per worker) to save time */
+const workerScopedDefaultValues = test.extend<{}, WorkerScopedDefaultValueFixtures>({
+  defaultCodes: [async ({browser}, use) => {
+    const page = await browser.newPage()
 
     await switchUserIdentityTo(page, "valtionavustus")
     const koodienHallintaPage = new KoodienhallintaPage(page)
     const codes = await koodienHallintaPage.createRandomCodeValues()
-    await use(codes)
+    use(codes)
+
+    await page.close()
+  }, { scope: 'worker' }],
+})
+
+export const defaultValues = workerScopedDefaultValues.extend<DefaultValueFixtures>({
+  answers,
+  codes: async ({defaultCodes}, use) => {
+    use(defaultCodes)
   },
   hakuProps: ({ codes }, use, testInfo) => {
     const nextYear = (new Date()).getFullYear() + 1
