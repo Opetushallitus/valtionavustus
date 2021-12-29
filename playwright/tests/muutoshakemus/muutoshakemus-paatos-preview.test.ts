@@ -9,7 +9,7 @@ import {
   budjettimuutoshakemusTest
 } from "../../fixtures/budjettimuutoshakemusTest";
 import {BudgetAmount, sortedFormTable} from "../../utils/budget";
-import {answers as svAnswers} from "../../fixtures/swedishHakemusTest";
+import {svAnswers} from "../../fixtures/swedishHakemusTest";
 
 const muutoshakemus1: MuutoshakemusValues = {
   jatkoaika: moment(new Date())
@@ -22,7 +22,7 @@ const muutoshakemus1: MuutoshakemusValues = {
 const sisaltomuutosPerustelut = 'Muutamme kaiken muuttamisen ilosta'
 
 const test = muutoshakemusTest.extend<{hakemustenArviointiPage: HakemustenArviointiPage}>({
-  hakemustenArviointiPage: async ({hakemus: {hakemusID}, avustushakuID, page}, use) => {
+  hakemustenArviointiPage: async ({acceptedHakemus: {hakemusID}, avustushakuID, page}, use) => {
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
     await hakijaMuutoshakemusPage.navigate(hakemusID)
     await hakijaMuutoshakemusPage.clickHaenSisaltomuutosta()
@@ -100,7 +100,7 @@ test.describe.parallel('muutoshakemus päätös preview', async () => {
 })
 
 const bTest = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixtures & {hakemustenArviointiPage: HakemustenArviointiPage}>({
-  hakemustenArviointiPage: async ({page, hakemus: {hakemusID}, avustushakuID}, use) => {
+  hakemustenArviointiPage: async ({page, acceptedHakemus: {hakemusID}, avustushakuID}, use) => {
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
     await hakijaMuutoshakemusPage.navigate(hakemusID)
     await hakijaMuutoshakemusPage.clickHaenMuutostaTaloudenKayttosuunnitelmaan()
@@ -201,10 +201,8 @@ const svJatkoaika = {
 }
 
 const svTest = muutoshakemusTest.extend<{hakemustenArviointiPage: HakemustenArviointiPage}>({
-  answers: async ({}, use) => {
-    await use(svAnswers)
-  },
-  hakemustenArviointiPage: async ({page, hakemus: {hakemusID}, avustushakuID}, use) => {
+  answers: svAnswers,
+  hakemustenArviointiPage: async ({page, acceptedHakemus: {hakemusID}, avustushakuID}, use) => {
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
     await hakijaMuutoshakemusPage.navigate(hakemusID)
     await hakijaMuutoshakemusPage.fillJatkoaikaValues(svJatkoaika)

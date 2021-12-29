@@ -2,7 +2,7 @@ import {budjettimuutoshakemusTest} from "./budjettimuutoshakemusTest";
 import {Answers} from "../utils/types";
 import {Budget} from "../utils/budget";
 
-export const answers: Answers = {
+export const svAnswers: Answers = {
   contactPersonEmail: "erik.eksampletten@example.com",
   contactPersonName: "Erik Eksampletten",
   contactPersonPhoneNumber: "555",
@@ -10,7 +10,7 @@ export const answers: Answers = {
   lang: 'sv'
 }
 
-export const budget: Budget = {
+export const svBudget: Budget = {
   amount: {
     personnel: '300',
     material: '420',
@@ -32,11 +32,12 @@ export const budget: Budget = {
   selfFinancing: '1',
 }
 
-export const svBudjettimuutoshakemusTest = budjettimuutoshakemusTest.extend({
-  budget: async ({}, use) => {
-    await use(budget)
-  },
-  answers: async ({}, use) => {
-    await use(answers)
-  }
+type SVBudjettimuutoshakemusFixtures = {
+  answers: Answers
+  budget: Budget
+}
+
+export const svBudjettimuutoshakemusTest = budjettimuutoshakemusTest.extend<SVBudjettimuutoshakemusFixtures>({
+  budget: svBudget,
+  answers: svAnswers,
 })

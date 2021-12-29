@@ -24,7 +24,7 @@ const muutoshakemus1: MuutoshakemusValues = {
 test.setTimeout(180000)
 
 test('When muutoshakemus enabled haku has been published, a hakemus has been submitted, and päätös has been sent', async ({
-  page, avustushakuID, hakemus: {hakemusID}, context, hakuProps, answers
+  page, avustushakuID, acceptedHakemus: {hakemusID}, context, hakuProps, answers
 }) => {
   await test.step('hakija gets the correct email content', async () => {
     const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)

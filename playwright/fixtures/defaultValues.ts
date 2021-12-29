@@ -3,16 +3,19 @@ import moment from 'moment'
 
 import { HakuProps, parseDate } from '../pages/hakujenHallintaPage'
 import { KoodienhallintaPage } from '../pages/koodienHallintaPage'
+import { answers } from '../utils/constants'
 import { randomAsiatunnus, randomString } from '../utils/random'
-import { VaCodeValues } from '../utils/types'
+import { Answers, VaCodeValues } from '../utils/types'
 import { switchUserIdentityTo } from '../utils/util'
 
 type DefaultValueFixtures = {
   codes: VaCodeValues
   hakuProps: HakuProps
+  answers: Answers
 }
 
 export const defaultValues = test.extend<DefaultValueFixtures>({
+  answers,
   codes: async ({page}, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 20_000)
 

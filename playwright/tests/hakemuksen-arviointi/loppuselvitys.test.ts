@@ -32,7 +32,7 @@ test.setTimeout(400000)
 const sendLoppuselvitysAsiatarkastamattaNotifications = () =>
   axios.post(`${VIRKAILIJA_URL}/api/test/send-loppuselvitys-asiatarkastamatta-notifications`)
 
-test('Loppuselvitys tab in hakemuksen arviointi should have link to correct loppuselvitys form for the hakemus', async ({page, avustushakuID, hakemus: {hakemusID}}) => {
+test('Loppuselvitys tab in hakemuksen arviointi should have link to correct loppuselvitys form for the hakemus', async ({page, avustushakuID, acceptedHakemus: {hakemusID}}) => {
   const loppuselvitysPage = LoppuselvitysPage(page)
 
   await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
@@ -48,7 +48,7 @@ test('Loppuselvitys tab in hakemuksen arviointi should have link to correct lopp
   await loppuselvitysFormPage.close()
 })
 
-test('virkailija sees loppuselvitys answers', async ({page, avustushakuID, hakemus: {hakemusID}, loppuselvitys: {loppuselvitysFormFilled}}) => {
+test('virkailija sees loppuselvitys answers', async ({page, avustushakuID, acceptedHakemus: {hakemusID}, loppuselvitys: {loppuselvitysFormFilled}}) => {
   expect(loppuselvitysFormFilled)
   const loppuselvitysPage = LoppuselvitysPage(page)
   await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
@@ -68,7 +68,7 @@ test('virkailija sees loppuselvitys answers', async ({page, avustushakuID, hakem
   expect(await page.innerText('#preview-container-loppuselvitys #textArea-4')).toEqual('Lisätietoja')
 })
 
-test('virkailija can not accept loppuselvitys while it is not verified', async ({page, avustushakuID, hakemus: {hakemusID}, loppuselvitys: {loppuselvitysFormFilled}}) => {
+test('virkailija can not accept loppuselvitys while it is not verified', async ({page, avustushakuID, acceptedHakemus: {hakemusID}, loppuselvitys: {loppuselvitysFormFilled}}) => {
   expect(loppuselvitysFormFilled)
   const loppuselvitysPage = LoppuselvitysPage(page)
   await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
@@ -87,7 +87,7 @@ test('loppuselvitys-asiatarkastamatta notification is sent to virkailija', async
   expect(loppuselvitysAsiatarkastamattaNotification?.formatted).toContain(`${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/`)
 })
 
-test('does not show asiatarkastus to a virkailija who is not valmistelija', async ({page, avustushakuID, loppuselvitys: {loppuselvitysFormFilled}, hakemus: {hakemusID}}) => {
+test('does not show asiatarkastus to a virkailija who is not valmistelija', async ({page, avustushakuID, loppuselvitys: {loppuselvitysFormFilled}, acceptedHakemus: {hakemusID}}) => {
   expect(loppuselvitysFormFilled)
   const loppuselvitysPage = LoppuselvitysPage(page)
   await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
@@ -96,7 +96,7 @@ test('does not show asiatarkastus to a virkailija who is not valmistelija', asyn
   expect(await countElements(page, "button[name=submit-verification]")).toEqual(0)
 })
 
-test('shows asiatarkastus to pääkäyttäjä who is not valmistelija', async ({page, avustushakuID, loppuselvitys: {loppuselvitysFormFilled}, hakemus: {hakemusID}}) => {
+test('shows asiatarkastus to pääkäyttäjä who is not valmistelija', async ({page, avustushakuID, loppuselvitys: {loppuselvitysFormFilled}, acceptedHakemus: {hakemusID}}) => {
   expect(loppuselvitysFormFilled)
   const loppuselvitysPage = LoppuselvitysPage(page)
   await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
@@ -113,7 +113,7 @@ test('hakija can not edit loppuselvitys after information has been verified', as
   expect(await page.isHidden('textarea[id="textArea-0"]'))
 })
 
-test('information verification is shown', async ({page, avustushakuID, hakemus: {hakemusID}, asiatarkastus: {asiatarkastettu}}) => {
+test('information verification is shown', async ({page, avustushakuID, acceptedHakemus: {hakemusID}, asiatarkastus: {asiatarkastettu}}) => {
   const textareaSelector = 'textarea[name="information-verification"]'
   expect(asiatarkastettu)
   const loppuselvitysPage = LoppuselvitysPage(page)

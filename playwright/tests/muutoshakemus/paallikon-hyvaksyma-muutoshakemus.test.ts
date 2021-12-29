@@ -40,7 +40,7 @@ test.beforeAll(async () => {
 const sisaltomuutosPerustelut = 'Muutamme kaiken muuttamisen ilosta'
 
 test('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen, hyvaksyjaksi tulee hyvaksyja, esittelijaksi ukotettu valmistelija ja lisatietoja osioon tulee ukotettu valmistelija',
-  async ({page, avustushakuID, hakemus: {hakemusID}}) => {
+  async ({page, avustushakuID, acceptedHakemus: {hakemusID}}) => {
   const user = 'Matti'
   const hakujenHallintaPage = new HakujenHallintaPage(page)
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)

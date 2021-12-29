@@ -4,7 +4,7 @@ import moment from "moment"
 
 import { getAllEmails } from "../../utils/emails"
 import { VIRKAILIJA_URL } from "../../utils/constants"
-import { hakemusTest } from "../../fixtures/hakemusTest"
+import { avustushakuTest } from "../../fixtures/avustushakuTest"
 import { HakijaAvustusHakuPage } from "../../pages/hakijaAvustusHakuPage"
 import { randomString } from "../../utils/random"
 
@@ -12,13 +12,13 @@ const sendHakuaikaPaattymassaNotifications = () =>
   axios.post(`${VIRKAILIJA_URL}/api/test/send-hakuaika-paattymassa-notifications`)
 
 type HakuaikaPaattymassaFixtures = {
-  hakemusDetails: {
+  filledHakemus: {
     email: string
   }
 }
 
-const hakuaikaPaattymassaTest = hakemusTest.extend<HakuaikaPaattymassaFixtures>({
-  hakemusDetails: async ({avustushakuID, page, answers}, use, testInfo) => {
+const hakuaikaPaattymassaTest = avustushakuTest.extend<HakuaikaPaattymassaFixtures>({
+  filledHakemus: async ({avustushakuID, page, answers}, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 30_000)
 
     const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
@@ -45,14 +45,14 @@ test.describe('When avustushaku is closing tomorrow', () => {
     }
   })
 
-  hakuaikaPaattymassaTest("sends an email to those whose hakemus is expiring tomorrow", async ({page, hakemusDetails, hakuProps}) => {
+  hakuaikaPaattymassaTest("sends an email to those whose hakemus is expiring tomorrow", async ({page, filledHakemus, hakuProps}) => {
     await sendHakuaikaPaattymassaNotifications()
     await page.waitForTimeout(5000)
 
     const emails = await getAllEmails('hakuaika-paattymassa')
     const endDate = moment(hakuProps.hakuaikaEnd).format('D.M.YYYY')
     const expectedEmail = expect.objectContaining({
-      'to-address': [hakemusDetails.email],
+      'to-address': [filledHakemus.email],
       formatted: expect.stringContaining(`hakuaika päättyy ${endDate}`),
     })
     expect(emails).toContainEqual(expectedEmail)
@@ -73,13 +73,13 @@ test.describe('When avustushaku is closing later than tomorrow', () => {
     }
   })
 
-  hakuaikaPaattymassaTest("does not send an e-mail", async ({page, hakemusDetails}) => {
+  hakuaikaPaattymassaTest("does not send an e-mail", async ({page, filledHakemus}) => {
     await sendHakuaikaPaattymassaNotifications()
     await page.waitForTimeout(5000)
 
     const emails = await getAllEmails('hakuaika-paattymassa')
     const expectedEmail = expect.objectContaining({
-      'to-address': [hakemusDetails.email],
+      'to-address': [filledHakemus.email],
     })
     expect(emails).not.toContainEqual(expectedEmail)
   })

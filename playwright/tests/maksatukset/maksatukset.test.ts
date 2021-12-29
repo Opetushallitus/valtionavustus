@@ -47,7 +47,7 @@ export async function removeStoredPitkäviiteFromAllAvustushakuPayments(avustush
 
 
 test.describe.parallel('Maksatukset', () => {
-  correctOVTTest('uses correct OVT when the operational unit is Palvelukeskus', async ({page, avustushakuID, hakemus: {hakemusID}, codes: codeValues}) => {
+  correctOVTTest('uses correct OVT when the operational unit is Palvelukeskus', async ({page, avustushakuID, acceptedHakemus: {hakemusID}, codes: codeValues}) => {
     const maksatuksetPage = MaksatuksetPage(page)
     await maksatuksetPage.goto(avustushakuID)
 
@@ -91,7 +91,7 @@ test.describe.parallel('Maksatukset', () => {
     expect(maksatukset).toContainEqual(maksatuksetPage.getExpectedPaymentXML(codeValues.project, codeValues.operation, codeValues.operationalUnit, pitkaviite, `${registerNumber}_1`, dueDate, '00372769790122'))
   })
 
-  test('work with pitkaviite without contact person name', async ({page, avustushakuID, hakemus: {hakemusID}}) => {
+  test('work with pitkaviite without contact person name', async ({page, avustushakuID, acceptedHakemus: {hakemusID}}) => {
     const maksatuksetPage = MaksatuksetPage(page)
     await maksatuksetPage.goto(avustushakuID)
 
@@ -131,7 +131,7 @@ test.describe.parallel('Maksatukset', () => {
     expect(await maksatuksetPage.getBatchStatus(1)).toEqual("Maksettu")
   })
 
-  test('work with pitkaviite with contact person name', async ({page, avustushakuID, hakemus: {hakemusID}, codes: { project, operation, operationalUnit}}) => {
+  test('work with pitkaviite with contact person name', async ({page, avustushakuID, acceptedHakemus: {hakemusID}, codes: { project, operation, operationalUnit}}) => {
     const maksatuksetPage = MaksatuksetPage(page)
     await maksatuksetPage.goto(avustushakuID)
 

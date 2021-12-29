@@ -20,7 +20,7 @@ const talousarvio = defaultBudget.amount
 const budjettimuutosPerustelut = "Ajat muuttuu, niin se vaan on"
 
 const test = budjettimuutoshakemusTest.extend<{hakemustenArviointiPage: HakemustenArviointiPage}>({
-  hakemustenArviointiPage: async ({hakemus: {hakemusID}, avustushakuID, page}, use) => {
+  hakemustenArviointiPage: async ({acceptedHakemus: {hakemusID}, avustushakuID, page}, use) => {
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
     await hakijaMuutoshakemusPage.navigate(hakemusID)
     await hakijaMuutoshakemusPage.clickHaenSisaltomuutosta()

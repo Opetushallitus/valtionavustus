@@ -6,7 +6,7 @@ import {HakemustenArviointiPage} from "../../pages/hakemustenArviointiPage";
 const sisaltomuutosPerustelut = 'Muutamme kaiken muuttamisen ilosta'
 
 const test = muutoshakemusTest.extend<{hakemustenArviointiPage: HakemustenArviointiPage}>({
-  hakemustenArviointiPage: async ({page, hakemus: {hakemusID}, avustushakuID}, use) => {
+  hakemustenArviointiPage: async ({page, acceptedHakemus: {hakemusID}, avustushakuID}, use) => {
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
     await hakijaMuutoshakemusPage.navigate(hakemusID)
     await hakijaMuutoshakemusPage.clickHaenSisaltomuutosta()

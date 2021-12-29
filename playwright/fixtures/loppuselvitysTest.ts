@@ -23,7 +23,7 @@ export interface LoppuselvitysFixtures {
 }
 
 export const loppuselvitysTest = muutoshakemusTest.extend<LoppuselvitysFixtures>({
-  loppuselvitys: async ({page, avustushakuID, hakemus: {hakemusID}}, use) => {
+  loppuselvitys: async ({page, avustushakuID, acceptedHakemus: {hakemusID}}, use) => {
     const loppuselvitysPage = LoppuselvitysPage(page)
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
     const loppuselvitysFormUrl = await page.getAttribute('[data-test-id="selvitys-link"]', 'href')
@@ -60,7 +60,7 @@ export const loppuselvitysTest = muutoshakemusTest.extend<LoppuselvitysFixtures>
       loppuselvitysFormFilled: true
     })
   },
-  asiatarkastus: async ({page, avustushakuID, hakemus: {hakemusID}, loppuselvitys: {loppuselvitysFormFilled}}, use) => {
+  asiatarkastus: async ({page, avustushakuID, acceptedHakemus: {hakemusID}, loppuselvitys: {loppuselvitysFormFilled}}, use) => {
     expect(loppuselvitysFormFilled)
     const loppuselvitysPage = LoppuselvitysPage(page)
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)

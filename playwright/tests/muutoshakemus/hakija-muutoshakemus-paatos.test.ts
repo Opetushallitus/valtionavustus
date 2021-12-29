@@ -64,7 +64,7 @@ const acceptedBudget: BudgetAmount = {
 
 const test = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixtures & {hakijaMuutoshakemusPaatosPage: HakijaMuutoshakemusPaatosPage}>({
   budget,
-  hakijaMuutoshakemusPaatosPage: async ({page, hakemus: {hakemusID}, avustushakuID}, use) => {
+  hakijaMuutoshakemusPaatosPage: async ({page, acceptedHakemus: {hakemusID}, avustushakuID}, use) => {
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
     await hakijaMuutoshakemusPage.navigate(hakemusID)
     await hakijaMuutoshakemusPage.fillJatkoaikaValues(jatkoaika)
@@ -198,7 +198,7 @@ const svJatkoaika = {
 
 const svTest = svBudjettimuutoshakemusTest.extend<{hakijaMuutoshakemusPaatosPage: HakijaMuutoshakemusPaatosPage}>({
   budget: svBudget,
-  hakijaMuutoshakemusPaatosPage: async ({page, avustushakuID, hakemus: {hakemusID}}, use) => {
+  hakijaMuutoshakemusPaatosPage: async ({page, avustushakuID, acceptedHakemus: {hakemusID}}, use) => {
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
     await hakijaMuutoshakemusPage.navigate(hakemusID)
     await hakijaMuutoshakemusPage.fillJatkoaikaValues(svJatkoaika)

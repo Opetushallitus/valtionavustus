@@ -2,16 +2,16 @@ import {expect} from "@playwright/test"
 import { Page } from "playwright"
 import { URLSearchParams } from "url"
 
-import {hakemusTest as test} from "../fixtures/hakemusTest"
+import {muutoshakemusTest as test} from "../fixtures/muutoshakemusTest"
 import {HakemustenArviointiPage} from "../pages/hakemustenArviointiPage"
 import { HakijaAvustusHakuPage } from "../pages/hakijaAvustusHakuPage"
 import {HakujenHallintaPage} from "../pages/hakujenHallintaPage"
 import { waitForElementWithText } from "../utils/util"
 
-test('virkailija can edit hakemus', async ({page, avustushakuID, hakemus}) => {
+test('virkailija can edit hakemus', async ({page, avustushakuID, submittedHakemus: hakemus}) => {
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   const hakujenHallintaPage = new HakujenHallintaPage(page)
-  hakemus.userKey = hakemus.userKey // here to ensure we have a hakemus :)
+  hakemus.userKey = hakemus.userKey // here to ensure we have a hakemus :-)
 
   const assertTokens = (assertedPage: Page) => {
     const tokens = new URLSearchParams(assertedPage.url())
@@ -65,7 +65,7 @@ test('virkailija can edit hakemus', async ({page, avustushakuID, hakemus}) => {
   })
 })
 
-test('hakija can edit hakemus', async ({page, avustushakuID, hakemus}) => {
+test('hakija can edit hakemus', async ({page, avustushakuID, submittedHakemus: hakemus}) => {
   const hakemusPage = new HakijaAvustusHakuPage(page)
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   const hakujenHallintaPage = new HakujenHallintaPage(page)
