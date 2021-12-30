@@ -183,8 +183,8 @@
         mail-subject   (get-in mail-titles [:hakuaika-paattymassa lang])
         template       (get-in mail-templates [:hakuaika-paattymassa lang])
         to             (:contact-email hakemus)
-        paattymispaiva (datetime/date-string (datetime/from-sql-time (:paattymispaiva hakemus)))
-        paattymisaika  (datetime/time-string (datetime/from-sql-time (:paattymispaiva hakemus)))
+        paattymispaiva (datetime/date-string (datetime/parse (:paattymispaiva hakemus)))
+        paattymisaika  (datetime/time-string (datetime/parse (:paattymispaiva hakemus)))
 
         url            (email/generate-url (:avustushaku-id hakemus) lang lang-str (:user-key hakemus) false) ]
     (log/info "sending to" to)
