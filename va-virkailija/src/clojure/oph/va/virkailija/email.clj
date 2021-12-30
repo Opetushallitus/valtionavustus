@@ -25,8 +25,8 @@
                                :sv "Mellanredovisningnen redo att fyllas"}
    :loppuselvitys-notification {:fi "Loppuselvitys täytettävissä haulle"
                                 :sv "Slutredovisningen redo att fyllas"}
-   :hakuaika-paattymassa {:fi "Hakuaika päättymässä"
-                          :sv "Hakuaika päättymässä"}
+   :hakuaika-paattymassa {:fi "Hakuaika on päättymässä"
+                          :sv "Hakuaika on päättymässä"}
    :payments-info-notification
    {:fi "Automaattinen viesti - Valtionavustuserän '%s' maksatus suoritettu"
     :sv "Automatiskt meddelande - Statsunderstöd '%s' betald"}})

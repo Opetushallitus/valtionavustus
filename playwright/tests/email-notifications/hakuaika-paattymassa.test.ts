@@ -73,7 +73,7 @@ test.describe('When avustushaku is closing tomorrow', () => {
 
     expect(email['to-address']).toHaveLength(1)
     expect(email['to-address']).toContain(filledHakemus.email)
-    expect(email.subject).toEqual("Hakuaika päättymässä")
+    expect(email.subject).toEqual("Hakuaika on päättymässä")
 
     const endDate = moment(hakuProps.hakuaikaEnd).format('D.M.YYYY')
     expect(email.formatted).toEqual(`Hyvä vastaanottaja,
@@ -97,7 +97,7 @@ Mikäli olette päättäneet jättää hakemuksen lähettämättä, on tämä vi
 
     expect(email['to-address']).toHaveLength(1)
     expect(email['to-address']).toContain(filledHakemus.email)
-    expect(email.subject).toEqual("Hakuaika päättymässä") // TODO Odottaa käännöstä
+    expect(email.subject).toEqual("Hakuaika on päättymässä") // TODO Odottaa käännöstä
 
     const endDate = moment(hakuProps.hakuaikaEnd).format('D.M.YYYY')
     expect(email.formatted).toEqual(`Bästa mottagare,
