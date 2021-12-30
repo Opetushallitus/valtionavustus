@@ -505,6 +505,9 @@
                              (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))
                        (not-found))))
 
+(defn sql-constraint-exception? [ex constraint-name]
+  (-> ex .getCause .getServerErrorMessage .getConstraint (= constraint-name)))
+
 (defn- post-init-selvitysform []
   (compojure-api/POST "/:avustushaku-id/init-selvitysform/:selvitys-type" []
                       :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
@@ -518,9 +521,14 @@
                           (let [created-form (hakija-api/create-form form (datetime/from-sql-time (:created_at avustushaku)))
                                 form-id (:id created-form)
                                 loppuselvitys (= selvitys-type "loppuselvitys")]
-                            (if loppuselvitys
-                              (hakija-api/update-avustushaku-form-loppuselvitys avustushaku-id form-id)
-                              (hakija-api/update-avustushaku-form-valiselvitys avustushaku-id form-id))
+                            (try
+                              (if loppuselvitys
+                                (hakija-api/update-avustushaku-form-loppuselvitys avustushaku-id form-id)
+                                (hakija-api/update-avustushaku-form-valiselvitys avustushaku-id form-id))
+                              (catch java.sql.BatchUpdateException ex
+                                (if (sql-constraint-exception? ex "nn_alkamispaiva")
+                                  (log/info "Ignoring nn_alkamispaiva constraint violation")
+                                  (throw ex))))
                             (ok (without-id created-form)))
                           (let [found-form (hakija-api/get-form-by-id form-keyword-value)]
                             (ok (without-id found-form)))))))
