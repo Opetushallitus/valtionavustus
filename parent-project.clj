@@ -1,4 +1,4 @@
-(def log4j-version "2.17.0")
+(def log4j-version "2.17.1")
 
 (defproject oph-va/root "0.1.0-SNAPSHOT"
   :description "OPH Valtionavustus"
