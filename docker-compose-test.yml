@@ -8,6 +8,7 @@ services:
     environment:
       log4j_smtp_port: "25"
       log4j_smtp_host: "fakesmtp"
+      JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
     volumes:
       - /dev/urandom:/dev/random
     ports:
@@ -31,6 +32,7 @@ services:
     environment:
       log4j_smtp_port: "25"
       log4j_smtp_host: "fakesmtp"
+      JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
     volumes:
       - /dev/urandom:/dev/random
     ports:

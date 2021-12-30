@@ -29,6 +29,7 @@ services:
       config: "/app/va-virkailija/config/playwright-test.edn"
       log4j_smtp_port: "25"
       log4j_smtp_host: "fakesmtp"
+      JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
     volumes:
       - /dev/urandom:/dev/random
     ports:
@@ -59,6 +60,7 @@ services:
       config: "/app/va-hakija/config/playwright-test.edn"
       log4j_smtp_port: "25"
       log4j_smtp_host: "fakesmtp"
+      JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
     volumes:
       - /dev/urandom:/dev/random
     ports:
