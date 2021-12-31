@@ -75,7 +75,7 @@ test.describe('When avustushaku is closing tomorrow', () => {
     expect(email['to-address']).toContain(filledHakemus.email)
     expect(email.subject).toEqual("Hakuaika on päättymässä")
 
-    const endDate = moment(hakuProps.hakuaikaEnd).format('D.M.YYYY')
+    const endDate = moment(hakuProps.hakuaikaEnd).format('DD.MM.YYYY')
     expect(email.formatted).toEqual(`Hyvä vastaanottaja,
 
 teillä on keskeneräinen hakemus valtionavustuksessa ${hakuProps.avustushakuName}. Huomaa, että avustuksen hakuaika päättyy ${endDate} klo 12.00.
@@ -99,7 +99,7 @@ Mikäli olette päättäneet jättää hakemuksen lähettämättä, on tämä vi
     expect(email['to-address']).toContain(filledHakemus.email)
     expect(email.subject).toEqual("Hakuaika on päättymässä") // TODO Odottaa käännöstä
 
-    const endDate = moment(hakuProps.hakuaikaEnd).format('D.M.YYYY')
+    const endDate = moment(hakuProps.hakuaikaEnd).format('DD.MM.YYYY')
     expect(email.formatted).toEqual(`Bästa mottagare,
 
 ni har en halvfärdig ansökan om statsunderstöd ${hakuProps.avustushakuName + ' på svenska'}. Observera att ansökningstiden för understödet avslutas ${endDate} kl. 12.00.
