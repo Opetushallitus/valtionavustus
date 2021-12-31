@@ -36,6 +36,7 @@ jenkins_http_host: "{{ ansible_nodename }}"
 jenkins_http_port: 8000
 
 jenkins_plugins:
+  - ansicolor
   - github
   - git
   - greenballs
