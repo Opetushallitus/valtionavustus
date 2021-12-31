@@ -92,7 +92,8 @@
             AND hv.status_loppuselvitys = 'missing'
             -- There are a few nulls and empty strings for some reason
             AND avustushaut.loppuselvitysdate IS NOT NULL AND avustushaut.loppuselvitysdate != ''
-            AND ABS(TO_DATE(avustushaut.loppuselvitysdate, 'DD.MM.YYYY')::date - CURRENT_DATE::date) <= 14"
+            AND to_date(avustushaut.loppuselvitysdate, 'DD.MM.YYYY')::date
+              BETWEEN current_timestamp::date AND current_timestamp::date + '14 days'::interval"
          []))
 
 (defn send-loppuselvitys-palauttamatta-notifications []

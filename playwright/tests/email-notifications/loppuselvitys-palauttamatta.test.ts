@@ -17,6 +17,16 @@ loppuselvitysTest('reminder email is not sent for hakemus with loppuselvitys dea
   expect(emailsAfter).toEqual(emailsBefore)
 })
 
+loppuselvitysTest('reminder email is not sent for avustushaku with loppuselvitys deadline in the past', async ({page, avustushakuID, acceptedHakemus: { hakemusID }}) => {
+  const loppuselvitysdate = moment().subtract(1, 'days').format('DD.MM.YYYY')
+  await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
+
+  const emailsBefore = await getLoppuselvitysPalauttamattaEmails(hakemusID)
+  await sendLoppuselvitysPalauttamattaNotifications(page)
+  const emailsAfter = await getLoppuselvitysPalauttamattaEmails(hakemusID)
+  expect(emailsAfter).toEqual(emailsBefore)
+})
+
 loppuselvitysTest('reminder email is sent for hakemus with loppuselvitys deadline in next 14 days', async ({page, hakuProps, avustushakuID, acceptedHakemus: { hakemusID, userKey }}) => {
   const loppuselvitysdate = moment().add(14, 'days').format('DD.MM.YYYY')
   await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
