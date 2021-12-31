@@ -1,5 +1,4 @@
-import axios from "axios"
-import { expect } from "@playwright/test"
+import { APIRequestContext, expect } from "@playwright/test"
 
 import moment from 'moment'
 import { loppuselvitysTest as test } from "../../fixtures/loppuselvitysTest";
@@ -29,8 +28,8 @@ import { LoppuselvitysPage } from "../../pages/loppuselvitysPage"
 
 test.setTimeout(400000)
 
-const sendLoppuselvitysAsiatarkastamattaNotifications = () =>
-  axios.post(`${VIRKAILIJA_URL}/api/test/send-loppuselvitys-asiatarkastamatta-notifications`)
+const sendLoppuselvitysAsiatarkastamattaNotifications = (request: APIRequestContext) =>
+  request.post(`${VIRKAILIJA_URL}/api/test/send-loppuselvitys-asiatarkastamatta-notifications`)
 
 test('Loppuselvitys tab in hakemuksen arviointi should have link to correct loppuselvitys form for the hakemus', async ({page, avustushakuID, acceptedHakemus: {hakemusID}}) => {
   const loppuselvitysPage = LoppuselvitysPage(page)
@@ -75,10 +74,10 @@ test('virkailija can not accept loppuselvitys while it is not verified', async (
   expect(await countElements(page, '[data-test-id="taloustarkastus-email"]')).toEqual(0)
 })
 
-test('loppuselvitys-asiatarkastamatta notification is sent to virkailija', async ({avustushakuID, loppuselvitys: {loppuselvitysFormFilled}}) => {
+test('loppuselvitys-asiatarkastamatta notification is sent to virkailija', async ({avustushakuID, loppuselvitys: {loppuselvitysFormFilled}, request}) => {
   expect(loppuselvitysFormFilled)
   const oldEmailCount = (await getAllEmails('loppuselvitys-asiatarkastamatta')).filter(e => e["to-address"].includes('santeri.horttanainen@reaktor.com')).length
-  await sendLoppuselvitysAsiatarkastamattaNotifications()
+  await sendLoppuselvitysAsiatarkastamattaNotifications(request)
 
   const emails = (await getAllEmails('loppuselvitys-asiatarkastamatta')).filter(e => e["to-address"].includes('santeri.horttanainen@reaktor.com'))
   expect(emails.length).toEqual(oldEmailCount + 1)
@@ -124,11 +123,11 @@ test('information verification is shown', async ({page, avustushakuID, acceptedH
   expect(moment(await page.innerText('[data-test-id=verified-at]'), 'D.M.YYYY [klo] H.mm').isSameOrBefore()).toBeTruthy()
 })
 
-test('loppuselvitys-asiatarkastamatta notification is not sent to virkailija anymore', async ({avustushakuID, asiatarkastus: { asiatarkastettu }}) => {
+test('loppuselvitys-asiatarkastamatta notification is not sent to virkailija anymore', async ({avustushakuID, asiatarkastus: { asiatarkastettu }, request}) => {
   expect(asiatarkastettu)
   const oldEmails = await getAllEmails('loppuselvitys-asiatarkastamatta')
   const oldEmailCount = oldEmails.filter(e => e["to-address"].includes('santeri.horttanainen@reaktor.com')).length
-  await sendLoppuselvitysAsiatarkastamattaNotifications()
+  await sendLoppuselvitysAsiatarkastamattaNotifications(request)
 
   const allEmails = await getAllEmails('loppuselvitys-asiatarkastamatta')
   const emails = allEmails.filter(e => e["to-address"].includes('santeri.horttanainen@reaktor.com'))

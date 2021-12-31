@@ -1,5 +1,4 @@
-import axios from "axios"
-import { expect, test } from "@playwright/test"
+import { expect, Page, test } from "@playwright/test"
 import moment from "moment"
 
 import { getAllEmails, getLastEmail } from "../../utils/emails"
@@ -8,8 +7,8 @@ import { HakijaAvustusHakuPage } from "../../pages/hakijaAvustusHakuPage"
 import { randomString } from "../../utils/random"
 import { muutoshakemusTest } from "../../fixtures/muutoshakemusTest"
 
-const sendHakuaikaPaattymassaNotifications = () =>
-  axios.post(`${VIRKAILIJA_URL}/api/test/send-hakuaika-paattymassa-notifications`)
+const sendHakuaikaPaattymassaNotifications = (page: Page) =>
+  page.request.post(`${VIRKAILIJA_URL}/api/test/send-hakuaika-paattymassa-notifications`)
 
 type HakuaikaPaattymassaFixtures = {
   filledHakemus: {
@@ -66,7 +65,7 @@ test.describe('When avustushaku is closing tomorrow', () => {
   })
 
   hakuaikaPaattymassaTest("sends an email to those whose hakemus is expiring tomorrow", async ({page, avustushakuID, filledHakemus, hakuProps}) => {
-    await sendHakuaikaPaattymassaNotifications()
+    await sendHakuaikaPaattymassaNotifications(page)
     await page.waitForTimeout(5000)
 
     const email = await getLastEmail('hakuaika-paattymassa')
@@ -90,7 +89,7 @@ Mikäli olette päättäneet jättää hakemuksen lähettämättä, on tämä vi
 
   hakuaikaPaattymassaTest("sends an email in swedish when hakemus is swedish", async ({page, avustushakuID, swedishHakemus, hakuProps}) => {
     const filledHakemus = swedishHakemus
-    await sendHakuaikaPaattymassaNotifications()
+    await sendHakuaikaPaattymassaNotifications(page)
     await page.waitForTimeout(5000)
 
     const email = await getLastEmail('hakuaika-paattymassa')
@@ -128,7 +127,7 @@ test.describe('When avustushaku is closing later than tomorrow', () => {
   })
 
   hakuaikaPaattymassaTest("does not send an e-mail", async ({page, filledHakemus}) => {
-    await sendHakuaikaPaattymassaNotifications()
+    await sendHakuaikaPaattymassaNotifications(page)
     await page.waitForTimeout(5000)
 
     const emails = await getAllEmails('hakuaika-paattymassa')

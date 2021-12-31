@@ -1,5 +1,4 @@
 import moment from "moment";
-import axios from 'axios'
 
 import { VIRKAILIJA_URL } from "./constants"
 import {Page} from "playwright";
@@ -67,7 +66,7 @@ function waitForElementWithAttribute(page: Page, attribute: string, attributeVal
 }
 
 export async function switchUserIdentityTo(page: Page, identity: string): Promise<void> {
-  await axios.post(`${VIRKAILIJA_URL}/api/test/set-fake-identity/${identity}`)
+  await page.request.post(`${VIRKAILIJA_URL}/api/test/set-fake-identity/${identity}`)
   await page.reload()
 }
 
