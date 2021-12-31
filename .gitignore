@@ -35,6 +35,5 @@ dist
 .package-lock.json.checksum
 git-HEAD.txt
 .python-version
-playwright-results/test-results/
-junit-playwright-js-unit.xml
+playwright-results/
 scripts/docker-compose

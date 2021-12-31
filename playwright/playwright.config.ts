@@ -29,8 +29,11 @@ const config: PlaywrightTestConfig = {
   reporter: [
     ['list'],
     ['junit', {
-      outputFile: 'playwright-results/junit-playwright-js-unit.xml'
-    }]
+      outputFile: 'playwright-results/junit-playwright-js-unit.xml',
+    }],
+    ['html', {
+      outputFolder: 'playwright-results/html-report/',
+    }],
   ]
 };
 
