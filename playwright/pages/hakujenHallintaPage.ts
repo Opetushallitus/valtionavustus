@@ -123,6 +123,11 @@ export class HakujenHallintaPage {
     ])
   }
 
+  async setLoppuselvitysDate(value: string) {
+    await this.page.fill('#loppuselvitysdate', value)
+    await this.page.keyboard.press('Tab')
+  }
+
   async sendPaatos(avustushakuID: number) {
     await clickElementWithText(this.page, "button", "Lähetä 1 päätöstä")
     await Promise.all([

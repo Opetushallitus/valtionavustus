@@ -27,6 +27,8 @@
                                 :sv "Slutredovisningen redo att fyllas"}
    :hakuaika-paattymassa {:fi "Hakuaika on päättymässä"
                           :sv "Hakuaika on päättymässä"}
+   :loppuselvitys-palauttamatta {:fi "Muistutus loppuselvityksen palauttamisesta"
+                                 :sv "Muistutus loppuselvityksen palauttamisesta"}
    :payments-info-notification
    {:fi "Automaattinen viesti - Valtionavustuserän '%s' maksatus suoritettu"
     :sv "Automatiskt meddelande - Statsunderstöd '%s' betald"}})
@@ -55,7 +57,8 @@
    :valiselvitys-tarkastamatta (email/load-template "email-templates/valiselvitys-tarkastamatta.fi")
    :hakuaika-paattymassa {:fi (email/load-template "email-templates/hakuaika-paattymassa.fi")
                           :sv (email/load-template "email-templates/hakuaika-paattymassa.sv")}
-   :loppuselvitys-palauttamatta (email/load-template "email-templates/loppuselvitys-palauttamatta.fi")})
+   :loppuselvitys-palauttamatta {:fi (email/load-template "email-templates/loppuselvitys-palauttamatta.fi")
+                                 :sv (email/load-template "email-templates/loppuselvitys-palauttamatta.sv")}})
 
 (defn mail-example [msg-type & [data]]
   {:content (render (:fi (msg-type mail-templates)) (if data data {}))
@@ -228,21 +231,20 @@
                               :list list}
                              (partial render template))))
 
-(defn send-loppuselvitys-palauttamatta [to avustushaku hakemus]
-  (let [lang     :fi
-        template (:loppuselvitys-palauttamatta mail-templates)
-        avustushaku-name (get-in avustushaku [:content :name lang])
-        loppuselvityslomake-url (loppuselvitys-url (:id avustushaku) (:user_key hakemus) lang)
-        ]
+(defn send-loppuselvitys-palauttamatta [notification]
+  (let [lang           (keyword (:language notification))
+        mail-subject   (get-in mail-titles [:loppuselvitys-palauttamatta lang])
+        template       (get-in mail-templates [:loppuselvitys-palauttamatta lang])]
     (email/try-send-msg-once {:type :loppuselvitys-palauttamatta
+                              :hakemus-id (:hakemus-id notification)
                               :lang lang
                               :from (-> email/smtp-config :from lang)
                               :sender (-> email/smtp-config :sender)
-                              :to to
-                              :subject "Loppuselvitys palauttamatta"
-                              :avustushaku-name avustushaku-name}
-                              :loppuselvitysdate (:loppuselvitysdate avustushaku)
-                              :loppuselvityslomake-url loppuselvityslomake-url
+                              :to [(:contact-email notification)]
+                              :subject mail-subject
+                              :avustushaku-name (:avustushaku-name notification)
+                              :loppuselvitysdate (:loppuselvitysdate notification)
+                              :url (loppuselvitys-url (:avustushaku-id notification) (:user-key notification) lang)}
                              (partial render template))))
 
 (defn send-paatos! [to avustushaku hakemus reply-to]

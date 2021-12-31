@@ -74,28 +74,30 @@
       (email/send-valiselvitys-tarkastamatta [(key keyval)] (val keyval)))))
 
 (defn- get-loppuselvitys-palauttamatta []
-  (query "SELECT hakemukset.*, normalized_hakemus.contact_email
-          FROM hakemukset 
-          JOIN arviot ON hakemukset.id = arviot.hakemus_id 
-          JOIN avustushaut ON hakemukset.avustushaku = avustushaut.id 
-          JOIN normalized_hakemus ON hakemukset.id = normalized_hakemus.hakemus_id
-          WHERE arviot.status = 'accepted'
-            AND hakemukset.status_loppuselvitys = 'missing'
-            AND ABS(TO_DATE(loppuselvitysdate, 'DD.MM.YYYY')::date - CURRENT_DATE::date) <= 14"
+  (query "SELECT
+            avustushaut.id as avustushaku_id,
+            h.hakemus_id,
+            hv.language,
+            jsonb_extract_path_text(avustushaut.content, 'name', hv.language) as avustushaku_name,
+            hv.user_key,
+            avustushaut.loppuselvitysdate,
+            h.contact_email
+          FROM hakija.hakemukset hv
+          JOIN virkailija.arviot ON hv.id = arviot.hakemus_id
+          JOIN hakija.avustushaut ON hv.avustushaku = avustushaut.id
+          JOIN virkailija.normalized_hakemus h ON hv.id = h.hakemus_id
+          WHERE hv.hakemus_type = 'hakemus'
+            AND hv.version_closed IS NULL
+            AND arviot.status = 'accepted'
+            AND hv.status_loppuselvitys = 'missing'
+            -- There are a few nulls and empty strings for some reason
+            AND avustushaut.loppuselvitysdate IS NOT NULL AND avustushaut.loppuselvitysdate != ''
+            AND ABS(TO_DATE(avustushaut.loppuselvitysdate, 'DD.MM.YYYY')::date - CURRENT_DATE::date) <= 14"
          []))
 
-(defn- get-avustushaku [id]
-  (query "SELECT * from avustushaut
-          WHERE id = ?"
-         [id]))
-
 (defn send-loppuselvitys-palauttamatta-notifications []
-  (let [hakemukset-list    (get-loppuselvitys-palauttamatta)
-        loppuselvityksia-palauttamatta (count hakemukset-list)]
-    (when (>= loppuselvityksia-palauttamatta 1)
-      (log/info "sending email to" loppuselvityksia-palauttamatta " contacts")
-      (doseq [hakemus hakemukset-list]
-        (email/send-loppuselvitys-palauttamatta
-          (:contact-email hakemus)
-          (get-avustushaku (:avustushaku hakemus)) 
-          hakemus)))))
+  (let [notifications (get-loppuselvitys-palauttamatta)]
+    (when (>= (count notifications) 1)
+      (log/info "sending email to" (count notifications) " contacts")
+      (doseq [notification notifications]
+        (email/send-loppuselvitys-palauttamatta notification)))))
