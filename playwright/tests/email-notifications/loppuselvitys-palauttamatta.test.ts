@@ -8,15 +8,9 @@ import { lastOrFail } from '../../../test/test-util'
 import { Answers } from '../../utils/types'
 
 loppuselvitysTest('reminder email is not sent for hakemus with loppuselvitys deadline 15 or more days in the future', async ({page, avustushakuID, acceptedHakemus: { hakemusID }}) => {
-  const hakujenHallinta = new HakujenHallintaPage(page)
-  async function setLoppuselvitysDate(value: string) {
-    await hakujenHallinta.navigateToPaatos(avustushakuID)
-    await hakujenHallinta.setLoppuselvitysDate(value)
-    await hakujenHallinta.waitForSave()
-  }
-
   const loppuselvitysdate = moment().add(15, 'days').format('DD.MM.YYYY')
-  await setLoppuselvitysDate(loppuselvitysdate)
+  await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
+
   const emailsBefore = await getLoppuselvitysPalauttamattaEmails(hakemusID)
   await sendLoppuselvitysPalauttamattaNotifications(page)
   const emailsAfter = await getLoppuselvitysPalauttamattaEmails(hakemusID)
@@ -24,22 +18,9 @@ loppuselvitysTest('reminder email is not sent for hakemus with loppuselvitys dea
 })
 
 loppuselvitysTest('reminder email is sent for hakemus with loppuselvitys deadline in next 14 days', async ({page, hakuProps, avustushakuID, acceptedHakemus: { hakemusID, userKey }}) => {
-  const hakujenHallinta = new HakujenHallintaPage(page)
-  async function setLoppuselvitysDate(value: string) {
-    await hakujenHallinta.navigateToPaatos(avustushakuID)
-    await hakujenHallinta.setLoppuselvitysDate(value)
-    await hakujenHallinta.waitForSave()
-  }
-
-  const currentYear = (new Date().getFullYear())
-  await setLoppuselvitysDate(`01.01.${currentYear + 100}`)
-  const emailsBefore = await getLoppuselvitysPalauttamattaEmails(hakemusID)
-  await sendLoppuselvitysPalauttamattaNotifications(page)
-  const emailsAfter = await getLoppuselvitysPalauttamattaEmails(hakemusID)
-  expect(emailsAfter).toEqual(emailsBefore)
-
   const loppuselvitysdate = moment().add(14, 'days').format('DD.MM.YYYY')
-  await setLoppuselvitysDate(loppuselvitysdate)
+  await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
+
   await sendLoppuselvitysPalauttamattaNotifications(page)
   const email = lastOrFail(await getLoppuselvitysPalauttamattaEmails(hakemusID))
   expect(email['to-address']).toHaveLength(1)
@@ -57,22 +38,9 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
 loppuselvitysTest.extend<{ answers: Answers }>({
   answers: swedishAnswers,
 })('reminder mail is sent in swedish for swedish hakemus', async ({page, hakuProps, avustushakuID, acceptedHakemus: { hakemusID, userKey }}) => {
-  const hakujenHallinta = new HakujenHallintaPage(page)
-  async function setLoppuselvitysDate(value: string) {
-    await hakujenHallinta.navigateToPaatos(avustushakuID)
-    await hakujenHallinta.setLoppuselvitysDate(value)
-    await hakujenHallinta.waitForSave()
-  }
-
-  const currentYear = (new Date().getFullYear())
-  await setLoppuselvitysDate(`01.01.${currentYear + 100}`)
-  const emailsBefore = await getLoppuselvitysPalauttamattaEmails(hakemusID)
-  await sendLoppuselvitysPalauttamattaNotifications(page)
-  const emailsAfter = await getLoppuselvitysPalauttamattaEmails(hakemusID)
-  expect(emailsAfter).toEqual(emailsBefore)
-
   const loppuselvitysdate = moment().add(14, 'days').format('DD.MM.YYYY')
-  await setLoppuselvitysDate(loppuselvitysdate)
+  await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
+
   await sendLoppuselvitysPalauttamattaNotifications(page)
   const email = lastOrFail(await getLoppuselvitysPalauttamattaEmails(hakemusID))
   expect(email['to-address']).toHaveLength(1)
@@ -89,3 +57,10 @@ Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid 
 
 const sendLoppuselvitysPalauttamattaNotifications = (page: Page) =>
   page.request.post(`${VIRKAILIJA_URL}/api/test/send-loppuselvitys-palauttamatta-notifications`, { failOnStatusCode: true })
+
+async function setLoppuselvitysDate(page: Page, avustushakuID: number, value: string) {
+  const hakujenHallinta = new HakujenHallintaPage(page)
+  await hakujenHallinta.navigateToPaatos(avustushakuID)
+  await hakujenHallinta.setLoppuselvitysDate(value)
+  await hakujenHallinta.waitForSave()
+}
