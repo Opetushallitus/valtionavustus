@@ -16,7 +16,8 @@ import queryString from 'query-string'
 import {
   fiLongDateTimeFormat,
   fiShortFormat,
-  isoFormat
+  isoFormat,
+  parseFinnishTimestamp
 } from 'va-common/web/va/i18n/dateformat'
 import {
   Avustushaku as BaseAvustushaku,
@@ -395,7 +396,7 @@ export default class HakujenHallintaController {
         throw Error(`Failed to find hakuaika ${fieldId}`)
       }
       const startOrEnd = hakuaika[1]
-      const newDate = moment(update.newValue, fiLongDateTimeFormat)
+      const newDate = parseFinnishTimestamp(update.newValue, fiLongDateTimeFormat)
       if(newDate.isSame(update.avustushaku.content.duration[startOrEnd])) {
         return state
       }

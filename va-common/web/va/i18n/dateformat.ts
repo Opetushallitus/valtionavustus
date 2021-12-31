@@ -15,6 +15,10 @@ export function parseDateString(str: string, _localizer: unknown): Date | undefi
   return date && date.isValid() ? date.toDate() : undefined
 }
 
+export function parseFinnishTimestamp(str: string, format: string): Moment {
+  return moment.tz(str, format, 'Europe/Helsinki')
+}
+
 export function parseDateStringToMoment(str: string | undefined | null): Moment | undefined {
   if(!str) return undefined
 
