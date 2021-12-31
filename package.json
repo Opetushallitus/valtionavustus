@@ -33,7 +33,7 @@
     "yup": "^0.29.3"
   },
   "devDependencies": {
-    "@playwright/test": "^1.15.2",
+    "@playwright/test": "^1.17.1",
     "@types/jest": "^27.0.2",
     "@types/lodash": "^4.14.162",
     "@types/node": "^16.10.3",
@@ -57,7 +57,7 @@
     "less-loader": "^10.2.0",
     "mocha": "^7.1.1",
     "mocha-junit-reporter": "^1.23.3",
-    "playwright": "^1.15.2",
+    "playwright": "^1.17.1",
     "puppeteer": "^10.4.0",
     "style-loader": "2.0.0",
     "ts-jest": "^27.0.5",
