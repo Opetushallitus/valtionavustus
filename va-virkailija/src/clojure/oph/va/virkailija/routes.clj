@@ -26,6 +26,7 @@
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.authentication :as authentication]
             [oph.va.virkailija.authorization :as authorization]
+            [oph.va.virkailija.fake-authentication :as fake-authentication]
             [oph.va.virkailija.rondo-scheduling :refer [handle-payment-response-xml]]
             [oph.va.virkailija.rondo-scheduling :refer [put-maksupalaute-to-maksatuspalvelu]]
             [oph.va.virkailija.rondo-scheduling :refer [processMaksupalaute]]
@@ -643,12 +644,10 @@
 (compojure-api/defroutes test-api-routes
   (compojure-api/POST "/set-fake-identity/:identity" []
     :path-params [identity :- s/Str]
-    (cond (= identity "valtionavustus") (authentication/set-fake-identity authentication/default-fake-admin-identity)
-          (= identity "paivipaakayttaja") (authentication/set-fake-identity authentication/fake-identity-paivi-paakayttaja)
-          (= identity "viivivirkailija") (authentication/set-fake-identity authentication/fake-identity-viivi-virkailija)
-          :else (throw (RuntimeException. (str "Invalid fake identity '" identity "'"))))
-    (ok {:ok "ok"}))
-
+    (if (fake-authentication/valid-fake-identity? identity)
+      (-> (ok {:ok "ok"})
+          (assoc :session {:fake-identity identity}))
+      (bad-request "Invalid fake identity")))
 
   (compojure-api/POST "/send-loppuselvitys-asiatarkastamatta-notifications" []
     :return {:ok s/Str}

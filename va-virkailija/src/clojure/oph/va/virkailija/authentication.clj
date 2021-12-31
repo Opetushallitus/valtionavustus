@@ -3,6 +3,7 @@
   (:require [oph.soresu.common.config :refer [config environment without-authentication?]]
             [oph.va.virkailija.cas :as cas]
             [oph.va.virkailija.va-users :as va-users]
+            [oph.va.virkailija.fake-authentication :as fake-authentication]
             [oph.common.background-job-supervisor :as job-supervisor]
             [clojure.core.async :refer [<! >!! alts! go chan timeout]]
             [clojure.tools.logging :as log])
@@ -74,50 +75,13 @@
       true)
     (log/warn "Login failed for CAS ticket " cas-ticket)))
 
-(def default-fake-admin-identity
-  {:email "santeri.horttanainen@reaktor.com"
-   :first-name "_"
-   :lang "fi"
-   :person-oid "1.2.246.562.24.15653262222"
-   :privileges ["va-admin"]
-   :surname "valtionavustus"
-   :username "valtionavustus"})
-
-(def fake-identity-paivi-paakayttaja
-  {:email "paivi.paakayttaja@example.com"
-   :first-name "Päivi"
-   :lang "fi"
-   :person-oid "1.2.246.562.24.99000000001"
-   :privileges ["va-admin"]
-   :surname "Pääkäyttäjä"
-   :username "paivipaakayttaja"})
-
-(def fake-identity-viivi-virkailija
-  {:email "viivi.virkailja@exmaple.com"
-   :first-name "Viivi"
-   :lang "fi"
-   :person-oid "1.2.246.562.24.99000000002"
-   :privileges ["va-user"]
-   :surname "Virkailija"
-   :username "viivivirkailija"})
-
-(def current-fake-identity (atom default-fake-admin-identity))
-;(def current-fake-identity (atom fake-identity-paivi-paakayttaja))
-;(def current-fake-identity (atom fake-identity-viivi-virkailija))
-
-(defn set-fake-identity [identity]
-  (reset! current-fake-identity identity))
-
-(defn reset-fake-identity []
-  (set-fake-identity default-fake-admin-identity))
-
-(defn- get-identity [cas-ticket]
+(defn- get-identity [session]
   (if (without-authentication?)
-      @current-fake-identity
-      (get-in @session-store [cas-ticket :identity])))
+      (fake-authentication/get-fake-identity session)
+      (get-in @session-store [(:cas-ticket session) :identity])))
 
 (defn get-request-identity [request]
-  (get-identity (-> request :session :cas-ticket)))
+  (get-identity (:session request)))
 
 (defn- do-logout [cas-ticket initiator-info]
   (if-let [session-data (get @session-store cas-ticket)]

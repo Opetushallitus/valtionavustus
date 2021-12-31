@@ -65,7 +65,8 @@ function waitForElementWithAttribute(page: Page, attribute: string, attributeVal
   // return await page.waitForXPath(`//*[@${attribute}='${attributeValue}'][contains(., '${text}')]`, waitForSelectorOptions)
 }
 
-export async function switchUserIdentityTo(page: Page, identity: string): Promise<void> {
+type FakeIdentity = "valtionavustus" | "paivipaakayttaja" | "viivivirkailija"
+export async function switchUserIdentityTo(page: Page, identity: FakeIdentity): Promise<void> {
   await page.request.post(`${VIRKAILIJA_URL}/api/test/set-fake-identity/${identity}`)
   await page.reload()
 }
