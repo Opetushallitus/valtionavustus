@@ -33,6 +33,7 @@ const config: PlaywrightTestConfig = {
     }],
     ['html', {
       outputFolder: 'playwright-results/html-report/',
+      open: 'never',
     }],
   ]
 };
