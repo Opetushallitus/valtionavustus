@@ -41,6 +41,8 @@ jenkins_plugins:
   - git
   - greenballs
   - email-ext
+  - junit
+  - slack
 
 # System config
 # =============
