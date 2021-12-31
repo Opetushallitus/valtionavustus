@@ -1,4 +1,5 @@
-import {Page} from "playwright";
+import {Page} from "@playwright/test";
+
 import {navigate} from "../utils/navigate";
 import {randomString} from "../utils/random";
 import {VaCodeValues} from "../utils/types";

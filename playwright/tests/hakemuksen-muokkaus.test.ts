@@ -1,5 +1,4 @@
-import {expect} from "@playwright/test"
-import { Page } from "playwright"
+import { expect, Page } from "@playwright/test"
 import { URLSearchParams } from "url"
 
 import {muutoshakemusTest as test} from "../fixtures/muutoshakemusTest"

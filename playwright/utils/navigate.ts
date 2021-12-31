@@ -1,4 +1,5 @@
-import {Page} from "playwright";
+import {Page} from "@playwright/test";
+
 import {HAKIJA_URL, VIRKAILIJA_URL} from "./constants";
 import {getHakemusUrlFromEmail, pollUntilNewHakemusEmailArrives} from "./emails";
 import {expectToBeDefined} from "./util";

@@ -1,4 +1,5 @@
-import {ElementHandle, Page} from "playwright";
+import {expect, ElementHandle, Page} from "@playwright/test";
+
 import {navigate} from "../utils/navigate";
 import {
   clickElementWithText,
@@ -6,7 +7,6 @@ import {
   getChangedBudgetTableCells,
   getExistingBudgetTableCells,
 } from "../utils/util";
-import {expect} from "@playwright/test";
 import {VIRKAILIJA_URL} from "../utils/constants";
 
 import {MuutoshakemusValues, PaatosStatus, PaatosValues} from "../utils/types";

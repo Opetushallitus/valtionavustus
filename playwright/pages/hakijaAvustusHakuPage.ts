@@ -1,4 +1,5 @@
-import {Page} from "playwright";
+import {Page} from "@playwright/test";
+
 import {navigateHakija} from "../utils/navigate";
 import {TEST_Y_TUNNUS} from "../utils/constants";
 import {

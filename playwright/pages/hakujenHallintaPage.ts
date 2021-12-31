@@ -1,5 +1,4 @@
-import {expect} from "@playwright/test";
-import {Page} from "playwright";
+import {expect, Page} from "@playwright/test";
 import moment from "moment";
 import fs from 'fs/promises'
 import path from "path";

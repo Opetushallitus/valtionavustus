@@ -1,4 +1,5 @@
-import {Page} from "playwright";
+import {Page} from "@playwright/test";
+
 import {getLinkToPaatosFromEmails} from "../utils/emails";
 
 export class HakijaPaatosPage {

@@ -1,8 +1,7 @@
 import moment from "moment";
+import {expect, Page} from "@playwright/test"
 
 import { VIRKAILIJA_URL } from "./constants"
-import {Page} from "playwright";
-import {expect} from "@playwright/test"
 
 export async function clearAndType(page: Page, selector: string, content: string) {
   await page.fill(selector, "")
