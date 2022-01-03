@@ -6,7 +6,6 @@ function run_tests {
   if ! running_on_jenkins;
     then
       npm run playwright:test "$@"
-      TZ=Europe/Stockholm npm run playwright:test playwright/tests/email-notifications/hakuaika-paattymassa.test.ts
   fi
 	npm run puppeteer:test "$@"
 	npm run soresu-form:test "$@"

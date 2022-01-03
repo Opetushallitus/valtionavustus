@@ -49,33 +49,38 @@ const hakuaikaPaattymassaTest = muutoshakemusTest.extend<HakuaikaPaattymassaFixt
   },
 })
 
-test.describe('When avustushaku is closing tomorrow', () => {
-  const today = new Date()
-  const tomorrow = new Date(today)
-  tomorrow.setDate(tomorrow.getDate() + 1)
-  tomorrow.setHours(12, 0, 0, 0)
+const timezones = ['Europe/Helsinki', 'Europe/Stockholm']
+for (const tz of timezones) {
+  test.describe(`With time zone ${tz}`, async () => {
+    test.use({ timezoneId: tz })
 
-  hakuaikaPaattymassaTest.use({
-    hakuProps: ({hakuProps}, use) => {
-      use({
-        ...hakuProps,
-        hakuaikaEnd: tomorrow,
+    test.describe('When avustushaku is closing tomorrow', () => {
+      const today = new Date()
+      const tomorrow = new Date(today)
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      tomorrow.setHours(12, 0, 0, 0)
+
+      hakuaikaPaattymassaTest.use({
+        hakuProps: ({hakuProps}, use) => {
+          use({
+            ...hakuProps,
+            hakuaikaEnd: tomorrow,
+          })
+        }
       })
-    }
-  })
 
-  hakuaikaPaattymassaTest("sends an email to those whose hakemus is expiring tomorrow", async ({page, avustushakuID, filledHakemus, hakuProps}) => {
-    await sendHakuaikaPaattymassaNotifications(page)
-    await page.waitForTimeout(5000)
+      hakuaikaPaattymassaTest("sends an email to those whose hakemus is expiring tomorrow", async ({page, avustushakuID, filledHakemus, hakuProps}) => {
+        await sendHakuaikaPaattymassaNotifications(page)
+        await page.waitForTimeout(5000)
 
-    const email = await getLastEmail('hakuaika-paattymassa')
+        const email = await getLastEmail('hakuaika-paattymassa')
 
-    expect(email['to-address']).toHaveLength(1)
-    expect(email['to-address']).toContain(filledHakemus.email)
-    expect(email.subject).toEqual("Hakuaika on päättymässä")
+        expect(email['to-address']).toHaveLength(1)
+        expect(email['to-address']).toContain(filledHakemus.email)
+        expect(email.subject).toEqual("Hakuaika on päättymässä")
 
-    const endDate = moment(hakuProps.hakuaikaEnd).format('DD.MM.YYYY')
-    expect(email.formatted).toEqual(`Hyvä vastaanottaja,
+        const endDate = moment(hakuProps.hakuaikaEnd).format('DD.MM.YYYY')
+        expect(email.formatted).toEqual(`Hyvä vastaanottaja,
 
 teillä on keskeneräinen hakemus valtionavustuksessa ${hakuProps.avustushakuName}. Huomaa, että avustuksen hakuaika päättyy ${endDate} klo 12.00.
 
@@ -85,21 +90,21 @@ hakemus lähetettävä käsiteltäväksi ennen hakuajan päättymistä. Määrä
 Pääsette viimeistelemään hakemuksenne tästä: ${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=${filledHakemus.userKey}&lang=fi
 
 Mikäli olette päättäneet jättää hakemuksen lähettämättä, on tämä viesti aiheeton.`)
-  })
+      })
 
-  hakuaikaPaattymassaTest("sends an email in swedish when hakemus is swedish", async ({page, avustushakuID, swedishHakemus, hakuProps}) => {
-    const filledHakemus = swedishHakemus
-    await sendHakuaikaPaattymassaNotifications(page)
-    await page.waitForTimeout(5000)
+      hakuaikaPaattymassaTest("sends an email in swedish when hakemus is swedish", async ({page, avustushakuID, swedishHakemus, hakuProps}) => {
+        const filledHakemus = swedishHakemus
+        await sendHakuaikaPaattymassaNotifications(page)
+        await page.waitForTimeout(5000)
 
-    const email = await getLastEmail('hakuaika-paattymassa')
+        const email = await getLastEmail('hakuaika-paattymassa')
 
-    expect(email['to-address']).toHaveLength(1)
-    expect(email['to-address']).toContain(filledHakemus.email)
-    expect(email.subject).toEqual("Hakuaika on päättymässä") // TODO Odottaa käännöstä
+        expect(email['to-address']).toHaveLength(1)
+        expect(email['to-address']).toContain(filledHakemus.email)
+        expect(email.subject).toEqual("Hakuaika on päättymässä") // TODO Odottaa käännöstä
 
-    const endDate = moment(hakuProps.hakuaikaEnd).format('DD.MM.YYYY')
-    expect(email.formatted).toEqual(`Bästa mottagare,
+        const endDate = moment(hakuProps.hakuaikaEnd).format('DD.MM.YYYY')
+        expect(email.formatted).toEqual(`Bästa mottagare,
 
 ni har en halvfärdig ansökan om statsunderstöd ${hakuProps.avustushakuName + ' på svenska'}. Observera att ansökningstiden för understödet avslutas ${endDate} kl. 12.00.
 
@@ -108,32 +113,36 @@ Ansökan och ändringar som görs i ansökan sparas automatiskt i Utbildningssty
 Ni kommer åt att färdigställa er ansökan via denna länk: ${HAKIJA_URL}/statsunderstod/${avustushakuID}/visa?hakemus=${filledHakemus.userKey}&lang=sv
 
 Om ni har beslutat att inte lämna in ansökan föranleder detta meddelande inga åtgärder.`)
-  })
-})
-
-test.describe('When avustushaku is closing later than tomorrow', () => {
-  const today = new Date()
-  const dayAfterTomorrow = new Date(today)
-  dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2)
-  dayAfterTomorrow.setHours(12, 0, 0, 0)
-
-  hakuaikaPaattymassaTest.use({
-    hakuProps: ({hakuProps}, use) => {
-      use({
-        ...hakuProps,
-        hakuaikaEnd: dayAfterTomorrow,
       })
-    }
-  })
-
-  hakuaikaPaattymassaTest("does not send an e-mail", async ({page, filledHakemus}) => {
-    await sendHakuaikaPaattymassaNotifications(page)
-    await page.waitForTimeout(5000)
-
-    const emails = await getAllEmails('hakuaika-paattymassa')
-    const expectedEmail = expect.objectContaining({
-      'to-address': [filledHakemus.email],
     })
-    expect(emails).not.toContainEqual(expectedEmail)
+
+    test.describe('When avustushaku is closing later than tomorrow', () => {
+      const today = new Date()
+      const dayAfterTomorrow = new Date(today)
+      dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2)
+      dayAfterTomorrow.setHours(12, 0, 0, 0)
+
+      hakuaikaPaattymassaTest.use({
+        hakuProps: ({hakuProps}, use) => {
+          use({
+            ...hakuProps,
+            hakuaikaEnd: dayAfterTomorrow,
+          })
+        }
+      })
+
+      hakuaikaPaattymassaTest("does not send an e-mail", async ({page, filledHakemus}) => {
+        await sendHakuaikaPaattymassaNotifications(page)
+        await page.waitForTimeout(5000)
+
+        const emails = await getAllEmails('hakuaika-paattymassa')
+        const expectedEmail = expect.objectContaining({
+          'to-address': [filledHakemus.email],
+        })
+        expect(emails).not.toContainEqual(expectedEmail)
+      })
+    })
+
   })
-})
+
+}
