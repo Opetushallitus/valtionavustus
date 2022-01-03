@@ -7,7 +7,7 @@ import moment from 'moment'
 import { lastOrFail } from '../../../test/test-util'
 import { Answers } from '../../utils/types'
 
-test.describe.parallel("loppuselvitys-palauttamatta", () => {
+test.describe("loppuselvitys-palauttamatta", () => {
   loppuselvitysTest('reminder email is not sent for hakemus with loppuselvitys deadline 15 or more days in the future', async ({page, avustushakuID, acceptedHakemus: { hakemusID }}) => {
     const loppuselvitysdate = moment().add(15, 'days').format('DD.MM.YYYY')
     await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
