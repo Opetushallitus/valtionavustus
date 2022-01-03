@@ -2,17 +2,18 @@ import { expect } from "@playwright/test"
 
 import { muutoshakemusTest} from "./muutoshakemusTest"
 import { LoppuselvitysPage } from "../pages/loppuselvitysPage"
-import { 
-  clearAndType,
+import {
+  clearAndType, expectToBeDefined,
 } from "../utils/util"
 import {
   navigate
 } from "../utils/navigate"
 import {
-  dummyPdfPath
+  dummyPdfPath, VIRKAILIJA_URL
 } from "../utils/constants"
 
 export interface LoppuselvitysFixtures {
+  loppuselvityspyyntöSent: {},
   loppuselvitys: {
     loppuselvitysFormFilled: boolean
     loppuselvitysFormUrl: string
@@ -23,7 +24,17 @@ export interface LoppuselvitysFixtures {
 }
 
 export const loppuselvitysTest = muutoshakemusTest.extend<LoppuselvitysFixtures>({
-  loppuselvitys: async ({page, avustushakuID, acceptedHakemus: {hakemusID}}, use) => {
+  loppuselvityspyyntöSent: async ({page, avustushakuID, acceptedHakemus}, use) => {
+    expectToBeDefined(acceptedHakemus)
+    await page.goto(`${VIRKAILIJA_URL}/admin/loppuselvitys/?avustushaku=${avustushakuID}`)
+    await Promise.all([
+      page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/loppuselvitys/send-notification`),
+      page.click('[data-test-id="send-loppuselvitys"]'),
+    ])
+    await use({})
+  },
+  loppuselvitys: async ({page, loppuselvityspyyntöSent, avustushakuID, acceptedHakemus: {hakemusID}}, use) => {
+    expectToBeDefined(loppuselvityspyyntöSent)
     const loppuselvitysPage = LoppuselvitysPage(page)
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
     const loppuselvitysFormUrl = await page.getAttribute('[data-test-id="selvitys-link"]', 'href')

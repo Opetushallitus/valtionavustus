@@ -2,13 +2,14 @@ import { test, expect, Page } from '@playwright/test'
 import { HAKIJA_URL, swedishAnswers, VIRKAILIJA_URL } from '../../utils/constants'
 import { loppuselvitysTest } from '../../fixtures/loppuselvitysTest'
 import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
-import { getLoppuselvitysPalauttamattaEmails } from '../../utils/emails'
+import { getLoppuselvitysPalauttamattaEmails, lastOrFail } from '../../utils/emails'
 import moment from 'moment'
-import { lastOrFail } from '../../../test/test-util'
 import { Answers } from '../../utils/types'
+import { expectToBeDefined } from '../../utils/util'
 
 test.describe("loppuselvitys-palauttamatta", () => {
-  loppuselvitysTest('reminder email is not sent for hakemus with loppuselvitys deadline 15 or more days in the future', async ({page, avustushakuID, acceptedHakemus: { hakemusID }}) => {
+  loppuselvitysTest('reminder email is not sent for hakemus with loppuselvitys deadline 15 or more days in the future', async ({page, avustushakuID, acceptedHakemus: { hakemusID }, loppuselvityspyyntöSent}) => {
+    expectToBeDefined(loppuselvityspyyntöSent)
     const loppuselvitysdate = moment().add(15, 'days').format('DD.MM.YYYY')
     await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
 
@@ -18,7 +19,8 @@ test.describe("loppuselvitys-palauttamatta", () => {
     expect(emailsAfter).toEqual(emailsBefore)
   })
 
-  loppuselvitysTest('reminder email is not sent for avustushaku with loppuselvitys deadline in the past', async ({page, avustushakuID, acceptedHakemus: { hakemusID }}) => {
+  loppuselvitysTest('reminder email is not sent for avustushaku with loppuselvitys deadline in the past', async ({page, avustushakuID, acceptedHakemus: { hakemusID }, loppuselvityspyyntöSent}) => {
+    expectToBeDefined(loppuselvityspyyntöSent)
     const loppuselvitysdate = moment().subtract(1, 'days').format('DD.MM.YYYY')
     await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
 
@@ -28,7 +30,8 @@ test.describe("loppuselvitys-palauttamatta", () => {
     expect(emailsAfter).toEqual(emailsBefore)
   })
 
-  loppuselvitysTest('reminder email is sent for hakemus with loppuselvitys deadline in next 14 days', async ({page, hakuProps, avustushakuID, acceptedHakemus: { hakemusID, userKey }}) => {
+  loppuselvitysTest('reminder email is sent for hakemus with loppuselvitys deadline in next 14 days', async ({page, hakuProps, avustushakuID, acceptedHakemus: { hakemusID, userKey }, loppuselvityspyyntöSent}) => {
+    expectToBeDefined(loppuselvityspyyntöSent)
     const loppuselvitysdate = moment().add(14, 'days').format('DD.MM.YYYY')
     await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
 
@@ -48,7 +51,8 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
 
   loppuselvitysTest.extend<{ answers: Answers }>({
     answers: swedishAnswers,
-  })('reminder mail is sent in swedish for swedish hakemus', async ({page, hakuProps, avustushakuID, acceptedHakemus: { hakemusID, userKey }}) => {
+  })('reminder mail is sent in swedish for swedish hakemus', async ({page, hakuProps, avustushakuID, acceptedHakemus: { hakemusID, userKey }, loppuselvityspyyntöSent}) => {
+    expectToBeDefined(loppuselvityspyyntöSent)
     const loppuselvitysdate = moment().add(14, 'days').format('DD.MM.YYYY')
     await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
 
@@ -65,6 +69,16 @@ Kom ihåg att skicka slutredovisningen för behandling inom utsatt tid, senast $
 
 Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid tekniska problem, ta kontakt på adressen valtionavustukset@oph.fi”.`)
     })
+
+  loppuselvitysTest('do not send reminders if loppuselvitys pyyntö has not been sent', async ({ page, avustushakuID, acceptedHakemus: { hakemusID }}) => {
+    const loppuselvitysdate = moment().add(7, 'days').format('DD.MM.YYYY')
+    await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
+
+    const emailsBefore = await getLoppuselvitysPalauttamattaEmails(hakemusID)
+    await sendLoppuselvitysPalauttamattaNotifications(page)
+    const emailsAfter = await getLoppuselvitysPalauttamattaEmails(hakemusID)
+    expect(emailsAfter).toEqual(emailsBefore)
+  })
 })
 const sendLoppuselvitysPalauttamattaNotifications = (page: Page) =>
   page.request.post(`${VIRKAILIJA_URL}/api/test/send-loppuselvitys-palauttamatta-notifications`, { failOnStatusCode: true })

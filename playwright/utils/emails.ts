@@ -148,7 +148,7 @@ export async function getHakemusTokenAndRegisterNumber(hakemusId: number): Promi
     .then(r => applicationGeneratedValuesSchema.validate(r.data))
 }
 
-function lastOrFail<T>(xs: ReadonlyArray<T>): T {
+export function lastOrFail<T>(xs: ReadonlyArray<T>): T {
   if (xs.length === 0) throw Error("Can't get last element of empty list")
   return xs[xs.length - 1]
 }

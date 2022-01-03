@@ -93,7 +93,12 @@
             -- There are a few nulls and empty strings for some reason
             AND avustushaut.loppuselvitysdate IS NOT NULL AND avustushaut.loppuselvitysdate != ''
             AND to_date(avustushaut.loppuselvitysdate, 'DD.MM.YYYY')::date
-              BETWEEN current_timestamp::date AND current_timestamp::date + '14 days'::interval"
+              BETWEEN current_timestamp::date AND current_timestamp::date + '14 days'::interval
+            AND EXISTS (
+              SELECT * FROM tapahtumaloki
+              WHERE tapahtumaloki.hakemus_id = h.hakemus_id
+                AND tyyppi = 'loppuselvitys-notification'
+            )"
          []))
 
 (defn send-loppuselvitys-palauttamatta-notifications []
