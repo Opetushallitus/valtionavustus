@@ -51,3 +51,9 @@
 
 - name: Add OPH artifactory IP mapping to /etc/hosts
   lineinfile: dest=/etc/hosts line='178.217.133.55 artifactory.oph.ware.fi' owner=root group=root mode=0644
+
+- name: Create init.groovy.d directory in Jenkins home
+  file: path="{{ jenkins_home }}/init.groovy.d" state=directory owner=jenkins group=jenkins
+
+- name: Add Jenkins init script that sets Content-Security-Policy
+  template: src=set_content_security_policy.groovy.j2 dest="{{ jenkins_home }}/init.groovy.d/set_content_security_policy.groovy" owner=jenkins group=jenkins

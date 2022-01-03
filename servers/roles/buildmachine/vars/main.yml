@@ -45,6 +45,8 @@ jenkins_plugins:
   - junit
   - slack
 
+jenkins_content_security_policy: "sandbox allow-scripts; default-src 'none'; img-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'unsafe-inline';"
+
 # System config
 # =============
 jenkins_system_config:
