@@ -51,6 +51,21 @@ Muistattehan lähettää loppuselvityksen käsiteltäväksi määräaikaan ${lop
 Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi`)
   })
 
+  loppuselvitysTest(
+    'reminder email is not sent when loppuselvitys is submitted',
+    async ({page, avustushakuID, acceptedHakemus: { hakemusID }, loppuselvitysSubmitted }) => {
+      expectToBeDefined(loppuselvitysSubmitted)
+
+      const loppuselvitysdate = moment().add(14, 'days').format('DD.MM.YYYY')
+      await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
+
+      const emailsBefore = await getLoppuselvitysPalauttamattaEmails(hakemusID)
+      await sendLoppuselvitysPalauttamattaNotifications(page)
+      const emailsAfter = await getLoppuselvitysPalauttamattaEmails(hakemusID)
+      expect(emailsAfter).toEqual(emailsBefore)
+    }
+  )
+
   loppuselvitysTest.extend<{ answers: Answers }>({
     answers: swedishAnswers,
   })('reminder mail is sent in swedish for swedish hakemus', async ({page, hakuProps, avustushakuID, acceptedHakemus: { hakemusID, userKey }, loppuselvityspyyntöSent}) => {

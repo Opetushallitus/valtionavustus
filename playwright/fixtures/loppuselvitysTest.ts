@@ -14,7 +14,7 @@ import {
 
 export interface LoppuselvitysFixtures {
   loppuselvityspyyntöSent: {},
-  loppuselvitys: {
+  loppuselvitysSubmitted: {
     loppuselvitysFormFilled: boolean
     loppuselvitysFormUrl: string
   }
@@ -33,7 +33,7 @@ export const loppuselvitysTest = muutoshakemusTest.extend<LoppuselvitysFixtures>
     ])
     await use({})
   },
-  loppuselvitys: async ({page, loppuselvityspyyntöSent, avustushakuID, acceptedHakemus: {hakemusID}}, use) => {
+  loppuselvitysSubmitted: async ({page, loppuselvityspyyntöSent, avustushakuID, acceptedHakemus: {hakemusID}}, use) => {
     expectToBeDefined(loppuselvityspyyntöSent)
     const loppuselvitysPage = LoppuselvitysPage(page)
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
@@ -71,7 +71,7 @@ export const loppuselvitysTest = muutoshakemusTest.extend<LoppuselvitysFixtures>
       loppuselvitysFormFilled: true
     })
   },
-  asiatarkastus: async ({page, avustushakuID, acceptedHakemus: {hakemusID}, loppuselvitys: {loppuselvitysFormFilled}}, use) => {
+  asiatarkastus: async ({page, avustushakuID, acceptedHakemus: {hakemusID}, loppuselvitysSubmitted: {loppuselvitysFormFilled}}, use) => {
     expect(loppuselvitysFormFilled)
     const loppuselvitysPage = LoppuselvitysPage(page)
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
