@@ -43,7 +43,8 @@
  :rondo-scheduler {:enabled? false}
  :notifications {:asiatarkastus        {:enabled? false
                                         :schedule "0 0 7 ? * 2"}
-                 :taloustarkastus      {:schedule "0 0 7 ? * 2"}
+                 :taloustarkastus      {:enabled? false
+                                        :schedule "0 0 7 ? * 2"}
                  :valiselvitys         {:enabled? false
                                         :schedule "0 0 7 ? * 2"}
                  :hakuaika-paattymassa {:enabled? false

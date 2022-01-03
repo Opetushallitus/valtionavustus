@@ -13,7 +13,8 @@
                     :strict-host-key-checking :yes}
  :notifications {:asiatarkastus   {:enabled? true
                                    :schedule "0 0 7 ? * 2"}
-                 :taloustarkastus {:schedule "0 0 7 ? * 2"}
+                 :taloustarkastus {:enabled? true
+                                   :schedule "0 0 7 ? * 2"}
                  :valiselvitys    {:enabled? true
                                    :schedule "0 0 7 ? * 2"}}
  :email {:enabled? true
