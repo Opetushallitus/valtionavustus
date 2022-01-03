@@ -243,7 +243,7 @@
                               :to [(:contact-email notification)]
                               :subject mail-subject
                               :avustushaku-name (:avustushaku-name notification)
-                              :loppuselvitysdate (:loppuselvitysdate notification)
+                              :loppuselvitys-deadline (datetime/java8-date-string (:loppuselvitys-deadline notification))
                               :url (loppuselvitys-url (:avustushaku-id notification) (:user-key notification) lang)}
                              (partial render template))))
 

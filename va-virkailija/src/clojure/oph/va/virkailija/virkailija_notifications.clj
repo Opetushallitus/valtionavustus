@@ -80,20 +80,38 @@
             hv.language,
             jsonb_extract_path_text(avustushaut.content, 'name', hv.language) as avustushaku_name,
             hv.user_key,
-            avustushaut.loppuselvitysdate,
+            coalesce(
+              latest_jatkoaika.hyvaksytty_jatkoaika,
+              to_date(avustushaut.loppuselvitysdate, 'DD.MM.YYYY')::date
+            ) AS loppuselvitys_deadline,
             h.contact_email
           FROM hakija.hakemukset hv
           JOIN virkailija.arviot ON hv.id = arviot.hakemus_id
           JOIN hakija.avustushaut ON hv.avustushaku = avustushaut.id
           JOIN virkailija.normalized_hakemus h ON hv.id = h.hakemus_id
+          LEFT JOIN LATERAL (
+            SELECT coalesce(
+              pj.paattymispaiva,
+              mh.haettu_kayttoajan_paattymispaiva
+            ) AS hyvaksytty_jatkoaika
+            FROM virkailija.muutoshakemus mh
+            JOIN virkailija.paatos mhp ON mhp.id = mh.paatos_id
+            JOIN virkailija.paatos_jatkoaika pj USING (paatos_id)
+            WHERE mh.hakemus_id = hv.id
+            AND mh.haen_kayttoajan_pidennysta AND pj.status IN ('accepted', 'accepted_with_changes')
+            ORDER BY mhp.created_at DESC
+            LIMIT 1
+          ) latest_jatkoaika ON true
           WHERE hv.hakemus_type = 'hakemus'
             AND hv.version_closed IS NULL
             AND arviot.status = 'accepted'
             AND hv.status_loppuselvitys = 'missing'
             -- There are a few nulls and empty strings for some reason
             AND avustushaut.loppuselvitysdate IS NOT NULL AND avustushaut.loppuselvitysdate != ''
-            AND to_date(avustushaut.loppuselvitysdate, 'DD.MM.YYYY')::date
-              BETWEEN current_timestamp::date AND current_timestamp::date + '14 days'::interval
+            AND coalesce(
+              latest_jatkoaika.hyvaksytty_jatkoaika,
+              to_date(avustushaut.loppuselvitysdate, 'DD.MM.YYYY')::date
+            ) BETWEEN current_timestamp::date AND current_timestamp::date + '14 days'::interval
             AND EXISTS (
               SELECT * FROM tapahtumaloki
               WHERE tapahtumaloki.hakemus_id = h.hakemus_id

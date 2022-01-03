@@ -4,8 +4,10 @@ import { loppuselvitysTest } from '../../fixtures/loppuselvitysTest'
 import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
 import { getLoppuselvitysPalauttamattaEmails, lastOrFail } from '../../utils/emails'
 import moment from 'moment'
-import { Answers } from '../../utils/types'
+import { Answers, MuutoshakemusValues } from '../../utils/types'
 import { expectToBeDefined } from '../../utils/util'
+import { HakijaMuutoshakemusPage } from '../../pages/hakijaMuutoshakemusPage'
+import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
 
 test.describe("loppuselvitys-palauttamatta", () => {
   loppuselvitysTest('reminder email is not sent for hakemus with loppuselvitys deadline 15 or more days in the future', async ({page, avustushakuID, acceptedHakemus: { hakemusID }, loppuselvityspyyntöSent}) => {
@@ -79,7 +81,54 @@ Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid 
     const emailsAfter = await getLoppuselvitysPalauttamattaEmails(hakemusID)
     expect(emailsAfter).toEqual(emailsBefore)
   })
+
+  loppuselvitysTest(
+    'does not send reminder if the latest accepted jatkoaika is over 14 days away',
+    async ({ page, avustushakuID, acceptedHakemus: { hakemusID }, loppuselvityspyyntöSent}) => {
+      expectToBeDefined(loppuselvityspyyntöSent)
+
+      await test.step('set loppuselvitys deadline', async () => {
+        const loppuselvitysdate = moment().add(1, 'days').format('DD.MM.YYYY')
+        await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
+      })
+
+      await test.step('apply for jatkoaika 5 days in the future', async () => {
+        await applyAndAcceptJatkoaika({
+          jatkoaika: moment().add(5, 'days'),
+          jatkoaikaPerustelu: 'Ge mig lite mera tid, tack!',
+        })
+      })
+
+      await test.step('apply for jatkoaika 100 years in the future', async () => {
+        await applyAndAcceptJatkoaika({
+          jatkoaika: moment().add(100, 'years'),
+          jatkoaikaPerustelu: 'Javisst ska hen leva uti hundrade år!',
+        })
+      })
+
+      await test.step('check reminder email is not sent', async () => {
+        const emailsBefore = await getLoppuselvitysPalauttamattaEmails(hakemusID)
+        await sendLoppuselvitysPalauttamattaNotifications(page)
+        const emailsAfter = await getLoppuselvitysPalauttamattaEmails(hakemusID)
+        expect(emailsAfter).toEqual(emailsBefore)
+      })
+
+      async function applyAndAcceptJatkoaika(values: MuutoshakemusValues) {
+        const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
+        await hakijaMuutoshakemusPage.navigate(hakemusID)
+        await hakijaMuutoshakemusPage.fillJatkoaikaValues(values)
+        await hakijaMuutoshakemusPage.clickSendMuutoshakemus()
+        await hakijaMuutoshakemusPage.expectMuutoshakemusToBeSubmittedSuccessfully(true)
+
+        const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+        await hakemustenArviointiPage.navigateToLatestMuutoshakemus(avustushakuID, hakemusID)
+        await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision('accepted')
+        await hakemustenArviointiPage.selectVakioperusteluInFinnish()
+        await hakemustenArviointiPage.saveMuutoshakemus()
+      }
+    })
 })
+
 const sendLoppuselvitysPalauttamattaNotifications = (page: Page) =>
   page.request.post(`${VIRKAILIJA_URL}/api/test/send-loppuselvitys-palauttamatta-notifications`, { failOnStatusCode: true })
 

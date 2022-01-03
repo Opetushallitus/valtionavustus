@@ -24,6 +24,15 @@
 (defn datetime->str [dt]
   (clj-time-format/unparse (clj-time-format/formatters :date-time) dt))
 
+(defn java8-date-to-joda [d]
+  (new org.joda.time.LocalDateTime
+       (-> d (.atStartOfDay (java.time.ZoneId/systemDefault))
+           (.toInstant)
+           (.toEpochMilli))))
+
+(defn java8-date-string [date]
+  (date-string (java8-date-to-joda date)))
+
 (defn now []
   (if @now-atom
     @now-atom
