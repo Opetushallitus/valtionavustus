@@ -47,7 +47,7 @@ test('Loppuselvitys tab in hakemuksen arviointi should have link to correct lopp
   await loppuselvitysFormPage.close()
 })
 
-test('virkailija sees loppuselvitys answers', async ({page, avustushakuID, acceptedHakemus: {hakemusID}, loppuselvitys: {loppuselvitysFormFilled}}) => {
+test('virkailija sees loppuselvitys answers', async ({page, avustushakuID, acceptedHakemus: {hakemusID}, loppuselvitysSubmitted: {loppuselvitysFormFilled}}) => {
   expect(loppuselvitysFormFilled)
   const loppuselvitysPage = LoppuselvitysPage(page)
   await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
@@ -67,14 +67,14 @@ test('virkailija sees loppuselvitys answers', async ({page, avustushakuID, accep
   expect(await page.innerText('#preview-container-loppuselvitys #textArea-4')).toEqual('Lisätietoja')
 })
 
-test('virkailija can not accept loppuselvitys while it is not verified', async ({page, avustushakuID, acceptedHakemus: {hakemusID}, loppuselvitys: {loppuselvitysFormFilled}}) => {
+test('virkailija can not accept loppuselvitys while it is not verified', async ({page, avustushakuID, acceptedHakemus: {hakemusID}, loppuselvitysSubmitted: {loppuselvitysFormFilled}}) => {
   expect(loppuselvitysFormFilled)
   const loppuselvitysPage = LoppuselvitysPage(page)
   await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
   expect(await countElements(page, '[data-test-id="taloustarkastus-email"]')).toEqual(0)
 })
 
-test('loppuselvitys-asiatarkastamatta notification is sent to virkailija', async ({avustushakuID, loppuselvitys: {loppuselvitysFormFilled}, request}) => {
+test('loppuselvitys-asiatarkastamatta notification is sent to virkailija', async ({avustushakuID, loppuselvitysSubmitted: {loppuselvitysFormFilled}, request}) => {
   expect(loppuselvitysFormFilled)
   const oldEmailCount = (await getAllEmails('loppuselvitys-asiatarkastamatta')).filter(e => e["to-address"].includes('santeri.horttanainen@reaktor.com')).length
   await sendLoppuselvitysAsiatarkastamattaNotifications(request)
@@ -86,7 +86,7 @@ test('loppuselvitys-asiatarkastamatta notification is sent to virkailija', async
   expect(loppuselvitysAsiatarkastamattaNotification?.formatted).toContain(`${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/`)
 })
 
-test('does not show asiatarkastus to a virkailija who is not valmistelija', async ({page, avustushakuID, loppuselvitys: {loppuselvitysFormFilled}, acceptedHakemus: {hakemusID}}) => {
+test('does not show asiatarkastus to a virkailija who is not valmistelija', async ({page, avustushakuID, loppuselvitysSubmitted: {loppuselvitysFormFilled}, acceptedHakemus: {hakemusID}}) => {
   expect(loppuselvitysFormFilled)
   const loppuselvitysPage = LoppuselvitysPage(page)
   await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
@@ -95,7 +95,7 @@ test('does not show asiatarkastus to a virkailija who is not valmistelija', asyn
   expect(await countElements(page, "button[name=submit-verification]")).toEqual(0)
 })
 
-test('shows asiatarkastus to pääkäyttäjä who is not valmistelija', async ({page, avustushakuID, loppuselvitys: {loppuselvitysFormFilled}, acceptedHakemus: {hakemusID}}) => {
+test('shows asiatarkastus to pääkäyttäjä who is not valmistelija', async ({page, avustushakuID, loppuselvitysSubmitted: {loppuselvitysFormFilled}, acceptedHakemus: {hakemusID}}) => {
   expect(loppuselvitysFormFilled)
   const loppuselvitysPage = LoppuselvitysPage(page)
   await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
@@ -104,7 +104,7 @@ test('shows asiatarkastus to pääkäyttäjä who is not valmistelija', async ({
   expect(await countElements(page, "button[name=submit-verification]")).toEqual(1)
 })
 
-test('hakija can not edit loppuselvitys after information has been verified', async ({page, loppuselvitys: { loppuselvitysFormUrl}, asiatarkastus: {asiatarkastettu} }) => {
+test('hakija can not edit loppuselvitys after information has been verified', async ({page, loppuselvitysSubmitted: { loppuselvitysFormUrl}, asiatarkastus: {asiatarkastettu} }) => {
   expect(asiatarkastettu)
   await navigate(page, loppuselvitysFormUrl)
   expect(await page.innerText('span[id="textArea-0"]')).toEqual('Yhteenveto')
