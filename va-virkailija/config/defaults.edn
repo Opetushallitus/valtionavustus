@@ -62,5 +62,4 @@
  :tasmaytysraportti-send {:enabled? false}
  :allow-overriding-feature-flag-from-url-params {:enabled? false}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
- :hakuaika-paattymassa-notification {:enabled? false}
  :test-apis {:enabled? false}}

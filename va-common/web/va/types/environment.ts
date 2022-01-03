@@ -12,5 +12,4 @@ export type EnvironmentApiResponse = {
   reports: FeatureFlag
   "allow-overriding-feature-flag-from-url-params"?: FeatureFlag
   "dont-send-loppuselvityspyynto-to-virkailija"?: FeatureFlag
-  "hakuaika-paattymassa-notification"?: FeatureFlag
 }
