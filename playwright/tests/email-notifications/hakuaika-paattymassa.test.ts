@@ -14,6 +14,7 @@ type HakuaikaPaattymassaFixtures = {
   filledHakemus: {
     email: string
     userKey: string
+    page: HakijaAvustusHakuPage
   }
   swedishHakemus: {
     email: string
@@ -22,9 +23,10 @@ type HakuaikaPaattymassaFixtures = {
 }
 
 const hakuaikaPaattymassaTest = muutoshakemusTest.extend<HakuaikaPaattymassaFixtures>({
-  filledHakemus: async ({avustushakuID, page, answers}, use, testInfo) => {
+  filledHakemus: async ({avustushakuID, browser, answers}, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 30_000)
 
+    const page = await browser.newPage()
     const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
     const randomEmail = `${randomString()}@example.com`
@@ -32,7 +34,10 @@ const hakuaikaPaattymassaTest = muutoshakemusTest.extend<HakuaikaPaattymassaFixt
     const answersWithRandomEmail = {contactPersonEmail: randomEmail, ...answersWithoutEmail}
     await hakijaAvustusHakuPage.fillMuutoshakemusEnabledHakemus(avustushakuID, answersWithRandomEmail)
     const userKey = await hakijaAvustusHakuPage.getUserKey()
-    await use({ email: randomEmail, userKey })
+
+    await use({ email: randomEmail, userKey, page: hakijaAvustusHakuPage })
+
+    await page.close()
   },
   swedishHakemus: async ({avustushakuID, page, swedishAnswers}, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 30_000)
@@ -114,6 +119,15 @@ Ni kommer åt att färdigställa er ansökan via denna länk: ${HAKIJA_URL}/stat
 
 Om ni har beslutat att inte lämna in ansökan föranleder detta meddelande inga åtgärder.`)
       })
+
+      hakuaikaPaattymassaTest('does not send an e-mail to those whose hakemus has been sent', async ({ page, filledHakemus }) => {
+        await filledHakemus.page.submitApplication()
+
+        await sendHakuaikaPaattymassaNotifications(page)
+        await page.waitForTimeout(5000)
+
+        await expectEmailNotSent(filledHakemus.email)
+      })
     })
 
     test.describe('When avustushaku is closing later than tomorrow', () => {
@@ -135,14 +149,18 @@ Om ni har beslutat att inte lämna in ansökan föranleder detta meddelande inga
         await sendHakuaikaPaattymassaNotifications(page)
         await page.waitForTimeout(5000)
 
-        const emails = await getAllEmails('hakuaika-paattymassa')
-        const expectedEmail = expect.objectContaining({
-          'to-address': [filledHakemus.email],
-        })
-        expect(emails).not.toContainEqual(expectedEmail)
+        await expectEmailNotSent(filledHakemus.email)
       })
     })
 
   })
 
+}
+
+async function expectEmailNotSent(email: string) {
+  const emails = await getAllEmails('hakuaika-paattymassa')
+  const expectedEmail = expect.objectContaining({
+    'to-address': [email],
+  })
+  expect(emails).not.toContainEqual(expectedEmail)
 }

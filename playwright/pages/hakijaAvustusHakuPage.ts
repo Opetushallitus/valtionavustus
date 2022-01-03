@@ -1,4 +1,4 @@
-import {Page} from "@playwright/test";
+import {Locator, Page} from "@playwright/test";
 
 import {navigateHakija} from "../utils/navigate";
 import {TEST_Y_TUNNUS} from "../utils/constants";
@@ -16,10 +16,11 @@ import {Answers} from "../utils/types";
 
 export class HakijaAvustusHakuPage {
   readonly page: Page
-  readonly sendHakemusButtonSelector = '#topbar #form-controls button#submit'
+  readonly sendHakemusButton: Locator
 
   constructor(page: Page) {
     this.page = page;
+    this.sendHakemusButton = page.locator('#topbar #form-controls button#submit')
   }
 
   async navigate(avustushakuID: number, lang: 'fi' | 'sv' | undefined) {
@@ -59,6 +60,11 @@ export class HakijaAvustusHakuPage {
   async submitChangeRequestResponse() {
     await this.page.click('#change-request-response')
     await this.page.waitForSelector('div.soresu-preview')
+  }
+
+  async submitApplication() {
+    await this.sendHakemusButton.click()
+    await this.page.waitForSelector('button:has-text("Hakemus lähetetty"), button:has-text("Ansökan sänd")')
   }
 
   async fillMuutoshakemusEnabledHakemus(avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void) {
@@ -106,10 +112,7 @@ export class HakijaAvustusHakuPage {
   }
   async fillAndSendMuutoshakemusEnabledHakemus(avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void) {
     await this.fillMuutoshakemusEnabledHakemus(avustushakuID, answers, beforeSubmitFn)
-    await this.page.click(this.sendHakemusButtonSelector)
-    const lang = answers.lang || 'fi'
-    const sentText = lang === 'fi' ? "Hakemus lähetetty" : "Ansökan sänd"
-    await this.page.waitForSelector(`${this.sendHakemusButtonSelector}:has-text("${sentText}")`)
+    await this.submitApplication()
     const userKey = await this.getUserKey()
     return {userKey}
   }
@@ -177,9 +180,7 @@ export class HakijaAvustusHakuPage {
 
     await this.fillBudget(budget, 'hakija')
 
-    await this.page.click(this.sendHakemusButtonSelector)
-    const sentText = lang === 'fi' ? "Hakemus lähetetty" : "Ansökan sänd"
-    await this.page.waitForSelector(`${this.sendHakemusButtonSelector}:has-text("${sentText}")`)
+    await this.submitApplication()
     return { userKey: await this.getUserKey() }
   }
 }
