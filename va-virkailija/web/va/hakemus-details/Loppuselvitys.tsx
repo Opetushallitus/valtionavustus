@@ -17,7 +17,6 @@ type SelvitysProps = {
   hakemus: Hakemus
   avustushaku: Avustushaku
   translations: any
-  selvitysType: 'valiselvitys' | 'loppuselvitys'
   userInfo: UserInfo
   multibatchEnabled: boolean
   isPresentingOfficer: boolean
@@ -27,12 +26,10 @@ type SelvitysProps = {
   presenter?: Role
 }
 
-const Selvitys = ({ presenter, controller, hakemus, avustushaku, translations, selvitysType, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText }: SelvitysProps) => {
-  const hasSelvitys = !!hakemus.selvitys?.[selvitysType]?.answers
-  const selvitysHakemus = hakemus.selvitys?.[selvitysType]
-  const form = hakemus.selvitys?.[`${selvitysType}Form`]
-
-  const renderLoppuselvitysForm = hasSelvitys && selvitysType === 'loppuselvitys'
+const Loppuselvitys = ({ presenter, controller, hakemus, avustushaku, translations, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText }: SelvitysProps) => {
+  const hasSelvitys = !!hakemus.selvitys?.loppuselvitys?.answers
+  const selvitysHakemus = hakemus.selvitys?.loppuselvitys
+  const form = hakemus.selvitys?.loppuselvitysForm
 
   const loppuselvitysStatus = hakemus["status-loppuselvitys"]
 
@@ -41,26 +38,26 @@ const Selvitys = ({ presenter, controller, hakemus, avustushaku, translations, s
 
   const lang = loppuselvitys?.language || "fi"
   return (
-    <div className="selvitys-container" data-test-id={`hakemus-details-${selvitysType}`}>
+    <div className="selvitys-container" data-test-id="hakemus-details-loppuselvitys">
       <PresenterComment controller={controller} hakemus={hakemus} helpText={presenterCommentHelpText}/>
       {hasSelvitys
         ? <SelvitysPreview hakemus={hakemus}
                             avustushaku={avustushaku}
                             translations={translations}
-                            selvitysType={selvitysType}
+                            selvitysType='loppuselvitys'
                             selvitysHakemus={selvitysHakemus}
                             form={form} />
-        : <SelvitysNotFilled avustushaku={avustushaku} selvitysType={selvitysType}/>}
+        : <SelvitysNotFilled avustushaku={avustushaku} selvitysType='loppuselvitys'/>}
       {multibatchEnabled && (avustushaku.content as any).multiplemaksuera &&
         <ApplicationPayments application={hakemus}
                               grant={avustushaku}
-                              index={selvitysType === "valiselvitys" ? 1 : 2}
+                              index={2}
                               payments={hakemus.payments}
                               onAddPayment={controller.addPayment}
                               onRemovePayment={controller.removePayment}
                               readonly={!isPresentingOfficer}/>}
-      <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType={selvitysType} helpText={selvitysLinkHelpText} />
-      {renderLoppuselvitysForm && <LoppuselvitysForm controller={controller} hakemus={hakemus} avustushaku={avustushaku} presenter={presenter} userInfo={userInfo} />}
+      <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType='loppuselvitys' helpText={selvitysLinkHelpText} />
+      {hasSelvitys && <LoppuselvitysForm controller={controller} hakemus={hakemus} avustushaku={avustushaku} presenter={presenter} userInfo={userInfo} />}
     {loppuselvitys && renderTaloustarkastusEmail && <TaloustarkastusEmail
       controller={controller}
       avustushakuId={avustushaku.id}
@@ -74,4 +71,4 @@ const Selvitys = ({ presenter, controller, hakemus, avustushaku, translations, s
   )
 }
 
-export default Selvitys
+export default Loppuselvitys

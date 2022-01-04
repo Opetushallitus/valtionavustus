@@ -1,21 +1,16 @@
-import {expect, ElementHandle, Page} from "@playwright/test";
+import { ElementHandle, expect, Page } from "@playwright/test";
 
-import {navigate} from "../utils/navigate";
+import { navigate } from "../utils/navigate";
 import {
   clickElementWithText,
   expectToBeDefined,
   getChangedBudgetTableCells,
   getExistingBudgetTableCells,
 } from "../utils/util";
-import {VIRKAILIJA_URL} from "../utils/constants";
+import { VIRKAILIJA_URL } from "../utils/constants";
 
-import {MuutoshakemusValues, PaatosStatus, PaatosValues} from "../utils/types";
-import {
-  AcceptedBudget,
-  Budget,
-  BudgetAmount,
-  defaultBudget
-} from "../utils/budget";
+import { MuutoshakemusValues, PaatosStatus, PaatosValues } from "../utils/types";
+import { AcceptedBudget, Budget, BudgetAmount, defaultBudget } from "../utils/budget";
 import { HakijaAvustusHakuPage } from "./hakijaAvustusHakuPage";
 
 const jatkoaikaSelector = '[data-test-id=muutoshakemus-jatkoaika]' as const
@@ -167,6 +162,10 @@ export class HakemustenArviointiPage {
 
   statusFieldSelector(hakemusID: number) {
     return `[data-test-id=muutoshakemus-status-${hakemusID}]`
+  }
+
+  async väliselvitysStatus(hakemusID: number) {
+    return await this.page.innerText(`tr#hakemus-${hakemusID} >> [data-test-id=väliselvitys-column]`)
   }
 
   async muutoshakemusStatusFieldContent(hakemusID: number) {

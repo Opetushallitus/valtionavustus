@@ -3,7 +3,8 @@ import React from 'react'
 import HakemusPreview from './HakemusPreview'
 import HakemusArviointi from './HakemusArviointi'
 import { Muutoshakemus } from './Muutoshakemus'
-import Selvitys from './Selvitys'
+import Loppuselvitys from './Loppuselvitys'
+import Väliselvitys from './Väliselvitys'
 import Seuranta from './Seuranta'
 import {HakuData, SelectedHakemusAccessControl, UserInfo} from "../types";
 import {Avustushaku, Hakemus} from "../../../../va-common/web/va/types";
@@ -81,19 +82,17 @@ export const HakemusDetails = (props: Props) => {
                                    helpTexts={helpTexts}/>
 
         case 'valiselvitys':
-          return <Selvitys environment={environment} controller={controller} hakemus={hakemus}
+          return <Väliselvitys environment={environment} controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo} presenter={presenter}
                            translations={translations}
-                           selvitysType="valiselvitys"
                            multibatchEnabled={multibatchEnabled}
                            isPresentingOfficer={isPresentingOfficer}
                            selvitysLinkHelpText={helpTexts["hankkeen_sivu__väliselvitys___linkki_lomakkeelle"]}
                            presenterCommentHelpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}/>
         case 'loppuselvitys':
-          return <Selvitys environment={environment} controller={controller} hakemus={hakemus}
+          return <Loppuselvitys environment={environment} controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo} presenter={presenter}
                            translations={translations}
-                           selvitysType="loppuselvitys"
                            multibatchEnabled={multibatchEnabled}
                            isPresentingOfficer={isPresentingOfficer}
                            selvitysLinkHelpText={helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"]}
