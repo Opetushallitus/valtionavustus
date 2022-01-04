@@ -30,7 +30,7 @@
          :from {:fi "no-reply@valtionavustukset.oph.fi"
                 :sv "no-reply@statsunderstod.oph.fi"}
          :sender "no-reply@csc.fi"
-         :to-taloustarkastaja ["taloustarkastaja@localhost"]
+         :to-taloustarkastaja ["taloustarkastus@localhost"]
          :to-palkeet ["palkeet@localhost"]
          :bounce-address "oph-va-alerts@reaktor.com"
          :print-mail-on-disable? true

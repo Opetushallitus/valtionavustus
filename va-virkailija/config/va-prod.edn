@@ -25,7 +25,7 @@
          :retry-initial-wait 2000
          :retry-multiplier 4
          :retry-max-time 60000
-         :to-taloustarkastaja ["taloustarkastaja@oph.fi"]}
+         :to-taloustarkastaja ["taloustarkastus@oph.fi"]}
  :integration-healthcheck {:enabled? true
                            :timeout 5000
                            :interval-minutes 15}
