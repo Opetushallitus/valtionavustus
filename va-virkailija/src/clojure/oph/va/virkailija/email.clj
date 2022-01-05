@@ -337,7 +337,9 @@
         mail-subject (str (get-in mail-titles [(keyword type) lang]) " " avustushaku-name)
         selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
         presenter (if (nil? selected-presenter) (first roles) selected-presenter)
-        disable-selvitysmail-to-virkailija (-> config :dont-send-loppuselvityspyynto-to-virkailija :enabled?)]
+        disable-selvitysmail-to-virkailija (-> config :dont-send-loppuselvityspyynto-to-virkailija :enabled?)
+        selvitysdate-unformatted ((keyword (str selvitys-type "date")) avustushaku)
+        selvitysdate (if (nil? selvitysdate-unformatted) "" (datetime/java8-date-string selvitysdate-unformatted))]
     (log/info "Url would be: " url)
     (tapahtumaloki/create-log-entry type (:id avustushaku) (:id hakemus) identity uuid to true)
     (email/enqueue-message-to-be-send {:operation :send
@@ -348,7 +350,7 @@
                                        :from (-> email/smtp-config :from lang)
                                        :sender (-> email/smtp-config :sender)
                                        :subject mail-subject
-                                       :selvitysdate ((keyword (str selvitys-type "date")) avustushaku)
+                                       :selvitysdate selvitysdate 
                                        :presenter-name (:name presenter)
                                        :avustushaku-name avustushaku-name
                                        :to to
