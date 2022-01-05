@@ -41,6 +41,7 @@
                          [radicalzephyr/ring.middleware.logger "0.6.0"]
                          [ring/ring-defaults "0.3.3"]
                          [ring/ring-session-timeout "0.2.0"]
+                         [ring/ring-ssl "0.3.0"]
 
                          ;; json
                          [cheshire "5.10.1"]

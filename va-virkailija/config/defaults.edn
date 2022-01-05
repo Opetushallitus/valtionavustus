@@ -1,6 +1,7 @@
 {:server {:auto-reload? true
           :allow-db-clear? false
           :enable-access-log? true
+          :enable-hsts? true
           :without-authentication? false
           :host "localhost"
           :port 8081

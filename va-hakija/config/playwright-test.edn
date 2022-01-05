@@ -1,5 +1,6 @@
 {:server {:allow-db-clear? true
           :enable-access-log? false
+          :enable-hsts? false
           :host "hakija"
           :url {:fi "http://va-hakija:8080/"
                 :sv "http://va-hakija:8080/"}

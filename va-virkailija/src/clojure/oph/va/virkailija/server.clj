@@ -147,6 +147,7 @@
                    (wrap-defaults h defaults)
                    (server/wrap-logger h)
                    (server/wrap-cache-control h)
+                   (server/wrap-hsts-when-enabled h)
                    (wrap-not-modified h)
                    (if auto-reload?
                      (wrap-reload h {:dirs ["va-virkailija/src" "va-common/src"]})

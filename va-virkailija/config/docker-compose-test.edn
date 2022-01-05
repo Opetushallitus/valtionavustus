@@ -3,6 +3,7 @@
                 :sv "http://localhost:8080/"}
           :virkailija-url "http://localhost:8081"
           :enable-access-log? false
+          :enable-hsts? false
           :without-authentication? true
           :require-https? false
           :payment-service-sftp {:enabled? true

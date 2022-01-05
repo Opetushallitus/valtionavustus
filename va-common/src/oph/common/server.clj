@@ -3,6 +3,7 @@
   (:require [clojure.tools.logging :as log]
             [ring.middleware.conditional :refer [if-url-doesnt-match]]
             [ring.middleware.logger :refer [wrap-with-logger]]
+            [ring.middleware.ssl :refer [wrap-hsts]]
             [ring.util.response :refer [get-header header]]
             [oph.soresu.common.config :refer [config]]
             [oph.va.jdbc.extensions])
@@ -38,6 +39,11 @@
 (defn wrap-logger [handler]
   (if (-> config :server :enable-access-log?)
     (if-url-doesnt-match handler #"/api/healthcheck" wrap-with-logger)
+    handler))
+
+(defn wrap-hsts-when-enabled [handler]
+  (if (-> config :server :enable-hsts?)
+    (wrap-hsts handler)
     handler))
 
 (defn wrap-cache-control [handler]

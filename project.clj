@@ -33,6 +33,7 @@
                  [buddy/buddy-auth]
                  [buddy/buddy-hashers]
                  [ring/ring-session-timeout]
+                 [ring/ring-ssl]
                  [com.cemerick/url :exclusions [com.cemerick/clojurescript.test]]
                  [dk.ative/docjure "1.16.0"]
                  [fi.vm.sade/scala-cas_2.11]
