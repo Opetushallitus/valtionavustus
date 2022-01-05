@@ -131,8 +131,8 @@
                           :content AvustusHakuContent
                           (s/optional-key :hankkeen-alkamispaiva) (s/maybe java.time.LocalDate)
                           (s/optional-key :hankkeen-paattymispaiva) (s/maybe java.time.LocalDate)
-                          (s/optional-key :loppuselvitysdate) (s/maybe s/Str)
-                          (s/optional-key :valiselvitysdate) (s/maybe s/Str)
+                          (s/optional-key :loppuselvitysdate) (s/maybe java.time.LocalDate)
+                          (s/optional-key :valiselvitysdate) (s/maybe java.time.LocalDate)
                           (s/optional-key :decision) Decision
                           :form Long
                           (s/optional-key :form_loppuselvitys) (s/maybe Long)

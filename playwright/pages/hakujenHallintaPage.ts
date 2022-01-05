@@ -124,7 +124,7 @@ export class HakujenHallintaPage {
   }
 
   async setLoppuselvitysDate(value: string) {
-    await this.page.fill('#loppuselvitysdate', value)
+    await this.page.fill('[data-test-id="loppuselvityksen-aikaraja"] div.datepicker input', value)
     await this.page.keyboard.press('Tab')
   }
 

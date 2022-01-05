@@ -329,8 +329,8 @@
    :status GrantStatus
    :register-number (s/maybe s/Str)
    (s/optional-key :decision) s/Any
-   :valiselvitysdate (s/maybe s/Str)
-   :loppuselvitysdate (s/maybe s/Str)
+   :valiselvitysdate (s/maybe LocalDate)
+   :loppuselvitysdate (s/maybe LocalDate)
    :form-loppuselvitys (s/maybe s/Int)
    :form-valiselvitys (s/maybe s/Int)
    :is-academysize s/Bool
@@ -452,7 +452,7 @@
   {:id s/Int
    :form-loppuselvitys s/Any
    :content s/Any
-   :valiselvitysdate s/Any
+   :valiselvitysdate (s/maybe LocalDate)
    :operation-id s/Any
    :is-academysize s/Bool
    :haku-type s/Any
@@ -463,7 +463,7 @@
    :status GrantStatus
    :operational-unit-id s/Any
    :register-number (s/maybe s/Str)
-   :loppuselvitysdate (s/maybe s/Str)
+   :loppuselvitysdate (s/maybe LocalDate)
    :valmistelija (s/maybe IncompleteLocalizedString)
    :hankkeen-alkamispaiva (s/maybe LocalDate)
    :hankkeen-paattymispaiva (s/maybe LocalDate)

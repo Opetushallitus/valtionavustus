@@ -13,7 +13,4 @@ export default class DateUtil {
     return moment(date).tz('Europe/Helsinki').format('D.M.YYYY H.mm')
   }
 
-  static isPast(date) {
-    return moment(date, 'D.M.YYYY') < new Date()
-  }
 }

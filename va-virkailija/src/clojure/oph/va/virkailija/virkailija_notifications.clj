@@ -82,7 +82,7 @@
             hv.user_key,
             coalesce(
               latest_jatkoaika.hyvaksytty_jatkoaika,
-              to_date(avustushaut.loppuselvitysdate, 'DD.MM.YYYY')::date
+              avustushaut.loppuselvitysdate::date
             ) AS loppuselvitys_deadline,
             h.contact_email
           FROM hakija.hakemukset hv
@@ -106,11 +106,11 @@
             AND hv.version_closed IS NULL
             AND arviot.status = 'accepted'
             AND hv.status_loppuselvitys = 'missing'
-            -- There are a few nulls and empty strings for some reason
-            AND avustushaut.loppuselvitysdate IS NOT NULL AND avustushaut.loppuselvitysdate != ''
+            -- There are a few nulls
+            AND avustushaut.loppuselvitysdate IS NOT NULL
             AND coalesce(
               latest_jatkoaika.hyvaksytty_jatkoaika,
-              to_date(avustushaut.loppuselvitysdate, 'DD.MM.YYYY')::date
+              avustushaut.loppuselvitysdate::date
             ) BETWEEN current_timestamp::date AND current_timestamp::date + '14 days'::interval
             AND EXISTS (
               SELECT * FROM tapahtumaloki

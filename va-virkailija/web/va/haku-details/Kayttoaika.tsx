@@ -1,7 +1,7 @@
-import React, {useState} from 'react'
-import DatePicker from 'react-widgets/DatePicker'
+import React from 'react'
 import moment, {Moment} from 'moment'
-import { parseDateString, isoFormat } from 'va-common/web/va/i18n/dateformat'
+import { isoFormat } from 'va-common/web/va/i18n/dateformat'
+import { DateInput } from './DateInput'
 
 import '../style/kayttoaika.less'
 import 'react-widgets/styles.css'
@@ -37,7 +37,8 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
           <DateInput
             id='hankkeen-alkamispaiva'
             onChange={onChange}
-            defaultValue={getStoredDateFor('hankkeen-alkamispaiva')} />
+            defaultValue={getStoredDateFor('hankkeen-alkamispaiva')}
+            allowEmpty={false}/>
         </div>
 
         <div className='date-input-container' data-test-id='hankkeen-paattymispaiva'>
@@ -45,40 +46,9 @@ export const Kayttoaika = (props: KayttoaikaProps) => {
           <DateInput
             id='hankkeen-paattymispaiva'
             onChange={onChange}
-            defaultValue={getStoredDateFor('hankkeen-paattymispaiva')} />
+            defaultValue={getStoredDateFor('hankkeen-paattymispaiva')}
+            allowEmpty={false}/>
         </div>
     </div>
-  )
-}
-
-interface DateInputProps {
-  id: string
-  defaultValue: Date | undefined
-  onChange: (id: string, date: Moment) => void
-}
-
-const DateInput = (props: DateInputProps) => {
-  const { id, defaultValue, onChange} = props
-  const [isValid, setIsValid] = useState(defaultValue !== undefined)
-
-  function onChangeHandlerFor(id: string) {
-    return function onChangeHandler(newDate: Date | null | undefined) {
-      const date = moment(newDate)
-      setIsValid(date.isValid())
-      onChange(id, date)
-    }
-  }
-
-  function getClassNames(): string {
-    return isValid ? 'datepicker' : 'datepicker error'
-  }
-
-  return (
-    <DatePicker
-      name={id}
-      parse={parseDateString}
-      onChange={onChangeHandlerFor(id)}
-      value={defaultValue}
-      containerClassName={getClassNames()} />
   )
 }

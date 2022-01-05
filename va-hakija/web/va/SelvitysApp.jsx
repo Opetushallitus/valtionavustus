@@ -2,9 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import * as Bacon from 'baconjs'
 import queryString from 'query-string'
+import moment from 'moment-timezone'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import DateUtil from 'soresu-form/web/DateUtil'
 
 import FormController from 'soresu-form/web/form/FormController'
 import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
@@ -142,6 +142,10 @@ function onInitialStateLoaded(initialState) {
   budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {
     reportValidationErrors: isNotFirstEdit(initialState)
   })
+}
+
+function isPast(date) {
+  return moment(date) < new Date()
 }
 
 function initFormController() {

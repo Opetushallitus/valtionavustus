@@ -210,8 +210,8 @@ export type Avustushaku = {
   'hankkeen-alkamispaiva'?: string
   'hankkeen-paattymispaiva'?: string
   is_academysize: boolean
-  valiselvitysdate?: unknown
-  loppuselvitysdate?: unknown
+  valiselvitysdate?: string
+  loppuselvitysdate?: string
   muutoshakukelpoinen: boolean
   'operation-id'?: unknown
   'operational-unit-id'?: unknown
