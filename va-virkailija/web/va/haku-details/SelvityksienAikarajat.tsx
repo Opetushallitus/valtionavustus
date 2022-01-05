@@ -3,6 +3,7 @@ import moment, {Moment} from 'moment'
 import { isoFormat } from 'va-common/web/va/i18n/dateformat'
 import { DateInput } from './DateInput'
 import { Avustushaku } from 'va-common/web/va/types'
+import HelpTooltip from '../HelpTooltip'
 
 import '../style/selvityksien-aikarajat.less'
 import 'react-widgets/styles.css'
@@ -12,10 +13,11 @@ interface KayttoaikaProps {
   controller: {
     onChangeListener: (avustushaku: Avustushaku, {id: string}, newValue: string) => void
   }
+  helpTexts: any
 }
 
 export const SelvityksienAikarajat = (props: KayttoaikaProps) => {
-  const {avustushaku, controller} = props
+  const {avustushaku, controller, helpTexts} = props
 
   function getStoredDateFor(field: string): Date | undefined {
     if (!avustushaku[field]) return undefined
@@ -31,7 +33,7 @@ export const SelvityksienAikarajat = (props: KayttoaikaProps) => {
 
   return (
     <div className='selvityksien-aikarajat'>
-      <h4>Väliselvitys</h4>
+      <h4 data-test-id="valiselvitys">Väliselvitys <HelpTooltip content={helpTexts["hakujen_hallinta__päätös___väliselvitys"]} direction="left" /> </h4>
 
         <div className='date-input-container' data-test-id='valiselvityksen-aikaraja'>
           <div className="aikaraja-label">Väliselvitys toimitettava viimeistään</div>
@@ -45,7 +47,7 @@ export const SelvityksienAikarajat = (props: KayttoaikaProps) => {
           <div className="aikaraja-help-text">Väliselvitys avautuu täytettäväksi kun väliselvityspyyntö on lähetetty</div>
         </div>
 
-      <h4>Loppuselvitys</h4>
+      <h4 data-test-id="loppuselvitys">Loppuselvitys <HelpTooltip content={helpTexts["hakujen_hallinta__päätös___loppuselvitys"]} direction="left" /> </h4>
 
         <div className='date-input-container' data-test-id='loppuselvityksen-aikaraja'>
           <div className="aikaraja-label">Loppuselvitys toimitettava viimeistään</div>

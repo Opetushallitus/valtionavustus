@@ -635,7 +635,7 @@ export default class DecisionEditor extends React.Component {
         {fields.map((field)=><DecisionFields key={field.id} title={field.title} avustushaku={avustushaku} id={field.id} onChange={onChange} helpText={field.helpText} dataTestId={field.dataTestId}/>)}
         <DecisionFields key="maksu" title="Avustuksen maksuaika" avustushaku={avustushaku} id="maksu" onChange={onChange} helpText={helpTexts["hakujen_hallinta__päätös___avustuksen_maksuaika"]} dataTestId={"maksu"} />
         <Kayttoaika avustushaku={avustushaku} controller={controller} />
-        <SelvityksienAikarajat avustushaku={avustushaku} controller={controller} />
+        <SelvityksienAikarajat avustushaku={avustushaku} controller={controller} helpTexts={helpTexts}/>
         {avustushaku.content.multiplemaksuera===true && <DateField avustushaku={avustushaku} controller={controller} field="maksudate" label="Viimeinen maksuerä" helpTexts={helpTexts} />}
         <LiitteetSelection environment={environment} avustushaku={avustushaku} decisionLiitteet={decisionLiitteet} controller={controller} helpTexts={helpTexts}/>
         <DecisionDateAndSend avustushaku={avustushaku} controller={controller} environment={environment} helpTexts={helpTexts} />
