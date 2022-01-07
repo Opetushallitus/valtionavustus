@@ -77,7 +77,7 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
     const email = lastOrFail(await getLoppuselvitysPalauttamattaEmails(hakemusID))
     expect(email['to-address']).toHaveLength(1)
     expect(email['to-address']).toContain('lars.andersson@example.com')
-    expect(email.subject).toContain("Muistutus loppuselvityksen palauttamisesta") // TODO odottaa käännöstä
+    expect(email.subject).toContain("Påminnelse om att lämna in slutredovisningen")
     expect(email['formatted']).toContain(`Bästa mottagare,
 
 er slutredovisning för användningen av statsunderstödet ${hakuProps.avustushakuName + ' på svenska'} har ännu inte lämnats in.

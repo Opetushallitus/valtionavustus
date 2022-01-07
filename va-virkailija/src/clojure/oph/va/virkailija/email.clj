@@ -28,7 +28,7 @@
    :hakuaika-paattymassa {:fi "Hakuaika on päättymässä"
                           :sv "Hakuaika on päättymässä"}
    :loppuselvitys-palauttamatta {:fi "Muistutus loppuselvityksen palauttamisesta"
-                                 :sv "Muistutus loppuselvityksen palauttamisesta"}
+                                 :sv "Påminnelse om att lämna in slutredovisningen"}
    :payments-info-notification
    {:fi "Automaattinen viesti - Valtionavustuserän '%s' maksatus suoritettu"
     :sv "Automatiskt meddelande - Statsunderstöd '%s' betald"}})
