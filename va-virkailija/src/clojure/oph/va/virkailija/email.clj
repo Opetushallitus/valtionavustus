@@ -1,16 +1,13 @@
 (ns oph.va.virkailija.email
   (:require [oph.soresu.common.db :refer [query]]
-            [clojure.java.jdbc :as jdbc]
             [oph.common.email :as email]
             [oph.common.datetime :as datetime]
             [oph.soresu.common.config :refer [config]]
             [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]
-            [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
             [clostache.parser :refer [render]])
   (:use [clojure.java.io]
-        [oph.va.decision-liitteet])
-  (:import (java.time.format DateTimeFormatter)))
+        [oph.va.decision-liitteet]))
 
 (def mail-titles
   {:change-request {:fi "Täydennyspyyntö avustushakemukseesi"

@@ -1,5 +1,4 @@
 (ns oph.va.hakija.handlers
-  (:use [clojure.tools.trace :only [trace]])
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [oph.soresu.common.config :refer [config]]
@@ -16,8 +15,7 @@
             [oph.va.hakija.db :as va-db]
             [oph.va.hakija.notification-formatter :as va-submit-notification]
             [oph.va.hakija.attachment-validator :as attachment-validator]
-            [oph.va.hakija.email :as va-email]
-            [ring.util.response :as resp]))
+            [oph.va.hakija.email :as va-email]))
 
 (defn- hakemus-conflict-response [hakemus]
   (conflict! {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
