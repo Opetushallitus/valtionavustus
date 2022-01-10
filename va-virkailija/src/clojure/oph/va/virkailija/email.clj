@@ -26,7 +26,7 @@
    :loppuselvitys-notification {:fi "Loppuselvitys täytettävissä haulle"
                                 :sv "Slutredovisningen redo att fyllas"}
    :hakuaika-paattymassa {:fi "Hakuaika on päättymässä"
-                          :sv "Hakuaika on päättymässä"}
+                          :sv "Ansökningstiden närmar sig sitt slut"}
    :loppuselvitys-palauttamatta {:fi "Muistutus loppuselvityksen palauttamisesta"
                                  :sv "Påminnelse om att lämna in slutredovisningen"}
    :payments-info-notification

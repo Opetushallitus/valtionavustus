@@ -106,7 +106,7 @@ Mikäli olette päättäneet jättää hakemuksen lähettämättä, on tämä vi
 
         expect(email['to-address']).toHaveLength(1)
         expect(email['to-address']).toContain(filledHakemus.email)
-        expect(email.subject).toEqual("Hakuaika on päättymässä") // TODO Odottaa käännöstä
+        expect(email.subject).toEqual("Ansökningstiden närmar sig sitt slut")
 
         const endDate = moment(hakuProps.hakuaikaEnd).format('DD.MM.YYYY')
         expect(email.formatted).toEqual(`Bästa mottagare,
