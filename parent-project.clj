@@ -19,7 +19,7 @@
 
   :managed-dependencies [[org.clojure/clojure "1.8.0"]
                          [nrepl "0.8.3"]
-                         [cider/cider-nrepl "0.26.0"]
+                         [cider/cider-nrepl "0.27.4"]
 
                          ;; our child projects
                          [oph/soresu "0.1.0-SNAPSHOT"]
