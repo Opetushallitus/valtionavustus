@@ -62,9 +62,6 @@
                               :environment "dev"
                               :configdefaults "va-virkailija/config/defaults.edn"}}
 
-             :common-test    {:env {:test-paths ["va-common/spec"]}}
-
-
              :hakija-test    {:env {:config "va-hakija/config/test.edn"
                               :environment "test"
                               :configdefaults "va-hakija/config/defaults.edn"}
@@ -86,8 +83,8 @@
 
   :nvd {:suppression-file "./dependency-check-suppressionlist.xml"}
 
-  :source-paths ["va-hakija/src", "va-virkailija/src/clojure" "va-common/src"]
-  :resource-paths ["va-hakija/resources", "va-virkailija/resources", "va-common/resources"]
+  :source-paths ["va-hakija/src", "va-virkailija/src/clojure"]
+  :resource-paths ["va-hakija/resources", "va-virkailija/resources"]
 
   :java-source-paths ["va-virkailija/src/java"]
 
@@ -97,8 +94,7 @@
 
   :target-path "target/%s"
 
-  :auto {:default {:paths ["va-common/src", "va-common/resources", "va-common/spec",
-                           "va-hakija/src", "va-hakija/resources", "va-hakija/spec",
+  :auto {:default {:paths ["va-hakija/src", "va-hakija/resources", "va-hakija/spec",
                            "va-virkailija/src", "va-virkailija/resources", "va-virkailija/spec"]
                    :file-pattern #"\.(clj|sql|json|edn)$"}}
 )

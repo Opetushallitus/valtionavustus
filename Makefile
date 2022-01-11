@@ -93,7 +93,6 @@ lein-build-backends:
 .PHONY: lein-test
 lein-test:
 	$(call lein_speclj,soresu-form)
-	./lein with-profile common-test spec $(SPECLJ_ARGS)
 	./lein with-profile hakija-test spec $(SPECLJ_ARGS)
 	$(call lein_doo,va-admin-ui)
 	./lein with-profile virkailija-test spec $(SPECLJ_ARGS)

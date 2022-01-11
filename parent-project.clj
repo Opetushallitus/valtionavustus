@@ -23,7 +23,6 @@
 
                          ;; our child projects
                          [oph/soresu "0.1.0-SNAPSHOT"]
-                         [oph-va/common "0.1.0-SNAPSHOT"]
 
                          ;; http
                          [buddy/buddy-auth "2.1.0"]
