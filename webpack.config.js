@@ -21,8 +21,7 @@ const makeConfig = (basedir, componentName) => {
           include:
             [
               "web/",
-              "../soresu-form/web/",
-              "../va-common/web/"
+              "../soresu-form/web/"
             ].map(m => path.resolve(basedir, m)),
           use: {
             loader: "babel-loader",
@@ -59,7 +58,7 @@ const makeConfig = (basedir, componentName) => {
     resolve: {
       alias: {
         "soresu-form": path.resolve(basedir, "../soresu-form"),
-        "va-common": path.resolve(basedir, "../va-common")
+        "va-common": path.resolve(basedir, "../soresu-form")
       },
       extensions: ['.ts', '.tsx', '.js', '.jsx']
     },
