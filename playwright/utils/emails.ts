@@ -37,6 +37,7 @@ export const getLoppuselvitysEmails = getEmails("loppuselvitys-notification")
 export const getAcceptedPäätösEmails = getMuutoshakemusEmails
 export const getTäydennyspyyntöEmails = getEmails("change-request")
 export const getLoppuselvitysPalauttamattaEmails = getEmails("loppuselvitys-palauttamatta")
+export const getValiselvitysPalauttamattaEmails = getEmails("valiselvitys-palauttamatta")
 
 async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))

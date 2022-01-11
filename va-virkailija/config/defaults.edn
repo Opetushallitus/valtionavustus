@@ -50,6 +50,8 @@
                                         :schedule "0 0 7 ? * 2"}
                  :hakuaika-paattymassa {:enabled? false
                                         :schedule "0 0 4 ? * *"}
+                 :valiselvitys-palauttamatta {:enabled? false
+                                        :schedule "0 0 8 ? * *"}
                  :loppuselvitys-palauttamatta {:enabled? false
                                         :schedule "0 0 8 ? * *"}
                  }

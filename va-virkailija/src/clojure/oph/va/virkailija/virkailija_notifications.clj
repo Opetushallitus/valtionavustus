@@ -19,7 +19,7 @@
             h.language,
             jsonb_extract_path_text(avustushaku.content, 'name', h.language) as avustushaku_name,
             avustushaku.content->'duration'->>'end' AS paattymispaiva
-            from hakija.hakemukset h
+          FROM hakija.hakemukset h
           JOIN hakija.avustushaut avustushaku
             ON h.avustushaku = avustushaku.id
           JOIN virkailija.normalized_hakemus hakemus
@@ -125,3 +125,39 @@
       (log/info "sending email to" (count notifications) " contacts")
       (doseq [notification notifications]
         (email/send-loppuselvitys-palauttamatta notification)))))
+
+(defn- get-valiselvitys-palauttamatta []
+  (query "SELECT
+            avustushaut.id as avustushaku_id,
+            h.hakemus_id,
+            hv.language,
+            jsonb_extract_path_text(avustushaut.content, 'name', hv.language) as avustushaku_name,
+            hv.user_key,
+            avustushaut.valiselvitysdate::date AS valiselvitys_deadline,
+            h.contact_email
+          FROM hakija.hakemukset hv
+          JOIN virkailija.arviot ON hv.id = arviot.hakemus_id
+          JOIN hakija.avustushaut ON hv.avustushaku = avustushaut.id
+          JOIN virkailija.normalized_hakemus h ON hv.id = h.hakemus_id
+          WHERE hv.hakemus_type = 'hakemus'
+            AND hv.version_closed IS NULL
+            AND arviot.status = 'accepted'
+            AND hv.status_valiselvitys = 'missing'
+            AND avustushaut.valiselvitysdate IS NOT NULL
+            AND avustushaut.valiselvitysdate::date BETWEEN current_timestamp::date AND current_timestamp::date + '14 days'::interval
+            AND EXISTS (
+              SELECT * FROM tapahtumaloki
+              WHERE tapahtumaloki.hakemus_id = h.hakemus_id
+                AND tyyppi = 'valiselvitys-notification'
+            )
+            AND NOT EXISTS (
+              SELECT * FROM email_event e
+              WHERE e.hakemus_id = h.hakemus_id
+                AND e.email_type = 'valiselvitys-palauttamatta'
+            )"
+         []))
+
+(defn send-valiselvitys-palauttamatta-notifications []
+  (let [notifications (get-valiselvitys-palauttamatta)]
+    (doseq [notification notifications]
+      (email/send-valiselvitys-palauttamatta notification))))

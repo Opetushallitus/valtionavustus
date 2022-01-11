@@ -28,6 +28,10 @@
   (log/info "Running loppuselvitys palauttamatta")
   (send-loppuselvitys-palauttamatta-notifications))
 
+(defjob ValiselvitysPalauttamattaNotification [ctx]
+  (log/info "Running loppuselvitys palauttamatta")
+  (send-valiselvitys-palauttamatta-notifications))
+
 (defn- get-notification-jobs []
   (filter :enabled?
     [
@@ -66,6 +70,13 @@
         :schedule (schedule
                    (cron-schedule
                     (get-in config [:notifications :loppuselvitys-palauttamatta :schedule])))
+      }
+      { :enabled? (get-in config [:notifications :valiselvitys-palauttamatta :enabled?])
+        :key "ValiselvitysPalauttamatta"
+        :job ValiselvitysPalauttamattaNotification
+        :schedule (schedule
+                   (cron-schedule
+                    (get-in config [:notifications :valiselvitys-palauttamatta :schedule])))
       }
     ]))
 

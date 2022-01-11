@@ -22,6 +22,8 @@
                                  :schedule "0 0 14 ? * 1,2,3,4,5"}
                  :loppuselvitys-palauttamatta {:enabled? true
                                                :schedule "0 0 14 ? * 1,2,3,4,5"}
+                 :valiselvitys-palauttamatta  {:enabled? true
+                                               :schedule "0 0 14 ? * 1,2,3,4,5"}
                  :hakuaika-paattymassa {:enabled? true
                                         :schedule "0 0 14 ? * 1,2,3,4,5"}}
  :payments {:enabled? true :delete-payments? true}

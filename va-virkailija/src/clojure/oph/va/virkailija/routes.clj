@@ -666,6 +666,12 @@
     (virkailija-notifications/send-loppuselvitys-palauttamatta-notifications)
     (ok {:ok "ok"}))
 
+  (compojure-api/POST "/send-valiselvitys-palauttamatta-notifications" []
+    :return {:ok s/Str}
+    (log/info "test-api: send valiselvitys palauttamatta notifications")
+    (virkailija-notifications/send-valiselvitys-palauttamatta-notifications)
+    (ok {:ok "ok"}))
+
   (compojure-api/POST "/process-maksupalaute" []
     :body  [body { :xml s/Str :filename s/Str }]
     :return {:message s/Str}

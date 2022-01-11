@@ -24,6 +24,8 @@
                                 :sv "Slutredovisningen redo att fyllas"}
    :hakuaika-paattymassa {:fi "Hakuaika on päättymässä"
                           :sv "Ansökningstiden närmar sig sitt slut"}
+   :valiselvitys-palauttamatta {:fi "Muistutus väliselvityksen palauttamisesta"
+                                :sv "Påminnelse om att lämna in mellanredovisningen"}
    :loppuselvitys-palauttamatta {:fi "Muistutus loppuselvityksen palauttamisesta"
                                  :sv "Påminnelse om att lämna in slutredovisningen"}
    :payments-info-notification
@@ -54,6 +56,8 @@
    :valiselvitys-tarkastamatta (email/load-template "email-templates/valiselvitys-tarkastamatta.fi")
    :hakuaika-paattymassa {:fi (email/load-template "email-templates/hakuaika-paattymassa.fi")
                           :sv (email/load-template "email-templates/hakuaika-paattymassa.sv")}
+   :valiselvitys-palauttamatta {:fi (email/load-template "email-templates/valiselvitys-palauttamatta.fi")
+                                :sv (email/load-template "email-templates/valiselvitys-palauttamatta.sv")}
    :loppuselvitys-palauttamatta {:fi (email/load-template "email-templates/loppuselvitys-palauttamatta.fi")
                                  :sv (email/load-template "email-templates/loppuselvitys-palauttamatta.sv")}})
 
@@ -94,6 +98,9 @@
   (let [va-url (-> config :server :url lang)
         lang-str (or (clojure.core/name lang) "fi")]
   (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" user-key "&lang=" lang-str)))
+
+(defn valiselvitys-url [avustushaku-id user-key lang]
+  (selvitys-url avustushaku-id user-key lang "valiselvitys"))
 
 (defn loppuselvitys-url [avustushaku-id user-key lang]
   (selvitys-url avustushaku-id user-key lang "loppuselvitys"))
@@ -226,6 +233,22 @@
                               :subject "Tarkastamattomia väliselvityksiä"
                               :amount (count list)
                               :list list}
+                             (partial render template))))
+
+(defn send-valiselvitys-palauttamatta [notification]
+  (let [lang         (keyword (:language notification))
+        mail-subject (get-in mail-titles [:valiselvitys-palauttamatta lang])
+        template     (get-in mail-templates [:valiselvitys-palauttamatta lang])]
+    (email/try-send-msg-once {:type :valiselvitys-palauttamatta
+                              :hakemus-id (:hakemus-id notification)
+                              :lang lang
+                              :from (-> email/smtp-config :from lang)
+                              :sender (-> email/smtp-config :sender)
+                              :to [(:contact-email notification)]
+                              :subject mail-subject
+                              :avustushaku-name (:avustushaku-name notification)
+                              :valiselvitys-deadline (datetime/java8-date-string (:valiselvitys-deadline notification))
+                              :url (valiselvitys-url (:avustushaku-id notification) (:user-key notification) lang)}
                              (partial render template))))
 
 (defn send-loppuselvitys-palauttamatta [notification]

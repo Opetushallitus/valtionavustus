@@ -128,6 +128,11 @@ export class HakujenHallintaPage {
     await this.page.keyboard.press('Tab')
   }
 
+  async setValiselvitysDate(value: string) {
+    await this.page.fill('[data-test-id="valiselvityksen-aikaraja"] div.datepicker input', value)
+    await this.page.keyboard.press('Tab')
+  }
+
   async sendPaatos(avustushakuID: number) {
     await clickElementWithText(this.page, "button", "Lähetä 1 päätöstä")
     await Promise.all([
