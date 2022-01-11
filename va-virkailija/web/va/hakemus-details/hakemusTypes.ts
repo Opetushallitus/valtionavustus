@@ -1,7 +1,7 @@
 import {
   Meno,
   TalousarvioValues
-} from "../../../../va-common/web/va/types/muutoshakemus";
+} from "va-common/web/va/types/muutoshakemus";
 import {FormikProps} from "formik";
 
 const PAATOS_ACCEPTED = 'accepted'

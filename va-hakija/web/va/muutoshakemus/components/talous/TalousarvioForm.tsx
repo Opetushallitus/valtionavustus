@@ -5,8 +5,8 @@ import { getNestedInputErrorClass } from 'va-common/web/va/formikHelpers'
 
 import 'va-common/web/va/muutoshakemus/talous.less'
 
-import { Language } from '../../../../../../va-common/web/va/i18n/translations'
-import { useTranslations } from '../../../../../../va-common/web/va/i18n/TranslationContext'
+import { Language } from 'va-common/web/va/i18n/translations'
+import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
 import { PerustelutTextArea } from '../PerustelutTextArea'
 import { ErrorMessage } from '../../ErrorMessage'
 

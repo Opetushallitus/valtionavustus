@@ -1,7 +1,7 @@
 import React from 'react'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import HelpTooltip from '../HelpTooltip'
-import { Avustushaku, Hakemus, HakemusStatus, HelpTexts } from '../../../../va-common/web/va/types'
+import { Avustushaku, Hakemus, HakemusStatus, HelpTexts } from 'va-common/web/va/types'
 
 type EditStatusProps = {
   avustushaku: Avustushaku

@@ -3,7 +3,7 @@ import ClassNames from 'classnames'
 
 import EnvironmentInfo from 'va-common/web/va/EnvironmentInfo.jsx'
 import NameFormatter from 'va-common/web/va/util/NameFormatter'
-import { EnvironmentApiResponse } from '../../../va-common/web/va/types/environment'
+import { EnvironmentApiResponse } from 'va-common/web/va/types/environment'
 import {State, UserInfo} from "./types";
 
 type TopBarProps = {

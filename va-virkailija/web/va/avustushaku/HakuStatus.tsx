@@ -1,5 +1,5 @@
 import React from 'react'
-import { AvustushakuStatus } from '../../../../va-common/web/va/types'
+import { AvustushakuStatus } from 'va-common/web/va/types'
 
 type HakuStatusProps = {
   status: AvustushakuStatus

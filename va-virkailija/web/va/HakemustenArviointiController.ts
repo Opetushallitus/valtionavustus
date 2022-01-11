@@ -28,10 +28,10 @@ import {
   Payment,
   Score,
   Scoring
-} from "../../../va-common/web/va/types";
+} from "va-common/web/va/types";
 import {HakemusSorter, HakuData, State, UserInfo} from "./types";
 import {MuutoshakemusPaatos} from "./hakemus-details/hakemusTypes";
-import {Muutoshakemus as MuutoshakemusType} from "../../../va-common/web/va/types/muutoshakemus";
+import {Muutoshakemus as MuutoshakemusType} from "va-common/web/va/types/muutoshakemus";
 
 const dispatcher = new Dispatcher()
 

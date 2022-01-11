@@ -1,22 +1,22 @@
 import {
   Avustushaku, Hakemus,
   NormalizedHakemusData, UserInfo
-} from "../../../../va-common/web/va/types";
+} from "va-common/web/va/types";
 import {
   Meno,
   Muutoshakemus,
   Talousarvio, TalousarvioValues,
-} from "../../../../va-common/web/va/types/muutoshakemus";
+} from "va-common/web/va/types/muutoshakemus";
 import React, {useMemo} from "react";
-import {MuutosTaloudenKayttosuunnitelmaan} from "../../../../va-common/web/va/muutoshakemus/MuutosTaloudenKayttosuunnitelmaan";
-import {MuutoshakemusSection} from "../../../../va-common/web/va/MuutoshakemusSection";
+import {MuutosTaloudenKayttosuunnitelmaan} from "va-common/web/va/muutoshakemus/MuutosTaloudenKayttosuunnitelmaan";
+import {MuutoshakemusSection} from "va-common/web/va/MuutoshakemusSection";
 import {isError, isSubmitDisabled} from "../formikHelpers";
 import {copyToClipboard} from "../copyToClipboard";
 import {
   getTranslationContext,
   TranslationContext,
   useTranslations
-} from "../../../../va-common/web/va/i18n/TranslationContext";
+} from "va-common/web/va/i18n/TranslationContext";
 import {
   dateStringToMoment,
   getTalousarvio,
@@ -26,7 +26,7 @@ import {
   isAcceptedWithChanges, isAcceptedWithOrWithoutChanges,
   isRejected,
   toFinnishDateFormat
-} from "../../../../va-common/web/va/Muutoshakemus";
+} from "va-common/web/va/Muutoshakemus";
 import {
   MuutoshakemusPaatosRequest,
   MuutoshakemusPaatosFormValues,
@@ -37,17 +37,17 @@ import * as Yup from "yup";
 import {
   fiLongFormat, isoFormat, parseDateString,
   parseDateStringToMoment
-} from "../../../../va-common/web/va/i18n/dateformat";
+} from "va-common/web/va/i18n/dateformat";
 import {paatosStatuses, PaatosStatusRadioButtonGroup} from "./PaatosStatus";
 import {TalousarvioAcceptWithChangesForm} from "./TalousarvioAcceptWithChangesForm";
 import Localization from "react-widgets/Localization";
-import {translationsFi} from "../../../../va-common/web/va/i18n/translations";
+import {translationsFi} from "va-common/web/va/i18n/translations";
 import DatePicker from "react-widgets/DatePicker";
 import moment from "moment";
 import MomentLocalizer from 'react-widgets-moment'
 import {
   getNestedInputErrorClass
-} from "../../../../va-common/web/va/formikHelpers";
+} from "va-common/web/va/formikHelpers";
 import {Role} from "../types";
 import HttpUtil from "soresu-form/web/HttpUtil";
 import {omit} from "lodash";
@@ -56,8 +56,8 @@ import HakemustenArviointiController from "../HakemustenArviointiController";
 import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
 import {Modal} from "./Modal";
-import {MuutoshakemusPaatos} from "../../../../va-common/web/va/MuutoshakemusPaatos";
-import {EnvironmentApiResponse} from "../../../../va-common/web/va/types/environment";
+import {MuutoshakemusPaatos} from "va-common/web/va/MuutoshakemusPaatos";
+import {EnvironmentApiResponse} from "va-common/web/va/types/environment";
 
 moment.locale('fi')
 const localizer = new MomentLocalizer(moment)

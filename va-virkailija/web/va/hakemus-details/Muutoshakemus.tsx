@@ -3,13 +3,13 @@ import moment from 'moment'
 
 import { MuutoshakemusValues, datetimeFormat } from 'va-common/web/va/MuutoshakemusValues'
 import { getTalousarvio, getProjectEndDate } from 'va-common/web/va/Muutoshakemus'
-import {EnvironmentApiResponse} from "../../../../va-common/web/va/types/environment";
-import {Muutoshakemus as MuutoshakemusType} from "../../../../va-common/web/va/types/muutoshakemus";
+import {EnvironmentApiResponse} from "va-common/web/va/types/environment";
+import {Muutoshakemus as MuutoshakemusType} from "va-common/web/va/types/muutoshakemus";
 import {
   Avustushaku,
   Hakemus,
   UserInfo
-} from "../../../../va-common/web/va/types";
+} from "va-common/web/va/types";
 
 import {MuutoshakemusForm} from "./MuutoshakemusForm";
 import {Role} from "../types";

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 
 import { FormikHook } from 'va-common/web/va/types/muutoshakemus'
 
-import {useTranslations} from '../../../../../va-common/web/va/i18n/TranslationContext'
+import {useTranslations} from 'va-common/web/va/i18n/TranslationContext'
 
 type TopBarNotificationProps = {
   f: FormikHook

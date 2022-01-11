@@ -1,6 +1,6 @@
-import {Avustushaku, Hakemus} from "../../../va-common/web/va/types";
-import {EnvironmentApiResponse} from "../../../va-common/web/va/types/environment";
-import { HakemusSelvitys, Loppuselvitys } from "../../../va-common/web/va/status";
+import {Avustushaku, Hakemus} from "va-common/web/va/types";
+import {EnvironmentApiResponse} from "va-common/web/va/types/environment";
+import { HakemusSelvitys, Loppuselvitys } from "va-common/web/va/status";
 
 export interface UserInfo {
   email: string

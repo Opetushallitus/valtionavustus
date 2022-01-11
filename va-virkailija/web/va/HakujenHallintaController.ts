@@ -25,7 +25,7 @@ import {
   AvustushakuType,
   Payment,
   RahoitusAlue
-} from "../../../va-common/web/va/types";
+} from "va-common/web/va/types";
 import {
   Filter,
   FilterId,
@@ -42,7 +42,7 @@ import {
   VaUserSearchResult,
   VaUserSearchResults
 } from "./types";
-import {EnvironmentApiResponse} from "../../../va-common/web/va/types/environment";
+import {EnvironmentApiResponse} from "va-common/web/va/types/environment";
 
 interface Avustushaku extends BaseAvustushaku {
   roles?: Role[]

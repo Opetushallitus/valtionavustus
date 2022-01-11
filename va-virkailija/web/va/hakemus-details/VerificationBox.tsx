@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment'
-import {fiLongDateTimeFormatWithKlo} from '../../../../va-common/web/va/i18n/dateformat'
+import {fiLongDateTimeFormatWithKlo} from 'va-common/web/va/i18n/dateformat'
 import './VerificationBox.less'
 
 interface VerificationBoxProps {
