@@ -7,8 +7,8 @@ import {
   isAcceptedWithChanges,
 } from './Muutoshakemus'
 import { TalousarvioTable } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
-import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
-import { fiShortFormat } from 'va-common/web/va/i18n/dateformat'
+import { useTranslations } from 'soresu-form/web/va/i18n/TranslationContext'
+import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
 import {
   Muutoshakemus,
   MuutoshakemusStatus,

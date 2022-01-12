@@ -1,10 +1,10 @@
 import React from 'react'
 
-import { FormikHook } from 'va-common/web/va/types/muutoshakemus'
-import { getInputErrorClass } from 'va-common/web/va/formikHelpers'
+import { FormikHook } from 'soresu-form/web/va/types/muutoshakemus'
+import { getInputErrorClass } from 'soresu-form/web/va/formikHelpers'
 
 import { ErrorMessage } from '../../ErrorMessage'
-import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
+import { useTranslations } from 'soresu-form/web/va/i18n/TranslationContext'
 
 interface ContactPersonProps {
   avustushakuName: string

@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
 
-import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
+import VaTraineeDayUtil from 'soresu-form/web/va/VaTraineeDayUtil'
 
 import FakeFormState from '../form/FakeFormState'
 import TraineeDayEditFormController from './TraineeDayEditFormController.jsx'

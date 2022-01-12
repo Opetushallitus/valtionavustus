@@ -6,8 +6,8 @@ import BasicTextField from 'soresu-form/web/form/component/BasicTextField.jsx'
 import Translator from 'soresu-form/web/form/Translator'
 import MathUtil from 'soresu-form/web/MathUtil'
 
-import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
-import VaTraineeDayCalculator from 'va-common/web/va/VaTraineeDayCalculator.jsx'
+import VaTraineeDayUtil from 'soresu-form/web/va/VaTraineeDayUtil'
+import VaTraineeDayCalculator from 'soresu-form/web/va/VaTraineeDayCalculator.jsx'
 
 export default class TraineeDayEditCalculator extends BasicFieldComponent {
   constructor(props) {

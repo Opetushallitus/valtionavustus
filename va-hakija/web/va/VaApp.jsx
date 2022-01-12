@@ -11,10 +11,10 @@ import ResponseParser from "soresu-form/web/form/ResponseParser"
 
 import VaForm from "./VaForm.jsx"
 import VaUrlCreator from "./VaUrlCreator"
-import VaComponentFactory from "va-common/web/va/VaComponentFactory"
-import VaSyntaxValidator from "va-common/web/va/VaSyntaxValidator"
-import VaPreviewComponentFactory from "va-common/web/va/VaPreviewComponentFactory"
-import VaBudgetCalculator from "va-common/web/va/VaBudgetCalculator"
+import VaComponentFactory from "soresu-form/web/va/VaComponentFactory"
+import VaSyntaxValidator from "soresu-form/web/va/VaSyntaxValidator"
+import VaPreviewComponentFactory from "soresu-form/web/va/VaPreviewComponentFactory"
+import VaBudgetCalculator from "soresu-form/web/va/VaBudgetCalculator"
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 

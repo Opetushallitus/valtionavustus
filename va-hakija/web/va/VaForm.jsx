@@ -5,9 +5,9 @@ import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
 import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
 
-import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber.jsx'
-import VaChangeRequest from 'va-common/web/va/VaChangeRequest.jsx'
-import { mapAnswersWithMuutoshakemusData } from 'va-common/web/va/MuutoshakemusMapper'
+import VaHakemusRegisterNumber from 'soresu-form/web/va/VaHakemusRegisterNumber.jsx'
+import VaChangeRequest from 'soresu-form/web/va/VaChangeRequest.jsx'
+import { mapAnswersWithMuutoshakemusData } from 'soresu-form/web/va/MuutoshakemusMapper'
 
 import VaFormTopbar from './VaFormTopbar.jsx'
 import VaOldBrowserWarning from './VaOldBrowserWarning.jsx'

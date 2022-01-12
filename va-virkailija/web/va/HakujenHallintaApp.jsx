@@ -9,7 +9,7 @@ import HakujenHallintaController from './HakujenHallintaController'
 import HakuListing from './haku-list/HakuListing.jsx'
 import EditorSelector from './haku-details/EditorSelector.jsx'
 import LocalStorage from './LocalStorage'
-import { translationsFi } from 'va-common/web/va/i18n/translations'
+import { translationsFi } from 'soresu-form/web/va/i18n/translations'
 
 import './style/virkailija.less'
 import './style/topbar.less'

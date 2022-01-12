@@ -7,9 +7,9 @@ import Loppuselvitys from './Loppuselvitys'
 import Väliselvitys from './Väliselvitys'
 import Seuranta from './Seuranta'
 import {HakuData, SelectedHakemusAccessControl, UserInfo} from "../types";
-import {Avustushaku, Hakemus} from "va-common/web/va/types";
+import {Avustushaku, Hakemus} from "soresu-form/web/va/types";
 import HakemustenArviointiController from "../HakemustenArviointiController";
-import {EnvironmentApiResponse} from "va-common/web/va/types/environment";
+import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
 
 import './hakemusDetails.less'
 

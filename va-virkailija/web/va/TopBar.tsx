@@ -1,9 +1,9 @@
 import React from 'react'
 import ClassNames from 'classnames'
 
-import EnvironmentInfo from 'va-common/web/va/EnvironmentInfo.jsx'
-import NameFormatter from 'va-common/web/va/util/NameFormatter'
-import { EnvironmentApiResponse } from 'va-common/web/va/types/environment'
+import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo.jsx'
+import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 import {State, UserInfo} from "./types";
 
 type TopBarProps = {

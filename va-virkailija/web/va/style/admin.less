@@ -1,4 +1,4 @@
-@import "~va-common/web/va/style/soresu-va.less";
+@import "~soresu-form/web/va/style/soresu-va.less";
 
 table.translation {
   margin-top: 10px;
@@ -29,7 +29,9 @@ table.translation {
   > span {
     padding-bottom: 6px;
     margin-right: 25px;
-    &:last-child{margin: 0;}
+    &:last-child {
+      margin: 0;
+    }
     text-transform: uppercase;
     color: @dark-gray;
     cursor: pointer;
@@ -40,7 +42,7 @@ table.translation {
     }
     &.disabled {
       pointer-events: none;
-      color: @light-gray
+      color: @light-gray;
     }
   }
 }
@@ -67,7 +69,6 @@ table.translation {
 }
 
 #haku-edit {
-
   #haku-edit-header {
     margin-top: 20px;
     width: @content-width;
@@ -100,8 +101,9 @@ table.translation {
     }
   }
 
-  #set-maksuerat,#set-academysize {
-    input[type=radio] + label {
+  #set-maksuerat,
+  #set-academysize {
+    input[type="radio"] + label {
       text-transform: none;
     }
   }
@@ -124,7 +126,8 @@ table.translation {
       padding-left: 0;
     }
 
-    &-name-column, &-email-column {
+    &-name-column,
+    &-email-column {
       input {
         width: 280px;
       }
@@ -160,13 +163,13 @@ table.translation {
   }
 
   .education-levels-table tr {
-    border-bottom: solid 1px @light-gray
+    border-bottom: solid 1px @light-gray;
   }
 
   .education-level-field {
     width: 65%;
     margin-right: 5px;
-    padding: 4px
+    padding: 4px;
   }
 
   #rahoitusalueet {
@@ -179,22 +182,25 @@ table.translation {
         }
       }
     }
-    th, td {
+    th,
+    td {
       padding: 15px 0 15px 30px;
       vertical-align: center;
       text-align: left;
       background-color: @lighter-gray;
     }
-    th:nth-last-child(2), td:nth-last-child(2) {
+    th:nth-last-child(2),
+    td:nth-last-child(2) {
       padding-left: 20px;
       padding-right: 20px;
       min-width: 22px;
     }
-    th:nth-last-child(1), td:nth-last-child(1) {
+    th:nth-last-child(1),
+    td:nth-last-child(1) {
       padding-left: 10px;
       background-color: transparent;
     }
-    input[type=text] {
+    input[type="text"] {
       padding: 4px;
     }
     button {
@@ -243,7 +249,7 @@ table.translation {
     }
     #va-user-search-results {
       &.loading {
-        background: white url('../img/ajax-loader.gif') no-repeat 4px 4px;
+        background: white url("../img/ajax-loader.gif") no-repeat 4px 4px;
       }
       min-height: 20px;
       width: 800px;
@@ -252,7 +258,7 @@ table.translation {
       top: 18px;
       ul {
         background: white;
-        box-shadow: 0 1px 2px 0 rgba(0,0,0,0.40);
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
         border-radius: 0 0 4px 4px;
         list-style: none;
         padding-left: 0;
@@ -280,14 +286,15 @@ table.translation {
           }
         }
         &.loading {
-          background: white url('../img/ajax-loader.gif') no-repeat 4px 4px;
+          background: white url("../img/ajax-loader.gif") no-repeat 4px 4px;
         }
       }
     }
   }
 
   .translation {
-    textarea, input[type=text] {
+    textarea,
+    input[type="text"] {
       max-width: 97%;
       width: 97%;
     }
@@ -335,12 +342,14 @@ table.translation {
     padding: 1px 10px;
   }
 
-  .haku-duration-edit-container, .haku-self-financing-edit-container {
+  .haku-duration-edit-container,
+  .haku-self-financing-edit-container {
     display: inline-block;
     margin-right: 40px;
   }
 
-  #selection-criteria, #focus-areas {
+  #selection-criteria,
+  #focus-areas {
     margin-top: 20px;
   }
 
@@ -348,7 +357,8 @@ table.translation {
     height: 66px;
   }
 
-  input:disabled, textarea:disabled {
+  input:disabled,
+  textarea:disabled {
     color: @dark-gray;
     border-width: 1px;
     border-style: dotted;
@@ -387,18 +397,19 @@ table.translation {
   text-align: right;
 }
 
-#loppuselvitysUpdatedAt, #valiselvitysUpdatedAt {
+#loppuselvitysUpdatedAt,
+#valiselvitysUpdatedAt {
   float: right;
   margin-right: 20px;
 }
 
-.decision-editor{
+.decision-editor {
   margin-top: 20px;
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
 }
 
-.decision-subfields{
+.decision-subfields {
   padding: 20px;
 }
 
@@ -406,21 +417,20 @@ table.translation {
   font-size: 12px;
 }
 
-
-.decision-row{
+.decision-row {
   margin-bottom: 10px;
   display: flex;
-  flex-direction:row;
+  flex-direction: row;
 }
 
-.decision-column{
+.decision-column {
   width: 50%;
-  label{
+  label {
     display: block;
     color: @darker-gray;
     margin-bottom: 5px;
   }
-  textarea{
+  textarea {
     width: 90%;
   }
 }
@@ -470,7 +480,7 @@ table.translation {
 }
 
 .decision-liite-selection {
-  input[type=radio] {
+  input[type="radio"] {
     display: inline-block;
   }
 
@@ -506,12 +516,15 @@ table.translation {
   }
 }
 
-.send-decisions-panel{
+.send-decisions-panel {
   padding-top: 20px;
-  h3{margin-top: 0;margin-bottom: 20px;}
+  h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
 }
 
-.haku-filter-remove{
+.haku-filter-remove {
   margin-left: 10px;
   font-size: 11px;
 }
@@ -545,7 +558,6 @@ table.translation {
 }
 
 .tapahtumaloki {
-
   margin-top: 10px;
   margin-bottom: 10px;
 
@@ -554,12 +566,12 @@ table.translation {
   }
 
   .entries {
-
     div.entry:nth-child(even) {
       background-color: @lighterer-gray;
     }
 
-    .entry, .header-row {
+    .entry,
+    .header-row {
       display: flex;
       text-align: center;
 

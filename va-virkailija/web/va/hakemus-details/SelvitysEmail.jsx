@@ -7,7 +7,7 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import JsUtil from 'soresu-form/web/JsUtil'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 import Translator from 'soresu-form/web/form/Translator'
-import NameFormatter from 'va-common/web/va/util/NameFormatter'
+import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
 
 const emailNotificationFieldType = "vaEmailNotification"
 

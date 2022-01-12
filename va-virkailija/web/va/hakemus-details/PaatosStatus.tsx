@@ -1,6 +1,6 @@
-import {translations} from "va-common/web/va/i18n/translations";
+import {translations} from "soresu-form/web/va/i18n/translations";
 import { MuutoshakemusPaatosFormValues } from "./hakemusTypes";
-import {TalousarvioValues} from "va-common/web/va/types/muutoshakemus";
+import {TalousarvioValues} from "soresu-form/web/va/types/muutoshakemus";
 import React from "react";
 
 export const paatosStatuses = [

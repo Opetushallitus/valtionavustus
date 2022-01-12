@@ -12,9 +12,9 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
 
-import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
-import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
-import { HakemusSelvitys, Loppuselvitys, Muutoshakemus } from 'va-common/web/va/status'
+import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
+import VaTraineeDayUtil from 'soresu-form/web/va/VaTraineeDayUtil'
+import { HakemusSelvitys, Loppuselvitys, Muutoshakemus } from 'soresu-form/web/va/status'
 
 import HakemusArviointiStatuses
   from './hakemus-details/HakemusArviointiStatuses'
@@ -28,10 +28,10 @@ import {
   Payment,
   Score,
   Scoring
-} from "va-common/web/va/types";
+} from "soresu-form/web/va/types";
 import {HakemusSorter, HakuData, State, UserInfo} from "./types";
 import {MuutoshakemusPaatos} from "./hakemus-details/hakemusTypes";
-import {Muutoshakemus as MuutoshakemusType} from "va-common/web/va/types/muutoshakemus";
+import {Muutoshakemus as MuutoshakemusType} from "soresu-form/web/va/types/muutoshakemus";
 
 const dispatcher = new Dispatcher()
 

@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import ComponentFactory from 'soresu-form/web/form/ComponentFactory.jsx'
 
-import {BudgetSummaryElement} from 'va-common/web/va/VaBudgetComponents.jsx'
+import {BudgetSummaryElement} from 'soresu-form/web/va/VaBudgetComponents.jsx'
 
 import BudgetEditElement, {EditSummingBudgetElement, EditBudgetItemElement} from './BudgetEditComponents.jsx'
 

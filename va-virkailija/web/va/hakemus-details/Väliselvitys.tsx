@@ -5,10 +5,10 @@ import SelvitysNotFilled from './SelvitysNotFilled'
 import SelvitysLink from './SelvitysLink'
 import PresenterComment from './PresenterComment'
 import ApplicationPayments from './ApplicationPayments'
-import { Avustushaku, Hakemus } from 'va-common/web/va/types'
+import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
 import { Role, UserInfo } from '../types'
-import { EnvironmentApiResponse } from 'va-common/web/va/types/environment'
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 import SelvitysEmail from './SelvitysEmail'
 
 type SelvitysProps = {

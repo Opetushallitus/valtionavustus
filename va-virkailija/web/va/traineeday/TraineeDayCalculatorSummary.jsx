@@ -1,7 +1,7 @@
 import React from 'react'
 
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
-import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
+import VaTraineeDayUtil from 'soresu-form/web/va/VaTraineeDayUtil'
 
 export default class TraineeDayCalculatorSummary extends React.Component {
   render() {

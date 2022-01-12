@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 import DropdownList from 'react-widgets/DropdownList'
 import moment from 'moment-timezone'
-import { fiShortFormat } from 'va-common/web/va/i18n/dateformat'
+import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
 
 import './avustushaku-dropdown.less'
 

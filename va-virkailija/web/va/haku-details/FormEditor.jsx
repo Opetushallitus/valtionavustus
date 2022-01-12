@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 
-import 'va-common/web/va/style/soresu-va.less'
+import 'soresu-form/web/va/style/soresu-va.less'
 import 'soresu-form/web/form/style/formedit.less'
 
 import FormEdit from 'soresu-form/web/form/edit/FormEdit.jsx'
 import FormEditorController from 'soresu-form/web/form/edit/FormEditController'
-import VaComponentFactory from 'va-common/web/va/VaComponentFactory'
-import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
+import VaComponentFactory from 'soresu-form/web/va/VaComponentFactory'
+import VaPreviewComponentFactory from 'soresu-form/web/va/VaPreviewComponentFactory'
 
 import FakeFormController from '../form/FakeFormController'
 import FakeFormState from '../form/FakeFormState'

@@ -1,12 +1,12 @@
 import React from 'react'
 
-import { getNestedInputErrorClass } from 'va-common/web/va/formikHelpers'
-import { Meno, Talousarvio, TalousarvioValues } from 'va-common/web/va/types/muutoshakemus'
+import { getNestedInputErrorClass } from 'soresu-form/web/va/formikHelpers'
+import { Meno, Talousarvio, TalousarvioValues } from 'soresu-form/web/va/types/muutoshakemus'
 import {
   MuutoshakemusPaatosFormValues
 } from "./hakemusTypes"
 
-import 'va-common/web/va/muutoshakemus/talous.less'
+import 'soresu-form/web/va/muutoshakemus/talous.less'
 
 interface TalousarvioAcceptWithChangesFormProps {
   f: MuutoshakemusPaatosFormValues

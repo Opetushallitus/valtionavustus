@@ -1,4 +1,4 @@
-@import "~va-common/web/va/style/soresu-va.less";
+@import "~soresu-form/web/va/style/soresu-va.less";
 
 .seuranta #budget-edit-container .va-budget .summing-table {
   .label-column {
@@ -16,7 +16,8 @@
     .soresu-tooltip {
       display: none;
     }
-    .summing-table, .budget-summary {
+    .summing-table,
+    .budget-summary {
       font-size: 14px;
       width: 100%;
       margin-top: 20px;
@@ -39,7 +40,7 @@
         margin: 0;
       }
       td {
-        line-height: 2;  // align text by baseline inside <span> and <input>
+        line-height: 2; // align text by baseline inside <span> and <input>
       }
       th {
         vertical-align: bottom;
@@ -67,21 +68,31 @@
         padding-left: 15px;
         padding-right: 5px;
       }
-      span.money, span.soresu-money {
+      span.money,
+      span.soresu-money {
         display: inline-block;
         min-height: 30px;
         margin: 0;
       }
-      .extra-small, .small, .medium, .large, .extra-large {
+      .extra-small,
+      .small,
+      .medium,
+      .large,
+      .extra-large {
         width: auto;
       }
       div.extra-extra-small {
         width: auto;
       }
-      .soresu-text-field input[type=text], .soresu-money-field input[type=text], .soresu-preview-element, .soresu-value {
+      .soresu-text-field input[type="text"],
+      .soresu-money-field input[type="text"],
+      .soresu-preview-element,
+      .soresu-value {
         font-size: inherit;
       }
-      .soresu-text-field input[type=text], .soresu-money-field input[type=text], .soresu-text-area textarea {
+      .soresu-text-field input[type="text"],
+      .soresu-money-field input[type="text"],
+      .soresu-text-area textarea {
         padding: 4px;
         margin: 0;
         width: 90%;
@@ -94,7 +105,8 @@
       .amount-value-column .money:after {
         margin-left: 0;
       }
-      .amounts, .percentages {
+      .amounts,
+      .percentages {
         tbody tr:first-child td {
           height: auto;
         }

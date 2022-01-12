@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Meno, MuutoshakemusStatus, Talousarvio } from 'va-common/web/va/types/muutoshakemus'
+import { Meno, MuutoshakemusStatus, Talousarvio } from 'soresu-form/web/va/types/muutoshakemus'
 import { useTranslations } from '../i18n/TranslationContext'
 import {isAcceptedWithOrWithoutChanges} from "../Muutoshakemus";
 import {OsioPaatos} from "../OsioPaatos";

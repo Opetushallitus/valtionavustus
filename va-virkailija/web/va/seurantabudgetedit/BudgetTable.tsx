@@ -1,8 +1,8 @@
 import React from 'react'
-import { getTalousarvio } from 'va-common/web/va/Muutoshakemus'
+import { getTalousarvio } from 'soresu-form/web/va/Muutoshakemus'
 
-import { Hakemus } from 'va-common/web/va/types'
-import { Muutoshakemus, Talousarvio } from 'va-common/web/va/types/muutoshakemus'
+import { Hakemus } from 'soresu-form/web/va/types'
+import { Muutoshakemus, Talousarvio } from 'soresu-form/web/va/types/muutoshakemus'
 
 type BudgetTableProps = {
   muutoshakemukset: Muutoshakemus[]

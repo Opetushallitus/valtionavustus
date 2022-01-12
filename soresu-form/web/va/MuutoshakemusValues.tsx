@@ -7,7 +7,7 @@ import {isAcceptedWithChanges} from "./Muutoshakemus";
 import {OsioPaatos} from "./OsioPaatos";
 import { Muutoshakemus, Talousarvio } from './types/muutoshakemus'
 import { useTranslations } from "./i18n/TranslationContext"
-import { fiLongFormat, parseDateStringToMoment } from 'va-common/web/va/i18n/dateformat'
+import { fiLongFormat, parseDateStringToMoment } from 'soresu-form/web/va/i18n/dateformat'
 
 import './MuutoshakemusValues.less'
 

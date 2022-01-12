@@ -1,9 +1,9 @@
 import React from 'react'
 
-import { FormikHook, FormValues } from 'va-common/web/va/types/muutoshakemus'
-import { getInputErrorClass } from 'va-common/web/va/formikHelpers'
+import { FormikHook, FormValues } from 'soresu-form/web/va/types/muutoshakemus'
+import { getInputErrorClass } from 'soresu-form/web/va/formikHelpers'
 
-import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
+import { useTranslations } from 'soresu-form/web/va/i18n/TranslationContext'
 import { ErrorMessage } from '../ErrorMessage'
 
 type PerustelutTextAreaProps = {

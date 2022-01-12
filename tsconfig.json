@@ -9,22 +9,22 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "soresu-form/*": ["soresu-form/*"]
+      "soresu-form/*": ["soresu-form/*"],
     }
   },
   "include": [
     "./va-hakija/**/*",
     "./va-virkailija/**/*",
-    "./va-common/**/*"
+    "./soresu-form/**/*",
   ],
   "exclude": [
     "node_modules",
     "va-admin-ui/target",
-    "va-common/target",
+    "soresu-form/target",
     "va-hakija/target",
     "va-virkailija/target",
     "va-admin-ui/resources",
-    "va-common/resources",
+    "soresu-form/resources",
     "va-hakija/resources",
     "va-virkailija/resources",
   ]

@@ -1,10 +1,10 @@
 import * as yup from 'yup'
 import { useFormik } from 'formik'
 
-import { FormValues, TalousarvioValues } from 'va-common/web/va/types/muutoshakemus'
-import { getTalousarvioSchema } from 'va-common/web/va/Muutoshakemus'
+import { FormValues, TalousarvioValues } from 'soresu-form/web/va/types/muutoshakemus'
+import { getTalousarvioSchema } from 'soresu-form/web/va/Muutoshakemus'
 import { postMuutoshakemus } from './client'
-import { Language, translations } from 'va-common/web/va/i18n/translations'
+import { Language, translations } from 'soresu-form/web/va/i18n/translations'
 
 const getMuutoshakemusSchema = (lang: Language) => {
   const t = translations[lang]

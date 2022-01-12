@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import { MuutoshakemusPaatos } from 'va-common/web/va/MuutoshakemusPaatos'
-import { PaatosState, MuutoshakemusPaatosResponse } from 'va-common/web/va/types/muutoshakemus'
-import { EnvironmentApiResponse } from 'va-common/web/va/types/environment'
-import { useTranslations } from 'va-common/web/va/i18n/TranslationContext'
+import { MuutoshakemusPaatos } from 'soresu-form/web/va/MuutoshakemusPaatos'
+import { PaatosState, MuutoshakemusPaatosResponse } from 'soresu-form/web/va/types/muutoshakemus'
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
+import { useTranslations } from 'soresu-form/web/va/i18n/TranslationContext'
 
 import { Query } from './MuutoshakemusApp'
 

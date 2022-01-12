@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 
-import { FormikHook } from 'va-common/web/va/types/muutoshakemus'
+import { FormikHook } from 'soresu-form/web/va/types/muutoshakemus'
 
 type AvustuksenKayttoajanPidennysProps = {
   f: FormikHook

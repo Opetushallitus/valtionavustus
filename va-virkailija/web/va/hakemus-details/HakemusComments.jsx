@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import DateUtil from 'soresu-form/web/DateUtil'
-import NameFormatter from 'va-common/web/va/util/NameFormatter'
+import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
 
 import HelpTooltip from '../HelpTooltip'
 

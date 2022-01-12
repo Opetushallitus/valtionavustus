@@ -140,7 +140,7 @@ Targets:
   lein-clean-targets            Remove Leiningen target directories from $$LEIN_PROJECTS.
   lein-clean-frontends          Remove CLJS build artifacts from va-virkailija and va-hakija, produced by va-admin-ui.
   lein-build                    `lein-install-jar-commons`, `lein-build-frontends`, `lein-build-backends`
-  lein-install-jar-commons      Install jars for soresu-form and va-common.
+  lein-install-jar-commons      Install jars for soresu-form.
   lein-build-frontends		Build CLJS fronends for va-virkailija and va-hakija (va-admin-ui)
   lein-build-backends           Build backend uberjars for va-hakija and va-virkailija.
   lein-test                     Run Leiningen tests for $$LEIN_PROJECTS.

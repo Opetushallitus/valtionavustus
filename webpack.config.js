@@ -57,8 +57,7 @@ const makeConfig = (basedir, componentName) => {
     },
     resolve: {
       alias: {
-        "soresu-form": path.resolve(basedir, "../soresu-form"),
-        "va-common": path.resolve(basedir, "../soresu-form")
+        "soresu-form": path.resolve(basedir, "../soresu-form")
       },
       extensions: ['.ts', '.tsx', '.js', '.jsx']
     },
@@ -66,7 +65,7 @@ const makeConfig = (basedir, componentName) => {
       splitChunks: {
         cacheGroups: {
           commons: {
-            test: /(soresu-form|va-common)/,
+            test: /soresu-form/,
             name: 'commons',
             chunks: 'all'
           }

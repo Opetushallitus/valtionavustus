@@ -73,8 +73,7 @@ Valtionavustus application is divided to following major parts:
 
 * [soresu-form](https://github.com/Opetushallitus/soresu-form), which is
   the generic form library (including both React client UI and Clojure
-  server code),
-* [va-common](../va-common/), which contains the React client UI and
+  server code) and the React client UI and
   Clojure server code shared between the applications,
 * [va-virkailija](../va-virkailija/), which contains React
   client UI and Clojure server for handling the scoring and processing
@@ -140,7 +139,7 @@ virkailija and hakija apps, and are forward-only.
 
 ## Localization
 
-* [Common form elements](../va-common/resources/public/translations.json)
+* [Common form elements](../soresu-form/resources/public/translations.json)
 * [Virkailija email templates](../va-virkailija/resources/email-templates/)
 * [Virkailija titles](../va-virkailija/src/oph/va/virkailija/email.clj)
 * [Hakija email templates](../va-hakija/resources/email-templates/)

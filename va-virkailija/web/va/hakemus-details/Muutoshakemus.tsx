@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import moment from 'moment'
 
-import { MuutoshakemusValues, datetimeFormat } from 'va-common/web/va/MuutoshakemusValues'
-import { getTalousarvio, getProjectEndDate } from 'va-common/web/va/Muutoshakemus'
-import {EnvironmentApiResponse} from "va-common/web/va/types/environment";
-import {Muutoshakemus as MuutoshakemusType} from "va-common/web/va/types/muutoshakemus";
+import { MuutoshakemusValues, datetimeFormat } from 'soresu-form/web/va/MuutoshakemusValues'
+import { getTalousarvio, getProjectEndDate } from 'soresu-form/web/va/Muutoshakemus'
+import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
+import {Muutoshakemus as MuutoshakemusType} from "soresu-form/web/va/types/muutoshakemus";
 import {
   Avustushaku,
   Hakemus,
   UserInfo
-} from "va-common/web/va/types";
+} from "soresu-form/web/va/types";
 
 import {MuutoshakemusForm} from "./MuutoshakemusForm";
 import {Role} from "../types";

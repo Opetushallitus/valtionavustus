@@ -18,14 +18,14 @@ import {
   fiShortFormat,
   isoFormat,
   parseFinnishTimestamp
-} from 'va-common/web/va/i18n/dateformat'
+} from 'soresu-form/web/va/i18n/dateformat'
 import {
   Avustushaku as BaseAvustushaku,
   AvustushakuStatus,
   AvustushakuType,
   Payment,
   RahoitusAlue
-} from "va-common/web/va/types";
+} from "soresu-form/web/va/types";
 import {
   Filter,
   FilterId,
@@ -42,7 +42,7 @@ import {
   VaUserSearchResult,
   VaUserSearchResults
 } from "./types";
-import {EnvironmentApiResponse} from "va-common/web/va/types/environment";
+import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
 
 interface Avustushaku extends BaseAvustushaku {
   roles?: Role[]

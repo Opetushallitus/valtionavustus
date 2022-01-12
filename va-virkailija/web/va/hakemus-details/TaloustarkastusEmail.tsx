@@ -2,9 +2,9 @@ import React, {useState, useEffect} from 'react'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import HakemustenArviointiController from '../HakemustenArviointiController'
 import { UserInfo } from '../types'
-import { Language } from 'va-common/web/va/i18n/translations'
-import { Hakemus, Answer, Selvitys, SelvitysEmail } from 'va-common/web/va/types'
-import { IconTrashcan } from "va-common/web/va/img/IconTrashcan";
+import { Language } from 'soresu-form/web/va/i18n/translations'
+import { Hakemus, Answer, Selvitys, SelvitysEmail } from 'soresu-form/web/va/types'
+import { IconTrashcan } from "soresu-form/web/va/img/IconTrashcan";
 
 import './TaloustarkastusEmail.less'
 import {VerificationBox} from "./VerificationBox"

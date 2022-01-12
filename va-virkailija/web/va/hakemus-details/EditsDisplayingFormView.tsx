@@ -4,10 +4,10 @@ import _ from 'lodash'
 
 import JsUtil from 'soresu-form/web/JsUtil'
 import FormPreview from 'soresu-form/web/form/FormPreview'
-import { Answer, AnswersDelta, HakemusFormState, NormalizedHakemusData } from 'va-common/web/va/types'
-import { Muutoshakemus } from 'va-common/web/va/types/muutoshakemus'
-import { getProjectEndDate } from 'va-common/web/va/Muutoshakemus'
-import { isoFormat, fiLongFormat } from 'va-common/web/va/i18n/dateformat'
+import { Answer, AnswersDelta, HakemusFormState, NormalizedHakemusData } from 'soresu-form/web/va/types'
+import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
+import { getProjectEndDate } from 'soresu-form/web/va/Muutoshakemus'
+import { isoFormat, fiLongFormat } from 'soresu-form/web/va/i18n/dateformat'
 
 function addOrMutateAnswer(answers: Answer[], key: string, newValue: any) {
   const answer = answers.find(a => a.key === key)

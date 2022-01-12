@@ -9,7 +9,7 @@ import HakuPhase from '../avustushaku/HakuPhase.jsx'
 import HakuStatuses from '../haku-details/HakuStatuses'
 import HakuPhases from '../haku-details/HakuPhases'
 import HakemusListing from '../hakemus-list/HakemusListing.jsx'
-import { fiLongFormat, fiShortFormat } from 'va-common/web/va/i18n/dateformat'
+import { fiLongFormat, fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
 
 import '../style/table.less'
 import './haku-listing.less'

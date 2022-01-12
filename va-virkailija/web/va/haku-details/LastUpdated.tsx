@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment-timezone'
-import { fiLongDateTimeFormatWithKlo } from 'va-common/web/va/i18n/dateformat'
+import { fiLongDateTimeFormatWithKlo } from 'soresu-form/web/va/i18n/dateformat'
 
 type LastUpdatedProps = {
   updatedAt: Date

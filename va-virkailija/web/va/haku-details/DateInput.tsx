@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import DatePicker from 'react-widgets/DatePicker'
 import moment, {Moment} from 'moment'
-import { parseDateString } from 'va-common/web/va/i18n/dateformat'
+import { parseDateString } from 'soresu-form/web/va/i18n/dateformat'
 
 import 'react-widgets/styles.css'
 

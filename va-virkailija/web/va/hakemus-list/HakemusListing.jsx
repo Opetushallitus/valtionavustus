@@ -2,7 +2,7 @@ import _ from 'lodash'
 import ClassNames from 'classnames'
 import React, { Component } from 'react'
 
-import { HakemusSelvitys, Loppuselvitys, Muutoshakemus } from 'va-common/web/va/status'
+import { HakemusSelvitys, Loppuselvitys, Muutoshakemus } from 'soresu-form/web/va/status'
 
 import HakemusArviointiStatuses from '../hakemus-details/HakemusArviointiStatuses'
 import ScoreResolver from '../ScoreResolver.js'

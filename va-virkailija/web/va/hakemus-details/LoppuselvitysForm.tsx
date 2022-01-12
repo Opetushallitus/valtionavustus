@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import { Avustushaku, Hakemus } from 'va-common/web/va/types'
+import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
 import { Role, UserInfo } from '../types'
 

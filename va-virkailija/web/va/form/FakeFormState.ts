@@ -1,9 +1,9 @@
 import Immutable from 'seamless-immutable'
 import _ from 'lodash'
 
-import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
-import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
-import { HakemusFormState } from 'va-common/web/va/types'
+import VaBudgetCalculator from 'soresu-form/web/va/VaBudgetCalculator'
+import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
+import { HakemusFormState } from 'soresu-form/web/va/types'
 
 type InitialFakeFormState = {
   translations: any

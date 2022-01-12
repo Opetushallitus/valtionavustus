@@ -150,7 +150,7 @@
                    (server/wrap-hsts-when-enabled h)
                    (wrap-not-modified h)
                    (if auto-reload?
-                     (wrap-reload h {:dirs ["va-virkailija/src" "va-common/src"]})
+                     (wrap-reload h {:dirs ["va-virkailija/src" "soresu-form/src"]})
                      h))
          threads (or (-> config :server :threads) 16)
          attachment-max-size (or (-> config :server :attachment-max-size) 50)]

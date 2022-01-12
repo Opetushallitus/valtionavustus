@@ -1,6 +1,6 @@
 import {FormikProps} from "formik"
 
-import { FormValues } from "va-common/web/va/types/muutoshakemus"
+import { FormValues } from "soresu-form/web/va/types/muutoshakemus"
 
 export const getInputErrorClass = (f: FormikProps<FormValues>, valueName: keyof FormValues, defaultClass = '', errorClass = 'muutoshakemus__input-error'): string => {
   return (f.errors[valueName])

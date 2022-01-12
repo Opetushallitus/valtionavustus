@@ -8,7 +8,7 @@ import {
   Talousarvio,
   TalousarvioValues
 } from './types/muutoshakemus'
-import { isoFormat, fiLongFormat } from 'va-common/web/va/i18n/dateformat'
+import { isoFormat, fiLongFormat } from 'soresu-form/web/va/i18n/dateformat'
 import { Avustushaku } from './types'
 
 export const getTalousarvioSchema = (talousarvio: TalousarvioValues, e: any) => {

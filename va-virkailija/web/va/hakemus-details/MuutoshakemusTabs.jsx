@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment'
-import { fiShortFormat } from 'va-common/web/va/i18n/dateformat'
+import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
 
 import './MuutoshakemusTabs.less'
 

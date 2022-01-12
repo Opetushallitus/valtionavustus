@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import HelpTooltip from "../HelpTooltip"
-import { Avustushaku, Hakemus } from 'va-common/web/va/types'
+import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 
 type SelvitysLinkProps = {
   hakemus: Hakemus

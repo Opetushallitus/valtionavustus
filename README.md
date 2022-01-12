@@ -8,9 +8,7 @@ myöntämiseen tarkoitetut palvelut.
 Projekti koostuu kahdesta web-palvelusta: va-hakija ja
 va-virkailija. Näillä on omat Leiningen-projektit tämän git-repositoryn
 juurihakemistossa. Web-sovelluksien yhteinen koodi on
-Leiningen-projektissa va-common. Lisäksi Leiningen-projektissa
-soresu-form on geneerinen lomake-editori, joka on riippuvuus
-va-commonille.
+Leiningen-projektissa soresu-form.
 
 Tässä README:ssä on yleiskuvaus palveluista, lisää dokumentaatiota:
 
@@ -346,8 +344,7 @@ cd va-hakija
 ../lein trampoline do dbclear, run
 ```
 
-Jos muutat backendien riippuvuuksina toimivien soresu-formin ja
-va-commonin Clojure-koodia, pitää niiden jar-paketit asentaa uudelleen,
+Jos muutat backendien riippuvuuksina toimivien soresu-formin Clojure-koodia, pitää niiden jar-paketit asentaa uudelleen,
 jotta backendit saavat muutokset käyttöön:
 
 ``` shell
