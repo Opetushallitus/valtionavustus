@@ -1,11 +1,8 @@
 (ns oph.va.hakija.email
   (:require [oph.common.datetime :as datetime]
-            [oph.soresu.common.db :refer [exec get-datasource]]
             [oph.common.email :as email]
-            [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
-            [clostache.parser :refer [render]]
-            [oph.soresu.common.config :refer [config]]))
+            [clostache.parser :refer [render]]))
 
 (def mail-titles
   {:new-hakemus {:fi "Linkki organisaationne avustushakemukseen"
