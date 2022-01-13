@@ -16,7 +16,9 @@
                  :taloustarkastus {:enabled? true
                                    :schedule "0 0 7 ? * 2"}
                  :valiselvitys    {:enabled? true
-                                   :schedule "0 0 7 ? * 2"}}
+                                   :schedule "0 0 7 ? * 2"}
+                 :loppuselvitys-palauttamatta {:enabled? true
+                                               :schedule "0 0 14 ? * 1,2,3,4,5"}}
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25
