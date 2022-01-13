@@ -344,7 +344,7 @@ cd va-hakija
 ../lein trampoline do dbclear, run
 ```
 
-Jos muutat backendien riippuvuuksina toimivien soresu-formin Clojure-koodia, pitää niiden jar-paketit asentaa uudelleen,
+Jos muutat backendin riippuvuutena toimivan soresu-formin Clojure-koodia, pitää soresu-formin jar-paketit asentaa uudelleen,
 jotta backendit saavat muutokset käyttöön:
 
 ``` shell
