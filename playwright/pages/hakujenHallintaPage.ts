@@ -209,7 +209,7 @@ export class HakujenHallintaPage {
     await this.selectTositelaji('XE')
     await this.page.fill("#hakuaika-start", formatDate(hakuaikaStart))
     await this.page.fill("#hakuaika-end", formatDate(hakuaikaEnd))
-    await this.addValmistelija("Matti Ranta")
+    await this.addValmistelija(avustushakuID, "Viivi Virkailija")
 
     await this.page.click('[data-test-id="päätös-välilehti"]')
     await this.page.fill('[data-test-id="hankkeen-alkamispaiva"] div.datepicker input', hankkeenAlkamispaiva)
@@ -221,9 +221,9 @@ export class HakujenHallintaPage {
     return avustushakuID
   }
 
-  async addValmistelija(name: string) {
-    await this.page.fill("#va-user-search-input", name)
-    await this.page.click(`#va-user-search-results li >> text=${name}`)
+  async addValmistelija(avustushakuID: number, name: string) {
+    await this.searchUsers(name)
+    await this.selectUser(name, avustushakuID)
   }
 
   async createHakuWithLomakeJson(lomakeJson: string, hakuProps: HakuProps): Promise<{ avustushakuID: number }> {
