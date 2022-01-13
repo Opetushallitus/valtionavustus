@@ -1,17 +1,19 @@
-import {expect} from "@playwright/test"
+import { expect } from "@playwright/test"
 import moment from "moment";
 
 import {
-  getAcceptedPäätösEmails, getLinkToHakemusFromSentEmails,
+  getAcceptedPäätösEmails,
+  getLinkToHakemusFromSentEmails,
   getValmistelijaEmails,
+  lastOrFail,
   waitUntilMinEmails
 } from "../../utils/emails";
-import {clickElementWithText, expectToBeDefined} from "../../utils/util";
-import {HAKIJA_URL, VIRKAILIJA_URL} from "../../utils/constants";
-import {muutoshakemusTest as test} from "../../fixtures/muutoshakemusTest";
-import {MuutoshakemusValues} from "../../utils/types";
-import {HakemustenArviointiPage} from "../../pages/hakemustenArviointiPage";
-import {HakijaMuutoshakemusPage} from "../../pages/hakijaMuutoshakemusPage";
+import { clickElementWithText } from "../../utils/util";
+import { HAKIJA_URL, VIRKAILIJA_URL } from "../../utils/constants";
+import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
+import { MuutoshakemusValues } from "../../utils/types";
+import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
+import { HakijaMuutoshakemusPage } from "../../pages/hakijaMuutoshakemusPage";
 
 const muutoshakemus1: MuutoshakemusValues = {
   jatkoaika: moment(new Date())
@@ -57,9 +59,9 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
 
   await test.step('valmistelija gets an email', async () => {
     await test.step('with correct title', async () => {
-      const emails = await waitUntilMinEmails(getValmistelijaEmails, 1, hakemusID)
-      const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0]
-      expectToBeDefined(title)
+      const email = lastOrFail(await waitUntilMinEmails(getValmistelijaEmails, 1, hakemusID))
+      expect(email['to-address']).toEqual(["santeri.horttanainen@reaktor.com"])
+      const title = email.formatted.match(/Hanke:.*/)?.[0]
       expect(title).toContain(`${hakuProps.registerNumber} - ${answers.projectName}`)
     })
 
