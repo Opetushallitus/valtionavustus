@@ -1,6 +1,4 @@
 import {budjettimuutoshakemusTest as test} from "../../fixtures/budjettimuutoshakemusTest";
-import axios from "axios";
-import {VIRKAILIJA_URL} from "../../utils/constants";
 import {HakemustenArviointiPage} from "../../pages/hakemustenArviointiPage";
 import {HakujenHallintaPage} from "../../pages/hakujenHallintaPage";
 import {HakijaMuutoshakemusPage} from "../../pages/hakijaMuutoshakemusPage";
@@ -9,56 +7,25 @@ import {parseMuutoshakemusPaatosFromEmails} from "../../utils/emails";
 import {expect} from "@playwright/test";
 import {HAKIJA_URL} from "../../../test/test-util";
 
-async function populateUserCache() {
-  const users = [
-    {
-      "person-oid": "oid",
-      "first-name": "Matti",
-      surname: "Mattilainen",
-      email: "email@email.com",
-      lang: "fi",
-      privileges: ["va-admin"]
-    },
-    {
-      "person-oid": "oid2",
-      "first-name": "_",
-      surname: "valtionavustus",
-      email: "email2@email.com",
-      lang: "fi",
-      privileges: ["va-admin"]
-    }
-  ]
-  await axios.post(`${VIRKAILIJA_URL}/api/test/user-cache`, users)
-}
-
 test.setTimeout(180000)
-
-test.beforeAll(async () => {
-  await populateUserCache()
-})
 
 const sisaltomuutosPerustelut = 'Muutamme kaiken muuttamisen ilosta'
 
 test('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen, hyvaksyjaksi tulee hyvaksyja, esittelijaksi ukotettu valmistelija ja lisatietoja osioon tulee ukotettu valmistelija',
   async ({page, avustushakuID, acceptedHakemus: {hakemusID}}) => {
-  const user = 'Matti'
+  const user = 'Viivi'
   const hakujenHallintaPage = new HakujenHallintaPage(page)
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
   const hakijaMuutoshakemusPaatosPage = new HakijaMuutoshakemusPaatosPage(page)
 
-  await test.step('setup user as valmistelija for avustushaku', async () => {
-    await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.searchUsers(user)
-    await hakujenHallintaPage.selectUser(user, avustushakuID)
-  })
   await test.step('ukota user for hakemus', async () => {
     await hakemustenArviointiPage.navigate(avustushakuID)
     await hakemustenArviointiPage.prepareSelectingValmistelijaForHakemus(hakemusID, user)
   })
   await test.step('remove current user from avustushaku valmistelijat', async () => {
     await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.removeUser(avustushakuID)
+    await hakujenHallintaPage.removeUser(avustushakuID, '_-valtionavustus')
   })
   await test.step('send muutoshakemus', async () => {
     await hakijaMuutoshakemusPage.navigate(hakemusID)

@@ -1,3 +1,4 @@
+import { expect } from '@playwright/test'
 import {HakujenHallintaPage} from "../pages/hakujenHallintaPage";
 import {HakijaAvustusHakuPage} from "../pages/hakijaAvustusHakuPage";
 import {HakemustenArviointiPage} from "../pages/hakemustenArviointiPage";
@@ -12,8 +13,9 @@ export interface BudjettimuutoshakemusFixtures extends MuutoshakemusFixtures {
 
 export const budjettimuutoshakemusTest = defaultValues.extend<BudjettimuutoshakemusFixtures>({
   budget: defaultBudget,
-  avustushakuID: async ({page, hakuProps}, use, testInfo) => {
+  avustushakuID: async ({page, hakuProps, userCache}, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 40_000)
+    expect(userCache).toBeDefined()
 
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     const avustushakuID = await hakujenHallintaPage.createBudjettimuutosEnabledHaku(hakuProps)

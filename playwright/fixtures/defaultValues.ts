@@ -3,7 +3,7 @@ import moment from 'moment'
 
 import { HakuProps, parseDate } from '../pages/hakujenHallintaPage'
 import { KoodienhallintaPage } from '../pages/koodienHallintaPage'
-import { answers, swedishAnswers } from '../utils/constants'
+import { answers, swedishAnswers, VIRKAILIJA_URL } from '../utils/constants'
 import { randomAsiatunnus, randomString } from '../utils/random'
 import { Answers, VaCodeValues } from '../utils/types'
 import { switchUserIdentityTo } from '../utils/util'
@@ -13,6 +13,7 @@ type DefaultValueFixtures = {
   hakuProps: HakuProps
   answers: Answers
   swedishAnswers: Answers
+  userCache: {}
 }
 
 type WorkerScopedDefaultValueFixtures = {
@@ -51,4 +52,36 @@ export const defaultValues = workerScopedDefaultValues.extend<DefaultValueFixtur
       vaCodes: codes,
     })
   },
+  userCache: async ({page}, use) => {
+    await test.step("populate user cache", async() => {
+      const users = [
+        {
+          "person-oid": "1.2.246.562.24.15653262222",
+          "first-name": "_",
+          surname: "valtionavustus",
+          email: "santeri.horttanainen@reaktor.com",
+          lang: "fi",
+          privileges: ["va-admin"]
+        },
+        {
+          "person-oid": "1.2.246.562.24.99000000001",
+          "first-name": "Päivi",
+          surname: "Pääkäyttäjä",
+          email: "paivi.paakayttaja@example.com",
+          lang: "fi",
+          privileges: ["va-admin"]
+        },
+        {
+          "person-oid": "1.2.246.562.24.99000000002",
+          "first-name": "Viivi",
+          surname: "Virkailija",
+          email: "viivi.virkailja@exmaple.com",
+          lang: "fi",
+          privileges: ["va-user"]
+        }
+      ]
+      await page.request.post(`${VIRKAILIJA_URL}/api/test/user-cache`, { data: users })
+    })
+    await use({})
+  }
 })

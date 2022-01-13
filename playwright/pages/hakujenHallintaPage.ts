@@ -111,7 +111,7 @@ export class HakujenHallintaPage {
     ])
   }
 
-  async removeUser(avustushakuID: number, role = '_-valtionavustus') {
+  async removeUser(avustushakuID: number, role: string) {
     await Promise.all([
       this.page.waitForResponse(
         response => {
