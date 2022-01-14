@@ -131,6 +131,7 @@ export const getValiselvitysEmails = getEmails("valiselvitys-notification")
 export const getLoppuselvitysEmails = getEmails("loppuselvitys-notification")
 export const getAcceptedPäätösEmails = getMuutoshakemusEmails
 export const getTäydennyspyyntöEmails = getEmails("change-request")
+export const getYhteystiedotMuutettuEmails = getEmails("hakemus-edited-after-applicant-edit")
 export async function waitUntilMinEmails(f: (hakemusId: number) => Promise<Email[]>, minEmails: number, hakemusId: number) {
   let emails: Email[] = await f(hakemusId)
 

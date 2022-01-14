@@ -247,7 +247,7 @@
     (or
       (= phase "current")
       (= (:status hakemus) "pending_change_request")
-      (= (:status hakemus) "applicant_edit_open")
+      (= (:status hakemus) "applicant_edit")
       (:valid token-verification))))
 
 (defn on-hakemus-update [haku-id hakemus-id base-version answers]
