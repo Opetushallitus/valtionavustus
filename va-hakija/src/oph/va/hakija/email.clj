@@ -110,7 +110,9 @@
    :grant-name grant-name
    :register-number (:register_number hakemus)
    :project-name (:project_name hakemus)
-   :organization-name (:organization_name hakemus)})
+   :organization-name (:organization_name hakemus)
+   :hakemus-id (:id hakemus)
+   :avustushaku-id (:avustushaku hakemus)})
 
 (defn send-applicant-edit-message! [lang recipients grant-name hakemus]
   (email/enqueue-message-to-be-send
@@ -127,7 +129,9 @@
    :grant-name grant-name
    :register-number (:register_number hakemus)
    :project-name (:project_name hakemus)
-   :organization-name (:organization_name hakemus)})
+   :organization-name (:organization_name hakemus)
+   :hakemus-id (:id hakemus)
+   :avustushaku-id (:avustushaku hakemus)})
 
 (defn send-applicant-edit-message-to-presenter! [recipients lang application-id grant-name hakemus]
   (email/enqueue-message-to-be-send
