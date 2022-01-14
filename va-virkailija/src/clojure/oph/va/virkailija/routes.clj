@@ -161,6 +161,10 @@
 
                          (compojure-api/HEAD "/" [] (on-healthcheck))
 
+                         (compojure-api/POST "/csp-report" request
+                           (log/info "CSP:" (slurp (:body request)))
+                           (ok {:ok "ok"}))
+
                          (compojure-api/GET
                           "/integrations/" []
                           :summary "Integrations healthcheck"
@@ -648,6 +652,12 @@
       (-> (ok {:ok "ok"})
           (assoc :session {:fake-identity identity}))
       (bad-request "Invalid fake identity")))
+
+  (compojure-api/POST "/csp-report-uri" []
+    :body [body s/Any]
+    :return {:ok s/Str}
+    (log/info "csp report" (:source-file (:csp-report body)))
+    (ok {:ok "ok"}))
 
   (compojure-api/POST "/send-loppuselvitys-asiatarkastamatta-notifications" []
     :return {:ok s/Str}

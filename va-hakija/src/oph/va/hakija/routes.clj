@@ -35,6 +35,10 @@
 
   (compojure-api/GET "/" [] (on-healthcheck))
 
+  (compojure-api/POST "/csp-report" request
+    (log/info "CSP:" (slurp (:body request)))
+    (ok {:ok "ok"}))
+
   (compojure-api/HEAD "/" [] (on-healthcheck)))
 
 (defn- system-time-ok-response [datetime]

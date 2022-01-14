@@ -2,6 +2,7 @@
           :allow-db-clear? false
           :enable-access-log? true
           :enable-hsts? true
+          :enable-csp? false
           :without-authentication? false
           :host "localhost"
           :port 8081

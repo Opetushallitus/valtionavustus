@@ -56,3 +56,11 @@
         (header "Cache-Control" (if response-cache-validated?
                                   "no-cache, must-revalidate, max-age=0"
                                   "no-store, max-age=0"))))))
+
+(defn wrap-csp-when-enabled [handler]
+  (if (-> config :server :enable-csp?)
+    (fn [request]
+      (let [response (handler request)]
+        (-> response
+          (header "Content-Security-Policy-Report-Only" "default-src *valtionavustukset.oph.fi *statsunderstod.oph.fi; report-uri /api/healthcheck/csp-report"))))
+    handler))
