@@ -9,8 +9,7 @@ muutoshakemusTest.extend<Pick<MuutoshakemusFixtures, 'finalAvustushakuEndDate'>>
     finalAvustushakuEndDate: moment().subtract(1, 'day').startOf('day'),
 })(
   "notify all virkaliijas assigned to avustushaku the day after hakuaika ended",
-  async ({ page, hakuProps, submittedHakemus, closedAvustushaku }) => {
-    expect(submittedHakemus).toBeDefined()
+  async ({ page, hakuProps, closedAvustushaku }) => {
     await sendHakuaikaPaattynytNotifications(page)
     const email = await getLastAvustushakuEmail(closedAvustushaku.id, 'hakuaika-paattynyt')
     expect(email).toBeDefined()
@@ -31,8 +30,7 @@ muutoshakemusTest.extend<Pick<MuutoshakemusFixtures, 'finalAvustushakuEndDate'>>
     finalAvustushakuEndDate: moment().subtract(7, 'day').startOf('day'),
 })(
   "do not notify virkaliija after the first day of hakuaika ending",
-  async ({ page, submittedHakemus, closedAvustushaku }) => {
-      expect(submittedHakemus).toBeDefined()
+  async ({ page, closedAvustushaku }) => {
       await sendHakuaikaPaattynytNotifications(page)
       const emails = await getAvustushakuEmails(closedAvustushaku.id, 'hakuaika-paattynyt')
       expect(emails).toHaveLength(0)

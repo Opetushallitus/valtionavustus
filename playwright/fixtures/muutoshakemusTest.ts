@@ -40,7 +40,8 @@ export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
     const {userKey} = await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(avustushakuID, answers)
     use({userKey})
   },
-  closedAvustushaku: async({ page, avustushakuID, finalAvustushakuEndDate }, use) => {
+  closedAvustushaku: async({ page, avustushakuID, submittedHakemus, finalAvustushakuEndDate }, use) => {
+    expect(submittedHakemus).toBeDefined()
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigate(avustushakuID)
     await hakujenHallintaPage.setEndDate(finalAvustushakuEndDate.format("D.M.YYYY H.mm"))
