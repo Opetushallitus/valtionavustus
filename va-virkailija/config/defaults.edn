@@ -55,6 +55,8 @@
                                         :schedule "0 0 8 ? * *"}
                  :loppuselvitys-palauttamatta {:enabled? false
                                         :schedule "0 0 8 ? * *"}
+                 :hakuaika-paattynyt {:enabled? false
+                                      :schedule "0 0 7 ? * *"}
                  }
  :payments {:enabled? true}
  :contact-person-name-in-pitkaviite {:enabled? false}

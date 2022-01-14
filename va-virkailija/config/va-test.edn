@@ -26,7 +26,9 @@
                  :valiselvitys-palauttamatta  {:enabled? true
                                                :schedule "0 0 14 ? * 1,2,3,4,5"}
                  :hakuaika-paattymassa {:enabled? true
-                                        :schedule "0 0 14 ? * 1,2,3,4,5"}}
+                                        :schedule "0 0 14 ? * 1,2,3,4,5"}
+                 :hakuaika-paattynyt {:enabled? true
+                                      :schedule "0 0 7 ? * *"}}
  :payments {:enabled? true :delete-payments? true}
  :contact-person-name-in-pitkaviite {:enabled? true}
  :tasmaytysraportti-create {:enabled? true}
