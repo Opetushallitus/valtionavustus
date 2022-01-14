@@ -56,6 +56,49 @@
       (doseq [hakemus hakemukset-list]
         (email/send-hakuaika-paattymassa hakemus)))))
 
+(defn get-avustushaut-ended-yesterday []
+  (query "WITH notification_recipients AS (
+            SELECT
+              avustushaku AS avustushaku_id,
+              jsonb_agg(DISTINCT email) AS \"to\"
+            FROM hakija.avustushaku_roles
+            WHERE role = 'presenting_officer'
+              AND email IS NOT NULL
+            GROUP BY avustushaku
+          ),
+          hakemus_totals as (
+            SELECT
+              avustushaku as avustushaku_id,
+              count(*) as hakemus_count,
+              sum(budget_total) as haettu_total_eur
+            FROM hakija.hakemukset
+            WHERE version_closed IS NULL
+              AND status = 'submitted'
+            GROUP BY avustushaku
+          )
+          SELECT
+            ah.id as avustushaku_id,
+            jsonb_extract_path_text(ah.content, 'name', 'fi') as avustushaku_name,
+            hakemus_totals.hakemus_count,
+            hakemus_totals.haettu_total_eur,
+            notification_recipients.to
+          FROM hakija.avustushaut ah
+          JOIN notification_recipients ON notification_recipients.avustushaku_id = ah.id
+          JOIN hakemus_totals ON hakemus_totals.avustushaku_id = ah.id
+          -- content->'duration'->>'end' is UTC timestamp so we have to explicitly convert
+          -- to finnish time to avoid e.g. 13.1.2022 0.00 finnish time (12.1.2022 22.00 utc)
+          -- being interpreted as 2022-01-12 instead of 2022-01-13 which the user has input
+          WHERE date(timestamptz(ah.content->'duration'->>'end') at time zone 'Europe/Helsinki')
+              = date(current_timestamp) - '1 day'::interval
+         " []))
+
+(defn send-hakuaika-paattynyt-notifications []
+  (let [notifications (get-avustushaut-ended-yesterday)]
+        (when (>= (count notifications) 1)
+          (log/info "Sending" (count notifications) "hakuaika-päättynyt notifications")
+          (doseq [n notifications]
+            (email/send-hakuaika-paattynyt n)))))
+
 (defn- get-valiselvitys-tarkastamatta []
   (query "SELECT h.avustushaku, count(h.id) as hakemus_count, r.email
           FROM hakemukset h

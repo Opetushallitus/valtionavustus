@@ -53,15 +53,17 @@ export async function waitUntilMinEmails(f: (hakemusId: number) => Promise<Email
   return emails
 }
 
+export async function getLastAvustushakuEmail(avustushakuID: number, emailType: string): Promise<Email> {
+  return await getAvustushakuEmails(avustushakuID, emailType).then(lastOrFail)
+}
 
 export async function getNewHakemusEmails(avustushakuID: number): Promise<Email[]> {
-  try {
-    const emails = await axios.get<Email>(`${VIRKAILIJA_URL}/api/test/avustushaku/${avustushakuID}/email/new-hakemus`)
-    return emailSchema.validate(emails.data)
-  } catch (e) {
-    log(`Failed to get emails for avustushaku ${avustushakuID}`, e)
-    throw e
-  }
+  return await getAvustushakuEmails(avustushakuID, 'new-hakemus')
+}
+
+export async function getAvustushakuEmails(avustushakuID: number, emailType: string): Promise<Email[]> {
+  return await axios.get(`${VIRKAILIJA_URL}/api/test/avustushaku/${avustushakuID}/email/${emailType}`)
+    .then(r => emailSchema.validate(r.data))
 }
 
 export async function pollUntilNewHakemusEmailArrives(avustushakuID: number): Promise<Email[]> {

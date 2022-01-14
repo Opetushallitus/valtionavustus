@@ -670,6 +670,12 @@
     (virkailija-notifications/send-hakuaika-paattymassa-notifications)
     (ok {:ok "ok"}))
 
+  (compojure-api/POST "/send-hakuaika-paattynyt-notifications" []
+    :return {:ok s/Str}
+    (log/info "test-api: send hakuaika päättynyt notifications")
+    (virkailija-notifications/send-hakuaika-paattynyt-notifications)
+    (ok {:ok "ok"}))
+
   (compojure-api/POST "/send-loppuselvitys-palauttamatta-notifications" []
     :return {:ok s/Str}
     (log/info "test-api: send loppuselvitys palauttamatta notifications")

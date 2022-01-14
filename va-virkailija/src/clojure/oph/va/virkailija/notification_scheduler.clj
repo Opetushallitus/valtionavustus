@@ -24,6 +24,10 @@
   (log/info "Running Hakuaika päättymässä")
   (send-hakuaika-paattymassa-notifications))
 
+(defjob HakuaikaPaattynytNotification [ctx]
+  (log/info "Running Hakuaika päättynyt")
+  (send-hakuaika-paattynyt-notifications))
+
 (defjob LoppuselvitysPalauttamattaNotification [ctx]
   (log/info "Running loppuselvitys palauttamatta")
   (send-loppuselvitys-palauttamatta-notifications))
@@ -64,6 +68,10 @@
                    (cron-schedule
                     (get-in config [:notifications :hakuaika-paattymassa :schedule])))
       }
+      { :enabled? (get-in config [:notifications :hakuaika-paattynyt :enabled?])
+        :key "HakuaikaPaattynyt"
+        :job HakuaikaPaattynytNotification
+        :schedule (schedule (cron-schedule (get-in config [:notifications :hakuaika-paattynyt :schedule])))}
       { :enabled? (get-in config [:notifications :loppuselvitys-palauttamatta :enabled?])
         :key "LoppuselvitysPalauttamatta"
         :job LoppuselvitysPalauttamattaNotification

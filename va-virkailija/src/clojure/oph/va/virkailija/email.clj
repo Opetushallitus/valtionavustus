@@ -24,6 +24,7 @@
                                 :sv "Slutredovisningen redo att fyllas"}
    :hakuaika-paattymassa {:fi "Hakuaika on päättymässä"
                           :sv "Ansökningstiden närmar sig sitt slut"}
+   :hakuaika-paattynyt {:fi "Hakuaika on päättynyt"}
    :valiselvitys-palauttamatta {:fi "Muistutus väliselvityksen palauttamisesta"
                                 :sv "Påminnelse om att lämna in mellanredovisningen"}
    :loppuselvitys-palauttamatta {:fi "Muistutus loppuselvityksen palauttamisesta"
@@ -56,6 +57,7 @@
    :valiselvitys-tarkastamatta (email/load-template "email-templates/valiselvitys-tarkastamatta.fi")
    :hakuaika-paattymassa {:fi (email/load-template "email-templates/hakuaika-paattymassa.fi")
                           :sv (email/load-template "email-templates/hakuaika-paattymassa.sv")}
+   :hakuaika-paattynyt {:fi (email/load-template "email-templates/hakuaika-paattynyt.fi")}
    :valiselvitys-palauttamatta {:fi (email/load-template "email-templates/valiselvitys-palauttamatta.fi")
                                 :sv (email/load-template "email-templates/valiselvitys-palauttamatta.sv")}
    :loppuselvitys-palauttamatta {:fi (email/load-template "email-templates/loppuselvitys-palauttamatta.fi")
@@ -205,6 +207,22 @@
                               :paattymisaika paattymisaika
                               :avustushaku-name (:avustushaku-name hakemus)
                               :url url}
+                             (partial render template))))
+
+(defn send-hakuaika-paattynyt [notification]
+  (let [lang         :fi
+        mail-subject (get-in mail-titles [:hakuaika-paattynyt lang])
+        template     (get-in mail-templates [:hakuaika-paattynyt lang])]
+    (email/try-send-msg-once {:type :hakuaika-paattynyt
+                              :lang lang
+                              :from (-> email/smtp-config :from lang)
+                              :sender (-> email/smtp-config :sender)
+                              :subject mail-subject
+                              :to (:to notification)
+                              :avustushaku-id (:avustushaku-id notification)
+                              :avustushaku-name (:avustushaku-name notification)
+                              :hakemus-count (:hakemus-count notification)
+                              :haettu-total-eur (:haettu-total-eur notification)}
                              (partial render template))))
 
 (defn send-loppuselvitys-asiatarkastamatta [to loppuselvitys-list]
