@@ -36,13 +36,17 @@
       (log/warn "Enabling all routes. This setting should be used only in development!")
       (create-all-routes))))
 
+(defn- drop-last-char [s]
+  (clojure.string/join "" (drop-last s)))
+
 (defn start-server [host port auto-reload?]
   (let [defaults (assoc-in site-defaults [:security :anti-forgery] false)
+        csp-url (str (drop-last-char (-> config :server :url :fi)) " " (drop-last-char (-> config :server :url :sv)))
         handler (as-> (create-routes) h
                   (wrap-defaults h defaults)
                   (server/wrap-logger h)
                   (server/wrap-cache-control h)
-                  (server/wrap-csp-when-enabled h)
+                  (server/wrap-csp-when-enabled h csp-url)
                   (server/wrap-hsts-when-enabled h)
                   (wrap-not-modified h)
                   (if auto-reload?
