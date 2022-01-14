@@ -122,6 +122,33 @@ puhelin 029 533 1000
 etunimi.sukunimi@oph.fi`)
   })
 
+  describe('when hakija changes yhteyshenkilö', () => {
+
+    beforeAll(async () => {
+      const token = (await getHakemusTokenAndRegisterNumber(hakemusID)).token
+      await navigateToHaunYhteystietojenMuokkaus(token)
+      await waitForElementWithText(page, 'button', 'Aloita yhteystietojen muokkaus')
+      await clickElementWithText(page, 'button', 'Aloita yhteystietojen muokkaus')
+      await waitForElementWithText(page, 'button', 'Tallenna muutos ja lopeta muokkaus')
+      await clearAndSet(page, '#applicant-name', 'Etunimi Takanimi')
+      await submitChanges()
+    })
+
+    it('sends a notification to hakija', async () => {
+      const emails = await waitUntilMinEmails(getYhteystiedotMuutettuEmails, 1, hakemusID)
+      expect(emails).toHaveLength(1)
+    })
+
+    async function navigateToHaunYhteystietojenMuokkaus(token: string) {
+      await navigateHakija(page, `/avustushaku/${avustushakuID}/nayta?avustushaku=${avustushakuID}&hakemus=${userKey}&lang=fi&preview=false&token=${token}&refuse-grant=false&modify-application=true`)
+    }
+
+    async function submitChanges() {
+      await page.waitForFunction(() => (document.querySelector("#applicant-edit-submit") as HTMLInputElement).disabled === false)
+      await clickElementWithText(page, 'button', 'Tallenna muutos ja lopeta muokkaus')
+    }
+  })
+
   it('navigates to the old virkailija edit view', async () => {
     await navigateToHakemuksenArviointi(page, avustushakuID, answers.projectName)
     await clickElementWithText(page, 'button', 'Muokkaa hakemusta')
@@ -169,32 +196,5 @@ Hakaniemenranta 6
 PL 380, 00531 Helsinki
 puhelin 029 533 1000
 etunimi.sukunimi@oph.fi`)
-  })
-
-  describe('when hakija changes yhteyshenkilö', () => {
-
-    beforeAll(async () => {
-      const token = (await getHakemusTokenAndRegisterNumber(hakemusID)).token
-      await navigateToHaunYhteystietojenMuokkaus(token)
-      await clickElementWithText(page, 'button', 'Aloita yhteystietojen muokkaus')
-      await waitForElementWithText(page, 'button', 'Tallenna muutos ja lopeta muokkaus')
-      await clearAndSet(page, '#applicant-name', 'Etunimi Takanimi')
-      await submitChanges()
-      await clickElementWithText(page, 'button', 'Tallenna muutos ja lopeta muokkaus')
-    })
-
-    it('sends a notification to hakija', async () => {
-      const emails = await waitUntilMinEmails(getYhteystiedotMuutettuEmails, 1, hakemusID)
-      expect(emails).toHaveLength(1)
-    })
-
-    async function navigateToHaunYhteystietojenMuokkaus(token: string) {
-      await navigateHakija(page, `/avustushaku/${avustushakuID}/nayta?avustushaku=${avustushakuID}&hakemus=${userKey}&lang=fi&preview=false&token=${token}&refuse-grant=false&modify-application=true`)
-    }
-
-    async function submitChanges() {
-      await page.waitForFunction(() => (document.querySelector("#applicant-edit-submit") as HTMLInputElement).disabled === false)
-      await clickElementWithText(page, 'button', 'Tallenna muutos ja lopeta muokkaus')
-    }
   })
 })
