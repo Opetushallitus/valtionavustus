@@ -62,5 +62,5 @@
     (fn [request]
       (let [response (handler request)]
         (-> response
-          (header "Content-Security-Policy-Report-Only" "default-src *valtionavustukset.oph.fi *statsunderstod.oph.fi; report-uri /api/healthcheck/csp-report"))))
+          (header "Content-Security-Policy-Report-Only" "default-src 'self' *.valtionavustukset.oph.fi *.statsunderstod.oph.fi; font-src *; style-src-elem *; report-uri /api/healthcheck/csp-report"))))
     handler))
