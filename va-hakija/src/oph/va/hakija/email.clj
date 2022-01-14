@@ -118,25 +118,6 @@
   (email/enqueue-message-to-be-send
        (generate-applicant-edit-email lang recipients grant-name hakemus)))
 
-(defn generate-presenter-applicant-edit-email [recipients lang application-id grant-name hakemus]
-  {:operation :send
-   :type :hakemus-edited-after-applicant-edit
-   :lang lang
-   :from (get-in email/smtp-config [:from lang])
-   :sender (:sender email/smtp-config)
-   :subject (get-in mail-titles [:hakemus-edited-after-applicant-edit lang])
-   :to recipients
-   :grant-name grant-name
-   :register-number (:register_number hakemus)
-   :project-name (:project_name hakemus)
-   :organization-name (:organization_name hakemus)
-   :hakemus-id (:id hakemus)
-   :avustushaku-id (:avustushaku hakemus)})
-
-(defn send-applicant-edit-message-to-presenter! [recipients lang application-id grant-name hakemus]
-  (email/enqueue-message-to-be-send
-       (generate-presenter-applicant-edit-email recipients lang application-id grant-name hakemus)))
-
 (defn notify-valmistelija-of-new-muutoshakemus [to avustushaku-id register-number hanke hakemus-id]
   (let [lang :fi
         url (email/generate-virkailija-url avustushaku-id hakemus-id)
