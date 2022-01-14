@@ -17,6 +17,8 @@
                                    :schedule "0 0 7 ? * 2"}
                  :valiselvitys    {:enabled? true
                                    :schedule "0 0 7 ? * 2"}
+                 :valiselvitys-palauttamatta  {:enabled? true
+                                               :schedule "0 0 14 ? * MON-FRI"}
                  :loppuselvitys-palauttamatta {:enabled? true
                                                :schedule "0 0 14 ? * MON-FRI"}}
  :email {:enabled? true
