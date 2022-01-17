@@ -35,7 +35,7 @@ export interface HakuProps {
 }
 
 const dateFormat = 'D.M.YYYY H.mm'
-const formatDate = (date: Date) => moment(date).format(dateFormat)
+const formatDate = (date: Date | moment.Moment) => moment(date).format(dateFormat)
 export const parseDate = (input: string) => moment(input, dateFormat).toDate()
 
 const waitForSaveStatusOk = (page: Page) => page.waitForSelector('[data-test-id="save-status"]:has-text("Kaikki tiedot tallennettu")')
@@ -160,7 +160,7 @@ export class HakujenHallintaPage {
     await this.waitForSave()
   }
 
-  async copyEsimerkkihaku() {
+  async copyEsimerkkihaku(): Promise<number> {
     await navigate(this.page, "/admin/haku-editor/")
     await this.page.click(".haku-filter-remove")
     await clickElementWithText(this.page, "td", "Yleisavustus - esimerkkihaku")
@@ -171,7 +171,8 @@ export class HakujenHallintaPage {
     await this.page.waitForFunction((name) =>
       document.querySelector("#haku-name-fi")?.textContent !== name, currentHakuTitle)
     await this.waitForSave()
-    // await this.page.waitForTimeout(2000)
+
+    return parseInt(await expectQueryParameter(this.page, "avustushaku"))
   }
 
   async inputTalousarviotili({koulutusaste, talousarviotili}: Rahoitusalue) {
@@ -198,9 +199,7 @@ export class HakujenHallintaPage {
     } = props
     console.log(`Avustushaku name for test: ${avustushakuName}`)
 
-    await this.copyEsimerkkihaku()
-
-    const avustushakuID = parseInt(await expectQueryParameter(this.page, "avustushaku"))
+    const avustushakuID = await this.copyEsimerkkihaku()
     console.log(`Avustushaku ID: ${avustushakuID}`)
 
     await this.page.fill("#register-number", registerNumber)
@@ -254,6 +253,13 @@ export class HakujenHallintaPage {
 
   async publishAvustushaku() {
     await this.page.click("label[for='set-status-published']")
+    await this.waitForSave()
+  }
+
+  async setStartDate(time: moment.Moment) {
+    const selector = "#hakuaika-start"
+    await this.page.fill(selector, formatDate(time))
+    await this.page.$eval(selector, (e => e.blur()))
     await this.waitForSave()
   }
 
