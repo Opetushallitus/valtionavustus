@@ -55,7 +55,7 @@ export default class SeurantaBudgetEditing extends React.Component<SeurantaBudge
     const budgetSpec = budgetChangeEnabled
       ? { ...budgetSpecWithSelvityses, children: budgetSpecWithSelvityses.children.filter((c: { id: string }) => c.id !== 'project-budget') }
       : budgetSpecWithSelvityses
-    const fakeHakemus = {answers: hakemus.arvio["seuranta-answers"]}
+    const fakeHakemus = ({answers: hakemus.arvio["seuranta-answers"]} as unknown) as Hakemus
     const formOperations = {
       chooseInitialLanguage: () => "fi",
       containsExistingEntityId: undefined,

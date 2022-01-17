@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react'
 import ReactDOM from 'react-dom'
 import _ from 'lodash'
+// @ts-ignore route-parser doesn't have proper types
 import RouteParser from 'route-parser'
 import queryString from 'query-string'
 

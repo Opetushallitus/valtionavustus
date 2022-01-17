@@ -3,21 +3,21 @@ import _ from 'lodash'
 
 import VaBudgetCalculator from 'soresu-form/web/va/VaBudgetCalculator'
 import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
-import { HakemusFormState } from 'soresu-form/web/va/types'
+import { Avustushaku, Hakemus, HakemusFormState } from 'soresu-form/web/va/types'
 
 type InitialFakeFormState = {
   translations: any
-  avustushaku: any
+  avustushaku: Avustushaku
   formContent: any
   formOperations?: any
-  hakemus: any
+  hakemus: Hakemus
   attachments?: any
   savedHakemus?: any
 }
 
 export default class FakeFormState {
 
-  static resolveAttachmentsProperty(allAttachments, hakemus) {
+  static resolveAttachmentsProperty(allAttachments: any, hakemus: Hakemus) {
     if (!allAttachments || !hakemus.id) {
       return {}
     }
@@ -25,12 +25,12 @@ export default class FakeFormState {
     return attachmentsForId ? attachmentsForId : {}
   }
 
-  static createEditFormState(avustushaku, translations, formContent) {
+  static createEditFormState(avustushaku: Avustushaku, translations: any, formContent: any) {
     return FakeFormState.createHakemusFormState({
       translations,
       avustushaku,
       formContent,
-      hakemus: {answers: {value: []}}
+      hakemus: ({answers: []} as unknown) as Hakemus
     })
   }
 

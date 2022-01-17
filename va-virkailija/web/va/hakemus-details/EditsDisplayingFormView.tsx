@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 import JsUtil from 'soresu-form/web/JsUtil'
 import FormPreview from 'soresu-form/web/form/FormPreview'
-import { Answer, AnswersDelta, Avustushaku, HakemusFormState, NormalizedHakemusData } from 'soresu-form/web/va/types'
+import { Answer, AnswersDelta, Avustushaku, Field, HakemusFormState, NormalizedHakemusData } from 'soresu-form/web/va/types'
 import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
 import { getProjectEndDate } from 'soresu-form/web/va/Muutoshakemus'
 import { isoFormat, fiLongFormat } from 'soresu-form/web/va/i18n/dateformat'
@@ -73,7 +73,7 @@ interface EditsDisplayingFormViewProps {
 }
 
 export default class EditsDisplayingFormView extends React.Component<EditsDisplayingFormViewProps> {
-  static renderField(controller, formEditController, state: HakemusFormState, infoElementValues, field) {
+  static renderField(controller: any, formEditController: any, state: HakemusFormState, infoElementValues: any, field: Field) {
     const fields = state.form.content
     const translations = state.configuration.translations
     const htmlId = controller.constructHtmlId(fields, field.id)
@@ -105,7 +105,7 @@ export default class EditsDisplayingFormView extends React.Component<EditsDispla
     const state = this.props.state
     const fields = state.form.content
 
-    const renderField = field => {
+    const renderField = (field: Field) => {
       return EditsDisplayingFormView.renderField(controller, null, state, infoElementValues, field)
     }
 
@@ -223,7 +223,7 @@ class DiffDisplayingField extends React.Component<any> {
       return FormPreview.renderField(controller, null, state, infoElementValues, field, { overridingInputValue: oldAnswer.value })
     }
 
-    function createOldAttachmentVersionDisplay(controller, translations: any) {
+    function createOldAttachmentVersionDisplay(controller: any, translations: any) {
       const attachmentVersion = findOriginalAttachmentVersion()
       const fields = state.form.content
       const htmlId = controller.constructHtmlId(fields, field.id)

@@ -53,7 +53,7 @@ export interface HakuData {
     talousarvio?: Menoluokka[]
 }
 
-interface HakemusFilter {
+export interface HakemusFilter {
     answers: any[]
     isOpen: boolean
     name: string

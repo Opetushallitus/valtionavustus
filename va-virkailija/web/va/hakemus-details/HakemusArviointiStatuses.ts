@@ -1,5 +1,5 @@
-const ALL_STATUSES = ['unhandled', 'processing', 'plausible', 'rejected', 'accepted'] as const
-type HakemusArviointiStatus = typeof ALL_STATUSES[number]
+import { ALL_STATUSES, HakemusArviointiStatus } from "soresu-form/web/va/types"
+
 export default class HakemusArviointiStatuses {
   static allStatuses() {
     return ALL_STATUSES
@@ -12,6 +12,6 @@ export default class HakemusArviointiStatuses {
       "rejected": "Hylätty",
       "accepted": "Hyväksytty"
     }
-    return translations[status] ? translations[status] : status
+    return translations[status] ?? status
   }
 }

@@ -1,8 +1,8 @@
 import * as Bacon from 'baconjs'
 import _ from 'lodash'
 import Immutable from 'seamless-immutable'
-
 import queryString from 'query-string'
+// @ts-ignore route-parser doesn't have proper types
 import RouteParser from 'route-parser'
 
 import Dispatcher from 'soresu-form/web/Dispatcher'
@@ -11,27 +11,29 @@ import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
-
 import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
 import VaTraineeDayUtil from 'soresu-form/web/va/VaTraineeDayUtil'
 import { HakemusSelvitys, Loppuselvitys, Muutoshakemus } from 'soresu-form/web/va/status'
-
-import HakemusArviointiStatuses
-  from './hakemus-details/HakemusArviointiStatuses'
-import RahoitusalueSelections from './hakemus-details/RahoitusalueSelections'
+import {Muutoshakemus as MuutoshakemusType} from "soresu-form/web/va/types/muutoshakemus"
 import {
+  Arvio,
   Avustushaku,
   Comment,
+  Field,
   Hakemus,
+  HakemusArviointiStatus,
   HakemusStatus,
   NormalizedHakemusData,
   Payment,
   Score,
   Scoring
-} from "soresu-form/web/va/types";
-import {HakemusSorter, HakuData, State, UserInfo} from "./types";
-import {MuutoshakemusPaatos} from "./hakemus-details/hakemusTypes";
-import {Muutoshakemus as MuutoshakemusType} from "soresu-form/web/va/types/muutoshakemus";
+} from "soresu-form/web/va/types"
+
+import HakemusArviointiStatuses
+  from './hakemus-details/HakemusArviointiStatuses'
+import RahoitusalueSelections from './hakemus-details/RahoitusalueSelections'
+import {HakemusFilter, HakemusSorter, HakuData, State, UserInfo} from "./types"
+import {MuutoshakemusPaatos} from "./hakemus-details/hakemusTypes"
 
 const dispatcher = new Dispatcher()
 
@@ -179,6 +181,7 @@ export default class HakemustenArviointiController {
   }
 
   _bind(...methods: any[]) {
+    // @ts-ignore
     methods.forEach((method) => this[method] = this[method].bind(this))
   }
 
@@ -463,8 +466,8 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.saveCompleted, "unexpected-save-error")
   }
 
-  onSetFilter(state: State, newFilter: any) {
-    state.hakemusFilter[newFilter.filterId] = newFilter.filter
+  onSetFilter(state: State, newFilter: { filterId: keyof HakemusFilter, filter: any }) {
+    state.hakemusFilter[newFilter.filterId] = newFilter.filter as never
     if (newFilter.filterId === "evaluator") {
       const avustushakuId = state.hakuData.avustushaku.id
       const evaluatorId = newFilter.filter
@@ -545,7 +548,7 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  static doOnAnswerValue(state: State, value, field: string){
+  static doOnAnswerValue(state: State, value: { hakemusId: number, field: any, newValue: any }, field: keyof Arvio){
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, value.hakemusId)
     if (relevantHakemus) {
       InputValueStorage.writeValue([value.field], relevantHakemus.arvio[field], FieldUpdateHandler.createFieldUpdate(value.field, value.newValue, VaSyntaxValidator))
@@ -737,16 +740,16 @@ export default class HakemustenArviointiController {
     const overriddenAnswers = selectedHakemus!.arvio["overridden-answers"]
 
     const findSelfFinancingSpecField = () => {
-      const budgetSummaryElement = budgetElement?.children.find( n => n.fieldType === "vaBudgetSummaryElement")
+      const budgetSummaryElement = budgetElement?.children.find((n: Field) => n.fieldType === "vaBudgetSummaryElement")
       return budgetSummaryElement
         ? FormUtil.findFieldByFieldType(budgetSummaryElement, "vaSelfFinancingField")
         : null
     }
 
-    const writeChangedAnswerFieldValues = fields => {
+    const writeChangedAnswerFieldValues = (fields: Field[]) => {
       let didWrite = false
 
-      _.forEach(fields, field => {
+      fields.forEach(field => {
         const oldValue = InputValueStorage.readValue(null, overriddenAnswers, field.id)
         const newValue = InputValueStorage.readValue(null, hakemusAnswers, field.id)
 
@@ -768,7 +771,7 @@ export default class HakemustenArviointiController {
     }
 
     // gather empty values for descriptions and answer fields for cost budget items
-    const {emptyDescriptions, answerCostFieldsToCopy} = _.reduce(FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement"), (acc, budgetItem) => {
+    const {emptyDescriptions, answerCostFieldsToCopy} = _.reduce(FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement"), (acc: any, budgetItem) => {
       const descriptionField = budgetItem.children[0]
       acc.emptyDescriptions[descriptionField.id] = ''
       if (!budgetItem.params.incrementsTotal) {
@@ -776,7 +779,7 @@ export default class HakemustenArviointiController {
         acc.answerCostFieldsToCopy.push(valueField)
       }
       return acc
-    }, {emptyDescriptions: {}, answerCostFieldsToCopy: ([] as unknown[])})
+    }, {emptyDescriptions: {}, answerCostFieldsToCopy: []})
 
     FormStateLoop.initDefaultValues(
       overriddenAnswers,
@@ -805,7 +808,7 @@ export default class HakemustenArviointiController {
 
     const selectedHakemus = state.selectedHakemus
     const hakemusAnswers = selectedHakemus!.answers
-    const defaultValues = _.reduce(FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement"), (acc, budgetItem) => {
+    const defaultValues = _.reduce(FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement"), (acc: any, budgetItem) => {
       const descriptionField = budgetItem.children[0]
       acc[descriptionField.id] = ''
       if (!budgetItem.params.incrementsTotal) {
@@ -834,7 +837,7 @@ export default class HakemustenArviointiController {
 
     const defaultFields: any = _.reduce(
       VaTraineeDayUtil.collectCalculatorSpecifications(state.hakuData.form.content, hakemusAnswers),
-      (acc, field) => {
+      (acc: any, field) => {
         acc[field.id] = _.assign(
           {},
           field,
@@ -926,26 +929,26 @@ export default class HakemustenArviointiController {
     }
   }
 
-  validateHakemusRahoitusalueAndTalousarviotiliSelection(state) {
+  validateHakemusRahoitusalueAndTalousarviotiliSelection(state: State) {
     if (!state.selectedHakemusAccessControl.allowHakemusStateChanges) {
       return
     }
 
     const avustushaku = state.hakuData.avustushaku
     const availableRahoitusalueet = avustushaku.content.rahoitusalueet
-    const hakemusArvio = state.selectedHakemus.arvio
+    const hakemusArvio = state.selectedHakemus?.arvio
 
     const selectedRahoitusalue = RahoitusalueSelections.validateRahoitusalueSelection(
-      hakemusArvio.rahoitusalue,
+      hakemusArvio?.rahoitusalue,
       availableRahoitusalueet)
 
     const selectedTalousarviotili = RahoitusalueSelections.validateTalousarviotiliSelection({
-      selectedTalousarviotili: hakemusArvio.talousarviotili,
+      selectedTalousarviotili: hakemusArvio?.talousarviotili,
       selectedRahoitusalue,
       availableRahoitusalueet
     })
 
-    if (hakemusArvio.rahoitusalue !== selectedRahoitusalue || hakemusArvio.talousarviotili !== selectedTalousarviotili) {
+    if (state.selectedHakemus && (hakemusArvio?.rahoitusalue !== selectedRahoitusalue || hakemusArvio?.talousarviotili !== selectedTalousarviotili)) {
       this.setHakemusRahoitusalueAndTalousarviotili({
         hakemus:         state.selectedHakemus,
         rahoitusalue:    selectedRahoitusalue,
@@ -955,7 +958,7 @@ export default class HakemustenArviointiController {
   }
 
   // Public API
-  selectHakemus(event) {
+  selectHakemus(event: React.MouseEvent<HTMLTableRowElement, MouseEvent>) {
     const hakemusId = Number(event.currentTarget.id.split('-')[1])
     dispatcher.push(events.selectHakemus, hakemusId)
   }
@@ -973,42 +976,42 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.setSorter, newSorter)
   }
 
-  setHakemusArvioStatus(hakemus, newStatus) {
+  setHakemusArvioStatus(hakemus: Hakemus, newStatus: HakemusArviointiStatus) {
     return function() {
       hakemus.arvio.status = newStatus
       dispatcher.push(events.updateHakemusArvio, hakemus)
     }
   }
 
-  setHakemusAllowVisibilityInExternalSystem(hakemus, newAllowVisibilityInExternalSystem) {
+  setHakemusAllowVisibilityInExternalSystem(hakemus: Hakemus, newAllowVisibilityInExternalSystem: string) {
     return function() {
       hakemus.arvio["allow-visibility-in-external-system"] = newAllowVisibilityInExternalSystem === "true"
       dispatcher.push(events.updateHakemusArvio, hakemus)
     }
   }
 
-  setHakemusShouldPay(hakemus, newShouldPay) {
+  setHakemusShouldPay(hakemus: Hakemus, newShouldPay: string) {
     return function() {
     hakemus.arvio["should-pay"] = newShouldPay === "true"
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }}
 
-setHakemusShouldPayComments(hakemus, newShouldPayComment) {
+setHakemusShouldPayComments(hakemus: Hakemus, newShouldPayComment: string) {
     hakemus.arvio["should-pay-comments"] = newShouldPayComment
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  toggleDetailedCosts(hakemus, useDetailedCosts) {
+  toggleDetailedCosts(hakemus: Hakemus, useDetailedCosts: boolean) {
     hakemus.arvio.useDetailedCosts = useDetailedCosts
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  setCostsGrantedValue(hakemus, newValue) {
+  setCostsGrantedValue(hakemus: Hakemus, newValue: number) {
     hakemus.arvio.costsGranted = newValue
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  static setAnswerValue(hakemusId, field, newValue, event){
+  static setAnswerValue(hakemusId: number, field: any, newValue: any, event: string){
     const setOverriddenAnswerValue = {
       hakemusId: hakemusId,
       field: field,
@@ -1017,11 +1020,11 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
     dispatcher.push(event, setOverriddenAnswerValue)
   }
 
-  setHakemusOverriddenAnswerValue(hakemusId, field, newValue) {
+  setHakemusOverriddenAnswerValue(hakemusId: number, field: any, newValue: any) {
     HakemustenArviointiController.setAnswerValue(hakemusId, field, newValue, events.setOverriddenAnswerValue)
   }
 
-  setHakemusSeurantaAnswerValue(hakemusId, field, newValue) {
+  setHakemusSeurantaAnswerValue(hakemusId: number, field: any, newValue: any) {
     HakemustenArviointiController.setAnswerValue(hakemusId, field, newValue, events.setSeurantaAnswerValue)
   }
 
@@ -1088,7 +1091,7 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
     }
   }
 
-  setHakemusRahoitusalueAndTalousarviotili({hakemus, rahoitusalue, talousarviotili}) {
+  setHakemusRahoitusalueAndTalousarviotili({hakemus, rahoitusalue, talousarviotili}: { hakemus: Hakemus, rahoitusalue: string, talousarviotili: string }) {
     hakemus.arvio.rahoitusalue = rahoitusalue
     hakemus.arvio.talousarviotili = talousarviotili
     dispatcher.push(events.updateHakemusArvio, hakemus)
@@ -1183,7 +1186,7 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
     dispatcher.push(events.togglePersonSelect, hakemusId)
   }
 
-  toggleHakemusRole(roleId,hakemus,roleField) {
+  toggleHakemusRole(roleId: number, hakemus: Hakemus, roleField: string) {
     if (roleField === "presenter"){
         hakemus.arvio["presenter-role-id"]=roleId
     } else {

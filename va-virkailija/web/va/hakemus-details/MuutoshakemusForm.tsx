@@ -1,3 +1,14 @@
+
+import React, {useMemo} from "react"
+import moment from "moment"
+// @ts-ignore react-widgets-moment doesn't have proper types
+import MomentLocalizer from 'react-widgets-moment'
+import {omit} from "lodash"
+import {useFormik} from "formik"
+import * as Yup from "yup"
+import DatePicker from "react-widgets/DatePicker"
+import Localization from "react-widgets/Localization"
+
 import {
   Avustushaku, Hakemus,
   NormalizedHakemusData, UserInfo
@@ -7,7 +18,6 @@ import {
   Muutoshakemus,
   Talousarvio, TalousarvioValues,
 } from "soresu-form/web/va/types/muutoshakemus";
-import React, {useMemo} from "react";
 import {MuutosTaloudenKayttosuunnitelmaan} from "soresu-form/web/va/muutoshakemus/MuutosTaloudenKayttosuunnitelmaan";
 import {MuutoshakemusSection} from "soresu-form/web/va/MuutoshakemusSection";
 import {isError, isSubmitDisabled} from "../formikHelpers";
@@ -32,32 +42,25 @@ import {
   MuutoshakemusPaatosFormValues,
   MuutoshakemusPaatosResponse
 } from "./hakemusTypes";
-import {useFormik} from "formik";
-import * as Yup from "yup";
 import {
   fiLongFormat, isoFormat, parseDateString,
   parseDateStringToMoment
 } from "soresu-form/web/va/i18n/dateformat";
 import {paatosStatuses, PaatosStatusRadioButtonGroup} from "./PaatosStatus";
 import {TalousarvioAcceptWithChangesForm} from "./TalousarvioAcceptWithChangesForm";
-import Localization from "react-widgets/Localization";
 import {translationsFi} from "soresu-form/web/va/i18n/translations";
-import DatePicker from "react-widgets/DatePicker";
-import moment from "moment";
-import MomentLocalizer from 'react-widgets-moment'
 import {
   getNestedInputErrorClass
 } from "soresu-form/web/va/formikHelpers";
 import {Role} from "../types";
 import HttpUtil from "soresu-form/web/HttpUtil";
-import {omit} from "lodash";
 import HakemustenArviointiController from "../HakemustenArviointiController";
-
-import 'soresu-form/web/form/style/main.less'
-import '../style/main.less'
 import {Modal} from "./Modal";
 import {MuutoshakemusPaatos} from "soresu-form/web/va/MuutoshakemusPaatos";
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
+
+import 'soresu-form/web/form/style/main.less'
+import '../style/main.less'
 
 moment.locale('fi')
 const localizer = new MomentLocalizer(moment)

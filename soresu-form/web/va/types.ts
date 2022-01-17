@@ -60,8 +60,12 @@ interface Oppilaitokset {
   names: string[]
 }
 
-type Arvio = {
+export const ALL_STATUSES = ['unhandled', 'processing', 'plausible', 'rejected', 'accepted'] as const
+export type HakemusArviointiStatus = typeof ALL_STATUSES[number]
+
+export type Arvio = {
   id: number
+  status: HakemusArviointiStatus
   "presenter-role-id"?: number
   "budget-granted"?: number
   costsGranted?: number
@@ -76,6 +80,14 @@ type Arvio = {
   perustelut?: string
   oppilaitokset?: Oppilaitokset
   "seuranta-answers"?: Answer[]
+  rahoitusalue?: string
+  talousarviotili?: string
+  "allow-visibility-in-external-system"?: boolean
+  "should-pay"?: boolean
+  "should-pay-comments"?: string
+  useDetailedCosts?: boolean
+  "summary-comment": string
+  roles: Record<string, number[]>
 }
 
 export interface NormalizedHakemusData {
@@ -250,4 +262,10 @@ export interface Form {
   created_at: Date
   updated_at: Date
   validationErrors?: any
+}
+
+export interface Field {
+  id: string
+  fieldType: string
+  fieldClass: string
 }

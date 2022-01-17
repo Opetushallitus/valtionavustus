@@ -1,13 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import * as queryString from 'query-string'
+// @ts-ignore react-widgets-moment doesn't have proper types
 import MomentLocalizer from 'react-widgets-moment'
+import Localization from 'react-widgets/Localization'
 import moment from 'moment'
+
 import { getTranslationContext, TranslationContext } from 'soresu-form/web/va/i18n/TranslationContext'
 import { Language } from 'soresu-form/web/va/i18n/translations'
 import { MuutoshakemusComponent } from './Muutoshakemus'
 import { Paatos } from './Paatos'
-import Localization from 'react-widgets/Localization'
 
 export type Query = {
   lang?: Language

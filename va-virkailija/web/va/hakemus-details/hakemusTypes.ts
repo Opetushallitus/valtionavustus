@@ -24,6 +24,7 @@ export interface MuutoshakemusPaatosResponse {
   'paatos-hyvaksytty-paattymispaiva'?: string
   'status-talousarvio'?: PaatosStatus
   'talousarvio': Meno[]
+  'created-at': string
 }
 
 export interface MuutoshakemusPaatos extends MuutoshakemusPaatosResponse {

@@ -2,6 +2,7 @@ import * as Bacon from 'baconjs'
 import _ from 'lodash'
 import Immutable from 'seamless-immutable'
 import moment from 'moment-timezone'
+// @ts-ignore route-parser doesn't have proper types
 import RouteParser from 'route-parser'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -69,10 +70,10 @@ interface State {
   }
   formDrafts: Record<number, Form>
   formDraftsJson: Record<number, string>
-  loppuselvitysFormDrafts: {},
-  loppuselvitysFormDraftsJson: {},
-  valiselvitysFormDrafts: {},
-  valiselvitysFormDraftsJson: {},
+  loppuselvitysFormDrafts: Record<number, Form>
+  loppuselvitysFormDraftsJson: Record<number, string>
+  valiselvitysFormDrafts: Record<number, Form>
+  valiselvitysFormDraftsJson: Record<number, string>
   subTab: HakujenHallintaSubTab
   vaUserSearch: {
     input: string
@@ -155,7 +156,7 @@ function appendBudgetComponent(selvitysType: Selvitys, avustushaku: Avustushaku)
   const originalVaBudget: any = FormUtil.findFieldByFieldType(avustushaku.formContent?.content, "vaBudget")
   const selvitysVaBudget: any = FormUtil.findFieldByFieldType(form.content, "vaBudget")
   if(originalVaBudget) {
-    const childrenWithoutBudgetSummary = originalVaBudget.children.filter(i => i.id !== 'budget-summary')
+    const childrenWithoutBudgetSummary = originalVaBudget.children.filter((i: { id: string }) => i.id !== 'budget-summary')
     if (selvitysVaBudget) {
       selvitysVaBudget.children = childrenWithoutBudgetSummary
     } else {
@@ -207,7 +208,8 @@ export default class HakujenHallintaController {
     return `/api/avustushaku/${avustushaku.id}/init-selvitysform/${selvitysType}`
   }
 
-  _bind(...methods) {
+  _bind(...methods: any[]) {
+    // @ts-ignore
     methods.forEach((method) => this[method] = this[method].bind(this))
   }
 
@@ -379,7 +381,7 @@ export default class HakujenHallintaController {
     const fieldId = update.field.id
 
     if (basicFields.indexOf(fieldId as any) > -1) {
-      update.avustushaku[fieldId] = update.newValue
+      update.avustushaku[fieldId as typeof basicFields[number]] = update.newValue
     } else if (fieldId === "haku-self-financing-percentage") {
       update.avustushaku.content["self-financing-percentage"] =
         parseInt(update.newValue)
@@ -422,8 +424,7 @@ export default class HakujenHallintaController {
         }
         const educationLevels = update.avustushaku.content["rahoitusalueet"]
         if (educationLevels) {
-          const index = educationLevels.findIndex(
-            x => x.rahoitusalue === update.field.dataset.title)
+          const index = educationLevels.findIndex((x: { rahoitusalue: string }) => x.rahoitusalue === update.field.dataset.title)
           if (index === -1) {
             educationLevels.push(value)
           } else {
@@ -502,7 +503,7 @@ export default class HakujenHallintaController {
     return avustushaku.content['rahoitusalueet']
   }
 
-  onAddTalousarviotili(state: State, addition) {
+  onAddTalousarviotili(state: State, addition: {avustushaku: Avustushaku, rahoitusalue: string}) {
     const currentRahoitusalueet = this.getOrCreateRahoitusalueet(addition.avustushaku)
     const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, addition.rahoitusalue)
     rahoitusalueValue.talousarviotilit.push("")
@@ -531,7 +532,7 @@ export default class HakujenHallintaController {
     return state
   }
 
-  onDeleteSelectionCriteria(state: State, deletion) {
+  onDeleteSelectionCriteria(state: State, deletion: {avustushaku: Avustushaku, index: number}) {
     deletion.avustushaku.content['selection-criteria'].items.splice(deletion.index, 1)
     state = this.startAutoSave(state)
     return state
@@ -546,7 +547,7 @@ export default class HakujenHallintaController {
     return state
   }
 
-  onDeleteFocusArea(state: State, deletion) {
+  onDeleteFocusArea(state: State, deletion: {avustushaku: Avustushaku, index: number}) {
     deletion.avustushaku.content['focus-areas'].items.splice(deletion.index, 1)
     state = this.startAutoSave(state)
     return state
@@ -711,12 +712,11 @@ export default class HakujenHallintaController {
   }
 
   onSelvitysFormLoaded(state: State, loadFormResult: {haku: Avustushaku, form: Form, selvitysType: Selvitys}) {
-    const haku = loadFormResult.haku
-    const selvitysType = loadFormResult.selvitysType
-    state[selvitysType + "FormDrafts"][haku.id] = loadFormResult.form
-    state[selvitysType + "FormDraftsJson"][haku.id] = JSON.stringify(loadFormResult.form, null, 2)
+    const { haku, selvitysType } = loadFormResult
+    state[selvitysType === 'valiselvitys' ? 'valiselvitysFormDrafts' : 'loppuselvitysFormDrafts'][haku.id] = loadFormResult.form
+    state[selvitysType === 'valiselvitys' ? 'valiselvitysFormDraftsJson' : 'loppuselvitysFormDraftsJson'][haku.id] = JSON.stringify(loadFormResult.form, null, 2)
     if (state.selectedHaku) {
-      state.selectedHaku[loadFormResult.selvitysType + "Form"] = _.cloneDeep(loadFormResult.form)
+      state.selectedHaku[selvitysType === 'valiselvitys' ? 'valiselvitysForm' : 'loppuselvitysForm'] = _.cloneDeep(loadFormResult.form)
     }
     return state
   }
@@ -756,7 +756,7 @@ export default class HakujenHallintaController {
     const selvitysType = hakuIdAndForm.selvitysType
     const haku = state.hakuList.find(haku => haku.id === avustusHakuId)
     if (haku) {
-      haku[selvitysType + "Form"] = formFromServer
+      haku[selvitysType === 'valiselvitys' ? "valiselvitysForm" : "loppuselvitysForm"] = formFromServer
     }
     return state
   }
@@ -806,14 +806,14 @@ export default class HakujenHallintaController {
   onUpdateSelvitysForm(state: State, formContentUpdateObject: {avustushaku: Avustushaku, newForm: Form, selvitysType: Selvitys}) {
     const selvitysType = formContentUpdateObject.selvitysType
     const avustushaku = formContentUpdateObject.avustushaku
-    state[selvitysType + "FormDrafts"][avustushaku.id] = formContentUpdateObject.newForm
+    state[selvitysType === 'valiselvitys' ? "valiselvitysFormDrafts" : "loppuselvitysFormDrafts"][avustushaku.id] = formContentUpdateObject.newForm
     return state
   }
 
   onUpdateSelvitysJsonForm(state: State, formContentUpdateObject: {avustushaku: Avustushaku, newFormJson: string, selvitysType: Selvitys}) {
     const selvitysType = formContentUpdateObject.selvitysType
     const avustushaku = formContentUpdateObject.avustushaku
-    state[selvitysType + "FormDraftsJson"][avustushaku.id] = formContentUpdateObject.newFormJson
+    state[selvitysType === 'valiselvitys' ? "valiselvitysFormDraftsJson" : "loppuselvitysFormDraftsJson"][avustushaku.id] = formContentUpdateObject.newFormJson
     return state
   }
 
@@ -897,7 +897,7 @@ export default class HakujenHallintaController {
     return state
   }
 
-  onFormJsonUpdated(state: State, formContentUpdateObject: {avustushaku, newFormJson: string}) {
+  onFormJsonUpdated(state: State, formContentUpdateObject: {avustushaku: Avustushaku, newFormJson: string}) {
     const avustushaku = formContentUpdateObject.avustushaku
     state.formDraftsJson[avustushaku.id] = formContentUpdateObject.newFormJson
     state.saveStatus.saveTime = null
@@ -1036,8 +1036,8 @@ export default class HakujenHallintaController {
 
   onClearFilters(state: State) {
     state.filter = {
-      status:HakuStatuses.allStatuses(),
-      phase:HakuPhases.allStatuses(),
+      status: HakuStatuses.allStatuses(),
+      phase: HakuPhases.allStatuses(),
       avustushaku: "",
       startdatestart:"",
       startdateend:"",
