@@ -104,23 +104,34 @@ export class HakujenHallintaPage {
     ])
   }
 
-  async selectUser(user: string, avustushakuID: number) {
+  async selectUser(user: string) {
     await Promise.all([
-      this.page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/role`),
+      this.waitForRolesSaved(),
       clickElementWithText(this.page, 'a', user)
     ])
   }
 
-  async removeUser(avustushakuID: number, role: string) {
+  async removeUser(name: string) {
+    const testId = "role-" +name.toLowerCase().replace(" ", "-")
     await Promise.all([
-      this.page.waitForResponse(
-        response => {
-          const regex = new RegExp(`.*api/avustushaku/${avustushakuID}/role/*`, "g")
-          const matchResult = response.url().match(regex)
-          return !!matchResult && matchResult.length > 0
-        }),
-      this.page.click( `[data-test-id="remove-role-${role}"]`)
+      this.waitForRolesSaved(),
+      this.page.click(`[data-test-id="${testId}"] button.remove`)
     ])
+  }
+
+  async setUserRole(name: string, role: 'presenting_officer' | 'evaluator') {
+    const testId = "role-" +name.toLowerCase().replace(" ", "-")
+    await Promise.all([
+      this.waitForRolesSaved(),
+      this.page.selectOption(`[data-test-id="${testId}"] select[name=role]`, role)
+        .then(_ => this.page.keyboard.press('Tab')) // tab out of the field to trigger save
+    ])
+  }
+
+  async waitForRolesSaved() {
+    return await this.page.waitForResponse(new RegExp(
+      `${VIRKAILIJA_URL}/api/avustushaku/\\d+/role(/\\d+)?`
+    ))
   }
 
   async setLoppuselvitysDate(value: string) {
@@ -209,7 +220,8 @@ export class HakujenHallintaPage {
     await this.selectTositelaji('XE')
     await this.page.fill("#hakuaika-start", formatDate(hakuaikaStart))
     await this.page.fill("#hakuaika-end", formatDate(hakuaikaEnd))
-    await this.addValmistelija(avustushakuID, "Viivi Virkailija")
+    await this.addValmistelija("Viivi Virkailija")
+    await this.addArvioija("Päivi Pääkäyttäjä")
 
     await this.page.click('[data-test-id="päätös-välilehti"]')
     await this.page.fill('[data-test-id="hankkeen-alkamispaiva"] div.datepicker input', hankkeenAlkamispaiva)
@@ -221,9 +233,15 @@ export class HakujenHallintaPage {
     return avustushakuID
   }
 
-  async addValmistelija(avustushakuID: number, name: string) {
+  async addValmistelija(name: string) {
     await this.searchUsers(name)
-    await this.selectUser(name, avustushakuID)
+    await this.selectUser(name)
+  }
+
+  async addArvioija(name: string) {
+    await this.searchUsers(name)
+    await this.selectUser(name)
+    await this.setUserRole(name, 'evaluator')
   }
 
   async createHakuWithLomakeJson(lomakeJson: string, hakuProps: HakuProps): Promise<{ avustushakuID: number }> {

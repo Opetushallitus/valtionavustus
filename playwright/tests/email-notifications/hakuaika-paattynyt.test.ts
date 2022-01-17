@@ -1,4 +1,4 @@
-import { expect, Page } from "@playwright/test"
+import { test, expect, Page } from "@playwright/test"
 import moment from "moment"
 
 import { getAvustushakuEmails, getLastAvustushakuEmail } from "../../utils/emails"
@@ -8,14 +8,22 @@ import { MuutoshakemusFixtures, muutoshakemusTest } from "../../fixtures/muutosh
 muutoshakemusTest.extend<Pick<MuutoshakemusFixtures, 'finalAvustushakuEndDate'>>({
     finalAvustushakuEndDate: moment().subtract(1, 'day').startOf('day'),
 })(
-  "notify all virkaliijas assigned to avustushaku the day after hakuaika ended",
+  "notify all valmistelijas assigned to avustushaku the day after hakuaika ended",
   async ({ page, hakuProps, closedAvustushaku }) => {
     await sendHakuaikaPaattynytNotifications(page)
     const email = await getLastAvustushakuEmail(closedAvustushaku.id, 'hakuaika-paattynyt')
     expect(email).toBeDefined()
-    expect(email['to-address']).toHaveLength(2)
-    expect(email['to-address']).toContain('santeri.horttanainen@reaktor.com')
-    expect(email['to-address']).toContain('viivi.virkailja@exmaple.com')
+
+    await test.step("notification is not sent to arvioija", async () => {
+      expect(email['to-address']).not.toContain('paivi.paakayttaja@example.com')
+    })
+
+    await test.step("notificaiton is sent to valmistelijas", async () => {
+      expect(email['to-address']).toHaveLength(2)
+      expect(email['to-address']).toContain('santeri.horttanainen@reaktor.com')
+      expect(email['to-address']).toContain('viivi.virkailja@exmaple.com')
+    })
+
     expect(email.subject).toEqual('Hakuaika on päättynyt')
     expect(email.formatted).toEqual(`Hyvä vastaanottaja,
 
@@ -29,7 +37,7 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi`)
 muutoshakemusTest.extend<Pick<MuutoshakemusFixtures, 'finalAvustushakuEndDate'>>({
     finalAvustushakuEndDate: moment().subtract(7, 'day').startOf('day'),
 })(
-  "do not notify virkaliija after the first day of hakuaika ending",
+  "do not notify after the first day of hakuaika ending",
   async ({ page, closedAvustushaku }) => {
       await sendHakuaikaPaattynytNotifications(page)
       const emails = await getAvustushakuEmails(closedAvustushaku.id, 'hakuaika-paattynyt')

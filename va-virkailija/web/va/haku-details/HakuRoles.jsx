@@ -164,7 +164,7 @@ class RoleRow extends React.Component {
     const onDelete = controller.deleteRole(avustushaku, role)
     return (
       <tr>
-        <td className="haku-roles-role-column">
+        <td className="haku-roles-role-column" data-test-id={`role-${role.name.toLowerCase().replace(" ","-")}`}>
           <select onChange={this.handleChange} name="role" value={role.role} disabled={disableEditing}>
             <option value="presenting_officer">Valmistelija</option>
             <option value="evaluator">Arvioija</option>
@@ -173,7 +173,7 @@ class RoleRow extends React.Component {
         <td className="haku-roles-name-column"><input type="text" value={role.name} name="name" onChange={this.handleChange} disabled={disableEditing}/></td>
         <td className="haku-roles-email-column">
           <input type="email" value={role.email || ""} name="email" onChange={this.handleChange} disabled={disableEditing}/>
-          <button type="button" onClick={onDelete} className="remove haku-roles-remove" alt="Poista" title={removeTitleText} data-test-id={`remove-role-${role.name.toLowerCase().replace(" ","-")}`} tabIndex="-1" disabled={disableEditing} />
+          <button type="button" onClick={onDelete} className="remove haku-roles-remove" alt="Poista" title={removeTitleText} tabIndex="-1" disabled={disableEditing} />
         </td>
       </tr>
     )

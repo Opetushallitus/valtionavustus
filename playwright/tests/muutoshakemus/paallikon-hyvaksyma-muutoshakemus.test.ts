@@ -25,7 +25,7 @@ test('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen, hyv
   })
   await test.step('remove current user from avustushaku valmistelijat', async () => {
     await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.removeUser(avustushakuID, '_-valtionavustus')
+    await hakujenHallintaPage.removeUser('_-valtionavustus')
   })
   await test.step('send muutoshakemus', async () => {
     await hakijaMuutoshakemusPage.navigate(hakemusID)
