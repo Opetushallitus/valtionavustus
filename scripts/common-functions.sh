@@ -72,6 +72,11 @@ function wait_until_port_is_listening {
   done
 }
 
+function require_docker {
+  require_command docker
+  docker ps > /dev/null 2>&1 || { echo >&2 "Running 'docker ps' failed. Is docker daemon running? Aborting."; exit 1; }
+}
+
 function wait_for_container_to_be_healthy {
   require_command docker
   local -r container_name="$1"
