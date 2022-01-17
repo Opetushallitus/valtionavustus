@@ -268,13 +268,15 @@
                                              (= (:role role) "presenting_officer")))
                              avustushaku-roles)))))
 
-(defn get-presenter-by-hakemus-id [hakemus-id]
-  (let [presenters (query "SELECT ar.name, ar.email, ar.oid
-                           FROM avustushaku_roles ar
-                           LEFT JOIN hakemukset h ON ar.avustushaku = h.avustushaku
-                           LEFT JOIN muutoshakemus m ON h.id = m.hakemus_id
-                           WHERE m.hakemus_id = ?" [hakemus-id])]
-    (first presenters)))
+(defn get-valmistelija-assigned-to-hakemus [hakemus-id]
+  (let [sql "SELECT ahr.name, ahr.email, ahr.oid
+             FROM hakija.hakemukset hv
+             JOIN virkailija.arviot a ON a.hakemus_id = hv.id
+             JOIN hakija.avustushaku_roles ahr ON a.presenter_role_id = ahr.id
+             WHERE hv.version_closed IS NULL AND hv.id = ?"
+        result (first (query sql [hakemus-id]))]
+    (log/info "Found valmistelija" result  "for hakemus ID" hakemus-id)
+    result))
 
 (defn- add-muutoshakemus [tx user-key hakemus-id muutoshakemus]
   (log/info (str "Inserting muutoshakemus for user-key: " user-key))

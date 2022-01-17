@@ -29,7 +29,7 @@ export const budjettimuutoshakemusTest = defaultValues.extend<Budjettimuutoshake
     const {userKey} = await hakijaAvustusHakuPage.fillAndSendBudjettimuutoshakemusEnabledHakemus(avustushakuID, answers, budget)
     use({userKey})
   },
-  acceptedHakemus: async ({avustushakuID, page, budget, submittedHakemus: {userKey}}, use, testInfo) => {
+  acceptedHakemus: async ({avustushakuID, ukotettuValmistelija, page, budget, submittedHakemus: {userKey}}, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 25_000)
 
     const hakujenHallintaPage = new HakujenHallintaPage(page)
@@ -44,7 +44,7 @@ export const budjettimuutoshakemusTest = defaultValues.extend<Budjettimuutoshake
     await hakujenHallintaPage.resolveAvustushaku()
 
     await hakemustenArviointiPage.navigate(avustushakuID)
-    await hakemustenArviointiPage.selectValmistelijaForHakemus(avustushakuID, hakemusID, "_ valtionavustus")
+    await hakemustenArviointiPage.selectValmistelijaForHakemus(avustushakuID, hakemusID, ukotettuValmistelija)
 
     await hakujenHallintaPage.navigateToPaatos(avustushakuID)
     await hakujenHallintaPage.sendPaatos(avustushakuID)

@@ -1,32 +1,24 @@
-import {budjettimuutoshakemusTest as test} from "../../fixtures/budjettimuutoshakemusTest";
+import {budjettimuutoshakemusTest} from "../../fixtures/budjettimuutoshakemusTest";
+import {DefaultValueFixtures} from '../../fixtures/defaultValues'
 import {HakemustenArviointiPage} from "../../pages/hakemustenArviointiPage";
-import {HakujenHallintaPage} from "../../pages/hakujenHallintaPage";
 import {HakijaMuutoshakemusPage} from "../../pages/hakijaMuutoshakemusPage";
 import {HakijaMuutoshakemusPaatosPage} from "../../pages/hakijaMuutoshakemusPaatosPage";
 import {parseMuutoshakemusPaatosFromEmails} from "../../utils/emails";
-import {expect} from "@playwright/test";
+import {expect, test} from "@playwright/test";
 import {HAKIJA_URL} from "../../../test/test-util";
 
 test.setTimeout(180000)
 
 const sisaltomuutosPerustelut = 'Muutamme kaiken muuttamisen ilosta'
 
-test('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen, hyvaksyjaksi tulee hyvaksyja, esittelijaksi ukotettu valmistelija ja lisatietoja osioon tulee ukotettu valmistelija',
-  async ({page, avustushakuID, acceptedHakemus: {hakemusID}}) => {
+budjettimuutoshakemusTest.extend<Pick<DefaultValueFixtures, 'ukotettuValmistelija'>>({
+  ukotettuValmistelija: "Viivi Virkailija",
+})('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen, hyvaksyjaksi tulee hyvaksyja, esittelijaksi ukotettu valmistelija ja lisatietoja osioon tulee ukotettu valmistelija', async ({page, avustushakuID, ukotettuValmistelija, acceptedHakemus: {hakemusID}}) => {
   const user = 'Viivi'
-  const hakujenHallintaPage = new HakujenHallintaPage(page)
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
   const hakijaMuutoshakemusPaatosPage = new HakijaMuutoshakemusPaatosPage(page)
 
-  await test.step('ukota user for hakemus', async () => {
-    await hakemustenArviointiPage.navigate(avustushakuID)
-    await hakemustenArviointiPage.prepareSelectingValmistelijaForHakemus(hakemusID, user)
-  })
-  await test.step('remove current user from avustushaku valmistelijat', async () => {
-    await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.removeUser('_-valtionavustus')
-  })
   await test.step('send muutoshakemus', async () => {
     await hakijaMuutoshakemusPage.navigate(hakemusID)
     await hakijaMuutoshakemusPage.clickHaenSisaltomuutosta()
@@ -39,9 +31,9 @@ test('Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen, hyv
     const hyvaksyja = await hakemustenArviointiPage.paatosPreviewHyvaksyja()
     expect(hyvaksyja).toEqual('_ valtionavustus')
     const esittelija = await hakemustenArviointiPage.paatosPreviewEsittelija()
-    expect(esittelija).toContain(user)
+    expect(esittelija).toContain(ukotettuValmistelija)
     const lisatietoja = await hakemustenArviointiPage.paatosPreviewLisatietoja()
-    expect(lisatietoja).toContain(user)
+    expect(lisatietoja).toContain(ukotettuValmistelija)
     await hakemustenArviointiPage.closePaatosPreview()
   })
   await test.step('shows correct values in paatos for hakija', async () => {

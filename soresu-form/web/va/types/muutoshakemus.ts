@@ -18,7 +18,7 @@ export interface MuutoshakemusPaatosResponse {
   muutoshakemukset: Muutoshakemus[]
   avustushaku: Avustushaku
   paatos: Paatos
-  isPresentingOfficer: boolean
+  isDecidedByUkotettuValmistelija: boolean
   presenter: Role
 }
 

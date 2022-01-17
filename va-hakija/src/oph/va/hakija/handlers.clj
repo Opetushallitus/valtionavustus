@@ -112,16 +112,6 @@
       (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta])
       (get-in muutoshakemus [:sisaltomuutos :haenSisaltomuutosta])))
 
-(defn- get-valmistelija-assigned-to-hakemus [hakemus-id]
-  (let [sql "SELECT ahr.name, ahr.email, ahr.oid
-             FROM hakija.hakemukset hv
-             JOIN virkailija.arviot a ON a.hakemus_id = hv.id
-             JOIN hakija.avustushaku_roles ahr ON a.presenter_role_id = ahr.id
-             WHERE hv.version_closed IS NULL AND hv.id = ?"
-        result (first (query sql [hakemus-id]))]
-    (log/info "Found valmistelija" result  "for hakemus ID" hakemus-id)
-    result))
-
 (defn on-post-muutoshakemus [user-key muutoshakemus]
   (let [hakemus (va-db/get-hakemus user-key)
         avustushaku-id (:avustushaku hakemus)
@@ -129,7 +119,7 @@
         register-number (:register_number hakemus)
         normalized-hakemus (va-db/get-normalized-hakemus user-key)
         hanke (:project-name normalized-hakemus)
-        valmistelija-email (:email (get-valmistelija-assigned-to-hakemus hakemus-id))]
+        valmistelija-email (:email (va-db/get-valmistelija-assigned-to-hakemus hakemus-id))]
     (va-db/on-muutoshakemus user-key hakemus-id avustushaku-id muutoshakemus)
     (if (should-notify-valimistelija-of-new-muutoshakemus muutoshakemus)
       (if (nil? valmistelija-email)

@@ -47,7 +47,7 @@ export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
     await hakujenHallintaPage.setEndDate(finalAvustushakuEndDate.format("D.M.YYYY H.mm"))
     await use({ id: avustushakuID })
   },
-  acceptedHakemus: async ({closedAvustushaku, page, submittedHakemus: {userKey}}, use, testInfo) => {
+  acceptedHakemus: async ({closedAvustushaku, page, ukotettuValmistelija, submittedHakemus: {userKey}}, use, testInfo) => {
     const avustushakuID = closedAvustushaku.id
     testInfo.setTimeout(testInfo.timeout + 25_000)
 
@@ -60,7 +60,7 @@ export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
     await hakujenHallintaPage.resolveAvustushaku()
 
     await hakemustenArviointiPage.navigate(avustushakuID)
-    await hakemustenArviointiPage.selectValmistelijaForHakemus(avustushakuID, hakemusID, "_ valtionavustus")
+    await hakemustenArviointiPage.selectValmistelijaForHakemus(avustushakuID, hakemusID, ukotettuValmistelija)
 
     await hakujenHallintaPage.navigateToPaatos(avustushakuID)
     await hakujenHallintaPage.sendPaatos(avustushakuID)

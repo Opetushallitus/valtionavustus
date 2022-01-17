@@ -85,7 +85,7 @@
     :muutoshakemus Muutoshakemus
     :muutoshakemusUrl s/Str
     :presenter Presenter
-    :isPresentingOfficer s/Bool
+    :isDecidedByUkotettuValmistelija s/Bool
     :hakemus NormalizedHakemus
     :avustushaku Avustushaku
     :muutoshakemukset MuutoshakemusList

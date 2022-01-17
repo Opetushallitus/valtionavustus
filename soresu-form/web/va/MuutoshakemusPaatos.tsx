@@ -127,13 +127,13 @@ const PerustelutSection: React.FC<{reason: string;}> = ({reason}) => {
   )
 }
 
-const HyvaksyjaSection: React.FC<{isPresentingOfficer: boolean; decider: string; presenter: Role | undefined}> =
-  ({isPresentingOfficer, presenter, decider}) => {
+const HyvaksyjaSection: React.FC<{isDecidedByUkotettuValmistelija: boolean; decider: string; presenter: Role | undefined}> =
+  ({isDecidedByUkotettuValmistelija, presenter, decider}) => {
     const { t } = useTranslations()
     return (
       <section className="muutoshakemus-paatos__section">
         <div data-test-id="muutoshakemus-paatos-tekija-title" className="muutoshakemus-paatos__title">{t.muutoshakemus.paatos.paatoksenTekija}</div>
-        {isPresentingOfficer
+        {isDecidedByUkotettuValmistelija
           ? <div data-test-id="paatos-decider">{decider}</div>
           : <div>
             <div data-test-id="paatos-decider">{decider}</div>
@@ -162,7 +162,7 @@ const LisatietojaSection: React.FC<{presenter: Role | undefined}> = ({presenter}
   )
 }
 
-export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset, isPresentingOfficer, muutoshakemusUrl }: MuutoshakemusPaatosProps) => {
+export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter, avustushaku, muutoshakemukset, isDecidedByUkotettuValmistelija, muutoshakemusUrl }: MuutoshakemusPaatosProps) => {
   const { t } = useTranslations()
   const paattymispaiva = isAcceptedWithChanges(paatos["paatos-status-jatkoaika"]) ? paatos.paattymispaiva : muutoshakemus['haettu-kayttoajan-paattymispaiva']
   const newTalousarvio = isAcceptedWithChanges(paatos["paatos-status-talousarvio"]) ? (paatos.talousarvio || []) : muutoshakemus.talousarvio
@@ -190,7 +190,7 @@ export const MuutoshakemusPaatos = ({ hakemus, muutoshakemus, paatos, presenter,
         <SisaltomuutosPaatosSection status={paatos["paatos-status-sisaltomuutos"]} />
       )}
       <PerustelutSection reason={paatos.reason} />
-      <HyvaksyjaSection isPresentingOfficer={isPresentingOfficer} decider={paatos.decider} presenter={presenter} />
+      <HyvaksyjaSection isDecidedByUkotettuValmistelija={isDecidedByUkotettuValmistelija} decider={paatos.decider} presenter={presenter} />
       <LisatietojaSection presenter={presenter} />
     </div>
   )

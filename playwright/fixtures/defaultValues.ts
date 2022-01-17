@@ -8,11 +8,12 @@ import { randomAsiatunnus, randomString } from '../utils/random'
 import { Answers, VaCodeValues } from '../utils/types'
 import { switchUserIdentityTo } from '../utils/util'
 
-type DefaultValueFixtures = {
+export type DefaultValueFixtures = {
   codes: VaCodeValues
   hakuProps: HakuProps
   answers: Answers
   swedishAnswers: Answers
+  ukotettuValmistelija: string
   userCache: {}
 }
 
@@ -52,6 +53,7 @@ export const defaultValues = workerScopedDefaultValues.extend<DefaultValueFixtur
       vaCodes: codes,
     })
   },
+  ukotettuValmistelija: "_ valtionavustus",
   userCache: async ({page}, use) => {
     await test.step("populate user cache", async() => {
       const users = [

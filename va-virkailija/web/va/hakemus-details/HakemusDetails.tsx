@@ -43,7 +43,8 @@ export const HakemusDetails = (props: Props) => {
     const muutoshakemukset = hakemus.muutoshakemukset
 
     const fallbackPresenter = hakuData.roles.find(r => r.role === 'presenting_officer')
-    const presenter = hakuData.roles.find(r => r.id === hakemus.arvio["presenter-role-id"]) || fallbackPresenter
+    const hakemukselleUkotettuValmistelija = hakuData.roles.find(r => r.id === hakemus.arvio["presenter-role-id"]) || fallbackPresenter
+    const isCurrentUserHakemukselleUkotettuValmistelija = hakemukselleUkotettuValmistelija?.oid === userOid
 
     const onClose = () => {
       document.body.classList.remove('split-view')
@@ -83,7 +84,7 @@ export const HakemusDetails = (props: Props) => {
 
         case 'valiselvitys':
           return <Väliselvitys environment={environment} controller={controller} hakemus={hakemus}
-                           avustushaku={avustushaku} userInfo={userInfo} presenter={presenter}
+                           avustushaku={avustushaku} userInfo={userInfo} presenter={hakemukselleUkotettuValmistelija}
                            translations={translations}
                            multibatchEnabled={multibatchEnabled}
                            isPresentingOfficer={isPresentingOfficer}
@@ -91,7 +92,7 @@ export const HakemusDetails = (props: Props) => {
                            presenterCommentHelpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}/>
         case 'loppuselvitys':
           return <Loppuselvitys environment={environment} controller={controller} hakemus={hakemus}
-                           avustushaku={avustushaku} userInfo={userInfo} presenter={presenter}
+                           avustushaku={avustushaku} userInfo={userInfo} presenter={hakemukselleUkotettuValmistelija}
                            translations={translations}
                            multibatchEnabled={multibatchEnabled}
                            isPresentingOfficer={isPresentingOfficer}
@@ -101,7 +102,7 @@ export const HakemusDetails = (props: Props) => {
           if (!muutoshakemukset || muutoshakemukset.length === 0)
             return <h2>Hankkeella ei ole muutoshakemuksia</h2>
           else
-            return <Muutoshakemus environment={environment} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakemusVersion={hakemus} controller={controller} userInfo={userInfo} presenter={presenter} isPresentingOfficer={isPresentingOfficer} />
+            return <Muutoshakemus environment={environment} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakemusVersion={hakemus} controller={controller} userInfo={userInfo} presenter={hakemukselleUkotettuValmistelija} isPresentingOfficer={isCurrentUserHakemukselleUkotettuValmistelija} />
         case 'seuranta':
           return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakuData={hakuData} translations={translations} helpTexts={helpTexts}/>
         default:
