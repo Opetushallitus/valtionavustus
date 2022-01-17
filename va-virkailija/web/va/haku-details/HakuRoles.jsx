@@ -163,8 +163,8 @@ class RoleRow extends React.Component {
     const removeTitleText = (disableEditing && userHasEditPrivilege) ? "Et voi poistaa itseltäsi oikeuksia hakuun" : "Poista"
     const onDelete = controller.deleteRole(avustushaku, role)
     return (
-      <tr>
-        <td className="haku-roles-role-column" data-test-id={`role-${role.name.toLowerCase().replace(" ","-")}`}>
+      <tr data-test-id={`role-${role.name.toLowerCase().replace(" ","-")}`}>
+        <td className="haku-roles-role-column">
           <select onChange={this.handleChange} name="role" value={role.role} disabled={disableEditing}>
             <option value="presenting_officer">Valmistelija</option>
             <option value="evaluator">Arvioija</option>
