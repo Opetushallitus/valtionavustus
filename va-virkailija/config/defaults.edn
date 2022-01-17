@@ -38,7 +38,8 @@
          :print-mail-on-disable? true
          :retry-initial-wait 2000
          :retry-multiplier 4
-         :retry-max-time 60000}
+         :retry-max-time 60000
+         :persistent-retry { :enabled? false }}
  :va-users {:use-cache? true
             :cache-refresh-interval-in-s 300
             :cache-max-refresh-interval-in-s 10800}
