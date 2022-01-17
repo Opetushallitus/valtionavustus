@@ -103,7 +103,7 @@ const PaattymispaivaValues = ({ muutoshakemus, projectEndDate }: PaattymispaivaV
 
 const errors = {
   required: 'Pakollinen kenttä',
-  talousarvioSum: sum => `Loppusumman on oltava ${sum}`
+  talousarvioSum: (sum: number) => `Loppusumman on oltava ${sum}`
 }
 
 const getPaatosSchema = (muutoshakemus: Muutoshakemus) => Yup.object().shape({

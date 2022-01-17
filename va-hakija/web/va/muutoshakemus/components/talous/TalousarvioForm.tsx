@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ChangeEvent } from 'react'
 
 import { FormikHook, Meno, Talousarvio, TalousarvioValues } from 'soresu-form/web/va/types/muutoshakemus'
 import { getNestedInputErrorClass } from 'soresu-form/web/va/formikHelpers'
@@ -25,7 +25,7 @@ const MenoRow = ({ f, meno, lang }: { f: FormikHook, meno: Meno, lang: Language 
   const value = f.values.talousarvio?.[meno.type]
   const amountClass = value === meno.amount ? '' : 'linethrough'
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     f.handleChange(e)
     if (f.values.talousarvio && !isNaN(parseInt(e.target.value))) {
       f.setFieldValue('talousarvio.currentSum', calculateCurrentSum({ ...f.values.talousarvio, [meno.type]: parseInt(e.target.value) }))
@@ -34,7 +34,7 @@ const MenoRow = ({ f, meno, lang }: { f: FormikHook, meno: Meno, lang: Language 
 
   return (
     <div className="muutoshakemus_talousarvio_row" data-test-id="meno-input-row">
-      <div className="description meno-description">{meno[`translation-${lang}`]}</div>
+      <div className="description meno-description">{meno[lang === 'fi' ? 'translation-fi' : 'translation-sv']}</div>
       <div className="existingAmount" data-test-id="current-value"><span className={amountClass}>{meno.amount}</span> €</div>
       <div className="separator" />
       <div className="changedAmount" data-test-id="meno-input">

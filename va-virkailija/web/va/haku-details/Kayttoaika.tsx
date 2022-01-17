@@ -1,22 +1,23 @@
 import React from 'react'
 import moment, {Moment} from 'moment'
 import { isoFormat } from 'soresu-form/web/va/i18n/dateformat'
+import { Avustushaku } from 'soresu-form/web/va/types'
 import { DateInput } from './DateInput'
 
 import '../style/kayttoaika.less'
 import 'react-widgets/styles.css'
 
 interface KayttoaikaProps {
-  avustushaku: object
+  avustushaku: Avustushaku
   controller: {
-    onChangeListener: (avustushaku: object, {id: string}, newValue: string) => void
+    onChangeListener: (avustushaku: object, { id }: { id: string }, newValue: string) => void
   }
 }
 
 export const Kayttoaika = (props: KayttoaikaProps) => {
   const {avustushaku, controller} = props
 
-  function getStoredDateFor(field: string): Date | undefined {
+  function getStoredDateFor(field: 'hankkeen-alkamispaiva' | 'hankkeen-paattymispaiva'): Date | undefined {
     if (!avustushaku[field]) return undefined
     if (!moment(avustushaku[field]).isValid()) return undefined
 

@@ -18,11 +18,11 @@ type MenoRowProps = {
 const MenoRow = ({ meno, currentTalousarvio, linethrough, odd }: MenoRowProps) => {
   const { lang } = useTranslations()
   const currentAmount = currentTalousarvio.find(t => t.type === meno.type)?.amount
-  const amountClass = meno.amount === currentAmount || !linethrough ? '' : 'meno-amount--linethrough'
+  const amountClass = meno.amount === currentAmount || !linethrough ? '' : 'meno-amount--linethrough'
 
   return (
     <div className={`meno-row ${odd ? '' : `meno-row-even`}`} data-test-id="meno-input-row" data-test-type={meno.type}>
-      <div className="meno-description">{meno[`translation-${lang}`]}</div>
+      <div className="meno-description">{meno[lang === 'fi' ? 'translation-fi' : 'translation-sv']}</div>
       <div className="meno-amount" data-test-id="current-value"><span className={amountClass}>{currentAmount} €</span></div>
       <div className="meno-amount" data-test-id="muutoshakemus-value">{meno.amount} €</div>
     </div>

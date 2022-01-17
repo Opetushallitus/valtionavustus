@@ -124,6 +124,9 @@ export interface Comment {
 export interface Selvitys {
   id: number
   "budget-oph-share"?: string
+  "project-name"?: string
+  "register-number"?: string
+  "selvitys-email"?: SelvitysEmail
   answers?: Answer[]
   language: 'fi' | 'sv'
 }

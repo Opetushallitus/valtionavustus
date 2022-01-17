@@ -1,10 +1,10 @@
 import React, { ReactNode } from 'react'
 
-import { FormikHook } from 'soresu-form/web/va/types/muutoshakemus'
+import { FormikHook, FormValues } from 'soresu-form/web/va/types/muutoshakemus'
 
 type AvustuksenKayttoajanPidennysProps = {
   f: FormikHook
-  name: string
+  name: keyof FormValues
   title: string
   children: ReactNode
 }
@@ -19,7 +19,7 @@ export const MuutoshakemusFormSection = ({ f, name, title, children }: Avustukse
           id={`checkbox-${name}`}
           onChange={f.handleChange}
           onBlur={f.handleBlur}
-          checked={f.values[name]}
+          checked={!!f.values[name]}
         />
         <label htmlFor={`checkbox-${name}`}>{title}</label>
       </div>

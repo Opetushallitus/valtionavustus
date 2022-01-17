@@ -3,7 +3,7 @@ export default class LocalStorage {
     return parseInt(window.localStorage.getItem("avustushakuId")!, 10)
   }
 
-  static saveAvustushakuId(id): void {
-    window.localStorage.setItem("avustushakuId", id)
+  static saveAvustushakuId(id: number): void {
+    window.localStorage.setItem("avustushakuId", String(id))
   }
 }

@@ -22,14 +22,11 @@ type TaloustarkastusEmailProps = {
 export const TaloustarkastusEmail = ({ hakemus, loppuselvitys, avustushakuName, avustushakuId, controller, userInfo, lang}: TaloustarkastusEmailProps) => {
   const taloustarkastettu = hakemus['status-loppuselvitys'] === "accepted"
   const senderName = userInfo["first-name"].split(" ")[0] + " " + userInfo["surname"]
-
   const projectName = loppuselvitys["project-name"] || hakemus["project-name"] || ""
   const registerNumber = loppuselvitys["register-number"] || ""
-
   const emailAnswers = flattenAnswers(loppuselvitys.answers?.concat(hakemus.answers) || []).filter(answer => answer.key && answer.key.includes("email"))
   const organizationEmail = emailAnswers.find(a => a.key === "organization-email")
   const primaryEmail = emailAnswers.find(a => a.key === "primary-email")
-
   const selvitysEmail = loppuselvitys["selvitys-email"]
 
   const [email, setEmail] = useState(taloustarkastettu && selvitysEmail ? sentEmail(lang, selvitysEmail) : initialEmail(lang, projectName, avustushakuName, registerNumber, senderName, userInfo))
@@ -165,7 +162,7 @@ function createEmailSubject(registerNumber: string) {
   }
 }
 
-function flattenAnswers(answers: Answer[]) {
+function flattenAnswers(answers: Answer[]): Answer[] {
   return answers.flatMap(a => Array.isArray(a.value) ? flattenAnswers(a.value) : a)
 }
 
@@ -178,7 +175,7 @@ function initialEmail(lang: Language, projectName: string, avustushakuName: stri
   }
 }
 
-function sentEmail(lang, sentEmail: SelvitysEmail) {
+function sentEmail(lang: Language, sentEmail: SelvitysEmail) {
   return {
     lang,
     receivers: sentEmail.to,

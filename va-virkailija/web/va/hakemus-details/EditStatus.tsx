@@ -65,7 +65,7 @@ export default class EditStatus extends React.Component<EditStatusProps, EditSta
         })
     }
 
-    const onStatusCommentChange = (event) =>{
+    const onStatusCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) =>{
       this.setState({comment:event.target.value})
     }
 

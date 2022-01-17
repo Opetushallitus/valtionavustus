@@ -1,6 +1,7 @@
 type FeatureFlag = { "enabled?": boolean }
+export type FeatureFlagKey = keyof Omit<EnvironmentApiResponse, 'name' | 'hakija-server'>
 
-export type EnvironmentApiResponse = {
+export interface EnvironmentApiResponse {
   name: string
   "hakija-server": {
     url: {

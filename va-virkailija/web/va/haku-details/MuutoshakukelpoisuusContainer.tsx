@@ -5,7 +5,7 @@ import 'react-widgets/styles.css'
 import "./Muutoshakukelpoisuus.less"
 
 interface Field {
-  id: string
+  id: 'project-name' | 'applicant-name' | 'primary-email' | 'textField-0'
 }
 
 interface Muutoshakukelpoisuus {

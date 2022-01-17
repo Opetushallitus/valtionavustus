@@ -3,7 +3,7 @@ import ClassNames from 'classnames'
 
 import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo.jsx'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
-import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
+import { EnvironmentApiResponse, FeatureFlagKey } from 'soresu-form/web/va/types/environment'
 import {State, UserInfo} from "./types";
 
 type TopBarProps = {
@@ -40,7 +40,7 @@ type TopBarTabsProps = {
 
 class TopBarTabs extends React.Component<TopBarTabsProps, {}> {
 
-  isEnabled(config: EnvironmentApiResponse, k: keyof EnvironmentApiResponse): boolean {
+  isEnabled(config: EnvironmentApiResponse, k: FeatureFlagKey): boolean {
     return config[k]?.["enabled?"] === true
   }
 
@@ -102,7 +102,7 @@ type TopBarControlsProps = {
 
 class TopBarControls extends React.Component<TopBarControlsProps, {}> {
 
-  getStatus(errorId, okStatus) {
+  getStatus(errorId: string, okStatus: JSX.Element): JSX.Element {
     switch (errorId) {
       case "": return okStatus
       case "validation-error": return <span className="error">Jossain kentässä puutteita. Tarkasta arvot.</span>

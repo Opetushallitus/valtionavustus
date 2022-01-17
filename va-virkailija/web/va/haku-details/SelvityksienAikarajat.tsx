@@ -11,7 +11,7 @@ import 'react-widgets/styles.css'
 interface KayttoaikaProps {
   avustushaku: Avustushaku
   controller: {
-    onChangeListener: (avustushaku: Avustushaku, {id: string}, newValue: string) => void
+    onChangeListener: (avustushaku: Avustushaku, { id }: { id: string }, newValue: string) => void
   }
   helpTexts: any
 }
@@ -19,7 +19,7 @@ interface KayttoaikaProps {
 export const SelvityksienAikarajat = (props: KayttoaikaProps) => {
   const {avustushaku, controller, helpTexts} = props
 
-  function getStoredDateFor(field: string): Date | undefined {
+  function getStoredDateFor(field: 'valiselvitysdate' | 'loppuselvitysdate'): Date | undefined {
     if (!avustushaku[field]) return undefined
     if (!moment(avustushaku[field]).isValid()) return undefined
     

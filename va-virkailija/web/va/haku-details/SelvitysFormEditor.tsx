@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import _ from 'lodash'
 import * as Bacon from 'baconjs'
 
 import HttpUtil from "soresu-form/web/HttpUtil"
+import { Avustushaku } from 'soresu-form/web/va/types'
 
 import FormEditor from './FormEditor'
 import { Lahetys, Tapahtumaloki } from './Tapahtumaloki'
 import { LastUpdated } from './LastUpdated'
 
 type SelvitysFormEditorProps = {
-  avustushaku: any
+  avustushaku: Avustushaku
   controller: any
   translations: any
   koodistos: any
@@ -32,17 +33,17 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
 
   const previewUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/" + selvitysType
   const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/" + selvitysType + "?lang=sv"
-  const onFormChange = (avustushaku, newDraft) =>{
+  const onFormChange = (avustushaku: Avustushaku, newDraft) =>{
     controller.selvitysFormOnChangeListener(avustushaku, newDraft, selvitysType)
     controller.selvitysJsonFormOnChangeListener(avustushaku, JSON.stringify(newDraft, null, 2), selvitysType)
   }
 
-  const onJsonChange = e => {
+  const onJsonChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     controller.selvitysJsonFormOnChangeListener(avustushaku, e.target.value, selvitysType)
     try {
       const parsedDraft = JSON.parse(e.target.value)
       controller.selvitysFormOnChangeListener(avustushaku, parsedDraft, selvitysType)
-    } catch (e)
+    } catch (err)
     {
     }
   }

@@ -43,7 +43,7 @@ export const PaatosStatusRadioButton: React.FC<PaatosStatusRadioButtonProps> = (
   talousarvioValues,
   group
 }) => {
-  const handleChange = e => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (talousarvioValues) {
       f.setFieldValue('talousarvio.talousarvio', talousarvioValues, true)
     }
