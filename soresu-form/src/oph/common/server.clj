@@ -62,5 +62,5 @@
     (fn [request]
       (let [response (handler request)]
         (-> response
-          (header "Content-Security-Policy-Report-Only" (str "default-src 'self' " urls "; object-src 'none'; font-src *; style-src-elem * 'unsafe-inline'; img-src *; report-uri /api/healthcheck/csp-report")))))
+          (header "Content-Security-Policy-Report-Only" (str "default-src 'self' " urls "; object-src 'none'; font-src *; style-src-elem * 'unsafe-inline'; img-src * data:; report-uri /api/healthcheck/csp-report")))))
     handler))
