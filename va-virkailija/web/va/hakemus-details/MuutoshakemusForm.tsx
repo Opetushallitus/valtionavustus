@@ -141,7 +141,7 @@ interface MuutoshakemusFormProps {
   userInfo: UserInfo
   presenter: Role | undefined
   projectEndDate: string | undefined
-  isPresentingOfficer: boolean
+  isCurrentUserHakemukselleUkotettuValmistelija: boolean
   currentTalousarvio: Talousarvio
   environment: EnvironmentApiResponse
 }
@@ -192,7 +192,7 @@ const formToPayload = (values: MuutoshakemusPaatosRequest) => {
 
 
 
-export const MuutoshakemusForm = ({avustushaku, currentTalousarvio, muutoshakemus, muutoshakemukset, projectEndDate, hakemus, controller, presenter, isPresentingOfficer, hakemusVersion, userInfo, environment}: MuutoshakemusFormProps) => {
+export const MuutoshakemusForm = ({avustushaku, currentTalousarvio, muutoshakemus, muutoshakemukset, projectEndDate, hakemus, controller, presenter, isCurrentUserHakemukselleUkotettuValmistelija, hakemusVersion, userInfo, environment}: MuutoshakemusFormProps) => {
   const { t } = useTranslations()
   const talousarvioValues = muutoshakemus.talousarvio.length ? getTalousarvioValues(muutoshakemus.talousarvio) : undefined
   const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
@@ -239,7 +239,7 @@ export const MuutoshakemusForm = ({avustushaku, currentTalousarvio, muutoshakemu
             muutoshakemus={muutoshakemus}
             hakemus={hakemus}
             presenter={presenter}
-            isPresentingOfficer={isPresentingOfficer}
+            isDecidedByUkotettuValmistelija={isCurrentUserHakemukselleUkotettuValmistelija}
             muutoshakemukset={muutoshakemukset}
             environment={environment}
             muutoshakemusUrl={hakemusVersion.muutoshakemusUrl}

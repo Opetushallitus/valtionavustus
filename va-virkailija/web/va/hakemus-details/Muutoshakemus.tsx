@@ -25,10 +25,10 @@ interface MuutoshakemusProps {
   controller: any
   userInfo: UserInfo
   presenter: Role | undefined
-  isPresentingOfficer: boolean
+  isCurrentUserHakemukselleUkotettuValmistelija: boolean
 }
 
-export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hakemusVersion, controller, userInfo, presenter, isPresentingOfficer }: MuutoshakemusProps) => {
+export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hakemusVersion, controller, userInfo, presenter, isCurrentUserHakemukselleUkotettuValmistelija }: MuutoshakemusProps) => {
   const hakemus = hakemusVersion.normalizedData
   const [a, setActiveMuutoshakemus] = useState(muutoshakemukset[0])
   const isAccepted = a.status === 'accepted' || a.status === 'accepted_with_changes'
@@ -45,7 +45,7 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
       userInfo={userInfo}
       presenter={presenter}
       projectEndDate={projectEndDate}
-      isPresentingOfficer={isPresentingOfficer}
+      isCurrentUserHakemukselleUkotettuValmistelija={isCurrentUserHakemukselleUkotettuValmistelija}
       currentTalousarvio={currentTalousarvio}
       environment={environment} />
     : <MuutoshakemusValues

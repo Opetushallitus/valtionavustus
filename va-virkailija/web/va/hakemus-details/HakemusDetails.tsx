@@ -102,7 +102,7 @@ export const HakemusDetails = (props: Props) => {
           if (!muutoshakemukset || muutoshakemukset.length === 0)
             return <h2>Hankkeella ei ole muutoshakemuksia</h2>
           else
-            return <Muutoshakemus environment={environment} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakemusVersion={hakemus} controller={controller} userInfo={userInfo} presenter={hakemukselleUkotettuValmistelija} isPresentingOfficer={isCurrentUserHakemukselleUkotettuValmistelija} />
+            return <Muutoshakemus environment={environment} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakemusVersion={hakemus} controller={controller} userInfo={userInfo} presenter={hakemukselleUkotettuValmistelija} isCurrentUserHakemukselleUkotettuValmistelija={isCurrentUserHakemukselleUkotettuValmistelija} />
         case 'seuranta':
           return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakuData={hakuData} translations={translations} helpTexts={helpTexts}/>
         default:
