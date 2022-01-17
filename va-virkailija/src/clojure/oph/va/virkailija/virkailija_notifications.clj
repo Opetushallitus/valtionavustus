@@ -70,7 +70,7 @@
             SELECT
               avustushaku as avustushaku_id,
               count(*) as hakemus_count,
-              sum(budget_total) as haettu_total_eur
+              sum(budget_oph_share) as haettu_total_eur
             FROM hakija.hakemukset
             WHERE version_closed IS NULL
               AND status = 'submitted'
