@@ -1,9 +1,17 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import FocusLock from 'react-focus-lock'
+
+import HakemustenArviointiController from '../HakemustenArviointiController'
 
 import './hakemusDetails.less'
 
-export const Modal = ({ title, controller, children }) => {
+interface ModalProps {
+  title: string
+  controller: HakemustenArviointiController
+  children: ReactNode
+}
+
+export const Modal = ({ title, controller, children }: ModalProps) => {
   const closeModal = () => controller.setModal(undefined)
   return (
     <FocusLock returnFocus={true} lockProps={{style:{display:"contents"}}}>

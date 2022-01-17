@@ -1,4 +1,4 @@
-function fallbackCopyTextToClipboard(text) {
+function fallbackCopyTextToClipboard(text: string) {
   const textArea = document.createElement('textarea')
   textArea.value = text
 
@@ -20,7 +20,7 @@ function fallbackCopyTextToClipboard(text) {
   document.body.removeChild(textArea)
 }
 
-export async function copyToClipboard(text) {
+export async function copyToClipboard(text: string) {
   if (!navigator.clipboard) {
     return fallbackCopyTextToClipboard(text)
   }

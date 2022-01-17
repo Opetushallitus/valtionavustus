@@ -1,10 +1,17 @@
 import React from 'react'
 import moment from 'moment'
 import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
+import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
 
 import './MuutoshakemusTabs.less'
 
-export const MuutoshakemusTabs = ({ muutoshakemukset, activeMuutoshakemus, setActiveMuutoshakemus }) => {
+interface MuutoshakemusTabsProps {
+  muutoshakemukset: Muutoshakemus[]
+  activeMuutoshakemus: Muutoshakemus
+  setActiveMuutoshakemus: (m: Muutoshakemus) => void
+}
+
+export const MuutoshakemusTabs = ({ muutoshakemukset, activeMuutoshakemus, setActiveMuutoshakemus }: MuutoshakemusTabsProps) => {
   return (
     <div className='muutoshakemus-tabs'>
       {muutoshakemukset.map((m, index) => (
