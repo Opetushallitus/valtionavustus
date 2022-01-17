@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 import JsUtil from 'soresu-form/web/JsUtil'
 import FormPreview from 'soresu-form/web/form/FormPreview'
-import { Answer, AnswersDelta, HakemusFormState, NormalizedHakemusData } from 'soresu-form/web/va/types'
+import { Answer, AnswersDelta, Avustushaku, HakemusFormState, NormalizedHakemusData } from 'soresu-form/web/va/types'
 import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
 import { getProjectEndDate } from 'soresu-form/web/va/Muutoshakemus'
 import { isoFormat, fiLongFormat } from 'soresu-form/web/va/i18n/dateformat'
@@ -30,10 +30,10 @@ function mutateAnswersDeltaWithKey(answersDelta: AnswersDelta, answers: Answer[]
 function mutateDeltaFromNormalizedData(answersDelta: AnswersDelta, answers: Answer[], normalizedData: NormalizedHakemusData) {
   mutateAnswersDeltaWithKey(answersDelta, answers, 'applicant-name', normalizedData['contact-person'])
   mutateAnswersDeltaWithKey(answersDelta, answers, 'primary-email', normalizedData['contact-email'])
-  mutateAnswersDeltaWithKey(answersDelta, answers, 'textField-0', normalizedData['textField-0'])
+  mutateAnswersDeltaWithKey(answersDelta, answers, 'textField-0', normalizedData['contact-phone'])
 }
 
-function mutateDeltaFromMuutoshakemukset(avustushaku, answersDelta: AnswersDelta, answers: Answer[], muutoshakemukset: Muutoshakemus[]) {
+function mutateDeltaFromMuutoshakemukset(avustushaku: Avustushaku, answersDelta: AnswersDelta, answers: Answer[], muutoshakemukset: Muutoshakemus[]) {
   const projectEnd = getProjectEndDate(avustushaku, muutoshakemukset)
   if (projectEnd) {
     mutateAnswersDeltaWithKey(answersDelta, answers, 'project-end', projectEnd)
@@ -56,17 +56,23 @@ function upsertAnswer(answers: Answer[], key: string, value: string | undefined,
   }
 }
 
-function mutateAnswersSetProjectStartAndEndDateFromPaatos(avustushaku, currentAnswers: Answer[]) {
+function mutateAnswersSetProjectStartAndEndDateFromPaatos(avustushaku: Avustushaku, currentAnswers: Answer[]) {
   upsertAnswer(currentAnswers, 'project-begin', toFinnishDateFormat(avustushaku['hankkeen-alkamispaiva']))
   upsertAnswer(currentAnswers, 'project-end', toFinnishDateFormat(avustushaku['hankkeen-paattymispaiva']))
 }
 
-function toFinnishDateFormat(dateStamp: string): string | undefined {
+function toFinnishDateFormat(dateStamp?: string): string | undefined {
   const date = moment(dateStamp, isoFormat)
   return date.isValid() ? date.format(fiLongFormat) : undefined
 }
 
-export default class EditsDisplayingFormView extends React.Component<any> {
+interface EditsDisplayingFormViewProps {
+  controller: any
+  state: any
+  infoElementValues: any
+}
+
+export default class EditsDisplayingFormView extends React.Component<EditsDisplayingFormViewProps> {
   static renderField(controller, formEditController, state: HakemusFormState, infoElementValues, field) {
     const fields = state.form.content
     const translations = state.configuration.translations
@@ -108,7 +114,7 @@ export default class EditsDisplayingFormView extends React.Component<any> {
             </div>
   }
 
-  static resolveChangedFields(avustushaku, currentAnswers: Answer[], changeRequests, attachmentVersions, muutoshakemukset?: Muutoshakemus[], normalizedData?: NormalizedHakemusData): AnswersDelta {
+  static resolveChangedFields(avustushaku: Avustushaku, currentAnswers: Answer[], changeRequests: any, attachmentVersions: any, muutoshakemukset?: Muutoshakemus[], normalizedData?: NormalizedHakemusData): AnswersDelta {
     const answersDelta = !changeRequests || changeRequests.length === 0
       ? { changedAnswers: [] as Answer[], newAnswers: [] as Answer[] }
       : createDelta(changeRequests, attachmentVersions, currentAnswers)
@@ -122,7 +128,7 @@ export default class EditsDisplayingFormView extends React.Component<any> {
 
     return answersDelta
 
-    function createDelta(changeRequests, attachmentVersions, currentAnswers): AnswersDelta {
+    function createDelta(changeRequests: any, attachmentVersions: any, currentAnswers: Answer[]): AnswersDelta {
       const oldestAnswers = changeRequests[0].answers
       const answersDelta = createDeltaFromUpdatedAttachments(attachmentVersions, changeRequests[0].version)
       addDeltaFromChangedAnswers(answersDelta, oldestAnswers, currentAnswers)
@@ -130,7 +136,7 @@ export default class EditsDisplayingFormView extends React.Component<any> {
       return answersDelta
     }
 
-    function createDeltaFromUpdatedAttachments(attachmentVersions, oldestHakemusVersion): AnswersDelta {
+    function createDeltaFromUpdatedAttachments(attachmentVersions: any, oldestHakemusVersion: any): AnswersDelta {
       const versionsByFieldId = _.groupBy(attachmentVersions, v => { return v["field-id"] })
       _.forEach(_.keys(versionsByFieldId), fieldId => {
         versionsByFieldId[fieldId] = stripNonSubmittedVersions(versionsByFieldId[fieldId])
@@ -146,7 +152,7 @@ export default class EditsDisplayingFormView extends React.Component<any> {
                  attachmentVersion: oldestRelevantAttachmentVersion }
       }), newAnswers: [], attachmentVersionsByFieldId: versionsByFieldId }
 
-      function stripNonSubmittedVersions(versionsOfAttachment) {
+      function stripNonSubmittedVersions(versionsOfAttachment: any) {
         const beforeAndAfterSubmission = _.partition(versionsOfAttachment, v => { return v["hakemus-version"] <= oldestHakemusVersion })
         const originalSubmittedAttachmentVersion = _.head(_.orderBy(beforeAndAfterSubmission[0], "version", "desc"))
         const attachmentVersionsAfterSubmissions = beforeAndAfterSubmission[1]
@@ -217,11 +223,11 @@ class DiffDisplayingField extends React.Component<any> {
       return FormPreview.renderField(controller, null, state, infoElementValues, field, { overridingInputValue: oldAnswer.value })
     }
 
-    function createOldAttachmentVersionDisplay(controller,translations) {
+    function createOldAttachmentVersionDisplay(controller, translations: any) {
       const attachmentVersion = findOriginalAttachmentVersion()
       const fields = state.form.content
       const htmlId = controller.constructHtmlId(fields, field.id)
-      const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field,controller:controller,translations:translations }
+      const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId, field, controller, translations }
       const renderingParameters = { overridingInputValue: oldAnswer.value }
       const downloadUrl = attachmentVersion ? controller.createAttachmentVersionDownloadUrl(field, attachmentVersion.version) : null
       return FormPreview._createFormPreviewComponent(controller, state, field, fieldProperties, renderingParameters, attachmentVersion, downloadUrl)

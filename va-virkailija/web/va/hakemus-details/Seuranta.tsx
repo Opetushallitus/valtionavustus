@@ -1,13 +1,28 @@
 import React from 'react'
-import PresenterComment from './PresenterComment.jsx'
-import SeurantaLiitteet from './SeurantaLiitteet.jsx'
-import SeurantaTags from './SeurantaTags.jsx'
-import SeurantaBudgetEditing from '../seurantabudgetedit/SeurantaBudgetEditing'
-import ShouldPay from './ShouldPay.jsx'
-import AllowVisibilityInExternalSystem from './AllowVisibilityInExternalSystem.jsx'
-import ShouldPayComments from './ShouldPayComments.jsx'
 
-export default class Seuranta extends React.Component {
+import PresenterComment from './PresenterComment'
+import SeurantaLiitteet from './SeurantaLiitteet'
+import SeurantaTags from './SeurantaTags'
+import SeurantaBudgetEditing from '../seurantabudgetedit/SeurantaBudgetEditing'
+import ShouldPay from './ShouldPay'
+import AllowVisibilityInExternalSystem from './AllowVisibilityInExternalSystem'
+import ShouldPayComments from './ShouldPayComments'
+import HakemustenArviointiController from '../HakemustenArviointiController'
+import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
+import { HakuData } from '../types'
+import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
+
+interface SeurantaProps {
+  controller: HakemustenArviointiController
+  hakemus: Hakemus
+  avustushaku: Avustushaku
+  translations: any
+  hakuData: HakuData
+  helpTexts: any
+  muutoshakemukset?: Muutoshakemus[]
+}
+
+export default class Seuranta extends React.Component<SeurantaProps> {
   render() {
     const {controller, hakemus, avustushaku, translations, hakuData, helpTexts, muutoshakemukset} = this.props
     return (

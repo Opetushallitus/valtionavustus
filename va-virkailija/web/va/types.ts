@@ -1,6 +1,7 @@
-import {Avustushaku, Hakemus} from "soresu-form/web/va/types";
+import {Avustushaku, Form, Hakemus} from "soresu-form/web/va/types";
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
 import { HakemusSelvitys, Loppuselvitys } from "soresu-form/web/va/status";
+import { Immutable } from "seamless-immutable";
 
 export interface UserInfo {
   email: string
@@ -38,10 +39,7 @@ interface Menoluokka {
 export interface HakuData {
     avustushaku: Avustushaku
     environment: EnvironmentApiResponse
-    form: {
-        content: any
-        rules: any
-    }
+    form: Immutable<Form>
     roles: Role[]
     privileges: HakuPrivileges
     hakemukset: Hakemus[]
@@ -142,20 +140,6 @@ export interface OnkoMuutoshakukelpoinenAvustushakuOk {
   'is-ok': boolean
   'ok-fields': MuutoshakemuksenVaatimaKentta[]
   'erroneous-fields': MuutoshakemuksenVaatimaKentta[]
-}
-
-interface Rule {
-  type: string
-  triggerId: string
-  targetIds: string[]
-  params?: any
-}
-
-export interface Form {
-  content: any
-  rules: Rule[]
-  created_at: Date
-  updated_at: Date
 }
 
 export interface VaCodeValue {

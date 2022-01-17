@@ -13,9 +13,21 @@ import SeurantaBudgetEditFormController from './SeurantaBudgetEditFormController
 import SeurantaBudgetEditComponentFactory from './SeurantaBudgetEditComponentFactory.jsx'
 
 import '../style/budgetedit.less'
+import { Answer, Avustushaku, Hakemus, Form as FormType } from 'soresu-form/web/va/types'
+import { HakuData } from '../types'
+import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
 
-export default class SeurantaBudgetEditing extends React.Component {
-  static validateFields(form, answers) {
+interface SeurantaBudgetEditingProps {
+  controller: any
+  hakemus: Hakemus
+  hakuData: HakuData
+  avustushaku: Avustushaku
+  translations: any
+  muutoshakemukset?: Muutoshakemus[]
+}
+
+export default class SeurantaBudgetEditing extends React.Component<SeurantaBudgetEditingProps> {
+  static validateFields(form: FormType, answers?: Answer[]) {
     const budgetItems = FormUtil.findFieldsByFieldType(form.content, 'vaBudgetItemElement')
     budgetItems.map(budgetItem => {
       const amountField = budgetItem.children[1]
@@ -26,7 +38,7 @@ export default class SeurantaBudgetEditing extends React.Component {
   }
 
   render() {
-    const {controller, hakemus, hakuData, avustushaku, translations, muutoshakemukset} = this.props as any
+    const {controller, hakemus, hakuData, avustushaku, translations, muutoshakemukset} = this.props
 
     const vaBudget = FormUtil.findFieldByFieldType(hakuData.form.content, "vaBudget")
 
@@ -41,7 +53,7 @@ export default class SeurantaBudgetEditing extends React.Component {
 
     const budgetChangeEnabled = Array.isArray(hakemus.normalizedData?.talousarvio)
     const budgetSpec = budgetChangeEnabled
-      ? { ...budgetSpecWithSelvityses, children: budgetSpecWithSelvityses.children.filter(c => c.id !== 'project-budget') }
+      ? { ...budgetSpecWithSelvityses, children: budgetSpecWithSelvityses.children.filter((c: { id: string }) => c.id !== 'project-budget') }
       : budgetSpecWithSelvityses
     const fakeHakemus = {answers: hakemus.arvio["seuranta-answers"]}
     const formOperations = {
@@ -76,7 +88,7 @@ export default class SeurantaBudgetEditing extends React.Component {
     return (
       <div className="budget-edit">
         <h2>Budjetti</h2>
-        {budgetChangeEnabled && <BudgetTable muutoshakemukset={muutoshakemukset} hakemus={hakemus} hakuData={hakuData} />}
+        {budgetChangeEnabled && muutoshakemukset && <BudgetTable muutoshakemukset={muutoshakemukset} hakemus={hakemus} hakuData={hakuData} />}
         <FormContainer {...formElementProps} />
       </div>
     )

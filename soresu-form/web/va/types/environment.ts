@@ -10,6 +10,7 @@ export interface EnvironmentApiResponse {
     }
   }
   "va-code-values": FeatureFlag
+  "multibatch-payments": FeatureFlag
   reports: FeatureFlag
   "allow-overriding-feature-flag-from-url-params"?: FeatureFlag
   "dont-send-loppuselvityspyynto-to-virkailija"?: FeatureFlag

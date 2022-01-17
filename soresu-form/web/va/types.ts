@@ -62,6 +62,7 @@ interface Oppilaitokset {
 
 type Arvio = {
   id: number
+  "presenter-role-id"?: number
   "budget-granted"?: number
   costsGranted?: number
   "overridden-answers"?: {
@@ -74,6 +75,7 @@ type Arvio = {
   tags?: Tag
   perustelut?: string
   oppilaitokset?: Oppilaitokset
+  "seuranta-answers"?: Answer[]
 }
 
 export interface NormalizedHakemusData {
@@ -209,6 +211,8 @@ export type Avustushaku = {
   form: number
   form_loppuselvitys: number
   form_valiselvitys: number
+  loppuselvitysForm?: Form
+  valiselvitysForm?: Form
   'haku-type': AvustushakuType
   'hankkeen-alkamispaiva'?: string
   'hankkeen-paattymispaiva'?: string
@@ -231,4 +235,19 @@ export interface UserInfo {
   'surname': string
   email: string
   'person-oid': string
+}
+
+interface Rule {
+  type: string
+  triggerId: string
+  targetIds: string[]
+  params?: any
+}
+
+export interface Form {
+  content: any
+  rules: Rule[]
+  created_at: Date
+  updated_at: Date
+  validationErrors?: any
 }

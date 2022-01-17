@@ -103,7 +103,7 @@ export const HakemusDetails = (props: Props) => {
           else
             return <Muutoshakemus environment={environment} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakemusVersion={hakemus} controller={controller} userInfo={userInfo} presenter={presenter} isPresentingOfficer={isPresentingOfficer} />
         case 'seuranta':
-          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakuData={hakuData} translations={translations} selectedHakemusAccessControl={selectedHakemusAccessControl} helpTexts={helpTexts}/>
+          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakuData={hakuData} translations={translations} helpTexts={helpTexts}/>
         default:
           throw new Error("Bad subTab selection '" + tabName + "'")
       }
@@ -111,7 +111,7 @@ export const HakemusDetails = (props: Props) => {
     const tab = (name: string, label: string | JSX.Element, testId?: string) => <span className={subTab === name ? 'selected' : ''} data-test-id={testId} onClick={createSubTabSelector(name)}>{label}</span>
 
     function createSubTabSelector(subTabToSelect: string) {
-      return e => {
+      return (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
         e.preventDefault()
         controller.selectEditorSubtab(subTabToSelect)
       }

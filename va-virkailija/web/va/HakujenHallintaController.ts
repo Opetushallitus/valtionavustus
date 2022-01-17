@@ -23,6 +23,7 @@ import {
   Avustushaku as BaseAvustushaku,
   AvustushakuStatus,
   AvustushakuType,
+  Form,
   Payment,
   RahoitusAlue
 } from "soresu-form/web/va/types";
@@ -30,7 +31,6 @@ import {
   Filter,
   FilterId,
   FilterValue,
-  Form,
   HakujenHallintaSubTab,
   Koodisto,
   OnkoMuutoshakukelpoinenAvustushakuOk,

@@ -27,13 +27,13 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
   const [lahetykset, setLahetykset] = useState<Lahetys[]>([])
 
   const { avustushaku, controller, translations, koodistos, selvitysType, environment, helpTexts, formDraft, formDraftJson } = props
-  const formContent = avustushaku[selvitysType + "Form"]
+  const formContent = selvitysType === 'valiselvitys' ? avustushaku.valiselvitysForm : avustushaku.loppuselvitysForm
   const updatedAtElementId = `${selvitysType}UpdatedAt`
   const updatedAt = formContent?.updated_at
 
   const previewUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/" + selvitysType
   const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/" + selvitysType + "?lang=sv"
-  const onFormChange = (avustushaku: Avustushaku, newDraft) =>{
+  const onFormChange = (avustushaku: Avustushaku, newDraft: any) =>{
     controller.selvitysFormOnChangeListener(avustushaku, newDraft, selvitysType)
     controller.selvitysJsonFormOnChangeListener(avustushaku, JSON.stringify(newDraft, null, 2), selvitysType)
   }
@@ -101,7 +101,7 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
 
   const valiselvitysSection = <div>
     <h4>Väliselvitysten lähettäminen</h4>
-    <p>Väliselvitys tulee toimittaa viimeistään <strong>{avustushaku[selvitysType + 'date']}</strong>.</p>
+    <p>Väliselvitys tulee toimittaa viimeistään <strong>{avustushaku.valiselvitysdate}</strong>.</p>
     <p>Väliselvityspyynnöt lähetetään niille hakijoille, joiden hakemukset on hyväksytty ja jotka eivät ole vielä toimittaneet väliselvitystä.</p>
     <p data-test-id='valiselvitys-ohje' dangerouslySetInnerHTML={{__html: helpTexts["hakujen_hallinta__väliselvitys___ohje"]}} />
     <button data-test-id='send-valiselvitys' disabled={sending} onClick={onSendSelvitys}>Lähetä väliselvityspyynnöt</button>
@@ -112,7 +112,7 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
 
   const loppuSelvitysSection = <div>
     <h4>Loppuselvityksen lähettäminen</h4>
-    <p>Loppuselvitys on koko ajan täytettävissä ja se tulee toimittaa viimeistään <strong>{avustushaku[selvitysType + 'date']}</strong>.</p>
+    <p>Loppuselvitys on koko ajan täytettävissä ja se tulee toimittaa viimeistään <strong>{avustushaku.loppuselvitysdate}</strong>.</p>
     <p>Loppuselvityspyynnöt lähetetään niille hakijoille, joiden hakemukset on hyväksytty ja jotka eivät ole vielä toimittaneet loppuselvitystä.</p>
     <p data-test-id='loppuselvitys-ohje' dangerouslySetInnerHTML={{__html: helpTexts["hakujen_hallinta__loppuselvitys___ohje"]}} />
     <button data-test-id='send-loppuselvitys' disabled={sending} onClick={onSendSelvitys}>Lähetä loppuselvityspyynnöt</button>
