@@ -3,7 +3,6 @@
             [ring.util.http-response :refer :all]
             [oph.soresu.common.config :refer [config]]
             [oph.common.datetime :as datetime]
-            [oph.common.string :refer [verify-token-hash]]
             [oph.soresu.common.db :refer [query]]
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.validation :as validation]
@@ -16,7 +15,8 @@
             [oph.va.hakija.db :as va-db]
             [oph.va.hakija.notification-formatter :as va-submit-notification]
             [oph.va.hakija.attachment-validator :as attachment-validator]
-            [oph.va.hakija.email :as va-email]))
+            [oph.va.hakija.email :as va-email]
+            [oph.va.hakija.officer-edit-auth :as officer-edit-auth]))
 
 (defn- hakemus-conflict-response [hakemus]
   (conflict! {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
@@ -227,18 +227,20 @@
       (log/info "Could not normalize necessary hakemus fields for hakemus: " hakemus-id " Error: " (.getMessage e))
       false)))
 
-(defn can-update-hakemus [haku-id hakemus-id answers]
-  (let [hakemus (va-db/get-hakemus hakemus-id)
+(defn can-update-hakemus [haku-id user-key answers identity]
+  (let [hakemus (va-db/get-hakemus user-key)
+        hakemus-id (:id hakemus)
         avustushaku (va-db/get-avustushaku haku-id)
         phase (avustushaku-phase avustushaku)
+        status (:status hakemus)
         officer-token (:officerToken answers)
-        officer-hash (:officerHash answers)
-        token-verification (when officer-token (verify-token-hash officer-token officer-hash))]
+        officer-edit-authorized? (officer-edit-auth/hakemus-update-authorized? identity hakemus-id)]
     (or
       (= phase "current")
-      (= (:status hakemus) "pending_change_request")
-      (= (:status hakemus) "applicant_edit")
-      (:valid token-verification))))
+      (= status "pending_change_request")
+      (= status "applicant_edit")
+      (and (= status "officer_edit")
+           officer-edit-authorized?))))
 
 (defn on-hakemus-update [haku-id hakemus-id base-version answers]
   (let [hakemus (va-db/get-hakemus hakemus-id)

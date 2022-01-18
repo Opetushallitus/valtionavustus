@@ -31,7 +31,7 @@
                  [org.apache.tika/tika-core]
                  [nrepl]
                  [buddy/buddy-auth]
-                 [buddy/buddy-hashers]
+                 [buddy/buddy-sign]
                  [ring/ring-session-timeout]
                  [ring/ring-ssl]
                  [com.cemerick/url :exclusions [com.cemerick/clojurescript.test]]

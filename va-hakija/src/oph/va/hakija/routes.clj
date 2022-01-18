@@ -23,7 +23,8 @@
             [oph.va.hakija.schema :refer :all]
             [oph.va.hakija.handlers :refer :all]
             [oph.common.organisation-service :as org]
-            [oph.va.hakija.db.queries :as queries]))
+            [oph.va.hakija.db.queries :as queries]
+            [oph.va.hakija.officer-edit-auth :as officer-edit-auth]))
 
 (defn- on-healthcheck []
   (if (hakija-db/health-check)
@@ -110,32 +111,29 @@
     :summary "Get or create selvitys for hakemus"
     (on-selvitys-init haku-id hakemus-id selvitys-type)))
 
-(defn- remove-authentication-keys [authenticated-answers]
-  (apply dissoc authenticated-answers (filter #(includes? % "officer") (keys authenticated-answers))))
-
 (defn- post-selvitys []
   (compojure-api/POST "/:haku-id/selvitys/:selvitys-type/:hakemus-id/:base-version" [haku-id hakemus-id base-version selvitys-type :as request]
     :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
-    :body [answers (compojure-api/describe AuthenticatedAnswers "New answers")]
+    :body [answers (compojure-api/describe Answers "New answers")]
     :return Hakemus
     :summary "Update hakemus values"
-    (on-selvitys-update haku-id hakemus-id base-version (remove-authentication-keys answers) (selvitys-form-keyword selvitys-type))))
+    (on-selvitys-update haku-id hakemus-id base-version answers (selvitys-form-keyword selvitys-type))))
 
 (defn- post-selvitys-submit []
   (compojure-api/POST "/:haku-id/selvitys/:selvitys-type/:hakemus-id/:base-version/submit" [haku-id selvitys-type hakemus-id base-version :as request]
     :path-params [haku-id :- Long, selvitys-type :- s/Str, hakemus-id :- s/Str, base-version :- Long]
-    :body [answers (compojure-api/describe AuthenticatedAnswers "New answers")]
+    :body [answers (compojure-api/describe Answers "New answers")]
     :return Hakemus
     :summary "Submit hakemus"
-    (on-selvitys-submit haku-id hakemus-id base-version (remove-authentication-keys answers) (selvitys-form-keyword selvitys-type) selvitys-type)))
+    (on-selvitys-submit haku-id hakemus-id base-version answers (selvitys-form-keyword selvitys-type) selvitys-type)))
 
 (defn- put-hakemus []
   (compojure-api/PUT "/:haku-id/hakemus" [haku-id :as request]
     :path-params [haku-id :- Long]
-    :body    [answers (compojure-api/describe AuthenticatedAnswers "New answers")]
+    :body    [answers (compojure-api/describe Answers "New answers")]
     :return  Hakemus
     :summary "Create initial hakemus"
-    (on-hakemus-create haku-id (remove-authentication-keys answers))))
+    (on-hakemus-create haku-id answers)))
 
 (defn- put-refuse-hakemus []
   (compojure-api/PUT "/:grant-id/hakemus/:application-id/:base-version/refuse/"
@@ -152,51 +150,51 @@
 (defn- post-hakemus []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version" [haku-id hakemus-id base-version :as request]
     :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
-    :body    [answers (compojure-api/describe AuthenticatedAnswers "New answers")]
+    :body    [answers (compojure-api/describe Answers "New answers")]
     :return  Hakemus
     :summary "Update hakemus values"
-    (if (can-update-hakemus haku-id hakemus-id answers)
-      (on-hakemus-update haku-id hakemus-id base-version (remove-authentication-keys answers))
+    (if (can-update-hakemus haku-id hakemus-id answers (:identity request))
+      (on-hakemus-update haku-id hakemus-id base-version answers)
       (bad-request! { :error "can not update hakemus"}))))
 
 (defn- post-hakemus-submit []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version/submit" [haku-id hakemus-id base-version :as request]
     :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
-    :body    [answers (compojure-api/describe AuthenticatedAnswers "New answers")]
+    :body    [answers (compojure-api/describe Answers "New answers")]
     :return  Hakemus
     :summary "Submit hakemus"
-    (if (can-update-hakemus haku-id hakemus-id answers)
-      (on-hakemus-submit haku-id hakemus-id base-version (remove-authentication-keys answers))
+    (if (can-update-hakemus haku-id hakemus-id answers nil)
+      (on-hakemus-submit haku-id hakemus-id base-version answers)
       (bad-request! { :error "can not update hakemus"}))))
 
 (defn- post-change-request-response []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version/change-request-response" [haku-id hakemus-id base-version :as request]
     :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
-    :body    [answers (compojure-api/describe AuthenticatedAnswers "New answers")]
+    :body    [answers (compojure-api/describe Answers "New answers")]
     :return  nil
     :summary "Submit response for hakemus change request"
-    (if (can-update-hakemus haku-id hakemus-id answers)
-      (on-hakemus-change-request-response haku-id hakemus-id base-version (remove-authentication-keys answers))
+    (if (can-update-hakemus haku-id hakemus-id answers nil)
+      (on-hakemus-change-request-response haku-id hakemus-id base-version answers)
       (bad-request! { :error "can not update hakemus"}))))
 
 (defn- officer-edit-submit []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version/officer-edit-submit" [haku-id hakemus-id base-version :as request]
     :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
-    :body    [answers (compojure-api/describe AuthenticatedAnswers "New answers")]
+    :body    [answers (compojure-api/describe Answers "New answers")]
     :return  nil
     :summary "Submit officer edit changes"
-    (if (can-update-hakemus haku-id hakemus-id answers)
-      (on-hakemus-edit-submit haku-id hakemus-id base-version (remove-authentication-keys answers) :officer-edit)
+    (if (can-update-hakemus haku-id hakemus-id answers (:identity request))
+      (on-hakemus-edit-submit haku-id hakemus-id base-version answers :officer-edit)
       (bad-request! { :error "can not update hakemus"}))))
 
 (defn- applicant-edit-submit []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version/applicant-edit-submit" [haku-id hakemus-id base-version :as request]
     :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
-    :body    [answers (compojure-api/describe AuthenticatedAnswers "New answers")]
+    :body    [answers (compojure-api/describe Answers "New answers")]
     :return  nil
     :summary "Submit applicant edit changes"
-    (if (can-update-hakemus haku-id hakemus-id answers)
-      (on-hakemus-edit-submit haku-id hakemus-id base-version (remove-authentication-keys answers) :applicant-edit)
+    (if (can-update-hakemus haku-id hakemus-id answers nil)
+      (on-hakemus-edit-submit haku-id hakemus-id base-version answers :applicant-edit)
       (bad-request! { :error "can not update hakemus"}))))
 
 (defn- applicant-edit-open []

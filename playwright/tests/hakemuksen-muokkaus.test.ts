@@ -15,9 +15,8 @@ test('virkailija can edit hakemus', async ({page, avustushakuID, submittedHakemu
   const assertTokens = (assertedPage: Page) => {
     const tokens = new URLSearchParams(assertedPage.url())
     expect(!!tokens.get('officerToken')).toBeTruthy()
-    expect(!!tokens.get('officerHash')).toBeTruthy()
   }
-  
+
   await test.step('when hakemus has been submitted', async () => {
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
     const hakemusPage = await hakemustenArviointiPage.openHakemusEditPage()

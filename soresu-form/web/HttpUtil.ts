@@ -8,8 +8,11 @@ export default class HttpUtil {
     return HttpUtil.handleResponse(axios.get(url))
   }
 
-  static post(url: string, jsonData?: any) {
-    return HttpUtil.handleResponse(axios.post(url, jsonData))
+  static post(url: string, jsonData?: any, authToken?: string) {
+    const authHeader = authToken ? { Authorization: `Token ${authToken}` } : undefined
+    return HttpUtil.handleResponse(axios.post(url, jsonData, {
+      headers: { ...authHeader }
+    }))
   }
 
   static put(url: string, requestData?: any, options?: any) {

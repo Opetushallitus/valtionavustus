@@ -43,7 +43,6 @@
                  [org.clojure/tools.logging]
 
                  [buddy/buddy-core]
-                 [buddy/buddy-hashers]
 
                  [clj-time]
                  [org.clojure/tools.trace]]

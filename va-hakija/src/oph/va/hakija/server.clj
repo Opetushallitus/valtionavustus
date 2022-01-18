@@ -3,6 +3,7 @@
   (:require [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.not-modified :refer [wrap-not-modified]]
             [ring.middleware.defaults :refer :all]
+            [buddy.auth.middleware :refer [wrap-authentication]]
             [clojure.tools.logging :as log]
             [oph.common.background-job-supervisor :as job-supervisor]
             [oph.common.server :as server]
@@ -10,7 +11,8 @@
             [oph.soresu.common.db :as db]
             [oph.va.hakija.db.migrations :as dbmigrations]
             [oph.va.virkailija.db.migrations :as virkailija-dbmigrations]
-            [oph.va.hakija.email :as email]))
+            [oph.va.hakija.email :as email]
+            [oph.va.hakija.officer-edit-auth :refer [officer-edit-auth-backend]]))
 
 (defn- startup [config]
   (log/info "Startup, with configuration:" config)
@@ -48,6 +50,7 @@
                   (server/wrap-cache-control h)
                   (server/wrap-csp-when-enabled h csp-url nil)
                   (server/wrap-hsts-when-enabled h)
+                  (wrap-authentication h officer-edit-auth-backend)
                   (wrap-not-modified h)
                   (if auto-reload?
                     (wrap-reload h {:dirs ["va-hakija/src" "soresu-form/src"]})

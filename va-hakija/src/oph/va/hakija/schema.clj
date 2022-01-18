@@ -3,13 +3,6 @@
             [oph.soresu.form.schema :refer :all]
             [oph.va.schema :refer :all]))
 
-(s/defschema AuthenticatedAnswers
-  "Answers with possible authentication tokens"
-  { :value [Answer]
-    (s/optional-key :officerToken) s/Str
-    (s/optional-key :officerHash) s/Str
-  })
-
 (s/defschema JatkoaikaHakemus
   "JatkoaikaHakemus contains fields for applying for deadline extension"
   {

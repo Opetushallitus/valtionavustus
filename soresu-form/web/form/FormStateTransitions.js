@@ -246,12 +246,8 @@ export default class FormStateTransitions {
     const self = this
     state.saveStatus.saveInProgress = true
     const params = new URLSearchParams(window.location.search)
-    const officerToken = params.get('officerToken')
-    const officerHash = params.get('officerHash')
-    const payload = officerToken && officerHash
-      ? { officerToken, officerHash, ...state.saveStatus.values }
-      : state.saveStatus.values
-    HttpUtil.post(url, payload)
+    const officerToken = params.get('officerToken') || undefined
+    HttpUtil.post(url, state.saveStatus.values, officerToken)
       .then(function(response) {
         self.pushSaveCompletedEvent(state, response, onSuccessCallback)
       })
