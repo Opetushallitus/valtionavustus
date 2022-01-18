@@ -60,7 +60,6 @@ function printEntityId(state) {
 
 const query = queryString.parse(location.search)
 const urlContent = { parsedQuery: query, location: location }
-const develMode =  query.devel === "true"
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
 const environmentP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.environmentConfigUrl()))
@@ -93,7 +92,6 @@ function onInitialStateLoaded(initialState) {
       initialState.avustushaku.id,
       initialState.saveStatus.hakemusId,
       initialState.configuration.lang,
-      initialState.configuration.develMode,
       initialState.token,
       initialState.isTokenValid)
   }
@@ -134,8 +132,5 @@ function initAppController() {
 
 const app = initAppController()
 app.stateProperty.onValue((state) => {
-  if (develMode) {
-    console.log("Updating UI with state:", state)
-  }
   ReactDOM.render(app.getReactComponent(state), document.getElementById("app"))
 })

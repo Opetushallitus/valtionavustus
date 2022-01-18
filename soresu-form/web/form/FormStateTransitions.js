@@ -23,10 +23,10 @@ const serverOperations = {
 }
 
 export default class FormStateTransitions {
-  constructor(dispatcher, events, develQueryParam) {
+  constructor(dispatcher, events) {
     this.dispatcher = dispatcher
     this.events = events
-    this.autoSave = _.debounce(function(){ dispatcher.push(events.save) }, develQueryParam? 100 : 3000)
+    this.autoSave = _.debounce(function(){ dispatcher.push(events.save) }, 3000)
     this._bind(
       'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'updateOld', 'onSave',
       'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError', 'onUploadAttachment',
@@ -347,8 +347,7 @@ export default class FormStateTransitions {
       window.location.href = state.extensionApi.formOperations.urlCreator.existingSubmissionPreviewUrl(
         state.avustushaku.id,
         state.saveStatus.hakemusId,
-        state.configuration.lang,
-        state.configuration.develMode
+        state.configuration.lang
       )
       return state
     }

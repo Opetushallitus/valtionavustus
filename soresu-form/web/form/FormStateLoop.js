@@ -55,7 +55,6 @@ export default class FormStateLoop {
     const queryParams = {
       embedForMuutoshakemus: query.embedForMuutoshakemus || false,
       preview: query.preview || false,
-      devel: query.devel || false
     }
     const translationsP = Bacon.fromPromise(HttpUtil.get("/translations.json")).map(Immutable)
     const savedObjectP = loadSavedObjectPromise(formOperations, urlContent)
@@ -91,7 +90,6 @@ export default class FormStateLoop {
         form: formP,
         embedForMuutoshakemus: queryParams.embedForMuutoshakemus === 'true',
         preview: queryParams.embedForMuutoshakemus === 'true' || queryParams.preview === 'true',
-        develMode: queryParams.devel === 'true',
         lang: lang,
         translations: translationsP
       },
@@ -120,7 +118,7 @@ export default class FormStateLoop {
       dispatcher.push(events.beforeUnload)
     })
 
-    const stateTransitions = new FormStateTransitions(dispatcher, events, queryParams.devel)
+    const stateTransitions = new FormStateTransitions(dispatcher, events)
     const formFieldValuesP = Bacon.update({},
       [dispatcher.stream(events.initialState)], stateTransitions.onInitialState,
       [dispatcher.stream(events.updateField)], stateTransitions.onUpdateField,

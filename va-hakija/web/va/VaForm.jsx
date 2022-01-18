@@ -47,7 +47,6 @@ export default class VaForm extends React.Component {
       <div>
         <VaOldBrowserWarning lang={configuration.lang}
                              translations={configuration.translations.warning}
-                             devel={configuration.develMode}
         />
         {!embedForMuutoshakemus && <VaFormTopbar controller={controller}
                       state={state}

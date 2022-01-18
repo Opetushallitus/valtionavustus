@@ -26,7 +26,6 @@ const findBusinessIdRelatedFieldIdWithEmptyValue = (formContent, savedAnswers) =
     fieldId => FormUtil.findField(formContent, fieldId) && _.isEmpty(findFieldAnswerValue(savedAnswers, fieldId)))
 
 const shouldShowBusinessIdSearch = state =>
-  !state.configuration.develMode &&
     !state.configuration.preview &&
     state.saveStatus.savedObject !== null &&
     findBusinessIdRelatedFieldIdWithEmptyValue(state.form.content, state.saveStatus.values.value)

@@ -37,7 +37,6 @@ export default class VaFormTopbar extends React.Component {
       avustushaku.id,
       state.saveStatus.hakemusId,
       lang,
-      configuration.develMode,
       state.token
     )
     const openPreview = function() {
@@ -94,12 +93,6 @@ export default class VaFormTopbar extends React.Component {
                   <div className="form-control soresu-tooltip soresu-tooltip-down">
                   <TextButton htmlId="applicant-edit-submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey="virkailija-edit-submit" lang={lang} />
                   </div>
-                )}
-                {configuration.develMode && (
-                  <ToggleLanguageButton id="toggle-language" controller={controller} languages={translations.languages} lang={lang}/>
-                )}
-                {configuration.develMode && (
-                  <TextButton htmlId="preview-button" onClick={openPreview} disabled={!controller.isSaveDraftAllowed(state)} translations={translations.form} translationKey="preview" lang={lang} />
                 )}
               </div>
             )}

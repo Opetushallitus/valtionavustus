@@ -60,8 +60,6 @@ export default class AdminApp extends Component {
   }
 }
 
-const develMode = queryString.parse(location.search).devel === 'true'
-
 const controller = new HakujenHallintaController()
 
 const hakuId = LocalStorage.avustushakuId() || 1
@@ -70,9 +68,6 @@ const stateP = controller.initializeState(hakuId)
 
 stateP.onValue(function(state) {
   if (state.hakuList) {
-    if (develMode) {
-      console.log("Updating UI with state:", state)
-    }
     ReactDOM.render(<AdminApp state={state} controller={controller}/>, document.getElementById('app'))
   }
 })

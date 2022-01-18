@@ -7,13 +7,13 @@ import LocalizedLink from 'soresu-form/web/form/component/LocalizedLink.jsx'
 export default class VaOldBrowserWarning extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { show: VaOldBrowserWarning.isBrowserOutdated(this.props.devel)  }
+    this.state = { show: VaOldBrowserWarning.isBrowserOutdated()  }
     this.hideClick = this.hideClick.bind(this)
   }
 
-  static isBrowserOutdated(devel) {
+  static isBrowserOutdated() {
     const browser = Bowser.browser
-    return (browser.msie && browser.version <= 10) || devel
+    return browser.msie && browser.version <= 10
 
   }
 

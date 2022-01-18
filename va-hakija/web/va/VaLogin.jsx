@@ -54,7 +54,7 @@ export default class VaLogin extends React.Component {
         })
         const hakemusId = response.id
         if(hakemusId) {
-          window.location.href = urlCreator.existingSubmissionEditUrl(model.avustushaku.id, hakemusId, model.lang, model.devel)
+          window.location.href = urlCreator.existingSubmissionEditUrl(model.avustushaku.id, hakemusId, model.lang)
         }
       })
       .catch(function(error) {
@@ -78,7 +78,7 @@ export default class VaLogin extends React.Component {
           SyntaxValidator.validateEmail(
             this.state.email) && this.state.email !== ""
     const canSend = () => email === sent || emailIsInvalid()
-    const hakemusPreviewUrl = urlCreator.existingSubmissionEditUrl(avustushaku.id, "", lang, model.devel)
+    const hakemusPreviewUrl = urlCreator.existingSubmissionEditUrl(avustushaku.id, "", lang)
 
     return <div>
       <VaLoginTopbar environment={environment} translations={translations} lang={lang} />
@@ -113,7 +113,6 @@ const environmentP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.environmentConf
 const initialStateTemplate = {
   translations: translationsP,
   lang: VaUrlCreator.chooseInitialLanguage(urlContent),
-  devel: query.devel,
   avustushaku: avustusHakuP,
   environment: environmentP
 }

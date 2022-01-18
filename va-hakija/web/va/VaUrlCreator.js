@@ -31,12 +31,9 @@ export default class VaUrlCreator extends UrlCreator {
       avustusHakuId,
       hakemusId,
       lang,
-      devel,
       token
     ) =>
-      `/avustushaku/${avustusHakuId}/nayta?avustushaku=${avustusHakuId}&hakemus=${hakemusId}&lang=${lang}${
-        devel ? "&devel=true" : ""
-      }${token ? "&token=" + token : ""}`
+      `/avustushaku/${avustusHakuId}/nayta?avustushaku=${avustusHakuId}&hakemus=${hakemusId}&lang=${lang}${token ? "&token=" + token : ""}`
 
     const urls = {
       formApiUrl: function(formId) {
@@ -87,7 +84,6 @@ export default class VaUrlCreator extends UrlCreator {
         avustushakuId,
         hakemusId,
         lang,
-        devel,
         token
       ) {
         return (
@@ -95,7 +91,6 @@ export default class VaUrlCreator extends UrlCreator {
             avustushakuId,
             hakemusId,
             lang,
-            devel,
             token
           ) + "&preview=true"
         )

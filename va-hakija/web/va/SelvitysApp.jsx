@@ -50,8 +50,8 @@ class SelvitysUrlCreator extends UrlCreator {
       return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/attachments/" + field.id
     }
 
-    const existingSubmissionEditUrl = (avustushakuId, selvitysId, lang, devel) =>
-      `/avustushaku/${avustushakuId}/${selvitysType}?${selvitysType}=${selvitysId}&lang=${lang}${devel ? "&devel=true" : ""}`
+    const existingSubmissionEditUrl = (avustushakuId, selvitysId, lang) =>
+      `/avustushaku/${avustushakuId}/${selvitysType}?${selvitysType}=${selvitysId}&lang=${lang}`
 
     const urls = {
       formApiUrl: function (formId) {
@@ -77,8 +77,8 @@ class SelvitysUrlCreator extends UrlCreator {
         return entityApiUrl(avustusHakuId, selvitysId)
       },
       existingSubmissionEditUrl,
-      existingSubmissionPreviewUrl: function (avustushakuId, selvitysId, lang, devel) {
-        return existingSubmissionEditUrl(avustushakuId, selvitysId, lang, devel) + "&preview=true"
+      existingSubmissionPreviewUrl: function (avustushakuId, selvitysId, lang) {
+        return existingSubmissionEditUrl(avustushakuId, selvitysId, lang) + "&preview=true"
       },
       loadAttachmentsApiUrl: function (urlContent) {
         const query = urlContent.parsedQuery
@@ -127,7 +127,6 @@ function printEntityId(state) {
 }
 
 const urlContent = { parsedQuery: query, location: location }
-const develMode =  query.devel === 'true'
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
 const environmentP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.environmentConfigUrl()))
@@ -185,7 +184,6 @@ function initFormController() {
         state.avustushaku.id,
         state.saveStatus.hakemusId,
         lang,
-        state.configuration.develMode,
         state.token
       )
 
@@ -216,9 +214,6 @@ if(!selvitysId && query.hakemus) {
 else{
   const app = initFormController()
   app.stateProperty.onValue((state) => {
-    if (develMode) {
-      console.log("Updating UI with state:", state)
-    }
     ReactDOM.render(app.getReactComponent(state), document.getElementById('app'))
   })
 }
