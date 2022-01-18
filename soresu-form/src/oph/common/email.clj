@@ -1,7 +1,5 @@
 (ns oph.common.email
   (:require [clojure.core.async :refer [<! >!! go chan]]
-            [clojure.tools.trace :refer [trace]]
-            [clojure.java.jdbc :as jdbc]
             [clojure.tools.logging :as log]
             [clojure.string :as string]
             [clojure.java.io :as io]
