@@ -56,8 +56,7 @@ export default class EditStatus extends React.Component<EditStatusProps, EditSta
     const onSubmit = () => {
       this.setState({submitting: true})
       updateHakemusStatus(avustushakuId, hakemus.id, status, this.state.comment)
-        .then((res: UpdateStatusResponse) => {
-          console.log(res)
+        .then((_res: UpdateStatusResponse) => {
           this.setState({ submitting: false, submitted: true })
           if(!cancelled){
             window.open(editUrl,'_blank')
@@ -112,8 +111,6 @@ export default class EditStatus extends React.Component<EditStatusProps, EditSta
 type UpdateStatusResponse = {
   'hakemus-id': string
   status: string
-  'hakemus-edit-oid': string
-  'hakemus-edit-password': string
 }
 
 async function updateHakemusStatus(avustushakuId: number, hakemusId: number, status: string, comment: string): Promise<UpdateStatusResponse> {
