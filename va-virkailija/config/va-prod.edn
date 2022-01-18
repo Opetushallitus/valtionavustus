@@ -22,7 +22,9 @@
                  :loppuselvitys-palauttamatta {:enabled? true
                                                :schedule "0 0 14 ? * MON-FRI"}
                  :hakuaika-paattymassa        {:enabled? true
-                                               :schedule "0 0 14 ? * MON-FRI"}}
+                                               :schedule "0 0 14 ? * MON-FRI"}
+                 :hakuaika-paattynyt          {:enabled? true
+                                               :schedule "0 0 7 ? * *"}}
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25
