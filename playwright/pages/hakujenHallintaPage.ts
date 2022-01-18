@@ -6,8 +6,7 @@ import path from "path";
 import {navigate} from "../utils/navigate";
 import {
   clickElementWithText,
-  expectQueryParameter,
-  getElementWithText
+  expectQueryParameter
 } from "../utils/util";
 import {VIRKAILIJA_URL} from "../utils/constants";
 import {VaCodeValues} from "../utils/types";
@@ -160,12 +159,8 @@ export class HakujenHallintaPage {
     await this.waitForSave()
   }
 
-  async copyEsimerkkihaku(): Promise<number> {
-    await navigate(this.page, "/admin/haku-editor/")
-    await this.page.click(".haku-filter-remove")
-    await clickElementWithText(this.page, "td", "Yleisavustus - esimerkkihaku")
-    const element = await getElementWithText(this.page, "td", "Yleisavustus - esimerkkihaku")
-    const currentHakuTitle = await (await element.getProperty('textContent'))?.jsonValue() as string
+  async copyCurrentHaku(): Promise<number> {
+    const currentHakuTitle = await this.page.$eval<string | null, HTMLTextAreaElement>("#haku-name-fi", el => el.textContent)
     await clickElementWithText(this.page, "a", "Kopioi uuden pohjaksi")
 
     await this.page.waitForFunction((name) =>
@@ -173,6 +168,13 @@ export class HakujenHallintaPage {
     await this.waitForSave()
 
     return parseInt(await expectQueryParameter(this.page, "avustushaku"))
+  }
+
+  async copyEsimerkkihaku(): Promise<number> {
+    await navigate(this.page, "/admin/haku-editor/")
+    await this.page.click(".haku-filter-remove")
+    await clickElementWithText(this.page, "td", "Yleisavustus - esimerkkihaku")
+    return await this.copyCurrentHaku()
   }
 
   async inputTalousarviotili({koulutusaste, talousarviotili}: Rahoitusalue) {

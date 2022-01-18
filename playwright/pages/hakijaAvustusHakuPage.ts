@@ -39,6 +39,10 @@ export class HakijaAvustusHakuPage {
     await navigateHakija(this.page, `/avustushaku/${avustushakuID}/nayta?hakemus=${userKey}`)
   }
 
+  async navigateToYhteyshenkilöChangePage(avustushakuId: number, userKey: string, token: string) {
+    await navigateHakija(this.page, `/avustushaku/${avustushakuId}/nayta?avustushaku=${avustushakuId}&hakemus=${userKey}&lang=fi&preview=false&token=${token}&refuse-grant=false&modify-application=true`)
+  }
+
   async selectMaakuntaFromDropdown(text: string) {
     const maakuntaInputSelector = '#koodistoField-1_input .rw-dropdown-list-input input'
     await this.page.fill(maakuntaInputSelector, text)

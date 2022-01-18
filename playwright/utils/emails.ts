@@ -38,6 +38,7 @@ export const getAcceptedPäätösEmails = getMuutoshakemusEmails
 export const getTäydennyspyyntöEmails = getEmails("change-request")
 export const getLoppuselvitysPalauttamattaEmails = getEmails("loppuselvitys-palauttamatta")
 export const getValiselvitysPalauttamattaEmails = getEmails("valiselvitys-palauttamatta")
+export const getYhteystiedotMuutettuEmails = getEmails("hakemus-edited-after-applicant-edit")
 
 async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
