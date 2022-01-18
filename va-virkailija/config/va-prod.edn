@@ -1,5 +1,6 @@
 {:server {:auto-reload? false
           :allow-db-clear? false
+          :enable-csp? true
           :port 6071
           :host "*"
           :virkailija-url "https://virkailija.valtionavustukset.oph.fi"
