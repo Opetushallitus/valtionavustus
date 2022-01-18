@@ -18,6 +18,17 @@ test.describe('Form editor muutoshakukelpoisuus message', () => {
     expect(okBannerText).toEqual("Lomake on muutoshakukelpoinenMuutoshakulomake toimitetaan avustuksen saajille automaattisesti päätösviestin yhteydessä")
   })
 
+  test('shows field ids on the hakemus edit page', async ({ avustushakuID, page }) => {
+    const hakujenHallintaPage = new HakujenHallintaPage(page)
+    await hakujenHallintaPage.navigateToFormEditor(avustushakuID)
+
+    const fieldHeaders = await page.$$(".soresu-field-title")
+    const fieldIds = await page.$$(".soresu-field-id")
+    const fieldIdInnerTexts = await Promise.all(fieldIds.map(el => el.evaluate(n => (n as HTMLElement).innerText)))
+
+    expect(fieldIdInnerTexts).toHaveLength(fieldHeaders.length)
+  })
+
   test("tells user about one missing field", async ({ page, hakuProps }) => {
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.createHakuWithLomakeJson(puuttuvaYhteyshenkilonNimiJson, hakuProps)
@@ -44,7 +55,6 @@ test.describe('Form editor muutoshakukelpoisuus message', () => {
     expectMissingFieldLabel(page, 'Yhteyshenkilön nimi')
     expectMissingFieldLabel(page, 'Yhteyshenkilön puhelinnumero')
   })
-
 })
 
 const expectMissingFieldId = (page: Page, fieldId: string) => page.waitForSelector(`.muutoshakukelpoisuus-dropdown-item-id >> text="${fieldId}"`)
