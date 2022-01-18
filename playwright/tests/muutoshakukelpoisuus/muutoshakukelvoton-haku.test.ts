@@ -54,7 +54,7 @@ test.describe('Avustushaku that was marked as muutoshakukelvoton', () => {
     await page.bringToFront()
   })
 
-  test.only('does not show link to muutoshaku in email preview', async ({ avustushakuID, acceptedHakemus: { hakemusID }, page }) => {
+  test('does not show link to muutoshaku in email preview', async ({ avustushakuID, acceptedHakemus: { hakemusID }, page }) => {
     expect(hakemusID).toBeTruthy()
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigateToPaatos(avustushakuID)
