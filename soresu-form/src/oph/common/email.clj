@@ -171,8 +171,8 @@
                           (:retry-multiplier smtp-config)
                           (:retry-max-time smtp-config)
                           send-fn))
-      ((log/error "Failed sending email:" msg-description)
-       (create-email-event email-id false msg))
+      (do (log/error "Failed sending email:" msg-description)
+          (create-email-event email-id false msg))
       (create-email-event email-id true msg))))
 
 (defn try-send-msg-once [msg format-plaintext-message]
