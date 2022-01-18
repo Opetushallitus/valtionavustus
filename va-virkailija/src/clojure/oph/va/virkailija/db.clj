@@ -30,17 +30,6 @@
                WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
          [id]))
 
-(defn create-muutoshakemus-url [va-url avustushaku-id user-key]
-  (let [ url-parameters  (form-encode { :user-key user-key :avustushaku-id avustushaku-id})]
-(str va-url "muutoshakemus?" url-parameters)))
-
-(defn get-muutoshakemus-url-by-hakemus-id [id]
-  (let [hakemukset (query "SELECT user_key, avustushaku from hakija.hakemukset WHERE id = ?" [id])
-        hakemus (first hakemukset)
-        va-url (get-in config [:server :url :fi])
-        muutoshakemus-url (create-muutoshakemus-url va-url (:avustushaku hakemus) (:user-key hakemus))]
-      muutoshakemus-url))
-
 (defn- store-paatos-sisaltomuutos [tx paatos-id status]
   (execute! tx "insert into paatos_sisaltomuutos (paatos_id, status) values (?, ?::virkailija.paatos_type)"
             [paatos-id status]))

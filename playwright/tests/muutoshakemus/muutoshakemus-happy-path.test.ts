@@ -97,4 +97,15 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
   await test.step('Displays valid muutoshakemus values', async () => {
     await hakemustenArviointiPage.validateMuutoshakemusValues(muutoshakemus1)
   })
+
+  await test.step('accept muutoshakemus', async () => {
+    await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision('accepted')
+    await hakemustenArviointiPage.selectVakioperusteluInFinnish()
+    await hakemustenArviointiPage.saveMuutoshakemus()
+
+    await test.step('email is immediately shown as sent', async () => {
+      expect(await page.innerText("data-test-id=päätös-email-status"))
+        .toMatch(/^Päätös lähetetty hakijalle /)
+    })
+  })
 })

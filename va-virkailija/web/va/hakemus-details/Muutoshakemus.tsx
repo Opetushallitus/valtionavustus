@@ -30,7 +30,8 @@ interface MuutoshakemusProps {
 
 export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hakemusVersion, controller, userInfo, presenter, isCurrentUserHakemukselleUkotettuValmistelija }: MuutoshakemusProps) => {
   const hakemus = hakemusVersion.normalizedData
-  const [a, setActiveMuutoshakemus] = useState(muutoshakemukset[0])
+  const [activeMuutoshakemus, setActiveMuutoshakemus] = useState(muutoshakemukset[0].id)
+  const a = muutoshakemukset.find(_ => _.id === activeMuutoshakemus)!
   const isAccepted = a.status === 'accepted' || a.status === 'accepted_with_changes'
   const projectEndDate = getProjectEndDate(avustushaku, muutoshakemukset, a)
   const currentTalousarvio = getTalousarvio(muutoshakemukset, hakemus && hakemus.talousarvio, isAccepted ? a : undefined)

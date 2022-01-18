@@ -8,7 +8,7 @@ import './MuutoshakemusTabs.less'
 interface MuutoshakemusTabsProps {
   muutoshakemukset: Muutoshakemus[]
   activeMuutoshakemus: Muutoshakemus
-  setActiveMuutoshakemus: (m: Muutoshakemus) => void
+  setActiveMuutoshakemus: (muutoshakemusId: number) => void
 }
 
 export const MuutoshakemusTabs = ({ muutoshakemukset, activeMuutoshakemus, setActiveMuutoshakemus }: MuutoshakemusTabsProps) => {
@@ -18,7 +18,7 @@ export const MuutoshakemusTabs = ({ muutoshakemukset, activeMuutoshakemus, setAc
         <button
           key={`muutoshakemus-tab-${index}`}
           className={`muutoshakemus-tabs__tab ${m.id === activeMuutoshakemus.id ? 'active' : ''}`}
-          onClick={() => setActiveMuutoshakemus(m)}
+          onClick={() => setActiveMuutoshakemus(m.id)}
           data-test-id={`muutoshakemus-tab-${m.id}`}
         >
           Muutoshakemus {moment(m['created-at']).format(fiShortFormat)}

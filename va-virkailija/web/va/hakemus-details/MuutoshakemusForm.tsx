@@ -40,7 +40,6 @@ import {
 import {
   MuutoshakemusPaatosRequest,
   MuutoshakemusPaatosFormValues,
-  MuutoshakemusPaatosResponse
 } from "./hakemusTypes";
 import {
   fiLongFormat, isoFormat, parseDateString,
@@ -206,8 +205,8 @@ export const MuutoshakemusForm = ({avustushaku, currentTalousarvio, muutoshakemu
     onSubmit: async (values) => {
       const payload = formToPayload(values)
       const url = `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus['hakemus-id']}/muutoshakemus/${muutoshakemus.id}/paatos`
-      const storedPaatos: MuutoshakemusPaatosResponse = await HttpUtil.post(url, payload)
-      controller.setPaatos({ muutoshakemusId: muutoshakemus.id, hakemusId: hakemus['hakemus-id'], ...storedPaatos })
+      const newMuutoshakemukset: Muutoshakemus[] = await HttpUtil.post(url, payload)
+      controller.setMuutoshakemukset(newMuutoshakemukset)
     }
   })
 

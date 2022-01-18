@@ -282,9 +282,7 @@ export class HakemustenArviointiPage {
   }
 
   async setMuutoshakemusJatkoaikaDecision(status: PaatosStatus, value?: string) {
-    if (status) {
-      await this.page.click(`label[for="haen-kayttoajan-pidennysta-${status}"]`)
-    }
+    await this.page.click(`label[for="haen-kayttoajan-pidennysta-${status}"]`)
     if (value) {
       await this.page.fill('div.datepicker input', value)
     }
@@ -295,9 +293,7 @@ export class HakemustenArviointiPage {
   }
 
   async setMuutoshakemusSisaltoDecision(status: PaatosStatus) {
-    if (status) {
-      await this.page.click(`label[for="haen-sisaltomuutosta-${status}"]`)
-    }
+    await this.page.click(`label[for="haen-sisaltomuutosta-${status}"]`)
   }
 
   async fillMuutoshakemusBudgetAmount(budget: BudgetAmount) {

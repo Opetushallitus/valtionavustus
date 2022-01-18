@@ -33,7 +33,6 @@ import HakemusArviointiStatuses
   from './hakemus-details/HakemusArviointiStatuses'
 import RahoitusalueSelections from './hakemus-details/RahoitusalueSelections'
 import {HakemusFilter, HakemusSorter, HakuData, State, UserInfo} from "./types"
-import {MuutoshakemusPaatos} from "./hakemus-details/hakemusTypes"
 
 const dispatcher = new Dispatcher()
 
@@ -65,7 +64,6 @@ const events = {
   setSeurantaAnswerValue: 'setSeurantaAnswerValue',
   changeRequestsLoaded: 'changeRequestsLoaded',
   attachmentVersionsLoaded: 'attachmentVersionsLoaded',
-  setPaatos: 'setPaatos',
   setScore: 'setScore',
   removeScore: 'removeScore',
   toggleOthersScoresDisplay: 'toggleOthersScoresDisplay',
@@ -160,7 +158,6 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.setSeurantaAnswerValue), this.onSetSeurantaAnswerValue],
       [dispatcher.stream(events.changeRequestsLoaded), this.onChangeRequestsLoaded],
       [dispatcher.stream(events.attachmentVersionsLoaded), this.onAttachmentVersionsLoaded],
-      [dispatcher.stream(events.setPaatos), this.onSetPaatos],
       [dispatcher.stream(events.setScore), this.onSetScore],
       [dispatcher.stream(events.removeScore), this.onRemoveScore],
       [dispatcher.stream(events.loadScores), this.loadScores],
@@ -263,7 +260,7 @@ export default class HakemustenArviointiController {
 
     Bacon
       .fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${hakemusIdToSelect}/muutoshakemus/`))
-      .onValue(muutoshakemukset => dispatcher.push(events.onMuutoshakemukset, muutoshakemukset))
+      .onValue(muutoshakemukset => this.setMuutoshakemukset(muutoshakemukset))
 
     if (!state.selectedHakemus) {
       throw new Error(`Avustushaku ${state.hakuData.avustushaku.id} does not have hakemus ${hakemusIdToSelect}`)
@@ -605,29 +602,6 @@ export default class HakemustenArviointiController {
           `Error in saving hakemus score, DELETE ${removeUrl}`, error)
         dispatcher.push(events.saveCompleted, "unexpected-save-error")
       })
-    return state
-  }
-
-  onSetPaatos(state: State, paatos: MuutoshakemusPaatos) {
-    if (!state.selectedHakemus) {
-      return state
-    }
-
-    const { muutoshakemusId, status, reason, talousarvio } = paatos
-    const muutoshakemus = state.selectedHakemus.muutoshakemukset?.find(m => m.id === muutoshakemusId)
-    if (muutoshakemus) {
-      muutoshakemus['paatos-created-at'] = paatos['created-at']
-      muutoshakemus['paatos-user-key'] = paatos['user-key']
-      muutoshakemus['paatos-hyvaksytty-paattymispaiva'] = paatos['paatos-hyvaksytty-paattymispaiva']
-      muutoshakemus['paatos-status-jatkoaika'] = paatos['status-jatkoaika']
-      muutoshakemus.talousarvio = talousarvio
-      muutoshakemus['paatos-status-talousarvio'] = paatos['status-talousarvio']
-      muutoshakemus['paatos-status-sisaltomuutos'] = paatos['status-sisaltomuutos']
-      muutoshakemus['paatos-reason'] = reason
-      muutoshakemus.status = status
-      state.selectedHakemus["status-muutoshakemus"] = status
-    }
-    state.selectedHakemus.muutoshakemusUrl = paatos.muutoshakemusUrl
     return state
   }
 
@@ -1158,8 +1132,8 @@ setHakemusShouldPayComments(hakemus: Hakemus, newShouldPayComment: string) {
     dispatcher.push(events.removeScore, index)
   }
 
-  setPaatos(paatos: MuutoshakemusPaatos) {
-    dispatcher.push(events.setPaatos, paatos)
+  setMuutoshakemukset(muutoshakemukset: MuutoshakemusType[]) {
+    dispatcher.push(events.onMuutoshakemukset, muutoshakemukset)
   }
 
   setModal(modal: JSX.Element | undefined) {
