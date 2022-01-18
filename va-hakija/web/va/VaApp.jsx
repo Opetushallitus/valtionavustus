@@ -76,8 +76,14 @@ function initialStateTemplateTransformation(template) {
   template.token = query.token
 }
 
+function isOfficerEdit(savedObject) {
+  const params = new URLSearchParams(window.location.search)
+  const hasOfficerToken = params.has('officerToken')
+  return savedObject.status === "officer_edit" && hasOfficerToken
+}
+
 function isEmptyOrReopenedHakemus(savedObject) {
-  return !savedObject || (savedObject.status === "pending_change_request" || savedObject.status === "officer_edit")
+  return !savedObject || savedObject.status === "pending_change_request" || isOfficerEdit(savedObject)
 }
 
 function onInitialStateLoaded(initialState) {

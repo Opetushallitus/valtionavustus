@@ -17,10 +17,14 @@ import {Answers} from "../utils/types";
 export class HakijaAvustusHakuPage {
   readonly page: Page
   readonly sendHakemusButton: Locator
+  readonly officerEditSubmitButton: Locator
+  readonly previewContainer: Locator
 
   constructor(page: Page) {
     this.page = page;
     this.sendHakemusButton = page.locator('#topbar #form-controls button#submit')
+    this.officerEditSubmitButton = page.locator('#virkailija-edit-submit')
+    this.previewContainer = page.locator('div.soresu-preview')
   }
 
   async navigate(avustushakuID: number, lang: 'fi' | 'sv' | undefined) {
@@ -56,14 +60,18 @@ export class HakijaAvustusHakuPage {
     )
   }
 
+  async waitForPreview() {
+    return this.previewContainer.waitFor()
+  }
+
   async submitOfficerEdit() {
-    await this.page.click('#virkailija-edit-submit')
-    await this.page.waitForSelector('div.soresu-preview')
+    await this.officerEditSubmitButton.click()
+    await this.waitForPreview()
   }
 
   async submitChangeRequestResponse() {
     await this.page.click('#change-request-response')
-    await this.page.waitForSelector('div.soresu-preview')
+    await this.waitForPreview()
   }
 
   async submitApplication() {

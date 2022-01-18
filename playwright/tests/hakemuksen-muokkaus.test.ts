@@ -63,6 +63,25 @@ test('virkailija can edit hakemus', async ({page, avustushakuID, submittedHakemu
   })
 })
 
+test(`hakija can't edit hakemus when officer is editing it`, async ({browser, page, avustushakuID, submittedHakemus}) => {
+  const hakujenHallintaPage = new HakujenHallintaPage(page)
+  await hakujenHallintaPage.navigate(avustushakuID)
+  await hakujenHallintaPage.setEndDate('1.1.2000 16.00')
+
+  const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+  await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
+  const officerEditPage = await hakemustenArviointiPage.openHakemusEditPage()
+  await expect(officerEditPage.officerEditSubmitButton).toBeEnabled()
+
+  await test.step(`hakija sees preview when there is no officer token`, async () => {
+    const newPage = await browser.newPage()
+    const hakemusPage = new HakijaAvustusHakuPage(newPage)
+    await hakemusPage.navigateToExistingHakemusPage(avustushakuID, submittedHakemus.userKey)
+    await hakemusPage.waitForPreview()
+    await expect(hakemusPage.officerEditSubmitButton).toBeHidden()
+  })
+})
+
 test('hakija can edit hakemus', async ({page, avustushakuID, submittedHakemus: hakemus}) => {
   const hakemusPage = new HakijaAvustusHakuPage(page)
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
