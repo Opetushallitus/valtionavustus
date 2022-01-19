@@ -139,6 +139,7 @@
          authenticator (if without-authentication?
                          without-authentication
                          with-authentication)
+         hakija-url (clojure.string/join "" (drop-last (-> config :server :url :fi)))
          handler (as-> #'all-routes h
                    (authenticator h)
                    (ring-session-timeout/wrap-absolute-session-timeout
@@ -147,7 +148,7 @@
                    (wrap-defaults h defaults)
                    (server/wrap-logger h)
                    (server/wrap-cache-control h)
-                   (server/wrap-csp-when-enabled h (-> config :server :virkailija-url))
+                   (server/wrap-csp-when-enabled h (-> config :server :virkailija-url) hakija-url)
                    (server/wrap-hsts-when-enabled h)
                    (wrap-not-modified h)
                    (if auto-reload?

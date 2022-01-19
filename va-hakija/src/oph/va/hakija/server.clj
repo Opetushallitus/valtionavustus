@@ -46,7 +46,7 @@
                   (wrap-defaults h defaults)
                   (server/wrap-logger h)
                   (server/wrap-cache-control h)
-                  (server/wrap-csp-when-enabled h csp-url)
+                  (server/wrap-csp-when-enabled h csp-url nil)
                   (server/wrap-hsts-when-enabled h)
                   (wrap-not-modified h)
                   (if auto-reload?

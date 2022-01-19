@@ -57,10 +57,10 @@
                                   "no-cache, must-revalidate, max-age=0"
                                   "no-store, max-age=0"))))))
 
-(defn wrap-csp-when-enabled [handler urls]
+(defn wrap-csp-when-enabled [handler default-src connect-src]
   (if (-> config :server :enable-csp?)
     (fn [request]
       (let [response (handler request)]
         (-> response
-          (header "Content-Security-Policy-Report-Only" (str "default-src 'self' " urls "; object-src 'none'; font-src *; style-src * 'unsafe-inline'; style-src-attr * 'unsafe-inline'; style-src-elem * 'unsafe-inline'; img-src * data:; report-uri /api/healthcheck/csp-report")))))
+          (header "Content-Security-Policy-Report-Only" (str "default-src 'self' " default-src "; connect-src " default-src " " connect-src "; object-src 'none'; font-src *; style-src * 'unsafe-inline'; style-src-attr * 'unsafe-inline'; style-src-elem * 'unsafe-inline'; img-src * data:; report-uri /api/healthcheck/csp-report")))))
     handler))
