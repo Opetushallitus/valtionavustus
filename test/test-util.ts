@@ -12,7 +12,6 @@ import {
   WaitForSelectorOptions
 } from "puppeteer"
 import * as assert from "assert"
-import * as fs from "fs"
 import moment from 'moment'
 
 const {randomBytes} = require("crypto")
@@ -111,13 +110,6 @@ export async function getHakemusTokenAndRegisterNumber(hakemusId: number): Promi
     .then(r => applicationGeneratedValuesSchema.validate(r.data))
 }
 
-export const sendLoppuselvitysAsiatarkastamattaNotifications = () =>
-  axios.post(`${VIRKAILIJA_URL}/api/test/send-loppuselvitys-asiatarkastamatta-notifications`)
-
-export const getAllEmails = (emailType: string): Promise<Email[]> =>
-  axios.get(`${VIRKAILIJA_URL}/api/test/email/${emailType}`)
-    .then(r => emailSchema.validate(r.data))
-
 const getEmails = (emailType: string) => (hakemusID: number): Promise<Email[]> =>
   axios.get(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusID}/email/${emailType}`)
     .then(r => { console.log(`getEmails(${emailType})`, r.data); return r })
@@ -130,7 +122,6 @@ export const getValiselvitysEmails = getEmails("valiselvitys-notification")
 export const getLoppuselvitysEmails = getEmails("loppuselvitys-notification")
 export const getAcceptedPäätösEmails = getMuutoshakemusEmails
 export const getTäydennyspyyntöEmails = getEmails("change-request")
-export const getYhteystiedotMuutettuEmails = getEmails("hakemus-edited-after-applicant-edit")
 export async function waitUntilMinEmails(f: (hakemusId: number) => Promise<Email[]>, minEmails: number, hakemusId: number) {
   let emails: Email[] = await f(hakemusId)
 
@@ -140,8 +131,6 @@ export async function waitUntilMinEmails(f: (hakemusId: number) => Promise<Email
   }
   return emails
 }
-
-export const linkToMuutoshakemusPaatosRegex = /https?:\/\/.*\/muutoshakemus\/paatos.*/
 
 async function waitFor(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -181,16 +170,6 @@ export async function pollUntilNewHakemusEmailArrives(avustushakuID: number): Pr
       }
     }
   }
-}
-
-
-export async function getLinkToHakemusFromSentEmails(hakemusID: number) {
-  const emails = await waitUntilMinEmails(getValmistelijaEmails, 1, hakemusID)
-
-  const linkToHakemusRegex = /https?:\/\/.*\/avustushaku.*/
-  const linkToHakemus = emails[0]?.formatted.match(linkToHakemusRegex)?.[0]
-  expectToBeDefined(linkToHakemus)
-  return linkToHakemus
 }
 
 export function mkBrowser() {
@@ -638,11 +617,6 @@ export async function textContent(page: Page, selector: string) {
   return await page.evaluate(_ => _.textContent, element)
 }
 
-export async function isDisabled(page: Page, selector: string): Promise<boolean> {
-  const isDisabled = await page.$eval(selector, (elem: Element) => (elem as any).disabled)
-  return isDisabled
-}
-
 async function prepareSelectingValmistelijaForHakemus(page: Page, avustushakuID: number, hakemusID: number, valmistelijaName: string) {
   await navigate(page, `/avustushaku/${avustushakuID}/`)
   await clickElement(page, `#hakemus-${hakemusID} .btn-role`)
@@ -661,19 +635,6 @@ export async function selectValmistelijaForHakemus(page: Page, avustushakuID: nu
   const valmistelijaButtonClass = await (await valmistelijaButton.getProperty('className'))?.jsonValue() as string
 
   if (!valmistelijaButtonClass.includes('selected')) {
-    await Promise.all([
-      page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`),
-      valmistelijaButton.click(),
-    ])
-  }
-}
-
-export async function deselectValmistelijaForHakemus(page: Page, avustushakuID: number, hakemusID: number, valmistelijaName: string) {
-  const valmistelijaButton = await prepareSelectingValmistelijaForHakemus(page, avustushakuID, hakemusID, valmistelijaName)
-
-  const valmistelijaButtonClass = await (await valmistelijaButton.getProperty('className'))?.jsonValue() as string
-
-  if (valmistelijaButtonClass.includes('selected')) {
     await Promise.all([
       page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`),
       valmistelijaButton.click(),
@@ -992,10 +953,6 @@ export async function actualResponseFromExternalAPIhakemuksetForAvustushaku(avus
   return await axios.get(url).then(r => r.data)
 }
 
-export async function waitForClojureScriptLoadingDialogVisible(page: Page) {
-  return page.waitForSelector("[data-test-id=loading-dialog]", { visible: true })
-}
-
 export async function waitForClojureScriptLoadingDialogHidden(page: Page) {
   return page.waitForSelector("[data-test-id=loading-dialog]", { hidden: true })
 }
@@ -1048,16 +1005,6 @@ export async function setCalendarDateForSelector(page: Page, date: string, selec
 export async function navigateToSeurantaTab(page: Page, avustushakuID: number, hakemusID: number) {
   await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/seuranta/`)
   await page.waitForSelector('#set-allow-visibility-in-external-system', { visible: true })
-}
-
-export async function navigateToValiselvitysTab(page: Page, avustushakuID: number, hakemusID: number) {
-  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/valiselvitys/`)
-  await page.waitForSelector('[data-test-id="hakemus-details-valiselvitys"]', { visible: true })
-}
-
-export async function navigateToLoppuselvitysTab(page: Page, avustushakuID: number, hakemusID: number) {
-  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/loppuselvitys/`)
-  await page.waitForSelector('[data-test-id="hakemus-details-loppuselvitys"]', { visible: true })
 }
 
 export async function saveMuutoshakemus(page: Page) {

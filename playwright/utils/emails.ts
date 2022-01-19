@@ -32,10 +32,7 @@ const getEmails = (emailType: string) => (hakemusID: number): Promise<Email[]> =
 export const getValmistelijaEmails = getEmails("notify-valmistelija-of-new-muutoshakemus")
 export const getMuutoshakemusPaatosEmails = getEmails("muutoshakemus-paatos")
 export const getMuutoshakemusEmails = getEmails("paatos-refuse")
-export const getValiselvitysEmails = getEmails("valiselvitys-notification")
-export const getLoppuselvitysEmails = getEmails("loppuselvitys-notification")
 export const getAcceptedPäätösEmails = getMuutoshakemusEmails
-export const getTäydennyspyyntöEmails = getEmails("change-request")
 export const getLoppuselvitysPalauttamattaEmails = getEmails("loppuselvitys-palauttamatta")
 export const getValiselvitysPalauttamattaEmails = getEmails("valiselvitys-palauttamatta")
 export const getYhteystiedotMuutettuEmails = getEmails("hakemus-edited-after-applicant-edit")
