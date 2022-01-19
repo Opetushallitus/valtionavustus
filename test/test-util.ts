@@ -28,7 +28,6 @@ export const HAKIJA_URL = `http://${HAKIJA_HOSTNAME}:${HAKIJA_PORT}`
 
 export const dummyPdfPath = path.join(__dirname, 'dummy.pdf')
 export const dummyExcelPath = path.join(__dirname, 'dummy.xls')
-export const standardizedHakulomakeJson = fs.readFileSync(path.join(__dirname, 'vakioitu-hakulomake.json'), 'utf8')
 
 export const TEST_Y_TUNNUS = "2050864-5"
 
