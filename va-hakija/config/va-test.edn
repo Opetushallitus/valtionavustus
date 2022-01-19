@@ -1,6 +1,5 @@
 {:server {:auto-reload? false
           :allow-db-clear? false
-          :enable-csp? true
           :port 8081
           :host "*"
           :url {:fi "https://testi.valtionavustukset.oph.fi/"

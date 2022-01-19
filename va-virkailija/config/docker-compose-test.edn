@@ -4,6 +4,7 @@
           :virkailija-url "http://localhost:8081"
           :enable-access-log? false
           :enable-hsts? false
+          :enable-csp? false
           :without-authentication? true
           :require-https? false
           :payment-service-sftp {:enabled? true
