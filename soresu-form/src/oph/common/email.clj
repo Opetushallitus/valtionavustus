@@ -174,7 +174,7 @@
 
 (defn try-send-msg-once [msg format-plaintext-message]
   (let [body (format-plaintext-message msg)
-        [msg-description send-fn] (create-mail-send-fn msg body)
+        [_ send-fn] (create-mail-send-fn msg body)
         email-id (store-email msg body)]
     (try
       (send-fn)
