@@ -161,9 +161,8 @@
             [avustushaku-id hakemus-id muutoshakemus-id email-id (name msg-type) success])
   (log/info (str "Succesfully stored email event for email: " email-id))))
 
-(defn- send-msg! [msg format-plaintext-message email-id]
-  (let [body (format-plaintext-message msg)
-        [msg-description send-fn] (create-mail-send-fn msg body)]
+(defn- send-msg! [msg body email-id]
+  (let [[msg-description send-fn] (create-mail-send-fn msg body)]
     (if (not (try-send! (:retry-initial-wait smtp-config)
                           (:retry-multiplier smtp-config)
                           (:retry-max-time smtp-config)
@@ -196,7 +195,7 @@
                     :stop true
                     :send (do
                             (try
-                              (send-msg! (:msg msg) (:format-plaintext-message msg) (:email-id msg))
+                              (send-msg! (:msg msg) (:body msg) (:email-id msg))
                             (catch Exception e
                               (log/error e "Failed to send email")))
                             false))]
@@ -253,4 +252,4 @@
 (defn enqueue-message-to-be-send [msg]
   (let [body (render-body msg)
         email-id (store-email msg body)]
-    (>!! mail-chan {:operation :send, :msg msg, :format-plaintext-message render-body, :email-id email-id})))
+    (>!! mail-chan {:operation :send, :msg msg, :body body, :email-id email-id})))
