@@ -24,7 +24,7 @@ function parse_env_from_script_name {
   if echo "${FILE_NAME}" | grep -E -q "$BASE_FILENAME-.([^-]+)\.sh"; then
     ENV=$(echo "${FILE_NAME}" | sed -E -e "s|$BASE_FILENAME-([^-]+)\.sh|\1|g")
     export ENV
-    echo "Deploying to [${ENV}]"
+    echo "Targeting environment [${ENV}]"
   else
     echo >&2 "Don't call this script directly"
     exit 1
