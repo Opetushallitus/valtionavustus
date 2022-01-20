@@ -245,7 +245,11 @@
   (email-utils/modify-url
    (get-in config [:server :url lang]) avustushaku-id user-key lang token include-muutoshaku-link?))
 
+(defn- render-body [msg]
+  (let [template (get-in @mail-templates [(:type msg) (:lang msg)])]
+    (render template msg)))
+
 (defn enqueue-message-to-be-send [msg]
-  (let [format-plaintext-message (partial render (get-in @mail-templates [(:type msg) (:lang msg)]))
-        email-id (store-email msg (format-plaintext-message msg))]
-    (>!! mail-chan {:operation :send, :msg msg, :format-plaintext-message format-plaintext-message, :email-id email-id})))
+  (let [body (render-body msg)
+        email-id (store-email msg body)]
+    (>!! mail-chan {:operation :send, :msg msg, :format-plaintext-message render-body, :email-id email-id})))
