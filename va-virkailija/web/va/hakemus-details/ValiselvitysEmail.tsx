@@ -1,20 +1,15 @@
 import React, { useState } from 'react'
-import Immutable from 'seamless-immutable'
 import _ from 'lodash'
 import ClassNames from 'classnames'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import JsUtil from 'soresu-form/web/JsUtil'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 import Translator from 'soresu-form/web/form/Translator'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
-import { Answer, Avustushaku, Field, Hakemus, Selvitys, UserInfo } from 'soresu-form/web/va/types'
+import { Avustushaku, Hakemus, Selvitys, UserInfo } from 'soresu-form/web/va/types'
 import { Language } from 'soresu-form/web/va/i18n/translations'
 
 import HakemustenArviointiController from '../HakemustenArviointiController'
-
-const emailNotificationFieldType = "vaEmailNotification"
-const legacyEmailFieldIds = Immutable(["organization-email", "primary-email", "signature-email"])
 
 interface ValiselvitysEmailProps {
   controller: HakemustenArviointiController
@@ -28,32 +23,7 @@ interface ValiselvitysEmailProps {
 
 type Email = { value: string, isValid: boolean }
 
-const isNonEmptyEmailField = (field: Field) =>
-  (field.fieldType === emailNotificationFieldType || _.includes(legacyEmailFieldIds, field.key)) &&
-  !_.isEmpty(field.value)
-
-const findFirstPreferredEmail = (emailFields: Field[]) => {
-  if (!emailFields.length) {
-    return null
-  }
-
-  const preferred = _.find(emailFields, f => f.fieldType === emailNotificationFieldType)
-
-  if (preferred) {
-    return preferred.value
-  }
-
-  return emailFields[0].value
-}
-
-const findRecipientEmail = (selvitysAnswers: Answer[], hakemusAnswers: Answer[]) =>
-  findFirstPreferredEmail(JsUtil.flatFilter(selvitysAnswers, isNonEmptyEmailField)) ||
-    findFirstPreferredEmail(JsUtil.flatFilter(hakemusAnswers, isNonEmptyEmailField))
-
-const isValidEmail = (email: string) => !SyntaxValidator.validateEmail(email)
-
-const makeRecipientEmail = (value = "") => ({value, isValid: isValidEmail(value)})
-
+const makeRecipientEmail = (value = "") => ({ value, isValid: !SyntaxValidator.validateEmail(value) })
 const makeEmptyRecipientEmail = () => ({value: "", isValid: true})
 
 function initialMessage(props: ValiselvitysEmailProps) {
@@ -79,11 +49,9 @@ function initialSubject(props: ValiselvitysEmailProps) {
 }
 
 function initialRecipientEmails(props: ValiselvitysEmailProps) {
-  const { hakemus, valiselvitys } = props
-  const foundRecipientEmail = findRecipientEmail(valiselvitys.answers || [], hakemus.answers) || ""
-  return foundRecipientEmail.length > 0
-  ? [makeRecipientEmail(foundRecipientEmail)]
-  : []
+  return props.hakemus.answers
+    .filter(a => a.key === 'primary-email' || a.key === 'organization-email')
+    .map(a => makeRecipientEmail(a.value))
 }
 
 export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
