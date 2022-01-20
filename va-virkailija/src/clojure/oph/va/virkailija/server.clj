@@ -41,7 +41,9 @@
   (when (get-in config [:tasmaytysraportti-create :enabled?])
     (tasmaytysraportti/start-schedule-create-tasmaytysraportti))
   (when (get-in config [:tasmaytysraportti-send :enabled?])
-    (tasmaytysraportti/start-schedule-send-tasmaytysraportti)))
+    (tasmaytysraportti/start-schedule-send-tasmaytysraportti))
+  (when (get-in config [:email :persistent-retry :enabled? ])
+    (email/start-persistent-retry-job)))
 
 (defn- shutdown []
   (log/info "Shutting down...")
@@ -58,8 +60,9 @@
   (when (get-in config [:tasmaytysraportti-create :enabled?])
     (tasmaytysraportti/stop-schedule-create-tasmaytysraportti))
   (when (get-in config [:tasmaytysraportti-send :enabled?])
-    (tasmaytysraportti/stop-schedule-send-tasmaytysraportti)))
-
+    (tasmaytysraportti/stop-schedule-send-tasmaytysraportti))
+  (when (get-in config [:email :persistent-retry :enabled? ])
+    (email/stop-persistent-retry-job)))
 
 (defn- query-string-for-redirect-location [original-request]
   (if-let [original-query-string (:query-string original-request)]

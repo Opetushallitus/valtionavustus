@@ -253,3 +253,24 @@
   (let [body (render-body msg)
         email-id (store-email msg body)]
     (>!! mail-chan {:operation :send, :msg msg, :body body, :email-id email-id})))
+
+(defn- get-messages-that-failed-to-send []
+  (query "SELECT e.id AS email_id, e.formatted, e.from_address as from, e.sender, e.to_address as to, e.bcc, e.reply_to, e.subject, e.attachment_contents, e.attachment_title, e.attachment_description, ee.email_type as type, 'unown' as lang
+          FROM email e JOIN email_event ee ON e.id = ee.email_id
+          WHERE ee.success = false
+          AND ee.id IN (
+            SELECT ee2.id
+            FROM email_event ee2
+            WHERE ee2.email_id = e.id
+            ORDER BY created_at DESC, id DESC
+            LIMIT 1
+          )" []))
+
+(defn retry-sending-failed-emails []
+  (log/info "Looking for email messages that failed to be sent")
+  (let [messages (get-messages-that-failed-to-send)]
+    (log/info "Found" (count messages) "email messages that failed to be sent")
+    (doseq [msg messages]
+      (let [body (:formatted msg)
+            email-id (:email-id msg)]
+        (>!! mail-chan {:operation :send, :msg msg, :body body, :email-id email-id})))))

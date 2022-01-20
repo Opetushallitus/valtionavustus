@@ -5,7 +5,11 @@
             [oph.soresu.common.config :refer [config]]
             [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]
             [clojure.tools.logging :as log]
-            [clostache.parser :refer [render]])
+            [clostache.parser :refer [render]]
+            [clojurewerkz.quartzite.scheduler :as qs]
+            [clojurewerkz.quartzite.jobs :refer [defjob] :as j]
+            [clojurewerkz.quartzite.triggers :as t]
+            [clojurewerkz.quartzite.schedule.cron :refer [schedule cron-schedule]])
   (:use [clojure.java.io]
         [oph.va.decision-liitteet]))
 
@@ -414,3 +418,23 @@
                                        :batch-key (:batch-key payments-info)
                                        :count (:count payments-info)
                                        :total-granted (:total-granted payments-info)})))
+
+(defjob EmailRetryJob [ctx]
+  (log/info "Running email retry")
+  (email/retry-sending-failed-emails))
+
+(defn start-persistent-retry-job []
+  (qs/schedule
+    (qs/start (qs/initialize))
+    (j/build
+      (j/of-type EmailRetryJob)
+      (j/with-identity (j/key (str "jobs." "EmailRetry"))))
+    (t/build
+      (t/with-identity (t/key (str "triggers." "EmailRetry")))
+      (t/start-now)
+      (t/with-schedule (schedule
+                        (cron-schedule
+                         (get-in config [:email :persistent-retry :schedule])))))))
+
+(defn stop-persistent-retry-job []
+  (qs/delete-trigger (qs/start (qs/initialize)) (t/key (str "triggers." "EmailRetry"))))

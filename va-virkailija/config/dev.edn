@@ -30,7 +30,9 @@
  :nrepl-enabled? true
  :email {:enabled? true
          :host "localhost"
-         :port 42069}
+         :port 42069
+         :persistent-retry {:enabled? true
+                            :schedule "0 * * * * ?"}}
  :payments {:enabled? true
             :delete-payments? true}
  :contact-person-name-in-pitkaviite {:enabled? true}
