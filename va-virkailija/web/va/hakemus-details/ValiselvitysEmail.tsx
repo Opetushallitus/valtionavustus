@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Immutable from 'seamless-immutable'
 import _ from 'lodash'
 import ClassNames from 'classnames'
@@ -28,13 +28,6 @@ interface ValiselvitysEmailProps {
 
 type Email = { value: string, isValid: boolean }
 
-interface SelvitysEmailState {
-  currentValiselvitysId: number
-  message: string
-  subject: string
-  recipientEmails: Email[]
-}
-
 const isNonEmptyEmailField = (field: Field) =>
   (field.fieldType === emailNotificationFieldType || _.includes(legacyEmailFieldIds, field.key)) &&
   !_.isEmpty(field.value)
@@ -63,122 +56,83 @@ const makeRecipientEmail = (value = "") => ({value, isValid: isValidEmail(value)
 
 const makeEmptyRecipientEmail = () => ({value: "", isValid: true})
 
-const makeState = ({hakemus, valiselvitys, avustushaku, userInfo, lang, translations}: ValiselvitysEmailProps) => {
+function initialMessage(props: ValiselvitysEmailProps) {
+  const { avustushaku, hakemus, lang, translations, userInfo, valiselvitys } = props
   const translator = new Translator(translations)
-
-  const selvitysTypeLowercase = translator.translate('valiselvitys', lang)
-  const selvitysTypeCapitalized = _.capitalize(translator.translate('valiselvitys', lang))
-  const avustushakuName = _.get(avustushaku, ["content", "name", lang || 'fi'])
-  const projectName = valiselvitys["project-name"] || hakemus["project-name"] || ""
-  const registerNumber = valiselvitys["register-number"]
-  const senderName = NameFormatter.onlyFirstForename(userInfo["first-name"]) + " " + userInfo["surname"]
-  const senderEmail = userInfo.email
-  const foundRecipientEmail = findRecipientEmail(valiselvitys.answers || [], hakemus.answers) || ""
-
-  const recipientEmails = foundRecipientEmail.length > 0
-    ? [makeRecipientEmail(foundRecipientEmail)]
-    : []
-
-  return {
-    currentValiselvitysId: valiselvitys.id,
-    message: translator.translate("valiselvitys-default-message", lang, "", {
-      "selvitys-type-lowercase": selvitysTypeLowercase,
-      "selvitys-type-capitalized": selvitysTypeCapitalized,
-      "project-name": projectName,
-      "avustushaku-name": avustushakuName,
-      "sender-name": senderName,
-      "sender-email": senderEmail
-    }),
-    subject: translator.translate("default-subject", lang, "", {
-      "selvitys-type-capitalized": selvitysTypeCapitalized,
-      "register-number": registerNumber
-    }),
-    recipientEmails
-  }
+  return translator.translate("valiselvitys-default-message", lang, "", {
+    "selvitys-type-lowercase":  translator.translate('valiselvitys', lang),
+    "selvitys-type-capitalized": _.capitalize(translator.translate('valiselvitys', lang)),
+    "project-name": valiselvitys["project-name"] ?? hakemus["project-name"] ?? "",
+    "avustushaku-name": avustushaku?.content?.name?.[lang || 'fi'] ?? '',
+    "sender-name": NameFormatter.onlyFirstForename(userInfo["first-name"]) + " " + userInfo["surname"],
+    "sender-email": userInfo.email
+  })
 }
 
-export default class ValiselvitysEmail extends React.Component<ValiselvitysEmailProps, SelvitysEmailState> {
-  constructor(props: ValiselvitysEmailProps) {
-    super(props)
-    this.onRecipientEmailChange = this.onRecipientEmailChange.bind(this)
-    this.onRecipientEmailRemove = this.onRecipientEmailRemove.bind(this)
-    this.onSubjectChange = this.onSubjectChange.bind(this)
-    this.onMessageChange = this.onMessageChange.bind(this)
-    this.onSendMessage = this.onSendMessage.bind(this)
-    this.state = makeState(props)
-  }
+function initialSubject(props: ValiselvitysEmailProps) {
+  const { lang, translations, valiselvitys } = props
+  const translator = new Translator(translations)
+  return translator.translate("default-subject", lang, "", {
+    "selvitys-type-capitalized": _.capitalize(translator.translate('valiselvitys', lang)),
+    "register-number": valiselvitys["register-number"]
+  })
+}
 
-  static getDerivedStateFromProps(props: ValiselvitysEmailProps, state: SelvitysEmailState) {
-    if (props.valiselvitys.id !== state.currentValiselvitysId) {
-      return makeState(props)
-    } else {
-      return null
-    }
-  }
+function initialRecipientEmails(props: ValiselvitysEmailProps) {
+  const { hakemus, valiselvitys } = props
+  const foundRecipientEmail = findRecipientEmail(valiselvitys.answers || [], hakemus.answers) || ""
+  return foundRecipientEmail.length > 0
+  ? [makeRecipientEmail(foundRecipientEmail)]
+  : []
+}
 
-  onRecipientEmailChange(index: number, event: React.ChangeEvent<HTMLInputElement>) {
+export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
+  const { avustushaku, controller, lang, valiselvitys } = props
+  const [message, setMessage] = useState<string>(initialMessage(props))
+  const [subject, setSubject] = useState<string>(initialSubject(props))
+  const [recipientEmails, setRecipientEmails] = useState<Email[]>(initialRecipientEmails(props))
+
+  function onRecipientEmailChange(index: number, event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value
-
-    this.setState(oldState => {
-      const oldEmails = oldState.recipientEmails
-
-      let newEmails
-
-      if (index === oldEmails.length) {
-        newEmails = oldEmails.concat(makeRecipientEmail(value))
-      } else {
-        newEmails = _.clone(oldEmails)
-        newEmails[index] = makeRecipientEmail(value)
-      }
-
-      return {
-        recipientEmails: newEmails
-      }
-    })
-  }
-
-  onRecipientEmailRemove(index: number) {
-    this.setState(oldState => {
-      const oldEmails = oldState.recipientEmails
-      const numOldEmails = oldEmails.length
-      const newEmails = []
-
-      for (let idx = 0; idx < numOldEmails; idx += 1) {
-        if (idx !== index) {
-          newEmails.push(oldEmails[idx])
-        }
-      }
-
-      return {
-        recipientEmails: newEmails
-      }
-    })
-  }
-
-  onSubjectChange(event: React.ChangeEvent<HTMLInputElement>) {
-    this.setState({subject: event.target.value})
-  }
-
-  onMessageChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    this.setState({message: event.target.value})
-  }
-
-  onSendMessage() {
-    const request = {
-      message: this.state.message,
-      "selvitys-hakemus-id": this.props.valiselvitys.id,
-      to: _.map(this.state.recipientEmails, email => email.value),
-      subject: this.state.subject
+    const oldEmails = recipientEmails
+    let newEmails
+    if (index === oldEmails.length) {
+      newEmails = oldEmails.concat(makeRecipientEmail(value))
+    } else {
+      newEmails = _.clone(oldEmails)
+      newEmails[index] = makeRecipientEmail(value)
     }
 
-    const avustushakuId = this.props.avustushaku.id
-    const controller = this.props.controller
-    const url = `/api/avustushaku/${avustushakuId}/selvitys/valiselvitys/send`
+    setRecipientEmails(newEmails)
+  }
+
+  function onRecipientEmailRemove(index: number) {
+    const oldEmails = recipientEmails
+    const numOldEmails = oldEmails.length
+    const newEmails = []
+
+    for (let idx = 0; idx < numOldEmails; idx += 1) {
+      if (idx !== index) {
+        newEmails.push(oldEmails[idx])
+      }
+    }
+
+    setRecipientEmails(newEmails)
+  }
+
+  function onSendMessage() {
+    const request = {
+      message,
+      "selvitys-hakemus-id": valiselvitys.id,
+      to: _.map(recipientEmails, email => email.value),
+      subject
+    }
+    const url = `/api/avustushaku/${avustushaku.id}/selvitys/valiselvitys/send`
 
     HttpUtil.post(url, request)
       .then(() => {
         controller.loadSelvitys()
-        controller.refreshHakemukset(avustushakuId)
+        controller.refreshHakemukset(avustushaku.id)
         return null
       })
       .catch(error => {
@@ -186,90 +140,73 @@ export default class ValiselvitysEmail extends React.Component<ValiselvitysEmail
       })
   }
 
-  render() {
-    const {
-      valiselvitys,
-      lang
-    } = this.props
+  const sentSelvitysEmail = valiselvitys["selvitys-email"]
+  const title = sentSelvitysEmail
+    ? "Lähetetty väliselvityksen hyväksyntä"
+    : `Lähetä väliselvityksen hyväksyntä${lang === 'sv' ? ' ruotsiksi': ''}`
+  const areAllEmailsValid = !_.some(recipientEmails, email => !email.isValid)
 
-    const {
-      message,
-      subject,
-      recipientEmails
-    } = this.state
-
-    const sentSelvitysEmail = valiselvitys["selvitys-email"]
-
-    const title = sentSelvitysEmail
-      ? "Lähetetty väliselvityksen hyväksyntä"
-      : `Lähetä väliselvityksen hyväksyntä${lang === 'sv' ? ' ruotsiksi': ''}`
-
-    const areAllEmailsValid = !_.some(recipientEmails, email => !email.isValid)
-
-    return (
-      <div data-test-id="selvitys-email">
-        <h2>{title}</h2>
-        <table className="selvitys-email-header">
-          <tbody>
-            {sentSelvitysEmail && (
-              <tr>
-                <th className="selvitys-email-header__header">Lähetetty:</th>
-                <td className="selvitys-email-header__value">{sentSelvitysEmail.send}</td>
-              </tr>
-            )}
+  return (
+    <div data-test-id="selvitys-email">
+      <h2>{title}</h2>
+      <table className="selvitys-email-header">
+        <tbody>
+          {sentSelvitysEmail && (
             <tr>
-              <th className="selvitys-email-header__header">Lähettäjä:</th>
-              <td className="selvitys-email-header__value">no-reply@oph.fi</td>
+              <th className="selvitys-email-header__header">Lähetetty:</th>
+              <td className="selvitys-email-header__value">{sentSelvitysEmail.send}</td>
             </tr>
-            <tr>
-              <th className={ClassNames("selvitys-email-header__header", {
-                "selvitys-email-header__header--for-value-input": !sentSelvitysEmail
-              })}>Vastaanottajat:</th>
-              <td className="selvitys-email-header__value">
-                {sentSelvitysEmail && (
-                  <a href={'mailto:' + sentSelvitysEmail.to.join(",")}>
+          )}
+          <tr>
+            <th className="selvitys-email-header__header">Lähettäjä:</th>
+            <td className="selvitys-email-header__value">no-reply@oph.fi</td>
+          </tr>
+          <tr>
+            <th className={ClassNames("selvitys-email-header__header", { "selvitys-email-header__header--for-value-input": !sentSelvitysEmail })}>
+              Vastaanottajat:
+            </th>
+            <td className="selvitys-email-header__value">
+              {sentSelvitysEmail
+                ? <a href={'mailto:' + sentSelvitysEmail.to.join(",")}>
                     {_.map(sentSelvitysEmail.to, email => <div key={email}>{email}</div>)}
                   </a>
-                )}
-                {!sentSelvitysEmail && _.map(recipientEmails.concat(makeEmptyRecipientEmail()), (email, index) =>
-                  <div key={index} className="selvitys-email-header__value-input-container">
-                    <input type="text"
-                           className={ClassNames("selvitys-email-header__value-input", {
-                             "selvitys-email-header__value-input--error": !email.isValid
-                           })}
-                           value={email.value}
-                           onChange={_.partial(this.onRecipientEmailChange, index)}/>
-                    {index < recipientEmails.length && (
-                      <button type="button"
-                              className="selvitys-email-header__remove-value-input-button soresu-remove"
-                              tabIndex={-1}
-                              onClick={_.partial(this.onRecipientEmailRemove, index)}/>
-                    )}
-                  </div>
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th className="selvitys-email-header__header">Aihe:</th>
-              <td className="selvitys-email-header__value">
-                {sentSelvitysEmail && sentSelvitysEmail.subject}
-                {!sentSelvitysEmail && (
-                  <input id="selvitys-email-title" className="selvitys-email-header__value-input" type="text" value={subject} onChange={this.onSubjectChange}/>
-                )}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        {sentSelvitysEmail && (
-          <div className="selvitys-email-message selvitys-email-message--sent">{sentSelvitysEmail.message}</div>
-        )}
-        {!sentSelvitysEmail && (
-          <div>
-            <textarea className="selvitys-email-message selvitys-email-message--unsent" value={message} onChange={this.onMessageChange}/>
-            <button id="submit-selvitys" onClick={this.onSendMessage} disabled={!recipientEmails.length || !areAllEmailsValid}>Lähetä viesti</button>
+                : _.map(recipientEmails.concat(makeEmptyRecipientEmail()), (email, index) =>
+                    <div key={index} className="selvitys-email-header__value-input-container">
+                      <input type="text"
+                              className={ClassNames("selvitys-email-header__value-input", {
+                                "selvitys-email-header__value-input--error": !email.isValid
+                              })}
+                              value={email.value}
+                              onChange={_.partial(onRecipientEmailChange, index)}/>
+                      {index < recipientEmails.length && (
+                        <button type="button"
+                                className="selvitys-email-header__remove-value-input-button soresu-remove"
+                                tabIndex={-1}
+                                onClick={_.partial(onRecipientEmailRemove, index)}/>
+                      )}
+                    </div>
+                  )
+                }
+            </td>
+          </tr>
+          <tr>
+            <th className="selvitys-email-header__header">Aihe:</th>
+            <td className="selvitys-email-header__value">
+              {sentSelvitysEmail
+                ? sentSelvitysEmail.subject
+                : <input id="selvitys-email-title" className="selvitys-email-header__value-input" type="text" value={subject} onChange={e => setSubject(e.target.value)}/>
+              }
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      {sentSelvitysEmail
+        ? <div className="selvitys-email-message selvitys-email-message--sent">{sentSelvitysEmail.message}</div>
+        : <div>
+            <textarea className="selvitys-email-message selvitys-email-message--unsent" value={message} onChange={e => setMessage(e.target.value)}/>
+            <button id="submit-selvitys" onClick={onSendMessage} disabled={!recipientEmails.length || !areAllEmailsValid}>Lähetä viesti</button>
           </div>
-        )}
-      </div>
-    )
-  }
+      }
+    </div>
+  )
 }

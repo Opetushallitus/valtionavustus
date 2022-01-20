@@ -9,7 +9,7 @@ import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
 import { Role, UserInfo } from '../types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
-import ValiselvitysEmail from './ValiselvitysEmail'
+import { ValiselvitysEmail } from './ValiselvitysEmail'
 
 type SelvitysProps = {
   controller: HakemustenArviointiController
