@@ -58,7 +58,7 @@
     (MultiPartEmail.)
     (SimpleEmail.)))
 
-(defn store-email [msg format-plaintext-message]
+(defn store-email [msg email-msg]
   (let [from            (common-string/trim-ws (:from msg))
     sender          (common-string/trim-ws (:sender msg))
     to              (mapv common-string/trim-ws (:to msg))
@@ -72,8 +72,7 @@
                             sender
                             to
                             (name (:lang msg))
-                            subject)
-      email-msg (format-plaintext-message msg)]
+                            subject)]
   (log/info "Storing email: " msg-description)
   (let [result (query "INSERT INTO virkailija.email (formatted, from_address, sender, to_address, bcc, reply_to, subject, attachment_contents, attachment_title, attachment_description)
                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id"
@@ -248,5 +247,5 @@
 
 (defn enqueue-message-to-be-send [msg]
   (let [format-plaintext-message (partial render (get-in @mail-templates [(:type msg) (:lang msg)]))
-        email-id (store-email msg format-plaintext-message)]
+        email-id (store-email msg (format-plaintext-message msg))]
     (>!! mail-chan {:operation :send, :msg msg, :format-plaintext-message format-plaintext-message, :email-id email-id})))
