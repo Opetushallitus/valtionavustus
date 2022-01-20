@@ -81,7 +81,7 @@
     (log/info (str "Succesfully stored email with id: " email_id))
     email_id)))
 
-(defn create-mail-send-fn [msg format-plaintext-message]
+(defn create-mail-send-fn [msg email-msg]
     (let [from          (common-string/trim-ws (:from msg))
         sender          (common-string/trim-ws (:sender msg))
         to              (mapv common-string/trim-ws (:to msg))
@@ -97,8 +97,7 @@
                                 (name (:lang msg))
                                 subject)]
     (log/info "Sending email:" msg-description)
-    (let [email-msg (format-plaintext-message msg)
-          make-email-obj (fn []
+    (let [make-email-obj (fn []
                            (let [msg (simple-or-not msg)]
                              (doto msg
                                (.setHostName (:host smtp-config))
@@ -163,7 +162,8 @@
   (log/info (str "Succesfully stored email event for email: " email-id))))
 
 (defn- send-msg! [msg format-plaintext-message email-id]
-  (let [[msg-description send-fn] (create-mail-send-fn msg format-plaintext-message)]
+  (let [body (format-plaintext-message msg)
+        [msg-description send-fn] (create-mail-send-fn msg body)]
     (if (not (try-send! (:retry-initial-wait smtp-config)
                           (:retry-multiplier smtp-config)
                           (:retry-max-time smtp-config)
@@ -174,7 +174,7 @@
 
 (defn try-send-msg-once [msg format-plaintext-message]
   (let [body (format-plaintext-message msg)
-        [msg-description send-fn] (create-mail-send-fn msg format-plaintext-message)
+        [msg-description send-fn] (create-mail-send-fn msg body)
         email-id (store-email msg body)]
     (try
       (send-fn)
