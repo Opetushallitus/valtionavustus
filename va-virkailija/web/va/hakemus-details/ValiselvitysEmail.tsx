@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import _ from 'lodash'
 import ClassNames from 'classnames'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -25,13 +24,14 @@ type Email = { value: string, isValid: boolean }
 
 const makeRecipientEmail = (value = "") => ({ value, isValid: !SyntaxValidator.validateEmail(value) })
 const makeEmptyRecipientEmail = () => ({value: "", isValid: true})
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 function initialMessage(props: ValiselvitysEmailProps) {
   const { avustushaku, hakemus, lang, translations, userInfo, valiselvitys } = props
   const translator = new Translator(translations)
   return translator.translate("valiselvitys-default-message", lang, "", {
     "selvitys-type-lowercase":  translator.translate('valiselvitys', lang),
-    "selvitys-type-capitalized": _.capitalize(translator.translate('valiselvitys', lang)),
+    "selvitys-type-capitalized": capitalize(translator.translate('valiselvitys', lang)),
     "project-name": valiselvitys["project-name"] ?? hakemus["project-name"] ?? "",
     "avustushaku-name": avustushaku?.content?.name?.[lang || 'fi'] ?? '',
     "sender-name": NameFormatter.onlyFirstForename(userInfo["first-name"]) + " " + userInfo["surname"],
@@ -43,7 +43,7 @@ function initialSubject(props: ValiselvitysEmailProps) {
   const { lang, translations, valiselvitys } = props
   const translator = new Translator(translations)
   return translator.translate("default-subject", lang, "", {
-    "selvitys-type-capitalized": _.capitalize(translator.translate('valiselvitys', lang)),
+    "selvitys-type-capitalized": capitalize(translator.translate('valiselvitys', lang)),
     "register-number": valiselvitys["register-number"]
   })
 }
@@ -62,37 +62,22 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
 
   function onRecipientEmailChange(index: number, event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value
-    const oldEmails = recipientEmails
-    let newEmails
-    if (index === oldEmails.length) {
-      newEmails = oldEmails.concat(makeRecipientEmail(value))
-    } else {
-      newEmails = _.clone(oldEmails)
-      newEmails[index] = makeRecipientEmail(value)
-    }
-
-    setRecipientEmails(newEmails)
+    const newRecipients = new Array(...recipientEmails)
+    newRecipients.splice(index, 1, makeRecipientEmail(value))
+    setRecipientEmails(newRecipients)
   }
 
   function onRecipientEmailRemove(index: number) {
-    const oldEmails = recipientEmails
-    const numOldEmails = oldEmails.length
-    const newEmails = []
-
-    for (let idx = 0; idx < numOldEmails; idx += 1) {
-      if (idx !== index) {
-        newEmails.push(oldEmails[idx])
-      }
-    }
-
-    setRecipientEmails(newEmails)
+    const newRecipients = new Array(...recipientEmails)
+    newRecipients.splice(index, 1)
+    setRecipientEmails(newRecipients)
   }
 
   function onSendMessage() {
     const request = {
       message,
       "selvitys-hakemus-id": valiselvitys.id,
-      to: _.map(recipientEmails, email => email.value),
+      to: recipientEmails.map(email => email.value),
       subject
     }
     const url = `/api/avustushaku/${avustushaku.id}/selvitys/valiselvitys/send`
@@ -112,7 +97,7 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
   const title = sentSelvitysEmail
     ? "Lähetetty väliselvityksen hyväksyntä"
     : `Lähetä väliselvityksen hyväksyntä${lang === 'sv' ? ' ruotsiksi': ''}`
-  const areAllEmailsValid = !_.some(recipientEmails, email => !email.isValid)
+  const areAllEmailsValid = !recipientEmails.some(email => !email.isValid)
 
   return (
     <div data-test-id="selvitys-email">
@@ -136,21 +121,21 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
             <td className="selvitys-email-header__value">
               {sentSelvitysEmail
                 ? <a href={'mailto:' + sentSelvitysEmail.to.join(",")}>
-                    {_.map(sentSelvitysEmail.to, email => <div key={email}>{email}</div>)}
+                    {sentSelvitysEmail.to.map(email => <div key={email}>{email}</div>)}
                   </a>
-                : _.map(recipientEmails.concat(makeEmptyRecipientEmail()), (email, index) =>
+                : recipientEmails.concat(makeEmptyRecipientEmail()).map((email, index) =>
                     <div key={index} className="selvitys-email-header__value-input-container">
                       <input type="text"
                               className={ClassNames("selvitys-email-header__value-input", {
                                 "selvitys-email-header__value-input--error": !email.isValid
                               })}
                               value={email.value}
-                              onChange={_.partial(onRecipientEmailChange, index)}/>
+                              onChange={e => onRecipientEmailChange(index, e)}/>
                       {index < recipientEmails.length && (
                         <button type="button"
                                 className="selvitys-email-header__remove-value-input-button soresu-remove"
                                 tabIndex={-1}
-                                onClick={_.partial(onRecipientEmailRemove, index)}/>
+                                onClick={() => onRecipientEmailRemove(index)}/>
                       )}
                     </div>
                   )
