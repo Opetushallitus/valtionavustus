@@ -1,7 +1,7 @@
 import Dispatcher from '../Dispatcher'
 
 import FieldUpdateHandler from './FieldUpdateHandler.js'
-import SyntaxValidator from './SyntaxValidator.js'
+import SyntaxValidator from './SyntaxValidator'
 import FormStateLoop from './FormStateLoop.js'
 
 const dispatcher = new Dispatcher()

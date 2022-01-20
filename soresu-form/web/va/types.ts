@@ -266,6 +266,9 @@ export interface Form {
 
 export interface Field {
   id: string
+  key?: string
+  value?: any
+  required?: boolean
   fieldType: string
   fieldClass: string
 }

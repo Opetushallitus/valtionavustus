@@ -1,13 +1,18 @@
 import _ from 'lodash'
-import BankAccountValidator from './BankAccountValidator.js'
+
+import BankAccountValidator from './BankAccountValidator'
 import MoneyValidator from './MoneyValidator'
 import IntegerValidator from './IntegerValidator'
 import DecimalValidator from './DecimalValidator'
 import TableValidator from './TableValidator'
+import { Field } from '../va/types'
+
+type Error = { error: string }
+type Validator = { validateSyntax: (field: Field, value: any) => Error | undefined}
 
 export default class SyntaxValidator {
-  static validateSyntax(field, value, customFieldSyntaxValidator) {
-    let validationErrors = []
+  static validateSyntax(field: Field, value: any, customFieldSyntaxValidator?: Validator) {
+    let validationErrors: Error[] = []
 
     if (field.required && (!value || _.trim(value).length < 1)) {
       validationErrors = [{error: "required"}]
@@ -92,7 +97,7 @@ export default class SyntaxValidator {
     return validationErrors
   }
 
-  static validateEmail(input) {
+  static validateEmail(input: any) {
     const validEmailRegexp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
     const invalidEmailRegexp = /[^\x00-\x7F]|%0[aA]/  // eslint-disable-line no-control-regex
     const isEmailValid = _.isString(input) &&
@@ -102,14 +107,14 @@ export default class SyntaxValidator {
     return isEmailValid ? undefined : { error: "email" }
   }
 
-  static validateUrl(input) {
+  static validateUrl(input: any) {
     // http(s)://xx.xx(.xx)*/any valid url characters
     const validUrlRegexp = /^https?:\/\/[\da-z-]{2,63}(\.[\da-z-]{2,63})+(\/[a-z|0-9|\-._~:/?#[\]@!$&'()*+,;=%]*)?$/i
     const validUrl = validUrlRegexp.test(input)
     return validUrl ? undefined : { error: "url" }
   }
 
-  static validateBusinessId(input) {
+  static validateBusinessId(input: any) {
     // see: http://tarkistusmerkit.teppovuori.fi/tarkmerk.htm#y-tunnus2
     const hasValidForm = /^[0-9]{7}-[0-9]$/.test(input)
     if (!hasValidForm) {
@@ -130,11 +135,11 @@ export default class SyntaxValidator {
     return calculatedCheckDigit === checkDigit ? undefined : { error: "finnishBusinessId" }
   }
 
-  static validateIban(input) {
+  static validateIban(input: any) {
     return BankAccountValidator.isValidIban(input) ? undefined : { error: "iban" }
   }
 
-  static validateBic(input) {
+  static validateBic(input: any) {
     return BankAccountValidator.isValidBic(input) ? undefined : { error: "bic" }
   }
 }

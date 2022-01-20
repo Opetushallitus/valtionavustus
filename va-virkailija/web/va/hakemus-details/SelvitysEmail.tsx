@@ -8,16 +8,40 @@ import JsUtil from 'soresu-form/web/JsUtil'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 import Translator from 'soresu-form/web/form/Translator'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
+import { Answer, Avustushaku, Field, Hakemus, Selvitys, UserInfo } from 'soresu-form/web/va/types'
+import { Language } from 'soresu-form/web/va/i18n/translations'
+
+import { Selvitys as SelvitysType } from '../types'
+import HakemustenArviointiController from '../HakemustenArviointiController'
 
 const emailNotificationFieldType = "vaEmailNotification"
-
 const legacyEmailFieldIds = Immutable(["organization-email", "primary-email", "signature-email"])
 
-const isNonEmptyEmailField = field =>
+interface SelvitysEmailProps {
+  controller: HakemustenArviointiController
+  avustushaku: Avustushaku
+  hakemus: Hakemus
+  selvitysHakemus: Selvitys
+  selvitysType: SelvitysType
+  lang?: Language
+  userInfo: UserInfo
+  translations: any
+}
+
+type Email = { value: string, isValid: boolean }
+
+interface SelvitysEmailState {
+  currentSelvitysHakemusId: number
+  message: string
+  subject: string
+  recipientEmails: Email[]
+}
+
+const isNonEmptyEmailField = (field: Field) =>
   (field.fieldType === emailNotificationFieldType || _.includes(legacyEmailFieldIds, field.key)) &&
   !_.isEmpty(field.value)
 
-const findFirstPreferredEmail = emailFields => {
+const findFirstPreferredEmail = (emailFields: Field[]) => {
   if (!emailFields.length) {
     return null
   }
@@ -31,27 +55,27 @@ const findFirstPreferredEmail = emailFields => {
   return emailFields[0].value
 }
 
-const findRecipientEmail = (selvitysAnswers, hakemusAnswers) =>
+const findRecipientEmail = (selvitysAnswers: Answer[], hakemusAnswers: Answer[]) =>
   findFirstPreferredEmail(JsUtil.flatFilter(selvitysAnswers, isNonEmptyEmailField)) ||
     findFirstPreferredEmail(JsUtil.flatFilter(hakemusAnswers, isNonEmptyEmailField))
 
-const isValidEmail = email => !SyntaxValidator.validateEmail(email)
+const isValidEmail = (email: string) => !SyntaxValidator.validateEmail(email)
 
 const makeRecipientEmail = (value = "") => ({value, isValid: isValidEmail(value)})
 
 const makeEmptyRecipientEmail = () => ({value: "", isValid: true})
 
-const makeState = ({hakemus, selvitysType, selvitysHakemus, avustushaku, userInfo, lang, translations}) => {
+const makeState = ({hakemus, selvitysType, selvitysHakemus, avustushaku, userInfo, lang, translations}: SelvitysEmailProps) => {
   const translator = new Translator(translations)
 
   const selvitysTypeLowercase = translator.translate(selvitysType, lang)
   const selvitysTypeCapitalized = _.capitalize(translator.translate(selvitysType, lang))
-  const avustushakuName = _.get(avustushaku, ["content", "name", lang])
+  const avustushakuName = _.get(avustushaku, ["content", "name", lang || 'fi'])
   const projectName = selvitysHakemus["project-name"] || hakemus["project-name"] || ""
   const registerNumber = selvitysHakemus["register-number"]
   const senderName = NameFormatter.onlyFirstForename(userInfo["first-name"]) + " " + userInfo["surname"]
   const senderEmail = userInfo.email
-  const foundRecipientEmail = findRecipientEmail(selvitysHakemus.answers, hakemus.answers) || ""
+  const foundRecipientEmail = findRecipientEmail(selvitysHakemus.answers || [], hakemus.answers) || ""
 
   const recipientEmails = foundRecipientEmail.length > 0
     ? [makeRecipientEmail(foundRecipientEmail)]
@@ -75,19 +99,19 @@ const makeState = ({hakemus, selvitysType, selvitysHakemus, avustushaku, userInf
   }
 }
 
-const makeFinnishGenetiveFormOfSelvitysType = selvitysType =>
+const makeFinnishGenetiveFormOfSelvitysType = (selvitysType: SelvitysType) =>
   selvitysType === 'valiselvitys' ? "väliselvityksen" : "loppuselvityksen"
 
-const makeTitleForSent = selvitysType =>
+const makeTitleForSent = (selvitysType: SelvitysType) =>
   `Lähetetty ${makeFinnishGenetiveFormOfSelvitysType(selvitysType)} hyväksyntä`
 
-const makeTitleForUnsent = (selvitysType, lang) => {
+const makeTitleForUnsent = (selvitysType: SelvitysType, lang: Language) => {
   const suffix = lang === 'sv' ? " ruotsiksi" : ""
   return `Lähetä ${makeFinnishGenetiveFormOfSelvitysType(selvitysType)} hyväksyntä${suffix}`
 }
 
-export default class SelvitysEmail extends React.Component {
-  constructor(props) {
+export default class SelvitysEmail extends React.Component<SelvitysEmailProps, SelvitysEmailState> {
+  constructor(props: SelvitysEmailProps) {
     super(props)
     this.onRecipientEmailChange = this.onRecipientEmailChange.bind(this)
     this.onRecipientEmailRemove = this.onRecipientEmailRemove.bind(this)
@@ -97,7 +121,7 @@ export default class SelvitysEmail extends React.Component {
     this.state = makeState(props)
   }
 
-  static getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps(props: SelvitysEmailProps, state: SelvitysEmailState) {
     if (props.selvitysHakemus.id !== state.currentSelvitysHakemusId) {
       return makeState(props)
     } else {
@@ -105,7 +129,7 @@ export default class SelvitysEmail extends React.Component {
     }
   }
 
-  onRecipientEmailChange(index, event) {
+  onRecipientEmailChange(index: number, event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value
 
     this.setState(oldState => {
@@ -126,7 +150,7 @@ export default class SelvitysEmail extends React.Component {
     })
   }
 
-  onRecipientEmailRemove(index) {
+  onRecipientEmailRemove(index: number) {
     this.setState(oldState => {
       const oldEmails = oldState.recipientEmails
       const numOldEmails = oldEmails.length
@@ -144,11 +168,11 @@ export default class SelvitysEmail extends React.Component {
     })
   }
 
-  onSubjectChange(event) {
+  onSubjectChange(event: React.ChangeEvent<HTMLInputElement>) {
     this.setState({subject: event.target.value})
   }
 
-  onMessageChange(event) {
+  onMessageChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
     this.setState({message: event.target.value})
   }
 
@@ -193,7 +217,7 @@ export default class SelvitysEmail extends React.Component {
 
     const title = sentSelvitysEmail
       ? makeTitleForSent(selvitysType)
-      : makeTitleForUnsent(selvitysType, lang)
+      : makeTitleForUnsent(selvitysType, lang || 'fi')
 
     const areAllEmailsValid = !_.some(recipientEmails, email => !email.isValid)
 
@@ -233,7 +257,7 @@ export default class SelvitysEmail extends React.Component {
                     {index < recipientEmails.length && (
                       <button type="button"
                               className="selvitys-email-header__remove-value-input-button soresu-remove"
-                              tabIndex="-1"
+                              tabIndex={-1}
                               onClick={_.partial(this.onRecipientEmailRemove, index)}/>
                     )}
                   </div>

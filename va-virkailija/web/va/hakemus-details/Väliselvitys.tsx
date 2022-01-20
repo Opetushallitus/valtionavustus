@@ -26,14 +26,14 @@ type SelvitysProps = {
 }
 
 const Väliselvitys = ({ controller, hakemus, avustushaku, translations, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText }: SelvitysProps) => {
-  const hasSelvitys = !!hakemus.selvitys?.valiselvitys?.answers
+  const hasSelvitysAnswers = !!hakemus.selvitys?.valiselvitys?.answers
   const selvitysHakemus = hakemus.selvitys?.valiselvitys
   const form = hakemus.selvitys?.valiselvitysForm
 
   return (
     <div className="selvitys-container" data-test-id="hakemus-details-valiselvitys">
       <PresenterComment controller={controller} hakemus={hakemus} helpText={presenterCommentHelpText}/>
-      {hasSelvitys
+      {hasSelvitysAnswers
         ? <SelvitysPreview hakemus={hakemus}
                             avustushaku={avustushaku}
                             translations={translations}
@@ -50,7 +50,7 @@ const Väliselvitys = ({ controller, hakemus, avustushaku, translations, userInf
                               onRemovePayment={controller.removePayment}
                               readonly={!isPresentingOfficer}/>}
       <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType='valiselvitys' helpText={selvitysLinkHelpText} />
-      {hasSelvitys && <SelvitysEmail
+      {selvitysHakemus && hasSelvitysAnswers && <SelvitysEmail
         controller={controller}
         selvitysType='valiselvitys'
         hakemus={hakemus}
