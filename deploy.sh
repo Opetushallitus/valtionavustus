@@ -28,6 +28,11 @@ function fix_directory_permissions_after_playwright_run {
 }
 
 function main {
+  if running_on_jenkins; then
+    docker image prune --force
+    remove_all_files_ignored_or_untracked_by_git
+  fi
+  parse_env_from_script_name "deploy"
   check_requirements
   init_nodejs
   install_docker_compose
@@ -196,21 +201,4 @@ function set_env_vars {
   fi
 }
 
-function check_env {
-  FILE_NAME=$(basename "$0")
-  if echo "${FILE_NAME}" | grep -E -q 'deploy-.{2,4}\.sh'; then
-    ENV=$(echo "${FILE_NAME}" | sed -E -e 's|deploy-(.{2,4})\.sh|\1|g')
-    export ENV
-    echo "Deploying to [${ENV}]"
-  else
-    echo >&2 "Don't call this script directly"
-    exit 1
-  fi
-}
-
-if running_on_jenkins; then
-  docker image prune --force
-  remove_all_files_ignored_or_untracked_by_git
-fi
-check_env
 main "$@"

@@ -19,14 +19,18 @@ function install_docker_compose {
 }
 
 function parse_env_from_script_name {
-  local FILE_NAME=$(basename "$0")
-  if echo ${FILE_NAME}| grep -E -q '.+-[^-]{2,4}\.sh$'; then
-    export ENV=$(echo ${FILE_NAME}| sed -E -e 's|.+-([^-]{2,4})\.sh$|\1|g')
+  local BASE_FILENAME="$1"
+  FILE_NAME=$(basename "$0")
+  if echo "${FILE_NAME}" | grep -E -q "$BASE_FILENAME-.([^-]+)\.sh"; then
+    ENV=$(echo "${FILE_NAME}" | sed -E -e "s|$BASE_FILENAME-([^-]+)\.sh|\1|g")
+    export ENV
+    echo "Deploying to [${ENV}]"
   else
     echo >&2 "Don't call this script directly"
     exit 1
   fi
 }
+
 
 function running_on_jenkins {
   [ "${JENKINS_HOME:-}" != "" ]
