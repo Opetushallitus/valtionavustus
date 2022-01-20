@@ -9,7 +9,7 @@ import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
 import { Role, UserInfo } from '../types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
-import SelvitysEmail from './SelvitysEmail'
+import ValiselvitysEmail from './ValiselvitysEmail'
 
 type SelvitysProps = {
   controller: HakemustenArviointiController
@@ -27,7 +27,7 @@ type SelvitysProps = {
 
 const Väliselvitys = ({ controller, hakemus, avustushaku, translations, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText }: SelvitysProps) => {
   const hasSelvitysAnswers = !!hakemus.selvitys?.valiselvitys?.answers
-  const selvitysHakemus = hakemus.selvitys?.valiselvitys
+  const valiselvitys = hakemus.selvitys?.valiselvitys
   const form = hakemus.selvitys?.valiselvitysForm
 
   return (
@@ -38,7 +38,7 @@ const Väliselvitys = ({ controller, hakemus, avustushaku, translations, userInf
                             avustushaku={avustushaku}
                             translations={translations}
                             selvitysType='valiselvitys'
-                            selvitysHakemus={selvitysHakemus}
+                            selvitysHakemus={valiselvitys}
                             form={form} />
         : <SelvitysNotFilled avustushaku={avustushaku} selvitysType='valiselvitys'/>}
       {multibatchEnabled && (avustushaku.content as any).multiplemaksuera &&
@@ -50,15 +50,16 @@ const Väliselvitys = ({ controller, hakemus, avustushaku, translations, userInf
                               onRemovePayment={controller.removePayment}
                               readonly={!isPresentingOfficer}/>}
       <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType='valiselvitys' helpText={selvitysLinkHelpText} />
-      {selvitysHakemus && hasSelvitysAnswers && <SelvitysEmail
-        controller={controller}
-        selvitysType='valiselvitys'
-        hakemus={hakemus}
-        avustushaku={avustushaku}
-        selvitysHakemus={selvitysHakemus}
-        userInfo={userInfo}
-        translations={translations["selvitys-email"]}
-        />}
+      {valiselvitys && hasSelvitysAnswers &&
+        <ValiselvitysEmail
+          controller={controller}
+          hakemus={hakemus}
+          avustushaku={avustushaku}
+          valiselvitys={valiselvitys}
+          userInfo={userInfo}
+          translations={translations["selvitys-email"]}
+        />
+      }
     </div>
   )
 }

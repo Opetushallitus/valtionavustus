@@ -11,18 +11,16 @@ import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
 import { Answer, Avustushaku, Field, Hakemus, Selvitys, UserInfo } from 'soresu-form/web/va/types'
 import { Language } from 'soresu-form/web/va/i18n/translations'
 
-import { Selvitys as SelvitysType } from '../types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
 
 const emailNotificationFieldType = "vaEmailNotification"
 const legacyEmailFieldIds = Immutable(["organization-email", "primary-email", "signature-email"])
 
-interface SelvitysEmailProps {
+interface ValiselvitysEmailProps {
   controller: HakemustenArviointiController
   avustushaku: Avustushaku
   hakemus: Hakemus
-  selvitysHakemus: Selvitys
-  selvitysType: SelvitysType
+  valiselvitys: Selvitys
   lang?: Language
   userInfo: UserInfo
   translations: any
@@ -31,7 +29,7 @@ interface SelvitysEmailProps {
 type Email = { value: string, isValid: boolean }
 
 interface SelvitysEmailState {
-  currentSelvitysHakemusId: number
+  currentValiselvitysId: number
   message: string
   subject: string
   recipientEmails: Email[]
@@ -65,25 +63,25 @@ const makeRecipientEmail = (value = "") => ({value, isValid: isValidEmail(value)
 
 const makeEmptyRecipientEmail = () => ({value: "", isValid: true})
 
-const makeState = ({hakemus, selvitysType, selvitysHakemus, avustushaku, userInfo, lang, translations}: SelvitysEmailProps) => {
+const makeState = ({hakemus, valiselvitys, avustushaku, userInfo, lang, translations}: ValiselvitysEmailProps) => {
   const translator = new Translator(translations)
 
-  const selvitysTypeLowercase = translator.translate(selvitysType, lang)
-  const selvitysTypeCapitalized = _.capitalize(translator.translate(selvitysType, lang))
+  const selvitysTypeLowercase = translator.translate('valiselvitys', lang)
+  const selvitysTypeCapitalized = _.capitalize(translator.translate('valiselvitys', lang))
   const avustushakuName = _.get(avustushaku, ["content", "name", lang || 'fi'])
-  const projectName = selvitysHakemus["project-name"] || hakemus["project-name"] || ""
-  const registerNumber = selvitysHakemus["register-number"]
+  const projectName = valiselvitys["project-name"] || hakemus["project-name"] || ""
+  const registerNumber = valiselvitys["register-number"]
   const senderName = NameFormatter.onlyFirstForename(userInfo["first-name"]) + " " + userInfo["surname"]
   const senderEmail = userInfo.email
-  const foundRecipientEmail = findRecipientEmail(selvitysHakemus.answers || [], hakemus.answers) || ""
+  const foundRecipientEmail = findRecipientEmail(valiselvitys.answers || [], hakemus.answers) || ""
 
   const recipientEmails = foundRecipientEmail.length > 0
     ? [makeRecipientEmail(foundRecipientEmail)]
     : []
 
   return {
-    currentSelvitysHakemusId: selvitysHakemus.id,
-    message: translator.translate(selvitysType + "-default-message", lang, "", {
+    currentValiselvitysId: valiselvitys.id,
+    message: translator.translate("valiselvitys-default-message", lang, "", {
       "selvitys-type-lowercase": selvitysTypeLowercase,
       "selvitys-type-capitalized": selvitysTypeCapitalized,
       "project-name": projectName,
@@ -99,19 +97,8 @@ const makeState = ({hakemus, selvitysType, selvitysHakemus, avustushaku, userInf
   }
 }
 
-const makeFinnishGenetiveFormOfSelvitysType = (selvitysType: SelvitysType) =>
-  selvitysType === 'valiselvitys' ? "väliselvityksen" : "loppuselvityksen"
-
-const makeTitleForSent = (selvitysType: SelvitysType) =>
-  `Lähetetty ${makeFinnishGenetiveFormOfSelvitysType(selvitysType)} hyväksyntä`
-
-const makeTitleForUnsent = (selvitysType: SelvitysType, lang: Language) => {
-  const suffix = lang === 'sv' ? " ruotsiksi" : ""
-  return `Lähetä ${makeFinnishGenetiveFormOfSelvitysType(selvitysType)} hyväksyntä${suffix}`
-}
-
-export default class SelvitysEmail extends React.Component<SelvitysEmailProps, SelvitysEmailState> {
-  constructor(props: SelvitysEmailProps) {
+export default class ValiselvitysEmail extends React.Component<ValiselvitysEmailProps, SelvitysEmailState> {
+  constructor(props: ValiselvitysEmailProps) {
     super(props)
     this.onRecipientEmailChange = this.onRecipientEmailChange.bind(this)
     this.onRecipientEmailRemove = this.onRecipientEmailRemove.bind(this)
@@ -121,8 +108,8 @@ export default class SelvitysEmail extends React.Component<SelvitysEmailProps, S
     this.state = makeState(props)
   }
 
-  static getDerivedStateFromProps(props: SelvitysEmailProps, state: SelvitysEmailState) {
-    if (props.selvitysHakemus.id !== state.currentSelvitysHakemusId) {
+  static getDerivedStateFromProps(props: ValiselvitysEmailProps, state: SelvitysEmailState) {
+    if (props.valiselvitys.id !== state.currentValiselvitysId) {
       return makeState(props)
     } else {
       return null
@@ -179,15 +166,14 @@ export default class SelvitysEmail extends React.Component<SelvitysEmailProps, S
   onSendMessage() {
     const request = {
       message: this.state.message,
-      "selvitys-hakemus-id": this.props.selvitysHakemus.id,
+      "selvitys-hakemus-id": this.props.valiselvitys.id,
       to: _.map(this.state.recipientEmails, email => email.value),
       subject: this.state.subject
     }
 
     const avustushakuId = this.props.avustushaku.id
-    const selvitysType = this.props.selvitysType
     const controller = this.props.controller
-    const url = `/api/avustushaku/${avustushakuId}/selvitys/${selvitysType}/send`
+    const url = `/api/avustushaku/${avustushakuId}/selvitys/valiselvitys/send`
 
     HttpUtil.post(url, request)
       .then(() => {
@@ -202,8 +188,7 @@ export default class SelvitysEmail extends React.Component<SelvitysEmailProps, S
 
   render() {
     const {
-      selvitysHakemus,
-      selvitysType,
+      valiselvitys,
       lang
     } = this.props
 
@@ -213,11 +198,11 @@ export default class SelvitysEmail extends React.Component<SelvitysEmailProps, S
       recipientEmails
     } = this.state
 
-    const sentSelvitysEmail = selvitysHakemus["selvitys-email"]
+    const sentSelvitysEmail = valiselvitys["selvitys-email"]
 
     const title = sentSelvitysEmail
-      ? makeTitleForSent(selvitysType)
-      : makeTitleForUnsent(selvitysType, lang || 'fi')
+      ? "Lähetetty väliselvityksen hyväksyntä"
+      : `Lähetä väliselvityksen hyväksyntä${lang === 'sv' ? ' ruotsiksi': ''}`
 
     const areAllEmailsValid = !_.some(recipientEmails, email => !email.isValid)
 
