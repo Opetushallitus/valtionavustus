@@ -1,9 +1,9 @@
 import _ from 'lodash'
 
-import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
-import FormUtil from 'soresu-form/web/form/FormUtil'
-import JsUtil from 'soresu-form/web/JsUtil'
-import MathUtil from 'soresu-form/web/MathUtil'
+import InputValueStorage from '../form/InputValueStorage'
+import FormUtil from '../form/FormUtil'
+import JsUtil from '../JsUtil'
+import MathUtil from '../MathUtil'
 
 export default class VaTraineeDayUtil {
   static formatFloat(floatValue) {
