@@ -168,13 +168,14 @@
                           (:retry-multiplier smtp-config)
                           (:retry-max-time smtp-config)
                           send-fn))
-      (do (log/error "Failed sending email:" msg-description)
-          (create-email-event email-id false msg))
+      ((log/error "Failed sending email:" msg-description)
+       (create-email-event email-id false msg))
       (create-email-event email-id true msg))))
 
 (defn try-send-msg-once [msg format-plaintext-message]
-  (let [[msg-description send-fn] (create-mail-send-fn msg format-plaintext-message)
-        email-id (store-email msg format-plaintext-message)]
+  (let [body (format-plaintext-message msg)
+        [msg-description send-fn] (create-mail-send-fn msg format-plaintext-message)
+        email-id (store-email msg body)]
     (try
       (send-fn)
       (create-email-event email-id true msg)
