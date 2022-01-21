@@ -23,7 +23,6 @@ import {
   Hakemus,
   HakemusArviointiStatus,
   HakemusStatus,
-  LegacyTranslations,
   NormalizedHakemusData,
   Payment,
   Score,
