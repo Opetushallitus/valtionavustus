@@ -7,7 +7,7 @@ import Loppuselvitys from './Loppuselvitys'
 import Väliselvitys from './Väliselvitys'
 import Seuranta from './Seuranta'
 import {HakuData, SelectedHakemusAccessControl, UserInfo} from "../types";
-import {Avustushaku, Hakemus} from "soresu-form/web/va/types";
+import {Avustushaku, Hakemus, LegacyTranslations} from "soresu-form/web/va/types";
 import HakemustenArviointiController from "../HakemustenArviointiController";
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
 
@@ -18,7 +18,7 @@ interface Props {
   avustushaku: Avustushaku
   hakemus: Hakemus | undefined
   selectedHakemusAccessControl: SelectedHakemusAccessControl
-  translations: any
+  translations: LegacyTranslations
   userInfo: UserInfo
   showOthersScores: boolean
   subTab: string

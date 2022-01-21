@@ -7,7 +7,7 @@ import SelvitysNotFilled from './SelvitysNotFilled'
 import SelvitysLink from './SelvitysLink'
 import PresenterComment from './PresenterComment'
 import ApplicationPayments from './ApplicationPayments'
-import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
+import { Avustushaku, Hakemus, LegacyTranslations } from 'soresu-form/web/va/types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
 import { Role, UserInfo } from '../types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
@@ -16,7 +16,7 @@ type SelvitysProps = {
   controller: HakemustenArviointiController
   hakemus: Hakemus
   avustushaku: Avustushaku
-  translations: any
+  translations: LegacyTranslations
   userInfo: UserInfo
   multibatchEnabled: boolean
   isPresentingOfficer: boolean

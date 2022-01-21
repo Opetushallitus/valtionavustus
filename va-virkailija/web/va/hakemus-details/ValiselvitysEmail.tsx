@@ -5,7 +5,7 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 import Translator from 'soresu-form/web/form/Translator'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
-import { Avustushaku, Hakemus, Selvitys, UserInfo } from 'soresu-form/web/va/types'
+import { Avustushaku, Hakemus, LegacyTranslationDict, Selvitys, UserInfo } from 'soresu-form/web/va/types'
 import { Language } from 'soresu-form/web/va/i18n/translations'
 
 import HakemustenArviointiController from '../HakemustenArviointiController'
@@ -15,9 +15,9 @@ interface ValiselvitysEmailProps {
   avustushaku: Avustushaku
   hakemus: Hakemus
   valiselvitys: Selvitys
-  lang?: Language
+  lang: Language
   userInfo: UserInfo
-  translations: any
+  translations: LegacyTranslationDict
 }
 
 type Email = { value: string, isValid: boolean }
@@ -33,7 +33,7 @@ function initialMessage(props: ValiselvitysEmailProps) {
     "selvitys-type-lowercase":  translator.translate('valiselvitys', lang),
     "selvitys-type-capitalized": capitalize(translator.translate('valiselvitys', lang)),
     "project-name": valiselvitys["project-name"] ?? hakemus["project-name"] ?? "",
-    "avustushaku-name": avustushaku?.content?.name?.[lang || 'fi'] ?? '',
+    "avustushaku-name": avustushaku?.content?.name?.[lang] ?? '',
     "sender-name": NameFormatter.onlyFirstForename(userInfo["first-name"]) + " " + userInfo["surname"],
     "sender-email": userInfo.email
   })
@@ -44,7 +44,7 @@ function initialSubject(props: ValiselvitysEmailProps) {
   const translator = new Translator(translations)
   return translator.translate("default-subject", lang, "", {
     "selvitys-type-capitalized": capitalize(translator.translate('valiselvitys', lang)),
-    "register-number": valiselvitys["register-number"]
+    "register-number": valiselvitys["register-number"] ?? ''
   })
 }
 

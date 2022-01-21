@@ -1,9 +1,13 @@
+import { languages, Language, LegacyTranslationDict } from "../va/types"
+
 export default class Translator {
-  constructor(translations) {
+  translations: LegacyTranslationDict
+
+  constructor(translations: LegacyTranslationDict) {
     this.translations = translations
   }
 
-  getValue(key, lang, defaultValue) {
+  getValue(key: string, lang: Language, defaultValue?: string) {
     const values = this.translations[key]
 
     if (values instanceof Object) {
@@ -13,8 +17,8 @@ export default class Translator {
         return value
       }
 
-      for (const altkey in values) {
-        const altvalue = values[altkey]
+      for (const altkey in languages) {
+        const altvalue = values[altkey as Language]
 
         if (typeof altvalue !== 'undefined') {
           console.error(`No translations found for "${key}" (used fallback "${altkey}") in lang "${lang}" from:\n` + JSON.stringify(values))
@@ -29,7 +33,7 @@ export default class Translator {
     return defaultValue ? defaultValue : key
   }
 
-  static replaceKeys(value, keyValues) {
+  static replaceKeys(value: string, keyValues?: Record<string, string>) {
     const NON_BREAKING_SPACE = "\u00A0"
     if(keyValues instanceof Object) {
       for (const key in keyValues) {
@@ -40,12 +44,12 @@ export default class Translator {
     return value
   }
 
-  translate(key, lang, defaultValue, keyValues) {
+  translate(key: string, lang: Language, defaultValue?: string, keyValues?: Record<string, string>) {
     const value = this.getValue(key, lang, defaultValue)
     return Translator.replaceKeys(value, keyValues)
   }
 
-  static translateKey(translations, key, lang, keyValues, defaultValue) {
+  static translateKey(translations: LegacyTranslationDict, key: string, lang: Language, keyValues?: Record<string, string>, defaultValue?: string) {
     const translator = new Translator(translations)
     return translator.translate(key, lang, defaultValue, keyValues)
   }

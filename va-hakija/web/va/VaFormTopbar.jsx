@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
-import Translator from 'soresu-form/web/form/Translator.js'
+import Translator from 'soresu-form/web/form/Translator'
 
 import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo.jsx'
 

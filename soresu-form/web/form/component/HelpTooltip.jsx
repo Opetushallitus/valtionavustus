@@ -1,6 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
-import Translator from '../Translator.js'
+import Translator from '../Translator'
 
 export default class HelpTooltip extends React.Component {
   render() {

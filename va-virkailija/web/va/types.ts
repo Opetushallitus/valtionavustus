@@ -1,4 +1,4 @@
-import {Avustushaku, Form, Hakemus} from "soresu-form/web/va/types";
+import {Avustushaku, Form, Hakemus, LegacyTranslations} from "soresu-form/web/va/types";
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
 import { HakemusSelvitys, Loppuselvitys } from "soresu-form/web/va/status";
 import { Immutable } from "seamless-immutable";
@@ -98,7 +98,7 @@ export interface State {
         saveTime: Date | null
         serverError: string
     }
-    translations: any
+    translations: LegacyTranslations
     userInfo: UserInfo
     subTab: string
     loadingSelvitys?: boolean

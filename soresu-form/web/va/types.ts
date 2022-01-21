@@ -1,6 +1,10 @@
 import { Muutoshakemus, MuutoshakemusStatus, Talousarvio } from "./types/muutoshakemus"
+import translations from '../../resources/public/translations.json'
 
-export type Language = 'fi' | 'sv'
+export const languages = ['fi', 'sv'] as const
+export type Language = typeof languages[number]
+export type LegacyTranslations = typeof translations
+export type LegacyTranslationDict = Record<string, { [l in Language]: string }>
 
 export type HakemusFormState = {
   avustushaku: any

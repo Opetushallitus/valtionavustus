@@ -3,6 +3,7 @@
   "compilerOptions": {
     "allowJs": true,
     "noImplicitAny": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "jsx": "react",
     "outDir": "dist",

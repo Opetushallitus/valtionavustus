@@ -4,7 +4,7 @@ import _ from 'lodash'
 
 import JsUtil from 'soresu-form/web/JsUtil'
 import FormPreview from 'soresu-form/web/form/FormPreview'
-import { Answer, AnswersDelta, Avustushaku, Field, HakemusFormState, NormalizedHakemusData } from 'soresu-form/web/va/types'
+import { Answer, AnswersDelta, Avustushaku, Field, HakemusFormState, LegacyTranslations, NormalizedHakemusData } from 'soresu-form/web/va/types'
 import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
 import { getProjectEndDate } from 'soresu-form/web/va/Muutoshakemus'
 import { isoFormat, fiLongFormat } from 'soresu-form/web/va/i18n/dateformat'
@@ -223,7 +223,7 @@ class DiffDisplayingField extends React.Component<any> {
       return FormPreview.renderField(controller, null, state, infoElementValues, field, { overridingInputValue: oldAnswer.value })
     }
 
-    function createOldAttachmentVersionDisplay(controller: any, translations: any) {
+    function createOldAttachmentVersionDisplay(controller: any, translations: LegacyTranslations) {
       const attachmentVersion = findOriginalAttachmentVersion()
       const fields = state.form.content
       const htmlId = controller.constructHtmlId(fields, field.id)

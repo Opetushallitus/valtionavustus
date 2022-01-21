@@ -1,5 +1,5 @@
 import React from 'react'
-import Translator from './../Translator.js'
+import Translator from './../Translator'
 
 export default class LocalizedString extends React.Component {
   render() {

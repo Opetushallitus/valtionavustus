@@ -13,7 +13,7 @@ import SeurantaBudgetEditFormController from './SeurantaBudgetEditFormController
 import SeurantaBudgetEditComponentFactory from './SeurantaBudgetEditComponentFactory.jsx'
 
 import '../style/budgetedit.less'
-import { Answer, Avustushaku, Hakemus, Form as FormType } from 'soresu-form/web/va/types'
+import { Answer, Avustushaku, Hakemus, Form as FormType, LegacyTranslations } from 'soresu-form/web/va/types'
 import { HakuData } from '../types'
 import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
 
@@ -22,7 +22,7 @@ interface SeurantaBudgetEditingProps {
   hakemus: Hakemus
   hakuData: HakuData
   avustushaku: Avustushaku
-  translations: any
+  translations: LegacyTranslations
   muutoshakemukset?: Muutoshakemus[]
 }
 

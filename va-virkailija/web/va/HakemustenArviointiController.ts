@@ -23,11 +23,13 @@ import {
   Hakemus,
   HakemusArviointiStatus,
   HakemusStatus,
+  LegacyTranslations,
   NormalizedHakemusData,
   Payment,
   Score,
   Scoring
 } from "soresu-form/web/va/types"
+import translations from 'soresu-form/resources/public/translations.json'
 
 import HakemusArviointiStatuses
   from './hakemus-details/HakemusArviointiStatuses'
@@ -121,7 +123,7 @@ export default class HakemustenArviointiController {
         saveTime: null,
         serverError: ""
       },
-      translations: Bacon.fromPromise<any>(HttpUtil.get("/translations.json")).map(Immutable),
+      translations: Immutable(translations),
       userInfo: Bacon.fromPromise<UserInfo>(HttpUtil.get("/api/userinfo")),
       subTab: 'arviointi'
     }
