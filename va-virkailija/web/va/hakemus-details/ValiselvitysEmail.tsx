@@ -32,8 +32,8 @@ function initialMessage(props: ValiselvitysEmailProps) {
   return translator.translate("valiselvitys-default-message", lang, "", {
     "selvitys-type-lowercase":  translator.translate('valiselvitys', lang),
     "selvitys-type-capitalized": capitalize(translator.translate('valiselvitys', lang)),
-    "project-name": valiselvitys["project-name"] ?? hakemus["project-name"] ?? "",
-    "avustushaku-name": avustushaku?.content?.name?.[lang] ?? '',
+    "project-name": valiselvitys["project-name"] || hakemus["project-name"] || "",
+    "avustushaku-name": avustushaku?.content?.name?.[lang] || '',
     "sender-name": NameFormatter.onlyFirstForename(userInfo["first-name"]) + " " + userInfo["surname"],
     "sender-email": userInfo.email
   })
@@ -44,7 +44,7 @@ function initialSubject(props: ValiselvitysEmailProps) {
   const translator = new Translator(translations)
   return translator.translate("default-subject", lang, "", {
     "selvitys-type-capitalized": capitalize(translator.translate('valiselvitys', lang)),
-    "register-number": valiselvitys["register-number"] ?? ''
+    "register-number": valiselvitys["register-number"] || ''
   })
 }
 
