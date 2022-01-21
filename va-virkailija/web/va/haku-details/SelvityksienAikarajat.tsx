@@ -2,7 +2,7 @@ import React from 'react'
 import moment, {Moment} from 'moment'
 import { isoFormat } from 'soresu-form/web/va/i18n/dateformat'
 import { DateInput } from './DateInput'
-import { Avustushaku } from 'soresu-form/web/va/types'
+import { Avustushaku, HelpTexts } from 'soresu-form/web/va/types'
 import HelpTooltip from '../HelpTooltip'
 
 import '../style/selvityksien-aikarajat.less'
@@ -13,7 +13,7 @@ interface KayttoaikaProps {
   controller: {
     onChangeListener: (avustushaku: Avustushaku, { id }: { id: string }, newValue: string) => void
   }
-  helpTexts: any
+  helpTexts: HelpTexts
 }
 
 export const SelvityksienAikarajat = (props: KayttoaikaProps) => {

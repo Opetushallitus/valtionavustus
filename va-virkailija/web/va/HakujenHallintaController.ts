@@ -26,6 +26,7 @@ import {
   AvustushakuStatus,
   AvustushakuType,
   Form,
+  HelpTexts,
   LegacyTranslations,
   Payment,
   RahoitusAlue
@@ -62,7 +63,7 @@ interface State {
   environment: EnvironmentApiResponse
   codeOptions: VaCodeValue[]
   decisionLiitteet: any
-  helpTexts: any
+  helpTexts: HelpTexts
   hakuId: number
   selectedHaku: Avustushaku | undefined
   saveStatus: {

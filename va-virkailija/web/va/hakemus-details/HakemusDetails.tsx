@@ -7,7 +7,7 @@ import Loppuselvitys from './Loppuselvitys'
 import Väliselvitys from './Väliselvitys'
 import Seuranta from './Seuranta'
 import {HakuData, SelectedHakemusAccessControl, UserInfo} from "../types";
-import {Avustushaku, Hakemus, LegacyTranslations} from "soresu-form/web/va/types";
+import {Avustushaku, Hakemus, HelpTexts, LegacyTranslations} from "soresu-form/web/va/types";
 import HakemustenArviointiController from "../HakemustenArviointiController";
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
 
@@ -24,27 +24,27 @@ interface Props {
   subTab: string
   controller: HakemustenArviointiController
   environment: EnvironmentApiResponse
-  helpTexts: any
+  helpTexts: HelpTexts
 }
 
 export const HakemusDetails = (props: Props) => {
     const {controller, hakemus, avustushaku, hakuData, userInfo,
            showOthersScores, translations, environment,
            selectedHakemusAccessControl, subTab, helpTexts} = props
-    const multibatchEnabled = Boolean(environment["multibatch-payments"]?.["enabled?"])
-
-    const userOid = userInfo["person-oid"]
-    const userRole = hakuData.roles.find(r => r.oid === userOid)
-    const isPresentingOfficer =
-            !!userOid && !!userRole && userRole.role === "presenting_officer"
     if (!(typeof hakemus === 'object')) {
       return null
     }
-    const muutoshakemukset = hakemus.muutoshakemukset
 
+    const multibatchEnabled = Boolean(environment["multibatch-payments"]?.["enabled?"])
+    const userOid = userInfo["person-oid"]
+    const userRole = hakuData.roles.find(r => r.oid === userOid)
+    const isPresentingOfficer = !!userOid && !!userRole && userRole.role === "presenting_officer"
+    const muutoshakemukset = hakemus.muutoshakemukset
     const fallbackPresenter = hakuData.roles.find(r => r.role === 'presenting_officer')
     const hakemukselleUkotettuValmistelija = hakuData.roles.find(r => r.id === hakemus.arvio["presenter-role-id"]) || fallbackPresenter
     const isCurrentUserHakemukselleUkotettuValmistelija = hakemukselleUkotettuValmistelija?.oid === userOid
+    const lang = hakemus.language || 'fi'
+    const muutoshakemusUrl = `${environment["hakija-server"].url[lang]}muutoshakemus?lang=${lang}&user-key=${hakemus["user-key"]}&avustushaku-id=${avustushaku.id}`
 
     const onClose = () => {
       document.body.classList.remove('split-view')
@@ -52,6 +52,7 @@ export const HakemusDetails = (props: Props) => {
     }
 
     const onToggle = (e: React.MouseEvent) => {
+      e.preventDefault()
       document.body.classList.toggle('split-view')
       if(document.body.classList.contains('split-view')) {
         const container = document.querySelector('.hakemus-list tbody.has-selected')
@@ -60,12 +61,8 @@ export const HakemusDetails = (props: Props) => {
           container.scrollTop = selected.offsetTop - 100
         }
       }
-      e.preventDefault()
       return false
     }
-
-    const CloseButton = () => <button id="close-hakemus-button" onClick={onClose}>&times;</button>
-    const ToggleButton = () => <button id="toggle-hakemus-list-button" onClick={onToggle}>↕</button>
 
     const getSubTab = (tabName: string) => {
       switch (tabName) {
@@ -99,17 +96,35 @@ export const HakemusDetails = (props: Props) => {
                            selvitysLinkHelpText={helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"]}
                            presenterCommentHelpText={helpTexts["hankkeen_sivu__loppuselvitys___valmistelijan_huomiot"]}/>
         case 'muutoshakemukset':
-          if (!muutoshakemukset || muutoshakemukset.length === 0)
-            return <h2>Hankkeella ei ole muutoshakemuksia</h2>
-          else
-            return <Muutoshakemus environment={environment} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakemusVersion={hakemus} controller={controller} userInfo={userInfo} presenter={hakemukselleUkotettuValmistelija} isCurrentUserHakemukselleUkotettuValmistelija={isCurrentUserHakemukselleUkotettuValmistelija} />
+          return <>
+              {avustushaku.muutoshakukelpoinen &&
+                <div className="muutoshakemus-link">
+                  <a href={muutoshakemusUrl} target="_blank" data-test-id="muutoshakemus-link">Linkki muutoshakemuslomakkeeseen</a>
+                </div>
+              }
+              {muutoshakemukset?.length
+                ? <Muutoshakemus
+                    environment={environment}
+                    avustushaku={avustushaku}
+                    muutoshakemukset={muutoshakemukset}
+                    hakemusVersion={hakemus}
+                    controller={controller}
+                    userInfo={userInfo}
+                    presenter={hakemukselleUkotettuValmistelija}
+                    isCurrentUserHakemukselleUkotettuValmistelija={isCurrentUserHakemukselleUkotettuValmistelija}
+                  />
+                : <h2>Hankkeella ei ole muutoshakemuksia</h2>
+              }
+            </>
         case 'seuranta':
           return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakuData={hakuData} translations={translations} helpTexts={helpTexts}/>
         default:
           throw new Error("Bad subTab selection '" + tabName + "'")
       }
     }
-    const tab = (name: string, label: string | JSX.Element, testId?: string) => <span className={subTab === name ? 'selected' : ''} data-test-id={testId} onClick={createSubTabSelector(name)}>{label}</span>
+
+    const tab = (name: string, label: string | JSX.Element, testId?: string) =>
+      <span className={subTab === name ? 'selected' : ''} data-test-id={testId} onClick={createSubTabSelector(name)}>{label}</span>
 
     function createSubTabSelector(subTabToSelect: string) {
       return (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
@@ -118,23 +133,18 @@ export const HakemusDetails = (props: Props) => {
       }
     }
 
-    function hasNewMuutoshakemus() {
-      return muutoshakemukset && muutoshakemukset.some(m => m.status === 'new')
-    }
-
     const MuutoshakemuksetLabel = () =>
       <span className='muutoshakemus-tab'>Muutoshakemukset
-        <span className={hasNewMuutoshakemus() ? 'muutoshakemukset-warning' : ''}>
+        <span className={muutoshakemukset?.some(m => m.status === 'new') ? 'muutoshakemukset-warning' : ''}>
           (<span data-test-id="number-of-pending-muutoshakemukset">{muutoshakemukset ? muutoshakemukset.length : 0}</span>)
         </span>
       </span>
 
     return (
       <div id="hakemus-details">
-        <CloseButton/>
-        <ToggleButton/>
-        <div id="editor-subtab-selector"
-             className="fixed-tabs section-container">
+        <button id="close-hakemus-button" onClick={onClose}>&times;</button>
+        <button id="toggle-hakemus-list-button" onClick={onToggle}>↕</button>
+        <div id="editor-subtab-selector" className="fixed-tabs section-container">
           {tab('arviointi', 'Arviointi')}
           {tab('valiselvitys', 'Väliselvitys')}
           {tab('loppuselvitys', 'Loppuselvitys')}
@@ -143,8 +153,7 @@ export const HakemusDetails = (props: Props) => {
         </div>
         <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
         <div id="hakemus-arviointi" className="fixed-content">
-          <div id="tab-content"
-               className={hakemus.refused ? "disabled" : ""}>
+          <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
             {getSubTab(subTab)}
           </div>
         </div>

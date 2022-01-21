@@ -8,7 +8,7 @@ import {
   lastOrFail,
   waitUntilMinEmails
 } from "../../utils/emails";
-import { clickElementWithText } from "../../utils/util";
+import { clickElementWithText, waitForNewTab } from "../../utils/util";
 import { HAKIJA_URL, VIRKAILIJA_URL } from "../../utils/constants";
 import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
 import { MuutoshakemusValues } from "../../utils/types";
@@ -26,8 +26,10 @@ const muutoshakemus1: MuutoshakemusValues = {
 test.setTimeout(180000)
 
 test('When muutoshakemus enabled haku has been published, a hakemus has been submitted, and päätös has been sent', async ({
-  page, avustushakuID, acceptedHakemus: {hakemusID}, context, hakuProps, answers
+  page, avustushakuID, acceptedHakemus: {hakemusID, userKey}, context, hakuProps, answers
 }) => {
+  const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+
   await test.step('hakija gets the correct email content', async () => {
     const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
     emails.forEach(email => {
@@ -36,7 +38,7 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
       expect(emailContent).toContain('Pääsette tekemään muutoshakemuksen sekä muuttamaan yhteyshenkilöä ja hänen yhteystietojaan koko hankekauden ajan tästä linkistä')
     })
   })
-  const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+
   await test.step('allows virkailija to edit the original hakemus', async () => {
     await hakemustenArviointiPage.navigate(avustushakuID)
     await hakemustenArviointiPage.clickHakemus(hakemusID)
@@ -46,7 +48,7 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
       context.waitForEvent('page'),
       clickElementWithText(page, "button", "Siirry muokkaamaan")
     ])
-    expect(await modificationPage.url()).toContain(`${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=`)
+    expect(modificationPage.url()).toContain(`${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=`)
     await modificationPage.close()
   })
 
@@ -92,6 +94,14 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
 
   await test.step('navigate to muutoshakemustab', async () => {
     await hakemustenArviointiPage.clickMuutoshakemusTab()
+  })
+
+  await test.step('muutoshakemustab links to the muutoshakemus form', async () => {
+    const newPagePromise = waitForNewTab(page)
+    await hakemustenArviointiPage.page.click('[data-test-id="muutoshakemus-link"]')
+    const muutoshakemusPage = await newPagePromise
+    expect(muutoshakemusPage.url()).toContain(`${HAKIJA_URL}/muutoshakemus?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`)
+    await muutoshakemusPage.close()
   })
 
   await test.step('Displays valid muutoshakemus values', async () => {

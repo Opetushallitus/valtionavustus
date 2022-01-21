@@ -1,4 +1,4 @@
-import {Avustushaku, Form, Hakemus, LegacyTranslations} from "soresu-form/web/va/types";
+import {Avustushaku, Form, Hakemus, HelpTexts, LegacyTranslations} from "soresu-form/web/va/types";
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
 import { HakemusSelvitys, Loppuselvitys } from "soresu-form/web/va/status";
 import { Immutable } from "seamless-immutable";
@@ -85,7 +85,7 @@ export interface State {
     avustushakuList: Avustushaku[]
     hakuData: HakuData
     hakemusFilter: HakemusFilter
-    helpTexts: any
+    helpTexts: HelpTexts
     hakemusSorter: HakemusSorter[]
     modal: JSX.Element | undefined
     personSelectHakemusId: number | undefined

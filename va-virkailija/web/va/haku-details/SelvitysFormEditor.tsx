@@ -3,7 +3,7 @@ import _ from 'lodash'
 import * as Bacon from 'baconjs'
 
 import HttpUtil from "soresu-form/web/HttpUtil"
-import { Avustushaku, LegacyTranslations } from 'soresu-form/web/va/types'
+import { Avustushaku, HelpTexts, LegacyTranslations } from 'soresu-form/web/va/types'
 
 import FormEditor from './FormEditor'
 import { Lahetys, Tapahtumaloki } from './Tapahtumaloki'
@@ -16,7 +16,7 @@ type SelvitysFormEditorProps = {
   koodistos: any
   selvitysType: 'valiselvitys' | 'loppuselvitys'
   environment: any
-  helpTexts: any
+  helpTexts: HelpTexts
   formDraft: any
   formDraftJson: string
 }

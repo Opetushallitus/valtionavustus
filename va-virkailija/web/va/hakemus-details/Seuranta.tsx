@@ -8,7 +8,7 @@ import ShouldPay from './ShouldPay'
 import AllowVisibilityInExternalSystem from './AllowVisibilityInExternalSystem'
 import ShouldPayComments from './ShouldPayComments'
 import HakemustenArviointiController from '../HakemustenArviointiController'
-import { Avustushaku, Hakemus, LegacyTranslations } from 'soresu-form/web/va/types'
+import { Avustushaku, Hakemus, HelpTexts, LegacyTranslations } from 'soresu-form/web/va/types'
 import { HakuData } from '../types'
 import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
 
@@ -18,7 +18,7 @@ interface SeurantaProps {
   avustushaku: Avustushaku
   translations: LegacyTranslations
   hakuData: HakuData
-  helpTexts: any
+  helpTexts: HelpTexts
   muutoshakemukset?: Muutoshakemus[]
 }
 
