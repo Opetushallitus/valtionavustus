@@ -28,6 +28,7 @@ import {
   Form,
   HelpTexts,
   LegacyTranslations,
+  Liite,
   Payment,
   RahoitusAlue
 } from "soresu-form/web/va/types";
@@ -37,13 +38,14 @@ import {
   FilterValue,
   HakujenHallintaSubTab,
   Koodisto,
+  Koodistos,
   OnkoMuutoshakukelpoinenAvustushakuOk,
   Privileges,
   Role,
   Selvitys,
   UserInfo,
   VaCodeValue,
-  VaUserSearchResult,
+  VaUserSearch,
   VaUserSearchResults
 } from "./types";
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
@@ -56,16 +58,16 @@ interface Avustushaku extends BaseAvustushaku {
   muutoshakukelpoisuus?: OnkoMuutoshakukelpoinenAvustushakuOk
 }
 
-interface State {
+export interface State {
   hakuList: Avustushaku[],
   userInfo: UserInfo
   translations: LegacyTranslations
   environment: EnvironmentApiResponse
   codeOptions: VaCodeValue[]
-  decisionLiitteet: any
+  decisionLiitteet: Liite[]
   helpTexts: HelpTexts
   hakuId: number
-  selectedHaku: Avustushaku | undefined
+  selectedHaku: Avustushaku
   saveStatus: {
     saveInProgress: boolean
     saveTime: Date | null
@@ -78,18 +80,8 @@ interface State {
   valiselvitysFormDrafts: Record<number, Form>
   valiselvitysFormDraftsJson: Record<number, string>
   subTab: HakujenHallintaSubTab
-  vaUserSearch: {
-    input: string
-    loading: boolean
-    result: {
-      error?: boolean
-      results: VaUserSearchResult[]
-    }
-  }
-  koodistos: {
-    content: Koodisto[] | null
-    loading: boolean
-  }
+  vaUserSearch: VaUserSearch
+  koodistos: Koodistos
   filter: Filter
 }
 

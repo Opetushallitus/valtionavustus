@@ -112,6 +112,15 @@ export type HakujenHallintaSubTab =
   | 'valiselvitys'
   | 'loppuselvitys'
 
+export interface VaUserSearch {
+  input: string
+  loading: boolean
+  result: {
+    error?: boolean
+    results: VaUserSearchResult[]
+  }
+}
+
 export interface VaUserSearchResult {
   'person-oid': string
   'first-name'?: string
@@ -129,6 +138,11 @@ export interface Koodisto {
   uri: string
   name: string
   version: unknown
+}
+
+export interface Koodistos {
+  content: Koodisto[] | null
+  loading: boolean
 }
 
 interface MuutoshakemuksenVaatimaKentta {

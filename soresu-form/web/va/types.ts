@@ -276,3 +276,22 @@ export interface Field {
   fieldType: string
   fieldClass: string
 }
+
+export interface Liite {
+  group: string
+  attachments: LiiteAttachment[]
+}
+
+interface LiiteAttachment {
+  id: string
+  langs: {
+    fi: string
+    sv: string
+  }
+  versions: LiiteAttachmentVersion[]
+}
+
+interface LiiteAttachmentVersion {
+  id: string
+  description: string
+}
