@@ -6,7 +6,8 @@
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
-            [oph.soresu.common.db :refer [exec query execute! with-tx]]
+            [oph.common.email :as common-email]
+            [oph.soresu.common.db :refer [exec query execute! with-tx exec-all]]
             [clojure.java.jdbc :as jdbc]
             [compojure.core :as compojure]
             [compojure.route :as compojure-route]
@@ -284,6 +285,34 @@
           WHERE email_type = ?::virkailija.email_type
           ORDER BY virkailija.email.id"
           [type]))
+
+(defn get-emails-by-send-success [success?]
+  (let [rows (query "SELECT * FROM (
+                       SELECT DISTINCT ON (e.id) e.formatted, e.to_address, e.bcc, e.subject, ee.success
+                       FROM virkailija.email e
+                       JOIN email_event ee ON (e.id = ee.email_id)
+                       ORDER BY e.id, ee.created_at DESC
+                     ) AS r
+                     WHERE r.success = ?" [success?])]
+    (map (fn [row] (select-keys row [:formatted :to-address :bcc :subject])) rows)))
+
+(first (get-emails-by-send-success false))
+
+(defn get-emails-that-failed-to-be-sent []
+  (get-emails-by-send-success false))
+
+(defn get-emails-that-succeeded-to-be-sent []
+  (get-emails-by-send-success true))
+
+(defn generate-emails-that-failed-to-be-sent [count]
+  (let [msg {:from "f@domain" :sender "s" :to ["t@domain"] :subject "s" :type "paatos" :lang "l"}
+        ids (map (fn [_] (common-email/store-email msg "m")) (range count))]
+    (doseq [id ids]
+      (common-email/create-email-event id false msg))
+    ids))
+
+(defn delete-emails-and-events []
+  (execute! "TRUNCATE TABLE virkailija.email CASCADE" []))
 
 (defn- get-normalized-hakemus []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/normalized" [haku-id hakemus-id]
@@ -760,6 +789,30 @@
     :return virkailija-schema/DbEmails
     :summary "Return emails of the given type"
     (ok (get-emails-by-type email-type)))
+
+  (compojure-api/GET "/email/sent/failed" []
+    :return virkailija-schema/DbEmails
+    :summary "Return emails that failed to be send"
+    (ok (get-emails-that-failed-to-be-sent)))
+
+  (compojure-api/GET "/email/sent/succeeded" []
+    :return virkailija-schema/DbEmails
+    :summary "Return emails that succeeded to be send"
+    (ok (get-emails-that-succeeded-to-be-sent)))
+
+  (compojure-api/POST "/email/generate-emails-that-failed-to-be-sent" []
+    :body [body { :count s/Num }]
+    :return [s/Num]
+    :summary "Generate emails that failed to be sent and return ids"
+    (ok (generate-emails-that-failed-to-be-sent (:count body))))
+
+  (compojure-api/POST "/email/delete-emails-and-events" []
+    :summary "Delete all emails and events"
+    (ok (delete-emails-and-events)))
+
+  (compojure-api/POST "/email/retry-to-send-email" []
+    :summary "Retry to send failed email"
+    (ok (common-email/retry-sending-failed-emails)))
 
   (compojure-api/GET "/hakemus/:hakemus-id/email/:email-type" []
     :path-params [hakemus-id :- Long email-type :- s/Str]

@@ -150,7 +150,7 @@
                                      email-msg)))))]
       [msg-description send-fn])))
 
-(defn- create-email-event [email-id success msg]
+(defn create-email-event [email-id success msg]
   (let [msg-type (:type msg)
         hakemus-id (:hakemus-id msg)
         avustushaku-id (:avustushaku-id msg)
