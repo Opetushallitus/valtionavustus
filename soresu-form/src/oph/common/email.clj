@@ -171,17 +171,20 @@
        (create-email-event email-id false msg))
       (create-email-event email-id true msg))))
 
-(defn try-send-msg-once [msg format-plaintext-message]
-  (let [body (format-plaintext-message msg)
-        [_ send-fn] (create-mail-send-fn msg body)
-        email-id (store-email msg body)]
-    (try
-      (send-fn)
-      (create-email-event email-id true msg)
-      (catch Exception e
-        (log/error e (format "Failed to send message: %s" (.getMessage e)))
-        (create-email-event email-id false msg)
-        (throw e)))))
+(defn try-send-msg-once
+  ([msg format-plaintext-message]
+   (let [body (format-plaintext-message msg)
+         email-id (store-email msg body)]
+     (try-send-msg-once msg body email-id)))
+  ([msg body email-id]
+   (let [[_ send-fn] (create-mail-send-fn msg body)]
+     (try
+       (send-fn)
+       (create-email-event email-id true msg)
+       (catch Exception e
+         (log/error e (format "Failed to send message: %s" (.getMessage e)))
+         (create-email-event email-id false msg)
+         (throw e))))))
 
 (def mail-templates (atom {}))
 
@@ -269,4 +272,4 @@
     (doseq [msg messages]
       (let [body (:formatted msg)
             email-id (:email-id msg)]
-        (>!! mail-chan {:operation :send, :msg msg, :body body, :email-id email-id})))))
+        (try-send-msg-once msg body email-id)))))
