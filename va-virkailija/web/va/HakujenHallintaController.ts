@@ -7,7 +7,6 @@ import RouteParser from 'route-parser'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import Dispatcher from 'soresu-form/web/Dispatcher'
-import FormUtil from "soresu-form/web/form/FormUtil"
 import translations from 'soresu-form/resources/public/translations.json'
 
 import LocalStorage from './LocalStorage'
@@ -85,8 +84,8 @@ export interface State {
   filter: Filter
 }
 
-const ValiselvitysForm = require('./data/ValiselvitysForm.json')
-const LoppuselvitysForm = require('./data/LoppuselvitysForm.json')
+const ValiselvitysForm = require('./data/ValiselvitysForm.json') as Form
+const LoppuselvitysForm = require('./data/LoppuselvitysForm.json') as Form
 
 const dispatcher = new Dispatcher()
 
@@ -148,10 +147,10 @@ function appendFieldIfMissing(avustushaku: Avustushaku, field: 'hankkeen-alkamis
 
 function appendBudgetComponent(selvitysType: Selvitys, avustushaku: Avustushaku) {
   const form = selvitysType === "valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
-  const originalVaBudget: any = FormUtil.findFieldByFieldType(avustushaku.formContent?.content, "vaBudget")
-  const selvitysVaBudget: any = FormUtil.findFieldByFieldType(form.content, "vaBudget")
+  const originalVaBudget = avustushaku.formContent?.content.find(f => f.fieldType === "vaBudget")
   if(originalVaBudget) {
-    const childrenWithoutBudgetSummary = originalVaBudget.children.filter((i: { id: string }) => i.id !== 'budget-summary')
+    const childrenWithoutBudgetSummary = originalVaBudget.children?.filter((i: { id: string }) => i.id !== 'budget-summary')
+    const selvitysVaBudget = form.content.find(f => f.fieldType === "vaBudget")
     if (selvitysVaBudget) {
       selvitysVaBudget.children = childrenWithoutBudgetSummary
     } else {

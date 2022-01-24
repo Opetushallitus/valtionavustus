@@ -112,8 +112,7 @@ export default class FormEdit extends React.Component {
     return (
       <div className="soresu-form-edit soresu-edit">
         {readOnlyNotification}
-        <CSSTransitionGroup
-          transitionName="soresu-dynamic-children-transition">
+        <CSSTransitionGroup transitionName="soresu-dynamic-children-transition">
           {fields.map(renderField)}
         </CSSTransitionGroup>
       </div>

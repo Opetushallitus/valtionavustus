@@ -67,7 +67,7 @@ export default class FormBranchGrower {
 
     const growingChildren = growingParent.children
 
-    if (FormUtil.findField(growingChildren[growingChildren.length - 2], fieldUpdate.id)) {
+    if (growingChildren && FormUtil.findField(growingChildren[growingChildren.length - 2], fieldUpdate.id)) {
       // Is the user currently editing a field in last enabled child? If
       // so, enable the disabled child and set required status for all
       // fields in current child.
