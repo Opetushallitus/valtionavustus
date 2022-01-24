@@ -296,8 +296,6 @@
                      WHERE r.success = ?" [success?])]
     (map (fn [row] (select-keys row [:formatted :to-address :bcc :subject])) rows)))
 
-(first (get-emails-by-send-success false))
-
 (defn get-emails-that-failed-to-be-sent []
   (get-emails-by-send-success false))
 
