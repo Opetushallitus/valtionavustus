@@ -9,7 +9,7 @@ import { useTranslations } from 'soresu-form/web/va/i18n/TranslationContext'
 interface ContactPersonProps {
   avustushakuName: string
   projectName: string
-  registerNumber: string
+  registerNumber?: string
   f: FormikHook
 }
 

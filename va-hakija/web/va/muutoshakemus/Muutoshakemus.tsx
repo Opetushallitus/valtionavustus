@@ -118,9 +118,9 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
       <ErrorBoundary>
         <MuutoshakemusSection className="muutoshakemus__top-form">
           <ContactPerson
-            avustushakuName={state.avustushaku.content.name[lang]}
+            avustushakuName={state.avustushaku?.content.name[lang]}
             projectName={state.hakemus?.["project-name"] || ''}
-            registerNumber={state.avustushaku["register-number"]}
+            registerNumber={state.avustushaku?.["register-number"]}
             f={f}
           />
           {!existingNewMuutoshakemus && (

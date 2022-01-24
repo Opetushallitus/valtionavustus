@@ -37,7 +37,10 @@ export const getTalousarvioValues = (talousarvio: Meno[]): TalousarvioValues => 
   }
 }
 
-export function getProjectEndDate(avustushaku: Avustushaku, muutoshakemukset?: Muutoshakemus[], beforeMuutoshakemus?: Muutoshakemus): string | undefined {
+export function getProjectEndDate(avustushaku?: Avustushaku, muutoshakemukset?: Muutoshakemus[], beforeMuutoshakemus?: Muutoshakemus): string | undefined {
+  if (!avustushaku) {
+    return undefined
+  }
   return toFinnishDateFormat(getProjectEndMoment(avustushaku, muutoshakemukset, beforeMuutoshakemus))
 }
 

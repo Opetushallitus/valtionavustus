@@ -32,7 +32,7 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
   const hakemus = hakemusVersion.normalizedData
   const [activeMuutoshakemus, setActiveMuutoshakemus] = useState(muutoshakemukset[0].id)
   const a = muutoshakemukset.find(_ => _.id === activeMuutoshakemus)!
-  const isAccepted = a.status === 'accepted' || a.status === 'accepted_with_changes'
+  const isAccepted = a.status === 'accepted' || a.status === 'accepted_with_changes'
   const projectEndDate = getProjectEndDate(avustushaku, muutoshakemukset, a)
   const currentTalousarvio = getTalousarvio(muutoshakemukset, hakemus && hakemus.talousarvio, isAccepted ? a : undefined)
   const content = a.status === 'new' && hakemus
