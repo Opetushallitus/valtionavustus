@@ -134,6 +134,7 @@ export default class FormEditorController {
         }
       case "link":
         return {
+          text: { fi: "", sv: "" },
           params: {
             href: { fi: "http://www.oph.fi/", sv: "http://www.oph.fi/"}
           }
