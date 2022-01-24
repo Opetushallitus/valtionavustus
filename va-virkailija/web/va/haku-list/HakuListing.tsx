@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent, useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import moment from 'moment'
 
 import DateUtil from 'soresu-form/web/DateUtil'
@@ -229,8 +229,7 @@ const DateFilter = (props: DateFilterProps) => {
     setOpen(!open)
   }
 
-  const updateFilter = (type: 'start' | 'end', event: FocusEvent<HTMLInputElement>) => {
-    const value = event.target.value
+  const updateFilter = (type: 'start' | 'end', value: string) => {
     const isValid = moment(value, [fiShortFormat], true).isValid() || value === ""
     if (isValid) {
       controller.setFilter((filterField + type) as FilterId, value)
@@ -242,14 +241,24 @@ const DateFilter = (props: DateFilterProps) => {
     }
   }
 
+  const onDelete = () => {
+    setStartValue('')
+    setEndValue('')
+    setInvalidstart(false)
+    setInvalidend(false)
+    updateFilter('start', '')
+    updateFilter('end', '')
+  }
+
   return (
     <div className="status-filter">
       <a onClick={handleClick}>{label}</a>
+      <button type="button" hidden={!startValue && !endValue} onClick={onDelete} className="filter-remove" title="Poista tilojen rajaukset" tabIndex={-1} />
       <div className="status-filter-popup popup-box-shadow" hidden={!open}>
         <label>Alkaen</label>
-        <input type="text" onBlur={e => updateFilter('start', e)} onChange={e => setStartValue(e.target.value)} className={invalidstart ? 'error' : ''} placeholder="p.k.vvvv" value={startValue}/>
+        <input type="text" onBlur={e => updateFilter('start', e.target.value)} onChange={e => setStartValue(e.target.value)} className={invalidstart ? 'error' : ''} placeholder="p.k.vvvv" value={startValue}/>
         <label>Loppuu</label>
-        <input type="text" onBlur={e => updateFilter('end', e)} onChange={e => setEndValue(e.target.value)} className={invalidend ? 'error' : ''}  placeholder="p.k.vvvv" value={endValue}/>
+        <input type="text" onBlur={e => updateFilter('end', e.target.value)} onChange={e => setEndValue(e.target.value)} className={invalidend ? 'error' : ''}  placeholder="p.k.vvvv" value={endValue}/>
       </div>
     </div>
   )
