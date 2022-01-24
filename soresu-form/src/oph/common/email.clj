@@ -31,24 +31,6 @@
 (def legacy-email-field-ids-without-contact-email
   (remove #(= contact-email-field-id %) legacy-email-field-ids))
 
-(defn- try-send! [time multiplier max-time send-fn]
-  (if (>= time max-time)
-    (do
-      (log/warn (format "Aborting sending message after too many failures (%d of %d ms)"
-                        time
-                        max-time))
-      false)
-    (try
-      (send-fn)
-      true
-      (catch Exception e
-        (log/warn e (format "Error in sending, trying again (%d of %d ms): %s"
-                            time
-                            max-time
-                            (.getMessage e)))
-        (Thread/sleep time)
-        (try-send! (* time multiplier) multiplier max-time send-fn)))))
-
 (defn- trim-ws-or-nil [str]
   (when str
     (common-string/trim-ws str)))
@@ -161,16 +143,6 @@
             [avustushaku-id hakemus-id muutoshakemus-id email-id (name msg-type) success])
   (log/info (str "Succesfully stored email event for email: " email-id))))
 
-(defn- send-msg! [msg body email-id]
-  (let [[msg-description send-fn] (create-mail-send-fn msg body)]
-    (if (not (try-send! (:retry-initial-wait smtp-config)
-                          (:retry-multiplier smtp-config)
-                          (:retry-max-time smtp-config)
-                          send-fn))
-      ((log/error "Failed sending email:" msg-description)
-       (create-email-event email-id false msg))
-      (create-email-event email-id true msg))))
-
 (defn try-send-msg-once
   ([msg format-plaintext-message]
    (let [body (format-plaintext-message msg)
@@ -198,7 +170,7 @@
                     :stop true
                     :send (do
                             (try
-                              (send-msg! (:msg msg) (:body msg) (:email-id msg))
+                              (try-send-msg-once (:msg msg) (:body msg) (:email-id msg))
                             (catch Exception e
                               (log/error e "Failed to send email")))
                             false))]
