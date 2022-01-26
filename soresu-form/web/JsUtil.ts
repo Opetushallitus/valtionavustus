@@ -1,8 +1,6 @@
 import _ from 'lodash'
 
 
-type ObjectOrArray = any[] | { [key: string]: any }
-
 const fastTraverseArray = (array: any[], func: any) => {
   for (let i = 0; i < array.length; i += 1) {
     const elem = array[i]
@@ -12,7 +10,7 @@ const fastTraverseArray = (array: any[], func: any) => {
   }
 }
 
-const fastTraverseObject = (obj: { [key: string]: any }, func: (x: ObjectOrArray) => boolean) => {
+const fastTraverseObject = (obj: any, func: (x: any) => boolean) => {
   const keys = Object.keys(obj)
   keys.forEach((k: string) => {
     const elem: any = obj[k]
@@ -23,11 +21,14 @@ const fastTraverseObject = (obj: { [key: string]: any }, func: (x: ObjectOrArray
 }
 
 export default class JsUtil {
-  static flatFilter(objectOrArray: any, nodePredicate: any) {
+  static flatFilter(objectOrArray: any,
+                    nodePredicate: (x: any) => boolean) {
     return JsUtil.traverseMatching(objectOrArray, nodePredicate, _.identity)
   }
 
-  static traverseMatching(objectOrArray: ObjectOrArray, nodePredicate: any, operation: any) {
+  static traverseMatching(objectOrArray: any,
+                          nodePredicate: (x: any) => boolean,
+                          operation: (x: any) => any): any[] {
     const results: any[] = []
     JsUtil.fastTraverse(objectOrArray, (element) => {
       if (nodePredicate(element)) {
@@ -38,7 +39,8 @@ export default class JsUtil {
     return results
   }
 
-  static findFirst(objectOrArray: ObjectOrArray, nodePredicate: any) {
+  static findFirst(objectOrArray: any,
+                   nodePredicate: (x: any) => boolean) {
     let found = false
     let object = null
     JsUtil.fastTraverse(objectOrArray, (element) => {
@@ -56,7 +58,8 @@ export default class JsUtil {
     return object
   }
 
-  static findIndexOfFirst(objectOrArray: ObjectOrArray, nodePredicate: any) {
+  static findIndexOfFirst(objectOrArray: any,
+                          nodePredicate: (x: any) => boolean) {
     let index = 0
     let found = false
     JsUtil.fastTraverse(objectOrArray, (element) => {
@@ -74,8 +77,8 @@ export default class JsUtil {
     return found ? index : -1
   }
 
-  static findJsonNodeContainingId(objectOrArray: ObjectOrArray, idToFind: string) {
-    const allNodesContainingNode = _.filter(objectOrArray, function (parentNode: ObjectOrArray) {
+  static findJsonNodeContainingId(objectOrArray: any, idToFind: string) {
+    const allNodesContainingNode = _.filter(objectOrArray, function (parentNode: any) {
       return JsUtil.findFirst(parentNode, (childNode: any) => childNode.id === idToFind) !== null
     })
     if (allNodesContainingNode.length > 1) {
@@ -85,7 +88,7 @@ export default class JsUtil {
     return _.head(allNodesContainingNode)
   }
 
-  static fastTraverse(x: ObjectOrArray, func: (_: typeof x) => boolean) {
+  static fastTraverse(x: any, func: (x: any) => boolean) {
     const shouldContinue = func(x)
 
     if (shouldContinue) {
