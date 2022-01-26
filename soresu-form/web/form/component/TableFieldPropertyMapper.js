@@ -1,9 +1,9 @@
 import _ from 'lodash'
 
 import {DefaultPropertyMapper} from './PropertyMapper'
-import MathUtil from '../../MathUtil'
 import Translator from '../Translator'
 import TableFieldUtil from './TableFieldUtil.jsx'
+import {formatDecimal, roundDecimal} from '../../MathUtil'
 
 export default class TableFieldPropertyMapper {
   static map(props) {
@@ -116,12 +116,12 @@ const makeColumnSums = (columnParams, cellValues) => {
     for (let colIndex = 0; colIndex < numColumns; colIndex += 1) {
       if (columnParams[colIndex].calculateSum) {
         const sum = sums[colIndex] || 0
-        sums[colIndex] = sum + (MathUtil.parseDecimal(cellValueRow[colIndex]) || 0)
+        sums[colIndex] = sum + (parseDecimal(cellValueRow[colIndex]) || 0)
       }
     }
   }
 
-  return _.mapValues(sums, d => MathUtil.formatDecimal(MathUtil.roundDecimal(d, 1)))
+  return _.mapValues(sums, d => formatDecimal(roundDecimal(d, 1)))
 }
 
 const appendCellRowWithValue = (cellValues, numColumns, cellValue, cellColIndex) => {

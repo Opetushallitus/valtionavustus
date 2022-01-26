@@ -3,7 +3,7 @@ import _ from 'lodash'
 import InputValueStorage from '../form/InputValueStorage'
 import FormUtil from '../form/FormUtil'
 import JsUtil from '../JsUtil'
-import MathUtil from '../MathUtil'
+import {parseDecimal} from '../MathUtil'
 
 export default class VaTraineeDayUtil {
   static formatFloat(floatValue) {
@@ -17,7 +17,7 @@ export default class VaTraineeDayUtil {
 
   static composeTotal(scopeValue, personCountValue, scopeType) {
     const parseScope = () => {
-      const value = MathUtil.parseDecimal(scopeValue)
+      const value = parseDecimal(scopeValue)
       return value ? value : 0
     }
 
@@ -35,7 +35,7 @@ export default class VaTraineeDayUtil {
     return _.reduce(
       calculatorAnswers,
       (sum, ans) => {
-        const val = MathUtil.parseDecimal(VaTraineeDayUtil.readSubfieldValue(ans.value, ans.key, subfieldType))
+        const val = parseDecimal(VaTraineeDayUtil.readSubfieldValue(ans.value, ans.key, subfieldType))
         return (val ? val : 0) + sum
       },
       0)

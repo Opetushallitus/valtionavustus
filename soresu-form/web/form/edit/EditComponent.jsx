@@ -4,7 +4,6 @@ import slug from "speakingurl"
 import _ from "lodash"
 
 import FormEditorController from "./FormEditController"
-import MathUtil from "../../MathUtil"
 import SyntaxValidator from "../SyntaxValidator"
 
 const hiddenFields = [
@@ -160,7 +159,7 @@ export class EditComponent extends React.Component {
           data-test-id={`delete-field-${field.id}`}
         >Poista</button>
       </div>) : null
-    
+
     return (
       <div key={htmlId} className={this.className()} data-test-id={`field-${field.id}`}>
         <div className="soresu-field-header">
@@ -312,7 +311,7 @@ export class TextFieldEdit extends FieldEditComponent {
     const formEditorController = this.props.formEditorController
     const editMaxLength = e => {
       const getter = f => f.params
-      const value = MathUtil.isNumeric(e.target.value) ? parseInt(e.target.value) : undefined
+      const value = isNumeric(e.target.value) ? parseInt(e.target.value) : undefined
       formEditorController.editField(field.id, getter, "maxlength", value)
     }
     const maxLengthEdit = (

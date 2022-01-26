@@ -1,7 +1,6 @@
 import _ from 'lodash'
-
-import MathUtil from '../MathUtil'
 import TableFieldUtil from './component/TableFieldUtil.jsx'
+import {representsDecimal, representsInteger} from '../MathUtil'
 
 export default class TableValidator {
   static validateTable(field, values) {
@@ -62,9 +61,9 @@ const isCellEmptyOrWs = value => !_.trim(value).length
 const isCellValueValidType = (type, value) => {
   switch (type) {
   case "integer":
-    return MathUtil.representsInteger(value)
+    return representsInteger(value)
   case "decimal":
-    return MathUtil.representsDecimal(value)
+    return representsDecimal(value)
   default:
     return true
   }

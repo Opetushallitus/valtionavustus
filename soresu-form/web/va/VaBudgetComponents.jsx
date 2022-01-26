@@ -1,10 +1,9 @@
 import React from 'react'
 import _ from 'lodash'
 import ClassNames from 'classnames'
-
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip'
-import MathUtil from 'soresu-form/web/MathUtil'
+import {percentageOf, roundDecimal, formatDecimal} from '../MathUtil'
 import Translator from 'soresu-form/web/form/Translator'
 
 export default class VaBudgetElement extends React.Component {
@@ -122,10 +121,10 @@ export class BudgetSummaryElement extends React.Component {
     const isFinancingResultANumber = totalNeeded.isValid && financing.isSelfValueANumber
     const isFinancingResultValid = totalNeeded.isValid && financing.isValid
 
-    const selfFinancingPercentage = MathUtil.percentageOf(financing.selfValue, totalNeeded.value)
-    const selfFinancingPercentageFormatted = MathUtil.formatDecimal(MathUtil.roundDecimal(
+    const selfFinancingPercentage = percentageOf(financing.selfValue, totalNeeded.value)
+    const selfFinancingPercentageFormatted = formatDecimal(roundDecimal(
       selfFinancingPercentage, 1, "floor"))
-    const ophFinancingPercentageFormatted = MathUtil.formatDecimal(MathUtil.roundDecimal(
+    const ophFinancingPercentageFormatted = formatDecimal(roundDecimal(
       100 - selfFinancingPercentage, 1, "ceil"))
 
     const financingNeededClassNames = ClassNames("total-financing-amount", {error: !totalNeeded.isValid})

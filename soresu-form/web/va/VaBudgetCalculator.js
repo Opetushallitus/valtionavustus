@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import JsUtil from 'soresu-form/web/JsUtil'
-import MathUtil from 'soresu-form/web/MathUtil'
+import {ratioShareRoundedUpOf, percentageShareRoundedUpOf} from '../MathUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import MoneyValidator from 'soresu-form/web/form/MoneyValidator'
 
@@ -101,7 +101,7 @@ export default class VaBudgetCalculator {
     }
 
     const validateFinancing = (summaryElement, minSelfFinancingPercentage, totalNeeded) => {
-      const minSelfFinancingValue = MathUtil.percentageShareRoundedUpOf(minSelfFinancingPercentage, totalNeeded)
+      const minSelfFinancingValue = percentageShareRoundedUpOf(minSelfFinancingPercentage, totalNeeded)
 
       const result = {
         minSelfValue: minSelfFinancingValue,
@@ -120,7 +120,7 @@ export default class VaBudgetCalculator {
       }
 
       if (fixedSelfFinancingRatio) {
-        const selfFinancingValue = MathUtil.ratioShareRoundedUpOf(fixedSelfFinancingRatio, totalNeeded)
+        const selfFinancingValue = ratioShareRoundedUpOf(fixedSelfFinancingRatio, totalNeeded)
 
         return _.assign(result, {
           selfValue: selfFinancingValue,

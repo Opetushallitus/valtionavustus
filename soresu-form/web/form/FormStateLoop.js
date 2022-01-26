@@ -6,10 +6,10 @@ import HttpUtil from '../HttpUtil'
 
 import InputValueStorage from './InputValueStorage'
 import JsUtil from '../JsUtil'
-import MathUtil from '../MathUtil'
 import FormStateTransitions from './FormStateTransitions'
 import FormRules from './FormRules'
 import Translator from './Translator'
+import {isNumeric} from '../MathUtil'
 
 export default class FormStateLoop {
   constructor(dispatcher, events) {
@@ -25,7 +25,7 @@ export default class FormStateLoop {
         if (_.isObject(field.initialValue)) {
           const translator = new Translator(field)
           return translator.translate("initialValue", lang)
-        } else if (MathUtil.isNumeric(field.initialValue)) {
+        } else if (isNumeric(field.initialValue)) {
           return field.initialValue.toString()
         }
         return undefined

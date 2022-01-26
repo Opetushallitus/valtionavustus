@@ -1,73 +1,84 @@
 import { expect } from 'chai'
-import MathUtil from '../MathUtil'
+import {
+  decimalShareRoundedUpOf,
+  percentageOf,
+  roundDecimal,
+  ratioShareRoundedUpOf,
+  percentageShareRoundedUpOf,
+  formatDecimal,
+  isNumeric,
+  representsInteger,
+  representsDecimal,
+  parseDecimal,
+} from '../MathUtil'
 
 describe('Math utilities', function() {
   it('keeps precision when calculating decimal shares, rounding up', function() {
-    expect(MathUtil.decimalShareRoundedUpOf(0.17, 10900)).to.eql(1853)
+    expect(decimalShareRoundedUpOf(0.17, 10900)).to.eql(1853)
   })
 
   describe('Calculating ratio shares', function() {
     it('rounds up to nearest integer', function() {
-      expect(MathUtil.ratioShareRoundedUpOf({nominator: 17, denominator: 100}, 6034)).to.eql(1026)
+      expect(ratioShareRoundedUpOf({nominator: 17, denominator: 100}, 6034)).to.eql(1026)
     })
 
     it('keeps precision when calculating ratio shares', function() {
-      expect(MathUtil.ratioShareRoundedUpOf({nominator: 17, denominator: 100}, 10900)).to.eql(1853)
+      expect(ratioShareRoundedUpOf({nominator: 17, denominator: 100}, 10900)).to.eql(1853)
     })
 
     it('returns nominator when total is the same as the denominator', function() {
-      expect(MathUtil.ratioShareRoundedUpOf({nominator: 21, denominator: 3400}, 3400)).to.eql(21)
+      expect(ratioShareRoundedUpOf({nominator: 21, denominator: 3400}, 3400)).to.eql(21)
     })
   })
 
   it('keeps precision when calculating percentage shares, rounding up', function() {
-    expect(MathUtil.percentageShareRoundedUpOf(17, 10900)).to.eql(1853)
+    expect(percentageShareRoundedUpOf(17, 10900)).to.eql(1853)
   })
 
   it('calculates percentage', function() {
-    expect(MathUtil.percentageOf(1853, 10900)).to.eql(17)
+    expect(percentageOf(1853, 10900)).to.eql(17)
   })
 
   describe('Rounding decimals', function() {
     it('rounds decimal with traditional rounding', function() {
-      expect(MathUtil.roundDecimal(0.1,  1).toString()).to.equal('0.1')
-      expect(MathUtil.roundDecimal(0.14, 1).toString()).to.equal('0.1')
-      expect(MathUtil.roundDecimal(0.15, 1).toString()).to.equal('0.2')
-      expect(MathUtil.roundDecimal(13.455, 2).toString()).to.equal('13.46')
+      expect(roundDecimal(0.1,  1).toString()).to.equal('0.1')
+      expect(roundDecimal(0.14, 1).toString()).to.equal('0.1')
+      expect(roundDecimal(0.15, 1).toString()).to.equal('0.2')
+      expect(roundDecimal(13.455, 2).toString()).to.equal('13.46')
     })
 
     it('rounds decimal with floor rounding', function() {
-      expect(MathUtil.roundDecimal(0.1,  1, 'floor').toString()).to.equal('0.1')
-      expect(MathUtil.roundDecimal(0.10, 1, 'floor').toString()).to.equal('0.1')
-      expect(MathUtil.roundDecimal(0.19, 1, 'floor').toString()).to.equal('0.1')
-      expect(MathUtil.roundDecimal(13.119, 2, 'floor').toString()).to.equal('13.11')
+      expect(roundDecimal(0.1,  1, 'floor').toString()).to.equal('0.1')
+      expect(roundDecimal(0.10, 1, 'floor').toString()).to.equal('0.1')
+      expect(roundDecimal(0.19, 1, 'floor').toString()).to.equal('0.1')
+      expect(roundDecimal(13.119, 2, 'floor').toString()).to.equal('13.11')
     })
 
     it('rounds decimal with ceil rounding', function() {
-      expect(MathUtil.roundDecimal(0.1,  1, 'ceil').toString()).to.equal('0.1')
-      expect(MathUtil.roundDecimal(0.10, 1, 'ceil').toString()).to.equal('0.1')
-      expect(MathUtil.roundDecimal(0.11, 1, 'ceil').toString()).to.equal('0.2')
-      expect(MathUtil.roundDecimal(13.111, 2, 'ceil').toString()).to.equal('13.12')
+      expect(roundDecimal(0.1,  1, 'ceil').toString()).to.equal('0.1')
+      expect(roundDecimal(0.10, 1, 'ceil').toString()).to.equal('0.1')
+      expect(roundDecimal(0.11, 1, 'ceil').toString()).to.equal('0.2')
+      expect(roundDecimal(13.111, 2, 'ceil').toString()).to.equal('13.12')
     })
 
     it('does not display digits after decimal point when result is integer', function() {
-      expect(MathUtil.roundDecimal(0.04, 1).toString()).to.equal('0')
-      expect(MathUtil.roundDecimal(1.04, 1).toString()).to.equal('1')
-      expect(MathUtil.roundDecimal(0.09, 1, 'floor').toString()).to.equal('0')
-      expect(MathUtil.roundDecimal(1.09, 1, 'floor').toString()).to.equal('1')
-      expect(MathUtil.roundDecimal(-1.01, 1, 'ceil').toString()).to.equal('-1')
-      expect(MathUtil.roundDecimal(0.91, 1, 'ceil').toString()).to.equal('1')
+      expect(roundDecimal(0.04, 1).toString()).to.equal('0')
+      expect(roundDecimal(1.04, 1).toString()).to.equal('1')
+      expect(roundDecimal(0.09, 1, 'floor').toString()).to.equal('0')
+      expect(roundDecimal(1.09, 1, 'floor').toString()).to.equal('1')
+      expect(roundDecimal(-1.01, 1, 'ceil').toString()).to.equal('-1')
+      expect(roundDecimal(0.91, 1, 'ceil').toString()).to.equal('1')
     })
 
     it('keeps precision', function() {
-      expect(MathUtil.roundDecimal(1.005, 2).toString()).to.equal('1.01')
+      expect(roundDecimal(1.005, 2).toString()).to.equal('1.01')
     })
   })
 
   it('formats decimal', function() {
-    expect(MathUtil.formatDecimal(1.01)).to.equal('1,01')
-    expect(MathUtil.formatDecimal('1,01')).to.equal('1,01')
-    expect(MathUtil.formatDecimal('1.01')).to.equal('1,01')
+    expect(formatDecimal(1.01)).to.equal('1,01')
+    expect(formatDecimal('1,01')).to.equal('1,01')
+    expect(formatDecimal('1.01')).to.equal('1,01')
   })
 
   it('parses integers and decimals', function() {
@@ -106,11 +117,11 @@ describe('Math utilities', function() {
 
     function testParse(value) {
       return [
-        MathUtil.isNumeric(value),
+        isNumeric(value),
         parseInt(value, 10),
-        MathUtil.representsInteger(value),
-        MathUtil.parseDecimal(value),
-        MathUtil.representsDecimal(value)
+        representsInteger(value),
+        parseDecimal(value),
+        representsDecimal(value)
       ]
     }
   })

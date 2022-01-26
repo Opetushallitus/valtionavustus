@@ -4,7 +4,7 @@ import React from 'react'
 import BasicFieldComponent from 'soresu-form/web/form/component/BasicFieldComponent.jsx'
 import BasicTextField from 'soresu-form/web/form/component/BasicTextField.jsx'
 import Translator from 'soresu-form/web/form/Translator'
-import MathUtil from 'soresu-form/web/MathUtil'
+import {parseDecimal} from 'soresu-form/web/MathUtil'
 
 import VaTraineeDayUtil from 'soresu-form/web/va/VaTraineeDayUtil'
 import VaTraineeDayCalculator from 'soresu-form/web/va/VaTraineeDayCalculator.jsx'
@@ -40,7 +40,7 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
     const orgTotalStr = VaTraineeDayUtil.readSubfieldValue(originalCalcAnswer.value, fieldId, "total")
 
     const grtScopeStr = VaTraineeDayUtil.readSubfieldValue(grantedCalcAnswer.value, fieldId, "scope")
-    const grtScopeIsValid = MathUtil.parseDecimal(grtScopeStr) >= 0
+    const grtScopeIsValid = parseDecimal(grtScopeStr) >= 0
     const grtScopeTypeStr = VaTraineeDayUtil.readSubfieldValue(grantedCalcAnswer.value, fieldId, "scope-type")
     const grtPersonCountStr = VaTraineeDayUtil.readSubfieldValue(grantedCalcAnswer.value, fieldId, "person-count")
     const grtPersonCountIsValid = parseInt(grtPersonCountStr, 10) >= 0
