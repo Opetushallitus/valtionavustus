@@ -10,7 +10,11 @@ import FormUtil from './FormUtil'
 import FormRules from './FormRules'
 import FormBranchGrower from './FormBranchGrower'
 import FormBranchEditableFieldGrower from './FormBranchEditableFieldGrower'
-import FieldUpdateHandler from './FieldUpdateHandler'
+import {
+  createFieldUpdate,
+  triggerRelatedFieldValidationIfNeeded,
+  updateStateFromFieldUpdate
+} from './FieldUpdateHandler'
 import JsUtil from '../JsUtil'
 import Translator from './Translator'
 
@@ -58,13 +62,13 @@ export default class FormStateTransitions {
 
   onUpdateField(state, fieldUpdate) {
     const formOperations = state.extensionApi.formOperations
-    FieldUpdateHandler.updateStateFromFieldUpdate(state, fieldUpdate)
+    updateStateFromFieldUpdate(state, fieldUpdate)
     FormRules.applyRulesToForm(state.configuration.form, state.form, state.saveStatus.values)
     if (_.isFunction(formOperations.onFieldUpdate)) {
       formOperations.onFieldUpdate(state, fieldUpdate.field, fieldUpdate.value)
     }
     FormBranchGrower.expandGrowingFieldSetIfNeeded(state, fieldUpdate)
-    FieldUpdateHandler.triggerRelatedFieldValidationIfNeeded(state, fieldUpdate)
+    triggerRelatedFieldValidationIfNeeded(state, fieldUpdate)
     const clientSideValidationPassed = state.form.validationErrors[fieldUpdate.id].length === 0
     if (clientSideValidationPassed) {
       if (_.isFunction(formOperations.onFieldValid)) {
@@ -123,8 +127,8 @@ export default class FormStateTransitions {
         ' - was it removed maybe? State is', state)
       return
     }
-    const fieldUpdate = FieldUpdateHandler.createFieldUpdate(field, newValue, state.extensionApi.customFieldSyntaxValidator)
-    FieldUpdateHandler.updateStateFromFieldUpdate(state, fieldUpdate)
+    const fieldUpdate = createFieldUpdate(field, newValue, state.extensionApi.customFieldSyntaxValidator)
+    updateStateFromFieldUpdate(state, fieldUpdate)
     FormBranchGrower.expandGrowingFieldSetIfNeeded(state, fieldUpdate)
   }
 

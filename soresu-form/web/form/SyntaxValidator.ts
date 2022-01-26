@@ -8,7 +8,7 @@ import TableValidator from './TableValidator'
 import { Field } from '../va/types'
 
 type Error = { error: string }
-type Validator = { validateSyntax: (field: Field, value: any) => Error | undefined}
+export type Validator = { validateSyntax: (field: Field, value: any) => Error | undefined}
 
 export default class SyntaxValidator {
   static validateSyntax(field: Field, value: any, customFieldSyntaxValidator?: Validator) {
