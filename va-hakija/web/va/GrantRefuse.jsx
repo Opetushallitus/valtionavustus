@@ -1,6 +1,6 @@
 import React from "react"
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
-import DateUtil from 'soresu-form/web/DateUtil.js'
+import DateUtil from 'soresu-form/web/DateUtil.ts'
 
 export default class FormContainer extends React.Component {
   constructor(props) {

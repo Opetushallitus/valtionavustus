@@ -26,7 +26,7 @@ import {
   AvustushakuStatus,
   AvustushakuType,
   Form,
-  HelpTexts,
+  HelpTexts, Language,
   LegacyTranslations,
   Liite,
   Payment,
@@ -50,7 +50,7 @@ import {
 } from "./types";
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
 
-interface Avustushaku extends BaseAvustushaku {
+export interface Avustushaku extends BaseAvustushaku {
   roles?: Role[]
   payments?: Payment[]
   privileges?: Privileges
@@ -385,14 +385,14 @@ export default class HakujenHallintaController {
       if (!hakuname) {
         throw Error(`Failed to find hakuname ${fieldId}`)
       }
-      const lang = hakuname[1]
+      const lang = hakuname[1] as Language
       update.avustushaku.content.name[lang] = update.newValue
     } else if (fieldId.startsWith("hakuaika-")) {
       const hakuaika = /hakuaika-(\w+)/.exec(fieldId)
       if (!hakuaika) {
         throw Error(`Failed to find hakuaika ${fieldId}`)
       }
-      const startOrEnd = hakuaika[1]
+      const startOrEnd = hakuaika[1] as ('start' | 'end')
       const newDate = parseFinnishTimestamp(update.newValue, fiLongDateTimeFormat)
       if(newDate.isSame(update.avustushaku.content.duration[startOrEnd])) {
         return state
@@ -434,22 +434,22 @@ export default class HakujenHallintaController {
       if (!selectionCriteria) {
         throw Error(`Failed to find selectionCriteria ${fieldId}`)
       }
-      const index = selectionCriteria[1]
-      const lang = selectionCriteria[2]
+      const index = Number(selectionCriteria[1])
+      const lang = selectionCriteria[2] as Language
       update.avustushaku.content['selection-criteria'].items[index][lang] = update.newValue
     } else if (fieldId.startsWith("focus-area-")) {
       const focusArea = /focus-area-(\d+)-(\w+)/.exec(fieldId)
       if (!focusArea) {
         throw Error(`Failed to find focusArea ${fieldId}`)
       }
-      const index = focusArea[1]
-      const lang = focusArea[2]
+      const index = Number(focusArea[1])
+      const lang = focusArea[2] as Language
       update.avustushaku.content['focus-areas'].items[index][lang] = update.newValue
     } else if (fieldId.startsWith("set-maksuera-")) {
       update.avustushaku.content["multiplemaksuera"] = update.newValue === "true"
     } else if (update.field.id.indexOf("decision.") !== -1) {
       const fieldName = update.field.id.substr(9)
-      _.set(update.avustushaku.decision, fieldName, update.newValue)
+      _.set(update.avustushaku.decision!, fieldName, update.newValue)
     } else if (fieldId.startsWith("operational-unit-id")) {
       update.avustushaku["operational-unit-id"] = update.newValue
     } else if (fieldId.startsWith("operation-id")) {
@@ -593,7 +593,7 @@ export default class HakujenHallintaController {
       if(oldHaku) {
         oldHaku.status = response.status
         oldHaku.phase = response.phase
-        oldHaku.decision.updatedAt = response.decision.updatedAt
+        oldHaku.decision!.updatedAt = response.decision?.updatedAt
       }
       state.saveStatus.saveTime = new Date()
       state.saveStatus.serverError = ""

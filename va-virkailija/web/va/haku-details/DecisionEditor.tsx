@@ -9,35 +9,69 @@ import PaatosUrl from '../hakemus-details/PaatosUrl'
 import HelpTooltip from '../HelpTooltip'
 import { Kayttoaika } from './Kayttoaika'
 import { SelvityksienAikarajat } from './SelvityksienAikarajat'
-import { Tapahtumaloki } from './Tapahtumaloki'
+import {Lahetys, Tapahtumaloki} from './Tapahtumaloki'
 import { LastUpdated } from './LastUpdated'
+import {
+  DecisionLiite,
+  HelpTexts, Language,
+  LegacyTranslations,
+  Liite, LiiteAttachment, LiiteAttachmentVersion
+} from "soresu-form/web/va/types";
+import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
+import HakujenHallintaController, {
+  Avustushaku
+} from "../HakujenHallintaController";
 
-const DecisionField = ({avustushaku, title, id,language, onChange, helpText, dataTestId}) => {
+
+interface DecisionProps {
+  title: string
+  avustushaku: Avustushaku
+  id: string
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+  helpText?: string
+  dataTestId?: string
+  language: Language
+}
+
+const DecisionField: React.FC<DecisionProps> = ({avustushaku, title, id,language, onChange, helpText, dataTestId}) => {
   const fieldId= `decision.${id}.${language}`
   const value = _.get(avustushaku, fieldId, "")
   const titleLanguage = language === "sv" ? `${title} ruotsiksi` : title
   return(
     <div className="decision-column" data-test-id={dataTestId}>
       <label>{titleLanguage} {helpText && language === 'fi' ? <HelpTooltip content={helpText} direction="left" /> : ''} </label>
-      <textarea onChange={onChange} rows="5" id={fieldId} value={value}></textarea>
+      <textarea onChange={onChange} rows={5} id={fieldId} value={value} />
     </div>
   )
 }
 
-const DecisionFields = ({title,avustushaku,id,onChange,helpText, dataTestId}) =>
+const DecisionFields: React.FC<Omit<DecisionProps, 'language'>> = ({title,avustushaku,id,onChange,helpText, dataTestId}) =>
   <div className="decision-row">
-    {['fi','sv'].map((language)=><DecisionField key={language} title={title} avustushaku={avustushaku} id={id} language={language} onChange={onChange} helpText={helpText} dataTestId={dataTestId}></DecisionField>)}
+    <DecisionField title={title} avustushaku={avustushaku} id={id} language="fi" onChange={onChange} helpText={helpText} dataTestId={dataTestId} />
+    <DecisionField title={title} avustushaku={avustushaku} id={id} language="sv" onChange={onChange} helpText={helpText} dataTestId={dataTestId} />
   </div>
 
+interface DateFieldProps {
+  avustushaku: Avustushaku
+  controller: HakujenHallintaController
+  field: 'maksudate' | 'date'
+  label: string
+  helpTexts: HelpTexts
+}
 
-class DateField extends React.Component {
-  constructor(props) {
+interface DateFieldState {
+  currentAvustushakuId: number
+  value: any
+}
+
+class DateField extends React.Component<DateFieldProps, DateFieldState> {
+  constructor(props: DateFieldProps) {
     super(props)
     this.state = DateField.initialState(props)
     this.onChange = this.onChange.bind(this)
   }
 
-  static getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps(props: DateFieldProps, state: DateFieldState) {
     if (props.avustushaku.id !== state.currentAvustushakuId) {
       return DateField.initialState(props)
     } else {
@@ -45,18 +79,18 @@ class DateField extends React.Component {
     }
   }
 
-  static initialState(props) {
+  static initialState(props: DateFieldProps): DateFieldState {
     return {
       currentAvustushakuId: props.avustushaku.id,
       value: DateField.value(props, props.field)
     }
   }
 
-  static value(props,field) {
-    return _.get(props.avustushaku, `decision.${field}`, "") || ""
+  static value(props: DateFieldProps, field: 'date' | 'maksudate') {
+    return props.avustushaku.decision?.[field] || ""
   }
 
-  onChange(event) {
+  onChange(event: React.ChangeEvent<HTMLInputElement>) {
     this.setState({value: event.target.value})
     this.props.controller.onChangeListener(this.props.avustushaku, event.target, event.target.value)
   }
@@ -76,10 +110,23 @@ class DateField extends React.Component {
   }
 }
 
-class LiitteetSelection extends React.Component {
-  constructor(props) {
+interface LiitteetSelectionProps {
+  environment: EnvironmentApiResponse
+  avustushaku: Avustushaku
+  decisionLiitteet: Liite[]
+  controller: HakujenHallintaController
+  helpTexts: HelpTexts
+}
+
+interface LiitteetSelectionState {
+  selectedLiitteet: Record<string, string>
+  selectedVersions: Record<string, string | undefined>
+}
+
+class LiitteetSelection extends React.Component<LiitteetSelectionProps, LiitteetSelectionState> {
+  constructor(props: LiitteetSelectionProps) {
     super(props)
-    const selectedLiitteet = _.get(this.props.avustushaku, "decision.liitteet", [])
+    const selectedLiitteet = this.props.avustushaku?.decision?.liitteet ?? []
     this.state = {
       selectedLiitteet: this.makeSelectedLiitteet(selectedLiitteet),
       selectedVersions: this.makeSelectedVersions(selectedLiitteet)
@@ -88,18 +135,18 @@ class LiitteetSelection extends React.Component {
     this.onChangeLiiteVersion = this.onChangeLiiteVersion.bind(this)
   }
 
-  makeSelectedLiitteet(selectedLiitteet) {
+  makeSelectedLiitteet(selectedLiitteet: DecisionLiite[]) {
     const available = this.props.decisionLiitteet
 
-    const findAvailableLiite = liite => {
-      const foundGroup = _.find(available, l => l.group === liite.group)
+    const findAvailableLiite = (liite: DecisionLiite): LiiteAttachment | undefined => {
+      const foundGroup = available.find(l => l.group === liite.group)
       if (!foundGroup) {
         return undefined
       }
-      return _.find(foundGroup.attachments, l => l.id === liite.id)
+      return foundGroup.attachments.find(l => l.id === liite.id)
     }
 
-    return _.reduce(selectedLiitteet, (acc, l) => {
+    return selectedLiitteet.reduce<Record<string, string>>( (acc, l) => {
       const foundSelected = findAvailableLiite(l)
       if (foundSelected) {
         acc[l.group] = foundSelected.id
@@ -108,54 +155,58 @@ class LiitteetSelection extends React.Component {
     }, {})
   }
 
-  makeSelectedVersions(selectedLiitteet) {
-    const candidateVersionsInSelectedLiitteet = _.reduce(selectedLiitteet, (acc, l) => {
+  makeSelectedVersions(selectedLiitteet: DecisionLiite[]) {
+    const candidateVersionsInSelectedLiitteet = selectedLiitteet.reduce<Record<string, string>>((acc, l) => {
       acc[l.id] = l.version
       return acc
     }, {})
 
-    return _.reduce(this.props.decisionLiitteet, (acc, g) => {
+    return this.props.decisionLiitteet.reduce<Record<string, string | undefined>>((acc, g) => {
       _.forEach(g.attachments, a => {
         const userSelectedVersion = candidateVersionsInSelectedLiitteet[a.id]
         const isVersionAvailable = userSelectedVersion !== undefined && _.find(a.versions, v => v.id === userSelectedVersion) !== undefined
-        acc[a.id] = isVersionAvailable ? userSelectedVersion : _.last(a.versions).id
+        acc[a.id] = isVersionAvailable ? userSelectedVersion : _.last(a.versions)?.id
       })
       return acc
     }, {})
   }
 
-  onChangeLiite(event) {
+  onChangeLiite(event: React.ChangeEvent<HTMLInputElement>) {
     const {
       value: liiteId,
       checked: isChecked
     } = event.target
     const liiteGroup = event.target.dataset.group
-    this.setState(state => {
-      const selectedLiitteet = isChecked
-        ? _.assign({}, state.selectedLiitteet, {[liiteGroup]: liiteId})
-        : _.omit(state.selectedLiitteet, [liiteGroup])
-      this.updateSelectedLiitteet(selectedLiitteet, state.selectedVersions)
-      return {selectedLiitteet}
-    })
+    if (liiteGroup) {
+      this.setState(state => {
+        const selectedLiitteet = isChecked
+          ? _.assign({}, state.selectedLiitteet, {[liiteGroup]: liiteId})
+          : _.omit(state.selectedLiitteet, [liiteGroup])
+        this.updateSelectedLiitteet(selectedLiitteet, state.selectedVersions)
+        return {selectedLiitteet}
+      })
+    }
   }
 
-  onChangeLiiteVersion(event) {
+  onChangeLiiteVersion(event: React.ChangeEvent<HTMLInputElement>) {
     const versionId = event.target.value
     const liiteId = event.target.dataset.liite
-    this.setState(state => {
-      const selectedVersions = _.assign({}, state.selectedVersions, {[liiteId]: versionId})
-      this.updateSelectedLiitteet(state.selectedLiitteet, selectedVersions)
-      return {selectedVersions}
-    })
+    if (liiteId) {
+      this.setState(state => {
+        const selectedVersions = _.assign({}, state.selectedVersions, {[liiteId]: versionId})
+        this.updateSelectedLiitteet(state.selectedLiitteet, selectedVersions)
+        return {selectedVersions}
+      })
+    }
   }
 
-  updateSelectedLiitteet(selectedLiitteet, selectedVersions) {
+  updateSelectedLiitteet(selectedLiitteet: LiitteetSelectionState['selectedLiitteet'], selectedVersions: LiitteetSelectionState['selectedVersions']) {
     const liitteet = _.map(selectedLiitteet, (liiteId, groupId) => ({
       group: groupId,
       id: liiteId,
       version: selectedVersions[liiteId]
     }))
-    this.props.controller.onChangeListener(this.props.avustushaku, {id: "decision.liitteet"}, liitteet)
+    this.props.controller.onChangeListener(this.props.avustushaku, {id: "decision.liitteet"}, liitteet as any)
   }
 
   render() {
@@ -169,7 +220,7 @@ class LiitteetSelection extends React.Component {
     )
   }
 
-  renderLiiteGroup(group) {
+  renderLiiteGroup(group: Liite) {
     return (
       <div key={group.group}>
         <h5>{group.group} <HelpTooltip content={this.props.helpTexts[`hakujen_hallinta__päätös___${group.group.toLowerCase().replace(/ /g, "_")}`]} direction="left" /> </h5>
@@ -178,7 +229,7 @@ class LiitteetSelection extends React.Component {
     )
   }
 
-  renderLiite(attachment, groupId) {
+  renderLiite(attachment: LiiteAttachment, groupId: string) {
     const isSelected = this.state.selectedLiitteet[groupId] === attachment.id
 
     return (
@@ -201,7 +252,7 @@ class LiitteetSelection extends React.Component {
     )
   }
 
-  renderLiiteVersion(attachment, isLiiteSelected, versionSpec) {
+  renderLiiteVersion(attachment: LiiteAttachment, isLiiteSelected: boolean, versionSpec: LiiteAttachmentVersion) {
     const isSelected = this.state.selectedVersions[attachment.id] === versionSpec.id
 
     return (
@@ -220,15 +271,16 @@ class LiitteetSelection extends React.Component {
     )
   }
 
-  renderLiiteVersionLinks(attachmentId, versionSuffix) {
+  renderLiiteVersionLinks(attachmentId: string, versionSuffix: string) {
+    const languages = ["fi", "sv"] as const
     return (
       <span>
-        {_.map(["fi", "sv"], lang => this.renderLiiteVersionLink(attachmentId, versionSuffix, lang))}
+        {languages.map(lang => this.renderLiiteVersionLink(attachmentId, versionSuffix, lang))}
       </span>
     )
   }
 
-  renderLiiteVersionLink(attachmentId, versionId, lang) {
+  renderLiiteVersionLink(attachmentId: string, versionId: string, lang: Language) {
     const hakijaUrl = this.props.environment["hakija-server"].url[lang]
     const linkUrl = `${hakijaUrl}liitteet/${attachmentId}${versionId}_${lang}.pdf`
     return <a key={lang}
@@ -241,8 +293,19 @@ class LiitteetSelection extends React.Component {
   }
 }
 
-class RegenerateDecisions extends React.Component {
-  constructor(props){
+interface RegenerateDecisionsProps {
+  avustushaku: Avustushaku
+  helpTexts: HelpTexts
+}
+
+interface RegenerateDecisionState {
+  completed: boolean
+  confirm: boolean
+  regenerating?: boolean
+}
+
+class RegenerateDecisions extends React.Component<RegenerateDecisionsProps, RegenerateDecisionState> {
+  constructor(props: RegenerateDecisionsProps) {
     super(props)
     this.state = {completed:false,confirm:false}
   }
@@ -279,11 +342,22 @@ class RegenerateDecisions extends React.Component {
   }
 }
 
-class ResendDecisions extends React.Component {
-  constructor(props){
-    super(props)
-    this.state = {completed:false,confirm:false}
-  }
+interface ResendDecisionProps {
+  avustushaku: Avustushaku
+  helpTexts: HelpTexts
+  reload: () => void
+  sent?: number
+}
+
+interface ResendDecisionsState {
+  completed: boolean
+  confirm: boolean
+  resending?: boolean
+  resendError?: string
+}
+
+class ResendDecisions extends React.Component<ResendDecisionProps, ResendDecisionsState> {
+  state: ResendDecisionsState = {completed:false,confirm:false}
 
   render(){
     const avustushaku = this.props.avustushaku
@@ -300,7 +374,7 @@ class ResendDecisions extends React.Component {
         this.props.reload()
       })
       sendS.onError(err => {
-        const setPäätösResendError = errorText =>
+        const setPäätösResendError = (errorText: string) =>
           this.setState({resending: false, resendError: errorText, confirm: false})
         if (err.name === "HttpResponseError" && err.response.status === 400) {
           setPäätösResendError(err.response.data.error)
@@ -330,8 +404,67 @@ class ResendDecisions extends React.Component {
   }
 }
 
-class DecisionDateAndSend extends React.Component {
-  constructor(props){
+interface DecisionDateAndSendProps {
+  avustushaku: Avustushaku
+  controller: HakujenHallintaController
+  environment: EnvironmentApiResponse
+  helpTexts: HelpTexts
+}
+
+interface Paatos {
+  id: number
+  version: number
+  "organization-name": string
+  "project-name": string
+  "sent-emails": any
+  view_count: number
+  user_key: string
+  "sent-time": string
+}
+
+interface PaatosSentRes {
+  count: number
+  sent: number
+  mail: any
+  "sent-time": string
+  "example-url": string
+  "example-refuse-url": string
+  "example-modify-url": string
+  paatokset: Paatos[]
+}
+
+interface DecisionAndSendState {
+  currentAvustushakuId: number
+  preview: boolean
+  sending: boolean
+  count?: number
+  sent?: number
+  mail?: any
+  sentTime?: string
+  exampleUrl?: string
+  exampleRefuseUrl?: string
+  exampleModifyUrl?: string
+  paatokset?: Paatos[]
+  lahetykset?: Lahetys[]
+  sendError?: string
+  paatosDetail?: number
+  paatosViews?: (PaatosView & {timeFormatted: string})[]
+}
+
+interface PaatosView {
+  id: number
+  hakemus_id: number
+  view_time: string
+  headers: any
+  remote_addr: string
+}
+
+interface PaatosViewsRes {
+  views: PaatosView[]
+}
+
+class DecisionDateAndSend extends React.Component<DecisionDateAndSendProps, DecisionAndSendState> {
+  constructor(props: DecisionDateAndSendProps){
     super(props)
     this.state = DecisionDateAndSend.initialState(props)
     this.rerenderParentCallback = this.rerenderParentCallback.bind(this);
@@ -343,7 +476,7 @@ class DecisionDateAndSend extends React.Component {
     this.fetchLahetetytPaatokset(this.props.avustushaku.id)
   }
 
-  static getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps(props: DecisionDateAndSendProps, state: DecisionAndSendState) {
     if (props.avustushaku.id !== state.currentAvustushakuId) {
       return DecisionDateAndSend.initialState(props)
     } else {
@@ -351,7 +484,7 @@ class DecisionDateAndSend extends React.Component {
     }
   }
 
-  static initialState(props) {
+  static initialState(props: DecisionDateAndSendProps): DecisionAndSendState {
     return {
       currentAvustushakuId: props.avustushaku.id,
       preview: false,
@@ -365,7 +498,7 @@ class DecisionDateAndSend extends React.Component {
     this.fetchLahetetytPaatokset(this.props.avustushaku.id)
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: DecisionDateAndSendProps) {
     if (prevProps.avustushaku.id !== this.state.currentAvustushakuId) {
       this.fetchEmailState(this.props.avustushaku.id)
     }
@@ -402,14 +535,14 @@ class DecisionDateAndSend extends React.Component {
       return '0'
     }
     //If, for some reason not all of the mails have been sent
-    if (this.state.sent !== 0 && this.state.count > 0) {
-      return `${(this.state.count-this.state.sent)}/${this.state.count}`
+    if (_.isNumber(this.state.sent) && this.state.sent !== 0 && this.state.count! > 0) {
+      return `${(this.state.count!-this.state.sent)}/${this.state.count}`
     }
     return this.state.count + ''
   }
 
-  fetchEmailState(avustushakuId) {
-    const sendS = Bacon.fromPromise(HttpUtil.get(`/api/paatos/sent/${avustushakuId}`,{}))
+  fetchEmailState(avustushakuId: number) {
+    const sendS = Bacon.fromPromise<PaatosSentRes>(HttpUtil.get(`/api/paatos/sent/${avustushakuId}`))
     sendS.onValue(res => {
       this.setState({
         ...this.state,
@@ -425,8 +558,8 @@ class DecisionDateAndSend extends React.Component {
     })
   }
 
-  fetchLahetetytPaatokset(avustushakuId) {
-    const sendS = Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}/tapahtumaloki/paatoksen_lahetys`,{}))
+  fetchLahetetytPaatokset(avustushakuId: number) {
+    const sendS = Bacon.fromPromise<Lahetys[]>(HttpUtil.get(`/api/avustushaku/${avustushakuId}/tapahtumaloki/paatoksen_lahetys`))
     sendS.onValue(lahetykset => {
       this.setState({ lahetykset })
     })
@@ -440,11 +573,11 @@ class DecisionDateAndSend extends React.Component {
 
   showTapahtumaLokiOrViimeisinLahetys() {
     return this.hasLahetetytPaatokset() ?
-      <Tapahtumaloki lahetykset={this.state.lahetykset} /> :
+      <Tapahtumaloki lahetykset={this.state.lahetykset!} /> :
       <strong>{this.state.sent} päätöstä lähetetty {this.sentTimeStamp()}</strong>
   }
 
-  sendControls(rerenderParentCallback) {
+  sendControls(rerenderParentCallback: () => void) {
     const onPreview = () => {
       this.setState({...this.state, preview:true})
       setTimeout(() => {this.setState({...this.state, preview: false})}, 5000)
@@ -459,7 +592,7 @@ class DecisionDateAndSend extends React.Component {
         }
       )
       sendS.onError(err => {
-        const setPäätösSendError = errorText =>
+        const setPäätösSendError = (errorText: string) =>
           this.setState({sending: false, sendError: errorText})
         if (err.name === "HttpResponseError" && err.response.status === 400) {
           setPäätösSendError(err.response.data.error)
@@ -473,8 +606,8 @@ class DecisionDateAndSend extends React.Component {
       return <img src="/img/ajax-loader.gif"/>
     }
 
-    const onShowViews = (paatos) =>{
-      const sendS = Bacon.fromPromise(HttpUtil.get(`/api/paatos/views/${paatos.id}`,{}))
+    const onShowViews = (paatos: Paatos) =>{
+      const sendS = Bacon.fromPromise<PaatosViewsRes>(HttpUtil.get(`/api/paatos/views/${paatos.id}`))
       sendS.onValue((res)=>{
         const paatosViews = res.views.map((v)=>{
           const dateTime = `${DateUtil.asDateString(v.view_time)} ${DateUtil.asTimeString(v.view_time)}`
@@ -515,7 +648,7 @@ class DecisionDateAndSend extends React.Component {
               </tr>
             </thead>
             <tbody>
-              {this.state.paatokset.map((paatos,index)=>
+              {(this.state.paatokset ?? []).map((paatos,index)=>
                 <tr key={index}>
                   <td>{paatos.id}</td>
                   <td>
@@ -540,7 +673,7 @@ class DecisionDateAndSend extends React.Component {
                             <col width="60%"/>
                           </colgroup>
                           <tbody>
-                            {this.state.paatosViews.map((view,index)=>
+                            {(this.state.paatosViews ?? []).map((view,index)=>
                               <tr key={index}>
                                 <td>{view.timeFormatted}</td>
                                 <td>{view.remote_addr}</td>
@@ -595,7 +728,16 @@ class DecisionDateAndSend extends React.Component {
   }
 }
 
-export default class DecisionEditor extends React.Component {
+interface DecisionEditorProps {
+  avustushaku: Avustushaku
+  decisionLiitteet: Liite[]
+  environment: EnvironmentApiResponse
+  controller: HakujenHallintaController
+  translations: LegacyTranslations
+  helpTexts: HelpTexts
+}
+
+export default class DecisionEditor extends React.Component<DecisionEditorProps> {
   render() {
     const {
       avustushaku,
@@ -604,7 +746,7 @@ export default class DecisionEditor extends React.Component {
       controller,
       helpTexts
     } = this.props
-    const onChange = (e) => controller.onChangeListener(avustushaku, e.target, e.target.value)
+    const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => controller.onChangeListener(avustushaku, e.target, e.target.value)
     const fields = [
       {id:"sovelletutsaannokset",title:"Sovelletut säännökset", helpText: helpTexts["hakujen_hallinta__päätös___sovelletut_säännökset"], dataTestId:"sovelletutsaannokset"},
       {id:"kayttooikeudet",title:"Tekijänoikeudet", helpText:helpTexts["hakujen_hallinta__päätös___tekijänoikeudet"], dataTestId:"kayttooikeudet"},
@@ -614,10 +756,12 @@ export default class DecisionEditor extends React.Component {
       {id:"johtaja",title:"Johtaja", helpText:helpTexts["hakujen_hallinta__päätös___johtaja"], dataTestId:"johtaja"},
       {id:"valmistelija",title:"Esittelijä", helpText:helpTexts["hakujen_hallinta__päätös___esittelijä"], dataTestId:"valmistelija"}
     ]
-    const updatedAt = avustushaku.decision.updatedAt
-    const rahoitusAlueDecisionSubfields = _.isEmpty(avustushaku.content.rahoitusalueet)
-      ? []
-      : avustushaku.content.rahoitusalueet.map(row => <DecisionFields key={row.rahoitusalue} title={"Myönteisen päätöksen lisäteksti - " + row.rahoitusalue} avustushaku={avustushaku} id={"myonteinenlisateksti-" + row.rahoitusalue.replace(/[\s.]/g, "_")} onChange={onChange}/>)
+    const updatedAt = avustushaku.decision?.updatedAt
+    const rahoitusAlueDecisionSubfields = avustushaku
+      .content
+      .rahoitusalueet
+      ?.map(row => <DecisionFields key={row.rahoitusalue} title={"Myönteisen päätöksen lisäteksti - " + row.rahoitusalue} avustushaku={avustushaku} id={"myonteinenlisateksti-" + row.rahoitusalue.replace(/[\s.]/g, "_")} onChange={onChange}/>)
+      ?? []
 
     const mainHelp = { __html: helpTexts["hakujen_hallinta__päätös___ohje"] }
 

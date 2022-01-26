@@ -6,16 +6,14 @@ import { DateInput } from './DateInput'
 
 import '../style/kayttoaika.less'
 import 'react-widgets/styles.css'
+import HakujenHallintaController from "../HakujenHallintaController";
 
 interface KayttoaikaProps {
   avustushaku: Avustushaku
-  controller: {
-    onChangeListener: (avustushaku: object, { id }: { id: string }, newValue: string) => void
-  }
+  controller: HakujenHallintaController
 }
 
-export const Kayttoaika = (props: KayttoaikaProps) => {
-  const {avustushaku, controller} = props
+export const Kayttoaika: React.FC<KayttoaikaProps> = ({avustushaku, controller}) => {
 
   function getStoredDateFor(field: 'hankkeen-alkamispaiva' | 'hankkeen-paattymispaiva'): Date | undefined {
     if (!avustushaku[field]) return undefined

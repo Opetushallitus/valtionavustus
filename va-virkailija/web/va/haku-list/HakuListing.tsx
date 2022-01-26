@@ -40,7 +40,7 @@ function _fieldGetter(fieldName: string) {
   throw Error("No field getter for " + fieldName)
 }
 
-function _filterWithDatePredicate(fieldGetter: (a: Avustushaku) => string, filterStart: string, filterEnd: string) {
+function _filterWithDatePredicate(fieldGetter: (a: Avustushaku) => string | Date, filterStart: string, filterEnd: string) {
   if (!filterStart && !filterEnd) {
     return () => true
   }
@@ -132,7 +132,7 @@ interface HakuRowProps {
 }
 
 const HakuRow = (props: HakuRowProps) => {
-  function toDateStr(dateTime: string) {
+  function toDateStr(dateTime: string | Date) {
     return DateUtil.asDateString(dateTime) + ' ' + DateUtil.asTimeString(dateTime)
   }
 

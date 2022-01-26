@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import DateUtil from 'soresu-form/web/DateUtil.js'
+import DateUtil from 'soresu-form/web/DateUtil.ts'
 
 export default class GrantRefusedNotice extends Component {
   render() {

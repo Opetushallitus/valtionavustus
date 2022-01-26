@@ -218,12 +218,73 @@ export interface RahoitusAlue {
   talousarviotilit: string[]
 }
 
-export type AvustushakuContent = any
+export interface AvustushakuContent {
+  name: LocalizedText
+  duration: {
+    label: LocalizedText
+    start: Date | string
+    end: Date | string
+  }
+  "focus-areas": LocalizedTextList
+  "selection-criteria": LocalizedTextList
+  "payment-size-limit"?: string
+  "payment-min-first-batch"?: number
+  "payment-fixed-limit"?: number
+  "total-grant-size"?: number
+  operation?: string
+  "operational-unit"?: string
+  project?: string
+  rahoitusalueet?: RahoitusAlue[]
+  multiplemaksuera?: boolean
+  "transaction-account"?: string
+  "document-type"?: string
+  "self-financing-percentage"?: number
+}
+
+export interface DecisionLiite {
+  group: string
+  id: string
+  version: string
+}
+
+export type Decision = Partial<{
+  date: string
+  taustaa: LocalizedTextOptional
+  "myonteinenlisateksti-Yleissivistävä_koulutus,_ml__varhaiskasvatus": LocalizedTextOptional
+  "myonteinenlisateksti-Ammatillinen_koulutus": LocalizedTextOptional
+  "myonteinenlisateksti-Aikuiskoulutus_ja_vapaa_sivistystyö": LocalizedTextOptional
+  "myonteinenlisateksti-Koko_opetustoimi": LocalizedTextOptional
+  "myonteinenlisateksti-Kansalaisopisto": LocalizedTextOptional
+  "myonteinenlisateksti-Kansanopisto": LocalizedTextOptional
+  "myonteinenlisateksti-Opintokeskus": LocalizedTextOptional
+  "myonteinenlisateksti-Kesäyliopisto": LocalizedTextOptional
+  "myonteinenlisateksti-Poikkeus": LocalizedTextOptional
+  "myonteinenlisateksti-Tiedeolympialaistoiminta": LocalizedTextOptional
+  "myonteinenlisateksti-koulut_ja_kotiperuskoulut": LocalizedTextOptional
+  "myonteinenlisateksti-Muut_järjestöt": LocalizedTextOptional
+  "myonteinenlisateksti-Kristillisten_koulujen_kerhotoiminta": LocalizedTextOptional
+  maksu: LocalizedTextOptional
+  maksudate: string
+  kaytto: LocalizedTextOptional
+  kayttotarkoitus: LocalizedTextOptional
+  kayttooikeudet: LocalizedTextOptional
+  selvitysvelvollisuus: LocalizedTextOptional
+  kayttoaika: LocalizedTextOptional
+  lisatiedot: LocalizedTextOptional
+  myonteinenlisateksti: LocalizedTextOptional
+  sovelletutsaannokset: LocalizedTextOptional
+  johtaja: LocalizedTextOptional
+  valmistelija: LocalizedTextOptional
+  liitteet: DecisionLiite[]
+  updatedAt: string
+}>
+
+
 
 export type Avustushaku = {
   id: number
   content: AvustushakuContent
-  decision: { updatedAt: string }
+  decision?: Decision
   form: number
   form_loppuselvitys: number
   form_valiselvitys: number
@@ -268,6 +329,23 @@ export interface Form {
   validationErrors?: any
 }
 
+interface LocalizedText {
+  fi: string
+  sv: string
+}
+
+type LocalizedTextOptional = Partial<LocalizedText>
+
+interface LocalizedTextList {
+  label: LocalizedText
+  items: LocalizedText[]
+}
+
+export interface Option {
+  value: string
+  label: LocalizedText
+}
+
 export interface Field {
   id: string
   key?: string
@@ -282,7 +360,7 @@ export interface Liite {
   attachments: LiiteAttachment[]
 }
 
-interface LiiteAttachment {
+export interface LiiteAttachment {
   id: string
   langs: {
     fi: string
@@ -291,7 +369,7 @@ interface LiiteAttachment {
   versions: LiiteAttachmentVersion[]
 }
 
-interface LiiteAttachmentVersion {
+export interface LiiteAttachmentVersion {
   id: string
   description: string
 }

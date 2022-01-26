@@ -117,12 +117,12 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
       <TopBar env={state.environment?.name || ''} f={f} />
       <ErrorBoundary>
         <MuutoshakemusSection className="muutoshakemus__top-form">
-          <ContactPerson
-            avustushakuName={state.avustushaku?.content.name[lang]}
+          {state.avustushaku && (<ContactPerson
+            avustushakuName={state.avustushaku.content.name[lang]}
             projectName={state.hakemus?.["project-name"] || ''}
-            registerNumber={state.avustushaku?.["register-number"]}
+            registerNumber={state.avustushaku["register-number"]}
             f={f}
-          />
+          />)}
           {!existingNewMuutoshakemus && (
             <>
               <h2 className="muutoshakemus__sub-title">{t.applicationEdit.title}</h2>

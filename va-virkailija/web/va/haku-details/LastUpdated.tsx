@@ -3,7 +3,7 @@ import moment from 'moment-timezone'
 import { fiLongDateTimeFormatWithKlo } from 'soresu-form/web/va/i18n/dateformat'
 
 type LastUpdatedProps = {
-  updatedAt?: Date
+  updatedAt?: Date | string
   id: string
 }
 
