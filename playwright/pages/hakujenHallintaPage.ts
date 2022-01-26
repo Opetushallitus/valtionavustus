@@ -1,4 +1,4 @@
-import {expect, Page} from "@playwright/test";
+import {Dialog, expect, Page} from "@playwright/test";
 import moment from "moment";
 import fs from 'fs/promises'
 import path from "path";
@@ -66,9 +66,49 @@ export function FormEditorPage(page: Page) {
     await waitForSaveStatusOk(page)
   }
 
+  async function getFieldIds() {
+    const ids = await page.$$eval('span.soresu-field-id', elems => elems.map(e => e.textContent))
+    return ids.filter(id => id !== null) as string[]
+  }
+
+  async function addField(afterFieldId: string, newFieldType: string) {
+    await page.hover(`[data-test-id="field-add-${afterFieldId}"]`)
+    await page.click(`[data-test-id="field-${afterFieldId}"] [data-test-id="add-field-${newFieldType}"]`)
+    await page.hover('span.soresu-field-id:first-of-type') // hover on something else so that the added content from first hover doesn't change page coordinates
+  }
+
+  async function acceptDialog(dialog: Dialog) {
+    await dialog.accept()
+  }
+
+  async function removeField(fieldId: string) {
+    page.on('dialog', acceptDialog)
+    await page.click(`[data-test-id="delete-field-${fieldId}"]`)
+    await page.waitForFunction(fieldId => {
+      const fieldIds = Array.from(document.querySelectorAll('span.soresu-field-id')).map(e => e.textContent)
+      return !fieldIds.includes(fieldId)
+    }, fieldId)
+    page.removeListener('dialog', acceptDialog)
+  }
+
+  async function moveField(fieldId: string, direction: 'up' | 'down') {
+    const fields = await getFieldIds()
+    const originalIndex = fields.indexOf(fieldId)
+    const expectedIndex = direction === 'up' ? originalIndex - 1 : originalIndex + 1
+    await page.click(`[data-test-id="move-field-${direction}-${fieldId}"]`)
+    await page.waitForFunction(({ fieldId, expectedIndex }) => {
+      const fieldIds = Array.from(document.querySelectorAll('span.soresu-field-id')).map(e => e.textContent)
+      return fieldIds[expectedIndex] === fieldId
+    }, { expectedIndex, fieldId })
+  }
+
   return {
     changeLomakeJson,
     saveForm,
+    getFieldIds,
+    addField,
+    removeField,
+    moveField,
   }
 }
 

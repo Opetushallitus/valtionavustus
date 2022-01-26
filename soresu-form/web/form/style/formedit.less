@@ -42,15 +42,17 @@ div.soresu-edit {
   }
 }
 
-div.soresu-field-edit, div.soresu-appendable-wrapper-edit {
+div.soresu-field-edit,
+div.soresu-appendable-wrapper-edit {
   .soresu-focus-show-error();
   position: relative;
-  label, table.translation th {
+  label,
+  table.translation th {
     color: #000;
     font-size: 16px;
     font-weight: 400;
   }
-  input[type=radio] + label {
+  input[type="radio"] + label {
     padding: 2px 4px;
   }
 }
@@ -60,7 +62,8 @@ div.soresu-field-edit, div.soresu-appendable-wrapper-edit {
 }
 
 .translation {
-  textarea, input[type=text] {
+  textarea,
+  input[type="text"] {
     max-width: 97%;
     height: 44px;
     padding: 8px 0 8px 12px;
@@ -79,7 +82,7 @@ div.soresu-field-edit, div.soresu-appendable-wrapper-edit {
 }
 
 div.soresu-field-edit {
- .soresu-edit-properties-line {
+  .soresu-edit-properties-line {
     display: table;
     table-layout: fixed;
     margin-top: 10px;
@@ -113,9 +116,9 @@ div.soresu-field-edit {
 }
 
 .soresu-field-id-grey-box {
-  background: #EAEAEA;
+  background: #eaeaea;
   border-radius: 4px;
-  color: #817C7B;
+  color: #817c7b;
   padding: 3px 15px;
 }
 
@@ -125,33 +128,36 @@ div.soresu-field-edit {
 }
 
 .soresu-field-edit-tools {
-  cursor: pointer;
-  color: #a9a3a1;
-  height: 25px;
   display: flex;
-}
+  flex-direction: row;
+  align-items: center;
+  height: 28px;
 
-.soresu-field-edit-button {
-  height: 25px;
-  right: 16%;
-  display: inline-block;
-  margin-left: 10px;
-  margin-right: 10px;
+  & > button {
+    border: none;
+    margin: 0;
+    color: #a9a3a1;
+    margin-left: 4px;
+  }
+
+  & > button:not(:disabled):hover {
+    color: white;
+  }
 }
 
 .soresu-field-remove {
-  background: transparent url('../img/remove_element.png') no-repeat left 5px;
-  padding-left: 30px;
+  background: transparent;
+  padding: 4px 14px;
 }
 
 .soresu-field-move-up {
-  width: 20px;
-  background: transparent url('../img/move_element_up.png') no-repeat;
+  padding: 14px;
+  background: transparent center url("../img/move_element_up.png") no-repeat;
 }
 
 .soresu-field-move-down {
-  width: 20px;
-  background: transparent url('../img/move_element_down.png') no-repeat;
+  padding: 14px;
+  background: transparent center url("../img/move_element_down.png") no-repeat;
 }
 
 .soresu-edit-property {
@@ -184,7 +190,7 @@ div.soresu-field-edit {
     -webkit-appearance: none;
     -moz-appearance: none;
     &:checked {
-      background: #fff url('../img/checkmark.png') no-repeat 4px 4px;
+      background: #fff url("../img/checkmark.png") no-repeat 4px 4px;
     }
   }
 

@@ -135,6 +135,7 @@ export class EditComponent extends React.Component {
 
     const addElementButtons = addableFields.map((key, i) => (
       <a key={i} className="soresu-edit"
+        data-test-id={`add-field-${key}`}
         onClick={this.handleOnAddClick.bind(this, key)}>
         {EditComponent.fieldTypeInFI(key)}
       </a>
@@ -143,16 +144,25 @@ export class EditComponent extends React.Component {
     const labelEdit = this.renderTranslationTable(htmlId + "-label", this.labelName(), x => x.label)
     const editFields = addableFields.indexOf(field.fieldType) !== -1 ? (
       <div className="soresu-field-edit-tools">
-        <span onClick={this.handleOnMoveFieldUpClick.bind(this)}
-          className="soresu-field-move-up soresu-field-edit-button" />
-        <span onClick={this.handleOnMoveFieldDownClick.bind(this)}
-          className="soresu-field-move-down soresu-field-edit-button" />
-        <span onClick={this.handleOnRemoveFieldClick.bind(this)}
-          className="soresu-field-remove soresu-field-edit-button">Poista</span>
+        <button
+          onClick={this.handleOnMoveFieldUpClick.bind(this)}
+          className="soresu-field-move-up"
+          data-test-id={`move-field-up-${field.id}`}
+        />
+        <button
+          onClick={this.handleOnMoveFieldDownClick.bind(this)}
+          className="soresu-field-move-down"
+          data-test-id={`move-field-down-${field.id}`}
+        />
+        <button
+          onClick={this.handleOnRemoveFieldClick.bind(this)}
+          className="soresu-field-remove"
+          data-test-id={`delete-field-${field.id}`}
+        >Poista</button>
       </div>) : null
     
     return (
-      <div key={htmlId} className={this.className()}>
+      <div key={htmlId} className={this.className()} data-test-id={`field-${field.id}`}>
         <div className="soresu-field-header">
           <span className="soresu-field-title">
             <h3>{EditComponent.fieldTypeInFI(field.fieldType)}</h3>
@@ -160,14 +170,12 @@ export class EditComponent extends React.Component {
           <div className="soresu-field-id-grey-box">
             <b>Id</b> <span className="soresu-field-id">{field.id}</span>
           </div>
-          <span>
-            {editFields}
-          </span>
+          {editFields}
         </div>
         <div className="soresu-field-content">
           {labelEdit}
           {fieldSpecificEdit}
-          <div className="soresu-field-add">
+          <div className="soresu-field-add" data-test-id={`field-add-${field.id}`}>
             <div className="soresu-field-add-header" />
             <div className="soresu-field-adders">{addElementButtons}</div>
           </div>
