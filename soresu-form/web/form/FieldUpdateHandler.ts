@@ -4,13 +4,13 @@ import _ from 'lodash'
 import InputValueStorage from './InputValueStorage'
 import SyntaxValidator, {ValidationError, Validator} from './SyntaxValidator'
 import JsUtil from '../JsUtil'
-import {Field, FieldType} from "soresu-form/web/va/types";
+import {Field} from "soresu-form/web/va/types";
 
 export interface FieldUpdate {
   id: string
   field: Field
   value: any
-  fieldType: FieldType
+  fieldType: string
   validationErrors: ValidationError[]
 }
 

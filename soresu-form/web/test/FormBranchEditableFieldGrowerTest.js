@@ -1,7 +1,7 @@
 import { expect } from "chai"
 import Immutable from 'seamless-immutable'
 import FormUtil from "../form/FormUtil"
-import FormBranchEditableFieldGrower from "../form/FormBranchEditableFieldGrower"
+import {ensureFirstChildIsRequired} from "../form/FormBranchEditableFieldGrower"
 
 describe("FormBranchEditableFieldGrower", () => {
   it("modifies form fields and answers for growing fieldset fields so that both have fieldset child in fieldset prototype position", () => {
@@ -44,7 +44,7 @@ describe("FormBranchEditableFieldGrower", () => {
       extensionApi: {}
     }
 
-    FormBranchEditableFieldGrower.ensureFirstChildIsRequired(state, FormUtil.findField(state.form.content, "my-fieldset"))
+    ensureFirstChildIsRequired(state, FormUtil.findField(state.form.content, "my-fieldset"))
 
     expect(getFieldsetIdTree(state.form.content)).to.eql([
       ["my-fieldset-1", ["my-fieldset-1.name", "my-fieldset-1.email"]],
@@ -128,7 +128,7 @@ describe("FormBranchEditableFieldGrower", () => {
       extensionApi: {}
     }
 
-    FormBranchEditableFieldGrower.ensureFirstChildIsRequired(state, FormUtil.findField(state.form.content, "my-fieldset"))
+    ensureFirstChildIsRequired(state, FormUtil.findField(state.form.content, "my-fieldset"))
 
     expect(getFieldsetIdTree(state.form.content)).to.eql([["my-fieldset-1", ["my-fieldset-1.goal", "my-fieldset-1.money"]]])
 
@@ -192,7 +192,7 @@ describe("FormBranchEditableFieldGrower", () => {
       extensionApi: {}
     }
 
-    FormBranchEditableFieldGrower.ensureFirstChildIsRequired(state, FormUtil.findField(state.form.content, "my-fieldset"))
+    ensureFirstChildIsRequired(state, FormUtil.findField(state.form.content, "my-fieldset"))
 
     expect(state.form.validationErrors).to.eql({"my-fieldset-1.money": [{error: "money"}]})
   })
@@ -227,7 +227,7 @@ describe("FormBranchEditableFieldGrower", () => {
       extensionApi: {}
     }
 
-    FormBranchEditableFieldGrower.ensureFirstChildIsRequired(state, FormUtil.findField(state.form.content, "my-fieldset"))
+    ensureFirstChildIsRequired(state, FormUtil.findField(state.form.content, "my-fieldset"))
 
     expect(state.form.validationErrors).to.eql({"my-fieldset-1.money": [{error: "required"}]})
   })
@@ -264,7 +264,7 @@ describe("FormBranchEditableFieldGrower", () => {
       extensionApi: {}
     }
 
-    FormBranchEditableFieldGrower.ensureFirstChildIsRequired(state, FormUtil.findField(state.form.content, "my-fieldset"))
+    ensureFirstChildIsRequired(state, FormUtil.findField(state.form.content, "my-fieldset"))
 
     expect(FormUtil.findField(state.form.content, "my-fieldset-1")).to.eql({
       "children": [
