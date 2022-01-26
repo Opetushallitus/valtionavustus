@@ -7,12 +7,12 @@ import DecimalValidator from './DecimalValidator'
 import TableValidator from './TableValidator'
 import { Field } from '../va/types'
 
-type Error = { error: string }
-export type Validator = { validateSyntax: (field: Field, value: any) => Error | undefined}
+export type ValidationError = { error: string }
+export type Validator = { validateSyntax: (field: Field, value: any) => ValidationError | undefined}
 
 export default class SyntaxValidator {
   static validateSyntax(field: Field, value: any, customFieldSyntaxValidator?: Validator) {
-    let validationErrors: Error[] = []
+    let validationErrors: ValidationError[] = []
 
     if (field.required && (!value || _.trim(value).length < 1)) {
       validationErrors = [{error: "required"}]
