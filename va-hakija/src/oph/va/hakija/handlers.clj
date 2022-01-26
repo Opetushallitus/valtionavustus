@@ -233,7 +233,6 @@
         avustushaku (va-db/get-avustushaku haku-id)
         phase (avustushaku-phase avustushaku)
         status (:status hakemus)
-        officer-token (:officerToken answers)
         officer-edit-authorized? (officer-edit-auth/hakemus-update-authorized? identity hakemus-id)]
     (or
       (= phase "current")
