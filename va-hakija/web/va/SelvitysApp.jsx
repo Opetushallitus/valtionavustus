@@ -7,7 +7,7 @@ import moment from 'moment-timezone'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 
 import FormController from 'soresu-form/web/form/FormController'
-import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
+import {triggerFieldUpdatesForValidation} from 'soresu-form/web/form/FieldUpdateHandler'
 import ResponseParser from 'soresu-form/web/form/ResponseParser'
 
 import VaForm from './VaForm.jsx'
@@ -101,7 +101,7 @@ class SelvitysUrlCreator extends UrlCreator {
 
 const urlCreator = new SelvitysUrlCreator(selvitysType)
 const budgetCalculator = new VaBudgetCalculator((descriptionField, state) => {
-  FieldUpdateHandler.triggerFieldUpdatesForValidation([descriptionField], state)
+  triggerFieldUpdatesForValidation([descriptionField], state)
 })
 
 function onFieldUpdate(state, field) {
