@@ -98,14 +98,10 @@ export default class FormEdit extends React.Component {
         controller, formEditorController, state, infoElementValues, field)
     }
 
-    const readOnlyNotificationText =
-      formEditorController.readOnlyNotificationText ?
-        formEditorController.readOnlyNotificationText : "Ei muokkausoikeutta"
-
     const readOnlyNotification = formEditorController.allowEditing ?
       null : (
         <div className="soresu-read-only-notification">
-          {readOnlyNotificationText}
+          Käyttäjätunnuksellasi ei ole oikeuksia muokata tätä hakua. Haun valmistelija voi lisätä sinulle oikeudet.
         </div>
       )
 

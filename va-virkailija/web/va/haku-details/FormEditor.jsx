@@ -26,7 +26,7 @@ export default class FormEditor extends Component {
       formDraft,
       onFormEdited: formEditedCallback,
       allowEditing: userHasEditPrivilege,
-      readOnlyNotificationText: "Käyttäjätunnuksellasi ei ole oikeuksia muokata tätä hakua. Haun valmistelija voi lisätä sinulle oikeudet."})
+    })
     const formState = formDraft
       ? FakeFormState.createEditFormState(avustushaku, translations, formDraft.content)
       : undefined
