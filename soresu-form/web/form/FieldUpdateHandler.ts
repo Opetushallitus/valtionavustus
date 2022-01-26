@@ -2,12 +2,19 @@ import Immutable from 'seamless-immutable'
 import _ from 'lodash'
 
 import InputValueStorage from './InputValueStorage'
-import SyntaxValidator, {Validator} from './SyntaxValidator'
+import SyntaxValidator, {ValidationError, Validator} from './SyntaxValidator'
 import JsUtil from '../JsUtil'
-import {Field} from "soresu-form/web/va/types";
+import {Field, FieldType} from "soresu-form/web/va/types";
 
+export interface FieldUpdate {
+  id: string
+  field: Field
+  value: any
+  fieldType: FieldType
+  validationErrors: ValidationError[]
+}
 
-export function createFieldUpdate(field: Field, value: any, customFieldSyntaxValidator?: Validator) {
+export function createFieldUpdate(field: Field, value: any, customFieldSyntaxValidator?: Validator) : FieldUpdate {
   return {
     id: field.id,
     field: field,
