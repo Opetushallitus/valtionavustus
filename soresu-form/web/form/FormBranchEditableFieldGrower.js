@@ -1,7 +1,10 @@
 import _ from 'lodash'
 
 import FormBranchGrower from './FormBranchGrower'
-import FieldUpdateHandler from './FieldUpdateHandler'
+import {
+  createFieldUpdate,
+  triggerFieldUpdatesForValidation
+} from './FieldUpdateHandler'
 import InputValueStorage from './InputValueStorage'
 import JsUtil from '../JsUtil'
 import FormUtil from './FormUtil'
@@ -25,7 +28,7 @@ export default class FormBranchEditableFieldGrower {
       if (!_.isUndefined(n.id) && n.fieldClass === "formField") {
         const prototypeNode = FormUtil.findFieldIgnoringIndex(childPrototype, n.id)
         const existingInputValue = InputValueStorage.readValue(null, answersObject, n.id)
-        answersToWrite.push(FieldUpdateHandler.createFieldUpdate(prototypeNode, existingInputValue, syntaxValidator))
+        answersToWrite.push(createFieldUpdate(prototypeNode, existingInputValue, syntaxValidator))
         validationErrorsToDelete.push(n.id)
       } else if (n.children) {
         answersToDelete.push(n.id)
@@ -60,6 +63,6 @@ export default class FormBranchEditableFieldGrower {
       firstChildOfGrowingSet,
       f => !_.isUndefined(f.id) && f.fieldClass === "formField"
     )
-    FieldUpdateHandler.triggerFieldUpdatesForValidation(fieldsToValidate, state)
+    triggerFieldUpdatesForValidation(fieldsToValidate, state)
   }
 }

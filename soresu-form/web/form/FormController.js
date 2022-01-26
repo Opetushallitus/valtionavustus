@@ -1,6 +1,6 @@
 import Dispatcher from '../Dispatcher'
 
-import FieldUpdateHandler from './FieldUpdateHandler.js'
+import {createFieldUpdate} from './FieldUpdateHandler'
 import SyntaxValidator from './SyntaxValidator'
 import FormStateLoop from './FormStateLoop.js'
 
@@ -66,7 +66,7 @@ export default class FormController {
   }
 
   componentOnChangeListener(field, newValue) {
-    dispatcher.push(events.updateField, FieldUpdateHandler.createFieldUpdate(field, newValue, this.customFieldSyntaxValidator))
+    dispatcher.push(events.updateField, createFieldUpdate(field, newValue, this.customFieldSyntaxValidator))
   }
 
   createAttachmentDownloadUrl(state, field) {

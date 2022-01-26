@@ -10,7 +10,7 @@ import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
-import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
+import {createFieldUpdate} from 'soresu-form/web/form/FieldUpdateHandler'
 import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
 import VaTraineeDayUtil from 'soresu-form/web/va/VaTraineeDayUtil'
 import { HakemusSelvitys, Loppuselvitys, Muutoshakemus } from 'soresu-form/web/va/status'
@@ -549,7 +549,7 @@ export default class HakemustenArviointiController {
   static doOnAnswerValue(state: State, value: { hakemusId: number, field: any, newValue: any }, field: keyof Arvio){
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, value.hakemusId)
     if (relevantHakemus) {
-      InputValueStorage.writeValue([value.field], relevantHakemus.arvio[field], FieldUpdateHandler.createFieldUpdate(value.field, value.newValue, VaSyntaxValidator))
+      InputValueStorage.writeValue([value.field], relevantHakemus.arvio[field], createFieldUpdate(value.field, value.newValue, VaSyntaxValidator))
       dispatcher.push(events.updateHakemusArvio, relevantHakemus)
     }
     return state
