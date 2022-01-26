@@ -9,7 +9,7 @@ import InputValueStorage from './InputValueStorage'
 import FormUtil from './FormUtil'
 import FormRules from './FormRules'
 import FormBranchGrower from './FormBranchGrower'
-import FormBranchEditableFieldGrower from './FormBranchEditableFieldGrower'
+import {ensureFirstChildIsRequired} from './FormBranchEditableFieldGrower'
 import {
   createFieldUpdate,
   triggerRelatedFieldValidationIfNeeded,
@@ -336,7 +336,7 @@ export default class FormStateTransitions {
     })
     InputValueStorage.deleteValue(growingParent, answersObject, fieldToRemove.id)
     FormRules.removeField(state.form, growingParent, fieldToRemove)
-    FormBranchEditableFieldGrower.ensureFirstChildIsRequired(state, growingParent)
+    ensureFirstChildIsRequired(state, growingParent)
     state.saveStatus.changes = true
     this.startAutoSave(state)
     return state
