@@ -43,7 +43,7 @@ export function parseDecimal(value: any): number {
     : parseFloat(normalizeDecimalStr("" + value))
 }
 
-export function formatDecimal(number: number, separator = ","): string {
+export function formatDecimal(number: number | string, separator = ","): string {
   return ("" + number).replace(".", separator)
 }
 
