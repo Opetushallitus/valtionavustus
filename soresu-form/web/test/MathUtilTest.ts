@@ -115,7 +115,7 @@ describe('Math utilities', function() {
     expect(testParse(true)).to.deep.equal([false, NaN, false, NaN, false])
     expect(testParse(null)).to.deep.equal([false, NaN, false, NaN, false])
 
-    function testParse(value) {
+    function testParse(value: any) {
       return [
         isNumeric(value),
         parseInt(value, 10),
