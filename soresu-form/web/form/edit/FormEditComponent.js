@@ -7,9 +7,9 @@ import {
   MultipleChoiceEdit,
   LinkEdit,
   OwnershipTypeEdit
-} from './EditComponent'
-import KoodistoFieldEdit from './KoodistoFieldEdit'
-import TableValue from '../preview/TableValue'
+} from './EditComponent.jsx'
+import KoodistoFieldEdit from './KoodistoFieldEdit.jsx'
+import TableValue from '../preview/TableValue.jsx'
 import {
   TextFieldPropertyMapper,
   LinkPropertyMapper,

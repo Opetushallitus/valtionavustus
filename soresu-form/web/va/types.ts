@@ -261,45 +261,11 @@ interface Rule {
 }
 
 export interface Form {
-  content: Field[]
+  content: any
   rules: Rule[]
   created_at: Date
   updated_at: Date
   validationErrors?: any
-}
-
-export const fieldTypes: { [f in AddableFieldType]: FieldClass } = {
-  "textField": "formField",
-  "textArea": "formField",
-  "radioButton": "formField",
-  "checkboxButton": "formField",
-  "dropdown": "formField",
-  "namedAttachment": "formField",
-  "koodistoField": "formField",
-  "p": "infoElement",
-  "h3": "infoElement",
-  "link": "infoElement",
-  "theme": "wrapperElement",
-  "fieldset": "wrapperElement",
-  "growingFieldset": "wrapperElement",
-  "growingFieldsetChild": "wrapperElement"
-}
-
-export const addableFields = ["textField", "textArea", "radioButton", "checkboxButton", "dropdown", "namedAttachment", "koodistoField", "p", "h3", "link", "theme", "fieldset", "growingFieldset", "growingFieldsetChild"] as const
-export type AddableFieldType = typeof addableFields[number]
-export type NonAddableFieldType = 'moneyField' | 'emailField' | 'bic' | 'iban' | 'tableField' | 'integerField' | 'decimalField' | 'finnishBusinessIdField' | 'vaEmailNotification'
-export type BudgetFieldType = 'vaBudget' | 'vaBudgetSummaryElement' | 'vaSelfFinancingField' | 'vaBudgetItemElement'
-export type FieldType = AddableFieldType | NonAddableFieldType | BudgetFieldType
-export type FieldClass = 'formField' | 'infoElement' | 'wrapperElement'
-
-interface LocalizedText {
-  fi: string
-  sv: string
-}
-
-export interface Option {
-  value: string
-  label: LocalizedText
 }
 
 export interface Field {
@@ -307,12 +273,8 @@ export interface Field {
   key?: string
   value?: any
   required?: boolean
-  fieldType: FieldType
-  fieldClass: FieldClass
-  options?: Option[]
-  children?: Field[]
-  params?: any
-  label?: LocalizedText
+  fieldType: string
+  fieldClass: string
 }
 
 export interface Liite {

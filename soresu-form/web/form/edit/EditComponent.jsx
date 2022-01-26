@@ -6,7 +6,6 @@ import _ from "lodash"
 import FormEditorController from "./FormEditController"
 import MathUtil from "../../MathUtil"
 import SyntaxValidator from "../SyntaxValidator"
-import { addableFields } from 'soresu-form/web/va/types'
 
 const hiddenFields = [
   "theme", "growingFieldsetChild", "fieldset"
@@ -129,9 +128,12 @@ export class EditComponent extends React.Component {
     const field = this.props.field
     const htmlId = this.props.htmlId
 
-    const editableFields = addableFields.filter(t => hiddenFields.indexOf(t) === -1)
+    const addableFields = Object.keys(
+      FormEditorController.addableFieldTypes()
+    ).filter(
+      t => hiddenFields.indexOf(t) === -1)
 
-    const addElementButtons = editableFields.map((key, i) => (
+    const addElementButtons = addableFields.map((key, i) => (
       <a key={i} className="soresu-edit"
         onClick={this.handleOnAddClick.bind(this, key)}>
         {EditComponent.fieldTypeInFI(key)}
@@ -139,7 +141,7 @@ export class EditComponent extends React.Component {
     ))
 
     const labelEdit = this.renderTranslationTable(htmlId + "-label", this.labelName(), x => x.label)
-    const editFields = editableFields.indexOf(field.fieldType) !== -1 ? (
+    const editFields = addableFields.indexOf(field.fieldType) !== -1 ? (
       <div className="soresu-field-edit-tools">
         <span onClick={this.handleOnMoveFieldUpClick.bind(this)}
           className="soresu-field-move-up soresu-field-edit-button" />

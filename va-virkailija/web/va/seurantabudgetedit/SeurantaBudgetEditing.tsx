@@ -30,12 +30,10 @@ export default class SeurantaBudgetEditing extends React.Component<SeurantaBudge
   static validateFields(form: FormType, answers?: Answer[]) {
     const budgetItems = FormUtil.findFieldsByFieldType(form.content, 'vaBudgetItemElement')
     budgetItems.map(budgetItem => {
-      const amountField = budgetItem.children?.[1]
-      if (amountField) {
-        const overriddenValue = InputValueStorage.readValue(form.content, answers, amountField.id)
-        const validationErrors = SyntaxValidator.validateSyntax(amountField, overriddenValue)
-        form.validationErrors = form.validationErrors.merge({[amountField.id]: validationErrors})
-      }
+      const amountField = budgetItem.children[1]
+      const overriddenValue = InputValueStorage.readValue(form.content, answers, amountField.id)
+      const validationErrors = SyntaxValidator.validateSyntax(amountField, overriddenValue)
+      form.validationErrors = form.validationErrors.merge({[amountField.id]: validationErrors})
     })
   }
 

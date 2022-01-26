@@ -5,7 +5,7 @@ import {Role} from "../../../../va-virkailija/web/va/types";
 
 export type MuutoshakemusProps = {
   status: 'LOADED' | 'LOADING'
-  avustushaku?: Avustushaku
+  avustushaku?: any
   environment?: EnvironmentApiResponse
   hakemus?: NormalizedHakemusData
   muutoshakemukset: Muutoshakemus[]

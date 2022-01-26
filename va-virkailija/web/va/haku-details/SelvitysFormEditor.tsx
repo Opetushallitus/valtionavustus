@@ -8,16 +8,14 @@ import { Avustushaku, HelpTexts, LegacyTranslations } from 'soresu-form/web/va/t
 import FormEditor from './FormEditor'
 import { Lahetys, Tapahtumaloki } from './Tapahtumaloki'
 import { LastUpdated } from './LastUpdated'
-import { Koodistos } from '../types'
-import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 type SelvitysFormEditorProps = {
   avustushaku: Avustushaku
   controller: any
   translations: LegacyTranslations
-  koodistos: Koodistos
+  koodistos: any
   selvitysType: 'valiselvitys' | 'loppuselvitys'
-  environment: EnvironmentApiResponse
+  environment: any
   helpTexts: HelpTexts
   formDraft: any
   formDraftJson: string

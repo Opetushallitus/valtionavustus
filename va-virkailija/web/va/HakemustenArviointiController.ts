@@ -6,6 +6,7 @@ import queryString from 'query-string'
 import RouteParser from 'route-parser'
 
 import Dispatcher from 'soresu-form/web/Dispatcher'
+import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
@@ -703,7 +704,8 @@ export default class HakemustenArviointiController {
       return
     }
 
-    const budgetElement = state.hakuData.form.content.find(f => f.fieldType === "vaBudget")
+    const budgetElement: any = FormUtil.findFieldByFieldType(state.hakuData.form.content, "vaBudget")
+
     if (!budgetElement) {
       return
     }
@@ -713,9 +715,9 @@ export default class HakemustenArviointiController {
     const overriddenAnswers = selectedHakemus!.arvio["overridden-answers"]
 
     const findSelfFinancingSpecField = () => {
-      const budgetSummaryElement = budgetElement?.children?.find((n: Field) => n.fieldType === "vaBudgetSummaryElement")
+      const budgetSummaryElement = budgetElement?.children.find((n: Field) => n.fieldType === "vaBudgetSummaryElement")
       return budgetSummaryElement
-        ? budgetSummaryElement.children?.find(f => f.fieldType === "vaSelfFinancingField")
+        ? FormUtil.findFieldByFieldType(budgetSummaryElement, "vaSelfFinancingField")
         : null
     }
 
@@ -744,11 +746,11 @@ export default class HakemustenArviointiController {
     }
 
     // gather empty values for descriptions and answer fields for cost budget items
-    const {emptyDescriptions, answerCostFieldsToCopy} = _.reduce(budgetElement.children?.find(f => f.fieldType === "vaBudgetItemElement"), (acc: any, budgetItem) => {
-      const descriptionField = budgetItem.children?.[0]
+    const {emptyDescriptions, answerCostFieldsToCopy} = _.reduce(FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement"), (acc: any, budgetItem) => {
+      const descriptionField = budgetItem.children[0]
       acc.emptyDescriptions[descriptionField.id] = ''
       if (!budgetItem.params.incrementsTotal) {
-        const valueField = budgetItem.children?.[1]
+        const valueField = budgetItem.children[1]
         acc.answerCostFieldsToCopy.push(valueField)
       }
       return acc
@@ -773,7 +775,7 @@ export default class HakemustenArviointiController {
   }
 
   setDefaultBudgetValuesForSelectedHakemusSeurantaAnswers(state: State) {
-    const budgetElement = state.hakuData.form.content.find(f => f.fieldType === "vaBudget")
+    const budgetElement = FormUtil.findFieldByFieldType(state.hakuData.form.content, "vaBudget")
 
     if (!budgetElement) {
       return
@@ -781,17 +783,11 @@ export default class HakemustenArviointiController {
 
     const selectedHakemus = state.selectedHakemus
     const hakemusAnswers = selectedHakemus!.answers
-    const defaultValues = _.reduce(budgetElement.children?.filter(f => f.fieldType === "vaBudgetItemElement"), (acc: any, budgetItem) => {
-      const descriptionField = budgetItem.children?.[0]
-      if (!descriptionField) {
-        return acc
-      }
+    const defaultValues = _.reduce(FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement"), (acc: any, budgetItem) => {
+      const descriptionField = budgetItem.children[0]
       acc[descriptionField.id] = ''
       if (!budgetItem.params.incrementsTotal) {
-        const valueField = budgetItem.children?.[1]
-        if (!valueField) {
-          return acc
-        }
+        const valueField = budgetItem.children[1]
         acc[valueField.id] = InputValueStorage.readValue(null, hakemusAnswers, valueField.id)
       }
       return acc
@@ -946,7 +942,7 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.closeHakemus, {})
   }
 
-  setFilter(filterId: string, newFilter: any) {
+  setFilter(filterId: any, newFilter: any) {
     dispatcher.push(events.setFilter, {filterId: filterId,
                                        filter: newFilter})
   }
@@ -990,7 +986,7 @@ setHakemusShouldPayComments(hakemus: Hakemus, newShouldPayComment: string) {
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  static setAnswerValue(hakemusId: number, field: Field, newValue: any, event: string){
+  static setAnswerValue(hakemusId: number, field: any, newValue: any, event: string){
     const setOverriddenAnswerValue = {
       hakemusId: hakemusId,
       field: field,
@@ -999,11 +995,11 @@ setHakemusShouldPayComments(hakemus: Hakemus, newShouldPayComment: string) {
     dispatcher.push(event, setOverriddenAnswerValue)
   }
 
-  setHakemusOverriddenAnswerValue(hakemusId: number, field: Field, newValue: any) {
+  setHakemusOverriddenAnswerValue(hakemusId: number, field: any, newValue: any) {
     HakemustenArviointiController.setAnswerValue(hakemusId, field, newValue, events.setOverriddenAnswerValue)
   }
 
-  setHakemusSeurantaAnswerValue(hakemusId: number, field: Field, newValue: any) {
+  setHakemusSeurantaAnswerValue(hakemusId: number, field: any, newValue: any) {
     HakemustenArviointiController.setAnswerValue(hakemusId, field, newValue, events.setSeurantaAnswerValue)
   }
 
