@@ -1,6 +1,6 @@
 import {svBudjettimuutoshakemusTest as svTest} from "../fixtures/swedishHakemusTest";
 import {HakijaPaatosPage} from "../pages/HakijaPaatosPage";
-import {expect} from "@playwright/test";
+import {expect, test} from "@playwright/test";
 import {
   getAcceptedPäätösEmails,
   getHakemusTokenAndRegisterNumber,
@@ -10,21 +10,12 @@ import {HAKIJA_URL} from "../utils/constants";
 
 svTest.setTimeout(180000)
 
-svTest('Swedish paatos', async ({page, acceptedHakemus: {hakemusID}}) => {
-  const hakijaPaatosPage = new HakijaPaatosPage(page)
-  await hakijaPaatosPage.navigate(hakemusID)
-  const paatosHeaderTitle = await hakijaPaatosPage.paatosHeaderTitle()
-  expect(paatosHeaderTitle?.trim()).toEqual('Beslut')
-  expect(await hakijaPaatosPage.paatosTitle()).toEqual('Beslut')
-  expect(await hakijaPaatosPage.acceptedTitle()).toEqual('Utbildningsstyrelsen har beslutat att bevilja statsunderstöd till projektet')
-  expect(await hakijaPaatosPage.lisatietojaTitle()).toEqual('Mer information')
-})
-
-svTest('gets an email in swedish', async ({acceptedHakemus: {hakemusID, userKey}, avustushakuID, hakuProps, answers}) => {
-  const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
-  const email = emails[emails.length - 1]
-  const { token, 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
-  expect(email.formatted).toEqual(`${registerNumber} - ${answers.projectName}
+svTest('When avustushaku has been created and swedish hakemus has been submitted and approved', async ({page, acceptedHakemus: {hakemusID, userKey}, answers, avustushakuID, hakuProps}) => {
+  await test.step('hakija gets an email in swedish', async () => {
+    const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
+    const email = emails[emails.length - 1]
+    const { token, 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
+    expect(email.formatted).toEqual(`${registerNumber} - ${answers.projectName}
 
 ${hakuProps.avustushakuName} på svenska
 
@@ -54,4 +45,27 @@ PB 380, 00531 Helsingfors
 telefon 029 533 1000
 fornamn.efternamn@oph.fi
 `)
+  })
+  const hakijaPaatosPage = new HakijaPaatosPage(page)
+  await test.step('hakija navigates to päätös', async () => {
+    await hakijaPaatosPage.navigate(hakemusID)
+  })
+  await test.step('päätös header title is in swedish', async () => {
+    const paatosHeaderTitle = await hakijaPaatosPage.paatosHeaderTitle()
+    expect(paatosHeaderTitle?.trim()).toEqual('Beslut')
+  })
+  await test.step('päätös header title is in swedish', async () => {
+    const paatosHeaderTitle = await hakijaPaatosPage.paatosHeaderTitle()
+    expect(paatosHeaderTitle?.trim()).toEqual('Beslut')
+  })
+  await test.step('päätös title is in swedish', async () => {
+    expect(await hakijaPaatosPage.paatosTitle()).toEqual('Beslut')
+  })
+  await test.step('päätös accepted title is in swedish', async () => {
+    expect(await hakijaPaatosPage.acceptedTitle()).toEqual('Utbildningsstyrelsen har beslutat att bevilja statsunderstöd till projektet')
+  })
+  await test.step('lisätietoja title is in swedish', async () => {
+    expect(await hakijaPaatosPage.lisatietojaTitle()).toEqual('Mer information')
+  })
 })
+
