@@ -393,7 +393,7 @@ class ResendDecisions extends React.Component<ResendDecisionProps, ResendDecisio
         }
         {!this.state.completed &&
           <div>
-            {this.state.confirm && <button onClick={onResend} disabled={resending}>{resending ? "Lähetetään" :  "Vahvista päätösten uudellenlähetys"}</button>}
+            {this.state.confirm && <button onClick={onResend} disabled={resending}>{resending ? "Lähetetään" :  "Vahvista päätösten uudelleenlähetys"}</button>}
             {!this.state.confirm && <button onClick={onConfirm} data-test-id="resend">Lähetä {this.props.sent} päätöstä uudelleen <HelpTooltip content={this.props.helpTexts["hakujen_hallinta__päätös___lähetä_päätökset_uudelleen"]} direction="left" /> </button>}
           </div>
         }

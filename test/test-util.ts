@@ -119,7 +119,6 @@ export const getValmistelijaEmails = getEmails("notify-valmistelija-of-new-muuto
 export const getMuutoshakemusPaatosEmails = getEmails("muutoshakemus-paatos")
 export const getMuutoshakemusEmails = getEmails("paatos-refuse")
 export const getValiselvitysEmails = getEmails("valiselvitys-notification")
-export const getLoppuselvitysEmails = getEmails("loppuselvitys-notification")
 export const getAcceptedPäätösEmails = getMuutoshakemusEmails
 export const getTäydennyspyyntöEmails = getEmails("change-request")
 export async function waitUntilMinEmails(f: (hakemusId: number) => Promise<Email[]>, minEmails: number, hakemusId: number) {
@@ -1104,19 +1103,6 @@ export async function clickToSendTäydennyspyyntö(page: Page, avustushakuID: nu
     page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/change-requests`),
     clickElement(page, "[data-test-id='täydennyspyyntö__lähetä']"),
   ])
-}
-
-export async function resendPäätökset(page: Page, avustushakuID: number): Promise<void> {
-  await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
-  await clickElementWithText(page, "button", "Lähetä 1 päätöstä uudelleen")
-  await clickElementWithText(page, "button", "Vahvista päätösten uudellenlähetys")
-  await waitForElementWIthTestId(page, "resend-completed-message")
-}
-
-export async function changeContactPersonEmail(page: Page, linkToMuutoshakemus: string, email: string): Promise<void> {
-  await page.goto(linkToMuutoshakemus, { waitUntil: "networkidle0" })
-  await clearAndType(page, '#muutoshakemus__email', email)
-  await clickElement(page, "#send-muutospyynto-button")
 }
 
 export function setupTestLogging() {

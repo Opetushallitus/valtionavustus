@@ -132,6 +132,26 @@ export class HakujenHallintaPage {
     return FormEditorPage(this.page)
   }
 
+  async switchToPaatosTab() {
+    await this.page.click('[data-test-id="päätös-välilehti"]')
+  }
+
+  async switchToValiselvitysTab() {
+    await this.page.click('[data-test-id="väliselvitys-välilehti"]')
+  }
+
+  async switchToLoppuselvitysTab() {
+    await this.page.click('[data-test-id="loppuselvitys-välilehti"]')
+  }
+
+  async sendValiselvitys() {
+    await this.page.click('text="Lähetä väliselvityspyynnöt"')
+  }
+
+  async sendLoppuselvitys() {
+    await this.page.click('text="Lähetä loppuselvityspyynnöt"')
+  }
+
   async waitForSave() {
     await waitForSaveStatusOk(this.page)
   }
@@ -192,6 +212,12 @@ export class HakujenHallintaPage {
     const tapahtumaloki = await this.page.waitForSelector(".tapahtumaloki")
     const logEntryCount = await tapahtumaloki.evaluate(e => e.querySelectorAll(".entry").length)
     expect(logEntryCount).toEqual(1)
+  }
+
+  async resendPaatokset(amountToSend = 1) {
+    await this.page.click(`text="Lähetä ${amountToSend} päätöstä uudelleen"`)
+    await this.page.click('text="Vahvista päätösten uudelleenlähetys"')
+    await this.page.waitForSelector('text="Päätökset lähetetty uudelleen"')
   }
 
   async resolveAvustushaku() {

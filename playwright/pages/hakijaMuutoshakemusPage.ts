@@ -18,6 +18,10 @@ export class HakijaMuutoshakemusPage {
 
   async navigate(hakemusID: number) {
     const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(hakemusID)
+    await this.navigateWithLink(linkToMuutoshakemus)
+  }
+
+  async navigateWithLink(linkToMuutoshakemus: string) {
     await this.page.goto(linkToMuutoshakemus)
   }
 
@@ -60,6 +64,10 @@ export class HakijaMuutoshakemusPage {
     await this.page.click('#send-muutospyynto-button:has-text("Lähetä käsiteltäväksi")')
   }
 
+  async clickSaveContacts() {
+    await this.page.click('text="Tallenna muutokset"')
+  }
+
   async expectMuutoshakemusToBeSubmittedSuccessfully(isApplication: boolean) {
     const notification = await this.page.textContent('div[class="auto-hide success"]')
 
@@ -97,5 +105,9 @@ export class HakijaMuutoshakemusPage {
       await this.clickSendMuutoshakemus()
       await this.expectMuutoshakemusToBeSubmittedSuccessfully(isApplication)
     }
+  }
+
+  async changeContactPersonEmailTo(email: string) {
+    await this.page.fill('#muutoshakemus__email', email)
   }
 }
