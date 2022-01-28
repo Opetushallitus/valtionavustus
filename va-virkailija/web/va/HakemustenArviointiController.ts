@@ -546,7 +546,7 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  static doOnAnswerValue(state: State, value: { hakemusId: number, field: any, newValue: any }, field: keyof Arvio){
+  static doOnAnswerValue(state: State, value: { hakemusId: number, field: Field, newValue: any }, field: keyof Arvio){
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, value.hakemusId)
     if (relevantHakemus) {
       InputValueStorage.writeValue([value.field], relevantHakemus.arvio[field], createFieldUpdate(value.field, value.newValue, VaSyntaxValidator))
@@ -704,8 +704,7 @@ export default class HakemustenArviointiController {
       return
     }
 
-    const budgetElement: any = FormUtil.findFieldByFieldType(state.hakuData.form.content, "vaBudget")
-
+    const budgetElement = FormUtil.findFieldByFieldType(state.hakuData.form.content, "vaBudget")
     if (!budgetElement) {
       return
     }
@@ -715,7 +714,7 @@ export default class HakemustenArviointiController {
     const overriddenAnswers = selectedHakemus!.arvio["overridden-answers"]
 
     const findSelfFinancingSpecField = () => {
-      const budgetSummaryElement = budgetElement?.children.find((n: Field) => n.fieldType === "vaBudgetSummaryElement")
+      const budgetSummaryElement = budgetElement?.children?.find((n: Field) => n.fieldType === "vaBudgetSummaryElement")
       return budgetSummaryElement
         ? FormUtil.findFieldByFieldType(budgetSummaryElement, "vaSelfFinancingField")
         : null
@@ -747,10 +746,10 @@ export default class HakemustenArviointiController {
 
     // gather empty values for descriptions and answer fields for cost budget items
     const {emptyDescriptions, answerCostFieldsToCopy} = _.reduce(FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement"), (acc: any, budgetItem) => {
-      const descriptionField = budgetItem.children[0]
+      const descriptionField = budgetItem.children?.[0]!
       acc.emptyDescriptions[descriptionField.id] = ''
       if (!budgetItem.params.incrementsTotal) {
-        const valueField = budgetItem.children[1]
+        const valueField = budgetItem.children?.[1]
         acc.answerCostFieldsToCopy.push(valueField)
       }
       return acc
@@ -784,10 +783,16 @@ export default class HakemustenArviointiController {
     const selectedHakemus = state.selectedHakemus
     const hakemusAnswers = selectedHakemus!.answers
     const defaultValues = _.reduce(FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement"), (acc: any, budgetItem) => {
-      const descriptionField = budgetItem.children[0]
+      const descriptionField = budgetItem.children?.[0]
+      if (!descriptionField) {
+        return acc
+      }
       acc[descriptionField.id] = ''
       if (!budgetItem.params.incrementsTotal) {
-        const valueField = budgetItem.children[1]
+        const valueField = budgetItem.children?.[1]
+        if (!valueField) {
+          return acc
+        }
         acc[valueField.id] = InputValueStorage.readValue(null, hakemusAnswers, valueField.id)
       }
       return acc
@@ -942,7 +947,7 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.closeHakemus, {})
   }
 
-  setFilter(filterId: any, newFilter: any) {
+  setFilter(filterId: string, newFilter: any) {
     dispatcher.push(events.setFilter, {filterId: filterId,
                                        filter: newFilter})
   }
@@ -986,7 +991,7 @@ setHakemusShouldPayComments(hakemus: Hakemus, newShouldPayComment: string) {
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  static setAnswerValue(hakemusId: number, field: any, newValue: any, event: string){
+  static setAnswerValue(hakemusId: number, field: Field, newValue: any, event: string){
     const setOverriddenAnswerValue = {
       hakemusId: hakemusId,
       field: field,
@@ -995,11 +1000,11 @@ setHakemusShouldPayComments(hakemus: Hakemus, newShouldPayComment: string) {
     dispatcher.push(event, setOverriddenAnswerValue)
   }
 
-  setHakemusOverriddenAnswerValue(hakemusId: number, field: any, newValue: any) {
+  setHakemusOverriddenAnswerValue(hakemusId: number, field: Field, newValue: any) {
     HakemustenArviointiController.setAnswerValue(hakemusId, field, newValue, events.setOverriddenAnswerValue)
   }
 
-  setHakemusSeurantaAnswerValue(hakemusId: number, field: any, newValue: any) {
+  setHakemusSeurantaAnswerValue(hakemusId: number, field: Field, newValue: any) {
     HakemustenArviointiController.setAnswerValue(hakemusId, field, newValue, events.setSeurantaAnswerValue)
   }
 

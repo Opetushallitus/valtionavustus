@@ -94,8 +94,7 @@ export default class FormEdit extends React.Component {
     const fields = state.form.content
 
     const renderField = function(field) {
-      return FormEdit.renderField(
-        controller, formEditorController, state, infoElementValues, field)
+      return FormEdit.renderField(controller, formEditorController, state, infoElementValues, field)
     }
 
     const readOnlyNotification = formEditorController.allowEditing ?
@@ -108,8 +107,7 @@ export default class FormEdit extends React.Component {
     return (
       <div className="soresu-form-edit soresu-edit">
         {readOnlyNotification}
-        <CSSTransitionGroup
-          transitionName="soresu-dynamic-children-transition">
+        <CSSTransitionGroup transitionName="soresu-dynamic-children-transition">
           {fields.map(renderField)}
         </CSSTransitionGroup>
       </div>

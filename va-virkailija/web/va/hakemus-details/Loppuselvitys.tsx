@@ -20,8 +20,8 @@ type SelvitysProps = {
   userInfo: UserInfo
   multibatchEnabled: boolean
   isPresentingOfficer: boolean
-  presenterCommentHelpText: any
-  selvitysLinkHelpText: any
+  presenterCommentHelpText: string
+  selvitysLinkHelpText: string
   environment: EnvironmentApiResponse
   presenter?: Role
 }

@@ -1,5 +1,4 @@
 import React from 'react'
-import _ from 'lodash'
 
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
@@ -30,10 +29,12 @@ export default class SeurantaBudgetEditing extends React.Component<SeurantaBudge
   static validateFields(form: FormType, answers?: Answer[]) {
     const budgetItems = FormUtil.findFieldsByFieldType(form.content, 'vaBudgetItemElement')
     budgetItems.map(budgetItem => {
-      const amountField = budgetItem.children[1]
-      const overriddenValue = InputValueStorage.readValue(form.content, answers, amountField.id)
-      const validationErrors = SyntaxValidator.validateSyntax(amountField, overriddenValue)
-      form.validationErrors = form.validationErrors.merge({[amountField.id]: validationErrors})
+      const amountField = budgetItem.children?.[1]
+      if (amountField) {
+        const overriddenValue = InputValueStorage.readValue(form.content, answers, amountField.id)
+        const validationErrors = SyntaxValidator.validateSyntax(amountField, overriddenValue)
+        form.validationErrors = form.validationErrors.merge({[amountField.id]: validationErrors})
+      }
     })
   }
 
@@ -48,12 +49,12 @@ export default class SeurantaBudgetEditing extends React.Component<SeurantaBudge
 
     const budgetSpecWithSelvityses = FormUtil.mergeDeepFieldTrees(
       vaBudget,
-      FormUtil.findFieldByFieldType(_.get(hakemus, "selvitys.valiselvitysForm.content", []), "vaBudget") || {},
-      FormUtil.findFieldByFieldType(_.get(hakemus, "selvitys.loppuselvitysForm.content", []), "vaBudget") || {})
+      FormUtil.findFieldByFieldType(hakemus?.selvitys?.valiselvitysForm?.content ?? [], "vaBudget") ?? {},
+      FormUtil.findFieldByFieldType(hakemus?.selvitys?.loppuselvitysForm?.content ?? [], "vaBudget") ?? {})
 
     const budgetChangeEnabled = Array.isArray(hakemus.normalizedData?.talousarvio)
     const budgetSpec = budgetChangeEnabled
-      ? { ...budgetSpecWithSelvityses, children: budgetSpecWithSelvityses.children.filter((c: { id: string }) => c.id !== 'project-budget') }
+      ? { ...budgetSpecWithSelvityses, children: budgetSpecWithSelvityses.children?.filter(c => c.id !== 'project-budget') }
       : budgetSpecWithSelvityses
     const fakeHakemus = ({answers: hakemus.arvio["seuranta-answers"]} as unknown) as Hakemus
     const formOperations = {

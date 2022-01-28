@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 import DateUtil from 'soresu-form/web/DateUtil'
 
-import FormEditor from './FormEditor.jsx'
+import FormEditor from './FormEditor'
 import FormJsonEditor from './FormJsonEditor.jsx'
 import { MuutoshakukelpoisuusContainer } from './MuutoshakukelpoisuusContainer'
 

@@ -134,17 +134,6 @@ export interface VaUserSearchResults {
   results: VaUserSearchResult[]
 }
 
-export interface Koodisto {
-  uri: string
-  name: string
-  version: unknown
-}
-
-export interface Koodistos {
-  content: Koodisto[] | null
-  loading: boolean
-}
-
 interface MuutoshakemuksenVaatimaKentta {
   id: string
   label?: string

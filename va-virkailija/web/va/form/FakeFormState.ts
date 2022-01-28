@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 import VaBudgetCalculator from 'soresu-form/web/va/VaBudgetCalculator'
 import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
-import { Avustushaku, Hakemus, HakemusFormState, LegacyTranslations } from 'soresu-form/web/va/types'
+import { Avustushaku, Field, Hakemus, HakemusFormState, LegacyTranslations } from 'soresu-form/web/va/types'
 
 type InitialFakeFormState = {
   translations: LegacyTranslations
@@ -25,7 +25,7 @@ export default class FakeFormState {
     return attachmentsForId ? attachmentsForId : {}
   }
 
-  static createEditFormState(avustushaku: Avustushaku, translations: LegacyTranslations, formContent: any) {
+  static createEditFormState(avustushaku: Avustushaku, translations: LegacyTranslations, formContent: Field[]) {
     return FakeFormState.createHakemusFormState({
       translations,
       avustushaku,

@@ -10,35 +10,45 @@ import VaPreviewComponentFactory from 'soresu-form/web/va/VaPreviewComponentFact
 
 import FakeFormController from '../form/FakeFormController'
 import FakeFormState from '../form/FakeFormState'
+import { Avustushaku, Field, Form, Koodistos, LegacyTranslations } from 'soresu-form/web/va/types'
+import HakujenHallintaController from '../HakujenHallintaController'
 
-export default class FormEditor extends Component {
+interface FormEditorProps {
+  controller: HakujenHallintaController
+  avustushaku: Avustushaku
+  translations: LegacyTranslations
+  koodistos: Koodistos
+  formDraft: Form
+  onFormChange: (avustushaku: Avustushaku, newDraft: Form) => void
+}
+
+export default class FormEditor extends Component<FormEditorProps> {
   render() {
-    const {avustushaku, translations, koodistos, formDraft, onFormChange} = this.props
-    const hakuAdminController = this.props.controller
-    const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
-    const formEditedCallback = (newDraft, operationResult) => {
+    const { avustushaku, controller, translations, koodistos, formDraft, onFormChange } = this.props
+    const allowEditing = avustushaku.privileges && avustushaku.privileges["edit-haku"]
+    const onFormEdited = (newDraft: Form, operationResult: Field | void) => {
       if (operationResult && operationResult.fieldType === "koodistoField") {
-        hakuAdminController.ensureKoodistosLoaded()
+        controller.ensureKoodistosLoaded()
       }
       onFormChange(avustushaku, newDraft)
     }
     const formEditorController = new FormEditorController({
       formDraft,
-      onFormEdited: formEditedCallback,
-      allowEditing: userHasEditPrivilege,
+      onFormEdited,
+      allowEditing,
     })
     const formState = formDraft
       ? FakeFormState.createEditFormState(avustushaku, translations, formDraft.content)
       : undefined
     if (formState) {
       formState.koodistos = koodistos
-      formState.koodistosLoader = hakuAdminController.ensureKoodistosLoaded
+      formState.koodistosLoader = controller.ensureKoodistosLoaded
     }
     const formElementProps = {
       state: formState,
       infoElementValues: avustushaku,
       controller: new FakeFormController(new VaComponentFactory(), new VaPreviewComponentFactory(), avustushaku, {}),
-      formEditorController: formEditorController
+      formEditorController
     }
 
     return formState ?

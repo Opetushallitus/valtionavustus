@@ -3,21 +3,23 @@ import _ from 'lodash'
 import * as Bacon from 'baconjs'
 
 import HttpUtil from "soresu-form/web/HttpUtil"
-import { Avustushaku, HelpTexts, LegacyTranslations } from 'soresu-form/web/va/types'
+import { Avustushaku, Form, HelpTexts, Koodistos, LegacyTranslations } from 'soresu-form/web/va/types'
 
 import FormEditor from './FormEditor'
 import { Lahetys, Tapahtumaloki } from './Tapahtumaloki'
 import { LastUpdated } from './LastUpdated'
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
+import HakujenHallintaController from '../HakujenHallintaController'
 
 type SelvitysFormEditorProps = {
   avustushaku: Avustushaku
-  controller: any
+  controller: HakujenHallintaController
   translations: LegacyTranslations
-  koodistos: any
+  koodistos: Koodistos
   selvitysType: 'valiselvitys' | 'loppuselvitys'
-  environment: any
+  environment: EnvironmentApiResponse
   helpTexts: HelpTexts
-  formDraft: any
+  formDraft: Form
   formDraftJson: string
 }
 
@@ -33,7 +35,7 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
 
   const previewUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/" + selvitysType
   const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/" + selvitysType + "?lang=sv"
-  const onFormChange = (avustushaku: Avustushaku, newDraft: any) =>{
+  const onFormChange = (avustushaku: Avustushaku, newDraft: Form) =>{
     controller.selvitysFormOnChangeListener(avustushaku, newDraft, selvitysType)
     controller.selvitysJsonFormOnChangeListener(avustushaku, JSON.stringify(newDraft, null, 2), selvitysType)
   }

@@ -1,7 +1,7 @@
 import React from 'react'
 import ClassNames from 'classnames'
 
-import { Avustushaku, Form, HelpTexts, LegacyTranslations, Liite } from 'soresu-form/web/va/types'
+import { Avustushaku, Form, HelpTexts, Koodistos, LegacyTranslations, Liite } from 'soresu-form/web/va/types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 import HakuEdit from './HakuEdit'
@@ -10,7 +10,7 @@ import DecisionEditor from './DecisionEditor'
 import { SelvitysFormEditor } from './SelvitysFormEditor'
 import HelpTooltip from '../HelpTooltip'
 import HakujenHallintaController from '../HakujenHallintaController'
-import { HakujenHallintaSubTab, Koodistos, UserInfo, VaCodeValue, VaUserSearch } from '../types'
+import { HakujenHallintaSubTab, UserInfo, VaCodeValue, VaUserSearch } from '../types'
 
 interface EditorSelectorProps {
   subTab: HakujenHallintaSubTab

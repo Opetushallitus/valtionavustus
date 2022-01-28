@@ -2,55 +2,44 @@ import _ from "lodash"
 
 import FormUtil from "../FormUtil"
 import JsUtil from "../../JsUtil"
+import { AddableFieldType, Field, FieldClass, FieldType, fieldTypes, Form, Option } from "soresu-form/web/va/types"
 
-const fieldTypes = {
-  "textField": "formField",
-  "textArea": "formField",
-  "radioButton": "formField",
-  "checkboxButton": "formField",
-  "dropdown": "formField",
-  "namedAttachment": "formField",
-  "koodistoField": "formField",
-  "p": "infoElement",
-  "h3": "infoElement",
-  "link": "infoElement",
-  "theme": "wrapperElement",
-  "fieldset": "wrapperElement",
-  "growingFieldset": "wrapperElement",
-  "growingFieldsetChild": "wrapperElement"
+interface FormEditorControllerProps {
+  formDraft: Form
+  onFormEdited: (f: Form, result: Field | void) => void
+  allowEditing: boolean
 }
 
 export default class FormEditorController {
+  formDraft: Form
+  onEditCallback: (f: Form, result: Field | void) => void
+  allowEditing: boolean
 
-  static addableFieldTypes() {
-    return fieldTypes
-  }
-
-  constructor(props) {
+  constructor(props: FormEditorControllerProps) {
     this.formDraft = props.formDraft
     this.onEditCallback = props.onFormEdited
     this.allowEditing = props.allowEditing
   }
 
-  doEdit(operation) {
+  doEdit(operation: () => Field | void) {
     if (this.allowEditing) {
       const result = operation()
       this.onEditCallback(this.formDraft, result)
     }
   }
 
-  editField(fieldId, valueContainerGetter, valueName, newValue) {
+  editField(fieldId: string, valueContainerGetter: (s: Field | null) => Field, valueName: keyof Field, newValue: string) {
     this.doEdit(() => {
       const fieldFromJson = FormUtil.findField(this.formDraft.content, fieldId)
       valueContainerGetter(fieldFromJson)[valueName] = newValue
     })
   }
 
-  removeField(field) {
+  removeField(field: Field) {
     this.doEdit(() => {
-      const fieldMatcher = f => { return f.id === field.id }
+      const fieldMatcher = (f: Field) => { return f.id === field.id }
       const parent = FormUtil.findFieldWithDirectChild(this.formDraft.content, field.id)
-      if (parent) {
+      if (parent?.children) {
         _.remove(parent.children, fieldMatcher)
       } else {
         _.remove(this.formDraft.content, fieldMatcher)
@@ -58,10 +47,10 @@ export default class FormEditorController {
     })
   }
 
-  moveField(field, indexDelta) {
+  moveField(field: Field, indexDelta: number) {
     this.doEdit(() => {
       const parent = FormUtil.findFieldWithDirectChild(this.formDraft.content, field.id)
-      const fields = parent ? parent.children : this.formDraft.content
+      const fields = parent?.children ? parent.children : this.formDraft.content
       const oldIndex = fields.findIndex(f => f.id === field.id)
       const newIndex = oldIndex + indexDelta
 
@@ -82,7 +71,7 @@ export default class FormEditorController {
     })
   }
 
-  getFieldClassProps(fieldClass) {
+  getFieldClassProps(fieldClass: FieldClass) {
     switch (fieldClass) {
       case "formField":
         return {
@@ -99,7 +88,7 @@ export default class FormEditorController {
     }
   }
 
-  getFieldTypeProps(fieldType, id) {
+  getFieldTypeProps(fieldType: FieldType, id: string): any {
     switch (fieldType) {
       case "moneyField":
       case "emailField":
@@ -157,8 +146,8 @@ export default class FormEditorController {
     }
   }
 
-  createNewField(fieldType, id) {
-    const fieldClass = FormEditorController.addableFieldTypes()[fieldType]
+  createNewField(fieldType: AddableFieldType, id: string) {
+    const fieldClass = fieldTypes[fieldType]
     const newField = Object.assign(
       {
         "params": {},
@@ -173,39 +162,34 @@ export default class FormEditorController {
     return newField
   }
 
-  findElementsById(id) {
-    return JsUtil.flatFilter(
-      this.formDraft.content, n => n.id === id)
-  }
-
-  generateUniqueId(baseId, index, delimiter = "-") {
+  generateUniqueId(baseId: string, index: number, delimiter = "-"): string {
     const proposed = `${baseId}${delimiter}${index}`
-    if (_.isEmpty(this.findElementsById(proposed))) {
+    if (_.isEmpty(JsUtil.flatFilter(this.formDraft.content, (n: Field) => n.id === proposed))) {
       return proposed
     }
     return this.generateUniqueId(baseId, index + 1, delimiter)
   }
 
-  addChildFieldAfter(fieldToAddAfter, newFieldType) {
+  addChildFieldAfter(fieldToAddAfter: Field, newFieldType: AddableFieldType) {
     this.doEdit(() => {
       const formDraftJson = this.formDraft
       const parentField = FormUtil.findFieldWithDirectChild(formDraftJson.content, fieldToAddAfter.id)
-      const childArray = parentField ? parentField.children : formDraftJson.content
+      const childArray = parentField?.children ? parentField.children : formDraftJson.content
       const fieldToAddAfterOnForm = FormUtil.findField(formDraftJson.content, fieldToAddAfter.id)
-      const indexOfNewChild = childArray.indexOf(fieldToAddAfterOnForm) + 1
+      const indexOfNewChild = fieldToAddAfterOnForm ? childArray.indexOf(fieldToAddAfterOnForm) + 1 : 0
 
-      const newId = parentField &&
-        parentField.fieldType === "growingFieldsetChild" ?
-        this.generateUniqueId(
-          `${parentField.id}.${newFieldType}`, 0, "_") :
-        this.generateUniqueId(newFieldType, 0)
+      const newId = parentField?.fieldType === "growingFieldsetChild"
+        ? this.generateUniqueId(`${parentField.id}.${newFieldType}`, 0, "_")
+        : this.generateUniqueId(newFieldType, 0)
       const newChild = this.createNewField(newFieldType, newId)
 
-      const parent = parentField ? FormUtil.findField(formDraftJson.content, parentField.id) : formDraftJson.content
+      const parent = parentField
+        ? FormUtil.findField(formDraftJson.content, parentField.id)
+        : formDraftJson.content
       if (_.isArray(parent)) {
         parent.splice(indexOfNewChild, 0, newChild)
       } else {
-        parent.children.splice(indexOfNewChild, 0, newChild)
+        parent?.children?.splice(indexOfNewChild, 0, newChild)
       }
       return newChild
     })
@@ -215,17 +199,17 @@ export default class FormEditorController {
     return { "value": "", "label": { "fi": "", "sv": "" } }
   }
 
-  appendOption(radioButtonField) {
+  appendOption(radioButtonField: Field) {
     this.doEdit(() => {
       const fieldInForm = FormUtil.findField(this.formDraft.content, radioButtonField.id)
-      fieldInForm.options.push(FormEditorController.createEmptyOption())
+      fieldInForm?.options?.push(FormEditorController.createEmptyOption())
     })
   }
 
-  removeOption(radioButtonField, optionToRemove) {
+  removeOption(radioButtonField: Field, optionToRemove: Option) {
     this.doEdit(() => {
       const fieldInForm = FormUtil.findField(this.formDraft.content, radioButtonField.id)
-      _.remove(fieldInForm.options, optionToRemove)
+      fieldInForm?.options && _.remove(fieldInForm.options, optionToRemove)
     })
   }
 }

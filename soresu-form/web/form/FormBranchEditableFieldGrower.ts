@@ -10,8 +10,8 @@ import JsUtil from '../JsUtil'
 import FormUtil from './FormUtil'
 import {Field} from "soresu-form/web/va/types";
 
-export function ensureFirstChildIsRequired(state: any, growingParent: any) {
-  const firstChildOfGrowingSet = _.head(growingParent.children)
+export function ensureFirstChildIsRequired(state: any, growingParent: Field) {
+  const firstChildOfGrowingSet = _.head(growingParent.children)!
   const prototypeForm = state.configuration.form
   const answersObject = state.saveStatus.values
   const syntaxValidator = state.extensionApi.customFieldSyntaxValidator
@@ -20,13 +20,13 @@ export function ensureFirstChildIsRequired(state: any, growingParent: any) {
   const answersToWrite: FieldUpdate[] = []
   const validationErrorsToDelete: string[] = []
 
-  const processFirstChildChildren = (operation: any) => {
+  const processFirstChildChildren = (operation: (f: Field) => void) => {
     _.forEach(JsUtil.flatFilter(firstChildOfGrowingSet, (n: Field) => !_.isUndefined(n.id)), operation)
   }
 
-  processFirstChildChildren((n: any) => {
+  processFirstChildChildren((n: Field) => {
     if (!_.isUndefined(n.id) && n.fieldClass === "formField") {
-      const prototypeNode = <Field><unknown>FormUtil.findFieldIgnoringIndex(childPrototype, n.id)
+      const prototypeNode = FormUtil.findFieldIgnoringIndex(childPrototype, n.id)!
       const existingInputValue = InputValueStorage.readValue(null, answersObject, n.id)
       answersToWrite.push(createFieldUpdate(prototypeNode, existingInputValue, syntaxValidator))
       validationErrorsToDelete.push(n.id)
@@ -35,24 +35,23 @@ export function ensureFirstChildIsRequired(state: any, growingParent: any) {
     }
   })
 
-  _.forEach(answersToDelete, fieldIdToEmpty => {
+  answersToDelete.forEach(fieldIdToEmpty => {
     InputValueStorage.deleteValue(growingParent, answersObject, fieldIdToEmpty)
   })
 
-  processFirstChildChildren((n: any) => {
-    const prototypeNode = <Field><unknown>FormUtil.findFieldIgnoringIndex(childPrototype, n.id);
-    n.id = prototypeNode.id
-    if (prototypeNode.required) {
+  processFirstChildChildren((n: Field) => {
+    const prototypeNode = FormUtil.findFieldIgnoringIndex(childPrototype, n.id)!
+    n.id = prototypeNode?.id
+    if (prototypeNode?.required) {
       n.required = true
     }
-
   })
 
-  _.forEach(answersToWrite, fieldUpdate => {
+  answersToWrite.forEach(fieldUpdate => {
     InputValueStorage.writeValue(prototypeForm, answersObject, fieldUpdate)
   })
 
-  growingParent.children.sort((firstChild: any, secondChild: any) => {
+  growingParent.children?.sort((firstChild: Field, secondChild: Field) => {
     return JsUtil.naturalCompare(firstChild.id, secondChild.id)
   })
 
@@ -61,7 +60,7 @@ export function ensureFirstChildIsRequired(state: any, growingParent: any) {
 
   const fieldsToValidate = JsUtil.flatFilter(
     firstChildOfGrowingSet,
-    (f: any) => !_.isUndefined(f.id) && f.fieldClass === "formField"
+    (f: Field) => !_.isUndefined(f.id) && f.fieldClass === "formField"
   )
   triggerFieldUpdatesForValidation(fieldsToValidate, state)
 }

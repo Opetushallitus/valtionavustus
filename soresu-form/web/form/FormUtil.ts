@@ -1,17 +1,21 @@
 import _ from 'lodash'
+import { ImmutableArray } from 'seamless-immutable'
 
 import JsUtil from '../JsUtil'
+import { Field, FieldType } from '../va/types'
+
+type FieldOrArray = Field | Field[] | ImmutableArray<Field>
 
 export default class FormUtil {
-  static scrollTo(element, duration, afterScroll) {
+  static scrollTo(element: Element, duration: number, afterScroll: () => any) {
     if(!afterScroll) {
       afterScroll = function(){}
     }
-    const aboutSame = function(current, target) {
+    const aboutSame = function(current: number, target: number) {
       return Math.abs(current - target) < 1
     }
     const startScrollPos = window.pageYOffset
-    const offsetFromTop = document.getElementById("container").getBoundingClientRect().top + startScrollPos
+    const offsetFromTop = document.getElementById("container")?.getBoundingClientRect().top as number + startScrollPos
     const targetScrollPos = element.getBoundingClientRect().top + startScrollPos - offsetFromTop
     if (aboutSame(startScrollPos, targetScrollPos)) {
       afterScroll()
@@ -31,9 +35,9 @@ export default class FormUtil {
     },10)
   }
 
-  static idIsSameOrSameIfIndexIgnoredPredicate(findId) {
+  static idIsSameOrSameIfIndexIgnoredPredicate(findId: string) {
     const findIdSansIndex = findId ? FormUtil.withOutIndex(findId) : findId
-    return field => {
+    return (field: Field) => {
       const givenFieldId = field.id
       if (givenFieldId === findIdSansIndex) {
         return true
@@ -45,7 +49,7 @@ export default class FormUtil {
     }
   }
 
-  static findChildIndexAccordingToFieldSpecification(specificationChildren, currentChildren, fieldId) {
+  static findChildIndexAccordingToFieldSpecification(specificationChildren: Field[], currentChildren: Field[], fieldId: string) {
     const newFieldSpecIndex = _.findIndex(specificationChildren, FormUtil.idIsSameOrSameIfIndexIgnoredPredicate(fieldId))
     let index = 0
     for (; index < currentChildren.length; index++) {
@@ -58,41 +62,41 @@ export default class FormUtil {
     return index
   }
 
-  static findField(formContent, fieldId) {
-    return JsUtil.findFirst(formContent, n => n.id === fieldId)
+  static findField(formContent: Field[], fieldId: string) {
+    return JsUtil.findFirst(formContent, (n: Field) => n.id === fieldId)
   }
 
-  static findIndexOfField(formContent, fieldId) {
-    return JsUtil.findIndexOfFirst(formContent, n => n.id === fieldId)
+  static findIndexOfField(formContent: Field[], fieldId: string) {
+    return JsUtil.findIndexOfFirst(formContent, (n: Field) => n.id === fieldId)
   }
 
-  static findFieldByFieldType(formContent, fieldType) {
-    return JsUtil.findFirst(formContent, n => { return n.fieldType === fieldType })
+  static findFieldByFieldType(formContent: FieldOrArray, fieldType: FieldType) {
+    return JsUtil.findFirst(formContent, (n: Field) => n.fieldType === fieldType)
   }
 
-  static findFieldsByFieldType(formContent, fieldType) {
-    return JsUtil.flatFilter(formContent, n => { return n.fieldType === fieldType })
+  static findFieldsByFieldType(formContent: FieldOrArray, fieldType: FieldType) {
+    return JsUtil.flatFilter(formContent, (n: Field) => n.fieldType === fieldType)
   }
 
-  static findFieldIgnoringIndex(formContent, fieldId) {
+  static findFieldIgnoringIndex(formContent: Field | Field[], fieldId: string) {
     return JsUtil.findFirst(formContent, FormUtil.idIsSameOrSameIfIndexIgnoredPredicate(fieldId))
   }
 
-  static findSubFieldIds(field) {
-    return JsUtil.traverseMatching(field.children, n => { return n.id}, n => { return n.id})
+  static findSubFieldIds(field: Field) {
+    return JsUtil.traverseMatching(field.children ?? [], (n: Field) => !!n.id, (n: Field) => n.id)
   }
 
-  static findFieldWithDirectChild(formContent, childId) {
-    return JsUtil.findFirst(formContent, n => { return _.some(n.children, c => { return c.id === childId })})
+  static findFieldWithDirectChild(formContent: Field[], childId: string) {
+    return JsUtil.findFirst(formContent, (n: Field) => n.children?.some(c => c.id === childId) ?? false)
   }
 
-  static findGrowingParent(formContent, fieldId) {
-    const allGrowingFieldsets = JsUtil.flatFilter(formContent, n => { return n.fieldType === "growingFieldset" })
+  static findGrowingParent(formContent: Field[], fieldId: string) {
+    const allGrowingFieldsets = JsUtil.flatFilter(formContent, (n: Field) => n.fieldType === "growingFieldset")
     return JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
   }
 
-  static withOutIndex(id) {
-    const partWithOutIndex = function(part) {
+  static withOutIndex(id: string) {
+    const partWithOutIndex = function(part: string) {
       const index = FormUtil.parseIndexFrom(part)
       if(index === "") {
         return part
@@ -101,35 +105,35 @@ export default class FormUtil {
         return part.substring(0, part.lastIndexOf("-"))
       }
     }
-    return _.map(id.split("."), part => {return partWithOutIndex(part)}).join(".")
+    return id.split(".").map(partWithOutIndex).join(".")
   }
 
-  static parseIndexFrom(id) {
+  static parseIndexFrom(id: string) {
     if (!id || id.length < 0) {
       throw new Error("Cannot parse index from empty id")
     }
     const index = _.last(id.split("-"))
-    if (!index || index.length === 0 || isNaN(index) || !(_.isFinite(parseInt(index)))) {
+    if (!index || index.length === 0 || isNaN(parseInt(index)) || !(_.isFinite(parseInt(index)))) {
       return ""
     }
     return parseInt(index)
   }
 
-  static mergeDeepFieldTrees(tree, ...restTrees) {
+  static mergeDeepFieldTrees(tree: Partial<Field>, ...restTrees: Partial<Field>[]) {
     const copiedTree = _.cloneDeep(tree)
 
-    _.forEach(restTrees, anotherTree => {
+    restTrees.forEach(anotherTree => {
       traverse(copiedTree, anotherTree)
     })
 
     return copiedTree
 
-    function traverse(dstTree, srcTree) {
+    function traverse(dstTree: Partial<Field>, srcTree: Partial<Field>) {
       const dstChildren = dstTree.children
 
       if (dstChildren && dstChildren.length > 0) {
         // lookup optimization
-        const dstChildrenById = _.reduce(dstChildren, (acc, field) => {
+        const dstChildrenById = dstChildren.reduce((acc: Record<string, Partial<Field>>, field) => {
           acc[field.id] = field
           return acc
         }, {})

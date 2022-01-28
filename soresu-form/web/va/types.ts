@@ -1,5 +1,6 @@
 import { Muutoshakemus, MuutoshakemusStatus, Talousarvio } from "./types/muutoshakemus"
 import translations from '../../resources/public/translations.json'
+import { ImmutableObject } from "seamless-immutable"
 
 export const languages = ['fi', 'sv'] as const
 export type Language = typeof languages[number]
@@ -15,6 +16,19 @@ export type HakemusFormState = {
   changeRequests: any
   attachmentVersions: any
   extensionApi: any
+  koodistos?: Koodistos
+  koodistosLoader?: () => void
+}
+
+export interface Koodisto {
+  uri: string
+  name: string
+  version: unknown
+}
+
+export interface Koodistos {
+  content: Koodisto[] | null
+  loading: boolean
 }
 
 export type AnswersDelta = {
@@ -178,9 +192,9 @@ export interface Hakemus {
   normalizedData?: NormalizedHakemusData
   selvitys?: {
     attachments: unknown
-    loppuselvitysForm: unknown
+    loppuselvitysForm?: ImmutableObject<Form>
     loppuselvitys: Selvitys,
-    valiselvitysForm: unknown
+    valiselvitysForm?: ImmutableObject<Form>
     valiselvitys: Selvitys
   }
   version: number
@@ -303,6 +317,7 @@ export type Avustushaku = {
   phase: AvustushakuPhase
   'register-number': string
   status: AvustushakuStatus
+  privileges?: any
 }
 
 export type HelpTexts = { [k: string]: string }
@@ -322,13 +337,12 @@ interface Rule {
 }
 
 export interface Form {
-  content: any
+  content: Field[]
   rules: Rule[]
   created_at: Date
   updated_at: Date
   validationErrors?: any
 }
-
 interface LocalizedText {
   fi: string
   sv: string
@@ -341,6 +355,30 @@ interface LocalizedTextList {
   items: LocalizedText[]
 }
 
+export const fieldTypes: { [f in AddableFieldType]: FieldClass } = {
+  "textField": "formField",
+  "textArea": "formField",
+  "radioButton": "formField",
+  "checkboxButton": "formField",
+  "dropdown": "formField",
+  "namedAttachment": "formField",
+  "koodistoField": "formField",
+  "p": "infoElement",
+  "h3": "infoElement",
+  "link": "infoElement",
+  "theme": "wrapperElement",
+  "fieldset": "wrapperElement",
+  "growingFieldset": "wrapperElement",
+  "growingFieldsetChild": "wrapperElement"
+}
+
+export const addableFields = ["textField", "textArea", "radioButton", "checkboxButton", "dropdown", "namedAttachment", "koodistoField", "p", "h3", "link", "theme", "fieldset", "growingFieldset", "growingFieldsetChild"] as const
+export type AddableFieldType = typeof addableFields[number]
+export type NonAddableFieldType = 'moneyField' | 'emailField' | 'bic' | 'iban' | 'tableField' | 'integerField' | 'decimalField' | 'finnishBusinessIdField' | 'vaEmailNotification'
+export type BudgetFieldType = 'vaBudget' | 'vaBudgetSummaryElement' | 'vaSelfFinancingField' | 'vaBudgetItemElement'
+export type FieldType = AddableFieldType | NonAddableFieldType | BudgetFieldType
+export type FieldClass = 'formField' | 'infoElement' | 'wrapperElement'
+
 export interface Option {
   value: string
   label: LocalizedText
@@ -351,8 +389,12 @@ export interface Field {
   key?: string
   value?: any
   required?: boolean
-  fieldType: string
-  fieldClass: string
+  fieldType: FieldType
+  fieldClass: FieldClass
+  options?: Option[]
+  children?: Field[]
+  params?: any
+  label?: LocalizedText
 }
 
 export interface Liite {
