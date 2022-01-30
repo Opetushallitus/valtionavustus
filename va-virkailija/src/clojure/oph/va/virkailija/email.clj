@@ -62,6 +62,7 @@
    :hakuaika-paattymassa {:fi (email/load-template "email-templates/hakuaika-paattymassa.fi")
                           :sv (email/load-template "email-templates/hakuaika-paattymassa.sv")}
    :hakuaika-paattynyt {:fi (email/load-template "email-templates/hakuaika-paattynyt.fi")}
+   :paatokset-lahetetty {:fi (email/load-template "email-templates/paatokset-lahetetty.fi")}
    :valiselvitys-palauttamatta {:fi (email/load-template "email-templates/valiselvitys-palauttamatta.fi")
                                 :sv (email/load-template "email-templates/valiselvitys-palauttamatta.sv")}
    :loppuselvitys-palauttamatta {:fi (email/load-template "email-templates/loppuselvitys-palauttamatta.fi")
@@ -311,6 +312,21 @@
 
                            (partial render (get-in mail-templates [:paatos lang])))))
 
+(defn send-paatokset-lahetetty [yhteenveto-url avustushaku-id avustushaku-name to]
+  (let [lang (keyword "fi")]
+  (email/try-send-msg-once {
+                            :type :paatokset-lahetetty
+                            :from (-> email/smtp-config :from lang)
+                            :sender (-> email/smtp-config :sender)
+                            :to to
+                            :subject "Avustuspäätökset on lähetetty"
+                            :lang lang
+                            :avustushaku-name avustushaku-name
+                            :yhteenveto-url yhteenveto-url
+                            :avustushaku-id avustushaku-id
+                            }
+                           (partial render (get-in mail-templates [:paatokset-lahetetty lang])))))
+
 (defn- has-multiple-menoluokka-rows [hakemus-id]
   (let [result (first (query "SELECT COUNT(id) FROM menoluokka_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
     (> (:count result) 1)))
@@ -392,7 +408,7 @@
                                        :from (-> email/smtp-config :from lang)
                                        :sender (-> email/smtp-config :sender)
                                        :subject mail-subject
-                                       :selvitysdate selvitysdate 
+                                       :selvitysdate selvitysdate
                                        :presenter-name (:name presenter)
                                        :avustushaku-name avustushaku-name
                                        :to to

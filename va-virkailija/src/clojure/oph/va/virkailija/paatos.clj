@@ -10,6 +10,7 @@
       [oph.va.virkailija.schema :as virkailija-schema]
       [oph.va.virkailija.hakudata :as hakudata]
       [oph.va.virkailija.db :as virkailija-db]
+      [oph.va.virkailija.saved-search :as saved-search]
       [clojure.tools.logging :as log]
       [clojure.string :as str]
       [oph.va.virkailija.decision :as decision]
@@ -45,6 +46,15 @@
              contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
              emails (emails-for-hakemus hakemus contact-email)]
          emails))
+
+(defn send-paatokset-lahetetty [avustushaku-id ids identity]
+  (let [valmistelija-emails (virkailija-db/get-valmistelija-emails-assigned-to-hakemus avustushaku-id)
+        avustushaku (hakija-api/get-avustushaku avustushaku-id)
+        avustushaku-name (get-in avustushaku [:content :name :fi])
+        search-id (saved-search/create-or-get-search avustushaku-id ids identity)
+        search-url (str (-> config :server :virkailija-url) "/yhteenveto/avustushaku/" avustushaku-id "/listaus/" search-id "/")]
+    (log/info "Sending paatokset-lahetetty email for avustushaku-id " avustushaku-id " emails " valmistelija-emails)
+    (email/send-paatokset-lahetetty search-url avustushaku-id avustushaku-name valmistelija-emails)))
 
 (defn send-paatos [hakemus-id emails batch-id identity]
       (let [hakemus (hakija-api/get-hakemus hakemus-id)
@@ -205,16 +215,19 @@
   (compojure-api/POST "/sendall/:avustushaku-id" [:as request]
                       :path-params [avustushaku-id :- Long]
                       (let [ids (get-hakemus-ids-to-send avustushaku-id)
-                            uuid (.toString (java.util.UUID/randomUUID))]
+                            uuid (.toString (java.util.UUID/randomUUID))
+                            identity (authentication/get-request-identity request)]
                            (if-let [valmistelija-required-error (check-hakemukset-have-valmistelija ids)]
                              valmistelija-required-error
                              (do (when (get-in config [:payments :enabled?])
                                        (do
                                          (log/info "Create initial payment for applications")
                                          (payments-data/create-grant-payments
-                                           avustushaku-id 0 (authentication/get-request-identity request))))
+                                           avustushaku-id 0 identity)))
                                  (log/info "Send all paatos ids " ids)
                                  (run! (partial send-paatos-for-all uuid (authentication/get-request-identity request)) ids)
+                                 (when (get-in config [:send-paatokset-lahetetty-to-virkailija :enabled?])
+                                     (send-paatokset-lahetetty avustushaku-id {:hakemus-ids ids} identity))
                                  (ok (merge {:status "ok"}
                                             (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))))
 

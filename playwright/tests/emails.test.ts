@@ -5,11 +5,13 @@ import {
   getValiselvitysEmails,
   getLinkToMuutoshakemusFromSentEmails,
   lastOrFail,
-  waitUntilMinEmails
+  waitUntilMinEmails, getPaatoksetLahetettyEmails
 } from "../utils/emails";
-import {expect} from "@playwright/test"
+import {expect, Page} from "@playwright/test"
 import {HakujenHallintaPage} from "../pages/hakujenHallintaPage";
 import {HakijaMuutoshakemusPage} from "../pages/hakijaMuutoshakemusPage";
+import {VIRKAILIJA_URL} from "../utils/constants";
+import {expectToBeDefined} from "../utils/util";
 
 const contactPersonEmail = "yrjo.yhteyshenkilo@example.com"
 const newContactPersonEmail = "uusi.yhteyshenkilo@example.com"
@@ -25,7 +27,17 @@ const test = muutoshakemusTest.extend({
   }
 })
 
-test('sends emails to correct contact and hakemus emails', async ({page, acceptedHakemus: {hakemusID}, avustushakuID}) => {
+const getSearchUrl = async ({page, avustushakuID, hakemusIds}: {page: Page, avustushakuID: number, hakemusIds: number[]}) => {
+  const res = await page.request.put(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/searches`, {
+    data: { "hakemus-ids": hakemusIds }
+  })
+  const json = await res.json()
+  const searchUrl = json["search-url"]
+  expectToBeDefined(searchUrl)
+  return searchUrl
+}
+
+test('sends emails to correct contact and hakemus emails', async ({page, acceptedHakemus: {hakemusID}, avustushakuID, hakuProps}) => {
   const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(hakemusID)
   await test.step('sends päätös email', async () => {
     const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
@@ -35,6 +47,29 @@ test('sends emails to correct contact and hakemus emails', async ({page, accepte
       contactPersonEmail,
       "akaan.kaupunki@akaa.fi"
     ])
+  })
+  await test.step('virkailija gets päätökset lähetetty email', async () => {
+    const emails = await waitUntilMinEmails(getPaatoksetLahetettyEmails, 1, avustushakuID)
+    const searchUrl = await getSearchUrl({page, hakemusIds: [hakemusID], avustushakuID})
+    expect(emails).toHaveLength(1)
+    const email = lastOrFail(emails)
+    expect(email["to-address"]).toEqual([
+      "santeri.horttanainen@reaktor.com",
+      "viivi.virkailja@exmaple.com"
+    ])
+    expect(email.subject).toEqual("Avustuspäätökset on lähetetty")
+    expect(email.formatted).toEqual(`Hei!
+
+Valtionavustuksen ${hakuProps.avustushakuName} päätökset on lähetetty kaikkien hakijoiden yhteyshenkilöille sekä hakijoiden virallisiin sähköpostiosoitteisiin.
+
+Linkki avustuksen päätöslistaan: ${VIRKAILIJA_URL}${searchUrl}
+
+Avustuksen päätökset tulee julkaista oph.fi-verkkopalvelussa ohjeistuksen mukaisesti https://intra.oph.fi/pages/viewpage.action?pageId=99516838
+
+Avustusten maksatukset toteutetaan päätöksessä kuvatun aikataulun mukaan. Ohjeet maksatusten tekemiseksi löytyvät: https://intra.oph.fi/display/VALA/Avustusten+maksaminen
+
+Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
+`)
   })
   const hakujenHallintaPage = new HakujenHallintaPage(page)
   await hakujenHallintaPage.navigateToPaatos(avustushakuID)

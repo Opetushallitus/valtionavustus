@@ -29,4 +29,5 @@
       :database-name "va-dev"}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :test-apis {:enabled? true}
+ :send-paatokset-lahetetty-to-virkailija {:enabled? true}
  :officer-edit-jwt-secret "playwright-test-secret"}

@@ -29,6 +29,11 @@ const getEmails = (emailType: string) => (hakemusID: number): Promise<Email[]> =
     .then(r => { console.log(`getEmails(${emailType})`, r.data); return r })
     .then(r => emailSchema.validate(r.data))
 
+const getEmailsWithAvustushaku = (emailType: string) => (avustushakuID: number): Promise<Email[]> =>
+  axios.get(`${VIRKAILIJA_URL}/api/test/avustushaku/${avustushakuID}/email/${emailType}`)
+    .then(r => { console.log(`getEmails(${emailType})`, r.data); return r })
+    .then(r => emailSchema.validate(r.data))
+
 export const getValmistelijaEmails = getEmails("notify-valmistelija-of-new-muutoshakemus")
 export const getMuutoshakemusPaatosEmails = getEmails("muutoshakemus-paatos")
 export const getMuutoshakemusEmails = getEmails("paatos-refuse")
@@ -38,6 +43,7 @@ export const getLoppuselvitysEmails = getEmails("loppuselvitys-notification")
 export const getLoppuselvitysPalauttamattaEmails = getEmails("loppuselvitys-palauttamatta")
 export const getValiselvitysPalauttamattaEmails = getEmails("valiselvitys-palauttamatta")
 export const getYhteystiedotMuutettuEmails = getEmails("hakemus-edited-after-applicant-edit")
+export const getPaatoksetLahetettyEmails = getEmailsWithAvustushaku("paatokset-lahetetty")
 
 async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))

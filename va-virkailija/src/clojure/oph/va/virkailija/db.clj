@@ -633,3 +633,13 @@
             FROM virkailija.menoluokka
             WHERE avustushaku_id = ?"
             [to-application-id from-application-id]))
+
+(defn get-valmistelija-emails-assigned-to-hakemus [avustushaku-id]
+  (let [sql "SELECT   DISTINCT(email)
+             FROM     hakija.avustushaku_roles
+             WHERE    role = 'presenting_officer' AND
+                      avustushaku = ?
+             ORDER BY email"
+        result (map :email (query sql [avustushaku-id]))]
+    (log/info "Found valmistelija emails " result "for avustushaku ID" avustushaku-id)
+    result))
