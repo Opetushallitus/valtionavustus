@@ -9,7 +9,9 @@
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25
-         :sender "no-reply@csc.fi"}
+         :sender "no-reply@csc.fi"
+         :persistent-retry {:enabled? true
+                            :schedule "0 * * * * ?"}}
  :rondo-scheduler {:enabled? true
                     :scheduling "0 00 04 ? * *"
                     :strict-host-key-checking :yes}
