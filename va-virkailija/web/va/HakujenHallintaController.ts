@@ -17,7 +17,6 @@ import HakuPhases from './haku-details/HakuPhases'
 import queryString from 'query-string'
 import {
   fiLongDateTimeFormat,
-  fiShortFormat,
   isoFormat,
   parseFinnishTimestamp
 } from 'soresu-form/web/va/i18n/dateformat'
@@ -151,7 +150,7 @@ function appendBudgetComponent(selvitysType: Selvitys, avustushaku: Avustushaku)
   const form = selvitysType === "valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
   const originalVaBudget = avustushaku.formContent?.content && FormUtil.findFieldByFieldType(avustushaku.formContent?.content, "vaBudget")
   if(originalVaBudget) {
-    const childrenWithoutBudgetSummary = originalVaBudget.children?.filter((i: { id: string }) => i.id !== 'budget-summary')
+    const childrenWithoutBudgetSummary = originalVaBudget.children?.filter(i => i.id !== 'budget-summary')
     const selvitysVaBudget = FormUtil.findFieldByFieldType(form.content, "vaBudget")
     if (selvitysVaBudget) {
       selvitysVaBudget.children = childrenWithoutBudgetSummary
@@ -245,13 +244,13 @@ export default class HakujenHallintaController {
       }
       ,
       filter:{
-        status:HakuStatuses.allStatuses(),
-        phase:HakuPhases.allStatuses(),
+        status: HakuStatuses.allStatuses(),
+        phase: HakuPhases.allStatuses(),
         avustushaku: "",
-        startdatestart:"",
-        startdateend:"",
-        enddatestart:moment().subtract(2, 'year').format(fiShortFormat),
-        enddateend:""
+        startdatestart: "",
+        startdateend: "",
+        enddatestart: "",
+        enddateend: ""
       }
     }
 
