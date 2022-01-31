@@ -5,6 +5,7 @@ import _ from "lodash"
 
 import FormEditorController from "./FormEditController"
 import SyntaxValidator from "../SyntaxValidator"
+import { isNumberic } from "../../MathUtil"
 import { addableFields } from 'soresu-form/web/va/types'
 
 const hiddenFields = [
