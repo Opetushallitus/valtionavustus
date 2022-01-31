@@ -3,7 +3,7 @@ import _ from 'lodash'
 import {DefaultPropertyMapper} from './PropertyMapper'
 import Translator from '../Translator'
 import TableFieldUtil from './TableFieldUtil.jsx'
-import {formatDecimal, roundDecimal} from '../../MathUtil'
+import {formatDecimal, roundDecimal, parseDecimal} from '../../MathUtil'
 
 export default class TableFieldPropertyMapper {
   static map(props) {
