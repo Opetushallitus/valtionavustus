@@ -40,8 +40,12 @@ function _fieldGetter(fieldName: string) {
   throw Error("No field getter for " + fieldName)
 }
 
+function isValidDateFilter(value: string) {
+  return moment(value, [fiShortFormat], true).isValid() || value === ""
+}
+
 function _filterWithDatePredicate(fieldGetter: (a: Avustushaku) => string | Date, filterStart: string, filterEnd: string) {
-  if (!filterStart && !filterEnd) {
+  if (!filterStart && !filterEnd || !isValidDateFilter(filterStart) || !isValidDateFilter(filterEnd)) {
     return () => true
   }
 
@@ -220,34 +224,22 @@ interface DateFilterProps {
 const DateFilter = (props: DateFilterProps) => {
   const { controller, filter, label, filterField } = props
   const [open, setOpen] = useState(false)
-  const [invalidstart, setInvalidstart] = useState(false)
-  const [invalidend, setInvalidend] = useState(false)
-  const [startValue, setStartValue] = useState(filter[(filterField + "start") as FilterId])
-  const [endValue, setEndValue] = useState(filter[(filterField + "end") as FilterId])
+  const startValue = filter[(filterField + "start") as FilterId] as string
+  const endValue = filter[(filterField + "end") as FilterId] as string
 
-  function handleClick() {
-    setOpen(!open)
+  const handleClick = () => setOpen(!open)
+
+  const updateStart = (value: string) => {
+    controller.setFilter((filterField + 'start') as FilterId, value)
   }
 
-  const updateFilter = (type: 'start' | 'end', value: string) => {
-    const isValid = moment(value, [fiShortFormat], true).isValid() || value === ""
-    if (isValid) {
-      controller.setFilter((filterField + type) as FilterId, value)
-    }
-    if (type === 'start') {
-      setInvalidstart(!isValid)
-    } else {
-      setInvalidend(!isValid)
-    }
+  const updateEnd = (value: string) => {
+    controller.setFilter((filterField + 'end') as FilterId, value)
   }
 
   const onDelete = () => {
-    setStartValue('')
-    setEndValue('')
-    setInvalidstart(false)
-    setInvalidend(false)
-    updateFilter('start', '')
-    updateFilter('end', '')
+    updateStart('')
+    updateEnd('')
   }
 
   return (
@@ -256,9 +248,9 @@ const DateFilter = (props: DateFilterProps) => {
       <button type="button" hidden={!startValue && !endValue} onClick={onDelete} className="filter-remove" title="Poista tilojen rajaukset" tabIndex={-1} />
       <div className="status-filter-popup popup-box-shadow" hidden={!open}>
         <label>Alkaen</label>
-        <input type="text" onBlur={e => updateFilter('start', e.target.value)} onChange={e => setStartValue(e.target.value)} className={invalidstart ? 'error' : ''} placeholder="p.k.vvvv" value={startValue}/>
+        <input type="text" onChange={e => updateStart(e.target.value)} className={!isValidDateFilter(startValue) ? 'error' : ''} placeholder="p.k.vvvv" value={startValue}/>
         <label>Loppuu</label>
-        <input type="text" onBlur={e => updateFilter('end', e.target.value)} onChange={e => setEndValue(e.target.value)} className={invalidend ? 'error' : ''}  placeholder="p.k.vvvv" value={endValue}/>
+        <input type="text" onChange={e => updateEnd(e.target.value)} className={!isValidDateFilter(endValue) ? 'error' : ''}  placeholder="p.k.vvvv" value={endValue}/>
       </div>
     </div>
   )
