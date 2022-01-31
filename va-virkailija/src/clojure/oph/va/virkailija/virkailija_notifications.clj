@@ -10,7 +10,6 @@
           LEFT JOIN avustushaku_roles r ON a.presenter_role_id = r.id
           JOIN hakija.avustushaut ah ON ah.id = h.avustushaku
           WHERE h.status_loppuselvitys = 'submitted' AND h.version_closed IS NULL AND r.email IS NOT NULL
-          AND ah.created_at > '2020-01-01'::timestamp
           GROUP BY h.avustushaku, r.email"
          []))
 
