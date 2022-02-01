@@ -491,7 +491,6 @@ async function waitForSaveStatusOkOrSaving(page: Page) {
 
 export async function copyEsimerkkihaku(page: Page) {
   await navigate(page, "/admin/haku-editor/")
-  await clickElement(page, ".haku-filter-remove")
   const element = await clickElementWithText(page, "td", "Yleisavustus - esimerkkihaku") as ElementHandle
   const currentHakuTitle = await (await element.getProperty('textContent'))?.jsonValue() as string
   await clickElementWithText(page, "a", "Kopioi uuden pohjaksi")

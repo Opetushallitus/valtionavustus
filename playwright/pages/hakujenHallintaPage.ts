@@ -238,7 +238,6 @@ export class HakujenHallintaPage {
 
   async copyEsimerkkihaku(): Promise<number> {
     await navigate(this.page, "/admin/haku-editor/")
-    await this.page.click(".haku-filter-remove")
     await clickElementWithText(this.page, "td", "Yleisavustus - esimerkkihaku")
     return await this.copyCurrentHaku()
   }
