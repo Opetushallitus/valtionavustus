@@ -31,6 +31,7 @@
  :contact-person-name-in-pitkaviite {:enabled? true}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
+ :send-paatokset-lahetetty-to-virkailija {:enabled? true}
  :integration-healthcheck {:enabled? true
                            :timeout 5000
                            :interval-minutes 15}}
