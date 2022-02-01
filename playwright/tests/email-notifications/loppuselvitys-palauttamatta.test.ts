@@ -46,7 +46,13 @@ test.describe("loppuselvitys-palauttamatta", () => {
 
 loppuselvityksenne avustuksessa ${hakuProps.avustushakuName} on palauttamatta.
 
-Muistattehan lähettää loppuselvityksen käsiteltäväksi määräaikaan ${loppuselvitysdate} mennessä. Linkki selvityslomakkeellenne: ${HAKIJA_URL}/avustushaku/${avustushakuID}/loppuselvitys?hakemus=${userKey}&lang=fi
+Muistattehan lähettää loppuselvityksen käsiteltäväksi määräaikaan ${loppuselvitysdate} mennessä.
+
+Käyttöajan pidennystä saaneiden hankkeiden määräaika voi poiketa edellä kuvatusta. Käyttöajan pidennystä saaneiden hankkeiden selvitysaikataulu kuvataan päätöksessä, joka on annettu muutoshakemukseennne.
+
+Mikäli käyttöajan pidennystä saaneelle hankkeelle ei ole erikseen annettu uutta määräaikaa, tulee loppuselvitys palauttaa kahden kuukauden kuluessa käyttöajan pidennyksen päättymisestä.
+
+Linkki selvityslomakkeellenne: ${HAKIJA_URL}/avustushaku/${avustushakuID}/loppuselvitys?hakemus=${userKey}&lang=fi
 
 Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi`)
   })
@@ -82,9 +88,15 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
 
 er slutredovisning för användningen av statsunderstödet ${hakuProps.avustushakuName + ' på svenska'} har ännu inte lämnats in.
 
-Kom ihåg att skicka slutredovisningen för behandling inom utsatt tid, senast ${loppuselvitysdate}. Länk till er redovisningsblankett: ${HAKIJA_URL}/avustushaku/${avustushakuID}/loppuselvitys?hakemus=${userKey}&lang=sv
+Kom ihåg att skicka slutredovisningen för behandling inom utsatt tid, senast ${loppuselvitysdate}.
 
-Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid tekniska problem, ta kontakt på adressen valtionavustukset@oph.fi”.`)
+Projekt som har beviljats förlängd användningstid för understödet kan ha en sista inlämningsdag för slutredovisningen som avviker från vad som nämns ovan. Den sista inlämningsdagen för redovisningar inom projekt som beviljats förlängd användningstid anges i beslutet som fattats utifrån en ändringsansökan.
+
+Om ett projekt som beviljats förlängd användningstid inte har fått en ny tidsfrist för redovisningen, ska slutredovisningen lämnas in inom två månader efter att den förlängda användningstiden har gått ut.
+
+Länk till er redovisningsblankett: ${HAKIJA_URL}/avustushaku/${avustushakuID}/loppuselvitys?hakemus=${userKey}&lang=sv
+
+Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid tekniska problem, ta kontakt på adressen valtionavustukset@oph.fi`)
     })
 
   loppuselvitysTest('do not send reminders if loppuselvitys pyyntö has not been sent', async ({ page, avustushakuID, acceptedHakemus: { hakemusID }}) => {

@@ -2,6 +2,12 @@ Hyvä vastaanottaja,
 
 loppuselvityksenne avustuksessa {{ avustushaku-name }} on palauttamatta.
 
-Muistattehan lähettää loppuselvityksen käsiteltäväksi määräaikaan {{ loppuselvitys-deadline }} mennessä. Linkki selvityslomakkeellenne: {{& url }}
+Muistattehan lähettää loppuselvityksen käsiteltäväksi määräaikaan {{ loppuselvitys-deadline }} mennessä.
+
+Käyttöajan pidennystä saaneiden hankkeiden määräaika voi poiketa edellä kuvatusta. Käyttöajan pidennystä saaneiden hankkeiden selvitysaikataulu kuvataan päätöksessä, joka on annettu muutoshakemukseennne.
+
+Mikäli käyttöajan pidennystä saaneelle hankkeelle ei ole erikseen annettu uutta määräaikaa, tulee loppuselvitys palauttaa kahden kuukauden kuluessa käyttöajan pidennyksen päättymisestä.
+
+Linkki selvityslomakkeellenne: {{& url }}
 
 Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi
