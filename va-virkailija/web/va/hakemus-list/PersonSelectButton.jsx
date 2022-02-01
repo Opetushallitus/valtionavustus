@@ -38,7 +38,7 @@ const PersonSelectPanel = ({hakemus,state,controller}) => {
   const onCloseClick = () => controller.togglePersonSelect(undefined)
   return (
     <div className="panel person-panel person-panel--top">
-      <button className="close" onClick={onCloseClick}>x</button>
+      <button className="close" onClick={onCloseClick} data-test-id="close-person-select-panel">x</button>
       <RoleContainer roleName="Valmistelija" roleField="presenter" roles={presenters} controller={controller} hakemus={hakemus}/>
       <RoleContainer roleName="Arvioijat" roleField="evaluators" roles={evaluators} controller={controller} hakemus={hakemus}/>
     </div>

@@ -203,8 +203,8 @@ export class HakujenHallintaPage {
     await this.page.keyboard.press('Tab')
   }
 
-  async sendPaatos(avustushakuID: number) {
-    await clickElementWithText(this.page, "button", "Lähetä 1 päätöstä")
+  async sendPaatos(avustushakuID: number, amount = 1) {
+    await this.page.click(`text="Lähetä ${amount} päätöstä"`)
     await Promise.all([
       this.page.waitForResponse(`${VIRKAILIJA_URL}/api/paatos/sendall/${avustushakuID}`),
       clickElementWithText(this.page, "button", "Vahvista lähetys"),

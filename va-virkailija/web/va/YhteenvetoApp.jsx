@@ -159,7 +159,8 @@ class SummaryHeading extends Component {
                              label={SummaryListing.arvioStatusFiForSummary(s)}
                              count={applicationsByStatus[s].length}
                              applied={sumByOphShare(applications)}
-                             granted={sumByBudgetGranted(applications)}/>
+                             granted={sumByBudgetGranted(applications)}
+                             testIdPrefix={s}/>
                   }
                 )
             }
@@ -170,7 +171,8 @@ class SummaryHeading extends Component {
                              count={hakemusList.length}
                              applied={ophShareSum}
                              granted={budgetGrantedSum}
-                             isTotalSummary={true}/>
+                             isTotalSummary={true}
+                             testIdPrefix="combined"/>
           </tfoot>
         </table>
       </div>
@@ -179,10 +181,10 @@ class SummaryHeading extends Component {
 }
 
 const SummaryTableRow = (
-  {label, count, applied, granted, isTotalSummary = false}) => {
+  {label, count, applied, granted, isTotalSummary = false, testIdPrefix}) => {
     const moneyClasses = isTotalSummary ? "money sum" : "money"
     return (
-      <tr className="summary-heading-table-row">
+      <tr className="summary-heading-table-row" data-test-id={`summary-for-${testIdPrefix}`}>
         <td className="arvio-status-column">{label}</td>
         <td className="count-column">{count}</td>
         <td className="applied-money-column">
@@ -197,11 +199,11 @@ const SummaryTableRow = (
 
 class SummaryListing extends Component {
   render() {
-    const {hakemusList, grant} = this.props
+    const {hakemusList, grant, arvioStatus} = this.props
     const hakemusListSorted = _.sortBy(hakemusList,'organization-name')
     const hakemusCount = hakemusListSorted.length
     const heading = SummaryListing.arvioStatusFiForSummary(
-      this.props.arvioStatus) + " (" + hakemusCount + ")"
+      arvioStatus) + " (" + hakemusCount + ")"
     const ophShareSum = sumByOphShare(hakemusListSorted)
     const multiBatch = grant.content.multiplemaksuera &&
           grant.content["payment-size-limit"]
@@ -214,10 +216,10 @@ class SummaryListing extends Component {
     const budgetGrantedSum = sumByBudgetGranted(hakemusListSorted)
 
     return (
-      <table key="hakemusListing" className="summary-hakemus-table">
+      <table key="hakemusListing" className="summary-hakemus-table" data-test-id={`${arvioStatus}-table`}>
         <thead>
           <tr>
-            <th colSpan="5" className="status-heading-column">{heading}</th>
+            <th colSpan="5" className="status-heading-column" data-test-id={`${arvioStatus}-table-heading`}>{heading}</th>
           </tr>
           <tr>
             <th className="organization-column">Hakija</th>

@@ -31,8 +31,8 @@ export class HakijaAvustusHakuPage {
     await navigateHakija(this.page, `/avustushaku/${avustushakuID}/?lang=${lang ?? 'fi'}`)
   }
 
-  async navigateToNewHakemusPage(avustushakuID: number) {
-    const receivedEmail = await pollUntilNewHakemusEmailArrives(avustushakuID)
+  async navigateToNewHakemusPage(avustushakuID: number, hakijaEmailAddress: string) {
+    const receivedEmail = await pollUntilNewHakemusEmailArrives(avustushakuID, hakijaEmailAddress)
     const hakemusUrl = getHakemusUrlFromEmail(receivedEmail[0])
     expectToBeDefined(hakemusUrl)
 
@@ -86,7 +86,7 @@ export class HakijaAvustusHakuPage {
     await this.page.fill("#primary-email", answers.contactPersonEmail)
     await this.page.click("#submit:not([disabled])")
 
-    await this.navigateToNewHakemusPage(avustushakuID)
+    await this.navigateToNewHakemusPage(avustushakuID, answers.contactPersonEmail)
 
     await this.page.fill("#finnish-business-id", TEST_Y_TUNNUS)
     await this.page.click("input.get-business-id")
@@ -163,7 +163,7 @@ export class HakijaAvustusHakuPage {
     await this.page.fill("#primary-email", answers.contactPersonEmail)
     await this.page.click( "#submit:not([disabled])")
 
-    await this.navigateToNewHakemusPage(avustushakuID)
+    await this.navigateToNewHakemusPage(avustushakuID, answers.contactPersonEmail)
 
     await this.page.fill("#finnish-business-id", TEST_Y_TUNNUS)
     await this.page.click( "input.get-business-id")

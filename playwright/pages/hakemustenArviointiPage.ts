@@ -7,7 +7,7 @@ import {
   getChangedBudgetTableCells,
   getExistingBudgetTableCells,
 } from "../utils/util";
-import { VIRKAILIJA_URL } from "../utils/constants";
+import {VIRKAILIJA_URL} from "../utils/constants";
 
 import { MuutoshakemusValues, PaatosStatus, PaatosValues } from "../utils/types";
 import { AcceptedBudget, Budget, BudgetAmount, defaultBudget } from "../utils/budget";
@@ -90,6 +90,7 @@ export class HakemustenArviointiPage {
         (valmistelijaButton as ElementHandle).click(),
       ])
     }
+    await this.page.click('[data-test-id=close-person-select-panel]')
   }
 
   async fillBudget(budget: Budget = defaultBudget, type: 'hakija' | 'virkailija') {
@@ -127,13 +128,14 @@ export class HakemustenArviointiPage {
 
   async acceptAvustushaku(
     avustushakuID: number,
+    projectName: string,
     budget: AcceptedBudget = "100000",
-    rahoitusalue?: string,
+    rahoitusalue = "Ammatillinen koulutus",
   ) {
     // Accept the hakemus
     await Promise.all([
       this.page.waitForNavigation(),
-      this.page.click('td:has-text("Akaan kaupunki")')
+      this.page.click(`text=${projectName}`)
     ])
 
     const hakemusID = await this.page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1]).then(possibleHakemusID => {
@@ -144,10 +146,7 @@ export class HakemustenArviointiPage {
     expectToBeDefined(hakemusID)
     console.log("Hakemus ID:", hakemusID)
 
-    if (rahoitusalue) {
-      // await this.page.click(`//label[contains(., "${rahoitusalue}")]`)
-      await this.page.click(`label:has-text("${rahoitusalue}")`)
-    }
+    await this.page.click(`label:has-text("${rahoitusalue}")`)
 
     await this.acceptHakemus(budget)
     await this.waitForArvioSave(avustushakuID, hakemusID)

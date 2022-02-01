@@ -72,13 +72,15 @@ export async function getAvustushakuEmails(avustushakuID: number, emailType: str
     .then(r => emailSchema.validate(r.data))
 }
 
-export async function pollUntilNewHakemusEmailArrives(avustushakuID: number): Promise<Email[]> {
+export async function pollUntilNewHakemusEmailArrives(avustushakuID: number, hakijaEmailAddress: string): Promise<Email[]> {
   while(true) {
     try {
       const emails = await getNewHakemusEmails(avustushakuID)
-      if (emails.length > 0) {
-        log(`Received emails`, JSON.stringify(emails, null, 2))
-        return emails
+      log(`Received emails`, JSON.stringify(emails, null, 2))
+      const hakijaEmails = emails.filter(email => email["to-address"].some(address => address === hakijaEmailAddress))
+      if (hakijaEmails.length > 0) {
+        log(`Received hakija emails`, JSON.stringify(hakijaEmails, null, 2))
+        return hakijaEmails
       } else {
         log('No emails received')
         await sleep(1000)

@@ -47,13 +47,13 @@ export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
     await hakujenHallintaPage.setEndDate(finalAvustushakuEndDate.format("D.M.YYYY H.mm"))
     await use({ id: avustushakuID })
   },
-  acceptedHakemus: async ({closedAvustushaku, page, ukotettuValmistelija, submittedHakemus: {userKey}}, use, testInfo) => {
+  acceptedHakemus: async ({closedAvustushaku, page, ukotettuValmistelija, submittedHakemus: {userKey}, answers}, use, testInfo) => {
     const avustushakuID = closedAvustushaku.id
     testInfo.setTimeout(testInfo.timeout + 25_000)
 
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigate(avustushakuID)
-    const hakemusID = await hakemustenArviointiPage.acceptAvustushaku(avustushakuID, "100000", "Ammatillinen koulutus")
+    const hakemusID = await hakemustenArviointiPage.acceptAvustushaku(avustushakuID, answers.projectName)
 
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigate(avustushakuID)
