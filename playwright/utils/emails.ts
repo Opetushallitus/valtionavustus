@@ -41,6 +41,7 @@ export const getAcceptedPäätösEmails = getMuutoshakemusEmails
 export const getValiselvitysEmails = getEmails("valiselvitys-notification")
 export const getLoppuselvitysEmails = getEmails("loppuselvitys-notification")
 export const getLoppuselvitysPalauttamattaEmails = getEmails("loppuselvitys-palauttamatta")
+export const getLahetaValiselvityspyynnotEmails = getEmailsWithAvustushaku("laheta-valiselvityspyynnot")
 export const getValiselvitysPalauttamattaEmails = getEmails("valiselvitys-palauttamatta")
 export const getYhteystiedotMuutettuEmails = getEmails("hakemus-edited-after-applicant-edit")
 export const getPaatoksetLahetettyEmails = getEmailsWithAvustushaku("paatokset-lahetetty")
