@@ -30,7 +30,9 @@
          :port 25
          :sender "no-reply@csc.fi"
          :bounce-address "valtionavustukset@oph.fi"
-         :to-taloustarkastaja ["taloustarkastus@oph.fi"]}
+         :to-taloustarkastaja ["taloustarkastus@oph.fi"]
+         :persistent-retry {:enabled? true
+                            :schedule "0 * * * * ?"}}
  :integration-healthcheck {:enabled? true
                            :timeout 5000
                            :interval-minutes 15}
