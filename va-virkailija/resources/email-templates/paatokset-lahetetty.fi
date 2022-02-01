@@ -1,8 +1,8 @@
-Hei!
+Hyvä vastaanottaja,
 
-Valtionavustuksen {{ avustushaku-name }} päätökset on lähetetty kaikkien hakijoiden yhteyshenkilöille sekä hakijoiden virallisiin sähköpostiosoitteisiin.
+valtionavustuksen {{ avustushaku-name }} päätökset on lähetetty kaikkien hakijoiden yhteyshenkilöille sekä hakijoiden virallisiin sähköpostiosoitteisiin.
 
-Linkki avustuksen päätöslistaan: {{& yhteenveto-url }}
+Linkki valtionavustuksen päätöslistaan: {{& yhteenveto-url }}
 
 Avustuksen päätökset tulee julkaista oph.fi-verkkopalvelussa ohjeistuksen mukaisesti https://intra.oph.fi/pages/viewpage.action?pageId=99516838
 

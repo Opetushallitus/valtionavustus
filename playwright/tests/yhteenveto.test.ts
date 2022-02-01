@@ -81,11 +81,11 @@ test('Yhteenveto', async ({page, avustushakuID, hakuProps, yhteenveto: {hakemusI
       "viivi.virkailja@exmaple.com"
     ])
     expect(email.subject).toEqual("Avustuspäätökset on lähetetty")
-    expect(email.formatted).toEqual(`Hei!
+    expect(email.formatted).toEqual(`Hyvä vastaanottaja,
 
-Valtionavustuksen ${avustushakuName} päätökset on lähetetty kaikkien hakijoiden yhteyshenkilöille sekä hakijoiden virallisiin sähköpostiosoitteisiin.
+valtionavustuksen ${avustushakuName} päätökset on lähetetty kaikkien hakijoiden yhteyshenkilöille sekä hakijoiden virallisiin sähköpostiosoitteisiin.
 
-Linkki avustuksen päätöslistaan: ${VIRKAILIJA_URL}${searchUrl}
+Linkki valtionavustuksen päätöslistaan: ${VIRKAILIJA_URL}${searchUrl}
 
 Avustuksen päätökset tulee julkaista oph.fi-verkkopalvelussa ohjeistuksen mukaisesti https://intra.oph.fi/pages/viewpage.action?pageId=99516838
 
