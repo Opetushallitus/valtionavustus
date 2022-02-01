@@ -59,6 +59,7 @@
    :loppuselvitys-asiatarkastamatta (email/load-template "email-templates/loppuselvitys-asiatarkastamatta.fi")
    :loppuselvitys-taloustarkastamatta (email/load-template "email-templates/loppuselvitys-taloustarkastamatta.fi")
    :valiselvitys-tarkastamatta (email/load-template "email-templates/valiselvitys-tarkastamatta.fi")
+   :laheta-valiselvityspyynnot (email/load-template "email-templates/laheta-valiselvityspyynnot.fi")
    :hakuaika-paattymassa {:fi (email/load-template "email-templates/hakuaika-paattymassa.fi")
                           :sv (email/load-template "email-templates/hakuaika-paattymassa.sv")}
    :hakuaika-paattynyt {:fi (email/load-template "email-templates/hakuaika-paattynyt.fi")}
@@ -272,6 +273,18 @@
                               :avustushaku-name (:avustushaku-name notification)
                               :valiselvitys-deadline (datetime/java8-date-string (:valiselvitys-deadline notification))
                               :url (valiselvitys-url (:avustushaku-id notification) (:user-key notification) lang)}
+                             (partial render template))))
+
+(defn send-laheta-valiselvityspyynnot [notification]
+  (let [lang         :fi
+        template     (:laheta-valiselvityspyynnot mail-templates)]
+    (email/try-send-msg-once {:type :laheta-valiselvityspyynnot
+                              :avustushaku-name (:avustushaku-name notification)
+                              :from (-> email/smtp-config :from lang)
+                              :sender (-> email/smtp-config :sender)
+                              :to (:emails notification)
+                              :subject "Muistutus väliselvityspyyntöjen lähettämisestä"
+                              :valiselvitys-deadline (datetime/java8-date-string (:valiselvitys-deadline notification))}
                              (partial render template))))
 
 (defn send-loppuselvitys-palauttamatta [notification]
