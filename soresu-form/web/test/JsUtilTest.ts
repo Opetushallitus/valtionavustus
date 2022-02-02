@@ -3,7 +3,7 @@ import JsUtil from '../JsUtil'
 
 describe('Js util', function() {
   it('collects objects matching a predicate', function() {
-    const found = JsUtil.flatFilter(Tree, el => /id-\d+/.test(el.id))
+    const found = JsUtil.flatFilter(Tree, (el: any) => /id-\d+/.test(el.id))
     expect(found).to.eql([
       {id: 'id-1'},
       {id: 'id-2'},
@@ -13,23 +13,23 @@ describe('Js util', function() {
   })
 
   it('finds first matching object', function() {
-    const object = JsUtil.findFirst(Tree, el => el.token === Token)
+    const object = JsUtil.findFirst(Tree, (el: any) => el.token === Token)
     expect(object).to.eql({id: 'id-3', token: Token})
   })
 
   describe('finding index of first matching object', function() {
     it('returns index when object matches', function() {
-      const index = JsUtil.findIndexOfFirst(Tree, el => el.token === Token)
+      const index = JsUtil.findIndexOfFirst(Tree, (el: any) => el.token === Token)
       expect(index).to.equal(TraversingStepsToToken - 1)
     })
 
     it('returns 0 when matching root object', function() {
-      const index = JsUtil.findIndexOfFirst(Tree, el => el.a1 && el.b1)
+      const index = JsUtil.findIndexOfFirst(Tree, (el: any) => el.a1 && el.b1)
       expect(index).to.equal(0)
     })
 
     it('returns -1 when match is not found', function() {
-      const index = JsUtil.findIndexOfFirst(Tree, el => el.token === "nosuch")
+      const index = JsUtil.findIndexOfFirst(Tree, (el: any) => el.token === "nosuch")
       expect(index).to.equal(-1)
     })
   })
