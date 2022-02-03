@@ -226,8 +226,7 @@
                                            avustushaku-id 0 identity)))
                                  (log/info "Send all paatos ids " ids)
                                  (run! (partial send-paatos-for-all uuid (authentication/get-request-identity request)) ids)
-                                 (when (get-in config [:send-paatokset-lahetetty-to-virkailija :enabled?])
-                                     (send-paatokset-lahetetty avustushaku-id {:hakemus-ids ids} identity))
+                                 (send-paatokset-lahetetty avustushaku-id {:hakemus-ids ids} identity)
                                  (ok (merge {:status "ok"}
                                             (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))))
 
