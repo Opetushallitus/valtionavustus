@@ -48,7 +48,7 @@
          emails))
 
 (defn send-paatokset-lahetetty [avustushaku-id ids identity]
-  (let [valmistelija-emails (virkailija-db/get-valmistelija-emails-assigned-to-hakemus avustushaku-id)
+  (let [valmistelija-emails (virkailija-db/get-valmistelija-emails-assigned-to-avustushaku avustushaku-id)
         avustushaku (hakija-api/get-avustushaku avustushaku-id)
         avustushaku-name (get-in avustushaku [:content :name :fi])
         search-id (saved-search/create-or-get-search avustushaku-id ids identity)

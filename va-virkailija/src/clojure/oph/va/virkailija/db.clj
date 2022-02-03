@@ -634,7 +634,7 @@
             WHERE avustushaku_id = ?"
             [to-application-id from-application-id]))
 
-(defn get-valmistelija-emails-assigned-to-hakemus [avustushaku-id]
+(defn get-valmistelija-emails-assigned-to-avustushaku [avustushaku-id]
   (let [sql "SELECT   DISTINCT(email)
              FROM     hakija.avustushaku_roles
              WHERE    role = 'presenting_officer' AND
