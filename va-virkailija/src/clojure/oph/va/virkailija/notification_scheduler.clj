@@ -20,6 +20,10 @@
   (log/info "Running Valiselvitys tarkastamatta")
   (send-valiselvitys-tarkastamatta-notifications))
 
+(defjob LahetaValiselvityspyynnotNotification [ctx]
+  (log/info "Running Laheta valiselvityspyynnot")
+  (send-laheta-valiselvityspyynnot-notifications))
+
 (defjob HakuaikaPaattymassaNotification [ctx]
   (log/info "Running Hakuaika päättymässä")
   (send-hakuaika-paattymassa-notifications))
@@ -60,6 +64,13 @@
         :schedule (schedule
                     (cron-schedule
                       (get-in config [:notifications :valiselvitys :schedule])))
+      }
+      { :enabled? (get-in config [:notifications :laheta-valiselvityspyynnot :enabled?])
+        :key "LahetaValiselvityspyynnot"
+        :job LahetaValiselvityspyynnotNotification
+        :schedule (schedule
+                    (cron-schedule
+                      (get-in config [:notifications :laheta-valiselvityspyynnot :schedule])))
       }
       { :enabled? (get-in config [:notifications :hakuaika-paattymassa :enabled?])
         :key "HakuaikaPaattymassa"
