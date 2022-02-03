@@ -59,7 +59,6 @@
                                       :schedule "0 0 7 ? * *"}
                  }
  :payments {:enabled? true}
- :contact-person-name-in-pitkaviite {:enabled? false}
  :multibatch-payments {:enabled? true}
  :va-code-values {:enabled? true}
  :reports {:enabled? true}

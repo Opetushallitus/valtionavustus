@@ -1,7 +1,6 @@
 (ns oph.va.virkailija.payments-data
   (:require
    [oph.soresu.common.db :refer [exec exec-all query]]
-   [oph.soresu.common.config :refer [feature-enabled?]]
    [oph.va.virkailija.utils
     :refer [convert-to-dash-keys convert-to-underscore-keys update-some]]
    [clj-time.coerce :as c]
@@ -80,8 +79,7 @@
 
 (defn generate-pitkaviite-for-payment [hakemus payment]
   (let [contact-person (application-data/get-application-contact-person-name (:id hakemus))]
-    (if (and (feature-enabled? :contact-person-name-in-pitkaviite)
-             (some? contact-person))
+    (if (some? contact-person)
       (format "%s_%s %s"
               (:register-number hakemus)
               (inc (:phase payment))
