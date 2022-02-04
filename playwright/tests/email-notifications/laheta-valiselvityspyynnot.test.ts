@@ -43,7 +43,7 @@ väliselvitysTest('Lähetä väliselvityspyynnöt notifications are send 6 month
   expect(emailsAfter.length).toBeGreaterThan(emailsBefore.length)
 })
 
-väliselvitysTest('Lähetä väliselvityspyynnöt notifications are send after paatos has been send', async ({closedAvustushaku, avustushakuID, page, ukotettuValmistelija}) => {
+väliselvitysTest('Lähetä väliselvityspyynnöt notifications are send after paatos has been send', async ({closedAvustushaku, avustushakuID, answers, page, ukotettuValmistelija}) => {
   expectToBeDefined(closedAvustushaku)
 
   await test.step('ensure notifications are not send before paatos has been send', async  () => {
@@ -60,7 +60,7 @@ väliselvitysTest('Lähetä väliselvityspyynnöt notifications are send after p
   await test.step('send paatos', async () => {
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigate(avustushakuID)
-    const hakemusID = await hakemustenArviointiPage.acceptAvustushaku(avustushakuID, "100000", "Ammatillinen koulutus")
+    const hakemusID = await hakemustenArviointiPage.acceptAvustushaku(avustushakuID, answers.projectName)
 
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigate(avustushakuID)
