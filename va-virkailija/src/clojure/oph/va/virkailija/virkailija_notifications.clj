@@ -206,8 +206,9 @@
 
 (defn- get-laheta-valiselvityspyynnot []
   (query "SELECT
+            a.id as avustushaku_id,
             a.valiselvitysdate as valiselvitys_deadline,
-            array_agg(r.email) as emails,
+            jsonb_agg(r.email) as to_email_addresses,
             (a.content -> 'name' ->> 'fi') as avustushaku_name
           FROM avustushaut a
           JOIN hakija.avustushaku_roles r ON r.avustushaku = a.id
@@ -217,15 +218,22 @@
               JOIN hakemukset h ON p.hakemus_id = h.id
               WHERE h.avustushaku = a.id 
                 AND h.version_closed is null
+                AND NOT EXISTS (
+                  SELECT * FROM tapahtumaloki
+                  WHERE tapahtumaloki.hakemus_id = h.id
+                    AND tyyppi = 'valiselvitys-notification'
+                )
           )
             AND valiselvitysdate is not null
             AND now() >= (valiselvitysdate::date - '6 month'::interval)
             AND r.role = 'presenting_officer'
-          GROUP BY avustushaku_name, valiselvitysdate"
+          GROUP BY avustushaku_name, valiselvitysdate, avustushaku_id"
          []))
 
 (defn send-laheta-valiselvityspyynnot-notifications []
   (let [notifications (get-laheta-valiselvityspyynnot)]
-    (doseq [notification notifications]
-    (email/send-laheta-valiselvityspyynnot notification))))
+    (when (>= (count notifications) 1)
+      (log/info "Sending" (count notifications) "laheta-valiselvityspyynnot notifications")
+      (doseq [notification notifications]
+        (email/send-laheta-valiselvityspyynnot notification)))))
   

@@ -280,9 +280,11 @@
         template     (:laheta-valiselvityspyynnot mail-templates)]
     (email/try-send-msg-once {:type :laheta-valiselvityspyynnot
                               :avustushaku-name (:avustushaku-name notification)
+                              :lang lang
+                              :avustushaku-id (:avustushaku-id notification)
                               :from (-> email/smtp-config :from lang)
                               :sender (-> email/smtp-config :sender)
-                              :to (:emails notification)
+                              :to (:to-email-addresses notification)
                               :subject "Muistutus väliselvityspyyntöjen lähettämisestä"
                               :valiselvitys-deadline (datetime/java8-date-string (:valiselvitys-deadline notification))}
                              (partial render template))))
