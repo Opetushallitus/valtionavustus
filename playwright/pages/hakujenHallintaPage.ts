@@ -150,6 +150,7 @@ export class HakujenHallintaPage {
 
   async sendLoppuselvitys() {
     await this.page.click('text="Lähetä loppuselvityspyynnöt"')
+    await this.page.waitForSelector('text="Lähetetty 1 viestiä"')
   }
 
   async waitForSave() {

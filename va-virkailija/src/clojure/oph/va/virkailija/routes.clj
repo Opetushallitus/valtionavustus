@@ -713,6 +713,12 @@
     (virkailija-notifications/send-laheta-valiselvityspyynnot-notifications)
     (ok {:ok "ok"}))
 
+  (compojure-api/POST "/send-laheta-loppuselvityspyynnot-notifications" []
+    :return {:ok s/Str}
+    (log/info "test-api: send laheta loppuselvityspyynnot notifications")
+    (virkailija-notifications/send-laheta-loppuselvityspyynnot-notifications)
+    (ok {:ok "ok"}))
+
   (compojure-api/POST "/send-valiselvitys-palauttamatta-notifications" []
     :return {:ok s/Str}
     (log/info "test-api: send valiselvitys palauttamatta notifications")

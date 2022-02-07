@@ -236,4 +236,36 @@
       (log/info "Sending" (count notifications) "laheta-valiselvityspyynnot notifications")
       (doseq [notification notifications]
         (email/send-laheta-valiselvityspyynnot notification)))))
-  
+
+(defn- get-laheta-loppuselvityspyynnot []
+  (query "SELECT
+            a.id AS avustushaku_id,
+            a.loppuselvitysdate AS loppuselvitys_deadline,
+            jsonb_agg(r.email) AS to,
+            (a.content -> 'name' ->> 'fi') AS avustushaku_name
+          FROM avustushaut a
+          JOIN hakija.avustushaku_roles r ON r.avustushaku = a.id
+          WHERE EXISTS (
+            SELECT *
+            FROM hakemus_paatokset p
+            JOIN hakemukset h ON p.hakemus_id = h.id
+            WHERE h.avustushaku = a.id AND
+                  h.version_closed IS NULL AND
+                  NOT EXISTS (
+                    SELECT * FROM tapahtumaloki
+                    WHERE tapahtumaloki.hakemus_id = h.id AND
+                          tyyppi = 'loppuselvitys-notification'
+                  )
+          ) AND
+          loppuselvitysdate IS NOT NULL AND
+          now() >= (loppuselvitysdate::date - '8 month'::interval) AND
+          r.role = 'presenting_officer'
+          GROUP BY avustushaku_name, valiselvitysdate, avustushaku_id"
+         []))
+
+(defn send-laheta-loppuselvityspyynnot-notifications []
+  (let [notifications (get-laheta-loppuselvityspyynnot)]
+    (when (>= (count notifications) 1)
+      (log/info "Sending" (count notifications) "laheta-loppuselvityspyynnot notifications")
+      (doseq [notification notifications]
+        (email/send-laheta-loppuselvityspyynnot notification)))))
