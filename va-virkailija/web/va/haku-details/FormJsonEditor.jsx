@@ -55,7 +55,7 @@ export default class FormJsonEditor extends React.Component {
           <button className="btn-fixed" type="button" onClick={scrollToTop}>Takaisin ylös</button>
           <button id="saveForm" className="btn-fixed" type="button" disabled={disableSave} onClick={onClick}>Tallenna</button>
         </div>
-        <span className="error">{parseError}</span>
+        <span className="error" data-test-id='form-error-state'>{parseError}</span>
         <textarea onChange={onChange} disabled={!userHasEditPrivilege || avustushaku.status === "published"} value={formDraftJson}/>
       </div>
   }

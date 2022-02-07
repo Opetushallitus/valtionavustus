@@ -53,9 +53,14 @@ export function FormEditorPage(page: Page) {
       textarea.value = lomakeJson
     }, lomakeJson)
 
+    await waitForFormErrorStateToDisappear()
     // trigger autosave by typing space in the end
     await page.type('.form-json-editor textarea', ' ')
     await page.keyboard.press('Backspace')
+  }
+
+  async function waitForFormErrorStateToDisappear() {
+    await page.waitForSelector('[data-test-id="form-error-state"]', { state: 'hidden' })
   }
 
   async function saveForm() {
@@ -268,6 +273,7 @@ export class HakujenHallintaPage {
     console.log(`Avustushaku name for test: ${avustushakuName}`)
 
     const avustushakuID = await this.copyEsimerkkihaku()
+    await this.page.waitForLoadState('networkidle')
     console.log(`Avustushaku ID: ${avustushakuID}`)
 
     await this.page.fill("#register-number", registerNumber)
