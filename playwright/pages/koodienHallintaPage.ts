@@ -68,6 +68,7 @@ export class KoodienhallintaPage {
 
   async createCodeValues(codeValues: VaCodeValues): Promise<VaCodeValues> {
     await this.navigate()
+    await this.waitForClojureScriptLoadingDialogHidden()
     await this.createCode("Toimintayksikkö", codeValues.operationalUnit)
     await this.clickKoodienhallintaTab( 'project')
     await this.createCode("Projekti", codeValues.project)
