@@ -4,6 +4,7 @@ import {loppuselvitysTest} from "../../fixtures/loppuselvitysTest";
 import {HakujenHallintaPage} from "../../pages/hakujenHallintaPage";
 import moment from "moment";
 import {
+  Email,
   getLahetaLoppuselvityspyynnotEmails,
   lastOrFail
 } from "../../utils/emails";
@@ -30,7 +31,42 @@ const notifyTest = loppuselvitysTest.extend<LoppuselvitysExtraFixtures>({
   }
 })
 
+async function expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page: Page, avustushakuID: number, loppuselvitysDateSet: boolean): Promise<Email[]> {
+  expect(loppuselvitysDateSet)
+  const emailsBefore = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
+  await sendLahetaLoppuselvityspyynnotNotifications(page)
+  const emailsAfter = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
+  expect(emailsAfter.length).toBeGreaterThan(emailsBefore.length)
+  return emailsAfter
+}
+
+async function expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page: Page, avustushakuID: number, loppuselvitysDateSet: boolean): Promise<Email[]> {
+  expect(loppuselvitysDateSet)
+  const emailsBefore = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
+  await sendLahetaLoppuselvityspyynnotNotifications(page)
+  const emailsAfter = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
+  expect(emailsAfter.length).toEqual(emailsBefore.length)
+}
+
+async function sendLoppuselvitysEmails(page: Page, avustushakuID: number) {
+  const hakujenHallintaPage = new HakujenHallintaPage(page)
+  await hakujenHallintaPage.navigateToPaatos(avustushakuID)
+  await hakujenHallintaPage.switchToLoppuselvitysTab()
+  await hakujenHallintaPage.sendLoppuselvitys()
+}
+
 test.describe('loppuselvitys', () => {
+  test.describe('notifications are sent repeatedly until loppuselvityspyynnöt have been sent', () => {
+    const loppuselvitysDeadline = moment().add(8, 'months').format('DD.MM.YYYY')
+    notifyTest.use({loppuselvitysDate: loppuselvitysDeadline})
+    notifyTest('loppuselvitys notification is sent repeatedly', async ({page, loppuselvitysDateSet, avustushakuID, hakuProps}) => {
+      await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID, loppuselvitysDateSet)
+      await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID, loppuselvitysDateSet)
+      await sendLoppuselvitysEmails(page, avustushakuID)
+      await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID, loppuselvitysDateSet)
+    })
+  })
+
   test.describe('when over 8 months till loppuselvitys deadline', () => {
     notifyTest.use({loppuselvitysDate: moment().add(12, 'months').format('DD.MM.YYYY')})
     notifyTest('notification is not send', async ({page, loppuselvitysDateSet, avustushakuID}) => {
@@ -41,15 +77,13 @@ test.describe('loppuselvitys', () => {
       expect(emailsBefore).toHaveLength(emailsAfter.length)
     })
   })
+
   test.describe('8 months till loppuselvitys deadline', () => {
     const loppuselvitysDeadline = moment().add(8, 'months').format('DD.MM.YYYY')
     notifyTest.use({loppuselvitysDate: loppuselvitysDeadline})
     notifyTest('notification is sent', async ({page, loppuselvitysDateSet, avustushakuID, hakuProps}) => {
-      expect(loppuselvitysDateSet)
-      const emailsBefore = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
-      await sendLahetaLoppuselvityspyynnotNotifications(page)
-      const emailsAfter = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
-      expect(emailsAfter.length).toBeGreaterThan(emailsBefore.length)
+      const emailsAfter = await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID, loppuselvitysDateSet)
+
       await test.step('email content is correct', async () => {
         const email = lastOrFail(emailsAfter)
         expect(email["to-address"]).toHaveLength(2)
@@ -70,16 +104,14 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
 `)
       })
       await test.step('notification is not sent again if loppupäätös is sent', async () => {
-        const hakujenHallintaPage = new HakujenHallintaPage(page)
-        await hakujenHallintaPage.navigateToPaatos(avustushakuID)
-        await hakujenHallintaPage.switchToLoppuselvitysTab()
-        await hakujenHallintaPage.sendLoppuselvitys()
+        await sendLoppuselvitysEmails(page, avustushakuID)
         await sendLahetaLoppuselvityspyynnotNotifications(page)
         const emailsAfterSendingLoppuselvitys = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
         expect(emailsAfter.length).toEqual(emailsAfterSendingLoppuselvitys.length)
       })
     })
   })
+
   test.describe('when sending päätös', async () => {
     loppuselvitysTest('send the notification only after sending päätös', async ({closedAvustushaku, page, avustushakuID, answers, ukotettuValmistelija}) => {
       expectToBeDefined(closedAvustushaku)
