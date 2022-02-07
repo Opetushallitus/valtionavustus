@@ -25,6 +25,8 @@
                                                :schedule "0 0 14 ? * 1,2,3,4,5"}
                  :laheta-valiselvityspyynnot  {:enabled? true
                                                :schedule "0 0 14 ? * 1,2,3,4,5"}
+                 :laheta-loppuselvityspyynnot {:enabled? true
+                                               :schedule "0 0 14 ? * 1,2,3,4,5"}
                  :hakuaika-paattymassa {:enabled? true
                                         :schedule "0 0 14 ? * 1,2,3,4,5"}
                  :hakuaika-paattynyt {:enabled? true
