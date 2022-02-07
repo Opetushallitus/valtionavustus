@@ -1,6 +1,6 @@
 Hei!
 
-{{amount}} väliselvitystä odottaa tarkastustasi valtionavustusjärjestelmässä. Tarkastamattomia väliselvityksiä on seuraavissa valtionavustuksissa:
+{{total-hakemus-count}} väliselvitystä odottaa tarkastustasi valtionavustusjärjestelmässä. Tarkastamattomia väliselvityksiä on seuraavissa valtionavustuksissa:
 
 {{#list}}
 - Väliselvityksiä {{count}} kpl: {{&link}}

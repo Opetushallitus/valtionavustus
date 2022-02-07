@@ -1,6 +1,6 @@
 Hei!
 
-{{amount}} loppuselvitystä odottaa taloustarkastustasi valtionavustusjärjestelmässä. Taloustarkastamattomia loppuselvityksiä on seuraavissa valtionavustuksissa:
+{{total-hakemus-count}} loppuselvitystä odottaa taloustarkastustasi valtionavustusjärjestelmässä. Taloustarkastamattomia loppuselvityksiä on seuraavissa valtionavustuksissa:
 
 {{#list}}
 - Loppuselvityksiä {{count}} kpl: {{&link}}

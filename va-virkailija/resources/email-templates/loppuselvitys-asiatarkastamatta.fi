@@ -1,6 +1,6 @@
 Hei!
 
-{{amount}} loppuselvitystä odottaa asiatarkastustasi valtionavustusjärjestelmässä. Tarkastamattomia loppuselvityksiä on seuraavissa valtionavustuksissa:
+{{total-hakemus-count}} loppuselvitystä odottaa asiatarkastustasi valtionavustusjärjestelmässä. Tarkastamattomia loppuselvityksiä on seuraavissa valtionavustuksissa:
 
 {{#list}}
 - Loppuselvityksiä {{count}} kpl: {{&link}}
