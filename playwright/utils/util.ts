@@ -18,6 +18,11 @@ export async function expectQueryParameter(page: Page, paramName: string): Promi
   return value
 }
 
+export async function clickElementWithTextStrict(page: Page, elementType: string, text: string) {
+  const selector = `${elementType}:text-is("${text}")`
+  await page.click(selector)
+}
+
 export async function clickElementWithText(page: Page, elementType: string, text: string) {
   const selector = `${elementType}:has-text("${text}")`
   await page.click(selector)

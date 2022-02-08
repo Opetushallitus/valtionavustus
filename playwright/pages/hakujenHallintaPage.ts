@@ -6,6 +6,7 @@ import path from "path";
 import {navigate} from "../utils/navigate";
 import {
   clickElementWithText,
+  clickElementWithTextStrict,
   expectQueryParameter
 } from "../utils/util";
 import {VIRKAILIJA_URL} from "../utils/constants";
@@ -245,7 +246,7 @@ export class HakujenHallintaPage {
 
   async copyEsimerkkihaku(): Promise<number> {
     await navigate(this.page, "/admin/haku-editor/")
-    await clickElementWithText(this.page, "td", "Yleisavustus - esimerkkihaku")
+    await clickElementWithTextStrict(this.page, "td", "Yleisavustus - esimerkkihaku")
     return await this.copyCurrentHaku()
   }
 
