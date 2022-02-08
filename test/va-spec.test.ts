@@ -166,10 +166,9 @@ describe("Puppeteer tests", () => {
     let originalPaatosTimestamp: string
     let originalValiselvitysTimestamp: string
     let originalLoppuselvitysTimestamp: string
-    let avustushakuId: number
 
     beforeAll(async () => {
-      avustushakuId = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
+      await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
       await clickElementWithText(page, "span", "Päätös")
       originalPaatosTimestamp = await textContent(page, "#paatosUpdatedAt")
 
