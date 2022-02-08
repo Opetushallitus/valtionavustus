@@ -29,7 +29,8 @@
     .right-side {
       display: flex;
 
-      .granted-sum-column, .applied-sum-column {
+      .granted-sum-column,
+      .applied-sum-column {
         text-align: right;
         font-weight: bold;
         width: 120px;
@@ -95,7 +96,12 @@ table.hakemus-list {
     }
   }
   .selvitys-column {
-    width: 120px;
+    width: 100px;
+    max-width: 100px;
+  }
+  .selvitys-value {
+    overflow-y: hidden;
+    text-overflow: ellipsis;
   }
 
   .should-pay-notification-column {
