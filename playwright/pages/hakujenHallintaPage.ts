@@ -11,6 +11,7 @@ import {
 } from "../utils/util";
 import {VIRKAILIJA_URL} from "../utils/constants";
 import {VaCodeValues} from "../utils/types";
+import {Response} from "playwright-core";
 
 interface Rahoitusalue {
   koulutusaste: string
@@ -118,6 +119,36 @@ export function FormEditorPage(page: Page) {
   }
 }
 
+function SelvitysTab(page: Page) {
+  const titleSelector = '[name="applicant-info-label-fi"]'
+
+  async function save() {
+    await Promise.all([
+      page.click('text="Tallenna"'),
+      page.waitForResponse(response => response.status() === 200 && isSelvitysSavedResponse(response))
+    ])
+  }
+
+  function isSelvitysSavedResponse(response: Response) {
+    if (response.request().method() !== 'POST') return false
+    return response.url().endsWith('/selvitysform/valiselvitys') || response.url().endsWith('/selvitysform/loppuselvitys')
+  }
+
+  async function setSelvitysTitleFi(title: string) {
+    await page.fill(titleSelector, title)
+    await save()
+  }
+
+  async function getSelvitysTitleFi() {
+    return await page.textContent(titleSelector)
+  }
+
+  return {
+    getSelvitysTitleFi,
+    setSelvitysTitleFi,
+  }
+}
+
 export class HakujenHallintaPage {
   readonly page: Page
 
@@ -139,16 +170,23 @@ export class HakujenHallintaPage {
     return FormEditorPage(this.page)
   }
 
+  async switchToHaunTiedotTab() {
+    await this.page.click('[data-test-id="haun-tiedot-välilehti"]')
+    await this.page.waitForSelector('#register-number')
+  }
+
   async switchToPaatosTab() {
     await this.page.click('[data-test-id="päätös-välilehti"]')
   }
 
   async switchToValiselvitysTab() {
     await this.page.click('[data-test-id="väliselvitys-välilehti"]')
+    return SelvitysTab(this.page)
   }
 
   async switchToLoppuselvitysTab() {
     await this.page.click('[data-test-id="loppuselvitys-välilehti"]')
+    return SelvitysTab(this.page)
   }
 
   async sendValiselvitys() {
