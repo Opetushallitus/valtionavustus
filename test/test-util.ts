@@ -1062,9 +1062,9 @@ export async function acceptAvustushaku(
   console.log("Hakemus ID:", hakemusID)
 
   if (rahoitusalue) {
-    const rahoitusalueSelector = `aria/${rahoitusalue}[role="radio"]`
-    await page.waitForSelector(rahoitusalueSelector, { timeout: 5000 })
-    await page.click(rahoitusalueSelector)
+    await waitForElementWithText(page, 'label', rahoitusalue)
+    const [button] = await page.$x(`//label[contains(., '${rahoitusalue}')]`)
+    await button.click()
   }
 
   await clickElement(page, "#arviointi-tab label[for='set-arvio-status-plausible']")
