@@ -31,8 +31,7 @@ const notifyTest = loppuselvitysTest.extend<LoppuselvitysExtraFixtures>({
   }
 })
 
-async function expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page: Page, avustushakuID: number, loppuselvitysDateSet: boolean): Promise<Email[]> {
-  expect(loppuselvitysDateSet)
+async function expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page: Page, avustushakuID: number): Promise<Email[]> {
   const emailsBefore = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
   await sendLahetaLoppuselvityspyynnotNotifications(page)
   const emailsAfter = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
@@ -40,8 +39,7 @@ async function expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page: Page
   return emailsAfter
 }
 
-async function expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page: Page, avustushakuID: number, loppuselvitysDateSet: boolean): Promise<Email[]> {
-  expect(loppuselvitysDateSet)
+async function expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page: Page, avustushakuID: number): Promise<void> {
   const emailsBefore = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
   await sendLahetaLoppuselvityspyynnotNotifications(page)
   const emailsAfter = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
@@ -59,11 +57,12 @@ test.describe('loppuselvitys', () => {
   test.describe('notifications are sent repeatedly until loppuselvityspyynnöt have been sent', () => {
     const loppuselvitysDeadline = moment().add(8, 'months').format('DD.MM.YYYY')
     notifyTest.use({loppuselvitysDate: loppuselvitysDeadline})
-    notifyTest('loppuselvitys notification is sent repeatedly', async ({page, loppuselvitysDateSet, avustushakuID, hakuProps}) => {
-      await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID, loppuselvitysDateSet)
-      await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID, loppuselvitysDateSet)
+    notifyTest('loppuselvitys notification is sent repeatedly', async ({page, loppuselvitysDateSet, avustushakuID}) => {
+      expect(loppuselvitysDateSet)
+      await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
+      await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
       await sendLoppuselvitysEmails(page, avustushakuID)
-      await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID, loppuselvitysDateSet)
+      await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
     })
   })
 
@@ -71,10 +70,7 @@ test.describe('loppuselvitys', () => {
     notifyTest.use({loppuselvitysDate: moment().add(12, 'months').format('DD.MM.YYYY')})
     notifyTest('notification is not send', async ({page, loppuselvitysDateSet, avustushakuID}) => {
       expect(loppuselvitysDateSet)
-      const emailsBefore = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
-      await sendLahetaLoppuselvityspyynnotNotifications(page)
-      const emailsAfter = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
-      expect(emailsBefore).toHaveLength(emailsAfter.length)
+      await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
     })
   })
 
@@ -82,8 +78,8 @@ test.describe('loppuselvitys', () => {
     const loppuselvitysDeadline = moment().add(8, 'months').format('DD.MM.YYYY')
     notifyTest.use({loppuselvitysDate: loppuselvitysDeadline})
     notifyTest('notification is sent', async ({page, loppuselvitysDateSet, avustushakuID, hakuProps}) => {
-      const emailsAfter = await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID, loppuselvitysDateSet)
-
+      expect(loppuselvitysDateSet)
+      const emailsAfter = await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
       await test.step('email content is correct', async () => {
         const email = lastOrFail(emailsAfter)
         expect(email["to-address"]).toHaveLength(2)
@@ -123,10 +119,7 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
       })
 
       await test.step('make sure notifications are not send before päätös', async () => {
-        const emailsBefore = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
-        await sendLahetaLoppuselvityspyynnotNotifications(page)
-        const emailsAfter = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
-        expect(emailsBefore).toHaveLength(emailsAfter.length)
+        await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
       })
 
       await test.step('send päätös', async () => {
@@ -146,10 +139,7 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
         await hakujenHallintaPage.sendPaatos(avustushakuID)
       })
 
-      const emailsBefore = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
-      await sendLahetaLoppuselvityspyynnotNotifications(page)
-      const emailsAfter = await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
-      expect(emailsAfter.length).toBeGreaterThan(emailsBefore.length)
+      await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
     })
   })
 })
