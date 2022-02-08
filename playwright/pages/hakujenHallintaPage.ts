@@ -134,6 +134,7 @@ export class HakujenHallintaPage {
 
   async navigateToFormEditor(avustushakuID: number) {
     await navigate(this.page, `/admin/form-editor/?avustushaku=${avustushakuID}`)
+    await this.page.waitForLoadState('networkidle')
     return FormEditorPage(this.page)
   }
 
