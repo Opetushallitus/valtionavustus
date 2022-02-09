@@ -1,4 +1,4 @@
-import {Dialog, expect, Page} from "@playwright/test";
+import {Dialog, expect, Locator, Page} from "@playwright/test";
 import moment from "moment";
 import fs from 'fs/promises'
 import path from "path";
@@ -41,81 +41,83 @@ export const parseDate = (input: string) => moment(input, dateFormat).toDate()
 
 const waitForSaveStatusOk = (page: Page) => page.waitForSelector('[data-test-id="save-status"]:has-text("Kaikki tiedot tallennettu")')
 
-export function FormEditorPage(page: Page) {
+export class FormEditorPage {
+  readonly page: Page
+  formErrorState: Locator
+  form: Locator
+  saveStatus: Locator
+  fieldId: Locator
+  saveFormButton: Locator
 
-  const editorTextareaSelector = '.form-json-editor textarea'
-  async function changeLomakeJson(lomakeJson: string) {
+  constructor(page: Page) {
+    this.page = page;
+    this.formErrorState = this.page.locator('[data-test-id="form-error-state"]')
+    this.form = this.page.locator('.form-json-editor textarea')
+    this.saveStatus = this.page.locator('[data-test-id="save-status"]')
+    this.fieldId = this.page.locator('span.soresu-field-id')
+    this.saveFormButton = this.page.locator('#saveForm')
+  }
+
+  async changeLomakeJson(lomakeJson: string) {
+    await this.form.waitFor()
     /*
       for some reason
       await this.page.fill(".form-json-editor textarea", lomakeJson)
       takes almost 50seconds
      */
-    await page.waitForSelector(editorTextareaSelector)
-    await page.$eval(editorTextareaSelector, (textarea: HTMLTextAreaElement, lomakeJson) => {
-      textarea.value = lomakeJson
+    await this.form.evaluate((textarea, lomakeJson) => {
+      (textarea as HTMLTextAreaElement).value = lomakeJson
     }, lomakeJson)
 
-    await waitForFormErrorStateToDisappear()
+    await this.formErrorState.waitFor({state: 'hidden'})
     // trigger autosave by typing space in the end
-    await page.type('.form-json-editor textarea', ' ')
-    await page.keyboard.press('Backspace')
+    await this.form.type(' ')
+    await this.page.keyboard.press('Backspace')
   }
 
-  async function waitForFormErrorStateToDisappear() {
-    await page.waitForSelector('[data-test-id="form-error-state"]', { state: 'hidden' })
-  }
-
-  async function saveForm() {
+  async saveForm() {
     await Promise.all([
-      page.waitForSelector('[data-test-id="save-status"]:has-text("Tallennetaan")'),
-      page.click("#saveForm:not(disabled)")
+      this.saveStatus.locator('text="Tallennetaan"').waitFor(),
+      this.saveFormButton.click()
     ])
-    await waitForSaveStatusOk(page)
+    await this.saveStatus.locator("text=Kaikki tiedot tallennettu").waitFor()
   }
 
-  async function getFieldIds() {
-    const ids = await page.$$eval('span.soresu-field-id', elems => elems.map(e => e.textContent))
-    return ids.filter(id => id !== null) as string[]
+  async getFieldIds() {
+    const ids = await this.fieldId.evaluateAll(elems => elems.map(e => e.textContent))
+    return ids.filter((id): id is string => id !== null)
   }
 
-  async function addField(afterFieldId: string, newFieldType: string) {
-    await page.hover(`[data-test-id="field-add-${afterFieldId}"]`)
-    await page.click(`[data-test-id="field-${afterFieldId}"] [data-test-id="add-field-${newFieldType}"]`)
-    await page.hover('span.soresu-field-id:first-of-type') // hover on something else so that the added content from first hover doesn't change page coordinates
+  async addField(afterFieldId: string, newFieldType: string) {
+    await this.page.hover(`[data-test-id="field-add-${afterFieldId}"]`)
+    await this.page.click(`[data-test-id="field-${afterFieldId}"] [data-test-id="add-field-${newFieldType}"]`)
+    await this.fieldId.first() // hover on something else so that the added content from first hover doesn't change page coordinates
   }
 
-  async function acceptDialog(dialog: Dialog) {
-    await dialog.accept()
+  async removeField(fieldId: string) {
+    async function acceptDialog(dialog: Dialog) {
+      await dialog.accept("Oletko varma, että haluat poistaa kentän?")
+    }
+    this.page.on('dialog', acceptDialog)
+    const fieldIdWithText = `text="${fieldId}"`
+    await this.fieldId.locator(fieldIdWithText).waitFor()
+    await Promise.all([
+      // without position this clicks the padding and does nothing
+      this.page.click(`[data-test-id="delete-field-${fieldId}"]`, {position: {x: 15, y: 5}}),
+      this.fieldId.locator(fieldIdWithText).waitFor({state: 'detached'})
+    ])
+    this.page.removeListener('dialog', acceptDialog)
   }
 
-  async function removeField(fieldId: string) {
-    page.on('dialog', acceptDialog)
-    await page.click(`[data-test-id="delete-field-${fieldId}"]`)
-    await page.waitForFunction(fieldId => {
-      const fieldIds = Array.from(document.querySelectorAll('span.soresu-field-id')).map(e => e.textContent)
-      return !fieldIds.includes(fieldId)
-    }, fieldId)
-    page.removeListener('dialog', acceptDialog)
-  }
-
-  async function moveField(fieldId: string, direction: 'up' | 'down') {
-    const fields = await getFieldIds()
+  async moveField(fieldId: string, direction: 'up' | 'down') {
+    const fields = await this.getFieldIds()
     const originalIndex = fields.indexOf(fieldId)
     const expectedIndex = direction === 'up' ? originalIndex - 1 : originalIndex + 1
-    await page.click(`[data-test-id="move-field-${direction}-${fieldId}"]`)
-    await page.waitForFunction(({ fieldId, expectedIndex }) => {
+    await this.page.click(`[data-test-id="move-field-${direction}-${fieldId}"]`)
+    await this.page.waitForFunction(({ fieldId, expectedIndex }) => {
       const fieldIds = Array.from(document.querySelectorAll('span.soresu-field-id')).map(e => e.textContent)
       return fieldIds[expectedIndex] === fieldId
     }, { expectedIndex, fieldId })
-  }
-
-  return {
-    changeLomakeJson,
-    saveForm,
-    getFieldIds,
-    addField,
-    removeField,
-    moveField,
   }
 }
 
@@ -167,7 +169,7 @@ export class HakujenHallintaPage {
   async navigateToFormEditor(avustushakuID: number) {
     await navigate(this.page, `/admin/form-editor/?avustushaku=${avustushakuID}`)
     await this.page.waitForLoadState('networkidle')
-    return FormEditorPage(this.page)
+    return new FormEditorPage(this.page)
   }
 
   async switchToHaunTiedotTab() {

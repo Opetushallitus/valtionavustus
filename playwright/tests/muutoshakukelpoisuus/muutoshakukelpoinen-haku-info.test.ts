@@ -13,19 +13,14 @@ test.describe('Form editor muutoshakukelpoisuus message', () => {
   test('tells that avustushaku is muutoshakukelpoinen', async ({ avustushakuID, page }) => {
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigateToFormEditor(avustushakuID)
-
     const okBannerText = await page.innerText('[data-test-id="muutoshakukelpoisuus-ok"]')
     expect(okBannerText).toEqual("Lomake on muutoshakukelpoinenMuutoshakulomake toimitetaan avustuksen saajille automaattisesti päätösviestin yhteydessä")
   })
 
   test('shows field ids on the hakemus edit page', async ({ avustushakuID, page }) => {
     const hakujenHallintaPage = new HakujenHallintaPage(page)
-    await hakujenHallintaPage.navigateToFormEditor(avustushakuID)
-
-    await page.waitForSelector(".soresu-field-id")
-    const fieldIds = await page.$$(".soresu-field-id")
-    const fieldIdInnerTexts = await Promise.all(fieldIds.map(el => el.evaluate(n => (n as HTMLElement).innerText)))
-
+    const formEditorPage = await hakujenHallintaPage.navigateToFormEditor(avustushakuID)
+    const fieldIdInnerTexts = await formEditorPage.getFieldIds()
     expect(fieldIdInnerTexts).toEqual(["name", "duration", "duration-help", "p-1", "applicant-info", "organization-fieldset", "organization", "organization-email", "business-id", "applicant-fieldset", "applicant-name", "primary-email", "textField-0", "radioButton-0", "koodistoField-1", "signatories-fieldset", "signatories-fieldset-1", "signatories-fieldset-1.name", "signatories-fieldset-1.email", "bank-fieldset", "bank-iban", "bank-bic", "h3-1", "p-0", "textField-2", "textField-1", "project-info", "project-name", "language", "nayta-tarkennus", "other-organizations", "other-organizations-1", "other-organizations.other-organizations-1.contactperson", "other-organizations.other-organizations-1.email", "checkboxButton-0", "project-plan", "selection-criteria", "togglable-wrapper-cp", "pp-basic-education", "pp-upper-secondary", "checkboxButton-1", "h3-0", "project-description", "project-description-1", "project-description.project-description-1.goal", "project-description.project-description-1.activity", "project-description.project-description-1.result", "project-effectiveness", "project-begin", "project-end", "financing-plan", "financing-plan-help", "vat-included", "budget"])
   })
 
