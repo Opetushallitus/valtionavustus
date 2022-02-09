@@ -11,6 +11,7 @@
   - {role: common, tags: ['common']}
   - {role: valtionavustus.app, tags: ['app']}
   - {role: postgresql12.db, tags: ['pg12']}
+  - {role: fluent-bit}
 
 - hosts: va_loadbalancer
   tags: ['well-actually-only-loadbalancer']

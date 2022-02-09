@@ -1,0 +1,32 @@
+- name: Add fluent-bit yum repo
+  yum_repository:
+    name: fluent-bit
+    description: Fluent-bit repo
+    baseurl: https://packages.fluentbit.io/centos/7/$basearch/
+    gpgkey: https://packages.fluentbit.io/fluentbit.key
+    gpgcheck: yes
+
+- name: Install td-agent-bit
+  yum:
+    name: td-agent-bit-1.8.12
+    state: present
+
+- name: Copy td-agent-bit parser file
+  copy:
+    src: parsers.conf
+    dest: "{{ td_agent_config_dir }}/parsers.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart td-agent-bit
+
+- name: Copy td-agent-bit configuration
+  copy:
+    src: td-agent-bit.conf
+    dest: "{{ td_agent_config_dir }}/td-agent-bit.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Restart td-agent-bit
