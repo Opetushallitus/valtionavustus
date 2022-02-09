@@ -259,7 +259,8 @@
           ) AND
           loppuselvitysdate IS NOT NULL AND
           now() >= (loppuselvitysdate::date - '8 month'::interval) AND
-          r.role = 'presenting_officer'
+          r.role = 'presenting_officer' AND
+          r.email IS NOT NULL
           GROUP BY avustushaku_name, valiselvitysdate, avustushaku_id"
          []))
 
