@@ -120,7 +120,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
           {state.avustushaku && (<ContactPerson
             avustushakuName={state.avustushaku.content.name[lang]}
             projectName={state.hakemus?.["project-name"] || ''}
-            registerNumber={state.avustushaku["register-number"]}
+            registerNumber={state.hakemus?.["register-number"]}
             f={f}
           />)}
           {!existingNewMuutoshakemus && (

@@ -29,6 +29,7 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
   page, avustushakuID, acceptedHakemus: {hakemusID, userKey}, context, hakuProps, answers
 }) => {
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+  let hakemusRegisterNumber: string | undefined
 
   await test.step('hakija gets the correct email content', async () => {
     const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
@@ -42,6 +43,7 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
   await test.step('allows virkailija to edit the original hakemus', async () => {
     await hakemustenArviointiPage.navigate(avustushakuID)
     await hakemustenArviointiPage.clickHakemus(hakemusID)
+    hakemusRegisterNumber = await page.locator('section.va-register-number span.value').innerText()
     await clickElementWithText(page, "button", "Muokkaa hakemusta")
 
     const [modificationPage] = await Promise.all([
@@ -55,6 +57,10 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
   await test.step('submit muutoshakemus #1', async () => {
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
     await hakijaMuutoshakemusPage.navigate(hakemusID)
+
+    const registerNumber = await page.locator('[data-test-id="register-number"]').innerText()
+    expect(registerNumber).toEqual(hakemusRegisterNumber)
+
     await hakijaMuutoshakemusPage.fillJatkoaikaValues(muutoshakemus1)
     await hakijaMuutoshakemusPage.sendMuutoshakemus(true)
   })
