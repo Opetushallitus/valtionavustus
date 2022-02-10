@@ -633,12 +633,6 @@ etunimi.sukunimi@oph.fi
         expect(projectName).toEqual(answers.projectName)
       })
 
-      it('shows correct register number', async () => {
-        const registerNumberSpan = await page.waitForSelector("[data-test-id=register-number]", { visible: true })
-        const registerNumber = await page.evaluate(element => element.textContent, registerNumberSpan)
-        expect(registerNumber).toEqual(haku.registerNumber)
-      })
-
       it('shows correct contact person name', async () => {
         const contactPersonInput = await page.waitForSelector("#muutoshakemus__contact-person", { visible: true })
         const contactPerson = await page.evaluate(element => element.value, contactPersonInput)
