@@ -37,7 +37,7 @@
     :body [stacktrace (compojure-api/describe s/Any "JavaScript stack trace")]
     :return nil
     :summary "Sends client errors to serverside"
-    (log/warn stacktrace)
+    (log/error stacktrace)
     (ok)))
 
 (defmulti avustushaku-phase (fn [avustushaku] [(:status avustushaku)
