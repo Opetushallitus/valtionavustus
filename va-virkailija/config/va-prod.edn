@@ -21,6 +21,8 @@
                                                :schedule "0 0 14 ? * MON-FRI"}
                  :laheta-valiselvityspyynnot  {:enabled? true
                                                :schedule "0 0 8 1 * ?"}
+                 :laheta-loppuselvityspyynnot  {:enabled? true
+                                               :schedule "0 0 8 1 * ?"}
                  :loppuselvitys-palauttamatta {:enabled? true
                                                :schedule "0 0 14 ? * MON-FRI"}
                  :hakuaika-paattymassa        {:enabled? true
