@@ -107,7 +107,7 @@ const PaattymispaivaValues = (props: PaattymispaivaValuesProps) => {
 
   return (
     <MuutoshakemusSection>
-      <h2 className="muutoshakemus-section-title">Käyttöaika</h2>
+      <h2 className="muutoshakemus-section-title">{t.muutoshakemus.paatos.kayttoaika}</h2>
       <div className="muutoshakemus__project-end-row">
         <div>
           <h3 className="muutoshakemus__header" data-test-id='muutoshakemus-current-end-date-title'>{currentEndDateTitle}</h3>
