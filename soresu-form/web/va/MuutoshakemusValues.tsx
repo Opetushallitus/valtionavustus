@@ -34,7 +34,7 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
                data-test-id="muutoshakemus-paatos">
             <div className="muutoshakemus__paatos">
                 <h2>
-                  <span data-test-id="paatos-status-text">Käsitelty</span>
+                  <span data-test-id="paatos-status-text">{t.muutoshakemus.paatos.processed}</span>
                   {a['paatos-created-at'] && ` ${moment(a['paatos-created-at']).format(datetimeFormat)}`}
                 </h2>
                 <h3 className="muutoshakemus__header" data-test-id="päätös-email-status">
@@ -51,7 +51,7 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
       {muutoshakemus['haettu-kayttoajan-paattymispaiva'] && <PaattymispaivaValues muutoshakemus={muutoshakemus} projectEndDate={projectEndDate} />}
       {!!talousarvio.length &&
         <MuutoshakemusSection>
-          <h2 className="muutoshakemus-section-title">Budjetti</h2>
+          <h2 className="muutoshakemus-section-title">{t.muutoshakemus.paatos.budjetti}</h2>
           <MuutosTaloudenKayttosuunnitelmaan
             currentTalousarvio={currentTalousarvio}
             newTalousarvio={talousarvio}
@@ -61,7 +61,7 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
       }
       {muutoshakemus['haen-sisaltomuutosta'] && (
         <MuutoshakemusSection>
-          <h2 className="muutoshakemus-section-title">Sisältö ja toteutustapa</h2>
+          <h2 className="muutoshakemus-section-title">{t.muutoshakemus.paatos.sisaltoJaToimitustapa}</h2>
           <div className="muutoshakemus-row">
             <h4 className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
             <div className="muutoshakemus-description-box" data-test-id="sisaltomuutos-perustelut">{muutoshakemus['sisaltomuutos-perustelut']}</div>
@@ -75,7 +75,7 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
       )}
       {muutoshakemus["paatos-reason"] && (
         <div className="muutoshakemus-paatos-reason">
-          <h2 className="muutoshakemus__header">Päätöksen perustelut</h2>
+          <h2 className="muutoshakemus__header">{t.muutoshakemus.paatos.perustelut}</h2>
           <div data-test-id="muutoshakemus-form-paatos-reason">{muutoshakemus["paatos-reason"]}</div>
         </div>
       )}

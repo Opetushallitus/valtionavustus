@@ -55,6 +55,7 @@ export const translationsFi = {
     paatos: {
       paatos: 'Päätös',
       asia: 'Asia',
+      processed: 'Käsitelty',
       linkkiMuutoshakemukseen: 'Näytä kaikki haetut muutokset perusteluineen',
       haettuMuutos: 'Haettu muutos',
       kayttoaika: 'Käyttöaika',
@@ -162,6 +163,7 @@ const translationsSv: Translations = {
     paatos: {
       paatos: 'Beslut',
       asia: 'Ärende',
+      processed: 'Behandlad',
       linkkiMuutoshakemukseen: 'Visa alla ändringar som ni ansökt om inklusive motiveringar',
       haettuMuutos: 'Ändring som ansökts om',
       kayttoaika: 'Användningstid',
@@ -272,14 +274,24 @@ const translationsSv: Translations = {
   },
   selvitys: {
     status: {
-      ...translationsFi.selvitys.status
+      missing: 'Saknas',
+      submitted: 'Utan granskning',
+      accepted: 'Godkänd',
     },
   },
-  loppuselvitys: translationsFi.loppuselvitys,
+  loppuselvitys: {
+    status: {
+      missing: 'Saknas',
+      submitted: 'I faktasökning',
+      information_verified: 'I finansiell revision',
+      accepted: 'Godkänd',
+    },
+  },
   email: {
     paatos: {
       status: {
-        ...translationsFi.email.paatos.status
+        sent: 'Beslut skickat till sökanden',
+        pending: 'Beslutet har ännu inte skickats till sökanden',
       },
     },
   },
