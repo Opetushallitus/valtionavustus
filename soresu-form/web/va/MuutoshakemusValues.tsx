@@ -2,16 +2,17 @@ import React from 'react'
 import moment from 'moment'
 
 import { MuutosTaloudenKayttosuunnitelmaan } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
-import {MuutoshakemusSection} from "./MuutoshakemusSection";
-import {isAcceptedWithChanges} from "./Muutoshakemus";
-import {OsioPaatos} from "./OsioPaatos";
+import {MuutoshakemusSection} from "./MuutoshakemusSection"
+import {isAcceptedWithChanges} from "./Muutoshakemus"
+import {OsioPaatos} from "./OsioPaatos"
 import { Muutoshakemus, Talousarvio } from './types/muutoshakemus'
+import { Language } from './i18n/translations'
 import { useTranslations } from "./i18n/TranslationContext"
 import { fiLongFormat, parseDateStringToMoment } from 'soresu-form/web/va/i18n/dateformat'
 
 import './MuutoshakemusValues.less'
 
-export const datetimeFormat = 'D.M.YYYY [klo] HH.mm'
+export const datetimeFormat = (lang: Language) => `D.M.YYYY [${lang === 'sv' ? 'kl.' : 'klo'}] HH.mm`
 
 type MuutoshakemusValuesProps = {
   currentTalousarvio: Talousarvio
@@ -22,7 +23,7 @@ type MuutoshakemusValuesProps = {
 
 export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
   const { currentTalousarvio, muutoshakemus, hakijaUrl, projectEndDate } = props
-  const { t } = useTranslations()
+  const { t, lang } = useTranslations()
   const a = muutoshakemus
   const paatosUrl = `${hakijaUrl}muutoshakemus/paatos?user-key=${a['paatos-user-key']}`
   const talousarvio = muutoshakemus["paatos-talousarvio"]?.length ? muutoshakemus["paatos-talousarvio"] : muutoshakemus.talousarvio
@@ -35,11 +36,11 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
             <div className="muutoshakemus__paatos">
                 <h2>
                   <span data-test-id="paatos-status-text">{t.muutoshakemus.paatos.processed}</span>
-                  {a['paatos-created-at'] && ` ${moment(a['paatos-created-at']).format(datetimeFormat)}`}
+                  {a['paatos-created-at'] && ` ${moment(a['paatos-created-at']).format(datetimeFormat(lang))}`}
                 </h2>
                 <h3 className="muutoshakemus__header" data-test-id="päätös-email-status">
                   {a['paatos-sent-at']
-                    ? `${t.email.paatos.status.sent} ${moment(a['paatos-sent-at']).format(datetimeFormat)}`
+                    ? `${t.email.paatos.status.sent} ${moment(a['paatos-sent-at']).format(datetimeFormat(lang))}`
                     : t.email.paatos.status.pending
                   }
                 </h3>
