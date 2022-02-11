@@ -4,6 +4,8 @@ Hakuaika: {{ start-date }} klo {{ start-time }} — {{ end-date }} klo {{ end-ti
 
 Hakemustanne voitte tarkastella tästä linkistä: {{& url }}
 
+Hakija voi muokata jo lähetettyä hakemusta alkuperäisen hakemuslinkin kautta hakuajan päättymiseen asti. Tällöin hakemusta ei kuitenkaan enää lähetetä uudelleen käsiteltäväksi, vaan muokkausten tallentuminen varmistetaan hakulomakkeen yläreunan lokitietokentästä.
+
 Hausta vastaava valmistelija on mainittu hakutiedotteessa.
 
 Opetushallitus
