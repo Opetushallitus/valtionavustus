@@ -58,7 +58,7 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
   return (
     <React.Fragment>
       {muutoshakemukset.length > 1 && <MuutoshakemusTabs muutoshakemukset={muutoshakemukset} activeMuutoshakemus={a} setActiveMuutoshakemus={setActiveMuutoshakemus} />}
-      <h2>Muutoshakemus {moment(a['created-at']).format(datetimeFormat)}</h2>
+      <h2>Muutoshakemus {moment(a['created-at']).format(datetimeFormat('fi'))}</h2>
       <div data-test-id="muutoshakemus-sisalto">
         {content}
       </div>
