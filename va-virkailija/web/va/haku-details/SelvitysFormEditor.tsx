@@ -150,7 +150,7 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
         {parseError && <span className="error">{parseError}</span>}
         <div className="btn-fixed-container">
           <button className="btn-fixed" type="button" onClick={scrollToTop}>Takaisin ylös</button>
-          <button className="btn-fixed" type="button" onClick={onSaveForm} disabled={disableSave}>Tallenna</button>
+          <button id="saveForm" className="btn-fixed" type="button" onClick={onSaveForm} disabled={disableSave}>Tallenna</button>
         </div>
         <textarea onChange={onJsonChange} value={formDraftJson}/>
       </div>

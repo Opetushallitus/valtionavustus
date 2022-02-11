@@ -725,6 +725,7 @@ export default class HakujenHallintaController {
     const editedForm = formSaveObject.form
     const selvitysType = formSaveObject.selvitysType
     const url = `/api/avustushaku/${avustushaku.id}/selvitysform/${selvitysType}`
+    state.saveStatus.saveInProgress = true
     HttpUtil.post(url, editedForm)
       .then(function (response) {
         dispatcher.push(events.selvitysFormSaveCompleted, {
@@ -746,13 +747,16 @@ export default class HakujenHallintaController {
   }
 
   onSelvitysFormSaveCompleted(state: State, hakuIdAndForm: {avustusHakuId: Avustushaku["id"], formFromServer: Form, selvitysType: Selvitys}) {
-    const avustusHakuId = hakuIdAndForm.avustusHakuId
-    const formFromServer = hakuIdAndForm.formFromServer
-    const selvitysType = hakuIdAndForm.selvitysType
+    const { avustusHakuId, formFromServer, selvitysType } = hakuIdAndForm
     const haku = state.hakuList.find(haku => haku.id === avustusHakuId)
     if (haku) {
-      haku[selvitysType === 'valiselvitys' ? "valiselvitysForm" : "loppuselvitysForm"] = formFromServer
+      haku[selvitysType === 'valiselvitys' ? "valiselvitysForm" : "loppuselvitysForm"] = _.cloneDeep(formFromServer)
+      state[selvitysType === 'valiselvitys' ? "valiselvitysFormDrafts" : "loppuselvitysFormDrafts"][haku.id] = formFromServer
+      state[selvitysType === 'valiselvitys' ? "valiselvitysFormDraftsJson" : "loppuselvitysFormDraftsJson"][haku.id] = JSON.stringify(formFromServer, null, 2)
     }
+    state.saveStatus.saveInProgress = false
+    state.saveStatus.saveTime = new Date()
+    state.saveStatus.serverError = ""
     return state
   }
 
@@ -802,6 +806,7 @@ export default class HakujenHallintaController {
     const selvitysType = formContentUpdateObject.selvitysType
     const avustushaku = formContentUpdateObject.avustushaku
     state[selvitysType === 'valiselvitys' ? "valiselvitysFormDrafts" : "loppuselvitysFormDrafts"][avustushaku.id] = formContentUpdateObject.newForm
+    state.saveStatus.saveTime = null
     return state
   }
 
@@ -809,6 +814,7 @@ export default class HakujenHallintaController {
     const selvitysType = formContentUpdateObject.selvitysType
     const avustushaku = formContentUpdateObject.avustushaku
     state[selvitysType === 'valiselvitys' ? "valiselvitysFormDraftsJson" : "loppuselvitysFormDraftsJson"][avustushaku.id] = formContentUpdateObject.newFormJson
+    state.saveStatus.saveTime = null
     return state
   }
 

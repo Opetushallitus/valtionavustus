@@ -109,3 +109,47 @@ defaultValues('Editing hakulomake', async ({ page }) => {
     expect(savedTextArea).toEqual(textToSave)
   })
 })
+
+defaultValues('Editing väliselvitys lomake', async ({ page }) => {
+  const hakujenHallinta = new HakujenHallintaPage(page)
+  const avustushakuID = await hakujenHallinta.copyEsimerkkihaku()
+  await hakujenHallinta.setStartDate(moment().subtract(1, 'day'))
+  const formEditorPage = await hakujenHallinta.navigateToFormEditor(avustushakuID)
+  await hakujenHallinta.switchToValiselvitysTab()
+
+  await test.step('save button is disabled without changes', async () => {
+    await formEditorPage.saveFormButton.isDisabled()
+  })
+
+  await test.step('changing hakulomake enables save button', async () => {
+    await page.fill('[name="applicant-info-label-fi"]', 'uus title')
+    await formEditorPage.saveFormButton.isEnabled()
+  })
+
+  await test.step('saving the form disables save button', async () => {
+    await formEditorPage.saveForm()
+    await formEditorPage.saveFormButton.isDisabled()
+  })
+})
+
+defaultValues('Editing loppuselvitys lomake', async ({ page }) => {
+  const hakujenHallinta = new HakujenHallintaPage(page)
+  const avustushakuID = await hakujenHallinta.copyEsimerkkihaku()
+  await hakujenHallinta.setStartDate(moment().subtract(1, 'day'))
+  const formEditorPage = await hakujenHallinta.navigateToFormEditor(avustushakuID)
+  await hakujenHallinta.switchToLoppuselvitysTab()
+
+  await test.step('save button is disabled without changes', async () => {
+    await formEditorPage.saveFormButton.isDisabled()
+  })
+
+  await test.step('changing hakulomake enables save button', async () => {
+    await page.fill('[name="applicant-info-label-fi"]', 'uus title')
+    await formEditorPage.saveFormButton.isEnabled()
+  })
+
+  await test.step('saving the form disables save button', async () => {
+    await formEditorPage.saveForm()
+    await formEditorPage.saveFormButton.isDisabled()
+  })
+})
