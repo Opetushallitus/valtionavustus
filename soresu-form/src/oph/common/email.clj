@@ -154,7 +154,7 @@
        (send-fn)
        (create-email-event email-id true msg)
        (catch Exception e
-         (log/error e (format "Failed to send message: %s" (.getMessage e)))
+         (log/info e (format "Failed to send message: %s" (.getMessage e)))
          (create-email-event email-id false msg)
          (throw e))))))
 
