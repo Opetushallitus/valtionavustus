@@ -15,5 +15,10 @@
   Regex level ERROR
 
 [OUTPUT]
-  Name  stdout
-  Match *
+  Name   http
+  Match  *
+  Tls    on
+  Format json
+  Host   events.pagerduty.com
+  Port   443
+  URI    /integration/{{ pagerduty_integration_key_fluent_bit }}/enqueue

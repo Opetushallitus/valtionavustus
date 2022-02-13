@@ -22,8 +22,8 @@
     - Restart td-agent-bit
 
 - name: Copy td-agent-bit configuration
-  copy:
-    src: td-agent-bit.conf
+  template:
+    src: td-agent-bit.conf.j2
     dest: "{{ td_agent_config_dir }}/td-agent-bit.conf"
     owner: root
     group: root
