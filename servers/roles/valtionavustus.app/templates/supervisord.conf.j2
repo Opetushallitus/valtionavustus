@@ -94,7 +94,6 @@ command=/usr/bin/java
   -Djava.rmi.server.hostname=127.0.0.1
   -Dlog4j2.formatMsgNoLookups=true
   -Dlog4j2.configurationFile=file:{{ data_dir }}/www/config/%(program_name)s-log4j2.xml
-  -Dlog4j.email.environment="%(host_node_name)s %(program_name)s"
   -cp {{ data_dir }}/www/%(program_name)s-current/%(program_name)s.jar oph.va.hakija.main
 environment=configsecrets={{ data_dir }}/www/config/secret-{{ app_profile }}.edn,configdefaults={{ data_dir }}/www/%(program_name)s-current/config/defaults.edn,config={{ data_dir }}/www/%(program_name)s-current/config/{{ app_profile }}.edn ; process environment additions (def no adds)
 ;process_name=%(program_name)s ; process_name expr (default %(program_name)s)

@@ -6,8 +6,6 @@ services:
     container_name: va-virkailija
     hostname: va-virkailija
     environment:
-      log4j_smtp_port: "25"
-      log4j_smtp_host: "fakesmtp"
       JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
     volumes:
       - /dev/urandom:/dev/random
@@ -30,8 +28,6 @@ services:
     container_name: va-hakija
     hostname: va-hakija
     environment:
-      log4j_smtp_port: "25"
-      log4j_smtp_host: "fakesmtp"
       JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
     volumes:
       - /dev/urandom:/dev/random

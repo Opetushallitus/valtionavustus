@@ -14,19 +14,13 @@
         <TimeBasedTriggeringPolicy interval="1"/>
       </Policies>
     </RollingFile>
-    <SMTP name="Mail" subject="[${sys:log4j.email.environment}] Virhe palvelimella" to="{{ logs_mail_recipient }}" from="{{ logs_mail_recipient }}" smtpHost="smtp.sdn.csc.fi" bufferSize="20">
-      <BurstFilter level="error" rate="1" maxBurst="5"/>
-      <PatternLayout pattern="%d{ISO8601} %-5p [%t] %c: %m%n"/>
-    </SMTP>
   </Appenders>
   <Loggers>
     <Logger name="ring" level="info" additivity="false">
       <AppenderRef ref="AccessLog"/>
-      <AppenderRef ref="Mail" level="error"/>
     </Logger>
     <Root level="info">
       <AppenderRef ref="ApplicationLog"/>
-      <AppenderRef ref="Mail" level="error"/>
     </Root>
   </Loggers>
 </Configuration>
