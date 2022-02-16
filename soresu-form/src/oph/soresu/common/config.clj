@@ -51,3 +51,6 @@
     (when (and use-fake-auth (not= "dev" environment))
       (throw (Exception. (str "Disabling authentication is allowed only in dev environment (env=" environment ")"))))
     use-fake-auth))
+
+(defn feature-enabled? [flag]
+  (get-in config [flag :enabled?]))

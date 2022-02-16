@@ -788,6 +788,20 @@
         (ok row)
         (not-found))))
 
+  (compojure-api/GET "/hakemus/:hakemus-id/valiselvitys-user-key" []
+    :path-params [hakemus-id :- Long]
+    :return s/Str
+    :summary "Returns the system generated user_key for väliselvitys"
+    (let [sql "SELECT valiselvitys_version.user_key
+               FROM hakija.hakemukset hakemus_version
+               JOIN hakija.hakemukset valiselvitys_version ON hakemus_version.id = valiselvitys_version.parent_id
+               WHERE hakemus_version.version_closed IS NULL
+               AND valiselvitys_version.version_closed IS NULL
+               AND hakemus_version.id = ?"]
+      (if-some [row (first (query sql [hakemus-id]))]
+        (ok (:user-key row))
+        (not-found))))
+
   (compojure-api/POST "/user-cache" []
     :body  [body (compojure-api/describe virkailija-schema/PopulateUserCachePayload "Juuh")]
     :return s/Any

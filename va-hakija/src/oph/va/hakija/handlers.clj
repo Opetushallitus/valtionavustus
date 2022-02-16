@@ -1,7 +1,7 @@
 (ns oph.va.hakija.handlers
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
-            [oph.soresu.common.config :refer [config]]
+            [oph.soresu.common.config :refer [config feature-enabled?]]
             [oph.common.datetime :as datetime]
             [oph.soresu.common.db :refer [query]]
             [oph.soresu.form.db :as form-db]
@@ -356,6 +356,8 @@
         form-id (selvitys-field-keyword avustushaku)
         form (form-db/get-form form-id)
         hakemus (va-db/get-hakemus hakemus-id)
+        lang (keyword (:language hakemus))
+        normalized-hakemus (va-db/get-normalized-hakemus-by-id (:parent_id hakemus))
         attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
         budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
         validation (merge (validation/validate-form form answers attachments)
@@ -374,7 +376,10 @@
                                                       answers
                                                       budget-totals)
               is-loppuselvitys (= selvitys-type "loppuselvitys")
+              is-valiselvitys (not is-loppuselvitys)
               updated-selvitys-status (if is-loppuselvitys (va-db/update-loppuselvitys-status parent_id "submitted") (va-db/update-valiselvitys-status parent_id "submitted"))]
+          (when (and is-valiselvitys (feature-enabled? :valiselvitys-vastaanotettu-notification))
+              (va-email/send-valiselvitys-submitted-message hakemus lang parent_id [(:contact-email normalized-hakemus)]))
           (hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))

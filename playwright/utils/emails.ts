@@ -39,6 +39,7 @@ export const getMuutoshakemusPaatosEmails = getEmails("muutoshakemus-paatos")
 export const getMuutoshakemusEmails = getEmails("paatos-refuse")
 export const getAcceptedPäätösEmails = getMuutoshakemusEmails
 export const getValiselvitysEmails = getEmails("valiselvitys-notification")
+export const getValiselvitysSubmittedNotificationEmails = getEmails("valiselvitys-submitted-notification")
 export const getLoppuselvitysEmails = getEmails("loppuselvitys-notification")
 export const getLoppuselvitysPalauttamattaEmails = getEmails("loppuselvitys-palauttamatta")
 export const getLahetaValiselvityspyynnotEmails = getEmailsWithAvustushaku("laheta-valiselvityspyynnot")
@@ -159,6 +160,12 @@ export async function getHakemusTokenAndRegisterNumber(hakemusId: number): Promi
 
   return await axios.get(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusId}/token-and-register-number`)
     .then(r => applicationGeneratedValuesSchema.validate(r.data))
+}
+
+export async function getVäliselvitysUserKey(hakemusId: number): Promise<string> {
+  const responseSchema = yup.string().required()
+  return await axios.get(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusId}/valiselvitys-user-key`)
+    .then(r => responseSchema.validate(r.data))
 }
 
 export function lastOrFail<T>(xs: ReadonlyArray<T>): T {

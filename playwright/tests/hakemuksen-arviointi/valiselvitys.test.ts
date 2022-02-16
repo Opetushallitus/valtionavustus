@@ -4,8 +4,26 @@ import { expectToBeDefined } from '../../utils/util'
 import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
 import { väliselvitysTest } from '../../fixtures/väliselvitysTest'
 import { getValiselvitysEmails } from '../../../test/test-util'
+import { getValiselvitysSubmittedNotificationEmails, getVäliselvitysUserKey, lastOrFail } from '../../utils/emails'
+import { HAKIJA_URL } from '../../utils/constants'
 
 test.describe('Väliselvitys', () => {
+  väliselvitysTest('väliselvitys submitted notification is sent', async ({ avustushakuID, acceptedHakemus, väliselvitysSubmitted }) => {
+    expectToBeDefined(väliselvitysSubmitted)
+    const userKey = await getVäliselvitysUserKey(acceptedHakemus.hakemusID)
+    const email = lastOrFail(await getValiselvitysSubmittedNotificationEmails(acceptedHakemus.hakemusID))
+    expect(email["to-address"]).toHaveLength(1)
+    expect(email["to-address"]).toEqual(["erkki.esimerkki@example.com"])
+    expect(email.subject).toEqual("Väliselvityksenne on vastaanotettu")
+    expect(email.formatted).toEqual(`Hyvä vastaanottaja,
+
+olemme vastaanottaneet väliselvityksenne: ${HAKIJA_URL}/avustushaku/${avustushakuID}/valiselvitys?valiselvitys=${userKey}&lang=fi&preview=true
+
+Saatte ilmoituksen osoitteesta no-reply@valtionavustukset.oph.fi, kun väliselvityksenne on käsitelty.
+
+Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi`)
+  })
+
   väliselvitysTest(
     'väliselvitys can be accepted',
     async ({ page, avustushakuID , acceptedHakemus, väliselvitysSubmitted}) => {
