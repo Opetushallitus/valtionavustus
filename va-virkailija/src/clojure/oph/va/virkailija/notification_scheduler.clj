@@ -25,7 +25,7 @@
   (send-laheta-valiselvityspyynnot-notifications))
 
 (defjob LahetaLoppuselvityspyynnotNotification [ctx]
-  (log/info "Running Loppu valiselvityspyynnot")
+  (log/info "Running Laheta loppuselvityspyynnot")
   (send-laheta-loppuselvityspyynnot-notifications))
 
 (defjob HakuaikaPaattymassaNotification [ctx]
