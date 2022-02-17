@@ -351,13 +351,29 @@
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
 
+(defn find-contact-person-email-from-last-hakemus-version [hakemus-id]
+  (let [sql "SELECT answer.value->>'value' AS primary_email
+             FROM hakija.hakemukset hakemus_version
+             JOIN hakija.form_submissions fs ON hakemus_version.form_submission_id = fs.id AND hakemus_version.form_submission_version = fs.version
+             JOIN jsonb_array_elements(fs.answers->'value') answer ON true
+             WHERE hakemus_version.version_closed IS NULL
+             AND hakemus_version.id = ?
+             AND answer.value->>'key' = 'primary-email'"
+        rows (query sql [hakemus-id])]
+    (:primary-email (first rows))))
+
+(defn get-hakemus-contact-email [hakemus-id]
+  (if-some [normalized-hakemus (va-db/get-normalized-hakemus-by-id hakemus-id)]
+    (:contact-email normalized-hakemus)
+    (find-contact-person-email-from-last-hakemus-version hakemus-id)))
+
 (defn on-selvitys-submit [haku-id hakemus-id base-version answers selvitys-field-keyword selvitys-type]
   (let [avustushaku (va-db/get-avustushaku haku-id)
         form-id (selvitys-field-keyword avustushaku)
         form (form-db/get-form form-id)
         hakemus (va-db/get-hakemus hakemus-id)
         lang (keyword (:language hakemus))
-        normalized-hakemus (va-db/get-normalized-hakemus-by-id (:parent_id hakemus))
+        contact-email (get-hakemus-contact-email (:parent_id hakemus))
         attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
         budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
         validation (merge (validation/validate-form form answers attachments)
@@ -379,7 +395,7 @@
               is-valiselvitys (not is-loppuselvitys)
               updated-selvitys-status (if is-loppuselvitys (va-db/update-loppuselvitys-status parent_id "submitted") (va-db/update-valiselvitys-status parent_id "submitted"))]
           (when (and is-valiselvitys (feature-enabled? :valiselvitys-vastaanotettu-notification))
-              (va-email/send-valiselvitys-submitted-message hakemus lang parent_id [(:contact-email normalized-hakemus)]))
+            (va-email/send-valiselvitys-submitted-message hakemus lang parent_id [contact-email]))
           (hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
