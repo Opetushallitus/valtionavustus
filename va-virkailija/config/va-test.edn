@@ -30,7 +30,10 @@
                  :hakuaika-paattymassa {:enabled? true
                                         :schedule "0 0 14 ? * 1,2,3,4,5"}
                  :hakuaika-paattynyt {:enabled? true
-                                      :schedule "0 0 7 ? * *"}}
+                                      :schedule "0 0 7 ? * *"}
+                 :muutoshakemuksia-kasittelematta {:enabled? true
+                                                   :schedule "0 0 14 ? * MON-FRI"}
+                 }
  :payments {:enabled? true :delete-payments? true}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}

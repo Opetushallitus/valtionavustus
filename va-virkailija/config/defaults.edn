@@ -61,6 +61,8 @@
                                         :schedule "0 0 8 ? * *"}
                  :hakuaika-paattynyt {:enabled? false
                                       :schedule "0 0 7 ? * *"}
+                 :muutoshakemuksia-kasittelematta {:enabled? false
+                                                   :schedule "0 0 8 ? * MON *"}
                  }
  :payments {:enabled? true}
  :multibatch-payments {:enabled? true}

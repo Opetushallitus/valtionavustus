@@ -28,7 +28,10 @@
                  :hakuaika-paattymassa        {:enabled? true
                                                :schedule "0 0 7 ? * MON-FRI"}
                  :hakuaika-paattynyt          {:enabled? true
-                                               :schedule "0 0 7 ? * *"}}
+                                               :schedule "0 0 7 ? * *"}
+                 :muutoshakemuksia-kasittelematta {:enabled? false
+                                                   :schedule "0 0 8 ? * MON *"}
+                 }
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25
