@@ -1,0 +1,7 @@
+Hei!
+
+{{total-count}} muutoshakemusta odottaa käsittelyäsi valtionavustusjärjestelmässä. Käsittelemättömiä muutoshakemuksia on seuraavissa valtionavustuksissa:
+
+{{#list}}
+{{project-name}} - {{&link}}
+{{/list}}

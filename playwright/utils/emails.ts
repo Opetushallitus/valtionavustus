@@ -47,6 +47,10 @@ export const getLahetaLoppuselvityspyynnotEmails = getEmailsWithAvustushaku("lah
 export const getValiselvitysPalauttamattaEmails = getEmails("valiselvitys-palauttamatta")
 export const getYhteystiedotMuutettuEmails = getEmails("hakemus-edited-after-applicant-edit")
 export const getPaatoksetLahetettyEmails = getEmailsWithAvustushaku("paatokset-lahetetty")
+export const getMuutoshakemuksetKasittelemattaEmails = async (ukotettuEmailAddress: string) => {
+  const emails = await getAllEmails('muutoshakemuksia-kasittelematta')
+  return emails.filter(e => e["to-address"].includes(ukotettuEmailAddress))
+}
 
 async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))

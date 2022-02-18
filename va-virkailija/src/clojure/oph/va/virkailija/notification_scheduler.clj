@@ -44,6 +44,10 @@
   (log/info "Running loppuselvitys palauttamatta")
   (send-valiselvitys-palauttamatta-notifications))
 
+(defjob MuutoshakemuksiaKasittelemattaNotification [ctx]
+  (log/info "Running muutoshakemuksia kasittelematta")
+  (send-valiselvitys-palauttamatta-notifications))
+
 (defn- get-notification-jobs []
   (filter :enabled?
     [
@@ -107,6 +111,13 @@
         :schedule (schedule
                    (cron-schedule
                     (get-in config [:notifications :valiselvitys-palauttamatta :schedule])))
+      }
+      { :enabled? (get-in config [:notifications :muutoshakemuksia-kasittelematta :enabled?])
+        :key "MuutoshakemuksiaKasittelematta"
+        :job MuutoshakemuksiaKasittelemattaNotification
+        :schedule (schedule
+                   (cron-schedule
+                    (get-in config [:notifications :muutoshakemuksia-kasittelematta :schedule])))
       }
     ]))
 

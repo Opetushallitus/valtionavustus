@@ -1,9 +1,10 @@
-import { expect } from "@playwright/test"
+import {APIRequestContext, expect} from "@playwright/test"
 import moment from "moment";
 
 import {
   getAcceptedPäätösEmails,
   getLinkToHakemusFromSentEmails,
+  getMuutoshakemuksetKasittelemattaEmails,
   getValmistelijaEmails,
   lastOrFail,
   waitUntilMinEmails
@@ -14,6 +15,11 @@ import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
 import { MuutoshakemusValues } from "../../utils/types";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { HakijaMuutoshakemusPage } from "../../pages/hakijaMuutoshakemusPage";
+
+
+
+const sendMuutoshakemuksiaKasittelemattaNotifications = (request: APIRequestContext) =>
+  request.post(`${VIRKAILIJA_URL}/api/test/send-muutoshakemuksia-kasittelematta-notifications`)
 
 const muutoshakemus1: MuutoshakemusValues = {
   jatkoaika: moment(new Date())
@@ -78,6 +84,17 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
       expect(linkToHakemus).toEqual(`${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`)
     })
   })
+  const ukotettuValmistelijaEmail = "santeri.horttanainen@reaktor.com"
+  let emailsAfterLength = 0
+  await test.step('ukotettu valmistelija gets a reminder', async () => {
+    const emailsBefore = await getMuutoshakemuksetKasittelemattaEmails(ukotettuValmistelijaEmail)
+    await sendMuutoshakemuksiaKasittelemattaNotifications(page.request)
+    const emailsAfter = await getMuutoshakemuksetKasittelemattaEmails(ukotettuValmistelijaEmail)
+    emailsAfterLength = emailsAfter.length
+    expect(emailsAfterLength).toBeGreaterThan(emailsBefore.length)
+    const email = lastOrFail(emailsAfter)
+    expect(email.formatted).toContain(`${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`)
+  })
 
   await test.step('Virkailija navigates to avustushaku', async () => {
     await hakemustenArviointiPage.navigate(avustushakuID)
@@ -117,11 +134,16 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
   await test.step('accept muutoshakemus', async () => {
     await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision('accepted')
     await hakemustenArviointiPage.selectVakioperusteluInFinnish()
+    const emailsBefore = await getMuutoshakemuksetKasittelemattaEmails(ukotettuValmistelijaEmail)
     await hakemustenArviointiPage.saveMuutoshakemus()
 
     await test.step('email is immediately shown as sent', async () => {
       expect(await page.innerText("data-test-id=päätös-email-status"))
         .toMatch(/^Päätös lähetetty hakijalle /)
+    })
+    await test.step('ukotettu valmistelija no longer gets notification', async () => {
+      const emailsAfterSending = await getMuutoshakemuksetKasittelemattaEmails(ukotettuValmistelijaEmail)
+      expect(emailsBefore.length).toEqual(emailsAfterSending.length)
     })
   })
 })

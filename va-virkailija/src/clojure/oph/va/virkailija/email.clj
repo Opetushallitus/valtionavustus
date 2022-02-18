@@ -60,6 +60,7 @@
    :loppuselvitys-taloustarkastamatta (email/load-template "email-templates/loppuselvitys-taloustarkastamatta.fi")
    :laheta-loppuselvityspyynnot (email/load-template "email-templates/laheta-loppuselvityspyynnot.fi")
    :valiselvitys-tarkastamatta (email/load-template "email-templates/valiselvitys-tarkastamatta.fi")
+   :muutoshakemuksia-kasittelematta (email/load-template "email-templates/muutoshakemuksia-kasittelematta.fi")
    :laheta-valiselvityspyynnot (email/load-template "email-templates/laheta-valiselvityspyynnot.fi")
    :hakuaika-paattymassa {:fi (email/load-template "email-templates/hakuaika-paattymassa.fi")
                           :sv (email/load-template "email-templates/hakuaika-paattymassa.sv")}
@@ -262,6 +263,30 @@
                               :to to
                               :subject "Tarkastamattomia väliselvityksiä"
                               :total-hakemus-count total-hakemus-count
+                              :list list}
+                             (partial render template))))
+
+(defn- generate-muutoshakemus-url [avustushaku-id hakemus-id]
+  (str (-> config :server :virkailija-url)
+       "/avustushaku/" avustushaku-id "/hakemus/" hakemus-id "/muutoshakemukset/"))
+
+(defn- to-muutoshakemus-kasittelematta [notification]
+  {:link (generate-muutoshakemus-url (:avustushaku-id notification) (:hakemus-id notification))
+   :project-name (:project-name notification)})
+
+(defn send-muutoshakemuksia-kasittelematta [notification]
+  (let [lang     (keyword "fi")
+        template (:muutoshakemuksia-kasittelematta mail-templates)
+        to       (:to notification)
+        list     (seq (map to-muutoshakemus-kasittelematta (:list notification)))
+        total-count (count list)]
+    (email/try-send-msg-once {:type :muutoshakemuksia-kasittelematta
+                              :lang lang
+                              :from (-> email/smtp-config :from lang)
+                              :sender (-> email/smtp-config :sender)
+                              :to [to]
+                              :subject "Käsittelemättömiä muutoshakemuksia"
+                              :total-count total-count
                               :list list}
                              (partial render template))))
 

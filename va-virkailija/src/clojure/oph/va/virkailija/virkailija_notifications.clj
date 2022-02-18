@@ -115,6 +115,31 @@
     (doseq [keyval grouped]
       (email/send-valiselvitys-tarkastamatta [(key keyval)] (val keyval)))))
 
+(defn- get-muutoshakemuksia-kasittelematta []
+  (query "SELECT ahr.email as to,
+                 jsonb_agg(
+                     jsonb_build_object(
+                       'avustushaku-id', h.avustushaku,
+                       'project-name', h.project_name,
+                       'hakemus-id', h.id
+                    )
+                 ) as list
+          FROM hakija.hakemukset h
+          JOIN virkailija.muutoshakemus m   ON h.id = m.hakemus_id
+          JOIN virkailija.arviot a          ON a.hakemus_id = h.id
+          JOIN hakija.avustushaku_roles ahr ON ahr.id = a.presenter_role_id
+          WHERE h.version_closed IS NULL AND
+                m.paatos_id IS NULL AND
+                ahr.email IS NOT NULL
+          GROUP BY ahr.email"
+         []))
+
+(defn send-muutoshakemuksia-kasittelematta-notifications []
+  (let [notifications (get-muutoshakemuksia-kasittelematta)]
+    (doseq [notification notifications]
+      (email/send-muutoshakemuksia-kasittelematta notification))))
+
+
 (defn- get-loppuselvitys-palauttamatta []
   (query "SELECT
             avustushaut.id as avustushaku_id,
