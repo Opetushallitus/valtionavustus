@@ -46,7 +46,7 @@
 
 (defjob MuutoshakemuksiaKasittelemattaNotification [ctx]
   (log/info "Running muutoshakemuksia kasittelematta")
-  (send-valiselvitys-palauttamatta-notifications))
+  (send-muutoshakemuksia-kasittelematta-notifications))
 
 (defn- get-notification-jobs []
   (filter :enabled?
