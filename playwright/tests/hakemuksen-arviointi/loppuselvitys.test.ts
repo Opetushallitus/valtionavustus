@@ -21,7 +21,7 @@ import {
 } from "../../utils/util"
 
 import {
-  getAllEmails
+  getAllEmails, getLoppuselvitysSubmittedNotificationEmails, lastOrFail
 } from "../../utils/emails"
 
 import { LoppuselvitysPage } from "../../pages/loppuselvitysPage"
@@ -45,6 +45,27 @@ test('Loppuselvitys tab in hakemuksen arviointi should have link to correct lopp
   await waitForElementWithText(loppuselvitysFormPage, 'button', 'Lähetä käsiteltäväksi')
 
   await loppuselvitysFormPage.close()
+})
+
+test('loppuselvitys submitted notification is sent', async ({ page, acceptedHakemus: { hakemusID }, loppuselvitysSubmitted: { loppuselvitysFormFilled } }) => {
+  expect(loppuselvitysFormFilled)
+  const email = lastOrFail(await getLoppuselvitysSubmittedNotificationEmails(hakemusID))
+  expect(email["to-address"]).toEqual(["erkki.esimerkki@example.com"])
+  expect(email.subject).toEqual("Loppuselvityksenne on vastaanotettu")
+  expect(email.formatted).toContain(`
+Saatte ilmoituksen osoitteesta no-reply@valtionavustukset.oph.fi, kun loppuselvityksenne on käsitelty.
+
+Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi`)
+
+  const previewUrl = email.formatted.match(/(https?:\/\/\S+)/gi)?.[0]
+  if (!previewUrl) {
+    throw new Error('No preview url found')
+  }
+
+  await page.goto(previewUrl)
+  expect(page.locator('div.soresu-preview > h1')).toContainText('loppuselvitys submitted notification is sent')
+  expect(page.locator('#textArea-0 > div')).toContainText('Yhteenveto')
+  expect(page.locator('#textArea-2 > div')).toContainText('Työn jako')
 })
 
 test('virkailija sees loppuselvitys answers', async ({page, avustushakuID, acceptedHakemus: {hakemusID}, loppuselvitysSubmitted: {loppuselvitysFormFilled}}) => {

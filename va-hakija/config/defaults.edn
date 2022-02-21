@@ -39,4 +39,5 @@
          :bounce-address "oph-va-alerts@reaktor.com"
          :print-mail-on-disable? true}
  :valiselvitys-vastaanotettu-notification {:enabled? false}
+ :loppuselvitys-vastaanotettu-notification {:enabled? false}
  :selvitys-limit {:enabled? false}}

@@ -13,4 +13,5 @@
          :host "fakesmtp"
          :port 25}
  :valiselvitys-vastaanotettu-notification {:enabled? true}
+ :loppuselvitys-vastaanotettu-notification {:enabled? true}
  :applications-ui {:enabled? true}}

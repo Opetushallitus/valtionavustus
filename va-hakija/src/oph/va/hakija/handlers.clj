@@ -367,11 +367,11 @@
     (:contact-email normalized-hakemus)
     (find-contact-person-email-from-last-hakemus-version hakemus-id)))
 
-(defn on-selvitys-submit [haku-id hakemus-id base-version answers selvitys-field-keyword selvitys-type]
+(defn on-selvitys-submit [haku-id selvitys-user-key base-version answers selvitys-field-keyword selvitys-type]
   (let [avustushaku (va-db/get-avustushaku haku-id)
         form-id (selvitys-field-keyword avustushaku)
         form (form-db/get-form form-id)
-        hakemus (va-db/get-hakemus hakemus-id)
+        hakemus (va-db/get-hakemus selvitys-user-key)
         lang (keyword (:language hakemus))
         contact-email (get-hakemus-contact-email (:parent_id hakemus))
         attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
@@ -385,7 +385,7 @@
               submission-version (:version saved-submission)
               parent_id (:parent_id hakemus)
               submitted-hakemus (va-db/submit-hakemus haku-id
-                                                      hakemus-id
+                                                      selvitys-user-key
                                                       submission-id
                                                       submission-version
                                                       (:register_number hakemus)
@@ -395,7 +395,9 @@
               is-valiselvitys (not is-loppuselvitys)
               updated-selvitys-status (if is-loppuselvitys (va-db/update-loppuselvitys-status parent_id "submitted") (va-db/update-valiselvitys-status parent_id "submitted"))]
           (when (and is-valiselvitys (feature-enabled? :valiselvitys-vastaanotettu-notification))
-            (va-email/send-valiselvitys-submitted-message hakemus lang parent_id [contact-email]))
+            (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id [contact-email]))
+          (when (and is-loppuselvitys (feature-enabled? :loppuselvitys-vastaanotettu-notification))
+            (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id [contact-email]))
           (hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))

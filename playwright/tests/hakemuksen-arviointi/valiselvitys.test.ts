@@ -21,7 +21,8 @@ olemme vastaanottaneet väliselvityksenne: ${HAKIJA_URL}/avustushaku/${avustusha
 
 Saatte ilmoituksen osoitteesta no-reply@valtionavustukset.oph.fi, kun väliselvityksenne on käsitelty.
 
-Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi`)
+Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi
+`)
   })
 
   väliselvitysTest(

@@ -15,6 +15,8 @@
    :hakemus-change-request-responded {:fi "Automaattinen viesti: avustushakemusta on täydennetty"}
    :valiselvitys-submitted-notification {:fi "Väliselvityksenne on vastaanotettu"
                                          :sv "Er mellanredovisning är mottagen"}
+   :loppuselvitys-submitted-notification {:fi "Loppuselvityksenne on vastaanotettu"
+                                          :sv "Er slutredovisning är mottagen"}
    :notify-valmistelija-of-new-muutoshakemus {:fi "Automaattinen viesti: saapunut muutoshakemus"}
    :application-refused-presenter
    {:fi "Automaattinen viesti: Avustuksen saajan ilmoitus"}
@@ -31,6 +33,8 @@
    :hakemus-change-request-responded {:fi (email/load-template "email-templates/hakemus-change-request-responded.plain.fi")}
    :valiselvitys-submitted-notification {:fi (email/load-template "email-templates/valiselvitys-submitted-notification.plain.fi")
                                          :sv (email/load-template "email-templates/valiselvitys-submitted-notification.plain.sv")}
+   :loppuselvitys-submitted-notification {:fi (email/load-template "email-templates/loppuselvitys-submitted-notification.plain.fi")
+                                          :sv (email/load-template "email-templates/loppuselvitys-submitted-notification.plain.sv")}
    :notify-valmistelija-of-new-muutoshakemus {:fi (email/load-template "email-templates/notify-valmistelija-of-new-muutoshakemus.plain.fi")}
    :application-refused-presenter
    {:fi (email/load-template
@@ -53,16 +57,16 @@
 (defn selvitys-preview-url [avustushaku-id selvitys-user-key lang selvitys-type]
   (let [va-url (-> config :server :url lang)
         lang-str (or (clojure.core/name lang) "fi")]
-    (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?valiselvitys=" selvitys-user-key "&lang=" lang-str "&preview=true")))
+    (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?" selvitys-type "=" selvitys-user-key "&lang=" lang-str "&preview=true")))
 
-(defn valiselvitys-preview-url [avustushaku-id user-key lang]
-  (selvitys-preview-url avustushaku-id user-key lang "valiselvitys"))
-
-(defn send-valiselvitys-submitted-message [valiselvitys-hakemus lang hakemus-id to]
-  (log/info "Sending notification of väliselvitys received")
-  (let [type :valiselvitys-submitted-notification
+(defn send-selvitys-submitted-message! [avustushaku-id selvitys-user-key selvitys-type lang hakemus-id to]
+  (log/info "Sending notification for a submitted selvitys of type " selvitys-type)
+  (let [type (if (= selvitys-type "loppuselvitys")
+                :loppuselvitys-submitted-notification
+                :valiselvitys-submitted-notification)
         subject (get-in mail-titles [type lang])
-        template (get-in mail-templates [type lang])]
+        template (get-in mail-templates [type lang])
+        preview-url (selvitys-preview-url avustushaku-id selvitys-user-key lang selvitys-type)]
     (email/try-send-msg-once {:type type
                               :lang lang
                               :from (-> email/smtp-config :from lang)
@@ -70,7 +74,7 @@
                               :to to
                               :subject subject
                               :hakemus-id hakemus-id
-                              :valiselvitys-preview-url (valiselvitys-preview-url (:avustushaku valiselvitys-hakemus) (:user_key valiselvitys-hakemus) lang)}
+                              :preview-url preview-url}
                              (partial render template))))
 
 (defn send-new-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date]

@@ -1,6 +1,6 @@
 Bästa mottagare,
 
-vi har tagit emot er mellanredovisning: {{& valiselvitys-preview-url }}
+vi har tagit emot er mellanredovisning: {{& preview-url }}
 
 Ni får ett meddelande från adressen no-reply@valtionavustukset.oph.fi då er mellanredovisning har behandlats.
 
