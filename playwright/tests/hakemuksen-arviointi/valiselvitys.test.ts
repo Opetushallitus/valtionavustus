@@ -4,25 +4,29 @@ import { expectToBeDefined } from '../../utils/util'
 import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
 import { väliselvitysTest } from '../../fixtures/väliselvitysTest'
 import { getValiselvitysEmails } from '../../../test/test-util'
-import { getValiselvitysSubmittedNotificationEmails, getVäliselvitysUserKey, lastOrFail } from '../../utils/emails'
-import { HAKIJA_URL } from '../../utils/constants'
+import { getValiselvitysSubmittedNotificationEmails, lastOrFail } from '../../utils/emails'
 
 test.describe('Väliselvitys', () => {
-  väliselvitysTest('väliselvitys submitted notification is sent', async ({ avustushakuID, acceptedHakemus, väliselvitysSubmitted }) => {
+  väliselvitysTest('väliselvitys submitted notification is sent', async ({ page, acceptedHakemus, väliselvitysSubmitted }) => {
     expectToBeDefined(väliselvitysSubmitted)
-    const userKey = await getVäliselvitysUserKey(acceptedHakemus.hakemusID)
     const email = lastOrFail(await getValiselvitysSubmittedNotificationEmails(acceptedHakemus.hakemusID))
     expect(email["to-address"]).toHaveLength(1)
     expect(email["to-address"]).toEqual(["erkki.esimerkki@example.com"])
     expect(email.subject).toEqual("Väliselvityksenne on vastaanotettu")
-    expect(email.formatted).toEqual(`Hyvä vastaanottaja,
-
-olemme vastaanottaneet väliselvityksenne: ${HAKIJA_URL}/avustushaku/${avustushakuID}/valiselvitys?valiselvitys=${userKey}&lang=fi&preview=true
-
+    expect(email.formatted).toContain(`
 Saatte ilmoituksen osoitteesta no-reply@valtionavustukset.oph.fi, kun väliselvityksenne on käsitelty.
 
 Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi
 `)
+
+    const previewUrl = email.formatted.match(/(https?:\/\/\S+)/gi)?.[0]
+    if (!previewUrl) {
+      throw new Error('No preview url found')
+    }
+
+    await page.goto(previewUrl)
+    expect(page.locator('div.soresu-preview > h1')).toContainText('väliselvitys submitted notification is sent')
+    expect(page.locator('#organization > div')).toContainText('Avustuksen saajan nimi')
   })
 
   väliselvitysTest(

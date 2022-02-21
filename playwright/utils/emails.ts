@@ -167,12 +167,6 @@ export async function getHakemusTokenAndRegisterNumber(hakemusId: number): Promi
     .then(r => applicationGeneratedValuesSchema.validate(r.data))
 }
 
-export async function getVäliselvitysUserKey(hakemusId: number): Promise<string> {
-  const responseSchema = yup.string().required()
-  return await axios.get(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusId}/valiselvitys-user-key`)
-    .then(r => responseSchema.validate(r.data))
-}
-
 export function lastOrFail<T>(xs: ReadonlyArray<T>): T {
   if (xs.length === 0) throw Error("Can't get last element of empty list")
   return xs[xs.length - 1]
