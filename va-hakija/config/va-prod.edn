@@ -12,4 +12,5 @@
          :port 25
          :sender "no-reply@csc.fi"
          :bounce-address "valtionavustukset@oph.fi"}
-}
+ :valiselvitys-vastaanotettu-notification {:enabled? true}
+ }
