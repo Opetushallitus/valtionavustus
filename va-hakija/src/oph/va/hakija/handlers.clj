@@ -394,7 +394,7 @@
               is-loppuselvitys (= selvitys-type "loppuselvitys")
               is-valiselvitys (not is-loppuselvitys)
               updated-selvitys-status (if is-loppuselvitys (va-db/update-loppuselvitys-status parent_id "submitted") (va-db/update-valiselvitys-status parent_id "submitted"))]
-          (when (and is-valiselvitys (feature-enabled? :valiselvitys-vastaanotettu-notification))
+          (when is-valiselvitys
             (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id [contact-email]))
           (when (and is-loppuselvitys (feature-enabled? :loppuselvitys-vastaanotettu-notification))
             (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id [contact-email]))

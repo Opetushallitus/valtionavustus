@@ -14,6 +14,5 @@
          :host "fakesmtp"
          :port 25}
  :applications-ui {:enabled? true}
- :valiselvitys-vastaanotettu-notification {:enabled? true}
  :loppuselvitys-vastaanotettu-notification {:enabled? true}
  :officer-edit-jwt-secret "playwright-test-secret"}
