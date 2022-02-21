@@ -142,6 +142,7 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
         .toMatch(/^Päätös lähetetty hakijalle /)
     })
     await test.step('ukotettu valmistelija no longer gets notification', async () => {
+      await sendMuutoshakemuksiaKasittelemattaNotifications(page.request)
       const emailsAfterSending = await getMuutoshakemuksetKasittelemattaEmails(ukotettuValmistelijaEmail)
       expect(emailsBefore.length).toEqual(emailsAfterSending.length)
     })
