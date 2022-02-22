@@ -392,12 +392,8 @@
                                                       answers
                                                       budget-totals)
               is-loppuselvitys (= selvitys-type "loppuselvitys")
-              is-valiselvitys (not is-loppuselvitys)
               updated-selvitys-status (if is-loppuselvitys (va-db/update-loppuselvitys-status parent_id "submitted") (va-db/update-valiselvitys-status parent_id "submitted"))]
-          (when is-valiselvitys
-            (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id [contact-email]))
-          (when (and is-loppuselvitys (feature-enabled? :loppuselvitys-vastaanotettu-notification))
-            (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id [contact-email]))
+          (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id [contact-email])
           (hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
