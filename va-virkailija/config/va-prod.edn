@@ -29,7 +29,7 @@
                                                :schedule "0 0 7 ? * MON-FRI"}
                  :hakuaika-paattynyt          {:enabled? true
                                                :schedule "0 0 7 ? * *"}
-                 :muutoshakemuksia-kasittelematta {:enabled? false
+                 :muutoshakemuksia-kasittelematta {:enabled? true
                                                    :schedule "0 0 8 ? * MON *"}
                  }
  :email {:enabled? true
