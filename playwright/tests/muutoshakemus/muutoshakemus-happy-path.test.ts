@@ -94,6 +94,7 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
     expect(emailsAfterLength).toBeGreaterThan(emailsBefore.length)
     const email = lastOrFail(emailsAfter)
     expect(email.subject).toEqual("Käsittelemättömiä muutoshakemuksia")
+    expect(email["to-address"]).toEqual([ukotettuValmistelijaEmail])
     const expectedArviointiLink = `${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/`
     expect(email.formatted).toContain(`- Muutoshakemuksia 1 kpl: ${expectedArviointiLink}`)
     await page.goto(expectedArviointiLink)
