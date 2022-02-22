@@ -25,8 +25,8 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
     }
 
     await page.goto(previewUrl)
-    expect(page.locator('div.soresu-preview > h1')).toContainText('väliselvitys submitted notification is sent')
-    expect(page.locator('#organization > div')).toContainText('Avustuksen saajan nimi')
+    await expect(page.locator('div.soresu-preview > h1')).toContainText('väliselvitys submitted notification is sent')
+    await expect(page.locator('#organization > div')).toContainText('Avustuksen saajan nimi')
   })
 
   väliselvitysTest(
