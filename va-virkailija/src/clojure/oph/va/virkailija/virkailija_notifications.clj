@@ -241,7 +241,7 @@
             SELECT *
               FROM hakemus_paatokset p
               JOIN hakemukset h ON p.hakemus_id = h.id
-              WHERE h.avustushaku = a.id 
+              WHERE h.avustushaku = a.id
                 AND h.version_closed is null
                 AND NOT EXISTS (
                   SELECT * FROM tapahtumaloki
