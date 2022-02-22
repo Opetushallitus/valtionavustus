@@ -116,22 +116,28 @@
       (email/send-valiselvitys-tarkastamatta [(key keyval)] (val keyval)))))
 
 (defn- get-muutoshakemuksia-kasittelematta []
-  (query "SELECT ahr.email as to,
-                 jsonb_agg(
-                     jsonb_build_object(
-                       'avustushaku-id', h.avustushaku,
-                       'project-name', h.project_name,
-                       'hakemus-id', h.id
-                    )
-                 ) as list
-          FROM hakija.hakemukset h
-          JOIN virkailija.muutoshakemus m   ON h.id = m.hakemus_id
-          JOIN virkailija.arviot a          ON a.hakemus_id = h.id
-          JOIN hakija.avustushaku_roles ahr ON ahr.id = a.presenter_role_id
-          WHERE h.version_closed IS NULL AND
-                m.paatos_id IS NULL AND
-                ahr.email IS NOT NULL
-          GROUP BY ahr.email"
+  (query "WITH kasittelematta AS (
+            SELECT ahr.email      AS ukotettu_email,
+                   h.avustushaku  AS avustushaku_id,
+                   count(m.id)    AS muutoshakemus_count
+            FROM hakija.hakemukset h
+                     JOIN virkailija.muutoshakemus m    ON h.id = m.hakemus_id
+                     JOIN virkailija.arviot a           ON a.hakemus_id = h.id
+                     JOIN hakija.avustushaku_roles ahr  ON ahr.id = a.presenter_role_id
+            WHERE h.version_closed IS NULL AND
+                  m.paatos_id IS NULL AND
+                  ahr.email IS NOT NULL
+            GROUP BY ahr.email, h.avustushaku
+         ) SELECT
+            kasittelematta.ukotettu_email as \"to\",
+            jsonb_agg(
+              jsonb_build_object(
+                'avustushaku-id', kasittelematta.avustushaku_id,
+                'count', kasittelematta.muutoshakemus_count
+              )
+            ) AS list
+           FROM kasittelematta
+           GROUP BY kasittelematta.ukotettu_email"
          []))
 
 (defn send-muutoshakemuksia-kasittelematta-notifications []

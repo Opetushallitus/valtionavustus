@@ -93,11 +93,10 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
     emailsAfterLength = emailsAfter.length
     expect(emailsAfterLength).toBeGreaterThan(emailsBefore.length)
     const email = lastOrFail(emailsAfter)
-    expect(email.formatted).toContain(`${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`)
-  })
-
-  await test.step('Virkailija navigates to avustushaku', async () => {
-    await hakemustenArviointiPage.navigate(avustushakuID)
+    expect(email.subject).toEqual("Käsittelemättömiä muutoshakemuksia")
+    const expectedArviointiLink = `${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/`
+    expect(email.formatted).toContain(`- Muutoshakemuksia 1 kpl: ${expectedArviointiLink}`)
+    await page.goto(expectedArviointiLink)
   })
 
   await test.step('Muutoshakemus status is ☆ Uusi', async () => {

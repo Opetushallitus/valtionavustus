@@ -266,27 +266,23 @@
                               :list list}
                              (partial render template))))
 
-(defn- generate-muutoshakemus-url [avustushaku-id hakemus-id]
-  (str (-> config :server :virkailija-url)
-       "/avustushaku/" avustushaku-id "/hakemus/" hakemus-id "/muutoshakemukset/"))
-
 (defn- to-muutoshakemus-kasittelematta [notification]
-  {:link (generate-muutoshakemus-url (:avustushaku-id notification) (:hakemus-id notification))
-   :project-name (:project-name notification)})
+  {:link (generate-avustushaku-url (:avustushaku-id notification))
+   :count (:count notification)})
 
 (defn send-muutoshakemuksia-kasittelematta [notification]
   (let [lang     (keyword "fi")
         template (:muutoshakemuksia-kasittelematta mail-templates)
         to       (:to notification)
         list     (seq (map to-muutoshakemus-kasittelematta (:list notification)))
-        total-count (count list)]
+        total-muutoshakemus-count (sum (map :count list))]
     (email/try-send-msg-once {:type :muutoshakemuksia-kasittelematta
                               :lang lang
                               :from (-> email/smtp-config :from lang)
                               :sender (-> email/smtp-config :sender)
                               :to [to]
                               :subject "Käsittelemättömiä muutoshakemuksia"
-                              :total-count total-count
+                              :total-muutoshakemus-count total-muutoshakemus-count
                               :list list}
                              (partial render template))))
 

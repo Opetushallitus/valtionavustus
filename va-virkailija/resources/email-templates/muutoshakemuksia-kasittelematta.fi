@@ -1,7 +1,9 @@
 Hei!
 
-{{total-count}} muutoshakemusta odottaa käsittelyäsi valtionavustusjärjestelmässä. Käsittelemättömiä muutoshakemuksia on seuraavissa valtionavustuksissa:
+{{total-muutoshakemus-count}} muutoshakemusta odottaa käsittelyäsi valtionavustusjärjestelmässä. Käsittelemättömiä muutoshakemuksia on seuraavissa valtionavustuksissa:
 
 {{#list}}
-{{project-name}} - {{&link}}
+- Muutoshakemuksia {{count}} kpl: {{&link}}
 {{/list}}
+
+Ohjeet muutoshakemuksen käsittelemiseksi löytyvät OSSIsta (kohta 4. Muutoshakemusten käsittely ja hyväksyntä): https://intra.oph.fi/pages/viewpage.action?spaceKey=VALA&title=Hankeaikainen+neuvonta
