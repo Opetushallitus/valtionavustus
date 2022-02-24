@@ -32,7 +32,7 @@ test.describe("loppuselvitys-palauttamatta", () => {
     expect(emailsAfter).toEqual(emailsBefore)
   })
 
-  loppuselvitysTest.only('reminder email is sent once for hakemus with loppuselvitys deadline in next 14 days', async ({page, answers, hakuProps, avustushakuID, acceptedHakemus: { hakemusID, userKey }, loppuselvityspyyntöSent}) => {
+  loppuselvitysTest('reminder email is sent once for hakemus with loppuselvitys deadline in next 14 days', async ({page, answers, hakuProps, avustushakuID, acceptedHakemus: { hakemusID, userKey }, loppuselvityspyyntöSent}) => {
     expectToBeDefined(loppuselvityspyyntöSent)
     const loppuselvitysdate = moment().add(14, 'days').format('DD.MM.YYYY')
     await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
