@@ -189,6 +189,11 @@
               SELECT * FROM tapahtumaloki
               WHERE tapahtumaloki.hakemus_id = h.hakemus_id
                 AND tyyppi = 'loppuselvitys-notification'
+            )
+            AND NOT EXISTS (
+              SELECT * FROM email_event e
+              WHERE e.hakemus_id = h.hakemus_id
+                AND e.email_type = 'loppuselvitys-palauttamatta'
             )"
          []))
 

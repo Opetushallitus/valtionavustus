@@ -32,17 +32,20 @@ test.describe("loppuselvitys-palauttamatta", () => {
     expect(emailsAfter).toEqual(emailsBefore)
   })
 
-  loppuselvitysTest('reminder email is sent for hakemus with loppuselvitys deadline in next 14 days', async ({page, hakuProps, avustushakuID, acceptedHakemus: { hakemusID, userKey }, loppuselvityspyyntöSent}) => {
+  loppuselvitysTest.only('reminder email is sent once for hakemus with loppuselvitys deadline in next 14 days', async ({page, answers, hakuProps, avustushakuID, acceptedHakemus: { hakemusID, userKey }, loppuselvityspyyntöSent}) => {
     expectToBeDefined(loppuselvityspyyntöSent)
     const loppuselvitysdate = moment().add(14, 'days').format('DD.MM.YYYY')
     await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
-
     await sendLoppuselvitysPalauttamattaNotifications(page)
-    const email = lastOrFail(await getLoppuselvitysPalauttamattaEmails(hakemusID))
-    expect(email['to-address']).toHaveLength(1)
-    expect(email['to-address']).toContain('erkki.esimerkki@example.com')
-    expect(email.subject).toContain("Muistutus loppuselvityksen palauttamisesta")
-    expect(email['formatted']).toContain(`Hyvä vastaanottaja,
+
+    await test.step('reminder is sent', async () => {
+      const emails = await getLoppuselvitysPalauttamattaEmails(hakemusID)
+      expect(emails).toHaveLength(1)
+      const email = emails[0]
+      expect(email['to-address']).toHaveLength(1)
+      expect(email['to-address']).toContain(answers.contactPersonEmail)
+      expect(email.subject).toContain("Muistutus loppuselvityksen palauttamisesta")
+      expect(email['formatted']).toContain(`Hyvä vastaanottaja,
 
 loppuselvityksenne avustuksessa ${hakuProps.avustushakuName} on palauttamatta.
 
@@ -55,6 +58,13 @@ Mikäli käyttöajan pidennystä saaneelle hankkeelle ei ole erikseen annettu uu
 Linkki selvityslomakkeellenne: ${HAKIJA_URL}/avustushaku/${avustushakuID}/loppuselvitys?hakemus=${userKey}&lang=fi
 
 Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi`)
+    })
+
+    await test.step('reminder is not sent again', async () => {
+      await sendLoppuselvitysPalauttamattaNotifications(page)
+      const emailsAfterSecondSend = await getLoppuselvitysPalauttamattaEmails(hakemusID)
+      expect(emailsAfterSecondSend).toHaveLength(1)
+    })
   })
 
   loppuselvitysTest(
