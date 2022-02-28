@@ -21,7 +21,7 @@ import {
 } from "../../utils/util"
 
 import {
-  getAllEmails, getLoppuselvitysSubmittedNotificationEmails, lastOrFail
+  getAllEmails, getHakemusTokenAndRegisterNumber, getLoppuselvitysSubmittedNotificationEmails, lastOrFail
 } from "../../utils/emails"
 
 import { LoppuselvitysPage } from "../../pages/loppuselvitysPage"
@@ -52,10 +52,20 @@ test('loppuselvitys submitted notification is sent', async ({ page, acceptedHake
   const email = lastOrFail(await getLoppuselvitysSubmittedNotificationEmails(hakemusID))
   expect(email["to-address"]).toEqual(["erkki.esimerkki@example.com"])
   expect(email.subject).toEqual("Loppuselvityksenne on vastaanotettu")
-  expect(email.formatted).toContain(`
-Saatte ilmoituksen osoitteesta no-reply@valtionavustukset.oph.fi, kun loppuselvityksenne on käsitelty.
+  const { 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
+  expect(email.formatted).toContain(`Hyvä vastaanottaja,
 
-Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi`)
+olemme vastaanottaneet loppuselvityksenne.
+
+Rahassa kylpijät Ky Ay Oy
+${registerNumber}
+`)
+  expect(email.formatted).toContain(`
+Hakija voi muokata jo lähetettyä loppuselvitystä oheisen linkin kautta selvityksen määräaikaan saakka. Tällöin selvitystä ei kuitenkaan enää lähetetä uudelleen käsiteltäväksi, vaan muokkausten tallentuminen varmistetaan hakulomakkeen yläreunan lokitietokentästä.
+
+Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi
+
+Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan viralliseen sähköpostiosoitteeseen sekä yhteyshenkilölle.`)
 
   const previewUrl = email.formatted.match(/(https?:\/\/\S+)/gi)?.[0]
   if (!previewUrl) {

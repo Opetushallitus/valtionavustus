@@ -4,20 +4,29 @@ import { expectToBeDefined } from '../../utils/util'
 import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
 import { väliselvitysTest } from '../../fixtures/väliselvitysTest'
 import { getValiselvitysEmails } from '../../../test/test-util'
-import { getValiselvitysSubmittedNotificationEmails, lastOrFail } from '../../utils/emails'
+import { getHakemusTokenAndRegisterNumber, getValiselvitysSubmittedNotificationEmails, lastOrFail } from '../../utils/emails'
 
 test.describe('Väliselvitys', () => {
-  väliselvitysTest('väliselvitys submitted notification is sent', async ({ page, acceptedHakemus, väliselvitysSubmitted }) => {
+  väliselvitysTest('väliselvitys submitted notification is sent', async ({ page, acceptedHakemus: { hakemusID }, väliselvitysSubmitted }) => {
     expectToBeDefined(väliselvitysSubmitted)
-    const email = lastOrFail(await getValiselvitysSubmittedNotificationEmails(acceptedHakemus.hakemusID))
+    const email = lastOrFail(await getValiselvitysSubmittedNotificationEmails(hakemusID))
     expect(email["to-address"]).toHaveLength(1)
     expect(email["to-address"]).toEqual(["erkki.esimerkki@example.com"])
     expect(email.subject).toEqual("Väliselvityksenne on vastaanotettu")
+    const { 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
+    expect(email.formatted).toContain(`Hyvä vastaanottaja,
+
+olemme vastaanottaneet väliselvityksenne.
+
+Rahassa kylpijät Ky Ay Oy
+${registerNumber}
+`)
     expect(email.formatted).toContain(`
-Saatte ilmoituksen osoitteesta no-reply@valtionavustukset.oph.fi, kun väliselvityksenne on käsitelty.
+Hakija voi muokata jo lähetettyä väliselvitystä oheisen linkin kautta selvityksen määräaikaan saakka. Tällöin selvitystä ei kuitenkaan enää lähetetä uudelleen käsiteltäväksi, vaan muokkausten tallentuminen varmistetaan hakulomakkeen yläreunan lokitietokentästä.
 
 Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi
-`)
+
+Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan viralliseen sähköpostiosoitteeseen sekä yhteyshenkilölle.`)
 
     const previewUrl = email.formatted.match(/(https?:\/\/\S+)/gi)?.[0]
     if (!previewUrl) {

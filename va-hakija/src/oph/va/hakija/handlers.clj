@@ -372,8 +372,6 @@
         form-id (selvitys-field-keyword avustushaku)
         form (form-db/get-form form-id)
         hakemus (va-db/get-hakemus selvitys-user-key)
-        lang (keyword (:language hakemus))
-        contact-email (get-hakemus-contact-email (:parent_id hakemus))
         attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
         budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
         validation (merge (validation/validate-form form answers attachments)
@@ -382,18 +380,23 @@
       (if (= base-version (:version hakemus))
         (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
-              submission-version (:version saved-submission)
-              parent_id (:parent_id hakemus)
               submitted-hakemus (va-db/submit-hakemus haku-id
                                                       selvitys-user-key
                                                       submission-id
-                                                      submission-version
+                                                      (:version saved-submission)
                                                       (:register_number hakemus)
                                                       answers
                                                       budget-totals)
-              is-loppuselvitys (= selvitys-type "loppuselvitys")
-              updated-selvitys-status (if is-loppuselvitys (va-db/update-loppuselvitys-status parent_id "submitted") (va-db/update-valiselvitys-status parent_id "submitted"))]
-          (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id [contact-email])
+              lang (keyword (:language hakemus))
+              parent_id (:parent_id hakemus)
+              contact-email (get-hakemus-contact-email parent_id)
+              parent-hakemus (va-db/get-hakemus-by-id parent_id)
+              hakemus-name (:project-name parent-hakemus)
+              register-number (:register-number parent-hakemus)]
+          (if (= selvitys-type "loppuselvitys")
+            (va-db/update-loppuselvitys-status parent_id "submitted")
+            (va-db/update-valiselvitys-status parent_id "submitted"))
+          (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id hakemus-name register-number [contact-email])
           (hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))

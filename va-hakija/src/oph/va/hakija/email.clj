@@ -14,9 +14,9 @@
                                             :sv "Automatiskt meddelande: er ansökan om understöd har kompletterats"}
    :hakemus-change-request-responded {:fi "Automaattinen viesti: avustushakemusta on täydennetty"}
    :valiselvitys-submitted-notification {:fi "Väliselvityksenne on vastaanotettu"
-                                         :sv "Er mellanredovisning är mottagen"}
+                                         :sv "Er mellanredovisning har emottagits"}
    :loppuselvitys-submitted-notification {:fi "Loppuselvityksenne on vastaanotettu"
-                                          :sv "Er slutredovisning är mottagen"}
+                                          :sv "Er slutredovisning har emottagits"}
    :notify-valmistelija-of-new-muutoshakemus {:fi "Automaattinen viesti: saapunut muutoshakemus"}
    :application-refused-presenter
    {:fi "Automaattinen viesti: Avustuksen saajan ilmoitus"}
@@ -59,7 +59,7 @@
         lang-str (or (clojure.core/name lang) "fi")]
     (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?" selvitys-type "=" selvitys-user-key "&lang=" lang-str "&preview=true")))
 
-(defn send-selvitys-submitted-message! [avustushaku-id selvitys-user-key selvitys-type lang hakemus-id to]
+(defn send-selvitys-submitted-message! [avustushaku-id selvitys-user-key selvitys-type lang hakemus-id hakemus-name register-number to]
   (log/info "Sending notification for a submitted selvitys of type " selvitys-type)
   (let [type (if (= selvitys-type "loppuselvitys")
                 :loppuselvitys-submitted-notification
@@ -74,6 +74,8 @@
                               :to to
                               :subject subject
                               :hakemus-id hakemus-id
+                              :hakemus-name hakemus-name
+                              :register-number register-number
                               :preview-url preview-url}
                              (partial render template))))
 
