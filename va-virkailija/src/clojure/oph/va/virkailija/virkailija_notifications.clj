@@ -261,7 +261,7 @@
                 )
           )
             AND valiselvitysdate is not null
-            AND now() >= (valiselvitysdate::date - '6 month'::interval)
+            AND now() + '6 month'::interval >= valiselvitysdate::date
             AND r.role = 'presenting_officer'
           GROUP BY avustushaku_name, valiselvitysdate, avustushaku_id"
          []))
