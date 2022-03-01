@@ -261,7 +261,7 @@
                 )
           )
             AND valiselvitysdate is not null
-            AND now() + '6 month'::interval >= valiselvitysdate::date
+            AND current_timestamp::date BETWEEN (valiselvitysdate::date - '6 month'::interval) AND valiselvitysdate::date 
             AND r.role = 'presenting_officer'
           GROUP BY avustushaku_name, valiselvitysdate, avustushaku_id"
          []))
@@ -294,7 +294,7 @@
                   )
           ) AND
           loppuselvitysdate IS NOT NULL AND
-          now() >= (loppuselvitysdate::date - '8 month'::interval) AND
+          current_timestamp::date BETWEEN (loppuselvitysdate::date - '8 month'::interval) AND loppuselvitysdate::date AND
           r.role = 'presenting_officer' AND
           r.email IS NOT NULL
           GROUP BY avustushaku_name, valiselvitysdate, avustushaku_id"

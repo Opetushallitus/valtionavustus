@@ -31,6 +31,19 @@ väliselvitysTest('Lähetä väliselvityspyynnöt notifications are not sent if 
   expect(emailsAfter).toEqual(emailsBefore)
 })
 
+väliselvitysTest('Lähetä väliselvityspyynnöt notifications are not sent if valiselvitys deadline is in the past', async ({page, avustushakuID, acceptedHakemus}) => {
+  expectToBeDefined(acceptedHakemus)
+  const valiselvitysdate = moment().subtract(1, 'day').format('DD.MM.YYYY')
+
+  await setValiselvitysDate(page, avustushakuID, valiselvitysdate)
+
+  const emailsBefore = await getLahetaValiselvityspyynnotEmails(avustushakuID)
+  await sendLahetaValiselvityspyynnotNotifications(page)
+
+  const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID)
+  expect(emailsAfter).toEqual(emailsBefore)
+})
+
 väliselvitysTest('Lähetä väliselvityspyynnöt notifications are send 6 months before valiselvitys deadline', async ({page, avustushakuID, acceptedHakemus}) => {
   expectToBeDefined(acceptedHakemus)
   const valiselvitysdate = moment().add(6, 'months').format('DD.MM.YYYY')

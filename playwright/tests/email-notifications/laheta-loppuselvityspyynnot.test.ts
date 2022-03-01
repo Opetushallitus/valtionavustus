@@ -66,6 +66,14 @@ test.describe('loppuselvitys', () => {
     })
   })
 
+  test.describe('when loppuselvitys deadline is in the past', () => {
+    notifyTest.use({loppuselvitysDate: moment().subtract(1, 'day').format('DD.MM.YYYY')})
+    notifyTest('notification is not send', async ({page, loppuselvitysDateSet, avustushakuID}) => {
+      expect(loppuselvitysDateSet)
+      await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
+    })
+  })
+
   test.describe('when over 8 months till loppuselvitys deadline', () => {
     notifyTest.use({loppuselvitysDate: moment().add(12, 'months').format('DD.MM.YYYY')})
     notifyTest('notification is not send', async ({page, loppuselvitysDateSet, avustushakuID}) => {
