@@ -22,6 +22,7 @@
             [oph.va.hakija.db :as hakija-db]
             [oph.va.hakija.schema :refer :all]
             [oph.va.hakija.handlers :refer :all]
+            [oph.va.hakija.routes.selvitys :as selvitys-routes]
             [oph.common.organisation-service :as org]
             [oph.va.hakija.db.queries :as queries]
             [oph.va.hakija.officer-edit-auth :as officer-edit-auth]))
@@ -65,10 +66,6 @@
 (defn- avustushaku-ok-response [avustushaku]
   (ok (va-routes/avustushaku-response-content avustushaku)))
 
-(defn- selvitys-form-keyword [selvitys-type]
-  (let [key (str "form_" selvitys-type)]
-    (keyword key)))
-
 (defn- get-id []
   (compojure-api/GET "/:id" [id]
     :path-params [id :- Long]
@@ -96,36 +93,6 @@
     (if decision-version
       (on-get-decision-answers haku-id hakemus-id :form)
       (on-get-current-answers haku-id hakemus-id :form))))
-
-(defn- get-selvitys []
-  (compojure-api/GET "/:haku-id/selvitys/:selvitys-type/:hakemus-id" [haku-id hakemus-id selvitys-type]
-    :path-params [haku-id :- Long, hakemus-id :- s/Str selvitys-type :- s/Str]
-    :return  Hakemus
-    :summary "Get current answers"
-    (on-get-current-answers haku-id hakemus-id (selvitys-form-keyword selvitys-type))))
-
-(defn- get-selvitys-init []
-  (compojure-api/GET "/:haku-id/selvitys/:selvitys-type/init/:hakemus-id" [haku-id selvitys-type hakemus-id]
-    :path-params [haku-id :- Long, hakemus-id :- s/Str selvitys-type :- s/Str]
-    :return HakemusInfo
-    :summary "Get or create selvitys for hakemus"
-    (on-selvitys-init haku-id hakemus-id selvitys-type)))
-
-(defn- post-selvitys []
-  (compojure-api/POST "/:haku-id/selvitys/:selvitys-type/:hakemus-id/:base-version" [haku-id hakemus-id base-version selvitys-type :as request]
-    :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
-    :body [answers (compojure-api/describe Answers "New answers")]
-    :return Hakemus
-    :summary "Update hakemus values"
-    (on-selvitys-update haku-id hakemus-id base-version answers (selvitys-form-keyword selvitys-type))))
-
-(defn- post-selvitys-submit []
-  (compojure-api/POST "/:haku-id/selvitys/:selvitys-type/:hakemus-id/:base-version/submit" [haku-id selvitys-type hakemus-id base-version :as request]
-    :path-params [haku-id :- Long, selvitys-type :- s/Str, hakemus-id :- s/Str, base-version :- Long]
-    :body [answers (compojure-api/describe Answers "New answers")]
-    :return Hakemus
-    :summary "Submit hakemus"
-    (on-selvitys-submit haku-id hakemus-id base-version answers (selvitys-form-keyword selvitys-type) selvitys-type)))
 
 (defn- put-hakemus []
   (compojure-api/PUT "/:haku-id/hakemus" [haku-id :as request]
@@ -327,10 +294,10 @@
   (get-normalized-hakemus)
   (get-muutoshakemukset)
   (get-hakemus)
-  (get-selvitys)
-  (get-selvitys-init)
-  (post-selvitys)
-  (post-selvitys-submit)
+  (selvitys-routes/get-selvitys)
+  (selvitys-routes/get-selvitys-init)
+  (selvitys-routes/post-selvitys)
+  (selvitys-routes/post-selvitys-submit)
   (put-hakemus)
   (put-refuse-hakemus)
   (post-hakemus)
