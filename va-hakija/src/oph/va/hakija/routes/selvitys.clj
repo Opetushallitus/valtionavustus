@@ -29,6 +29,26 @@
   (http/ok {:id (:user_key hakemus)
             :language (:language hakemus)}))
 
+(defn- create-selvitys-hakemus [selvitys-type avustushaku hakemus]
+  (let [form-keyword                (keyword (str "form_" selvitys-type))
+        form-id                     (form-keyword avustushaku)
+        form                        (form-db/get-form form-id)
+        register-number             (:register_number hakemus)
+        answers                     {:value [{:key "language"
+                                              :value (:language hakemus)
+                                              :fieldType "radioButton"}]}
+        budget-totals               (va-budget/calculate-totals-hakija answers avustushaku form)
+        new-hakemus-with-submission (va-db/create-hakemus! (:id avustushaku)
+                                                           form-id
+                                                           answers
+                                                           selvitys-type
+                                                           register-number
+                                                           budget-totals)
+        new-hakemus                 (:hakemus new-hakemus-with-submission)
+        new-hakemus-id              (:id new-hakemus)]
+    (do (va-db/update-hakemus-parent-id new-hakemus-id (:id hakemus))
+        new-hakemus)))
+
 (defn get-selvitys-init []
   (compojure-api/GET "/:haku-id/selvitys/:selvitys-type/init/:hakemus-key" [haku-id selvitys-type hakemus-id]
     :path-params [haku-id :- Long, hakemus-key :- s/Str selvitys-type :- s/Str]
@@ -36,27 +56,10 @@
     :summary "Get or create selvitys for hakemus"
     (if-some [avustushaku (va-db/get-avustushaku haku-id)]
       (if-some [hakemus (va-db/get-hakemus hakemus-key)]
-        (let [form-keyword (keyword (str "form_" selvitys-type))
-              form-id      (form-keyword avustushaku)
-              hakemus-id   (:id hakemus)]
+        (let [hakemus-id   (:id hakemus)]
           (if-some [existing-selvitys (va-db/find-hakemus-by-parent-id-and-type hakemus-id selvitys-type)]
             (ok-id existing-selvitys)
-            (let [form (form-db/get-form form-id)
-                  register-number             (:register_number hakemus)
-                  answers                     {:value [{:key "language"
-                                                        :value (:language hakemus)
-                                                        :fieldType "radioButton"}]}
-                  budget-totals               (va-budget/calculate-totals-hakija answers avustushaku form)
-                  new-hakemus-with-submission (va-db/create-hakemus! haku-id
-                                                                     form-id
-                                                                     answers
-                                                                     selvitys-type
-                                                                     register-number
-                                                                     budget-totals)
-                  new-hakemus                 (:hakemus new-hakemus-with-submission)
-                  new-hakemus-id              (:id new-hakemus)
-                  updated                     (va-db/update-hakemus-parent-id new-hakemus-id hakemus-id)]
-                (ok-id new-hakemus))))
+            (ok-id (create-selvitys-hakemus selvitys-type avustushaku hakemus))))
         (http/not-found))
       (http/not-found))))
 
