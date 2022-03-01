@@ -43,11 +43,9 @@
                                                            answers
                                                            selvitys-type
                                                            register-number
-                                                           budget-totals)
-        new-hakemus                 (:hakemus new-hakemus-with-submission)
-        new-hakemus-id              (:id new-hakemus)]
-    (do (va-db/update-hakemus-parent-id new-hakemus-id (:id hakemus))
-        new-hakemus)))
+                                                           budget-totals
+                                                           (:id hakemus))]
+    (:hakemus new-hakemus-with-submission)))
 
 (defn get-selvitys-init []
   (compojure-api/GET "/:haku-id/selvitys/:selvitys-type/init/:hakemus-key" [haku-id selvitys-type hakemus-id]

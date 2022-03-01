@@ -162,7 +162,8 @@
                                           {}
                                           "hakemus"
                                           nil
-                                          (va-budget/calculate-totals-hakija {} avustushaku form))
+                                          (va-budget/calculate-totals-hakija {} avustushaku form)
+                                          nil)
                          :hakemus)
             submission-id (:form_submission_id hakemus)
             answers (form-util/generate-answers form

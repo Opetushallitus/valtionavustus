@@ -1,1 +1,0 @@
-update hakemukset set parent_id=:parent_id where id=:id

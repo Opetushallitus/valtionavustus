@@ -2,7 +2,6 @@
   (:require [yesql.core :refer [defquery]]))
 
 (defquery create-hakemus<! "sql/hakemus/create.sql")
-(defquery update-hakemus-parent-id! "sql/hakemus/update-parent-id.sql")
 (defquery find-by-parent-id-and-hakemus-type "sql/hakemus/find-by-parent-id-and-hakemus-type.sql")
 (defquery get-hakemus-by-user-key "sql/hakemus/get_by_user_id.sql")
 (defquery get-hakemus-version-by-user-id

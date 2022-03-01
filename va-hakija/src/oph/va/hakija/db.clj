@@ -99,14 +99,15 @@
    :budget_oph_share (or (:oph-share budget-totals) 0)})
 
 
-(defn create-hakemus! [avustushaku-id form-id answers hakemus-type register-number budget-totals]
+(defn create-hakemus! [avustushaku-id form-id answers hakemus-type register-number budget-totals parent-id]
   (let [submission (form-db/create-submission! form-id answers)
         user-key (generate-hash-id)
-        params (-> {:avustushaku_id avustushaku-id
-                    :user_key user-key
+        params (-> {:avustushaku_id  avustushaku-id
+                    :user_key        user-key
                     :form_submission (:id submission)
                     :register_number (if (nil? register-number) (generate-register-number avustushaku-id user-key) register-number)
-                    :hakemus_type hakemus-type}
+                    :hakemus_type    hakemus-type
+                    :parent_id       parent-id}
                    (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params avustushaku-id answers))
         hakemus (exec queries/create-hakemus<! params)]
@@ -345,9 +346,6 @@
       (log/info (str "Change normalized contact person details with user-key: " user-key))
       (change-normalized-hakemus-contact-person-details tx user-key hakemus-id (get muutoshakemus :yhteyshenkilo))
       (log/info (str "Succesfully changed contact person details with user-key: " user-key))))))
-
-(defn update-hakemus-parent-id [hakemus-id parent-id]
-  (exec queries/update-hakemus-parent-id! {:id hakemus-id :parent_id parent-id}))
 
 (defn update-submission [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (let [register-number (or register-number

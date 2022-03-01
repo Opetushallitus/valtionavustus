@@ -58,7 +58,8 @@
                                                     answers
                                                     "hakemus"
                                                     nil
-                                                    budget-totals)]
+                                                    budget-totals
+                                                    nil)]
           (let [validation (merge (validation/validate-form form answers {})
                                   (va-budget/validate-budget-hakija answers budget-totals form))
                 language (keyword (-> new-hakemus :hakemus :language))
