@@ -20,7 +20,7 @@ väliselvitysTest('Lähetä väliselvityspyynnot notifications are not sent if v
 
 väliselvitysTest('Lähetä väliselvityspyynnöt notifications are not sent if valiselvitys deadline is more than 6 months in the future', async ({page, avustushakuID, acceptedHakemus}) => {
   expectToBeDefined(acceptedHakemus)
-  const valiselvitysdate = moment().add(6, 'months').add(1, 'day').format('DD.MM.YYYY')
+  const valiselvitysdate = moment().add(7, 'months').format('DD.MM.YYYY')
 
   await setValiselvitysDate(page, avustushakuID, valiselvitysdate)
 
