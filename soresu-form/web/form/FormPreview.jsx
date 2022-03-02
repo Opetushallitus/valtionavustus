@@ -101,7 +101,7 @@ export default class FormPreview extends React.Component {
       return FormPreview.renderField(controller, null, state, infoElementValues, field)
     }
 
-    return  <div className="soresu-preview">
+    return  <div className="soresu-preview" data-test-id={"form-preview"}>
               {fields.map(renderField) }
             </div>
   }
