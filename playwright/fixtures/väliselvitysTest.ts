@@ -1,7 +1,7 @@
 import { muutoshakemusTest } from './muutoshakemusTest'
 import { expectToBeDefined } from '../utils/util'
 import { dummyPdfPath, VIRKAILIJA_URL } from '../utils/constants'
-import { ValiselvitysPage } from '../pages/valiselvitysPage'
+import { VirkailijaValiselvitysPage } from '../pages/virkailijaValiselvitysPage'
 import { navigate } from '../utils/navigate'
 
 type VäliselvitysFixtures = {
@@ -21,7 +21,7 @@ export const väliselvitysTest = muutoshakemusTest.extend<VäliselvitysFixtures>
   },
   väliselvitysSubmitted: async ({page, avustushakuID, acceptedHakemus, väliselvityspyyntöSent}, use) => {
     expectToBeDefined(väliselvityspyyntöSent)
-    const valiselvitysPage = new ValiselvitysPage(page)
+    const valiselvitysPage = VirkailijaValiselvitysPage(page)
     await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
     const väliselvitysFormUrl = await page.getAttribute('[data-test-id="selvitys-link"]', 'href')
     if (!väliselvitysFormUrl) throw Error("valiselvitys form url not found")

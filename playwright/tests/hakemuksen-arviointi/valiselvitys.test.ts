@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { ValiselvitysPage } from '../../pages/valiselvitysPage'
+import { VirkailijaValiselvitysPage } from '../../pages/virkailijaValiselvitysPage'
 import { expectToBeDefined } from '../../utils/util'
 import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
 import { väliselvitysTest } from '../../fixtures/väliselvitysTest'
@@ -50,7 +50,7 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
       })
 
       await test.step('tarkasta väliselvitys', async () => {
-        const valiselvitysPage = new ValiselvitysPage(page)
+        const valiselvitysPage = VirkailijaValiselvitysPage(page)
         valiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
         await page.waitForSelector('[data-test-id="selvitys-email"]')
         await valiselvitysPage.acceptVäliselvitys()
