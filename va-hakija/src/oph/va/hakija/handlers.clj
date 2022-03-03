@@ -30,20 +30,23 @@
       avustushaku
       (method-not-allowed! {:phase phase}))))
 
+(defn hakemus-response [hakemus submission validation parent-hakemus]
+  {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
+   :created-at (:created_at hakemus)
+   :status (:status hakemus)
+   :status-comment (:status_change_comment hakemus)
+   :register-number (:register_number hakemus)
+   :version (:version hakemus)
+   :version-date (:last_status_change_at hakemus)
+   :submission (without-id submission)
+   :validation-errors validation
+   :refused (:refused hakemus)
+   :refused-at (:refused_at hakemus)
+   :refused-comment (:refused_comment hakemus)
+   :loppuselvitys-information-verified-at (:loppuselvitys-information-verified-at parent-hakemus)})
+
 (defn hakemus-ok-response [hakemus submission validation parent-hakemus]
-  (ok {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
-       :created-at (:created_at hakemus)
-       :status (:status hakemus)
-       :status-comment (:status_change_comment hakemus)
-       :register-number (:register_number hakemus)
-       :version (:version hakemus)
-       :version-date (:last_status_change_at hakemus)
-       :submission (without-id submission)
-       :validation-errors validation
-       :refused (:refused hakemus)
-       :refused-at (:refused_at hakemus)
-       :refused-comment (:refused_comment hakemus)
-       :loppuselvitys-information-verified-at (:loppuselvitys-information-verified-at parent-hakemus)}))
+  (ok (hakemus-response hakemus submission validation parent-hakemus)))
 
 (defn on-hakemus-create [haku-id answers]
   (let [avustushaku (get-open-avustushaku haku-id {})
@@ -163,30 +166,33 @@
         budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)]
     (va-db/open-hakemus-applicant-edit haku-id hakemus-id submission-id submission-version register-number answers budget-totals)))
 
-(defn on-get-current-answers [haku-id hakemus-id form-key]
+(defn get-current-answers [haku-id hakemus-id form-key]
   (let [avustushaku (va-db/get-avustushaku haku-id)
         form-id (form-key avustushaku)
         form (form-db/get-form form-id)
         hakemus (va-db/get-hakemus hakemus-id)
-        parent-hakemus (va-db/get-hakemus-by-id (:parent_id hakemus))
         submission-id (:form_submission_id hakemus)
         submission (:body (get-form-submission form-id submission-id))
-        submission-version (:version submission)
         answers (:answers submission)
         attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
-        budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
-        validation (merge (validation/validate-form form answers attachments)
-                          (va-budget/validate-budget-hakija answers budget-totals form))]
-    (if (= (:status hakemus) "new")
-      (let [verified-hakemus (va-db/verify-hakemus haku-id
-                                                   hakemus-id
-                                                   submission-id
-                                                   submission-version
-                                                   (:register_number hakemus)
-                                                   answers
-                                                   budget-totals)]
-        (hakemus-ok-response verified-hakemus submission validation parent-hakemus))
-      (hakemus-ok-response hakemus submission validation parent-hakemus))))
+        budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)]
+    {:hakemus        (if (= (:status hakemus) "new")
+                       (va-db/verify-hakemus haku-id
+                                             hakemus-id
+                                             submission-id
+                                             (:version submission)
+                                             (:register_number hakemus)
+                                             answers
+                                             budget-totals)
+                       hakemus)
+     :submission     submission
+     :validation     (merge (validation/validate-form form answers attachments)
+                            (va-budget/validate-budget-hakija answers budget-totals form))
+     :parent-hakemus (va-db/get-hakemus-by-id (:parent_id hakemus))}))
+
+(defn on-get-current-answers [haku-id hakemus-id form-key]
+  (let [{:keys [hakemus submission validation parent-hakemus]} (get-current-answers haku-id hakemus-id form-key)]
+    (hakemus-ok-response hakemus submission validation parent-hakemus)))
 
 (defn try-store-normalized-hakemus [hakemus-id hakemus answers haku-id]
   (try

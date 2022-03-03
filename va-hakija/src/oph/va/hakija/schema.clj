@@ -101,6 +101,11 @@
    (s/optional-key :refused-comment) (s/maybe s/Str)
    (s/optional-key :refused-at) (s/maybe s/Inst)})
 
+(s/defschema Selvitys
+  "Hakemus with Selvitys-specific fields"
+  (merge Hakemus
+         {:valiselvitys-approved-at (s/maybe s/Inst)}))
+
 (s/defschema HakemusInfo
   "Hakemus with user key and language"
   {:id s/Str

@@ -22,7 +22,7 @@
             [oph.va.hakija.db :as hakija-db]
             [oph.va.hakija.schema :refer :all]
             [oph.va.hakija.handlers :refer :all]
-            [oph.va.hakija.routes.selvitys :as selvitys-routes]
+            [oph.va.hakija.selvitys.routes :as selvitys-routes]
             [oph.common.organisation-service :as org]
             [oph.va.hakija.db.queries :as queries]
             [oph.va.hakija.officer-edit-auth :as officer-edit-auth]))

@@ -1,4 +1,4 @@
-(ns oph.va.hakija.routes.selvitys
+(ns oph.va.hakija.selvitys.routes
   (:require [oph.soresu.common.db :refer [query]]
             [oph.soresu.form.validation :as validation]
             [oph.soresu.form.schema :as soresu-schema]
@@ -18,12 +18,19 @@
   (let [key (str "form_" selvitys-type)]
     (keyword key)))
 
+(defn selvitys-response [current-answers valiselvitys-approved-at]
+  (let [{:keys [hakemus submission validation parent-hakemus]} current-answers]
+    (merge (handlers/hakemus-response hakemus submission validation parent-hakemus)
+           {:valiselvitys-approved-at valiselvitys-approved-at})))
+
 (defn get-selvitys []
-  (compojure-api/GET "/:haku-id/selvitys/:selvitys-type/:hakemus-id" [haku-id hakemus-id selvitys-type]
-    :path-params [haku-id :- Long, hakemus-id :- s/Str selvitys-type :- s/Str]
-    :return  hakija-schema/Hakemus
+  (compojure-api/GET "/:haku-id/selvitys/:selvitys-type/:hakemus-key" [haku-id selvitys-type hakemus-key]
+    :path-params [haku-id :- Long, hakemus-key :- s/Str selvitys-type :- s/Str]
+    :return  hakija-schema/Selvitys
     :summary "Get current answers"
-    (handlers/on-get-current-answers haku-id hakemus-id (selvitys-form-keyword selvitys-type))))
+    (let [current-answers          (handlers/get-current-answers haku-id hakemus-key (selvitys-form-keyword selvitys-type))
+          valiselvitys-approved-at nil]
+      (http/ok (selvitys-response current-answers valiselvitys-approved-at)))))
 
 (defn- ok-id [hakemus]
   (http/ok {:id (:user_key hakemus)
@@ -48,18 +55,21 @@
     (:hakemus new-hakemus-with-submission)))
 
 (defn get-selvitys-init []
-  (compojure-api/GET "/:haku-id/selvitys/:selvitys-type/init/:hakemus-key" [haku-id selvitys-type hakemus-id]
+  (compojure-api/GET "/:haku-id/selvitys/:selvitys-type/init/:hakemus-key" [haku-id selvitys-type hakemus-key]
     :path-params [haku-id :- Long, hakemus-key :- s/Str selvitys-type :- s/Str]
     :return hakija-schema/HakemusInfo
     :summary "Get or create selvitys for hakemus"
     (if-some [avustushaku (va-db/get-avustushaku haku-id)]
       (if-some [hakemus (va-db/get-hakemus hakemus-key)]
-        (let [hakemus-id   (:id hakemus)]
-          (if-some [existing-selvitys (va-db/find-hakemus-by-parent-id-and-type hakemus-id selvitys-type)]
-            (ok-id existing-selvitys)
-            (ok-id (create-selvitys-hakemus selvitys-type avustushaku hakemus))))
+        (if-some [existing-selvitys (va-db/find-hakemus-by-parent-id-and-type (:id hakemus) selvitys-type)]
+          (ok-id existing-selvitys)
+          (ok-id (create-selvitys-hakemus selvitys-type avustushaku hakemus)))
         (http/not-found))
       (http/not-found))))
+
+(defn- selvitys-updateable? [form-key parent-hakemus]
+  (or (= (name form-key) "form_valiselvitys")
+      (not (:loppuselvitys-information-verified-at parent-hakemus))))
 
 (defn- on-selvitys-update [haku-id user-key base-version answers form-key]
   (let [hakemus (va-db/get-hakemus user-key)
@@ -67,12 +77,9 @@
         avustushaku (va-db/get-avustushaku haku-id)
         form-id (form-key avustushaku)
         form (form-db/get-form form-id)
-        security-validation (validation/validate-form-security form answers)
-        is-updateable-selvitys (or
-                                  (= (name form-key) "form_valiselvitys")
-                                  (not (:loppuselvitys-information-verified-at parent-hakemus)))]
+        security-validation (validation/validate-form-security form answers)]
     (if (every? empty? (vals security-validation))
-      (if (and is-updateable-selvitys (= base-version (:version hakemus)))
+      (if (and (selvitys-updateable? form-key parent-hakemus) (= base-version (:version hakemus)))
         (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
               budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
               validation (merge (validation/validate-form form answers attachments)
