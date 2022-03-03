@@ -1,0 +1,10 @@
+ARG PYTHON_VERSION
+FROM python:${PYTHON_VERSION}
+
+ARG ANSIBLE_VERSION
+
+RUN pip3 install ansible==${ANSIBLE_VERSION}
+
+WORKDIR /ansible
+
+ENTRYPOINT ["ansible-vault"]
