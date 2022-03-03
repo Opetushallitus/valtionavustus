@@ -77,7 +77,10 @@ export class HakemustenArviointiPage {
   }
 
   async waitForArvioSave(avustushakuID: number, hakemusID: number) {
-    await this.page.waitForResponse(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`)
+    await this.page.waitForResponse(response => 
+      response.url() === `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`
+      && response.ok()
+    )
   }
 
   async selectValmistelijaForHakemus(avustushakuID: number, hakemusID: number, valmistelijaName: string) {
