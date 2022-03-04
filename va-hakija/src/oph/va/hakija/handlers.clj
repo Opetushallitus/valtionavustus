@@ -166,11 +166,11 @@
         budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)]
     (va-db/open-hakemus-applicant-edit haku-id hakemus-id submission-id submission-version register-number answers budget-totals)))
 
-(defn get-current-answers [haku-id hakemus-id form-key]
+(defn get-current-answers [haku-id hakemus-key form-key]
   (let [avustushaku (va-db/get-avustushaku haku-id)
         form-id (form-key avustushaku)
         form (form-db/get-form form-id)
-        hakemus (va-db/get-hakemus hakemus-id)
+        hakemus (va-db/get-hakemus hakemus-key)
         submission-id (:form_submission_id hakemus)
         submission (:body (get-form-submission form-id submission-id))
         answers (:answers submission)
@@ -178,7 +178,7 @@
         budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)]
     {:hakemus        (if (= (:status hakemus) "new")
                        (va-db/verify-hakemus haku-id
-                                             hakemus-id
+                                             hakemus-key
                                              submission-id
                                              (:version submission)
                                              (:register_number hakemus)

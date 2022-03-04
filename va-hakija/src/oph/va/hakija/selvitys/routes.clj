@@ -18,19 +18,27 @@
   (let [key (str "form_" selvitys-type)]
     (keyword key)))
 
-(defn selvitys-response [current-answers valiselvitys-approved-at]
+(defn selvitys-response [current-answers selvitys-status]
   (let [{:keys [hakemus submission validation parent-hakemus]} current-answers]
     (merge (handlers/hakemus-response hakemus submission validation parent-hakemus)
-           {:valiselvitys-approved-at valiselvitys-approved-at})))
+           {:selvitys-status selvitys-status})))
+
+(defn- get-selvitys-status [selvitys-key selvitys-type]
+  (let [selvitys-statuses (first (query "SELECT status_valiselvitys, status_loppuselvitys
+                                         FROM hakemukset
+                                         WHERE id = (SELECT parent_id FROM hakemukset WHERE user_key = ? AND version_closed IS NULL)
+                                         AND version_closed IS NULL"
+                                        [selvitys-key]))]
+    (selvitys-statuses (keyword (str "status-" selvitys-type)))))
 
 (defn get-selvitys []
-  (compojure-api/GET "/:haku-id/selvitys/:selvitys-type/:hakemus-key" [haku-id selvitys-type hakemus-key]
-    :path-params [haku-id :- Long, hakemus-key :- s/Str selvitys-type :- s/Str]
+  (compojure-api/GET "/:haku-id/selvitys/:selvitys-type/:selvitys-key" []
+    :path-params [haku-id :- Long, selvitys-key :- s/Str selvitys-type :- s/Str]
     :return  hakija-schema/Selvitys
     :summary "Get current answers"
-    (let [current-answers          (handlers/get-current-answers haku-id hakemus-key (selvitys-form-keyword selvitys-type))
-          valiselvitys-approved-at nil]
-      (http/ok (selvitys-response current-answers valiselvitys-approved-at)))))
+    (let [current-answers (handlers/get-current-answers haku-id selvitys-key (selvitys-form-keyword selvitys-type))
+          selvitys-status (get-selvitys-status selvitys-key selvitys-type)]
+      (http/ok (selvitys-response current-answers selvitys-status)))))
 
 (defn- ok-id [hakemus]
   (http/ok {:id (:user_key hakemus)

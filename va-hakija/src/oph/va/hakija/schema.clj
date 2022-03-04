@@ -104,7 +104,7 @@
 (s/defschema Selvitys
   "Hakemus with Selvitys-specific fields"
   (merge Hakemus
-         {:valiselvitys-approved-at (s/maybe s/Inst)}))
+         {:selvitys-status (s/maybe s/Str)}))
 
 (s/defschema HakemusInfo
   "Hakemus with user key and language"
