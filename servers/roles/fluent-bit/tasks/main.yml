@@ -8,7 +8,7 @@
 
 - name: Install td-agent-bit
   yum:
-    name: td-agent-bit-1.8.12
+    name: td-agent-bit
     state: present
 
 - name: Copy td-agent-bit parser file
