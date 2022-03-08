@@ -14,31 +14,33 @@
             [ring.util.http-response :as http]
             [schema.core :as s]))
 
+(s/defschema Selvitys
+  "Hakemus with Selvitys-specific fields"
+  (merge hakija-schema/Hakemus
+         {:selvitys-updatable s/Bool}))
+
 (defn- selvitys-form-keyword [selvitys-type]
   (let [key (str "form_" selvitys-type)]
     (keyword key)))
 
-(defn selvitys-response [current-answers selvitys-status]
+(defn- selvitys-updateable? [selvitys-type parent-hakemus]
+  (case selvitys-type
+    "valiselvitys"  (not= (:status-valiselvitys parent-hakemus) "accepted")
+    "loppuselvitys" (not (:loppuselvitys-information-verified-at parent-hakemus))))
+
+(defn selvitys-response [current-answers updatable]
   (let [{:keys [hakemus submission validation parent-hakemus]} current-answers]
     (merge (handlers/hakemus-response hakemus submission validation parent-hakemus)
-           {:selvitys-status selvitys-status})))
-
-(defn- get-selvitys-status [selvitys-key selvitys-type]
-  (let [selvitys-statuses (first (query "SELECT status_valiselvitys, status_loppuselvitys
-                                         FROM hakemukset
-                                         WHERE id = (SELECT parent_id FROM hakemukset WHERE user_key = ? AND version_closed IS NULL)
-                                         AND version_closed IS NULL"
-                                        [selvitys-key]))]
-    (selvitys-statuses (keyword (str "status-" selvitys-type)))))
+           {:selvitys-updatable updatable})))
 
 (defn get-selvitys []
   (compojure-api/GET "/:haku-id/selvitys/:selvitys-type/:selvitys-key" []
     :path-params [haku-id :- Long, selvitys-key :- s/Str selvitys-type :- s/Str]
-    :return  hakija-schema/Selvitys
+    :return Selvitys
     :summary "Get current answers"
     (let [current-answers (handlers/get-current-answers haku-id selvitys-key (selvitys-form-keyword selvitys-type))
-          selvitys-status (get-selvitys-status selvitys-key selvitys-type)]
-      (http/ok (selvitys-response current-answers selvitys-status)))))
+          updatable       (selvitys-updateable? selvitys-type (:parent-hakemus current-answers))]
+      (http/ok (selvitys-response current-answers updatable)))))
 
 (defn- ok-id [hakemus]
   (http/ok {:id (:user_key hakemus)
@@ -75,34 +77,32 @@
         (http/not-found))
       (http/not-found))))
 
-(defn- selvitys-updateable? [form-key parent-hakemus]
-  (or (= (name form-key) "form_valiselvitys")
-      (not (:loppuselvitys-information-verified-at parent-hakemus))))
-
-(defn- on-selvitys-update [haku-id user-key base-version answers form-key]
+(defn- on-selvitys-update [haku-id user-key base-version answers selvitys-type]
   (let [hakemus (va-db/get-hakemus user-key)
         parent-hakemus (va-db/get-hakemus-by-id (:parent_id hakemus))
         avustushaku (va-db/get-avustushaku haku-id)
-        form-id (form-key avustushaku)
+        form-id (get avustushaku (selvitys-form-keyword selvitys-type))
         form (form-db/get-form form-id)
         security-validation (validation/validate-form-security form answers)]
-    (if (every? empty? (vals security-validation))
-      (if (and (selvitys-updateable? form-key parent-hakemus) (= base-version (:version hakemus)))
-        (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
-              budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
-              validation (merge (validation/validate-form form answers attachments)
-                                (va-budget/validate-budget-hakija answers budget-totals form))
-              updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
-              updated-hakemus (va-db/update-submission haku-id
-                                                       user-key
-                                                       (:form_submission_id hakemus)
-                                                       (:version updated-submission)
-                                                       (:register_number hakemus)
-                                                       answers
-                                                       budget-totals)]
-          (handlers/hakemus-ok-response updated-hakemus updated-submission validation parent-hakemus))
-        (handlers/hakemus-conflict-response hakemus))
-      (http/bad-request! security-validation))))
+    (if (not (every? empty? (vals security-validation)))
+      (http/bad-request! security-validation)
+      (if (not= base-version (:version hakemus))
+        (handlers/hakemus-conflict-response hakemus)
+        (if (not (selvitys-updateable? selvitys-type parent-hakemus))
+          (http/forbidden)
+          (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
+                budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+                validation (merge (validation/validate-form form answers attachments)
+                                  (va-budget/validate-budget-hakija answers budget-totals form))
+                updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
+                updated-hakemus (va-db/update-submission haku-id
+                                                         user-key
+                                                         (:form_submission_id hakemus)
+                                                         (:version updated-submission)
+                                                         (:register_number hakemus)
+                                                         answers
+                                                         budget-totals)]
+            (handlers/hakemus-ok-response updated-hakemus updated-submission validation parent-hakemus)))))))
 
 (defn post-selvitys []
   (compojure-api/POST "/:haku-id/selvitys/:selvitys-type/:hakemus-id/:base-version" [haku-id hakemus-id base-version selvitys-type :as request]
@@ -110,7 +110,7 @@
     :body [answers (compojure-api/describe soresu-schema/Answers "New answers")]
     :return hakija-schema/Hakemus
     :summary "Update hakemus values"
-    (on-selvitys-update haku-id hakemus-id base-version answers (selvitys-form-keyword selvitys-type))))
+    (on-selvitys-update haku-id hakemus-id base-version answers selvitys-type)))
 
 (defn- find-contact-person-email-from-last-hakemus-version [hakemus-id]
   (let [sql "SELECT answer.value->>'value' AS primary_email
