@@ -1,9 +1,10 @@
-import { expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import {HakemustenArviointiPage} from "../pages/hakemustenArviointiPage";
 import {HakujenHallintaPage} from "../pages/hakujenHallintaPage";
 import moment from "moment"
 import {HakijaAvustusHakuPage} from "../pages/hakijaAvustusHakuPage";
 import { defaultValues } from "./defaultValues";
+import { expectToBeDefined } from '../utils/util';
 
 export interface MuutoshakemusFixtures {
   finalAvustushakuEndDate: moment.Moment
@@ -28,23 +29,34 @@ export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
   avustushakuID: async ({page, hakuProps, userCache}, use, testInfo) => {
     expect(userCache).toBeDefined()
     testInfo.setTimeout(testInfo.timeout + 40_000)
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
+
+    let avustushakuID: number | null = null
+    await test.step('Create avustushaku', async () => {
+      const hakujenHallintaPage = new HakujenHallintaPage(page)
+      avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
+    })
+    expectToBeDefined(avustushakuID)
     await use(avustushakuID)
   },
   submittedHakemus: async ({avustushakuID, answers, page}, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 15_000)
 
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
-    await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
-    const {userKey} = await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(avustushakuID, answers)
-    use({userKey})
+    let userKey: string | null = null
+    await test.step('Submit hakemus', async () => {
+      const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+      await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
+      userKey = (await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(avustushakuID, answers)).userKey
+    })
+    expectToBeDefined(userKey)
+    await use({userKey})
   },
   closedAvustushaku: async({ page, avustushakuID, submittedHakemus, finalAvustushakuEndDate }, use) => {
     expect(submittedHakemus).toBeDefined()
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
-    await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.setEndDate(finalAvustushakuEndDate.format("D.M.YYYY H.mm"))
+    await test.step('Close avustushaku', async () => {
+      const hakujenHallintaPage = new HakujenHallintaPage(page)
+      await hakujenHallintaPage.navigate(avustushakuID)
+      await hakujenHallintaPage.setEndDate(finalAvustushakuEndDate.format("D.M.YYYY H.mm"))
+    })
     await use({ id: avustushakuID })
   },
   acceptedHakemus: async ({closedAvustushaku, page, ukotettuValmistelija, submittedHakemus: {userKey}, answers}, use, testInfo) => {
@@ -52,18 +64,28 @@ export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
     testInfo.setTimeout(testInfo.timeout + 25_000)
 
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
-    await hakemustenArviointiPage.navigate(avustushakuID)
-    const hakemusID = await hakemustenArviointiPage.acceptAvustushaku(avustushakuID, answers.projectName)
+
+    let hakemusID: number = 0
+    await test.step('Accept hakemus', async () => {
+      await hakemustenArviointiPage.navigate(avustushakuID)
+      hakemusID = await hakemustenArviointiPage.acceptAvustushaku(avustushakuID, answers.projectName)
+    })
 
     const hakujenHallintaPage = new HakujenHallintaPage(page)
-    await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.resolveAvustushaku()
+    await test.step('Resolve avustushaku', async () => {
+      await hakujenHallintaPage.navigate(avustushakuID)
+      await hakujenHallintaPage.resolveAvustushaku()
+    })
 
-    await hakemustenArviointiPage.navigate(avustushakuID)
-    await hakemustenArviointiPage.selectValmistelijaForHakemus(avustushakuID, hakemusID, ukotettuValmistelija)
+    await test.step('Add valmistelija for hakemus', async () => {
+      await hakemustenArviointiPage.navigate(avustushakuID)
+      await hakemustenArviointiPage.selectValmistelijaForHakemus(avustushakuID, hakemusID, ukotettuValmistelija)
+    })
 
-    await hakujenHallintaPage.navigateToPaatos(avustushakuID)
-    await hakujenHallintaPage.sendPaatos(avustushakuID)
+    await test.step('Send päätökset', async () => {
+      await hakujenHallintaPage.navigateToPaatos(avustushakuID)
+      await hakujenHallintaPage.sendPaatos(avustushakuID)
+    })
 
     await use({hakemusID, userKey})
   }

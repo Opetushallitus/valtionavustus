@@ -6,7 +6,7 @@ import { KoodienhallintaPage } from '../pages/koodienHallintaPage'
 import { answers, swedishAnswers, VIRKAILIJA_URL } from '../utils/constants'
 import { randomAsiatunnus, randomString } from '../utils/random'
 import { Answers, VaCodeValues } from '../utils/types'
-import { switchUserIdentityTo } from '../utils/util'
+import { expectToBeDefined, switchUserIdentityTo } from '../utils/util'
 
 export type DefaultValueFixtures = {
   codes: VaCodeValues
@@ -24,14 +24,17 @@ type WorkerScopedDefaultValueFixtures = {
 /** Default values created only once (per worker) to save time */
 const workerScopedDefaultValues = test.extend<{}, WorkerScopedDefaultValueFixtures>({
   defaultCodes: [async ({browser}, use) => {
-    const page = await browser.newPage()
+    let codes: VaCodeValues | null = null
+    await test.step('Create koodisto', async () => {
+      const page = await browser.newPage()
 
-    await switchUserIdentityTo(page, "valtionavustus")
-    const koodienHallintaPage = new KoodienhallintaPage(page)
-    const codes = await koodienHallintaPage.createRandomCodeValues()
-    use(codes)
-
-    await page.close()
+      await switchUserIdentityTo(page, "valtionavustus")
+      const koodienHallintaPage = new KoodienhallintaPage(page)
+      codes = await koodienHallintaPage.createRandomCodeValues()
+      await page.close()
+    })
+    expectToBeDefined(codes)
+    await use(codes)
   }, { scope: 'worker' }],
 })
 
