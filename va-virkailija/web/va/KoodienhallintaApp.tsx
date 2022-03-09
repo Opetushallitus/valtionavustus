@@ -33,7 +33,14 @@ const KoodienhallintaApp = () => {
   }
   const {environment} = data
   return <>
-    <TopBar environment={environment} activeTab="va-code-values"/>
+    <TopBar environment={environment} activeTab="va-code-values" state={{
+      userInfo: data.userInfo,
+      saveStatus: {
+        saveInProgress: false,
+        saveTime: null,
+        serverError: ""
+      }
+    }}/>
     <Koodienhallinta />
   </>
 }
