@@ -271,7 +271,7 @@ export class HakujenHallintaPage {
   }
 
   async copyCurrentHaku(): Promise<number> {
-    const currentHakuTitle = await this.page.$eval<string | null, HTMLTextAreaElement>("#haku-name-fi", el => el.textContent)
+    const currentHakuTitle = await this.page.textContent("#haku-name-fi")
     await clickElementWithText(this.page, "a", "Kopioi uuden pohjaksi")
 
     await this.page.waitForFunction((name) =>
