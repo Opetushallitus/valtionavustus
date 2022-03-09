@@ -4,13 +4,21 @@ import ClassNames from 'classnames'
 import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo.jsx'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
 import { EnvironmentApiResponse, FeatureFlagKey } from 'soresu-form/web/va/types/environment'
-import {State, UserInfo} from "./types";
-import { State as HakemustenArviointiState } from './HakujenHallintaController'
+import { UserInfo } from "./types";
+
+interface TopBarState {
+  userInfo: UserInfo
+  saveStatus: {
+    saveInProgress: boolean
+    saveTime: Date | null
+    serverError: string
+  }
+}
 
 type TopBarProps = {
   environment: EnvironmentApiResponse
   activeTab?: string
-  state?: State | HakemustenArviointiState
+  state?: TopBarState
 }
 
 export default class TopBar extends React.Component<TopBarProps, {}> {
