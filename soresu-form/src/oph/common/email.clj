@@ -137,11 +137,24 @@
         hakemus-id (:hakemus-id msg)
         avustushaku-id (:avustushaku-id msg)
         muutoshakemus-id (:muutoshakemus-id msg)]
-  (log/info "Storing email event for email: " email-id)
-  (execute! "INSERT INTO virkailija.email_event (avustushaku_id, hakemus_id, muutoshakemus_id, email_id, email_type, success)
-             VALUES (?, ?, ?, ?, ?::virkailija.email_type, ?)"
-            [avustushaku-id hakemus-id muutoshakemus-id email-id (name msg-type) success])
-  (log/info (str "Succesfully stored email event for email: " email-id))))
+    (try
+      (log/info "Storing email event for email: " email-id)
+      (execute! "INSERT INTO virkailija.email_event (avustushaku_id, hakemus_id, muutoshakemus_id, email_id, email_type, success)
+                 VALUES (?, ?, ?, ?, ?::virkailija.email_type, ?)"
+                [avustushaku-id hakemus-id muutoshakemus-id email-id (name msg-type) success])
+      (log/info (str "Succesfully stored email event for email: " email-id))
+      (catch Exception e
+        (log/error (str "Failed to store email event for email: " email-id))))))
+
+(defn try-send-msg [msg body email-id]
+ (let [[_ send-fn] (create-mail-send-fn msg body)]
+   (try
+     (send-fn)
+     (create-email-event email-id true msg)
+     (catch Exception e
+       (log/info e (format "Failed to send message: %s" (.getMessage e)))
+       (create-email-event email-id false msg)
+       (throw e)))))
 
 (defn try-send-msg-once
   ([msg format-plaintext-message]
@@ -149,14 +162,9 @@
          email-id (store-email msg body)]
      (try-send-msg-once msg body email-id)))
   ([msg body email-id]
-   (let [[_ send-fn] (create-mail-send-fn msg body)]
-     (try
-       (send-fn)
-       (create-email-event email-id true msg)
-       (catch Exception e
-         (log/info e (format "Failed to send message: %s" (.getMessage e)))
-         (create-email-event email-id false msg)
-         (throw e))))))
+    (try (try-send-msg msg body email-id)
+      ;; eat exception here as the retry mechanism will alert if sending fails enough times
+      (catch Exception e))))
 
 (def mail-templates (atom {}))
 
@@ -231,9 +239,28 @@
 
 (defn- get-messages-that-failed-to-send []
   (query "SELECT * FROM (
-            SELECT DISTINCT ON (e.id) e.id AS email_id, e.formatted, e.from_address as from, e.sender, e.to_address as to, e.bcc, e.reply_to, e.subject, e.attachment_contents, e.attachment_title, e.attachment_description, ee.email_type as type, 'fi' as lang, ee.success
-            FROM email e JOIN email_event ee ON e.id = ee.email_id
-            ORDER BY e.id, ee.created_at DESC
+            SELECT DISTINCT ON (e.id)
+              e.id AS email_id,
+              e.formatted,
+              e.from_address as from,
+              e.sender,
+              e.to_address as to,
+              e.bcc,
+              e.reply_to,
+              e.subject,
+              e.attachment_contents,
+              e.attachment_title,
+              e.attachment_description,
+              ee.email_type as type,
+              'fi' as lang,
+              ee.success,
+              events.created_at as first_created_at,
+              events.created_at + interval '1 hour' < now() as over_hour_old
+            FROM email e
+            JOIN email_event ee ON e.id = ee.email_id
+            JOIN email_event events ON e.id = events.email_id
+            ORDER BY e.id, ee.created_at DESC,
+                     events.created_at ASC
           ) AS r
           WHERE r.success = false" []))
 
@@ -243,5 +270,12 @@
     (log/info "Found" (count messages) "email messages that failed to be sent")
     (doseq [msg messages]
       (let [body (:formatted msg)
-            email-id (:email-id msg)]
-        (try-send-msg-once msg body email-id)))))
+            email-id (:email-id msg)
+            over-hour-old (:over-hour-old msg)
+            first-created-at (:first-created-at msg)]
+        (try
+          (try-send-msg msg body email-id)
+          (catch Exception e
+            (when over-hour-old
+              ;; fluentbit sends an alarm to pagerduty from error level logs
+              (log/error e "Failed to send email for 60 minutes" email-id first-created-at))))))))
