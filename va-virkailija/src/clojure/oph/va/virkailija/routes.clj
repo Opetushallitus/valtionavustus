@@ -202,7 +202,7 @@
 
                           (compojure/GET "/avustushaku/:id/*" [id] (return-html "virkailija/index.html"))
 
-                          (compojure/GET "/va-code-values2" [] (return-html "virkailija/codevalues.html"))
+                          (compojure/GET "/admin-ui/va-code-values/" [] (return-html "virkailija/codevalues.html"))
 
                           (compojure/GET "/admin-ui/*" [] (return-html "admin-ui/index.html"))
 

@@ -4,20 +4,22 @@ import {KoodienhallintaPage} from "../pages/koodienHallintaPage";
 const test = baseTest.extend<{koodienhallintaPage: KoodienhallintaPage}>({
   koodienhallintaPage: async ({page}, use) => {
     const koodienhallintaPage = new KoodienhallintaPage(page)
-    await koodienhallintaPage.navigateToTsVersion()
+    await koodienhallintaPage.navigate()
+    await use(koodienhallintaPage)
+  }
+})
+
+test.describe('Koodienhallinta', () => {
+  test('deleting code works', async ({page, koodienhallintaPage}) => {
     await koodienhallintaPage.yearInput.fill('2022')
     await koodienhallintaPage.nameInput.fill( 'testName')
     await koodienhallintaPage.codeInput.fill('testCode')
     await koodienhallintaPage.submitButton.click()
     await koodienhallintaPage.codeList.locator('text=testCode')
-    await use(koodienhallintaPage)
     page.on('dialog', dialog => dialog.accept('Oletko aivan varma, että haluat poistaa koodin?'))
     await koodienhallintaPage.page.locator('[data-test-id=code-cell-2022-testCode-testName]').locator('[data-test-id=delete-code]').click()
+  })
 
-  }
-})
-
-test.describe('Koodienhallinta', () => {
   test('validates year input', async ({koodienhallintaPage}) => {
     await koodienhallintaPage.submitButton.isDisabled()
     await koodienhallintaPage.yearInput.fill('1900')
@@ -26,7 +28,7 @@ test.describe('Koodienhallinta', () => {
     await koodienhallintaPage.submitButton.isDisabled()
     await koodienhallintaPage.codeInputFormHasError("Vuosi voi olla minimissään 1970")
     await koodienhallintaPage.submitButton.isDisabled()
-    await koodienhallintaPage.yearInput.fill('2022')
+    await koodienhallintaPage.yearInput.fill('2200')
     await koodienhallintaPage.codeInputFormHasError("Vuosi voi olla maksimissaan 2100")
     await koodienhallintaPage.submitButton.isDisabled()
     await koodienhallintaPage.yearInput.fill('')
@@ -60,7 +62,7 @@ test.describe('Koodienhallinta', () => {
     await koodienhallintaPage.submitButton.isEnabled()
     await koodienhallintaPage.noCodeInputFormErrors()
   })
-  test.only('navigating between tabs clears values in form', async ({koodienhallintaPage}) => {
+  test('navigating between tabs clears values in form', async ({koodienhallintaPage}) => {
     await koodienhallintaPage.yearInput.fill('2022')
     await koodienhallintaPage.codeInput.fill('will be')
     await koodienhallintaPage.nameInput.fill( 'cleared')

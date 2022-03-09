@@ -11,7 +11,6 @@
    [oph.va.admin-ui.router :as router]
    [oph.va.admin-ui.dialogs :as dialogs]
    [oph.va.admin-ui.payments.payments-core :as payments-core]
-   [oph.va.admin-ui.va-code-values.va-code-values-core :as code-values-core]
    [oph.va.admin-ui.reports.reports-core :as reports-core]
    [oph.va.admin-ui.search.search-core :as search-core]
    [oph.va.admin-ui.user :as user]))
@@ -76,7 +75,6 @@
          [:div {:style theme/app-container}
           (case (router/get-current-path)
             "/admin-ui/payments/" (payments-core/home-page data)
-            "/admin-ui/va-code-values/" (code-values-core/home-page)
             "/admin-ui/reports/" (reports-core/home-page)
             "/admin-ui/search/" (search-core/home-page)
             (do
@@ -113,7 +111,6 @@
       (close! dialog-chan)
       (case (router/get-current-path)
         "/admin-ui/payments/" (payments-core/init!)
-        "/admin-ui/va-code-values/" (code-values-core/init!)
         "/admin-ui/reports/" (reports-core/init!)
         "/admin-ui/search/" (search-core/init!)
         ""))))
