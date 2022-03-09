@@ -309,8 +309,19 @@
       (common-email/create-email-event id false msg))
     ids))
 
-(defn delete-emails-and-events []
-  (execute! "TRUNCATE TABLE virkailija.email CASCADE" []))
+(defn delete-generated-emails-and-events []
+  (execute! "
+    WITH removable_emails AS (
+      DELETE FROM virkailija.email_event
+      WHERE email_id IN (
+        SELECT id FROM virkailija.email WHERE sender = 's'
+      )
+      RETURNING virkailija.email_event.email_id
+    )
+    DELETE FROM virkailija.email WHERE id IN (
+      SELECT email_id FROM removable_emails
+    )
+  " []))
 
 (defn- get-normalized-hakemus []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/normalized" [haku-id hakemus-id]
@@ -821,9 +832,9 @@
     :summary "Generate emails that failed to be sent and return ids"
     (ok (generate-emails-that-failed-to-be-sent (:count body))))
 
-  (compojure-api/POST "/email/delete-emails-and-events" []
-    :summary "Delete all emails and events"
-    (ok (delete-emails-and-events)))
+  (compojure-api/POST "/email/delete-generated-emails-and-events" []
+    :summary "Delete all emails and events that were generated from generate-emails-that-failed-to-be-sent"
+    (ok (delete-generated-emails-and-events)))
 
   (compojure-api/POST "/email/retry-to-send-email" []
     :summary "Retry to send failed email"

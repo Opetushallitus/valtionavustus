@@ -10,7 +10,7 @@ export interface Email {
   subject?: string
 }
 
-const emailSchema = yup.array().of(yup.object().shape<Email>({
+export const emailSchema = yup.array().of(yup.object().shape<Email>({
   formatted: yup.string().required(),
   "to-address": yup.array().of(yup.string().required()).defined(),
   bcc: yup.string().defined().nullable(),
