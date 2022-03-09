@@ -84,12 +84,12 @@
         form-id (get avustushaku (selvitys-form-keyword selvitys-type))
         form (form-db/get-form form-id)
         security-validation (validation/validate-form-security form answers)]
-    (if (not (every? empty? (vals security-validation)))
-      (http/bad-request! security-validation)
+    (if (not (selvitys-updateable? selvitys-type parent-hakemus))
+      (http/forbidden)
       (if (not= base-version (:version hakemus))
         (handlers/hakemus-conflict-response hakemus)
-        (if (not (selvitys-updateable? selvitys-type parent-hakemus))
-          (http/forbidden)
+        (if (not (every? empty? (vals security-validation)))
+          (http/bad-request! security-validation)
           (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
                 budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
                 validation (merge (validation/validate-form form answers attachments)
@@ -105,12 +105,12 @@
             (handlers/hakemus-ok-response updated-hakemus updated-submission validation parent-hakemus)))))))
 
 (defn post-selvitys []
-  (compojure-api/POST "/:haku-id/selvitys/:selvitys-type/:hakemus-id/:base-version" [haku-id hakemus-id base-version selvitys-type :as request]
-    :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
+  (compojure-api/POST "/:haku-id/selvitys/:selvitys-type/:hakemus-key/:base-version" [haku-id hakemus-key base-version selvitys-type :as request]
+    :path-params [haku-id :- Long, hakemus-key :- s/Str, base-version :- Long]
     :body [answers (compojure-api/describe soresu-schema/Answers "New answers")]
     :return hakija-schema/Hakemus
     :summary "Update hakemus values"
-    (on-selvitys-update haku-id hakemus-id base-version answers selvitys-type)))
+    (on-selvitys-update haku-id hakemus-key base-version answers selvitys-type)))
 
 (defn- find-contact-person-email-from-last-hakemus-version [hakemus-id]
   (let [sql "SELECT answer.value->>'value' AS primary_email

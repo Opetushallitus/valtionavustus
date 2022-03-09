@@ -5,6 +5,7 @@ import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
 import { väliselvitysTest } from '../../fixtures/väliselvitysTest'
 import { getValiselvitysEmails } from '../../../test/test-util'
 import { getHakemusTokenAndRegisterNumber, getValiselvitysSubmittedNotificationEmails, lastOrFail } from '../../utils/emails'
+import { HAKIJA_URL } from '../../utils/constants'
 
 test.describe('Väliselvitys', () => {
   väliselvitysTest('väliselvitys submitted notification is sent', async ({ page, acceptedHakemus: { hakemusID }, väliselvitysSubmitted }) => {
@@ -40,8 +41,7 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
 
   väliselvitysTest(
     'väliselvitys can be accepted',
-    async ({ page, avustushakuID , acceptedHakemus, väliselvitysSubmitted}) => {
-      expectToBeDefined(väliselvitysSubmitted)
+    async ({ page, avustushakuID , acceptedHakemus, väliselvitysSubmitted: { userKey }}) => {
       const arviointi = new HakemustenArviointiPage(page)
 
       await test.step('väliselvitys is tarkastamatta', async () => {
@@ -65,6 +65,15 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
       await test.step('väliselvitys is hyväksytty', async () => {
         await arviointi.navigate(avustushakuID)
         expect(await arviointi.väliselvitysStatus(acceptedHakemus.hakemusID)).toEqual("Hyväksytty")
+      })
+
+      await test.step(`väliselvitys can't be updated using the API`, async () => {
+        const getSelvitys = await page.request.get(`${HAKIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/valiselvitys/${userKey}`)
+        const selvitys = await getSelvitys.json()
+        const postSelvitysContent = await page.request.post(`${HAKIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/valiselvitys/${userKey}/${selvitys.version}`, {
+          data: { value: [] },
+        })
+        expect(postSelvitysContent.status()).toEqual(403)
       })
     }
   )
