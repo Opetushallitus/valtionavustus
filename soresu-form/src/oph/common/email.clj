@@ -163,8 +163,9 @@
      (try-send-msg-once msg body email-id)))
   ([msg body email-id]
     (try (try-send-msg msg body email-id)
-      ;; eat exception here as the retry mechanism will alert if sending fails enough times
-      (catch Exception e))))
+      ;; just log info here as the retry mechanism will alert if sending fails enough times
+      (catch Exception e
+        (log/info e "Tried to send email:" email-id)))))
 
 (def mail-templates (atom {}))
 
@@ -276,6 +277,7 @@
         (try
           (try-send-msg msg body email-id)
           (catch Exception e
-            (when over-hour-old
+            (if over-hour-old
               ;; fluentbit sends an alarm to pagerduty from error level logs
-              (log/error e "Failed to send email for 60 minutes" email-id first-created-at))))))))
+              (log/error e "Failed to send email for 60 minutes:" email-id first-created-at)
+              (log/info e "Failed to send email:" email-id first-created-at))))))))
