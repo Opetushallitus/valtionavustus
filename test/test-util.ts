@@ -951,24 +951,19 @@ export async function actualResponseFromExternalAPIhakemuksetForAvustushaku(avus
   return await axios.get(url).then(r => r.data)
 }
 
-export async function waitForClojureScriptLoadingDialogHidden(page: Page) {
-  return page.waitForSelector("[data-test-id=loading-dialog]", { hidden: true })
-}
-
-export async function createUniqueCode(page: Page, name: string = 'Test code'): Promise<string> {
+export async function createUniqueCode(page: Page, name: string = 'Test code') {
   const uniqueCode = randomString().substring(0, 13)
   return createCode(page, name, uniqueCode)
 }
 
-export async function createCode(page: Page, name: string = 'Test code', code: string): Promise<string> {
+export async function createCode(page: Page, name: string = 'Test code', code: string) {
   await clearAndType(page, '[data-test-id=code-form__year]', '2020')
   await clearAndType(page, '[data-test-id=code-form__code]', `${code}`)
   await clearAndType(page, '[data-test-id=code-form__name]', `${name} ${code}`)
   await clickElementWithTestId(page, 'code-form__add-button')
   await page.waitForNetworkIdle()
-  await waitForClojureScriptLoadingDialogHidden(page)
-  await page.waitForSelector(`tr[data-test-id="${code}"]`)
-  return code
+  await page.waitForSelector(`tr[data-test-id="code-cell-2020-${code}-${name} ${code}"]`)
+  return {code, name, year: "2020"}
 }
 
 async function selectCode(page: Page, codeType: 'operational-unit' | 'project' | 'operation', code: string): Promise<void> {
@@ -976,15 +971,20 @@ async function selectCode(page: Page, codeType: 'operational-unit' | 'project' |
   await clickElementWithTestId(page, code)
 }
 
-export async function assertCodeIsVisible(page: Page, code: string, visibility: boolean) {
-  const buttonId = visibility ? 'code-row__hide-button' : 'code-row__show-button'
-  const selector = `tr[data-test-id='${code}'] [data-test-id=${buttonId}]`
-  await page.waitForSelector(selector)
+export interface CodeInfo {
+  name: string
+  code: string
+  year: string
 }
 
-export async function clickCodeVisibilityButton(page: Page, code: string, visibility: boolean) {
-  const buttonId = visibility ? 'code-row__show-button' : 'code-row__hide-button'
-  const selector = `tr[data-test-id='${code}'] [data-test-id=${buttonId}]`
+export async function assertCodeIsVisible(page: Page, codeInfo: CodeInfo, visibility: boolean) {
+  const hideClass = visibility ? '' : '.code-cell__hidden'
+  await page.waitForSelector(`tr[data-test-id="code-cell-${codeInfo.year}-${codeInfo.code}-${codeInfo.name} ${codeInfo.code}"] ${hideClass}`)
+}
+
+export async function clickCodeVisibilityButton(page: Page, codeInfo: CodeInfo, visibility: boolean) {
+  const buttonId = visibility ? 'show-code' : 'hide-code'
+  const selector = `tr[data-test-id="code-cell-${codeInfo.year}-${codeInfo.code}-${codeInfo.name} ${codeInfo.code}"] [data-test-id=${buttonId}]`
   await clickElement(page, selector)
 }
 

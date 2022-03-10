@@ -1,7 +1,6 @@
 import { Page } from "puppeteer";
 import {
   clickElement,
-  waitForClojureScriptLoadingDialogHidden,
 } from "./test-util";
 
 type KoodienhallintaTab = 'operational-unit' | 'project' | 'operation'
@@ -10,6 +9,5 @@ export async function clickKoodienhallintaTab(page: Page, tabName: Koodienhallin
   const tabSelector = `[data-test-id=code-value-tab-${tabName}]`
   await clickElement(page, tabSelector)
   await page.waitForNetworkIdle()
-  await waitForClojureScriptLoadingDialogHidden(page)
   await page.waitForSelector(`.oph-tab-item-is-active${tabSelector}`, {visible: true})
 }
