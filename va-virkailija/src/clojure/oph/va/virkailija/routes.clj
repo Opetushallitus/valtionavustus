@@ -157,7 +157,7 @@
   (compojure-api/GET "/admin-ui/va-code-values/" request
     (va-code-values-routes/with-admin request
       (return-html "virkailija/codevalues.html")
-      (unauthorized ""))))
+      (status (return-html "virkailija/unauthorized.html") 401))))
 
 (compojure-api/defroutes healthcheck-routes
                          "Healthcheck routes"

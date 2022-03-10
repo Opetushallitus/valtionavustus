@@ -1,5 +1,12 @@
 import {test as baseTest, expect} from "@playwright/test"
 import {KoodienhallintaPage} from "../pages/koodienHallintaPage";
+import {
+  switchUserIdentityTo,
+  expectToBeDefined
+} from "../utils/util"
+import {
+  navigate
+} from "../utils/navigate"
 
 const test = baseTest.extend<{koodienhallintaPage: KoodienhallintaPage}>({
   koodienhallintaPage: async ({page}, use) => {
@@ -10,6 +17,30 @@ const test = baseTest.extend<{koodienhallintaPage: KoodienhallintaPage}>({
 })
 
 test.describe('Koodienhallinta', () => {
+  test.beforeEach(async ({page}) => {
+    await switchUserIdentityTo(page, 'valtionavustus')
+  })
+
+  test('koodienhallinta tab is hidden from non admin user', async ({page}) => {
+    await navigate(page, '/')
+    await page.waitForSelector('#va-code-values')
+    await switchUserIdentityTo(page, 'viivivirkailija')
+    await page.waitForSelector('#va-code-values', {state: 'hidden'})
+  })
+
+  test('koodienhallinta tab can not be navigated to by non admin user', async ({page}) => {
+    const response = await navigate(page, '/admin-ui/va-code-values/')
+    expectToBeDefined(response)
+    expect(response.status()).toEqual(200)
+
+    await navigate(page, '/')
+    await switchUserIdentityTo(page, 'viivivirkailija')
+
+    const responseForNonAdmin = await navigate(page, '/admin-ui/va-code-values/')
+    expectToBeDefined(responseForNonAdmin)
+    expect(responseForNonAdmin.status()).toEqual(401)
+  })
+
   test('deleting code works', async ({page, koodienhallintaPage}) => {
     await koodienhallintaPage.yearInput.fill('2022')
     await koodienhallintaPage.nameInput.fill( 'testName')
