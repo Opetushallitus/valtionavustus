@@ -20,7 +20,7 @@
 (defonce initialized (r/atom false))
 
 (def top-links
-  {:grant-admin {:link "/admin-ui/payments/" :title "Hakujen hallinta"}
+  {:grant-admin {:link "/admin/haku-editor/" :title "Hakujen hallinta"}
    :grant-evaluations {:link "/" :title "Hakemusten arviointi"}
    :va-code-values {:link "/admin-ui/va-code-values/"
                     :title "VA-Koodienhallinta"}
