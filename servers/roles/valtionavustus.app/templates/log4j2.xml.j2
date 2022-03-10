@@ -13,7 +13,15 @@
       <Policies>
         <TimeBasedTriggeringPolicy interval="1"/>
       </Policies>
-      <DefaultRolloverStrategy max="365"/>
+      <DefaultRolloverStrategy>
+        <Delete basePath="{{ logs_dir }}/valtionavustus">
+          <IfAny>
+            <IfFileName glob="{{ item }}_access.*.log"/>
+            <IfFileName glob="{{ item }}_access.log.*"/>
+          </IfAny>
+          <IfLastModified age="P356D"/>
+        </Delete>
+      </DefaultRolloverStrategy>
     </RollingFile>
   </Appenders>
   <Loggers>
