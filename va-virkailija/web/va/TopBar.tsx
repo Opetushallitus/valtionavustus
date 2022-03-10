@@ -69,7 +69,7 @@ class TopBarTabs extends React.Component<TopBarTabsProps, {}> {
                    href="/" disabled={disabled}
                    activeTab={activeTab}/>
         {this.isEnabled(config, "va-code-values") &&
-           <TopBarTab id="va-code-values" label="VA-koodienhallinta"
+          isAdmin && <TopBarTab id="va-code-values" label="VA-koodienhallinta"
                         href="/admin-ui/va-code-values/" disabled={disabled}
                         activeTab={activeTab}/>}
         {isAdmin && this.isEnabled(config, "reports") &&

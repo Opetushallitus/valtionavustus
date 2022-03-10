@@ -153,6 +153,12 @@
       hakemus-and-avustushaku
       (method-not-allowed!))))
 
+(defn- try-to-access-va-code-values []
+  (compojure-api/GET "/admin-ui/va-code-values/" request
+    (va-code-values-routes/with-admin request
+      (return-html "virkailija/codevalues.html")
+      (unauthorized ""))))
+
 (compojure-api/defroutes healthcheck-routes
                          "Healthcheck routes"
 
@@ -202,7 +208,7 @@
 
                           (compojure/GET "/avustushaku/:id/*" [id] (return-html "virkailija/index.html"))
 
-                          (compojure/GET "/admin-ui/va-code-values/" [] (return-html "virkailija/codevalues.html"))
+                          (try-to-access-va-code-values)
 
                           (compojure/GET "/admin-ui/*" [] (return-html "admin-ui/index.html"))
 
