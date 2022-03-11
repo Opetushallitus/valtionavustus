@@ -26,3 +26,11 @@
 
 - name: upload buildstatus
   include: buildstatus.yml
+
+- name: Cronjob to clean yum cache to prevent /var partition from running out of space
+  cron:
+    name: Clean yum cache periodically
+    minute: "0"
+    hour: "8"
+    user: root
+    job: "/usr/bin/yum clean all"
