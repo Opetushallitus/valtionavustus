@@ -291,9 +291,17 @@ export class HakujenHallintaPage {
     await this.page.fill(`input[name="education-levels"][data-title="${koulutusaste}"]`, talousarviotili)
   }
 
+  dropdownSelector(codeType: 'operational-unit' | 'project' | 'operation') {
+    return `[data-test-id=code-value-dropdown__${codeType}]`
+  }
+
   async selectCode(codeType: 'operational-unit' | 'project' | 'operation', code: string): Promise<void> {
-    await this.page.click(`[data-test-id=code-value-dropdown__${codeType}] > div`)
+    await this.page.click(`${this.dropdownSelector(codeType)} > div`)
     await this.page.click(`[data-test-id='${code}']`)
+  }
+
+  async fillCode(codeType: 'operational-unit' | 'project' | 'operation', code: string): Promise<void> {
+    await this.page.fill(`${this.dropdownSelector(codeType)} > div input`, `${code}`)
   }
 
   async selectTositelaji(value: 'XE' | 'XB'): Promise<void> {

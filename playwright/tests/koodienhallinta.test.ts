@@ -104,4 +104,61 @@ test.describe('Koodienhallinta', () => {
     expect(await koodienhallintaPage.nameInput.textContent()).toEqual('')
     await koodienhallintaPage.submitButton.isDisabled()
   })
+
+  test('When a code is created', async ({koodienhallintaPage}) => {
+    const codeValues = await koodienhallintaPage.createRandomCodeValues()
+    const codeName = 'Toimintayksikkö'
+    const rowSelector = koodienhallintaPage.codeRowSelector(codeValues.operationalUnit, codeName)
+
+    await test.step('the code is visible in the page', async () => {
+      await koodienhallintaPage.navigate()
+      await expect(koodienhallintaPage.page.locator(rowSelector)).toBeVisible()
+      await koodienhallintaPage.assertCodeIsVisible(codeValues.operationalUnit, codeName,true)
+    })
+
+    await test.step('the code is visible in haku editor dropdown', async () => {
+      const hakujenHallintaPage = await koodienhallintaPage.navigateToHakujenHallintaPage()
+      await hakujenHallintaPage.fillCode('operational-unit', codeValues.operationalUnit)
+      await expect(hakujenHallintaPage.page.locator(`[data-test-id="${codeValues.operationalUnit}"]`)).toBeVisible()
+    })
+
+    await test.step('And virkailija hides the code', async () => {
+      await koodienhallintaPage.navigate()
+      await koodienhallintaPage.clickCodeVisibilityButton(codeValues.operationalUnit, codeName, false)
+
+      await test.step('the code is not visible', async () => {
+        await expect(koodienhallintaPage.page.locator(rowSelector)).toBeVisible()
+        await koodienhallintaPage.assertCodeIsVisible(codeValues.operationalUnit, codeName,false)
+      })
+
+      await test.step('the code is not visible in haku editor page dropdown', async () => {
+        const hakujenHallintaPage = await koodienhallintaPage.navigateToHakujenHallintaPage()
+        await hakujenHallintaPage.fillCode('operational-unit', codeValues.operationalUnit)
+
+        const noSelectableOptionsSelector = `${hakujenHallintaPage.dropdownSelector('operational-unit')} [data-test-id=code-value-dropdown__no-options]`
+        await expect(koodienhallintaPage.page.locator(noSelectableOptionsSelector)).toHaveCount(1)
+      })
+
+      await test.step('the code is not visible after navigation', async () => {
+        await koodienhallintaPage.navigate()
+        await koodienhallintaPage.assertCodeIsVisible(codeValues.operationalUnit, codeName,false)
+      })
+
+      await test.step('When virkailija makes the code visible again', async () => {
+        await koodienhallintaPage.navigate()
+        await koodienhallintaPage.clickCodeVisibilityButton(codeValues.operationalUnit, codeName, true)
+
+        await test.step('the code is visible on koodien hallinta page', async () => {
+          await koodienhallintaPage.assertCodeIsVisible(codeValues.operationalUnit, codeName,true)
+        })
+
+        await test.step('the code is visible in haku editor dropdown', async () => {
+          const hakujenHallintaPage = await koodienhallintaPage.navigateToHakujenHallintaPage()
+          await hakujenHallintaPage.fillCode('operational-unit', codeValues.operationalUnit)
+          await expect(koodienhallintaPage.page.locator(`[data-test-id="${codeValues.operationalUnit}"]`)).toBeVisible()
+        })
+      })
+
+    })
+  })
 })

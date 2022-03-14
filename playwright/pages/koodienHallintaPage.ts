@@ -1,8 +1,8 @@
-import {Page, Locator} from "@playwright/test";
-
+import {Page, Locator, expect} from "@playwright/test";
 import {navigate} from "../utils/navigate";
 import {randomString} from "../utils/random";
 import {VaCodeValues} from "../utils/types";
+import {FormEditorPage, HakujenHallintaPage} from "./hakujenHallintaPage";
 
 type KoodienhallintaTab = 'operational-unit' | 'project' | 'operation'
 
@@ -30,10 +30,23 @@ export class KoodienhallintaPage {
     await navigate(this.page, '/admin-ui/va-code-values/')
   }
 
+  async navigateToHakujenHallintaPage() {
+    await navigate(this.page, '/admin/haku-editor/')
+    await this.page.waitForLoadState('networkidle')
+    return new HakujenHallintaPage(this.page)
+  }
+
   async clickKoodienhallintaTab(tabName: KoodienhallintaTab) {
     const tabSelector = `[data-test-id=code-value-tab-${tabName}]`
     await this.page.click(tabSelector)
     await this.page.waitForSelector(`.oph-tab-item-is-active${tabSelector}`)
+  }
+
+  async clickCodeVisibilityButton(code: string, name: string, visibility: boolean) {
+    const buttonId = visibility ? 'show-code' : 'hide-code'
+    const selector = `${this.codeRowSelector(code, name)} [data-test-id=${buttonId}]`
+    await this.page.click(selector)
+    await this.page.waitForLoadState('networkidle')
   }
 
   /*
@@ -59,8 +72,22 @@ export class KoodienhallintaPage {
     await this.makeSureCodeFilled('[data-test-id=code-form__code]', `${code}`)
     await this.makeSureCodeFilled('[data-test-id=code-form__name]', `${name} ${code}`)
     await this.submitButton.click()
-    await this.page.waitForSelector(`tr[data-test-id="code-cell-2020-${code}-${name} ${code}"]`)
+    await this.page.waitForSelector(this.codeRowSelector(code, name))
     return code
+  }
+
+  codeRowSelector(code: string, name: string) {
+    return `tr[data-test-id="code-cell-2020-${code}-${name} ${code}"]`
+  }
+  async assertCodeIsVisible(code: string, name: string, visibility: boolean) {
+    const firstCellSelector = `${this.codeRowSelector(code, name)} td:first-of-type`
+    const firstCellElement = await this.page.waitForSelector(firstCellSelector, { state: 'visible' })
+    const cellClassNames = await this.page.evaluate(el => el.className, firstCellElement)
+    if (visibility) {
+      expect(cellClassNames).not.toEqual(expect.stringContaining('code-cell__hidden'))
+    } else {
+      expect(cellClassNames).toEqual(expect.stringContaining('code-cell__hidden'))
+    }
   }
 
   async createCodeValues(codeValues: VaCodeValues): Promise<VaCodeValues> {

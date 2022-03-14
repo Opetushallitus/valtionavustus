@@ -8,17 +8,13 @@ import {
   createValidCopyOfEsimerkkihakuAndReturnTheNewId,
   mkBrowser,
   getFirstPage,
-  CodeInfo,
   ratkaiseAvustushaku,
   publishAvustushaku,
   fillAndSendHakemus,
   acceptHakemus,
-  clickCodeVisibilityButton,
   clickElementWithTestId,
-  assertCodeIsVisible,
   expectedResponseFromExternalAPIhakemuksetForAvustushaku,
   actualResponseFromExternalAPIhakemuksetForAvustushaku,
-  createUniqueCode,
   closeAvustushakuByChangingEndDateToPast,
   navigate,
   clickElementWithText,
@@ -617,96 +613,4 @@ etunimi.sukunimi@oph.fi
 `)
   })
 
-  describe('When virkailija navigates to codes page', () => {
-    beforeAll(async () => {
-      await navigate(page, '/admin-ui/va-code-values/')
-    })
-
-    describe('And creates new koodi', () => {
-      let codeInfo: CodeInfo
-      beforeAll(async () => {
-        codeInfo = await createUniqueCode(page)
-      })
-
-      describe('And navigates back to codes page', () => {
-        beforeAll(async () => {
-          await navigate(page, '/admin-ui/va-code-values/')
-        })
-
-        it('code is present in the page', async () => {
-            await page.waitForSelector(`tr[data-test-id="code-cell-${codeInfo.year}-${codeInfo.code}-${codeInfo.name} ${codeInfo.code}"]`)
-        })
-
-        it('code is visible', async () => {
-          await assertCodeIsVisible(page, codeInfo, true)
-        })
-
-        describe('When virkailija navigates to haku editor', () => {
-          beforeAll(async () => {
-            await navigate(page, '/admin/haku-editor/')
-          })
-
-          it('code is visible in dropdown', async () => {
-            await clearAndType(page, '[data-test-id=code-value-dropdown__operational-unit] > div', `${codeInfo.code}`)
-            await page.waitForSelector(`[data-test-id="${codeInfo.code}"]`)
-          })
-
-        })
-
-        describe('When virkailija hides the code', () => {
-          beforeAll(async () => {
-            await navigate(page, '/admin-ui/va-code-values/')
-            await clickCodeVisibilityButton(page, codeInfo, false)
-          })
-
-          it('code is not visible on page', async () => {
-            await assertCodeIsVisible(page, codeInfo, false)
-          })
-
-          describe('When virkailija navigates to haku editor', () => {
-            beforeAll(async () => {
-              await navigate(page, '/admin/haku-editor/')
-            })
-
-            it('code is not visible in dropdown', async () => {
-              await clearAndType(page, '[data-test-id=code-value-dropdown__operational-unit] > div', `${codeInfo.code}`)
-              await page.waitForSelector('[data-test-id=code-value-dropdown__operational-unit] [data-test-id=code-value-dropdown__no-options]')
-            })
-          })
-
-
-          describe('When virkailija navigates to code page', () => {
-            beforeAll(async () => {
-              await navigate(page, '/admin-ui/va-code-values/')
-            })
-
-            it('code is still not visible on the page', async () => {
-              await assertCodeIsVisible(page, codeInfo, false)
-            })
-
-            describe('When virkailija sets the code visible', () => {
-              beforeAll(async () => {
-                await clickCodeVisibilityButton(page, codeInfo, true)
-              })
-
-              it('the code is visible in the page', async () => {
-                await assertCodeIsVisible(page, codeInfo, true)
-              })
-
-              describe('And when virkailija navigates to code page', () => {
-                beforeAll(async () => {
-                  await navigate(page, '/admin-ui/va-code-values/')
-                })
-
-                it('the code is still visible in the page', async () => {
-                  await assertCodeIsVisible(page, codeInfo, true)
-                })
-
-              })
-            })
-          })
-        })
-      })
-    })
-  })
 })
