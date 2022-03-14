@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 import JsUtil from '../../JsUtil'
 import FormUtil from '../FormUtil'
-import LocalizedString from './LocalizedString.jsx'
+import LocalizedString from './LocalizedString.tsx'
 import Translator from '../Translator'
 
 export default class FormErrorSummary extends React.Component {

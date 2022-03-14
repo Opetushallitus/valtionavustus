@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 import ClassNames from 'classnames'
-import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
+import LocalizedString from 'soresu-form/web/form/component/LocalizedString.tsx'
 import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip'
 import {percentageOf, roundDecimal, formatDecimal} from '../MathUtil'
 import Translator from 'soresu-form/web/form/Translator'

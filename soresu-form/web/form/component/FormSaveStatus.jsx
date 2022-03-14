@@ -1,7 +1,7 @@
 import React from 'react'
 
 import DateUtil from '../../DateUtil'
-import LocalizedString from './LocalizedString.jsx'
+import LocalizedString from './LocalizedString.tsx'
 
 export default class FormSaveStatus extends React.Component {
   render() {

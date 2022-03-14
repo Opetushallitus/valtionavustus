@@ -1,5 +1,5 @@
 import React from "react"
-import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
+import LocalizedString from 'soresu-form/web/form/component/LocalizedString.tsx'
 import HttpUtil from "soresu-form/web/HttpUtil"
 
 export default class OpenContactsEdit extends React.Component {

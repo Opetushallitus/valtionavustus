@@ -7,7 +7,7 @@ import 'soresu-form/web/form/style/main.less'
 import './style/va-login.less'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
+import LocalizedString from 'soresu-form/web/form/component/LocalizedString.tsx'
 import {DateRangeInfoElement, H1InfoElement} from 'soresu-form/web/form/component/InfoElement.jsx'
 import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip'
 

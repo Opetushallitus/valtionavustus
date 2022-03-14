@@ -1,6 +1,6 @@
 import React from 'react'
 
-import LocalizedString from '../LocalizedString.jsx'
+import LocalizedString from '../LocalizedString.tsx'
 
 export default class ThemeWrapper extends React.Component {
   render() {

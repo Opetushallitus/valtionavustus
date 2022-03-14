@@ -6,7 +6,7 @@ import Dropzone from 'react-dropzone'
 import AttachmentDisplay from '../preview/AttachmentDisplay.jsx'
 import RemoveButton from './RemoveButton.jsx'
 import BasicSizedComponent from './BasicSizedComponent.jsx'
-import LocalizedString from './LocalizedString.jsx'
+import LocalizedString from './LocalizedString.tsx'
 
 export default class AttachmentField extends BasicSizedComponent {
   render() {

@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 
 import PreviewComponent from './PreviewComponent.jsx'
-import LocalizedString from '../component/LocalizedString.jsx'
+import LocalizedString from '../component/LocalizedString.tsx'
 
 export default class MultipleOptionValue extends PreviewComponent {
   render() {

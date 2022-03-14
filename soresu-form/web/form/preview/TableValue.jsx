@@ -2,7 +2,7 @@ import React from 'react'
 import ClassNames from 'classnames'
 
 import TableFieldUtil from '../component/TableFieldUtil.jsx'
-import LocalizedString from '../component/LocalizedString.jsx'
+import LocalizedString from '../component/LocalizedString.tsx'
 
 export default class TableValue extends React.Component {
   render() {

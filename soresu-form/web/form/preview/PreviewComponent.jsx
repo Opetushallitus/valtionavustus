@@ -1,7 +1,7 @@
 import React from 'react'
 import ClassNames from 'classnames'
 import _ from 'lodash'
-import LocalizedString from './../component/LocalizedString.jsx'
+import LocalizedString from './../component/LocalizedString.tsx'
 
 export default class PreviewComponent extends React.Component {
   render(preview) {

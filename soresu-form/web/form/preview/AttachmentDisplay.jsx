@@ -2,7 +2,7 @@ import React from 'react'
 
 import PreviewComponent from './PreviewComponent.jsx'
 import {BasicInfoComponent} from '../component/InfoElement.jsx'
-import LocalizedString from '../component/LocalizedString.jsx'
+import LocalizedString from '../component/LocalizedString.tsx'
 
 export default class AttachmentDisplay extends PreviewComponent {
   render() {

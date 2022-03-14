@@ -1,6 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
-import LocalizedString from './LocalizedString.jsx'
+import LocalizedString from './LocalizedString.tsx'
 import BasicSizedComponent from './BasicSizedComponent.jsx'
 
 export default class BasicTextArea extends BasicSizedComponent {

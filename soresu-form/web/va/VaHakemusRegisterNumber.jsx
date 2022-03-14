@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 
-import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
+import LocalizedString from 'soresu-form/web/form/component/LocalizedString.tsx'
 
 export default class VaHakemusRegisterNumber extends React.Component {
   render() {

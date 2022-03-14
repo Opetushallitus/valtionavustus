@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 import ModalDialog from "./ModalDialog.jsx"
 import FormUtil from "../FormUtil"
-import LocalizedString from "./LocalizedString.jsx"
+import LocalizedString from "./LocalizedString.tsx"
 import Translator from "../Translator"
 import HttpUtil from "../../HttpUtil"
 import SyntaxValidator from "../SyntaxValidator"
