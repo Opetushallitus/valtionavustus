@@ -1,10 +1,4 @@
 type FeatureFlag = { "enabled?": boolean }
-export type FeatureFlagKey = keyof Omit<EnvironmentApiResponse, 'name'
-  | 'hakija-server'
-  | 'notice'
-  | 'show-name'
-  >
-
 
 export interface EnvironmentApiResponse {
   name: string
@@ -24,3 +18,7 @@ export interface EnvironmentApiResponse {
   reports: FeatureFlag
   "dont-send-loppuselvityspyynto-to-virkailija"?: FeatureFlag
 }
+
+type FeatureFlags<T> = { [P in keyof T as T[P] extends FeatureFlag ? P : never]: T[P] }
+
+export type FeatureFlagKey = keyof FeatureFlags<Required<EnvironmentApiResponse>>
