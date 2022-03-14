@@ -10,7 +10,7 @@ import {VaCodeValue} from "../types";
 import {IconVisibility} from "./IconVisibility";
 import {IconVisibilityOff} from "./IconVisibilityOff";
 import {IconDelete} from "./IconDelete";
-import HttpUtil from "soresu-form/web/HttpUtil";
+import HttpUtil, {getHttpResponseErrorStatus} from "soresu-form/web/HttpUtil";
 import {
   Field,
   FormikProps,
@@ -201,7 +201,7 @@ const Codes = ({codes, onActionSuccess, isLoading}:{codes: VaCodeValue[], onActi
         await HttpUtil.delete(getUrl(codeId))
         onActionSuccess()
       } catch (e) {
-        if (e.status === 405) {
+        if (getHttpResponseErrorStatus(e) === 405) {
           console.log('code already exists')
         } else {
           console.log('unknown error')

@@ -47,10 +47,16 @@ export default class HttpUtil {
   }
 }
 
-export class HttpResponseError extends Error {
-  response: any;
+interface Response {
+  status: number
+  statusText: string
+  data: any
+}
 
-  constructor(message: string, response: any) {
+export class HttpResponseError extends Error {
+  response: Response;
+
+  constructor(message: string, response: Response) {
     super(message);
     this.message = message
     this.name = "HttpResponseError"
@@ -60,4 +66,11 @@ export class HttpResponseError extends Error {
     }
     Error.captureStackTrace(this, HttpResponseError)
   }
+}
+
+export const getHttpResponseErrorStatus = (e: unknown): number | undefined => {
+  if (e instanceof HttpResponseError) {
+    return e.response.status
+  }
+  return undefined
 }
