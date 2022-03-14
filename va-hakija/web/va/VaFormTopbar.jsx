@@ -4,7 +4,7 @@ import _ from 'lodash'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.tsx'
 import Translator from 'soresu-form/web/form/Translator'
 
-import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo.jsx'
+import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo.tsx'
 
 import TextButton from 'soresu-form/web/form/component/TextButton.tsx'
 import FormSaveStatus from 'soresu-form/web/form/component/FormSaveStatus.jsx'

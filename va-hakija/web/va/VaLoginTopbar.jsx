@@ -2,7 +2,7 @@ import React from 'react'
 
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.tsx'
 
-import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo.jsx'
+import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo.tsx'
 
 export default class VaLoginTopbar extends React.Component {
   render() {

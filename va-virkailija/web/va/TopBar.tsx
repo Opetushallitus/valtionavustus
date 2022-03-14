@@ -1,7 +1,7 @@
 import React from 'react'
 import ClassNames from 'classnames'
 
-import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo.jsx'
+import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
 import { EnvironmentApiResponse, FeatureFlagKey } from 'soresu-form/web/va/types/environment'
 import { UserInfo } from "./types";
