@@ -6,7 +6,7 @@ import Translator from 'soresu-form/web/form/Translator'
 
 import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo.jsx'
 
-import TextButton from 'soresu-form/web/form/component/TextButton.jsx'
+import TextButton from 'soresu-form/web/form/component/TextButton.tsx'
 import FormSaveStatus from 'soresu-form/web/form/component/FormSaveStatus.jsx'
 import ToggleLanguageButton from 'soresu-form/web/form/component/ToggleLanguageButton.jsx'
 import FormErrorSummary from 'soresu-form/web/form/component/FormErrorSummary.jsx'
