@@ -22,7 +22,7 @@
     "react-dom": "^16.13.1",
     "react-dropzone": "^4.0.1",
     "react-focus-lock": "^2.5.0",
-    "react-select": "3.1.0",
+    "react-select": "^4.3.1",
     "react-transition-group": "^2.2.0",
     "react-widgets": "^5.1.1",
     "react-widgets-moment": "^5.0.6",
@@ -33,6 +33,7 @@
     "yup": "^0.29.3"
   },
   "devDependencies": {
+    "@types/react-select": "^4.0.18",
     "@playwright/test": "^1.17.1",
     "@types/big.js": "^6.1.2",
     "@types/chai": "^4.3.0",
