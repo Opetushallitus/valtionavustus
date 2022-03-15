@@ -15,7 +15,7 @@ export interface FieldUpdate {
   growingParent?: any
 }
 
-export function createFieldUpdate(field: Field, value: any, customFieldSyntaxValidator?: Validator) : FieldUpdate {
+export function createFieldUpdate(field: Field, value: any, customFieldSyntaxValidator?: typeof Validator) : FieldUpdate {
   return {
     id: field.id,
     field,

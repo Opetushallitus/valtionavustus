@@ -375,7 +375,7 @@ export const fieldTypes: { [f in AddableFieldType]: FieldClass } = {
 export const addableFields = ["textField", "textArea", "radioButton", "checkboxButton", "dropdown", "namedAttachment", "koodistoField", "p", "h3", "link", "theme", "fieldset", "growingFieldset", "growingFieldsetChild"] as const
 export type AddableFieldType = typeof addableFields[number]
 export type NonAddableFieldType = 'moneyField' | 'emailField' | 'bic' | 'iban' | 'tableField' | 'integerField' | 'decimalField' | 'finnishBusinessIdField' | 'vaEmailNotification'
-export type BudgetFieldType = 'vaBudget' | 'vaBudgetSummaryElement' | 'vaSelfFinancingField' | 'vaBudgetItemElement'
+export type BudgetFieldType = 'vaBudget' | 'vaBudgetSummaryElement' | 'vaSelfFinancingField' | 'vaBudgetItemElement' | 'vaTraineeDayCalculator'
 export type FieldType = AddableFieldType | NonAddableFieldType | BudgetFieldType
 export type FieldClass = 'formField' | 'infoElement' | 'wrapperElement'
 

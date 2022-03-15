@@ -1,9 +1,11 @@
 import MoneyValidator from 'soresu-form/web/form/MoneyValidator'
 
 import VaTraineeDayCalculator from './VaTraineeDayCalculator.jsx'
+import {Field} from "soresu-form/web/va/types";
+import {ValidationError, Validator} from "soresu-form/web/form/SyntaxValidator";
 
-export default class VaSyntaxValidator {
-  static validateSyntax(field, value) {
+export default class VaSyntaxValidator implements Validator {
+  static validateSyntax(field: Field, value: any): ValidationError | undefined {
     switch (field.fieldType) {
       case 'vaSelfFinancingField':
         return MoneyValidator.validateMoney(value)

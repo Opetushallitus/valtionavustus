@@ -6,14 +6,14 @@ import moment from 'moment-timezone'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 
-import FormController from 'soresu-form/web/form/FormController'
+import FormController from 'soresu-form/web/form/FormController.ts'
 import {triggerFieldUpdatesForValidation} from 'soresu-form/web/form/FieldUpdateHandler'
 import ResponseParser from 'soresu-form/web/form/ResponseParser'
 
 import VaForm from './VaForm.jsx'
 import VaUrlCreator from './VaUrlCreator'
 import VaComponentFactory from 'soresu-form/web/va/VaComponentFactory'
-import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
+import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator.ts'
 import VaPreviewComponentFactory from 'soresu-form/web/va/VaPreviewComponentFactory'
 import VaBudgetCalculator from 'soresu-form/web/va/VaBudgetCalculator'
 import UrlCreator from 'soresu-form/web/form/UrlCreator'

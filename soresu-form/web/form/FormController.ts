@@ -1,8 +1,19 @@
+import {EventStream,} from 'baconjs'
 import Dispatcher from '../Dispatcher'
 
 import {createFieldUpdate} from './FieldUpdateHandler'
 import SyntaxValidator from './SyntaxValidator'
-import FormStateLoop from './FormStateLoop.js'
+import FormStateLoop from './FormStateLoop'
+import VaComponentFactory from "soresu-form/web/va/VaComponentFactory";
+import VaPreviewComponentFactory
+  from "soresu-form/web/va/VaPreviewComponentFactory";
+import VaSyntaxValidator from "soresu-form/web/va/VaSyntaxValidator";
+import {
+  FormOperations,
+  InitialValues,
+  UrlContent
+} from "soresu-form/web/form/types/Form";
+import {Field, Language} from "soresu-form/web/va/types";
 
 const dispatcher = new Dispatcher()
 
@@ -24,11 +35,32 @@ const events = {
   attachmentRemovalCompleted: 'attachmentRemovalCompleted',
   refuseApplication: 'refuseApplication',
   onApplicationRefused: 'onApplicationRefused',
-  onModifyApplicationContacts: 'onModifyApplicationContacts'
+  onModifyApplicationContacts: 'onModifyApplicationContacts',
+  modifyApplicationContacts: 'modifyApplicationContacts'
+} as const
+
+export type FormEvents = typeof events
+
+interface FormControllerProps {
+  initialStateTemplateTransformation: any
+  onInitialStateLoaded: (initialState: any) => void
+  formP: EventStream<any>
+  customComponentFactory: VaComponentFactory
+  customPreviewComponentFactory: VaPreviewComponentFactory
+  customFieldSyntaxValidator: typeof VaSyntaxValidator
 }
 
 export default class FormController {
-  constructor(props) {
+
+  initialStateTemplateTransformation: any;
+  onInitialStateLoaded: (initialState: any) => void;
+  formP: EventStream<any>;
+  customComponentFactory: VaComponentFactory;
+  customPreviewComponentFactory: VaPreviewComponentFactory;
+  customFieldSyntaxValidator: typeof VaSyntaxValidator;
+  stateLoop: FormStateLoop;
+
+  constructor(props: FormControllerProps) {
     this.initialStateTemplateTransformation = props.initialStateTemplateTransformation
     this.onInitialStateLoaded = props.onInitialStateLoaded
     this.formP = props.formP
@@ -36,71 +68,69 @@ export default class FormController {
     this.customPreviewComponentFactory = props.customPreviewComponentFactory
     this.customFieldSyntaxValidator = props.customFieldSyntaxValidator
     this.stateLoop = new FormStateLoop(dispatcher, events)
-    this._bind('componentOnChangeListener', 'initFieldValidation', 'getCustomFieldSyntaxValidator')
+    this.componentOnChangeListener = this.componentOnChangeListener.bind(this)
+    this.initFieldValidation = this.initFieldValidation.bind(this)
+    this.getCustomFieldSyntaxValidator = this.getCustomFieldSyntaxValidator.bind(this)
   }
 
-  _bind(...methods) {
-    methods.forEach((method) => this[method] = this[method].bind(this))
-  }
-
-  initialize(formOperations, initialValues, urlContent) {
+  initialize(formOperations: FormOperations, initialValues: InitialValues, urlContent: UrlContent) {
     return this.stateLoop.initialize(this, formOperations, initialValues, urlContent)
   }
 
   // Public API
-  constructHtmlId(formContent, fieldId) {
+  constructHtmlId(_formContent: any, fieldId: any) {
     return fieldId // For the time being, our field ids are unique within the form
   }
 
-  changeLanguage(lang) {
+  changeLanguage(lang: Language) {
     dispatcher.push(events.changeLanguage, lang)
   }
 
-  submit(event) {
+  submit(event: any) {
     event.preventDefault()
-    dispatcher.push(events.submit)
+    dispatcher.push(events.submit, {})
   }
 
-  hasPendingChanges(state) {
+  hasPendingChanges(state: any) {
     return state.saveStatus.changes || state.saveStatus.saveInProgress
   }
 
-  componentOnChangeListener(field, newValue) {
+  componentOnChangeListener(field: Field, newValue: any) {
     dispatcher.push(events.updateField, createFieldUpdate(field, newValue, this.customFieldSyntaxValidator))
   }
 
-  createAttachmentDownloadUrl(state, field) {
+  createAttachmentDownloadUrl(state: any, field: Field) {
     const formOperations = state.extensionApi.formOperations
     return formOperations.urlCreator.attachmentDownloadUrl(state, field)
   }
 
-  createOrganisationInfoUrl(state) {
+  createOrganisationInfoUrl(state: any) {
     const formOperations = state.extensionApi.formOperations
     return formOperations.urlCreator.organisationInfoUrl(state)
   }
 
-  uploadAttachment(field, files) {
+  uploadAttachment(field: Field, files: any) {
     dispatcher.push(events.startAttachmentUpload, { field: field, files: files })
   }
 
-  deleteAttachment(field) {
+  deleteAttachment(field: Field) {
     dispatcher.push(events.startAttachmentRemoval, field)
   }
 
-  componentDidMount(field, initialValue) {
+  componentDidMount(field: Field, initialValue: any) {
     this.initFieldValidation(field, initialValue)
   }
 
-  initFieldValidation(field, value) {
+  initFieldValidation(field: Field, value: any) {
     dispatcher.push(events.fieldValidation, {id: field.id, validationErrors: SyntaxValidator.validateSyntax(field, value, this.customFieldSyntaxValidator)})
   }
 
-  isSaveDraftAllowed(state) {
+  isSaveDraftAllowed(state: any) {
     const formOperations = state.extensionApi.formOperations
     return formOperations.isSaveDraftAllowed(state)
   }
 
-  removeField(field) {
+  removeField(field: Field) {
     dispatcher.push(events.removeField, field)
   }
 
@@ -112,7 +142,7 @@ export default class FormController {
     return this.customFieldSyntaxValidator
   }
 
-  createCustomComponent(componentProps) {
+  createCustomComponent(componentProps: any) {
     if (!this.customComponentFactory) {
       throw new Error("To create a custom field, supply customComponentFactory to FormController")
     }
@@ -123,24 +153,19 @@ export default class FormController {
     return this.customPreviewComponentFactory ? this.customPreviewComponentFactory.fieldTypeMapping : {}
   }
 
-  createCustomPreviewComponent(componentProps) {
+  createCustomPreviewComponent(componentProps: any) {
     if (!this.customPreviewComponentFactory) {
       throw new Error("To create a custom field, supply customComponentFactory to FormController")
     }
     return this.customPreviewComponentFactory.createComponent(componentProps)
   }
 
-  getCustomComponentProperties(state) {
+  getCustomComponentProperties(state: any) {
     return this.customComponentFactory ? this.customComponentFactory.getCustomComponentProperties(state) : {}
   }
 
-  refuseApplication(comment) {
-    dispatcher.push(events.refuseApplication, comment,
-                   () => dispatcher.push(events.onApplicationRefused))
+  refuseApplication(comment: string) {
+    dispatcher.push(events.refuseApplication, comment)
   }
 
-  modifyApplicationContacts() {
-    dispatcher.push(events.modifyApplicationContacts,
-                   () => dispatcher.push(events.onModifyApplicationContacts))
-  }
 }

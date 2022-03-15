@@ -759,7 +759,7 @@ export default class HakemustenArviointiController {
       overriddenAnswers,
       emptyDescriptions,
       budgetElement,
-      null
+      'fi'
     )
 
     const selfFinancingFieldToCopy = findSelfFinancingSpecField()
@@ -802,7 +802,7 @@ export default class HakemustenArviointiController {
       selectedHakemus!.arvio["seuranta-answers"],
       defaultValues,
       budgetElement,
-      null
+      'fi'
     )
   }
 

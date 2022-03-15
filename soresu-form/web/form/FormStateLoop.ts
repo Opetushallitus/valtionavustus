@@ -3,6 +3,7 @@ import _ from 'lodash'
 import Immutable from 'seamless-immutable'
 
 import HttpUtil from '../HttpUtil'
+import Dispatcher from '../Dispatcher'
 
 import InputValueStorage from './InputValueStorage'
 import JsUtil from '../JsUtil'
@@ -10,15 +11,24 @@ import FormStateTransitions from './FormStateTransitions'
 import FormRules from './FormRules'
 import Translator from './Translator'
 import {isNumeric} from '../MathUtil'
+import {
+  FormOperations,
+  InitialValues,
+  UrlContent
+} from "soresu-form/web/form/types/Form";
+import {Language} from "soresu-form/web/va/types";
+import FormController, {FormEvents} from "soresu-form/web/form/FormController";
 
 export default class FormStateLoop {
-  constructor(dispatcher, events) {
+  private dispatcher: Dispatcher;
+  private events: FormEvents;
+  constructor(dispatcher: Dispatcher, events: FormEvents) {
     this.dispatcher = dispatcher
     this.events = events
   }
 
-  static initDefaultValues(values, initialValues, formSpecificationContent, lang) {
-    function determineInitialValue(field) {
+  static initDefaultValues(values: any, initialValues: any, formSpecificationContent: any, lang: Language) {
+    function determineInitialValue(field: any) {
       if (field.id in initialValues) {
         return initialValues[field.id]
       } else if (!_.isUndefined(field.initialValue)) {
@@ -32,7 +42,7 @@ export default class FormStateLoop {
       }
     }
 
-    const fields = JsUtil.flatFilter(formSpecificationContent, n => { return !_.isUndefined(n.id) })
+    const fields = JsUtil.flatFilter<any>(formSpecificationContent, n => { return !_.isUndefined(n.id) })
     _.forEach(fields, f => {
       const currentValueFromState = InputValueStorage.readValue(formSpecificationContent, values, f.id)
       if (currentValueFromState === "") {
@@ -50,7 +60,7 @@ export default class FormStateLoop {
     return values
   }
 
-  initialize(controller, formOperations, initialValues, urlContent) {
+  initialize(controller: FormController, formOperations: FormOperations, initialValues: InitialValues, urlContent: UrlContent) {
     const query = urlContent.parsedQuery
     const queryParams = {
       embedForMuutoshakemus: query.embedForMuutoshakemus || false,
@@ -62,7 +72,7 @@ export default class FormStateLoop {
     const formP = controller.formP.map(Immutable)
     const lang = formOperations.chooseInitialLanguage(urlContent)
     const initialValuesP = getInitialFormValuesPromise(formOperations, formP, initialValues, savedObjectP, lang)
-    const initialFormStateP = initialValuesP.combine(formP, function(values, form) {
+    const initialFormStateP = initialValuesP.combine(formP, function(values: any, form: any) {
       return FormRules.applyRulesToForm(form,
               {
                 content: form.content.asMutable({deep: true}),
@@ -115,33 +125,33 @@ export default class FormStateLoop {
     Bacon.fromEvent(window, "beforeunload").onValue(function() {
       // For some odd reason Safari always displays a dialog here
       // But it's probably safer to always save the document anyway
-      dispatcher.push(events.beforeUnload)
+      dispatcher.push(events.beforeUnload, {})
     })
 
     const stateTransitions = new FormStateTransitions(dispatcher, events)
     const formFieldValuesP = Bacon.update({},
-      [dispatcher.stream(events.initialState)], stateTransitions.onInitialState,
-      [dispatcher.stream(events.updateField)], stateTransitions.onUpdateField,
-      [dispatcher.stream(events.fieldValidation)],stateTransitions.onFieldValidation,
-      [dispatcher.stream(events.changeLanguage)], stateTransitions.onChangeLang,
-      [dispatcher.stream(events.save)], stateTransitions.onSave,
-      [dispatcher.stream(events.initAutoSave)], stateTransitions.onInitAutoSave,
-      [dispatcher.stream(events.saveCompleted)], stateTransitions.onSaveCompleted,
-      [dispatcher.stream(events.serverError)], stateTransitions.onServerError,
-      [dispatcher.stream(events.submit)], stateTransitions.onSubmit,
-      [dispatcher.stream(events.removeField)], stateTransitions.onRemoveField,
-      [dispatcher.stream(events.beforeUnload)], stateTransitions.onBeforeUnload,
-      [dispatcher.stream(events.startAttachmentUpload)], stateTransitions.onUploadAttachment,
-      [dispatcher.stream(events.attachmentUploadCompleted)], stateTransitions.onAttachmentUploadCompleted,
-      [dispatcher.stream(events.startAttachmentRemoval)], stateTransitions.onRemoveAttachment,
-      [dispatcher.stream(events.attachmentRemovalCompleted)], stateTransitions.onAttachmentRemovalCompleted,
-      [dispatcher.stream(events.refuseApplication)], stateTransitions.onRefuseApplication,
-      [dispatcher.stream(events.modifyApplicationContacts)], stateTransitions.onModifyApplicationContacts)
+      [dispatcher.stream(events.initialState), stateTransitions.onInitialState],
+      [dispatcher.stream(events.updateField), stateTransitions.onUpdateField],
+      [dispatcher.stream(events.fieldValidation),stateTransitions.onFieldValidation],
+      [dispatcher.stream(events.changeLanguage), stateTransitions.onChangeLang],
+      [dispatcher.stream(events.save), stateTransitions.onSave],
+      [dispatcher.stream(events.initAutoSave), stateTransitions.onInitAutoSave],
+      [dispatcher.stream(events.saveCompleted), stateTransitions.onSaveCompleted],
+      [dispatcher.stream(events.serverError), stateTransitions.onServerError],
+      [dispatcher.stream(events.submit), stateTransitions.onSubmit],
+      [dispatcher.stream(events.removeField), stateTransitions.onRemoveField],
+      [dispatcher.stream(events.beforeUnload), stateTransitions.onBeforeUnload],
+      [dispatcher.stream(events.startAttachmentUpload), stateTransitions.onUploadAttachment],
+      [dispatcher.stream(events.attachmentUploadCompleted), stateTransitions.onAttachmentUploadCompleted],
+      [dispatcher.stream(events.startAttachmentRemoval), stateTransitions.onRemoveAttachment],
+      [dispatcher.stream(events.attachmentRemovalCompleted), stateTransitions.onAttachmentRemovalCompleted],
+      [dispatcher.stream(events.refuseApplication), stateTransitions.onRefuseApplication],
+      [dispatcher.stream(events.modifyApplicationContacts), stateTransitions.onModifyApplicationContacts])
 
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
 
-    function loadSavedObjectPromise(formOperations, urlContent) {
+    function loadSavedObjectPromise(formOperations: FormOperations, urlContent: UrlContent) {
       if (formOperations.containsExistingEntityId(urlContent)) {
         return Bacon.fromPromise(
           HttpUtil.get(formOperations.urlCreator.loadEntityApiUrl(urlContent))
@@ -150,7 +160,7 @@ export default class FormStateLoop {
       return Bacon.constant(null)
     }
 
-    function loadAttachmentsPromise(formOperations, urlContent) {
+    function loadAttachmentsPromise(formOperations: FormOperations, urlContent: UrlContent) {
       if (formOperations.containsExistingEntityId(urlContent)) {
         return Bacon.fromPromise(
           HttpUtil.get(formOperations.urlCreator.loadAttachmentsApiUrl(urlContent))
@@ -159,8 +169,8 @@ export default class FormStateLoop {
       return Bacon.constant({})
     }
 
-    function getInitialFormValuesPromise(formOperations, formP, initialValues, savedObjectP, lang) {
-      const valuesP = savedObjectP.map(function(savedObject) {
+    function getInitialFormValuesPromise(formOperations: FormOperations, formP: any, initialValues: any, savedObjectP: any, lang: Language) {
+      const valuesP = savedObjectP.map(function(savedObject: any) {
         if(savedObject) {
           return formOperations.responseParser.getFormAnswers(savedObject)
         }
@@ -168,7 +178,7 @@ export default class FormStateLoop {
           return {}
         }
       })
-      return valuesP.combine(formP, function(values, form) {
+      return valuesP.combine(formP, function(values: any, form: any) {
         return FormStateLoop.initDefaultValues(values, initialValues, form.content, lang)
       })
     }
