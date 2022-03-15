@@ -51,7 +51,7 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
 
       await test.step('tarkasta väliselvitys', async () => {
         const valiselvitysPage = VirkailijaValiselvitysPage(page)
-        valiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
+        await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
         await page.waitForSelector('[data-test-id="selvitys-email"]')
         await valiselvitysPage.acceptVäliselvitys()
       })
