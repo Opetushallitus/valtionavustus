@@ -1,8 +1,9 @@
-import _ from 'lodash'
+import _, { DebouncedFunc } from 'lodash'
 import Immutable from 'seamless-immutable'
 import queryString from 'query-string'
 
 import HttpUtil from '../HttpUtil'
+import Dispatcher from '../Dispatcher'
 
 import LocalStorage from './LocalStorage'
 import InputValueStorage from './InputValueStorage'
@@ -11,12 +12,14 @@ import FormRules from './FormRules'
 import FormBranchGrower from './FormBranchGrower'
 import {ensureFirstChildIsRequired} from './FormBranchEditableFieldGrower'
 import {
-  createFieldUpdate,
+  createFieldUpdate, FieldUpdate,
   triggerRelatedFieldValidationIfNeeded,
   updateStateFromFieldUpdate
 } from './FieldUpdateHandler'
 import JsUtil from '../JsUtil'
 import Translator from './Translator'
+import {FormEvents} from "soresu-form/web/form/FormController";
+import {Field, Language} from "soresu-form/web/va/types";
 
 const serverOperations = {
   initialSave: 'initialSave',
@@ -24,13 +27,18 @@ const serverOperations = {
   submit: 'submit',
   refuseApplication: 'refuseApplication',
   modifyApplicationContacts: 'modifyApplicationContacts'
-}
+} as const
 
-export default class FormStateTransitions {
-  constructor(dispatcher, events) {
+type ServerOperation = typeof serverOperations[keyof typeof serverOperations]
+
+export default class  FormStateTransitions {
+  dispatcher: Dispatcher;
+  events: FormEvents;
+  autoSave: DebouncedFunc<() => void>;
+  constructor(dispatcher: Dispatcher, events: FormEvents) {
     this.dispatcher = dispatcher
     this.events = events
-    this.autoSave = _.debounce(function(){ dispatcher.push(events.save) }, 3000)
+    this.autoSave = _.debounce(function(){ dispatcher.push(events.save, {}) }, 3000)
     this._bind(
       'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'updateOld', 'onSave',
       'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError', 'onUploadAttachment',
@@ -38,11 +46,12 @@ export default class FormStateTransitions {
       'refreshStateFromServer', 'onRefuseApplication')
   }
 
-  _bind(...methods) {
-    methods.forEach((method) => this[method] = this[method].bind(this))
+  _bind(...methods: any) {
+    // @ts-ignore is this binding still necessary?
+    methods.forEach((method: any) => this[method] = this[method].bind(this))
   }
 
-  startAutoSave(state) {
+  startAutoSave(state: any) {
     const formOperations = state.extensionApi.formOperations
     if (formOperations.isSaveDraftAllowed(state)) {
       state.saveStatus.saveInProgress = true
@@ -51,7 +60,7 @@ export default class FormStateTransitions {
     return state
   }
 
-  onInitialState(state, realInitialState) {
+  onInitialState(_state: any, realInitialState: any) {
     const onInitialStateLoaded = realInitialState.extensionApi.onInitialStateLoaded
     FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(realInitialState.configuration.form.content, realInitialState.form.content, realInitialState.saveStatus.values, !realInitialState.configuration.preview)
     if (_.isFunction(onInitialStateLoaded)) {
@@ -60,7 +69,7 @@ export default class FormStateTransitions {
     return realInitialState
   }
 
-  onUpdateField(state, fieldUpdate) {
+  onUpdateField(state: any, fieldUpdate: FieldUpdate) {
     const formOperations = state.extensionApi.formOperations
     updateStateFromFieldUpdate(state, fieldUpdate)
     FormRules.applyRulesToForm(state.configuration.form, state.form, state.saveStatus.values)
@@ -76,12 +85,12 @@ export default class FormStateTransitions {
       }
     }
     state.saveStatus.changes = true
-    LocalStorage.save(formOperations.createUiStateIdentifier, state, fieldUpdate)
+    LocalStorage.save(formOperations.createUiStateIdentifier, state)
     this.startAutoSave(state)
     return state
   }
 
-  onUploadAttachment(state, uploadEvent) {
+  onUploadAttachment(state: any, uploadEvent: { field: Field, files: any }) {
     const { files, field } = uploadEvent
     const formOperations = state.extensionApi.formOperations
     if (formOperations.isSaveDraftAllowed(state)) {
@@ -120,7 +129,7 @@ export default class FormStateTransitions {
     return state
   }
 
-  static updateFieldValueInState(fieldId, newValue, state) {
+  static updateFieldValueInState(fieldId: string, newValue: any, state: any) {
     const field = FormUtil.findField(state.form, fieldId)
     if (!field) {
       console.log('Warning: field "' + fieldId + '" not found in state to update it with new value ', newValue ,
@@ -132,20 +141,20 @@ export default class FormStateTransitions {
     FormBranchGrower.expandGrowingFieldSetIfNeeded(state, fieldUpdate)
   }
 
-  onAttachmentUploadCompleted(state, responseFromServer) {
+  onAttachmentUploadCompleted(state: any, responseFromServer: any) {
     const formOperations = state.extensionApi.formOperations
     const fieldId = responseFromServer["field-id"]
     state.saveStatus.attachments[fieldId] = responseFromServer
     const placeHolderValue = responseFromServer.filename
     FormStateTransitions.updateFieldValueInState(fieldId, placeHolderValue, state)
-    LocalStorage.save(formOperations.createUiStateIdentifier, state, {})
+    LocalStorage.save(formOperations.createUiStateIdentifier, state)
 
     state.saveStatus.attachmentUploadsInProgress[fieldId] = false
     this.refreshStateFromServer(this, state)
     return state
   }
 
-  refreshStateFromServer(self, state) {
+  refreshStateFromServer(self: FormStateTransitions, state: any) {
     const query = queryString.parse(location.search)
     const urlContent = {parsedQuery: query, location: location}
     const formOperations = state.extensionApi.formOperations
@@ -154,7 +163,7 @@ export default class FormStateTransitions {
     })
   }
 
-  onRemoveAttachment(state, fieldOfFile) {
+  onRemoveAttachment(state: any, fieldOfFile: Field) {
     const formOperations = state.extensionApi.formOperations
     if (formOperations.isSaveDraftAllowed(state)) {
       const url = formOperations.urlCreator.attachmentDeleteUrl(state, fieldOfFile)
@@ -176,36 +185,36 @@ export default class FormStateTransitions {
     return state
   }
 
-  onAttachmentRemovalCompleted(state, fieldOfRemovedFile) {
+  onAttachmentRemovalCompleted(state: any, fieldOfRemovedFile: Field) {
     const formOperations = state.extensionApi.formOperations
     const fieldId = fieldOfRemovedFile.id
     state.saveStatus.attachments[fieldId] = undefined
     FormStateTransitions.updateFieldValueInState(fieldId, "", state)
     state.saveStatus.attachmentUploadsInProgress[fieldId] = false
-    LocalStorage.save(formOperations.createUiStateIdentifier, state, {})
+    LocalStorage.save(formOperations.createUiStateIdentifier, state)
     this.refreshStateFromServer(this, state)
     return state
   }
 
-  onFieldValidation(state, validation) {
+  onFieldValidation(state: any, validation: any) {
     if (state.extensionApi.formOperations.isNotFirstEdit(state)) {
       state.form.validationErrors = state.form.validationErrors.merge({[validation.id]: validation.validationErrors})
     }
     return state
   }
 
-  onChangeLang(state, lang) {
+  onChangeLang(state: any, lang: Language) {
     state.configuration.lang = lang
     return state
   }
 
-  static handleAttachmentSaveError(msgKey, error, translations, lang, msgKeyValues) {
+  static handleAttachmentSaveError(msgKey: string, error: any, translations: any, lang: Language, msgKeyValues?: Record<string, any>) {
     console.warn(`Handle attachment ${msgKey}`, error)
     const translator = new Translator(translations.errors)
     alert(translator.translate(msgKey, lang, undefined, msgKeyValues))
   }
 
-  static handleUnexpectedServerError(dispatcher, events, method, url, error, serverOperation) {
+  static handleUnexpectedServerError(dispatcher: Dispatcher, events: FormEvents, method: any, url: string, error: any, serverOperation: ServerOperation) {
     console.error(`Error in ${serverOperation}, ${method} ${url}`, error)
     if (serverOperation === serverOperations.submit) {
       dispatcher.push(events.serverError, {error: "unexpected-submit-error"})
@@ -213,13 +222,13 @@ export default class FormStateTransitions {
       dispatcher.push(events.serverError, {error: "unexpected-save-error"})
     } else if (serverOperation === serverOperations.autoSave) {
       dispatcher.push(events.serverError, {error: "unexpected-save-error"})
-      dispatcher.push(events.initAutoSave)
+      dispatcher.push(events.initAutoSave, {})
     } else if (serverOperation === serverOperations.refuseApplication) {
       dispatcher.push(events.serverError, {error: "unexpected-save-error"})
     }
   }
 
-  static handleServerError(dispatcher, events, error, method, url, serverOperation) {
+  static handleServerError(dispatcher: Dispatcher, events: FormEvents, error: any, method: any, url: string, serverOperation: ServerOperation) {
     if (error.response) {
       const res = error.response
 
@@ -242,7 +251,7 @@ export default class FormStateTransitions {
     FormStateTransitions.handleUnexpectedServerError(dispatcher, events, method, url, error, serverOperation)
   }
 
-  updateOld(state, serverOperation, onSuccessCallback) {
+  updateOld(state: any, serverOperation: ServerOperation, onSuccessCallback?: (state: any) => void) {
     const formOperations = state.extensionApi.formOperations
     const url = serverOperation === serverOperations.submit ? formOperations.urlCreator.submitEntityApiUrl(state) : formOperations.urlCreator.editEntityApiUrl(state)
     const dispatcher = this.dispatcher
@@ -267,7 +276,7 @@ export default class FormStateTransitions {
     return state
   }
 
-  pushSaveCompletedEvent(state, response, onSuccessCallback) {
+  pushSaveCompletedEvent(state: any, response: any, onSuccessCallback?: (state: any) => void) {
     const formOperations = state.extensionApi.formOperations
     const updatedState = _.cloneDeep(state)
     updatedState.saveStatus.savedObject = response
@@ -279,7 +288,7 @@ export default class FormStateTransitions {
     this.dispatcher.push(this.events.saveCompleted, updatedState)
   }
 
-  onSave(state, params) {
+  onSave(state: any, params: any) {
     const onSuccessCallback = params ? params.onSuccessCallback : undefined
     const formOperations = state.extensionApi.formOperations
     if (formOperations.isSaveDraftAllowed(state) && state.saveStatus.changes) {
@@ -288,19 +297,19 @@ export default class FormStateTransitions {
     return state
   }
 
-  onBeforeUnload(state) {
+  onBeforeUnload(state: any) {
     const formOperations = state.extensionApi.formOperations
     if (formOperations.isSaveDraftAllowed(state) && state.saveStatus.changes) {
       return this.updateOld(state, serverOperations.autoSave)
     }
   }
 
-  onInitAutoSave(state) {
+  onInitAutoSave(state: any) {
     this.startAutoSave(state)
     return state
   }
 
-  onSaveCompleted(stateFromUiLoop, stateWithServerChanges) {
+  onSaveCompleted(stateFromUiLoop: any, stateWithServerChanges: any) {
     const formOperations = stateFromUiLoop.extensionApi.formOperations
     const locallyStoredValues = LocalStorage.load(formOperations.createUiStateIdentifier, stateWithServerChanges)
     stateFromUiLoop.saveStatus.changes = !_.isEqual(stateFromUiLoop.saveStatus.values, stateWithServerChanges.saveStatus.values)
@@ -321,17 +330,24 @@ export default class FormStateTransitions {
     return stateFromUiLoop
   }
 
-  onSubmit(state) {
+  onSubmit(state: any) {
     const newState = this.updateOld(state, serverOperations.submit)
-    FormUtil.scrollTo(document.getElementById('container'), 1500)
+    const containerElem = document.getElementById('container')
+    if (!containerElem) {
+      throw Error('Container not found')
+    }
+    FormUtil.scrollTo(containerElem, 1500)
     return newState
   }
 
-  onRemoveField(state, fieldToRemove) {
-    const deleteAttachmentF = field => this.dispatcher.push(this.events.startAttachmentRemoval, field)
+  onRemoveField(state: any, fieldToRemove: Field) {
+    const deleteAttachmentF = (field: Field) => this.dispatcher.push(this.events.startAttachmentRemoval, field)
     const growingParent = FormUtil.findGrowingParent(state.form.content, fieldToRemove.id)
+    if (!growingParent) {
+      throw Error(`Growing parent not found for ${fieldToRemove.id}`)
+    }
     const answersObject = state.saveStatus.values
-    JsUtil.traverseMatching(fieldToRemove, n => { return n.fieldType === "namedAttachment"}, attachmentField => {
+    JsUtil.traverseMatching<Field>(fieldToRemove, n => { return n.fieldType === "namedAttachment"}, attachmentField => {
       deleteAttachmentF(attachmentField)
     })
     InputValueStorage.deleteValue(growingParent, answersObject, fieldToRemove.id)
@@ -342,7 +358,7 @@ export default class FormStateTransitions {
     return state
   }
 
-  onServerError(state, serverErrors) {
+  onServerError(state: any, serverErrors: any) {
     if(serverErrors.error === "save-not-allowed") {
       window.location.href = state.extensionApi.formOperations.urlCreator.existingSubmissionPreviewUrl(
         state.avustushaku.id,
@@ -359,7 +375,7 @@ export default class FormStateTransitions {
     return state
   }
 
-  onRefuseApplication(state, comment, onSuccessCallback) {
+  onRefuseApplication(state: any, comment: string) {
     const formOperations = state.extensionApi.formOperations
     const url = formOperations.urlCreator.refuseApplicationApiUrl(state)
     const dispatcher = this.dispatcher
@@ -368,7 +384,7 @@ export default class FormStateTransitions {
     state.saveStatus.saveInProgress = true
     HttpUtil.put(url, {comment: comment})
       .then(function(response) {
-        self.pushSaveCompletedEvent(state, response, onSuccessCallback)
+        self.pushSaveCompletedEvent(state, response)
       })
       .catch(function(error) {
         FormStateTransitions.handleServerError(
@@ -382,13 +398,13 @@ export default class FormStateTransitions {
     return state
   }
 
-  onApplicationRefused(state) {
+  onApplicationRefused(state: any) {
     state.saveStatus.savedObject.refused = true
     return state
   }
 
 
-onModifyApplicationContacts(state, onSuccessCallback){
+onModifyApplicationContacts(state: any, onSuccessCallback: any){
   const formOperations = state.extensionApi.formOperations
   const url = formOperations.urlCreator.modifyContactsApiUrl(state)
   const dispatcher = this.dispatcher

@@ -7,10 +7,7 @@ import { Field, FieldType } from '../va/types'
 type FieldOrArray = Field | Field[] | ImmutableArray<Field>
 
 export default class FormUtil {
-  static scrollTo(element: Element, duration: number, afterScroll: () => any) {
-    if(!afterScroll) {
-      afterScroll = function(){}
-    }
+  static scrollTo(element: Element, duration: number, afterScroll?: () => any) {
     const aboutSame = function(current: number, target: number) {
       return Math.abs(current - target) < 1
     }
@@ -18,7 +15,7 @@ export default class FormUtil {
     const offsetFromTop = document.getElementById("container")?.getBoundingClientRect().top as number + startScrollPos
     const targetScrollPos = element.getBoundingClientRect().top + startScrollPos - offsetFromTop
     if (aboutSame(startScrollPos, targetScrollPos)) {
-      afterScroll()
+      afterScroll?.()
       return
     }
     const diff = targetScrollPos - startScrollPos
@@ -30,7 +27,7 @@ export default class FormUtil {
       window.scrollTo (0, nextScrollPos)
       if(aboutSame(nextScrollPos, targetScrollPos)) {
         clearInterval(scrollInterval)
-        afterScroll()
+        afterScroll?.()
       }
     },10)
   }
@@ -92,7 +89,7 @@ export default class FormUtil {
 
   static findGrowingParent(formContent: Field[], fieldId: string) {
     const allGrowingFieldsets = JsUtil.flatFilter(formContent, (n: Field) => n.fieldType === "growingFieldset")
-    return JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
+    return JsUtil.findJsonNodeContainingId<Field>(allGrowingFieldsets, fieldId)
   }
 
   static withOutIndex(id: string) {
