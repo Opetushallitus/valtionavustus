@@ -2,11 +2,11 @@ import * as xlsx from "xlsx"
 import * as path from "path"
 import * as yup from "yup"
 import axios from "axios"
+import Puppeteer from "puppeteer"
 import {
   Browser,
   ElementHandle,
   Frame,
-  launch,
   Page,
   WaitForOptions,
   WaitForSelectorOptions
@@ -173,7 +173,7 @@ export async function pollUntilNewHakemusEmailArrives(avustushakuID: number): Pr
 
 export function mkBrowser() {
   const headless = process.env['HEADLESS'] === 'true'
-  return launch({
+  return Puppeteer.launch({
     args: headless ? ["--no-sandbox", "--disable-setuid-sandbox"] : [],
     slowMo: 0,
     headless: headless,
