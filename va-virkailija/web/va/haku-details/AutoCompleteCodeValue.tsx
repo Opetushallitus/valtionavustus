@@ -44,6 +44,7 @@ export default class AutocompleteCodeValue extends Component<AutoCompleteCodeVal
         getOptionValue={this.getOptionValue}
         value={this.props.selectedValue as VaCodeValue}
         backspaceRemovesValue={true}
+        isOptionDisabled={(option => Boolean(option.hidden))}
         components={{ Option, SingleValue, NoOptionsMessage }}
       />
     )
@@ -56,11 +57,15 @@ interface OptionProps extends SingleValueProps {
 }
 
 function Option({data, selectOption, style}: OptionProps) {
+  const classNames = Boolean(data.hidden) ?
+      'Select-input name-option-renderer code-value-renderer disabled' :
+      'Select-input name-option-renderer code-value-renderer'
+
   const onChange = () => selectOption(data)
 
   return (
     <div
-      className="Select-input name-option-renderer code-value-renderer"
+      className={classNames}
       style={style}
       onClick={onChange}
       data-test-id={data.code}>
@@ -75,8 +80,10 @@ interface SingleValueProps {
 }
 
 function SingleValue({ data }: SingleValueProps) {
+  const classNames = Boolean(data.hidden) ? 'code-value-renderer disabled' : 'code-value-renderer'
+
   return (
-    <div className="code-value-renderer">
+    <div className={classNames}>
       <span>{data.code}</span>
       <span>{data["code-value"]}</span>
     </div>

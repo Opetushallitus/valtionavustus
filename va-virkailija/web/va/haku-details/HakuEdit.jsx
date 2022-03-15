@@ -22,9 +22,9 @@ export default class HakuEdit extends Component {
     const allowAllHakuEdits = userHasEditPrivilege && (avustushaku.status === "new" || avustushaku.status === "draft")
     const allowNondisruptiveHakuEdits = userHasEditPrivilege && (allowAllHakuEdits || avustushaku.phase === "current" || avustushaku.phase === "upcoming")
     const userHasEditMyHakuRolePrivilege = avustushaku.privileges && avustushaku.privileges["edit-my-haku-role"]
-    const selectedValueProject = this.props.codeOptions.filter(k => k.id===avustushaku["project-id"] && !k.hidden)[0] || ""
-    const selectedValueOperation = this.props.codeOptions.filter(k => k.id===avustushaku["operation-id"] && !k.hidden)[0] || ""
-    const selectedValueOperationalUnit = this.props.codeOptions.filter(k => k.id===avustushaku["operational-unit-id"] && !k.hidden)[0] || ""
+    const selectedValueProject = this.props.codeOptions.filter(k => k.id===avustushaku["project-id"])[0] || ""
+    const selectedValueOperation = this.props.codeOptions.filter(k => k.id===avustushaku["operation-id"])[0] || ""
+    const selectedValueOperationalUnit = this.props.codeOptions.filter(k => k.id===avustushaku["operational-unit-id"])[0] || ""
     const helpTexts = this.props.helpTexts
 
     const onChangeListener = (target, value) => {
@@ -96,11 +96,8 @@ export default class HakuEdit extends Component {
               controller={controller}
               avustushaku={avustushaku}
               onChange={onChange}
-              codeOptions={
-                this.props.codeOptions.filter(
-                  k => k["value-type"] === "operational-unit" && !k.hidden)
-              }
-              selectedValue={selectedValueOperationalUnit}/>
+              codeOptions={this.props.codeOptions.filter(k => k["value-type"] === "operational-unit")}
+              selectedValue={selectedValueOperationalUnit} />
           </div>
           <div className="editor-row-element" data-test-id="code-value-dropdown__project">
             <h3 className="required">Projekti <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___projekti"]} /></h3>
@@ -110,11 +107,8 @@ export default class HakuEdit extends Component {
               controller={controller}
               avustushaku={avustushaku}
               onChange={onChange}
-              codeOptions={
-                this.props.codeOptions.filter(
-                  k => k["value-type"] === "project" && !k.hidden)
-              }
-              selectedValue={selectedValueProject}/>
+              codeOptions={this.props.codeOptions.filter(k => k["value-type"] === "project")}
+              selectedValue={selectedValueProject} />
           </div>
           <div className="editor-row-element" data-test-id="code-value-dropdown__operation">
             <h3 className="required">Toiminto <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___toiminto"]} /></h3>
@@ -124,11 +118,8 @@ export default class HakuEdit extends Component {
               controller={controller}
               avustushaku={avustushaku}
               onChange={onChange}
-              codeOptions={
-                this.props.codeOptions.filter(
-                  k => k["value-type"] === "operation" && !k.hidden)
-              }
-              selectedValue={selectedValueOperation}/>
+              codeOptions={this.props.codeOptions.filter(k => k["value-type"] === "operation")}
+              selectedValue={selectedValueOperation} />
           </div>
         </div>
         <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} helpTexts={helpTexts} />
