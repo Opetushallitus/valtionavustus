@@ -9,7 +9,7 @@ import VaHakemusRegisterNumber from 'soresu-form/web/va/VaHakemusRegisterNumber.
 import VaChangeRequest from 'soresu-form/web/va/VaChangeRequest.jsx'
 import { mapAnswersWithMuutoshakemusData } from 'soresu-form/web/va/MuutoshakemusMapper'
 
-import VaFormTopbar from './VaFormTopbar.jsx'
+import VaFormTopbar from './VaFormTopbar.tsx'
 import VaOldBrowserWarning from './VaOldBrowserWarning.jsx'
 
 import GrantRefuse from './GrantRefuse.jsx'

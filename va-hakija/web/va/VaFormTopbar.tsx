@@ -1,19 +1,26 @@
 import React from 'react'
 import _ from 'lodash'
 
-import LocalizedString from 'soresu-form/web/form/component/LocalizedString.tsx'
+import LocalizedString from 'soresu-form/web/form/component/LocalizedString'
 import Translator from 'soresu-form/web/form/Translator'
 
-import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo.tsx'
+import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo'
 
-import TextButton from 'soresu-form/web/form/component/TextButton.tsx'
+import TextButton from 'soresu-form/web/form/component/TextButton'
 import FormSaveStatus from 'soresu-form/web/form/component/FormSaveStatus.jsx'
 import FormErrorSummary from 'soresu-form/web/form/component/FormErrorSummary.jsx'
 import ServerError from 'soresu-form/web/form/component/ServerError.jsx'
+import FormController from "soresu-form/web/form/FormController";
 
-export default class VaFormTopbar extends React.Component {
-  render() {
-    const {controller, state, hakemusType, isExpired} = this.props
+interface Props {
+  controller: FormController
+  state: any
+  hakemusType: 'loppuselvitys' | 'valiselvitys' | 'hakemus'
+  isExpired: boolean
+}
+
+const VaFormTopbar = (props: Props) => {
+    const {controller, state, hakemusType, isExpired} = props
     const saveStatus = state.saveStatus
     const configuration = state.configuration
     const avustushaku = state.avustushaku
@@ -38,9 +45,6 @@ export default class VaFormTopbar extends React.Component {
       lang,
       state.token
     )
-    const openPreview = function() {
-      window.open(previewUrl, "preview")
-    }
     const isNormalEdit = () => _.includes(["new", "draft","submitted"], _.get(saveStatus.savedObject, "status"))
     const isChangeRequestResponse = () => "pending_change_request" === _.get(saveStatus.savedObject, "status")
     const isInVirkailijaEditMode = () => "officer_edit" === _.get(saveStatus.savedObject, "status")
@@ -131,5 +135,6 @@ export default class VaFormTopbar extends React.Component {
         <span hidden={true} id="pending-changes">{controller.hasPendingChanges(state) ? "true" : "false"}</span>
       </section>
     )
-  }
 }
+
+export default VaFormTopbar
