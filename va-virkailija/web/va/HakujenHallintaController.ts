@@ -852,7 +852,7 @@ export default class HakujenHallintaController {
     dispatcher.push(events.createHaku, baseHaku)
   }
 
-  onChangeListener(avustushaku: Avustushaku, field: {id: string}, newValue: string | null) {
+  onChangeListener(avustushaku: Avustushaku, field: {id: string}, newValue: string | number | null) {
     dispatcher.push(events.updateField, {avustushaku: avustushaku, field: field, newValue: newValue})
   }
 
