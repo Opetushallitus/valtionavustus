@@ -13,8 +13,11 @@ export function VirkailijaValiselvitysPage(page: Page) {
     await page.waitForSelector("text=Lähetetty väliselvityksen hyväksyntä")
   }
 
+
+
   return {
     acceptVäliselvitys,
     navigateToValiselvitysTab,
+    linkToHakemus: page.locator('text="Linkki lomakkeelle"')
   }
 }

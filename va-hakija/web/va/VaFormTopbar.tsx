@@ -58,7 +58,11 @@ const VaFormTopbar = (props: Props) => {
   const hasEnded = avustushaku.phase === "ended"
   const topicKey = `heading-${hakemusType}`
   const isHakemus = hakemusType === "hakemus"
-
+  const selvitysUpdateable = saveStatus?.savedObject?.["selvitys-updatable"]
+  const isValiselvitys = hakemusType === 'valiselvitys'
+  // selvitys-updatable can be undefined, we only care if its false
+  const valiselvitysNotUpdateable = isValiselvitys && selvitysUpdateable === false
+  const previewOrValiselvitysNotUpdateable = preview || valiselvitysNotUpdateable
   return(
     <section id="topbar">
       <div id="top-container">
@@ -72,7 +76,7 @@ const VaFormTopbar = (props: Props) => {
             </h1>
             <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang} hakemusType={hakemusType}/>
           </div>
-          {!preview && (
+          {!previewOrValiselvitysNotUpdateable && (
             <div id="form-controls">
               {isNormalEdit() && (
                 <div className="form-control soresu-tooltip soresu-tooltip-down">
@@ -105,7 +109,7 @@ const VaFormTopbar = (props: Props) => {
               {isHakemus && hasEnded && (
                 <LocalizedString htmlId="avustushaku-has-ended-message" translations={translations.form} translationKey="has-ended" lang={lang} />
               )}
-              {!isHakemus && isExpired ? (
+              {(!isHakemus && isExpired) || valiselvitysNotUpdateable && (
                 <div>
                   <LocalizedString translations={translations.form}
                                    translationKey="form-is-expired"
@@ -118,13 +122,13 @@ const VaFormTopbar = (props: Props) => {
                                           "form-middle" : "form-final",
                                          lang)}}/>
                 </div>
-                ) : null}
+                )}
               <ServerError serverError={saveStatus.serverError} translations={translations.errors} lang={lang}/>
             </div>
-            {!preview && (
+            {!previewOrValiselvitysNotUpdateable && (
               <FormErrorSummary formContent={form.content} controller={controller} validationErrors={validationErrors} translations={translations.errors} lang={lang} />
             )}
-            {!preview && (
+            {!previewOrValiselvitysNotUpdateable && (
               <a className="preview-link" href={previewUrl} target="_blank"><LocalizedString translations={translations.form} translationKey="print-version" lang={lang}/></a>
             )}
           </div>

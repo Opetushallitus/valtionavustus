@@ -6,6 +6,7 @@ import { väliselvitysTest } from '../../fixtures/väliselvitysTest'
 import { getValiselvitysEmails } from '../../../test/test-util'
 import { getHakemusTokenAndRegisterNumber, getValiselvitysSubmittedNotificationEmails, lastOrFail } from '../../utils/emails'
 import { HAKIJA_URL } from '../../utils/constants'
+import {HakijaSelvitysPage} from "../../pages/hakijaSelvitysPage";
 
 test.describe('Väliselvitys', () => {
   väliselvitysTest('väliselvitys submitted notification is sent', async ({ page, acceptedHakemus: { hakemusID }, väliselvitysSubmitted }) => {
@@ -41,7 +42,8 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
 
   väliselvitysTest(
     'väliselvitys can be accepted',
-    async ({ page, avustushakuID , acceptedHakemus, väliselvitysSubmitted: { userKey }}) => {
+    async ({ context, page, avustushakuID , acceptedHakemus, väliselvitysSubmitted: { userKey }}) => {
+
       const arviointi = new HakemustenArviointiPage(page)
 
       await test.step('väliselvitys is tarkastamatta', async () => {
@@ -49,9 +51,20 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
         expect(await arviointi.väliselvitysStatus(acceptedHakemus.hakemusID)).toEqual("Tarkastamatta")
       })
 
+      const valiselvitysPage = VirkailijaValiselvitysPage(page)
+      await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
+      await test.step('hakija could still edit väliselvitys', async () => {
+        const [newPage] = await Promise.all([
+          context.waitForEvent('page'),
+          valiselvitysPage.linkToHakemus.click()
+        ])
+        const hakijaSelvitysPage = HakijaSelvitysPage(newPage)
+        await hakijaSelvitysPage.valiselvitysWarning.waitFor({state: "detached"})
+        await hakijaSelvitysPage.submitButton.isEnabled()
+        await hakijaSelvitysPage.page.close()
+      })
+
       await test.step('tarkasta väliselvitys', async () => {
-        const valiselvitysPage = VirkailijaValiselvitysPage(page)
-        await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
         await page.waitForSelector('[data-test-id="selvitys-email"]')
         await valiselvitysPage.acceptVäliselvitys()
       })
@@ -60,6 +73,17 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
         const emails = await getValiselvitysEmails(acceptedHakemus.hakemusID)
         const expected = ["erkki.esimerkki@example.com", "akaan.kaupunki@akaa.fi"]
         expect(emails[0]["to-address"].every(addr => expected.includes(addr))).toBeTruthy()
+      })
+
+      await test.step('väliselvitys no longer editable', async () => {
+        const [newPage] = await Promise.all([
+          context.waitForEvent('page'),
+          valiselvitysPage.linkToHakemus.click()
+        ])
+        const hakijaSelvitysPage = HakijaSelvitysPage(newPage)
+        await hakijaSelvitysPage.valiselvitysWarning.waitFor({state: "attached"})
+        await hakijaSelvitysPage.submitButton.waitFor({state: 'detached'})
+        await hakijaSelvitysPage.page.close()
       })
 
       await test.step('väliselvitys is hyväksytty', async () => {

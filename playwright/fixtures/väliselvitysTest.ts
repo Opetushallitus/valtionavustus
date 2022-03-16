@@ -1,8 +1,10 @@
+import { expect } from '@playwright/test'
 import { muutoshakemusTest } from './muutoshakemusTest'
 import { expectToBeDefined } from '../utils/util'
 import { dummyPdfPath, VIRKAILIJA_URL } from '../utils/constants'
 import { VirkailijaValiselvitysPage } from '../pages/virkailijaValiselvitysPage'
 import { navigate } from '../utils/navigate'
+import {HakijaSelvitysPage} from "../pages/hakijaSelvitysPage";
 
 type VäliselvitysFixtures = {
   väliselvityspyyntöSent: {}
@@ -32,26 +34,30 @@ export const väliselvitysTest = muutoshakemusTest.extend<VäliselvitysFixtures>
       const väliselvitysFormUrl = await page.getAttribute('[data-test-id="selvitys-link"]', 'href')
       if (!väliselvitysFormUrl) throw Error("valiselvitys form url not found")
       await navigate(page, väliselvitysFormUrl)
+      const hakijaSelvitysPage = HakijaSelvitysPage(page)
+      await hakijaSelvitysPage.organization.fill("Avustuksen saajan nimi")
+      await hakijaSelvitysPage.projectName.fill("Hankkeen nimi")
 
-      await page.fill(`[name='organization']`, "Avustuksen saajan nimi")
-      await page.fill(`[name='project-name']`, "Hankkeen nimi")
+      await hakijaSelvitysPage.projectGoal.fill("Hankkeen/toiminnan tavoite")
+      await hakijaSelvitysPage.projectActivity.fill("Toiminta, jolla tavoitteeseen on pyritty")
+      await hakijaSelvitysPage.projectResult.fill("Konkreettiset tulokset, jotka tavoitteen osalta saavutettiin")
 
-      await page.fill(`[name='project-description.project-description-1.goal']`, "Hankkeen/toiminnan tavoite")
-      await page.fill(`[name='project-description.project-description-1.activity']`, "Toiminta, jolla tavoitteeseen on pyritty")
-      await page.fill(`[name='project-description.project-description-1.result']`, "Konkreettiset tulokset, jotka tavoitteen osalta saavutettiin")
+      await hakijaSelvitysPage.textArea1.fill("Miten hankkeen toimintaa, tuloksia ja vaikutuksia on arvioitu?")
+      await hakijaSelvitysPage.textArea3.fill("Miten hankkeesta/toiminnasta on tiedotettu?")
 
-      await page.fill(`[name='textArea-1']`, "Miten hankkeen toimintaa, tuloksia ja vaikutuksia on arvioitu?")
-      await page.fill(`[name='textArea-3']`, "Miten hankkeesta/toiminnasta on tiedotettu?")
+      await hakijaSelvitysPage.outcomeRadioBtn.click()
+      await hakijaSelvitysPage.outcomeDescription.fill("Kuvaus")
+      await hakijaSelvitysPage.outcomeAddress.fill("Saatavuustiedot, www-osoite tms.")
+      await hakijaSelvitysPage.goodPracticesRadioBtn.click()
+      await hakijaSelvitysPage.textArea4.fill("Lisätietoja")
+      await hakijaSelvitysPage.firstAttachment.setInputFiles(dummyPdfPath)
 
-      await page.click("label[for='project-outcomes.project-outcomes-1.outcome-type.radio.1']")
-      await page.fill(`[name='project-outcomes.project-outcomes-1.description']`, "Kuvaus")
-      await page.fill(`[name='project-outcomes.project-outcomes-1.address']`, "Saatavuustiedot, www-osoite tms.")
-      await page.click("label[for='radioButton-good-practices.radio.1']")
-      await page.fill(`[name='textArea-4']`, "Lisätietoja")
-      await page.setInputFiles("[name='namedAttachment-0']", dummyPdfPath)
-
-      await page.click('button#submit:not([disabled])')
-      await page.waitForSelector(`#submit:has-text("Väliselvitys lähetetty")`)
+      await hakijaSelvitysPage.valiselvitysWarning.waitFor({state: 'detached'})
+      await expect(hakijaSelvitysPage.submitButton).toHaveText("Lähetä käsiteltäväksi")
+      await hakijaSelvitysPage.submitButton.click()
+      await expect(hakijaSelvitysPage.submitButton).toHaveText("Väliselvitys lähetetty")
+      await hakijaSelvitysPage.submitButton.isDisabled()
+      await hakijaSelvitysPage.valiselvitysWarning.waitFor({state: 'detached'})
 
       userKey = new URL(page.url()).searchParams.get('valiselvitys')
     })
