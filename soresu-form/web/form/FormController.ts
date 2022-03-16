@@ -9,11 +9,11 @@ import VaPreviewComponentFactory
   from "soresu-form/web/va/VaPreviewComponentFactory";
 import VaSyntaxValidator from "soresu-form/web/va/VaSyntaxValidator";
 import {
-  FormOperations,
-  InitialValues,
+  FormOperations, InitialStateTemplate,
+  InitialValues, StateLoopState,
   UrlContent
 } from "soresu-form/web/form/types/Form";
-import {Field, Language} from "soresu-form/web/va/types";
+import {Field, Form, Language} from "soresu-form/web/va/types";
 
 const dispatcher = new Dispatcher()
 
@@ -42,8 +42,8 @@ const events = {
 export type FormEvents = typeof events
 
 interface FormControllerProps {
-  initialStateTemplateTransformation: any
-  onInitialStateLoaded: (initialState: any) => void
+  initialStateTemplateTransformation: (initialState: InitialStateTemplate) => StateLoopState
+  onInitialStateLoaded: (initialState: StateLoopState) => void
   formP: EventStream<any>
   customComponentFactory: VaComponentFactory
   customPreviewComponentFactory: VaPreviewComponentFactory
@@ -51,10 +51,9 @@ interface FormControllerProps {
 }
 
 export default class FormController {
-
-  initialStateTemplateTransformation: any;
-  onInitialStateLoaded: (initialState: any) => void;
-  formP: EventStream<any>;
+  initialStateTemplateTransformation: (initialState: InitialStateTemplate) => StateLoopState;
+  onInitialStateLoaded: (initialState: StateLoopState) => void;
+  formP: EventStream<Form>;
   customComponentFactory: VaComponentFactory;
   customPreviewComponentFactory: VaPreviewComponentFactory;
   customFieldSyntaxValidator: typeof VaSyntaxValidator;
@@ -91,7 +90,7 @@ export default class FormController {
     dispatcher.push(events.submit, {})
   }
 
-  hasPendingChanges(state: any) {
+  hasPendingChanges(state: StateLoopState) {
     return state.saveStatus.changes || state.saveStatus.saveInProgress
   }
 
@@ -99,12 +98,12 @@ export default class FormController {
     dispatcher.push(events.updateField, createFieldUpdate(field, newValue, this.customFieldSyntaxValidator))
   }
 
-  createAttachmentDownloadUrl(state: any, field: Field) {
+  createAttachmentDownloadUrl(state: StateLoopState, field: Field) {
     const formOperations = state.extensionApi.formOperations
     return formOperations.urlCreator.attachmentDownloadUrl(state, field)
   }
 
-  createOrganisationInfoUrl(state: any) {
+  createOrganisationInfoUrl(state: StateLoopState) {
     const formOperations = state.extensionApi.formOperations
     return formOperations.urlCreator.organisationInfoUrl(state)
   }
@@ -125,7 +124,7 @@ export default class FormController {
     dispatcher.push(events.fieldValidation, {id: field.id, validationErrors: SyntaxValidator.validateSyntax(field, value, this.customFieldSyntaxValidator)})
   }
 
-  isSaveDraftAllowed(state: any) {
+  isSaveDraftAllowed(state: StateLoopState) {
     const formOperations = state.extensionApi.formOperations
     return formOperations.isSaveDraftAllowed(state)
   }
@@ -160,7 +159,7 @@ export default class FormController {
     return this.customPreviewComponentFactory.createComponent(componentProps)
   }
 
-  getCustomComponentProperties(state: any) {
+  getCustomComponentProperties(state: StateLoopState) {
     return this.customComponentFactory ? this.customComponentFactory.getCustomComponentProperties(state) : {}
   }
 

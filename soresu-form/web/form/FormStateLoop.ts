@@ -12,12 +12,14 @@ import FormRules from './FormRules'
 import Translator from './Translator'
 import {isNumeric} from '../MathUtil'
 import {
-  FormOperations,
-  InitialValues,
+  FormOperations, InitialStateTemplate,
+  InitialValues, SavedObject,
   UrlContent
 } from "soresu-form/web/form/types/Form";
-import {Language} from "soresu-form/web/va/types";
+import {Form, Language} from "soresu-form/web/va/types";
 import FormController, {FormEvents} from "soresu-form/web/form/FormController";
+import {EventStream} from "baconjs";
+import {Answers} from "../../../playwright/utils/types";
 
 export default class FormStateLoop {
   private dispatcher: Dispatcher;
@@ -27,7 +29,7 @@ export default class FormStateLoop {
     this.events = events
   }
 
-  static initDefaultValues(values: any, initialValues: any, formSpecificationContent: any, lang: Language) {
+  static initDefaultValues(values: Answers | {} | undefined, initialValues: any, formSpecificationContent: any, lang: Language) {
     function determineInitialValue(field: any) {
       if (field.id in initialValues) {
         return initialValues[field.id]
@@ -72,7 +74,7 @@ export default class FormStateLoop {
     const formP = controller.formP.map(Immutable)
     const lang = formOperations.chooseInitialLanguage(urlContent)
     const initialValuesP = getInitialFormValuesPromise(formOperations, formP, initialValues, savedObjectP, lang)
-    const initialFormStateP = initialValuesP.combine(formP, function(values: any, form: any) {
+    const initialFormStateP = initialValuesP.combine(formP, (values, form) => {
       return FormRules.applyRulesToForm(form,
               {
                 content: form.content.asMutable({deep: true}),
@@ -84,7 +86,7 @@ export default class FormStateLoop {
           HttpUtil.get(formOperations.urlCreator.validateTokenUrl(query.hakemus, query.token)))
         : {valid: false}
 
-    const initialStateTemplate = {
+    const initialStateTemplate: InitialStateTemplate = {
       form: initialFormStateP,
       tokenValidation: tokenValidation,
       saveStatus: {
@@ -118,7 +120,7 @@ export default class FormStateLoop {
     const events = this.events
     const initialState = Bacon.combineTemplate(initialStateTemplate)
 
-    initialState.onValue(function(state) {
+    initialState.onValue(state => {
       dispatcher.push(events.initialState, state)
     })
 
@@ -129,7 +131,7 @@ export default class FormStateLoop {
     })
 
     const stateTransitions = new FormStateTransitions(dispatcher, events)
-    const formFieldValuesP = Bacon.update({},
+    const formFieldValuesP = Bacon.update<FormStateLoop | {}>({},
       [dispatcher.stream(events.initialState), stateTransitions.onInitialState],
       [dispatcher.stream(events.updateField), stateTransitions.onUpdateField],
       [dispatcher.stream(events.fieldValidation),stateTransitions.onFieldValidation],
@@ -151,13 +153,13 @@ export default class FormStateLoop {
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
 
-    function loadSavedObjectPromise(formOperations: FormOperations, urlContent: UrlContent) {
+    function loadSavedObjectPromise(formOperations: FormOperations, urlContent: UrlContent): EventStream<SavedObject | null> {
       if (formOperations.containsExistingEntityId(urlContent)) {
         return Bacon.fromPromise(
           HttpUtil.get(formOperations.urlCreator.loadEntityApiUrl(urlContent))
         )
       }
-      return Bacon.constant(null)
+      return Bacon.once(null)
     }
 
     function loadAttachmentsPromise(formOperations: FormOperations, urlContent: UrlContent) {
@@ -166,11 +168,11 @@ export default class FormStateLoop {
           HttpUtil.get(formOperations.urlCreator.loadAttachmentsApiUrl(urlContent))
         )
       }
-      return Bacon.constant({})
+      return Bacon.once({})
     }
 
-    function getInitialFormValuesPromise(formOperations: FormOperations, formP: any, initialValues: any, savedObjectP: any, lang: Language) {
-      const valuesP = savedObjectP.map(function(savedObject: any) {
+    function getInitialFormValuesPromise(formOperations: FormOperations, formP: EventStream<Immutable.ImmutableObject<Form>>, initialValues: InitialValues, savedObjectP: EventStream<SavedObject | null>, lang: Language) {
+      const valuesP = savedObjectP.map(savedObject => {
         if(savedObject) {
           return formOperations.responseParser.getFormAnswers(savedObject)
         }
@@ -178,9 +180,9 @@ export default class FormStateLoop {
           return {}
         }
       })
-      return valuesP.combine(formP, function(values: any, form: any) {
-        return FormStateLoop.initDefaultValues(values, initialValues, form.content, lang)
-      })
+      return valuesP.combine(formP, (values, form) =>
+        FormStateLoop.initDefaultValues(values, initialValues, form.content, lang)
+      )
     }
   }
 

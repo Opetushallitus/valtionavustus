@@ -81,15 +81,17 @@ interface Oppilaitokset {
 export const ALL_STATUSES = ['unhandled', 'processing', 'plausible', 'rejected', 'accepted'] as const
 export type HakemusArviointiStatus = typeof ALL_STATUSES[number]
 
+export interface Answers {
+  value: Answer[]
+}
+
 export type Arvio = {
   id: number
   status: HakemusArviointiStatus
   "presenter-role-id"?: number
   "budget-granted"?: number
   costsGranted?: number
-  "overridden-answers"?: {
-    value: Answer[]
-  }
+  "overridden-answers"?: Answers
   hasChanges?: boolean
   scoring?: Scoring
   'presentercomment'?: string
