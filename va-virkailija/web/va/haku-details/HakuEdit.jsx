@@ -6,7 +6,7 @@ import DateUtil from 'soresu-form/web/DateUtil'
 import HakuStatus from "../avustushaku/HakuStatus.tsx"
 import HakuRoles from "./HakuRoles.jsx"
 import EducationLevels from "./EducationLevels.jsx"
-import AutoCompleteCodeValue from "./AutoCompleteCodeValue.jsx"
+import AutoCompleteCodeValue from "./AutoCompleteCodeValue.tsx"
 import HelpTooltip from '../HelpTooltip'
 import WarningBanner from "../WarningBanner";
 
