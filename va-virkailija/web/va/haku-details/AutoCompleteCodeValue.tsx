@@ -83,7 +83,7 @@ function SingleValue({ data }: SingleValueProps) {
   const classNames = Boolean(data.hidden) ? 'code-value-renderer disabled' : 'code-value-renderer'
 
   return (
-    <div className={classNames}>
+    <div className={classNames} data-test-id={`singlevalue-${data["value-type"]}`}>
       <span>{data.code}</span>
       <span>{data["code-value"]}</span>
     </div>

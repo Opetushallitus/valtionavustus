@@ -1,12 +1,7 @@
 import {test as baseTest, expect} from "@playwright/test"
 import {KoodienhallintaPage} from "../pages/koodienHallintaPage";
-import {
-  switchUserIdentityTo,
-  expectToBeDefined
-} from "../utils/util"
-import {
-  navigate
-} from "../utils/navigate"
+import {switchUserIdentityTo, expectToBeDefined} from '../utils/util'
+import {navigate} from '../utils/navigate'
 
 const test = baseTest.extend<{koodienhallintaPage: KoodienhallintaPage}>({
   koodienhallintaPage: async ({page}, use) => {
@@ -15,6 +10,8 @@ const test = baseTest.extend<{koodienhallintaPage: KoodienhallintaPage}>({
     await use(koodienhallintaPage)
   }
 })
+
+const colorDarkGray = 'rgb(153, 146, 144)'
 
 test.describe('Koodienhallinta', () => {
   test.beforeEach(async ({page}) => {
@@ -120,6 +117,8 @@ test.describe('Koodienhallinta', () => {
       const hakujenHallintaPage = await koodienhallintaPage.navigateToHakujenHallintaPage()
       await hakujenHallintaPage.fillCode('operational-unit', codeValues.operationalUnit)
       await expect(hakujenHallintaPage.page.locator(`[data-test-id="${codeValues.operationalUnit}"]`)).toBeVisible()
+
+      await hakujenHallintaPage.selectCodeAndWaitForSave(codeValues.operationalUnit)
     })
 
     await test.step('And virkailija hides the code', async () => {
@@ -131,14 +130,19 @@ test.describe('Koodienhallinta', () => {
         await koodienhallintaPage.assertCodeIsVisible(codeValues.operationalUnit, codeName,false)
       })
 
-      await test.step('the code is displayed as gray in haku editor page dropdown', async () => {
+      await test.step('the code is displayed as gray', async () => {
         const hakujenHallintaPage = await koodienhallintaPage.navigateToHakujenHallintaPage()
-        await hakujenHallintaPage.fillCode('operational-unit', codeValues.operationalUnit)
 
-        const selectableOptionElement = await hakujenHallintaPage.page.waitForSelector(`[data-test-id="${codeValues.operationalUnit}"]`)
-        const selectableOptionStyles = await hakujenHallintaPage.page.evaluate(e => getComputedStyle(e), selectableOptionElement)
-        const darkGray = 'rgb(153, 146, 144)'
-        expect(selectableOptionStyles.color).toEqual(darkGray)
+        await test.step('in haku editor dropdown placeholder', async () => {
+          const styles = await hakujenHallintaPage.getInputPlaceholderCodeStyles('operational-unit')
+          expect(styles.color).toEqual(colorDarkGray)
+        })
+
+        await test.step('in haku editor dropdown options', async () => {
+          await hakujenHallintaPage.fillCode('operational-unit', codeValues.operationalUnit)
+          const styles = await hakujenHallintaPage.getInputOptionCodeStyles(codeValues.operationalUnit)
+          expect(styles.color).toEqual(colorDarkGray)
+        })
       })
 
       await test.step('the code is not visible after navigation', async () => {
@@ -154,13 +158,21 @@ test.describe('Koodienhallinta', () => {
           await koodienhallintaPage.assertCodeIsVisible(codeValues.operationalUnit, codeName,true)
         })
 
-        await test.step('the code is visible in haku editor dropdown', async () => {
+        await test.step('the code is not displayed as gray', async () => {
           const hakujenHallintaPage = await koodienhallintaPage.navigateToHakujenHallintaPage()
-          await hakujenHallintaPage.fillCode('operational-unit', codeValues.operationalUnit)
-          await expect(koodienhallintaPage.page.locator(`[data-test-id="${codeValues.operationalUnit}"]`)).toBeVisible()
+
+          await test.step('in haku editor dropdown placeholder', async () => {
+            const styles = await hakujenHallintaPage.getInputPlaceholderCodeStyles('operational-unit')
+            expect(styles.color).not.toEqual(colorDarkGray)
+          })
+
+          await test.step('in haku editor dropdown options', async () => {
+            await hakujenHallintaPage.fillCode('operational-unit', codeValues.operationalUnit)
+            const styles = await hakujenHallintaPage.getInputOptionCodeStyles(codeValues.operationalUnit)
+            expect(styles.color).not.toEqual(colorDarkGray)
+          })
         })
       })
-
     })
   })
 })

@@ -304,6 +304,24 @@ export class HakujenHallintaPage {
     await this.page.fill(`${this.dropdownSelector(codeType)} > div input`, `${code}`)
   }
 
+  async selectCodeAndWaitForSave(code: string): Promise<void> {
+    await Promise.all([
+      this.page.click(`.Select-input[data-test-id="${code}"]`),
+      this.page.locator('text=Tallennetaan').waitFor(),
+      this.page.locator('text=Kaikki tiedot tallennettu').waitFor(),
+    ])
+  }
+
+  async getInputOptionCodeStyles(code: string): Promise<CSSStyleDeclaration> {
+    const selectableOptionElement = await this.page.waitForSelector(`.Select-input[data-test-id="${code}"]`)
+    return await this.page.evaluate(e => getComputedStyle(e), selectableOptionElement)
+  }
+
+  async getInputPlaceholderCodeStyles(codeType: 'operational-unit' | 'project' | 'operation'): Promise<CSSStyleDeclaration> {
+    const selectableOptionElement = await this.page.waitForSelector(`.code-value-renderer[data-test-id="singlevalue-${codeType}"]`)
+    return await this.page.evaluate(e => getComputedStyle(e), selectableOptionElement)
+  }
+
   async selectTositelaji(value: 'XE' | 'XB'): Promise<void> {
     await this.page.selectOption('select#document-type', value)
   }
