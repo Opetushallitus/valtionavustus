@@ -2,7 +2,7 @@ import {Page, Locator, expect} from "@playwright/test";
 import {navigate} from "../utils/navigate";
 import {randomString} from "../utils/random";
 import {VaCodeValues} from "../utils/types";
-import {FormEditorPage, HakujenHallintaPage} from "./hakujenHallintaPage";
+import {HakujenHallintaPage} from "./hakujenHallintaPage";
 
 type KoodienhallintaTab = 'operational-unit' | 'project' | 'operation'
 

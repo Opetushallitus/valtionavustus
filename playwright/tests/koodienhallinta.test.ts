@@ -131,12 +131,14 @@ test.describe('Koodienhallinta', () => {
         await koodienhallintaPage.assertCodeIsVisible(codeValues.operationalUnit, codeName,false)
       })
 
-      await test.step('the code is not visible in haku editor page dropdown', async () => {
+      await test.step('the code is displayed as gray in haku editor page dropdown', async () => {
         const hakujenHallintaPage = await koodienhallintaPage.navigateToHakujenHallintaPage()
         await hakujenHallintaPage.fillCode('operational-unit', codeValues.operationalUnit)
 
-        const noSelectableOptionsSelector = `${hakujenHallintaPage.dropdownSelector('operational-unit')} [data-test-id=code-value-dropdown__no-options]`
-        await expect(koodienhallintaPage.page.locator(noSelectableOptionsSelector)).toHaveCount(1)
+        const selectableOptionElement = await hakujenHallintaPage.page.waitForSelector(`[data-test-id="${codeValues.operationalUnit}"]`)
+        const selectableOptionStyles = await hakujenHallintaPage.page.evaluate(e => getComputedStyle(e), selectableOptionElement)
+        const darkGray = 'rgb(153, 146, 144)'
+        expect(selectableOptionStyles.color).toEqual(darkGray)
       })
 
       await test.step('the code is not visible after navigation', async () => {
