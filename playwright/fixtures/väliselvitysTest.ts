@@ -42,14 +42,14 @@ export const väliselvitysTest = muutoshakemusTest.extend<VäliselvitysFixtures>
       await hakijaSelvitysPage.projectActivity.fill("Toiminta, jolla tavoitteeseen on pyritty")
       await hakijaSelvitysPage.projectResult.fill("Konkreettiset tulokset, jotka tavoitteen osalta saavutettiin")
 
-      await hakijaSelvitysPage.textArea1.fill("Miten hankkeen toimintaa, tuloksia ja vaikutuksia on arvioitu?")
-      await hakijaSelvitysPage.textArea3.fill("Miten hankkeesta/toiminnasta on tiedotettu?")
+      await hakijaSelvitysPage.textArea(1).fill("Miten hankkeen toimintaa, tuloksia ja vaikutuksia on arvioitu?")
+      await hakijaSelvitysPage.textArea(3).fill("Miten hankkeesta/toiminnasta on tiedotettu?")
 
-      await hakijaSelvitysPage.outcomeRadioBtn.click()
+      await hakijaSelvitysPage.outcomeTypeRadioButtons.report.click()
       await hakijaSelvitysPage.outcomeDescription.fill("Kuvaus")
       await hakijaSelvitysPage.outcomeAddress.fill("Saatavuustiedot, www-osoite tms.")
-      await hakijaSelvitysPage.goodPracticesRadioBtn.click()
-      await hakijaSelvitysPage.textArea4.fill("Lisätietoja")
+      await hakijaSelvitysPage.goodPracticesRadioButtons.no.click()
+      await hakijaSelvitysPage.textArea(4).fill("Lisätietoja")
       await hakijaSelvitysPage.firstAttachment.setInputFiles(dummyPdfPath)
 
       await hakijaSelvitysPage.valiselvitysWarning.waitFor({state: 'detached'})

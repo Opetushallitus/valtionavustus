@@ -11,6 +11,7 @@ import {
 import {
   dummyPdfPath, VIRKAILIJA_URL
 } from "../utils/constants"
+import {HakijaSelvitysPage} from "../pages/hakijaSelvitysPage";
 
 export interface LoppuselvitysFixtures {
   loppuselvityspyyntöSent: {},
@@ -43,28 +44,29 @@ export const loppuselvitysTest = muutoshakemusTest.extend<LoppuselvitysFixtures>
     }
 
     await navigate(page, loppuselvitysFormUrl)
-    await page.waitForSelector('[id="textArea-0"]')
+    const hakijaSelvitysPage = HakijaSelvitysPage(page)
 
-    await clearAndType(page, '[id="textArea-0"]', 'Yhteenveto')
-    await clearAndType(page, '[id="textArea-2"]', 'Työn jako')
-    await clearAndType(page, '[id="project-description.project-description-1.goal"]', 'Tavoite')
-    await clearAndType(page, '[id="project-description.project-description-1.activity"]', 'Toiminta')
-    await clearAndType(page, '[id="project-description.project-description-1.result"]', 'Tulokset')
-    await clearAndType(page, '[id="textArea-1"]', 'Arviointi')
-    await clearAndType(page, '[id="textArea-3"]', 'Tiedotus')
+    await hakijaSelvitysPage.textArea(0).fill('Yhteenveto')
+    await hakijaSelvitysPage.textArea(2).fill('Työn jako')
+    await hakijaSelvitysPage.projectGoal.fill('Tavoite')
+    await hakijaSelvitysPage.projectActivity.fill('Toiminta')
+    await hakijaSelvitysPage.projectResult.fill('Tulokset')
+    await hakijaSelvitysPage.textArea(1).fill('Arviointi')
+    await hakijaSelvitysPage.textArea(3).fill('Tiedotus')
 
-    await page.click('label[for="project-outcomes.project-outcomes-1.outcome-type.radio.0"]')
-    await clearAndType(page, '[id="project-outcomes.project-outcomes-1.description"]', 'Kuvaus')
-    await clearAndType(page, '[id="project-outcomes.project-outcomes-1.address"]', 'Saatavuustiedot')
+    await hakijaSelvitysPage.outcomeTypeRadioButtons.operatingModel.click()
+    await hakijaSelvitysPage.outcomeDescription.fill('Kuvaus')
+    await hakijaSelvitysPage.outcomeAddress.fill('Saatavuustiedot')
 
-    await page.click('label[for="radioButton-good-practices.radio.1"]')
-    await clearAndType(page, '[id="textArea-4"]', 'Lisätietoja')
+    await hakijaSelvitysPage.goodPracticesRadioButtons.no.click()
+    await hakijaSelvitysPage.textArea(4).fill('Lisätietoja')
 
-    await page.setInputFiles('[name="namedAttachment-0"]', dummyPdfPath)
+    await hakijaSelvitysPage.firstAttachment.setInputFiles(dummyPdfPath)
 
-    await page.click('button#submit:not([disabled])')
-    
-    await page.waitForSelector(`#submit:has-text("Loppuselvitys lähetetty")`)
+    await expect(hakijaSelvitysPage.submitButton).toHaveText('Lähetä käsiteltäväksi')
+    await hakijaSelvitysPage.submitButton.click()
+    await expect(hakijaSelvitysPage.submitButton).toHaveText('Loppuselvitys lähetetty')
+    await hakijaSelvitysPage.submitButton.isDisabled()
 
     await use({
       loppuselvitysFormUrl,
