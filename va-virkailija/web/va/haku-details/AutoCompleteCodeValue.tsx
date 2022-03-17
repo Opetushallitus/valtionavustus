@@ -1,4 +1,4 @@
-import React, {Component, CSSProperties} from 'react'
+import React, {CSSProperties} from 'react'
 import Select from 'react-select'
 import HakujenHallintaController, {Avustushaku} from '../HakujenHallintaController'
 import {VaCodeValue} from '../types'
@@ -14,41 +14,33 @@ interface AutoCompleteCodeValueProps {
   selectedValue: VaCodeValue | ''
 }
 
-export default class AutocompleteCodeValue extends Component<AutoCompleteCodeValueProps> {
-  constructor(props: AutoCompleteCodeValueProps) {
-    super(props)
-    this.updateValue = this.updateValue.bind(this)
-  }
-
-  updateValue (option: VaCodeValue | null) {
+export default function AutocompleteCodeValue(props: AutoCompleteCodeValueProps) {
+  const {controller, avustushaku, id, codeType, codeOptions, selectedValue} = props
+  const updateValue = (option: VaCodeValue | null) => {
     if (option == null) {
-      this.props.controller.onChangeListener(this.props.avustushaku, {id: this.props.id}, null)
-      this.props.avustushaku[this.props.codeType] = null
+      controller.onChangeListener(avustushaku, {id}, null)
+      avustushaku[codeType] = null
     } else {
-      this.props.controller.onChangeListener(this.props.avustushaku, {id: this.props.id}, option.id)
-      this.props.avustushaku[this.props.codeType] = option.id
+      controller.onChangeListener(avustushaku, {id}, option.id)
+      avustushaku[codeType] = option.id
     }
   }
 
-  getOptionValue(option: VaCodeValue) {
-    return `${option.code} ${option["code-value"]}`
-  }
+  const getOptionValue = (option: VaCodeValue) => `${option.code} ${option["code-value"]}`
 
-  render() {
-    return (
-      <Select
-        getOptionLabel={() => 'code'}
-        placeholder="Valitse listasta"
-        options={this.props.codeOptions}
-        onChange={this.updateValue}
-        getOptionValue={this.getOptionValue}
-        value={this.props.selectedValue as VaCodeValue}
-        backspaceRemovesValue={true}
-        isOptionDisabled={(option => Boolean(option.hidden))}
-        components={{ Option, SingleValue, NoOptionsMessage }}
-      />
-    )
-  }
+  return (
+    <Select
+      getOptionLabel={() => 'code'}
+      placeholder="Valitse listasta"
+      options={codeOptions}
+      onChange={updateValue}
+      getOptionValue={getOptionValue}
+      value={selectedValue as VaCodeValue}
+      backspaceRemovesValue={true}
+      isOptionDisabled={(option => Boolean(option.hidden))}
+      components={{ Option, SingleValue, NoOptionsMessage }}
+    />
+  )
 }
 
 interface OptionProps extends SingleValueProps {
