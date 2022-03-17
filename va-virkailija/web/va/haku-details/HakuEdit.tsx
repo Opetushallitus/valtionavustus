@@ -1,41 +1,54 @@
 import React, { Component } from 'react'
-import _ from 'lodash'
 
 import DateUtil from 'soresu-form/web/DateUtil'
+import { Avustushaku, AvustushakuStatus, AVUSTUSHAKU_STATUSES, HelpTexts } from 'soresu-form/web/va/types'
 
-import HakuStatus from "../avustushaku/HakuStatus.tsx"
+import HakuStatus from "../avustushaku/HakuStatus"
 import HakuRoles from "./HakuRoles.jsx"
-import EducationLevels from "./EducationLevels.jsx"
-import AutoCompleteCodeValue from "./AutoCompleteCodeValue.tsx"
+import EducationLevels from "./EducationLevels"
+import AutoCompleteCodeValue from "./AutoCompleteCodeValue"
 import HelpTooltip from '../HelpTooltip'
-import WarningBanner from "../WarningBanner";
+import WarningBanner from "../WarningBanner"
+import HakujenHallintaController, { SelectedAvustushaku } from '../HakujenHallintaController'
+import { UserInfo, VaCodeValue, VaUserSearch } from '../types'
 
-export default class HakuEdit extends Component {
+type HakuEditProps = {
+  avustushaku: SelectedAvustushaku
+  codeOptions: VaCodeValue[]
+  controller: HakujenHallintaController
+  helpTexts: HelpTexts
+  userInfo: UserInfo
+  vaUserSearch: VaUserSearch
+}
+
+export default class HakuEdit extends Component<HakuEditProps> {
   render() {
-    const controller = this.props.controller
-    const avustushaku = this.props.avustushaku
-    const hasNoPayments = avustushaku.payments &&
-          avustushaku.payments.length === 0
-    const vaUserSearch = this.props.vaUserSearch
-    const userInfo = this.props.userInfo
-    const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
+    const {
+      avustushaku,
+      controller,
+      codeOptions,
+      helpTexts,
+      userInfo,
+      vaUserSearch,
+    } = this.props
+    const hasNoPayments = !!avustushaku.payments?.length
+    const userHasEditPrivilege = !!avustushaku.privileges?.["edit-haku"]
     const allowAllHakuEdits = userHasEditPrivilege && (avustushaku.status === "new" || avustushaku.status === "draft")
     const allowNondisruptiveHakuEdits = userHasEditPrivilege && (allowAllHakuEdits || avustushaku.phase === "current" || avustushaku.phase === "upcoming")
-    const userHasEditMyHakuRolePrivilege = avustushaku.privileges && avustushaku.privileges["edit-my-haku-role"]
-    const selectedValueProject = this.props.codeOptions.filter(k => k.id===avustushaku["project-id"])[0] || ""
-    const selectedValueOperation = this.props.codeOptions.filter(k => k.id===avustushaku["operation-id"])[0] || ""
-    const selectedValueOperationalUnit = this.props.codeOptions.filter(k => k.id===avustushaku["operational-unit-id"])[0] || ""
-    const helpTexts = this.props.helpTexts
+    const userHasEditMyHakuRolePrivilege = !!avustushaku.privileges?.["edit-my-haku-role"]
+    const selectedValueProject = codeOptions.find(k => k.id === avustushaku["project-id"]) || ""
+    const selectedValueOperation = codeOptions.find(k => k.id === avustushaku["operation-id"]) || ""
+    const selectedValueOperationalUnit = codeOptions.find(k => k.id === avustushaku["operational-unit-id"]) || ""
 
-    const onChangeListener = (target, value) => {
+    const onChangeListener = (target: EventTarget & HTMLElement, value: string) => {
       controller.onChangeListener(avustushaku, target, value)
     }
 
-    const onChange = e => {
+    const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
       onChangeListener(e.target, e.target.value)
     }
 
-    const onChangeTrimWs = e => {
+    const onChangeTrimWs = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       onChangeListener(e.target, e.target.value.replace(/\s/g, " "))
     }
 
@@ -55,8 +68,7 @@ export default class HakuEdit extends Component {
           </WarningBanner>}
         <div id="haku-edit-header" className="editor-header">
           <div className="field-register-number">
-            <RegisterNumber controller={controller} avustushaku={avustushaku}
-                            allowAllHakuEdits={allowAllHakuEdits} onChange={onChange} helpTexts={helpTexts}/>
+            <RegisterNumber avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} onChange={onChange} helpTexts={helpTexts}/>
           </div>
          <div className="editor-header-element">
            <CreateHaku controller={controller} avustushaku={avustushaku} helpTexts={helpTexts}/>
@@ -68,8 +80,8 @@ export default class HakuEdit extends Component {
             <tr>
               <td>
                 <textarea id="haku-name-fi"
-                          rows="2"
-                          maxLength="200"
+                          rows={2}
+                          maxLength={200}
                           value={avustushaku.content.name.fi}
                           onChange={onChangeTrimWs}
                           disabled={!allowNondisruptiveHakuEdits}
@@ -77,8 +89,8 @@ export default class HakuEdit extends Component {
               </td>
               <td>
                 <textarea id="haku-name-sv"
-                          rows="2"
-                          maxLength="200"
+                          rows={2}
+                          maxLength={200}
                           value={avustushaku.content.name.sv}
                           onChange={onChangeTrimWs}
                           disabled={!allowNondisruptiveHakuEdits}
@@ -95,8 +107,7 @@ export default class HakuEdit extends Component {
               codeType="operational-unit-id"
               controller={controller}
               avustushaku={avustushaku}
-              onChange={onChange}
-              codeOptions={this.props.codeOptions.filter(k => k["value-type"] === "operational-unit")}
+              codeOptions={codeOptions.filter(k => k["value-type"] === "operational-unit")}
               selectedValue={selectedValueOperationalUnit} />
           </div>
           <div className="editor-row-element" data-test-id="code-value-dropdown__project">
@@ -106,8 +117,7 @@ export default class HakuEdit extends Component {
               codeType="project-id"
               controller={controller}
               avustushaku={avustushaku}
-              onChange={onChange}
-              codeOptions={this.props.codeOptions.filter(k => k["value-type"] === "project")}
+              codeOptions={codeOptions.filter(k => k["value-type"] === "project")}
               selectedValue={selectedValueProject} />
           </div>
           <div className="editor-row-element" data-test-id="code-value-dropdown__operation">
@@ -117,8 +127,7 @@ export default class HakuEdit extends Component {
               codeType="operation-id"
               controller={controller}
               avustushaku={avustushaku}
-              onChange={onChange}
-              codeOptions={this.props.codeOptions.filter(k => k["value-type"] === "operation")}
+              codeOptions={codeOptions.filter(k => k["value-type"] === "operation")}
               selectedValue={selectedValueOperation} />
           </div>
         </div>
@@ -148,14 +157,13 @@ export default class HakuEdit extends Component {
             <h3>Maksatus <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___maksatus"]} direction="left" /></h3>
             <div>
               <div className="haku-edit-field-container">
-                <Maksuerat value={avustushaku.content.multiplemaksuera}
-                           disabled={!allowAllHakuEdits} onChange={onChange}/>
+                <Maksuerat value={avustushaku.content.multiplemaksuera} disabled={!allowAllHakuEdits} onChange={onChange}/>
               </div>
               <div className="haku-edit-field-container">
                 <h3>Hakijan omarahoitusvaatimus <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___hakijan_omarahoitusvaatimus"]} /></h3>
                 <input id="haku-self-financing-percentage" type="number"
                        min="0" max="99" className="percentage" required={true}
-                       maxLength="2" onChange={onChange}
+                       maxLength={2} onChange={onChange}
                        disabled={!allowAllHakuEdits}
                        value={avustushaku.content["self-financing-percentage"]} />
                 <span>%</span>
@@ -164,12 +172,8 @@ export default class HakuEdit extends Component {
             <div title={avustushaku.content.multiplemaksuera &&
                         allowAllHakuEdits && !hasNoPayments ?
                         "Avustuksen maksatuksia on jo luotu, joten arvoja ei voi enää muuttaa"
-                        : null}>
-              <div
-                className={
-                  avustushaku.content.multiplemaksuera && allowAllHakuEdits &&
-                    hasNoPayments ?
-                null : "haku-edit-disabled-form"}>
+                        : undefined}>
+              <div className={avustushaku.content.multiplemaksuera && allowAllHakuEdits && hasNoPayments ? undefined : "haku-edit-disabled-form"}>
                 <div>
                   <label className="haku-edit-radio-button-item">
                     <input type="radio" name="payment-size-limit" value="no-limit"
@@ -255,13 +259,20 @@ export default class HakuEdit extends Component {
   }
 }
 
-class CreateHaku extends React.Component {
+type CreateHakuProps = {
+  avustushaku: Avustushaku
+  controller: HakujenHallintaController
+  helpTexts: HelpTexts
+}
+
+class CreateHaku extends React.Component<CreateHakuProps> {
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
     const helpTexts = this.props.helpTexts
-    function onClick(e) {
+    function onClick(e: React.MouseEvent<HTMLAnchorElement>) {
       controller.createHaku(avustushaku)
+      // @ts-ignore
       e.target.blur()
       e.preventDefault()
     }
@@ -269,14 +280,27 @@ class CreateHaku extends React.Component {
   }
 }
 
-class DateField extends React.Component {
-  constructor(props) {
+type DateFieldProps = {
+  id: string
+  disabled: boolean
+  avustushakuId: number
+  value: string | Date
+  onBlur: (e: React.ChangeEvent<HTMLInputElement>) => void
+}
+
+type DateFieldState = {
+  currentAvustushakuId: number
+  value: string
+}
+
+class DateField extends React.Component<DateFieldProps, DateFieldState> {
+  constructor(props: DateFieldProps) {
     super(props)
     this.state = DateField.initialState(props)
     this.onChange = this.onChange.bind(this)
   }
 
-  static getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps(props: DateFieldProps, state: DateFieldState) {
     if (props.avustushakuId !== state.currentAvustushakuId) {
       return DateField.initialState(props)
     } else {
@@ -284,22 +308,22 @@ class DateField extends React.Component {
     }
   }
 
-  static initialState(props) {
+  static initialState(props: DateFieldProps): DateFieldState {
     return {
       currentAvustushakuId: props.avustushakuId,
       value: DateField.asDateTimeString(props.value)
     }
   }
 
-  onChange(event) {
+  onChange(event: React.ChangeEvent<HTMLInputElement>) {
     this.setState({value: event.target.value})
   }
 
   render() {
     return (
       <input className="date"
-             maxLength="16"
-             size="16"
+             maxLength={16}
+             size={16}
              type="text"
              id={this.props.id}
              onChange={this.onChange}
@@ -309,12 +333,21 @@ class DateField extends React.Component {
     )
   }
 
-  static asDateTimeString(value) {
+  static asDateTimeString(value: string | Date) {
     return DateUtil.asDateString(value) + " " + DateUtil.asTimeString(value)
   }
 }
 
-class SelectionCriteria extends React.Component {
+type TextAreaProps = {
+  allowAllHakuEdits: boolean
+  allowNondisruptiveHakuEdits: boolean
+  avustushaku: Avustushaku
+  controller: HakujenHallintaController
+  helpTexts: HelpTexts
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+}
+
+class SelectionCriteria extends React.Component<TextAreaProps> {
   render() {
     const avustushaku = this.props.avustushaku
     const selectionCriteria = avustushaku.content['selection-criteria']
@@ -328,9 +361,9 @@ class SelectionCriteria extends React.Component {
       const htmlId = "selection-criteria-" + index + "-"
       criteriaItems.push(
         <tr key={index}>
-          <td><textarea onChange={onChange} rows="2" id={htmlId + "fi"} value={selectionCriteria.items[index].fi} disabled={!allowNondisruptiveHakuEdits} /></td>
-          <td><textarea onChange={onChange} rows="2" id={htmlId + "sv"} value={selectionCriteria.items[index].sv} disabled={!allowNondisruptiveHakuEdits} /></td>
-          <td><button type="button" className="remove" onClick={controller.deleteSelectionCriteria(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={!allowAllHakuEdits} /></td>
+          <td><textarea onChange={onChange} rows={2} id={htmlId + "fi"} value={selectionCriteria.items[index].fi} disabled={!allowNondisruptiveHakuEdits} /></td>
+          <td><textarea onChange={onChange} rows={2} id={htmlId + "sv"} value={selectionCriteria.items[index].sv} disabled={!allowNondisruptiveHakuEdits} /></td>
+          <td><button type="button" className="remove" onClick={controller.deleteSelectionCriteria(avustushaku, index)} title="Poista" tabIndex={-1} disabled={!allowAllHakuEdits} /></td>
         </tr>
       )
     }
@@ -347,7 +380,7 @@ class SelectionCriteria extends React.Component {
   }
 }
 
-class FocusArea extends React.Component {
+class FocusArea extends React.Component<TextAreaProps> {
   render() {
     const avustushaku = this.props.avustushaku
     const focusAreas = avustushaku.content['focus-areas']
@@ -361,9 +394,9 @@ class FocusArea extends React.Component {
       const htmlId = "focus-area-" + index + "-"
       focusAreaItems.push(
         <tr key={index}>
-          <td><textarea onChange={onChange} rows="3" id={htmlId + "fi"} value={focusAreas.items[index].fi} disabled={!allowNondisruptiveHakuEdits} /></td>
-          <td><textarea onChange={onChange} rows="3" id={htmlId + "sv"} value={focusAreas.items[index].sv} disabled={!allowNondisruptiveHakuEdits} /></td>
-          <td><button type="button" className="remove" onClick={controller.deleteFocusArea(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={!allowAllHakuEdits} /></td>
+          <td><textarea onChange={onChange} rows={3} id={htmlId + "fi"} value={focusAreas.items[index].fi} disabled={!allowNondisruptiveHakuEdits} /></td>
+          <td><textarea onChange={onChange} rows={3} id={htmlId + "sv"} value={focusAreas.items[index].sv} disabled={!allowNondisruptiveHakuEdits} /></td>
+          <td><button type="button" className="remove" onClick={controller.deleteFocusArea(avustushaku, index)} title="Poista" tabIndex={-1} disabled={!allowAllHakuEdits} /></td>
         </tr>
       )
     }
@@ -380,29 +413,36 @@ class FocusArea extends React.Component {
   }
 }
 
-class HakuType extends React.Component {
+type HakuTypeProps = {
+  hakuType: string
+  disabled: boolean
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  helpTexts: HelpTexts
+}
+
+class HakuType extends React.Component<HakuTypeProps> {
   render() {
     const selectedHakuType = this.props.hakuType
     const isDisabled = this.props.disabled
     const onChange = this.props.onChange
     const helpTexts = this.props.helpTexts
-    const options = _.flatten([
-      {htmlId: "set-haku-type-yleisavustus", value: "yleisavustus", label: "Yleisavustus"},
-      {htmlId: "set-haku-type-eritysavustus", value: "erityisavustus", label: "Erityisavustus"}
-    ].map(spec =>
-      [
-        <input id={spec.htmlId}
-               key={spec.htmlId}
-               type="radio"
-               name="haku-type"
-               value={spec.value}
-               onChange={onChange}
-               checked={spec.value === selectedHakuType}
-               disabled={isDisabled} />,
-        <label key={spec.htmlId + "-label"}
-               htmlFor={spec.htmlId}>{spec.label}</label>
-      ]
-    ))
+    const options = [
+        {htmlId: "set-haku-type-yleisavustus", value: "yleisavustus", label: "Yleisavustus"},
+        {htmlId: "set-haku-type-eritysavustus", value: "erityisavustus", label: "Erityisavustus"}
+      ].map(spec =>
+        [
+          <input id={spec.htmlId}
+                key={spec.htmlId}
+                type="radio"
+                name="haku-type"
+                value={spec.value}
+                onChange={onChange}
+                checked={spec.value === selectedHakuType}
+                disabled={isDisabled} />,
+          <label key={spec.htmlId + "-label"}
+                htmlFor={spec.htmlId}>{spec.label}</label>
+        ]
+      ).flat()
     return (
       <div id="set-haku-type">
         <h3>Hakutyyppi <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___hakutyyppi"]} direction="left" /></h3>
@@ -414,13 +454,20 @@ class HakuType extends React.Component {
   }
 }
 
-class AcademySize extends React.Component {
+type AcademySizeProps = {
+  value: boolean
+  disabled: boolean
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  helpTexts: HelpTexts
+}
+
+class AcademySize extends React.Component<AcademySizeProps> {
   render() {
-    const initialValue = this.props.value === true
+    const initialValue = this.props.value ? "true" : "false"
     const onChange = this.props.onChange
     const isDisabled = this.props.disabled
     const options = []
-    const values = [false, true]
+    const values = ["false", "true"]
     const helpTexts = this.props.helpTexts
     for (let i=0; i < values.length; i++) {
       const value = values[i]
@@ -437,7 +484,7 @@ class AcademySize extends React.Component {
         />
       )
       options.push(
-        <label key={htmlId + "-label"} htmlFor={htmlId}>{value ? "Valmistelija lisää oppilaitoksen koon" : "Ei käytössä"}</label>
+        <label key={htmlId + "-label"} htmlFor={htmlId}>{value === "true" ? "Valmistelija lisää oppilaitoksen koon" : "Ei käytössä"}</label>
       )
     }
     return (
@@ -451,21 +498,26 @@ class AcademySize extends React.Component {
   }
 }
 
+type MaksueratProps = {
+  value: boolean | undefined
+  disabled: boolean
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+}
 
-class Maksuerat extends React.Component {
+class Maksuerat extends React.Component<MaksueratProps> {
   render() {
-    const multipleRahoitusalue = this.props.value === true
+    const multipleRahoitusalue = this.props.value ? "true" : "false"
     const onChange = this.props.onChange
     const isDisabled = this.props.disabled
     const options = [
-      {label:"Yksi maksuerä",value:false},
-      {label:"Useampi maksuerä",value:true}
+      { label: "Yksi maksuerä", value: "false" },
+      { label: "Useampi maksuerä", value: "true" }
     ]
     const optionsHtml = options.map(option=>{
       const value = option.value
       const htmlId = "set-maksuera-" + value
       return (
-      <span key={value}>
+      <span key={`span-${htmlId}`}>
         <input id={htmlId}
                type="radio"
                key={htmlId}
@@ -491,16 +543,24 @@ class Maksuerat extends React.Component {
   }
 }
 
-class SetStatus extends React.Component {
+type SetStatusProps = {
+  currentStatus: AvustushakuStatus
+  hakuIsValid: boolean
+  helpTexts: HelpTexts
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  userHasEditPrivilege: boolean
+}
+
+class SetStatus extends React.Component<SetStatusProps> {
   render() {
     const currentStatus = this.props.currentStatus
     const onChange = this.props.onChange
     const hakuIsValid = this.props.hakuIsValid
     const userHasEditPrivilege = this.props.userHasEditPrivilege
     const statuses = []
-    const statusValues = ['deleted', 'draft', 'published', 'resolved']
+    const statusValues = AVUSTUSHAKU_STATUSES.filter(s => s !== 'new')
     const helpTexts = this.props.helpTexts
-    const isDisabled = function(status) {
+    const isDisabled = function(status: string) {
       if (!userHasEditPrivilege) {
         return true
       }
@@ -551,9 +611,16 @@ class SetStatus extends React.Component {
   }
 }
 
-class RegisterNumber extends React.Component {
+type RegisterNumberProps = {
+  allowAllHakuEdits: boolean
+  avustushaku: Avustushaku
+  helpTexts: HelpTexts
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+}
 
-  static isValid(avustushaku) {
+class RegisterNumber extends React.Component<RegisterNumberProps> {
+
+  static isValid(avustushaku: Avustushaku) {
     const registerNumber = avustushaku["register-number"]
     return registerNumber == null ? false : /^\d{1,5}\/\d{2,6}$/.test(registerNumber)
   }
@@ -567,8 +634,8 @@ class RegisterNumber extends React.Component {
     const registerNumberClass = isRegisterNumberValid ? "" : "error"
     const errorStyle = {paddingLeft: "5px"}
     const helpTexts = this.props.helpTexts
-    let errorString = ""
-    if (_.isNull(registerNumber) || _.isEmpty(registerNumber)) {
+    let errorString = <span></span>
+    if (!registerNumber) {
       errorString = <span style={errorStyle} className="error">Asianumero on pakollinen tieto</span>
     } else if (!isRegisterNumberValid) {
       errorString = <span style={errorStyle} className="error">
@@ -577,7 +644,7 @@ class RegisterNumber extends React.Component {
     }
     return <div className="haku-edit-registernumber">
              <h3 className="required">Asianumero <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___asianumero"]} direction="left" /></h3>
-             <input type="text" disabled={!allowAllHakuEdits} onChange={this.props.onChange} className={registerNumberClass} maxLength="128" placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
+             <input type="text" disabled={!allowAllHakuEdits} onChange={this.props.onChange} className={registerNumberClass} maxLength={128} placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
              <div>{errorString}</div>
            </div>
   }

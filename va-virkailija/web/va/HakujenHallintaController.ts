@@ -58,6 +58,10 @@ export interface Avustushaku extends BaseAvustushaku {
   muutoshakukelpoisuus?: OnkoMuutoshakukelpoinenAvustushakuOk
 }
 
+export interface SelectedAvustushaku extends Avustushaku {
+  payments?: Payment[]
+}
+
 export interface State {
   hakuList: Avustushaku[],
   userInfo: UserInfo
@@ -67,7 +71,7 @@ export interface State {
   decisionLiitteet: Liite[]
   helpTexts: HelpTexts
   hakuId: number
-  selectedHaku: Avustushaku
+  selectedHaku: SelectedAvustushaku
   saveStatus: {
     saveInProgress: boolean
     saveTime: Date | null

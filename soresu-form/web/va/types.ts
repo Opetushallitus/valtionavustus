@@ -223,7 +223,8 @@ export interface Hakemus {
   'loppuselvitys-taloustarkastettu-at'?: string
 }
 
-export type AvustushakuStatus = 'new' | 'draft' | 'published' | 'resolved' | 'deleted'
+export const AVUSTUSHAKU_STATUSES = ['new', 'draft', 'published', 'resolved', 'deleted'] as const
+export type AvustushakuStatus = typeof AVUSTUSHAKU_STATUSES[number]
 
 export type AvustushakuPhase = 'upcoming' | 'current' | 'ended' | 'unpublished'
 
