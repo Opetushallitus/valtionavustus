@@ -79,15 +79,17 @@ export class KoodienhallintaPage {
   codeRowSelector(code: string, name: string) {
     return `tr[data-test-id="code-cell-2020-${code}-${name} ${code}"]`
   }
-  async assertCodeIsVisible(code: string, name: string, visibility: boolean) {
-    const firstCellSelector = `${this.codeRowSelector(code, name)} td:first-of-type`
-    const firstCellElement = await this.page.waitForSelector(firstCellSelector, { state: 'visible' })
-    const cellClassNames = await this.page.evaluate(el => el.className, firstCellElement)
-    if (visibility) {
-      expect(cellClassNames).not.toEqual(expect.stringContaining('code-cell__hidden'))
-    } else {
-      expect(cellClassNames).toEqual(expect.stringContaining('code-cell__hidden'))
-    }
+
+  firstCellLocator(code: string, name: string) {
+    return this.page.locator(`${this.codeRowSelector(code, name)} td:first-of-type`)
+  }
+
+  async assertCodeIsVisible(code: string, name: string) {
+    await expect(this.firstCellLocator(code, name)).not.toHaveClass('code-cell__hidden')
+  }
+
+  async assertCodeIsHidden(code: string, name: string) {
+    await expect(this.firstCellLocator(code, name)).toHaveClass('code-cell__hidden')
   }
 
   async createCodeValues(codeValues: VaCodeValues): Promise<VaCodeValues> {

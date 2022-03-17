@@ -110,7 +110,7 @@ test.describe('Koodienhallinta', () => {
     await test.step('the code is visible in the page', async () => {
       await koodienhallintaPage.navigate()
       await expect(koodienhallintaPage.page.locator(rowSelector)).toBeVisible()
-      await koodienhallintaPage.assertCodeIsVisible(codeValues.operationalUnit, codeName,true)
+      await koodienhallintaPage.assertCodeIsVisible(codeValues.operationalUnit, codeName)
     })
 
     await test.step('the code is visible in haku editor dropdown', async () => {
@@ -127,7 +127,7 @@ test.describe('Koodienhallinta', () => {
 
       await test.step('the code is not visible', async () => {
         await expect(koodienhallintaPage.page.locator(rowSelector)).toBeVisible()
-        await koodienhallintaPage.assertCodeIsVisible(codeValues.operationalUnit, codeName,false)
+        await koodienhallintaPage.assertCodeIsHidden(codeValues.operationalUnit, codeName)
       })
 
       await test.step('the code is displayed as gray', async () => {
@@ -147,7 +147,7 @@ test.describe('Koodienhallinta', () => {
 
       await test.step('the code is not visible after navigation', async () => {
         await koodienhallintaPage.navigate()
-        await koodienhallintaPage.assertCodeIsVisible(codeValues.operationalUnit, codeName,false)
+        await koodienhallintaPage.assertCodeIsHidden(codeValues.operationalUnit, codeName)
       })
 
       await test.step('When virkailija makes the code visible again', async () => {
@@ -155,7 +155,7 @@ test.describe('Koodienhallinta', () => {
         await koodienhallintaPage.clickCodeVisibilityButton(codeValues.operationalUnit, codeName, true)
 
         await test.step('the code is visible on koodien hallinta page', async () => {
-          await koodienhallintaPage.assertCodeIsVisible(codeValues.operationalUnit, codeName,true)
+          await koodienhallintaPage.assertCodeIsVisible(codeValues.operationalUnit, codeName)
         })
 
         await test.step('the code is not displayed as gray', async () => {
