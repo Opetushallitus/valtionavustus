@@ -4,7 +4,7 @@ import ClassNames from 'classnames'
 import { Avustushaku, Form, HelpTexts, Koodistos, LegacyTranslations, Liite } from 'soresu-form/web/va/types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
-import HakuEdit from './HakuEdit'
+import { HakuEdit } from './HakuEdit'
 import FormEditorContainer from './FormEditorContainer'
 import DecisionEditor from './DecisionEditor'
 import { SelvitysFormEditor } from './SelvitysFormEditor'
