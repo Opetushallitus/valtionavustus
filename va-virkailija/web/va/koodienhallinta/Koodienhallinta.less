@@ -1,6 +1,15 @@
-.koodienhallinta-body {
-  padding: 120px 5px 5px 0;
-  background-color: rgb(250, 250, 250);
+.koodienhallinta {
+  &-container {
+    justify-content: center;
+    background-color: #fafafa;
+    display: grid;
+
+  }
+  &-body {
+    padding-top: 120px;
+    background-color: rgb(250, 250, 250);
+    max-width: 1300px;
+  }
 }
 
 .code-input-container {
@@ -42,18 +51,37 @@
   &__hidden {
     color: #e3e3e3;
   }
+  &__buttons {
+    text-align: center;
+  }
 }
 
 .code-icon-button {
   background: none !important;
   border: none !important;
+
+}
+
+.icon-lock-open, .icon-lock-closed {
+  &:hover {
+    path {
+      fill: #00b5f0;
+    }
+  }
+}
+
+.icon-delete {
+  &:hover {
+    path:nth-last-of-type(1) {
+      fill: #00b5f0;
+    }
+  }
 }
 
 td, th {
   height: 48px;
   text-align: left;
   padding: 1px 1.5rem;
-  width: 25%;
 }
 
 tr {

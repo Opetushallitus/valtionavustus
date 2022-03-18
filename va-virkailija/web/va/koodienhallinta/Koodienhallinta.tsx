@@ -7,8 +7,8 @@ import * as yup from "yup"
 import {ValueType, valueTypes} from "./types";
 
 import {VaCodeValue} from "../types";
-import {IconVisibility} from "./IconVisibility";
-import {IconVisibilityOff} from "./IconVisibilityOff";
+import {IconLockOpen} from "./IconLockOpen";
+import {IconLockClosed} from "./IconLockClosed";
 import {IconDelete} from "./IconDelete";
 import HttpUtil, {getHttpResponseErrorStatus} from "soresu-form/web/HttpUtil";
 import {
@@ -186,6 +186,7 @@ const SkeletonCodes = () => {
           <td className="loading"><div/></td>
           <td className="loading"><div/></td>
           <td className="loading"><div/></td>
+          <td className="loading"><div/></td>
         </tr>
       ))}
     </React.Fragment>
@@ -215,12 +216,20 @@ const Codes = ({codes, onActionSuccess, isLoading}:{codes: VaCodeValue[], onActi
   }
   return (
     <table aria-busy={isLoading ? 'true' : 'false'} aria-live="polite">
+      <colgroup>
+        <col style={{width: '10%'}}/>
+        <col style={{width: '24%'}}/>
+        <col style={{width: '50%'}}/>
+        <col style={{width: '8%'}}/>
+        <col style={{width: '8%'}}/>
+      </colgroup>
       <thead>
         <tr>
           <th className="code-cell">Vuosi</th>
           <th>Koodi</th>
           <th>Nimi</th>
-          <th>Toiminnot</th>
+          <th className="code-cell__buttons">Lukitse</th>
+          <th className="code-cell__buttons">Poista</th>
         </tr>
       </thead>
       <tbody>
@@ -232,15 +241,18 @@ const Codes = ({codes, onActionSuccess, isLoading}:{codes: VaCodeValue[], onActi
             <td className={fadeClass}>{code.year}</td>
             <td className={fadeClass}>{code.code}</td>
             <td className={fadeClass}>{code["code-value"]}</td>
-            <td>
-              <button data-test-id="delete-code" className="code-icon-button" onClick={deleteCode(code.id)}>
+            <td className="code-cell__buttons">
+              <button data-test-id={code.hidden ? 'show-code' : 'hide-code'} className={`code-icon-button ${code.hidden ? 'code-icon-button__hidden' : ''}`} onClick={setCodeVisibility(code.id, !code.hidden)}>
+                {
+                  code.hidden
+                    ? <IconLockClosed />
+                    : <IconLockOpen/>
+                }
+              </button>
+            </td>
+            <td className="code-cell__buttons">
+              <button data-test-id="delete-code" className="code-icon-button icon-delete" onClick={deleteCode(code.id)}>
                 <IconDelete/>
-              </button>
-              <button data-test-id="show-code" className="code-icon-button" disabled={!code.hidden} onClick={setCodeVisibility(code.id, false)}>
-                <IconVisibility fill={code.hidden ? undefined : '#e3e3e3'}/>
-              </button>
-              <button data-test-id="hide-code" className="code-icon-button" disabled={code.hidden} onClick={setCodeVisibility(code.id, true)}>
-                <IconVisibilityOff fill={code.hidden ? '#e3e3e3' : undefined}/>
               </button>
             </td>
           </tr>
@@ -328,12 +340,14 @@ export const Koodienhallinta = () => {
     ? codes.filter(code => code['code-value'].includes(filterWord))
     : codes
   return (
-    <div className="koodienhallinta-body">
-      <OphTabs selectedTab={selectedTab} onTabSelect={(tab) => dispatch({type: 'select-tab', value: tab})} />
-      <CodeInputForm selectedTab={selectedTab} onActionSuccess={() => dispatch({type: 'trigger-code-refetch'})} />
-      <hr />
-      <CodeFilter selectedTab={selectedTab} selectedYear={filterYear} onSelect={year => dispatch({type: 'set-filter-year', value: year})} onFilterWord={word => dispatch({type: 'set-filter-word', value: word})}/>
-      <Codes isLoading={isLoading} codes={filteredCodes} onActionSuccess={() => dispatch({type: 'trigger-code-refetch'})}/>
+    <div className="koodienhallinta-container">
+      <div className="koodienhallinta-body">
+        <OphTabs selectedTab={selectedTab} onTabSelect={(tab) => dispatch({type: 'select-tab', value: tab})} />
+        <CodeInputForm selectedTab={selectedTab} onActionSuccess={() => dispatch({type: 'trigger-code-refetch'})} />
+        <hr />
+        <CodeFilter selectedTab={selectedTab} selectedYear={filterYear} onSelect={year => dispatch({type: 'set-filter-year', value: year})} onFilterWord={word => dispatch({type: 'set-filter-word', value: word})}/>
+        <Codes isLoading={isLoading} codes={filteredCodes} onActionSuccess={() => dispatch({type: 'trigger-code-refetch'})}/>
+      </div>
     </div>
   )
 }
