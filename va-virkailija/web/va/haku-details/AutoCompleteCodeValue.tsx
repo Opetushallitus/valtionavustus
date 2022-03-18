@@ -1,5 +1,9 @@
-import React, {CSSProperties} from 'react'
-import Select from 'react-select'
+import React, {PropsWithChildren} from 'react'
+import Select, {
+  SingleValueProps,
+  components,
+  OptionProps, GroupBase,
+} from 'react-select'
 import HakujenHallintaController, {Avustushaku} from '../HakujenHallintaController'
 import {VaCodeValue} from '../types'
 
@@ -13,6 +17,8 @@ interface AutoCompleteCodeValueProps {
   codeOptions: VaCodeValue[]
   selectedValue: VaCodeValue | ''
 }
+
+const colorDarkGray = 'rgb(153, 146, 144)'
 
 export default function AutocompleteCodeValue(props: AutoCompleteCodeValueProps) {
   const {controller, avustushaku, id, codeType, codeOptions, selectedValue} = props
@@ -30,62 +36,56 @@ export default function AutocompleteCodeValue(props: AutoCompleteCodeValueProps)
 
   return (
     <Select
-      getOptionLabel={() => 'code'}
+      getOptionLabel={getOptionValue}
       placeholder="Valitse listasta"
       options={codeOptions}
       onChange={updateValue}
+      isMulti={false}
+      styles={{
+        singleValue: (base, {data}) => ({
+          ...base,
+          whiteSpace: 'normal',
+          color: data.hidden
+            ? colorDarkGray
+            : base.color
+        }),
+        option: (base, {data}) => ({
+          ...base,
+          color: data.hidden
+           ? colorDarkGray
+            : base.color
+        })
+      }}
+      noOptionsMessage={() => 'Ei hakutuloksia'}
       getOptionValue={getOptionValue}
       value={selectedValue as VaCodeValue}
       backspaceRemovesValue={true}
       isOptionDisabled={(option => Boolean(option.hidden))}
-      components={{ Option, SingleValue, NoOptionsMessage }}
+      components={{Option, SingleValue}}
     />
   )
 }
 
-interface OptionProps extends SingleValueProps {
-  selectOption: (data: VaCodeValue) => void
-  style?: CSSProperties
-}
-
-function Option({data, selectOption, style}: OptionProps) {
-  const classNames = Boolean(data.hidden) ?
-      'Select-input name-option-renderer code-value-renderer disabled' :
-      'Select-input name-option-renderer code-value-renderer'
-
-  const onChange = () => selectOption(data)
-
+function Option({children, ...props}: PropsWithChildren<OptionProps<VaCodeValue, false, GroupBase<VaCodeValue>>>) {
+  const {data, innerProps} = props
+  // add data-test-id to component
+  const propsWithDataTestId = Object.assign({}, innerProps, {'data-test-id': data.code})
   return (
-    <div
-      className={classNames}
-      style={style}
-      onClick={onChange}
-      data-test-id={data.code}>
-      <span>{data.code}</span>
-      <span>{data["code-value"]}</span>
-    </div>
+    <components.Option
+      {...props}
+      innerProps={propsWithDataTestId}>
+      {children}
+    </components.Option>
   )
 }
 
-interface SingleValueProps {
-  data: VaCodeValue
-}
-
-function SingleValue({ data }: SingleValueProps) {
-  const classNames = Boolean(data.hidden) ? 'code-value-renderer disabled' : 'code-value-renderer'
-
+function SingleValue({ children, ...props }: PropsWithChildren<SingleValueProps<VaCodeValue, false, GroupBase<VaCodeValue>>>) {
+  const {data, innerProps} = props
+  // add data-test-id to component
+  const propsWithDataTestId = Object.assign({}, innerProps, {'data-test-id': `singlevalue-${data["value-type"]}`})
   return (
-    <div className={classNames} data-test-id={`singlevalue-${data["value-type"]}`}>
-      <span>{data.code}</span>
-      <span>{data["code-value"]}</span>
-    </div>
-  )
-}
-
-function NoOptionsMessage(_props: any) {
-  return (
-    <span data-test-id="code-value-dropdown__no-options">
-      Ei hakutuloksia
-    </span>
+    <components.SingleValue {...props} innerProps={propsWithDataTestId} >
+      {children}
+    </components.SingleValue>
   )
 }
