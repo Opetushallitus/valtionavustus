@@ -10,6 +10,7 @@ import { VIRKAILIJA_URL } from '../../utils/constants'
 import {
   MaksatuksetPage
 } from '../../pages/maksatuksetPage'
+import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 
 
 const correctOVTTest = test.extend({
@@ -173,5 +174,35 @@ test.describe.parallel('Maksatukset', () => {
 
     const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu()
     expect(maksatukset).toContainEqual(maksatuksetPage.getExpectedPaymentXML(project, operation, operationalUnit, pitkaviite, `${registerNumber}_1`, dueDate))
+  })
+
+  test('sending maksatukset disables changing code values for haku', async ({ page, avustushakuID, acceptedHakemus: { hakemusID } }) => {
+    const maksatuksetPage = MaksatuksetPage(page)
+    await maksatuksetPage.goto(avustushakuID)
+
+    await maksatuksetPage.fillInMaksueranTiedot("asha pasha", "essi.esittelija@example.com", "hygge.hyvaksyja@example.com")
+    const dueDate = await page.getAttribute('[id="Eräpäivä"]', 'value')
+    if (!dueDate) throw new Error('Cannot find due date from form')
+
+    await maksatuksetPage.sendMaksatukset()
+    await maksatuksetPage.reloadPaymentPage()
+
+    const { "register-number": registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
+    const pitkaviite = `${registerNumber}_1 Erkki Esimerkki`
+    await putMaksupalauteToMaksatuspalveluAndProcessIt(`
+      <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+      <VA-invoice>
+        <Header>
+          <Pitkaviite>${pitkaviite}</Pitkaviite>
+          <Maksupvm>2018-06-08</Maksupvm>
+        </Header>
+      </VA-invoice>
+    `)
+
+    const hakujenHallintaPage = new HakujenHallintaPage(page)
+    await hakujenHallintaPage.navigate(avustushakuID)
+    expect(hakujenHallintaPage.page.locator('.code-value-dropdown-operational-unit-id--is-disabled')).toBeVisible()
+    expect(hakujenHallintaPage.page.locator('.code-value-dropdown-operation-id--is-disabled')).toBeVisible()
+    expect(hakujenHallintaPage.page.locator('.code-value-dropdown-project-id--is-disabled')).toBeVisible()
   })
 })

@@ -16,12 +16,13 @@ interface AutoCompleteCodeValueProps {
   avustushaku: Avustushaku
   codeOptions: VaCodeValue[]
   selectedValue: VaCodeValue | ''
+  disabled: boolean
 }
 
 const colorDarkGray = 'rgb(153, 146, 144)'
 
 export default function AutocompleteCodeValue(props: AutoCompleteCodeValueProps) {
-  const {controller, avustushaku, id, codeType, codeOptions, selectedValue} = props
+  const {controller, avustushaku, id, codeType, codeOptions, selectedValue, disabled} = props
   const updateValue = (option: VaCodeValue | null) => {
     if (option == null) {
       controller.onChangeListener(avustushaku, {id}, null)
@@ -36,6 +37,7 @@ export default function AutocompleteCodeValue(props: AutoCompleteCodeValueProps)
 
   return (
     <Select
+      classNamePrefix={`code-value-dropdown-${codeType}`}
       getOptionLabel={getOptionValue}
       placeholder="Valitse listasta"
       options={codeOptions}
@@ -58,6 +60,7 @@ export default function AutocompleteCodeValue(props: AutoCompleteCodeValueProps)
       }}
       noOptionsMessage={() => 'Ei hakutuloksia'}
       getOptionValue={getOptionValue}
+      isDisabled={disabled}
       value={selectedValue as VaCodeValue}
       backspaceRemovesValue={true}
       isOptionDisabled={(option => Boolean(option.hidden))}
