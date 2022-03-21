@@ -1,4 +1,5 @@
 (def log4j-version "2.17.1")
+(def jackson-version "2.12.4")
 
 (defproject oph-va/root "0.1.0-SNAPSHOT"
   :description "OPH Valtionavustus"
@@ -45,11 +46,11 @@
                          ;; json
                          [cheshire "5.10.1"]
                          [org.clojure/data.json "0.2.6"]
-                         [com.fasterxml.jackson.core/jackson-core "2.12.4"]
-                         [com.fasterxml.jackson.core/jackson-databind "2.12.4"]
-                         [com.fasterxml.jackson.core/jackson-annotations "2.12.4"]
-                         [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor "2.12.4"]
-                         [com.fasterxml.jackson.dataformat/jackson-dataformat-smile "2.12.4"]
+                         [com.fasterxml.jackson.core/jackson-core ~jackson-version]
+                         [com.fasterxml.jackson.core/jackson-databind ~jackson-version]
+                         [com.fasterxml.jackson.core/jackson-annotations ~jackson-version]
+                         [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor ~jackson-version]
+                         [com.fasterxml.jackson.dataformat/jackson-dataformat-smile ~jackson-version]
                          [prismatic/schema "1.1.6"]
 
                          ;; database
