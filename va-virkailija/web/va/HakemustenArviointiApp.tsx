@@ -21,6 +21,7 @@ import './style/main.less'
 
 import './hakemusten-arviointi.less'
 import {State} from "./types";
+import NewHakemusListing from "./hakemus-list/NewHakemusListing";
 
 interface Props {
   state: State
@@ -65,20 +66,22 @@ const App = ({state, controller}: Props) => {
                 <ExcelExportLink avustushaku={avustushaku} />
               </div>
             </div>
-            <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
-                            budgetGrantedSum={hakuData["budget-granted-sum"]}
-                            hakemusFilter={state.hakemusFilter}
-                            hakemusSorter={state.hakemusSorter}
-                            hakemusList={hakemusList}
-                            hasSelected={hasSelected}
-                            selectedHakemus={selectedHakemus}
-                            previouslySelectedHakemus={previouslySelectedHakemus}
-                            userInfo={state.userInfo}
-                            privileges={hakuData.privileges}
-                            controller={controller}
-                            avustushaku={avustushaku}
-                            environment={environment}
-                            state={state}/>
+            {environment["new-hakemus-listing-ui"]?.["enabled?"]
+              ? <NewHakemusListing />
+              : <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
+                  budgetGrantedSum={hakuData["budget-granted-sum"]}
+                  hakemusFilter={state.hakemusFilter}
+                  hakemusSorter={state.hakemusSorter}
+                  hakemusList={hakemusList}
+                  hasSelected={hasSelected}
+                  selectedHakemus={selectedHakemus}
+                  previouslySelectedHakemus={previouslySelectedHakemus}
+                  userInfo={state.userInfo}
+                  privileges={hakuData.privileges}
+                  controller={controller}
+                  avustushaku={avustushaku}
+                  environment={environment}
+                  state={state}/>}
           </div>
           <HakemusDetails hakuData={hakuData}
                           avustushaku={avustushaku}

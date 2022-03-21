@@ -22,6 +22,7 @@
          :reports (:reports config)
          :va-code-values (:va-code-values config)
          :dont-send-loppuselvityspyynto-to-virkailija (:dont-send-loppuselvityspyynto-to-virkailija config)
+         :new-hakemus-listing-ui (:new-hakemus-listing-ui config)
          :selvitys-limit (:selvitys-limit config)}
         opintopolku (:opintopolku config)]
     (if-let [opintopolku-url (:url opintopolku)]
