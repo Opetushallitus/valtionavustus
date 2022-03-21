@@ -201,8 +201,8 @@ test.describe.parallel('Maksatukset', () => {
 
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigate(avustushakuID)
-    expect(hakujenHallintaPage.page.locator('.code-value-dropdown-operational-unit-id--is-disabled')).toBeVisible()
-    expect(hakujenHallintaPage.page.locator('.code-value-dropdown-operation-id--is-disabled')).toBeVisible()
-    expect(hakujenHallintaPage.page.locator('.code-value-dropdown-project-id--is-disabled')).toBeVisible()
+    await expect(hakujenHallintaPage.page.locator('.code-value-dropdown-operational-unit-id--is-disabled')).toBeVisible()
+    await expect(hakujenHallintaPage.page.locator('.code-value-dropdown-operation-id--is-disabled')).toBeVisible()
+    await expect(hakujenHallintaPage.page.locator('.code-value-dropdown-project-id--is-disabled')).toBeVisible()
   })
 })
