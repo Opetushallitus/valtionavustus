@@ -26,6 +26,7 @@ import NewHakemusListing from "./hakemus-list/NewHakemusListing";
 interface Props {
   state: State
   controller: HakemustenArviointiController
+  newHakemusListingUiEnabled: boolean
 }
 
 const App = ({state, controller}: Props) => {
@@ -66,7 +67,7 @@ const App = ({state, controller}: Props) => {
                 <ExcelExportLink avustushaku={avustushaku} />
               </div>
             </div>
-            {environment["new-hakemus-listing-ui"]?.["enabled?"]
+            {newHakemusListingUiEnabled
               ? <NewHakemusListing />
               : <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
                   budgetGrantedSum={hakuData["budget-granted-sum"]}
@@ -113,12 +114,13 @@ if (!parsedAvustusHakuIdObject || _.isUndefined(parsedAvustusHakuIdObject["avust
 const avustushakuId = parsedAvustusHakuIdObject ? parseInt(parsedAvustusHakuIdObject["avustushaku_id"], 10) : defaultHakuId
 LocalStorage.saveAvustushakuId(avustushakuId)
 const query = queryString.parse(location.search)
+const newHakemusListingUiEnabled = query["new-hakemus-listing-ui"] === "true"
 const evaluator = query.arvioija ? parseInt(query.arvioija) : undefined
 const controller = new HakemustenArviointiController()
 const stateP = controller.initializeState(avustushakuId,evaluator)
 
 stateP.onValue((state) => {
   if (state.hakuData && state.userInfo) {
-    ReactDOM.render(<App state={state} controller={controller}/>, document.getElementById('app'))
+    ReactDOM.render(<App state={state} controller={controller} newHakemusListingUiEnabled={newHakemusListingUiEnabled}/>, document.getElementById('app'))
   }
 })
