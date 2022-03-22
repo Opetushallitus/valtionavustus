@@ -993,7 +993,7 @@ export default class HakujenHallintaController {
     }
   }
 
-  createRole(avustushaku: Avustushaku, newRole: Role) {
+  createRole(avustushaku: Avustushaku, newRole: Partial<Role>) {
     return function () {
       HttpUtil.put(HakujenHallintaController.roleUrl(avustushaku), newRole)
         .then(function (response) {
