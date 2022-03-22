@@ -1,0 +1,87 @@
+.filterInput {
+  text-align: left;
+  padding: 4px 4px 4px 8px;
+  background: #FFFFFF;
+  border: 1px solid #C1C1C1;
+  box-sizing: border-box;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.alignCenter {
+  text-align: center;
+}
+
+.hakemusTable {
+  width: 100%;
+  background-color: #fff;
+  font-size: 13px;
+
+  th {
+    padding: 8px;
+    text-align: left;
+  }
+  td, th {
+    text-overflow: ellipsis;
+    max-width: 216px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  tbody tr {
+    td {
+      padding: 8px 5px 8px 5px;
+    }
+    td:first-of-type, td:nth-of-type(2) {
+      padding-left: 12px;
+    }
+    td:last-of-type {
+      padding-right: 8px;
+    }
+  }
+  thead tr {
+    border-bottom: 1px solid #E1E1E1;
+  }
+  tfoot {
+    background-color: #fff;
+    position: sticky;
+    bottom: 0;
+    td:first-of-type {
+      padding: 8px 0 8px 12px;
+    }
+  }
+}
+
+.splitView {
+  height: 200px;
+  overflow: scroll;
+}
+
+.fixedColumn {
+  width: 265px;
+}
+
+.hakemusRow {
+  cursor: pointer;
+  background-color: #fff;
+  &:hover {
+    background-color: darken(#fafafa, 20%);
+  }
+  &:active {
+    background-color: darken(#fafafa, 40%);
+  }
+}
+
+.selectedHakemusRow {
+  composes: hakemusRow;
+  background-color: #C8E8F9;
+  &:hover {
+    background-color: darken(#C8E8F9, 20%);
+  }
+  &:active {
+    background-color: darken(#C8E8F9, 40%);
+  }
+}
+
+.yhteenveto {
+  margin-left: 1rem;
+}

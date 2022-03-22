@@ -938,8 +938,7 @@ export default class HakemustenArviointiController {
   }
 
   // Public API
-  selectHakemus(event: React.MouseEvent<HTMLTableRowElement, MouseEvent>) {
-    const hakemusId = Number(event.currentTarget.id.split('-')[1])
+  selectHakemus(hakemusId: number) {
     dispatcher.push(events.selectHakemus, hakemusId)
   }
 

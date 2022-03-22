@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import ReactDOM from 'react-dom'
 import _ from 'lodash'
 // @ts-ignore route-parser doesn't have proper types
@@ -22,6 +22,7 @@ import './style/main.less'
 import './hakemusten-arviointi.less'
 import {State} from "./types";
 import NewHakemusListing from "./hakemus-list/NewHakemusListing";
+import {Hakemus} from "soresu-form/web/va/types";
 
 interface Props {
   state: State
@@ -34,7 +35,7 @@ const App = ({state, controller}: Props) => {
     const avustushaku = hakuData.avustushaku
     const hakemusList = hakuData.hakemukset
     const hasSelected = typeof state.selectedHakemus === 'object'
-    const selectedHakemus = hasSelected ? state.selectedHakemus : {}
+    const selectedHakemus: Hakemus | undefined | {} = hasSelected ? state.selectedHakemus : {}
     const previouslySelectedHakemus = state.previouslySelectedHakemus
     const translations = state.translations
     const selectedHakemusAccessControl = state.selectedHakemusAccessControl
@@ -42,6 +43,7 @@ const App = ({state, controller}: Props) => {
     const subTab = state.subTab
     const environment = hakuData.environment
     const helpTexts = state.helpTexts
+    const [splitView, toggleSplitView] = useState(false)
 
     useEffect(() => {
       const escFunction = (event: KeyboardEvent) => {
@@ -54,7 +56,6 @@ const App = ({state, controller}: Props) => {
         document.removeEventListener('keydown', escFunction, false)
       }
     }, [])
-
     return (
       <section>
         <TopBar activeTab="arviointi" environment={environment} state={state}/>
@@ -68,7 +69,15 @@ const App = ({state, controller}: Props) => {
               </div>
             </div>
             {newHakemusListingUiEnabled
-              ? <NewHakemusListing />
+              ? <NewHakemusListing
+                  selectedHakemus={selectedHakemus}
+                  hakemusList={hakemusList}
+                  avustushaku={avustushaku}
+                  roles={hakuData.roles}
+                  splitView={splitView}
+                  onSelectHakemus={id => controller.selectHakemus(id)}
+                  onYhteenvetoClick={filteredHakemusList => controller.gotoSavedSearch(filteredHakemusList)}
+                 />
               : <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
                   budgetGrantedSum={hakuData["budget-granted-sum"]}
                   hakemusFilter={state.hakemusFilter}
@@ -94,6 +103,7 @@ const App = ({state, controller}: Props) => {
                           subTab={subTab}
                           controller={controller}
                           environment={environment}
+                          onClickToggle={() => toggleSplitView(current => !current)}
                           helpTexts={helpTexts}/>
           <div hidden={!hasSelected} id="footer">
             <HakemusHakijaSidePreviewLink hakemus={selectedHakemus} avustushaku={avustushaku} />

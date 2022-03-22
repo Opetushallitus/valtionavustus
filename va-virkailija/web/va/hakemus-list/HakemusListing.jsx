@@ -520,7 +520,7 @@ class HakemusRow extends Component {
     }
     const showNotPayIcon = "should-pay" in hakemus.arvio && hakemus.arvio["should-pay"] !== null && !hakemus.arvio["should-pay"]
 
-    return <tr id={htmlId} className={rowClass} onClick={controller.selectHakemus}>
+    return <tr id={htmlId} className={rowClass} onClick={() => controller.selectHakemus(hakemus.id)}>
       <td className="organization-column" title={hakemus["organization-name"]}>
         {hakemus["organization-name"]}
       </td>

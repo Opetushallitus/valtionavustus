@@ -25,12 +25,13 @@ interface Props {
   controller: HakemustenArviointiController
   environment: EnvironmentApiResponse
   helpTexts: HelpTexts
+  onClickToggle: () => void
 }
 
 export const HakemusDetails = (props: Props) => {
     const {controller, hakemus, avustushaku, hakuData, userInfo,
            showOthersScores, translations, environment,
-           selectedHakemusAccessControl, subTab, helpTexts} = props
+           selectedHakemusAccessControl, subTab, helpTexts, onClickToggle} = props
     if (!(typeof hakemus === 'object')) {
       return null
     }
@@ -61,6 +62,7 @@ export const HakemusDetails = (props: Props) => {
           container.scrollTop = selected.offsetTop - 100
         }
       }
+      onClickToggle()
       return false
     }
 
