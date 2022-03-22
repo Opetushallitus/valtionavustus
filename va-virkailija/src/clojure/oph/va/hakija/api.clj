@@ -358,8 +358,7 @@
 (defn verify-loppuselvitys-information [hakemus-id verify-information identity]
   (let [hakemus  (get-hakemus hakemus-id)
         role     (get-avustushaku-role-by-avustushaku-id-and-person-oid (:avustushaku hakemus) (:person-oid identity))
-        allowed-to-verify (or (authorization/is-pääkäyttäjä? identity)
-                              (= "presenting_officer" (:role role)))
+        allowed-to-verify (or (authorization/is-pääkäyttäjä? identity) (authorization/is-valmistelija? role))
         status   (:status_loppuselvitys hakemus)
         message  (:message verify-information)
         verifier (str (:first-name identity) " " (:surname identity))]

@@ -33,12 +33,12 @@ const RoleContainer = ({roleName,roleField,roles,controller,hakemusFilter}) => {
 const PersonSelectPanel = ({state,controller,hakemusFilter}) =>{
   const show = hakemusFilter.roleIsOpen
   const roles = state.hakuData.roles
-  const filterByRole = (roles,role) =>
+  const filterByRole = (roles, filteredRoles) =>
         _.sortBy(
-          roles.filter((currentRole) => currentRole.role === role),
+          roles.filter((currentRole) => filteredRoles.includes(currentRole.role)),
           'name')
-  const presenters = filterByRole(roles,"presenting_officer")
-  const evaluators = filterByRole(roles,"evaluator")
+  const presenters = filterByRole(roles, ["presenting_officer", "vastuuvalmistelija"])
+  const evaluators = filterByRole(roles, ["evaluator"])
   const onCloseClick = () => {
     controller.setFilter("roleIsOpen",false)
   }

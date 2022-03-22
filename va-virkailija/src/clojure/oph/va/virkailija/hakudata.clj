@@ -182,7 +182,7 @@
 
 (defn presenting-officer-email [avustushaku-id]
   (let [roles (hakija-api/get-avustushaku-roles avustushaku-id)
-        presenting-officers (filter (fn [x] (= (:role x) "presenting_officer")) roles)
+        presenting-officers (filter #(authorization/is-valmistelija? %) roles)
         presenting-officer-emails (map :email presenting-officers)
         first-email (first presenting-officer-emails)] first-email))
 

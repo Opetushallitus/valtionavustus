@@ -223,7 +223,7 @@ export class HakujenHallintaPage {
     ])
   }
 
-  async setUserRole(name: string, role: 'presenting_officer' | 'evaluator') {
+  async setUserRole(name: string, role: 'presenting_officer' | 'evaluator' | 'vastuuvalmistelija') {
     const testId = "role-" +name.toLowerCase().replace(" ", "-")
     await Promise.all([
       this.waitForRolesSaved(),

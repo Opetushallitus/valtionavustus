@@ -103,13 +103,6 @@
     (when (and muutoshakemus-budget (not= hakemus-budget muutoshakemus-budget))
       [(str "muutoshakemus budget was " muutoshakemus-budget " (should be " hakemus-budget ")")])))
 
-(defn- presenting-officer-email [avustushaku-id]
-  (let [roles (va-db/get-avustushaku-roles avustushaku-id)
-        presenting-officers (filter (fn [x] (= (:role x) "presenting_officer")) roles)
-        presenting-officer-emails (map :email presenting-officers)
-        first-email (first presenting-officer-emails)]
-    first-email))
-
 (defn- should-notify-valimistelija-of-new-muutoshakemus [muutoshakemus]
   (or (:talousarvio muutoshakemus)
       (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta])
@@ -241,8 +234,13 @@
         (hakemus-conflict-response hakemus))
       (bad-request! security-validation))))
 
-(defn get-assigned-virkailijas-for-avustushaku [avustushaku-id]
-  (filter #(= (:role %) "presenting_officer") (va-db/get-avustushaku-roles avustushaku-id)))
+(defn- is-valmistelija? [role]
+  (or
+    (= (:role role) "presenting_officer")
+    (= (:role role) "vastuuvalmistelija")))
+
+(defn- get-valmistelijas-for-avustushaku [avustushaku-id]
+  (filter #(is-valmistelija? %) (va-db/get-avustushaku-roles avustushaku-id)))
 
 (defn on-refuse-application [avustushaku-id hakemus-id base-version comment token]
   (let [hakemus (va-db/get-hakemus hakemus-id)
@@ -258,7 +256,7 @@
            (not (:refused hakemus)))
       (do
         (va-db/refuse-application hakemus comment)
-        (let [virkailija-roles (get-assigned-virkailijas-for-avustushaku (:id avustushaku))]
+        (let [virkailija-roles (get-valmistelijas-for-avustushaku (:id avustushaku))]
           (when (some #(when (some? (:email %)) true) virkailija-roles)
             (va-email/send-refused-message-to-presenter!
              (map :email (filter #(some? (:email %)) virkailija-roles))

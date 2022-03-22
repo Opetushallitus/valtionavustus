@@ -32,9 +32,9 @@ const PersonSelectPanel = ({hakemus,state,controller}) => {
     return <span/>
   }
   const roles = state.hakuData.roles
-  const filterByRole = (roles,role)=> _.sortBy(roles.filter((currentRole)=>currentRole.role === role),'name')
-  const presenters = filterByRole(roles,"presenting_officer")
-  const evaluators = filterByRole(roles,"evaluator")
+  const filterByRole = (roles, filteredRoles)=> _.sortBy(roles.filter((currentRole) => filteredRoles.includes(currentRole.role)),'name')
+  const presenters = filterByRole(roles, ["presenting_officer", "vastuuvalmistelija"])
+  const evaluators = filterByRole(roles, ["evaluator"])
   const onCloseClick = () => controller.togglePersonSelect(undefined)
   return (
     <div className="panel person-panel person-panel--top">

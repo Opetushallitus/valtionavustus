@@ -13,7 +13,9 @@ export interface UserInfo {
   username: string
 }
 
-type RoleType = 'presenting_officer' | 'evaluator'
+export const VALMISTELIJA_ROLES = ['presenting_officer', 'vastuuvalmistelija'] as const
+export type ValmistelijaRole = typeof VALMISTELIJA_ROLES[number]
+export type RoleType = ValmistelijaRole | 'evualuator'
 
 export interface Role {
     id: number

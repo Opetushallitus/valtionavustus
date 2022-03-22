@@ -637,8 +637,7 @@
 (defn get-valmistelija-emails-assigned-to-avustushaku [avustushaku-id]
   (let [sql "SELECT   DISTINCT(email)
              FROM     hakija.avustushaku_roles
-             WHERE    role = 'presenting_officer' AND
-                      avustushaku = ?
+             WHERE    avustushaku = ? AND (role = 'presenting_officer' OR role = 'vastuuvalmistelija')
              ORDER BY email"
         result (map :email (query sql [avustushaku-id]))]
     (log/info "Found valmistelija emails " result "for avustushaku ID" avustushaku-id)

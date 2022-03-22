@@ -7,6 +7,7 @@
             [oph.va.decision-liitteet :as decision-liitteet]
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.soresu.form.formutil :as formutil]
+            [oph.va.virkailija.authorization :as authorization]
             [oph.va.virkailija.kayttosuunnitelma :as ks]
             [oph.va.virkailija.koulutusosio :as koulutusosio]
             [schema.core :as s]
@@ -152,7 +153,7 @@
         answers-field (:answers hakemus)
         answers {:value answers-field}
         roles (:roles haku-data)
-        presenting-officers (filter #(= (:role %) "presenting_officer") roles)
+        presenting-officers (filter #(authorization/is-valmistelija? %) roles)
         arvio (:arvio hakemus)
         decision-status (:status arvio)
         oppilaitokset (:names (:oppilaitokset arvio))

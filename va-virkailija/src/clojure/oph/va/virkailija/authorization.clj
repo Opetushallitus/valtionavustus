@@ -3,8 +3,13 @@
 (defn is-pääkäyttäjä? [identity]
   (some? (some #{"va-admin"} (:privileges identity))))
 
+(defn is-valmistelija? [role]
+  (or
+    (= (:role role) "presenting_officer")
+    (= (:role role) "vastuuvalmistelija")))
+
 (defn resolve-user-privileges [user-identity user-haku-role]
-  (let [is-presenter      (= "presenting_officer" (:role user-haku-role))
+  (let [is-presenter      (is-valmistelija? user-haku-role)
         is-evaluator      (= "evaluator" (:role user-haku-role))
         is-va-admin       (is-pääkäyttäjä? user-identity)]
     {:edit-haku            (or is-presenter is-va-admin)

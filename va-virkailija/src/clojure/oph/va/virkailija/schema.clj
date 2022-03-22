@@ -198,7 +198,7 @@
                       (s/optional-key :refused-at) (s/maybe s/Inst)})
 
 (s/defschema RoleType
-  (s/enum "presenting_officer" "evaluator"))
+  (s/enum "presenting_officer" "evaluator" "vastuuvalmistelija"))
 
 (s/defschema NewRole {:name s/Str
                       :email (s/maybe s/Str)

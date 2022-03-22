@@ -6,7 +6,7 @@ import { Muutoshakemus } from './Muutoshakemus'
 import Loppuselvitys from './Loppuselvitys'
 import Väliselvitys from './Väliselvitys'
 import Seuranta from './Seuranta'
-import {HakuData, SelectedHakemusAccessControl, UserInfo} from "../types";
+import {HakuData, SelectedHakemusAccessControl, UserInfo, VALMISTELIJA_ROLES} from "../types";
 import {Avustushaku, Hakemus, HelpTexts, LegacyTranslations} from "soresu-form/web/va/types";
 import HakemustenArviointiController from "../HakemustenArviointiController";
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
@@ -39,9 +39,9 @@ export const HakemusDetails = (props: Props) => {
     const multibatchEnabled = Boolean(environment["multibatch-payments"]?.["enabled?"])
     const userOid = userInfo["person-oid"]
     const userRole = hakuData.roles.find(r => r.oid === userOid)
-    const isPresentingOfficer = !!userOid && !!userRole && userRole.role === "presenting_officer"
+    const isPresentingOfficer = (VALMISTELIJA_ROLES as any).includes(userRole?.role)
     const muutoshakemukset = hakemus.muutoshakemukset
-    const fallbackPresenter = hakuData.roles.find(r => r.role === 'presenting_officer')
+    const fallbackPresenter = hakuData.roles.find(r => (VALMISTELIJA_ROLES as any).includes(r.role))
     const hakemukselleUkotettuValmistelija = hakuData.roles.find(r => r.id === hakemus.arvio["presenter-role-id"]) || fallbackPresenter
     const isCurrentUserHakemukselleUkotettuValmistelija = hakemukselleUkotettuValmistelija?.oid === userOid
     const lang = hakemus.language || 'fi'

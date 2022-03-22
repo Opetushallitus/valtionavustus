@@ -61,7 +61,7 @@
               avustushaku AS avustushaku_id,
               jsonb_agg(DISTINCT email) AS \"to\"
             FROM hakija.avustushaku_roles
-            WHERE role = 'presenting_officer'
+            WHERE (role = 'presenting_officer' OR role = 'vastuuvalmistelija')
               AND email IS NOT NULL
             GROUP BY avustushaku
           ),
@@ -262,7 +262,7 @@
           )
             AND valiselvitysdate is not null
             AND current_timestamp::date BETWEEN (valiselvitysdate::date - '6 month'::interval) AND valiselvitysdate::date 
-            AND r.role = 'presenting_officer'
+            AND (r.role = 'presenting_officer' OR r.role = 'vastuuvalmistelija')
           GROUP BY avustushaku_name, valiselvitysdate, avustushaku_id"
          []))
 
@@ -295,7 +295,7 @@
           ) AND
           loppuselvitysdate IS NOT NULL AND
           current_timestamp::date BETWEEN (loppuselvitysdate::date - '8 month'::interval) AND loppuselvitysdate::date AND
-          r.role = 'presenting_officer' AND
+          (r.role = 'presenting_officer' OR r.role = 'vastuuvalmistelija') AND
           r.email IS NOT NULL
           GROUP BY avustushaku_name, valiselvitysdate, avustushaku_id"
          []))
