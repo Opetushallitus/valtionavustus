@@ -4,10 +4,24 @@ import _ from 'lodash'
 
 import CSSTransitionGroup from 'soresu-form/web/form/component/wrapper/CSSTransitionGroup.jsx'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
+import { HelpTexts } from 'soresu-form/web/va/types'
+
 import VaUserSearchParameters from './VaUserSearchParameters'
 import HelpTooltip from '../HelpTooltip'
+import HakujenHallintaController, { SelectedAvustushaku } from '../HakujenHallintaController'
+import { Role, UserInfo, VaUserSearch } from '../types'
 
-export default class HakuRoles extends Component {
+type HakuRolesProps = {
+  controller: HakujenHallintaController
+  avustushaku: SelectedAvustushaku
+  userHasEditPrivilege: boolean
+  userHasEditMyHakuRolePrivilege: boolean
+  vaUserSearch: VaUserSearch
+  userInfo: UserInfo
+  helpTexts: HelpTexts
+}
+
+export default class HakuRoles extends Component<HakuRolesProps> {
   render() {
     const {
       controller,
@@ -29,7 +43,8 @@ export default class HakuRoles extends Component {
                controller={controller}/>
     )) : []
 
-    const startSearch = e => {
+    const startSearch = (e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>) => {
+      // @ts-ignore
       const input = _.trim(e.target.value)
       controller.startVaUserSearch(input)
     }
@@ -61,7 +76,8 @@ export default class HakuRoles extends Component {
               <input id="va-user-search-input" type="text" placeholder={"Hae"} onChange={startSearch} disabled={!roles || !userHasEditPrivilege}/>
                 <button type="button" className={clearInputButtonClassname} title="Tyhjennä" disabled={!hasInput} onClick={(e) => {
                   const vaUserSearchInput = document.getElementById('va-user-search-input')
-                  vaUserSearchInput.value = ''
+                  // @ts-ignore
+                  vaUserSearchInput?.value = ''
                   startSearch(e)
                 }} />
                 <PersonSelectList vaUserSearch={vaUserSearch} avustushaku={avustushaku} controller={controller} />
@@ -74,7 +90,13 @@ export default class HakuRoles extends Component {
   }
 }
 
-class PersonSelectList extends React.Component {
+type PersonSelectListProps = {
+  vaUserSearch: VaUserSearch
+  avustushaku: SelectedAvustushaku
+  controller: HakujenHallintaController
+}
+
+class PersonSelectList extends React.Component<PersonSelectListProps> {
   render() {
     const {vaUserSearch, avustushaku, controller} = this.props
     const personRows = _.map(vaUserSearch.result.results, r => {
@@ -82,16 +104,16 @@ class PersonSelectList extends React.Component {
       const surname = r["surname"]
       const email = r["email"]
       const oid = r["person-oid"]
-      const newRole = {
+      const newRole = ({
         name:  NameFormatter.onlyFirstForename(firstName) + " " + surname,
         email: email,
         role:  null,
         oid:   oid
-      }
+      } as unknown) as Role
       const accessLevel = PersonSelectList.privilegesToClassAndDescription(r.privileges)
       const personIsInRolesAlready = _.some(avustushaku.roles, r => r.oid === oid)
       const titleText = `${firstName} ${surname} ${email ? "<" + email + "> " : ""}(${accessLevel.description}, oid ${oid})${personIsInRolesAlready ? ' (Käyttäjä on jo lisätty avustushakuun)' : ''}`
-      const onClick = e => {
+      const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         e.preventDefault()
         if (!personIsInRolesAlready) {
           controller.createRole(avustushaku, newRole)()
@@ -99,8 +121,8 @@ class PersonSelectList extends React.Component {
       }
 
       return (
-        <li key={r["person-oid"]} title={titleText} className={personIsInRolesAlready ? "disabled" : null}>
-          <a href="javascript:" onClick={onClick} className={personIsInRolesAlready ? "disabled" : null}>
+        <li key={r["person-oid"]} title={titleText} className={personIsInRolesAlready ? "disabled" : undefined}>
+          <a href="javascript:" onClick={onClick} className={personIsInRolesAlready ? "disabled" : undefined}>
             {firstName} {surname} ({email ? email + ", " : ""}{accessLevel.description})
           </a>
           </li>
@@ -118,7 +140,7 @@ class PersonSelectList extends React.Component {
     )
   }
 
-  static privilegesToClassAndDescription(privileges) {
+  static privilegesToClassAndDescription(privileges: string[]) {
     if (_.includes(privileges, "va-admin")) {
       return { className: "va-admin", description: "VA-pääkäyttäjä" }
     } else if (_.includes(privileges, "va-user")) {
@@ -128,22 +150,34 @@ class PersonSelectList extends React.Component {
   }
 }
 
-class RoleRow extends React.Component {
-  constructor(props) {
+type RoleRowProps = {
+  controller: HakujenHallintaController
+  avustushaku: SelectedAvustushaku
+  role: Role
+  userInfo: UserInfo
+  userHasEditPrivilege: boolean
+  userHasEditMyHakuRolePrivilege: boolean
+}
+
+class RoleRow extends React.Component<RoleRowProps> {
+  constructor(props: RoleRowProps) {
     super(props)
     this.handleChange = this.handleChange.bind(this)
+    // @ts-ignore
     this.debouncedSave = _.debounce(() => {
       this.props.controller.saveRole(this.props.avustushaku, this.props.role)
     }, 3000).bind(this)
   }
 
-  isValid(event) {
+  isValid(event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     return event && event.target && (typeof event.target.checkValidity !== 'function' || event.target.checkValidity())
   }
 
-  handleChange(event) {
+  handleChange(event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    // @ts-ignore
     this.props.role[event.target.name] = event.target.value
     if (this.isValid(event)) {
+      // @ts-ignore
       this.debouncedSave()
     }
     this.props.controller.reRender()
@@ -173,7 +207,7 @@ class RoleRow extends React.Component {
         <td className="haku-roles-name-column"><input type="text" value={role.name} name="name" onChange={this.handleChange} disabled={disableEditing}/></td>
         <td className="haku-roles-email-column">
           <input type="email" value={role.email || ""} name="email" onChange={this.handleChange} disabled={disableEditing}/>
-          <button type="button" onClick={onDelete} className="remove haku-roles-remove" alt="Poista" title={removeTitleText} tabIndex="-1" disabled={disableEditing} />
+          <button type="button" onClick={onDelete} className="remove haku-roles-remove" title={removeTitleText} tabIndex={-1} disabled={disableEditing} />
         </td>
       </tr>
     )

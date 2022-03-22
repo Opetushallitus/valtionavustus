@@ -4,7 +4,7 @@ import DateUtil from 'soresu-form/web/DateUtil'
 import { Avustushaku, AvustushakuStatus, AVUSTUSHAKU_STATUSES, HelpTexts } from 'soresu-form/web/va/types'
 
 import HakuStatus from "../avustushaku/HakuStatus"
-import HakuRoles from "./HakuRoles.jsx"
+import HakuRoles from "./HakuRoles"
 import EducationLevels from "./EducationLevels"
 import AutoCompleteCodeValue from "./AutoCompleteCodeValue"
 import HelpTooltip from '../HelpTooltip'
