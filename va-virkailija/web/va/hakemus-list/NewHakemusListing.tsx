@@ -35,42 +35,45 @@ type MuutoshakemusStatuses = typeof Muutoshakemus.statuses[number]
 type ValiselvitysStatuses = typeof HakemusSelvitys.statuses[number]
 type LoppuselvitysStatuses = typeof Loppuselvitys.statuses[number]
 
-interface State {
-  filterHakemusStatus: readonly HakemusArviointiStatus[]
-  filterMuutoshakemusStatus: readonly MuutoshakemusStatuses[]
-  filterValiselvitysStatus: readonly ValiselvitysStatuses[]
-  filterLoppuselvitysStatus: readonly LoppuselvitysStatuses[]
-  filterOrganization: string
-  filterProjectName: string
-  filteredList: Hakemus[]
-  list: Hakemus[]
+interface FilterState {
+  status: {
+    hakemus: readonly HakemusArviointiStatus[],
+    muutoshakemus: readonly MuutoshakemusStatuses[]
+    valiselvitys: readonly ValiselvitysStatuses[]
+    loppuselvitys: readonly LoppuselvitysStatuses[]
+  },
+  organization: string
+  projectName: string
 }
+
+type FilterKeys = keyof FilterState["status"]
+type FilterValue<FilterKey extends FilterKeys> = FilterState["status"][FilterKey][number]
+
+type StatusFilterAction<Filter extends FilterKeys> =
+  | {type: `set-status-filter`, filter: Filter, value: FilterValue<Filter>}
+  | {type: `unset-status-filter`, filter: Filter, value: FilterValue<Filter>}
+  | {type: `clear-status-filter`, filter: Filter}
 
 type Action =
   | {type: 'set-organization-name-filter', value: string}
   | {type: 'set-project-name-filter', value: string}
-  | {type: 'set-hakemus-status-filter', value: HakemusArviointiStatus}
-  | {type: 'unset-hakemus-status-filter', value: HakemusArviointiStatus}
-  | {type: 'set-muutoshakemus-status-filter', value: MuutoshakemusStatuses}
-  | {type: 'unset-muutoshakemus-status-filter', value: MuutoshakemusStatuses}
-  | {type: 'set-valiselvitys-status-filter', value: ValiselvitysStatuses}
-  | {type: 'unset-valiselvitys-status-filter', value: ValiselvitysStatuses}
-  | {type: 'set-loppuselvitys-status-filter', value: LoppuselvitysStatuses}
-  | {type: 'unset-loppuselvitys-status-filter', value: LoppuselvitysStatuses}
-  | {type: 'clear-filter', filter: 'tila' | 'muutoshakemus' | 'valiselvitys' | 'loppuselvitys'}
+  | StatusFilterAction<'hakemus'>
+  | StatusFilterAction<'valiselvitys'>
+  | StatusFilterAction<'loppuselvitys'>
+  | StatusFilterAction<'muutoshakemus'>
 
-const filterHakemusList = (state: State): State => {
-  const filteredList = state.list.filter(hakemus => {
-    const organizationNameOk = hakemus["organization-name"].toLocaleLowerCase().includes(state.filterOrganization)
-    const projectNameOk = hakemus["project-name"].toLocaleLowerCase().includes(state.filterProjectName)
-    const muutoshakemusStatusOk = state.filterMuutoshakemusStatus.length > 0 && hakemus["status-muutoshakemus"]
-      ? state.filterMuutoshakemusStatus.includes(hakemus["status-muutoshakemus"])
+const filteredHakemusList = (state: FilterState, list: Hakemus[]): Hakemus[] => {
+  return list.filter(hakemus => {
+    const organizationNameOk = hakemus["organization-name"].toLocaleLowerCase().includes(state.organization)
+    const projectNameOk = hakemus["project-name"].toLocaleLowerCase().includes(state.projectName)
+    const muutoshakemusStatusOk = state.status.muutoshakemus.length > 0 && hakemus["status-muutoshakemus"]
+      ? state.status.muutoshakemus.includes(hakemus["status-muutoshakemus"])
       : true
-    const valiselvitysStatusOk = state.filterValiselvitysStatus.length > 0 && hakemus["status-valiselvitys"]
-      ? hakemus["status-valiselvitys"] === 'information_verified' || state.filterValiselvitysStatus.includes(hakemus["status-valiselvitys"])
+    const valiselvitysStatusOk = state.status.valiselvitys.length > 0 && hakemus["status-valiselvitys"]
+      ? hakemus["status-valiselvitys"] === 'information_verified' || state.status.valiselvitys.includes(hakemus["status-valiselvitys"])
       : true
-    const loppuselvitysStatusOk = state.filterLoppuselvitysStatus.length > 0 && hakemus["status-loppuselvitys"]
-      ? state.filterLoppuselvitysStatus.includes(hakemus["status-loppuselvitys"])
+    const loppuselvitysStatusOk = state.status.loppuselvitys.length > 0 && hakemus["status-loppuselvitys"]
+      ? state.status.loppuselvitys.includes(hakemus["status-loppuselvitys"])
       : true
     return organizationNameOk
       && projectNameOk
@@ -78,53 +81,47 @@ const filterHakemusList = (state: State): State => {
       && valiselvitysStatusOk
       && loppuselvitysStatusOk
   })
-  return {
-    ...state,
-    filteredList
-  }
 }
 
-const defaultFilters = {
-  filterHakemusStatus: ALL_STATUSES,
-  filterMuutoshakemusStatus: Muutoshakemus.statuses,
-  filterValiselvitysStatus: HakemusSelvitys.statuses,
-  filterLoppuselvitysStatus: Loppuselvitys.statuses,
+const defaultStatusFilters = {
+  hakemus: ALL_STATUSES,
+  muutoshakemus: Muutoshakemus.statuses,
+  valiselvitys: HakemusSelvitys.statuses,
+  loppuselvitys: Loppuselvitys.statuses,
 } as const
 
-const reducer = (state: State, action: Action): State => {
+const reducer = (state: FilterState, action: Action): FilterState => {
   switch (action.type) {
     case "set-organization-name-filter":
-      return filterHakemusList({ ...state, filterOrganization: action.value })
+      return {...state, organization: action.value}
     case "set-project-name-filter":
-      return filterHakemusList({...state, filterProjectName: action.value })
-    case "set-hakemus-status-filter":
-      return filterHakemusList({ ...state, filterHakemusStatus: state.filterHakemusStatus.concat(action.value)})
-    case "unset-hakemus-status-filter":
-      return filterHakemusList({...state, filterHakemusStatus: state.filterHakemusStatus.filter(s => s !== action.value)})
-    case "set-muutoshakemus-status-filter":
-      return filterHakemusList({...state, filterMuutoshakemusStatus: state.filterMuutoshakemusStatus.concat(action.value)})
-    case "unset-muutoshakemus-status-filter":
-      return filterHakemusList({ ...state, filterMuutoshakemusStatus: state.filterMuutoshakemusStatus.filter(s => s !== action.value)})
-    case "set-valiselvitys-status-filter":
-      return filterHakemusList({ ...state, filterValiselvitysStatus: state.filterValiselvitysStatus.concat(action.value)})
-    case "unset-valiselvitys-status-filter":
-      return filterHakemusList({ ...state, filterValiselvitysStatus: state.filterValiselvitysStatus.filter(s => s !== action.value)})
-    case "set-loppuselvitys-status-filter":
-      return filterHakemusList({ ...state, filterLoppuselvitysStatus: state.filterLoppuselvitysStatus.concat(action.value)})
-    case "unset-loppuselvitys-status-filter":
-      return filterHakemusList({ ...state, filterLoppuselvitysStatus: state.filterLoppuselvitysStatus.filter(s => s !== action.value)})
-    case "clear-filter": {
-      switch (action.filter) {
-        case "tila":
-          return filterHakemusList({ ...state, filterHakemusStatus: defaultFilters.filterHakemusStatus })
-        case "muutoshakemus":
-          return filterHakemusList({ ...state, filterMuutoshakemusStatus: defaultFilters.filterMuutoshakemusStatus })
-        case "valiselvitys":
-          return filterHakemusList({ ...state, filterValiselvitysStatus: defaultFilters.filterValiselvitysStatus })
-        case "loppuselvitys":
-          return filterHakemusList({ ...state, filterLoppuselvitysStatus: defaultFilters.filterLoppuselvitysStatus })
-        default:
-          throw Error(`unknown filter ${action.filter}`)
+      return {...state, projectName: action.value}
+    case "set-status-filter": {
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          [action.filter]: [...state.status[action.filter], action.value]
+        }
+      }
+    }
+    case "unset-status-filter": {
+      const cloned = [...state.status[action.filter]]
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          [action.filter]: cloned.filter(s => s !== action.value)
+        }
+      }
+    }
+    case "clear-status-filter": {
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          [action.filter]: [...defaultStatusFilters[action.filter]]
+        }
       }
     }
     default:
@@ -132,19 +129,20 @@ const reducer = (state: State, action: Action): State => {
   }
 }
 
-const getDefaultState = (list: Hakemus[]): State => ({
-  ...defaultFilters,
-  filterOrganization: '',
-  filterProjectName: '',
-  list,
-  filteredList: list,
+const getDefaultState = (): FilterState => ({
+  status: {
+    ...defaultStatusFilters
+  },
+  projectName: '',
+  organization: '',
 })
 
 export default function NewHakemusListing(props: Props) {
   const {avustushaku, selectedHakemus, hakemusList, onSelectHakemus, onYhteenvetoClick, roles, splitView} = props
   const selectedHakemusId = selectedHakemus && 'id' in selectedHakemus ? selectedHakemus.id : undefined
-  const [state, dispatch] = useReducer(reducer, getDefaultState(hakemusList))
+  const [filterState, dispatch] = useReducer(reducer, getDefaultState())
   const isResolved = avustushaku.status === 'resolved'
+  const filteredList = filteredHakemusList(filterState, hakemusList)
   return (
     <div className={selectedHakemus && splitView ? styles.splitView : undefined}>
       {
@@ -153,7 +151,9 @@ export default function NewHakemusListing(props: Props) {
             selectedHakemusId={selectedHakemusId}
             onYhteenvetoClick={onYhteenvetoClick}
             onSelectHakemus={onSelectHakemus}
-            state={state}
+            filterState={filterState}
+            filteredList={filteredList}
+            list={hakemusList}
             dispatch={dispatch}
             roles={roles}
           />
@@ -167,7 +167,9 @@ export default function NewHakemusListing(props: Props) {
 
 interface ResolvedTableProps {
   selectedHakemusId: number | undefined
-  state: State
+  filterState: FilterState
+  list: Hakemus[]
+  filteredList: Hakemus[]
   dispatch: React.Dispatch<Action>
   onSelectHakemus: (hakemusId: number) => void
   onYhteenvetoClick: (filteredHakemusList: Hakemus[]) => void
@@ -177,11 +179,13 @@ interface ResolvedTableProps {
 function ResolvedTable(props: ResolvedTableProps) {
   const {
     selectedHakemusId,
-    state,
+    filterState,
     dispatch,
     onSelectHakemus,
     onYhteenvetoClick,
     roles,
+    filteredList,
+    list
   } = props
 
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -190,7 +194,7 @@ function ResolvedTable(props: ResolvedTableProps) {
   const onProjectInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({type: 'set-project-name-filter', value: event.target.value})
   }
-  const {filterProjectName, filterOrganization, filterHakemusStatus, filterMuutoshakemusStatus, filterValiselvitysStatus, filteredList, list} = state
+  const {projectName, organization, status: statusFilter} = filterState
   const totalBudgetGranted = filteredList
     .map(h => h.arvio["budget-granted"])
     .reduce<number>((totalGranted, granted) => {
@@ -216,13 +220,13 @@ function ResolvedTable(props: ResolvedTableProps) {
         <tr>
           <th className={styles.fixedColumn}>
             <div className={styles.filterInput}>
-              <input placeholder="Hakijaorganisaatio" onChange={onOrganizationInput} value={filterOrganization} />
+              <input placeholder="Hakijaorganisaatio" onChange={onOrganizationInput} value={organization} />
               <PolygonIcon />
             </div>
           </th>
           <th className={styles.fixedColumn}>
             <div className={styles.filterInput}>
-              <input placeholder="Hanke tai asianumero" onChange={onProjectInput} value={filterProjectName} />
+              <input placeholder="Hanke tai asianumero" onChange={onProjectInput} value={projectName} />
               <PolygonIcon />
             </div>
           </th>
@@ -231,13 +235,13 @@ function ResolvedTable(props: ResolvedTableProps) {
               text="Tila"
               statuses={ALL_STATUSES}
               labelText={HakemusArviointiStatuses.statusToFI}
-              isChecked={status => filterHakemusStatus.includes(status)}
-              onCheck={status => dispatch({type: 'set-hakemus-status-filter', value: status})}
-              onUncheck={status => dispatch({type: 'unset-hakemus-status-filter', value: status})}
+              isChecked={status => statusFilter.hakemus.includes(status)}
+              onCheck={status => dispatch({type: 'set-status-filter', filter: 'hakemus', value: status})}
+              onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'hakemus', value: status})}
               amountOfStatus={status => list.filter(h => h.arvio.status === status).length}
               showDeleteButton={
-                state.filterHakemusStatus.length !== ALL_STATUSES.length
-                  ? { ariaLabel: "Poista hakemuksen tila rajaukset", onClick: () => dispatch({type: 'clear-filter', filter: 'tila'})}
+                statusFilter.hakemus.length !== ALL_STATUSES.length
+                  ? { ariaLabel: "Poista hakemuksen tila rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'hakemus'})}
                   : undefined}
             />
           </th>
@@ -246,13 +250,13 @@ function ResolvedTable(props: ResolvedTableProps) {
               text="Muutoshakemus"
               statuses={Muutoshakemus.statuses}
               labelText={Muutoshakemus.statusToFI}
-              isChecked={status => filterMuutoshakemusStatus.includes(status)}
-              onCheck={status => dispatch({type: 'set-muutoshakemus-status-filter', value: status})}
-              onUncheck={status => dispatch({type: 'unset-muutoshakemus-status-filter', value: status})}
+              isChecked={status => statusFilter.muutoshakemus.includes(status)}
+              onCheck={status => dispatch({type: 'set-status-filter', filter: 'muutoshakemus', value: status})}
+              onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'muutoshakemus', value: status})}
               amountOfStatus={status => list.filter(h => h["status-muutoshakemus"] === status).length}
               showDeleteButton={
-                state.filterMuutoshakemusStatus.length !== Muutoshakemus.statuses.length
-                  ? { ariaLabel: "Poista muutoshakemus rajaukset", onClick: () => dispatch({type: 'clear-filter', filter: 'muutoshakemus'})}
+                statusFilter.muutoshakemus.length !== Muutoshakemus.statuses.length
+                  ? { ariaLabel: "Poista muutoshakemus rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'muutoshakemus'})}
                   : undefined}
             />
           </th>
@@ -261,13 +265,13 @@ function ResolvedTable(props: ResolvedTableProps) {
               text="Väliselvitys"
               statuses={HakemusSelvitys.statuses}
               labelText={HakemusSelvitys.statusToFI}
-              isChecked={status => filterValiselvitysStatus.includes(status)}
-              onCheck={status => dispatch({type: 'set-valiselvitys-status-filter', value: status})}
-              onUncheck={status => dispatch({type: 'unset-valiselvitys-status-filter', value: status})}
+              isChecked={status => statusFilter.valiselvitys.includes(status)}
+              onCheck={status => dispatch({type: 'set-status-filter', filter: 'valiselvitys', value: status})}
+              onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'valiselvitys', value: status})}
               amountOfStatus={status => list.filter(h => h["status-valiselvitys"] === status).length}
               showDeleteButton={
-                state.filterValiselvitysStatus.length !== HakemusSelvitys.statuses.length
-                  ? { ariaLabel: "Poista väliselvitys rajaukset", onClick: () => dispatch({type: 'clear-filter', filter: 'valiselvitys'})}
+                statusFilter.valiselvitys.length !== HakemusSelvitys.statuses.length
+                  ? { ariaLabel: "Poista väliselvitys rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'valiselvitys'})}
                   : undefined}
             />
           </th>
@@ -276,13 +280,13 @@ function ResolvedTable(props: ResolvedTableProps) {
               text="Loppuselvitys"
               statuses={Loppuselvitys.statuses}
               labelText={Loppuselvitys.statusToFI}
-              isChecked={status => state.filterLoppuselvitysStatus.includes(status)}
-              onCheck={status => dispatch({type: 'set-loppuselvitys-status-filter', value: status})}
-              onUncheck={status => dispatch({type: 'unset-loppuselvitys-status-filter', value: status})}
+              isChecked={status => statusFilter.loppuselvitys.includes(status)}
+              onCheck={status => dispatch({type: 'set-status-filter', filter: 'loppuselvitys', value: status})}
+              onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'loppuselvitys', value: status})}
               amountOfStatus={status => list.filter(h => h["status-loppuselvitys"] === status).length}
               showDeleteButton={
-                state.filterLoppuselvitysStatus.length !== Loppuselvitys.statuses.length
-                  ? { ariaLabel: "Poista loppuselvitys rajaukset", onClick: () => dispatch({type: 'clear-filter', filter: 'loppuselvitys'})}
+                statusFilter.loppuselvitys.length !== Loppuselvitys.statuses.length
+                  ? { ariaLabel: "Poista loppuselvitys rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'loppuselvitys'})}
                   : undefined}
               />
           </th>
