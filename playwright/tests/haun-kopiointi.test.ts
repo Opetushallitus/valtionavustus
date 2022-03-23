@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test'
-import { defaultValues } from '../../fixtures/defaultValues'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
 
-defaultValues('Copying hakulomake', async ({ page }) => {
+import { defaultValues } from '../fixtures/defaultValues'
+import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
+
+defaultValues('Copying haku', async ({ page }) => {
   const hakujenHallinta = new HakujenHallintaPage(page)
   const avustushakuID = await hakujenHallinta.copyEsimerkkihaku()
 
@@ -14,6 +15,11 @@ defaultValues('Copying hakulomake', async ({ page }) => {
 
   await hakujenHallinta.switchToHaunTiedotTab()
   await hakujenHallinta.copyCurrentHaku()
+
+  await test.step('vastuuvalmistelija is set to current user', async () => {
+    await hakujenHallinta.switchToHaunTiedotTab()
+    await expect(hakujenHallinta.page.locator('[data-test-id="vastuuvalmistelija"]')).toContainText('_ valtionavustus <santeri.horttanainen@reaktor.com>')
+  })
 
   await test.step('väliselvitys title is copied to the new avustushaku', async () => {
     await expectValiselvitysTitleToBe(hakujenHallinta, valiselvitysTitle)

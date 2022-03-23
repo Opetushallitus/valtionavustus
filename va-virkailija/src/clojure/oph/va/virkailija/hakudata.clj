@@ -224,7 +224,7 @@
                    created-at)]
     (hakija-api/create-avustushaku-role tx
                                         {:avustushaku (:id new-haku)
-                                         :role "presenting_officer"
+                                         :role "vastuuvalmistelija"
                                          :name (str (:first-name identity) " "
                                                     (:surname identity))
                                          :email (:email identity)

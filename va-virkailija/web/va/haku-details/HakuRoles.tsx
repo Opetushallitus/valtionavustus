@@ -28,22 +28,31 @@ export const HakuRoles = ({ avustushaku, controller, helpTexts, userInfo, vaUser
   }, [search])
 
   const roles = [...(avustushaku.roles ?? [])].sort((a, b) => a.name < b.name ? -1 : 1)
-  const roleRows = roles ? roles.map(role => (
-    <RoleRow key={role.id}
-              role={role}
-              avustushaku={avustushaku}
-              userInfo={userInfo}
-              userHasEditPrivilege={userHasEditPrivilege}
-              userHasEditMyHakuRolePrivilege={userHasEditMyHakuRolePrivilege}
-              controller={controller}/>
-  )) : []
+  const roleRows = roles
+    .filter(r => r.role !== 'vastuuvalmistelija')
+    .map(role => (
+        <RoleRow key={role.id}
+                  role={role}
+                  avustushaku={avustushaku}
+                  userInfo={userInfo}
+                  userHasEditPrivilege={userHasEditPrivilege}
+                  userHasEditMyHakuRolePrivilege={userHasEditMyHakuRolePrivilege}
+                  controller={controller}
+        />
+    ))
 
   const searchErrorClass = vaUserSearch.result.error ? "error" : "hidden"
   const hasInput = vaUserSearch.input.length > 0
   const clearInputButtonClassname = ClassNames("remove", { enabled: hasInput })
+  const vastuuvalmistelija = roles.find(r => r.role === 'vastuuvalmistelija')
 
   return (
     <div className="haku-roles">
+      {vastuuvalmistelija &&
+        <div className="haku-roles-vastuuvalmistelija">
+          <b>Vastuuvalmistelija: </b><span data-test-id="vastuuvalmistelija">{`${vastuuvalmistelija.name} <${vastuuvalmistelija.email}>`}</span>
+        </div>
+      }
       <table>
         <thead>
           <tr>
@@ -53,7 +62,7 @@ export const HakuRoles = ({ avustushaku, controller, helpTexts, userInfo, vaUser
           </tr>
         </thead>
         <CSSTransitionGroup transitionName="haku-roles-transition" component="tbody">
-        {roleRows}
+          {roleRows}
         </CSSTransitionGroup>
       </table>
 
@@ -165,7 +174,9 @@ const RoleRow = ({ avustushaku, controller, role, userInfo, userHasEditPrivilege
           <option value="evaluator">Arvioija</option>
         </select>
       </td>
-      <td className="haku-roles-name-column"><input type="text" value={role.name} name="name" onChange={handleChange('name')} disabled={disableEditing}/></td>
+      <td className="haku-roles-name-column">
+        <input type="text" value={role.name} name="name" onChange={handleChange('name')} disabled={disableEditing}/>
+      </td>
       <td className="haku-roles-email-column">
         <input type="email" value={role.email || ""} name="email" onChange={handleChange('email')} disabled={disableEditing}/>
         <button type="button" onClick={onDelete} className="remove haku-roles-remove" title={removeTitleText} tabIndex={-1} disabled={disableEditing} />
