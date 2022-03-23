@@ -26,7 +26,9 @@ export interface PaatosState extends MuutoshakemusPaatosResponse {
   environment: EnvironmentApiResponse
 }
 
-export type MuutoshakemusStatus = "accepted" | "rejected" | "accepted_with_changes"
+export const MuutoshakemusStatuses = ["accepted", "rejected", "accepted_with_changes"] as const
+
+export type MuutoshakemusStatus = typeof MuutoshakemusStatuses[number]
 
 export interface Muutoshakemus {
   id: number

@@ -1,11 +1,15 @@
 .filterInput {
-  text-align: left;
-  padding: 4px 4px 4px 8px;
-  background: #FFFFFF;
-  border: 1px solid #C1C1C1;
-  box-sizing: border-box;
-  border-radius: 4px;
-  width: 100%;
+  display: flex;
+  align-items: center;
+
+  input {
+    text-align: left;
+    padding: 4px 4px 4px 8px;
+    background: #FFFFFF;
+    border: 1px solid #C1C1C1;
+    box-sizing: border-box;
+    border-radius: 4px;
+  }
 }
 
 .alignCenter {
@@ -16,14 +20,15 @@
   width: 100%;
   background-color: #fff;
   font-size: 13px;
+  table-layout: fixed;
 
   th {
     padding: 8px;
     text-align: left;
   }
-  td, th {
-    text-overflow: ellipsis;
+  td {
     max-width: 216px;
+    text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
   }
@@ -45,6 +50,7 @@
     background-color: #fff;
     position: sticky;
     bottom: 0;
+    z-index: 0;
     td:first-of-type {
       padding: 8px 0 8px 12px;
     }
@@ -84,4 +90,61 @@
 
 .yhteenveto {
   margin-left: 1rem;
+}
+
+.tableLabel {
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.tableLabelPopup {
+  position: absolute;
+  top: 35px;
+  background-color: #fff;
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  width: 160px;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 40%);
+  &:after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 0;
+    height: 0;
+    border: 5px solid;
+    border-color: transparent transparent #fff #fff;
+    transform-origin: 0 0;
+    transform: rotate(135deg);
+    box-shadow: -2px 2px 3px 0 rgb(0 0 0 / 10%);
+  }
+}
+
+.statusCheckbox {
+  display: flex;
+  padding: 4px 0 4px 0;
+  align-items: center;
+  input {
+    margin-right: 8px;
+  }
+}
+
+.tableLabelBtn {
+  background-color: transparent !important;
+  border-radius: 0 !important;
+  color: #499CC7;
+  font-size: 13px;
+  border: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.polygon {
+  height: 8px;
+  width: auto;
+  margin-left: 8px;
 }
