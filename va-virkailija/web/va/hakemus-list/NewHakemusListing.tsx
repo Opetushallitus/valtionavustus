@@ -1,4 +1,4 @@
-import React, {useReducer, useState} from "react";
+import React, {useEffect, useReducer, useRef, useState} from "react";
 import {
   ALL_STATUSES,
   Avustushaku,
@@ -57,21 +57,39 @@ type Action =
   | {type: 'unset-valiselvitys-status-filter', value: ValiselvitysStatuses}
   | {type: 'set-loppuselvitys-status-filter', value: LoppuselvitysStatuses}
   | {type: 'unset-loppuselvitys-status-filter', value: LoppuselvitysStatuses}
+  | {type: 'clear-filter', filter: 'tila' | 'muutoshakemus' | 'valiselvitys' | 'loppuselvitys'}
 
 const filterHakemusList = (state: State): State => {
-  const {list, filterOrganization, filterProjectName, filterHakemusStatus, filterValiselvitysStatus, filterMuutoshakemusStatus, filterLoppuselvitysStatus} = state
-  const filteredList = list
-    .filter(hakemus => hakemus["organization-name"].toLocaleLowerCase().includes(filterOrganization))
-    .filter(hakemus => hakemus["project-name"].toLocaleLowerCase().includes(filterProjectName))
-    .filter(hakemus => filterHakemusStatus.length > 0 ? filterHakemusStatus.includes(hakemus.arvio.status) : true)
-    .filter(hakemus => filterMuutoshakemusStatus.length > 0 && hakemus["status-muutoshakemus"] ? filterMuutoshakemusStatus.includes(hakemus["status-muutoshakemus"]) : true)
-    .filter(hakemus => filterValiselvitysStatus.length > 0 && hakemus["status-valiselvitys"] ? hakemus["status-valiselvitys"] === 'information_verified' || filterValiselvitysStatus.includes(hakemus["status-valiselvitys"]) : true)
-    .filter(hakemus => filterLoppuselvitysStatus.length > 0 && hakemus["status-loppuselvitys"] ? filterLoppuselvitysStatus.includes(hakemus["status-loppuselvitys"]) : true)
+  const filteredList = state.list.filter(hakemus => {
+    const organizationNameOk = hakemus["organization-name"].toLocaleLowerCase().includes(state.filterOrganization)
+    const projectNameOk = hakemus["project-name"].toLocaleLowerCase().includes(state.filterProjectName)
+    const muutoshakemusStatusOk = state.filterMuutoshakemusStatus.length > 0 && hakemus["status-muutoshakemus"]
+      ? state.filterMuutoshakemusStatus.includes(hakemus["status-muutoshakemus"])
+      : true
+    const valiselvitysStatusOk = state.filterValiselvitysStatus.length > 0 && hakemus["status-valiselvitys"]
+      ? hakemus["status-valiselvitys"] === 'information_verified' || state.filterValiselvitysStatus.includes(hakemus["status-valiselvitys"])
+      : true
+    const loppuselvitysStatusOk = state.filterLoppuselvitysStatus.length > 0 && hakemus["status-loppuselvitys"]
+      ? state.filterLoppuselvitysStatus.includes(hakemus["status-loppuselvitys"])
+      : true
+    return organizationNameOk
+      && projectNameOk
+      && muutoshakemusStatusOk
+      && valiselvitysStatusOk
+      && loppuselvitysStatusOk
+  })
   return {
     ...state,
     filteredList
   }
 }
+
+const defaultFilters = {
+  filterHakemusStatus: ALL_STATUSES,
+  filterMuutoshakemusStatus: Muutoshakemus.statuses,
+  filterValiselvitysStatus: HakemusSelvitys.statuses,
+  filterLoppuselvitysStatus: Loppuselvitys.statuses,
+} as const
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -95,16 +113,27 @@ const reducer = (state: State, action: Action): State => {
       return filterHakemusList({ ...state, filterLoppuselvitysStatus: state.filterLoppuselvitysStatus.concat(action.value)})
     case "unset-loppuselvitys-status-filter":
       return filterHakemusList({ ...state, filterLoppuselvitysStatus: state.filterLoppuselvitysStatus.filter(s => s !== action.value)})
+    case "clear-filter": {
+      switch (action.filter) {
+        case "tila":
+          return filterHakemusList({ ...state, filterHakemusStatus: defaultFilters.filterHakemusStatus })
+        case "muutoshakemus":
+          return filterHakemusList({ ...state, filterMuutoshakemusStatus: defaultFilters.filterMuutoshakemusStatus })
+        case "valiselvitys":
+          return filterHakemusList({ ...state, filterValiselvitysStatus: defaultFilters.filterValiselvitysStatus })
+        case "loppuselvitys":
+          return filterHakemusList({ ...state, filterLoppuselvitysStatus: defaultFilters.filterLoppuselvitysStatus })
+        default:
+          throw Error(`unknown filter ${action.filter}`)
+      }
+    }
     default:
       throw Error('unknown action')
   }
 }
 
 const getDefaultState = (list: Hakemus[]): State => ({
-  filterHakemusStatus: ALL_STATUSES,
-  filterMuutoshakemusStatus: Muutoshakemus.statuses,
-  filterValiselvitysStatus: HakemusSelvitys.statuses,
-  filterLoppuselvitysStatus: Loppuselvitys.statuses,
+  ...defaultFilters,
   filterOrganization: '',
   filterProjectName: '',
   list,
@@ -206,6 +235,10 @@ function ResolvedTable(props: ResolvedTableProps) {
               onCheck={status => dispatch({type: 'set-hakemus-status-filter', value: status})}
               onUncheck={status => dispatch({type: 'unset-hakemus-status-filter', value: status})}
               amountOfStatus={status => list.filter(h => h.arvio.status === status).length}
+              showDeleteButton={
+                state.filterHakemusStatus.length !== ALL_STATUSES.length
+                  ? { ariaLabel: "Poista hakemuksen tila rajaukset", onClick: () => dispatch({type: 'clear-filter', filter: 'tila'})}
+                  : undefined}
             />
           </th>
           <th>
@@ -217,6 +250,10 @@ function ResolvedTable(props: ResolvedTableProps) {
               onCheck={status => dispatch({type: 'set-muutoshakemus-status-filter', value: status})}
               onUncheck={status => dispatch({type: 'unset-muutoshakemus-status-filter', value: status})}
               amountOfStatus={status => list.filter(h => h["status-muutoshakemus"] === status).length}
+              showDeleteButton={
+                state.filterMuutoshakemusStatus.length !== Muutoshakemus.statuses.length
+                  ? { ariaLabel: "Poista muutoshakemus rajaukset", onClick: () => dispatch({type: 'clear-filter', filter: 'muutoshakemus'})}
+                  : undefined}
             />
           </th>
           <th>
@@ -228,6 +265,10 @@ function ResolvedTable(props: ResolvedTableProps) {
               onCheck={status => dispatch({type: 'set-valiselvitys-status-filter', value: status})}
               onUncheck={status => dispatch({type: 'unset-valiselvitys-status-filter', value: status})}
               amountOfStatus={status => list.filter(h => h["status-valiselvitys"] === status).length}
+              showDeleteButton={
+                state.filterValiselvitysStatus.length !== HakemusSelvitys.statuses.length
+                  ? { ariaLabel: "Poista väliselvitys rajaukset", onClick: () => dispatch({type: 'clear-filter', filter: 'valiselvitys'})}
+                  : undefined}
             />
           </th>
           <th>
@@ -239,6 +280,10 @@ function ResolvedTable(props: ResolvedTableProps) {
               onCheck={status => dispatch({type: 'set-loppuselvitys-status-filter', value: status})}
               onUncheck={status => dispatch({type: 'unset-loppuselvitys-status-filter', value: status})}
               amountOfStatus={status => list.filter(h => h["status-loppuselvitys"] === status).length}
+              showDeleteButton={
+                state.filterLoppuselvitysStatus.length !== Loppuselvitys.statuses.length
+                  ? { ariaLabel: "Poista loppuselvitys rajaukset", onClick: () => dispatch({type: 'clear-filter', filter: 'loppuselvitys'})}
+                  : undefined}
               />
           </th>
           <th><TableLabel text="Myönnetty" disabled /></th>
@@ -290,18 +335,37 @@ const PolygonIcon = () => <img src={polygonSrc} alt="ikoni" className={styles.po
 interface TableLabelProps {
   text: string
   disabled?: boolean
+  showDeleteButton?: {
+    ariaLabel: string
+    onClick: () => void
+  }
 }
 
-const TableLabel: React.FC<TableLabelProps> = ({text, disabled, children} ) => {
+const TableLabel: React.FC<TableLabelProps> = ({text, disabled, showDeleteButton, children} ) => {
   const [toggled, toggleMenu] = useState(false)
+  const popupRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (popupRef?.current && event.target instanceof Element && !popupRef.current.contains(event.target)) {
+        toggleMenu(value => !value)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [popupRef])
   return (
     <div className={styles.tableLabel}>
       <button disabled={!!disabled} onClick={() => toggleMenu(state => !state)} className={styles.tableLabelBtn}>
         <span>{text}</span>
       </button>
+      {showDeleteButton && (
+        <button className={styles.deleteBtn} onClick={showDeleteButton.onClick} aria-labelledby={showDeleteButton.ariaLabel} />
+      )}
       <PolygonIcon />
       {toggled && (
-        <div className={styles.tableLabelPopup}>
+        <div className={styles.tableLabelPopup} ref={popupRef} >
           {children}
         </div>
       )}
@@ -320,8 +384,8 @@ interface StatusTableLabelProps<Status extends Statuses> extends TableLabelProps
   amountOfStatus: (status: Status) => number
 }
 
-function StatusTableLabel<Status extends Statuses>({statuses, labelText, text, isChecked, onCheck, onUncheck, amountOfStatus}: StatusTableLabelProps<Status>) {
-  return <TableLabel text={text}>
+function StatusTableLabel<Status extends Statuses>({statuses, labelText, text, isChecked, onCheck, onUncheck, amountOfStatus, showDeleteButton}: StatusTableLabelProps<Status>) {
+  return <TableLabel text={text} showDeleteButton={showDeleteButton}>
     {statuses.map(status => {
       const checked = isChecked(status)
       return (
