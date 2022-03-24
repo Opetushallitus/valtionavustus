@@ -80,22 +80,24 @@
 .hakemusRow {
   cursor: pointer;
   background-color: #fff;
+  border: 1px solid #fff;
   &:hover {
-    background-color: darken(#fafafa, 20%);
+    background-color: #EBF7FD;
   }
   &:active {
-    background-color: darken(#fafafa, 40%);
+    background-color: darken(#EBF7FD, 10%);
   }
 }
 
 .selectedHakemusRow {
   composes: hakemusRow;
-  background-color: #C8E8F9;
+  border-color: #C8E8F9;
+  background-color: #EBF7FD;
   &:hover {
-    background-color: darken(#C8E8F9, 20%);
+    background-color: darken(#EBF7FD, 20%);
   }
   &:active {
-    background-color: darken(#C8E8F9, 40%);
+    background-color: darken(#EBF7FD, 40%);
   }
 }
 
