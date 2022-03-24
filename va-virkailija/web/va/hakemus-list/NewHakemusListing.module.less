@@ -1,4 +1,12 @@
+.font {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: -0.035em;
+}
+
 .filterInput {
+  composes: font;
   display: flex;
   align-items: center;
 
@@ -18,9 +26,9 @@
 }
 
 .hakemusTable {
+  composes: font;
   width: 100%;
   background-color: #fff;
-  font-size: 13px;
   table-layout: fixed;
 
   th {
@@ -137,6 +145,7 @@
 }
 
 .btn {
+  composes: font;
   &:focus {
     outline: none;
   }
