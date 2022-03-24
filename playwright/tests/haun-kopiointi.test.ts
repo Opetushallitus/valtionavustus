@@ -16,11 +16,6 @@ defaultValues('Copying haku', async ({ page }) => {
   await hakujenHallinta.switchToHaunTiedotTab()
   await hakujenHallinta.copyCurrentHaku()
 
-  await test.step('vastuuvalmistelija is set to current user', async () => {
-    await hakujenHallinta.switchToHaunTiedotTab()
-    await expect(hakujenHallinta.page.locator('[data-test-id="vastuuvalmistelija"]')).toContainText('_ valtionavustus <santeri.horttanainen@reaktor.com>')
-  })
-
   await test.step('väliselvitys title is copied to the new avustushaku', async () => {
     await expectValiselvitysTitleToBe(hakujenHallinta, valiselvitysTitle)
   })

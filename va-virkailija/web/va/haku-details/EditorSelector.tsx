@@ -10,14 +10,13 @@ import DecisionEditor from './DecisionEditor'
 import { SelvitysFormEditor } from './SelvitysFormEditor'
 import HelpTooltip from '../HelpTooltip'
 import HakujenHallintaController from '../HakujenHallintaController'
-import { HakujenHallintaSubTab, UserInfo, VaCodeValue, VaUserSearch } from '../types'
+import { HakujenHallintaSubTab, UserInfo, VaCodeValue } from '../types'
 
 interface EditorSelectorProps {
   subTab: HakujenHallintaSubTab
   controller: HakujenHallintaController
   avustushaku: Avustushaku
   decisionLiitteet: Liite[]
-  vaUserSearch: VaUserSearch
   koodistos: Koodistos
   userInfo: UserInfo
   environment: EnvironmentApiResponse
@@ -47,7 +46,6 @@ export const EditorSelector = (props: EditorSelectorProps) => {
     decisionLiitteet,
     formDraft,
     formDraftJson,
-    vaUserSearch,
     koodistos,
     userInfo,
     environment,
@@ -63,7 +61,6 @@ export const EditorSelector = (props: EditorSelectorProps) => {
   switch (subTab) {
     case "haku-editor":
       subTabContent = <HakuEdit avustushaku={avustushaku}
-                                vaUserSearch={vaUserSearch}
                                 userInfo={userInfo}
                                 controller={controller}
                                 codeOptions={codeOptions}

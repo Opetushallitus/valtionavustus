@@ -201,10 +201,39 @@ export class HakujenHallintaPage {
     await waitForSaveStatusOk(this.page)
   }
 
-  async searchUsers(user: string) {
+  async searchUsersForRoles(user: string) {
     await Promise.all([
       this.page.waitForResponse(`${VIRKAILIJA_URL}/api/va-user/search`),
       this.page.fill('#va-user-search-input', user)
+    ])
+  }
+
+  async searchUsersForVastuuvalmistelija(user: string) {
+    await Promise.all([
+      this.page.waitForResponse(`${VIRKAILIJA_URL}/api/va-user/search`),
+      this.page.fill('#va-user-search-vastuuvalmistelija', user)
+    ])
+  }
+
+  async clearUserSearchForRoles() {
+    this.page.click('[data-test-id="clear-role-search"]')
+  }
+
+  async clearUserSearchForVastuuvalmistelija() {
+    this.page.click('[data-test-id="clear-vastuuvalmistelija-search"]')
+  }
+
+  async fillVastuuvalmistelijaName(name: string) {
+    await Promise.all([
+      this.waitForRolesSaved(),
+      this.page.fill('[data-test-id="vastuuvalmistelija-name"]', name)
+    ])
+  }
+
+  async fillVastuuvalmistelijaEmail(email: string) {
+    await Promise.all([
+      this.waitForRolesSaved(),
+      this.page.fill('[data-test-id="vastuuvalmistelija-email"]', email)
     ])
   }
 
@@ -223,7 +252,7 @@ export class HakujenHallintaPage {
     ])
   }
 
-  async setUserRole(name: string, role: 'presenting_officer' | 'evaluator' | 'vastuuvalmistelija') {
+  async setUserRole(name: string, role: 'presenting_officer' | 'evaluator') {
     const testId = "role-" +name.toLowerCase().replace(" ", "-")
     await Promise.all([
       this.waitForRolesSaved(),
@@ -372,14 +401,19 @@ export class HakujenHallintaPage {
   }
 
   async addValmistelija(name: string) {
-    await this.searchUsers(name)
+    await this.searchUsersForRoles(name)
     await this.selectUser(name)
   }
 
   async addArvioija(name: string) {
-    await this.searchUsers(name)
+    await this.searchUsersForRoles(name)
     await this.selectUser(name)
     await this.setUserRole(name, 'evaluator')
+  }
+
+  async setVastuuvalmistelija(name: string) {
+    await this.searchUsersForVastuuvalmistelija(name)
+    await this.selectUser(name)
   }
 
   async createHakuWithLomakeJson(lomakeJson: string, hakuProps: HakuProps): Promise<{ avustushakuID: number }> {

@@ -115,10 +115,6 @@ table.translation {
   .haku-roles {
     margin-top: 30px;
 
-    &-vastuuvalmistelija {
-      margin-bottom: 30px;
-    }
-
     &-role-column,
     &-name-column,
     &-email-column {
@@ -131,13 +127,20 @@ table.translation {
     }
 
     &-name-column,
-    &-email-column {
+    &-email-column,
+    &-vastuuvalmistelija {
       input {
         width: 280px;
+        border: 1px solid #c1c1c1;
+        padding: 0 4px;
       }
       input:invalid {
         background-color: @bright-red;
       }
+    }
+
+    &-vastuuvalmistelija > input:first-of-type {
+      margin-right: 16px;
     }
 
     &-email-column {
@@ -230,7 +233,7 @@ table.translation {
     }
   }
 
-  #va-user-search-add-role {
+  .va-user-search-add-role {
     min-height: 72px;
     .va-user-search-error-display {
       min-height: 22px;
@@ -251,10 +254,12 @@ table.translation {
         }
       }
     }
-    #va-user-search-results {
+    #va-user-search-results,
+    #va-vastuuvalmistelija-search-results {
       &.loading {
         background: white url("../img/ajax-loader.gif") no-repeat 4px 4px;
       }
+      z-index: 500;
       min-height: 20px;
       width: 800px;
       position: absolute;

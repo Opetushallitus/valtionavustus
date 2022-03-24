@@ -11,7 +11,6 @@ import FormUtil from 'soresu-form/web/form/FormUtil'
 import translations from 'soresu-form/resources/public/translations.json'
 
 import LocalStorage from './LocalStorage'
-import VaUserSearchParameters from './haku-details/VaUserSearchParameters'
 import HakuStatuses from './haku-details/HakuStatuses'
 import HakuPhases from './haku-details/HakuPhases'
 import queryString from 'query-string'
@@ -45,8 +44,6 @@ import {
   Selvitys,
   UserInfo,
   VaCodeValue,
-  VaUserSearch,
-  VaUserSearchResults
 } from "./types";
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
 
@@ -84,7 +81,6 @@ export interface State {
   valiselvitysFormDrafts: Record<number, Form>
   valiselvitysFormDraftsJson: Record<number, string>
   subTab: HakujenHallintaSubTab
-  vaUserSearch: VaUserSearch
   koodistos: Koodistos
   filter: Filter
 }
@@ -128,8 +124,6 @@ const events = {
   beforeUnload: 'beforeUnload',
   selectEditorSubTab: 'selectEditorSubTab',
   setFilter: 'onSetFilter',
-  vaUserSearchStarted: 'vaUserSearchStarted',
-  vaUserSearchFinished: 'vaUserSearchFinished',
   ensureKoodistosLoaded: 'ensureKoodistosLoaded',
   koodistosLoaded: 'koodistosLoaded',
   clearFilters: 'clearFilters'
@@ -237,11 +231,6 @@ export default class HakujenHallintaController {
       valiselvitysFormDrafts: {},
       valiselvitysFormDraftsJson: {},
       subTab: subTab,
-      vaUserSearch: {
-        input: "",
-        loading: false,
-        result: {error: false, results: []}
-      },
       koodistos: {
         content: null,
         loading: false
@@ -309,8 +298,6 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.deleteFocusArea), this.onDeleteFocusArea],
       [dispatcher.stream(events.beforeUnload), this.onBeforeUnload],
       [dispatcher.stream(events.selectEditorSubTab), this.onSelectEditorSubTab],
-      [dispatcher.stream(events.vaUserSearchStarted), this.onStartVaUserSearch],
-      [dispatcher.stream(events.vaUserSearchFinished), this.onVaUserSearchFinished],
       [dispatcher.stream(events.ensureKoodistosLoaded), this.onEnsureKoodistoLoaded],
       [dispatcher.stream(events.setFilter), this.onSetFilter],
       [dispatcher.stream(events.koodistosLoaded), this.onKoodistosLoaded],
@@ -331,10 +318,6 @@ export default class HakujenHallintaController {
       return subTab
     }
   }
-
-  startVaUserSearch = _.debounce((searchInput) => {
-    dispatcher.push(events.vaUserSearchStarted, searchInput)
-  }, VaUserSearchParameters.searchDebounceMillis())
 
   autoSave = _.debounce(function () {
     dispatcher.push(events.saveHaku, {})
@@ -657,6 +640,9 @@ export default class HakujenHallintaController {
   }
 
   onRoleCreated(state: State, newRole: {haku: Avustushaku, role: Role}) {
+    if (newRole.role.role === 'vastuuvalmistelija') {
+      newRole.haku.roles = newRole.haku.roles?.filter(f => f.role !== 'vastuuvalmistelija')
+    }
     newRole.haku.roles?.push(newRole.role)
     this.loadPrivileges(newRole.haku)
     return state
@@ -819,29 +805,6 @@ export default class HakujenHallintaController {
     const avustushaku = formContentUpdateObject.avustushaku
     state[selvitysType === 'valiselvitys' ? "valiselvitysFormDraftsJson" : "loppuselvitysFormDraftsJson"][avustushaku.id] = formContentUpdateObject.newFormJson
     state.saveStatus.saveTime = null
-    return state
-  }
-
-  onStartVaUserSearch(state: State, searchInput: string) {
-    state.vaUserSearch.input = searchInput
-    if(searchInput.length >= VaUserSearchParameters.minimumSearchInputLength()) {
-      state.vaUserSearch.loading = true
-      const url = "/api/va-user/search"
-      HttpUtil.post(url, {searchInput: searchInput})
-        .then(r => {
-          dispatcher.push(events.vaUserSearchFinished, r)
-        })
-        .catch(error => {
-          console.error(`Error in VA user search, POST ${url}`, error)
-          dispatcher.push(events.vaUserSearchFinished, {error: true, results: []})
-        })
-    }
-    return state
-  }
-
-  onVaUserSearchFinished(state: State, searchResponse: VaUserSearchResults | {error: true, results: []}) {
-    state.vaUserSearch.result = searchResponse
-    state.vaUserSearch.loading = false
     return state
   }
 

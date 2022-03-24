@@ -115,7 +115,6 @@ export type HakujenHallintaSubTab =
   | 'loppuselvitys'
 
 export interface VaUserSearch {
-  input: string
   loading: boolean
   result: {
     error?: boolean
@@ -130,10 +129,6 @@ export interface VaUserSearchResult {
   email?: string
   lang: string
   privileges: string[]
-}
-
-export interface VaUserSearchResults {
-  results: VaUserSearchResult[]
 }
 
 interface MuutoshakemuksenVaatimaKentta {

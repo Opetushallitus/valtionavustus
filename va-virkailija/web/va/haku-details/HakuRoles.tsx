@@ -1,33 +1,30 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import ClassNames from 'classnames'
-import { debounce } from 'lodash'
+import { debounce, isEqual } from 'lodash'
 
 import CSSTransitionGroup from 'soresu-form/web/form/component/wrapper/CSSTransitionGroup.jsx'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
 import { HelpTexts } from 'soresu-form/web/va/types'
 
-import VaUserSearchParameters from './VaUserSearchParameters'
 import HelpTooltip from '../HelpTooltip'
 import HakujenHallintaController, { SelectedAvustushaku } from '../HakujenHallintaController'
 import { Role, RoleType, UserInfo, VaUserSearch } from '../types'
+import { minimumSearchInputLength, useVaUserSearch } from '../VaUserSearch'
 
 type HakuRolesProps = {
   controller: HakujenHallintaController
   avustushaku: SelectedAvustushaku
   userHasEditPrivilege: boolean
   userHasEditMyHakuRolePrivilege: boolean
-  vaUserSearch: VaUserSearch
   userInfo: UserInfo
   helpTexts: HelpTexts
 }
 
-export const HakuRoles = ({ avustushaku, controller, helpTexts, userInfo, vaUserSearch, userHasEditPrivilege, userHasEditMyHakuRolePrivilege }: HakuRolesProps) => {
-  const [search, setSearch] = useState("")
-  useEffect(() => {
-    controller.startVaUserSearch(search)
-  }, [search])
-
+export const HakuRoles = ({ avustushaku, controller, helpTexts, userInfo, userHasEditPrivilege, userHasEditMyHakuRolePrivilege }: HakuRolesProps) => {
+  const [vastuuvalmistelijaSearchInput, setVastuuvalmistelijaSearchInput, vastuuvalmistelijaSearch] = useVaUserSearch()
+  const [roleSearchInput, setRoleSearchInput, roleSearch] = useVaUserSearch()
   const roles = [...(avustushaku.roles ?? [])].sort((a, b) => a.name < b.name ? -1 : 1)
+  const vastuuvalmistelija = roles.find(r => r.role === 'vastuuvalmistelija')
   const roleRows = roles
     .filter(r => r.role !== 'vastuuvalmistelija')
     .map(role => (
@@ -41,18 +38,36 @@ export const HakuRoles = ({ avustushaku, controller, helpTexts, userInfo, vaUser
         />
     ))
 
-  const searchErrorClass = vaUserSearch.result.error ? "error" : "hidden"
-  const hasInput = vaUserSearch.input.length > 0
-  const clearInputButtonClassname = ClassNames("remove", { enabled: hasInput })
-  const vastuuvalmistelija = roles.find(r => r.role === 'vastuuvalmistelija')
-
   return (
     <div className="haku-roles">
-      {vastuuvalmistelija &&
-        <div className="haku-roles-vastuuvalmistelija">
-          <b>Vastuuvalmistelija: </b><span data-test-id="vastuuvalmistelija">{`${vastuuvalmistelija.name} <${vastuuvalmistelija.email}>`}</span>
+      <div id="vastuuvalmistelija">
+        {vastuuvalmistelija &&
+          <div className="haku-roles-vastuuvalmistelija">
+            <b>Vastuuvalmistelija: </b>
+            <Vastuuvalmistelija
+              role={vastuuvalmistelija}
+              avustushaku={avustushaku}
+              userInfo={userInfo}
+              userHasEditPrivilege={userHasEditPrivilege}
+              userHasEditMyHakuRolePrivilege={userHasEditMyHakuRolePrivilege}
+              controller={controller}
+            />
+          </div>
+        }
+        <div className="va-user-search-add-role">
+          <div className="va-user-search-error-display">
+            <span className={vastuuvalmistelijaSearch.result.error ? "error" : "hidden"}>
+              Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.
+            </span>
+          </div>
+          <span>Vaihda vastuuvalmistelijaa: </span>
+          <div className="va-user-search-block">
+            <input id="va-user-search-vastuuvalmistelija" type="text" placeholder={"Hae"} value={vastuuvalmistelijaSearchInput} onChange={e => setVastuuvalmistelijaSearchInput(e.target.value)} disabled={!roles || !userHasEditPrivilege}/>
+            <button data-test-id="clear-vastuuvalmistelija-search" type="button" className={ClassNames("remove", { enabled: !!vastuuvalmistelijaSearchInput.length })} title="Tyhjennä" disabled={!vastuuvalmistelijaSearchInput.length} onClick={() => setVastuuvalmistelijaSearchInput("")} />
+            <PersonSelectList roleType="vastuuvalmistelija" vaUserSearch={vastuuvalmistelijaSearch} input={vastuuvalmistelijaSearchInput} avustushaku={avustushaku} controller={controller} />
+          </div>
         </div>
-      }
+      </div>
       <table>
         <thead>
           <tr>
@@ -66,14 +81,18 @@ export const HakuRoles = ({ avustushaku, controller, helpTexts, userInfo, vaUser
         </CSSTransitionGroup>
       </table>
 
-      <div id="va-user-search-add-role">
-        <div className="va-user-search-error-display"><span className={searchErrorClass}>Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.</span></div>
+      <div className="va-user-search-add-role">
+        <div className="va-user-search-error-display">
+          <span className={roleSearch.result.error ? "error" : "hidden"}>
+            Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.
+          </span>
+        </div>
         <div>
           <span>Lisää uusi henkilö: </span><HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___lisää_uusi_henkilö"]} direction="left" />
           <div className="va-user-search-block">
-            <input id="va-user-search-input" type="text" placeholder={"Hae"}  value={search} onChange={e => setSearch(e.target.value)} disabled={!roles || !userHasEditPrivilege}/>
-            <button type="button" className={clearInputButtonClassname} title="Tyhjennä" disabled={!hasInput} onClick={() => setSearch("")} />
-            <PersonSelectList vaUserSearch={vaUserSearch} avustushaku={avustushaku} controller={controller} />
+            <input id="va-user-search-input" type="text" placeholder={"Hae"} value={roleSearchInput} onChange={e => setRoleSearchInput(e.target.value)} disabled={!roles || !userHasEditPrivilege}/>
+            <button data-test-id="clear-role-search" type="button" className={ClassNames("remove", { enabled: !!roleSearchInput.length })} title="Tyhjennä" disabled={!roleSearchInput.length} onClick={() => setRoleSearchInput("")} />
+            <PersonSelectList vaUserSearch={roleSearch} input={roleSearchInput} avustushaku={avustushaku} controller={controller} />
           </div>
         </div>
       </div>
@@ -85,6 +104,8 @@ type PersonSelectListProps = {
   vaUserSearch: VaUserSearch
   avustushaku: SelectedAvustushaku
   controller: HakujenHallintaController
+  input: string
+  roleType?: RoleType
 }
 
 const privilegesToClassAndDescription = (privileges: string[]) => {
@@ -96,7 +117,7 @@ const privilegesToClassAndDescription = (privileges: string[]) => {
   return { className: "no-va-access", description: "Ei VA-oikeuksia" }
 }
 
-const PersonSelectList = ({ avustushaku, controller, vaUserSearch }: PersonSelectListProps) => {
+const PersonSelectList = ({ avustushaku, controller, vaUserSearch, input, roleType }: PersonSelectListProps) => {
   const personRows = vaUserSearch.result.results.map(r => {
     const firstName = r["first-name"]
     const surname = r["surname"]
@@ -105,7 +126,7 @@ const PersonSelectList = ({ avustushaku, controller, vaUserSearch }: PersonSelec
     const newRole = {
       name:  NameFormatter.onlyFirstForename(firstName) + " " + surname,
       email,
-      role: "presenting_officer" as RoleType,
+      role: roleType ?? "presenting_officer",
       oid
     }
     const accessLevel = privilegesToClassAndDescription(r.privileges)
@@ -120,7 +141,7 @@ const PersonSelectList = ({ avustushaku, controller, vaUserSearch }: PersonSelec
 
     return (
       <li key={r["person-oid"]} title={titleText} className={personIsInRolesAlready ? "disabled" : undefined}>
-        <a href="javascript:" onClick={onClick} className={personIsInRolesAlready ? "disabled" : undefined}>
+        <a onClick={onClick} className={personIsInRolesAlready ? "disabled" : undefined}>
           {firstName} {surname} ({email ? email + ", " : ""}{accessLevel.description})
         </a>
       </li>
@@ -128,7 +149,7 @@ const PersonSelectList = ({ avustushaku, controller, vaUserSearch }: PersonSelec
   })
   const resultRows = personRows.length === 0 ? [<li key="no-results-row" className="no-results-row">Ei hakutuloksia.</li>] : personRows
   const searchResultClassNames = ClassNames(undefined, { loading: vaUserSearch.loading,
-                                                          hidden: vaUserSearch.input.length < VaUserSearchParameters.minimumSearchInputLength() })
+                                                          hidden: input.length < minimumSearchInputLength })
   return (
     <div id="va-user-search-results" className={searchResultClassNames}>
       <ul className={searchResultClassNames}>
@@ -148,18 +169,19 @@ type RoleRowProps = {
 }
 
 const RoleRow = ({ avustushaku, controller, role, userInfo, userHasEditPrivilege, userHasEditMyHakuRolePrivilege }: RoleRowProps) => {
-  const debouncedSave = debounce(() => { controller.saveRole(avustushaku, role) }, 3000)
+  const debouncedSave = useCallback(debounce((savedRole: Role) => { controller.saveRole(avustushaku, savedRole) }, 3000), [])
+  const [editedRole, setEditedRole] = useState(role)
+  const [emailOk, setEmailOk] = useState(true)
 
-  const handleChange = (key: 'email' | 'name' | 'role') => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    if (key === 'role') {
-      role[key] = event.target.value as RoleType
-    } else {
-      role[key] = event.target.value
+  useEffect(() => {
+    if (emailOk && !isEqual(role, editedRole)) {
+      debouncedSave(editedRole)
     }
-    if (typeof event.target.checkValidity !== 'function' || event.target.checkValidity()) {
-      debouncedSave()
-    }
-    controller.reRender()
+  }, [editedRole])
+
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmailOk(event.target.checkValidity())
+    setEditedRole({ ...editedRole, email: event.target.value })
   }
 
   const thisRowIsMe = role.oid === userInfo["person-oid"]
@@ -169,18 +191,44 @@ const RoleRow = ({ avustushaku, controller, role, userInfo, userHasEditPrivilege
   return (
     <tr data-test-id={`role-${role.name.toLowerCase().replace(" ","-")}`}>
       <td className="haku-roles-role-column">
-        <select onChange={handleChange('role')} name="role" value={role.role} disabled={disableEditing}>
+        <select onChange={(e) => setEditedRole({ ...editedRole, role: e.target.value as RoleType })} name="role" value={editedRole.role} disabled={disableEditing}>
           <option value="presenting_officer">Valmistelija</option>
           <option value="evaluator">Arvioija</option>
         </select>
       </td>
       <td className="haku-roles-name-column">
-        <input type="text" value={role.name} name="name" onChange={handleChange('name')} disabled={disableEditing}/>
+        <input type="text" value={editedRole.name} name="name" onChange={(e) => setEditedRole({ ...editedRole, name: e.target.value })} disabled={disableEditing}/>
       </td>
       <td className="haku-roles-email-column">
-        <input type="email" value={role.email || ""} name="email" onChange={handleChange('email')} disabled={disableEditing}/>
+        <input type="email" value={editedRole.email || ""} name="email" onChange={handleEmailChange} disabled={disableEditing}/>
         <button type="button" onClick={onDelete} className="remove haku-roles-remove" title={removeTitleText} tabIndex={-1} disabled={disableEditing} />
       </td>
     </tr>
+  )
+}
+
+const Vastuuvalmistelija = ({ avustushaku, controller, role, userInfo, userHasEditPrivilege, userHasEditMyHakuRolePrivilege }: RoleRowProps) => {
+  const debouncedSave = useCallback(debounce((savedRole: Role) => { controller.saveRole(avustushaku, savedRole) }, 3000), [])
+  const [editedRole, setEditedRole] = useState(role)
+  const [emailOk, setEmailOk] = useState(true)
+  const thisRowIsMe = role.oid === userInfo["person-oid"]
+  const disableEditing = !userHasEditPrivilege || (thisRowIsMe && !userHasEditMyHakuRolePrivilege)
+
+  useEffect(() => {
+    if (emailOk && !isEqual(role, editedRole)) {
+      debouncedSave(editedRole)
+    }
+  }, [editedRole])
+
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmailOk(event.target.checkValidity())
+    setEditedRole({ ...editedRole, email: event.target.value })
+  }
+
+  return (
+    <span key={`vastuuvalmistelija-${role.oid}`} className="haku-roles-vastuuvalmistelija">
+      <input data-test-id="vastuuvalmistelija-name" type="text" value={editedRole.name} name="name" onChange={(e) => setEditedRole({ ...editedRole, name: e.target.value })} placeholder="Nimi" disabled={disableEditing}/>
+      <input data-test-id="vastuuvalmistelija-email" type="email" value={editedRole.email ?? ""} name="email" onChange={handleEmailChange} placeholder="Email" disabled={disableEditing}/>
+    </span>
   )
 }

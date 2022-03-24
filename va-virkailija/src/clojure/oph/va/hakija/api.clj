@@ -140,9 +140,15 @@
    :role (:role role)
    :oid (:oid role)})
 
+(defn- delete-vastuuvalmistelija [tx avustushaku-id]
+  (execute! tx
+            "DELETE FROM hakija.avustushaku_roles WHERE avustushaku = ? AND role = 'vastuuvalmistelija'"
+            [avustushaku-id]))
+
 (defn create-avustushaku-role [tx role]
   (let [role-enum (new HakuRole (:role role))
         role-to-save (assoc role :role role-enum)
+        delete (when (= (:role role) "vastuuvalmistelija") (delete-vastuuvalmistelija tx (:avustushaku role)))
         role-id (hakija-queries/create-avustushaku-role<! role-to-save {:connection tx})]
     (->> (hakija-queries/get-avustushaku-role role-id {:connection tx})
          (map role->json)

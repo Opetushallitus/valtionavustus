@@ -45,7 +45,6 @@ const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
                           loppuselvitysFormDraft={state.loppuselvitysFormDrafts[selectedHaku.id]}
                           loppuselvitysFormDraftJson={state.loppuselvitysFormDraftsJson[selectedHaku.id]}
                           environment={environment}
-                          vaUserSearch={state.vaUserSearch}
                           koodistos={state.koodistos}
                           userInfo={state.userInfo}
                           controller={controller}

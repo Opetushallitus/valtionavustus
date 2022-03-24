@@ -10,7 +10,7 @@ import AutoCompleteCodeValue from "./AutoCompleteCodeValue"
 import HelpTooltip from '../HelpTooltip'
 import WarningBanner from "../WarningBanner"
 import HakujenHallintaController, { SelectedAvustushaku } from '../HakujenHallintaController'
-import { UserInfo, VaCodeValue, VaUserSearch } from '../types'
+import { UserInfo, VaCodeValue } from '../types'
 
 type HakuEditProps = {
   avustushaku: SelectedAvustushaku
@@ -18,10 +18,9 @@ type HakuEditProps = {
   controller: HakujenHallintaController
   helpTexts: HelpTexts
   userInfo: UserInfo
-  vaUserSearch: VaUserSearch
 }
 
-export const HakuEdit = ({ avustushaku, codeOptions, controller, helpTexts, userInfo, vaUserSearch }: HakuEditProps) => {
+export const HakuEdit = ({ avustushaku, codeOptions, controller, helpTexts, userInfo }: HakuEditProps) => {
   const hasNoPayments = !!avustushaku.payments?.length
   const isCodeValuesDisabled = !!avustushaku.payments?.find(p => p["paymentstatus-id"] === 'paid')
   const userHasEditPrivilege = !!avustushaku.privileges?.["edit-haku"]
@@ -246,7 +245,7 @@ export const HakuEdit = ({ avustushaku, codeOptions, controller, helpTexts, user
           </div>
         </div>
       </div>
-      <HakuRoles avustushaku={avustushaku} vaUserSearch={vaUserSearch} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} userHasEditMyHakuRolePrivilege={userHasEditMyHakuRolePrivilege} controller={controller} helpTexts={helpTexts}/>
+      <HakuRoles avustushaku={avustushaku} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} userHasEditMyHakuRolePrivilege={userHasEditMyHakuRolePrivilege} controller={controller} helpTexts={helpTexts}/>
       <SelectionCriteria controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} helpTexts={helpTexts}/>
       <FocusArea controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} helpTexts={helpTexts}/>
     </div>
