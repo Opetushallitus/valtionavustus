@@ -240,7 +240,7 @@
     (= (:role role) "vastuuvalmistelija")))
 
 (defn- get-valmistelijas-for-avustushaku [avustushaku-id]
-  (filter #(is-valmistelija? %) (va-db/get-avustushaku-roles avustushaku-id)))
+  (filter is-valmistelija? (va-db/get-avustushaku-roles avustushaku-id)))
 
 (defn on-refuse-application [avustushaku-id hakemus-id base-version comment token]
   (let [hakemus (va-db/get-hakemus hakemus-id)

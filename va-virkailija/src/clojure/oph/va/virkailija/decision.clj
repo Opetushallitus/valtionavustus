@@ -153,7 +153,7 @@
         answers-field (:answers hakemus)
         answers {:value answers-field}
         roles (:roles haku-data)
-        presenting-officers (filter #(authorization/is-valmistelija? %) roles)
+        presenting-officers (filter authorization/is-valmistelija? roles)
         arvio (:arvio hakemus)
         decision-status (:status arvio)
         oppilaitokset (:names (:oppilaitokset arvio))
