@@ -81,7 +81,7 @@ export const HakuRoles = ({ avustushaku, controller, helpTexts, userInfo, userHa
         </CSSTransitionGroup>
       </table>
 
-      <div className="va-user-search-add-role">
+      <div id="roles-list" className="va-user-search-add-role">
         <div className="va-user-search-error-display">
           <span className={roleSearch.result.error ? "error" : "hidden"}>
             Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.
@@ -140,7 +140,7 @@ const PersonSelectList = ({ avustushaku, controller, vaUserSearch, input, roleTy
     }
 
     return (
-      <li key={r["person-oid"]} title={titleText} className={personIsInRolesAlready ? "disabled" : undefined}>
+      <li key={r["person-oid"]} data-test-id={r["person-oid"]} title={titleText} className={personIsInRolesAlready ? "disabled" : undefined}>
         <a onClick={onClick} className={personIsInRolesAlready ? "disabled" : undefined}>
           {firstName} {surname} ({email ? email + ", " : ""}{accessLevel.description})
         </a>
@@ -220,13 +220,19 @@ const Vastuuvalmistelija = ({ avustushaku, controller, role, userInfo, userHasEd
     }
   }, [editedRole])
 
+  useEffect(() => {
+    if (role.oid !== editedRole.oid) {
+      setEditedRole(role)
+    }
+  }, [role])
+
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmailOk(event.target.checkValidity())
     setEditedRole({ ...editedRole, email: event.target.value })
   }
 
   return (
-    <span key={`vastuuvalmistelija-${role.oid}`} className="haku-roles-vastuuvalmistelija">
+    <span className="haku-roles-vastuuvalmistelija">
       <input data-test-id="vastuuvalmistelija-name" type="text" value={editedRole.name} name="name" onChange={(e) => setEditedRole({ ...editedRole, name: e.target.value })} placeholder="Nimi" disabled={disableEditing}/>
       <input data-test-id="vastuuvalmistelija-email" type="email" value={editedRole.email ?? ""} name="email" onChange={handleEmailChange} placeholder="Email" disabled={disableEditing}/>
     </span>
