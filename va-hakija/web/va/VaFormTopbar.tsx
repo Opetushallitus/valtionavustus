@@ -60,9 +60,10 @@ const VaFormTopbar = (props: Props) => {
   const isHakemus = hakemusType === "hakemus"
   const selvitysUpdateable = saveStatus?.savedObject?.["selvitys-updatable"]
   const isValiselvitys = hakemusType === 'valiselvitys'
+  const isLoppuselvitys = hakemusType === 'loppuselvitys'
   // selvitys-updatable can be undefined, we only care if its false
-  const valiselvitysNotUpdateable = isValiselvitys && selvitysUpdateable === false
-  const previewOrValiselvitysNotUpdateable = preview || valiselvitysNotUpdateable
+  const selvitysNotUpdateable = (isValiselvitys || isLoppuselvitys) && selvitysUpdateable === false
+  const previewOrSelvitysNotUpdateable = preview || selvitysNotUpdateable
   return(
     <section id="topbar">
       <div id="top-container">
@@ -76,7 +77,7 @@ const VaFormTopbar = (props: Props) => {
             </h1>
             <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang} hakemusType={hakemusType}/>
           </div>
-          {!previewOrValiselvitysNotUpdateable && (
+          {!previewOrSelvitysNotUpdateable && (
             <div id="form-controls">
               {isNormalEdit() && (
                 <div className="form-control soresu-tooltip soresu-tooltip-down">
@@ -109,7 +110,7 @@ const VaFormTopbar = (props: Props) => {
               {isHakemus && hasEnded && (
                 <LocalizedString htmlId="avustushaku-has-ended-message" translations={translations.form} translationKey="has-ended" lang={lang} />
               )}
-              {(!isHakemus && isExpired) || valiselvitysNotUpdateable && (
+              {(!isHakemus && isExpired) || selvitysNotUpdateable && (
                 <div>
                   <LocalizedString translations={translations.form}
                                    translationKey="form-is-expired"
@@ -118,17 +119,16 @@ const VaFormTopbar = (props: Props) => {
                                      {formtype:
                                       Translator.translateKey(
                                         translations.form,
-                                        hakemusType === "valiselvitys" ?
-                                          "form-middle" : "form-final",
+                                        isValiselvitys ? "form-middle" : "form-final",
                                          lang)}}/>
                 </div>
                 )}
               <ServerError serverError={saveStatus.serverError} translations={translations.errors} lang={lang}/>
             </div>
-            {!previewOrValiselvitysNotUpdateable && (
+            {!previewOrSelvitysNotUpdateable && (
               <FormErrorSummary formContent={form.content} controller={controller} validationErrors={validationErrors} translations={translations.errors} lang={lang} />
             )}
-            {!previewOrValiselvitysNotUpdateable && (
+            {!previewOrSelvitysNotUpdateable && (
               <a className="preview-link" href={previewUrl} target="_blank"><LocalizedString translations={translations.form} translationKey="print-version" lang={lang}/></a>
             )}
           </div>
