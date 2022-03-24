@@ -143,6 +143,14 @@ export default function NewHakemusListing(props: Props) {
   const [filterState, dispatch] = useReducer(reducer, getDefaultState())
   const isResolved = avustushaku.status === 'resolved'
   const filteredList = filteredHakemusList(filterState, hakemusList)
+  const totalBudgetGranted = filteredList
+    .reduce<number>((totalGranted, hakemus) => {
+      const granted = hakemus.arvio["budget-granted"]
+      if (!granted) {
+        return totalGranted
+      }
+      return totalGranted + granted
+    }, 0)
   return (
     <div className={selectedHakemus && splitView ? styles.splitView : undefined}>
       {
@@ -156,12 +164,165 @@ export default function NewHakemusListing(props: Props) {
             list={hakemusList}
             dispatch={dispatch}
             roles={roles}
+            totalBudgetGranted={totalBudgetGranted}
           />
         ) : (
-          <div>Todo</div>
+          <HakemusTable
+            selectedHakemusId={selectedHakemusId}
+            onYhteenvetoClick={onYhteenvetoClick}
+            onSelectHakemus={onSelectHakemus}
+            filterState={filterState}
+            filteredList={filteredList}
+            list={hakemusList}
+            dispatch={dispatch}
+            roles={roles}
+            totalBudgetGranted={totalBudgetGranted}
+        />
         )
       }
     </div>
+  )
+}
+
+interface HakemusTableProps {
+  selectedHakemusId: number | undefined
+  filterState: FilterState
+  list: Hakemus[]
+  filteredList: Hakemus[]
+  dispatch: React.Dispatch<Action>
+  onSelectHakemus: (hakemusId: number) => void
+  onYhteenvetoClick: (filteredHakemusList: Hakemus[]) => void
+  roles: Role[]
+  totalBudgetGranted: number
+}
+
+function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemusId, onSelectHakemus, onYhteenvetoClick, roles, totalBudgetGranted}: HakemusTableProps) {
+  const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch({type: 'set-organization-name-filter', value: event.target.value})
+  }
+  const onProjectInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch({type: 'set-project-name-filter', value: event.target.value})
+  }
+  const totalOphShare = filteredList.reduce((total, hakemus) => {
+    const ophShare = hakemus["budget-oph-share"]
+    return total + ophShare
+  }, 0)
+  const {organization, projectName, status: statusFilter} = filterState
+  return (
+    <table className={styles.hakemusTable}>
+      <colgroup>
+        <col style={{width: '216px'}} />
+        <col style={{width: '210px'}} />
+        <col style={{width: '136px'}} />
+        <col style={{width: '136px'}} />
+        <col style={{width: '136px'}} />
+        <col style={{width: '80px'}} />
+        <col style={{width: '80px'}} />
+        <col style={{width: '80px'}} />
+        <col style={{width: '59px'}} />
+      </colgroup>
+      <thead>
+      <tr>
+        <th>
+          <div className={styles.filterInput}>
+            <input placeholder="Hakijaorganisaatio" onChange={onOrganizationInput} value={organization} />
+            <PolygonIcon />
+          </div>
+        </th>
+        <th>
+          <div className={styles.filterInput}>
+            <input placeholder="Hanke tai asianumero" onChange={onProjectInput} value={projectName} />
+            <PolygonIcon />
+          </div>
+        </th>
+        <th>
+          <TableLabel text="Arvio" disabled />
+        </th>
+        <th>
+          <StatusTableLabel
+            text="Tila"
+            statuses={ALL_STATUSES}
+            labelText={HakemusArviointiStatuses.statusToFI}
+            isChecked={status => statusFilter.hakemus.includes(status)}
+            onCheck={status => dispatch({type: 'set-status-filter', filter: 'hakemus', value: status})}
+            onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'hakemus', value: status})}
+            amountOfStatus={status => list.filter(h => h.arvio.status === status).length}
+            showDeleteButton={
+              statusFilter.hakemus.length !== ALL_STATUSES.length
+                ? { ariaLabel: "Poista hakemuksen tila rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'hakemus'})}
+                : undefined}
+          />
+        </th>
+        <th>
+          <StatusTableLabel
+            text="Muutoshakemus"
+            statuses={Muutoshakemus.statuses}
+            labelText={Muutoshakemus.statusToFI}
+            isChecked={status => statusFilter.muutoshakemus.includes(status)}
+            onCheck={status => dispatch({type: 'set-status-filter', filter: 'muutoshakemus', value: status})}
+            onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'muutoshakemus', value: status})}
+            amountOfStatus={status => list.filter(h => h["status-muutoshakemus"] === status).length}
+            showDeleteButton={
+              statusFilter.muutoshakemus.length !== Muutoshakemus.statuses.length
+                ? { ariaLabel: "Poista muutoshakemus rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'muutoshakemus'})}
+                : undefined}
+          />
+        </th>
+        <th>
+          <TableLabel text="Haettu" />
+        </th>
+        <th><TableLabel text="Myönnetty" disabled /></th>
+        <th><TableLabel text="Valmistelija" disabled /></th>
+        <th><TableLabel text="Arvioija" disabled /> </th>
+      </tr>
+      </thead>
+      <tbody>
+      {filteredList.map(hakemus => {
+        const modified = hakemus["submitted-version"] !== undefined && hakemus["submitted-version"] !== hakemus.version
+        return (
+          <tr key={`hakemus-${hakemus.id}`}
+              className={hakemus.id === selectedHakemusId ? styles.selectedHakemusRow : styles.hakemusRow}
+              tabIndex={0}
+              onClick={() => onSelectHakemus(hakemus.id)}
+              onKeyDown={e => e.key === 'Enter' && onSelectHakemus(hakemus.id)}>
+            <td>{hakemus["organization-name"]}</td>
+            <td>
+              <div className={styles.projectTd}>
+                <span>{hakemus["register-number"]}</span>
+                {modified && <Pill color="blue" text="Muokattu" />}
+              </div>
+            </td>
+            <td>Tähtii</td>
+            <td><ArvioStatus status={hakemus.arvio.status} /></td>
+            <td><MuutoshakemusPill status={hakemus["status-muutoshakemus"]} /></td>
+            <td className={styles.alignCenter}>{euroFormatter.format(hakemus["budget-oph-share"])}</td>
+            <td className={styles.alignCenter}>{
+              hakemus.arvio["budget-granted"]
+                ? euroFormatter.format(hakemus.arvio["budget-granted"])
+                : '-'
+            }</td>
+            <td>{roles.filter(r => r.role === 'presenting_officer').map(r => r.name).join(', ')}</td>
+            <td>{roles.filter(r => r.role === 'evaluator').map(r => r.name).join(', ')}</td>
+          </tr>
+        )
+      })}
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colSpan={5}>
+          {filteredList.length}/{list.length} hakemusta
+          <a className={styles.yhteenveto} href="/yhteenveto/" target="_blank" onClick={() => onYhteenvetoClick(filteredList)}>Näytä yhteenveto</a>
+        </td>
+        <td colSpan={1} className={styles.alignCenter}>
+          {euroFormatter.format(totalOphShare)}
+        </td>
+        <td colSpan={1} className={styles.alignCenter}>
+          {totalBudgetGranted > 0 ? euroFormatter.format(totalBudgetGranted) : '-'}
+        </td>
+        <td colSpan={2} />
+      </tr>
+      </tfoot>
+    </table>
   )
 }
 
@@ -174,6 +335,7 @@ interface ResolvedTableProps {
   onSelectHakemus: (hakemusId: number) => void
   onYhteenvetoClick: (filteredHakemusList: Hakemus[]) => void
   roles: Role[]
+  totalBudgetGranted: number
 }
 
 function ResolvedTable(props: ResolvedTableProps) {
@@ -185,7 +347,8 @@ function ResolvedTable(props: ResolvedTableProps) {
     onYhteenvetoClick,
     roles,
     filteredList,
-    list
+    list,
+    totalBudgetGranted
   } = props
 
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -195,14 +358,7 @@ function ResolvedTable(props: ResolvedTableProps) {
     dispatch({type: 'set-project-name-filter', value: event.target.value})
   }
   const {projectName, organization, status: statusFilter} = filterState
-  const totalBudgetGranted = filteredList
-    .map(h => h.arvio["budget-granted"])
-    .reduce<number>((totalGranted, granted) => {
-      if (!granted) {
-        return totalGranted
-      }
-      return totalGranted + granted
-    }, 0)
+
   return (
     <table className={styles.hakemusTable}>
       <colgroup>
@@ -218,13 +374,13 @@ function ResolvedTable(props: ResolvedTableProps) {
       </colgroup>
       <thead>
         <tr>
-          <th className={styles.fixedColumn}>
+          <th>
             <div className={styles.filterInput}>
               <input placeholder="Hakijaorganisaatio" onChange={onOrganizationInput} value={organization} />
               <PolygonIcon />
             </div>
           </th>
-          <th className={styles.fixedColumn}>
+          <th>
             <div className={styles.filterInput}>
               <input placeholder="Hanke tai asianumero" onChange={onProjectInput} value={projectName} />
               <PolygonIcon />
@@ -302,8 +458,8 @@ function ResolvedTable(props: ResolvedTableProps) {
             tabIndex={0}
             onClick={() => onSelectHakemus(hakemus.id)}
             onKeyDown={e => e.key === 'Enter' && onSelectHakemus(hakemus.id)}>
-          <td className={styles.fixedColumn}>{hakemus["organization-name"]}</td>
-          <td className={styles.fixedColumn}>{hakemus["project-name"]}</td>
+          <td>{hakemus["organization-name"]}</td>
+          <td>{hakemus["project-name"]}</td>
           <td><ArvioStatus status={hakemus.arvio.status} /></td>
           <td><MuutoshakemusPill status={hakemus["status-muutoshakemus"]} /></td>
           <td><ValiselvitysPill status={hakemus["status-valiselvitys"]} /></td>

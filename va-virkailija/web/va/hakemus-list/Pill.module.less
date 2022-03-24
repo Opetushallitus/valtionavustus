@@ -8,6 +8,10 @@
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 22px;
 }
 
 .greenPill {
@@ -32,4 +36,10 @@
   composes: pill;
   background: #F8F8F8;
   border-color: #E6E6E6;
+}
+
+.bluePill {
+  composes: pill;
+  background: #F6FCFF;
+  border-color: #C8E8F9;
 }

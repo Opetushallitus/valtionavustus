@@ -185,6 +185,7 @@ export interface Hakemus {
   'status-muutoshakemus'?: MuutoshakemusStatus
   'budget-oph-share': number
   'budget-total': number
+  'register-number'?: string
   attachmentVersions: unknown[]
   changeRequests: unknown[]
   comments?: Comment[]
