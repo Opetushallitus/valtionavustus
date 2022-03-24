@@ -302,8 +302,8 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
                 ? euroFormatter.format(hakemus.arvio["budget-granted"])
                 : '-'
             }</td>
-            <td>{roles.filter(r => r.role === 'presenting_officer').map(r => r.name).join(', ')}</td>
-            <td>{roles.filter(r => r.role === 'evaluator').map(r => r.name).join(', ')}</td>
+            <td>{initialsOfPeopleInRole(roles,'presenting_officer')}</td>
+            <td>{initialsOfPeopleInRole(roles,'evaluator')}</td>
           </tr>
         )
       })}
@@ -470,8 +470,8 @@ function ResolvedTable(props: ResolvedTableProps) {
               ? euroFormatter.format(hakemus.arvio["budget-granted"])
               : '-'
           }</td>
-          <td>{roles.filter(r => r.role === 'presenting_officer').map(r => r.name).join(', ')}</td>
-          <td>{roles.filter(r => r.role === 'evaluator').map(r => r.name).join(', ')}</td>
+          <td>{initialsOfPeopleInRole(roles,'presenting_officer')}</td>
+          <td>{initialsOfPeopleInRole(roles,'evaluator')}</td>
         </tr>
       ))}
       </tbody>
@@ -490,6 +490,16 @@ function ResolvedTable(props: ResolvedTableProps) {
     </table>
   )
 }
+
+const initialsOfPeopleInRole = (roles: Role[], role: Role['role']): string =>
+  roles
+    .filter(r => r.role === role)
+    .map(r =>
+      r.name
+        .split(/\s+/)
+        .reduce((initials, name) => initials + name.slice(0, 1), '')
+    )
+    .join(', ')
 
 const PolygonIcon = () => <img src={polygonSrc} alt="ikoni" className={styles.polygon}/>
 
