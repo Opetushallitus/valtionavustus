@@ -42,7 +42,7 @@ interface FilterState {
     loppuselvitys: readonly LoppuselvitysStatuses[]
   },
   organization: string
-  projectName: string
+  projectNameOrCode: string
 }
 
 type FilterKeys = keyof FilterState["status"]
@@ -64,7 +64,7 @@ type Action =
 const filteredHakemusList = (state: FilterState, list: Hakemus[]): Hakemus[] => {
   return list.filter(hakemus => {
     const organizationNameOk = hakemus["organization-name"].toLocaleLowerCase().includes(state.organization)
-    const projectNameOk = hakemus["project-name"].toLocaleLowerCase().includes(state.projectName)
+    const projectNameOrRegisternumberOk = (hakemus["project-name"] + hakemus["register-number"] || '').toLocaleLowerCase().includes(state.projectNameOrCode)
     const hakemusStatusOK = state.status.hakemus.length > 0 && state.status.hakemus.includes(hakemus.arvio.status)
     const muutoshakemusStatusOk = state.status.muutoshakemus.length > 0 && hakemus["status-muutoshakemus"]
       ? state.status.muutoshakemus.includes(hakemus["status-muutoshakemus"])
@@ -76,7 +76,7 @@ const filteredHakemusList = (state: FilterState, list: Hakemus[]): Hakemus[] => 
       ? state.status.loppuselvitys.includes(hakemus["status-loppuselvitys"])
       : true
     return organizationNameOk
-      && projectNameOk
+      && projectNameOrRegisternumberOk
       && hakemusStatusOK
       && muutoshakemusStatusOk
       && valiselvitysStatusOk
@@ -96,7 +96,7 @@ const reducer = (state: FilterState, action: Action): FilterState => {
     case "set-organization-name-filter":
       return {...state, organization: action.value}
     case "set-project-name-filter":
-      return {...state, projectName: action.value}
+      return {...state, projectNameOrCode: action.value}
     case "set-status-filter": {
       return {
         ...state,
@@ -134,7 +134,7 @@ const getDefaultState = (): FilterState => ({
   status: {
     ...defaultStatusFilters
   },
-  projectName: '',
+  projectNameOrCode: '',
   organization: '',
 })
 
@@ -208,7 +208,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
     const ophShare = hakemus["budget-oph-share"]
     return total + ophShare
   }, 0)
-  const {organization, projectName, status: statusFilter} = filterState
+  const {organization, projectNameOrCode, status: statusFilter} = filterState
   return (
     <table className={styles.hakemusTable}>
       <colgroup>
@@ -232,7 +232,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
         </th>
         <th>
           <div className={styles.filterInput}>
-            <input placeholder="Hanke tai asianumero" onChange={onProjectInput} value={projectName} />
+            <input placeholder="Hanke tai asianumero" onChange={onProjectInput} value={projectNameOrCode} />
             <PolygonIcon />
           </div>
         </th>
@@ -358,7 +358,7 @@ function ResolvedTable(props: ResolvedTableProps) {
   const onProjectInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({type: 'set-project-name-filter', value: event.target.value})
   }
-  const {projectName, organization, status: statusFilter} = filterState
+  const {projectNameOrCode, organization, status: statusFilter} = filterState
 
   return (
     <table className={styles.hakemusTable}>
@@ -383,7 +383,7 @@ function ResolvedTable(props: ResolvedTableProps) {
           </th>
           <th>
             <div className={styles.filterInput}>
-              <input placeholder="Hanke tai asianumero" onChange={onProjectInput} value={projectName} />
+              <input placeholder="Hanke tai asianumero" onChange={onProjectInput} value={projectNameOrCode} />
               <PolygonIcon />
             </div>
           </th>
