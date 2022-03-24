@@ -30,7 +30,7 @@ export default class YhteenvetoController {
       hakemusFilter: {
         organization: "",
         name: "",
-        status: HakemusArviointiStatuses.allStatuses()
+        status: HakemusArviointiStatuses.statuses
       },
       hakemusSorter: [
         {field: "score", order: "desc"}

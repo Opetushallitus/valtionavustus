@@ -44,7 +44,7 @@ export default class SummaryApp extends Component {
   }
 
   static statusesInOrder() {
-    const statuses = ["refused"].concat(HakemusArviointiStatuses.allStatuses())
+    const statuses = ["refused"].concat(HakemusArviointiStatuses.statuses)
     statuses.reverse()
     return statuses
   }

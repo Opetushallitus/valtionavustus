@@ -178,7 +178,7 @@ export default class HakemusListing extends Component {
     return function(list, sorter) {
       switch (sorter.field) {
         case "status":
-          return _.sortBy(list, HakemusListing._sortByArray(hakemus => hakemus.arvio.status, HakemusArviointiStatuses.allStatuses(), sorter.order, userInfo, allowHakemusScoring))
+          return _.sortBy(list, HakemusListing._sortByArray(hakemus => hakemus.arvio.status, HakemusArviointiStatuses.statuses, sorter.order, userInfo, allowHakemusScoring))
       }
       return _.orderBy(list, HakemusListing._fieldGetter(sorter.field, userInfo, allowHakemusScoring), sorter.order)
     }
@@ -261,7 +261,7 @@ export default class HakemusListing extends Component {
                               hakemusList={hakemusList}
                               filter={filter}
                               label="Tila"
-                              statusValues={HakemusArviointiStatuses.allStatuses()}
+                              statusValues={HakemusArviointiStatuses.statuses}
                               statusToFi={HakemusArviointiStatuses.statusToFI}
                               filterField="status"/>
                 <HakemusSorter field="status" sorter={sorter} controller={controller}/>

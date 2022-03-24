@@ -162,8 +162,8 @@ class SetArviointiStatus extends React.Component {
     const controller = this.props.controller
     const helpTexts = this.props.helpTexts
     const statuses = []
-    const statusValues = HakemusArviointiStatuses.allStatuses()
-    for (let i = 0; i < statusValues.length; i++) {
+    const statusValues = HakemusArviointiStatuses.statuses
+      for (let i = 0; i < statusValues.length; i++) {
       const htmlId = "set-arvio-status-" + statusValues[i]
       const statusFI = HakemusArviointiStatuses.statusToFI(statusValues[i])
       const onChange = allowEditing ? controller.setHakemusArvioStatus(hakemus, statusValues[i]) : null

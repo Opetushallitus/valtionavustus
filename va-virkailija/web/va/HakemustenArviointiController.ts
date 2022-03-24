@@ -99,7 +99,7 @@ export default class HakemustenArviointiController {
         isOpen:false,
         name: "",
         openQuestions:[],
-        status: HakemusArviointiStatuses.allStatuses(),
+        status: HakemusArviointiStatuses.statuses,
         status_valiselvitys: HakemusSelvitys.statuses,
         status_loppuselvitys: Loppuselvitys.statuses,
         status_muutoshakemus: Muutoshakemus.statuses,

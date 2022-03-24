@@ -1,6 +1,5 @@
 import React, {useEffect, useReducer, useRef, useState} from "react";
 import {
-  ALL_STATUSES,
   Avustushaku,
   Hakemus,
   HakemusArviointiStatus,
@@ -84,7 +83,7 @@ const filteredHakemusList = (state: FilterState, list: Hakemus[]): Hakemus[] => 
 }
 
 const defaultStatusFilters = {
-  hakemus: ALL_STATUSES,
+  hakemus: HakemusArviointiStatuses.statuses,
   muutoshakemus: Muutoshakemus.statuses,
   valiselvitys: HakemusSelvitys.statuses,
   loppuselvitys: Loppuselvitys.statuses,
@@ -241,14 +240,14 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
         <th>
           <StatusTableLabel
             text="Tila"
-            statuses={ALL_STATUSES}
+            statuses={HakemusArviointiStatuses.statuses}
             labelText={HakemusArviointiStatuses.statusToFI}
             isChecked={status => statusFilter.hakemus.includes(status)}
             onCheck={status => dispatch({type: 'set-status-filter', filter: 'hakemus', value: status})}
             onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'hakemus', value: status})}
             amountOfStatus={status => list.filter(h => h.arvio.status === status).length}
             showDeleteButton={
-              statusFilter.hakemus.length !== ALL_STATUSES.length
+              statusFilter.hakemus.length !== HakemusArviointiStatuses.statuses.length
                 ? { ariaLabel: "Poista hakemuksen tila rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'hakemus'})}
                 : undefined}
           />
@@ -389,14 +388,14 @@ function ResolvedTable(props: ResolvedTableProps) {
           <th>
             <StatusTableLabel
               text="Tila"
-              statuses={ALL_STATUSES}
+              statuses={HakemusArviointiStatuses.statuses}
               labelText={HakemusArviointiStatuses.statusToFI}
               isChecked={status => statusFilter.hakemus.includes(status)}
               onCheck={status => dispatch({type: 'set-status-filter', filter: 'hakemus', value: status})}
               onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'hakemus', value: status})}
               amountOfStatus={status => list.filter(h => h.arvio.status === status).length}
               showDeleteButton={
-                statusFilter.hakemus.length !== ALL_STATUSES.length
+                statusFilter.hakemus.length !== HakemusArviointiStatuses.statuses.length
                   ? { ariaLabel: "Poista hakemuksen tila rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'hakemus'})}
                   : undefined}
             />
