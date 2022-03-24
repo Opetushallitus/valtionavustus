@@ -65,6 +65,7 @@ const filteredHakemusList = (state: FilterState, list: Hakemus[]): Hakemus[] => 
   return list.filter(hakemus => {
     const organizationNameOk = hakemus["organization-name"].toLocaleLowerCase().includes(state.organization)
     const projectNameOk = hakemus["project-name"].toLocaleLowerCase().includes(state.projectName)
+    const hakemusStatusOK = state.status.hakemus.length > 0 && state.status.hakemus.includes(hakemus.arvio.status)
     const muutoshakemusStatusOk = state.status.muutoshakemus.length > 0 && hakemus["status-muutoshakemus"]
       ? state.status.muutoshakemus.includes(hakemus["status-muutoshakemus"])
       : true
@@ -76,6 +77,7 @@ const filteredHakemusList = (state: FilterState, list: Hakemus[]): Hakemus[] => 
       : true
     return organizationNameOk
       && projectNameOk
+      && hakemusStatusOK
       && muutoshakemusStatusOk
       && valiselvitysStatusOk
       && loppuselvitysStatusOk
