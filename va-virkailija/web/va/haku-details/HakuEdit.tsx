@@ -21,8 +21,8 @@ type HakuEditProps = {
 }
 
 export const HakuEdit = ({ avustushaku, codeOptions, controller, helpTexts, userInfo }: HakuEditProps) => {
-  const hasNoPayments = !!avustushaku.payments?.length
-  const isCodeValuesDisabled = !!avustushaku.payments?.find(p => p["paymentstatus-id"] === 'paid')
+  const hasPayments = !!avustushaku.payments?.length
+  const isAllPaymentsPaid = hasPayments && !avustushaku.payments?.find(p => p["paymentstatus-id"] !== 'paid')
   const userHasEditPrivilege = !!avustushaku.privileges?.["edit-haku"]
   const allowAllHakuEdits = userHasEditPrivilege && (avustushaku.status === "new" || avustushaku.status === "draft")
   const allowNondisruptiveHakuEdits = userHasEditPrivilege && (allowAllHakuEdits || avustushaku.phase === "current" || avustushaku.phase === "upcoming")
@@ -100,7 +100,7 @@ export const HakuEdit = ({ avustushaku, codeOptions, controller, helpTexts, user
             avustushaku={avustushaku}
             codeOptions={codeOptions.filter(k => k["value-type"] === "operational-unit")}
             selectedValue={selectedValueOperationalUnit}
-            disabled={isCodeValuesDisabled} />
+            disabled={isAllPaymentsPaid} />
         </div>
         <div className="editor-row-element" data-test-id="code-value-dropdown__project">
           <h3 className="required">Projekti <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___projekti"]} /></h3>
@@ -111,7 +111,7 @@ export const HakuEdit = ({ avustushaku, codeOptions, controller, helpTexts, user
             avustushaku={avustushaku}
             codeOptions={codeOptions.filter(k => k["value-type"] === "project")}
             selectedValue={selectedValueProject}
-            disabled={isCodeValuesDisabled} />
+            disabled={isAllPaymentsPaid} />
         </div>
         <div className="editor-row-element" data-test-id="code-value-dropdown__operation">
           <h3 className="required">Toiminto <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___toiminto"]} /></h3>
@@ -122,7 +122,7 @@ export const HakuEdit = ({ avustushaku, codeOptions, controller, helpTexts, user
             avustushaku={avustushaku}
             codeOptions={codeOptions.filter(k => k["value-type"] === "operation")}
             selectedValue={selectedValueOperation}
-            disabled={isCodeValuesDisabled} />
+            disabled={isAllPaymentsPaid} />
         </div>
       </div>
       <SetStatus hakuIsValid={isValidRegisterNumber(avustushaku["register-number"])} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} helpTexts={helpTexts} />
@@ -163,11 +163,10 @@ export const HakuEdit = ({ avustushaku, codeOptions, controller, helpTexts, user
               <span>%</span>
             </div>
           </div>
-          <div title={avustushaku.content.multiplemaksuera &&
-                      allowAllHakuEdits && !hasNoPayments ?
-                      "Avustuksen maksatuksia on jo luotu, joten arvoja ei voi enää muuttaa"
-                      : undefined}>
-            <div className={avustushaku.content.multiplemaksuera && allowAllHakuEdits && hasNoPayments ? undefined : "haku-edit-disabled-form"}>
+          <div title={avustushaku.content.multiplemaksuera && allowAllHakuEdits && hasPayments
+                        ? "Avustuksen maksatuksia on jo luotu, joten arvoja ei voi enää muuttaa"
+                        : undefined}>
+            <div className={avustushaku.content.multiplemaksuera && allowAllHakuEdits && !hasPayments ? undefined : "haku-edit-disabled-form"}>
               <div>
                 <label className="haku-edit-radio-button-item">
                   <input type="radio" name="payment-size-limit" value="no-limit"
