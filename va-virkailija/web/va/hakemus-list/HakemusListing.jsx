@@ -243,7 +243,7 @@ export default class HakemusListing extends Component {
     })
 
     return (
-      <div className="listing-table hakemus-list-container">
+      <div id="hakemus-listing" className="listing-table hakemus-list-container">
         <table key="hakemusListing" className={hakemusListingClass}>
           <thead>
             <tr>

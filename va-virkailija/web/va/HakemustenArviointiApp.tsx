@@ -62,7 +62,7 @@ const App = ({state, controller}: Props) => {
         <section id="main-container" className="section-container">
           <div id="list-container" className={hasSelected ? "has-selected" : ""}>
             <div id="list-heading">
-              <AvustushakuDropdown controller={controller} avustushaku={avustushaku} avustushakuList={avustushakuList} />
+              <AvustushakuDropdown avustushaku={avustushaku} avustushakuList={avustushakuList} />
               <div className="right-side">
                 <HakemusFilter controller={controller} hakemusFilter={state.hakemusFilter} hakuData={hakuData}/>
                 <ExcelExportLink avustushaku={avustushaku} />

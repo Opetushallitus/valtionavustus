@@ -1,4 +1,4 @@
-import { ElementHandle, expect, Page } from "@playwright/test";
+import {ElementHandle, expect, Locator, Page} from "@playwright/test";
 
 import { navigate } from "../utils/navigate";
 import {
@@ -17,9 +17,16 @@ const jatkoaikaSelector = '[data-test-id=muutoshakemus-jatkoaika]' as const
 
 export class HakemustenArviointiPage {
   readonly page: Page
-
+  readonly avustushakuDropdown: Locator
+  readonly inputFilterOrganization: Locator
+  readonly inputFilterProject: Locator
+  readonly hakemusListing: Locator
   constructor(page: Page) {
     this.page = page;
+    this.avustushakuDropdown = this.page.locator('#avustushaku-dropdown')
+    this.inputFilterOrganization = this.page.locator('[placeholder="Hakijaorganisaatio"]')
+    this.inputFilterProject = this.page.locator('[placeholder="Hanke tai asianumero"]')
+    this.hakemusListing = this.page.locator('#hakemus-listing')
   }
 
   async navigate(avustushakuID: number) {
@@ -77,7 +84,7 @@ export class HakemustenArviointiPage {
   }
 
   async waitForArvioSave(avustushakuID: number, hakemusID: number) {
-    await this.page.waitForResponse(response => 
+    await this.page.waitForResponse(response =>
       response.url() === `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`
       && response.ok()
     )

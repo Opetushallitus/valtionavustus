@@ -153,7 +153,7 @@ export default function NewHakemusListing(props: Props) {
       return totalGranted + granted
     }, 0)
   return (
-    <div className={selectedHakemus && splitView ? styles.splitView : undefined}>
+    <div id="hakemus-listing" className={selectedHakemus && splitView ? styles.splitView : undefined}>
       {
         isResolved ? (
           <ResolvedTable
