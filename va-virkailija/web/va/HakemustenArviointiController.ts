@@ -782,7 +782,8 @@ export default class HakemustenArviointiController {
 
     const selectedHakemus = state.selectedHakemus
     const hakemusAnswers = selectedHakemus!.answers
-    const defaultValues = _.reduce(FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement"), (acc: any, budgetItem) => {
+    const budgetItems = FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement")
+    const defaultValues = budgetItems.reduce<Record<string, string>>((acc, budgetItem) => {
       const descriptionField = budgetItem.children?.[0]
       if (!descriptionField) {
         return acc

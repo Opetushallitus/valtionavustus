@@ -1,10 +1,16 @@
 import _ from 'lodash'
-import { ImmutableArray } from 'seamless-immutable'
+import {Immutable, ImmutableArray} from 'seamless-immutable'
 
 import JsUtil from '../JsUtil'
 import { Field, FieldType } from '../va/types'
 
 type FieldOrArray = Field | Field[] | ImmutableArray<Field>
+
+type ReturnType<T> = T extends ImmutableArray<infer R>
+  ? Immutable<R>
+  : T extends Array<infer R>
+  ? R
+  : T
 
 export default class FormUtil {
   static scrollTo(element: Element, duration: number, afterScroll?: () => any) {
@@ -71,8 +77,8 @@ export default class FormUtil {
     return JsUtil.findFirst(formContent, (n: Field) => n.fieldType === fieldType)
   }
 
-  static findFieldsByFieldType(formContent: FieldOrArray, fieldType: FieldType) {
-    return JsUtil.flatFilter(formContent, (n: Field) => n.fieldType === fieldType)
+  static findFieldsByFieldType<T extends FieldOrArray>(formContent: T, fieldType: FieldType) {
+    return JsUtil.flatFilter(formContent, (n: ReturnType<T>) => n.fieldType === fieldType)
   }
 
   static findFieldIgnoringIndex(formContent: Field | Field[], fieldId: string) {

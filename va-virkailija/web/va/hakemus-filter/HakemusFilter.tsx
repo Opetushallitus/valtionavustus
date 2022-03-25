@@ -4,9 +4,12 @@ import ClassNames from 'classnames'
 
 import FormUtil from 'soresu-form/web/form/FormUtil'
 
+import HakemustenArviointiController from "../HakemustenArviointiController";
+import {HakemusFilter, HakuData} from "../types";
+
 import './hakemus-filter.less'
 
-const ToggleFilterButton  = ({controller,hakemusFilter}) => {
+const ToggleFilterButton  = ({controller,hakemusFilter}: Props) => {
   const activeFilterCount = hakemusFilter.answers.length
   const hasActiveFilters = activeFilterCount>0
   const onFilter = () => controller.toggleHakemusFilter()
@@ -19,11 +22,12 @@ const ToggleFilterButton  = ({controller,hakemusFilter}) => {
   )
 }
 
-const FilterQuestion = ({question, controller, hakemusFilter}) =>{
+const FilterQuestion = ({question, controller, hakemusFilter}: {question: Question, controller: HakemustenArviointiController, hakemusFilter: HakemusFilter}) =>{
   const openQuestions = hakemusFilter.openQuestions
   const activeFilterCount = question.options.filter((o)=>o.selected).length
-  const onQuestionClick = (questionId) => {
-    const newOpenQuestions = _.includes(openQuestions, questionId) ? _.without(openQuestions,questionId) : openQuestions.concat(questionId)
+  const onQuestionClick = () => {
+    const questionId = question.id
+    const newOpenQuestions = openQuestions.includes(questionId) ? _.without(openQuestions,questionId) : openQuestions.concat(questionId)
     controller.setFilter("openQuestions",newOpenQuestions)
   }
 
@@ -33,7 +37,7 @@ const FilterQuestion = ({question, controller, hakemusFilter}) =>{
 
   return(
     <div>
-      <div className={questionClass} onClick={onQuestionClick.bind(this,question.id)}>{question.label} <span hidden={activeFilterCount === 0}>({activeFilterCount})</span></div>
+      <div className={questionClass} onClick={onQuestionClick}>{question.label} <span hidden={activeFilterCount === 0}>({activeFilterCount})</span></div>
       <div className="hakemus-filter-options" hidden={!question.open}>
         {question.options.map((option)=><FilterOption key={option.label} hakemusFilter={hakemusFilter} question={question} option={option} controller={controller}></FilterOption>)}
       </div>
@@ -41,9 +45,9 @@ const FilterQuestion = ({question, controller, hakemusFilter}) =>{
   )
 }
 
-const FilterOption = ({question,option,controller,hakemusFilter}) => {
+const FilterOption = ({question,option,controller,hakemusFilter}: {question: Question, option: QuestionOption, controller: HakemustenArviointiController, hakemusFilter: HakemusFilter}) => {
   const answers = hakemusFilter.answers
-  const onClick = (option) => {
+  const onClick = () => {
     const filterChange = {
       id:question.id,
       answer:option.value
@@ -57,11 +61,11 @@ const FilterOption = ({question,option,controller,hakemusFilter}) => {
   })
 
   return (
-    <button className={btnClass} style={{marginRight:10}} onClick={onClick.bind(this, option)}>{option.label}</button>
+    <button className={btnClass} style={{marginRight:10}} onClick={onClick}>{option.label}</button>
   )
 }
 
-const RemoveFilter = ({controller,hakemusFilter}) => {
+const RemoveFilter = ({controller,hakemusFilter}: Props) => {
   const hidden = hakemusFilter.answers.length === 0 &&
     !_.isNumber(hakemusFilter.evaluator) &&
     !_.isNumber(hakemusFilter.presenter)
@@ -69,7 +73,20 @@ const RemoveFilter = ({controller,hakemusFilter}) => {
   return <span hidden={hidden} className="hakemus-filter-remove" onClick={onRemove}>Poista rajaimet</span>
 }
 
-const FilterList  = ({hakemusFilter,hakuData,controller}) => {
+interface QuestionOption {
+  label: string
+  value: string
+  selected: boolean
+}
+
+interface Question {
+  id: string
+  label?: string
+  options: QuestionOption[]
+  open: boolean
+}
+
+const FilterList  = ({hakemusFilter,hakuData,controller}: Props) => {
   const open = hakemusFilter.isOpen
   const form = hakuData.form
   const radioQuestions = FormUtil.findFieldsByFieldType(form.content, "radioButton")
@@ -78,34 +95,33 @@ const FilterList  = ({hakemusFilter,hakuData,controller}) => {
   const questions = radioQuestions.concat(checkboxQuestions).concat(dropdownQuestions)
   const answers = hakemusFilter.answers
 
-  const buildQuestions = () => {
-    const selectedPredicate = (questionId, answer) => _.some(answers, a => a.answer === answer && a.id === questionId)
-    const mapOption = (questionId, option) =>(
-      {
-        label: option.label.fi,
-        value: option.value,
-        selected: selectedPredicate(questionId, option.value)
-      }
-    )
+  const selectedPredicate = (questionId: string, answer: string) => answers.some(a => a.answer === answer && a.id === questionId)
+  const buildQuestions = (): Question[] => {
     const openQuestions = hakemusFilter.openQuestions
     const filterQuestions = questions.map((r)=> {
+      const options = r.options?.asMutable() ?? []
       return {
         id: r.id,
-        label: r.label.fi,
-        options: r.options.asMutable().map(_.partial(mapOption, r.id)),
-        open: _.includes(openQuestions, r.id)
+        label: r.label?.fi,
+        options: options.map(option => ({
+          label: option.label.fi,
+          value: option.value,
+          selected: selectedPredicate(r.id, option.value)
+        })),
+        open: openQuestions.includes(r.id)
       }
     })
     if (!_.isEmpty(hakuData.avustushaku.content.rahoitusalueet)) {
+      const rahoitusalueet = hakuData.avustushaku.content["rahoitusalueet"] ?? []
       filterQuestions.unshift({
         id: "rahoitusalue",
         label: "Rahoitusalue",
-        options: hakuData.avustushaku.content["rahoitusalueet"].concat([{rahoitusalue: "Ei rahoitusaluetta"}]).map((row)=>({
+        options: rahoitusalueet.concat([{rahoitusalue: "Ei rahoitusaluetta", talousarviotilit: []}]).map((row)=>({
           label: row.rahoitusalue,
           value: row.rahoitusalue,
           selected: selectedPredicate("rahoitusalue", row.rahoitusalue)
         })),
-        open: _.includes(openQuestions, "rahoitusalue")
+        open: openQuestions.includes("rahoitusalue")
       })
     }
 
@@ -138,7 +154,13 @@ const FilterList  = ({hakemusFilter,hakuData,controller}) => {
   )
 }
 
-const HakemusFilter = (props) =>
+interface Props {
+  controller: HakemustenArviointiController
+  hakemusFilter: HakemusFilter
+  hakuData: HakuData
+}
+
+const HakemusFilter = (props: Props) =>
 (
   <div className="hakemus-filter-container">
     <ToggleFilterButton {...props}/>
