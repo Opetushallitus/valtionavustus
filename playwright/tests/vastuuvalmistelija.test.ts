@@ -21,6 +21,12 @@ defaultValues('Vastuuvalmistelija role', async ({ page, userCache }) => {
     await expect(hakujenHallinta.page.locator('[data-test-id="vastuuvalmistelija-email"]')).toHaveValue('viivi.virkailja@exmaple.com')
   })
 
+  await test.step('the previous vastuuvalmistelija is automatically set as regular valmistelija to avoid losing edit rights to haku', async () => {
+    await expect(hakujenHallinta.page.locator('[data-test-id="role-_-valtionavustus"] select[name=role]')).toHaveValue('presenting_officer')
+    await expect(hakujenHallinta.page.locator('[data-test-id="role-_-valtionavustus"] input[name=name]')).toHaveValue('_ valtionavustus')
+    await expect(hakujenHallinta.page.locator('[data-test-id="role-_-valtionavustus"] input[name=email]')).toHaveValue('santeri.horttanainen@reaktor.com')
+  })
+
   await test.step('can not be set if the new user is a valmistelija already', async () => {
     await hakujenHallinta.addValmistelija('Päivi')
     await hakujenHallinta.searchUsersForVastuuvalmistelija('Päivi')

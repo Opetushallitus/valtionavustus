@@ -626,11 +626,9 @@ export default class HakujenHallintaController {
   }
 
   loadRoles(selectedHaku: Avustushaku) {
-    if(!_.isArray(selectedHaku.roles)) {
-      HttpUtil.get(HakujenHallintaController.roleUrl(selectedHaku)).then(roles => {
-        dispatcher.push(events.rolesLoaded, {haku: selectedHaku, roles: roles})
-      })
-    }
+    HttpUtil.get(HakujenHallintaController.roleUrl(selectedHaku)).then(roles => {
+      dispatcher.push(events.rolesLoaded, {haku: selectedHaku, roles: roles})
+    })
   }
 
   onRolesLoaded(state: State, loadedRoles: {haku: Avustushaku, roles: Role[]}) {
@@ -640,11 +638,7 @@ export default class HakujenHallintaController {
   }
 
   onRoleCreated(state: State, newRole: {haku: Avustushaku, role: Role}) {
-    if (newRole.role.role === 'vastuuvalmistelija') {
-      newRole.haku.roles = newRole.haku.roles?.filter(f => f.role !== 'vastuuvalmistelija')
-    }
-    newRole.haku.roles?.push(newRole.role)
-    this.loadPrivileges(newRole.haku)
+    this.loadRoles(newRole.haku)
     return state
   }
 
