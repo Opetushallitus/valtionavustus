@@ -28,7 +28,7 @@ export class HakemustenArviointiPage {
 
   async navigateToLatestHakemusArviointi(avustushakuID: number) {
     await navigate(this.page, `/avustushaku/${avustushakuID}/`)
-    await this.page.click('.overview-row:first-of-type')
+    await this.page.click('tbody tr:first-of-type')
   }
 
   async navigateToLatestMuutoshakemus(avustushakuID: number, hakemusID: number) {
