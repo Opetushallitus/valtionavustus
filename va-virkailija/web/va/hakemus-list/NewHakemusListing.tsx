@@ -591,13 +591,18 @@ function ArvioStatus({status}: {status: HakemusArviointiStatus}) {
   return <Pill color={statusToColor[status]} text={text} />
 }
 
+const muutoshakemusStatusToColor: Record<MuutoshakemusStatus, PillProps['color']> = {
+  'accepted_with_changes': 'yellow',
+  'accepted': 'green',
+  'rejected': 'red',
+  'new': 'blue',
+}
 function MuutoshakemusPill({status}: {status: MuutoshakemusStatus | undefined}) {
   if (!status) {
     return <EmptyGreyPill />
   }
   const statusToFI = Muutoshakemus.statusToFI(status)
-  const color = status === 'rejected' ? 'red' : 'green'
-  return <Pill color={color} text={statusToFI} />
+  return <Pill color={muutoshakemusStatusToColor[status]} text={statusToFI} />
 }
 
 function ValiselvitysPill({status}: {status: SelvitysStatus | undefined}) {

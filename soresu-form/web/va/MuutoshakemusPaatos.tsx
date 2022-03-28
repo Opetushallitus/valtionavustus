@@ -11,9 +11,9 @@ import { useTranslations } from 'soresu-form/web/va/i18n/TranslationContext'
 import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
 import {
   Muutoshakemus,
-  MuutoshakemusStatus,
   Paatos,
   PaatosState,
+  PaatosStatus,
   Talousarvio
 } from "./types/muutoshakemus";
 
@@ -27,7 +27,7 @@ type MuutoshakemusPaatosProps = Omit<PaatosState, 'paatos' | 'presenter'> & {
   presenter: Role | undefined
 }
 
-const Muutospaatos: React.FC<{osio: PaatosOsio; paatosStatus: MuutoshakemusStatus}>
+const Muutospaatos: React.FC<{osio: PaatosOsio; paatosStatus: PaatosStatus}>
   = ({osio, paatosStatus, children}) => {
   const { t } = useTranslations()
   return (
@@ -46,7 +46,7 @@ const Muutospaatos: React.FC<{osio: PaatosOsio; paatosStatus: MuutoshakemusStatu
   )
 }
 
-const TalousarvioPaatosSection: React.FC<{currentTalousarvio: Talousarvio, newTalousarvio: Talousarvio, status: MuutoshakemusStatus}> =
+const TalousarvioPaatosSection: React.FC<{currentTalousarvio: Talousarvio, newTalousarvio: Talousarvio, status: PaatosStatus}> =
   ({
     status,
     currentTalousarvio,
@@ -61,7 +61,7 @@ const TalousarvioPaatosSection: React.FC<{currentTalousarvio: Talousarvio, newTa
   )
 }
 
-const JatkoaikaPaatosSection = ({status, paattymispaiva, projectEndDate}: {status: MuutoshakemusStatus; paattymispaiva: string | undefined, projectEndDate: string | undefined}) => {
+const JatkoaikaPaatosSection = ({status, paattymispaiva, projectEndDate}: {status: PaatosStatus; paattymispaiva: string | undefined, projectEndDate: string | undefined}) => {
   const { t } = useTranslations()
   return (
     <Muutospaatos paatosStatus={status} osio="paatos-jatkoaika">
@@ -80,7 +80,7 @@ const JatkoaikaPaatosSection = ({status, paattymispaiva, projectEndDate}: {statu
   )
 }
 
-const SisaltomuutosPaatosSection: React.FC<{status: MuutoshakemusStatus}> = ({status}) => {
+const SisaltomuutosPaatosSection: React.FC<{status: PaatosStatus}> = ({status}) => {
   const { t } = useTranslations()
   return (
     <Muutospaatos paatosStatus={status} osio="paatos-sisaltomuutos">

@@ -26,13 +26,19 @@ export interface PaatosState extends MuutoshakemusPaatosResponse {
   environment: EnvironmentApiResponse
 }
 
-export const MuutoshakemusStatuses = ["accepted", "rejected", "accepted_with_changes"] as const
+const PAATOS_ACCEPTED = 'accepted'
+const PAATOS_ACCEPTED_WITH_CHANGES = 'accepted_with_changes'
+const PAATOS_REJECTED = 'rejected'
 
+const PAATOS_STATUSES = [PAATOS_ACCEPTED, PAATOS_ACCEPTED_WITH_CHANGES, PAATOS_REJECTED] as const
+export type PaatosStatus = typeof PAATOS_STATUSES[number]
+
+export const MuutoshakemusStatuses = [...PAATOS_STATUSES, 'new'] as const
 export type MuutoshakemusStatus = typeof MuutoshakemusStatuses[number]
 
 export interface Muutoshakemus {
   id: number
-  status?: "new" | MuutoshakemusStatus
+  status?: MuutoshakemusStatus
   "hakemus-id": number
   "haen-kayttoajan-pidennysta": boolean
   "kayttoajan-pidennys-perustelut"?: string
@@ -46,10 +52,10 @@ export interface Muutoshakemus {
   "paatos-sent-at"?: string
   "paatos-user-key"?: string
   "paatos-hyvaksytty-paattymispaiva"?: string
-  "paatos-status-jatkoaika"?: MuutoshakemusStatus
+  "paatos-status-jatkoaika": PaatosStatus | null
   "paatos-talousarvio"?: Talousarvio
-  "paatos-status-talousarvio"?: MuutoshakemusStatus
-  "paatos-status-sisaltomuutos"?: MuutoshakemusStatus
+  "paatos-status-talousarvio": PaatosStatus | null
+  "paatos-status-sisaltomuutos": PaatosStatus | null
   "paatos-reason"?: string
 }
 
@@ -63,9 +69,9 @@ export interface Paatos {
   "user-key": string
   "created-at": string
   "updated-at": string
-  "paatos-status-jatkoaika"?: MuutoshakemusStatus
-  "paatos-status-talousarvio"?: MuutoshakemusStatus
-  "paatos-status-sisaltomuutos"?: MuutoshakemusStatus
+  "paatos-status-jatkoaika"?: PaatosStatus
+  "paatos-status-talousarvio"?: PaatosStatus
+  "paatos-status-sisaltomuutos"?: PaatosStatus
 }
 
 export interface Meno {

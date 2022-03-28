@@ -40,6 +40,10 @@
     (s/optional-key :sisaltomuutos) Sisaltomuutos
   })
 
+(s/defschema PaatosStatus
+  "Status of individual muutoshakemus section paatos"
+  (s/enum "accepted" "accepted_with_changes" "rejected"))
+
 (s/defschema Paatos
   "Paatos"
   {
@@ -51,9 +55,9 @@
     :updated-at s/Inst
     (s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
     (s/optional-key :talousarvio) (s/maybe [Meno])
-    (s/optional-key :paatos-status-jatkoaika) (s/maybe s/Str)
-    (s/optional-key :paatos-status-talousarvio) (s/maybe s/Str)
-    (s/optional-key :paatos-status-sisaltomuutos) (s/maybe s/Str)
+    (s/optional-key :paatos-status-jatkoaika) (s/maybe PaatosStatus)
+    (s/optional-key :paatos-status-talousarvio) (s/maybe PaatosStatus)
+    (s/optional-key :paatos-status-sisaltomuutos) (s/maybe PaatosStatus)
     :decider s/Str
   })
 

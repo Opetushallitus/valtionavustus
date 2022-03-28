@@ -1,10 +1,10 @@
 import React from "react";
-import {PaatosStatus} from "../../../va-virkailija/web/va/hakemus-details/hakemusTypes";
 import {useTranslations} from "./i18n/TranslationContext";
 import {isAccepted, isRejected} from "./Muutoshakemus";
 import {IconAccepted} from "./img/IconAccepted";
 import {IconRejected} from "./img/IconRejected";
 import {IconAcceptedWithChanges} from "./img/IconAcceptedWithChanges";
+import {PaatosStatus} from "./types/muutoshakemus";
 
 import './OsioPaatos.less'
 

@@ -4,7 +4,7 @@ import * as yup from 'yup'
 import {
   Meno,
   Muutoshakemus,
-  MuutoshakemusStatus,
+  PaatosStatus,
   Talousarvio,
   TalousarvioValues
 } from './types/muutoshakemus'
@@ -52,16 +52,16 @@ export function getProjectEndMoment(avustushaku: Avustushaku, muutoshakemukset?:
   return latestAcceptedMuutoshakemus ? latestAcceptedMuutoshakemus : dateStringToMoment(avustushaku['hankkeen-paattymispaiva'])
 }
 
-export const isAcceptedWithChanges = (status: MuutoshakemusStatus | undefined): boolean =>
+export const isAcceptedWithChanges = (status: PaatosStatus | null | undefined): boolean =>
   status === 'accepted_with_changes'
 
-export const isAccepted = (status: MuutoshakemusStatus | undefined): boolean =>
+export const isAccepted = (status: PaatosStatus | null | undefined): boolean =>
   status === 'accepted'
 
-export const isAcceptedWithOrWithoutChanges = (status: MuutoshakemusStatus | undefined): boolean =>
+export const isAcceptedWithOrWithoutChanges = (status: PaatosStatus | null | undefined): boolean =>
   isAccepted(status) || isAcceptedWithChanges(status)
 
-export const isRejected = (status: MuutoshakemusStatus | undefined): boolean =>
+export const isRejected = (status: PaatosStatus | null | undefined): boolean =>
   status === 'rejected'
 
 function acceptedTalousarvioFilter(m: Muutoshakemus) {

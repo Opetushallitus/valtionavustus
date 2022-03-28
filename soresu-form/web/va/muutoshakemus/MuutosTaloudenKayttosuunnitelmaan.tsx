@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Meno, MuutoshakemusStatus, Talousarvio } from 'soresu-form/web/va/types/muutoshakemus'
+import { Meno, PaatosStatus, Talousarvio } from 'soresu-form/web/va/types/muutoshakemus'
 import { useTranslations } from '../i18n/TranslationContext'
 import {isAcceptedWithOrWithoutChanges} from "../Muutoshakemus";
 import {OsioPaatos} from "../OsioPaatos";
@@ -32,7 +32,7 @@ const MenoRow = ({ meno, currentTalousarvio, linethrough, odd }: MenoRowProps) =
 export type MuutosTaloudenKayttosuunnitelmaanProps = {
   currentTalousarvio: Talousarvio
   newTalousarvio: Talousarvio
-  status: MuutoshakemusStatus | undefined
+  status: PaatosStatus | null
   reason?: string
 }
 
