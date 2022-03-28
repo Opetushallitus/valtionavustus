@@ -46,7 +46,7 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
   }
 })
 
-test('filtering works lolbal', async ({hakemustenArviointiPage, hakuProps}) => {
+test('hakemus listing', async ({hakemustenArviointiPage, hakuProps}) => {
   await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
 
   await test.step('filtering with organization works', async () => {
