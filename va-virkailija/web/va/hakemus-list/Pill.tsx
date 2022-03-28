@@ -9,7 +9,7 @@ const pillStyles = {
   blue: styles.bluePill
 } as const
 
-interface PillProps {
+export interface PillProps {
   color: keyof typeof pillStyles
   text: string
 }

@@ -15,7 +15,7 @@ import {
 } from "soresu-form/web/va/status";
 import HakemusArviointiStatuses
   from "../hakemus-details/HakemusArviointiStatuses";
-import {Pill} from "./Pill";
+import {Pill, PillProps} from "./Pill";
 import {Role} from "../types";
 
 import polygonSrc from '../img/polygon.svg'
@@ -579,16 +579,16 @@ const euroFormatter = new Intl.NumberFormat('fi-FI', { style: 'currency', curren
 
 const EmptyGreyPill = () => <Pill color="grey" text="-" />
 
+const statusToColor: Record<HakemusArviointiStatus, PillProps['color']> = {
+  accepted: 'green',
+  rejected: 'red',
+  plausible: 'yellow',
+  unhandled: 'yellow',
+  processing: 'blue',
+}
 function ArvioStatus({status}: {status: HakemusArviointiStatus}) {
   const text = HakemusArviointiStatuses.statusToFI(status)
-  const color = status === 'accepted'
-    ? 'green'
-    : status === 'rejected'
-    ? 'red'
-    : status === 'plausible'
-    ?'yellow'
-    : 'grey'
-  return <Pill color={color} text={text} />
+  return <Pill color={statusToColor[status]} text={text} />
 }
 
 function MuutoshakemusPill({status}: {status: MuutoshakemusStatus | undefined}) {
