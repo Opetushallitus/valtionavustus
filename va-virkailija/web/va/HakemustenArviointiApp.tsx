@@ -11,7 +11,6 @@ import HakemusDetails from './hakemus-details/HakemusDetails'
 import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink'
 import HakemusDecisionLink from './hakemus-details/HakemusDecisionLink'
 import AvustushakuDropdown from './avustushaku/AvustushakuDropdown'
-import ExcelExportLink from './avustushaku/ExcelExportLink'
 import HakemusFilter from './hakemus-filter/HakemusFilter'
 import LocalStorage from './LocalStorage'
 
@@ -64,7 +63,7 @@ const App = ({state, controller}: Props) => {
               <AvustushakuDropdown avustushaku={avustushaku} avustushakuList={avustushakuList} />
               <div className="right-side">
                 <HakemusFilter controller={controller} hakemusFilter={state.hakemusFilter} hakuData={hakuData}/>
-                <ExcelExportLink avustushaku={avustushaku} />
+                <a className="excel-export" href={`/api/avustushaku/${avustushaku.id}/export.xslx`} target="_">Lataa Excel</a>
               </div>
             </div>
             {newHakemusListingUiEnabled

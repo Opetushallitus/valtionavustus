@@ -13,12 +13,10 @@ const ToggleFilterButton  = ({controller,hakemusFilter}: Props) => {
   const activeFilterCount = hakemusFilter.answers.length
   const hasActiveFilters = activeFilterCount>0
   const onFilter = () => controller.toggleHakemusFilter()
-  const buttonClass = ClassNames('btn btn-sm',{
-    'btn-blue': hasActiveFilters,
-    'btn-simple': !hasActiveFilters
-  })
+  const buttonClass = ClassNames('hakemus-btn')
+  const suffix = hasActiveFilters ? `(${activeFilterCount})` : 'listaa'
   return (
-    <button className={buttonClass} style={{fontSize:12,marginTop:-4}} onClick={onFilter}>Rajaa <span hidden={!hasActiveFilters}>({activeFilterCount})</span></button>
+    <button className={buttonClass} onClick={onFilter}>Rajaa {suffix}</button>
   )
 }
 
@@ -70,7 +68,8 @@ const RemoveFilter = ({controller,hakemusFilter}: Props) => {
     !_.isNumber(hakemusFilter.evaluator) &&
     !_.isNumber(hakemusFilter.presenter)
   const onRemove = () => controller.clearFilters()
-  return <span hidden={hidden} className="hakemus-filter-remove" onClick={onRemove}>Poista rajaimet</span>
+  const explanation = "Poista listan rajaukset"
+  return <button aria-label={explanation} title={explanation} hidden={hidden} className="hakemus-filter-remove" onClick={onRemove} />
 }
 
 interface QuestionOption {

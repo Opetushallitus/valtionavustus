@@ -28,7 +28,7 @@ export default function AvustushakuDropdown({avustushaku, avustushakuList}: Prop
     emptyList: 'Ei avustushakuja',
     emptyFilter: 'Ei tuloksia'
   }
-  return <div id="avustushaku-dropdown" className={styles.avustushakuDropdown}>
+  return <div id="avustushaku-dropdown">
            <DropdownList dataKey="id"
                          containerClassName={styles.dropdownList}
                          textField={avustushakuToText}
