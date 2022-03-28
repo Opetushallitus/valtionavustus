@@ -6,8 +6,8 @@ import { HakemusSelvitys, Loppuselvitys, Muutoshakemus } from 'soresu-form/web/v
 
 import HakemusArviointiStatuses from '../hakemus-details/HakemusArviointiStatuses'
 import ScoreResolver from '../ScoreResolver.js'
-import PersonFilterButton from './PersonFilterButton.jsx'
-import PersonSelectButton from './PersonSelectButton.jsx'
+import { PersonFilterButton } from './PersonFilterButton'
+import { PersonSelectButton } from './PersonSelectButton'
 import ShouldPayIcon from './ShouldPayIcon.jsx'
 
 import '../style/table.less'
@@ -575,7 +575,10 @@ class HakemusRow extends Component {
         <span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span>
       </td>
       <td className="person-filter-column">
-        <PersonSelectButton show={allowChangeHakemusState} controller={controller} hakemus={hakemus} state={state}/>
+        {allowChangeHakemusState
+          ? <PersonSelectButton controller={controller} hakemus={hakemus} state={state}/>
+          : <span />
+        }
       </td>
     </tr>
   }

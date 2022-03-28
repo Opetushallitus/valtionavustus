@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import _ from 'lodash'
+import { isEqual } from 'lodash'
 import * as Bacon from 'baconjs'
 
 import HttpUtil from "soresu-form/web/HttpUtil"
@@ -70,7 +70,7 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
   }
 
   function formHasBeenEdited() {
-    return formDraft && formContent && !_.isEqual(parsedForm, formContent)
+    return formDraft && formContent && !isEqual(parsedForm, formContent)
   }
 
   const disableSave = !!parseError || !formHasBeenEdited()

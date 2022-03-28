@@ -1,6 +1,5 @@
 import axios from 'axios'
 import moment from 'moment'
-import { omit } from 'lodash'
 
 import { FormValues } from 'soresu-form/web/va/types/muutoshakemus'
 import { isoFormat } from 'soresu-form/web/va/i18n/dateformat'
@@ -26,7 +25,7 @@ export async function postMuutoshakemus(props: MuutoshakemusProps) {
   }
 
   const talousarvio = values.haenMuutostaTaloudenKayttosuunnitelmaan && {
-    talousarvio: omit(values.talousarvio, ['currentSum', 'originalSum']),
+    talousarvio: { ...values.talousarvio, currentSum: undefined, originalSum: undefined },
     talousarvioPerustelut: values.taloudenKayttosuunnitelmanPerustelut
   }
 

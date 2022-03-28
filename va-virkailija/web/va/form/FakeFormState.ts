@@ -1,5 +1,5 @@
 import Immutable from 'seamless-immutable'
-import _ from 'lodash'
+import { cloneDeep } from 'lodash'
 
 import VaBudgetCalculator from 'soresu-form/web/va/VaBudgetCalculator'
 import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
@@ -63,7 +63,7 @@ export default class FakeFormState {
         preview: true
       },
       form: {
-        content: _.cloneDeep(formContent),
+        content: cloneDeep(formContent),
         validationErrors: Immutable({})
       },
       saveStatus: {

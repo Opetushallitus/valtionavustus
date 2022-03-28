@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react'
 import ReactDOM from 'react-dom'
-import _ from 'lodash'
 // @ts-ignore route-parser doesn't have proper types
 import RouteParser from 'route-parser'
 import queryString from 'query-string'
@@ -118,7 +117,7 @@ const App = ({state, controller}: Props) => {
 const defaultHakuId = LocalStorage.avustushakuId() || 1
 
 const parsedAvustusHakuIdObject = new RouteParser('/avustushaku/:avustushaku_id/*ignore').match(location.pathname)
-if (!parsedAvustusHakuIdObject || _.isUndefined(parsedAvustusHakuIdObject["avustushaku_id"])) {
+if (!parsedAvustusHakuIdObject?.avustushaku_id) {
   window.location.href = "/avustushaku/" + defaultHakuId + "/"
 }
 const avustushakuId = parsedAvustusHakuIdObject ? parseInt(parsedAvustusHakuIdObject["avustushaku_id"], 10) : defaultHakuId

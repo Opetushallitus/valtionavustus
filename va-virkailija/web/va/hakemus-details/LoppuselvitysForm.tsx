@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
+
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
+
 import HakemustenArviointiController from '../HakemustenArviointiController'
 import { Role, UserInfo } from '../types'
+import {VerificationBox} from "./VerificationBox"
 
 import './LoppuselvitysForm.less'
-import _ from 'lodash'
-import {VerificationBox} from "./VerificationBox"
 
 type LoppuselvitysFormProps = {
   avustushaku: Avustushaku
@@ -56,5 +57,5 @@ export const LoppuselvitysForm = ({ avustushaku, hakemus, controller, userInfo, 
 }
 
 function isPääkäyttäjä(userInfo: UserInfo): boolean {
-  return _.includes(userInfo.privileges, "va-admin")
+  return userInfo.privileges.includes("va-admin")
 }

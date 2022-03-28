@@ -1162,7 +1162,7 @@ setHakemusShouldPayComments(hakemus: Hakemus, newShouldPayComment: string) {
     dispatcher.push(events.toggleHakemusFilter, {})
   }
 
-  togglePersonSelect(hakemusId: number) {
+  togglePersonSelect(hakemusId?: number) {
     dispatcher.push(events.togglePersonSelect, hakemusId)
   }
 
