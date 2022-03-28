@@ -34,7 +34,15 @@ const makeConfig = (basedir, componentName) => {
           test: /\.less$/,
           use: [
             {loader: "style-loader"},
-            {loader: "css-loader"},
+            {
+              loader: "css-loader",
+              options: {
+                modules: {
+                  auto: true,
+                  localIdentName: '[local]__[hash:base64]',
+                },
+              },
+            },
             {loader: "less-loader"}
           ]
         },
