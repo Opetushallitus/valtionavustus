@@ -605,17 +605,19 @@ function MuutoshakemusPill({status}: {status: MuutoshakemusStatus | undefined}) 
   return <Pill color={muutoshakemusStatusToColor[status]} text={statusToFI} />
 }
 
+const valiselvitysStatusToColor: Record<SelvitysStatus, PillProps['color']> = {
+  'accepted': 'green',
+  'information_verified': 'green', // information_verified is just for loppuselvitys
+  'missing': 'red',
+  'submitted': 'yellow',
+}
 function ValiselvitysPill({status}: {status: SelvitysStatus | undefined}) {
   // TODO: check should use Loppuselvitys.statusToFi with this field instead
   if (!status || status === 'information_verified') {
     return <EmptyGreyPill />
   }
   const statusToFI = HakemusSelvitys.statusToFI(status)
-  // TODO: confirm status colors
-  const color = status !== 'accepted'
-    ? 'yellow'
-    : 'green'
-  return <Pill color={color} text={statusToFI} />
+  return <Pill color={valiselvitysStatusToColor[status]} text={statusToFI} />
 }
 
 function LoppuselvitysPill({status}: {status: SelvitysStatus | undefined}) {
