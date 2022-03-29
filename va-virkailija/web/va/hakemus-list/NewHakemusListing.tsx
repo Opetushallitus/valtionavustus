@@ -620,14 +620,16 @@ function ValiselvitysPill({status}: {status: SelvitysStatus | undefined}) {
   return <Pill color={valiselvitysStatusToColor[status]} text={statusToFI} />
 }
 
+const loppuselvitysStatusToColor: Record<SelvitysStatus, PillProps['color']> = {
+  'accepted': 'green',
+  'information_verified': 'blue',
+  'missing': 'red',
+  'submitted': 'blue',
+}
 function LoppuselvitysPill({status}: {status: SelvitysStatus | undefined}) {
   if (!status) {
     return <EmptyGreyPill />
   }
   const statusToFI = Loppuselvitys.statusToFI(status)
-  // TODO: confirm status colors
-  const color = status !== 'accepted'
-    ? 'yellow'
-    : 'green'
-  return <Pill color={color} text={statusToFI} />
+  return <Pill color={loppuselvitysStatusToColor[status]} text={statusToFI} />
 }
