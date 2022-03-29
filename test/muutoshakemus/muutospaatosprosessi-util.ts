@@ -42,7 +42,7 @@ import {
   VIRKAILIJA_URL,
   waitUntilMinEmails
 } from "../test-util"
-import {PaatosStatus} from "../../va-virkailija/web/va/hakemus-details/hakemusTypes";
+import {PaatosStatus} from "../../soresu-form/web/va/types/muutoshakemus";
 
 export interface Answers {
   projectName: string
