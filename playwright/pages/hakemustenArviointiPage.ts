@@ -22,6 +22,8 @@ export class HakemustenArviointiPage {
   readonly inputFilterProject: Locator
   readonly hakemusListing: Locator
   readonly showUnfinished: Locator
+  readonly hakemusRows: Locator
+
   constructor(page: Page) {
     this.page = page;
     this.avustushakuDropdown = this.page.locator('#avustushaku-dropdown')
@@ -29,10 +31,18 @@ export class HakemustenArviointiPage {
     this.inputFilterProject = this.page.locator('[placeholder="Hanke tai asianumero"]')
     this.hakemusListing = this.page.locator('#hakemus-listing')
     this.showUnfinished = this.page.locator('text="Näytä keskeneräiset"')
+    this.hakemusRows = this.hakemusListing.locator('tbody tr')
   }
 
-  async navigate(avustushakuID: number) {
-    await navigate(this.page, `/avustushaku/${avustushakuID}/`)
+  async navigate(avustushakuID: number, options?: { showAll?: boolean, newListingUi?: boolean }) {
+    const params = new URLSearchParams()
+    if (options?.showAll) {
+      params.append('showAll', 'true')
+    }
+    if (options?.newListingUi) {
+      params.append('new-hakemus-listing-ui', 'true')
+    }
+    await navigate(this.page, `/avustushaku/${avustushakuID}/?${params.toString()}`)
   }
 
   async navigateToLatestHakemusArviointi(avustushakuID: number) {

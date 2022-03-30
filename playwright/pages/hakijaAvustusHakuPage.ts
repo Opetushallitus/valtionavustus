@@ -80,17 +80,30 @@ export class HakijaAvustusHakuPage {
     return { userKey: await this.getUserKey() }
   }
 
+  async startApplication(avustushakuID: number, contactPersonEmail: string) {
+    await this.page.waitForSelector('#haku-not-open', { state: 'hidden' })
+    await this.page.fill("#primary-email", contactPersonEmail)
+    await this.page.click("#submit:not([disabled])")
+
+    const receivedEmail = await pollUntilNewHakemusEmailArrives(avustushakuID, contactPersonEmail)
+    const hakemusUrl = getHakemusUrlFromEmail(receivedEmail[0])
+    expectToBeDefined(hakemusUrl)
+    return hakemusUrl
+  }
+
+  async fillInBusinessId(businessId: string) {
+    await this.page.fill("#finnish-business-id", businessId)
+    await this.page.click("input.get-business-id")
+  }
+
   async fillMuutoshakemusEnabledHakemus(avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void) {
     const lang = answers.lang || 'fi'
 
-    await this.page.waitForSelector('#haku-not-open', { state: 'hidden' })
-    await this.page.fill("#primary-email", answers.contactPersonEmail)
-    await this.page.click("#submit:not([disabled])")
+    const hakemusUrl = await this.startApplication(avustushakuID, answers.contactPersonEmail)
+    await this.page.goto(hakemusUrl)
 
-    await this.navigateToNewHakemusPage(avustushakuID, answers.contactPersonEmail)
+    await this.fillInBusinessId(TEST_Y_TUNNUS)
 
-    await this.page.fill("#finnish-business-id", TEST_Y_TUNNUS)
-    await this.page.click("input.get-business-id")
     await this.page.fill("#applicant-name", answers.contactPersonName)
     await this.page.fill("[id='textField-0']", answers.contactPersonPhoneNumber)
     await this.page.fill("[id='signatories-fieldset-1.name']", "Erkki Esimerkki")
@@ -160,14 +173,11 @@ export class HakijaAvustusHakuPage {
   async fillBudjettimuutoshakemusEnabledHakemus(avustushakuID: number, answers: Answers, budget?: Budget) {
     const lang = answers.lang || 'fi'
 
-    await this.page.waitForSelector('#haku-not-open', { state: 'hidden', timeout: 500 })
-    await this.page.fill("#primary-email", answers.contactPersonEmail)
-    await this.page.click( "#submit:not([disabled])")
+    const hakemusUrl = await this.startApplication(avustushakuID, answers.contactPersonEmail)
+    await this.page.goto(hakemusUrl)
 
-    await this.navigateToNewHakemusPage(avustushakuID, answers.contactPersonEmail)
+    await this.fillInBusinessId(TEST_Y_TUNNUS)
 
-    await this.page.fill("#finnish-business-id", TEST_Y_TUNNUS)
-    await this.page.click( "input.get-business-id")
     await this.page.fill("#applicant-name", answers.contactPersonName)
     await this.page.fill("[id='textField-0']", answers.contactPersonPhoneNumber)
     await this.page.fill("[id='signatories-fieldset-1.name']", "Erkki Esimerkki")

@@ -280,7 +280,9 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
       </thead>
       <tbody>
       {filteredList.map(hakemus => {
-        const modified = hakemus["submitted-version"] !== undefined && hakemus["submitted-version"] !== hakemus.version
+        const modified = hakemus["submitted-version"] !== null && hakemus["submitted-version"] !== hakemus.version
+        const draft = hakemus.status === 'draft'
+
         return (
           <tr key={`hakemus-${hakemus.id}`}
               className={hakemus.id === selectedHakemusId ? styles.selectedHakemusRow : styles.hakemusRow}
@@ -292,6 +294,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
               <div className={styles.projectTd}>
                 {getProject(hakemus)}
                 {modified && <Pill color="blue" text="Muokattu" />}
+                {draft && <Pill color="yellow" text="Keskeneräinen" />}
               </div>
             </td>
             <td>Tähtii</td>
