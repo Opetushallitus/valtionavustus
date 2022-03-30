@@ -5,11 +5,13 @@ import ClassNames from 'classnames'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 
 import HakemustenArviointiController from "../HakemustenArviointiController";
-import {HakemusFilter, HakuData} from "../types";
+import {HakemusFilter} from "../types";
 
 import './hakemus-filter.less'
+import {Immutable} from "seamless-immutable";
+import {Avustushaku, Form, Hakemus} from "soresu-form/web/va/types";
 
-const ToggleFilterButton  = ({controller,hakemusFilter}: Props) => {
+const ToggleFilterButton  = ({controller,hakemusFilter}: Pick<Props, 'controller' | 'hakemusFilter'>) => {
   const activeFilterCount = hakemusFilter.answers.length
   const hasActiveFilters = activeFilterCount>0
   const onFilter = () => controller.toggleHakemusFilter()
@@ -63,7 +65,7 @@ const FilterOption = ({question,option,controller,hakemusFilter}: {question: Que
   )
 }
 
-const RemoveFilter = ({controller,hakemusFilter}: Props) => {
+const RemoveFilter = ({controller,hakemusFilter}: Pick<Props, 'controller' | 'hakemusFilter'>) => {
   const hidden = hakemusFilter.answers.length === 0 &&
     !_.isNumber(hakemusFilter.evaluator) &&
     !_.isNumber(hakemusFilter.presenter)
@@ -85,9 +87,8 @@ interface Question {
   open: boolean
 }
 
-const FilterList  = ({hakemusFilter,hakuData,controller}: Props) => {
+const FilterList  = ({hakemusFilter, form, avustushaku, hakemukset, controller}: Props) => {
   const open = hakemusFilter.isOpen
-  const form = hakuData.form
   const radioQuestions = FormUtil.findFieldsByFieldType(form.content, "radioButton")
   const checkboxQuestions = FormUtil.findFieldsByFieldType(form.content, "checkboxButton")
   const dropdownQuestions = FormUtil.findFieldsByFieldType(form.content, "dropdown")
@@ -110,8 +111,8 @@ const FilterList  = ({hakemusFilter,hakuData,controller}: Props) => {
         open: openQuestions.includes(r.id)
       }
     })
-    if (!_.isEmpty(hakuData.avustushaku.content.rahoitusalueet)) {
-      const rahoitusalueet = hakuData.avustushaku.content["rahoitusalueet"] ?? []
+    if (!_.isEmpty(avustushaku.content.rahoitusalueet)) {
+      const rahoitusalueet = avustushaku.content["rahoitusalueet"] ?? []
       filterQuestions.unshift({
         id: "rahoitusalue",
         label: "Rahoitusalue",
@@ -124,7 +125,7 @@ const FilterList  = ({hakemusFilter,hakuData,controller}: Props) => {
       })
     }
 
-    const tags = _.uniq(_.flatten(hakuData.hakemukset.map((i)=>_.get(i, 'arvio.tags.value'))))
+    const tags = _.uniq(_.flatten(hakemukset.map((i)=>_.get(i, 'arvio.tags.value'))))
     if(tags.length>0){
       filterQuestions.push({
         id: "tags",
@@ -156,14 +157,16 @@ const FilterList  = ({hakemusFilter,hakuData,controller}: Props) => {
 interface Props {
   controller: HakemustenArviointiController
   hakemusFilter: HakemusFilter
-  hakuData: HakuData
+  form: Immutable<Form>
+  avustushaku: Avustushaku
+  hakemukset: Hakemus[]
 }
 
 const HakemusFilter = (props: Props) =>
 (
   <div className="hakemus-filter-container">
-    <ToggleFilterButton {...props}/>
-    <RemoveFilter {...props}/>
+    <ToggleFilterButton hakemusFilter={props.hakemusFilter} controller={props.controller}/>
+    <RemoveFilter hakemusFilter={props.hakemusFilter} controller={props.controller} />
     <FilterList {...props}/>
   </div>
 )

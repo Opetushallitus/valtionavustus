@@ -76,7 +76,13 @@ const App = ({state, controller}: Props) => {
             <div id="list-heading">
               <AvustushakuDropdown avustushaku={avustushaku} avustushakuList={avustushakuList} />
               <div className="right-side">
-                <HakemusFilter controller={controller} hakemusFilter={state.hakemusFilter} hakuData={hakuData}/>
+                <HakemusFilter
+                  controller={controller}
+                  hakemusFilter={state.hakemusFilter}
+                  form={hakuData.form}
+                  avustushaku={avustushaku}
+                  hakemukset={hakemusList}
+                />
                 {!isResolved && <Switch checked={showAllHakemukset} onChange={onSwitchClick} label="Näytä keskeneräiset" />}
                 <a className="excel-export" href={`/api/avustushaku/${avustushaku.id}/export.xslx`} target="_">Lataa Excel</a>
               </div>
