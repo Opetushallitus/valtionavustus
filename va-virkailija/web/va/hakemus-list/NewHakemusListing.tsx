@@ -287,15 +287,15 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
             <td>{hakemus["organization-name"]}</td>
             <td>
               <div className={styles.projectTd}>
-                <span>{hakemus["register-number"]}</span>
+                {getProject(hakemus)}
                 {modified && <Pill color="blue" text="Muokattu" />}
               </div>
             </td>
             <td>Tähtii</td>
             <td><ArvioStatus status={hakemus.arvio.status} /></td>
             <td><MuutoshakemusPill status={hakemus["status-muutoshakemus"]} /></td>
-            <td className={styles.alignCenter}>{euroFormatter.format(hakemus["budget-oph-share"])}</td>
-            <td className={styles.alignCenter}>{
+            <td className={styles.alignRight}>{euroFormatter.format(hakemus["budget-oph-share"])}</td>
+            <td className={styles.alignRight}>{
               hakemus.arvio["budget-granted"]
                 ? euroFormatter.format(hakemus.arvio["budget-granted"])
                 : '-'
@@ -310,12 +310,12 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
       <tr>
         <td colSpan={5}>
           {filteredList.length}/{list.length} hakemusta
-          <a className={styles.yhteenveto} href="/yhteenveto/" target="_blank" onClick={() => onYhteenvetoClick(filteredList)}>Näytä yhteenveto</a>
+          <a className={styles.yhteenveto} href="/yhteenveto/" target="_blank" onClick={() => onYhteenvetoClick(filteredList)}>Päätöslista</a>
         </td>
-        <td colSpan={1} className={styles.alignCenter}>
+        <td colSpan={1} className={styles.alignRight}>
           {euroFormatter.format(totalOphShare)}
         </td>
-        <td colSpan={1} className={styles.alignCenter}>
+        <td colSpan={1} className={styles.alignRight}>
           {totalBudgetGranted > 0 ? euroFormatter.format(totalBudgetGranted) : '-'}
         </td>
         <td colSpan={2} />
@@ -458,7 +458,7 @@ function ResolvedTable(props: ResolvedTableProps) {
             onClick={() => onSelectHakemus(hakemus.id)}
             onKeyDown={e => e.key === 'Enter' && onSelectHakemus(hakemus.id)}>
           <td>{hakemus["organization-name"]}</td>
-          <td>{hakemus["project-name"]}</td>
+          <td>{getProject(hakemus)}</td>
           <td><ArvioStatus status={hakemus.arvio.status} /></td>
           <td><MuutoshakemusPill status={hakemus["status-muutoshakemus"]} /></td>
           <td><ValiselvitysPill status={hakemus["status-valiselvitys"]} /></td>
@@ -477,7 +477,7 @@ function ResolvedTable(props: ResolvedTableProps) {
       <tr>
         <td colSpan={6}>
           {filteredList.length}/{list.length} hakemusta
-          <a className={styles.yhteenveto} href="/yhteenveto/" target="_blank" onClick={() => onYhteenvetoClick(filteredList)}>Näytä yhteenveto</a>
+          <a className={styles.yhteenveto} href="/yhteenveto/" target="_blank" onClick={() => onYhteenvetoClick(filteredList)}>Päätöslista</a>
         </td>
         <td colSpan={1} className={styles.alignCenter}>
           {totalBudgetGranted > 0 ? euroFormatter.format(totalBudgetGranted) : '-'}
@@ -486,6 +486,18 @@ function ResolvedTable(props: ResolvedTableProps) {
       </tr>
       </tfoot>
     </table>
+  )
+}
+
+const getProject = (hakemus: Hakemus) => {
+  const registerNumber = hakemus["register-number"] ?? ''
+  const projectName = hakemus["project-name"]
+  const combined = `${registerNumber} ${projectName}`.trim()
+  return (
+    <div title={combined} aria-label={combined} className={styles.project}>
+      {registerNumber.length > 0 && <span>{registerNumber}</span>}
+      <span>{projectName}</span>
+    </div>
   )
 }
 
