@@ -57,7 +57,6 @@
     }
     &:nth-of-type(even):not(:hover) {
       background: #fafafa;
-      border-color: #fafafa;
     }
     &:hover {
       background-color: #EBF7FD;
@@ -104,12 +103,10 @@
 .hakemusRow {
   cursor: pointer;
   background-color: #fff;
-  border: 1px solid #fff;
 }
 
 .selectedHakemusRow {
   composes: hakemusRow;
-  border-color: #C8E8F9;
   background-color: #EBF7FD;
   &:hover {
     background-color: darken(#EBF7FD, 20%);
