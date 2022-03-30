@@ -271,7 +271,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
           />
         </th>
         <th>
-          <TableLabel text="Haettu" />
+          <TableLabel text="Haettu" disabled />
         </th>
         <th><TableLabel text="Myönnetty" disabled /></th>
         <th><TableLabel text="Valmistelija" disabled /></th>

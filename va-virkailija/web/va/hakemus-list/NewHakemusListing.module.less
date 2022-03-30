@@ -166,9 +166,11 @@
   &:focus {
     outline: none;
   }
-  &:hover {
-    background-color: #00b5f0;
-    border-color: #00b5f0;
+  &:hover:not(:disabled) {
+    background-color: #EBF7FD !important;
+  }
+  &:active:not(:disabled) {
+    background-color: darken(#EBF7FD, 10%) !important;
   }
 }
 
@@ -182,6 +184,11 @@
   border: 0;
   padding: 0;
   width: 100%;
+  &:disabled {
+    border: none;
+    background: unset;
+    color: black;
+  }
 }
 
 .polygon {
