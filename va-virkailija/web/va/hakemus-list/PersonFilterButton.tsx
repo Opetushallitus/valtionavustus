@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { HakemusFilter, Role, RoleType, State } from '../types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
@@ -38,26 +38,22 @@ const RoleContainer = ({roleName,roleField,roles,controller,hakemusFilter}: Role
     <React.Fragment>
       <div className="role-title">{roleName}</div>
       <div className="role-container">
-        {roles.map(role => <RoleButton key={role.id} role={role} roleField={roleField} controller={controller} hakemusFilter={hakemusFilter}/>)}
+        {roles.map(role => <RoleButton key={`${roleName}-${role.id}`} role={role} roleField={roleField} controller={controller} hakemusFilter={hakemusFilter}/>)}
       </div>
     </React.Fragment>
   )
 }
 
-const PersonSelectPanel = ({ state, controller }: PersonFilterButtonProps) =>{
+const PersonSelectPanel = ({ state, controller, setIsOpen }: PersonFilterButtonProps & { setIsOpen: (isOpen: boolean) => void }) =>{
   const hakemusFilter = state.hakemusFilter
-  const show = hakemusFilter.roleIsOpen
   const roles = state.hakuData.roles
   const filterByRole = (filteredRoles: RoleType[]) => roles.filter(currentRole => filteredRoles.includes(currentRole.role)).sort((a, b) => a.name > b.name ? -1 : 1)
   const presenters = filterByRole(["presenting_officer", "vastuuvalmistelija"])
   const evaluators = filterByRole(["evaluator"])
-  const onCloseClick = () => {
-    controller.setFilter("roleIsOpen",false)
-  }
 
   return (
-    <div hidden={!show} className="panel person-panel">
-      <button className="close" onClick={onCloseClick}>x</button>
+    <div className="panel person-panel">
+      <button className="close" onClick={() => setIsOpen(false)}>x</button>
       <RoleContainer roleName="Valmistelija" roleField="presenter" roles={presenters} controller={controller} hakemusFilter={hakemusFilter}/>
       <RoleContainer roleName="Arvioija" roleField="evaluator" roles={evaluators} controller={controller} hakemusFilter={hakemusFilter}/>
     </div>
@@ -70,23 +66,24 @@ type PersonFilterButtonProps = {
 }
 
 export const PersonFilterButton = ({ state, controller }: PersonFilterButtonProps) => {
+  const [isOpen, setIsOpen] = useState(false)
   const hakemusFilter = state.hakemusFilter
   const activeFilterCount = (hakemusFilter.evaluator ? 1 : 0) + (hakemusFilter.presenter ? 1 : 0)
   const onClick = () => {
-    if(!hakemusFilter.roleIsOpen){
+    if (!isOpen) {
       controller.togglePersonSelect(undefined)
     }
-    controller.setFilter("roleIsOpen", !hakemusFilter.roleIsOpen)
+    setIsOpen(!isOpen)
   }
 
   return (
-    <div style={{position:'relative'}}>
+    <div className="person-filter-button">
       <button onClick={onClick} className={`btn btn-sm btn-simple btn-role ${activeFilterCount ? 'btn-selected--border' : 'btn-role--center'}`}>
         <span hidden={!activeFilterCount} className="btn-role__count">
           {activeFilterCount}
         </span>
       </button>
-      <PersonSelectPanel state={state} controller={controller} />
+      {isOpen && <PersonSelectPanel state={state} controller={controller} setIsOpen={setIsOpen} />}
     </div>
   )
 }

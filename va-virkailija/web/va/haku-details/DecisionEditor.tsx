@@ -664,7 +664,7 @@ class DecisionDateAndSend extends React.Component<DecisionDateAndSendProps, Deci
                     {paatos.view_count === 0 && <span>{paatos.view_count}</span>}
                     {paatos.view_count > 0 && <a onClick={onShowViews.bind(this, paatos)}>{paatos.view_count}</a>}
                     {this.state.paatosDetail === paatos.id &&
-                      <div className="panel person-panel person-panel--sm person-panel--view-details">
+                      <div className="panel person-panel person-panel--view-details">
                         <button className="close" onClick={onCloseViews}>x</button>
                         <table className="table">
                           <colgroup>

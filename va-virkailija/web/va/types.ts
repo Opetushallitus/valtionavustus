@@ -65,7 +65,6 @@ export interface HakemusFilter {
     status_loppuselvitys: typeof Loppuselvitys.statuses
     status_muutoshakemus: typeof HakemusSelvitys.statuses
     organization: string
-    roleIsOpen: boolean
     evaluator: number | undefined
     presenter?: any
 }

@@ -5,14 +5,15 @@
 
 @haku-selector-combobox-height: 22px;
 @overview-list-height: 270px;
-@overview-and-top-total-height: @topbar-height + @haku-selector-combobox-height + @overview-list-height;
+@overview-and-top-total-height: @topbar-height + @haku-selector-combobox-height +
+  @overview-list-height;
 
 h3.required:after {
   content: "\00a0*";
 }
 
 body {
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
   background-color: @lighterer-gray;
   color: @text-black;
   font-size: 16px;
@@ -42,64 +43,64 @@ h3 {
   margin: 10px 0 0 0;
 }
 
-.btn{
+.btn {
   font-weight: 500;
   margin-top: 0;
   border-radius: 3px;
 }
 
-.btn:disabled{
+.btn:disabled {
   color: #333;
 }
 
-.btn-sm{
+.btn-sm {
   font-size: 11px;
   line-height: 1.5;
   padding: 5px 7px;
 }
 
-.btn-simple{
+.btn-simple {
   display: inline-block;
   color: #4d4d4d;
   background-color: transparent;
-  border: solid 1px #D8D8D8;
+  border: solid 1px #d8d8d8;
 }
 
-.btn-blue{
+.btn-blue {
   color: @light-blue;
   border: 1px solid @light-blue;
   background-color: transparent;
 }
 
-.btn-danger{
+.btn-danger {
   color: #fff;
   border: 1px solid @bright-red;
   background-color: @bright-red;
 }
 
-.btn-selected{
+.btn-selected {
   background-color: @light-blue;
   color: #fff;
   border-color: @light-blue;
 }
 
-.btn-selected--border{
+.btn-selected--border {
   border-width: 2px;
   border-color: @light-blue;
 }
 
-.btn-tag{
+.btn-tag {
   margin-right: 10px;
   margin-bottom: 10px;
 }
 
-.btn-tag-example{
+.btn-tag-example {
   padding: 2px 5px;
   cursor: text;
 }
 
-
-#container, #main-container {
+#container,
+#main-container {
   margin-top: @topbar-height + 10px;
 
   label:after {
@@ -171,7 +172,7 @@ button:disabled {
 }
 
 button.add {
-  background: transparent url('../img/add_line_enabled.png') no-repeat left top;
+  background: transparent url("../img/add_line_enabled.png") no-repeat left top;
   border: none;
   width: 22px;
   height: 22px;
@@ -183,7 +184,8 @@ button.add {
 
 button.remove,
 button.soresu-remove {
-  background: transparent url('../img/remove_line_enabled.png') no-repeat left top;
+  background: transparent url("../img/remove_line_enabled.png") no-repeat left
+    top;
   border: none;
   width: 20px;
   height: 22px;
@@ -195,7 +197,8 @@ button.soresu-remove {
 
 button:disabled.remove,
 button:disabled.soresu-remove {
-  background: transparent url('../img/remove_line_disabled.png') no-repeat left top;
+  background: transparent url("../img/remove_line_disabled.png") no-repeat left
+    top;
 }
 
 textarea {
@@ -203,14 +206,15 @@ textarea {
   padding: 10px;
 }
 
-input[type=text] {
+input[type="text"] {
   padding: 0 4px;
 }
 
-textarea, input[type=text] {
+textarea,
+input[type="text"] {
   #va-virkailija .input-placeholder({
     font-style: italic;
-  });
+  });;
   &:enabled {
     border: 1px solid @middle-gray;
   }
@@ -249,11 +253,12 @@ table caption {
   }
 }
 
-input[type=radio] {
+input[type="radio"] {
   display: none;
 }
 
-.soresu-radiobutton-group, .soresu-form .soresu-radiobutton-group {
+.soresu-radiobutton-group,
+.soresu-form .soresu-radiobutton-group {
   display: inline-block;
   border: 2px solid @light-blue;
   border-radius: 2px;
@@ -261,7 +266,7 @@ input[type=radio] {
   background-color: white;
   margin: 4px 0;
 
-  input[type=radio] + label {
+  input[type="radio"] + label {
     display: inline-block;
     font-size: 15px;
     font-weight: normal;
@@ -274,22 +279,22 @@ input[type=radio] {
   }
 
   &--vertical {
-    input[type=radio] + label {
+    input[type="radio"] + label {
       display: block;
     }
   }
 
-  input[type=radio]:disabled + label {
+  input[type="radio"]:disabled + label {
     color: @light-gray;
   }
 
-  input[type=radio]:checked + label {
+  input[type="radio"]:checked + label {
     color: white;
     background-color: @light-blue;
     border-color: @light-blue;
   }
 
-  input[type=radio]:not(:disabled):not(:checked) + label:hover {
+  input[type="radio"]:not(:disabled):not(:checked) + label:hover {
     color: white;
     background-color: @bright-blue;
     border-color: @bright-blue;
@@ -297,8 +302,12 @@ input[type=radio] {
   }
 }
 
-div.soresu-field-edit .soresu-edit-properties-line .soresu-edit-property .soresu-radiobutton-group--vertical label.soresu-input-type-selection {
-  min-width: auto;  // override, just horrible
+div.soresu-field-edit
+  .soresu-edit-properties-line
+  .soresu-edit-property
+  .soresu-radiobutton-group--vertical
+  label.soresu-input-type-selection {
+  min-width: auto; // override, just horrible
 }
 
 .soresu-sizebutton-group {
@@ -324,7 +333,7 @@ div.soresu-field-edit .soresu-edit-properties-line .soresu-edit-property .soresu
     }
   }
 
-  input[type=radio]:checked + label.soresu-size-selection {
+  input[type="radio"]:checked + label.soresu-size-selection {
     color: white;
     background-color: #06526b;
 
@@ -335,13 +344,14 @@ div.soresu-field-edit .soresu-edit-properties-line .soresu-edit-property .soresu
     }
   }
 
-  input[type=radio]:not(:disabled):not(:checked) + label.soresu-size-selection:hover {
+  input[type="radio"]:not(:disabled):not(:checked)
+    + label.soresu-size-selection:hover {
     background-color: @bright-blue;
     cursor: pointer;
   }
 }
 
-.soresu-edit-property input[type=checkbox] {
+.soresu-edit-property input[type="checkbox"] {
   border: 2px solid @light-blue;
   border-radius: 2px;
   position: relative;
@@ -357,18 +367,17 @@ div.soresu-field-edit .soresu-edit-properties-line .soresu-edit-property .soresu
   }
 }
 
-
-.panel{
+.panel {
   background-color: #fff;
   padding: 15px;
   border: 1px solid #dfdfdf;
-  box-shadow: 0 1px 1px rgba(0,0,0,.5);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
   z-index: 10000;
 
-  .close{
+  .close {
     color: @light-gray;
     font-weight: 200;
-    font-family: "Helvetica Neue","Helvetica",Arial,sans-serif;
+    font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
     font-size: 30px;
     position: absolute;
     right: -5px;
@@ -377,83 +386,84 @@ div.soresu-field-edit .soresu-edit-properties-line .soresu-edit-property .soresu
   }
 }
 
-.email-preview-panel{
+.email-preview-panel {
   width: 400px;
   position: relative;
   .box-triangle(80px);
   .box-triangle-up(@light-gray, @off-white);
 }
 
-.person-panel{
+.person-filter-button {
+  position: relative;
+}
+
+.person-panel {
   width: 333px;
   position: absolute;
   max-height: 400px;
   overflow-x: hidden;
   overflow-y: auto;
-  left: -340px;
+  right: 0;
   top: 32px;
   text-align: left;
+  z-index: 10000;
   .box-triangle(325px);
   .box-triangle-up(@light-gray, @off-white);
-  button{
+  button {
     margin-right: 10px;
     margin-bottom: 10px;
   }
 
-  &&--top{
+  &&--top {
     left: inherit;
     right: 20px;
-    top:80px;
-    &:before,&:after{
+    top: 80px;
+    &:before,
+    &:after {
       content: none;
     }
   }
-  &&--sm{
-    font-size: 12px;
-  }
 
-  &&--view-details{
+  &&--view-details {
     width: 800px;
-    right: 0;
-    left: inherit;
   }
 }
 
-.role-container{
+.role-container {
   margin-bottom: 10px;
   display: flex;
   flex-wrap: wrap;
 }
 
-.role-title{
+.role-title {
   font-size: 12px;
   margin-bottom: 15px;
   color: #4d4d4d;
 }
 
-.btn-role{
-  background: transparent url('../img/person_icon.png') no-repeat 25% 50%;
+.btn-role {
+  background: transparent url("../img/person_icon.png") no-repeat 25% 50%;
   position: relative;
   width: 30px;
   height: 25px;
   margin-bottom: 0;
 
-  &--center{
+  &--center {
     background-position-x: 50%;
   }
-  &__count{
-    color: #C4C4C4;
+  &__count {
+    color: #c4c4c4;
     font-size: 12px;
     font-weight: bold;
     position: absolute;
     top: 2px;
-    right:3px;
+    right: 3px;
   }
 }
 
-.radio-container{
+.radio-container {
   border: 1px solid #dfdfdf;
-  box-shadow: 0 1px 1px rgba(0,0,0,.5);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
   width: 100%;
   margin-top: 6px;
   margin-bottom: 10px;
@@ -478,25 +488,25 @@ div.soresu-field-edit .soresu-edit-properties-line .soresu-edit-property .soresu
   }
 }
 
-.radio-row{
+.radio-row {
   box-sizing: border-box;
   color: @light-blue;
   width: 100%;
   padding: 5px 10px;
   line-height: 1.15;
-  cursor:pointer;
-  &--unselected:hover{
+  cursor: pointer;
+  &--unselected:hover {
     background-color: #e0edf4;
   }
-  &--selected{
+  &--selected {
     background-color: @light-blue;
     color: #fff;
   }
-  label{
+  label {
     cursor: pointer;
   }
 
-  input[type="radio"]{
+  input[type="radio"] {
     display: none;
   }
 }
@@ -512,8 +522,8 @@ div.soresu-field-edit .soresu-edit-properties-line .soresu-edit-property .soresu
 }
 
 .seuranta-liitteet {
-  div.soresu-attachment-input-field button.soresu-remove{
-    top:0;
+  div.soresu-attachment-input-field button.soresu-remove {
+    top: 0;
   }
 }
 
@@ -530,7 +540,7 @@ div.soresu-field-edit .soresu-edit-properties-line .soresu-edit-property .soresu
     line-height: 1.7em;
     top: 37px;
     left: -20px;
-    input[type=checkbox] {
+    input[type="checkbox"] {
       margin-right: 5px;
     }
     .box-triangle(22px);
@@ -539,7 +549,7 @@ div.soresu-field-edit .soresu-edit-properties-line .soresu-edit-property .soresu
 }
 
 button.filter-remove {
-  background: transparent url('../img/remove_line_enabled.png') no-repeat center;
+  background: transparent url("../img/remove_line_enabled.png") no-repeat center;
   background-size: 14px 14px;
   border-width: 0;
   margin: 0;
@@ -557,11 +567,11 @@ input.text-filter {
   padding-left: 4px;
   #va-virkailija .input-placeholder({
     color: @form-label-black;
-  });
-  &:focus{
+  });;
+  &:focus {
     outline: none;
     #va-virkailija .input-placeholder({
       color: @light-gray;
-    })
+    });;
   }
 }

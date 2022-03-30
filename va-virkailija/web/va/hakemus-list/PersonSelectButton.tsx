@@ -35,7 +35,7 @@ const RoleContainer = ({ roleName, roleField, roles, controller, hakemus }: Role
     <React.Fragment>
       <div className="role-title">{roleName}</div>
       <div className="role-container">
-        {roles.map(role => <RoleButton key={role.id} role={role} roleField={roleField} controller={controller} hakemus={hakemus}/>)}
+        {roles.map(role => <RoleButton key={`${roleName}-${role.id}`} role={role} roleField={roleField} controller={controller} hakemus={hakemus}/>)}
       </div>
     </React.Fragment>
   )
@@ -79,10 +79,7 @@ export const PersonSelectButton = ({ controller, hakemus, state }: PersonSelectB
       <button onClick={onClick} className="btn btn-sm btn-simple btn-role" title={presenterName}>
         <span className="btn-role__count">{countIndicator}</span>
       </button>
-      {state.personSelectHakemusId === hakemus.id
-        ? <PersonSelectPanel hakemus={hakemus} state={state} controller={controller}/>
-        : <span/>
-      }
+      {state.personSelectHakemusId === hakemus.id && <PersonSelectPanel hakemus={hakemus} state={state} controller={controller}/>}
     </div>
   )
 }

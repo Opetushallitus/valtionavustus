@@ -104,7 +104,6 @@ export default class HakemustenArviointiController {
         status_loppuselvitys: Loppuselvitys.statuses,
         status_muutoshakemus: Muutoshakemus.statuses,
         organization: "",
-        roleIsOpen:false,
         evaluator:evaluator,
         presenter:undefined
       },
