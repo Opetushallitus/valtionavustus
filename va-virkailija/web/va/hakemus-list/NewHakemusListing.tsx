@@ -84,7 +84,7 @@ const filteredHakemusList = (state: FilterState, list: Hakemus[]): Hakemus[] => 
 }
 
 const defaultStatusFilters = {
-  hakemus: HakemusArviointiStatuses.statuses,
+  hakemus: HakemusArviointiStatuses.statuses.filter(s => s !== 'rejected'),
   muutoshakemus: Muutoshakemus.statuses,
   valiselvitys: HakemusSelvitys.statuses,
   loppuselvitys: Loppuselvitys.statuses,
@@ -116,11 +116,14 @@ const reducer = (state: FilterState, action: Action): FilterState => {
       }
     }
     case "clear-status-filter": {
+      const clearedStatuses = action.filter === 'hakemus'
+        ? HakemusArviointiStatuses.statuses
+        : defaultStatusFilters[action.filter]
       return {
         ...state,
         status: {
           ...state.status,
-          [action.filter]: [...defaultStatusFilters[action.filter]]
+          [action.filter]: [...clearedStatuses]
         }
       }
     }
