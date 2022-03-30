@@ -55,9 +55,15 @@
     td:last-of-type {
       padding-right: 8px;
     }
-    &:nth-of-type(even) {
+    &:nth-of-type(even):not(:hover) {
       background: #fafafa;
       border-color: #fafafa;
+    }
+    &:hover {
+      background-color: #EBF7FD;
+    }
+    &:active {
+      background-color: darken(#EBF7FD, 10%);
     }
   }
   thead tr {
@@ -90,18 +96,15 @@
   span:nth-of-type(2) {
     padding-left: 8px;
   }
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .hakemusRow {
   cursor: pointer;
   background-color: #fff;
   border: 1px solid #fff;
-  &:hover {
-    background-color: #EBF7FD;
-  }
-  &:active {
-    background-color: darken(#EBF7FD, 10%);
-  }
 }
 
 .selectedHakemusRow {
