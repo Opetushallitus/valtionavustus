@@ -77,6 +77,7 @@ export class HakijaAvustusHakuPage {
   async submitApplication() {
     await this.sendHakemusButton.click()
     await this.page.waitForSelector('button:has-text("Hakemus lähetetty"), button:has-text("Ansökan sänd")')
+    return { userKey: await this.getUserKey() }
   }
 
   async fillMuutoshakemusEnabledHakemus(avustushakuID: number, answers: Answers, beforeSubmitFn?: () => void) {
@@ -156,7 +157,7 @@ export class HakijaAvustusHakuPage {
     }
   }
 
-  async fillAndSendBudjettimuutoshakemusEnabledHakemus(avustushakuID: number, answers: Answers, budget?: Budget) {
+  async fillBudjettimuutoshakemusEnabledHakemus(avustushakuID: number, answers: Answers, budget?: Budget) {
     const lang = answers.lang || 'fi'
 
     await this.page.waitForSelector('#haku-not-open', { state: 'hidden', timeout: 500 })
@@ -191,8 +192,5 @@ export class HakijaAvustusHakuPage {
     await this.page.click( '[for="vat-included.radio.0"]')
 
     await this.fillBudget(budget, 'hakija')
-
-    await this.submitApplication()
-    return { userKey: await this.getUserKey() }
   }
 }

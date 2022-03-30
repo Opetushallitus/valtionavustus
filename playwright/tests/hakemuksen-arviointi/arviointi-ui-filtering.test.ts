@@ -39,7 +39,13 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
       },
       selfFinancing: "1",
     }
-    await hakijaAvustusHakuPage.fillAndSendBudjettimuutoshakemusEnabledHakemus(avustushakuID, answers2, budget2)
+    await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
+    await hakijaAvustusHakuPage.fillBudjettimuutoshakemusEnabledHakemus(avustushakuID, answers2, budget2)
+    await hakijaAvustusHakuPage.submitApplication()
+    const answers3 = {...answers, contactPersonEmail: 'erkki3.esimerkki@example.com'}
+    await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
+    await hakijaAvustusHakuPage.fillBudjettimuutoshakemusEnabledHakemus(avustushakuID, answers3, budget2)
+    await hakijaAvustusHakuPage.waitForEditSaved()
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigate(avustushakuID)
     await use(hakemustenArviointiPage)
@@ -61,6 +67,14 @@ test('hakemus listing', async ({hakemustenArviointiPage, hakuProps}) => {
     await expect(hakemustenArviointiPage.hakemusListing).toContainText('1/2 hakemusta')
     await hakemustenArviointiPage.inputFilterProject.fill('')
     await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
+  })
+
+  await test.step('clicking näytä keskeneräiset shows unfinished hakemuses in the listing', async () => {
+    await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
+    await expect(hakemustenArviointiPage.showUnfinished).not.toBeChecked()
+    await hakemustenArviointiPage.showUnfinished.click()
+    await expect(hakemustenArviointiPage.showUnfinished).toBeChecked()
+    await expect(hakemustenArviointiPage.hakemusListing).toContainText('3/3 hakemusta')
   })
 
   await test.step('clicking another avustushaku from dropdown switches to that', async () => {

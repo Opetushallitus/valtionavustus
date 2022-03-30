@@ -1,7 +1,6 @@
 import * as Bacon from 'baconjs'
 import _ from 'lodash'
 import Immutable from 'seamless-immutable'
-import queryString from 'query-string'
 // @ts-ignore route-parser doesn't have proper types
 import RouteParser from 'route-parser'
 
@@ -225,10 +224,6 @@ export default class HakemustenArviointiController {
   autoSaveHakemusArvio = _.debounce((updatedHakemus: Hakemus) => { dispatcher.push(events.saveHakemusArvio, updatedHakemus) }, 3000)
 
   onInitialState(_emptyState: State, realInitialState: State) {
-    const query = queryString.parse(location.search)
-    if (query.showAll !== "true") {
-      realInitialState.hakuData.hakemukset = HakemustenArviointiController.filterHakemukset(realInitialState.hakuData.hakemukset)
-    }
     const parsedHakemusIdObject = new RouteParser('/*ignore/hakemus/:hakemus_id/*ignore').match(location.pathname)
     if (parsedHakemusIdObject && parsedHakemusIdObject["hakemus_id"]) {
       this.onHakemusSelection(realInitialState, Number(parsedHakemusIdObject["hakemus_id"]))

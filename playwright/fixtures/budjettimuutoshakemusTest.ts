@@ -26,7 +26,8 @@ export const budjettimuutoshakemusTest = defaultValues.extend<Budjettimuutoshake
 
     const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
-    const {userKey} = await hakijaAvustusHakuPage.fillAndSendBudjettimuutoshakemusEnabledHakemus(avustushakuID, answers, budget)
+    await hakijaAvustusHakuPage.fillBudjettimuutoshakemusEnabledHakemus(avustushakuID, answers, budget)
+    const {userKey} = await hakijaAvustusHakuPage.submitApplication()
     use({userKey})
   },
   acceptedHakemus: async ({avustushakuID, ukotettuValmistelija, page, budget, answers, submittedHakemus: {userKey}}, use, testInfo) => {

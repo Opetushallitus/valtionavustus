@@ -21,12 +21,14 @@ export class HakemustenArviointiPage {
   readonly inputFilterOrganization: Locator
   readonly inputFilterProject: Locator
   readonly hakemusListing: Locator
+  readonly showUnfinished: Locator
   constructor(page: Page) {
     this.page = page;
     this.avustushakuDropdown = this.page.locator('#avustushaku-dropdown')
     this.inputFilterOrganization = this.page.locator('[placeholder="Hakijaorganisaatio"]')
     this.inputFilterProject = this.page.locator('[placeholder="Hanke tai asianumero"]')
     this.hakemusListing = this.page.locator('#hakemus-listing')
+    this.showUnfinished = this.page.locator('text="Näytä keskeneräiset"')
   }
 
   async navigate(avustushakuID: number) {

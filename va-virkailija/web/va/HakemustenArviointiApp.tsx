@@ -21,6 +21,7 @@ import './hakemusten-arviointi.less'
 import {State} from "./types";
 import NewHakemusListing from "./hakemus-list/NewHakemusListing";
 import {Hakemus} from "soresu-form/web/va/types";
+import {Switch} from "./hakemus-list/Switch";
 
 interface Props {
   state: State
@@ -28,10 +29,15 @@ interface Props {
   newHakemusListingUiEnabled: boolean
 }
 
+const showAll = 'showAll' as const
+
 const App = ({state, controller}: Props) => {
+    const [showAllHakemukset, toggleShowAllHakemukset] = useState(() => new URLSearchParams(location.search).get(showAll) === 'true')
     const hakuData = state.hakuData
     const avustushaku = hakuData.avustushaku
-    const hakemusList = hakuData.hakemukset
+    const hakemusList = showAllHakemukset
+      ? hakuData.hakemukset
+      : HakemustenArviointiController.filterHakemukset(hakuData.hakemukset)
     const hasSelected = typeof state.selectedHakemus === 'object'
     const selectedHakemus: Hakemus | undefined | {} = hasSelected ? state.selectedHakemus : {}
     const previouslySelectedHakemus = state.previouslySelectedHakemus
@@ -42,7 +48,7 @@ const App = ({state, controller}: Props) => {
     const environment = hakuData.environment
     const helpTexts = state.helpTexts
     const [splitView, toggleSplitView] = useState(false)
-
+    const isResolved = avustushaku.status === 'resolved'
     useEffect(() => {
       const escFunction = (event: KeyboardEvent) => {
         if(event.keyCode === 27) {
@@ -54,6 +60,14 @@ const App = ({state, controller}: Props) => {
         document.removeEventListener('keydown', escFunction, false)
       }
     }, [])
+    const onSwitchClick = () => {
+      const newToggleState = !showAllHakemukset
+      const searchParams = new URLSearchParams(location.search)
+      searchParams.set(showAll, String(newToggleState))
+      const newUrl = `${location.pathname}?${searchParams.toString()}`
+      history.replaceState(null, document.title, newUrl)
+      toggleShowAllHakemukset(newToggleState)
+    }
     return (
       <section>
         <TopBar activeTab="arviointi" environment={environment} state={state}/>
@@ -63,6 +77,7 @@ const App = ({state, controller}: Props) => {
               <AvustushakuDropdown avustushaku={avustushaku} avustushakuList={avustushakuList} />
               <div className="right-side">
                 <HakemusFilter controller={controller} hakemusFilter={state.hakemusFilter} hakuData={hakuData}/>
+                {!isResolved && <Switch checked={showAllHakemukset} onChange={onSwitchClick} label="Näytä keskeneräiset" />}
                 <a className="excel-export" href={`/api/avustushaku/${avustushaku.id}/export.xslx`} target="_">Lataa Excel</a>
               </div>
             </div>
@@ -70,7 +85,7 @@ const App = ({state, controller}: Props) => {
               ? <NewHakemusListing
                   selectedHakemus={selectedHakemus}
                   hakemusList={hakemusList}
-                  avustushaku={avustushaku}
+                  isResolved={isResolved}
                   roles={hakuData.roles}
                   splitView={splitView}
                   onSelectHakemus={id => controller.selectHakemus(id)}

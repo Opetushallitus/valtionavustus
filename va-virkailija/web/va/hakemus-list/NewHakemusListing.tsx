@@ -1,6 +1,5 @@
 import React, {useEffect, useReducer, useRef, useState} from "react";
 import {
-  Avustushaku,
   Hakemus,
   HakemusArviointiStatus,
   SelvitysStatus
@@ -23,11 +22,11 @@ import polygonSrc from '../img/polygon.svg'
 interface Props {
   selectedHakemus: Hakemus | undefined | {}
   hakemusList: Hakemus[]
-  avustushaku: Avustushaku
   roles: Role[]
   splitView: boolean
   onSelectHakemus: (hakemusId: number) => void
   onYhteenvetoClick: (filteredHakemusList: Hakemus[]) => void
+  isResolved: boolean
 }
 
 type MuutoshakemusStatuses = typeof Muutoshakemus.statuses[number]
@@ -139,10 +138,9 @@ const getDefaultState = (): FilterState => ({
 })
 
 export default function NewHakemusListing(props: Props) {
-  const {avustushaku, selectedHakemus, hakemusList, onSelectHakemus, onYhteenvetoClick, roles, splitView} = props
+  const {selectedHakemus, hakemusList, onSelectHakemus, onYhteenvetoClick, roles, splitView, isResolved} = props
   const selectedHakemusId = selectedHakemus && 'id' in selectedHakemus ? selectedHakemus.id : undefined
   const [filterState, dispatch] = useReducer(reducer, getDefaultState())
-  const isResolved = avustushaku.status === 'resolved'
   const filteredList = filteredHakemusList(filterState, hakemusList)
   const totalBudgetGranted = filteredList
     .reduce<number>((totalGranted, hakemus) => {
