@@ -7,7 +7,6 @@ import { getValiselvitysEmails } from '../../../test/test-util'
 import { getHakemusTokenAndRegisterNumber, getValiselvitysSubmittedNotificationEmails, lastOrFail } from '../../utils/emails'
 import { HAKIJA_URL } from '../../utils/constants'
 import {HakijaSelvitysPage} from "../../pages/hakijaSelvitysPage";
-import {navigate} from "../../utils/navigate";
 
 test.describe('Väliselvitys', () => {
   väliselvitysTest('väliselvitys submitted notification is sent', async ({ page, acceptedHakemus: { hakemusID }, väliselvitysSubmitted }) => {
