@@ -1,10 +1,9 @@
-const webpack = require("webpack")
 const path = require("path")
-const TerserPlugin = require('terser-webpack-plugin')
 
 const makeConfig = (basedir, componentName) => {
+  const mode = process.env.NODE_ENV || 'development'
   return {
-    mode: process.env.NODE_ENV || 'development',
+    mode,
     output: {
       path: path.resolve(basedir,`resources/public/${componentName}`),
       filename: "js/[name].js"
@@ -23,10 +22,14 @@ const makeConfig = (basedir, componentName) => {
               "web/",
               "../soresu-form/web/"
             ].map(m => path.resolve(basedir, m)),
+          exclude: /node_modules/,
           use: {
             loader: "babel-loader",
             options: {
-              cacheDirectory: true
+              cacheDirectory: true,
+              presets: [
+                ['@babel/preset-env', { targets: "defaults" }]
+              ]
             }
           }
         },
@@ -68,17 +71,6 @@ const makeConfig = (basedir, componentName) => {
         "soresu-form": path.resolve(basedir, "../soresu-form")
       },
       extensions: ['.ts', '.tsx', '.js', '.jsx']
-    },
-    optimization: {
-      splitChunks: {
-        cacheGroups: {
-          commons: {
-            test: /soresu-form/,
-            name: 'commons',
-            chunks: 'all'
-          }
-        }
-      }
     }
   }
 }
