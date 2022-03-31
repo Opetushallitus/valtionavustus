@@ -1,10 +1,10 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 
 import RadioRow from './RadioRow.jsx'
 import HelpTooltip from "../HelpTooltip"
 
-export default class ChooseTalousarviotili extends React.Component {
+export default class ChooseTalousarviotili extends Component {
   constructor(props) {
     super(props)
     this.state = {isOpen: false}

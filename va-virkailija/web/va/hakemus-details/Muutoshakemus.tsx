@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { Fragment, useState } from 'react';
 import moment from 'moment'
 
 import { MuutoshakemusValues, datetimeFormat } from 'soresu-form/web/va/MuutoshakemusValues'
@@ -56,12 +56,12 @@ export const Muutoshakemus = ({ environment, avustushaku, muutoshakemukset, hake
       projectEndDate={projectEndDate} />
 
   return (
-    <React.Fragment>
+    <Fragment>
       {muutoshakemukset.length > 1 && <MuutoshakemusTabs muutoshakemukset={muutoshakemukset} activeMuutoshakemus={a} setActiveMuutoshakemus={setActiveMuutoshakemus} />}
       <h2>Muutoshakemus {moment(a['created-at']).format(datetimeFormat('fi'))}</h2>
       <div data-test-id="muutoshakemus-sisalto">
         {content}
       </div>
-    </React.Fragment>
-  )
+    </Fragment>
+  );
 }

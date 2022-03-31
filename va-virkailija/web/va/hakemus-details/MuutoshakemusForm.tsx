@@ -1,5 +1,5 @@
 
-import React, {useMemo} from "react"
+import { Fragment, useMemo } from "react";
 import moment from "moment"
 // @ts-ignore react-widgets-moment doesn't have proper types
 import MomentLocalizer from 'react-widgets-moment'
@@ -84,7 +84,7 @@ const PaattymispaivaValues = ({ muutoshakemus, projectEndDate }: PaattymispaivaV
   const perustelut = muutoshakemus['kayttoajan-pidennys-perustelut']
 
   return (
-    <React.Fragment>
+    <Fragment>
       <div className="muutoshakemus__project-end-row">
         <div>
           <h3 className="muutoshakemus__header" data-test-id='muutoshakemus-current-end-date-title'>{currentEndDateTitle}</h3>
@@ -99,8 +99,8 @@ const PaattymispaivaValues = ({ muutoshakemus, projectEndDate }: PaattymispaivaV
         <h4 className="muutoshakemus__header" data-test-id='muutoshakemus-reasoning-title'>{t.muutoshakemus.applicantReasoning}</h4>
         <div className="muutoshakemus-description-box" data-test-id="muutoshakemus-jatkoaika-perustelu">{perustelut}</div>
       </div>
-    </React.Fragment>
-  )
+    </Fragment>
+  );
 }
 
 const errors = {

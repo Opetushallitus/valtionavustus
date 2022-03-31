@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import React from 'react'
 import ClassNames from 'classnames'
 
 export default class TableFieldUtil {

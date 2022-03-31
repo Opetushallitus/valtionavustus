@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import { Component } from 'react';
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import HelpTooltip from '../HelpTooltip'
 

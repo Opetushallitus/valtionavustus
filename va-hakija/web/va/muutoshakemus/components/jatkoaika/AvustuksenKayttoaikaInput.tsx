@@ -1,4 +1,3 @@
-import React from 'react'
 import DatePicker from 'react-widgets/DatePicker'
 import moment from 'moment'
 import { FormikHook } from 'soresu-form/web/va/types/muutoshakemus'

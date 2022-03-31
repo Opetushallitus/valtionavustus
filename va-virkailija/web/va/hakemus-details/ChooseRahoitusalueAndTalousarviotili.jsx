@@ -1,11 +1,11 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 
 import ChooseRahoitusalue from './ChooseRahoitusalue.jsx'
 import ChooseTalousarviotili from './ChooseTalousarviotili.jsx'
 import RahoitusalueSelections from './RahoitusalueSelections'
 
-export default class ChooseRahoitusalueAndTalousarvioTili extends React.Component {
+export default class ChooseRahoitusalueAndTalousarvioTili extends Component {
   constructor(props) {
     super(props)
     this.selectRahoitusalue = this.selectRahoitusalue.bind(this)

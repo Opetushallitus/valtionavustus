@@ -1,11 +1,11 @@
-import React from 'react'
+import { Component } from 'react';
 
 import ComponentFactory from '../ComponentFactory.jsx'
 import Translator from '../Translator'
 import DateUtil from '../../DateUtil'
 import {InfoElementPropertyMapper, AccordionElementPropertyMapper, LinkPropertyMapper} from './PropertyMapper.js'
 
-export class BasicInfoComponent extends React.Component {
+export class BasicInfoComponent extends Component {
   asDateTimeString(date) {
     const timeLimiter = new Translator(this.props.translations["misc"]).translate("time", this.props.lang, "KLO")
     return DateUtil.asDateString(date) + " " + timeLimiter + " " + DateUtil.asTimeString(date)
@@ -140,7 +140,7 @@ export class EndOfDateRangeInfoElement extends BasicInfoComponent {
   }
 }
 
-export default class InfoElement extends React.Component {
+export default class InfoElement extends Component {
   constructor(props) {
     super(props)
     const fieldTypeMapping = {

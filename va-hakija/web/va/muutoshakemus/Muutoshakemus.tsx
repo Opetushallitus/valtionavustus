@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react';
 import moment from 'moment'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'

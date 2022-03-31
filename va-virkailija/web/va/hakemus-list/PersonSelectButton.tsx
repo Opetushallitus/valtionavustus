@@ -1,4 +1,4 @@
-import React from 'react'
+import { Fragment } from 'react';
 
 import { Hakemus } from 'soresu-form/web/va/types'
 
@@ -32,13 +32,13 @@ type RoleContainerProps = {
 
 const RoleContainer = ({ roleName, roleField, roles, controller, hakemus }: RoleContainerProps) => {
   return (
-    <React.Fragment>
+    <Fragment>
       <div className="role-title">{roleName}</div>
       <div className="role-container">
         {roles.map(role => <RoleButton key={`${roleName}-${role.id}`} role={role} roleField={roleField} controller={controller} hakemus={hakemus}/>)}
       </div>
-    </React.Fragment>
-  )
+    </Fragment>
+  );
 }
 
 type PersonSelectButtonProps = {

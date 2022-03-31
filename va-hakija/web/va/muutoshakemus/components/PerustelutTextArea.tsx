@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { FormikHook, FormValues } from 'soresu-form/web/va/types/muutoshakemus'
 import { getInputErrorClass } from 'soresu-form/web/va/formikHelpers'
 

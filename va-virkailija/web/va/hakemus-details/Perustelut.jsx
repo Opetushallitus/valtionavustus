@@ -1,9 +1,9 @@
 import * as Bacon from 'baconjs'
-import React from 'react'
+import { Component } from 'react';
 import _ from "lodash"
 import rejectedReasonsByLanguage from './rejectedReasonsByLanguage.json'
 import HelpTooltip from '../HelpTooltip'
-export default class Perustelut extends React.Component {
+export default class Perustelut extends Component {
 
   constructor(props) {
     super(props)

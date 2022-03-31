@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import {useTranslations} from "./i18n/TranslationContext";
 import {isAccepted, isRejected} from "./Muutoshakemus";
 import {IconAccepted} from "./img/IconAccepted";

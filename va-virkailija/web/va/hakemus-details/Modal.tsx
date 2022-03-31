@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react';
 import FocusLock from 'react-focus-lock'
 
 import HakemustenArviointiController from '../HakemustenArviointiController'

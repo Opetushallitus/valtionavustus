@@ -1,4 +1,4 @@
-import React from "react"
+import { Component } from "react";
 import _ from 'lodash'
 
 import ModalDialog from "./ModalDialog.jsx"
@@ -35,7 +35,7 @@ const validateBusinessId = str =>
     ? {isDisabled: false, error: ""}
     : {isDisabled: true, error: "error"}
 
-export default class BusinessIdSearch extends React.Component {
+export default class BusinessIdSearch extends Component {
   constructor(props) {
     super(props)
     this.fetchOrganizationData = this.fetchOrganizationData.bind(this)

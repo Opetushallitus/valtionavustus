@@ -1,8 +1,5 @@
-import React, {
-  useEffect,
-  useReducer,
-  useState
-} from "react";
+import { useEffect, useReducer, useState } from "react";
+import * as React from "react";
 import * as yup from "yup"
 import {ValueType, valueTypes} from "./types";
 

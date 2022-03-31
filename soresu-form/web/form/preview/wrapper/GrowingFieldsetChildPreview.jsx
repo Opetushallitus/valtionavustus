@@ -1,8 +1,8 @@
-import React from 'react'
+import { Component } from 'react';
 import ClassNames from 'classnames'
 import _ from 'lodash'
 
-export default class GrowingFieldsetChildPreviewElement extends React.Component {
+export default class GrowingFieldsetChildPreviewElement extends Component {
   render() {
     const children = this.props.children
     const htmlId = this.props.htmlId

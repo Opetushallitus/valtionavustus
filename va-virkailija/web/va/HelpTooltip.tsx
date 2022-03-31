@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 
 type HelpTooltipProps = {
   content: string
@@ -6,7 +6,7 @@ type HelpTooltipProps = {
   testId?: string
 }
 
-export default class HelpTooltip extends React.Component<HelpTooltipProps> {
+export default class HelpTooltip extends Component<HelpTooltipProps> {
 
   render() {
     return <a className={`soresu-tooltip soresu-tooltip-${this.props.direction || "up"} soresu-help-icon`}

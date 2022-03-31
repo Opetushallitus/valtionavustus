@@ -1,5 +1,3 @@
-import React from 'react'
-
 import DropdownList from 'react-widgets/DropdownList'
 import moment from 'moment-timezone'
 import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'

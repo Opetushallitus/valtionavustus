@@ -1,4 +1,4 @@
-import React from 'react'
+import { Fragment } from 'react';
 import moment from 'moment'
 import {fiLongDateTimeFormatWithKlo} from 'soresu-form/web/va/i18n/dateformat'
 import './VerificationBox.less'
@@ -15,7 +15,7 @@ const formatDate = (date?: string) => {
 }
 
 export const VerificationBox = ({ title, date, verifier }: VerificationBoxProps) => {
-  if (!Boolean(title) || !Boolean(date) || !Boolean(verifier)) return <React.Fragment />
+  if (!Boolean(title) || !Boolean(date) || !Boolean(verifier)) return <Fragment />;
 
   return (
     <div className="verification-footer">

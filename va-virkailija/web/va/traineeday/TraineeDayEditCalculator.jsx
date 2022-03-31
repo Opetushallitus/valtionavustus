@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import React from 'react'
 
 import BasicFieldComponent from 'soresu-form/web/form/component/BasicFieldComponent.jsx'
 import BasicTextField from 'soresu-form/web/form/component/BasicTextField.jsx'

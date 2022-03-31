@@ -1,5 +1,3 @@
-import React from 'react'
-
 const RadioRow = ({name, value, isSelected, allowEditing, onChange}) => {
   const classes = `radio-row radio-row--${isSelected ? 'selected' : 'unselected'}`
 

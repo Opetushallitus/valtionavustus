@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 import HelpTooltip from '../HelpTooltip'
 
 export const educationLevels = [
@@ -126,7 +126,7 @@ function isBlockedBy(blockers, itemValues) {
   return false
 }
 
-export default class EducationLevels extends React.Component {
+export default class EducationLevels extends Component {
   render() {
     const {enabled, values, onChange, onAdd, onRemove, grant, helpTexts} = this.props
     const itemValues = (values || []).reduce((a, c) => {

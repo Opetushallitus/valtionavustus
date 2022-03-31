@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 
 import ComponentFactory from '../../ComponentFactory.jsx'
 import ThemeWrapper from './../../component/wrapper/ThemeWrapper.jsx'
@@ -6,7 +6,7 @@ import FieldsetPreview from './FieldsetPreview.jsx'
 import GrowingFieldsetPreview from './GrowingFieldsetPreview.jsx'
 import GrowingFieldsetChildPreview from './GrowingFieldsetChildPreview.jsx'
 
-export default class WrapperPreviewComponent extends React.Component {
+export default class WrapperPreviewComponent extends Component {
   constructor(props) {
     super(props)
     const fieldTypeMapping = {

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useState } from 'react';
 import moment from 'moment'
 
 import DateUtil from 'soresu-form/web/DateUtil'

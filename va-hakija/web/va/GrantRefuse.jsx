@@ -1,8 +1,8 @@
-import React from "react"
+import { Component } from "react";
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.tsx'
 import DateUtil from 'soresu-form/web/DateUtil.ts'
 
-export default class FormContainer extends React.Component {
+export default class FormContainer extends Component {
   constructor(props) {
     super(props)
     const refused = this.props.state.saveStatus.savedObject.refused || false

@@ -1,4 +1,3 @@
-import React from 'react'
 import PreviewComponent from './PreviewComponent.jsx'
 
 export default class DecimalValue extends PreviewComponent {

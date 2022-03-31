@@ -1,9 +1,9 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 import * as Bacon from 'baconjs'
 import HelpTooltip from '../HelpTooltip'
 
-export default class PresenterComment extends React.Component {
+export default class PresenterComment extends Component {
 
   constructor(props) {
     super(props)

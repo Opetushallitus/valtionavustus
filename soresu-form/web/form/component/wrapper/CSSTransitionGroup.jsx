@@ -1,8 +1,8 @@
 import _ from 'lodash'
-import React from 'react'
+import { Component } from 'react';
 import {TransitionGroup, CSSTransition} from 'react-transition-group'
 
-export default class CSSTransitionGroup extends React.Component {
+export default class CSSTransitionGroup extends Component {
   render() {
     const children = this.props.children
     const transitionName = this.props.transitionName

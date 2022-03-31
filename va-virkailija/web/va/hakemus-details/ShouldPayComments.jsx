@@ -1,7 +1,7 @@
 import * as Bacon from 'baconjs'
-import React from 'react'
+import { Component } from 'react';
 
-export default class ShouldPayComments extends React.Component {
+export default class ShouldPayComments extends Component {
   constructor(props){
     super(props)
     this.state= ShouldPayComments.initialState(props)

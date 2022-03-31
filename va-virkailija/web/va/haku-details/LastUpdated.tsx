@@ -1,4 +1,3 @@
-import React from 'react'
 import moment from 'moment-timezone'
 import { fiLongDateTimeFormatWithKlo } from 'soresu-form/web/va/i18n/dateformat'
 

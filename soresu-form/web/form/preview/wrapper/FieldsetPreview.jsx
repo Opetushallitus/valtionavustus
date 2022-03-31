@@ -1,8 +1,8 @@
-import React from 'react'
+import { Component } from 'react';
 
 import CSSTransitionGroup from '../../component/wrapper/CSSTransitionGroup.jsx'
 
-export default class FieldsetPreview extends React.Component {
+export default class FieldsetPreview extends Component {
   render() {
     const children = this.props.children
     const htmlId = this.props.htmlId

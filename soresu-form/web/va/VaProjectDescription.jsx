@@ -1,13 +1,13 @@
-import React from 'react'
+import { createElement, Component } from 'react';
 import ClassNames from 'classnames'
 
 import RemoveButton from 'soresu-form/web/form/component/RemoveButton.jsx'
 
-export default class VaProjectDescription extends React.Component {
+export default class VaProjectDescription extends Component {
   render() {
     const children = this.props.children
     const htmlId = this.props.htmlId
-    const removeButton = React.createElement(RemoveButton, this.props)
+    const removeButton = createElement(RemoveButton, this.props)
     const className = ClassNames("va-big-fieldset", { disabled: this.props.disabled })
     return (
       <li className={className}>

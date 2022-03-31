@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 
 import './style/preview.less'
@@ -9,7 +9,7 @@ import WrapperPreviewComponent from './preview/wrapper/WrapperPreviewComponent.j
 import InputValueStorage from './InputValueStorage.js'
 import {dropFirstInfoFields} from "soresu-form/web/form/FormPreviewTS";
 
-export default class FormPreview extends React.Component {
+export default class FormPreview extends Component {
 
   static renderField(controller, formEditController, state, infoElementValues, field, renderingParameters) {
     const fields = state.form.content

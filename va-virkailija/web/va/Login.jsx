@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component, createElement } from 'react';
 import ReactDOM from 'react-dom'
 import * as Bacon from 'baconjs'
 import queryString from 'query-string'
@@ -11,7 +11,7 @@ import './style/login.less'
 
 import TopBar from './TopBar.tsx'
 
-export default class Login extends React.Component {
+export default class Login extends Component {
   render() {
     const model = this.props.model
     const environment =  model.environment
@@ -47,5 +47,5 @@ const initialState = Bacon.combineTemplate(initialStateTemplate)
 
 initialState.onValue(function(state) {
   const properties = { model: state }
-  ReactDOM.render(React.createElement(Login, properties), document.getElementById('app'))
+  ReactDOM.render(createElement(Login, properties), document.getElementById('app'))
 })

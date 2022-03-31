@@ -1,4 +1,4 @@
-import React from "react"
+import { Component } from "react";
 
 import {
   BasicFieldEdit,
@@ -11,7 +11,7 @@ import FormEditComponent from "./FormEditComponent"
 
 import FormPreview from "../FormPreview.jsx"
 
-export default class FormEdit extends React.Component {
+export default class FormEdit extends Component {
 
   static createFormEditComponent(controller, formEditorController, state,
     field, fieldProperties, renderingParameters) {

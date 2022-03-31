@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react';
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import HelpTooltip from '../HelpTooltip'
 import { Avustushaku, Hakemus, HakemusStatus, HelpTexts } from 'soresu-form/web/va/types'

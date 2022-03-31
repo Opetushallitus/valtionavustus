@@ -1,8 +1,8 @@
-import React from "react"
+import { Component } from "react";
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.tsx'
 import HttpUtil from "soresu-form/web/HttpUtil"
 
-export default class OpenContactsEdit extends React.Component {
+export default class OpenContactsEdit extends Component {
   constructor(props) {
     super(props)
     this.onSubmitClick = this.onSubmitClick.bind(this)

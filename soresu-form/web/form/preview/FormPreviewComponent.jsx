@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 import ComponentFactory from '../ComponentFactory.jsx'
 import BasicValue from './BasicValue.jsx'
 import TextAreaValue from './TextAreaValue.jsx'
@@ -17,7 +17,7 @@ import {
 } from '../component/PropertyMapper'
 import TableValuePropertyMapper from './TableValuePropertyMapper'
 
-export default class FormPreviewComponent extends React.Component {
+export default class FormPreviewComponent extends Component {
   constructor(props) {
     super(props)
     const fieldTypeMapping = {

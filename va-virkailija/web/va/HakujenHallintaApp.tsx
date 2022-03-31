@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom'
 import moment from 'moment'
 // @ts-ignore react-widgets-moment doesn't have proper types

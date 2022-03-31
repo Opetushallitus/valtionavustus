@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 
 import DateUtil from 'soresu-form/web/DateUtil'

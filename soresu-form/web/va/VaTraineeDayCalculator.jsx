@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 
 import BasicFieldComponent from 'soresu-form/web/form/component/BasicFieldComponent.jsx'
@@ -184,7 +184,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
   }
 }
 
-export class VaTraineeDayTotalCalculator extends React.Component {
+export class VaTraineeDayTotalCalculator extends Component {
   constructor(props) {
     super(props)
     this.translator = new Translator(props.translations.form["trainee-day-calculator"])

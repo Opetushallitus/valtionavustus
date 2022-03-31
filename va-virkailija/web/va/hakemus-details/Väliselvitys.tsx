@@ -1,5 +1,3 @@
-import React from 'react'
-
 import SelvitysPreview from './SelvitysPreview'
 import SelvitysNotFilled from './SelvitysNotFilled'
 import SelvitysLink from './SelvitysLink'

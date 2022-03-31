@@ -1,6 +1,6 @@
-import React from "react"
+import { Component } from "react";
 
-export default class ModalDialog extends React.Component {
+export default class ModalDialog extends Component {
   render() {
     return this.props.isOpen ? (
       <div className={this.props.overlayClassName}>

@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import { useState } from 'react';
+import * as React from 'react';
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'

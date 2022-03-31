@@ -1,5 +1,3 @@
-import React from 'react'
-
 export type DebugProps = { json: any }
 
 export default function Debug({ json }: DebugProps) {

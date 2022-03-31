@@ -1,8 +1,8 @@
-import React from 'react'
+import { Component } from 'react';
 
 import Translator from '../Translator'
 
-export default class ServerError extends React.Component {
+export default class ServerError extends Component {
   constructor(props) {
     super(props)
     this.translations = this.props.translations

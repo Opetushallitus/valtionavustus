@@ -1,10 +1,10 @@
-import React from 'react'
+import { Component } from 'react';
 import ClassNames from 'classnames'
 
 import TableFieldUtil from '../component/TableFieldUtil.jsx'
 import LocalizedString from '../component/LocalizedString.tsx'
 
-export default class TableValue extends React.Component {
+export default class TableValue extends Component {
   render() {
     const {
       htmlId,

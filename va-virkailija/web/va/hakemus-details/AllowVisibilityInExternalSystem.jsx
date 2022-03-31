@@ -1,8 +1,8 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from "lodash"
 import HelpTooltip from "../HelpTooltip"
 
-export default class AllowVisibilityInExternalSystem extends React.Component {
+export default class AllowVisibilityInExternalSystem extends Component {
   constructor(props){
     super(props)
   }

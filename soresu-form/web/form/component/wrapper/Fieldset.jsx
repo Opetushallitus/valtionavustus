@@ -1,6 +1,6 @@
-import React from 'react'
+import { Component } from 'react';
 
-export default class Fieldset extends React.Component {
+export default class Fieldset extends Component {
   render() {
     const children = this.props.children
     const htmlId = this.props.htmlId

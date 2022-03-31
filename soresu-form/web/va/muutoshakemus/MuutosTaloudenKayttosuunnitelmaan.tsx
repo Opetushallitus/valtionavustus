@@ -1,4 +1,4 @@
-import React from 'react'
+import { Fragment } from 'react';
 
 import { Meno, PaatosStatus, Talousarvio } from 'soresu-form/web/va/types/muutoshakemus'
 import { useTranslations } from '../i18n/TranslationContext'
@@ -66,7 +66,7 @@ export const MuutosTaloudenKayttosuunnitelmaan = (props: MuutosTaloudenKayttosuu
   const { t } = useTranslations()
 
   return (
-    <React.Fragment>
+    <Fragment>
       <TalousarvioTable {...props} />
       <div className="muutoshakemus-row">
         <h4 className="muutoshakemus__header" data-test-id="reasoning-title">{t.muutosTaloudenKayttosuunnitelmaan.applicantReasoning}</h4>
@@ -77,6 +77,6 @@ export const MuutosTaloudenKayttosuunnitelmaan = (props: MuutosTaloudenKayttosuu
           <OsioPaatos osio="paatos-talousarvio" paatosStatus={status} />
         </div>
        )}
-    </React.Fragment>
-  )
+    </Fragment>
+  );
 }

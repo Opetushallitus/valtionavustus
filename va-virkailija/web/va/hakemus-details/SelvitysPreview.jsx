@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import { Component } from "react";
 import _ from "lodash"
 
 import FormContainer from "soresu-form/web/form/FormContainer.jsx"

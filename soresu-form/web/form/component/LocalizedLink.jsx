@@ -1,7 +1,7 @@
-import React from 'react'
+import { Component } from 'react';
 import Translator from '../Translator'
 
-export default class LocalizedLink extends React.Component {
+export default class LocalizedLink extends Component {
   constructor(props) {
     super(props)
   }

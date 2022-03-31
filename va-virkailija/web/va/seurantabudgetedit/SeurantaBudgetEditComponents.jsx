@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 import ClassNames from 'classnames'
 
@@ -7,7 +7,7 @@ import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 
 import VaBudgetCalculator from 'soresu-form/web/va/VaBudgetCalculator'
 
-export class EditSummingBudgetElement extends React.Component {
+export class EditSummingBudgetElement extends Component {
   render() {
     const {field, children, htmlId, lang, controller, customProps} = this.props
     const sum = field.sum
@@ -111,7 +111,7 @@ export class EditSummingBudgetElement extends React.Component {
   }
 }
 
-export class EditBudgetItemElement extends React.Component {
+export class EditBudgetItemElement extends Component {
   render() {
     const {field, children, htmlId, disabled, lang, controller, customProps} = this.props
     const descriptionComponent = children[0]
@@ -142,7 +142,7 @@ export class EditBudgetItemElement extends React.Component {
   }
 }
 
-class EditBudgetItemCell extends React.Component {
+class EditBudgetItemCell extends Component {
   amountOf(answers, valueId, descriptionId) {
     const value = InputValueStorage.readValue(null, answers, valueId)
     const hasValidValue = !!value

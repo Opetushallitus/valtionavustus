@@ -1,4 +1,4 @@
-import React from 'react'
+import { createElement, Component } from 'react';
 import ClassNames from 'classnames'
 import _ from 'lodash'
 import Dropzone from 'react-dropzone'
@@ -38,7 +38,7 @@ export default class AttachmentField extends BasicSizedComponent {
   }
 }
 
-class ExistingAttachmentComponent extends React.Component {
+class ExistingAttachmentComponent extends Component {
   render() {
     const attachment = this.props.attachment
     const downloadUrl = this.props.downloadUrl
@@ -47,7 +47,7 @@ class ExistingAttachmentComponent extends React.Component {
     removeProperties.renderingParameters.removeMe = this.props.onRemove
 
     const attachmentDisplay = <AttachmentDisplay {...this.props} attachment={attachment} downloadUrl={downloadUrl}/>
-    const removeButton = React.createElement(RemoveButton, removeProperties)
+    const removeButton = createElement(RemoveButton, removeProperties)
     return <div>
              {attachmentDisplay}
              {removeButton}

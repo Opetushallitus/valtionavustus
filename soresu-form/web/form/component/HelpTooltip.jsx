@@ -1,8 +1,8 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 import Translator from '../Translator'
 
-export default class HelpTooltip extends React.Component {
+export default class HelpTooltip extends Component {
   render() {
     const translator = new Translator(this.props)
     const helpText = _.get(this.props, "content." + this.props.lang)

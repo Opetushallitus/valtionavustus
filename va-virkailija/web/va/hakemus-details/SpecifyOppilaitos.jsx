@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 
 const OppilaitosRow = ({value, allowEditing, onChange, onDelete}) =>{
   const deleteButton = onDelete ? <button type="button" onClick={onDelete}>Poista</button> : null
@@ -18,7 +18,7 @@ const OppilaitosRow = ({value, allowEditing, onChange, onDelete}) =>{
   )
 }
 
-export default class SpecifyOppilaitos extends React.Component {
+export default class SpecifyOppilaitos extends Component {
 
   constructor(props) {
     super(props)

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom'
 // @ts-ignore route-parser doesn't have proper types
 import RouteParser from 'route-parser'

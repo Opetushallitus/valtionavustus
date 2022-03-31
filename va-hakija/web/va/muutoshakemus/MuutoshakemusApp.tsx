@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom'
 import * as queryString from 'query-string'
 // @ts-ignore react-widgets-moment doesn't have proper types

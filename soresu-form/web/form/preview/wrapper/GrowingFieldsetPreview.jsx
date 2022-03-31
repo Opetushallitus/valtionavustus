@@ -1,8 +1,8 @@
-import React from 'react'
+import { Component } from 'react';
 import ClassNames from 'classnames'
 import _ from 'lodash'
 
-export default class GrowingFieldsetPreviewElement extends React.Component {
+export default class GrowingFieldsetPreviewElement extends Component {
   className(className) {
     const field = this.props.field
     const classNames = ClassNames(className, {"show-only-first-label": field.params.showOnlyFirstLabels })

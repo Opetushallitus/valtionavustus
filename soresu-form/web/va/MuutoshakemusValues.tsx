@@ -1,4 +1,4 @@
-import React from 'react'
+import { Fragment } from 'react';
 import moment from 'moment'
 
 import { MuutosTaloudenKayttosuunnitelmaan } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
@@ -29,7 +29,7 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
   const talousarvio = muutoshakemus["paatos-talousarvio"]?.length ? muutoshakemus["paatos-talousarvio"] : muutoshakemus.talousarvio
   const hasAnyPaatos = !!muutoshakemus["paatos-status-jatkoaika"] || !!muutoshakemus["paatos-status-talousarvio"] || !!muutoshakemus["paatos-status-sisaltomuutos"]
   return (
-    <React.Fragment>
+    <Fragment>
       {hasAnyPaatos &&
         <section className="muutoshakemus-section"
                data-test-id="muutoshakemus-paatos">
@@ -80,8 +80,8 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
           <div data-test-id="muutoshakemus-form-paatos-reason">{muutoshakemus["paatos-reason"]}</div>
         </div>
       )}
-    </React.Fragment>
-  )
+    </Fragment>
+  );
 }
 
 function formatDate(date?: string) {

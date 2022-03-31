@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 
 export const IconRejected: React.FC<{fill?: string}> = ({fill = '#c9302c'}) => (
   <svg data-test-id={'icon-rejected'} width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">

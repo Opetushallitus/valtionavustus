@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import React from 'react'
+import { Component } from 'react';
 import ComponentFactory from '../ComponentFactory.jsx'
 import {
   TextFieldEdit,
@@ -17,7 +17,7 @@ import {
 } from '../component/PropertyMapper'
 import TableValuePropertyMapper from '../preview/TableValuePropertyMapper'
 
-export default class FormEditComponent extends React.Component {
+export default class FormEditComponent extends Component {
 
   static fieldTypeMapping(){
     return {

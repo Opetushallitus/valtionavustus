@@ -1,4 +1,3 @@
-import React from 'react'
 import moment, {Moment} from 'moment'
 import { isoFormat } from 'soresu-form/web/va/i18n/dateformat'
 import { DateInput } from './DateInput'

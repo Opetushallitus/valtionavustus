@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react';
 import ClassNames from 'classnames'
 
 import { Avustushaku, Form, HelpTexts, Koodistos, LegacyTranslations, Liite } from 'soresu-form/web/va/types'

@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 
 import JsUtil from '../../JsUtil'
@@ -6,7 +6,7 @@ import FormUtil from '../FormUtil'
 import LocalizedString from './LocalizedString.tsx'
 import Translator from '../Translator'
 
-export default class FormErrorSummary extends React.Component {
+export default class FormErrorSummary extends Component {
 
   constructor(props) {
     super(props)

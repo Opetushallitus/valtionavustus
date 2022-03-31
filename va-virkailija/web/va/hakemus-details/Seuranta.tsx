@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 
 import PresenterComment from './PresenterComment'
 import SeurantaLiitteet from './SeurantaLiitteet'
@@ -22,7 +22,7 @@ interface SeurantaProps {
   muutoshakemukset?: Muutoshakemus[]
 }
 
-export default class Seuranta extends React.Component<SeurantaProps> {
+export default class Seuranta extends Component<SeurantaProps> {
   render() {
     const {controller, hakemus, avustushaku, translations, hakuData, helpTexts, muutoshakemukset} = this.props
     return (

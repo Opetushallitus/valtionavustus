@@ -1,4 +1,4 @@
-import React from "react"
+import { Component } from "react";
 import ClassNames from "classnames"
 import slug from "speakingurl"
 import _ from "lodash"
@@ -12,7 +12,7 @@ const hiddenFields = [
   "theme", "growingFieldsetChild", "fieldset"
 ]
 
-export class EditComponent extends React.Component {
+export class EditComponent extends Component {
 
   static fieldTypeInFI(fieldType){
     const translations = {

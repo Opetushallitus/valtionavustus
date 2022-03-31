@@ -1,10 +1,10 @@
-import React from 'react'
+import { Component } from 'react';
 import Bowser from 'bowser'
 
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.tsx'
 import LocalizedLink from 'soresu-form/web/form/component/LocalizedLink.jsx'
 
-export default class VaOldBrowserWarning extends React.Component {
+export default class VaOldBrowserWarning extends Component {
   constructor(props) {
     super(props)
     this.state = { show: VaOldBrowserWarning.isBrowserOutdated()  }

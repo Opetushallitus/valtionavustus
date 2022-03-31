@@ -1,8 +1,8 @@
-import React from 'react'
+import { Component } from 'react';
 
 import LocalizedString from '../LocalizedString.tsx'
 
-export default class ThemeWrapper extends React.Component {
+export default class ThemeWrapper extends Component {
   render() {
     const field = this.props.field
     const lang = this.props.lang

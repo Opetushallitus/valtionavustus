@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { LoppuselvitysForm } from './LoppuselvitysForm'
 import { TaloustarkastusEmail } from './TaloustarkastusEmail'
 import SelvitysPreview from './SelvitysPreview'

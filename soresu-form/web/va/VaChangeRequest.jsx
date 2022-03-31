@@ -1,11 +1,11 @@
-import React from 'react'
+import { Component } from 'react';
 
 import DateUtil from 'soresu-form/web/DateUtil'
 import Translator from 'soresu-form/web/form/Translator'
 
 import NameFormatter from './util/NameFormatter'
 
-export default class VaChangeRequest extends React.Component {
+export default class VaChangeRequest extends Component {
   render() {
     const hakemus = this.props.hakemus
     if(hakemus && (hakemus.status === "pending_change_request" || hakemus.status === "officer_edit" )) {

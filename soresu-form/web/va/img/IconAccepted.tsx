@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 
 export const IconAccepted: React.FC<{fill?: string}> = ({fill = '#159ECB'}) => (
   <svg data-test-id={'icon-accepted'} xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none">

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import ClassNames from 'classnames'
-import React, { Component } from 'react'
+import { Component } from 'react';
 
 import { HakemusSelvitys, Loppuselvitys, Muutoshakemus } from 'soresu-form/web/va/status'
 
@@ -328,7 +328,7 @@ export default class HakemusListing extends Component {
   }
 
   static formatNumber (num) {
-    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ")
+    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
   }
 }
 

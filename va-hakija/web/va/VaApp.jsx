@@ -1,4 +1,3 @@
-import React from "react"
 import ReactDOM from "react-dom"
 import * as Bacon from "baconjs"
 import queryString from "query-string"

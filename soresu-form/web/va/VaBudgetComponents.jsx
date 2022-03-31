@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 import ClassNames from 'classnames'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.tsx'
@@ -6,7 +6,7 @@ import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip'
 import {percentageOf, roundDecimal, formatDecimal} from '../MathUtil'
 import Translator from 'soresu-form/web/form/Translator'
 
-export default class VaBudgetElement extends React.Component {
+export default class VaBudgetElement extends Component {
   constructor(props) {
     super(props)
   }
@@ -27,7 +27,7 @@ export default class VaBudgetElement extends React.Component {
   }
 }
 
-export class SummingBudgetElement extends React.Component {
+export class SummingBudgetElement extends Component {
   columnTitles(field) {
     if (field.params.showColumnTitles) {
       return (
@@ -66,7 +66,7 @@ export class SummingBudgetElement extends React.Component {
   }
 }
 
-export class BudgetItemElement extends React.Component {
+export class BudgetItemElement extends Component {
   constructor(props) {
     super(props)
     this._bind('helpText')
@@ -101,7 +101,7 @@ export class BudgetItemElement extends React.Component {
   }
 }
 
-export class BudgetSummaryElement extends React.Component {
+export class BudgetSummaryElement extends Component {
   constructor(props) {
     super(props)
     this.miscTranslator = new Translator(props.translations["misc"])

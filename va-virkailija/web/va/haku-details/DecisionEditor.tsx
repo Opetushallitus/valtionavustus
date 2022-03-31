@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react';
 import _ from 'lodash'
 import * as Bacon from 'baconjs'
 
@@ -226,7 +226,7 @@ class LiitteetSelection extends React.Component<LiitteetSelectionProps, Liitteet
         <h5>{group.group} <HelpTooltip content={this.props.helpTexts[`hakujen_hallinta__päätös___${group.group.toLowerCase().replace(/ /g, "_")}`]} direction="left" /> </h5>
         {_.map(group.attachments, attachment => this.renderLiite(attachment, group.group))}
       </div>
-    )
+    );
   }
 
   renderLiite(attachment: LiiteAttachment, groupId: string) {

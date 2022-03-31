@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 
 import FormUtil from 'soresu-form/web/form/FormUtil'
@@ -13,7 +13,7 @@ import FakeFormState from '../form/FakeFormState'
 
 import '../style/budgetedit.less'
 
-export default class HakemusBudgetEditing extends React.Component {
+export default class HakemusBudgetEditing extends Component {
   static isEditingAllowed(allowEditingArvio, formContent, fieldId) {
     if(!allowEditingArvio) {
       return false

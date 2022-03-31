@@ -1,9 +1,9 @@
-import React from 'react'
+import { Component } from 'react';
 
 import DateUtil from '../../DateUtil'
 import LocalizedString from './LocalizedString.tsx'
 
-export default class FormSaveStatus extends React.Component {
+export default class FormSaveStatus extends Component {
   render() {
     const saveStatus = this.props.saveStatus
     const translations = this.props.translations.form

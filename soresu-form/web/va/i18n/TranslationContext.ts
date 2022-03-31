@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { createContext, useContext } from 'react';
 import {Language, Translations, translations} from './translations'
 
 export interface TranslationContext {
@@ -11,7 +11,7 @@ const defaultTranslations = {
   lang: 'fi' as Language
 }
 
-export const TranslationContext = React.createContext<TranslationContext>(defaultTranslations)
+export const TranslationContext = createContext<TranslationContext>(defaultTranslations)
 
 export const useTranslations = () => {
   const context = useContext(TranslationContext)

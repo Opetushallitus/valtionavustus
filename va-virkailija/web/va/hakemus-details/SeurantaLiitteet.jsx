@@ -1,12 +1,12 @@
 import _ from 'lodash'
-import React from 'react'
+import { Component } from 'react';
 import HelpTooltip from "../HelpTooltip"
 
 import AttachmentField from 'soresu-form/web/form/component/AttachmentField.jsx'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import Translator from 'soresu-form/web/form/Translator'
 
-export default class SeurantaLiitteet extends React.Component {
+export default class SeurantaLiitteet extends Component {
   render() {
     const {controller, hakemus, hakuData, avustushaku, translations, helpText} = this.props
     const hakemusId = hakemus.id

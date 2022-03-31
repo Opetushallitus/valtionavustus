@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
+import * as React from 'react';
 
 import DateUtil from 'soresu-form/web/DateUtil'
 import { Avustushaku, AvustushakuStatus, AVUSTUSHAKU_STATUSES, HelpTexts } from 'soresu-form/web/va/types'
@@ -535,7 +536,7 @@ type RegisterNumberProps = {
 }
 
 const isValidRegisterNumber = (registerNumber: string) => {
-  return registerNumber == null ? false : /^\d{1,5}\/\d{2,6}$/.test(registerNumber)
+  return registerNumber == null ? false : /^\d{1,5}\/\d{2,6}$/.test(registerNumber);
 }
 
 const RegisterNumber = ({ avustushaku, allowAllHakuEdits, helpTexts, onChange }: RegisterNumberProps) => {

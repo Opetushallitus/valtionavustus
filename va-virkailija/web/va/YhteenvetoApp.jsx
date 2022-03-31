@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import { Component } from 'react';
 import ReactDOM from 'react-dom'
 import _ from 'lodash'
 import RouteParser from 'route-parser'

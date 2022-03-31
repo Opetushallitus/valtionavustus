@@ -1,4 +1,3 @@
-import React from "react"
 import _ from "lodash"
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
 import {Language} from "soresu-form/web/va/types";

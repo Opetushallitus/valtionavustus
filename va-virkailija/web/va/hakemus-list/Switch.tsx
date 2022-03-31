@@ -1,5 +1,3 @@
-import React from 'react';
-
 import styles from './Switch.module.less'
 
 interface Props {

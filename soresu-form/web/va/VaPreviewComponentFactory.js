@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import React from 'react'
+import { Component } from 'react';
 import ClassNames from 'classnames'
 
 import Translator from 'soresu-form/web/form/Translator'
@@ -48,7 +48,7 @@ export default class VaPreviewComponentFactory extends ComponentFactory {
   }
 }
 
-class VaPreviewBudgetItemElement extends React.Component {
+class VaPreviewBudgetItemElement extends Component {
   render() {
     const field = this.props.field
     const children = this.props.children
@@ -74,7 +74,7 @@ class VaPreviewBudgetElement extends VaBudgetElement {
             </div>)
   }}
 
-class VaProjectDescriptionPreview extends React.Component {
+class VaProjectDescriptionPreview extends Component {
   render() {
     const children = this.props.children
     const htmlId = this.props.htmlId

@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import { Component } from 'react';
 import PaatosUrl from './PaatosUrl'
 export default class HakemusDecisionLink extends Component {
   render() {

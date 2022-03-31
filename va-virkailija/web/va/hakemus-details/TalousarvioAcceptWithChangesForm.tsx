@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react';
 
 import { getNestedInputErrorClass } from 'soresu-form/web/va/formikHelpers'
 import { Meno, Talousarvio, TalousarvioValues } from 'soresu-form/web/va/types/muutoshakemus'

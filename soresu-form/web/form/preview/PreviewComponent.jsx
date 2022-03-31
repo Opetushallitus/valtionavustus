@@ -1,9 +1,9 @@
-import React from 'react'
+import { Component } from 'react';
 import ClassNames from 'classnames'
 import _ from 'lodash'
 import LocalizedString from './../component/LocalizedString.tsx'
 
-export default class PreviewComponent extends React.Component {
+export default class PreviewComponent extends Component {
   render(preview) {
     return (
       <div className={this.className()}>

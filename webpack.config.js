@@ -12,7 +12,7 @@ const makeConfig = (basedir, componentName) => {
     module: {
       rules: [
         {
-          test: /\.(ts)x?$/,
+          test: /\.(js|ts)x?$/,
           exclude: /node_modules/,
           loader: 'ts-loader'
         },

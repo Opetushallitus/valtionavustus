@@ -1,4 +1,3 @@
-import React from 'react'
 import PreviewComponent from './PreviewComponent.jsx'
 import LocalizedString from '../component/LocalizedString.tsx'
 

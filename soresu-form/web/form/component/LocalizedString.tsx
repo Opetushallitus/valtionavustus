@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react';
 import Translator from './../Translator'
 import {Language, LegacyTranslationDict} from "soresu-form/web/va/types";
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 import { AvustushakuStatus } from 'soresu-form/web/va/types'
 
 type HakuStatusProps = {
@@ -7,7 +7,7 @@ type HakuStatusProps = {
 
 type HakuStatusState = never
 
-export default class HakuStatus extends React.Component<HakuStatusProps, HakuStatusState> {
+export default class HakuStatus extends Component<HakuStatusProps, HakuStatusState> {
   render() {
     const status = this.props.status
     let value: string = status

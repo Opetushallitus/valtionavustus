@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import React from 'react'
+import { Component } from 'react';
 import ClassNames from 'classnames'
 
 import TableFieldUtil from './TableFieldUtil.jsx'
@@ -7,7 +7,7 @@ import TableValidator from '../TableValidator'
 import HelpTooltip from './HelpTooltip'
 import LocalizedString from './LocalizedString.tsx'
 
-export default class TableField extends React.Component {
+export default class TableField extends Component {
   componentDidMount() {
     const {field, cellValues, controller} = this.props
     controller.componentDidMount(field, cellValues)

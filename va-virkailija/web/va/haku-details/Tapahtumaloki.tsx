@@ -1,5 +1,3 @@
-import React from 'react'
-
 import DateUtil from 'soresu-form/web/DateUtil'
 
 export type Lahetys = {

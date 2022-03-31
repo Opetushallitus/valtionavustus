@@ -1,9 +1,9 @@
-import React from 'react'
+import { Component } from 'react';
 
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import VaTraineeDayUtil from 'soresu-form/web/va/VaTraineeDayUtil'
 
-export default class TraineeDayCalculatorSummary extends React.Component {
+export default class TraineeDayCalculatorSummary extends Component {
   render() {
     const children = this.props.children
     const htmlId = this.props.htmlId

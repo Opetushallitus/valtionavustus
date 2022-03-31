@@ -1,5 +1,3 @@
-import React from 'react'
-
 import _ from 'lodash'
 
 import Translator from '../Translator'

@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 import ClassNames from 'classnames'
 
 import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo'
@@ -21,7 +21,7 @@ type TopBarProps = {
   state?: TopBarState
 }
 
-export default class TopBar extends React.Component<TopBarProps, {}> {
+export default class TopBar extends Component<TopBarProps, {}> {
   render() {
     const environment = this.props.environment
     const state = this.props.state
@@ -47,7 +47,7 @@ type TopBarTabsProps = {
   userInfo?: UserInfo
 }
 
-class TopBarTabs extends React.Component<TopBarTabsProps, {}> {
+class TopBarTabs extends Component<TopBarTabsProps, {}> {
 
   isEnabled(config: EnvironmentApiResponse, k: FeatureFlagKey): boolean {
     return config[k]?.["enabled?"] === true
@@ -90,7 +90,7 @@ type TopBarTabProps = {
   disabled: boolean
 }
 
-class TopBarTab extends React.Component<TopBarTabProps, {}> {
+class TopBarTab extends Component<TopBarTabProps, {}> {
   render() {
     const id = this.props.id
     const label = this.props.label
@@ -109,7 +109,7 @@ type TopBarControlsProps = {
   state: NonNullable<TopBarProps["state"]>
 }
 
-class TopBarControls extends React.Component<TopBarControlsProps, {}> {
+class TopBarControls extends Component<TopBarControlsProps, {}> {
 
   getStatus(errorId: string, okStatus: JSX.Element): JSX.Element {
     switch (errorId) {

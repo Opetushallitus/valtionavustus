@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
@@ -25,7 +25,7 @@ interface SeurantaBudgetEditingProps {
   muutoshakemukset?: Muutoshakemus[]
 }
 
-export default class SeurantaBudgetEditing extends React.Component<SeurantaBudgetEditingProps> {
+export default class SeurantaBudgetEditing extends Component<SeurantaBudgetEditingProps> {
   static validateFields(form: FormType, answers?: Answer[]) {
     const budgetItems = FormUtil.findFieldsByFieldType(form.content, 'vaBudgetItemElement')
     budgetItems.map(budgetItem => {

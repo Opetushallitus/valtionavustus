@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component, createElement } from 'react';
 import ReactDOM from 'react-dom'
 import QueryString from 'query-string'
 import * as Bacon from 'baconjs'
@@ -18,7 +18,7 @@ import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 import TextButton from 'soresu-form/web/form/component/TextButton.tsx'
 import EmailTextField from 'soresu-form/web/form/component/EmailTextField.jsx'
 
-export default class VaLogin extends React.Component {
+export default class VaLogin extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -120,5 +120,5 @@ const initialState = Bacon.combineTemplate(initialStateTemplate)
 
 initialState.onValue(function(state) {
   const properties = { model: state }
-  ReactDOM.render(React.createElement(VaLogin, properties), document.getElementById('app'))
+  ReactDOM.render(createElement(VaLogin, properties), document.getElementById('app'))
 })

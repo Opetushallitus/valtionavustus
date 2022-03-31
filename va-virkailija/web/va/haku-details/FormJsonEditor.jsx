@@ -1,10 +1,10 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 
 function scrollToTop() {
   window.scrollTo(0, 0)
 }
-export default class FormJsonEditor extends React.Component {
+export default class FormJsonEditor extends Component {
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku

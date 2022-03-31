@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
@@ -19,7 +19,7 @@ import './style/main.less'
 
 const allowedStatuses = ["officer_edit", "submitted", "pending_change_request", "applicant_edit"]
 
-export default class VaForm extends React.Component {
+export default class VaForm extends Component {
   render() {
     const {controller, state, hakemusType, isExpired, refuseGrant, modifyApplication} = this.props
     const registerNumber = _.get(state.saveStatus.savedObject, "register-number", undefined)

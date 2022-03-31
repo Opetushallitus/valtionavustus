@@ -1,4 +1,5 @@
-import React, {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react';
+import * as React from 'react';
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import HakemustenArviointiController from '../HakemustenArviointiController'
 import { UserInfo } from '../types'

@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { Component } from 'react'
+import { Component } from 'react';
+import * as React from 'react';
 import * as Bacon from 'baconjs'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'

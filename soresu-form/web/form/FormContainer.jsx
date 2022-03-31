@@ -1,9 +1,9 @@
-import React from "react"
+import { createElement, Component } from "react";
 import _ from "lodash"
 
 import BusinessIdSearch from "./component/BusinessIdSearch.jsx"
 
-export default class FormContainer extends React.Component {
+export default class FormContainer extends Component {
   render() {
     const {state, controller, formContainerClass, useBusinessIdSearch} = this.props
     const headerElements = _.get(this.props, "headerElements", "")
@@ -14,7 +14,7 @@ export default class FormContainer extends React.Component {
       infoElementValues: this.props.infoElementValues,
       modifyApplication: this.props.modifyApplication
     }
-    const formElement = React.createElement(formContainerClass, formElementProps)
+    const formElement = createElement(formContainerClass, formElementProps)
     const { embedForMuutoshakemus } = state.configuration
 
     if (embedForMuutoshakemus) {

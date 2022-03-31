@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react'
+import { ChangeEvent } from 'react';
 
 import { FormikHook, Meno, Talousarvio, TalousarvioValues } from 'soresu-form/web/va/types/muutoshakemus'
 import { getNestedInputErrorClass } from 'soresu-form/web/va/formikHelpers'

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react';
 import { isEqual } from 'lodash'
 import * as Bacon from 'baconjs'
 

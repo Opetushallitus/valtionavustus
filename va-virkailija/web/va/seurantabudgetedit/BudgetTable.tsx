@@ -1,4 +1,3 @@
-import React from 'react'
 import { getTalousarvio } from 'soresu-form/web/va/Muutoshakemus'
 
 import { Hakemus } from 'soresu-form/web/va/types'

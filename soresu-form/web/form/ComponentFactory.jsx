@@ -1,4 +1,4 @@
-import React from 'react'
+import { createElement } from 'react';
 
 export default class ComponentFactory {
   constructor(props) {
@@ -11,7 +11,7 @@ export default class ComponentFactory {
     if (fieldType in this.fieldTypeMapping) {
       const fieldPropertyMapper = this.fieldPropertyMapperMapping[fieldType]
       const effectiveProps = fieldPropertyMapper ? fieldPropertyMapper.map(componentProps) : componentProps
-      return React.createElement(this.fieldTypeMapping[fieldType], effectiveProps)
+      return createElement(this.fieldTypeMapping[fieldType], effectiveProps);
     }
     return <span key={componentProps.htmlId}>{this.constructor.name} : Unsupported field type {fieldType}</span>
   }

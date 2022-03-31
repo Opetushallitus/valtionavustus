@@ -1,8 +1,8 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 import Translator from '../Translator'
 
-export default class RemoveButton extends React.Component {
+export default class RemoveButton extends Component {
   render() {
     const props = this.props
     const renderingParameters = this.props.renderingParameters

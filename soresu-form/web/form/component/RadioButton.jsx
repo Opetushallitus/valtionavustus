@@ -1,4 +1,3 @@
-import React from 'react'
 import Translator from '../Translator'
 import BasicFieldComponent from './BasicFieldComponent.jsx'
 

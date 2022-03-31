@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 
 import ComponentFactory from '../ComponentFactory.jsx'
 
@@ -29,7 +29,7 @@ import {
 } from './PropertyMapper'
 import TableFieldPropertyMapper from './TableFieldPropertyMapper'
 
-export default class FormComponent extends React.Component {
+export default class FormComponent extends Component {
   constructor(props) {
     super(props)
     const fieldTypeMapping = {

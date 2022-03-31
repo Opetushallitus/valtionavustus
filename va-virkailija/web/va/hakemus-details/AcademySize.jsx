@@ -1,8 +1,8 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 import * as Bacon from 'baconjs'
 
-export default class AcademySize extends React.Component {
+export default class AcademySize extends Component {
   constructor(props) {
     super(props)
     this.state = AcademySize.initialState(props)

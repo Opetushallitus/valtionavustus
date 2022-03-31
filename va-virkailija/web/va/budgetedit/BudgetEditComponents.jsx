@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 import ClassNames from 'classnames'
 
@@ -8,7 +8,7 @@ import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import VaBudgetCalculator from 'soresu-form/web/va/VaBudgetCalculator'
 import HelpTooltip from '../HelpTooltip'
 
-export default class BudgetEditElement extends React.Component {
+export default class BudgetEditElement extends Component {
   constructor(props) {
     super(props)
   }
@@ -27,7 +27,7 @@ export default class BudgetEditElement extends React.Component {
   }
 }
 
-class ToggleKonttaSumma extends React.Component {
+class ToggleKonttaSumma extends Component {
   render() {
     const {controller, disabled, useDetailedCosts} = this.props
     const statuses = _.flatten([
@@ -56,7 +56,7 @@ class ToggleKonttaSumma extends React.Component {
   }
 }
 
-export class EditSummingBudgetElement extends React.Component {
+export class EditSummingBudgetElement extends Component {
   render() {
     const {field, children, htmlId, controller, lang, customProps} = this.props
     const disabled = this.props.disabled || typeof this.props.disabled === 'undefined'
@@ -148,7 +148,7 @@ export class EditSummingBudgetElement extends React.Component {
   }
 }
 
-export class EditBudgetItemElement extends React.Component {
+export class EditBudgetItemElement extends Component {
   render() {
     const {field, children, htmlId, disabled, lang, controller, customProps} = this.props
     const descriptionComponent = children[0]

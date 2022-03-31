@@ -1,11 +1,11 @@
-import React from 'react'
+import { Component } from 'react';
 import ClassNames from 'classnames'
 import _ from 'lodash'
 
 import LocalizedString from './LocalizedString.tsx'
 import HelpTooltip from './HelpTooltip'
 
-export default class BasicFieldComponent extends React.Component {
+export default class BasicFieldComponent extends Component {
   constructor(props) {
     super(props)
     this.componentDidMount = this.componentDidMount.bind(this)

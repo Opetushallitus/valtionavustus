@@ -1,8 +1,8 @@
-import React from 'react'
+import { Component } from 'react';
 import HelpTooltip from "../HelpTooltip"
 import RadioRow from './RadioRow.jsx'
 
-export default class ChooseRahoitusalue extends React.Component {
+export default class ChooseRahoitusalue extends Component {
   constructor(props) {
     super(props)
     this.state = {isOpen: false}

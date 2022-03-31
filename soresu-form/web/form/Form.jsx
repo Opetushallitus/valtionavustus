@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 import _ from 'lodash'
 
 import './style/main.less'
@@ -8,7 +8,7 @@ import InfoElement from './component/InfoElement.jsx'
 import WrapperComponent from './component/wrapper/WrapperComponent.jsx'
 import InputValueStorage from './InputValueStorage.js'
 
-export default class Form extends React.Component {
+export default class Form extends Component {
   render() {
     const infoElementValues = this.props.infoElementValues.content
     const controller = this.props.controller

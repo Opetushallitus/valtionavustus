@@ -1,4 +1,3 @@
-import React from 'react'
 import HakemusListing from './HakemusListing.jsx'
 
 const ShouldPayIcon = ({hakemus, show}) => {

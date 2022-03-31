@@ -5,7 +5,7 @@
     "noImplicitAny": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "outDir": "dist",
     "sourceMap": true,
     "baseUrl": ".",

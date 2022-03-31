@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import { Component } from 'react';
 import HelpTooltip from "../HelpTooltip"
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 

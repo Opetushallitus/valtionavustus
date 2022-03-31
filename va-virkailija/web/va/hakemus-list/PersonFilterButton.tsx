@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { Fragment, useState } from 'react';
 
 import { HakemusFilter, Role, RoleType, State } from '../types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
@@ -35,13 +35,13 @@ type RoleContainerProps = {
 
 const RoleContainer = ({roleName,roleField,roles,controller,hakemusFilter}: RoleContainerProps) => {
   return (
-    <React.Fragment>
+    <Fragment>
       <div className="role-title">{roleName}</div>
       <div className="role-container">
         {roles.map(role => <RoleButton key={`${roleName}-${role.id}`} role={role} roleField={roleField} controller={controller} hakemusFilter={hakemusFilter}/>)}
       </div>
-    </React.Fragment>
-  )
+    </Fragment>
+  );
 }
 
 const PersonSelectPanel = ({ state, controller, setIsOpen }: PersonFilterButtonProps & { setIsOpen: (isOpen: boolean) => void }) =>{

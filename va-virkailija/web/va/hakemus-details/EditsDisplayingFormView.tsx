@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react';
 import moment from 'moment'
 import _ from 'lodash'
 
@@ -72,7 +72,7 @@ interface EditsDisplayingFormViewProps {
   infoElementValues: any
 }
 
-export default class EditsDisplayingFormView extends React.Component<EditsDisplayingFormViewProps> {
+export default class EditsDisplayingFormView extends Component<EditsDisplayingFormViewProps> {
   static renderField(controller: any, formEditController: any, state: HakemusFormState, infoElementValues: any, field: Field) {
     const fields = state.form.content
     const translations = state.configuration.translations
@@ -198,7 +198,7 @@ export default class EditsDisplayingFormView extends React.Component<EditsDispla
   }
 }
 
-class DiffDisplayingField extends React.Component<any> {
+class DiffDisplayingField extends Component<any> {
   render() {
     const field = this.props.field
     const oldAnswer = this.props.oldAnswer

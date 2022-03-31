@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { FormikHook } from 'soresu-form/web/va/types/muutoshakemus'
 
 import { useTranslations } from 'soresu-form/web/va/i18n/TranslationContext'

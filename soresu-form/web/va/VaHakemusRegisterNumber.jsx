@@ -1,9 +1,9 @@
 import _ from 'lodash'
-import React from 'react'
+import { Component } from 'react';
 
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.tsx'
 
-export default class VaHakemusRegisterNumber extends React.Component {
+export default class VaHakemusRegisterNumber extends Component {
   render() {
     if(!_.isNull(this.props.registerNumber) && !_.isUndefined(this.props.registerNumber)) {
       const registerNumber = this.props.registerNumber
