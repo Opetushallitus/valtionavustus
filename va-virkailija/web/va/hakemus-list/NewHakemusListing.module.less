@@ -178,17 +178,26 @@
 .tableLabelBtn {
   composes: btn;
   background-color: transparent;
-  border-radius: 0;
   color: #499CC7;
   font-size: 13px;
-  border: 0;
   padding: 0;
   width: 100%;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  &:hover {
+    border: 1px solid #499CC7;
+  }
   &:disabled {
     border: none;
     background: unset;
     color: black;
   }
+}
+
+.tableLabelBtnOpen {
+  composes: tableLabelBtn;
+  border: 1px solid #499CC7;
+  background-color: #EBF7FD;
 }
 
 .polygon {

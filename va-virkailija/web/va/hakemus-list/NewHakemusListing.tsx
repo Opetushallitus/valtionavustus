@@ -542,9 +542,10 @@ const TableLabel: React.FC<TableLabelProps> = ({text, disabled, showDeleteButton
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [popupRef])
+  const buttonStyle = toggled ? styles.tableLabelBtnOpen : styles.tableLabelBtn
   return (
     <div className={styles.tableLabel}>
-      <button disabled={!!disabled} onClick={() => toggleMenu(state => !state)} className={styles.tableLabelBtn}>
+      <button disabled={!!disabled} onClick={() => toggleMenu(state => !state)} className={buttonStyle}>
         <span>{text}</span>
       </button>
       {showDeleteButton && (
