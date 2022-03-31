@@ -255,13 +255,11 @@
               ee.email_type as type,
               'fi' as lang,
               ee.success,
-              events.created_at as first_created_at,
-              events.created_at + interval '1 hour' < now() as over_hour_old
+              e.created_at as first_created_at,
+              e.created_at + interval '1 hour' < now() as over_hour_old
             FROM email e
             JOIN email_event ee ON e.id = ee.email_id
-            JOIN email_event events ON e.id = events.email_id
-            ORDER BY e.id, ee.created_at DESC,
-                     events.created_at ASC
+            ORDER BY e.id, ee.created_at DESC
           ) AS r
           WHERE r.success = false" []))
 
