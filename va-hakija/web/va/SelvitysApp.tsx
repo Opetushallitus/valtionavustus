@@ -123,8 +123,9 @@ function onFieldUpdate(state: StateLoopState, field: Field) {
 }
 
 function isNotFirstEdit(state: State): boolean {
-  // @ts-expect-error
-  return state.saveStatus.savedObject && state.saveStatus.savedObject.version && (state.saveStatus.savedObject.version > 1)
+  if (!state.saveStatus.savedObject || !state.saveStatus.savedObject.version) return false
+
+  return state.saveStatus.savedObject.version > 1
 }
 
 interface SaveState {
