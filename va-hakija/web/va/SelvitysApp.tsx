@@ -50,8 +50,8 @@ type SelvitysType = 'valiselvitys' | 'loppuselvitys'
 
 class SelvitysUrlCreator extends UrlCreator {
   constructor(selvitysType: SelvitysType) {
-    function entityApiUrl(avustusHakuId: number, hakemusId: string, hakemusBaseVersion: string | number): string {
-      return "/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/` + hakemusId + (typeof hakemusBaseVersion === "number" ? "/" + hakemusBaseVersion : "")
+    function entityApiUrl(avustusHakuId: number, hakemusId: string, hakemusBaseVersion: any): string {
+      return "/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/` + hakemusId + (typeof hakemusBaseVersion === "number" ? `/${hakemusBaseVersion}` : '')
     }
 
     const attachmentDirectAccessUrl = function(state: State, field: Field) {
@@ -85,8 +85,7 @@ class SelvitysUrlCreator extends UrlCreator {
         const query = urlContent.parsedQuery
         const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
         const selvitysId = query[selvitysType]
-        // @ts-expect-error
-        return entityApiUrl(avustusHakuId, selvitysId)
+        return entityApiUrl(avustusHakuId, selvitysId, undefined)
       },
       existingSubmissionEditUrl,
       existingSubmissionPreviewUrl: function (avustushakuId: string | number, selvitysId: string | number, lang: Lang) {
