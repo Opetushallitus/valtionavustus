@@ -158,10 +158,15 @@
 (defn delete-avustushaku-role [avustushaku-id role-id]
  (exec hakija-queries/delete-avustushaku-role! {:avustushaku avustushaku-id :id role-id}))
 
-(defn update-avustushaku-role [avustushaku-id role]
+(defn update-avustushaku-role [tx avustushaku-id role]
   (let [role-enum (new HakuRole (:role role))
-        role-to-save (assoc (assoc role :role role-enum) :avustushaku avustushaku-id)]
-    (exec hakija-queries/update-avustushaku-role! role-to-save)
+        role-to-save (assoc (assoc role :role role-enum) :avustushaku avustushaku-id)
+        delete (when (= (:role role) "vastuuvalmistelija") (change-existing-vastuuvalmistelija-to-valmistelija tx avustushaku-id))]
+    (execute! tx
+              "UPDATE hakija.avustushaku_roles
+               SET avustushaku = ?, role = ?, name = ?, email = ?
+               WHERE id = ?"
+              [avustushaku-id role-enum (:name role) (:email role) (:id role)])
     (->> role-to-save
        (exec hakija-queries/get-avustushaku-role)
          (map role->json)

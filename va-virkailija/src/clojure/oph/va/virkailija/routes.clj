@@ -446,7 +446,8 @@
                       :body [role (compojure-api/describe virkailija-schema/Role "Changed role")]
                       :return virkailija-schema/Role
                       :summary "Update avustushaku role"
-                      (ok (hakija-api/update-avustushaku-role avustushaku-id role))))
+                      (with-tx (fn [tx]
+                        (ok (hakija-api/update-avustushaku-role tx avustushaku-id role))))))
 
 (defn- del-avustushaku-role []
   (compojure-api/DELETE "/:avustushaku-id/role/:role-id" []

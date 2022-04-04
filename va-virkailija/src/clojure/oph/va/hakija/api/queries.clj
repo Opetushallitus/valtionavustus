@@ -14,7 +14,6 @@
 (defquery get-avustushaku-by-status "sql/hakija/avustushaku/get-by-status.sql")
 (defquery create-avustushaku-role<! "sql/hakija/avustushaku/create-role.sql")
 (defquery get-avustushaku-role "sql/hakija/avustushaku/get-role.sql")
-(defquery update-avustushaku-role! "sql/hakija/avustushaku/update-role.sql")
 (defquery delete-avustushaku-role! "sql/hakija/avustushaku/delete-role.sql")
 (defquery get-avustushaku-roles "sql/hakija/avustushaku/get-roles.sql")
 (defquery get-avustushaku-role-by-avustushaku-id-and-person-oid "sql/hakija/avustushaku/get-role-by-avustushaku-id-and-person-oid.sql")

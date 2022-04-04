@@ -252,7 +252,7 @@ export class HakujenHallintaPage {
     ])
   }
 
-  async setUserRole(name: string, role: 'presenting_officer' | 'evaluator') {
+  async setUserRole(name: string, role: 'presenting_officer' | 'evaluator' | 'vastuuvalmistelija') {
     const testId = "role-" +name.toLowerCase().replace(" ", "-")
     await Promise.all([
       this.waitForRolesSaved(),
@@ -262,9 +262,10 @@ export class HakujenHallintaPage {
   }
 
   async waitForRolesSaved() {
-    return await this.page.waitForResponse(new RegExp(
-      `${VIRKAILIJA_URL}/api/avustushaku/\\d+/role(/\\d+)?`
-    ))
+    return await Promise.all([
+      this.page.waitForResponse(new RegExp(`${VIRKAILIJA_URL}/api/avustushaku/\\d+/role(/\\d+)?`)),
+      this.page.waitForResponse(new RegExp(`${VIRKAILIJA_URL}/api/avustushaku/\\d+/privileges`))
+    ])
   }
 
   async setLoppuselvitysDate(value: string) {
@@ -411,9 +412,10 @@ export class HakujenHallintaPage {
     await this.setUserRole(name, 'evaluator')
   }
 
-  async setVastuuvalmistelija(name: string) {
-    await this.searchUsersForVastuuvalmistelija(name)
+  async addVastuuvalmistelija(name: string) {
+    await this.searchUsersForRoles(name)
     await this.selectUser(name)
+    await this.setUserRole(name, 'vastuuvalmistelija')
   }
 
   async createHakuWithLomakeJson(lomakeJson: string, hakuProps: HakuProps): Promise<{ avustushakuID: number }> {

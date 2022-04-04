@@ -975,7 +975,11 @@ export default class HakujenHallintaController {
   saveRole(avustushaku: Avustushaku, role: Role) {
     HttpUtil.post(HakujenHallintaController.roleUrl(avustushaku) + "/" + role.id, role)
       .then(() => {
-        this.loadPrivileges(avustushaku)
+        if (role.role === 'vastuuvalmistelija') {
+          this.loadRoles(avustushaku)
+        } else {
+          this.loadPrivileges(avustushaku)
+        }
       })
   }
 

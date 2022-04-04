@@ -14,8 +14,16 @@ defaultValues('Vastuuvalmistelija role', async ({ page, userCache }) => {
     await expect(hakujenHallinta.page.locator('[data-test-id="vastuuvalmistelija-email"]')).toHaveValue('santeri.horttanainen@reaktor.com')
   })
 
+  await test.step('can not be removed', async () => {
+    await expect(hakujenHallinta.page.locator('[data-test-id="role-_-valtionavustus"] button')).toBeDisabled()
+  })
+
+  await test.step('can not change role', async () => {
+    await expect(hakujenHallinta.page.locator('[data-test-id="role-_-valtionavustus"] select[name=role]')).toBeDisabled()
+  })
+
   await test.step('can be set for a new user', async () => {
-    await hakujenHallinta.setVastuuvalmistelija('Viivi')
+    await hakujenHallinta.addVastuuvalmistelija('Viivi Virkailija')
     await hakujenHallinta.page.reload()
     await expect(hakujenHallinta.page.locator('[data-test-id="vastuuvalmistelija-name"]')).toHaveValue('Viivi Virkailija')
     await expect(hakujenHallinta.page.locator('[data-test-id="vastuuvalmistelija-email"]')).toHaveValue('viivi.virkailja@exmaple.com')
@@ -25,13 +33,6 @@ defaultValues('Vastuuvalmistelija role', async ({ page, userCache }) => {
     await expect(hakujenHallinta.page.locator('[data-test-id="role-_-valtionavustus"] select[name=role]')).toHaveValue('presenting_officer')
     await expect(hakujenHallinta.page.locator('[data-test-id="role-_-valtionavustus"] input[name=name]')).toHaveValue('_ valtionavustus')
     await expect(hakujenHallinta.page.locator('[data-test-id="role-_-valtionavustus"] input[name=email]')).toHaveValue('santeri.horttanainen@reaktor.com')
-  })
-
-  await test.step('can not be set if the new user is a valmistelija already', async () => {
-    await hakujenHallinta.addValmistelija('Päivi')
-    await hakujenHallinta.searchUsersForVastuuvalmistelija('Päivi')
-    await expect(hakujenHallinta.page.locator('#vastuuvalmistelija li[data-test-id="1.2.246.562.24.99000000001"]')).toHaveAttribute('class', 'disabled')
-    await hakujenHallinta.clearUserSearchForVastuuvalmistelija()
   })
 
   await test.step('name and email can be changed', async () => {
