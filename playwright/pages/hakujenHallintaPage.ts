@@ -142,9 +142,28 @@ function SelvitysTab(page: Page) {
     return await page.textContent(titleSelector)
   }
 
+  async function openFormPreview(selector: string) {
+    const [previewPage] = await Promise.all([
+      page.context().waitForEvent('page'),
+      await page.click(selector),
+    ])
+    await previewPage.bringToFront()
+    return previewPage
+  }
+
+  async function openFormPreviewFi() {
+    return await openFormPreview(`[data-test-id='form-preview-fi']`)
+  }
+
+  async function openFormPreviewSv() {
+    return await openFormPreview(`[data-test-id='form-preview-sv']`)
+  }
+
   return {
     getSelvitysTitleFi,
     setSelvitysTitleFi,
+    openFormPreviewFi,
+    openFormPreviewSv,
   }
 }
 
@@ -161,6 +180,10 @@ export class HakujenHallintaPage {
 
   async navigateToPaatos(avustushakuID: number) {
     await navigate(this.page, `/admin/decision/?avustushaku=${avustushakuID}`)
+  }
+
+  async navigateToValiselvitys(avustushakuID: number) {
+    await navigate(this.page, `/admin/valiselvitys/?avustushaku=${avustushakuID}`)
   }
 
   async navigateToFormEditor(avustushakuID: number) {

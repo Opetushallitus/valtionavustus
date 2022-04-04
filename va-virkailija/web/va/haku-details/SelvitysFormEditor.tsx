@@ -132,12 +132,14 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
         <div className="link-list-item">
           <h3>Lomakkeen esikatselu</h3>
           <a target="_blank"
+              data-test-id='form-preview-fi'
               rel="noopener noreferrer"
               href={previewUrlFi}>
             Suomeksi
           </a>
           <span className="link-divider"/>
           <a target="_blank"
+              data-test-id='form-preview-sv'
               rel="noopener noreferrer"
               href={previewUrlSv}>
             Ruotsiksi

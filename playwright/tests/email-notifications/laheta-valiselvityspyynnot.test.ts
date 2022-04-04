@@ -8,6 +8,30 @@ import {HakemustenArviointiPage} from "../../pages/hakemustenArviointiPage";
 import { getLahetaValiselvityspyynnotEmails } from '../../utils/emails'
 import { expectToBeDefined } from '../../utils/util'
 
+
+väliselvitysTest('Väliselvityspyyntö can be previewed', async ({page, avustushakuID, acceptedHakemus}) => {
+  expectToBeDefined(avustushakuID)
+
+  const hakujenHallintaPage = new HakujenHallintaPage(page)
+  const tab = await hakujenHallintaPage.switchToValiselvitysTab()
+
+  await test.step('in finnish', async () => {
+    await page.bringToFront()
+    const previewPage = await tab.openFormPreviewFi()
+
+    expect(await previewPage.textContent('h1')).toEqual('Väliselvitys')
+    expect(await previewPage.textContent('[id="financing-plan"] h2')).toEqual('Talousarvio')
+  })
+
+  await test.step('in swedish', async () => {
+    await page.bringToFront()
+    const previewPage = await tab.openFormPreviewSv()
+
+    expect(await previewPage.textContent('h1')).toEqual('Mellanredovisning')
+    expect(await previewPage.textContent('[id="financing-plan"] h2')).toEqual('Projektets budget')
+  })
+})
+
 väliselvitysTest('Lähetä väliselvityspyynnot notifications are not sent if väliselvitys deadline is not set', async ({page, avustushakuID, acceptedHakemus}) => {
   expectToBeDefined(acceptedHakemus)
 
