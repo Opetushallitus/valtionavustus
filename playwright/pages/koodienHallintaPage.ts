@@ -42,10 +42,9 @@ export class KoodienhallintaPage {
     await this.page.waitForSelector(`.oph-tab-item-is-active${tabSelector}`)
   }
 
-  async clickCodeVisibilityButton(code: string, name: string, visibility: boolean) {
+  async clickCodeVisibilityButton(year: string, name: string, code: string, visibility: boolean) {
     const buttonId = visibility ? 'show-code' : 'hide-code'
-    const selector = `${this.codeRowSelector(code, name)} [data-test-id=${buttonId}]`
-    await this.page.click(selector)
+    await this.codeRowLocator(year, name, code).locator(`[data-test-id=${buttonId}]`).click()
     await this.page.waitForLoadState('networkidle')
   }
 
@@ -68,28 +67,29 @@ export class KoodienhallintaPage {
   }
 
   async createCode(name: string = 'Test code', code: string): Promise<string> {
-    await this.makeSureCodeFilled('[data-test-id=code-form__year]', '2020')
+    const year = '2020'
+    await this.makeSureCodeFilled('[data-test-id=code-form__year]', year)
     await this.makeSureCodeFilled('[data-test-id=code-form__code]', `${code}`)
     await this.makeSureCodeFilled('[data-test-id=code-form__name]', `${name} ${code}`)
     await this.submitButton.click()
-    await this.page.waitForSelector(this.codeRowSelector(code, name))
+    await this.codeRowLocator(year, `${name} ${code}`, code).waitFor()
     return code
   }
 
-  codeRowSelector(code: string, name: string) {
-    return `tr[data-test-id="code-cell-2020-${code}-${name} ${code}"]`
+  codeRowLocator(year: string, name: string, code: string) {
+    return this.page.locator(`tr[data-test-id="code-cell-${year}-${code}-${name}"]`)
   }
 
-  firstCellLocator(code: string, name: string) {
-    return this.page.locator(`${this.codeRowSelector(code, name)} td:first-of-type`)
+  firstCellLocator(year: string, name: string, code: string) {
+    return this.codeRowLocator(year, name, code).locator('td:first-of-type')
   }
 
-  async assertCodeIsVisible(code: string, name: string) {
-    await expect(this.firstCellLocator(code, name)).not.toHaveClass('code-cell__hidden')
+  async assertCodeIsVisible(year: string, name: string, code: string) {
+    await expect(this.firstCellLocator(year, name, code)).not.toHaveClass('code-cell__hidden')
   }
 
-  async assertCodeIsHidden(code: string, name: string) {
-    await expect(this.firstCellLocator(code, name)).toHaveClass('code-cell__hidden')
+  async assertCodeIsHidden(year: string, name: string, code: string) {
+    await expect(this.firstCellLocator(year, name, code)).toHaveClass('code-cell__hidden')
   }
 
   async createCodeValues(codeValues: VaCodeValues): Promise<VaCodeValues> {
@@ -103,7 +103,7 @@ export class KoodienhallintaPage {
   }
 
   async createRandomCodeValues(): Promise<VaCodeValues> {
-    const uniqueCode = () => randomString().substring(0, 14)
+    const uniqueCode = () => randomString().substring(0, 13)
     const codeValues = { operationalUnit: uniqueCode(), project: uniqueCode(), operation: uniqueCode() }
     return this.createCodeValues(codeValues)
   }
