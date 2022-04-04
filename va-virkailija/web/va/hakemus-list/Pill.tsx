@@ -14,10 +14,11 @@ export interface PillProps {
   color: keyof typeof pillStyles
   text: string
   compact?: boolean
+  testId?: string | null
 }
 
-export const Pill = ({color, text, compact}: PillProps) =>  (
-  <div className={classNames(pillStyles[color], {
+export const Pill = ({color, text, compact, testId = null}: PillProps) =>  (
+  <div data-test-id={testId} className={classNames(pillStyles[color], {
     [styles.compact]: compact
   })}>
     {text}

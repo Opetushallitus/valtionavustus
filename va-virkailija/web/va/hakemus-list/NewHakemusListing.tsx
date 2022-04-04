@@ -243,6 +243,10 @@ interface HakemusTableProps {
   toggleSplitView: (forceValue?: boolean) => void
 }
 
+function hakemusModifiedAfterSubmitted(hakemus :Hakemus) {
+  return hakemus["submitted-version"] && hakemus["submitted-version"] !== hakemus.version
+}
+
 function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemusId, onSelectHakemus, onYhteenvetoClick, roles, totalBudgetGranted, state, controller, toggleSplitView}: HakemusTableProps) {
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({type: 'set-organization-name-filter', value: event.target.value})
@@ -351,7 +355,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
       </thead>
       <tbody>
       {filteredList.map(hakemus => {
-        const modified = hakemus["submitted-version"] !== null && hakemus["submitted-version"] !== hakemus.version
+        const modified = hakemusModifiedAfterSubmitted(hakemus)
         const draft = hakemus.status === 'draft'
 
         return (
@@ -364,7 +368,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
             <td>
               <div className={styles.projectTd}>
                 {getProject(hakemus)}
-                {modified && <Pill color="blue" text="Muokattu" compact />}
+                {modified && <Pill color="blue" testId={`${hakemus.id}-modified-pill`} text="Muokattu" compact />}
                 {draft && <Pill color="yellow" text="Keskeneräinen" compact />}
               </div>
             </td>
