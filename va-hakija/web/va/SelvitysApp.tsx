@@ -177,7 +177,6 @@ function onInitialStateLoaded(initialState: StateLoopState) {
 function initFormController() {
   const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(HttpUtil.get(urlCreator.formApiUrl(avustusHaku["form_" + selvitysType])))})
   const controller = new FormController({
-    // @ts-expect-error
     "initialStateTemplateTransformation": initialStateTemplateTransformation,
     "onInitialStateLoaded": onInitialStateLoaded,
     "formP": formP,

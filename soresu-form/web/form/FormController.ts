@@ -42,7 +42,7 @@ const events = {
 export type FormEvents = typeof events
 
 interface FormControllerProps {
-  initialStateTemplateTransformation: (initialState: InitialStateTemplate) => StateLoopState
+  initialStateTemplateTransformation: (initialState: InitialStateTemplate) => void
   onInitialStateLoaded: (initialState: StateLoopState) => void
   formP: EventStream<any>
   customComponentFactory: VaComponentFactory
@@ -51,7 +51,7 @@ interface FormControllerProps {
 }
 
 export default class FormController {
-  initialStateTemplateTransformation: (initialState: InitialStateTemplate) => StateLoopState;
+  initialStateTemplateTransformation: (initialState: InitialStateTemplate) => void;
   onInitialStateLoaded: (initialState: StateLoopState) => void;
   formP: EventStream<Form>;
   customComponentFactory: VaComponentFactory;
