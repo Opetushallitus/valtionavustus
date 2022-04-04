@@ -2,8 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import * as Bacon from 'baconjs'
 import queryString from 'query-string'
-import moment from 'moment-timezone'
-
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import FormController from 'soresu-form/web/form/FormController'
 import {triggerFieldUpdatesForValidation} from 'soresu-form/web/form/FieldUpdateHandler'
@@ -161,12 +159,6 @@ function onInitialStateLoaded(initialState: StateLoopState) {
   })
 }
 
-// @ts-expect-error
-function isPast(date) {
-  // @ts-expect-error
-  return moment(date) < new Date()
-}
-
 function initFormController() {
   const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(HttpUtil.get(urlCreator.formApiUrl(avustusHaku["form_" + selvitysType])))})
   const controller = new FormController({
@@ -195,16 +187,10 @@ function initFormController() {
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   // @ts-expect-error
   return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state) {
-    const expired = state.configuration.environment["selvitys-limit"] &&
-          state.configuration.environment["selvitys-limit"]["enabled?"] &&
-          ((selvitysType === "valiselvitys" && // @ts-expect-error
-           DateUtil.isPast(state.avustushaku.valiselvitysdate)) ||
-          (selvitysType === "loppuselvitys" && // @ts-expect-error
-           DateUtil.isPast(state.avustushaku.loppuselvitysdate)))
     const isValiselvitys = selvitysType === 'valiselvitys'
     const selvitysUpdateable = state.saveStatus.savedObject && state.saveStatus.savedObject['selvitys-updatable']
     const valiselvitysNotUpdateable = isValiselvitys && selvitysUpdateable === false
-    if (!showPreview && (expired || valiselvitysNotUpdateable)) {
+    if (!showPreview && valiselvitysNotUpdateable) {
       const previewUrl = formOperations.urlCreator.existingSubmissionPreviewUrl(
         state.avustushaku.id,
         state.saveStatus.hakemusId,
@@ -220,7 +206,7 @@ function initFormController() {
               state={state}
               hakemusType={selvitysType}
               useBusinessIdSearch={false}
-              isExpired={expired}/>)
+              isExpired={false} />)
   }}
 }
 
