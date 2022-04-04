@@ -72,9 +72,7 @@ const VaCodeValueSchema = yup.object().shape({
     .min(1970, 'Vuosi voi olla minimissään 1970')
     .max(2100, 'Vuosi voi olla maksimissaan 2100')
     .required("Vuosi on pakollinen"),
-  code: yup.string()
-    .max(13, "Koodi voi olla max 13 merkkiä pitkä")
-    .required("Koodi on pakollinen"),
+  code: yup.string().required("Koodi on pakollinen"),
   'code-value': yup.string().required('Nimi on pakollinen'),
   'value-type': yup.string().oneOf(valueTypes).required('value-type on pakollinen')
 })

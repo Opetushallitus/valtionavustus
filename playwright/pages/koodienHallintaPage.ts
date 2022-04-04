@@ -103,7 +103,7 @@ export class KoodienhallintaPage {
   }
 
   async createRandomCodeValues(): Promise<VaCodeValues> {
-    const uniqueCode = () => randomString().substring(0, 13)
+    const uniqueCode = () => randomString().substring(0, 14)
     const codeValues = { operationalUnit: uniqueCode(), project: uniqueCode(), operation: uniqueCode() }
     return this.createCodeValues(codeValues)
   }
