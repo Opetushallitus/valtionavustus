@@ -78,8 +78,7 @@ class SelvitysUrlCreator extends UrlCreator {
       },
       submitEntityApiUrl: function (state: State) {
         const baseEditUrl = this.editEntityApiUrl(state)
-        // @ts-expect-error
-        const isChangeRequest = state.saveStatus.savedObject.status === "pending_change_request"
+        const isChangeRequest = state.saveStatus.savedObject?.status === "pending_change_request"
         return baseEditUrl + (isChangeRequest ? "/change-request-response" : "/submit")
       },
       loadEntityApiUrl: function (urlContent: UrlContent) {
