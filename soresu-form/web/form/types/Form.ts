@@ -71,7 +71,7 @@ export interface SavedObject extends HakijaHakemus {
   'selvitys-updatable': boolean
 }
 
-interface InitialSaveStatus {
+export interface InitialSaveStatus {
   changes: boolean
   saveInProgress: boolean
   serverError: string
@@ -129,7 +129,7 @@ export interface InitialStateTemplate {
   }
 }
 
-interface HakijaAvustusHaku {
+export interface HakijaAvustusHaku {
   id: number
   status: "new" | "draft" | "published" | "resolved" | "deleted"
   phase: "unpublished" | "upcoming" | "current" | "ended"

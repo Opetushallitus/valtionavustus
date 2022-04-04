@@ -103,7 +103,7 @@ const hakijaConfig = Object.assign(
   {
     entry: {
       app: path.resolve(__dirname, "va-hakija/web/va/VaApp.jsx"),
-      selvitysApp: path.resolve(__dirname, "va-hakija/web/va/SelvitysApp.jsx"),
+      selvitysApp: path.resolve(__dirname, "va-hakija/web/va/SelvitysApp.tsx"),
       login: path.resolve(__dirname, "va-hakija/web/va/VaLogin.jsx"),
       muutoshakemusApp: path.resolve(__dirname, "va-hakija/web/va/muutoshakemus/MuutoshakemusApp.tsx"),
     }

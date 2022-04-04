@@ -5,18 +5,18 @@ import queryString from 'query-string'
 import moment from 'moment-timezone'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
-
-import FormController from 'soresu-form/web/form/FormController.ts'
+import FormController from 'soresu-form/web/form/FormController'
 import {triggerFieldUpdatesForValidation} from 'soresu-form/web/form/FieldUpdateHandler'
 import ResponseParser from 'soresu-form/web/form/ResponseParser'
-
 import VaForm from './VaForm.jsx'
 import VaUrlCreator from './VaUrlCreator'
 import VaComponentFactory from 'soresu-form/web/va/VaComponentFactory'
-import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator.ts'
+import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
 import VaPreviewComponentFactory from 'soresu-form/web/va/VaPreviewComponentFactory'
 import VaBudgetCalculator from 'soresu-form/web/va/VaBudgetCalculator'
 import UrlCreator from 'soresu-form/web/form/UrlCreator'
+import {HakijaAvustusHaku, InitialSaveStatus, StateLoopState, UrlContent} from 'soresu-form/web/form/types/Form'
+import {Answers, Field} from 'soresu-form/web/va/types'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 const selvitysType = location.pathname.indexOf("loppuselvitys") !== -1 ? "loppuselvitys" : "valiselvitys"
@@ -25,12 +25,12 @@ const selvitysId = query[selvitysType]
 const showPreview = query.preview
 const lang = query.lang
 
-function containsExistingEntityId(urlContent) {
+function containsExistingEntityId(urlContent: UrlContent): boolean {
   const query = urlContent.parsedQuery
   return query[selvitysType] && query[selvitysType].length > 0
 }
 
-function isFieldEnabled(saved) {
+function isFieldEnabled(saved: StateLoopState) {
   return saved
 }
 
@@ -38,57 +38,73 @@ const responseParser = new ResponseParser({
   getFormAnswers: function(response) { return response.submission.answers }
 })
 
+interface SaveStatus extends InitialSaveStatus {
+  hakemusId?: string
+}
+
+interface State {
+  avustushaku: HakijaAvustusHaku
+  saveStatus: SaveStatus
+}
+
+type Lang = 'fi' | 'sv'
+type SelvitysType = 'valiselvitys' | 'loppuselvitys'
+
 class SelvitysUrlCreator extends UrlCreator {
-  constructor(selvitysType) {
-    function entityApiUrl(avustusHakuId, hakemusId, hakemusBaseVersion) {
+  constructor(selvitysType: SelvitysType) {
+    function entityApiUrl(avustusHakuId: number, hakemusId: string, hakemusBaseVersion: string | number): string {
       return "/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/` + hakemusId + (typeof hakemusBaseVersion === "number" ? "/" + hakemusBaseVersion : "")
     }
 
-    const attachmentDirectAccessUrl = function(state, field) {
+    const attachmentDirectAccessUrl = function(state: State, field: Field) {
       const avustusHakuId = state.avustushaku.id
       const hakemusId = state.saveStatus.hakemusId
       return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/attachments/" + field.id
     }
 
-    const existingSubmissionEditUrl = (avustushakuId, selvitysId, lang) =>
+    const existingSubmissionEditUrl = (avustushakuId: string | number, selvitysId: string | number, lang: Lang) =>
       `/avustushaku/${avustushakuId}/${selvitysType}?${selvitysType}=${selvitysId}&lang=${lang}`
 
     const urls = {
-      formApiUrl: function (formId) {
+      formApiUrl: function (formId: string | number) {
         return "/api/form/" + formId
       },
       newEntityApiUrl: function () {
         // loadEntity creates
       },
-      editEntityApiUrl: function (state) {
+      editEntityApiUrl: function (state: State) {
         const avustusHakuId = state.avustushaku.id
         const hakemusId = state.saveStatus.hakemusId
+        // @ts-expect-error
         return entityApiUrl(avustusHakuId, hakemusId, state.saveStatus.savedObject.version)
       },
-      submitEntityApiUrl: function (state) {
+      submitEntityApiUrl: function (state: State) {
         const baseEditUrl = this.editEntityApiUrl(state)
+        // @ts-expect-error
         const isChangeRequest = state.saveStatus.savedObject.status === "pending_change_request"
         return baseEditUrl + (isChangeRequest ? "/change-request-response" : "/submit")
       },
-      loadEntityApiUrl: function (urlContent) {
+      loadEntityApiUrl: function (urlContent: UrlContent) {
         const query = urlContent.parsedQuery
         const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
         const selvitysId = query[selvitysType]
+        // @ts-expect-error
         return entityApiUrl(avustusHakuId, selvitysId)
       },
       existingSubmissionEditUrl,
-      existingSubmissionPreviewUrl: function (avustushakuId, selvitysId, lang) {
+      existingSubmissionPreviewUrl: function (avustushakuId: string | number, selvitysId: string | number, lang: Lang) {
         return existingSubmissionEditUrl(avustushakuId, selvitysId, lang) + "&preview=true"
       },
-      loadAttachmentsApiUrl: function (urlContent) {
+      loadAttachmentsApiUrl: function (urlContent: UrlContent) {
         const query = urlContent.parsedQuery
         const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
         const hakemusId = query[selvitysType]
         return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/attachments"
       },
-      attachmentBaseUrl: function(state, field) {
+      attachmentBaseUrl: function(state: State, field: Field) {
         const avustusHakuId = state.avustushaku.id
         const hakemusId = state.saveStatus.hakemusId
+        // @ts-expect-error
         const hakemusVersion = state.saveStatus.savedObject.version
         return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/" + hakemusVersion + "/attachments/" + field.id
       },
@@ -100,56 +116,61 @@ class SelvitysUrlCreator extends UrlCreator {
 }
 
 const urlCreator = new SelvitysUrlCreator(selvitysType)
-const budgetCalculator = new VaBudgetCalculator((descriptionField, state) => {
+const budgetCalculator = new VaBudgetCalculator((descriptionField: Field, state: Answers | {}) => {
   triggerFieldUpdatesForValidation([descriptionField], state)
 })
 
-function onFieldUpdate(state, field) {
+function onFieldUpdate(state: StateLoopState, field: Field) {
   if (field.fieldType === "moneyField" || field.fieldType === "vaSelfFinancingField") {
     budgetCalculator.handleBudgetAmountUpdate(state, field.id)
   }
 }
 
-function isNotFirstEdit(state) {
+function isNotFirstEdit(state: State) {
   return state.saveStatus.savedObject && state.saveStatus.savedObject.version && (state.saveStatus.savedObject.version > 1)
 }
 
-function isSaveDraftAllowed(state) {
+function isSaveDraftAllowed(state: State) {
   return state.saveStatus.hakemusId && state.saveStatus.hakemusId.length > 0
 }
 
-function createUiStateIdentifier(state) {
+function createUiStateIdentifier(state: StateLoopState): string {
+  // @ts-expect-error
   return state.configuration.form.id + "-" + sessionIdentifierForLocalStorageId
 }
 
-function printEntityId(state) {
+function printEntityId(state: State) {
   return state.saveStatus.hakemusId
 }
 
 const urlContent = { parsedQuery: query, location: location }
-const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
+const avustusHakuId: string = VaUrlCreator.parseAvustusHakuId(urlContent)
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
 const environmentP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.environmentConfigUrl()))
 
-function initialStateTemplateTransformation(template) {
+function initialStateTemplateTransformation(template: any) {
   template.avustushaku = avustusHakuP
   template.configuration.environment = environmentP
   template.saveStatus.hakemusId = query[selvitysType]
 }
 
-function onInitialStateLoaded(initialState) {
+function onInitialStateLoaded(initialState: StateLoopState) {
   budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {
+    // @ts-expect-error
     reportValidationErrors: isNotFirstEdit(initialState)
   })
 }
 
+// @ts-expect-error
 function isPast(date) {
+  // @ts-expect-error
   return moment(date) < new Date()
 }
 
 function initFormController() {
   const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(HttpUtil.get(urlCreator.formApiUrl(avustusHaku["form_" + selvitysType])))})
   const controller = new FormController({
+    // @ts-expect-error
     "initialStateTemplateTransformation": initialStateTemplateTransformation,
     "onInitialStateLoaded": onInitialStateLoaded,
     "formP": formP,
@@ -170,13 +191,15 @@ function initFormController() {
     "printEntityId": printEntityId
   }
   const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
+  // @ts-expect-error
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
+  // @ts-expect-error
   return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state) {
     const expired = state.configuration.environment["selvitys-limit"] &&
           state.configuration.environment["selvitys-limit"]["enabled?"] &&
-          ((selvitysType === "valiselvitys" &&
+          ((selvitysType === "valiselvitys" && // @ts-expect-error
            DateUtil.isPast(state.avustushaku.valiselvitysdate)) ||
-          (selvitysType === "loppuselvitys" &&
+          (selvitysType === "loppuselvitys" && // @ts-expect-error
            DateUtil.isPast(state.avustushaku.loppuselvitysdate)))
     const isValiselvitys = selvitysType === 'valiselvitys'
     const selvitysUpdateable = state.saveStatus.savedObject && state.saveStatus.savedObject['selvitys-updatable']
@@ -201,7 +224,7 @@ function initFormController() {
   }}
 }
 
-function initSelvitys(avustusHakuId, hakemusId, selvitysType, showPreview){
+function initSelvitys(avustusHakuId: string, hakemusId: string | number, selvitysType: SelvitysType, showPreview: string){
   HttpUtil.get("/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/init/` + hakemusId).then(response => {
     const hakemusId = response.id
     const hakemusLang = lang ? lang : response.language
@@ -211,7 +234,7 @@ function initSelvitys(avustusHakuId, hakemusId, selvitysType, showPreview){
 
 
 if(!selvitysId && query.hakemus) {
-  initSelvitys(avustusHakuId,query.hakemus, selvitysType, showPreview)
+  initSelvitys(avustusHakuId, query.hakemus, selvitysType, showPreview)
 }
 else{
   const app = initFormController()
