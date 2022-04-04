@@ -128,8 +128,10 @@ function isNotFirstEdit(state: State) {
   return state.saveStatus.savedObject && state.saveStatus.savedObject.version && (state.saveStatus.savedObject.version > 1)
 }
 
-function isSaveDraftAllowed(state: State) {
-  return state.saveStatus.hakemusId && state.saveStatus.hakemusId.length > 0
+function isSaveDraftAllowed(state: State): boolean {
+  if (!state.saveStatus.hakemusId) return false
+
+  return state.saveStatus.hakemusId.length > 0
 }
 
 function createUiStateIdentifier(state: StateLoopState): string {
