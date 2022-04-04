@@ -13,7 +13,13 @@ import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
 import VaPreviewComponentFactory from 'soresu-form/web/va/VaPreviewComponentFactory'
 import VaBudgetCalculator from 'soresu-form/web/va/VaBudgetCalculator'
 import UrlCreator from 'soresu-form/web/form/UrlCreator'
-import {HakijaAvustusHaku, InitialSaveStatus, StateLoopState, UrlContent} from 'soresu-form/web/form/types/Form'
+import {
+  FormOperations,
+  HakijaAvustusHaku,
+  InitialSaveStatus,
+  StateLoopState,
+  UrlContent
+} from 'soresu-form/web/form/types/Form'
 import {Answers, Field} from 'soresu-form/web/va/types'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
@@ -122,7 +128,7 @@ function onFieldUpdate(state: StateLoopState, field: Field) {
   }
 }
 
-function isNotFirstEdit(state: State): boolean {
+function isNotFirstEdit(state: StateLoopState): boolean {
   if (!state.saveStatus.savedObject || !state.saveStatus.savedObject.version) return false
 
   return state.saveStatus.savedObject.version > 1
@@ -147,7 +153,7 @@ function createUiStateIdentifier(state: StateLoopState): string {
   return state.configuration.form.id + "-" + sessionIdentifierForLocalStorageId
 }
 
-function printEntityId(state: State) {
+function printEntityId(state: StateLoopState) {
   return state.saveStatus.hakemusId
 }
 
@@ -164,7 +170,6 @@ function initialStateTemplateTransformation(template: any) {
 
 function onInitialStateLoaded(initialState: StateLoopState) {
   budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {
-    // @ts-expect-error
     reportValidationErrors: isNotFirstEdit(initialState)
   })
 }
@@ -180,7 +185,7 @@ function initFormController() {
     "customPreviewComponentFactory": new VaPreviewComponentFactory(),
     "customFieldSyntaxValidator": VaSyntaxValidator
   })
-  const formOperations = {
+  const formOperations: FormOperations = {
     "chooseInitialLanguage": VaUrlCreator.chooseInitialLanguage,
     "containsExistingEntityId": containsExistingEntityId,
     "isFieldEnabled": isFieldEnabled,
@@ -193,7 +198,6 @@ function initFormController() {
     "printEntityId": printEntityId
   }
   const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
-  // @ts-expect-error
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state: any) {
     const isValiselvitys = selvitysType === 'valiselvitys'
