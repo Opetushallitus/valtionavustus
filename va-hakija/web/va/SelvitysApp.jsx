@@ -179,7 +179,7 @@ function initFormController() {
           (selvitysType === "loppuselvitys" &&
            DateUtil.isPast(state.avustushaku.loppuselvitysdate)))
     const isValiselvitys = selvitysType === 'valiselvitys'
-    const selvitysUpdateable = state.saveStatus.savedObject["selvitys-updatable"]
+    const selvitysUpdateable = state.saveStatus.savedObject && state.saveStatus.savedObject['selvitys-updatable']
     const valiselvitysNotUpdateable = isValiselvitys && selvitysUpdateable === false
     if (!showPreview && (expired || valiselvitysNotUpdateable)) {
       const previewUrl = formOperations.urlCreator.existingSubmissionPreviewUrl(
