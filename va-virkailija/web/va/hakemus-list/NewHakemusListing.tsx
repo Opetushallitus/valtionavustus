@@ -293,8 +293,8 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
             <td>
               <div className={styles.projectTd}>
                 {getProject(hakemus)}
-                {modified && <Pill color="blue" text="Muokattu" />}
-                {draft && <Pill color="yellow" text="Keskeneräinen" />}
+                {modified && <Pill color="blue" text="Muokattu" compact />}
+                {draft && <Pill color="yellow" text="Keskeneräinen" compact />}
               </div>
             </td>
             <td>Tähtii</td>

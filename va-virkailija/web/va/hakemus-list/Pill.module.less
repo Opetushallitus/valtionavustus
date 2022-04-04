@@ -1,7 +1,7 @@
 .pill {
   box-sizing: border-box;
   border-radius: 8px;
-  padding: 0 8px;
+  padding: 0 4px;
   font-size: 13px;
   border: 1px solid;
   text-align: center;
@@ -12,7 +12,15 @@
   justify-content: center;
   align-items: center;
   height: 22px;
+
+  &.compact {
+    border-radius: 4px;
+    height: 26px;
+    font-size: 10px;
+    padding: 2px 4px;
+  }
 }
+
 
 .greenPill {
   composes: pill;

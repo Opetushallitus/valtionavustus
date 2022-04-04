@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 import styles from "./Pill.module.less";
 
 const pillStyles = {
@@ -12,10 +13,13 @@ const pillStyles = {
 export interface PillProps {
   color: keyof typeof pillStyles
   text: string
+  compact?: boolean
 }
 
-export const Pill = ({color, text}: PillProps) =>  (
-  <div className={pillStyles[color]}>
+export const Pill = ({color, text, compact}: PillProps) =>  (
+  <div className={classNames(pillStyles[color], {
+    [styles.compact]: compact
+  })}>
     {text}
   </div>
 )
