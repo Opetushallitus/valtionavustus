@@ -122,14 +122,23 @@ function onFieldUpdate(state: StateLoopState, field: Field) {
   }
 }
 
-function isNotFirstEdit(state: State) {
+function isNotFirstEdit(state: State): boolean {
+  // @ts-expect-error
   return state.saveStatus.savedObject && state.saveStatus.savedObject.version && (state.saveStatus.savedObject.version > 1)
 }
 
-function isSaveDraftAllowed(state: State): boolean {
+interface SaveState {
+  saveStatus: {
+    hakemusId?: string | number
+  }
+}
+
+function isSaveDraftAllowed(state: SaveState): boolean {
   if (!state.saveStatus.hakemusId) return false
 
-  return state.saveStatus.hakemusId.length > 0
+  return typeof state.saveStatus.hakemusId === 'string' ?
+    state.saveStatus.hakemusId.length > 0 :
+    state.saveStatus.hakemusId > 0
 }
 
 function createUiStateIdentifier(state: StateLoopState): string {
@@ -185,8 +194,7 @@ function initFormController() {
   const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
   // @ts-expect-error
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
-  // @ts-expect-error
-  return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state) {
+  return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state: any) {
     const isValiselvitys = selvitysType === 'valiselvitys'
     const selvitysUpdateable = state.saveStatus.savedObject && state.saveStatus.savedObject['selvitys-updatable']
     const valiselvitysNotUpdateable = isValiselvitys && selvitysUpdateable === false
