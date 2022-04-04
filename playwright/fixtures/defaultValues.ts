@@ -29,7 +29,7 @@ const workerScopedDefaultValues = test.extend<{}, WorkerScopedDefaultValueFixtur
       const page = await browser.newPage()
 
       await switchUserIdentityTo(page, "valtionavustus")
-      const koodienHallintaPage = new KoodienhallintaPage(page)
+      const koodienHallintaPage = KoodienhallintaPage(page)
       codes = await koodienHallintaPage.createRandomCodeValues()
       await page.close()
     })

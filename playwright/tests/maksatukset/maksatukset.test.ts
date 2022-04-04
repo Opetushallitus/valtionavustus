@@ -16,7 +16,7 @@ import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 const correctOVTTest = test.extend({
   codes: async ({page}, use) => {
     const codes = { operationalUnit: '6600105300', operation: '3425324634', project: '523452346' }
-    const koodienHallintaPage = new KoodienhallintaPage(page)
+    const koodienHallintaPage = KoodienhallintaPage(page)
     await koodienHallintaPage.createCodeValues(codes)
     await use(codes)
   },

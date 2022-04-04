@@ -3,9 +3,9 @@ import {KoodienhallintaPage} from "../pages/koodienHallintaPage";
 import {switchUserIdentityTo, expectToBeDefined} from '../utils/util'
 import {navigate} from '../utils/navigate'
 
-const test = baseTest.extend<{koodienhallintaPage: KoodienhallintaPage}>({
+const test = baseTest.extend<{koodienhallintaPage: ReturnType<typeof KoodienhallintaPage>}>({
   koodienhallintaPage: async ({page}, use) => {
-    const koodienhallintaPage = new KoodienhallintaPage(page)
+    const koodienhallintaPage = KoodienhallintaPage(page)
     await koodienhallintaPage.navigate()
     await use(koodienhallintaPage)
   }
