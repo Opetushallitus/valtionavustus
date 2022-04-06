@@ -252,7 +252,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
         </th>
         <th>
           <div className={styles.filterInput}>
-            <input placeholder="Hanke tai asianumero" onChange={onProjectInput} value={projectNameOrCode} />
+            <input placeholder="Asianumero tai hanke" onChange={onProjectInput} value={projectNameOrCode} />
             <PolygonIcon />
           </div>
         </th>
@@ -416,7 +416,7 @@ function ResolvedTable(props: ResolvedTableProps) {
           </th>
           <th>
             <div className={styles.filterInput}>
-              <input placeholder="Hanke tai asianumero" onChange={onProjectInput} value={projectNameOrCode} />
+              <input placeholder="Asianumero tai hanke" onChange={onProjectInput} value={projectNameOrCode} />
               <PolygonIcon />
             </div>
           </th>
