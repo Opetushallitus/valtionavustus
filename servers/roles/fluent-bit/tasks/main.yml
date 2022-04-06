@@ -30,3 +30,8 @@
     mode: '0644'
   notify:
     - Restart td-agent-bit
+
+- name: Enable td-agent-bit
+  service:
+    name: td-agent-bit
+    enabled: yes
