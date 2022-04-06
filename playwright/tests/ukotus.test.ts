@@ -6,7 +6,7 @@ import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
 
 test.setTimeout(180000)
 
-hakemusSentTest('Valmistelijan ukotus', async ({ page, avustushakuID, hakemusUserKey }) => {
+hakemusSentTest('Valmistelijan as an arvostelija', async ({ page, avustushakuID, hakemusUserKey }) => {
   expect(hakemusUserKey).toBeDefined()
 
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
