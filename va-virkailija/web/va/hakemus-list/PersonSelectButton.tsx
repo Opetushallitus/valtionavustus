@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Hakemus } from 'soresu-form/web/va/types'
 
-import { Role, RoleType, State } from '../types'
+import { Role, State } from '../types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
 
 type RoleButtonProps = {
@@ -18,7 +18,7 @@ const RoleButton = ({ role, roleField, controller, hakemus }: RoleButtonProps) =
   const active = roleField === "presenter" ? hakemus.arvio["presenter-role-id"] === role.id : currentRoles.includes(role.id)
 
   return (
-    <button className={`btn btn-sm ${active ? 'btn-selected' : 'btn-simple'}`} onClick={onClick}>{role.name}</button>
+    <button className={`btn btn-sm ${active ? 'btn-selected' : 'btn-simple'}`} onClick={onClick} data-test-id={`${roleField}-${role.name.replace(" ", "-")}`}>{role.name}</button>
   )
 }
 
@@ -35,7 +35,7 @@ const RoleContainer = ({ roleName, roleField, roles, controller, hakemus }: Role
     <React.Fragment>
       <div className="role-title">{roleName}</div>
       <div className="role-container">
-        {roles.map(role => <RoleButton key={`${roleName}-${role.id}`} role={role} roleField={roleField} controller={controller} hakemus={hakemus}/>)}
+        {roles.map(role => <RoleButton key={`${roleName}-${role.id}`} role={role} roleField={roleField} controller={controller} hakemus={hakemus} />)}
       </div>
     </React.Fragment>
   )
@@ -48,16 +48,14 @@ type PersonSelectButtonProps = {
 }
 
 const PersonSelectPanel = ({ hakemus, state, controller }: PersonSelectButtonProps) => {
-  const roles = state.hakuData.roles
-  const filterByRole = (filteredRoles: RoleType[]) => roles.filter(currentRole => filteredRoles.includes(currentRole.role)).sort((a, b) => a.name > b.name ? -1 : 1)
-  const presenters = filterByRole(["presenting_officer", "vastuuvalmistelija"])
-  const evaluators = filterByRole(["evaluator"])
+  const roles = [ ...state.hakuData.roles ].sort((a, b) => a.name > b.name ? -1 : 1)
+  const presenters = roles.filter(r => ["presenting_officer", "vastuuvalmistelija"].includes(r.role))
   const onCloseClick = () => controller.togglePersonSelect(undefined)
   return (
     <div className="panel person-panel person-panel--top">
       <button className="close" onClick={onCloseClick} data-test-id="close-person-select-panel">x</button>
       <RoleContainer roleName="Valmistelija" roleField="presenter" roles={presenters} controller={controller} hakemus={hakemus}/>
-      <RoleContainer roleName="Arvioijat" roleField="evaluators" roles={evaluators} controller={controller} hakemus={hakemus}/>
+      <RoleContainer roleName="Arvioijat" roleField="evaluators" roles={roles} controller={controller} hakemus={hakemus}/>
     </div>
   )
 }

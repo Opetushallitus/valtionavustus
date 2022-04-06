@@ -45,9 +45,14 @@ export class HakemustenArviointiPage {
     await navigate(this.page, `/avustushaku/${avustushakuID}/?${params.toString()}`)
   }
 
-  async navigateToLatestHakemusArviointi(avustushakuID: number) {
+  async navigateToLatestHakemusArviointi(avustushakuID: number): Promise<number> {
     await navigate(this.page, `/avustushaku/${avustushakuID}/`)
     await this.page.click('tbody tr:first-of-type')
+    await this.page.waitForSelector('#hakemus-details')
+    return await this.page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1]).then(possibleHakemusID => {
+      expectToBeDefined(possibleHakemusID)
+      return parseInt(possibleHakemusID)
+    })
   }
 
   async navigateToLatestMuutoshakemus(avustushakuID: number, hakemusID: number) {
@@ -68,8 +73,16 @@ export class HakemustenArviointiPage {
     await this.page.press(searchSelector, 'Enter');
   }
 
-  async prepareSelectingValmistelijaForHakemus(hakemusID: number, valmistelijaName: string) {
+  async openUkotusModal(hakemusID: number) {
     await this.page.click(`#hakemus-${hakemusID} .btn-role`)
+  }
+
+  async closeUkotusModal() {
+    await this.page.click('[data-test-id=close-person-select-panel]')
+  }
+
+  async prepareSelectingValmistelijaForHakemus(hakemusID: number, valmistelijaName: string) {
+    await this.openUkotusModal(hakemusID)
     const selector = `table.hakemus-list tr.selected button:has-text("${valmistelijaName}")`
     const valmistelijaButton = await this.page.waitForSelector(selector)
     if (!valmistelijaButton) {
@@ -112,7 +125,17 @@ export class HakemustenArviointiPage {
         (valmistelijaButton as ElementHandle).click(),
       ])
     }
-    await this.page.click('[data-test-id=close-person-select-panel]')
+    await this.closeUkotusModal()
+  }
+
+  async toggleArvioijaForHakemus(avustushakuID: number, hakemusID: number, valmistelijaName: string) {
+    await this.openUkotusModal(hakemusID)
+    const arvioijaButton = await this.page.waitForSelector(`[data-test-id="evaluators-${valmistelijaName.replace(" ", "-")}"]`)
+    await Promise.all([
+      this.waitForArvioSave(avustushakuID, hakemusID),
+      (arvioijaButton as ElementHandle).click(),
+    ])
+    await this.closeUkotusModal()
   }
 
   async fillBudget(budget: Budget = defaultBudget, type: 'hakija' | 'virkailija') {
@@ -360,4 +383,13 @@ export class HakemustenArviointiPage {
     }))
   }
 
+  async setSelectionCriteriaStars(questionNumber: number, starValue: number) {
+    await this.page.click(`.valintaperuste-list tr.single-valintaperuste:nth-of-type(${questionNumber}) img:nth-of-type(${starValue})`)
+  }
+
+  async getHakemusScore(hakemusId: number): Promise<string | undefined> {
+    const title = await this.page.locator(`#hakemus-${hakemusId} .list-score-row`).getAttribute('title')
+    const regex = title?.match(/.*Keskiarvo\: ([\S]+).*/)
+    return regex?.[1]
+  }
 }

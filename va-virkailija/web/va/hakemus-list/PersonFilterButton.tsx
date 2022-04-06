@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { HakemusFilter, Role, RoleType, State } from '../types'
+import { HakemusFilter, Role, State } from '../types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
 
 
@@ -46,16 +46,14 @@ const RoleContainer = ({roleName,roleField,roles,controller,hakemusFilter}: Role
 
 const PersonSelectPanel = ({ state, controller, setIsOpen }: PersonFilterButtonProps & { setIsOpen: (isOpen: boolean) => void }) =>{
   const hakemusFilter = state.hakemusFilter
-  const roles = state.hakuData.roles
-  const filterByRole = (filteredRoles: RoleType[]) => roles.filter(currentRole => filteredRoles.includes(currentRole.role)).sort((a, b) => a.name > b.name ? -1 : 1)
-  const presenters = filterByRole(["presenting_officer", "vastuuvalmistelija"])
-  const evaluators = filterByRole(["evaluator"])
+  const roles = [...state.hakuData.roles].sort((a, b) => a.name > b.name ? -1 : 1)
+  const presenters = roles.filter(r => ["presenting_officer", "vastuuvalmistelija"].includes(r.role))
 
   return (
     <div className="panel person-panel">
       <button className="close" onClick={() => setIsOpen(false)}>x</button>
       <RoleContainer roleName="Valmistelija" roleField="presenter" roles={presenters} controller={controller} hakemusFilter={hakemusFilter}/>
-      <RoleContainer roleName="Arvioija" roleField="evaluator" roles={evaluators} controller={controller} hakemusFilter={hakemusFilter}/>
+      <RoleContainer roleName="Arvioija" roleField="evaluator" roles={roles} controller={controller} hakemusFilter={hakemusFilter}/>
     </div>
   )
 }
@@ -70,9 +68,7 @@ export const PersonFilterButton = ({ state, controller }: PersonFilterButtonProp
   const hakemusFilter = state.hakemusFilter
   const activeFilterCount = (hakemusFilter.evaluator ? 1 : 0) + (hakemusFilter.presenter ? 1 : 0)
   const onClick = () => {
-    if (!isOpen) {
-      controller.togglePersonSelect(undefined)
-    }
+    controller.togglePersonSelect(undefined)
     setIsOpen(!isOpen)
   }
 

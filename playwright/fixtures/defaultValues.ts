@@ -54,6 +54,7 @@ export const defaultValues = workerScopedDefaultValues.extend<DefaultValueFixtur
       hankkeenPaattymispaiva: '20.04.4200',
       registerNumber: randomAsiatunnus(),
       vaCodes: codes,
+      selectionCriteria: [],
     })
   },
   ukotettuValmistelija: "_ valtionavustus",

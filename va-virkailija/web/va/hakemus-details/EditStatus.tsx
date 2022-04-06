@@ -99,7 +99,9 @@ export default class EditStatus extends React.Component<EditStatusProps, EditSta
               {this.state.submitted && <span>{cancelled ? 'Hakemus peruutettu' : 'Tila muutettu'}</span>}
             </div>
           : <span>
-              <button className={cancelled ? "btn-danger" : ""} onClick={onOpen} data-test-id="virkailija-edit-hakemus">{cancelled ? 'Peruuta hakemus' : 'Muokkaa hakemusta'}</button>
+              <button className={cancelled ? "btn-danger" : ""} onClick={onOpen} data-test-id={cancelled ? "virkailija-cancel-hakemus" : "virkailija-edit-hakemus"}>
+                {cancelled ? 'Peruuta hakemus' : 'Muokkaa hakemusta'}
+              </button>
               { tooltip() }
             </span>
         }

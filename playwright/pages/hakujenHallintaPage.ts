@@ -33,6 +33,7 @@ export interface HakuProps {
   hakuaikaEnd: Date
   hankkeenAlkamispaiva: string
   hankkeenPaattymispaiva: string
+  selectionCriteria: string[]
 }
 
 const dateFormat = 'D.M.YYYY H.mm'
@@ -386,7 +387,8 @@ export class HakujenHallintaPage {
       hakuaikaStart,
       hakuaikaEnd,
       hankkeenAlkamispaiva,
-      hankkeenPaattymispaiva
+      hankkeenPaattymispaiva,
+      selectionCriteria,
     } = props
     console.log(`Avustushaku name for test: ${avustushakuName}`)
 
@@ -418,6 +420,12 @@ export class HakujenHallintaPage {
     await this.page.fill('[data-test-id="hankkeen-alkamispaiva"] div.datepicker input', hankkeenAlkamispaiva)
     await this.page.fill('[data-test-id="hankkeen-paattymispaiva"] div.datepicker input', hankkeenPaattymispaiva)
     await clickElementWithText(this.page, "span", "Haun tiedot")
+
+    for (var i = 0; i < selectionCriteria.length; i++) {
+      await this.page.click('[data-test-id="add-selection-criteria"]')
+      await this.page.fill(`#selection-criteria-${i}-fi`, selectionCriteria[i])
+      await this.page.fill(`#selection-criteria-${i}-sv`, selectionCriteria[i])
+    }
 
     await this.waitForSave()
 

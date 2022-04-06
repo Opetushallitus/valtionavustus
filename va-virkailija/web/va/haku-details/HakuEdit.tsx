@@ -332,7 +332,13 @@ const SelectionCriteria = ({ allowAllHakuEdits, allowNondisruptiveHakuEdits, avu
       <tbody>
         {criteriaItems}
       </tbody>
-      <tfoot><tr><td><button type="button" disabled={!allowAllHakuEdits} onClick={controller.addSelectionCriteria(avustushaku)}>Lisää uusi valintaperuste</button></td></tr></tfoot>
+      <tfoot>
+        <tr>
+          <td>
+            <button type="button" disabled={!allowAllHakuEdits} onClick={controller.addSelectionCriteria(avustushaku)} data-test-id="add-selection-criteria">Lisää uusi valintaperuste</button>
+          </td>
+        </tr>
+      </tfoot>
     </table>
   )
 }

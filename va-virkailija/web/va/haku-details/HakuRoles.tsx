@@ -137,7 +137,7 @@ type RoleRowProps = {
 }
 
 const RoleRow = ({ avustushaku, controller, role, userInfo, userHasEditPrivilege, userHasEditMyHakuRolePrivilege }: RoleRowProps) => {
-  const debouncedSave = useCallback(debounce((savedRole: Role) => { controller.saveRole(avustushaku, savedRole) }, 3000), [])
+  const debouncedSave = useCallback(debounce((savedRole: Role) => { controller.saveRole(avustushaku, savedRole) }, 2000), [])
   const [editedRole, setEditedRole] = useState(role)
   const [emailOk, setEmailOk] = useState(true)
 
