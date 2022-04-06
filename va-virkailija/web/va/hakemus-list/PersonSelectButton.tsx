@@ -2,8 +2,12 @@ import React from 'react'
 
 import { Hakemus } from 'soresu-form/web/va/types'
 
-import { Role, State } from '../types'
+import {Role, State} from '../types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
+
+export const isPresenterRole = ({role}: Role): boolean => ["presenting_officer", "vastuuvalmistelija"].includes(role)
+export const isPresenter = (hakemus: Hakemus, {id}: Role) => hakemus.arvio["presenter-role-id"] === id
+export const isEvaluator = (hakemus: Hakemus, {id}: Role) => hakemus.arvio.roles['evaluators'].includes(id)
 
 type RoleButtonProps = {
   role: Role
@@ -14,9 +18,9 @@ type RoleButtonProps = {
 
 const RoleButton = ({ role, roleField, controller, hakemus }: RoleButtonProps) => {
   const onClick = () => controller.toggleHakemusRole(role.id, hakemus, roleField)
-  const currentRoles = hakemus.arvio.roles[roleField]
-  const active = roleField === "presenter" ? hakemus.arvio["presenter-role-id"] === role.id : currentRoles.includes(role.id)
-
+  const active = roleField === "presenter"
+    ? isPresenter(hakemus, role)
+    : isEvaluator(hakemus, role)
   return (
     <button className={`btn btn-sm ${active ? 'btn-selected' : 'btn-simple'}`} onClick={onClick} data-test-id={`${roleField}-${role.name.replace(" ", "-")}`}>{role.name}</button>
   )
@@ -45,11 +49,12 @@ type PersonSelectButtonProps = {
   controller: HakemustenArviointiController
   hakemus: Hakemus
   state: State
+  toggleSplitView: (forceValue?: boolean) => void
 }
 
-const PersonSelectPanel = ({ hakemus, state, controller }: PersonSelectButtonProps) => {
+export const PersonSelectPanel = ({ hakemus, state, controller }: Omit<PersonSelectButtonProps, 'toggleSplitView'>) => {
   const roles = [ ...state.hakuData.roles ].sort((a, b) => a.name > b.name ? -1 : 1)
-  const presenters = roles.filter(r => ["presenting_officer", "vastuuvalmistelija"].includes(r.role))
+  const presenters = roles.filter(isPresenterRole)
   const onCloseClick = () => controller.togglePersonSelect(undefined)
   return (
     <div className="panel person-panel person-panel--top">
@@ -60,10 +65,10 @@ const PersonSelectPanel = ({ hakemus, state, controller }: PersonSelectButtonPro
   )
 }
 
-export const PersonSelectButton = ({ controller, hakemus, state }: PersonSelectButtonProps) => {
+export const PersonSelectButton = ({ controller, hakemus, state, toggleSplitView }: PersonSelectButtonProps) => {
   const onClick = () => {
     controller.togglePersonSelect(hakemus.id)
-    document.body.classList.add('split-view')
+    toggleSplitView(true)
   }
   const roles = state.hakuData.roles.map(r => r.id)
   const presenterRoleId = hakemus.arvio["presenter-role-id"]

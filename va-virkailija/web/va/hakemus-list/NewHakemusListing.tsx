@@ -1,4 +1,4 @@
-import React, {useEffect, useReducer, useRef, useState} from "react";
+import React, {useReducer, useState} from "react";
 import {
   Hakemus,
   HakemusArviointiStatus,
@@ -15,9 +15,16 @@ import {
 import HakemusArviointiStatuses
   from "../hakemus-details/HakemusArviointiStatuses";
 import {Pill, PillProps} from "./Pill";
-import {Role} from "../types";
+import {Role, State} from "../types";
 
 import polygonSrc from '../img/polygon.svg'
+import useOutsideClick from "../useOutsideClick";
+import {
+  isEvaluator, isPresenter,
+  isPresenterRole,
+  PersonSelectPanel
+} from "./PersonSelectButton";
+import HakemustenArviointiController from "../HakemustenArviointiController";
 
 interface Props {
   selectedHakemus: Hakemus | undefined | {}
@@ -27,6 +34,9 @@ interface Props {
   onSelectHakemus: (hakemusId: number) => void
   onYhteenvetoClick: (filteredHakemusList: Hakemus[]) => void
   isResolved: boolean
+  controller: HakemustenArviointiController
+  state: State
+  toggleSplitView: () => void
 }
 
 type MuutoshakemusStatuses = typeof Muutoshakemus.statuses[number]
@@ -141,7 +151,7 @@ const getDefaultState = (): FilterState => ({
 })
 
 export default function NewHakemusListing(props: Props) {
-  const {selectedHakemus, hakemusList, onSelectHakemus, onYhteenvetoClick, roles, splitView, isResolved} = props
+  const {selectedHakemus, hakemusList, onSelectHakemus, onYhteenvetoClick, roles, splitView, isResolved, controller, state, toggleSplitView} = props
   const selectedHakemusId = selectedHakemus && 'id' in selectedHakemus ? selectedHakemus.id : undefined
   const [filterState, dispatch] = useReducer(reducer, getDefaultState())
   const filteredList = filteredHakemusList(filterState, hakemusList)
@@ -167,6 +177,9 @@ export default function NewHakemusListing(props: Props) {
             dispatch={dispatch}
             roles={roles}
             totalBudgetGranted={totalBudgetGranted}
+            controller={controller}
+            state={state}
+            toggleSplitView={toggleSplitView}
           />
         ) : (
           <HakemusTable
@@ -179,6 +192,9 @@ export default function NewHakemusListing(props: Props) {
             dispatch={dispatch}
             roles={roles}
             totalBudgetGranted={totalBudgetGranted}
+            controller={controller}
+            state={state}
+            toggleSplitView={toggleSplitView}
         />
         )
       }
@@ -196,9 +212,12 @@ interface HakemusTableProps {
   onYhteenvetoClick: (filteredHakemusList: Hakemus[]) => void
   roles: Role[]
   totalBudgetGranted: number
+  controller: HakemustenArviointiController
+  state: State
+  toggleSplitView: (forceValue?: boolean) => void
 }
 
-function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemusId, onSelectHakemus, onYhteenvetoClick, roles, totalBudgetGranted}: HakemusTableProps) {
+function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemusId, onSelectHakemus, onYhteenvetoClick, roles, totalBudgetGranted, state, controller, toggleSplitView}: HakemusTableProps) {
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({type: 'set-organization-name-filter', value: event.target.value})
   }
@@ -306,8 +325,12 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
                 ? euroFormatter.format(hakemus.arvio["budget-granted"])
                 : '-'
             }</td>
-            <td>{initialsOfPeopleInRole(roles,'presenting_officer')}</td>
-            <td>{initialsOfPeopleInRole(roles,'evaluator')}</td>
+            <td className={styles.alignCenter}>
+              <PeopleRoleButton roles={roles} controller={controller} hakemus={hakemus} state={state} toggleSplitView={toggleSplitView} onSelectHakemus={onSelectHakemus} selectedRole="presenter"/>
+            </td>
+            <td className={styles.alignCenter}>
+              <PeopleRoleButton roles={roles} controller={controller} hakemus={hakemus} state={state} toggleSplitView={toggleSplitView} onSelectHakemus={onSelectHakemus} selectedRole="evaluators"/>
+            </td>
           </tr>
         )
       })}
@@ -341,6 +364,9 @@ interface ResolvedTableProps {
   onYhteenvetoClick: (filteredHakemusList: Hakemus[]) => void
   roles: Role[]
   totalBudgetGranted: number
+  controller: HakemustenArviointiController
+  state: State
+  toggleSplitView: (forceValue?: boolean) => void
 }
 
 function ResolvedTable(props: ResolvedTableProps) {
@@ -353,7 +379,10 @@ function ResolvedTable(props: ResolvedTableProps) {
     roles,
     filteredList,
     list,
-    totalBudgetGranted
+    totalBudgetGranted,
+    controller,
+    state,
+    toggleSplitView
   } = props
 
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -474,8 +503,12 @@ function ResolvedTable(props: ResolvedTableProps) {
               ? euroFormatter.format(hakemus.arvio["budget-granted"])
               : '-'
           }</td>
-          <td>{initialsOfPeopleInRole(roles,'presenting_officer')}</td>
-          <td>{initialsOfPeopleInRole(roles,'evaluator')}</td>
+          <td className={styles.alignCenter}>
+            <PeopleRoleButton roles={roles} controller={controller} hakemus={hakemus} state={state} toggleSplitView={toggleSplitView} onSelectHakemus={onSelectHakemus} selectedRole="presenter"/>
+          </td>
+          <td className={styles.alignCenter}>
+            <PeopleRoleButton roles={roles} controller={controller} hakemus={hakemus} state={state} toggleSplitView={toggleSplitView} onSelectHakemus={onSelectHakemus} selectedRole="evaluators"/>
+          </td>
         </tr>
       ))}
       </tbody>
@@ -507,15 +540,58 @@ const getProject = (hakemus: Hakemus) => {
   )
 }
 
-const initialsOfPeopleInRole = (roles: Role[], role: Role['role']): string =>
-  roles
-    .filter(r => r.role === role)
-    .map(r =>
-      r.name
-        .split(/\s+/)
-        .reduce((initials, name) => initials + name.slice(0, 1), '')
+const RoleButton = ({text, onClick, disabled, empty}: { text: string, onClick: () => void, disabled: boolean, empty?: boolean }) => {
+  const className = empty ? styles.emptyRoleBtn : styles.roleButton
+  return (
+    <button disabled={disabled} className={className} onClick={e => {
+      e.stopPropagation()
+      onClick()
+    }}>
+      {text}
+    </button>
+  )
+}
+
+interface PeopleRoleButton {
+  roles: Role[],
+  controller: HakemustenArviointiController,
+  hakemus: Hakemus,
+  state: State,
+  toggleSplitView: (override?: boolean) => void,
+  onSelectHakemus: (hakemusId: number) => void,
+  selectedRole: 'evaluators' | 'presenter'
+}
+
+const PeopleRoleButton = ({roles, controller, selectedRole, state, toggleSplitView, onSelectHakemus, hakemus}: PeopleRoleButton) => {
+  const onClickCallback = () => {
+    onSelectHakemus(hakemus.id)
+    controller.togglePersonSelect(hakemus.id)
+    toggleSplitView(true)
+  }
+  const presentersWanted = selectedRole === 'presenter'
+  const buttonInitials = roles
+    .filter(role =>
+      presentersWanted
+        ? isPresenterRole(role) && isPresenter(hakemus, role)
+        : isEvaluator(hakemus, role)
     )
+    .map(({name}) =>
+       name
+        .split(/\s+/)
+        .reduce((initials, name) => initials + name.slice(0, 1), ''))
     .join(', ')
+  const disallowChangeHakemusState = !state.hakuData.privileges["change-hakemus-state"]
+  return (
+    <React.Fragment>
+      {buttonInitials.length === 0
+        ? <RoleButton disabled={disallowChangeHakemusState}  text="+" onClick={onClickCallback} empty />
+        : <RoleButton disabled={disallowChangeHakemusState} text={buttonInitials} onClick={onClickCallback} />
+      }
+      {state.personSelectHakemusId === hakemus.id && <PersonSelectPanel hakemus={hakemus} state={state} controller={controller}  />}
+    </React.Fragment>
+  )
+}
+
 
 const PolygonIcon = () => <img src={polygonSrc} alt="ikoni" className={styles.polygon}/>
 
@@ -530,18 +606,8 @@ interface TableLabelProps {
 
 const TableLabel: React.FC<TableLabelProps> = ({text, disabled, showDeleteButton, children} ) => {
   const [toggled, toggleMenu] = useState(false)
-  const popupRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (popupRef?.current && event.target instanceof Element && !popupRef.current.contains(event.target)) {
-        toggleMenu(value => !value)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [popupRef])
+  const onOutsideClick = () => toggleMenu(value => !value)
+  const ref = useOutsideClick<HTMLDivElement>(onOutsideClick)
   const buttonStyle = toggled ? styles.tableLabelBtnOpen : styles.tableLabelBtn
   return (
     <div className={styles.tableLabel}>
@@ -553,7 +619,7 @@ const TableLabel: React.FC<TableLabelProps> = ({text, disabled, showDeleteButton
       )}
       <PolygonIcon />
       {toggled && (
-        <div className={styles.tableLabelPopup} ref={popupRef} >
+        <div className={styles.tableLabelPopup} ref={ref} >
           {children}
         </div>
       )}

@@ -47,7 +47,14 @@ const App = ({state, controller}: Props) => {
     const subTab = state.subTab
     const environment = hakuData.environment
     const helpTexts = state.helpTexts
-    const [splitView, toggleSplitView] = useState(false)
+    const [splitView, setSplitView] = useState(false)
+    const toggleSplitView = (forceValue?: boolean) => {
+      if (forceValue !== undefined) {
+        setSplitView(forceValue)
+      } else {
+        setSplitView(current => !current)
+      }
+    }
     const isResolved = avustushaku.status === 'resolved'
     useEffect(() => {
       const escFunction = (event: KeyboardEvent) => {
@@ -69,7 +76,7 @@ const App = ({state, controller}: Props) => {
       toggleShowAllHakemukset(newToggleState)
     }
     return (
-      <section>
+      <section className={splitView ? 'split-view' : ''}>
         <TopBar activeTab="arviointi" environment={environment} state={state}/>
         <section id="main-container" className="section-container">
           <div id="list-container" className={hasSelected ? "has-selected" : ""}>
@@ -96,6 +103,9 @@ const App = ({state, controller}: Props) => {
                   splitView={splitView}
                   onSelectHakemus={id => controller.selectHakemus(id)}
                   onYhteenvetoClick={filteredHakemusList => controller.gotoSavedSearch(filteredHakemusList)}
+                  toggleSplitView={toggleSplitView}
+                  controller={controller}
+                  state={state}
                  />
               : <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
                   budgetGrantedSum={hakuData["budget-granted-sum"]}
@@ -110,6 +120,7 @@ const App = ({state, controller}: Props) => {
                   controller={controller}
                   avustushaku={avustushaku}
                   environment={environment}
+                  toggleSplitView={toggleSplitView}
                   state={state}/>}
           </div>
           <HakemusDetails hakuData={hakuData}
@@ -122,7 +133,8 @@ const App = ({state, controller}: Props) => {
                           subTab={subTab}
                           controller={controller}
                           environment={environment}
-                          onClickToggle={() => toggleSplitView(current => !current)}
+                          splitView={splitView}
+                          toggleSplitView={toggleSplitView}
                           helpTexts={helpTexts}/>
           <div hidden={!hasSelected} id="footer">
             <HakemusHakijaSidePreviewLink hakemus={selectedHakemus} avustushaku={avustushaku} />

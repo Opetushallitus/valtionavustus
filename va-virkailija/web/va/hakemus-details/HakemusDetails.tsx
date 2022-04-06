@@ -25,13 +25,14 @@ interface Props {
   controller: HakemustenArviointiController
   environment: EnvironmentApiResponse
   helpTexts: HelpTexts
-  onClickToggle: () => void
+  splitView: boolean
+  toggleSplitView: (forceValue?: boolean) => void
 }
 
 export const HakemusDetails = (props: Props) => {
     const {controller, hakemus, avustushaku, hakuData, userInfo,
-           showOthersScores, translations, environment,
-           selectedHakemusAccessControl, subTab, helpTexts, onClickToggle} = props
+           showOthersScores, translations, environment, splitView,
+           selectedHakemusAccessControl, subTab, helpTexts, toggleSplitView} = props
     if (!(typeof hakemus === 'object')) {
       return null
     }
@@ -48,21 +49,21 @@ export const HakemusDetails = (props: Props) => {
     const muutoshakemusUrl = `${environment["hakija-server"].url[lang]}muutoshakemus?lang=${lang}&user-key=${hakemus["user-key"]}&avustushaku-id=${avustushaku.id}`
 
     const onClose = () => {
-      document.body.classList.remove('split-view')
+      toggleSplitView(false)
       controller.closeHakemusDetail()
     }
 
     const onToggle = (e: React.MouseEvent) => {
       e.preventDefault()
-      document.body.classList.toggle('split-view')
-      if(document.body.classList.contains('split-view')) {
+      const nextToggle = !splitView
+      toggleSplitView(nextToggle)
+      if(nextToggle) {
         const container = document.querySelector('.hakemus-list tbody.has-selected')
         const selected = document.querySelector<HTMLTableRowElement>('#list-container tbody.has-selected .overview-row.selected')
         if (container && selected?.offsetTop) {
           container.scrollTop = selected.offsetTop - 100
         }
       }
-      onClickToggle()
       return false
     }
 

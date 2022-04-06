@@ -39,12 +39,6 @@
     padding: 8px;
     text-align: left;
   }
-  td {
-    max-width: 216px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-  }
   tbody tr {
     td {
       padding: 8px 5px 8px 5px;
@@ -163,6 +157,10 @@
 
 .btn {
   composes: font;
+  font-size: 13px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 2px;
   &:focus {
     outline: none;
   }
@@ -179,11 +177,7 @@
   composes: btn;
   background-color: transparent;
   color: #499CC7;
-  font-size: 13px;
-  padding: 0;
   width: 100%;
-  border: 1px solid transparent;
-  border-radius: 2px;
   &:hover {
     border: 1px solid #499CC7;
   }
@@ -213,4 +207,19 @@
   border-width: 0;
   margin: 0;
   height: 22px;
+}
+
+.roleButton {
+  composes: btn;
+  background-color: #F7FCFF;
+  border: 1px solid #499CC7;
+  width: fit-content;
+  padding: 0 8px;
+  color: #1A1919;
+}
+
+.emptyRoleBtn {
+  composes: roleButton;
+  border: 1px solid #C1C1C1;
+  background-color: #fafafa;
 }

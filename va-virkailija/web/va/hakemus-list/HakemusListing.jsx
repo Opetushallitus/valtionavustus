@@ -190,7 +190,7 @@ export default class HakemusListing extends Component {
   }
 
   render() {
-    const {controller, userInfo, state, hasSelected, selectedHakemus, previouslySelectedHakemus, hakemusList, privileges, avustushaku, environment} = this.props
+    const {controller, userInfo, state, hasSelected, selectedHakemus, previouslySelectedHakemus, hakemusList, privileges, avustushaku, environment, toggleSplitView} = this.props
     const avustushakuStatus = avustushaku.status
     const isResolved = avustushakuStatus === "resolved"
     const isAcademysize = avustushaku.is_academysize
@@ -226,6 +226,7 @@ export default class HakemusListing extends Component {
         isResolved={isResolved}
         isAcademysize={isAcademysize}
         state={state}
+        toggleSplitView={toggleSplitView}
         anyPostModified={anyPostModified}
         includesShouldNotPay={includesShouldNotPay}/> })
     const budgetGrantedSum = HakemusListing.formatNumber(_.sum(filteredHakemusList.map(x => x.arvio["budget-granted"])))
@@ -497,6 +498,7 @@ class HakemusRow extends Component {
       selectedHakemus,
       state,
       userInfo,
+      toggleSplitView
     } = this.props
     const htmlId = "hakemus-" + hakemus.id
     const thisIsSelected = hakemus === selectedHakemus || hakemus === previouslySelectedHakemus
@@ -576,7 +578,7 @@ class HakemusRow extends Component {
       </td>
       <td className="person-filter-column">
         {allowChangeHakemusState
-          ? <PersonSelectButton controller={controller} hakemus={hakemus} state={state}/>
+          ? <PersonSelectButton controller={controller} hakemus={hakemus} state={state} toggleSplitView={toggleSplitView}/>
           : <span />
         }
       </td>
