@@ -26,14 +26,15 @@ muutoshakemusTest('Valmistelijan as an arvostelija', async ({ page, avustushakuI
   await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast()
   const hakemusId = await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
   await hakemustenArviointiPage.navigate(avustushakuID)
-  await hakemustenArviointiPage.selectValmistelijaForHakemus(avustushakuID, hakemusId, '_ valtionavustus')
+  await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusId, '_ valtionavustus')
 
   await test.step('can be set as arvioija in addition to valmistelija', async () => {
-    await hakemustenArviointiPage.toggleArvioijaForHakemus(avustushakuID, hakemusId, '_ valtionavustus')
+    await hakemustenArviointiPage.selectArvioijaForHakemus(hakemusId, '_ valtionavustus')
 
     await hakemustenArviointiPage.navigate(avustushakuID)
     await hakemustenArviointiPage.openUkotusModal(hakemusId)
-    await expect(page.locator('[data-test-id="evaluators-_-valtionavustus"]')).toHaveClass('btn btn-sm btn-selected')
+    await page.locator(`[aria-label="Poista _ valtionavustus arvioijan roolista"]`).waitFor()
+    await page.locator(`[aria-label="Poista _ valtionavustus valmistelijan roolista"]`).waitFor()
     await hakemustenArviointiPage.closeUkotusModal()
   })
 
@@ -44,7 +45,7 @@ muutoshakemusTest('Valmistelijan as an arvostelija', async ({ page, avustushakuI
     const hakemusScore = await hakemustenArviointiPage.getHakemusScore(hakemusId)
     expect(hakemusScore).toEqual('4')
   })
-  
+
   await test.step('can still do thigs a valmistelija can do', async () => {
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
     await expect(page.locator('[data-test-id="virkailija-edit-hakemus"]')).toBeEnabled()

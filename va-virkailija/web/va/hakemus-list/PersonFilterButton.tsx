@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
+import classNames from "classnames";
 
 import { HakemusFilter, Role, State } from '../types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
 
+import styles from './Person.module.less'
 
 type RoleButtonProps = {
   roleField: 'evaluator' | 'presenter'
@@ -19,9 +21,11 @@ const RoleButton = ({ role, roleField, controller, hakemusFilter }: RoleButtonPr
     controller.closeHakemusDetail()
   }
   const active = role.id === currentFilter
-
   return (
-    <button className={`btn btn-sm ${active ? 'btn-selected' : 'btn-simple'}`} onClick={onClick}>{role.name}</button>
+    <button
+      onClick={onClick}
+      className={classNames(styles.roleButton, {[styles.selected]: active})}
+    >{role.name}</button>
   )
 }
 
@@ -36,8 +40,8 @@ type RoleContainerProps = {
 const RoleContainer = ({roleName,roleField,roles,controller,hakemusFilter}: RoleContainerProps) => {
   return (
     <React.Fragment>
-      <div className="role-title">{roleName}</div>
-      <div className="role-container">
+      <div className={styles.roleTitle}>{roleName}</div>
+      <div className={styles.roleContainer}>
         {roles.map(role => <RoleButton key={`${roleName}-${role.id}`} role={role} roleField={roleField} controller={controller} hakemusFilter={hakemusFilter}/>)}
       </div>
     </React.Fragment>
@@ -51,7 +55,7 @@ const PersonSelectPanel = ({ state, controller, setIsOpen }: PersonFilterButtonP
 
   return (
     <div className="panel person-panel">
-      <button className="close" onClick={() => setIsOpen(false)}>x</button>
+      <button onClick={() => setIsOpen(false)} className={styles.close} aria-label="Sulje valmistelija ja arvioija rajain" />
       <RoleContainer roleName="Valmistelija" roleField="presenter" roles={presenters} controller={controller} hakemusFilter={hakemusFilter}/>
       <RoleContainer roleName="Arvioija" roleField="evaluator" roles={roles} controller={controller} hakemusFilter={hakemusFilter}/>
     </div>

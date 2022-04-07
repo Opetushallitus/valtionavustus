@@ -80,7 +80,7 @@ väliselvitysTest('Lähetä väliselvityspyynnöt notifications are send after p
     await hakujenHallintaPage.resolveAvustushaku()
 
     await hakemustenArviointiPage.navigate(avustushakuID)
-    await hakemustenArviointiPage.selectValmistelijaForHakemus(avustushakuID, hakemusID, ukotettuValmistelija)
+    await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
 
     await hakujenHallintaPage.navigateToPaatos(avustushakuID)
     await hakujenHallintaPage.sendPaatos(avustushakuID)

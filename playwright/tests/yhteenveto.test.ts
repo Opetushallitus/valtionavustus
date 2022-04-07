@@ -56,8 +56,8 @@ const test = muutoshakemusTest.extend<{yhteenveto: {hakemusIds: number[], userKe
     await hakujenHallintaPage.resolveAvustushaku()
 
     await hakemustenArviointiPage.navigate(avustushakuID)
-    await hakemustenArviointiPage.selectValmistelijaForHakemus(avustushakuID, hakemusID1, ukotettuValmistelija)
-    await hakemustenArviointiPage.selectValmistelijaForHakemus(avustushakuID, hakemusID2, ukotettuValmistelija)
+    await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID1, ukotettuValmistelija)
+    await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID2, ukotettuValmistelija)
 
     await use({hakemusIds: [hakemusID1, hakemusID2], userKey})
   }

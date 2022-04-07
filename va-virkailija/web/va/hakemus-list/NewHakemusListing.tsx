@@ -6,6 +6,7 @@ import {
 } from "soresu-form/web/va/types";
 
 import styles from './NewHakemusListing.module.less'
+import buttonStyles from './Button.module.less'
 import {MuutoshakemusStatus} from "soresu-form/web/va/types/muutoshakemus";
 import {
   HakemusSelvitys,
@@ -25,6 +26,7 @@ import {
   PersonSelectPanel
 } from "./PersonSelectButton";
 import HakemustenArviointiController from "../HakemustenArviointiController";
+import classNames from "classnames";
 
 interface Props {
   selectedHakemus: Hakemus | undefined | {}
@@ -540,18 +542,6 @@ const getProject = (hakemus: Hakemus) => {
   )
 }
 
-const RoleButton = ({text, onClick, disabled, empty}: { text: string, onClick: () => void, disabled: boolean, empty?: boolean }) => {
-  const className = empty ? styles.emptyRoleBtn : styles.roleButton
-  return (
-    <button disabled={disabled} className={className} onClick={e => {
-      e.stopPropagation()
-      onClick()
-    }}>
-      {text}
-    </button>
-  )
-}
-
 interface PeopleRoleButton {
   roles: Role[],
   controller: HakemustenArviointiController,
@@ -563,7 +553,8 @@ interface PeopleRoleButton {
 }
 
 const PeopleRoleButton = ({roles, controller, selectedRole, state, toggleSplitView, onSelectHakemus, hakemus}: PeopleRoleButton) => {
-  const onClickCallback = () => {
+  const onClickCallback = (e: React.SyntheticEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     onSelectHakemus(hakemus.id)
     controller.togglePersonSelect(hakemus.id)
     toggleSplitView(true)
@@ -584,8 +575,8 @@ const PeopleRoleButton = ({roles, controller, selectedRole, state, toggleSplitVi
   return (
     <React.Fragment>
       {buttonInitials.length === 0
-        ? <RoleButton disabled={disallowChangeHakemusState}  text="+" onClick={onClickCallback} empty />
-        : <RoleButton disabled={disallowChangeHakemusState} text={buttonInitials} onClick={onClickCallback} />
+        ? <button disabled={disallowChangeHakemusState} className={buttonStyles.greyButton} onClick={onClickCallback}>+</button>
+        : <button disabled={disallowChangeHakemusState} className={buttonStyles.blueButton} onClick={onClickCallback}>{buttonInitials}</button>
       }
       {state.personSelectHakemusId === hakemus.id && <PersonSelectPanel hakemus={hakemus} state={state} controller={controller}  />}
     </React.Fragment>
@@ -608,14 +599,11 @@ const TableLabel: React.FC<TableLabelProps> = ({text, disabled, showDeleteButton
   const [toggled, toggleMenu] = useState(false)
   const onOutsideClick = () => toggleMenu(value => !value)
   const ref = useOutsideClick<HTMLDivElement>(onOutsideClick)
-  const buttonStyle = toggled ? styles.tableLabelBtnOpen : styles.tableLabelBtn
   return (
     <div className={styles.tableLabel}>
-      <button disabled={!!disabled} onClick={() => toggleMenu(state => !state)} className={buttonStyle}>
-        <span>{text}</span>
-      </button>
+      <button disabled={!!disabled} onClick={() => toggleMenu(state => !state)} className={classNames(styles.tableLabelButton, {[buttonStyles.selected]: toggled})}>{text}</button>
       {showDeleteButton && (
-        <button className={styles.deleteBtn} onClick={showDeleteButton.onClick} aria-labelledby={showDeleteButton.ariaLabel} />
+        <button className={buttonStyles.deleteButton} onClick={showDeleteButton.onClick} aria-label={showDeleteButton.ariaLabel} />
       )}
       <PolygonIcon />
       {toggled && (

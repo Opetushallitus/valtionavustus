@@ -1,3 +1,5 @@
+@import "Button.module";
+
 .font {
   font-size: 13px;
   font-weight: 400;
@@ -121,6 +123,12 @@
   align-items: center;
 }
 
+.tableLabelButton {
+  composes: whiteButton;
+  width: 100%;
+  padding: 0;
+}
+
 .tableLabelPopup {
   position: absolute;
   top: 35px;
@@ -155,71 +163,8 @@
   }
 }
 
-.btn {
-  composes: font;
-  font-size: 13px;
-  padding: 0;
-  border: 1px solid transparent;
-  border-radius: 2px;
-  &:focus {
-    outline: none;
-  }
-  &:hover:not(:disabled) {
-    background-color: #EBF7FD !important;
-  }
-  &:active:not(:disabled) {
-    background-color: darken(#EBF7FD, 10%) !important;
-  }
-}
-
-
-.tableLabelBtn {
-  composes: btn;
-  background-color: transparent;
-  color: #499CC7;
-  width: 100%;
-  &:hover {
-    border: 1px solid #499CC7;
-  }
-  &:disabled {
-    border: none;
-    background: unset;
-    color: black;
-  }
-}
-
-.tableLabelBtnOpen {
-  composes: tableLabelBtn;
-  border: 1px solid #499CC7;
-  background-color: #EBF7FD;
-}
-
 .polygon {
   height: 8px;
   width: auto;
   margin-left: 8px;
-}
-
-.deleteBtn {
-  composes: btn;
-  background: transparent url('../img/x-button.svg') no-repeat center;
-  background-size: 14px 14px;
-  border-width: 0;
-  margin: 0;
-  height: 22px;
-}
-
-.roleButton {
-  composes: btn;
-  background-color: #F7FCFF;
-  border: 1px solid #499CC7;
-  width: fit-content;
-  padding: 0 8px;
-  color: #1A1919;
-}
-
-.emptyRoleBtn {
-  composes: roleButton;
-  border: 1px solid #C1C1C1;
-  background-color: #fafafa;
 }

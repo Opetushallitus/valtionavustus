@@ -1,4 +1,4 @@
-import {ElementHandle, expect, Locator, Page} from "@playwright/test";
+import {expect, Locator, Page} from "@playwright/test";
 
 import { navigate } from "../utils/navigate";
 import {
@@ -78,17 +78,7 @@ export class HakemustenArviointiPage {
   }
 
   async closeUkotusModal() {
-    await this.page.click('[data-test-id=close-person-select-panel]')
-  }
-
-  async prepareSelectingValmistelijaForHakemus(hakemusID: number, valmistelijaName: string) {
-    await this.openUkotusModal(hakemusID)
-    const selector = `table.hakemus-list tr.selected button:has-text("${valmistelijaName}")`
-    const valmistelijaButton = await this.page.waitForSelector(selector)
-    if (!valmistelijaButton) {
-      throw new Error(`Valmistelija button not found with selector: ${selector}`)
-    }
-    return valmistelijaButton
+    await this.page.click('[aria-label="Sulje valmistelija ja arvioija valitsin"]')
   }
 
   async openHakemusEditPage(reason: string = 'Kunhan editoin'): Promise<HakijaAvustusHakuPage> {
@@ -115,26 +105,17 @@ export class HakemustenArviointiPage {
     )
   }
 
-  async selectValmistelijaForHakemus(avustushakuID: number, hakemusID: number, valmistelijaName: string) {
-    const valmistelijaButton = await this.prepareSelectingValmistelijaForHakemus(hakemusID, valmistelijaName)
-    const valmistelijaButtonClass = await (await valmistelijaButton.getProperty('className'))?.jsonValue()
-
-    if (!valmistelijaButtonClass.includes('selected')) {
-      await Promise.all([
-        this.waitForArvioSave(avustushakuID, hakemusID),
-        (valmistelijaButton as ElementHandle).click(),
-      ])
-    }
+  async selectValmistelijaForHakemus(hakemusID: number, valmistelijaName: string) {
+    await this.openUkotusModal(hakemusID)
+    await this.page.click(`[aria-label="Lisää ${valmistelijaName} valmistelijaksi"]`)
+    await this.page.locator(`[aria-label="Poista ${valmistelijaName} valmistelijan roolista"]`).waitFor()
     await this.closeUkotusModal()
   }
 
-  async toggleArvioijaForHakemus(avustushakuID: number, hakemusID: number, valmistelijaName: string) {
+  async selectArvioijaForHakemus(hakemusID: number, valmistelijaName: string) {
     await this.openUkotusModal(hakemusID)
-    const arvioijaButton = await this.page.waitForSelector(`[data-test-id="evaluators-${valmistelijaName.replace(" ", "-")}"]`)
-    await Promise.all([
-      this.waitForArvioSave(avustushakuID, hakemusID),
-      (arvioijaButton as ElementHandle).click(),
-    ])
+    await this.page.click(`[aria-label="Lisää ${valmistelijaName} arvioijaksi"]`)
+    await this.page.locator(`[aria-label="Poista ${valmistelijaName} arvioijan roolista"]`).waitFor()
     await this.closeUkotusModal()
   }
 

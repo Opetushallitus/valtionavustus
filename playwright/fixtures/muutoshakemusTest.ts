@@ -79,7 +79,7 @@ export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
 
     await test.step('Add valmistelija for hakemus', async () => {
       await hakemustenArviointiPage.navigate(avustushakuID)
-      await hakemustenArviointiPage.selectValmistelijaForHakemus(avustushakuID, hakemusID, ukotettuValmistelija)
+      await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
     })
 
     await test.step('Send päätökset', async () => {

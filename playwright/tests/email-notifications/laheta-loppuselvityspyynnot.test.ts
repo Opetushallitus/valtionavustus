@@ -140,7 +140,7 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
         await hakujenHallintaPage.resolveAvustushaku()
 
         await hakemustenArviointiPage.navigate(avustushakuID)
-        await hakemustenArviointiPage.selectValmistelijaForHakemus(avustushakuID, hakemusID, ukotettuValmistelija)
+        await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
 
         await hakujenHallintaPage.navigateToPaatos(avustushakuID)
 
