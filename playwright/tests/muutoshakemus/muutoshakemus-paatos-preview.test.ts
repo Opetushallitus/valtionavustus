@@ -39,62 +39,52 @@ const test = muutoshakemusTest.extend<{hakemustenArviointiPage: HakemustenArvioi
 
 test.setTimeout(180000)
 
-test.describe.parallel('muutoshakemus päätös preview', async () => {
-  test('has correct basic information', async ({hakemustenArviointiPage}) => {
-    await hakemustenArviointiPage.openPaatosPreview()
-    expect(await hakemustenArviointiPage.paatosPreviewMuutoshakemusPaatosTitle()).toBe('Päätös')
-    const register = await hakemustenArviointiPage.paatosPreviewRegisterNumber()
-    expect(register).toMatch(/[0-9]{1,3}\/[0-9]{1,5}\/[0-9]{2,6}/)
-    const project = await hakemustenArviointiPage.paatosPreviewProjectName()
-    expect(project).toEqual('Rahassa kylpijät Ky Ay Oy')
-    const org = await hakemustenArviointiPage.paatosPreviewOrg()
-    expect(org).toEqual('Akaan kaupunki')
-    const decider = await hakemustenArviointiPage.paatosPreviewHyvaksyja()
-    expect(decider).toEqual('_ valtionavustus')
-    const info = await hakemustenArviointiPage.paatosPreviewLisatietoja()
-    expect(info).toEqual('_ valtionavustussanteri.horttanainen@reaktor.com029 533 1000 (vaihde)')
+test('muutoshakemus päätös preview', async ({hakemustenArviointiPage}) => {
+  const preview = hakemustenArviointiPage.paatosPreview()
+  await test.step('has correct basic information', async () => {
+    await preview.open()
+    await expect(preview.muutoshakemusPaatosTitle).toHaveText('Päätös')
+    await expect(preview.projectName).toHaveText('Rahassa kylpijät Ky Ay Oy')
+    expect(await preview.registerNumber.textContent()).toMatch(/[0-9]{1,3}\/[0-9]{1,5}\/[0-9]{2,6}/)
+    await expect(preview.org).toHaveText('Akaan kaupunki')
+    await expect(preview.hyvaksyja).toHaveText('_ valtionavustus')
+    await expect(preview.lisatietoja).toHaveText('_ valtionavustussanteri.horttanainen@reaktor.com029 533 1000 (vaihde)')
+    await preview.close()
   })
 
-  test('accepted', async ({hakemustenArviointiPage}) => {
+  await test.step('accepted', async () => {
     const decision = 'Hyväksytään haetut muutokset sisältöön ja toteutustapaan'
     await hakemustenArviointiPage.setMuutoshakemusSisaltoDecision('accepted')
     await hakemustenArviointiPage.writePerustelu(decision)
-    await hakemustenArviointiPage.openPaatosPreview()
-    const acceptedPaatos = await hakemustenArviointiPage.paatosPreviewJatkoaikaPaatos()
-    expect(acceptedPaatos).toEqual('Hyväksytään haetut muutokset käyttöaikaan')
-    const paatos = await hakemustenArviointiPage.paatosPreviewSisaltoPaatos()
-    expect(paatos).toEqual('Hyväksytään haetut muutokset sisältöön ja toteutustapaan')
-    const perustelu = await hakemustenArviointiPage.paatosPreviewPerustelu()
-    expect(perustelu).toEqual(decision)
+    await preview.open()
+    await expect(preview.jatkoaikaPaatos).toHaveText('Hyväksytään haetut muutokset käyttöaikaan')
+    await expect(preview.sisaltoPaatos).toHaveText('Hyväksytään haetut muutokset sisältöön ja toteutustapaan')
+    await expect(preview.perustelu).toHaveText(decision)
+    await preview.close()
   })
 
-  test('rejected', async ({hakemustenArviointiPage}) => {
+  await test.step('rejected', async () => {
     await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision('rejected')
     await hakemustenArviointiPage.setMuutoshakemusSisaltoDecision('rejected')
     await hakemustenArviointiPage.selectVakioperusteluInFinnish()
-    await hakemustenArviointiPage.openPaatosPreview()
-    const acceptedPaatos = await hakemustenArviointiPage.paatosPreviewJatkoaikaPaatos()
-    expect(acceptedPaatos).toEqual('Hylätään haetut muutokset käyttöaikaan')
-    const paatos = await hakemustenArviointiPage.paatosPreviewSisaltoPaatos()
-    expect(paatos).toEqual('Hylätään haetut muutokset sisältöön ja toteutustapaan')
-    const perustelu = await hakemustenArviointiPage.paatosPreviewPerustelu()
-    expect(perustelu).toEqual('Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.')
+    await preview.open()
+    await expect(preview.jatkoaikaPaatos).toHaveText('Hylätään haetut muutokset käyttöaikaan')
+    await expect(preview.sisaltoPaatos).toHaveText('Hylätään haetut muutokset sisältöön ja toteutustapaan')
+    await expect(preview.perustelu).toHaveText('Opetushallitus on arvioinut hakemuksen. Opetushallitus on asiantuntija-arvioinnin perusteella ja asiaa harkittuaan päättänyt olla hyväksymättä haettuja muutoksia.')
+    await preview.close()
   })
 
-  test('accepted with changes', async ({hakemustenArviointiPage}) => {
+  await test.step('accepted with changes', async () => {
     await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision('accepted_with_changes', '20.04.2400')
     const decision = 'Hyväksytään haetut muutokset sisältöön ja toteutustapaan muutettuna'
     await hakemustenArviointiPage.setMuutoshakemusSisaltoDecision('accepted_with_changes')
     await hakemustenArviointiPage.writePerustelu(decision)
-    await hakemustenArviointiPage.openPaatosPreview()
-    const acceptedPaatos = await hakemustenArviointiPage.paatosPreviewJatkoaikaPaatos()
-    expect(acceptedPaatos).toEqual('Hyväksytään haetut muutokset käyttöaikaan muutettuna')
-    const acceptedDate = await hakemustenArviointiPage.paatosPreviewJatkoaikaValue()
-    expect(acceptedDate).toBe('20.4.2400')
-    const paatos = await hakemustenArviointiPage.paatosPreviewSisaltoPaatos()
-    expect(paatos).toEqual('Hyväksytään haetut muutokset sisältöön ja toteutustapaan muutettuna')
-    const perustelu = await hakemustenArviointiPage.paatosPreviewPerustelu()
-    expect(perustelu).toEqual(decision)
+    await preview.open()
+    await expect(preview.jatkoaikaPaatos).toHaveText('Hyväksytään haetut muutokset käyttöaikaan muutettuna')
+    await expect(preview.jatkoaikaValue).toHaveText('20.4.2400')
+    await expect(preview.sisaltoPaatos).toHaveText('Hyväksytään haetut muutokset sisältöön ja toteutustapaan muutettuna')
+    await expect(preview.perustelu).toHaveText(decision)
+    await preview.close()
   })
 
 })
@@ -117,9 +107,7 @@ const bTest = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixtures & {
   }
 })
 
-bTest.setTimeout(180000)
-
-bTest.describe.parallel('budjettimuutoshakemus päätös preview', async () => {
+bTest('budjettimuutoshakemus päätös preview', async ({hakemustenArviointiPage}) => {
 
   const budget: BudgetAmount = {
     personnel: '200000',
@@ -131,9 +119,7 @@ bTest.describe.parallel('budjettimuutoshakemus päätös preview', async () => {
     other: '10000000',
   }
 
-  bTest('accepted with changes', async ({hakemustenArviointiPage}) => {
-    await hakemustenArviointiPage.setMuutoshakemusBudgetDecision('accepted_with_changes', budget)
-    await hakemustenArviointiPage.openPaatosPreview()
+  const assertCorrectExistingBudget = async () => {
     const expectedExistingBudget = [
       { description: 'Henkilöstömenot', amount: '200000 €' },
       { description: 'Aineet, tarvikkeet ja tavarat', amount: '3000 €' },
@@ -143,8 +129,16 @@ bTest.describe.parallel('budjettimuutoshakemus päätös preview', async () => {
       { description: 'Matkamenot', amount: '100 €' },
       { description: 'Muut menot', amount: '10000000 €' }
     ]
-    const currentValues = await hakemustenArviointiPage.existingBudgetTableCells('.muutoshakemus-paatos__content [data-test-id="meno-input-row"]')
+    const currentValues = await preview.existingBudgetTableCells()
     expect(sortedFormTable(currentValues)).toEqual(sortedFormTable(expectedExistingBudget))
+  }
+
+  const preview = hakemustenArviointiPage.paatosPreview()
+
+  await test.step('accepted with changes', async () => {
+    await hakemustenArviointiPage.setMuutoshakemusBudgetDecision('accepted_with_changes', budget)
+    await preview.open()
+    await assertCorrectExistingBudget()
     const expectedChangedBudget = [
       { description: 'Henkilöstömenot', amount: '200000 €' },
       { description: 'Aineet, tarvikkeet ja tavarat', amount: '3001 €' },
@@ -154,25 +148,16 @@ bTest.describe.parallel('budjettimuutoshakemus päätös preview', async () => {
       { description: 'Matkamenot', amount: '100 €' },
       { description: 'Muut menot', amount: '10000000 €' }
     ]
-    expect(sortedFormTable(await hakemustenArviointiPage.changedBudgetTableCells('.muutoshakemus-paatos__content [data-test-id="meno-input-row"]'))).toEqual(sortedFormTable(expectedChangedBudget))
-    const paatos = await hakemustenArviointiPage.paatosPreviewTalousarvioPaatos()
-    expect(paatos).toEqual('Hyväksytään haetut muutokset budjettiin muutettuna')
+    const changedCells = await preview.changedBudgetTableCells()
+    expect(sortedFormTable(changedCells)).toEqual(sortedFormTable(expectedChangedBudget))
+    await expect(preview.talousarvioPaatos).toHaveText('Hyväksytään haetut muutokset budjettiin muutettuna')
+    await preview.close()
   })
 
-  bTest('accepted', async ({hakemustenArviointiPage}) => {
+  await test.step('accepted', async () => {
     await hakemustenArviointiPage.setMuutoshakemusBudgetDecision('accepted')
-    await hakemustenArviointiPage.openPaatosPreview()
-    const expectedExistingBudget = [
-      { description: 'Henkilöstömenot', amount: '200000 €' },
-      { description: 'Aineet, tarvikkeet ja tavarat', amount: '3000 €' },
-      { description: 'Laitehankinnat', amount: '10000 €' },
-      { description: 'Palvelut', amount: '100 €' },
-      { description: 'Vuokrat', amount: '161616 €' },
-      { description: 'Matkamenot', amount: '100 €' },
-      { description: 'Muut menot', amount: '10000000 €' }
-    ]
-    const currentValues = await hakemustenArviointiPage.existingBudgetTableCells('.muutoshakemus-paatos__content [data-test-id="meno-input-row"]')
-    expect(sortedFormTable(currentValues)).toEqual(sortedFormTable(expectedExistingBudget))
+    await preview.open()
+    await assertCorrectExistingBudget()
     const expectedChangedBudget = [
       { description: 'Henkilöstömenot', amount: '200100 €' },
       { description: 'Aineet, tarvikkeet ja tavarat', amount: '4001 €' },
@@ -182,16 +167,16 @@ bTest.describe.parallel('budjettimuutoshakemus päätös preview', async () => {
       { description: 'Matkamenot', amount: '0 €' },
       { description: 'Muut menot', amount: '10000000 €' }
     ]
-    expect(sortedFormTable(await hakemustenArviointiPage.changedBudgetTableCells('.muutoshakemus-paatos__content [data-test-id="meno-input-row"]'))).toEqual(sortedFormTable(expectedChangedBudget))
-    const paatos = await hakemustenArviointiPage.paatosPreviewTalousarvioPaatos()
-    expect(paatos).toEqual('Hyväksytään haetut muutokset budjettiin')
+    const changedCells = await preview.changedBudgetTableCells()
+    expect(sortedFormTable(changedCells)).toEqual(sortedFormTable(expectedChangedBudget))
+    await expect(preview.talousarvioPaatos).toHaveText('Hyväksytään haetut muutokset budjettiin')
+    await preview.close()
   })
 
-  bTest('rejected', async ({hakemustenArviointiPage}) => {
+  await test.step('rejected', async () => {
     await hakemustenArviointiPage.setMuutoshakemusBudgetDecision('rejected')
-    await hakemustenArviointiPage.openPaatosPreview()
-    const paatos = await hakemustenArviointiPage.paatosPreviewTalousarvioPaatos()
-    expect(paatos).toEqual('Hylätään haetut muutokset budjettiin')
+    await preview.open()
+    await expect(preview.talousarvioPaatos).toHaveText('Hylätään haetut muutokset budjettiin')
   })
 })
 
@@ -209,23 +194,20 @@ const svTest = muutoshakemusTest.extend<{hakemustenArviointiPage: HakemustenArvi
     await hakijaMuutoshakemusPage.sendMuutoshakemus(true, true)
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigateToLatestMuutoshakemus(avustushakuID, hakemusID)
-    await hakemustenArviointiPage.openPaatosPreview()
+    await hakemustenArviointiPage.paatosPreview().open()
     await use(hakemustenArviointiPage)
   }
 })
 
 svTest('muutoshakemus in swedish päätös preview', async ({hakemustenArviointiPage}) => {
-
+  const preview = hakemustenArviointiPage.paatosPreview()
   await test.step('modal title is still in finnish', async () => {
-    expect(await hakemustenArviointiPage.paatosPreviewTitle())
-      .toBe('ESIKATSELU')
+    await expect(preview.title).toHaveText('ESIKATSELU')
   })
 
   await test.step('päätös preview content is in swedish', async () => {
-    expect(await hakemustenArviointiPage.paatosPreviewMuutoshakemusPaatosTitle())
-      .toBe('Beslut')
-    expect(await hakemustenArviointiPage.paatosPreviewJatkoaikaPaatos())
-      .toBe('De ändringar som ni ansökt om gällande understödets användningstid godkänns')
+    await expect(preview.muutoshakemusPaatosTitle).toHaveText('Beslut')
+    await expect(preview.jatkoaikaPaatos).toHaveText('De ändringar som ni ansökt om gällande understödets användningstid godkänns')
   })
 
 })

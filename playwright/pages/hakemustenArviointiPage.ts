@@ -236,74 +236,37 @@ export class HakemustenArviointiPage {
     return this.page.innerText('.muutoshakemus-notice')
   }
 
-  async getPaatosPerustelut() {
-    return this.page.innerText('[data-test-id="muutoshakemus-form-paatos-reason"]')
-  }
-
-  async openPaatosPreview() {
-    await Promise.all([
-      clickElementWithText(this.page, 'a', 'Esikatsele päätösdokumentti'),
-      this.page.waitForSelector('.muutoshakemus-paatos__content')
-    ])
-  }
-
-  async paatosPreviewTitle() {
-    return await this.page.textContent('.hakemus-details-modal__title-row > span')
-  }
-
-  async paatosPreviewMuutoshakemusPaatosTitle() {
-    return await this.page.textContent('[data-test-id=muutoshakemus-paatos-title]')
-  }
-
-  async paatosPreviewJatkoaikaPaatos() {
-    return await this.page.textContent('[data-test-id="paatos-jatkoaika"]')
-  }
-
-  async paatosPreviewSisaltoPaatos() {
-    return await this.page.textContent('[data-test-id="paatos-sisaltomuutos"]')
-  }
-
-  async paatosPreviewTalousarvioPaatos() {
-    return await this.page.textContent('[data-test-id="paatos-talousarvio"]')
-  }
-
-  async paatosPreviewJatkoaikaValue() {
-    return await this.page.textContent('[data-test-id="paattymispaiva-value"]')
-  }
-
-  async paatosPreviewEsittelija() {
-    return await this.page.textContent('[data-test-id="paatos-esittelija"]')
-  }
-
-  async paatosPreviewLisatietoja() {
-    return await this.page.textContent('[data-test-id="paatos-additional-info"]')
-  }
-
-  async paatosPreviewHyvaksyja() {
-    return await this.page.textContent('[data-test-id="paatos-decider"]')
-  }
-
-  async closePaatosPreview() {
-    await Promise.all([
-      clickElementWithText(this.page, 'button', 'Sulje'),
-      this.page.waitForSelector('.muutoshakemus-paatos__content', { state: 'detached' })
-    ])
-  }
-
-  async paatosPreviewRegisterNumber() {
-    return await this.page.textContent('[data-test-id="paatos-register-number"]')
-  }
-
-  async paatosPreviewProjectName() {
-    return await this.page.textContent('[data-test-id="paatos-project-name"]')
-  }
-
-  async paatosPreviewOrg() {
-    return await this.page.textContent('h1.muutoshakemus-paatos__org')
-  }
-
-  async paatosPreviewPerustelu() {
-    return await this.page.textContent('[data-test-id="paatos-reason"]')
+  paatosPreview() {
+    return {
+      perustelut: this.page.locator('[data-test-id="muutoshakemus-form-paatos-reason"]'),
+      open: async () => {
+        await Promise.all([
+          this.page.click('text=Esikatsele päätösdokumentti'),
+          this.page.waitForSelector('.muutoshakemus-paatos__content')
+        ])
+      },
+      close: async () => {
+        await Promise.all([
+          this.page.waitForSelector('.muutoshakemus-paatos__content', { state: 'detached' }),
+          this.page.click('text=Sulje')
+        ])
+      },
+      title: this.page.locator('.hakemus-details-modal__title-row > span'),
+      muutoshakemusPaatosTitle: this.page.locator('[data-test-id=muutoshakemus-paatos-title]'),
+      jatkoaikaPaatos: this.page.locator('[data-test-id="paatos-jatkoaika"]'),
+      jatkoaikaValue: this.page.locator('[data-test-id="paattymispaiva-value"]'),
+      sisaltoPaatos: this.page.locator('[data-test-id="paatos-sisaltomuutos"]'),
+      talousarvioPaatos:  this.page.locator('[data-test-id="paatos-talousarvio"]'),
+      esittelija: this.page.locator('[data-test-id="paatos-esittelija"]'),
+      lisatietoja: this.page.locator('[data-test-id="paatos-additional-info"]'),
+      hyvaksyja: this.page.locator('[data-test-id="paatos-decider"]'),
+      registerNumber: this.page.locator('[data-test-id="paatos-register-number"]'),
+      projectName: this.page.locator('[data-test-id="paatos-project-name"]'),
+      org: this.page.locator('h1.muutoshakemus-paatos__org'),
+      perustelu: this.page.locator('[data-test-id="paatos-reason"]'),
+      existingBudgetTableCells: () => getExistingBudgetTableCells(this.page, '.muutoshakemus-paatos__content [data-test-id="meno-input-row"]'),
+      changedBudgetTableCells: () => getChangedBudgetTableCells(this.page, '.muutoshakemus-paatos__content [data-test-id="meno-input-row"]')
+    }
   }
 
   async setMuutoshakemusJatkoaikaDecision(status: PaatosStatus, value?: string) {
@@ -345,14 +308,6 @@ export class HakemustenArviointiPage {
     await this.page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
     const statusText = await this.page.textContent('[data-test-id="paatos-status-text"]')
     expect(statusText).toEqual('Käsitelty')
-  }
-
-  async existingBudgetTableCells(selector?: string) {
-    return await getExistingBudgetTableCells(this.page, selector)
-  }
-
-  async changedBudgetTableCells(selector?: string) {
-    return await getChangedBudgetTableCells(this.page, selector)
   }
 
   async getAcceptedBudgetInputAmounts(): Promise<{ name: string; value: string }[]> {
