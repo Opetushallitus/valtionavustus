@@ -1,13 +1,23 @@
 import { expect, test } from '@playwright/test';
 
-import { hakemusSentTest } from '../fixtures/hakemusSentTest'
+import { muutoshakemusTest } from '../fixtures/muutoshakemusTest';
 import { HakemustenArviointiPage } from '../pages/hakemustenArviointiPage'
 import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
 
 test.setTimeout(180000)
 
-hakemusSentTest('Valmistelijan as an arvostelija', async ({ page, avustushakuID, hakemusUserKey }) => {
-  expect(hakemusUserKey).toBeDefined()
+muutoshakemusTest.use({
+  hakuProps: ({hakuProps}, use) => use({
+    ...hakuProps,
+    selectionCriteria: [
+      'Onko hyvin tehty?',
+      'Onko mittää järkee?',
+    ],
+  })
+})
+
+muutoshakemusTest('Valmistelijan as an arvostelija', async ({ page, avustushakuID, submittedHakemus }) => {
+  expect(submittedHakemus).toBeDefined()
 
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   const hakujenHallintaPage = new HakujenHallintaPage(page)
@@ -42,12 +52,11 @@ hakemusSentTest('Valmistelijan as an arvostelija', async ({ page, avustushakuID,
 
     await page.click('label[for="useDetailedCosts-true"]')
     await page.fill('[id="budget-edit-personnel-costs-row.amount"]', '100000')
-    await page.fill('[id="budget-edit-material-costs-row.amount"]', '2000')
 
     await page.click('label[for="set-arvio-status-accepted"]')
 
     await page.reload()
     await expect(page.locator('td.status-column')).toContainText('Hyväksytty')
-    await expect(page.locator('td.granted-sum-column span.money')).toContainText('10 273 815')
+    await expect(page.locator('td.granted-sum-column span.money')).toContainText('99 999')
   })
 })
