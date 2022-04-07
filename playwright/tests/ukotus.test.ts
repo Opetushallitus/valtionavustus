@@ -16,7 +16,7 @@ muutoshakemusTest.use({
   })
 })
 
-muutoshakemusTest('Valmistelijan as an arvostelija', async ({ page, avustushakuID, submittedHakemus }) => {
+muutoshakemusTest('Valmistelija as an arvostelija', async ({ page, avustushakuID, submittedHakemus }) => {
   expect(submittedHakemus).toBeDefined()
 
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
@@ -46,7 +46,7 @@ muutoshakemusTest('Valmistelijan as an arvostelija', async ({ page, avustushakuI
     expect(hakemusScore).toEqual('4')
   })
 
-  await test.step('can still do thigs a valmistelija can do', async () => {
+  await test.step('can still do things a valmistelija can do', async () => {
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
     await expect(page.locator('[data-test-id="virkailija-edit-hakemus"]')).toBeEnabled()
     await expect(page.locator('[data-test-id="request-change-button"]')).toBeEnabled()
