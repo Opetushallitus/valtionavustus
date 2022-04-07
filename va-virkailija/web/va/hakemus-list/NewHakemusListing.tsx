@@ -27,6 +27,10 @@ import {
 } from "./PersonSelectButton";
 import HakemustenArviointiController from "../HakemustenArviointiController";
 import classNames from "classnames";
+import {
+  ControlledSelectPanel,
+  RoleField
+} from "./PersonFilterButton";
 
 interface Props {
   selectedHakemus: Hakemus | undefined | {}
@@ -54,6 +58,8 @@ interface FilterState {
   },
   organization: string
   projectNameOrCode: string
+  presenter?: number
+  evaluator?: number
 }
 
 type FilterKeys = keyof FilterState["status"]
@@ -67,6 +73,8 @@ type StatusFilterAction<Filter extends FilterKeys> =
 type Action =
   | {type: 'set-organization-name-filter', value: string}
   | {type: 'set-project-name-filter', value: string}
+  | {type: 'set-evaluator-filter', id?: number}
+  | {type: 'set-presenter-filter', id?: number}
   | StatusFilterAction<'hakemus'>
   | StatusFilterAction<'valiselvitys'>
   | StatusFilterAction<'loppuselvitys'>
@@ -86,12 +94,20 @@ const filteredHakemusList = (state: FilterState, list: Hakemus[]): Hakemus[] => 
     const loppuselvitysStatusOk = state.status.loppuselvitys.length > 0 && hakemus["status-loppuselvitys"]
       ? state.status.loppuselvitys.includes(hakemus["status-loppuselvitys"])
       : true
+    const evaluatorOk = state.evaluator !== undefined
+      ? isEvaluator(hakemus, {id: state.evaluator})
+      : true
+    const presenterOk = state.presenter !== undefined
+      ? isPresenter(hakemus, {id: state.presenter})
+      : true
     return organizationNameOk
       && projectNameOrRegisternumberOk
       && hakemusStatusOK
       && muutoshakemusStatusOk
       && valiselvitysStatusOk
       && loppuselvitysStatusOk
+      && evaluatorOk
+      && presenterOk
   })
 }
 
@@ -139,6 +155,12 @@ const reducer = (state: FilterState, action: Action): FilterState => {
         }
       }
     }
+    case "set-evaluator-filter": {
+      return {...state, evaluator: action.id }
+    }
+    case "set-presenter-filter": {
+      return { ...state, presenter: action.id }
+    }
     default:
       throw Error('unknown action')
   }
@@ -150,6 +172,8 @@ const getDefaultState = (): FilterState => ({
   },
   projectNameOrCode: '',
   organization: '',
+  presenter: undefined,
+  evaluator: undefined
 })
 
 export default function NewHakemusListing(props: Props) {
@@ -295,8 +319,34 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
           <TableLabel text="Haettu" disabled />
         </th>
         <th><TableLabel text="Myönnetty" disabled /></th>
-        <th><TableLabel text="Valmistelija" disabled /></th>
-        <th><TableLabel text="Arvioija" disabled /> </th>
+        <th>
+          <PersonTableLabel
+            text="Valmistelija"
+            roleField="presenter"
+            roles={roles}
+            onClickRole={id => dispatch({type: 'set-presenter-filter', id})}
+            activeId={filterState.presenter}
+            showDeleteButton={filterState.presenter !== undefined
+              ? {
+                onClick: () => dispatch({type: 'set-presenter-filter', id: undefined}),
+                ariaLabel: 'Piilota valmistelija rajaus valitsin'
+              } : undefined}
+          />
+        </th>
+        <th>
+          <PersonTableLabel
+            text="Arvioijat"
+            roleField="evaluator"
+            roles={roles}
+            onClickRole={id => dispatch({type: 'set-evaluator-filter', id})}
+            activeId={filterState.evaluator}
+            showDeleteButton={filterState.evaluator !== undefined
+              ? {
+                onClick: () => dispatch({type: 'set-evaluator-filter', id: undefined}),
+                ariaLabel: 'Piilota arvioija rajaus valitsin'
+              } : undefined}
+          />
+        </th>
       </tr>
       </thead>
       <tbody>
@@ -483,8 +533,34 @@ function ResolvedTable(props: ResolvedTableProps) {
               />
           </th>
           <th><TableLabel text="Myönnetty" disabled /></th>
-          <th><TableLabel text="Valmistelija" disabled /></th>
-          <th><TableLabel text="Arvioija" disabled /> </th>
+          <th>
+            <PersonTableLabel
+              text="Valmistelija"
+              roleField="presenter"
+              roles={roles}
+              onClickRole={id => dispatch({type: 'set-presenter-filter', id})}
+              activeId={filterState.presenter}
+              showDeleteButton={filterState.presenter !== undefined
+                ? {
+                  onClick: () => dispatch({type: 'set-presenter-filter', id: undefined}),
+                  ariaLabel: 'Piilota valmistelija rajaus valitsin'
+                } : undefined}
+            />
+          </th>
+          <th>
+            <PersonTableLabel
+              text="Arvioijat"
+              roleField="evaluator"
+              roles={roles}
+              onClickRole={id => dispatch({type: 'set-evaluator-filter', id})}
+              activeId={filterState.evaluator}
+              showDeleteButton={filterState.evaluator !== undefined
+                ? {
+                  onClick: () => dispatch({type: 'set-evaluator-filter', id: undefined}),
+                  ariaLabel: 'Piilota arvioija rajaus valitsin'
+                } : undefined}
+            />
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -609,6 +685,34 @@ const TableLabel: React.FC<TableLabelProps> = ({text, disabled, showDeleteButton
       {toggled && (
         <div className={styles.tableLabelPopup} ref={ref} >
           {children}
+        </div>
+      )}
+    </div>
+  )
+}
+
+interface PersonTableLabel extends TableLabelProps {
+  roles: Role[]
+  onClickRole: (id: number) => void
+  roleField: RoleField
+  activeId?: number
+}
+
+const PersonTableLabel: React.FC<PersonTableLabel> = ({text, disabled, showDeleteButton, roleField, roles, onClickRole, activeId} ) => {
+  const [toggled, toggleMenu] = useState(false)
+  const onOutsideClick = () => toggleMenu(value => !value)
+  const ref = useOutsideClick<HTMLDivElement>(onOutsideClick)
+
+  return (
+    <div className={styles.tableLabel}>
+      <button disabled={!!disabled} onClick={() => toggleMenu(state => !state)} className={classNames(styles.tableLabelButton, {[buttonStyles.selected]: toggled})}>{text}</button>
+      {showDeleteButton && (
+        <button className={buttonStyles.deleteButton} onClick={showDeleteButton.onClick} aria-label={showDeleteButton.ariaLabel} />
+      )}
+      <PolygonIcon />
+      {toggled && (
+        <div className={styles.tableLabelPopup} ref={ref} >
+          <ControlledSelectPanel roles={roles} onClickClose={onOutsideClick} onClickRole={onClickRole} roleField={roleField} activeId={activeId} />
         </div>
       )}
     </div>

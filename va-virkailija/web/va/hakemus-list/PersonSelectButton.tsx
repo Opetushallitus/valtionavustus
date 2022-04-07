@@ -9,8 +9,8 @@ import HakemustenArviointiController from '../HakemustenArviointiController'
 import styles from './Person.module.less'
 
 export const isPresenterRole = ({role}: Role): boolean => ["presenting_officer", "vastuuvalmistelija"].includes(role)
-export const isPresenter = (hakemus: Hakemus, {id}: Role) => hakemus.arvio["presenter-role-id"] === id
-export const isEvaluator = (hakemus: Hakemus, {id}: Role) => hakemus.arvio.roles['evaluators'].includes(id)
+export const isPresenter = (hakemus: Hakemus, {id}: { id: number }) => hakemus.arvio["presenter-role-id"] === id
+export const isEvaluator = (hakemus: Hakemus, {id}: { id: number }) => hakemus.arvio.roles['evaluators'].includes(id)
 
 type RoleButtonProps = {
   role: Role

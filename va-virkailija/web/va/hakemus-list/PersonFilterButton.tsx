@@ -6,8 +6,10 @@ import HakemustenArviointiController from '../HakemustenArviointiController'
 
 import styles from './Person.module.less'
 
+export type RoleField = 'evaluator' | 'presenter'
+
 type RoleButtonProps = {
-  roleField: 'evaluator' | 'presenter'
+  roleField: RoleField
   role: Role
   controller: HakemustenArviointiController
   hakemusFilter: HakemusFilter
@@ -59,6 +61,40 @@ const PersonSelectPanel = ({ state, controller, setIsOpen }: PersonFilterButtonP
       <RoleContainer roleName="Valmistelija" roleField="presenter" roles={presenters} controller={controller} hakemusFilter={hakemusFilter}/>
       <RoleContainer roleName="Arvioija" roleField="evaluator" roles={roles} controller={controller} hakemusFilter={hakemusFilter}/>
     </div>
+  )
+}
+
+interface ControlledSelectPanelProps {
+  onClickClose: () => void
+  roles: Role[]
+  roleField: RoleField
+  onClickRole: (id: number) => void
+  activeId?: number
+}
+
+export function ControlledSelectPanel({roleField, roles, onClickClose, onClickRole, activeId}: ControlledSelectPanelProps) {
+  const roleName = {
+    'presenter': 'Valmistelija',
+    'evaluator': 'Arvioija',
+  }
+  const roleFieldRoles = roleField === 'presenter'
+    ? roles.filter(r => ["presenting_officer", "vastuuvalmistelija"].includes(r.role))
+    : roles
+  return (
+    <React.Fragment>
+      <button onClick={onClickClose} className={styles.close} aria-label="Sulje valmistelija ja arvioija rajain" />
+      <div className={styles.roleTitle}>{[roleName[roleField]]}</div>
+      <div className={styles.roleContainer}>
+        {roleFieldRoles.map(role => (
+          <button
+            key={`${roleField}-${role.id}`}
+            onClick={() => onClickRole(role.id)}
+            className={classNames(styles.roleButton, {[styles.selected]: role.id === activeId})}>
+            {role.name}
+          </button>
+        ))}
+      </div>
+    </React.Fragment>
   )
 }
 
