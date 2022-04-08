@@ -395,10 +395,9 @@ export class MultipleChoiceEdit extends FieldEditComponent {
           onChange={createOnChange("fi")} value={labelGetter(field).fi}/>
         <input type="text" placeholder="Vastausvaihtoehto ruotsiksi"
           onChange={createOnChange("sv")} value={labelGetter(field).sv}/>
-        <span
-          onClick={this.removeOption.bind(this, field, option)}
-          className="soresu-edit soresu-field-remove soresu-field-edit-icon"
-        />
+        <button onClick={this.removeOption.bind(this, field, option)} className="soresu-edit soresu-field-remove">
+          Poista
+        </button>
       </div>
     )
   }
