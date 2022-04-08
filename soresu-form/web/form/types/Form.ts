@@ -77,17 +77,17 @@ interface InitialConfiguration {
 }
 
 export interface FormOperations<T> {
-  "chooseInitialLanguage": (urlContent: UrlContent) => Language,
-  "containsExistingEntityId": (urlContent: UrlContent) => boolean,
-  "isFieldEnabled": (saved: T) => boolean,
-  "onFieldUpdate": (state: T, field: any) => void,
-  "isSaveDraftAllowed": (state: T) => boolean,
-  "isNotFirstEdit": (state: T) => boolean,
-  "createUiStateIdentifier": (state: T) => string,
-  "urlCreator": UrlCreator,
-  "responseParser": ResponseParser,
-  "printEntityId": (state: T) => number,
-  "onFieldValid"?: (state: T, field: Field, value: any) => void
+  chooseInitialLanguage: (urlContent: UrlContent) => Language
+  containsExistingEntityId: (urlContent: UrlContent) => boolean
+  isFieldEnabled?: (fieldId: string) => boolean
+  onFieldUpdate: (state: T, field: any) => void
+  isSaveDraftAllowed: (state: T) => boolean
+  isNotFirstEdit: (state: T) => boolean
+  createUiStateIdentifier: (state: T) => string
+  urlCreator: UrlCreator
+  responseParser: ResponseParser
+  printEntityId: (state: T) => number
+  onFieldValid?: (state: T, field: Field, value: any) => void
 }
 
 export interface BaseStateLoopState<T> {

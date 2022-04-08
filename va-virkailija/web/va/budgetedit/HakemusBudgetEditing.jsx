@@ -55,7 +55,7 @@ export default class HakemusBudgetEditing extends React.Component {
     const formOperations = {
       chooseInitialLanguage: () => "fi",
       containsExistingEntityId: undefined,
-      isFieldEnabled: (saved, fieldId) => HakemusBudgetEditing.isEditingAllowed(allowEditing, vaBudget, fieldId),
+      isFieldEnabled: (fieldId) => HakemusBudgetEditing.isEditingAllowed(allowEditing, vaBudget, fieldId),
       onFieldUpdate: undefined,
       isSaveDraftAllowed: () => allowEditing,
       isNotFirstEdit: () => true,

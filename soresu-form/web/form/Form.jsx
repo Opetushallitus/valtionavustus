@@ -50,7 +50,7 @@ export default class Form extends React.Component {
         if (modifyApplication) {
           fieldDisabled =  (isOpened() && !applicantFields.includes(field.id)) || (!isOpened())
         } else {
-        fieldDisabled =  !formOperations.isFieldEnabled(saved, field.id) || field.forceDisabled === true
+          fieldDisabled = (formOperations.isFieldEnabled && !formOperations.isFieldEnabled(field.id)) || field.forceDisabled === true
         }
 
 

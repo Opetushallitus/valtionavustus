@@ -60,7 +60,6 @@ export default class SeurantaBudgetEditing extends React.Component<SeurantaBudge
     const formOperations = {
       chooseInitialLanguage: () => "fi",
       containsExistingEntityId: undefined,
-      isFieldEnabled: () => true,
       onFieldUpdate: undefined,
       isSaveDraftAllowed: () => true,
       isNotFirstEdit: () => true,

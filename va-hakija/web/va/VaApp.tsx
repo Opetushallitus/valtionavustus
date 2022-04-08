@@ -27,10 +27,6 @@ function containsExistingEntityId(urlContent: UrlContent) {
   return query.hakemus && query.hakemus.length > 0
 }
 
-function isFieldEnabled(saved: VaAppStateLoopState) {
-  return !!saved
-}
-
 const responseParser = new ResponseParser({
   getFormAnswers: function(response) { return response.submission.answers }
 })
@@ -120,7 +116,6 @@ function initVaFormController() {
   const formOperations: FormOperations<VaAppStateLoopState> = {
     chooseInitialLanguage: VaUrlCreator.chooseInitialLanguage,
     containsExistingEntityId,
-    isFieldEnabled,
     onFieldUpdate,
     isSaveDraftAllowed,
     isNotFirstEdit,

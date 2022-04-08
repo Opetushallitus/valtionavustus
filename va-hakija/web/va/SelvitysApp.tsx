@@ -37,10 +37,6 @@ function containsExistingEntityId(urlContent: UrlContent): boolean {
   return query[selvitysType] && query[selvitysType].length > 0
 }
 
-function isFieldEnabled(saved: SelvitysAppStateLoopState) {
-  return !!saved
-}
-
 const responseParser = new ResponseParser({
   getFormAnswers: function(response) { return response.submission.answers }
 })
@@ -195,7 +191,6 @@ function initFormController() {
   const formOperations: FormOperations<SelvitysAppStateLoopState> = {
     chooseInitialLanguage: VaUrlCreator.chooseInitialLanguage,
     containsExistingEntityId,
-    isFieldEnabled,
     onFieldUpdate,
     isSaveDraftAllowed,
     isNotFirstEdit,
