@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-import { muutoshakemusTest } from '../fixtures/muutoshakemusTest';
-import { HakemustenArviointiPage } from '../pages/hakemustenArviointiPage'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
+import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest';
+import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
 
 test.setTimeout(180000)
 
