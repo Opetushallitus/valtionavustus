@@ -131,7 +131,7 @@
 
 .tableLabelPopup {
   position: absolute;
-  top: 35px;
+  top: 38px;
   background-color: #fff;
   padding: 8px 16px;
   display: flex;
@@ -151,6 +151,15 @@
     transform-origin: 0 0;
     transform: rotate(135deg);
     box-shadow: -2px 2px 3px 0 rgb(0 0 0 / 10%);
+  }
+}
+
+.tableLabelPopupEvaluator {
+  composes: tableLabelPopup;
+  right: 0;
+  &:after {
+    right: 20px;
+    left: unset;
   }
 }
 

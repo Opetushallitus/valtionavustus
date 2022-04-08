@@ -264,13 +264,13 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
       <colgroup>
         <col style={{width: '216px'}} />
         <col style={{width: '210px'}} />
-        <col style={{width: '136px'}} />
+        <col style={{width: '100px'}} />
         <col style={{width: '136px'}} />
         <col style={{width: '136px'}} />
         <col style={{width: '80px'}} />
         <col style={{width: '80px'}} />
         <col style={{width: '80px'}} />
-        <col style={{width: '59px'}} />
+        <col style={{width: '95px'}} />
       </colgroup>
       <thead>
       <tr>
@@ -339,7 +339,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
         </th>
         <th>
           <PersonTableLabel
-            text="Arvioijat"
+            text="Arvioija"
             roleField="evaluator"
             roles={roles}
             onClickRole={id => dispatch({type: 'set-evaluator-filter', id})}
@@ -553,7 +553,7 @@ function ResolvedTable(props: ResolvedTableProps) {
           </th>
           <th>
             <PersonTableLabel
-              text="Arvioijat"
+              text="Arvioija"
               roleField="evaluator"
               roles={roles}
               onClickRole={id => dispatch({type: 'set-evaluator-filter', id})}
@@ -706,7 +706,9 @@ const PersonTableLabel: React.FC<PersonTableLabel> = ({text, disabled, showDelet
   const [toggled, toggleMenu] = useState(false)
   const onOutsideClick = () => toggleMenu(value => !value)
   const ref = useOutsideClick<HTMLDivElement>(onOutsideClick)
-
+  const popupStyle = roleField === 'evaluator'
+    ? styles.tableLabelPopupEvaluator
+    : styles.tableLabelPopup
   return (
     <div className={styles.tableLabel}>
       <button disabled={!!disabled} onClick={() => toggleMenu(state => !state)} className={classNames(styles.tableLabelButton, {[buttonStyles.selected]: toggled})}>{text}</button>
@@ -715,7 +717,7 @@ const PersonTableLabel: React.FC<PersonTableLabel> = ({text, disabled, showDelet
       )}
       <PolygonIcon />
       {toggled && (
-        <div className={styles.tableLabelPopup} ref={ref} >
+        <div className={popupStyle} ref={ref} >
           <ControlledSelectPanel roles={roles} onClickClose={onOutsideClick} onClickRole={onClickRole} roleField={roleField} activeId={activeId} />
         </div>
       )}
