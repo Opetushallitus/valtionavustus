@@ -5,25 +5,27 @@ import queryString from "query-string"
 
 import HttpUtil from "soresu-form/web/HttpUtil"
 
-import FormController from "soresu-form/web/form/FormController.ts"
+import FormController from "soresu-form/web/form/FormController"
 import {triggerFieldUpdatesForValidation} from "soresu-form/web/form/FieldUpdateHandler"
 import ResponseParser from "soresu-form/web/form/ResponseParser"
+import { SavedObject, StateLoopState, UrlContent } from "soresu-form/web/form/types/Form"
+import { Field } from "soresu-form/web/va/types"
 
-import VaForm from "./VaForm.jsx"
+
+import VaForm from "./VaForm"
 import VaUrlCreator from "./VaUrlCreator"
 import VaComponentFactory from "soresu-form/web/va/VaComponentFactory"
-import VaSyntaxValidator from "soresu-form/web/va/VaSyntaxValidator.ts"
+import VaSyntaxValidator from "soresu-form/web/va/VaSyntaxValidator"
 import VaPreviewComponentFactory from "soresu-form/web/va/VaPreviewComponentFactory"
 import VaBudgetCalculator from "soresu-form/web/va/VaBudgetCalculator"
-
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 
-function containsExistingEntityId(urlContent) {
+function containsExistingEntityId(urlContent: UrlContent) {
   const query = urlContent.parsedQuery
   return query.hakemus && query.hakemus.length > 0
 }
 
-function isFieldEnabled(saved) {
+function isFieldEnabled(saved: StateLoopState) {
   return saved
 }
 
@@ -32,29 +34,35 @@ const responseParser = new ResponseParser({
 })
 
 const urlCreator = new VaUrlCreator()
-const budgetCalculator = new VaBudgetCalculator((descriptionField, state) => {
+const budgetCalculator = new VaBudgetCalculator((descriptionField: Field, state: StateLoopState) => {
   triggerFieldUpdatesForValidation([descriptionField], state)
 })
 
-function onFieldUpdate(state, field) {
+function onFieldUpdate(state: StateLoopState, field: Field) {
   if (field.fieldType === "moneyField" || field.fieldType === "vaSelfFinancingField") {
     budgetCalculator.handleBudgetAmountUpdate(state, field.id)
   }
 }
 
-function isNotFirstEdit(state) {
-  return state.saveStatus.savedObject && state.saveStatus.savedObject.version && (state.saveStatus.savedObject.version > 1)
+function isNotFirstEdit(state: StateLoopState): boolean {
+  return !!state.saveStatus.savedObject && !!state.saveStatus.savedObject.version && (state.saveStatus.savedObject.version > 1)
 }
 
-function isSaveDraftAllowed(state) {
-  return state.saveStatus.hakemusId && state.saveStatus.hakemusId.length > 0
+function isSaveDraftAllowed(state: StateLoopState): boolean {
+  if (!state.saveStatus.hakemusId) return false
+
+  return typeof state.saveStatus.hakemusId === 'string' ?
+    // @ts-expect-error
+    state.saveStatus.hakemusId.length > 0 :
+    state.saveStatus.hakemusId > 0
 }
 
-function createUiStateIdentifier(state) {
+function createUiStateIdentifier(state: StateLoopState) {
+  // @ts-expect-error
   return state.configuration.form.id + "-" + sessionIdentifierForLocalStorageId
 }
 
-function printEntityId(state) {
+function printEntityId(state: StateLoopState) {
   return state.saveStatus.hakemusId
 }
 
@@ -67,7 +75,7 @@ const normalizedHakemusP = Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${av
 const muutoshakemuksetP = Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustusHakuId}/hakemus/${query.hakemus}/muutoshakemus`).catch(e => []))
 
 
-function initialStateTemplateTransformation(template) {
+function initialStateTemplateTransformation(template: any) {
   template.avustushaku = avustusHakuP
   template.normalizedHakemus = normalizedHakemusP
   template.muutoshakemukset = muutoshakemuksetP
@@ -76,17 +84,17 @@ function initialStateTemplateTransformation(template) {
   template.token = query.token
 }
 
-function isOfficerEdit(savedObject) {
+function isOfficerEdit(savedObject: SavedObject) {
   const params = new URLSearchParams(window.location.search)
   const hasOfficerToken = params.has('officerToken')
   return savedObject.status === "officer_edit" && hasOfficerToken
 }
 
-function isEmptyOrReopenedHakemus(savedObject) {
+function isEmptyOrReopenedHakemus(savedObject: SavedObject | null) {
   return !savedObject || savedObject.status === "pending_change_request" || isOfficerEdit(savedObject)
 }
 
-function onInitialStateLoaded(initialState) {
+function onInitialStateLoaded(initialState: StateLoopState) {
   budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {
     reportValidationErrors: isNotFirstEdit(initialState)
   })
@@ -99,6 +107,7 @@ function onInitialStateLoaded(initialState) {
       initialState.saveStatus.hakemusId,
       initialState.configuration.lang,
       initialState.token,
+      // @ts-expect-error
       initialState.isTokenValid)
   }
 }
@@ -127,7 +136,7 @@ function initVaFormController() {
   }
   const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
-  return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state) {
+  return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state: any) {
     return <VaForm controller={controller} state={state} hakemusType="hakemus" useBusinessIdSearch={true} refuseGrant={urlContent.parsedQuery["refuse-grant"]} modifyApplication={urlContent.parsedQuery["modify-application"]}/>
   }}
 }
