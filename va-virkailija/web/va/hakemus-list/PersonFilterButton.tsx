@@ -8,6 +8,12 @@ import styles from './Person.module.less'
 
 export type RoleField = 'evaluator' | 'presenter'
 
+const getRoleButtonAriaLabel = (roleField: RoleField, name: string) => {
+  return roleField === 'presenter'
+    ? `Rajaa valmistelijalla ${name}`
+    : `Rajaa arvioijalla ${name}`
+}
+
 type RoleButtonProps = {
   roleField: RoleField
   role: Role
@@ -22,12 +28,14 @@ const RoleButton = ({ role, roleField, controller, hakemusFilter }: RoleButtonPr
     controller.setFilter(roleField,newFilter)
     controller.closeHakemusDetail()
   }
-  const active = role.id === currentFilter
+  const {id, name} = role
+  const active = id === currentFilter
   return (
     <button
       onClick={onClick}
+      aria-label={getRoleButtonAriaLabel(roleField, name)}
       className={classNames(styles.roleButton, {[styles.selected]: active})}
-    >{role.name}</button>
+    >{name}</button>
   )
 }
 
@@ -85,14 +93,18 @@ export function ControlledSelectPanel({roleField, roles, onClickClose, onClickRo
       <button onClick={onClickClose} className={styles.close} aria-label="Sulje valmistelija ja arvioija rajain" />
       <div className={styles.roleTitle}>{[roleName[roleField]]}</div>
       <div className={styles.roleContainer}>
-        {roleFieldRoles.map(role => (
-          <button
-            key={`${roleField}-${role.id}`}
-            onClick={() => onClickRole(role.id)}
-            className={classNames(styles.roleButton, {[styles.selected]: role.id === activeId})}>
-            {role.name}
-          </button>
-        ))}
+        {roleFieldRoles.map(({id, name}) => {
+          const active = id === activeId
+          return (
+            <button
+              key={`${roleField}-${id}`}
+              onClick={() => onClickRole(id)}
+              aria-label={getRoleButtonAriaLabel(roleField, name)}
+              className={classNames(styles.roleButton, {[styles.selected]: active})}>
+              {name}
+            </button>
+          )
+        })}
       </div>
     </React.Fragment>
   )

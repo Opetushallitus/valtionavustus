@@ -47,45 +47,76 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
     await hakijaAvustusHakuPage.fillBudjettimuutoshakemusEnabledHakemus(avustushakuID, answers3, budget2)
     await hakijaAvustusHakuPage.waitForEditSaved()
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
-    await hakemustenArviointiPage.navigate(avustushakuID)
     await use(hakemustenArviointiPage)
   }
 })
 
-test('hakemus listing', async ({hakemustenArviointiPage, hakuProps}) => {
-  await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
-
-  await test.step('filtering with organization works', async () => {
-    await hakemustenArviointiPage.inputFilterOrganization.fill('Nothing will be found')
-    await expect(hakemustenArviointiPage.hakemusListing).toContainText('0/2 hakemusta')
-    await hakemustenArviointiPage.inputFilterOrganization.fill('')
+const listingUis = ['old', 'new'] as const
+for (const listingUi of listingUis) {
+  test(`${listingUi} hakemus listing`, async ({hakemustenArviointiPage, hakuProps, avustushakuID}) => {
+    const newListingUi = listingUi === 'new'
+    await hakemustenArviointiPage.navigate(avustushakuID, {newListingUi})
     await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
-  })
 
-  await test.step('filtering with project works', async () => {
-    await hakemustenArviointiPage.inputFilterProject.fill(`1/${hakuProps.registerNumber}`)
-    await expect(hakemustenArviointiPage.hakemusListing).toContainText('1/2 hakemusta')
-    await hakemustenArviointiPage.inputFilterProject.fill('')
-    await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
-  })
+    await test.step('filtering with organization works', async () => {
+      await hakemustenArviointiPage.inputFilterOrganization.fill('Nothing will be found')
+      await expect(hakemustenArviointiPage.hakemusListing).toContainText('0/2 hakemusta')
+      await hakemustenArviointiPage.inputFilterOrganization.fill('')
+      await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
+    })
 
-  await test.step('clicking näytä keskeneräiset shows unfinished hakemuses in the listing', async () => {
-    await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
-    await expect(hakemustenArviointiPage.showUnfinished).not.toBeChecked()
-    await hakemustenArviointiPage.showUnfinished.click()
-    await expect(hakemustenArviointiPage.showUnfinished).toBeChecked()
-    await expect(hakemustenArviointiPage.hakemusListing).toContainText('3/3 hakemusta')
-  })
+    await test.step('filtering with project works', async () => {
+      await hakemustenArviointiPage.inputFilterProject.fill(`1/${hakuProps.registerNumber}`)
+      await expect(hakemustenArviointiPage.hakemusListing).toContainText('1/2 hakemusta')
+      await hakemustenArviointiPage.inputFilterProject.fill('')
+      await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
+    })
 
-  await test.step('clicking another avustushaku from dropdown switches to that', async () => {
-    await hakemustenArviointiPage.avustushakuDropdown.locator('.rw-popup-container').waitFor({state: 'hidden'})
-    await hakemustenArviointiPage.avustushakuDropdown.click()
-    await hakemustenArviointiPage.avustushakuDropdown.locator('.rw-popup-container').waitFor()
-    await Promise.all([
-      hakemustenArviointiPage.page.waitForNavigation(),
-      hakemustenArviointiPage.avustushakuDropdown.locator('text=Ammatillisen peruskoulutuksen laadun kehittäminen').click()
-    ])
-    await expect(hakemustenArviointiPage.hakemusListing).toContainText('0/0 hakemusta')
-    expect(hakemustenArviointiPage.page.url()).toMatch(`${VIRKAILIJA_URL}/avustushaku/1/`)
+    await test.step('clicking näytä keskeneräiset shows unfinished hakemuses in the listing', async () => {
+      await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
+      await expect(hakemustenArviointiPage.showUnfinished).not.toBeChecked()
+      await hakemustenArviointiPage.showUnfinished.click()
+      await expect(hakemustenArviointiPage.showUnfinished).toBeChecked()
+      await expect(hakemustenArviointiPage.hakemusListing).toContainText('3/3 hakemusta')
+      await hakemustenArviointiPage.showUnfinished.click()
+    })
+
+    if (newListingUi) {
+      await test.step('can filter with arvioija', async () => {
+        await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
+        await hakemustenArviointiPage.hakemusRows.first().locator('[aria-label="Lisää arvioija hakemukselle"]').click()
+        await hakemustenArviointiPage.page.locator('text="Päivi Pääkäyttäjä"').click()
+        await hakemustenArviointiPage.closeUkotusModal()
+        await hakemustenArviointiPage.page.click('text=Arvioija')
+        await hakemustenArviointiPage.page.locator('text="Päivi Pääkäyttäjä"').click()
+        await expect(hakemustenArviointiPage.hakemusListing).toContainText('1/2 hakemusta')
+        await hakemustenArviointiPage.page.locator('[aria-label="Poista arvioija rajaus"]').click()
+        await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
+      })
+      await test.step('can filter with valmistelija', async () => {
+        await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
+        await hakemustenArviointiPage.hakemusRows.first().locator('[aria-label="Lisää valmistelija hakemukselle"]').click()
+        await hakemustenArviointiPage.page.locator('[aria-label="Lisää _ valtionavustus valmistelijaksi"]').click()
+        await hakemustenArviointiPage.closeUkotusModal()
+        await hakemustenArviointiPage.page.click('text=Valmistelija')
+        await hakemustenArviointiPage.page.locator('[aria-label="Rajaa valmistelijalla _ valtionavustus"]').click()
+        await expect(hakemustenArviointiPage.hakemusListing).toContainText('1/2 hakemusta')
+        await hakemustenArviointiPage.page.locator('[aria-label="Poista valmistelija rajaus"]').click()
+        await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
+      })
+
+    }
+
+    await test.step('clicking another avustushaku from dropdown switches to that', async () => {
+      await hakemustenArviointiPage.avustushakuDropdown.locator('.rw-popup-container').waitFor({state: 'hidden'})
+      await hakemustenArviointiPage.avustushakuDropdown.click()
+      await hakemustenArviointiPage.avustushakuDropdown.locator('.rw-popup-container').waitFor()
+      await Promise.all([
+        hakemustenArviointiPage.page.waitForNavigation(),
+        hakemustenArviointiPage.avustushakuDropdown.locator('text=Ammatillisen peruskoulutuksen laadun kehittäminen').click()
+      ])
+      await expect(hakemustenArviointiPage.hakemusListing).toContainText('0/0 hakemusta')
+      expect(hakemustenArviointiPage.page.url()).toMatch(`${VIRKAILIJA_URL}/avustushaku/1/`)
+    })
   })
-})
+}

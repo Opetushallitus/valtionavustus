@@ -28,7 +28,7 @@ export class HakemustenArviointiPage {
     this.page = page;
     this.avustushakuDropdown = this.page.locator('#avustushaku-dropdown')
     this.inputFilterOrganization = this.page.locator('[placeholder="Hakijaorganisaatio"]')
-    this.inputFilterProject = this.page.locator('[placeholder="Hanke tai asianumero"]')
+    this.inputFilterProject = this.page.locator('[placeholder="Asianumero tai hanke"]')
     this.hakemusListing = this.page.locator('#hakemus-listing')
     this.showUnfinished = this.page.locator('text="Näytä keskeneräiset"')
     this.hakemusRows = this.hakemusListing.locator('tbody tr')

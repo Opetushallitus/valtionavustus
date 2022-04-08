@@ -333,7 +333,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
             showDeleteButton={filterState.presenter !== undefined
               ? {
                 onClick: () => dispatch({type: 'set-presenter-filter', id: undefined}),
-                ariaLabel: 'Piilota valmistelija rajaus valitsin'
+                ariaLabel: 'Poista valmistelija rajaus'
               } : undefined}
           />
         </th>
@@ -347,7 +347,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
             showDeleteButton={filterState.evaluator !== undefined
               ? {
                 onClick: () => dispatch({type: 'set-evaluator-filter', id: undefined}),
-                ariaLabel: 'Piilota arvioija rajaus valitsin'
+                ariaLabel: 'Poista arvioija rajaus'
               } : undefined}
           />
         </th>
@@ -386,6 +386,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
             </td>
             <td className={styles.alignCenter}>
               <PeopleRoleButton roles={roles} controller={controller} hakemus={hakemus} state={state} toggleSplitView={toggleSplitView} onSelectHakemus={onSelectHakemus} selectedRole="evaluators"/>
+              {state.personSelectHakemusId === hakemus.id && <PersonSelectPanel hakemus={hakemus} state={state} controller={controller}  />}
             </td>
           </tr>
         )
@@ -547,7 +548,7 @@ function ResolvedTable(props: ResolvedTableProps) {
               showDeleteButton={filterState.presenter !== undefined
                 ? {
                   onClick: () => dispatch({type: 'set-presenter-filter', id: undefined}),
-                  ariaLabel: 'Piilota valmistelija rajaus valitsin'
+                  ariaLabel: 'Poista valmistelija rajaus'
                 } : undefined}
             />
           </th>
@@ -561,7 +562,7 @@ function ResolvedTable(props: ResolvedTableProps) {
               showDeleteButton={filterState.evaluator !== undefined
                 ? {
                   onClick: () => dispatch({type: 'set-evaluator-filter', id: undefined}),
-                  ariaLabel: 'Piilota arvioija rajaus valitsin'
+                  ariaLabel: 'Poista arvioija rajaus'
                 } : undefined}
             />
           </th>
@@ -590,6 +591,7 @@ function ResolvedTable(props: ResolvedTableProps) {
           </td>
           <td className={styles.alignCenter}>
             <PeopleRoleButton roles={roles} controller={controller} hakemus={hakemus} state={state} toggleSplitView={toggleSplitView} onSelectHakemus={onSelectHakemus} selectedRole="evaluators"/>
+            {state.personSelectHakemusId === hakemus.id && <PersonSelectPanel hakemus={hakemus} state={state} controller={controller}  />}
           </td>
         </tr>
       ))}
@@ -652,13 +654,13 @@ const PeopleRoleButton = ({roles, controller, selectedRole, state, toggleSplitVi
         .reduce((initials, name) => initials + name.slice(0, 1), ''))
     .join(', ')
   const disallowChangeHakemusState = !state.hakuData.privileges["change-hakemus-state"]
+  const ariaLabel = presentersWanted ? 'Lisää valmistelija hakemukselle' : 'Lisää arvioija hakemukselle'
   return (
     <React.Fragment>
       {buttonInitials.length === 0
-        ? <button disabled={disallowChangeHakemusState} className={buttonStyles.greyButton} onClick={onClickCallback}>+</button>
-        : <button disabled={disallowChangeHakemusState} className={buttonStyles.blueButton} onClick={onClickCallback}>{buttonInitials}</button>
+        ? <button aria-label={ariaLabel} disabled={disallowChangeHakemusState} className={buttonStyles.greyButton} onClick={onClickCallback}>+</button>
+        : <button aria-label={ariaLabel} disabled={disallowChangeHakemusState} className={buttonStyles.blueButton} onClick={onClickCallback}>{buttonInitials}</button>
       }
-      {state.personSelectHakemusId === hakemus.id && <PersonSelectPanel hakemus={hakemus} state={state} controller={controller}  />}
     </React.Fragment>
   )
 }

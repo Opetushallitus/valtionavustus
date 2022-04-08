@@ -253,7 +253,7 @@ export default class HakemusListing extends Component {
                 <HakemusSorter field="organization" sorter={sorter} controller={controller}/>
               </th>
               <th className="project-name-column">
-                <input className="text-filter" placeholder="Hanke tai asianumero" onChange={onFilterChange("name")} value={filter.name}></input>
+                <input className="text-filter" placeholder="Asianumero tai hanke" onChange={onFilterChange("name")} value={filter.name}></input>
                 <HakemusSorter field="name" sorter={sorter} controller={controller}/>
               </th>
               {!isResolved && <th className="score-column">Arvio <HakemusSorter field="score" sorter={sorter} controller={controller}/></th>}
