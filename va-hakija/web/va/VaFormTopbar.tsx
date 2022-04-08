@@ -11,9 +11,10 @@ import FormSaveStatus from 'soresu-form/web/form/component/FormSaveStatus.jsx'
 import FormErrorSummary from 'soresu-form/web/form/component/FormErrorSummary.jsx'
 import ServerError from 'soresu-form/web/form/component/ServerError.jsx'
 import FormController from "soresu-form/web/form/FormController";
+import { InitialStateTemplate, StateLoopState } from 'soresu-form/web/form/types/Form'
 
 interface Props {
-  controller: FormController
+  controller: FormController<StateLoopState, InitialStateTemplate<StateLoopState>>
   state: any
   hakemusType: 'loppuselvitys' | 'valiselvitys' | 'hakemus'
   isExpired: boolean

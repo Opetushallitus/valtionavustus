@@ -341,6 +341,7 @@ interface Rule {
 }
 
 export interface Form {
+  id?: any
   content: Field[]
   rules: Rule[]
   created_at: Date

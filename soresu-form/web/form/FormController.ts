@@ -3,21 +3,16 @@ import Dispatcher from '../Dispatcher'
 
 import {createFieldUpdate} from './FieldUpdateHandler'
 import SyntaxValidator from './SyntaxValidator'
-import FormStateLoop from './FormStateLoop'
 import VaComponentFactory from "soresu-form/web/va/VaComponentFactory";
 import VaPreviewComponentFactory
   from "soresu-form/web/va/VaPreviewComponentFactory";
 import VaSyntaxValidator from "soresu-form/web/va/VaSyntaxValidator";
-import {
-  FormOperations, InitialStateTemplate,
-  InitialValues, StateLoopState,
-  UrlContent
-} from "soresu-form/web/form/types/Form";
+import { BaseStateLoopState, InitialStateTemplate, StateLoopState } from "soresu-form/web/form/types/Form";
 import {Field, Form, Language} from "soresu-form/web/va/types";
 
-const dispatcher = new Dispatcher()
+export const dispatcher = new Dispatcher()
 
-const events = {
+export const events = {
   initialState: 'initialState',
   updateField: 'updateField',
   fieldValidation: 'fieldValidation',
@@ -41,39 +36,33 @@ const events = {
 
 export type FormEvents = typeof events
 
-interface FormControllerProps {
-  initialStateTemplateTransformation: (initialState: InitialStateTemplate) => void
-  onInitialStateLoaded: (initialState: StateLoopState) => void
-  formP: EventStream<any>
+interface FormControllerProps<T extends BaseStateLoopState<T>, K> {
+  initialStateTemplateTransformation: (initialState: K extends InitialStateTemplate<T> ? K : never) => void
+  onInitialStateLoaded: (initialState: T) => void
+  formP: EventStream<Form>
   customComponentFactory: VaComponentFactory
   customPreviewComponentFactory: VaPreviewComponentFactory
   customFieldSyntaxValidator: typeof VaSyntaxValidator
 }
 
-export default class FormController {
-  initialStateTemplateTransformation: (initialState: InitialStateTemplate) => void;
-  onInitialStateLoaded: (initialState: StateLoopState) => void;
+export default class FormController<T extends BaseStateLoopState<T>, K> {
+  initialStateTemplateTransformation: (initialState: K extends InitialStateTemplate<T> ? K : never) => void;
+  onInitialStateLoaded: (initialState: T) => void;
   formP: EventStream<Form>;
   customComponentFactory: VaComponentFactory;
   customPreviewComponentFactory: VaPreviewComponentFactory;
   customFieldSyntaxValidator: typeof VaSyntaxValidator;
-  stateLoop: FormStateLoop;
 
-  constructor(props: FormControllerProps) {
+  constructor(props: FormControllerProps<T, K>) {
     this.initialStateTemplateTransformation = props.initialStateTemplateTransformation
     this.onInitialStateLoaded = props.onInitialStateLoaded
     this.formP = props.formP
     this.customComponentFactory = props.customComponentFactory
     this.customPreviewComponentFactory = props.customPreviewComponentFactory
     this.customFieldSyntaxValidator = props.customFieldSyntaxValidator
-    this.stateLoop = new FormStateLoop(dispatcher, events)
     this.componentOnChangeListener = this.componentOnChangeListener.bind(this)
     this.initFieldValidation = this.initFieldValidation.bind(this)
     this.getCustomFieldSyntaxValidator = this.getCustomFieldSyntaxValidator.bind(this)
-  }
-
-  initialize(formOperations: FormOperations, initialValues: InitialValues, urlContent: UrlContent) {
-    return this.stateLoop.initialize(this, formOperations, initialValues, urlContent)
   }
 
   // Public API

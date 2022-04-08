@@ -6,7 +6,7 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import FormController from 'soresu-form/web/form/FormController'
 import {triggerFieldUpdatesForValidation} from 'soresu-form/web/form/FieldUpdateHandler'
 import ResponseParser from 'soresu-form/web/form/ResponseParser'
-import VaForm from './VaForm.jsx'
+import VaForm from './VaForm'
 import VaUrlCreator from './VaUrlCreator'
 import VaComponentFactory from 'soresu-form/web/va/VaComponentFactory'
 import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
@@ -17,10 +17,13 @@ import {
   FormOperations,
   HakijaAvustusHaku,
   InitialSaveStatus,
-  StateLoopState,
+  SelvitysAppStateLoopState,
+  SelvitysAppStateTemplate,
   UrlContent
 } from 'soresu-form/web/form/types/Form'
-import {Answers, Field} from 'soresu-form/web/va/types'
+import {Answers, Avustushaku, Field, Form} from 'soresu-form/web/va/types'
+import { initializeStateLoop } from 'soresu-form/web/form/FormStateLoop'
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 const selvitysType = location.pathname.indexOf("loppuselvitys") !== -1 ? "loppuselvitys" : "valiselvitys"
@@ -34,8 +37,8 @@ function containsExistingEntityId(urlContent: UrlContent): boolean {
   return query[selvitysType] && query[selvitysType].length > 0
 }
 
-function isFieldEnabled(saved: StateLoopState) {
-  return saved
+function isFieldEnabled(saved: SelvitysAppStateLoopState) {
+  return !!saved
 }
 
 const responseParser = new ResponseParser({
@@ -56,7 +59,7 @@ type SelvitysType = 'valiselvitys' | 'loppuselvitys'
 
 class SelvitysUrlCreator extends UrlCreator {
   constructor(selvitysType: SelvitysType) {
-    function entityApiUrl(avustusHakuId: number, hakemusId: string, hakemusBaseVersion: any): string {
+    function entityApiUrl(avustusHakuId: number, hakemusId?: string, hakemusBaseVersion?: number): string {
       return "/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/` + hakemusId + (typeof hakemusBaseVersion === "number" ? `/${hakemusBaseVersion}` : '')
     }
 
@@ -79,8 +82,7 @@ class SelvitysUrlCreator extends UrlCreator {
       editEntityApiUrl: function (state: State) {
         const avustusHakuId = state.avustushaku.id
         const hakemusId = state.saveStatus.hakemusId
-        // @ts-expect-error
-        return entityApiUrl(avustusHakuId, hakemusId, state.saveStatus.savedObject.version)
+        return entityApiUrl(avustusHakuId, hakemusId, state.saveStatus.savedObject?.version)
       },
       submitEntityApiUrl: function (state: State) {
         const baseEditUrl = this.editEntityApiUrl(state)
@@ -106,8 +108,7 @@ class SelvitysUrlCreator extends UrlCreator {
       attachmentBaseUrl: function(state: State, field: Field) {
         const avustusHakuId = state.avustushaku.id
         const hakemusId = state.saveStatus.hakemusId
-        // @ts-expect-error
-        const hakemusVersion = state.saveStatus.savedObject.version
+        const hakemusVersion = state.saveStatus.savedObject?.version
         return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/" + hakemusVersion + "/attachments/" + field.id
       },
       attachmentDownloadUrl: attachmentDirectAccessUrl,
@@ -122,13 +123,13 @@ const budgetCalculator = new VaBudgetCalculator((descriptionField: Field, state:
   triggerFieldUpdatesForValidation([descriptionField], state)
 })
 
-function onFieldUpdate(state: StateLoopState, field: Field) {
+function onFieldUpdate(state: SelvitysAppStateLoopState, field: Field) {
   if (field.fieldType === "moneyField" || field.fieldType === "vaSelfFinancingField") {
     budgetCalculator.handleBudgetAmountUpdate(state, field.id)
   }
 }
 
-function isNotFirstEdit(state: StateLoopState): boolean {
+function isNotFirstEdit(state: SelvitysAppStateLoopState): boolean {
   if (!state.saveStatus.savedObject || !state.saveStatus.savedObject.version) return false
 
   return state.saveStatus.savedObject.version > 1
@@ -148,81 +149,85 @@ function isSaveDraftAllowed(state: SaveState): boolean {
     state.saveStatus.hakemusId > 0
 }
 
-function createUiStateIdentifier(state: StateLoopState): string {
-  // @ts-expect-error
+function createUiStateIdentifier(state: SelvitysAppStateLoopState): string {
   return state.configuration.form.id + "-" + sessionIdentifierForLocalStorageId
 }
 
-function printEntityId(state: StateLoopState) {
+function printEntityId(state: SelvitysAppStateLoopState) {
   return state.saveStatus.hakemusId
 }
 
-const urlContent = { parsedQuery: query, location: location }
+const urlContent = { parsedQuery: query, location }
 const avustusHakuId: string = VaUrlCreator.parseAvustusHakuId(urlContent)
-const avustusHakuP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
-const environmentP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.environmentConfigUrl()))
+const avustusHakuP = Bacon.fromPromise<Avustushaku>(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
+const environmentP = Bacon.fromPromise<EnvironmentApiResponse>(HttpUtil.get(VaUrlCreator.environmentConfigUrl()))
 
-function initialStateTemplateTransformation(template: any) {
+function initialStateTemplateTransformation(template: SelvitysAppStateTemplate) {
   template.avustushaku = avustusHakuP
   template.configuration.environment = environmentP
   template.saveStatus.hakemusId = query[selvitysType]
 }
 
-function onInitialStateLoaded(initialState: StateLoopState) {
+function onInitialStateLoaded(initialState: SelvitysAppStateLoopState) {
   budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {
     reportValidationErrors: isNotFirstEdit(initialState)
   })
 }
 
 function initFormController() {
-  const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(HttpUtil.get(urlCreator.formApiUrl(avustusHaku["form_" + selvitysType])))})
-  const controller = new FormController({
-    "initialStateTemplateTransformation": initialStateTemplateTransformation,
-    "onInitialStateLoaded": onInitialStateLoaded,
-    "formP": formP,
-    "customComponentFactory": new VaComponentFactory(),
-    "customPreviewComponentFactory": new VaPreviewComponentFactory(),
-    "customFieldSyntaxValidator": VaSyntaxValidator
-  })
-  const formOperations: FormOperations = {
-    "chooseInitialLanguage": VaUrlCreator.chooseInitialLanguage,
-    "containsExistingEntityId": containsExistingEntityId,
-    "isFieldEnabled": isFieldEnabled,
-    "onFieldUpdate": onFieldUpdate,
-    "isSaveDraftAllowed": isSaveDraftAllowed,
-    "isNotFirstEdit": isNotFirstEdit,
-    "createUiStateIdentifier": createUiStateIdentifier,
-    "urlCreator": urlCreator,
-    "responseParser": responseParser,
-    "printEntityId": printEntityId
-  }
-  const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
-  const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
-  return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state: any) {
-    const isValiselvitys = selvitysType === 'valiselvitys'
-    const selvitysUpdateable = state.saveStatus.savedObject && state.saveStatus.savedObject['selvitys-updatable']
-    const valiselvitysNotUpdateable = isValiselvitys && selvitysUpdateable === false
-    if (!showPreview && valiselvitysNotUpdateable) {
-      const previewUrl = formOperations.urlCreator.existingSubmissionPreviewUrl(
-        state.avustushaku.id,
-        state.saveStatus.hakemusId,
-        lang,
-        state.token
+  const formP = avustusHakuP.flatMap(function(avustusHaku) {
+    return Bacon.fromPromise<Form>(
+      HttpUtil.get(
+        urlCreator.formApiUrl(
+          selvitysType === 'valiselvitys' ? avustusHaku.form_valiselvitys : avustusHaku.form_loppuselvitys
+        )
       )
+    )
+  })
+  const controller = new FormController({
+    initialStateTemplateTransformation,
+    onInitialStateLoaded,
+    formP,
+    customComponentFactory: new VaComponentFactory(),
+    customPreviewComponentFactory: new VaPreviewComponentFactory(),
+    customFieldSyntaxValidator: VaSyntaxValidator
+  })
+  const formOperations: FormOperations<SelvitysAppStateLoopState> = {
+    chooseInitialLanguage: VaUrlCreator.chooseInitialLanguage,
+    containsExistingEntityId,
+    isFieldEnabled,
+    onFieldUpdate,
+    isSaveDraftAllowed,
+    isNotFirstEdit,
+    createUiStateIdentifier,
+    urlCreator,
+    responseParser,
+    printEntityId
+  }
+  const initialValues = { language: VaUrlCreator.chooseInitialLanguage(urlContent) }
+  const stateProperty = initializeStateLoop<SelvitysAppStateLoopState, SelvitysAppStateTemplate>(controller, formOperations, initialValues, urlContent)
+  return {
+    stateProperty,
+    getReactComponent: function getReactComponent(state: SelvitysAppStateLoopState) {
+      const isValiselvitys = selvitysType === 'valiselvitys'
+      const selvitysUpdateable = state.saveStatus.savedObject && state.saveStatus.savedObject['selvitys-updatable']
+      const valiselvitysNotUpdateable = isValiselvitys && selvitysUpdateable === false
+      if (!showPreview && valiselvitysNotUpdateable) {
+        const previewUrl = formOperations.urlCreator.existingSubmissionPreviewUrl(
+          state.avustushaku.id,
+          state.saveStatus.hakemusId,
+          lang
+        )
 
-      window.location.href = previewUrl
+        window.location.href = previewUrl
+      }
+
+      return <VaForm controller={controller} state={state} hakemusType={selvitysType} useBusinessIdSearch={false} isExpired={false} />
     }
-
-    return (
-      <VaForm controller={controller}
-              state={state}
-              hakemusType={selvitysType}
-              useBusinessIdSearch={false}
-              isExpired={false} />)
-  }}
+  }
 }
 
-function initSelvitys(avustusHakuId: string, hakemusId: string | number, selvitysType: SelvitysType, showPreview: string){
+function redirectToNewSelvitys(avustusHakuId: string, hakemusId: string, selvitysType: SelvitysType, showPreview: string){
   HttpUtil.get("/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/init/` + hakemusId).then(response => {
     const hakemusId = response.id
     const hakemusLang = lang ? lang : response.language
@@ -230,13 +235,11 @@ function initSelvitys(avustusHakuId: string, hakemusId: string | number, selvity
   })
 }
 
-
-if(!selvitysId && query.hakemus) {
-  initSelvitys(avustusHakuId, query.hakemus, selvitysType, showPreview)
-}
-else{
+if (!selvitysId && query.hakemus) {
+  redirectToNewSelvitys(avustusHakuId, query.hakemus, selvitysType, showPreview)
+} else {
   const app = initFormController()
-  app.stateProperty.onValue((state) => {
+  app.stateProperty.onValue(state => {
     ReactDOM.render(app.getReactComponent(state), document.getElementById('app'))
   })
 }

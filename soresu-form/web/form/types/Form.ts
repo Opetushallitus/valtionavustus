@@ -1,5 +1,6 @@
 import {
   Answers,
+  Avustushaku,
   AvustushakuContent, Decision, Field,
   Form,
   HakemusStatus,
@@ -17,20 +18,6 @@ import {Muutoshakemus} from "soresu-form/web/va/types/muutoshakemus";
 export interface UrlContent {
   parsedQuery: any
   location: Location
-}
-
-export interface FormOperations {
-  "chooseInitialLanguage": (urlContent: UrlContent) => Language,
-  "containsExistingEntityId": (urlContent: UrlContent) => boolean,
-  "isFieldEnabled": (saved: StateLoopState) => any,
-  "onFieldUpdate": (state: StateLoopState, field: any) => void,
-  "isSaveDraftAllowed": (state: StateLoopState) => boolean,
-  "isNotFirstEdit": (state: StateLoopState) => boolean,
-  "createUiStateIdentifier": (state: StateLoopState) => string,
-  "urlCreator": UrlCreator,
-  "responseParser": ResponseParser,
-  "printEntityId": (state: StateLoopState) => number,
-  "onFieldValid"?: (state: StateLoopState, field: Field, value: any) => void
 }
 
 export interface InitialValues {
@@ -89,7 +76,21 @@ interface InitialConfiguration {
   translations: LegacyTranslationDict
 }
 
-export interface InitialStateLoopState {
+export interface FormOperations<T> {
+  "chooseInitialLanguage": (urlContent: UrlContent) => Language,
+  "containsExistingEntityId": (urlContent: UrlContent) => boolean,
+  "isFieldEnabled": (saved: T) => boolean,
+  "onFieldUpdate": (state: T, field: any) => void,
+  "isSaveDraftAllowed": (state: T) => boolean,
+  "isNotFirstEdit": (state: T) => boolean,
+  "createUiStateIdentifier": (state: T) => string,
+  "urlCreator": UrlCreator,
+  "responseParser": ResponseParser,
+  "printEntityId": (state: T) => number,
+  "onFieldValid"?: (state: T, field: Field, value: any) => void
+}
+
+export interface BaseStateLoopState<T> {
   form: Form
   tokenValidation: {
     valid: boolean
@@ -97,13 +98,14 @@ export interface InitialStateLoopState {
   saveStatus: InitialSaveStatus
   configuration: InitialConfiguration
   extensionApi: {
-    formOperations: FormOperations
+    formOperations: FormOperations<T>
     customFieldSyntaxValidator: typeof VaSyntaxValidator
-    onInitialStateLoaded: (state: StateLoopState) => void
+    onInitialStateLoaded: (state: T) => void
   }
 }
 
-export interface InitialStateTemplate {
+export interface InitialStateTemplate<T extends BaseStateLoopState<T>> {
+  avustushaku?: EventStream<Avustushaku>
   form: any
   tokenValidation: EventStream<{ valid: boolean }> | {valid: boolean}
   saveStatus: {
@@ -114,6 +116,7 @@ export interface InitialStateTemplate {
     savedObject: EventStream<SavedObject | null>,
     attachments: EventStream<any>,
     attachmentUploadsInProgress: {}
+    hakemusId?: string
   }
   configuration: {
     form: EventStream<Immutable.ImmutableObject<Form>>
@@ -121,12 +124,22 @@ export interface InitialStateTemplate {
     preview: boolean
     lang: Language
     translations: EventStream<any>
+    environment?: EventStream<EnvironmentApiResponse>
   }
   extensionApi: {
-    formOperations: FormOperations
+    formOperations: FormOperations<T>
     customFieldSyntaxValidator: typeof VaSyntaxValidator
-    onInitialStateLoaded: (state: StateLoopState) => void
+    onInitialStateLoaded: (state: T) => void
   }
+}
+
+export interface SelvitysAppStateTemplate extends InitialStateTemplate<SelvitysAppStateLoopState> {
+}
+
+export interface VaAppStateTemplate extends InitialStateTemplate<SelvitysAppStateLoopState> {
+  normalizedHakemus: EventStream<NormalizedHakemusData>
+  muutoshakemukset: EventStream<Muutoshakemus[]>
+  token: string
 }
 
 export interface HakijaAvustusHaku {
@@ -151,7 +164,7 @@ export interface HakijaAvustusHaku {
   muutoshakukelpoinen: boolean
 }
 
-interface SelvitysAppStateLoopState extends InitialStateLoopState {
+export interface SelvitysAppStateLoopState extends BaseStateLoopState<SelvitysAppStateLoopState> {
   avustushaku: HakijaAvustusHaku
   configuration: InitialConfiguration & {
     environment: EnvironmentApiResponse
@@ -161,7 +174,7 @@ interface SelvitysAppStateLoopState extends InitialStateLoopState {
   }
 }
 
-interface VaAppStateLoopState extends InitialStateLoopState {
+export interface VaAppStateLoopState extends BaseStateLoopState<SelvitysAppStateLoopState> {
   avustushaku: HakijaAvustusHaku
   configuration: InitialConfiguration & {
     environment: EnvironmentApiResponse
@@ -172,6 +185,7 @@ interface VaAppStateLoopState extends InitialStateLoopState {
   normalizedHakemus: NormalizedHakemusData | undefined
   muutoshakemukset: Muutoshakemus[]
   token: string
+  isTokenValid: boolean
 }
 
 export type StateLoopState = SelvitysAppStateLoopState | VaAppStateLoopState

@@ -12,14 +12,22 @@ import FormRules from './FormRules'
 import Translator from './Translator'
 import {isNumeric} from '../MathUtil'
 import {
-  FormOperations, InitialStateTemplate,
-  InitialValues, SavedObject,
+  BaseStateLoopState,
+  FormOperations,
+  InitialStateTemplate,
+  InitialValues,
+  SavedObject,
   UrlContent
 } from "soresu-form/web/form/types/Form";
 import {Form, Language} from "soresu-form/web/va/types";
-import FormController, {FormEvents} from "soresu-form/web/form/FormController";
+import FormController, {dispatcher, events, FormEvents} from "soresu-form/web/form/FormController";
 import {EventStream} from "baconjs";
 import {Answers} from "../../../playwright/utils/types";
+
+export function initializeStateLoop<T extends BaseStateLoopState<T>, K>(controller: FormController<T, K>, formOperations: FormOperations<T>, initialValues: InitialValues, urlContent: UrlContent) {
+  const stateLoop = new FormStateLoop(dispatcher, events)
+  return stateLoop.initialize<T, K>(controller, formOperations, initialValues, urlContent)
+}
 
 export default class FormStateLoop {
   private dispatcher: Dispatcher;
@@ -62,7 +70,7 @@ export default class FormStateLoop {
     return values
   }
 
-  initialize(controller: FormController, formOperations: FormOperations, initialValues: InitialValues, urlContent: UrlContent) {
+  initialize<T extends BaseStateLoopState<T>, K>(controller: FormController<T, K>, formOperations: FormOperations<T>, initialValues: InitialValues, urlContent: UrlContent) {
     const query = urlContent.parsedQuery
     const queryParams = {
       embedForMuutoshakemus: query.embedForMuutoshakemus || false,
@@ -81,12 +89,11 @@ export default class FormStateLoop {
                 validationErrors: Immutable({})
               }, values)
     })
-    const tokenValidation = query.token ?
-        Bacon.fromPromise(
-          HttpUtil.get(formOperations.urlCreator.validateTokenUrl(query.hakemus, query.token)))
-        : {valid: false}
+    const tokenValidation = query.token
+        ? Bacon.fromPromise(HttpUtil.get(formOperations.urlCreator.validateTokenUrl(query.hakemus, query.token)))
+        : { valid: false }
 
-    const initialStateTemplate: InitialStateTemplate = {
+    const initialStateTemplate: InitialStateTemplate<T> = {
       form: initialFormStateP,
       tokenValidation: tokenValidation,
       saveStatus: {
@@ -131,7 +138,7 @@ export default class FormStateLoop {
     })
 
     const stateTransitions = new FormStateTransitions(dispatcher, events)
-    const formFieldValuesP = Bacon.update<FormStateLoop | {}>({},
+    const formFieldValuesP = Bacon.update<T | {}>({},
       [dispatcher.stream(events.initialState), stateTransitions.onInitialState],
       [dispatcher.stream(events.updateField), stateTransitions.onUpdateField],
       [dispatcher.stream(events.fieldValidation),stateTransitions.onFieldValidation],
@@ -150,10 +157,10 @@ export default class FormStateLoop {
       [dispatcher.stream(events.refuseApplication), stateTransitions.onRefuseApplication],
       [dispatcher.stream(events.modifyApplicationContacts), stateTransitions.onModifyApplicationContacts])
 
+    // filter should return only the state and never an empty object
+    return formFieldValuesP.filter((value) => { return !_.isEmpty(value) }) as Bacon.Property<T>
 
-    return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
-
-    function loadSavedObjectPromise(formOperations: FormOperations, urlContent: UrlContent): EventStream<SavedObject | null> {
+    function loadSavedObjectPromise(formOperations: FormOperations<T>, urlContent: UrlContent): EventStream<SavedObject | null> {
       if (formOperations.containsExistingEntityId(urlContent)) {
         return Bacon.fromPromise(
           HttpUtil.get(formOperations.urlCreator.loadEntityApiUrl(urlContent))
@@ -162,7 +169,7 @@ export default class FormStateLoop {
       return Bacon.once(null)
     }
 
-    function loadAttachmentsPromise(formOperations: FormOperations, urlContent: UrlContent) {
+    function loadAttachmentsPromise(formOperations: FormOperations<T>, urlContent: UrlContent) {
       if (formOperations.containsExistingEntityId(urlContent)) {
         return Bacon.fromPromise(
           HttpUtil.get(formOperations.urlCreator.loadAttachmentsApiUrl(urlContent))
@@ -171,12 +178,11 @@ export default class FormStateLoop {
       return Bacon.once({})
     }
 
-    function getInitialFormValuesPromise(formOperations: FormOperations, formP: EventStream<Immutable.ImmutableObject<Form>>, initialValues: InitialValues, savedObjectP: EventStream<SavedObject | null>, lang: Language) {
-      const valuesP = savedObjectP.map(savedObject => {
-        if(savedObject) {
+    function getInitialFormValuesPromise(formOperations: FormOperations<T>, formP: EventStream<Immutable.ImmutableObject<Form>>, initialValues: InitialValues, savedObjectP: EventStream<SavedObject | null>, lang: Language) {
+      const valuesP = savedObjectP.map<Answers | {}>(savedObject => {
+        if (savedObject) {
           return formOperations.responseParser.getFormAnswers(savedObject)
-        }
-        else {
+        } else {
           return {}
         }
       })
