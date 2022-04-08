@@ -136,7 +136,7 @@ export interface InitialStateTemplate<T extends BaseStateLoopState<T>> {
 export interface SelvitysAppStateTemplate extends InitialStateTemplate<SelvitysAppStateLoopState> {
 }
 
-export interface VaAppStateTemplate extends InitialStateTemplate<SelvitysAppStateLoopState> {
+export interface VaAppStateTemplate extends InitialStateTemplate<VaAppStateLoopState> {
   normalizedHakemus: EventStream<NormalizedHakemusData>
   muutoshakemukset: EventStream<Muutoshakemus[]>
   token: string
