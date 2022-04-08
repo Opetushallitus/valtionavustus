@@ -6,7 +6,6 @@ import RouteParser from 'route-parser'
 
 import Dispatcher from 'soresu-form/web/Dispatcher'
 import FormUtil from 'soresu-form/web/form/FormUtil'
-import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import {createFieldUpdate} from 'soresu-form/web/form/FieldUpdateHandler'
@@ -28,6 +27,7 @@ import {
   Scoring
 } from "soresu-form/web/va/types"
 import translations from 'soresu-form/resources/public/translations.json'
+import { initDefaultValues } from 'soresu-form/web/form/FormStateLoop'
 
 import HakemusArviointiStatuses
   from './hakemus-details/HakemusArviointiStatuses'
@@ -749,7 +749,7 @@ export default class HakemustenArviointiController {
       return acc
     }, {emptyDescriptions: {}, answerCostFieldsToCopy: []})
 
-    FormStateLoop.initDefaultValues(
+    initDefaultValues(
       overriddenAnswers,
       emptyDescriptions,
       budgetElement,
@@ -793,7 +793,7 @@ export default class HakemustenArviointiController {
       return acc
     }, {})
 
-    FormStateLoop.initDefaultValues(
+    initDefaultValues(
       selectedHakemus!.arvio["seuranta-answers"],
       defaultValues,
       budgetElement,
