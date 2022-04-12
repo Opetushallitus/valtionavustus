@@ -326,19 +326,19 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
         <th>
           <div className={styles.tableHeader}>
             <input placeholder="Hakijaorganisaatio" onChange={onOrganizationInput} value={organization} />
-            <SortButton sortKey="organization" sortingState={sortingState} setSorting={setSorting} />
+            <SortButton sortKey="organization" sortingState={sortingState} setSorting={setSorting} text="hakijaorganisaatio" />
           </div>
         </th>
         <th>
           <div className={styles.tableHeader}>
             <input placeholder="Asianumero tai hanke" onChange={onProjectInput} value={projectNameOrCode} />
-            <SortButton sortKey="registerNumber" sortingState={sortingState} setSorting={setSorting} />
+            <SortButton sortKey="registerNumber" sortingState={sortingState} setSorting={setSorting} text="asianumero" />
           </div>
         </th>
         <th>
           <div className={styles.tableHeader}>
             <TableLabel text="Arvio" disabled />
-            <SortButton sortKey="score" sortingState={sortingState} setSorting={setSorting} />
+            <SortButton sortKey="score" sortingState={sortingState} setSorting={setSorting} text="arvio" />
           </div>
         </th>
         <th>
@@ -356,7 +356,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
                   ? { ariaLabel: "Poista hakemuksen tila rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'hakemus'})}
                   : undefined}
             />
-            <SortButton sortKey="hakemus" setSorting={setSorting} sortingState={sortingState} />
+            <SortButton sortKey="hakemus" setSorting={setSorting} sortingState={sortingState} text="hakemuksen tila" />
           </div>
         </th>
         <th>
@@ -374,19 +374,19 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
                   ? { ariaLabel: "Poista muutoshakemus rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'muutoshakemus'})}
                   : undefined}
             />
-            <SortButton sortKey="muutoshakemus" setSorting={setSorting} sortingState={sortingState} />
+            <SortButton sortKey="muutoshakemus" setSorting={setSorting} sortingState={sortingState} text="muutoshakemuksen tila" />
           </div>
         </th>
         <th>
           <div className={styles.tableHeader}>
             <TableLabel text="Haettu" disabled />
-            <SortButton sortKey="applied" sortingState={sortingState} setSorting={setSorting} />
+            <SortButton sortKey="applied" sortingState={sortingState} setSorting={setSorting} text="haettu summa" />
           </div>
         </th>
         <th>
           <div className={styles.tableHeader}>
             <TableLabel text="Myönnetty" disabled />
-            <SortButton sortKey="granted" sortingState={sortingState} setSorting={setSorting} />
+            <SortButton sortKey="granted" sortingState={sortingState} setSorting={setSorting} text="myönnetty summa" />
           </div>
         </th>
         <th>
@@ -429,9 +429,10 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
               className={hakemus.id === selectedHakemusId ? styles.selectedHakemusRow : styles.hakemusRow}
               tabIndex={0}
               onClick={() => onSelectHakemus(hakemus.id)}
-              onKeyDown={e => e.key === 'Enter' && onSelectHakemus(hakemus.id)}>
-            <td>{hakemus["organization-name"]}</td>
-            <td>
+              onKeyDown={e => e.key === 'Enter' && onSelectHakemus(hakemus.id)}
+              data-test-id={`hakemus-${hakemus["user-key"]}`}>
+            <td className="organization-cell">{hakemus["organization-name"]}</td>
+            <td className="project-name-cell">
               <div className={styles.projectTd}>
                 {getProject(hakemus)}
                 {modified && <Pill color="blue" testId={`${hakemus.id}-modified-pill`} text="Muokattu" compact />}
@@ -439,10 +440,10 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
               </div>
             </td>
             <td>Tähtii</td>
-            <td><ArvioStatus status={hakemus.arvio.status} /></td>
+            <td className="hakemus-status-cell"><ArvioStatus status={hakemus.arvio.status} /></td>
             <td><MuutoshakemusPill status={hakemus["status-muutoshakemus"]} /></td>
-            <td className={styles.alignRight}>{euroFormatter.format(hakemus["budget-oph-share"])}</td>
-            <td className={styles.alignRight}>{
+            <td className={`${styles.alignRight} applied-sum-cell`}>{euroFormatter.format(hakemus["budget-oph-share"])}</td>
+            <td className={`${styles.alignRight} granted-sum-cell`}>{
               hakemus.arvio["budget-granted"]
                 ? euroFormatter.format(hakemus.arvio["budget-granted"])
                 : '-'
@@ -538,13 +539,13 @@ function ResolvedTable(props: ResolvedTableProps) {
           <th>
             <div className={styles.tableHeader}>
               <input placeholder="Hakijaorganisaatio" onChange={onOrganizationInput} value={organization} />
-              <SortButton sortKey="organization" setSorting={setSorting} sortingState={sortingState} />
+              <SortButton sortKey="organization" setSorting={setSorting} sortingState={sortingState} text="hakijaorganisaatio" />
             </div>
           </th>
           <th>
             <div className={styles.tableHeader}>
               <input placeholder="Asianumero tai hanke" onChange={onProjectInput} value={projectNameOrCode} />
-              <SortButton sortKey="registerNumber" setSorting={setSorting} sortingState={sortingState} />
+              <SortButton sortKey="registerNumber" setSorting={setSorting} sortingState={sortingState} text="asianumero" />
             </div>
           </th>
           <th>
@@ -562,7 +563,7 @@ function ResolvedTable(props: ResolvedTableProps) {
                     ? { ariaLabel: "Poista hakemuksen tila rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'hakemus'})}
                     : undefined}
               />
-              <SortButton sortKey="hakemus" setSorting={setSorting} sortingState={sortingState} />
+              <SortButton sortKey="hakemus" setSorting={setSorting} sortingState={sortingState} text="hakemuksen tila" />
             </div>
           </th>
           <th>
@@ -580,7 +581,7 @@ function ResolvedTable(props: ResolvedTableProps) {
                     ? { ariaLabel: "Poista muutoshakemus rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'muutoshakemus'})}
                     : undefined}
               />
-              <SortButton sortKey="muutoshakemus" setSorting={setSorting} sortingState={sortingState} />
+              <SortButton sortKey="muutoshakemus" setSorting={setSorting} sortingState={sortingState} text="muutoshakemuksen tila" />
             </div>
           </th>
           <th>
@@ -598,7 +599,7 @@ function ResolvedTable(props: ResolvedTableProps) {
                     ? { ariaLabel: "Poista väliselvitys rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'valiselvitys'})}
                     : undefined}
               />
-              <SortButton sortKey="valiselvitys" setSorting={setSorting} sortingState={sortingState} />
+              <SortButton sortKey="valiselvitys" setSorting={setSorting} sortingState={sortingState} text="väliselvityksen tila" />
             </div>
           </th>
           <th>
@@ -616,13 +617,13 @@ function ResolvedTable(props: ResolvedTableProps) {
                     ? { ariaLabel: "Poista loppuselvitys rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'loppuselvitys'})}
                     : undefined}
                 />
-                <SortButton sortKey="loppuselvitys" setSorting={setSorting} sortingState={sortingState} />
+                <SortButton sortKey="loppuselvitys" setSorting={setSorting} sortingState={sortingState} text="loppuselvityksen tila" />
             </div>
           </th>
           <th>
             <div className={styles.tableHeader}>
               <TableLabel text="Myönnetty" disabled />
-              <SortButton sortKey="granted" setSorting={setSorting} sortingState={sortingState} />
+              <SortButton sortKey="granted" setSorting={setSorting} sortingState={sortingState} text="myönnetty summa" />
             </div>
           </th>
           <th>
@@ -661,14 +662,15 @@ function ResolvedTable(props: ResolvedTableProps) {
             className={hakemus.id === selectedHakemusId ? styles.selectedHakemusRow : styles.hakemusRow}
             tabIndex={0}
             onClick={() => onSelectHakemus(hakemus.id)}
-            onKeyDown={e => e.key === 'Enter' && onSelectHakemus(hakemus.id)}>
-          <td>{hakemus["organization-name"]}</td>
-          <td>{getProject(hakemus)}</td>
-          <td><ArvioStatus status={hakemus.arvio.status} /></td>
+            onKeyDown={e => e.key === 'Enter' && onSelectHakemus(hakemus.id)}
+            data-test-id={`hakemus-${hakemus["user-key"]}`}>
+          <td className="organization-cell">{hakemus["organization-name"]}</td>
+          <td className="project-name-cell">{getProject(hakemus)}</td>
+          <td className="hakemus-status-cell"><ArvioStatus status={hakemus.arvio.status} /></td>
           <td><MuutoshakemusPill status={hakemus["status-muutoshakemus"]} /></td>
           <td><ValiselvitysPill status={hakemus["status-valiselvitys"]} /></td>
           <td><LoppuselvitysPill status={hakemus["status-loppuselvitys"]} /></td>
-          <td className={styles.alignCenter}>{
+          <td className={`${styles.alignRight} granted-sum-cell`}>{
             hakemus.arvio["budget-granted"]
               ? euroFormatter.format(hakemus.arvio["budget-granted"])
               : '-'
@@ -756,19 +758,25 @@ type SortButtonProps = {
   sortKey: SortKey
   setSorting: (sortKey: SortKey) => void
   sortingState: SortState
+  text: string
 }
 
-const SortButton = ({ sortKey, setSorting, sortingState }: SortButtonProps) => (
-  <button className={buttonStyles.transparentButton} onClick={() => setSorting(sortKey)}>
-    <svg width="12px" height="12px" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M4.86603 6.5C4.48113 7.16667 3.51887 7.16667 3.13397 6.5L0.535899 2C0.150999 1.33333 0.632123 0.499999 1.40192 0.499999L6.59808 0.5C7.36788 0.5 7.849 1.33333 7.4641 2L4.86603 6.5Z"
-        fill={sortKey === sortingState.sortKey ? '#499CC7' : '#C1C1C1'}
-        transform={sortKey === sortingState.sortKey && sortingState.sortOrder === 'desc' ? 'scale(1, -1) translate(0, -8)' : ''}
-      />
-    </svg>
-  </button>
-)
+const SortButton = ({ sortKey, setSorting, sortingState, text }: SortButtonProps) => {
+  const isCurrentSortKey = sortKey === sortingState.sortKey
+  const isDesc = isCurrentSortKey && sortingState.sortOrder === 'desc'
+  const ariaLabel = `Järjestä ${text} ${isDesc ? 'nousevaan' : 'laskevaan'} järjestykseen`
+  return (
+    <button aria-label={ariaLabel} className={buttonStyles.transparentButton} onClick={() => setSorting(sortKey)} data-test-id={`sort-button-${sortKey}`}>
+      <svg width="12px" height="12px" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M4.86603 6.5C4.48113 7.16667 3.51887 7.16667 3.13397 6.5L0.535899 2C0.150999 1.33333 0.632123 0.499999 1.40192 0.499999L6.59808 0.5C7.36788 0.5 7.849 1.33333 7.4641 2L4.86603 6.5Z"
+          fill={isCurrentSortKey ? '#499CC7' : '#C1C1C1'}
+          transform={isDesc ? 'scale(1, -1) translate(0, -8)' : ''}
+        />
+      </svg>
+    </button>
+  )
+}
 
 interface TableLabelProps {
   text: string
