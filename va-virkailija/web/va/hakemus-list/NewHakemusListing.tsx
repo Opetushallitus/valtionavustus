@@ -361,24 +361,6 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
         </th>
         <th>
           <div className={styles.tableHeader}>
-            <StatusTableLabel
-              text="Muutoshakemus"
-              statuses={Muutoshakemus.statuses}
-              labelText={Muutoshakemus.statusToFI}
-              isChecked={status => statusFilter.muutoshakemus.includes(status)}
-              onCheck={status => dispatch({type: 'set-status-filter', filter: 'muutoshakemus', value: status})}
-              onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'muutoshakemus', value: status})}
-              amountOfStatus={status => list.filter(h => h["status-muutoshakemus"] === status).length}
-              showDeleteButton={
-                statusFilter.muutoshakemus.length !== Muutoshakemus.statuses.length
-                  ? { ariaLabel: "Poista muutoshakemus rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'muutoshakemus'})}
-                  : undefined}
-            />
-            <SortButton sortKey="muutoshakemus" setSorting={setSorting} sortingState={sortingState} text="muutoshakemuksen tila" />
-          </div>
-        </th>
-        <th>
-          <div className={styles.tableHeader}>
             <TableLabel text="Haettu" disabled />
             <SortButton sortKey="applied" sortingState={sortingState} setSorting={setSorting} text="haettu summa" />
           </div>
@@ -441,7 +423,6 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
             </td>
             <td>Tähtii</td>
             <td className="hakemus-status-cell"><ArvioStatus status={hakemus.arvio.status} /></td>
-            <td><MuutoshakemusPill status={hakemus["status-muutoshakemus"]} /></td>
             <td className={`${styles.alignRight} applied-sum-cell`}>{euroFormatter.format(hakemus["budget-oph-share"])}</td>
             <td className={`${styles.alignRight} granted-sum-cell`}>{
               hakemus.arvio["budget-granted"]
