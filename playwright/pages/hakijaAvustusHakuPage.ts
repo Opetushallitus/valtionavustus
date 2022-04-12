@@ -201,6 +201,10 @@ export class HakijaAvustusHakuPage {
     await this.page.fill("[id='project-end']", "13.03.2032")
     await this.page.click( '[for="vat-included.radio.0"]')
 
+    if (answers.organization) {
+      await this.page.fill("#organization", answers.organization)
+    }
+
     await this.fillBudget(budget, 'hakija')
   }
 }

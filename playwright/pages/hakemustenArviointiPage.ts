@@ -60,6 +60,14 @@ export class HakemustenArviointiPage {
     await this.page.waitForSelector('#tab-content')
   }
 
+  async navigateToHakemus(avustushakuId: number, userKey: string, options?: { showAll?: boolean, newListingUi?: boolean }) {
+    await this.navigate(avustushakuId, options)
+    await Promise.all([
+      this.page.waitForNavigation(),
+      this.page.click(`[data-test-id="hakemus-${userKey}"]`)
+    ])
+  }
+
   async clickHakemus(hakemusID: number) {
     await Promise.all([
       this.page.waitForNavigation(),
@@ -183,6 +191,10 @@ export class HakemustenArviointiPage {
     await this.page.click("#arviointi-tab label[for='set-arvio-status-plausible']")
     await this.acceptBudget(budget)
     await this.page.click("#arviointi-tab label[for='set-arvio-status-accepted']")
+  }
+
+  async rejectHakemus() {
+    await this.page.click("#arviointi-tab label[for='set-arvio-status-rejected']")
   }
 
   statusFieldSelector(hakemusID: number) {
@@ -330,5 +342,9 @@ export class HakemustenArviointiPage {
     const title = await this.page.locator(`#hakemus-${hakemusId} .list-score-row`).getAttribute('title')
     const regex = title?.match(/.*Keskiarvo\: ([\S]+).*/)
     return regex?.[1]
+  }
+
+  async sortBy(sortKey: string) {
+    await this.page.click(`[data-test-id="sort-button-${sortKey}"]`)
   }
 }

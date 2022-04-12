@@ -12,6 +12,7 @@ export interface PaatosValues {
 }
 
 export interface Answers {
+    organization?: string
     projectName: string
     contactPersonName: string
     contactPersonEmail: string
