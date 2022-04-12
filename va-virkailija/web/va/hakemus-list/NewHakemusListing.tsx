@@ -18,7 +18,6 @@ import HakemusArviointiStatuses
 import {Pill, PillProps} from "./Pill";
 import {Role, State} from "../types";
 
-import polygonSrc from '../img/polygon.svg'
 import useOutsideClick from "../useOutsideClick";
 import {
   isEvaluator, isPresenter,
@@ -65,6 +64,32 @@ interface FilterState {
 type FilterKeys = keyof FilterState["status"]
 type FilterValue<FilterKey extends FilterKeys> = FilterState["status"][FilterKey][number]
 
+const SORTING_KEYS = [ 'organization', 'registerNumber', 'hakemus', 'muutoshakemus', 'valiselvitys', 'loppuselvitys', 'applied', 'granted', 'score' ] as const
+type SortOrder = 'asc' | 'desc'
+type SortKey = typeof SORTING_KEYS[number]
+type SorterMap = {
+  [k in SortKey]: (h: Hakemus) => number | string
+}
+type SortState = { sortKey: SortKey | undefined, sortOrder: SortOrder }
+
+const sortValueMap: SorterMap = {
+  organization: (h: Hakemus) => h["organization-name"],
+  registerNumber: (h: Hakemus) => h["register-number"] ?? 'zzz',
+  hakemus: (h: Hakemus) => h.arvio.status,
+  muutoshakemus: (h: Hakemus) => h.muutoshakemukset?.[0]?.status ?? h["status-muutoshakemus"] ?? 'zzz',
+  valiselvitys: (h: Hakemus) => h["status-valiselvitys"],
+  loppuselvitys: (h: Hakemus) => h["status-loppuselvitys"],
+  applied: (h: Hakemus) => h["budget-oph-share"],
+  granted: (h: Hakemus) => h.arvio["budget-granted"] ?? 0,
+  score: (h: Hakemus) => h.arvio.scoring?.["score-total-average"] ?? 0,
+}
+
+const hakemusSorter = ({ sortKey, sortOrder, }: SortState) => (a: Hakemus, b: Hakemus): number => {
+  const sortOrderCoef = sortOrder === 'asc' ? -1 : 1
+  const sortResult = sortKey && sortValueMap[sortKey](a) > sortValueMap[sortKey](b) ? 1 : -1
+  return sortOrderCoef * sortResult
+}
+
 type StatusFilterAction<Filter extends FilterKeys> =
   | {type: `set-status-filter`, filter: Filter, value: FilterValue<Filter>}
   | {type: `unset-status-filter`, filter: Filter, value: FilterValue<Filter>}
@@ -75,40 +100,39 @@ type Action =
   | {type: 'set-project-name-filter', value: string}
   | {type: 'set-evaluator-filter', id?: number}
   | {type: 'set-presenter-filter', id?: number}
+  | {type: 'set-sorting', key: SortKey }
   | StatusFilterAction<'hakemus'>
   | StatusFilterAction<'valiselvitys'>
   | StatusFilterAction<'loppuselvitys'>
   | StatusFilterAction<'muutoshakemus'>
 
-const filteredHakemusList = (state: FilterState, list: Hakemus[]): Hakemus[] => {
-  return list.filter(hakemus => {
-    const organizationNameOk = hakemus["organization-name"].toLocaleLowerCase().includes(state.organization)
-    const projectNameOrRegisternumberOk = (hakemus["project-name"] + hakemus["register-number"] || '').toLocaleLowerCase().includes(state.projectNameOrCode)
-    const hakemusStatusOK = state.status.hakemus.length > 0 && state.status.hakemus.includes(hakemus.arvio.status)
-    const muutoshakemusStatusOk = state.status.muutoshakemus.length > 0 && hakemus["status-muutoshakemus"]
-      ? state.status.muutoshakemus.includes(hakemus["status-muutoshakemus"])
-      : true
-    const valiselvitysStatusOk = state.status.valiselvitys.length > 0 && hakemus["status-valiselvitys"]
-      ? hakemus["status-valiselvitys"] === 'information_verified' || state.status.valiselvitys.includes(hakemus["status-valiselvitys"])
-      : true
-    const loppuselvitysStatusOk = state.status.loppuselvitys.length > 0 && hakemus["status-loppuselvitys"]
-      ? state.status.loppuselvitys.includes(hakemus["status-loppuselvitys"])
-      : true
-    const evaluatorOk = state.evaluator !== undefined
-      ? isEvaluator(hakemus, {id: state.evaluator})
-      : true
-    const presenterOk = state.presenter !== undefined
-      ? isPresenter(hakemus, {id: state.presenter})
-      : true
-    return organizationNameOk
-      && projectNameOrRegisternumberOk
-      && hakemusStatusOK
-      && muutoshakemusStatusOk
-      && valiselvitysStatusOk
-      && loppuselvitysStatusOk
-      && evaluatorOk
-      && presenterOk
-  })
+const hakemusFilter = (state: FilterState) => (hakemus: Hakemus) => {
+  const organizationNameOk = hakemus["organization-name"].toLocaleLowerCase().includes(state.organization)
+  const projectNameOrRegisternumberOk = (hakemus["project-name"] + hakemus["register-number"] || '').toLocaleLowerCase().includes(state.projectNameOrCode)
+  const hakemusStatusOK = state.status.hakemus.length > 0 && state.status.hakemus.includes(hakemus.arvio.status)
+  const muutoshakemusStatusOk = state.status.muutoshakemus.length > 0 && hakemus["status-muutoshakemus"]
+    ? state.status.muutoshakemus.includes(hakemus["status-muutoshakemus"])
+    : true
+  const valiselvitysStatusOk = state.status.valiselvitys.length > 0 && hakemus["status-valiselvitys"]
+    ? hakemus["status-valiselvitys"] === 'information_verified' || state.status.valiselvitys.includes(hakemus["status-valiselvitys"])
+    : true
+  const loppuselvitysStatusOk = state.status.loppuselvitys.length > 0 && hakemus["status-loppuselvitys"]
+    ? state.status.loppuselvitys.includes(hakemus["status-loppuselvitys"])
+    : true
+  const evaluatorOk = state.evaluator !== undefined
+    ? isEvaluator(hakemus, {id: state.evaluator})
+    : true
+  const presenterOk = state.presenter !== undefined
+    ? isPresenter(hakemus, {id: state.presenter})
+    : true
+  return organizationNameOk
+    && projectNameOrRegisternumberOk
+    && hakemusStatusOK
+    && muutoshakemusStatusOk
+    && valiselvitysStatusOk
+    && loppuselvitysStatusOk
+    && evaluatorOk
+    && presenterOk
 }
 
 const defaultStatusFilters = {
@@ -173,14 +197,33 @@ const getDefaultState = (): FilterState => ({
   projectNameOrCode: '',
   organization: '',
   presenter: undefined,
-  evaluator: undefined
+  evaluator: undefined,
 })
+
+const useSorting = (): [SortState, (newSortKey?: SortKey) => void] => {
+  const [sortKey, setSortKey] = useState<SortKey | undefined>()
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
+
+  const setSorting = (newSortKey?: SortKey) => {
+    if (sortKey === newSortKey) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortKey(newSortKey)
+      setSortOrder('asc')
+    }
+  }
+
+  return [{ sortKey, sortOrder }, setSorting]
+}
 
 export default function NewHakemusListing(props: Props) {
   const {selectedHakemus, hakemusList, onSelectHakemus, onYhteenvetoClick, roles, splitView, isResolved, controller, state, toggleSplitView} = props
   const selectedHakemusId = selectedHakemus && 'id' in selectedHakemus ? selectedHakemus.id : undefined
   const [filterState, dispatch] = useReducer(reducer, getDefaultState())
-  const filteredList = filteredHakemusList(filterState, hakemusList)
+  const [sortingState, setSorting] = useSorting()
+  const filteredList = hakemusList
+    .filter(hakemusFilter(filterState))
+    .sort(hakemusSorter(sortingState))
   const totalBudgetGranted = filteredList
     .reduce<number>((totalGranted, hakemus) => {
       const granted = hakemus.arvio["budget-granted"]
@@ -206,6 +249,8 @@ export default function NewHakemusListing(props: Props) {
             controller={controller}
             state={state}
             toggleSplitView={toggleSplitView}
+            sortingState={sortingState}
+            setSorting={setSorting}
           />
         ) : (
           <HakemusTable
@@ -221,6 +266,8 @@ export default function NewHakemusListing(props: Props) {
             controller={controller}
             state={state}
             toggleSplitView={toggleSplitView}
+            sortingState={sortingState}
+            setSorting={setSorting}
         />
         )
       }
@@ -241,13 +288,15 @@ interface HakemusTableProps {
   controller: HakemustenArviointiController
   state: State
   toggleSplitView: (forceValue?: boolean) => void
+  setSorting: (sortKey?: SortKey) => void
+  sortingState: SortState
 }
 
 function hakemusModifiedAfterSubmitted(hakemus :Hakemus) {
   return hakemus["submitted-version"] && hakemus["submitted-version"] !== hakemus.version
 }
 
-function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemusId, onSelectHakemus, onYhteenvetoClick, roles, totalBudgetGranted, state, controller, toggleSplitView}: HakemusTableProps) {
+function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemusId, onSelectHakemus, onYhteenvetoClick, roles, totalBudgetGranted, state, controller, toggleSplitView, sortingState, setSorting}: HakemusTableProps) {
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({type: 'set-organization-name-filter', value: event.target.value})
   }
@@ -275,54 +324,71 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
       <thead>
       <tr>
         <th>
-          <div className={styles.filterInput}>
+          <div className={styles.tableHeader}>
             <input placeholder="Hakijaorganisaatio" onChange={onOrganizationInput} value={organization} />
-            <PolygonIcon />
+            <SortButton sortKey="organization" sortingState={sortingState} setSorting={setSorting} />
           </div>
         </th>
         <th>
-          <div className={styles.filterInput}>
+          <div className={styles.tableHeader}>
             <input placeholder="Asianumero tai hanke" onChange={onProjectInput} value={projectNameOrCode} />
-            <PolygonIcon />
+            <SortButton sortKey="registerNumber" sortingState={sortingState} setSorting={setSorting} />
           </div>
         </th>
         <th>
-          <TableLabel text="Arvio" disabled />
+          <div className={styles.tableHeader}>
+            <TableLabel text="Arvio" disabled />
+            <SortButton sortKey="score" sortingState={sortingState} setSorting={setSorting} />
+          </div>
         </th>
         <th>
-          <StatusTableLabel
-            text="Tila"
-            statuses={HakemusArviointiStatuses.statuses}
-            labelText={HakemusArviointiStatuses.statusToFI}
-            isChecked={status => statusFilter.hakemus.includes(status)}
-            onCheck={status => dispatch({type: 'set-status-filter', filter: 'hakemus', value: status})}
-            onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'hakemus', value: status})}
-            amountOfStatus={status => list.filter(h => h.arvio.status === status).length}
-            showDeleteButton={
-              statusFilter.hakemus.length !== HakemusArviointiStatuses.statuses.length
-                ? { ariaLabel: "Poista hakemuksen tila rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'hakemus'})}
-                : undefined}
-          />
+          <div className={styles.tableHeader}>
+            <StatusTableLabel
+              text="Tila"
+              statuses={HakemusArviointiStatuses.statuses}
+              labelText={HakemusArviointiStatuses.statusToFI}
+              isChecked={status => statusFilter.hakemus.includes(status)}
+              onCheck={status => dispatch({type: 'set-status-filter', filter: 'hakemus', value: status})}
+              onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'hakemus', value: status})}
+              amountOfStatus={status => list.filter(h => h.arvio.status === status).length}
+              showDeleteButton={
+                statusFilter.hakemus.length !== HakemusArviointiStatuses.statuses.length
+                  ? { ariaLabel: "Poista hakemuksen tila rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'hakemus'})}
+                  : undefined}
+            />
+            <SortButton sortKey="hakemus" setSorting={setSorting} sortingState={sortingState} />
+          </div>
         </th>
         <th>
-          <StatusTableLabel
-            text="Muutoshakemus"
-            statuses={Muutoshakemus.statuses}
-            labelText={Muutoshakemus.statusToFI}
-            isChecked={status => statusFilter.muutoshakemus.includes(status)}
-            onCheck={status => dispatch({type: 'set-status-filter', filter: 'muutoshakemus', value: status})}
-            onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'muutoshakemus', value: status})}
-            amountOfStatus={status => list.filter(h => h["status-muutoshakemus"] === status).length}
-            showDeleteButton={
-              statusFilter.muutoshakemus.length !== Muutoshakemus.statuses.length
-                ? { ariaLabel: "Poista muutoshakemus rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'muutoshakemus'})}
-                : undefined}
-          />
+          <div className={styles.tableHeader}>
+            <StatusTableLabel
+              text="Muutoshakemus"
+              statuses={Muutoshakemus.statuses}
+              labelText={Muutoshakemus.statusToFI}
+              isChecked={status => statusFilter.muutoshakemus.includes(status)}
+              onCheck={status => dispatch({type: 'set-status-filter', filter: 'muutoshakemus', value: status})}
+              onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'muutoshakemus', value: status})}
+              amountOfStatus={status => list.filter(h => h["status-muutoshakemus"] === status).length}
+              showDeleteButton={
+                statusFilter.muutoshakemus.length !== Muutoshakemus.statuses.length
+                  ? { ariaLabel: "Poista muutoshakemus rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'muutoshakemus'})}
+                  : undefined}
+            />
+            <SortButton sortKey="muutoshakemus" setSorting={setSorting} sortingState={sortingState} />
+          </div>
         </th>
         <th>
-          <TableLabel text="Haettu" disabled />
+          <div className={styles.tableHeader}>
+            <TableLabel text="Haettu" disabled />
+            <SortButton sortKey="applied" sortingState={sortingState} setSorting={setSorting} />
+          </div>
         </th>
-        <th><TableLabel text="Myönnetty" disabled /></th>
+        <th>
+          <div className={styles.tableHeader}>
+            <TableLabel text="Myönnetty" disabled />
+            <SortButton sortKey="granted" sortingState={sortingState} setSorting={setSorting} />
+          </div>
+        </th>
         <th>
           <PersonTableLabel
             text="Valmistelija"
@@ -424,6 +490,8 @@ interface ResolvedTableProps {
   controller: HakemustenArviointiController
   state: State
   toggleSplitView: (forceValue?: boolean) => void
+  setSorting: (sortKey?: SortKey) => void
+  sortingState: SortState
 }
 
 function ResolvedTable(props: ResolvedTableProps) {
@@ -439,7 +507,9 @@ function ResolvedTable(props: ResolvedTableProps) {
     totalBudgetGranted,
     controller,
     state,
-    toggleSplitView
+    toggleSplitView,
+    setSorting,
+    sortingState,
   } = props
 
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -466,78 +536,95 @@ function ResolvedTable(props: ResolvedTableProps) {
       <thead>
         <tr>
           <th>
-            <div className={styles.filterInput}>
+            <div className={styles.tableHeader}>
               <input placeholder="Hakijaorganisaatio" onChange={onOrganizationInput} value={organization} />
-              <PolygonIcon />
+              <SortButton sortKey="organization" setSorting={setSorting} sortingState={sortingState} />
             </div>
           </th>
           <th>
-            <div className={styles.filterInput}>
+            <div className={styles.tableHeader}>
               <input placeholder="Asianumero tai hanke" onChange={onProjectInput} value={projectNameOrCode} />
-              <PolygonIcon />
+              <SortButton sortKey="registerNumber" setSorting={setSorting} sortingState={sortingState} />
             </div>
           </th>
           <th>
-            <StatusTableLabel
-              text="Tila"
-              statuses={HakemusArviointiStatuses.statuses}
-              labelText={HakemusArviointiStatuses.statusToFI}
-              isChecked={status => statusFilter.hakemus.includes(status)}
-              onCheck={status => dispatch({type: 'set-status-filter', filter: 'hakemus', value: status})}
-              onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'hakemus', value: status})}
-              amountOfStatus={status => list.filter(h => h.arvio.status === status).length}
-              showDeleteButton={
-                statusFilter.hakemus.length !== HakemusArviointiStatuses.statuses.length
-                  ? { ariaLabel: "Poista hakemuksen tila rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'hakemus'})}
-                  : undefined}
-            />
-          </th>
-          <th>
-            <StatusTableLabel
-              text="Muutoshakemus"
-              statuses={Muutoshakemus.statuses}
-              labelText={Muutoshakemus.statusToFI}
-              isChecked={status => statusFilter.muutoshakemus.includes(status)}
-              onCheck={status => dispatch({type: 'set-status-filter', filter: 'muutoshakemus', value: status})}
-              onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'muutoshakemus', value: status})}
-              amountOfStatus={status => list.filter(h => h["status-muutoshakemus"] === status).length}
-              showDeleteButton={
-                statusFilter.muutoshakemus.length !== Muutoshakemus.statuses.length
-                  ? { ariaLabel: "Poista muutoshakemus rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'muutoshakemus'})}
-                  : undefined}
-            />
-          </th>
-          <th>
-            <StatusTableLabel
-              text="Väliselvitys"
-              statuses={HakemusSelvitys.statuses}
-              labelText={HakemusSelvitys.statusToFI}
-              isChecked={status => statusFilter.valiselvitys.includes(status)}
-              onCheck={status => dispatch({type: 'set-status-filter', filter: 'valiselvitys', value: status})}
-              onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'valiselvitys', value: status})}
-              amountOfStatus={status => list.filter(h => h["status-valiselvitys"] === status).length}
-              showDeleteButton={
-                statusFilter.valiselvitys.length !== HakemusSelvitys.statuses.length
-                  ? { ariaLabel: "Poista väliselvitys rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'valiselvitys'})}
-                  : undefined}
-            />
-          </th>
-          <th>
-            <StatusTableLabel
-              text="Loppuselvitys"
-              statuses={Loppuselvitys.statuses}
-              labelText={Loppuselvitys.statusToFI}
-              isChecked={status => statusFilter.loppuselvitys.includes(status)}
-              onCheck={status => dispatch({type: 'set-status-filter', filter: 'loppuselvitys', value: status})}
-              onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'loppuselvitys', value: status})}
-              amountOfStatus={status => list.filter(h => h["status-loppuselvitys"] === status).length}
-              showDeleteButton={
-                statusFilter.loppuselvitys.length !== Loppuselvitys.statuses.length
-                  ? { ariaLabel: "Poista loppuselvitys rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'loppuselvitys'})}
-                  : undefined}
+            <div className={styles.tableHeader}>
+              <StatusTableLabel
+                text="Tila"
+                statuses={HakemusArviointiStatuses.statuses}
+                labelText={HakemusArviointiStatuses.statusToFI}
+                isChecked={status => statusFilter.hakemus.includes(status)}
+                onCheck={status => dispatch({type: 'set-status-filter', filter: 'hakemus', value: status})}
+                onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'hakemus', value: status})}
+                amountOfStatus={status => list.filter(h => h.arvio.status === status).length}
+                showDeleteButton={
+                  statusFilter.hakemus.length !== HakemusArviointiStatuses.statuses.length
+                    ? { ariaLabel: "Poista hakemuksen tila rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'hakemus'})}
+                    : undefined}
               />
+              <SortButton sortKey="hakemus" setSorting={setSorting} sortingState={sortingState} />
+            </div>
           </th>
-          <th><TableLabel text="Myönnetty" disabled /></th>
+          <th>
+            <div className={styles.tableHeader}>
+              <StatusTableLabel
+                text="Muutoshakemus"
+                statuses={Muutoshakemus.statuses}
+                labelText={Muutoshakemus.statusToFI}
+                isChecked={status => statusFilter.muutoshakemus.includes(status)}
+                onCheck={status => dispatch({type: 'set-status-filter', filter: 'muutoshakemus', value: status})}
+                onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'muutoshakemus', value: status})}
+                amountOfStatus={status => list.filter(h => h["status-muutoshakemus"] === status).length}
+                showDeleteButton={
+                  statusFilter.muutoshakemus.length !== Muutoshakemus.statuses.length
+                    ? { ariaLabel: "Poista muutoshakemus rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'muutoshakemus'})}
+                    : undefined}
+              />
+              <SortButton sortKey="muutoshakemus" setSorting={setSorting} sortingState={sortingState} />
+            </div>
+          </th>
+          <th>
+            <div className={styles.tableHeader}>
+              <StatusTableLabel
+                text="Väliselvitys"
+                statuses={HakemusSelvitys.statuses}
+                labelText={HakemusSelvitys.statusToFI}
+                isChecked={status => statusFilter.valiselvitys.includes(status)}
+                onCheck={status => dispatch({type: 'set-status-filter', filter: 'valiselvitys', value: status})}
+                onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'valiselvitys', value: status})}
+                amountOfStatus={status => list.filter(h => h["status-valiselvitys"] === status).length}
+                showDeleteButton={
+                  statusFilter.valiselvitys.length !== HakemusSelvitys.statuses.length
+                    ? { ariaLabel: "Poista väliselvitys rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'valiselvitys'})}
+                    : undefined}
+              />
+              <SortButton sortKey="valiselvitys" setSorting={setSorting} sortingState={sortingState} />
+            </div>
+          </th>
+          <th>
+            <div className={styles.tableHeader}>
+              <StatusTableLabel
+                text="Loppuselvitys"
+                statuses={Loppuselvitys.statuses}
+                labelText={Loppuselvitys.statusToFI}
+                isChecked={status => statusFilter.loppuselvitys.includes(status)}
+                onCheck={status => dispatch({type: 'set-status-filter', filter: 'loppuselvitys', value: status})}
+                onUncheck={status => dispatch({type: 'unset-status-filter', filter: 'loppuselvitys', value: status})}
+                amountOfStatus={status => list.filter(h => h["status-loppuselvitys"] === status).length}
+                showDeleteButton={
+                  statusFilter.loppuselvitys.length !== Loppuselvitys.statuses.length
+                    ? { ariaLabel: "Poista loppuselvitys rajaukset", onClick: () => dispatch({type: 'clear-status-filter', filter: 'loppuselvitys'})}
+                    : undefined}
+                />
+                <SortButton sortKey="loppuselvitys" setSorting={setSorting} sortingState={sortingState} />
+            </div>
+          </th>
+          <th>
+            <div className={styles.tableHeader}>
+              <TableLabel text="Myönnetty" disabled />
+              <SortButton sortKey="granted" setSorting={setSorting} sortingState={sortingState} />
+            </div>
+          </th>
           <th>
             <PersonTableLabel
               text="Valmistelija"
@@ -665,8 +752,23 @@ const PeopleRoleButton = ({roles, controller, selectedRole, state, toggleSplitVi
   )
 }
 
+type SortButtonProps = {
+  sortKey: SortKey
+  setSorting: (sortKey: SortKey) => void
+  sortingState: SortState
+}
 
-const PolygonIcon = () => <img src={polygonSrc} alt="ikoni" className={styles.polygon}/>
+const SortButton = ({ sortKey, setSorting, sortingState }: SortButtonProps) => (
+  <button className={buttonStyles.transparentButton} onClick={() => setSorting(sortKey)}>
+    <svg width="12px" height="12px" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M4.86603 6.5C4.48113 7.16667 3.51887 7.16667 3.13397 6.5L0.535899 2C0.150999 1.33333 0.632123 0.499999 1.40192 0.499999L6.59808 0.5C7.36788 0.5 7.849 1.33333 7.4641 2L4.86603 6.5Z"
+        fill={sortKey === sortingState.sortKey ? '#499CC7' : '#C1C1C1'}
+        transform={sortKey === sortingState.sortKey && sortingState.sortOrder === 'desc' ? 'scale(1, -1) translate(0, -8)' : ''}
+      />
+    </svg>
+  </button>
+)
 
 interface TableLabelProps {
   text: string
@@ -687,7 +789,6 @@ const TableLabel: React.FC<TableLabelProps> = ({text, disabled, showDeleteButton
       {showDeleteButton && (
         <button className={buttonStyles.deleteButton} onClick={showDeleteButton.onClick} aria-label={showDeleteButton.ariaLabel} />
       )}
-      <PolygonIcon />
       {toggled && (
         <div className={styles.tableLabelPopup} ref={ref} >
           {children}
@@ -717,7 +818,6 @@ const PersonTableLabel: React.FC<PersonTableLabel> = ({text, disabled, showDelet
       {showDeleteButton && (
         <button className={buttonStyles.deleteButton} onClick={showDeleteButton.onClick} aria-label={showDeleteButton.ariaLabel} />
       )}
-      <PolygonIcon />
       {toggled && (
         <div className={popupStyle} ref={ref} >
           <ControlledSelectPanel roles={roles} onClickClose={onOutsideClick} onClickRole={onClickRole} roleField={roleField} activeId={activeId} />

@@ -7,12 +7,14 @@
   letter-spacing: -0.035em;
 }
 
-.filterInput {
+.tableHeader {
   composes: font;
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
 
-  input {
+  &>input {
     text-align: left;
     padding: 4px 4px 4px 8px;
     background: #FFFFFF;
@@ -73,6 +75,9 @@
       padding: 8px 0 8px 12px;
     }
   }
+  input {
+    margin-right: 2px;
+  }
 }
 
 .splitView {
@@ -121,6 +126,7 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
+  width: 100%;
 }
 
 .tableLabelButton {
@@ -170,10 +176,4 @@
   input {
     margin-right: 8px;
   }
-}
-
-.polygon {
-  height: 8px;
-  width: auto;
-  margin-left: 8px;
 }
