@@ -315,7 +315,6 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
         <col style={{width: '210px'}} />
         <col style={{width: '100px'}} />
         <col style={{width: '136px'}} />
-        <col style={{width: '136px'}} />
         <col style={{width: '80px'}} />
         <col style={{width: '80px'}} />
         <col style={{width: '80px'}} />
