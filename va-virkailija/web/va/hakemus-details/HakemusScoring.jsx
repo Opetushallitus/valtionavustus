@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import ClassNames from 'classnames'
 
-import ScoreResolver from '../ScoreResolver.js'
+import ScoreResolver from '../ScoreResolver'
 import HelpTooltip from '../HelpTooltip'
 
 export default class HakemusScoring extends Component {

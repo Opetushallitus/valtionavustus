@@ -44,7 +44,7 @@ export type Answer = {
   attachmentVersion?: any
 }
 
-interface PersonScoreAverage {
+export interface PersonScoreAverage {
   'person-oid': string
   'first-name': string
   'last-name': string

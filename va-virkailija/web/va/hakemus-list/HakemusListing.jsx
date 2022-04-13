@@ -5,7 +5,7 @@ import React, { Component } from 'react'
 import { HakemusSelvitys, Loppuselvitys, Muutoshakemus } from 'soresu-form/web/va/status'
 
 import HakemusArviointiStatuses from '../hakemus-details/HakemusArviointiStatuses'
-import ScoreResolver from '../ScoreResolver.js'
+import ScoreResolver from '../ScoreResolver'
 import { PersonFilterButton } from './PersonFilterButton'
 import { PersonSelectButton } from './PersonSelectButton'
 import ShouldPayIcon from './ShouldPayIcon.jsx'
