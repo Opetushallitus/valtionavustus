@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import ClassNames from 'classnames'
 
-import ScoreResolver, {scoreToFI, createAverageSummaryText, myScoringIsComplete} from '../ScoreResolver'
+import ScoreResolver, {scoreToFI, createAverageSummaryText, myScoringIsComplete, scoringByOid} from '../ScoreResolver'
 import HelpTooltip from '../HelpTooltip'
 
 export default class HakemusScoring extends Component {
@@ -62,7 +62,7 @@ export default class HakemusScoring extends Component {
   static createOthersScoreDisplays(allScoresOfHakemus, scoringOfHakemus, valintaperusteet, myUserInfo) {
     const othersPersonOids = _.map(ScoreResolver.othersScorings(scoringOfHakemus, myUserInfo), s => { return s["person-oid"]})
     return _.map(othersPersonOids, oid => {
-      const userScoring = ScoreResolver.scoringByOid(scoringOfHakemus, oid)
+      const userScoring = scoringByOid(scoringOfHakemus, oid)
       const userLabel = userScoring["first-name"] + " " + userScoring["last-name"]
       return (
         <table key={"peruste-list-of" + oid} className="valintaperuste-list">

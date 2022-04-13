@@ -55,13 +55,13 @@ export function effectiveAverage(scoring: Scoring, userInfo: UserInfo, allowHake
   return !allowHakemusScoring || myScoringIsComplete(scoring, userInfo) ? scoring["score-total-average"] : undefined
 }
 
-export default class ScoreResolver {
-  static scoringByOid(scoring: Scoring, personOid: string): PersonScoreAverage | undefined {
-    return scoring["score-averages-by-user"].find((personScoreAverage: PersonScoreAverage) => {
-      return personScoreAverage && personScoreAverage["person-oid"] === personOid
-    })
-  }
+export function scoringByOid(scoring: Scoring, personOid: string): PersonScoreAverage | undefined {
+  return scoring["score-averages-by-user"].find((personScoreAverage: PersonScoreAverage) => {
+    return personScoreAverage && personScoreAverage["person-oid"] === personOid
+  })
+}
 
+export default class ScoreResolver {
   static myAverage(scoring: Scoring, userInfo: UserInfo): number | undefined {
     const myScore = scoring["score-averages-by-user"]
       .find((personScoreAverage: PersonScoreAverage) => ScoreResolver._belongsToUser(personScoreAverage, userInfo))
