@@ -408,7 +408,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
 
         return (
           <tr key={`hakemus-${hakemus.id}`}
-              className={hakemus.id === selectedHakemusId ? styles.selectedHakemusRow : styles.hakemusRow}
+              className={classNames(hakemus.id === selectedHakemusId ? styles.selectedHakemusRow : styles.hakemusRow, { [styles.draft]: draft })}
               tabIndex={0}
               onClick={() => onSelectHakemus(hakemus.id)}
               onKeyDown={e => e.key === 'Enter' && onSelectHakemus(hakemus.id)}
@@ -422,7 +422,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
               </div>
             </td>
             <td>Tähtii</td>
-            <td className="hakemus-status-cell"><ArvioStatus status={hakemus.arvio.status} /></td>
+            <td className="hakemus-status-cell">{draft ? <EmptyGreyPill /> : <ArvioStatus status={hakemus.arvio.status} />}</td>
             <td className={`${styles.alignRight} applied-sum-cell`}>{euroFormatter.format(hakemus["budget-oph-share"])}</td>
             <td className={`${styles.alignRight} granted-sum-cell`}>{
               hakemus.arvio["budget-granted"]
