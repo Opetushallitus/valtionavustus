@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import ClassNames from 'classnames'
 
-import ScoreResolver, {scoreToFI, createAverageSummaryText} from '../ScoreResolver'
+import ScoreResolver, {scoreToFI, createAverageSummaryText, myScoringIsComplete} from '../ScoreResolver'
 import HelpTooltip from '../HelpTooltip'
 
 export default class HakemusScoring extends Component {
@@ -13,7 +13,7 @@ export default class HakemusScoring extends Component {
     const allScoresOfHakemus = hakemus.scores
     const scoringOfHakemus = hakemus.arvio ? hakemus.arvio.scoring : undefined
     const myUserInfo = this.props.userInfo
-    const allowSeeingOthersScores = ScoreResolver.myScoringIsComplete(scoringOfHakemus, myUserInfo) || (!allowHakemusScoring)
+    const allowSeeingOthersScores = myScoringIsComplete(scoringOfHakemus, myUserInfo) || (!allowHakemusScoring)
     const showOthersScores = this.props.showOthersScores && allowSeeingOthersScores
 
     const avustushaku = this.props.avustushaku

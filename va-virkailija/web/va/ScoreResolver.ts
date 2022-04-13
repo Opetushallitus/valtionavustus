@@ -40,20 +40,20 @@ export function createAverageSummaryText(scoring: Scoring, userInfo: UserInfo): 
   }
 }
 
-export default class ScoreResolver {
-  static myScoringIsComplete(scoring: Scoring, userInfo: UserInfo) {
-    return scoring && scoring["score-averages-by-user"].some(isMyScore)
+export function myScoringIsComplete(scoring: Scoring, userInfo: UserInfo) {
+  return scoring && scoring["score-averages-by-user"].some(isMyScore)
 
-    function isMyScore(scoreAverageByUser: PersonScoreAverage) {
-      return ScoreResolver._belongsToUser(scoreAverageByUser, userInfo)
-    }
+  function isMyScore(scoreAverageByUser: PersonScoreAverage) {
+    return ScoreResolver._belongsToUser(scoreAverageByUser, userInfo)
   }
+}
 
+export default class ScoreResolver {
   static effectiveAverage(scoring: Scoring, userInfo: UserInfo, allowHakemusScoring: boolean = false): number | undefined {
     if (!scoring || !scoring["score-averages-by-user"] || scoring["score-averages-by-user"].length === 0) {
       return undefined
     }
-    return !allowHakemusScoring || ScoreResolver.myScoringIsComplete(scoring, userInfo) ? scoring["score-total-average"] : undefined
+    return !allowHakemusScoring || myScoringIsComplete(scoring, userInfo) ? scoring["score-total-average"] : undefined
   }
 
   static scoringByOid(scoring: Scoring, personOid: string): PersonScoreAverage | undefined {
