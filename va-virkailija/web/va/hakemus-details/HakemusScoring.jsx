@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import ClassNames from 'classnames'
 
-import ScoreResolver from '../ScoreResolver'
+import ScoreResolver, {scoreToFI} from '../ScoreResolver'
 import HelpTooltip from '../HelpTooltip'
 
 export default class HakemusScoring extends Component {
@@ -89,7 +89,7 @@ class ValintaPerusteRow extends Component {
     const personOid = this.props.personOid
     const controller = this.props.controller
     const scoreOfUser = _.find(allScoresOfThisPeruste, s => { return s["person-oid"] === personOid })
-    const scoreOfUserFi = ScoreResolver.scoreToFI(scoreOfUser ? scoreOfUser.score : null)
+    const scoreOfUserFi = scoreToFI(scoreOfUser ? scoreOfUser.score : null)
     const starElements = _.map(_.range(4), i => <StarElement key={i}
                                                              index={i}
                                                              scoreOfUser={scoreOfUser}
@@ -127,7 +127,7 @@ class StarElement extends Component {
 
   render() {
     const indexOfStar = this.props.index
-    const starTitle = ScoreResolver.scoreToFI(indexOfStar)
+    const starTitle = scoreToFI(indexOfStar)
     const scoreOfUser = this.props.scoreOfUser
     const allowHakemusScoring = this.props.allowHakemusScoring
     const selectionCriteriaIndex = this.props.selectionCriteriaIndex

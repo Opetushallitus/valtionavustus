@@ -1,22 +1,21 @@
 import {Scoring, PersonScoreAverage} from 'soresu-form/web/va/types'
 import {UserInfo} from "./types";
 
-export default class ScoreResolver {
-  static scoreToFI(score: number): string {
-    switch (score) {
-      case 0:
-        return "Ei toteudu"
-      case 1:
-        return "Toteutuu"
-      case 2:
-        return "Toteutuu hyvin"
-      case 3:
-        return "Toteutuu erinomaisesti"
-    }
-    return "Ei arviota"
+export function scoreToFI(score: number): string {
+  switch (score) {
+    case 0:
+      return "Ei toteudu"
+    case 1:
+      return "Toteutuu"
+    case 2:
+      return "Toteutuu hyvin"
+    case 3:
+      return "Toteutuu erinomaisesti"
   }
+  return "Ei arviota"
+}
 
-
+export default class ScoreResolver {
   static createAverageSummaryText(scoring: Scoring, userInfo: UserInfo): string {
     if (!scoring || !scoring["score-averages-by-user"] || scoring["score-averages-by-user"].length === 0) {
       return "Ei arvioita"
@@ -38,7 +37,7 @@ export default class ScoreResolver {
     }
 
     function meanToDisplay(meanScore: number) {
-      return (1 + Math.round(10 * meanScore) / 10.0) + " (" + ScoreResolver.scoreToFI(Math.round(meanScore)) + ")"
+      return (1 + Math.round(10 * meanScore) / 10.0) + " (" + scoreToFI(Math.round(meanScore)) + ")"
     }
   }
 
