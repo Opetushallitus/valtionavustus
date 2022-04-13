@@ -50,11 +50,8 @@
     td:first-of-type, td:nth-of-type(2) {
       padding-left: 12px;
     }
-    td:last-of-type {
-      padding-right: 8px;
-    }
     &:nth-of-type(even):not(:hover) {
-      background: #fafafa;
+      background-color: #fafafa;
     }
     &:hover {
       background-color: #EBF7FD;
@@ -108,14 +105,17 @@
 
 .selectedHakemusRow {
   composes: hakemusRow;
-  background-color: #EBF7FD;
+  background-color: #EBF7FD !important;
+  outline: 1px solid #C8E8F9;
+  outline-offset: -1px;
   &:hover {
-    background-color: darken(#EBF7FD, 20%);
+    filter: brightness(95%) contrast(1.1) saturate(2);
   }
   &:active {
-    background-color: darken(#EBF7FD, 40%);
+    filter: brightness(95%) contrast(1.1) saturate(2);
   }
 }
+
 
 .yhteenveto {
   margin-left: 1rem;
