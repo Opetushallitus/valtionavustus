@@ -5,7 +5,7 @@ import React, { Component } from 'react'
 import { HakemusSelvitys, Loppuselvitys, Muutoshakemus } from 'soresu-form/web/va/status'
 
 import HakemusArviointiStatuses from '../hakemus-details/HakemusArviointiStatuses'
-import ScoreResolver from '../ScoreResolver'
+import ScoreResolver, {createAverageSummaryText} from '../ScoreResolver'
 import { PersonFilterButton } from './PersonFilterButton'
 import { PersonSelectButton } from './PersonSelectButton'
 import ShouldPayIcon from './ShouldPayIcon.jsx'
@@ -616,7 +616,7 @@ class Scoring extends Component {
 
     const titleText = _.isUndefined(meanScore) ?
       (allowHakemusScoring ? "Pisteytä hakemus jokaisen valintaperusteen mukaan nähdäksesi kaikkien arvioiden keskiarvon" : null ) :
-      ScoreResolver.createAverageSummaryText(scoring, userInfo)
+      createAverageSummaryText(scoring, userInfo)
 
     return (
       <div className="list-score-row" title={titleText}>

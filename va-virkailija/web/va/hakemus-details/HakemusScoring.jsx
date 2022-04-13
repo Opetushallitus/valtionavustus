@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import ClassNames from 'classnames'
 
-import ScoreResolver, {scoreToFI} from '../ScoreResolver'
+import ScoreResolver, {scoreToFI, createAverageSummaryText} from '../ScoreResolver'
 import HelpTooltip from '../HelpTooltip'
 
 export default class HakemusScoring extends Component {
@@ -162,7 +162,7 @@ class SeeOthersScores extends Component {
     const classNames = ClassNames("see-others-scoring", {disabled: !allowSeeingOthersScores || othersScoringsCount === 0})
 
     const labelText = resolveLabelText()
-    const titleText = allowSeeingOthersScores ? ScoreResolver.createAverageSummaryText(scoring, userInfo) : undefined
+    const titleText = allowSeeingOthersScores ? createAverageSummaryText(scoring, userInfo) : undefined
 
     const onClick = e => {
       e.preventDefault()

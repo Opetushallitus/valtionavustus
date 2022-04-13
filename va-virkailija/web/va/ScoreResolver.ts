@@ -15,32 +15,32 @@ export function scoreToFI(score: number): string {
   return "Ei arviota"
 }
 
-export default class ScoreResolver {
-  static createAverageSummaryText(scoring: Scoring, userInfo: UserInfo): string {
-    if (!scoring || !scoring["score-averages-by-user"] || scoring["score-averages-by-user"].length === 0) {
-      return "Ei arvioita"
-    }
-    const averagesByUser = scoring["score-averages-by-user"]
-    const numberOfScorings = averagesByUser.length
-    const meanScore = ScoreResolver.effectiveAverage(scoring, userInfo)
-    const scoringSubstantive = numberOfScorings > 1 ? " arviota" : " arvio"
-    return numberOfScorings + scoringSubstantive + ". Keskiarvo: " + meanToDisplay(meanScore!) + "\n" + createSummaryText()
+export function createAverageSummaryText(scoring: Scoring, userInfo: UserInfo): string {
+  if (!scoring || !scoring["score-averages-by-user"] || scoring["score-averages-by-user"].length === 0) {
+    return "Ei arvioita"
+  }
+  const averagesByUser = scoring["score-averages-by-user"]
+  const numberOfScorings = averagesByUser.length
+  const meanScore = ScoreResolver.effectiveAverage(scoring, userInfo)
+  const scoringSubstantive = numberOfScorings > 1 ? " arviota" : " arvio"
+  return numberOfScorings + scoringSubstantive + ". Keskiarvo: " + meanToDisplay(meanScore!) + "\n" + createSummaryText()
 
-    function createSummaryText() {
-      const othersScorings = ScoreResolver.othersScorings(scoring, userInfo)
-      const textFromOthersResults = othersScorings.map(s => {
-        return " - " + s["first-name"] + " " + s["last-name"] + ": " + meanToDisplay(s["score-average"]) + "\n"
-      })
+  function createSummaryText() {
+    const othersScorings = ScoreResolver.othersScorings(scoring, userInfo)
+    const textFromOthersResults = othersScorings.map(s => {
+      return " - " + s["first-name"] + " " + s["last-name"] + ": " + meanToDisplay(s["score-average"]) + "\n"
+    })
 
-      const myAverage = ScoreResolver.myAverage(scoring, userInfo)
-      return textFromOthersResults + (myAverage ? " - oma arviosi: " + meanToDisplay(myAverage) : "")
-    }
-
-    function meanToDisplay(meanScore: number) {
-      return (1 + Math.round(10 * meanScore) / 10.0) + " (" + scoreToFI(Math.round(meanScore)) + ")"
-    }
+    const myAverage = ScoreResolver.myAverage(scoring, userInfo)
+    return textFromOthersResults + (myAverage ? " - oma arviosi: " + meanToDisplay(myAverage) : "")
   }
 
+  function meanToDisplay(meanScore: number) {
+    return (1 + Math.round(10 * meanScore) / 10.0) + " (" + scoreToFI(Math.round(meanScore)) + ")"
+  }
+}
+
+export default class ScoreResolver {
   static myScoringIsComplete(scoring: Scoring, userInfo: UserInfo) {
     return scoring && scoring["score-averages-by-user"].some(isMyScore)
 
