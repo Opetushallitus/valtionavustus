@@ -21,7 +21,7 @@ export function createAverageSummaryText(scoring: Scoring, userInfo: UserInfo): 
   }
   const averagesByUser = scoring["score-averages-by-user"]
   const numberOfScorings = averagesByUser.length
-  const meanScore = ScoreResolver.effectiveAverage(scoring, userInfo)
+  const meanScore = effectiveAverage(scoring, userInfo)
   const scoringSubstantive = numberOfScorings > 1 ? " arviota" : " arvio"
   return numberOfScorings + scoringSubstantive + ". Keskiarvo: " + meanToDisplay(meanScore!) + "\n" + createSummaryText()
 
@@ -48,14 +48,14 @@ export function myScoringIsComplete(scoring: Scoring, userInfo: UserInfo) {
   }
 }
 
-export default class ScoreResolver {
-  static effectiveAverage(scoring: Scoring, userInfo: UserInfo, allowHakemusScoring: boolean = false): number | undefined {
-    if (!scoring || !scoring["score-averages-by-user"] || scoring["score-averages-by-user"].length === 0) {
-      return undefined
-    }
-    return !allowHakemusScoring || myScoringIsComplete(scoring, userInfo) ? scoring["score-total-average"] : undefined
+export function effectiveAverage(scoring: Scoring, userInfo: UserInfo, allowHakemusScoring: boolean = false): number | undefined {
+  if (!scoring || !scoring["score-averages-by-user"] || scoring["score-averages-by-user"].length === 0) {
+    return undefined
   }
+  return !allowHakemusScoring || myScoringIsComplete(scoring, userInfo) ? scoring["score-total-average"] : undefined
+}
 
+export default class ScoreResolver {
   static scoringByOid(scoring: Scoring, personOid: string): PersonScoreAverage | undefined {
     return scoring["score-averages-by-user"].find((personScoreAverage: PersonScoreAverage) => {
       return personScoreAverage && personScoreAverage["person-oid"] === personOid

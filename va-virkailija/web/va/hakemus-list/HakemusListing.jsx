@@ -5,7 +5,7 @@ import React, { Component } from 'react'
 import { HakemusSelvitys, Loppuselvitys, Muutoshakemus } from 'soresu-form/web/va/status'
 
 import HakemusArviointiStatuses from '../hakemus-details/HakemusArviointiStatuses'
-import ScoreResolver, {createAverageSummaryText} from '../ScoreResolver'
+import {createAverageSummaryText, effectiveAverage} from '../ScoreResolver'
 import { PersonFilterButton } from './PersonFilterButton'
 import { PersonSelectButton } from './PersonSelectButton'
 import ShouldPayIcon from './ShouldPayIcon.jsx'
@@ -61,7 +61,7 @@ export default class HakemusListing extends Component {
         return hakemus => hakemus.arvio["should-pay"] ? "" : "!"
       case "score":
         return hakemus => {
-          const score = ScoreResolver.effectiveAverage(hakemus.arvio.scoring, userInfo, allowHakemusScoring)
+          const score = effectiveAverage(hakemus.arvio.scoring, userInfo, allowHakemusScoring)
           return score ? score : 0
         }
     }
@@ -590,7 +590,7 @@ class HakemusRow extends Component {
 class Scoring extends Component {
   render() {
     const { userInfo, allowHakemusScoring, scoring } = this.props
-    const meanScore = ScoreResolver.effectiveAverage(scoring, userInfo, allowHakemusScoring)
+    const meanScore = effectiveAverage(scoring, userInfo, allowHakemusScoring)
     const normalizedMeanScore = meanScore + 1
     const starElements = _.map(_.range(4), indexOfStar => {
       const isVisible = Math.ceil(meanScore) >= indexOfStar
