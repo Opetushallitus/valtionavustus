@@ -2,7 +2,13 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import ClassNames from 'classnames'
 
-import ScoreResolver, {scoreToFI, createAverageSummaryText, myScoringIsComplete, scoringByOid} from '../ScoreResolver'
+import {
+  scoreToFI,
+  createAverageSummaryText,
+  myScoringIsComplete,
+  scoringByOid,
+  othersScorings
+} from '../ScoreResolver'
 import HelpTooltip from '../HelpTooltip'
 
 export default class HakemusScoring extends Component {
@@ -60,7 +66,7 @@ export default class HakemusScoring extends Component {
   }
 
   static createOthersScoreDisplays(allScoresOfHakemus, scoringOfHakemus, valintaperusteet, myUserInfo) {
-    const othersPersonOids = _.map(ScoreResolver.othersScorings(scoringOfHakemus, myUserInfo), s => { return s["person-oid"]})
+    const othersPersonOids = _.map(othersScorings(scoringOfHakemus, myUserInfo), s => { return s["person-oid"]})
     return _.map(othersPersonOids, oid => {
       const userScoring = scoringByOid(scoringOfHakemus, oid)
       const userLabel = userScoring["first-name"] + " " + userScoring["last-name"]
@@ -158,7 +164,7 @@ class SeeOthersScores extends Component {
     const userInfo = this.props.userInfo
     const allowSeeingOthersScores = this.props.allowSeeingOthersScores
     const showOthersScores = this.props.showOthersScores
-    const othersScoringsCount = allowSeeingOthersScores ? ScoreResolver.othersScorings(scoring, userInfo).length : 0
+    const othersScoringsCount = allowSeeingOthersScores ? othersScorings(scoring, userInfo).length : 0
     const classNames = ClassNames("see-others-scoring", {disabled: !allowSeeingOthersScores || othersScoringsCount === 0})
 
     const labelText = resolveLabelText()

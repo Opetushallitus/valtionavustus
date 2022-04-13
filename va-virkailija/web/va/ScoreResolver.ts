@@ -26,13 +26,13 @@ export function createAverageSummaryText(scoring: Scoring, userInfo: UserInfo): 
   return numberOfScorings + scoringSubstantive + ". Keskiarvo: " + meanToDisplay(meanScore!) + "\n" + createSummaryText()
 
   function createSummaryText() {
-    const othersScorings = ScoreResolver.othersScorings(scoring, userInfo)
-    const textFromOthersResults = othersScorings.map(s => {
+    const othersScorings_ = othersScorings(scoring, userInfo)
+    const textFromOthersResults = othersScorings_.map(s => {
       return " - " + s["first-name"] + " " + s["last-name"] + ": " + meanToDisplay(s["score-average"]) + "\n"
     })
 
-    const myAverage = ScoreResolver.myAverage(scoring, userInfo)
-    return textFromOthersResults + (myAverage ? " - oma arviosi: " + meanToDisplay(myAverage) : "")
+    const average = myAverage(scoring, userInfo)
+    return textFromOthersResults + (average ? " - oma arviosi: " + meanToDisplay(average) : "")
   }
 
   function meanToDisplay(meanScore: number) {
@@ -44,7 +44,7 @@ export function myScoringIsComplete(scoring: Scoring, userInfo: UserInfo) {
   return scoring && scoring["score-averages-by-user"].some(isMyScore)
 
   function isMyScore(scoreAverageByUser: PersonScoreAverage) {
-    return ScoreResolver._belongsToUser(scoreAverageByUser, userInfo)
+    return belongsToUser(scoreAverageByUser, userInfo)
   }
 }
 
@@ -61,18 +61,16 @@ export function scoringByOid(scoring: Scoring, personOid: string): PersonScoreAv
   })
 }
 
-export default class ScoreResolver {
-  static myAverage(scoring: Scoring, userInfo: UserInfo): number | undefined {
-    const myScore = scoring["score-averages-by-user"]
-      .find((personScoreAverage: PersonScoreAverage) => ScoreResolver._belongsToUser(personScoreAverage, userInfo))
-    return myScore ? myScore["score-average"] : undefined
-  }
+function myAverage(scoring: Scoring, userInfo: UserInfo): number | undefined {
+  const myScore = scoring["score-averages-by-user"]
+    .find((personScoreAverage: PersonScoreAverage) => belongsToUser(personScoreAverage, userInfo))
+  return myScore ? myScore["score-average"] : undefined
+}
 
-  static othersScorings(scoring: Scoring, userInfo: UserInfo): PersonScoreAverage[] {
-    return scoring["score-averages-by-user"].filter(a => !ScoreResolver._belongsToUser(a, userInfo))
-  }
+export function othersScorings(scoring: Scoring, userInfo: UserInfo): PersonScoreAverage[] {
+  return scoring["score-averages-by-user"].filter(a => !belongsToUser(a, userInfo))
+}
 
-  static _belongsToUser(scoreAverageByUser: PersonScoreAverage, userInfo: UserInfo): boolean {
-    return scoreAverageByUser && scoreAverageByUser["person-oid"] === userInfo["person-oid"]
-  }
+function belongsToUser(scoreAverageByUser: PersonScoreAverage, userInfo: UserInfo): boolean {
+  return scoreAverageByUser && scoreAverageByUser["person-oid"] === userInfo["person-oid"]
 }
