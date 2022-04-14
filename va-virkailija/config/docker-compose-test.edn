@@ -27,5 +27,5 @@
  :db {:server-name "va-postgres"
       :database-name "va-dev"}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
- :new-top-bar {:enabled? true}
+ :new-top-bar {:enabled? false}
  :test-apis {:enabled? true}}
