@@ -46,4 +46,11 @@
     <packageUrl regex="true">^pkg:maven/org\.apache\.poi/poi.*</packageUrl>
     <cve>CVE-2022-26336</cve>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+    Wrong package matched, vulnerability is in async javscript library
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.clojure/core\.async.*</packageUrl>
+    <cve>CVE-2021-43138</cve>
+  </suppress>
 </suppressions>
