@@ -208,7 +208,7 @@ export interface Hakemus {
   'user-last-name'?: string
   'organization-name': string
   'project-name': string
-  refused?: unknown
+  refused?: boolean
   'refused-at'?: unknown
   'refused-comment'?: unknown
   payments: Payment[]

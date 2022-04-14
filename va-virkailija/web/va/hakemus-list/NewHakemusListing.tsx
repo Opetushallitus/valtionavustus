@@ -421,7 +421,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
               </div>
             </td>
             <td>Tähtii</td>
-            <td className="hakemus-status-cell">{draft ? <EmptyGreyPill /> : <ArvioStatus status={hakemus.arvio.status} />}</td>
+            <td className="hakemus-status-cell">{draft ? <EmptyGreyPill /> : <ArvioStatus status={hakemus.arvio.status} refused={hakemus.refused} />}</td>
             <td className={`${styles.alignRight} applied-sum-cell`}>{euroFormatter.format(hakemus["budget-oph-share"])}</td>
             <td className={`${styles.alignRight} granted-sum-cell`}>{
               hakemus.arvio["budget-granted"]
@@ -646,10 +646,10 @@ function ResolvedTable(props: ResolvedTableProps) {
             data-test-id={`hakemus-${hakemus["user-key"]}`}>
           <td className="organization-cell">{hakemus["organization-name"]}</td>
           <td className="project-name-cell">{getProject(hakemus)}</td>
-          <td className="hakemus-status-cell"><ArvioStatus status={hakemus.arvio.status} /></td>
-          <td><MuutoshakemusPill status={hakemus["status-muutoshakemus"]} /></td>
-          <td><ValiselvitysPill status={hakemus["status-valiselvitys"]} /></td>
-          <td><LoppuselvitysPill status={hakemus["status-loppuselvitys"]} /></td>
+          <td className="hakemus-status-cell"><ArvioStatus status={hakemus.arvio.status} refused={hakemus.refused} /></td>
+          <td data-test-class="muutoshakemus-status-cell"><MuutoshakemusPill status={hakemus["status-muutoshakemus"]} refused={hakemus.refused} /></td>
+          <td data-test-class="valiselvitys-status-cell"><ValiselvitysPill status={hakemus["status-valiselvitys"]} refused={hakemus.refused} /></td>
+          <td data-test-class="loppuselvitys-status-cell"><LoppuselvitysPill status={hakemus["status-loppuselvitys"]} refused={hakemus.refused} /></td>
           <td className={`${styles.alignRight} granted-sum-cell`}>{
             hakemus.arvio["budget-granted"]
               ? euroFormatter.format(hakemus.arvio["budget-granted"])
@@ -857,7 +857,10 @@ const statusToColor: Record<HakemusArviointiStatus, PillProps['color']> = {
   unhandled: 'yellow',
   processing: 'blue',
 }
-function ArvioStatus({status}: {status: HakemusArviointiStatus}) {
+function ArvioStatus({status, refused}: {status: HakemusArviointiStatus, refused: boolean | undefined}) {
+  if (refused) {
+    return <Pill color="yellow" text="Ei tarvetta" />
+  }
   const text = HakemusArviointiStatuses.statusToFI(status)
   return <Pill color={statusToColor[status]} text={text} />
 }
@@ -868,8 +871,8 @@ const muutoshakemusStatusToColor: Record<MuutoshakemusStatus, PillProps['color']
   'rejected': 'red',
   'new': 'blue',
 }
-function MuutoshakemusPill({status}: {status: MuutoshakemusStatus | undefined}) {
-  if (!status) {
+function MuutoshakemusPill({status, refused}: {status: MuutoshakemusStatus | undefined, refused: boolean | undefined}) {
+  if (!status || refused) {
     return <EmptyGreyPill />
   }
   const statusToFI = Muutoshakemus.statusToFI(status)
@@ -882,9 +885,9 @@ const valiselvitysStatusToColor: Record<SelvitysStatus, PillProps['color']> = {
   'missing': 'red',
   'submitted': 'yellow',
 }
-function ValiselvitysPill({status}: {status: SelvitysStatus | undefined}) {
+function ValiselvitysPill({status, refused}: {status: SelvitysStatus | undefined, refused: boolean | undefined}) {
   // TODO: check should use Loppuselvitys.statusToFi with this field instead
-  if (!status || status === 'information_verified') {
+  if (!status || status === 'information_verified' || refused) {
     return <EmptyGreyPill />
   }
   const statusToFI = HakemusSelvitys.statusToFI(status)
@@ -897,8 +900,8 @@ const loppuselvitysStatusToColor: Record<SelvitysStatus, PillProps['color']> = {
   'missing': 'red',
   'submitted': 'blue',
 }
-function LoppuselvitysPill({status}: {status: SelvitysStatus | undefined}) {
-  if (!status) {
+function LoppuselvitysPill({status, refused}: {status: SelvitysStatus | undefined, refused: boolean | undefined}) {
+  if (!status || refused) {
     return <EmptyGreyPill />
   }
   const statusToFI = Loppuselvitys.statusToFI(status)

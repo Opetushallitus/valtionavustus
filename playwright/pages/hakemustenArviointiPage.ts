@@ -75,12 +75,6 @@ export class HakemustenArviointiPage {
     ])
   }
 
-  async search(text: string) {
-    const searchSelector = '[aria-label="Enter your search term"]'
-    await this.page.fill(searchSelector, text);
-    await this.page.press(searchSelector, 'Enter');
-  }
-
   async openUkotusModal(hakemusID: number) {
     await this.page.click(`#hakemus-${hakemusID} .btn-role`)
   }

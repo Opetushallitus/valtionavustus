@@ -103,6 +103,15 @@ export function getHakemusUrlFromEmail(email: Email) {
   return email.formatted.match(/https?:\/\/.*\/avustushaku.*/)?.[0] || email.formatted.match(/https?:\/\/.*\/statsunderstod.*/)?.[0]
 }
 
+const linkToRefuseRegex = /https?:\/\/.*refuse-grant=true.*/
+export function getRefuseUrlFromEmail(email: Email): string {
+  const url = email.formatted.match(linkToRefuseRegex)?.[0]
+  if (!url) {
+    throw new Error('No refuse URL in email')
+  }
+  return url
+}
+
 export const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshakemus\?.*/
 export async function getLinkToMuutoshakemusFromSentEmails(hakemusID: number) {
   const emails = await waitUntilMinEmails(getMuutoshakemusEmails, 1, hakemusID)
