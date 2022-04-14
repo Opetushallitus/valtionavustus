@@ -8,6 +8,7 @@ import './style/main.less'
 import {Koodienhallinta} from "./koodienhallinta/Koodienhallinta";
 import {UserInfo} from "./types";
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
+import { HeaderContainer } from "./NewHeader";
 
 
 
@@ -31,16 +32,17 @@ const KoodienhallintaApp = () => {
   if (!data) {
     return null
   }
-  const {environment} = data
+  const { environment, userInfo } = data
+  const saveStatus = {
+    saveInProgress: false,
+    saveTime: null,
+    serverError: ""
+  }
   return <>
-    <TopBar environment={environment} activeTab="va-code-values" state={{
-      userInfo: data.userInfo,
-      saveStatus: {
-        saveInProgress: false,
-        saveTime: null,
-        serverError: ""
-      }
-    }}/>
+    {environment["new-top-bar"]?.["enabled?"]
+      ? <HeaderContainer activeTab='va-code-values' environment={environment} userInfo={userInfo} saveStatus={saveStatus} />
+      : <TopBar environment={environment} activeTab="va-code-values" state={{ userInfo, saveStatus }}/>
+    }
     <Koodienhallinta />
   </>
 }

@@ -6,6 +6,7 @@ import MomentLocalizer from 'react-widgets-moment'
 import Localization from 'react-widgets/Localization'
 
 import TopBar from './TopBar'
+import { HeaderContainer } from './NewHeader'
 import HakujenHallintaController, { State } from './HakujenHallintaController'
 import { HakuListing } from './haku-list/HakuListing'
 import { EditorSelector } from './haku-details/EditorSelector'
@@ -15,7 +16,6 @@ import { translationsFi } from 'soresu-form/web/va/i18n/translations'
 import './style/virkailija.less'
 import './style/topbar.less'
 import './style/admin.less'
-
 interface HakujenHallintaAppProps {
   state: State
   controller: HakujenHallintaController
@@ -25,11 +25,14 @@ moment.locale('fi')
 const momentLocalizer = new MomentLocalizer(moment)
 
 const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
-  const { environment, selectedHaku, translations, codeOptions, helpTexts } = state
+  const { environment, selectedHaku, translations, codeOptions, helpTexts, saveStatus, userInfo } = state
   return (
     <Localization date={momentLocalizer} messages={translationsFi.calendar}>
       <section>
-        <TopBar activeTab="admin" environment={environment} state={state}/>
+        {environment['new-top-bar']?.['enabled?']
+          ? <HeaderContainer activeTab='admin' environment={environment} userInfo={userInfo} saveStatus={saveStatus} />
+          : <TopBar activeTab="admin" environment={environment} state={state}/>
+        }
         <section id="container">
           <HakuListing hakuList={state.hakuList}
                        selectedHaku={state.selectedHaku}

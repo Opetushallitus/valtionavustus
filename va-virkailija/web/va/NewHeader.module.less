@@ -1,0 +1,94 @@
+.headerContainer {
+  composes: headerContainer;
+  display: flex;
+  justify-content: center;
+  height: 48px;
+  background-color: white;
+
+}
+
+.header {
+  composes: header;
+  display: flex;
+  justify-content: space-between;
+  width: 1300px;
+  margin: 4px 0;
+
+  line-height: 40px;
+}
+
+.stickyHeader {
+  composes: stickyHeader;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000000;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.headerLinks {
+  composes: headerLinks;
+  display: flex;
+  flex-shrink: 0;
+
+  * {
+    padding-right: 40px;
+  }
+
+  a {
+    color: black;
+    display: inline-block;
+    vertical-align: middle;
+
+    &[class="activeTab"], &:hover {
+      color: #159ecb;
+    }
+  }
+}
+
+.headerControls {
+  composes: headerControls;
+  display: flex;
+  align-items: center;
+  
+  * {
+    margin-left: 16px;
+  }
+}
+
+.environmentName {
+  height: 24px;
+  padding: 0 14px;
+
+  color: white;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 24px;
+
+  background-color: #BA3E35;
+  border-radius: 28px;
+}
+
+.username {
+  font-size: 14px;
+}
+
+.logoutButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  color: #159ecb;
+  font-size: 14px;
+
+  background: transparent;
+  border-width: 0;
+  padding: 0;
+  margin: 0;
+
+  &:not(:disabled):hover {
+    background: transparent;
+  }
+}

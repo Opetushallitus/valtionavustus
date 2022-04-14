@@ -61,6 +61,7 @@
    (s/optional-key :multibatch-payments) (s/maybe {:enabled? s/Bool})
    (s/optional-key :va-code-values) (s/maybe {:enabled? s/Bool})
    (s/optional-key :dont-send-loppuselvityspyynto-to-virkailija) (s/maybe {:enabled? s/Bool})
+   (s/optional-key :new-top-bar) (s/maybe {:enabled? s/Bool})
    (s/optional-key :reports) (s/maybe {:enabled? s/Bool})
    (s/optional-key :selvitys-limit) (s/maybe {:enabled? s/Bool})})
 

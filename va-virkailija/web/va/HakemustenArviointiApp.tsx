@@ -22,6 +22,7 @@ import {State} from "./types";
 import NewHakemusListing from "./hakemus-list/NewHakemusListing";
 import {Hakemus} from "soresu-form/web/va/types";
 import {Switch} from "./hakemus-list/Switch";
+import { HeaderContainer } from './NewHeader'
 
 interface Props {
   state: State
@@ -33,20 +34,24 @@ const showAll = 'showAll' as const
 
 const App = ({state, controller}: Props) => {
     const [showAllHakemukset, toggleShowAllHakemukset] = useState(() => new URLSearchParams(location.search).get(showAll) === 'true')
-    const hakuData = state.hakuData
-    const avustushaku = hakuData.avustushaku
+    const {
+      avustushakuList,
+      hakuData,
+      helpTexts,
+      modal,
+      previouslySelectedHakemus,
+      saveStatus,
+      selectedHakemusAccessControl,
+      subTab,
+      translations,
+      userInfo,
+    } = state
+    const { avustushaku, environment, hakemukset, } = hakuData
     const hakemusList = showAllHakemukset
-      ? hakuData.hakemukset
-      : HakemustenArviointiController.filterHakemukset(hakuData.hakemukset)
+      ? hakemukset
+      : HakemustenArviointiController.filterHakemukset(hakemukset)
     const hasSelected = typeof state.selectedHakemus === 'object'
     const selectedHakemus: Hakemus | undefined | {} = hasSelected ? state.selectedHakemus : {}
-    const previouslySelectedHakemus = state.previouslySelectedHakemus
-    const translations = state.translations
-    const selectedHakemusAccessControl = state.selectedHakemusAccessControl
-    const avustushakuList = state.avustushakuList
-    const subTab = state.subTab
-    const environment = hakuData.environment
-    const helpTexts = state.helpTexts
     const [splitView, setSplitView] = useState(false)
     const toggleSplitView = (forceValue?: boolean) => {
       if (forceValue !== undefined) {
@@ -77,7 +82,10 @@ const App = ({state, controller}: Props) => {
     }
     return (
       <section className={splitView ? 'split-view' : ''}>
-        <TopBar activeTab="arviointi" environment={environment} state={state}/>
+        {environment['new-top-bar']?.['enabled?']
+          ? <HeaderContainer activeTab='arviointi' environment={environment} userInfo={userInfo} saveStatus={saveStatus} />
+          : <TopBar activeTab="arviointi" environment={environment} state={state}/>
+        }
         <section id="main-container" className="section-container">
           <div id="list-container" className={hasSelected ? "has-selected" : ""}>
             <div id="list-heading">
@@ -141,7 +149,7 @@ const App = ({state, controller}: Props) => {
             <HakemusDecisionLink hakemus={selectedHakemus} avustushaku={avustushaku} />
           </div>
         </section>
-        {state.modal}
+        {modal}
       </section>
     )
 }
