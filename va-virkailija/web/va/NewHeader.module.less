@@ -1,14 +1,22 @@
 .headerContainer {
-  composes: headerContainer;
   display: flex;
   justify-content: center;
   height: 48px;
+  z-index: 1000000;
   background-color: white;
+  box-shadow: none;
+}
 
+.stickyHeaderContainer {
+  composes: headerContainer;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .header {
-  composes: header;
   display: flex;
   justify-content: space-between;
   width: 1300px;
@@ -17,18 +25,7 @@
   line-height: 40px;
 }
 
-.stickyHeader {
-  composes: stickyHeader;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000000;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
 .headerLinks {
-  composes: headerLinks;
   display: flex;
   flex-shrink: 0;
 
@@ -48,7 +45,6 @@
 }
 
 .headerControls {
-  composes: headerControls;
   display: flex;
   align-items: center;
   
@@ -91,4 +87,45 @@
   &:not(:disabled):hover {
     background: transparent;
   }
+}
+
+.notificationContainer {
+  position: fixed;
+  top: 48px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 1000000;
+}
+
+.notificationWrapper {
+  position: relative;
+  width: 1300px;
+  display: flex;
+  justify-content: right;
+  opacity: 1;
+  transition: all 250ms linear;
+}
+
+.notification {
+  background-color: #DCF8E7;
+  border: 1px solid #108046;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin: 8px 8px 0 0;
+  padding: 8px 16px;
+
+  *:not(:last-of-type) {
+    margin-right: 16px;
+  }
+}
+
+.notificationError {
+  composes: notification;
+  background-color: #FFF3F2;
+  border-color: #BA3E35;
+}
+
+.notificationIcon {
+  padding-right: 16px;
 }

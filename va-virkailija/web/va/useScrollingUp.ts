@@ -6,7 +6,7 @@ export default function useScrollingUp() {
 
   const handleScroll = () => {
     const currY = window.scrollY
-    setScrollingUp(prevY > currY)
+    setScrollingUp(currY === 0 ? false : prevY > currY)
     prevY = currY
   }
 
