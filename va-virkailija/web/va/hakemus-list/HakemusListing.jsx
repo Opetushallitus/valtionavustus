@@ -8,7 +8,7 @@ import HakemusArviointiStatuses from '../hakemus-details/HakemusArviointiStatuse
 import {createAverageSummaryText, effectiveAverage} from '../ScoreResolver'
 import { PersonFilterButton } from './PersonFilterButton'
 import { PersonSelectButton } from './PersonSelectButton'
-import ShouldPayIcon from './ShouldPayIcon.jsx'
+import ShouldPayIcon from './ShouldPayIcon'
 
 import '../style/table.less'
 import './hakemus-listing.less'
