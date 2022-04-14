@@ -28,33 +28,31 @@ const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
   const { environment, selectedHaku, translations, codeOptions, helpTexts, saveStatus, userInfo } = state
   return (
     <Localization date={momentLocalizer} messages={translationsFi.calendar}>
-      <section>
-        {environment['new-top-bar']?.['enabled?']
-          ? <HeaderContainer activeTab='admin' environment={environment} userInfo={userInfo} saveStatus={saveStatus} />
-          : <TopBar activeTab="admin" environment={environment} state={state}/>
-        }
-        <section id="container">
-          <HakuListing hakuList={state.hakuList}
-                       selectedHaku={state.selectedHaku}
-                       filter={state.filter}
-                       controller={controller} />
-          <EditorSelector subTab={state.subTab}
-                          avustushaku={selectedHaku}
-                          decisionLiitteet={state.decisionLiitteet}
-                          formDraft={state.formDrafts[selectedHaku.id]}
-                          formDraftJson={state.formDraftsJson[selectedHaku.id]}
-                          valiselvitysFormDraft={state.valiselvitysFormDrafts[selectedHaku.id]}
-                          valiselvitysFormDraftJson={state.valiselvitysFormDraftsJson[selectedHaku.id]}
-                          loppuselvitysFormDraft={state.loppuselvitysFormDrafts[selectedHaku.id]}
-                          loppuselvitysFormDraftJson={state.loppuselvitysFormDraftsJson[selectedHaku.id]}
-                          environment={environment}
-                          koodistos={state.koodistos}
-                          userInfo={state.userInfo}
-                          controller={controller}
-                          translations={translations}
-                          codeOptions={codeOptions}
-                          helpTexts={helpTexts} />
-        </section>
+      {environment['new-top-bar']?.['enabled?']
+        ? <HeaderContainer activeTab='admin' environment={environment} userInfo={userInfo} saveStatus={saveStatus} />
+        : <TopBar activeTab="admin" environment={environment} state={state}/>
+      }
+      <section id={environment['new-top-bar']?.['enabled?'] ? '' : "container"}>
+        <HakuListing hakuList={state.hakuList}
+                      selectedHaku={state.selectedHaku}
+                      filter={state.filter}
+                      controller={controller} />
+        <EditorSelector subTab={state.subTab}
+                        avustushaku={selectedHaku}
+                        decisionLiitteet={state.decisionLiitteet}
+                        formDraft={state.formDrafts[selectedHaku.id]}
+                        formDraftJson={state.formDraftsJson[selectedHaku.id]}
+                        valiselvitysFormDraft={state.valiselvitysFormDrafts[selectedHaku.id]}
+                        valiselvitysFormDraftJson={state.valiselvitysFormDraftsJson[selectedHaku.id]}
+                        loppuselvitysFormDraft={state.loppuselvitysFormDrafts[selectedHaku.id]}
+                        loppuselvitysFormDraftJson={state.loppuselvitysFormDraftsJson[selectedHaku.id]}
+                        environment={environment}
+                        koodistos={state.koodistos}
+                        userInfo={state.userInfo}
+                        controller={controller}
+                        translations={translations}
+                        codeOptions={codeOptions}
+                        helpTexts={helpTexts} />
       </section>
     </Localization>
   )
