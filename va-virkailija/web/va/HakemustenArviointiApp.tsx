@@ -80,14 +80,15 @@ const App = ({state, controller}: Props) => {
       history.replaceState(null, document.title, newUrl)
       toggleShowAllHakemukset(newToggleState)
     }
+    const newHeader = environment['new-top-bar']?.['enabled?']
     return (
       <section className={splitView ? 'split-view' : ''}>
         {environment['new-top-bar']?.['enabled?']
           ? <HeaderContainer activeTab='arviointi' environment={environment} userInfo={userInfo} saveStatus={saveStatus} />
           : <TopBar activeTab="arviointi" environment={environment} state={state}/>
         }
-        <section id="main-container" className="section-container">
-          <div id="list-container" className={hasSelected ? "has-selected" : ""}>
+        <section id={newHeader ? '' : "main-container"} className="section-container">
+          <div id="list-container" className={hasSelected ? `has-selected ${newHeader ? 'new-header' : ''}` : ""}>
             <div id="list-heading">
               <AvustushakuDropdown avustushaku={avustushaku} avustushakuList={avustushakuList} />
               <div className="right-side">
