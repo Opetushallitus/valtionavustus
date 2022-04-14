@@ -64,7 +64,7 @@ const Header = ({ activeTab, environment, userInfo }: HeaderProps) => {
         <img src="/img/logo-176x50@2x.png" width="142" height="40" alt="Opetushallitus / Utbildningsstyrelsen" />
         <a href="/admin/" className={activeTab === 'admin' ? 'activeTab' : undefined}>Hakujen hallinta</a>
         <a href="/" className={activeTab === 'arviointi' ? 'activeTab' : undefined}>Hakemusten arviointi</a>
-        {isAdmin && <a href="/admin-ui/va-code-values/" className={activeTab === 'va-code-values' ? 'active-tab' : undefined}>VA-koodienhallinta</a>}
+        {isAdmin && <a href="/admin-ui/va-code-values/" className={activeTab === 'va-code-values' ? 'activeTab' : undefined}>VA-koodienhallinta</a>}
         {isAdmin && <a href="/admin-ui/reports/">VA-pulssi</a>}
         <a href="/admin-ui/search/">Haku</a>
       </div>
@@ -119,9 +119,4 @@ const errorIcon = () =>
 const saveInProgressIcon = () =>
   <svg width="9" height="11" viewBox="0 0 9 11" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M6.47656 10.832C6.65234 10.9492 6.85742 10.8613 6.94531 10.6855C8.05859 8.51758 8 5.88086 6.76953 3.74219C5.53906 1.63281 3.3125 0.255859 0.851562 0.138672C0.646484 0.109375 0.5 0.285156 0.5 0.490234V0.724609C0.5 0.900391 0.617188 1.04688 0.822266 1.07617C2.93164 1.19336 4.89453 2.36523 5.97852 4.21094C7.0332 6.08594 7.0918 8.37109 6.125 10.2461C6.03711 10.4219 6.0957 10.627 6.27148 10.7148L6.47656 10.832Z" fill="#108046"/>
-  </svg>
-
-const closeIcon = () =>
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M7.4082 6.125L10.8281 2.73828L11.5254 2.04102C11.625 1.94141 11.625 1.77539 11.5254 1.64258L10.7949 0.912109C10.6621 0.8125 10.4961 0.8125 10.3965 0.912109L6.3125 5.0293L2.19531 0.912109C2.0957 0.8125 1.92969 0.8125 1.79688 0.912109L1.06641 1.64258C0.966797 1.77539 0.966797 1.94141 1.06641 2.04102L5.18359 6.125L1.06641 10.2422C0.966797 10.3418 0.966797 10.5078 1.06641 10.6406L1.79688 11.3711C1.92969 11.4707 2.0957 11.4707 2.19531 11.3711L6.3125 7.25391L9.69922 10.6738L10.3965 11.3711C10.4961 11.4707 10.6621 11.4707 10.7949 11.3711L11.5254 10.6406C11.625 10.5078 11.625 10.3418 11.5254 10.2422L7.4082 6.125Z" fill="#1A1919"/>
   </svg>

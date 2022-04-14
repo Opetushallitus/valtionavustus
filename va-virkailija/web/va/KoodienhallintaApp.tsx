@@ -43,7 +43,7 @@ const KoodienhallintaApp = () => {
       ? <HeaderContainer activeTab='va-code-values' environment={environment} userInfo={userInfo} saveStatus={saveStatus} />
       : <TopBar environment={environment} activeTab="va-code-values" state={{ userInfo, saveStatus }}/>
     }
-    <Koodienhallinta />
+    <Koodienhallinta newHeader={environment["new-top-bar"]?.["enabled?"]} />
   </>
 }
 
