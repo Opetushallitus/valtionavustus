@@ -19,7 +19,7 @@ export default class HakemusScoring extends Component {
     const allScoresOfHakemus = hakemus.scores
     const scoringOfHakemus = hakemus.arvio ? hakemus.arvio.scoring : undefined
     const myUserInfo = this.props.userInfo
-    const allowSeeingOthersScores = myScoringIsComplete(scoringOfHakemus, myUserInfo) || (!allowHakemusScoring)
+    const allowSeeingOthersScores = scoringOfHakemus && myScoringIsComplete(scoringOfHakemus, myUserInfo) || !allowHakemusScoring
     const showOthersScores = this.props.showOthersScores && allowSeeingOthersScores
 
     const avustushaku = this.props.avustushaku
@@ -164,7 +164,7 @@ class SeeOthersScores extends Component {
     const userInfo = this.props.userInfo
     const allowSeeingOthersScores = this.props.allowSeeingOthersScores
     const showOthersScores = this.props.showOthersScores
-    const othersScoringsCount = allowSeeingOthersScores ? othersScorings(scoring, userInfo).length : 0
+    const othersScoringsCount = allowSeeingOthersScores && scoring ? othersScorings(scoring, userInfo).length : 0
     const classNames = ClassNames("see-others-scoring", {disabled: !allowSeeingOthersScores || othersScoringsCount === 0})
 
     const labelText = resolveLabelText()

@@ -41,7 +41,7 @@ export function createAverageSummaryText(scoring: Scoring, userInfo: UserInfo): 
 }
 
 export function myScoringIsComplete(scoring: Scoring, userInfo: UserInfo) {
-  return scoring && scoring["score-averages-by-user"].some(isMyScore)
+  return scoring["score-averages-by-user"]?.some(isMyScore)
 
   function isMyScore(scoreAverageByUser: PersonScoreAverage) {
     return belongsToUser(scoreAverageByUser, userInfo)
@@ -56,19 +56,18 @@ export function effectiveAverage(scoring: Scoring, userInfo: UserInfo, allowHake
 }
 
 export function scoringByOid(scoring: Scoring, personOid: string): PersonScoreAverage | undefined {
-  return scoring["score-averages-by-user"].find((personScoreAverage: PersonScoreAverage) => {
+  return scoring["score-averages-by-user"]?.find((personScoreAverage: PersonScoreAverage) => {
     return personScoreAverage && personScoreAverage["person-oid"] === personOid
   })
 }
 
 function myAverage(scoring: Scoring, userInfo: UserInfo): number | undefined {
-  const myScore = scoring["score-averages-by-user"]
-    .find((personScoreAverage: PersonScoreAverage) => belongsToUser(personScoreAverage, userInfo))
+  const myScore = scoring["score-averages-by-user"]?.find((personScoreAverage: PersonScoreAverage) => belongsToUser(personScoreAverage, userInfo))
   return myScore ? myScore["score-average"] : undefined
 }
 
 export function othersScorings(scoring: Scoring, userInfo: UserInfo): PersonScoreAverage[] {
-  return scoring["score-averages-by-user"].filter(a => !belongsToUser(a, userInfo))
+  return scoring["score-averages-by-user"]?.filter(a => !belongsToUser(a, userInfo)) ?? []
 }
 
 function belongsToUser(scoreAverageByUser: PersonScoreAverage, userInfo: UserInfo): boolean {

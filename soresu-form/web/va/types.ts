@@ -55,7 +55,7 @@ export interface PersonScoreAverage {
 export interface Scoring {
   'arvio-id': number
   'score-total-average': number
-  'score-averages-by-user': PersonScoreAverage[]
+  'score-averages-by-user'?: PersonScoreAverage[]
 }
 
 export interface Score {
