@@ -129,6 +129,6 @@ const errorIcon = () =>
   </svg>
 
 const saveInProgressIcon = () =>
-  <svg width="9" height="11" viewBox="0 0 9 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M6.47656 10.832C6.65234 10.9492 6.85742 10.8613 6.94531 10.6855C8.05859 8.51758 8 5.88086 6.76953 3.74219C5.53906 1.63281 3.3125 0.255859 0.851562 0.138672C0.646484 0.109375 0.5 0.285156 0.5 0.490234V0.724609C0.5 0.900391 0.617188 1.04688 0.822266 1.07617C2.93164 1.19336 4.89453 2.36523 5.97852 4.21094C7.0332 6.08594 7.0918 8.37109 6.125 10.2461C6.03711 10.4219 6.0957 10.627 6.27148 10.7148L6.47656 10.832Z" fill="#108046"/>
+  <svg className={styles.spinnerClass} width="14" height="14" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+    <circle className={styles.spinnerPath} fill="none" strokeWidth="6" strokeLinecap="round" cx="33" cy="33" r="30" />
   </svg>
