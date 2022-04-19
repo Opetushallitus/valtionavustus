@@ -135,6 +135,8 @@ const App = ({state, controller}: Props) => {
                   toggleSplitView={toggleSplitView}
                   controller={controller}
                   state={state}
+                  userInfo={userInfo}
+                  allowHakemusScoring={hakuData.privileges["score-hakemus"]}
                   additionalInfoOpen={showInfo}
                  />
               : <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
