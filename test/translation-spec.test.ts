@@ -193,7 +193,7 @@ describe('Translations', () => {
 
         it('Budget rows are in Swedish', async () => {
           const budgetRows = await page.$$eval('[data-test-id=meno-input-row]', elements => {
-            return elements.map(elem => elem.querySelector('.description')?.textContent || '')
+            return elements.map(elem => elem.querySelector('.description')?.textContent || '')
           })
           expect(budgetRows.sort()).toEqual(swedishBudgetRowNames.sort())
         })

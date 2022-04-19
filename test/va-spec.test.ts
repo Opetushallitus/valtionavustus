@@ -30,7 +30,7 @@ import {
   dummyPdfPath,
   uploadFile,
   verifyTooltipText,
-  waitForSave,
+  waitForSaveStatusOk,
   addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel,
   typeValueInFieldAndExpectValidationError,
   typeValueInFieldAndExpectNoValidationError,
@@ -56,6 +56,7 @@ import {
   clickToSendTäydennyspyyntö,
   randomAsiatunnus,
   setupTestLogging,
+  navigateToHaunTiedot,
 } from './test-util'
 import {
   createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku,
@@ -85,7 +86,7 @@ describe("Puppeteer tests", () => {
   it("should allow removing attachment from hakemus", async function() {
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
 
-    await publishAvustushaku(page)
+    await publishAvustushaku(page, avustushakuID)
     await fillAndSendHakemus(page, avustushakuID, async function() {
       await deleteAttachment(page, "financial-information-form")
       await uploadFile(page, "input[name='financial-information-form']", dummyPdfPath)
@@ -96,15 +97,15 @@ describe("Puppeteer tests", () => {
     const allowBasicAvustushakuFlowAndCheckEachHakemusHasValmistelija = (getPage: () => Page, multiplePaymentBatches: boolean) => async () => {
       const page = getPage()
       const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
-
+      await navigateToHaunTiedot(page, avustushakuID)
       if (multiplePaymentBatches) {
         await clickElement(page, "label[for='set-maksuera-true']")
+        await waitForSaveStatusOk(page)
       } else {
         await clickElement(page, "label[for='set-maksuera-false']")
       }
-      await waitForSave(page)
 
-      await publishAvustushaku(page)
+      await publishAvustushaku(page, avustushakuID)
       await fillAndSendHakemus(page, avustushakuID)
 
       await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
@@ -181,7 +182,7 @@ describe("Puppeteer tests", () => {
       beforeAll(async () => {
         await clickElementWithText(page, "span", "Päätös")
         await clearAndType(page, "#decision\\.taustaa\\.fi", "Burger Time")
-        await waitForSave(page)
+        await waitForSaveStatusOk(page)
       })
 
       it('päätös modified timestamp has changed', async () => {
@@ -214,9 +215,7 @@ describe("Puppeteer tests", () => {
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
     const { fieldId, fieldLabel } = await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, "decimalField")
-
-    await clickElementWithText(page, "span", "Haun tiedot")
-    await publishAvustushaku(page)
+    await publishAvustushaku(page, avustushakuID)
 
     await fillAndSendHakemus(page, avustushakuID, async () => {
       await typeValueInFieldAndExpectValidationError(page, fieldId, 'Not an decimal', fieldLabel, 'fi: Syötä yksi numeroarvo')
@@ -228,9 +227,7 @@ describe("Puppeteer tests", () => {
 
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
     const { fieldId, fieldLabel } = await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(page, "integerField")
-
-    await clickElementWithText(page, "span", "Haun tiedot")
-    await publishAvustushaku(page)
+    await publishAvustushaku(page, avustushakuID)
 
     await fillAndSendHakemus(page, avustushakuID, async () => {
       await typeValueInFieldAndExpectValidationError(page, fieldId, 'Not an integer', fieldLabel, 'fi: Syötä arvo kokonaislukuina')
@@ -307,9 +304,7 @@ describe("Puppeteer tests", () => {
     beforeAll(async () => {
       avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
       fieldId = (await addFieldToFormAndReturnElementIdAndLabel(page, "project-goals", "textField")).fieldId
-
-      await clickElementWithText(page, "span", "Haun tiedot")
-      await publishAvustushaku(page)
+      await publishAvustushaku(page, avustushakuID)
     })
 
     describe('And new hakemus has been created', () => {
@@ -335,9 +330,10 @@ describe("Puppeteer tests", () => {
       describe('And hakemus has been approved', () => {
         beforeAll(async () => {
           await acceptHakemus(page, avustushakuID, hakemusID, async () => {
+            await navigateToHakemus(page, avustushakuID, hakemusID)
             await clickElementWithTestId(page, 'tab-seuranta')
             await clickElementWithTestId(page, 'set-allow-visibility-in-external-system-true')
-            await waitForSave(page)
+            await waitForSaveStatusOk(page)
           })
         })
 
@@ -420,9 +416,7 @@ describe("Puppeteer tests", () => {
     beforeAll(async () => {
       avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
       fieldId = (await addFieldToFormAndReturnElementIdAndLabel(page, "project-nutshell", "textField")).fieldId
-
-      await clickElementWithText(page, "span", "Haun tiedot")
-      await publishAvustushaku(page)
+      await publishAvustushaku(page, avustushakuID)
     })
 
     it('Shows hankkeen alkamisaika in external API', async () => {
@@ -448,9 +442,10 @@ describe("Puppeteer tests", () => {
         beforeAll(async () => {
           await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
           await acceptHakemus(page, avustushakuID, hakemusID, async () => {
+            await navigateToHakemus(page, avustushakuID, hakemusID)
             await clickElementWithTestId(page, 'tab-seuranta')
             await clickElementWithTestId(page, 'set-allow-visibility-in-external-system-true')
-            await waitForSave(page)
+            await waitForSaveStatusOk(page)
           })
         })
 

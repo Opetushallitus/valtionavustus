@@ -196,6 +196,10 @@ export const getFirstPage = async (browser: Browser) => {
 }
 
 
+export async function navigateToHaunTiedot(page: Page, avustushakuId: number) {
+  await page.goto(`${VIRKAILIJA_URL}/admin/haku-editor/?avustushaku=${avustushakuId}`, { waitUntil: "networkidle0" })
+}
+
 export async function navigate(page: Page, path: string, waitForOptions?: WaitForOptions) {
   await page.goto(`${VIRKAILIJA_URL}${path}`, waitForOptions ?? { waitUntil: "networkidle0" })
 }
@@ -303,9 +307,8 @@ export async function createHakuFromEsimerkkihaku(page: Page, props: HakuProps):
   await clickElement(page, '[data-test-id="päätös-välilehti"]')
   await setCalendarDateForSelector(page, hankkeenAlkamispaiva || '20.04.1969', '[data-test-id="hankkeen-alkamispaiva"] div.datepicker input')
   await setCalendarDateForSelector(page, hankkeenPaattymispaiva || '20.04.4200', '[data-test-id="hankkeen-paattymispaiva"] div.datepicker input')
-  await clickElementWithText(page, "span", "Haun tiedot")
 
-  await waitForSave(page)
+  await waitForSaveStatusOk(page)
 
   return avustushakuID
 }
@@ -319,9 +322,10 @@ async function selectTositelaji(page: Page, value: 'XE' | 'XB'): Promise<void> {
   await page.select('select#document-type', value)
 }
 
-export async function publishAvustushaku(page: Page) {
+export async function publishAvustushaku(page: Page, avustushakuId: number) {
+  await navigateToHaunTiedot(page, avustushakuId)
   await clickElement(page, "label[for='set-status-published']")
-  await waitForSave(page)
+  await waitForSaveStatusOk(page)
 }
 
 export async function fillAndSendHakemus(page: Page, avustushakuID: number, beforeSubmitFn?: () => void) {
@@ -447,7 +451,7 @@ export async function closeAvustushakuByChangingEndDateToPast(page: Page, avustu
   await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
   const previousYear = (new Date()).getFullYear() - 1
   await clearAndType(page, "#hakuaika-end", `1.1.${previousYear} 0.00`)
-  await waitForSave(page)
+  await waitForSaveStatusOk(page)
 }
 
 
@@ -477,7 +481,7 @@ export function expectToBeDefined<T>(val: T): asserts val is NonNullable<T> {
   }
 }
 
-async function waitForSaveStatusOk(page: Page) {
+export async function waitForSaveStatusOk(page: Page) {
   return page.waitForFunction(
     () => document.querySelector('[data-test-id="save-status"]')?.textContent === 'Kaikki tiedot tallennettu'
   )
@@ -497,7 +501,6 @@ export async function copyEsimerkkihaku(page: Page) {
 
   await page.waitForFunction((name: string) =>
     document.querySelector("#haku-name-fi")?.textContent !== name, {}, currentHakuTitle)
-  await waitForSaveStatusOk(page)
   await page.waitForTimeout(2000)
 }
 
@@ -571,13 +574,12 @@ export async function clearAndType(page: Page, selector: string, text: string, o
   if (checkElementIsActive && !(await isElementActive(page, element))) {
     throw new Error(`clearAndType: element ${selector} is not the active element after clicking. Is something covering the element?`)
   }
-  await element.click({clickCount: 3})
+  await page.$eval(selector, el => {
+    // @ts-ignore
+    el.value = ''
+  })
   await element.type(text)
   await page.evaluate(e => e.blur(), element)
-}
-
-export async function waitForSave(page: Page) {
-  await page.waitForFunction(() => document.querySelector("#form-controls .status .info")?.textContent === "Kaikki tiedot tallennettu")
 }
 
 export async function waitForArvioSave(page: Page, avustushakuID: number, hakemusID: number) {
@@ -585,9 +587,12 @@ export async function waitForArvioSave(page: Page, avustushakuID: number, hakemu
 }
 
 export async function resolveAvustushaku(page: Page, avustushakuID: number) {
-  await navigate(page, `/admin/haku-editor/?avustushaku=${avustushakuID}`)
-  await clickElement(page, "label[for='set-status-resolved']")
-  await waitForSave(page)
+  await navigateToHaunTiedot(page, avustushakuID)
+  const isResolved = await page.$('[id="set-status-resolved"][checked]')
+  if (!isResolved) {
+    await clickElement(page, "label[for='set-status-resolved']")
+    await waitForSaveStatusOk(page)
+  }
 }
 
 export async function sendPäätös(page: Page, avustushakuID: number) {
@@ -689,9 +694,8 @@ export async function createValidCopyOfLukioEsimerkkihakuWithValintaperusteetAnd
   await clickElement(page, '[data-test-id="päätös-välilehti"]')
   await setCalendarDateForSelector(page, '20.04.1969', '[data-test-id="hankkeen-alkamispaiva"] div.datepicker input')
   await setCalendarDateForSelector(page, '20.04.4200', '[data-test-id="hankkeen-paattymispaiva"] div.datepicker input')
-  await clickElementWithText(page, "span", "Haun tiedot")
 
-  await waitForSave(page)
+  await waitForSaveStatusOk(page)
 
   return parseInt(avustushakuID)
 }
@@ -1011,7 +1015,7 @@ export async function typePerustelu(page: Page, perustelu: string) {
 /** @deprecated Tää tekee jonku hädin tuskin toimivan avustushaun :DD */
 export async function ratkaiseAvustushaku(page: Page, hakuName?: string, vaCodes?: VaCodeValues) {
   const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus(), hakuName, vaCodes)
-  await publishAvustushaku(page)
+  await publishAvustushaku(page, avustushakuID)
   await fillAndSendHakemus(page, avustushakuID)
 
   return await acceptAvustushaku(page, avustushakuID, "100000", "Ammatillinen koulutus")

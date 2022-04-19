@@ -218,7 +218,7 @@ describe("Tooltips", () => {
 
     beforeAll(async () => {
       avustushakuID = await createValidCopyOfLukioEsimerkkihakuWithValintaperusteetAndReturnTheNewId(page)
-      await publishAvustushaku(page)
+      await publishAvustushaku(page, avustushakuID)
     })
 
     describe('And hakemus has been sent', () => {
