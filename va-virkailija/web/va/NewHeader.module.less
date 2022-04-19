@@ -96,6 +96,12 @@
   display: flex;
   justify-content: center;
   z-index: 1000000;
+  pointer-events: none;
+}
+
+.notificationContainerWithoutHeader {
+  composes: notificationContainer;
+  top: 0px;
 }
 
 .notificationWrapper {
@@ -112,8 +118,9 @@
   border: 1px solid #108046;
   border-radius: 4px;
   box-sizing: border-box;
-  margin: 8px 8px 0 0;
+  margin: 8px 0;
   padding: 8px 16px;
+  pointer-events: initial;
 
   *:not(:last-of-type) {
     margin-right: 16px;
@@ -124,6 +131,18 @@
   composes: notification;
   background-color: #FFF3F2;
   border-color: #BA3E35;
+}
+
+.notificationWarning {
+  composes: notification;
+  background-color: #FFFAE2;
+  border-color: #DEB335;
+}
+
+.notificationInfo {
+  composes: notification;
+  background-color: #F6FCFF;
+  border-color: #499CC7;
 }
 
 .notificationIcon {

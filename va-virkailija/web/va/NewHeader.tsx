@@ -13,10 +13,12 @@ interface HeaderSaveStatus {
   serverError: string
 }
 
+type NotificationStatus = 'ok' | 'error' | 'warning' | 'info'
+
 type NotificationProps = {
   notification: string
   notificationIcon: () => JSX.Element
-  error?: boolean
+  status: NotificationStatus
 }
 
 type HeaderProps = {
@@ -31,13 +33,16 @@ type HeaderContainerProps = HeaderProps & {
 
 export const HeaderContainer = ({ activeTab, environment, userInfo, saveStatus }: HeaderContainerProps) => {
   const isScrollingUp = useScrollingUp()
+  const isNotificationWithHeader = isScrollingUp || window.scrollY === 0
   const [notificationContent, setNotificationContent] = useState<NotificationProps | undefined>(getNotificationContent(saveStatus))
 
   useEffect(() => {
     const content = getNotificationContent(saveStatus)
     setNotificationContent(content)
-    if (content && !saveStatus.saveInProgress) {
-      setTimeout(() => setNotificationContent(undefined), 5000)
+    const timeout = setTimeout(() => setNotificationContent(undefined), 5000)
+
+    return () => {
+      clearTimeout(timeout)
     }
   }, [saveStatus.saveInProgress])
 
@@ -47,7 +52,7 @@ export const HeaderContainer = ({ activeTab, environment, userInfo, saveStatus }
         <Header activeTab={activeTab} environment={environment} userInfo={userInfo} />
       </div>
       {notificationContent &&
-        <div className={styles.notificationContainer}>
+        <div className={isNotificationWithHeader ? styles.notificationContainer : styles.notificationContainerWithoutHeader}>
           <Notification {...notificationContent} />
         </div>
       }
@@ -79,10 +84,17 @@ const Header = ({ activeTab, environment, userInfo }: HeaderProps) => {
   )
 }
 
-const Notification = ({ notification, notificationIcon, error }: NotificationProps) => {
+const notificationClass: { [k in NotificationStatus]: any } = {
+  ok: styles.notification,
+  error: styles.notificationError,
+  warning: styles.notificationWarning,
+  info: styles.notificationInfo,
+}
+
+const Notification = ({ notification, notificationIcon, status }: NotificationProps) => {
   return (
     <div className={styles.notificationWrapper}>
-      <div className={error ? styles.notificationError : styles.notification} aria-live="polite">
+      <div className={notificationClass[status]} aria-live="polite">
         <span>{notificationIcon()}</span>
         <span data-test-id="save-status">{notification}</span>
       </div>
@@ -90,17 +102,17 @@ const Notification = ({ notification, notificationIcon, error }: NotificationPro
   )
 }
 
-function getNotificationContent(saveStatus: HeaderSaveStatus) {
+function getNotificationContent(saveStatus: HeaderSaveStatus): NotificationProps | undefined {
   const { saveInProgress, saveTime, serverError } = saveStatus
   if (saveInProgress) {
-    return { notification: 'Tallennetaan', notificationIcon: saveInProgressIcon }
+    return { notification: 'Tallennetaan', notificationIcon: saveInProgressIcon, status: 'ok' }
   } else if (serverError) {
     const notification = serverError === 'validation-error'
       ? 'Jossain kentässä puutteita. Tarkasta arvot.'
       : 'Virhe tallennuksessa. Lataa sivu uudelleen.'
-    return { notification, notificationIcon: errorIcon, error: true }
+    return { notification, notificationIcon: errorIcon, status: 'error' }
   } else if (saveTime) {
-    return { notification: 'Kaikki tiedot tallennettu', notificationIcon: okIcon }
+    return { notification: 'Kaikki tiedot tallennettu', notificationIcon: okIcon, status: 'ok' }
   } else {
     return undefined
   }
