@@ -441,7 +441,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
       </tbody>
       <tfoot>
       <tr>
-        <td colSpan={5}>
+        <td colSpan={4}>
           {filteredList.length}/{list.length} hakemusta
           <a className={styles.yhteenveto} href="/yhteenveto/" target="_blank" onClick={() => onYhteenvetoClick(filteredList)}>Päätöslista</a>
         </td>
