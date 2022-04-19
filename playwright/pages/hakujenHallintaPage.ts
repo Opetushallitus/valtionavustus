@@ -330,7 +330,6 @@ export class HakujenHallintaPage {
 
     await this.page.waitForFunction((name) =>
       document.querySelector("#haku-name-fi")?.textContent !== name, currentHakuTitle)
-    await this.waitForSave()
 
     return parseInt(await expectQueryParameter(this.page, "avustushaku"))
   }
@@ -419,7 +418,6 @@ export class HakujenHallintaPage {
     await this.page.click('[data-test-id="päätös-välilehti"]')
     await this.page.fill('[data-test-id="hankkeen-alkamispaiva"] div.datepicker input', hankkeenAlkamispaiva)
     await this.page.fill('[data-test-id="hankkeen-paattymispaiva"] div.datepicker input', hankkeenPaattymispaiva)
-    await clickElementWithText(this.page, "span", "Haun tiedot")
 
     for (var i = 0; i < selectionCriteria.length; i++) {
       await this.page.click('[data-test-id="add-selection-criteria"]')
@@ -457,7 +455,8 @@ export class HakujenHallintaPage {
     return { avustushakuID }
   }
 
-  async publishAvustushaku() {
+  async publishAvustushaku(avustushakuId: number) {
+    await this.navigate(avustushakuId)
     await this.page.click("label[for='set-status-published']")
     await this.waitForSave()
   }
@@ -492,16 +491,14 @@ export class HakujenHallintaPage {
   async createMuutoshakemusEnabledHaku(hakuProps: HakuProps) {
     const muutoshakemusEnabledHakuLomakeJson = await fs.readFile(path.join(__dirname, '../fixtures/prod.hakulomake.json'), 'utf8')
     const {avustushakuID} = await this.createHakuWithLomakeJson(muutoshakemusEnabledHakuLomakeJson, hakuProps)
-    await clickElementWithText(this.page, "span", "Haun tiedot")
-    await this.publishAvustushaku()
+    await this.publishAvustushaku(avustushakuID)
     return avustushakuID
   }
 
   async createBudjettimuutosEnabledHaku(hakuProps: HakuProps) {
     const muutoshakemusEnabledHakuLomakeJson = await fs.readFile(path.join(__dirname, '../fixtures/budjettimuutos.hakulomake.json'), 'utf8')
     const {avustushakuID} = await this.createHakuWithLomakeJson(muutoshakemusEnabledHakuLomakeJson, hakuProps)
-    await clickElementWithText(this.page, "span", "Haun tiedot")
-    await this.publishAvustushaku()
+    await this.publishAvustushaku(avustushakuID)
     return avustushakuID
   }
 
