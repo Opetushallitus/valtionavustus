@@ -671,7 +671,7 @@ function ResolvedTable(props: ResolvedTableProps) {
           {filteredList.length}/{list.length} hakemusta
           <a className={styles.yhteenveto} href="/yhteenveto/" target="_blank" onClick={() => onYhteenvetoClick(filteredList)}>Päätöslista</a>
         </td>
-        <td colSpan={1} className={styles.alignCenter}>
+        <td colSpan={1} className={styles.alignRight}>
           {totalBudgetGranted > 0 ? euroFormatter.format(totalBudgetGranted) : '-'}
         </td>
         <td colSpan={2} />
