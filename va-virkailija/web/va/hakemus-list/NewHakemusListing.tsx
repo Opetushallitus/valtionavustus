@@ -886,7 +886,6 @@ const valiselvitysStatusToColor: Record<SelvitysStatus, PillProps['color']> = {
   'submitted': 'yellow',
 }
 function ValiselvitysPill({status, refused}: {status: SelvitysStatus | undefined, refused: boolean | undefined}) {
-  // TODO: check should use Loppuselvitys.statusToFi with this field instead
   if (!status || status === 'information_verified' || refused) {
     return <EmptyGreyPill />
   }
