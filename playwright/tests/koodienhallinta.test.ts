@@ -20,9 +20,9 @@ test.describe('Koodienhallinta', () => {
 
   test('koodienhallinta tab is hidden from non admin user', async ({page}) => {
     await navigate(page, '/')
-    await page.waitForSelector('#va-code-values')
+    await page.waitForSelector('a[href="/admin-ui/va-code-values/"]')
     await switchUserIdentityTo(page, 'viivivirkailija')
-    await page.waitForSelector('#va-code-values', {state: 'hidden'})
+    await page.waitForSelector('a[href="/admin-ui/va-code-values/"]', {state: 'hidden'})
   })
 
   test('koodienhallinta tab can not be navigated to by non admin user', async ({page}) => {
