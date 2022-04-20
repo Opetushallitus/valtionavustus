@@ -429,6 +429,10 @@ export class HakujenHallintaPage {
 
     await this.waitForSave()
 
+    await this.page.fill('[id="decision.taustaa.fi"]', 'taustaa')
+
+    await this.waitForSave()
+
     return avustushakuID
   }
 
