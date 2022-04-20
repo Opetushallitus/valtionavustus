@@ -146,17 +146,19 @@ export const HakemusDetails = (props: Props) => {
       <div id="hakemus-details">
         <button id="close-hakemus-button" onClick={onClose}>&times;</button>
         <button id="toggle-hakemus-list-button" onClick={onToggle}>↕</button>
-        <div id="editor-subtab-selector" className="fixed-tabs section-container">
-          {tab('arviointi', 'Arviointi')}
-          {tab('valiselvitys', 'Väliselvitys')}
-          {tab('loppuselvitys', 'Loppuselvitys')}
-          {tab('muutoshakemukset', <MuutoshakemuksetLabel/>)}
-          {tab('seuranta', 'Seuranta', 'tab-seuranta')}
-        </div>
         <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
-        <div id="hakemus-arviointi" className="fixed-content">
-          <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
-            {getSubTab(subTab)}
+        <div id="arviointi-container">
+          <div id="editor-subtab-selector" className="fixed-tabs section-container">
+            {tab('arviointi', 'Arviointi')}
+            {tab('valiselvitys', 'Väliselvitys')}
+            {tab('loppuselvitys', 'Loppuselvitys')}
+            {tab('muutoshakemukset', <MuutoshakemuksetLabel/>)}
+            {tab('seuranta', 'Seuranta', 'tab-seuranta')}
+          </div>
+          <div id="hakemus-arviointi">
+            <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
+              {getSubTab(subTab)}
+            </div>
           </div>
         </div>
       </div>
