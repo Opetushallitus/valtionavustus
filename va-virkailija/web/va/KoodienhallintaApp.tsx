@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from "react";
 import ReactDOM from "react-dom";
-import TopBar from "./TopBar";
 import HttpUtil from "soresu-form/web/HttpUtil";
 
-import './style/topbar.less'
 import './style/main.less'
 import {Koodienhallinta} from "./koodienhallinta/Koodienhallinta";
 import {UserInfo} from "./types";
@@ -39,11 +37,8 @@ const KoodienhallintaApp = () => {
     serverError: ""
   }
   return <>
-    {environment["new-top-bar"]?.["enabled?"]
-      ? <HeaderContainer activeTab='va-code-values' environment={environment} userInfo={userInfo} saveStatus={saveStatus} />
-      : <TopBar environment={environment} activeTab="va-code-values" state={{ userInfo, saveStatus }}/>
-    }
-    <Koodienhallinta newHeader={environment["new-top-bar"]?.["enabled?"]} />
+    <HeaderContainer activeTab='va-code-values' environment={environment} userInfo={userInfo} saveStatus={saveStatus} />
+    <Koodienhallinta />
   </>
 }
 

@@ -5,8 +5,8 @@
 
 @haku-selector-combobox-height: 22px;
 @overview-list-height: 270px;
-@overview-and-top-total-height: @topbar-height + @haku-selector-combobox-height +
-  @overview-list-height;
+@header-and-margin: 56px;
+@overview-and-top-total-height: @header-and-margin + @haku-selector-combobox-height + @overview-list-height;
 
 h3.required:after {
   content: "\00a0*";
@@ -97,11 +97,6 @@ h3 {
 .btn-tag-example {
   padding: 2px 5px;
   cursor: text;
-}
-
-#container,
-#main-container {
-  margin-top: @topbar-height + 10px;
 }
 
 .section-container {

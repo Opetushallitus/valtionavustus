@@ -19,10 +19,7 @@
          :notice (get-notice)
          :application-change {:refuse-enabled? true}
          :multibatch-payments (:multibatch-payments config)
-         :reports (:reports config)
-         :va-code-values (:va-code-values config)
          :dont-send-loppuselvityspyynto-to-virkailija (:dont-send-loppuselvityspyynto-to-virkailija config)
-         :new-top-bar (:new-top-bar config)
          :selvitys-limit (:selvitys-limit config)}
         opintopolku (:opintopolku config)]
     (if-let [opintopolku-url (:url opintopolku)]

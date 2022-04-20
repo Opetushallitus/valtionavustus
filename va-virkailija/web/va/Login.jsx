@@ -6,10 +6,8 @@ import queryString from 'query-string'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 
 import './style/virkailija.less'
-import './style/topbar.less'
 import './style/login.less'
-
-import TopBar from './TopBar.tsx'
+import styles from './NewHeader.module.less'
 
 export default class Login extends React.Component {
   render() {
@@ -23,7 +21,15 @@ export default class Login extends React.Component {
     const notPermitted = query["not-permitted"] === "true" ? notPermittedMessage : undefined
     return (
       <div>
-        <TopBar environment={environment}/>
+        <div className={styles.headerContainer}>
+          <div className={styles.header}>
+            <div className={styles.headerLinks}>
+              <img src="/img/logo-176x50@2x.png" width="142" height="40" alt="Opetushallitus / Utbildningsstyrelsen" />
+            </div>
+            <div className={styles.headerControls}>
+            </div>
+          </div>
+        </div>
         <section id="container">
           <div className="row">{notPermitted}</div>
           <div className="row">{error}</div>

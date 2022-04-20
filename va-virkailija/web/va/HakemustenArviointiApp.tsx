@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom'
 import RouteParser from 'route-parser'
 import queryString from 'query-string'
 
-import TopBar from './TopBar'
 import HakemustenArviointiController from './HakemustenArviointiController'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusDetails from './hakemus-details/HakemusDetails'
@@ -14,7 +13,6 @@ import AvustushakuDropdown from './avustushaku/AvustushakuDropdown'
 import HakemusFilter from './hakemus-filter/HakemusFilter'
 import LocalStorage from './LocalStorage'
 
-import './style/topbar.less'
 import './style/main.less'
 
 import './hakemusten-arviointi.less'
@@ -80,15 +78,11 @@ const App = ({state, controller}: Props) => {
       history.replaceState(null, document.title, newUrl)
       toggleShowAllHakemukset(newToggleState)
     }
-    const newHeader = environment['new-top-bar']?.['enabled?']
     return (
       <section className={splitView ? 'split-view' : ''}>
-        {environment['new-top-bar']?.['enabled?']
-          ? <HeaderContainer activeTab='arviointi' environment={environment} userInfo={userInfo} saveStatus={saveStatus} />
-          : <TopBar activeTab="arviointi" environment={environment} state={state}/>
-        }
-        <section id={newHeader ? '' : "main-container"} className="section-container">
-          <div id="list-container" className={hasSelected ? `has-selected ${newHeader ? 'new-header' : ''}` : ""}>
+        <HeaderContainer activeTab='arviointi' environment={environment} userInfo={userInfo} saveStatus={saveStatus} />
+        <section className="section-container">
+          <div id="list-container" className={hasSelected ? "has-selected" : ""}>
             <div id="list-heading">
               <AvustushakuDropdown avustushaku={avustushaku} avustushakuList={avustushakuList} />
               <div className="right-side">

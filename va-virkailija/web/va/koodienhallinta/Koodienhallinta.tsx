@@ -191,7 +191,7 @@ const SkeletonCodes = () => {
   )
 }
 
-const Codes = ({codes, onActionSuccess, isLoading, newHeader}:{codes: VaCodeValue[], onActionSuccess: () => void, isLoading: boolean, newHeader?: boolean}) => {
+const Codes = ({codes, onActionSuccess, isLoading}:{codes: VaCodeValue[], onActionSuccess: () => void, isLoading: boolean}) => {
 
   const getUrl = (codeId: number) => `/api/v2/va-code-values/${codeId}/`
   const deleteCode = (codeId: number) => async () => {
@@ -221,7 +221,7 @@ const Codes = ({codes, onActionSuccess, isLoading, newHeader}:{codes: VaCodeValu
         <col style={{width: '8%'}}/>
         <col style={{width: '8%'}}/>
       </colgroup>
-      <thead className={newHeader ? 'new-header' : ''}>
+      <thead>
         <tr>
           <th className="code-cell">Vuosi</th>
           <th>Koodi</th>
@@ -304,7 +304,7 @@ const reducer = (state: State, action: Action): State => {
 
 const initialState: State = {selectedTab: 'operational-unit', filterYear: '', isLoading: false, codes: [], codeRefetchTrigger: false, filterWord: ''}
 
-export const Koodienhallinta = ({ newHeader }: { newHeader?: boolean }) => {
+export const Koodienhallinta = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const {selectedTab, filterYear, codeRefetchTrigger, filterWord, codes, isLoading} = state
   useEffect(() => {
@@ -339,12 +339,12 @@ export const Koodienhallinta = ({ newHeader }: { newHeader?: boolean }) => {
     : codes
   return (
     <div className="koodienhallinta-container">
-      <div className={`koodienhallinta-body${newHeader ? '-with-new-header' : ''}`}>
+      <div className="koodienhallinta-body">
         <OphTabs selectedTab={selectedTab} onTabSelect={(tab) => dispatch({type: 'select-tab', value: tab})} />
         <CodeInputForm selectedTab={selectedTab} onActionSuccess={() => dispatch({type: 'trigger-code-refetch'})} />
         <hr />
         <CodeFilter selectedTab={selectedTab} selectedYear={filterYear} onSelect={year => dispatch({type: 'set-filter-year', value: year})} onFilterWord={word => dispatch({type: 'set-filter-word', value: word})}/>
-        <Codes isLoading={isLoading} codes={filteredCodes} onActionSuccess={() => dispatch({type: 'trigger-code-refetch'})} newHeader={newHeader}/>
+        <Codes isLoading={isLoading} codes={filteredCodes} onActionSuccess={() => dispatch({type: 'trigger-code-refetch'})} />
       </div>
     </div>
   )

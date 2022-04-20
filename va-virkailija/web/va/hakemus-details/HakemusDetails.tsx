@@ -144,7 +144,7 @@ export const HakemusDetails = (props: Props) => {
       </span>
 
     return (
-      <div id="hakemus-details" className={environment['new-top-bar']?.['enabled?'] ? 'new-header' : ''}>
+      <div id="hakemus-details">
         <button id="close-hakemus-button" onClick={onClose}>&times;</button>
         <button id="toggle-hakemus-list-button" onClick={onToggle}>↕</button>
         <div id="editor-subtab-selector" className="fixed-tabs section-container">

@@ -67,9 +67,7 @@
             (router/get-current-path)
             (cond-> top-links
               (not (user/is-admin? (deref user/user-info)))
-              (dissoc top-links :va-code-values)
-              (not (get-in @environment [:reports :enabled?]))
-              (dissoc top-links :va-pulse))
+              (dissoc top-links :va-code-values))
             (when (:selected-grant payments-core/state)
               (:id (deref (:selected-grant payments-core/state)))))]
          [:div {:style theme/app-container}
@@ -94,7 +92,6 @@
       (if (:success config-result)
         (do
           (connection/set-config! (:body config-result))
-          (reset! environment (select-keys (:body config-result) [:reports]))
           (let [user-info-result (<! (connection/get-user-info))]
             (put! dialog-chan 2)
             (if (:success user-info-result)

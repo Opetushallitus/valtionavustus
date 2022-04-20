@@ -22,12 +22,14 @@
 }
 
 #hakemus-details {
+  margin-top: 8px;
+
   #preview-container {
     position: absolute;
     background-color: @off-white;
     padding: 20px;
     overflow-y: scroll;
-    top: 130px;
+    top: @header-and-margin;
     bottom: 20px;
     width: @preview-width;
 
@@ -86,7 +88,7 @@
     overflow-y: auto;
     display: inline-block;
     margin-left: @preview-width + 50px;
-    top: @topbar-height;
+    top: @header-and-margin;
     bottom: 20px;
     width: @content-width - @preview-width - 90px;
 
@@ -369,15 +371,15 @@
 }
 
 #close-hakemus-button {
-  top: @topbar-height + 12px;
+  top: 12px + @header-and-margin;
 }
 
 #toggle-hakemus-list-button {
-  top: @topbar-height + 50px;
+  top: 50px + @header-and-margin;
 }
 
 .split-view #hakemus-details {
-  margin-top: @overview-and-top-total-height;
+  margin-top: 22px;
 
   #preview-container {
     top: @overview-and-top-total-height;
@@ -393,45 +395,5 @@
 
   #toggle-hakemus-list-button {
     top: @overview-and-top-total-height + 50px;
-  }
-}
-
-.split-view #hakemus-details.new-header {
-  margin-top: 22px;
-
-  #preview-container {
-    top: @overview-and-top-total-height - 120px + 56px;
-  }
-
-  #hakemus-arviointi {
-    top: @overview-and-top-total-height - 120px + 56px;
-  }
-
-  #close-hakemus-button {
-    top: @overview-and-top-total-height + 12px - 120px + 56px;
-  }
-
-  #toggle-hakemus-list-button {
-    top: @overview-and-top-total-height + 50px - 120px + 56px;
-  }
-}
-
-#hakemus-details.new-header {
-  margin-top: 8px;
-
-  #preview-container {
-    top: 56px;
-  }
-
-  #hakemus-arviointi {
-    top: 56px;
-  }
-
-  #close-hakemus-button {
-    top: 12px + 56px;
-  }
-
-  #toggle-hakemus-list-button {
-    top: 50px + 56px;
   }
 }
