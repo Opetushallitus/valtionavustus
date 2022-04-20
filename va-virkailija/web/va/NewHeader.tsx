@@ -44,7 +44,7 @@ export const HeaderContainer = ({ activeTab, environment, userInfo, saveStatus }
     return () => {
       clearTimeout(timeout)
     }
-  }, [saveStatus.saveInProgress])
+  }, [saveStatus.saveInProgress, saveStatus.saveTime, saveStatus.serverError])
 
   return (
     <>
