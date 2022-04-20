@@ -242,21 +242,26 @@ export const HakemusDetails = (props: Props) => {
       <button id="toggle-hakemus-list-button" onClick={onToggle}>
         ↕
       </button>
-      <div id="editor-subtab-selector" className="fixed-tabs section-container">
-        {tab("arviointi", "Arviointi")}
-        {tab("valiselvitys", "Väliselvitys")}
-        {tab("loppuselvitys", "Loppuselvitys")}
-        {tab("muutoshakemukset", <MuutoshakemuksetLabel />)}
-        {tab("seuranta", "Seuranta", "tab-seuranta")}
-      </div>
-      <HakemusPreview
-        hakemus={hakemus}
-        avustushaku={avustushaku}
-        hakuData={hakuData}
-      />
-      <div id="hakemus-arviointi" className="fixed-content">
-        <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
-          {getSubTab(subTab)}
+      <div className="arviointi-container">
+        <div
+          id="editor-subtab-selector"
+          className="fixed-tabs section-container"
+        >
+          {tab("arviointi", "Arviointi")}
+          {tab("valiselvitys", "Väliselvitys")}
+          {tab("loppuselvitys", "Loppuselvitys")}
+          {tab("muutoshakemukset", <MuutoshakemuksetLabel />)}
+          {tab("seuranta", "Seuranta", "tab-seuranta")}
+        </div>
+        <HakemusPreview
+          hakemus={hakemus}
+          avustushaku={avustushaku}
+          hakuData={hakuData}
+        />
+        <div id="hakemus-arviointi" className="fixed-content">
+          <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
+            {getSubTab(subTab)}
+          </div>
         </div>
       </div>
     </div>
