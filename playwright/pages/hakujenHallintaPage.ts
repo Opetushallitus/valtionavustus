@@ -415,15 +415,17 @@ export class HakujenHallintaPage {
     await this.addValmistelija("Viivi Virkailija")
     await this.addArvioija("Päivi Pääkäyttäjä")
 
-    await this.page.click('[data-test-id="päätös-välilehti"]')
-    await this.page.fill('[data-test-id="hankkeen-alkamispaiva"] div.datepicker input', hankkeenAlkamispaiva)
-    await this.page.fill('[data-test-id="hankkeen-paattymispaiva"] div.datepicker input', hankkeenPaattymispaiva)
-
     for (var i = 0; i < selectionCriteria.length; i++) {
       await this.page.click('[data-test-id="add-selection-criteria"]')
       await this.page.fill(`#selection-criteria-${i}-fi`, selectionCriteria[i])
       await this.page.fill(`#selection-criteria-${i}-sv`, selectionCriteria[i])
     }
+
+    await this.waitForSave()
+
+    await this.page.click('[data-test-id="päätös-välilehti"]')
+    await this.page.fill('[data-test-id="hankkeen-alkamispaiva"] div.datepicker input', hankkeenAlkamispaiva)
+    await this.page.fill('[data-test-id="hankkeen-paattymispaiva"] div.datepicker input', hankkeenPaattymispaiva)
 
     await this.waitForSave()
 
