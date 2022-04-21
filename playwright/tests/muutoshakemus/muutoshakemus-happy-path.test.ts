@@ -2,6 +2,7 @@ import {APIRequestContext, expect} from "@playwright/test"
 import moment from "moment";
 
 import {
+  Email,
   getAcceptedPäätösEmails,
   getLinkToHakemusFromSentEmails,
   getMuutoshakemuksetKasittelemattaEmails,
@@ -85,12 +86,11 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
     })
   })
   const ukotettuValmistelijaEmail = "santeri.horttanainen@reaktor.com"
-  let emailsAfterLength = 0
   await test.step('ukotettu valmistelija gets a reminder', async () => {
     const emailsBefore = await getMuutoshakemuksetKasittelemattaEmails(ukotettuValmistelijaEmail)
     await sendMuutoshakemuksiaKasittelemattaNotifications(page.request)
     const emailsAfter = await getMuutoshakemuksetKasittelemattaEmails(ukotettuValmistelijaEmail)
-    emailsAfterLength = emailsAfter.length
+    const emailsAfterLength = emailsAfter.length
     expect(emailsAfterLength).toBeGreaterThan(emailsBefore.length)
     const email = lastOrFail(emailsAfter)
     expect(email.subject).toEqual("Käsittelemättömiä muutoshakemuksia")
@@ -132,19 +132,23 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
   })
 
   await test.step('accept muutoshakemus', async () => {
+    const isCurrentAvustushakuEmail = (e: Email) => e.formatted.includes(`/avustushaku/${avustushakuID}/`)
     await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision('accepted')
     await hakemustenArviointiPage.selectVakioperusteluInFinnish()
     const emailsBefore = await getMuutoshakemuksetKasittelemattaEmails(ukotettuValmistelijaEmail)
+    const emailsBeforeWithCurrentAvustushaku = emailsBefore.filter(isCurrentAvustushakuEmail)
     await hakemustenArviointiPage.saveMuutoshakemus()
 
     await test.step('email is immediately shown as sent', async () => {
       expect(await page.innerText("data-test-id=päätös-email-status"))
         .toMatch(/^Päätös lähetetty hakijalle /)
     })
-    await test.step('ukotettu valmistelija no longer gets notification', async () => {
+
+    await test.step('ukotettu valmistelija no longer gets notification for this avustushaku', async () => {
       await sendMuutoshakemuksiaKasittelemattaNotifications(page.request)
       const emailsAfterSending = await getMuutoshakemuksetKasittelemattaEmails(ukotettuValmistelijaEmail)
-      expect(emailsAfterSending).toEqual(emailsBefore)
+      const emailsAfterWithCurrentAvustushaku = emailsAfterSending.filter(isCurrentAvustushakuEmail)
+      expect(emailsBeforeWithCurrentAvustushaku).toEqual(emailsAfterWithCurrentAvustushaku)
     })
   })
 })
