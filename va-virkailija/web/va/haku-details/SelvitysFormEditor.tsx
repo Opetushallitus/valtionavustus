@@ -1,14 +1,16 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { isEqual } from 'lodash'
 import * as Bacon from 'baconjs'
+import moment from 'moment'
 
-import HttpUtil from "soresu-form/web/HttpUtil"
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
 import { Avustushaku, Form, HelpTexts, Koodistos, LegacyTranslations } from 'soresu-form/web/va/types'
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 import FormEditor from './FormEditor'
 import { Lahetys, Tapahtumaloki } from './Tapahtumaloki'
 import { LastUpdated } from './LastUpdated'
-import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 import HakujenHallintaController from '../HakujenHallintaController'
 
 type SelvitysFormEditorProps = {
@@ -103,7 +105,10 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
 
   const valiselvitysSection = <div>
     <h4>Väliselvitysten lähettäminen</h4>
-    <p>Väliselvitys tulee toimittaa viimeistään <strong>{avustushaku.valiselvitysdate}</strong>.</p>
+    {avustushaku.loppuselvitysdate
+      ? <p>Väliselvitys tulee toimittaa viimeistään <strong>{moment(avustushaku.valiselvitysdate).format(fiShortFormat)}</strong>.</p>
+      : <p>Väliselvityksen toimitukselle ei ole asetettu takarajaa.</p>
+    }
     <p>Väliselvityspyynnöt lähetetään niille hakijoille, joiden hakemukset on hyväksytty ja jotka eivät ole vielä toimittaneet väliselvitystä.</p>
     <p data-test-id='valiselvitys-ohje' dangerouslySetInnerHTML={{__html: helpTexts["hakujen_hallinta__väliselvitys___ohje"]}} />
     <button data-test-id='send-valiselvitys' disabled={sending} onClick={onSendSelvitys}>Lähetä väliselvityspyynnöt</button>
@@ -114,7 +119,10 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
 
   const loppuSelvitysSection = <div>
     <h4>Loppuselvityksen lähettäminen</h4>
-    <p>Loppuselvitys on koko ajan täytettävissä ja se tulee toimittaa viimeistään <strong>{avustushaku.loppuselvitysdate}</strong>.</p>
+    {avustushaku.loppuselvitysdate
+      ? <p>Loppuselvitys on koko ajan täytettävissä ja se tulee toimittaa viimeistään <strong>{moment(avustushaku.loppuselvitysdate).format(fiShortFormat)}</strong>.</p>
+      : <p>Loppuselvityksen toimitukselle ei ole asetettu takarajaa.</p>
+    }
     <p>Loppuselvityspyynnöt lähetetään niille hakijoille, joiden hakemukset on hyväksytty ja jotka eivät ole vielä toimittaneet loppuselvitystä.</p>
     <p data-test-id='loppuselvitys-ohje' dangerouslySetInnerHTML={{__html: helpTexts["hakujen_hallinta__loppuselvitys___ohje"]}} />
     <button data-test-id='send-loppuselvitys' disabled={sending} onClick={onSendSelvitys}>Lähetä loppuselvityspyynnöt</button>
