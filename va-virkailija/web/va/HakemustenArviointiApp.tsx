@@ -20,7 +20,7 @@ import {State} from "./types";
 import NewHakemusListing from "./hakemus-list/NewHakemusListing";
 import {Hakemus} from "soresu-form/web/va/types";
 import {Switch} from "./hakemus-list/Switch";
-import { HeaderContainer } from './NewHeader'
+import { HeaderContainer } from './Header'
 
 interface Props {
   state: State

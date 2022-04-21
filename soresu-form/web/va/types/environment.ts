@@ -14,7 +14,6 @@ export interface EnvironmentApiResponse {
     sv: string
   }
   "multibatch-payments": FeatureFlag
-  reports: FeatureFlag
   "dont-send-loppuselvityspyynto-to-virkailija"?: FeatureFlag
   "show-additional-info"?: FeatureFlag
 }

@@ -6,7 +6,7 @@ import './style/main.less'
 import {Koodienhallinta} from "./koodienhallinta/Koodienhallinta";
 import {UserInfo} from "./types";
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
-import { HeaderContainer } from "./NewHeader";
+import { HeaderContainer } from "./Header";
 
 
 

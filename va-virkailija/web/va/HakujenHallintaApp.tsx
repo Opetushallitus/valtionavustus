@@ -5,7 +5,7 @@ import moment from 'moment'
 import MomentLocalizer from 'react-widgets-moment'
 import Localization from 'react-widgets/Localization'
 
-import { HeaderContainer } from './NewHeader'
+import { HeaderContainer } from './Header'
 import HakujenHallintaController, { State } from './HakujenHallintaController'
 import { HakuListing } from './haku-list/HakuListing'
 import { EditorSelector } from './haku-details/EditorSelector'
