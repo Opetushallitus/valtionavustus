@@ -125,20 +125,39 @@ export const HakuEdit = ({ avustushaku, codeOptions, controller, helpTexts, user
             disabled={isAllPaymentsPaid} />
         </div>
       </div>
-      <SetStatus hakuIsValid={isValidRegisterNumber(avustushaku["register-number"])} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} helpTexts={helpTexts} />
-      <div className="haku-duration-and-self-financing">
-        <div className="haku-duration-edit-container">
-          <h3>{avustushaku.content.duration.label.fi} <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___hakuaika"]} direction="left" /></h3>
-          <DateField id="hakuaika-start" onBlur={onChange} avustushakuId={avustushaku.id} value={avustushaku.content.duration.start} disabled={!allowAllHakuEdits} />
-          <span className="dateDivider" />
-          <DateField id="hakuaika-end" onBlur={onChange} avustushakuId={avustushaku.id} value={avustushaku.content.duration.end} disabled={!allowNondisruptiveHakuEdits} />
+      <div className="two-column-container">
+        <div>
+          <SetStatus hakuIsValid={isValidRegisterNumber(avustushaku["register-number"])} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} helpTexts={helpTexts} />
+          <div className="haku-duration-and-self-financing">
+            <div className="haku-duration-edit-container">
+              <h3>{avustushaku.content.duration.label.fi} <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___hakuaika"]} direction="left" /></h3>
+              <DateField id="hakuaika-start" onBlur={onChange} avustushakuId={avustushaku.id} value={avustushaku.content.duration.start} disabled={!allowAllHakuEdits} />
+              <span className="dateDivider" />
+              <DateField id="hakuaika-end" onBlur={onChange} avustushakuId={avustushaku.id} value={avustushaku.content.duration.end} disabled={!allowNondisruptiveHakuEdits} />
+            </div>
+          </div>
+          <HakuType hakuType={avustushaku["haku-type"]} disabled={!allowAllHakuEdits} onChange={onChange} helpTexts={helpTexts} />
+          <AcademySize value={avustushaku.is_academysize}
+                        disabled={!allowAllHakuEdits}
+                        onChange={onChange}
+                        helpTexts={helpTexts} />
+        </div>
+        <div>
+          <div>
+            <h3>Salli tietojen automaattinen siirtyminen www.oph.fi-sivustolle</h3>
+            <fieldset className="soresu-radiobutton-group">
+              <span>
+                <input id="allow_visibility_in_external_system_true" type="radio" name="allow_visibility_in_external_system" value="true" onChange={onChange} checked={avustushaku.allow_visibility_in_external_system} />
+                <label htmlFor="allow_visibility_in_external_system_true">Kyllä</label>
+              </span>
+              <span>
+                <input id="allow_visibility_in_external_system_false" type="radio" name="allow_visibility_in_external_system" value="false" onChange={onChange} checked={!avustushaku.allow_visibility_in_external_system} />
+                <label htmlFor="allow_visibility_in_external_system_false">Ei</label>
+              </span>
+            </fieldset>
+          </div>
         </div>
       </div>
-      <HakuType hakuType={avustushaku["haku-type"]} disabled={!allowAllHakuEdits} onChange={onChange} helpTexts={helpTexts} />
-      <AcademySize value={avustushaku.is_academysize}
-                    disabled={!allowAllHakuEdits}
-                    onChange={onChange}
-                    helpTexts={helpTexts} />
       <EducationLevels enabled={allowNondisruptiveHakuEdits}
                         values={avustushaku.content.rahoitusalueet}
                         onAdd={controller.addTalousarviotili}

@@ -13,5 +13,6 @@ set content = :content,
     project_id = :project_id,
     operation_id = :operation_id,
     operational_unit_id = :operational_unit_id,
-    muutoshakukelpoinen = :muutoshakukelpoinen
+    muutoshakukelpoinen = :muutoshakukelpoinen,
+    allow_visibility_in_external_system = :allow_visibility_in_external_system
 where id = :id

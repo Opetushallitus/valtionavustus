@@ -257,6 +257,7 @@ export interface AvustushakuContent {
   "transaction-account"?: string
   "document-type"?: string
   "self-financing-percentage"?: number
+  allow_visibility_in_external_system: boolean
 }
 
 export interface DecisionLiite {
@@ -322,6 +323,7 @@ export type Avustushaku = {
   'register-number': string
   status: AvustushakuStatus
   privileges?: any
+  allow_visibility_in_external_system: boolean
 }
 
 export type HelpTexts = { [k: string]: string }

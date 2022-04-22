@@ -130,6 +130,12 @@ export class HakijaAvustusHakuPage {
     await this.page.fill("[id='personnel-costs-row.amount']", "69420666")
     await this.page.fill("[id='self-financing-amount']", "1")
 
+    if (answers.hakemusFields?.length) {
+      await Promise.all(answers.hakemusFields.map(async ({ fieldId, answer}) => {
+        await this.page.fill(`#${fieldId}`, answer)
+      }))
+    }
+
     if (beforeSubmitFn) {
       await beforeSubmitFn()
     }

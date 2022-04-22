@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { Browser, Page } from "puppeteer"
 import moment from 'moment'
 
@@ -402,57 +401,6 @@ describe("Puppeteer tests", () => {
                 .toEqual('Puuttuu')
             })
           })
-        })
-      })
-    })
-  })
-
-  describe('When haku #2 has been created and published', () => {
-    let fieldId: string
-    let avustushakuID: number
-    let hakemusID: number
-    const randomValueForProjectNutshell = randomString()
-
-    beforeAll(async () => {
-      avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(page, randomAsiatunnus())
-      fieldId = (await addFieldToFormAndReturnElementIdAndLabel(page, "project-nutshell", "textField")).fieldId
-      await publishAvustushaku(page, avustushakuID)
-    })
-
-    it('Shows hankkeen alkamisaika in external API', async () => {
-      const response = await axios.get(`${VIRKAILIJA_URL}/api/v2/external/avustushaut/?year=2020`)
-      const haku = response.data.find((h: { id: number }) => h.id === avustushakuID)
-      expect(haku['hankkeen-alkamispaiva']).toBe('1969-04-20')
-    })
-
-    it('Shows hankkeen paattymispaiva in external API', async () => {
-      const response = await axios.get(`${VIRKAILIJA_URL}/api/v2/external/avustushaut/?year=2020`)
-      const haku = response.data.find((h: { id: number }) => h.id === avustushakuID)
-      expect(haku['hankkeen-paattymispaiva']).toBe('4200-04-20')
-    })
-
-    describe('And new hakemus has been created', () => {
-      beforeAll(async () => {
-        hakemusID = await fillAndSendHakemusAndReturnHakemusId(page, avustushakuID, async () => {
-          await typeValueInFieldAndExpectNoValidationError(page, fieldId, randomValueForProjectNutshell)
-        })
-      })
-
-      describe('And hakemus has been approved', () => {
-        beforeAll(async () => {
-          await closeAvustushakuByChangingEndDateToPast(page, avustushakuID)
-          await acceptHakemus(page, avustushakuID, hakemusID, async () => {
-            await navigateToHakemus(page, avustushakuID, hakemusID)
-            await clickElementWithTestId(page, 'tab-seuranta')
-            await clickElementWithTestId(page, 'set-allow-visibility-in-external-system-true')
-            await waitForSaveStatusOk(page)
-          })
-        })
-
-        it("shows the contents of the project-nutshell -field of a hakemus in external api as 'nutshell'", async () => {
-          const expectedResponse = await expectedResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID, hakemusID, randomValueForProjectNutshell)
-          const actualResponse = await actualResponseFromExternalAPIhakemuksetForAvustushaku(avustushakuID)
-          expect(actualResponse).toMatchObject(expectedResponse)
         })
       })
     })

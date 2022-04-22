@@ -1,4 +1,5 @@
 import {Dialog, expect, Locator, Page} from "@playwright/test";
+import {Response} from "playwright-core";
 import moment from "moment";
 import fs from 'fs/promises'
 import path from "path";
@@ -10,8 +11,8 @@ import {
   expectQueryParameter
 } from "../utils/util";
 import {VIRKAILIJA_URL} from "../utils/constants";
-import {VaCodeValues} from "../utils/types";
-import {Response} from "playwright-core";
+import {VaCodeValues, Field} from "../utils/types";
+import { addFieldsToHakemusJson } from "../utils/hakemus-json";
 
 interface Rahoitusalue {
   koulutusaste: string
@@ -34,6 +35,7 @@ export interface HakuProps {
   hankkeenAlkamispaiva: string
   hankkeenPaattymispaiva: string
   selectionCriteria: string[]
+  hakemusFields: Field[]
 }
 
 const dateFormat = 'D.M.YYYY H.mm'
@@ -456,7 +458,14 @@ export class HakujenHallintaPage {
   async createHakuWithLomakeJson(lomakeJson: string, hakuProps: HakuProps): Promise<{ avustushakuID: number }> {
     const avustushakuID = await this.createHakuFromEsimerkkihaku(hakuProps)
     const formEditorPage = await this.navigateToFormEditor(avustushakuID)
-    await formEditorPage.changeLomakeJson(lomakeJson)
+
+    if (hakuProps.hakemusFields.length) {
+      const newJson = addFieldsToHakemusJson(lomakeJson, hakuProps.hakemusFields)
+      await formEditorPage.changeLomakeJson(newJson)
+    } else {
+      await formEditorPage.changeLomakeJson(lomakeJson)
+    }
+
     await formEditorPage.saveForm()
     return { avustushakuID }
   }
@@ -508,4 +517,8 @@ export class HakujenHallintaPage {
     return avustushakuID
   }
 
+  async allowExternalApi(allow: boolean) {
+    await this.page.click(`label[for="allow_visibility_in_external_system_${allow}"]`)
+    await this.waitForSave()
+  }
 }

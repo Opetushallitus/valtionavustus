@@ -71,6 +71,10 @@ export class HakemustenArviointiPage {
     ])
   }
 
+  async waitForSave() {
+    await this.page.waitForSelector('[data-test-id="save-status"]:has-text("Kaikki tiedot tallennettu")')
+  }
+
   async clickHakemus(hakemusID: number) {
     await Promise.all([
       this.page.waitForNavigation(),
@@ -359,5 +363,11 @@ export class HakemustenArviointiPage {
 
   async sortBy(sortKey: string) {
     await this.page.click(`[data-test-id="sort-button-${sortKey}"]`)
+  }
+
+  async allowExternalApi(allow: boolean) {
+    await this.page.click('[data-test-id="tab-seuranta"]')
+    await this.page.click(`[data-test-id="set-allow-visibility-in-external-system-${allow}"]`)
+    await this.waitForSave()
   }
 }

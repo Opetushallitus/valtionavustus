@@ -53,6 +53,7 @@ export interface Avustushaku extends BaseAvustushaku {
   privileges?: Privileges
   formContent?: Form
   muutoshakukelpoisuus?: OnkoMuutoshakukelpoinenAvustushakuOk
+  allow_visibility_in_external_system: boolean
 }
 
 export interface SelectedAvustushaku extends Avustushaku {
@@ -443,6 +444,8 @@ export default class HakujenHallintaController {
       update.avustushaku["operation-id"] = update.newValue
     } else if (fieldId.startsWith("project-id")) {
       update.avustushaku["project-id"] = update.newValue
+    } else if (fieldId.startsWith('allow_visibility_in_external_system')) {
+      update.avustushaku.allow_visibility_in_external_system = update.newValue === 'true'
     } else if (update.field.name === "payment-size-limit") {
       update.avustushaku.content["payment-size-limit"] = update.newValue
     } else if (fieldId === "payment-fixed-limit") {

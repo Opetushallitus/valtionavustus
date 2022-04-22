@@ -138,6 +138,7 @@
                           (s/optional-key :operation-id) (s/maybe s/Int)
                           (s/optional-key :operational-unit-id) (s/maybe s/Int)
                           (s/optional-key :project-id) (s/maybe s/Int)
+                          :allow_visibility_in_external_system s/Bool
                           :muutoshakukelpoinen s/Bool})
 
 (s/defschema HakemusStatus

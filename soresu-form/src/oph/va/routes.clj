@@ -69,4 +69,5 @@
    :project-id                   (:project_id avustushaku)
    :operation-id (:operation_id avustushaku)
    :operational-unit-id (:operational_unit_id avustushaku)
-   :muutoshakukelpoinen (:muutoshakukelpoinen avustushaku)})
+   :muutoshakukelpoinen (:muutoshakukelpoinen avustushaku)
+   :allow_visibility_in_external_system (:allow_visibility_in_external_system avustushaku)})

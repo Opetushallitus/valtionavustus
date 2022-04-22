@@ -55,6 +55,7 @@ export const defaultValues = workerScopedDefaultValues.extend<DefaultValueFixtur
       registerNumber: randomAsiatunnus(),
       vaCodes: codes,
       selectionCriteria: [],
+      hakemusFields: [],
     })
   },
   ukotettuValmistelija: "_ valtionavustus",

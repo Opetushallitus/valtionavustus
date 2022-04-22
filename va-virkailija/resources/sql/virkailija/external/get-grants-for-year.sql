@@ -8,6 +8,7 @@ FROM
   hakija.avustushaut h
 WHERE
   h.status != 'deleted' AND
+  h.allow_visibility_in_external_system = true AND
   (
     date_part('year', (h.content#>>'{duration,start}')::timestamp) <= :year
     AND

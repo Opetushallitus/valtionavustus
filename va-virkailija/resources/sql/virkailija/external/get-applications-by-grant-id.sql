@@ -46,11 +46,14 @@ LEFT JOIN
     WHERE f.version_closed IS NULL
     AND elem->>'key' = 'project-end'
   ) AS project_end ON (h.form_submission_id = project_end.id AND h.form_submission_version = project_end.version)
+LEFT JOIN
+  hakija.avustushaut ah ON h.avustushaku = ah.id
 WHERE
   h.avustushaku = :grant_id
   AND h.hakemus_type = 'hakemus'
   AND h.version_closed IS NULL
   AND a.status = 'accepted'
   AND a.allow_visibility_in_external_system = true
+  AND ah.allow_visibility_in_external_system = true
 ORDER BY
   h.id ASC;
