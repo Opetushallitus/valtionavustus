@@ -1,10 +1,5 @@
 (ns oph.va.virkailija.routes
-  (:use [clojure.tools.trace :only [trace]]
-        [clojure.pprint :only [pprint]])
-  (:use [clojure.java.io])
-  (:use [clojure.set :only [rename-keys]])
   (:require [cemerick.url :refer [map->query]]
-            [clojure.java.jdbc :as jdbc]
             [clojure.tools.logging :as log]
             [compojure.api.exception :as compojure-ex]
             [compojure.api.sweet :as compojure-api]
@@ -13,14 +8,13 @@
             [oph.common.datetime :as datetime]
             [oph.common.email :as common-email]
             [oph.soresu.common.config :refer [config]]
-            [oph.soresu.common.db :refer [exec query execute! with-tx exec-all]]
+            [oph.soresu.common.db :refer [query execute! with-tx]]
             [oph.soresu.common.koodisto :as koodisto]
-            [oph.soresu.common.routes :refer :all]
+            [oph.soresu.common.routes :refer [return-html compojure-error-handler exception-handler]]
             [oph.soresu.form.formutil :as formutil]
             [oph.soresu.form.schema :as form-schema]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.hakija.officer-edit-auth :as officer-edit-auth]
-            [oph.va.jdbc.enums :refer :all]
             [oph.va.routes :as va-routes]
             [oph.va.schema :as va-schema]
             [oph.va.virkailija.application-routes :as application-routes]
@@ -41,13 +35,10 @@
             [oph.va.virkailija.payment-batches-routes :as payment-batches-routes]
             [oph.va.virkailija.payments-routes :as payments-routes]
             [oph.va.virkailija.remote-file-service :refer [get-all-maksatukset-from-maksatuspalvelu]]
-            [oph.va.virkailija.reporting-data :as reporting]
             [oph.va.virkailija.reporting-routes :as reporting-routes]
-            [oph.va.virkailija.rondo-scheduling :refer [handle-payment-response-xml]]
-            [oph.va.virkailija.rondo-scheduling :refer [processMaksupalaute]]
-            [oph.va.virkailija.rondo-scheduling :refer [put-maksupalaute-to-maksatuspalvelu]]
+            [oph.va.virkailija.rondo-scheduling :refer [processMaksupalaute put-maksupalaute-to-maksatuspalvelu]]
             [oph.va.virkailija.rondo-service :as rondo-service]
-            [oph.va.virkailija.saved-search :refer :all]
+            [oph.va.virkailija.saved-search :as saved-search]
             [oph.va.virkailija.schema :as virkailija-schema]
             [oph.va.virkailija.scoring :as scoring]
             [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]
@@ -55,7 +46,7 @@
             [oph.va.virkailija.va-users :as va-users]
             [oph.va.virkailija.virkailija-notifications :as virkailija-notifications]
             [ring.swagger.json-schema-dirty]  ; for schema.core/conditional
-            [ring.util.http-response :refer :all]
+            [ring.util.http-response :refer [ok internal-server-error not-found not-found! bad-request bad-request! method-not-allowed! unauthorized]]
             [ring.util.response :as resp]
             [schema.core :as s])
   (:import [java.io ByteArrayInputStream]))
@@ -157,7 +148,7 @@
   (compojure-api/GET "/admin-ui/va-code-values/" request
     (va-code-values-routes/with-admin request
       (return-html "virkailija/codevalues.html")
-      (status (return-html "virkailija/unauthorized.html") 401))))
+      (resp/status (return-html "virkailija/unauthorized.html") 401))))
 
 (compojure-api/defroutes healthcheck-routes
                          "Healthcheck routes"
@@ -395,7 +386,7 @@
                         hakemus-id (.toString (java.util.UUID/randomUUID)) (authentication/get-request-identity request))))
 
 (defn- post-change-request-email []
-  (compojure-api/POST "/:avustushaku-id/change-request-email" []
+  (compojure-api/POST "/:avustushaku-id/change-request-email" [avustushaku-id]
                       :path-params [avustushaku-id :- Long]
                       :body [change-request (compojure-api/describe virkailija-schema/ChangeRequestEmail "Change request")]
                       (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
@@ -407,7 +398,7 @@
                                                      :url "[linkki hakemukseen]"})}))))
 
 (defn- get-avustushaku-export []
-  (compojure-api/GET "/:haku-id/export.xslx" []
+  (compojure-api/GET "/:haku-id/export.xslx" [haku-id]
                      :path-params [haku-id :- Long]
                      :summary "Export Excel XLSX document for avustushaku"
                      (let [document (-> (hakudata/get-hakudata-for-export haku-id)
@@ -418,7 +409,7 @@
                            (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"avustushaku-" haku-id ".xlsx\""))))))
 
 (defn- get-avustushaku-role []
-  (compojure-api/GET "/:avustushaku-id/role" []
+  (compojure-api/GET "/:avustushaku-id/role" [avustushaku-id]
                      :path-params [avustushaku-id :- Long]
                      :return [virkailija-schema/Role]
                      :summary "List roles for given avustushaku"
@@ -672,7 +663,7 @@
                      :summary "Create new stored search"
                      :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
                      (let [identity (authentication/get-request-identity request)
-                           search-id (create-or-get-search avustushaku-id body identity)
+                           search-id (saved-search/create-or-get-search avustushaku-id body identity)
                            search-url (str "/yhteenveto/avustushaku/" avustushaku-id "/listaus/" search-id "/")]
                        (ok {:search-url search-url}))))
 
@@ -682,7 +673,7 @@
                      :return virkailija-schema/SavedSearch
                      :summary "Get stored search"
                      :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
-                     (let [saved-search (get-saved-search avustushaku-id saved-search-id)]
+                     (let [saved-search (saved-search/get-saved-search avustushaku-id saved-search-id)]
                        (ok (:query saved-search)))))
 
 (defn- get-tapahtumaloki []
@@ -1006,7 +997,7 @@
                                                   (log/error "Error in login ticket handling" e))
                                                 (redirect-to-loggged-out-page request {"error" "true"}))))
 
-                         (compojure-api/POST "/cas" request
+                         (compojure-api/POST "/cas" []
                                              :form-params [logoutRequest :- s/Str]
                                              :return s/Any
                                              :summary "Handle logout request from cas"
