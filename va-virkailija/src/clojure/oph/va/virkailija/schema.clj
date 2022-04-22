@@ -224,6 +224,26 @@
    :translation-fi (s/maybe s/Str)
    :translation-sv (s/maybe s/Str)})
 
+(s/defschema VACodeValue
+  "VA Code Value"
+  {:id s/Int
+   :value-type s/Str
+   :year s/Int
+   :code s/Str
+   :code-value s/Str
+   (s/optional-key :hidden) (s/maybe s/Bool)})
+
+(s/defschema CreateVACodeValue
+  "Create VA Code Value"
+  {:value-type s/Str
+   :year s/Int
+   :code s/Str
+   :code-value s/Str})
+
+(s/defschema VACodeValueEdit
+  "VA Code Value Edit"
+  {:hidden s/Bool})
+
 (s/defschema HakuData
   "Avustushaku structured response with related form, roles, hakemukset etc"
   {:avustushaku AvustusHaku
@@ -400,26 +420,6 @@
 (s/defschema PaymentsCreateResult
   "Payment create result"
   {:success s/Bool :errors [s/Any]})
-
-(s/defschema VACodeValue
-  "VA Code Value"
-  {:id s/Int
-   :value-type s/Str
-   :year s/Int
-   :code s/Str
-   :code-value s/Str
-   (s/optional-key :hidden) (s/maybe s/Bool)})
-
-(s/defschema CreateVACodeValue
-  "Create VA Code Value"
-  {:value-type s/Str
-   :year s/Int
-   :code s/Str
-   :code-value s/Str})
-
-(s/defschema VACodeValueEdit
-  "VA Code Value Edit"
-  {:hidden s/Bool})
 
 (s/defschema HealthCheckResult
   "Integration healthcheck result"
