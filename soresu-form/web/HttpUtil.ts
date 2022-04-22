@@ -4,8 +4,8 @@ const errorHasResponse = (error: any) =>
   !!error.response && (typeof error.response === "object")
 
 export default class HttpUtil {
-  static get(url: string) {
-    return HttpUtil.handleResponse(axios.get(url))
+  static get<T = any>(url: string) {
+    return HttpUtil.handleResponse(axios.get(url)) as Promise<T>
   }
 
   static post(url: string, jsonData?: any, authToken?: string) {

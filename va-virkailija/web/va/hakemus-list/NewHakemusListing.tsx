@@ -42,6 +42,7 @@ interface Props {
   controller: HakemustenArviointiController
   state: State
   toggleSplitView: () => void
+  additionalInfoOpen: boolean
 }
 
 type MuutoshakemusStatuses = typeof Muutoshakemus.statuses[number]
@@ -217,7 +218,7 @@ const useSorting = (): [SortState, (newSortKey?: SortKey) => void] => {
 }
 
 export default function NewHakemusListing(props: Props) {
-  const {selectedHakemus, hakemusList, onSelectHakemus, onYhteenvetoClick, roles, splitView, isResolved, controller, state, toggleSplitView} = props
+  const {selectedHakemus, hakemusList, onSelectHakemus, onYhteenvetoClick, roles, splitView, isResolved, controller, state, toggleSplitView, additionalInfoOpen} = props
   const selectedHakemusId = selectedHakemus && 'id' in selectedHakemus ? selectedHakemus.id : undefined
   const [filterState, dispatch] = useReducer(reducer, getDefaultState())
   const [sortingState, setSorting] = useSorting()
@@ -232,8 +233,13 @@ export default function NewHakemusListing(props: Props) {
       }
       return totalGranted + granted
     }, 0)
+  const containerClass = selectedHakemus && splitView
+    ? additionalInfoOpen
+      ? styles.smallFixedContainer
+      : styles.largeFixedContainer
+    : styles.tableContainer
   return (
-    <div id="hakemus-listing" className={selectedHakemus && splitView ? styles.splitView : undefined}>
+    <div id="hakemus-listing" className={containerClass}>
       {
         isResolved ? (
           <ResolvedTable
@@ -452,7 +458,7 @@ function HakemusTable({dispatch, filterState, list, filteredList, selectedHakemu
           {totalBudgetGranted > 0 ? euroFormatter.format(totalBudgetGranted) : '-'}
         </td>
         <td colSpan={2} />
-      </tr>
+        </tr>
       </tfoot>
     </table>
   )

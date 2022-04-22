@@ -4,6 +4,8 @@
             [oph.va.virkailija.scoring :as scoring]
             [oph.soresu.common.db]
             [oph.soresu.form.formutil :as formutil]
+            [clojure.tools.logging :as log]
+            [oph.va.virkailija.va-code-values-data :as va-code-values]
             [oph.va.routes :as va-routes]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.authorization :as authorization]
@@ -172,9 +174,17 @@
                                   (assoc :ispublic true)
                                   ))))
 
+(defn get-toimintayksikko [id]
+      (when (some? id)
+        (va-code-values/get-va-code-value id)))
+
 (defn get-combined-avustushaku-data-with-privileges [avustushaku-id identity]
-  (when-let [haku-data (get-combined-avustushaku-data avustushaku-id)]
-    (add-privileges identity haku-data)))
+  (let [haku-data (get-combined-avustushaku-data avustushaku-id)
+        toimintayksikko-id (get-in haku-data [:avustushaku :operational-unit-id])
+        toimintayksikko (get-toimintayksikko toimintayksikko-id)
+        with-privileges (add-privileges identity haku-data)
+        ]
+    (assoc with-privileges :toimintayksikko toimintayksikko)))
 
 (defn- add-copy-suffixes [nameField]
   { :fi (str (:fi nameField) " (kopio)" )

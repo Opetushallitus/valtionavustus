@@ -51,6 +51,7 @@ export interface HakuData {
     'budget-granted-sum': number
     'operation-id'?: number
     'operational-unit-id'?: number
+    toimintayksikko?: VaCodeValue
     'project-id'?: number
     talousarvio?: Menoluokka[]
 }
@@ -82,6 +83,12 @@ export type SelectedHakemusAccessControl = Partial<{
   allowHakemusCancellation: boolean
 }>
 
+export interface LahetysStatuses {
+  paatoksetSentAt?: string
+  valiselvitysPyynnostSentAt?: string
+  loppuselvitysPyynnotSentAt?: string
+}
+
 export interface State {
     avustushakuList: Avustushaku[]
     hakuData: HakuData
@@ -103,6 +110,7 @@ export interface State {
     userInfo: UserInfo
     subTab: string
     loadingSelvitys?: boolean
+    lahetykset: LahetysStatuses
 }
 
 export type Selvitys = 'valiselvitys' | 'loppuselvitys'

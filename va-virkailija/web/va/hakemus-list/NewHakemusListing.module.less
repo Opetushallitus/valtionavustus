@@ -18,7 +18,7 @@
     text-align: left;
     padding: 4px 4px 4px 8px;
     background: #FFFFFF;
-    border: 1px solid #C1C1C1;
+    border: 1px solid #817C7B;
     box-sizing: border-box;
     border-radius: 4px;
     width: 100%;
@@ -38,12 +38,14 @@
   width: 100%;
   background-color: #fff;
   table-layout: fixed;
+  outline: 1px solid #E6E6E6;
+  border-radius: 4px;
   th {
     padding: 8px;
     text-align: left;
   }
   td {
-    padding: 8px 5px 8px 5px;
+    padding: 4px 5px 4px 5px;
   }
   tbody tr {
     td:first-of-type, td:nth-of-type(2) {
@@ -66,12 +68,16 @@
     border-bottom: 1px solid #E1E1E1;
   }
   tfoot {
-    background-color: #fff;
     position: sticky;
-    bottom: 0;
+    bottom: -1px;
     z-index: 0;
+    background-color: #fff;
+    border-radius: 4px;
     td:first-of-type {
       padding-left: 12px;
+    }
+    td {
+      border-radius: 0 0 4px 4px;
     }
   }
   input {
@@ -79,10 +85,20 @@
   }
 }
 
-.splitView {
+.tableContainer {
+  padding: 1px;
+}
+
+.largeFixedContainer {
+  composes: tableContainer;
   height: 230px;
   overflow-y: scroll;
   overflow-x: hidden;
+}
+
+.smallFixedContainer {
+  composes: largeFixedContainer;
+  height: 160px;
 }
 
 .projectTd {

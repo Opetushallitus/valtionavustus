@@ -33,6 +33,7 @@ import HakemusArviointiStatuses
   from './hakemus-details/HakemusArviointiStatuses'
 import RahoitusalueSelections from './hakemus-details/RahoitusalueSelections'
 import {HakemusFilter, HakemusSorter, HakuData, State, UserInfo} from "./types"
+import {Lahetys} from "./haku-details/Tapahtumaloki";
 
 const dispatcher = new Dispatcher()
 
@@ -122,6 +123,7 @@ export default class HakemustenArviointiController {
       },
       translations: Immutable(translations),
       userInfo: Bacon.fromPromise<UserInfo>(HttpUtil.get("/api/userinfo")),
+      lahetykset: Bacon.fromPromise(getLahetysStatuses(avustushakuId)),
       subTab: 'arviointi'
     }
 
@@ -1191,5 +1193,19 @@ setHakemusShouldPayComments(hakemus: Hakemus, newShouldPayComment: string) {
       history.pushState({}, window.document.title, newUrl)
     }
     return state
+  }
+}
+
+async function getLahetysStatuses(avustushakuId: number) {
+  const [paatos, valiselvitys, loppuselvitys] = await Promise.all([
+    HttpUtil.get<Lahetys[]>(`/api/avustushaku/${avustushakuId}/tapahtumaloki/paatoksen_lahetys`),
+    HttpUtil.get<Lahetys[]>(`/api/avustushaku/${avustushakuId}/tapahtumaloki/valiselvitys-notification`),
+    HttpUtil.get<Lahetys[]>(`/api/avustushaku/${avustushakuId}/tapahtumaloki/loppuselvitys-notification`)
+  ])
+  const successfullySent = (lahetys: Lahetys) => lahetys.success
+  return {
+    paatoksetSentAt: paatos.find(successfullySent)?.created_at,
+    valiselvitysPyynnostSentAt: valiselvitys.find(successfullySent)?.created_at,
+    loppuselvitysPyynnotSentAt: loppuselvitys.find(successfullySent)?.created_at
   }
 }

@@ -239,6 +239,7 @@
    :budget-granted-sum s/Int
    (s/optional-key :operation-id) (s/maybe s/Int)
    (s/optional-key :operational-unit-id) (s/maybe s/Int)
+   (s/optional-key :toimintayksikko) (s/maybe VACodeValue)
    (s/optional-key :project-id) (s/maybe s/Int)
    (s/optional-key :talousarvio) (s/maybe [Menoluokka])})
 

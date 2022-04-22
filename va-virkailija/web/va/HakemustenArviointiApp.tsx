@@ -21,6 +21,7 @@ import NewHakemusListing from "./hakemus-list/NewHakemusListing";
 import {Hakemus} from "soresu-form/web/va/types";
 import {Switch} from "./hakemus-list/Switch";
 import { HeaderContainer } from './Header'
+import {AvustushakuDetails} from "./hakemus-list/AvustushakuDetails";
 
 interface Props {
   state: State
@@ -28,10 +29,18 @@ interface Props {
   newHakemusListingUiEnabled: boolean
 }
 
-const showAll = 'showAll' as const
+const SHOW_ALL = 'showAll' as const
+const SHOW_ADDITIONAL_INFO = 'showAdditionalInfo' as const
+
+const setUrlParams = (key: string, value: boolean) => {
+  const searchParams = new URLSearchParams(location.search)
+  searchParams.set(key, String(value))
+  const newUrl = `${location.pathname}?${searchParams.toString()}`
+  history.replaceState(null, document.title, newUrl)
+}
 
 const App = ({state, controller}: Props) => {
-    const [showAllHakemukset, toggleShowAllHakemukset] = useState(() => new URLSearchParams(location.search).get(showAll) === 'true')
+    const [showAllHakemukset, toggleShowAllHakemukset] = useState(() => new URLSearchParams(location.search).get(SHOW_ALL) === 'true')
     const {
       avustushakuList,
       hakuData,
@@ -51,6 +60,7 @@ const App = ({state, controller}: Props) => {
     const hasSelected = typeof state.selectedHakemus === 'object'
     const selectedHakemus: Hakemus | undefined | {} = hasSelected ? state.selectedHakemus : {}
     const [splitView, setSplitView] = useState(false)
+    const [showInfo, setShowInfo] = useState(() => new URLSearchParams(location.search).get(SHOW_ADDITIONAL_INFO) === 'true')
     const toggleSplitView = (forceValue?: boolean) => {
       if (forceValue !== undefined) {
         setSplitView(forceValue)
@@ -70,14 +80,8 @@ const App = ({state, controller}: Props) => {
         document.removeEventListener('keydown', escFunction, false)
       }
     }, [])
-    const onSwitchClick = () => {
-      const newToggleState = !showAllHakemukset
-      const searchParams = new URLSearchParams(location.search)
-      searchParams.set(showAll, String(newToggleState))
-      const newUrl = `${location.pathname}?${searchParams.toString()}`
-      history.replaceState(null, document.title, newUrl)
-      toggleShowAllHakemukset(newToggleState)
-    }
+
+    const additionalInfoEnabled = environment['show-additional-info']?.["enabled?"]
     return (
       <section className={splitView ? 'split-view' : ''}>
         <HeaderContainer activeTab='arviointi' environment={environment} userInfo={userInfo} saveStatus={saveStatus} />
@@ -86,6 +90,16 @@ const App = ({state, controller}: Props) => {
             <div id="list-heading">
               <AvustushakuDropdown avustushaku={avustushaku} avustushakuList={avustushakuList} />
               <div className="right-side">
+                {additionalInfoEnabled && <button
+                  className="hakemus-btn"
+                  onClick={() => {
+                    const newState = !showInfo
+                    setUrlParams(SHOW_ADDITIONAL_INFO, newState)
+                    setShowInfo(newState)
+                  }}>
+                  {showInfo ? 'Piilota' : 'Näytä'} lisätiedot
+                </button>
+                }
                 <HakemusFilter
                   controller={controller}
                   hakemusFilter={state.hakemusFilter}
@@ -93,9 +107,21 @@ const App = ({state, controller}: Props) => {
                   avustushaku={avustushaku}
                   hakemukset={hakemusList}
                 />
-                {!isResolved && <Switch checked={showAllHakemukset} onChange={onSwitchClick} label="Näytä keskeneräiset" />}
+                {!isResolved && <Switch
+                  checked={showAllHakemukset}
+                  onChange={() => {
+                    const newState = !showAllHakemukset
+                    setUrlParams(SHOW_ALL, newState)
+                    toggleShowAllHakemukset(newState)
+                  }}
+                  label="Näytä keskeneräiset" />}
                 <a className="excel-export" href={`/api/avustushaku/${avustushaku.id}/export.xslx`} target="_">Lataa Excel</a>
               </div>
+            </div>
+            <div>
+              {additionalInfoEnabled && showInfo && (
+                <AvustushakuDetails  avustushaku={avustushaku} lahetykset={state.lahetykset} vastuuvalmistelija={hakuData.roles.find(r => r.role === 'vastuuvalmistelija')} toimintayksikko={hakuData.toimintayksikko} />
+              )}
             </div>
             {newHakemusListingUiEnabled
               ? <NewHakemusListing
@@ -109,6 +135,7 @@ const App = ({state, controller}: Props) => {
                   toggleSplitView={toggleSplitView}
                   controller={controller}
                   state={state}
+                  additionalInfoOpen={showInfo}
                  />
               : <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
                   budgetGrantedSum={hakuData["budget-granted-sum"]}
