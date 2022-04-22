@@ -18,25 +18,25 @@ export const AvustushakuDetails: React.FC<Props> = ({avustushaku, vastuuvalmiste
   return (
     <div className={styles.detailsContainer}>
       <Box title="Toimintayksikkö">
-        <span>{toimintayksikko?.["code-value"] ?? '-'}</span>
+        <span data-test-id="lisatiedot-toimintayksikko">{toimintayksikko?.["code-value"] ?? '-'}</span>
       </Box>
       <Box title="Vastuuvalmistelija">
-        <span>{vastuuvalmistelija?.name ?? '-'}</span>
+        <span data-test-id="lisatiedot-vastuuvalmistelija">{vastuuvalmistelija?.name ?? '-'}</span>
       </Box>
       <Box title="Päätökset">
-        <span>{lahetykset.paatoksetSentAt ? format(lahetykset.paatoksetSentAt) : 'Ei lähetetty'}</span>
+        <span data-test-id="lisatiedot-paatokset">{lahetykset.paatoksetSentAt ? format(lahetykset.paatoksetSentAt) : 'Ei lähetetty'}</span>
       </Box>
       <Box title="Maksatukset">
-        <span>{earliestPaymentCreatedAt ? format(earliestPaymentCreatedAt) : 'Ei lähetetty'}</span>
+        <span data-test-id="lisatiedot-maksatukset">{earliestPaymentCreatedAt ? format(earliestPaymentCreatedAt) : 'Ei lähetetty'}</span>
       </Box>
       <Box title="Väliselvitykset">
-        <Deadline deadline={avustushaku.valiselvitysdate} sentAt={lahetykset.valiselvitysPyynnostSentAt} />
+        <Deadline dataTestId="lisatiedot-valiselvitykset" deadline={avustushaku.valiselvitysdate} sentAt={lahetykset.valiselvitysPyynnostSentAt} />
       </Box>
       <Box title="Loppuselvitykset">
-        <Deadline deadline={avustushaku.loppuselvitysdate} sentAt={lahetykset.loppuselvitysPyynnotSentAt} />
+        <Deadline dataTestId="lisatiedot-loppuselvitykset" deadline={avustushaku.loppuselvitysdate} sentAt={lahetykset.loppuselvitysPyynnotSentAt} />
       </Box>
       <Box title="Muutoshakukelpoinen">
-        <span>{avustushaku.muutoshakukelpoinen ? 'Kyllä' : 'Ei'}</span>
+        <span data-test-id="lisatiedot-muutoshakukelpoinen">{avustushaku.muutoshakukelpoinen ? 'Kyllä' : 'Ei'}</span>
       </Box>
     </div>
   )
@@ -57,16 +57,24 @@ const Box: React.FC<BoxProps> = ({title, children}) => {
 
 const format = (date: string) => moment(date).format('DD.MM.YYYY')
 
-const Deadline: React.FC<{deadline?: string, sentAt?: string}> = ({deadline, sentAt}) => {
+interface DeadlineProps {
+  deadline?: string
+  sentAt?: string
+  dataTestId: string
+}
+
+const Deadline: React.FC<DeadlineProps> = ({deadline, sentAt, dataTestId}) => {
   if (!deadline) {
-    return <span>-</span>
+    return <span data-test-id={dataTestId}>-</span>
   }
   if (!sentAt) {
     return (
-      <React.Fragment>
-        <span>Ei lähetetty<span className={styles.deadline}>{` (DL ${format(deadline)})`}</span></span>
-      </React.Fragment>
+      <span data-test-id={dataTestId}>Ei lähetetty
+        <span className={styles.deadline}>
+          {` (DL ${format(deadline)})`}
+        </span>
+      </span>
     )
   }
-  return <span>Lähetetty {format(sentAt)}</span>
+  return <span data-test-id={dataTestId}>{format(sentAt)}</span>
 }

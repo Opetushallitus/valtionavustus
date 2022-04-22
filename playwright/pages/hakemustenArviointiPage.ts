@@ -34,13 +34,16 @@ export class HakemustenArviointiPage {
     this.hakemusRows = this.hakemusListing.locator('tbody tr')
   }
 
-  async navigate(avustushakuID: number, options?: { showAll?: boolean, newListingUi?: boolean }) {
+  async navigate(avustushakuID: number, options?: { showAll?: boolean, newListingUi?: boolean, showAdditionalInfo?: boolean }) {
     const params = new URLSearchParams()
     if (options?.showAll) {
       params.append('showAll', 'true')
     }
     if (options?.newListingUi) {
       params.append('new-hakemus-listing-ui', 'true')
+    }
+    if (options?.showAdditionalInfo) {
+      params.append('showAdditionalInfo', 'true')
     }
     await navigate(this.page, `/avustushaku/${avustushakuID}/?${params.toString()}`)
   }
@@ -275,6 +278,22 @@ export class HakemustenArviointiPage {
       perustelu: this.page.locator('[data-test-id="paatos-reason"]'),
       existingBudgetTableCells: () => getExistingBudgetTableCells(this.page, '.muutoshakemus-paatos__content [data-test-id="meno-input-row"]'),
       changedBudgetTableCells: () => getChangedBudgetTableCells(this.page, '.muutoshakemus-paatos__content [data-test-id="meno-input-row"]')
+    }
+  }
+
+  additionalInfo() {
+    return {
+      locators: {
+        showAdditionalInfo: this.page.locator('text="Näytä lisätiedot"'),
+        hideAdditionalInfo: this.page.locator('text="Piilota lisätiedot"'),
+        toimintayksikko: this.page.locator('[data-test-id="lisatiedot-toimintayksikko"]'),
+        vastuuvalmistelija: this.page.locator('[data-test-id="lisatiedot-vastuuvalmistelija"]'),
+        paatokset: this.page.locator('[data-test-id="lisatiedot-paatokset"]'),
+        maksatukset: this.page.locator('[data-test-id="lisatiedot-maksatukset"]'),
+        valiselvitykset: this.page.locator('[data-test-id="lisatiedot-valiselvitykset"]'),
+        loppuselvitykset: this.page.locator('[data-test-id="lisatiedot-loppuselvitykset"]'),
+        muutoshakukelpoinen: this.page.locator('[data-test-id="lisatiedot-muutoshakukelpoinen"]')
+      }
     }
   }
 
