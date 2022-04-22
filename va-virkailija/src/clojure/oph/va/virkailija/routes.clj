@@ -1,10 +1,5 @@
 (ns oph.va.virkailija.routes
-  (:use [clojure.tools.trace :only [trace]]
-        [clojure.pprint :only [pprint]])
-  (:use [clojure.java.io])
-  (:use [clojure.set :only [rename-keys]])
   (:require [cemerick.url :refer [map->query]]
-            [clojure.java.jdbc :as jdbc]
             [clojure.tools.logging :as log]
             [compojure.api.exception :as compojure-ex]
             [compojure.api.sweet :as compojure-api]
@@ -13,7 +8,7 @@
             [oph.common.datetime :as datetime]
             [oph.common.email :as common-email]
             [oph.soresu.common.config :refer [config]]
-            [oph.soresu.common.db :refer [exec query execute! with-tx exec-all]]
+            [oph.soresu.common.db :refer [query execute! with-tx]]
             [oph.soresu.common.koodisto :as koodisto]
             [oph.soresu.common.routes :refer :all]
             [oph.soresu.form.formutil :as formutil]
@@ -41,11 +36,8 @@
             [oph.va.virkailija.payment-batches-routes :as payment-batches-routes]
             [oph.va.virkailija.payments-routes :as payments-routes]
             [oph.va.virkailija.remote-file-service :refer [get-all-maksatukset-from-maksatuspalvelu]]
-            [oph.va.virkailija.reporting-data :as reporting]
             [oph.va.virkailija.reporting-routes :as reporting-routes]
-            [oph.va.virkailija.rondo-scheduling :refer [handle-payment-response-xml]]
-            [oph.va.virkailija.rondo-scheduling :refer [processMaksupalaute]]
-            [oph.va.virkailija.rondo-scheduling :refer [put-maksupalaute-to-maksatuspalvelu]]
+            [oph.va.virkailija.rondo-scheduling :refer [processMaksupalaute put-maksupalaute-to-maksatuspalvelu]]
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.saved-search :refer :all]
             [oph.va.virkailija.schema :as virkailija-schema]
@@ -55,7 +47,7 @@
             [oph.va.virkailija.va-users :as va-users]
             [oph.va.virkailija.virkailija-notifications :as virkailija-notifications]
             [ring.swagger.json-schema-dirty]  ; for schema.core/conditional
-            [ring.util.http-response :refer :all]
+            [ring.util.http-response :refer [ok not-found not-found! bad-request!]]
             [ring.util.response :as resp]
             [schema.core :as s])
   (:import [java.io ByteArrayInputStream]))
