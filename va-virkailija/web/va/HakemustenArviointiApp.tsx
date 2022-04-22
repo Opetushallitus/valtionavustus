@@ -120,7 +120,7 @@ const App = ({state, controller}: Props) => {
             </div>
             <div>
               {additionalInfoEnabled && showInfo && (
-                <AvustushakuDetails  avustushaku={avustushaku} lahetykset={state.lahetykset} vastuuvalmistelija={hakuData.roles.find(r => r.role === 'vastuuvalmistelija')} toimintayksikko={hakuData.toimintayksikko} />
+                <AvustushakuDetails  avustushaku={avustushaku} lahetykset={state.lahetykset} vastuuvalmistelija={hakuData.roles.find(r => r.role === 'vastuuvalmistelija')} toimintayksikko={hakuData.toimintayksikko} earliestPaymentCreatedAt={state.earliestPaymentCreatedAt} />
               )}
             </div>
             {newHakemusListingUiEnabled

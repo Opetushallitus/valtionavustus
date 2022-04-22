@@ -124,6 +124,7 @@ export default class HakemustenArviointiController {
       translations: Immutable(translations),
       userInfo: Bacon.fromPromise<UserInfo>(HttpUtil.get("/api/userinfo")),
       lahetykset: Bacon.fromPromise(getLahetysStatuses(avustushakuId)),
+      earliestPaymentCreatedAt: Bacon.fromPromise(getEarliestPaymentCreatedAt(avustushakuId)),
       subTab: 'arviointi'
     }
 
@@ -1208,4 +1209,14 @@ async function getLahetysStatuses(avustushakuId: number) {
     valiselvitysPyynnostSentAt: valiselvitys.find(successfullySent)?.created_at,
     loppuselvitysPyynnotSentAt: loppuselvitys.find(successfullySent)?.created_at
   }
+}
+
+async function getEarliestPaymentCreatedAt(avustushakuId: number) {
+  const payments = await HttpUtil.get<Payment[]>(`/api/v2/grants/${avustushakuId}/payments/`)
+  const paymentIsSent = ["sent", "paid"]
+  const allPaymentsPaid = payments.every(p => paymentIsSent.includes(p["paymentstatus-id"]))
+  if (payments.length === 0 || !allPaymentsPaid) {
+    return undefined
+  }
+  return payments.map(p => p["created-at"]).sort()[0]
 }

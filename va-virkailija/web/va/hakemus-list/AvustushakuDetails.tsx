@@ -11,9 +11,10 @@ interface Props {
   vastuuvalmistelija: Role | undefined
   lahetykset: LahetysStatuses
   toimintayksikko?: VaCodeValue
+  earliestPaymentCreatedAt?: string
 }
 
-export const AvustushakuDetails: React.FC<Props> = ({avustushaku, vastuuvalmistelija, lahetykset, toimintayksikko}) => {
+export const AvustushakuDetails: React.FC<Props> = ({avustushaku, vastuuvalmistelija, lahetykset, toimintayksikko, earliestPaymentCreatedAt}) => {
   return (
     <div className={styles.detailsContainer}>
       <Box title="Toimintayksikkö">
@@ -25,7 +26,9 @@ export const AvustushakuDetails: React.FC<Props> = ({avustushaku, vastuuvalmiste
       <Box title="Päätökset">
         <span>{lahetykset.paatoksetSentAt ? format(lahetykset.paatoksetSentAt) : 'Ei lähetetty'}</span>
       </Box>
-      <Box title="Maksatukset"/>
+      <Box title="Maksatukset">
+        <span>{earliestPaymentCreatedAt ? format(earliestPaymentCreatedAt) : 'Ei lähetetty'}</span>
+      </Box>
       <Box title="Väliselvitykset">
         <Deadline deadline={avustushaku.valiselvitysdate} sentAt={lahetykset.valiselvitysPyynnostSentAt} />
       </Box>

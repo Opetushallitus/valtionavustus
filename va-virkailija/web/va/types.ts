@@ -110,6 +110,7 @@ export interface State {
     userInfo: UserInfo
     subTab: string
     loadingSelvitys?: boolean
+    earliestPaymentCreatedAt?: string
     lahetykset: LahetysStatuses
 }
 
