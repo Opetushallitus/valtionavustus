@@ -1,10 +1,8 @@
 (ns oph.va.virkailija.hakudata
-  (:use [clojure.tools.trace :only [trace]])
   (:require [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.scoring :as scoring]
             [oph.soresu.common.db]
             [oph.soresu.form.formutil :as formutil]
-            [clojure.tools.logging :as log]
             [oph.va.virkailija.va-code-values-data :as va-code-values]
             [oph.va.routes :as va-routes]
             [oph.va.hakija.api :as hakija-api]

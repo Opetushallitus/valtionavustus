@@ -10,9 +10,7 @@
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.invoice :as invoice]
             [oph.soresu.common.config :refer [config]]
-            [ring.util.http-response :refer [ok not-found request-timeout]]
-            [oph.va.virkailija.remote-file-service :refer :all])
-  (:import [oph.va.virkailija.rondo_service RondoFileService]))
+            [oph.va.virkailija.remote-file-service :refer [delete-remote-file! get-local-file get-remote-file get-remote-file-list report-exception]]))
 
 (def timeout-limit 600000)
 
@@ -80,7 +78,7 @@
     (get-statuses-of-payments remote-service)))
 
 (defjob RondoJob
-  [ctx]
+  [_ctx]
   (log/info "Running scheduled fetch of payments now from rondo!")
         (processMaksupalaute))
 

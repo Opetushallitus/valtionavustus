@@ -1,52 +1,51 @@
 (ns oph.va.virkailija.notification-scheduler
-  (:require [clojure.core.async :as a]
-            [clojurewerkz.quartzite.scheduler :as qs]
+  (:require [clojurewerkz.quartzite.scheduler :as qs]
             [clojurewerkz.quartzite.triggers :as t]
             [clojurewerkz.quartzite.jobs :refer [defjob] :as j]
             [clojurewerkz.quartzite.schedule.cron :refer [schedule cron-schedule]]
             [clojure.tools.logging :as log]
             [oph.soresu.common.config :refer [config]]
-            [oph.va.virkailija.virkailija-notifications :refer :all]))
+            [oph.va.virkailija.virkailija-notifications :as notifications]))
 
-(defjob LoppuselvitysAsiatarkastamattaNotification [ctx]
+(defjob LoppuselvitysAsiatarkastamattaNotification [_ctx]
   (log/info "Running Loppuselvitys asiatarkastamatta")
-  (send-loppuselvitys-asiatarkastamatta-notifications))
+  (notifications/send-loppuselvitys-asiatarkastamatta-notifications))
 
-(defjob LoppuselvitysTaloustarkastamattaNotification [ctx]
+(defjob LoppuselvitysTaloustarkastamattaNotification [_ctx]
   (log/info "Running Loppuselvitys taloustarkastamatta")
-  (send-loppuselvitys-taloustarkastamatta-notifications))
+  (notifications/send-loppuselvitys-taloustarkastamatta-notifications))
 
-(defjob ValiselvitysTarkastamattaNotification [ctx]
+(defjob ValiselvitysTarkastamattaNotification [_ctx]
   (log/info "Running Valiselvitys tarkastamatta")
-  (send-valiselvitys-tarkastamatta-notifications))
+  (notifications/send-valiselvitys-tarkastamatta-notifications))
 
-(defjob LahetaValiselvityspyynnotNotification [ctx]
+(defjob LahetaValiselvityspyynnotNotification [_ctx]
   (log/info "Running Laheta valiselvityspyynnot")
-  (send-laheta-valiselvityspyynnot-notifications))
+  (notifications/send-laheta-valiselvityspyynnot-notifications))
 
-(defjob LahetaLoppuselvityspyynnotNotification [ctx]
+(defjob LahetaLoppuselvityspyynnotNotification [_ctx]
   (log/info "Running Laheta loppuselvityspyynnot")
-  (send-laheta-loppuselvityspyynnot-notifications))
+  (notifications/send-laheta-loppuselvityspyynnot-notifications))
 
-(defjob HakuaikaPaattymassaNotification [ctx]
+(defjob HakuaikaPaattymassaNotification [_ctx]
   (log/info "Running Hakuaika päättymässä")
-  (send-hakuaika-paattymassa-notifications))
+  (notifications/send-hakuaika-paattymassa-notifications))
 
-(defjob HakuaikaPaattynytNotification [ctx]
+(defjob HakuaikaPaattynytNotification [_ctx]
   (log/info "Running Hakuaika päättynyt")
-  (send-hakuaika-paattynyt-notifications))
+  (notifications/send-hakuaika-paattynyt-notifications))
 
-(defjob LoppuselvitysPalauttamattaNotification [ctx]
+(defjob LoppuselvitysPalauttamattaNotification [_ctx]
   (log/info "Running loppuselvitys palauttamatta")
-  (send-loppuselvitys-palauttamatta-notifications))
+  (notifications/send-loppuselvitys-palauttamatta-notifications))
 
-(defjob ValiselvitysPalauttamattaNotification [ctx]
+(defjob ValiselvitysPalauttamattaNotification [_ctx]
   (log/info "Running loppuselvitys palauttamatta")
-  (send-valiselvitys-palauttamatta-notifications))
+  (notifications/send-valiselvitys-palauttamatta-notifications))
 
-(defjob MuutoshakemuksiaKasittelemattaNotification [ctx]
+(defjob MuutoshakemuksiaKasittelemattaNotification [_ctx]
   (log/info "Running muutoshakemuksia kasittelematta")
-  (send-muutoshakemuksia-kasittelematta-notifications))
+  (notifications/send-muutoshakemuksia-kasittelematta-notifications))
 
 (defn- get-notification-jobs []
   (filter :enabled?

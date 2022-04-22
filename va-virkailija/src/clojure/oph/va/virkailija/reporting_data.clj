@@ -3,9 +3,7 @@
    [oph.soresu.common.db :refer [exec]]
    [oph.va.virkailija.db.queries :as queries]
    [oph.va.hakija.api.queries :as hakija-queries]
-   [oph.va.virkailija.utils :refer [convert-to-dash-keys]]
-   [clojure.pprint :refer [print-table]])
-  (:import (oph.va.jdbc.enums HakuStatus)))
+   [oph.va.virkailija.utils :refer [convert-to-dash-keys]]))
 
 (defn year-to-int-all-v [c]
   (mapv #(update % :year int)

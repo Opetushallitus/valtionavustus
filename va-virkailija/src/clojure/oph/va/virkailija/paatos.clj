@@ -1,13 +1,12 @@
 (ns oph.va.virkailija.paatos
     (:require
-      [ring.util.http-response :refer :all]
+      [ring.util.http-response :refer [bad-request ok]]
       [compojure.api.sweet :as compojure-api]
       [oph.va.hakija.api :as hakija-api]
       [oph.soresu.form.formutil :as formutil]
       [oph.va.decision-liitteet :as decision-liitteet]
       [oph.va.virkailija.email :as email]
       [oph.common.email :refer [refuse-url modify-url legacy-email-field-ids legacy-email-field-ids-without-contact-email]]
-      [oph.va.virkailija.schema :as virkailija-schema]
       [oph.va.virkailija.hakudata :as hakudata]
       [oph.va.virkailija.db :as virkailija-db]
       [oph.va.virkailija.saved-search :as saved-search]
@@ -135,12 +134,9 @@
            (ok {:status "sent" :hakemus hakemus-id :emails emails})))
 
 (defn regenerate-paatos [hakemus-id]
-      (let [hakemus (hakija-api/get-hakemus hakemus-id)
-            submission (hakija-api/get-hakemus-submission hakemus)
-            answers (:answers submission)
-            decision (decision/paatos-html hakemus-id)]
-           (hakija-api/update-paatos-decision hakemus-id decision)
-           (ok {:status "regenerated"})))
+      (let [decision (decision/paatos-html hakemus-id)]
+        (hakija-api/update-paatos-decision hakemus-id decision)
+        (ok {:status "regenerated"})))
 
 (defn send-paatos-for-all [batch-id identity hakemus-id]
       (log/info "send-paatos-for-all" hakemus-id)
@@ -220,10 +216,9 @@
                            (if-let [valmistelija-required-error (check-hakemukset-have-valmistelija ids)]
                              valmistelija-required-error
                              (do (when (get-in config [:payments :enabled?])
-                                       (do
-                                         (log/info "Create initial payment for applications")
-                                         (payments-data/create-grant-payments
-                                           avustushaku-id 0 identity)))
+                                   (log/info "Create initial payment for applications")
+                                   (payments-data/create-grant-payments
+                                     avustushaku-id 0 identity))
                                  (log/info "Send all paatos ids " ids)
                                  (run! (partial send-paatos-for-all uuid (authentication/get-request-identity request)) ids)
                                  (send-paatokset-lahetetty avustushaku-id {:hakemus-ids ids} identity)

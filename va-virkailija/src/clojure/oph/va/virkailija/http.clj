@@ -2,7 +2,6 @@
   (:require [oph.soresu.common.config :refer [config]]
             [cheshire.core :as cheshire])
   (:import [scala.runtime AbstractFunction1]
-           [org.http4s.client Client]
            [oph.va.virkailija.http BlazeClients JavaClient ResponseException]))
 
 (def ^:private accept-header-json {"Accept" "application/json"})

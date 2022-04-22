@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.virkailija-notifications
-  (:use [oph.soresu.common.db])
   (:require [clojure.tools.logging :as log]
-            [oph.va.virkailija.email :as email]))
+            [oph.va.virkailija.email :as email]
+            [oph.soresu.common.db :refer [query]]))
 
 (defn- get-loppuselvitys-asiatarkastamatta []
   (query "SELECT h.avustushaku, count(h.id) as hakemus_count, r.email

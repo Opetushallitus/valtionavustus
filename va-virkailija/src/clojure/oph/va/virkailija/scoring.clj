@@ -1,6 +1,4 @@
 (ns oph.va.virkailija.scoring
-  (:use [clojure.tools.trace :only [trace]]
-        [clojure.pprint :only [pprint]])
   (:require [oph.va.virkailija.db :as virkailija-db]
             [oph.va.hakija.api :as hakija-api]))
 

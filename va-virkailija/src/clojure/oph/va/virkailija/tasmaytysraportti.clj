@@ -1,12 +1,13 @@
 (ns oph.va.virkailija.tasmaytysraportti
-  (:require [oph.soresu.common.db :refer [exec get-datasource]]
-            [clojure.tools.logging :as log]
-            [clojure.java.jdbc :as jdbc]
-            [oph.va.virkailija.scheduler :as scheduler]
-            [oph.common.email :as email]
-            [oph.va.virkailija.db.queries :as virkailija-queries])
-  (:use clj-pdf.core)
-  (:use [clojure.java.io]))
+  (:require
+   [clj-pdf.core :refer [pdf]]
+   [clojure.java.io :refer [output-stream]]
+   [clojure.java.jdbc :as jdbc]
+   [clojure.tools.logging :as log]
+   [oph.common.email :as email]
+   [oph.soresu.common.db :refer [exec get-datasource]]
+   [oph.va.virkailija.db.queries :as virkailija-queries]
+   [oph.va.virkailija.scheduler :as scheduler]))
 
 (def fields-of-interest
   {:toimintayksikko_koodi {:title "Toimintayksikkö" :width 7}
@@ -78,11 +79,10 @@
         (let [data-by-date (group-by :tasmaytysraportti_date data)
               dates (keys data-by-date)]
           (doseq [tasmaytysraportti_date dates]
-            (do
-              (log/info (str "Process unreported maksatus rows for " tasmaytysraportti_date))
-              (let [data (get data-by-date tasmaytysraportti_date)
-                    tmp-file (create-tasmaytysraportti tasmaytysraportti_date data)]
-                (store-tasmaytysraportti tasmaytysraportti_date tmp-file))))))
+            (log/info (str "Process unreported maksatus rows for " tasmaytysraportti_date))
+            (let [data (get data-by-date tasmaytysraportti_date)
+                  tmp-file (create-tasmaytysraportti tasmaytysraportti_date data)]
+              (store-tasmaytysraportti tasmaytysraportti_date tmp-file)))))
       (log/info "No unreported maksatus rows found"))))
 
 (defn send-unsent-tasmaytysraportti-mails []
@@ -119,7 +119,6 @@
   (let [data (exec virkailija-queries/get-tasmaytysraportti-by-avustuskahu-id-data
                    {:avustushaku_id avustushaku-id})
         tasmaytysraportti_date (:tasmaytysraportti_date (first data))
-        rowcount (count data)
         tmp-file (create-tasmaytysraportti tasmaytysraportti_date data)]
     (get-bytes tmp-file)))
 

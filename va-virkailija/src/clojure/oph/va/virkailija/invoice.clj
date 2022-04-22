@@ -1,13 +1,11 @@
 (ns oph.va.virkailija.invoice
   (:require [oph.va.virkailija.lkp-templates :as lkp]
-            [clojure.data.xml :refer [emit emit-str parse
+            [clojure.data.xml :refer [emit parse
                                       sexp-as-element]]
             [clj-time.core :as t]
             [clj-time.coerce :as c]
-            [clj-time.format :as f]
             [oph.va.virkailija.utils :refer [remove-white-spaces]]
             [clojure.string :as c-str]
-            [clojure.tools.logging :as log]
             [clojure.java.io :as io]))
 
 (def organisations {"XA" 6600
@@ -16,7 +14,7 @@
 
 (defn timestamp-to-date ([ts]
   (try (.format (new java.text.SimpleDateFormat "yyyy-MM-dd") ts )
-  (catch Exception e ""))
+  (catch Exception _ ""))
 ))
 
 
@@ -144,9 +142,10 @@
               default-phase)}))
   ([pitkaviite] (parse-pitkaviite pitkaviite 0)))
 
-(defn payment-to-xml [data]
+(defn payment-to-xml
   "Creates xml document (tags) of given payment of Valtionavustukset maksatus.
   Document should be valid document for VIA/Rondo."
+  [data]
   (sexp-as-element (payment-to-invoice data)))
 
 (defn get-content [xml ks]
@@ -162,17 +161,12 @@
   {:register-number (first (get-content xml [:VA-invoice :Header :Pitkaviite]))
    :invoice-date (first (get-content xml [:VA-invoice :Header :Maksupvm]))})
 
-(defn write-xml! [tags file]
+(defn write-xml!
   "Writes XML document to a file.
   Document should be tags as clojure.data.xml.elements."
+  [tags file]
   (with-open [out-file (java.io.FileWriter. file)]
     (emit tags out-file)))
-
-(defn read-xml-file [file]
-  "Reads XML from file path and returns xml document of
-  clojure.data.xml.elements."
-  (with-open [input (java.io.FileInputStream. file)]
-    (parse input)))
 
 (defn read-xml-string [s]
   (with-open [input (io/input-stream (.getBytes s "UTF-8"))]

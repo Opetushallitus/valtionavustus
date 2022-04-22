@@ -1,16 +1,13 @@
 (ns oph.va.virkailija.payments-data
   (:require
-   [oph.soresu.common.db :refer [exec exec-all query]]
+   [oph.soresu.common.db :refer [exec exec-all]]
    [oph.va.virkailija.utils
     :refer [convert-to-dash-keys convert-to-underscore-keys update-some]]
    [clj-time.coerce :as c]
-   [clj-time.core :as t]
-   [clj-time.format :as f]
    [oph.va.virkailija.db.queries :as queries]
    [oph.va.virkailija.application-data :as application-data]
    [oph.va.virkailija.grant-data :as grant-data]
-   [oph.va.virkailija.invoice :as invoice]
-   [oph.va.virkailija.email :as email]))
+   [oph.va.virkailija.invoice :as invoice]))
 
 (def system-user
   {:person-oid "System"

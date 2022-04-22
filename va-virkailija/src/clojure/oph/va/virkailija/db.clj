@@ -1,13 +1,9 @@
 (ns oph.va.virkailija.db
-  (:use [oph.soresu.common.db]
-        [oph.va.menoluokka.db]
-        [clojure.data :as data]
-        [clojure.tools.trace :only [trace]])
   (:require [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.db.queries :as queries]
-            [oph.soresu.common.config :refer [config]]
-            [oph.soresu.common.routes :refer :all]
-            [ring.util.codec :refer [form-encode]]
+            [oph.soresu.common.db :refer [escape-like-pattern exec execute! generate-hash-id query with-transaction with-tx]]
+            [clojure.data :as data]
+            [oph.va.menoluokka.db :refer [store-menoluokka-hakemus-rows]]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.hakija.api :as hakija-api]
             [clojure.string :as string]
@@ -179,18 +175,8 @@
   (let [result (first (query "SELECT COUNT(id) FROM menoluokka_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
     (> (:count result) 1)))
 
-(defn is-avustushaku-muutoshakukelpoinen? [avustushaku-id]
-  (if-some [row (first (query "SELECT muutoshakukelpoinen FROM avustushaut WHERE id = ?" [avustushaku-id]))]
-    (:muutoshakukelpoinen row)))
-
 (defn get-normalized-hakemus-contact-email [hakemus-id]
   (:contact-email (get-normalized-hakemus hakemus-id)))
-
-(defn- get-talousarvio [id entity]
-  (query (str "SELECT mh.amount, m.type, m.translation_fi, m.translation_sv
-               FROM virkailija.menoluokka_" entity " as mh, virkailija.menoluokka as m
-               WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
-         [id]))
 
 (defn get-muutoshakemukset [hakemus-id]
   (log/info (str "Get muutoshakemus with hakemus id: " hakemus-id))
@@ -333,15 +319,6 @@
                                                    timestamp
                                                    {:old (:status existing)
                                                     :new (:status new)}))
-    changelog))
-
-(defn- compare-allow-visibility-in-external-system [changelog identity timestamp existing new]
-  (if (not (= (:allow_visibility_in_external_system new) (:allow_visibility_in_external_system existing)))
-    (append-changelog changelog (->changelog-entry identity
-                                                   "allow-visibility-in-external-system-change"
-                                                   timestamp
-                                                   {:old (:allow_visibility_in_external_system existing)
-                                                    :new (:allow_visibility_in_external_system new)}))
     changelog))
 
 (defn- compare-should-pay [changelog identity timestamp existing new]

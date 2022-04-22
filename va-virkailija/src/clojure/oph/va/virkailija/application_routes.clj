@@ -2,12 +2,11 @@
   (:require [compojure.api.sweet :as compojure-api]
             [oph.va.virkailija.application-data :as application-data]
             [ring.util.http-response :refer [ok not-found]]
-            [compojure.core :as compojure]
             [oph.va.virkailija.schema :as virkailija-schema]))
 
 (defn- get-payments []
   (compojure-api/GET
-    "/:id/payments/" [id :as request]
+    "/:id/payments/" [id]
     :path-params [id :- Long]
     :summary "Get application payments"
     (ok (application-data/get-application-payments id))))

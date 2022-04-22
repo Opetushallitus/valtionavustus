@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.schema
   (:require [schema.core :as s]
-            [oph.soresu.form.schema :refer :all]
-            [oph.va.schema :refer :all])
+            [oph.soresu.form.schema :as soresu-schema]
+            [oph.va.schema :as va-schema])
   (:import (java.time LocalDate)))
 
 (s/defschema ArvioStatus
@@ -23,7 +23,7 @@
    (s/optional-key :status-sisaltomuutos) (s/maybe s/Str)
    (s/optional-key :paatos-hyvaksytty-paattymispaiva) (s/maybe java.time.LocalDate)
    (s/optional-key :status-jatkoaika) (s/maybe s/Str)
-   (s/optional-key :talousarvio) (s/maybe [Meno])
+   (s/optional-key :talousarvio) (s/maybe [va-schema/Meno])
    (s/optional-key :status-talousarvio) (s/maybe s/Str)
    :created-at s/Inst
    :updated-at s/Inst})
@@ -94,8 +94,8 @@
   "Arvio contains evaluation of hakemus"
   {:id s/Int
    :status ArvioStatus
-   :overridden-answers Answers
-   :seuranta-answers Answers
+   :overridden-answers soresu-schema/Answers
+   :seuranta-answers soresu-schema/Answers
    :budget-granted s/Int
    :costsGranted s/Int
    :useDetailedCosts s/Bool
@@ -126,7 +126,7 @@
 (s/defschema SelvitysEmail
   "Loppu/Valiselvitys email"
   {:message s/Str
-   :to [(s/one Email "email") Email]
+   :to [(s/one soresu-schema/Email "email") soresu-schema/Email]
    :subject s/Str
    :selvitys-hakemus-id Long})
 
@@ -173,7 +173,7 @@
                       :project-name s/Str
                       :organization-name s/Str
                       :language s/Str
-                      :status HakemusStatus
+                      :status va-schema/HakemusStatus
                       :status-comment (s/maybe s/Str)
                       :user-first-name (s/maybe s/Str)
                       :user-last-name (s/maybe s/Str)
@@ -191,7 +191,7 @@
                       :loppuselvitys-taloustarkastettu-at (s/maybe s/Inst)
                       :loppuselvitys-information-verification (s/maybe s/Str)
                       :selvitys-email (s/maybe s/Str)
-                      :answers [Answer]
+                      :answers [soresu-schema/Answer]
                       (s/optional-key :submitted-version) (s/maybe s/Int)
                       (s/optional-key :refused) (s/maybe s/Bool)
                       (s/optional-key :refused-comment) (s/maybe s/Str)
@@ -246,8 +246,8 @@
 
 (s/defschema HakuData
   "Avustushaku structured response with related form, roles, hakemukset etc"
-  {:avustushaku AvustusHaku
-   :environment Environment
+  {:avustushaku va-schema/AvustusHaku
+   :environment va-schema/Environment
    :form {:content s/Any
           :rules s/Any}
    :roles [Role]
@@ -265,7 +265,7 @@
 
 (s/defschema PaatosData
   "Decision response with related avustushaku, form, roles, hakemus"
-  {:avustushaku AvustusHaku
+  {:avustushaku va-schema/AvustusHaku
    :form {:content s/Any
           :rules s/Any}
    :roles [Role]
@@ -387,7 +387,7 @@
    (s/optional-key :takp-account) (s/maybe s/Str)
    (s/optional-key :grant-id) s/Int
    (s/optional-key :evaluation) s/Any
-   (s/optional-key :answers) [Answer]
+   (s/optional-key :answers) [soresu-schema/Answer]
    (s/optional-key :payment-decisions) (s/maybe [{:id s/Int :payment-sum s/Int
                                          :takp-account s/Str}])
    (s/optional-key :refused) (s/maybe s/Bool)
@@ -467,7 +467,7 @@
    :form-valiselvitys s/Any
    :form s/Any
    :project-id s/Any
-   :phase HakuPhase
+   :phase va-schema/HakuPhase
    :status GrantStatus
    :operational-unit-id s/Any
    :register-number (s/maybe s/Str)

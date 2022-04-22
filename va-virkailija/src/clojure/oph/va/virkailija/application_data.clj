@@ -2,10 +2,8 @@
   (:require [oph.soresu.common.db :refer [exec query]]
             [oph.va.virkailija.db :as va-db]
             [oph.va.virkailija.utils :refer [convert-to-dash-keys]]
-            [clj-time.core :as t]
             [oph.va.virkailija.db.queries :as virkailija-queries]
-            [oph.va.hakija.api.queries :as hakija-queries])
-  (:import (oph.va.jdbc.enums)))
+            [oph.va.hakija.api.queries :as hakija-queries]))
 
 (defn get-application-evaluation [application-id]
   (convert-to-dash-keys

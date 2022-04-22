@@ -1,11 +1,10 @@
 (ns oph.va.virkailija.authentication
-  (:use [clojure.tools.trace :only [trace]])
   (:require [oph.soresu.common.config :refer [config environment without-authentication?]]
             [oph.va.virkailija.cas :as cas]
             [oph.va.virkailija.va-users :as va-users]
             [oph.va.virkailija.fake-authentication :as fake-authentication]
             [oph.common.background-job-supervisor :as job-supervisor]
-            [clojure.core.async :refer [<! >!! alts! go chan timeout]]
+            [clojure.core.async :refer [>!! alts! go chan timeout]]
             [clojure.tools.logging :as log])
   (:import (fi.vm.sade.utils.cas CasLogout)))
 

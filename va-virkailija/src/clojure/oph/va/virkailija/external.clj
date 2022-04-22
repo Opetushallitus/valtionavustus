@@ -1,23 +1,17 @@
 (ns oph.va.virkailija.external
   (:require [clojure.tools.logging :as log]
-            [schema.core :as s]
             [compojure.api.sweet :as compojure-api]
-            [oph.va.virkailija.cas :as cas]
+            [oph.soresu.common.config :refer [config environment without-authentication?]]
             [oph.va.virkailija.application-data :as application-data]
+            [oph.va.virkailija.cas :as cas]
             [oph.va.virkailija.external-data :as external-data]
-            [ring.util.http-response :as response]
-            [oph.soresu.common.config :refer [config]]
             [oph.va.virkailija.schema :as schema]
-            [oph.soresu.common.config :refer [config environment without-authentication?]]))
+            [ring.util.http-response :as response]
+            [schema.core :as s]))
 
 (def virkailija-login-url
   (when-not *compile-files*
     (str (-> config :server :virkailija-url) "/api/v2/external/hankkeet/")))
-
-(defn- without-authentication [site]
-  (when (not (or (= environment "dev") (= environment "test")))
-    (throw (Exception.
-             "Authentication is allowed only in dev or test environments"))))
 
 (compojure-api/defroutes routes
   "External API"

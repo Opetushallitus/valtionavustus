@@ -1,8 +1,8 @@
 (ns oph.va.virkailija.main
-  (:use [oph.va.virkailija.server :only [start-server]])
   (:require [clojure.tools.logging :as log]
             [nrepl.server :as nrepl-server]
-            [oph.soresu.common.config :refer [config environment without-authentication?]])
+            [oph.soresu.common.config :refer [config without-authentication?]]
+            [oph.va.virkailija.server :refer [start-server]])
   (:gen-class))
 
 (defn write-nrepl-port-file [port]
@@ -17,7 +17,7 @@
     (write-nrepl-port-file nrepl-port)
     (log/info "nrepl running on port " nrepl-port)))
 
-(defn -main [& args]
+(defn -main [& _args]
   (let [server-config (:server config)
         auto-reload? (:auto-reload? server-config)
         port (:port server-config)

@@ -47,7 +47,7 @@
   Given function (f) will be called.
   If timeout (t) happens before given function finishes timeout value (tv)
   will be returned."
-  [f t tv & a]
+  [f t tv]
   (let [c (chan)]
     (go
       (>! c (f)))

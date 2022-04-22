@@ -5,7 +5,7 @@
             [oph.va.virkailija.db :as virkailija-db]
             [oph.common.background-job-supervisor :as job-supervisor]
             [clojure.string :as string]
-            [clojure.core.async :refer [<! >!! alts! go chan timeout]]
+            [clojure.core.async :refer [>!! alts! go chan timeout]]
             [clojure.tools.logging :as log]))
 
 (def ^:private va-users-update-chan (chan 1))

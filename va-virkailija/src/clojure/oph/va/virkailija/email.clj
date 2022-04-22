@@ -1,17 +1,17 @@
 (ns oph.va.virkailija.email
-  (:require [oph.soresu.common.db :refer [query]]
-            [oph.common.email :as email]
-            [oph.common.datetime :as datetime]
-            [oph.soresu.common.config :refer [config]]
-            [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]
+  (:require [clojure.java.io :refer [copy input-stream resource]]
             [clojure.tools.logging :as log]
-            [clostache.parser :refer [render]]
-            [clojurewerkz.quartzite.scheduler :as qs]
             [clojurewerkz.quartzite.jobs :refer [defjob] :as j]
+            [clojurewerkz.quartzite.schedule.cron :refer [schedule cron-schedule]]
+            [clojurewerkz.quartzite.scheduler :as qs]
             [clojurewerkz.quartzite.triggers :as t]
-            [clojurewerkz.quartzite.schedule.cron :refer [schedule cron-schedule]])
-  (:use [clojure.java.io]
-        [oph.va.decision-liitteet]))
+            [clostache.parser :refer [render]]
+            [oph.common.datetime :as datetime]
+            [oph.common.email :as email]
+            [oph.soresu.common.config :refer [config]]
+            [oph.soresu.common.db :refer [query]]
+            [oph.va.decision-liitteet :refer [Liitteet]]
+            [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]))
 
 (def mail-titles
   {:change-request {:fi "Täydennyspyyntö avustushakemukseesi"

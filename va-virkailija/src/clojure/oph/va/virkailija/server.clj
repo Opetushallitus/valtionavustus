@@ -1,11 +1,9 @@
 (ns oph.va.virkailija.server
-  (:use [clojure.tools.trace :only [trace]]
-        [oph.va.virkailija.routes :only [all-routes opintopolku-login-url virkailija-login-url]])
   (:require [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.session.cookie :refer [cookie-store]]
             [ring.middleware.not-modified :refer [wrap-not-modified]]
             [ring.middleware.session-timeout :as ring-session-timeout]
-            [ring.middleware.defaults :refer :all]
+            [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
             [buddy.auth.middleware :as buddy-middleware]
             [buddy.auth.accessrules :as buddy-accessrules]
             [oph.va.virkailija.db.migrations :as dbmigrations]
@@ -20,6 +18,7 @@
             [oph.va.virkailija.va-users :as va-users]
             [oph.va.virkailija.notification-scheduler :as notification-scheduler]
             [oph.va.virkailija.rondo-scheduling :as rondo-scheduling]
+            [oph.va.virkailija.routes :refer [all-routes opintopolku-login-url virkailija-login-url]]
             [oph.va.virkailija.healthcheck :as healthcheck]
             [oph.va.virkailija.tasmaytysraportti :as tasmaytysraportti]))
 
@@ -77,7 +76,7 @@
      :body    (str "Access to " (:uri request) " is not authorized, redirecting to login")
      :session {:original-url original-url}}))
 
-(defn- any-access [request] true)
+(defn- any-access [_] true)
 
 (defn- authenticated-access [request]
   (if (auth/get-request-identity request)

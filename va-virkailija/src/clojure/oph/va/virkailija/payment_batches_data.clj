@@ -5,20 +5,16 @@
             [oph.va.virkailija.utils
              :refer [convert-to-dash-keys convert-to-underscore-keys
                      with-timeout]]
-            [oph.va.virkailija.payments-data
-             :refer [convert-timestamps-from-sql]]
             [oph.va.virkailija.application-data :as application-data]
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.soresu.common.config :refer [config]]
-            [oph.va.virkailija.rondo-service :refer :all]
-            [oph.va.virkailija.remote-file-service :refer :all]
+            [oph.va.virkailija.remote-file-service :refer [send-payment-to-rondo!]]
             [oph.va.virkailija.invoice :as invoice]
             [clj-time.core :as t]
             [clj-time.format :as f]
-            [oph.va.virkailija.email :as email])
-  (:import [oph.va.virkailija.rondo_service RondoFileService]))
+            [oph.va.virkailija.email :as email]))
 
 (def date-formatter (f/formatter "dd.MM.YYYY"))
 
@@ -28,7 +24,7 @@
   (->> (exec queries/find-batches
              {:batch_date date :grant_id grant-id})
       (map convert-to-dash-keys)
-      (map convert-timestamps-from-sql)))
+      (map payments-data/convert-timestamps-from-sql)))
 
 (defn create-batch [values]
   (->> values
@@ -36,13 +32,13 @@
        (exec queries/create-batch)
        first
        convert-to-dash-keys
-       convert-timestamps-from-sql))
+       payments-data/convert-timestamps-from-sql))
 
 (defn get-batch [id]
   (-> (exec queries/get-batch {:batch_id id})
       first
       convert-to-dash-keys
-      convert-timestamps-from-sql))
+      payments-data/convert-timestamps-from-sql))
 
 (defn create-filename
   ([payment id-gen-fn] (format "payment-%d-%d.xml" (:id payment) (id-gen-fn)))
@@ -113,7 +109,7 @@
 (defn get-batch-documents [batch-id]
   (->> (exec queries/get-batch-documents {:batch_id batch-id})
       (map convert-to-dash-keys)
-      (map convert-timestamps-from-sql)))
+      (map payments-data/convert-timestamps-from-sql)))
 
 (defn create-batch-document [batch-id document]
   (->> (assoc document :batch-id batch-id)
@@ -151,5 +147,5 @@
 (defn get-grant-batches [grant-id]
   (->> (exec queries/get-grant-batches {:grant_id grant-id})
        (map convert-to-dash-keys)
-       (map convert-timestamps-from-sql)
+       (map payments-data/convert-timestamps-from-sql)
        (map set-batch-documents)))

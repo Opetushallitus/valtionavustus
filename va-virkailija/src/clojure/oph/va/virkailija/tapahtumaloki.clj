@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.tapahtumaloki
     (:require
-      [oph.soresu.common.db :refer [exec exec-all]]
+      [oph.soresu.common.db :refer [exec]]
       [clojure.tools.logging :as log]
       [oph.va.virkailija.db.queries :as queries]))
 

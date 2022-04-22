@@ -1,13 +1,9 @@
 (ns oph.va.virkailija.rondo-service
   (:require [clj-ssh.ssh :as ssh]
-            [ring.util.http-response :refer :all]
-            [oph.va.virkailija.remote-file-service :refer [RemoteFileService]]
-            [oph.va.hakija.api :as hakija-api]
+            [oph.va.virkailija.remote-file-service :refer [RemoteFileService get-local-file get-sent-maksatukset-file-list]]
             [oph.va.virkailija.invoice :as invoice]
-            [oph.va.virkailija.payments-data :as payments-data]
             [clojure.tools.logging :as log]
-            [clojure.string :as strc]
-            [oph.va.virkailija.remote-file-service :refer :all]))
+            [clojure.string :as strc]))
 
 
 (defn create-session
@@ -105,7 +101,7 @@
               :file filename
               :path (:remote_path_from (:configuration service))
               :config (:configuration service)))
-  (report-exception [service msg exception] (log/error msg exception)))
+  (report-exception [_service msg exception] (log/error msg exception)))
 
 (defn create-service [config]
   (RondoFileService. config))

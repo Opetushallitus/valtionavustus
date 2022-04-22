@@ -7,7 +7,7 @@
 (def file-filter
   (reify
     java.io.FilenameFilter
-    (accept [this _ filename]
+    (accept [_ _ filename]
       (.endsWith filename ".edn"))))
 
 (defn load-templates [files]

@@ -10,9 +10,7 @@
             [oph.va.virkailija.authorization :as authorization]
             [oph.va.virkailija.kayttosuunnitelma :as ks]
             [oph.va.virkailija.koulutusosio :as koulutusosio]
-            [schema.core :as s]
             [hiccup.core :refer [html]]
-            [clojure.tools.logging :as log]
             [oph.va.virkailija.payments-data :as payments-data])
   (:import  [java.time.format DateTimeFormatter]))
 
