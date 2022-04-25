@@ -9,14 +9,14 @@ interface Props {
   scoring: Scoring
 }
 
+const starOffImage = "/virkailija/img/star_off.png"
 export default function StarScoring(props: Props) {
   const {userInfo, allowHakemusScoring, scoring} = props
   const meanScore = effectiveAverage(scoring, userInfo, allowHakemusScoring)
   const normalizedMeanScore = meanScore! + 1
-  console.log(normalizedMeanScore, meanScore, props)
   const starElements = [0, 1, 2, 3].map(indexOfStar => {
     const isVisible = Math.ceil(meanScore!) >= indexOfStar
-    const starImage = isVisible ? "/virkailija/img/star_on.png" : "/virkailija/img/star_off.png"
+    const starImage = isVisible ? "/virkailija/img/star_on.png" : starOffImage
 
     let className = "single-score"
 
@@ -43,6 +43,19 @@ export default function StarScoring(props: Props) {
   return (
     <div className="list-score-row" title={titleText!}>
       {starElements}
+    </div>
+  )
+}
+
+export function EmptyScore() {
+  const emptyStarElements = [0, 1, 2, 3].map(indexOfStar => {
+    return <img key={indexOfStar} className={"single-score"}
+                src={starOffImage}/>
+  })
+
+  return (
+    <div className={"list-score-row"}>
+      {emptyStarElements}
     </div>
   )
 }

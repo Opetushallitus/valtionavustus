@@ -7,7 +7,7 @@ import {
 
 import styles from './NewHakemusListing.module.less'
 import buttonStyles from './Button.module.less'
-import StarScoring from "./StarScoring";
+import StarScoring, {EmptyScore} from "./StarScoring";
 import {MuutoshakemusStatus} from "soresu-form/web/va/types/muutoshakemus";
 import {
   HakemusSelvitys,
@@ -499,10 +499,10 @@ function HakemusTable({
                 {draft && <Pill color="yellow" text="Keskeneräinen" compact/>}
               </div>
             </td>
-            <td className="stars-cell">
-              {scoring && <StarScoring userInfo={userInfo}
+            <td className={styles.starsCell}>
+              {scoring ? <StarScoring userInfo={userInfo}
                                        allowHakemusScoring={allowHakemusScoring}
-                                       scoring={scoring}/>}
+                                       scoring={scoring}/> : <EmptyScore/>}
             </td>
             <td className="hakemus-status-cell">{draft ? <EmptyGreyPill/> :
               <ArvioStatus status={hakemus.arvio.status}
