@@ -16,6 +16,7 @@ import {Muutoshakemus as MuutoshakemusType} from "soresu-form/web/va/types/muuto
 import {
   Arvio,
   Avustushaku,
+  ChangeRequest,
   Comment,
   Field,
   Hakemus,
@@ -560,7 +561,7 @@ export default class HakemustenArviointiController {
     return HakemustenArviointiController.doOnAnswerValue(state, value, "seuranta-answers" )
   }
 
-  onChangeRequestsLoaded(state: State, hakemusIdWithChangeRequests: { hakemusId: number; changeRequests: unknown[] }) {
+  onChangeRequestsLoaded(state: State, hakemusIdWithChangeRequests: { hakemusId: number; changeRequests: ChangeRequest[] }) {
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdWithChangeRequests.hakemusId)
     if (relevantHakemus) {
       relevantHakemus.changeRequests = hakemusIdWithChangeRequests.changeRequests
@@ -1007,7 +1008,7 @@ setHakemusShouldPayComments(hakemus: Hakemus, newShouldPayComment: string) {
 
 
 
-  setChangeRequestText(hakemus: Hakemus, text: string) {
+  setChangeRequestText(hakemus: Hakemus, text: string | undefined) {
     return function() {
       hakemus.changeRequest = text
       dispatcher.push(events.reRender, {})

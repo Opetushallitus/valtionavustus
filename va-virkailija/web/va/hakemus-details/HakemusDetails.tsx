@@ -77,7 +77,6 @@ export const HakemusDetails = (props: Props) => {
                                    selectedHakemusAccessControl={selectedHakemusAccessControl}
                                    userInfo={userInfo}
                                    showOthersScores={showOthersScores}
-                                   subTab={subTab}
                                    controller={controller}
                                    multibatchEnabled={multibatchEnabled}
                                    helpTexts={helpTexts}/>

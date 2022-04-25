@@ -1,23 +1,42 @@
 import * as Bacon from 'baconjs'
 import React from 'react'
 import _ from "lodash"
+
+import { Hakemus, HelpTexts } from 'soresu-form/web/va/types'
+
 import rejectedReasonsByLanguage from './rejectedReasonsByLanguage.json'
 import HelpTooltip from '../HelpTooltip'
-export default class Perustelut extends React.Component {
+import HakemustenArviointiController from '../HakemustenArviointiController'
 
-  constructor(props) {
+type PerustelutProps = {
+  controller: HakemustenArviointiController
+  hakemus: Hakemus
+  helpTexts: HelpTexts
+  allowEditing?: boolean
+}
+
+type PerustelutState = {
+  currentHakemusId: number
+  perustelut: string
+  showReasons: boolean
+}
+
+export default class Perustelut extends React.Component<PerustelutProps, PerustelutState> {
+  reasonBus: Bacon.Bus<[a: Hakemus, b: string]>
+
+  constructor(props: PerustelutProps) {
     super(props)
     this.reasonBus = new Bacon.Bus()
     this.reasonBus.debounce(1000).onValue(([hakemus, newReason]) => { this.props.controller.setArvioPerustelut(hakemus, newReason) })
     this.state = Perustelut.initialState(props)
   }
 
-  reasonUpdated(newReason) {
+  reasonUpdated(newReason: string) {
     this.setState({perustelut: newReason})
     this.reasonBus.push([this.props.hakemus, newReason])
   }
 
-  static getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps(props: PerustelutProps, state: PerustelutState) {
     if (props.hakemus.id !== state.currentHakemusId) {
       return Perustelut.initialState(props)
     } else {
@@ -25,7 +44,7 @@ export default class Perustelut extends React.Component {
     }
   }
 
-  static initialState(props){
+  static initialState(props: PerustelutProps){
     const perustelut = Perustelut.getPerustelut(props)
     return {
       currentHakemusId: props.hakemus.id,
@@ -34,8 +53,8 @@ export default class Perustelut extends React.Component {
     }
   }
 
-  static getPerustelut(props) {
-    return _.get(props.hakemus, "arvio.perustelut") || ""
+  static getPerustelut(props: PerustelutProps) {
+    return props.hakemus.arvio.perustelut ?? ''
   }
 
   render() {
@@ -47,15 +66,15 @@ export default class Perustelut extends React.Component {
     // empty string here
     const controller = this.props.controller
     const helpTexts = this.props.helpTexts
-    const addReason = (reason) => {
+    const addReason = (reason: string) => {
       const currentPerustelut = Perustelut.getPerustelut(this.props)
       const newPerustelut = currentPerustelut.length === 0 ?
             reason : currentPerustelut + " " + reason
       controller.setArvioPerustelut(hakemus, newPerustelut)
       this.setState({perustelut: newPerustelut,showReasons:false})
       setTimeout(function() {
-        document.getElementById("perustelut-container").scrollIntoView({block: "start", behavior: "smooth"})
-        document.getElementById("perustelut").focus()
+        document.getElementById("perustelut-container")?.scrollIntoView({block: "start", behavior: "smooth"})
+        document.getElementById("perustelut")?.focus()
       }, 300)
     }
     const rejected = _.get(hakemus,"arvio.status","") === "rejected"
@@ -80,7 +99,7 @@ export default class Perustelut extends React.Component {
               </div>
           }
           <textarea id="perustelut"
-                    rows="5"
+                    rows={5}
                     disabled={!allowEditing}
                     value={this.state.perustelut}
                     onChange={(evt) => this.reasonUpdated(evt.target.value)} />

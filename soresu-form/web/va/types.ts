@@ -85,6 +85,14 @@ export interface Answers {
   value: Answer[]
 }
 
+export type ChangeLogEntry = {
+  type: "budget-change" | "oppilaitokset-change" | "summary-comment" | "overridden-answers-change" | "presenter-comment" | "status-change" | "should-pay-change"
+  timestamp: string
+  'first-name': string
+  'last-name': string
+  data: any
+}
+
 export type Arvio = {
   id: number
   status: HakemusArviointiStatus
@@ -108,6 +116,7 @@ export type Arvio = {
   useDetailedCosts?: boolean
   "summary-comment": string
   roles: Record<string, number[]>
+  changeLog?: ChangeLogEntry[]
 }
 
 export interface NormalizedHakemusData {
@@ -174,6 +183,11 @@ export interface SelvitysEmail {
   message: string
 }
 
+export interface ChangeRequest {
+  "status-comment": string
+  "version-date": string
+}
+
 export interface Hakemus {
   id: number
   answers: Answer[]
@@ -187,7 +201,7 @@ export interface Hakemus {
   'budget-total': number
   'register-number'?: string
   attachmentVersions: unknown[]
-  changeRequests: unknown[]
+  changeRequests: ChangeRequest[]
   comments?: Comment[]
   language: Language
   muutoshakemusUrl: string

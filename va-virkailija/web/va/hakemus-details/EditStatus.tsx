@@ -6,7 +6,7 @@ import { Avustushaku, Hakemus, HakemusStatus, HelpTexts } from 'soresu-form/web/
 type EditStatusProps = {
   avustushaku: Avustushaku
   hakemus: Hakemus
-  allowEditing: boolean
+  allowEditing?: boolean
   status: Extract<'officer_edit' | 'cancelled', HakemusStatus>
   helpTexts: HelpTexts
 }

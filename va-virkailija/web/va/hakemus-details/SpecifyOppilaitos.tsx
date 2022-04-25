@@ -1,14 +1,23 @@
 import React from 'react'
+import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
+import HakemustenArviointiController from '../HakemustenArviointiController'
 
-const OppilaitosRow = ({value, allowEditing, onChange, onDelete}) =>{
+type OppilaitosRowProps = {
+  value: string
+  allowEditing?: boolean
+  onChange: ((e: React.ChangeEvent<HTMLInputElement>) => void) | undefined
+  onDelete?: ((_e: any) => void) | undefined
+}
+
+const OppilaitosRow = ({value, allowEditing, onChange, onDelete}: OppilaitosRowProps) =>{
   const deleteButton = onDelete ? <button type="button" onClick={onDelete}>Poista</button> : null
   return (
     <div>
       <input
              type="text"
              name="oppilaitos"
-             size="50"
-             maxLength="50"
+             size={50}
+             maxLength={50}
              value={value}
              disabled={!allowEditing}
              onChange={onChange}
@@ -18,9 +27,16 @@ const OppilaitosRow = ({value, allowEditing, onChange, onDelete}) =>{
   )
 }
 
-export default class SpecifyOppilaitos extends React.Component {
+type SpecifyOppilaitosProps = {
+  avustushaku: Avustushaku
+  controller: HakemustenArviointiController
+  hakemus: Hakemus
+  allowEditing?: boolean
+}
 
-  constructor(props) {
+export default class SpecifyOppilaitos extends React.Component<SpecifyOppilaitosProps> {
+
+  constructor(props: SpecifyOppilaitosProps) {
     super(props)
   }
 
@@ -31,18 +47,18 @@ export default class SpecifyOppilaitos extends React.Component {
     }
     const hakemus = this.props.hakemus
     const allowEditing = this.props.allowEditing
-    const currentOppilaitokset = hakemus.arvio ? hakemus.arvio.oppilaitokset.names : []
+    const currentOppilaitokset = hakemus.arvio.oppilaitokset?.names ?? []
     const controller = this.props.controller
     const oppilaitosRows = []
-    const onOppilaitosChange = function(index) {
-      return allowEditing ? (event) => {
+    const onOppilaitosChange = function(index: number) {
+      return allowEditing ? (event: React.ChangeEvent<HTMLInputElement>) => {
             controller.setOppilaitos(hakemus, index, event.target.value)
-          } : null
+          } : undefined
     }
-    const onOppilaitosRemove = function(index) {
+    const onOppilaitosRemove = function(index: number) {
       return allowEditing ? () => {
             controller.removeOppilaitos(hakemus, index)
-          } : null
+          } : undefined
     }
     let oppilaitosIndex = 0
     for (; oppilaitosIndex < currentOppilaitokset.length; oppilaitosIndex++) {

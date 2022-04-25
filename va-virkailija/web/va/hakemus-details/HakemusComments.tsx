@@ -1,11 +1,20 @@
 import React, { useState } from 'react'
 
 import DateUtil from 'soresu-form/web/DateUtil'
+import { Comment, HelpTexts } from 'soresu-form/web/va/types'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
 
+import HakemustenArviointiController from '../HakemustenArviointiController'
 import HelpTooltip from '../HelpTooltip'
 
-const HakemusComments = ({ controller, helpTexts, allowHakemusCommenting, comments }) => {
+type HakemusCommentsProps = {
+  controller: HakemustenArviointiController
+  helpTexts: HelpTexts
+  comments?: Comment[]
+  allowHakemusCommenting?: boolean
+}
+
+const HakemusComments = ({ controller, helpTexts, allowHakemusCommenting, comments }: HakemusCommentsProps) => {
   const [comment, setComment] = useState('')
   const [added, setAdded] = useState(false)
   const addComment = () => {
@@ -23,7 +32,7 @@ const HakemusComments = ({ controller, helpTexts, allowHakemusCommenting, commen
         ? <div className="comment-list">{comments.map(c => <Comment comment={c} key={c.id}/>)}</div>
         : <div>Ei kommentteja</div>
       }
-      <textarea rows="3" className="comment-input" id="comment-input"
+      <textarea rows={3} className="comment-input" id="comment-input"
                 value={comment}
                 onChange={(event) => setComment(event.target.value)}
                 hidden={!allowHakemusCommenting} disabled={!allowHakemusCommenting}/>
@@ -33,7 +42,7 @@ const HakemusComments = ({ controller, helpTexts, allowHakemusCommenting, commen
   )
 }
 
-const Comment = ({comment})=>{
+const Comment = ({ comment }: { comment: Comment })=>{
     const firstName = NameFormatter.onlyFirstForename(comment.first_name)
     const lastName = comment.last_name
     const nameShort = NameFormatter.shorten(firstName, lastName)

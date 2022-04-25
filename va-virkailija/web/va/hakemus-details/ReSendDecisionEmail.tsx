@@ -1,10 +1,26 @@
 import React, { Component } from 'react'
+
 import HttpUtil from 'soresu-form/web/HttpUtil'
+import { Avustushaku, Hakemus, HelpTexts } from 'soresu-form/web/va/types'
+
 import HelpTooltip from '../HelpTooltip'
+import { HakuData } from '../types'
 
-export default class ReSendDecisionEmail extends Component {
+type ReSendDecisionEmailProps = {
+  avustushaku: Avustushaku
+  hakuData: HakuData
+  hakemus: Hakemus
+  helpTexts: HelpTexts
+}
 
-  constructor(props){
+type ReSendDecisionEmailState = {
+  submitting: boolean
+  submitted: boolean
+}
+
+export default class ReSendDecisionEmail extends Component<ReSendDecisionEmailProps, ReSendDecisionEmailState> {
+
+  constructor(props: ReSendDecisionEmailProps) {
     super(props)
     this.state = {submitting: false, submitted: false}
   }

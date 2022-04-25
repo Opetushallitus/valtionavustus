@@ -1,18 +1,34 @@
 import React from 'react'
 import _ from 'lodash'
 import * as Bacon from 'baconjs'
+
+import { Hakemus } from 'soresu-form/web/va/types'
+
 import HelpTooltip from '../HelpTooltip'
+import HakemustenArviointiController from '../HakemustenArviointiController'
 
-export default class PresenterComment extends React.Component {
+type PresenterCommentProps = {
+  controller: HakemustenArviointiController
+  hakemus: Hakemus
+  helpText: string
+}
 
-  constructor(props) {
+type PresenterCommentState = {
+  currentHakemusId: number
+  value: string
+}
+
+export default class PresenterComment extends React.Component<PresenterCommentProps, PresenterCommentState> {
+  changeBus: Bacon.Bus<[a: Hakemus, b: string]>
+
+  constructor(props: PresenterCommentProps) {
     super(props)
     this.state = PresenterComment.initialState(props)
     this.changeBus = new Bacon.Bus()
     this.changeBus.debounce(1000).onValue(([hakemus, value]) => { this.props.controller.setPresenterComment(hakemus, value) })
   }
 
-  static getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps(props: PresenterCommentProps, state: PresenterCommentState) {
     if (props.hakemus.id !== state.currentHakemusId) {
       return PresenterComment.initialState(props)
     } else {
@@ -20,7 +36,7 @@ export default class PresenterComment extends React.Component {
     }
   }
 
-  static initialState(props) {
+  static initialState(props: PresenterCommentProps) {
     const value = _.get(props.hakemus, "arvio.presentercomment") || ""
     return {
       currentHakemusId: props.hakemus.id,
@@ -29,7 +45,7 @@ export default class PresenterComment extends React.Component {
   }
 
   render() {
-    const onChange = (e)=> {
+    const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>)=> {
       const value = e.target.value
       this.setState({value: value})
       this.changeBus.push([this.props.hakemus, value])
@@ -37,7 +53,7 @@ export default class PresenterComment extends React.Component {
     return (
       <div className="value-edit">
         <label>Valmistelijan huomiot <HelpTooltip content={this.props.helpText} direction={"valmistelijan-huomiot"} /> </label>
-        <textarea rows="5" value={this.state.value} onChange={onChange}></textarea>
+        <textarea rows={5} value={this.state.value} onChange={onChange}></textarea>
       </div>
     )
   }
