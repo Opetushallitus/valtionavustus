@@ -1,9 +1,14 @@
 import React, { Component } from 'react'
+import { AvustushakuPhase} from 'soresu-form/web/va/types'
 
-export default class HakuPhase extends Component {
+interface Props {
+  phase: AvustushakuPhase
+}
+
+export default class HakuPhase extends Component<Props> {
   render() {
     const phase = this.props.phase
-    let value = phase
+    let value: string = phase
     switch(phase) {
       case "upcoming":
         value = "Aukeamassa"
