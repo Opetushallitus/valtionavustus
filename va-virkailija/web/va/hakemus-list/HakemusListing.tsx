@@ -347,44 +347,46 @@ export default function HakemusListing(props: Props) {
         : styles.largeFixedContainer
       : styles.tableContainer;
   return (
-    <div id="hakemus-listing" className={containerClass}>
-      {isResolved ? (
-        <ResolvedTable
-          selectedHakemusId={selectedHakemusId}
-          onYhteenvetoClick={onYhteenvetoClick}
-          onSelectHakemus={onSelectHakemus}
-          filterState={filterState}
-          filteredList={filteredList}
-          list={hakemusList}
-          dispatch={dispatch}
-          roles={roles}
-          totalBudgetGranted={totalBudgetGranted}
-          controller={controller}
-          state={state}
-          toggleSplitView={toggleSplitView}
-          sortingState={sortingState}
-          setSorting={setSorting}
-        />
-      ) : (
-        <HakemusTable
-          selectedHakemusId={selectedHakemusId}
-          onYhteenvetoClick={onYhteenvetoClick}
-          onSelectHakemus={onSelectHakemus}
-          filterState={filterState}
-          filteredList={filteredList}
-          list={hakemusList}
-          dispatch={dispatch}
-          roles={roles}
-          totalBudgetGranted={totalBudgetGranted}
-          controller={controller}
-          state={state}
-          toggleSplitView={toggleSplitView}
-          sortingState={sortingState}
-          setSorting={setSorting}
-          userInfo={userInfo}
-          allowHakemusScoring={allowHakemusScoring}
-        />
-      )}
+    <div className={styles.containerForModals}>
+      <div id="hakemus-listing" className={containerClass}>
+        {isResolved ? (
+          <ResolvedTable
+            selectedHakemusId={selectedHakemusId}
+            onYhteenvetoClick={onYhteenvetoClick}
+            onSelectHakemus={onSelectHakemus}
+            filterState={filterState}
+            filteredList={filteredList}
+            list={hakemusList}
+            dispatch={dispatch}
+            roles={roles}
+            totalBudgetGranted={totalBudgetGranted}
+            controller={controller}
+            state={state}
+            toggleSplitView={toggleSplitView}
+            sortingState={sortingState}
+            setSorting={setSorting}
+          />
+        ) : (
+          <HakemusTable
+            selectedHakemusId={selectedHakemusId}
+            onYhteenvetoClick={onYhteenvetoClick}
+            onSelectHakemus={onSelectHakemus}
+            filterState={filterState}
+            filteredList={filteredList}
+            list={hakemusList}
+            dispatch={dispatch}
+            roles={roles}
+            totalBudgetGranted={totalBudgetGranted}
+            controller={controller}
+            state={state}
+            toggleSplitView={toggleSplitView}
+            sortingState={sortingState}
+            setSorting={setSorting}
+            userInfo={userInfo}
+            allowHakemusScoring={allowHakemusScoring}
+          />
+        )}
+      </div>
     </div>
   );
 }
