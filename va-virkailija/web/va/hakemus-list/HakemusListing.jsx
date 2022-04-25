@@ -244,9 +244,10 @@ export default class HakemusListing extends Component {
     })
 
     return (
-      <div id="hakemus-listing" className="listing-table hakemus-list-container">
-        <table key="hakemusListing" className={hakemusListingClass}>
-          <thead>
+      <div className="listing-table-container">
+        <div id="hakemus-listing" className="listing-table hakemus-list-container">
+          <table key="hakemusListing" className={hakemusListingClass}>
+            <thead>
             <tr>
               <th className="organization-column">
                 <input className="text-filter" placeholder="Hakijaorganisaatio" onChange={onFilterChange("organization")} value={filter.organization}></input>
@@ -287,41 +288,42 @@ export default class HakemusListing extends Component {
               <th className="post-submit-notification-column"></th>
               {!isResolved && <th className="applied-sum-column">Haettu <HakemusSorter field="applied-sum" sorter={sorter} controller={controller}/></th>}
               {isResolved && <th className="selvitys-column">
-                  <StatusFilter controller={controller}
-                                  hakemusList={hakemusList}
-                                  filter={filter}
-                                  label="Välis."
-                                  statusValues={HakemusSelvitys.statuses}
-                                  statusToFi={HakemusSelvitys.statusToFI}
-                                  filterField="status_valiselvitys"/>
-                    <HakemusSorter field="status_valiselvitys" sorter={sorter} controller={controller}/>
+                <StatusFilter controller={controller}
+                              hakemusList={hakemusList}
+                              filter={filter}
+                              label="Välis."
+                              statusValues={HakemusSelvitys.statuses}
+                              statusToFi={HakemusSelvitys.statusToFI}
+                              filterField="status_valiselvitys"/>
+                <HakemusSorter field="status_valiselvitys" sorter={sorter} controller={controller}/>
               </th>}
               {isResolved && <th className="selvitys-column">
-                  <StatusFilter controller={controller}
-                                  hakemusList={hakemusList}
-                                  filter={filter}
-                                  label="Loppus."
-                                  statusValues={Loppuselvitys.statuses}
-                                  statusToFi={Loppuselvitys.statusToFI}
-                                  filterField="status_loppuselvitys"/>
-                    <HakemusSorter field="status_loppuselvitys" sorter={sorter} controller={controller}/>
+                <StatusFilter controller={controller}
+                              hakemusList={hakemusList}
+                              filter={filter}
+                              label="Loppus."
+                              statusValues={Loppuselvitys.statuses}
+                              statusToFi={Loppuselvitys.statusToFI}
+                              filterField="status_loppuselvitys"/>
+                <HakemusSorter field="status_loppuselvitys" sorter={sorter} controller={controller}/>
               </th>}
               <th className="granted-sum-column">Myönnetty <HakemusSorter field="granted-sum" sorter={sorter} controller={controller}/></th>
               <th className="person-filter-column"><PersonFilterButton controller={controller} state={state}/></th>
             </tr>
-          </thead>
-          <tbody data-test-id="hakemus-list" className={hasSelected ? "has-selected" : ""}>
+            </thead>
+            <tbody data-test-id="hakemus-list" className={hasSelected ? "has-selected" : ""}>
             {hakemusElements}
-          </tbody>
-        </table>
-        <div className="listing-footer">
-          <div className="total-applications-column">
-            <ApplicationSummaryLink filteredHakemusList={filteredHakemusList} hakemusList={hakemusList} controller={controller} />
-          </div>
-          <div className="right-side">
-            <div className="applied-sum-column">{!isResolved && <span className="money">{ophShareSum}</span>}</div>
-            <div className="granted-sum-column"><span className="money">{budgetGrantedSum}</span></div>
-            <div className="person-filter-column"></div>
+            </tbody>
+          </table>
+          <div className="listing-footer">
+            <div className="total-applications-column">
+              <ApplicationSummaryLink filteredHakemusList={filteredHakemusList} hakemusList={hakemusList} controller={controller} />
+            </div>
+            <div className="right-side">
+              <div className="applied-sum-column">{!isResolved && <span className="money">{ophShareSum}</span>}</div>
+              <div className="granted-sum-column"><span className="money">{budgetGrantedSum}</span></div>
+              <div className="person-filter-column"></div>
+            </div>
           </div>
         </div>
       </div>
