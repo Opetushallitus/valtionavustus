@@ -356,7 +356,7 @@
    :form-valiselvitys (s/maybe s/Int)
    :is-academysize s/Bool
    :haku-type GrantType
-   :allow_visibility_in_external_system s/Bool
+   :allow-visibility-in-external-system s/Bool
    (s/optional-key :operational-unit-id) (s/maybe s/Int)
    (s/optional-key :operational-unit) (s/maybe s/Str)
    (s/optional-key :project-id) (s/maybe s/Int)
