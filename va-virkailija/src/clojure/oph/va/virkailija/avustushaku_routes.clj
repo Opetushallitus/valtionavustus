@@ -11,6 +11,7 @@
             [oph.va.virkailija.authorization :as authorization]
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.email :as email]
+            [oph.va.virkailija.excel.all-avustushakus-export :refer [export-avustushakus]]
             [oph.va.virkailija.export :as export]
             [oph.va.virkailija.hakemus-search :as hakemus-search]
             [oph.va.virkailija.hakudata :as hakudata]
@@ -39,6 +40,15 @@
     (if (= "published" (:status avustushaku))
       hakemus-and-avustushaku
       (http/method-not-allowed!))))
+
+(defn- get-all-avustushaku-exports []
+  (compojure-api/GET "/export.xlsx" []
+                     :summary "Export Excel XLSX document with all avustushakus"
+                     (let [document (-> (export-avustushakus)
+                                        (ByteArrayInputStream.))] 
+                       (-> (http/ok document)
+                           (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
+                           (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"avustushaut.xlsx\""))))))
 
 (defn- get-avustushaku-status []
   (compojure-api/GET "/" []
@@ -473,6 +483,8 @@
 
 (compojure-api/defroutes avustushaku-routes
   "Hakemus listing and filtering"
+
+  (get-all-avustushaku-exports)
 
   (compojure-api/GET "/search" []
     :query-params [organization-name :- virkailija-schema/AvustushakuOrganizationNameQuery]
