@@ -58,7 +58,6 @@
   "sql/virkailija/applications/get-full-evaluation.sql")
 (defquery get-application-payments
   "sql/virkailija/applications/get-application-payments.sql")
-(defquery get-total-paid "sql/virkailija/applications/get-total-paid.sql")
 (defquery application-has-payments
   "sql/virkailija/applications/has-payments.sql")
 (defquery get-application-unsent-payments
@@ -98,7 +97,6 @@
 
 (defquery get-unprosessed-tasmaytysraportti-data "sql/virkailija/tasmaytysraportti/get-unprocessed-tasmaytysraportti-data.sql")
 (defquery get-tasmaytysraportti-by-avustuskahu-id-data "sql/virkailija/tasmaytysraportti/get-tasmaytysraportti-by-avustushaku-id-data.sql")
-(defquery store-tasmaytysraportti "sql/virkailija/tasmaytysraportti/store-tasmaytysraportti.sql")
 
 (defquery create-tapahtumaloki-entry "sql/virkailija/tapahtumaloki/create-tapahtumaloki-entry.sql")
 (defquery get-tapahtumaloki-entries "sql/virkailija/tapahtumaloki/get-tapahtumaloki-entries.sql")
