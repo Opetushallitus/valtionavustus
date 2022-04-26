@@ -1,13 +1,24 @@
 import React, { Component } from 'react'
-import _ from 'lodash'
-
 import DateUtil from 'soresu-form/web/DateUtil'
-
 import FormEditor from './FormEditor'
 import FormJsonEditor from './FormJsonEditor'
 import { MuutoshakukelpoisuusContainer } from './MuutoshakukelpoisuusContainer'
+import HakujenHallintaController, {Avustushaku} from "../HakujenHallintaController";
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
+import { LegacyTranslations, Koodistos, Form, HelpTexts} from 'soresu-form/web/va/types'
 
-export default class FormEditorContainer extends Component {
+interface FormEditorContainerProps {
+  avustushaku: Avustushaku
+  environment: EnvironmentApiResponse
+  translations: LegacyTranslations
+  koodistos: Koodistos
+  formDraft: Form
+  formDraftJson: string
+  controller: HakujenHallintaController
+  helpTexts: HelpTexts
+}
+
+export default class FormEditorContainer extends Component<FormEditorContainerProps> {
   render() {
     const avustushaku = this.props.avustushaku
     const translations = this.props.translations
@@ -15,7 +26,7 @@ export default class FormEditorContainer extends Component {
     const formDraft = this.props.formDraft
     const formDraftJson = this.props.formDraftJson
     const controller = this.props.controller
-    const updatedAt = _.get(avustushaku, "formContent.updated_at")
+    const updatedAt = avustushaku.formContent?.updated_at
     const helpTexts = this.props.helpTexts
 
     const environment = this.props.environment
@@ -25,16 +36,16 @@ export default class FormEditorContainer extends Component {
     const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/nayta?lang=sv"
     const formattedUpdatedDate = `${DateUtil.asDateString(updatedAt)} klo ${DateUtil.asTimeString(updatedAt)}`
 
-    const onFormChange = (avustushaku, newDraft) =>{
+    const onFormChange = (avustushaku: Avustushaku, newDraft: Form) =>{
       controller.formOnChangeListener(avustushaku, newDraft)
       controller.formOnJsonChangeListener(avustushaku, JSON.stringify(newDraft, null, 2))
     }
 
     const scrollToEditor = () =>
     {
-        const textArea = document.querySelector(".form-json-editor textarea")
-        textArea.scrollIntoView({block: "start", behavior: "smooth"})
-        textArea.focus()
+        const textArea = document.querySelector<HTMLTextAreaElement>(".form-json-editor textarea")
+        textArea?.scrollIntoView({block: "start", behavior: "smooth"})
+        textArea?.focus()
     }
 
     const mainHelp = { __html: helpTexts["hakujen_hallinta__hakulomake___ohje"] }
@@ -42,7 +53,7 @@ export default class FormEditorContainer extends Component {
     return (
       <section>
         {avustushaku.muutoshakukelpoisuus && <MuutoshakukelpoisuusContainer muutoshakukelpoisuus={avustushaku.muutoshakukelpoisuus}/>}
-        <div dangerouslySetInnerHTML={mainHelp}></div>
+        <div dangerouslySetInnerHTML={mainHelp}/>
         <div style={{float:'right'}}><button className="btn btn-blue btn-sm" onClick={scrollToEditor}>JSON editoriin</button></div>
         {updatedAt && <div style={{float:'right',marginRight:20}}>Päivitetty: {formattedUpdatedDate}</div>}
         <div className="link-list">

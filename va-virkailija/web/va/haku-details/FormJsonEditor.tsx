@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import _ from 'lodash'
 import HakujenHallintaController, {Avustushaku} from "../HakujenHallintaController";
-import { Koodistos, LegacyTranslations, Form} from 'soresu-form/web/va/types';
+import { Form} from 'soresu-form/web/va/types';
 
 function scrollToTop() {
   window.scrollTo(0, 0)
@@ -10,10 +10,7 @@ function scrollToTop() {
 interface FormEditorProps {
   controller: HakujenHallintaController
   avustushaku: Avustushaku
-  translations: LegacyTranslations
-  koodistos: Koodistos
   formDraftJson: string
-  onFormChange: (avustushaku: Avustushaku, newDraft: Form) => void
 }
 
 export default class FormJsonEditor extends Component<FormEditorProps> {

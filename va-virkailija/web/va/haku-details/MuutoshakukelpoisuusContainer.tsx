@@ -3,15 +3,10 @@ import React, { useState } from 'react'
 import 'react-widgets/styles.css'
 
 import "./Muutoshakukelpoisuus.less"
+import {OnkoMuutoshakukelpoinenAvustushakuOk} from "../types";
 
 interface Field {
   id: 'project-name' | 'applicant-name' | 'primary-email' | 'textField-0'
-}
-
-interface Muutoshakukelpoisuus {
-  "is-ok": boolean
-  "ok-fields": Field[]
-  "erroneous-fields": Field[]
 }
 
 const fieldLabels = {
@@ -22,7 +17,7 @@ const fieldLabels = {
 }
 
 interface MuutoshakukelpoisuusWarningProps {
-  muutoshakukelpoisuus: Muutoshakukelpoisuus
+  muutoshakukelpoisuus: OnkoMuutoshakukelpoinenAvustushakuOk
   controlDropdown: () => void
 }
 
@@ -95,7 +90,7 @@ const MuutoshakukelpoisuusDropdown = ({ muutoshakukelpoisuus }: Muutoshakukelpoi
 }
 
 interface MuutoshakukelpoisuusProps {
-  muutoshakukelpoisuus: Muutoshakukelpoisuus
+  muutoshakukelpoisuus: OnkoMuutoshakukelpoinenAvustushakuOk
 }
 
 let initialState = {
