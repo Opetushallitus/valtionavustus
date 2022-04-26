@@ -228,7 +228,6 @@ export interface Hakemus {
   payments: Payment[]
   scores: unknown[]
   'selvitys-email'?: SelvitysEmail
-  changeRequest?: string
   'taloustarkastettu-by'?: string
   'taloustarkastettu-at'?: string
   'loppuselvitys-information-verified-by'?: string

@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import React, { Component } from 'react'
+import React, { Component, useEffect, useState } from 'react'
 import * as Bacon from 'baconjs'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -235,102 +235,73 @@ type ChangeRequestProps = {
   allowEditing?: boolean
 }
 
-type ChangeRequestState = {
-  currentHakemusId: number,
-  preview: boolean
-  mail?: Mail
-}
-
 type Mail = {
   subject: string
   sender: string
   content: string
 }
 
-class ChangeRequest extends Component<ChangeRequestProps, ChangeRequestState> {
-  constructor(props: ChangeRequestProps){
-    super(props)
-    this.state = ChangeRequest.initialState(props)
+const ChangeRequest = ({ avustushaku, hakemus, helpTexts, controller, allowEditing }: ChangeRequestProps) => {
+  const [mail, setMail] = useState<Mail>()
+  const [preview, setPreview] = useState(false)
+  const [newChangeRequest, setNewChangeRequest] = useState(false)
+  const [changeRequest, setChangeRequest] = useState('')
+
+  useEffect(() => {
+    setPreview(false)
+    setNewChangeRequest(false)
+    setChangeRequest('')
+    setMail(undefined)
+  }, [hakemus.id, hakemus.status])
+
+  const status = hakemus.status
+  const hasChangeRequired = status === 'pending_change_request' || status === 'officer_edit'
+  const changeRequestTitle = status === 'pending_change_request' ? "Täydennyspyyntö lähetetty" : "Virkailijan muokkaus avattu"
+  const lastChangeRequest = hakemus.changeRequests?.length ? hakemus.changeRequests[hakemus.changeRequests.length - 1] : undefined
+  const lastChangeRequestText = lastChangeRequest ? lastChangeRequest["status-comment"] : ""
+  const lastChangeRequestTime = lastChangeRequest ? `${DateUtil.asDateString(lastChangeRequest["version-date"])} ${DateUtil.asTimeString(lastChangeRequest["version-date"])}` : ""
+
+  const onPreview = () => {
+    const sendS = Bacon.fromPromise<{ mail: Mail }>(HttpUtil.post(`/api/avustushaku/${avustushaku.id}/change-request-email`, { text: changeRequest }))
+    sendS.onValue(res => {
+      setMail(res.mail)
+      setPreview(true)
+    })
   }
 
-  static getDerivedStateFromProps(props: ChangeRequestProps, state: ChangeRequestState) {
-    if (props.hakemus.id !== state.currentHakemusId) {
-      return ChangeRequest.initialState(props)
-    } else {
-      return null
-    }
-  }
-
-  static initialState(props: ChangeRequestProps) {
-    return {
-      currentHakemusId: props.hakemus.id,
-      preview: false
-    }
-  }
-
-  render() {
-    const helpTexts = this.props.helpTexts
-    const hakemus = this.props.hakemus
-    const avustushaku = this.props.avustushaku
-    const status = hakemus.status
-    const hasChangeRequired = status === 'pending_change_request' || status === 'officer_edit'
-    const changeRequestTitle = status === 'pending_change_request' ? "Täydennyspyyntö lähetetty" : "Virkailijan muokkaus avattu"
-    const allowEditing = this.props.allowEditing
-    const lastChangeRequest = _.last(hakemus.changeRequests)
-    const lastChangeRequestText = lastChangeRequest ? lastChangeRequest["status-comment"] : ""
-    const lastChangeRequestTime = lastChangeRequest ? DateUtil.asDateString(lastChangeRequest["version-date"]) + " " + DateUtil.asTimeString(lastChangeRequest["version-date"]) : ""
-    const controller = this.props.controller
-    const openEdit = allowEditing ? controller.setChangeRequestText(hakemus, "") : undefined
-    const closeEdit = allowEditing ? controller.setChangeRequestText(hakemus, undefined) : undefined
-    const onTextChange = function(event: React.ChangeEvent<HTMLTextAreaElement>) {
-      controller.setChangeRequestText(hakemus, event.target.value)()
-    }
-    const sendChangeRequest = allowEditing ? controller.setHakemusStatus(hakemus, "pending_change_request", () => hakemus.changeRequest ?? '') : undefined
-    const newChangeRequest = typeof hakemus.changeRequest !== 'undefined' && !hasChangeRequired
-
-    const onPreview = () =>{
-      const sendS = Bacon.fromPromise<{ mail: Mail }>(HttpUtil.post(`/api/avustushaku/${avustushaku.id}/change-request-email`,{ text: hakemus.changeRequest }))
-      sendS.onValue((res)=>{
-        this.setState({ ...this.state, preview:true, mail: res.mail })
-      })
-    }
-
-    const closePreview = () => this.setState({...this.state, preview:false})
-    const mail = this.state.mail
-    return (
-      <div className="value-edit">
-        <button type="button"
-                hidden={newChangeRequest || hasChangeRequired}
-                onClick={openEdit}
-                disabled={!allowEditing}
-                data-test-id="request-change-button">Pyydä täydennystä </button>
-        <HelpTooltip testId={"tooltip-taydennys"} content={helpTexts["hankkeen_sivu__arviointi___pyydä_täydennystä"]} direction="arviointi" />
-        <div hidden={!newChangeRequest}>
-          <label>Lähetä täydennyspyyntö</label>
-          <span onClick={closeEdit} className="close"></span>
-          <textarea data-test-id='täydennyspyyntö__textarea' placeholder="Täydennyspyyntö hakijalle" onChange={onTextChange} rows={4} disabled={!allowEditing} value={hakemus.changeRequest}/>
-          <button data-test-id='täydennyspyyntö__lähetä' type="button" disabled={_.isEmpty(hakemus.changeRequest)} onClick={sendChangeRequest}>Lähetä</button>
-          <a onClick={onPreview} style={{position:'relative'}}>Esikatsele</a>
-          {(this.state.preview && mail) && <div className="panel email-preview-panel">
-            <span className="close" onClick={closePreview}></span>
+  return (
+    <div key={`changerequest-${hakemus.id}-${hakemus.status}`} className="value-edit">
+      {newChangeRequest || hasChangeRequired
+        ? <label>Täydennyspyyntö</label>
+        : <button onClick={() => setNewChangeRequest(true)} disabled={!allowEditing} data-test-id="request-change-button">Pyydä täydennystä </button>
+      }
+      <HelpTooltip testId={"tooltip-taydennys"} content={helpTexts["hankkeen_sivu__arviointi___pyydä_täydennystä"]} direction="arviointi" />
+      <div hidden={!newChangeRequest || !allowEditing}>
+        <span onClick={() => setNewChangeRequest(false)} className="close"></span>
+        <textarea data-test-id='täydennyspyyntö__textarea' placeholder="Täydennyspyyntö hakijalle" onChange={(e) => setChangeRequest(e.target.value)} rows={4} disabled={!allowEditing} value={changeRequest}/>
+        <button data-test-id='täydennyspyyntö__lähetä' disabled={!changeRequest.length} onClick={() => controller.setHakemusStatus(hakemus, "pending_change_request", changeRequest)}>Lähetä</button>
+        <a onClick={onPreview} style={{ position: 'relative' }}>Esikatsele</a>
+        {preview && mail && (
+          <div className="panel email-preview-panel">
+            <span className="close" onClick={() => setPreview(false)}></span>
             <div data-test-id="change-request-preview-subject">
               <strong>Otsikko:</strong> {mail.subject}<br/>
             </div>
             <div data-test-id="change-request-preview-sender">
               <strong>Lähettäjä:</strong> {mail.sender}<br/><br/>
             </div>
-            <div data-test-id="change-request-preview-content" style={{whiteSpace:'pre-line'}}>
-            {mail.content}
+            <div data-test-id="change-request-preview-content" style={{ whiteSpace:'pre-line' }}>
+              {mail.content}
             </div>
-          </div>}
-        </div>
-        <div hidden={!hasChangeRequired}>
-          <div className="change-request-title">* {changeRequestTitle} {lastChangeRequestTime}</div>
-          <pre className="change-request-text">{lastChangeRequestText}</pre>
-        </div>
+          </div>
+        )}
       </div>
-    )
-  }
+      <div hidden={!hasChangeRequired}>
+        <div className="change-request-title">* {changeRequestTitle} {lastChangeRequestTime}</div>
+        <pre className="change-request-text">{lastChangeRequestText}</pre>
+      </div>
+    </div>
+  )
 }
 
 type SummaryCommentProps = {

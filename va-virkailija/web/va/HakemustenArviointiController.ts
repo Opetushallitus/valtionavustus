@@ -363,26 +363,25 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onUpdateHakemusStatus(state: State, statusChange: {hakemusId: number; status: HakemusStatus; comment: string}) {
+  onUpdateHakemusStatus(state: State, statusChange: { hakemusId: number; status: HakemusStatus; comment: string }) {
     const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + statusChange.hakemusId + "/status"
     state.saveStatus.saveInProgress = true
-    const request = {"status": statusChange.status, "comment": statusChange.comment}
+    const request = { status: statusChange.status, comment: statusChange.comment }
     const self = this
     HttpUtil.post(updateUrl, request)
-        .then(function(response) {
-          if(response instanceof Object) {
-            dispatcher.push(events.saveCompleted, "")
-            self.loadChangeRequests(state, statusChange.hakemusId)
-          }
-          else {
-            dispatcher.push(events.saveCompleted, "unexpected-save-error")
-          }
-          return null
-        })
-        .catch(function(error) {
-          console.error(`Error in updating hakemus status, POST ${updateUrl}`, error)
+      .then(function(response) {
+        if (response instanceof Object) {
+          dispatcher.push(events.saveCompleted, "")
+          self.loadChangeRequests(state, statusChange.hakemusId)
+        } else {
           dispatcher.push(events.saveCompleted, "unexpected-save-error")
-        })
+        }
+        return null
+      })
+      .catch(function(error) {
+        console.error(`Error in updating hakemus status, POST ${updateUrl}`, error)
+        dispatcher.push(events.saveCompleted, "unexpected-save-error")
+      })
     return state
   }
 
@@ -1006,15 +1005,6 @@ setHakemusShouldPayComments(hakemus: Hakemus, newShouldPayComment: string) {
     HakemustenArviointiController.setAnswerValue(hakemusId, field, newValue, events.setSeurantaAnswerValue)
   }
 
-
-
-  setChangeRequestText(hakemus: Hakemus, text: string | undefined) {
-    return function() {
-      hakemus.changeRequest = text
-      dispatcher.push(events.reRender, {})
-    }
-  }
-
   refreshAttachments(avustushakuId: number){
     const s = Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId))
     s.onValue((hakuData)=>
@@ -1057,16 +1047,14 @@ setHakemusShouldPayComments(hakemus: Hakemus, newShouldPayComment: string) {
 
   }
 
-  setHakemusStatus(hakemus: Hakemus, newStatus: HakemusStatus, commentGetter: () => string) {
-    return function() {
-      hakemus.status = newStatus
-      const statusChange = {
-        hakemusId: hakemus.id,
-        status: newStatus,
-        comment: commentGetter()
-      }
-      dispatcher.push(events.updateHakemusStatus, statusChange)
+  setHakemusStatus(hakemus: Hakemus, status: HakemusStatus, comment: string) {
+    hakemus.status = status
+    const statusChange = {
+      hakemusId: hakemus.id,
+      status,
+      comment
     }
+    dispatcher.push(events.updateHakemusStatus, statusChange)
   }
 
   setHakemusRahoitusalueAndTalousarviotili({hakemus, rahoitusalue, talousarviotili}: { hakemus: Hakemus, rahoitusalue: string, talousarviotili: string }) {
