@@ -1,5 +1,4 @@
 import React from 'react'
-import _ from 'lodash'
 import * as Bacon from 'baconjs'
 
 import { Hakemus } from 'soresu-form/web/va/types'
@@ -37,7 +36,7 @@ export default class PresenterComment extends React.Component<PresenterCommentPr
   }
 
   static initialState(props: PresenterCommentProps) {
-    const value = _.get(props.hakemus, "arvio.presentercomment") || ""
+    const value = props.hakemus.arvio?.presentercomment ?? ""
     return {
       currentHakemusId: props.hakemus.id,
       value: value

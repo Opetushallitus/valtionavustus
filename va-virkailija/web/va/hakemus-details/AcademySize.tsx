@@ -1,5 +1,4 @@
 import React from 'react'
-import _ from 'lodash'
 import * as Bacon from 'baconjs'
 
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
@@ -38,10 +37,10 @@ export default class AcademySize extends React.Component<AcademySizeProps, Acade
   }
 
   static initialState(props: AcademySizeProps){
-    const value = _.get(props.hakemus, "arvio.academysize") || 0
+    const value = props.hakemus.arvio?.academysize || 0
     return {
       currentHakemusId: props.hakemus.id,
-      value: value,
+      value: "" + value,
       invalid: false
     }
   }
@@ -53,10 +52,10 @@ export default class AcademySize extends React.Component<AcademySizeProps, Acade
     }
     const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value
-      this.setState({value: value})
+      this.setState({ ...this.state, value })
       const valueInt = parseInt(value)
-      if(value.length>0){
-        this.setState({invalid:isNaN(valueInt)})
+      if (value.length > 0) {
+        this.setState({ invalid: isNaN(valueInt) })
       }
       if(valueInt){
         this.changeBus.push([hakemus, valueInt])
