@@ -81,7 +81,6 @@ const App = ({state, controller}: Props) => {
       }
     }, [])
 
-    const additionalInfoEnabled = environment['show-additional-info']?.["enabled?"]
     return (
       <section className={splitView ? 'split-view' : ''}>
         <HeaderContainer activeTab='arviointi' environment={environment} userInfo={userInfo} saveStatus={saveStatus} />
@@ -90,7 +89,7 @@ const App = ({state, controller}: Props) => {
             <div id="list-heading">
               <AvustushakuDropdown avustushaku={avustushaku} avustushakuList={avustushakuList} />
               <div className="right-side">
-                {additionalInfoEnabled && <button
+                <button
                   className="hakemus-btn"
                   onClick={() => {
                     const newState = !showInfo
@@ -99,7 +98,6 @@ const App = ({state, controller}: Props) => {
                   }}>
                   {showInfo ? 'Piilota' : 'Näytä'} lisätiedot
                 </button>
-                }
                 <HakemusFilter
                   controller={controller}
                   hakemusFilter={state.hakemusFilter}
@@ -119,8 +117,13 @@ const App = ({state, controller}: Props) => {
               </div>
             </div>
             <div>
-              {additionalInfoEnabled && showInfo && (
-                <AvustushakuDetails  avustushaku={avustushaku} lahetykset={state.lahetykset} vastuuvalmistelija={hakuData.roles.find(r => r.role === 'vastuuvalmistelija')} toimintayksikko={hakuData.toimintayksikko} earliestPaymentCreatedAt={state.earliestPaymentCreatedAt} />
+              {showInfo && (
+                <AvustushakuDetails
+                  avustushaku={avustushaku}
+                  lahetykset={state.lahetykset}
+                  vastuuvalmistelija={hakuData.roles.find(r => r.role === 'vastuuvalmistelija')}
+                  toimintayksikko={hakuData.toimintayksikko}
+                  earliestPaymentCreatedAt={state.earliestPaymentCreatedAt} />
               )}
             </div>
             {newHakemusListingUiEnabled
