@@ -4,7 +4,7 @@ import _ from 'lodash'
 import DateUtil from 'soresu-form/web/DateUtil'
 
 import FormEditor from './FormEditor'
-import FormJsonEditor from './FormJsonEditor.jsx'
+import FormJsonEditor from './FormJsonEditor'
 import { MuutoshakukelpoisuusContainer } from './MuutoshakukelpoisuusContainer'
 
 export default class FormEditorContainer extends Component {

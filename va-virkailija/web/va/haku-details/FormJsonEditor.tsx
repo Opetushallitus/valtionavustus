@@ -1,10 +1,22 @@
-import React from 'react'
+import React, {Component} from 'react'
 import _ from 'lodash'
+import HakujenHallintaController, {Avustushaku} from "../HakujenHallintaController";
+import { Koodistos, LegacyTranslations, Form} from 'soresu-form/web/va/types';
 
 function scrollToTop() {
   window.scrollTo(0, 0)
 }
-export default class FormJsonEditor extends React.Component {
+
+interface FormEditorProps {
+  controller: HakujenHallintaController
+  avustushaku: Avustushaku
+  translations: LegacyTranslations
+  koodistos: Koodistos
+  formDraftJson: string
+  onFormChange: (avustushaku: Avustushaku, newDraft: Form) => void
+}
+
+export default class FormJsonEditor extends Component<FormEditorProps> {
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
@@ -12,7 +24,7 @@ export default class FormJsonEditor extends React.Component {
     const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
     const hakuIsDraft = avustushaku.status === "draft"
 
-    const onChange = e => {
+    const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       controller.formOnJsonChangeListener(avustushaku, e.target.value)
       try {
         const parsedDraft = JSON.parse(e.target.value)
@@ -25,11 +37,11 @@ export default class FormJsonEditor extends React.Component {
       controller.saveForm(avustushaku, formDraftJson)
     }
 
-    let parsedForm = formDraftJson
+    let parsedForm : Form | null = null
     let parseError = false
     try {
       parsedForm = JSON.parse(formDraftJson)
-    } catch (error) {
+    } catch (error :any) {
       parseError = error.toString()
     }
     const saveDisabledError = (() => {
@@ -44,7 +56,7 @@ export default class FormJsonEditor extends React.Component {
       }
       return null
     })()
-    const allowSave = userHasEditPrivilege && parseError === false && hakuIsDraft
+    const allowSave = userHasEditPrivilege && !parseError && hakuIsDraft
     const formHasBeenEdited = (formDraftJson && avustushaku.formContent) && !_.isEqual(parsedForm, avustushaku.formContent)
     const disableSave = !allowSave || !formHasBeenEdited
 
