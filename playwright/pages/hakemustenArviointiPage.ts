@@ -105,6 +105,12 @@ export class HakemustenArviointiPage {
     await this.page.click('[data-test-id="request-change-button"]')
     await this.page.type('[data-test-id="täydennyspyyntö__textarea"]', reason)
     await this.page.click('[data-test-id="täydennyspyyntö__lähetä"]')
+    await this.waitForSave()
+  }
+
+  async cancelChangeRequest() {
+    await this.page.click('[data-test-id="täydennyspyyntö__cancel"]')
+    await this.waitForSave()
   }
 
   async waitForArvioSave(avustushakuID: number, hakemusID: number) {

@@ -5,10 +5,11 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 import Translator from 'soresu-form/web/form/Translator'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
-import { Avustushaku, Hakemus, LegacyTranslationDict, Selvitys, UserInfo } from 'soresu-form/web/va/types'
+import { Avustushaku, Hakemus, LegacyTranslationDict, Selvitys } from 'soresu-form/web/va/types'
 import { Language } from 'soresu-form/web/va/i18n/translations'
 
 import HakemustenArviointiController from '../HakemustenArviointiController'
+import { UserInfo } from '../types'
 
 interface ValiselvitysEmailProps {
   controller: HakemustenArviointiController

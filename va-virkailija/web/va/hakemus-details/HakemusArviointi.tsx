@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import * as Bacon from 'baconjs'
 
 import DateUtil from 'soresu-form/web/DateUtil'
-import { Avustushaku, ChangeLogEntry, Hakemus, HelpTexts, LegacyTranslations, UserInfo } from 'soresu-form/web/va/types'
+import { Avustushaku, ChangeLogEntry, Hakemus, HelpTexts, LegacyTranslations } from 'soresu-form/web/va/types'
 
 import HakemusBudgetEditing from '../budgetedit/HakemusBudgetEditing'
 import HakemusScoring from './HakemusScoring'
@@ -19,7 +19,7 @@ import ReSendDecisionEmail from './ReSendDecisionEmail'
 import ApplicationPayments from './ApplicationPayments'
 import HelpTooltip from '../HelpTooltip'
 import HakemustenArviointiController from '../HakemustenArviointiController'
-import { HakuData, SelectedHakemusAccessControl } from '../types'
+import { HakuData, SelectedHakemusAccessControl, UserInfo } from '../types'
 
 import '../style/admin.less'
 import { ChangeRequest } from './ChangeRequest'
@@ -66,7 +66,7 @@ export default class HakemusArviointi extends Component<HakemusArviointiProps> {
          helpTexts={helpTexts}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
-       <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
+       <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} userInfo={userInfo} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
        {multibatchEnabled && avustushaku.content["multiplemaksuera"] &&

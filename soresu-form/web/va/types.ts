@@ -186,6 +186,7 @@ export interface SelvitysEmail {
 export interface ChangeRequest {
   "status-comment": string
   "version-date": string
+  "user-oid": string
 }
 
 export interface Hakemus {
@@ -340,13 +341,6 @@ export type Avustushaku = {
 }
 
 export type HelpTexts = { [k: string]: string }
-
-export interface UserInfo {
-  'first-name': string
-  'surname': string
-  email: string
-  'person-oid': string
-}
 
 interface Rule {
   type: string

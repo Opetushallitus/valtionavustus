@@ -1,4 +1,4 @@
-select h.id, h.version, h.created_at,
+select h.id, h.version, h.created_at, h.user_oid,
        h.status, h.status_change_comment, h.user_first_name, h.user_last_name,
        h.organization_name, h.project_name, h.language, h.budget_total, h.budget_oph_share,
        s.answers->'value' as answer_values, h.user_key, h.register_number

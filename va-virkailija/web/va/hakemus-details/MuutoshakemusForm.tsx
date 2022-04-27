@@ -9,10 +9,7 @@ import * as Yup from "yup"
 import DatePicker from "react-widgets/DatePicker"
 import Localization from "react-widgets/Localization"
 
-import {
-  Avustushaku, Hakemus,
-  NormalizedHakemusData, UserInfo
-} from "soresu-form/web/va/types";
+import { Avustushaku, Hakemus, NormalizedHakemusData } from "soresu-form/web/va/types";
 import {
   Meno,
   Muutoshakemus,
@@ -51,7 +48,7 @@ import {translationsFi} from "soresu-form/web/va/i18n/translations";
 import {
   getNestedInputErrorClass
 } from "soresu-form/web/va/formikHelpers";
-import {Role} from "../types";
+import {Role, UserInfo} from "../types";
 import HttpUtil from "soresu-form/web/HttpUtil";
 import HakemustenArviointiController from "../HakemustenArviointiController";
 import {Modal} from "./Modal";

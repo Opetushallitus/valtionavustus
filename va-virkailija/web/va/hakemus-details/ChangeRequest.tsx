@@ -7,12 +7,14 @@ import { Avustushaku, Hakemus, HelpTexts } from 'soresu-form/web/va/types'
 
 import HelpTooltip from '../HelpTooltip'
 import HakemustenArviointiController from '../HakemustenArviointiController'
+import { UserInfo } from "../types"
 
 type ChangeRequestProps = {
   controller: HakemustenArviointiController
   hakemus: Hakemus
   helpTexts: HelpTexts
   avustushaku: Avustushaku
+  userInfo: UserInfo
   allowEditing?: boolean
 }
 
@@ -22,7 +24,7 @@ type Mail = {
   content: string
 }
 
-export const ChangeRequest = ({ avustushaku, hakemus, helpTexts, controller, allowEditing }: ChangeRequestProps) => {
+export const ChangeRequest = ({ avustushaku, hakemus, helpTexts, controller, allowEditing, userInfo }: ChangeRequestProps) => {
   const [mail, setMail] = useState<Mail>()
   const [preview, setPreview] = useState(false)
   const [newChangeRequest, setNewChangeRequest] = useState(false)
@@ -39,8 +41,9 @@ export const ChangeRequest = ({ avustushaku, hakemus, helpTexts, controller, all
   const hasChangeRequired = status === 'pending_change_request' || status === 'officer_edit'
   const changeRequestTitle = status === 'pending_change_request' ? "Täydennyspyyntö lähetetty" : "Virkailijan muokkaus avattu"
   const lastChangeRequest = hakemus.changeRequests?.length ? hakemus.changeRequests[hakemus.changeRequests.length - 1] : undefined
-  const lastChangeRequestText = lastChangeRequest ? lastChangeRequest["status-comment"] : ""
-  const lastChangeRequestTime = lastChangeRequest ? `${DateUtil.asDateString(lastChangeRequest["version-date"])} ${DateUtil.asTimeString(lastChangeRequest["version-date"])}` : ""
+  const lastChangeRequestText = lastChangeRequest?.["status-comment"]
+  const lastChangeRequestTime = `${DateUtil.asDateString(lastChangeRequest?.["version-date"])} ${DateUtil.asTimeString(lastChangeRequest?.["version-date"])}`
+  const canCancelChangeRequest = status === 'pending_change_request' && (lastChangeRequest?.['user-oid'] === userInfo['person-oid'] || userInfo.privileges.includes('va-admin'))
 
   const onPreview = () => {
     const sendS = Bacon.fromPromise<{ mail: Mail }>(HttpUtil.post(`/api/avustushaku/${avustushaku.id}/change-request-email`, { text: changeRequest }))
@@ -81,6 +84,9 @@ export const ChangeRequest = ({ avustushaku, hakemus, helpTexts, controller, all
         <div className="change-request-title">* {changeRequestTitle} {lastChangeRequestTime}</div>
         <pre className="change-request-text">{lastChangeRequestText}</pre>
       </div>
+      {canCancelChangeRequest &&
+        <button onClick={() => controller.setHakemusStatus(hakemus, 'submitted', 'Täydennyspyyntö peruttu')} data-test-id='täydennyspyyntö__cancel'>Peru täydennyspyyntö</button>
+      }
     </div>
   )
 }

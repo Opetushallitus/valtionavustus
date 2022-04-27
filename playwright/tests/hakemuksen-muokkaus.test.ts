@@ -63,31 +63,12 @@ test('virkailija can edit hakemus', async ({page, avustushakuID, submittedHakemu
   })
 })
 
-test(`hakija can't edit hakemus when officer is editing it`, async ({browser, page, avustushakuID, submittedHakemus}) => {
-  const hakujenHallintaPage = new HakujenHallintaPage(page)
-  await hakujenHallintaPage.navigate(avustushakuID)
-  await hakujenHallintaPage.setEndDate('1.1.2000 16.00')
-
-  const hakemustenArviointiPage = new HakemustenArviointiPage(page)
-  await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
-  const officerEditPage = await hakemustenArviointiPage.openHakemusEditPage()
-  await expect(officerEditPage.officerEditSubmitButton).toBeEnabled()
-
-  await test.step(`hakija sees preview when there is no officer token`, async () => {
-    const newPage = await browser.newPage()
-    const hakemusPage = new HakijaAvustusHakuPage(newPage)
-    await hakemusPage.navigateToExistingHakemusPage(avustushakuID, submittedHakemus.userKey)
-    await hakemusPage.waitForPreview()
-    await expect(hakemusPage.officerEditSubmitButton).toBeHidden()
-  })
-})
-
-test('hakija can edit hakemus', async ({page, avustushakuID, submittedHakemus: hakemus}) => {
+test.only('hakija', async ({page, avustushakuID, submittedHakemus: hakemus}) => {
   const hakemusPage = new HakijaAvustusHakuPage(page)
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   const hakujenHallintaPage = new HakujenHallintaPage(page)
 
-  await test.step('when hakemus has been submitted', async () => {
+  await test.step('can edit hakemus when hakemus has been submitted', async () => {
     await hakemusPage.navigateToExistingHakemusPage(avustushakuID, hakemus.userKey)
     await hakemusPage.selectMaakuntaFromDropdown('Etelä-Savo')
     await hakemusPage.waitForEditSaved()
@@ -96,7 +77,7 @@ test('hakija can edit hakemus', async ({page, avustushakuID, submittedHakemus: h
     await waitForElementWithText(page, 'span', 'Etelä-Savo')
   })
 
-  await test.step('when a change request has been made', async () => {
+  await test.step('can edit hakemus when a change request has been made', async () => {
     await hakujenHallintaPage.navigate(avustushakuID)
     await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast()
 
@@ -109,5 +90,26 @@ test('hakija can edit hakemus', async ({page, avustushakuID, submittedHakemus: h
 
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
     await waitForElementWithText(page, 'span', 'Ahvenanmaa')
+  })
+
+  await test.step('can not edit hakemus when a change request has been cancelled', async () => {
+    await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
+    await hakemustenArviointiPage.createChangeRequest('it never happened')
+    await hakemustenArviointiPage.page.waitForSelector('div[class="change-request-title"]')
+
+    await hakemustenArviointiPage.cancelChangeRequest()
+
+    await hakemusPage.navigateToExistingHakemusPage(avustushakuID, hakemus.userKey)
+    await hakemusPage.waitForPreview()
+  })
+
+  await test.step('can not edit hakemus when officer is editing it', async () => {
+    await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
+    const officerEditPage = await hakemustenArviointiPage.openHakemusEditPage()
+    await expect(officerEditPage.officerEditSubmitButton).toBeEnabled()
+
+    await hakemusPage.navigateToExistingHakemusPage(avustushakuID, hakemus.userKey)
+    await hakemusPage.waitForPreview()
+    await expect(hakemusPage.officerEditSubmitButton).toBeHidden()
   })
 })

@@ -202,6 +202,7 @@
    :status-comment (:status_change_comment hakemus)
    :user-first-name (:user_first_name hakemus)
    :user-last-name (:user_last_name hakemus)
+   :user-oid (:user_oid hakemus)
    :register-number (:register_number hakemus)
    :user-key (:user_key hakemus)
    :selvitys-email (:selvitys_email hakemus)

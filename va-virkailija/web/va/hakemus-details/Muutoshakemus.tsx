@@ -5,14 +5,10 @@ import { MuutoshakemusValues, datetimeFormat } from 'soresu-form/web/va/Muutosha
 import { getTalousarvio, getProjectEndDate } from 'soresu-form/web/va/Muutoshakemus'
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
 import {Muutoshakemus as MuutoshakemusType} from "soresu-form/web/va/types/muutoshakemus";
-import {
-  Avustushaku,
-  Hakemus,
-  UserInfo
-} from "soresu-form/web/va/types";
+import { Avustushaku, Hakemus } from "soresu-form/web/va/types";
 
 import {MuutoshakemusForm} from "./MuutoshakemusForm";
-import {Role} from "../types";
+import { Role, UserInfo } from "../types";
 import { MuutoshakemusTabs } from './MuutoshakemusTabs'
 
 import './Muutoshakemus.less'
