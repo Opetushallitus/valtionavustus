@@ -63,7 +63,7 @@ test('virkailija can edit hakemus', async ({page, avustushakuID, submittedHakemu
   })
 })
 
-test.only('hakija', async ({page, avustushakuID, submittedHakemus: hakemus}) => {
+test('hakija', async ({ page, avustushakuID, submittedHakemus: hakemus }) => {
   const hakemusPage = new HakijaAvustusHakuPage(page)
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   const hakujenHallintaPage = new HakujenHallintaPage(page)
