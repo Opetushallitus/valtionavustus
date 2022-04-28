@@ -1,7 +1,40 @@
-import React from 'react'
+import React, {Component} from 'react'
+import {HelpTexts, RahoitusAlue } from 'soresu-form/web/va/types'
 import HelpTooltip from '../HelpTooltip'
+import {Avustushaku} from "../HakujenHallintaController";
 
-export const educationLevels = [
+type EducationLevelTitle = "Varhaiskasvatus"
+  | "Yleissivistävä koulutus, ml. varhaiskasvatus"
+  | "Esiopetus"
+  | "Perusopetus"
+  | "Lukiokoulutus"
+  | "Taiteen perusopetus"
+  | "Ammatillinen koulutus"
+  | "Vapaa sivistystyö"
+  | "Kansalaisopisto"
+  | "Tiedeolympialaistoiminta"
+  | "Suomi-koulut ja kotiperuskoulut"
+  | "Muut järjestöt"
+  | "Kristillisten koulujen kerhotoiminta"
+  | "Kansanopisto"
+  | "Opintokeskus"
+  | "Kesäyliopisto"
+  | "Korkeakoulutus"
+  | "Aikuiskoulutus ja vapaa sivistystyö"
+  | "Koko opetustoimi"
+  | "Poikkeus"
+  | "Muut hakuryhmät"
+  | "Muut"
+
+interface EducationLevelItem {
+  title: EducationLevelTitle
+  blockedBy?: EducationLevelTitle[]
+  isChild?: boolean
+  isTitle?: boolean
+  readOnly?: boolean
+}
+
+export const educationLevels : EducationLevelItem[] = [
   {title: "Yleissivistävä koulutus, ml. varhaiskasvatus",
    blockedBy: ["Varhaiskasvatus",
                "Esiopetus",
@@ -52,13 +85,13 @@ export const educationLevels = [
   {title: "Muut", isChild: true, blockedBy: ["Muut hakuryhmät"]}
 ]
 
-function getId(levelIndex, valueIndex) {
+function getId(levelIndex: number, valueIndex: number) {
   return `education-level-${levelIndex}-${valueIndex}`
 }
 
 function renderItemValues(
-  {index, title, values, onChange, isTitle, onAdd, onRemove, readOnly}) {
-  const onAddWithFocusNext = (i) => {
+  {index, title, values, onChange, isTitle, onAdd, onRemove, readOnly}: RenderableItemProps) {
+  const onAddWithFocusNext = (i: number) => {
     onAdd()
     setTimeout(() => {
       const next = document.getElementById(getId(index, i + 1))
@@ -84,7 +117,7 @@ function renderItemValues(
               title={
                 readOnly ?
                   "Vanhoja rahoitusalueita (nyk. koulutusaste) ei voi muokata" :
-                  null
+                  undefined
               }
               readOnly={readOnly}
               data-index={i}
@@ -93,7 +126,7 @@ function renderItemValues(
               <button className="add"
                       onClick={onAddWithFocusNext.bind(null, i)}
                       tabIndex={-1}/> : null}
-            {i === values.length > 0 || v ?
+            {i === values.length && i > 0 || v ?
               <button className="remove"
                       onClick={onRemove(i)}
                       tabIndex={-1}/> : null}
@@ -104,10 +137,19 @@ function renderItemValues(
   )
 }
 
-function renderItem(item) {
+type RenderableItemProps = EducationLevelItem & {
+  index: number
+  values: string[]
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
+  onAdd: () => void;
+  onRemove: (index: number) => () => void
+  disabled: boolean
+}
+
+function renderItem(item: RenderableItemProps) {
   return (
     <tr key={item.index}
-        className={item.disabled ? "haku-edit-disabled-form" : null}>
+        className={item.disabled ? "haku-edit-disabled-form" : ""}>
       {item.isChild ? <td/> : null}
       <td>{item.title}</td>
       <td>
@@ -118,24 +160,34 @@ function renderItem(item) {
   )
 }
 
-function isBlockedBy(blockers, itemValues) {
+function isBlockedBy(blockers: EducationLevelTitle[], itemValues: { [p: string]: string[] }): boolean {
   if (blockers) {
-    return blockers.find(
-      v => itemValues[v] && itemValues[v].find(x => x.length > 0))
+    return !!blockers.find(
+      (v: EducationLevelTitle) => itemValues[v] && itemValues[v].find(x => x.length > 0))
   }
   return false
 }
 
-export default class EducationLevels extends React.Component {
+interface EducationLevelsProps {
+  enabled: boolean
+  values: RahoitusAlue[]
+  grant: Avustushaku
+  onAdd: (avustushaku:Avustushaku, rahoitusAlue: string) => void
+  onRemove: (avustushaku: Avustushaku, rahoitusalue: string, index: number) => () => void
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
+  helpTexts: HelpTexts
+}
+
+export default class EducationLevels extends Component<EducationLevelsProps> {
   render() {
     const {enabled, values, onChange, onAdd, onRemove, grant, helpTexts} = this.props
-    const itemValues = (values || []).reduce((a, c) => {
+    const itemValues: { [p: string]: string[] } = values.reduce((a: { [index: string]: string[] }, c) => {
       a[c.rahoitusalue] = c.talousarviotilit
       return a
     }, {})
 
     return (
-      <div className={enabled ? null : "haku-edit-disabled-form"}>
+      <div className={enabled ? "haku-edit-disabled-form" : ""}>
         <h3>Koulutusasteet (kirjoita talousarviotili ottaaksesi käyttöön, esim. 29.10.30.20) <HelpTooltip content={helpTexts["hakujen_hallinta__haun_tiedot___koulutusasteet"]} /></h3>
         <table className="education-levels-table">
           <tbody>
@@ -154,7 +206,7 @@ export default class EducationLevels extends React.Component {
                         onChange: onChange,
                         onAdd: onAdd.bind(null, grant, el.title),
                         onRemove: onRemove.bind(null, grant, el.title),
-                        disabled: isBlockedBy(el.blockedBy, itemValues)
+                        disabled: isBlockedBy(el.blockedBy || [], itemValues)
                       }
                     )
                   )

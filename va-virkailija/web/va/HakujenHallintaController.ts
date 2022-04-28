@@ -919,7 +919,7 @@ export default class HakujenHallintaController {
     return state
   }
 
-  addTalousarviotili(avustushaku: Avustushaku, rahoitusalue: RahoitusAlue) {
+  addTalousarviotili(avustushaku: Avustushaku, rahoitusalue: string) {
     dispatcher.push(events.addTalousarviotili, {avustushaku: avustushaku, rahoitusalue: rahoitusalue})
   }
 

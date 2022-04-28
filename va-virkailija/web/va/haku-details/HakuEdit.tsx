@@ -159,7 +159,7 @@ export const HakuEdit = ({ avustushaku, codeOptions, controller, helpTexts, user
         </div>
       </div>
       <EducationLevels enabled={allowNondisruptiveHakuEdits}
-                        values={avustushaku.content.rahoitusalueet}
+                        values={avustushaku.content.rahoitusalueet?? []}
                         onAdd={controller.addTalousarviotili}
                         onRemove={controller.deleteTalousarviotili}
                         grant={avustushaku}

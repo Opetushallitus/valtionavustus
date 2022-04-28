@@ -7,7 +7,7 @@ import YhteenvetoController from './YhteenvetoController.jsx'
 import HakemusArviointiStatuses
   from './hakemus-details/HakemusArviointiStatuses'
 import DateUtil from 'soresu-form/web/DateUtil'
-import {educationLevels} from './haku-details/EducationLevels.jsx'
+import {educationLevels} from './haku-details/EducationLevels'
 
 
 import './style/main.less'
