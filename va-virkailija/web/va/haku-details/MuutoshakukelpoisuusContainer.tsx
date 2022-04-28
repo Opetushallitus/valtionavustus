@@ -4,6 +4,7 @@ import 'react-widgets/styles.css'
 
 import "./Muutoshakukelpoisuus.less"
 import {OnkoMuutoshakukelpoinenAvustushakuOk} from "../types";
+import useScrollingUp from '../useScrollingUp';
 
 interface Field {
   id: 'project-name' | 'applicant-name' | 'primary-email' | 'textField-0'
@@ -99,6 +100,7 @@ let initialState = {
 
 export const MuutoshakukelpoisuusContainer = ({ muutoshakukelpoisuus }: MuutoshakukelpoisuusProps) => {
   const [state, setState] = useState(initialState)
+  const isScrollingUp = useScrollingUp()
   const colorClass = muutoshakukelpoisuus['is-ok'] ? 'muutoshakukelpoisuus-ok' : 'muutoshakukelpoisuus-warning'
 
   const controlDropdown = () => {
@@ -106,7 +108,7 @@ export const MuutoshakukelpoisuusContainer = ({ muutoshakukelpoisuus }: Muutosha
   }
 
   return (
-    <div className={`muutoshakukelpoisuus-container ${colorClass}`}>
+    <div className={`muutoshakukelpoisuus-container ${colorClass} ${isScrollingUp ? 'muutoshakukelpoisuus-container-with-header' : ''}`}>
       {muutoshakukelpoisuus['is-ok']
         ? <MuutoshakukelpoisuusOk />
         : <MuutoshakukelpoisuusWarning muutoshakukelpoisuus={muutoshakukelpoisuus} controlDropdown={controlDropdown} />
