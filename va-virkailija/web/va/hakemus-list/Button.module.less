@@ -10,7 +10,7 @@
   font-size: 13px;
   padding: 0 8px;
   border: 1px solid transparent;
-  border-radius: 2px;
+  border-radius: 4px;
   color: #1A1919;
   &:focus {
     outline: none;
@@ -25,18 +25,27 @@
     border: 1px solid #499CC7;
     background-color: #EBF7FD;
   }
+  &:disabled {
+    background: #FFFFFF;
+    border: 1px solid #EAEAEA;
+    color: #C1C1C1;
+    pointer-events: none;
+  }
 }
 
 .blueButton {
   composes: btn;
   background-color: #F7FCFF;
   border: 1px solid #499CC7;
+  &:hover {
+    background-color: #D6F1FF;
+  }
 }
 
 .greyButton {
   composes: btn;
   border: 1px solid #C1C1C1;
-  background-color: #fafafa;
+  background-color: #FFFFFF;
 }
 
 .whiteButton {

@@ -25,10 +25,6 @@
   }
 }
 
-.alignCenter {
-  text-align: center;
-}
-
 .alignRight {
   text-align: right;
 }
@@ -123,14 +119,14 @@
 
 .selectedHakemusRow {
   composes: hakemusRow;
-  background-color: #EBF7FD !important;
+  background-color: #DAF0FB !important;
   outline: 1px solid #C8E8F9;
   outline-offset: -1px;
   &:hover {
-    background-color: darken(#EBF7FD, 20%);
+    background-color: darken(#DAF0FB, 10%) !important;
   }
   &:active {
-    background-color: darken(#EBF7FD, 40%);
+    background-color: darken(#DAF0FB, 20%) !important;
   }
 }
 
@@ -201,4 +197,26 @@
 
 .starsCell {
   text-align: center;
+}
+
+.baseRoleButton {
+  line-height: 16px;
+  min-width: 36px;
+  min-height: 26px;
+}
+
+.roleContainer {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.addRoleButton {
+  composes: greyButton baseRoleButton;
+  display: flex;
+  align-items: center;
+}
+
+.roleButton {
+  composes: blueButton baseRoleButton;
 }

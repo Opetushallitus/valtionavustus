@@ -31,6 +31,7 @@ import {
   ControlledSelectPanel,
   RoleField
 } from "./PersonFilterButton";
+import {AddRoleImage} from "./AddRoleImage";
 
 interface Props {
   selectedHakemus: Hakemus | undefined | {}
@@ -514,14 +515,14 @@ function HakemusTable({
                 ? euroFormatter.format(hakemus.arvio["budget-granted"])
                 : '-'
             }</td>
-            <td className={styles.alignCenter}>
+            <td>
               <PeopleRoleButton roles={roles} controller={controller}
                                 hakemus={hakemus} state={state}
                                 toggleSplitView={toggleSplitView}
                                 onSelectHakemus={onSelectHakemus}
                                 selectedRole="presenter"/>
             </td>
-            <td className={styles.alignCenter}>
+            <td>
               <PeopleRoleButton roles={roles} controller={controller}
                                 hakemus={hakemus} state={state}
                                 toggleSplitView={toggleSplitView}
@@ -833,14 +834,14 @@ function ResolvedTable(props: ResolvedTableProps) {
               ? euroFormatter.format(hakemus.arvio["budget-granted"])
               : '-'
           }</td>
-          <td className={styles.alignCenter}>
+          <td>
             <PeopleRoleButton roles={roles} controller={controller}
                               hakemus={hakemus} state={state}
                               toggleSplitView={toggleSplitView}
                               onSelectHakemus={onSelectHakemus}
                               selectedRole="presenter"/>
           </td>
-          <td className={styles.alignCenter}>
+          <td>
             <PeopleRoleButton roles={roles} controller={controller}
                               hakemus={hakemus} state={state}
                               toggleSplitView={toggleSplitView}
@@ -922,16 +923,18 @@ const PeopleRoleButton = ({
   const disallowChangeHakemusState = !state.hakuData.privileges["change-hakemus-state"]
   const ariaLabel = presentersWanted ? 'Lisää valmistelija hakemukselle' : 'Lisää arvioija hakemukselle'
   return (
-    <React.Fragment>
+    <div className={styles.roleContainer}>
       {buttonInitials.length === 0
         ? <button aria-label={ariaLabel} disabled={disallowChangeHakemusState}
-                  className={buttonStyles.greyButton}
-                  onClick={onClickCallback}>+</button>
+                  className={styles.addRoleButton}
+                  onClick={onClickCallback}>
+            <AddRoleImage />
+          </button>
         : <button aria-label={ariaLabel} disabled={disallowChangeHakemusState}
-                  className={buttonStyles.blueButton}
+                  className={styles.roleButton}
                   onClick={onClickCallback}>{buttonInitials}</button>
       }
-    </React.Fragment>
+    </div>
   )
 }
 
