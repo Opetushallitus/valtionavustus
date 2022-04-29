@@ -1,0 +1,16 @@
+# Ignore everything recursively by default
+*
+
+# Run prettier for these extensions
+!*.ts
+!*.js
+!*.tsx
+!*.jsx
+
+# Check subdirectories too
+!*/
+
+# Ignore these folders anywhere
+**/target/
+**/public/
+**/node_modules/
