@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import * as Bacon from 'baconjs'
 
 import DateUtil from 'soresu-form/web/DateUtil'
@@ -37,58 +37,53 @@ type HakemusArviointiProps = {
   selectedHakemusAccessControl: SelectedHakemusAccessControl
 }
 
-export default class HakemusArviointi extends Component<HakemusArviointiProps> {
-  render() {
-    const {controller, hakemus, avustushaku, hakuData, translations,
-           userInfo, showOthersScores,
-           multibatchEnabled, helpTexts} = this.props
-    const {
-      allowHakemusCommenting,
-      allowHakemusStateChanges,
-      allowHakemusScoring,
-      allowHakemusOfficerEditing,
-      allowHakemusCancellation
-    } = this.props.selectedHakemusAccessControl
+export const HakemusArviointi = ({ controller, hakemus, avustushaku, hakuData, translations, userInfo, showOthersScores, multibatchEnabled, helpTexts, selectedHakemusAccessControl } : HakemusArviointiProps) => {
+  const {
+    allowHakemusCommenting,
+    allowHakemusStateChanges,
+    allowHakemusScoring,
+    allowHakemusOfficerEditing,
+    allowHakemusCancellation
+  } = selectedHakemusAccessControl
 
-    return (
-     <div id="arviointi-tab">
-       <PresenterComment controller={controller} hakemus={hakemus} helpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}/>
-       <ChooseRahoitusalueAndTalousarviotili controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
-       <SpecifyOppilaitos controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
-       <AcademySize controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
-       <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku} helpTexts={helpTexts}
-                       allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
-       <HakemusComments
-         controller={controller}
-         comments={hakemus.comments}
-         allowHakemusCommenting={allowHakemusCommenting}
-         helpTexts={helpTexts}/>
-       <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
-       <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
-       <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} userInfo={userInfo} />
-       <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
-       <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
-       {multibatchEnabled && avustushaku.content["multiplemaksuera"] &&
-         <ApplicationPayments application={hakemus}
-                              grant={avustushaku}
-                              index={0}
-                              payments={hakemus.payments}
-                              onAddPayment={controller.addPayment}
-                              onRemovePayment={controller.removePayment}
-                              readonly={true}/>}
-       <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
-       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusOfficerEditing} status="officer_edit" helpTexts={helpTexts} />
-       {hakemus.status === 'draft' && userInfo.privileges.includes('va-admin') && (
-         <div className="value-edit">
-           <button onClick={() => controller.setHakemusStatus(hakemus, 'submitted', 'Submitted by admin')} data-test-id="submit-hakemus">Merkitse hakemus lähetetyksi</button>
-         </div>
-       )}
-       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusCancellation} status="cancelled" helpTexts={helpTexts} />
-       <ReSendDecisionEmail  avustushaku={avustushaku} hakemus={hakemus} hakuData={hakuData} helpTexts={helpTexts} />
-       <ChangeLog hakemus={hakemus}/>
-     </div>
-    )
-  }
+  return (
+    <div id="arviointi-tab">
+      <PresenterComment controller={controller} hakemus={hakemus} helpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}/>
+      <ChooseRahoitusalueAndTalousarviotili controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
+      <SpecifyOppilaitos controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
+      <AcademySize controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
+      <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku} helpTexts={helpTexts}
+                      allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
+      <HakemusComments
+        controller={controller}
+        comments={hakemus.comments}
+        allowHakemusCommenting={allowHakemusCommenting}
+        helpTexts={helpTexts}/>
+      <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
+      <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
+      <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} userInfo={userInfo} />
+      <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
+      <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
+      {multibatchEnabled && avustushaku.content["multiplemaksuera"] &&
+        <ApplicationPayments application={hakemus}
+                            grant={avustushaku}
+                            index={0}
+                            payments={hakemus.payments}
+                            onAddPayment={controller.addPayment}
+                            onRemovePayment={controller.removePayment}
+                            readonly={true}/>}
+      <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
+      <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusOfficerEditing} status="officer_edit" helpTexts={helpTexts} />
+      {hakemus.status === 'draft' && userInfo.privileges.includes('va-admin') && (
+        <div className="value-edit">
+          <button onClick={() => controller.setHakemusStatus(hakemus, 'submitted', 'Submitted by admin')} data-test-id="submit-hakemus">Merkitse hakemus lähetetyksi</button>
+        </div>
+      )}
+      <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusCancellation} status="cancelled" helpTexts={helpTexts} />
+      <ReSendDecisionEmail  avustushaku={avustushaku} hakemus={hakemus} hakuData={hakuData} helpTexts={helpTexts} />
+      <ChangeLog hakemus={hakemus}/>
+    </div>
+  )
 }
 
 class ChangeLog extends React.Component<{ hakemus: Hakemus }>{

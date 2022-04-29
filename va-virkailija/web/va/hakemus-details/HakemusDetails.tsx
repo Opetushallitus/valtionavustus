@@ -1,7 +1,7 @@
 import React from 'react'
 
 import HakemusPreview from './HakemusPreview'
-import HakemusArviointi from './HakemusArviointi'
+import { HakemusArviointi } from './HakemusArviointi'
 import { Muutoshakemus } from './Muutoshakemus'
 import Loppuselvitys from './Loppuselvitys'
 import Väliselvitys from './Väliselvitys'
