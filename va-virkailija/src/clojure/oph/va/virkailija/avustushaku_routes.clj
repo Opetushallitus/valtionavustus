@@ -464,6 +464,8 @@
                                   user-key (:user_key updated-hakemus)
                                   presenting-officer-email (:email identity)]
                               (email/send-change-request-message! language email avustushaku-id hakemus-id avustushaku-name user-key status-comment presenting-officer-email)))
+                          (if (= new-status "submitted")
+                            (virkailija-db/update-submitted-hakemus-version (:id hakemus)))
                           (http/ok {:hakemus-id hakemus-id
                                :status new-status})))))
 

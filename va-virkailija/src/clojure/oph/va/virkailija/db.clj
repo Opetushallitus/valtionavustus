@@ -14,7 +14,6 @@
 
 (defn- add-paatos-menoluokkas [tx paatos-id avustushaku-id talousarvio]
   (doseq [[type amount] (seq talousarvio)]
-    (log/info (str "INSERTING EINFWIROGMW " (name type) " " amount " " paatos-id))
     (execute! tx
       "INSERT INTO menoluokka_paatos (menoluokka_id, paatos_id, amount)
        VALUES ((SELECT id FROM menoluokka WHERE avustushaku_id = ? AND type = ?), ?, ?)"
@@ -619,3 +618,8 @@
         result (map :email (query sql [avustushaku-id]))]
     (log/info "Found valmistelija emails " result "for avustushaku ID" avustushaku-id)
     result))
+
+(defn update-submitted-hakemus-version [hakemus-id]
+  (execute! "UPDATE hakija.hakemukset
+             SET submitted_version = version
+             WHERE id = ? AND version_closed is null" [hakemus-id]))

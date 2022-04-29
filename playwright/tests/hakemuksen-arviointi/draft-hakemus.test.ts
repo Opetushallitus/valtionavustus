@@ -26,21 +26,21 @@ const newHakemusTest = muutoshakemusTest.extend<NewHakemusFixtures>({
 })
 
 newHakemusTest('an unsubmitted (draft) hakemus', async ({ avustushakuID, newHakemus, page }) => {
+  const hakemusListPage = new HakemustenArviointiPage(page)
+  const hakijaPage = new HakijaAvustusHakuPage(page)
   const listPageOptions = { newListingUi: true }
+
   await test.step('is not shown in showAll list when new', async () => {
-    const hakemusListPage = new HakemustenArviointiPage(page)
     await hakemusListPage.navigate(avustushakuID, listPageOptions)
     await hakemusListPage.showUnfinished.check()
     expect(await hakemusListPage.hakemusRows.count()).toBe(0)
   })
 
   await test.step('is shown in showAll list after applicant has edited application for the first time', async () => {
-    const hakijaPage = new HakijaAvustusHakuPage(page)
     await page.goto(newHakemus)
     await hakijaPage.fillInBusinessId(TEST_Y_TUNNUS)
     await hakijaPage.waitForEditSaved()
 
-    const hakemusListPage = new HakemustenArviointiPage(page)
     await hakemusListPage.navigate(avustushakuID, listPageOptions)
     await hakemusListPage.showUnfinished.check()
     await hakemusListPage.hakemusListing.waitFor({ timeout: 5000 })
@@ -48,5 +48,17 @@ newHakemusTest('an unsubmitted (draft) hakemus', async ({ avustushakuID, newHake
     expect(await rows.count()).toBe(1)
     const row = rows.first()
     expect(await row.locator('text=Keskeneräinen').isVisible()).toBeTruthy()
+  })
+
+  await test.step('can be submitted by admin', async () => {
+    await hakemusListPage.navigateToLatestHakemusArviointi(avustushakuID, true)
+    await hakemusListPage.submitHakemus()
+    await hakemusListPage.waitForSave()
+
+    await hakemusListPage.navigate(avustushakuID, listPageOptions)
+    await hakemusListPage.showUnfinished.uncheck()
+    expect(await hakemusListPage.hakemusRows.count()).toBe(1)
+    expect(await hakemusListPage.hakemusRows.first().locator('text=Käsittelemättä').isVisible()).toBeTruthy()
+    await expect(page.locator('[data-test-id="submit-hakemus"]')).toHaveCount(0)
   })
 })

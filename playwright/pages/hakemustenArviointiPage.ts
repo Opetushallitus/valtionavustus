@@ -48,8 +48,11 @@ export class HakemustenArviointiPage {
     await navigate(this.page, `/avustushaku/${avustushakuID}/?${params.toString()}`)
   }
 
-  async navigateToLatestHakemusArviointi(avustushakuID: number): Promise<number> {
+  async navigateToLatestHakemusArviointi(avustushakuID: number, isDraft: boolean = false): Promise<number> {
     await navigate(this.page, `/avustushaku/${avustushakuID}/`)
+    if (isDraft) {
+      this.showUnfinished.check()
+    }
     await this.page.click('tbody tr:first-of-type')
     await this.page.waitForSelector('#hakemus-details')
     return await this.page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1]).then(possibleHakemusID => {
@@ -202,6 +205,10 @@ export class HakemustenArviointiPage {
 
   async rejectHakemus() {
     await this.page.click("#arviointi-tab label[for='set-arvio-status-rejected']")
+  }
+
+  async submitHakemus() {
+    await this.page.click('[data-test-id="submit-hakemus"]')
   }
 
   statusFieldSelector(hakemusID: number) {

@@ -20,9 +20,9 @@ import ApplicationPayments from './ApplicationPayments'
 import HelpTooltip from '../HelpTooltip'
 import HakemustenArviointiController from '../HakemustenArviointiController'
 import { HakuData, SelectedHakemusAccessControl, UserInfo } from '../types'
+import { ChangeRequest } from './ChangeRequest'
 
 import '../style/admin.less'
-import { ChangeRequest } from './ChangeRequest'
 
 type HakemusArviointiProps = {
   controller: HakemustenArviointiController
@@ -49,7 +49,6 @@ export default class HakemusArviointi extends Component<HakemusArviointiProps> {
       allowHakemusOfficerEditing,
       allowHakemusCancellation
     } = this.props.selectedHakemusAccessControl
-    const comments = hakemus.comments
 
     return (
      <div id="arviointi-tab">
@@ -61,7 +60,7 @@ export default class HakemusArviointi extends Component<HakemusArviointiProps> {
                        allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
        <HakemusComments
          controller={controller}
-         comments={comments}
+         comments={hakemus.comments}
          allowHakemusCommenting={allowHakemusCommenting}
          helpTexts={helpTexts}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
@@ -79,6 +78,11 @@ export default class HakemusArviointi extends Component<HakemusArviointiProps> {
                               readonly={true}/>}
        <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
        <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusOfficerEditing} status="officer_edit" helpTexts={helpTexts} />
+       {hakemus.status === 'draft' && userInfo.privileges.includes('va-admin') && (
+         <div className="value-edit">
+           <button onClick={() => controller.setHakemusStatus(hakemus, 'submitted', 'Submitted by admin')} data-test-id="submit-hakemus">Merkitse hakemus lähetetyksi</button>
+         </div>
+       )}
        <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusCancellation} status="cancelled" helpTexts={helpTexts} />
        <ReSendDecisionEmail  avustushaku={avustushaku} hakemus={hakemus} hakuData={hakuData} helpTexts={helpTexts} />
        <ChangeLog hakemus={hakemus}/>
