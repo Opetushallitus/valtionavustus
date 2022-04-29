@@ -5,10 +5,13 @@
   (:require [oph.soresu.form.formutil :as formutil])
   (:import [java.util Date]))
 
+(defn- remove-whitespace [input]
+  (clojure.string/replace input #"\s" ""))
+
 (defn- answer->menoluokka-row [answers hakemus-id menoluokka]
   {:menoluokka_id (:id menoluokka)
    :hakemus_id hakemus-id
-   :amount (Integer/parseInt (formutil/find-answer-value answers (str (:type menoluokka) ".amount")))})
+   :amount (Integer/parseInt (remove-whitespace (formutil/find-answer-value answers (str (:type menoluokka) ".amount"))))})
 
 (defn store-menoluokka-hakemus-rows [avustushaku-id hakemus-id answers]
   (with-tx (fn [tx]
