@@ -1,22 +1,26 @@
-type FeatureFlag = { "enabled?": boolean }
+type FeatureFlag = { "enabled?": boolean };
 
 export interface EnvironmentApiResponse {
-  name: string
-  "show-name": boolean
+  name: string;
+  "show-name": boolean;
   "hakija-server": {
     url: {
-      fi: string,
-      sv: string
-    }
-  }
+      fi: string;
+      sv: string;
+    };
+  };
   notice: {
-    fi: string
-    sv: string
-  }
-  "multibatch-payments": FeatureFlag
-  "dont-send-loppuselvityspyynto-to-virkailija"?: FeatureFlag
+    fi: string;
+    sv: string;
+  };
+  "multibatch-payments": FeatureFlag;
+  "dont-send-loppuselvityspyynto-to-virkailija"?: FeatureFlag;
 }
 
-type FeatureFlags<T> = { [P in keyof T as T[P] extends FeatureFlag ? P : never]: T[P] }
+type FeatureFlags<T> = {
+  [P in keyof T as T[P] extends FeatureFlag ? P : never]: T[P];
+};
 
-export type FeatureFlagKey = keyof FeatureFlags<Required<EnvironmentApiResponse>>
+export type FeatureFlagKey = keyof FeatureFlags<
+  Required<EnvironmentApiResponse>
+>;

@@ -1,19 +1,26 @@
 import React from "react";
-import ClassNames from 'classnames'
+import ClassNames from "classnames";
 
-import './MuutoshakemusSection.less'
+import "./MuutoshakemusSection.less";
 
 interface Props {
-  blueMiddleComponent?: JSX.Element
-  bottomComponent?: JSX.Element
-  datepickerFix?: boolean
+  blueMiddleComponent?: JSX.Element;
+  bottomComponent?: JSX.Element;
+  datepickerFix?: boolean;
 }
 
-export const MuutoshakemusSection: React.FC<Props> = ({blueMiddleComponent, bottomComponent, datepickerFix, children}) => (
-  <section className={ClassNames("muutoshakemus-form-section",  {'muutoshakemus-form-section_date-picker-fix': datepickerFix})}>
-    <div className="muutoshakemus-form-section_content">
-      {children}
-    </div>
+export const MuutoshakemusSection: React.FC<Props> = ({
+  blueMiddleComponent,
+  bottomComponent,
+  datepickerFix,
+  children,
+}) => (
+  <section
+    className={ClassNames("muutoshakemus-form-section", {
+      "muutoshakemus-form-section_date-picker-fix": datepickerFix,
+    })}
+  >
+    <div className="muutoshakemus-form-section_content">{children}</div>
     {blueMiddleComponent && (
       <div className="muutoshakemus-form-section_cta">
         {blueMiddleComponent}
@@ -25,4 +32,4 @@ export const MuutoshakemusSection: React.FC<Props> = ({blueMiddleComponent, bott
       </div>
     )}
   </section>
-)
+);

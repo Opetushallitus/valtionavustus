@@ -1,4 +1,4 @@
-import {expect, Locator, Page} from "@playwright/test";
+import { expect, Locator, Page } from "@playwright/test";
 
 import { navigate } from "../utils/navigate";
 import {
@@ -7,166 +7,275 @@ import {
   getChangedBudgetTableCells,
   getExistingBudgetTableCells,
 } from "../utils/util";
-import {VIRKAILIJA_URL} from "../utils/constants";
+import { VIRKAILIJA_URL } from "../utils/constants";
 
-import { MuutoshakemusValues, PaatosStatus, PaatosValues } from "../utils/types";
-import { AcceptedBudget, Budget, BudgetAmount, defaultBudget } from "../utils/budget";
+import {
+  MuutoshakemusValues,
+  PaatosStatus,
+  PaatosValues,
+} from "../utils/types";
+import {
+  AcceptedBudget,
+  Budget,
+  BudgetAmount,
+  defaultBudget,
+} from "../utils/budget";
 import { HakijaAvustusHakuPage } from "./hakijaAvustusHakuPage";
 
-const jatkoaikaSelector = '[data-test-id=muutoshakemus-jatkoaika]' as const
+const jatkoaikaSelector = "[data-test-id=muutoshakemus-jatkoaika]" as const;
 
 export class HakemustenArviointiPage {
-  readonly page: Page
-  readonly avustushakuDropdown: Locator
-  readonly inputFilterOrganization: Locator
-  readonly inputFilterProject: Locator
-  readonly hakemusListing: Locator
-  readonly showUnfinished: Locator
-  readonly hakemusRows: Locator
+  readonly page: Page;
+  readonly avustushakuDropdown: Locator;
+  readonly inputFilterOrganization: Locator;
+  readonly inputFilterProject: Locator;
+  readonly hakemusListing: Locator;
+  readonly showUnfinished: Locator;
+  readonly hakemusRows: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.avustushakuDropdown = this.page.locator('#avustushaku-dropdown')
-    this.inputFilterOrganization = this.page.locator('[placeholder="Hakijaorganisaatio"]')
-    this.inputFilterProject = this.page.locator('[placeholder="Asianumero tai hanke"]')
-    this.hakemusListing = this.page.locator('#hakemus-listing')
-    this.showUnfinished = this.page.locator('text="Näytä keskeneräiset"')
-    this.hakemusRows = this.hakemusListing.locator('tbody tr')
+    this.avustushakuDropdown = this.page.locator("#avustushaku-dropdown");
+    this.inputFilterOrganization = this.page.locator(
+      '[placeholder="Hakijaorganisaatio"]'
+    );
+    this.inputFilterProject = this.page.locator(
+      '[placeholder="Asianumero tai hanke"]'
+    );
+    this.hakemusListing = this.page.locator("#hakemus-listing");
+    this.showUnfinished = this.page.locator('text="Näytä keskeneräiset"');
+    this.hakemusRows = this.hakemusListing.locator("tbody tr");
   }
 
-  async navigate(avustushakuID: number, options?: { showAll?: boolean, newListingUi?: boolean, showAdditionalInfo?: boolean }) {
-    const params = new URLSearchParams()
+  async navigate(
+    avustushakuID: number,
+    options?: {
+      showAll?: boolean;
+      newListingUi?: boolean;
+      showAdditionalInfo?: boolean;
+    }
+  ) {
+    const params = new URLSearchParams();
     if (options?.showAll) {
-      params.append('showAll', 'true')
+      params.append("showAll", "true");
     }
     if (options?.newListingUi) {
-      params.append('new-hakemus-listing-ui', 'true')
+      params.append("new-hakemus-listing-ui", "true");
     }
     if (options?.showAdditionalInfo) {
-      params.append('showAdditionalInfo', 'true')
+      params.append("showAdditionalInfo", "true");
     }
-    await navigate(this.page, `/avustushaku/${avustushakuID}/?${params.toString()}`)
+    await navigate(
+      this.page,
+      `/avustushaku/${avustushakuID}/?${params.toString()}`
+    );
   }
 
-  async navigateToLatestHakemusArviointi(avustushakuID: number, isDraft: boolean = false): Promise<number> {
-    await navigate(this.page, `/avustushaku/${avustushakuID}/`)
+  async navigateToLatestHakemusArviointi(
+    avustushakuID: number,
+    isDraft: boolean = false
+  ): Promise<number> {
+    await navigate(this.page, `/avustushaku/${avustushakuID}/`);
     if (isDraft) {
-      this.showUnfinished.check()
+      this.showUnfinished.check();
     }
-    await this.page.click('tbody tr:first-of-type')
-    await this.page.waitForSelector('#hakemus-details')
-    return await this.page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1]).then(possibleHakemusID => {
-      expectToBeDefined(possibleHakemusID)
-      return parseInt(possibleHakemusID)
-    })
+    await this.page.click("tbody tr:first-of-type");
+    await this.page.waitForSelector("#hakemus-details");
+    return await this.page
+      .evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1])
+      .then((possibleHakemusID) => {
+        expectToBeDefined(possibleHakemusID);
+        return parseInt(possibleHakemusID);
+      });
   }
 
-  async navigateToLatestMuutoshakemus(avustushakuID: number, hakemusID: number) {
-    await navigate(this.page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`)
-    await this.page.waitForSelector('#tab-content')
+  async navigateToLatestMuutoshakemus(
+    avustushakuID: number,
+    hakemusID: number
+  ) {
+    await navigate(
+      this.page,
+      `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`
+    );
+    await this.page.waitForSelector("#tab-content");
   }
 
-  async navigateToHakemus(avustushakuId: number, userKey: string, options?: { showAll?: boolean, newListingUi?: boolean }) {
-    await this.navigate(avustushakuId, options)
+  async navigateToHakemus(
+    avustushakuId: number,
+    userKey: string,
+    options?: { showAll?: boolean; newListingUi?: boolean }
+  ) {
+    await this.navigate(avustushakuId, options);
     await Promise.all([
       this.page.waitForNavigation(),
-      this.page.click(`[data-test-id="hakemus-${userKey}"]`)
-    ])
+      this.page.click(`[data-test-id="hakemus-${userKey}"]`),
+    ]);
   }
 
   async waitForSave() {
-    await this.page.waitForSelector('[data-test-id="save-status"]:has-text("Kaikki tiedot tallennettu")')
+    await this.page.waitForSelector(
+      '[data-test-id="save-status"]:has-text("Kaikki tiedot tallennettu")'
+    );
   }
 
   async clickHakemus(hakemusID: number) {
     await Promise.all([
       this.page.waitForNavigation(),
-      this.page.click(`#hakemus-${hakemusID}`)
-    ])
+      this.page.click(`#hakemus-${hakemusID}`),
+    ]);
   }
 
   async openUkotusModal(hakemusID: number) {
-    await this.page.click(`#hakemus-${hakemusID} .btn-role`)
+    await this.page.click(`#hakemus-${hakemusID} .btn-role`);
   }
 
   async closeUkotusModal() {
-    await this.page.click('[aria-label="Sulje valmistelija ja arvioija valitsin"]')
+    await this.page.click(
+      '[aria-label="Sulje valmistelija ja arvioija valitsin"]'
+    );
   }
 
-  async openHakemusEditPage(reason: string = 'Kunhan editoin'): Promise<HakijaAvustusHakuPage> {
-    await this.page.click('[data-test-id=virkailija-edit-hakemus]')
-    await this.page.type('[data-test-id=virkailija-edit-comment]', reason)
+  async openHakemusEditPage(
+    reason: string = "Kunhan editoin"
+  ): Promise<HakijaAvustusHakuPage> {
+    await this.page.click("[data-test-id=virkailija-edit-hakemus]");
+    await this.page.type("[data-test-id=virkailija-edit-comment]", reason);
     const [newPage] = await Promise.all([
-      this.page.context().waitForEvent('page'),
-      this.page.click('[data-test-id=virkailija-edit-submit]')
-    ])
-    await newPage.bringToFront()
-    return new HakijaAvustusHakuPage(newPage)
+      this.page.context().waitForEvent("page"),
+      this.page.click("[data-test-id=virkailija-edit-submit]"),
+    ]);
+    await newPage.bringToFront();
+    return new HakijaAvustusHakuPage(newPage);
   }
 
   async createChangeRequest(reason: string = "Täydennäppä") {
-    await this.page.click('[data-test-id="request-change-button"]')
-    await this.page.type('[data-test-id="täydennyspyyntö__textarea"]', reason)
-    await this.page.click('[data-test-id="täydennyspyyntö__lähetä"]')
-    await this.waitForSave()
+    await this.page.click('[data-test-id="request-change-button"]');
+    await this.page.type('[data-test-id="täydennyspyyntö__textarea"]', reason);
+    await this.page.click('[data-test-id="täydennyspyyntö__lähetä"]');
+    await this.waitForSave();
   }
 
   async cancelChangeRequest() {
-    await this.page.click('[data-test-id="täydennyspyyntö__cancel"]')
-    await this.waitForSave()
+    await this.page.click('[data-test-id="täydennyspyyntö__cancel"]');
+    await this.waitForSave();
   }
 
   async waitForArvioSave(avustushakuID: number, hakemusID: number) {
-    await this.page.waitForResponse(response =>
-      response.url() === `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio`
-      && response.ok()
-    )
+    await this.page.waitForResponse(
+      (response) =>
+        response.url() ===
+          `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio` &&
+        response.ok()
+    );
   }
 
-  async selectValmistelijaForHakemus(hakemusID: number, valmistelijaName: string) {
-    await this.openUkotusModal(hakemusID)
-    await this.page.click(`[aria-label="Lisää ${valmistelijaName} valmistelijaksi"]`)
-    await this.page.locator(`[aria-label="Poista ${valmistelijaName} valmistelijan roolista"]`).waitFor()
-    await this.closeUkotusModal()
+  async selectValmistelijaForHakemus(
+    hakemusID: number,
+    valmistelijaName: string
+  ) {
+    await this.openUkotusModal(hakemusID);
+    await this.page.click(
+      `[aria-label="Lisää ${valmistelijaName} valmistelijaksi"]`
+    );
+    await this.page
+      .locator(
+        `[aria-label="Poista ${valmistelijaName} valmistelijan roolista"]`
+      )
+      .waitFor();
+    await this.closeUkotusModal();
   }
 
   async selectArvioijaForHakemus(hakemusID: number, valmistelijaName: string) {
-    await this.openUkotusModal(hakemusID)
-    await this.page.click(`[aria-label="Lisää ${valmistelijaName} arvioijaksi"]`)
-    await this.page.locator(`[aria-label="Poista ${valmistelijaName} arvioijan roolista"]`).waitFor()
-    await this.closeUkotusModal()
+    await this.openUkotusModal(hakemusID);
+    await this.page.click(
+      `[aria-label="Lisää ${valmistelijaName} arvioijaksi"]`
+    );
+    await this.page
+      .locator(`[aria-label="Poista ${valmistelijaName} arvioijan roolista"]`)
+      .waitFor();
+    await this.closeUkotusModal();
   }
 
-  async fillBudget(budget: Budget = defaultBudget, type: 'hakija' | 'virkailija') {
+  async fillBudget(
+    budget: Budget = defaultBudget,
+    type: "hakija" | "virkailija"
+  ) {
+    const prefix = type === "virkailija" ? "budget-edit-" : "";
 
-    const prefix = type === 'virkailija' ? 'budget-edit-' : ''
+    await this.page.fill(
+      `[id='${prefix}personnel-costs-row.description']`,
+      budget.description.personnel
+    );
+    await this.page.fill(
+      `[id='${prefix}personnel-costs-row.amount']`,
+      budget.amount.personnel
+    );
+    await this.page.fill(
+      `[id='${prefix}material-costs-row.description']`,
+      budget.description.material
+    );
+    await this.page.fill(
+      `[id='${prefix}material-costs-row.amount']`,
+      budget.amount.material
+    );
+    await this.page.fill(
+      `[id='${prefix}equipment-costs-row.description']`,
+      budget.description.equipment
+    );
+    await this.page.fill(
+      `[id='${prefix}equipment-costs-row.amount']`,
+      budget.amount.equipment
+    );
+    await this.page.fill(
+      `[id='${prefix}service-purchase-costs-row.description']`,
+      budget.description["service-purchase"]
+    );
+    await this.page.fill(
+      `[id='${prefix}service-purchase-costs-row.amount']`,
+      budget.amount["service-purchase"]
+    );
+    await this.page.fill(
+      `[id='${prefix}rent-costs-row.description']`,
+      budget.description.rent
+    );
+    await this.page.fill(
+      `[id='${prefix}rent-costs-row.amount']`,
+      budget.amount.rent
+    );
+    await this.page.fill(
+      `[id='${prefix}steamship-costs-row.description']`,
+      budget.description.steamship
+    );
+    await this.page.fill(
+      `[id='${prefix}steamship-costs-row.amount']`,
+      budget.amount.steamship
+    );
+    await this.page.fill(
+      `[id='${prefix}other-costs-row.description']`,
+      budget.description.other
+    );
+    await this.page.fill(
+      `[id='${prefix}other-costs-row.amount']`,
+      budget.amount.other
+    );
 
-    await this.page.fill(`[id='${prefix}personnel-costs-row.description']`, budget.description.personnel)
-    await this.page.fill(`[id='${prefix}personnel-costs-row.amount']`, budget.amount.personnel)
-    await this.page.fill(`[id='${prefix}material-costs-row.description']`, budget.description.material)
-    await this.page.fill(`[id='${prefix}material-costs-row.amount']`, budget.amount.material)
-    await this.page.fill(`[id='${prefix}equipment-costs-row.description']`, budget.description.equipment)
-    await this.page.fill(`[id='${prefix}equipment-costs-row.amount']`, budget.amount.equipment)
-    await this.page.fill(`[id='${prefix}service-purchase-costs-row.description']`, budget.description['service-purchase'])
-    await this.page.fill(`[id='${prefix}service-purchase-costs-row.amount']`, budget.amount['service-purchase'])
-    await this.page.fill(`[id='${prefix}rent-costs-row.description']`, budget.description.rent)
-    await this.page.fill(`[id='${prefix}rent-costs-row.amount']`, budget.amount.rent)
-    await this.page.fill(`[id='${prefix}steamship-costs-row.description']`, budget.description.steamship)
-    await this.page.fill(`[id='${prefix}steamship-costs-row.amount']`, budget.amount.steamship)
-    await this.page.fill(`[id='${prefix}other-costs-row.description']`, budget.description.other)
-    await this.page.fill(`[id='${prefix}other-costs-row.amount']`, budget.amount.other)
-
-    if (type === 'hakija') {
-      await this.page.fill(`[id='${prefix}self-financing-amount']`, budget.selfFinancing)
+    if (type === "hakija") {
+      await this.page.fill(
+        `[id='${prefix}self-financing-amount']`,
+        budget.selfFinancing
+      );
     }
   }
 
   async acceptBudget(budget: AcceptedBudget) {
-    if (typeof budget === 'string') {
-      await this.page.fill("#budget-edit-project-budget .amount-column input", budget)
+    if (typeof budget === "string") {
+      await this.page.fill(
+        "#budget-edit-project-budget .amount-column input",
+        budget
+      );
     } else {
-      await this.page.click( 'label[for="useDetailedCosts-true"]')
-      await this.fillBudget(budget, 'virkailija')
+      await this.page.click('label[for="useDetailedCosts-true"]');
+      await this.fillBudget(budget, "virkailija");
     }
   }
 
@@ -174,128 +283,172 @@ export class HakemustenArviointiPage {
     avustushakuID: number,
     projectName: string,
     budget: AcceptedBudget = "100000",
-    rahoitusalue = "Ammatillinen koulutus",
+    rahoitusalue = "Ammatillinen koulutus"
   ) {
     // Accept the hakemus
     await Promise.all([
       this.page.waitForNavigation(),
-      this.page.click(`text=${projectName}`)
-    ])
+      this.page.click(`text=${projectName}`),
+    ]);
 
-    const hakemusID = await this.page.evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1]).then(possibleHakemusID => {
-      expectToBeDefined(possibleHakemusID)
-      return parseInt(possibleHakemusID)
-    })
+    const hakemusID = await this.page
+      .evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1])
+      .then((possibleHakemusID) => {
+        expectToBeDefined(possibleHakemusID);
+        return parseInt(possibleHakemusID);
+      });
 
-    expectToBeDefined(hakemusID)
-    console.log("Hakemus ID:", hakemusID)
+    expectToBeDefined(hakemusID);
+    console.log("Hakemus ID:", hakemusID);
 
-    await this.page.click(`label:has-text("${rahoitusalue}")`)
+    await this.page.click(`label:has-text("${rahoitusalue}")`);
 
-    await this.acceptHakemus(budget)
-    await this.waitForArvioSave(avustushakuID, hakemusID)
-    return hakemusID
+    await this.acceptHakemus(budget);
+    await this.waitForArvioSave(avustushakuID, hakemusID);
+    return hakemusID;
   }
 
   async acceptHakemus(budget: AcceptedBudget = "100000") {
-    await this.page.click("#arviointi-tab label[for='set-arvio-status-plausible']")
-    await this.acceptBudget(budget)
-    await this.page.click("#arviointi-tab label[for='set-arvio-status-accepted']")
+    await this.page.click(
+      "#arviointi-tab label[for='set-arvio-status-plausible']"
+    );
+    await this.acceptBudget(budget);
+    await this.page.click(
+      "#arviointi-tab label[for='set-arvio-status-accepted']"
+    );
   }
 
   async rejectHakemus() {
-    await this.page.click("#arviointi-tab label[for='set-arvio-status-rejected']")
+    await this.page.click(
+      "#arviointi-tab label[for='set-arvio-status-rejected']"
+    );
   }
 
   async submitHakemus() {
-    await this.page.click('[data-test-id="submit-hakemus"]')
+    await this.page.click('[data-test-id="submit-hakemus"]');
   }
 
   statusFieldSelector(hakemusID: number) {
-    return `[data-test-id=muutoshakemus-status-${hakemusID}]`
+    return `[data-test-id=muutoshakemus-status-${hakemusID}]`;
   }
 
   async väliselvitysStatus(hakemusID: number) {
-    return await this.page.innerText(`tr#hakemus-${hakemusID} >> [data-test-id=väliselvitys-column]`)
+    return await this.page.innerText(
+      `tr#hakemus-${hakemusID} >> [data-test-id=väliselvitys-column]`
+    );
   }
 
   async muutoshakemusStatusFieldContent(hakemusID: number) {
-    const handle = await this.page.waitForSelector(this.statusFieldSelector(hakemusID))
-    return await handle.textContent()
+    const handle = await this.page.waitForSelector(
+      this.statusFieldSelector(hakemusID)
+    );
+    return await handle.textContent();
   }
 
   async clickMuutoshakemusStatusField(hakemusID: number) {
-    await this.page.click(this.statusFieldSelector(hakemusID))
+    await this.page.click(this.statusFieldSelector(hakemusID));
   }
 
   async clickMuutoshakemusTab() {
-    await this.page.click('span.muutoshakemus-tab')
-    await this.page.waitForSelector(jatkoaikaSelector)
+    await this.page.click("span.muutoshakemus-tab");
+    await this.page.waitForSelector(jatkoaikaSelector);
   }
 
-  async validateMuutoshakemusValues(muutoshakemus: MuutoshakemusValues, paatos?: PaatosValues) {
-    const jatkoaika = await this.page.textContent(jatkoaikaSelector)
-    expect(jatkoaika).toEqual(muutoshakemus.jatkoaika?.format('DD.MM.YYYY'))
-    const jatkoaikaPerustelu = await this.page.textContent('[data-test-id=muutoshakemus-jatkoaika-perustelu]')
-    expect(jatkoaikaPerustelu).toEqual(muutoshakemus.jatkoaikaPerustelu)
+  async validateMuutoshakemusValues(
+    muutoshakemus: MuutoshakemusValues,
+    paatos?: PaatosValues
+  ) {
+    const jatkoaika = await this.page.textContent(jatkoaikaSelector);
+    expect(jatkoaika).toEqual(muutoshakemus.jatkoaika?.format("DD.MM.YYYY"));
+    const jatkoaikaPerustelu = await this.page.textContent(
+      "[data-test-id=muutoshakemus-jatkoaika-perustelu]"
+    );
+    expect(jatkoaikaPerustelu).toEqual(muutoshakemus.jatkoaikaPerustelu);
 
     if (paatos) {
-      await this.page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
-      const form = await this.page.evaluate((selector: string) => document.querySelectorAll(selector).length, '[data-test-id="muutoshakemus-form"]')
-      expect(form).toEqual(0)
-      const muutospaatosLink = await this.page.textContent('a.muutoshakemus__paatos-link')
-      expect(muutospaatosLink).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\/paatos\?user-key=[a-f0-9]{64}/)
+      await this.page.waitForSelector('[data-test-id="muutoshakemus-paatos"]');
+      const form = await this.page.evaluate(
+        (selector: string) => document.querySelectorAll(selector).length,
+        '[data-test-id="muutoshakemus-form"]'
+      );
+      expect(form).toEqual(0);
+      const muutospaatosLink = await this.page.textContent(
+        "a.muutoshakemus__paatos-link"
+      );
+      expect(muutospaatosLink).toMatch(
+        /https?:\/\/[^\/]+\/muutoshakemus\/paatos\?user-key=[a-f0-9]{64}/
+      );
     } else {
-      await this.page.waitForSelector('[data-test-id="muutoshakemus-form"]')
+      await this.page.waitForSelector('[data-test-id="muutoshakemus-form"]');
     }
   }
 
   async selectVakioperusteluInFinnish() {
-    await clickElementWithText(this.page, 'a', 'Lisää vakioperustelu suomeksi')
+    await clickElementWithText(this.page, "a", "Lisää vakioperustelu suomeksi");
   }
 
   async getSisaltomuutosPerustelut() {
-    return this.page.innerText('[data-test-id="sisaltomuutos-perustelut"]')
+    return this.page.innerText('[data-test-id="sisaltomuutos-perustelut"]');
   }
 
   async getMuutoshakemusNotice() {
-    return this.page.innerText('.muutoshakemus-notice')
+    return this.page.innerText(".muutoshakemus-notice");
   }
 
   async getPaatosPerustelut() {
-    return this.page.innerText('[data-test-id="muutoshakemus-form-paatos-reason"]')
+    return this.page.innerText(
+      '[data-test-id="muutoshakemus-form-paatos-reason"]'
+    );
   }
 
   paatosPreview() {
     return {
       open: async () => {
         await Promise.all([
-          this.page.click('text=Esikatsele päätösdokumentti'),
-          this.page.waitForSelector('.muutoshakemus-paatos__content')
-        ])
+          this.page.click("text=Esikatsele päätösdokumentti"),
+          this.page.waitForSelector(".muutoshakemus-paatos__content"),
+        ]);
       },
       close: async () => {
         await Promise.all([
-          this.page.waitForSelector('.muutoshakemus-paatos__content', { state: 'detached' }),
-          this.page.click('text=Sulje')
-        ])
+          this.page.waitForSelector(".muutoshakemus-paatos__content", {
+            state: "detached",
+          }),
+          this.page.click("text=Sulje"),
+        ]);
       },
-      title: this.page.locator('.hakemus-details-modal__title-row > span'),
-      muutoshakemusPaatosTitle: this.page.locator('[data-test-id=muutoshakemus-paatos-title]'),
+      title: this.page.locator(".hakemus-details-modal__title-row > span"),
+      muutoshakemusPaatosTitle: this.page.locator(
+        "[data-test-id=muutoshakemus-paatos-title]"
+      ),
       jatkoaikaPaatos: this.page.locator('[data-test-id="paatos-jatkoaika"]'),
-      jatkoaikaValue: this.page.locator('[data-test-id="paattymispaiva-value"]'),
+      jatkoaikaValue: this.page.locator(
+        '[data-test-id="paattymispaiva-value"]'
+      ),
       sisaltoPaatos: this.page.locator('[data-test-id="paatos-sisaltomuutos"]'),
-      talousarvioPaatos:  this.page.locator('[data-test-id="paatos-talousarvio"]'),
+      talousarvioPaatos: this.page.locator(
+        '[data-test-id="paatos-talousarvio"]'
+      ),
       esittelija: this.page.locator('[data-test-id="paatos-esittelija"]'),
       lisatietoja: this.page.locator('[data-test-id="paatos-additional-info"]'),
       hyvaksyja: this.page.locator('[data-test-id="paatos-decider"]'),
-      registerNumber: this.page.locator('[data-test-id="paatos-register-number"]'),
+      registerNumber: this.page.locator(
+        '[data-test-id="paatos-register-number"]'
+      ),
       projectName: this.page.locator('[data-test-id="paatos-project-name"]'),
-      org: this.page.locator('h1.muutoshakemus-paatos__org'),
+      org: this.page.locator("h1.muutoshakemus-paatos__org"),
       perustelu: this.page.locator('[data-test-id="paatos-reason"]'),
-      existingBudgetTableCells: () => getExistingBudgetTableCells(this.page, '.muutoshakemus-paatos__content [data-test-id="meno-input-row"]'),
-      changedBudgetTableCells: () => getChangedBudgetTableCells(this.page, '.muutoshakemus-paatos__content [data-test-id="meno-input-row"]')
-    }
+      existingBudgetTableCells: () =>
+        getExistingBudgetTableCells(
+          this.page,
+          '.muutoshakemus-paatos__content [data-test-id="meno-input-row"]'
+        ),
+      changedBudgetTableCells: () =>
+        getChangedBudgetTableCells(
+          this.page,
+          '.muutoshakemus-paatos__content [data-test-id="meno-input-row"]'
+        ),
+    };
   }
 
   additionalInfo() {
@@ -303,84 +456,138 @@ export class HakemustenArviointiPage {
       locators: {
         showAdditionalInfo: this.page.locator('text="Näytä lisätiedot"'),
         hideAdditionalInfo: this.page.locator('text="Piilota lisätiedot"'),
-        toimintayksikko: this.page.locator('[data-test-id="lisatiedot-toimintayksikko"]'),
-        vastuuvalmistelija: this.page.locator('[data-test-id="lisatiedot-vastuuvalmistelija"]'),
+        toimintayksikko: this.page.locator(
+          '[data-test-id="lisatiedot-toimintayksikko"]'
+        ),
+        vastuuvalmistelija: this.page.locator(
+          '[data-test-id="lisatiedot-vastuuvalmistelija"]'
+        ),
         paatokset: this.page.locator('[data-test-id="lisatiedot-paatokset"]'),
-        maksatukset: this.page.locator('[data-test-id="lisatiedot-maksatukset"]'),
-        valiselvitykset: this.page.locator('[data-test-id="lisatiedot-valiselvitykset"]'),
-        loppuselvitykset: this.page.locator('[data-test-id="lisatiedot-loppuselvitykset"]'),
-        muutoshakukelpoinen: this.page.locator('[data-test-id="lisatiedot-muutoshakukelpoinen"]')
-      }
-    }
+        maksatukset: this.page.locator(
+          '[data-test-id="lisatiedot-maksatukset"]'
+        ),
+        valiselvitykset: this.page.locator(
+          '[data-test-id="lisatiedot-valiselvitykset"]'
+        ),
+        loppuselvitykset: this.page.locator(
+          '[data-test-id="lisatiedot-loppuselvitykset"]'
+        ),
+        muutoshakukelpoinen: this.page.locator(
+          '[data-test-id="lisatiedot-muutoshakukelpoinen"]'
+        ),
+      },
+    };
   }
 
-  async setMuutoshakemusJatkoaikaDecision(status: PaatosStatus, value?: string) {
-    await this.page.click(`label[for="haen-kayttoajan-pidennysta-${status}"]`)
+  async setMuutoshakemusJatkoaikaDecision(
+    status: PaatosStatus,
+    value?: string
+  ) {
+    await this.page.click(`label[for="haen-kayttoajan-pidennysta-${status}"]`);
     if (value) {
-      await this.page.fill('div.datepicker input', value)
+      await this.page.fill("div.datepicker input", value);
     }
   }
 
   async writePerustelu(text: string) {
-    await this.page.fill('#reason', text)
+    await this.page.fill("#reason", text);
   }
 
   async setMuutoshakemusSisaltoDecision(status: PaatosStatus) {
-    await this.page.click(`label[for="haen-sisaltomuutosta-${status}"]`)
+    await this.page.click(`label[for="haen-sisaltomuutosta-${status}"]`);
   }
 
   async fillMuutoshakemusBudgetAmount(budget: BudgetAmount) {
-    await this.page.fill( "input[name='talousarvio.personnel-costs-row'][type='number']", budget.personnel)
-    await this.page.fill( "input[name='talousarvio.material-costs-row'][type='number']", budget.material)
-    await this.page.fill( "input[name='talousarvio.equipment-costs-row'][type='number']", budget.equipment)
-    await this.page.fill( "input[name='talousarvio.service-purchase-costs-row'][type='number']", budget['service-purchase'])
-    await this.page.fill( "input[name='talousarvio.rent-costs-row'][type='number']", budget.rent)
-    await this.page.fill( "input[name='talousarvio.steamship-costs-row'][type='number']", budget.steamship)
-    await this.page.fill( "input[name='talousarvio.other-costs-row'][type='number']", budget.other)
+    await this.page.fill(
+      "input[name='talousarvio.personnel-costs-row'][type='number']",
+      budget.personnel
+    );
+    await this.page.fill(
+      "input[name='talousarvio.material-costs-row'][type='number']",
+      budget.material
+    );
+    await this.page.fill(
+      "input[name='talousarvio.equipment-costs-row'][type='number']",
+      budget.equipment
+    );
+    await this.page.fill(
+      "input[name='talousarvio.service-purchase-costs-row'][type='number']",
+      budget["service-purchase"]
+    );
+    await this.page.fill(
+      "input[name='talousarvio.rent-costs-row'][type='number']",
+      budget.rent
+    );
+    await this.page.fill(
+      "input[name='talousarvio.steamship-costs-row'][type='number']",
+      budget.steamship
+    );
+    await this.page.fill(
+      "input[name='talousarvio.other-costs-row'][type='number']",
+      budget.other
+    );
   }
 
-  async setMuutoshakemusBudgetDecision(status: PaatosStatus, value?: BudgetAmount) {
+  async setMuutoshakemusBudgetDecision(
+    status: PaatosStatus,
+    value?: BudgetAmount
+  ) {
     if (status) {
-      await this.page.click(`label[for="talousarvio-${status}"]`)
+      await this.page.click(`label[for="talousarvio-${status}"]`);
     }
     if (value) {
-      await this.fillMuutoshakemusBudgetAmount(value)
+      await this.fillMuutoshakemusBudgetAmount(value);
     }
   }
 
   async saveMuutoshakemus() {
-    await this.page.click('[data-test-id="muutoshakemus-submit"]')
-    await this.page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
-    const statusText = await this.page.textContent('[data-test-id="paatos-status-text"]')
-    expect(statusText).toEqual('Käsitelty')
+    await this.page.click('[data-test-id="muutoshakemus-submit"]');
+    await this.page.waitForSelector('[data-test-id="muutoshakemus-paatos"]');
+    const statusText = await this.page.textContent(
+      '[data-test-id="paatos-status-text"]'
+    );
+    expect(statusText).toEqual("Käsitelty");
   }
 
-  async getAcceptedBudgetInputAmounts(): Promise<{ name: string; value: string }[]> {
-    const inputs = await this.page.$$('[data-test-id="muutoshakemus-form"] [data-test-id="meno-input"] > input')
-    return Promise.all(inputs.map(async (elem) => {
-      const name = (await elem.getAttribute('name'))?.replace('talousarvio.', '') || ''
-      const value = await elem.inputValue()
-      return { name, value }
-    }))
+  async getAcceptedBudgetInputAmounts(): Promise<
+    { name: string; value: string }[]
+  > {
+    const inputs = await this.page.$$(
+      '[data-test-id="muutoshakemus-form"] [data-test-id="meno-input"] > input'
+    );
+    return Promise.all(
+      inputs.map(async (elem) => {
+        const name =
+          (await elem.getAttribute("name"))?.replace("talousarvio.", "") || "";
+        const value = await elem.inputValue();
+        return { name, value };
+      })
+    );
   }
 
   async setSelectionCriteriaStars(questionNumber: number, starValue: number) {
-    await this.page.click(`.valintaperuste-list tr.single-valintaperuste:nth-of-type(${questionNumber}) img:nth-of-type(${starValue})`)
+    await this.page.click(
+      `.valintaperuste-list tr.single-valintaperuste:nth-of-type(${questionNumber}) img:nth-of-type(${starValue})`
+    );
   }
 
   async getHakemusScore(hakemusId: number): Promise<string | undefined> {
-    const title = await this.page.locator(`#hakemus-${hakemusId} .list-score-row`).getAttribute('title')
-    const regex = title?.match(/.*Keskiarvo\: ([\S]+).*/)
-    return regex?.[1]
+    const title = await this.page
+      .locator(`#hakemus-${hakemusId} .list-score-row`)
+      .getAttribute("title");
+    const regex = title?.match(/.*Keskiarvo\: ([\S]+).*/);
+    return regex?.[1];
   }
 
   async sortBy(sortKey: string) {
-    await this.page.click(`[data-test-id="sort-button-${sortKey}"]`)
+    await this.page.click(`[data-test-id="sort-button-${sortKey}"]`);
   }
 
   async allowExternalApi(allow: boolean) {
-    await this.page.click('[data-test-id="tab-seuranta"]')
-    await this.page.click(`[data-test-id="set-allow-visibility-in-external-system-${allow}"]`)
-    await this.waitForSave()
+    await this.page.click('[data-test-id="tab-seuranta"]');
+    await this.page.click(
+      `[data-test-id="set-allow-visibility-in-external-system-${allow}"]`
+    );
+    await this.waitForSave();
   }
 }

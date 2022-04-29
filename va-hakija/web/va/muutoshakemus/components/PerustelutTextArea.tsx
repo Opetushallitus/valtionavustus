@@ -1,21 +1,25 @@
-import React from 'react'
+import React from "react";
 
-import { FormikHook, FormValues } from 'soresu-form/web/va/types/muutoshakemus'
-import { getInputErrorClass } from 'soresu-form/web/va/formikHelpers'
+import { FormikHook, FormValues } from "soresu-form/web/va/types/muutoshakemus";
+import { getInputErrorClass } from "soresu-form/web/va/formikHelpers";
 
-import { useTranslations } from 'soresu-form/web/va/i18n/TranslationContext'
-import { ErrorMessage } from '../ErrorMessage'
+import { useTranslations } from "soresu-form/web/va/i18n/TranslationContext";
+import { ErrorMessage } from "../ErrorMessage";
 
 type PerustelutTextAreaProps = {
-  f: FormikHook
-  name: keyof FormValues
-  title?: string
-}
+  f: FormikHook;
+  name: keyof FormValues;
+  title?: string;
+};
 
-export const PerustelutTextArea = ({ f, name, title }: PerustelutTextAreaProps) => {
-  const { t } = useTranslations()
-  const reasonError = getInputErrorClass(f, name)
-  const id = `perustelut-${name}`
+export const PerustelutTextArea = ({
+  f,
+  name,
+  title,
+}: PerustelutTextAreaProps) => {
+  const { t } = useTranslations();
+  const reasonError = getInputErrorClass(f, name);
+  const id = `perustelut-${name}`;
 
   return (
     <div className="muutoshakemus__perustelut">
@@ -32,5 +36,5 @@ export const PerustelutTextArea = ({ f, name, title }: PerustelutTextAreaProps) 
       />
       <ErrorMessage text={f.errors[name] as string} />
     </div>
-  )
-}
+  );
+};

@@ -1,7 +1,7 @@
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: './jest-environment.js',
-  testMatch: ['./**/?(*.)test.ts'],
+  preset: "ts-jest",
+  testEnvironment: "./jest-environment.js",
+  testMatch: ["./**/?(*.)test.ts"],
   testTimeout: 10000,
   verbose: false,
   reporters: [
@@ -15,7 +15,7 @@ module.exports = {
         suiteNameTemplate: "Puppeteer tests",
         classNameTemplate: "{filepath}",
         titleTemplate: "{classname} {title}",
-      }
-    ]
-  ]
-}
+      },
+    ],
+  ],
+};

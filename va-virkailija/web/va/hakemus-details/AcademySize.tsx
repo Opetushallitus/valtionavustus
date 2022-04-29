@@ -1,71 +1,87 @@
-import React from 'react'
-import * as Bacon from 'baconjs'
+import React from "react";
+import * as Bacon from "baconjs";
 
-import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
+import { Avustushaku, Hakemus } from "soresu-form/web/va/types";
 
-import HakemustenArviointiController from '../HakemustenArviointiController'
+import HakemustenArviointiController from "../HakemustenArviointiController";
 
 type AcademySizeProps = {
-  avustushaku: Avustushaku
-  controller: HakemustenArviointiController
-  hakemus: Hakemus
-  allowEditing?: boolean
-}
+  avustushaku: Avustushaku;
+  controller: HakemustenArviointiController;
+  hakemus: Hakemus;
+  allowEditing?: boolean;
+};
 
 type AcademySizeState = {
-  currentHakemusId: number
-  invalid: boolean
-  value: string
-}
+  currentHakemusId: number;
+  invalid: boolean;
+  value: string;
+};
 
-export default class AcademySize extends React.Component<AcademySizeProps, AcademySizeState> {
-  changeBus: Bacon.Bus<[a: Hakemus, b: number]>
+export default class AcademySize extends React.Component<
+  AcademySizeProps,
+  AcademySizeState
+> {
+  changeBus: Bacon.Bus<[a: Hakemus, b: number]>;
 
   constructor(props: AcademySizeProps) {
-    super(props)
-    this.state = AcademySize.initialState(props)
-    this.changeBus = new Bacon.Bus()
-    this.changeBus.debounce(1000).onValue(([hakemus, value]) => { this.props.controller.setHakemusAcademysize(hakemus, value) })
+    super(props);
+    this.state = AcademySize.initialState(props);
+    this.changeBus = new Bacon.Bus();
+    this.changeBus.debounce(1000).onValue(([hakemus, value]) => {
+      this.props.controller.setHakemusAcademysize(hakemus, value);
+    });
   }
 
-  static getDerivedStateFromProps(props: AcademySizeProps, state: AcademySizeState) {
+  static getDerivedStateFromProps(
+    props: AcademySizeProps,
+    state: AcademySizeState
+  ) {
     if (props.hakemus.id !== state.currentHakemusId) {
-      return AcademySize.initialState(props)
+      return AcademySize.initialState(props);
     } else {
-      return null
+      return null;
     }
   }
 
-  static initialState(props: AcademySizeProps){
-    const value = props.hakemus.arvio?.academysize || 0
+  static initialState(props: AcademySizeProps) {
+    const value = props.hakemus.arvio?.academysize || 0;
     return {
       currentHakemusId: props.hakemus.id,
       value: "" + value,
-      invalid: false
-    }
+      invalid: false,
+    };
   }
 
   render() {
-    const {avustushaku, hakemus, allowEditing} = this.props
+    const { avustushaku, hakemus, allowEditing } = this.props;
     if (!avustushaku.is_academysize) {
-      return null
+      return null;
     }
     const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = event.target.value
-      this.setState({ ...this.state, value })
-      const valueInt = parseInt(value)
+      const value = event.target.value;
+      this.setState({ ...this.state, value });
+      const valueInt = parseInt(value);
       if (value.length > 0) {
-        this.setState({ invalid: isNaN(valueInt) })
+        this.setState({ invalid: isNaN(valueInt) });
       }
-      if(valueInt){
-        this.changeBus.push([hakemus, valueInt])
+      if (valueInt) {
+        this.changeBus.push([hakemus, valueInt]);
       }
-    }
+    };
     return (
       <div className="hakemus-arviointi-section hakemus-arviointi-section--academy-size">
         <label>Oppilaitoksen koko:</label>
-        <input type="number" className={this.state.invalid ? 'error input-number-sm' : 'input-number-sm'} value={this.state.value} onChange={onChange} disabled={!allowEditing}/>
+        <input
+          type="number"
+          className={
+            this.state.invalid ? "error input-number-sm" : "input-number-sm"
+          }
+          value={this.state.value}
+          onChange={onChange}
+          disabled={!allowEditing}
+        />
       </div>
-    )
+    );
   }
 }

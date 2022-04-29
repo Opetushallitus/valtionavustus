@@ -1,30 +1,28 @@
-import React, { Component } from 'react'
-import { AvustushakuPhase} from 'soresu-form/web/va/types'
+import React, { Component } from "react";
+import { AvustushakuPhase } from "soresu-form/web/va/types";
 
 interface Props {
-  phase: AvustushakuPhase
+  phase: AvustushakuPhase;
 }
 
 export default class HakuPhase extends Component<Props> {
   render() {
-    const phase = this.props.phase
-    let value: string = phase
-    switch(phase) {
+    const phase = this.props.phase;
+    let value: string = phase;
+    switch (phase) {
       case "upcoming":
-        value = "Aukeamassa"
-        break
+        value = "Aukeamassa";
+        break;
       case "current":
-        value = "Auki"
-        break
+        value = "Auki";
+        break;
       case "ended":
-        value = "Päättynyt"
-        break
+        value = "Päättynyt";
+        break;
       case "unpublished":
-        value = "Kiinni"
-        break
+        value = "Kiinni";
+        break;
     }
-    return (
-      <span className={phase}>{value}</span>
-    )
+    return <span className={phase}>{value}</span>;
   }
 }

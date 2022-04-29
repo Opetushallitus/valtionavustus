@@ -1,10 +1,13 @@
-import _ from 'lodash'
+import _ from "lodash";
 
-import ComponentFactory from 'soresu-form/web/form/ComponentFactory.jsx'
+import ComponentFactory from "soresu-form/web/form/ComponentFactory.jsx";
 
-import {BudgetSummaryElement} from 'soresu-form/web/va/VaBudgetComponents.jsx'
+import { BudgetSummaryElement } from "soresu-form/web/va/VaBudgetComponents.jsx";
 
-import BudgetEditElement, {EditSummingBudgetElement, EditBudgetItemElement} from './BudgetEditComponents.jsx'
+import BudgetEditElement, {
+  EditSummingBudgetElement,
+  EditBudgetItemElement,
+} from "./BudgetEditComponents.jsx";
 
 export default class BudgetEditComponentFactory extends ComponentFactory {
   constructor() {
@@ -13,12 +16,12 @@ export default class BudgetEditComponentFactory extends ComponentFactory {
         vaBudget: BudgetEditElement,
         vaSummingBudgetElement: EditSummingBudgetElement,
         vaBudgetItemElement: EditBudgetItemElement,
-        vaBudgetSummaryElement: BudgetSummaryElement
+        vaBudgetSummaryElement: BudgetSummaryElement,
       },
       fieldPropertyMapperMapping: {
-        vaBudgetSummaryElement: BudgetSummaryEditPropertyMapper
-      }
-    })
+        vaBudgetSummaryElement: BudgetSummaryEditPropertyMapper,
+      },
+    });
   }
 }
 
@@ -26,11 +29,11 @@ class BudgetSummaryEditPropertyMapper {
   static map(props) {
     return _.assign({}, props, {
       labelTranslations: {
-        totalSumRowLabel: {fi:"Opetushallituksen myöntämä avustus"},
-        ophFinancingLabel: {fi:"Opetushallituksen myöntämä avustus"},
-        selfFinancingLabel: {fi:"Omarahoitus"}
+        totalSumRowLabel: { fi: "Opetushallituksen myöntämä avustus" },
+        ophFinancingLabel: { fi: "Opetushallituksen myöntämä avustus" },
+        selfFinancingLabel: { fi: "Omarahoitus" },
       },
-      showSelfFinancingField: false
-    })
+      showSelfFinancingField: false,
+    });
   }
 }

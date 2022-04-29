@@ -1,11 +1,14 @@
-import React from 'react'
+import React from "react";
 
-import ComponentFactory from 'soresu-form/web/form/ComponentFactory.jsx'
+import ComponentFactory from "soresu-form/web/form/ComponentFactory.jsx";
 
-import {EditSummingBudgetElement, EditBudgetItemElement} from './SeurantaBudgetEditComponents.jsx'
-import BudgetEditElement from '../budgetedit/BudgetEditComponents.jsx'
+import {
+  EditSummingBudgetElement,
+  EditBudgetItemElement,
+} from "./SeurantaBudgetEditComponents.jsx";
+import BudgetEditElement from "../budgetedit/BudgetEditComponents.jsx";
 
-const Empty = () => <div></div>
+const Empty = () => <div></div>;
 
 export default class SeurantaBudgetEditComponentFactory extends ComponentFactory {
   constructor() {
@@ -14,9 +17,9 @@ export default class SeurantaBudgetEditComponentFactory extends ComponentFactory
         vaBudget: BudgetEditElement,
         vaSummingBudgetElement: EditSummingBudgetElement,
         vaBudgetItemElement: EditBudgetItemElement,
-        vaBudgetSummaryElement: Empty
+        vaBudgetSummaryElement: Empty,
       },
-      fieldPropertyMapperMapping: {}
-    })
+      fieldPropertyMapperMapping: {},
+    });
   }
 }

@@ -7,20 +7,23 @@ const pillStyles = {
   red: styles.redPill,
   yellow: styles.yellowPill,
   grey: styles.greyPill,
-  blue: styles.bluePill
-} as const
+  blue: styles.bluePill,
+} as const;
 
 export interface PillProps {
-  color: keyof typeof pillStyles
-  text: string
-  compact?: boolean
-  testId?: string | null
+  color: keyof typeof pillStyles;
+  text: string;
+  compact?: boolean;
+  testId?: string | null;
 }
 
-export const Pill = ({color, text, compact, testId = null}: PillProps) =>  (
-  <div data-test-id={testId} className={classNames(pillStyles[color], {
-    [styles.compact]: compact
-  })}>
+export const Pill = ({ color, text, compact, testId = null }: PillProps) => (
+  <div
+    data-test-id={testId}
+    className={classNames(pillStyles[color], {
+      [styles.compact]: compact,
+    })}
+  >
     {text}
   </div>
-)
+);

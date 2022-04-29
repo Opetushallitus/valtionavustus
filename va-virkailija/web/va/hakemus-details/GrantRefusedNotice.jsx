@@ -1,11 +1,11 @@
-import React, {Component} from 'react'
-import DateUtil from 'soresu-form/web/DateUtil.ts'
+import React, { Component } from "react";
+import DateUtil from "soresu-form/web/DateUtil.ts";
 
 export default class GrantRefusedNotice extends Component {
   render() {
-    const {application} = this.props
+    const { application } = this.props;
     if (!application.refused) {
-      return null
+      return null;
     }
     return (
       <div className="grant-refused-notice soresu-preview">
@@ -26,6 +26,7 @@ export default class GrantRefusedNotice extends Component {
             </div>
           </div>
         </div>
-      </div>)
+      </div>
+    );
   }
 }
