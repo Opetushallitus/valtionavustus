@@ -95,9 +95,8 @@ export const TalousarvioForm = ({
     ? "currentSumError"
     : "";
   // @ts-ignore Formik provides incorrect error type
-  const currentSumErrorElem = f.errors.talousarvio?.currentSum && (
-    <ErrorMessage text={f.errors.talousarvio?.currentSum} />
-  );
+  const currentSum = f.errors.talousarvio?.currentSum;
+  const currentSumErrorElem = currentSum && <ErrorMessage text={currentSum} />;
   return (
     <>
       <div
