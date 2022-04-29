@@ -928,7 +928,7 @@ const PeopleRoleButton = ({
         ? <button aria-label={ariaLabel} disabled={disallowChangeHakemusState}
                   className={styles.addRoleButton}
                   onClick={onClickCallback}>
-            <AddRoleImage />
+            <AddRoleImage disabled={disallowChangeHakemusState} />
           </button>
         : <button aria-label={ariaLabel} disabled={disallowChangeHakemusState}
                   className={styles.roleButton}
