@@ -5,8 +5,9 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 import Translator from 'soresu-form/web/form/Translator'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
-import { Avustushaku, Hakemus, LegacyTranslationDict, Selvitys } from 'soresu-form/web/va/types'
+import { Avustushaku, Hakemus, Selvitys } from 'soresu-form/web/va/types'
 import { Language } from 'soresu-form/web/va/i18n/translations'
+import translations from 'soresu-form/resources/public/translations.json'
 
 import HakemustenArviointiController from '../HakemustenArviointiController'
 import { UserInfo } from '../types'
@@ -18,7 +19,6 @@ interface ValiselvitysEmailProps {
   valiselvitys: Selvitys
   lang: Language
   userInfo: UserInfo
-  translations: LegacyTranslationDict
 }
 
 type Email = { value: string, isValid: boolean }
@@ -28,8 +28,8 @@ const makeEmptyRecipientEmail = () => ({value: "", isValid: true})
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 function initialMessage(props: ValiselvitysEmailProps) {
-  const { avustushaku, hakemus, lang, translations, userInfo, valiselvitys } = props
-  const translator = new Translator(translations)
+  const { avustushaku, hakemus, lang, userInfo, valiselvitys } = props
+  const translator = new Translator(translations["selvitys-email"])
   return translator.translate("valiselvitys-default-message", lang, "", {
     "selvitys-type-lowercase":  translator.translate('valiselvitys', lang),
     "selvitys-type-capitalized": capitalize(translator.translate('valiselvitys', lang)),
@@ -41,8 +41,8 @@ function initialMessage(props: ValiselvitysEmailProps) {
 }
 
 function initialSubject(props: ValiselvitysEmailProps) {
-  const { lang, translations, valiselvitys } = props
-  const translator = new Translator(translations)
+  const { lang, valiselvitys } = props
+  const translator = new Translator(translations["selvitys-email"])
   return translator.translate("default-subject", lang, "", {
     "selvitys-type-capitalized": capitalize(translator.translate('valiselvitys', lang)),
     "register-number": valiselvitys["register-number"] || ''

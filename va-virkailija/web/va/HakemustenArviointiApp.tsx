@@ -50,7 +50,6 @@ const App = ({state, controller}: Props) => {
       saveStatus,
       selectedHakemusAccessControl,
       subTab,
-      translations,
       userInfo,
     } = state
     const { avustushaku, environment, hakemukset, } = hakuData
@@ -161,7 +160,6 @@ const App = ({state, controller}: Props) => {
           <HakemusDetails hakuData={hakuData}
                           avustushaku={avustushaku}
                           hakemus={state.selectedHakemus}
-                          translations={translations}
                           selectedHakemusAccessControl={selectedHakemusAccessControl}
                           userInfo={state.userInfo}
                           showOthersScores={state.showOthersScores}

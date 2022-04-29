@@ -5,7 +5,7 @@ import SelvitysNotFilled from './SelvitysNotFilled'
 import SelvitysLink from './SelvitysLink'
 import PresenterComment from './PresenterComment'
 import ApplicationPayments from './ApplicationPayments'
-import { Avustushaku, Hakemus, LegacyTranslations } from 'soresu-form/web/va/types'
+import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
 import { Role, UserInfo } from '../types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
@@ -15,7 +15,6 @@ type SelvitysProps = {
   controller: HakemustenArviointiController
   hakemus: Hakemus
   avustushaku: Avustushaku
-  translations: LegacyTranslations
   userInfo: UserInfo
   multibatchEnabled: boolean
   isPresentingOfficer: boolean
@@ -25,7 +24,7 @@ type SelvitysProps = {
   presenter?: Role
 }
 
-const Väliselvitys = ({ controller, hakemus, avustushaku, translations, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText }: SelvitysProps) => {
+const Väliselvitys = ({ controller, hakemus, avustushaku, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText }: SelvitysProps) => {
   const hasSelvitysAnswers = !!hakemus.selvitys?.valiselvitys?.answers
   const valiselvitys = hakemus.selvitys?.valiselvitys
   const form = hakemus.selvitys?.valiselvitysForm
@@ -36,7 +35,6 @@ const Väliselvitys = ({ controller, hakemus, avustushaku, translations, userInf
       {hasSelvitysAnswers
         ? <SelvitysPreview hakemus={hakemus}
                             avustushaku={avustushaku}
-                            translations={translations}
                             selvitysType='valiselvitys'
                             selvitysHakemus={valiselvitys}
                             form={form} />
@@ -57,7 +55,6 @@ const Väliselvitys = ({ controller, hakemus, avustushaku, translations, userInf
           avustushaku={avustushaku}
           valiselvitys={valiselvitys}
           userInfo={userInfo}
-          translations={translations["selvitys-email"]}
           lang={hakemus.language}
         />
       }

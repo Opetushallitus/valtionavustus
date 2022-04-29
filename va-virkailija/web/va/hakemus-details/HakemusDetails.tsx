@@ -7,7 +7,7 @@ import Loppuselvitys from './Loppuselvitys'
 import Väliselvitys from './Väliselvitys'
 import Seuranta from './Seuranta'
 import {HakuData, SelectedHakemusAccessControl, UserInfo, VALMISTELIJA_ROLES} from "../types";
-import {Avustushaku, Hakemus, HelpTexts, LegacyTranslations} from "soresu-form/web/va/types";
+import {Avustushaku, Hakemus, HelpTexts} from "soresu-form/web/va/types";
 import HakemustenArviointiController from "../HakemustenArviointiController";
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
 
@@ -18,7 +18,6 @@ interface Props {
   avustushaku: Avustushaku
   hakemus: Hakemus | undefined
   selectedHakemusAccessControl: SelectedHakemusAccessControl
-  translations: LegacyTranslations
   userInfo: UserInfo
   showOthersScores: boolean
   subTab: string
@@ -31,7 +30,7 @@ interface Props {
 
 export const HakemusDetails = (props: Props) => {
     const {controller, hakemus, avustushaku, hakuData, userInfo,
-           showOthersScores, translations, environment, splitView,
+           showOthersScores, environment, splitView,
            selectedHakemusAccessControl, subTab, helpTexts, toggleSplitView} = props
     if (!(typeof hakemus === 'object')) {
       return null
@@ -73,7 +72,6 @@ export const HakemusDetails = (props: Props) => {
           return <HakemusArviointi hakemus={hakemus}
                                    avustushaku={avustushaku}
                                    hakuData={hakuData}
-                                   translations={translations}
                                    selectedHakemusAccessControl={selectedHakemusAccessControl}
                                    userInfo={userInfo}
                                    showOthersScores={showOthersScores}
@@ -84,7 +82,6 @@ export const HakemusDetails = (props: Props) => {
         case 'valiselvitys':
           return <Väliselvitys environment={environment} controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo} presenter={hakemukselleUkotettuValmistelija}
-                           translations={translations}
                            multibatchEnabled={multibatchEnabled}
                            isPresentingOfficer={isPresentingOfficer}
                            selvitysLinkHelpText={helpTexts["hankkeen_sivu__väliselvitys___linkki_lomakkeelle"]}
@@ -92,7 +89,6 @@ export const HakemusDetails = (props: Props) => {
         case 'loppuselvitys':
           return <Loppuselvitys environment={environment} controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo} presenter={hakemukselleUkotettuValmistelija}
-                           translations={translations}
                            multibatchEnabled={multibatchEnabled}
                            isPresentingOfficer={isPresentingOfficer}
                            selvitysLinkHelpText={helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"]}
@@ -119,7 +115,7 @@ export const HakemusDetails = (props: Props) => {
               }
             </>
         case 'seuranta':
-          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakuData={hakuData} translations={translations} helpTexts={helpTexts}/>
+          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} muutoshakemukset={muutoshakemukset} hakuData={hakuData} helpTexts={helpTexts}/>
         default:
           throw new Error("Bad subTab selection '" + tabName + "'")
       }
@@ -153,7 +149,7 @@ export const HakemusDetails = (props: Props) => {
           {tab('muutoshakemukset', <MuutoshakemuksetLabel/>)}
           {tab('seuranta', 'Seuranta', 'tab-seuranta')}
         </div>
-        <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
+        <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} />
         <div id="hakemus-arviointi" className="fixed-content">
           <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
             {getSubTab(subTab)}

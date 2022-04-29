@@ -14,7 +14,6 @@ import { LastUpdated } from './LastUpdated'
 import {
   DecisionLiite,
   HelpTexts, Language,
-  LegacyTranslations,
   Liite, LiiteAttachment, LiiteAttachmentVersion
 } from "soresu-form/web/va/types";
 import {EnvironmentApiResponse} from "soresu-form/web/va/types/environment";
@@ -733,7 +732,6 @@ interface DecisionEditorProps {
   decisionLiitteet: Liite[]
   environment: EnvironmentApiResponse
   controller: HakujenHallintaController
-  translations: LegacyTranslations
   helpTexts: HelpTexts
 }
 

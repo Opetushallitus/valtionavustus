@@ -8,7 +8,7 @@ import ShouldPay from './ShouldPay'
 import AllowVisibilityInExternalSystem from './AllowVisibilityInExternalSystem'
 import ShouldPayComments from './ShouldPayComments'
 import HakemustenArviointiController from '../HakemustenArviointiController'
-import { Avustushaku, Hakemus, HelpTexts, LegacyTranslations } from 'soresu-form/web/va/types'
+import { Avustushaku, Hakemus, HelpTexts } from 'soresu-form/web/va/types'
 import { HakuData } from '../types'
 import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
 
@@ -16,7 +16,6 @@ interface SeurantaProps {
   controller: HakemustenArviointiController
   hakemus: Hakemus
   avustushaku: Avustushaku
-  translations: LegacyTranslations
   hakuData: HakuData
   helpTexts: HelpTexts
   muutoshakemukset?: Muutoshakemus[]
@@ -24,7 +23,7 @@ interface SeurantaProps {
 
 export default class Seuranta extends React.Component<SeurantaProps> {
   render() {
-    const {controller, hakemus, avustushaku, translations, hakuData, helpTexts, muutoshakemukset} = this.props
+    const {controller, hakemus, avustushaku, hakuData, helpTexts, muutoshakemukset} = this.props
     return (
       <div className="seuranta">
         <AllowVisibilityInExternalSystem controller={controller}
@@ -42,7 +41,6 @@ export default class Seuranta extends React.Component<SeurantaProps> {
           <PresenterComment controller={controller} hakemus={hakemus} helpText={helpTexts["hankkeen_sivu__seuranta___valmistelijan_huomiot"]}/>
           <SeurantaBudgetEditing avustushaku={avustushaku}
                                  hakuData={hakuData}
-                                 translations={translations}
                                  controller={controller}
                                  hakemus={hakemus}
                                  muutoshakemukset={muutoshakemukset}/>
@@ -50,7 +48,6 @@ export default class Seuranta extends React.Component<SeurantaProps> {
         <div className="seuranta-section">
           <SeurantaLiitteet avustushaku={avustushaku}
                             hakuData={hakuData}
-                            translations={translations}
                             controller={controller}
                             hakemus={hakemus}
                             helpText={helpTexts["hankkeen_sivu__seuranta___liitteet"]}/>

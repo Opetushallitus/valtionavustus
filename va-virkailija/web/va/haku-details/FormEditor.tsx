@@ -10,13 +10,12 @@ import VaPreviewComponentFactory from 'soresu-form/web/va/VaPreviewComponentFact
 
 import FakeFormController from '../form/FakeFormController'
 import FakeFormState from '../form/FakeFormState'
-import { Avustushaku, Field, Form, Koodistos, LegacyTranslations } from 'soresu-form/web/va/types'
+import { Avustushaku, Field, Form, Koodistos } from 'soresu-form/web/va/types'
 import HakujenHallintaController from '../HakujenHallintaController'
 
 interface FormEditorProps {
   controller: HakujenHallintaController
   avustushaku: Avustushaku
-  translations: LegacyTranslations
   koodistos: Koodistos
   formDraft: Form
   onFormChange: (avustushaku: Avustushaku, newDraft: Form) => void
@@ -24,7 +23,7 @@ interface FormEditorProps {
 
 export default class FormEditor extends Component<FormEditorProps> {
   render() {
-    const { avustushaku, controller, translations, koodistos, formDraft, onFormChange } = this.props
+    const { avustushaku, controller, koodistos, formDraft, onFormChange } = this.props
     const allowEditing = avustushaku.privileges && avustushaku.privileges["edit-haku"]
     const onFormEdited = (newDraft: Form, operationResult: Field | void) => {
       if (operationResult && operationResult.fieldType === "koodistoField") {
@@ -38,7 +37,7 @@ export default class FormEditor extends Component<FormEditorProps> {
       allowEditing,
     })
     const formState = formDraft
-      ? FakeFormState.createEditFormState(avustushaku, translations, formDraft.content)
+      ? FakeFormState.createEditFormState(avustushaku, formDraft.content)
       : undefined
     if (formState) {
       formState.koodistos = koodistos

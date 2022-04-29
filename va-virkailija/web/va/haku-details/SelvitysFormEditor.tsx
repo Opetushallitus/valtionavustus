@@ -5,7 +5,7 @@ import moment from 'moment'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
-import { Avustushaku, Form, HelpTexts, Koodistos, LegacyTranslations } from 'soresu-form/web/va/types'
+import { Avustushaku, Form, HelpTexts, Koodistos } from 'soresu-form/web/va/types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 import FormEditor from './FormEditor'
@@ -16,7 +16,6 @@ import HakujenHallintaController from '../HakujenHallintaController'
 type SelvitysFormEditorProps = {
   avustushaku: Avustushaku
   controller: HakujenHallintaController
-  translations: LegacyTranslations
   koodistos: Koodistos
   selvitysType: 'valiselvitys' | 'loppuselvitys'
   environment: EnvironmentApiResponse
@@ -30,7 +29,7 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
   const [sending, setSending] = useState(false)
   const [lahetykset, setLahetykset] = useState<Lahetys[]>([])
 
-  const { avustushaku, controller, translations, koodistos, selvitysType, environment, helpTexts, formDraft, formDraftJson } = props
+  const { avustushaku, controller, koodistos, selvitysType, environment, helpTexts, formDraft, formDraftJson } = props
   const formContent = selvitysType === 'valiselvitys' ? avustushaku.valiselvitysForm : avustushaku.loppuselvitysForm
   const updatedAtElementId = `${selvitysType}UpdatedAt`
   const updatedAt = formContent?.updated_at
@@ -154,7 +153,7 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
           </a>
         </div>
       </div>
-      <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} />
+      <FormEditor avustushaku={avustushaku} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} />
       <div className="form-json-editor">
         <h3>Hakulomakkeen sisältö</h3>
         {parseError && <span className="error">{parseError}</span>}

@@ -7,7 +7,7 @@ import SelvitysNotFilled from './SelvitysNotFilled'
 import SelvitysLink from './SelvitysLink'
 import PresenterComment from './PresenterComment'
 import ApplicationPayments from './ApplicationPayments'
-import { Avustushaku, Hakemus, LegacyTranslations } from 'soresu-form/web/va/types'
+import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 import HakemustenArviointiController from '../HakemustenArviointiController'
 import { Role, UserInfo } from '../types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
@@ -16,7 +16,6 @@ type SelvitysProps = {
   controller: HakemustenArviointiController
   hakemus: Hakemus
   avustushaku: Avustushaku
-  translations: LegacyTranslations
   userInfo: UserInfo
   multibatchEnabled: boolean
   isPresentingOfficer: boolean
@@ -26,7 +25,7 @@ type SelvitysProps = {
   presenter?: Role
 }
 
-const Loppuselvitys = ({ presenter, controller, hakemus, avustushaku, translations, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText }: SelvitysProps) => {
+const Loppuselvitys = ({ presenter, controller, hakemus, avustushaku, userInfo, multibatchEnabled, isPresentingOfficer, presenterCommentHelpText, selvitysLinkHelpText }: SelvitysProps) => {
   const hasSelvitys = !!hakemus.selvitys?.loppuselvitys?.answers
   const selvitysHakemus = hakemus.selvitys?.loppuselvitys
   const form = hakemus.selvitys?.loppuselvitysForm
@@ -43,7 +42,6 @@ const Loppuselvitys = ({ presenter, controller, hakemus, avustushaku, translatio
       {hasSelvitys
         ? <SelvitysPreview hakemus={hakemus}
                             avustushaku={avustushaku}
-                            translations={translations}
                             selvitysType='loppuselvitys'
                             selvitysHakemus={selvitysHakemus}
                             form={form} />

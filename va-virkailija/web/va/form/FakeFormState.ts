@@ -1,12 +1,12 @@
 import Immutable from 'seamless-immutable'
 import { cloneDeep } from 'lodash'
 
+import translations from 'soresu-form/resources/public/translations.json'
 import VaBudgetCalculator from 'soresu-form/web/va/VaBudgetCalculator'
 import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
-import { Avustushaku, Field, Hakemus, HakemusFormState, LegacyTranslations } from 'soresu-form/web/va/types'
+import { Avustushaku, Field, Hakemus, HakemusFormState } from 'soresu-form/web/va/types'
 
 type InitialFakeFormState = {
-  translations: LegacyTranslations
   avustushaku: Avustushaku
   formContent: any
   formOperations?: any
@@ -25,9 +25,8 @@ export default class FakeFormState {
     return attachmentsForId ? attachmentsForId : {}
   }
 
-  static createEditFormState(avustushaku: Avustushaku, translations: LegacyTranslations, formContent: Field[]) {
+  static createEditFormState(avustushaku: Avustushaku, formContent: Field[]) {
     return FakeFormState.createHakemusFormState({
-      translations,
       avustushaku,
       formContent,
       hakemus: ({answers: []} as unknown) as Hakemus
@@ -35,7 +34,6 @@ export default class FakeFormState {
   }
 
   static createHakemusFormState({
-    translations,
     avustushaku,
     formContent,
     formOperations,
@@ -58,7 +56,7 @@ export default class FakeFormState {
         }
       },
       configuration: {
-        translations: translations,
+        translations: Immutable(translations),
         lang: "fi",
         preview: true
       },

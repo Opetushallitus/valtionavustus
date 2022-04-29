@@ -8,7 +8,6 @@ import RouteParser from 'route-parser'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import Dispatcher from 'soresu-form/web/Dispatcher'
 import FormUtil from 'soresu-form/web/form/FormUtil'
-import translations from 'soresu-form/resources/public/translations.json'
 
 import LocalStorage from './LocalStorage'
 import HakuStatuses from './haku-details/HakuStatuses'
@@ -28,7 +27,6 @@ import {
   Koodisto,
   Koodistos,
   Language,
-  LegacyTranslations,
   Liite,
   Payment,
   RahoitusAlue
@@ -63,7 +61,6 @@ export interface SelectedAvustushaku extends Avustushaku {
 export interface State {
   hakuList: Avustushaku[],
   userInfo: UserInfo
-  translations: LegacyTranslations
   environment: EnvironmentApiResponse
   codeOptions: VaCodeValue[]
   decisionLiitteet: Liite[]
@@ -213,7 +210,6 @@ export default class HakujenHallintaController {
     const initialStateTemplate = {
       hakuList: Bacon.fromPromise<Avustushaku[]>(HttpUtil.get("/api/avustushaku")),
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
-      translations: Immutable(translations),
       environment: Bacon.fromPromise(HttpUtil.get("/environment")),
       codeOptions: Bacon.fromPromise(HttpUtil.get("/api/v2/va-code-values/")),
       decisionLiitteet: Bacon.fromPromise(HttpUtil.get("/api/paatos/liitteet")).map(Immutable),

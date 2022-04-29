@@ -5,12 +5,11 @@ import FormJsonEditor from './FormJsonEditor'
 import { MuutoshakukelpoisuusContainer } from './MuutoshakukelpoisuusContainer'
 import HakujenHallintaController, {Avustushaku} from "../HakujenHallintaController";
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
-import { LegacyTranslations, Koodistos, Form, HelpTexts} from 'soresu-form/web/va/types'
+import { Koodistos, Form, HelpTexts} from 'soresu-form/web/va/types'
 
 interface FormEditorContainerProps {
   avustushaku: Avustushaku
   environment: EnvironmentApiResponse
-  translations: LegacyTranslations
   koodistos: Koodistos
   formDraft: Form
   formDraftJson: string
@@ -21,7 +20,6 @@ interface FormEditorContainerProps {
 export default class FormEditorContainer extends Component<FormEditorContainerProps> {
   render() {
     const avustushaku = this.props.avustushaku
-    const translations = this.props.translations
     const koodistos = this.props.koodistos
     const formDraft = this.props.formDraft
     const formDraftJson = this.props.formDraftJson
@@ -66,7 +64,7 @@ export default class FormEditorContainer extends Component<FormEditorContainerPr
             <a target="haku-preview-fi" href={previewUrlFi}>Suomeksi</a><span className="link-divider"/><a target="haku-preview-sv" href={previewUrlSv}>Ruotsiksi</a>
           </div>
         </div>
-        <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange}/>
+        <FormEditor avustushaku={avustushaku} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange}/>
         <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraftJson={formDraftJson} />
       </section>
     )

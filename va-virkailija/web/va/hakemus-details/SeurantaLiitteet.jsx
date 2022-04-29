@@ -5,16 +5,18 @@ import HelpTooltip from "../HelpTooltip"
 import AttachmentField from 'soresu-form/web/form/component/AttachmentField.jsx'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import Translator from 'soresu-form/web/form/Translator'
+import translationJson from 'soresu-form/resources/public/translations.json'
 
 export default class SeurantaLiitteet extends React.Component {
   render() {
-    const {controller, hakemus, hakuData, avustushaku, translations, helpText} = this.props
+    const {controller, hakemus, hakuData, avustushaku, helpText} = this.props
     const hakemusId = hakemus.id
     const avustushakuId = avustushaku.id
     const hakemusUserKey = hakemus["user-key"]
     const attachments = hakuData.attachments[hakemusId] || []
     const hakijaServer = _.get(hakuData,"environment.hakija-server.url.fi")
     const fakeFormController = {componentDidMount: () => {}}
+    const translations = Immutable(translationJson)
 
     const onDrop = (fieldId, files) => {
       const file = files[0]

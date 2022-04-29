@@ -18,7 +18,6 @@ export default class TraineeDayEditing extends Component {
     const avustushaku = this.props.avustushaku
     const hakuData = this.props.hakuData
     const hakemus = this.props.hakemus
-    const translations = this.props.translations
     const allowEditing = this.props.allowEditing
     const traineeDayCalcs = VaTraineeDayUtil.collectCalculatorSpecifications(hakuData.form.content, hakemus.answers)
 
@@ -40,7 +39,6 @@ export default class TraineeDayEditing extends Component {
     }
     const fakeHakemus = {answers: hakemus.arvio["overridden-answers"]}
     const traineeDayEditFormState = FakeFormState.createHakemusFormState({
-      translations,
       avustushaku,
       formContent: [{
         fieldType:  "vaTraineeDayCalculatorSummary",

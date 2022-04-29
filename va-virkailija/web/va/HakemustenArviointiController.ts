@@ -27,7 +27,6 @@ import {
   Score,
   Scoring
 } from "soresu-form/web/va/types"
-import translations from 'soresu-form/resources/public/translations.json'
 import { initDefaultValues } from 'soresu-form/web/form/FormStateLoop'
 
 import HakemusArviointiStatuses
@@ -122,7 +121,6 @@ export default class HakemustenArviointiController {
         saveTime: null,
         serverError: ""
       },
-      translations: Immutable(translations),
       userInfo: Bacon.fromPromise<UserInfo>(HttpUtil.get("/api/userinfo")),
       lahetykset: Bacon.fromPromise(getLahetysStatuses(avustushakuId)),
       earliestPaymentCreatedAt: Bacon.fromPromise(getEarliestPaymentCreatedAt(avustushakuId)),

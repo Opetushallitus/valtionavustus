@@ -23,7 +23,7 @@ moment.locale('fi')
 const momentLocalizer = new MomentLocalizer(moment)
 
 const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
-  const { environment, selectedHaku, translations, codeOptions, helpTexts, saveStatus, userInfo } = state
+  const { environment, selectedHaku, codeOptions, helpTexts, saveStatus, userInfo } = state
   return (
     <Localization date={momentLocalizer} messages={translationsFi.calendar}>
       <HeaderContainer activeTab='admin' environment={environment} userInfo={userInfo} saveStatus={saveStatus} />
@@ -45,7 +45,6 @@ const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
                         koodistos={state.koodistos}
                         userInfo={state.userInfo}
                         controller={controller}
-                        translations={translations}
                         codeOptions={codeOptions}
                         helpTexts={helpTexts} />
       </section>

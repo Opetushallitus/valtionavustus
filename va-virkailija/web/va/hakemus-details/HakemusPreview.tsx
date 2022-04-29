@@ -10,7 +10,7 @@ import VaPreviewComponentFactory from 'soresu-form/web/va/VaPreviewComponentFact
 import VaHakemusRegisterNumber from 'soresu-form/web/va/VaHakemusRegisterNumber'
 import VaChangeRequest from 'soresu-form/web/va/VaChangeRequest'
 import { mapAnswersWithMuutoshakemusData } from 'soresu-form/web/va/MuutoshakemusMapper'
-import { Answer, Avustushaku, Hakemus, HakemusFormState, LegacyTranslations } from 'soresu-form/web/va/types'
+import { Answer, Avustushaku, Hakemus, HakemusFormState } from 'soresu-form/web/va/types'
 import GrantRefusedNotice from './GrantRefusedNotice'
 import EditsDisplayingFormView from './EditsDisplayingFormView'
 import FakeFormController from '../form/FakeFormController'
@@ -19,13 +19,12 @@ import { HakuData } from '../types'
 
 import '../style/formpreview.less'
 
-export default class HakemusPreview extends Component<{ hakemus: Hakemus, avustushaku: Avustushaku, hakuData: HakuData, translations: LegacyTranslations }> {
+export default class HakemusPreview extends Component<{ hakemus: Hakemus, avustushaku: Avustushaku, hakuData: HakuData }> {
   render() {
     const hakemus = this.props.hakemus
     const registerNumber = _.get(hakemus, "register-number", "")
     const avustushaku = this.props.avustushaku
     const hakuData = this.props.hakuData
-    const translations = this.props.translations
     const formState = createPreviewHakemusFormState()
     const registerNumberDisplay = <VaHakemusRegisterNumber key="register-number"
                                                            registerNumber={registerNumber}
@@ -62,7 +61,6 @@ export default class HakemusPreview extends Component<{ hakemus: Hakemus, avustu
 
     function createPreviewHakemusFormState(): HakemusFormState {
       const hakemusFormState = FakeFormState.createHakemusFormState({
-        translations,
         avustushaku,
         formContent: hakuData.form.content,
         attachments: hakuData.attachments,

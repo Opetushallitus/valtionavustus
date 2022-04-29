@@ -2,7 +2,7 @@ import React from 'react'
 import * as Bacon from 'baconjs'
 
 import DateUtil from 'soresu-form/web/DateUtil'
-import { Avustushaku, ChangeLogEntry, Hakemus, HelpTexts, LegacyTranslations } from 'soresu-form/web/va/types'
+import { Avustushaku, ChangeLogEntry, Hakemus, HelpTexts } from 'soresu-form/web/va/types'
 
 import HakemusBudgetEditing from '../budgetedit/HakemusBudgetEditing'
 import HakemusScoring from './HakemusScoring'
@@ -28,7 +28,6 @@ type HakemusArviointiProps = {
   controller: HakemustenArviointiController
   hakemus: Hakemus
   avustushaku: Avustushaku
-  translations: LegacyTranslations
   hakuData: HakuData
   userInfo: UserInfo
   helpTexts: HelpTexts
@@ -37,7 +36,7 @@ type HakemusArviointiProps = {
   selectedHakemusAccessControl: SelectedHakemusAccessControl
 }
 
-export const HakemusArviointi = ({ controller, hakemus, avustushaku, hakuData, translations, userInfo, showOthersScores, multibatchEnabled, helpTexts, selectedHakemusAccessControl } : HakemusArviointiProps) => {
+export const HakemusArviointi = ({ controller, hakemus, avustushaku, hakuData, userInfo, showOthersScores, multibatchEnabled, helpTexts, selectedHakemusAccessControl } : HakemusArviointiProps) => {
   const {
     allowHakemusCommenting,
     allowHakemusStateChanges,
@@ -63,7 +62,7 @@ export const HakemusArviointi = ({ controller, hakemus, avustushaku, hakuData, t
       <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
       <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} userInfo={userInfo} />
       <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
-      <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
+      <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} helpTexts={helpTexts} />
       {multibatchEnabled && avustushaku.content["multiplemaksuera"] &&
         <ApplicationPayments application={hakemus}
                             grant={avustushaku}
@@ -72,7 +71,7 @@ export const HakemusArviointi = ({ controller, hakemus, avustushaku, hakuData, t
                             onAddPayment={controller.addPayment}
                             onRemovePayment={controller.removePayment}
                             readonly={true}/>}
-      <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
+      <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusOfficerEditing} status="officer_edit" helpTexts={helpTexts} />
       {hakemus.status === 'draft' && userInfo.privileges.includes('va-admin') && (
         <div className="value-edit">

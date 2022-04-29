@@ -12,7 +12,7 @@ import SeurantaBudgetEditFormController from './SeurantaBudgetEditFormController
 import SeurantaBudgetEditComponentFactory from './SeurantaBudgetEditComponentFactory.jsx'
 
 import '../style/budgetedit.less'
-import { Answer, Avustushaku, Hakemus, Form as FormType, LegacyTranslations } from 'soresu-form/web/va/types'
+import { Answer, Avustushaku, Hakemus, Form as FormType } from 'soresu-form/web/va/types'
 import { HakuData } from '../types'
 import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
 
@@ -21,7 +21,6 @@ interface SeurantaBudgetEditingProps {
   hakemus: Hakemus
   hakuData: HakuData
   avustushaku: Avustushaku
-  translations: LegacyTranslations
   muutoshakemukset?: Muutoshakemus[]
 }
 
@@ -39,7 +38,7 @@ export default class SeurantaBudgetEditing extends React.Component<SeurantaBudge
   }
 
   render() {
-    const {controller, hakemus, hakuData, avustushaku, translations, muutoshakemukset} = this.props
+    const {controller, hakemus, hakuData, avustushaku, muutoshakemukset} = this.props
 
     const vaBudget = FormUtil.findFieldByFieldType(hakuData.form.content, "vaBudget")
 
@@ -69,7 +68,6 @@ export default class SeurantaBudgetEditing extends React.Component<SeurantaBudge
       printEntityId: undefined
     }
     const budgetEditFormState = FakeFormState.createHakemusFormState({
-      translations,
       avustushaku,
       formContent: [budgetSpec],
       formOperations,

@@ -1,7 +1,7 @@
 import React from 'react'
 import ClassNames from 'classnames'
 
-import { Avustushaku, Form, HelpTexts, Koodistos, LegacyTranslations, Liite } from 'soresu-form/web/va/types'
+import { Avustushaku, Form, HelpTexts, Koodistos, Liite } from 'soresu-form/web/va/types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 import { HakuEdit } from './HakuEdit'
@@ -20,7 +20,6 @@ interface EditorSelectorProps {
   koodistos: Koodistos
   userInfo: UserInfo
   environment: EnvironmentApiResponse
-  translations: LegacyTranslations
   formDraft: Form
   formDraftJson: string
   loppuselvitysFormDraft: Form
@@ -49,7 +48,6 @@ export const EditorSelector = (props: EditorSelectorProps) => {
     koodistos,
     userInfo,
     environment,
-    translations,
     valiselvitysFormDraft,
     valiselvitysFormDraftJson,
     loppuselvitysFormDraft,
@@ -69,7 +67,6 @@ export const EditorSelector = (props: EditorSelectorProps) => {
     case "form-editor":
       subTabContent = <FormEditorContainer avustushaku={avustushaku}
                                             environment={environment}
-                                            translations={translations}
                                             koodistos={koodistos}
                                             formDraft={formDraft}
                                             formDraftJson={formDraftJson}
@@ -81,7 +78,6 @@ export const EditorSelector = (props: EditorSelectorProps) => {
                                       decisionLiitteet={decisionLiitteet}
                                       environment={environment}
                                       controller={controller}
-                                      translations={translations}
                                       helpTexts={helpTexts} />
       break
     case "valiselvitys":
@@ -93,7 +89,6 @@ export const EditorSelector = (props: EditorSelectorProps) => {
                                       koodistos={koodistos}
                                       formDraft={subTab === 'valiselvitys' ? valiselvitysFormDraft : loppuselvitysFormDraft}
                                       formDraftJson={subTab === 'valiselvitys' ? valiselvitysFormDraftJson : loppuselvitysFormDraftJson}
-                                      translations={translations}
                                       helpTexts={helpTexts} />
       break
     default:
