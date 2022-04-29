@@ -1,13 +1,26 @@
 import _ from "lodash";
 import React from "react";
+import Immutable from "seamless-immutable";
+
 import HelpTooltip from "../HelpTooltip";
 
 import AttachmentField from "soresu-form/web/form/component/AttachmentField.jsx";
 import HttpUtil from "soresu-form/web/HttpUtil";
 import Translator from "soresu-form/web/form/Translator";
 import translationJson from "soresu-form/resources/public/translations.json";
+import { HakuData } from "../types";
+import HakemustenArviointiController from "../HakemustenArviointiController";
+import { Avustushaku, Hakemus } from "soresu-form/web/va/types";
 
-export default class SeurantaLiitteet extends React.Component {
+type SeurantaLiitteetProps = {
+  controller: HakemustenArviointiController;
+  hakemus: Hakemus;
+  hakuData: HakuData;
+  avustushaku: Avustushaku;
+  helpText: string;
+};
+
+export default class SeurantaLiitteet extends React.Component<SeurantaLiitteetProps> {
   render() {
     const { controller, hakemus, hakuData, avustushaku, helpText } = this.props;
     const hakemusId = hakemus.id;
@@ -18,7 +31,7 @@ export default class SeurantaLiitteet extends React.Component {
     const fakeFormController = { componentDidMount: () => {} };
     const translations = Immutable(translationJson);
 
-    const onDrop = (fieldId, files) => {
+    const onDrop = (fieldId: string, files: any) => {
       const file = files[0];
       const formData = new FormData();
       formData.append("file", file);
@@ -35,7 +48,7 @@ export default class SeurantaLiitteet extends React.Component {
             error.response.data &&
             error.response.data["detected-content-type"]
           ) {
-            const translator = new Translator(translations.errors);
+            const translator = new Translator(translationJson.errors);
             alert(
               translator.translate(
                 "attachment-has-illegal-content-type-error",
@@ -54,7 +67,7 @@ export default class SeurantaLiitteet extends React.Component {
         });
     };
 
-    const onRemove = (fieldId) => {
+    const onRemove = (fieldId: string) => {
       const url = `${hakijaServer}api/avustushaku/${avustushakuId}/hakemus/${hakemusUserKey}/attachments/${fieldId}`;
       HttpUtil.delete(url)
         .then(function () {
@@ -67,7 +80,7 @@ export default class SeurantaLiitteet extends React.Component {
         });
     };
 
-    const makeDownloadUrl = (fieldId) =>
+    const makeDownloadUrl = (fieldId: string) =>
       `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/attachments/${fieldId}`;
 
     const seurantaAttachmentsCount = _.keys(attachments).filter(
