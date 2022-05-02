@@ -1,4 +1,4 @@
-import BasicTextField from "./BasicTextField.jsx";
+import BasicTextField from "./BasicTextField";
 
 export default class IbanTextField extends BasicTextField {
   constructor(props) {

@@ -1,4 +1,4 @@
-import BasicTextField from "./BasicTextField.jsx";
+import BasicTextField from "./BasicTextField";
 
 export default class KoodistoField extends BasicTextField {
   constructor(props) {
@@ -11,7 +11,6 @@ export default class KoodistoField extends BasicTextField {
   }
 
   render() {
-    console.log("I am a KoodistoField that does not do much yet.");
     return super.render();
   }
 }

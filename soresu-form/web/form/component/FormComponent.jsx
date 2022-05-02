@@ -2,21 +2,21 @@ import React from "react";
 
 import ComponentFactory from "../ComponentFactory.jsx";
 
-import BasicTextField from "./BasicTextField.jsx";
+import BasicTextField from "./BasicTextField";
 import BasicTextArea from "./BasicTextArea";
-import EmailTextField from "./EmailTextField.jsx";
-import MoneyTextField from "./MoneyTextField.jsx";
-import IntegerTextField from "./IntegerTextField.jsx";
-import DecimalTextField from "./DecimalTextField.jsx";
-import FinnishBusinessIdTextField from "./FinnishBusinessIdTextField.jsx";
-import IbanTextField from "./IbanTextField.jsx";
-import BicTextField from "./BicTextField.jsx";
-import Dropdown from "./Dropdown.jsx";
-import RadioButton from "./RadioButton.jsx";
-import CheckboxButton from "./CheckboxButton.jsx";
-import AttachmentField from "./AttachmentField.jsx";
-import KoodistoField from "./KoodistoField.jsx";
-import TableField from "./TableField.jsx";
+import EmailTextField from "./EmailTextField";
+import MoneyTextField from "./MoneyTextField";
+import IntegerTextField from "./IntegerTextField";
+import DecimalTextField from "./DecimalTextField";
+import FinnishBusinessIdTextField from "./FinnishBusinessIdTextField";
+import IbanTextField from "./IbanTextField";
+import BicTextField from "./BicTextField";
+import Dropdown from "./Dropdown";
+import RadioButton from "./RadioButton";
+import CheckboxButton from "./CheckboxButton";
+import AttachmentField from "./AttachmentField";
+import KoodistoField from "./KoodistoField";
+import TableField from "./TableField";
 import {
   TextFieldPropertyMapper,
   TrimmingTextFieldPropertyMapper,

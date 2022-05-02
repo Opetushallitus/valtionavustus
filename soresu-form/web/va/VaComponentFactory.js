@@ -1,7 +1,7 @@
 import ComponentFactory from "soresu-form/web/form/ComponentFactory.jsx";
 import CheckboxButton from "soresu-form/web/form/component/CheckboxButton.jsx";
-import EmailTextField from "soresu-form/web/form/component/EmailTextField.jsx";
-import MoneyTextField from "soresu-form/web/form/component/MoneyTextField.jsx";
+import EmailTextField from "soresu-form/web/form/component/EmailTextField";
+import MoneyTextField from "soresu-form/web/form/component/MoneyTextField";
 import {
   TrimmingTextFieldPropertyMapper,
   FieldOnChangePropertyMapper,
