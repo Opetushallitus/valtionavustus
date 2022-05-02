@@ -415,7 +415,7 @@ export default class HakemusListing extends Component {
               <th className="project-name-column">
                 <input
                   className="text-filter"
-                  placeholder="Asianumero tai hanke"
+                  placeholder="Asiatunnus tai hanke"
                   onChange={onFilterChange("name")}
                   value={filter.name}
                 ></input>

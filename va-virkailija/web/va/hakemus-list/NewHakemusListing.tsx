@@ -422,7 +422,7 @@ function HakemusTable({
           <th>
             <div className={styles.tableHeader}>
               <input
-                placeholder="Asianumero tai hanke"
+                placeholder="Asiatunnus tai hanke"
                 onChange={onProjectInput}
                 value={projectNameOrCode}
               />
@@ -771,7 +771,7 @@ function ResolvedTable(props: ResolvedTableProps) {
           <th>
             <div className={styles.tableHeader}>
               <input
-                placeholder="Asianumero tai hanke"
+                placeholder="Asiatunnus tai hanke"
                 onChange={onProjectInput}
                 value={projectNameOrCode}
               />

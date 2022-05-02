@@ -40,7 +40,7 @@ export class HakemustenArviointiPage {
       '[placeholder="Hakijaorganisaatio"]'
     );
     this.inputFilterProject = this.page.locator(
-      '[placeholder="Asianumero tai hanke"]'
+      '[placeholder="Asiatunnus tai hanke"]'
     );
     this.hakemusListing = this.page.locator("#hakemus-listing");
     this.showUnfinished = this.page.locator('text="Näytä keskeneräiset"');
