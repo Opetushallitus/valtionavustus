@@ -81,8 +81,6 @@
   
   :aot [oph.va.jdbc.enums oph.va.hakija.db.migrations oph.va.virkailija.db.migrations]
 
-  :nvd {:suppression-file "./dependency-check-suppressionlist.xml"}
-
   :source-paths ["va-hakija/src", "va-virkailija/src/clojure"]
   :resource-paths ["va-hakija/resources", "va-virkailija/resources"]
 

@@ -25,10 +25,15 @@ function lein_dep_check_in_dir () {
   local dir=$1
 
   local EXIT=0
-  cd "$dir"
-  "$LEIN" nvd check || EXIT=$?
+  nvd_check $dir || EXIT=$?
   delete_temp_files_if_running_on_jenkins
   return $EXIT
+}
+
+function nvd_check {
+  local dir=$1
+  cd "$repo/dependency-check"
+  "$LEIN" with-profile -user run -m nvd.task.check nvd-config.json "$(cd $dir; $LEIN classpath)"
 }
 
 function download_temp_db_to_workspace_in_jenkins() {
