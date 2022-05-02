@@ -5,9 +5,3 @@ export function validateMoney(input: string) {
     ? undefined
     : {error: "money"};
 }
-
-export default class MoneyValidator {
-  static validateMoney(input: string) {
-    return validateMoney(input);
-  }
-}

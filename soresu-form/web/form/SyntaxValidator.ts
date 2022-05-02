@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 import BankAccountValidator from "./BankAccountValidator";
-import MoneyValidator from "./MoneyValidator";
+import { validateMoney } from "./MoneyValidator";
 import IntegerValidator from "./IntegerValidator";
 import DecimalValidator from "./DecimalValidator";
 import TableValidator from "./TableValidator";
@@ -43,7 +43,7 @@ export default class SyntaxValidator {
         break;
       case "moneyField":
         {
-          const moneyError = MoneyValidator.validateMoney(value);
+          const moneyError = validateMoney(value);
           if (moneyError) {
             validationErrors.push(moneyError);
           }
