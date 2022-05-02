@@ -122,6 +122,7 @@ export default class SeurantaLiitteet extends React.Component<SeurantaLiitteetPr
             translations={translations}
             lang="fi"
             disabled={false}
+            // @ts-ignore
             allAttachments={attachments}
             onDrop={_.partial(onDrop, field.id)}
             onRemove={_.partial(onRemove, field.id)}

@@ -1,7 +1,7 @@
 import _ from "lodash";
 import React from "react";
 
-import BasicFieldComponent from "soresu-form/web/form/component/BasicFieldComponent.jsx";
+import BasicFieldComponent from "soresu-form/web/form/component/BasicFieldComponent";
 import BasicTextField from "soresu-form/web/form/component/BasicTextField.jsx";
 import Translator from "soresu-form/web/form/Translator";
 import { parseDecimal } from "soresu-form/web/MathUtil";

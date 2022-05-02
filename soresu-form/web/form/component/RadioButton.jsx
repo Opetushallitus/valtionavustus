@@ -1,6 +1,6 @@
 import React from "react";
 import Translator from "../Translator";
-import BasicFieldComponent from "./BasicFieldComponent.jsx";
+import BasicFieldComponent from "./BasicFieldComponent";
 
 export default class RadioButton extends BasicFieldComponent {
   render() {

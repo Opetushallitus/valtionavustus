@@ -2,11 +2,27 @@ import React from "react";
 import ClassNames from "classnames";
 import _ from "lodash";
 
-import LocalizedString from "./LocalizedString.tsx";
+import LocalizedString from "./LocalizedString";
 import HelpTooltip from "./HelpTooltip";
+import FormController from "soresu-form/web/form/FormController";
+import {Field} from "soresu-form/web/va/types";
 
-export default class BasicFieldComponent extends React.Component {
-  constructor(props) {
+interface Props {
+  field: any
+  controller: any
+  value: any
+  renderingParameters: any
+  disabled?: boolean
+  required?: boolean
+  hasError?: boolean
+  htmlId: any
+  lang: any
+  translations: any
+  translationKey: string
+}
+
+export default class BasicFieldComponent extends React.Component<Props> {
+  constructor(props: Props) {
     super(props);
     this.componentDidMount = this.componentDidMount.bind(this);
   }
@@ -20,9 +36,9 @@ export default class BasicFieldComponent extends React.Component {
     }
   }
 
-  static checkValueOnBlur(field, htmlId, oldValue, onChange, controller) {
+  static checkValueOnBlur(field: Field, htmlId: string, oldValue: string, onChange: any, controller: FormController<any, any>) {
     return function () {
-      const element = document.getElementById(htmlId);
+      const element = document.getElementById(htmlId) as HTMLInputElement;
       if (element) {
         const newValue = element.value;
         if (oldValue !== newValue) {
@@ -34,7 +50,7 @@ export default class BasicFieldComponent extends React.Component {
     };
   }
 
-  label(className) {
+  label(className: string) {
     const translationKey = this.props.translationKey;
     if (this.hideLabel() || !this.props.translations[translationKey]) {
       return undefined;
@@ -68,12 +84,12 @@ export default class BasicFieldComponent extends React.Component {
     return undefined;
   }
 
-  labelClassName(className) {
+  labelClassName(className: string) {
     const classNames = ClassNames(className, { disabled: this.props.disabled });
     return !_.isEmpty(classNames) ? classNames : undefined;
   }
 
-  resolveClassName(className) {
+  resolveClassName(className: string) {
     const classNames = ClassNames(className, { error: this.props.hasError });
     return !_.isEmpty(classNames) ? classNames : undefined;
   }
@@ -85,7 +101,7 @@ export default class BasicFieldComponent extends React.Component {
     );
   }
 
-  param(param, defaultValue) {
+  param(param: any, defaultValue: any) {
     if (!this.props.field.params) {
       return defaultValue;
     }

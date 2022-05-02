@@ -5,7 +5,7 @@ import DropdownList from "react-widgets/DropdownList";
 import "react-widgets/styles.css";
 
 import Translator from "../Translator";
-import BasicFieldComponent from "./BasicFieldComponent.jsx";
+import BasicFieldComponent from "./BasicFieldComponent";
 
 export default class Dropdown extends BasicFieldComponent {
   render() {

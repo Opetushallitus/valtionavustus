@@ -3,7 +3,7 @@ import React from "react";
 import _ from "lodash";
 
 import Translator from "../Translator";
-import BasicFieldComponent from "./BasicFieldComponent.jsx";
+import BasicFieldComponent from "./BasicFieldComponent";
 
 export default class CheckboxButton extends BasicFieldComponent {
   render() {

@@ -1,6 +1,6 @@
 import ClassNames from "classnames";
 import _ from "lodash";
-import BasicFieldComponent from "./BasicFieldComponent.jsx";
+import BasicFieldComponent from "./BasicFieldComponent";
 
 export default class BasicSizedComponent extends BasicFieldComponent {
   sizeClassName() {

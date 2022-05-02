@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import BasicFieldComponent from "./BasicFieldComponent.jsx";
+import BasicFieldComponent from "./BasicFieldComponent";
 
 export class DefaultPropertyMapper {
   static map(props) {

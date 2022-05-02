@@ -5,7 +5,7 @@ import ClassNames from "classnames";
 import Translator from "soresu-form/web/form/Translator";
 import ComponentFactory from "soresu-form/web/form/ComponentFactory.jsx";
 import LocalizedString from "soresu-form/web/form/component/LocalizedString.tsx";
-import BasicFieldComponent from "soresu-form/web/form/component/BasicFieldComponent.jsx";
+import BasicFieldComponent from "soresu-form/web/form/component/BasicFieldComponent";
 import BasicValue from "soresu-form/web/form/preview/BasicValue.jsx";
 import MoneyValue from "soresu-form/web/form/preview/MoneyValue.jsx";
 import MultipleOptionValue from "soresu-form/web/form/preview/MultipleOptionValue.jsx";
