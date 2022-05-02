@@ -1,14 +1,23 @@
 import React from "react";
 import ClassNames from "classnames";
 import _ from "lodash";
+// @ts-ignore
 import Dropzone from "react-dropzone";
 
 import AttachmentDisplay from "../preview/AttachmentDisplay.jsx";
 import RemoveButton from "./RemoveButton.jsx";
 import BasicSizedComponent from "./BasicSizedComponent";
-import LocalizedString from "./LocalizedString.tsx";
+import LocalizedString from "./LocalizedString";
 
-export default class AttachmentField extends BasicSizedComponent {
+interface Props {
+  allAttachments: any;
+  renderingParameters?: any;
+  downloadUrl: any;
+  onRemove: any;
+  onDrop: any;
+}
+
+export default class AttachmentField extends BasicSizedComponent<Props> {
   render() {
     const props = this.props;
     const translations = this.props.translations;
@@ -56,11 +65,17 @@ export default class AttachmentField extends BasicSizedComponent {
   }
 }
 
-class ExistingAttachmentComponent extends React.Component {
+interface ExistingAttachmentComponentProps {
+  attachment: any;
+}
+
+class ExistingAttachmentComponent extends React.Component<
+  Props & ExistingAttachmentComponentProps
+> {
   render() {
     const attachment = this.props.attachment;
     const downloadUrl = this.props.downloadUrl;
-    const removeProperties = _.cloneDeep(this.props);
+    const removeProperties = { ..._.cloneDeep(this.props) };
     removeProperties.renderingParameters = _.isObject(
       removeProperties.renderingParameters
     )
@@ -75,7 +90,7 @@ class ExistingAttachmentComponent extends React.Component {
         downloadUrl={downloadUrl}
       />
     );
-    const removeButton = React.createElement(RemoveButton, removeProperties);
+    const removeButton = <RemoveButton {...removeProperties} />;
     return (
       <div>
         {attachmentDisplay}

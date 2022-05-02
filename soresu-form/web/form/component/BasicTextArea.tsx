@@ -1,12 +1,12 @@
-import React, {ChangeEventHandler, FocusEventHandler} from "react";
+import React, { ChangeEventHandler, FocusEventHandler } from "react";
 import _ from "lodash";
 import LocalizedString from "./LocalizedString";
 import BasicSizedComponent from "./BasicSizedComponent";
 
 interface Props {
-  maxLength: number
-  onBlur: FocusEventHandler<any>
-  onChange: ChangeEventHandler<any>
+  maxLength: number;
+  onBlur: FocusEventHandler<any>;
+  onChange: ChangeEventHandler<any>;
 }
 
 export default class BasicTextArea extends BasicSizedComponent<Props> {

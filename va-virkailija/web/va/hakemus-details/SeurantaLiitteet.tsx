@@ -4,7 +4,7 @@ import Immutable from "seamless-immutable";
 
 import HelpTooltip from "../HelpTooltip";
 
-import AttachmentField from "soresu-form/web/form/component/AttachmentField.jsx";
+import AttachmentField from "soresu-form/web/form/component/AttachmentField";
 import HttpUtil from "soresu-form/web/HttpUtil";
 import Translator from "soresu-form/web/form/Translator";
 import translationJson from "soresu-form/resources/public/translations.json";
@@ -119,16 +119,17 @@ export default class SeurantaLiitteet extends React.Component<SeurantaLiitteetPr
           <AttachmentField
             field={field}
             key={field.id}
+            translationKey={field.id}
             translations={translations}
             lang="fi"
             disabled={false}
-            // @ts-ignore
             allAttachments={attachments}
             onDrop={_.partial(onDrop, field.id)}
             onRemove={_.partial(onRemove, field.id)}
             htmlId={field.id}
             controller={fakeFormController}
             downloadUrl={makeDownloadUrl(field.id)}
+            renderingParameters={{}}
           />
         ))}
       </div>

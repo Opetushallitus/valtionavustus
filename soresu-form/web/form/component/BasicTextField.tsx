@@ -1,10 +1,10 @@
-import React, {ChangeEventHandler, FocusEventHandler} from "react";
+import React, { ChangeEventHandler, FocusEventHandler } from "react";
 import BasicSizedComponent from "./BasicSizedComponent";
 
 interface Props {
-  maxLength: number
-  onBlur: FocusEventHandler<any>
-  onChange: ChangeEventHandler<any>
+  maxLength: number;
+  onBlur: FocusEventHandler<any>;
+  onChange: ChangeEventHandler<any>;
 }
 
 export default class BasicTextField<T> extends BasicSizedComponent<Props & T> {

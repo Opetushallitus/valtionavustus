@@ -5,20 +5,20 @@ import _ from "lodash";
 import LocalizedString from "./LocalizedString";
 import HelpTooltip from "./HelpTooltip";
 import FormController from "soresu-form/web/form/FormController";
-import {Field} from "soresu-form/web/va/types";
+import { Field } from "soresu-form/web/va/types";
 
 interface Props {
-  field: any
-  controller: any
-  value: any
-  renderingParameters: any
-  disabled?: boolean
-  required?: boolean
-  hasError?: boolean
-  htmlId: any
-  lang: any
-  translations: any
-  translationKey: string
+  field: any;
+  controller: any;
+  value?: any;
+  renderingParameters: any;
+  disabled?: boolean;
+  required?: boolean;
+  hasError?: boolean;
+  htmlId: any;
+  lang: any;
+  translations: any;
+  translationKey: string;
 }
 
 export default class BasicFieldComponent<T> extends React.Component<Props & T> {
@@ -36,7 +36,13 @@ export default class BasicFieldComponent<T> extends React.Component<Props & T> {
     }
   }
 
-  static checkValueOnBlur(field: Field, htmlId: string, oldValue: string, onChange: any, controller: FormController<any, any>) {
+  static checkValueOnBlur(
+    field: Field,
+    htmlId: string,
+    oldValue: string,
+    onChange: any,
+    controller: FormController<any, any>
+  ) {
     return function () {
       const element = document.getElementById(htmlId) as HTMLInputElement;
       if (element) {
