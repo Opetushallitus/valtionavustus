@@ -21,8 +21,8 @@ interface Props {
   translationKey: string
 }
 
-export default class BasicFieldComponent extends React.Component<Props> {
-  constructor(props: Props) {
+export default class BasicFieldComponent<T> extends React.Component<Props & T> {
+  constructor(props: Props & T) {
     super(props);
     this.componentDidMount = this.componentDidMount.bind(this);
   }

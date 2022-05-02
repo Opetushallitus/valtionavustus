@@ -1,5 +1,5 @@
 import React from "react";
-import BasicSizedComponent from "./BasicSizedComponent.jsx";
+import BasicSizedComponent from "./BasicSizedComponent";
 
 export default class BasicTextField extends BasicSizedComponent {
   constructor(props) {
