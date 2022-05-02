@@ -60,7 +60,11 @@
 (defn wrap-csp-when-enabled [handler default-src connect-src]
   (if (-> config :server :enable-csp?)
     (fn [request]
-      (let [response (handler request)]
+      (let [response (handler request)
+            is-swagger-ui (= (:uri request) "/doc/index.html")]
         (-> response
-          (header "Content-Security-Policy" (str "default-src 'self' " default-src "; connect-src " default-src " " connect-src "; object-src 'none'; font-src *; style-src * 'unsafe-inline'; style-src-attr * 'unsafe-inline'; style-src-elem * 'unsafe-inline'; img-src * data:; report-uri /api/healthcheck/csp-report")))))
+          (header "Content-Security-Policy"
+            (if is-swagger-ui
+              (str "default-src 'self' " default-src "; style-src * 'unsafe-inline'; img-src 'self' validator.swagger.io data:; script-src " default-src " 'unsafe-inline'")
+              (str "default-src 'self' " default-src "; connect-src " default-src " " connect-src "; object-src 'none'; font-src *; style-src * 'unsafe-inline'; style-src-attr * 'unsafe-inline'; style-src-elem * 'unsafe-inline'; img-src * data:; report-uri /api/healthcheck/csp-report"))))))
     handler))
