@@ -16,10 +16,10 @@
     outline: none;
   }
   &:hover:not(:disabled) {
-    background-color: #499CC7 !important;
+    background-color: #499CC7;
   }
   &:active:not(:disabled) {
-    background-color: darken(#499CC7, 10%) !important;
+    background-color: darken(#499CC7, 10%);
   }
   &.selected {
     border: 1px solid #499CC7;
@@ -38,7 +38,7 @@
   background-color: #FFF;
   border: 1px solid #499CC7;
   color: #499CC7;
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: #D6F1FF;
   }
 }
@@ -53,7 +53,8 @@
   composes: btn;
   background-color: transparent;
   color: #499CC7;
-  &:hover {
+  &:hover:not(:disabled) {
+    background-color: transparent;
     border: 1px solid #499CC7;
   }
   &:disabled {
