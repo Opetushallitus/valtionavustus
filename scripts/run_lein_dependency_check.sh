@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/common-functions.sh"
+readonly LEIN="$repo/lein"
 
 function delete_temp_files_if_running_on_jenkins () {
   if running_on_jenkins; then
@@ -14,7 +15,7 @@ function lein_dep_check_for_project () {
 
   local EXIT=0
   cd "$repo/$project_dir"
-  ../lein nvd check || EXIT=$?
+  "$LEIN" nvd check || EXIT=$?
   delete_temp_files_if_running_on_jenkins
   return $EXIT
 }
@@ -23,7 +24,7 @@ function lein_dep_check () {
 
   local EXIT=0
   cd "$repo"
-  ./lein nvd check || EXIT=$?
+  "$LEIN" nvd check || EXIT=$?
   delete_temp_files_if_running_on_jenkins
   return $EXIT
 }
