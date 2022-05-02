@@ -8,12 +8,14 @@ import { MuutoshakemusFixtures } from "./muutoshakemusTest";
 
 export interface BudjettimuutoshakemusFixtures extends MuutoshakemusFixtures {
   budget: Budget;
+  acceptedBudget: Budget | undefined;
   avustushakuID: number;
 }
 
 export const budjettimuutoshakemusTest =
   defaultValues.extend<BudjettimuutoshakemusFixtures>({
     budget: defaultBudget,
+    acceptedBudget: undefined,
     avustushakuID: async ({ page, hakuProps, userCache }, use, testInfo) => {
       testInfo.setTimeout(testInfo.timeout + 40_000);
       expect(userCache).toBeDefined();
@@ -46,6 +48,7 @@ export const budjettimuutoshakemusTest =
         ukotettuValmistelija,
         page,
         budget,
+        acceptedBudget,
         answers,
         submittedHakemus: { userKey },
       },
@@ -60,10 +63,12 @@ export const budjettimuutoshakemusTest =
 
       const hakemustenArviointiPage = new HakemustenArviointiPage(page);
       await hakemustenArviointiPage.navigate(avustushakuID);
+
+      const acceptWithBudget = Boolean(acceptedBudget) ? acceptedBudget : budget;
       const hakemusID = await hakemustenArviointiPage.acceptAvustushaku(
         avustushakuID,
         answers.projectName,
-        budget
+        acceptWithBudget
       );
 
       await hakujenHallintaPage.navigate(avustushakuID);

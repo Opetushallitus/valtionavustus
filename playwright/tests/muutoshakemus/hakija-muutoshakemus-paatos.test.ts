@@ -34,6 +34,20 @@ const budget: Budget = {
   selfFinancing: "1",
 };
 
+const budgetWithFinnishThousandSeparator: Budget = {
+  amount: {
+    personnel: "300",
+    material: "420",
+    equipment: "1 337",
+    'service-purchase': "5 318 008",
+    rent: "69",
+    steamship: "0",
+    other: "9 000",
+  },
+  description: budget.description,
+  selfFinancing: budget.selfFinancing,
+};
+
 const jatkoaika = {
   jatkoaika: moment(new Date()).add(1, "days").locale("fi"),
   jatkoaikaPerustelu: "Duubiduubi-laa",
@@ -52,7 +66,7 @@ const muutoshakemus1Budget: BudgetAmount = {
 const muutoshakemus1Perustelut =
   "Pitäis päästä poistaa jotain akuuttii.... koodaile jotai jos mitää ois poistaa palaillaa sit mo";
 
-const acceptedBudget: BudgetAmount = {
+const acceptedMuutoshakemusBudget: BudgetAmount = {
   personnel: "1301",
   material: "1421",
   equipment: "2338",
@@ -68,6 +82,7 @@ const test = budjettimuutoshakemusTest.extend<
   }
 >({
   budget,
+  acceptedBudget: budgetWithFinnishThousandSeparator,
   hakijaMuutoshakemusPaatosPage: async (
     { page, acceptedHakemus: { hakemusID }, avustushakuID },
     use
@@ -96,7 +111,7 @@ const test = budjettimuutoshakemusTest.extend<
     );
     await hakemustenArviointiPage.setMuutoshakemusBudgetDecision(
       "accepted_with_changes",
-      acceptedBudget
+      acceptedMuutoshakemusBudget
     );
     await hakemustenArviointiPage.selectVakioperusteluInFinnish();
     await hakemustenArviointiPage.saveMuutoshakemus();
