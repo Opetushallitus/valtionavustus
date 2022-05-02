@@ -16,6 +16,7 @@ function run_tests {
 
 function main {
   init_nodejs
+  npm run prettier-check-project "$@"
   run_tests "$@"
 }
 

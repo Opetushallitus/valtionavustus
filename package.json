@@ -83,6 +83,7 @@
     "build-watch": "node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --progress --watch",
     "hakija:test": "mocha --require va-hakija/web/test/babelhook $MOCHA_ARGS va-hakija/web/test/*Test.js",
     "hakija:test-watch": "mocha --watch --require va-hakija/web/test/babelhook $MOCHA_ARGS va-hakija/web/test/*Test.js",
-    "virkailija:test": "cd va-virkailija && true"
+    "virkailija:test": "cd va-virkailija && true",
+    "prettier-check-project": "prettier --check ."
   }
 }
