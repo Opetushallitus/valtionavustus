@@ -7,6 +7,7 @@ import BasicFieldComponent, {
 export interface BasicSizedComponentProps extends BasicFieldComponentProps {
   size?: number;
 }
+
 export default class BasicSizedComponent<T> extends BasicFieldComponent<
   BasicSizedComponentProps & T
 > {
