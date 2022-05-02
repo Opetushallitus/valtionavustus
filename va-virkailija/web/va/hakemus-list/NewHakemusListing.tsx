@@ -7,7 +7,7 @@ import {
 
 import styles from "./NewHakemusListing.module.less";
 import buttonStyles from "./Button.module.less";
-import StarScoring, { EmptyScore } from "./StarScoring";
+import { StarScoring } from "./StarScoring";
 import { MuutoshakemusStatus } from "soresu-form/web/va/types/muutoshakemus";
 import {
   HakemusSelvitys,

@@ -33,7 +33,7 @@ const Star: React.FC<StarProps> = ({ style, opacity }) => {
   );
 };
 
-interface Props {
+interface StarScoringProps {
   userInfo: UserInfo;
   allowHakemusScoring: boolean;
   scoring?: Scoring;
@@ -50,10 +50,10 @@ const toStarElem = (meanScore: number) => (indexOfStar: number) => {
   );
 }
 
-export default function StarScoring(props: Props) {
+export const StarScoring = (props: StarScoringProps) => {
   const { userInfo, allowHakemusScoring, scoring } = props;
   const meanScore = scoring && effectiveAverage(scoring, userInfo, allowHakemusScoring);
-  if (!meanScore) {
+  if (!scoring || meanScore === undefined) {
     return <EmptyScore />
   }
 
@@ -72,7 +72,7 @@ export default function StarScoring(props: Props) {
   );
 }
 
-export function EmptyScore() {
+function EmptyScore() {
   const emptyStarElements = [0, 1, 2, 3].map((indexOfStar) => (
     <Star
       key={`empty-score-star-${indexOfStar}`}
