@@ -603,15 +603,11 @@ function HakemusTable({
                 </div>
               </td>
               <td className={styles.starsCell}>
-                {scoring ? (
-                  <StarScoring
-                    userInfo={userInfo}
-                    allowHakemusScoring={allowHakemusScoring}
-                    scoring={scoring}
-                  />
-                ) : (
-                  <EmptyScore />
-                )}
+                <StarScoring
+                  userInfo={userInfo}
+                  allowHakemusScoring={allowHakemusScoring}
+                  scoring={scoring}
+                />
               </td>
               <td className="hakemus-status-cell">
                 {draft ? (
