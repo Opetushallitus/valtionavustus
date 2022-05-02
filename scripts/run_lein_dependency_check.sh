@@ -12,18 +12,20 @@ function delete_temp_files_if_running_on_jenkins () {
 
 function lein_dep_check_for_project () {
   local project_dir=$1
-
-  local EXIT=0
-  cd "$repo/$project_dir"
-  "$LEIN" nvd check || EXIT=$?
-  delete_temp_files_if_running_on_jenkins
-  return $EXIT
+  local dir="$repo/$project_dir"
+  lein_dep_check_in_dir "$dir"
 }
 
 function lein_dep_check () {
+  local dir="$repo"
+  lein_dep_check_in_dir "$dir"
+}
+
+function lein_dep_check_in_dir () {
+  local dir=$1
 
   local EXIT=0
-  cd "$repo"
+  cd "$dir"
   "$LEIN" nvd check || EXIT=$?
   delete_temp_files_if_running_on_jenkins
   return $EXIT
