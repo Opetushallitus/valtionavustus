@@ -32,11 +32,20 @@
     }
   }
 
-  .list-total {
+  .list-footer {
     position: sticky;
     bottom: -1px;
     padding: 10px 0;
     font-size: 13px;
     background-color: @lighterer-gray;
+    display: flex;
+    .list-footer-total {
+      flex-grow: 1;
+      text-align: left;
+    }
+    .list-footer-download-export {
+      flex-grow: 1;
+      text-align: right;
+    }
   }
 }

@@ -215,8 +215,15 @@ export const HakuListing = (props: HakuListingProps) => {
         </thead>
         <tbody>{hakuElements}</tbody>
       </table>
-      <div className="list-total">
-        {filteredHakuList.length}/{hakuList.length} {} hakua
+      <div className="list-footer">
+        <div className="list-footer-total">
+          {filteredHakuList.length}/{hakuList.length} hakua
+        </div>
+        <div className="list-footer-download-export">
+          <a href="/api/avustushaku/export.xlsx">
+            Lataa excel ({hakuList.length} hakua)
+          </a>
+        </div>
       </div>
     </div>
   );
