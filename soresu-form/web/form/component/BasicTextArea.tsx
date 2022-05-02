@@ -1,23 +1,26 @@
-import React from "react";
+import React, {ChangeEventHandler, FocusEventHandler} from "react";
 import _ from "lodash";
-import LocalizedString from "./LocalizedString.tsx";
+import LocalizedString from "./LocalizedString";
 import BasicSizedComponent from "./BasicSizedComponent";
 
-export default class BasicTextArea extends BasicSizedComponent {
+interface Props {
+  maxLength: number
+  onBlur: FocusEventHandler<any>
+  onChange: ChangeEventHandler<any>
+}
+
+export default class BasicTextArea extends BasicSizedComponent<Props> {
   render() {
     const props = this.props;
     const length = _.isUndefined(props.value) ? 0 : props.value.length;
     const lengthLeft = props.maxLength - length;
-    const classStr = this.resolveClassName();
     return (
       <div className="soresu-text-area">
-        {this.label(classStr)}
         <textarea
           id={props.htmlId}
           name={props.htmlId}
           maxLength={props.maxLength}
           value={props.value}
-          className={classStr}
           disabled={props.disabled}
           onBlur={props.onBlur}
           onChange={props.onChange}

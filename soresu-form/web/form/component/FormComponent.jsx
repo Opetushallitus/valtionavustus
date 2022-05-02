@@ -3,7 +3,7 @@ import React from "react";
 import ComponentFactory from "../ComponentFactory.jsx";
 
 import BasicTextField from "./BasicTextField.jsx";
-import BasicTextArea from "./BasicTextArea.jsx";
+import BasicTextArea from "./BasicTextArea";
 import EmailTextField from "./EmailTextField.jsx";
 import MoneyTextField from "./MoneyTextField.jsx";
 import IntegerTextField from "./IntegerTextField.jsx";
