@@ -1,12 +1,14 @@
 import ClassNames from "classnames";
 import _ from "lodash";
-import BasicFieldComponent from "./BasicFieldComponent";
+import BasicFieldComponent, {
+  BasicFieldComponentProps,
+} from "./BasicFieldComponent";
 
-interface Props {
+export interface BasicSizedComponentProps extends BasicFieldComponentProps {
   size?: number;
 }
 export default class BasicSizedComponent<T> extends BasicFieldComponent<
-  Props & T
+  BasicSizedComponentProps & T
 > {
   sizeClassName() {
     if (this.props.size && !Number.isInteger(this.props.size)) {

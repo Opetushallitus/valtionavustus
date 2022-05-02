@@ -1,13 +1,17 @@
 import React, { ChangeEventHandler, FocusEventHandler } from "react";
-import BasicSizedComponent from "./BasicSizedComponent";
+import BasicSizedComponent, {
+  BasicSizedComponentProps,
+} from "./BasicSizedComponent";
 
-interface Props {
+export interface BasicTextFieldProps extends BasicSizedComponentProps {
   maxLength: number;
   onBlur: FocusEventHandler<any>;
   onChange: ChangeEventHandler<any>;
 }
 
-export default class BasicTextField<T> extends BasicSizedComponent<Props & T> {
+export default class BasicTextField<T> extends BasicSizedComponent<
+  BasicTextFieldProps & T
+> {
   baseClassName() {
     return "soresu-text-field";
   }

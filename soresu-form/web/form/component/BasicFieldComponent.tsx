@@ -7,7 +7,7 @@ import HelpTooltip from "./HelpTooltip";
 import FormController from "soresu-form/web/form/FormController";
 import { Field } from "soresu-form/web/va/types";
 
-interface Props {
+export interface BasicFieldComponentProps {
   field: any;
   controller: any;
   value?: any;
@@ -21,8 +21,10 @@ interface Props {
   translationKey: string;
 }
 
-export default class BasicFieldComponent<T> extends React.Component<Props & T> {
-  constructor(props: Props & T) {
+export default class BasicFieldComponent<T> extends React.Component<
+  BasicFieldComponentProps & T
+> {
+  constructor(props: BasicFieldComponentProps & T) {
     super(props);
     this.componentDidMount = this.componentDidMount.bind(this);
   }
