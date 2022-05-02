@@ -2,12 +2,10 @@ import { Browser, Page } from "puppeteer";
 import moment from "moment";
 
 import {
-  VIRKAILIJA_URL,
   HAKIJA_URL,
   createValidCopyOfEsimerkkihakuAndReturnTheNewId,
   mkBrowser,
   getFirstPage,
-  ratkaiseAvustushaku,
   publishAvustushaku,
   fillAndSendHakemus,
   acceptHakemus,
@@ -28,15 +26,10 @@ import {
   deleteAttachment,
   dummyPdfPath,
   uploadFile,
-  verifyTooltipText,
   waitForSaveStatusOk,
   addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel,
   typeValueInFieldAndExpectValidationError,
   typeValueInFieldAndExpectNoValidationError,
-  gotoVäliselvitysTab,
-  waitForElementWithText,
-  fillAndSendVäliselvityspyyntö,
-  downloadExcelExport,
   clickFormSaveAndWait,
   addFieldToFormAndReturnElementIdAndLabel,
   navigateToHakemuksenArviointi,
@@ -351,45 +344,6 @@ describe("Puppeteer tests", () => {
         (document.querySelector("button#saveForm") as HTMLInputElement)
           .disabled === false
     );
-  });
-
-  it("produces väliselvitys sheet in excel export", async function () {
-    const { avustushakuID } = await ratkaiseAvustushaku(page);
-
-    await verifyTooltipText(
-      page,
-      `[data-test-id="väliselvitys-välilehti"] a`,
-      /Tällä välilehdellä laaditaan ja lähetetään avustuksen saajien väliselvityspyynnöt.*/
-    );
-
-    await gotoVäliselvitysTab(page, avustushakuID);
-    await clickElementWithText(page, "button", "Lähetä väliselvityspyynnöt");
-    const responseP = page.waitForResponse(
-      `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/valiselvitys/send-notification`
-    );
-    await waitForElementWithText(page, "span", "Lähetetty 1 viestiä");
-    const response: any = await responseP.then((_) => _.json());
-    const väliselvitysKey = response.hakemukset[0].user_key;
-    log(`Väliselvitys user_key: ${väliselvitysKey}`);
-
-    await fillAndSendVäliselvityspyyntö(page, avustushakuID, väliselvitysKey);
-
-    const workbook = await downloadExcelExport(page, avustushakuID);
-
-    expect(workbook.SheetNames).toMatchObject([
-      "Hakemukset",
-      "Hakemuksien vastaukset",
-      "Väliselvityksien vastaukset",
-      "Loppuselvityksien vastaukset",
-      "Tiliöinti",
-    ]);
-    const sheet = workbook.Sheets["Väliselvityksien vastaukset"];
-
-    expect(sheet.B1.v).toEqual("Hakijaorganisaatio");
-    expect(sheet.B2.v).toEqual("Akaan kaupungin kissojenkasvatuslaitos");
-
-    expect(sheet.C1.v).toEqual("Hankkeen nimi");
-    expect(sheet.C2.v).toEqual("Kissojen koulutuksen tehostaminen");
   });
 
   it("should allow user to add koodistokenttä to form and save it", async function () {

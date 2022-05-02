@@ -1,4 +1,3 @@
-import * as xlsx from "xlsx";
 import * as path from "path";
 import * as yup from "yup";
 import axios from "axios";
@@ -1313,40 +1312,6 @@ async function submitVäliselvitys(page: Page) {
         ) as HTMLInputElement
       ).textContent === "Väliselvitys lähetetty"
   );
-}
-
-export async function downloadExcelExport(page: Page, avustushakuID: number) {
-  await navigate(page, `/avustushaku/${avustushakuID}/`);
-
-  // Hack around Puppeteer not being able to tell Puppeteer where to download files
-  const url = `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/export.xslx`;
-  const buffer = await downloadFile(page, url);
-  return xlsx.read(buffer, { type: "buffer" });
-}
-
-// https://github.com/puppeteer/puppeteer/issues/299#issuecomment-569221074
-async function downloadFile(page: Page, resource: string) {
-  const data: any = await page.evaluate((resource, init) => {
-    return window.fetch(resource, init).then((resp) => {
-      if (!resp.ok)
-        throw new Error(
-          `Server responded with ${resp.status} ${resp.statusText}`
-        );
-      return resp.blob().then((data) => {
-        const reader = new FileReader();
-        return new Promise((resolve) => {
-          reader.addEventListener("loadend", () =>
-            resolve({
-              url: reader.result,
-              mime: resp.headers.get("Content-Type"),
-            })
-          );
-          reader.readAsDataURL(data);
-        });
-      });
-    });
-  }, resource);
-  return Buffer.from(data.url.split(",")[1], "base64");
 }
 
 export async function getHakemusIDFromHakemusTokenURLParameter(
