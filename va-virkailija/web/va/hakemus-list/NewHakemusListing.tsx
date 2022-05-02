@@ -1176,12 +1176,13 @@ const PeopleRoleButton = ({
     toggleSplitView(true);
   };
   const presentersWanted = selectedRole === "presenter";
-  const buttonInitials = roles
-    .filter((role) =>
-      presentersWanted
-        ? isPresenterRole(role) && isPresenter(hakemus, role)
-        : isEvaluator(hakemus, role)
-    )
+  const filteredRoles = roles.filter((role) =>
+    presentersWanted
+      ? isPresenterRole(role) && isPresenter(hakemus, role)
+      : isEvaluator(hakemus, role)
+  );
+  const title = filteredRoles.map(f => f.name).join('\n')
+  const buttonInitials = filteredRoles
     .map(({ name }) =>
       name
         .split(/\s+/)
@@ -1201,6 +1202,7 @@ const PeopleRoleButton = ({
           disabled={disallowChangeHakemusState}
           className={styles.addRoleButton}
           onClick={onClickCallback}
+          title={title}
         >
           <AddRoleImage disabled={disallowChangeHakemusState} />
         </button>
@@ -1210,6 +1212,7 @@ const PeopleRoleButton = ({
           disabled={disallowChangeHakemusState}
           className={styles.roleButton}
           onClick={onClickCallback}
+          title={title}
         >
           {buttonInitials}
         </button>
