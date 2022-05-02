@@ -126,7 +126,7 @@
                          [clojurewerkz/quartzite "2.0.0"]
                          [org.checkerframework/checker-qual "3.17.0"]
                          [clj-commons/clj-yaml "0.7.107"]
-                         [metosin/ring-swagger-ui "3.46.0"]]
+                         [metosin/ring-swagger-ui "4.5.0"]]
 
   :pedantic? :abort
 
