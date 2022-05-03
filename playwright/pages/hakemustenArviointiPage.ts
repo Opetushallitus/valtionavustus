@@ -77,7 +77,7 @@ export class HakemustenArviointiPage {
   ): Promise<number> {
     await navigate(this.page, `/avustushaku/${avustushakuID}/`);
     if (isDraft) {
-      this.showUnfinished.check();
+      await this.showUnfinished.check();
     }
     await this.page.click("tbody tr:first-of-type");
     await this.page.waitForSelector("#hakemus-details");
