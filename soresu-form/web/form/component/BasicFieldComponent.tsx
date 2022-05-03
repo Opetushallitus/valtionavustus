@@ -58,7 +58,7 @@ export default class BasicFieldComponent<T> extends React.Component<
     };
   }
 
-  label(className: string) {
+  label(className?: string) {
     const translationKey = this.props.translationKey;
     if (this.hideLabel() || !this.props.translations[translationKey]) {
       return undefined;
@@ -92,7 +92,7 @@ export default class BasicFieldComponent<T> extends React.Component<
     return undefined;
   }
 
-  labelClassName(className: string) {
+  labelClassName(className?: string) {
     const classNames = ClassNames(className, { disabled: this.props.disabled });
     return !_.isEmpty(classNames) ? classNames : undefined;
   }

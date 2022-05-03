@@ -1,13 +1,20 @@
-import React from "react";
+import React, { ChangeEventHandler } from "react";
 import ClassNames from "classnames";
 
 import DropdownList from "react-widgets/DropdownList";
 import "react-widgets/styles.css";
 
 import Translator from "../Translator";
-import BasicFieldComponent from "./BasicFieldComponent";
+import BasicFieldComponent, {
+  BasicFieldComponentProps,
+} from "./BasicFieldComponent";
 
-export default class Dropdown extends BasicFieldComponent {
+interface DropdownProps extends BasicFieldComponentProps {
+  options: any;
+  onChange: ChangeEventHandler<any>;
+}
+
+export default class Dropdown extends BasicFieldComponent<DropdownProps> {
   render() {
     const props = this.props;
 
@@ -17,12 +24,12 @@ export default class Dropdown extends BasicFieldComponent {
       emptyFilter: "Ei tuloksia",
     };
 
-    const optionToText = (option) =>
+    const optionToText = (option: any) =>
       option.value
         ? new Translator(option).translate("label", props.lang, option.value)
         : "";
 
-    const OptionEntry = (props) => <span>{optionToText(props.item)}</span>;
+    const OptionEntry = (props: any) => <span>{optionToText(props.item)}</span>;
 
     const classStr = ClassNames("soresu-dropdown", {
       "soresu-dropdown-unselected":
@@ -46,7 +53,7 @@ export default class Dropdown extends BasicFieldComponent {
           renderValue={OptionEntry}
           filter="contains"
           messages={messages}
-          onToggle={null}
+          onToggle={() => {}}
         />
       </div>
     );
