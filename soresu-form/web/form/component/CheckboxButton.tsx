@@ -1,15 +1,19 @@
-import React from "react";
+import React, {ChangeEventHandler} from "react";
 
 import _ from "lodash";
 
 import Translator from "../Translator";
-import BasicFieldComponent from "./BasicFieldComponent";
+import BasicFieldComponent, {BasicFieldComponentProps} from "./BasicFieldComponent";
 
-export default class CheckboxButton extends BasicFieldComponent {
+interface CheckboxButtonProps extends BasicFieldComponentProps {
+  options?: any[]
+  onChange: ChangeEventHandler<any>
+}
+
+export default class CheckboxButton extends BasicFieldComponent<CheckboxButtonProps> {
   render() {
     const props = this.props;
     const selectionButtons = [];
-    const classStr = this.resolveClassName();
     if (props.options) {
       for (let i = 0; i < props.options.length; i++) {
         const optionValue = props.options[i].value;
@@ -34,7 +38,6 @@ export default class CheckboxButton extends BasicFieldComponent {
         selectionButtons.push(
           <label
             key={props.htmlId + "." + optionValue + ".label"}
-            className={classStr}
             htmlFor={props.htmlId + ".checkbox." + i}
           >
             {label}
@@ -44,7 +47,6 @@ export default class CheckboxButton extends BasicFieldComponent {
     }
     return (
       <div className="soresu-checkbox">
-        {this.label()}
         {selectionButtons}
       </div>
     );

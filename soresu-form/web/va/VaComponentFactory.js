@@ -1,5 +1,5 @@
 import ComponentFactory from "soresu-form/web/form/ComponentFactory.jsx";
-import CheckboxButton from "soresu-form/web/form/component/CheckboxButton.jsx";
+import CheckboxButton from "soresu-form/web/form/component/CheckboxButton";
 import EmailTextField from "soresu-form/web/form/component/EmailTextField";
 import MoneyTextField from "soresu-form/web/form/component/MoneyTextField";
 import {
