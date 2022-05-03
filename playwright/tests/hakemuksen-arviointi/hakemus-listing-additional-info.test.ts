@@ -7,6 +7,8 @@ import moment from "moment";
 import { MaksatuksetPage } from "../../pages/maksatuksetPage";
 
 const formattedMoment = () => moment(new Date()).format("DD.MM.YYYY");
+const valiselvitysDeadline = "01.01.2023";
+const loppuselvitysDeadline = "20.04.2023";
 
 test(`hakemusten arviointi additional info`, async ({
   page,
@@ -16,24 +18,35 @@ test(`hakemusten arviointi additional info`, async ({
   codes,
 }) => {
   expectToBeDefined(closedAvustushaku);
+  const hakujenHallintaPage = new HakujenHallintaPage(page);
   const hakemustenArviointiPage = new HakemustenArviointiPage(page);
-  await hakemustenArviointiPage.navigate(avustushakuID, { newListingUi: true });
+  await hakemustenArviointiPage.navigate(avustushakuID, {
+    newListingUi: true,
+    showAdditionalInfo: true,
+  });
+  const { locators } = hakemustenArviointiPage.additionalInfo();
+
+  await test.step(
+    "shows no budget if there are no accepted hakemuses",
+    async () => {
+      await expect(locators.budjetti).toHaveText("-");
+    }
+  );
+
   await hakemustenArviointiPage.acceptAvustushaku(
     avustushakuID,
     answers.projectName
   );
+
   await hakemustenArviointiPage.page.locator('button:text("×")').click();
-  const { locators } = hakemustenArviointiPage.additionalInfo();
-  const valiselvitysDeadline = "01.01.2023";
-  const loppuselvitysDeadline = "20.04.2023";
-  await locators.showAdditionalInfo.click();
   await expect(locators.vastuuvalmistelija).toHaveText("_ valtionavustus");
-  const hakujenHallintaPage = new HakujenHallintaPage(page);
+
   await test.step("shows correct toimintayksikkö", async () => {
     await expect(locators.toimintayksikko).toHaveText(
       `Toimintayksikkö ${codes.operationalUnit}`
     );
   });
+
   await test.step("updates paatos to show when it was sent", async () => {
     await expect(locators.paatokset).toHaveText("Ei lähetetty");
     await hakemustenArviointiPage.page
@@ -53,6 +66,7 @@ test(`hakemusten arviointi additional info`, async ({
     });
     await expect(locators.paatokset).toHaveText(formattedMoment());
   });
+
   await test.step("updates maksatukset to show when it was sent", async () => {
     await expect(locators.maksatukset).toHaveText("Ei lähetetty");
     const maksatuksetPage = MaksatuksetPage(page);
@@ -71,6 +85,7 @@ test(`hakemusten arviointi additional info`, async ({
     });
     await expect(locators.maksatukset).toHaveText(formattedMoment());
   });
+
   await test.step(
     "updates vali and loppuselvitys to show when it has a deadline",
     async () => {
@@ -92,6 +107,7 @@ test(`hakemusten arviointi additional info`, async ({
       );
     }
   );
+
   await test.step(
     "update vali and loppuselvitys to show when they were sent",
     async () => {
@@ -111,9 +127,18 @@ test(`hakemusten arviointi additional info`, async ({
       await expect(locators.loppuselvitykset).toHaveText(formattedMoment());
     }
   );
+
   await test.step("shows is muutoshakukelpoinen", async () => {
     await expect(locators.muutoshakukelpoinen).toHaveText("Kyllä");
   });
+
+  await test.step(
+    "shows Kokonaiskustannus as budget if an accepted hakemus has it",
+    async () => {
+      await expect(locators.budjetti).toHaveText("Kokonaiskustannus");
+    }
+  );
+
   await test.step("can close additional info", async () => {
     await locators.muutoshakukelpoinen.waitFor();
     await locators.showAdditionalInfo.waitFor({ state: "detached" });

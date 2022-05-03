@@ -4,6 +4,8 @@ import ReactDOM from "react-dom";
 import RouteParser from "route-parser";
 import queryString from "query-string";
 
+import { Hakemus } from "soresu-form/web/va/types";
+
 import HakemustenArviointiController from "./HakemustenArviointiController";
 import HakemusListing from "./hakemus-list/HakemusListing.jsx";
 import HakemusDetails from "./hakemus-details/HakemusDetails";
@@ -12,16 +14,14 @@ import HakemusDecisionLink from "./hakemus-details/HakemusDecisionLink";
 import AvustushakuDropdown from "./avustushaku/AvustushakuDropdown";
 import HakemusFilter from "./hakemus-filter/HakemusFilter";
 import LocalStorage from "./LocalStorage";
-
-import "./style/main.less";
-
-import "./hakemusten-arviointi.less";
 import { State } from "./types";
 import NewHakemusListing from "./hakemus-list/NewHakemusListing";
-import { Hakemus } from "soresu-form/web/va/types";
 import { Switch } from "./hakemus-list/Switch";
 import { HeaderContainer } from "./Header";
 import { AvustushakuDetails } from "./hakemus-list/AvustushakuDetails";
+
+import "./style/main.less";
+import "./hakemusten-arviointi.less";
 
 interface Props {
   state: State;
@@ -144,6 +144,7 @@ const App = ({ state, controller }: Props) => {
             {showInfo && (
               <AvustushakuDetails
                 avustushaku={avustushaku}
+                hakemusList={hakemusList}
                 lahetykset={state.lahetykset}
                 vastuuvalmistelija={hakuData.roles.find(
                   (r) => r.role === "vastuuvalmistelija"

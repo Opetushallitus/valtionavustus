@@ -457,24 +457,25 @@ export class HakemustenArviointiPage {
         showAdditionalInfo: this.page.locator('text="Näytä lisätiedot"'),
         hideAdditionalInfo: this.page.locator('text="Piilota lisätiedot"'),
         toimintayksikko: this.page.locator(
-          '[data-test-id="lisatiedot-toimintayksikko"]'
+          '[data-test-id="lisatiedot-Toimintayksikkö"]'
         ),
         vastuuvalmistelija: this.page.locator(
-          '[data-test-id="lisatiedot-vastuuvalmistelija"]'
+          '[data-test-id="lisatiedot-Vastuuvalmistelija"]'
         ),
-        paatokset: this.page.locator('[data-test-id="lisatiedot-paatokset"]'),
+        paatokset: this.page.locator('[data-test-id="lisatiedot-Päätökset"]'),
         maksatukset: this.page.locator(
-          '[data-test-id="lisatiedot-maksatukset"]'
+          '[data-test-id="lisatiedot-Maksatukset"]'
         ),
         valiselvitykset: this.page.locator(
-          '[data-test-id="lisatiedot-valiselvitykset"]'
+          '[data-test-id="lisatiedot-Väliselvitykset"]'
         ),
         loppuselvitykset: this.page.locator(
-          '[data-test-id="lisatiedot-loppuselvitykset"]'
+          '[data-test-id="lisatiedot-Loppuselvitykset"]'
         ),
         muutoshakukelpoinen: this.page.locator(
-          '[data-test-id="lisatiedot-muutoshakukelpoinen"]'
+          '[data-test-id="lisatiedot-Muutoshakukelpoinen"]'
         ),
+        budjetti: this.page.locator('[data-test-id="lisatiedot-Budjetti"]'),
       },
     };
   }

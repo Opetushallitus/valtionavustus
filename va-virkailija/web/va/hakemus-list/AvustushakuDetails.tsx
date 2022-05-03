@@ -1,4 +1,4 @@
-import { Avustushaku } from "soresu-form/web/va/types";
+import { Avustushaku, Hakemus } from "soresu-form/web/va/types";
 import React from "react";
 import moment from "moment";
 
@@ -8,6 +8,7 @@ import styles from "./AvustushakuDetails.module.less";
 
 interface Props {
   avustushaku: Avustushaku;
+  hakemusList: Hakemus[];
   vastuuvalmistelija: Role | undefined;
   lahetykset: LahetysStatuses;
   toimintayksikko?: VaCodeValue;
@@ -16,55 +17,52 @@ interface Props {
 
 export const AvustushakuDetails: React.FC<Props> = ({
   avustushaku,
+  hakemusList,
   vastuuvalmistelija,
   lahetykset,
   toimintayksikko,
   earliestPaymentCreatedAt,
 }) => {
+  const acceptedHakemus = hakemusList.find(
+    (h) => h.arvio.status === "accepted"
+  );
   return (
     <div className={styles.detailsContainer}>
       <Box title="Toimintayksikkö">
-        <span data-test-id="lisatiedot-toimintayksikko">
-          {toimintayksikko?.["code-value"] ?? "-"}
-        </span>
+        {toimintayksikko?.["code-value"] ?? "-"}
       </Box>
-      <Box title="Vastuuvalmistelija">
-        <span data-test-id="lisatiedot-vastuuvalmistelija">
-          {vastuuvalmistelija?.name ?? "-"}
-        </span>
-      </Box>
+      <Box title="Vastuuvalmistelija">{vastuuvalmistelija?.name ?? "-"}</Box>
       <Box title="Päätökset">
-        <span data-test-id="lisatiedot-paatokset">
-          {lahetykset.paatoksetSentAt
-            ? format(lahetykset.paatoksetSentAt)
-            : "Ei lähetetty"}
-        </span>
+        {lahetykset.paatoksetSentAt
+          ? format(lahetykset.paatoksetSentAt)
+          : "Ei lähetetty"}
       </Box>
       <Box title="Maksatukset">
-        <span data-test-id="lisatiedot-maksatukset">
-          {earliestPaymentCreatedAt
-            ? format(earliestPaymentCreatedAt)
-            : "Ei lähetetty"}
-        </span>
+        {earliestPaymentCreatedAt
+          ? format(earliestPaymentCreatedAt)
+          : "Ei lähetetty"}
       </Box>
       <Box title="Väliselvitykset">
         <Deadline
-          dataTestId="lisatiedot-valiselvitykset"
           deadline={avustushaku.valiselvitysdate}
           sentAt={lahetykset.valiselvitysPyynnostSentAt}
         />
       </Box>
       <Box title="Loppuselvitykset">
         <Deadline
-          dataTestId="lisatiedot-loppuselvitykset"
           deadline={avustushaku.loppuselvitysdate}
           sentAt={lahetykset.loppuselvitysPyynnotSentAt}
         />
       </Box>
       <Box title="Muutoshakukelpoinen">
-        <span data-test-id="lisatiedot-muutoshakukelpoinen">
-          {avustushaku.muutoshakukelpoinen ? "Kyllä" : "Ei"}
-        </span>
+        {avustushaku.muutoshakukelpoinen ? "Kyllä" : "Ei"}
+      </Box>
+      <Box title="Budjetti">
+        {acceptedHakemus
+          ? acceptedHakemus.arvio.useDetailedCosts
+            ? "Menoluokittelu"
+            : "Kokonaiskustannus"
+          : "-"}
       </Box>
     </div>
   );
@@ -78,7 +76,7 @@ const Box: React.FC<BoxProps> = ({ title, children }) => {
   return (
     <div className={styles.box}>
       <span className={styles.title}>{title}</span>
-      {children}
+      <span data-test-id={`lisatiedot-${title}`}>{children}</span>
     </div>
   );
 };
@@ -88,24 +86,19 @@ const format = (date: string) => moment(date).format("DD.MM.YYYY");
 interface DeadlineProps {
   deadline?: string;
   sentAt?: string;
-  dataTestId: string;
 }
 
-const Deadline: React.FC<DeadlineProps> = ({
-  deadline,
-  sentAt,
-  dataTestId,
-}) => {
+const Deadline: React.FC<DeadlineProps> = ({ deadline, sentAt }) => {
   if (!deadline) {
-    return <span data-test-id={dataTestId}>-</span>;
+    return <>-</>;
   }
   if (!sentAt) {
     return (
-      <span data-test-id={dataTestId}>
+      <>
         Ei lähetetty
         <span className={styles.deadline}>{` (DL ${format(deadline)})`}</span>
-      </span>
+      </>
     );
   }
-  return <span data-test-id={dataTestId}>{format(sentAt)}</span>;
+  return <>{format(sentAt)}</>;
 };
