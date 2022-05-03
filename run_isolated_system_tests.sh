@@ -5,6 +5,7 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functio
 function run_tests {
   if ! running_on_jenkins;
     then
+      npm run prettier-check-project "$@"
       npm run playwright:test "$@"
   fi
 	npm run puppeteer:test "$@"
@@ -16,7 +17,6 @@ function run_tests {
 
 function main {
   init_nodejs
-  npm run prettier-check-project "$@"
   run_tests "$@"
 }
 
