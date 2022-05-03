@@ -1,8 +1,15 @@
-import React from "react";
+import React, { ChangeEventHandler } from "react";
 import Translator from "../Translator";
-import BasicFieldComponent from "./BasicFieldComponent";
+import BasicFieldComponent, {
+  BasicFieldComponentProps,
+} from "./BasicFieldComponent";
 
-export default class RadioButton extends BasicFieldComponent {
+interface RadioButtonProps extends BasicFieldComponentProps {
+  options: any[];
+  onChange: ChangeEventHandler<any>;
+}
+
+export default class RadioButton extends BasicFieldComponent<RadioButtonProps> {
   render() {
     const props = this.props;
     const radiobuttons = [];

@@ -2,7 +2,7 @@ import React from "react";
 import _ from "lodash";
 
 import BasicFieldComponent from "soresu-form/web/form/component/BasicFieldComponent";
-import RadioButton from "soresu-form/web/form/component/RadioButton.jsx";
+import RadioButton from "soresu-form/web/form/component/RadioButton";
 import BasicTextField from "soresu-form/web/form/component/BasicTextField";
 import { parseDecimal } from "../MathUtil";
 import Translator from "soresu-form/web/form/Translator";

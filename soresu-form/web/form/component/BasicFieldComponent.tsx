@@ -97,7 +97,7 @@ export default class BasicFieldComponent<T> extends React.Component<
     return !_.isEmpty(classNames) ? classNames : undefined;
   }
 
-  resolveClassName(className: string) {
+  resolveClassName(className?: string): string | undefined {
     const classNames = ClassNames(className, { error: this.props.hasError });
     return !_.isEmpty(classNames) ? classNames : undefined;
   }
