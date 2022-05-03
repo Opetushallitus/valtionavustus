@@ -19,7 +19,7 @@ export default class BasicSizedComponent<T> extends BasicFieldComponent<
     }
   }
 
-  resolveClassName(className: string) {
+  resolveClassName(className?: string) {
     const classNames = ClassNames(
       className,
       { error: this.props.hasError },

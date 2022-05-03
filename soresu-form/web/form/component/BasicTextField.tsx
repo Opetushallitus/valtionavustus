@@ -18,8 +18,10 @@ export default class BasicTextField<T> extends BasicSizedComponent<
   render() {
     const props = this.props;
     const sizeNumber = Number.isInteger(props.size) ? props.size : undefined;
+    const classStr = this.resolveClassName();
     return (
       <div className={this.resolveClassName(this.baseClassName())}>
+        {this.label(classStr)}
         <input
           type={"text"}
           size={sizeNumber}
