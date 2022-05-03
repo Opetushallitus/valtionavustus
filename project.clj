@@ -19,7 +19,7 @@
                              :nvd]}
 
   :dependencies [[org.clojure/clojure]
-                 [oph/soresu]
+                 [oph/soresu-form]
                  [de.ubercode.clostache/clostache]
                  [org.apache.commons/commons-email]
                  [org.clojure/core.async]

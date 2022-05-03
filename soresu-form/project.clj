@@ -1,4 +1,4 @@
-(defproject oph/soresu "0.1.0-SNAPSHOT"
+(defproject oph/soresu-form "0.1.0-SNAPSHOT"
 
   :description "OPH Soresu forms"
 
