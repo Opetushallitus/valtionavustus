@@ -242,7 +242,7 @@ export default class EducationLevels extends Component<EducationLevelsProps> {
     );
 
     return (
-      <div className={enabled ? "haku-edit-disabled-form" : ""}>
+      <div className={enabled ? "" : "haku-edit-disabled-form"}>
         <h3>
           Koulutusasteet (kirjoita talousarviotili ottaaksesi käyttöön, esim.
           29.10.30.20){" "}
