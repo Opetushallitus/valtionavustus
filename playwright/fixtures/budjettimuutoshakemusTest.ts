@@ -64,7 +64,9 @@ export const budjettimuutoshakemusTest =
       const hakemustenArviointiPage = new HakemustenArviointiPage(page);
       await hakemustenArviointiPage.navigate(avustushakuID);
 
-      const acceptWithBudget = Boolean(acceptedBudget) ? acceptedBudget : budget;
+      const acceptWithBudget = Boolean(acceptedBudget)
+        ? acceptedBudget
+        : budget;
       const hakemusID = await hakemustenArviointiPage.acceptAvustushaku(
         avustushakuID,
         answers.projectName,

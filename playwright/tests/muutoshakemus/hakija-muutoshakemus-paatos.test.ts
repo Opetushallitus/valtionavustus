@@ -39,7 +39,7 @@ const budgetWithFinnishThousandSeparator: Budget = {
     personnel: "300",
     material: "420",
     equipment: "1 337",
-    'service-purchase': "5 318 008",
+    "service-purchase": "5 318 008",
     rent: "69",
     steamship: "0",
     other: "9 000",
