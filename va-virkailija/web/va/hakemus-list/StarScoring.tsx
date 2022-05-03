@@ -7,7 +7,7 @@ import styles from "./StarScoring.module.less";
 
 interface StarProps {
   style: "empty" | "blue";
-  opacity: number
+  opacity: number;
 }
 
 const Star: React.FC<StarProps> = ({ style, opacity }) => {
@@ -48,13 +48,14 @@ const toStarElem = (meanScore: number) => (indexOfStar: number) => {
       opacity={opacity}
     />
   );
-}
+};
 
 export const StarScoring = (props: StarScoringProps) => {
   const { userInfo, allowHakemusScoring, scoring } = props;
-  const meanScore = scoring && effectiveAverage(scoring, userInfo, allowHakemusScoring);
+  const meanScore =
+    scoring && effectiveAverage(scoring, userInfo, allowHakemusScoring);
   if (!scoring || meanScore === undefined) {
-    return <EmptyScore />
+    return <EmptyScore />;
   }
 
   const starElements = [0, 1, 2, 3].map(toStarElem(meanScore));
@@ -70,15 +71,11 @@ export const StarScoring = (props: StarScoringProps) => {
       {starElements}
     </div>
   );
-}
+};
 
 function EmptyScore() {
   const emptyStarElements = [0, 1, 2, 3].map((indexOfStar) => (
-    <Star
-      key={`empty-score-star-${indexOfStar}`}
-      style="empty"
-      opacity={100}
-    />
+    <Star key={`empty-score-star-${indexOfStar}`} style="empty" opacity={100} />
   ));
 
   return <div className={styles.starContainer}>{emptyStarElements}</div>;

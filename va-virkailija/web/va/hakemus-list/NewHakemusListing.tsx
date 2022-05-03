@@ -1177,7 +1177,7 @@ const PeopleRoleButton = ({
       ? isPresenterRole(role) && isPresenter(hakemus, role)
       : isEvaluator(hakemus, role)
   );
-  const title = filteredRoles.map(f => f.name).join('\n')
+  const title = filteredRoles.map((f) => f.name).join("\n");
   const buttonInitials = filteredRoles
     .map(({ name }) =>
       name
