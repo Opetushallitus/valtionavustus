@@ -1578,6 +1578,12 @@ export default class HakemustenArviointiController {
   }
 }
 
+const oldestFirst = (a: Lahetys, b: Lahetys) =>
+  a.created_at < b.created_at ? -1 : 1;
+const successfullySent = (lahetys: Lahetys) => lahetys.success;
+const getEarliestSuccessfulLahetysDate = (loki: Lahetys[]) =>
+  loki.filter(successfullySent).sort(oldestFirst)[0]?.created_at;
+
 async function getLahetysStatuses(avustushakuId: number) {
   const [paatos, valiselvitys, loppuselvitys] = await Promise.all([
     HttpUtil.get<Lahetys[]>(
@@ -1590,12 +1596,10 @@ async function getLahetysStatuses(avustushakuId: number) {
       `/api/avustushaku/${avustushakuId}/tapahtumaloki/loppuselvitys-notification`
     ),
   ]);
-  const successfullySent = (lahetys: Lahetys) => lahetys.success;
   return {
-    paatoksetSentAt: paatos.find(successfullySent)?.created_at,
-    valiselvitysPyynnostSentAt: valiselvitys.find(successfullySent)?.created_at,
-    loppuselvitysPyynnotSentAt:
-      loppuselvitys.find(successfullySent)?.created_at,
+    paatoksetSentAt: getEarliestSuccessfulLahetysDate(paatos),
+    valiselvitysPyynnostSentAt: getEarliestSuccessfulLahetysDate(valiselvitys),
+    loppuselvitysPyynnotSentAt: getEarliestSuccessfulLahetysDate(loppuselvitys),
   };
 }
 
