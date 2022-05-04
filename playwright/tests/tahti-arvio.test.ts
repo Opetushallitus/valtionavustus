@@ -37,9 +37,7 @@ muutoshakemusTest(
     const hakemusScore = await hakemustenArviointiPage.getHakemusScore(
       hakemusId
     );
-    await hakemustenArviointiPage.navigate(avustushakuID, {
-      newListingUi: true,
-    });
+    await hakemustenArviointiPage.navigate(avustushakuID);
     expect(hakemusScore).toEqual("2.5");
   }
 );

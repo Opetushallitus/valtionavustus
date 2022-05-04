@@ -18,9 +18,7 @@ muutoshakemusTest(
       "Hakemus list shows refused application",
       async () => {
         const hakemustenArviointiPage = new HakemustenArviointiPage(page);
-        await hakemustenArviointiPage.navigate(avustushakuID, {
-          newListingUi: true,
-        });
+        await hakemustenArviointiPage.navigate(avustushakuID);
 
         const status = hakemustenArviointiPage.hakemusRows.locator(
           ".hakemus-status-cell"

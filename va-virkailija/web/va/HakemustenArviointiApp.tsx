@@ -5,7 +5,6 @@ import RouteParser from "route-parser";
 import queryString from "query-string";
 
 import HakemustenArviointiController from "./HakemustenArviointiController";
-import HakemusListing from "./hakemus-list/HakemusListing.jsx";
 import HakemusDetails from "./hakemus-details/HakemusDetails";
 import { HakemusHakijaSidePreviewLink } from "./hakemus-details/HakemusHakijaSidePreviewLink";
 import HakemusDecisionLink from "./hakemus-details/HakemusDecisionLink";
@@ -24,7 +23,6 @@ import "./hakemusten-arviointi.less";
 interface Props {
   state: State;
   controller: HakemustenArviointiController;
-  newHakemusListingUiEnabled: boolean;
 }
 
 const SHOW_ALL = "showAll" as const;
@@ -46,7 +44,6 @@ const App = ({ state, controller }: Props) => {
     hakuData,
     helpTexts,
     modal,
-    previouslySelectedHakemus,
     saveStatus,
     selectedHakemusAccessControl,
     subTab,
@@ -149,43 +146,23 @@ const App = ({ state, controller }: Props) => {
               />
             )}
           </div>
-          {newHakemusListingUiEnabled ? (
-            <NewHakemusListing
-              selectedHakemus={state.selectedHakemus}
-              hakemusList={hakemusList}
-              isResolved={isResolved}
-              roles={hakuData.roles}
-              splitView={splitView}
-              onSelectHakemus={(id) => controller.selectHakemus(id)}
-              onYhteenvetoClick={(filteredHakemusList) =>
-                controller.gotoSavedSearch(filteredHakemusList)
-              }
-              toggleSplitView={toggleSplitView}
-              controller={controller}
-              state={state}
-              userInfo={userInfo}
-              allowHakemusScoring={hakuData.privileges["score-hakemus"]}
-              additionalInfoOpen={showInfo}
-            />
-          ) : (
-            <HakemusListing
-              ophShareSum={hakuData["budget-oph-share-sum"]}
-              budgetGrantedSum={hakuData["budget-granted-sum"]}
-              hakemusFilter={state.hakemusFilter}
-              hakemusSorter={state.hakemusSorter}
-              hakemusList={hakemusList}
-              hasSelected={hasSelected}
-              selectedHakemus={state.selectedHakemus}
-              previouslySelectedHakemus={previouslySelectedHakemus}
-              userInfo={state.userInfo}
-              privileges={hakuData.privileges}
-              controller={controller}
-              avustushaku={avustushaku}
-              environment={environment}
-              toggleSplitView={toggleSplitView}
-              state={state}
-            />
-          )}
+          <NewHakemusListing
+            selectedHakemus={state.selectedHakemus}
+            hakemusList={hakemusList}
+            isResolved={isResolved}
+            roles={hakuData.roles}
+            splitView={splitView}
+            onSelectHakemus={(id) => controller.selectHakemus(id)}
+            onYhteenvetoClick={(filteredHakemusList) =>
+              controller.gotoSavedSearch(filteredHakemusList)
+            }
+            toggleSplitView={toggleSplitView}
+            controller={controller}
+            state={state}
+            userInfo={userInfo}
+            allowHakemusScoring={hakuData.privileges["score-hakemus"]}
+            additionalInfoOpen={showInfo}
+          />
         </div>
         <HakemusDetails
           hakuData={hakuData}
@@ -202,7 +179,7 @@ const App = ({ state, controller }: Props) => {
           helpTexts={helpTexts}
         />
         <div hidden={!hasSelected} id="footer">
-          {state.selectedHakemus?.["user-key"] &&
+          {state.selectedHakemus?.["user-key"] && (
             <>
               <HakemusHakijaSidePreviewLink
                 hakemusUserKey={state.selectedHakemus["user-key"]}
@@ -213,7 +190,7 @@ const App = ({ state, controller }: Props) => {
                 avustushaku={avustushaku}
               />
             </>
-          }
+          )}
         </div>
       </section>
       {modal}
@@ -234,7 +211,6 @@ const avustushakuId = parsedAvustusHakuIdObject
   : defaultHakuId;
 LocalStorage.saveAvustushakuId(avustushakuId);
 const query = queryString.parse(location.search);
-const newHakemusListingUiEnabled = query["new-hakemus-listing-ui"] === "true";
 const evaluator = query.arvioija ? parseInt(query.arvioija) : undefined;
 const controller = new HakemustenArviointiController();
 const stateP = controller.initializeState(avustushakuId, evaluator);
@@ -242,11 +218,7 @@ const stateP = controller.initializeState(avustushakuId, evaluator);
 stateP.onValue((state) => {
   if (state.hakuData && state.userInfo) {
     ReactDOM.render(
-      <App
-        state={state}
-        controller={controller}
-        newHakemusListingUiEnabled={newHakemusListingUiEnabled}
-      />,
+      <App state={state} controller={controller} />,
       document.getElementById("app")
     );
   }

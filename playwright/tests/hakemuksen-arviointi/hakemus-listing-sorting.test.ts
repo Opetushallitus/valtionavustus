@@ -96,19 +96,14 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
     const hakemustenArviointiPage = new HakemustenArviointiPage(page);
     await hakemustenArviointiPage.navigateToHakemus(
       avustushakuID,
-      submittedHakemus.userKey,
-      { newListingUi: true }
+      submittedHakemus.userKey
     );
     await hakemustenArviointiPage.acceptHakemus("7000");
 
-    await hakemustenArviointiPage.navigateToHakemus(avustushakuID, userKey2, {
-      newListingUi: true,
-    });
+    await hakemustenArviointiPage.navigateToHakemus(avustushakuID, userKey2);
     await hakemustenArviointiPage.acceptHakemus("3000");
 
-    await hakemustenArviointiPage.navigateToHakemus(avustushakuID, userKey3, {
-      newListingUi: true,
-    });
+    await hakemustenArviointiPage.navigateToHakemus(avustushakuID, userKey3);
     await hakemustenArviointiPage.rejectHakemus();
 
     await use(hakemustenArviointiPage);
@@ -120,7 +115,7 @@ test("hakemus list sorting when avustushaku is not resolved", async ({
   hakuProps: { registerNumber },
   avustushakuID,
 }) => {
-  await hakemustenArviointiPage.navigate(avustushakuID, { newListingUi: true });
+  await hakemustenArviointiPage.navigate(avustushakuID);
   await hakemustenArviointiPage.page.click(
     '[aria-label="Poista hakemuksen tila rajaukset"]'
   );

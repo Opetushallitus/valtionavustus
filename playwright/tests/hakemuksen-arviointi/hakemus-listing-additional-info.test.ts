@@ -21,7 +21,6 @@ test(`hakemusten arviointi additional info`, async ({
   const hakujenHallintaPage = new HakujenHallintaPage(page);
   const hakemustenArviointiPage = new HakemustenArviointiPage(page);
   await hakemustenArviointiPage.navigate(avustushakuID, {
-    newListingUi: true,
     showAdditionalInfo: true,
   });
   const { locators } = hakemustenArviointiPage.additionalInfo();
@@ -61,7 +60,6 @@ test(`hakemusten arviointi additional info`, async ({
     await hakujenHallintaPage.switchToPaatosTab();
     await hakujenHallintaPage.sendPaatos(avustushakuID);
     await hakemustenArviointiPage.navigate(avustushakuID, {
-      newListingUi: true,
       showAdditionalInfo: true,
     });
     await expect(locators.paatokset).toHaveText(formattedMoment());
@@ -80,7 +78,6 @@ test(`hakemusten arviointi additional info`, async ({
     if (!dueDate) throw new Error("Cannot find due date from form");
     await maksatuksetPage.sendMaksatukset();
     await hakemustenArviointiPage.navigate(avustushakuID, {
-      newListingUi: true,
       showAdditionalInfo: true,
     });
     await expect(locators.maksatukset).toHaveText(formattedMoment());
@@ -96,7 +93,6 @@ test(`hakemusten arviointi additional info`, async ({
       await hakujenHallintaPage.setLoppuselvitysDate(loppuselvitysDeadline);
       await hakujenHallintaPage.waitForSave();
       await hakemustenArviointiPage.navigate(avustushakuID, {
-        newListingUi: true,
         showAdditionalInfo: true,
       });
       await expect(locators.valiselvitykset).toHaveText(
@@ -120,7 +116,6 @@ test(`hakemusten arviointi additional info`, async ({
       );
       await hakujenHallintaPage.page.locator('text="Lähetetty 1 viestiä"');
       await hakemustenArviointiPage.navigate(avustushakuID, {
-        newListingUi: true,
         showAdditionalInfo: true,
       });
       await expect(locators.valiselvitykset).toHaveText(formattedMoment());

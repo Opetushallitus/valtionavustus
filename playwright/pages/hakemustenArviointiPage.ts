@@ -51,16 +51,12 @@ export class HakemustenArviointiPage {
     avustushakuID: number,
     options?: {
       showAll?: boolean;
-      newListingUi?: boolean;
       showAdditionalInfo?: boolean;
     }
   ) {
     const params = new URLSearchParams();
     if (options?.showAll) {
       params.append("showAll", "true");
-    }
-    if (options?.newListingUi) {
-      params.append("new-hakemus-listing-ui", "true");
     }
     if (options?.showAdditionalInfo) {
       params.append("showAdditionalInfo", "true");
@@ -103,7 +99,7 @@ export class HakemustenArviointiPage {
   async navigateToHakemus(
     avustushakuId: number,
     userKey: string,
-    options?: { showAll?: boolean; newListingUi?: boolean }
+    options?: { showAll?: boolean }
   ) {
     await this.navigate(avustushakuId, options);
     await Promise.all([

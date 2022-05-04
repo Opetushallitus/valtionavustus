@@ -3,9 +3,9 @@ import { Avustushaku, Hakemus } from "soresu-form/web/va/types";
 import PaatosUrl from "./PaatosUrl";
 
 type HakemusDecisionLinkProps = {
-  avustushaku: Avustushaku
-  hakemus: Hakemus
-}
+  avustushaku: Avustushaku;
+  hakemus: Hakemus;
+};
 
 export default class HakemusDecisionLink extends Component<HakemusDecisionLinkProps> {
   render() {

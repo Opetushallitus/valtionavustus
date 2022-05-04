@@ -18,7 +18,7 @@ test(`shows Muokattu pill when the application has been modified after submit`, 
   await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID);
   const officerEditPage = await hakemustenArviointiPage.openHakemusEditPage();
   await expect(officerEditPage.officerEditSubmitButton).toBeEnabled();
-  await hakemustenArviointiPage.navigate(avustushakuID, { newListingUi: true });
+  await hakemustenArviointiPage.navigate(avustushakuID);
   const firstRow = hakemustenArviointiPage.hakemusRows.first();
   const modifiedPill = firstRow.locator("[data-test-id$=modified-pill]");
   expect(await modifiedPill.innerText()).toEqual("Muokattu");

@@ -33,10 +33,9 @@ newHakemusTest(
   async ({ avustushakuID, newHakemus, page }) => {
     const hakemusListPage = new HakemustenArviointiPage(page);
     const hakijaPage = new HakijaAvustusHakuPage(page);
-    const listPageOptions = { newListingUi: true };
 
     await test.step("is not shown in showAll list when new", async () => {
-      await hakemusListPage.navigate(avustushakuID, listPageOptions);
+      await hakemusListPage.navigate(avustushakuID);
       await hakemusListPage.showUnfinished.check();
       expect(await hakemusListPage.hakemusRows.count()).toBe(0);
     });
@@ -48,7 +47,7 @@ newHakemusTest(
         await hakijaPage.fillInBusinessId(TEST_Y_TUNNUS);
         await hakijaPage.waitForEditSaved();
 
-        await hakemusListPage.navigate(avustushakuID, listPageOptions);
+        await hakemusListPage.navigate(avustushakuID);
         await hakemusListPage.showUnfinished.check();
         await hakemusListPage.hakemusListing.waitFor({ timeout: 5000 });
         const rows = hakemusListPage.hakemusRows;
@@ -68,7 +67,7 @@ newHakemusTest(
       await hakemusListPage.submitHakemus();
       await hakemusListPage.waitForSave();
 
-      await hakemusListPage.navigate(avustushakuID, listPageOptions);
+      await hakemusListPage.navigate(avustushakuID);
       await hakemusListPage.showUnfinished.uncheck();
       expect(await hakemusListPage.hakemusRows.count()).toBe(1);
       expect(
