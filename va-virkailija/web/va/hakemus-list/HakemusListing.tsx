@@ -5,7 +5,7 @@ import {
   SelvitysStatus,
 } from "soresu-form/web/va/types";
 
-import styles from "./NewHakemusListing.module.less";
+import styles from "./HakemusListing.module.less";
 import buttonStyles from "./Button.module.less";
 import { StarScoring } from "./StarScoring";
 import { MuutoshakemusStatus } from "soresu-form/web/va/types/muutoshakemus";
@@ -24,10 +24,10 @@ import {
   isPresenter,
   isPresenterRole,
   PersonSelectPanel,
-} from "./PersonSelectButton";
+} from "./PersonSelectPanel";
 import HakemustenArviointiController from "../HakemustenArviointiController";
 import classNames from "classnames";
-import { ControlledSelectPanel, RoleField } from "./PersonFilterButton";
+import { ControlledSelectPanel, RoleField } from "./ControlledSelectPanel";
 import { AddRoleImage } from "./AddRoleImage";
 
 interface Props {
@@ -250,7 +250,7 @@ const useSorting = (): [SortState, (newSortKey?: SortKey) => void] => {
   return [{ sortKey, sortOrder }, setSorting];
 };
 
-export default function NewHakemusListing(props: Props) {
+export default function HakemusListing(props: Props) {
   const {
     selectedHakemus,
     hakemusList,

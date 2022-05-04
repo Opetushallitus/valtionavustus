@@ -12,7 +12,7 @@ import AvustushakuDropdown from "./avustushaku/AvustushakuDropdown";
 import HakemusFilter from "./hakemus-filter/HakemusFilter";
 import LocalStorage from "./LocalStorage";
 import { State } from "./types";
-import NewHakemusListing from "./hakemus-list/NewHakemusListing";
+import HakemusListing from "./hakemus-list/HakemusListing";
 import { Switch } from "./hakemus-list/Switch";
 import { HeaderContainer } from "./Header";
 import { AvustushakuDetails } from "./hakemus-list/AvustushakuDetails";
@@ -146,7 +146,7 @@ const App = ({ state, controller }: Props) => {
               />
             )}
           </div>
-          <NewHakemusListing
+          <HakemusListing
             selectedHakemus={state.selectedHakemus}
             hakemusList={hakemusList}
             isResolved={isResolved}
