@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React from "react";
-import ComponentFactory from "../ComponentFactory.jsx";
+import ComponentFactory from "../ComponentFactory";
 import {
   TextFieldEdit,
   TextAreaEdit,

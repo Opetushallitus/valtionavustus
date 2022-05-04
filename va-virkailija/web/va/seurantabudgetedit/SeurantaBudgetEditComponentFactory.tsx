@@ -1,12 +1,12 @@
 import React from "react";
 
-import ComponentFactory from "soresu-form/web/form/ComponentFactory.jsx";
+import ComponentFactory from "soresu-form/web/form/ComponentFactory";
 
 import {
   EditSummingBudgetElement,
   EditBudgetItemElement,
-} from "./SeurantaBudgetEditComponents.jsx";
-import BudgetEditElement from "../budgetedit/BudgetEditComponents.jsx";
+} from "./SeurantaBudgetEditComponents";
+import BudgetEditElement from "../budgetedit/BudgetEditComponents";
 
 const Empty = () => <div></div>;
 

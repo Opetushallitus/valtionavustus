@@ -1,14 +1,14 @@
 import React from "react";
-import ComponentFactory from "../ComponentFactory.jsx";
-import BasicValue from "./BasicValue.jsx";
-import TextAreaValue from "./TextAreaValue.jsx";
-import MoneyValue from "./MoneyValue.jsx";
-import IntegerValue from "./IntegerValue.jsx";
-import DecimalValue from "./DecimalValue.jsx";
-import OptionValue from "./OptionValue.jsx";
-import MultipleOptionValue from "./MultipleOptionValue.jsx";
-import AttachmentPreview from "./AttachmentPreview.jsx";
-import TableValue from "./TableValue.jsx";
+import ComponentFactory from "../ComponentFactory";
+import BasicValue from "./BasicValue";
+import TextAreaValue from "./TextAreaValue";
+import MoneyValue from "./MoneyValue";
+import IntegerValue from "./IntegerValue";
+import DecimalValue from "./DecimalValue";
+import OptionValue from "./OptionValue";
+import MultipleOptionValue from "./MultipleOptionValue";
+import AttachmentPreview from "./AttachmentPreview";
+import TableValue from "./TableValue";
 import {
   TextFieldPropertyMapper,
   OptionFieldPropertyMapper,

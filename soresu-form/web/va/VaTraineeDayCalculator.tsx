@@ -1,7 +1,9 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 import _ from "lodash";
 
-import BasicFieldComponent from "soresu-form/web/form/component/BasicFieldComponent";
+import BasicFieldComponent, {
+  BasicFieldComponentProps,
+} from "soresu-form/web/form/component/BasicFieldComponent";
 import RadioButton from "soresu-form/web/form/component/RadioButton";
 import BasicTextField from "soresu-form/web/form/component/BasicTextField";
 import { parseDecimal } from "../MathUtil";
@@ -10,7 +12,7 @@ import InputValueStorage from "soresu-form/web/form/InputValueStorage";
 
 import VaTraineeDayUtil from "./VaTraineeDayUtil";
 
-const formatFloatString = (stringValue) => {
+const formatFloatString = (stringValue: string) => {
   const sanitizedString = stringValue.replace(".", ",").replace(/[^\d,]/g, "");
   if (sanitizedString.indexOf(",") < 0 || sanitizedString.endsWith(",")) {
     return sanitizedString;
@@ -19,7 +21,7 @@ const formatFloatString = (stringValue) => {
   return VaTraineeDayUtil.formatFloat(floatValue);
 };
 
-const formatIntString = (stringValue) => {
+const formatIntString = (stringValue: string) => {
   if (stringValue === "") {
     return stringValue;
   }
@@ -27,9 +29,12 @@ const formatIntString = (stringValue) => {
   return intValue ? intValue.toString() : "0";
 };
 
+interface VaTraineeDayCalculatorProps extends BasicFieldComponentProps {}
+
 // Koulutettavapäivälaskuri in finnish
-export default class VaTraineeDayCalculator extends BasicFieldComponent {
-  static subfieldSpecFor(fieldId, type) {
+export default class VaTraineeDayCalculator extends BasicFieldComponent<VaTraineeDayCalculatorProps> {
+  translator: Translator;
+  static subfieldSpecFor(fieldId: string, type: string) {
     switch (type) {
       case "scope-type":
         return { id: fieldId + ".scope-type", fieldType: "radioButton" };
@@ -44,7 +49,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
     }
   }
 
-  static emptySubfieldsFor(fieldId) {
+  static emptySubfieldsFor(fieldId: string) {
     return [
       { key: fieldId + ".scope-type", value: "op", fieldType: "radioButton" },
       { key: fieldId + ".scope", value: "0", fieldType: "textField" },
@@ -53,15 +58,15 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
     ];
   }
 
-  constructor(props) {
+  constructor(props: VaTraineeDayCalculatorProps) {
     super(props);
     this.translator = new Translator(
       props.translations.form["trainee-day-calculator"]
     );
   }
 
-  static validateTotal(field, value) {
-    _.forEach(value, (answer) => {
+  static validateTotal(field: any, value: any) {
+    _.forEach(value, (answer: any) => {
       if (answer.key && !_.startsWith(answer.key, field.id)) {
         const subType = answer.key.substr(answer.key.lastIndexOf(".") + 1);
         answer.key = field.id + "." + subType;
@@ -73,8 +78,8 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
     return total > 0 ? undefined : { error: "negative-trayneeday-total" };
   }
 
-  static onChange(subfield, props, valueHolder, field) {
-    return (event) => {
+  static onChange(subfield: any, props: any, valueHolder: any, field: any) {
+    return (event: ChangeEvent<any>) => {
       let value = event.target.value;
       let scopeValue = VaTraineeDayUtil.readSubfieldValue(
         valueHolder.value,
@@ -145,7 +150,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
       },
     ];
 
-    const onChange = (subfield) => {
+    const onChange = (subfield: any) => {
       return VaTraineeDayCalculator.onChange(
         subfield,
         props,
@@ -191,6 +196,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
             <tr>
               <td>
                 <RadioButton
+                  field={field}
                   htmlId={htmlId + ".scope-type"}
                   options={scopeTypeOptions}
                   disabled={props.disabled}
@@ -207,6 +213,9 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
                   )}
                   translations={{}}
                   lang={this.props.lang}
+                  renderingParameters={undefined}
+                  translationKey={""}
+                  controller={null}
                 />
               </td>
               <td>
@@ -221,6 +230,10 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
                   hasError={props.hasError && !scopeIsValid}
                   size="extra-extra-small"
                   lang={this.props.lang}
+                  field={field}
+                  controller={null}
+                  translationKey={""}
+                  renderingParameters={{}}
                 />
               </td>
               <td>
@@ -238,13 +251,16 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
                   hasError={props.hasError && !personCountIsValid}
                   size="extra-extra-small"
                   lang={this.props.lang}
+                  field={field}
+                  translationKey={""}
+                  renderingParameters={{}}
                 />
               </td>
             </tr>
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan="3">
+              <td colSpan={3}>
                 {this.label(totalClassStr)}: {totalStr}
               </td>
             </tr>
@@ -255,8 +271,16 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
   }
 }
 
-export class VaTraineeDayTotalCalculator extends React.Component {
-  constructor(props) {
+interface VaTraineeDayTotalCalculatorProps {
+  answersObject: any;
+  translations: any;
+  htmlId: any;
+  lang: any;
+}
+
+export class VaTraineeDayTotalCalculator extends React.Component<VaTraineeDayTotalCalculatorProps> {
+  translator: Translator;
+  constructor(props: VaTraineeDayTotalCalculatorProps) {
     super(props);
     this.translator = new Translator(
       props.translations.form["trainee-day-calculator"]

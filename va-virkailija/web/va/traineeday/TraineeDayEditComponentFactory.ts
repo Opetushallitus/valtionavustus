@@ -1,7 +1,7 @@
-import ComponentFactory from "soresu-form/web/form/ComponentFactory.jsx";
-import TraineeDayEditCalculator from "./TraineeDayEditCalculator.jsx";
+import ComponentFactory from "soresu-form/web/form/ComponentFactory";
+import TraineeDayEditCalculator from "./TraineeDayEditCalculator";
 import { FieldOnChangePropertyMapper } from "soresu-form/web/form/component/PropertyMapper";
-import TraineeDayCalculatorSummary from "./TraineeDayCalculatorSummary.jsx";
+import TraineeDayCalculatorSummary from "./TraineeDayCalculatorSummary";
 
 export default class TraineeDayEditComponentFactory extends ComponentFactory {
   constructor() {

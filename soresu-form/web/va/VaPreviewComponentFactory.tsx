@@ -3,18 +3,18 @@ import React from "react";
 import ClassNames from "classnames";
 
 import Translator from "soresu-form/web/form/Translator";
-import ComponentFactory from "soresu-form/web/form/ComponentFactory.jsx";
-import LocalizedString from "soresu-form/web/form/component/LocalizedString.tsx";
+import ComponentFactory from "soresu-form/web/form/ComponentFactory";
+import LocalizedString from "soresu-form/web/form/component/LocalizedString";
 import BasicFieldComponent from "soresu-form/web/form/component/BasicFieldComponent";
-import BasicValue from "soresu-form/web/form/preview/BasicValue.jsx";
-import MoneyValue from "soresu-form/web/form/preview/MoneyValue.jsx";
-import MultipleOptionValue from "soresu-form/web/form/preview/MultipleOptionValue.jsx";
+import BasicValue from "soresu-form/web/form/preview/BasicValue";
+import MoneyValue from "soresu-form/web/form/preview/MoneyValue";
+import MultipleOptionValue from "soresu-form/web/form/preview/MultipleOptionValue";
 import { FieldOnChangePropertyMapper } from "soresu-form/web/form/component/PropertyMapper";
 
 import VaBudgetElement, {
   SummingBudgetElement,
   BudgetSummaryElement,
-} from "./VaBudgetComponents.jsx";
+} from "./VaBudgetComponents";
 
 import {
   VaFocusAreasPropertyMapper,
@@ -48,10 +48,10 @@ export default class VaPreviewComponentFactory extends ComponentFactory {
   }
 }
 
-class VaPreviewBudgetItemElement extends React.Component {
+class VaPreviewBudgetItemElement extends React.Component<any> {
   render() {
     const field = this.props.field;
-    const children = this.props.children;
+    const children: any = this.props.children;
     const htmlId = this.props.htmlId;
     const descriptionComponent = children[0];
     const amountComponent = children[1];
@@ -72,7 +72,7 @@ class VaPreviewBudgetItemElement extends React.Component {
 }
 
 class VaPreviewBudgetElement extends VaBudgetElement {
-  html(htmlId, children) {
+  html(htmlId: any, children: any) {
     return (
       <div className="va-budget" id={htmlId}>
         {children}
@@ -81,7 +81,7 @@ class VaPreviewBudgetElement extends VaBudgetElement {
   }
 }
 
-class VaProjectDescriptionPreview extends React.Component {
+class VaProjectDescriptionPreview extends React.Component<any> {
   render() {
     const children = this.props.children;
     const htmlId = this.props.htmlId;
@@ -103,8 +103,9 @@ class VaProjectDescriptionPreview extends React.Component {
   }
 }
 
-class VaPreviewTraineeDayCalculator extends BasicFieldComponent {
-  constructor(props) {
+class VaPreviewTraineeDayCalculator extends BasicFieldComponent<any> {
+  translator: Translator;
+  constructor(props: any) {
     super(props);
     this.translator = new Translator(
       props.translations.form["trainee-day-calculator"]
@@ -162,7 +163,7 @@ class VaPreviewTraineeDayCalculator extends BasicFieldComponent {
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan="3">
+              <td colSpan={3}>
                 {this.label("total")}:{" "}
                 {VaTraineeDayUtil.readSubfieldValue(
                   subfields,

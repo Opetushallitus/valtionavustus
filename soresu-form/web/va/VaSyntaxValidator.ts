@@ -1,6 +1,6 @@
 import { validateMoney } from "soresu-form/web/form/MoneyValidator";
 
-import VaTraineeDayCalculator from "./VaTraineeDayCalculator.jsx";
+import VaTraineeDayCalculator from "./VaTraineeDayCalculator";
 import { Field } from "soresu-form/web/va/types";
 import {
   ValidationError,

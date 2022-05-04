@@ -1,6 +1,6 @@
 import React from "react";
 
-import ComponentFactory from "../ComponentFactory.jsx";
+import ComponentFactory from "../ComponentFactory";
 
 import BasicTextField from "./BasicTextField";
 import BasicTextArea from "./BasicTextArea";

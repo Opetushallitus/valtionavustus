@@ -10,7 +10,7 @@ import Translator from "soresu-form/web/form/Translator";
 import translationJson from "soresu-form/resources/public/translations.json";
 import { HakuData } from "../types";
 import HakemustenArviointiController from "../HakemustenArviointiController";
-import { Avustushaku, Hakemus } from "soresu-form/web/va/types";
+import { Avustushaku, Hakemus, Field } from "soresu-form/web/va/types";
 
 type SeurantaLiitteetProps = {
   controller: HakemustenArviointiController;
@@ -28,7 +28,9 @@ export default class SeurantaLiitteet extends React.Component<SeurantaLiitteetPr
     const hakemusUserKey = hakemus["user-key"];
     const attachments = hakuData.attachments[hakemusId] || [];
     const hakijaServer = _.get(hakuData, "environment.hakija-server.url.fi");
-    const fakeFormController = { componentDidMount: () => {} };
+    const fakeFormController = {
+      componentDidMount: () => {},
+    };
     const translations = Immutable(translationJson);
 
     const onDrop = (fieldId: string, files: any) => {
@@ -115,7 +117,7 @@ export default class SeurantaLiitteet extends React.Component<SeurantaLiitteetPr
         <h2>
           Liitteet <HelpTooltip content={helpText} direction={"arviointi"} />{" "}
         </h2>
-        {_.map(fields, (field) => (
+        {_.map(fields, (field: Field) => (
           <AttachmentField
             field={field}
             key={field.id}

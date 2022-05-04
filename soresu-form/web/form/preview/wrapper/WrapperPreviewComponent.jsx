@@ -1,10 +1,10 @@
 import React from "react";
 
-import ComponentFactory from "../../ComponentFactory.jsx";
-import ThemeWrapper from "./../../component/wrapper/ThemeWrapper.jsx";
-import FieldsetPreview from "./FieldsetPreview.jsx";
-import GrowingFieldsetPreview from "./GrowingFieldsetPreview.jsx";
-import GrowingFieldsetChildPreview from "./GrowingFieldsetChildPreview.jsx";
+import ComponentFactory from "../../ComponentFactory";
+import ThemeWrapper from "./../../component/wrapper/ThemeWrapper";
+import FieldsetPreview from "./FieldsetPreview";
+import GrowingFieldsetPreview from "./GrowingFieldsetPreview";
+import GrowingFieldsetChildPreview from "./GrowingFieldsetChildPreview";
 
 export default class WrapperPreviewComponent extends React.Component {
   constructor(props) {

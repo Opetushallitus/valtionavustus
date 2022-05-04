@@ -1,4 +1,4 @@
-import ComponentFactory from "soresu-form/web/form/ComponentFactory.jsx";
+import ComponentFactory from "soresu-form/web/form/ComponentFactory";
 import CheckboxButton from "soresu-form/web/form/component/CheckboxButton";
 import EmailTextField from "soresu-form/web/form/component/EmailTextField";
 import MoneyTextField from "soresu-form/web/form/component/MoneyTextField";
@@ -11,7 +11,7 @@ import VaBudgetElement, {
   SummingBudgetElement,
   BudgetItemElement,
   BudgetSummaryElement,
-} from "./VaBudgetComponents.jsx";
+} from "./VaBudgetComponents";
 
 import {
   VaFocusAreasPropertyMapper,
@@ -19,11 +19,11 @@ import {
   SelfFinancingPropertyMapper,
 } from "./VaPropertyMapper";
 
-import VaProjectDescription from "./VaProjectDescription.jsx";
+import VaProjectDescription from "./VaProjectDescription";
 
 import VaTraineeDayCalculator, {
   VaTraineeDayTotalCalculator,
-} from "./VaTraineeDayCalculator.jsx";
+} from "./VaTraineeDayCalculator";
 
 export default class VaComponentFactory extends ComponentFactory {
   constructor() {
@@ -50,7 +50,7 @@ export default class VaComponentFactory extends ComponentFactory {
     });
   }
 
-  getCustomComponentProperties(state) {
+  getCustomComponentProperties(state: any) {
     return { avustushaku: state.avustushaku };
   }
 }

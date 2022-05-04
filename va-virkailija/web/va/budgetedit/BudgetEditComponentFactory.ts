@@ -1,13 +1,11 @@
-import _ from "lodash";
+import ComponentFactory from "soresu-form/web/form/ComponentFactory";
 
-import ComponentFactory from "soresu-form/web/form/ComponentFactory.jsx";
-
-import { BudgetSummaryElement } from "soresu-form/web/va/VaBudgetComponents.jsx";
+import { BudgetSummaryElement } from "soresu-form/web/va/VaBudgetComponents";
 
 import BudgetEditElement, {
   EditSummingBudgetElement,
   EditBudgetItemElement,
-} from "./BudgetEditComponents.jsx";
+} from "./BudgetEditComponents";
 
 export default class BudgetEditComponentFactory extends ComponentFactory {
   constructor() {
@@ -26,8 +24,8 @@ export default class BudgetEditComponentFactory extends ComponentFactory {
 }
 
 class BudgetSummaryEditPropertyMapper {
-  static map(props) {
-    return _.assign({}, props, {
+  static map(props: any) {
+    return Object.assign({}, props, {
       labelTranslations: {
         totalSumRowLabel: { fi: "Opetushallituksen myöntämä avustus" },
         ophFinancingLabel: { fi: "Opetushallituksen myöntämä avustus" },

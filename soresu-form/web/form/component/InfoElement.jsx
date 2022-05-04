@@ -1,13 +1,13 @@
 import React from "react";
 
-import ComponentFactory from "../ComponentFactory.jsx";
+import ComponentFactory from "../ComponentFactory";
 import Translator from "../Translator";
 import DateUtil from "../../DateUtil";
 import {
   InfoElementPropertyMapper,
   AccordionElementPropertyMapper,
   LinkPropertyMapper,
-} from "./PropertyMapper.js";
+} from "./PropertyMapper";
 
 export class BasicInfoComponent extends React.Component {
   asDateTimeString(date) {

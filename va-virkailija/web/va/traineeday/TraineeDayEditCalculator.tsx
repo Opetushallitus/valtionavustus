@@ -1,16 +1,21 @@
 import _ from "lodash";
 import React from "react";
 
-import BasicFieldComponent from "soresu-form/web/form/component/BasicFieldComponent";
+import BasicFieldComponent, {
+  BasicFieldComponentProps,
+} from "soresu-form/web/form/component/BasicFieldComponent";
 import BasicTextField from "soresu-form/web/form/component/BasicTextField";
 import Translator from "soresu-form/web/form/Translator";
 import { parseDecimal } from "soresu-form/web/MathUtil";
 
 import VaTraineeDayUtil from "soresu-form/web/va/VaTraineeDayUtil";
-import VaTraineeDayCalculator from "soresu-form/web/va/VaTraineeDayCalculator.jsx";
+import VaTraineeDayCalculator from "soresu-form/web/va/VaTraineeDayCalculator";
 
-export default class TraineeDayEditCalculator extends BasicFieldComponent {
-  constructor(props) {
+interface TraineeDayEditCalculatorProps extends BasicFieldComponentProps {}
+
+export default class TraineeDayEditCalculator extends BasicFieldComponent<TraineeDayEditCalculatorProps> {
+  translator: Translator;
+  constructor(props: TraineeDayEditCalculatorProps) {
     super(props);
     this.translator = new Translator(
       props.translations.form["trainee-day-calculator"]
@@ -38,7 +43,7 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
     const allowEditing = props.controller.allowEditing;
     const hasError = props.hasError;
 
-    const onChange = (subfield) => {
+    const onChange = (subfield: any) => {
       return VaTraineeDayCalculator.onChange(
         subfield,
         props,
@@ -103,6 +108,7 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
         </td>
         <td style={{ whiteSpace: "nowrap" }}>
           <BasicTextField
+            field={field}
             htmlId={htmlId + ".scope"}
             disabled={!allowEditing}
             onChange={onChange(
@@ -113,12 +119,15 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
             hasError={hasError && !grtScopeIsValid}
             size="extra-extra-small"
             lang={this.props.lang}
+            renderingParameters={{}}
+            translationKey={""}
           />
           {grtScopeTypeStr}
         </td>
         <td className="text-gray original-value">{orgPersonCountStr}</td>
         <td>
           <BasicTextField
+            field={field}
             htmlId={htmlId + ".person-count"}
             disabled={!allowEditing}
             onChange={onChange(
@@ -129,6 +138,8 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
             hasError={hasError && !grtPersonCountIsValid}
             size="extra-extra-small"
             lang={this.props.lang}
+            renderingParameters={{}}
+            translationKey={""}
           />
         </td>
         <td className="text-gray">{orgTotalStr}</td>
@@ -139,7 +150,7 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
     );
   }
 
-  static renderNameAnswer(subfields) {
+  static renderNameAnswer(subfields: any) {
     const subfield = _.find(subfields, (ans) => ans.fieldType === "nameField");
     return subfield ? subfield.value : "";
   }

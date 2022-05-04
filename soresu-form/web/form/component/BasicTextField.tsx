@@ -4,9 +4,9 @@ import BasicSizedComponent, {
 } from "./BasicSizedComponent";
 
 export interface BasicTextFieldProps extends BasicSizedComponentProps {
-  maxLength: number;
-  onBlur: FocusEventHandler<any>;
-  onChange: ChangeEventHandler<any>;
+  maxLength?: number;
+  onBlur?: FocusEventHandler<any>;
+  onChange?: ChangeEventHandler<any>;
 }
 
 export default class BasicTextField<T> extends BasicSizedComponent<
@@ -17,7 +17,9 @@ export default class BasicTextField<T> extends BasicSizedComponent<
   }
   render() {
     const props = this.props;
-    const sizeNumber = Number.isInteger(props.size) ? props.size : undefined;
+    const sizeNumber = Number.isInteger(props.size)
+      ? Number(props.size)
+      : undefined;
     const classStr = this.resolveClassName();
     return (
       <div className={this.resolveClassName(this.baseClassName())}>

@@ -1,7 +1,7 @@
 import React from "react";
 
 import FormUtil from "soresu-form/web/form/FormUtil";
-import FormContainer from "soresu-form/web/form/FormContainer.jsx";
+import FormContainer from "soresu-form/web/form/FormContainer";
 import Form from "soresu-form/web/form/Form.jsx";
 import InputValueStorage from "soresu-form/web/form/InputValueStorage";
 import SyntaxValidator from "soresu-form/web/form/SyntaxValidator";
@@ -9,7 +9,7 @@ import SyntaxValidator from "soresu-form/web/form/SyntaxValidator";
 import { BudgetTable } from "./BudgetTable";
 import FakeFormState from "../form/FakeFormState";
 import SeurantaBudgetEditFormController from "./SeurantaBudgetEditFormController";
-import SeurantaBudgetEditComponentFactory from "./SeurantaBudgetEditComponentFactory.jsx";
+import SeurantaBudgetEditComponentFactory from "./SeurantaBudgetEditComponentFactory";
 
 import "../style/budgetedit.less";
 import {

@@ -1,12 +1,15 @@
 import React from "react";
 
 export default class ComponentFactory {
-  constructor(props) {
+  fieldTypeMapping: any;
+  fieldPropertyMapperMapping: any;
+
+  constructor(props: any) {
     this.fieldTypeMapping = props.fieldTypeMapping;
     this.fieldPropertyMapperMapping = props.fieldPropertyMapperMapping;
   }
 
-  createComponent(componentProps) {
+  createComponent(componentProps: any) {
     const fieldType = componentProps.fieldType;
     if (fieldType in this.fieldTypeMapping) {
       const fieldPropertyMapper = this.fieldPropertyMapperMapping[fieldType];
