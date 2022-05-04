@@ -4,12 +4,10 @@ import ReactDOM from "react-dom";
 import RouteParser from "route-parser";
 import queryString from "query-string";
 
-import { Hakemus } from "soresu-form/web/va/types";
-
 import HakemustenArviointiController from "./HakemustenArviointiController";
 import HakemusListing from "./hakemus-list/HakemusListing.jsx";
 import HakemusDetails from "./hakemus-details/HakemusDetails";
-import HakemusHakijaSidePreviewLink from "./hakemus-details/HakemusHakijaSidePreviewLink";
+import { HakemusHakijaSidePreviewLink } from "./hakemus-details/HakemusHakijaSidePreviewLink";
 import HakemusDecisionLink from "./hakemus-details/HakemusDecisionLink";
 import AvustushakuDropdown from "./avustushaku/AvustushakuDropdown";
 import HakemusFilter from "./hakemus-filter/HakemusFilter";
@@ -59,9 +57,6 @@ const App = ({ state, controller }: Props) => {
     ? hakemukset
     : HakemustenArviointiController.filterHakemukset(hakemukset);
   const hasSelected = typeof state.selectedHakemus === "object";
-  const selectedHakemus: Hakemus | undefined | {} = hasSelected
-    ? state.selectedHakemus
-    : {};
   const [splitView, setSplitView] = useState(false);
   const [showInfo, setShowInfo] = useState(
     () =>
@@ -156,7 +151,7 @@ const App = ({ state, controller }: Props) => {
           </div>
           {newHakemusListingUiEnabled ? (
             <NewHakemusListing
-              selectedHakemus={selectedHakemus}
+              selectedHakemus={state.selectedHakemus}
               hakemusList={hakemusList}
               isResolved={isResolved}
               roles={hakuData.roles}
@@ -180,7 +175,7 @@ const App = ({ state, controller }: Props) => {
               hakemusSorter={state.hakemusSorter}
               hakemusList={hakemusList}
               hasSelected={hasSelected}
-              selectedHakemus={selectedHakemus}
+              selectedHakemus={state.selectedHakemus}
               previouslySelectedHakemus={previouslySelectedHakemus}
               userInfo={state.userInfo}
               privileges={hakuData.privileges}
@@ -207,14 +202,18 @@ const App = ({ state, controller }: Props) => {
           helpTexts={helpTexts}
         />
         <div hidden={!hasSelected} id="footer">
-          <HakemusHakijaSidePreviewLink
-            hakemus={selectedHakemus}
-            avustushaku={avustushaku}
-          />
-          <HakemusDecisionLink
-            hakemus={selectedHakemus}
-            avustushaku={avustushaku}
-          />
+          {state.selectedHakemus?.["user-key"] &&
+            <>
+              <HakemusHakijaSidePreviewLink
+                hakemusUserKey={state.selectedHakemus["user-key"]}
+                avustushakuId={avustushakuId}
+              />
+              <HakemusDecisionLink
+                hakemus={state.selectedHakemus}
+                avustushaku={avustushaku}
+              />
+            </>
+          }
         </div>
       </section>
       {modal}

@@ -31,7 +31,7 @@ import { ControlledSelectPanel, RoleField } from "./PersonFilterButton";
 import { AddRoleImage } from "./AddRoleImage";
 
 interface Props {
-  selectedHakemus: Hakemus | undefined | {};
+  selectedHakemus: Hakemus | undefined;
   hakemusList: Hakemus[];
   roles: Role[];
   splitView: boolean;
@@ -266,8 +266,7 @@ export default function NewHakemusListing(props: Props) {
     allowHakemusScoring,
     additionalInfoOpen,
   } = props;
-  const selectedHakemusId =
-    selectedHakemus && "id" in selectedHakemus ? selectedHakemus.id : undefined;
+  const selectedHakemusId = selectedHakemus ? selectedHakemus.id : undefined;
   const [filterState, dispatch] = useReducer(reducer, getDefaultState());
   const [sortingState, setSorting] = useSorting();
   const filteredList = hakemusList
