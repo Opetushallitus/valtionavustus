@@ -106,7 +106,6 @@ export interface State {
   modal: JSX.Element | undefined;
   personSelectHakemusId: number | undefined;
   selectedHakemus: Hakemus | undefined;
-  previouslySelectedHakemus?: Hakemus;
   selectedHakemusAccessControl: SelectedHakemusAccessControl;
   showOthersScores: boolean;
   saveStatus: {

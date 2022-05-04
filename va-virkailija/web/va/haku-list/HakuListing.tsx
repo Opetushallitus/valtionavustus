@@ -16,7 +16,6 @@ import HakuStatuses, {
 import HakuPhases, {
   HakuPhase as HakuPhaseType,
 } from "../haku-details/HakuPhases";
-import HakemusListing from "../hakemus-list/HakemusListing.jsx";
 import HakujenHallintaController from "../HakujenHallintaController";
 import { Filter, FilterId } from "../types";
 
@@ -73,6 +72,28 @@ function _filterWithDatePredicate(
   };
 }
 
+function _filterWithArrayPredicate<T>(fieldGetter: (a: Avustushaku) => T, filter: T[]) {
+  return function (avustushaku: Avustushaku) {
+    return filter.includes(fieldGetter(avustushaku));
+  };
+}
+
+function _filterWithStrPredicate(fieldGetter: (a: Avustushaku) => string, filter: string) {
+  if (!filter.length) {
+    return function () {
+      return true;
+    };
+  }
+  return function (avustushaku: Avustushaku) {
+    if (!fieldGetter(avustushaku).length) {
+      return false;
+    }
+    return (
+      fieldGetter(avustushaku).toUpperCase().indexOf(filter.toUpperCase()) >= 0
+    );
+  };
+}
+
 export const HakuListing = (props: HakuListingProps) => {
   const { hakuList, selectedHaku, controller, filter } = props;
 
@@ -84,20 +105,20 @@ export const HakuListing = (props: HakuListingProps) => {
 
   const filteredHakuList = hakuList
     .filter(
-      HakemusListing._filterWithArrayPredicate(
+      _filterWithArrayPredicate(
         _fieldGetter("status"),
         filter.status
       )
     )
     .filter(
-      HakemusListing._filterWithArrayPredicate(
+      _filterWithArrayPredicate(
         _fieldGetter("phase"),
         filter.phase
       )
     )
     .filter(
-      HakemusListing._filterWithStrPredicate(
-        _fieldGetter("avustushaku"),
+      _filterWithStrPredicate(
+        _fieldGetter("avustushaku") as (a: Avustushaku) => string,
         filter.avustushaku
       )
     )
@@ -294,7 +315,7 @@ const StatusFilter = <T extends HakuStatusType | HakuPhaseType>(
     const checked = statusFilter.includes(status);
     const htmlId = "filter-by-status-" + status;
     const kpl = hakuList.filter(
-      HakemusListing._filterWithArrayPredicate(_fieldGetter(filterField), [
+      _filterWithArrayPredicate(_fieldGetter(filterField), [
         status,
       ])
     ).length;
