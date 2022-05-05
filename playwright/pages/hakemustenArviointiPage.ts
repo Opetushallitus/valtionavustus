@@ -122,7 +122,10 @@ export class HakemustenArviointiPage {
   }
 
   async openUkotusModal(hakemusID: number) {
-    await this.page.click(`#hakemus-${hakemusID} .btn-role`);
+    await this.page
+      .locator(`[data-test-id=hakemus-${hakemusID}]`)
+      .locator(`[aria-label="Lisää valmistelija hakemukselle"]`)
+      .click();
   }
 
   async closeUkotusModal() {

@@ -580,7 +580,7 @@ function HakemusTable({
               onKeyDown={(e) =>
                 e.key === "Enter" && onSelectHakemus(hakemus.id)
               }
-              data-test-id={`hakemus-${hakemus["user-key"]}`}
+              data-test-id={`hakemus-${hakemus.id}`}
             >
               <td className="organization-cell">
                 {hakemus["organization-name"]}
@@ -1041,7 +1041,7 @@ function ResolvedTable(props: ResolvedTableProps) {
             tabIndex={0}
             onClick={() => onSelectHakemus(hakemus.id)}
             onKeyDown={(e) => e.key === "Enter" && onSelectHakemus(hakemus.id)}
-            data-test-id={`hakemus-${hakemus["user-key"]}`}
+            data-test-id={`hakemus-${hakemus.id}`}
           >
             <td className="organization-cell">
               {hakemus["organization-name"]}
