@@ -41,8 +41,6 @@ muutoshakemusTest(
           hakemusId,
           "_ valtionavustus"
         );
-
-        await hakemustenArviointiPage.navigate(avustushakuID);
         await hakemustenArviointiPage.openUkotusModal(hakemusId);
         await page
           .locator(`[aria-label="Poista _ valtionavustus arvioijan roolista"]`)
@@ -59,7 +57,6 @@ muutoshakemusTest(
     await test.step("can set arvio", async () => {
       await hakemustenArviointiPage.setSelectionCriteriaStars(1, 4);
       await hakemustenArviointiPage.setSelectionCriteriaStars(2, 4);
-      await page.reload();
       const hakemusScore = await hakemustenArviointiPage.getHakemusScore(
         hakemusId
       );
@@ -85,12 +82,12 @@ muutoshakemusTest(
 
       await page.click('label[for="set-arvio-status-accepted"]');
 
-      await page.reload();
-      await expect(page.locator("td.status-column")).toContainText(
-        "Hyväksytty"
-      );
+      await page.locator("#close-hakemus-button").click();
       await expect(
-        page.locator("td.granted-sum-column span.money")
+        page.locator('[data-test-class="hakemus-status-cell"]')
+      ).toContainText("Hyväksytty");
+      await expect(
+        page.locator('[data-test-class="granted-sum-cell"]')
       ).toContainText("99 999");
     });
   }

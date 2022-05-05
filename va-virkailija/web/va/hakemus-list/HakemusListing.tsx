@@ -667,7 +667,10 @@ function HakemusTable({
                   scoring={scoring}
                 />
               </td>
-              <td className="hakemus-status-cell">
+              <td
+                className="hakemus-status-cell"
+                data-test-class="hakemus-status-cell"
+              >
                 {draft ? (
                   <EmptyGreyPill />
                 ) : (
@@ -680,7 +683,10 @@ function HakemusTable({
               <td className={`${styles.alignRight} applied-sum-cell`}>
                 {euroFormatter.format(hakemus["budget-oph-share"])}
               </td>
-              <td className={`${styles.alignRight} granted-sum-cell`}>
+              <td
+                className={`${styles.alignRight} granted-sum-cell`}
+                data-test-class="granted-sum-cell"
+              >
                 {hakemus.arvio["budget-granted"]
                   ? euroFormatter.format(hakemus.arvio["budget-granted"])
                   : "-"}
@@ -1106,7 +1112,10 @@ function ResolvedTable(props: ResolvedTableProps) {
               {hakemus["organization-name"]}
             </td>
             <td className="project-name-cell">{getProject(hakemus)}</td>
-            <td className="hakemus-status-cell">
+            <td
+              className="hakemus-status-cell"
+              data-test-class="hakemus-status-cell"
+            >
               <ArvioStatus
                 status={hakemus.arvio.status}
                 refused={hakemus.refused}
@@ -1130,7 +1139,10 @@ function ResolvedTable(props: ResolvedTableProps) {
                 refused={hakemus.refused}
               />
             </td>
-            <td className={`${styles.alignRight} granted-sum-cell`}>
+            <td
+              className={`${styles.alignRight} granted-sum-cell`}
+              data-test-class="granted-sum-cell"
+            >
               {hakemus.arvio["budget-granted"]
                 ? euroFormatter.format(hakemus.arvio["budget-granted"])
                 : "-"}
