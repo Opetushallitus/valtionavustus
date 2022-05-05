@@ -5,7 +5,6 @@ import {
   HelpTexts,
 } from "soresu-form/web/va/types";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
-import { HakemusSelvitys, Loppuselvitys } from "soresu-form/web/va/status";
 import { Immutable } from "seamless-immutable";
 
 export interface UserInfo {
@@ -64,18 +63,12 @@ export interface HakuData {
   talousarvio?: Menoluokka[];
 }
 
+export type AnswerFilter = { id: string, answer: string }
+
 export interface HakemusFilter {
-  answers: any[];
+  answers: AnswerFilter[];
   isOpen: boolean;
-  name: string;
-  openQuestions: any[];
-  status: string[];
-  status_valiselvitys: typeof HakemusSelvitys.statuses;
-  status_loppuselvitys: typeof Loppuselvitys.statuses;
-  status_muutoshakemus: typeof HakemusSelvitys.statuses;
-  organization: string;
-  evaluator: number | undefined;
-  presenter?: any;
+  openQuestions: string[];
 }
 
 export interface HakemusSorter {

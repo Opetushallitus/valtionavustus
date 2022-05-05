@@ -16,7 +16,7 @@ import {
 } from "soresu-form/web/va/status";
 import HakemusArviointiStatuses from "../hakemus-details/HakemusArviointiStatuses";
 import { Pill, PillProps } from "./Pill";
-import { Role, State, UserInfo } from "../types";
+import { HakemusFilter, Role, State, UserInfo } from "../types";
 
 import useOutsideClick from "../useOutsideClick";
 import {
@@ -168,6 +168,50 @@ const hakemusFilter = (state: FilterState) => (hakemus: Hakemus) => {
   );
 };
 
+const answerFilter = (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
+  const answers = hakemusFilter.answers.filter((a) => !["tagit", "rahoitusalue"].includes(a.id))
+  if (!answers.length) {
+    return true;
+  }
+
+  const filtersGroupedById = answers.reduce((prev, cur) => {
+    if (Object.keys(prev).includes(cur.id)) {
+      return {
+        ...prev,
+        [cur.id]: [...prev[cur.id], cur.answer],
+      };
+    } else {
+      return {
+        ...prev,
+        [cur.id]: [cur.answer],
+      };
+    }
+  }, {} as { [id: string]: string[] });
+
+  return Object.keys(filtersGroupedById).every((key) => {
+    const filterAnswers = filtersGroupedById[key];
+    const hakemusAnswer = hakemus.answers.find((a) => a.key === key);
+    return filterAnswers.includes(hakemusAnswer?.value);
+  });
+};
+
+const rahoitusalueFilter = (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
+  const rahoitusalues = hakemusFilter.answers.filter(a => a.id === 'rahoitusalue').map(a => a.answer)
+  if (!rahoitusalues.length) {
+    return true
+  }
+  return !hakemus.arvio.rahoitusalue && rahoitusalues.includes('Ei rahoitusaluetta')
+      || hakemus.arvio.rahoitusalue && rahoitusalues.includes(hakemus.arvio.rahoitusalue)
+}
+
+const tagFilter = (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
+  const tags = hakemusFilter.answers.filter(a => a.id === 'tags').map(a => a.answer)
+  if (!tags.length) {
+    return true
+  }
+  return hakemus.arvio.tags?.value.some(t => tags.includes(t))
+}
+
 const defaultStatusFilters = {
   hakemus: HakemusArviointiStatuses.statuses.filter((s) => s !== "rejected"),
   muutoshakemus: Muutoshakemus.statuses,
@@ -271,6 +315,9 @@ export default function HakemusListing(props: Props) {
   const [sortingState, setSorting] = useSorting();
   const filteredList = hakemusList
     .filter(hakemusFilter(filterState))
+    .filter(answerFilter(state.hakemusFilter))
+    .filter(rahoitusalueFilter(state.hakemusFilter))
+    .filter(tagFilter(state.hakemusFilter))
     .sort(hakemusSorter(sortingState));
   const totalBudgetGranted = filteredList.reduce<number>(
     (totalGranted, hakemus) => {

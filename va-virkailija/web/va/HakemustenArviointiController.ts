@@ -622,15 +622,6 @@ export default class HakemustenArviointiController {
     newFilter: { filterId: keyof HakemusFilter; filter: any }
   ) {
     state.hakemusFilter[newFilter.filterId] = newFilter.filter as never;
-    if (newFilter.filterId === "evaluator") {
-      const avustushakuId = state.hakuData.avustushaku.id;
-      const evaluatorId = newFilter.filter;
-      const avustushakuUrl = `/avustushaku/${avustushakuId}/`;
-      const url = evaluatorId
-        ? `${avustushakuUrl}?arvioija=${evaluatorId}`
-        : avustushakuUrl;
-      history.pushState({}, window.document.title, url);
-    }
     return state;
   }
 
@@ -892,8 +883,6 @@ export default class HakemustenArviointiController {
 
   onClearFilters(state: State) {
     state.hakemusFilter.answers = [];
-    state.hakemusFilter.evaluator = undefined;
-    state.hakemusFilter.presenter = undefined;
     return state;
   }
 

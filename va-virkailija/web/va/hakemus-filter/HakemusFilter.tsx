@@ -21,7 +21,7 @@ const ToggleFilterButton = ({
   const buttonClass = ClassNames("hakemus-btn");
   const suffix = hasActiveFilters ? `(${activeFilterCount})` : "listaa";
   return (
-    <button className={buttonClass} onClick={onFilter}>
+    <button className={buttonClass} onClick={onFilter} data-test-id="rajaa-listaa">
       Rajaa {suffix}
     </button>
   );
@@ -110,9 +110,7 @@ const RemoveFilter = ({
   hakemusFilter,
 }: Pick<Props, "controller" | "hakemusFilter">) => {
   const hidden =
-    hakemusFilter.answers.length === 0 &&
-    !_.isNumber(hakemusFilter.evaluator) &&
-    !_.isNumber(hakemusFilter.presenter);
+    hakemusFilter.answers.length === 0;
   const onRemove = () => controller.clearFilters();
   const explanation = "Poista listan rajaukset";
   return (
@@ -223,7 +221,7 @@ const FilterList = ({
 
   return (
     <div hidden={!open} className="panel hakemus-filter-panel">
-      <button className="close" onClick={onToggleFilter}>
+      <button className="close" onClick={onToggleFilter} data-test-id="rajaa-listaa-close">
         x
       </button>
       {filterQuestions.map((question) => (

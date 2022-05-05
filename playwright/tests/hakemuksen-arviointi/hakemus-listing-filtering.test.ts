@@ -21,6 +21,7 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
     const answers2 = {
       ...answers,
       contactPersonEmail: "erkki2.esimerkki@example.com",
+      lang: "sv" as const,
     };
     const budget2 = {
       amount: {
@@ -43,7 +44,7 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
       },
       selfFinancing: "1",
     };
-    await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang);
+    await hakijaAvustusHakuPage.navigate(avustushakuID, answers2.lang);
     await hakijaAvustusHakuPage.fillBudjettimuutoshakemusEnabledHakemus(
       avustushakuID,
       answers2,
@@ -54,7 +55,7 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
       ...answers,
       contactPersonEmail: "erkki3.esimerkki@example.com",
     };
-    await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang);
+    await hakijaAvustusHakuPage.navigate(avustushakuID, answers3.lang);
     await hakijaAvustusHakuPage.fillBudjettimuutoshakemusEnabledHakemus(
       avustushakuID,
       answers3,
@@ -66,7 +67,7 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
   },
 });
 
-test("hakemus listing", async ({
+test("hakemus list filtering", async ({
   hakemustenArviointiPage,
   hakuProps,
   avustushakuID,
@@ -166,6 +167,17 @@ test("hakemus listing", async ({
     await hakemustenArviointiPage.page
       .locator('[aria-label="Poista valmistelija rajaus"]')
       .click();
+    await expect(hakemustenArviointiPage.hakemusListing).toContainText(
+      "2/2 hakemusta"
+    );
+  });
+
+  await test.step("filtering with 'Rajaa listaa' hakemus filter works", async () => {
+    await hakemustenArviointiPage.clickRajaaListaaFilter("Asiointikieli", "Suomi");
+    await expect(hakemustenArviointiPage.hakemusListing).toContainText(
+      "1/2 hakemusta"
+    );
+    await hakemustenArviointiPage.clickRajaaListaaFilter("Asiointikieli", "Suomi");
     await expect(hakemustenArviointiPage.hakemusListing).toContainText(
       "2/2 hakemusta"
     );

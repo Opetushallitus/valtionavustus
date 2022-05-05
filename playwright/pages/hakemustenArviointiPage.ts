@@ -590,4 +590,13 @@ export class HakemustenArviointiPage {
     );
     await this.waitForSave();
   }
+
+  async clickRajaaListaaFilter(category: string, answer: string) {
+    await this.page.click('[data-test-id="rajaa-listaa"]')
+    const question = this.page.locator(`div:text-matches("${category}", "i")`)
+    await question.click()
+    await this.page.click(`button:text-matches("${answer}", "i")`)
+    await question.click()
+    await this.page.click('[data-test-id="rajaa-listaa-close"]')
+  }
 }
