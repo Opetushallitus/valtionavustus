@@ -80,7 +80,6 @@
     "build": "webpack",
     "build-production": "NODE_ENV=production npm run build",
     "build-watch": "node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --progress --watch",
-    "virkailija:test": "cd va-virkailija && true",
     "prettier-check-project": "prettier --check ."
   }
 }

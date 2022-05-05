@@ -10,7 +10,6 @@ function run_tests {
   fi
 	npm run puppeteer:test "$@"
 	npm run soresu-form:test "$@"
-	npm run virkailija:test "$@"
 	make lein-test
 }
 
