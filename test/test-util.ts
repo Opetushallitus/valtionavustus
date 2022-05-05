@@ -944,7 +944,7 @@ async function prepareSelectingValmistelijaForHakemus(
   await navigate(page, `/avustushaku/${avustushakuID}/`);
   await clickElement(page, `[data-test-id="hakemus-${hakemusID}"] [aria-label="Lisää valmistelija hakemukselle"]`)
 
-  const xpath = `//table[contains(@class, 'hakemus-list')]/tbody//tr[contains(@class, 'selected')]//button[contains(., '${valmistelijaName}')]`;
+  const xpath = `//tr[contains(@class, 'selected')]//button[@aria-label="Lisää ${valmistelijaName} valmistelijaksi"]`
   const valmistelijaButton = await page.waitForXPath(xpath, { visible: true });
   if (!valmistelijaButton) {
     throw new Error(`Valmistelija button not found with XPath: ${xpath}`);
