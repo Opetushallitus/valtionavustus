@@ -661,6 +661,7 @@ function HakemusTable({
               </td>
               <td className={styles.starsCell}>
                 <StarScoring
+                  id={hakemus.id}
                   userInfo={userInfo}
                   allowHakemusScoring={allowHakemusScoring}
                   scoring={scoring}

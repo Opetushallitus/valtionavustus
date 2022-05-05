@@ -34,6 +34,7 @@ const Star: React.FC<StarProps> = ({ style, opacity }) => {
 };
 
 interface StarScoringProps {
+  id: number;
   userInfo: UserInfo;
   allowHakemusScoring: boolean;
   scoring?: Scoring;
@@ -67,7 +68,11 @@ export const StarScoring = (props: StarScoringProps) => {
       : createAverageSummaryText(scoring, userInfo);
 
   return (
-    <div className={styles.starContainer} title={titleText}>
+    <div
+      data-test-id={`hakemus-scoring-${props.id}`}
+      className={styles.starContainer}
+      title={titleText}
+    >
       {starElements}
     </div>
   );

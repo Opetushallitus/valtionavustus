@@ -573,7 +573,7 @@ export class HakemustenArviointiPage {
 
   async getHakemusScore(hakemusId: number): Promise<string | undefined> {
     const title = await this.page
-      .locator(`#hakemus-${hakemusId} .list-score-row`)
+      .locator(`[data-test-id=hakemus-scoring-${hakemusId}]`)
       .getAttribute("title");
     const regex = title?.match(/.*Keskiarvo\: ([\S]+).*/);
     return regex?.[1];
