@@ -469,7 +469,7 @@ describe("Puppeteer tests", () => {
               expect(
                 await textContent(
                   page,
-                  `#hakemus-${hakemusID} [data-test-class=valiselvitys-status-cell]`
+                  `[data-test-id="hakemus-${hakemusID}"] [data-test-class=valiselvitys-status-cell]`
                 )
               ).toEqual("Puuttuu");
             });
