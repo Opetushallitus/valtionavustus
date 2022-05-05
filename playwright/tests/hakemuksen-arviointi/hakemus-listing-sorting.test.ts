@@ -73,7 +73,7 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
       answers2,
       budget2
     );
-    const userKey2 = (await hakijaAvustusHakuPage.submitApplication()).userKey;
+    await hakijaAvustusHakuPage.submitApplication();
 
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang);
     const answers3 = {
@@ -87,7 +87,7 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
       answers3,
       budget3
     );
-    const userKey3 = (await hakijaAvustusHakuPage.submitApplication()).userKey;
+    await hakijaAvustusHakuPage.submitApplication();
 
     const hakujenHallintaPage = new HakujenHallintaPage(page);
     await hakujenHallintaPage.navigate(avustushakuID);
@@ -96,14 +96,20 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
     const hakemustenArviointiPage = new HakemustenArviointiPage(page);
     await hakemustenArviointiPage.navigateToHakemus(
       avustushakuID,
-      submittedHakemus.userKey
+      answers.projectName
     );
     await hakemustenArviointiPage.acceptHakemus("7000");
 
-    await hakemustenArviointiPage.navigateToHakemus(avustushakuID, userKey2);
+    await hakemustenArviointiPage.navigateToHakemus(
+      avustushakuID,
+      answers2.projectName
+    );
     await hakemustenArviointiPage.acceptHakemus("3000");
 
-    await hakemustenArviointiPage.navigateToHakemus(avustushakuID, userKey3);
+    await hakemustenArviointiPage.navigateToHakemus(
+      avustushakuID,
+      answers3.projectName
+    );
     await hakemustenArviointiPage.rejectHakemus();
 
     await use(hakemustenArviointiPage);

@@ -98,14 +98,14 @@ export class HakemustenArviointiPage {
 
   async navigateToHakemus(
     avustushakuId: number,
-    userKey: string,
+    hanke: string,
     options?: { showAll?: boolean }
   ) {
     await this.navigate(avustushakuId, options);
-    await Promise.all([
-      this.page.waitForNavigation(),
-      this.page.click(`[data-test-id="hakemus-${userKey}"]`),
-    ]);
+    await this.page.click(`span:text-matches("${hanke}")`);
+    await this.page.waitForSelector(
+      `#project-name div:text-matches("${hanke}")`
+    );
   }
 
   async waitForSave() {
