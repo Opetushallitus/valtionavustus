@@ -74,7 +74,7 @@
   },
   "private": false,
   "scripts": {
-    "puppeteer:test": "jest --config=test/jest.config.js --verbose --forceExit --runInBand",
+    "puppeteer:test": "jest --config=test/jest.config.js --forceExit --runInBand",
     "playwright:test": "playwright test --config=playwright/playwright.config.ts",
     "soresu-form:test": "mocha --require ts-node/register $MOCHA_ARGS soresu-form/web/test/*Test.*",
     "soresu-form:test-watch": "mocha --watch --require ts-node/register $MOCHA_ARGS soresu-form/web/test/*Test.*",
