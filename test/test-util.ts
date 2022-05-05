@@ -942,7 +942,7 @@ async function prepareSelectingValmistelijaForHakemus(
   valmistelijaName: string
 ) {
   await navigate(page, `/avustushaku/${avustushakuID}/`);
-  await clickElement(page, `#hakemus-${hakemusID} .btn-role`);
+  await clickElement(page, `[data-test-id="hakemus-${hakemusID}"] [aria-label="Lisää valmistelija hakemukselle"]`)
 
   const xpath = `//table[contains(@class, 'hakemus-list')]/tbody//tr[contains(@class, 'selected')]//button[contains(., '${valmistelijaName}')]`;
   const valmistelijaButton = await page.waitForXPath(xpath, { visible: true });
