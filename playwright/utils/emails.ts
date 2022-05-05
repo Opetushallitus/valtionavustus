@@ -57,6 +57,8 @@ const getEmailsWithAvustushaku =
       })
       .then((r) => emailSchema.validate(r.data));
 
+export const getTäydennyspyyntöEmails = getEmails("change-request");
+
 export const getValmistelijaEmails = getEmails(
   "notify-valmistelija-of-new-muutoshakemus"
 );

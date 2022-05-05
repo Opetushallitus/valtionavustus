@@ -2,7 +2,6 @@ import { Browser, Page } from "puppeteer";
 import moment from "moment";
 
 import {
-  HAKIJA_URL,
   createValidCopyOfEsimerkkihakuAndReturnTheNewId,
   mkBrowser,
   getFirstPage,
@@ -33,8 +32,6 @@ import {
   clickFormSaveAndWait,
   addFieldToFormAndReturnElementIdAndLabel,
   navigateToHakemuksenArviointi,
-  getTäydennyspyyntöEmails,
-  waitUntilMinEmails,
   setPageErrorConsoleLogger,
   randomString,
   log,
@@ -44,8 +41,6 @@ import {
   navigateToPaatos,
   navigateToSeurantaTab,
   clickDropdownElementWithText,
-  fillTäydennyspyyntöField,
-  clickToSendTäydennyspyyntö,
   randomAsiatunnus,
   setupTestLogging,
   navigateToHaunTiedot,
@@ -53,7 +48,6 @@ import {
 import {
   createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku,
   fillAndSendMuutoshakemusDisabledMenoluokiteltuHakemus,
-  publishAndFillMuutoshakemusEnabledAvustushaku,
 } from "./muutoshakemus/muutospaatosprosessi-util";
 
 jest.setTimeout(400_000);
@@ -585,134 +579,5 @@ describe("Puppeteer tests", () => {
         });
       });
     });
-  });
-
-  it("allows previewing täydennyspyyntö to hakija", async () => {
-    const randomId = randomString();
-    const { avustushakuID } =
-      await publishAndFillMuutoshakemusEnabledAvustushaku(
-        page,
-        {
-          registerNumber: "1621/2020",
-          avustushakuName: `Täydennyspyyntöavustushaku ${randomId}`,
-        },
-        {
-          contactPersonEmail: "lotta.lomake@example.com",
-          contactPersonName: "Lotta Lomake",
-          contactPersonPhoneNumber: "666",
-          projectName: "Lomakkeentäyttörajoitteiset Ry",
-        }
-      );
-    await closeAvustushakuByChangingEndDateToPast(page, avustushakuID);
-    await navigateToHakemuksenArviointi(page, avustushakuID, "Akaan kaupunki");
-
-    const täydennyspyyntöText =
-      "Jaahas miltäköhän tämä täydennyspyyntö mahtaa näyttää sähköpostissa?";
-    await fillTäydennyspyyntöField(page, täydennyspyyntöText);
-    await clickElementWithText(page, "a", "Esikatsele");
-
-    expect(
-      await textContent(page, "[data-test-id='change-request-preview-subject']")
-    ).toStrictEqual(`Otsikko: Täydennyspyyntö avustushakemukseesi`);
-    expect(
-      await textContent(page, "[data-test-id='change-request-preview-sender']")
-    ).toStrictEqual(`Lähettäjä: no-reply@csc.fi`);
-    expect(
-      await textContent(page, "[data-test-id='change-request-preview-content']")
-    ).toStrictEqual(`Avustushakemus: Täydennyspyyntöavustushaku ${randomId}
-
-Täydennyspyyntö:
-"${täydennyspyyntöText}"
-
-Pääset täydentämään avustushakemusta tästä linkistä: [linkki hakemukseen]
-Muokkaa vain pyydettyjä kohtia.
-
-Lisätietoja voitte kysyä sähköpostitse osoitteesta valtionavustukset@oph.fi
-
-Hausta vastaava valmistelija on mainittu hakutiedotteessa.
-
-Opetushallitus
-Hakaniemenranta 6
-PL 380, 00531 Helsinki
-
-puhelin 029 533 1000
-faksi 029 533 1035
-etunimi.sukunimi@oph.fi
-`);
-  });
-
-  it("allows sending täydennyspyyntö to hakija", async () => {
-    const randomId = randomString();
-
-    const { avustushakuID, userKey } =
-      await publishAndFillMuutoshakemusEnabledAvustushaku(
-        page,
-        {
-          registerNumber: "1620/2020",
-          avustushakuName: `Täydennyspyyntöavustushaku ${randomId}`,
-        },
-        {
-          contactPersonEmail: "lotta.lomake@example.com",
-          contactPersonName: "Lotta Lomake",
-          contactPersonPhoneNumber: "666",
-          projectName: "Lomakkeentäyttörajoitteiset Ry",
-        }
-      );
-
-    await closeAvustushakuByChangingEndDateToPast(page, avustushakuID);
-    const { hakemusID } = await navigateToHakemuksenArviointi(
-      page,
-      avustushakuID,
-      "Akaan kaupunki"
-    );
-
-    expect(await getTäydennyspyyntöEmails(hakemusID)).toHaveLength(0);
-
-    const täydennyspyyntöText =
-      "Joo ei tosta hakemuksesta ota mitään tolkkua. Voisitko tarkentaa?";
-    await fillTäydennyspyyntöField(page, täydennyspyyntöText);
-    await clickToSendTäydennyspyyntö(page, avustushakuID, hakemusID);
-
-    expect(
-      await textContent(page, "#arviointi-tab .change-request-title")
-    ).toMatch(
-      /\* Täydennyspyyntö lähetetty \d{1,2}\.\d{1,2}\.\d{4} \d{1,2}\.\d{1,2}/
-    );
-    // The quotes around täydennyspyyntö message are done with CSS :before
-    // and :after pseudo elements and not shown in Node.textContent
-    expect(
-      await textContent(page, "#arviointi-tab .change-request-text")
-    ).toStrictEqual(täydennyspyyntöText);
-
-    const emails = await waitUntilMinEmails(
-      getTäydennyspyyntöEmails,
-      1,
-      hakemusID
-    );
-    expect(emails).toHaveLength(1);
-    expect(emails[0]["to-address"]).toHaveLength(1);
-    expect(emails[0]["to-address"]).toContain("lotta.lomake@example.com");
-    expect(emails[0]["bcc"]).toStrictEqual("santeri.horttanainen@reaktor.com");
-    expect(emails[0].formatted)
-      .toStrictEqual(`Avustushakemus: Täydennyspyyntöavustushaku ${randomId}
-
-Täydennyspyyntö:
-"Joo ei tosta hakemuksesta ota mitään tolkkua. Voisitko tarkentaa?"
-
-Pääset täydentämään avustushakemusta tästä linkistä: ${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=${userKey}&lang=fi
-Muokkaa vain pyydettyjä kohtia.
-
-Lisätietoja voitte kysyä sähköpostitse osoitteesta valtionavustukset@oph.fi
-
-Hausta vastaava valmistelija on mainittu hakutiedotteessa.
-
-Opetushallitus
-Hakaniemenranta 6
-PL 380, 00531 Helsinki
-
-puhelin 029 533 1000
-faksi 029 533 1035
-etunimi.sukunimi@oph.fi
-`);
   });
 });

@@ -179,7 +179,6 @@ export const getMuutoshakemusPaatosEmails = getEmails("muutoshakemus-paatos");
 export const getMuutoshakemusEmails = getEmails("paatos-refuse");
 export const getValiselvitysEmails = getEmails("valiselvitys-notification");
 export const getAcceptedPäätösEmails = getMuutoshakemusEmails;
-export const getTäydennyspyyntöEmails = getEmails("change-request");
 export async function waitUntilMinEmails(
   f: (hakemusId: number) => Promise<Email[]>,
   minEmails: number,
@@ -1646,30 +1645,6 @@ export async function waitForNewTab(currentPage: Page): Promise<Page> {
   return new Promise((resolve) =>
     currentPage.once("popup", (newPage) => resolve(newPage))
   );
-}
-
-export async function fillTäydennyspyyntöField(
-  page: Page,
-  täydennyspyyntöText: string
-): Promise<void> {
-  await clickElementWithText(page, "button", "Pyydä täydennystä");
-  await page.type(
-    "[data-test-id='täydennyspyyntö__textarea']",
-    täydennyspyyntöText
-  );
-}
-
-export async function clickToSendTäydennyspyyntö(
-  page: Page,
-  avustushakuID: number,
-  hakemusID: number
-) {
-  await Promise.all([
-    page.waitForResponse(
-      `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/change-requests`
-    ),
-    clickElement(page, "[data-test-id='täydennyspyyntö__lähetä']"),
-  ]);
 }
 
 export function setupTestLogging() {

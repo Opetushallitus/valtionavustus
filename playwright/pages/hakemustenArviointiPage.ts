@@ -195,6 +195,23 @@ export class HakemustenArviointiPage {
     await this.closeUkotusModal();
   }
 
+  async fillTäydennyspyyntöField(täydennyspyyntöText: string): Promise<void> {
+    await clickElementWithText(this.page, "button", "Pyydä täydennystä");
+    await this.page.fill(
+      "[data-test-id='täydennyspyyntö__textarea']",
+      täydennyspyyntöText
+    );
+  }
+
+  async clickToSendTäydennyspyyntö(avustushakuID: number, hakemusID: number) {
+    await Promise.all([
+      this.page.waitForResponse(
+        `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/change-requests`
+      ),
+      this.page.click("[data-test-id='täydennyspyyntö__lähetä']"),
+    ]);
+  }
+
   async fillBudget(
     budget: Budget = defaultBudget,
     type: "hakija" | "virkailija"
@@ -278,6 +295,16 @@ export class HakemustenArviointiPage {
     }
   }
 
+  async getHakemusID() {
+    const hakemusID = await this.page
+      .evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1])
+      .then((possibleHakemusID) => {
+        expectToBeDefined(possibleHakemusID);
+        return parseInt(possibleHakemusID);
+      });
+    return hakemusID;
+  }
+
   async acceptAvustushaku(
     avustushakuID: number,
     projectName: string,
@@ -290,12 +317,7 @@ export class HakemustenArviointiPage {
       this.page.click(`text=${projectName}`),
     ]);
 
-    const hakemusID = await this.page
-      .evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1])
-      .then((possibleHakemusID) => {
-        expectToBeDefined(possibleHakemusID);
-        return parseInt(possibleHakemusID);
-      });
+    const hakemusID = await this.getHakemusID();
 
     expectToBeDefined(hakemusID);
     console.log("Hakemus ID:", hakemusID);
