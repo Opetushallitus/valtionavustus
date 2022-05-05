@@ -179,37 +179,6 @@ describe("Puppeteer tests", () => {
     );
   });
 
-  it("shows the same updated date on the Päätös tab as on the Väliselvitys and Loppuselvitys tabs", async function () {
-    await createValidCopyOfEsimerkkihakuAndReturnTheNewId(
-      page,
-      randomAsiatunnus()
-    );
-
-    await clickElementWithText(page, "span", "Päätös");
-    const paatosUpdatedAt = getElementInnerText(page, "#paatosUpdatedAt");
-
-    await clickElementWithText(page, "span", "Väliselvitys");
-    const valiselvitysUpdatedAt = getElementInnerText(
-      page,
-      "#valiselvitysUpdatedAt"
-    );
-
-    await clickElementWithText(page, "span", "Loppuselvitys");
-    const loppuselvitysUpdatedAt = getElementInnerText(
-      page,
-      "#loppuselvitysUpdatedAt"
-    );
-
-    return Promise.all([
-      paatosUpdatedAt,
-      valiselvitysUpdatedAt,
-      loppuselvitysUpdatedAt,
-    ]).then(([paatos, valiselvitys, loppuselvitys]) => {
-      expect(paatos).toEqual(valiselvitys);
-      expect(paatos).toEqual(loppuselvitys);
-    });
-  });
-
   describe("When virkailija creates avustushaku", () => {
     let originalPaatosTimestamp: string;
     let originalValiselvitysTimestamp: string;

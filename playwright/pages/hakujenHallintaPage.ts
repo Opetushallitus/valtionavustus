@@ -198,9 +198,15 @@ function SelvitysTab(page: Page) {
 
 export class HakujenHallintaPage {
   readonly page: Page;
+  readonly paatosUpdatedAt: Locator;
+  readonly valiselvitysUpdatedAt: Locator;
+  readonly loppuselvitysUpdatedAt: Locator;
 
   constructor(page: Page) {
     this.page = page;
+    this.paatosUpdatedAt = this.page.locator("#paatosUpdatedAt");
+    this.valiselvitysUpdatedAt = this.page.locator("#valiselvitysUpdatedAt");
+    this.loppuselvitysUpdatedAt = this.page.locator("#loppuselvitysUpdatedAt");
   }
 
   async navigate(avustushakuID: number) {
