@@ -30,9 +30,17 @@ muutoshakemusTest(
         );
         expect(await muutoshakemusStatus.textContent()).toEqual("-");
 
-        expect(await hakemustenArviointiPage.getVäliselvitysStatus(acceptedHakemus.hakemusID)).toEqual("-");
+        expect(
+          await hakemustenArviointiPage.getVäliselvitysStatus(
+            acceptedHakemus.hakemusID
+          )
+        ).toEqual("-");
 
-        expect(await hakemustenArviointiPage.getLoppuselvitysStatus(acceptedHakemus.hakemusID)).toEqual("-");
+        expect(
+          await hakemustenArviointiPage.getLoppuselvitysStatus(
+            acceptedHakemus.hakemusID
+          )
+        ).toEqual("-");
       }
     );
   }

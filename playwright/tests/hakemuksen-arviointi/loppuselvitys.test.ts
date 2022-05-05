@@ -25,7 +25,7 @@ import {
 
 import { LoppuselvitysPage } from "../../pages/loppuselvitysPage";
 import { HakijaSelvitysPage } from "../../pages/hakijaSelvitysPage";
-import {HakemustenArviointiPage} from "../../pages/hakemustenArviointiPage";
+import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 
 test.setTimeout(400000);
 
@@ -383,7 +383,9 @@ test("virkailija can accept loppuselvitys", async ({
       await arviointi.navigate(avustushakuID);
 
       await navigate(page, `/avustushaku/${avustushakuID}/`);
-      expect(await arviointi.getLoppuselvitysStatus(acceptedHakemus.hakemusID)).toEqual("Hyväksytty");
+      expect(
+        await arviointi.getLoppuselvitysStatus(acceptedHakemus.hakemusID)
+      ).toEqual("Hyväksytty");
     }
   );
 });
