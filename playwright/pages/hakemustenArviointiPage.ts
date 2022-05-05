@@ -117,7 +117,7 @@ export class HakemustenArviointiPage {
   async clickHakemus(hakemusID: number) {
     await Promise.all([
       this.page.waitForNavigation(),
-      this.page.click(`#hakemus-${hakemusID}`),
+      this.page.click(`[data-test-id="hakemus-${hakemusID}"]`),
     ]);
   }
 
@@ -337,11 +337,10 @@ export class HakemustenArviointiPage {
     );
   }
 
-  async muutoshakemusStatusFieldContent(hakemusID: number) {
-    const handle = await this.page.waitForSelector(
-      this.statusFieldSelector(hakemusID)
-    );
-    return await handle.textContent();
+  async muutoshakemusStatusFieldContent() {
+    return await this.page
+      .locator("[data-test-class=muutoshakemus-status-cell]")
+      .textContent();
   }
 
   async clickMuutoshakemusStatusField(hakemusID: number) {

@@ -36,7 +36,7 @@ const test = muutoshakemusTest.extend<{
     await hakijaMuutoshakemusPage.sendMuutoshakemus(true);
     const hakemustenArviointiPage = new HakemustenArviointiPage(page);
     await hakemustenArviointiPage.navigate(avustushakuID);
-    await hakemustenArviointiPage.clickMuutoshakemusStatusField(hakemusID);
+    await hakemustenArviointiPage.clickHakemus(hakemusID);
     await hakemustenArviointiPage.clickMuutoshakemusTab();
     await use(hakemustenArviointiPage);
   },

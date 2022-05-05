@@ -132,14 +132,15 @@ test("When muutoshakemus enabled haku has been published, a hakemus has been sub
     await page.goto(expectedArviointiLink);
   });
 
-  await test.step("Muutoshakemus status is ☆ Uusi", async () => {
+  await test.step("Muutoshakemus status is Uusi", async () => {
     const content =
-      await hakemustenArviointiPage.muutoshakemusStatusFieldContent(hakemusID);
-    expect(content).toEqual("☆ Uusi");
+      await hakemustenArviointiPage.muutoshakemusStatusFieldContent();
+    expect(content).toEqual("Uusi");
   });
 
-  await test.step("click muutoshakemus status field", async () => {
-    await hakemustenArviointiPage.clickMuutoshakemusStatusField(hakemusID);
+  await test.step("go to hakemus muutoshakemus tab", async () => {
+    await hakemustenArviointiPage.clickHakemus(hakemusID);
+    await hakemustenArviointiPage.clickMuutoshakemusTab();
   });
 
   await test.step(
