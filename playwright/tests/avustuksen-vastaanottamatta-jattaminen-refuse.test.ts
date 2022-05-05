@@ -30,15 +30,9 @@ muutoshakemusTest(
         );
         expect(await muutoshakemusStatus.textContent()).toEqual("-");
 
-        const valiselvitysStatus = hakemustenArviointiPage.hakemusRows.locator(
-          "[data-test-class=valiselvitys-status-cell]"
-        );
-        expect(await valiselvitysStatus.textContent()).toEqual("-");
+        expect(await hakemustenArviointiPage.getVäliselvitysStatus(acceptedHakemus.hakemusID)).toEqual("-");
 
-        const loppuselvitysStatus = hakemustenArviointiPage.hakemusRows.locator(
-          "[data-test-class=loppuselvitys-status-cell]"
-        );
-        expect(await loppuselvitysStatus.textContent()).toEqual("-");
+        expect(await hakemustenArviointiPage.getLoppuselvitysStatus(acceptedHakemus.hakemusID)).toEqual("-");
       }
     );
   }

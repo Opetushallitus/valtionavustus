@@ -25,6 +25,7 @@ import {
 
 import { LoppuselvitysPage } from "../../pages/loppuselvitysPage";
 import { HakijaSelvitysPage } from "../../pages/hakijaSelvitysPage";
+import {HakemustenArviointiPage} from "../../pages/hakemustenArviointiPage";
 
 test.setTimeout(400000);
 
@@ -306,6 +307,7 @@ test("virkailija can accept loppuselvitys", async ({
   page,
   avustushakuID,
   asiatarkastus: { asiatarkastettu },
+  acceptedHakemus,
 }) => {
   expect(asiatarkastettu);
   const subject = "Hieno homma";
@@ -377,11 +379,11 @@ test("virkailija can accept loppuselvitys", async ({
   await test.step(
     "loppuselvitys is shown as hyväksytty in hakemus listing",
     async () => {
+      const arviointi = new HakemustenArviointiPage(page);
+      await arviointi.navigate(avustushakuID);
+
       await navigate(page, `/avustushaku/${avustushakuID}/`);
-      const loppuselvitysStatus = await page.innerText(
-        '[data-test-id="loppuselvitys-column"]'
-      );
-      expect(loppuselvitysStatus).toEqual("Hyväksytty");
+      expect(await arviointi.getLoppuselvitysStatus(acceptedHakemus.hakemusID)).toEqual("Hyväksytty");
     }
   );
 });

@@ -331,10 +331,19 @@ export class HakemustenArviointiPage {
     return `[data-test-id=muutoshakemus-status-${hakemusID}]`;
   }
 
-  async väliselvitysStatus(hakemusID: number) {
-    return await this.page.innerText(
-      `tr#hakemus-${hakemusID} >> [data-test-id=väliselvitys-column]`
+  async getLoppuselvitysStatus(hakemusID: number) {
+    return this.getSelvitysStatus(hakemusID, 'loppu')
+  }
+
+  async getVäliselvitysStatus(hakemusID: number) {
+    return this.getSelvitysStatus(hakemusID, 'vali')
+  }
+
+  async getSelvitysStatus(hakemusID: number, type: 'vali' | 'loppu') {
+    const valiselvitysStatus = await this.page.locator(
+      `[data-test-id=\"hakemus-${hakemusID}\"] [data-test-class=${type}selvitys-status-cell]`
     );
+    return valiselvitysStatus.textContent()
   }
 
   async muutoshakemusStatusFieldContent() {
