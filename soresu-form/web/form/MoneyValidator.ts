@@ -5,7 +5,7 @@ export function validateMoney(input: string) {
 }
 
 export function isValidMoney(input: string): boolean {
-  return isInteger(input) && hasMaxSevenDigits(parseInt(input, 10))
+  return isInteger(input) && hasMaxSevenDigits(parseInt(input, 10));
 }
 
 function isInteger(input: string): boolean {
@@ -13,5 +13,5 @@ function isInteger(input: string): boolean {
 }
 
 function hasMaxSevenDigits(input: number): boolean {
-  return input <= 9999999
+  return input <= 9999999;
 }
