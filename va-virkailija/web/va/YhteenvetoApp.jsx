@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import _ from "lodash";
+// @ts-ignore
 import RouteParser from "route-parser";
 
 import YhteenvetoController from "./YhteenvetoController.jsx";
@@ -17,7 +18,10 @@ export default class SummaryApp extends Component {
     const hakuData = state.hakuData;
     const hakemusList = hakuData.hakemukset.map((h) =>
       h.refused
-        ? { ...h, status: "refused", arvio: { ...h.arvio, status: "refused" } }
+        ? Object.assign(h, {
+            status: "refused",
+            arvio: Object.assign(h.arvio, { status: "refused" }),
+          })
         : h
     );
     const avustushaku = hakuData.avustushaku;
@@ -264,7 +268,7 @@ class SummaryListing extends Component {
         <thead>
           <tr>
             <th
-              colSpan="5"
+              colSpan={5}
               className="status-heading-column"
               data-test-id={`${arvioStatus}-table-heading`}
             >
@@ -284,7 +288,7 @@ class SummaryListing extends Component {
         <tbody>{hakemusElements}</tbody>
         <tfoot>
           <tr>
-            <td colSpan="2" className="total-applications-column">
+            <td colSpan={2} className="total-applications-column">
               &nbsp;
             </td>
             <td className="applied-money-column">

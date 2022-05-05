@@ -110,7 +110,9 @@ export default class BusinessIdSearch extends React.Component {
 
   handleOnChange(event) {
     const inputted = event.target.value;
-    this.setState({ businessId: inputted, ...validateBusinessId(inputted) });
+    this.setState(
+      Object.assign({ businessId: inputted }, validateBusinessId(inputted))
+    );
   }
 
   // actions that happen after user has submitted their organisation-id, calls backend organisaton api
