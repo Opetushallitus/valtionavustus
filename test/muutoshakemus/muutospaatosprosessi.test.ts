@@ -211,7 +211,7 @@ describe("Muutospäätösprosessi", () => {
           });
 
           it('muutoshakemus status is shown as "Hylätty"', async () => {
-            const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`;
+            const muutoshakemusStatusField = `[data-test-id="hakemus-${hakemusID}"] [data-test-class=muutoshakemus-status-cell]`;
             await page.waitForSelector(muutoshakemusStatusField);
             const muutoshakemusStatus = await page.$eval(
               muutoshakemusStatusField,
@@ -409,7 +409,7 @@ etunimi.sukunimi@oph.fi
               });
 
               it('Muutoshakemus status is displayed as "Uusi', async () => {
-                const muutoshakemusStatusField = `[data-test-id=muutoshakemus-status-${hakemusID}]`;
+                const muutoshakemusStatusField = `[data-test-id="hakemus-${hakemusID}"] [data-test-class=muutoshakemus-status-cell]`;
                 await page.waitForSelector(muutoshakemusStatusField);
                 const muutoshakemusStatus = await page.$eval(
                   muutoshakemusStatusField,
