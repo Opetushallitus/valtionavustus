@@ -4,7 +4,7 @@ import FormUtil from "soresu-form/web/form/FormUtil";
 import InputValueStorage from "soresu-form/web/form/InputValueStorage";
 
 import BudgetBusinessRules from "../budgetedit/BudgetBusinessRules";
-import {isValidMoney} from "soresu-form/web/form/MoneyValidator";
+import { isValidMoney } from "soresu-form/web/form/MoneyValidator";
 
 export default class BudgetEditFormController {
   constructor(
@@ -63,9 +63,12 @@ export default class BudgetEditFormController {
   }
 
   componentOnChangeListener(field, newValue) {
-    const valueOrZero = Boolean(newValue) ? newValue : 0
+    const valueOrZero = Boolean(newValue) ? newValue : 0;
 
-    if(field.fieldType === 'moneyField' && Boolean(isValidMoney(valueOrZero))) {
+    if (
+      field.fieldType === "moneyField" &&
+      Boolean(isValidMoney(valueOrZero))
+    ) {
       this.arviointiController.setHakemusOverriddenAnswerValue(
         this.hakemus.id,
         field,
