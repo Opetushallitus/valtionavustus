@@ -419,7 +419,7 @@ export async function fillAndSendMuutoshakemusEnabledHakemus(
     "[id='personnel-costs-row.description']",
     "Pieninä seteleinä kiitos."
   );
-  await clearAndType(page, "[id='personnel-costs-row.amount']", "69420666");
+  await clearAndType(page, "[id='personnel-costs-row.amount']", "6942066");
   await clearAndType(page, "[id='self-financing-amount']", "1");
 
   if (beforeSubmitFn) {
