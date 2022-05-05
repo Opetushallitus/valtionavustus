@@ -72,7 +72,7 @@ export default class BudgetEditFormController {
       this.arviointiController.setHakemusOverriddenAnswerValue(
         this.hakemus.id,
         field,
-        parseInt(valueOrZero)
+        parseInt(valueOrZero, 10)
       );
     }
   }
