@@ -13,7 +13,6 @@ const getRoleButtonAriaLabel = (roleField: RoleField, name: string) => {
     : `Rajaa arvioijalla ${name}`;
 };
 
-
 interface ControlledSelectPanelProps {
   onClickClose: () => void;
   roles: Role[];

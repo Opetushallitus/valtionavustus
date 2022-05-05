@@ -169,7 +169,9 @@ const hakemusFilter = (state: FilterState) => (hakemus: Hakemus) => {
 };
 
 const answerFilter = (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
-  const answers = hakemusFilter.answers.filter((a) => !["tagit", "rahoitusalue"].includes(a.id))
+  const answers = hakemusFilter.answers.filter(
+    (a) => !["tagit", "rahoitusalue"].includes(a.id)
+  );
   if (!answers.length) {
     return true;
   }
@@ -195,22 +197,31 @@ const answerFilter = (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
   });
 };
 
-const rahoitusalueFilter = (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
-  const rahoitusalues = hakemusFilter.answers.filter(a => a.id === 'rahoitusalue').map(a => a.answer)
-  if (!rahoitusalues.length) {
-    return true
-  }
-  return !hakemus.arvio.rahoitusalue && rahoitusalues.includes('Ei rahoitusaluetta')
-      || hakemus.arvio.rahoitusalue && rahoitusalues.includes(hakemus.arvio.rahoitusalue)
-}
+const rahoitusalueFilter =
+  (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
+    const rahoitusalues = hakemusFilter.answers
+      .filter((a) => a.id === "rahoitusalue")
+      .map((a) => a.answer);
+    if (!rahoitusalues.length) {
+      return true;
+    }
+    return (
+      (!hakemus.arvio.rahoitusalue &&
+        rahoitusalues.includes("Ei rahoitusaluetta")) ||
+      (hakemus.arvio.rahoitusalue &&
+        rahoitusalues.includes(hakemus.arvio.rahoitusalue))
+    );
+  };
 
 const tagFilter = (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
-  const tags = hakemusFilter.answers.filter(a => a.id === 'tags').map(a => a.answer)
+  const tags = hakemusFilter.answers
+    .filter((a) => a.id === "tags")
+    .map((a) => a.answer);
   if (!tags.length) {
-    return true
+    return true;
   }
-  return hakemus.arvio.tags?.value.some(t => tags.includes(t))
-}
+  return hakemus.arvio.tags?.value.some((t) => tags.includes(t));
+};
 
 const defaultStatusFilters = {
   hakemus: HakemusArviointiStatuses.statuses.filter((s) => s !== "rejected"),

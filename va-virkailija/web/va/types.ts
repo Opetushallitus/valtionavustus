@@ -63,7 +63,7 @@ export interface HakuData {
   talousarvio?: Menoluokka[];
 }
 
-export type AnswerFilter = { id: string, answer: string }
+export type AnswerFilter = { id: string; answer: string };
 
 export interface HakemusFilter {
   answers: AnswerFilter[];

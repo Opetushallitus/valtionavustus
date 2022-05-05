@@ -172,16 +172,25 @@ test("hakemus list filtering", async ({
     );
   });
 
-  await test.step("filtering with 'Rajaa listaa' hakemus filter works", async () => {
-    await hakemustenArviointiPage.clickRajaaListaaFilter("Asiointikieli", "Suomi");
-    await expect(hakemustenArviointiPage.hakemusListing).toContainText(
-      "1/2 hakemusta"
-    );
-    await hakemustenArviointiPage.clickRajaaListaaFilter("Asiointikieli", "Suomi");
-    await expect(hakemustenArviointiPage.hakemusListing).toContainText(
-      "2/2 hakemusta"
-    );
-  });
+  await test.step(
+    "filtering with 'Rajaa listaa' hakemus filter works",
+    async () => {
+      await hakemustenArviointiPage.clickRajaaListaaFilter(
+        "Asiointikieli",
+        "Suomi"
+      );
+      await expect(hakemustenArviointiPage.hakemusListing).toContainText(
+        "1/2 hakemusta"
+      );
+      await hakemustenArviointiPage.clickRajaaListaaFilter(
+        "Asiointikieli",
+        "Suomi"
+      );
+      await expect(hakemustenArviointiPage.hakemusListing).toContainText(
+        "2/2 hakemusta"
+      );
+    }
+  );
 
   await test.step(
     "clicking another avustushaku from dropdown switches to that",
