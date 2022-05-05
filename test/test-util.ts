@@ -1348,7 +1348,7 @@ export async function navigateToHakemus(
   await navigate(page, `/avustushaku/${avustushakuID}/`);
   await Promise.all([
     page.waitForNavigation(),
-    clickElement(page, `#hakemus-${hakemusID}`),
+    clickElement(page, `[data-test-id="hakemus-${hakemusID}"]`),
   ]);
 }
 
