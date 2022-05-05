@@ -50,7 +50,6 @@
     "babel-plugin-webpack-alias": "2.1.2",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
-    "babel-register": "^6.26.0",
     "chai": "^4.3.6",
     "css-loader": "5.2.4",
     "file-loader": "^6.2.0",
@@ -81,8 +80,6 @@
     "build": "webpack",
     "build-production": "NODE_ENV=production npm run build",
     "build-watch": "node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --progress --watch",
-    "hakija:test": "mocha --require va-hakija/web/test/babelhook $MOCHA_ARGS va-hakija/web/test/*Test.js",
-    "hakija:test-watch": "mocha --watch --require va-hakija/web/test/babelhook $MOCHA_ARGS va-hakija/web/test/*Test.js",
     "virkailija:test": "cd va-virkailija && true",
     "prettier-check-project": "prettier --check ."
   }
