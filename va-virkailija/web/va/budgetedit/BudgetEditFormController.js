@@ -63,18 +63,23 @@ export default class BudgetEditFormController {
   }
 
   componentOnChangeListener(field, newValue) {
-    const valueOrZero = Boolean(newValue) ? newValue : 0;
+    if (field.fieldType !== 'moneyField') {
+      this.overrideAnswerValue(field, newValue);
+    } else {
+      const valueOrZero = Boolean(newValue) ? newValue : 0;
 
-    if (
-      field.fieldType === "moneyField" &&
-      Boolean(isValidMoney(valueOrZero))
-    ) {
-      this.arviointiController.setHakemusOverriddenAnswerValue(
-        this.hakemus.id,
-        field,
-        parseInt(valueOrZero, 10)
-      );
+      if (isValidMoney(valueOrZero)) {
+        this.overrideAnswerValue(field, parseInt(valueOrZero, 10));
+      }
     }
+  }
+
+  overrideAnswerValue(field, newValue) {
+    this.arviointiController.setHakemusOverriddenAnswerValue(
+      this.hakemus.id,
+      field,
+      newValue
+    );
   }
 
   toggleDetailedCostsListener(event) {
