@@ -563,7 +563,7 @@ describe("Puppeteer tests", () => {
             expect(
               await getElementInnerText(
                 page,
-                '#budget-edit-project-budget [class="granted-amount-column"] [class="money"]'
+                '#budget-edit-project-budget tfoot [class="granted-amount-column"] [class="money"]'
               )
             ).toBe("100000");
           });
