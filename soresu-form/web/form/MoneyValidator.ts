@@ -5,7 +5,7 @@ export function validateMoney(input: string) {
 }
 
 export function isValidMoney(input: string): boolean {
-  return isInteger(input)
+  return isInteger(input);
 }
 
 function isInteger(input: string): boolean {

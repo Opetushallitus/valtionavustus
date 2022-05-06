@@ -942,9 +942,12 @@ async function prepareSelectingValmistelijaForHakemus(
   valmistelijaName: string
 ) {
   await navigate(page, `/avustushaku/${avustushakuID}/`);
-  await clickElement(page, `[data-test-id="hakemus-${hakemusID}"] [aria-label="Lisää valmistelija hakemukselle"]`)
+  await clickElement(
+    page,
+    `[data-test-id="hakemus-${hakemusID}"] [aria-label="Lisää valmistelija hakemukselle"]`
+  );
 
-  const xpath = `//tr[contains(@class, 'selected')]//button[@aria-label="Lisää ${valmistelijaName} valmistelijaksi"]`
+  const xpath = `//tr[contains(@class, 'selected')]//button[@aria-label="Lisää ${valmistelijaName} valmistelijaksi"]`;
   const valmistelijaButton = await page.waitForXPath(xpath, { visible: true });
   if (!valmistelijaButton) {
     throw new Error(`Valmistelija button not found with XPath: ${xpath}`);

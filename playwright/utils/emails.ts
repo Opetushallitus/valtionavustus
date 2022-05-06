@@ -30,8 +30,10 @@ export const getAllEmails = (emailType: string): Promise<Email[]> =>
     .get(`${VIRKAILIJA_URL}/api/test/email/${emailType}`)
     .then((r) => emailSchema.validate(r.data));
 
-export const getLastEmail = (emailType: string, hakemusID: number): Promise<Email> =>
-  getEmails(emailType)(hakemusID).then(lastOrFail);
+export const getLastEmail = (
+  emailType: string,
+  hakemusID: number
+): Promise<Email> => getEmails(emailType)(hakemusID).then(lastOrFail);
 
 const getEmails =
   (emailType: string) =>
