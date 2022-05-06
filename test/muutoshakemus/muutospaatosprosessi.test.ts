@@ -415,7 +415,7 @@ etunimi.sukunimi@oph.fi
                   muutoshakemusStatusField,
                   (el) => el.textContent
                 );
-                expect(muutoshakemusStatus).toEqual("☆ Uusi");
+                expect(muutoshakemusStatus).toEqual("Uusi");
               });
 
               describe("And navigates to hakemus and clicks muutoshakemus tab", () => {
