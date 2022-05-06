@@ -1,6 +1,6 @@
 {
-  "presets": ["es2015", "react"],
+  "presets": ["@babel/preset-env", "@babel/preset-react"],
   "plugins": [
-    "babel-plugin-webpack-alias"
+    "babel-plugin-webpack-alias-7"
   ]
 }

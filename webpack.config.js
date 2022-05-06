@@ -50,7 +50,7 @@ const makeConfig = (basedir, componentName) => {
         },
         {
           test: /\.(?:png|gif|jpe?g|svg)$/,
-          type: 'asset/inline',
+          type: "asset/inline",
         },
       ],
     },
