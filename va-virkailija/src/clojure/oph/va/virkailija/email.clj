@@ -217,6 +217,7 @@
                               :paattymispaiva paattymispaiva
                               :paattymisaika paattymisaika
                               :avustushaku-name (:avustushaku-name hakemus)
+                              :avustushaku-id (:avustushaku-id hakemus)
                               :url url}
                              (partial render template))))
 
