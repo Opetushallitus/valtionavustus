@@ -103,7 +103,7 @@ for (const tz of timezones) {
           await sendHakuaikaPaattymassaNotifications(page);
           await page.waitForTimeout(5000);
 
-          const email = await getLastEmail("hakuaika-paattymassa");
+          const email = await getLastEmail("hakuaika-paattymassa", avustushakuID);
 
           expect(email["to-address"]).toHaveLength(1);
           expect(email["to-address"]).toContain(filledHakemus.email);
@@ -130,7 +130,7 @@ Mikäli olette päättäneet jättää hakemuksen lähettämättä, on tämä vi
           await sendHakuaikaPaattymassaNotifications(page);
           await page.waitForTimeout(5000);
 
-          const email = await getLastEmail("hakuaika-paattymassa");
+          const email = await getLastEmail("hakuaika-paattymassa", avustushakuID);
 
           expect(email["to-address"]).toHaveLength(1);
           expect(email["to-address"]).toContain(filledHakemus.email);
