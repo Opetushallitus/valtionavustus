@@ -49,12 +49,8 @@ const makeConfig = (basedir, componentName) => {
           use: [{ loader: "style-loader" }, { loader: "css-loader" }],
         },
         {
-          test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
-          use: "url-loader?name=[name].[ext]",
-        },
-        {
           test: /\.(?:png|gif|jpe?g|svg)$/,
-          loader: "url-loader",
+          type: 'asset/inline',
         },
       ],
     },
