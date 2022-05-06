@@ -18,7 +18,7 @@ export const LastUpdated = (props: LastUpdatedProps) => {
 
   return (
     <div id={props.id}>
-      Päivitetty: {formattedUpdatedAt}
+      <span className="date"> Päivitetty: {formattedUpdatedAt}</span>
       <span style={{ display: "none" }}>.{seconds}</span>
     </div>
   );

@@ -7,24 +7,19 @@ test("Shows the same updated date on the Päätös tab as on the Väliselvitys a
   avustushakuID,
 }) => {
   const hakujenHallintaPage = new HakujenHallintaPage(page);
+
   await hakujenHallintaPage.navigateToPaatos(avustushakuID);
+  const paatosUpdatedAt =
+    await hakujenHallintaPage.paatosUpdatedAt.textContent();
 
-  const paatosUpdatedAt = hakujenHallintaPage.paatosUpdatedAt.textContent;
-
-  await hakujenHallintaPage.navigateToValiselvitys(avustushakuID);
-
+  await hakujenHallintaPage.switchToValiselvitysTab();
   const valiselvitysUpdatedAt =
-    hakujenHallintaPage.valiselvitysUpdatedAt.textContent;
+    await hakujenHallintaPage.valiselvitysUpdatedAt.textContent();
 
+  await hakujenHallintaPage.switchToLoppuselvitysTab();
   const loppuselvitysUpdatedAt =
-    hakujenHallintaPage.loppuselvitysUpdatedAt.textContent;
+    await hakujenHallintaPage.loppuselvitysUpdatedAt.textContent();
 
-  return Promise.all([
-    paatosUpdatedAt,
-    valiselvitysUpdatedAt,
-    loppuselvitysUpdatedAt,
-  ]).then(([paatos, valiselvitys, loppuselvitys]) => {
-    expect(paatos).toEqual(valiselvitys);
-    expect(paatos).toEqual(loppuselvitys);
-  });
+  expect(paatosUpdatedAt).toEqual(valiselvitysUpdatedAt);
+  expect(paatosUpdatedAt).toEqual(loppuselvitysUpdatedAt);
 });
