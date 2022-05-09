@@ -31,4 +31,12 @@ export class HakijaPaatosPage {
   async lisatietojaTitle() {
     return await this.page.textContent('[data-test-id="lisatietoja-title"]');
   }
+
+  async avustuslajiTitle() {
+    return await this.page.textContent('[data-test-id="avustuslaji"] h2');
+  }
+
+  async avustuslaji() {
+    return await this.page.textContent('[data-test-id="avustuslaji"] p');
+  }
 }

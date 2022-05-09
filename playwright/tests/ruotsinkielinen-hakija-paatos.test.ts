@@ -85,5 +85,13 @@ fornamn.efternamn@oph.fi
         "Mer information"
       );
     });
+    await test.step("avustuslaji is in swedish", async () => {
+      expect(await hakijaPaatosPage.avustuslajiTitle()).toEqual(
+        "Typ av statsunderstöd"
+      );
+      expect(await hakijaPaatosPage.avustuslaji()).toEqual(
+        "Specialunderstöd"
+      );
+    });
   }
 );

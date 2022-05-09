@@ -548,6 +548,18 @@
       "fi": "Sovelletut säännökset",
       "sv": "Tillämpade bestämmelser"
     },
+    "avustuslaji": {
+      "fi": "Avustuslaji",
+      "sv": "Typ av statsunderstöd"
+    },
+    "erityisavustus": {
+      "fi": "Erityisavustus",
+      "sv": "Specialunderstöd"
+    },
+    "yleisavustus": {
+      "fi": "Yleisavustus",
+      "sv": "Allmänt understöd"
+    },
     "kayttooikeudet": {
       "fi": "Tekijänoikeudet",
       "sv": "Användarrättigheter"
