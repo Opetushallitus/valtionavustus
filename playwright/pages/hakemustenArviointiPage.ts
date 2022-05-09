@@ -226,9 +226,9 @@ export class HakemustenArviointiPage {
     const prefix = type === "virkailija" ? "budget-edit-" : "";
 
     const clearAndType = async (selector: string, value: string) => {
-      await this.page.fill(selector, '');
-      await this.page.type(selector,value);
-    }
+      await this.page.fill(selector, "");
+      await this.page.type(selector, value);
+    };
 
     await clearAndType(
       `[id='${prefix}personnel-costs-row.description']`,

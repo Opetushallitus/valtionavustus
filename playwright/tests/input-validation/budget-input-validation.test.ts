@@ -39,7 +39,7 @@ const haettuBudjetti = {
   },
   description: defaultBudget.description,
   selfFinancing: defaultBudget.selfFinancing,
-}
+};
 
 interface BudjettimuutoshakemusFixtures extends MuutoshakemusFixtures {
   budget: Budget;
