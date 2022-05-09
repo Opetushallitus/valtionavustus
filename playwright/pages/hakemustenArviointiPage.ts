@@ -96,6 +96,13 @@ export class HakemustenArviointiPage {
     await this.page.waitForSelector("#tab-content");
   }
 
+  async navigateToHakemusArviointi(avustushakuID: number, hakemusID: number) {
+    await navigate(
+      this.page,
+      `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arviointi/`
+    );
+  }
+
   async navigateToHakemus(
     avustushakuId: number,
     hanke: string,
@@ -628,5 +635,46 @@ export class HakemustenArviointiPage {
     await this.page.click(`button:text-matches("${answer}", "i")`);
     await question.click();
     await this.page.click('[data-test-id="rajaa-listaa-close"]');
+  }
+
+  async getNormalizedBudget(): Promise<{
+    haettu: BudgetAmount;
+    myönnetty: BudgetAmount;
+  }> {
+    await this.page.waitForSelector("#budget-edit-project-budget");
+    const rowSelector = "#budget-edit-project-budget .budget-item";
+
+    function idToBudgetClass(id: string | null) {
+      if (id == null) return "";
+
+      return id.replace("budget-edit-", "").replace("-costs-row", "");
+    }
+
+    const haettuBudjetti = {} as BudgetAmount;
+    const myönnettyBudjetti = {} as BudgetAmount;
+
+    const budgetFromPage = await this.page.$$eval(rowSelector, (elements) => {
+      return elements.map((elem) => ({
+        id: elem.getAttribute("id") ?? "",
+        haettu:
+          (elem.querySelector(".original-amount-column") as HTMLElement)
+            ?.innerText ?? "",
+        myönnetty:
+          elem.querySelector(".amount-column input")?.getAttribute("value") ??
+          "",
+      }));
+    });
+
+    budgetFromPage.forEach((row) => {
+      haettuBudjetti[idToBudgetClass(row.id) as keyof BudgetAmount] =
+        row.haettu;
+      myönnettyBudjetti[idToBudgetClass(row.id) as keyof BudgetAmount] =
+        row.myönnetty;
+    });
+
+    return {
+      haettu: haettuBudjetti,
+      myönnetty: myönnettyBudjetti,
+    };
   }
 }
