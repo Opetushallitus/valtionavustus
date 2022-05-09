@@ -96,7 +96,9 @@ export const getMuutoshakemuksetKasittelemattaEmails = async (
   ukotettuEmailAddress: string,
   avustushakuID: number
 ) => {
-  const emails = await getEmailsWithAvustushaku("muutoshakemuksia-kasittelematta")(avustushakuID);
+  const emails = await getEmailsWithAvustushaku(
+    "muutoshakemuksia-kasittelematta"
+  )(avustushakuID);
   return emails.filter((e) => e["to-address"].includes(ukotettuEmailAddress));
 };
 
