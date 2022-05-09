@@ -80,6 +80,9 @@ export const getHakuaikaPaattymassaEmails = getEmailsWithAvustushaku(
 export const getLahetaValiselvityspyynnotEmails = getEmailsWithAvustushaku(
   "laheta-valiselvityspyynnot"
 );
+export const getLahetaLoppuselvityspyynnotEmails = getEmailsWithAvustushaku(
+  "laheta-loppuselvityspyynnot"
+);
 export const getLoppuselvitysAsiatarkastamattaEmails = getEmailsWithAvustushaku(
   "loppuselvitys-asiatarkastamatta"
 );
