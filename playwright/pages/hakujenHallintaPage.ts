@@ -204,15 +204,9 @@ export class HakujenHallintaPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.paatosUpdatedAt = this.page
-      .locator("#paatosUpdatedAt")
-      .locator(".date");
-    this.valiselvitysUpdatedAt = this.page
-      .locator("#valiselvitysUpdatedAt")
-      .locator(".date");
-    this.loppuselvitysUpdatedAt = this.page
-      .locator("#loppuselvitysUpdatedAt")
-      .locator(".date");
+    this.paatosUpdatedAt = this.page.locator("#paatosUpdatedAt");
+    this.valiselvitysUpdatedAt = this.page.locator("#valiselvitysUpdatedAt");
+    this.loppuselvitysUpdatedAt = this.page.locator("#loppuselvitysUpdatedAt");
   }
 
   async navigate(avustushakuID: number) {
