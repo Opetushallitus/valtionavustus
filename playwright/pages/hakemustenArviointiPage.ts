@@ -225,59 +225,65 @@ export class HakemustenArviointiPage {
   ) {
     const prefix = type === "virkailija" ? "budget-edit-" : "";
 
-    await this.page.fill(
+    const clearAndType = async (selector: string, value: string) => {
+      await this.page.fill(selector, '');
+      await this.page.type(selector,value);
+    }
+
+    await clearAndType(
       `[id='${prefix}personnel-costs-row.description']`,
       budget.description.personnel
     );
-    await this.page.fill(
+    await clearAndType(
       `[id='${prefix}personnel-costs-row.amount']`,
       budget.amount.personnel
     );
-    await this.page.fill(
+    await clearAndType(
       `[id='${prefix}material-costs-row.description']`,
       budget.description.material
     );
-    await this.page.fill(
+    await clearAndType(
       `[id='${prefix}material-costs-row.amount']`,
       budget.amount.material
     );
-    await this.page.fill(
+    await clearAndType(
       `[id='${prefix}equipment-costs-row.description']`,
       budget.description.equipment
     );
-    await this.page.fill(
+    await clearAndType(
       `[id='${prefix}equipment-costs-row.amount']`,
       budget.amount.equipment
     );
-    await this.page.fill(
+    await clearAndType(
       `[id='${prefix}service-purchase-costs-row.description']`,
       budget.description["service-purchase"]
     );
-    await this.page.fill(
+    await clearAndType(
       `[id='${prefix}service-purchase-costs-row.amount']`,
       budget.amount["service-purchase"]
     );
-    await this.page.fill(
+    await clearAndType(
       `[id='${prefix}rent-costs-row.description']`,
       budget.description.rent
     );
-    await this.page.fill(
+    await clearAndType(
       `[id='${prefix}rent-costs-row.amount']`,
       budget.amount.rent
     );
-    await this.page.fill(
+    await clearAndType(
       `[id='${prefix}steamship-costs-row.description']`,
       budget.description.steamship
     );
-    await this.page.fill(
+    await clearAndType(
       `[id='${prefix}steamship-costs-row.amount']`,
       budget.amount.steamship
     );
-    await this.page.fill(
+    await clearAndType(
       `[id='${prefix}other-costs-row.description']`,
       budget.description.other
     );
-    await this.page.fill(
+
+    await clearAndType(
       `[id='${prefix}other-costs-row.amount']`,
       budget.amount.other
     );
