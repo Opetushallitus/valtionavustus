@@ -4,7 +4,7 @@ import { loppuselvitysTest as test } from "../../fixtures/loppuselvitysTest";
 
 import { VIRKAILIJA_URL } from "../../utils/constants";
 
-import { getAllEmails } from "../../utils/emails";
+import { getLoppuselvitysAsiatarkastamattaEmails } from "../../utils/emails";
 
 const sendLoppuselvitysAsiatarkastamattaNotifications = (
   request: APIRequestContext
@@ -19,13 +19,17 @@ test("loppuselvitys-asiatarkastamatta notification is not sent to virkailija if 
   request,
 }) => {
   expect(asiatarkastettu);
-  const oldEmails = await getAllEmails("loppuselvitys-asiatarkastamatta");
+  const oldEmails = await getLoppuselvitysAsiatarkastamattaEmails(
+    avustushakuID
+  );
   const oldEmailCount = oldEmails.filter((e) =>
     e["to-address"].includes("santeri.horttanainen@reaktor.com")
   ).length;
   await sendLoppuselvitysAsiatarkastamattaNotifications(request);
 
-  const allEmails = await getAllEmails("loppuselvitys-asiatarkastamatta");
+  const allEmails = await getLoppuselvitysAsiatarkastamattaEmails(
+    avustushakuID
+  );
   const emails = allEmails.filter((e) =>
     e["to-address"].includes("santeri.horttanainen@reaktor.com")
   );

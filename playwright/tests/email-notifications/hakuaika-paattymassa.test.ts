@@ -1,7 +1,7 @@
 import { expect, Page, test } from "@playwright/test";
 import moment from "moment";
 
-import { getAllEmails, getLastEmail } from "../../utils/emails";
+import { getHakuaikaPaattymassaEmails, getLastEmail } from "../../utils/emails";
 import { HAKIJA_URL, VIRKAILIJA_URL } from "../../utils/constants";
 import { HakijaAvustusHakuPage } from "../../pages/hakijaAvustusHakuPage";
 import { randomString } from "../../utils/random";
@@ -161,13 +161,13 @@ Om ni har beslutat att inte lämna in ansökan föranleder detta meddelande inga
 
       hakuaikaPaattymassaTest(
         "does not send an e-mail to those whose hakemus has been sent",
-        async ({ page, filledHakemus }) => {
+        async ({ page, avustushakuID, filledHakemus }) => {
           await filledHakemus.page.submitApplication();
 
           await sendHakuaikaPaattymassaNotifications(page);
           await page.waitForTimeout(5000);
 
-          await expectEmailNotSent(filledHakemus.email);
+          await expectEmailNotSent(filledHakemus.email, avustushakuID);
         }
       );
     });
@@ -189,19 +189,19 @@ Om ni har beslutat att inte lämna in ansökan föranleder detta meddelande inga
 
       hakuaikaPaattymassaTest(
         "does not send an e-mail",
-        async ({ page, filledHakemus }) => {
+        async ({ page, filledHakemus, avustushakuID }) => {
           await sendHakuaikaPaattymassaNotifications(page);
           await page.waitForTimeout(5000);
 
-          await expectEmailNotSent(filledHakemus.email);
+          await expectEmailNotSent(filledHakemus.email, avustushakuID);
         }
       );
     });
   });
 }
 
-async function expectEmailNotSent(email: string) {
-  const emails = await getAllEmails("hakuaika-paattymassa");
+async function expectEmailNotSent(email: string, avustushakuID: number) {
+  const emails = await getHakuaikaPaattymassaEmails(avustushakuID);
   const expectedEmail = expect.objectContaining({
     "to-address": [email],
   });

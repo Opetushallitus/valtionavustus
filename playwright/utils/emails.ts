@@ -25,11 +25,6 @@ export const emailSchema = yup
   )
   .defined();
 
-export const getAllEmails = (emailType: string): Promise<Email[]> =>
-  axios
-    .get(`${VIRKAILIJA_URL}/api/test/email/${emailType}`)
-    .then((r) => emailSchema.validate(r.data));
-
 export const getLastEmail = (
   emailType: string,
   avustushakuID: number
@@ -79,11 +74,14 @@ export const getLoppuselvitysEmails = getEmails("loppuselvitys-notification");
 export const getLoppuselvitysPalauttamattaEmails = getEmails(
   "loppuselvitys-palauttamatta"
 );
+export const getHakuaikaPaattymassaEmails = getEmailsWithAvustushaku(
+  "hakuaika-paattymassa"
+);
 export const getLahetaValiselvityspyynnotEmails = getEmailsWithAvustushaku(
   "laheta-valiselvityspyynnot"
 );
-export const getLahetaLoppuselvityspyynnotEmails = getEmailsWithAvustushaku(
-  "laheta-loppuselvityspyynnot"
+export const getLoppuselvitysAsiatarkastamattaEmails = getEmailsWithAvustushaku(
+  "loppuselvitys-asiatarkastamatta"
 );
 export const getValiselvitysPalauttamattaEmails = getEmails(
   "valiselvitys-palauttamatta"
@@ -95,9 +93,10 @@ export const getPaatoksetLahetettyEmails = getEmailsWithAvustushaku(
   "paatokset-lahetetty"
 );
 export const getMuutoshakemuksetKasittelemattaEmails = async (
-  ukotettuEmailAddress: string
+  ukotettuEmailAddress: string,
+  avustushakuID: number
 ) => {
-  const emails = await getAllEmails("muutoshakemuksia-kasittelematta");
+  const emails = await getEmailsWithAvustushaku("muutoshakemuksia-kasittelematta")(avustushakuID);
   return emails.filter((e) => e["to-address"].includes(ukotettuEmailAddress));
 };
 

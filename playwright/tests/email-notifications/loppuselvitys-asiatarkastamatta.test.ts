@@ -4,7 +4,7 @@ import { loppuselvitysTest as test } from "../../fixtures/loppuselvitysTest";
 
 import { VIRKAILIJA_URL } from "../../utils/constants";
 
-import { getAllEmails } from "../../utils/emails";
+import { getLoppuselvitysAsiatarkastamattaEmails } from "../../utils/emails";
 
 const sendLoppuselvitysAsiatarkastamattaNotifications = (
   request: APIRequestContext
@@ -20,15 +20,15 @@ test("loppuselvitys-asiatarkastamatta notification is sent to virkailija when lo
 }) => {
   expect(loppuselvitysFormFilled);
   const oldEmailCount = (
-    await getAllEmails("loppuselvitys-asiatarkastamatta")
+    await getLoppuselvitysAsiatarkastamattaEmails(avustushakuID)
   ).filter((e) =>
     e["to-address"].includes("santeri.horttanainen@reaktor.com")
   ).length;
   await sendLoppuselvitysAsiatarkastamattaNotifications(request);
 
-  const emails = (await getAllEmails("loppuselvitys-asiatarkastamatta")).filter(
-    (e) => e["to-address"].includes("santeri.horttanainen@reaktor.com")
-  );
+  const emails = (
+    await getLoppuselvitysAsiatarkastamattaEmails(avustushakuID)
+  ).filter((e) => e["to-address"].includes("santeri.horttanainen@reaktor.com"));
   expect(emails.length).toEqual(oldEmailCount + 1);
   const loppuselvitysAsiatarkastamattaNotification = emails.pop();
   expect(loppuselvitysAsiatarkastamattaNotification?.subject).toEqual(

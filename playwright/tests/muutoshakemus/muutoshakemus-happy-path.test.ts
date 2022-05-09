@@ -114,11 +114,13 @@ test("When muutoshakemus enabled haku has been published, a hakemus has been sub
   const ukotettuValmistelijaEmail = "santeri.horttanainen@reaktor.com";
   await test.step("ukotettu valmistelija gets a reminder", async () => {
     const emailsBefore = await getMuutoshakemuksetKasittelemattaEmails(
-      ukotettuValmistelijaEmail
+      ukotettuValmistelijaEmail,
+      avustushakuID
     );
     await sendMuutoshakemuksiaKasittelemattaNotifications(page.request);
     const emailsAfter = await getMuutoshakemuksetKasittelemattaEmails(
-      ukotettuValmistelijaEmail
+      ukotettuValmistelijaEmail,
+      avustushakuID
     );
     const emailsAfterLength = emailsAfter.length;
     expect(emailsAfterLength).toBeGreaterThan(emailsBefore.length);
@@ -186,7 +188,8 @@ test("When muutoshakemus enabled haku has been published, a hakemus has been sub
     await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision("accepted");
     await hakemustenArviointiPage.selectVakioperusteluInFinnish();
     const emailsBefore = await getMuutoshakemuksetKasittelemattaEmails(
-      ukotettuValmistelijaEmail
+      ukotettuValmistelijaEmail,
+      avustushakuID
     );
     const emailsBeforeWithCurrentAvustushaku = emailsBefore.filter(
       isCurrentAvustushakuEmail
@@ -205,7 +208,8 @@ test("When muutoshakemus enabled haku has been published, a hakemus has been sub
         await sendMuutoshakemuksiaKasittelemattaNotifications(page.request);
         const emailsAfterSending =
           await getMuutoshakemuksetKasittelemattaEmails(
-            ukotettuValmistelijaEmail
+            ukotettuValmistelijaEmail,
+            avustushakuID
           );
         const emailsAfterWithCurrentAvustushaku = emailsAfterSending.filter(
           isCurrentAvustushakuEmail

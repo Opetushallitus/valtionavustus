@@ -353,12 +353,6 @@
     :summary "Juuh"
     (ok (virkailija-db/update-va-users-cache body)))
 
-  (compojure-api/GET "/email/:email-type" []
-    :path-params [email-type :- s/Str]
-    :return virkailija-schema/DbEmails
-    :summary "Return emails of the given type"
-    (ok (get-emails-by-type email-type)))
-
   (compojure-api/GET "/email/sent/failed" []
     :return virkailija-schema/DbEmails
     :summary "Return emails that failed to be send"
