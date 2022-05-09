@@ -321,7 +321,7 @@ export const HakuEdit = ({
       <div>
         <div className="multibatch-fields">
           <h3>
-            Maksatus{" "}
+            Maksatus
             <HelpTooltip
               content={helpTexts["hakujen_hallinta__haun_tiedot___maksatus"]}
               direction="left"
@@ -337,7 +337,7 @@ export const HakuEdit = ({
             </div>
             <div className="haku-edit-field-container">
               <h3>
-                Hakijan omarahoitusvaatimus{" "}
+                Hakijan omarahoitusvaatimus
                 <HelpTooltip
                   content={
                     helpTexts[
@@ -443,7 +443,7 @@ export const HakuEdit = ({
             <div className="haku-edit-field-container">
               <label>
                 <h3>
-                  Maksuliikemenotili{" "}
+                  Maksuliikemenotili
                   <HelpTooltip
                     content={
                       helpTexts[
@@ -471,7 +471,7 @@ export const HakuEdit = ({
             <div className="haku-edit-field-container">
               <label>
                 <h3>
-                  Tositelaji{" "}
+                  Tositelaji
                   <HelpTooltip
                     content={
                       helpTexts["hakujen_hallinta__haun_tiedot___tositelaji"]
@@ -495,7 +495,7 @@ export const HakuEdit = ({
         <div className="editor-field-row">
           <div className="editor-row-element">
             <h3 className="required">
-              Määräraha{" "}
+              Määräraha
               <HelpTooltip
                 content={helpTexts["hakujen_hallinta__haun_tiedot___määräraha"]}
                 direction="left"
@@ -673,7 +673,7 @@ const SelectionCriteria = ({
       <thead>
         <tr>
           <th>
-            {selectionCriteria.label.fi}{" "}
+            {selectionCriteria.label.fi}
             <HelpTooltip
               content={
                 helpTexts["hakujen_hallinta__haun_tiedot___valintaperusteet"]
@@ -754,7 +754,7 @@ const FocusArea = ({
       <thead>
         <tr>
           <th>
-            {focusAreas.label.fi}{" "}
+            {focusAreas.label.fi}
             <HelpTooltip
               content={
                 helpTexts["hakujen_hallinta__haun_tiedot___painopistealueet"]
@@ -880,7 +880,7 @@ const AcademySize = ({
   return (
     <div id="set-academysize">
       <h3>
-        Oppilaitoksen koko{" "}
+        Oppilaitoksen koko
         <HelpTooltip
           content={
             helpTexts["hakujen_hallinta__haun_tiedot___oppilaitoksen_koko"]
@@ -985,7 +985,7 @@ const SetStatus = ({
   return (
     <div>
       <h3>
-        Tila{" "}
+        Tila
         <HelpTooltip
           content={helpTexts["hakujen_hallinta__haun_tiedot___tila"]}
           direction="left"
@@ -1039,7 +1039,7 @@ const RegisterNumber = ({
   return (
     <div className="haku-edit-registernumber">
       <h3 className="required">
-        Asianumero{" "}
+        Asianumero
         <HelpTooltip
           content={helpTexts["hakujen_hallinta__haun_tiedot___asianumero"]}
           direction="left"

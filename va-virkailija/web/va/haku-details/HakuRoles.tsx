@@ -41,21 +41,21 @@ export const HakuRoles = ({
         <thead>
           <tr>
             <th className="haku-roles-role-column">
-              Rooli{" "}
+              Rooli
               <HelpTooltip
                 content={helpTexts["hakujen_hallinta__haun_tiedot___rooli"]}
                 direction="left"
               />
             </th>
             <th className="haku-roles-name-column">
-              Nimi{" "}
+              Nimi
               <HelpTooltip
                 content={helpTexts["hakujen_hallinta__haun_tiedot___nimi"]}
                 direction="left"
               />
             </th>
             <th className="haku-roles-email-column">
-              Sähköposti{" "}
+              Sähköposti
               <HelpTooltip
                 content={
                   helpTexts["hakujen_hallinta__haun_tiedot___sähköposti"]
@@ -92,7 +92,7 @@ export const HakuRoles = ({
         </div>
         <div>
           <div>
-            Lisää uusi henkilö rooleihin:{" "}
+            Lisää uusi henkilö rooleihin:
             <HelpTooltip
               content={
                 helpTexts["hakujen_hallinta__haun_tiedot___lisää_uusi_henkilö"]
