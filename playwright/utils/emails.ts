@@ -33,7 +33,8 @@ export const getAllEmails = (emailType: string): Promise<Email[]> =>
 export const getLastEmail = (
   emailType: string,
   avustushakuID: number
-): Promise<Email> => getEmailsWithAvustushaku(emailType)(avustushakuID).then(lastOrFail);
+): Promise<Email> =>
+  getEmailsWithAvustushaku(emailType)(avustushakuID).then(lastOrFail);
 
 const getEmails =
   (emailType: string) =>
