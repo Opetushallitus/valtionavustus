@@ -41,6 +41,7 @@ function main {
   build
   if current-commit-is-not-tested;
   then
+    npm run prettier-check-project
     build_docker_images
     if running_on_jenkins; then
       scripts/docker-compose -f ${PLAYWRIGHT_COMPOSE_FILE} up --abort-on-container-exit
