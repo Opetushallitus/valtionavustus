@@ -129,6 +129,7 @@
                   ahr.email IS NOT NULL
             GROUP BY ahr.email, h.avustushaku
          ) SELECT
+            kasittelematta.avustushaku_id,
             kasittelematta.ukotettu_email as \"to\",
             jsonb_agg(
               jsonb_build_object(
@@ -137,7 +138,7 @@
               )
             ) AS list
            FROM kasittelematta
-           GROUP BY kasittelematta.ukotettu_email"
+           GROUP BY kasittelematta.ukotettu_email, kasittelematta.avustushaku_id"
          []))
 
 (defn send-muutoshakemuksia-kasittelematta-notifications []

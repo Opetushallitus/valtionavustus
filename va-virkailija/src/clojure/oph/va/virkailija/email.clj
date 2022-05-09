@@ -275,10 +275,12 @@
   (let [lang     (keyword "fi")
         template (:muutoshakemuksia-kasittelematta mail-templates)
         to       (:to notification)
+        avustushaku-id (:avustushaku-id notification)
         list     (seq (map to-muutoshakemus-kasittelematta (:list notification)))
         total-muutoshakemus-count (sum (map :count list))]
     (email/try-send-msg-once {:type :muutoshakemuksia-kasittelematta
                               :lang lang
+                              :avustushaku-id avustushaku-id
                               :from (-> email/smtp-config :from lang)
                               :sender (-> email/smtp-config :sender)
                               :to [to]
