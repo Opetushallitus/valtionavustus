@@ -89,9 +89,7 @@ fornamn.efternamn@oph.fi
       expect(await hakijaPaatosPage.avustuslajiTitle()).toEqual(
         "Typ av statsunderstöd"
       );
-      expect(await hakijaPaatosPage.avustuslaji()).toEqual(
-        "Specialunderstöd"
-      );
+      expect(await hakijaPaatosPage.avustuslaji()).toEqual("Specialunderstöd");
     });
   }
 );
