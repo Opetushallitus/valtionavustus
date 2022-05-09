@@ -4,13 +4,13 @@
             [oph.soresu.common.db :refer [query]]))
 
 (defn- get-loppuselvitys-asiatarkastamatta []
-  (query "SELECT h.avustushaku, count(h.id) as hakemus_count, r.email
+  (query "SELECT h.avustushaku as avustushaku_id, count(h.id) as hakemus_count, r.email
           FROM hakemukset h
           LEFT JOIN arviot a ON h.id = a.hakemus_id
           LEFT JOIN avustushaku_roles r ON a.presenter_role_id = r.id
           JOIN hakija.avustushaut ah ON ah.id = h.avustushaku
           WHERE h.status_loppuselvitys = 'submitted' AND h.version_closed IS NULL AND r.email IS NOT NULL
-          GROUP BY h.avustushaku, r.email"
+          GROUP BY avustushaku_id, r.email"
          []))
 
 (defn- get-hakuaika-paattymassa-haut []
@@ -36,10 +36,10 @@
       (email/send-loppuselvitys-asiatarkastamatta [(key keyval)] (val keyval)))))
 
 (defn- get-loppuselvitys-taloustarkastamatta []
-  (query "SELECT avustushaku, count(id) as hakemus_count
+  (query "SELECT avustushaku as avustushaku_id, count(id) as hakemus_count
           FROM hakemukset
           WHERE status_loppuselvitys = 'information_verified' AND version_closed IS NULL
-          GROUP BY avustushaku"
+          GROUP BY avustushaku_id"
          []))
 
 (defn send-loppuselvitys-taloustarkastamatta-notifications []

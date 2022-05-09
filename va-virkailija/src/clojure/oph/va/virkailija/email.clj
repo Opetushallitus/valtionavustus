@@ -180,16 +180,23 @@
   {:link (generate-avustushaku-url (:avustushaku selvitys))
    :count (:hakemus-count selvitys)})
 
+(defn- to-loppuselvitys-tarkastamatta [selvitys]
+  {:link (generate-avustushaku-url (:avustushaku-id selvitys))
+   :count (:hakemus-count selvitys)
+   :avustushaku-id (:avustushaku-id selvitys)})
+
 (defn sum [values] (reduce + 0 values))
 
 (defn send-loppuselvitys-taloustarkastamatta [loppuselvitys-list]
   (let [lang     :fi
         template (:loppuselvitys-taloustarkastamatta mail-templates)
-        list     (seq (map to-selvitys-tarkastamatta loppuselvitys-list))
+        list     (seq (map to-loppuselvitys-tarkastamatta loppuselvitys-list))
+        avustushaku-id (:avustushaku-id (last list))
         total-hakemus-count (sum (map :count list))]
     (email/try-send-msg-once {:type :loppuselvitys-taloustarkastamatta
                               :lang lang
                               :from (-> email/smtp-config :from lang)
+                              :avustushaku-id avustushaku-id
                               :sender (-> email/smtp-config :sender)
                               :to (-> email/smtp-config :to-taloustarkastaja)
                               :subject "Taloustarkastamattomia loppuselvityksiä"
@@ -240,12 +247,14 @@
 (defn send-loppuselvitys-asiatarkastamatta [to loppuselvitys-list]
   (let [lang     :fi
         template (:loppuselvitys-asiatarkastamatta mail-templates)
-        list     (seq (map to-selvitys-tarkastamatta loppuselvitys-list))
+        list     (seq (map to-loppuselvitys-tarkastamatta loppuselvitys-list))
+        avustushaku-id (:avustushaku-id (last list))
         total-hakemus-count (sum (map :count list))]
     (email/try-send-msg-once {:type :loppuselvitys-asiatarkastamatta
                               :lang lang
                               :from (-> email/smtp-config :from lang)
                               :sender (-> email/smtp-config :sender)
+                              :avustushaku-id avustushaku-id
                               :to to
                               :subject "Asiatarkastamattomia loppuselvityksiä"
                               :total-hakemus-count total-hakemus-count
