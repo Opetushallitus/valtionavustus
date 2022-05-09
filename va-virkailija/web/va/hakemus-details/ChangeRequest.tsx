@@ -88,7 +88,7 @@ export const ChangeRequest = ({
           disabled={!allowEditing}
           data-test-id="request-change-button"
         >
-          Pyydä täydennystä{" "}
+          Pyydä täydennystä
         </button>
       )}
       <HelpTooltip

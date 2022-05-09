@@ -45,7 +45,7 @@ export default class ShouldPay extends React.Component {
     return (
       <div id="set-should-pay-grant">
         <h3>
-          Maksuun: <HelpTooltip content={helpText} direction={"arviointi"} />{" "}
+          Maksuun: <HelpTooltip content={helpText} direction={"arviointi"} />
         </h3>
         <fieldset className="soresu-radiobutton-group">{options}</fieldset>
       </div>

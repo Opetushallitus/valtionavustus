@@ -245,7 +245,7 @@ export default class EducationLevels extends Component<EducationLevelsProps> {
       <div className={enabled ? "" : "haku-edit-disabled-form"}>
         <h3>
           Koulutusasteet (kirjoita talousarviotili ottaaksesi käyttöön, esim.
-          29.10.30.20){" "}
+          29.10.30.20)
           <HelpTooltip
             content={
               helpTexts["hakujen_hallinta__haun_tiedot___koulutusasteet"]

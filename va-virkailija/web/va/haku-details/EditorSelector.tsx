@@ -140,7 +140,7 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           data-test-id="haun-tiedot-välilehti"
           className={ClassNames({ selected: subTab === "haku-editor" })}
         >
-          Haun tiedot{" "}
+          Haun tiedot
           <HelpTooltip
             content={
               helpTexts["hakujen_hallinta__haun_tiedot___valilehden_infopallo"]
@@ -152,7 +152,7 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           onClick={createSubTabSelector("form-editor")}
           className={ClassNames({ selected: subTab === "form-editor" })}
         >
-          Hakulomake{" "}
+          Hakulomake
           <HelpTooltip
             content={
               helpTexts["hakujen_hallinta__hakulomake___valilehden_infopallo"]
@@ -164,7 +164,7 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           className={ClassNames({ selected: subTab === "decision" })}
           data-test-id="päätös-välilehti"
         >
-          Päätös{" "}
+          Päätös
           <HelpTooltip
             content={
               helpTexts[
@@ -178,7 +178,7 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           className={ClassNames({ selected: subTab === "valiselvitys" })}
           data-test-id="väliselvitys-välilehti"
         >
-          Väliselvitys{" "}
+          Väliselvitys
           <HelpTooltip
             content={
               helpTexts[
@@ -192,7 +192,7 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           className={ClassNames({ selected: subTab === "loppuselvitys" })}
           data-test-id="loppuselvitys-välilehti"
         >
-          Loppuselvitys{" "}
+          Loppuselvitys
           <HelpTooltip
             content={
               helpTexts[

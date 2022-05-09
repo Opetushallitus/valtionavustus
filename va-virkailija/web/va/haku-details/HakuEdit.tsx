@@ -118,7 +118,7 @@ export const HakuEdit = ({
         <thead>
           <tr>
             <th>
-              Haun nimi{" "}
+              Haun nimi
               <HelpTooltip
                 content={helpTexts["hakujen_hallinta__haun_tiedot___haun_nimi"]}
                 direction="left"
@@ -158,7 +158,7 @@ export const HakuEdit = ({
           data-test-id="code-value-dropdown__operational-unit"
         >
           <h3 className="required">
-            Toimintayksikkö{" "}
+            Toimintayksikkö
             <HelpTooltip
               content={
                 helpTexts["hakujen_hallinta__haun_tiedot___toimintayksikkö"]
@@ -183,7 +183,7 @@ export const HakuEdit = ({
           data-test-id="code-value-dropdown__project"
         >
           <h3 className="required">
-            Projekti{" "}
+            Projekti
             <HelpTooltip
               content={helpTexts["hakujen_hallinta__haun_tiedot___projekti"]}
             />
@@ -205,7 +205,7 @@ export const HakuEdit = ({
           data-test-id="code-value-dropdown__operation"
         >
           <h3 className="required">
-            Toiminto{" "}
+            Toiminto
             <HelpTooltip
               content={helpTexts["hakujen_hallinta__haun_tiedot___toiminto"]}
             />
@@ -235,7 +235,7 @@ export const HakuEdit = ({
           <div className="haku-duration-and-self-financing">
             <div className="haku-duration-edit-container">
               <h3>
-                {avustushaku.content.duration.label.fi}{" "}
+                {avustushaku.content.duration.label.fi}
                 <HelpTooltip
                   content={
                     helpTexts["hakujen_hallinta__haun_tiedot___hakuaika"]
@@ -827,7 +827,7 @@ const HakuType = ({
   return (
     <div id="set-haku-type">
       <h3>
-        Hakutyyppi{" "}
+        Avustuslaji
         <HelpTooltip
           content={helpTexts["hakujen_hallinta__haun_tiedot___hakutyyppi"]}
           direction="left"

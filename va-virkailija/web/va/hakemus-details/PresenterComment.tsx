@@ -60,11 +60,11 @@ export default class PresenterComment extends React.Component<
     return (
       <div className="value-edit">
         <label>
-          Valmistelijan huomiot{" "}
+          Valmistelijan huomiot
           <HelpTooltip
             content={this.props.helpText}
             direction={"valmistelijan-huomiot"}
-          />{" "}
+          />
         </label>
         <textarea
           rows={5}

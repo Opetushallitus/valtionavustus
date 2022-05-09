@@ -115,7 +115,7 @@ export default class SeurantaLiitteet extends React.Component<SeurantaLiitteetPr
     return (
       <div className="seuranta-liitteet">
         <h2>
-          Liitteet <HelpTooltip content={helpText} direction={"arviointi"} />{" "}
+          Liitteet <HelpTooltip content={helpText} direction={"arviointi"} />
         </h2>
         {_.map(fields, (field: Field) => (
           <AttachmentField

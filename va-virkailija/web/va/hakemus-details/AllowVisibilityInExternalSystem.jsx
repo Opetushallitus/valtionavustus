@@ -60,8 +60,8 @@ export default class AllowVisibilityInExternalSystem extends React.Component {
     return (
       <div id="set-allow-visibility-in-external-system">
         <h3>
-          Salli näkyvyys ulkoisessa järjestelmässä:{" "}
-          <HelpTooltip content={helpText} direction={"salli-nakyvyys"} />{" "}
+          Salli näkyvyys ulkoisessa järjestelmässä:
+          <HelpTooltip content={helpText} direction={"salli-nakyvyys"} />
         </h3>
         <fieldset className="soresu-radiobutton-group">{options}</fieldset>
       </div>

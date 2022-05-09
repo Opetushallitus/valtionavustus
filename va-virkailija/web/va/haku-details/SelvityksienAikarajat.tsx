@@ -40,11 +40,11 @@ export const SelvityksienAikarajat = (props: KayttoaikaProps) => {
   return (
     <div className="selvityksien-aikarajat">
       <h4 data-test-id="valiselvitys">
-        Väliselvitys{" "}
+        Väliselvitys
         <HelpTooltip
           content={helpTexts["hakujen_hallinta__päätös___väliselvitys"]}
           direction="left"
-        />{" "}
+        />
       </h4>
 
       <div
@@ -68,11 +68,11 @@ export const SelvityksienAikarajat = (props: KayttoaikaProps) => {
       </div>
 
       <h4 data-test-id="loppuselvitys">
-        Loppuselvitys{" "}
+        Loppuselvitys
         <HelpTooltip
           content={helpTexts["hakujen_hallinta__päätös___loppuselvitys"]}
           direction="left"
-        />{" "}
+        />
       </h4>
 
       <div

@@ -49,12 +49,12 @@ const DecisionField: React.FC<DecisionProps> = ({
   return (
     <div className="decision-column" data-test-id={dataTestId}>
       <label>
-        {titleLanguage}{" "}
+        {titleLanguage}
         {helpText && language === "fi" ? (
           <HelpTooltip content={helpText} direction="left" />
         ) : (
           ""
-        )}{" "}
+        )}
       </label>
       <textarea onChange={onChange} rows={5} id={fieldId} value={value} />
     </div>
@@ -147,7 +147,7 @@ class DateField extends React.Component<DateFieldProps, DateFieldState> {
       <div className="decision-date">
         <div className="decision-column">
           <span className="decision-date-label" data-test-id="ratkaisupäivä">
-            {this.props.label}{" "}
+            {this.props.label}
             <HelpTooltip
               content={
                 this.props.helpTexts["hakujen_hallinta__päätös___ratkaisupäivä"]
@@ -289,7 +289,7 @@ class LiitteetSelection extends React.Component<
     return (
       <div>
         <h4 data-test-id="paatoksenliitteet">
-          Päätöksen liitteet{" "}
+          Päätöksen liitteet
           <HelpTooltip
             content={
               this.props.helpTexts[
@@ -297,7 +297,7 @@ class LiitteetSelection extends React.Component<
               ]
             }
             direction="left"
-          />{" "}
+          />
         </h4>
         <div className="decision-liite-selection">
           {_.map(this.props.decisionLiitteet, (group) =>
@@ -312,7 +312,7 @@ class LiitteetSelection extends React.Component<
     return (
       <div key={group.group}>
         <h5>
-          {group.group}{" "}
+          {group.group}
           <HelpTooltip
             content={
               this.props.helpTexts[
@@ -322,7 +322,7 @@ class LiitteetSelection extends React.Component<
               ]
             }
             direction="left"
-          />{" "}
+          />
         </h5>
         {_.map(group.attachments, (attachment) =>
           this.renderLiite(attachment, group.group)
@@ -479,7 +479,7 @@ class RegenerateDecisions extends React.Component<
             )}
             {!this.state.confirm && (
               <button onClick={onConfirm}>
-                Luo päätökset uudelleen{" "}
+                Luo päätökset uudelleen
                 <HelpTooltip
                   content={
                     this.props.helpTexts[
@@ -583,7 +583,7 @@ class ResendDecisions extends React.Component<
             )}
             {!this.state.confirm && (
               <button onClick={onConfirm} data-test-id="resend">
-                Lähetä {this.props.sent} päätöstä uudelleen{" "}
+                Lähetä {this.props.sent} päätöstä uudelleen
                 <HelpTooltip
                   content={
                     this.props.helpTexts[
@@ -591,7 +591,7 @@ class ResendDecisions extends React.Component<
                     ]
                   }
                   direction="left"
-                />{" "}
+                />
               </button>
             )}
           </div>

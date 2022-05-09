@@ -198,7 +198,7 @@ export default class BusinessIdSearch extends React.Component {
                   translations={this.translations}
                   translationKey="business-id"
                   lang={this.lang}
-                />{" "}
+                />
                 :
                 <input
                   id="finnish-business-id"
