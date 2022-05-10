@@ -1,6 +1,5 @@
 import {
   Answers,
-  Avustushaku,
   AvustushakuContent,
   Decision,
   Field,
@@ -63,6 +62,7 @@ export interface SavedObject extends HakijaHakemus {
 
 export interface InitialSaveStatus {
   changes: boolean;
+  hakemusId?: string;
   saveInProgress: boolean;
   serverError: string;
   values: Answers | {};
@@ -94,6 +94,7 @@ export interface FormOperations<T> {
 }
 
 export interface BaseStateLoopState<T> {
+  avustushaku?: HakijaAvustusHaku;
   form: Form;
   tokenValidation: {
     valid: boolean;
@@ -108,7 +109,7 @@ export interface BaseStateLoopState<T> {
 }
 
 export interface InitialStateTemplate<T extends BaseStateLoopState<T>> {
-  avustushaku?: EventStream<Avustushaku>;
+  avustushaku?: EventStream<HakijaAvustusHaku>;
   form: any;
   tokenValidation: EventStream<{ valid: boolean }> | { valid: boolean };
   saveStatus: {

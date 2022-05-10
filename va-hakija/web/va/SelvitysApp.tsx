@@ -21,7 +21,7 @@ import {
   SelvitysAppStateTemplate,
   UrlContent,
 } from "soresu-form/web/form/types/Form";
-import { Answers, Avustushaku, Field, Form } from "soresu-form/web/va/types";
+import { Answers, Field, Form } from "soresu-form/web/va/types";
 import { initializeStateLoop } from "soresu-form/web/form/FormStateLoop";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 
@@ -46,13 +46,9 @@ const responseParser = new ResponseParser({
   },
 });
 
-interface SaveStatus extends InitialSaveStatus {
-  hakemusId?: string;
-}
-
 interface State {
   avustushaku: HakijaAvustusHaku;
-  saveStatus: SaveStatus;
+  saveStatus: InitialSaveStatus;
 }
 
 type Lang = "fi" | "sv";
@@ -217,7 +213,7 @@ function printEntityId(state: SelvitysAppStateLoopState) {
 
 const urlContent = { parsedQuery: query, location };
 const avustusHakuId: string = VaUrlCreator.parseAvustusHakuId(urlContent);
-const avustusHakuP = Bacon.fromPromise<Avustushaku>(
+const avustusHakuP = Bacon.fromPromise<HakijaAvustusHaku>(
   HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId))
 );
 const environmentP = Bacon.fromPromise<EnvironmentApiResponse>(

@@ -1,20 +1,31 @@
 import React from "react";
-import LocalizedString from "soresu-form/web/form/component/LocalizedString.tsx";
+
+import LocalizedString from "soresu-form/web/form/component/LocalizedString";
+import { BaseStateLoopState } from "soresu-form/web/form/types/Form";
 import HttpUtil from "soresu-form/web/HttpUtil";
 
-export default class OpenContactsEdit extends React.Component {
-  constructor(props) {
+type OpenContactsEditProps<T extends BaseStateLoopState<T>> = {
+  state: T;
+  opened: boolean;
+};
+
+export default class OpenContactsEdit<
+  T extends BaseStateLoopState<T>
+> extends React.Component<OpenContactsEditProps<T>> {
+  constructor(props: OpenContactsEditProps<T>) {
     super(props);
     this.onSubmitClick = this.onSubmitClick.bind(this);
   }
 
   onSubmitClick() {
-    const avustusHakuId = this.props.state.avustushaku.id;
+    const avustusHakuId = this.props.state.avustushaku?.id;
     const hakemusId = this.props.state.saveStatus.hakemusId;
     const url = `/api/avustushaku/${avustusHakuId}/hakemus/${hakemusId}/applicant-edit-open`;
 
     HttpUtil.get(url).then(() => {
-      this.props.state.saveStatus.savedObject.version += 1;
+      if (this.props.state.saveStatus.savedObject) {
+        this.props.state.saveStatus.savedObject.version += 1;
+      }
       location.reload();
     });
   }
@@ -36,11 +47,7 @@ export default class OpenContactsEdit extends React.Component {
               />
             </h3>
 
-            <button
-              className="soresu-text-button"
-              disabled={this.opened}
-              onClick={this.onSubmitClick}
-            >
+            <button className="soresu-text-button" onClick={this.onSubmitClick}>
               <LocalizedString
                 translations={translations.form}
                 translationKey="open-edit-contacts-button"

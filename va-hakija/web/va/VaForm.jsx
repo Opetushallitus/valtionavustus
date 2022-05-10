@@ -13,7 +13,7 @@ import VaFormTopbar from "./VaFormTopbar.tsx";
 import VaOldBrowserWarning from "./VaOldBrowserWarning.jsx";
 
 import GrantRefuse from "./GrantRefuse";
-import OpenContactsEdit from "./OpenContactsEdit.jsx";
+import OpenContactsEdit from "./OpenContactsEdit";
 
 import "./style/main.less";
 

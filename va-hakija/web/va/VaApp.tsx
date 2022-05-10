@@ -9,17 +9,13 @@ import { triggerFieldUpdatesForValidation } from "soresu-form/web/form/FieldUpda
 import ResponseParser from "soresu-form/web/form/ResponseParser";
 import {
   FormOperations,
+  HakijaAvustusHaku,
   SavedObject,
   UrlContent,
   VaAppStateLoopState,
   VaAppStateTemplate,
 } from "soresu-form/web/form/types/Form";
-import {
-  Avustushaku,
-  Field,
-  Form,
-  NormalizedHakemusData,
-} from "soresu-form/web/va/types";
+import { Field, Form, NormalizedHakemusData } from "soresu-form/web/va/types";
 import VaComponentFactory from "soresu-form/web/va/VaComponentFactory";
 import VaSyntaxValidator from "soresu-form/web/va/VaSyntaxValidator";
 import VaPreviewComponentFactory from "soresu-form/web/va/VaPreviewComponentFactory";
@@ -83,7 +79,7 @@ function printEntityId(state: VaAppStateLoopState) {
 const query = queryString.parse(location.search);
 const urlContent = { parsedQuery: query, location: location };
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent);
-const avustusHakuP = Bacon.fromPromise<Avustushaku>(
+const avustusHakuP = Bacon.fromPromise<HakijaAvustusHaku>(
   HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId))
 );
 const environmentP = Bacon.fromPromise<EnvironmentApiResponse>(
