@@ -9,7 +9,6 @@ import VaSyntaxValidator from "soresu-form/web/va/VaSyntaxValidator";
 import {
   BaseStateLoopState,
   InitialStateTemplate,
-  StateLoopState,
 } from "soresu-form/web/form/types/Form";
 import { Field, Form, Language } from "soresu-form/web/va/types";
 
@@ -88,7 +87,7 @@ export default class FormController<T extends BaseStateLoopState<T>, K> {
     dispatcher.push(events.submit, {});
   }
 
-  hasPendingChanges(state: StateLoopState) {
+  hasPendingChanges(state: T) {
     return state.saveStatus.changes || state.saveStatus.saveInProgress;
   }
 
@@ -99,7 +98,7 @@ export default class FormController<T extends BaseStateLoopState<T>, K> {
     );
   }
 
-  createAttachmentDownloadUrl(state: StateLoopState, field: Field) {
+  createAttachmentDownloadUrl(state: T, field: Field) {
     const formOperations = state.extensionApi.formOperations;
     return formOperations.urlCreator.attachmentDownloadUrl(state, field);
   }
@@ -130,7 +129,7 @@ export default class FormController<T extends BaseStateLoopState<T>, K> {
     });
   }
 
-  isSaveDraftAllowed(state: StateLoopState) {
+  isSaveDraftAllowed(state: T) {
     const formOperations = state.extensionApi.formOperations;
     return formOperations.isSaveDraftAllowed(state);
   }
@@ -173,7 +172,7 @@ export default class FormController<T extends BaseStateLoopState<T>, K> {
     return this.customPreviewComponentFactory.createComponent(componentProps);
   }
 
-  getCustomComponentProperties(state: StateLoopState) {
+  getCustomComponentProperties(state: T) {
     return this.customComponentFactory
       ? this.customComponentFactory.getCustomComponentProperties(state)
       : {};

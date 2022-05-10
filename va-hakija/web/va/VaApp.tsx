@@ -126,12 +126,12 @@ function onInitialStateLoaded(initialState: VaAppStateLoopState) {
   const modifyApplication = query["modify-application"];
   if (
     !modifyApplication &&
-    initialState.avustushaku.phase !== "current" &&
+    initialState.avustushaku?.phase !== "current" &&
     !initialState.configuration.preview &&
     !isEmptyOrReopenedHakemus(initialState.saveStatus.savedObject)
   ) {
     window.location.href = urlCreator.existingSubmissionPreviewUrl(
-      initialState.avustushaku.id,
+      initialState.avustushaku?.id,
       initialState.saveStatus.hakemusId,
       initialState.configuration.lang,
       initialState.token

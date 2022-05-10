@@ -7,7 +7,7 @@ import { BaseStateLoopState } from "soresu-form/web/form/types/Form";
 type GrantRefuseProps<T extends BaseStateLoopState<T>> = {
   state: T;
   isTokenValid: boolean;
-  onSubmit: (comment?: string) => void;
+  onSubmit: (comment: string) => void;
 };
 
 type GrantRefuseState = {

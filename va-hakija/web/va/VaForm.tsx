@@ -1,17 +1,15 @@
 import React from "react";
-import _ from "lodash";
 
-import FormContainer from "soresu-form/web/form/FormContainer.jsx";
-import Form from "soresu-form/web/form/Form.jsx";
-import FormPreview from "soresu-form/web/form/FormPreview.jsx";
-
-import VaHakemusRegisterNumber from "soresu-form/web/va/VaHakemusRegisterNumber.jsx";
-import VaChangeRequest from "soresu-form/web/va/VaChangeRequest.jsx";
+import FormContainer from "soresu-form/web/form/FormContainer";
+import Form from "soresu-form/web/form/Form";
+import FormPreview from "soresu-form/web/form/FormPreview";
+import VaHakemusRegisterNumber from "soresu-form/web/va/VaHakemusRegisterNumber";
+import VaChangeRequest from "soresu-form/web/va/VaChangeRequest";
 import { mapAnswersWithMuutoshakemusData } from "soresu-form/web/va/MuutoshakemusMapper";
+import FormController from "soresu-form/web/form/FormController";
+import { BaseStateLoopState } from "soresu-form/web/form/types/Form";
 
-import VaFormTopbar from "./VaFormTopbar.tsx";
-import VaOldBrowserWarning from "./VaOldBrowserWarning.jsx";
-
+import VaFormTopbar from "./VaFormTopbar";
 import GrantRefuse from "./GrantRefuse";
 import OpenContactsEdit from "./OpenContactsEdit";
 
@@ -24,7 +22,17 @@ const allowedStatuses = [
   "applicant_edit",
 ];
 
-export default class VaForm extends React.Component {
+type VaFormProps<T extends BaseStateLoopState<T>, K> = {
+  controller: FormController<T, K>
+  state: T
+  hakemusType: "hakemus" | "valiselvitys" | "loppuselvitys"
+  refuseGrant?: string
+  modifyApplication?: string
+  isExpired?: boolean
+  useBusinessIdSearch?: boolean
+};
+
+export default class VaForm<T extends BaseStateLoopState<T>, K> extends React.Component<VaFormProps<T, K>> {
   render() {
     const {
       controller,
@@ -34,11 +42,7 @@ export default class VaForm extends React.Component {
       refuseGrant,
       modifyApplication,
     } = this.props;
-    const registerNumber = _.get(
-      state.saveStatus.savedObject,
-      "register-number",
-      undefined
-    );
+    const registerNumber = state.saveStatus.savedObject?.["register-number"];
     const { saveStatus, configuration } = state;
     const { embedForMuutoshakemus, preview } = configuration;
     const registerNumberDisplay = (
@@ -67,28 +71,28 @@ export default class VaForm extends React.Component {
       preview || isLoppuselvitysInformationVerified ? FormPreview : Form;
     const showGrantRefuse =
       preview &&
+      // @ts-ignore
       state.token &&
-      allowedStatuses.indexOf(saveStatus.savedObject.status) > -1 &&
+      allowedStatuses.indexOf(saveStatus.savedObject?.status ?? "") > -1 &&
       refuseGrant === "true";
     const isInApplicantEditMode = () =>
-      "applicant_edit" === _.get(saveStatus.savedObject, "status");
+      "applicant_edit" === saveStatus.savedObject?.status;
     const showOpenContactsEditButton =
       !showGrantRefuse && modifyApplication && !isInApplicantEditMode();
     if (!embedForMuutoshakemus && preview) {
       saveStatus.values.value = mapAnswersWithMuutoshakemusData(
+        // @ts-ignore
         state.avustushaku,
         saveStatus.values.value,
+        // @ts-ignore
         state.muutoshakemukset,
+        // @ts-ignore
         state.normalizedHakemus
       );
     }
 
     return (
       <div>
-        <VaOldBrowserWarning
-          lang={configuration.lang}
-          translations={configuration.translations.warning}
-        />
         {!embedForMuutoshakemus && (
           <VaFormTopbar
             controller={controller}
@@ -107,14 +111,7 @@ export default class VaForm extends React.Component {
           />
         )}
         {!embedForMuutoshakemus && showOpenContactsEditButton && (
-          <OpenContactsEdit
-            controller={controller}
-            state={state}
-            onSubmit={controller.refuseApplication}
-            isTokenValid={
-              state.tokenValidation ? state.tokenValidation.valid : false
-            }
-          />
+          <OpenContactsEdit state={state} />
         )}
         <FormContainer
           controller={controller}

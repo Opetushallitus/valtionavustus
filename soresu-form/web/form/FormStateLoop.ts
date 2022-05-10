@@ -18,13 +18,12 @@ import {
   SavedObject,
   UrlContent,
 } from "soresu-form/web/form/types/Form";
-import { Form, Language } from "soresu-form/web/va/types";
+import { Answers, Form, Language } from "soresu-form/web/va/types";
 import FormController, {
   dispatcher,
   events,
 } from "soresu-form/web/form/FormController";
 import { EventStream } from "baconjs";
-import { Answers } from "../../../playwright/utils/types";
 
 export function initDefaultValues(
   values: Answers | {} | undefined,

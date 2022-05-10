@@ -286,7 +286,7 @@ function initFormController() {
       if (!showPreview && valiselvitysNotUpdateable) {
         const previewUrl =
           formOperations.urlCreator.existingSubmissionPreviewUrl(
-            state.avustushaku.id,
+            state.avustushaku?.id,
             state.saveStatus.hakemusId,
             lang
           );

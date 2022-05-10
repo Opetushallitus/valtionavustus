@@ -1,4 +1,4 @@
-import { Answers } from "../../../playwright/utils/types";
+import { Answers } from "../va/types";
 
 interface Props {
   getFormAnswers?: (response: any) => Answers;

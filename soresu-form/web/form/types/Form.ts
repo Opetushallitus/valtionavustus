@@ -65,7 +65,7 @@ export interface InitialSaveStatus {
   hakemusId?: string;
   saveInProgress: boolean;
   serverError: string;
-  values: Answers | {};
+  values: Answers;
   savedObject: SavedObject | null;
   attachments: any | null;
   attachmentUploadsInProgress: Record<string, boolean>;
@@ -99,8 +99,12 @@ export interface BaseStateLoopState<T> {
   tokenValidation: {
     valid: boolean;
   };
-  saveStatus: InitialSaveStatus;
-  configuration: InitialConfiguration;
+  saveStatus: InitialSaveStatus & {
+    hakemusId: number;
+  };
+  configuration: InitialConfiguration & {
+    environment: EnvironmentApiResponse;
+  };
   extensionApi: {
     formOperations: FormOperations<T>;
     customFieldSyntaxValidator: typeof VaSyntaxValidator;
@@ -170,25 +174,10 @@ export interface HakijaAvustusHaku {
 }
 
 export interface SelvitysAppStateLoopState
-  extends BaseStateLoopState<SelvitysAppStateLoopState> {
-  avustushaku: HakijaAvustusHaku;
-  configuration: InitialConfiguration & {
-    environment: EnvironmentApiResponse;
-  };
-  saveStatus: InitialSaveStatus & {
-    hakemusId: number;
-  };
-}
+  extends BaseStateLoopState<SelvitysAppStateLoopState> {}
 
 export interface VaAppStateLoopState
-  extends BaseStateLoopState<SelvitysAppStateLoopState> {
-  avustushaku: HakijaAvustusHaku;
-  configuration: InitialConfiguration & {
-    environment: EnvironmentApiResponse;
-  };
-  saveStatus: InitialSaveStatus & {
-    hakemusId: number;
-  };
+  extends BaseStateLoopState<VaAppStateLoopState> {
   normalizedHakemus: NormalizedHakemusData | undefined;
   muutoshakemukset: Muutoshakemus[];
   token: string;

@@ -6,7 +6,6 @@ import HttpUtil from "soresu-form/web/HttpUtil";
 
 type OpenContactsEditProps<T extends BaseStateLoopState<T>> = {
   state: T;
-  opened: boolean;
 };
 
 export default class OpenContactsEdit<
