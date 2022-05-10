@@ -8,10 +8,10 @@ import FormController from "soresu-form/web/form/FormController";
 import { Field } from "soresu-form/web/va/types";
 
 export interface BasicFieldComponentProps {
-  field: Field;
+  field?: Field;
   controller?: any;
   value?: any;
-  renderingParameters: any;
+  renderingParameters?: any;
   disabled?: boolean;
   required?: boolean;
   hasError?: boolean;
@@ -110,7 +110,7 @@ export default class BasicFieldComponent<T> extends React.Component<
   }
 
   param(param: any, defaultValue: any) {
-    if (!this.props.field.params) {
+    if (!this.props.field?.params) {
       return defaultValue;
     }
     if (this.props.field.params[param] !== undefined) {

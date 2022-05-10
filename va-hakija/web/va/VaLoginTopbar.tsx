@@ -1,10 +1,17 @@
 import React from "react";
 
-import LocalizedString from "soresu-form/web/form/component/LocalizedString.tsx";
+import LocalizedString from "soresu-form/web/form/component/LocalizedString";
+import EnvironmentInfo from "soresu-form/web/va/EnvironmentInfo";
+import { LegacyTranslations } from "soresu-form/web/va/types";
+import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 
-import EnvironmentInfo from "soresu-form/web/va/EnvironmentInfo.tsx";
+type VaLoginTopBarProps = {
+  lang: "fi" | "sv";
+  translations: LegacyTranslations;
+  environment: EnvironmentApiResponse;
+};
 
-export default class VaLoginTopbar extends React.Component {
+export default class VaLoginTopbar extends React.Component<VaLoginTopBarProps> {
   render() {
     const lang = this.props.lang;
     return (

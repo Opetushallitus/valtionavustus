@@ -23,16 +23,19 @@ const allowedStatuses = [
 ];
 
 type VaFormProps<T extends BaseStateLoopState<T>, K> = {
-  controller: FormController<T, K>
-  state: T
-  hakemusType: "hakemus" | "valiselvitys" | "loppuselvitys"
-  refuseGrant?: string
-  modifyApplication?: string
-  isExpired?: boolean
-  useBusinessIdSearch?: boolean
+  controller: FormController<T, K>;
+  state: T;
+  hakemusType: "hakemus" | "valiselvitys" | "loppuselvitys";
+  refuseGrant?: string;
+  modifyApplication?: string;
+  isExpired?: boolean;
+  useBusinessIdSearch?: boolean;
 };
 
-export default class VaForm<T extends BaseStateLoopState<T>, K> extends React.Component<VaFormProps<T, K>> {
+export default class VaForm<
+  T extends BaseStateLoopState<T>,
+  K
+> extends React.Component<VaFormProps<T, K>> {
   render() {
     const {
       controller,

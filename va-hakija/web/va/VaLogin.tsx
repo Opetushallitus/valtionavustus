@@ -7,22 +7,42 @@ import "soresu-form/web/form/style/main.less";
 import "./style/va-login.less";
 
 import HttpUtil from "soresu-form/web/HttpUtil";
-import LocalizedString from "soresu-form/web/form/component/LocalizedString.tsx";
+import LocalizedString from "soresu-form/web/form/component/LocalizedString";
 import {
   DateRangeInfoElement,
   H1InfoElement,
-} from "soresu-form/web/form/component/InfoElement.jsx";
+} from "soresu-form/web/form/component/InfoElement";
 import HelpTooltip from "soresu-form/web/form/component/HelpTooltip";
+import SyntaxValidator from "soresu-form/web/form/SyntaxValidator";
+import TextButton from "soresu-form/web/form/component/TextButton";
+import EmailTextField from "soresu-form/web/form/component/EmailTextField";
+import { LegacyTranslations } from "soresu-form/web/va/types";
+import { HakijaAvustusHaku } from "soresu-form/web/form/types/Form";
+import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 
-import VaLoginTopbar from "./VaLoginTopbar.jsx";
+import VaLoginTopbar from "./VaLoginTopbar";
 import VaUrlCreator from "./VaUrlCreator.js";
 
-import SyntaxValidator from "soresu-form/web/form/SyntaxValidator";
-import TextButton from "soresu-form/web/form/component/TextButton.tsx";
-import EmailTextField from "soresu-form/web/form/component/EmailTextField";
+type VaLoginProps = {
+  model: {
+    avustushaku: HakijaAvustusHaku;
+    environment: EnvironmentApiResponse;
+    lang: "fi" | "sv";
+    translations: LegacyTranslations;
+  };
+};
 
-export default class VaLogin extends React.Component {
-  constructor(props) {
+type VaLoginState = {
+  email: string;
+  sent: string;
+  error: string;
+};
+
+export default class VaLogin extends React.Component<
+  VaLoginProps,
+  VaLoginState
+> {
+  constructor(props: VaLoginProps) {
     super(props);
     this.state = {
       email: "",
@@ -31,15 +51,21 @@ export default class VaLogin extends React.Component {
     };
   }
 
-  handleEmailChange(event) {
+  handleEmailChange(event: React.ChangeEvent<any>) {
     this.setState({
       email: event.target.value,
       sent: "",
     });
   }
 
-  submit(event) {
-    event.preventDefault();
+  submit(
+    event:
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+      | React.FormEvent<HTMLFormElement>
+  ) {
+    if ("preventDefault" in event) {
+      event.preventDefault();
+    }
     if (SyntaxValidator.validateEmail(this.state.email)) {
       return;
     }
@@ -85,7 +111,7 @@ export default class VaLogin extends React.Component {
     const sent = this.state.sent;
     const error = this.state.error;
     const emailIsInvalid = () =>
-      SyntaxValidator.validateEmail(this.state.email) &&
+      !!SyntaxValidator.validateEmail(this.state.email) &&
       this.state.email !== "";
     const canSend = () => email === sent || emailIsInvalid();
     const hakemusPreviewUrl = urlCreator.existingSubmissionEditUrl(
@@ -152,10 +178,10 @@ export default class VaLogin extends React.Component {
               value={email}
               translationKey="contact-email"
               lang={lang}
-              required="true"
+              required={true}
               disabled={!isOpen}
               size="small"
-              maxLength="80"
+              maxLength={80}
             />
             <TextButton
               htmlId="submit"
