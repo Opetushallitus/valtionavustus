@@ -76,7 +76,7 @@ export default class VaBudgetCalculator {
     });
 
     function isNotEmpty(value) {
-      if (typeof value === 'number') return true
+      if (typeof value === "number") return true;
 
       return value && _.trim(value).length > 0;
     }
