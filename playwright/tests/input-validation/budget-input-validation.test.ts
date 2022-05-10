@@ -73,9 +73,11 @@ acceptedWithInvalidBudgetValuesTest(
     await acceptedWithInvalidBudgetValuesTest.step(
       "There are no errors in omarahoitus",
       async () => {
-        await expect(page.locator(".budget-summary-financing .error")).not.toBeVisible();
+        await expect(
+          page.locator(".budget-summary-financing .error")
+        ).not.toBeVisible();
       }
-    )
+    );
   }
 );
 
