@@ -12,7 +12,7 @@ import { mapAnswersWithMuutoshakemusData } from "soresu-form/web/va/Muutoshakemu
 import VaFormTopbar from "./VaFormTopbar.tsx";
 import VaOldBrowserWarning from "./VaOldBrowserWarning.jsx";
 
-import GrantRefuse from "./GrantRefuse.jsx";
+import GrantRefuse from "./GrantRefuse";
 import OpenContactsEdit from "./OpenContactsEdit.jsx";
 
 import "./style/main.less";
@@ -99,7 +99,6 @@ export default class VaForm extends React.Component {
         )}
         {!embedForMuutoshakemus && showGrantRefuse && (
           <GrantRefuse
-            controller={controller}
             state={state}
             onSubmit={controller.refuseApplication}
             isTokenValid={

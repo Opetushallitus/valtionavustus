@@ -7,7 +7,7 @@ import {
   Form,
   HakemusStatus,
   Language,
-  LegacyTranslationDict,
+  LegacyTranslations,
   NormalizedHakemusData,
 } from "soresu-form/web/va/types";
 import UrlCreator from "soresu-form/web/form/UrlCreator";
@@ -76,7 +76,7 @@ interface InitialConfiguration {
   embedForMuutoshakemus: boolean;
   preview: boolean;
   lang: Language;
-  translations: LegacyTranslationDict;
+  translations: LegacyTranslations;
 }
 
 export interface FormOperations<T> {

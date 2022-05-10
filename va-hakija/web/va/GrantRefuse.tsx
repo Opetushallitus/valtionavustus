@@ -1,13 +1,28 @@
 import React from "react";
-import LocalizedString from "soresu-form/web/form/component/LocalizedString.tsx";
-import DateUtil from "soresu-form/web/DateUtil.ts";
 
-export default class FormContainer extends React.Component {
-  constructor(props) {
+import LocalizedString from "soresu-form/web/form/component/LocalizedString";
+import DateUtil from "soresu-form/web/DateUtil";
+import { BaseStateLoopState } from "soresu-form/web/form/types/Form";
+
+type GrantRefuseProps<T extends BaseStateLoopState<T>> = {
+  state: T;
+  isTokenValid: boolean;
+  onSubmit: (comment?: string) => void;
+};
+
+type GrantRefuseState = {
+  isChecked: boolean;
+  comment: string;
+};
+
+export default class GrantRefuse<
+  T extends BaseStateLoopState<T>
+> extends React.Component<GrantRefuseProps<T>, GrantRefuseState> {
+  constructor(props: GrantRefuseProps<T>) {
     super(props);
-    const refused = this.props.state.saveStatus.savedObject.refused || false;
+    const refused = this.props.state.saveStatus.savedObject?.refused || false;
     const initialComment = refused
-      ? props.state.saveStatus.savedObject["refused-comment"]
+      ? props.state.saveStatus.savedObject?.["refused-comment"] ?? ""
       : "";
     this.state = { isChecked: false, comment: initialComment };
     this.onCheckedChange = this.onCheckedChange.bind(this);
@@ -19,7 +34,9 @@ export default class FormContainer extends React.Component {
     this.setState({ isChecked: !this.state.isChecked });
   }
 
-  onCommentChange(e) {
+  onCommentChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
     this.setState({ comment: e.target.value });
   }
 
@@ -31,8 +48,8 @@ export default class FormContainer extends React.Component {
     const configuration = this.props.state.configuration;
     const translations = configuration.translations;
     const lang = configuration.lang;
-    const refused = this.props.state.saveStatus.savedObject.refused || false;
-    const refusedAt = this.props.state.saveStatus.savedObject["refused-at"];
+    const refused = this.props.state.saveStatus.savedObject?.refused || false;
+    const refusedAt = this.props.state.saveStatus.savedObject?.["refused-at"];
     const isTokenValid = this.props.isTokenValid;
 
     return (
@@ -56,7 +73,9 @@ export default class FormContainer extends React.Component {
             </div>
           )}
           <div
-            className={refused || !this.props.isTokenValid ? "disabled" : null}
+            className={
+              refused || !this.props.isTokenValid ? "disabled" : undefined
+            }
           >
             <p>
               <LocalizedString

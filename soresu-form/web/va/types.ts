@@ -9,7 +9,9 @@ import { ImmutableObject } from "seamless-immutable";
 export const languages = ["fi", "sv"] as const;
 export type Language = typeof languages[number];
 export type LegacyTranslations = typeof translations;
-export type LegacyTranslationDict = Record<string, { [l in Language]: string }>;
+export type LegacyTranslationDict = {
+  [k in string]: string | LegacyTranslationDict;
+};
 
 export type HakemusFormState = {
   avustushaku: any;

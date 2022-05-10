@@ -57,7 +57,9 @@ export default class Translator {
     keyValues?: Record<string, string>
   ) {
     const value = this.getValue(key, lang, defaultValue);
-    return Translator.replaceKeys(value, keyValues);
+    return typeof value === "string"
+      ? Translator.replaceKeys(value, keyValues)
+      : "";
   }
 
   static translateKey(

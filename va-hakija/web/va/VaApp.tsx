@@ -138,8 +138,7 @@ function onInitialStateLoaded(initialState: VaAppStateLoopState) {
       initialState.avustushaku.id,
       initialState.saveStatus.hakemusId,
       initialState.configuration.lang,
-      initialState.token,
-      initialState.isTokenValid
+      initialState.token
     );
   }
 }
