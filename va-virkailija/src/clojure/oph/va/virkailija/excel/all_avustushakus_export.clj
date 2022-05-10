@@ -66,7 +66,7 @@ SELECT
   avustushaku.id AS avustushaku_id,
   avustushaku.register_number AS asiatunnus,
   avustushaku.content->'name'->>'fi' AS avustushaku_name,
-  avustushaku.haku_type AS avustushaku_type,
+  avustushaku.haku_type AS avustuslaji,
   vastuuvalmistelija_name,
   vastuuvalmistelija_email,
   paatos_counts.hyvaksytty_count,
@@ -113,7 +113,7 @@ ORDER BY avustushaku.id DESC
 (defn db-row->excel-row [row]
   [(:avustushaku-id row)
    (or (:avustushaku-name row) "")
-   (or (:avustushaku-type row) "")
+   (or (:avustuslaji row) "")
    ;"Koulutusasteet"
    (format-sql-timestamp (:avustushaku-duration-start row))
    (format-sql-timestamp (:avustushaku-duration-end row))
@@ -147,7 +147,7 @@ ORDER BY avustushaku.id DESC
   [["" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "Manuaalisesti täydennettävät"]
    ["Haun ID"
     "Avustuksen nimi"
-    "Erityis-/yleisavustus"
+    "Avustuslaji"
     ;"Koulutusaste"
     "Haku auki"
     "Haku kiinni"
