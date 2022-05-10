@@ -115,9 +115,6 @@ export default class VaUrlCreator extends UrlCreator {
           field.id
         );
       },
-      organisationInfoUrl: function () {
-        return "/api/organisations/?organisation-id=";
-      },
       attachmentDownloadUrl: attachmentDirectAccessUrl,
       attachmentDeleteUrl: attachmentDirectAccessUrl,
       refuseApplicationApiUrl: function (state) {

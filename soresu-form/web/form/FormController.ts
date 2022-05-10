@@ -104,11 +104,6 @@ export default class FormController<T extends BaseStateLoopState<T>, K> {
     return formOperations.urlCreator.attachmentDownloadUrl(state, field);
   }
 
-  createOrganisationInfoUrl(state: StateLoopState) {
-    const formOperations = state.extensionApi.formOperations;
-    return formOperations.urlCreator.organisationInfoUrl(state);
-  }
-
   uploadAttachment(field: Field, files: any) {
     dispatcher.push(events.startAttachmentUpload, {
       field: field,

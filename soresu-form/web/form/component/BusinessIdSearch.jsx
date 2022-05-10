@@ -118,11 +118,7 @@ export default class BusinessIdSearch extends React.Component {
   // actions that happen after user has submitted their organisation-id, calls backend organisaton api
   fetchOrganizationData(id) {
     const language = this.props.state.configuration.lang;
-    const url = this.props.controller.createOrganisationInfoUrl(
-      this.props.state
-    );
-
-    HttpUtil.get(url + id + "&lang=" + language)
+    HttpUtil.get(`/api/organisations/?organisation-id=${id}&lang=${language}`)
       .then((response) => {
         _.each(
           organizationToFormFieldIds,
