@@ -8,7 +8,7 @@ import FormController from "soresu-form/web/form/FormController";
 import { Field } from "soresu-form/web/va/types";
 
 export interface BasicFieldComponentProps {
-  field?: Field;
+  field: Field;
   controller?: any;
   value?: any;
   renderingParameters?: any;

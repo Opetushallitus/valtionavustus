@@ -182,6 +182,7 @@ export default class VaLogin extends React.Component<
               disabled={!isOpen}
               size="small"
               maxLength={80}
+              field={{ id: 'dummy', fieldType: 'textField', fieldClass: 'formField' }}
             />
             <TextButton
               htmlId="submit"
