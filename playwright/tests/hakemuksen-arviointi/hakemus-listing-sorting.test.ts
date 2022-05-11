@@ -122,9 +122,6 @@ test("hakemus list sorting when avustushaku is not resolved", async ({
   avustushakuID,
 }) => {
   await hakemustenArviointiPage.navigate(avustushakuID);
-  await hakemustenArviointiPage.page.click(
-    '[aria-label="Poista hakemuksen tila rajaukset"]'
-  );
   await expect(hakemustenArviointiPage.hakemusListing).toContainText(
     "3/3 hakemusta"
   );
