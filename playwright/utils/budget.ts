@@ -6,7 +6,7 @@ export const defaultBudget = {
     "service-purchase": "100",
     rent: "161616",
     steamship: "100",
-    other: "10000000",
+    other: "100000",
   },
   description: {
     personnel: "Tarvitsemme ihmisiä aaltoihin.",

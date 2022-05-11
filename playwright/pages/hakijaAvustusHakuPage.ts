@@ -197,7 +197,7 @@ export class HakijaAvustusHakuPage {
       "[id='personnel-costs-row.description']",
       "Pieninä seteleinä kiitos."
     );
-    await this.page.fill("[id='personnel-costs-row.amount']", "69420666");
+    await this.page.fill("[id='personnel-costs-row.amount']", "6942066");
     await this.page.fill("[id='self-financing-amount']", "1");
 
     if (answers.hakemusFields?.length) {

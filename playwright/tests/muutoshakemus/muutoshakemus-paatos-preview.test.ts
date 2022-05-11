@@ -158,7 +158,7 @@ bTest(
       "service-purchase": "1100",
       rent: "160616",
       steamship: "100",
-      other: "10000000",
+      other: "100000",
     };
 
     const assertCorrectExistingBudget = async () => {
@@ -169,7 +169,7 @@ bTest(
         { description: "Palvelut", amount: "100 €" },
         { description: "Vuokrat", amount: "161616 €" },
         { description: "Matkamenot", amount: "100 €" },
-        { description: "Muut menot", amount: "10000000 €" },
+        { description: "Muut menot", amount: "100000 €" },
       ];
       const currentValues = await preview.existingBudgetTableCells();
       expect(sortedFormTable(currentValues)).toEqual(
@@ -193,7 +193,7 @@ bTest(
         { description: "Palvelut", amount: "1100 €" },
         { description: "Vuokrat", amount: "160616 €" },
         { description: "Matkamenot", amount: "100 €" },
-        { description: "Muut menot", amount: "10000000 €" },
+        { description: "Muut menot", amount: "100000 €" },
       ];
       const changedCells = await preview.changedBudgetTableCells();
       expect(sortedFormTable(changedCells)).toEqual(
@@ -216,7 +216,7 @@ bTest(
         { description: "Palvelut", amount: "100 €" },
         { description: "Vuokrat", amount: "161616 €" },
         { description: "Matkamenot", amount: "0 €" },
-        { description: "Muut menot", amount: "10000000 €" },
+        { description: "Muut menot", amount: "100000 €" },
       ];
       const changedCells = await preview.changedBudgetTableCells();
       expect(sortedFormTable(changedCells)).toEqual(

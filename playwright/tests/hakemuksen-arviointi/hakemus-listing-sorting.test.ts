@@ -191,12 +191,12 @@ test("hakemus list sorting when avustushaku is not resolved", async ({
     await hakemustenArviointiPage.sortBy("applied");
     const descElems = hakemustenArviointiPage.page.locator(".applied-sum-cell");
     const descTexts = await descElems.allInnerTexts();
-    expect(descTexts).toEqual(["10 374 815 €", "6 999 €", "3 499 €"]);
+    expect(descTexts).toEqual(["474 815 €", "6 999 €", "3 499 €"]);
 
     await hakemustenArviointiPage.sortBy("applied");
     const ascElems = hakemustenArviointiPage.page.locator(".applied-sum-cell");
     const ascTexts = await ascElems.allInnerTexts();
-    expect(ascTexts).toEqual(["3 499 €", "6 999 €", "10 374 815 €"]);
+    expect(ascTexts).toEqual(["3 499 €", "6 999 €", "474 815 €"]);
   });
 
   await test.step("can be sorted by granted sum", async () => {

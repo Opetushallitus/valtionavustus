@@ -2,12 +2,9 @@ import { expect } from "@playwright/test";
 
 import { loppuselvitysTest as test } from "../../fixtures/loppuselvitysTest";
 
-import { navigate } from "../../utils/navigate";
-
 import { switchUserIdentityTo, countElements } from "../../utils/util";
 
 import { LoppuselvitysPage } from "../../pages/loppuselvitysPage";
-import { HakijaSelvitysPage } from "../../pages/hakijaSelvitysPage";
 
 test("shows asiatarkastus to pääkäyttäjä who is not valmistelija", async ({
   page,

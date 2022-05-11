@@ -107,6 +107,9 @@ const test = muutoshakemusTest.extend<{
   },
 });
 
+const appliedAmount1 = "13884130";
+const appliedAmount2 = "6942065";
+
 test("Yhteenveto", async ({
   page,
   avustushakuID,
@@ -164,7 +167,7 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
         await yhteenvetoPage.summaryHeadingRowFor("accepted");
       expect(title).toEqual("Myönteiset päätökset");
       expect(amount).toEqual("2");
-      expect(appliedAmount).toEqual("138841330");
+      expect(appliedAmount).toEqual(appliedAmount1);
       expect(grantedAmount).toEqual("109998");
     });
     await test.step("combined summary is correct", async () => {
@@ -172,7 +175,7 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
         await yhteenvetoPage.summaryHeadingRowFor("combined");
       expect(title).toEqual("Yhteensä");
       expect(amount).toEqual("2");
-      expect(appliedAmount).toEqual("138841330");
+      expect(appliedAmount).toEqual(appliedAmount1);
       expect(grantedAmount).toEqual("109998");
     });
   });
@@ -192,7 +195,7 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
         row;
       expect(organization).toEqual("Akaan kaupunki");
       expect(project).toEqual(pyorijatAnswers.projectName);
-      expect(appliedAmount).toEqual("69420665");
+      expect(appliedAmount).toEqual(appliedAmount2);
       expect(grantedAmount).toEqual("9999");
       expect(comment).toEqual("");
     });
@@ -206,14 +209,14 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
         row;
       expect(organization).toEqual("Akaan kaupunki");
       expect(project).toEqual(answers.projectName);
-      expect(appliedAmount).toEqual("69420665");
+      expect(appliedAmount).toEqual(appliedAmount2);
       expect(grantedAmount).toEqual("99999");
       expect(comment).toEqual("");
     });
     await test.step("summary is correct", async () => {
       const { totalAppliedAmount, totalGrantedAmount } =
         await yhteenvetoPage.summaryTableSummaryRow("accepted");
-      expect(totalAppliedAmount).toEqual("138841330");
+      expect(totalAppliedAmount).toEqual(appliedAmount1);
       expect(totalGrantedAmount).toEqual("109998");
     });
   });

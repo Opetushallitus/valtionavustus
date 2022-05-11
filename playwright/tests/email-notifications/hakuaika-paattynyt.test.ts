@@ -40,7 +40,7 @@ muutoshakemusTest.extend<
     expect(email.subject).toEqual("Hakuaika on päättynyt");
     expect(email.formatted).toEqual(`Hyvä vastaanottaja,
 
-olette saaneet hakuun ${hakuProps.avustushakuName} yhteensä 1 hakemusta, joiden yhteenlaskettu haettu avustussumma on 69420665 euroa.
+olette saaneet hakuun ${hakuProps.avustushakuName} yhteensä 1 hakemusta, joiden yhteenlaskettu haettu avustussumma on 6942065 euroa.
 
 Voitte aloittaa hakemusten arvioinnin. Ohjeet hakemusten arviointiin (https://intra.oph.fi/display/VALA/Hakemusten+arviointi) ja päätösten laatimiseen (https://intra.oph.fi/pages/viewpage.action?pageId=99516838) löytyvät OSSIsta.
 
