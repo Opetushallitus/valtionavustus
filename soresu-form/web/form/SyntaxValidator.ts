@@ -15,6 +15,21 @@ export abstract class Validator {
   ) => ValidationError | undefined;
 }
 
+function isFalsyOrEmptyStringButNotZeroMoney(
+  value: any,
+  field: Field
+): boolean {
+  if (field.fieldType === "moneyField") return isFalsyButNotZero(value);
+
+  return !value || _.trim(value).length < 1;
+}
+
+function isFalsyButNotZero(value: any): boolean {
+  if (value === 0) return false;
+
+  return !value;
+}
+
 export default class SyntaxValidator {
   static validateSyntax(
     field: Field,
@@ -23,11 +38,11 @@ export default class SyntaxValidator {
   ) {
     let validationErrors: ValidationError[] = [];
 
-    if (field.required && (!value || _.trim(value).length < 1)) {
+    if (field.required && isFalsyOrEmptyStringButNotZeroMoney(value, field)) {
       validationErrors = [{ error: "required" }];
     }
 
-    if (!value) {
+    if (isFalsyButNotZero(value)) {
       return validationErrors;
     }
 
