@@ -2,6 +2,7 @@ import { expect, Locator, Page } from "@playwright/test";
 
 import { navigate } from "../utils/navigate";
 import {
+  clearAndType,
   clickElementWithText,
   expectToBeDefined,
   getChangedBudgetTableCells,
@@ -225,65 +226,74 @@ export class HakemustenArviointiPage {
   ) {
     const prefix = type === "virkailija" ? "budget-edit-" : "";
 
-    const clearAndType = async (selector: string, value: string) => {
-      await this.page.fill(selector, "");
-      await this.page.type(selector, value);
-    };
-
     await clearAndType(
+      this.page,
       `[id='${prefix}personnel-costs-row.description']`,
       budget.description.personnel
     );
     await clearAndType(
+      this.page,
       `[id='${prefix}personnel-costs-row.amount']`,
       budget.amount.personnel
     );
     await clearAndType(
+      this.page,
       `[id='${prefix}material-costs-row.description']`,
       budget.description.material
     );
     await clearAndType(
+      this.page,
       `[id='${prefix}material-costs-row.amount']`,
       budget.amount.material
     );
     await clearAndType(
+      this.page,
       `[id='${prefix}equipment-costs-row.description']`,
       budget.description.equipment
     );
     await clearAndType(
+      this.page,
       `[id='${prefix}equipment-costs-row.amount']`,
       budget.amount.equipment
     );
     await clearAndType(
+      this.page,
       `[id='${prefix}service-purchase-costs-row.description']`,
       budget.description["service-purchase"]
     );
     await clearAndType(
+      this.page,
       `[id='${prefix}service-purchase-costs-row.amount']`,
       budget.amount["service-purchase"]
     );
     await clearAndType(
+      this.page,
       `[id='${prefix}rent-costs-row.description']`,
       budget.description.rent
     );
     await clearAndType(
+      this.page,
       `[id='${prefix}rent-costs-row.amount']`,
       budget.amount.rent
     );
     await clearAndType(
+      this.page,
       `[id='${prefix}steamship-costs-row.description']`,
       budget.description.steamship
     );
     await clearAndType(
+      this.page,
       `[id='${prefix}steamship-costs-row.amount']`,
       budget.amount.steamship
     );
     await clearAndType(
+      this.page,
       `[id='${prefix}other-costs-row.description']`,
       budget.description.other
     );
 
     await clearAndType(
+      this.page,
       `[id='${prefix}other-costs-row.amount']`,
       budget.amount.other
     );
