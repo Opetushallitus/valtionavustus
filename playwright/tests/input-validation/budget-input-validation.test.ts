@@ -78,6 +78,19 @@ acceptedWithInvalidBudgetValuesTest(
         ).not.toBeVisible();
       }
     );
+
+    await acceptedWithInvalidBudgetValuesTest.step(
+      "Input field does not have error when value is 0",
+      async () => {
+        const steamshipInputSelector =
+          '[id="budget-edit-steamship-costs-row"] .soresu-money-field';
+
+        expect(budgetWithNumericValues.amount.steamship).toBe("0");
+        await expect(page.locator(steamshipInputSelector)).not.toHaveClass(
+          /error/
+        );
+      }
+    );
   }
 );
 
