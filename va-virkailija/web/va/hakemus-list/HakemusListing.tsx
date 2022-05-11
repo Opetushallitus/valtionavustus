@@ -224,7 +224,7 @@ const tagFilter = (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
 };
 
 const defaultStatusFilters = {
-  hakemus: HakemusArviointiStatuses.statuses.filter((s) => s !== "rejected"),
+  hakemus: HakemusArviointiStatuses.statuses,
   muutoshakemus: Muutoshakemus.statuses,
   valiselvitys: HakemusSelvitys.statuses,
   loppuselvitys: Loppuselvitys.statuses,
@@ -256,15 +256,11 @@ const reducer = (state: FilterState, action: Action): FilterState => {
       };
     }
     case "clear-status-filter": {
-      const clearedStatuses =
-        action.filter === "hakemus"
-          ? HakemusArviointiStatuses.statuses
-          : defaultStatusFilters[action.filter];
       return {
         ...state,
         status: {
           ...state.status,
-          [action.filter]: [...clearedStatuses],
+          [action.filter]: [...defaultStatusFilters[action.filter]],
         },
       };
     }
@@ -279,9 +275,12 @@ const reducer = (state: FilterState, action: Action): FilterState => {
   }
 };
 
-const getDefaultState = (): FilterState => ({
+const getDefaultState = (isResolved: boolean): FilterState => ({
   status: {
     ...defaultStatusFilters,
+    hakemus: isResolved
+      ? defaultStatusFilters.hakemus.filter((s) => s !== "rejected")
+      : defaultStatusFilters.hakemus,
   },
   projectNameOrCode: "",
   organization: "",
@@ -322,7 +321,10 @@ export default function HakemusListing(props: Props) {
     additionalInfoOpen,
   } = props;
   const selectedHakemusId = selectedHakemus ? selectedHakemus.id : undefined;
-  const [filterState, dispatch] = useReducer(reducer, getDefaultState());
+  const [filterState, dispatch] = useReducer(
+    reducer,
+    getDefaultState(isResolved)
+  );
   const [sortingState, setSorting] = useSorting();
   const filteredList = hakemusList
     .filter(hakemusFilter(filterState))

@@ -4,6 +4,7 @@ import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { expectToBeDefined } from "../../utils/util";
 import { HakijaAvustusHakuPage } from "../../pages/hakijaAvustusHakuPage";
 import { VIRKAILIJA_URL } from "../../utils/constants";
+import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 
 interface ArviointiUiFilteringFixtures {
   hakemustenArviointiPage: HakemustenArviointiPage;
@@ -75,6 +76,19 @@ test("hakemus list filtering", async ({
   await hakemustenArviointiPage.navigate(avustushakuID);
   await expect(hakemustenArviointiPage.hakemusListing).toContainText(
     "2/2 hakemusta"
+  );
+
+  await test.step(
+    "hylätyt are not filtered by default when avustushaku is not yet resolved",
+    async () => {
+      const { page } = hakemustenArviointiPage;
+      await page.click("text=Tila");
+      await expect(page.locator("#unhandled")).toBeChecked();
+      await expect(page.locator("#processing")).toBeChecked();
+      await expect(page.locator("#plausible")).toBeChecked();
+      await expect(page.locator("#rejected")).toBeChecked();
+      await expect(page.locator("#accepted")).toBeChecked();
+    }
   );
 
   await test.step("filtering with organization works", async () => {
@@ -189,6 +203,25 @@ test("hakemus list filtering", async ({
       await expect(hakemustenArviointiPage.hakemusListing).toContainText(
         "2/2 hakemusta"
       );
+    }
+  );
+
+  await test.step(
+    "hylätyt are filtered by default when avustushaku is resolved",
+    async () => {
+      const hakujenHallintaPage = new HakujenHallintaPage(
+        hakemustenArviointiPage.page
+      );
+      await hakujenHallintaPage.navigate(avustushakuID);
+      await hakujenHallintaPage.resolveAvustushaku();
+      await hakemustenArviointiPage.navigate(avustushakuID);
+      const { page } = hakemustenArviointiPage;
+      await page.click("text=Tila");
+      await expect(page.locator("#unhandled")).toBeChecked();
+      await expect(page.locator("#processing")).toBeChecked();
+      await expect(page.locator("#plausible")).toBeChecked();
+      await expect(page.locator("#rejected")).not.toBeChecked();
+      await expect(page.locator("#accepted")).toBeChecked();
     }
   );
 
