@@ -655,42 +655,35 @@ export class HakemustenArviointiPage {
 
   async getNormalizedBudget(): Promise<{
     haettu: BudgetAmount;
-    myönnetty: BudgetAmount;
+    myonnetty: BudgetAmount;
   }> {
     await this.page.waitForSelector("#budget-edit-project-budget");
-    const rowSelector = "#budget-edit-project-budget .budget-item";
+    const rowLocator = (key: keyof BudgetAmount) =>
+      this.page.locator(`#budget-edit-${key}-costs-row`);
+    const getHaettuAmount = (key: keyof BudgetAmount) =>
+      rowLocator(key).locator(".original-amount-column").innerText();
+    const getMyonnettyAmount = (key: keyof BudgetAmount) =>
+      rowLocator(key).locator(".amount-column").locator("input").inputValue();
 
-    function idToBudgetClass(id: string | null) {
-      if (id == null) return "";
-
-      return id.replace("budget-edit-", "").replace("-costs-row", "");
-    }
-
-    const haettuBudjetti = {} as BudgetAmount;
-    const myönnettyBudjetti = {} as BudgetAmount;
-
-    const budgetFromPage = await this.page.$$eval(rowSelector, (elements) => {
-      return elements.map((elem) => ({
-        id: elem.getAttribute("id") ?? "",
-        haettu:
-          (elem.querySelector(".original-amount-column") as HTMLElement)
-            ?.innerText ?? "",
-        myönnetty:
-          elem.querySelector(".amount-column input")?.getAttribute("value") ??
-          "",
-      }));
-    });
-
-    budgetFromPage.forEach((row) => {
-      haettuBudjetti[idToBudgetClass(row.id) as keyof BudgetAmount] =
-        row.haettu;
-      myönnettyBudjetti[idToBudgetClass(row.id) as keyof BudgetAmount] =
-        row.myönnetty;
-    });
+    const getBudget = async (
+      budgetType: "haettu" | "myonnetty"
+    ): Promise<Record<keyof BudgetAmount, string>> => {
+      const getValueFunction =
+        budgetType === "haettu" ? getHaettuAmount : getMyonnettyAmount;
+      return {
+        "service-purchase": await getValueFunction("service-purchase"),
+        equipment: await getValueFunction("equipment"),
+        other: await getValueFunction("other"),
+        material: await getValueFunction("material"),
+        rent: await getValueFunction("rent"),
+        steamship: await getValueFunction("steamship"),
+        personnel: await getValueFunction("personnel"),
+      };
+    };
 
     return {
-      haettu: haettuBudjetti,
-      myönnetty: myönnettyBudjetti,
+      haettu: await getBudget("haettu"),
+      myonnetty: await getBudget("myonnetty"),
     };
   }
 }

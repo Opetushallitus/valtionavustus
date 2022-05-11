@@ -65,7 +65,7 @@ acceptedWithInvalidBudgetValuesTest(
       "Non-numeric characters were ignored for approved budget",
       async () => {
         expect(
-          (await hakemustenArviointiPage.getNormalizedBudget()).myönnetty
+          (await hakemustenArviointiPage.getNormalizedBudget()).myonnetty
         ).toEqual(budgetWithNumericValues.amount);
       }
     );
