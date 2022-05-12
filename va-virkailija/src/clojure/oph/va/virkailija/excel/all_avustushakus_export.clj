@@ -66,6 +66,7 @@ SELECT
   avustushaku.id AS avustushaku_id,
   avustushaku.register_number AS asiatunnus,
   avustushaku.content->'name'->>'fi' AS avustushaku_name,
+  avustushaku.content->'rahoitusalueet' as koulutusasteet,
   avustushaku.haku_type AS avustuslaji,
   vastuuvalmistelija_name,
   vastuuvalmistelija_email,
@@ -110,77 +111,100 @@ ORDER BY avustushaku.id DESC
   (let [dt (from-sql-time ts)]
     (str (date-string dt) " " (time-string dt))))
 
-(defn db-row->excel-row [row]
-  [(:avustushaku-id row)
-   (or (:avustushaku-name row) "")
-   (or (:avustuslaji row) "")
-   ;"Koulutusasteet"
-   (format-sql-timestamp (:avustushaku-duration-start row))
-   (format-sql-timestamp (:avustushaku-duration-end row))
-   (cond
-     (:valiselvitykset-lahetetty row) (format-sql-timestamp (:valiselvitykset-lahetetty row))
-     (:valiselvitys-deadline row) (str (java8-date-string (:valiselvitys-deadline row)) " DL")
-     :else "")
-   (cond
-     (:loppuselvitykset-lahetetty row) (format-sql-timestamp (:loppuselvitykset-lahetetty row))
-     (:loppuselvitys-deadline row) (str (java8-date-string (:loppuselvitys-deadline row)) " DL")
-     :else "")
-   (or (:asiatunnus row) "")
-   (or (:avustushaku-maararaha row) "")
-   ;"TA-tili"
-   (or (:toimintayksikko-code-value row) "")
-   (or (:projekti-code-value row) "")
-   (or (:toiminto-code-value row) "")
-   (or (:maksatukset-lahetetty row) "")
-   (or (:maksatukset-summa row) "")
-   (or (:jakamaton-maararaha row) "")
-   (if (:paatokset-lahetetty row) (format-sql-timestamp (:paatokset-lahetetty row)) "")
-   (str (:paatokset-total-count row) "/" (:hyvaksytty-count row) "/" (:hylatty-count row))
-   (if (:ensimmainen-kayttopaiva row) (java8-date-string (:ensimmainen-kayttopaiva row)) "")
-   (if (:viimeinen-kayttopaiva row) (java8-date-string (:viimeinen-kayttopaiva row)) "")
-   (if (:vastuuvalmistelija-name row)
-     (str (:vastuuvalmistelija-name row) ", " (:vastuuvalmistelija-email row))
-     "")
-   ])
+(defn koulutusaste-columns [koulutusaste]
+  [(:rahoitusalue koulutusaste)
+   (clojure.string/join ", " (:talousarviotilit koulutusaste))])
 
-(def headers
-  [["" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "Manuaalisesti täydennettävät"]
-   ["Haun ID"
-    "Avustuksen nimi"
-    "Avustuslaji"
-    ;"Koulutusaste"
-    "Haku auki"
-    "Haku kiinni"
-    "Väliselvitys lähetetty/DL"
-    "Loppuselvitys lähetetty/DL"
-    "Asiatunnus"
-    "Määräraha (€)"
-    ;"TA-tili"
-    "Toimintayksikkö"
-    "Projekti koodi"
-    "Toiminto"
-    "Maksettu pvm"
-    "Maksettu €"
-    "Jakamaton (määräraha miinus maksettu)"
-    "Päätös pvm"
-    "Päätösten lkm, yht/myönteinen/kielteinen"
-    "1. käyttöpäivä"
-    "viimeinen käyttöpäivä"
-    "Vastuuvalmistelija"
-    ; Manuaalisesti täydennettävät
-    "Määrärahan nimi talousarviossa"
-    "Arvioitu maksu pvm"
-    "Käytettävä määräraha sidottu/purettu kirjanpidossa pvm"
-    "Noudatettava lainsäädäntö"
-    "OKM raportointivaatimukset"]])
+(defn expand-koulutusasteet [n row]
+  (let [dummy-value {:rahoitusalue ""
+                     :talousarviotilit []}]
+    (apply concat (vec (map-indexed
+      (fn [idx _] (koulutusaste-columns (nth (:koulutusasteet row) idx dummy-value)))
+      (repeat n nil))))))
+
+(defn db-row->excel-row [row max-koulutusaste-count]
+  (concat
+    [(:avustushaku-id row)
+     (or (:avustushaku-name row) "")
+     (or (:avustuslaji row) "")]
+    (expand-koulutusasteet max-koulutusaste-count row )
+    [(format-sql-timestamp (:avustushaku-duration-start row))
+     (format-sql-timestamp (:avustushaku-duration-end row))
+     (cond
+       (:valiselvitykset-lahetetty row) (format-sql-timestamp (:valiselvitykset-lahetetty row))
+       (:valiselvitys-deadline row) (str (java8-date-string (:valiselvitys-deadline row)) " DL")
+       :else "")
+     (cond
+       (:loppuselvitykset-lahetetty row) (format-sql-timestamp (:loppuselvitykset-lahetetty row))
+       (:loppuselvitys-deadline row) (str (java8-date-string (:loppuselvitys-deadline row)) " DL")
+       :else "")
+     (or (:asiatunnus row) "")
+     (or (:avustushaku-maararaha row) "")
+     (or (:toimintayksikko-code-value row) "")
+     (or (:projekti-code-value row) "")
+     (or (:toiminto-code-value row) "")
+     (or (:maksatukset-lahetetty row) "")
+     (or (:maksatukset-summa row) "")
+     (or (:jakamaton-maararaha row) "")
+     (if (:paatokset-lahetetty row) (format-sql-timestamp (:paatokset-lahetetty row)) "")
+     (str (:paatokset-total-count row) "/" (:hyvaksytty-count row) "/" (:hylatty-count row))
+     (if (:ensimmainen-kayttopaiva row) (java8-date-string (:ensimmainen-kayttopaiva row)) "")
+     (if (:viimeinen-kayttopaiva row) (java8-date-string (:viimeinen-kayttopaiva row)) "")
+     (if (:vastuuvalmistelija-name row)
+       (str (:vastuuvalmistelija-name row) ", " (:vastuuvalmistelija-email row))
+       "")
+     ]))
+
+(defn koulutusaste-headers [n]
+  (let [header-pairs (map-indexed
+                       (fn [idx _] [(str "Koulutusate " (+ idx 1))
+                                    (str "TA-tilit " (+ idx 1))])
+                       (repeat n nil))]
+    (clojure.pprint/pprint header-pairs)
+    (apply concat header-pairs)))
+
+(defn headers [max-koulutusaste-count]
+  [(concat
+     ["" "" ""]
+     (repeat (* 2 max-koulutusaste-count) "")
+     ["" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "Manuaalisesti täydennettävät"])
+   (concat
+     ["Haun ID"
+      "Avustuksen nimi"
+      "Avustuslaji"]
+     (koulutusaste-headers max-koulutusaste-count)
+     ["Haku auki"
+      "Haku kiinni"
+      "Väliselvitys lähetetty/DL"
+      "Loppuselvitys lähetetty/DL"
+      "Asiatunnus"
+      "Määräraha (€)"
+      "Toimintayksikkö"
+      "Projekti koodi"
+      "Toiminto"
+      "Maksettu pvm"
+      "Maksettu €"
+      "Jakamaton (määräraha miinus maksettu)"
+      "Päätös pvm"
+      "Päätösten lkm, yht/myönteinen/kielteinen"
+      "1. käyttöpäivä"
+      "viimeinen käyttöpäivä"
+      "Vastuuvalmistelija"
+      ; Manuaalisesti täydennettävät
+      "Määrärahan nimi talousarviossa"
+      "Arvioitu maksu pvm"
+      "Käytettävä määräraha sidottu/purettu kirjanpidossa pvm"
+      "Noudatettava lainsäädäntö"
+      "OKM raportointivaatimukset"])])
 
 (defn export-avustushakus []
   (let [data (query export-data-query [])
         output (ByteArrayOutputStream.)
+        max-koulutusaste-count (apply max (map (comp count :koulutusasteet) data))
         wb (spreadsheet/create-workbook
              "Avustushaut"
              (concat
-               headers
-               (vec (map db-row->excel-row data))))]
+               (headers max-koulutusaste-count)
+               (vec (map #(db-row->excel-row % max-koulutusaste-count) data))))]
     (.write wb output)
     (.toByteArray output)))
