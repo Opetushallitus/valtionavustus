@@ -4,7 +4,7 @@
         [oph.soresu.common.config :only [config]])
   (:require [clojure.tools.logging :as log]
             [oph.soresu.common.db :as db])
-  (import [org.flywaydb.core Flyway]
+  (:import [org.flywaydb.core Flyway]
           [org.flywaydb.core.api.migration.jdbc JdbcMigration]
           [org.flywaydb.core.api.migration MigrationInfoProvider]
           [org.flywaydb.core.api MigrationVersion]))
