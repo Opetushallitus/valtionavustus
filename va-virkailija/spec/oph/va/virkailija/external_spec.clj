@@ -1,5 +1,5 @@
 (ns oph.va.virkailija.external-spec
-  (require [schema.core :as s]
+  (:require [schema.core :as s]
            [speclj.core
             :refer [should should-not should= describe
                     it tags around-all run-specs]]

@@ -1,5 +1,5 @@
 (ns oph.va.virkailija.hakija-api-spec
-  (use [clojure.tools.trace :only [trace]]
+  (:use [clojure.tools.trace :only [trace]]
        [clojure.pprint :only [pprint]])
   (:require
     [speclj.core :refer :all]

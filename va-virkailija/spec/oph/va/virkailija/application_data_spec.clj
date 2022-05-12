@@ -1,5 +1,5 @@
 (ns oph.va.virkailija.application-data-spec
-  (require [speclj.core
+  (:require [speclj.core
             :refer [should should-not should= describe
                     it tags around-all run-specs]]
            [oph.common.testing.spec-plumbing :refer [with-test-server!]]
