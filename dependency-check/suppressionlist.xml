@@ -2,36 +2,15 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
   <suppress>
     <notes><![CDATA[
-   file name: google-closure-library-0.0-20201211-3e6c510d.jar
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.clojure/google\-closure\-library@0.0-20201211-3e6c510d$</packageUrl>
-    <cve>CVE-2020-8910</cve>
-  </suppress>
-  <suppress>
-    <notes><![CDATA[
-   file name: google-closure-library-third-party-0.0-20201211-3e6c510d.jar
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.clojure/google\-closure\-library\-third\-party@0.0-20201211-3e6c510d$</packageUrl>
-    <cve>CVE-2020-8910</cve>
-  </suppress>
-  <suppress>
-    <notes><![CDATA[
-   file name: closure-compiler-unshaded-v20210505.jar (shaded: com.google.guava:guava:27.1-jre)
-   ]]></notes>
-    <filePath regex="true">.*\bclosure\-compiler\-unshaded\-v20210505\.jar\/META-INF\/maven\/com\.google\.guava\/guava\/pom\.xml</filePath>
-    <cve>CVE-2020-8908</cve>
-  </suppress>
-  <suppress>
-    <notes><![CDATA[
    file name: vorbis-java-tika-0.8.jar
-   ]]></notes>
+   ]]>    </notes>
     <packageUrl regex="true">^pkg:maven/org\.gagravarr/vorbis\-java\-tika@0.8$</packageUrl>
     <cve>CVE-2017-6888</cve>
   </suppress>
   <suppress>
     <notes><![CDATA[
     file name: alpn-api-1.1.3.v20160715.jar
-    ]]></notes>
+    ]]>    </notes>
     <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.alpn/alpn-api.*</packageUrl>
     <cve>CVE-2005-3747</cve>
     <cve>CVE-2009-5049</cve>
@@ -42,28 +21,28 @@
   <suppress until="2022-06-01Z">
     <notes><![CDATA[
     file name: poi-ooxml-schemas-4.1.1.jar
-    ]]></notes>
+    ]]>    </notes>
     <packageUrl regex="true">^pkg:maven/org\.apache\.poi/poi-ooxml-schemas-.*</packageUrl>
     <cve>CVE-2022-26336</cve>
   </suppress>
   <suppress until="2022-06-01Z">
     <notes><![CDATA[
     file name: poi-ooxml-4.1.1.jar
-    ]]></notes>
+    ]]>    </notes>
     <packageUrl regex="true">^pkg:maven/org\.apache\.poi/poi-ooxml-.*</packageUrl>
     <cve>CVE-2022-26336</cve>
   </suppress>
   <suppress until="2022-06-01Z">
     <notes><![CDATA[
     file name: poi-4.1.1.jar
-    ]]></notes>
+    ]]>    </notes>
     <packageUrl regex="true">^pkg:maven/org\.apache\.poi/poi.*</packageUrl>
     <cve>CVE-2022-26336</cve>
   </suppress>
   <suppress>
     <notes><![CDATA[
     Wrong package matched, vulnerability is in async javscript library
-    ]]></notes>
+    ]]>    </notes>
     <packageUrl regex="true">^pkg:maven/org\.clojure/core\.async.*</packageUrl>
     <cve>CVE-2021-43138</cve>
   </suppress>
