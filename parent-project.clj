@@ -19,7 +19,7 @@
                                     :releases false}]
                  ["public-github"  {:url "git://github.com"}]]
 
-  :managed-dependencies [[org.clojure/clojure "1.8.0"]
+  :managed-dependencies [[org.clojure/clojure "1.9.0"]
                          [nrepl "0.9.0"]
                          [cider/cider-nrepl "0.27.4"]
 
