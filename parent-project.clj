@@ -88,7 +88,7 @@
                          [org.http4s/http4s-dsl_2.11 "0.16.6"]
 
                          ;; ClojureScript
-                         [org.clojure/clojurescript "1.10.879"]
+                         [org.clojure/clojurescript "1.11.4"]
                          [reagent "0.8.1"
                           :exclusions [cljsjs/react cljsjs/react-dom cljsjs/react-dom-server]]
                          [cljsjs/react "16.4.2-0"]
@@ -102,7 +102,7 @@
                          ;; CLJS Dev
                          [com.cemerick/piggieback "0.2.2"]
                          [binaryage/devtools "0.9.10"]
-                         [figwheel-sidecar "0.5.16"]
+                         [figwheel-sidecar "0.5.20"]
                          [com.google.guava/guava "31.1-jre"
                           :exclusions [com.google.code.findbugs/jsr305]]
 
@@ -115,10 +115,8 @@
                          [dk.ative/docjure "1.16.0"]
                          [instaparse "1.4.10"]
                          [org.apache.commons/commons-email "1.5"]
-                         [org.clojure/core.async "0.4.500"]
-                         [org.clojure/tools.reader "1.1.0"]
+                         [org.clojure/core.async "1.5.648"]
                          [org.clojure/tools.trace "0.7.9"]
-                         [org.clojure/tools.analyzer.jvm "0.7.3"]
                          [org.scala-lang.modules/scala-xml_2.11 "1.0.6"]
                          [org.scala-lang/scala-library "2.11.12"]
                          [org.clojure/data.xml "0.0.8"]

@@ -3,7 +3,7 @@
 
   :plugins [[lein-parent "0.3.2"]
             [lein-cljsbuild "1.1.7"]
-            [lein-figwheel "0.5.16" :exclusions [org.clojure/clojure]]
+            [lein-figwheel "0.5.20" :exclusions [org.clojure/clojure]]
             [lein-doo "0.1.10" :exclusions [org.clojure/clojure]]
             [lein-asset-minifier "0.4.4" :exclusions [org.clojure/clojure]]]
 
@@ -66,6 +66,7 @@
       :asset-path "/admin-ui/js/out"
       :source-map true
       :optimizations :none
+      :language-in :es-next
       :pretty-print  true}
      }
     :release
@@ -77,6 +78,7 @@
       :npm-deps {:oph-virkailija-style-guide "git+https://github.com/Opetushallitus/virkailija-styles.git"}
       :asset-path "/admin-ui/js/out"
       :optimizations :advanced
+      :language-in :es-next
       :pretty-print false}}
     :test
     {:source-paths ["src" "test" "env/test/cljs"]
