@@ -107,6 +107,7 @@ test.describe("Form editor muutoshakukelpoisuus message", () => {
       'text="Lomakkeesta puuttuu muutoshakemukselle tarpeellinen kenttä. Muutoshaku ei ole mahdollista."'
     );
 
+    await page.evaluate(() => window.scrollTo(0, 0));
     await page.click('[data-test-id="muutoshakukelpoisuus-warning-button"]');
 
     await expectMissingFieldId(page, "applicant-name");
@@ -127,6 +128,7 @@ test.describe("Form editor muutoshakukelpoisuus message", () => {
       'text="Lomakkeesta puuttuu 2 muutoshakemukselle tarpeellista kenttää. Muutoshaku ei ole mahdollista."'
     );
 
+    await page.evaluate(() => window.scrollTo(0, 0));
     await page.click('[data-test-id="muutoshakukelpoisuus-warning-button"]');
 
     expectMissingFieldId(page, "applicant-name");
