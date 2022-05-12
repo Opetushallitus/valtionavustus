@@ -88,7 +88,7 @@
                          [org.http4s/http4s-dsl_2.11 "0.16.6"]
 
                          ;; ClojureScript
-                         [org.clojure/clojurescript "1.10.879"]
+                         [org.clojure/clojurescript "1.11.4"]
                          [reagent "0.8.1"
                           :exclusions [cljsjs/react cljsjs/react-dom cljsjs/react-dom-server]]
                          [cljsjs/react "16.4.2-0"]
