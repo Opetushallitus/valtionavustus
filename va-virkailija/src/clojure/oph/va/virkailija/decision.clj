@@ -7,7 +7,6 @@
             [oph.va.decision-liitteet :as decision-liitteet]
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.soresu.form.formutil :as formutil]
-            [oph.soresu.common.config :refer [config]]
             [oph.va.virkailija.authorization :as authorization]
             [oph.va.virkailija.kayttosuunnitelma :as ks]
             [oph.va.virkailija.koulutusosio :as koulutusosio]
@@ -216,7 +215,6 @@
                 :koulutusosio                  (:body koulutusosio)
                 :has-koulutusosio              has-koulutusosio
                 :oppilaitokset                 oppilaitokset
-                :is-avustuslaji-enabled        (-> config :paatos-avustuslaji :enabled?)
                 :avustuslaji                   (translate avustushaku-type)
                 }
         body (render template params)]

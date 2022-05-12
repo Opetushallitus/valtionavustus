@@ -26,6 +26,5 @@
  :tasmaytysraportti-create {:enabled? true}
  :db {:server-name "va-postgres"
       :database-name "va-dev"}
- :paatos-avustuslaji {:enabled? true}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :test-apis {:enabled? true}}
