@@ -560,7 +560,7 @@ class ResendDecisions extends React.Component<
       <div>
         {this.state.resending && (
           <div>
-            <img src="/img/ajax-loader.gif" />
+            <img src="/virkailija/img/ajax-loader.gif" />
             &nbsp;<strong>Päätöksiä lähetetään uudelleen...</strong>
           </div>
         )}
@@ -853,7 +853,7 @@ class DecisionDateAndSend extends React.Component<
     };
 
     if (!_.isNumber(this.state.count)) {
-      return <img src="/img/ajax-loader.gif" />;
+      return <img src="/virkailija/img/ajax-loader.gif" />;
     }
 
     const onShowViews = (paatos: Paatos) => {
@@ -879,7 +879,7 @@ class DecisionDateAndSend extends React.Component<
         <div className="decision-separator" />
         {this.state.sending && (
           <div>
-            <img src="/img/ajax-loader.gif" />
+            <img src="/virkailija/img/ajax-loader.gif" />
             &nbsp;<strong>Päätöksiä lähetetään...</strong>
           </div>
         )}

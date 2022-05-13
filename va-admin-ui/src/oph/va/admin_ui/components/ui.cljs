@@ -276,7 +276,7 @@
           [:div {:style theme/search-popover}
            (cond
              (:searching props)
-             [:img {:src "/img/ajax-loader.gif"}]
+             [:img {:src "/virkailija/img/ajax-loader.gif"}]
              (seq items)
              (doall
                (map-indexed
