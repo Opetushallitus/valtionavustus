@@ -639,7 +639,7 @@ describe("Talousarvion muuttaminen", () => {
         { name: "talousarvio.service-purchase-costs-row", amount: 100 },
         { name: "talousarvio.rent-costs-row", amount: 161616 },
         { name: "talousarvio.steamship-costs-row", amount: 100 },
-        { name: "talousarvio.other-costs-row", amount: 10000000 },
+        { name: "talousarvio.other-costs-row", amount: 100000 },
       ];
       await validateBudgetInputFields(expectedBudgetInputs);
     });
