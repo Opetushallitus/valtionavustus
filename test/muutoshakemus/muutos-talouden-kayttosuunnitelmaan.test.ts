@@ -649,12 +649,12 @@ describe("Talousarvion muuttaminen", () => {
         page,
         "[data-test-id=original-sum]"
       );
-      expect(originalSum).toEqual("10374816 €");
+      expect(originalSum).toEqual("474816 €");
       const currentSum = await getElementInnerText(
         page,
         "[data-test-id=current-sum]"
       );
-      expect(currentSum).toEqual("10374816");
+      expect(currentSum).toEqual("474816");
 
       await clearAndType(
         page,
@@ -665,12 +665,12 @@ describe("Talousarvion muuttaminen", () => {
         page,
         "[data-test-id=original-sum]"
       );
-      expect(originalSum2).toEqual("10374816 €");
+      expect(originalSum2).toEqual("474816 €");
       const currentSum2 = await getElementInnerText(
         page,
         "[data-test-id=current-sum]"
       );
-      expect(currentSum2).toEqual("10374817");
+      expect(currentSum2).toEqual("474817");
 
       await clearAndType(
         page,
@@ -681,7 +681,7 @@ describe("Talousarvion muuttaminen", () => {
         page,
         "[data-test-id=current-sum]"
       );
-      expect(currentSum3).toEqual("10374816");
+      expect(currentSum3).toEqual("474816");
     });
 
     async function waitForSendButtonEnabled() {
@@ -738,7 +738,7 @@ describe("Talousarvion muuttaminen", () => {
         page,
         "[data-test-id=current-sum-error]"
       );
-      expect(sumErrorMessage).toEqual("Loppusumman on oltava 10374816");
+      expect(sumErrorMessage).toEqual("Loppusumman on oltava 474816");
 
       await clearAndType(
         page,
