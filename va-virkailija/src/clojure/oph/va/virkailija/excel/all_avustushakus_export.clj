@@ -81,6 +81,7 @@ SELECT
   avustushaku.loppuselvitysdate AS loppuselvitys_deadline,
   loppuselvitykset_lahetetty,
   avustushaku.content->'total-grant-size' AS avustushaku_maararaha,
+  coalesce(maksatukset_summa, 0) as maksatukset_summa,
   (avustushaku.content->>'total-grant-size')::numeric - maksatukset_summa AS jakamaton_maararaha,
   avustushaku.hankkeen_alkamispaiva AS ensimmainen_kayttopaiva,
   avustushaku.hankkeen_paattymispaiva AS viimeinen_kayttopaiva,
@@ -160,7 +161,6 @@ ORDER BY avustushaku.id DESC
                        (fn [idx _] [(str "Koulutusaste " (+ idx 1))
                                     (str "TA-tilit " (+ idx 1))])
                        (repeat n nil))]
-    (clojure.pprint/pprint header-pairs)
     (apply concat header-pairs)))
 
 (defn headers [max-koulutusaste-count]

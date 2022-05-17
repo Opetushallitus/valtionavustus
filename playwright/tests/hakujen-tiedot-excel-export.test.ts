@@ -36,6 +36,7 @@ muutoshakemusTest(
     expect(columnValue("Vastuuvalmistelija")).toEqual(
       "_ valtionavustus, santeri.horttanainen@reaktor.com"
     );
+    expect(columnValue("Maksettu €")).toEqual(0);
   }
 );
 
