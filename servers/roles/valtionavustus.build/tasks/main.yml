@@ -98,3 +98,11 @@
     create: yes
     state: present
   tags: buildstatus
+
+- name: Relocate leiningen local repository unto bigger disk
+  copy:
+    content: "{:user {:local-repo \"/data/jenkins/local-repositories/leiningen\"}}\n"
+    dest: /home/jenkins/.lein/profiles.clj
+    owner: jenkins
+    group: jenkins
+    mode: 0600
