@@ -4,6 +4,9 @@ set -o errexit -o nounset -o pipefail
 readonly repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 readonly node_version="16.9.1"
 readonly npm_version="7.24.0"
+readonly ansible_version="4.6.0"
+readonly python_version="3.9.0"
+readonly local_docker_namespace="va"
 
 function remove_all_files_ignored_or_untracked_by_git {
   git clean -xdf
