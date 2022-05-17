@@ -157,7 +157,7 @@ ORDER BY avustushaku.id DESC
 
 (defn koulutusaste-headers [n]
   (let [header-pairs (map-indexed
-                       (fn [idx _] [(str "Koulutusate " (+ idx 1))
+                       (fn [idx _] [(str "Koulutusaste " (+ idx 1))
                                     (str "TA-tilit " (+ idx 1))])
                        (repeat n nil))]
     (clojure.pprint/pprint header-pairs)
