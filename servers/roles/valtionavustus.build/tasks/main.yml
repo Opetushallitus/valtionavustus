@@ -106,3 +106,11 @@
     owner: jenkins
     group: jenkins
     mode: 0600
+
+- name: Relocate the npm cache unto bigger disk
+  copy:
+    content: "cache=/data/jenkins/local-repositories/npm"
+    dest: /home/jenkins/.npmrc
+    owner: jenkins
+    group: jenkins
+    mode: 0600
