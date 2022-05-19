@@ -112,6 +112,9 @@ ORDER BY avustushaku.id DESC
   (let [dt (from-sql-time ts)]
     (str (date-string dt) " " (time-string dt))))
 
+(defn format-sql-timestamp-as-date [ts]
+  (date-string (from-sql-time ts)))
+
 (defn koulutusaste-columns [koulutusaste]
   [(:rahoitusalue koulutusaste)
    (clojure.string/join ", " (:talousarviotilit koulutusaste))])
@@ -147,7 +150,7 @@ ORDER BY avustushaku.id DESC
      (or (:maksatukset-lahetetty row) "")
      (or (:maksatukset-summa row) "")
      (or (:jakamaton-maararaha row) "")
-     (if (:paatokset-lahetetty row) (format-sql-timestamp (:paatokset-lahetetty row)) "")
+     (if (:paatokset-lahetetty row) (format-sql-timestamp-as-date (:paatokset-lahetetty row)) "")
      (str (:paatokset-total-count row) "/" (:hyvaksytty-count row) "/" (:hylatty-count row))
      (if (:ensimmainen-kayttopaiva row) (java8-date-string (:ensimmainen-kayttopaiva row)) "")
      (if (:viimeinen-kayttopaiva row) (java8-date-string (:viimeinen-kayttopaiva row)) "")
