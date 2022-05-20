@@ -8,6 +8,7 @@ export interface Email {
   "to-address": string[];
   bcc: string | null;
   subject?: string;
+  "reply-to"?: string;
 }
 
 export const emailSchema = yup
