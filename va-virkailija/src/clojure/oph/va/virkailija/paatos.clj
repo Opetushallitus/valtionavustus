@@ -59,7 +59,7 @@
       (let [hakemus (hakija-api/get-hakemus hakemus-id)
             avustushaku-id (:avustushaku hakemus)
             avustushaku (hakija-api/get-avustushaku avustushaku-id)
-            presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)
+            presenting-officer-email (:email (hakudata/get-valmistelija-assigned-to-hakemus hakemus-id))
             decision (decision/paatos-html hakemus-id)
             arvio (virkailija-db/get-arvio hakemus-id)
             token (create-application-token (:id hakemus))]
@@ -85,7 +85,7 @@
       (let [hakemus (hakija-api/get-hakemus hakemus-id)
             avustushaku-id (:avustushaku hakemus)
             avustushaku (hakija-api/get-avustushaku avustushaku-id)
-            presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)
+            presenting-officer-email (:email (hakudata/get-valmistelija-assigned-to-hakemus hakemus-id))
             decision (decision/paatos-html hakemus-id)
             arvio (virkailija-db/get-arvio hakemus-id)
             token (create-application-token (:id hakemus))]
@@ -113,7 +113,7 @@
             hakemus (hakija-api/get-hakemus hakemus-id)
             avustushaku-id (:avustushaku hakemus)
             avustushaku (hakija-api/get-avustushaku avustushaku-id)
-            presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)
+            presenting-officer-email (:email (hakudata/get-valmistelija-assigned-to-hakemus hakemus-id))
             arvio (virkailija-db/get-arvio hakemus-id)
             token (create-application-token (:id hakemus))]
 

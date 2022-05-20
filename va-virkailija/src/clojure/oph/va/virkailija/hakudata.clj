@@ -6,6 +6,7 @@
             [oph.va.virkailija.va-code-values-data :as va-code-values]
             [oph.va.routes :as va-routes]
             [oph.va.hakija.api :as hakija-api]
+            [clojure.tools.logging :as log]
             [oph.va.virkailija.authorization :as authorization]
             [clj-time.core :as clj-time]))
 
@@ -188,11 +189,15 @@
   { :fi (str (:fi nameField) " (kopio)" )
     :sv (str (:sv nameField) " (kopia)")})
 
-(defn presenting-officer-email [avustushaku-id]
-  (let [roles (hakija-api/get-avustushaku-roles avustushaku-id)
-        presenting-officers (filter authorization/is-valmistelija? roles)
-        presenting-officer-emails (map :email presenting-officers)
-        first-email (first presenting-officer-emails)] first-email))
+(defn get-valmistelija-assigned-to-hakemus [hakemus-id]
+  (let [sql "SELECT ahr.name, ahr.email, ahr.oid
+             FROM hakija.hakemukset hv
+             JOIN virkailija.arviot a ON a.hakemus_id = hv.id
+             JOIN hakija.avustushaku_roles ahr ON a.presenter_role_id = ahr.id
+             WHERE hv.version_closed IS NULL AND hv.id = ?"
+        result (first (oph.soresu.common.db/query sql [hakemus-id]))]
+    (log/info "Found valmistelija" result  "for hakemus ID" hakemus-id)
+    result))
 
 (defn create-new-avustushaku [tx base-haku-id identity]
   (let [created-at (clj-time/now)
