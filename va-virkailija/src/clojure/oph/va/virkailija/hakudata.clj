@@ -189,16 +189,6 @@
   { :fi (str (:fi nameField) " (kopio)" )
     :sv (str (:sv nameField) " (kopia)")})
 
-(defn get-valmistelija-assigned-to-hakemus [hakemus-id]
-  (let [sql "SELECT ahr.name, ahr.email, ahr.oid
-             FROM hakija.hakemukset hv
-             JOIN virkailija.arviot a ON a.hakemus_id = hv.id
-             JOIN hakija.avustushaku_roles ahr ON a.presenter_role_id = ahr.id
-             WHERE hv.version_closed IS NULL AND hv.id = ?"
-        result (first (oph.soresu.common.db/query sql [hakemus-id]))]
-    (log/info "Found valmistelija" result  "for hakemus ID" hakemus-id)
-    result))
-
 (defn create-new-avustushaku [tx base-haku-id identity]
   (let [created-at (clj-time/now)
         base-haku (-> base-haku-id

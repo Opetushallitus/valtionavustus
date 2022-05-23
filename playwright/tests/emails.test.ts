@@ -104,7 +104,7 @@ test("sends emails to correct contact and hakemus emails", async ({
       contactPersonEmail,
       "akaan.kaupunki@akaa.fi",
     ]);
-    expect(email["reply-to"]).toEqual("santeri.horttanainen@reaktor.com");
+    expect(email["reply-to"]).toEqual(null);
   });
   const hakujenHallintaPage = new HakujenHallintaPage(page);
   await hakujenHallintaPage.navigateToPaatos(avustushakuID);
@@ -121,7 +121,7 @@ test("sends emails to correct contact and hakemus emails", async ({
       contactPersonEmail,
       "akaan.kaupunki@akaa.fi",
     ]);
-    expect(email["reply-to"]).toEqual("santeri.horttanainen@reaktor.com");
+    expect(email["reply-to"]).toEqual(null);
   });
   const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page);
   await test.step(

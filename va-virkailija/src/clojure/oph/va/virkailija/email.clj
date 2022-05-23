@@ -358,7 +358,7 @@
                               :url (loppuselvitys-url (:avustushaku-id notification) (:user-key notification) lang)}
                              (partial render template))))
 
-(defn send-paatos! [to avustushaku hakemus reply-to]
+(defn send-paatos! [to avustushaku hakemus]
   (let [lang-str (:language hakemus)
         lang (keyword lang-str)
         url (paatos-url (:id avustushaku) (:user_key hakemus) (keyword lang-str))
@@ -369,7 +369,6 @@
                           :type :paatos
                           :lang lang
                           :from (-> email/smtp-config :from lang)
-                          :reply-to reply-to
                           :sender (-> email/smtp-config :sender)
                           :subject mail-subject
                           :avustushaku-name avustushaku-name
@@ -408,7 +407,7 @@
     (:muutoshakukelpoinen avustushaku)
     (has-normalized-hakemus hakemus-id)))
 
-(defn send-paatos-refuse! [to avustushaku hakemus reply-to token]
+(defn send-paatos-refuse! [to avustushaku hakemus token]
   (let [lang-str (:language hakemus)
         lang (keyword lang-str)
         url (paatos-url (:id avustushaku) (:user_key hakemus) (keyword lang-str))
@@ -422,7 +421,6 @@
              :type :paatos-refuse
              :lang lang
              :from (-> email/smtp-config :from lang)
-             :reply-to reply-to
              :sender (-> email/smtp-config :sender)
              :subject mail-subject
              :avustushaku-name avustushaku-name
