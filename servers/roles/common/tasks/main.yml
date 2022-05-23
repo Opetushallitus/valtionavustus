@@ -115,11 +115,11 @@
     state: present
   when: ansible_os_family == 'RedHat'
 
-- name: Set mail receiver for system reboot needed mail
+- name: Don't send email for kernel update reboots
   lineinfile:
     dest: '{{ csc_host_info_config_path }}'
     regexp: '^MAIL_ADDR='
-    line: 'MAIL_ADDR="{{ system_reboot_needed_mail_recipient }}"'
+    line: 'MAIL_ADDR=""'
     state: present
   when: ansible_os_family == 'RedHat'
 
