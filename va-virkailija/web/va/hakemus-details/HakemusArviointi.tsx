@@ -197,7 +197,7 @@ export const HakemusArviointi = ({
 class ChangeLog extends React.Component<{ hakemus: Hakemus }> {
   render() {
     const hakemus = this.props.hakemus;
-    const changelogs = hakemus.arvio.changeLog;
+    const changelogs = hakemus.arvio.changelog;
     if (!changelogs) {
       return null;
     }

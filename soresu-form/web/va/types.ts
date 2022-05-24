@@ -135,7 +135,7 @@ export type Arvio = {
   useDetailedCosts?: boolean;
   "summary-comment": string;
   roles: Record<string, number[]>;
-  changeLog?: ChangeLogEntry[];
+  changelog?: ChangeLogEntry[];
 };
 
 export interface NormalizedHakemusData {
