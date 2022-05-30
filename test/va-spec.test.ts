@@ -22,9 +22,6 @@ import {
   sendPäätös,
   textContent,
   selectValmistelijaForHakemus,
-  deleteAttachment,
-  dummyPdfPath,
-  uploadFile,
   waitForSaveStatusOk,
   addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel,
   typeValueInFieldAndExpectValidationError,
@@ -67,23 +64,6 @@ describe("Puppeteer tests", () => {
   afterAll(async () => {
     await page.close();
     await browser.close();
-  });
-
-  it("should allow removing attachment from hakemus", async function () {
-    const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(
-      page,
-      randomAsiatunnus()
-    );
-
-    await publishAvustushaku(page, avustushakuID);
-    await fillAndSendHakemus(page, avustushakuID, async function () {
-      await deleteAttachment(page, "financial-information-form");
-      await uploadFile(
-        page,
-        "input[name='financial-information-form']",
-        dummyPdfPath
-      );
-    });
   });
 
   describe("should allow basic avustushaku flow and check each hakemus has valmistelija", () => {

@@ -982,11 +982,6 @@ export async function selectValmistelijaForHakemus(
   }
 }
 
-export async function deleteAttachment(page: Page, attachmentFieldId: string) {
-  await clickElement(page, `#${attachmentFieldId} button.soresu-remove`);
-  await page.waitForSelector(`[name='${attachmentFieldId}']`);
-}
-
 export async function verifyText(page: Page, selector: string, regex: RegExp) {
   await page.evaluate(
     (selector) =>
