@@ -290,7 +290,7 @@
                   FROM hakemus_paatokset p
                   JOIN hakemukset h ON p.hakemus_id = h.id
                   JOIN arviot arvio ON arvio.hakemus_id = h.id
-                  WHERE h.avustushaku = 348
+                  WHERE h.avustushaku = a.id
                     AND h.version_closed IS NULL
                     AND arvio.status = 'accepted'
                     AND NOT EXISTS (

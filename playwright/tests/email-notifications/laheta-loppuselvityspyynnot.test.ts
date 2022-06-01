@@ -81,10 +81,6 @@ test.describe("loppuselvitys", () => {
             page,
             avustushakuID
           );
-          await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(
-            page,
-            avustushakuID
-          );
           await sendLoppuselvitysEmails(page, avustushakuID);
           await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(
             page,
