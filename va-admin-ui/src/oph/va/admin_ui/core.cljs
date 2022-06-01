@@ -11,7 +11,6 @@
    [oph.va.admin-ui.router :as router]
    [oph.va.admin-ui.dialogs :as dialogs]
    [oph.va.admin-ui.payments.payments-core :as payments-core]
-   [oph.va.admin-ui.reports.reports-core :as reports-core]
    [oph.va.admin-ui.search.search-core :as search-core]
    [oph.va.admin-ui.user :as user]))
 
@@ -24,7 +23,6 @@
    :grant-evaluations {:link "/" :title "Hakemusten arviointi"}
    :va-code-values {:link "/admin-ui/va-code-values/"
                     :title "VA-Koodienhallinta"}
-   :va-pulse {:link "/admin-ui/reports/" :title "VA-pulssi"}
    :search {:link "/admin-ui/search/" :title "Haku"}})
 
 (defn create-link [href title active]
@@ -73,7 +71,6 @@
          [:div {:style theme/app-container}
           (case (router/get-current-path)
             "/admin-ui/payments/" (payments-core/home-page data)
-            "/admin-ui/reports/" (reports-core/home-page)
             "/admin-ui/search/" (search-core/home-page)
             (do
               (router/redirect-to! "/admin-ui/payments/")

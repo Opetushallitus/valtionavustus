@@ -116,7 +116,6 @@ const Header = ({ activeTab, environment, userInfo }: HeaderProps) => {
             VA-koodienhallinta
           </a>
         )}
-        {isAdmin && <a href="/admin-ui/reports/">VA-pulssi</a>}
         <a href="/admin-ui/search/">Haku</a>
       </div>
       <div className={styles.headerControls}>
