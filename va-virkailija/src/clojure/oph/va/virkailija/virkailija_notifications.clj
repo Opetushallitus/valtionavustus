@@ -250,17 +250,20 @@
           FROM avustushaut a
           JOIN hakija.avustushaku_roles r ON r.avustushaku = a.id
           WHERE EXISTS (
-            SELECT *
-              FROM hakemus_paatokset p
-              JOIN hakemukset h ON p.hakemus_id = h.id
-              WHERE h.avustushaku = a.id
-                AND h.version_closed is null
-                AND NOT EXISTS (
-                  SELECT * FROM tapahtumaloki
-                  WHERE tapahtumaloki.hakemus_id = h.id
-                    AND tyyppi = 'valiselvitys-notification'
+                  SELECT *
+                    FROM hakemus_paatokset p
+                    JOIN hakemukset h ON p.hakemus_id = h.id
+                    JOIN arviot arvio ON arvio.hakemus_id = h.id
+                    WHERE h.avustushaku = a.id
+                      AND h.version_closed is null
+                      AND arvio.status = 'accepted'
+                      AND NOT EXISTS (
+                        SELECT *
+                        FROM tapahtumaloki
+                        WHERE tapahtumaloki.hakemus_id = h.id
+                          AND tyyppi = 'valiselvitys-notification'
+                      )
                 )
-          )
             AND valiselvitysdate is not null
             AND current_timestamp::date BETWEEN (valiselvitysdate::date - '6 month'::interval) AND valiselvitysdate::date 
             AND (r.role = 'presenting_officer' OR r.role = 'vastuuvalmistelija')
@@ -283,22 +286,25 @@
           FROM avustushaut a
           JOIN hakija.avustushaku_roles r ON r.avustushaku = a.id
           WHERE EXISTS (
-            SELECT *
-            FROM hakemus_paatokset p
-            JOIN hakemukset h ON p.hakemus_id = h.id
-            WHERE h.avustushaku = a.id AND
-                  h.version_closed IS NULL AND
-                  NOT EXISTS (
-                    SELECT * FROM tapahtumaloki
-                    WHERE tapahtumaloki.hakemus_id = h.id AND
-                          tyyppi = 'loppuselvitys-notification'
-                  )
-          ) AND
-          loppuselvitysdate IS NOT NULL AND
-          current_timestamp::date BETWEEN (loppuselvitysdate::date - '8 month'::interval) AND loppuselvitysdate::date AND
-          (r.role = 'presenting_officer' OR r.role = 'vastuuvalmistelija') AND
-          r.email IS NOT NULL
-          GROUP BY avustushaku_name, valiselvitysdate, avustushaku_id"
+                  SELECT *
+                  FROM hakemus_paatokset p
+                  JOIN hakemukset h ON p.hakemus_id = h.id
+                  JOIN arviot arvio ON arvio.hakemus_id = h.id
+                  WHERE h.avustushaku = 348
+                    AND h.version_closed IS NULL
+                    AND arvio.status = 'accepted'
+                    AND NOT EXISTS (
+                          SELECT *
+                          FROM tapahtumaloki
+                          WHERE tapahtumaloki.hakemus_id = h.id
+                            AND tyyppi = 'loppuselvitys-notification'
+                        )
+                )
+            AND loppuselvitysdate IS NOT NULL
+            AND current_timestamp::date BETWEEN (loppuselvitysdate::date - '8 month'::interval) AND loppuselvitysdate::date
+            AND (r.role = 'presenting_officer' OR r.role = 'vastuuvalmistelija')
+            AND r.email IS NOT NULL
+            GROUP BY avustushaku_name, valiselvitysdate, avustushaku_id"
          []))
 
 (defn send-laheta-loppuselvityspyynnot-notifications []
