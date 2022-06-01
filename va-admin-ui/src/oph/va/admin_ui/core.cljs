@@ -105,6 +105,5 @@
       (close! dialog-chan)
       (case (router/get-current-path)
         "/admin-ui/payments/" (payments-core/init!)
-        "/admin-ui/reports/" (reports-core/init!)
         "/admin-ui/search/" (search-core/init!)
         ""))))
