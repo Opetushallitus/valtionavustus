@@ -11,7 +11,6 @@
    [oph.va.admin-ui.router :as router]
    [oph.va.admin-ui.dialogs :as dialogs]
    [oph.va.admin-ui.payments.payments-core :as payments-core]
-   [oph.va.admin-ui.search.search-core :as search-core]
    [oph.va.admin-ui.user :as user]))
 
 (defonce environment (r/atom {}))
