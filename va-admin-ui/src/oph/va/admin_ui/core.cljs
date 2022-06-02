@@ -71,7 +71,6 @@
          [:div {:style theme/app-container}
           (case (router/get-current-path)
             "/admin-ui/payments/" (payments-core/home-page data)
-            "/admin-ui/search/" (search-core/home-page)
             (do
               (router/redirect-to! "/admin-ui/payments/")
               "Redirecting..."))]])
@@ -105,5 +104,4 @@
       (close! dialog-chan)
       (case (router/get-current-path)
         "/admin-ui/payments/" (payments-core/init!)
-        "/admin-ui/search/" (search-core/init!)
         ""))))
