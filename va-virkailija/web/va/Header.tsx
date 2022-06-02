@@ -121,7 +121,7 @@ const Header = ({ activeTab, environment, userInfo }: HeaderProps) => {
           </a>
         )}
         <a
-          href="/admin-ui/search/"
+          href="/haku/"
           className={activeTab === "search" ? "activeTab" : undefined}
         >
           Haku

@@ -23,7 +23,7 @@
    :grant-evaluations {:link "/" :title "Hakemusten arviointi"}
    :va-code-values {:link "/admin-ui/va-code-values/"
                     :title "VA-Koodienhallinta"}
-   :search {:link "/admin-ui/search/" :title "Haku"}})
+   :search {:link "/haku/" :title "Haku"}})
 
 (defn create-link [href title active]
   [:a {:key href :href href

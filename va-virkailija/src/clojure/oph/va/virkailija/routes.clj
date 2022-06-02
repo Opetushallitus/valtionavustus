@@ -39,6 +39,7 @@
             [ring.swagger.json-schema-dirty]  ; for schema.core/conditional
             [ring.util.http-response :refer [ok internal-server-error not-found bad-request unauthorized]]
             [ring.util.response :as resp]
+            [ring.util.codec :as codec]
             [schema.core :as s]))
 
 (def opintopolku-login-url
@@ -151,6 +152,11 @@
                           (compojure/GET "/avustushaku/:id/*" [id] (return-html "virkailija/index.html"))
 
                           (try-to-access-va-code-values)
+
+                          (compojure-api/GET "/admin-ui/search/" [search order]
+                            (if (:and search order)
+                              (resp/redirect (str "/haku/" "?" (codec/form-encode { :search search :order order })))
+                              (resp/redirect "/haku/")))
 
                           (compojure/GET "/admin-ui/*" [] (return-html "admin-ui/index.html"))
 
