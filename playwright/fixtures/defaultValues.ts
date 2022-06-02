@@ -53,12 +53,14 @@ export const defaultValues =
     },
     hakuProps: ({ codes }, use, testInfo) => {
       const nextYear = new Date().getFullYear() + 1;
+      const randomName = randomString();
       use({
         avustushakuName: `Testiavustushaku (${
           testInfo.title
-        } ${randomString()} - ${moment(new Date()).format(
+        } ${randomName} - ${moment(new Date()).format(
           "YYYY-MM-DD hh:mm:ss:SSSS"
         )}`,
+        randomName,
         hakuaikaStart: parseDate("1.1.1970 0.00"),
         hakuaikaEnd: parseDate(`31.12.${nextYear} 23.59`),
         hankkeenAlkamispaiva: "20.04.1969",

@@ -2,6 +2,7 @@ import {
   Avustushaku,
   Form,
   Hakemus,
+  HakemusArviointiStatus,
   HelpTexts,
 } from "soresu-form/web/va/types";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
@@ -177,3 +178,41 @@ export interface Filter {
 
 export type FilterId = keyof Filter;
 export type FilterValue = Filter[FilterId];
+
+export type AvustushakuV2 = {
+  id: number;
+  "register-number": string;
+  "created-at": string;
+  content: {
+    name: {
+      fi: string;
+      sv: string;
+    };
+    duration: {
+      end: string;
+      start: string;
+    };
+  };
+};
+
+export type HakemusV2 = {
+  id: number;
+  "grant-id": number;
+  "parent-id": number | null;
+  "grant-name": string;
+  "project-name": string | null;
+  "register-number": string;
+  "organization-name": string;
+  "budget-oph-share": number;
+  refused: boolean | null;
+  "refused-comment": string | null;
+  "created-at": string;
+  evaluation?: {
+    "should-pay": boolean;
+    "should-pay-comments": string | null;
+    rahoitusalue: string;
+    status: HakemusArviointiStatus;
+    talousarviotili: string;
+    "budget-granted": number;
+  };
+};

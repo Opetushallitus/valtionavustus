@@ -96,6 +96,7 @@ const virkailijaConfig = Object.assign(
         __dirname,
         "va-virkailija/web/va/KoodienhallintaApp.tsx"
       ),
+      search: path.resolve(__dirname, "va-virkailija/web/va/SearchApp.tsx"),
     },
   }
 );

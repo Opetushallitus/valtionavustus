@@ -28,7 +28,7 @@ type HeaderProps = {
 };
 
 type HeaderContainerProps = HeaderProps & {
-  saveStatus: HeaderSaveStatus;
+  saveStatus?: HeaderSaveStatus;
 };
 
 export const HeaderContainer = ({
@@ -51,7 +51,11 @@ export const HeaderContainer = ({
     return () => {
       clearTimeout(timeout);
     };
-  }, [saveStatus.saveInProgress, saveStatus.saveTime, saveStatus.serverError]);
+  }, [
+    saveStatus?.saveInProgress,
+    saveStatus?.saveTime,
+    saveStatus?.serverError,
+  ]);
 
   return (
     <>
@@ -116,7 +120,12 @@ const Header = ({ activeTab, environment, userInfo }: HeaderProps) => {
             VA-koodienhallinta
           </a>
         )}
-        <a href="/admin-ui/search/">Haku</a>
+        <a
+          href="/admin-ui/search/"
+          className={activeTab === "search" ? "activeTab" : undefined}
+        >
+          Haku
+        </a>
       </div>
       <div className={styles.headerControls}>
         {environment["show-name"] && (
@@ -156,22 +165,21 @@ const Notification = ({
 };
 
 function getNotificationContent(
-  saveStatus: HeaderSaveStatus
+  saveStatus?: HeaderSaveStatus
 ): NotificationProps | undefined {
-  const { saveInProgress, saveTime, serverError } = saveStatus;
-  if (saveInProgress) {
+  if (saveStatus?.saveInProgress) {
     return {
       notification: "Tallennetaan",
       notificationIcon: saveInProgressIcon,
       status: "ok",
     };
-  } else if (serverError) {
+  } else if (saveStatus?.serverError) {
     const notification =
-      serverError === "validation-error"
+      saveStatus?.serverError === "validation-error"
         ? "Jossain kentässä puutteita. Tarkasta arvot."
         : "Virhe tallennuksessa. Lataa sivu uudelleen.";
     return { notification, notificationIcon: errorIcon, status: "error" };
-  } else if (saveTime) {
+  } else if (saveStatus?.saveTime) {
     return {
       notification: "Kaikki tiedot tallennettu",
       notificationIcon: okIcon,

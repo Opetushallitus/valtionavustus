@@ -29,18 +29,12 @@ const KoodienhallintaApp = () => {
     return null;
   }
   const { environment, userInfo } = data;
-  const saveStatus = {
-    saveInProgress: false,
-    saveTime: null,
-    serverError: "",
-  };
   return (
     <>
       <HeaderContainer
         activeTab="va-code-values"
         environment={environment}
         userInfo={userInfo}
-        saveStatus={saveStatus}
       />
       <Koodienhallinta />
     </>

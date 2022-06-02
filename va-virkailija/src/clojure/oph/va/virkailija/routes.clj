@@ -128,6 +128,8 @@
 
                           (compojure/GET "/yhteenveto/*" [] (return-html "virkailija/summary.html"))
 
+                          (compojure/GET "/haku/*" [] (return-html "virkailija/search.html"))
+
                           (compojure-api/GET "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
                                              :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
                                              :query-params [{decision-version :- s/Bool false}]

@@ -28,6 +28,7 @@ const defaultRahoitusalueet: Rahoitusalue[] = [
 
 export interface HakuProps {
   avustushakuName: string;
+  randomName: string;
   registerNumber: string;
   vaCodes: VaCodeValues;
   hakuaikaStart: Date;
