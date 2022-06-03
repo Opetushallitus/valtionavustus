@@ -14,6 +14,7 @@ import { translationsFi } from "soresu-form/web/va/i18n/translations";
 
 import "./style/virkailija.less";
 import "./style/admin.less";
+import { NewHakuListing } from "./haku-list/NewHakuListing";
 interface HakujenHallintaAppProps {
   state: State;
   controller: HakujenHallintaController;
@@ -31,6 +32,8 @@ const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
     saveStatus,
     userInfo,
   } = state;
+  const searchParams = new URLSearchParams(window.location.search);
+  const newHakuListing = searchParams.get("new-haku-listing") === "true";
   return (
     <Localization date={momentLocalizer} messages={translationsFi.calendar}>
       <HeaderContainer
@@ -40,12 +43,16 @@ const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
         saveStatus={saveStatus}
       />
       <section>
-        <HakuListing
-          hakuList={state.hakuList}
-          selectedHaku={state.selectedHaku}
-          filter={state.filter}
-          controller={controller}
-        />
+        {newHakuListing ? (
+          <NewHakuListing />
+        ) : (
+          <HakuListing
+            hakuList={state.hakuList}
+            selectedHaku={state.selectedHaku}
+            filter={state.filter}
+            controller={controller}
+          />
+        )}
         <EditorSelector
           subTab={state.subTab}
           avustushaku={selectedHaku}

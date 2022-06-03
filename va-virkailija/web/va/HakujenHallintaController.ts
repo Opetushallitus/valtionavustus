@@ -780,11 +780,13 @@ export default class HakujenHallintaController {
     this.loadPayments(hakuToSelect);
     this.loadForm(hakuToSelect);
     LocalStorage.saveAvustushakuId(hakuToSelect.id);
-    window.history.pushState(
-      null,
-      document.title,
-      `?avustushaku=${hakuToSelect.id}`
-    );
+    const newHakuListing =
+      new URLSearchParams(window.location.search).get("new-haku-listing") ===
+      "true";
+    const url = newHakuListing
+      ? `?avustushaku=${hakuToSelect.id}&new-haku-listing=true`
+      : `?avustushaku=${hakuToSelect.id}`;
+    window.history.pushState(null, document.title, url);
     return state;
   }
 
