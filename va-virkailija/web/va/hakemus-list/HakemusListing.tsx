@@ -803,7 +803,7 @@ function ResolvedTable(props: ResolvedTableProps) {
   const { projectNameOrCode, organization, status: statusFilter } = filterState;
 
   return (
-    <table className={styles.hakemusTable}>
+    <table className={styles.table}>
       <colgroup>
         <col style={{ width: "186px" }} />
         <col style={{ width: "210px" }} />
