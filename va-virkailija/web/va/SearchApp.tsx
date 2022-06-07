@@ -179,6 +179,7 @@ const renderHakemus = (hakemus: HakemusV2) => {
         href={`/avustushaku/${hakemus["grant-id"]}/hakemus/${
           hakemus["parent-id"] ?? hakemus.id
         }/`}
+        target="_blank"
       >
         <h2>
           {hakemus["register-number"]} - {hakemus["organization-name"]}
