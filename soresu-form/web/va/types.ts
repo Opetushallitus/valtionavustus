@@ -278,7 +278,14 @@ export const AVUSTUSHAKU_STATUSES = [
 ] as const;
 export type AvustushakuStatus = typeof AVUSTUSHAKU_STATUSES[number];
 
-export type AvustushakuPhase = "upcoming" | "current" | "ended" | "unpublished";
+export const AVUSTUSHAKU_PHASES = [
+  "upcoming",
+  "current",
+  "ended",
+  "unpublished",
+] as const;
+
+export type AvustushakuPhase = typeof AVUSTUSHAKU_PHASES[number];
 
 export type AvustushakuType = "yleisavustus" | "erityisavustus";
 

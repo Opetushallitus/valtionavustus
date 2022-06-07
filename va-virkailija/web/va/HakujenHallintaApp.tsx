@@ -44,7 +44,13 @@ const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
       />
       <section>
         {newHakuListing ? (
-          <NewHakuListing />
+          <NewHakuListing
+            hakuList={state.hakuList}
+            selectedHaku={state.selectedHaku}
+            onClickHaku={(id) => {
+              controller.selectHaku(id)();
+            }}
+          />
         ) : (
           <HakuListing
             hakuList={state.hakuList}
