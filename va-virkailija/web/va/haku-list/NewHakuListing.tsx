@@ -13,7 +13,7 @@ import { Pill } from "../hakemus-list/Pill";
 import moment from "moment-timezone";
 import { SelectedAvustushaku } from "../HakujenHallintaController";
 
-import buttonStyles from "../hakemus-list/Button.module.less";
+import buttonStyles from "../style/Button.module.less";
 import styles from "./NewHakuListing.module.less";
 
 interface TableLabelProps {

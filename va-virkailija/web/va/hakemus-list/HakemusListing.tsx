@@ -6,7 +6,7 @@ import {
 } from "soresu-form/web/va/types";
 
 import styles from "./HakemusListing.module.less";
-import buttonStyles from "./Button.module.less";
+import buttonStyles from "../style/Button.module.less";
 import { StarScoring } from "./StarScoring";
 import { MuutoshakemusStatus } from "soresu-form/web/va/types/muutoshakemus";
 import {
