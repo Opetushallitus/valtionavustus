@@ -140,6 +140,14 @@
                           :allow_visibility_in_external_system s/Bool
                           :muutoshakukelpoinen s/Bool})
 
+(s/defschema ListingAvustushaku
+  "Avustushaku with extra details for avustushaku listing"
+    (assoc AvustusHaku
+           :paatokset-lahetetty (s/maybe java.sql.Timestamp)
+           :maksatukset-lahetetty (s/maybe java.sql.Timestamp)
+           :valiselvitykset-lahetetty (s/maybe java.sql.Timestamp)
+           :loppuselvitykset-lahetetty (s/maybe java.sql.Timestamp)))
+
 (s/defschema HakemusStatus
   "Status from the applicant point of view"
   (s/enum "new" "draft" "submitted" "pending_change_request"

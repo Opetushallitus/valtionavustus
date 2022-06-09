@@ -494,6 +494,13 @@
     :summary "Search hakemukset by organization name. Organization-name must have length of at least 3."
     (http/ok (hakemus-search/find-hakemukset-by-organization-name organization-name)))
 
+  (compojure-api/GET "/listing" []
+    :summary "Return list of all avustushaku with extra fields for listing ui"
+    :return [va-schema/ListingAvustushaku]
+    (if-let [response (hakija-api/get-avustushaut-for-haku-listing)]
+      (http/ok response)
+      (http/not-found)))
+
   (get-avustushaku-status)
   (get-normalized-hakemus)
   (put-avustushaku)

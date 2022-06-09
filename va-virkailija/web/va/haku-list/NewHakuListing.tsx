@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import useOutsideClick from "../useOutsideClick";
 import classNames from "classnames";
 import {
-  Avustushaku,
   AVUSTUSHAKU_PHASES,
   AVUSTUSHAKU_STATUSES,
   AvustushakuPhase,
@@ -11,7 +10,7 @@ import {
 } from "soresu-form/web/va/types";
 import { Pill } from "../hakemus-list/Pill";
 import moment from "moment-timezone";
-import { SelectedAvustushaku } from "../HakujenHallintaController";
+import { SelectedAvustushaku, Avustushaku } from "../HakujenHallintaController";
 
 import buttonStyles from "../style/Button.module.less";
 import styles from "./NewHakuListing.module.less";
@@ -114,6 +113,53 @@ function StatusTableLabel<Status extends Statuses>({
   );
 }
 
+const GreenCheckIcon = () => (
+  <svg
+    width="21"
+    height="20"
+    viewBox="0 0 21 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect x="0.5" width="20" height="20" rx="10" fill="#DCF8E7" />
+    <path
+      d="M15.0576 5.62012L8.37988 12.2979L5.94238 9.83496C5.81543 9.7334 5.6123 9.7334 5.51074 9.83496L4.77441 10.5713C4.67285 10.6729 4.67285 10.876 4.77441 11.0029L8.17676 14.3799C8.30371 14.5068 8.48145 14.5068 8.6084 14.3799L16.2256 6.7627C16.3271 6.66113 16.3271 6.45801 16.2256 6.33105L15.4893 5.62012C15.3877 5.49316 15.1846 5.49316 15.0576 5.62012Z"
+      fill="#108046"
+    />
+  </svg>
+);
+
+const RedXIcon = () => (
+  <svg
+    width="21"
+    height="20"
+    viewBox="0 0 21 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect x="0.5" width="20" height="20" rx="10" fill="#FFF3F2" />
+    <path
+      d="M11.7061 9.9873L14.4482 7.27051C14.6006 7.11816 14.6006 6.83887 14.4482 6.68652L13.8135 6.05176C13.6611 5.89941 13.3818 5.89941 13.2295 6.05176L10.5127 8.79395L7.77051 6.05176C7.61816 5.89941 7.33887 5.89941 7.18652 6.05176L6.55176 6.68652C6.39941 6.83887 6.39941 7.11816 6.55176 7.27051L9.29395 9.9873L6.55176 12.7295C6.39941 12.8818 6.39941 13.1611 6.55176 13.3135L7.18652 13.9482C7.33887 14.1006 7.61816 14.1006 7.77051 13.9482L10.5127 11.2061L13.2295 13.9482C13.3818 14.1006 13.6611 14.1006 13.8135 13.9482L14.4482 13.3135C14.6006 13.1611 14.6006 12.8818 14.4482 12.7295L11.7061 9.9873Z"
+      fill="#BA3E35"
+    />
+  </svg>
+);
+
+const GoodBadDate: React.FC<{ goodDate?: string; badDate?: string }> = ({
+  goodDate,
+  badDate,
+}) => {
+  const date = goodDate ? goodDate : badDate;
+  const shortDate = date && toShortDate(date);
+  const icon = goodDate ? <GreenCheckIcon /> : <RedXIcon />;
+  return (
+    <div className={styles.goodBadDate}>
+      {shortDate ? icon : null}
+      <span>{shortDate ?? "-"}</span>
+    </div>
+  );
+};
+
 const TableHeader: React.FC = ({ children }) => (
   <th>
     <div className={styles.tableHeader}>{children}</div>
@@ -190,9 +236,6 @@ export const NewHakuListing: React.FC<Props> = ({
                 <TableLabel text="Loppuselvitys" disabled />
               </TableHeader>
               <TableHeader>
-                <TableLabel text="Väliselvitykset" disabled />
-              </TableHeader>
-              <TableHeader>
                 <TableLabel text="V.Valmistelija" disabled />
               </TableHeader>
               <TableHeader>
@@ -244,29 +287,26 @@ export const NewHakuListing: React.FC<Props> = ({
                   </td>
                   <td>{startEnd}</td>
                   <td>
-                    {
-                      // TODO: get päätös date
-                    }
+                    <GoodBadDate
+                      goodDate={avustushaku["paatokset-lahetetty"]}
+                    />
                   </td>
                   <td>
-                    {
-                      // TODO: get maksatukset date
-                    }
+                    <GoodBadDate
+                      goodDate={avustushaku["maksatukset-lahetetty"]}
+                    />
                   </td>
                   <td>
-                    {avustushaku.valiselvitysdate
-                      ? toShortDate(avustushaku.valiselvitysdate)
-                      : "-"}
+                    <GoodBadDate
+                      goodDate={avustushaku["valiselvitykset-lahetetty"]}
+                      badDate={avustushaku.valiselvitysdate}
+                    />
                   </td>
                   <td>
-                    {avustushaku.loppuselvitysdate
-                      ? toShortDate(avustushaku.loppuselvitysdate)
-                      : "-"}
-                  </td>
-                  <td>
-                    {
-                      // TODO: get väliselvityskset date
-                    }
+                    <GoodBadDate
+                      goodDate={avustushaku["loppuselvitykset-lahetetty"]}
+                      badDate={avustushaku.loppuselvitysdate}
+                    />
                   </td>
                   <td>
                     {
@@ -308,7 +348,7 @@ export const NewHakuListing: React.FC<Props> = ({
               <td colSpan={8}>
                 Näytetään {filteredList.length}/{hakuList.length} hakua
               </td>
-              <td colSpan={8}>
+              <td colSpan={7}>
                 <a href="/api/avustushaku/export.xlsx">
                   Lataa excel ({hakuList.length} hakua)
                 </a>

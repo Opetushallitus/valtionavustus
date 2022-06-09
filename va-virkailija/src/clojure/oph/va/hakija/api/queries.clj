@@ -18,6 +18,7 @@
 (defquery get-avustushaku-roles "sql/hakija/avustushaku/get-roles.sql")
 (defquery get-avustushaku-role-by-avustushaku-id-and-person-oid "sql/hakija/avustushaku/get-role-by-avustushaku-id-and-person-oid.sql")
 (defquery list-matching-avustushaut-by-ids "sql/hakija/avustushaku/list-matching-by-ids.sql")
+(defquery get-avustushakus-for-listing "sql/hakija/avustushaku/get-avustushakus-for-listing.sql")
 
 (defquery list-hakemukset-by-avustushaku "sql/hakija/hakemus/list-by-avustushaku.sql")
 (defquery list-hakemukset-for-export-by-type-and-avustushaku "sql/hakija/hakemus/list-for-export-by-type-and-avustushaku.sql")

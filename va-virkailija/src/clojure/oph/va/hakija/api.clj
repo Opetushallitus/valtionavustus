@@ -4,7 +4,7 @@
         [clojure.pprint :only [pprint]])
   (:require [clojure.java.io :as io]
             [oph.soresu.common.config :refer [config]]
-            [oph.soresu.common.db :refer :all]
+            [oph.soresu.common.db :refer [exec exec-all execute! query with-transaction get-next-exception-or-original escape-like-pattern]]
             [oph.soresu.form.formhandler :as formhandler]
             [oph.va.jdbc.enums]
             [oph.va.hakija.api.queries :as hakija-queries]
@@ -501,3 +501,15 @@
 
 (defn list-matching-avustushaut-by-ids [ids]
   (exec hakija-queries/list-matching-avustushaut-by-ids {:ids ids}))
+
+(defn listing-avustushaku [avustushakudata]
+ (let [avustushaku (avustushaku-response-content avustushakudata)]
+   (assoc avustushaku
+          :paatokset-lahetetty (:paatokset_lahetetty avustushakudata)
+          :maksatukset-lahetetty (:maksatukset_lahetetty avustushakudata)
+          :valiselvitykset-lahetetty (:valiselvitykset_lahetetty avustushakudata)
+          :loppuselvitykset-lahetetty (:loppuselvitykset_lahetetty avustushakudata))))
+
+(defn get-avustushaut-for-haku-listing []
+  (let [data (exec hakija-queries/get-avustushakus-for-listing {})]
+    (map listing-avustushaku data)))

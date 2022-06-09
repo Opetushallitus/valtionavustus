@@ -52,6 +52,10 @@ export interface Avustushaku extends BaseAvustushaku {
   formContent?: Form;
   muutoshakukelpoisuus?: OnkoMuutoshakukelpoinenAvustushakuOk;
   allow_visibility_in_external_system: boolean;
+  "paatokset-lahetetty"?: string;
+  "maksatukset-lahetetty"?: string;
+  "valiselvitykset-lahetetty"?: string;
+  "loppuselvitykset-lahetetty"?: string;
 }
 
 export interface SelectedAvustushaku extends Avustushaku {
@@ -238,7 +242,7 @@ export default class HakujenHallintaController {
 
     const initialStateTemplate = {
       hakuList: Bacon.fromPromise<Avustushaku[]>(
-        HttpUtil.get("/api/avustushaku")
+        HttpUtil.get("/api/avustushaku/listing")
       ),
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
       environment: Bacon.fromPromise(HttpUtil.get("/environment")),
@@ -733,6 +737,10 @@ export default class HakujenHallintaController {
         "loppuselvitysForm",
         "payments",
         "muutoshakukelpoisuus",
+        "paatokset-lahetetty",
+        "maksatukset-lahetetty",
+        "valiselvitykset-lahetetty",
+        "loppuselvitykset-lahetetty",
       ])
     )
       .then(function (response) {
