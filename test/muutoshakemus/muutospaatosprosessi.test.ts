@@ -19,12 +19,10 @@ import {
   mkBrowser,
   navigate,
   randomString,
-  ratkaiseAvustushaku,
   selectVakioperusteluInFinnish,
   setPageErrorConsoleLogger,
   textContent,
   waitUntilMinEmails,
-  Email,
   createHakuFromEsimerkkihaku,
   defaultBudget,
   getHakemusTokenAndRegisterNumber,
@@ -104,20 +102,6 @@ describe("Muutospäätösprosessi", () => {
     jatkoaika: moment(new Date()).add(4, "months").add(6, "days").locale("fi"),
     jatkoaikaPerustelu: "Jaa ei kyllä kerkeekkään",
   };
-
-  describe("When haku has been published and hakemus has been submitted, but fields cannot be normalized", () => {
-    let emails: Email[];
-    beforeAll(async () => {
-      const { hakemusID } = await ratkaiseAvustushaku(page);
-      emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID);
-    });
-
-    it("Hakija does not get email to muutoshakemus", () => {
-      emails.forEach((email) => {
-        expect(email.formatted).not.toContain(`${HAKIJA_URL}/muutoshakemus`);
-      });
-    });
-  });
 
   describe("When muutoshakemus enabled haku has been published, a hakemus has been submitted, and päätös has been sent", () => {
     const haku = createRandomHakuValues();
