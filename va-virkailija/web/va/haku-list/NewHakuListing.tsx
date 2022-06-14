@@ -15,6 +15,123 @@ import { SelectedAvustushaku, Avustushaku } from "../HakujenHallintaController";
 import buttonStyles from "../style/Button.module.less";
 import styles from "./NewHakuListing.module.less";
 
+const SORTING_KEYS = [
+  "avustushaku",
+  "status",
+  "phase",
+  "hakuaika",
+  "paatos",
+  "maksatukset",
+  "valiselvitykset",
+  "loppuselvitykset",
+  "valmistelija",
+  "budjetti",
+  "muutoshakukelpoinen",
+  "kayttoaikaAlkaa",
+  "kayttoaikaPaattyy",
+  "jaossaOllutSumma",
+  "maksettuSumma",
+] as const;
+
+type SortOrder = "asc" | "desc";
+
+type SortKey = typeof SORTING_KEYS[number];
+
+type SorterMap = {
+  [k in SortKey]: (h: Avustushaku) => number | string;
+};
+interface SortState {
+  sortKey: SortKey | undefined;
+  sortOrder: SortOrder;
+}
+
+interface SortButtonProps {
+  sortKey: SortKey;
+  setSorting: (sortKey: SortKey) => void;
+  sortingState: SortState;
+  text: string;
+}
+
+const sortValueMap: SorterMap = {
+  avustushaku: (a) => a.content.name.fi,
+  status: (a) => StatusToFi[a.status],
+  phase: (a) => PhaseToFi[a.phase],
+  hakuaika: (a) => new Date(a.content.duration.end).getTime(),
+  paatos: (a) => a["paatokset-lahetetty"] ?? "zzz",
+  maksatukset: (a) => a["maksatukset-lahetetty"] ?? "zzz",
+  valiselvitykset: (a) =>
+    a["valiselvitykset-lahetetty"] ?? a.valiselvitysdate ?? "zzz",
+  loppuselvitykset: (a) =>
+    a["loppuselvitykset-lahetetty"] ?? a.loppuselvitysdate ?? "zzz",
+  valmistelija: () => "zzz", // TODO: implement with valmistaja
+  muutoshakukelpoinen: (a) => (a.muutoshakukelpoinen ? 1 : 0),
+  budjetti: () => "zzz", // TODO: implement with budjetti
+  kayttoaikaAlkaa: (a) => a["hankkeen-alkamispaiva"] ?? "zzz",
+  kayttoaikaPaattyy: (a) => a["hankkeen-paattymispaiva"] ?? "zzz",
+  jaossaOllutSumma: () => "zzz", // TODO: implement with jaossa ollut summa,
+  maksettuSumma: () => "zzz", // TODO: implement with maksettu summa
+};
+
+const avustushakuSorter =
+  ({ sortKey, sortOrder }: SortState) =>
+  (a: Avustushaku, b: Avustushaku): number => {
+    const sortOrderCoef = sortOrder === "asc" ? -1 : 1;
+    const sortResult =
+      sortKey && sortValueMap[sortKey](a) > sortValueMap[sortKey](b) ? 1 : -1;
+    return sortOrderCoef * sortResult;
+  };
+
+const SortButton = ({
+  sortKey,
+  text,
+  sortingState,
+  setSorting,
+}: SortButtonProps) => {
+  const isCurrentSortKey = sortKey === sortingState.sortKey;
+  const isDesc = isCurrentSortKey && sortingState.sortOrder === "desc";
+  const ariaLabel = `Järjestä ${text} ${
+    isDesc ? "nousevaan" : "laskevaan"
+  } järjestykseen`;
+  return (
+    <button
+      aria-label={ariaLabel}
+      className={buttonStyles.transparentButton}
+      onClick={() => setSorting(sortKey)}
+      data-test-id={`sort-button-${sortKey}`}
+    >
+      <svg
+        width="12px"
+        height="12px"
+        viewBox="0 0 8 8"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M4.86603 6.5C4.48113 7.16667 3.51887 7.16667 3.13397 6.5L0.535899 2C0.150999 1.33333 0.632123 0.499999 1.40192 0.499999L6.59808 0.5C7.36788 0.5 7.849 1.33333 7.4641 2L4.86603 6.5Z"
+          fill={isCurrentSortKey ? "#499CC7" : "#C1C1C1"}
+          transform={isDesc ? "scale(1, -1) translate(0, -8)" : ""}
+        />
+      </svg>
+    </button>
+  );
+};
+
+const useSorting = (): [SortState, (newSortKey?: SortKey) => void] => {
+  const [sortKey, setSortKey] = useState<SortKey | undefined>();
+  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+
+  const setSorting = (newSortKey?: SortKey) => {
+    if (sortKey === newSortKey) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(newSortKey);
+      setSortOrder("asc");
+    }
+  };
+
+  return [{ sortKey, sortOrder }, setSorting];
+};
+
 interface TableLabelProps {
   text: string;
   disabled?: boolean;
@@ -179,7 +296,8 @@ export const NewHakuListing: React.FC<Props> = ({
   selectedHaku,
   onClickHaku,
 }) => {
-  const filteredList = hakuList;
+  const [sortingState, setSorting] = useSorting();
+  const filteredList = [...hakuList].sort(avustushakuSorter(sortingState));
   return (
     <div className={styles.containerForModals}>
       <div className={styles.tableContainer}>
@@ -195,6 +313,12 @@ export const NewHakuListing: React.FC<Props> = ({
                   onChange={() => {}}
                   value={""}
                 />
+                <SortButton
+                  sortKey="avustushaku"
+                  setSorting={setSorting}
+                  sortingState={sortingState}
+                  text="avustushaku"
+                />
               </TableHeader>
               <TableHeader>
                 <StatusTableLabel
@@ -206,6 +330,12 @@ export const NewHakuListing: React.FC<Props> = ({
                   onUncheck={() => {}}
                   amountOfStatus={() => 0}
                   showDeleteButton={undefined}
+                />
+                <SortButton
+                  sortKey="status"
+                  setSorting={setSorting}
+                  sortingState={sortingState}
+                  text="avustushaun tila"
                 />
               </TableHeader>
               <TableHeader>
@@ -219,42 +349,120 @@ export const NewHakuListing: React.FC<Props> = ({
                   amountOfStatus={() => 0}
                   showDeleteButton={undefined}
                 />
+                <SortButton
+                  sortKey="phase"
+                  setSorting={setSorting}
+                  sortingState={sortingState}
+                  text="vaihe"
+                />
               </TableHeader>
               <TableHeader>
                 <TableLabel text="Hakuaika" disabled />
+                <SortButton
+                  sortKey="hakuaika"
+                  setSorting={setSorting}
+                  sortingState={sortingState}
+                  text="hakuaika"
+                />
               </TableHeader>
               <TableHeader>
                 <TableLabel text="Päätös" disabled />
+                <SortButton
+                  sortKey="paatos"
+                  setSorting={setSorting}
+                  sortingState={sortingState}
+                  text="päätökset"
+                />
               </TableHeader>
               <TableHeader>
                 <TableLabel text="Maksatus" disabled />
+                <SortButton
+                  sortKey="maksatukset"
+                  setSorting={setSorting}
+                  sortingState={sortingState}
+                  text="maksatukset"
+                />
               </TableHeader>
               <TableHeader>
                 <TableLabel text="Väliselvitys" disabled />
+                <SortButton
+                  sortKey="valiselvitykset"
+                  setSorting={setSorting}
+                  sortingState={sortingState}
+                  text="väliselvitykset"
+                />
               </TableHeader>
               <TableHeader>
                 <TableLabel text="Loppuselvitys" disabled />
+                <SortButton
+                  sortKey="loppuselvitykset"
+                  setSorting={setSorting}
+                  sortingState={sortingState}
+                  text="loppuselvitykset"
+                />
               </TableHeader>
               <TableHeader>
                 <TableLabel text="V.Valmistelija" disabled />
+                <SortButton
+                  sortKey="valmistelija"
+                  setSorting={setSorting}
+                  sortingState={sortingState}
+                  text="valmistelijat"
+                />
               </TableHeader>
               <TableHeader>
                 <TableLabel text="Muutoshakukelpoinen" disabled />
+                <SortButton
+                  sortKey="muutoshakukelpoinen"
+                  setSorting={setSorting}
+                  sortingState={sortingState}
+                  text="muutoshakukelpoisuus"
+                />
               </TableHeader>
               <TableHeader>
                 <TableLabel text="Budjetti" disabled />
+                <SortButton
+                  sortKey="budjetti"
+                  setSorting={setSorting}
+                  sortingState={sortingState}
+                  text="budjetit"
+                />
               </TableHeader>
               <TableHeader>
                 <TableLabel text="Käyttöaika alkaa" disabled />
+                <SortButton
+                  sortKey="kayttoaikaAlkaa"
+                  setSorting={setSorting}
+                  sortingState={sortingState}
+                  text="käyttöaika alkaa"
+                />
               </TableHeader>
               <TableHeader>
                 <TableLabel text="Käyttöaika päättyy" disabled />
+                <SortButton
+                  sortKey="kayttoaikaPaattyy"
+                  setSorting={setSorting}
+                  sortingState={sortingState}
+                  text="käyttöaika päättyy"
+                />
               </TableHeader>
               <TableHeader>
                 <TableLabel text="Jaossa ollut summa €" disabled />
+                <SortButton
+                  sortKey="jaossaOllutSumma"
+                  setSorting={setSorting}
+                  sortingState={sortingState}
+                  text="jaetut summat"
+                />
               </TableHeader>
               <TableHeader>
                 <TableLabel text="Maksettu summa €" disabled />
+                <SortButton
+                  sortKey="maksettuSumma"
+                  setSorting={setSorting}
+                  sortingState={sortingState}
+                  text="maksetut summat"
+                />
               </TableHeader>
             </tr>
           </thead>
