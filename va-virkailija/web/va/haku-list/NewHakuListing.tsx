@@ -71,7 +71,7 @@ const sortValueMap: SorterMap = {
   budjetti: () => "zzz", // TODO: implement with budjetti
   kayttoaikaAlkaa: (a) => a["hankkeen-alkamispaiva"] ?? "zzz",
   kayttoaikaPaattyy: (a) => a["hankkeen-paattymispaiva"] ?? "zzz",
-  jaossaOllutSumma: () => "zzz", // TODO: implement with jaossa ollut summa,
+  jaossaOllutSumma: (a) => a.content["total-grant-size"] ?? "zzz",
   maksettuSumma: () => "zzz", // TODO: implement with maksettu summa
 };
 
@@ -487,9 +487,7 @@ export const NewHakuListing: React.FC<Props> = ({
                       : "_"}
                   </td>
                   <td className={styles.alignRight}>
-                    {
-                      // TODO: get jaossa ollut summa €
-                    }
+                    {avustushaku.content["total-grant-size"] ?? "-"}
                   </td>
                   <td className={styles.alignRight}>
                     {
