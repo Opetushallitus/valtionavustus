@@ -329,6 +329,7 @@ export const NewHakuListing: React.FC<Props> = ({
               <tr>
                 <TableHeader sortKey="avustushaku" text="avustushaku">
                   <input
+                    className={styles.nameFilter}
                     placeholder="Avustushaku"
                     onChange={(e) => setFilter(e.target.value)}
                     value={filter}
