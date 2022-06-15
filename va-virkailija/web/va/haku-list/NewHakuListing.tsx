@@ -66,7 +66,7 @@ const sortValueMap: SorterMap = {
     a["valiselvitykset-lahetetty"] ?? a.valiselvitysdate ?? "zzz",
   loppuselvitykset: (a) =>
     a["loppuselvitykset-lahetetty"] ?? a.loppuselvitysdate ?? "zzz",
-  valmistelija: () => "zzz", // TODO: implement with valmistaja
+  valmistelija: (a) => a.vastuuvalmistelija ?? "zzz",
   muutoshakukelpoinen: (a) => (a.muutoshakukelpoinen ? 1 : 0),
   budjetti: () => "zzz", // TODO: implement with budjetti
   kayttoaikaAlkaa: (a) => a["hankkeen-alkamispaiva"] ?? "zzz",
@@ -453,9 +453,20 @@ export const NewHakuListing: React.FC<Props> = ({
                     />
                   </td>
                   <td>
-                    {
-                      // TODO: put V.Valmistelija here
-                    }
+                    <button
+                      className={buttonStyles.greyButton}
+                      title={
+                        avustushaku.vastuuvalmistelija ??
+                        "Ei vastuuvalmistelijaa"
+                      }
+                    >
+                      {avustushaku.vastuuvalmistelija
+                        ?.split(/\s+/)
+                        .reduce(
+                          (initials, name) => initials + name.slice(0, 1),
+                          ""
+                        ) ?? "-"}
+                    </button>
                   </td>
                   <td>{avustushaku.muutoshakukelpoinen ? "Kyllä" : "Ei"}</td>
                   <td>

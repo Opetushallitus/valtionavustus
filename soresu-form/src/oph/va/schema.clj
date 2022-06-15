@@ -143,6 +143,7 @@
 (s/defschema ListingAvustushaku
   "Avustushaku with extra details for avustushaku listing"
     (assoc AvustusHaku
+           :vastuuvalmistelija (s/maybe s/Str)
            :paatokset-lahetetty (s/maybe java.sql.Timestamp)
            :maksatukset-lahetetty (s/maybe java.sql.Timestamp)
            :valiselvitykset-lahetetty (s/maybe java.sql.Timestamp)

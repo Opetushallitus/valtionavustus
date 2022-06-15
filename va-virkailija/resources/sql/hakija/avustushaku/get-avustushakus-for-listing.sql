@@ -3,6 +3,14 @@ WITH avustushakus AS (
   FROM hakija.avustushaut
   WHERE status <> 'deleted'
 ),
+vastuuvalmistelijat AS (
+  SELECT
+    avustushaku AS avustushaku_id,
+    name AS vastuuvalmistelija
+  FROM avustushakus AS avustushaku
+  JOIN hakija.avustushaku_roles ON avustushaku = avustushaku_id
+  WHERE hakija.avustushaku_roles.role = 'vastuuvalmistelija'
+),
 paatokset_lahetetty AS (
   SELECT avustushaku_id, min(tapahtumaloki.created_at) AS paatokset_lahetetty
   FROM avustushakus avustushaku
@@ -36,11 +44,13 @@ loppuselvityspyynnot_lahetetty AS (
 )
 SELECT
   avustushaku.*,
+  vastuuvalmistelija,
   paatokset_lahetetty,
   maksatukset_lahetetty,
   valiselvitykset_lahetetty,
   loppuselvitykset_lahetetty
 FROM avustushakus avustushaku
+LEFT JOIN vastuuvalmistelijat USING (avustushaku_id)
 LEFT JOIN paatokset_lahetetty USING (avustushaku_id)
 LEFT JOIN maksatukset USING (avustushaku_id)
 LEFT JOIN valiselvityspyynnot_lahetetty USING (avustushaku_id)

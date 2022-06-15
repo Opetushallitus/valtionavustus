@@ -505,6 +505,7 @@
 (defn listing-avustushaku [avustushakudata]
  (let [avustushaku (avustushaku-response-content avustushakudata)]
    (assoc avustushaku
+          :vastuuvalmistelija (:vastuuvalmistelija avustushakudata)
           :paatokset-lahetetty (:paatokset_lahetetty avustushakudata)
           :maksatukset-lahetetty (:maksatukset_lahetetty avustushakudata)
           :valiselvitykset-lahetetty (:valiselvitykset_lahetetty avustushakudata)

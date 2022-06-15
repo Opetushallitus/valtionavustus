@@ -52,6 +52,7 @@ export interface Avustushaku extends BaseAvustushaku {
   formContent?: Form;
   muutoshakukelpoisuus?: OnkoMuutoshakukelpoinenAvustushakuOk;
   allow_visibility_in_external_system: boolean;
+  vastuuvalmistelija?: string;
   "paatokset-lahetetty"?: string;
   "maksatukset-lahetetty"?: string;
   "valiselvitykset-lahetetty"?: string;
