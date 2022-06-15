@@ -738,6 +738,7 @@ export default class HakujenHallintaController {
         "loppuselvitysForm",
         "payments",
         "muutoshakukelpoisuus",
+        "vastuuvalmistelija",
         "paatokset-lahetetty",
         "maksatukset-lahetetty",
         "valiselvitykset-lahetetty",
