@@ -315,10 +315,7 @@ export const NewHakuListing: React.FC<Props> = ({
   );
   const value = { sortingState: { sortOrder, sortKey }, setSorting };
   const filteredList = [...hakuList]
-    .filter(
-      (v) =>
-        hakuNameFilter.length == 0 || v.content.name.fi.includes(hakuNameFilter)
-    )
+    .filter((v) => v.content.name.fi.includes(hakuNameFilter))
     .sort(avustushakuSorter(value.sortingState));
   return (
     <div className={styles.containerForModals}>
