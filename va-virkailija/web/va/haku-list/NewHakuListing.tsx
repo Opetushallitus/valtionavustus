@@ -301,7 +301,7 @@ export const NewHakuListing: React.FC<Props> = ({
 }) => {
   const [sortKey, setSortKey] = useState<SortKey | undefined>();
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
-  const [filter, setFilter] = useState<string>("");
+  const [hakuNameFilter, setHakuNameFilter] = useState<string>("");
   const setSorting = useCallback(
     (newSortKey?: SortKey) => {
       if (sortKey === newSortKey) {
@@ -315,7 +315,10 @@ export const NewHakuListing: React.FC<Props> = ({
   );
   const value = { sortingState: { sortOrder, sortKey }, setSorting };
   const filteredList = [...hakuList]
-    .filter((v) => filter.length == 0 || v.content.name.fi.includes(filter))
+    .filter(
+      (v) =>
+        hakuNameFilter.length == 0 || v.content.name.fi.includes(hakuNameFilter)
+    )
     .sort(avustushakuSorter(value.sortingState));
   return (
     <div className={styles.containerForModals}>
@@ -331,8 +334,8 @@ export const NewHakuListing: React.FC<Props> = ({
                   <input
                     className={styles.nameFilter}
                     placeholder="Avustushaku"
-                    onChange={(e) => setFilter(e.target.value)}
-                    value={filter}
+                    onChange={(e) => setHakuNameFilter(e.target.value)}
+                    value={hakuNameFilter}
                   />
                 </TableHeader>
                 <TableHeader sortKey="status" text="avustushaun tila">
