@@ -315,7 +315,7 @@ export const NewHakuListing: React.FC<Props> = ({
   );
   const value = { sortingState: { sortOrder, sortKey }, setSorting };
   const filteredList = [...hakuList]
-    .filter((v) => v.content.name.fi.includes(hakuNameFilter))
+    .filter(hakuNameContains(hakuNameFilter))
     .sort(avustushakuSorter(value.sortingState));
   return (
     <div className={styles.containerForModals}>
@@ -551,3 +551,7 @@ const PhaseToColor = {
 const PhasePill: React.FC<{ phase: AvustushakuPhase }> = ({ phase }) => (
   <Pill color={PhaseToColor[phase]} text={PhaseToFi[phase]} />
 );
+
+const hakuNameContains =
+  (s: string) => (haku: Avustushaku, _i: number, _a: Avustushaku[]) =>
+    haku.content.name.fi.includes(s);
