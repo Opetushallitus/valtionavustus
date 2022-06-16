@@ -503,13 +503,14 @@
   (exec hakija-queries/list-matching-avustushaut-by-ids {:ids ids}))
 
 (defn listing-avustushaku [avustushakudata]
- (let [avustushaku (avustushaku-response-content avustushakudata)]
-   (assoc avustushaku
-          :vastuuvalmistelija (:vastuuvalmistelija avustushakudata)
-          :paatokset-lahetetty (:paatokset_lahetetty avustushakudata)
-          :maksatukset-lahetetty (:maksatukset_lahetetty avustushakudata)
-          :valiselvitykset-lahetetty (:valiselvitykset_lahetetty avustushakudata)
-          :loppuselvitykset-lahetetty (:loppuselvitykset_lahetetty avustushakudata))))
+  (let [avustushaku (avustushaku-response-content avustushakudata)]
+    (assoc avustushaku
+           :vastuuvalmistelija (:vastuuvalmistelija avustushakudata)
+           :paatokset-lahetetty (:paatokset_lahetetty avustushakudata)
+           :maksatukset-lahetetty (:maksatukset_lahetetty avustushakudata)
+           :valiselvitykset-lahetetty (:valiselvitykset_lahetetty avustushakudata)
+           :loppuselvitykset-lahetetty (:loppuselvitykset_lahetetty avustushakudata)
+           :maksatukset-summa (:maksatukset_summa avustushakudata))))
 
 (defn get-avustushaut-for-haku-listing []
   (let [data (exec hakija-queries/get-avustushakus-for-listing {})]

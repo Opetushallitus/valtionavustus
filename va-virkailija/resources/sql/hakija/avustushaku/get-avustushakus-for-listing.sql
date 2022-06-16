@@ -21,7 +21,8 @@ paatokset_lahetetty AS (
 maksatukset AS (
   SELECT
     avustushaku.id AS avustushaku_id,
-    min(hakemus_version.created_at) AS maksatukset_lahetetty
+    min(hakemus_version.created_at) AS maksatukset_lahetetty,
+    coalesce(sum(payment_sum), 0) AS maksatukset_summa
   FROM avustushakus avustushaku
   JOIN hakija.hakemukset hakemus_version ON hakemus_version.avustushaku = avustushaku.id
   JOIN virkailija.payments ON hakemus_version.id = payments.application_id AND hakemus_version.version = payments.application_version
@@ -48,7 +49,8 @@ SELECT
   paatokset_lahetetty,
   maksatukset_lahetetty,
   valiselvitykset_lahetetty,
-  loppuselvitykset_lahetetty
+  loppuselvitykset_lahetetty,
+  maksatukset_summa
 FROM avustushakus avustushaku
 LEFT JOIN vastuuvalmistelijat USING (avustushaku_id)
 LEFT JOIN paatokset_lahetetty USING (avustushaku_id)
