@@ -203,15 +203,12 @@ Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid 
         });
       });
 
-      await test.step(
-        "apply for jatkoaika 100 years in the future",
-        async () => {
-          await applyAndAcceptJatkoaika({
-            jatkoaika: moment().add(100, "years"),
-            jatkoaikaPerustelu: "Javisst ska hen leva uti hundrade år!",
-          });
-        }
-      );
+      await test.step("apply for jatkoaika 100 years in the future", async () => {
+        await applyAndAcceptJatkoaika({
+          jatkoaika: moment().add(100, "years"),
+          jatkoaikaPerustelu: "Javisst ska hen leva uti hundrade år!",
+        });
+      });
 
       await test.step("check reminder email is not sent", async () => {
         const emailsBefore = await getLoppuselvitysPalauttamattaEmails(

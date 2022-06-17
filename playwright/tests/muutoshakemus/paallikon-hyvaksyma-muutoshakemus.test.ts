@@ -76,15 +76,12 @@ budjettimuutoshakemusTest.extend<
         await hakijaMuutoshakemusPaatosPage.lisatietoja();
       expect(hakemusLisatietoja).toContain(user);
     });
-    await test.step(
-      "clicking link in asia section navigates to muutoshakemus",
-      async () => {
-        await hakijaMuutoshakemusPaatosPage.clickLinkToMuutoshakemus();
-        const urlRegex = new RegExp(
-          `${HAKIJA_URL}/muutoshakemus\\?user-key=.*&avustushaku-id=${avustushakuID}&lang=fi`
-        );
-        expect(page.url()).toMatch(urlRegex);
-      }
-    );
+    await test.step("clicking link in asia section navigates to muutoshakemus", async () => {
+      await hakijaMuutoshakemusPaatosPage.clickLinkToMuutoshakemus();
+      const urlRegex = new RegExp(
+        `${HAKIJA_URL}/muutoshakemus\\?user-key=.*&avustushaku-id=${avustushakuID}&lang=fi`
+      );
+      expect(page.url()).toMatch(urlRegex);
+    });
   }
 );

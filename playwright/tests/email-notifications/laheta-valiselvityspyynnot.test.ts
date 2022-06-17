@@ -87,23 +87,20 @@ väliselvitysTest(
   }) => {
     expectToBeDefined(closedAvustushaku);
 
-    await test.step(
-      "ensure notifications are not send before paatos has been send",
-      async () => {
-        const valiselvitysdate = moment().add(5, "months").format("DD.MM.YYYY");
-        await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
+    await test.step("ensure notifications are not send before paatos has been send", async () => {
+      const valiselvitysdate = moment().add(5, "months").format("DD.MM.YYYY");
+      await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
 
-        const emailsBefore = await getLahetaValiselvityspyynnotEmails(
-          avustushakuID
-        );
-        await sendLahetaValiselvityspyynnotNotifications(page);
+      const emailsBefore = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
+      await sendLahetaValiselvityspyynnotNotifications(page);
 
-        const emailsAfter = await getLahetaValiselvityspyynnotEmails(
-          avustushakuID
-        );
-        expect(emailsAfter).toEqual(emailsBefore);
-      }
-    );
+      const emailsAfter = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
+      expect(emailsAfter).toEqual(emailsBefore);
+    });
 
     await test.step("send paatos", async () => {
       const hakemustenArviointiPage = new HakemustenArviointiPage(page);

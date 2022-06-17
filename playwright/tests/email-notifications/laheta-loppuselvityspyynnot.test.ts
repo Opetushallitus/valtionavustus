@@ -66,30 +66,27 @@ async function sendLoppuselvitysEmails(page: Page, avustushakuID: number) {
 }
 
 test.describe("loppuselvitys", () => {
-  test.describe(
-    "notifications are sent repeatedly until loppuselvityspyynnöt have been sent",
-    () => {
-      const loppuselvitysDeadline = moment()
-        .add(8, "months")
-        .format("DD.MM.YYYY");
-      notifyTest.use({ loppuselvitysDate: loppuselvitysDeadline });
-      notifyTest(
-        "loppuselvitys notification is sent repeatedly",
-        async ({ page, loppuselvitysDateSet, avustushakuID }) => {
-          expect(loppuselvitysDateSet);
-          await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(
-            page,
-            avustushakuID
-          );
-          await sendLoppuselvitysEmails(page, avustushakuID);
-          await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(
-            page,
-            avustushakuID
-          );
-        }
-      );
-    }
-  );
+  test.describe("notifications are sent repeatedly until loppuselvityspyynnöt have been sent", () => {
+    const loppuselvitysDeadline = moment()
+      .add(8, "months")
+      .format("DD.MM.YYYY");
+    notifyTest.use({ loppuselvitysDate: loppuselvitysDeadline });
+    notifyTest(
+      "loppuselvitys notification is sent repeatedly",
+      async ({ page, loppuselvitysDateSet, avustushakuID }) => {
+        expect(loppuselvitysDateSet);
+        await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(
+          page,
+          avustushakuID
+        );
+        await sendLoppuselvitysEmails(page, avustushakuID);
+        await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(
+          page,
+          avustushakuID
+        );
+      }
+    );
+  });
 
   test.describe("when loppuselvitys deadline is in the past", () => {
     notifyTest.use({
@@ -160,18 +157,15 @@ Huomatkaa, että valtionavustusjärjestelmä lähettää automaattisesti muistut
 Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
 `);
         });
-        await test.step(
-          "notification is not sent again if loppupäätös is sent",
-          async () => {
-            await sendLoppuselvitysEmails(page, avustushakuID);
-            await sendLahetaLoppuselvityspyynnotNotifications(page);
-            const emailsAfterSendingLoppuselvitys =
-              await getLahetaLoppuselvityspyynnotEmails(avustushakuID);
-            expect(emailsAfter.length).toEqual(
-              emailsAfterSendingLoppuselvitys.length
-            );
-          }
-        );
+        await test.step("notification is not sent again if loppupäätös is sent", async () => {
+          await sendLoppuselvitysEmails(page, avustushakuID);
+          await sendLahetaLoppuselvityspyynnotNotifications(page);
+          const emailsAfterSendingLoppuselvitys =
+            await getLahetaLoppuselvityspyynnotEmails(avustushakuID);
+          expect(emailsAfter.length).toEqual(
+            emailsAfterSendingLoppuselvitys.length
+          );
+        });
       }
     );
   });
@@ -196,15 +190,12 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
           await hakujenHallinta.waitForSave();
         });
 
-        await test.step(
-          "make sure notifications are not send before päätös",
-          async () => {
-            await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(
-              page,
-              avustushakuID
-            );
-          }
-        );
+        await test.step("make sure notifications are not send before päätös", async () => {
+          await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(
+            page,
+            avustushakuID
+          );
+        });
 
         await test.step("send päätös", async () => {
           const hakemustenArviointiPage = new HakemustenArviointiPage(page);

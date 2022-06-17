@@ -27,70 +27,53 @@ test.describe("valiselvitys-palauttamatta", () => {
     }) => {
       expectToBeDefined(väliselvityspyyntöSent);
 
-      await test.step(
-        "is not sent for hakemus with valiselvitys deadline 15 or more days in the future",
-        async () => {
-          const valiselvitysdate = moment()
-            .add(15, "days")
-            .format("DD.MM.YYYY");
-          await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
+      await test.step("is not sent for hakemus with valiselvitys deadline 15 or more days in the future", async () => {
+        const valiselvitysdate = moment().add(15, "days").format("DD.MM.YYYY");
+        await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
 
-          const emailsBefore = await getValiselvitysPalauttamattaEmails(
-            hakemusID
-          );
-          await sendValiselvitysPalauttamattaNotifications(page);
-          const emailsAfter = await getValiselvitysPalauttamattaEmails(
-            hakemusID
-          );
-          expect(emailsAfter).toEqual(emailsBefore);
-        }
-      );
+        const emailsBefore = await getValiselvitysPalauttamattaEmails(
+          hakemusID
+        );
+        await sendValiselvitysPalauttamattaNotifications(page);
+        const emailsAfter = await getValiselvitysPalauttamattaEmails(hakemusID);
+        expect(emailsAfter).toEqual(emailsBefore);
+      });
 
-      await test.step(
-        "is not sent for hakemus with valiselvitys deadline in the past",
-        async () => {
-          const valiselvitysdate = moment()
-            .subtract(1, "days")
-            .format("DD.MM.YYYY");
-          await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
+      await test.step("is not sent for hakemus with valiselvitys deadline in the past", async () => {
+        const valiselvitysdate = moment()
+          .subtract(1, "days")
+          .format("DD.MM.YYYY");
+        await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
 
-          const emailsBefore = await getValiselvitysPalauttamattaEmails(
-            hakemusID
-          );
-          await sendValiselvitysPalauttamattaNotifications(page);
-          const emailsAfter = await getValiselvitysPalauttamattaEmails(
-            hakemusID
-          );
-          expect(emailsAfter).toEqual(emailsBefore);
-        }
-      );
+        const emailsBefore = await getValiselvitysPalauttamattaEmails(
+          hakemusID
+        );
+        await sendValiselvitysPalauttamattaNotifications(page);
+        const emailsAfter = await getValiselvitysPalauttamattaEmails(hakemusID);
+        expect(emailsAfter).toEqual(emailsBefore);
+      });
 
-      await test.step(
-        "is sent for hakemus with valiselvitys deadline in next 14 days",
-        async () => {
-          const valiselvitysdate = moment()
-            .add(14, "days")
-            .format("DD.MM.YYYY");
-          await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
+      await test.step("is sent for hakemus with valiselvitys deadline in next 14 days", async () => {
+        const valiselvitysdate = moment().add(14, "days").format("DD.MM.YYYY");
+        await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
 
-          await sendValiselvitysPalauttamattaNotifications(page);
-          const email = lastOrFail(
-            await getValiselvitysPalauttamattaEmails(hakemusID)
-          );
-          expect(email["to-address"]).toHaveLength(1);
-          expect(email["to-address"]).toContain("erkki.esimerkki@example.com");
-          expect(email.subject).toContain(
-            "Muistutus väliselvityksen palauttamisesta"
-          );
-          expect(email["formatted"]).toContain(`Hyvä vastaanottaja,
+        await sendValiselvitysPalauttamattaNotifications(page);
+        const email = lastOrFail(
+          await getValiselvitysPalauttamattaEmails(hakemusID)
+        );
+        expect(email["to-address"]).toHaveLength(1);
+        expect(email["to-address"]).toContain("erkki.esimerkki@example.com");
+        expect(email.subject).toContain(
+          "Muistutus väliselvityksen palauttamisesta"
+        );
+        expect(email["formatted"]).toContain(`Hyvä vastaanottaja,
 
 Väliselvityksenne avustuksessa ${hakuProps.avustushakuName} on palauttamatta.
 
 Muistattehan lähettää väliselvityksen käsiteltäväksi määräaikaan ${valiselvitysdate} mennessä. Linkki selvityslomakkeellenne: ${HAKIJA_URL}/avustushaku/${avustushakuID}/valiselvitys?hakemus=${userKey}&lang=fi
 
 Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi`);
-        }
-      );
+      });
 
       await test.step("is sent only once", async () => {
         const emailsBefore = await getValiselvitysPalauttamattaEmails(

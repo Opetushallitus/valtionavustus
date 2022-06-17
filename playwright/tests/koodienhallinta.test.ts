@@ -222,53 +222,47 @@ test.describe("Koodienhallinta", () => {
         );
       });
 
-      await test.step(
-        "When virkailija makes the code visible again",
-        async () => {
-          await koodienhallintaPage.navigate();
-          await koodienhallintaPage.clickCodeVisibilityButton(
-            "2020",
+      await test.step("When virkailija makes the code visible again", async () => {
+        await koodienhallintaPage.navigate();
+        await koodienhallintaPage.clickCodeVisibilityButton(
+          "2020",
+          codeName,
+          codeValues.operationalUnit,
+          true
+        );
+
+        await test.step("the code is visible on koodien hallinta page", async () => {
+          await koodienhallintaPage.assertCodeIsVisible(
+            codeYear,
             codeName,
-            codeValues.operationalUnit,
-            true
+            codeValues.operationalUnit
           );
+        });
 
-          await test.step(
-            "the code is visible on koodien hallinta page",
-            async () => {
-              await koodienhallintaPage.assertCodeIsVisible(
-                codeYear,
-                codeName,
-                codeValues.operationalUnit
+        await test.step("the code is not displayed as gray", async () => {
+          const hakujenHallintaPage =
+            await koodienhallintaPage.navigateToHakujenHallintaPage();
+
+          await test.step("in haku editor dropdown placeholder", async () => {
+            const styles =
+              await hakujenHallintaPage.getInputPlaceholderCodeStyles(
+                "operational-unit"
               );
-            }
-          );
-
-          await test.step("the code is not displayed as gray", async () => {
-            const hakujenHallintaPage =
-              await koodienhallintaPage.navigateToHakujenHallintaPage();
-
-            await test.step("in haku editor dropdown placeholder", async () => {
-              const styles =
-                await hakujenHallintaPage.getInputPlaceholderCodeStyles(
-                  "operational-unit"
-                );
-              expect(styles.color).not.toEqual(colorDarkGray);
-            });
-
-            await test.step("in haku editor dropdown options", async () => {
-              await hakujenHallintaPage.fillCode(
-                "operational-unit",
-                codeValues.operationalUnit
-              );
-              const styles = await hakujenHallintaPage.getInputOptionCodeStyles(
-                codeValues.operationalUnit
-              );
-              expect(styles.color).not.toEqual(colorDarkGray);
-            });
+            expect(styles.color).not.toEqual(colorDarkGray);
           });
-        }
-      );
+
+          await test.step("in haku editor dropdown options", async () => {
+            await hakujenHallintaPage.fillCode(
+              "operational-unit",
+              codeValues.operationalUnit
+            );
+            const styles = await hakujenHallintaPage.getInputOptionCodeStyles(
+              codeValues.operationalUnit
+            );
+            expect(styles.color).not.toEqual(colorDarkGray);
+          });
+        });
+      });
     });
   });
 });

@@ -34,25 +34,22 @@ muutoshakemusTest(
       "_ valtionavustus"
     );
 
-    await test.step(
-      "can be set as arvioija in addition to valmistelija",
-      async () => {
-        await hakemustenArviointiPage.selectArvioijaForHakemus(
-          hakemusId,
-          "_ valtionavustus"
-        );
-        await hakemustenArviointiPage.openUkotusModal(hakemusId);
-        await page
-          .locator(`[aria-label="Poista _ valtionavustus arvioijan roolista"]`)
-          .waitFor();
-        await page
-          .locator(
-            `[aria-label="Poista _ valtionavustus valmistelijan roolista"]`
-          )
-          .waitFor();
-        await hakemustenArviointiPage.closeUkotusModal();
-      }
-    );
+    await test.step("can be set as arvioija in addition to valmistelija", async () => {
+      await hakemustenArviointiPage.selectArvioijaForHakemus(
+        hakemusId,
+        "_ valtionavustus"
+      );
+      await hakemustenArviointiPage.openUkotusModal(hakemusId);
+      await page
+        .locator(`[aria-label="Poista _ valtionavustus arvioijan roolista"]`)
+        .waitFor();
+      await page
+        .locator(
+          `[aria-label="Poista _ valtionavustus valmistelijan roolista"]`
+        )
+        .waitFor();
+      await hakemustenArviointiPage.closeUkotusModal();
+    });
 
     await test.step("can set arvio", async () => {
       await hakemustenArviointiPage.setSelectionCriteriaStars(1, 4);

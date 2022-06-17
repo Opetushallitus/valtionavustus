@@ -112,20 +112,17 @@ test("Search page", async ({
     await expect(searchPage.hakemusResults).toHaveCount(3);
   });
 
-  await test.step(
-    "sorts current results according to the created-at timestamps",
-    async () => {
-      await expect(searchPage.hakemusResults.locator("h2")).toContainText([
-        `3/${hakuProps.registerNumber} - Hakusivufirma oy`,
-        `2/${hakuProps.registerNumber} - Hakusivufirma oy`,
-        `1/${hakuProps.registerNumber} - Akaan kaupunki`,
-      ]);
-      await searchPage.setOrder("asc");
-      await expect(searchPage.hakemusResults.locator("h2")).toContainText([
-        `1/${hakuProps.registerNumber} - Akaan kaupunki`,
-        `2/${hakuProps.registerNumber} - Hakusivufirma oy`,
-        `3/${hakuProps.registerNumber} - Hakusivufirma oy`,
-      ]);
-    }
-  );
+  await test.step("sorts current results according to the created-at timestamps", async () => {
+    await expect(searchPage.hakemusResults.locator("h2")).toContainText([
+      `3/${hakuProps.registerNumber} - Hakusivufirma oy`,
+      `2/${hakuProps.registerNumber} - Hakusivufirma oy`,
+      `1/${hakuProps.registerNumber} - Akaan kaupunki`,
+    ]);
+    await searchPage.setOrder("asc");
+    await expect(searchPage.hakemusResults.locator("h2")).toContainText([
+      `1/${hakuProps.registerNumber} - Akaan kaupunki`,
+      `2/${hakuProps.registerNumber} - Hakusivufirma oy`,
+      `3/${hakuProps.registerNumber} - Hakusivufirma oy`,
+    ]);
+  });
 });

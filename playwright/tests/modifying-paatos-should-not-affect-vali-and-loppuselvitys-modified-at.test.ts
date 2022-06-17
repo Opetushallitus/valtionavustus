@@ -34,23 +34,17 @@ test("Modifying päätös should not affect vali- and loppuselvitys updated at t
     expect(newPaatosTimestamp).not.toEqual(originalPaatosTimestamp);
   });
 
-  await test.step(
-    "loppuselvitys modified timestamp has not changed",
-    async () => {
-      await hakujenHallinta.switchToLoppuselvitysTab();
-      const newLoppuselvitysTimestamp =
-        await hakujenHallinta.loppuselvitysUpdatedAt.textContent();
-      expect(newLoppuselvitysTimestamp).toEqual(originalLoppuselvitysTimestamp);
-    }
-  );
+  await test.step("loppuselvitys modified timestamp has not changed", async () => {
+    await hakujenHallinta.switchToLoppuselvitysTab();
+    const newLoppuselvitysTimestamp =
+      await hakujenHallinta.loppuselvitysUpdatedAt.textContent();
+    expect(newLoppuselvitysTimestamp).toEqual(originalLoppuselvitysTimestamp);
+  });
 
-  await test.step(
-    "väliselvitys modified timestamp has not changed",
-    async () => {
-      await hakujenHallinta.switchToValiselvitysTab();
-      const newValiselvitysTimestamp =
-        await hakujenHallinta.valiselvitysUpdatedAt.textContent();
-      expect(newValiselvitysTimestamp).toEqual(originalValiselvitysTimestamp);
-    }
-  );
+  await test.step("väliselvitys modified timestamp has not changed", async () => {
+    await hakujenHallinta.switchToValiselvitysTab();
+    const newValiselvitysTimestamp =
+      await hakujenHallinta.valiselvitysUpdatedAt.textContent();
+    expect(newValiselvitysTimestamp).toEqual(originalValiselvitysTimestamp);
+  });
 });

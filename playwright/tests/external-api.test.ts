@@ -32,27 +32,21 @@ test("external api", async ({
   const hakujenHallintaPage = new HakujenHallintaPage(page);
   const hakemustenArviointiPage = new HakemustenArviointiPage(page);
 
-  await test.step(
-    "returns avustushaku when external api is allowed",
-    async () => {
-      const avustushaut = await getAvustushautForYear(
-        finalAvustushakuEndDate.get("year")
-      );
-      const avustushaku = avustushaut.find((a) => a.id === avustushakuID);
-      expect(avustushaku).toBeDefined();
-      expect(avustushaku?.["hankkeen-alkamispaiva"]).toBe("1969-04-20");
-      expect(avustushaku?.["hankkeen-paattymispaiva"]).toBe("4200-04-20");
-    }
-  );
+  await test.step("returns avustushaku when external api is allowed", async () => {
+    const avustushaut = await getAvustushautForYear(
+      finalAvustushakuEndDate.get("year")
+    );
+    const avustushaku = avustushaut.find((a) => a.id === avustushakuID);
+    expect(avustushaku).toBeDefined();
+    expect(avustushaku?.["hankkeen-alkamispaiva"]).toBe("1969-04-20");
+    expect(avustushaku?.["hankkeen-paattymispaiva"]).toBe("4200-04-20");
+  });
 
-  await test.step(
-    "does not return hakemus when external api is disallowed",
-    async () => {
-      const hakemukset = await getHakemuksetForAvustushaku(avustushakuID);
-      const hakemus = hakemukset.find((h) => h.id === hakemusID);
-      expect(hakemus).toBeUndefined();
-    }
-  );
+  await test.step("does not return hakemus when external api is disallowed", async () => {
+    const hakemukset = await getHakemuksetForAvustushaku(avustushakuID);
+    const hakemus = hakemukset.find((h) => h.id === hakemusID);
+    expect(hakemus).toBeUndefined();
+  });
 
   await test.step("allow hakemus for external api", async () => {
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(
@@ -86,22 +80,16 @@ test("external api", async ({
     await hakujenHallintaPage.allowExternalApi(false);
   });
 
-  await test.step(
-    "does not return avustushaku when external api is disallowed",
-    async () => {
-      const avustushaut = await getAvustushautForYear(
-        finalAvustushakuEndDate.get("year")
-      );
-      const avustushaku = avustushaut.find((a) => a.id === avustushakuID);
-      expect(avustushaku).toBeUndefined();
-    }
-  );
+  await test.step("does not return avustushaku when external api is disallowed", async () => {
+    const avustushaut = await getAvustushautForYear(
+      finalAvustushakuEndDate.get("year")
+    );
+    const avustushaku = avustushaut.find((a) => a.id === avustushakuID);
+    expect(avustushaku).toBeUndefined();
+  });
 
-  await test.step(
-    "does not return hakemuses when avustushaku is disallowed from external api",
-    async () => {
-      const hakemukset = await getHakemuksetForAvustushaku(avustushakuID);
-      expect(hakemukset).toEqual([]);
-    }
-  );
+  await test.step("does not return hakemuses when avustushaku is disallowed from external api", async () => {
+    const hakemukset = await getHakemuksetForAvustushaku(avustushakuID);
+    expect(hakemukset).toEqual([]);
+  });
 });
