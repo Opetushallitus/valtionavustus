@@ -11,10 +11,12 @@ interface DateInputProps {
   onChange: (id: string, date: Moment) => void;
   allowEmpty: boolean;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 export const DateInput = (props: DateInputProps) => {
-  const { id, defaultValue, onChange, allowEmpty, placeholder } = props;
+  const { id, defaultValue, onChange, allowEmpty, placeholder, disabled } =
+    props;
   const [isValid, setIsValid] = useState(
     defaultValue !== undefined || allowEmpty
   );
@@ -42,6 +44,7 @@ export const DateInput = (props: DateInputProps) => {
       value={defaultValue}
       placeholder={placeholder}
       containerClassName={getClassNames()}
+      disabled={disabled}
     />
   );
 };

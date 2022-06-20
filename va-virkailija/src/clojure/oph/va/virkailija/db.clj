@@ -623,3 +623,29 @@
   (execute! "UPDATE hakija.hakemukset
              SET submitted_version = version
              WHERE id = ? AND version_closed is null" [hakemus-id]))
+
+(defn get-raportointivelvoitteet [avustushaku-id]
+  (query "SELECT id, raportointilaji, asha_tunnus, maaraaika, lisatiedot
+          FROM raportointivelvoite
+          WHERE avustushaku_id = ?" [avustushaku-id]))
+
+(defn insert-raportointivelvoite [avustushaku-id velvoite]
+  (let [id (query "INSERT INTO raportointivelvoite (avustushaku_id, raportointilaji, asha_tunnus, maaraaika, lisatiedot)
+                   VALUES (?, ?, ?, ?, ?)
+                   RETURNING id"
+                   [avustushaku-id (:raportointilaji velvoite) (:asha-tunnus velvoite) (:maaraaika velvoite) (:lisatiedot velvoite)])]
+    (assoc velvoite :id (:id (first id)))))
+
+(defn update-raportointivelvoite [avustushaku-id velvoite]
+  (execute! "UPDATE raportointivelvoite
+             SET raportointilaji = ?,
+                 asha_tunnus = ?,
+                 maaraaika = ?,
+                 lisatiedot = ?
+             WHERE avustushaku_id = ? AND id = ?"
+             [(:raportointilaji velvoite) (:asha-tunnus velvoite) (:maaraaika velvoite) (:lisatiedot velvoite) avustushaku-id (:id velvoite)]))
+
+(defn delete-raportointivelvoite [avustushaku-id raportointivelvoite-id]
+  (execute! "DELETE FROM raportointivelvoite
+             WHERE avustushaku_id = ? AND id = ?"
+             [avustushaku-id raportointivelvoite-id]))

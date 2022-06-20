@@ -260,6 +260,39 @@
                         (hakija-api/delete-avustushaku-role avustushaku-id role-id)
                         (http/ok {:id role-id})))
 
+
+(defn- get-avustushaku-raportointivelvoitteet []
+  (compojure-api/GET "/:avustushaku-id/raportointivelvoitteet" []
+                     :path-params [avustushaku-id :- Long]
+                     :return [virkailija-schema/Raportointivelvoite]
+                     :summary "List raportointivelvoitteet for given avustushaku"
+                     (http/ok (virkailija-db/get-raportointivelvoitteet avustushaku-id))))
+
+(defn- put-avustushaku-raportointivelvoite []
+  (compojure-api/PUT "/:avustushaku-id/raportointivelvoite" []
+                     :path-params [avustushaku-id :- Long]
+                     :body [raportointivelvoite (compojure-api/describe virkailija-schema/RaportointivelvoiteData "New velvoite")]
+                     :return virkailija-schema/Raportointivelvoite
+                     :summary "Create new raportointivelvoite for avustushaku"
+                     (http/ok (virkailija-db/insert-raportointivelvoite avustushaku-id raportointivelvoite))))
+
+(defn- post-avustushaku-raportointivelvoite []
+  (compojure-api/POST "/:avustushaku-id/raportointivelvoite/:raportointivelvoite-id" []
+                      :path-params [avustushaku-id :- Long raportointivelvoite-id :- Long]
+                      :body [raportointivelvoite (compojure-api/describe virkailija-schema/Raportointivelvoite "Changed velvoite")]
+                      :return virkailija-schema/Raportointivelvoite
+                      :summary "Update avustushaku raportointivelvoite"
+                      (virkailija-db/update-raportointivelvoite avustushaku-id raportointivelvoite)
+                      (http/ok raportointivelvoite)))
+
+(defn- del-avustushaku-raportointivelvoite []
+  (compojure-api/DELETE "/:avustushaku-id/raportointivelvoite/:raportointivelvoite-id" []
+                        :path-params [avustushaku-id :- Long raportointivelvoite-id :- Long]
+                        :return {:id Long}
+                        :summary "Delete avustushaku raportointivelvoite"
+                        (virkailija-db/delete-raportointivelvoite avustushaku-id raportointivelvoite-id)
+                        (http/ok {:id raportointivelvoite-id})))
+
 (defn- get-avustushaku-privileges []
   (compojure-api/GET "/:avustushaku-id/privileges" request
                      :path-params [avustushaku-id :- Long]
@@ -520,6 +553,10 @@
   (put-avustushaku-role)
   (post-avustushaku-role)
   (del-avustushaku-role)
+  (get-avustushaku-raportointivelvoitteet)
+  (put-avustushaku-raportointivelvoite)
+  (post-avustushaku-raportointivelvoite)
+  (del-avustushaku-raportointivelvoite)
   (get-avustushaku-privileges)
   (get-avustushaku-form)
   (post-avustushaku-form)

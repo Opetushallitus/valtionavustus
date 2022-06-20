@@ -496,3 +496,13 @@
    :project-end (s/maybe s/Str)
    :budget-granted (s/maybe s/Int)
    :costs-granted (s/maybe s/Int)})
+
+(s/defschema RaportointivelvoiteData
+  {:raportointilaji s/Str
+   :maaraaika java.time.LocalDate
+   :asha-tunnus s/Str
+   :lisatiedot (s/maybe s/Str)})
+
+(s/defschema Raportointivelvoite
+  (assoc RaportointivelvoiteData
+         :id s/Int))

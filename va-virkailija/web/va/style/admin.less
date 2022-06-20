@@ -85,6 +85,11 @@ table.translation {
 }
 
 #haku-edit {
+  .spacer {
+    border-top: 1px solid #d9d9d9;
+    border-left: 0;
+    margin: 2rem 0;
+  }
 
   #haku-edit-header {
     margin-top: 20px;
@@ -388,6 +393,74 @@ table.translation {
     color: @dark-gray;
     border-width: 1px;
     border-style: dotted;
+  }
+
+  .raportointivelvoitteet {
+    * {
+      box-sizing: border-box;
+    }
+
+    input {
+      border: 1px solid #c1c1c1;
+      padding: 0 4px;
+      border-radius: 4px;
+      width: 100%;
+    }
+
+    &_row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    &_raportointilaji {
+      width: 315px;
+    }
+
+    &_maaraaika {
+      width: 180px;
+
+      input:disabled {
+        background: initial !important;
+      }
+    }
+
+    &_asha-tunnus {
+      width: 130px;
+
+      input {
+        min-height: 38px;
+      }
+    }
+
+    &_label {
+      white-space: nowrap;
+    }
+
+    &_lisatiedot {
+      width: 420px;
+
+      input {
+        min-height: 38px;
+      }
+    }
+
+    &_buttons {
+      display: flex;
+      align-items: end;
+    }
+
+    &_button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: none;
+      border: none;
+      margin: 0;
+      padding: 0;
+      height: 30px;
+      width: 30px;
+      margin: 4px 0;
+    }
   }
 }
 

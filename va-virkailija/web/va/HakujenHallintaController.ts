@@ -104,6 +104,7 @@ const events = {
   hakuCreated: "hakuCreated",
   updateField: "updateField",
   saveHaku: "saveHaku",
+  saveInProgress: "saveInProgress",
   saveCompleted: "saveCompleted",
   paymentsLoaded: "paymentsLoaded",
   rolesLoaded: "rolesLoaded",
@@ -297,6 +298,7 @@ export default class HakujenHallintaController {
       "onUpdateField",
       "onHakuCreated",
       "startAutoSave",
+      "onSaveInProgress",
       "onSaveCompleted",
       "onHakuSelection",
       "onHakuSave",
@@ -323,13 +325,14 @@ export default class HakujenHallintaController {
     });
 
     return Bacon.update(
-      {} as any,
+      {} as State,
       [dispatcher.stream(events.initialState), this.onInitialState],
       [dispatcher.stream(events.selectHaku), this.onHakuSelection],
       [dispatcher.stream(events.createHaku), this.onHakuCreation],
       [dispatcher.stream(events.hakuCreated), this.onHakuCreated],
       [dispatcher.stream(events.updateField), this.onUpdateField],
       [dispatcher.stream(events.saveHaku), this.onHakuSave],
+      [dispatcher.stream(events.saveInProgress), this.onSaveInProgress],
       [dispatcher.stream(events.saveCompleted), this.onSaveCompleted],
       [dispatcher.stream(events.paymentsLoaded), this.onPaymentsLoaded],
       [dispatcher.stream(events.rolesLoaded), this.onRolesLoaded],
@@ -766,20 +769,27 @@ export default class HakujenHallintaController {
     return state;
   }
 
-  onSaveCompleted(state: State, response: Avustushaku | { error: string }) {
+  onSaveCompleted(state: State, response?: Avustushaku | { error: string }) {
     state.saveStatus.saveInProgress = false;
-    if ("error" in response) {
+    if (response && "error" in response) {
       state.saveStatus.serverError = response.error;
     } else {
-      const oldHaku = state.hakuList.find((haku) => haku.id === response.id);
-      if (oldHaku) {
-        oldHaku.status = response.status;
-        oldHaku.phase = response.phase;
-        oldHaku.decision!.updatedAt = response.decision?.updatedAt;
+      if (response) {
+        const oldHaku = state.hakuList.find((haku) => haku.id === response.id);
+        if (oldHaku) {
+          oldHaku.status = response.status;
+          oldHaku.phase = response.phase;
+          oldHaku.decision!.updatedAt = response.decision?.updatedAt;
+        }
       }
       state.saveStatus.saveTime = new Date();
       state.saveStatus.serverError = "";
     }
+    return state;
+  }
+
+  onSaveInProgress(state: State) {
+    state.saveStatus.saveInProgress = true;
     return state;
   }
 
@@ -1151,6 +1161,14 @@ export default class HakujenHallintaController {
 
   createHaku(baseHaku: Avustushaku) {
     dispatcher.push(events.createHaku, baseHaku);
+  }
+
+  startSave() {
+    dispatcher.push(events.saveInProgress, undefined);
+  }
+
+  completeSave() {
+    dispatcher.push(events.saveCompleted, undefined);
   }
 
   onChangeListener(

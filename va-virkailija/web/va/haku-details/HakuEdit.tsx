@@ -20,6 +20,7 @@ import HakujenHallintaController, {
 } from "../HakujenHallintaController";
 import { UserInfo, VaCodeValue } from "../types";
 import { DateInput } from "./DateInput";
+import { Raportointivelvoitteet } from "./Raportointivelvoitteet";
 
 type HakuEditProps = {
   avustushaku: SelectedAvustushaku;
@@ -519,7 +520,7 @@ export const HakuEdit = ({
             </div>
           </div>
           <div>
-            <h3 className="required">
+            <h3>
               Arvioitu maksupäivä
               <HelpTooltip
                 content={
@@ -544,6 +545,13 @@ export const HakuEdit = ({
           </div>
         </div>
       </div>
+      <hr className="spacer" />
+      <Raportointivelvoitteet
+        avustushaku={avustushaku}
+        controller={controller}
+        helpTexts={helpTexts}
+      />
+      <hr className="spacer" />
       <HakuRoles
         avustushaku={avustushaku}
         userInfo={userInfo}
@@ -552,6 +560,7 @@ export const HakuEdit = ({
         controller={controller}
         helpTexts={helpTexts}
       />
+      <hr className="spacer" />
       <SelectionCriteria
         controller={controller}
         avustushaku={avustushaku}
@@ -560,6 +569,7 @@ export const HakuEdit = ({
         onChange={onChange}
         helpTexts={helpTexts}
       />
+      <hr className="spacer" />
       <FocusArea
         controller={controller}
         avustushaku={avustushaku}

@@ -384,6 +384,14 @@ export type Avustushaku = {
   arvioitu_maksupaiva?: string;
 };
 
+export interface Raportointivelvoite {
+  id?: number
+  raportointilaji: string
+  maaraaika: string
+  "asha-tunnus": string
+  lisatiedot?: string
+};
+
 export type HelpTexts = { [k: string]: string };
 
 interface Rule {
