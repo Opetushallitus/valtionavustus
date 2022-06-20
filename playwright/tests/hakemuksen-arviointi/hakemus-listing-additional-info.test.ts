@@ -25,9 +25,12 @@ test(`hakemusten arviointi additional info`, async ({
   });
   const { locators } = hakemustenArviointiPage.additionalInfo();
 
-  await test.step("shows no budget if there are no accepted hakemuses", async () => {
-    await expect(locators.budjetti).toHaveText("-");
-  });
+  await test.step(
+    "shows no budget if there are no accepted hakemuses",
+    async () => {
+      await expect(locators.budjetti).toHaveText("-");
+    }
+  );
 
   await hakemustenArviointiPage.acceptAvustushaku(
     avustushakuID,
@@ -80,45 +83,56 @@ test(`hakemusten arviointi additional info`, async ({
     await expect(locators.maksatukset).toHaveText(formattedMoment());
   });
 
-  await test.step("updates vali and loppuselvitys to show when it has a deadline", async () => {
-    await expect(locators.valiselvitykset).toHaveText("-");
-    await expect(locators.loppuselvitykset).toHaveText("-");
-    await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-    await hakujenHallintaPage.setValiselvitysDate(valiselvitysDeadline);
-    await hakujenHallintaPage.setLoppuselvitysDate(loppuselvitysDeadline);
-    await hakujenHallintaPage.waitForSave();
-    await hakemustenArviointiPage.navigate(avustushakuID, {
-      showAdditionalInfo: true,
-    });
-    await expect(locators.valiselvitykset).toHaveText(
-      `Ei lähetetty (DL ${valiselvitysDeadline})`
-    );
-    await expect(locators.loppuselvitykset).toHaveText(
-      `Ei lähetetty (DL ${loppuselvitysDeadline})`
-    );
-  });
+  await test.step(
+    "updates vali and loppuselvitys to show when it has a deadline",
+    async () => {
+      await expect(locators.valiselvitykset).toHaveText("-");
+      await expect(locators.loppuselvitykset).toHaveText("-");
+      await hakujenHallintaPage.navigateToPaatos(avustushakuID);
+      await hakujenHallintaPage.setValiselvitysDate(valiselvitysDeadline);
+      await hakujenHallintaPage.setLoppuselvitysDate(loppuselvitysDeadline);
+      await hakujenHallintaPage.waitForSave();
+      await hakemustenArviointiPage.navigate(avustushakuID, {
+        showAdditionalInfo: true,
+      });
+      await expect(locators.valiselvitykset).toHaveText(
+        `Ei lähetetty (DL ${valiselvitysDeadline})`
+      );
+      await expect(locators.loppuselvitykset).toHaveText(
+        `Ei lähetetty (DL ${loppuselvitysDeadline})`
+      );
+    }
+  );
 
-  await test.step("update vali and loppuselvitys to show when they were sent", async () => {
-    await hakujenHallintaPage.navigateToValiselvitys(avustushakuID);
-    await hakujenHallintaPage.page.click('text="Lähetä väliselvityspyynnöt"');
-    await hakujenHallintaPage.page.locator('text="Lähetetty 1 viestiä"');
-    await hakujenHallintaPage.switchToLoppuselvitysTab();
-    await hakujenHallintaPage.page.click('text="Lähetä loppuselvityspyynnöt"');
-    await hakujenHallintaPage.page.locator('text="Lähetetty 1 viestiä"');
-    await hakemustenArviointiPage.navigate(avustushakuID, {
-      showAdditionalInfo: true,
-    });
-    await expect(locators.valiselvitykset).toHaveText(formattedMoment());
-    await expect(locators.loppuselvitykset).toHaveText(formattedMoment());
-  });
+  await test.step(
+    "update vali and loppuselvitys to show when they were sent",
+    async () => {
+      await hakujenHallintaPage.navigateToValiselvitys(avustushakuID);
+      await hakujenHallintaPage.page.click('text="Lähetä väliselvityspyynnöt"');
+      await hakujenHallintaPage.page.locator('text="Lähetetty 1 viestiä"');
+      await hakujenHallintaPage.switchToLoppuselvitysTab();
+      await hakujenHallintaPage.page.click(
+        'text="Lähetä loppuselvityspyynnöt"'
+      );
+      await hakujenHallintaPage.page.locator('text="Lähetetty 1 viestiä"');
+      await hakemustenArviointiPage.navigate(avustushakuID, {
+        showAdditionalInfo: true,
+      });
+      await expect(locators.valiselvitykset).toHaveText(formattedMoment());
+      await expect(locators.loppuselvitykset).toHaveText(formattedMoment());
+    }
+  );
 
   await test.step("shows is muutoshakukelpoinen", async () => {
     await expect(locators.muutoshakukelpoinen).toHaveText("Kyllä");
   });
 
-  await test.step("shows Kokonaiskustannus as budget if an accepted hakemus has it", async () => {
-    await expect(locators.budjetti).toHaveText("Kokonaiskustannus");
-  });
+  await test.step(
+    "shows Kokonaiskustannus as budget if an accepted hakemus has it",
+    async () => {
+      await expect(locators.budjetti).toHaveText("Kokonaiskustannus");
+    }
+  );
 
   await test.step("can close additional info", async () => {
     await locators.muutoshakukelpoinen.waitFor();

@@ -128,17 +128,20 @@ defaultValues("Editing hakulomake", async ({ page }) => {
     expect(fieldsAfterMoveDown).toEqual(movedDownFields);
   });
 
-  await test.step("(nested) field can be edited inside a fieldset", async () => {
-    const textToSave = "hakijampa nimmee kyselläämpi";
-    await page.fill('[name="organization-label-fi"]', textToSave);
-    await formEditorPage.saveForm();
-    await formEditorPage.saveFormButton.isDisabled();
+  await test.step(
+    "(nested) field can be edited inside a fieldset",
+    async () => {
+      const textToSave = "hakijampa nimmee kyselläämpi";
+      await page.fill('[name="organization-label-fi"]', textToSave);
+      await formEditorPage.saveForm();
+      await formEditorPage.saveFormButton.isDisabled();
 
-    const savedTextArea = await page.textContent(
-      '[name="organization-label-fi"]'
-    );
-    expect(savedTextArea).toEqual(textToSave);
-  });
+      const savedTextArea = await page.textContent(
+        '[name="organization-label-fi"]'
+      );
+      expect(savedTextArea).toEqual(textToSave);
+    }
+  );
 });
 
 defaultValues("Editing väliselvitys lomake", async ({ page }) => {

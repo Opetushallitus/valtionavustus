@@ -45,23 +45,26 @@ defaultValues("Vastuuvalmistelija role", async ({ page, userCache }) => {
     ).toHaveValue("viivi.virkailja@exmaple.com");
   });
 
-  await test.step("the previous vastuuvalmistelija is automatically set as regular valmistelija to avoid losing edit rights to haku", async () => {
-    await expect(
-      hakujenHallinta.page.locator(
-        '[data-test-id="role-_-valtionavustus"] select[name=role]'
-      )
-    ).toHaveValue("presenting_officer");
-    await expect(
-      hakujenHallinta.page.locator(
-        '[data-test-id="role-_-valtionavustus"] input[name=name]'
-      )
-    ).toHaveValue("_ valtionavustus");
-    await expect(
-      hakujenHallinta.page.locator(
-        '[data-test-id="role-_-valtionavustus"] input[name=email]'
-      )
-    ).toHaveValue("santeri.horttanainen@reaktor.com");
-  });
+  await test.step(
+    "the previous vastuuvalmistelija is automatically set as regular valmistelija to avoid losing edit rights to haku",
+    async () => {
+      await expect(
+        hakujenHallinta.page.locator(
+          '[data-test-id="role-_-valtionavustus"] select[name=role]'
+        )
+      ).toHaveValue("presenting_officer");
+      await expect(
+        hakujenHallinta.page.locator(
+          '[data-test-id="role-_-valtionavustus"] input[name=name]'
+        )
+      ).toHaveValue("_ valtionavustus");
+      await expect(
+        hakujenHallinta.page.locator(
+          '[data-test-id="role-_-valtionavustus"] input[name=email]'
+        )
+      ).toHaveValue("santeri.horttanainen@reaktor.com");
+    }
+  );
 
   await test.step("name and email can be changed", async () => {
     await hakujenHallinta.fillVastuuvalmistelijaName("vastuu");

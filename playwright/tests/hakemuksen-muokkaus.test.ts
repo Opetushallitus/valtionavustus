@@ -86,72 +86,85 @@ test("hakija", async ({ page, avustushakuID, submittedHakemus: hakemus }) => {
   const hakemustenArviointiPage = new HakemustenArviointiPage(page);
   const hakujenHallintaPage = new HakujenHallintaPage(page);
 
-  await test.step("can edit hakemus when hakemus has been submitted", async () => {
-    await hakemusPage.navigateToExistingHakemusPage(
-      avustushakuID,
-      hakemus.userKey
-    );
-    await hakemusPage.selectMaakuntaFromDropdown("Etelä-Savo");
-    await hakemusPage.waitForEditSaved();
+  await test.step(
+    "can edit hakemus when hakemus has been submitted",
+    async () => {
+      await hakemusPage.navigateToExistingHakemusPage(
+        avustushakuID,
+        hakemus.userKey
+      );
+      await hakemusPage.selectMaakuntaFromDropdown("Etelä-Savo");
+      await hakemusPage.waitForEditSaved();
 
-    await hakemustenArviointiPage.navigateToLatestHakemusArviointi(
-      avustushakuID
-    );
-    await waitForElementWithText(page, "span", "Etelä-Savo");
-  });
+      await hakemustenArviointiPage.navigateToLatestHakemusArviointi(
+        avustushakuID
+      );
+      await waitForElementWithText(page, "span", "Etelä-Savo");
+    }
+  );
 
-  await test.step("can edit hakemus when a change request has been made", async () => {
-    await hakujenHallintaPage.navigate(avustushakuID);
-    await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast();
+  await test.step(
+    "can edit hakemus when a change request has been made",
+    async () => {
+      await hakujenHallintaPage.navigate(avustushakuID);
+      await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast();
 
-    await hakemustenArviointiPage.navigateToLatestHakemusArviointi(
-      avustushakuID
-    );
-    await hakemustenArviointiPage.createChangeRequest();
+      await hakemustenArviointiPage.navigateToLatestHakemusArviointi(
+        avustushakuID
+      );
+      await hakemustenArviointiPage.createChangeRequest();
 
-    await hakemusPage.navigateToExistingHakemusPage(
-      avustushakuID,
-      hakemus.userKey
-    );
-    await hakemusPage.selectMaakuntaFromDropdown("Ahvenanmaa");
-    await hakemusPage.submitChangeRequestResponse();
+      await hakemusPage.navigateToExistingHakemusPage(
+        avustushakuID,
+        hakemus.userKey
+      );
+      await hakemusPage.selectMaakuntaFromDropdown("Ahvenanmaa");
+      await hakemusPage.submitChangeRequestResponse();
 
-    await hakemustenArviointiPage.navigateToLatestHakemusArviointi(
-      avustushakuID
-    );
-    await waitForElementWithText(page, "span", "Ahvenanmaa");
-  });
+      await hakemustenArviointiPage.navigateToLatestHakemusArviointi(
+        avustushakuID
+      );
+      await waitForElementWithText(page, "span", "Ahvenanmaa");
+    }
+  );
 
-  await test.step("can not edit hakemus when a change request has been cancelled", async () => {
-    await hakemustenArviointiPage.navigateToLatestHakemusArviointi(
-      avustushakuID
-    );
-    await hakemustenArviointiPage.createChangeRequest("it never happened");
-    await hakemustenArviointiPage.page.waitForSelector(
-      'div[class="change-request-title"]'
-    );
+  await test.step(
+    "can not edit hakemus when a change request has been cancelled",
+    async () => {
+      await hakemustenArviointiPage.navigateToLatestHakemusArviointi(
+        avustushakuID
+      );
+      await hakemustenArviointiPage.createChangeRequest("it never happened");
+      await hakemustenArviointiPage.page.waitForSelector(
+        'div[class="change-request-title"]'
+      );
 
-    await hakemustenArviointiPage.cancelChangeRequest();
+      await hakemustenArviointiPage.cancelChangeRequest();
 
-    await hakemusPage.navigateToExistingHakemusPage(
-      avustushakuID,
-      hakemus.userKey
-    );
-    await hakemusPage.waitForPreview();
-  });
+      await hakemusPage.navigateToExistingHakemusPage(
+        avustushakuID,
+        hakemus.userKey
+      );
+      await hakemusPage.waitForPreview();
+    }
+  );
 
-  await test.step("can not edit hakemus when officer is editing it", async () => {
-    await hakemustenArviointiPage.navigateToLatestHakemusArviointi(
-      avustushakuID
-    );
-    const officerEditPage = await hakemustenArviointiPage.openHakemusEditPage();
-    await expect(officerEditPage.officerEditSubmitButton).toBeEnabled();
+  await test.step(
+    "can not edit hakemus when officer is editing it",
+    async () => {
+      await hakemustenArviointiPage.navigateToLatestHakemusArviointi(
+        avustushakuID
+      );
+      const officerEditPage =
+        await hakemustenArviointiPage.openHakemusEditPage();
+      await expect(officerEditPage.officerEditSubmitButton).toBeEnabled();
 
-    await hakemusPage.navigateToExistingHakemusPage(
-      avustushakuID,
-      hakemus.userKey
-    );
-    await hakemusPage.waitForPreview();
-    await expect(hakemusPage.officerEditSubmitButton).toBeHidden();
-  });
+      await hakemusPage.navigateToExistingHakemusPage(
+        avustushakuID,
+        hakemus.userKey
+      );
+      await hakemusPage.waitForPreview();
+      await expect(hakemusPage.officerEditSubmitButton).toBeHidden();
+    }
+  );
 });

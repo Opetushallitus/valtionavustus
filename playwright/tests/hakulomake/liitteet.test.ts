@@ -75,13 +75,16 @@ test("hakemus requires all attachments to be uploaded before allowing to submit"
   const finaLocator = hakijaAvustusHakuPage.page.locator(
     "[name='financial-information-form']"
   );
-  await test.step("enables sending after uploading last attachment", async () => {
-    await hakijaAvustusHakuPage.sendHakemusButton.isDisabled();
-    await finaLocator.waitFor();
-    await finaLocator.setInputFiles(dummyPdfPath);
-    await finaLocator.waitFor({ state: "detached" });
-    await hakijaAvustusHakuPage.sendHakemusButton.isEnabled();
-  });
+  await test.step(
+    "enables sending after uploading last attachment",
+    async () => {
+      await hakijaAvustusHakuPage.sendHakemusButton.isDisabled();
+      await finaLocator.waitFor();
+      await finaLocator.setInputFiles(dummyPdfPath);
+      await finaLocator.waitFor({ state: "detached" });
+      await hakijaAvustusHakuPage.sendHakemusButton.isEnabled();
+    }
+  );
   await test.step("can remove attachment", async () => {
     await hakijaAvustusHakuPage.page
       .locator("#financial-information-form")

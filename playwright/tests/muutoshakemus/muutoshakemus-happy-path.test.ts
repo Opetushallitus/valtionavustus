@@ -58,23 +58,26 @@ test("When muutoshakemus enabled haku has been published, a hakemus has been sub
     });
   });
 
-  await test.step("allows virkailija to edit the original hakemus", async () => {
-    await hakemustenArviointiPage.navigate(avustushakuID);
-    await hakemustenArviointiPage.clickHakemus(hakemusID);
-    hakemusRegisterNumber = await page
-      .locator("section.va-register-number span.value")
-      .innerText();
-    await clickElementWithText(page, "button", "Muokkaa hakemusta");
+  await test.step(
+    "allows virkailija to edit the original hakemus",
+    async () => {
+      await hakemustenArviointiPage.navigate(avustushakuID);
+      await hakemustenArviointiPage.clickHakemus(hakemusID);
+      hakemusRegisterNumber = await page
+        .locator("section.va-register-number span.value")
+        .innerText();
+      await clickElementWithText(page, "button", "Muokkaa hakemusta");
 
-    const [modificationPage] = await Promise.all([
-      context.waitForEvent("page"),
-      clickElementWithText(page, "button", "Siirry muokkaamaan"),
-    ]);
-    expect(modificationPage.url()).toContain(
-      `${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=`
-    );
-    await modificationPage.close();
-  });
+      const [modificationPage] = await Promise.all([
+        context.waitForEvent("page"),
+        clickElementWithText(page, "button", "Siirry muokkaamaan"),
+      ]);
+      expect(modificationPage.url()).toContain(
+        `${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=`
+      );
+      await modificationPage.close();
+    }
+  );
 
   await test.step("submit muutoshakemus #1", async () => {
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page);
@@ -142,32 +145,38 @@ test("When muutoshakemus enabled haku has been published, a hakemus has been sub
     await hakemustenArviointiPage.clickMuutoshakemusTab();
   });
 
-  await test.step("shows the number of pending muutoshakemus in red", async () => {
-    const numOfMuutosHakemuksetElement = await page.waitForSelector(
-      '[data-test-id=number-of-pending-muutoshakemukset]:has-text("1")'
-    );
-    const color = await page.evaluate(
-      (e) => getComputedStyle(e).color,
-      numOfMuutosHakemuksetElement
-    );
-    expect(color).toBe("rgb(255, 0, 0)"); // red
-  });
+  await test.step(
+    "shows the number of pending muutoshakemus in red",
+    async () => {
+      const numOfMuutosHakemuksetElement = await page.waitForSelector(
+        '[data-test-id=number-of-pending-muutoshakemukset]:has-text("1")'
+      );
+      const color = await page.evaluate(
+        (e) => getComputedStyle(e).color,
+        numOfMuutosHakemuksetElement
+      );
+      expect(color).toBe("rgb(255, 0, 0)"); // red
+    }
+  );
 
   await test.step("navigate to muutoshakemustab", async () => {
     await hakemustenArviointiPage.clickMuutoshakemusTab();
   });
 
-  await test.step("muutoshakemustab links to the muutoshakemus form", async () => {
-    const newPagePromise = waitForNewTab(page);
-    await hakemustenArviointiPage.page.click(
-      '[data-test-id="muutoshakemus-link"]'
-    );
-    const muutoshakemusPage = await newPagePromise;
-    expect(muutoshakemusPage.url()).toContain(
-      `${HAKIJA_URL}/muutoshakemus?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`
-    );
-    await muutoshakemusPage.close();
-  });
+  await test.step(
+    "muutoshakemustab links to the muutoshakemus form",
+    async () => {
+      const newPagePromise = waitForNewTab(page);
+      await hakemustenArviointiPage.page.click(
+        '[data-test-id="muutoshakemus-link"]'
+      );
+      const muutoshakemusPage = await newPagePromise;
+      expect(muutoshakemusPage.url()).toContain(
+        `${HAKIJA_URL}/muutoshakemus?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`
+      );
+      await muutoshakemusPage.close();
+    }
+  );
 
   await test.step("Displays valid muutoshakemus values", async () => {
     await hakemustenArviointiPage.validateMuutoshakemusValues(muutoshakemus1);
@@ -193,18 +202,22 @@ test("When muutoshakemus enabled haku has been published, a hakemus has been sub
       );
     });
 
-    await test.step("ukotettu valmistelija no longer gets notification for this avustushaku", async () => {
-      await sendMuutoshakemuksiaKasittelemattaNotifications(page.request);
-      const emailsAfterSending = await getMuutoshakemuksetKasittelemattaEmails(
-        ukotettuValmistelijaEmail,
-        avustushakuID
-      );
-      const emailsAfterWithCurrentAvustushaku = emailsAfterSending.filter(
-        isCurrentAvustushakuEmail
-      );
-      expect(emailsBeforeWithCurrentAvustushaku).toEqual(
-        emailsAfterWithCurrentAvustushaku
-      );
-    });
+    await test.step(
+      "ukotettu valmistelija no longer gets notification for this avustushaku",
+      async () => {
+        await sendMuutoshakemuksiaKasittelemattaNotifications(page.request);
+        const emailsAfterSending =
+          await getMuutoshakemuksetKasittelemattaEmails(
+            ukotettuValmistelijaEmail,
+            avustushakuID
+          );
+        const emailsAfterWithCurrentAvustushaku = emailsAfterSending.filter(
+          isCurrentAvustushakuEmail
+        );
+        expect(emailsBeforeWithCurrentAvustushaku).toEqual(
+          emailsAfterWithCurrentAvustushaku
+        );
+      }
+    );
   });
 });

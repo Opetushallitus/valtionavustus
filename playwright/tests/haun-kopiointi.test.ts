@@ -16,29 +16,38 @@ defaultValues("Copying haku", async ({ page }) => {
   await hakujenHallinta.switchToHaunTiedotTab();
   await hakujenHallinta.copyCurrentHaku();
 
-  await test.step("väliselvitys title is copied to the new avustushaku", async () => {
-    await expectValiselvitysTitleToBe(hakujenHallinta, valiselvitysTitle);
-  });
+  await test.step(
+    "väliselvitys title is copied to the new avustushaku",
+    async () => {
+      await expectValiselvitysTitleToBe(hakujenHallinta, valiselvitysTitle);
+    }
+  );
 
-  await test.step("loppuselvitys title is copied to the new avustushaku", async () => {
-    await expectLoppuselvitysTitleToBe(hakujenHallinta, loppuselvitysTitle);
-  });
+  await test.step(
+    "loppuselvitys title is copied to the new avustushaku",
+    async () => {
+      await expectLoppuselvitysTitleToBe(hakujenHallinta, loppuselvitysTitle);
+    }
+  );
 
-  await test.step("changing väliselvitys and loppuselvitys on the copied avustushaku does not change the original selvitys values", async () => {
-    await setValiselvitysTitleTo(
-      hakujenHallinta,
-      `Uudelleen ${valiselvitysTitle.toLowerCase()}`
-    );
-    await setLoppuselvitysTitleTo(
-      hakujenHallinta,
-      `Uudelleen ${loppuselvitysTitle.toLowerCase()}`
-    );
+  await test.step(
+    "changing väliselvitys and loppuselvitys on the copied avustushaku does not change the original selvitys values",
+    async () => {
+      await setValiselvitysTitleTo(
+        hakujenHallinta,
+        `Uudelleen ${valiselvitysTitle.toLowerCase()}`
+      );
+      await setLoppuselvitysTitleTo(
+        hakujenHallinta,
+        `Uudelleen ${loppuselvitysTitle.toLowerCase()}`
+      );
 
-    await hakujenHallinta.navigate(avustushakuID);
+      await hakujenHallinta.navigate(avustushakuID);
 
-    await expectValiselvitysTitleToBe(hakujenHallinta, valiselvitysTitle);
-    await expectLoppuselvitysTitleToBe(hakujenHallinta, loppuselvitysTitle);
-  });
+      await expectValiselvitysTitleToBe(hakujenHallinta, valiselvitysTitle);
+      await expectLoppuselvitysTitleToBe(hakujenHallinta, loppuselvitysTitle);
+    }
+  );
 });
 
 async function expectLoppuselvitysTitleToBe(

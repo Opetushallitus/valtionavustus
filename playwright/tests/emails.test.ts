@@ -124,27 +124,30 @@ test("sends emails to correct contact and hakemus emails", async ({
     expect(email["reply-to"]).toEqual(null);
   });
   const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page);
-  await test.step("resends to correct address after changing contact person email", async () => {
-    await hakijaMuutoshakemusPage.navigateWithLink(linkToMuutoshakemus);
-    await hakijaMuutoshakemusPage.changeContactPersonEmailTo(
-      newContactPersonEmail
-    );
-    await hakijaMuutoshakemusPage.clickSaveContacts();
-    await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-    await hakujenHallintaPage.resendPaatokset();
+  await test.step(
+    "resends to correct address after changing contact person email",
+    async () => {
+      await hakijaMuutoshakemusPage.navigateWithLink(linkToMuutoshakemus);
+      await hakijaMuutoshakemusPage.changeContactPersonEmailTo(
+        newContactPersonEmail
+      );
+      await hakijaMuutoshakemusPage.clickSaveContacts();
+      await hakujenHallintaPage.navigateToPaatos(avustushakuID);
+      await hakujenHallintaPage.resendPaatokset();
 
-    const emails = await waitUntilMinEmails(
-      getAcceptedPäätösEmails,
-      3,
-      hakemusID
-    );
-    expect(emails).toHaveLength(3);
-    const email = lastOrFail(emails);
-    expect(email["to-address"]).toEqual([
-      newContactPersonEmail,
-      "akaan.kaupunki@akaa.fi",
-    ]);
-  });
+      const emails = await waitUntilMinEmails(
+        getAcceptedPäätösEmails,
+        3,
+        hakemusID
+      );
+      expect(emails).toHaveLength(3);
+      const email = lastOrFail(emails);
+      expect(email["to-address"]).toEqual([
+        newContactPersonEmail,
+        "akaan.kaupunki@akaa.fi",
+      ]);
+    }
+  );
   await test.step("sends väliselvitys email", async () => {
     await hakujenHallintaPage.switchToValiselvitysTab();
     await hakujenHallintaPage.sendValiselvitys();
