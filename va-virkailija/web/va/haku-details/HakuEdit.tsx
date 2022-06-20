@@ -74,7 +74,7 @@ export const HakuEdit = ({
   };
 
   const onChangeDateInput = (id: string, date: Moment) => {
-    controller.onChangeListener(avustushaku, { id }, date.format('YYYY-MM-DD'));
+    controller.onChangeListener(avustushaku, { id }, date.format("YYYY-MM-DD"));
   };
 
   const onChangeTrimWs = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

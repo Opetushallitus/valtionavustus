@@ -504,7 +504,10 @@ export class HakujenHallintaPage {
     }
 
     if (arvioituMaksupaiva) {
-      await this.page.fill('[name="arvioitu_maksupaiva"]', formatDate(arvioituMaksupaiva));
+      await this.page.fill(
+        '[name="arvioitu_maksupaiva"]',
+        formatDate(arvioituMaksupaiva)
+      );
     }
 
     await this.selectTositelaji("XE");

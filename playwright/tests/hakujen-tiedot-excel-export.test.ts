@@ -8,7 +8,7 @@ muutoshakemusTest.use({
   hakuProps: ({ hakuProps }, use) =>
     use({
       ...hakuProps,
-      arvioituMaksupaiva: new Date('2077-12-17'),
+      arvioituMaksupaiva: new Date("2077-12-17"),
     }),
 });
 
@@ -42,7 +42,7 @@ muutoshakemusTest(
       "_ valtionavustus, santeri.horttanainen@reaktor.com"
     );
     expect(columnValue("Maksettu €")).toEqual(0);
-    expect(columnValue("Arvioitu maksu pvm")).toEqual('17.12.2077');
+    expect(columnValue("Arvioitu maksu pvm")).toEqual("17.12.2077");
   }
 );
 

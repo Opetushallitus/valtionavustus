@@ -10,7 +10,7 @@ interface DateInputProps {
   defaultValue: Date | undefined;
   onChange: (id: string, date: Moment) => void;
   allowEmpty: boolean;
-  placeholder?: string
+  placeholder?: string;
 }
 
 export const DateInput = (props: DateInputProps) => {
