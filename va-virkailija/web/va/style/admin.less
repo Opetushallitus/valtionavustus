@@ -68,7 +68,24 @@ table.translation {
   flex: 1;
 }
 
+.money_input {
+  input {
+    border: 2px solid #c1c1c1;
+    padding: 0 30px 0 4px;
+    border-radius: 4px;
+    min-height: 34px;
+  }
+
+  &:after {
+    content: "€";
+    text-align: center;
+    position: relative;
+    right: 20px;
+  }
+}
+
 #haku-edit {
+
   #haku-edit-header {
     margin-top: 20px;
     width: @content-width;

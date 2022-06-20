@@ -10,17 +10,20 @@ interface DateInputProps {
   defaultValue: Date | undefined;
   onChange: (id: string, date: Moment) => void;
   allowEmpty: boolean;
+  placeholder?: string
 }
 
 export const DateInput = (props: DateInputProps) => {
-  const { id, defaultValue, onChange, allowEmpty } = props;
+  const { id, defaultValue, onChange, allowEmpty, placeholder } = props;
   const [isValid, setIsValid] = useState(
     defaultValue !== undefined || allowEmpty
   );
 
   function onChangeHandlerFor(id: string) {
     return function onChangeHandler(newDate: Date | null | undefined) {
+      console.log(newDate)
       const date = moment(newDate);
+      console.log(date)
       setIsValid(
         date.isValid() ||
           ((newDate === null || newDate === undefined) && allowEmpty)
@@ -39,6 +42,7 @@ export const DateInput = (props: DateInputProps) => {
       parse={parseDateString}
       onChange={onChangeHandlerFor(id)}
       value={defaultValue}
+      placeholder={placeholder}
       containerClassName={getClassNames()}
     />
   );

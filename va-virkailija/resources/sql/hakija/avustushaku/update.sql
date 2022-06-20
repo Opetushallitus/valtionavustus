@@ -14,5 +14,6 @@ set content = :content,
     operation_id = :operation_id,
     operational_unit_id = :operational_unit_id,
     muutoshakukelpoinen = :muutoshakukelpoinen,
-    allow_visibility_in_external_system = :allow_visibility_in_external_system
+    allow_visibility_in_external_system = :allow_visibility_in_external_system,
+    arvioitu_maksupaiva = :arvioitu_maksupaiva
 where id = :id

@@ -138,6 +138,7 @@
                           (s/optional-key :operational-unit-id) (s/maybe s/Int)
                           (s/optional-key :project-id) (s/maybe s/Int)
                           :allow_visibility_in_external_system s/Bool
+                          :arvioitu_maksupaiva (s/maybe java.time.LocalDate)
                           :muutoshakukelpoinen s/Bool})
 
 (s/defschema ListingAvustushaku

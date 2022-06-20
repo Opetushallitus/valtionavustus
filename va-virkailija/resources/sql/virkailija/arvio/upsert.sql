@@ -16,6 +16,7 @@ insert into arviot (
   academysize,
   oppilaitokset,
   allow_visibility_in_external_system,
+  arvioitu_maksupaiva,
   should_pay,
   should_pay_comments)
 values (
@@ -36,6 +37,7 @@ values (
   :academysize,
   :oppilaitokset,
   :allow_visibility_in_external_system,
+  :arvioitu_maksupaiva,
   :should_pay,
   :should_pay_comments)
 ON CONFLICT (hakemus_id) DO UPDATE SET
@@ -55,5 +57,6 @@ ON CONFLICT (hakemus_id) DO UPDATE SET
   academysize = EXCLUDED.academysize,
   oppilaitokset = EXCLUDED.oppilaitokset,
   allow_visibility_in_external_system = EXCLUDED.allow_visibility_in_external_system,
+  arvioitu_maksupaiva = EXCLUDED.arvioitu_maksupaiva,
   should_pay = EXCLUDED.should_pay,
   should_pay_comments = EXCLUDED.should_pay_comments

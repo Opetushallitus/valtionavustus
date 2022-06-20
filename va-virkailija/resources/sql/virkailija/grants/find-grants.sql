@@ -1,7 +1,7 @@
 SELECT
   id, created_at, form, content, status, register_number, valiselvitysdate,
   loppuselvitysdate, form_loppuselvitys, form_valiselvitys,
-  is_academysize, haku_type, allow_visibility_in_external_system
+  is_academysize, haku_type, allow_visibility_in_external_system, arvioitu_maksupaiva
 FROM
   hakija.avustushaut
 WHERE

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Moment } from "moment";
 
 import DateUtil from "soresu-form/web/DateUtil";
 import {
@@ -18,6 +19,7 @@ import HakujenHallintaController, {
   SelectedAvustushaku,
 } from "../HakujenHallintaController";
 import { UserInfo, VaCodeValue } from "../types";
+import { DateInput } from "./DateInput";
 
 type HakuEditProps = {
   avustushaku: SelectedAvustushaku;
@@ -69,6 +71,10 @@ export const HakuEdit = ({
     >
   ) => {
     onChangeListener(e.target, e.target.value);
+  };
+
+  const onChangeDateInput = (id: string, date: Moment) => {
+    controller.onChangeListener(avustushaku, { id }, date.format('YYYY-MM-DD'));
   };
 
   const onChangeTrimWs = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -493,7 +499,7 @@ export const HakuEdit = ({
           </div>
         </div>
         <div className="editor-field-row">
-          <div className="editor-row-element">
+          <div>
             <h3 className="required">
               Määräraha
               <HelpTooltip
@@ -501,15 +507,40 @@ export const HakuEdit = ({
                 direction="left"
               />
             </h3>
-            <input
-              id="total-grant-size"
-              type="number"
-              disabled={!allowAllHakuEdits}
-              onChange={onChange}
-              required={true}
-              value={avustushaku.content["total-grant-size"] || ""}
+            <div className="money_input">
+              <input
+                id="total-grant-size"
+                pattern="[0-9]+"
+                disabled={!allowAllHakuEdits}
+                onChange={onChange}
+                required={true}
+                value={avustushaku.content["total-grant-size"] || ""}
+              />
+            </div>
+          </div>
+          <div>
+            <h3 className="required">
+              Arvioitu maksupäivä
+              <HelpTooltip
+                content={
+                  helpTexts[
+                    "hakujen_hallinta__haun_tiedot___arvioitu_maksupäivä"
+                  ]
+                }
+                direction="left"
+              />
+            </h3>
+            <DateInput
+              id="arvioitu_maksupaiva"
+              onChange={onChangeDateInput}
+              defaultValue={
+                avustushaku.arvioitu_maksupaiva
+                  ? new Date(avustushaku.arvioitu_maksupaiva)
+                  : undefined
+              }
+              allowEmpty={true}
+              placeholder="Päivämäärä"
             />
-            <span> €</span>
           </div>
         </div>
       </div>

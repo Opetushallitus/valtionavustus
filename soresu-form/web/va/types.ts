@@ -316,6 +316,7 @@ export interface AvustushakuContent {
   "document-type"?: string;
   "self-financing-percentage"?: number;
   allow_visibility_in_external_system: boolean;
+  arvioitu_maksupaiva?: string;
 }
 
 export interface DecisionLiite {
@@ -380,6 +381,7 @@ export type Avustushaku = {
   status: AvustushakuStatus;
   privileges?: any;
   allow_visibility_in_external_system: boolean;
+  arvioitu_maksupaiva?: string;
 };
 
 export type HelpTexts = { [k: string]: string };

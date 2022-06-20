@@ -70,4 +70,5 @@
    :operation-id (:operation_id avustushaku)
    :operational-unit-id (:operational_unit_id avustushaku)
    :muutoshakukelpoinen (:muutoshakukelpoinen avustushaku)
+   :arvioitu_maksupaiva (:arvioitu_maksupaiva avustushaku)
    :allow_visibility_in_external_system (:allow_visibility_in_external_system avustushaku)})

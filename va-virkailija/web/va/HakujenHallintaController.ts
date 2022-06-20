@@ -52,6 +52,7 @@ export interface Avustushaku extends BaseAvustushaku {
   formContent?: Form;
   muutoshakukelpoisuus?: OnkoMuutoshakukelpoinenAvustushakuOk;
   allow_visibility_in_external_system: boolean;
+  arvioitu_maksupaiva?: string;
   vastuuvalmistelija?: string;
   "paatokset-lahetetty"?: string;
   "maksatukset-lahetetty"?: string;
@@ -556,6 +557,8 @@ export default class HakujenHallintaController {
     } else if (fieldId.startsWith("allow_visibility_in_external_system")) {
       update.avustushaku.allow_visibility_in_external_system =
         update.newValue === "true";
+    } else if (fieldId === "arvioitu_maksupaiva") {
+      update.avustushaku.arvioitu_maksupaiva = update.newValue;
     } else if (update.field.name === "payment-size-limit") {
       update.avustushaku.content["payment-size-limit"] = update.newValue;
     } else if (fieldId === "payment-fixed-limit") {
