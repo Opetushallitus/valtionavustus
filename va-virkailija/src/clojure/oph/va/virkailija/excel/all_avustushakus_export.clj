@@ -85,6 +85,7 @@ SELECT
   (avustushaku.content->>'total-grant-size')::numeric - maksatukset_summa AS jakamaton_maararaha,
   avustushaku.hankkeen_alkamispaiva AS ensimmainen_kayttopaiva,
   avustushaku.hankkeen_paattymispaiva AS viimeinen_kayttopaiva,
+  avustushaku.arvioitu_maksupaiva AS arvioitu_maksupaiva,
   projekti.code AS projekti_code,
   projekti.code_value AS projekti_code_value,
   projekti.year AS projekti_year,
@@ -157,6 +158,8 @@ ORDER BY avustushaku.id DESC
      (if (:vastuuvalmistelija-name row)
        (str (:vastuuvalmistelija-name row) ", " (:vastuuvalmistelija-email row))
        "")
+     ""
+     (if (:arvioitu-maksupaiva row) (java8-date-string (:arvioitu-maksupaiva row)) "")
      ]))
 
 (defn koulutusaste-headers [n]

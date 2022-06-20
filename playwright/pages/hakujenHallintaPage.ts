@@ -33,6 +33,7 @@ export interface HakuProps {
   vaCodes: VaCodeValues;
   hakuaikaStart: Date;
   hakuaikaEnd: Date;
+  arvioituMaksupaiva?: Date;
   hankkeenAlkamispaiva: string;
   hankkeenPaattymispaiva: string;
   selectionCriteria: string[];
@@ -480,6 +481,7 @@ export class HakujenHallintaPage {
       hankkeenAlkamispaiva,
       hankkeenPaattymispaiva,
       selectionCriteria,
+      arvioituMaksupaiva,
     } = props;
     console.log(`Avustushaku name for test: ${avustushakuName}`);
 
@@ -499,6 +501,10 @@ export class HakujenHallintaPage {
 
     for (const rahoitusalue of defaultRahoitusalueet) {
       await this.inputTalousarviotili(rahoitusalue);
+    }
+
+    if (arvioituMaksupaiva) {
+      await this.page.fill('[name="arvioitu_maksupaiva"]', formatDate(arvioituMaksupaiva));
     }
 
     await this.selectTositelaji("XE");

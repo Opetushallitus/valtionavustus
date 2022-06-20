@@ -21,9 +21,7 @@ export const DateInput = (props: DateInputProps) => {
 
   function onChangeHandlerFor(id: string) {
     return function onChangeHandler(newDate: Date | null | undefined) {
-      console.log(newDate)
       const date = moment(newDate);
-      console.log(date)
       setIsValid(
         date.isValid() ||
           ((newDate === null || newDate === undefined) && allowEmpty)
