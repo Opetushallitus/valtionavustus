@@ -180,8 +180,7 @@ interface StatusTableLabelProps<Status extends Statuses>
   statuses: readonly Status[];
   labelText: (status: Status) => string;
   isChecked: (status: Status) => boolean;
-  onCheck: (status: Status) => void;
-  onUncheck: (status: Status) => void;
+  onToggle: (status: Status, isChecked: boolean) => void;
   amountOfStatus: (status: Status) => number;
 }
 
@@ -190,8 +189,7 @@ function StatusTableLabel<Status extends Statuses>({
   labelText,
   text,
   isChecked,
-  onCheck,
-  onUncheck,
+  onToggle,
   amountOfStatus,
   showDeleteButton,
 }: StatusTableLabelProps<Status>) {
@@ -209,11 +207,7 @@ function StatusTableLabel<Status extends Statuses>({
               id={status}
               checked={checked}
               onChange={() => {
-                if (checked) {
-                  onUncheck(status);
-                } else {
-                  onCheck(status);
-                }
+                onToggle(status, checked);
               }}
             />
             <label htmlFor={status}>
@@ -302,6 +296,12 @@ export const NewHakuListing: React.FC<Props> = ({
   const [sortKey, setSortKey] = useState<SortKey | undefined>();
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
   const [hakuNameFilter, setHakuNameFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<AvustushakuStatus[]>(() => [
+    ...AVUSTUSHAKU_STATUSES,
+  ]);
+  const [phaseFilter, setPhaseFilter] = useState<AvustushakuPhase[]>(() => [
+    ...AVUSTUSHAKU_PHASES,
+  ]);
   const setSorting = useCallback(
     (newSortKey?: SortKey) => {
       if (sortKey === newSortKey) {
@@ -314,8 +314,10 @@ export const NewHakuListing: React.FC<Props> = ({
     [sortKey]
   );
   const value = { sortingState: { sortOrder, sortKey }, setSorting };
-  const filteredList = [...hakuList]
+  const filteredList = hakuList
     .filter(hakuNameContains(hakuNameFilter))
+    .filter(statusContains(statusFilter))
+    .filter(phaseContains(phaseFilter))
     .sort(avustushakuSorter(value.sortingState));
   return (
     <div className={styles.containerForModals}>
@@ -340,11 +342,28 @@ export const NewHakuListing: React.FC<Props> = ({
                     text="Tila"
                     statuses={AVUSTUSHAKU_STATUSES}
                     labelText={(status) => StatusToFi[status]}
-                    isChecked={() => false}
-                    onCheck={() => {}}
-                    onUncheck={() => {}}
-                    amountOfStatus={() => 0}
-                    showDeleteButton={undefined}
+                    isChecked={(status) => statusFilter.includes(status)}
+                    onToggle={(status, isChecked) =>
+                      setStatusFilter((filters) => {
+                        if (isChecked) {
+                          return filters.filter((s) => s !== status);
+                        }
+                        return filters.concat(status);
+                      })
+                    }
+                    amountOfStatus={(status) =>
+                      hakuList.filter((a) => a.status === status).length
+                    }
+                    showDeleteButton={
+                      statusFilter.length !== AVUSTUSHAKU_STATUSES.length
+                        ? {
+                            ariaLabel:
+                              "Poista avustustushakujen tila rajaukset",
+                            onClick: () =>
+                              setStatusFilter([...AVUSTUSHAKU_STATUSES]),
+                          }
+                        : undefined
+                    }
                   />
                 </TableHeader>
                 <TableHeader sortKey="phase" text="vaihe">
@@ -352,11 +371,28 @@ export const NewHakuListing: React.FC<Props> = ({
                     text="Vaihe"
                     statuses={AVUSTUSHAKU_PHASES}
                     labelText={(phase) => PhaseToFi[phase]}
-                    isChecked={() => false}
-                    onCheck={() => {}}
-                    onUncheck={() => {}}
-                    amountOfStatus={() => 0}
-                    showDeleteButton={undefined}
+                    isChecked={(phase) => phaseFilter.includes(phase)}
+                    onToggle={(phase, isChecked) =>
+                      setPhaseFilter((filters) => {
+                        if (isChecked) {
+                          return filters.filter((p) => p !== phase);
+                        }
+                        return filters.concat(phase);
+                      })
+                    }
+                    amountOfStatus={(phase) =>
+                      hakuList.filter((a) => a.phase === phase).length
+                    }
+                    showDeleteButton={
+                      phaseFilter.length !== AVUSTUSHAKU_PHASES.length
+                        ? {
+                            ariaLabel:
+                              "Poista avustustushakujen vaihe rajaukset",
+                            onClick: () =>
+                              setPhaseFilter([...AVUSTUSHAKU_PHASES]),
+                          }
+                        : undefined
+                    }
                   />
                 </TableHeader>
                 <TableHeader sortKey="hakuaika" text="hakuaika">
@@ -555,3 +591,13 @@ const PhasePill: React.FC<{ phase: AvustushakuPhase }> = ({ phase }) => (
 const hakuNameContains =
   (s: string) => (haku: Avustushaku, _i: number, _a: Avustushaku[]) =>
     haku.content.name.fi.includes(s);
+
+const statusContains =
+  (selectedFilters: AvustushakuStatus[]) =>
+  ({ status }: Avustushaku) =>
+    selectedFilters.includes(status);
+
+const phaseContains =
+  (selectedPhases: AvustushakuPhase[]) =>
+  ({ phase }: Avustushaku) =>
+    selectedPhases.includes(phase);
