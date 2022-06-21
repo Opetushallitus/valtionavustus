@@ -10,6 +10,7 @@ import {
 } from "soresu-form/web/va/types";
 import { Pill } from "../hakemus-list/Pill";
 import moment from "moment-timezone";
+import DatePicker from "react-widgets/DatePicker";
 import { SelectedAvustushaku, Avustushaku } from "../HakujenHallintaController";
 
 import buttonStyles from "../style/Button.module.less";
@@ -131,6 +132,7 @@ const SortButton = ({ sortKey, text }: SortButtonProps) => {
 interface TableLabelProps {
   text: string;
   disabled?: boolean;
+  widePopupStyle?: boolean;
   showDeleteButton?: {
     ariaLabel: string;
     onClick: () => void;
@@ -140,6 +142,7 @@ interface TableLabelProps {
 const TableLabel: React.FC<TableLabelProps> = ({
   text,
   disabled,
+  widePopupStyle,
   showDeleteButton,
   children,
 }) => {
@@ -165,7 +168,12 @@ const TableLabel: React.FC<TableLabelProps> = ({
         />
       )}
       {toggled && (
-        <div className={styles.tableLabelPopup} ref={ref}>
+        <div
+          className={
+            widePopupStyle ? styles.wideTableLabelPopup : styles.tableLabelPopup
+          }
+          ref={ref}
+        >
           {children}
         </div>
       )}
@@ -296,6 +304,8 @@ export const NewHakuListing: React.FC<Props> = ({
   const [sortKey, setSortKey] = useState<SortKey | undefined>();
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
   const [hakuNameFilter, setHakuNameFilter] = useState<string>("");
+  const [startFilterDate, setStartFilterDate] = useState<Date | null>(null);
+  const [endFilter, setEndFilter] = useState<Date | null>(null);
   const [statusFilter, setStatusFilter] = useState<AvustushakuStatus[]>(() => [
     ...AVUSTUSHAKU_STATUSES,
   ]);
@@ -318,6 +328,8 @@ export const NewHakuListing: React.FC<Props> = ({
     .filter(hakuNameContains(hakuNameFilter))
     .filter(statusContains(statusFilter))
     .filter(phaseContains(phaseFilter))
+    .filter(startsAfterOrSameDay(startFilterDate))
+    .filter(endsAfterEndFilter(endFilter))
     .sort(avustushakuSorter(value.sortingState));
   return (
     <div className={styles.containerForModals}>
@@ -396,7 +408,37 @@ export const NewHakuListing: React.FC<Props> = ({
                   />
                 </TableHeader>
                 <TableHeader sortKey="hakuaika" text="hakuaika">
-                  <TableLabel text="Hakuaika" disabled />
+                  <TableLabel
+                    text="Hakuaika"
+                    widePopupStyle
+                    showDeleteButton={
+                      startFilterDate !== null || endFilter !== null
+                        ? {
+                            ariaLabel: "Tyhjennä hakuaika rajaukset",
+                            onClick: () => {
+                              setStartFilterDate(null);
+                              setEndFilter(null);
+                            },
+                          }
+                        : undefined
+                    }
+                  >
+                    <DatePicker
+                      aria-label="Rajaa avustushaut niihin joiden hakuaika alkaa päivämääränä tai sen jälkeen"
+                      placeholder="pp.kk.vvvv"
+                      value={startFilterDate}
+                      parse="DD.MM.YYYY"
+                      onChange={(value) => setStartFilterDate(value ?? null)}
+                    />
+                    <span>&nbsp;&nbsp;-&nbsp;&nbsp;</span>
+                    <DatePicker
+                      aria-label="Rajaa avustushaut niihin joiden hakuaika päättyy päivämääränä tai sitä ennen"
+                      placeholder="pp.kk.vvvv"
+                      value={endFilter}
+                      parse="DD.MM.YYYY"
+                      onChange={(value) => setEndFilter(value ?? null)}
+                    />
+                  </TableLabel>
                 </TableHeader>
                 <TableHeader sortKey="paatos" text="päätökset">
                   <TableLabel text="Päätös" disabled />
@@ -601,3 +643,27 @@ const phaseContains =
   (selectedPhases: AvustushakuPhase[]) =>
   ({ phase }: Avustushaku) =>
     selectedPhases.includes(phase);
+
+const getDateWithoutTime = (date: Date) => date.toISOString().split("T")[0];
+
+const maybeDateWithoutTime = (date: Date | null) =>
+  date ? getDateWithoutTime(date) : null;
+
+const startsAfterOrSameDay =
+  (startFilterDate: Date | null) => (a: Avustushaku) => {
+    const startFilter = maybeDateWithoutTime(startFilterDate);
+    if (!startFilter) {
+      return true;
+    }
+    return (
+      getDateWithoutTime(new Date(a.content.duration.start)) >= startFilter
+    );
+  };
+
+const endsAfterEndFilter = (endFilterDate: Date | null) => (a: Avustushaku) => {
+  const endFilter = maybeDateWithoutTime(endFilterDate);
+  if (!endFilter) {
+    return true;
+  }
+  return getDateWithoutTime(new Date(a.content.duration.end)) <= endFilter;
+};
