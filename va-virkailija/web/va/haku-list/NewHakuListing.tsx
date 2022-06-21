@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useReducer, useState } from "react";
 
 import useOutsideClick from "../useOutsideClick";
 import classNames from "classnames";
@@ -296,6 +296,80 @@ interface Props {
 
 const toShortDate = (date: Date | string) => moment(date).format("DD.MM.YY");
 
+interface TableFilterState {
+  hakuName: string;
+  durationStart: Date | null;
+  durationEnd: Date | null;
+  statuses: AvustushakuStatus[];
+  phases: AvustushakuPhase[];
+}
+
+type FilterAction =
+  | { type: "set-haku-name"; name: string }
+  | {
+      type: "set-duration";
+      date: Date | null;
+      durationType: "durationStart" | "durationEnd";
+    }
+  | { type: "clear-durations" }
+  | { type: "toggle-status"; status: AvustushakuStatus }
+  | { type: "toggle-phase"; phase: AvustushakuPhase }
+  | { type: "clear"; key: keyof TableFilterState };
+
+const defaultFilterState: TableFilterState = {
+  durationStart: null,
+  durationEnd: null,
+  statuses: [...AVUSTUSHAKU_STATUSES],
+  phases: [...AVUSTUSHAKU_PHASES],
+  hakuName: "",
+};
+
+const filterReducer = (
+  state: TableFilterState,
+  action: FilterAction
+): TableFilterState => {
+  switch (action.type) {
+    case "set-duration": {
+      return { ...state, [action.durationType]: action.date };
+    }
+    case "clear-durations":
+      return {
+        ...state,
+        durationStart: null,
+        durationEnd: null,
+      };
+    case "toggle-status": {
+      if (state.statuses.includes(action.status)) {
+        return {
+          ...state,
+          statuses: state.statuses.filter((s) => s !== action.status),
+        };
+      }
+      return { ...state, statuses: state.statuses.concat(action.status) };
+    }
+    case "toggle-phase": {
+      if (state.phases.includes(action.phase)) {
+        return {
+          ...state,
+          phases: state.phases.filter((p) => p !== action.phase),
+        };
+      }
+      return { ...state, phases: state.phases.concat(action.phase) };
+    }
+    case "clear": {
+      return { ...state, [action.key]: defaultFilterState[action.key] };
+    }
+    case "set-haku-name": {
+      return {
+        ...state,
+        hakuName: action.name,
+      };
+    }
+    default:
+      throw Error("unknown action type");
+  }
+};
+
 export const NewHakuListing: React.FC<Props> = ({
   hakuList,
   selectedHaku,
@@ -303,15 +377,9 @@ export const NewHakuListing: React.FC<Props> = ({
 }) => {
   const [sortKey, setSortKey] = useState<SortKey | undefined>();
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
-  const [hakuNameFilter, setHakuNameFilter] = useState<string>("");
-  const [startFilterDate, setStartFilterDate] = useState<Date | null>(null);
-  const [endFilter, setEndFilter] = useState<Date | null>(null);
-  const [statusFilter, setStatusFilter] = useState<AvustushakuStatus[]>(() => [
-    ...AVUSTUSHAKU_STATUSES,
-  ]);
-  const [phaseFilter, setPhaseFilter] = useState<AvustushakuPhase[]>(() => [
-    ...AVUSTUSHAKU_PHASES,
-  ]);
+  const [filterState, dispatch] = useReducer(filterReducer, defaultFilterState);
+  const { hakuName, durationStart, durationEnd, statuses, phases } =
+    filterState;
   const setSorting = useCallback(
     (newSortKey?: SortKey) => {
       if (sortKey === newSortKey) {
@@ -325,11 +393,7 @@ export const NewHakuListing: React.FC<Props> = ({
   );
   const value = { sortingState: { sortOrder, sortKey }, setSorting };
   const filteredList = hakuList
-    .filter(hakuNameContains(hakuNameFilter))
-    .filter(statusContains(statusFilter))
-    .filter(phaseContains(phaseFilter))
-    .filter(startsAfterOrSameDay(startFilterDate))
-    .filter(endsAfterEndFilter(endFilter))
+    .filter(filterWithState(filterState))
     .sort(avustushakuSorter(value.sortingState));
   return (
     <div className={styles.containerForModals}>
@@ -345,8 +409,10 @@ export const NewHakuListing: React.FC<Props> = ({
                   <input
                     className={styles.nameFilter}
                     placeholder="Avustushaku"
-                    onChange={(e) => setHakuNameFilter(e.target.value)}
-                    value={hakuNameFilter}
+                    onChange={(e) =>
+                      dispatch({ type: "set-haku-name", name: e.target.value })
+                    }
+                    value={hakuName}
                   />
                 </TableHeader>
                 <TableHeader sortKey="status" text="avustushaun tila">
@@ -354,25 +420,23 @@ export const NewHakuListing: React.FC<Props> = ({
                     text="Tila"
                     statuses={AVUSTUSHAKU_STATUSES}
                     labelText={(status) => StatusToFi[status]}
-                    isChecked={(status) => statusFilter.includes(status)}
-                    onToggle={(status, isChecked) =>
-                      setStatusFilter((filters) => {
-                        if (isChecked) {
-                          return filters.filter((s) => s !== status);
-                        }
-                        return filters.concat(status);
-                      })
+                    isChecked={(status) => statuses.includes(status)}
+                    onToggle={(status) =>
+                      dispatch({ type: "toggle-status", status })
                     }
                     amountOfStatus={(status) =>
                       hakuList.filter((a) => a.status === status).length
                     }
                     showDeleteButton={
-                      statusFilter.length !== AVUSTUSHAKU_STATUSES.length
+                      statuses.length !== AVUSTUSHAKU_STATUSES.length
                         ? {
                             ariaLabel:
                               "Poista avustustushakujen tila rajaukset",
                             onClick: () =>
-                              setStatusFilter([...AVUSTUSHAKU_STATUSES]),
+                              dispatch({
+                                type: "clear",
+                                key: "statuses",
+                              }),
                           }
                         : undefined
                     }
@@ -383,25 +447,23 @@ export const NewHakuListing: React.FC<Props> = ({
                     text="Vaihe"
                     statuses={AVUSTUSHAKU_PHASES}
                     labelText={(phase) => PhaseToFi[phase]}
-                    isChecked={(phase) => phaseFilter.includes(phase)}
-                    onToggle={(phase, isChecked) =>
-                      setPhaseFilter((filters) => {
-                        if (isChecked) {
-                          return filters.filter((p) => p !== phase);
-                        }
-                        return filters.concat(phase);
-                      })
+                    isChecked={(phase) => phases.includes(phase)}
+                    onToggle={(phase) =>
+                      dispatch({ type: "toggle-phase", phase })
                     }
                     amountOfStatus={(phase) =>
                       hakuList.filter((a) => a.phase === phase).length
                     }
                     showDeleteButton={
-                      phaseFilter.length !== AVUSTUSHAKU_PHASES.length
+                      phases.length !== AVUSTUSHAKU_PHASES.length
                         ? {
                             ariaLabel:
                               "Poista avustustushakujen vaihe rajaukset",
                             onClick: () =>
-                              setPhaseFilter([...AVUSTUSHAKU_PHASES]),
+                              dispatch({
+                                type: "clear",
+                                key: "phases",
+                              }),
                           }
                         : undefined
                     }
@@ -412,12 +474,11 @@ export const NewHakuListing: React.FC<Props> = ({
                     text="Hakuaika"
                     widePopupStyle
                     showDeleteButton={
-                      startFilterDate !== null || endFilter !== null
+                      durationStart !== null || durationEnd !== null
                         ? {
                             ariaLabel: "Tyhjennä hakuaika rajaukset",
                             onClick: () => {
-                              setStartFilterDate(null);
-                              setEndFilter(null);
+                              dispatch({ type: "clear-durations" });
                             },
                           }
                         : undefined
@@ -426,17 +487,29 @@ export const NewHakuListing: React.FC<Props> = ({
                     <DatePicker
                       aria-label="Rajaa avustushaut niihin joiden hakuaika alkaa päivämääränä tai sen jälkeen"
                       placeholder="pp.kk.vvvv"
-                      value={startFilterDate}
+                      value={durationStart}
                       parse="DD.MM.YYYY"
-                      onChange={(value) => setStartFilterDate(value ?? null)}
+                      onChange={(value) =>
+                        dispatch({
+                          type: "set-duration",
+                          durationType: "durationStart",
+                          date: value ?? null,
+                        })
+                      }
                     />
                     <span>&nbsp;&nbsp;-&nbsp;&nbsp;</span>
                     <DatePicker
                       aria-label="Rajaa avustushaut niihin joiden hakuaika päättyy päivämääränä tai sitä ennen"
                       placeholder="pp.kk.vvvv"
-                      value={endFilter}
+                      value={durationEnd}
                       parse="DD.MM.YYYY"
-                      onChange={(value) => setEndFilter(value ?? null)}
+                      onChange={(value) =>
+                        dispatch({
+                          type: "set-duration",
+                          durationType: "durationEnd",
+                          date: value ?? null,
+                        })
+                      }
                     />
                   </TableLabel>
                 </TableHeader>
@@ -630,40 +703,42 @@ const PhasePill: React.FC<{ phase: AvustushakuPhase }> = ({ phase }) => (
   <Pill color={PhaseToColor[phase]} text={PhaseToFi[phase]} />
 );
 
-const hakuNameContains =
-  (s: string) => (haku: Avustushaku, _i: number, _a: Avustushaku[]) =>
-    haku.content.name.fi.includes(s);
-
-const statusContains =
-  (selectedFilters: AvustushakuStatus[]) =>
-  ({ status }: Avustushaku) =>
-    selectedFilters.includes(status);
-
-const phaseContains =
-  (selectedPhases: AvustushakuPhase[]) =>
-  ({ phase }: Avustushaku) =>
-    selectedPhases.includes(phase);
-
 const getDateWithoutTime = (date: Date) => date.toISOString().split("T")[0];
 
 const maybeDateWithoutTime = (date: Date | null) =>
   date ? getDateWithoutTime(date) : null;
 
-const startsAfterOrSameDay =
-  (startFilterDate: Date | null) => (a: Avustushaku) => {
-    const startFilter = maybeDateWithoutTime(startFilterDate);
+const tableFilterMap: Record<
+  keyof TableFilterState,
+  (state: TableFilterState, avustushaku: Avustushaku) => boolean
+> = {
+  hakuName: ({ hakuName }, haku) => haku.content.name.fi.includes(hakuName),
+  phases: ({ phases }, haku) => phases.includes(haku.phase),
+  statuses: ({ statuses }, haku) => statuses.includes(haku.status),
+  durationStart: ({ durationStart }, haku) => {
+    const startFilter = maybeDateWithoutTime(durationStart);
     if (!startFilter) {
       return true;
     }
     return (
-      getDateWithoutTime(new Date(a.content.duration.start)) >= startFilter
+      getDateWithoutTime(new Date(haku.content.duration.start)) >= startFilter
     );
-  };
-
-const endsAfterEndFilter = (endFilterDate: Date | null) => (a: Avustushaku) => {
-  const endFilter = maybeDateWithoutTime(endFilterDate);
-  if (!endFilter) {
-    return true;
-  }
-  return getDateWithoutTime(new Date(a.content.duration.end)) <= endFilter;
+  },
+  durationEnd: ({ durationEnd }, haku) => {
+    const endFilter = maybeDateWithoutTime(durationEnd);
+    if (!endFilter) {
+      return true;
+    }
+    return getDateWithoutTime(new Date(haku.content.duration.end)) <= endFilter;
+  },
 };
+
+const tableFilterKeys = Object.keys(
+  tableFilterMap
+) as (keyof TableFilterState)[];
+
+const filterWithState =
+  (state: TableFilterState) => (avustushaku: Avustushaku) =>
+    tableFilterKeys.every((filterKey) =>
+      tableFilterMap[filterKey](state, avustushaku)
+    );
