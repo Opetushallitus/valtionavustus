@@ -88,7 +88,7 @@ const avustushakuSorter =
 const useSorting = () => {
   const context = React.useContext(SortStateContext);
   if (context === undefined) {
-    throw new Error("useShorting should be used within a SortStateProvider");
+    throw new Error("useSorting should be used within a SortStateProvider");
   }
   return context;
 };
