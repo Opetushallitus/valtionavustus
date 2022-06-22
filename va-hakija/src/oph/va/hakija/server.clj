@@ -25,8 +25,8 @@
 (defn- shutdown []
   (log/info "Shutting down...")
   (email/stop-background-job-send-mails)
-  (db/close-datasource!)
-  (job-supervisor/await-jobs!))
+  (job-supervisor/await-jobs!)
+  (db/close-datasource!))
 
 (defn- create-restricted-routes [] #'restricted-routes)
 (defn- create-all-routes [] #'all-routes)

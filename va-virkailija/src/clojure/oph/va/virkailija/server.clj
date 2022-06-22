@@ -50,7 +50,6 @@
   (auth/stop-background-job-timeout-sessions)
   (if (get-in config [:va-users :use-cache?])
     (va-users/stop-background-job-update-va-users-cache))
-  (db/close-datasource!)
   (job-supervisor/await-jobs!)
   (rondo-scheduling/stop-schedule-from-rondo)
   (notification-scheduler/stop-notification-scheduler)
@@ -61,7 +60,8 @@
   (when (get-in config [:tasmaytysraportti-send :enabled?])
     (tasmaytysraportti/stop-schedule-send-tasmaytysraportti))
   (when (get-in config [:email :persistent-retry :enabled? ])
-    (email/stop-persistent-retry-job)))
+    (email/stop-persistent-retry-job))
+  (db/close-datasource!))
 
 (defn- query-string-for-redirect-location [original-request]
   (if-let [original-query-string (:query-string original-request)]
