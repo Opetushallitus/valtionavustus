@@ -8,7 +8,6 @@
             [oph.common.background-job-supervisor :as job-supervisor]
             [oph.common.server :as server]
             [oph.soresu.common.config :refer [config]]
-            [oph.soresu.common.db :as db]
             [oph.va.hakija.db.migrations :as dbmigrations]
             [oph.va.virkailija.db.migrations :as virkailija-dbmigrations]
             [oph.va.hakija.email :as email]
@@ -25,7 +24,6 @@
 (defn- shutdown []
   (log/info "Shutting down...")
   (email/stop-background-job-send-mails)
-  (db/close-datasource!)
   (job-supervisor/await-jobs!))
 
 (defn- create-restricted-routes [] #'restricted-routes)
