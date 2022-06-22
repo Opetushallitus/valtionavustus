@@ -12,6 +12,7 @@
             [oph.common.server :as server]
             [oph.common.background-job-supervisor :as job-supervisor]
             [oph.soresu.common.config :refer [config environment]]
+            [oph.soresu.common.db :as db]
             [oph.va.virkailija.authentication :as auth]
             [oph.va.virkailija.email :as email]
             [oph.va.virkailija.va-users :as va-users]
@@ -49,6 +50,7 @@
   (auth/stop-background-job-timeout-sessions)
   (if (get-in config [:va-users :use-cache?])
     (va-users/stop-background-job-update-va-users-cache))
+  (db/close-datasource!)
   (job-supervisor/await-jobs!)
   (rondo-scheduling/stop-schedule-from-rondo)
   (notification-scheduler/stop-notification-scheduler)

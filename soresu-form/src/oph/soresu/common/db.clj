@@ -46,6 +46,14 @@
                         datasources)))
   (:db @datasource))
 
+(defn close-datasource! []
+  (swap! datasource (fn [datasources]
+                      (if (contains? datasources :db)
+                        (let [ds (:db datasources)]
+                          (close-datasource ds)
+                          (dissoc datasources :db))
+                        datasources))))
+
 (defn get-next-exception-or-original [original-exception]
   (try (.getNextException original-exception)
        (catch IllegalArgumentException iae
