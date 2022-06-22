@@ -30,7 +30,6 @@
         check-and-shutdown (fn []
                              (if (compare-and-set! shutdown-done? false true)
                                (on-shutdown)))]
-    (.addShutdownHook (Runtime/getRuntime) (Thread. check-and-shutdown))
     ;; Return stop-function with our own shutdown
     (fn []
       (stop)

@@ -25,7 +25,8 @@
 
     (if (:nrepl-enabled? config) (run-nrepl))
 
-    (start-server {:host host
-                   :port port
-                   :auto-reload? auto-reload?
-                   :without-authentication? (without-authentication?)})))
+    (let [stop-server (start-server {:host host
+                                     :port port
+                                     :auto-reload? auto-reload?
+                                     :without-authentication? (without-authentication?)})]
+      (.addShutdownHook (Runtime/getRuntime) (Thread. stop-server)))))

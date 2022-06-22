@@ -23,4 +23,5 @@
         port (:port server-config)
         host (:host server-config)]
     (if (:nrepl-enabled? config) (run-nrepl))
-    (start-server host port auto-reload?)))
+    (let [stop-server (start-server host port auto-reload?)]
+      (.addShutdownHook (Runtime/getRuntime) (Thread. stop-server)))))
