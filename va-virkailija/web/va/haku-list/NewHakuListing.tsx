@@ -16,6 +16,9 @@ import { SelectedAvustushaku, Avustushaku } from "../HakujenHallintaController";
 import buttonStyles from "../style/Button.module.less";
 import styles from "./NewHakuListing.module.less";
 
+export const AVUSTUSHAKU_STATUSES_AVAILABLE_FOR_FILTER =
+  AVUSTUSHAKU_STATUSES.filter((status) => status !== "deleted");
+
 const SORTING_KEYS = [
   "avustushaku",
   "status",
@@ -319,7 +322,7 @@ type FilterAction =
 const defaultFilterState: TableFilterState = {
   durationStart: null,
   durationEnd: null,
-  statuses: [...AVUSTUSHAKU_STATUSES],
+  statuses: [...AVUSTUSHAKU_STATUSES_AVAILABLE_FOR_FILTER],
   phases: [...AVUSTUSHAKU_PHASES],
   hakuName: "",
 };
@@ -418,7 +421,7 @@ export const NewHakuListing: React.FC<Props> = ({
                 <TableHeader sortKey="status" text="avustushaun tila">
                   <StatusTableLabel
                     text="Tila"
-                    statuses={AVUSTUSHAKU_STATUSES}
+                    statuses={AVUSTUSHAKU_STATUSES_AVAILABLE_FOR_FILTER}
                     labelText={(status) => StatusToFi[status]}
                     isChecked={(status) => statuses.includes(status)}
                     onToggle={(status) =>
@@ -428,7 +431,8 @@ export const NewHakuListing: React.FC<Props> = ({
                       hakuList.filter((a) => a.status === status).length
                     }
                     showDeleteButton={
-                      statuses.length !== AVUSTUSHAKU_STATUSES.length
+                      statuses.length !==
+                      AVUSTUSHAKU_STATUSES_AVAILABLE_FOR_FILTER.length
                         ? {
                             ariaLabel:
                               "Poista avustustushakujen tila rajaukset",
