@@ -401,7 +401,7 @@ export const NewHakuListing: React.FC<Props> = ({
   return (
     <div className={styles.containerForModals}>
       <div className={styles.tableContainer}>
-        <table className={styles.table}>
+        <table className={styles.table} id="haku-listing">
           <colgroup>
             <col style={{ maxWidth: "400px" }} />
           </colgroup>
@@ -707,7 +707,8 @@ const PhasePill: React.FC<{ phase: AvustushakuPhase }> = ({ phase }) => (
   <Pill color={PhaseToColor[phase]} text={PhaseToFi[phase]} />
 );
 
-const getDateWithoutTime = (date: Date) => date.toISOString().split("T")[0];
+const getDateWithoutTime = (date: Date) =>
+  `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
 const maybeDateWithoutTime = (date: Date | null) =>
   date ? getDateWithoutTime(date) : null;

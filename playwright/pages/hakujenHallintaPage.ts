@@ -211,10 +211,12 @@ export class HakujenHallintaPage {
     this.loppuselvitysUpdatedAt = this.page.locator("#loppuselvitysUpdatedAt");
   }
 
-  async navigate(avustushakuID: number) {
+  async navigate(avustushakuID: number, opts?: { newHakuListing?: boolean }) {
     await navigate(
       this.page,
-      `/admin/haku-editor/?avustushaku=${avustushakuID}`
+      `/admin/haku-editor/?avustushaku=${avustushakuID}${
+        opts?.newHakuListing ? "&new-haku-listing=true" : ""
+      }`
     );
   }
 
@@ -647,5 +649,35 @@ export class HakujenHallintaPage {
       `label[for="allow_visibility_in_external_system_${allow}"]`
     );
     await this.waitForSave();
+  }
+
+  hakuListingSelectors() {
+    const hakuList = this.page.locator("#haku-listing");
+    const hakuRows = hakuList.locator("tbody tr");
+    return {
+      avustushakuFilterInput: this.page.locator('[placeholder="Avustushaku"]'),
+      hakuList,
+      hakuRows,
+      tilaPopup: {
+        labelBtn: this.page.locator('button:has-text("Tila")'),
+        uusiCheckbox: this.page.locator('label:has-text("Uusi")'),
+      },
+      vaihePopup: {
+        labelBtn: this.page.locator('button:has-text("Vaihe")'),
+        kiinniCheckbox: this.page.locator('label:has-text("Kiinni")'),
+      },
+      hakuaikaPopup: {
+        labelBtn: this.page.locator('button:has-text("Hakuaika")'),
+        hakuaikaStart: this.page.locator(
+          '[aria-label="Rajaa avustushaut niihin joiden hakuaika alkaa päivämääränä tai sen jälkeen"] input'
+        ),
+        hakuaikaEnd: this.page.locator(
+          '[aria-label="Rajaa avustushaut niihin joiden hakuaika päättyy päivämääränä tai sitä ennen"] input'
+        ),
+        clearBtn: this.page.locator(
+          '[aria-label="Tyhjennä hakuaika rajaukset"]'
+        ),
+      },
+    };
   }
 }
