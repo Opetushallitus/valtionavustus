@@ -10,6 +10,8 @@ import { expectToBeDefined, switchUserIdentityTo } from "../utils/util";
 
 export type DefaultValueFixtures = {
   codes: VaCodeValues;
+  randomName: string;
+  avustushakuName: string;
   hakuProps: HakuProps;
   answers: Answers;
   swedishAnswers: Answers;
@@ -51,15 +53,21 @@ export const defaultValues =
     codes: async ({ defaultCodes }, use) => {
       use(defaultCodes);
     },
-    hakuProps: ({ codes }, use, testInfo) => {
-      const nextYear = new Date().getFullYear() + 1;
+    randomName: async ({}, use) => {
       const randomName = randomString();
+      await use(randomName);
+    },
+    avustushakuName: async ({ randomName }, use, testInfo) => {
+      await use(
+        `Testiavustushaku (${testInfo.title} ${randomName} - ${moment(
+          new Date()
+        ).format("YYYY-MM-DD hh:mm:ss:SSSS")}`
+      );
+    },
+    hakuProps: ({ codes, avustushakuName, randomName }, use) => {
+      const nextYear = new Date().getFullYear() + 1;
       use({
-        avustushakuName: `Testiavustushaku (${
-          testInfo.title
-        } ${randomName} - ${moment(new Date()).format(
-          "YYYY-MM-DD hh:mm:ss:SSSS"
-        )}`,
+        avustushakuName,
         randomName,
         hakuaikaStart: parseDate("1.1.1970 0.00"),
         hakuaikaEnd: parseDate(`31.12.${nextYear} 23.59`),

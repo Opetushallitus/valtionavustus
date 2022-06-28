@@ -38,6 +38,7 @@ export interface HakuProps {
   hankkeenPaattymispaiva: string;
   selectionCriteria: string[];
   hakemusFields: Field[];
+  jaossaOlevaSumma?: number;
 }
 
 const dateFormat = "D.M.YYYY H.mm";
@@ -484,6 +485,7 @@ export class HakujenHallintaPage {
       hankkeenPaattymispaiva,
       selectionCriteria,
       arvioituMaksupaiva,
+      jaossaOlevaSumma,
     } = props;
     console.log(`Avustushaku name for test: ${avustushakuName}`);
 
@@ -510,6 +512,10 @@ export class HakujenHallintaPage {
         '[name="arvioitu_maksupaiva"]',
         formatDate(arvioituMaksupaiva)
       );
+    }
+
+    if (jaossaOlevaSumma !== undefined) {
+      await this.page.fill("#total-grant-size", String(jaossaOlevaSumma));
     }
 
     await this.selectTositelaji("XE");
@@ -651,32 +657,58 @@ export class HakujenHallintaPage {
     await this.waitForSave();
   }
 
-  hakuListingSelectors() {
+  hakuListingTableSelectors() {
     const hakuList = this.page.locator("#haku-listing");
     const hakuRows = hakuList.locator("tbody tr");
+    const baseTableLocators = (columnTestId: string) => ({
+      cellValue: (trTestId: string) =>
+        hakuList
+          .locator(`[data-test-id="${trTestId}"]`)
+          .locator(`[data-test-id=${columnTestId}]`),
+      cellValues: () =>
+        hakuRows.locator(`[data-test-id=${columnTestId}]`).allInnerTexts(),
+      sort: this.page.locator(`[data-test-id=sort-button-${columnTestId}]`),
+    });
     return {
-      avustushakuFilterInput: this.page.locator('[placeholder="Avustushaku"]'),
       hakuList,
-      hakuRows,
-      tilaPopup: {
-        labelBtn: this.page.locator('button:has-text("Tila")'),
-        uusiCheckbox: this.page.locator('label:has-text("Uusi")'),
-      },
-      vaihePopup: {
-        labelBtn: this.page.locator('button:has-text("Vaihe")'),
-        kiinniCheckbox: this.page.locator('label:has-text("Kiinni")'),
-      },
-      hakuaikaPopup: {
-        labelBtn: this.page.locator('button:has-text("Hakuaika")'),
-        hakuaikaStart: this.page.locator(
-          '[aria-label="Rajaa avustushaut niihin joiden hakuaika alkaa päivämääränä tai sen jälkeen"] input'
-        ),
-        hakuaikaEnd: this.page.locator(
-          '[aria-label="Rajaa avustushaut niihin joiden hakuaika päättyy päivämääränä tai sitä ennen"] input'
-        ),
-        clearBtn: this.page.locator(
-          '[aria-label="Tyhjennä hakuaika rajaukset"]'
-        ),
+      columns: {
+        avustushaku: {
+          ...baseTableLocators("avustushaku"),
+          input: this.page.locator('[placeholder="Avustushaku"]'),
+        },
+        tila: {
+          ...baseTableLocators("status"),
+          toggle: this.page.locator('button:has-text("Tila")'),
+          uusiCheckbox: this.page.locator('label:has-text("Uusi")'),
+        },
+        vaihe: {
+          ...baseTableLocators("phase"),
+          toggle: this.page.locator('button:has-text("Vaihe")'),
+          kiinniCheckbox: this.page.locator('label:has-text("Kiinni")'),
+        },
+        hakuaika: {
+          ...baseTableLocators("hakuaika"),
+          toggle: this.page.locator('button:has-text("Hakuaika")'),
+          clear: this.page.locator(
+            '[aria-label="Tyhjennä hakuaika rajaukset"]'
+          ),
+          hakuaikaStart: this.page.locator(
+            '[aria-label="Rajaa avustushaut niihin joiden hakuaika alkaa päivämääränä tai sen jälkeen"] input'
+          ),
+          hakuaikaEnd: this.page.locator(
+            '[aria-label="Rajaa avustushaut niihin joiden hakuaika päättyy päivämääränä tai sitä ennen"] input'
+          ),
+        },
+        paatos: baseTableLocators("paatos"),
+        valiselvitykset: baseTableLocators("valiselvitykset"),
+        loppuselvitykset: baseTableLocators("loppuselvitykset"),
+        vastuuvalmistelija: baseTableLocators("valmistelija"),
+        muutoshakukelpoinen: baseTableLocators("muutoshakukelpoinen"),
+        maksatukset: baseTableLocators("maksatukset"),
+        kayttoaikaAlkaa: baseTableLocators("kayttoaikaAlkaa"),
+        kayttoaikaPaattyy: baseTableLocators("kayttoaikaPaattyy"),
+        jaossaOllutSumma: baseTableLocators("jaossaOllutSumma"),
+        maksettuSumma: baseTableLocators("maksettuSumma"),
       },
     };
   }

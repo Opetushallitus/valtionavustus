@@ -576,8 +576,9 @@ export const NewHakuListing: React.FC<Props> = ({
                   )}
                   onClick={() => onClickHaku(avustushaku)}
                   tabIndex={0}
+                  data-test-id={avustushaku.content.name.fi}
                 >
-                  <td className={styles.longTextTd}>
+                  <td className={styles.longTextTd} data-test-id="avustushaku">
                     <span>{avustushaku.content.name.fi}</span>
                   </td>
                   <td>
@@ -586,30 +587,30 @@ export const NewHakuListing: React.FC<Props> = ({
                   <td>
                     <PhasePill phase={avustushaku.phase} />
                   </td>
-                  <td>{startEnd}</td>
-                  <td>
+                  <td data-test-id="hakuaika">{startEnd}</td>
+                  <td data-test-id="paatos">
                     <GoodBadDate
                       goodDate={avustushaku["paatokset-lahetetty"]}
                     />
                   </td>
-                  <td>
+                  <td data-test-id="maksatukset">
                     <GoodBadDate
                       goodDate={avustushaku["maksatukset-lahetetty"]}
                     />
                   </td>
-                  <td>
+                  <td data-test-id="valiselvitykset">
                     <GoodBadDate
                       goodDate={avustushaku["valiselvitykset-lahetetty"]}
                       badDate={avustushaku.valiselvitysdate}
                     />
                   </td>
-                  <td>
+                  <td data-test-id="loppuselvitykset">
                     <GoodBadDate
                       goodDate={avustushaku["loppuselvitykset-lahetetty"]}
                       badDate={avustushaku.loppuselvitysdate}
                     />
                   </td>
-                  <td>
+                  <td data-test-id="valmistelija">
                     <button
                       className={buttonStyles.greyButton}
                       title={
@@ -625,26 +626,40 @@ export const NewHakuListing: React.FC<Props> = ({
                         ) ?? "-"}
                     </button>
                   </td>
-                  <td>{avustushaku.muutoshakukelpoinen ? "Kyllä" : "Ei"}</td>
+                  <td data-test-id="muutoshakukelpoinen">
+                    {avustushaku.muutoshakukelpoinen ? "Kyllä" : "Ei"}
+                  </td>
                   <td>
                     {
                       // TODO: get is menokohtainen or kokonaiskustannus
                     }
                   </td>
-                  <td>
+                  <td
+                    data-test-id="kayttoaikaAlkaa"
+                    title={avustushaku["hankkeen-alkamispaiva"]}
+                  >
                     {avustushaku["hankkeen-alkamispaiva"]
                       ? toShortDate(avustushaku["hankkeen-alkamispaiva"])
                       : "-"}
                   </td>
-                  <td>
+                  <td
+                    data-test-id="kayttoaikaPaattyy"
+                    title={avustushaku["hankkeen-paattymispaiva"]}
+                  >
                     {avustushaku["hankkeen-paattymispaiva"]
                       ? toShortDate(avustushaku["hankkeen-paattymispaiva"])
                       : "_"}
                   </td>
-                  <td className={styles.alignRight}>
+                  <td
+                    data-test-id="jaossaOllutSumma"
+                    className={styles.alignRight}
+                  >
                     {avustushaku.content["total-grant-size"] ?? "-"}
                   </td>
-                  <td className={styles.alignRight}>
+                  <td
+                    data-test-id="maksettuSumma"
+                    className={styles.alignRight}
+                  >
                     {avustushaku["maksatukset-summa"] ?? "-"}
                   </td>
                 </tr>
@@ -686,7 +701,11 @@ const StatusToColor = {
 } as const;
 
 const StatusPill: React.FC<{ status: AvustushakuStatus }> = ({ status }) => (
-  <Pill color={StatusToColor[status]} text={StatusToFi[status]} />
+  <Pill
+    testId="status"
+    color={StatusToColor[status]}
+    text={StatusToFi[status]}
+  />
 );
 
 const PhaseToFi = {
@@ -704,7 +723,7 @@ const PhaseToColor = {
 } as const;
 
 const PhasePill: React.FC<{ phase: AvustushakuPhase }> = ({ phase }) => (
-  <Pill color={PhaseToColor[phase]} text={PhaseToFi[phase]} />
+  <Pill testId="phase" color={PhaseToColor[phase]} text={PhaseToFi[phase]} />
 );
 
 const getDateWithoutTime = (date: Date) =>

@@ -6,17 +6,13 @@ const getIndexInHakuList = async (
   hakujenHallintaPage: HakujenHallintaPage,
   avustushakuName: string
 ) => {
-  const { hakuList, hakuRows } = hakujenHallintaPage.hakuListingSelectors();
+  const { hakuList, columns } = hakujenHallintaPage.hakuListingTableSelectors();
   await hakuList.waitFor();
-  const rows = await hakuRows.allInnerTexts();
+  const rows = await columns.avustushaku.cellValues();
   const defaultAvustushakuName = "Yleisavustus - esimerkkihaku";
   return {
-    defaultAvustushakuIndex: rows.findIndex((text) =>
-      text.includes(defaultAvustushakuName)
-    ),
-    testAvustushakuIndex: rows.findIndex((text) =>
-      text.includes(avustushakuName)
-    ),
+    defaultAvustushakuIndex: rows.indexOf(defaultAvustushakuName),
+    testAvustushakuIndex: rows.indexOf(avustushakuName),
     avustusHakuAmount: rows.length,
   };
 };
@@ -25,8 +21,8 @@ test("filtering haku table", async ({ avustushakuID, page, hakuProps }) => {
   const { avustushakuName } = hakuProps;
   const hakujenHallintaPage = new HakujenHallintaPage(page);
   await hakujenHallintaPage.navigate(avustushakuID, { newHakuListing: true });
-  const { avustushakuFilterInput, tilaPopup, vaihePopup, hakuaikaPopup } =
-    hakujenHallintaPage.hakuListingSelectors();
+  const { columns } = hakujenHallintaPage.hakuListingTableSelectors();
+  const { avustushaku, tila, vaihe, hakuaika } = columns;
   await test.step("filtering with avustushaku name works", async () => {
     const beforeFiltering = await getIndexInHakuList(
       hakujenHallintaPage,
@@ -35,7 +31,7 @@ test("filtering haku table", async ({ avustushakuID, page, hakuProps }) => {
     expect(beforeFiltering.avustusHakuAmount).toBeGreaterThanOrEqual(2);
     expect(beforeFiltering.defaultAvustushakuIndex).toBeGreaterThanOrEqual(0);
     expect(beforeFiltering.testAvustushakuIndex).toBeGreaterThanOrEqual(0);
-    await avustushakuFilterInput.fill(avustushakuName);
+    await avustushaku.input.fill(avustushakuName);
     const afterFiltering = await getIndexInHakuList(
       hakujenHallintaPage,
       avustushakuName
@@ -43,7 +39,7 @@ test("filtering haku table", async ({ avustushakuID, page, hakuProps }) => {
     expect(afterFiltering.defaultAvustushakuIndex).toEqual(-1);
     expect(afterFiltering.testAvustushakuIndex).toEqual(0);
     expect(afterFiltering.avustusHakuAmount).toEqual(1);
-    await avustushakuFilterInput.fill("");
+    await avustushaku.input.fill("");
     const afterClearingFilter = await getIndexInHakuList(
       hakujenHallintaPage,
       avustushakuName
@@ -51,8 +47,8 @@ test("filtering haku table", async ({ avustushakuID, page, hakuProps }) => {
     expect(afterClearingFilter).toEqual(beforeFiltering);
   });
   await test.step("filters with tila", async () => {
-    const { labelBtn, uusiCheckbox } = tilaPopup;
-    await labelBtn.click();
+    const { toggle, uusiCheckbox } = tila;
+    await toggle.click();
     await uusiCheckbox.uncheck();
     const afterFiltering = await getIndexInHakuList(
       hakujenHallintaPage,
@@ -69,8 +65,8 @@ test("filtering haku table", async ({ avustushakuID, page, hakuProps }) => {
     expect(afterClearing.testAvustushakuIndex).toBeGreaterThanOrEqual(0);
   });
   await test.step("filters with vaihe", async () => {
-    const { labelBtn, kiinniCheckbox } = vaihePopup;
-    await labelBtn.click();
+    const { toggle, kiinniCheckbox } = vaihe;
+    await toggle.click();
     await kiinniCheckbox.uncheck();
     const afterFiltering = await getIndexInHakuList(
       hakujenHallintaPage,
@@ -87,9 +83,9 @@ test("filtering haku table", async ({ avustushakuID, page, hakuProps }) => {
     expect(afterClearing.testAvustushakuIndex).toBeGreaterThanOrEqual(0);
   });
   await test.step("filters with hakuaika", async () => {
-    const { labelBtn, hakuaikaStart, hakuaikaEnd, clearBtn } = hakuaikaPopup;
-    await clearBtn.waitFor({ state: "hidden" });
-    await labelBtn.click();
+    const { toggle, hakuaikaStart, hakuaikaEnd, clear } = hakuaika;
+    await clear.waitFor({ state: "hidden" });
+    await toggle.click();
     const beforeFiltering = await getIndexInHakuList(
       hakujenHallintaPage,
       avustushakuName
@@ -103,7 +99,7 @@ test("filtering haku table", async ({ avustushakuID, page, hakuProps }) => {
     expect(afterStartFilter.avustusHakuAmount).toBeLessThan(
       beforeFiltering.avustusHakuAmount
     );
-    await clearBtn.waitFor();
+    await clear.waitFor();
     await hakuaikaEnd.fill("31.12.2015");
     await page.keyboard.press("Tab");
     const afterBothFilters = await getIndexInHakuList(
@@ -112,7 +108,7 @@ test("filtering haku table", async ({ avustushakuID, page, hakuProps }) => {
     );
     expect(afterBothFilters.avustusHakuAmount).toEqual(1);
     expect(afterBothFilters.defaultAvustushakuIndex).toEqual(0);
-    await clearBtn.click();
+    await clear.click();
     const afterClearing = await getIndexInHakuList(
       hakujenHallintaPage,
       avustushakuName
