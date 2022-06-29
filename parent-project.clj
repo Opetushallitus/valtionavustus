@@ -30,7 +30,7 @@
                          [buddy/buddy-auth "2.1.0"]
                          [clout "2.2.1"]
                          [org.apache.commons/commons-compress "1.21"]
-                         [org.apache.tika/tika-core "2.4.0"]
+                         [org.apache.tika/tika-core "2.4.1"]
                          [compojure "1.6.2"]
                          [http-kit "2.5.3"]
                          [metosin/compojure-api "1.1.13"]
