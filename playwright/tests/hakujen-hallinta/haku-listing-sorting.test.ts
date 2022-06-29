@@ -74,7 +74,6 @@ test("sorting haku table", async ({
   avustushakuName,
   secondHakuProps,
 }) => {
-  const { columns } = hakujenHallintaPage.hakuListingTableSelectors();
   const todayFormatted = moment().format("DD.MM.YY");
   const {
     hakuaikaStart,
@@ -99,7 +98,7 @@ test("sorting haku table", async ({
     kayttoaikaPaattyy,
     jaossaOllutSumma,
     maksettuSumma,
-  } = columns;
+  } = hakujenHallintaPage.hakuListingTableSelectors();
   await test.step("can be sorted by avustushaku name", async () => {
     await avustushaku.sort.click();
     const descSorted = await avustushaku.cellValues();

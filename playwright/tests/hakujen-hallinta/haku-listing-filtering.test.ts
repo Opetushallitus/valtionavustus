@@ -6,9 +6,10 @@ const getIndexInHakuList = async (
   hakujenHallintaPage: HakujenHallintaPage,
   avustushakuName: string
 ) => {
-  const { hakuList, columns } = hakujenHallintaPage.hakuListingTableSelectors();
+  const { hakuList, avustushaku } =
+    hakujenHallintaPage.hakuListingTableSelectors();
   await hakuList.waitFor();
-  const rows = await columns.avustushaku.cellValues();
+  const rows = await avustushaku.cellValues();
   const defaultAvustushakuName = "Yleisavustus - esimerkkihaku";
   return {
     defaultAvustushakuIndex: rows.indexOf(defaultAvustushakuName),
@@ -21,8 +22,8 @@ test("filtering haku table", async ({ avustushakuID, page, hakuProps }) => {
   const { avustushakuName } = hakuProps;
   const hakujenHallintaPage = new HakujenHallintaPage(page);
   await hakujenHallintaPage.navigate(avustushakuID, { newHakuListing: true });
-  const { columns } = hakujenHallintaPage.hakuListingTableSelectors();
-  const { avustushaku, tila, vaihe, hakuaika } = columns;
+  const { avustushaku, tila, vaihe, hakuaika } =
+    hakujenHallintaPage.hakuListingTableSelectors();
   await test.step("filtering with avustushaku name works", async () => {
     const beforeFiltering = await getIndexInHakuList(
       hakujenHallintaPage,
