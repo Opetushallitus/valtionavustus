@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { loppuselvitysTest as test } from "../fixtures/loppuselvitysTest";
 import { HakujenHallintaPage } from "../pages/hakujenHallintaPage";
+import { selvitysTest as test } from "../fixtures/selvitysTest";
 
 test("Modifying päätös should not affect vali- and loppuselvitys updated at timestamps", async ({
   page,

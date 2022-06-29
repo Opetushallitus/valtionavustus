@@ -1,10 +1,9 @@
 import { expect } from "@playwright/test";
 
-import { loppuselvitysTest as test } from "../../fixtures/loppuselvitysTest";
-
 import { countElements } from "../../utils/util";
 
 import { LoppuselvitysPage } from "../../pages/loppuselvitysPage";
+import { selvitysTest as test } from "../../fixtures/selvitysTest";
 
 test("virkailija can not accept loppuselvitys while it is not verified", async ({
   page,

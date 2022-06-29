@@ -1,5 +1,3 @@
-import { loppuselvitysTest as test } from "../../fixtures/loppuselvitysTest";
-
 import {
   clickElementWithText,
   waitForElementWithText,
@@ -7,6 +5,7 @@ import {
 } from "../../utils/util";
 
 import { LoppuselvitysPage } from "../../pages/loppuselvitysPage";
+import { selvitysTest as test } from "../../fixtures/selvitysTest";
 
 test("Loppuselvitys tab in hakemuksen arviointi should have link to correct loppuselvitys form for the hakemus", async ({
   page,

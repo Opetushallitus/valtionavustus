@@ -6,7 +6,6 @@ import {
   swedishAnswers,
   VIRKAILIJA_URL,
 } from "../../utils/constants";
-import { väliselvitysTest } from "../../fixtures/väliselvitysTest";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import {
   getValiselvitysPalauttamattaEmails,
@@ -14,9 +13,10 @@ import {
 } from "../../utils/emails";
 import { Answers } from "../../utils/types";
 import { expectToBeDefined } from "../../utils/util";
+import { selvitysTest } from "../../fixtures/selvitysTest";
 
 test.describe("valiselvitys-palauttamatta", () => {
-  väliselvitysTest(
+  selvitysTest(
     "reminder in Finnish",
     async ({
       page,
@@ -103,7 +103,7 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
     }
   );
 
-  väliselvitysTest(
+  selvitysTest(
     "reminder email is not sent when valiselvitys is submitted",
     async ({
       page,
@@ -123,7 +123,7 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
     }
   );
 
-  väliselvitysTest.extend<{ answers: Answers }>({
+  selvitysTest.extend<{ answers: Answers }>({
     answers: swedishAnswers,
   })(
     "reminder mail is sent in swedish for swedish hakemus",
@@ -160,7 +160,7 @@ Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid 
     }
   );
 
-  väliselvitysTest(
+  selvitysTest(
     "do not send reminders if valiselvitys pyyntö has not been sent",
     async ({ page, avustushakuID, acceptedHakemus: { hakemusID } }) => {
       const valiselvitysdate = moment().add(7, "days").format("DD.MM.YYYY");

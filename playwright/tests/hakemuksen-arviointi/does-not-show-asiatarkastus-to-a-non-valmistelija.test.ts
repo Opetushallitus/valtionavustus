@@ -1,10 +1,9 @@
 import { expect } from "@playwright/test";
 
-import { loppuselvitysTest as test } from "../../fixtures/loppuselvitysTest";
-
 import { switchUserIdentityTo, countElements } from "../../utils/util";
 
 import { LoppuselvitysPage } from "../../pages/loppuselvitysPage";
+import { selvitysTest as test } from "../../fixtures/selvitysTest";
 
 test("does not show asiatarkastus to a virkailija who is not valmistelija", async ({
   page,

@@ -4,7 +4,6 @@ import {
   swedishAnswers,
   VIRKAILIJA_URL,
 } from "../../utils/constants";
-import { loppuselvitysTest } from "../../fixtures/loppuselvitysTest";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import {
   getLoppuselvitysPalauttamattaEmails,
@@ -15,9 +14,10 @@ import { Answers, MuutoshakemusValues } from "../../utils/types";
 import { expectToBeDefined } from "../../utils/util";
 import { HakijaMuutoshakemusPage } from "../../pages/hakijaMuutoshakemusPage";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
+import { selvitysTest } from "../../fixtures/selvitysTest";
 
 test.describe("loppuselvitys-palauttamatta", () => {
-  loppuselvitysTest(
+  selvitysTest(
     "reminder email is not sent for hakemus with loppuselvitys deadline 15 or more days in the future",
     async ({
       page,
@@ -36,7 +36,7 @@ test.describe("loppuselvitys-palauttamatta", () => {
     }
   );
 
-  loppuselvitysTest(
+  selvitysTest(
     "reminder email is not sent for avustushaku with loppuselvitys deadline in the past",
     async ({
       page,
@@ -57,7 +57,7 @@ test.describe("loppuselvitys-palauttamatta", () => {
     }
   );
 
-  loppuselvitysTest(
+  selvitysTest(
     "reminder email is sent once for hakemus with loppuselvitys deadline in next 14 days",
     async ({
       page,
@@ -106,7 +106,7 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
     }
   );
 
-  loppuselvitysTest(
+  selvitysTest(
     "reminder email is not sent when loppuselvitys is submitted",
     async ({
       page,
@@ -126,7 +126,7 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
     }
   );
 
-  loppuselvitysTest.extend<{ answers: Answers }>({
+  selvitysTest.extend<{ answers: Answers }>({
     answers: swedishAnswers,
   })(
     "reminder mail is sent in swedish for swedish hakemus",
@@ -168,7 +168,7 @@ Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid 
     }
   );
 
-  loppuselvitysTest(
+  selvitysTest(
     "do not send reminders if loppuselvitys pyyntö has not been sent",
     async ({ page, avustushakuID, acceptedHakemus: { hakemusID } }) => {
       const loppuselvitysdate = moment().add(7, "days").format("DD.MM.YYYY");
@@ -181,7 +181,7 @@ Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid 
     }
   );
 
-  loppuselvitysTest(
+  selvitysTest(
     "does not send reminder if the latest accepted jatkoaika is over 14 days away",
     async ({
       page,

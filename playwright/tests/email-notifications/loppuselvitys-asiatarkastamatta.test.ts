@@ -1,10 +1,9 @@
 import { APIRequestContext, expect } from "@playwright/test";
 
-import { loppuselvitysTest as test } from "../../fixtures/loppuselvitysTest";
-
 import { VIRKAILIJA_URL } from "../../utils/constants";
 
 import { getLoppuselvitysAsiatarkastamattaEmails } from "../../utils/emails";
+import { selvitysTest as test } from "../../fixtures/selvitysTest";
 
 const sendLoppuselvitysAsiatarkastamattaNotifications = (
   request: APIRequestContext

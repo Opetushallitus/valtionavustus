@@ -1,13 +1,13 @@
 import { expect } from "@playwright/test";
 
 import moment from "moment";
-import { loppuselvitysTest as test } from "../../fixtures/loppuselvitysTest";
 
 import { navigate } from "../../utils/navigate";
 
 import { waitForElementWithText, clearAndType } from "../../utils/util";
 
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
+import { selvitysTest as test } from "../../fixtures/selvitysTest";
 
 test("virkailija can accept loppuselvitys", async ({
   page,

@@ -1,12 +1,11 @@
 import { expect } from "@playwright/test";
 
-import { loppuselvitysTest as test } from "../../fixtures/loppuselvitysTest";
-
 import {
   getHakemusTokenAndRegisterNumber,
   getLoppuselvitysSubmittedNotificationEmails,
   lastOrFail,
 } from "../../utils/emails";
+import { selvitysTest as test } from "../../fixtures/selvitysTest";
 
 test("loppuselvitys submitted notification is sent", async ({
   page,

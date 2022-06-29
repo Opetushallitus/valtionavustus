@@ -1,14 +1,14 @@
 import * as xlsx from "xlsx";
 import { expect } from "@playwright/test";
-import { väliselvitysTest } from "../fixtures/väliselvitysTest";
 import { navigate } from "../utils/navigate";
 import { expectToBeDefined } from "../utils/util";
+import { selvitysTest } from "../fixtures/selvitysTest";
 
-väliselvitysTest.use({
+selvitysTest.use({
   acceptDownloads: true,
 });
 
-väliselvitysTest(
+selvitysTest(
   "Excel export contains väliselvitys sheet",
   async ({ page, avustushakuID, väliselvitysSubmitted }) => {
     expectToBeDefined(väliselvitysSubmitted);

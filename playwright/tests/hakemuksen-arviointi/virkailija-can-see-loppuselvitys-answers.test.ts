@@ -1,8 +1,7 @@
 import { expect } from "@playwright/test";
 
-import { loppuselvitysTest as test } from "../../fixtures/loppuselvitysTest";
-
 import { LoppuselvitysPage } from "../../pages/loppuselvitysPage";
+import { selvitysTest as test } from "../../fixtures/selvitysTest";
 
 test("virkailija can see loppuselvitys answers", async ({
   page,

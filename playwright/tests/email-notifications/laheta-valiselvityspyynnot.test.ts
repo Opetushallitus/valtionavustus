@@ -2,13 +2,13 @@ import { test, expect, Page } from "@playwright/test";
 import moment from "moment";
 
 import { VIRKAILIJA_URL } from "../../utils/constants";
-import { väliselvitysTest } from "../../fixtures/väliselvitysTest";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { getLahetaValiselvityspyynnotEmails } from "../../utils/emails";
 import { expectToBeDefined } from "../../utils/util";
+import { selvitysTest } from "../../fixtures/selvitysTest";
 
-väliselvitysTest(
+selvitysTest(
   "Lähetä väliselvityspyynnot notifications are not sent if väliselvitys deadline is not set",
   async ({ page, avustushakuID, acceptedHakemus }) => {
     expectToBeDefined(acceptedHakemus);
@@ -23,7 +23,7 @@ väliselvitysTest(
   }
 );
 
-väliselvitysTest(
+selvitysTest(
   "Lähetä väliselvityspyynnöt notifications are not sent if valiselvitys deadline is more than 6 months in the future",
   async ({ page, avustushakuID, acceptedHakemus }) => {
     expectToBeDefined(acceptedHakemus);
@@ -41,7 +41,7 @@ väliselvitysTest(
   }
 );
 
-väliselvitysTest(
+selvitysTest(
   "Lähetä väliselvityspyynnöt notifications are not sent if valiselvitys deadline is in the past",
   async ({ page, avustushakuID, acceptedHakemus }) => {
     expectToBeDefined(acceptedHakemus);
@@ -59,7 +59,7 @@ väliselvitysTest(
   }
 );
 
-väliselvitysTest(
+selvitysTest(
   "Lähetä väliselvityspyynnöt notifications are send 6 months before valiselvitys deadline",
   async ({ page, avustushakuID, acceptedHakemus }) => {
     expectToBeDefined(acceptedHakemus);
@@ -76,7 +76,7 @@ väliselvitysTest(
   }
 );
 
-väliselvitysTest(
+selvitysTest(
   "Lähetä väliselvityspyynnöt notifications are send after paatos has been send",
   async ({
     closedAvustushaku,
@@ -137,7 +137,7 @@ väliselvitysTest(
   }
 );
 
-väliselvitysTest(
+selvitysTest(
   "Lähetä väliselvityspyynnöt notifications are not sent if väliselvityspyyntö has been sent",
   async ({ page, avustushakuID, väliselvityspyyntöSent }) => {
     expectToBeDefined(väliselvityspyyntöSent);
@@ -156,7 +156,7 @@ väliselvitysTest(
   }
 );
 
-väliselvitysTest(
+selvitysTest(
   "Lähetä väliselvityspyynnöt notifications are sent until väliselvityspyynnöt have been sent",
   async ({ page, avustushakuID, acceptedHakemus }) => {
     expectToBeDefined(acceptedHakemus);

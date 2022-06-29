@@ -2,7 +2,6 @@ import { expect, test } from "@playwright/test";
 import { VirkailijaValiselvitysPage } from "../../pages/virkailijaValiselvitysPage";
 import { expectToBeDefined } from "../../utils/util";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
-import { väliselvitysTest } from "../../fixtures/väliselvitysTest";
 import { getValiselvitysEmails } from "../../../test/test-util";
 import {
   getHakemusTokenAndRegisterNumber,
@@ -11,9 +10,10 @@ import {
 } from "../../utils/emails";
 import { HAKIJA_URL } from "../../utils/constants";
 import { HakijaSelvitysPage } from "../../pages/hakijaSelvitysPage";
+import { selvitysTest } from "../../fixtures/selvitysTest";
 
 test.describe("Väliselvitys", () => {
-  väliselvitysTest(
+  selvitysTest(
     "väliselvitys submitted notification is sent",
     async ({ page, acceptedHakemus: { hakemusID }, väliselvitysSubmitted }) => {
       expectToBeDefined(väliselvitysSubmitted);
@@ -54,7 +54,7 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
     }
   );
 
-  väliselvitysTest(
+  selvitysTest(
     "väliselvitys can be accepted",
     async ({
       context,
@@ -147,7 +147,7 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
       );
     }
   );
-  väliselvitysTest(
+  selvitysTest(
     "väliselvitys cannot be edited after it has been accepted",
     async ({
       context,

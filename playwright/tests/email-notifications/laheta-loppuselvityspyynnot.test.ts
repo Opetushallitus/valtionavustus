@@ -1,6 +1,5 @@
 import { Page, test, expect } from "@playwright/test";
 import { VIRKAILIJA_URL } from "../../utils/constants";
-import { loppuselvitysTest } from "../../fixtures/loppuselvitysTest";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import moment from "moment";
 import {
@@ -10,6 +9,7 @@ import {
 } from "../../utils/emails";
 import { expectToBeDefined } from "../../utils/util";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
+import { selvitysTest } from "../../fixtures/selvitysTest";
 
 const sendLahetaLoppuselvityspyynnotNotifications = (page: Page) =>
   page.request.post(
@@ -22,7 +22,7 @@ interface LoppuselvitysExtraFixtures {
   loppuselvitysDateSet: true;
 }
 
-const notifyTest = loppuselvitysTest.extend<LoppuselvitysExtraFixtures>({
+const notifyTest = selvitysTest.extend<LoppuselvitysExtraFixtures>({
   loppuselvitysDate: moment().format("DD.MM.YYYY"),
   loppuselvitysDateSet: async (
     { loppuselvitysDate, page, avustushakuID, acceptedHakemus },
@@ -177,7 +177,7 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
   });
 
   test.describe("when sending päätös", async () => {
-    loppuselvitysTest(
+    selvitysTest(
       "send the notification only after sending päätös",
       async ({
         closedAvustushaku,

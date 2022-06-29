@@ -1,9 +1,9 @@
-import { väliselvitysTest } from "../fixtures/väliselvitysTest";
 import { expectToBeDefined } from "../utils/util";
 import { HakujenHallintaPage } from "../pages/hakujenHallintaPage";
 import { expect, test } from "@playwright/test";
+import { selvitysTest } from "../fixtures/selvitysTest";
 
-väliselvitysTest(
+selvitysTest(
   "Selvityspyyntö can be previewed",
   async ({ page, avustushakuID, acceptedHakemus }) => {
     expectToBeDefined(avustushakuID);
