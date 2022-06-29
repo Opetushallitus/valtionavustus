@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.excel.all-avustushakus-export
   (:require [dk.ative.docjure.spreadsheet :as spreadsheet]
             [oph.soresu.common.db :refer [query]]
-            [oph.common.datetime :refer [from-sql-time date-string time-string java8-date-string]])
+            [oph.common.datetime :refer [from-sql-time date-string parse-date time-string java8-date-string]])
   (:import [java.io ByteArrayOutputStream]))
 
 (def export-data-query "
@@ -61,12 +61,19 @@ loppuselvityspyynnot_lahetetty AS (
   JOIN virkailija.tapahtumaloki USING (avustushaku_id)
   WHERE success AND tapahtumaloki.tyyppi = 'loppuselvitys-notification'
   GROUP BY avustushaku_id
+),
+grouped_raportointivelvoitteet AS (
+  SELECT avustushaku_id, jsonb_agg(rv.*) AS raportointivelvoitteet
+  FROM avustushakus_to_export avustushaku
+  JOIN raportointivelvoite rv USING (avustushaku_id)
+  GROUP BY avustushaku_id
 )
 SELECT
   avustushaku.id AS avustushaku_id,
   avustushaku.register_number AS asiatunnus,
   avustushaku.content->'name'->>'fi' AS avustushaku_name,
   avustushaku.content->'rahoitusalueet' as koulutusasteet,
+  raportointivelvoitteet,
   avustushaku.haku_type AS avustuslaji,
   vastuuvalmistelija_name,
   vastuuvalmistelija_email,
@@ -103,6 +110,7 @@ LEFT JOIN vastuuvalmistelijat USING (avustushaku_id)
 LEFT JOIN paatokset_lahetetty USING (avustushaku_id)
 LEFT JOIN valiselvityspyynnot_lahetetty USING (avustushaku_id)
 LEFT JOIN loppuselvityspyynnot_lahetetty USING (avustushaku_id)
+LEFT JOIN grouped_raportointivelvoitteet USING (avustushaku_id)
 LEFT JOIN virkailija.va_code_values projekti ON projekti.id = avustushaku.project_id
 LEFT JOIN virkailija.va_code_values toimintayksikko ON toimintayksikko.id = avustushaku.operational_unit_id
 LEFT JOIN virkailija.va_code_values toiminto ON toiminto.id = avustushaku.operation_id
@@ -127,12 +135,25 @@ ORDER BY avustushaku.id DESC
       (fn [idx _] (koulutusaste-columns (nth (:koulutusasteet row) idx dummy-value)))
       (repeat n nil))))))
 
-(defn db-row->excel-row [row max-koulutusaste-count]
+(defn- raportointivelvoite-str [rv]
+  (if (= rv "")
+    ""
+    (let [lisatiedot (if (= (:lisatiedot rv) "") "" (str " (" (:lisatiedot rv) ")"))
+          maaraaika (date-string (parse-date (:maaraaika rv)))]
+      (str (:raportointilaji rv) ": " (:asha_tunnus rv) ", " maaraaika lisatiedot))))
+
+(defn expand-raportointivelvoitteet [n row]
+  (apply concat (vec (map-indexed
+    (fn [idx _] [(raportointivelvoite-str (nth (:raportointivelvoitteet row) idx ""))])
+    (repeat n nil)))))
+
+(defn db-row->excel-row [row max-koulutusaste-count max-raportointivelvoitteet-count]
   (concat
     [(:avustushaku-id row)
      (or (:avustushaku-name row) "")
      (or (:avustuslaji row) "")]
-    (expand-koulutusasteet max-koulutusaste-count row )
+    (expand-koulutusasteet max-koulutusaste-count row)
+    (expand-raportointivelvoitteet max-raportointivelvoitteet-count row)
     [(format-sql-timestamp (:avustushaku-duration-start row))
      (format-sql-timestamp (:avustushaku-duration-end row))
      (cond
@@ -169,16 +190,24 @@ ORDER BY avustushaku.id DESC
                        (repeat n nil))]
     (apply concat header-pairs)))
 
-(defn headers [max-koulutusaste-count]
+(defn raportointivelvoite-headers [n]
+  (let [headers (map-indexed
+                  (fn [idx _] [(str "Raportointivelvoite " (+ idx 1))])
+                  (repeat n nil))]
+    (apply concat headers)))
+
+(defn headers [max-koulutusaste-count max-raportointivelvoite-count]
   [(concat
      ["" "" ""]
      (repeat (* 2 max-koulutusaste-count) "")
+     (repeat max-raportointivelvoite-count "")
      ["" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "Manuaalisesti täydennettävät"])
    (concat
      ["Haun ID"
       "Avustuksen nimi"
       "Avustuslaji"]
      (koulutusaste-headers max-koulutusaste-count)
+     (raportointivelvoite-headers max-raportointivelvoite-count)
      ["Haku auki"
       "Haku kiinni"
       "Väliselvitys lähetetty/DL"
@@ -207,10 +236,11 @@ ORDER BY avustushaku.id DESC
   (let [data (query export-data-query [])
         output (ByteArrayOutputStream.)
         max-koulutusaste-count (apply max (map (comp count :koulutusasteet) data))
+        max-raportointivelvoite-count (apply max (map (comp count :raportointivelvoitteet) data))
         wb (spreadsheet/create-workbook
              "Avustushaut"
              (concat
-               (headers max-koulutusaste-count)
-               (vec (map #(db-row->excel-row % max-koulutusaste-count) data))))]
+               (headers max-koulutusaste-count max-raportointivelvoite-count)
+               (vec (map #(db-row->excel-row % max-koulutusaste-count max-raportointivelvoite-count) data))))]
     (.write wb output)
     (.toByteArray output)))

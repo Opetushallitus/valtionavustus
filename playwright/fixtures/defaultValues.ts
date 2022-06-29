@@ -76,6 +76,7 @@ export const defaultValues =
         registerNumber: randomAsiatunnus(),
         vaCodes: codes,
         selectionCriteria: [],
+        raportointivelvoitteet: [],
         hakemusFields: [],
       });
     },

@@ -79,7 +79,7 @@ export default function AutocompleteCodeValue(
   );
 }
 
-function Option({
+export function Option({
   children,
   ...props
 }: PropsWithChildren<OptionProps<VaCodeValue, false, GroupBase<VaCodeValue>>>) {

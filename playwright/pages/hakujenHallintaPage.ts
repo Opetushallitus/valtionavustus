@@ -26,6 +26,13 @@ const defaultRahoitusalueet: Rahoitusalue[] = [
   },
 ];
 
+interface Raportointivelvoite {
+  raportointilaji: string;
+  maaraaika: string;
+  ashaTunnus: string;
+  lisatiedot?: string;
+}
+
 export interface HakuProps {
   avustushakuName: string;
   randomName: string;
@@ -37,6 +44,7 @@ export interface HakuProps {
   hankkeenAlkamispaiva: string;
   hankkeenPaattymispaiva: string;
   selectionCriteria: string[];
+  raportointivelvoitteet: Raportointivelvoite[];
   hakemusFields: Field[];
   jaossaOlevaSumma?: number;
 }
@@ -431,6 +439,18 @@ export class HakujenHallintaPage {
     await this.page.click(`[data-test-id='${code}']`);
   }
 
+  raportointilajiSelector(index: number) {
+    return `[id="raportointilaji-dropdown-${index}"]`;
+  }
+
+  async selectRaportointilaji(
+    index: number,
+    raportointilaji: string
+  ): Promise<void> {
+    await this.page.click(`${this.raportointilajiSelector(index)} > div`);
+    await this.page.click(`[data-test-id='${raportointilaji}']`);
+  }
+
   async fillCode(
     codeType: "operational-unit" | "project" | "operation",
     code: string
@@ -486,6 +506,7 @@ export class HakujenHallintaPage {
       selectionCriteria,
       arvioituMaksupaiva,
       jaossaOlevaSumma,
+      raportointivelvoitteet,
     } = props;
     console.log(`Avustushaku name for test: ${avustushakuName}`);
 
@@ -528,6 +549,29 @@ export class HakujenHallintaPage {
       await this.page.click('[data-test-id="add-selection-criteria"]');
       await this.page.fill(`#selection-criteria-${i}-fi`, selectionCriteria[i]);
       await this.page.fill(`#selection-criteria-${i}-sv`, selectionCriteria[i]);
+    }
+
+    for (var i = 0; i < raportointivelvoitteet.length; i++) {
+      await this.selectRaportointilaji(
+        i,
+        raportointivelvoitteet[i].raportointilaji
+      );
+      await this.page.fill(
+        `[id="asha-tunnus-${i}"]`,
+        raportointivelvoitteet[i].ashaTunnus
+      );
+      await this.page.fill(
+        `[name="maaraaika-${i}"]`,
+        raportointivelvoitteet[i].maaraaika
+      );
+      if (raportointivelvoitteet[i].lisatiedot) {
+        await this.page.fill(
+          `[id="lisatiedot-${i}"]`,
+          raportointivelvoitteet[i].lisatiedot ?? ""
+        );
+      }
+      await this.waitForSave();
+      await this.page.click(`[id="new-raportointivelvoite-${i}"]`);
     }
 
     await this.waitForSave();

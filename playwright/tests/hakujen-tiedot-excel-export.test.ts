@@ -9,6 +9,19 @@ muutoshakemusTest.use({
     use({
       ...hakuProps,
       arvioituMaksupaiva: new Date("2077-12-17"),
+      raportointivelvoitteet: [
+        {
+          raportointilaji: "Muu raportti",
+          maaraaika: "12.12.2022",
+          ashaTunnus: "VA-260-1",
+        },
+        {
+          raportointilaji: "Loppuraportti",
+          maaraaika: "01.01.2023",
+          ashaTunnus: "VA-260-2",
+          lisatiedot: "hyvää joulua",
+        },
+      ],
     }),
 });
 
@@ -35,6 +48,12 @@ muutoshakemusTest(
     expect(columnValue("Avustuslaji")).toEqual("erityisavustus");
     expect(columnValue("Koulutusaste 1")).toEqual("Ammatillinen koulutus");
     expect(columnValue("TA-tilit 1")).toEqual("29.10.30.20");
+    expect(columnValue("Raportointivelvoite 1")).toEqual(
+      "Muu raportti: VA-260-1, 12.12.2022"
+    );
+    expect(columnValue("Raportointivelvoite 2")).toEqual(
+      "Loppuraportti: VA-260-2, 01.01.2023 (hyvää joulua)"
+    );
     expect(columnValue("Haku auki")).toEqual("01.01.1970 00.00");
     expect(columnValue("Haku kiinni")).toEqual("31.12.2023 23.59");
     expect(columnValue("Asiatunnus")).toEqual(hakuProps.registerNumber);

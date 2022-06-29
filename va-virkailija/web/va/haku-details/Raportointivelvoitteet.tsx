@@ -1,8 +1,13 @@
 import { debounce } from "lodash";
-import React, { useCallback, useEffect, useState } from "react";
-import Select from "react-select";
-import HttpUtil from "soresu-form/web/HttpUtil";
+import React, {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import Select, { components, OptionProps, GroupBase } from "react-select";
 
+import HttpUtil from "soresu-form/web/HttpUtil";
 import { HelpTexts, Raportointivelvoite } from "soresu-form/web/va/types";
 
 import HakujenHallintaController, {
@@ -65,12 +70,27 @@ const RemoveButton = () => (
   </svg>
 );
 
+type OptionType = { value: string; label: string };
+
 const options = [
   { value: "Avustuspäätökset", label: "Avustuspäätökset" },
   { value: "Väliraportti", label: "Väliraportti" },
   { value: "Loppuraportti", label: "Loppuraportti" },
   { value: "Muu raportti", label: "Muu raportti" },
 ];
+
+export function Option({
+  children,
+  ...props
+}: PropsWithChildren<OptionProps<OptionType, false, GroupBase<OptionType>>>) {
+  const { data, innerProps } = props;
+  const propsWithDataTestId = { ...innerProps, "data-test-id": data.value };
+  return (
+    <components.Option {...props} innerProps={propsWithDataTestId}>
+      {children}
+    </components.Option>
+  );
+}
 
 const Raportointivelvoite = ({
   index,
@@ -132,6 +152,7 @@ const Raportointivelvoite = ({
           />
         </h3>
         <Select
+          id={`raportointilaji-dropdown-${index}`}
           placeholder="Valitse raportointilaji"
           options={options}
           onChange={(newValue) => setRaportointilaji(newValue?.value)}
@@ -140,6 +161,7 @@ const Raportointivelvoite = ({
               ? { value: raportointilaji, label: raportointilaji }
               : undefined
           }
+          components={{ Option }}
         />
       </div>
       <div className="raportointivelvoitteet_maaraaika">
@@ -153,7 +175,7 @@ const Raportointivelvoite = ({
           />
         </h3>
         <DateInput
-          id="arvioitu_maksupaiva"
+          id={`maaraaika-${index}`}
           onChange={(_id, date) => setMaaraaika(date.format("YYYY-MM-DD"))}
           defaultValue={maaraaika ? new Date(maaraaika) : undefined}
           allowEmpty={true}
@@ -170,6 +192,7 @@ const Raportointivelvoite = ({
           />
         </h3>
         <input
+          id={`asha-tunnus-${index}`}
           value={ashaTunnus}
           onChange={(e) => setAshaTunnus(e.target.value)}
           disabled={!raportointilaji}
@@ -188,6 +211,7 @@ const Raportointivelvoite = ({
           />
         </h3>
         <input
+          id={`lisatiedot-${index}`}
           value={lisatiedot}
           onChange={(e) => setLisatiedot(e.target.value)}
           disabled={!raportointilaji}
@@ -195,6 +219,7 @@ const Raportointivelvoite = ({
       </div>
       <div className="raportointivelvoitteet_buttons">
         <button
+          id={`new-raportointivelvoite-${index}`}
           className="raportointivelvoitteet_button"
           onClick={() => addRaportointivelvoite(index)}
         >
@@ -228,13 +253,16 @@ export const Raportointivelvoitteet = ({
       const r = await HttpUtil.get<Raportointivelvoite[]>(
         `/api/avustushaku/${avustushaku.id}/raportointivelvoitteet`
       );
-      setRaportointivelvoitteet([
-        ...r,
-        {
-          "asha-tunnus": "",
-          lisatiedot: "",
-        } as Raportointivelvoite,
-      ]);
+      setRaportointivelvoitteet(
+        r.length
+          ? r
+          : [
+              {
+                "asha-tunnus": "",
+                lisatiedot: "",
+              } as Raportointivelvoite,
+            ]
+      );
     };
 
     void fetchRaportointivelvoitteet();
