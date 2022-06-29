@@ -148,7 +148,7 @@ test("sorting haku table", async ({
   });
   await test.step("correct hakuaika for avustushaut", async () => {
     await expect(hakuaika.cellValue(avustushakuName)).toContainText(
-      "01.01.70 - 28.06.21"
+      `01.01.70 - ${moment().subtract(1, "years").format("DD.MM.YY")}`
     );
     await expect(hakuaika.cellValue(secondAvustushakuName)).toContainText(
       `${secondAvustushakuStartFormatted} - ${secondAvustushakuEndFormatted}`
