@@ -71,6 +71,7 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           controller={controller}
           codeOptions={codeOptions}
           helpTexts={helpTexts}
+          environment={environment}
         />
       );
       break;

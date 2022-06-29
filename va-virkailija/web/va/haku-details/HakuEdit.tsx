@@ -21,6 +21,7 @@ import HakujenHallintaController, {
 import { UserInfo, VaCodeValue } from "../types";
 import { DateInput } from "./DateInput";
 import { Raportointivelvoitteet } from "./Raportointivelvoitteet";
+import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 
 type HakuEditProps = {
   avustushaku: SelectedAvustushaku;
@@ -28,6 +29,7 @@ type HakuEditProps = {
   controller: HakujenHallintaController;
   helpTexts: HelpTexts;
   userInfo: UserInfo;
+  environment: EnvironmentApiResponse;
 };
 
 export const HakuEdit = ({
@@ -36,6 +38,7 @@ export const HakuEdit = ({
   controller,
   helpTexts,
   userInfo,
+  environment,
 }: HakuEditProps) => {
   const hasPayments = !!avustushaku.payments?.length;
   const isAllPaymentsPaid =
@@ -545,12 +548,16 @@ export const HakuEdit = ({
           </div>
         </div>
       </div>
-      <hr className="spacer" />
-      <Raportointivelvoitteet
-        avustushaku={avustushaku}
-        controller={controller}
-        helpTexts={helpTexts}
-      />
+      {environment["avustushaku-excel-extra-fields"]?.["enabled?"] && (
+        <>
+          <hr className="spacer" />
+          <Raportointivelvoitteet
+            avustushaku={avustushaku}
+            controller={controller}
+            helpTexts={helpTexts}
+          />
+        </>
+      )}
       <hr className="spacer" />
       <HakuRoles
         avustushaku={avustushaku}

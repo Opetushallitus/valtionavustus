@@ -70,4 +70,5 @@
  :tasmaytysraportti-create {:enabled? false}
  :tasmaytysraportti-send {:enabled? false}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
+ :avustushaku-excel-extra-fields {:enabled? false}
  :test-apis {:enabled? false}}
