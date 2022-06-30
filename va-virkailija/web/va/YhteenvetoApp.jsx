@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import _ from "lodash";
 // @ts-ignore
 import RouteParser from "route-parser";
@@ -386,11 +386,11 @@ if (!parsedRoute || _.isUndefined(parsedRoute["avustushaku_id"])) {
 const controller = new YhteenvetoController();
 const stateP = controller.initializeState(parsedRoute);
 
+const app = document.getElementById("app");
+const root = createRoot(app);
+
 stateP.onValue((state) => {
   if (state.hakuData && state.userInfo) {
-    ReactDOM.render(
-      <SummaryApp state={state} controller={controller} />,
-      document.getElementById("app")
-    );
+    root.render(<SummaryApp state={state} controller={controller} />);
   }
 });

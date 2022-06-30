@@ -70,6 +70,7 @@ export const AvustushakuDetails: React.FC<Props> = ({
 
 interface BoxProps {
   title: string;
+  children: React.ReactNode;
 }
 
 const Box: React.FC<BoxProps> = ({ title, children }) => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 // @ts-ignore route-parser doesn't have proper types
 import RouteParser from "route-parser";
 import queryString from "query-string";
@@ -215,11 +215,11 @@ const evaluator = query.arvioija ? parseInt(query.arvioija) : undefined;
 const controller = new HakemustenArviointiController();
 const stateP = controller.initializeState(avustushakuId, evaluator);
 
+const app = document.getElementById("app");
+const root = createRoot(app!);
+
 stateP.onValue((state) => {
   if (state.hakuData && state.userInfo) {
-    ReactDOM.render(
-      <App state={state} controller={controller} />,
-      document.getElementById("app")
-    );
+    root.render(<App state={state} controller={controller} />);
   }
 });

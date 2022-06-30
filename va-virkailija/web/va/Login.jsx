@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import * as Bacon from "baconjs";
 import queryString from "query-string";
 
@@ -67,10 +67,10 @@ const initialStateTemplate = {
 
 const initialState = Bacon.combineTemplate(initialStateTemplate);
 
+const app = document.getElementById("app");
+const root = createRoot(app);
+
 initialState.onValue(function (state) {
   const properties = { model: state };
-  ReactDOM.render(
-    React.createElement(Login, properties),
-    document.getElementById("app")
-  );
+  root.render(<Login {...properties} />);
 });

@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import moment from "moment";
 // @ts-ignore react-widgets-moment doesn't have proper types
 import MomentLocalizer from "react-widgets-moment";
@@ -15,6 +15,7 @@ import { translationsFi } from "soresu-form/web/va/i18n/translations";
 import "./style/virkailija.less";
 import "./style/admin.less";
 import { NewHakuListing } from "./haku-list/NewHakuListing";
+
 interface HakujenHallintaAppProps {
   state: State;
   controller: HakujenHallintaController;
@@ -91,11 +92,11 @@ const controller = new HakujenHallintaController();
 const hakuId = LocalStorage.avustushakuId() || 1;
 const stateP = controller.initializeState(hakuId);
 
+const app = document.getElementById("app");
+const root = createRoot(app!);
+
 stateP.onValue(function (state) {
   if (state.hakuList) {
-    ReactDOM.render(
-      <HakujenHallintaApp state={state} controller={controller} />,
-      document.getElementById("app")
-    );
+    root.render(<HakujenHallintaApp state={state} controller={controller} />);
   }
 });

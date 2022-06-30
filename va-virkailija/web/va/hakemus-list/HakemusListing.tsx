@@ -1340,6 +1340,7 @@ interface TableLabelProps {
     ariaLabel: string;
     onClick: () => void;
   };
+  children?: React.ReactNode;
 }
 
 const TableLabel: React.FC<TableLabelProps> = ({

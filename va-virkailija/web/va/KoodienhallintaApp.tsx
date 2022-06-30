@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import HttpUtil from "soresu-form/web/HttpUtil";
 
 import "./style/main.less";
@@ -41,4 +41,6 @@ const KoodienhallintaApp = () => {
   );
 };
 
-ReactDOM.render(<KoodienhallintaApp />, document.getElementById("app"));
+const app = document.getElementById("app");
+const root = createRoot(app!);
+root.render(<KoodienhallintaApp />);

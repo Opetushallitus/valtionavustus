@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import moment from "moment";
 
 import HttpUtil from "soresu-form/web/HttpUtil";
@@ -236,4 +236,6 @@ const renderHakemus = (hakemus: HakemusV2) => {
   );
 };
 
-ReactDOM.render(<SearchApp />, document.getElementById("app"));
+const app = document.getElementById("app");
+const root = createRoot(app!);
+root.render(<SearchApp />);

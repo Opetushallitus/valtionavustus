@@ -140,6 +140,7 @@ interface TableLabelProps {
     ariaLabel: string;
     onClick: () => void;
   };
+  children?: React.ReactNode;
 }
 
 const TableLabel: React.FC<TableLabelProps> = ({
@@ -278,11 +279,9 @@ const GoodBadDate: React.FC<{ goodDate?: string; badDate?: string }> = ({
   );
 };
 
-const TableHeader: React.FC<SortButtonProps> = ({
-  sortKey,
-  text,
-  children,
-}) => (
+const TableHeader: React.FC<
+  SortButtonProps & { children: React.ReactNode }
+> = ({ sortKey, text, children }) => (
   <th>
     <div className={styles.tableHeader}>
       {children}

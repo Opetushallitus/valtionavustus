@@ -30,6 +30,7 @@ type MuutoshakemusPaatosProps = Omit<PaatosState, "paatos" | "presenter"> & {
 const Muutospaatos: React.FC<{
   osio: PaatosOsio;
   paatosStatus: PaatosStatus;
+  children: React.ReactNode;
 }> = ({ osio, paatosStatus, children }) => {
   const { t } = useTranslations();
   return (

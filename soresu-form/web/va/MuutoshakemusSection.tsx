@@ -7,6 +7,7 @@ interface Props {
   blueMiddleComponent?: JSX.Element;
   bottomComponent?: JSX.Element;
   datepickerFix?: boolean;
+  children: React.ReactNode;
 }
 
 export const MuutoshakemusSection: React.FC<Props> = ({
