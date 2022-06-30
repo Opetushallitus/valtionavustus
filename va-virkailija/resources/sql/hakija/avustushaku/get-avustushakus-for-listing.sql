@@ -44,7 +44,9 @@ loppuselvityspyynnot_lahetetty AS (
   GROUP BY avustushaku_id
 ),
 use_detailed_costs AS (
-  SELECT avustushaku.id as avustushaku_id, a.use_overridden_detailed_costs
+  SELECT DISTINCT ON (avustushaku.id)
+    avustushaku.id as avustushaku_id,
+    a.use_overridden_detailed_costs
   FROM avustushakus avustushaku
   JOIN hakija.hakemukset h ON h.avustushaku = avustushaku.id
   JOIN virkailija.arviot a ON a.hakemus_id = h.id
