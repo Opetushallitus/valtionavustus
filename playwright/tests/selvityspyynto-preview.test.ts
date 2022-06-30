@@ -5,7 +5,7 @@ import { selvitysTest } from "../fixtures/selvitysTest";
 
 selvitysTest(
   "Selvityspyyntö can be previewed",
-  async ({ page, avustushakuID, acceptedHakemus }) => {
+  async ({ page, avustushakuID }) => {
     expectToBeDefined(avustushakuID);
 
     const hakujenHallintaPage = new HakujenHallintaPage(page);
