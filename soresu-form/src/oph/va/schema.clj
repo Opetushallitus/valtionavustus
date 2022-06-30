@@ -150,7 +150,9 @@
            :maksatukset-lahetetty (s/maybe java.sql.Timestamp)
            :valiselvitykset-lahetetty (s/maybe java.sql.Timestamp)
            :loppuselvitykset-lahetetty (s/maybe java.sql.Timestamp)
-           :maksatukset-summa (s/maybe s/Int)))
+           :maksatukset-summa (s/maybe s/Int)
+           :use-overridden-detailed-costs (s/maybe s/Bool)
+    ))
 
 (s/defschema HakemusStatus
   "Status from the applicant point of view"

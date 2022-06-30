@@ -72,7 +72,7 @@ const sortValueMap: SorterMap = {
     a["loppuselvitykset-lahetetty"] ?? a.loppuselvitysdate ?? "zzz",
   valmistelija: (a) => a.vastuuvalmistelija ?? "zzz",
   muutoshakukelpoinen: (a) => (a.muutoshakukelpoinen ? 1 : 0),
-  budjetti: () => "zzz", // TODO: implement with budjetti
+  budjetti: (a) => getBudget(a),
   kayttoaikaAlkaa: (a) => a["hankkeen-alkamispaiva"] ?? "zzz",
   kayttoaikaPaattyy: (a) => a["hankkeen-paattymispaiva"] ?? "zzz",
   jaossaOllutSumma: (a) => a.content["total-grant-size"] ?? "zzz",
@@ -629,11 +629,7 @@ export const NewHakuListing: React.FC<Props> = ({
                   <td data-test-id="muutoshakukelpoinen">
                     {avustushaku.muutoshakukelpoinen ? "Kyllä" : "Ei"}
                   </td>
-                  <td>
-                    {
-                      // TODO: get is menokohtainen or kokonaiskustannus
-                    }
-                  </td>
+                  <td data-test-id="budjetti">{getBudget(avustushaku)}</td>
                   <td
                     data-test-id="kayttoaikaAlkaa"
                     title={avustushaku["hankkeen-alkamispaiva"]}
@@ -766,3 +762,13 @@ const filterWithState =
     tableFilterKeys.every((filterKey) =>
       tableFilterMap[filterKey](state, avustushaku)
     );
+
+const getBudget = (avustushaku: Avustushaku): string => {
+  if (avustushaku["use-overridden-detailed-costs"] === true) {
+    return "Menoluokittelu";
+  }
+  if (avustushaku["use-overridden-detailed-costs"] === false) {
+    return "Kokonaiskustannus";
+  }
+  return "-";
+};

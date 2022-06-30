@@ -98,6 +98,7 @@ test("sorting haku table", async ({
     kayttoaikaPaattyy,
     jaossaOllutSumma,
     maksettuSumma,
+    budjetti,
   } = hakujenHallintaPage.hakuListingTableSelectors();
   await test.step("can be sorted by avustushaku name", async () => {
     await avustushaku.sort.click();
@@ -279,6 +280,24 @@ test("sorting haku table", async ({
       descSorted.indexOf(secondAvustushakuName)
     );
     await muutoshakukelpoinen.sort.click();
+    const ascSorted = await avustushaku.cellValues();
+    expect(ascSorted.indexOf(avustushakuName)).toBeGreaterThan(
+      ascSorted.indexOf(secondAvustushakuName)
+    );
+  });
+  await test.step("correct budjetti for avustushaut", async () => {
+    await expect(budjetti.cellValue(avustushakuName)).toContainText(
+      "Kokonaiskustannus"
+    );
+    await expect(budjetti.cellValue(secondAvustushakuName)).toContainText("-");
+  });
+  await test.step("can be sorted by budjetti", async () => {
+    await budjetti.sort.click();
+    const descSorted = await avustushaku.cellValues();
+    expect(descSorted.indexOf(avustushakuName)).toBeLessThan(
+      descSorted.indexOf(secondAvustushakuName)
+    );
+    await budjetti.sort.click();
     const ascSorted = await avustushaku.cellValues();
     expect(ascSorted.indexOf(avustushakuName)).toBeGreaterThan(
       ascSorted.indexOf(secondAvustushakuName)

@@ -59,6 +59,7 @@ export interface Avustushaku extends BaseAvustushaku {
   "valiselvitykset-lahetetty"?: string;
   "loppuselvitykset-lahetetty"?: string;
   "maksatukset-summa"?: number;
+  "use-overridden-detailed-costs"?: boolean | null;
 }
 
 export interface SelectedAvustushaku extends Avustushaku {
@@ -751,6 +752,7 @@ export default class HakujenHallintaController {
         "valiselvitykset-lahetetty",
         "loppuselvitykset-lahetetty",
         "maksatukset-summa",
+        "use-overridden-detailed-costs",
       ])
     )
       .then(function (response) {

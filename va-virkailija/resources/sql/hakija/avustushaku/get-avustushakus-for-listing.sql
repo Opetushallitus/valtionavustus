@@ -42,6 +42,14 @@ loppuselvityspyynnot_lahetetty AS (
   JOIN virkailija.tapahtumaloki USING (avustushaku_id)
   WHERE success AND tapahtumaloki.tyyppi = 'loppuselvitys-notification'
   GROUP BY avustushaku_id
+),
+use_detailed_costs AS (
+  SELECT avustushaku.id as avustushaku_id, a.use_overridden_detailed_costs
+  FROM avustushakus avustushaku
+  JOIN hakija.hakemukset h ON h.avustushaku = avustushaku.id
+  JOIN virkailija.arviot a ON a.hakemus_id = h.id
+  WHERE h.version_closed IS NULL AND
+        a.status = 'accepted'
 )
 SELECT
   avustushaku.*,
@@ -50,11 +58,13 @@ SELECT
   maksatukset_lahetetty,
   valiselvitykset_lahetetty,
   loppuselvitykset_lahetetty,
-  maksatukset_summa
+  maksatukset_summa,
+  use_overridden_detailed_costs
 FROM avustushakus avustushaku
 LEFT JOIN vastuuvalmistelijat USING (avustushaku_id)
 LEFT JOIN paatokset_lahetetty USING (avustushaku_id)
 LEFT JOIN maksatukset USING (avustushaku_id)
 LEFT JOIN valiselvityspyynnot_lahetetty USING (avustushaku_id)
 LEFT JOIN loppuselvityspyynnot_lahetetty USING (avustushaku_id)
+LEFT JOIN use_detailed_costs USING (avustushaku_id)
 ORDER BY to_date(avustushaku.content#>>'{duration,start}','yyyy-MM-ddTHH24:MI:SS.MS') DESC, avustushaku.id DESC

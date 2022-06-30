@@ -511,7 +511,9 @@
            :valiselvitykset-lahetetty (:valiselvitykset_lahetetty avustushakudata)
            :loppuselvitykset-lahetetty (:loppuselvitykset_lahetetty avustushakudata)
            :arvioitu_maksupaiva (:arvioitu_maksupaiva avustushakudata)
-           :maksatukset-summa (:maksatukset_summa avustushakudata))))
+           :maksatukset-summa (:maksatukset_summa avustushakudata)
+           :use-overridden-detailed-costs (:use_overridden_detailed_costs avustushakudata)
+    )))
 
 (defn get-avustushaut-for-haku-listing []
   (let [data (exec hakija-queries/get-avustushakus-for-listing {})]

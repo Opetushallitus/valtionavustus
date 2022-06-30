@@ -750,6 +750,7 @@ export class HakujenHallintaPage {
       kayttoaikaPaattyy: baseTableLocators("kayttoaikaPaattyy"),
       jaossaOllutSumma: baseTableLocators("jaossaOllutSumma"),
       maksettuSumma: baseTableLocators("maksettuSumma"),
+      budjetti: baseTableLocators("budjetti"),
     };
   }
 }
