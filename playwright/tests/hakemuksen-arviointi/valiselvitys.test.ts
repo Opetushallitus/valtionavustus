@@ -157,7 +157,7 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
       väliselvitysSubmitted,
     }) => {
       expectToBeDefined(väliselvitysSubmitted);
-      const valiselvitysPage = new VirkailijaValiselvitysPage(page);
+      const valiselvitysPage = VirkailijaValiselvitysPage(page);
       await valiselvitysPage.navigateToValiselvitysTab(
         avustushakuID,
         acceptedHakemus.hakemusID
