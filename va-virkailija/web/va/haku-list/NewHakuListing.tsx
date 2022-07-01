@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useReducer, useState } from "react";
+import React, {
+  useCallback,
+  useDeferredValue,
+  useMemo,
+  useReducer,
+  useState,
+} from "react";
 
 import useOutsideClick from "../useOutsideClick";
 import classNames from "classnames";
@@ -380,6 +386,7 @@ export const NewHakuListing: React.FC<Props> = ({
   const [sortKey, setSortKey] = useState<SortKey | undefined>();
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
   const [filterState, dispatch] = useReducer(filterReducer, defaultFilterState);
+  const deferredHakuName = useDeferredValue(filterState.hakuName);
   const { hakuName, durationStart, durationEnd, statuses, phases } =
     filterState;
   const setSorting = useCallback(
@@ -394,7 +401,7 @@ export const NewHakuListing: React.FC<Props> = ({
     [sortKey]
   );
   const filteredList = hakuList
-    .filter(filterWithState(filterState))
+    .filter(filterWithState({ ...filterState, hakuName: deferredHakuName }))
     .sort(avustushakuSorter(sortKey, sortOrder));
   return (
     <div className={styles.containerForModals}>
