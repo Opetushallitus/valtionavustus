@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import * as Bacon from "baconjs";
 import queryString from "query-string";
 import HttpUtil from "soresu-form/web/HttpUtil";
@@ -336,10 +336,9 @@ if (!selvitysId && query.hakemus) {
   );
 } else {
   const app = initFormController();
+  const container = document.getElementById("app");
+  const root = createRoot(container!);
   app.stateProperty.onValue((state) => {
-    ReactDOM.render(
-      app.getReactComponent(state),
-      document.getElementById("app")
-    );
+    root.render(app.getReactComponent(state));
   });
 }

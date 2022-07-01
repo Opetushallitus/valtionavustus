@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import * as Bacon from "baconjs";
 import queryString from "query-string";
 
@@ -192,6 +192,9 @@ function initVaFormController() {
 }
 
 const app = initVaFormController();
+const container = document.getElementById("app")!;
+const root = createRoot(container!);
+
 app.stateProperty.onValue((state) => {
-  ReactDOM.render(app.getReactComponent(state), document.getElementById("app"));
+  root.render(app.getReactComponent(state));
 });

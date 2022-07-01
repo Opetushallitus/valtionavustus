@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import * as queryString from "query-string";
 // @ts-ignore react-widgets-moment doesn't have proper types
 import MomentLocalizer from "react-widgets-moment";
@@ -61,4 +61,7 @@ const app = (
     </Localization>
   </TranslationContext.Provider>
 );
-ReactDOM.render(app, document.getElementById("app"));
+
+const container = document.getElementById("app");
+const root = createRoot(container!);
+root.render(app);
