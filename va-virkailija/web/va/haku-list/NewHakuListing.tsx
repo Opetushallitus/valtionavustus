@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer, useState } from "react";
+import React, { useCallback, useMemo, useReducer, useState } from "react";
 
 import useOutsideClick from "../useOutsideClick";
 import classNames from "classnames";
@@ -80,7 +80,7 @@ const sortValueMap: SorterMap = {
 };
 
 const avustushakuSorter =
-  ({ sortKey, sortOrder }: SortState) =>
+  (sortKey: SortKey | undefined, sortOrder: SortOrder) =>
   (a: Avustushaku, b: Avustushaku): number => {
     const sortOrderCoef = sortOrder === "asc" ? -1 : 1;
     const sortResult =
@@ -269,7 +269,7 @@ const GoodBadDate: React.FC<{ goodDate?: string; badDate?: string }> = ({
   badDate,
 }) => {
   const date = goodDate ? goodDate : badDate;
-  const shortDate = date && toShortDate(date);
+  const shortDate = useMemo(() => date && toShortDate(date), [date]);
   const icon = goodDate ? <GreenCheckIcon /> : <RedXIcon />;
   return (
     <div className={styles.goodBadDate}>
@@ -393,10 +393,9 @@ export const NewHakuListing: React.FC<Props> = ({
     },
     [sortKey]
   );
-  const value = { sortingState: { sortOrder, sortKey }, setSorting };
   const filteredList = hakuList
     .filter(filterWithState(filterState))
-    .sort(avustushakuSorter(value.sortingState));
+    .sort(avustushakuSorter(sortKey, sortOrder));
   return (
     <div className={styles.containerForModals}>
       <div className={styles.tableContainer}>
@@ -405,7 +404,9 @@ export const NewHakuListing: React.FC<Props> = ({
             <col style={{ maxWidth: "400px" }} />
           </colgroup>
           <thead>
-            <SortStateContext.Provider value={value}>
+            <SortStateContext.Provider
+              value={{ sortingState: { sortOrder, sortKey }, setSorting }}
+            >
               <tr>
                 <TableHeader sortKey="avustushaku" text="avustushaku">
                   <input
@@ -559,107 +560,14 @@ export const NewHakuListing: React.FC<Props> = ({
             </SortStateContext.Provider>
           </thead>
           <tbody>
-            {filteredList.map((avustushaku) => {
-              const { start, end } = avustushaku.content.duration;
-              const startEnd =
-                start && end
-                  ? `${toShortDate(start)} - ${toShortDate(end)}`
-                  : "-";
-              return (
-                <tr
-                  key={avustushaku.id}
-                  className={classNames(
-                    selectedHaku.id === avustushaku.id
-                      ? styles.selectedHakemusRow
-                      : styles.hakemusRow
-                  )}
-                  onClick={() => onClickHaku(avustushaku)}
-                  tabIndex={0}
-                  data-test-id={avustushaku.content.name.fi}
-                >
-                  <td className={styles.longTextTd} data-test-id="avustushaku">
-                    <span>{avustushaku.content.name.fi}</span>
-                  </td>
-                  <td>
-                    <StatusPill status={avustushaku.status} />
-                  </td>
-                  <td>
-                    <PhasePill phase={avustushaku.phase} />
-                  </td>
-                  <td data-test-id="hakuaika">{startEnd}</td>
-                  <td data-test-id="paatos">
-                    <GoodBadDate
-                      goodDate={avustushaku["paatokset-lahetetty"]}
-                    />
-                  </td>
-                  <td data-test-id="maksatukset">
-                    <GoodBadDate
-                      goodDate={avustushaku["maksatukset-lahetetty"]}
-                    />
-                  </td>
-                  <td data-test-id="valiselvitykset">
-                    <GoodBadDate
-                      goodDate={avustushaku["valiselvitykset-lahetetty"]}
-                      badDate={avustushaku.valiselvitysdate}
-                    />
-                  </td>
-                  <td data-test-id="loppuselvitykset">
-                    <GoodBadDate
-                      goodDate={avustushaku["loppuselvitykset-lahetetty"]}
-                      badDate={avustushaku.loppuselvitysdate}
-                    />
-                  </td>
-                  <td data-test-id="valmistelija">
-                    <button
-                      className={buttonStyles.greyButton}
-                      title={
-                        avustushaku.vastuuvalmistelija ??
-                        "Ei vastuuvalmistelijaa"
-                      }
-                    >
-                      {avustushaku.vastuuvalmistelija
-                        ?.split(/\s+/)
-                        .reduce(
-                          (initials, name) => initials + name.slice(0, 1),
-                          ""
-                        ) ?? "-"}
-                    </button>
-                  </td>
-                  <td data-test-id="muutoshakukelpoinen">
-                    {avustushaku.muutoshakukelpoinen ? "Kyllä" : "Ei"}
-                  </td>
-                  <td data-test-id="budjetti">{getBudget(avustushaku)}</td>
-                  <td
-                    data-test-id="kayttoaikaAlkaa"
-                    title={avustushaku["hankkeen-alkamispaiva"]}
-                  >
-                    {avustushaku["hankkeen-alkamispaiva"]
-                      ? toShortDate(avustushaku["hankkeen-alkamispaiva"])
-                      : "-"}
-                  </td>
-                  <td
-                    data-test-id="kayttoaikaPaattyy"
-                    title={avustushaku["hankkeen-paattymispaiva"]}
-                  >
-                    {avustushaku["hankkeen-paattymispaiva"]
-                      ? toShortDate(avustushaku["hankkeen-paattymispaiva"])
-                      : "_"}
-                  </td>
-                  <td
-                    data-test-id="jaossaOllutSumma"
-                    className={styles.alignRight}
-                  >
-                    {avustushaku.content["total-grant-size"] ?? "-"}
-                  </td>
-                  <td
-                    data-test-id="maksettuSumma"
-                    className={styles.alignRight}
-                  >
-                    {avustushaku["maksatukset-summa"] ?? "-"}
-                  </td>
-                </tr>
-              );
-            })}
+            {filteredList.map((avustushaku) => (
+              <MemoizedAvustushakuItem
+                key={avustushaku.id}
+                avustushaku={avustushaku}
+                selectedHakuId={selectedHaku.id}
+                onClickHaku={onClickHaku}
+              />
+            ))}
           </tbody>
           <tfoot>
             <tr>
@@ -678,6 +586,100 @@ export const NewHakuListing: React.FC<Props> = ({
     </div>
   );
 };
+
+const AvustushakuItem = ({
+  avustushaku,
+  selectedHakuId,
+  onClickHaku,
+}: {
+  avustushaku: Avustushaku;
+  selectedHakuId: number;
+  onClickHaku: (avustushaku: Avustushaku) => void;
+}) => {
+  const { start, end } = avustushaku.content.duration;
+  const startEnd =
+    start && end ? `${toShortDate(start)} - ${toShortDate(end)}` : "-";
+  return (
+    <tr
+      key={avustushaku.id}
+      className={classNames(
+        selectedHakuId === avustushaku.id
+          ? styles.selectedHakemusRow
+          : styles.hakemusRow
+      )}
+      onClick={() => onClickHaku(avustushaku)}
+      tabIndex={0}
+      data-test-id={avustushaku.content.name.fi}
+    >
+      <td className={styles.longTextTd} data-test-id="avustushaku">
+        <span>{avustushaku.content.name.fi}</span>
+      </td>
+      <td>
+        <StatusPill status={avustushaku.status} />
+      </td>
+      <td>
+        <PhasePill phase={avustushaku.phase} />
+      </td>
+      <td data-test-id="hakuaika">{startEnd}</td>
+      <td data-test-id="paatos">
+        <GoodBadDate goodDate={avustushaku["paatokset-lahetetty"]} />
+      </td>
+      <td data-test-id="maksatukset">
+        <GoodBadDate goodDate={avustushaku["maksatukset-lahetetty"]} />
+      </td>
+      <td data-test-id="valiselvitykset">
+        <GoodBadDate
+          goodDate={avustushaku["valiselvitykset-lahetetty"]}
+          badDate={avustushaku.valiselvitysdate}
+        />
+      </td>
+      <td data-test-id="loppuselvitykset">
+        <GoodBadDate
+          goodDate={avustushaku["loppuselvitykset-lahetetty"]}
+          badDate={avustushaku.loppuselvitysdate}
+        />
+      </td>
+      <td data-test-id="valmistelija">
+        <button
+          className={buttonStyles.greyButton}
+          title={avustushaku.vastuuvalmistelija ?? "Ei vastuuvalmistelijaa"}
+        >
+          {avustushaku.vastuuvalmistelija
+            ?.split(/\s+/)
+            .reduce((initials, name) => initials + name.slice(0, 1), "") ?? "-"}
+        </button>
+      </td>
+      <td data-test-id="muutoshakukelpoinen">
+        {avustushaku.muutoshakukelpoinen ? "Kyllä" : "Ei"}
+      </td>
+      <td data-test-id="budjetti">{getBudget(avustushaku)}</td>
+      <td
+        data-test-id="kayttoaikaAlkaa"
+        title={avustushaku["hankkeen-alkamispaiva"]}
+      >
+        {avustushaku["hankkeen-alkamispaiva"]
+          ? toShortDate(avustushaku["hankkeen-alkamispaiva"])
+          : "-"}
+      </td>
+      <td
+        data-test-id="kayttoaikaPaattyy"
+        title={avustushaku["hankkeen-paattymispaiva"]}
+      >
+        {avustushaku["hankkeen-paattymispaiva"]
+          ? toShortDate(avustushaku["hankkeen-paattymispaiva"])
+          : "_"}
+      </td>
+      <td data-test-id="jaossaOllutSumma" className={styles.alignRight}>
+        {avustushaku.content["total-grant-size"] ?? "-"}
+      </td>
+      <td data-test-id="maksettuSumma" className={styles.alignRight}>
+        {avustushaku["maksatukset-summa"] ?? "-"}
+      </td>
+    </tr>
+  );
+};
+
+const MemoizedAvustushakuItem = React.memo(AvustushakuItem);
 
 const StatusToFi = {
   draft: "Luonnos",

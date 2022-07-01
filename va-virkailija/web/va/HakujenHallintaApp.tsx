@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import moment from "moment";
 // @ts-ignore react-widgets-moment doesn't have proper types
@@ -6,7 +6,10 @@ import MomentLocalizer from "react-widgets-moment";
 import Localization from "react-widgets/Localization";
 
 import { HeaderContainer } from "./Header";
-import HakujenHallintaController, { State } from "./HakujenHallintaController";
+import HakujenHallintaController, {
+  Avustushaku,
+  State,
+} from "./HakujenHallintaController";
 import { HakuListing } from "./haku-list/HakuListing";
 import { EditorSelector } from "./haku-details/EditorSelector";
 import LocalStorage from "./LocalStorage";
@@ -35,6 +38,9 @@ const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
   } = state;
   const searchParams = new URLSearchParams(window.location.search);
   const newHakuListing = searchParams.get("new-haku-listing") === "true";
+  const onClickHaku = useCallback((avustushaku: Avustushaku) => {
+    controller.selectHaku(avustushaku)();
+  }, []);
   return (
     <Localization date={momentLocalizer} messages={translationsFi.calendar}>
       <HeaderContainer
@@ -48,9 +54,7 @@ const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
           <NewHakuListing
             hakuList={state.hakuList}
             selectedHaku={state.selectedHaku}
-            onClickHaku={(id) => {
-              controller.selectHaku(id)();
-            }}
+            onClickHaku={onClickHaku}
           />
         ) : (
           <HakuListing
