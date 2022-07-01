@@ -81,8 +81,8 @@ const sortValueMap: SorterMap = {
   budjetti: (a) => getBudget(a),
   kayttoaikaAlkaa: (a) => a["hankkeen-alkamispaiva"] ?? "zzz",
   kayttoaikaPaattyy: (a) => a["hankkeen-paattymispaiva"] ?? "zzz",
-  jaossaOllutSumma: (a) => a.content["total-grant-size"] ?? "zzz",
-  maksettuSumma: (a) => a["maksatukset-summa"] ?? "zzz",
+  jaossaOllutSumma: (a) => a.content["total-grant-size"] ?? 0,
+  maksettuSumma: (a) => a["maksatukset-summa"] ?? 0,
 };
 
 const avustushakuSorter =

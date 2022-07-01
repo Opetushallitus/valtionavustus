@@ -354,12 +354,12 @@ test("sorting haku table", async ({
   await test.step("can be sorted by jaossa ollut summa", async () => {
     await jaossaOllutSumma.sort.click();
     const descSorted = await avustushaku.cellValues();
-    expect(descSorted.indexOf(avustushakuName)).toBeGreaterThan(
+    expect(descSorted.indexOf(avustushakuName)).toBeLessThan(
       descSorted.indexOf(secondAvustushakuName)
     );
     await jaossaOllutSumma.sort.click();
     const ascSorted = await avustushaku.cellValues();
-    expect(ascSorted.indexOf(avustushakuName)).toBeLessThan(
+    expect(ascSorted.indexOf(avustushakuName)).toBeGreaterThanOrEqual(
       ascSorted.indexOf(secondAvustushakuName)
     );
     await test.step("correct maksettu summa for avustushaut", async () => {
@@ -373,12 +373,12 @@ test("sorting haku table", async ({
     await test.step("can be sorted by maksettu summa", async () => {
       await maksettuSumma.sort.click();
       const descSorted = await avustushaku.cellValues();
-      expect(descSorted.indexOf(avustushakuName)).toBeGreaterThan(
+      expect(descSorted.indexOf(avustushakuName)).toBeLessThan(
         descSorted.indexOf(secondAvustushakuName)
       );
       await maksettuSumma.sort.click();
       const ascSorted = await avustushaku.cellValues();
-      expect(ascSorted.indexOf(avustushakuName)).toBeLessThan(
+      expect(ascSorted.indexOf(avustushakuName)).toBeGreaterThan(
         ascSorted.indexOf(secondAvustushakuName)
       );
     });
