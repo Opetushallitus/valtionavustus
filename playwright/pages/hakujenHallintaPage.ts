@@ -715,6 +715,7 @@ export class HakujenHallintaPage {
     });
     return {
       hakuList,
+      hakuRows,
       avustushaku: {
         ...baseTableLocators("avustushaku"),
         input: this.page.locator('[placeholder="Avustushaku"]'),
