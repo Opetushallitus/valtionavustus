@@ -1,6 +1,7 @@
-const webpack = require("webpack");
 const path = require("path");
-const TerserPlugin = require("terser-webpack-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+
+const plugins = [new ForkTsCheckerWebpackPlugin()];
 
 const makeConfig = (basedir, componentName) => {
   return {
@@ -54,6 +55,7 @@ const makeConfig = (basedir, componentName) => {
         },
       ],
     },
+    plugins,
     resolve: {
       alias: {
         "soresu-form": path.resolve(basedir, "../soresu-form"),
