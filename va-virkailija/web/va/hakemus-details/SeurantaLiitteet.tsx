@@ -33,7 +33,7 @@ export default class SeurantaLiitteet extends React.Component<SeurantaLiitteetPr
     };
     const translations = Immutable(translationJson);
 
-    const onDrop = (fieldId: string, files: any) => {
+    const onDrop = (fieldId: string) => (files: any) => {
       const file = files[0];
       const formData = new FormData();
       formData.append("file", file);
@@ -69,7 +69,7 @@ export default class SeurantaLiitteet extends React.Component<SeurantaLiitteetPr
         });
     };
 
-    const onRemove = (fieldId: string) => {
+    const onRemove = (fieldId: string) => () => {
       const url = `${hakijaServer}api/avustushaku/${avustushakuId}/hakemus/${hakemusUserKey}/attachments/${fieldId}`;
       HttpUtil.delete(url)
         .then(function () {
@@ -126,8 +126,8 @@ export default class SeurantaLiitteet extends React.Component<SeurantaLiitteetPr
             lang="fi"
             disabled={false}
             allAttachments={attachments}
-            onDrop={_.partial(onDrop, field.id)}
-            onRemove={_.partial(onRemove, field.id)}
+            onDrop={onDrop(field.id)}
+            onRemove={onRemove(field.id)}
             htmlId={field.id}
             controller={fakeFormController}
             downloadUrl={makeDownloadUrl(field.id)}

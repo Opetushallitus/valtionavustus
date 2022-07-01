@@ -79,7 +79,7 @@ test("hakemus requires all attachments to be uploaded before allowing to submit"
     "enables sending after uploading last attachment",
     async () => {
       await hakijaAvustusHakuPage.sendHakemusButton.isDisabled();
-      await finaLocator.waitFor();
+      await finaLocator.waitFor({ state: "attached" });
       await finaLocator.setInputFiles(dummyPdfPath);
       await finaLocator.waitFor({ state: "detached" });
       await hakijaAvustusHakuPage.sendHakemusButton.isEnabled();
@@ -90,7 +90,7 @@ test("hakemus requires all attachments to be uploaded before allowing to submit"
       .locator("#financial-information-form")
       .locator("button.soresu-remove")
       .click();
-    await finaLocator.waitFor();
+    await finaLocator.waitFor({ state: "attached" });
   });
   await test.step("removal disables sending", async () => {
     await hakijaAvustusHakuPage.sendHakemusButton.isDisabled();

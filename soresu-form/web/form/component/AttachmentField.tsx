@@ -1,8 +1,7 @@
 import React from "react";
 import ClassNames from "classnames";
 import _ from "lodash";
-// @ts-ignore
-import Dropzone from "react-dropzone";
+import Dropzone, { DropEvent, FileRejection } from "react-dropzone";
 
 import AttachmentDisplay from "../preview/AttachmentDisplay.jsx";
 import RemoveButton from "./RemoveButton.jsx";
@@ -13,8 +12,12 @@ interface Props {
   allAttachments: any;
   renderingParameters?: any;
   downloadUrl: any;
-  onRemove: any;
-  onDrop: any;
+  onRemove: () => void;
+  onDrop: <T extends File>(
+    acceptedFiles: T[],
+    fileRejections: FileRejection[],
+    event: DropEvent
+  ) => void;
 }
 
 export default class AttachmentField extends BasicSizedComponent<Props> {
@@ -36,20 +39,24 @@ export default class AttachmentField extends BasicSizedComponent<Props> {
     const attachmentElement = existingAttachment ? (
       <ExistingAttachmentComponent {...propertiesWithAttachment} />
     ) : (
-      <Dropzone
-        className={classStr}
-        id={props.htmlId}
-        name={props.htmlId}
-        onDrop={props.onDrop}
-        disableClick={props.disabled}
-        multiple={false}
-      >
-        <LocalizedString
-          className={uploadButtonClassStr}
-          translations={translations.form.attachment}
-          translationKey="uploadhere"
-          lang={lang}
-        />
+      <Dropzone onDrop={props.onDrop} multiple={false}>
+        {({ getRootProps, getInputProps }) => (
+          <div {...getRootProps({ className: classStr })}>
+            <input
+              {...getInputProps({
+                disabled: props.disabled,
+                id: props.htmlId,
+                name: props.htmlId,
+              })}
+            />
+            <LocalizedString
+              className={uploadButtonClassStr}
+              translations={translations.form.attachment}
+              translationKey="uploadhere"
+              lang={lang}
+            />
+          </div>
+        )}
       </Dropzone>
     );
 
