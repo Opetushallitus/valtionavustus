@@ -33,6 +33,7 @@ export class HakemustenArviointiPage {
   readonly hakemusListing: Locator;
   readonly showUnfinished: Locator;
   readonly hakemusRows: Locator;
+  readonly toggleHakemusList: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -46,6 +47,7 @@ export class HakemustenArviointiPage {
     this.hakemusListing = this.page.locator("#hakemus-listing");
     this.showUnfinished = this.page.locator('text="Näytä keskeneräiset"');
     this.hakemusRows = this.hakemusListing.locator("tbody tr");
+    this.toggleHakemusList = this.page.locator("#toggle-hakemus-list-button");
   }
 
   async navigate(

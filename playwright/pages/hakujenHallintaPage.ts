@@ -212,12 +212,14 @@ export class HakujenHallintaPage {
   readonly paatosUpdatedAt: Locator;
   readonly valiselvitysUpdatedAt: Locator;
   readonly loppuselvitysUpdatedAt: Locator;
+  readonly decisionEditor: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.paatosUpdatedAt = this.page.locator("#paatosUpdatedAt");
     this.valiselvitysUpdatedAt = this.page.locator("#valiselvitysUpdatedAt");
     this.loppuselvitysUpdatedAt = this.page.locator("#loppuselvitysUpdatedAt");
+    this.decisionEditor = this.page.locator(".decision-editor");
   }
 
   async navigate(avustushakuID: number, opts?: { newHakuListing?: boolean }) {

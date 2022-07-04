@@ -982,103 +982,6 @@ export async function selectValmistelijaForHakemus(
   }
 }
 
-export async function verifyText(page: Page, selector: string, regex: RegExp) {
-  await page.evaluate(
-    (selector) =>
-      document.querySelector(selector).scrollIntoView({ block: "center" }),
-    selector
-  );
-  const element = await page.waitForSelector(selector, { visible: true });
-  const text = await page.evaluate((element) => element.textContent, element);
-  assert.ok(regex.test(text), `Text ${regex.source} found from: ${text}`);
-}
-
-async function removePreviousHoverEffect(page: Page) {
-  /* Move mouse away from current position, hopefully to a place with no hover effects */
-  await page.mouse.move(0, 0);
-}
-
-export async function verifyTooltipText(
-  page: Page,
-  tooltipAnchorSelector: string,
-  tooltipTextRegex: RegExp
-) {
-  await removePreviousHoverEffect(page);
-  const tooltipContentSelector = `${tooltipAnchorSelector} span`;
-  await page.evaluate((tooltipAnchorSelector) => {
-    document
-      .querySelector(tooltipAnchorSelector)
-      .scrollIntoView({ block: "center" });
-  }, tooltipAnchorSelector);
-
-  await page.hover(tooltipAnchorSelector);
-  const tooltipElement = await page.waitForSelector(tooltipContentSelector, {
-    visible: true,
-  });
-  const tooltipText = await page.evaluate(
-    (element) => element.textContent,
-    tooltipElement
-  );
-  assert.ok(
-    tooltipTextRegex.test(tooltipText),
-    `Tooltip ${tooltipTextRegex.source} found from: ${tooltipText}`
-  );
-}
-
-export async function createValidCopyOfLukioEsimerkkihakuWithValintaperusteetAndReturnTheNewId(
-  page: Page
-) {
-  const avustushakuName = mkAvustushakuName();
-  console.log(`Avustushaku name for test: ${avustushakuName}`);
-
-  await copyEsimerkkihaku(page);
-
-  const avustushakuID = await expectQueryParameter(page, "avustushaku");
-
-  expectToBeDefined(avustushakuID);
-
-  console.log(`Avustushaku ID: ${avustushakuID}`);
-
-  await clearAndType(page, "#register-number", randomAsiatunnus());
-  await clearAndType(page, "#haku-name-fi", avustushakuName);
-  await clearAndType(page, "#hakuaika-start", "1.1.1970 0.00");
-
-  const lukioKoulutusasteSelector =
-    '[name=education-levels][data-title="Lukiokoulutus"]';
-  await clearAndType(page, lukioKoulutusasteSelector, "29.10.30");
-
-  await clickElementWithText(page, "button", "Lisää uusi valintaperuste");
-  await clearAndType(
-    page,
-    "#selection-criteria-0-fi",
-    "Hanke edistää opetustuntikohtaisen valtionosuuden piiriin kuuluvan taiteen perusopetuksen pedagogista kehittämistä."
-  );
-  await clearAndType(page, "#selection-criteria-0-sv", "Och samma på svenska.");
-
-  const nextYear = new Date().getFullYear() + 1;
-  await clearAndType(page, "#hakuaika-end", `31.12.${nextYear} 23.59`);
-
-  await clickElement(page, '[data-test-id="päätös-välilehti"]');
-  await setCalendarDateForSelector(
-    page,
-    "20.04.1969",
-    '[data-test-id="hankkeen-alkamispaiva"] div.datepicker input'
-  );
-  await setCalendarDateForSelector(
-    page,
-    "20.04.4200",
-    '[data-test-id="hankkeen-paattymispaiva"] div.datepicker input'
-  );
-
-  await waitForSaveStatusOk(page);
-
-  return parseInt(avustushakuID);
-}
-
-export async function gotoPäätösTab(page: Page, avustushakuID: number) {
-  await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`);
-}
-
 export async function addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(
   page: Page,
   fieldType: string
@@ -1220,97 +1123,6 @@ export async function typeValueInFieldAndExpectNoValidationError(
   await page.waitForSelector("#submit:enabled");
 }
 
-export async function gotoVäliselvitysTab(page: Page, avustushakuID: number) {
-  await navigate(page, `/admin/valiselvitys/?avustushaku=${avustushakuID}`);
-}
-
-export async function fillAndSendVäliselvityspyyntö(
-  page: Page,
-  avustushakuID: number,
-  väliselvitysKey: string
-) {
-  await navigateHakija(
-    page,
-    `/avustushaku/${avustushakuID}/valiselvitys?hakemus=${väliselvitysKey}&lang=fi`
-  );
-  await clearAndType(
-    page,
-    "#organization",
-    "Akaan kaupungin kissojenkasvatuslaitos"
-  );
-  await clearAndType(
-    page,
-    "#project-name",
-    "Kissojen koulutuksen tehostaminen"
-  );
-  await clearAndType(
-    page,
-    "[name='project-description.project-description-1.goal']",
-    "Kouluttaa kissoja entistä tehokkaamminen"
-  );
-  await clearAndType(
-    page,
-    "[name='project-description.project-description-1.activity']",
-    "Kissoille on tarjottu enemmän kissanminttua"
-  );
-  await clearAndType(
-    page,
-    "[name='project-description.project-description-1.result']",
-    "Ei tiedossa"
-  );
-
-  await clearAndType(
-    page,
-    "[name='textArea-1']",
-    "Miten hankeen toimintaa, tuloksia ja vaikutuksia on arvioitu?"
-  );
-  await clearAndType(
-    page,
-    "[name='textArea-3']",
-    "Miten hankkeesta/toiminnasta on tiedotettu?"
-  );
-
-  await clickElementWithText(page, "label", "Toimintamalli");
-
-  await clearAndType(
-    page,
-    "[name='project-outcomes.project-outcomes-1.description']",
-    "Kuvaus"
-  );
-  await clearAndType(
-    page,
-    "[name='project-outcomes.project-outcomes-1.address']",
-    "Saatavuustiedot, www-osoite tms."
-  );
-
-  await clickElement(page, "label[for='radioButton-good-practices.radio.1']");
-  await clearAndType(page, "[name='textArea-4']", "Lisätietoja");
-
-  await uploadFile(page, "[name='namedAttachment-0']", dummyPdfPath);
-
-  await submitVäliselvitys(page);
-}
-
-async function submitVäliselvitys(page: Page) {
-  await page.waitForFunction(
-    () =>
-      (
-        document.querySelector(
-          "#topbar #form-controls button#submit"
-        ) as HTMLInputElement
-      ).disabled === false
-  );
-  await clickElement(page, "#topbar #form-controls button#submit");
-  await page.waitForFunction(
-    () =>
-      (
-        document.querySelector(
-          "#topbar #form-controls button#submit"
-        ) as HTMLInputElement
-      ).textContent === "Väliselvitys lähetetty"
-  );
-}
-
 export async function getHakemusIDFromHakemusTokenURLParameter(
   page: Page
 ): Promise<number> {
@@ -1425,11 +1237,6 @@ export async function actualResponseFromExternalAPIhakemuksetForAvustushaku(
   return await axios.get(url).then((r) => r.data);
 }
 
-export async function createUniqueCode(page: Page, name: string = "Test code") {
-  const uniqueCode = randomString().substring(0, 13);
-  return createCode(page, name, uniqueCode);
-}
-
 export async function createCode(
   page: Page,
   name: string = "Test code",
@@ -1474,16 +1281,6 @@ export async function assertCodeIsVisible(
   await page.waitForSelector(
     `tr[data-test-id="code-cell-${codeInfo.year}-${codeInfo.code}-${codeInfo.name} ${codeInfo.code}"] ${hideClass}`
   );
-}
-
-export async function clickCodeVisibilityButton(
-  page: Page,
-  codeInfo: CodeInfo,
-  visibility: boolean
-) {
-  const buttonId = visibility ? "show-code" : "hide-code";
-  const selector = `tr[data-test-id="code-cell-${codeInfo.year}-${codeInfo.code}-${codeInfo.name} ${codeInfo.code}"] [data-test-id=${buttonId}]`;
-  await clickElement(page, selector);
 }
 
 export interface PaatosValues {
@@ -1614,12 +1411,6 @@ export async function acceptAvustushaku(
 export function lastOrFail<T>(xs: ReadonlyArray<T>): T {
   if (xs.length === 0) throw Error("Can't get last element of empty list");
   return xs[xs.length - 1];
-}
-
-export async function waitForNewTab(currentPage: Page): Promise<Page> {
-  return new Promise((resolve) =>
-    currentPage.once("popup", (newPage) => resolve(newPage))
-  );
 }
 
 export function setupTestLogging() {
