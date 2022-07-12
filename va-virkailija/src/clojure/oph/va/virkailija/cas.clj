@@ -27,7 +27,19 @@
    {:pre [(seq service-url) (seq username) (seq password)]}
    (CasAuthenticatingClient/apply @cas-client (CasParams/apply service-url username password) service-client caller-id "JSESSIONID")))
 
+(defn try-n-times [f n]
+  (try
+    (f)
+    (catch Throwable t
+      (if (pos? n)
+        (try-n-times f (dec n))
+        (throw t)))))
+
+(defmacro try3 [& body]
+  `(try-n-times (fn [] ~@body) 3))
+
 (defn validate-service-ticket [^String virkailija-login-url ^String cas-ticket]
-  (-> @cas-client
-      (.validateServiceTicketWithVirkailijaUsername virkailija-login-url cas-ticket)
-      .run))
+  (try3 (-> @cas-client
+        (.validateServiceTicketWithVirkailijaUsername virkailija-login-url cas-ticket)
+        .run)))
+
