@@ -13,7 +13,7 @@ function main {
     fatal "Expected '$SSH_KEY_PATH' to exists"
   else
     info "Adding $SSH_KEY_PATH to ssh agent"
-    ssh-add "$SSH_KEY_PATH"
+    ssh-add --apple-use-keychain "$SSH_KEY_PATH"
   fi
 
   if [ ! -d "$VA_SECRETS_REPO/.git" ]; then
