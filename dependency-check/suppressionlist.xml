@@ -60,7 +60,7 @@
     <packageUrl regex="true">^pkg:maven/org\.apache\.poi/poi.*</packageUrl>
     <cve>CVE-2022-26336</cve>
   </suppress>
-  <suppress until="2022-07-12Z">
+  <suppress until="2666-07-12Z">
     <notes><![CDATA[
     Wrong package matched, vulnerability is in async javscript library
     ]]>    </notes>
