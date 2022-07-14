@@ -66,11 +66,17 @@ export interface SelectedAvustushaku extends Avustushaku {
   payments?: Payment[];
 }
 
+export interface LainsaadantoOption {
+  id: number;
+  name: string;
+}
+
 export interface State {
   hakuList: Avustushaku[];
   userInfo: UserInfo;
   environment: EnvironmentApiResponse;
   codeOptions: VaCodeValue[];
+  lainsaadantoOptions: LainsaadantoOption[];
   decisionLiitteet: Liite[];
   helpTexts: HelpTexts;
   hakuId: number;
@@ -252,6 +258,9 @@ export default class HakujenHallintaController {
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
       environment: Bacon.fromPromise(HttpUtil.get("/environment")),
       codeOptions: Bacon.fromPromise(HttpUtil.get("/api/v2/va-code-values/")),
+      lainsaadantoOptions: Bacon.fromPromise<LainsaadantoOption[]>(
+        HttpUtil.get("/api/avustushaku/lainsaadanto-options")
+      ),
       decisionLiitteet: Bacon.fromPromise(
         HttpUtil.get("/api/paatos/liitteet")
       ).map(Immutable),

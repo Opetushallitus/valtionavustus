@@ -15,7 +15,9 @@ import FormEditorContainer from "./FormEditorContainer";
 import DecisionEditor from "./DecisionEditor";
 import { SelvitysFormEditor } from "./SelvitysFormEditor";
 import HelpTooltip from "../HelpTooltip";
-import HakujenHallintaController from "../HakujenHallintaController";
+import HakujenHallintaController, {
+  LainsaadantoOption,
+} from "../HakujenHallintaController";
 import { HakujenHallintaSubTab, UserInfo, VaCodeValue } from "../types";
 
 interface EditorSelectorProps {
@@ -33,6 +35,7 @@ interface EditorSelectorProps {
   valiselvitysFormDraft: Form;
   valiselvitysFormDraftJson: string;
   codeOptions: VaCodeValue[];
+  lainsaadantoOptions: LainsaadantoOption[];
   helpTexts: HelpTexts;
 }
 
@@ -59,6 +62,7 @@ export const EditorSelector = (props: EditorSelectorProps) => {
     loppuselvitysFormDraft,
     loppuselvitysFormDraftJson,
     codeOptions,
+    lainsaadantoOptions,
     helpTexts,
   } = props;
   let subTabContent;
@@ -70,6 +74,7 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           userInfo={userInfo}
           controller={controller}
           codeOptions={codeOptions}
+          lainsaadantoOptions={lainsaadantoOptions}
           helpTexts={helpTexts}
           environment={environment}
         />

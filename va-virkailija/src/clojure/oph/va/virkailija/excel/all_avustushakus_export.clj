@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.excel.all-avustushakus-export
   (:require [dk.ative.docjure.spreadsheet :as spreadsheet]
+            [clojure.string :refer [join]]
             [oph.soresu.common.db :refer [query]]
             [oph.common.datetime :refer [from-sql-time date-string parse-date time-string java8-date-string]])
   (:import [java.io ByteArrayOutputStream]))
@@ -67,6 +68,13 @@ grouped_raportointivelvoitteet AS (
   FROM avustushakus_to_export avustushaku
   JOIN raportointivelvoite rv USING (avustushaku_id)
   GROUP BY avustushaku_id
+),
+lainsaadanto_str AS (
+  SELECT avustushaku_id, jsonb_agg(l.name) AS lainsaadanto
+  FROM avustushakus_to_export avustushaku
+  JOIN avustushaku_lainsaadanto al USING (avustushaku_id)
+  JOIN lainsaadanto l ON al.lainsaadanto_id = l.id
+  GROUP BY avustushaku_id
 )
 SELECT
   avustushaku.id AS avustushaku_id,
@@ -74,6 +82,7 @@ SELECT
   avustushaku.content->'name'->>'fi' AS avustushaku_name,
   avustushaku.content->'rahoitusalueet' as koulutusasteet,
   raportointivelvoitteet,
+  lainsaadanto,
   avustushaku.haku_type AS avustuslaji,
   vastuuvalmistelija_name,
   vastuuvalmistelija_email,
@@ -111,6 +120,7 @@ LEFT JOIN paatokset_lahetetty USING (avustushaku_id)
 LEFT JOIN valiselvityspyynnot_lahetetty USING (avustushaku_id)
 LEFT JOIN loppuselvityspyynnot_lahetetty USING (avustushaku_id)
 LEFT JOIN grouped_raportointivelvoitteet USING (avustushaku_id)
+LEFT JOIN lainsaadanto_str USING (avustushaku_id)
 LEFT JOIN virkailija.va_code_values projekti ON projekti.id = avustushaku.project_id
 LEFT JOIN virkailija.va_code_values toimintayksikko ON toimintayksikko.id = avustushaku.operational_unit_id
 LEFT JOIN virkailija.va_code_values toiminto ON toiminto.id = avustushaku.operation_id
@@ -179,6 +189,9 @@ ORDER BY avustushaku.id DESC
      (if (:vastuuvalmistelija-name row)
        (str (:vastuuvalmistelija-name row) ", " (:vastuuvalmistelija-email row))
        "")
+     (if (:lainsaadanto row)
+       (join ", " (:lainsaadanto row))
+       "")
      ""
      (if (:arvioitu-maksupaiva row) (java8-date-string (:arvioitu-maksupaiva row)) "")
      ]))
@@ -225,6 +238,7 @@ ORDER BY avustushaku.id DESC
       "1. käyttöpäivä"
       "viimeinen käyttöpäivä"
       "Vastuuvalmistelija"
+      "Lainsäädäntö"
       ; Manuaalisesti täydennettävät
       "Määrärahan nimi talousarviossa"
       "Arvioitu maksu pvm"

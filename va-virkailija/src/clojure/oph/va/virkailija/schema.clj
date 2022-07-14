@@ -506,3 +506,7 @@
 (s/defschema Raportointivelvoite
   (assoc RaportointivelvoiteData
          :id s/Int))
+
+(s/defschema Lainsaadanto
+  {:id s/Int
+   :name s/Str})

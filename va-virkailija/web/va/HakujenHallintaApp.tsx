@@ -32,6 +32,7 @@ const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
     environment,
     selectedHaku,
     codeOptions,
+    lainsaadantoOptions,
     helpTexts,
     saveStatus,
     userInfo,
@@ -85,6 +86,7 @@ const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
           userInfo={state.userInfo}
           controller={controller}
           codeOptions={codeOptions}
+          lainsaadantoOptions={lainsaadantoOptions}
           helpTexts={helpTexts}
         />
       </section>

@@ -516,6 +516,17 @@
                      :path-params [avustushaku-id :- Long, tyyppi :- s/Str]
                      (http/ok (tapahtumaloki/get-tapahtumaloki-entries tyyppi avustushaku-id))))
 
+(defn- get-avustushaku-lainsaadanto []
+  (compojure-api/GET "/:avustushaku-id/lainsaadanto" []
+                     :path-params [avustushaku-id :- Long]
+                     (http/ok (virkailija-db/get-avustushaku-lainsaadanto avustushaku-id))))
+
+(defn- post-avustushaku-lainsaadanto []
+  (compojure-api/POST "/:avustushaku-id/lainsaadanto" request
+                      :path-params [avustushaku-id :- Long]
+                      :body [body [s/Int]]
+                      (http/ok (virkailija-db/upsert-avustushaku-lainsaadanto avustushaku-id body))))
+
 (compojure-api/defroutes avustushaku-routes
   "Hakemus listing and filtering"
 
@@ -533,6 +544,11 @@
     (if-let [response (hakija-api/get-avustushaut-for-haku-listing)]
       (http/ok response)
       (http/not-found)))
+
+  (compojure-api/GET "/lainsaadanto-options" []
+    :summary "Return list of all lainsaadantos"
+    :return [virkailija-schema/Lainsaadanto]
+    (http/ok (virkailija-db/get-lainsaadanto-options)))
 
   (get-avustushaku-status)
   (get-normalized-hakemus)
@@ -557,6 +573,8 @@
   (put-avustushaku-raportointivelvoite)
   (post-avustushaku-raportointivelvoite)
   (del-avustushaku-raportointivelvoite)
+  (post-avustushaku-lainsaadanto)
+  (get-avustushaku-lainsaadanto)
   (get-avustushaku-privileges)
   (get-avustushaku-form)
   (post-avustushaku-form)

@@ -649,3 +649,34 @@
   (execute! "DELETE FROM raportointivelvoite
              WHERE avustushaku_id = ? AND id = ?"
              [avustushaku-id raportointivelvoite-id]))
+
+(defn get-lainsaadanto-options []
+  (query "SELECT id, name
+          FROM lainsaadanto" []))
+
+(defn get-avustushaku-lainsaadanto [avustushaku-id]
+  (let [lainsaadantos (query "SELECT lainsaadanto_id
+                              FROM avustushaku_lainsaadanto
+                              WHERE avustushaku_id = ?" [avustushaku-id])]
+    (map :lainsaadanto-id lainsaadantos)))
+
+(defn- upsert-lainsaadanto [avustushaku-id lainsaadanto-id]
+  (let [id-rows (query "INSERT INTO avustushaku_lainsaadanto (avustushaku_id, lainsaadanto_id)
+                        VALUES (?, ?)
+                        ON CONFLICT (avustushaku_id, lainsaadanto_id) DO UPDATE SET
+                          lainsaadanto_id = EXCLUDED.lainsaadanto_id
+                        RETURNING lainsaadanto_id"
+                        [avustushaku-id lainsaadanto-id])]
+    (:lainsaadanto-id (first id-rows))))
+
+(defn- remove-old-lainsaadanto [avustushaku-id current-lainsaadanto-ids]
+  (execute!
+    (str "DELETE FROM avustushaku_lainsaadanto
+          WHERE avustushaku_id = ? AND lainsaadanto_id NOT IN (" (parameter-list current-lainsaadanto-ids) ")")
+    (conj current-lainsaadanto-ids avustushaku-id)))
+
+(defn upsert-avustushaku-lainsaadanto [avustushaku-id lainsaadanto-ids]
+  (if (> (count lainsaadanto-ids) 0)
+    (let [ids (map (partial upsert-lainsaadanto avustushaku-id) lainsaadanto-ids)]
+      (remove-old-lainsaadanto avustushaku-id ids))
+    (execute! "DELETE FROM avustushaku_lainsaadanto WHERE avustushaku_id = ?" [avustushaku-id])))

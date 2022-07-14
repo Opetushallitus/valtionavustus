@@ -16,16 +16,19 @@ import AutoCompleteCodeValue from "./AutoCompleteCodeValue";
 import HelpTooltip from "../HelpTooltip";
 import WarningBanner from "../WarningBanner";
 import HakujenHallintaController, {
+  LainsaadantoOption,
   SelectedAvustushaku,
 } from "../HakujenHallintaController";
 import { UserInfo, VaCodeValue } from "../types";
 import { DateInput } from "./DateInput";
 import { Raportointivelvoitteet } from "./Raportointivelvoitteet";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
+import { Lainsaadanto } from "./Lainsaadanto";
 
 type HakuEditProps = {
   avustushaku: SelectedAvustushaku;
   codeOptions: VaCodeValue[];
+  lainsaadantoOptions: LainsaadantoOption[];
   controller: HakujenHallintaController;
   helpTexts: HelpTexts;
   userInfo: UserInfo;
@@ -35,6 +38,7 @@ type HakuEditProps = {
 export const HakuEdit = ({
   avustushaku,
   codeOptions,
+  lainsaadantoOptions,
   controller,
   helpTexts,
   userInfo,
@@ -319,6 +323,14 @@ export const HakuEdit = ({
           </div>
         </div>
       </div>
+      {environment["avustushaku-excel-extra-fields"]?.["enabled?"] && (
+        <Lainsaadanto
+          avustushaku={avustushaku}
+          controller={controller}
+          lainsaadantoOptions={lainsaadantoOptions}
+          helpTexts={helpTexts}
+        />
+      )}
       <EducationLevels
         enabled={allowNondisruptiveHakuEdits}
         values={avustushaku.content.rahoitusalueet ?? []}
