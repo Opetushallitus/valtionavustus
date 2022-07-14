@@ -100,5 +100,7 @@
                                   [binaryage/devtools]
                                   [figwheel-sidecar]
                                   [nrepl]
-                                  [com.google.guava/guava]]}}
+                                  [com.google.guava/guava "31.1-jre"
+                                    :exclusions [com.google.code.findbugs/jsr305]]]}}
+
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]})
