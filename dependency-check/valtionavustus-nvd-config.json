@@ -1,0 +1,4 @@
+{"delete-config?": false,
+ "nvd": {"suppression-file": "suppressionlist.xml",
+         "output-dir": "target/nvd/valtionavustus/"
+ }}

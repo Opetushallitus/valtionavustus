@@ -33,7 +33,10 @@ function lein_dep_check_in_dir () {
 function nvd_check {
   local dir=$1
   cd "$repo/dependency-check"
-  "$LEIN" with-profile -user run -m nvd.task.check nvd-config.json "$(cd $dir; $LEIN classpath)"
+
+  project=$(basename "$dir")
+
+  "$LEIN" with-profile -user run -m nvd.task.check "$project"-nvd-config.json "$(cd "$dir"; $LEIN classpath)"
 }
 
 function download_temp_db_to_workspace_in_jenkins() {
