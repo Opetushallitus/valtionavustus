@@ -77,6 +77,7 @@ export const defaultValues =
         vaCodes: codes,
         selectionCriteria: [],
         raportointivelvoitteet: [],
+        lainsaadanto: [],
         hakemusFields: [],
       });
     },

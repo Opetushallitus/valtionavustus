@@ -41,6 +41,7 @@ export interface HakuProps {
   hakuaikaStart: Date;
   hakuaikaEnd: Date;
   arvioituMaksupaiva?: Date;
+  lainsaadanto: string[];
   hankkeenAlkamispaiva: string;
   hankkeenPaattymispaiva: string;
   selectionCriteria: string[];
@@ -507,6 +508,7 @@ export class HakujenHallintaPage {
       hankkeenPaattymispaiva,
       selectionCriteria,
       arvioituMaksupaiva,
+      lainsaadanto,
       jaossaOlevaSumma,
       raportointivelvoitteet,
     } = props;
@@ -574,6 +576,10 @@ export class HakujenHallintaPage {
       }
       await this.waitForSave();
       await this.page.click(`[id="new-raportointivelvoite-${i}"]`);
+    }
+
+    for (const saadanto of lainsaadanto) {
+      await this.page.locator(`label:has-text("${saadanto}")`).click();
     }
 
     await this.waitForSave();
