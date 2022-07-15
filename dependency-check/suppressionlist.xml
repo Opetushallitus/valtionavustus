@@ -74,4 +74,32 @@
     <packageUrl regex="true">^pkg:maven/org.http4s/blaze-core_2.11@0.12.11</packageUrl>
     <cve>CVE-2021-21293</cve>
   </suppress>
+  <suppress until="2023-10-01Z">
+    <notes><![CDATA[
+    No update available
+    ]]>    </notes>
+    <packageUrl regex="true">^pkg:maven/org.clojure/data.priority-map@1.1.0</packageUrl>
+    <cve>CVE-2022-23172</cve>
+  </suppress>
+  <suppress until="2023-10-01Z">
+    <notes><![CDATA[
+    No update available
+    ]]>    </notes>
+    <packageUrl regex="true">^pkg:maven/org.clojure/data.priority-map@1.1.0</packageUrl>
+    <cve>CVE-2022-23173</cve>
+  </suppress>
+  <suppress until="2023-10-01Z">
+    <notes><![CDATA[
+    No update available
+    ]]>    </notes>
+    <packageUrl regex="true">^pkg:maven/org.clojure/data.priority-map@0.0.7</packageUrl>
+    <cve>CVE-2022-23172</cve>
+  </suppress>
+  <suppress until="2023-10-01Z">
+    <notes><![CDATA[
+    No update available
+    ]]>    </notes>
+    <packageUrl regex="true">^pkg:maven/org.clojure/data.priority-map@0.0.7</packageUrl>
+    <cve>CVE-2022-23173</cve>
+  </suppress>
 </suppressions>
