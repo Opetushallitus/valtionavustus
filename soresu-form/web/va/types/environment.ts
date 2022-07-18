@@ -16,6 +16,8 @@ export interface EnvironmentApiResponse {
   "multibatch-payments": FeatureFlag;
   "dont-send-loppuselvityspyynto-to-virkailija"?: FeatureFlag;
   "avustushaku-excel-extra-fields"?: FeatureFlag;
+  "maksatukset-typescript"?: FeatureFlag;
+  payments: FeatureFlag & { "delete-payments?": boolean };
 }
 
 type FeatureFlags<T> = {

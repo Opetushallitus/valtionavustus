@@ -1,0 +1,122 @@
+@import "~soresu-form/web/form/style/variables.less";
+
+.maksatukset {
+  width: 100%;
+  margin: 2rem 0;
+
+  &_avustushaku-info {
+    display: flex;
+
+    > div {
+      margin: 1rem;
+    }
+
+    label {
+      color: #aaaaaa;
+    }
+  }
+
+  &_tabs {
+    display: flex;
+  }
+
+  &_tab {
+    text-transform: uppercase;
+    appearance: none;
+    background: inherit;
+    padding: 0.5rem 0;
+    margin: 0;
+    font-weight: 700;
+    color: @light-gray;
+    cursor: pointer;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    box-sizing: border-box;
+
+    &:not(:disabled):hover {
+      background: none;
+    }
+
+    &:focus {
+      outline: 0;
+    }
+
+    &:not(:first-of-type) {
+      margin-left: 1vw;
+    }
+
+    &.active {
+      color: @light-blue;
+      border-bottom: 2px solid @light-blue;
+    }
+  }
+
+  &_badge {
+    font-size: 0.6rem;
+    margin-left: 8px;
+    border-radius: 2px;
+    color: #fff;
+    background-color: @light-blue;
+    cursor: pointer;
+    padding: 1px 5px;
+  }
+
+  &_report {
+    margin: 2rem 0;
+  }
+
+  &_no-payments {
+    width: 100%;
+    padding: 1rem;
+    background-color: #ddd;
+  }
+
+  &_payments-table {
+    width: 100%;
+    box-sizing: border-box;
+
+    th,
+    td {
+      text-align: left;
+      font-size: 0.9rem;
+      font-weight: 400;
+      padding: 0.5rem 0;
+    }
+
+    tr.gray {
+      background-color: #eee;
+    }
+
+    tr.white {
+      background-color: #fff;
+    }
+
+    td.align-right {
+      text-align: right;
+    }
+
+    th:not(:first-of-type),
+    td:not(:first-of-type) {
+      padding-left: 0.2rem;
+    }
+
+    .narrow-column {
+      width: 120px;
+    }
+
+    .semi-narrow-column {
+      width: 160px;
+    }
+
+    .phase-header {
+      border-top: 1px solid @light-gray;
+      border-bottom: 1px solid @light-gray;
+    }
+
+    input {
+      box-sizing: border-box;
+      width: 100%;
+    }
+  }
+}

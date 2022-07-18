@@ -19,6 +19,7 @@ import HakujenHallintaController, {
   LainsaadantoOption,
 } from "../HakujenHallintaController";
 import { HakujenHallintaSubTab, UserInfo, VaCodeValue } from "../types";
+import { Maksatukset } from "./Maksatukset";
 
 interface EditorSelectorProps {
   subTab: HakujenHallintaSubTab;
@@ -127,6 +128,17 @@ export const EditorSelector = (props: EditorSelectorProps) => {
         />
       );
       break;
+    case "maksatukset":
+      subTabContent = (
+        <Maksatukset
+          avustushaku={avustushaku}
+          codeValues={codeOptions}
+          controller={controller}
+          environment={environment}
+          userInfo={userInfo}
+        />
+      );
+      break;
     default:
       throw new Error(`Bad subTab selection '${subTab}'`);
   }
@@ -208,14 +220,18 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           />
         </span>
         <span
-          onClick={createRedirectTo(
-            "/admin-ui/payments/?grant-id=" + avustushaku.id
-          )}
+          onClick={
+            environment["maksatukset-typescript"]?.["enabled?"]
+              ? createSubTabSelector("maksatukset")
+              : createRedirectTo(
+                  "/admin-ui/payments/?grant-id=" + avustushaku.id
+                )
+          }
           className={
             avustushaku.status !== "published" &&
             avustushaku.status !== "resolved"
               ? "disabled"
-              : ""
+              : ClassNames({ selected: subTab === "maksatukset" })
           }
         >
           Maksatukset
@@ -229,7 +245,15 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           />
         </span>
       </div>
-      <div className="section-container">{subTabContent}</div>
+      <div
+        className={
+          subTab !== "maksatukset"
+            ? "section-container"
+            : "maksatukset-container"
+        }
+      >
+        {subTabContent}
+      </div>
     </section>
   );
 };

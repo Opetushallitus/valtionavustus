@@ -21,6 +21,7 @@
          :multibatch-payments (:multibatch-payments config)
          :dont-send-loppuselvityspyynto-to-virkailija (:dont-send-loppuselvityspyynto-to-virkailija config)
          :avustushaku-excel-extra-fields (:avustushaku-excel-extra-fields config)
+         :maksatukset-typescript (:maksatukset-typescript config)
          :selvitys-limit (:selvitys-limit config)}
         opintopolku (:opintopolku config)]
     (if-let [opintopolku-url (:url opintopolku)]

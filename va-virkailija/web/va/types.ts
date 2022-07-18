@@ -1,4 +1,5 @@
 import {
+  Answer,
   Avustushaku,
   Form,
   Hakemus,
@@ -120,7 +121,8 @@ export type HakujenHallintaSubTab =
   | "form-editor"
   | "decision"
   | "valiselvitys"
-  | "loppuselvitys";
+  | "loppuselvitys"
+  | "maksatukset";
 
 export interface VaUserSearch {
   loading: boolean;
@@ -216,3 +218,66 @@ export type HakemusV2 = {
     "budget-granted": number;
   };
 };
+
+type PaymentV2Status = "created" | "waiting" | "paid" | "sent"
+
+export type PaymentV2 = {
+  "application-id": number
+  "application-version": number
+  "batch-id": number
+  "created-at": string
+  filename: string
+  id: number
+  "payment-sum": number
+  "paymentstatus-id": PaymentV2Status
+  phase: number
+  pitkaviite: string
+  "user-name": string
+  version: number
+  "version-closed": string | null
+}
+
+export type HakemusV2WithEvaluation = {
+  answers: Answer[]
+  "budget-granted": number
+  "budget-oph-share": number
+  "budget-total": number
+  "costs-granted": number
+  "created-at": string
+  "grant-id": number
+  id: number
+  language: "fi" | "sv"
+  "lkp-account": string
+  "organization-name": string
+  "project-name": string
+  refused: boolean | null
+  "refused-at": string | null
+  "refused-comment": string | null
+  "register-number": string
+  "should-pay": true
+  status: HakemusArviointiStatus
+  "takp-account": string
+  version: number
+}
+
+type BatchDocumentV2 = {
+  "acceptor-email": string
+  "created-at": string
+  "document-id": string
+  id: number
+  phase: number
+  "presenter-email": string
+}
+
+export type PaymentBatchV2 = {
+  "batch-number": number
+  "created-at": string
+  currency: "EUR"
+  documents: BatchDocumentV2[]
+  "due-date": string
+  "grant-id": number
+  id: number
+  "invoice-date": string
+  partner: string
+  "receipt-date": string
+}
