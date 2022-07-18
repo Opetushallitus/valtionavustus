@@ -113,14 +113,17 @@ export const MaksatuksetTable = ({ payments }: PaymentsTableProps) => {
 
   const renderPhase = (phase: string, payments: Maksatus[]) => {
     return (
-      <>
+      <React.Fragment key={`phase-${phase}`}>
         <tr>
           <td className="phase-header" colSpan={9}>
             {Number.parseInt(phase) + 1}. erä
           </td>
         </tr>
         {payments.map((p, i) => (
-          <tr className={i % 2 === 0 ? "white" : "gray"}>
+          <tr
+            key={`maksatus-${p.id}`}
+            className={i % 2 === 0 ? "white" : "gray"}
+          >
             <td className="align-right semi-narrow-column">{p.pitkaviite}</td>
             <td className="narrow-column">
               {paymentStatusTranslation[p["paymentstatus-id"]]}
@@ -147,7 +150,7 @@ export const MaksatuksetTable = ({ payments }: PaymentsTableProps) => {
             <td className="align-right narrow-column">{p["payment-sum"]} €</td>
           </tr>
         ))}
-      </>
+      </React.Fragment>
     );
   };
 
@@ -155,42 +158,44 @@ export const MaksatuksetTable = ({ payments }: PaymentsTableProps) => {
     <div>
       <table className="maksatukset_payments-table">
         <thead className="maksatukset_table-header">
-          <th className="semi-narrow-column">
-            <div>Pitkäviite</div>
-            <input onChange={setFilterByKey("pitkaviite")} />
-          </th>
-          <th className="narrow-column">
-            <div>Tila</div>
-            <input onChange={setFilterByKey("paymentstatus")} />
-          </th>
-          <th>
-            <div>Toimittajan nimi</div>
-            <input onChange={setFilterByKey("organization-name")} />
-          </th>
-          <th>
-            <div>Hanke</div>
-            <input onChange={setFilterByKey("project-name")} />
-          </th>
-          <th className="narrow-column">
-            <div>Maksuun</div>
-            <input onChange={setFilterByKey("payment-sum")} />
-          </th>
-          <th className="semi-narrow-column">
-            <div>Pankkitilin IBAN</div>
-            <input onChange={setFilterByKey("bank-iban")} />
-          </th>
-          <th className="narrow-column">
-            <div>LKP-tili</div>
-            <input onChange={setFilterByKey("lkp-account")} />
-          </th>
-          <th className="narrow-column">
-            <div>TaKp-tili</div>
-            <input onChange={setFilterByKey("takp-account")} />
-          </th>
-          <th className="narrow-column">
-            <div>Tiliöinti</div>
-            <input onChange={setFilterByKey("accounting")} />
-          </th>
+          <tr>
+            <th className="semi-narrow-column">
+              <div>Pitkäviite</div>
+              <input onChange={setFilterByKey("pitkaviite")} />
+            </th>
+            <th className="narrow-column">
+              <div>Tila</div>
+              <input onChange={setFilterByKey("paymentstatus")} />
+            </th>
+            <th>
+              <div>Toimittajan nimi</div>
+              <input onChange={setFilterByKey("organization-name")} />
+            </th>
+            <th>
+              <div>Hanke</div>
+              <input onChange={setFilterByKey("project-name")} />
+            </th>
+            <th className="narrow-column">
+              <div>Maksuun</div>
+              <input onChange={setFilterByKey("payment-sum")} />
+            </th>
+            <th className="semi-narrow-column">
+              <div>Pankkitilin IBAN</div>
+              <input onChange={setFilterByKey("bank-iban")} />
+            </th>
+            <th className="narrow-column">
+              <div>LKP-tili</div>
+              <input onChange={setFilterByKey("lkp-account")} />
+            </th>
+            <th className="narrow-column">
+              <div>TaKp-tili</div>
+              <input onChange={setFilterByKey("takp-account")} />
+            </th>
+            <th className="narrow-column">
+              <div>Tiliöinti</div>
+              <input onChange={setFilterByKey("accounting")} />
+            </th>
+          </tr>
         </thead>
         <tbody className="maksatukset_table-body">
           {Object.keys(groupedPayments).map((phase) =>
@@ -199,24 +204,26 @@ export const MaksatuksetTable = ({ payments }: PaymentsTableProps) => {
         </tbody>
         {payments && payments.length > 0 && (
           <tfoot className="phase-header">
-            <td colSpan={3}>
-              {visiblePayments.length}/{payments.length} maksatusta
-            </td>
-            <td className="align-right">Yhteensä</td>
-            <td className="align-right">
-              {visiblePayments.reduce(
-                (acc, cur) => acc + cur["payment-sum"],
-                0
-              )}{" "}
-              €
-            </td>
-            <td colSpan={4} className="align-right">
-              {visiblePayments.reduce(
-                (acc, cur) => acc + cur["payment-sum"],
-                0
-              )}{" "}
-              €
-            </td>
+            <tr>
+              <td colSpan={3}>
+                {visiblePayments.length}/{payments.length} maksatusta
+              </td>
+              <td className="align-right">Yhteensä</td>
+              <td className="align-right">
+                {visiblePayments.reduce(
+                  (acc, cur) => acc + cur["payment-sum"],
+                  0
+                )}{" "}
+                €
+              </td>
+              <td colSpan={4} className="align-right">
+                {visiblePayments.reduce(
+                  (acc, cur) => acc + cur["payment-sum"],
+                  0
+                )}{" "}
+                €
+              </td>
+            </tr>
           </tfoot>
         )}
       </table>

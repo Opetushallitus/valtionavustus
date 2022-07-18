@@ -1,5 +1,6 @@
-import moment from "moment";
 import React, { useEffect, useState } from "react";
+import { partition } from "lodash";
+import moment from "moment";
 
 import HttpUtil from "soresu-form/web/HttpUtil";
 import { fiShortFormat } from "soresu-form/web/va/i18n/dateformat";
@@ -15,15 +16,18 @@ import {
   UserInfo,
   VaCodeValue,
 } from "../types";
+import { LahtevatMaksatukset } from "./LahtevatMaksatukset";
 
 import "./Maksatukset.less";
 import { MaksatuksetTable } from "./MaksatuksetTable";
+import { HelpTexts } from "soresu-form/web/va/types";
 
 type MaksatuksetProps = {
   avustushaku: SelectedAvustushaku;
   codeValues: VaCodeValue[];
   controller: HakujenHallintaController;
   environment: EnvironmentApiResponse;
+  helpTexts: HelpTexts;
   userInfo: UserInfo;
 };
 
@@ -44,11 +48,18 @@ export const Maksatukset = ({
   codeValues,
   controller,
   environment,
+  helpTexts,
   userInfo,
 }: MaksatuksetProps) => {
   const [tab, setTab] = useState<MaksatuksetTab>("outgoing");
   const [maksatukset, setMaksatukset] = useState<Maksatus[]>([]);
   const [batches, setBatches] = useState<PaymentBatchV2[]>([]);
+  const [sentPayments, outgoingPayments] = partition(maksatukset, isSent);
+  const newSentPayments = sentPayments.filter(isToday).length;
+
+  useEffect(() => {
+    void refreshPayments();
+  }, [avustushaku.id]);
 
   const refreshPayments = async () => {
     const [hakemukset, payments, batches] = await Promise.all([
@@ -73,52 +84,9 @@ export const Maksatukset = ({
     setBatches(batches);
   };
 
-  useEffect(() => {
-    void refreshPayments();
-  }, [avustushaku.id]);
-
-  const newSentPayments = maksatukset?.filter((p) => isSent(p) && isToday(p));
-
   return (
     <div className="maksatukset">
-      <div className="maksatukset_avustushaku">
-        <h2>{avustushaku.content.name.fi}</h2>
-        <div className="maksatukset_avustushaku-info">
-          <div>
-            <label>Toimintayksikkö</label>
-            <div>
-              {
-                codeValues.find(
-                  (c) => c.id === avustushaku["operational-unit-id"]
-                )?.code
-              }
-            </div>
-          </div>
-          <div>
-            <label>Projekti</label>
-            <div>
-              {codeValues.find((c) => c.id === avustushaku["project-id"])?.code}
-            </div>
-          </div>
-          <div>
-            <label>Toiminto</label>
-            <div>
-              {
-                codeValues.find((c) => c.id === avustushaku["operation-id"])
-                  ?.code
-              }
-            </div>
-          </div>
-          <div>
-            <label>Maksuliikemenotili</label>
-            <div>{avustushaku.content["transaction-account"]}</div>
-          </div>
-          <div>
-            <label>Tositelaji</label>
-            <div>{avustushaku.content["document-type"]}</div>
-          </div>
-        </div>
-      </div>
+      <AvustushakuInfo avustushaku={avustushaku} codeValues={codeValues} />
       <div className="maksatukset_tabs">
         <a
           className={`maksatukset_tab ${tab === "outgoing" ? "active" : ""}`}
@@ -131,31 +99,36 @@ export const Maksatukset = ({
           onClick={() => setTab("sent")}
         >
           Lähetetyt maksatukset
-          {newSentPayments?.length ? (
-            <span className="maksatukset_badge">
-              {newSentPayments?.length} uutta
-            </span>
+          {newSentPayments ? (
+            <span className="maksatukset_badge">{newSentPayments} uutta</span>
           ) : (
             ""
           )}
         </a>
       </div>
-      {tab === "sent" && (
-        <MaksatuseräTable batches={batches} maksatukset={maksatukset} />
+      {tab === "sent" ? (
+        <>
+          <MaksatuseräTable batches={batches} payments={sentPayments} />
+          <MaksatuksetTable payments={sentPayments} />
+          <div className="maksatukset_report">
+            <a
+              target="_blank"
+              href={`/api/v2/reports/tasmaytys/avustushaku/${avustushaku.id}`}
+            >
+              Lataa täsmäytysraportti
+            </a>
+          </div>
+        </>
+      ) : (
+        <LahtevatMaksatukset
+          avustushaku={avustushaku}
+          controller={controller}
+          helpTexts={helpTexts}
+          payments={outgoingPayments}
+          refreshPayments={refreshPayments}
+          userInfo={userInfo}
+        />
       )}
-      <MaksatuksetTable
-        payments={maksatukset?.filter((p) =>
-          tab === "sent" ? isSent(p) : !isSent(p)
-        )}
-      />
-      <div className="maksatukset_report">
-        <a
-          target="_blank"
-          href={`/api/v2/reports/tasmaytys/avustushaku/${avustushaku.id}`}
-        >
-          Lataa täsmäytysraportti
-        </a>
-      </div>
       {userInfo.privileges.includes("va-admin") && (
         <AdminTools
           avustushaku={avustushaku}
@@ -168,41 +141,89 @@ export const Maksatukset = ({
   );
 };
 
-type MaksatuseräTable = {
-  batches: PaymentBatchV2[];
-  maksatukset: Maksatus[];
+const AvustushakuInfo = ({
+  avustushaku,
+  codeValues,
+}: {
+  avustushaku: SelectedAvustushaku;
+  codeValues: VaCodeValue[];
+}) => {
+  return (
+    <div className="maksatukset_avustushaku">
+      <h2>{avustushaku.content.name.fi}</h2>
+      <div className="maksatukset_avustushaku-info">
+        <div>
+          <label>Toimintayksikkö</label>
+          <div>
+            {
+              codeValues.find(
+                (c) => c.id === avustushaku["operational-unit-id"]
+              )?.code
+            }
+          </div>
+        </div>
+        <div>
+          <label>Projekti</label>
+          <div>
+            {codeValues.find((c) => c.id === avustushaku["project-id"])?.code}
+          </div>
+        </div>
+        <div>
+          <label>Toiminto</label>
+          <div>
+            {codeValues.find((c) => c.id === avustushaku["operation-id"])?.code}
+          </div>
+        </div>
+        <div>
+          <label>Maksuliikemenotili</label>
+          <div>{avustushaku.content["transaction-account"]}</div>
+        </div>
+        <div>
+          <label>Tositelaji</label>
+          <div>{avustushaku.content["document-type"]}</div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
-const MaksatuseräTable = ({ batches, maksatukset }: MaksatuseräTable) => {
+type MaksatuseräTable = {
+  batches: PaymentBatchV2[];
+  payments: Maksatus[];
+};
+
+const MaksatuseräTable = ({ batches, payments }: MaksatuseräTable) => {
   let i = 0;
   return (
     <>
       <table className="maksatukset_payments-table">
         <thead>
-          <th>Vaihe</th>
-          <th>Yhteensä</th>
-          <th>Maksatuksia</th>
-          <th>Laskupvm</th>
-          <th>Eräpvm</th>
-          <th>Tositepäivä</th>
-          <th>Allekirjoitettu yhteenveto</th>
-          <th>Esittelijän sähköpostiosoite</th>
-          <th>Hyväksyjän sähköpostiosoite</th>
+          <tr>
+            <th>Vaihe</th>
+            <th>Yhteensä</th>
+            <th>Maksatuksia</th>
+            <th>Laskupvm</th>
+            <th>Eräpvm</th>
+            <th>Tositepäivä</th>
+            <th>Allekirjoitettu yhteenveto</th>
+            <th>Esittelijän sähköpostiosoite</th>
+            <th>Hyväksyjän sähköpostiosoite</th>
+          </tr>
         </thead>
         <tbody>
           {batches.map((b) => (
-            <>
+            <React.Fragment key={b.id}>
               {b.documents.map((d) => {
-                const payments = maksatukset.filter(
-                  (m) => m["batch-id"] === b.id && m.phase === d.phase
+                const batchPayments = payments.filter(
+                  (p) => p["batch-id"] === b.id && p.phase === d.phase
                 );
                 return (
-                  <tr className={i % 2 === 0 ? "white" : "gray"}>
+                  <tr key={d.phase} className={i % 2 === 0 ? "white" : "gray"}>
                     <td>{d.phase + 1}. erä</td>
                     <td>
-                      {payments.reduce((a, c) => a + c["payment-sum"], 0)}
+                      {batchPayments.reduce((a, c) => a + c["payment-sum"], 0)}
                     </td>
-                    <td>{payments.length}</td>
+                    <td>{batchPayments.length}</td>
                     <td>{moment(b["invoice-date"]).format(fiShortFormat)}</td>
                     <td>{moment(b["due-date"]).format(fiShortFormat)}</td>
                     <td>{moment(b["receipt-date"]).format(fiShortFormat)}</td>
@@ -212,7 +233,7 @@ const MaksatuseräTable = ({ batches, maksatukset }: MaksatuseräTable) => {
                   </tr>
                 );
               })}
-            </>
+            </React.Fragment>
           ))}
         </tbody>
       </table>

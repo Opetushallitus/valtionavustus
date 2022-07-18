@@ -260,7 +260,7 @@ export type HakemusV2WithEvaluation = {
   version: number;
 };
 
-type BatchDocumentV2 = {
+export type BatchDocumentV2 = {
   "acceptor-email": string;
   "created-at": string;
   "document-id": string;

@@ -135,6 +135,7 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           codeValues={codeOptions}
           controller={controller}
           environment={environment}
+          helpTexts={helpTexts}
           userInfo={userInfo}
         />
       );
