@@ -107,7 +107,15 @@ const MaksatuksetPhase = ({
 
   return (
     <React.Fragment key={`phase-${phase}`}>
-      <div>{Number.parseInt(phase) + 1}. erä</div>
+      <table className="maksatukset_payments-table">
+        <thead className="phase-header">
+          <tr>
+            <td>
+              <div>{Number.parseInt(phase) + 1}. erä</div>
+            </td>
+          </tr>
+        </thead>
+      </table>
       <div className="maksatukset_table-container">
         <table className="maksatukset_payments-table">
           <tbody className="maksatukset_table-body">
@@ -149,35 +157,37 @@ const MaksatuksetPhase = ({
               </tr>
             ))}
           </tbody>
-          <tfoot className="phase-header">
-            <tr>
-              <td className="semi-narrow-column">
-                {visiblePayments.length}/{payments.length} maksatusta
-              </td>
-              <td className="narrow-column"></td>
-              <td></td>
-              <td className="align-right">Yhteensä</td>
-              <td className="align-right narrow-column">
-                {visiblePayments.reduce(
-                  (acc, cur) => acc + cur["payment-sum"],
-                  0
-                )}{" "}
-                €
-              </td>
-              <td className="semi-narrow-column"></td>
-              <td className="narrow-column"></td>
-              <td className="narrow-column"></td>
-              <td className="align-right narrow-column">
-                {visiblePayments.reduce(
-                  (acc, cur) => acc + cur["payment-sum"],
-                  0
-                )}{" "}
-                €
-              </td>
-            </tr>
-          </tfoot>
         </table>
       </div>
+      <table className="maksatukset_payments-table">
+        <tfoot className="phase-header">
+          <tr>
+            <td className="semi-narrow-column">
+              {visiblePayments.length}/{payments.length} maksatusta
+            </td>
+            <td className="narrow-column"></td>
+            <td></td>
+            <td className="align-right">Yhteensä</td>
+            <td className="align-right narrow-column">
+              {visiblePayments.reduce(
+                (acc, cur) => acc + cur["payment-sum"],
+                0
+              )}{" "}
+              €
+            </td>
+            <td className="semi-narrow-column"></td>
+            <td className="narrow-column"></td>
+            <td className="narrow-column"></td>
+            <td className="align-right narrow-column">
+              {visiblePayments.reduce(
+                (acc, cur) => acc + cur["payment-sum"],
+                0
+              )}{" "}
+              €
+            </td>
+          </tr>
+        </tfoot>
+      </table>
     </React.Fragment>
   );
 };
