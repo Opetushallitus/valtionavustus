@@ -74,9 +74,15 @@
     background-color: #ddd;
   }
 
+  &_table-container {
+    max-height: 300px;
+    overflow: auto;
+  }
+
   &_payments-table {
     width: 100%;
     box-sizing: border-box;
+    table-layout: fixed;
 
     th,
     td {
@@ -84,6 +90,10 @@
       font-size: 0.9rem;
       font-weight: 400;
       padding: 0.5rem 0;
+      max-width: 300px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     tr.gray {

@@ -87,72 +87,115 @@ const filterBy = (filter: Filter) => (p: Maksatus) => {
   return true;
 };
 
-export const MaksatuksetTable = ({ payments }: PaymentsTableProps) => {
-  const [filter, setFilter] = useState<Filter>({});
-  const [visiblePayments, setVisiblePayments] = useState<Maksatus[]>(
-    payments ?? []
-  );
+type MaksatuksetPhaseProps = {
+  payments: Maksatus[];
+  phase: string;
+  filter: Filter;
+};
+
+const MaksatuksetPhase = ({
+  payments,
+  phase,
+  filter,
+}: MaksatuksetPhaseProps) => {
+  const [visiblePayments, setVisiblePayments] = useState<Maksatus[]>(payments);
 
   useEffect(() => {
-    const filtered = payments?.filter(filterBy(filter));
-    setVisiblePayments(filtered ?? []);
+    const filtered = payments.filter(filterBy(filter));
+    setVisiblePayments(filtered);
   }, [filter, payments]);
 
+  return (
+    <React.Fragment key={`phase-${phase}`}>
+      <div>{Number.parseInt(phase) + 1}. erä</div>
+      <div className="maksatukset_table-container">
+        <table className="maksatukset_payments-table">
+          <tbody className="maksatukset_table-body">
+            {visiblePayments.map((p, i) => (
+              <tr
+                key={`maksatus-${p.id}`}
+                className={i % 2 === 0 ? "white" : "gray"}
+              >
+                <td className="align-right semi-narrow-column">
+                  {p.pitkaviite}
+                </td>
+                <td className="narrow-column">
+                  {paymentStatusTranslation[p["paymentstatus-id"]]}
+                </td>
+                <td>{p.hakemus?.["organization-name"]}</td>
+                <td>
+                  <a
+                    target="_blank"
+                    href={`/avustushaku/${p.hakemus?.["grant-id"]}/hakemus/${p.hakemus?.id}/arviointi`}
+                  >
+                    {p.hakemus?.["project-name"]}
+                  </a>
+                </td>
+                <td className="align-right narrow-column">
+                  {p["payment-sum"]} €
+                </td>
+                <td className="semi-narrow-column">
+                  {p.hakemus?.answers.find((a) => a.key === "bank-iban")?.value}
+                </td>
+                <td className="narrow-column">
+                  {p.hakemus?.["lkp-account"] ?? "LKP-tili puuttuu"}
+                </td>
+                <td className="narrow-column">
+                  {p.hakemus?.["takp-account"] ?? "TAKP-tili puuttuu"}
+                </td>
+                <td className="align-right narrow-column">
+                  {p["payment-sum"]} €
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot className="phase-header">
+            <tr>
+              <td className="semi-narrow-column">
+                {visiblePayments.length}/{payments.length} maksatusta
+              </td>
+              <td className="narrow-column"></td>
+              <td></td>
+              <td className="align-right">Yhteensä</td>
+              <td className="align-right narrow-column">
+                {visiblePayments.reduce(
+                  (acc, cur) => acc + cur["payment-sum"],
+                  0
+                )}{" "}
+                €
+              </td>
+              <td className="semi-narrow-column"></td>
+              <td className="narrow-column"></td>
+              <td className="narrow-column"></td>
+              <td className="align-right narrow-column">
+                {visiblePayments.reduce(
+                  (acc, cur) => acc + cur["payment-sum"],
+                  0
+                )}{" "}
+                €
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </React.Fragment>
+  );
+};
+
+export const MaksatuksetTable = ({ payments }: PaymentsTableProps) => {
+  const [filter, setFilter] = useState<Filter>({});
   const setFilterByKey =
     (key: SortKey) => (e: ChangeEvent<HTMLInputElement>) => {
       setFilter({ ...filter, [key]: e.target.value });
     };
 
-  const groupedPayments = visiblePayments.reduce((acc, cur) => {
+  const groupedPayments = (payments ?? []).reduce((acc, cur) => {
     const phase = `${cur.phase}`;
     if (phase) {
       return { ...acc, [phase]: [...(acc[phase] ?? []), cur] };
     }
     return acc;
   }, {} as { [k in string]: Maksatus[] });
-
-  const renderPhase = (phase: string, payments: Maksatus[]) => {
-    return (
-      <React.Fragment key={`phase-${phase}`}>
-        <tr>
-          <td className="phase-header" colSpan={9}>
-            {Number.parseInt(phase) + 1}. erä
-          </td>
-        </tr>
-        {payments.map((p, i) => (
-          <tr
-            key={`maksatus-${p.id}`}
-            className={i % 2 === 0 ? "white" : "gray"}
-          >
-            <td className="align-right semi-narrow-column">{p.pitkaviite}</td>
-            <td className="narrow-column">
-              {paymentStatusTranslation[p["paymentstatus-id"]]}
-            </td>
-            <td>{p.hakemus?.["organization-name"]}</td>
-            <td>
-              <a
-                target="_blank"
-                href={`/avustushaku/${p.hakemus?.["grant-id"]}/hakemus/${p.hakemus?.id}/arviointi`}
-              >
-                {p.hakemus?.["project-name"]}
-              </a>
-            </td>
-            <td className="align-right narrow-column">{p["payment-sum"]} €</td>
-            <td className="semi-narrow-column">
-              {p.hakemus?.answers.find((a) => a.key === "bank-iban")?.value}
-            </td>
-            <td className="narrow-column">
-              {p.hakemus?.["lkp-account"] ?? "LKP-tili puuttuu"}
-            </td>
-            <td className="narrow-column">
-              {p.hakemus?.["takp-account"] ?? "TAKP-tili puuttuu"}
-            </td>
-            <td className="align-right narrow-column">{p["payment-sum"]} €</td>
-          </tr>
-        ))}
-      </React.Fragment>
-    );
-  };
 
   return (
     <div>
@@ -197,36 +240,14 @@ export const MaksatuksetTable = ({ payments }: PaymentsTableProps) => {
             </th>
           </tr>
         </thead>
-        <tbody className="maksatukset_table-body">
-          {Object.keys(groupedPayments).map((phase) =>
-            renderPhase(phase, groupedPayments[phase])
-          )}
-        </tbody>
-        {payments && payments.length > 0 && (
-          <tfoot className="phase-header">
-            <tr>
-              <td colSpan={3}>
-                {visiblePayments.length}/{payments.length} maksatusta
-              </td>
-              <td className="align-right">Yhteensä</td>
-              <td className="align-right">
-                {visiblePayments.reduce(
-                  (acc, cur) => acc + cur["payment-sum"],
-                  0
-                )}{" "}
-                €
-              </td>
-              <td colSpan={4} className="align-right">
-                {visiblePayments.reduce(
-                  (acc, cur) => acc + cur["payment-sum"],
-                  0
-                )}{" "}
-                €
-              </td>
-            </tr>
-          </tfoot>
-        )}
       </table>
+      {Object.keys(groupedPayments).map((phase) => (
+        <MaksatuksetPhase
+          phase={phase}
+          payments={groupedPayments[phase]}
+          filter={filter}
+        />
+      ))}
       {!payments ||
         (payments.length === 0 && (
           <div className="maksatukset_no-payments">Ei maksatuksia</div>
