@@ -25,6 +25,8 @@ import { Raportointivelvoitteet } from "./Raportointivelvoitteet";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 import { Lainsaadanto } from "./Lainsaadanto";
 
+import "../style/koodien-valinta.less";
+
 type HakuEditProps = {
   avustushaku: SelectedAvustushaku;
   codeOptions: VaCodeValue[];
@@ -166,12 +168,12 @@ export const HakuEdit = ({
           </tr>
         </tbody>
       </table>
-      <div className="editor-field-row code-values">
+      <div className="koodien-valinta">
         <div
-          className="editor-row-element"
+          className="koodien-valinta-elementti"
           data-test-id="code-value-dropdown__operational-unit"
         >
-          <h3 className="required">
+          <h3 className="koodien-valinta-otsikko required">
             Toimintayksikkö
             <HelpTooltip
               content={
@@ -193,10 +195,10 @@ export const HakuEdit = ({
           />
         </div>
         <div
-          className="editor-row-element"
+          className="koodien-valinta-elementti"
           data-test-id="code-value-dropdown__project"
         >
-          <h3 className="required">
+          <h3 className="koodien-valinta-otsikko required">
             Projekti
             <HelpTooltip
               content={helpTexts["hakujen_hallinta__haun_tiedot___projekti"]}
@@ -215,10 +217,10 @@ export const HakuEdit = ({
           />
         </div>
         <div
-          className="editor-row-element"
+          className="koodien-valinta-elementti"
           data-test-id="code-value-dropdown__operation"
         >
-          <h3 className="required">
+          <h3 className="koodien-valinta-otsikko required">
             Toiminto
             <HelpTooltip
               content={helpTexts["hakujen_hallinta__haun_tiedot___toiminto"]}
