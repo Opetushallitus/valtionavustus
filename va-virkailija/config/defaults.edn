@@ -72,4 +72,5 @@
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :avustushaku-excel-extra-fields {:enabled? false}
  :maksatukset-typescript {:enabled? false}
- :test-apis {:enabled? false}}
+ :test-apis {:enabled? false}
+ :multiple-project-codes {:enabled? false}}

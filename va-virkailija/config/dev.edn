@@ -37,4 +37,5 @@
  :tasmaytysraportti-send {:enabled? true}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :avustushaku-excel-extra-fields {:enabled? true}
- :test-apis {:enabled? true}}
+ :test-apis {:enabled? true}
+ :multiple-project-codes {:enabled? true}}

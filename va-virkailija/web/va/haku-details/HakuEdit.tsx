@@ -192,6 +192,7 @@ export const HakuEdit = ({
             )}
             selectedValue={selectedValueOperationalUnit}
             disabled={isAllPaymentsPaid}
+            environment={environment}
           />
         </div>
         <div
@@ -214,6 +215,7 @@ export const HakuEdit = ({
             )}
             selectedValue={selectedValueProject}
             disabled={isAllPaymentsPaid}
+            environment={environment}
           />
         </div>
         <div
@@ -236,6 +238,7 @@ export const HakuEdit = ({
             )}
             selectedValue={selectedValueOperation}
             disabled={isAllPaymentsPaid}
+            environment={environment}
           />
         </div>
       </div>
