@@ -21,7 +21,7 @@ interface AutoCompleteCodeValueProps {
   codeOptions: VaCodeValue[];
   selectedValue: VaCodeValue | "";
   disabled: boolean;
-  environment: EnvironmentApiResponse
+  environment: EnvironmentApiResponse;
 }
 
 const colorDarkGray = "rgb(153, 146, 144)";
@@ -36,9 +36,9 @@ export default function AutocompleteCodeValue(
     codeType,
     selectedValue,
     disabled,
-    environment
+    environment,
   } = props;
-  let { codeOptions } = props
+  let { codeOptions } = props;
   const updateValue = (option: VaCodeValue | null) => {
     if (option == null) {
       controller.onChangeListener(avustushaku, { id }, null);
@@ -49,10 +49,11 @@ export default function AutocompleteCodeValue(
     }
   };
 
-  const multipleProjectCodesEnabled = environment["multiple-project-codes"]?.["enabled?"]
+  const multipleProjectCodesEnabled =
+    environment["multiple-project-codes"]?.["enabled?"];
 
   if (multipleProjectCodesEnabled && codeType === "project-id") {
-    makeNoProjectCodeFirstElement(codeOptions)
+    makeNoProjectCodeFirstElement(codeOptions);
   }
 
   const getOptionValue = (option: VaCodeValue) =>
@@ -127,8 +128,10 @@ function SingleValue({
 }
 
 function makeNoProjectCodeFirstElement(codeOptions: VaCodeValue[]) {
-    const noProjectCodeInd = codeOptions.findIndex((code: VaCodeValue) => code["code-value"] === "Ei projektikoodia")
-    const noProjectCode = codeOptions[noProjectCodeInd]
-    codeOptions.splice(noProjectCodeInd, 1)
-    codeOptions = [noProjectCode, ... codeOptions]
+  const noProjectCodeInd = codeOptions.findIndex(
+    (code: VaCodeValue) => code["code-value"] === "Ei projektikoodia"
+  );
+  const noProjectCode = codeOptions[noProjectCodeInd];
+  codeOptions.splice(noProjectCodeInd, 1);
+  codeOptions = [noProjectCode, ...codeOptions];
 }
