@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { Provider } from "react-redux";
 import HttpUtil from "soresu-form/web/HttpUtil";
 
 import "./style/main.less";
@@ -7,6 +8,7 @@ import { Koodienhallinta } from "./koodienhallinta/Koodienhallinta";
 import { UserInfo } from "./types";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 import { HeaderContainer } from "./Header";
+import { store } from "./koodienhallinta/store";
 
 interface Data {
   environment: EnvironmentApiResponse;
@@ -43,4 +45,8 @@ const KoodienhallintaApp = () => {
 
 const app = document.getElementById("app");
 const root = createRoot(app!);
-root.render(<KoodienhallintaApp />);
+root.render(
+  <Provider store={store}>
+    <KoodienhallintaApp />
+  </Provider>
+);
