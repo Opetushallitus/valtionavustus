@@ -400,7 +400,6 @@ export async function createHakuFromEsimerkkihaku(
 
   if (props.vaCodes) {
     await selectCode(page, "operational-unit", props.vaCodes.operationalUnit);
-    await selectCode(page, "project", props.vaCodes.project);
     await selectProject(page, props.vaCodes.project);
     await selectCode(page, "operation", props.vaCodes.operation);
   }
