@@ -5,19 +5,14 @@ import Select, {
   OptionProps,
   GroupBase,
 } from "react-select";
-import HakujenHallintaController, {
-  Avustushaku,
-} from "../HakujenHallintaController";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 import { VaCodeValue } from "../types";
 
-type CodeType = "operational-unit-id" | "project-id" | "operation-id";
+export type CodeType = "operational-unit-id" | "project-id" | "operation-id";
 
-interface AutoCompleteCodeValueProps {
-  id: CodeType;
+export interface AutoCompleteCodeValueProps {
   codeType: CodeType;
-  controller: HakujenHallintaController;
-  avustushaku: Avustushaku;
+  updateValue: (option: VaCodeValue | null) => void;
   codeOptions: VaCodeValue[];
   selectedValue: VaCodeValue | "";
   disabled: boolean;
@@ -30,31 +25,16 @@ export default function AutocompleteCodeValue(
   props: AutoCompleteCodeValueProps
 ) {
   const {
-    controller,
-    avustushaku,
-    id,
     codeType,
     selectedValue,
     disabled,
     environment,
+    updateValue,
+    codeOptions,
   } = props;
-  let { codeOptions } = props;
-  const updateValue = (option: VaCodeValue | null) => {
-    if (option == null) {
-      controller.onChangeListener(avustushaku, { id }, null);
-      avustushaku[codeType] = null;
-    } else {
-      controller.onChangeListener(avustushaku, { id }, option.id);
-      avustushaku[codeType] = option.id;
-    }
-  };
 
   const multipleProjectCodesEnabled =
     environment["multiple-project-codes"]?.["enabled?"];
-
-  if (multipleProjectCodesEnabled && codeType === "project-id") {
-    makeNoProjectCodeFirstElement(codeOptions);
-  }
 
   const getOptionValue = (option: VaCodeValue) =>
     `${option.code} ${option["code-value"]}`;
@@ -125,13 +105,4 @@ function SingleValue({
       {children}
     </components.SingleValue>
   );
-}
-
-function makeNoProjectCodeFirstElement(codeOptions: VaCodeValue[]) {
-  const noProjectCodeInd = codeOptions.findIndex(
-    (code: VaCodeValue) => code["code-value"] === "Ei projektikoodia"
-  );
-  const noProjectCode = codeOptions[noProjectCodeInd];
-  codeOptions.splice(noProjectCodeInd, 1);
-  codeOptions = [noProjectCode, ...codeOptions];
 }

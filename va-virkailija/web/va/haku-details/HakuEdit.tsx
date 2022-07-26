@@ -12,7 +12,7 @@ import {
 import HakuStatus from "../avustushaku/HakuStatus";
 import { HakuRoles } from "./HakuRoles";
 import EducationLevels from "./EducationLevels";
-import AutoCompleteCodeValue from "./AutoCompleteCodeValue";
+import AutoCompleteCodeValue, { CodeType } from "./AutoCompleteCodeValue";
 import HelpTooltip from "../HelpTooltip";
 import WarningBanner from "../WarningBanner";
 import HakujenHallintaController, {
@@ -24,6 +24,7 @@ import { DateInput } from "./DateInput";
 import { Raportointivelvoitteet } from "./Raportointivelvoitteet";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 import { Lainsaadanto } from "./Lainsaadanto";
+import ProjectSelectors from "./ProjectSelectors";
 
 import "../style/koodien-valinta.less";
 
@@ -94,6 +95,21 @@ export const HakuEdit = ({
   const mainHelp = {
     __html: helpTexts["hakujen_hallinta__haun_tiedot___ohje"],
   };
+
+  const multipleProjectCodesEnabled =
+    environment["multiple-project-codes"]?.["enabled?"];
+
+  const updateCodeValue =
+    (id: CodeType, avustushaku: SelectedAvustushaku) =>
+    (option: VaCodeValue | null) => {
+      if (option == null) {
+        controller.onChangeListener(avustushaku, { id }, null);
+        avustushaku[id] = null;
+      } else {
+        controller.onChangeListener(avustushaku, { id }, option.id);
+        avustushaku[id] = option.id;
+      }
+    };
 
   return (
     <div id="haku-edit">
@@ -183,16 +199,14 @@ export const HakuEdit = ({
             />
           </h3>
           <AutoCompleteCodeValue
-            id="operational-unit-id"
             codeType="operational-unit-id"
-            controller={controller}
-            avustushaku={avustushaku}
             codeOptions={codeOptions.filter(
               (k) => k["value-type"] === "operational-unit"
             )}
             selectedValue={selectedValueOperationalUnit}
             disabled={isAllPaymentsPaid}
             environment={environment}
+            updateValue={updateCodeValue("operational-unit-id", avustushaku)}
           />
         </div>
         <div
@@ -205,18 +219,28 @@ export const HakuEdit = ({
               content={helpTexts["hakujen_hallinta__haun_tiedot___projekti"]}
             />
           </h3>
-          <AutoCompleteCodeValue
-            id="project-id"
-            codeType="project-id"
-            controller={controller}
-            avustushaku={avustushaku}
-            codeOptions={codeOptions.filter(
-              (k) => k["value-type"] === "project"
-            )}
-            selectedValue={selectedValueProject}
-            disabled={isAllPaymentsPaid}
-            environment={environment}
-          />
+          {multipleProjectCodesEnabled ? (
+            <ProjectSelectors
+              avustushaku={avustushaku}
+              codeOptions={codeOptions.filter(
+                (k) => k["value-type"] === "project"
+              )}
+              disabled={isAllPaymentsPaid}
+              environment={environment}
+              controller={controller}
+            />
+          ) : (
+            <AutoCompleteCodeValue
+              codeType="project-id"
+              codeOptions={codeOptions.filter(
+                (k) => k["value-type"] === "project"
+              )}
+              selectedValue={selectedValueProject}
+              disabled={isAllPaymentsPaid}
+              environment={environment}
+              updateValue={updateCodeValue("project-id", avustushaku)}
+            />
+          )}
         </div>
         <div
           className="koodien-valinta-elementti"
@@ -229,16 +253,14 @@ export const HakuEdit = ({
             />
           </h3>
           <AutoCompleteCodeValue
-            id="operation-id"
             codeType="operation-id"
-            controller={controller}
-            avustushaku={avustushaku}
             codeOptions={codeOptions.filter(
               (k) => k["value-type"] === "operation"
             )}
             selectedValue={selectedValueOperation}
             disabled={isAllPaymentsPaid}
             environment={environment}
+            updateValue={updateCodeValue("operation-id", avustushaku)}
           />
         </div>
       </div>

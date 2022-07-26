@@ -16,6 +16,7 @@
             [oph.va.virkailija.hakemus-search :as hakemus-search]
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.va.virkailija.paatos :as paatos]
+            [oph.va.virkailija.projects :as projects]
             [oph.va.virkailija.saved-search :as saved-search]
             [oph.va.virkailija.schema :as virkailija-schema]
             [oph.va.virkailija.scoring :as scoring]
@@ -104,6 +105,20 @@
                      :return virkailija-schema/OnkoMuutoshakukelpoinenAvustushakuOk
                      :summary "Juuh"
                      (http/ok (virkailija-db/onko-muutoshakukelpoinen-avustushaku-ok avustushaku-id))))
+
+(defn- get-projects []
+  (compojure-api/GET "/:avustushaku-id/projects" []
+                     :path-params [avustushaku-id :- Long]
+                     :return [virkailija-schema/VACodeValue]
+                     (http/ok (projects/get-projects avustushaku-id))))
+
+(defn- post-projects []
+  (compojure-api/POST "/:avustushaku-id/projects" []
+                     :path-params [avustushaku-id :- Long]
+                     :body [projects-body (compojure-api/describe virkailija-schema/VACodeValues "Avustushaun projektit")]
+                     :return s/Any 
+                     (http/ok (projects/update-projects avustushaku-id projects-body)
+                     )))
 
 (defn- post-muutoshakemus-paatos []
   (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/:muutoshakemus-id/paatos" request
@@ -593,4 +608,6 @@
   (post-hakemus-status)
   (put-searches)
   (get-search)
+  (get-projects)
+  (post-projects)
   (get-tapahtumaloki))

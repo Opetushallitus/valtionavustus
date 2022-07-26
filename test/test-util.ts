@@ -401,6 +401,7 @@ export async function createHakuFromEsimerkkihaku(
   if (props.vaCodes) {
     await selectCode(page, "operational-unit", props.vaCodes.operationalUnit);
     await selectCode(page, "project", props.vaCodes.project);
+    await selectProject(page, props.vaCodes.project);
     await selectCode(page, "operation", props.vaCodes.operation);
   }
 
@@ -1251,6 +1252,11 @@ export async function createCode(
     `tr[data-test-id="code-cell-2020-${code}-${name} ${code}"]`
   );
   return { code, name, year: "2020" };
+}
+
+async function selectProject(page: Page, code: string) {
+  await page.click(`.projekti-valitsin input`);
+  await page.click(`[data-test-id='${code}']`);
 }
 
 async function selectCode(

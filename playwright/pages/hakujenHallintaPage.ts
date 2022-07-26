@@ -434,6 +434,11 @@ export class HakujenHallintaPage {
     return `[data-test-id=code-value-dropdown__${codeType}]`;
   }
 
+  async selectProject(code: string) {
+    await this.page.click(`.projekti-valitsin input`);
+    await this.page.click(`[data-test-id='${code}']`);
+  }
+
   async selectCode(
     codeType: "operational-unit" | "project" | "operation",
     code: string
@@ -524,7 +529,7 @@ export class HakujenHallintaPage {
 
     if (props.vaCodes) {
       await this.selectCode("operational-unit", props.vaCodes.operationalUnit);
-      await this.selectCode("project", props.vaCodes.project);
+      await this.selectProject(props.vaCodes.project);
       await this.selectCode("operation", props.vaCodes.operation);
     }
 

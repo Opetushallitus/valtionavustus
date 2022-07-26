@@ -60,6 +60,7 @@ export interface Avustushaku extends BaseAvustushaku {
   "loppuselvitykset-lahetetty"?: string;
   "maksatukset-summa"?: number;
   "use-overridden-detailed-costs"?: boolean | null;
+  projects?: VaCodeValue[];
 }
 
 export interface SelectedAvustushaku extends Avustushaku {
@@ -114,6 +115,7 @@ const events = {
   saveInProgress: "saveInProgress",
   saveCompleted: "saveCompleted",
   paymentsLoaded: "paymentsLoaded",
+  projectsLoaded: "projectsLoaded",
   rolesLoaded: "rolesLoaded",
   roleCreated: "roleCreated",
   roleDeleted: "roleDeleted",
@@ -231,6 +233,10 @@ export default class HakujenHallintaController {
     return `/api/avustushaku/${avustushakuId}/onko-muutoshakukelpoinen-avustushaku-ok`;
   }
 
+  static projectsUrl(avustushakuId: Avustushaku["id"]) {
+    return `/api/avustushaku/${avustushakuId}/projects`;
+  }
+
   static privilegesUrl(avustushaku: Avustushaku) {
     return `/api/avustushaku/${avustushaku.id}/privileges`;
   }
@@ -320,6 +326,7 @@ export default class HakujenHallintaController {
       "onDeleteFocusArea",
       "onBeforeUnload",
       "onPaymentsLoaded",
+      "onProjectsLoaded",
       "onRolesLoaded",
       "onRoleCreated",
       "onRoleDeleted",
@@ -345,6 +352,7 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.saveInProgress), this.onSaveInProgress],
       [dispatcher.stream(events.saveCompleted), this.onSaveCompleted],
       [dispatcher.stream(events.paymentsLoaded), this.onPaymentsLoaded],
+      [dispatcher.stream(events.projectsLoaded), this.onProjectsLoaded],
       [dispatcher.stream(events.rolesLoaded), this.onRolesLoaded],
       [dispatcher.stream(events.roleCreated), this.onRoleCreated],
       [dispatcher.stream(events.roleDeleted), this.onRoleDeleted],
@@ -762,6 +770,7 @@ export default class HakujenHallintaController {
         "loppuselvitykset-lahetetty",
         "maksatukset-summa",
         "use-overridden-detailed-costs",
+        "projects",
       ])
     )
       .then(function (response) {
@@ -813,6 +822,7 @@ export default class HakujenHallintaController {
     this.onkoMuutoshakukelpoinenAvustushakuOk(hakuToSelect.id);
     this.loadPrivileges(hakuToSelect);
     this.loadRoles(hakuToSelect);
+    this.loadProjects(hakuToSelect);
     this.loadPayments(hakuToSelect);
     this.loadForm(hakuToSelect);
     LocalStorage.saveAvustushakuId(hakuToSelect.id);
@@ -860,6 +870,17 @@ export default class HakujenHallintaController {
     });
   }
 
+  loadProjects(selectedHaku: Avustushaku) {
+    HttpUtil.get(HakujenHallintaController.projectsUrl(selectedHaku.id)).then(
+      (projects) => {
+        dispatcher.push(events.projectsLoaded, {
+          haku: selectedHaku,
+          projects,
+        });
+      }
+    );
+  }
+
   loadRoles(selectedHaku: Avustushaku) {
     HttpUtil.get(HakujenHallintaController.roleUrl(selectedHaku)).then(
       (roles) => {
@@ -869,6 +890,17 @@ export default class HakujenHallintaController {
         });
       }
     );
+  }
+
+  onProjectsLoaded(
+    state: State,
+    loadedProjects: { haku: Avustushaku; projects: VaCodeValue[] }
+  ) {
+    loadedProjects.projects.sort((a, b) =>
+      a["code-value"].localeCompare(b["code-value"])
+    );
+    loadedProjects.haku.projects = loadedProjects.projects;
+    return state;
   }
 
   onRolesLoaded(
@@ -1405,6 +1437,16 @@ export default class HakujenHallintaController {
       } else {
         this.loadPrivileges(avustushaku);
       }
+    });
+  }
+
+  saveProjects(avustushaku: Avustushaku, projects: VaCodeValue[]) {
+    console.log(projects);
+    HttpUtil.post(
+      HakujenHallintaController.projectsUrl(avustushaku.id),
+      projects
+    ).then(() => {
+      this.loadProjects(avustushaku);
     });
   }
 

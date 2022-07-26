@@ -235,6 +235,10 @@
    :code-value s/Str
    (s/optional-key :hidden) (s/maybe s/Bool)})
 
+(s/defschema VACodeValues
+  "VA Code Values"
+  [VACodeValue])
+
 (s/defschema CreateVACodeValue
   "Create VA Code Value"
   {:value-type s/Str
