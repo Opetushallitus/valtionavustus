@@ -94,12 +94,6 @@
         preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" hakemus-user-key "&preview=" showPreview)]
     (resp/redirect preview-url)))
 
-(defn- try-to-access-va-code-values []
-  (compojure-api/GET "/admin-ui/va-code-values/" request
-    (va-code-values-routes/with-admin request
-      (return-html "virkailija/codevalues.html")
-      (resp/status (return-html "virkailija/unauthorized.html") 401))))
-
 (compojure-api/defroutes healthcheck-routes
                          "Healthcheck routes"
 
@@ -151,7 +145,15 @@
 
                           (compojure/GET "/avustushaku/:id/*" [id] (return-html "virkailija/index.html"))
 
-                          (try-to-access-va-code-values)
+                          (compojure-api/GET "/admin-ui/va-code-values/" request
+                              (va-code-values-routes/with-admin request
+                                (return-html "virkailija/codevalues.html")
+                                (resp/status (return-html "virkailija/unauthorized.html") 401)))
+
+                          (compojure-api/GET "/admin-ui/va-code-values/*" request
+                              (va-code-values-routes/with-admin request
+                                (return-html "virkailija/codevalues.html")
+                                (resp/status (return-html "virkailija/unauthorized.html") 401)))
 
                           (compojure-api/GET "/admin-ui/search/" [search order]
                             (if (:and search order)

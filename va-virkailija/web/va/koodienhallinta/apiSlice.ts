@@ -1,12 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
-import { VaCodeValue } from "../types";
+import { UserInfo, VaCodeValue } from "../types";
 import { ValueType } from "./types";
+import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 
 const vaCodesTag = "VaCodes";
 
 export const apiSlice = createApi({
   reducerPath: "api",
-  baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "/" }),
   tagTypes: [vaCodesTag],
   endpoints: (builder) => ({
     getVaCodeValues: builder.query<
@@ -19,13 +20,13 @@ export const apiSlice = createApi({
         if (year !== "") {
           params.set("year", year);
         }
-        return `/v2/va-code-values?${params.toString()}`;
+        return `api/v2/va-code-values?${params.toString()}`;
       },
       providesTags: [vaCodesTag],
     }),
     addVaCode: builder.mutation<VaCodeValue, Omit<VaCodeValue, "id">>({
       query: (initialCode) => ({
-        url: "/v2/va-code-values",
+        url: "api/v2/va-code-values",
         method: "POST",
         body: initialCode,
       }),
@@ -36,7 +37,7 @@ export const apiSlice = createApi({
       { id: number; hidden: boolean }
     >({
       query: ({ id, hidden }) => ({
-        url: `/v2/va-code-values/${id}/`,
+        url: `api/v2/va-code-values/${id}/`,
         method: "POST",
         body: { hidden },
       }),
@@ -44,16 +45,37 @@ export const apiSlice = createApi({
     }),
     removeVaCode: builder.mutation<void, number>({
       query: (id) => ({
-        url: `/v2/va-code-values/${id}/`,
+        url: `api/v2/va-code-values/${id}/`,
         method: "DELETE",
       }),
       invalidatesTags: [vaCodesTag],
+    }),
+    getEnvironmentAndUserInfo: builder.query<
+      {
+        userInfo: UserInfo;
+        environment: EnvironmentApiResponse;
+      },
+      void
+    >({
+      queryFn: async (_arg, _queryApi, _extraOpts, baseQuery) => {
+        const [environment, userInfo] = await Promise.all([
+          baseQuery("/environment"),
+          baseQuery("api/userinfo"),
+        ]);
+        return {
+          data: {
+            environment: environment.data as EnvironmentApiResponse,
+            userInfo: userInfo.data as UserInfo,
+          },
+        };
+      },
     }),
   }),
 });
 
 export const {
   useGetVaCodeValuesQuery,
+  useGetEnvironmentAndUserInfoQuery,
   useAddVaCodeMutation,
   useUpdateVaCodeVisibilityMutation,
   useRemoveVaCodeMutation,

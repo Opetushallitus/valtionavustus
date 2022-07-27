@@ -18,6 +18,7 @@ export interface EnvironmentApiResponse {
   "avustushaku-excel-extra-fields"?: FeatureFlag;
   "multiple-project-codes"?: FeatureFlag;
   "maksatukset-typescript"?: FeatureFlag;
+  "ta-tilit"?: FeatureFlag;
   payments: FeatureFlag & { "delete-payments?": boolean };
 }
 
