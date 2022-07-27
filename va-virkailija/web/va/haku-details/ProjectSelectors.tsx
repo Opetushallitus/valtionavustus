@@ -3,12 +3,14 @@ import { VaCodeValue } from "../types";
 import AutoCompleteCodeValue from "./AutoCompleteCodeValue";
 import HakujenHallintaController, {
   SelectedAvustushaku,
+  State,
 } from "../HakujenHallintaController";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 
 import "../style/projektien-valinta.less";
 
 interface ProjectSelectorsProps {
+  state: State;
   avustushaku: SelectedAvustushaku;
   controller: HakujenHallintaController;
   codeOptions: VaCodeValue[];
@@ -17,8 +19,10 @@ interface ProjectSelectorsProps {
 }
 
 export default function ProjectSelectors(props: ProjectSelectorsProps) {
-  const { avustushaku, disabled, environment, controller } = props;
-  let { codeOptions } = props;
+  const { state, avustushaku, environment, controller } = props;
+  let { codeOptions, disabled } = props;
+
+  disabled = disabled || state.loadingProjects;
 
   codeOptions = makeNoProjectCodeFirstElement(codeOptions);
 
@@ -107,7 +111,7 @@ function ProjectSelector({
   removeRow,
 }: ProjectSelectorProps) {
   return (
-    <div className="projekti-valitsin">
+    <div data-test-id={`projekti-valitsin-${selectedValue ? selectedValue.code : "initial"}`} className="projekti-valitsin">
       <AutoCompleteCodeValue
         codeType="project-id"
         codeOptions={codeOptions.filter((k) => k["value-type"] === "project")}
@@ -116,10 +120,10 @@ function ProjectSelector({
         environment={environment}
         updateValue={updateValue}
       />
-      <button className="lisaa-projekti projekti-nappula" onClick={addRow}>
+      <button disabled={disabled} data-test-id={`lisaa-projekti-${selectedValue ? selectedValue.code : "initial"}`} className="lisaa-projekti projekti-nappula" onClick={addRow}>
         <AddProjectButtonIcon />
       </button>
-      <button className="poista-projekti projekti-nappula" onClick={removeRow}>
+      <button disabled={disabled} className="poista-projekti projekti-nappula" onClick={removeRow}>
         <RemoveProjectButtonIcon />
       </button>
     </div>

@@ -96,6 +96,7 @@ export interface State {
   subTab: HakujenHallintaSubTab;
   koodistos: Koodistos;
   filter: Filter;
+  loadingProjects: boolean;
 }
 
 const ValiselvitysForm = require("./data/ValiselvitysForm.json") as Form;
@@ -115,6 +116,7 @@ const events = {
   saveInProgress: "saveInProgress",
   saveCompleted: "saveCompleted",
   paymentsLoaded: "paymentsLoaded",
+  onSaveProject: "onSaveProject",
   projectsLoaded: "projectsLoaded",
   rolesLoaded: "rolesLoaded",
   roleCreated: "roleCreated",
@@ -298,6 +300,7 @@ export default class HakujenHallintaController {
         enddatestart: "",
         enddateend: "",
       },
+      loadingProjects: true
     };
 
     const initialState = Bacon.combineTemplate(initialStateTemplate);
@@ -353,6 +356,7 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.saveCompleted), this.onSaveCompleted],
       [dispatcher.stream(events.paymentsLoaded), this.onPaymentsLoaded],
       [dispatcher.stream(events.projectsLoaded), this.onProjectsLoaded],
+      [dispatcher.stream(events.onSaveProject), this.onSaveProject],
       [dispatcher.stream(events.rolesLoaded), this.onRolesLoaded],
       [dispatcher.stream(events.roleCreated), this.onRoleCreated],
       [dispatcher.stream(events.roleDeleted), this.onRoleDeleted],
@@ -892,6 +896,11 @@ export default class HakujenHallintaController {
     );
   }
 
+  onSaveProject(state: State) {
+    state.loadingProjects = true;
+    return state;
+  }
+
   onProjectsLoaded(
     state: State,
     loadedProjects: { haku: Avustushaku; projects: VaCodeValue[] }
@@ -900,6 +909,7 @@ export default class HakujenHallintaController {
       a["code-value"].localeCompare(b["code-value"])
     );
     loadedProjects.haku.projects = loadedProjects.projects;
+    state.loadingProjects = false;
     return state;
   }
 
@@ -1441,7 +1451,7 @@ export default class HakujenHallintaController {
   }
 
   saveProjects(avustushaku: Avustushaku, projects: VaCodeValue[]) {
-    console.log(projects);
+    dispatcher.push(events.onSaveProject, {});
     HttpUtil.post(
       HakujenHallintaController.projectsUrl(avustushaku.id),
       projects

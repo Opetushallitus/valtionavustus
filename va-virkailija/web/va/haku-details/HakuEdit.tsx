@@ -18,6 +18,7 @@ import WarningBanner from "../WarningBanner";
 import HakujenHallintaController, {
   LainsaadantoOption,
   SelectedAvustushaku,
+  State,
 } from "../HakujenHallintaController";
 import { UserInfo, VaCodeValue } from "../types";
 import { DateInput } from "./DateInput";
@@ -29,6 +30,7 @@ import ProjectSelectors from "./ProjectSelectors";
 import "../style/koodien-valinta.less";
 
 type HakuEditProps = {
+  state: State;
   avustushaku: SelectedAvustushaku;
   codeOptions: VaCodeValue[];
   lainsaadantoOptions: LainsaadantoOption[];
@@ -39,6 +41,7 @@ type HakuEditProps = {
 };
 
 export const HakuEdit = ({
+  state,
   avustushaku,
   codeOptions,
   lainsaadantoOptions,
@@ -221,6 +224,7 @@ export const HakuEdit = ({
           </h3>
           {multipleProjectCodesEnabled ? (
             <ProjectSelectors
+              state={state}
               avustushaku={avustushaku}
               codeOptions={codeOptions.filter(
                 (k) => k["value-type"] === "project"

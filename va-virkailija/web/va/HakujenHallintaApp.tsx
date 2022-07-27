@@ -66,6 +66,7 @@ const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
           />
         )}
         <EditorSelector
+          state={state}
           subTab={state.subTab}
           avustushaku={selectedHaku}
           decisionLiitteet={state.decisionLiitteet}

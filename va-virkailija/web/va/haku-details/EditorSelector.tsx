@@ -17,11 +17,13 @@ import { SelvitysFormEditor } from "./SelvitysFormEditor";
 import HelpTooltip from "../HelpTooltip";
 import HakujenHallintaController, {
   LainsaadantoOption,
+  State
 } from "../HakujenHallintaController";
 import { HakujenHallintaSubTab, UserInfo, VaCodeValue } from "../types";
 import { Maksatukset } from "./Maksatukset";
 
 interface EditorSelectorProps {
+  state: State
   subTab: HakujenHallintaSubTab;
   controller: HakujenHallintaController;
   avustushaku: Avustushaku;
@@ -49,6 +51,7 @@ function createRedirectTo(url: string) {
 
 export const EditorSelector = (props: EditorSelectorProps) => {
   const {
+    state,
     subTab,
     controller,
     avustushaku,
@@ -71,6 +74,7 @@ export const EditorSelector = (props: EditorSelectorProps) => {
     case "haku-editor":
       subTabContent = (
         <HakuEdit
+          state={state}
           avustushaku={avustushaku}
           userInfo={userInfo}
           controller={controller}
