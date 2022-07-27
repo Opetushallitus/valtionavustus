@@ -26,6 +26,6 @@ export interface Answers {
 
 export interface VaCodeValues {
   operationalUnit: string;
-  project: string;
+  project: string[];
   operation: string;
 }

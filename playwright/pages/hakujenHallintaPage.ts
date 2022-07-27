@@ -434,9 +434,22 @@ export class HakujenHallintaPage {
     return `[data-test-id=code-value-dropdown__${codeType}]`;
   }
 
+  async overrideProject(code: string, codeToOverride: string) {
+    await this.page.click(`[data-test-id="projekti-valitsin-${codeToOverride}"] input`);
+    await this.page.click(`[data-test-id='${code}']`);
+  }
+
   async selectProject(code: string) {
     await this.page.click(`.projekti-valitsin input`);
     await this.page.click(`[data-test-id='${code}']`);
+  }
+
+  async addProjectRow() {
+    await this.page.click(`.lisaa-projekti`);
+  }
+
+  async removeProjectRow(projectToRemove: string) {
+    await this.page.click(`[data-test-id="projekti-valitsin-${projectToRemove}"] .poista-projekti`);
   }
 
   async selectCode(
@@ -529,7 +542,9 @@ export class HakujenHallintaPage {
 
     if (props.vaCodes) {
       await this.selectCode("operational-unit", props.vaCodes.operationalUnit);
-      await this.selectProject(props.vaCodes.project);
+
+      await this.selectProject(props.vaCodes.project[1]);
+
       await this.selectCode("operation", props.vaCodes.operation);
     }
 

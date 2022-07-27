@@ -38,8 +38,19 @@ export const KoodienhallintaPage = (page: Page) => {
   ): Promise<VaCodeValues> => {
     await navigateToKoodienhallinta();
     await createCode("Toimintayksikkö", codeValues.operationalUnit);
+
     await clickKoodienhallintaTab("project");
-    await createCode("Projekti", codeValues.project);
+    const year = "2020";
+    await page.fill("[data-test-id=code-form__year]", year);
+    await page.fill("[data-test-id=code-form__code]",  "0000000000000000");
+    await page.fill("[data-test-id=code-form__name]", `Ei projektikoodia`);
+    await submitButton.click();
+
+    for (const code of codeValues.project) {
+      await clickKoodienhallintaTab("project");
+      await createCode("Projekti", code);
+    }
+    
     await clickKoodienhallintaTab("operation");
     await createCode("Toiminto", codeValues.operation);
     return codeValues;
@@ -88,7 +99,7 @@ export const KoodienhallintaPage = (page: Page) => {
       const uniqueCode = () => randomString().substring(0, 13);
       const codeValues = {
         operationalUnit: uniqueCode(),
-        project: uniqueCode(),
+        project: [uniqueCode(), uniqueCode(), uniqueCode()],
         operation: uniqueCode(),
       };
       return createCodeValues(codeValues);
