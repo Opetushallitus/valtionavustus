@@ -9,6 +9,7 @@ import { HeaderContainer } from "./Header";
 import { store } from "./koodienhallinta/store";
 import { VaCode } from "./koodienhallinta/VaCode";
 import { useGetEnvironmentAndUserInfoQuery } from "./koodienhallinta/apiSlice";
+import { TalousarviotilienHallinta } from "./koodienhallinta/TalousarviotilienHallinta";
 
 const KoodienhallintaApp = () => {
   const { data, isSuccess } = useGetEnvironmentAndUserInfoQuery();
@@ -33,7 +34,9 @@ const KoodienhallintaApp = () => {
           />
           <Route path="project" element={<VaCode valueType="project" />} />
           <Route path="operation" element={<VaCode valueType="operation" />} />
-          {enableTaTilit && <Route path="ta-tilit" element={<div>wip</div>} />}
+          {enableTaTilit && (
+            <Route path="ta-tilit" element={<TalousarviotilienHallinta />} />
+          )}
         </Route>
       </Routes>
     </>
