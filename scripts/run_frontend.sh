@@ -6,8 +6,6 @@ function main {
   init_nodejs
   cd "$repo"
   npm_ci_if_package_lock_has_changed
-  #npm install --save baconjs@latest
-  #npm uninstall --save-dev @types/baconjs
   npm run build-watch
 }
 
