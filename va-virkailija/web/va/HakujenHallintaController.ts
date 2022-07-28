@@ -778,7 +778,11 @@ export default class HakujenHallintaController {
       ])
     )
       .then(function (response) {
-        dispatcher.push(events.saveCompleted, response);
+        if (!state.selectedHaku.projects || state.selectedHaku.projects.length < 1) {
+          dispatcher.push(events.saveCompleted, { error: "validation-error" });
+        } else {
+          dispatcher.push(events.saveCompleted, response);
+        }
       })
       .catch(function (error) {
         if (error.response && error.response.status === 400) {
@@ -898,6 +902,7 @@ export default class HakujenHallintaController {
 
   onSaveProject(state: State) {
     state.loadingProjects = true;
+    state.saveStatus.saveInProgress = true;
     return state;
   }
 
@@ -1452,6 +1457,7 @@ export default class HakujenHallintaController {
 
   saveProjects(avustushaku: Avustushaku, projects: VaCodeValue[]) {
     dispatcher.push(events.onSaveProject, {});
+    this.autoSave();
     HttpUtil.post(
       HakujenHallintaController.projectsUrl(avustushaku.id),
       projects

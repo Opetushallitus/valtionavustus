@@ -6,10 +6,6 @@ import { alustaAvustushaunTaytto } from "./multiple-projects-util"
 
 import { expectToBeDefined } from "../../utils/util";
 
-//testaa että käyttäjän on valkattava edes "ei projektikoodia"
-
-//testaa että rivejä voi poistaa
-
 test("Avustushaulle pystyy lisäämään useamman projektikoodin", async ({ page, hakuProps, userCache }, testInfo) => {
   testInfo.setTimeout(testInfo.timeout + 40_000);
   expectToBeDefined(userCache);
