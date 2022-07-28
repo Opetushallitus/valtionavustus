@@ -300,7 +300,7 @@ export default class HakujenHallintaController {
         enddatestart: "",
         enddateend: "",
       },
-      loadingProjects: true
+      loadingProjects: true,
     };
 
     const initialState = Bacon.combineTemplate(initialStateTemplate);
@@ -778,7 +778,10 @@ export default class HakujenHallintaController {
       ])
     )
       .then(function (response) {
-        if (!state.selectedHaku.projects || state.selectedHaku.projects.length < 1) {
+        if (
+          !state.selectedHaku.projects ||
+          state.selectedHaku.projects.length < 1
+        ) {
           dispatcher.push(events.saveCompleted, { error: "validation-error" });
         } else {
           dispatcher.push(events.saveCompleted, response);

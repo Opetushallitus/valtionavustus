@@ -1,9 +1,11 @@
 import { Page } from "@playwright/test";
-import { HakuProps} from "../../pages/hakujenHallintaPage";
+import { HakuProps } from "../../pages/hakujenHallintaPage";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 
-export async function alustaAvustushaunTaytto(page: Page, hakuProps: HakuProps) {
-
+export async function alustaAvustushaunTaytto(
+  page: Page,
+  hakuProps: HakuProps
+) {
   const hakujenHallintaPage = new HakujenHallintaPage(page);
 
   const { avustushakuName, registerNumber } = hakuProps;
@@ -30,4 +32,3 @@ export async function alustaAvustushaunTaytto(page: Page, hakuProps: HakuProps) 
   }
   return hakujenHallintaPage;
 }
-

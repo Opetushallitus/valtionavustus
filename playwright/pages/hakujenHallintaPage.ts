@@ -435,7 +435,9 @@ export class HakujenHallintaPage {
   }
 
   async overrideProject(code: string, codeToOverride: string) {
-    await this.page.click(`[data-test-id="projekti-valitsin-${codeToOverride}"] input`);
+    await this.page.click(
+      `[data-test-id="projekti-valitsin-${codeToOverride}"] input`
+    );
     await this.page.click(`[data-test-id='${code}']`);
   }
 
@@ -449,7 +451,9 @@ export class HakujenHallintaPage {
   }
 
   async removeProjectRow(projectToRemove: string) {
-    await this.page.click(`[data-test-id="projekti-valitsin-${projectToRemove}"] .poista-projekti`);
+    await this.page.click(
+      `[data-test-id="projekti-valitsin-${projectToRemove}"] .poista-projekti`
+    );
   }
 
   async selectCode(

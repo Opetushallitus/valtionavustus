@@ -17,13 +17,13 @@ import { SelvitysFormEditor } from "./SelvitysFormEditor";
 import HelpTooltip from "../HelpTooltip";
 import HakujenHallintaController, {
   LainsaadantoOption,
-  State
+  State,
 } from "../HakujenHallintaController";
 import { HakujenHallintaSubTab, UserInfo, VaCodeValue } from "../types";
 import { Maksatukset } from "./Maksatukset";
 
 interface EditorSelectorProps {
-  state: State
+  state: State;
   subTab: HakujenHallintaSubTab;
   controller: HakujenHallintaController;
   avustushaku: Avustushaku;

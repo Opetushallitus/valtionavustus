@@ -111,7 +111,12 @@ function ProjectSelector({
   removeRow,
 }: ProjectSelectorProps) {
   return (
-    <div data-test-id={`projekti-valitsin-${selectedValue ? selectedValue.code : "initial"}`} className="projekti-valitsin">
+    <div
+      data-test-id={`projekti-valitsin-${
+        selectedValue ? selectedValue.code : "initial"
+      }`}
+      className="projekti-valitsin"
+    >
       <AutoCompleteCodeValue
         codeType="project-id"
         codeOptions={codeOptions.filter((k) => k["value-type"] === "project")}
@@ -120,10 +125,21 @@ function ProjectSelector({
         environment={environment}
         updateValue={updateValue}
       />
-      <button disabled={disabled} data-test-id={`lisaa-projekti-${selectedValue ? selectedValue.code : "initial"}`} className="lisaa-projekti projekti-nappula" onClick={addRow}>
+      <button
+        disabled={disabled}
+        data-test-id={`lisaa-projekti-${
+          selectedValue ? selectedValue.code : "initial"
+        }`}
+        className="lisaa-projekti projekti-nappula"
+        onClick={addRow}
+      >
         <AddProjectButtonIcon />
       </button>
-      <button disabled={disabled} className="poista-projekti projekti-nappula" onClick={removeRow}>
+      <button
+        disabled={disabled}
+        className="poista-projekti projekti-nappula"
+        onClick={removeRow}
+      >
         <RemoveProjectButtonIcon />
       </button>
     </div>

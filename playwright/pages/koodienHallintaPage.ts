@@ -42,7 +42,7 @@ export const KoodienhallintaPage = (page: Page) => {
     await clickKoodienhallintaTab("project");
     const year = "2020";
     await page.fill("[data-test-id=code-form__year]", year);
-    await page.fill("[data-test-id=code-form__code]",  "0000000000000000");
+    await page.fill("[data-test-id=code-form__code]", "0000000000000000");
     await page.fill("[data-test-id=code-form__name]", `Ei projektikoodia`);
     await submitButton.click();
 
@@ -50,7 +50,7 @@ export const KoodienhallintaPage = (page: Page) => {
       await clickKoodienhallintaTab("project");
       await createCode("Projekti", code);
     }
-    
+
     await clickKoodienhallintaTab("operation");
     await createCode("Toiminto", codeValues.operation);
     return codeValues;
