@@ -4,6 +4,12 @@ import * as yup from "yup";
 import styles from "./TalousarviotilienHallinta.module.less";
 
 import { Field, FormikProvider, useFormik } from "formik";
+import {
+  useCreateTalousarviotiliMutation,
+  useGetTalousarvioTilitQuery,
+  useRemoveTalousarviotiliMutation,
+} from "./apiSlice";
+import { Talousarviotili } from "./types";
 
 const Label = ({ text, labelFor }: { text: string; labelFor: string }) => {
   return (
@@ -51,12 +57,17 @@ const FieldInput = ({
         name={name}
         placeholder={placeholder}
       />
-      {error && <div className={styles.error}>{error}</div>}
+      {error && (
+        <div className={styles.error} data-test-id={`error-${name}`}>
+          {error}
+        </div>
+      )}
     </div>
   );
 };
 
 const NewTiliRow = () => {
+  const [createTalousarviotili] = useCreateTalousarviotiliMutation();
   const formik = useFormik({
     initialValues: {
       year: "",
@@ -65,8 +76,20 @@ const NewTiliRow = () => {
       amount: "",
     },
     validationSchema: NewTiliSchema,
-    onSubmit: async (_values, formikHelpers) => {
-      formikHelpers.setSubmitting(false);
+    onSubmit: async (values, formikHelpers) => {
+      const { year, code, name, amount } = values;
+      try {
+        await createTalousarviotili({
+          code,
+          name,
+          year: Number(year),
+          amount: Number(amount),
+        });
+        formikHelpers.resetForm();
+      } catch (e) {
+      } finally {
+        formikHelpers.setSubmitting(false);
+      }
     },
   });
   const submitDisabled = formik.isSubmitting || !formik.isValid;
@@ -112,62 +135,41 @@ const NewTiliRow = () => {
   );
 };
 
-interface TiliProps {
-  year: string;
-  code: string;
-  name: string;
-  amount: string;
-}
-
-const TiliRow = ({ year, code, name, amount }: TiliProps) => {
+const TiliRow = ({ id, year, code, name, amount }: Talousarviotili) => {
+  const [removeTili, { isLoading }] = useRemoveTalousarviotiliMutation();
+  const deleteTili = async () => {
+    if (
+      window.confirm(
+        `Oletko aivan varma, että haluat poistaa tilin ${code} ${name}?`
+      )
+    ) {
+      try {
+        await removeTili(id);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
   return (
-    <div className={styles.tiliRow}>
-      <input
-        className={styles.input}
-        placeholder="Vuosiluku"
-        value={year}
-        disabled
-      />
-      <input
-        className={styles.input}
-        id="code"
-        placeholder="Syötä TA-tilin koodi"
-        value={code}
-        disabled
-      />
-      <input
-        className={styles.input}
-        id="name"
-        placeholder="Syötä tilin nimi"
-        value={name}
-        disabled
-      />
-      <input
-        className={styles.inputEuro}
-        id="amount"
-        placeholder="Syötä euromäärä"
-        value={amount}
-        disabled
-      />
+    <div className={styles.tiliRow} data-test-id={name}>
+      <input className={styles.input} value={year} disabled />
+      <input className={styles.input} id="code" value={code} disabled />
+      <input className={styles.input} id="name" value={name} disabled />
+      <input className={styles.inputEuro} id="amount" value={amount} disabled />
       <div className={styles.buttonContainer}>
-        <button className={styles.plusButton} />
-        <button className={styles.minusButton} />
+        <button disabled={isLoading} className={styles.plusButton} />
+        <button
+          disabled={isLoading}
+          className={styles.minusButton}
+          onClick={deleteTili}
+        />
       </div>
     </div>
   );
 };
 
-const tilit = [
-  {
-    id: 1,
-    year: "2021",
-    code: "0010100012",
-    name: "testi koodi",
-    amount: "10000",
-  },
-];
-
 export const TalousarviotilienHallinta = () => {
+  const { data } = useGetTalousarvioTilitQuery();
   return (
     <div className={styles.grid}>
       <div className={styles.row}>
@@ -176,8 +178,8 @@ export const TalousarviotilienHallinta = () => {
         <Label text="TA-tilin nimi" labelFor="name"></Label>
         <Label text="TA-tilin euromäärä" labelFor="amount"></Label>
       </div>
-      {tilit.map(({ id, ...rest }) => (
-        <TiliRow key={id} {...rest} />
+      {data?.map((tili) => (
+        <TiliRow key={tili.id} {...tili} />
       ))}
       <NewTiliRow />
     </div>

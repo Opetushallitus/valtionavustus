@@ -110,5 +110,26 @@ export const KoodienhallintaPage = (page: Page) => {
     noCodeInputFormErrors: async () => {
       await codeInputError.waitFor({ state: "detached" });
     },
+    taTilit: {
+      form: {
+        year: {
+          input: page.locator('[placeholder="Vuosiluku"]'),
+          error: page.locator("[data-test-id=error-year]"),
+        },
+        code: {
+          input: page.locator('[placeholder="Syötä TA-tilin koodi"]'),
+          error: page.locator("[data-test-id=error-code]"),
+        },
+        name: {
+          input: page.locator('[placeholder="Syötä tilin nimi"]'),
+          error: page.locator("[data-test-id=error-name]"),
+        },
+        amount: {
+          input: page.locator('[placeholder="Syötä euromäärä"]'),
+          error: page.locator("[data-test-id=error-amount]"),
+        },
+        submitBtn: page.locator('[title="Tallenna uusi talousarviotili"]'),
+      },
+    },
   };
 };

@@ -1,14 +1,15 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 import { UserInfo, VaCodeValue } from "../types";
-import { ValueType } from "./types";
+import { CreateTalousarvioTili, Talousarviotili, ValueType } from "./types";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 
 const vaCodesTag = "VaCodes";
+const talousarviotilitTag = "talousarviotilit";
 
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl: "/" }),
-  tagTypes: [vaCodesTag],
+  tagTypes: [vaCodesTag, talousarviotilitTag],
   endpoints: (builder) => ({
     getVaCodeValues: builder.query<
       VaCodeValue[],
@@ -70,6 +71,28 @@ export const apiSlice = createApi({
         };
       },
     }),
+    getTalousarvioTilit: builder.query<Talousarviotili[], void>({
+      query: () => "api/talousarviotilit",
+      providesTags: [talousarviotilitTag],
+    }),
+    createTalousarviotili: builder.mutation<
+      Talousarviotili,
+      CreateTalousarvioTili
+    >({
+      query: (newTalousarviotili) => ({
+        url: `api/talousarviotilit/`,
+        method: "POST",
+        body: newTalousarviotili,
+      }),
+      invalidatesTags: [talousarviotilitTag],
+    }),
+    removeTalousarviotili: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `api/talousarviotilit/${id}/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [talousarviotilitTag],
+    }),
   }),
 });
 
@@ -79,4 +102,7 @@ export const {
   useAddVaCodeMutation,
   useUpdateVaCodeVisibilityMutation,
   useRemoveVaCodeMutation,
+  useGetTalousarvioTilitQuery,
+  useCreateTalousarviotiliMutation,
+  useRemoveTalousarviotiliMutation,
 } = apiSlice;

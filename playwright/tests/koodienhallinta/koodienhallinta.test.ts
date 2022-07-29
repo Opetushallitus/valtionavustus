@@ -1,7 +1,7 @@
 import { test as baseTest, expect } from "@playwright/test";
-import { KoodienhallintaPage } from "../pages/koodienHallintaPage";
-import { switchUserIdentityTo, expectToBeDefined } from "../utils/util";
-import { navigate } from "../utils/navigate";
+import { KoodienhallintaPage } from "../../pages/koodienHallintaPage";
+import { switchUserIdentityTo, expectToBeDefined } from "../../utils/util";
+import { navigate } from "../../utils/navigate";
 
 const test = baseTest.extend<{
   koodienhallintaPage: ReturnType<typeof KoodienhallintaPage>;

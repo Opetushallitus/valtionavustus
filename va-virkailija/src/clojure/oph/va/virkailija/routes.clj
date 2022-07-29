@@ -34,6 +34,7 @@
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.schema :as virkailija-schema]
             [oph.va.virkailija.va-code-values-routes :as va-code-values-routes]
+            [oph.va.virkailija.talousarviotili-routes :as talousarviotili-routes]
             [oph.va.virkailija.va-users :as va-users]
             [oph.va.virkailija.virkailija-notifications :as virkailija-notifications]
             [ring.swagger.json-schema-dirty]  ; for schema.core/conditional
@@ -556,6 +557,8 @@
                       (compojure-api/context "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
                       (compojure-api/context "/api/paatos" [] :tags ["paatos"] paatos/paatos-routes)
                       (compojure-api/context "/paatos" [] :tags ["paatos"] decision/decision-routes)
+                      (compojure-api/context "/api/talousarviotilit" [] :tags ["talousarviotilit"]
+                                                                   talousarviotili-routes/routes)
                       (compojure-api/context "/api/v2/grants" [] :tags ["grants"] grant-routes/routes)
                       (compojure-api/context "/api/v2/applications" [] :tags ["applications"]
                                              application-routes/routes)

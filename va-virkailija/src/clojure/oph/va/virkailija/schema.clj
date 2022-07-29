@@ -514,3 +514,15 @@
 (s/defschema Lainsaadanto
   {:id s/Int
    :name s/Str})
+
+(s/defschema CreateTalousarviotili
+  {
+  :name s/Str
+  :code s/Str
+  :year s/Int
+  :amount s/Int
+ })
+
+(s/defschema Talousarviotili
+  (assoc CreateTalousarviotili
+        :id s/Int))
