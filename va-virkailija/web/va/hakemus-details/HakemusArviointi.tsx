@@ -8,6 +8,7 @@ import {
   Hakemus,
   HelpTexts,
 } from "soresu-form/web/va/types";
+import { VaCodeValue } from "../types";
 
 import HakemusBudgetEditing from "../budgetedit/HakemusBudgetEditing";
 import HakemusScoring from "./HakemusScoring";
@@ -26,6 +27,7 @@ import HelpTooltip from "../HelpTooltip";
 import HakemustenArviointiController from "../HakemustenArviointiController";
 import { HakuData, SelectedHakemusAccessControl, UserInfo } from "../types";
 import { ChangeRequest } from "./ChangeRequest";
+import ProjectSelector from "../haku-details/ProjectSelector";
 
 import "../style/admin.less";
 
@@ -39,6 +41,8 @@ type HakemusArviointiProps = {
   showOthersScores: boolean;
   multibatchEnabled: boolean;
   selectedHakemusAccessControl: SelectedHakemusAccessControl;
+  multipleProjectCodesEnabled: boolean;
+  projects: VaCodeValue[];
 };
 
 export const HakemusArviointi = ({
@@ -51,6 +55,8 @@ export const HakemusArviointi = ({
   multibatchEnabled,
   helpTexts,
   selectedHakemusAccessControl,
+  multipleProjectCodesEnabled,
+  projects,
 }: HakemusArviointiProps) => {
   const {
     allowHakemusCommenting,
@@ -60,6 +66,14 @@ export const HakemusArviointi = ({
     allowHakemusCancellation,
   } = selectedHakemusAccessControl;
 
+  const selectProject = (option: VaCodeValue | null) => {
+    if (option === null) {
+      return;
+    }
+
+    controller.selectProject(hakemus, option);
+  };
+
   return (
     <div id="arviointi-tab">
       <PresenterComment
@@ -67,6 +81,15 @@ export const HakemusArviointi = ({
         hakemus={hakemus}
         helpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}
       />
+      {multipleProjectCodesEnabled && (
+        <ProjectSelector
+          updateValue={selectProject}
+          codeOptions={projects}
+          selectedValue={hakemus.project || ""}
+          multipleProjectCodesEnabled={multipleProjectCodesEnabled}
+          disabled={!allowHakemusStateChanges}
+        />
+      )}
       <ChooseRahoitusalueAndTalousarviotili
         controller={controller}
         hakemus={hakemus}

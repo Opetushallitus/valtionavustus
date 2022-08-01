@@ -177,6 +177,7 @@ const App = ({ state, controller }: Props) => {
           splitView={splitView}
           toggleSplitView={toggleSplitView}
           helpTexts={helpTexts}
+          projects={state.projects}
         />
         <div hidden={!hasSelected} id="footer">
           {state.selectedHakemus?.["user-key"] && (

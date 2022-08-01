@@ -31,6 +31,7 @@ import {
   Score,
   Scoring,
 } from "soresu-form/web/va/types";
+import { VaCodeValue } from "./types";
 import { initDefaultValues } from "soresu-form/web/form/FormStateLoop";
 
 import HakemusArviointiStatuses from "./hakemus-details/HakemusArviointiStatuses";
@@ -48,6 +49,7 @@ const dispatcher = new Dispatcher();
 
 const events = {
   onNormalizedData: "onNormalizedData",
+  projectLoaded: "projectLoaded",
   onMuutoshakemukset: "onMuutoshakemukset",
   beforeUnload: "beforeUnload",
   initialState: "initialState",
@@ -61,6 +63,8 @@ const events = {
   closeHakemus: "closeHakemus",
   updateHakemusArvio: "updateHakemusArvio",
   saveHakemusArvio: "saveHakemusArvio",
+  selectProject: "selectProject",
+  projectSelected: "projectSelected",
   updateHakemusStatus: "updateHakemusStatus",
   saveCompleted: "saveCompleted",
   loadComments: "loadcomments",
@@ -115,6 +119,9 @@ export default class HakemustenArviointiController {
       hakuData: Bacon.fromPromise<HakuData>(
         HttpUtil.get("/api/avustushaku/" + avustushakuId)
       ),
+      projects: Bacon.fromPromise<VaCodeValue[]>(
+        HttpUtil.get(`/api/avustushaku/${avustushakuId}/projects`)
+      ),
       hakemusFilter: {
         answers: [],
         isOpen: false,
@@ -157,6 +164,7 @@ export default class HakemustenArviointiController {
     return Bacon.update(
       {} as any,
       [dispatcher.stream(events.onNormalizedData), this.onNormalizedData],
+      [dispatcher.stream(events.projectLoaded), this.onProjectLoaded],
       [dispatcher.stream(events.onMuutoshakemukset), this.onMuutoshakemukset],
       [dispatcher.stream(events.beforeUnload), this.onBeforeUnload],
       [dispatcher.stream(events.initialState), this.onInitialState],
@@ -172,6 +180,8 @@ export default class HakemustenArviointiController {
         this.onUpdateHakemusStatus,
       ],
       [dispatcher.stream(events.saveHakemusArvio), this.onSaveHakemusArvio],
+      [dispatcher.stream(events.projectSelected), this.onProjectSelected],
+      [dispatcher.stream(events.selectProject), this.onSelectProject],
       [dispatcher.stream(events.saveCompleted), this.onSaveCompleted],
       [dispatcher.stream(events.loadComments), this.onLoadComments],
       [dispatcher.stream(events.commentsLoaded), this.onCommentsLoaded],
@@ -346,6 +356,17 @@ export default class HakemustenArviointiController {
       hakemusIdToSelect
     );
     const avustushakuId = state.hakuData.avustushaku.id;
+
+    Bacon.fromPromise(
+      HttpUtil.get(
+        "/api/avustushaku/" +
+          avustushakuId +
+          "/hakemus/" +
+          hakemusIdToSelect +
+          "/project"
+      )
+    ).onValue((project) => dispatcher.push(events.projectLoaded, project));
+
     const normalizedStream = Bacon.fromPromise(
       HttpUtil.get(
         "/api/avustushaku/" +
@@ -459,6 +480,42 @@ export default class HakemustenArviointiController {
       delete updatedHakemus.arvio["scoring"];
     }
     this.autoSaveHakemusArvio(updatedHakemus);
+    return state;
+  }
+
+  onProjectSelected(
+    state: State,
+    { hakemus, project }: { hakemus: Hakemus; project: VaCodeValue }
+  ) {
+    if (state.selectedHakemus && state.selectedHakemus.id === hakemus.id) {
+      state.selectedHakemus.project = project;
+    }
+    dispatcher.push(events.saveCompleted, "");
+    return state;
+  }
+
+  onSelectProject(
+    state: State,
+    { hakemus, project }: { hakemus: Hakemus; project: VaCodeValue }
+  ) {
+    state.saveStatus.saveInProgress = true;
+    const avustushakuId = state.hakuData.avustushaku.id;
+
+    const hakemusId = hakemus.id;
+    HttpUtil.post(
+      "/api/avustushaku/" +
+        avustushakuId +
+        "/hakemus/" +
+        hakemusId +
+        "/project",
+      project
+    )
+      .then((_success) => {
+        dispatcher.push(events.projectSelected, { hakemus, project });
+      })
+      .catch((_err) => {
+        dispatcher.push(events.saveCompleted, "unexpected-save-error");
+      });
     return state;
   }
 
@@ -1394,6 +1451,13 @@ export default class HakemustenArviointiController {
     return state;
   }
 
+  onProjectLoaded(state: State, project: VaCodeValue) {
+    if (state.selectedHakemus) {
+      state.selectedHakemus.project = project;
+    }
+    return state;
+  }
+
   onMuutoshakemukset(state: State, muutoshakemukset: MuutoshakemusType[]) {
     if (state.selectedHakemus) {
       state.selectedHakemus.muutoshakemukset = muutoshakemukset;
@@ -1545,6 +1609,13 @@ export default class HakemustenArviointiController {
 
   clearFilters() {
     dispatcher.push(events.clearFilters, {});
+  }
+
+  selectProject(hakemus: Hakemus, project: VaCodeValue) {
+    dispatcher.push(events.selectProject, {
+      hakemus,
+      project,
+    });
   }
 
   addPayment(paymentSum: number, index: number) {

@@ -11,6 +11,7 @@ import {
   SelectedHakemusAccessControl,
   UserInfo,
   VALMISTELIJA_ROLES,
+  VaCodeValue,
 } from "../types";
 import { Avustushaku, Hakemus, HelpTexts } from "soresu-form/web/va/types";
 import HakemustenArviointiController from "../HakemustenArviointiController";
@@ -31,6 +32,7 @@ interface Props {
   helpTexts: HelpTexts;
   splitView: boolean;
   toggleSplitView: (forceValue?: boolean) => void;
+  projects: VaCodeValue[];
 }
 
 export const HakemusDetails = (props: Props) => {
@@ -47,6 +49,7 @@ export const HakemusDetails = (props: Props) => {
     subTab,
     helpTexts,
     toggleSplitView,
+    projects,
   } = props;
   if (!(typeof hakemus === "object")) {
     return null;
@@ -109,6 +112,10 @@ export const HakemusDetails = (props: Props) => {
             controller={controller}
             multibatchEnabled={multibatchEnabled}
             helpTexts={helpTexts}
+            multipleProjectCodesEnabled={
+              environment["multiple-project-codes"]?.["enabled?"] === true
+            }
+            projects={projects}
           />
         );
 

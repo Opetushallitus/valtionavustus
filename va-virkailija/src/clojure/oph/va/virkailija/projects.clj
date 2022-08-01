@@ -3,6 +3,24 @@
             [oph.va.virkailija.utils :refer
              [convert-to-dash-keys convert-to-underscore-keys]]))
 
+(defn update-project [hakemus-id project]
+  (execute!
+              "UPDATE hakija.hakemukset h
+               SET project_id = ? 
+               WHERE h.id = ?"
+              [(:id project) hakemus-id]))
+
+(defn get-project [hakemus-id]
+  (first (query "SELECT
+            va_code_values.id, value_type, year, code, code_value, hidden
+          FROM
+            virkailija.va_code_values
+          JOIN hakija.hakemukset h
+            ON h.id = ?
+          WHERE
+            va_code_values.id = h.project_id"
+         [hakemus-id])))
+
 (defn get-projects [avustushaku-id]
   (query "SELECT
             va_code_values.id, value_type, year, code, code_value, hidden

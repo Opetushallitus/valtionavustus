@@ -115,7 +115,7 @@
 (defn- post-projects []
   (compojure-api/POST "/:avustushaku-id/projects" []
                      :path-params [avustushaku-id :- Long]
-                     :body [projects-body (compojure-api/describe virkailija-schema/VACodeValues "Avustushaun projektit")]
+                     :body [projects-body (compojure-api/describe [virkailija-schema/VACodeValue] "Avustushaun projektit")]
                      :return s/Any 
                      (http/ok (projects/update-projects avustushaku-id projects-body)
                      )))
@@ -148,6 +148,21 @@
                            search-id (saved-search/create-or-get-search avustushaku-id body identity)
                            search-url (str "/yhteenveto/avustushaku/" avustushaku-id "/listaus/" search-id "/")]
                        (http/ok {:search-url search-url}))))
+
+(defn- get-project []
+  (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/project" [haku-id hakemus-id]
+    :path-params [haku-id :- Long hakemus-id :- Long]
+    :return (s/maybe virkailija-schema/VACodeValue)
+    :summary "Get selected hakemus project"
+      (http/ok (projects/get-project hakemus-id))))
+
+(defn- post-project []
+  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/project" [avustushaku-id hakemus-id]
+                     :path-params [avustushaku-id :- Long hakemus-id :- Long]
+                     :body [project-body (compojure-api/describe virkailija-schema/VACodeValue "Hakemuksen projekti")]
+                     :return s/Any 
+                     (http/ok (projects/update-project hakemus-id project-body)
+                     )))
 
 (defn- get-normalized-hakemus []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/normalized" [haku-id hakemus-id]
@@ -608,6 +623,8 @@
   (post-hakemus-status)
   (put-searches)
   (get-search)
+  (get-project)
+  (post-project)
   (get-projects)
   (post-projects)
   (get-tapahtumaloki))

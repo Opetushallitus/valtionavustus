@@ -95,6 +95,7 @@ export interface LahetysStatuses {
 export interface State {
   avustushakuList: Avustushaku[];
   hakuData: HakuData;
+  projects: VaCodeValue[];
   hakemusFilter: HakemusFilter;
   helpTexts: HelpTexts;
   hakemusSorter: HakemusSorter[];

@@ -5,6 +5,7 @@ import {
 } from "./types/muutoshakemus";
 import translations from "../../resources/public/translations.json";
 import { ImmutableObject } from "seamless-immutable";
+import { VaCodeValue } from "../../../va-virkailija/web/va/types";
 
 export const languages = ["fi", "sv"] as const;
 export type Language = typeof languages[number];
@@ -267,6 +268,7 @@ export interface Hakemus {
   "loppuselvitys-information-verification"?: string;
   "loppuselvitys-taloustarkastanut-name"?: string;
   "loppuselvitys-taloustarkastettu-at"?: string;
+  project?: VaCodeValue;
 }
 
 export const AVUSTUSHAKU_STATUSES = [
