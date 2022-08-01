@@ -82,6 +82,13 @@ export const HakemusArviointi = ({
         helpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}
       />
       {multipleProjectCodesEnabled && (
+        <div
+          className="koodien-valinta-elementti"
+          data-test-id="code-value-dropdown__project"
+        >
+          <h3 className="koodien-valinta-otsikko required">
+            Projektikoodi
+          </h3>
         <ProjectSelector
           updateValue={selectProject}
           codeOptions={projects}
@@ -89,6 +96,7 @@ export const HakemusArviointi = ({
           multipleProjectCodesEnabled={multipleProjectCodesEnabled}
           disabled={!allowHakemusStateChanges}
         />
+        </div>
       )}
       <ChooseRahoitusalueAndTalousarviotili
         controller={controller}
