@@ -15,17 +15,14 @@ import FormEditorContainer from "./FormEditorContainer";
 import DecisionEditor from "./DecisionEditor";
 import { SelvitysFormEditor } from "./SelvitysFormEditor";
 import HelpTooltip from "../HelpTooltip";
-import HakujenHallintaController, {
-  LainsaadantoOption,
-  State,
-} from "../HakujenHallintaController";
+import { LainsaadantoOption } from "../HakujenHallintaController";
 import { HakujenHallintaSubTab, UserInfo, VaCodeValue } from "../types";
 import { Maksatukset } from "./Maksatukset";
+import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
+import { selectEditorSubTab } from "../hakujenHallinta/hakuReducer";
 
 interface EditorSelectorProps {
-  state: State;
   subTab: HakujenHallintaSubTab;
-  controller: HakujenHallintaController;
   avustushaku: Avustushaku;
   decisionLiitteet: Liite[];
   koodistos: Koodistos;
@@ -51,9 +48,7 @@ function createRedirectTo(url: string) {
 
 export const EditorSelector = (props: EditorSelectorProps) => {
   const {
-    state,
     subTab,
-    controller,
     avustushaku,
     decisionLiitteet,
     formDraft,
@@ -69,15 +64,14 @@ export const EditorSelector = (props: EditorSelectorProps) => {
     lainsaadantoOptions,
     helpTexts,
   } = props;
+  const dispatch = useHakujenHallintaDispatch();
   let subTabContent;
   switch (subTab) {
     case "haku-editor":
       subTabContent = (
         <HakuEdit
-          state={state}
           avustushaku={avustushaku}
           userInfo={userInfo}
-          controller={controller}
           codeOptions={codeOptions}
           lainsaadantoOptions={lainsaadantoOptions}
           helpTexts={helpTexts}
@@ -93,7 +87,6 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           koodistos={koodistos}
           formDraft={formDraft}
           formDraftJson={formDraftJson}
-          controller={controller}
           helpTexts={helpTexts}
         />
       );
@@ -104,7 +97,6 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           avustushaku={avustushaku}
           decisionLiitteet={decisionLiitteet}
           environment={environment}
-          controller={controller}
           helpTexts={helpTexts}
         />
       );
@@ -116,7 +108,6 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           selvitysType={subTab}
           environment={environment}
           avustushaku={avustushaku}
-          controller={controller}
           koodistos={koodistos}
           formDraft={
             subTab === "valiselvitys"
@@ -137,7 +128,6 @@ export const EditorSelector = (props: EditorSelectorProps) => {
         <Maksatukset
           avustushaku={avustushaku}
           codeValues={codeOptions}
-          controller={controller}
           environment={environment}
           helpTexts={helpTexts}
           userInfo={userInfo}
@@ -151,7 +141,7 @@ export const EditorSelector = (props: EditorSelectorProps) => {
   function createSubTabSelector(subTabToSelect: HakujenHallintaSubTab) {
     return (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
       e.preventDefault();
-      controller.selectEditorSubtab(subTabToSelect);
+      dispatch(selectEditorSubTab(subTabToSelect));
     };
   }
 

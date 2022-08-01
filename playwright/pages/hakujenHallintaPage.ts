@@ -311,6 +311,7 @@ export class HakujenHallintaPage {
 
   async navigateToPaatos(avustushakuID: number) {
     await navigate(this.page, `/admin/decision/?avustushaku=${avustushakuID}`);
+    await this.page.waitForLoadState("networkidle")
     return this.paatosLocators();
   }
 
@@ -513,11 +514,17 @@ export class HakujenHallintaPage {
 
   async copyEsimerkkihaku(): Promise<number> {
     await navigate(this.page, "/admin/haku-editor/");
-    await clickElementWithTextStrict(
-      this.page,
-      "td",
-      "Yleisavustus - esimerkkihaku"
-    );
+    const loadingAvustushaku = this.page.locator("text=Ladataan tietoja");
+    await loadingAvustushaku.waitFor({ state: "detached" });
+    await Promise.all([
+      loadingAvustushaku.waitFor(),
+      clickElementWithTextStrict(
+        this.page,
+        "td",
+        "Yleisavustus - esimerkkihaku"
+      ),
+    ]);
+    await loadingAvustushaku.waitFor({ state: "detached" });
     return await this.copyCurrentHaku();
   }
 

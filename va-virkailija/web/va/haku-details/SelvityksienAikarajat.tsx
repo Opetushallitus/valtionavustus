@@ -7,22 +7,17 @@ import HelpTooltip from "../HelpTooltip";
 
 import "../style/selvityksien-aikarajat.less";
 import "react-widgets/styles.css";
+import { updateField } from "../hakujenHallinta/hakuReducer";
+import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
 
 interface KayttoaikaProps {
   avustushaku: Avustushaku;
-  controller: {
-    onChangeListener: (
-      avustushaku: Avustushaku,
-      { id }: { id: string },
-      newValue: string
-    ) => void;
-  };
   helpTexts: HelpTexts;
 }
 
 export const SelvityksienAikarajat = (props: KayttoaikaProps) => {
-  const { avustushaku, controller, helpTexts } = props;
-
+  const { avustushaku, helpTexts } = props;
+  const dispatch = useHakujenHallintaDispatch();
   function getStoredDateFor(
     field: "valiselvitysdate" | "loppuselvitysdate"
   ): Date | undefined {
@@ -34,7 +29,7 @@ export const SelvityksienAikarajat = (props: KayttoaikaProps) => {
 
   function onChange(id: string, date: Moment) {
     const value = date.isValid() ? date.format(isoFormat) : "";
-    controller.onChangeListener(avustushaku, { id: id }, value);
+    dispatch(updateField({ avustushaku, field: { id }, newValue: value }));
   }
 
   return (

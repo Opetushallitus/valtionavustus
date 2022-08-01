@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import _ from "lodash";
 import * as Bacon from "baconjs";
 
@@ -20,9 +20,9 @@ import {
   LiiteAttachmentVersion,
 } from "soresu-form/web/va/types";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
-import HakujenHallintaController, {
-  Avustushaku,
-} from "../HakujenHallintaController";
+import { Avustushaku } from "../HakujenHallintaController";
+import { updateField } from "../hakujenHallinta/hakuReducer";
+import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
 
 interface DecisionProps {
   title: string;
@@ -93,7 +93,6 @@ const DecisionFields: React.FC<Omit<DecisionProps, "language">> = ({
 
 interface DateFieldProps {
   avustushaku: Avustushaku;
-  controller: HakujenHallintaController;
   field: "maksudate" | "date";
   label: string;
   helpTexts: HelpTexts;
@@ -104,130 +103,272 @@ interface DateFieldState {
   value: any;
 }
 
-class DateField extends React.Component<DateFieldProps, DateFieldState> {
-  constructor(props: DateFieldProps) {
-    super(props);
-    this.state = DateField.initialState(props);
-    this.onChange = this.onChange.bind(this);
-  }
-
-  static getDerivedStateFromProps(
-    props: DateFieldProps,
-    state: DateFieldState
-  ) {
-    if (props.avustushaku.id !== state.currentAvustushakuId) {
-      return DateField.initialState(props);
-    } else {
-      return null;
-    }
-  }
-
-  static initialState(props: DateFieldProps): DateFieldState {
+const DateField = (props: DateFieldProps) => {
+  const dispatch = useHakujenHallintaDispatch();
+  const getInitialState = (): DateFieldState => {
     return {
       currentAvustushakuId: props.avustushaku.id,
-      value: DateField.value(props, props.field),
+      value: props.avustushaku.decision?.[props.field] || "",
     };
-  }
+  };
+  const [state, setState] = useState<DateFieldState>(getInitialState);
+  useEffect(() => {
+    if (props.avustushaku.id !== state.currentAvustushakuId) {
+      setState(getInitialState());
+    }
+  }, [props.avustushaku.id, state.currentAvustushakuId]);
 
-  static value(props: DateFieldProps, field: "date" | "maksudate") {
-    return props.avustushaku.decision?.[field] || "";
-  }
-
-  onChange(event: React.ChangeEvent<HTMLInputElement>) {
-    this.setState({ value: event.target.value });
-    this.props.controller.onChangeListener(
-      this.props.avustushaku,
-      event.target,
-      event.target.value
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setState((state) => ({ ...state, value: event.target.value }));
+    dispatch(
+      updateField({
+        avustushaku: props.avustushaku,
+        field: event.target,
+        newValue: event.target.value,
+      })
     );
-  }
+  };
 
-  render() {
-    return (
-      <div className="decision-date">
-        <div className="decision-column">
-          <span className="decision-date-label" data-test-id="ratkaisupäivä">
-            {this.props.label}
-            <HelpTooltip
-              content={
-                this.props.helpTexts["hakujen_hallinta__päätös___ratkaisupäivä"]
-              }
-              direction="left"
-            />
-          </span>
-          <input
-            type="text"
-            value={this.state.value}
-            id={`decision.${this.props.field}`}
-            onChange={this.onChange}
+  return (
+    <div className="decision-date">
+      <div className="decision-column">
+        <span className="decision-date-label" data-test-id="ratkaisupäivä">
+          {props.label}
+          <HelpTooltip
+            content={
+              props.helpTexts["hakujen_hallinta__päätös___ratkaisupäivä"]
+            }
+            direction="left"
           />
-        </div>
+        </span>
+        <input
+          type="text"
+          value={state.value}
+          id={`decision.${props.field}`}
+          onChange={onChange}
+        />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
-interface LiitteetSelectionProps {
-  environment: EnvironmentApiResponse;
-  avustushaku: Avustushaku;
-  decisionLiitteet: Liite[];
-  controller: HakujenHallintaController;
+const LiiteGroup = ({
+  liite,
+  helpTexts,
+  environment,
+  selectedLiitteet,
+  selectedVersions,
+  onChangeLiite,
+  onChangeLiiteVersions,
+}: {
+  liite: Liite;
   helpTexts: HelpTexts;
-}
-
-interface LiitteetSelectionState {
   selectedLiitteet: Record<string, string>;
   selectedVersions: Record<string, string | undefined>;
-}
+  environment: EnvironmentApiResponse;
+  onChangeLiite: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) => {
+  return (
+    <div key={liite.group}>
+      <h5>
+        {liite.group}
+        <HelpTooltip
+          content={
+            helpTexts[
+              `hakujen_hallinta__päätös___${liite.group
+                .toLowerCase()
+                .replace(/ /g, "_")}`
+            ]
+          }
+          direction="left"
+        />
+      </h5>
+      {liite.attachments.map((attachment) => (
+        <LiiteComponent
+          key={attachment.id}
+          attachment={attachment}
+          groupId={liite.group}
+          environment={environment}
+          selectedLiitteet={selectedLiitteet}
+          selectedVersions={selectedVersions}
+          onChangeLiite={onChangeLiite}
+          onChangeLiiteVersions={onChangeLiiteVersions}
+        />
+      ))}
+    </div>
+  );
+};
 
-class LiitteetSelection extends React.Component<
-  LiitteetSelectionProps,
-  LiitteetSelectionState
-> {
-  constructor(props: LiitteetSelectionProps) {
-    super(props);
-    const selectedLiitteet = this.props.avustushaku?.decision?.liitteet ?? [];
-    this.state = {
-      selectedLiitteet: this.makeSelectedLiitteet(selectedLiitteet),
-      selectedVersions: this.makeSelectedVersions(selectedLiitteet),
-    };
-    this.onChangeLiite = this.onChangeLiite.bind(this);
-    this.onChangeLiiteVersion = this.onChangeLiiteVersion.bind(this);
-  }
+const LiiteComponent = ({
+  attachment,
+  groupId,
+  selectedLiitteet,
+  selectedVersions,
+  environment,
+  onChangeLiite,
+  onChangeLiiteVersions,
+}: {
+  attachment: LiiteAttachment;
+  groupId: string;
+  selectedLiitteet: Record<string, string>;
+  selectedVersions: Record<string, string | undefined>;
+  environment: EnvironmentApiResponse;
+  onChangeLiite: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) => {
+  const isSelected = selectedLiitteet[groupId] === attachment.id;
+  return (
+    <div key={attachment.id} className="decision-liite-selection__liite">
+      <label>
+        <input
+          type="checkbox"
+          className="decision-liite-selection__liite-input"
+          data-group={groupId}
+          name={"decision-liite-group--" + groupId}
+          value={attachment.id}
+          checked={isSelected}
+          onChange={onChangeLiite}
+        />
+        {attachment.langs.fi}{" "}
+        <span className="decision-liite-selection__liite-id">
+          {attachment.id}
+        </span>
+      </label>
+      {attachment.versions.length > 1 ? (
+        <div>
+          {attachment.versions.map((v) => (
+            <LiiteVersion
+              key={`liiteversion-${v.id}`}
+              attachment={attachment}
+              isLiiteSelected={isSelected}
+              versionSpec={v}
+              environment={environment}
+              selectedVersions={selectedVersions}
+              onChangeLiiteVersions={onChangeLiiteVersions}
+            />
+          ))}
+        </div>
+      ) : (
+        <LiiteVersionLinks
+          attachmentId={attachment.id}
+          versionSuffix={attachment.versions[0].id}
+          environment={environment}
+        />
+      )}
+    </div>
+  );
+};
 
-  makeSelectedLiitteet(selectedLiitteet: DecisionLiite[]) {
-    const available = this.props.decisionLiitteet;
+const LiiteVersion = ({
+  attachment,
+  isLiiteSelected,
+  versionSpec,
+  environment,
+  selectedVersions,
+  onChangeLiiteVersions,
+}: {
+  attachment: LiiteAttachment;
+  isLiiteSelected: boolean;
+  versionSpec: LiiteAttachmentVersion;
+  environment: EnvironmentApiResponse;
+  selectedVersions: Record<string, string | undefined>;
+  onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) => {
+  const isSelected = selectedVersions[attachment.id] === versionSpec.id;
 
-    const findAvailableLiite = (
-      liite: DecisionLiite
-    ): LiiteAttachment | undefined => {
-      const foundGroup = available.find((l) => l.group === liite.group);
-      if (!foundGroup) {
-        return undefined;
-      }
-      return foundGroup.attachments.find((l) => l.id === liite.id);
-    };
+  return (
+    <label
+      key={"v" + versionSpec.id}
+      className="decision-liite-selection__liite-version"
+    >
+      <input
+        type="radio"
+        className="decision-liite-selection__liite-version-input"
+        data-liite={attachment.id}
+        name={"decision-liite-version--" + attachment.id}
+        value={versionSpec.id}
+        checked={isSelected}
+        onChange={onChangeLiiteVersions}
+        disabled={!isLiiteSelected}
+      />
+      {versionSpec.description}
+      <LiiteVersionLinks
+        attachmentId={attachment.id}
+        versionSuffix={versionSpec.id}
+        environment={environment}
+      />
+    </label>
+  );
+};
 
-    return selectedLiitteet.reduce<Record<string, string>>((acc, l) => {
-      const foundSelected = findAvailableLiite(l);
-      if (foundSelected) {
-        acc[l.group] = foundSelected.id;
-      }
-      return acc;
-    }, {});
-  }
+const LiiteVersionLinks = ({
+  attachmentId,
+  versionSuffix,
+  environment,
+}: {
+  attachmentId: string;
+  versionSuffix: string;
+  environment: EnvironmentApiResponse;
+}) => {
+  const languages = ["fi", "sv"] as const;
+  return (
+    <span>
+      {languages.map((lang) => {
+        const hakijaUrl = environment["hakija-server"].url[lang];
+        const linkUrl = `${hakijaUrl}liitteet/${attachmentId}${versionSuffix}_${lang}.pdf`;
+        return (
+          <a
+            key={lang}
+            className="decision-liite-selection__link"
+            href={linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {lang}
+          </a>
+        );
+      })}
+    </span>
+  );
+};
 
-  makeSelectedVersions(selectedLiitteet: DecisionLiite[]) {
-    const candidateVersionsInSelectedLiitteet = selectedLiitteet.reduce<
-      Record<string, string>
-    >((acc, l) => {
-      acc[l.id] = l.version;
-      return acc;
-    }, {});
+const makeSelectedLiitteet = (
+  available: Liite[],
+  selectedLiitteet: DecisionLiite[]
+) => {
+  const findAvailableLiite = (
+    liite: DecisionLiite
+  ): LiiteAttachment | undefined => {
+    const foundGroup = available.find((l) => l.group === liite.group);
+    if (!foundGroup) {
+      return undefined;
+    }
+    return foundGroup.attachments.find((l) => l.id === liite.id);
+  };
 
-    return this.props.decisionLiitteet.reduce<
-      Record<string, string | undefined>
-    >((acc, g) => {
+  return selectedLiitteet.reduce<Record<string, string>>((acc, l) => {
+    const foundSelected = findAvailableLiite(l);
+    if (foundSelected) {
+      acc[l.group] = foundSelected.id;
+    }
+    return acc;
+  }, {});
+};
+
+const makeSelectedVersions = (
+  decisionLiitteet: Liite[],
+  selectedLiitteet: DecisionLiite[]
+) => {
+  const candidateVersionsInSelectedLiitteet = selectedLiitteet.reduce<
+    Record<string, string>
+  >((acc, l) => {
+    acc[l.id] = l.version;
+    return acc;
+  }, {});
+
+  return decisionLiitteet.reduce<Record<string, string | undefined>>(
+    (acc, g) => {
       _.forEach(g.attachments, (a) => {
         const userSelectedVersion = candidateVersionsInSelectedLiitteet[a.id];
         const isVersionAvailable =
@@ -238,192 +379,111 @@ class LiitteetSelection extends React.Component<
           : _.last(a.versions)?.id;
       });
       return acc;
-    }, {});
-  }
+    },
+    {}
+  );
+};
 
-  onChangeLiite(event: React.ChangeEvent<HTMLInputElement>) {
-    const { value: liiteId, checked: isChecked } = event.target;
-    const liiteGroup = event.target.dataset.group;
-    if (liiteGroup) {
-      this.setState((state) => {
-        const selectedLiitteet = isChecked
-          ? _.assign({}, state.selectedLiitteet, { [liiteGroup]: liiteId })
-          : _.omit(state.selectedLiitteet, [liiteGroup]);
-        this.updateSelectedLiitteet(selectedLiitteet, state.selectedVersions);
-        return { selectedLiitteet };
-      });
-    }
-  }
+interface LiitteetSelectionProps {
+  environment: EnvironmentApiResponse;
+  avustushaku: Avustushaku;
+  decisionLiitteet: Liite[];
+  helpTexts: HelpTexts;
+}
 
-  onChangeLiiteVersion(event: React.ChangeEvent<HTMLInputElement>) {
-    const versionId = event.target.value;
-    const liiteId = event.target.dataset.liite;
-    if (liiteId) {
-      this.setState((state) => {
-        const selectedVersions = _.assign({}, state.selectedVersions, {
-          [liiteId]: versionId,
-        });
-        this.updateSelectedLiitteet(state.selectedLiitteet, selectedVersions);
-        return { selectedVersions };
-      });
-    }
-  }
+interface LiitteetSelectionState {
+  selectedLiitteet: Record<string, string>;
+  selectedVersions: Record<string, string | undefined>;
+}
 
-  updateSelectedLiitteet(
+const LiitteetSelection = ({
+  avustushaku,
+  decisionLiitteet,
+  environment,
+  helpTexts,
+}: LiitteetSelectionProps) => {
+  const [selectedLiitteet, setSelectedLiitteet] = useState(() =>
+    makeSelectedLiitteet(
+      decisionLiitteet,
+      avustushaku?.decision?.liitteet ?? []
+    )
+  );
+  const [selectedVersions, setSelectedVersions] = useState(() =>
+    makeSelectedVersions(
+      decisionLiitteet,
+      avustushaku?.decision?.liitteet ?? []
+    )
+  );
+  const dispatch = useHakujenHallintaDispatch();
+
+  const updateSelectedLiitteet = (
     selectedLiitteet: LiitteetSelectionState["selectedLiitteet"],
     selectedVersions: LiitteetSelectionState["selectedVersions"]
-  ) {
+  ) => {
     const liitteet = _.map(selectedLiitteet, (liiteId, groupId) => ({
       group: groupId,
       id: liiteId,
       version: selectedVersions[liiteId],
     }));
-    this.props.controller.onChangeListener(
-      this.props.avustushaku,
-      { id: "decision.liitteet" },
-      liitteet as any
+    dispatch(
+      updateField({
+        avustushaku,
+        field: { id: "decision.liitteet" },
+        newValue: liitteet as any,
+      })
     );
-  }
+  };
 
-  render() {
-    return (
-      <div>
-        <h4 data-test-id="paatoksenliitteet">
-          Päätöksen liitteet
-          <HelpTooltip
-            content={
-              this.props.helpTexts[
-                "hakujen_hallinta__päätös___päätöksen_liitteet"
-              ]
-            }
-            direction="left"
-          />
-        </h4>
-        <div className="decision-liite-selection">
-          {_.map(this.props.decisionLiitteet, (group) =>
-            this.renderLiiteGroup(group)
-          )}
-        </div>
-      </div>
-    );
-  }
+  const onChangeLiite = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value: liiteId, checked: isChecked } = event.target;
+    const liiteGroup = event.target.dataset.group;
+    if (liiteGroup) {
+      const newSelectedLiitteet = isChecked
+        ? _.assign({}, selectedLiitteet, { [liiteGroup]: liiteId })
+        : _.omit(selectedLiitteet, [liiteGroup]);
+      updateSelectedLiitteet(newSelectedLiitteet, selectedVersions);
+      setSelectedLiitteet(newSelectedLiitteet);
+    }
+  };
 
-  renderLiiteGroup(group: Liite) {
-    return (
-      <div key={group.group}>
-        <h5>
-          {group.group}
-          <HelpTooltip
-            content={
-              this.props.helpTexts[
-                `hakujen_hallinta__päätös___${group.group
-                  .toLowerCase()
-                  .replace(/ /g, "_")}`
-              ]
-            }
-            direction="left"
-          />
-        </h5>
-        {_.map(group.attachments, (attachment) =>
-          this.renderLiite(attachment, group.group)
-        )}
-      </div>
-    );
-  }
+  const onChangeLiiteVersion = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const versionId = event.target.value;
+    const liiteId = event.target.dataset.liite;
+    if (liiteId) {
+      const newSelectedVersions = _.assign({}, selectedVersions, {
+        [liiteId]: versionId,
+      });
+      updateSelectedLiitteet(selectedLiitteet, newSelectedVersions);
+      setSelectedVersions(newSelectedVersions);
+    }
+  };
 
-  renderLiite(attachment: LiiteAttachment, groupId: string) {
-    const isSelected = this.state.selectedLiitteet[groupId] === attachment.id;
-
-    return (
-      <div key={attachment.id} className="decision-liite-selection__liite">
-        <label>
-          <input
-            type="checkbox"
-            className="decision-liite-selection__liite-input"
-            data-group={groupId}
-            name={"decision-liite-group--" + groupId}
-            value={attachment.id}
-            checked={isSelected}
-            onChange={this.onChangeLiite}
-          />
-          {attachment.langs.fi}{" "}
-          <span className="decision-liite-selection__liite-id">
-            {attachment.id}
-          </span>
-        </label>
-        {attachment.versions.length > 1 ? (
-          <div>
-            {_.map(attachment.versions, (v) =>
-              this.renderLiiteVersion(attachment, isSelected, v)
-            )}
-          </div>
-        ) : (
-          this.renderLiiteVersionLinks(attachment.id, attachment.versions[0].id)
-        )}
-      </div>
-    );
-  }
-
-  renderLiiteVersion(
-    attachment: LiiteAttachment,
-    isLiiteSelected: boolean,
-    versionSpec: LiiteAttachmentVersion
-  ) {
-    const isSelected =
-      this.state.selectedVersions[attachment.id] === versionSpec.id;
-
-    return (
-      <label
-        key={"v" + versionSpec.id}
-        className="decision-liite-selection__liite-version"
-      >
-        <input
-          type="radio"
-          className="decision-liite-selection__liite-version-input"
-          data-liite={attachment.id}
-          name={"decision-liite-version--" + attachment.id}
-          value={versionSpec.id}
-          checked={isSelected}
-          onChange={this.onChangeLiiteVersion}
-          disabled={!isLiiteSelected}
+  return (
+    <div>
+      <h4 data-test-id="paatoksenliitteet">
+        Päätöksen liitteet
+        <HelpTooltip
+          content={helpTexts["hakujen_hallinta__päätös___päätöksen_liitteet"]}
+          direction="left"
         />
-        {versionSpec.description}
-        {this.renderLiiteVersionLinks(attachment.id, versionSpec.id)}
-      </label>
-    );
-  }
-
-  renderLiiteVersionLinks(attachmentId: string, versionSuffix: string) {
-    const languages = ["fi", "sv"] as const;
-    return (
-      <span>
-        {languages.map((lang) =>
-          this.renderLiiteVersionLink(attachmentId, versionSuffix, lang)
-        )}
-      </span>
-    );
-  }
-
-  renderLiiteVersionLink(
-    attachmentId: string,
-    versionId: string,
-    lang: Language
-  ) {
-    const hakijaUrl = this.props.environment["hakija-server"].url[lang];
-    const linkUrl = `${hakijaUrl}liitteet/${attachmentId}${versionId}_${lang}.pdf`;
-    return (
-      <a
-        key={lang}
-        className="decision-liite-selection__link"
-        href={linkUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {lang}
-      </a>
-    );
-  }
-}
+      </h4>
+      <div className="decision-liite-selection">
+        {decisionLiitteet.map((liite) => (
+          <LiiteGroup
+            key={`Liitegroup-${liite.group}`}
+            liite={liite}
+            environment={environment}
+            selectedLiitteet={selectedLiitteet}
+            selectedVersions={selectedVersions}
+            helpTexts={helpTexts}
+            onChangeLiite={onChangeLiite}
+            onChangeLiiteVersions={onChangeLiiteVersion}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 interface RegenerateDecisionsProps {
   avustushaku: Avustushaku;
@@ -608,7 +668,6 @@ class ResendDecisions extends React.Component<
 
 interface DecisionDateAndSendProps {
   avustushaku: Avustushaku;
-  controller: HakujenHallintaController;
   environment: EnvironmentApiResponse;
   helpTexts: HelpTexts;
 }
@@ -1061,163 +1120,154 @@ interface DecisionEditorProps {
   avustushaku: Avustushaku;
   decisionLiitteet: Liite[];
   environment: EnvironmentApiResponse;
-  controller: HakujenHallintaController;
   helpTexts: HelpTexts;
 }
 
-export default class DecisionEditor extends React.Component<DecisionEditorProps> {
-  render() {
-    const {
-      avustushaku,
-      decisionLiitteet,
-      environment,
-      controller,
-      helpTexts,
-    } = this.props;
-    const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
-      controller.onChangeListener(avustushaku, e.target, e.target.value);
-    const fields = [
-      {
-        id: "sovelletutsaannokset",
-        title: "Sovelletut säännökset",
-        helpText: helpTexts["hakujen_hallinta__päätös___sovelletut_säännökset"],
-        dataTestId: "sovelletutsaannokset",
-      },
-      {
-        id: "kayttooikeudet",
-        title: "Tekijänoikeudet",
-        helpText: helpTexts["hakujen_hallinta__päätös___tekijänoikeudet"],
-        dataTestId: "kayttooikeudet",
-      },
-      {
-        id: "kayttotarkoitus",
-        title: "Avustuksen käyttötarkoitus",
-        helpText:
-          helpTexts["hakujen_hallinta__päätös___avustuksen_käyttötarkoitus"],
-        dataTestId: "kayttotarkoitus",
-      },
-      {
-        id: "selvitysvelvollisuus",
-        title: "Selvitysvelvollisuus",
-        helpText: helpTexts["hakujen_hallinta__päätös___selvitysvelvollisuus"],
-        dataTestId: "selvitysvelvollisuus",
-      },
-      {
-        id: "hyvaksyminen",
-        title: "Päätöksen hyväksyminen",
-        helpText:
-          helpTexts["hakujen_hallinta__päätös___päätöksen_hyväksyminen"],
-        dataTestId: "hyvaksyminen",
-      },
-      {
-        id: "johtaja",
-        title: "Johtaja",
-        helpText: helpTexts["hakujen_hallinta__päätös___johtaja"],
-        dataTestId: "johtaja",
-      },
-      {
-        id: "valmistelija",
-        title: "Esittelijä",
-        helpText: helpTexts["hakujen_hallinta__päätös___esittelijä"],
-        dataTestId: "valmistelija",
-      },
-    ];
-    const updatedAt = avustushaku.decision?.updatedAt;
-    const rahoitusAlueDecisionSubfields =
-      avustushaku.content.rahoitusalueet?.map((row) => (
-        <DecisionFields
-          key={row.rahoitusalue}
-          title={"Myönteisen päätöksen lisäteksti - " + row.rahoitusalue}
-          avustushaku={avustushaku}
-          id={"myonteinenlisateksti-" + row.rahoitusalue.replace(/[\s.]/g, "_")}
-          onChange={onChange}
-        />
-      )) ?? [];
-
-    const mainHelp = { __html: helpTexts["hakujen_hallinta__päätös___ohje"] };
-
-    return (
-      <div className="decision-editor">
-        <div data-test-id="paatos-ohje" dangerouslySetInnerHTML={mainHelp} />
-        <LastUpdated updatedAt={updatedAt} id={"paatosUpdatedAt"} />
-        <DecisionFields
-          key="taustaa"
-          title="Taustaa"
-          avustushaku={avustushaku}
-          id="taustaa"
-          onChange={onChange}
-          helpText={helpTexts["hakujen_hallinta__päätös___taustaa"]}
-          dataTestId="taustaa"
-        />
-        <DecisionFields
-          key="myonteinenlisateksti"
-          title="Myönteisen päätöksen lisäteksti"
-          avustushaku={avustushaku}
-          id="myonteinenlisateksti"
-          onChange={onChange}
-          helpText={
-            helpTexts[
-              "hakujen_hallinta__päätös___myönteisen_päätöksen_lisäteksti"
-            ]
-          }
-          dataTestId="myonteinenlisateksti"
-        />
-        {rahoitusAlueDecisionSubfields.length > 0 && (
-          <div className="decision-subfields">
-            {rahoitusAlueDecisionSubfields}
-          </div>
-        )}
-        {fields.map((field) => (
-          <DecisionFields
-            key={field.id}
-            title={field.title}
-            avustushaku={avustushaku}
-            id={field.id}
-            onChange={onChange}
-            helpText={field.helpText}
-            dataTestId={field.dataTestId}
-          />
-        ))}
-        <DecisionFields
-          key="maksu"
-          title="Avustuksen maksuaika"
-          avustushaku={avustushaku}
-          id="maksu"
-          onChange={onChange}
-          helpText={
-            helpTexts["hakujen_hallinta__päätös___avustuksen_maksuaika"]
-          }
-          dataTestId={"maksu"}
-        />
-        <Kayttoaika avustushaku={avustushaku} controller={controller} />
-        <SelvityksienAikarajat
-          avustushaku={avustushaku}
-          controller={controller}
-          helpTexts={helpTexts}
-        />
-        {avustushaku.content.multiplemaksuera === true && (
-          <DateField
-            avustushaku={avustushaku}
-            controller={controller}
-            field="maksudate"
-            label="Viimeinen maksuerä"
-            helpTexts={helpTexts}
-          />
-        )}
-        <LiitteetSelection
-          environment={environment}
-          avustushaku={avustushaku}
-          decisionLiitteet={decisionLiitteet}
-          controller={controller}
-          helpTexts={helpTexts}
-        />
-        <DecisionDateAndSend
-          avustushaku={avustushaku}
-          controller={controller}
-          environment={environment}
-          helpTexts={helpTexts}
-        />
-      </div>
+const DecisionEditor = ({
+  avustushaku,
+  decisionLiitteet,
+  environment,
+  helpTexts,
+}: DecisionEditorProps) => {
+  const dispatch = useHakujenHallintaDispatch();
+  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    dispatch(
+      updateField({ avustushaku, field: e.target, newValue: e.target.value })
     );
-  }
-}
+  };
+  const fields = [
+    {
+      id: "sovelletutsaannokset",
+      title: "Sovelletut säännökset",
+      helpText: helpTexts["hakujen_hallinta__päätös___sovelletut_säännökset"],
+      dataTestId: "sovelletutsaannokset",
+    },
+    {
+      id: "kayttooikeudet",
+      title: "Tekijänoikeudet",
+      helpText: helpTexts["hakujen_hallinta__päätös___tekijänoikeudet"],
+      dataTestId: "kayttooikeudet",
+    },
+    {
+      id: "kayttotarkoitus",
+      title: "Avustuksen käyttötarkoitus",
+      helpText:
+        helpTexts["hakujen_hallinta__päätös___avustuksen_käyttötarkoitus"],
+      dataTestId: "kayttotarkoitus",
+    },
+    {
+      id: "selvitysvelvollisuus",
+      title: "Selvitysvelvollisuus",
+      helpText: helpTexts["hakujen_hallinta__päätös___selvitysvelvollisuus"],
+      dataTestId: "selvitysvelvollisuus",
+    },
+    {
+      id: "hyvaksyminen",
+      title: "Päätöksen hyväksyminen",
+      helpText: helpTexts["hakujen_hallinta__päätös___päätöksen_hyväksyminen"],
+      dataTestId: "hyvaksyminen",
+    },
+    {
+      id: "johtaja",
+      title: "Johtaja",
+      helpText: helpTexts["hakujen_hallinta__päätös___johtaja"],
+      dataTestId: "johtaja",
+    },
+    {
+      id: "valmistelija",
+      title: "Esittelijä",
+      helpText: helpTexts["hakujen_hallinta__päätös___esittelijä"],
+      dataTestId: "valmistelija",
+    },
+  ];
+  const updatedAt = avustushaku.decision?.updatedAt;
+  const rahoitusAlueDecisionSubfields =
+    avustushaku.content.rahoitusalueet?.map((row) => (
+      <DecisionFields
+        key={row.rahoitusalue}
+        title={"Myönteisen päätöksen lisäteksti - " + row.rahoitusalue}
+        avustushaku={avustushaku}
+        id={"myonteinenlisateksti-" + row.rahoitusalue.replace(/[\s.]/g, "_")}
+        onChange={onChange}
+      />
+    )) ?? [];
+
+  const mainHelp = { __html: helpTexts["hakujen_hallinta__päätös___ohje"] };
+
+  return (
+    <div className="decision-editor">
+      <div data-test-id="paatos-ohje" dangerouslySetInnerHTML={mainHelp} />
+      <LastUpdated updatedAt={updatedAt} id={"paatosUpdatedAt"} />
+      <DecisionFields
+        key="taustaa"
+        title="Taustaa"
+        avustushaku={avustushaku}
+        id="taustaa"
+        onChange={onChange}
+        helpText={helpTexts["hakujen_hallinta__päätös___taustaa"]}
+        dataTestId="taustaa"
+      />
+      <DecisionFields
+        key="myonteinenlisateksti"
+        title="Myönteisen päätöksen lisäteksti"
+        avustushaku={avustushaku}
+        id="myonteinenlisateksti"
+        onChange={onChange}
+        helpText={
+          helpTexts[
+            "hakujen_hallinta__päätös___myönteisen_päätöksen_lisäteksti"
+          ]
+        }
+        dataTestId="myonteinenlisateksti"
+      />
+      {rahoitusAlueDecisionSubfields.length > 0 && (
+        <div className="decision-subfields">
+          {rahoitusAlueDecisionSubfields}
+        </div>
+      )}
+      {fields.map((field) => (
+        <DecisionFields
+          key={field.id}
+          title={field.title}
+          avustushaku={avustushaku}
+          id={field.id}
+          onChange={onChange}
+          helpText={field.helpText}
+          dataTestId={field.dataTestId}
+        />
+      ))}
+      <DecisionFields
+        key="maksu"
+        title="Avustuksen maksuaika"
+        avustushaku={avustushaku}
+        id="maksu"
+        onChange={onChange}
+        helpText={helpTexts["hakujen_hallinta__päätös___avustuksen_maksuaika"]}
+        dataTestId={"maksu"}
+      />
+      <Kayttoaika avustushaku={avustushaku} />
+      <SelvityksienAikarajat avustushaku={avustushaku} helpTexts={helpTexts} />
+      {avustushaku.content.multiplemaksuera === true && (
+        <DateField
+          avustushaku={avustushaku}
+          field="maksudate"
+          label="Viimeinen maksuerä"
+          helpTexts={helpTexts}
+        />
+      )}
+      <LiitteetSelection
+        environment={environment}
+        avustushaku={avustushaku}
+        decisionLiitteet={decisionLiitteet}
+        helpTexts={helpTexts}
+      />
+      <DecisionDateAndSend
+        avustushaku={avustushaku}
+        environment={environment}
+        helpTexts={helpTexts}
+      />
+    </div>
+  );
+};
+
+export default DecisionEditor;

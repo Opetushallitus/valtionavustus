@@ -220,7 +220,7 @@ function appendBudgetComponent(
   }
   return form;
 }
-export default class HakujenHallintaController {
+class HakujenHallintaController {
   static paymentsUrl(avustushaku: Avustushaku) {
     return `/api/v2/grants/${avustushaku.id}/payments/`;
   }

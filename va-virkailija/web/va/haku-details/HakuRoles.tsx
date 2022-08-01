@@ -7,14 +7,17 @@ import NameFormatter from "soresu-form/web/va/util/NameFormatter";
 import { HelpTexts } from "soresu-form/web/va/types";
 
 import HelpTooltip from "../HelpTooltip";
-import HakujenHallintaController, {
-  SelectedAvustushaku,
-} from "../HakujenHallintaController";
+import { SelectedAvustushaku } from "../HakujenHallintaController";
 import { Role, RoleType, UserInfo, VaUserSearch } from "../types";
 import { minimumSearchInputLength, useVaUserSearch } from "../VaUserSearch";
+import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
+import {
+  createHakuRole,
+  deleteRole,
+  saveRole,
+} from "../hakujenHallinta/hakuReducer";
 
 type HakuRolesProps = {
-  controller: HakujenHallintaController;
   avustushaku: SelectedAvustushaku;
   userHasEditPrivilege: boolean;
   userHasEditMyHakuRolePrivilege: boolean;
@@ -24,7 +27,6 @@ type HakuRolesProps = {
 
 export const HakuRoles = ({
   avustushaku,
-  controller,
   helpTexts,
   userInfo,
   userHasEditPrivilege,
@@ -77,7 +79,6 @@ export const HakuRoles = ({
               userInfo={userInfo}
               userHasEditPrivilege={userHasEditPrivilege}
               userHasEditMyHakuRolePrivilege={userHasEditMyHakuRolePrivilege}
-              controller={controller}
             />
           ))}
         </CSSTransitionGroup>
@@ -123,7 +124,6 @@ export const HakuRoles = ({
               vaUserSearch={roleSearch}
               input={roleSearchInput}
               avustushaku={avustushaku}
-              controller={controller}
             />
           </div>
         </div>
@@ -135,7 +135,6 @@ export const HakuRoles = ({
 type PersonSelectListProps = {
   vaUserSearch: VaUserSearch;
   avustushaku: SelectedAvustushaku;
-  controller: HakujenHallintaController;
   input: string;
   roleType?: RoleType;
 };
@@ -151,11 +150,11 @@ const privilegesToClassAndDescription = (privileges: string[]) => {
 
 const PersonSelectList = ({
   avustushaku,
-  controller,
   vaUserSearch,
   input,
   roleType,
 }: PersonSelectListProps) => {
+  const dispatch = useHakujenHallintaDispatch();
   const personRows = vaUserSearch.result.results.map((r) => {
     const firstName = r["first-name"];
     const surname = r["surname"];
@@ -179,7 +178,9 @@ const PersonSelectList = ({
     const onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
       if (!personIsInRolesAlready) {
-        controller.createRole(avustushaku, newRole)();
+        dispatch(
+          createHakuRole({ role: newRole, avustushakuId: avustushaku.id })
+        );
       }
     };
 
@@ -220,7 +221,6 @@ const PersonSelectList = ({
 };
 
 type RoleRowProps = {
-  controller: HakujenHallintaController;
   avustushaku: SelectedAvustushaku;
   role: Role;
   userInfo: UserInfo;
@@ -230,15 +230,15 @@ type RoleRowProps = {
 
 const RoleRow = ({
   avustushaku,
-  controller,
   role,
   userInfo,
   userHasEditPrivilege,
   userHasEditMyHakuRolePrivilege,
 }: RoleRowProps) => {
+  const dispatch = useHakujenHallintaDispatch();
   const debouncedSave = useCallback(
     debounce((savedRole: Role) => {
-      controller.saveRole(avustushaku, savedRole);
+      dispatch(saveRole({ role: savedRole, avustushakuId: avustushaku.id }));
     }, 2000),
     []
   );
@@ -271,7 +271,9 @@ const RoleRow = ({
       : disableChangingVastuuvalmistelija
       ? "Vastuuvalmistelijaa ei voi poistaa"
       : "Poista";
-  const onDelete = controller.deleteRole(avustushaku, role);
+  const onDelete = () =>
+    dispatch(deleteRole({ avustushakuId: avustushaku.id, roleId: role.id }));
+
   return (
     <tr
       key={`${role.oid}-${role.role}`}

@@ -9,8 +9,9 @@ import useScrollingUp from "./useScrollingUp";
 
 interface HeaderSaveStatus {
   saveInProgress: boolean;
-  saveTime: Date | null;
+  saveTime: Date | string | null;
   serverError: string;
+  loadingAvustushaku?: boolean;
 }
 
 type NotificationStatus = "ok" | "error" | "warning" | "info";
@@ -55,6 +56,7 @@ export const HeaderContainer = ({
     saveStatus?.saveInProgress,
     saveStatus?.saveTime,
     saveStatus?.serverError,
+    saveStatus?.loadingAvustushaku,
   ]);
 
   return (
@@ -184,6 +186,12 @@ function getNotificationContent(
       notification: "Kaikki tiedot tallennettu",
       notificationIcon: okIcon,
       status: "ok",
+    };
+  } else if (saveStatus?.loadingAvustushaku) {
+    return {
+      notification: "Ladataan tietoja",
+      notificationIcon: saveInProgressIcon,
+      status: "warning",
     };
   } else {
     return undefined;

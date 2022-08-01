@@ -10,19 +10,18 @@ import React, {
 import { HelpTexts } from "soresu-form/web/va/types";
 import HttpUtil from "soresu-form/web/HttpUtil";
 
-import HakujenHallintaController, {
-  SelectedAvustushaku,
-} from "../HakujenHallintaController";
+import { SelectedAvustushaku } from "../HakujenHallintaController";
 import HelpTooltip from "../HelpTooltip";
 import { UserInfo, VaUserSearch } from "../types";
 import { DateInput } from "./DateInput";
 import { Maksatus } from "./Maksatukset";
 import { MaksatuksetTable } from "./MaksatuksetTable";
 import { useVaUserSearch } from "../VaUserSearch";
+import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
+import { completeSave, startSave } from "../hakujenHallinta/hakuReducer";
 
 type LahtevatMaksatuksetProps = {
   avustushaku: SelectedAvustushaku;
-  controller: HakujenHallintaController;
   helpTexts: HelpTexts;
   payments: Maksatus[];
   refreshPayments: () => Promise<void>;
@@ -48,19 +47,18 @@ const hasDocumentsForAllPhases = (phases: number[], documents: Document[]) => {
 
 export const LahtevatMaksatukset = ({
   avustushaku,
-  controller,
   helpTexts,
   payments,
   refreshPayments,
   userInfo,
 }: LahtevatMaksatuksetProps) => {
+  const dispatch = useHakujenHallintaDispatch();
   const [laskunPvm, setLaskunPvm] = useState<Date>(now.toDate());
   const [erapaiva, setErapaiva] = useState(now.add(1, "w").toDate());
   const [tositePvm, setTositePvm] = useState<Date>();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
   const phases = [...new Set(payments.map((p) => p.phase))];
-  console.log(avustushaku);
 
   useEffect(() => {
     const newErrors = [
@@ -105,7 +103,7 @@ export const LahtevatMaksatukset = ({
   };
 
   const onLähetäMaksatukset = async () => {
-    controller.startSave();
+    dispatch(startSave());
     const id = await createPaymentBatches();
     await HttpUtil.post(`/api/v2/payment-batches/${id}/payments/`);
     try {
@@ -116,17 +114,17 @@ export const LahtevatMaksatukset = ({
       );
     }
     await refreshPayments();
-    controller.completeSave();
+    dispatch(completeSave());
   };
 
   const onAsetaMaksetuksi = async () => {
-    controller.startSave();
+    dispatch(startSave());
     const id = await createPaymentBatches();
     await HttpUtil.put(`/api/v2/payment-batches/${id}/payments/`, {
       "paymentstatus-id": "paid",
     });
     await refreshPayments();
-    controller.completeSave();
+    dispatch(completeSave());
   };
 
   return (

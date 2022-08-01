@@ -163,7 +163,11 @@ function renderItemValues({
             />
           ) : null}
           {(i === values.length && i > 0) || v ? (
-            <button className="remove" onClick={onRemove(i)} tabIndex={-1} />
+            <button
+              className="remove"
+              onClick={onRemove(i)}
+              tabIndex={-1}
+            />
           ) : null}
         </span>
       ) : null}
@@ -231,8 +235,7 @@ interface EducationLevelsProps {
 
 export default class EducationLevels extends Component<EducationLevelsProps> {
   render() {
-    const { enabled, values, onChange, onAdd, onRemove, grant, helpTexts } =
-      this.props;
+    const { enabled, values, onChange, helpTexts, onAdd, onRemove, grant } = this.props;
     const itemValues: { [p: string]: string[] } = values.reduce(
       (a: { [index: string]: string[] }, c) => {
         a[c.rahoitusalue] = c.talousarviotilit;

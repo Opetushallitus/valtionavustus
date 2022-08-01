@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import moment from "moment";
 // @ts-ignore react-widgets-moment doesn't have proper types
@@ -6,42 +6,48 @@ import MomentLocalizer from "react-widgets-moment";
 import Localization from "react-widgets/Localization";
 
 import { HeaderContainer } from "./Header";
-import HakujenHallintaController, {
-  Avustushaku,
-  State,
-} from "./HakujenHallintaController";
+import { Avustushaku } from "./HakujenHallintaController";
 import { HakuListing } from "./haku-list/HakuListing";
 import { EditorSelector } from "./haku-details/EditorSelector";
-import LocalStorage from "./LocalStorage";
 import { translationsFi } from "soresu-form/web/va/i18n/translations";
 
 import "./style/virkailija.less";
 import "./style/admin.less";
 import { NewHakuListing } from "./haku-list/NewHakuListing";
-
-interface HakujenHallintaAppProps {
-  state: State;
-  controller: HakujenHallintaController;
-}
+import store, {
+  useHakujenHallintaDispatch,
+  useHakujenHallintaSelector,
+} from "./hakujenHallinta/hakujenHallintaStore";
+import { Provider } from "react-redux";
+import { fetchInitialState, selectHaku } from "./hakujenHallinta/hakuReducer";
 
 moment.locale("fi");
 const momentLocalizer = new MomentLocalizer(moment);
 
-const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
-  const {
-    environment,
-    selectedHaku,
-    codeOptions,
-    lainsaadantoOptions,
-    helpTexts,
-    saveStatus,
-    userInfo,
-  } = state;
+const HakujenHallintaApp = () => {
+  const state = useHakujenHallintaSelector((state) => state.haku);
+  const { saveStatus, initialData, selectedHaku } = state;
+  const dispatch = useHakujenHallintaDispatch();
+  useEffect(() => {
+    dispatch(fetchInitialState());
+  }, []);
   const searchParams = new URLSearchParams(window.location.search);
   const newHakuListing = searchParams.get("new-haku-listing") === "true";
   const onClickHaku = useCallback((avustushaku: Avustushaku) => {
-    controller.selectHaku(avustushaku)();
+    dispatch(selectHaku(avustushaku));
   }, []);
+  if (initialData.loading || !selectedHaku) {
+    return null;
+  }
+  const {
+    environment,
+    hakuList,
+    codeOptions,
+    lainsaadantoOptions,
+    helpTexts,
+    userInfo,
+    decisionLiitteet,
+  } = initialData.data;
   return (
     <Localization date={momentLocalizer} messages={translationsFi.calendar}>
       <HeaderContainer
@@ -53,26 +59,20 @@ const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
       <section>
         {newHakuListing ? (
           <NewHakuListing
-            hakuList={state.hakuList}
-            selectedHaku={state.selectedHaku}
+            hakuList={hakuList}
+            selectedHaku={selectedHaku}
             onClickHaku={onClickHaku}
           />
         ) : (
-          <HakuListing
-            hakuList={state.hakuList}
-            selectedHaku={state.selectedHaku}
-            filter={state.filter}
-            controller={controller}
-          />
+          <HakuListing hakuList={hakuList} selectedHaku={selectedHaku} />
         )}
         <EditorSelector
-          state={state}
           subTab={state.subTab}
           avustushaku={selectedHaku}
-          decisionLiitteet={state.decisionLiitteet}
+          decisionLiitteet={decisionLiitteet}
           formDraft={state.formDrafts[selectedHaku.id]}
           formDraftJson={state.formDraftsJson[selectedHaku.id]}
-          valiselvitysFormDraft={state.valiselvitysFormDrafts[selectedHaku.id]}
+          valiselvitysFormDraft={state.valiselvitysFormDrafts[selectedHaku?.id]}
           valiselvitysFormDraftJson={
             state.valiselvitysFormDraftsJson[selectedHaku.id]
           }
@@ -84,8 +84,7 @@ const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
           }
           environment={environment}
           koodistos={state.koodistos}
-          userInfo={state.userInfo}
-          controller={controller}
+          userInfo={userInfo}
           codeOptions={codeOptions}
           lainsaadantoOptions={lainsaadantoOptions}
           helpTexts={helpTexts}
@@ -95,15 +94,11 @@ const HakujenHallintaApp = ({ state, controller }: HakujenHallintaAppProps) => {
   );
 };
 
-const controller = new HakujenHallintaController();
-const hakuId = LocalStorage.avustushakuId() || 1;
-const stateP = controller.initializeState(hakuId);
-
 const app = document.getElementById("app");
 const root = createRoot(app!);
 
-stateP.onValue(function (state) {
-  if (state.hakuList) {
-    root.render(<HakujenHallintaApp state={state} controller={controller} />);
-  }
-});
+root.render(
+  <Provider store={store}>
+    <HakujenHallintaApp />
+  </Provider>
+);

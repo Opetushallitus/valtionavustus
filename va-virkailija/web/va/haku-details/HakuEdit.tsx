@@ -15,10 +15,9 @@ import EducationLevels from "./EducationLevels";
 import AutoCompleteCodeValue, { CodeType } from "./AutoCompleteCodeValue";
 import HelpTooltip from "../HelpTooltip";
 import WarningBanner from "../WarningBanner";
-import HakujenHallintaController, {
+import {
   LainsaadantoOption,
   SelectedAvustushaku,
-  State,
 } from "../HakujenHallintaController";
 import { UserInfo, VaCodeValue } from "../types";
 import { DateInput } from "./DateInput";
@@ -28,29 +27,34 @@ import { Lainsaadanto } from "./Lainsaadanto";
 import ProjectSelectors from "./ProjectSelectors";
 
 import "../style/koodien-valinta.less";
+import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
+import {
+  addFocusArea, addSelectionCriteria, addTalousarviotili,
+  createHaku,
+  deleteFocusArea, removeSelectionCriteria, removeTalousarviotili,
+  startAutoSaveForSelectedAvustushaku,
+  updateField,
+} from "../hakujenHallinta/hakuReducer";
 
 type HakuEditProps = {
-  state: State;
   avustushaku: SelectedAvustushaku;
   codeOptions: VaCodeValue[];
   lainsaadantoOptions: LainsaadantoOption[];
-  controller: HakujenHallintaController;
   helpTexts: HelpTexts;
   userInfo: UserInfo;
   environment: EnvironmentApiResponse;
 };
 
 export const HakuEdit = ({
-  state,
   avustushaku,
   codeOptions,
   lainsaadantoOptions,
-  controller,
   helpTexts,
   userInfo,
   environment,
 }: HakuEditProps) => {
   const hasPayments = !!avustushaku.payments?.length;
+  const dispatch = useHakujenHallintaDispatch();
   const isAllPaymentsPaid =
     hasPayments &&
     !avustushaku.payments?.find((p) => p["paymentstatus-id"] !== "paid");
@@ -76,7 +80,7 @@ export const HakuEdit = ({
     target: EventTarget & HTMLElement,
     value: string
   ) => {
-    controller.onChangeListener(avustushaku, target, value);
+    dispatch(updateField({ avustushaku, field: target, newValue: value }));
   };
 
   const onChange = (
@@ -88,7 +92,13 @@ export const HakuEdit = ({
   };
 
   const onChangeDateInput = (id: string, date: Moment) => {
-    controller.onChangeListener(avustushaku, { id }, date.format("YYYY-MM-DD"));
+    dispatch(
+      updateField({
+        avustushaku,
+        field: { id },
+        newValue: date.format("YYYY-MM-DD"),
+      })
+    );
   };
 
   const onChangeTrimWs = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -106,11 +116,17 @@ export const HakuEdit = ({
     (id: CodeType, avustushaku: SelectedAvustushaku) =>
     (option: VaCodeValue | null) => {
       if (option == null) {
-        controller.onChangeListener(avustushaku, { id }, null);
-        avustushaku[id] = null;
+        dispatch(updateField({ avustushaku, field: { id }, newValue: null }));
+        // avustushaku[id] = null;
       } else {
-        controller.onChangeListener(avustushaku, { id }, option.id);
-        avustushaku[id] = option.id;
+        dispatch(
+          updateField({
+            avustushaku,
+            field: { id },
+            newValue: option.id,
+          })
+        );
+        // avustushaku[id] = option.id;
       }
     };
 
@@ -142,11 +158,7 @@ export const HakuEdit = ({
           />
         </div>
         <div className="editor-header-element">
-          <CreateHaku
-            controller={controller}
-            avustushaku={avustushaku}
-            helpTexts={helpTexts}
-          />
+          <CreateHaku avustushaku={avustushaku} helpTexts={helpTexts} />
         </div>
       </div>
       <table id="name" className="translation">
@@ -224,14 +236,12 @@ export const HakuEdit = ({
           </h3>
           {multipleProjectCodesEnabled ? (
             <ProjectSelectors
-              state={state}
               avustushaku={avustushaku}
               codeOptions={codeOptions.filter(
                 (k) => k["value-type"] === "project"
               )}
               disabled={isAllPaymentsPaid}
               multipleProjectCodesEnabled={multipleProjectCodesEnabled}
-              controller={controller}
             />
           ) : (
             <AutoCompleteCodeValue
@@ -357,7 +367,6 @@ export const HakuEdit = ({
       {environment["avustushaku-excel-extra-fields"]?.["enabled?"] && (
         <Lainsaadanto
           avustushaku={avustushaku}
-          controller={controller}
           lainsaadantoOptions={lainsaadantoOptions}
           helpTexts={helpTexts}
         />
@@ -365,11 +374,17 @@ export const HakuEdit = ({
       <EducationLevels
         enabled={allowNondisruptiveHakuEdits}
         values={avustushaku.content.rahoitusalueet ?? []}
-        onAdd={controller.addTalousarviotili}
-        onRemove={controller.deleteTalousarviotili}
         grant={avustushaku}
         onChange={onChange}
         helpTexts={helpTexts}
+        onAdd={(_, tili) => {
+          dispatch(addTalousarviotili(tili))
+          dispatch(startAutoSaveForSelectedAvustushaku());
+        }}
+        onRemove={(_, rahoitusalue, index) => () => {
+          dispatch(removeTalousarviotili({rahoitusalue, index}))
+          dispatch(startAutoSaveForSelectedAvustushaku());
+        }}
       />
       <div>
         <div className="multibatch-fields">
@@ -596,7 +611,6 @@ export const HakuEdit = ({
           <hr className="spacer" />
           <Raportointivelvoitteet
             avustushaku={avustushaku}
-            controller={controller}
             helpTexts={helpTexts}
           />
         </>
@@ -607,12 +621,10 @@ export const HakuEdit = ({
         userInfo={userInfo}
         userHasEditPrivilege={userHasEditPrivilege}
         userHasEditMyHakuRolePrivilege={userHasEditMyHakuRolePrivilege}
-        controller={controller}
         helpTexts={helpTexts}
       />
       <hr className="spacer" />
       <SelectionCriteria
-        controller={controller}
         avustushaku={avustushaku}
         allowAllHakuEdits={allowAllHakuEdits}
         allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits}
@@ -621,7 +633,6 @@ export const HakuEdit = ({
       />
       <hr className="spacer" />
       <FocusArea
-        controller={controller}
         avustushaku={avustushaku}
         allowAllHakuEdits={allowAllHakuEdits}
         allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits}
@@ -634,17 +645,13 @@ export const HakuEdit = ({
 
 type CreateHakuProps = {
   avustushaku: Avustushaku;
-  controller: HakujenHallintaController;
   helpTexts: HelpTexts;
 };
 
-const CreateHaku = ({
-  avustushaku,
-  controller,
-  helpTexts,
-}: CreateHakuProps) => {
+const CreateHaku = ({ avustushaku, helpTexts }: CreateHakuProps) => {
+  const dispatch = useHakujenHallintaDispatch();
   function onClick(e: React.MouseEvent<HTMLAnchorElement>) {
-    controller.createHaku(avustushaku);
+    dispatch(createHaku(avustushaku.id));
     // @ts-ignore
     e.target.blur();
     e.preventDefault();
@@ -708,7 +715,6 @@ type TextAreaProps = {
   allowAllHakuEdits: boolean;
   allowNondisruptiveHakuEdits: boolean;
   avustushaku: Avustushaku;
-  controller: HakujenHallintaController;
   helpTexts: HelpTexts;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 };
@@ -717,11 +723,11 @@ const SelectionCriteria = ({
   allowAllHakuEdits,
   allowNondisruptiveHakuEdits,
   avustushaku,
-  controller,
   onChange,
   helpTexts,
 }: TextAreaProps) => {
   const selectionCriteria = avustushaku.content["selection-criteria"];
+  const dispatch = useHakujenHallintaDispatch()
   const criteriaItems = [];
   for (let index = 0; index < selectionCriteria.items.length; index++) {
     const htmlId = "selection-criteria-" + index + "-";
@@ -749,7 +755,10 @@ const SelectionCriteria = ({
           <button
             type="button"
             className="remove"
-            onClick={controller.deleteSelectionCriteria(avustushaku, index)}
+            onClick={() => {
+              dispatch(removeSelectionCriteria(index))
+              dispatch(startAutoSaveForSelectedAvustushaku())
+            }}
             title="Poista"
             tabIndex={-1}
             disabled={!allowAllHakuEdits}
@@ -782,7 +791,10 @@ const SelectionCriteria = ({
             <button
               type="button"
               disabled={!allowAllHakuEdits}
-              onClick={controller.addSelectionCriteria(avustushaku)}
+              onClick={() => {
+                dispatch(addSelectionCriteria())
+                dispatch(startAutoSaveForSelectedAvustushaku())
+              }}
               data-test-id="add-selection-criteria"
             >
               Lisää uusi valintaperuste
@@ -798,10 +810,10 @@ const FocusArea = ({
   allowAllHakuEdits,
   allowNondisruptiveHakuEdits,
   avustushaku,
-  controller,
   onChange,
   helpTexts,
 }: TextAreaProps) => {
+  const dispatch = useHakujenHallintaDispatch();
   const focusAreas = avustushaku.content["focus-areas"];
   const focusAreaItems = [];
   for (let index = 0; index < focusAreas.items.length; index++) {
@@ -830,7 +842,10 @@ const FocusArea = ({
           <button
             type="button"
             className="remove"
-            onClick={controller.deleteFocusArea(avustushaku, index)}
+            onClick={() => {
+              dispatch(deleteFocusArea(index));
+              dispatch(startAutoSaveForSelectedAvustushaku());
+            }}
             title="Poista"
             tabIndex={-1}
             disabled={!allowAllHakuEdits}
@@ -863,7 +878,10 @@ const FocusArea = ({
             <button
               type="button"
               disabled={!allowAllHakuEdits}
-              onClick={controller.addFocusArea(avustushaku)}
+              onClick={() => {
+                dispatch(addFocusArea());
+                dispatch(startAutoSaveForSelectedAvustushaku());
+              }}
             >
               Lisää uusi painopistealue
             </button>

@@ -10,15 +10,14 @@ import Select, { components, OptionProps, GroupBase } from "react-select";
 import HttpUtil from "soresu-form/web/HttpUtil";
 import { HelpTexts, Raportointivelvoite } from "soresu-form/web/va/types";
 
-import HakujenHallintaController, {
-  SelectedAvustushaku,
-} from "../HakujenHallintaController";
+import { SelectedAvustushaku } from "../HakujenHallintaController";
 import HelpTooltip from "../HelpTooltip";
 import { DateInput } from "./DateInput";
+import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
+import { completeSave, startSave } from "../hakujenHallinta/hakuReducer";
 
 type RaportointivelvoitteetProps = {
   avustushaku: SelectedAvustushaku;
-  controller: HakujenHallintaController;
   helpTexts: HelpTexts;
 };
 
@@ -241,12 +240,12 @@ const Raportointivelvoite = ({
 
 export const Raportointivelvoitteet = ({
   avustushaku,
-  controller,
   helpTexts,
 }: RaportointivelvoitteetProps) => {
   const [raportointivelvoitteet, setRaportointivelvoitteet] = useState<
     Raportointivelvoite[] | undefined
   >();
+  const dispatch = useHakujenHallintaDispatch();
 
   useEffect(() => {
     const fetchRaportointivelvoitteet = async () => {
@@ -270,7 +269,7 @@ export const Raportointivelvoitteet = ({
 
   const putRaportointivelvoite = useCallback(
     debounce(async (index: number, r: Raportointivelvoite) => {
-      controller.startSave();
+      dispatch(startSave());
       const newRaportointivelvoite = await HttpUtil.put(
         `/api/avustushaku/${avustushaku.id}/raportointivelvoite`,
         r
@@ -280,14 +279,14 @@ export const Raportointivelvoitteet = ({
           i === index ? newRaportointivelvoite : old
         )
       );
-      controller.completeSave();
+      dispatch(completeSave());
     }, 2000),
     [raportointivelvoitteet]
   );
 
   const postRaportointivelvoite = useCallback(
     debounce(async (r: Raportointivelvoite) => {
-      controller.startSave();
+      dispatch(startSave());
       await HttpUtil.post(
         `/api/avustushaku/${avustushaku.id}/raportointivelvoite/${r.id}`,
         r
@@ -295,7 +294,7 @@ export const Raportointivelvoitteet = ({
       setRaportointivelvoitteet(
         raportointivelvoitteet?.map((old) => (old.id === r.id ? r : old))
       );
-      controller.completeSave();
+      dispatch(completeSave());
     }, 2000),
     [raportointivelvoitteet]
   );
@@ -314,14 +313,14 @@ export const Raportointivelvoitteet = ({
     r?: Raportointivelvoite
   ) => {
     if (r?.id) {
-      controller.startSave();
+      dispatch(startSave());
       await HttpUtil.delete(
         `/api/avustushaku/${avustushaku.id}/raportointivelvoite/${r.id}`
       );
       setRaportointivelvoitteet(
         raportointivelvoitteet?.filter((old) => old.id !== r.id)
       );
-      controller.completeSave();
+      dispatch(completeSave());
     } else {
       const newRaportointivelvoitteet = [...(raportointivelvoitteet ?? [])];
       newRaportointivelvoitteet.splice(index, 1);
