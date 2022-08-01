@@ -28,5 +28,6 @@
       :database-name "va-dev"}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :avustushaku-excel-extra-fields {:enabled? true}
+ :ta-tilit {:enabled? true}
  :test-apis {:enabled? true}
  :multiple-project-codes {:enabled? true}}
