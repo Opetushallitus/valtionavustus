@@ -140,7 +140,7 @@ const TiliRow = ({ id, year, code, name, amount }: Talousarviotili) => {
   const deleteTili = async () => {
     if (
       window.confirm(
-        `Oletko aivan varma, että haluat poistaa tilin ${code} ${name}?`
+        `Oletko aivan varma, että haluat poistaa talousarviotilin ${code} ${name}?`
       )
     ) {
       try {
@@ -153,14 +153,15 @@ const TiliRow = ({ id, year, code, name, amount }: Talousarviotili) => {
   return (
     <div className={styles.tiliRow} data-test-id={name}>
       <input className={styles.input} value={year} disabled />
-      <input className={styles.input} id="code" value={code} disabled />
-      <input className={styles.input} id="name" value={name} disabled />
-      <input className={styles.inputEuro} id="amount" value={amount} disabled />
+      <input className={styles.input} value={code} disabled />
+      <input className={styles.input} value={name} disabled />
+      <input className={styles.inputEuro} value={amount} disabled />
       <div className={styles.buttonContainer}>
         <button disabled={isLoading} className={styles.plusButton} />
         <button
           disabled={isLoading}
           className={styles.minusButton}
+          title={`Poista talousarviotili ${code}`}
           onClick={deleteTili}
         />
       </div>

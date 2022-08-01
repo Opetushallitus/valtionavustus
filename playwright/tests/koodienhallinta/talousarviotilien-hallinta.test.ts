@@ -15,36 +15,55 @@ const test = defaultValues.extend<{
 });
 
 test.describe.parallel("talousarviotilien hallinta", () => {
-  test("can create a new talousarviotili", async ({
+  test("can create and remove talousarviotili", async ({
     koodienhallintaPage,
     randomName,
   }) => {
     const taForm = koodienhallintaPage.taTilit.form;
     const name = `Talousarviotili ${randomName}`;
+    const year = "2022";
+    const code = randomString();
+    const amount = "420";
     const row = await koodienhallintaPage.page.locator(
       `[data-test-id="${name}"]`
     );
-    await expect(taForm.submitBtn).toBeEnabled();
-    await expect(taForm.year.error).toBeHidden();
-    await expect(taForm.code.error).toBeHidden();
-    await expect(taForm.name.error).toBeHidden();
-    await expect(taForm.amount.error).toBeHidden();
-    await expect(row).toBeHidden();
-    await taForm.submitBtn.click();
-    const year = "2022";
-    await taForm.year.input.fill(year);
-    const code = randomString();
-    await taForm.code.input.fill(code);
-    await taForm.name.input.fill(name);
-    const amount = "420";
-    await taForm.amount.input.fill(amount);
-    await taForm.submitBtn.click();
-    await expect(row).toBeVisible();
-    // TODO: assert correct values in newly generated row
-    await expect(taForm.year.input).toContainText("");
-    await expect(taForm.code.input).toContainText("");
-    await expect(taForm.name.input).toContainText("");
-    await expect(taForm.amount.input).toContainText("");
+    await test.step("check form is in correct state", async () => {
+      await expect(taForm.submitBtn).toBeEnabled();
+      await expect(taForm.year.error).toBeHidden();
+      await expect(taForm.code.error).toBeHidden();
+      await expect(taForm.name.error).toBeHidden();
+      await expect(taForm.amount.error).toBeHidden();
+      await expect(row).toBeHidden();
+    });
+    await test.step("fill form", async () => {
+      await taForm.year.input.fill(year);
+      await taForm.code.input.fill(code);
+      await taForm.name.input.fill(name);
+      await taForm.amount.input.fill(amount);
+    });
+    await test.step("create row", async () => {
+      await taForm.submitBtn.click();
+      await expect(row).toBeVisible();
+      await expect(row.locator(`input:has-text("${name}")`));
+      await expect(row.locator(`input:has-text("${year}")`));
+      await expect(row.locator(`input:has-text("${code}")`));
+      await expect(row.locator(`input:has-text("${amount}")`));
+      await expect(taForm.year.input).toContainText("");
+      await expect(taForm.code.input).toContainText("");
+      await expect(taForm.name.input).toContainText("");
+      await expect(taForm.amount.input).toContainText("");
+    });
+    await test.step("delete newly created form", async () => {
+      koodienhallintaPage.page.on("dialog", (dialog) =>
+        dialog.accept(
+          `Oletko aivan varma, että haluat poistaa talousarviotilin ${code} ${name}?`
+        )
+      );
+      await row
+        .locator(`button[title="Poista talousarviotili ${code}"]`)
+        .click();
+      await expect(row).toBeHidden();
+    });
   });
   test("requires all fields", async ({ koodienhallintaPage }) => {
     const taForm = koodienhallintaPage.taTilit.form;
