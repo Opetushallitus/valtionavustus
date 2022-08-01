@@ -100,7 +100,7 @@ export const HakuEdit = ({
   };
 
   const multipleProjectCodesEnabled =
-    environment["multiple-project-codes"]?.["enabled?"];
+    environment["multiple-project-codes"]?.["enabled?"] === true;
 
   const updateCodeValue =
     (id: CodeType, avustushaku: SelectedAvustushaku) =>
@@ -208,7 +208,7 @@ export const HakuEdit = ({
             )}
             selectedValue={selectedValueOperationalUnit}
             disabled={isAllPaymentsPaid}
-            environment={environment}
+            multipleProjectCodesEnabled={multipleProjectCodesEnabled}
             updateValue={updateCodeValue("operational-unit-id", avustushaku)}
           />
         </div>
@@ -230,7 +230,7 @@ export const HakuEdit = ({
                 (k) => k["value-type"] === "project"
               )}
               disabled={isAllPaymentsPaid}
-              environment={environment}
+              multipleProjectCodesEnabled={multipleProjectCodesEnabled}
               controller={controller}
             />
           ) : (
@@ -241,7 +241,7 @@ export const HakuEdit = ({
               )}
               selectedValue={selectedValueProject}
               disabled={isAllPaymentsPaid}
-              environment={environment}
+              multipleProjectCodesEnabled={multipleProjectCodesEnabled}
               updateValue={updateCodeValue("project-id", avustushaku)}
             />
           )}
@@ -263,7 +263,7 @@ export const HakuEdit = ({
             )}
             selectedValue={selectedValueOperation}
             disabled={isAllPaymentsPaid}
-            environment={environment}
+            multipleProjectCodesEnabled={multipleProjectCodesEnabled}
             updateValue={updateCodeValue("operation-id", avustushaku)}
           />
         </div>

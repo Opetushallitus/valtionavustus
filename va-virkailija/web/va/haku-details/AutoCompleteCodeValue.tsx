@@ -5,7 +5,6 @@ import Select, {
   OptionProps,
   GroupBase,
 } from "react-select";
-import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 import { VaCodeValue } from "../types";
 
 export type CodeType = "operational-unit-id" | "project-id" | "operation-id";
@@ -16,7 +15,7 @@ export interface AutoCompleteCodeValueProps {
   codeOptions: VaCodeValue[];
   selectedValue: VaCodeValue | "";
   disabled: boolean;
-  environment: EnvironmentApiResponse;
+  multipleProjectCodesEnabled: boolean;
 }
 
 const colorDarkGray = "rgb(153, 146, 144)";
@@ -28,13 +27,10 @@ export default function AutocompleteCodeValue(
     codeType,
     selectedValue,
     disabled,
-    environment,
+    multipleProjectCodesEnabled,
     updateValue,
     codeOptions,
   } = props;
-
-  const multipleProjectCodesEnabled =
-    environment["multiple-project-codes"]?.["enabled?"];
 
   const getOptionValue = (option: VaCodeValue) =>
     `${option.code} ${option["code-value"]}`;
