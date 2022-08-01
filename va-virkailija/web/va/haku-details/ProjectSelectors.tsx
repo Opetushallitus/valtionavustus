@@ -45,7 +45,11 @@ export default function ProjectSelectors(props: ProjectSelectorsProps) {
         controller.onChangeListener(avustushaku, { id: "project-id" }, null);
         avustushaku["project-id"] = null;
       } else {
-        controller.onChangeListener(avustushaku, { id: "project-id" }, option.id);
+        controller.onChangeListener(
+          avustushaku,
+          { id: "project-id" },
+          option.id
+        );
         avustushaku["project-id"] = option.id;
       }
     };

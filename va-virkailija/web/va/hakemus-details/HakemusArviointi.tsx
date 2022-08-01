@@ -86,16 +86,14 @@ export const HakemusArviointi = ({
           className="koodien-valinta-elementti"
           data-test-id="code-value-dropdown__project"
         >
-          <h3 className="koodien-valinta-otsikko required">
-            Projektikoodi
-          </h3>
-        <ProjectSelector
-          updateValue={selectProject}
-          codeOptions={projects}
-          selectedValue={hakemus.project || ""}
-          multipleProjectCodesEnabled={multipleProjectCodesEnabled}
-          disabled={!allowHakemusStateChanges}
-        />
+          <h3 className="koodien-valinta-otsikko required">Projektikoodi</h3>
+          <ProjectSelector
+            updateValue={selectProject}
+            codeOptions={projects}
+            selectedValue={hakemus.project || ""}
+            multipleProjectCodesEnabled={multipleProjectCodesEnabled}
+            disabled={!allowHakemusStateChanges}
+          />
         </div>
       )}
       <ChooseRahoitusalueAndTalousarviotili
