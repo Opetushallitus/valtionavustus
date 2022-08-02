@@ -13,7 +13,7 @@ const correctOVTTest = test.extend({
     const codes = {
       operationalUnit: "6600105300",
       operation: "3425324634",
-      project: "523452346",
+      project: ["523452346"],
     };
     const koodienHallintaPage = KoodienhallintaPage(page);
     await koodienHallintaPage.createCodeValues(codes);
@@ -115,9 +115,10 @@ test.describe.parallel("Maksatukset", () => {
       expect(await maksatuksetPage.getBatchStatus(1)).toEqual("Maksettu");
 
       const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu();
+
       expect(maksatukset).toContainEqual(
         maksatuksetPage.getExpectedPaymentXML(
-          codeValues.project,
+          codeValues.project[0],
           codeValues.operation,
           codeValues.operationalUnit,
           pitkaviite,
@@ -242,7 +243,7 @@ test.describe.parallel("Maksatukset", () => {
     const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu();
     expect(maksatukset).toContainEqual(
       maksatuksetPage.getExpectedPaymentXML(
-        project,
+        project[0],
         operation,
         operationalUnit,
         pitkaviite,
