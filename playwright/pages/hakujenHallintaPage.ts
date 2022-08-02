@@ -547,7 +547,7 @@ export class HakujenHallintaPage {
     if (props.vaCodes) {
       await this.selectCode("operational-unit", props.vaCodes.operationalUnit);
 
-      await this.selectProject(props.vaCodes.project[1]);
+      await this.selectProject(props.vaCodes.project[0]);
 
       await this.selectCode("operation", props.vaCodes.operation);
     }
