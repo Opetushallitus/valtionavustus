@@ -344,6 +344,19 @@ export class HakemustenArviointiPage {
 
     const hakemusID = await this.getHakemusID();
 
+    const selectFirstAvailableProjectAsDefault = async () => {
+      await this.page
+        .locator("text=Syötä projektikoodi")
+        .click({ force: true });
+      await this.page
+        .locator(
+          `[data-test-id="projekti-valitsin-initial"] [class^="code-value-dropdown-project-id__option"]`
+        )
+        .click({ force: true });
+    };
+
+    await selectFirstAvailableProjectAsDefault();
+
     expectToBeDefined(hakemusID);
     console.log("Hakemus ID:", hakemusID);
 
