@@ -409,6 +409,7 @@ export class HakujenHallintaPage {
       (name) => document.querySelector("#haku-name-fi")?.textContent !== name,
       currentHakuTitle
     );
+    await this.page.waitForLoadState("networkidle");
 
     return parseInt(await expectQueryParameter(this.page, "avustushaku"));
   }
@@ -444,6 +445,14 @@ export class HakujenHallintaPage {
   async selectProject(code: string) {
     await this.page.click(`.projekti-valitsin input`);
     await this.page.click(`[data-test-id='${code}']`);
+  }
+
+  async selectVaCodes(codes: VaCodeValues | undefined) {
+    if (!codes) throw new Error("No VaCodeValues provided, cannot continue");
+
+    await this.selectCode("operational-unit", codes.operationalUnit);
+    await this.selectProject(codes.project[0]);
+    await this.selectCode("operation", codes.operation);
   }
 
   async addProjectRow() {
@@ -537,20 +546,13 @@ export class HakujenHallintaPage {
     console.log(`Avustushaku name for test: ${avustushakuName}`);
 
     const avustushakuID = await this.copyEsimerkkihaku();
-    await this.page.waitForLoadState("networkidle");
     console.log(`Avustushaku ID: ${avustushakuID}`);
 
     await this.page.fill("#register-number", registerNumber);
     await this.page.fill("#haku-name-fi", avustushakuName);
     await this.page.fill("#haku-name-sv", avustushakuName + " på svenska");
 
-    if (props.vaCodes) {
-      await this.selectCode("operational-unit", props.vaCodes.operationalUnit);
-
-      await this.selectProject(props.vaCodes.project[0]);
-
-      await this.selectCode("operation", props.vaCodes.operation);
-    }
+    await this.selectVaCodes(props.vaCodes);
 
     for (const rahoitusalue of defaultRahoitusalueet) {
       await this.inputTalousarviotili(rahoitusalue);

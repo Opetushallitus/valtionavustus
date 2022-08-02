@@ -6,13 +6,15 @@ import moment from "moment";
 import { defaultValues } from "../fixtures/defaultValues";
 import { HakujenHallintaPage } from "../pages/hakujenHallintaPage";
 
-defaultValues("Editing hakulomake", async ({ page }) => {
+defaultValues("Editing hakulomake", async ({ page, hakuProps }) => {
   const puuttuvaYhteyshenkilonNimiJson = await readFile(
     path.join(__dirname, "../fixtures/prod.hakulomake.json"),
     { encoding: "utf8" }
   );
   const hakujenHallinta = new HakujenHallintaPage(page);
   const avustushakuID = await hakujenHallinta.copyEsimerkkihaku();
+  await hakujenHallinta.selectVaCodes(hakuProps.vaCodes);
+
   await hakujenHallinta.setStartDate(moment().subtract(1, "day"));
   const formEditorPage = await hakujenHallinta.navigateToFormEditor(
     avustushakuID
@@ -144,9 +146,10 @@ defaultValues("Editing hakulomake", async ({ page }) => {
   );
 });
 
-defaultValues("Editing väliselvitys lomake", async ({ page }) => {
+defaultValues("Editing väliselvitys lomake", async ({ page, hakuProps }) => {
   const hakujenHallinta = new HakujenHallintaPage(page);
   const avustushakuID = await hakujenHallinta.copyEsimerkkihaku();
+  await hakujenHallinta.selectVaCodes(hakuProps.vaCodes);
   await hakujenHallinta.setStartDate(moment().subtract(1, "day"));
   const formEditorPage = await hakujenHallinta.navigateToFormEditor(
     avustushakuID
@@ -168,9 +171,10 @@ defaultValues("Editing väliselvitys lomake", async ({ page }) => {
   });
 });
 
-defaultValues("Editing loppuselvitys lomake", async ({ page }) => {
+defaultValues("Editing loppuselvitys lomake", async ({ page, hakuProps }) => {
   const hakujenHallinta = new HakujenHallintaPage(page);
   const avustushakuID = await hakujenHallinta.copyEsimerkkihaku();
+  await hakujenHallinta.selectVaCodes(hakuProps.vaCodes);
   await hakujenHallinta.setStartDate(moment().subtract(1, "day"));
   const formEditorPage = await hakujenHallinta.navigateToFormEditor(
     avustushakuID

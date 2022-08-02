@@ -12,8 +12,6 @@ export async function alustaAvustushaunTaytto(
   console.log(`Avustushaku name for test: ${avustushakuName}`);
 
   const avustushakuID = await hakujenHallintaPage.copyEsimerkkihaku();
-
-  await page.waitForLoadState("networkidle");
   console.log(`Avustushaku ID: ${avustushakuID}`);
 
   await page.fill("#register-number", registerNumber);
