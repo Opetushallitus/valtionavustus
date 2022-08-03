@@ -10,7 +10,7 @@ Se tidigare ändringsansökningar och gör vid behov en ny ändringsansökan: {{
 
 Bilaga: {{ attachment-title }}
 
-Mera information ges vid behov av kontaktpersonen som anges i beslutet. 
+Mera information ges vid behov av kontaktpersonen som anges i beslutet.
 
 Hälsningar,
 {{ presenter-name }}
