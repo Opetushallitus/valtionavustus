@@ -455,6 +455,14 @@ export class HakujenHallintaPage {
     await this.selectCode("operation", codes.operation);
   }
 
+  async selectVaCodesAndWaitForSave(codes: VaCodeValues | undefined) {
+    await Promise.all([
+      this.selectVaCodes(codes),
+      this.page.locator("text=Tallennetaan").waitFor(),
+      this.page.locator("text=Kaikki tiedot tallennettu").waitFor(),
+    ]);
+  }
+
   async addProjectRow() {
     await this.page.click(`.lisaa-projekti`);
   }

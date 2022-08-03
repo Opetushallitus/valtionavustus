@@ -156,19 +156,8 @@ test.describe("Koodienhallinta", () => {
     await test.step("the code is visible in haku editor dropdown", async () => {
       const hakujenHallintaPage =
         await koodienhallintaPage.navigateToHakujenHallintaPage();
-      await hakujenHallintaPage.fillCode(
-        "operational-unit",
-        codeValues.operationalUnit
-      );
-      await expect(
-        hakujenHallintaPage.page.locator(
-          `[data-test-id="${codeValues.operationalUnit}"]`
-        )
-      ).toBeVisible();
 
-      await hakujenHallintaPage.selectCodeAndWaitForSave(
-        codeValues.operationalUnit
-      );
+      await hakujenHallintaPage.selectVaCodesAndWaitForSave(codeValues);
     });
 
     await test.step("And virkailija hides the code", async () => {
