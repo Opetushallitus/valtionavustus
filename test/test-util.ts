@@ -12,6 +12,7 @@ import {
 } from "puppeteer";
 import * as assert from "assert";
 import moment from "moment";
+import { VaCodeValues } from "../playwright/utils/types";
 
 const { randomBytes } = require("crypto");
 
@@ -350,11 +351,7 @@ interface HakuProps {
   vaCodes?: VaCodeValues;
 }
 
-export type VaCodeValues = {
-  operationalUnit: string;
-  project: string;
-  operation: string;
-};
+export { VaCodeValues };
 
 type Rahoitusalue = {
   koulutusaste: string;
