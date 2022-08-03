@@ -30,6 +30,7 @@ import {
   randomAsiatunnus,
   MailWithLinks,
   saveMuutoshakemus,
+  VaCodeValues,
 } from "../test-util";
 import {
   ratkaiseMuutoshakemusEnabledAvustushaku,
@@ -42,6 +43,7 @@ import {
   navigateToLatestMuutoshakemus,
   expectMuutoshakemusPaatosReason,
   setMuutoshakemusJatkoaikaDecision,
+  createRandomCodeValues,
 } from "./muutospaatosprosessi-util";
 import {
   navigateToHakijaMuutoshakemusPage,
@@ -734,18 +736,21 @@ etunimi.sukunimi@oph.fi
     let linkToMuutoshakemus: string;
     let avustushakuID: number;
     let hakemusID: number;
+    let codes: VaCodeValues;
     const newName = randomString();
     const newEmail = "uusi.email@reaktor.com";
     const newPhone = "0901967632";
     const haku = createRandomHakuValues();
 
     beforeAll(async () => {
+      codes = await createRandomCodeValues(page);
       const { avustushakuID: avustushakuId, hakemusID: hakemusId } =
         await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(
           page,
           haku,
           answers,
-          defaultBudget
+          defaultBudget,
+          codes
         );
       avustushakuID = avustushakuId;
       hakemusID = hakemusId;

@@ -122,13 +122,15 @@ export async function createMuutoshakemusEnabledHaku(
 async function createBudjettimuutoshakemusEnabledHaku(
   page: Page,
   registerNumber: string,
+  codes: VaCodeValues,
   hakuName?: string
 ): Promise<{ avustushakuID: number }> {
   return await createHakuWithLomakeJson(
     page,
     budjettimuutoshakemusEnabledLomakeJson,
     registerNumber,
-    hakuName
+    hakuName,
+    codes
   );
 }
 
@@ -497,7 +499,7 @@ export async function createRandomCodeValues(
   const uniqueCode = () => randomString().substring(0, 13);
   const codeValues = {
     operationalUnit: uniqueCode(),
-    project: uniqueCode(),
+    project: [uniqueCode(), uniqueCode()],
     operation: uniqueCode(),
   };
   return createCodeValues(page, codeValues);
@@ -510,7 +512,11 @@ export async function createCodeValues(
   await navigate(page, "/admin-ui/va-code-values/");
   await createCode(page, "Toimintayksikkö", codeValues.operationalUnit);
   await clickKoodienhallintaTab(page, "project");
-  await createCode(page, "Projekti", codeValues.project);
+
+  for (const project of codeValues.project) {
+    await createCode(page, "Projekti", project);
+  }
+
   await clickKoodienhallintaTab(page, "operation");
   await createCode(page, "Toiminto", codeValues.operation);
   return codeValues;
@@ -541,11 +547,13 @@ export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSum
   page: Page,
   haku: Haku,
   answers: Answers,
-  budget: Budget
+  budget: Budget,
+  codes: VaCodeValues
 ) {
   const { avustushakuID } = await createBudjettimuutoshakemusEnabledHaku(
     page,
     haku.registerNumber,
+    codes,
     haku.avustushakuName
   );
   await publishAvustushaku(page, avustushakuID);
@@ -562,11 +570,13 @@ export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwrit
   page: Page,
   haku: Haku,
   answers: Answers,
-  budget: Budget
+  budget: Budget,
+  codes: VaCodeValues
 ) {
   const { avustushakuID } = await createBudjettimuutoshakemusEnabledHaku(
     page,
     haku.registerNumber,
+    codes,
     haku.avustushakuName
   );
   await publishAvustushaku(page, avustushakuID);

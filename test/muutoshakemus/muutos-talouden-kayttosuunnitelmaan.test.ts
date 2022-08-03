@@ -19,8 +19,10 @@ import {
   createRandomHakuValues,
   setupTestLogging,
   typePerustelu,
+  VaCodeValues,
 } from "../test-util";
 import {
+  createRandomCodeValues,
   fillOsiotAndSendMuutoshakemusDecision,
   navigateToLatestMuutoshakemus,
   navigateToNthMuutoshakemus,
@@ -111,14 +113,17 @@ describe("Talousarvion muuttaminen", () => {
     let hakemusID: number;
     let emails: Email[];
     const haku = createRandomHakuValues("Budjettimuutos");
+    let codes: VaCodeValues;
 
     beforeAll(async () => {
+      codes = await createRandomCodeValues(page);
       const { avustushakuID: avustushakuId, hakemusID: hakemusId } =
         await ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(
           page,
           haku,
           answers,
-          budget
+          budget,
+          codes
         );
       avustushakuID = avustushakuId;
       hakemusID = hakemusId;
@@ -164,6 +169,7 @@ describe("Talousarvion muuttaminen", () => {
     let avustushakuID: number;
     let hakemusID: number;
     const haku = createRandomHakuValues("Budjettimuutos");
+    let codes: VaCodeValues;
     const budget: Budget = {
       amount: {
         personnel: "300",
@@ -187,12 +193,14 @@ describe("Talousarvion muuttaminen", () => {
     };
 
     beforeAll(async () => {
+      codes = await createRandomCodeValues(page);
       const { avustushakuID: avustushakuId, hakemusID: hakemusId } =
         await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(
           page,
           haku,
           answers,
-          budget
+          budget,
+          codes
         );
       avustushakuID = avustushakuId;
       hakemusID = hakemusId;
@@ -600,14 +608,17 @@ describe("Talousarvion muuttaminen", () => {
   describe("Hakija haluaa tehdä muutoshakemuksen talouden käyttösuunnitelmaan", () => {
     let hakemusID: number;
     const haku = createRandomHakuValues("Budjettimuutos");
+    let codes: VaCodeValues;
 
     beforeAll(async () => {
+      codes = await createRandomCodeValues(page);
       const { hakemusID: hakemusId } =
         await ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(
           page,
           haku,
           answers,
-          defaultBudget
+          defaultBudget,
+          codes
         );
       hakemusID = hakemusId;
       await navigateToHakijaMuutoshakemusPage(page, hakemusID);

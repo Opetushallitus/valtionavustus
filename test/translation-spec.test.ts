@@ -14,9 +14,11 @@ import {
   HAKIJA_URL,
   setCalendarDateForSelector,
   MailWithLinks,
+  VaCodeValues,
 } from "./test-util";
 import {
   Answers,
+  createRandomCodeValues,
   fillOsiotAndSendMuutoshakemusDecision,
   navigateToLatestMuutoshakemus,
   parseMuutoshakemusPaatosFromEmails,
@@ -98,9 +100,11 @@ describe("Translations", () => {
     let avustushakuID: number;
     let hakemusID: number;
     let userKey: string;
+    let codes: VaCodeValues;
     const haku = createRandomHakuValues();
 
     beforeAll(async () => {
+      codes = await createRandomCodeValues(page);
       const {
         avustushakuID: avustushakuId,
         hakemusID: hakemusId,
@@ -109,7 +113,8 @@ describe("Translations", () => {
         page,
         haku,
         answers,
-        budget
+        budget,
+        codes
       );
       avustushakuID = avustushakuId;
       hakemusID = hakemusId;
@@ -408,7 +413,7 @@ Se tidigare ändringsansökningar och gör vid behov en ny ändringsansökan: ${
 
 Bilaga: Rättelseyrkande
 
-Mera information ges vid behov av kontaktpersonen som anges i beslutet. 
+Mera information ges vid behov av kontaktpersonen som anges i beslutet.
 
 Hälsningar,
 _ valtionavustus
