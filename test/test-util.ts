@@ -331,8 +331,8 @@ export interface MailWithLinks extends Email {
 export async function createValidCopyOfEsimerkkihakuAndReturnTheNewId(
   page: Page,
   registerNumber: string,
-  hakuName?: string,
-  vaCodes?: VaCodeValues
+  vaCodes: VaCodeValues,
+  hakuName?: string
 ): Promise<number> {
   return await createHakuFromEsimerkkihaku(page, {
     name: hakuName,

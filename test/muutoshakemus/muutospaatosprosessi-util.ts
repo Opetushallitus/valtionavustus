@@ -89,14 +89,14 @@ async function createHakuWithLomakeJson(
   page: Page,
   lomakeJson: string,
   registerNumber: string,
-  hakuName?: string,
-  codes?: VaCodeValues
+  codes: VaCodeValues,
+  hakuName?: string
 ): Promise<{ avustushakuID: number }> {
   const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(
     page,
     registerNumber,
-    hakuName,
-    codes
+    codes,
+    hakuName
   );
   await clickElementWithText(page, "span", "Hakulomake");
   await clearAndSet(page, ".form-json-editor textarea", lomakeJson);
@@ -107,15 +107,15 @@ async function createHakuWithLomakeJson(
 export async function createMuutoshakemusEnabledHaku(
   page: Page,
   registerNumber: string,
-  hakuName?: string,
-  codes?: VaCodeValues
+  codes: VaCodeValues,
+  hakuName?: string
 ): Promise<{ avustushakuID: number }> {
   return await createHakuWithLomakeJson(
     page,
     muutoshakemusEnabledHakuLomakeJson,
     registerNumber,
-    hakuName,
-    codes
+    codes,
+    hakuName
   );
 }
 
@@ -129,18 +129,20 @@ async function createBudjettimuutoshakemusEnabledHaku(
     page,
     budjettimuutoshakemusEnabledLomakeJson,
     registerNumber,
-    hakuName,
-    codes
+    codes,
+    hakuName
   );
 }
 
 export async function createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku(
   page: Page,
-  haku: Haku
+  haku: Haku,
+  codes: VaCodeValues
 ): Promise<number> {
   const { avustushakuID } = await createMuutoshakemusDisabledMenoluokiteltuHaku(
     page,
     haku.registerNumber,
+    codes,
     haku.avustushakuName
   );
   await publishAvustushaku(page, avustushakuID);
@@ -336,12 +338,14 @@ export async function fillAndSendMuutoshakemusDisabledMenoluokiteltuHakemus(
 async function createMuutoshakemusDisabledMenoluokiteltuHaku(
   page: Page,
   registerNumber: string,
+  codes: VaCodeValues,
   hakuName?: string
 ): Promise<{ avustushakuID: number }> {
   return await createHakuWithLomakeJson(
     page,
     muutoshakuDisabledMenoluokiteltuLomakeJson,
     registerNumber,
+    codes,
     hakuName
   );
 }
@@ -452,11 +456,13 @@ export async function fillAndSendMuutoshakemusEnabledHakemus(
 export async function publishAndFillMuutoshakemusEnabledAvustushaku(
   page: Page,
   haku: Haku,
-  answers: Answers
+  answers: Answers,
+  codes: VaCodeValues
 ): Promise<{ avustushakuID: number; userKey: string }> {
   const { avustushakuID } = await createMuutoshakemusEnabledHaku(
     page,
     haku.registerNumber,
+    codes,
     haku.avustushakuName
   );
   await publishAvustushaku(page, avustushakuID);
@@ -526,13 +532,13 @@ export async function createMuutoshakemusEnabledAvustushakuAndFillHakemus(
   page: Page,
   haku: Haku,
   answers: Answers,
-  codes?: VaCodeValues
+  codes: VaCodeValues
 ): Promise<{ avustushakuID: number; userKey: string }> {
   const { avustushakuID } = await createMuutoshakemusEnabledHaku(
     page,
     haku.registerNumber,
-    haku.avustushakuName,
-    codes
+    codes,
+    haku.avustushakuName
   );
   await publishAvustushaku(page, avustushakuID);
   const { userKey } = await fillAndSendMuutoshakemusEnabledHakemus(

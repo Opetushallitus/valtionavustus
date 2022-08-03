@@ -41,9 +41,11 @@ import {
   randomAsiatunnus,
   setupTestLogging,
   navigateToHaunTiedot,
+  VaCodeValues,
 } from "./test-util";
 import {
   createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku,
+  createRandomCodeValues,
   fillAndSendMuutoshakemusDisabledMenoluokiteltuHakemus,
 } from "./muutoshakemus/muutospaatosprosessi-util";
 
@@ -70,10 +72,12 @@ describe("Puppeteer tests", () => {
     const allowBasicAvustushakuFlowAndCheckEachHakemusHasValmistelija =
       (getPage: () => Page, multiplePaymentBatches: boolean) => async () => {
         const page = getPage();
+        const codes = await createRandomCodeValues(page);
         const avustushakuID =
           await createValidCopyOfEsimerkkihakuAndReturnTheNewId(
             page,
-            randomAsiatunnus()
+            randomAsiatunnus(),
+            codes
           );
         await navigateToHaunTiedot(page, avustushakuID);
         if (multiplePaymentBatches) {
@@ -154,9 +158,11 @@ describe("Puppeteer tests", () => {
   });
 
   it("supports fields that accept only decimals", async function () {
+    const codes = await createRandomCodeValues(page);
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(
       page,
-      randomAsiatunnus()
+      randomAsiatunnus(),
+      codes
     );
     const { fieldId, fieldLabel } =
       await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(
@@ -178,9 +184,11 @@ describe("Puppeteer tests", () => {
   });
 
   it("supports fields that accept only whole numbers", async function () {
+    const codes = await createRandomCodeValues(page);
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(
       page,
-      randomAsiatunnus()
+      randomAsiatunnus(),
+      codes
     );
     const { fieldId, fieldLabel } =
       await addFieldOfSpecificTypeToFormAndReturnElementIdAndLabel(
@@ -202,9 +210,11 @@ describe("Puppeteer tests", () => {
   });
 
   it("supports editing and saving the values of the fields", async function () {
+    const codes = await createRandomCodeValues(page);
     await createValidCopyOfEsimerkkihakuAndReturnTheNewId(
       page,
-      randomAsiatunnus()
+      randomAsiatunnus(),
+      codes
     );
     await clickElementWithText(page, "span", "Hakulomake");
     await page.waitForFunction(
@@ -225,9 +235,11 @@ describe("Puppeteer tests", () => {
   });
 
   it("should allow user to add koodistokenttä to form and save it", async function () {
+    const codes = await createRandomCodeValues(page);
     const avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(
       page,
-      randomAsiatunnus()
+      randomAsiatunnus(),
+      codes
     );
     await navigate(page, `/admin/form-editor/?avustushaku=${avustushakuID}`);
     // Add new Koodistokenttä
@@ -256,9 +268,11 @@ describe("Puppeteer tests", () => {
     const randomValueForProjectNutshell = randomString();
 
     beforeAll(async () => {
+      const codes = await createRandomCodeValues(page);
       avustushakuID = await createValidCopyOfEsimerkkihakuAndReturnTheNewId(
         page,
-        randomAsiatunnus()
+        randomAsiatunnus(),
+        codes
       );
       fieldId = (
         await addFieldToFormAndReturnElementIdAndLabel(
@@ -432,6 +446,7 @@ describe("Puppeteer tests", () => {
   describe("When muutoshakukelvoton avustushaku with menoluokat has been created", () => {
     let avustushakuID: number;
     let hakemusID: number;
+    let codes: VaCodeValues;
     const haku = {
       registerNumber: randomAsiatunnus(),
       avustushakuName: `Muutoshakukelvoton menoluokallinen haku - ${moment(
@@ -440,10 +455,12 @@ describe("Puppeteer tests", () => {
     };
 
     beforeAll(async () => {
+      codes = await createRandomCodeValues(page);
       avustushakuID =
         await createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku(
           page,
-          haku
+          haku,
+          codes
         );
     });
 
