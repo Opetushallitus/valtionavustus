@@ -348,7 +348,7 @@ interface HakuProps {
   hakuaikaEnd?: string;
   hankkeenAlkamispaiva?: string;
   hankkeenPaattymispaiva?: string;
-  vaCodes?: VaCodeValues;
+  vaCodes: VaCodeValues;
 }
 
 export { VaCodeValues };
@@ -395,11 +395,9 @@ export async function createHakuFromEsimerkkihaku(
   await clearAndType(page, "#haku-name-fi", avustushakuName);
   await clearAndType(page, "#haku-name-sv", avustushakuName + " på svenska");
 
-  if (props.vaCodes) {
-    await selectCode(page, "operational-unit", props.vaCodes.operationalUnit);
-    await selectCode(page, "project", props.vaCodes.project[1]);
-    await selectCode(page, "operation", props.vaCodes.operation);
-  }
+  await selectCode(page, "operational-unit", props.vaCodes.operationalUnit);
+  await selectCode(page, "project", props.vaCodes.project[1]);
+  await selectCode(page, "operation", props.vaCodes.operation);
 
   for (const rahoitusalue of defaultRahoitusalueet) {
     await inputTalousarviotili(page, rahoitusalue);

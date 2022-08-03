@@ -669,19 +669,23 @@ etunimi.sukunimi@oph.fi
     const hankkeenPaattymispaiva = "29.12.1969";
 
     beforeAll(async () => {
+      const codes = await createRandomCodeValues(page);
       await createHakuFromEsimerkkihaku(page, {
         name,
         hankkeenAlkamispaiva,
         hankkeenPaattymispaiva,
         registerNumber: randomAsiatunnus(),
+        vaCodes: codes,
       });
     });
 
     describe("And creates avustushaku #2", () => {
       beforeAll(async () => {
+        const codes = await createRandomCodeValues(page);
         await createHakuFromEsimerkkihaku(page, {
           name: `Makuulla hatata - haku ${randomString()}`,
           registerNumber: randomAsiatunnus(),
+          vaCodes: codes,
         });
       });
 
