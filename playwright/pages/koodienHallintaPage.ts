@@ -53,8 +53,10 @@ export const KoodienhallintaPage = (page: Page) => {
     await submitButton.click();
 
     for (const code of codeValues.project) {
-      await clickKoodienhallintaTab("project");
-      await createCode("Projekti", code);
+      if (code !== NoProjectCodeProvided.code) {
+        await clickKoodienhallintaTab("project");
+        await createCode("Projekti", code);
+      }
     }
 
     await clickKoodienhallintaTab("operation");
