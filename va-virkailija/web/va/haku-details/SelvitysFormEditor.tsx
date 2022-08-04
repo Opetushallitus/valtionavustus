@@ -130,8 +130,15 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
     return formDraft && formContent && !isEqual(parsedForm, formContent);
   }
 
-  const disableSave = !!parseError || !formHasBeenEdited();
-
+  const hasFormBeenEdited = !formHasBeenEdited();
+  const disableSave = !!parseError || hasFormBeenEdited;
+  console.log({
+    parseError,
+    hasFormBeenEdited,
+    disableSave,
+    parsedForm,
+    formContent,
+  });
   const recreateForm = () => {
     dispatch(recreateSelvitysForm({ avustushaku, selvitysType }));
   };

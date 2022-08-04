@@ -937,12 +937,14 @@ const hakuSlice = createSlice({
           null,
           2
         );
-        const hakuList = getHakuList(state)
-        const index = hakuList.findIndex(({id}) => id === avustushakuId)
+        const hakuList = getHakuList(state);
+        const index = hakuList.findIndex(({ id }) => id === avustushakuId);
         hakuList[index] = {
           ...avustushaku,
-          ...rest
-        }
+          ...rest,
+          valiselvitysForm,
+          loppuselvitysForm,
+        };
         state.saveStatus.loadingAvustushaku = false;
       })
       .addCase(saveHaku.fulfilled, (state, action) => {

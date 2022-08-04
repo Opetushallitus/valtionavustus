@@ -11,6 +11,7 @@ import VaPreviewComponentFactory from "soresu-form/web/va/VaPreviewComponentFact
 import FakeFormController from "../form/FakeFormController";
 import FakeFormState from "../form/FakeFormState";
 import { Avustushaku, Field, Form, Koodistos } from "soresu-form/web/va/types";
+import _ from "lodash";
 
 interface FormEditorProps {
   avustushaku: Avustushaku;
@@ -19,11 +20,17 @@ interface FormEditorProps {
   onFormChange: (avustushaku: Avustushaku, newDraft: Form) => void;
 }
 const FormEditor = ({
-  avustushaku,
+  avustushaku: originalAvustushaku,
   koodistos,
-  formDraft,
+  formDraft: originalFormDraft,
   onFormChange,
 }: FormEditorProps) => {
+  /*
+    FIXME: Redux Toolkit doesn't allow mutating state directly
+           so this needs to be refactored to dispatch to the store
+   */
+  const avustushaku = _.cloneDeep(originalAvustushaku);
+  const formDraft = _.cloneDeep(originalFormDraft);
   const allowEditing =
     avustushaku.privileges && avustushaku.privileges["edit-haku"];
   const onFormEdited = (newDraft: Form, operationResult: Field | void) => {
