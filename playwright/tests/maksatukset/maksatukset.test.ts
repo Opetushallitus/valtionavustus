@@ -7,13 +7,14 @@ import { getHakemusTokenAndRegisterNumber } from "../../utils/emails";
 import { VIRKAILIJA_URL } from "../../utils/constants";
 import { MaksatuksetPage } from "../../pages/maksatuksetPage";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
+import { NoProjectCodeProvided } from "../../utils/types";
 
 const correctOVTTest = test.extend({
   codes: async ({ page }, use) => {
     const codes = {
       operationalUnit: "6600105300",
       operation: "3425324634",
-      project: ["523452346"],
+      project: [NoProjectCodeProvided.code, "523452346"],
     };
     const koodienHallintaPage = KoodienhallintaPage(page);
     await koodienHallintaPage.createCodeValues(codes);
@@ -118,7 +119,7 @@ test.describe.parallel("Maksatukset", () => {
 
       expect(maksatukset).toContainEqual(
         maksatuksetPage.getExpectedPaymentXML(
-          codeValues.project[0],
+          codeValues.project[1],
           codeValues.operation,
           codeValues.operationalUnit,
           pitkaviite,

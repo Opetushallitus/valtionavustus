@@ -443,7 +443,10 @@ export class HakujenHallintaPage {
   }
 
   async selectProject(code: string) {
+    if (!code) throw new Error("No project code provided, cannot continue");
+
     await this.page.click(`.projekti-valitsin input`);
+    await this.page.type(`.projekti-valitsin input`, code);
     await this.page.click(`[data-test-id='${code}']`);
   }
 
@@ -451,7 +454,7 @@ export class HakujenHallintaPage {
     if (!codes) throw new Error("No VaCodeValues provided, cannot continue");
 
     await this.selectCode("operational-unit", codes.operationalUnit);
-    await this.selectProject(codes.project[0]);
+    await this.selectProject(codes.project[1]);
     await this.selectCode("operation", codes.operation);
   }
 
