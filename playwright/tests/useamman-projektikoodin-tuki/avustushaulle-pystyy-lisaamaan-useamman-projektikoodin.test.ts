@@ -5,6 +5,7 @@ import { defaultValues as test } from "../../fixtures/defaultValues";
 import { alustaAvustushaunTaytto } from "./multiple-projects-util";
 
 import { expectToBeDefined } from "../../utils/util";
+import { NoProjectCodeProvided } from "../../utils/types";
 
 test("Avustushaulle pystyy lisäämään useamman projektikoodin", async ({
   page,
@@ -32,7 +33,7 @@ test("Avustushaulle pystyy lisäämään useamman projektikoodin", async ({
 
   await hakujenHallintaPage.overrideProject(
     secondProjectToSelect,
-    "0000000000000000"
+    NoProjectCodeProvided.code
   );
 
   await expect(

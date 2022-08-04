@@ -1,7 +1,7 @@
 import { Page, expect } from "@playwright/test";
 import { navigate } from "../utils/navigate";
 import { randomString } from "../utils/random";
-import { VaCodeValues } from "../utils/types";
+import { NoProjectCodeProvided, VaCodeValues } from "../utils/types";
 import { HakujenHallintaPage } from "./hakujenHallintaPage";
 
 type KoodienhallintaTab = "operational-unit" | "project" | "operation";
@@ -42,8 +42,14 @@ export const KoodienhallintaPage = (page: Page) => {
     await clickKoodienhallintaTab("project");
     const year = "2020";
     await page.fill("[data-test-id=code-form__year]", year);
-    await page.fill("[data-test-id=code-form__code]", "0000000000000000");
-    await page.fill("[data-test-id=code-form__name]", `Ei projektikoodia`);
+    await page.fill(
+      "[data-test-id=code-form__code]",
+      NoProjectCodeProvided.code
+    );
+    await page.fill(
+      "[data-test-id=code-form__name]",
+      NoProjectCodeProvided.name
+    );
     await submitButton.click();
 
     for (const code of codeValues.project) {

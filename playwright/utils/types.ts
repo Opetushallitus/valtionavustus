@@ -29,3 +29,8 @@ export interface VaCodeValues {
   project: string[];
   operation: string;
 }
+
+export const NoProjectCodeProvided = {
+  code: "0000000000000000",
+  name: "Ei projektikoodia",
+};
