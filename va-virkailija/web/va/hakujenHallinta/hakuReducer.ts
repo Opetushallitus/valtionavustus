@@ -108,6 +108,17 @@ interface State {
   loadingProjects: boolean;
 }
 
+function appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing(
+  avustushaku: Avustushaku
+): Avustushaku {
+  const today = new Date().toISOString().split('T')[0];
+  return {
+    ...avustushaku,
+    ["hankkeen-alkamispaiva"]: avustushaku["hankkeen-alkamispaiva"] ?? today,
+    ["hankkeen-paattymispaiva"]: avustushaku["hankkeen-paattymispaiva"] ?? today
+  }
+}
+
 export const saveProjects = createAsyncThunk<void, {avustushakuId: number, value: VaCodeValue}, {state: HakujenHallintaRootState}>("haku/saveProject", async (payload, thunkAPI) => {
   thunkAPI.dispatch(addProject(payload))
   thunkAPI.dispatch(startAutoSaveForSelectedAvustushaku())
@@ -150,11 +161,12 @@ export const fetchInitialState = createAsyncThunk<InitialData, void>(
     ]);
     const query = queryString.parse(window.location.search);
     const grantId = parseInt(query.avustushaku) || 1;
-    const selectedHaku = hakuList.find((h) => h.id === grantId) || hakuList[0];
+    const modifiedHakuList = hakuList.map(appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing)
+    const selectedHaku = modifiedHakuList.find((h) => h.id === grantId) || hakuList[0];
 
     thunkAPI.dispatch(selectHaku(selectedHaku));
     return {
-      hakuList,
+      hakuList: modifiedHakuList,
       userInfo,
       environment,
       codeOptions,
