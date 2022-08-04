@@ -513,8 +513,11 @@ export class HakujenHallintaPage {
   }
 
   async copyEsimerkkihaku(): Promise<number> {
-    await navigate(this.page, "/admin/haku-editor/");
     const loadingAvustushaku = this.page.locator("text=Ladataan tietoja");
+    await Promise.all([
+      loadingAvustushaku.waitFor(),
+      navigate(this.page, "/admin/haku-editor/")
+    ])
     await loadingAvustushaku.waitFor({ state: "detached" });
     await Promise.all([
       loadingAvustushaku.waitFor(),
