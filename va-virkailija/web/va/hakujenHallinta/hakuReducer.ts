@@ -572,7 +572,7 @@ export const saveForm = createAsyncThunk<
 });
 
 export const updateField = createAsyncThunk<
-  Avustushaku,
+  void,
   {
     avustushaku: Avustushaku;
     field: { id: string; name?: string; dataset?: any };
@@ -698,8 +698,8 @@ export const updateField = createAsyncThunk<
   } else {
     console.error("Unsupported update to field ", update.field.id, ":", update);
   }
+  thunkAPI.dispatch(updateAvustushaku(avustushaku));
   thunkAPI.dispatch(startAutoSaveForAvustushaku(avustushaku.id));
-  return avustushaku;
 });
 
 const consolidateSubTabSelectionWithUrl = (): HakujenHallintaSubTab => {
@@ -806,6 +806,11 @@ const hakuSlice = createSlice({
     addAvustushaku: (state, { payload }: PayloadAction<BaseAvustushaku>) => {
       const hakuList = getHakuList(state);
       hakuList.unshift(payload);
+    },
+    updateAvustushaku: (state, { payload }: PayloadAction<Avustushaku>) => {
+      const hakuList = getHakuList(state);
+      const index = hakuList.findIndex(({ id }) => id === payload.id);
+      hakuList[index] = payload;
     },
     addFocusArea: (state) => {
       const selectedHaku = getSelectedHaku(state);
@@ -975,11 +980,6 @@ const hakuSlice = createSlice({
       .addCase(updateField.pending, (state) => {
         state.saveStatus.saveInProgress = true;
       })
-      .addCase(updateField.fulfilled, (state, { payload }) => {
-        const hakuList = getHakuList(state);
-        const index = hakuList.findIndex(({ id }) => id === payload.id);
-        hakuList[index] = payload;
-      })
       .addCase(startAutoSaveForAvustushaku.pending, (state) => {
         state.saveStatus.saveInProgress = true;
       })
@@ -1057,6 +1057,7 @@ export const {
   selvitysFormUpdated,
   selvitysFormJsonUpdated,
   addAvustushaku,
+  updateAvustushaku,
   addFocusArea,
   deleteFocusArea,
   addProject,
