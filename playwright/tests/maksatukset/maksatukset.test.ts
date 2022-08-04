@@ -244,7 +244,7 @@ test.describe.parallel("Maksatukset", () => {
     const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu();
     expect(maksatukset).toContainEqual(
       maksatuksetPage.getExpectedPaymentXML(
-        project[0],
+        project[1],
         operation,
         operationalUnit,
         pitkaviite,
