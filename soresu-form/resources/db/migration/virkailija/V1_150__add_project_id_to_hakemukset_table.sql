@@ -1,5 +1,5 @@
 alter table hakija.hakemukset
-add column project_id integer,
+add column if not exists project_id integer,
 add constraint project_id_fk foreign key (project_id) references virkailija.va_code_values (id);
 
 update hakija.hakemukset as h
