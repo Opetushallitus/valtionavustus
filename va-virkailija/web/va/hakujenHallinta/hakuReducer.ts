@@ -1,6 +1,7 @@
 import {
   AsyncThunkPayloadCreator,
   createAsyncThunk,
+  createSelector,
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
@@ -61,10 +62,6 @@ interface Avustushaku extends BaseAvustushaku {
   projects?: VaCodeValue[];
 }
 
-interface SelectedAvustushaku extends Avustushaku {
-  payments?: Payment[];
-}
-
 interface InitialData {
   hakuList: Avustushaku[];
   userInfo: UserInfo;
@@ -90,7 +87,6 @@ interface OnSelectHakuData {
 interface State {
   initialData: { loading: false; data: InitialData } | { loading: true };
   hakuId: number;
-  selectedHaku?: SelectedAvustushaku;
   saveStatus: {
     saveInProgress: boolean;
     saveTime: string | null;
@@ -111,31 +107,56 @@ interface State {
 function appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing(
   avustushaku: Avustushaku
 ): Avustushaku {
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
   return {
     ...avustushaku,
     ["hankkeen-alkamispaiva"]: avustushaku["hankkeen-alkamispaiva"] ?? today,
-    ["hankkeen-paattymispaiva"]: avustushaku["hankkeen-paattymispaiva"] ?? today
-  }
+    ["hankkeen-paattymispaiva"]:
+      avustushaku["hankkeen-paattymispaiva"] ?? today,
+  };
 }
 
-export const saveProjects = createAsyncThunk<void, {avustushakuId: number, value: VaCodeValue}, {state: HakujenHallintaRootState}>("haku/saveProject", async (payload, thunkAPI) => {
-  thunkAPI.dispatch(addProject(payload))
-  thunkAPI.dispatch(startAutoSaveForSelectedAvustushaku())
-  await HttpUtil.post(`/api/avustushaku/${payload.avustushakuId}/projects`, thunkAPI.getState().haku.selectedHaku!.projects)
-})
+export const saveProjects = createAsyncThunk<
+  void,
+  { avustushakuId: number; value: VaCodeValue },
+  { state: HakujenHallintaRootState }
+>("haku/saveProject", async (payload, thunkAPI) => {
+  thunkAPI.dispatch(addProject(payload));
+  thunkAPI.dispatch(startAutoSaveForAvustushaku(payload.avustushakuId));
+  const haku = getAvustushaku(thunkAPI.getState().haku, payload.avustushakuId);
+  await HttpUtil.post(
+    `/api/avustushaku/${payload.avustushakuId}/projects`,
+    haku.projects
+  );
+});
 
-export const removeProjects = createAsyncThunk<void, {avustushakuId: number, value: VaCodeValue}, {state: HakujenHallintaRootState}>("haku/saveProject", async (payload, thunkAPI) => {
-  thunkAPI.dispatch(removeProject(payload))
-  thunkAPI.dispatch(startAutoSaveForSelectedAvustushaku())
-  await HttpUtil.post(`/api/avustushaku/${payload.avustushakuId}/projects`, thunkAPI.getState().haku.selectedHaku!.projects)
-})
+export const removeProjects = createAsyncThunk<
+  void,
+  { avustushakuId: number; value: VaCodeValue },
+  { state: HakujenHallintaRootState }
+>("haku/saveProject", async (payload, thunkAPI) => {
+  thunkAPI.dispatch(removeProject(payload));
+  thunkAPI.dispatch(startAutoSaveForAvustushaku(payload.avustushakuId));
+  const haku = getAvustushaku(thunkAPI.getState().haku, payload.avustushakuId);
+  await HttpUtil.post(
+    `/api/avustushaku/${payload.avustushakuId}/projects`,
+    haku.projects
+  );
+});
 
-export const updateProjects = createAsyncThunk<void, {avustushakuId: number, value: VaCodeValue, index: number}, {state: HakujenHallintaRootState}>("haku/saveProject", async (payload, thunkAPI) => {
-  thunkAPI.dispatch(updateProject(payload))
-  thunkAPI.dispatch(startAutoSaveForSelectedAvustushaku())
-  await HttpUtil.post(`/api/avustushaku/${payload.avustushakuId}/projects`, thunkAPI.getState().haku.selectedHaku!.projects)
-})
+export const updateProjects = createAsyncThunk<
+  void,
+  { avustushakuId: number; value: VaCodeValue; index: number },
+  { state: HakujenHallintaRootState }
+>("haku/saveProject", async (payload, thunkAPI) => {
+  thunkAPI.dispatch(updateProject(payload));
+  thunkAPI.dispatch(startAutoSaveForAvustushaku(payload.avustushakuId));
+  const haku = getAvustushaku(thunkAPI.getState().haku, payload.avustushakuId);
+  await HttpUtil.post(
+    `/api/avustushaku/${payload.avustushakuId}/projects`,
+    haku.projects
+  );
+});
 
 export const fetchInitialState = createAsyncThunk<InitialData, void>(
   "haku/fetchInitialState",
@@ -161,8 +182,11 @@ export const fetchInitialState = createAsyncThunk<InitialData, void>(
     ]);
     const query = queryString.parse(window.location.search);
     const grantId = parseInt(query.avustushaku) || 1;
-    const modifiedHakuList = hakuList.map(appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing)
-    const selectedHaku = modifiedHakuList.find((h) => h.id === grantId) || hakuList[0];
+    const modifiedHakuList = hakuList.map(
+      appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing
+    );
+    const selectedHaku =
+      modifiedHakuList.find((h) => h.id === grantId) || hakuList[0];
 
     thunkAPI.dispatch(selectHaku(selectedHaku));
     return {
@@ -312,14 +336,14 @@ const saveHaku = createAsyncThunk<
   }
 });
 
-export const createHaku = createAsyncThunk<Avustushaku, number>(
+export const createHaku = createAsyncThunk<void, number>(
   "haku/createHaku",
   async (baseHakuId, thunkAPI) => {
     const newAvustushaku = await HttpUtil.put("/api/avustushaku", {
       baseHakuId,
     });
+    thunkAPI.dispatch(addAvustushaku(newAvustushaku));
     thunkAPI.dispatch(selectHaku(newAvustushaku));
-    return newAvustushaku;
   }
 );
 
@@ -403,6 +427,7 @@ export const saveRole = createAsyncThunk<
   | {
       roles: Role[];
       avustushakuId: number;
+      privileges: Privileges;
     }
   | { privileges: Privileges; avustushakuId: number },
   { role: Role; avustushakuId: number }
@@ -411,6 +436,9 @@ export const saveRole = createAsyncThunk<
     `/api/avustushaku/${avustushakuId}/role/${role.id}`,
     role
   );
+  const privileges = await HttpUtil.get<Privileges>(
+    `/api/avustushaku/${avustushakuId}/privileges`
+  );
   if (role.role === "vastuuvalmistelija") {
     const roles = await HttpUtil.get<Role[]>(
       `/api/avustushaku/${avustushakuId}/role`
@@ -418,11 +446,9 @@ export const saveRole = createAsyncThunk<
     return {
       avustushakuId,
       roles,
+      privileges,
     };
   } else {
-    const privileges = await HttpUtil.get<Privileges>(
-      `/api/avustushaku/${avustushakuId}/privileges`
-    );
     return {
       privileges,
       avustushakuId,
@@ -432,18 +458,16 @@ export const saveRole = createAsyncThunk<
 
 const debouncedSave: AsyncThunkPayloadCreator<
   void,
-  void,
+  number,
   { state: HakujenHallintaRootState }
-> = async (_, thunkAPI) => {
-  const selectedHaku = thunkAPI.getState().haku.selectedHaku;
-  if (selectedHaku) {
-    thunkAPI.dispatch(saveHaku(selectedHaku));
-  }
+> = async (id, thunkAPI) => {
+  const haku = getAvustushaku(thunkAPI.getState().haku, id);
+  thunkAPI.dispatch(saveHaku(haku));
 };
 
-export const startAutoSaveForSelectedAvustushaku = createAsyncThunk<
+export const startAutoSaveForAvustushaku = createAsyncThunk<
   void,
-  void,
+  number,
   { state: HakujenHallintaRootState }
 >("haku/startAutoSave", _.debounce(debouncedSave, 3000));
 
@@ -674,7 +698,7 @@ export const updateField = createAsyncThunk<
   } else {
     console.error("Unsupported update to field ", update.field.id, ":", update);
   }
-  thunkAPI.dispatch(startAutoSaveForSelectedAvustushaku());
+  thunkAPI.dispatch(startAutoSaveForAvustushaku(avustushaku.id));
   return avustushaku;
 });
 
@@ -699,7 +723,6 @@ const initialState: State = {
     loading: true,
   },
   hakuId: LocalStorage.avustushakuId() || 1,
-  selectedHaku: undefined,
   saveStatus: {
     saveInProgress: false,
     saveTime: null,
@@ -780,53 +803,92 @@ const hakuSlice = createSlice({
         newDraftJson;
       state.saveStatus.saveTime = null;
     },
+    addAvustushaku: (state, { payload }: PayloadAction<BaseAvustushaku>) => {
+      const hakuList = getHakuList(state);
+      hakuList.unshift(payload);
+    },
     addFocusArea: (state) => {
-      state.selectedHaku?.content["focus-areas"].items.push({ fi: "", sv: "" });
+      const selectedHaku = getSelectedHaku(state);
+      selectedHaku.content["focus-areas"].items.push({ fi: "", sv: "" });
     },
     deleteFocusArea: (state, { payload }: PayloadAction<number>) => {
-      state.selectedHaku?.content["focus-areas"].items.splice(payload, 1);
+      const selectedHaku = getSelectedHaku(state);
+      selectedHaku.content["focus-areas"].items.splice(payload, 1);
     },
     addSelectionCriteria: (state) => {
-      state.selectedHaku?.content["selection-criteria"].items.push({ fi: "", sv: "" });
+      const selectedHaku = getSelectedHaku(state);
+      selectedHaku.content["selection-criteria"].items.push({ fi: "", sv: "" });
     },
-    removeSelectionCriteria: (state, {payload}: PayloadAction<number>) => {
-      state.selectedHaku?.content["selection-criteria"].items.splice(payload, 1)
+    removeSelectionCriteria: (state, { payload }: PayloadAction<number>) => {
+      const selectedHaku = getSelectedHaku(state);
+      selectedHaku.content["selection-criteria"].items.splice(payload, 1);
     },
-    addProject: (state, {payload}: PayloadAction<{avustushakuId: number, value: VaCodeValue}>) => {
-      if (state.selectedHaku) {
-        state.selectedHaku.projects?.push(payload.value)
-        state.selectedHaku["project-id"] = payload.value.id
+    addProject: (
+      state,
+      { payload }: PayloadAction<{ avustushakuId: number; value: VaCodeValue }>
+    ) => {
+      const selectedHaku = getSelectedHaku(state);
+      selectedHaku.projects?.push(payload.value);
+      selectedHaku["project-id"] = payload.value.id;
+    },
+    removeProject: (
+      state,
+      { payload }: PayloadAction<{ avustushakuId: number; value: VaCodeValue }>
+    ) => {
+      const selectedHaku = getSelectedHaku(state);
+      if (selectedHaku.projects) {
+        selectedHaku.projects = selectedHaku.projects.filter(
+          (p) => p.id !== payload.value.id
+        );
+        selectedHaku["project-id"] = null;
       }
     },
-    removeProject: (state, {payload}: PayloadAction<{avustushakuId: number, value: VaCodeValue}>) => {
-      if (state.selectedHaku?.projects) {
-        state.selectedHaku.projects = state.selectedHaku.projects.filter(p => p.id !== payload.value.id)
-        state.selectedHaku["project-id"] = null
+    updateProject: (
+      state,
+      {
+        payload,
+      }: PayloadAction<{
+        avustushakuId: number;
+        value: VaCodeValue;
+        index: number;
+      }>
+    ) => {
+      const selectedHaku = getSelectedHaku(state);
+      if (selectedHaku.projects) {
+        selectedHaku.projects[payload.index] = payload.value;
+        selectedHaku["project-id"] = payload.value.id;
       }
     },
-    updateProject: (state, {payload}: PayloadAction<{avustushakuId: number, value: VaCodeValue, index: number}>) => {
-      if (state.selectedHaku?.projects) {
-        state.selectedHaku.projects[payload.index] = payload.value
-        state.selectedHaku["project-id"] = payload.value.id
+    addTalousarviotili: (state, { payload }: PayloadAction<string>) => {
+      const selectedHaku = getSelectedHaku(state);
+      if (selectedHaku.content["rahoitusalueet"]) {
+        const rahoitusalueet = getOrCreateRahoitusalueet(selectedHaku);
+        const rahoitusalue = getOrCreateRahoitusalue(rahoitusalueet, payload);
+        rahoitusalue.talousarviotilit.push("");
       }
     },
-    addTalousarviotili: (state, {payload}: PayloadAction<string>) => {
-      if (state.selectedHaku?.content["rahoitusalueet"]) {
-        const rahoitusalueet = getOrCreateRahoitusalueet(state.selectedHaku)
-        const rahoitusalue = getOrCreateRahoitusalue(rahoitusalueet, payload)
-        rahoitusalue.talousarviotilit.push("")
-      }
-    },
-    removeTalousarviotili: (state, {payload}: PayloadAction<{rahoitusalue: string, index: number}>) => {
-      if (state.selectedHaku?.content["rahoitusalueet"]) {
-        const rahoitusalueet = getOrCreateRahoitusalueet(state.selectedHaku)
-        const rahoitusalue = getOrCreateRahoitusalue(rahoitusalueet, payload.rahoitusalue)
+    removeTalousarviotili: (
+      state,
+      { payload }: PayloadAction<{ rahoitusalue: string; index: number }>
+    ) => {
+      const selectedHaku = getSelectedHaku(state);
+      if (selectedHaku.content["rahoitusalueet"]) {
+        const rahoitusalueet = getOrCreateRahoitusalueet(selectedHaku);
+        const rahoitusalue = getOrCreateRahoitusalue(
+          rahoitusalueet,
+          payload.rahoitusalue
+        );
         rahoitusalue.talousarviotilit.splice(payload.index, 1);
         if (rahoitusalue.talousarviotilit.length === 0) {
-          rahoitusalueet.splice(rahoitusalueet.findIndex(r => r.rahoitusalue === payload.rahoitusalue), 1)
+          rahoitusalueet.splice(
+            rahoitusalueet.findIndex(
+              (r) => r.rahoitusalue === payload.rahoitusalue
+            ),
+            1
+          );
         }
       }
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -841,17 +903,16 @@ const hakuSlice = createSlice({
       })
       .addCase(selectHaku.pending, (state, action) => {
         const avustushaku = action.meta.arg;
-        const avustushakuId = avustushaku.id;
-        state.selectedHaku = avustushaku;
-        LocalStorage.saveAvustushakuId(avustushakuId);
+        LocalStorage.saveAvustushakuId(avustushaku.id);
         const newHakuListing =
           new URLSearchParams(window.location.search).get(
             "new-haku-listing"
           ) === "true";
         const url = newHakuListing
-          ? `?avustushaku=${avustushakuId}&new-haku-listing=true`
-          : `?avustushaku=${avustushakuId}`;
+          ? `?avustushaku=${avustushaku.id}&new-haku-listing=true`
+          : `?avustushaku=${avustushaku.id}`;
         window.history.pushState(null, document.title, url);
+        state.hakuId = avustushaku.id;
         state.saveStatus.loadingAvustushaku = true;
       })
       .addCase(selectHaku.fulfilled, (state, action) => {
@@ -876,7 +937,12 @@ const hakuSlice = createSlice({
           null,
           2
         );
-        state.selectedHaku = { ...avustushaku, ...rest };
+        const hakuList = getHakuList(state)
+        const index = hakuList.findIndex(({id}) => id === avustushakuId)
+        hakuList[index] = {
+          ...avustushaku,
+          ...rest
+        }
         state.saveStatus.loadingAvustushaku = false;
       })
       .addCase(saveHaku.fulfilled, (state, action) => {
@@ -901,23 +967,18 @@ const hakuSlice = createSlice({
           action.payload ?? "unexpected-save-error";
         state.saveStatus.saveInProgress = false;
       })
-      .addCase(createHaku.fulfilled, (state, action) => {
-        if (state.initialData.loading) {
-          return;
-        }
-        const newHaku = action.payload;
-        state.initialData.data.hakuList.unshift(newHaku);
-      })
       .addCase(createHaku.rejected, (state) => {
         state.saveStatus.serverError = "unexpected-create-error";
       })
       .addCase(updateField.pending, (state) => {
         state.saveStatus.saveInProgress = true;
       })
-      .addCase(updateField.fulfilled, (state, action) => {
-        state.selectedHaku = action.payload;
+      .addCase(updateField.fulfilled, (state, { payload }) => {
+        const hakuList = getHakuList(state);
+        const index = hakuList.findIndex(({ id }) => id === payload.id);
+        hakuList[index] = payload;
       })
-      .addCase(startAutoSaveForSelectedAvustushaku.pending, (state) => {
+      .addCase(startAutoSaveForAvustushaku.pending, (state) => {
         state.saveStatus.saveInProgress = true;
       })
       .addCase(createHakuRole.pending, (state) => {
@@ -926,19 +987,9 @@ const hakuSlice = createSlice({
       .addCase(createHakuRole.fulfilled, (state, action) => {
         state.saveStatus.saveInProgress = false;
         const { avustushakuId, roles, privileges } = action.payload;
-        if (state.selectedHaku?.id === avustushakuId) {
-          state.selectedHaku.roles = roles;
-          state.selectedHaku.privileges = privileges;
-        }
-        if (!state.initialData.loading) {
-          const avustushaku = state.initialData.data.hakuList.find(
-            (a) => a.id === avustushakuId
-          );
-          if (avustushaku) {
-            avustushaku.roles = roles;
-            avustushaku.privileges = privileges;
-          }
-        }
+        const haku = getAvustushaku(state, avustushakuId);
+        haku.roles = roles;
+        haku.privileges = privileges;
       })
       .addCase(saveRole.pending, (state) => {
         state.saveStatus.saveInProgress = true;
@@ -946,40 +997,29 @@ const hakuSlice = createSlice({
       .addCase(saveRole.fulfilled, (state, action) => {
         state.saveStatus.saveInProgress = false;
         const payload = action.payload;
-        if (state.selectedHaku?.id !== payload.avustushakuId) {
-          return;
-        }
-        if ("privileges" in payload) {
-          state.selectedHaku.privileges = payload.privileges;
+        const haku = getAvustushaku(state, payload.avustushakuId);
+        if ("roles" in payload) {
+          haku.roles = payload.roles;
         } else {
-          state.selectedHaku.roles = payload.roles;
+          haku.privileges = payload.privileges;
         }
       })
       .addCase(deleteRole.fulfilled, (state, action) => {
         const payload = action.payload;
-        if (state.selectedHaku?.id !== payload.avustushakuId) {
-          return;
-        }
-        state.selectedHaku.privileges = payload.privileges;
-        state.selectedHaku.roles = payload.roles;
+        const haku = getAvustushaku(state, payload.avustushakuId);
+        haku.privileges = payload.privileges;
+        haku.roles = payload.roles;
       })
       .addCase(saveForm.pending, (state) => {
         state.saveStatus.saveInProgress = true;
       })
       .addCase(saveForm.fulfilled, (state, action) => {
         const { avustushakuId, form, muutoshakukelpoinen } = action.payload;
-        if (state.initialData.loading) {
-          return;
-        }
-        const haku = state.initialData.data.hakuList.find(
-          (a) => a.id === avustushakuId
-        );
-        if (haku) {
-          haku.formContent = form;
-          state.formDrafts[avustushakuId] = form;
-          state.formDraftsJson[avustushakuId] = JSON.stringify(form, null, 2);
-          haku.muutoshakukelpoisuus = muutoshakukelpoinen;
-        }
+        const haku = getAvustushaku(state, avustushakuId);
+        haku.formContent = form;
+        state.formDrafts[avustushakuId] = form;
+        state.formDraftsJson[avustushakuId] = JSON.stringify(form, null, 2);
+        haku.muutoshakukelpoisuus = muutoshakukelpoinen;
       })
       .addCase(saveForm.rejected, (state, action) => {
         state.saveStatus.serverError =
@@ -990,15 +1030,8 @@ const hakuSlice = createSlice({
       })
       .addCase(saveSelvitysForm.fulfilled, (state, action) => {
         const { avustushakuId, form, selvitysType } = action.payload;
-        if (state.initialData.loading) {
-          return;
-        }
-        const haku = state.initialData.data.hakuList.find(
-          (a) => a.id === avustushakuId
-        );
-        if (haku) {
-          haku[selvitysFormMap[selvitysType]] = form;
-        }
+        const haku = getAvustushaku(state, avustushakuId);
+        haku[selvitysFormMap[selvitysType]] = form;
         state[selvitysFormDraftMap[selvitysType]][avustushakuId] = form;
         state[selvitysFormDraftJsonMap[selvitysType]][avustushakuId] =
           JSON.stringify(form, null, 2);
@@ -1021,6 +1054,7 @@ export const {
   formJsonUpdated,
   selvitysFormUpdated,
   selvitysFormJsonUpdated,
+  addAvustushaku,
   addFocusArea,
   deleteFocusArea,
   addProject,
@@ -1029,7 +1063,48 @@ export const {
   addSelectionCriteria,
   removeSelectionCriteria,
   addTalousarviotili,
-  removeTalousarviotili
+  removeTalousarviotili,
 } = hakuSlice.actions;
 
 export default hakuSlice.reducer;
+
+const getHakuList = (
+  state: State | HakujenHallintaRootState
+): Avustushaku[] => {
+  if ("haku" in state) {
+    if (state.haku.initialData.loading) {
+      return [];
+    }
+    return state.haku.initialData.data.hakuList;
+  }
+  if (state.initialData.loading) {
+    return [];
+  }
+  return state.initialData.data.hakuList;
+};
+const getAvustushakuFromList = (
+  hakuList: Avustushaku[],
+  avustushakuId: number
+) => {
+  const haku = hakuList.find(({ id }) => id === avustushakuId);
+  if (!haku) {
+    throw Error(
+      `Could not find avustushaku with id=${avustushakuId} from list`
+    );
+  }
+  return haku;
+};
+export const getSelectedHaku = (state: State) => {
+  const hakuList = getHakuList(state);
+  return getAvustushakuFromList(hakuList, state.hakuId);
+};
+
+const getAvustushaku = (state: State, avustushakuId: number) => {
+  const hakuList = getHakuList(state);
+  return getAvustushakuFromList(hakuList, avustushakuId);
+};
+
+export const getSelectedHakuSelector = createSelector(
+  (state: HakujenHallintaRootState) => getSelectedHaku(state.haku),
+  (value) => value
+);

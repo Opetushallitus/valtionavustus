@@ -1,13 +1,7 @@
 import React from "react";
 import ClassNames from "classnames";
 
-import {
-  Avustushaku,
-  Form,
-  HelpTexts,
-  Koodistos,
-  Liite,
-} from "soresu-form/web/va/types";
+import { HelpTexts, Koodistos, Liite } from "soresu-form/web/va/types";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 
 import { HakuEdit } from "./HakuEdit";
@@ -18,22 +12,21 @@ import HelpTooltip from "../HelpTooltip";
 import { LainsaadantoOption } from "../HakujenHallintaController";
 import { HakujenHallintaSubTab, UserInfo, VaCodeValue } from "../types";
 import { Maksatukset } from "./Maksatukset";
-import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
-import { selectEditorSubTab } from "../hakujenHallinta/hakuReducer";
+import {
+  useHakujenHallintaDispatch,
+  useHakujenHallintaSelector,
+} from "../hakujenHallinta/hakujenHallintaStore";
+import {
+  getSelectedHakuSelector,
+  selectEditorSubTab,
+} from "../hakujenHallinta/hakuReducer";
 
 interface EditorSelectorProps {
   subTab: HakujenHallintaSubTab;
-  avustushaku: Avustushaku;
   decisionLiitteet: Liite[];
   koodistos: Koodistos;
   userInfo: UserInfo;
   environment: EnvironmentApiResponse;
-  formDraft: Form;
-  formDraftJson: string;
-  loppuselvitysFormDraft: Form;
-  loppuselvitysFormDraftJson: string;
-  valiselvitysFormDraft: Form;
-  valiselvitysFormDraftJson: string;
   codeOptions: VaCodeValue[];
   lainsaadantoOptions: LainsaadantoOption[];
   helpTexts: HelpTexts;
@@ -49,22 +42,25 @@ function createRedirectTo(url: string) {
 export const EditorSelector = (props: EditorSelectorProps) => {
   const {
     subTab,
-    avustushaku,
     decisionLiitteet,
-    formDraft,
-    formDraftJson,
     koodistos,
     userInfo,
     environment,
-    valiselvitysFormDraft,
-    valiselvitysFormDraftJson,
-    loppuselvitysFormDraft,
-    loppuselvitysFormDraftJson,
     codeOptions,
     lainsaadantoOptions,
     helpTexts,
   } = props;
+  const state = useHakujenHallintaSelector((state) => state.haku);
+  const avustushaku = useHakujenHallintaSelector(getSelectedHakuSelector);
   const dispatch = useHakujenHallintaDispatch();
+  const formDraft = state.formDrafts[avustushaku.id];
+  const formDraftJson = state.formDraftsJson[avustushaku.id];
+  const valiselvitysFormDraft = state.valiselvitysFormDrafts[avustushaku.id];
+  const valiselvitysFormDraftJson =
+    state.valiselvitysFormDraftsJson[avustushaku.id];
+  const loppuselvitysFormDraft = state.loppuselvitysFormDrafts[avustushaku.id];
+  const loppuselvitysFormDraftJson =
+    state.loppuselvitysFormDraftsJson[avustushaku.id];
   let subTabContent;
   switch (subTab) {
     case "haku-editor":

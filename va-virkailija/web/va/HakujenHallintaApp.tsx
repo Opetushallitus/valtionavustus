@@ -26,7 +26,7 @@ const momentLocalizer = new MomentLocalizer(moment);
 
 const HakujenHallintaApp = () => {
   const state = useHakujenHallintaSelector((state) => state.haku);
-  const { saveStatus, initialData, selectedHaku } = state;
+  const { saveStatus, initialData } = state;
   const dispatch = useHakujenHallintaDispatch();
   useEffect(() => {
     dispatch(fetchInitialState());
@@ -36,7 +36,7 @@ const HakujenHallintaApp = () => {
   const onClickHaku = useCallback((avustushaku: Avustushaku) => {
     dispatch(selectHaku(avustushaku));
   }, []);
-  if (initialData.loading || !selectedHaku) {
+  if (initialData.loading) {
     return null;
   }
   const {
@@ -58,30 +58,13 @@ const HakujenHallintaApp = () => {
       />
       <section>
         {newHakuListing ? (
-          <NewHakuListing
-            hakuList={hakuList}
-            selectedHaku={selectedHaku}
-            onClickHaku={onClickHaku}
-          />
+          <NewHakuListing hakuList={hakuList} onClickHaku={onClickHaku} />
         ) : (
-          <HakuListing hakuList={hakuList} selectedHaku={selectedHaku} />
+          <HakuListing hakuList={hakuList} />
         )}
         <EditorSelector
           subTab={state.subTab}
-          avustushaku={selectedHaku}
           decisionLiitteet={decisionLiitteet}
-          formDraft={state.formDrafts[selectedHaku.id]}
-          formDraftJson={state.formDraftsJson[selectedHaku.id]}
-          valiselvitysFormDraft={state.valiselvitysFormDrafts[selectedHaku?.id]}
-          valiselvitysFormDraftJson={
-            state.valiselvitysFormDraftsJson[selectedHaku.id]
-          }
-          loppuselvitysFormDraft={
-            state.loppuselvitysFormDrafts[selectedHaku.id]
-          }
-          loppuselvitysFormDraftJson={
-            state.loppuselvitysFormDraftsJson[selectedHaku.id]
-          }
           environment={environment}
           koodistos={state.koodistos}
           userInfo={userInfo}

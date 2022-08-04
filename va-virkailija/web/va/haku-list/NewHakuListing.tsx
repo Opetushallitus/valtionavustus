@@ -17,10 +17,12 @@ import {
 import { Pill } from "../hakemus-list/Pill";
 import moment from "moment-timezone";
 import DatePicker from "react-widgets/DatePicker";
-import { SelectedAvustushaku, Avustushaku } from "../HakujenHallintaController";
+import { Avustushaku } from "../HakujenHallintaController";
 
 import buttonStyles from "../style/Button.module.less";
 import styles from "./NewHakuListing.module.less";
+import { useSelector } from "react-redux";
+import { getSelectedHakuSelector } from "../hakujenHallinta/hakuReducer";
 
 export const AVUSTUSHAKU_STATUSES_AVAILABLE_FOR_FILTER =
   AVUSTUSHAKU_STATUSES.filter((status) => status !== "deleted");
@@ -298,7 +300,6 @@ const TableHeader: React.FC<
 
 interface Props {
   hakuList: Avustushaku[];
-  selectedHaku: SelectedAvustushaku;
   onClickHaku: (avustushaku: Avustushaku) => void;
 }
 
@@ -378,11 +379,8 @@ const filterReducer = (
   }
 };
 
-export const NewHakuListing: React.FC<Props> = ({
-  hakuList,
-  selectedHaku,
-  onClickHaku,
-}) => {
+export const NewHakuListing: React.FC<Props> = ({ hakuList, onClickHaku }) => {
+  const selectedHaku = useSelector(getSelectedHakuSelector);
   const [sortKey, setSortKey] = useState<SortKey | undefined>();
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
   const [filterState, dispatch] = useReducer(filterReducer, defaultFilterState);

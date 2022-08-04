@@ -515,17 +515,17 @@ export class HakujenHallintaPage {
   async copyEsimerkkihaku(): Promise<number> {
     const loadingAvustushaku = this.page.locator("text=Ladataan tietoja");
     await Promise.all([
+      navigate(this.page, "/admin/haku-editor/"),
       loadingAvustushaku.waitFor(),
-      navigate(this.page, "/admin/haku-editor/")
-    ])
+    ]);
     await loadingAvustushaku.waitFor({ state: "detached" });
     await Promise.all([
-      loadingAvustushaku.waitFor(),
       clickElementWithTextStrict(
         this.page,
         "td",
         "Yleisavustus - esimerkkihaku"
       ),
+      loadingAvustushaku.waitFor(),
     ]);
     await loadingAvustushaku.waitFor({ state: "detached" });
     return await this.copyCurrentHaku();

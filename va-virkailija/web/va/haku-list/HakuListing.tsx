@@ -25,11 +25,13 @@ import {
   useHakujenHallintaSelector,
 } from "../hakujenHallinta/hakujenHallintaStore";
 import { clearFilters, setFilter } from "../hakujenHallinta/hakuFilterReducer";
-import { selectHaku } from "../hakujenHallinta/hakuReducer";
+import {
+  getSelectedHakuSelector,
+  selectHaku,
+} from "../hakujenHallinta/hakuReducer";
 
 interface HakuListingProps {
   hakuList: Avustushaku[];
-  selectedHaku: Avustushaku;
 }
 
 function _fieldGetter(fieldName: string) {
@@ -104,7 +106,8 @@ function _filterWithStrPredicate(
 }
 
 export const HakuListing = (props: HakuListingProps) => {
-  const { hakuList, selectedHaku } = props;
+  const { hakuList } = props;
+  const selectedHaku = useHakujenHallintaSelector(getSelectedHakuSelector);
   const filter = useHakujenHallintaSelector((s) => s.hakuFilter);
   const dispatch = useHakujenHallintaDispatch();
   const onFilterChange = function (filterId: FilterId) {

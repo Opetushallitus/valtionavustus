@@ -29,10 +29,14 @@ import ProjectSelectors from "./ProjectSelectors";
 import "../style/koodien-valinta.less";
 import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
 import {
-  addFocusArea, addSelectionCriteria, addTalousarviotili,
+  addFocusArea,
+  addSelectionCriteria,
+  addTalousarviotili,
   createHaku,
-  deleteFocusArea, removeSelectionCriteria, removeTalousarviotili,
-  startAutoSaveForSelectedAvustushaku,
+  deleteFocusArea,
+  removeSelectionCriteria,
+  removeTalousarviotili,
+  startAutoSaveForAvustushaku,
   updateField,
 } from "../hakujenHallinta/hakuReducer";
 
@@ -378,12 +382,12 @@ export const HakuEdit = ({
         onChange={onChange}
         helpTexts={helpTexts}
         onAdd={(_, tili) => {
-          dispatch(addTalousarviotili(tili))
-          dispatch(startAutoSaveForSelectedAvustushaku());
+          dispatch(addTalousarviotili(tili));
+          dispatch(startAutoSaveForAvustushaku(avustushaku.id));
         }}
         onRemove={(_, rahoitusalue, index) => () => {
-          dispatch(removeTalousarviotili({rahoitusalue, index}))
-          dispatch(startAutoSaveForSelectedAvustushaku());
+          dispatch(removeTalousarviotili({ rahoitusalue, index }));
+          dispatch(startAutoSaveForAvustushaku(avustushaku.id));
         }}
       />
       <div>
@@ -727,7 +731,7 @@ const SelectionCriteria = ({
   helpTexts,
 }: TextAreaProps) => {
   const selectionCriteria = avustushaku.content["selection-criteria"];
-  const dispatch = useHakujenHallintaDispatch()
+  const dispatch = useHakujenHallintaDispatch();
   const criteriaItems = [];
   for (let index = 0; index < selectionCriteria.items.length; index++) {
     const htmlId = "selection-criteria-" + index + "-";
@@ -756,8 +760,8 @@ const SelectionCriteria = ({
             type="button"
             className="remove"
             onClick={() => {
-              dispatch(removeSelectionCriteria(index))
-              dispatch(startAutoSaveForSelectedAvustushaku())
+              dispatch(removeSelectionCriteria(index));
+              dispatch(startAutoSaveForAvustushaku(avustushaku.id));
             }}
             title="Poista"
             tabIndex={-1}
@@ -792,8 +796,8 @@ const SelectionCriteria = ({
               type="button"
               disabled={!allowAllHakuEdits}
               onClick={() => {
-                dispatch(addSelectionCriteria())
-                dispatch(startAutoSaveForSelectedAvustushaku())
+                dispatch(addSelectionCriteria());
+                dispatch(startAutoSaveForAvustushaku(avustushaku.id));
               }}
               data-test-id="add-selection-criteria"
             >
@@ -844,7 +848,7 @@ const FocusArea = ({
             className="remove"
             onClick={() => {
               dispatch(deleteFocusArea(index));
-              dispatch(startAutoSaveForSelectedAvustushaku());
+              dispatch(startAutoSaveForAvustushaku(avustushaku.id));
             }}
             title="Poista"
             tabIndex={-1}
@@ -880,7 +884,7 @@ const FocusArea = ({
               disabled={!allowAllHakuEdits}
               onClick={() => {
                 dispatch(addFocusArea());
-                dispatch(startAutoSaveForSelectedAvustushaku());
+                dispatch(startAutoSaveForAvustushaku(avustushaku.id));
               }}
             >
               Lisää uusi painopistealue

@@ -6,12 +6,12 @@ import ProjectSelector from "./ProjectSelector";
 import "../style/projektien-valinta.less";
 import {
   useHakujenHallintaDispatch,
-  useHakujenHallintaSelector
+  useHakujenHallintaSelector,
 } from "../hakujenHallinta/hakujenHallintaStore";
 import {
   removeProjects,
   saveProjects,
-  updateProjects
+  updateProjects,
 } from "../hakujenHallinta/hakuReducer";
 
 interface ProjectSelectorsProps {
@@ -25,12 +25,12 @@ export default function ProjectSelectors(props: ProjectSelectorsProps) {
   const loadingProjects = useHakujenHallintaSelector(
     (s) => s.haku.loadingProjects
   );
-  const dispatch = useHakujenHallintaDispatch()
+  const dispatch = useHakujenHallintaDispatch();
   const { avustushaku, multipleProjectCodesEnabled } = props;
   let { codeOptions, disabled } = props;
-  const projects = [...avustushaku.projects ?? []].sort((a, b) =>
+  const projects = [...(avustushaku.projects ?? [])].sort((a, b) =>
     a["code-value"].localeCompare(b["code-value"])
-  )
+  );
   disabled = disabled || loadingProjects;
 
   codeOptions = makeNoProjectCodeFirstElement(codeOptions);
@@ -40,7 +40,13 @@ export default function ProjectSelectors(props: ProjectSelectorsProps) {
       if (option === null) {
         return;
       }
-      dispatch(updateProjects({avustushakuId: avustushaku.id, value: option, index: projectIndex}))
+      dispatch(
+        updateProjects({
+          avustushakuId: avustushaku.id,
+          value: option,
+          index: projectIndex,
+        })
+      );
       /*//TODO: Poista allaoleva tehdessäsi VA-286-6:sta
       if (option == null) {
         controller.onChangeListener(avustushaku, { id: "project-id" }, null);
@@ -56,12 +62,16 @@ export default function ProjectSelectors(props: ProjectSelectorsProps) {
     };
 
   const addRow = () => {
-    dispatch(saveProjects({avustushakuId: avustushaku.id, value: codeOptions[0]}))
+    dispatch(
+      saveProjects({ avustushakuId: avustushaku.id, value: codeOptions[0] })
+    );
   };
 
   const removeRow = (project: VaCodeValue | null) => () => {
     if (project) {
-      dispatch(removeProjects({avustushakuId: avustushaku.id, value: project}))
+      dispatch(
+        removeProjects({ avustushakuId: avustushaku.id, value: project })
+      );
     }
   };
 
