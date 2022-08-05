@@ -904,20 +904,18 @@ const hakuSlice = createSlice({
       })
       .addCase(saveHaku.fulfilled, (state, action) => {
         const response = action.payload;
-        if (state.initialData.loading) {
-          return;
-        }
-        const oldHaku = state.initialData.data.hakuList.find(
-          (haku) => haku.id === response.id
-        );
-        if (oldHaku) {
-          oldHaku.status = response.status;
-          oldHaku.phase = response.phase;
-          oldHaku.decision!.updatedAt = response.decision?.updatedAt;
-        }
+        const hakuList = getHakuList(state);
+        const oldHaku = getAvustushakuFromList(hakuList, response.id);
+        oldHaku.status = response.status;
+        oldHaku.phase = response.phase;
+        oldHaku.decision!.updatedAt = response.decision?.updatedAt;
         state.saveStatus.saveInProgress = false;
         state.saveStatus.saveTime = new Date().toISOString();
-        state.saveStatus.serverError = "";
+        if (!oldHaku.projects || oldHaku.projects.length === 0) {
+          state.saveStatus.serverError = "validation-error";
+        } else {
+          state.saveStatus.serverError = "";
+        }
       })
       .addCase(saveHaku.rejected, (state, action) => {
         state.saveStatus.serverError =
