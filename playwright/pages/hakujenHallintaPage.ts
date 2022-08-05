@@ -272,6 +272,7 @@ export class HakujenHallintaPage {
   readonly valiselvitysUpdatedAt: Locator;
   readonly loppuselvitysUpdatedAt: Locator;
   readonly decisionEditor: Locator;
+  readonly loadingAvustushaku: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -279,15 +280,27 @@ export class HakujenHallintaPage {
     this.valiselvitysUpdatedAt = this.page.locator("#valiselvitysUpdatedAt");
     this.loppuselvitysUpdatedAt = this.page.locator("#loppuselvitysUpdatedAt");
     this.decisionEditor = this.page.locator(".decision-editor");
+    this.loadingAvustushaku = this.page.locator("text=Ladataan tietoja");
+  }
+
+  async navigateTo(path: string) {
+    await Promise.all([
+      this.loadingAvustushaku.waitFor(),
+      navigate(this.page, path),
+    ]);
+    await this.loadingAvustushaku.waitFor({ state: "detached" });
   }
 
   async navigate(avustushakuID: number, opts?: { newHakuListing?: boolean }) {
-    await navigate(
-      this.page,
+    await this.navigateTo(
       `/admin/haku-editor/?avustushaku=${avustushakuID}${
         opts?.newHakuListing ? "&new-haku-listing=true" : ""
       }`
     );
+  }
+
+  async navigateToDefaultAvustushaku() {
+    await this.navigateTo("/admin/haku-editor/");
   }
 
   async navigateToHakemusByClicking(
@@ -310,24 +323,16 @@ export class HakujenHallintaPage {
   }
 
   async navigateToPaatos(avustushakuID: number) {
-    await navigate(this.page, `/admin/decision/?avustushaku=${avustushakuID}`);
-    await this.page.waitForLoadState("networkidle")
+    await this.navigateTo(`/admin/decision/?avustushaku=${avustushakuID}`);
     return this.paatosLocators();
   }
 
   async navigateToValiselvitys(avustushakuID: number) {
-    await navigate(
-      this.page,
-      `/admin/valiselvitys/?avustushaku=${avustushakuID}`
-    );
+    await this.navigateTo(`/admin/valiselvitys/?avustushaku=${avustushakuID}`);
   }
 
   async navigateToFormEditor(avustushakuID: number) {
-    await navigate(
-      this.page,
-      `/admin/form-editor/?avustushaku=${avustushakuID}`
-    );
-    await this.page.waitForLoadState("networkidle");
+    await this.navigateTo(`/admin/form-editor/?avustushaku=${avustushakuID}`);
     return new FormEditorPage(this.page);
   }
 
@@ -513,21 +518,16 @@ export class HakujenHallintaPage {
   }
 
   async copyEsimerkkihaku(): Promise<number> {
-    const loadingAvustushaku = this.page.locator("text=Ladataan tietoja");
-    await Promise.all([
-      navigate(this.page, "/admin/haku-editor/"),
-      loadingAvustushaku.waitFor(),
-    ]);
-    await loadingAvustushaku.waitFor({ state: "detached" });
+    await this.navigateToDefaultAvustushaku();
     await Promise.all([
       clickElementWithTextStrict(
         this.page,
         "td",
         "Yleisavustus - esimerkkihaku"
       ),
-      loadingAvustushaku.waitFor(),
+      this.loadingAvustushaku.waitFor(),
     ]);
-    await loadingAvustushaku.waitFor({ state: "detached" });
+    await this.loadingAvustushaku.waitFor({ state: "detached" });
     return await this.copyCurrentHaku();
   }
 
