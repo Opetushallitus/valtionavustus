@@ -135,9 +135,9 @@ test("When muutoshakemus enabled haku has been published, a hakemus has been sub
   });
 
   await test.step("Muutoshakemus status is Uusi", async () => {
-    const content =
-      await hakemustenArviointiPage.muutoshakemusStatusFieldContent();
-    expect(content).toEqual("Uusi");
+    await expect(
+      hakemustenArviointiPage.muutoshakemusStatusFieldContent()
+    ).toHaveText("Uusi");
   });
 
   await test.step("go to hakemus muutoshakemus tab", async () => {

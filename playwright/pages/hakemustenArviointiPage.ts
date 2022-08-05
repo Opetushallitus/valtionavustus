@@ -97,6 +97,7 @@ export class HakemustenArviointiPage {
       `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`
     );
     await this.page.waitForSelector("#tab-content");
+    await this.page.waitForLoadState("networkidle");
   }
 
   async navigateToHakemusArviointi(avustushakuID: number, hakemusID: number) {
@@ -330,6 +331,13 @@ export class HakemustenArviointiPage {
     return hakemusID;
   }
 
+  async selectHakemusFromList(projectName: string) {
+    await Promise.all([
+      this.page.waitForNavigation(),
+      this.page.click(`text=${projectName}`),
+    ]);
+  }
+
   async acceptAvustushaku(
     avustushakuID: number,
     projectName: string,
@@ -337,11 +345,7 @@ export class HakemustenArviointiPage {
     rahoitusalue = "Ammatillinen koulutus"
   ) {
     // Accept the hakemus
-    await Promise.all([
-      this.page.waitForNavigation(),
-      this.page.click(`text=${projectName}`),
-    ]);
-
+    await this.selectHakemusFromList(projectName);
     const hakemusID = await this.getHakemusID();
 
     const selectFirstAvailableProjectAsDefault = async () => {
@@ -406,10 +410,8 @@ export class HakemustenArviointiPage {
     return valiselvitysStatus.textContent();
   }
 
-  async muutoshakemusStatusFieldContent() {
-    return await this.page
-      .locator("[data-test-class=muutoshakemus-status-cell]")
-      .textContent();
+  muutoshakemusStatusFieldContent() {
+    return this.page.locator("[data-test-class=muutoshakemus-status-cell]");
   }
 
   async clickMuutoshakemusStatusField(hakemusID: number) {

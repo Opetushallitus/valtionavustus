@@ -16,16 +16,17 @@ export const MuutoshakemusTabs = ({
   activeMuutoshakemus,
   setActiveMuutoshakemus,
 }: MuutoshakemusTabsProps) => {
+  console.log(muutoshakemukset);
   return (
     <div className="muutoshakemus-tabs">
       {muutoshakemukset.map((m, index) => (
         <button
-          key={`muutoshakemus-tab-${index}`}
+          key={`muutoshakemus-tab-${m.id}`}
           className={`muutoshakemus-tabs__tab ${
             m.id === activeMuutoshakemus.id ? "active" : ""
           }`}
           onClick={() => setActiveMuutoshakemus(m.id)}
-          data-test-id={`muutoshakemus-tab-${m.id}`}
+          data-test-id={`muutoshakemus-tab-${index}`}
         >
           Muutoshakemus {moment(m["created-at"]).format(fiShortFormat)}
         </button>

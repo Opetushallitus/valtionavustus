@@ -84,7 +84,7 @@ const test = budjettimuutoshakemusTest.extend<
   budget,
   acceptedBudget: budgetWithFinnishThousandSeparator,
   hakijaMuutoshakemusPaatosPage: async (
-    { page, acceptedHakemus: { hakemusID }, avustushakuID },
+    { page, acceptedHakemus: { hakemusID }, avustushakuID, hakuProps, answers },
     use
   ) => {
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page);
@@ -119,6 +119,21 @@ const test = budjettimuutoshakemusTest.extend<
     if (!links.linkToMuutoshakemusPaatos) {
       throw Error("No linkToMuutoshakemusPaatos found");
     }
+    await test.step("email has correct title", async () => {
+      expect(links.title).toContain(
+        `${hakuProps.registerNumber} - ${answers.projectName}`
+      );
+    });
+    await test.step("email has link to päätös", async () => {
+      expect(links.linkToMuutoshakemusPaatos).toMatch(
+        /https?:\/\/[^\/]+\/muutoshakemus\/paatos\?user-key=[a-f0-9]{64}/
+      );
+    });
+    await test.step("email has link to muutoshakemus", async () => {
+      expect(links.linkToMuutoshakemus).toMatch(
+        /https?:\/\/[^\/]+\/muutoshakemus\?.*/
+      );
+    });
     const hakijaMuutoshakemusPaatosPage = new HakijaMuutoshakemusPaatosPage(
       page
     );

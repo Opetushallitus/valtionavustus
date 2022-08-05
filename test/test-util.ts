@@ -748,14 +748,12 @@ async function waitForSaveStatusOkOrSaving(page: Page) {
 
 export async function copyEsimerkkihaku(page: Page) {
   await navigate(page, "/admin/haku-editor/");
-  const element = (await clickElementWithText(
-    page,
-    "td",
-    "Yleisavustus - esimerkkihaku"
-  )) as ElementHandle;
-  const currentHakuTitle = (await (
-    await element.getProperty("textContent")
-  )?.jsonValue()) as string;
+  const [element] = await Promise.all([
+    await clickElementWithText(page, "td", "Yleisavustus - esimerkkihaku"),
+    page.waitForNetworkIdle({ idleTime: 500 }),
+  ]);
+  const textContent = await element.getProperty("textContent");
+  const currentHakuTitle = await textContent?.jsonValue<string>();
   await clickElementWithText(page, "a", "Kopioi uuden pohjaksi");
 
   await page.waitForFunction(

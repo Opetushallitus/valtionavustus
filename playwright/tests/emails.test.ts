@@ -132,6 +132,10 @@ test("sends emails to correct contact and hakemus emails", async ({
         newContactPersonEmail
       );
       await hakijaMuutoshakemusPage.clickSaveContacts();
+      await hakijaMuutoshakemusPage.expectMuutoshakemusToBeSubmittedSuccessfully(
+        false
+      );
+      expect(await getValiselvitysEmails(hakemusID)).toHaveLength(0);
       await hakujenHallintaPage.navigateToPaatos(avustushakuID);
       await hakujenHallintaPage.resendPaatokset();
 

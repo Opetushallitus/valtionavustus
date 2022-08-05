@@ -1,4 +1,4 @@
-import { expect, Page } from "@playwright/test";
+import { expect, Locator, Page } from "@playwright/test";
 
 import { getExistingBudgetTableCells } from "../utils/util";
 import { getLinkToMuutoshakemusFromSentEmails } from "../utils/emails";
@@ -7,9 +7,13 @@ import { BudgetAmount } from "../utils/budget";
 
 export class HakijaMuutoshakemusPage {
   readonly page: Page;
+  readonly existingMuutoshakemusLocator: Locator;
 
   constructor(page: Page) {
     this.page = page;
+    this.existingMuutoshakemusLocator = this.page.locator(
+      '[data-test-class="existing-muutoshakemus"]'
+    );
   }
 
   async navigate(hakemusID: number) {
@@ -21,6 +25,7 @@ export class HakijaMuutoshakemusPage {
 
   async navigateWithLink(linkToMuutoshakemus: string) {
     await this.page.goto(linkToMuutoshakemus);
+    await this.page.locator("h1[id=topic]").waitFor();
   }
 
   async fillJatkoaikaValues(muutoshakemus: MuutoshakemusValues) {
