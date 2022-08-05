@@ -40,18 +40,8 @@ export default function ProjectSelectors(props: ProjectSelectorsProps) {
 
       controller.saveProjects(avustushaku, [option, ...projects]);
 
-      //TODO: Poista allaoleva tehdessäsi VA-286-6:sta
-      if (option == null) {
-        controller.onChangeListener(avustushaku, { id: "project-id" }, null);
-        avustushaku["project-id"] = null;
-      } else {
-        controller.onChangeListener(
-          avustushaku,
-          { id: "project-id" },
-          option.id
-        );
-        avustushaku["project-id"] = option.id;
-      }
+      controller.onChangeListener(avustushaku, { id: "project-id" }, option.id);
+      avustushaku["project-id"] = option.id;
     };
 
   const addRow = () => {
