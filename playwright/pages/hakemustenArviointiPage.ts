@@ -703,4 +703,34 @@ export class HakemustenArviointiPage {
       myonnetty: await getBudget("myonnetty"),
     };
   }
+
+  sidebarLocators() {
+    const oldAnswer = this.page.locator(".answer-old-value");
+    const newAnswer = this.page.locator(".answer-new-value");
+    const applicantName = "#applicant-name div";
+    const phone = "#textField-0 div";
+    const email = "#primary-email div";
+    return {
+      printableLink: this.page.locator('text="Tulostusversio"'),
+      oldAnswers: {
+        applicantName: oldAnswer.locator(applicantName),
+        phoneNumber: oldAnswer.locator(phone),
+        email: oldAnswer.locator(email),
+      },
+      newAnswers: {
+        applicantName: newAnswer.locator(applicantName),
+        phoneNumber: newAnswer.locator(phone),
+        email: newAnswer.locator(email),
+      },
+    };
+  }
+
+  arviointiTabLocators() {
+    return {
+      resendPaatokset: this.page.locator(
+        'text="Lähetä päätössähköposti uudestaan"'
+      ),
+      paatoksetResent: this.page.locator('text="Sähköposti lähetetty"'),
+    };
+  }
 }

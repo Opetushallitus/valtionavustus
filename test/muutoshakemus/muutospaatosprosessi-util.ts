@@ -3,7 +3,6 @@ import * as fs from "fs";
 import { Moment } from "moment";
 import * as path from "path";
 import { Page } from "puppeteer";
-import * as querystring from "querystring";
 import { clickKoodienhallintaTab } from "../koodienhallinta-util";
 import {
   acceptAvustushaku,
@@ -68,16 +67,6 @@ const muutoshakuDisabledMenoluokiteltuLomakeJson = fs.readFileSync(
   path.join(__dirname, "muutoshakemus-disabled-menoluokiteltu.hakulomake.json"),
   "utf8"
 );
-
-export async function getUserKeyFromPaatosEmail(
-  hakemusID: number
-): Promise<string> {
-  const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(
-    hakemusID
-  );
-  const userKey = querystring.parse(linkToMuutoshakemus)["user-key"] as string;
-  return userKey;
-}
 
 async function createHakuWithLomakeJson(
   page: Page,

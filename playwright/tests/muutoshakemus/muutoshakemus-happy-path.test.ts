@@ -5,17 +5,23 @@ import {
   Email,
   getAcceptedPäätösEmails,
   getLinkToHakemusFromSentEmails,
+  getLinkToMuutoshakemusFromSentEmails,
   getMuutoshakemuksetKasittelemattaEmails,
   getValmistelijaEmails,
   lastOrFail,
   waitUntilMinEmails,
 } from "../../utils/emails";
 import { clickElementWithText, waitForNewTab } from "../../utils/util";
-import { HAKIJA_URL, VIRKAILIJA_URL } from "../../utils/constants";
+import {
+  HAKIJA_URL,
+  TEST_Y_TUNNUS,
+  VIRKAILIJA_URL,
+} from "../../utils/constants";
 import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
 import { MuutoshakemusValues } from "../../utils/types";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { HakijaMuutoshakemusPage } from "../../pages/hakijaMuutoshakemusPage";
+import { randomString } from "../../../test/test-util";
 
 const sendMuutoshakemuksiaKasittelemattaNotifications = (
   request: APIRequestContext
@@ -42,6 +48,18 @@ test("When muutoshakemus enabled haku has been published, a hakemus has been sub
 }) => {
   const hakemustenArviointiPage = new HakemustenArviointiPage(page);
   let hakemusRegisterNumber: string | undefined;
+  let linkToMuutoshakemus = "";
+  await test.step(
+    "hakija gets an email with a link to muutoshakemus",
+    async () => {
+      linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(
+        hakemusID
+      );
+      expect(linkToMuutoshakemus).toContain(
+        `${HAKIJA_URL}/muutoshakemus?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`
+      );
+    }
+  );
 
   await test.step("hakija gets the correct email content", async () => {
     const emails = await waitUntilMinEmails(
@@ -56,6 +74,28 @@ test("When muutoshakemus enabled haku has been published, a hakemus has been sub
         "Pääsette tekemään muutoshakemuksen sekä muuttamaan yhteyshenkilöä ja hänen yhteystietojaan koko hankekauden ajan tästä linkistä"
       );
     });
+  });
+
+  const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page);
+  await test.step("hakija sees correct content", async () => {
+    await hakijaMuutoshakemusPage.navigateWithLink(linkToMuutoshakemus);
+    const locators = hakijaMuutoshakemusPage.locators();
+    await expect(locators.avustushakuName).toHaveText(
+      hakuProps.avustushakuName
+    );
+    await expect(locators.projectName).toHaveText(answers.projectName);
+    await expect(locators.contactPerson).toHaveValue(answers.contactPersonName);
+    await expect(locators.contactPersonEmail).toHaveValue(
+      answers.contactPersonEmail
+    );
+    await expect(locators.contactPersonPhoneNumber).toHaveValue(
+      answers.contactPersonPhoneNumber
+    );
+    await expect(locators.sendMuutospyyntoButton).toBeDisabled();
+    await expect(locators.originalHakemus.yTunnus).toHaveText(TEST_Y_TUNNUS);
+    await expect(locators.originalHakemus.contactPersonName).toHaveText(
+      answers.contactPersonName
+    );
   });
 
   await test.step(
@@ -79,10 +119,26 @@ test("When muutoshakemus enabled haku has been published, a hakemus has been sub
     }
   );
 
-  await test.step("submit muutoshakemus #1", async () => {
-    const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page);
-    await hakijaMuutoshakemusPage.navigate(hakemusID);
+  const newName = randomString();
+  const newEmail = "uusi.email@reaktor.com";
+  const newPhone = "0901967632";
+  await test.step(
+    "test form validation before submitting muutoshakemus #1",
+    async () => {
+      await hakijaMuutoshakemusPage.navigateWithLink(linkToMuutoshakemus);
+      const locators = hakijaMuutoshakemusPage.locators();
+      await locators.contactPerson.fill(newName);
+      await locators.contactPersonEmail.fill("not-email");
+      await locators.contactPersonPhoneNumber.fill(newPhone);
+      await expect(locators.sendMuutospyyntoButton).toBeDisabled();
+      await expect(locators.contactPersonEmail).toHaveClass(/error/);
+      await locators.contactPersonEmail.fill(newEmail);
+      await expect(locators.contactPersonEmail).not.toHaveClass(/error/);
+      await expect(locators.sendMuutospyyntoButton).toBeEnabled();
+    }
+  );
 
+  await test.step("submit muutoshakemus #1", async () => {
     const registerNumber = await page
       .locator('[data-test-id="register-number"]')
       .innerText();
@@ -159,10 +215,6 @@ test("When muutoshakemus enabled haku has been published, a hakemus has been sub
     }
   );
 
-  await test.step("navigate to muutoshakemustab", async () => {
-    await hakemustenArviointiPage.clickMuutoshakemusTab();
-  });
-
   await test.step(
     "muutoshakemustab links to the muutoshakemus form",
     async () => {
@@ -177,9 +229,35 @@ test("When muutoshakemus enabled haku has been published, a hakemus has been sub
       await muutoshakemusPage.close();
     }
   );
-
-  await test.step("Displays valid muutoshakemus values", async () => {
+  const assertAnswerValues = async () => {
+    const sidebarLocators = hakemustenArviointiPage.sidebarLocators();
+    await expect(sidebarLocators.oldAnswers.applicantName).toHaveText(
+      "Erkki Esimerkki"
+    );
+    await expect(sidebarLocators.newAnswers.applicantName).toHaveText(newName);
+    await expect(sidebarLocators.oldAnswers.phoneNumber).toHaveText("666");
+    await expect(sidebarLocators.newAnswers.phoneNumber).toHaveText(newPhone);
+    await expect(sidebarLocators.oldAnswers.email).toHaveText(
+      "erkki.esimerkki@example.com"
+    );
+    await expect(sidebarLocators.newAnswers.email).toHaveText(newEmail);
+  };
+  await test.step("Displays correct muutoshakemus values", async () => {
     await hakemustenArviointiPage.validateMuutoshakemusValues(muutoshakemus1);
+    await assertAnswerValues();
+  });
+
+  await test.step("printable link shows correct values", async () => {
+    const sidebarLocators = hakemustenArviointiPage.sidebarLocators();
+    const [printablePage] = await Promise.all([
+      context.waitForEvent("page"),
+      sidebarLocators.printableLink.click(),
+    ]);
+    await printablePage.waitForLoadState();
+    await expect(printablePage.locator("#applicant-name")).toHaveText(newName);
+    await expect(printablePage.locator("#primary-email")).toHaveText(newEmail);
+    await expect(printablePage.locator("#textField-0")).toHaveText(newPhone);
+    await printablePage.close();
   });
 
   await test.step("accept muutoshakemus", async () => {
@@ -217,6 +295,22 @@ test("When muutoshakemus enabled haku has been published, a hakemus has been sub
         expect(emailsBeforeWithCurrentAvustushaku).toEqual(
           emailsAfterWithCurrentAvustushaku
         );
+      }
+    );
+
+    await test.step(
+      "Values are not overwritten after re-sending päätös",
+      async () => {
+        await hakemustenArviointiPage.page.click('text="Arviointi"');
+        await hakemustenArviointiPage.page.on("dialog", async (dialog) => {
+          await dialog.accept();
+        });
+        const arviointiTabLocators =
+          hakemustenArviointiPage.arviointiTabLocators();
+        await arviointiTabLocators.resendPaatokset.click();
+        await arviointiTabLocators.paatoksetResent.waitFor();
+        await hakemustenArviointiPage.page.reload();
+        await assertAnswerValues();
       }
     );
   });

@@ -130,7 +130,7 @@ export class HakijaMuutoshakemusPage {
 
   async sendMuutoshakemus(isApplication: boolean, swedish?: boolean) {
     if (swedish) {
-      await this.page.click("#send-muutospyynto-button");
+      await this.locators().sendMuutospyyntoButton.click();
       expect(
         await this.page.textContent('div[class="auto-hide success"]')
       ).toEqual("Ändringsansökan har skickats");
@@ -142,5 +142,23 @@ export class HakijaMuutoshakemusPage {
 
   async changeContactPersonEmailTo(email: string) {
     await this.page.fill("#muutoshakemus__email", email);
+  }
+
+  locators() {
+    const originalHakemusIframe = this.page.frameLocator(
+      'iframe[data-test-id="original-hakemus"]'
+    );
+    return {
+      avustushakuName: this.page.locator("[data-test-id=avustushaku-name]"),
+      projectName: this.page.locator("[data-test-id=project-name]"),
+      contactPerson: this.page.locator("#muutoshakemus__contact-person"),
+      contactPersonEmail: this.page.locator("#muutoshakemus__email"),
+      contactPersonPhoneNumber: this.page.locator("#muutoshakemus__phone"),
+      sendMuutospyyntoButton: this.page.locator("#send-muutospyynto-button"),
+      originalHakemus: {
+        contactPersonName: originalHakemusIframe.locator("#applicant-name"),
+        yTunnus: originalHakemusIframe.locator("#business-id div"),
+      },
+    };
   }
 }
