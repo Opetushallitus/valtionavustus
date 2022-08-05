@@ -116,45 +116,16 @@ function appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing(
   };
 }
 
-export const saveProjects = createAsyncThunk<
-  void,
-  { avustushakuId: number; value: VaCodeValue },
-  { state: HakujenHallintaRootState }
->("haku/saveProject", async (payload, thunkAPI) => {
-  thunkAPI.dispatch(addProject(payload));
-  thunkAPI.dispatch(startAutoSaveForAvustushaku(payload.avustushakuId));
-  const haku = getAvustushaku(thunkAPI.getState().haku, payload.avustushakuId);
-  await HttpUtil.post(
-    `/api/avustushaku/${payload.avustushakuId}/projects`,
-    haku.projects
-  );
-});
-
-export const removeProjects = createAsyncThunk<
-  void,
-  { avustushakuId: number; value: VaCodeValue },
-  { state: HakujenHallintaRootState }
->("haku/saveProject", async (payload, thunkAPI) => {
-  thunkAPI.dispatch(removeProject(payload));
-  thunkAPI.dispatch(startAutoSaveForAvustushaku(payload.avustushakuId));
-  const haku = getAvustushaku(thunkAPI.getState().haku, payload.avustushakuId);
-  await HttpUtil.post(
-    `/api/avustushaku/${payload.avustushakuId}/projects`,
-    haku.projects
-  );
-});
-
 export const updateProjects = createAsyncThunk<
   void,
-  { avustushakuId: number; value: VaCodeValue; index: number },
+  { avustushakuId: number; projects: VaCodeValue[] },
   { state: HakujenHallintaRootState }
 >("haku/saveProject", async (payload, thunkAPI) => {
   thunkAPI.dispatch(updateProject(payload));
   thunkAPI.dispatch(startAutoSaveForAvustushaku(payload.avustushakuId));
-  const haku = getAvustushaku(thunkAPI.getState().haku, payload.avustushakuId);
   await HttpUtil.post(
     `/api/avustushaku/${payload.avustushakuId}/projects`,
-    haku.projects
+    payload.projects
   );
 });
 
@@ -828,40 +799,19 @@ const hakuSlice = createSlice({
       const selectedHaku = getSelectedHaku(state);
       selectedHaku.content["selection-criteria"].items.splice(payload, 1);
     },
-    addProject: (
-      state,
-      { payload }: PayloadAction<{ avustushakuId: number; value: VaCodeValue }>
-    ) => {
-      const selectedHaku = getSelectedHaku(state);
-      selectedHaku.projects?.push(payload.value);
-      selectedHaku["project-id"] = payload.value.id;
-    },
-    removeProject: (
-      state,
-      { payload }: PayloadAction<{ avustushakuId: number; value: VaCodeValue }>
-    ) => {
-      const selectedHaku = getSelectedHaku(state);
-      if (selectedHaku.projects) {
-        selectedHaku.projects = selectedHaku.projects.filter(
-          (p) => p.id !== payload.value.id
-        );
-        selectedHaku["project-id"] = null;
-      }
-    },
     updateProject: (
       state,
       {
         payload,
       }: PayloadAction<{
         avustushakuId: number;
-        value: VaCodeValue;
-        index: number;
+        projects: VaCodeValue[];
       }>
     ) => {
       const selectedHaku = getSelectedHaku(state);
       if (selectedHaku.projects) {
-        selectedHaku.projects[payload.index] = payload.value;
-        selectedHaku["project-id"] = payload.value.id;
+        selectedHaku.projects = payload.projects;
+        selectedHaku["project-id"] = payload.projects[0]?.id;
       }
     },
     addTalousarviotili: (state, { payload }: PayloadAction<string>) => {
@@ -1060,8 +1010,6 @@ export const {
   updateAvustushaku,
   addFocusArea,
   deleteFocusArea,
-  addProject,
-  removeProject,
   updateProject,
   addSelectionCriteria,
   removeSelectionCriteria,

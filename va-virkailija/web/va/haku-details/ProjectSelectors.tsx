@@ -8,11 +8,7 @@ import {
   useHakujenHallintaDispatch,
   useHakujenHallintaSelector,
 } from "../hakujenHallinta/hakujenHallintaStore";
-import {
-  removeProjects,
-  saveProjects,
-  updateProjects,
-} from "../hakujenHallinta/hakuReducer";
+import { updateProjects } from "../hakujenHallinta/hakuReducer";
 
 interface ProjectSelectorsProps {
   avustushaku: SelectedAvustushaku;
@@ -40,37 +36,29 @@ export default function ProjectSelectors(props: ProjectSelectorsProps) {
       if (option === null) {
         return;
       }
+      projects[projectIndex] = option;
       dispatch(
         updateProjects({
           avustushakuId: avustushaku.id,
-          value: option,
-          index: projectIndex,
+          projects,
         })
       );
-      /*//TODO: Poista allaoleva tehdessäsi VA-286-6:sta
-      if (option == null) {
-        controller.onChangeListener(avustushaku, { id: "project-id" }, null);
-        avustushaku["project-id"] = null;
-      } else {
-        controller.onChangeListener(
-          avustushaku,
-          { id: "project-id" },
-          option.id
-        );
-        avustushaku["project-id"] = option.id;
-      }*/
     };
 
   const addRow = () => {
     dispatch(
-      saveProjects({ avustushakuId: avustushaku.id, value: codeOptions[0] })
+      updateProjects({
+        avustushakuId: avustushaku.id,
+        projects: [codeOptions[0], ...projects],
+      })
     );
   };
 
   const removeRow = (project: VaCodeValue | null) => () => {
     if (project) {
+      const newProjects = projects.filter((p) => p.id !== project.id);
       dispatch(
-        removeProjects({ avustushakuId: avustushaku.id, value: project })
+        updateProjects({ avustushakuId: avustushaku.id, projects: newProjects })
       );
     }
   };
