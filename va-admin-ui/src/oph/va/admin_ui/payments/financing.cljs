@@ -76,6 +76,7 @@
       [:div
        [va-ui/select-field
         {:label "Vaihe"
+         :data-test-id "installment-phase"
          :value (:phase @value)
          :values (map #(hash-map
                          :key % :value % :primary-text (phase-to-name %))

@@ -48,6 +48,12 @@ export interface HakuProps {
   raportointivelvoitteet: Raportointivelvoite[];
   hakemusFields: Field[];
   jaossaOlevaSumma?: number;
+  installment?: Installment;
+}
+
+export enum Installment {
+  OneInstallment,
+  MultipleInstallments,
 }
 
 const dateFormat = "D.M.YYYY H.mm";
@@ -567,6 +573,7 @@ export class HakujenHallintaPage {
       lainsaadanto,
       jaossaOlevaSumma,
       raportointivelvoitteet,
+      installment,
     } = props;
     console.log(`Avustushaku name for test: ${avustushakuName}`);
 
@@ -578,6 +585,14 @@ export class HakujenHallintaPage {
     await this.page.fill("#haku-name-sv", avustushakuName + " på svenska");
 
     await this.selectVaCodes(props.vaCodes);
+
+    if (installment === Installment.MultipleInstallments) {
+      await this.page.locator("text=Useampi maksuerä").click();
+      await this.page.locator("text=Kaikille avustuksen saajille").click();
+      await this.page
+        .locator("select#transaction-account")
+        .selectOption("5000");
+    }
 
     for (const rahoitusalue of defaultRahoitusalueet) {
       await this.inputTalousarviotili(rahoitusalue);

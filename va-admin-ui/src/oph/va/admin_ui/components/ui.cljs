@@ -111,7 +111,7 @@
        [:div {:class "oph-field-text"} help-text])]))
 
 (defn select-field [props]
-  [:div {:class "oph-field" :style (merge theme/select-field (:style props))}
+  [:div {:class "oph-field" :style (merge theme/select-field (:style props)) :data-test-id (:data-test-id props)}
    [:label {:class "oph-label"} (or (:label props)
                                     (:floating-label-text props))
     (when-some [text (:tooltip props)] [tooltip {} text])]

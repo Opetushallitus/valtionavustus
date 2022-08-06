@@ -953,7 +953,7 @@ export default class HakemustenArviointiController {
     HttpUtil.post(url, {
       "application-id": hakemus!.id,
       "application-version": hakemus!.version,
-      state: 1,
+      "paymentstatus-id": "waiting",
       "batch-id": null,
       "payment-sum": paymentSum,
       phase: index,

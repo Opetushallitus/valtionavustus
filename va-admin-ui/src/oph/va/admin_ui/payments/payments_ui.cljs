@@ -96,6 +96,7 @@
             grouped-payments (group-by :phase sorted-filtered-payments)]
         [:div
          [table/table
+          {:data-test-id "payments-table"}
           [table/table-header
            [table/table-row
             [table/sortable-header-column
@@ -207,6 +208,7 @@
 (defn batches-table [{batches :batches
                       payments :payments}]
   [table/table
+   {:data-test-id "batches-table"}
    [table/table-header
     [table/table-row
      [table/table-header-column
