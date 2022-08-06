@@ -259,6 +259,20 @@ export class HakujenHallintaPage {
 
   async switchToPaatosTab() {
     await this.page.click('[data-test-id="päätös-välilehti"]');
+    const datePicker = "div.datepicker input";
+    const alkamisPaiva = this.page.locator(
+      '[data-test-id="hankkeen-alkamispaiva"]'
+    );
+    const label = '[data-test-id="label"]';
+    const paattymisPaiva = this.page.locator(
+      '[data-test-id="hankkeen-paattymispaiva"]'
+    );
+    return {
+      hankkeenAlkamisPaiva: alkamisPaiva.locator(datePicker),
+      hankkeenAlkamisPaivaLabel: alkamisPaiva.locator(label),
+      hankkeenPaattymisPaiva: paattymisPaiva.locator(datePicker),
+      hankkeenPaattymisPaivaLabel: paattymisPaiva.locator(label),
+    };
   }
 
   async switchToValiselvitysTab() {
