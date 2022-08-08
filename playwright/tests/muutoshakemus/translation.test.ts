@@ -79,7 +79,7 @@ test("swedish muutoshakemus translations", async ({
       "Övriga kostnader",
     ];
     const rows = await locators.budget.budgetRows.allTextContents();
-    expect(rows).toEqual(swedishBudgetRowNames);
+    expect(rows.sort()).toEqual(swedishBudgetRowNames.sort());
   });
   await test.step("submit muutoshakemus #1", async () => {
     await hakijaMuutoshakemusPage.fillTalousarvioValues(
