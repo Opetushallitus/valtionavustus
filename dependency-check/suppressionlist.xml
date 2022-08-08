@@ -109,4 +109,20 @@
     <packageUrl regex="true">^pkg:maven/org\.scalaz/scalaz-core.*</packageUrl>
     <cve>CVE-2022-2393</cve>
   </suppress>
+  <suppress until="2022-11-08Z">
+    <notes><![CDATA[
+    No updates
+    ]]>
+    </notes>
+    <packageUrl regex="true">^pkg:maven/xalan/serializer@2.7.2</packageUrl>
+    <cve>CVE-2022-34169</cve>
+  </suppress>
+  <suppress until="2022-11-08Z">
+    <notes><![CDATA[
+    No updates
+    ]]>
+    </notes>
+    <packageUrl regex="true">^pkg:maven/xalan/xalan@2.7.2</packageUrl>
+    <cve>CVE-2022-34169</cve>
+  </suppress>
 </suppressions>
