@@ -2,13 +2,13 @@ import { expect } from "@playwright/test";
 import { HakujenHallintaPage } from "../pages/hakujenHallintaPage";
 import { HakijaAvustusHakuPage } from "../pages/hakijaAvustusHakuPage";
 import { HakemustenArviointiPage } from "../pages/hakemustenArviointiPage";
-import { Budget, defaultBudget } from "../utils/budget";
+import { AcceptedBudget, Budget, defaultBudget } from "../utils/budget";
 import { defaultValues } from "./defaultValues";
 import { MuutoshakemusFixtures } from "./muutoshakemusTest";
 
 export interface BudjettimuutoshakemusFixtures extends MuutoshakemusFixtures {
   budget: Budget;
-  acceptedBudget: Budget | undefined;
+  acceptedBudget: AcceptedBudget | Budget | undefined;
   avustushakuID: number;
 }
 
@@ -64,9 +64,7 @@ export const budjettimuutoshakemusTest =
       const hakemustenArviointiPage = new HakemustenArviointiPage(page);
       await hakemustenArviointiPage.navigate(avustushakuID);
 
-      const acceptWithBudget = Boolean(acceptedBudget)
-        ? acceptedBudget
-        : budget;
+      const acceptWithBudget = acceptedBudget ? acceptedBudget : budget;
       const hakemusID = await hakemustenArviointiPage.acceptAvustushaku(
         avustushakuID,
         answers.projectName,

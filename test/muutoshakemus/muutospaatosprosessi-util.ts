@@ -26,17 +26,13 @@ import {
   navigateToNewHakemusPage,
   publishAvustushaku,
   randomString,
-  saveMuutoshakemus,
   selectMaakuntaFromDropdown,
-  selectVakioperusteluInFinnish,
-  setCalendarDate,
   TEST_Y_TUNNUS,
   uploadFile,
   VaCodeValues,
   VIRKAILIJA_URL,
   waitUntilMinEmails,
 } from "../test-util";
-import { PaatosStatus } from "../../soresu-form/web/va/types/muutoshakemus";
 
 export interface Answers {
   projectName: string;
@@ -345,29 +341,6 @@ export async function createCodeValues(
   return codeValues;
 }
 
-export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuWithLumpSumBudget(
-  page: Page,
-  haku: Haku,
-  answers: Answers,
-  budget: Budget,
-  codes: VaCodeValues
-) {
-  const { avustushakuID } = await createBudjettimuutoshakemusEnabledHaku(
-    page,
-    haku.registerNumber,
-    codes,
-    haku.avustushakuName
-  );
-  await publishAvustushaku(page, avustushakuID);
-  await fillAndSendBudjettimuutoshakemusEnabledHakemus(
-    page,
-    avustushakuID,
-    answers,
-    budget
-  );
-  return await acceptAvustushaku(page, avustushakuID);
-}
-
 export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(
   page: Page,
   haku: Haku,
@@ -390,18 +363,6 @@ export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwrit
   );
   const { hakemusID } = await acceptAvustushaku(page, avustushakuID, budget);
   return { avustushakuID, hakemusID, userKey };
-}
-
-export async function navigateToLatestMuutoshakemus(
-  page: Page,
-  avustushakuID: number,
-  hakemusID: number
-) {
-  await navigate(
-    page,
-    `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`
-  );
-  await page.waitForSelector("#tab-content");
 }
 
 export const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshakemus\?.*/;
@@ -454,64 +415,6 @@ export async function fillMuutoshakemusBudgetAmount(
     "input[name='talousarvio.other-costs-row'][type='number']",
     budget.other
   );
-}
-
-export async function navigateToNthMuutoshakemus(
-  page: Page,
-  avustushakuID: number,
-  hakemusID: number,
-  n: number
-) {
-  await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/`);
-  await clickElement(page, '[class="muutoshakemus-tab"]');
-  await clickElement(page, `.muutoshakemus-tabs button:nth-last-child(${n})`);
-  await page.waitForSelector('[data-test-id="muutoshakemus-sisalto"]');
-}
-
-export async function setMuutoshakemusJatkoaikaDecision(
-  page: Page,
-  status: PaatosStatus,
-  value?: string
-) {
-  if (status) {
-    await clickElement(
-      page,
-      `label[for="haen-kayttoajan-pidennysta-${status}"]`
-    );
-  }
-  if (value) {
-    await setCalendarDate(page, value);
-  }
-}
-
-interface FillOpts {
-  jatkoaika?: { status: PaatosStatus; value?: string };
-  budget?: { status: PaatosStatus; value?: BudgetAmount };
-  selectVakioperustelu?: boolean;
-}
-
-export async function fillOsiotAndSendMuutoshakemusDecision(
-  page: Page,
-  opts: FillOpts
-) {
-  const { jatkoaika, budget, selectVakioperustelu = true } = opts ?? {};
-  if (budget?.status) {
-    await clickElement(page, `label[for="talousarvio-${budget.status}"]`);
-  }
-  if (budget?.value) {
-    await fillMuutoshakemusBudgetAmount(page, budget.value);
-  }
-  if (jatkoaika) {
-    await setMuutoshakemusJatkoaikaDecision(
-      page,
-      jatkoaika.status,
-      jatkoaika.value
-    );
-  }
-  if (selectVakioperustelu) {
-    await selectVakioperusteluInFinnish(page);
-  }
-  await saveMuutoshakemus(page);
 }
 
 export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(

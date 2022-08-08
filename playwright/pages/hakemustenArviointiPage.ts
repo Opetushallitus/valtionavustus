@@ -653,8 +653,15 @@ export class HakemustenArviointiPage {
     await this.page.click(`[data-test-id="sort-button-${sortKey}"]`);
   }
 
+  tabs() {
+    return {
+      seuranta: this.page.locator('[data-test-id="tab-seuranta"]'),
+      muutoshakemus: this.page.locator('span:text-is("Muutoshakemukset")'),
+    };
+  }
+
   async allowExternalApi(allow: boolean) {
-    await this.page.click('[data-test-id="tab-seuranta"]');
+    await this.tabs().seuranta.click();
     await this.page.click(
       `[data-test-id="set-allow-visibility-in-external-system-${allow}"]`
     );
@@ -739,6 +746,17 @@ export class HakemustenArviointiPage {
       hakijaPerustelut: this.page.locator(
         '[data-test-id="muutoshakemus-reasoning-title"]'
       ),
+      oldBudgetTitle: this.page.locator('[data-test-id="budget-old-title"]'),
+      currentBudgetTitle: this.page.locator(
+        '[data-test-id="budget-change-title"]'
+      ),
+    };
+  }
+
+  seurantaTabLocators() {
+    return {
+      grantedTotal: this.page.locator("[data-test-id=granted-total]"),
+      amountTotal: this.page.locator("[data-test-id=amount-total]"),
     };
   }
 }

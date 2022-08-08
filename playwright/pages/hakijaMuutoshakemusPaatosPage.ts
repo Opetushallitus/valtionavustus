@@ -22,6 +22,27 @@ export class HakijaMuutoshakemusPaatosPage {
     );
   }
 
+  locators() {
+    return {
+      currentBudgetTitle: this.page.locator(
+        '[data-test-id="budget-change-title"]'
+      ),
+      oldBudgetTitle: this.page.locator('[data-test-id="budget-old-title"]'),
+      talousarvioPerustelut: this.page.locator(
+        '[data-test-id="muutoshakemus-talousarvio-perustelu"]'
+      ),
+      currentTalousarvioPerustelut: this.page.locator(
+        '[data-test-class="existing-muutoshakemus"][data-test-state="new"] [data-test-id="muutoshakemus-talousarvio-perustelu"]'
+      ),
+      reasoning: this.page.locator('[data-test-id="reasoning-title"]'),
+      jatkoaika: this.page.locator('[data-test-id="muutoshakemus-jatkoaika"]'),
+      talousarvio: this.page.locator(".talousarvio"),
+      budgetInput: this.page.locator(
+        '[data-test-type="personnel-costs-row"] input'
+      ),
+    };
+  }
+
   async currentBudgetTitle() {
     return await this.page.textContent('[data-test-id="budget-old-title"]');
   }

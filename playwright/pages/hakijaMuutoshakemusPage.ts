@@ -47,7 +47,7 @@ export class HakijaMuutoshakemusPage {
   }
 
   async clickHaenKayttoajanPidennysta() {
-    await this.page.click("#checkbox-haenKayttoajanPidennysta");
+    await this.locators().haenKayttoajanPidennysta.click();
   }
 
   async fillSisaltomuutosPerustelut(perustelut: string) {
@@ -55,7 +55,7 @@ export class HakijaMuutoshakemusPage {
   }
 
   async clickHaenMuutostaTaloudenKayttosuunnitelmaan() {
-    await this.page.click("#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan");
+    await this.locators().haenMuutostaTaloudenKayttosuunnitelmaan.click();
   }
 
   async fillTalousarvioValues(
@@ -171,8 +171,14 @@ export class HakijaMuutoshakemusPage {
         contactPersonName: originalHakemusIframe.locator("#applicant-name"),
         yTunnus: originalHakemusIframe.locator("#business-id div"),
       },
+      haenKayttoajanPidennysta: this.page.locator(
+        "#checkbox-haenKayttoajanPidennysta"
+      ),
       haenKayttoajanPidennystaLabel: this.page.locator(
         'label[for="checkbox-haenKayttoajanPidennysta"]'
+      ),
+      haenMuutostaTaloudenKayttosuunnitelmaan: this.page.locator(
+        "#checkbox-haenMuutostaTaloudenKayttosuunnitelmaan"
       ),
       haenMuutostaTaloudenKayttosuunnitelmaanLabel: this.page.locator(
         'label[for="checkbox-haenMuutostaTaloudenKayttosuunnitelmaan"]'
