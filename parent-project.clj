@@ -121,8 +121,6 @@
                          [org.scala-lang/scala-library "2.11.12"]
                          [org.clojure/data.xml "0.0.8"]
                          [clj-ssh "0.5.14"]
-                         [clj-pdf "2.6.1"
-                          :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
                          [clojurewerkz/quartzite "2.0.0"]
                          [org.checkerframework/checker-qual "3.17.0"]
                          [clj-commons/clj-yaml "0.7.107"]
