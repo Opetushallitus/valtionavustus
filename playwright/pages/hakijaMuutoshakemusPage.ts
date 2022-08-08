@@ -3,7 +3,7 @@ import { expect, Locator, Page } from "@playwright/test";
 import { getExistingBudgetTableCells } from "../utils/util";
 import { getLinkToMuutoshakemusFromSentEmails } from "../utils/emails";
 import { MuutoshakemusValues } from "../utils/types";
-import { BudgetAmount } from "../utils/budget";
+import { BudgetAmount, sortedFormTable } from "../utils/budget";
 
 export class HakijaMuutoshakemusPage {
   readonly page: Page;
@@ -124,7 +124,9 @@ export class HakijaMuutoshakemusPage {
       ];
 
       const budgetRows = await getExistingBudgetTableCells(page);
-      expect(budgetRows).toEqual(budgetExpectedItems);
+      expect(sortedFormTable(budgetRows)).toEqual(
+        sortedFormTable(budgetExpectedItems)
+      );
     };
   }
 
