@@ -151,13 +151,61 @@ export class HakijaMuutoshakemusPage {
     return {
       avustushakuName: this.page.locator("[data-test-id=avustushaku-name]"),
       projectName: this.page.locator("[data-test-id=project-name]"),
+      registerNumber: this.page.locator(
+        '[data-test-id="register-number-title"]'
+      ),
       contactPerson: this.page.locator("#muutoshakemus__contact-person"),
+      contactPersonLabel: this.page.locator(
+        'label[for="muutoshakemus__contact-person"]'
+      ),
       contactPersonEmail: this.page.locator("#muutoshakemus__email"),
+      contactPersonEmailLabel: this.page.locator(
+        'label[for="muutoshakemus__email"]'
+      ),
       contactPersonPhoneNumber: this.page.locator("#muutoshakemus__phone"),
+      contactPersonPhoneNumberLabel: this.page.locator(
+        'label[for="muutoshakemus__phone"]'
+      ),
       sendMuutospyyntoButton: this.page.locator("#send-muutospyynto-button"),
       originalHakemus: {
         contactPersonName: originalHakemusIframe.locator("#applicant-name"),
         yTunnus: originalHakemusIframe.locator("#business-id div"),
+      },
+      haenKayttoajanPidennystaLabel: this.page.locator(
+        'label[for="checkbox-haenKayttoajanPidennysta"]'
+      ),
+      haenMuutostaTaloudenKayttosuunnitelmaanLabel: this.page.locator(
+        'label[for="checkbox-haenMuutostaTaloudenKayttosuunnitelmaan"]'
+      ),
+      existingJatkoaikaTitle: this.page.locator(
+        '[data-test-id="jatkoaika-title-existing"]'
+      ),
+      newJatkoaikaTitle: this.page.locator(
+        '[data-test-id="jatkoaika-title-new"]'
+      ),
+      kayttoajanPidennysPerusteluLabel: this.page.locator(
+        'label[for="perustelut-kayttoajanPidennysPerustelut"]'
+      ),
+      perustelutError: this.page.locator(
+        ".muutoshakemus__perustelut .muutoshakemus__error-message"
+      ),
+      calendar: {
+        input: this.page.locator("[name=haettuKayttoajanPaattymispaiva]"),
+        button: this.page.locator('button[title="Select date"]'),
+        monthLabel: this.page.locator('button[id="rw_4_calendar_label"]'),
+      },
+      budget: {
+        expensesTotalTitle: this.page.locator(
+          '[data-test-id="expenses-total-title"]'
+        ),
+        taloudenKayttosuunnitelmanPerustelutLabel: this.page.locator(
+          'label[for="perustelut-taloudenKayttosuunnitelmanPerustelut"]'
+        ),
+        budgetRows: this.page
+          .locator("[data-test-id=meno-input-row]")
+          .locator(".description"),
+        perustelut: this.page.locator('[data-test-id="budget-old-title"]'),
+        changeTitle: this.page.locator('[data-test-id="budget-change-title"]'),
       },
     };
   }

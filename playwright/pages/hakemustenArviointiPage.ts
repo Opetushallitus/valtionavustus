@@ -733,4 +733,12 @@ export class HakemustenArviointiPage {
       paatoksetResent: this.page.locator('text="Sähköposti lähetetty"'),
     };
   }
+
+  muutoshakemusTabLocators() {
+    return {
+      hakijaPerustelut: this.page.locator(
+        '[data-test-id="muutoshakemus-reasoning-title"]'
+      ),
+    };
+  }
 }

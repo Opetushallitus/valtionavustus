@@ -9,7 +9,6 @@ import {
   clearAndType,
   clickElement,
   setCalendarDate,
-  textContent,
 } from "../test-util";
 
 export async function navigateToHakijaMuutoshakemusPage(
@@ -57,44 +56,6 @@ export async function fillJatkoaikaValues(
 
 export async function clickSendMuutoshakemusButton(page: Page) {
   await clickElement(page, "#send-muutospyynto-button:not([disabled])");
-}
-
-export async function expectMuutoshakemusToBeSubmittedSuccessfully(
-  page: Page,
-  isApplication: boolean
-) {
-  const successNotificationSelector = 'div[class="auto-hide success"]';
-  const notification = await textContent(page, successNotificationSelector);
-
-  // The text is different if we are actually applying for jatkoaika/budjettimuutos/sisältömuutos
-  const notificationText = isApplication
-    ? "Muutoshakemus lähetetty"
-    : "Muutokset tallennettu";
-  expect(notification).toBe(notificationText);
-}
-
-export async function fillAndSendMuutoshakemus(
-  page: Page,
-  hakemusID: number,
-  muutoshakemus: MuutoshakemusValues
-) {
-  await navigateToHakijaMuutoshakemusPage(page, hakemusID);
-  if (muutoshakemus.jatkoaika) {
-    await fillJatkoaikaValues(page, muutoshakemus);
-    await clickSendMuutoshakemusButton(page);
-  }
-
-  await expectMuutoshakemusToBeSubmittedSuccessfully(
-    page,
-    !!muutoshakemus.jatkoaika
-  );
-}
-
-export async function fillSisaltomuutosPerustelut(
-  page: Page,
-  perustelut: string
-) {
-  await clearAndType(page, "#perustelut-sisaltomuutosPerustelut", perustelut);
 }
 
 export async function fillBudgetPerustelut(page: Page, perustelut: string) {

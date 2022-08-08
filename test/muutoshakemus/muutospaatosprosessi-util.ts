@@ -21,8 +21,6 @@ import {
   fillBudget,
   getHakemusIDFromHakemusTokenURLParameter,
   getMuutoshakemusEmails,
-  getMuutoshakemusPaatosEmails,
-  MailWithLinks,
   navigate,
   navigateHakija,
   navigateToNewHakemusPage,
@@ -415,32 +413,6 @@ export async function getLinkToMuutoshakemusFromSentEmails(hakemusID: number) {
   )?.[0];
   expectToBeDefined(linkToMuutoshakemus);
   return linkToMuutoshakemus;
-}
-
-export async function parseMuutoshakemusPaatosFromEmails(
-  hakemusID: number
-): Promise<MailWithLinks> {
-  const emails = await waitUntilMinEmails(
-    getMuutoshakemusPaatosEmails,
-    1,
-    hakemusID
-  );
-  const title = emails[0]?.formatted.match(/Hanke:.*/)?.[0];
-  const linkToMuutoshakemusPaatosRegex =
-    /https?:\/\/.*\/muutoshakemus\/paatos.*/;
-  const linkToMuutoshakemusPaatos = emails[0]?.formatted.match(
-    linkToMuutoshakemusPaatosRegex
-  )?.[0];
-  const linkToMuutoshakemus = emails[0]?.formatted.match(
-    linkToMuutoshakemusRegex
-  )?.[0];
-
-  return {
-    title,
-    linkToMuutoshakemusPaatos,
-    linkToMuutoshakemus,
-    ...emails[0],
-  };
 }
 
 export async function fillMuutoshakemusBudgetAmount(
