@@ -240,6 +240,7 @@ export class HakujenHallintaPage {
 
   async navigateToPaatos(avustushakuID: number) {
     await navigate(this.page, `/admin/decision/?avustushaku=${avustushakuID}`);
+    return this.paatosLocators();
   }
 
   async navigateToValiselvitys(avustushakuID: number) {
@@ -265,6 +266,10 @@ export class HakujenHallintaPage {
 
   async switchToPaatosTab() {
     await this.page.click('[data-test-id="päätös-välilehti"]');
+    return this.paatosLocators();
+  }
+
+  paatosLocators() {
     const datePicker = "div.datepicker input";
     const alkamisPaiva = this.page.locator(
       '[data-test-id="hankkeen-alkamispaiva"]'
@@ -278,6 +283,7 @@ export class HakujenHallintaPage {
       hankkeenAlkamisPaivaLabel: alkamisPaiva.locator(label),
       hankkeenPaattymisPaiva: paattymisPaiva.locator(datePicker),
       hankkeenPaattymisPaivaLabel: paattymisPaiva.locator(label),
+      paatosSendError: this.page.locator("#päätös-send-error"),
     };
   }
 

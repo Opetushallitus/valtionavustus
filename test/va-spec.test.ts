@@ -16,7 +16,6 @@ import {
   clickElementWithText,
   clickElement,
   clearAndType,
-  waitForArvioSave,
   fillAndSendHakemusAndReturnHakemusId,
   resolveAvustushaku,
   sendPäätös,
@@ -28,10 +27,8 @@ import {
   typeValueInFieldAndExpectNoValidationError,
   clickFormSaveAndWait,
   addFieldToFormAndReturnElementIdAndLabel,
-  navigateToHakemuksenArviointi,
   setPageErrorConsoleLogger,
   randomString,
-  log,
   navigateToHakemus,
   countElements,
   getElementInnerText,
@@ -40,7 +37,6 @@ import {
   clickDropdownElementWithText,
   randomAsiatunnus,
   setupTestLogging,
-  navigateToHaunTiedot,
   VaCodeValues,
 } from "./test-util";
 import {
@@ -66,95 +62,6 @@ describe("Puppeteer tests", () => {
   afterAll(async () => {
     await page.close();
     await browser.close();
-  });
-
-  describe("should allow basic avustushaku flow and check each hakemus has valmistelija", () => {
-    const allowBasicAvustushakuFlowAndCheckEachHakemusHasValmistelija =
-      (getPage: () => Page, multiplePaymentBatches: boolean) => async () => {
-        const page = getPage();
-        const codes = await createRandomCodeValues(page);
-        const avustushakuID =
-          await createValidCopyOfEsimerkkihakuAndReturnTheNewId(
-            page,
-            randomAsiatunnus(),
-            codes
-          );
-        await navigateToHaunTiedot(page, avustushakuID);
-        if (multiplePaymentBatches) {
-          await clickElement(page, "label[for='set-maksuera-true']");
-          await waitForSaveStatusOk(page);
-        } else {
-          await clickElement(page, "label[for='set-maksuera-false']");
-        }
-
-        await publishAvustushaku(page, avustushakuID);
-        await fillAndSendHakemus(page, avustushakuID);
-
-        await closeAvustushakuByChangingEndDateToPast(page, avustushakuID);
-
-        // Accept the hakemus
-        const { hakemusID } = await navigateToHakemuksenArviointi(
-          page,
-          avustushakuID,
-          "Akaan kaupunki"
-        );
-
-        log("Hakemus ID:", hakemusID);
-
-        await clickElement(
-          page,
-          "#arviointi-tab label[for='set-arvio-status-plausible']"
-        );
-        await clearAndType(
-          page,
-          "#budget-edit-project-budget .amount-column input",
-          "100000"
-        );
-        await Promise.all([
-          clickElement(
-            page,
-            "#arviointi-tab label[for='set-arvio-status-accepted']"
-          ),
-          waitForArvioSave(page, avustushakuID, hakemusID),
-        ]);
-
-        await resolveAvustushaku(page, avustushakuID);
-
-        // Sending päätös should give error because the hakemus is missing valmistelija
-        await sendPäätös(page, avustushakuID);
-        expect(await textContent(page, "#päätös-send-error")).toEqual(
-          `Hakemukselle numero ${hakemusID} ei ole valittu valmistelijaa. Päätöksiä ei lähetetty.`
-        );
-
-        await selectValmistelijaForHakemus(
-          page,
-          avustushakuID,
-          hakemusID,
-          "_ valtionavustus"
-        );
-
-        await sendPäätös(page, avustushakuID);
-        const tapahtumaloki = await page.waitForSelector(".tapahtumaloki");
-        const logEntryCount = await tapahtumaloki?.evaluate(
-          (e) => e.querySelectorAll(".entry").length
-        );
-        expect(logEntryCount).toEqual(1);
-      };
-
-    it(
-      "when the avustushaku has a single payment batch",
-      allowBasicAvustushakuFlowAndCheckEachHakemusHasValmistelija(
-        () => page,
-        false
-      )
-    );
-    it(
-      "when the avustushaku has multiple payment batches",
-      allowBasicAvustushakuFlowAndCheckEachHakemusHasValmistelija(
-        () => page,
-        true
-      )
-    );
   });
 
   it("supports fields that accept only decimals", async function () {
