@@ -162,8 +162,10 @@ const akuTest = defaultValues.extend<{
       avustushakuID,
       ukotettuValmistelija,
     },
-    use
+    use,
+    testInfo
   ) => {
+    testInfo.setTimeout(testInfo.timeout + 60_000);
     expectToBeDefined(userCache);
     const hakujenHallintaPage = new HakujenHallintaPage(page);
     await hakujenHallintaPage.navigate(avustushakuID);
