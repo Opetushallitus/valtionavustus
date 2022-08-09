@@ -1,7 +1,6 @@
 FROM mcr.microsoft.com/playwright:v1.17.1-focal
 RUN apt update
 ADD playwright playwright/
-ADD test test/
 ADD run_playwright_tests_in_container.sh run_playwright_tests_in_container.sh
 ADD package.json package.json
 ADD package-lock.json package-lock.json
