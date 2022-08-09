@@ -7,6 +7,8 @@ import { answers, swedishAnswers, VIRKAILIJA_URL } from "../utils/constants";
 import { randomAsiatunnus, randomString } from "../utils/random";
 import { Answers, VaCodeValues } from "../utils/types";
 import { expectToBeDefined, switchUserIdentityTo } from "../utils/util";
+import { EnvironmentApiResponse } from "../../soresu-form/web/va/types/environment";
+import axios from "axios";
 
 export type DefaultValueFixtures = {
   codes: VaCodeValues;
@@ -17,6 +19,7 @@ export type DefaultValueFixtures = {
   swedishAnswers: Answers;
   ukotettuValmistelija: string;
   userCache: {};
+  environment: EnvironmentApiResponse;
 };
 
 type WorkerScopedDefaultValueFixtures = {
@@ -56,6 +59,12 @@ export const defaultValues =
     randomName: async ({}, use) => {
       const randomName = randomString();
       await use(randomName);
+    },
+    environment: async ({}, use) => {
+      const res = await axios.get<EnvironmentApiResponse>(
+        `${VIRKAILIJA_URL}/environment`
+      );
+      await use(res.data);
     },
     avustushakuName: async ({ randomName }, use, testInfo) => {
       await use(

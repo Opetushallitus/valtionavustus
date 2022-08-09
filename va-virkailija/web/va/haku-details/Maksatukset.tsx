@@ -108,8 +108,15 @@ export const Maksatukset = ({
       </div>
       {tab === "sent" ? (
         <>
-          <MaksatuseräTable batches={batches} payments={sentPayments} />
-          <MaksatuksetTable payments={sentPayments} />
+          <MaksatuseräTable
+            batches={batches}
+            payments={sentPayments}
+            testId="maksatukset-table-batches"
+          />
+          <MaksatuksetTable
+            payments={sentPayments}
+            testId="maksatukset-table-payments"
+          />
           <div className="maksatukset_report">
             <a
               target="_blank"
@@ -190,13 +197,14 @@ const AvustushakuInfo = ({
 type MaksatuseräTable = {
   batches: PaymentBatchV2[];
   payments: Maksatus[];
+  testId: string;
 };
 
-const MaksatuseräTable = ({ batches, payments }: MaksatuseräTable) => {
+const MaksatuseräTable = ({ batches, payments, testId }: MaksatuseräTable) => {
   let i = 0;
   return (
     <>
-      <table className="maksatukset_payments-table">
+      <table className="maksatukset_payments-table" data-test-id={testId}>
         <thead>
           <tr>
             <th>Vaihe</th>

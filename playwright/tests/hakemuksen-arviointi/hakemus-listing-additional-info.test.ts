@@ -13,9 +13,11 @@ const loppuselvitysDeadline = "20.04.2023";
 test(`hakemusten arviointi additional info`, async ({
   page,
   avustushakuID,
+  avustushakuName,
   closedAvustushaku,
   answers,
   codes,
+  environment,
 }) => {
   expectToBeDefined(closedAvustushaku);
   const hakujenHallintaPage = new HakujenHallintaPage(page);
@@ -67,16 +69,12 @@ test(`hakemusten arviointi additional info`, async ({
 
   await test.step("updates maksatukset to show when it was sent", async () => {
     await expect(locators.maksatukset).toHaveText("Ei lähetetty");
-    const maksatuksetPage = MaksatuksetPage(page);
-    await maksatuksetPage.goto(avustushakuID);
-    await maksatuksetPage.fillInMaksueranTiedot(
-      "asha pasha",
-      "essi.esittelija@example.com",
-      "hygge.hyvaksyja@example.com"
+    const maksatuksetPage = MaksatuksetPage(
+      page,
+      environment["maksatukset-typescript"]?.["enabled?"] ?? false
     );
-    const dueDate = await page.getAttribute('[id="Eräpäivä"]', "value");
-    if (!dueDate) throw new Error("Cannot find due date from form");
-    await maksatuksetPage.sendMaksatukset();
+    await maksatuksetPage.goto(avustushakuName);
+    await maksatuksetPage.fillMaksueranTiedotAndSendMaksatukset();
     await hakemustenArviointiPage.navigate(avustushakuID, {
       showAdditionalInfo: true,
     });

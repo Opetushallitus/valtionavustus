@@ -290,6 +290,25 @@ export class HakujenHallintaPage {
     );
   }
 
+  async navigateToHakemusByClicking(
+    avustushakuName: string,
+    opts?: { newHakuListing?: boolean }
+  ) {
+    await this.navigate(0, opts);
+    const { avustushaku } = this.hakuListingTableSelectors();
+    await avustushaku.input.fill(avustushakuName);
+
+    const listItemSelector = opts?.newHakuListing
+      ? await this.page.locator(
+          `[data-test-id="${avustushakuName}"] [data-test-id="avustushaku"]`
+        )
+      : await this.page
+          .locator(".haku-list td")
+          .locator(`text=${avustushakuName}`);
+
+    await listItemSelector.click();
+  }
+
   async navigateToPaatos(avustushakuID: number) {
     await navigate(this.page, `/admin/decision/?avustushaku=${avustushakuID}`);
     return this.paatosLocators();

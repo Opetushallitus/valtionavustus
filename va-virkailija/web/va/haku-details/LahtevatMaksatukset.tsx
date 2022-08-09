@@ -161,7 +161,7 @@ export const LahtevatMaksatukset = ({
                 allowEmpty={false}
               />
             </div>
-            <div>
+            <div data-test-id="eräpäivä">
               <h3 className="required">
                 Eräpäivä
                 <HelpTooltip
@@ -176,7 +176,7 @@ export const LahtevatMaksatukset = ({
                 allowEmpty={false}
               />
             </div>
-            <div>
+            <div data-test-id="tosite-pvm">
               <h3 className="required">
                 Tositepäivämäärä
                 <HelpTooltip
@@ -219,7 +219,7 @@ export const LahtevatMaksatukset = ({
           <div className="spacer" />
         </>
       )}
-      <MaksatuksetTable payments={payments} />
+      <MaksatuksetTable payments={payments} testId="pending-payments-table" />
     </>
   );
 };

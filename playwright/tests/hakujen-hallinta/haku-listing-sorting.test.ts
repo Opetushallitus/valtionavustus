@@ -47,22 +47,16 @@ const test = selvitysTest.extend<{
     await use(secondHakuProps);
   },
   hakujenHallintaPage: async (
-    { secondHakuProps, avustushakuID, page },
+    { secondHakuProps, avustushakuID, avustushakuName, page, environment },
     use
   ) => {
     expectToBeDefined(secondHakuProps);
-    const maksatuksetPage = MaksatuksetPage(page);
-    await maksatuksetPage.goto(avustushakuID);
-
-    await maksatuksetPage.fillInMaksueranTiedot(
-      "asha pasha",
-      "essi.esittelija@example.com",
-      "hygge.hyvaksyja@example.com"
+    const maksatuksetPage = MaksatuksetPage(
+      page,
+      environment["maksatukset-typescript"]?.["enabled?"] ?? false
     );
-    const dueDate = await page.getAttribute('[id="Eräpäivä"]', "value");
-    if (!dueDate) throw new Error("Cannot find due date from form");
-
-    await maksatuksetPage.sendMaksatukset();
+    await maksatuksetPage.goto(avustushakuName);
+    await maksatuksetPage.fillMaksueranTiedotAndSendMaksatukset();
     const hakujenHallintaPage = new HakujenHallintaPage(page);
     await hakujenHallintaPage.navigate(avustushakuID, { newHakuListing: true });
     await use(hakujenHallintaPage);

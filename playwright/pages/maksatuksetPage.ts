@@ -7,15 +7,25 @@ import {
   waitForClojureScriptLoadingDialogVisible,
   clearAndType,
 } from "../utils/util";
-import { navigate } from "../utils/navigate";
+import { HakujenHallintaPage } from "./hakujenHallintaPage";
+import { waitForSaveStatusOk } from "../../test/test-util";
 
-export function MaksatuksetPage(page: Page) {
-  async function goto(avustushakuID?: number) {
-    if (avustushakuID) {
-      await navigate(page, `/admin-ui/payments/?grant-id=${avustushakuID}`);
-    } else {
-      await navigate(page, "/admin-ui/payments/");
-    }
+export function MaksatuksetPage(
+  page: Page,
+  isTypescriptImplementation: boolean
+) {
+  async function goto(avustushakuName: string) {
+    const hakujenHallintaPage = new HakujenHallintaPage(page);
+    await hakujenHallintaPage.navigateToHakemusByClicking(avustushakuName);
+    await page.locator("text=Maksatukset >> a").click();
+  }
+
+  async function fillTositepaivamaaraTypescript() {
+    const openDatepicker = `[data-test-id="tosite-pvm"] button`;
+    const selectToday = `${openDatepicker} >> text=tänään`;
+
+    await page.locator(openDatepicker).click();
+    await page.locator(selectToday).click();
   }
 
   async function fillTositepaivamaara() {
@@ -48,19 +58,100 @@ export function MaksatuksetPage(page: Page) {
     }
   }
 
+  async function getDueDateInputValue(): Promise<string> {
+    const datePicker = isTypescriptImplementation
+      ? `[data-test-id="eräpäivä"] input`
+      : `[id="Eräpäivä"]`;
+
+    const dueDate = await page.getAttribute(datePicker, "value");
+    if (!dueDate) throw new Error("Cannot find due date from form");
+
+    if (isTypescriptImplementation) {
+      return moment(dueDate, "DD.MM.YYYY").format("YYYY-MM-DD");
+    } else {
+      return dueDate;
+    }
+  }
+
   async function fillMaksueranTiedotAndSendMaksatukset() {
+    const dueDate = await getDueDateInputValue();
+
     await fillInMaksueranTiedot(
       "asha pasha",
       "essi.esittelija@example.com",
       "hygge.hyvaksyja@example.com"
     );
-    const dueDate = await page.getAttribute('[id="Eräpäivä"]', "value");
-    if (!dueDate) throw new Error("Cannot find due date from form");
-
     await sendMaksatukset();
+
+    return dueDate;
+  }
+
+  async function fillInMaksueranTiedotTypescriptImplementation(
+    ashaTunniste: string,
+    esittelijanOsoite: string,
+    hyvaksyjanOsoite: string
+  ) {
+    await page.waitForSelector(`.maksatukset_documents`);
+    const amountOfInstallments = await page
+      .locator(`.maksatukset_document-phase`)
+      .count();
+
+    function phaseFiller(phase: number) {
+      const row = page.locator(`.maksatukset_document`).nth(phase);
+
+      async function fillASHA(tunniste: string) {
+        await row.locator("input").nth(0).fill(tunniste);
+      }
+      async function fillPresenterEmail(email: string) {
+        await row.locator("input").nth(1).fill(email);
+      }
+      async function fillAcceptorEmail(email: string) {
+        await row.locator("input").nth(2).fill(email);
+      }
+      async function lisaaAsiakirja() {
+        await row.locator("text=Lisää asiakirja").click();
+      }
+
+      return {
+        fillASHA,
+        fillPresenterEmail,
+        fillAcceptorEmail,
+        lisaaAsiakirja,
+      };
+    }
+
+    await fillTositepaivamaaraTypescript();
+
+    for (let i = 0; i < amountOfInstallments; i++) {
+      const rowFiller = phaseFiller(i);
+      await rowFiller.fillASHA(ashaTunniste);
+      await rowFiller.fillPresenterEmail(esittelijanOsoite);
+      await rowFiller.fillAcceptorEmail(hyvaksyjanOsoite);
+      await rowFiller.lisaaAsiakirja();
+    }
   }
 
   async function fillInMaksueranTiedot(
+    ashaTunniste: string,
+    esittelijanOsoite: string,
+    hyvaksyjanOsoite: string
+  ) {
+    if (isTypescriptImplementation) {
+      return await fillInMaksueranTiedotTypescriptImplementation(
+        ashaTunniste,
+        esittelijanOsoite,
+        hyvaksyjanOsoite
+      );
+    } else {
+      await fillInMaksueranTiedotClojure(
+        ashaTunniste,
+        esittelijanOsoite,
+        hyvaksyjanOsoite
+      );
+    }
+  }
+
+  async function fillInMaksueranTiedotClojure(
     ashaTunniste: string,
     esittelijanOsoite: string,
     hyvaksyjanOsoite: string
@@ -99,36 +190,16 @@ export function MaksatuksetPage(page: Page) {
     }
   }
 
-  const getBatchStatus = getSentPaymentBatchColumn(2);
-  const getBatchPitkäViite = getSentPaymentBatchColumn(1);
-  const getBatchToimittajanNimi = getSentPaymentBatchColumn(3);
-  const getBatchHanke = getSentPaymentBatchColumn(4);
-  const getBatchMaksuun = getSentPaymentBatchColumn(5);
-  const getBatchIBAN = getSentPaymentBatchColumn(6);
-  const getBatchLKPTili = getSentPaymentBatchColumn(7);
-  const getBatchTaKpTili = getSentPaymentBatchColumn(8);
-  const getTiliönti = getSentPaymentBatchColumn(9);
-
-  async function gotoLähetetytMaksatuksetTab(): Promise<void> {
-    await page.click("[data-test-id=sent-payments-tab]");
-  }
-
   async function reloadPaymentPage() {
-    await Promise.all([
-      waitForClojureScriptLoadingDialogVisible(page),
-      page.reload({ waitUntil: "load" }),
-    ]);
-    await waitForClojureScriptLoadingDialogHidden(page);
-  }
-
-  function getSentPaymentBatchColumn(column: number) {
-    return async (paymentBatchRow: number): Promise<string | undefined> => {
-      const rowSelector = (n: number) =>
-        `[data-test-id=sent-payment-batches-table] tbody > tr:nth-child(${n})`;
-      return await page.innerText(
-        `${rowSelector(paymentBatchRow)} > td:nth-child(${column})`
-      );
-    };
+    if (isTypescriptImplementation) {
+      await page.reload({ waitUntil: "networkidle" });
+    } else {
+      await Promise.all([
+        waitForClojureScriptLoadingDialogVisible(page),
+        page.reload({ waitUntil: "load" }),
+      ]);
+      await waitForClojureScriptLoadingDialogHidden(page);
+    }
   }
 
   function getExpectedPaymentXML(
@@ -145,10 +216,25 @@ export function MaksatuksetPage(page: Page) {
   }
 
   async function sendMaksatukset(): Promise<void> {
+    if (isTypescriptImplementation) {
+      return await sendMaksatuksetTypescript();
+    } else {
+      return await sendMaksatuksetClojure();
+    }
+  }
+
+  async function sendMaksatuksetClojure(): Promise<void> {
     await Promise.all([
       page.waitForSelector(`text="Kaikki maksatukset lähetetty"`, {
         timeout: 10000,
       }),
+      clickElementWithText(page, "button", "Lähetä maksatukset"),
+    ]);
+  }
+
+  async function sendMaksatuksetTypescript(): Promise<void> {
+    await Promise.all([
+      waitForSaveStatusOk(page),
       clickElementWithText(page, "button", "Lähetä maksatukset"),
     ]);
   }
@@ -160,24 +246,14 @@ export function MaksatuksetPage(page: Page) {
 
   async function clickLahetetytMaksatuksetTab() {
     await page.locator(`text=Lähetetyt maksatukset`).click();
-    return lahetetytMaksueratTab(page);
+    return lahetetytMaksueratTab(page, isTypescriptImplementation);
   }
 
   return {
     fillInMaksueranTiedot,
     fillMaksueranTiedotAndSendMaksatukset,
-    getBatchHanke,
-    getBatchIBAN,
-    getBatchLKPTili,
-    getBatchMaksuun,
-    getBatchPitkäViite,
-    getBatchStatus,
-    getBatchTaKpTili,
-    getBatchToimittajanNimi,
     getExpectedPaymentXML,
-    getTiliönti,
     goto,
-    gotoLähetetytMaksatuksetTab,
     reloadPaymentPage,
     sendMaksatukset,
     clickLahtevatMaksatuksetTab,
@@ -185,12 +261,20 @@ export function MaksatuksetPage(page: Page) {
   };
 }
 
-function lahetetytMaksueratTab(page: Page) {
+function lahetetytMaksueratTab(
+  page: Page,
+  isTypescriptImplementation: boolean
+) {
   return function maksuerat(phase: 1 | 2 | 3) {
-    const tableSelector = `[data-test-id="batches-table"] [class="va-ui-table-body"] tr:nth-of-type(${phase})`;
-    const paymentSelector = `[data-test-id="payments-table"] tbody >> nth=${
-      phase - 1
-    }`;
+    const tableSelector = isTypescriptImplementation
+      ? `[data-test-id="maksatukset-table-batches"] tbody tr:nth-of-type(${phase})`
+      : `[data-test-id="batches-table"] [class="va-ui-table-body"] tr:nth-of-type(${phase})`;
+
+    const paymentSelector = isTypescriptImplementation
+      ? `[data-test-id="maksatukset-table-payments"] .maksatukset_table-container >> nth=${
+          phase - 1
+        } `
+      : `[data-test-id="payments-table"] tbody >> nth=${phase - 1}`;
 
     async function getPitkaviite(): Promise<string> {
       return await page

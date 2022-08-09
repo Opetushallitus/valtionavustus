@@ -4,6 +4,7 @@ import { Maksatus } from "./Maksatukset";
 
 type PaymentsTableProps = {
   payments?: Maksatus[];
+  testId: string;
 };
 
 type SortKey =
@@ -192,7 +193,7 @@ const MaksatuksetPhase = ({
   );
 };
 
-export const MaksatuksetTable = ({ payments }: PaymentsTableProps) => {
+export const MaksatuksetTable = ({ payments, testId }: PaymentsTableProps) => {
   const [filter, setFilter] = useState<Filter>({});
   const setFilterByKey =
     (key: SortKey) => (e: ChangeEvent<HTMLInputElement>) => {
@@ -208,7 +209,7 @@ export const MaksatuksetTable = ({ payments }: PaymentsTableProps) => {
   }, {} as { [k in string]: Maksatus[] });
 
   return (
-    <div>
+    <div data-test-id={testId}>
       <table className="maksatukset_payments-table">
         <thead className="maksatukset_table-header">
           <tr>
