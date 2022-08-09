@@ -40,9 +40,9 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
   }
 
   await page.goto(previewUrl);
-  expect(page.locator("div.soresu-preview > h1")).toContainText(
+  await expect(page.locator("div.soresu-preview > h1")).toContainText(
     "loppuselvitys submitted notification is sent"
   );
-  expect(page.locator("#textArea-0 > div")).toContainText("Yhteenveto");
-  expect(page.locator("#textArea-2 > div")).toContainText("Työn jako");
+  await expect(page.locator("#textArea-0 > div")).toContainText("Yhteenveto");
+  await expect(page.locator("#textArea-2 > div")).toContainText("Työn jako");
 });
