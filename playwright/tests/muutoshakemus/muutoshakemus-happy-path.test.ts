@@ -21,7 +21,7 @@ import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
 import { MuutoshakemusValues } from "../../utils/types";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { HakijaMuutoshakemusPage } from "../../pages/hakijaMuutoshakemusPage";
-import { randomString } from "../../../test/test-util";
+import { randomString } from "../../utils/random";
 
 const sendMuutoshakemuksiaKasittelemattaNotifications = (
   request: APIRequestContext

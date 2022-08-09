@@ -9,6 +9,7 @@ import {
   clickElementWithText,
   clickElementWithTextStrict,
   expectQueryParameter,
+  expectToBeDefined,
 } from "../utils/util";
 import { VIRKAILIJA_URL } from "../utils/constants";
 import { VaCodeValues, Field } from "../utils/types";
@@ -156,6 +157,57 @@ export class FormEditorPage {
       },
       { expectedIndex, fieldId }
     );
+  }
+
+  async addKoodisto(koodisto: string) {
+    await this.page.locator(".soresu-field-add-header").first().hover();
+    await this.page.click("text=Koodistokenttä");
+    await this.page.click('text="Valitse koodisto"');
+    await this.page.keyboard.type(koodisto);
+    await this.page.keyboard.press("ArrowDown");
+    await this.page.keyboard.press("Enter");
+    await this.page.locator('label:text-is("Pudotusvalikko")').first().click();
+  }
+
+  fieldJson(type: string, id: string, label: string) {
+    return {
+      fieldClass: "wrapperElement",
+      id: id + "wrapper",
+      fieldType: "theme",
+      children: [
+        {
+          label: {
+            fi: label + "fi",
+            sv: label + "sv",
+          },
+          fieldClass: "formField",
+          helpText: {
+            fi: "helpText fi",
+            sv: "helpText sv",
+          },
+          id: id,
+          params: {
+            size: "small",
+            maxlength: 1000,
+          },
+          required: true,
+          fieldType: type,
+        },
+      ],
+    };
+  }
+
+  async addFields(...fields: (Field & { fieldLabel: string })[]) {
+    const formContent = await this.form.textContent();
+    expectToBeDefined(formContent);
+    const json = JSON.parse(formContent);
+    const { content } = json;
+    const fieldsJson = fields.map(({ fieldId, type, fieldLabel }) =>
+      this.fieldJson(type, fieldId, fieldLabel)
+    );
+    const newJson = { ...json, content: [...content, ...fieldsJson] };
+    await this.changeLomakeJson(JSON.stringify(newJson));
+    await this.saveForm();
   }
 }
 
@@ -716,6 +768,11 @@ export class HakujenHallintaPage {
   async publishAvustushaku(avustushakuId: number) {
     await this.navigate(avustushakuId);
     await this.page.click("label[for='set-status-published']");
+    await this.waitForSave();
+  }
+
+  async setAvustushakuInDraftState() {
+    await this.page.click("label[for='set-status-draft']");
     await this.waitForSave();
   }
 

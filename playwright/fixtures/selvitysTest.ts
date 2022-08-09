@@ -4,7 +4,7 @@ import { dummyPdfPath, VIRKAILIJA_URL } from "../utils/constants";
 import { VirkailijaValiselvitysPage } from "../pages/virkailijaValiselvitysPage";
 import { navigate } from "../utils/navigate";
 import { HakijaSelvitysPage } from "../pages/hakijaSelvitysPage";
-import { expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { LoppuselvitysPage } from "../pages/loppuselvitysPage";
 
 interface SelvitysFixtures {
@@ -25,7 +25,7 @@ interface SelvitysFixtures {
 
 export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
   väliselvityspyyntöSent: async (
-    { page, avustushakuID, acceptedHakemus },
+    { page, avustushakuID, acceptedHakemus, ukotettuValmistelija },
     use,
     testInfo
   ) => {
@@ -41,6 +41,15 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
         ),
         page.click('[data-test-id="send-valiselvitys"]'),
       ]);
+    });
+    const tapahtumaloki = page.locator("div.tapahtumaloki");
+    await test.step("updates tapahtumaloki", async () => {
+      await expect(
+        tapahtumaloki.locator('[data-test-id="sender-0"]')
+      ).toHaveText(ukotettuValmistelija);
+      await expect(tapahtumaloki.locator('[data-test-id="sent-0"]')).toHaveText(
+        "1"
+      );
     });
     await use({});
   },
@@ -119,7 +128,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     await use({ userKey });
   },
   loppuselvityspyyntöSent: async (
-    { page, avustushakuID, acceptedHakemus },
+    { page, avustushakuID, acceptedHakemus, ukotettuValmistelija },
     use
   ) => {
     expectToBeDefined(acceptedHakemus);
@@ -132,6 +141,15 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
       ),
       page.click('[data-test-id="send-loppuselvitys"]'),
     ]);
+    const tapahtumaloki = page.locator("div.tapahtumaloki");
+    await test.step("updates tapahtumaloki", async () => {
+      await expect(
+        tapahtumaloki.locator('[data-test-id="sender-0"]')
+      ).toHaveText(ukotettuValmistelija);
+      await expect(tapahtumaloki.locator('[data-test-id="sent-0"]')).toHaveText(
+        "1"
+      );
+    });
     await use({});
   },
   loppuselvitysSubmitted: async (

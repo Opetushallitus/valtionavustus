@@ -5,7 +5,7 @@ import { HakijaMuutoshakemusPage } from "../../pages/hakijaMuutoshakemusPage";
 import { HakijaMuutoshakemusPaatosPage } from "../../pages/hakijaMuutoshakemusPaatosPage";
 import { parseMuutoshakemusPaatosFromEmails } from "../../utils/emails";
 import { expect, test } from "@playwright/test";
-import { HAKIJA_URL } from "../../../test/test-util";
+import { HAKIJA_URL } from "../../utils/constants";
 
 test.setTimeout(180000);
 

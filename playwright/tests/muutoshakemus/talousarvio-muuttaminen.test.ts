@@ -8,9 +8,8 @@ import {
   getAcceptedPäätösEmails,
   getLinkToMuutoshakemusFromSentEmails,
 } from "../../utils/emails";
-import { Budget } from "../../utils/budget";
+import { Budget, BudgetAmount } from "../../utils/budget";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
-import { BudgetAmount } from "../../../test/test-util";
 import moment from "moment/moment";
 import { HakijaMuutoshakemusPaatosPage } from "../../pages/hakijaMuutoshakemusPaatosPage";
 

@@ -2,9 +2,10 @@ import { expect, test } from "@playwright/test";
 import { VirkailijaValiselvitysPage } from "../../pages/virkailijaValiselvitysPage";
 import { expectToBeDefined } from "../../utils/util";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
-import { getValiselvitysEmails } from "../../../test/test-util";
+
 import {
   getHakemusTokenAndRegisterNumber,
+  getValiselvitysEmails,
   getValiselvitysSubmittedNotificationEmails,
   lastOrFail,
 } from "../../utils/emails";

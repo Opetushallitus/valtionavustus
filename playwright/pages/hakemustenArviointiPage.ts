@@ -738,6 +738,15 @@ export class HakemustenArviointiPage {
         'text="Lähetä päätössähköposti uudestaan"'
       ),
       paatoksetResent: this.page.locator('text="Sähköposti lähetetty"'),
+      comments: {
+        input: this.page.locator("#comment-input"),
+        sendButton: this.page.locator("[data-test-id=send-comment]"),
+        commentAdded: this.page.locator('text="Kommentti lisätty"'),
+        comment: this.page
+          .locator(".comment-list")
+          .locator(".single-comment")
+          .locator("div"),
+      },
     };
   }
 
@@ -757,6 +766,12 @@ export class HakemustenArviointiPage {
     return {
       grantedTotal: this.page.locator("[data-test-id=granted-total]"),
       amountTotal: this.page.locator("[data-test-id=amount-total]"),
+      kustannusMyonnetty: this.page.locator(
+        '#budget-edit-project-budget tfoot [class="granted-amount-column"] [class="money"]'
+      ),
+      kustannusHyvaksytty: this.page.locator(
+        '#budget-edit-project-budget [class="amount-column"] [class="money sum"]'
+      ),
     };
   }
 }
