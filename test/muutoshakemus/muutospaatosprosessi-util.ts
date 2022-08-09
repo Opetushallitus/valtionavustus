@@ -5,9 +5,6 @@ import * as path from "path";
 import { Page } from "puppeteer";
 import { clickKoodienhallintaTab } from "../koodienhallinta-util";
 import {
-  acceptAvustushaku,
-  Budget,
-  BudgetAmount,
   clearAndSet,
   clearAndType,
   clickElement,
@@ -16,9 +13,7 @@ import {
   createCode,
   createValidCopyOfEsimerkkihakuAndReturnTheNewId,
   dummyExcelPath,
-  expectQueryParameter,
   expectToBeDefined,
-  fillBudget,
   getHakemusIDFromHakemusTokenURLParameter,
   getMuutoshakemusEmails,
   navigate,
@@ -52,11 +47,6 @@ export interface MuutoshakemusValues {
   jatkoaikaPerustelu: string;
 }
 
-fs.readFileSync(path.join(__dirname, "prod.hakulomake.json"), "utf8");
-const budjettimuutoshakemusEnabledLomakeJson = fs.readFileSync(
-  path.join(__dirname, "budjettimuutos.hakulomake.json"),
-  "utf8"
-);
 const muutoshakuDisabledMenoluokiteltuLomakeJson = fs.readFileSync(
   path.join(__dirname, "muutoshakemus-disabled-menoluokiteltu.hakulomake.json"),
   "utf8"
@@ -79,21 +69,6 @@ async function createHakuWithLomakeJson(
   await clearAndSet(page, ".form-json-editor textarea", lomakeJson);
   await clickFormSaveAndWait(page);
   return { avustushakuID };
-}
-
-async function createBudjettimuutoshakemusEnabledHaku(
-  page: Page,
-  registerNumber: string,
-  codes: VaCodeValues,
-  hakuName?: string
-): Promise<{ avustushakuID: number }> {
-  return await createHakuWithLomakeJson(
-    page,
-    budjettimuutoshakemusEnabledLomakeJson,
-    registerNumber,
-    codes,
-    hakuName
-  );
 }
 
 export async function createAndPublishMuutoshakemusDisabledMenoluokiteltuHaku(
@@ -341,30 +316,6 @@ export async function createCodeValues(
   return codeValues;
 }
 
-export async function ratkaiseBudjettimuutoshakemusEnabledAvustushakuButOverwriteMenoluokat(
-  page: Page,
-  haku: Haku,
-  answers: Answers,
-  budget: Budget,
-  codes: VaCodeValues
-) {
-  const { avustushakuID } = await createBudjettimuutoshakemusEnabledHaku(
-    page,
-    haku.registerNumber,
-    codes,
-    haku.avustushakuName
-  );
-  await publishAvustushaku(page, avustushakuID);
-  const { userKey } = await fillAndSendBudjettimuutoshakemusEnabledHakemus(
-    page,
-    avustushakuID,
-    answers,
-    budget
-  );
-  const { hakemusID } = await acceptAvustushaku(page, avustushakuID, budget);
-  return { avustushakuID, hakemusID, userKey };
-}
-
 export const linkToMuutoshakemusRegex = /https?:\/\/.*\/muutoshakemus\?.*/;
 export async function getLinkToMuutoshakemusFromSentEmails(hakemusID: number) {
   const emails = await waitUntilMinEmails(getMuutoshakemusEmails, 1, hakemusID);
@@ -374,162 +325,4 @@ export async function getLinkToMuutoshakemusFromSentEmails(hakemusID: number) {
   )?.[0];
   expectToBeDefined(linkToMuutoshakemus);
   return linkToMuutoshakemus;
-}
-
-export async function fillMuutoshakemusBudgetAmount(
-  page: Page,
-  budget: BudgetAmount
-) {
-  await clearAndType(
-    page,
-    "input[name='talousarvio.personnel-costs-row'][type='number']",
-    budget.personnel
-  );
-  await clearAndType(
-    page,
-    "input[name='talousarvio.material-costs-row'][type='number']",
-    budget.material
-  );
-  await clearAndType(
-    page,
-    "input[name='talousarvio.equipment-costs-row'][type='number']",
-    budget.equipment
-  );
-  await clearAndType(
-    page,
-    "input[name='talousarvio.service-purchase-costs-row'][type='number']",
-    budget["service-purchase"]
-  );
-  await clearAndType(
-    page,
-    "input[name='talousarvio.rent-costs-row'][type='number']",
-    budget.rent
-  );
-  await clearAndType(
-    page,
-    "input[name='talousarvio.steamship-costs-row'][type='number']",
-    budget.steamship
-  );
-  await clearAndType(
-    page,
-    "input[name='talousarvio.other-costs-row'][type='number']",
-    budget.other
-  );
-}
-
-export async function fillAndSendBudjettimuutoshakemusEnabledHakemus(
-  page: Page,
-  avustushakuID: number,
-  answers: Answers,
-  budget?: Budget,
-  beforeSubmitFn?: () => void
-): Promise<{ userKey: string }> {
-  const lang = answers.lang || "fi";
-  await navigateHakija(
-    page,
-    `/avustushaku/${avustushakuID}/?lang=${lang || "fi"}`
-  );
-
-  await page.waitForSelector("#haku-not-open", { hidden: true, timeout: 500 });
-  await clearAndType(page, "#primary-email", answers.contactPersonEmail);
-  await clickElement(page, "#submit:not([disabled])");
-
-  await navigateToNewHakemusPage(page, avustushakuID);
-
-  async function clickCorrectLanguageSelector() {
-    const index = lang && lang === "sv" ? 1 : 0;
-    await clickElement(page, `[for='language.radio.${index}']`);
-  }
-
-  await clearAndType(page, "#finnish-business-id", TEST_Y_TUNNUS);
-  await clickElement(page, "input.get-business-id");
-  await clearAndType(page, "#applicant-name", answers.contactPersonName);
-  await clearAndType(
-    page,
-    "[id='textField-0']",
-    answers.contactPersonPhoneNumber
-  );
-  await clearAndType(
-    page,
-    "[id='signatories-fieldset-1.name']",
-    "Erkki Esimerkki"
-  );
-  await clearAndType(
-    page,
-    "[id='signatories-fieldset-1.email']",
-    "erkki.esimerkki@example.com"
-  );
-  await clickElementWithText(
-    page,
-    "label",
-    lang === "fi"
-      ? "Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko"
-      : "Kommun/samkommun, kommunalt ägda bolag, kyrkan"
-  );
-  await clickElement(page, "[id='koodistoField-1_input']");
-  await selectMaakuntaFromDropdown(page, lang === "fi" ? "Kainuu" : "Åland");
-  await clearAndType(page, "#bank-iban", "FI95 6682 9530 0087 65");
-  await clearAndType(page, "#bank-bic", "OKOYFIHH");
-  await clearAndType(page, "#textField-2", "2");
-  await clearAndType(page, "#textField-1", "20");
-  await clearAndType(page, "#project-name", answers.projectName);
-  await clickCorrectLanguageSelector();
-  await clickElement(page, "[for='checkboxButton-0.checkbox.0']");
-  await clickElementWithText(
-    page,
-    "label",
-    lang === "fi" ? "Opetuksen lisääminen" : "Ordnande av extra undervisning"
-  );
-  await clearAndType(
-    page,
-    "[id='project-description.project-description-1.goal']",
-    "Jonain päivänä teemme maailman suurimman aallon."
-  );
-  await clearAndType(
-    page,
-    "[id='project-description.project-description-1.activity']",
-    "Teemme aaltoja joka dailyssa aina kun joku on saanut tehtyä edes jotain."
-  );
-  await clearAndType(
-    page,
-    "[id='project-description.project-description-1.result']",
-    "Hankkeeseen osallistuneiden hartiat vetreytyvät suunnattomasti."
-  );
-  await clearAndType(
-    page,
-    "[id='project-effectiveness']",
-    "Käsienheiluttelu kasvaa suhteessa muuhun tekemiseen huomattavasti"
-  );
-  await clearAndType(page, "[id='project-begin']", "13.03.1992");
-  await clearAndType(page, "[id='project-end']", "13.03.2032");
-  await clickElement(page, '[for="vat-included.radio.0"]');
-
-  await fillBudget(page, budget, "hakija");
-
-  if (beforeSubmitFn) {
-    await beforeSubmitFn();
-  }
-
-  await page.waitForFunction(
-    () =>
-      (
-        document.querySelector(
-          "#topbar #form-controls button#submit"
-        ) as HTMLInputElement
-      ).disabled === false
-  );
-  await clickElement(page, "#topbar #form-controls button#submit");
-  const sentText = lang === "fi" ? "Hakemus lähetetty" : "Ansökan sänd";
-  await page.waitForFunction(
-    (text: string) =>
-      (
-        document.querySelector(
-          "#topbar #form-controls button#submit"
-        ) as HTMLInputElement
-      ).textContent === text,
-    undefined,
-    sentText
-  );
-  const userKey = await expectQueryParameter(page, "hakemus");
-  return { userKey };
 }

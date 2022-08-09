@@ -4,7 +4,10 @@ import {
   budjettimuutoshakemusTest,
 } from "../../fixtures/budjettimuutoshakemusTest";
 import { HakijaMuutoshakemusPage } from "../../pages/hakijaMuutoshakemusPage";
-import { getLinkToMuutoshakemusFromSentEmails } from "../../utils/emails";
+import {
+  getAcceptedPäätösEmails,
+  getLinkToMuutoshakemusFromSentEmails,
+} from "../../utils/emails";
 import { Budget } from "../../utils/budget";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { BudgetAmount } from "../../../test/test-util";
@@ -325,6 +328,71 @@ muutosTest(
         );
       }
     );
+  }
+);
+
+budjettimuutoshakemusTest(
+  "filling muutoshakemus budget",
+  async ({ page, acceptedHakemus: { hakemusID } }) => {
+    await test.step("email has correct text", async () => {
+      const emails = await getAcceptedPäätösEmails(hakemusID);
+      expect(emails).toHaveLength(1);
+      expect(emails[0].formatted).toContain(
+        "Pääsette tekemään muutoshakemuksen sekä muuttamaan yhteyshenkilöä ja hänen yhteystietojaan koko hankekauden ajan tästä linkistä"
+      );
+    });
+    const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page);
+    await hakijaMuutoshakemusPage.navigate(hakemusID);
+    await test.step("has prefilled menoluokat", async () => {
+      await hakijaMuutoshakemusPage.clickHaenMuutostaTaloudenKayttosuunnitelmaan();
+      const expectedBudgetInputs = [
+        { name: "talousarvio.personnel-costs-row", amount: 200000 },
+        { name: "talousarvio.material-costs-row", amount: 3000 },
+        { name: "talousarvio.equipment-costs-row", amount: 10000 },
+        { name: "talousarvio.service-purchase-costs-row", amount: 100 },
+        { name: "talousarvio.rent-costs-row", amount: 161616 },
+        { name: "talousarvio.steamship-costs-row", amount: 100 },
+        { name: "talousarvio.other-costs-row", amount: 100000 },
+      ];
+      const rows = await getMenoInputRows(page);
+      expect(sortedInputFields(expectedBudgetInputs)).toEqual(
+        sortedInputFields(rows)
+      );
+    });
+    const locators = hakijaMuutoshakemusPage.locators();
+    const { budget } = locators;
+    await test.step("yhteissumma changes when changing value", async () => {
+      await expect(budget.originalSum).toHaveText("474816 €");
+      await expect(budget.currentSum).toHaveText("474816");
+      await budget.input.personnelCosts.fill("200001");
+      await expect(budget.originalSum).toHaveText("474816 €");
+      await expect(budget.currentSum).toHaveText("474817");
+      await budget.input.personnelCosts.fill("200000");
+      await expect(budget.originalSum).toHaveText("474816 €");
+      await expect(budget.currentSum).toHaveText("474816");
+    });
+    await test.step("require perustelut", async () => {
+      await expect(locators.sendMuutospyyntoButton).toBeDisabled();
+      await expect(
+        budget.input.errors.taloudenKayttosuunnitelmanPerustelut
+      ).toHaveText("Pakollinen kenttä");
+      await budget.input.taloudenKayttosuunnitelmanPerustelut.fill("perustelu");
+      await expect(locators.sendMuutospyyntoButton).toBeEnabled();
+      await expect(
+        budget.input.errors.taloudenKayttosuunnitelmanPerustelut
+      ).toHaveText("");
+    });
+    await test.step("require current sum to match original sum", async () => {
+      await expect(budget.currentSumError).toBeHidden();
+      await budget.input.equipmentCosts.fill("9999");
+      await expect(locators.sendMuutospyyntoButton).toBeDisabled();
+      await expect(budget.currentSumError).toHaveText(
+        "Loppusumman on oltava 474816"
+      );
+      await budget.input.materialCosts.fill("3001");
+      await expect(locators.sendMuutospyyntoButton).toBeEnabled();
+      await expect(budget.currentSumError).toBeHidden();
+    });
   }
 );
 

@@ -70,8 +70,7 @@ export class HakijaMuutoshakemusPage {
       );
     }
     if (explanation) {
-      await this.page.fill(
-        "#perustelut-taloudenKayttosuunnitelmanPerustelut",
+      await this.locators().budget.input.taloudenKayttosuunnitelmanPerustelut.fill(
         explanation
       );
     }
@@ -203,6 +202,28 @@ export class HakijaMuutoshakemusPage {
         monthLabel: this.page.locator('button[id="rw_4_calendar_label"]'),
       },
       budget: {
+        originalSum: this.page.locator("[data-test-id=original-sum]"),
+        currentSum: this.page.locator("[data-test-id=current-sum]"),
+        currentSumError: this.page.locator("[data-test-id=current-sum-error]"),
+        input: {
+          personnelCosts: this.page.locator(
+            'input[name="talousarvio.personnel-costs-row"]'
+          ),
+          equipmentCosts: this.page.locator(
+            'input[name="talousarvio.equipment-costs-row"]'
+          ),
+          materialCosts: this.page.locator(
+            'input[name="talousarvio.material-costs-row"]'
+          ),
+          taloudenKayttosuunnitelmanPerustelut: this.page.locator(
+            "#perustelut-taloudenKayttosuunnitelmanPerustelut"
+          ),
+          errors: {
+            taloudenKayttosuunnitelmanPerustelut: this.page.locator(
+              "#perustelut-taloudenKayttosuunnitelmanPerustelut + .muutoshakemus__error-message"
+            ),
+          },
+        },
         expensesTotalTitle: this.page.locator(
           '[data-test-id="expenses-total-title"]'
         ),
@@ -212,7 +233,7 @@ export class HakijaMuutoshakemusPage {
         budgetRows: this.page
           .locator("[data-test-id=meno-input-row]")
           .locator(".description"),
-        perustelut: this.page.locator('[data-test-id="budget-old-title"]'),
+        oldTitle: this.page.locator('[data-test-id="budget-old-title"]'),
         changeTitle: this.page.locator('[data-test-id="budget-change-title"]'),
       },
     };

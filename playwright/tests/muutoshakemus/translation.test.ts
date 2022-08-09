@@ -100,7 +100,7 @@ test("swedish muutoshakemus translations", async ({
       "Ska få ta bort något akut .... koda något om något ois ta bort bit sit mo"
     );
     await hakijaMuutoshakemusPage.sendMuutoshakemus(true, true);
-    await expect(locators.budget.perustelut).toHaveText("Nuvarande budget");
+    await expect(locators.budget.oldTitle).toHaveText("Nuvarande budget");
     await expect(locators.budget.changeTitle).toHaveText(
       "Den ansökta nya budgeten"
     );
@@ -111,9 +111,7 @@ test("swedish muutoshakemus translations", async ({
       avustushakuID,
       hakemusID
     );
-    await expect(locators.budget.perustelut).toHaveText(
-      "Voimassaoleva budjetti"
-    );
+    await expect(locators.budget.oldTitle).toHaveText("Voimassaoleva budjetti");
     await expect(locators.budget.changeTitle).toHaveText(
       "Haettu uusi budjetti"
     );
@@ -180,9 +178,7 @@ fornamn.efternamn@oph.fi
   });
   await test.step("hakija goes to muutoshakemus page", async () => {
     await hakijaMuutoshakemusPage.navigate(hakemusID);
-    await expect(locators.budget.perustelut).toHaveText(
-      "Den tidigare budgeten"
-    );
+    await expect(locators.budget.oldTitle).toHaveText("Den tidigare budgeten");
     await expect(locators.budget.changeTitle).toHaveText("Godkänd ny budget");
   });
 });
