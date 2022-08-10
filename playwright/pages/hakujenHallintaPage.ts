@@ -105,7 +105,7 @@ export class FormEditorPage {
 
   async saveForm() {
     await this.saveFormButton.click();
-    await this.saveStatus.locator("text=Kaikki tiedot tallennettu").isVisible();
+    await this.saveStatus.locator("text=Kaikki tiedot tallennettu").waitFor();
   }
 
   async getFieldIds() {

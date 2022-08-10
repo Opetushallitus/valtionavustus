@@ -53,9 +53,7 @@ newHakemusTest(
         const rows = hakemusListPage.hakemusRows;
         expect(await rows.count()).toBe(1);
         const row = rows.first();
-        expect(
-          await row.locator("text=Keskeneräinen").isVisible()
-        ).toBeTruthy();
+        await row.locator("text=Keskeneräinen").waitFor();
       }
     );
 
