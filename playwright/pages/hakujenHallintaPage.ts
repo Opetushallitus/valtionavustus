@@ -62,11 +62,6 @@ const formatDate = (date: Date | moment.Moment) =>
   moment(date).format(dateFormat);
 export const parseDate = (input: string) => moment(input, dateFormat).toDate();
 
-export const waitForSaveStatusOk = (page: Page) =>
-  page.waitForSelector(
-    '[data-test-id="save-status"]:has-text("Kaikki tiedot tallennettu")'
-  );
-
 export class FormEditorPage {
   readonly page: Page;
   formErrorState: Locator;
@@ -104,8 +99,12 @@ export class FormEditorPage {
   }
 
   async saveForm() {
+    const savedSuccessfully = this.saveStatus.locator(
+      "text=Kaikki tiedot tallennettu"
+    );
+    await expect(savedSuccessfully).toBeHidden();
     await this.saveFormButton.click();
-    await this.saveStatus.locator("text=Kaikki tiedot tallennettu").waitFor();
+    await expect(savedSuccessfully).toBeVisible();
   }
 
   async getFieldIds() {
@@ -388,7 +387,11 @@ export class HakujenHallintaPage {
   }
 
   async waitForSave() {
-    await waitForSaveStatusOk(this.page);
+    const saveState = this.page.locator('[data-test-id="save-status"]');
+    await expect(saveState.locator('text="Tallennetaan"')).toBeVisible();
+    await expect(
+      saveState.locator('text="Kaikki tiedot tallennettu"')
+    ).toBeVisible();
   }
 
   async searchUsersForRoles(user: string) {
@@ -406,11 +409,11 @@ export class HakujenHallintaPage {
   }
 
   async clearUserSearchForRoles() {
-    this.page.click('[data-test-id="clear-role-search"]');
+    await this.page.click('[data-test-id="clear-role-search"]');
   }
 
   async clearUserSearchForVastuuvalmistelija() {
-    this.page.click('[data-test-id="clear-vastuuvalmistelija-search"]');
+    await this.page.click('[data-test-id="clear-vastuuvalmistelija-search"]');
   }
 
   async fillVastuuvalmistelijaName(name: string) {
@@ -737,11 +740,10 @@ export class HakujenHallintaPage {
 
     for (const saadanto of lainsaadanto) {
       await this.page.locator(`label:has-text("${saadanto}")`).click();
+      await this.waitForSave();
     }
 
-    await this.waitForSave();
-
-    await this.page.click('[data-test-id="päätös-välilehti"]');
+    await this.switchToPaatosTab();
     await this.page.fill(
       '[data-test-id="hankkeen-alkamispaiva"] div.datepicker input',
       hankkeenAlkamispaiva
@@ -750,13 +752,9 @@ export class HakujenHallintaPage {
       '[data-test-id="hankkeen-paattymispaiva"] div.datepicker input',
       hankkeenPaattymispaiva
     );
-
-    await this.waitForSave();
-
     await this.page.fill('[id="decision.taustaa.fi"]', "taustaa");
 
     await this.waitForSave();
-
     return avustushakuID;
   }
 
