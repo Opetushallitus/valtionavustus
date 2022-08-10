@@ -63,6 +63,14 @@ export function MaksatuksetPage(
       ? `[data-test-id="eräpäivä"] input`
       : `[id="Eräpäivä"]`;
 
+    await page.waitForSelector(datePicker);
+    await page.waitForFunction((selector) => {
+      return (
+        (document?.querySelector(selector) as HTMLInputElement).value?.length >
+        5
+      );
+    }, datePicker);
+
     const dueDate = await page.getAttribute(datePicker, "value");
     if (!dueDate) throw new Error("Cannot find due date from form");
 
