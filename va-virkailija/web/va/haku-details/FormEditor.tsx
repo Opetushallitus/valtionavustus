@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 
 import "soresu-form/web/va/style/soresu-va.less";
 import "soresu-form/web/form/style/formedit.less";
@@ -12,6 +12,8 @@ import FakeFormController from "../form/FakeFormController";
 import FakeFormState from "../form/FakeFormState";
 import { Avustushaku, Field, Form, Koodistos } from "soresu-form/web/va/types";
 import _ from "lodash";
+import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
+import { ensureKoodistoLoaded } from "../hakujenHallinta/hakuReducer";
 
 interface FormEditorProps {
   avustushaku: Avustushaku;
@@ -19,23 +21,35 @@ interface FormEditorProps {
   formDraft: Form;
   onFormChange: (avustushaku: Avustushaku, newDraft: Form) => void;
 }
+
+const cloneDeeplyBecauseYouCannotMutateStateDirectlyWithRedux = (
+  avustushaku: Avustushaku,
+  formDraft: Form
+) => ({
+  avustushaku: _.cloneDeep(avustushaku),
+  formDraft: _.cloneDeep(formDraft),
+});
+
 const FormEditor = ({
   avustushaku: originalAvustushaku,
   koodistos,
   formDraft: originalFormDraft,
   onFormChange,
 }: FormEditorProps) => {
-  /*
-    FIXME: Redux Toolkit doesn't allow mutating state directly
-           so this needs to be refactored to dispatch to the store
-   */
-  const avustushaku = _.cloneDeep(originalAvustushaku);
-  const formDraft = _.cloneDeep(originalFormDraft);
+  const { avustushaku, formDraft } =
+    cloneDeeplyBecauseYouCannotMutateStateDirectlyWithRedux(
+      originalAvustushaku,
+      originalFormDraft
+    );
+  const dispatch = useHakujenHallintaDispatch();
   const allowEditing =
     avustushaku.privileges && avustushaku.privileges["edit-haku"];
+  const ensureLoaded = useCallback(() => {
+    dispatch(ensureKoodistoLoaded());
+  }, []);
   const onFormEdited = (newDraft: Form, operationResult: Field | void) => {
     if (operationResult && operationResult.fieldType === "koodistoField") {
-      // controller.ensureKoodistosLoaded();
+      ensureLoaded();
     }
     onFormChange(avustushaku, newDraft);
   };
@@ -49,7 +63,7 @@ const FormEditor = ({
     : undefined;
   if (formState) {
     formState.koodistos = koodistos;
-    //formState.koodistosLoader = controller.ensureKoodistosLoaded;
+    formState.koodistosLoader = ensureLoaded;
   }
   const formElementProps = {
     state: formState,

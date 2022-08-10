@@ -162,8 +162,7 @@ export class FormEditorPage {
   async addKoodisto(koodisto: string) {
     await this.page.locator(".soresu-field-add-header").first().hover();
     await this.page.click("text=Koodistokenttä");
-    await this.page.click('text="Valitse koodisto"');
-    await this.page.keyboard.type(koodisto);
+    await this.page.click(`text="${koodisto}"`);
     await this.page.keyboard.press("ArrowDown");
     await this.page.keyboard.press("Enter");
     await this.page.locator('label:text-is("Pudotusvalikko")').first().click();
@@ -333,6 +332,11 @@ export class HakujenHallintaPage {
 
   async navigateToFormEditor(avustushakuID: number) {
     await this.navigateTo(`/admin/form-editor/?avustushaku=${avustushakuID}`);
+    return new FormEditorPage(this.page);
+  }
+
+  async switchToFormEditorTab() {
+    await this.page.locator('span:text-is("Hakulomake")').click();
     return new FormEditorPage(this.page);
   }
 
@@ -794,8 +798,7 @@ export class HakujenHallintaPage {
     return { avustushakuID };
   }
 
-  async publishAvustushaku(avustushakuId: number) {
-    await this.navigate(avustushakuId);
+  async publishAvustushaku() {
     await this.page.click("label[for='set-status-published']");
     await this.waitForSave();
   }
@@ -843,7 +846,8 @@ export class HakujenHallintaPage {
       muutoshakemusEnabledHakuLomakeJson,
       hakuProps
     );
-    await this.publishAvustushaku(avustushakuID);
+    await this.switchToHaunTiedotTab();
+    await this.publishAvustushaku();
     return avustushakuID;
   }
 
@@ -856,7 +860,8 @@ export class HakujenHallintaPage {
       muutoshakemusEnabledHakuLomakeJson,
       hakuProps
     );
-    await this.publishAvustushaku(avustushakuID);
+    await this.switchToHaunTiedotTab();
+    await this.publishAvustushaku();
     return avustushakuID;
   }
 

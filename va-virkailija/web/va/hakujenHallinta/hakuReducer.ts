@@ -21,6 +21,7 @@ import {
   AvustushakuType,
   Form,
   HelpTexts,
+  Koodisto,
   Koodistos,
   Language,
   Liite,
@@ -115,6 +116,27 @@ function appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing(
       avustushaku["hankkeen-paattymispaiva"] ?? today,
   };
 }
+
+export const ensureKoodistoLoaded = createAsyncThunk<
+  Koodisto[],
+  void,
+  { state: HakujenHallintaRootState }
+>(
+  "haku/ensureKoodistoLoaded",
+  async (_) => {
+    const koodistos = await HttpUtil.get<Koodisto[]>("/api/koodisto/");
+    return koodistos;
+  },
+  {
+    condition: (_, { getState }) => {
+      const koodistosState = getState().haku.koodistos;
+      if (koodistosState.loading || koodistosState.content) {
+        return false;
+      }
+      return true;
+    },
+  }
+);
 
 export const updateProjects = createAsyncThunk<
   void,
@@ -970,6 +992,9 @@ const hakuSlice = createSlice({
         state.formDrafts[avustushakuId] = form;
         state.formDraftsJson[avustushakuId] = JSON.stringify(form, null, 2);
         haku.muutoshakukelpoisuus = muutoshakukelpoinen;
+        state.saveStatus.saveInProgress = false;
+        state.saveStatus.saveTime = new Date().toISOString();
+        state.saveStatus.serverError = "";
       })
       .addCase(saveForm.rejected, (state, action) => {
         state.saveStatus.serverError =
@@ -992,6 +1017,17 @@ const hakuSlice = createSlice({
       .addCase(saveSelvitysForm.rejected, (state, action) => {
         state.saveStatus.serverError =
           action.payload ?? "unexpected-save-error";
+      })
+      .addCase(ensureKoodistoLoaded.pending, (state) => {
+        state.koodistos.loading = true;
+      })
+      .addCase(ensureKoodistoLoaded.fulfilled, (state, action) => {
+        state.koodistos.content = action.payload;
+        state.koodistos.loading = false;
+      })
+      .addCase(ensureKoodistoLoaded.rejected, (state) => {
+        state.koodistos.content = null;
+        state.koodistos.loading = false;
       });
   },
 });
