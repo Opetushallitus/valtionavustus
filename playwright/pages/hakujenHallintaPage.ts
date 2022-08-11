@@ -574,6 +574,7 @@ export class HakujenHallintaPage {
   }
 
   async selectVaCodesAndWaitForSave(codes: VaCodeValues | undefined) {
+    const longTimeoutAsSelectingCodesMightTakeAWhile = 10000;
     await Promise.all([
       this.selectVaCodes(codes),
       expect(
@@ -583,7 +584,7 @@ export class HakujenHallintaPage {
         this.page
           .locator(saveStatusSelector)
           .locator("text=Kaikki tiedot tallennettu")
-      ).toBeVisible(),
+      ).toBeVisible({ timeout: longTimeoutAsSelectingCodesMightTakeAWhile }),
     ]);
   }
 
