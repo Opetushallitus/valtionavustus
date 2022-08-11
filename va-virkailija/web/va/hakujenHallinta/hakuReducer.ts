@@ -964,6 +964,8 @@ const hakuSlice = createSlice({
       })
       .addCase(createHakuRole.fulfilled, (state, action) => {
         state.saveStatus.saveInProgress = false;
+        state.saveStatus.saveTime = new Date().toISOString();
+        state.saveStatus.serverError = "";
         const { avustushakuId, roles, privileges } = action.payload;
         const haku = getAvustushaku(state, avustushakuId);
         haku.roles = roles;
