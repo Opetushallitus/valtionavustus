@@ -10,7 +10,6 @@ import React, {
 import { HelpTexts } from "soresu-form/web/va/types";
 import HttpUtil from "soresu-form/web/HttpUtil";
 
-import { SelectedAvustushaku } from "../HakujenHallintaController";
 import HelpTooltip from "../HelpTooltip";
 import { UserInfo, VaUserSearch } from "../types";
 import { DateInput } from "./DateInput";
@@ -18,10 +17,14 @@ import { Maksatus } from "./Maksatukset";
 import { MaksatuksetTable } from "./MaksatuksetTable";
 import { useVaUserSearch } from "../VaUserSearch";
 import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
-import { completeSave, startSave } from "../hakujenHallinta/hakuReducer";
+import {
+  completeSave,
+  Avustushaku,
+  startSave,
+} from "../hakujenHallinta/hakuReducer";
 
 type LahtevatMaksatuksetProps = {
-  avustushaku: SelectedAvustushaku;
+  avustushaku: Avustushaku;
   helpTexts: HelpTexts;
   payments: Maksatus[];
   refreshPayments: () => Promise<void>;
@@ -223,7 +226,7 @@ export const LahtevatMaksatukset = ({
 };
 
 type DocumentEditorProps = {
-  avustushaku: SelectedAvustushaku;
+  avustushaku: Avustushaku;
   documents: Document[];
   helpTexts: HelpTexts;
   phase: number;

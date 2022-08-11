@@ -9,7 +9,6 @@ import FormEditorContainer from "./FormEditorContainer";
 import DecisionEditor from "./DecisionEditor";
 import { SelvitysFormEditor } from "./SelvitysFormEditor";
 import HelpTooltip from "../HelpTooltip";
-import { LainsaadantoOption } from "../HakujenHallintaController";
 import { HakujenHallintaSubTab, UserInfo, VaCodeValue } from "../types";
 import { Maksatukset } from "./Maksatukset";
 import {
@@ -18,6 +17,7 @@ import {
 } from "../hakujenHallinta/hakujenHallintaStore";
 import {
   getSelectedHakuSelector,
+  LainsaadantoOption,
   selectEditorSubTab,
 } from "../hakujenHallinta/hakuReducer";
 

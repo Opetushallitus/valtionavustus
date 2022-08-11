@@ -28,7 +28,6 @@ import {
   Payment,
   RahoitusAlue,
 } from "soresu-form/web/va/types";
-import { LainsaadantoOption } from "../HakujenHallintaController";
 // @ts-ignore route-parser doesn't have proper types
 import RouteParser from "route-parser";
 import HttpUtil from "soresu-form/web/HttpUtil";
@@ -45,7 +44,7 @@ import { HakujenHallintaRootState } from "./hakujenHallintaStore";
 const ValiselvitysForm = require("../data/ValiselvitysForm.json") as Form;
 const LoppuselvitysForm = require("../data/LoppuselvitysForm.json") as Form;
 
-interface Avustushaku extends BaseAvustushaku {
+export interface Avustushaku extends BaseAvustushaku {
   roles?: Role[];
   payments?: Payment[];
   privileges?: Privileges;
@@ -61,6 +60,11 @@ interface Avustushaku extends BaseAvustushaku {
   "maksatukset-summa"?: number;
   "use-overridden-detailed-costs"?: boolean | null;
   projects?: VaCodeValue[];
+}
+
+export interface LainsaadantoOption {
+  id: number;
+  name: string;
 }
 
 interface InitialData {

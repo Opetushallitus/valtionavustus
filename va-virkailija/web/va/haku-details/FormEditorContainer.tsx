@@ -3,11 +3,14 @@ import DateUtil from "soresu-form/web/DateUtil";
 import FormEditor from "./FormEditor";
 import FormJsonEditor from "./FormJsonEditor";
 import { MuutoshakukelpoisuusContainer } from "./MuutoshakukelpoisuusContainer";
-import { Avustushaku } from "../HakujenHallintaController";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 import { Koodistos, Form, HelpTexts } from "soresu-form/web/va/types";
 import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
-import { formJsonUpdated, formUpdated } from "../hakujenHallinta/hakuReducer";
+import {
+  Avustushaku,
+  formJsonUpdated,
+  formUpdated,
+} from "../hakujenHallinta/hakuReducer";
 
 interface FormEditorContainerProps {
   avustushaku: Avustushaku;

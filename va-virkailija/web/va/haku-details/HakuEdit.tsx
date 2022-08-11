@@ -3,7 +3,6 @@ import { Moment } from "moment";
 
 import DateUtil from "soresu-form/web/DateUtil";
 import {
-  Avustushaku,
   AvustushakuStatus,
   AVUSTUSHAKU_STATUSES,
   HelpTexts,
@@ -15,10 +14,6 @@ import EducationLevels from "./EducationLevels";
 import AutoCompleteCodeValue, { CodeType } from "./AutoCompleteCodeValue";
 import HelpTooltip from "../HelpTooltip";
 import WarningBanner from "../WarningBanner";
-import {
-  LainsaadantoOption,
-  SelectedAvustushaku,
-} from "../HakujenHallintaController";
 import { UserInfo, VaCodeValue } from "../types";
 import { DateInput } from "./DateInput";
 import { Raportointivelvoitteet } from "./Raportointivelvoitteet";
@@ -34,14 +29,16 @@ import {
   addTalousarviotili,
   createHaku,
   deleteFocusArea,
+  LainsaadantoOption,
   removeSelectionCriteria,
   removeTalousarviotili,
+  Avustushaku,
   startAutoSaveForAvustushaku,
   updateField,
 } from "../hakujenHallinta/hakuReducer";
 
 type HakuEditProps = {
-  avustushaku: SelectedAvustushaku;
+  avustushaku: Avustushaku;
   codeOptions: VaCodeValue[];
   lainsaadantoOptions: LainsaadantoOption[];
   helpTexts: HelpTexts;
@@ -117,7 +114,7 @@ export const HakuEdit = ({
     environment["multiple-project-codes"]?.["enabled?"] === true;
 
   const updateCodeValue =
-    (id: CodeType, avustushaku: SelectedAvustushaku) =>
+    (id: CodeType, avustushaku: Avustushaku) =>
     (option: VaCodeValue | null) => {
       if (option == null) {
         dispatch(updateField({ avustushaku, field: { id }, newValue: null }));

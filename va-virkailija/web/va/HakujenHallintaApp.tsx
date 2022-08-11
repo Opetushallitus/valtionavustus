@@ -6,7 +6,6 @@ import MomentLocalizer from "react-widgets-moment";
 import Localization from "react-widgets/Localization";
 
 import { HeaderContainer } from "./Header";
-import { Avustushaku } from "./HakujenHallintaController";
 import { HakuListing } from "./haku-list/HakuListing";
 import { EditorSelector } from "./haku-details/EditorSelector";
 import { translationsFi } from "soresu-form/web/va/i18n/translations";
@@ -19,7 +18,11 @@ import store, {
   useHakujenHallintaSelector,
 } from "./hakujenHallinta/hakujenHallintaStore";
 import { Provider } from "react-redux";
-import { fetchInitialState, selectHaku } from "./hakujenHallinta/hakuReducer";
+import {
+  Avustushaku,
+  fetchInitialState,
+  selectHaku,
+} from "./hakujenHallinta/hakuReducer";
 
 moment.locale("fi");
 const momentLocalizer = new MomentLocalizer(moment);

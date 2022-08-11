@@ -17,12 +17,14 @@ import {
 import { Pill } from "../hakemus-list/Pill";
 import moment from "moment-timezone";
 import DatePicker from "react-widgets/DatePicker";
-import { Avustushaku } from "../HakujenHallintaController";
 
 import buttonStyles from "../style/Button.module.less";
 import styles from "./NewHakuListing.module.less";
 import { useSelector } from "react-redux";
-import { getSelectedHakuSelector } from "../hakujenHallinta/hakuReducer";
+import {
+  Avustushaku,
+  getSelectedHakuSelector,
+} from "../hakujenHallinta/hakuReducer";
 
 export const AVUSTUSHAKU_STATUSES_AVAILABLE_FOR_FILTER =
   AVUSTUSHAKU_STATUSES.filter((status) => status !== "deleted");

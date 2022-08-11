@@ -1,6 +1,5 @@
 import React from "react";
 import { VaCodeValue } from "../types";
-import { SelectedAvustushaku } from "../HakujenHallintaController";
 import ProjectSelector from "./ProjectSelector";
 
 import "../style/projektien-valinta.less";
@@ -8,10 +7,10 @@ import {
   useHakujenHallintaDispatch,
   useHakujenHallintaSelector,
 } from "../hakujenHallinta/hakujenHallintaStore";
-import { updateProjects } from "../hakujenHallinta/hakuReducer";
+import { Avustushaku, updateProjects } from "../hakujenHallinta/hakuReducer";
 
 interface ProjectSelectorsProps {
-  avustushaku: SelectedAvustushaku;
+  avustushaku: Avustushaku;
   codeOptions: VaCodeValue[];
   disabled: boolean;
   multipleProjectCodesEnabled: boolean;

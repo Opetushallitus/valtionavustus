@@ -3,16 +3,17 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import HttpUtil from "soresu-form/web/HttpUtil";
 import { HelpTexts } from "soresu-form/web/va/types";
 
-import {
-  LainsaadantoOption,
-  SelectedAvustushaku,
-} from "../HakujenHallintaController";
 import HelpTooltip from "../HelpTooltip";
 import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
-import { completeSave, startSave } from "../hakujenHallinta/hakuReducer";
+import {
+  completeSave,
+  LainsaadantoOption,
+  Avustushaku,
+  startSave,
+} from "../hakujenHallinta/hakuReducer";
 
 type LainsaadantoProps = {
-  avustushaku: SelectedAvustushaku;
+  avustushaku: Avustushaku;
   lainsaadantoOptions: LainsaadantoOption[];
   helpTexts: HelpTexts;
 };

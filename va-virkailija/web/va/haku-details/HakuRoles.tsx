@@ -7,7 +7,6 @@ import NameFormatter from "soresu-form/web/va/util/NameFormatter";
 import { HelpTexts } from "soresu-form/web/va/types";
 
 import HelpTooltip from "../HelpTooltip";
-import { SelectedAvustushaku } from "../HakujenHallintaController";
 import { Role, RoleType, UserInfo, VaUserSearch } from "../types";
 import { minimumSearchInputLength, useVaUserSearch } from "../VaUserSearch";
 import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
@@ -15,11 +14,12 @@ import {
   createHakuRole,
   deleteRole,
   saveRole,
+  Avustushaku,
   startSave,
 } from "../hakujenHallinta/hakuReducer";
 
 type HakuRolesProps = {
-  avustushaku: SelectedAvustushaku;
+  avustushaku: Avustushaku;
   userHasEditPrivilege: boolean;
   userHasEditMyHakuRolePrivilege: boolean;
   userInfo: UserInfo;
@@ -135,7 +135,7 @@ export const HakuRoles = ({
 
 type PersonSelectListProps = {
   vaUserSearch: VaUserSearch;
-  avustushaku: SelectedAvustushaku;
+  avustushaku: Avustushaku;
   input: string;
   roleType?: RoleType;
 };
@@ -222,7 +222,7 @@ const PersonSelectList = ({
 };
 
 type RoleRowProps = {
-  avustushaku: SelectedAvustushaku;
+  avustushaku: Avustushaku;
   role: Role;
   userInfo: UserInfo;
   userHasEditPrivilege: boolean;

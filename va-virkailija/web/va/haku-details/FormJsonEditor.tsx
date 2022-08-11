@@ -1,9 +1,9 @@
 import React from "react";
 import _ from "lodash";
-import { Avustushaku } from "../HakujenHallintaController";
 import { Form } from "soresu-form/web/va/types";
 import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
 import {
+  Avustushaku,
   formJsonUpdated,
   formUpdated,
   saveForm,

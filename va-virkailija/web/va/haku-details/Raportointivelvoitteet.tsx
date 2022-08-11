@@ -10,14 +10,17 @@ import Select, { components, OptionProps, GroupBase } from "react-select";
 import HttpUtil from "soresu-form/web/HttpUtil";
 import { HelpTexts, Raportointivelvoite } from "soresu-form/web/va/types";
 
-import { SelectedAvustushaku } from "../HakujenHallintaController";
 import HelpTooltip from "../HelpTooltip";
 import { DateInput } from "./DateInput";
 import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
-import { completeSave, startSave } from "../hakujenHallinta/hakuReducer";
+import {
+  completeSave,
+  Avustushaku,
+  startSave,
+} from "../hakujenHallinta/hakuReducer";
 
 type RaportointivelvoitteetProps = {
-  avustushaku: SelectedAvustushaku;
+  avustushaku: Avustushaku;
   helpTexts: HelpTexts;
 };
 

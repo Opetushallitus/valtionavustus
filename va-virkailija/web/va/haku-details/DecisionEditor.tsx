@@ -20,8 +20,7 @@ import {
   LiiteAttachmentVersion,
 } from "soresu-form/web/va/types";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
-import { Avustushaku } from "../HakujenHallintaController";
-import { updateField } from "../hakujenHallinta/hakuReducer";
+import { Avustushaku, updateField } from "../hakujenHallinta/hakuReducer";
 import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
 
 interface DecisionProps {

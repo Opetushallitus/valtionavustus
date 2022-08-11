@@ -6,7 +6,6 @@ import HttpUtil from "soresu-form/web/HttpUtil";
 import { fiShortFormat } from "soresu-form/web/va/i18n/dateformat";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 
-import { SelectedAvustushaku } from "../HakujenHallintaController";
 import {
   HakemusV2WithEvaluation,
   PaymentBatchV2,
@@ -20,10 +19,14 @@ import "./Maksatukset.less";
 import { MaksatuksetTable } from "./MaksatuksetTable";
 import { HelpTexts } from "soresu-form/web/va/types";
 import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
-import { completeSave, startSave } from "../hakujenHallinta/hakuReducer";
+import {
+  completeSave,
+  Avustushaku,
+  startSave,
+} from "../hakujenHallinta/hakuReducer";
 
 type MaksatuksetProps = {
-  avustushaku: SelectedAvustushaku;
+  avustushaku: Avustushaku;
   codeValues: VaCodeValue[];
   environment: EnvironmentApiResponse;
   helpTexts: HelpTexts;
@@ -148,7 +151,7 @@ const AvustushakuInfo = ({
   avustushaku,
   codeValues,
 }: {
-  avustushaku: SelectedAvustushaku;
+  avustushaku: Avustushaku;
   codeValues: VaCodeValue[];
 }) => {
   return (
@@ -249,7 +252,7 @@ const MaksatuseräTable = ({ batches, payments, testId }: MaksatuseräTable) => 
 };
 
 type AdminToolsProps = {
-  avustushaku: SelectedAvustushaku;
+  avustushaku: Avustushaku;
   environment: EnvironmentApiResponse;
   refreshPayments: () => Promise<void>;
 };

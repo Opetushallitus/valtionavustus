@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { HelpTexts, RahoitusAlue } from "soresu-form/web/va/types";
 import HelpTooltip from "../HelpTooltip";
-import { Avustushaku } from "../HakujenHallintaController";
+import { Avustushaku } from "../hakujenHallinta/hakuReducer";
 
 type EducationLevelTitle =
   | "Varhaiskasvatus"
