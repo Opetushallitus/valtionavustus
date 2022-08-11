@@ -245,7 +245,7 @@ export function MaksatuksetPage(
         page
           .locator('[data-test-id="save-status"]')
           .locator('text="Kaikki tiedot tallennettu"')
-      ).toBeVisible(),
+      ).toBeVisible({ timeout: 10000 }),
       clickElementWithText(page, "button", "Lähetä maksatukset"),
     ]);
   }
