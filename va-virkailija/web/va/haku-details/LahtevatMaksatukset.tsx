@@ -70,7 +70,7 @@ export const LahtevatMaksatukset = ({
       !avustushaku["operation-id"] ? "Avustushaun toiminto puuttuu" : undefined,
       !avustushaku["project-id"] ? "Avustushaun projekti puuttuu" : undefined,
       !avustushaku.content["document-type"]
-        ? "Abustushaun tositelaji puuttuu"
+        ? "Avustushaun tositelaji puuttuu"
         : undefined,
       payments.filter((p) => !p.hakemus?.["lkp-account"]).length
         ? "LKP-tili puuttuu joltain hakemukselta"
