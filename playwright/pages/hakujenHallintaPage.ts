@@ -62,7 +62,7 @@ const formatDate = (date: Date | moment.Moment) =>
   moment(date).format(dateFormat);
 export const parseDate = (input: string) => moment(input, dateFormat).toDate();
 
-const waitForSaveStatusOk = (page: Page) =>
+export const waitForSaveStatusOk = (page: Page) =>
   page.waitForSelector(
     '[data-test-id="save-status"]:has-text("Kaikki tiedot tallennettu")'
   );

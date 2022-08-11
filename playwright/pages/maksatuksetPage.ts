@@ -7,8 +7,10 @@ import {
   waitForClojureScriptLoadingDialogVisible,
   clearAndType,
 } from "../utils/util";
-import { HakujenHallintaPage } from "./hakujenHallintaPage";
-import { waitForSaveStatusOk } from "../../test/test-util";
+import {
+  HakujenHallintaPage,
+  waitForSaveStatusOk,
+} from "./hakujenHallintaPage";
 
 export function MaksatuksetPage(
   page: Page,
