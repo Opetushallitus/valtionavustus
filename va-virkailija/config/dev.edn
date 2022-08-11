@@ -35,6 +35,7 @@
             :delete-payments? true}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
+ :maksatukset-typescript {:enabled? true}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :avustushaku-excel-extra-fields {:enabled? true}
  :ta-tilit {:enabled? true}
