@@ -7,7 +7,6 @@ import path from "path";
 import { navigate } from "../utils/navigate";
 import {
   clickElementWithText,
-  clickElementWithTextStrict,
   expectQueryParameter,
   expectToBeDefined,
 } from "../utils/util";
@@ -62,11 +61,12 @@ const formatDate = (date: Date | moment.Moment) =>
   moment(date).format(dateFormat);
 export const parseDate = (input: string) => moment(input, dateFormat).toDate();
 
+const saveStatusSelector = '[data-test-id="save-status"]';
+
 export class FormEditorPage {
   readonly page: Page;
   formErrorState: Locator;
   form: Locator;
-  saveStatus: Locator;
   fieldId: Locator;
   saveFormButton: Locator;
 
@@ -76,7 +76,6 @@ export class FormEditorPage {
       '[data-test-id="form-error-state"]'
     );
     this.form = this.page.locator(".form-json-editor textarea");
-    this.saveStatus = this.page.locator('[data-test-id="save-status"]');
     this.fieldId = this.page.locator("span.soresu-field-id");
     this.saveFormButton = this.page.locator("#saveForm");
   }
@@ -99,9 +98,9 @@ export class FormEditorPage {
   }
 
   async saveForm() {
-    const savedSuccessfully = this.saveStatus.locator(
-      "text=Kaikki tiedot tallennettu"
-    );
+    const savedSuccessfully = this.page
+      .locator(saveStatusSelector)
+      .locator("text=Kaikki tiedot tallennettu");
     await expect(savedSuccessfully).toBeHidden();
     await this.saveFormButton.click();
     await expect(savedSuccessfully).toBeVisible();
@@ -278,15 +277,17 @@ export class HakujenHallintaPage {
     this.valiselvitysUpdatedAt = this.page.locator("#valiselvitysUpdatedAt");
     this.loppuselvitysUpdatedAt = this.page.locator("#loppuselvitysUpdatedAt");
     this.decisionEditor = this.page.locator(".decision-editor");
-    this.loadingAvustushaku = this.page.locator("text=Ladataan tietoja");
+    this.loadingAvustushaku = this.page
+      .locator(saveStatusSelector)
+      .locator("text=Ladataan tietoja");
   }
 
   async navigateTo(path: string) {
     await Promise.all([
-      this.loadingAvustushaku.waitFor(),
+      expect(this.loadingAvustushaku).toBeVisible(),
       navigate(this.page, path),
     ]);
-    await this.loadingAvustushaku.waitFor({ state: "detached" });
+    await expect(this.loadingAvustushaku).toBeHidden();
   }
 
   async navigate(avustushakuID: number, opts?: { newHakuListing?: boolean }) {
@@ -316,8 +317,11 @@ export class HakujenHallintaPage {
       : await this.page
           .locator(".haku-list td")
           .locator(`text=${avustushakuName}`);
-
-    await listItemSelector.click();
+    await Promise.all([
+      listItemSelector.click(),
+      expect(this.loadingAvustushaku).toBeVisible(),
+    ]);
+    await expect(this.loadingAvustushaku).toBeHidden();
   }
 
   async navigateToPaatos(avustushakuID: number) {
@@ -389,7 +393,7 @@ export class HakujenHallintaPage {
   async waitForSave() {
     await expect(
       this.page
-        .locator('[data-test-id="save-status"]')
+        .locator(saveStatusSelector)
         .locator('text="Kaikki tiedot tallennettu"')
     ).toBeVisible();
   }
@@ -526,15 +530,12 @@ export class HakujenHallintaPage {
 
   async copyEsimerkkihaku(): Promise<number> {
     await this.navigateToDefaultAvustushaku();
+    await expect(this.loadingAvustushaku).toBeHidden();
     await Promise.all([
-      clickElementWithTextStrict(
-        this.page,
-        "td",
-        "Yleisavustus - esimerkkihaku"
-      ),
-      this.loadingAvustushaku.waitFor(),
+      this.page.locator('td:text-is("Yleisavustus - esimerkkihaku")').click(),
+      expect(this.loadingAvustushaku).toBeVisible(),
     ]);
-    await this.loadingAvustushaku.waitFor({ state: "detached" });
+    await expect(this.loadingAvustushaku).toBeHidden();
     return await this.copyCurrentHaku();
   }
 
@@ -575,8 +576,14 @@ export class HakujenHallintaPage {
   async selectVaCodesAndWaitForSave(codes: VaCodeValues | undefined) {
     await Promise.all([
       this.selectVaCodes(codes),
-      this.page.locator("text=Tallennetaan").waitFor(),
-      this.page.locator("text=Kaikki tiedot tallennettu").waitFor(),
+      expect(
+        this.page.locator(saveStatusSelector).locator("text=Tallennetaan")
+      ).toBeVisible(),
+      expect(
+        this.page
+          .locator(saveStatusSelector)
+          .locator("text=Kaikki tiedot tallennettu")
+      ).toBeVisible(),
     ]);
   }
 
@@ -618,14 +625,6 @@ export class HakujenHallintaPage {
       `${this.dropdownSelector(codeType)} > div input`,
       `${code}`
     );
-  }
-
-  async selectCodeAndWaitForSave(code: string): Promise<void> {
-    await Promise.all([
-      this.page.click(`[data-test-id="${code}"]`),
-      this.page.locator("text=Tallennetaan").waitFor(),
-      this.page.locator("text=Kaikki tiedot tallennettu").waitFor(),
-    ]);
   }
 
   async getInputOptionCodeStyles(code: string): Promise<CSSStyleDeclaration> {
