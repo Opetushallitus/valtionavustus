@@ -28,7 +28,8 @@ muutoshakemusTest.use({
 
 muutoshakemusTest(
   "Excel export of all hakus",
-  async ({ page, hakuProps, avustushakuID }) => {
+  async ({ page, userCache, hakuProps, avustushakuID }) => {
+    expectToBeDefined(userCache);
     expectToBeDefined(avustushakuID);
     const [download] = await Promise.all([
       page.waitForEvent("download"),

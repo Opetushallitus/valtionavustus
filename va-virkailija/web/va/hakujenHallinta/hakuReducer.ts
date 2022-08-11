@@ -744,6 +744,8 @@ const hakuSlice = createSlice({
     },
     completeSave: (state) => {
       state.saveStatus.saveInProgress = false;
+      state.saveStatus.saveTime = new Date().toISOString();
+      state.saveStatus.serverError = "";
     },
     selectEditorSubTab: (
       state,
@@ -963,11 +965,10 @@ const hakuSlice = createSlice({
         haku.roles = roles;
         haku.privileges = privileges;
       })
-      .addCase(saveRole.pending, (state) => {
-        state.saveStatus.saveInProgress = true;
-      })
       .addCase(saveRole.fulfilled, (state, action) => {
         state.saveStatus.saveInProgress = false;
+        state.saveStatus.saveTime = new Date().toISOString();
+        state.saveStatus.serverError = "";
         const payload = action.payload;
         const haku = getAvustushaku(state, payload.avustushakuId);
         if ("roles" in payload) {

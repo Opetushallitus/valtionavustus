@@ -25,13 +25,11 @@ type RaportointivelvoiteProps = {
   index: number;
   raportointivelvoite?: Raportointivelvoite;
   helpTexts: HelpTexts;
-  postRaportointivelvoite: (
-    r: Raportointivelvoite
-  ) => Promise<void> | undefined;
+  postRaportointivelvoite: (r: Raportointivelvoite) => void | undefined;
   putRaportointivelvoite: (
     index: number,
     r: Raportointivelvoite
-  ) => Promise<void> | undefined;
+  ) => void | undefined;
   addRaportointivelvoite: (index: number) => void;
   deleteRaportointivelvoite: (
     index: number,
@@ -120,7 +118,7 @@ const Raportointivelvoite = ({
         raportointivelvoite?.lisatiedot !== lisatiedot)
     ) {
       if (raportointivelvoite?.id) {
-        void postRaportointivelvoite({
+        postRaportointivelvoite({
           id: raportointivelvoite?.id,
           raportointilaji,
           maaraaika,
@@ -128,7 +126,7 @@ const Raportointivelvoite = ({
           lisatiedot,
         });
       } else {
-        void putRaportointivelvoite(index, {
+        putRaportointivelvoite(index, {
           raportointilaji,
           maaraaika,
           "asha-tunnus": ashaTunnus,
@@ -246,7 +244,7 @@ export const Raportointivelvoitteet = ({
     Raportointivelvoite[] | undefined
   >();
   const dispatch = useHakujenHallintaDispatch();
-
+  const startAutoSave = () => dispatch(startSave());
   useEffect(() => {
     const fetchRaportointivelvoitteet = async () => {
       const r = await HttpUtil.get<Raportointivelvoite[]>(
@@ -269,7 +267,6 @@ export const Raportointivelvoitteet = ({
 
   const putRaportointivelvoite = useCallback(
     debounce(async (index: number, r: Raportointivelvoite) => {
-      dispatch(startSave());
       const newRaportointivelvoite = await HttpUtil.put(
         `/api/avustushaku/${avustushaku.id}/raportointivelvoite`,
         r
@@ -286,7 +283,6 @@ export const Raportointivelvoitteet = ({
 
   const postRaportointivelvoite = useCallback(
     debounce(async (r: Raportointivelvoite) => {
-      dispatch(startSave());
       await HttpUtil.post(
         `/api/avustushaku/${avustushaku.id}/raportointivelvoite/${r.id}`,
         r
@@ -337,8 +333,14 @@ export const Raportointivelvoitteet = ({
           index={i}
           raportointivelvoite={r}
           helpTexts={helpTexts}
-          putRaportointivelvoite={putRaportointivelvoite}
-          postRaportointivelvoite={postRaportointivelvoite}
+          putRaportointivelvoite={(index, raportointivelvoite) => {
+            startAutoSave();
+            putRaportointivelvoite(index, raportointivelvoite);
+          }}
+          postRaportointivelvoite={(raportointivelvoite) => {
+            startAutoSave();
+            postRaportointivelvoite(raportointivelvoite);
+          }}
           addRaportointivelvoite={addRaportointivelvoite}
           deleteRaportointivelvoite={deleteRaportointivelvoite}
         />

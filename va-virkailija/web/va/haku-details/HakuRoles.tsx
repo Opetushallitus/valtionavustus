@@ -15,6 +15,7 @@ import {
   createHakuRole,
   deleteRole,
   saveRole,
+  startSave,
 } from "../hakujenHallinta/hakuReducer";
 
 type HakuRolesProps = {
@@ -251,6 +252,7 @@ const RoleRow = ({
 
   useEffect(() => {
     if (emailOk && !isEqual(role, editedRole)) {
+      dispatch(startSave());
       debouncedSave(editedRole);
     }
   }, [editedRole]);

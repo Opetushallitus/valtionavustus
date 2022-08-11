@@ -387,10 +387,10 @@ export class HakujenHallintaPage {
   }
 
   async waitForSave() {
-    const saveState = this.page.locator('[data-test-id="save-status"]');
-    await expect(saveState.locator('text="Tallennetaan"')).toBeVisible();
     await expect(
-      saveState.locator('text="Kaikki tiedot tallennettu"')
+      this.page
+        .locator('[data-test-id="save-status"]')
+        .locator('text="Kaikki tiedot tallennettu"')
     ).toBeVisible();
   }
 
@@ -721,12 +721,12 @@ export class HakujenHallintaPage {
         raportointivelvoitteet[i].raportointilaji
       );
       await this.page.fill(
-        `[id="asha-tunnus-${i}"]`,
-        raportointivelvoitteet[i].ashaTunnus
-      );
-      await this.page.fill(
         `[name="maaraaika-${i}"]`,
         raportointivelvoitteet[i].maaraaika
+      );
+      await this.page.fill(
+        `[id="asha-tunnus-${i}"]`,
+        raportointivelvoitteet[i].ashaTunnus
       );
       if (raportointivelvoitteet[i].lisatiedot) {
         await this.page.fill(
