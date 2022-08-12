@@ -20,9 +20,9 @@ import { MaksatuksetTable } from "./MaksatuksetTable";
 import { HelpTexts } from "soresu-form/web/va/types";
 import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
 import {
-  completeSave,
+  completeManualSave,
   Avustushaku,
-  startSave,
+  startManuallySaving,
 } from "../hakujenHallinta/hakuReducer";
 
 type MaksatuksetProps = {
@@ -268,20 +268,20 @@ const AdminTools = ({
       "Oletko varma, että haluat poistaa kaikki haun maksatukset?"
     );
     if (really) {
-      dispatch(startSave());
+      dispatch(startManuallySaving());
       await HttpUtil.delete(`/api/v2/grants/${avustushaku.id}/payments/`);
       await refreshPayments();
-      dispatch(completeSave());
+      dispatch(completeManualSave());
     }
   };
 
   const onLuoMaksatukset = async () => {
-    dispatch(startSave());
+    dispatch(startManuallySaving());
     await HttpUtil.post(`/api/v2/grants/${avustushaku.id}/payments/`, {
       phase: 0,
     });
     await refreshPayments();
-    dispatch(completeSave());
+    dispatch(completeManualSave());
   };
 
   return (

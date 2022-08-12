@@ -395,7 +395,7 @@ export class HakujenHallintaPage {
       this.page
         .locator(saveStatusSelector)
         .locator('text="Kaikki tiedot tallennettu"')
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 10000 });
   }
 
   async searchUsersForRoles(user: string) {

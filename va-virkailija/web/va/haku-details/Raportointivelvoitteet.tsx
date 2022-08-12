@@ -14,9 +14,9 @@ import HelpTooltip from "../HelpTooltip";
 import { DateInput } from "./DateInput";
 import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
 import {
-  completeSave,
+  completeManualSave,
   Avustushaku,
-  startSave,
+  startManuallySaving,
 } from "../hakujenHallinta/hakuReducer";
 
 type RaportointivelvoitteetProps = {
@@ -247,7 +247,7 @@ export const Raportointivelvoitteet = ({
     Raportointivelvoite[] | undefined
   >();
   const dispatch = useHakujenHallintaDispatch();
-  const startAutoSave = () => dispatch(startSave());
+  const startAutoSave = () => dispatch(startManuallySaving());
   useEffect(() => {
     const fetchRaportointivelvoitteet = async () => {
       const r = await HttpUtil.get<Raportointivelvoite[]>(
@@ -279,7 +279,7 @@ export const Raportointivelvoitteet = ({
           i === index ? newRaportointivelvoite : old
         )
       );
-      dispatch(completeSave());
+      dispatch(completeManualSave());
     }, 2000),
     [raportointivelvoitteet]
   );
@@ -293,7 +293,7 @@ export const Raportointivelvoitteet = ({
       setRaportointivelvoitteet(
         raportointivelvoitteet?.map((old) => (old.id === r.id ? r : old))
       );
-      dispatch(completeSave());
+      dispatch(completeManualSave());
     }, 2000),
     [raportointivelvoitteet]
   );
@@ -312,14 +312,14 @@ export const Raportointivelvoitteet = ({
     r?: Raportointivelvoite
   ) => {
     if (r?.id) {
-      dispatch(startSave());
+      dispatch(startManuallySaving());
       await HttpUtil.delete(
         `/api/avustushaku/${avustushaku.id}/raportointivelvoite/${r.id}`
       );
       setRaportointivelvoitteet(
         raportointivelvoitteet?.filter((old) => old.id !== r.id)
       );
-      dispatch(completeSave());
+      dispatch(completeManualSave());
     } else {
       const newRaportointivelvoitteet = [...(raportointivelvoitteet ?? [])];
       newRaportointivelvoitteet.splice(index, 1);

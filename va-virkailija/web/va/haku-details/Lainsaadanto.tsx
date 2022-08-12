@@ -6,10 +6,10 @@ import { HelpTexts } from "soresu-form/web/va/types";
 import HelpTooltip from "../HelpTooltip";
 import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
 import {
-  completeSave,
+  completeManualSave,
   LainsaadantoOption,
   Avustushaku,
-  startSave,
+  startManuallySaving,
 } from "../hakujenHallinta/hakuReducer";
 
 type LainsaadantoProps = {
@@ -37,7 +37,7 @@ export const Lainsaadanto = ({
   }, [avustushaku.id]);
 
   const onChange = (id: number) => async (e: ChangeEvent<HTMLInputElement>) => {
-    dispatch(startSave());
+    dispatch(startManuallySaving());
     const newLainsaadanto = e.target.checked
       ? [...new Set([...lainsaadanto, id])]
       : lainsaadanto.filter((i) => i !== id);
@@ -46,7 +46,7 @@ export const Lainsaadanto = ({
       newLainsaadanto
     );
     setLainsaadanto(newLainsaadanto);
-    dispatch(completeSave());
+    dispatch(completeManualSave());
   };
 
   return (

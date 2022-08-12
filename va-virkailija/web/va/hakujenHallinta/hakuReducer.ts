@@ -89,15 +89,43 @@ interface OnSelectHakuData {
   loppuselvitysForm: Form;
 }
 
+type SavingKey =
+  | "saveInProgress"
+  | "savingRoles"
+  | "savingForm"
+  | "savingManuallyRefactorToOwnActionsAtSomepoint";
+
+const startSaving = ({ saveStatus }: State, key: SavingKey): SaveStatus => {
+  return {
+    ...saveStatus,
+    [key]: true,
+    saveTime: null,
+  };
+};
+
+const saveSuccess = ({ saveStatus }: State, key: SavingKey): SaveStatus => {
+  return {
+    ...saveStatus,
+    [key]: false,
+    saveTime: new Date().toISOString(),
+    serverError: "",
+  };
+};
+
+export interface SaveStatus {
+  saveInProgress: boolean;
+  saveTime: string | null;
+  serverError: string;
+  loadingAvustushaku?: boolean;
+  savingRoles?: boolean;
+  savingForm?: boolean;
+  savingManuallyRefactorToOwnActionsAtSomepoint?: boolean;
+}
+
 interface State {
   initialData: { loading: false; data: InitialData } | { loading: true };
   hakuId: number;
-  saveStatus: {
-    saveInProgress: boolean;
-    saveTime: string | null;
-    serverError: string;
-    loadingAvustushaku?: boolean;
-  };
+  saveStatus: SaveStatus;
   formDrafts: Record<number, Form>;
   formDraftsJson: Record<number, string>;
   loppuselvitysFormDrafts: Record<number, Form>;
@@ -724,6 +752,10 @@ const initialState: State = {
     saveInProgress: false,
     saveTime: null,
     serverError: "",
+    savingForm: false,
+    savingRoles: false,
+    loadingAvustushaku: false,
+    savingManuallyRefactorToOwnActionsAtSomepoint: false,
   },
   formDrafts: {},
   formDraftsJson: {},
@@ -743,13 +775,17 @@ const hakuSlice = createSlice({
   name: "haku",
   initialState,
   reducers: {
-    startSave: (state) => {
-      state.saveStatus.saveInProgress = true;
+    startManuallySaving: (state) => {
+      state.saveStatus = startSaving(
+        state,
+        "savingManuallyRefactorToOwnActionsAtSomepoint"
+      );
     },
-    completeSave: (state) => {
-      state.saveStatus.saveInProgress = false;
-      state.saveStatus.saveTime = new Date().toISOString();
-      state.saveStatus.serverError = "";
+    completeManualSave: (state) => {
+      state.saveStatus = saveSuccess(
+        state,
+        "savingManuallyRefactorToOwnActionsAtSomepoint"
+      );
     },
     selectEditorSubTab: (
       state,
@@ -937,12 +973,9 @@ const hakuSlice = createSlice({
         oldHaku.status = response.status;
         oldHaku.phase = response.phase;
         oldHaku.decision!.updatedAt = response.decision?.updatedAt;
-        state.saveStatus.saveInProgress = false;
-        state.saveStatus.saveTime = new Date().toISOString();
+        state.saveStatus = saveSuccess(state, "saveInProgress");
         if (!oldHaku.projects || oldHaku.projects.length === 0) {
           state.saveStatus.serverError = "validation-error";
-        } else {
-          state.saveStatus.serverError = "";
         }
       })
       .addCase(saveHaku.rejected, (state, action) => {
@@ -950,31 +983,28 @@ const hakuSlice = createSlice({
           action.payload ?? "unexpected-save-error";
         state.saveStatus.saveInProgress = false;
       })
-      .addCase(createHaku.rejected, (state) => {
-        state.saveStatus.serverError = "unexpected-create-error";
-      })
       .addCase(updateField.pending, (state) => {
-        state.saveStatus.saveInProgress = true;
-      })
-      .addCase(startAutoSaveForAvustushaku.pending, (state) => {
-        state.saveStatus.saveInProgress = true;
+        state.saveStatus = startSaving(state, "saveInProgress");
       })
       .addCase(createHakuRole.pending, (state) => {
-        state.saveStatus.saveInProgress = true;
+        state.saveStatus = startSaving(state, "savingRoles");
       })
       .addCase(createHakuRole.fulfilled, (state, action) => {
-        state.saveStatus.saveInProgress = false;
-        state.saveStatus.saveTime = new Date().toISOString();
-        state.saveStatus.serverError = "";
+        state.saveStatus = saveSuccess(state, "savingRoles");
         const { avustushakuId, roles, privileges } = action.payload;
         const haku = getAvustushaku(state, avustushakuId);
         haku.roles = roles;
         haku.privileges = privileges;
       })
-      .addCase(saveRole.fulfilled, (state, action) => {
+      .addCase(createHaku.rejected, (state) => {
+        state.saveStatus.serverError = "unexpected-create-error";
         state.saveStatus.saveInProgress = false;
-        state.saveStatus.saveTime = new Date().toISOString();
-        state.saveStatus.serverError = "";
+      })
+      .addCase(saveRole.pending, (state) => {
+        state.saveStatus = startSaving(state, "savingRoles");
+      })
+      .addCase(saveRole.fulfilled, (state, action) => {
+        state.saveStatus = saveSuccess(state, "savingRoles");
         const payload = action.payload;
         const haku = getAvustushaku(state, payload.avustushakuId);
         if ("roles" in payload) {
@@ -983,14 +1013,18 @@ const hakuSlice = createSlice({
           haku.privileges = payload.privileges;
         }
       })
+      .addCase(deleteRole.pending, (state) => {
+        state.saveStatus = startSaving(state, "savingRoles");
+      })
       .addCase(deleteRole.fulfilled, (state, action) => {
+        state.saveStatus = saveSuccess(state, "savingRoles");
         const payload = action.payload;
         const haku = getAvustushaku(state, payload.avustushakuId);
         haku.privileges = payload.privileges;
         haku.roles = payload.roles;
       })
       .addCase(saveForm.pending, (state) => {
-        state.saveStatus.saveInProgress = true;
+        state.saveStatus = startSaving(state, "savingForm");
       })
       .addCase(saveForm.fulfilled, (state, action) => {
         const { avustushakuId, form, muutoshakukelpoinen } = action.payload;
@@ -999,16 +1033,15 @@ const hakuSlice = createSlice({
         state.formDrafts[avustushakuId] = form;
         state.formDraftsJson[avustushakuId] = JSON.stringify(form, null, 2);
         haku.muutoshakukelpoisuus = muutoshakukelpoinen;
-        state.saveStatus.saveInProgress = false;
-        state.saveStatus.saveTime = new Date().toISOString();
-        state.saveStatus.serverError = "";
+        state.saveStatus = saveSuccess(state, "savingForm");
       })
       .addCase(saveForm.rejected, (state, action) => {
+        state.saveStatus.savingForm = false;
         state.saveStatus.serverError =
           action.payload ?? "unexpected-save-error";
       })
       .addCase(saveSelvitysForm.pending, (state) => {
-        state.saveStatus.saveInProgress = true;
+        state.saveStatus = startSaving(state, "savingForm");
       })
       .addCase(saveSelvitysForm.fulfilled, (state, action) => {
         const { avustushakuId, form, selvitysType } = action.payload;
@@ -1017,11 +1050,10 @@ const hakuSlice = createSlice({
         state[selvitysFormDraftMap[selvitysType]][avustushakuId] = form;
         state[selvitysFormDraftJsonMap[selvitysType]][avustushakuId] =
           JSON.stringify(form, null, 2);
-        state.saveStatus.saveInProgress = false;
-        state.saveStatus.saveTime = new Date().toISOString();
-        state.saveStatus.serverError = "";
+        state.saveStatus = saveSuccess(state, "savingForm");
       })
       .addCase(saveSelvitysForm.rejected, (state, action) => {
+        state.saveStatus.savingForm = false;
         state.saveStatus.serverError =
           action.payload ?? "unexpected-save-error";
       })
@@ -1040,8 +1072,8 @@ const hakuSlice = createSlice({
 });
 
 export const {
-  startSave,
-  completeSave,
+  startManuallySaving,
+  completeManualSave,
   selectEditorSubTab,
   formUpdated,
   formJsonUpdated,

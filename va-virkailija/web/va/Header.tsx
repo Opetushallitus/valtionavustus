@@ -12,6 +12,9 @@ interface HeaderSaveStatus {
   saveTime: Date | string | null;
   serverError: string;
   loadingAvustushaku?: boolean;
+  savingRoles?: boolean;
+  savingForm?: boolean;
+  savingManuallyRefactorToOwnActionsAtSomepoint?: boolean;
 }
 
 type NotificationStatus = "ok" | "error" | "warning" | "info";
@@ -56,7 +59,10 @@ export const HeaderContainer = ({
     saveStatus?.saveInProgress,
     saveStatus?.saveTime,
     saveStatus?.serverError,
+    saveStatus?.savingRoles,
     saveStatus?.loadingAvustushaku,
+    saveStatus?.savingForm,
+    saveStatus?.savingManuallyRefactorToOwnActionsAtSomepoint,
   ]);
 
   return (
@@ -169,7 +175,12 @@ const Notification = ({
 function getNotificationContent(
   saveStatus?: HeaderSaveStatus
 ): NotificationProps | undefined {
-  if (saveStatus?.saveInProgress) {
+  if (
+    saveStatus?.saveInProgress ||
+    saveStatus?.savingRoles ||
+    saveStatus?.savingForm ||
+    saveStatus?.savingManuallyRefactorToOwnActionsAtSomepoint
+  ) {
     return {
       notification: "Tallennetaan",
       notificationIcon: saveInProgressIcon,

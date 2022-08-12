@@ -18,9 +18,9 @@ import { MaksatuksetTable } from "./MaksatuksetTable";
 import { useVaUserSearch } from "../VaUserSearch";
 import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
 import {
-  completeSave,
+  completeManualSave,
   Avustushaku,
-  startSave,
+  startManuallySaving,
 } from "../hakujenHallinta/hakuReducer";
 
 type LahtevatMaksatuksetProps = {
@@ -106,7 +106,7 @@ export const LahtevatMaksatukset = ({
   };
 
   const onLähetäMaksatukset = async () => {
-    dispatch(startSave());
+    dispatch(startManuallySaving());
     const id = await createPaymentBatches();
     await HttpUtil.post(`/api/v2/payment-batches/${id}/payments/`);
     try {
@@ -117,17 +117,17 @@ export const LahtevatMaksatukset = ({
       );
     }
     await refreshPayments();
-    dispatch(completeSave());
+    dispatch(completeManualSave());
   };
 
   const onAsetaMaksetuksi = async () => {
-    dispatch(startSave());
+    dispatch(startManuallySaving());
     const id = await createPaymentBatches();
     await HttpUtil.put(`/api/v2/payment-batches/${id}/payments/`, {
       "paymentstatus-id": "paid",
     });
     await refreshPayments();
-    dispatch(completeSave());
+    dispatch(completeManualSave());
   };
 
   return (
