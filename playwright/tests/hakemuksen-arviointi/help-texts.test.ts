@@ -158,11 +158,9 @@ test("help texts", async ({
   });
 
   const hakemustenArviointiPage = new HakemustenArviointiPage(page);
-
   await test.step("hakemuksen arviointi", async () => {
-    await hakujenHallintaPage.switchToHaunTiedotTab();
+    await hakujenHallintaPage.navigate(avustushakuID);
     await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast();
-    await hakemustenArviointiPage.navigate(avustushakuID);
     await hakemustenArviointiPage.navigateToHakemus(
       avustushakuID,
       answers.projectName

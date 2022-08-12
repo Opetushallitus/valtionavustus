@@ -39,7 +39,7 @@ const test = defaultValues.extend<{
     const avustushakuID = await hakujenHallintaPage.createHakuFromEsimerkkihaku(
       hakuProps
     );
-    await hakujenHallintaPage.switchToHaunTiedotTab();
+    await hakujenHallintaPage.navigate(avustushakuID);
     await hakujenHallintaPage.publishAvustushaku();
     const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page);
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang);

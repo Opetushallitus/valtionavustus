@@ -349,7 +349,7 @@ export class HakujenHallintaPage {
 
   async switchToHaunTiedotTab() {
     await this.page.click('[data-test-id="haun-tiedot-välilehti"]');
-    await this.page.waitForSelector("#register-number");
+    await expect(this.page.locator("#register-number")).toBeVisible();
   }
 
   async switchToPaatosTab() {
@@ -848,7 +848,7 @@ export class HakujenHallintaPage {
       muutoshakemusEnabledHakuLomakeJson,
       hakuProps
     );
-    await this.switchToHaunTiedotTab();
+    await this.navigate(avustushakuID);
     await this.publishAvustushaku();
     return avustushakuID;
   }
@@ -862,7 +862,7 @@ export class HakujenHallintaPage {
       muutoshakemusEnabledHakuLomakeJson,
       hakuProps
     );
-    await this.switchToHaunTiedotTab();
+    await this.navigate(avustushakuID);
     await this.publishAvustushaku();
     return avustushakuID;
   }

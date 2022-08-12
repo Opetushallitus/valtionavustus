@@ -24,8 +24,9 @@ test("switching between avustushaut", async ({
       hankkeenPaattymispaiva,
     });
   });
+  let avustushakuID: number;
   await test.step("create avustushaku #2", async () => {
-    await hakujenHallintaPage.copyEsimerkkihaku();
+    avustushakuID = await hakujenHallintaPage.copyEsimerkkihaku();
     await hakujenHallintaPage.createHakuFromEsimerkkihaku({
       ...hakuProps,
       avustushakuName: `Makuulla hatata - haku ${randomString()}`,
@@ -53,7 +54,8 @@ test("switching between avustushaut", async ({
   await test.step(
     "switch to hauntiedot and avustushaku #1 to get ready to check paatos tab rendering when switching",
     async () => {
-      await hakujenHallintaPage.switchToHaunTiedotTab();
+      expectToBeDefined(avustushakuID);
+      await hakujenHallintaPage.navigate(avustushakuID);
       await hakujenHallintaPage.page.click(`text="${avustushakuName}"`);
     }
   );

@@ -59,7 +59,7 @@ test("can add and validate different fields", async ({
   };
   await formEditorPage.addKoodisto("ammattiluokitus");
   await formEditorPage.addFields(decimalField, integerField);
-  await hakujenHallintaPage.switchToHaunTiedotTab();
+  await hakujenHallintaPage.navigate(avustushakuID);
   await hakujenHallintaPage.publishAvustushaku();
   const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page);
   await hakijaAvustusHakuPage.navigate(avustushakuID, "fi");

@@ -13,7 +13,7 @@ defaultValues("Copying haku", async ({ page }) => {
   await setValiselvitysTitleTo(hakujenHallinta, valiselvitysTitle);
   await setLoppuselvitysTitleTo(hakujenHallinta, loppuselvitysTitle);
 
-  await hakujenHallinta.switchToHaunTiedotTab();
+  await hakujenHallinta.navigate(avustushakuID);
   await hakujenHallinta.copyCurrentHaku();
 
   await test.step(
