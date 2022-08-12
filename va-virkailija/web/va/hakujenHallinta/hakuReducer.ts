@@ -490,11 +490,19 @@ const debouncedSave: AsyncThunkPayloadCreator<
   thunkAPI.dispatch(saveHaku(haku));
 };
 
+const debouncedSaveHaku = createAsyncThunk<
+  void,
+  number,
+  { state: HakujenHallintaRootState }
+>("haku/debouncedSaveHaku", _.debounce(debouncedSave, 3000));
+
 export const startAutoSaveForAvustushaku = createAsyncThunk<
   void,
   number,
   { state: HakujenHallintaRootState }
->("haku/startAutoSave", _.debounce(debouncedSave, 3000));
+>("haku/startAutoSave", async (id, thunkAPI) => {
+  thunkAPI.dispatch(debouncedSaveHaku(id));
+});
 
 const selvitysFormMap = {
   valiselvitys: "valiselvitysForm",
@@ -983,7 +991,7 @@ const hakuSlice = createSlice({
           action.payload ?? "unexpected-save-error";
         state.saveStatus.saveInProgress = false;
       })
-      .addCase(updateField.pending, (state) => {
+      .addCase(startAutoSaveForAvustushaku.pending, (state) => {
         state.saveStatus = startSaving(state, "saveInProgress");
       })
       .addCase(createHakuRole.pending, (state) => {
