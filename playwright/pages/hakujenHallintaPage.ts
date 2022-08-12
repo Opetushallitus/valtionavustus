@@ -7,7 +7,6 @@ import path from "path";
 import { navigate } from "../utils/navigate";
 import {
   clickElementWithText,
-  clickElementWithTextStrict,
   expectQueryParameter,
   expectToBeDefined,
 } from "../utils/util";
@@ -62,16 +61,12 @@ const formatDate = (date: Date | moment.Moment) =>
   moment(date).format(dateFormat);
 export const parseDate = (input: string) => moment(input, dateFormat).toDate();
 
-export const waitForSaveStatusOk = (page: Page) =>
-  page.waitForSelector(
-    '[data-test-id="save-status"]:has-text("Kaikki tiedot tallennettu")'
-  );
+const saveStatusSelector = '[data-test-id="save-status"]';
 
 export class FormEditorPage {
   readonly page: Page;
   formErrorState: Locator;
   form: Locator;
-  saveStatus: Locator;
   fieldId: Locator;
   saveFormButton: Locator;
 
@@ -81,7 +76,6 @@ export class FormEditorPage {
       '[data-test-id="form-error-state"]'
     );
     this.form = this.page.locator(".form-json-editor textarea");
-    this.saveStatus = this.page.locator('[data-test-id="save-status"]');
     this.fieldId = this.page.locator("span.soresu-field-id");
     this.saveFormButton = this.page.locator("#saveForm");
   }
@@ -104,8 +98,12 @@ export class FormEditorPage {
   }
 
   async saveForm() {
+    const savedSuccessfully = this.page
+      .locator(saveStatusSelector)
+      .locator("text=Kaikki tiedot tallennettu");
+    await expect(savedSuccessfully).toBeHidden();
     await this.saveFormButton.click();
-    await this.saveStatus.locator("text=Kaikki tiedot tallennettu").waitFor();
+    await expect(savedSuccessfully).toBeVisible();
   }
 
   async getFieldIds() {
@@ -162,8 +160,7 @@ export class FormEditorPage {
   async addKoodisto(koodisto: string) {
     await this.page.locator(".soresu-field-add-header").first().hover();
     await this.page.click("text=Koodistokenttä");
-    await this.page.click('text="Valitse koodisto"');
-    await this.page.keyboard.type(koodisto);
+    await this.page.click(`text="${koodisto}"`);
     await this.page.keyboard.press("ArrowDown");
     await this.page.keyboard.press("Enter");
     await this.page.locator('label:text-is("Pudotusvalikko")').first().click();
@@ -272,6 +269,7 @@ export class HakujenHallintaPage {
   readonly valiselvitysUpdatedAt: Locator;
   readonly loppuselvitysUpdatedAt: Locator;
   readonly decisionEditor: Locator;
+  readonly loadingAvustushaku: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -279,15 +277,29 @@ export class HakujenHallintaPage {
     this.valiselvitysUpdatedAt = this.page.locator("#valiselvitysUpdatedAt");
     this.loppuselvitysUpdatedAt = this.page.locator("#loppuselvitysUpdatedAt");
     this.decisionEditor = this.page.locator(".decision-editor");
+    this.loadingAvustushaku = this.page
+      .locator(saveStatusSelector)
+      .locator("text=Ladataan tietoja");
+  }
+
+  async navigateTo(path: string) {
+    await Promise.all([
+      expect(this.loadingAvustushaku).toBeVisible(),
+      navigate(this.page, path),
+    ]);
+    await expect(this.loadingAvustushaku).toBeHidden();
   }
 
   async navigate(avustushakuID: number, opts?: { newHakuListing?: boolean }) {
-    await navigate(
-      this.page,
+    await this.navigateTo(
       `/admin/haku-editor/?avustushaku=${avustushakuID}${
         opts?.newHakuListing ? "&new-haku-listing=true" : ""
       }`
     );
+  }
+
+  async navigateToDefaultAvustushaku() {
+    await this.navigateTo("/admin/haku-editor/");
   }
 
   async navigateToHakemusByClicking(
@@ -305,28 +317,33 @@ export class HakujenHallintaPage {
       : await this.page
           .locator(".haku-list td")
           .locator(`text=${avustushakuName}`);
-
-    await listItemSelector.click();
+    await Promise.all([
+      listItemSelector.click(),
+      expect(this.loadingAvustushaku).toBeVisible(),
+    ]);
+    await expect(this.loadingAvustushaku).toBeHidden();
   }
 
   async navigateToPaatos(avustushakuID: number) {
-    await navigate(this.page, `/admin/decision/?avustushaku=${avustushakuID}`);
+    await this.navigateTo(`/admin/decision/?avustushaku=${avustushakuID}`);
     return this.paatosLocators();
   }
 
   async navigateToValiselvitys(avustushakuID: number) {
-    await navigate(
-      this.page,
-      `/admin/valiselvitys/?avustushaku=${avustushakuID}`
-    );
+    await this.navigateTo(`/admin/valiselvitys/?avustushaku=${avustushakuID}`);
+  }
+
+  async navigateToLoppuselvitys(avustushakuID: number) {
+    await this.navigateTo(`/admin/loppuselvitys/?avustushaku=${avustushakuID}`);
   }
 
   async navigateToFormEditor(avustushakuID: number) {
-    await navigate(
-      this.page,
-      `/admin/form-editor/?avustushaku=${avustushakuID}`
-    );
-    await this.page.waitForLoadState("networkidle");
+    await this.navigateTo(`/admin/form-editor/?avustushaku=${avustushakuID}`);
+    return new FormEditorPage(this.page);
+  }
+
+  async switchToFormEditorTab() {
+    await this.page.locator('span:text-is("Hakulomake")').click();
     return new FormEditorPage(this.page);
   }
 
@@ -378,7 +395,11 @@ export class HakujenHallintaPage {
   }
 
   async waitForSave() {
-    await waitForSaveStatusOk(this.page);
+    await expect(
+      this.page
+        .locator(saveStatusSelector)
+        .locator('text="Kaikki tiedot tallennettu"')
+    ).toBeVisible({ timeout: 10000 });
   }
 
   async searchUsersForRoles(user: string) {
@@ -396,11 +417,11 @@ export class HakujenHallintaPage {
   }
 
   async clearUserSearchForRoles() {
-    this.page.click('[data-test-id="clear-role-search"]');
+    await this.page.click('[data-test-id="clear-role-search"]');
   }
 
   async clearUserSearchForVastuuvalmistelija() {
-    this.page.click('[data-test-id="clear-vastuuvalmistelija-search"]');
+    await this.page.click('[data-test-id="clear-vastuuvalmistelija-search"]');
   }
 
   async fillVastuuvalmistelijaName(name: string) {
@@ -512,12 +533,13 @@ export class HakujenHallintaPage {
   }
 
   async copyEsimerkkihaku(): Promise<number> {
-    await navigate(this.page, "/admin/haku-editor/");
-    await clickElementWithTextStrict(
-      this.page,
-      "td",
-      "Yleisavustus - esimerkkihaku"
-    );
+    await this.navigateToDefaultAvustushaku();
+    await expect(this.loadingAvustushaku).toBeHidden();
+    await Promise.all([
+      this.page.locator('td:text-is("Yleisavustus - esimerkkihaku")').click(),
+      expect(this.loadingAvustushaku).toBeVisible(),
+    ]);
+    await expect(this.loadingAvustushaku).toBeHidden();
     return await this.copyCurrentHaku();
   }
 
@@ -556,10 +578,17 @@ export class HakujenHallintaPage {
   }
 
   async selectVaCodesAndWaitForSave(codes: VaCodeValues | undefined) {
+    const longTimeoutAsSelectingCodesMightTakeAWhile = 10000;
     await Promise.all([
       this.selectVaCodes(codes),
-      this.page.locator("text=Tallennetaan").waitFor(),
-      this.page.locator("text=Kaikki tiedot tallennettu").waitFor(),
+      expect(
+        this.page.locator(saveStatusSelector).locator("text=Tallennetaan")
+      ).toBeVisible(),
+      expect(
+        this.page
+          .locator(saveStatusSelector)
+          .locator("text=Kaikki tiedot tallennettu")
+      ).toBeVisible({ timeout: longTimeoutAsSelectingCodesMightTakeAWhile }),
     ]);
   }
 
@@ -601,14 +630,6 @@ export class HakujenHallintaPage {
       `${this.dropdownSelector(codeType)} > div input`,
       `${code}`
     );
-  }
-
-  async selectCodeAndWaitForSave(code: string): Promise<void> {
-    await Promise.all([
-      this.page.click(`[data-test-id="${code}"]`),
-      this.page.locator("text=Tallennetaan").waitFor(),
-      this.page.locator("text=Kaikki tiedot tallennettu").waitFor(),
-    ]);
   }
 
   async getInputOptionCodeStyles(code: string): Promise<CSSStyleDeclaration> {
@@ -704,12 +725,12 @@ export class HakujenHallintaPage {
         raportointivelvoitteet[i].raportointilaji
       );
       await this.page.fill(
-        `[id="asha-tunnus-${i}"]`,
-        raportointivelvoitteet[i].ashaTunnus
-      );
-      await this.page.fill(
         `[name="maaraaika-${i}"]`,
         raportointivelvoitteet[i].maaraaika
+      );
+      await this.page.fill(
+        `[id="asha-tunnus-${i}"]`,
+        raportointivelvoitteet[i].ashaTunnus
       );
       if (raportointivelvoitteet[i].lisatiedot) {
         await this.page.fill(
@@ -723,11 +744,10 @@ export class HakujenHallintaPage {
 
     for (const saadanto of lainsaadanto) {
       await this.page.locator(`label:has-text("${saadanto}")`).click();
+      await this.waitForSave();
     }
 
-    await this.waitForSave();
-
-    await this.page.click('[data-test-id="päätös-välilehti"]');
+    await this.switchToPaatosTab();
     await this.page.fill(
       '[data-test-id="hankkeen-alkamispaiva"] div.datepicker input',
       hankkeenAlkamispaiva
@@ -736,13 +756,9 @@ export class HakujenHallintaPage {
       '[data-test-id="hankkeen-paattymispaiva"] div.datepicker input',
       hankkeenPaattymispaiva
     );
-
-    await this.waitForSave();
-
     await this.page.fill('[id="decision.taustaa.fi"]', "taustaa");
 
     await this.waitForSave();
-
     return avustushakuID;
   }
 
@@ -784,8 +800,7 @@ export class HakujenHallintaPage {
     return { avustushakuID };
   }
 
-  async publishAvustushaku(avustushakuId: number) {
-    await this.navigate(avustushakuId);
+  async publishAvustushaku() {
     await this.page.click("label[for='set-status-published']");
     await this.waitForSave();
   }
@@ -833,7 +848,8 @@ export class HakujenHallintaPage {
       muutoshakemusEnabledHakuLomakeJson,
       hakuProps
     );
-    await this.publishAvustushaku(avustushakuID);
+    await this.switchToHaunTiedotTab();
+    await this.publishAvustushaku();
     return avustushakuID;
   }
 
@@ -846,7 +862,8 @@ export class HakujenHallintaPage {
       muutoshakemusEnabledHakuLomakeJson,
       hakuProps
     );
-    await this.publishAvustushaku(avustushakuID);
+    await this.switchToHaunTiedotTab();
+    await this.publishAvustushaku();
     return avustushakuID;
   }
 

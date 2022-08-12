@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { HelpTexts, RahoitusAlue } from "soresu-form/web/va/types";
 import HelpTooltip from "../HelpTooltip";
-import { Avustushaku } from "../HakujenHallintaController";
+import { Avustushaku } from "../hakujenHallinta/hakuReducer";
 
 type EducationLevelTitle =
   | "Varhaiskasvatus"
@@ -231,7 +231,7 @@ interface EducationLevelsProps {
 
 export default class EducationLevels extends Component<EducationLevelsProps> {
   render() {
-    const { enabled, values, onChange, onAdd, onRemove, grant, helpTexts } =
+    const { enabled, values, onChange, helpTexts, onAdd, onRemove, grant } =
       this.props;
     const itemValues: { [p: string]: string[] } = values.reduce(
       (a: { [index: string]: string[] }, c) => {

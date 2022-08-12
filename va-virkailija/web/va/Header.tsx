@@ -9,8 +9,12 @@ import useScrollingUp from "./useScrollingUp";
 
 interface HeaderSaveStatus {
   saveInProgress: boolean;
-  saveTime: Date | null;
+  saveTime: Date | string | null;
   serverError: string;
+  loadingAvustushaku?: boolean;
+  savingRoles?: boolean;
+  savingForm?: boolean;
+  savingManuallyRefactorToOwnActionsAtSomepoint?: boolean;
 }
 
 type NotificationStatus = "ok" | "error" | "warning" | "info";
@@ -55,6 +59,10 @@ export const HeaderContainer = ({
     saveStatus?.saveInProgress,
     saveStatus?.saveTime,
     saveStatus?.serverError,
+    saveStatus?.savingRoles,
+    saveStatus?.loadingAvustushaku,
+    saveStatus?.savingForm,
+    saveStatus?.savingManuallyRefactorToOwnActionsAtSomepoint,
   ]);
 
   return (
@@ -167,7 +175,12 @@ const Notification = ({
 function getNotificationContent(
   saveStatus?: HeaderSaveStatus
 ): NotificationProps | undefined {
-  if (saveStatus?.saveInProgress) {
+  if (
+    saveStatus?.saveInProgress ||
+    saveStatus?.savingRoles ||
+    saveStatus?.savingForm ||
+    saveStatus?.savingManuallyRefactorToOwnActionsAtSomepoint
+  ) {
     return {
       notification: "Tallennetaan",
       notificationIcon: saveInProgressIcon,
@@ -184,6 +197,12 @@ function getNotificationContent(
       notification: "Kaikki tiedot tallennettu",
       notificationIcon: okIcon,
       status: "ok",
+    };
+  } else if (saveStatus?.loadingAvustushaku) {
+    return {
+      notification: "Ladataan tietoja",
+      notificationIcon: saveInProgressIcon,
+      status: "warning",
     };
   } else {
     return undefined;

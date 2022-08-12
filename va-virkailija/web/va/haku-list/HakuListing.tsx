@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import moment from "moment";
 
 import DateUtil from "soresu-form/web/DateUtil";
@@ -16,17 +16,22 @@ import HakuStatuses, {
 import HakuPhases, {
   HakuPhase as HakuPhaseType,
 } from "../haku-details/HakuPhases";
-import HakujenHallintaController from "../HakujenHallintaController";
 import { Filter, FilterId } from "../types";
 
 import "../style/table.less";
 import "./haku-listing.less";
+import {
+  useHakujenHallintaDispatch,
+  useHakujenHallintaSelector,
+} from "../hakujenHallinta/hakujenHallintaStore";
+import { clearFilters, setFilter } from "../hakujenHallinta/hakuFilterReducer";
+import {
+  getSelectedHakuSelector,
+  selectHaku,
+} from "../hakujenHallinta/hakuReducer";
 
 interface HakuListingProps {
   hakuList: Avustushaku[];
-  selectedHaku: Avustushaku;
-  controller: HakujenHallintaController;
-  filter: Filter;
 }
 
 function _fieldGetter(fieldName: string) {
@@ -101,11 +106,13 @@ function _filterWithStrPredicate(
 }
 
 export const HakuListing = (props: HakuListingProps) => {
-  const { hakuList, selectedHaku, controller, filter } = props;
-
+  const { hakuList } = props;
+  const selectedHaku = useHakujenHallintaSelector(getSelectedHakuSelector);
+  const filter = useHakujenHallintaSelector((s) => s.hakuFilter);
+  const dispatch = useHakujenHallintaDispatch();
   const onFilterChange = function (filterId: FilterId) {
     return (e: ChangeEvent<HTMLInputElement>) => {
-      controller.setFilter(filterId, e.target.value);
+      dispatch(setFilter({ filterId, filter: e.target.value }));
     };
   };
 
@@ -134,7 +141,7 @@ export const HakuListing = (props: HakuListingProps) => {
     );
 
   const onRemoveFilters = () => {
-    controller.clearFilters();
+    dispatch(clearFilters());
   };
 
   const hasFilters =
@@ -147,12 +154,7 @@ export const HakuListing = (props: HakuListingProps) => {
     filter.enddateend.length;
 
   const hakuElements = filteredHakuList.map((haku) => (
-    <HakuRow
-      haku={haku}
-      key={haku.id}
-      selectedHaku={selectedHaku}
-      controller={controller}
-    />
+    <HakuRow haku={haku} key={haku.id} selectedHaku={selectedHaku} />
   ));
   return (
     <div className="section-container listing-table haku-list">
@@ -175,7 +177,6 @@ export const HakuListing = (props: HakuListingProps) => {
             </th>
             <th className="status-column">
               <StatusFilter
-                controller={controller}
                 hakuList={hakuList}
                 filter={filter}
                 label="Tila"
@@ -186,7 +187,6 @@ export const HakuListing = (props: HakuListingProps) => {
             </th>
             <th className="phase-column">
               <StatusFilter
-                controller={controller}
                 hakuList={hakuList}
                 filter={filter}
                 label="Vaihe"
@@ -197,7 +197,6 @@ export const HakuListing = (props: HakuListingProps) => {
             </th>
             <th className="start-column">
               <DateFilter
-                controller={controller}
                 filter={filter}
                 label="Haku alkaa"
                 filterField="startdate"
@@ -205,7 +204,6 @@ export const HakuListing = (props: HakuListingProps) => {
             </th>
             <th className="end-column">
               <DateFilter
-                controller={controller}
                 filter={filter}
                 label="Haku päättyy"
                 filterField="enddate"
@@ -232,25 +230,32 @@ export const HakuListing = (props: HakuListingProps) => {
 interface HakuRowProps {
   haku: Avustushaku;
   selectedHaku: Avustushaku;
-  controller: HakujenHallintaController;
 }
 
-const HakuRow = (props: HakuRowProps) => {
+const HakuRow = ({ haku, selectedHaku }: HakuRowProps) => {
+  const dispatch = useHakujenHallintaDispatch();
+  const ref = useRef<HTMLTableRowElement>(null);
+  const thisIsSelected = haku.id === selectedHaku.id;
+  useEffect(() => {
+    if (thisIsSelected) {
+      ref?.current?.scrollIntoView({ block: "center" });
+    }
+  }, []);
   function toDateStr(dateTime: string | Date) {
     return (
       DateUtil.asDateString(dateTime) + " " + DateUtil.asTimeString(dateTime)
     );
   }
 
-  const haku = props.haku;
   const htmlId = "haku-" + haku.id;
-  const thisIsSelected = haku === props.selectedHaku;
   const rowClass = thisIsSelected
     ? "selected overview-row"
     : "unselected overview-row";
-  const controller = props.controller;
+  const onClick = () => {
+    dispatch(selectHaku(haku));
+  };
   return (
-    <tr id={htmlId} className={rowClass} onClick={controller.selectHaku(haku)}>
+    <tr ref={ref} id={htmlId} className={rowClass} onClick={onClick}>
       <td className="name-column">{haku.content.name.fi}</td>
       <td className="status-column">
         <HakuStatus status={haku.status} />
@@ -265,7 +270,6 @@ const HakuRow = (props: HakuRowProps) => {
 };
 
 interface StatusFilterProps<T> {
-  controller: HakujenHallintaController;
   hakuList: Avustushaku[];
   filter: Filter;
   label: string;
@@ -277,17 +281,10 @@ interface StatusFilterProps<T> {
 const StatusFilter = <T extends HakuStatusType | HakuPhaseType>(
   props: StatusFilterProps<T>
 ) => {
-  const {
-    controller,
-    hakuList,
-    filter,
-    label,
-    statusValues,
-    statusToFi,
-    filterField,
-  } = props;
+  const { hakuList, filter, label, statusValues, statusToFi, filterField } =
+    props;
   const [open, setOpen] = useState(false);
-
+  const dispatch = useHakujenHallintaDispatch();
   function handleClick() {
     setOpen(!open);
   }
@@ -297,19 +294,28 @@ const StatusFilter = <T extends HakuStatusType | HakuPhaseType>(
   const onCheckboxChange = function (status: T) {
     return function () {
       if (statusFilter.includes(status)) {
-        controller.setFilter(
-          filterField,
-          statusFilter.filter((s) => s !== status)
+        dispatch(
+          setFilter({
+            filterId: filterField,
+            filter: statusFilter.filter((s) => s !== status),
+          })
         );
       } else {
-        controller.setFilter(filterField, [...statusFilter, status]);
+        dispatch(
+          setFilter({
+            filterId: filterField,
+            filter: [...statusFilter, status],
+          })
+        );
       }
     };
   };
 
   const onDelete = function () {
     setOpen(false);
-    controller.setFilter(filterField, statusValues as string[]);
+    dispatch(
+      setFilter({ filterId: filterField, filter: statusValues as string[] })
+    );
   };
   const hasFilters = statusFilter.length !== statusValues.length;
 
@@ -355,14 +361,14 @@ const StatusFilter = <T extends HakuStatusType | HakuPhaseType>(
 };
 
 interface DateFilterProps {
-  controller: HakujenHallintaController;
   filter: Filter;
   label: string;
   filterField: "startdate" | "enddate";
 }
 
 const DateFilter = (props: DateFilterProps) => {
-  const { controller, filter, label, filterField } = props;
+  const { filter, label, filterField } = props;
+  const dispatch = useHakujenHallintaDispatch();
   const [open, setOpen] = useState(false);
   const startValue = filter[(filterField + "start") as FilterId] as string;
   const endValue = filter[(filterField + "end") as FilterId] as string;
@@ -370,11 +376,11 @@ const DateFilter = (props: DateFilterProps) => {
   const handleClick = () => setOpen(!open);
 
   const updateStart = (value: string) => {
-    controller.setFilter((filterField + "start") as FilterId, value);
+    dispatch(setFilter({ filterId: `${filterField}start`, filter: value }));
   };
 
   const updateEnd = (value: string) => {
-    controller.setFilter((filterField + "end") as FilterId, value);
+    dispatch(setFilter({ filterId: `${filterField}end`, filter: value }));
   };
 
   const onDelete = () => {

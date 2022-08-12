@@ -1,5 +1,5 @@
 import moment from "moment";
-import { Page } from "@playwright/test";
+import { Page, expect } from "@playwright/test";
 
 import {
   clickElementWithText,
@@ -7,10 +7,7 @@ import {
   waitForClojureScriptLoadingDialogVisible,
   clearAndType,
 } from "../utils/util";
-import {
-  HakujenHallintaPage,
-  waitForSaveStatusOk,
-} from "./hakujenHallintaPage";
+import { HakujenHallintaPage } from "./hakujenHallintaPage";
 
 export function MaksatuksetPage(
   page: Page,
@@ -244,7 +241,11 @@ export function MaksatuksetPage(
 
   async function sendMaksatuksetTypescript(): Promise<void> {
     await Promise.all([
-      waitForSaveStatusOk(page),
+      expect(
+        page
+          .locator('[data-test-id="save-status"]')
+          .locator('text="Kaikki tiedot tallennettu"')
+      ).toBeVisible({ timeout: 10000 }),
       clickElementWithText(page, "button", "Lähetä maksatukset"),
     ]);
   }

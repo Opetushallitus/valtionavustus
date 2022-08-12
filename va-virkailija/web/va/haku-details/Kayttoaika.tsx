@@ -6,30 +6,29 @@ import { DateInput } from "./DateInput";
 
 import "../style/kayttoaika.less";
 import "react-widgets/styles.css";
-import HakujenHallintaController from "../HakujenHallintaController";
+import { updateField } from "../hakujenHallinta/hakuReducer";
+import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
 
 interface KayttoaikaProps {
   avustushaku: Avustushaku;
-  controller: HakujenHallintaController;
 }
 
-export const Kayttoaika: React.FC<KayttoaikaProps> = ({
-  avustushaku,
-  controller,
-}) => {
-  function getStoredDateFor(
+export const Kayttoaika: React.FC<KayttoaikaProps> = ({ avustushaku }) => {
+  const dispatch = useHakujenHallintaDispatch();
+
+  const getStoredDateFor = (
     field: "hankkeen-alkamispaiva" | "hankkeen-paattymispaiva"
-  ): Date | undefined {
+  ): Date | undefined => {
     if (!avustushaku[field]) return undefined;
     if (!moment(avustushaku[field]).isValid()) return undefined;
 
     return moment(avustushaku[field]).toDate();
-  }
+  };
 
-  function onChange(id: string, date: Moment) {
+  const onChange = (id: string, date: Moment) => {
     const value = date.isValid() ? date.format(isoFormat) : "";
-    controller.onChangeListener(avustushaku, { id: id }, value);
-  }
+    dispatch(updateField({ avustushaku, field: { id: id }, newValue: value }));
+  };
 
   return (
     <div className="kayttoaika">

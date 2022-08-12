@@ -46,9 +46,7 @@ test("can add and validate different fields", async ({
   const avustushakuID =
     await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps);
   await hakujenHallintaPage.setAvustushakuInDraftState();
-  const formEditorPage = await hakujenHallintaPage.navigateToFormEditor(
-    avustushakuID
-  );
+  const formEditorPage = await hakujenHallintaPage.switchToFormEditorTab();
   const decimalField = {
     type: "decimalField",
     fieldId: "id-decimalField",
@@ -62,7 +60,7 @@ test("can add and validate different fields", async ({
   await formEditorPage.addKoodisto("ammattiluokitus");
   await formEditorPage.addFields(decimalField, integerField);
   await hakujenHallintaPage.switchToHaunTiedotTab();
-  await hakujenHallintaPage.publishAvustushaku(avustushakuID);
+  await hakujenHallintaPage.publishAvustushaku();
   const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page);
   await hakijaAvustusHakuPage.navigate(avustushakuID, "fi");
   await hakijaAvustusHakuPage.fillMuutoshakemusEnabledHakemus(

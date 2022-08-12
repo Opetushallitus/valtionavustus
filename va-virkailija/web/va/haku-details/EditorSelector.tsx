@@ -1,13 +1,7 @@
 import React from "react";
 import ClassNames from "classnames";
 
-import {
-  Avustushaku,
-  Form,
-  HelpTexts,
-  Koodistos,
-  Liite,
-} from "soresu-form/web/va/types";
+import { HelpTexts, Koodistos, Liite } from "soresu-form/web/va/types";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 
 import { HakuEdit } from "./HakuEdit";
@@ -15,28 +9,24 @@ import FormEditorContainer from "./FormEditorContainer";
 import DecisionEditor from "./DecisionEditor";
 import { SelvitysFormEditor } from "./SelvitysFormEditor";
 import HelpTooltip from "../HelpTooltip";
-import HakujenHallintaController, {
-  LainsaadantoOption,
-  State,
-} from "../HakujenHallintaController";
 import { HakujenHallintaSubTab, UserInfo, VaCodeValue } from "../types";
 import { Maksatukset } from "./Maksatukset";
+import {
+  useHakujenHallintaDispatch,
+  useHakujenHallintaSelector,
+} from "../hakujenHallinta/hakujenHallintaStore";
+import {
+  getSelectedHakuSelector,
+  LainsaadantoOption,
+  selectEditorSubTab,
+} from "../hakujenHallinta/hakuReducer";
 
 interface EditorSelectorProps {
-  state: State;
   subTab: HakujenHallintaSubTab;
-  controller: HakujenHallintaController;
-  avustushaku: Avustushaku;
   decisionLiitteet: Liite[];
   koodistos: Koodistos;
   userInfo: UserInfo;
   environment: EnvironmentApiResponse;
-  formDraft: Form;
-  formDraftJson: string;
-  loppuselvitysFormDraft: Form;
-  loppuselvitysFormDraftJson: string;
-  valiselvitysFormDraft: Form;
-  valiselvitysFormDraftJson: string;
   codeOptions: VaCodeValue[];
   lainsaadantoOptions: LainsaadantoOption[];
   helpTexts: HelpTexts;
@@ -51,33 +41,33 @@ function createRedirectTo(url: string) {
 
 export const EditorSelector = (props: EditorSelectorProps) => {
   const {
-    state,
     subTab,
-    controller,
-    avustushaku,
     decisionLiitteet,
-    formDraft,
-    formDraftJson,
     koodistos,
     userInfo,
     environment,
-    valiselvitysFormDraft,
-    valiselvitysFormDraftJson,
-    loppuselvitysFormDraft,
-    loppuselvitysFormDraftJson,
     codeOptions,
     lainsaadantoOptions,
     helpTexts,
   } = props;
+  const state = useHakujenHallintaSelector((state) => state.haku);
+  const avustushaku = useHakujenHallintaSelector(getSelectedHakuSelector);
+  const dispatch = useHakujenHallintaDispatch();
+  const formDraft = state.formDrafts[avustushaku.id];
+  const formDraftJson = state.formDraftsJson[avustushaku.id];
+  const valiselvitysFormDraft = state.valiselvitysFormDrafts[avustushaku.id];
+  const valiselvitysFormDraftJson =
+    state.valiselvitysFormDraftsJson[avustushaku.id];
+  const loppuselvitysFormDraft = state.loppuselvitysFormDrafts[avustushaku.id];
+  const loppuselvitysFormDraftJson =
+    state.loppuselvitysFormDraftsJson[avustushaku.id];
   let subTabContent;
   switch (subTab) {
     case "haku-editor":
       subTabContent = (
         <HakuEdit
-          state={state}
           avustushaku={avustushaku}
           userInfo={userInfo}
-          controller={controller}
           codeOptions={codeOptions}
           lainsaadantoOptions={lainsaadantoOptions}
           helpTexts={helpTexts}
@@ -93,7 +83,6 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           koodistos={koodistos}
           formDraft={formDraft}
           formDraftJson={formDraftJson}
-          controller={controller}
           helpTexts={helpTexts}
         />
       );
@@ -104,7 +93,6 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           avustushaku={avustushaku}
           decisionLiitteet={decisionLiitteet}
           environment={environment}
-          controller={controller}
           helpTexts={helpTexts}
         />
       );
@@ -116,7 +104,6 @@ export const EditorSelector = (props: EditorSelectorProps) => {
           selvitysType={subTab}
           environment={environment}
           avustushaku={avustushaku}
-          controller={controller}
           koodistos={koodistos}
           formDraft={
             subTab === "valiselvitys"
@@ -137,7 +124,6 @@ export const EditorSelector = (props: EditorSelectorProps) => {
         <Maksatukset
           avustushaku={avustushaku}
           codeValues={codeOptions}
-          controller={controller}
           environment={environment}
           helpTexts={helpTexts}
           userInfo={userInfo}
@@ -151,7 +137,7 @@ export const EditorSelector = (props: EditorSelectorProps) => {
   function createSubTabSelector(subTabToSelect: HakujenHallintaSubTab) {
     return (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
       e.preventDefault();
-      controller.selectEditorSubtab(subTabToSelect);
+      dispatch(selectEditorSubTab(subTabToSelect));
     };
   }
 

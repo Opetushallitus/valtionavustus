@@ -3,27 +3,28 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import HttpUtil from "soresu-form/web/HttpUtil";
 import { HelpTexts } from "soresu-form/web/va/types";
 
-import HakujenHallintaController, {
-  LainsaadantoOption,
-  SelectedAvustushaku,
-} from "../HakujenHallintaController";
 import HelpTooltip from "../HelpTooltip";
+import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
+import {
+  completeManualSave,
+  LainsaadantoOption,
+  Avustushaku,
+  startManuallySaving,
+} from "../hakujenHallinta/hakuReducer";
 
 type LainsaadantoProps = {
-  avustushaku: SelectedAvustushaku;
-  controller: HakujenHallintaController;
+  avustushaku: Avustushaku;
   lainsaadantoOptions: LainsaadantoOption[];
   helpTexts: HelpTexts;
 };
 
 export const Lainsaadanto = ({
   avustushaku,
-  controller,
   helpTexts,
   lainsaadantoOptions,
 }: LainsaadantoProps) => {
   const [lainsaadanto, setLainsaadanto] = useState<number[]>([]);
-
+  const dispatch = useHakujenHallintaDispatch();
   useEffect(() => {
     const fetchLainsaadanto = async () => {
       const resp = await HttpUtil.get<number[]>(
@@ -36,7 +37,7 @@ export const Lainsaadanto = ({
   }, [avustushaku.id]);
 
   const onChange = (id: number) => async (e: ChangeEvent<HTMLInputElement>) => {
-    controller.startSave();
+    dispatch(startManuallySaving());
     const newLainsaadanto = e.target.checked
       ? [...new Set([...lainsaadanto, id])]
       : lainsaadanto.filter((i) => i !== id);
@@ -45,7 +46,7 @@ export const Lainsaadanto = ({
       newLainsaadanto
     );
     setLainsaadanto(newLainsaadanto);
-    controller.completeSave();
+    dispatch(completeManualSave());
   };
 
   return (

@@ -39,7 +39,8 @@ const test = defaultValues.extend<{
     const avustushakuID = await hakujenHallintaPage.createHakuFromEsimerkkihaku(
       hakuProps
     );
-    await hakujenHallintaPage.publishAvustushaku(avustushakuID);
+    await hakujenHallintaPage.switchToHaunTiedotTab();
+    await hakujenHallintaPage.publishAvustushaku();
     const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page);
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang);
 
@@ -169,7 +170,7 @@ const akuTest = defaultValues.extend<{
     expectToBeDefined(userCache);
     const hakujenHallintaPage = new HakujenHallintaPage(page);
     await hakujenHallintaPage.navigate(avustushakuID);
-    await hakujenHallintaPage.publishAvustushaku(avustushakuID);
+    await hakujenHallintaPage.publishAvustushaku();
     const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page);
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang);
 

@@ -73,9 +73,9 @@ export const KoodienhallintaPage = (page: Page) => {
     codeList: page.locator("table tbody"),
     navigate: navigateToKoodienhallinta,
     navigateToHakujenHallintaPage: async () => {
-      await navigate(page, "/admin/haku-editor/");
-      await page.waitForLoadState("networkidle");
-      return new HakujenHallintaPage(page);
+      const hakujenHallintaPage = new HakujenHallintaPage(page);
+      await hakujenHallintaPage.navigateToDefaultAvustushaku();
+      return hakujenHallintaPage;
     },
     codeRowLocator,
     clickKoodienhallintaTab,

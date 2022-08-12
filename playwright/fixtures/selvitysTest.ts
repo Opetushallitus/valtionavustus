@@ -6,6 +6,7 @@ import { navigate } from "../utils/navigate";
 import { HakijaSelvitysPage } from "../pages/hakijaSelvitysPage";
 import { expect, test } from "@playwright/test";
 import { LoppuselvitysPage } from "../pages/loppuselvitysPage";
+import { HakujenHallintaPage } from "../pages/hakujenHallintaPage";
 
 interface SelvitysFixtures {
   väliselvityspyyntöSent: {};
@@ -32,14 +33,13 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     testInfo.setTimeout(testInfo.timeout + 5_000);
     await muutoshakemusTest.step("Send väliselvityspyynnöt", async () => {
       expectToBeDefined(acceptedHakemus);
-      await page.goto(
-        `${VIRKAILIJA_URL}/admin/valiselvitys/?avustushaku=${avustushakuID}`
-      );
+      const hakujenHallinta = new HakujenHallintaPage(page);
+      await hakujenHallinta.navigateToValiselvitys(avustushakuID);
       await Promise.all([
         page.waitForResponse(
           `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/valiselvitys/send-notification`
         ),
-        page.click('[data-test-id="send-valiselvitys"]'),
+        hakujenHallinta.sendValiselvitys(),
       ]);
     });
     const tapahtumaloki = page.locator("div.tapahtumaloki");
@@ -132,9 +132,8 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     use
   ) => {
     expectToBeDefined(acceptedHakemus);
-    await page.goto(
-      `${VIRKAILIJA_URL}/admin/loppuselvitys/?avustushaku=${avustushakuID}`
-    );
+    const hakujenHallintaPage = new HakujenHallintaPage(page);
+    await hakujenHallintaPage.navigateToLoppuselvitys(avustushakuID);
     await Promise.all([
       page.waitForResponse(
         `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/loppuselvitys/send-notification`

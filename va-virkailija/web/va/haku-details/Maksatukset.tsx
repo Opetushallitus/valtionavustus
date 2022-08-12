@@ -6,9 +6,6 @@ import HttpUtil from "soresu-form/web/HttpUtil";
 import { fiShortFormat } from "soresu-form/web/va/i18n/dateformat";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 
-import HakujenHallintaController, {
-  SelectedAvustushaku,
-} from "../HakujenHallintaController";
 import {
   HakemusV2WithEvaluation,
   PaymentBatchV2,
@@ -21,11 +18,16 @@ import { LahtevatMaksatukset } from "./LahtevatMaksatukset";
 import "./Maksatukset.less";
 import { MaksatuksetTable } from "./MaksatuksetTable";
 import { HelpTexts } from "soresu-form/web/va/types";
+import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
+import {
+  completeManualSave,
+  Avustushaku,
+  startManuallySaving,
+} from "../hakujenHallinta/hakuReducer";
 
 type MaksatuksetProps = {
-  avustushaku: SelectedAvustushaku;
+  avustushaku: Avustushaku;
   codeValues: VaCodeValue[];
-  controller: HakujenHallintaController;
   environment: EnvironmentApiResponse;
   helpTexts: HelpTexts;
   userInfo: UserInfo;
@@ -46,7 +48,6 @@ const isToday = (p: Maksatus) =>
 export const Maksatukset = ({
   avustushaku,
   codeValues,
-  controller,
   environment,
   helpTexts,
   userInfo,
@@ -129,7 +130,6 @@ export const Maksatukset = ({
       ) : (
         <LahtevatMaksatukset
           avustushaku={avustushaku}
-          controller={controller}
           helpTexts={helpTexts}
           payments={outgoingPayments}
           refreshPayments={refreshPayments}
@@ -139,7 +139,6 @@ export const Maksatukset = ({
       {userInfo.privileges.includes("va-admin") && (
         <AdminTools
           avustushaku={avustushaku}
-          controller={controller}
           environment={environment}
           refreshPayments={refreshPayments}
         />
@@ -152,7 +151,7 @@ const AvustushakuInfo = ({
   avustushaku,
   codeValues,
 }: {
-  avustushaku: SelectedAvustushaku;
+  avustushaku: Avustushaku;
   codeValues: VaCodeValue[];
 }) => {
   return (
@@ -253,37 +252,36 @@ const MaksatuseräTable = ({ batches, payments, testId }: MaksatuseräTable) => 
 };
 
 type AdminToolsProps = {
-  avustushaku: SelectedAvustushaku;
-  controller: HakujenHallintaController;
+  avustushaku: Avustushaku;
   environment: EnvironmentApiResponse;
   refreshPayments: () => Promise<void>;
 };
 
 const AdminTools = ({
   avustushaku,
-  controller,
   environment,
   refreshPayments,
 }: AdminToolsProps) => {
+  const dispatch = useHakujenHallintaDispatch();
   const onPoistaMaksatukset = async () => {
     const really = window.confirm(
       "Oletko varma, että haluat poistaa kaikki haun maksatukset?"
     );
     if (really) {
-      controller.startSave();
+      dispatch(startManuallySaving());
       await HttpUtil.delete(`/api/v2/grants/${avustushaku.id}/payments/`);
       await refreshPayments();
-      controller.completeSave();
+      dispatch(completeManualSave());
     }
   };
 
   const onLuoMaksatukset = async () => {
-    controller.startSave();
+    dispatch(startManuallySaving());
     await HttpUtil.post(`/api/v2/grants/${avustushaku.id}/payments/`, {
       phase: 0,
     });
     await refreshPayments();
-    controller.completeSave();
+    dispatch(completeManualSave());
   };
 
   return (

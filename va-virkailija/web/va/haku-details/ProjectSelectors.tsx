@@ -1,78 +1,81 @@
 import React from "react";
 import { VaCodeValue } from "../types";
-import HakujenHallintaController, {
-  SelectedAvustushaku,
-  State,
-} from "../HakujenHallintaController";
 import ProjectSelector from "./ProjectSelector";
 
 import "../style/projektien-valinta.less";
+import {
+  useHakujenHallintaDispatch,
+  useHakujenHallintaSelector,
+} from "../hakujenHallinta/hakujenHallintaStore";
+import { Avustushaku, updateProjects } from "../hakujenHallinta/hakuReducer";
 
 interface ProjectSelectorsProps {
-  state: State;
-  avustushaku: SelectedAvustushaku;
-  controller: HakujenHallintaController;
+  avustushaku: Avustushaku;
   codeOptions: VaCodeValue[];
   disabled: boolean;
   multipleProjectCodesEnabled: boolean;
 }
 
 export default function ProjectSelectors(props: ProjectSelectorsProps) {
-  const { state, avustushaku, multipleProjectCodesEnabled, controller } = props;
+  const loadingProjects = useHakujenHallintaSelector(
+    (s) => s.haku.loadingProjects
+  );
+  const dispatch = useHakujenHallintaDispatch();
+  const { avustushaku, multipleProjectCodesEnabled } = props;
   let { codeOptions, disabled } = props;
-
-  disabled = disabled || state.loadingProjects;
+  const projects = [...(avustushaku.projects ?? [])].sort((a, b) =>
+    a["code-value"].localeCompare(b["code-value"])
+  );
+  disabled = disabled || loadingProjects;
 
   codeOptions = makeNoProjectCodeFirstElement(codeOptions);
 
   const updateValue =
-    (project: VaCodeValue | null) => (option: VaCodeValue | null) => {
+    (projectIndex: number) => (option: VaCodeValue | null) => {
       if (option === null) {
         return;
       }
-      const projects = avustushaku.projects || [];
-
-      // poista ylikirjoitettu projekti
-      const oldProjectInd = projects.findIndex((proj) => proj === project);
-      if (oldProjectInd !== -1) {
-        projects.splice(oldProjectInd, 1);
-      }
-
-      controller.saveProjects(avustushaku, [option, ...projects]);
-
-      controller.onChangeListener(avustushaku, { id: "project-id" }, option.id);
-      avustushaku["project-id"] = option.id;
+      projects[projectIndex] = option;
+      dispatch(
+        updateProjects({
+          avustushakuId: avustushaku.id,
+          projects,
+        })
+      );
     };
 
   const addRow = () => {
-    const projects = avustushaku.projects || [];
-    projects.push(codeOptions[0]);
-    controller.saveProjects(avustushaku, projects);
+    dispatch(
+      updateProjects({
+        avustushakuId: avustushaku.id,
+        projects: [codeOptions[0], ...projects],
+      })
+    );
   };
 
   const removeRow = (project: VaCodeValue | null) => () => {
-    const projects = avustushaku.projects || [];
-    const oldProjectInd = projects.findIndex((proj) => proj === project);
-    if (oldProjectInd !== -1) {
-      projects.splice(oldProjectInd, 1);
+    if (project) {
+      const newProjects = projects.filter((p) => p.id !== project.id);
+      dispatch(
+        updateProjects({ avustushakuId: avustushaku.id, projects: newProjects })
+      );
     }
-    controller.saveProjects(avustushaku, projects);
   };
 
   return (
     <div className="projekti-valitsimet">
-      {!avustushaku.projects || avustushaku.projects.length < 1 ? (
+      {projects.length < 1 ? (
         <ProjectSelector
           codeOptions={codeOptions.filter((k) => k["value-type"] === "project")}
           selectedValue={""}
           disabled={disabled}
           multipleProjectCodesEnabled={multipleProjectCodesEnabled}
-          updateValue={updateValue(null)}
+          updateValue={updateValue(0)}
           removeRow={removeRow(null)}
           addRow={addRow}
         />
       ) : (
-        avustushaku.projects?.map((project: VaCodeValue, ind) => {
+        projects.map((project, ind) => {
           return (
             <ProjectSelector
               key={`${project.id}-${ind}`}
@@ -82,7 +85,7 @@ export default function ProjectSelectors(props: ProjectSelectorsProps) {
               selectedValue={project}
               disabled={disabled}
               multipleProjectCodesEnabled={multipleProjectCodesEnabled}
-              updateValue={updateValue(project)}
+              updateValue={updateValue(ind)}
               removeRow={removeRow(project)}
               addRow={addRow}
             />

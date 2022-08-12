@@ -16,11 +16,16 @@ import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 import FormEditor from "./FormEditor";
 import { Lahetys, Tapahtumaloki } from "./Tapahtumaloki";
 import { LastUpdated } from "./LastUpdated";
-import HakujenHallintaController from "../HakujenHallintaController";
+import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
+import {
+  recreateSelvitysForm,
+  saveSelvitysForm,
+  selvitysFormJsonUpdated,
+  selvitysFormUpdated,
+} from "../hakujenHallinta/hakuReducer";
 
 type SelvitysFormEditorProps = {
   avustushaku: Avustushaku;
-  controller: HakujenHallintaController;
   koodistos: Koodistos;
   selvitysType: "valiselvitys" | "loppuselvitys";
   environment: EnvironmentApiResponse;
@@ -33,10 +38,9 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
   const [count, setCount] = useState<number | undefined>(undefined);
   const [sending, setSending] = useState(false);
   const [lahetykset, setLahetykset] = useState<Lahetys[]>([]);
-
+  const dispatch = useHakujenHallintaDispatch();
   const {
     avustushaku,
-    controller,
     koodistos,
     selvitysType,
     environment,
@@ -64,37 +68,47 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
     "/" +
     selvitysType +
     "?lang=sv";
-  const onFormChange = (avustushaku: Avustushaku, newDraft: Form) => {
-    controller.selvitysFormOnChangeListener(
-      avustushaku,
-      newDraft,
-      selvitysType
+  const onFormChange = ({ id }: Avustushaku, newDraft: Form) => {
+    dispatch(
+      selvitysFormUpdated({ selvitysType, newDraft, avustushakuId: id })
     );
-    controller.selvitysJsonFormOnChangeListener(
-      avustushaku,
-      JSON.stringify(newDraft, null, 2),
-      selvitysType
+    dispatch(
+      selvitysFormJsonUpdated({
+        selvitysType,
+        newDraftJson: JSON.stringify(newDraft, null, 2),
+        avustushakuId: id,
+      })
     );
   };
 
   const onJsonChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    controller.selvitysJsonFormOnChangeListener(
-      avustushaku,
-      e.target.value,
-      selvitysType
+    dispatch(
+      selvitysFormJsonUpdated({
+        selvitysType,
+        avustushakuId: avustushaku.id,
+        newDraftJson: e.target.value,
+      })
     );
     try {
       const parsedDraft = JSON.parse(e.target.value);
-      controller.selvitysFormOnChangeListener(
-        avustushaku,
-        parsedDraft,
-        selvitysType
+      dispatch(
+        selvitysFormUpdated({
+          avustushakuId: avustushaku.id,
+          selvitysType,
+          newDraft: parsedDraft,
+        })
       );
     } catch (err) {}
   };
 
   const onSaveForm = () => {
-    controller.saveSelvitysForm(avustushaku, formDraft, selvitysType);
+    dispatch(
+      saveSelvitysForm({
+        avustushakuId: avustushaku.id,
+        form: formDraft,
+        selvitysType,
+      })
+    );
   };
   const scrollToTop = () => {
     window.scrollTo(0, 0);
@@ -116,10 +130,17 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
     return formDraft && formContent && !isEqual(parsedForm, formContent);
   }
 
-  const disableSave = !!parseError || !formHasBeenEdited();
-
+  const hasFormBeenEdited = !formHasBeenEdited();
+  const disableSave = !!parseError || hasFormBeenEdited;
+  console.log({
+    parseError,
+    hasFormBeenEdited,
+    disableSave,
+    parsedForm,
+    formContent,
+  });
   const recreateForm = () => {
-    controller.selvitysFormOnRecreate(avustushaku, selvitysType);
+    dispatch(recreateSelvitysForm({ avustushaku, selvitysType }));
   };
 
   const onSendSelvitys = () => {
@@ -259,7 +280,6 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
         avustushaku={avustushaku}
         formDraft={formDraft}
         koodistos={koodistos}
-        controller={controller}
         onFormChange={onFormChange}
       />
       <div className="form-json-editor">
