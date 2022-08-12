@@ -333,6 +333,10 @@ export class HakujenHallintaPage {
     await this.navigateTo(`/admin/valiselvitys/?avustushaku=${avustushakuID}`);
   }
 
+  async navigateToLoppuselvitys(avustushakuID: number) {
+    await this.navigateTo(`/admin/loppuselvitys/?avustushaku=${avustushakuID}`);
+  }
+
   async navigateToFormEditor(avustushakuID: number) {
     await this.navigateTo(`/admin/form-editor/?avustushaku=${avustushakuID}`);
     return new FormEditorPage(this.page);

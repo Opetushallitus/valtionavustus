@@ -181,9 +181,8 @@ selvitysTest(
     );
     expect(emailsAfter2.length).toBeGreaterThan(emailsBefore2.length);
 
-    await page.goto(
-      `${VIRKAILIJA_URL}/admin/valiselvitys/?avustushaku=${avustushakuID}`
-    );
+    const hakujenHallinta = new HakujenHallintaPage(page);
+    await hakujenHallinta.navigateToValiselvitys(avustushakuID);
     await Promise.all([
       page.waitForResponse(
         `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/valiselvitys/send-notification`
