@@ -86,7 +86,7 @@ export const Maksatukset = ({
   };
 
   return (
-    <div className="maksatukset">
+    <div className="maksatukset section-container">
       <AvustushakuInfo avustushaku={avustushaku} codeValues={codeValues} />
       <div className="maksatukset_tabs">
         <a
