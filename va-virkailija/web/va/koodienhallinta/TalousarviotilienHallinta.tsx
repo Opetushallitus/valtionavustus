@@ -84,9 +84,14 @@ const NewTiliRow = () => {
           name,
           year: Number(year),
           amount: Number(amount),
-        });
+        }).unwrap();
         formikHelpers.resetForm();
-      } catch (e) {
+      } catch (e: any) {
+        if ("status" in e && e.status === 422) {
+          formikHelpers.setErrors({
+            code: `Koodi ${code} on jo olemassa vuodelle ${year}`,
+          });
+        }
       } finally {
         formikHelpers.setSubmitting(false);
       }

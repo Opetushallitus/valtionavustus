@@ -78,6 +78,49 @@ test.describe.parallel("talousarviotilien hallinta", () => {
       await expect(row).toBeHidden();
     });
   });
+  test("same talousarviotili code cannot be created again for the same year", async ({
+    koodienhallintaPage,
+    randomName,
+  }) => {
+    const taForm = koodienhallintaPage.taTilit.form;
+    const name = `Talousarviotili ${randomName}`;
+    const year = "2022";
+    const code = randomString();
+    const amount = "69";
+    const row = await koodienhallintaPage.page.locator(
+      `[data-test-id="${name}"]`
+    );
+    await test.step("fill form", async () => {
+      await taForm.year.input.fill(year);
+      await taForm.code.input.fill(code);
+      await taForm.name.input.fill(name);
+      await taForm.amount.input.fill(amount);
+    });
+    await test.step("create row", async () => {
+      await taForm.submitBtn.click();
+      await expect(row).toBeVisible();
+      await expect(taForm.submitBtn).toBeEnabled();
+    });
+    await test.step("fill form again", async () => {
+      await taForm.year.input.fill(year);
+      await taForm.code.input.fill(code);
+      await taForm.name.input.fill(name);
+      await taForm.amount.input.fill(amount);
+    });
+    await test.step("submitting should fail", async () => {
+      await taForm.submitBtn.click();
+      await expect(taForm.code.error).toContainText(
+        `Koodi ${code} on jo olemassa vuodelle ${year}`
+      );
+      await expect(row).toHaveCount(1);
+    });
+    await test.step("submitting works with another year", async () => {
+      await taForm.year.input.fill("2021");
+      await taForm.submitBtn.click();
+      await expect(taForm.code.error).toBeHidden();
+      await expect(row).toHaveCount(2);
+    });
+  });
   test("requires all fields", async ({ koodienhallintaPage }) => {
     const taForm = koodienhallintaPage.taTilit.form;
     await taForm.submitBtn.click();

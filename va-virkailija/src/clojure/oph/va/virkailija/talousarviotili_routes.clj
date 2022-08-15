@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.talousarviotili-routes
   (:require [compojure.api.sweet :as compojure-api]
-            [ring.util.http-response :refer [ok method-not-allowed unauthorized]]
+            [clojure.tools.logging :as log]
+            [ring.util.http-response :refer [ok method-not-allowed unauthorized unprocessable-entity! internal-server-error!]]
             [oph.va.virkailija.schema :as schema]
             [oph.soresu.common.db :refer [query with-tx execute!]]
             [oph.va.virkailija.va-code-values-routes :refer [with-admin]]))
@@ -11,13 +12,14 @@
 
 (defn- create-new-talousarviotili [talousarviotili]
   (with-tx (fn [tx]
-    (execute! tx "INSERT INTO talousarviotilit (year, code, name, amount)
+    (-> (query tx "INSERT INTO talousarviotilit (year, code, name, amount)
                   VALUES (?, ?, ?, ?)
                   RETURNING *"
-              [(:year talousarviotili)
-               (:code talousarviotili)
-               (:name talousarviotili)
-               (:amount talousarviotili)]))))
+               [(:year talousarviotili)
+                (:code talousarviotili)
+                (:name talousarviotili)
+                (:amount talousarviotili)])
+        first))))
 
 (defn- delete-talousarviotili! [id]
   (with-tx (fn [tx]
@@ -46,7 +48,12 @@
     :return schema/Talousarviotili
     :summary "Create new talousarviotili"
     (with-admin request
-      (ok (create-new-talousarviotili talousarviotili))
+      (try
+        (ok (create-new-talousarviotili talousarviotili))
+        (catch java.sql.SQLException e
+          ((case (.getSQLState e)
+             "23505" (unprocessable-entity!)
+             (internal-server-error!)))))
       (unauthorized ""))))
 
 (defn- delete-talousarviotili []
