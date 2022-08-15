@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import moment from "moment";
 // @ts-ignore react-widgets-moment doesn't have proper types
@@ -31,9 +31,6 @@ const HakujenHallintaApp = () => {
   const state = useHakujenHallintaSelector((state) => state.haku);
   const { saveStatus, initialData } = state;
   const dispatch = useHakujenHallintaDispatch();
-  useEffect(() => {
-    dispatch(fetchInitialState());
-  }, []);
   const searchParams = new URLSearchParams(window.location.search);
   const newHakuListing = searchParams.get("new-haku-listing") === "true";
   const onClickHaku = useCallback((avustushaku: Avustushaku) => {
@@ -82,6 +79,8 @@ const HakujenHallintaApp = () => {
 
 const app = document.getElementById("app");
 const root = createRoot(app!);
+
+store.dispatch(fetchInitialState());
 
 root.render(
   <Provider store={store}>
