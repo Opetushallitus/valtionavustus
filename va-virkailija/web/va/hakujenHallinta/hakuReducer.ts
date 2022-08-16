@@ -1,7 +1,6 @@
 import {
   AsyncThunkPayloadCreator,
   createAsyncThunk,
-  createSelector,
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
@@ -856,19 +855,19 @@ const hakuSlice = createSlice({
       hakuList[index] = payload;
     },
     addFocusArea: (state) => {
-      const selectedHaku = getSelectedHaku(state);
+      const selectedHaku = getSelectedAvustushaku(state);
       selectedHaku.content["focus-areas"].items.push({ fi: "", sv: "" });
     },
     deleteFocusArea: (state, { payload }: PayloadAction<number>) => {
-      const selectedHaku = getSelectedHaku(state);
+      const selectedHaku = getSelectedAvustushaku(state);
       selectedHaku.content["focus-areas"].items.splice(payload, 1);
     },
     addSelectionCriteria: (state) => {
-      const selectedHaku = getSelectedHaku(state);
+      const selectedHaku = getSelectedAvustushaku(state);
       selectedHaku.content["selection-criteria"].items.push({ fi: "", sv: "" });
     },
     removeSelectionCriteria: (state, { payload }: PayloadAction<number>) => {
-      const selectedHaku = getSelectedHaku(state);
+      const selectedHaku = getSelectedAvustushaku(state);
       selectedHaku.content["selection-criteria"].items.splice(payload, 1);
     },
     updateProject: (
@@ -880,14 +879,14 @@ const hakuSlice = createSlice({
         projects: VaCodeValue[];
       }>
     ) => {
-      const selectedHaku = getSelectedHaku(state);
+      const selectedHaku = getSelectedAvustushaku(state);
       if (selectedHaku.projects) {
         selectedHaku.projects = payload.projects;
         selectedHaku["project-id"] = payload.projects[0]?.id;
       }
     },
     addTalousarviotili: (state, { payload }: PayloadAction<string>) => {
-      const selectedHaku = getSelectedHaku(state);
+      const selectedHaku = getSelectedAvustushaku(state);
       if (selectedHaku.content["rahoitusalueet"]) {
         const rahoitusalueet = getOrCreateRahoitusalueet(selectedHaku);
         const rahoitusalue = getOrCreateRahoitusalue(rahoitusalueet, payload);
@@ -898,7 +897,7 @@ const hakuSlice = createSlice({
       state,
       { payload }: PayloadAction<{ rahoitusalue: string; index: number }>
     ) => {
-      const selectedHaku = getSelectedHaku(state);
+      const selectedHaku = getSelectedAvustushaku(state);
       if (selectedHaku.content["rahoitusalueet"]) {
         const rahoitusalueet = getOrCreateRahoitusalueet(selectedHaku);
         const rahoitusalue = getOrCreateRahoitusalue(
@@ -1126,7 +1125,8 @@ const getAvustushakuFromList = (
   }
   return haku;
 };
-export const getSelectedHaku = (state: State) => {
+
+const getSelectedAvustushaku = (state: State) => {
   const hakuList = getHakuList(state);
   return getAvustushakuFromList(hakuList, state.hakuId);
 };
@@ -1136,7 +1136,29 @@ const getAvustushaku = (state: State, avustushakuId: number) => {
   return getAvustushakuFromList(hakuList, avustushakuId);
 };
 
-export const getSelectedHakuSelector = createSelector(
-  (state: HakujenHallintaRootState) => getSelectedHaku(state.haku),
-  (value) => value
-);
+export const selectSelectedAvustushaku = (state: HakujenHallintaRootState) =>
+  getSelectedAvustushaku(state.haku);
+
+export const selectDraftsForAvustushaku =
+  (avustushakuId: number) =>
+  ({ haku }: HakujenHallintaRootState) => {
+    return {
+      formDraft: haku.formDrafts[avustushakuId],
+      formDraftJson: haku.formDraftsJson[avustushakuId],
+      valiselvitysFormDraft: haku.valiselvitysFormDrafts[avustushakuId],
+      valiselvitysFormDraftJson: haku.valiselvitysFormDraftsJson[avustushakuId],
+      loppuselvitysFormDraft: haku.loppuselvitysFormDrafts[avustushakuId],
+      loppuselvitysFormDraftsJson:
+        haku.loppuselvitysFormDraftsJson[avustushakuId],
+    };
+  };
+
+export const selectLoadedInitialData = (state: HakujenHallintaRootState) => {
+  const initialData = state.haku.initialData;
+  if (initialData.loading) {
+    throw Error("Tried to use initialData before it was fetched");
+  }
+  return initialData.data;
+};
+
+export const selectHakuState = (state: HakujenHallintaRootState) => state.haku;

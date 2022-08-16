@@ -23,7 +23,7 @@ import styles from "./NewHakuListing.module.less";
 import { useSelector } from "react-redux";
 import {
   Avustushaku,
-  getSelectedHakuSelector,
+  selectSelectedAvustushaku,
 } from "../hakujenHallinta/hakuReducer";
 
 export const AVUSTUSHAKU_STATUSES_AVAILABLE_FOR_FILTER =
@@ -382,7 +382,7 @@ const filterReducer = (
 };
 
 export const NewHakuListing: React.FC<Props> = ({ hakuList, onClickHaku }) => {
-  const selectedHaku = useSelector(getSelectedHakuSelector);
+  const selectedHaku = useSelector(selectSelectedAvustushaku);
   const [sortKey, setSortKey] = useState<SortKey | undefined>();
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
   const [filterState, dispatch] = useReducer(filterReducer, defaultFilterState);

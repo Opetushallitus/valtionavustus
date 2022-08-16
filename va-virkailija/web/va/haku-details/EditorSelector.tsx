@@ -1,36 +1,22 @@
 import React from "react";
 import ClassNames from "classnames";
 
-import { HelpTexts, Koodistos, Liite } from "soresu-form/web/va/types";
-import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
-
 import { HakuEdit } from "./HakuEdit";
 import FormEditorContainer from "./FormEditorContainer";
 import DecisionEditor from "./DecisionEditor";
 import { SelvitysFormEditor } from "./SelvitysFormEditor";
 import HelpTooltip from "../HelpTooltip";
-import { HakujenHallintaSubTab, UserInfo, VaCodeValue } from "../types";
+import { HakujenHallintaSubTab } from "../types";
 import { Maksatukset } from "./Maksatukset";
 import {
   useHakujenHallintaDispatch,
   useHakujenHallintaSelector,
 } from "../hakujenHallinta/hakujenHallintaStore";
 import {
-  getSelectedHakuSelector,
-  LainsaadantoOption,
+  selectSelectedAvustushaku,
   selectEditorSubTab,
+  selectLoadedInitialData,
 } from "../hakujenHallinta/hakuReducer";
-
-interface EditorSelectorProps {
-  subTab: HakujenHallintaSubTab;
-  decisionLiitteet: Liite[];
-  koodistos: Koodistos;
-  userInfo: UserInfo;
-  environment: EnvironmentApiResponse;
-  codeOptions: VaCodeValue[];
-  lainsaadantoOptions: LainsaadantoOption[];
-  helpTexts: HelpTexts;
-}
 
 function createRedirectTo(url: string) {
   return (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
@@ -39,96 +25,30 @@ function createRedirectTo(url: string) {
   };
 }
 
-export const EditorSelector = (props: EditorSelectorProps) => {
-  const {
-    subTab,
-    decisionLiitteet,
-    koodistos,
-    userInfo,
-    environment,
-    codeOptions,
-    lainsaadantoOptions,
-    helpTexts,
-  } = props;
-  const state = useHakujenHallintaSelector((state) => state.haku);
-  const avustushaku = useHakujenHallintaSelector(getSelectedHakuSelector);
+export const EditorSelector = () => {
+  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
+  const subTab = useHakujenHallintaSelector((state) => state.haku.subTab);
+  const { helpTexts, environment } = useHakujenHallintaSelector(
+    selectLoadedInitialData
+  );
   const dispatch = useHakujenHallintaDispatch();
-  const formDraft = state.formDrafts[avustushaku.id];
-  const formDraftJson = state.formDraftsJson[avustushaku.id];
-  const valiselvitysFormDraft = state.valiselvitysFormDrafts[avustushaku.id];
-  const valiselvitysFormDraftJson =
-    state.valiselvitysFormDraftsJson[avustushaku.id];
-  const loppuselvitysFormDraft = state.loppuselvitysFormDrafts[avustushaku.id];
-  const loppuselvitysFormDraftJson =
-    state.loppuselvitysFormDraftsJson[avustushaku.id];
   let subTabContent;
   switch (subTab) {
     case "haku-editor":
-      subTabContent = (
-        <HakuEdit
-          avustushaku={avustushaku}
-          userInfo={userInfo}
-          codeOptions={codeOptions}
-          lainsaadantoOptions={lainsaadantoOptions}
-          helpTexts={helpTexts}
-          environment={environment}
-        />
-      );
+      subTabContent = <HakuEdit />;
       break;
     case "form-editor":
-      subTabContent = (
-        <FormEditorContainer
-          avustushaku={avustushaku}
-          environment={environment}
-          koodistos={koodistos}
-          formDraft={formDraft}
-          formDraftJson={formDraftJson}
-          helpTexts={helpTexts}
-        />
-      );
+      subTabContent = <FormEditorContainer />;
       break;
     case "decision":
-      subTabContent = (
-        <DecisionEditor
-          avustushaku={avustushaku}
-          decisionLiitteet={decisionLiitteet}
-          environment={environment}
-          helpTexts={helpTexts}
-        />
-      );
+      subTabContent = <DecisionEditor />;
       break;
     case "valiselvitys":
     case "loppuselvitys":
-      subTabContent = (
-        <SelvitysFormEditor
-          selvitysType={subTab}
-          environment={environment}
-          avustushaku={avustushaku}
-          koodistos={koodistos}
-          formDraft={
-            subTab === "valiselvitys"
-              ? valiselvitysFormDraft
-              : loppuselvitysFormDraft
-          }
-          formDraftJson={
-            subTab === "valiselvitys"
-              ? valiselvitysFormDraftJson
-              : loppuselvitysFormDraftJson
-          }
-          helpTexts={helpTexts}
-        />
-      );
+      subTabContent = <SelvitysFormEditor selvitysType={subTab} />;
       break;
     case "maksatukset":
-      subTabContent = (
-        <Maksatukset
-          avustushaku={avustushaku}
-          codeValues={codeOptions}
-          environment={environment}
-          helpTexts={helpTexts}
-          userInfo={userInfo}
-        />
-      );
+      subTabContent = <Maksatukset />;
       break;
     default:
       throw new Error(`Bad subTab selection '${subTab}'`);

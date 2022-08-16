@@ -20,8 +20,16 @@ import {
   LiiteAttachmentVersion,
 } from "soresu-form/web/va/types";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
-import { Avustushaku, updateField } from "../hakujenHallinta/hakuReducer";
-import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
+import {
+  Avustushaku,
+  selectLoadedInitialData,
+  selectSelectedAvustushaku,
+  updateField,
+} from "../hakujenHallinta/hakuReducer";
+import {
+  useHakujenHallintaDispatch,
+  useHakujenHallintaSelector,
+} from "../hakujenHallinta/hakujenHallintaStore";
 
 interface DecisionProps {
   title: string;
@@ -1115,20 +1123,11 @@ class DecisionDateAndSend extends React.Component<
   }
 }
 
-interface DecisionEditorProps {
-  avustushaku: Avustushaku;
-  decisionLiitteet: Liite[];
-  environment: EnvironmentApiResponse;
-  helpTexts: HelpTexts;
-}
-
-const DecisionEditor = ({
-  avustushaku,
-  decisionLiitteet,
-  environment,
-  helpTexts,
-}: DecisionEditorProps) => {
+const DecisionEditor = () => {
   const dispatch = useHakujenHallintaDispatch();
+  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
+  const { decisionLiitteet, environment, helpTexts } =
+    useHakujenHallintaSelector(selectLoadedInitialData);
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(
       updateField({ avustushaku, field: e.target, newValue: e.target.value })

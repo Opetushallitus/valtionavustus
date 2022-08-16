@@ -39,15 +39,7 @@ const HakujenHallintaApp = () => {
   if (initialData.loading) {
     return null;
   }
-  const {
-    environment,
-    hakuList,
-    codeOptions,
-    lainsaadantoOptions,
-    helpTexts,
-    userInfo,
-    decisionLiitteet,
-  } = initialData.data;
+  const { environment, hakuList, userInfo } = initialData.data;
   return (
     <Localization date={momentLocalizer} messages={translationsFi.calendar}>
       <HeaderContainer
@@ -62,16 +54,7 @@ const HakujenHallintaApp = () => {
         ) : (
           <HakuListing hakuList={hakuList} />
         )}
-        <EditorSelector
-          subTab={state.subTab}
-          decisionLiitteet={decisionLiitteet}
-          environment={environment}
-          koodistos={state.koodistos}
-          userInfo={userInfo}
-          codeOptions={codeOptions}
-          lainsaadantoOptions={lainsaadantoOptions}
-          helpTexts={helpTexts}
-        />
+        <EditorSelector />
       </section>
     </Localization>
   );

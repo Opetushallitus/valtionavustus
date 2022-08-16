@@ -10,28 +10,23 @@ import {
   HakemusV2WithEvaluation,
   PaymentBatchV2,
   PaymentV2,
-  UserInfo,
   VaCodeValue,
 } from "../types";
 import { LahtevatMaksatukset } from "./LahtevatMaksatukset";
 
 import "./Maksatukset.less";
 import { MaksatuksetTable } from "./MaksatuksetTable";
-import { HelpTexts } from "soresu-form/web/va/types";
-import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
+import {
+  useHakujenHallintaDispatch,
+  useHakujenHallintaSelector,
+} from "../hakujenHallinta/hakujenHallintaStore";
 import {
   completeManualSave,
   Avustushaku,
   startManuallySaving,
+  selectSelectedAvustushaku,
+  selectLoadedInitialData,
 } from "../hakujenHallinta/hakuReducer";
-
-type MaksatuksetProps = {
-  avustushaku: Avustushaku;
-  codeValues: VaCodeValue[];
-  environment: EnvironmentApiResponse;
-  helpTexts: HelpTexts;
-  userInfo: UserInfo;
-};
 
 type MaksatuksetTab = "outgoing" | "sent";
 
@@ -45,13 +40,14 @@ const today = moment().format(fiShortFormat);
 const isToday = (p: Maksatus) =>
   moment(p["created-at"]).format(fiShortFormat) === today;
 
-export const Maksatukset = ({
-  avustushaku,
-  codeValues,
-  environment,
-  helpTexts,
-  userInfo,
-}: MaksatuksetProps) => {
+export const Maksatukset = () => {
+  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
+  const {
+    codeOptions: codeValues,
+    environment,
+    helpTexts,
+    userInfo,
+  } = useHakujenHallintaSelector(selectLoadedInitialData);
   const [tab, setTab] = useState<MaksatuksetTab>("outgoing");
   const [maksatukset, setMaksatukset] = useState<Maksatus[]>([]);
   const [batches, setBatches] = useState<PaymentBatchV2[]>([]);

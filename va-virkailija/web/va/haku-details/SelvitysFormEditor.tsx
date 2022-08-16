@@ -5,56 +5,61 @@ import moment from "moment";
 
 import HttpUtil from "soresu-form/web/HttpUtil";
 import { fiShortFormat } from "soresu-form/web/va/i18n/dateformat";
-import {
-  Avustushaku,
-  Form,
-  HelpTexts,
-  Koodistos,
-} from "soresu-form/web/va/types";
-import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
+import { Avustushaku, Form } from "soresu-form/web/va/types";
 
 import FormEditor from "./FormEditor";
 import { Lahetys, Tapahtumaloki } from "./Tapahtumaloki";
 import { LastUpdated } from "./LastUpdated";
-import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
 import {
+  useHakujenHallintaDispatch,
+  useHakujenHallintaSelector,
+} from "../hakujenHallinta/hakujenHallintaStore";
+import {
+  selectHakuState,
+  selectLoadedInitialData,
   recreateSelvitysForm,
   saveSelvitysForm,
+  selectDraftsForAvustushaku,
+  selectSelectedAvustushaku,
   selvitysFormJsonUpdated,
   selvitysFormUpdated,
 } from "../hakujenHallinta/hakuReducer";
 
 type SelvitysFormEditorProps = {
-  avustushaku: Avustushaku;
-  koodistos: Koodistos;
   selvitysType: "valiselvitys" | "loppuselvitys";
-  environment: EnvironmentApiResponse;
-  helpTexts: HelpTexts;
-  formDraft: Form;
-  formDraftJson: string;
 };
 
-export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
+export const SelvitysFormEditor = ({
+  selvitysType,
+}: SelvitysFormEditorProps) => {
+  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
+  const isValiSelvitys = selvitysType === "valiselvitys";
+  const { environment, helpTexts } = useHakujenHallintaSelector(
+    selectLoadedInitialData
+  );
+  const { koodistos } = useHakujenHallintaSelector(selectHakuState);
+  const {
+    valiselvitysFormDraft,
+    loppuselvitysFormDraft,
+    valiselvitysFormDraftJson,
+    loppuselvitysFormDraftsJson,
+  } = useHakujenHallintaSelector(selectDraftsForAvustushaku(avustushaku.id));
   const [count, setCount] = useState<number | undefined>(undefined);
   const [sending, setSending] = useState(false);
   const [lahetykset, setLahetykset] = useState<Lahetys[]>([]);
   const dispatch = useHakujenHallintaDispatch();
-  const {
-    avustushaku,
-    koodistos,
-    selvitysType,
-    environment,
-    helpTexts,
-    formDraft,
-    formDraftJson,
-  } = props;
   const formContent =
     selvitysType === "valiselvitys"
       ? avustushaku.valiselvitysForm
       : avustushaku.loppuselvitysForm;
   const updatedAtElementId = `${selvitysType}UpdatedAt`;
   const updatedAt = formContent?.updated_at;
-
+  const formDraft = isValiSelvitys
+    ? valiselvitysFormDraft
+    : loppuselvitysFormDraft;
+  const formDraftJson = isValiSelvitys
+    ? valiselvitysFormDraftJson
+    : loppuselvitysFormDraftsJson;
   const previewUrlFi =
     environment["hakija-server"].url.fi +
     "avustushaku/" +
@@ -132,13 +137,6 @@ export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
 
   const hasFormBeenEdited = !formHasBeenEdited();
   const disableSave = !!parseError || hasFormBeenEdited;
-  console.log({
-    parseError,
-    hasFormBeenEdited,
-    disableSave,
-    parsedForm,
-    formContent,
-  });
   const recreateForm = () => {
     dispatch(recreateSelvitysForm({ avustushaku, selvitysType }));
   };

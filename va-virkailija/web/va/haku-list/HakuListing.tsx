@@ -26,7 +26,7 @@ import {
 } from "../hakujenHallinta/hakujenHallintaStore";
 import { clearFilters, setFilter } from "../hakujenHallinta/hakuFilterReducer";
 import {
-  getSelectedHakuSelector,
+  selectSelectedAvustushaku,
   selectHaku,
 } from "../hakujenHallinta/hakuReducer";
 
@@ -107,7 +107,7 @@ function _filterWithStrPredicate(
 
 export const HakuListing = (props: HakuListingProps) => {
   const { hakuList } = props;
-  const selectedHaku = useHakujenHallintaSelector(getSelectedHakuSelector);
+  const selectedHaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
   const filter = useHakujenHallintaSelector((s) => s.hakuFilter);
   const dispatch = useHakujenHallintaDispatch();
   const onFilterChange = function (filterId: FilterId) {

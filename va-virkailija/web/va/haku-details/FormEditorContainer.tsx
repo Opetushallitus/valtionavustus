@@ -3,33 +3,32 @@ import DateUtil from "soresu-form/web/DateUtil";
 import FormEditor from "./FormEditor";
 import FormJsonEditor from "./FormJsonEditor";
 import { MuutoshakukelpoisuusContainer } from "./MuutoshakukelpoisuusContainer";
-import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
-import { Koodistos, Form, HelpTexts } from "soresu-form/web/va/types";
-import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
+import { Form } from "soresu-form/web/va/types";
+import {
+  useHakujenHallintaDispatch,
+  useHakujenHallintaSelector,
+} from "../hakujenHallinta/hakujenHallintaStore";
 import {
   Avustushaku,
   formJsonUpdated,
   formUpdated,
+  selectDraftsForAvustushaku,
+  selectHakuState,
+  selectLoadedInitialData,
+  selectSelectedAvustushaku,
 } from "../hakujenHallinta/hakuReducer";
 
-interface FormEditorContainerProps {
-  avustushaku: Avustushaku;
-  environment: EnvironmentApiResponse;
-  koodistos: Koodistos;
-  formDraft: Form;
-  formDraftJson: string;
-  helpTexts: HelpTexts;
-}
-
-const FormEditorContainer = ({
-  avustushaku,
-  koodistos,
-  formDraft,
-  formDraftJson,
-  helpTexts,
-  environment,
-}: FormEditorContainerProps) => {
+const FormEditorContainer = () => {
   const dispatch = useHakujenHallintaDispatch();
+  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
+  const { environment, helpTexts } = useHakujenHallintaSelector(
+    selectLoadedInitialData
+  );
+  const { formDraft, formDraftJson } = useHakujenHallintaSelector(
+    selectDraftsForAvustushaku(avustushaku.id)
+  );
+  const { koodistos } = useHakujenHallintaSelector(selectHakuState);
+
   const updatedAt = avustushaku.formContent?.updated_at;
   const hakuUrlFi =
     environment["hakija-server"].url.fi +

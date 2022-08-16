@@ -14,46 +14,36 @@ import EducationLevels from "./EducationLevels";
 import AutoCompleteCodeValue, { CodeType } from "./AutoCompleteCodeValue";
 import HelpTooltip from "../HelpTooltip";
 import WarningBanner from "../WarningBanner";
-import { UserInfo, VaCodeValue } from "../types";
+import { VaCodeValue } from "../types";
 import { DateInput } from "./DateInput";
 import { Raportointivelvoitteet } from "./Raportointivelvoitteet";
-import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 import { Lainsaadanto } from "./Lainsaadanto";
 import ProjectSelectors from "./ProjectSelectors";
 
 import "../style/koodien-valinta.less";
-import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
+import {
+  useHakujenHallintaDispatch,
+  useHakujenHallintaSelector,
+} from "../hakujenHallinta/hakujenHallintaStore";
 import {
   addFocusArea,
   addSelectionCriteria,
   addTalousarviotili,
   createHaku,
   deleteFocusArea,
-  LainsaadantoOption,
   removeSelectionCriteria,
   removeTalousarviotili,
   Avustushaku,
   startAutoSaveForAvustushaku,
   updateField,
+  selectSelectedAvustushaku,
+  selectLoadedInitialData,
 } from "../hakujenHallinta/hakuReducer";
 
-type HakuEditProps = {
-  avustushaku: Avustushaku;
-  codeOptions: VaCodeValue[];
-  lainsaadantoOptions: LainsaadantoOption[];
-  helpTexts: HelpTexts;
-  userInfo: UserInfo;
-  environment: EnvironmentApiResponse;
-};
-
-export const HakuEdit = ({
-  avustushaku,
-  codeOptions,
-  lainsaadantoOptions,
-  helpTexts,
-  userInfo,
-  environment,
-}: HakuEditProps) => {
+export const HakuEdit = () => {
+  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
+  const { codeOptions, lainsaadantoOptions, helpTexts, userInfo, environment } =
+    useHakujenHallintaSelector(selectLoadedInitialData);
   const hasPayments = !!avustushaku.payments?.length;
   const dispatch = useHakujenHallintaDispatch();
   const isAllPaymentsPaid =
@@ -118,7 +108,6 @@ export const HakuEdit = ({
     (option: VaCodeValue | null) => {
       if (option == null) {
         dispatch(updateField({ avustushaku, field: { id }, newValue: null }));
-        // avustushaku[id] = null;
       } else {
         dispatch(
           updateField({
@@ -127,7 +116,6 @@ export const HakuEdit = ({
             newValue: option.id,
           })
         );
-        // avustushaku[id] = option.id;
       }
     };
 
