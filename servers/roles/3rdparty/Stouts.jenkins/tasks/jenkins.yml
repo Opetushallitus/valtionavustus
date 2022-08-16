@@ -12,7 +12,6 @@
   tags: [jenkins, jenkins-configure]
 
 - include: plugins.yml
-  when: jenkins_plugins | length > 0
   tags: [jenkins, jenkins-plugins]
 
 - include: ssh.yml

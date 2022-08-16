@@ -35,16 +35,6 @@ jenkins_proxy_port: 443
 jenkins_http_host: "{{ ansible_nodename }}"
 jenkins_http_port: 8000
 
-jenkins_plugins:
-  - ansicolor
-  - github
-  - git
-  - greenballs
-  - htmlpublisher
-  - email-ext
-  - junit
-  - slack
-
 jenkins_content_security_policy: "sandbox allow-scripts; default-src 'none'; img-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'unsafe-inline';"
 
 # System config
