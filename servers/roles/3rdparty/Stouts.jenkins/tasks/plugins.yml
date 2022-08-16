@@ -23,6 +23,8 @@
       version: "1.34.5"
     - name: slack
       version: "616.v03b_1e98d13dd"
+    - name: mailer
+      version: "414.vcc4c33714601"
 
   notify:
     - jenkins check web ready
@@ -53,7 +55,6 @@
       - name: external-monitor-job
       - name: windows-slaves
       - name: script-security
-      - name: mailer
       - name: matrix-auth
       - name: instance-identity
   notify:
