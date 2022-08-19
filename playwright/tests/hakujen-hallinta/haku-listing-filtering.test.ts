@@ -21,7 +21,7 @@ const getIndexInHakuList = async (
 test("filtering haku table", async ({ avustushakuID, page, hakuProps }) => {
   const { avustushakuName } = hakuProps;
   const hakujenHallintaPage = new HakujenHallintaPage(page);
-  await hakujenHallintaPage.navigate(avustushakuID, { newHakuListing: true });
+  await hakujenHallintaPage.navigate(avustushakuID);
   const { avustushaku, tila, vaihe, hakuaika, hakuRows } =
     hakujenHallintaPage.hakuListingTableSelectors();
   await test.step("filtering with avustushaku name works", async () => {

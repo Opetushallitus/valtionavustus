@@ -980,13 +980,7 @@ const hakuSlice = createSlice({
       .addCase(selectHaku.pending, (state, action) => {
         const avustushaku = action.meta.arg;
         LocalStorage.saveAvustushakuId(avustushaku.id);
-        const newHakuListing =
-          new URLSearchParams(window.location.search).get(
-            "new-haku-listing"
-          ) === "true";
-        const url = newHakuListing
-          ? `?avustushaku=${avustushaku.id}&new-haku-listing=true`
-          : `?avustushaku=${avustushaku.id}`;
+        const url = `?avustushaku=${avustushaku.id}`;
         window.history.pushState(null, document.title, url);
         state.hakuId = avustushaku.id;
         state.saveStatus.loadingAvustushaku = true;

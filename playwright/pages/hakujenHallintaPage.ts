@@ -298,23 +298,16 @@ export class HakujenHallintaPage {
     await expect(this.loadingAvustushaku).toBeHidden();
   }
 
-  async navigate(avustushakuID: number, opts?: { newHakuListing?: boolean }) {
-    await this.navigateTo(
-      `/admin/haku-editor/?avustushaku=${avustushakuID}${
-        opts?.newHakuListing ? "&new-haku-listing=true" : ""
-      }`
-    );
+  async navigate(avustushakuID: number) {
+    await this.navigateTo(`/admin/haku-editor/?avustushaku=${avustushakuID}`);
   }
 
   async navigateToDefaultAvustushaku() {
     await this.navigateTo("/admin/haku-editor/");
   }
 
-  async navigateToHakemusByClicking(
-    avustushakuName: string,
-    opts?: { newHakuListing?: boolean }
-  ) {
-    await this.navigate(0, opts);
+  async navigateToHakemusByClicking(avustushakuName: string) {
+    await this.navigate(0);
     const { avustushaku } = this.hakuListingTableSelectors();
     await avustushaku.input.fill(avustushakuName);
     const listItemSelector = await this.page.locator(

@@ -58,7 +58,7 @@ const test = selvitysTest.extend<{
     await maksatuksetPage.goto(avustushakuName);
     await maksatuksetPage.fillMaksueranTiedotAndSendMaksatukset();
     const hakujenHallintaPage = new HakujenHallintaPage(page);
-    await hakujenHallintaPage.navigate(avustushakuID, { newHakuListing: true });
+    await hakujenHallintaPage.navigate(avustushakuID);
     await use(hakujenHallintaPage);
   },
 });
