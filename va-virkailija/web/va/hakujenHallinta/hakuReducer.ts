@@ -800,7 +800,7 @@ const initialState: State = {
     saveInProgress: false,
     saveTime: null,
     serverError: "",
-    loadingAvustushaku: false,
+    loadingAvustushaku: true,
   },
   formDrafts: {},
   formDraftsJson: {},
