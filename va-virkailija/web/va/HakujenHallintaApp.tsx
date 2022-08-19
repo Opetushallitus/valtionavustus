@@ -6,7 +6,6 @@ import MomentLocalizer from "react-widgets-moment";
 import Localization from "react-widgets/Localization";
 
 import { HeaderContainer } from "./Header";
-import { HakuListing } from "./haku-list/HakuListing";
 import { EditorSelector } from "./haku-details/EditorSelector";
 import { translationsFi } from "soresu-form/web/va/i18n/translations";
 
@@ -31,8 +30,6 @@ const HakujenHallintaApp = () => {
   const state = useHakujenHallintaSelector((state) => state.haku);
   const { saveStatus, initialData } = state;
   const dispatch = useHakujenHallintaDispatch();
-  const searchParams = new URLSearchParams(window.location.search);
-  const newHakuListing = searchParams.get("new-haku-listing") === "true";
   const onClickHaku = useCallback((avustushaku: Avustushaku) => {
     dispatch(selectHaku(avustushaku));
   }, []);
@@ -49,11 +46,7 @@ const HakujenHallintaApp = () => {
         saveStatus={saveStatus}
       />
       <section>
-        {newHakuListing ? (
-          <NewHakuListing hakuList={hakuList} onClickHaku={onClickHaku} />
-        ) : (
-          <HakuListing hakuList={hakuList} />
-        )}
+        <NewHakuListing hakuList={hakuList} onClickHaku={onClickHaku} />
         <EditorSelector />
       </section>
     </Localization>

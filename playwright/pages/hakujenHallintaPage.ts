@@ -309,17 +309,12 @@ export class HakujenHallintaPage {
     await this.navigate(0, opts);
     const { avustushaku } = this.hakuListingTableSelectors();
     await avustushaku.input.fill(avustushakuName);
-
-    const listItemSelector = opts?.newHakuListing
-      ? await this.page.locator(
-          `[data-test-id="${avustushakuName}"] [data-test-id="avustushaku"]`
-        )
-      : await this.page
-          .locator(".haku-list td")
-          .locator(`text=${avustushakuName}`);
+    const listItemSelector = await this.page.locator(
+      `[data-test-id="${avustushakuName}"]`
+    );
     await Promise.all([
-      listItemSelector.click(),
       expect(this.loadingAvustushaku).toBeVisible(),
+      listItemSelector.click(),
     ]);
     await expect(this.loadingAvustushaku).toBeHidden();
   }
@@ -533,8 +528,10 @@ export class HakujenHallintaPage {
     await this.navigateToDefaultAvustushaku();
     await expect(this.loadingAvustushaku).toBeHidden();
     await Promise.all([
-      this.page.locator('td:text-is("Yleisavustus - esimerkkihaku")').click(),
       expect(this.loadingAvustushaku).toBeVisible(),
+      this.page
+        .locator('[data-test-id="Yleisavustus - esimerkkihaku"]')
+        .click(),
     ]);
     await expect(this.loadingAvustushaku).toBeHidden();
     return await this.copyCurrentHaku();
