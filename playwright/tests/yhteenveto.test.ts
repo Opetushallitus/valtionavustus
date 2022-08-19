@@ -90,7 +90,7 @@ const test = muutoshakemusTest.extend<{
     );
 
     const hakujenHallintaPage = new HakujenHallintaPage(page);
-    await hakujenHallintaPage.navigate(avustushakuID);
+    await hakujenHallintaPage.navigateFromHeader();
     await hakujenHallintaPage.resolveAvustushaku();
 
     await hakemustenArviointiPage.navigate(avustushakuID);

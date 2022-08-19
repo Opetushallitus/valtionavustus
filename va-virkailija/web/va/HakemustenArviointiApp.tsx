@@ -86,6 +86,7 @@ const App = ({ state, controller }: Props) => {
         environment={environment}
         userInfo={userInfo}
         saveStatus={saveStatus}
+        avustushakuId={avustushaku.id}
       />
       <section className="section-container">
         <div id="list-container" className={hasSelected ? "has-selected" : ""}>

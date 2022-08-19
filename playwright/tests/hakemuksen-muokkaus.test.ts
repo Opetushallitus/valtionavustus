@@ -39,7 +39,7 @@ test("virkailija can edit hakemus", async ({
   });
 
   await test.step("when the avustushaku has been closed", async () => {
-    await hakujenHallintaPage.navigate(avustushakuID);
+    await hakujenHallintaPage.navigateFromHeader();
     await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast();
 
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(
@@ -106,7 +106,7 @@ test("hakija", async ({ page, avustushakuID, submittedHakemus: hakemus }) => {
   await test.step(
     "can edit hakemus when a change request has been made",
     async () => {
-      await hakujenHallintaPage.navigate(avustushakuID);
+      await hakujenHallintaPage.navigateFromHeader();
       await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast();
 
       await hakemustenArviointiPage.navigateToLatestHakemusArviointi(

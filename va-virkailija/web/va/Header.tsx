@@ -30,6 +30,7 @@ type HeaderProps = {
   environment: EnvironmentApiResponse;
   activeTab: string;
   userInfo: UserInfo;
+  avustushakuId?: number;
 };
 
 type HeaderContainerProps = HeaderProps & {
@@ -41,6 +42,7 @@ export const HeaderContainer = ({
   environment,
   userInfo,
   saveStatus,
+  avustushakuId,
 }: HeaderContainerProps) => {
   const isScrollingUp = useScrollingUp();
   const isNotificationWithHeader = isScrollingUp || window.scrollY === 0;
@@ -79,6 +81,7 @@ export const HeaderContainer = ({
           activeTab={activeTab}
           environment={environment}
           userInfo={userInfo}
+          avustushakuId={avustushakuId}
         />
       </div>
       {notificationContent && (
@@ -96,7 +99,12 @@ export const HeaderContainer = ({
   );
 };
 
-const Header = ({ activeTab, environment, userInfo }: HeaderProps) => {
+const Header = ({
+  activeTab,
+  environment,
+  userInfo,
+  avustushakuId,
+}: HeaderProps) => {
   const isAdmin = userInfo.privileges.includes("va-admin");
   const username = `${NameFormatter.onlyFirstForename(
     userInfo["first-name"]
@@ -111,7 +119,11 @@ const Header = ({ activeTab, environment, userInfo }: HeaderProps) => {
           alt="Opetushallitus / Utbildningsstyrelsen"
         />
         <a
-          href="/admin/"
+          href={
+            avustushakuId
+              ? `/admin/haku-editor/?avustushaku=${avustushakuId}`
+              : "/admin/"
+          }
           className={activeTab === "admin" ? "activeTab" : undefined}
         >
           Hakujen hallinta

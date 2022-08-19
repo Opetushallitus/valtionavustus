@@ -71,7 +71,7 @@ export const budjettimuutoshakemusTest =
         acceptWithBudget
       );
 
-      await hakujenHallintaPage.navigate(avustushakuID);
+      await hakujenHallintaPage.navigateFromHeader();
       await hakujenHallintaPage.resolveAvustushaku();
 
       await hakemustenArviointiPage.navigate(avustushakuID);

@@ -27,7 +27,7 @@ const testSendingPaatos = async ({
     answers.projectName
   );
   const hakujenHallintaPage = new HakujenHallintaPage(page);
-  await hakujenHallintaPage.navigate(avustushakuID);
+  await hakujenHallintaPage.navigateFromHeader();
   await hakujenHallintaPage.resolveAvustushaku();
   await hakemustenArviointiPage.navigate(avustushakuID);
   const paatosLocators = await hakujenHallintaPage.navigateToPaatos(

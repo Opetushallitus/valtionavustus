@@ -282,6 +282,14 @@ export class HakujenHallintaPage {
       .locator("text=Ladataan tietoja");
   }
 
+  async navigateFromHeader() {
+    await Promise.all([
+      expect(this.loadingAvustushaku).toBeVisible(),
+      this.page.locator(`text="Hakujen hallinta"`).click(),
+    ]);
+    await expect(this.loadingAvustushaku).toBeHidden();
+  }
+
   async navigateTo(path: string) {
     await Promise.all([
       expect(this.loadingAvustushaku).toBeVisible(),

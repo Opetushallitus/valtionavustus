@@ -116,7 +116,7 @@ const test = defaultValues.extend<{
       await hakemustenArviointiPage.waitForArvioSave(avustushakuID, hakemusID);
     });
     await test.step("Resolve avustushaku", async () => {
-      await hakujenHallintaPage.navigate(avustushakuID);
+      await hakujenHallintaPage.navigateFromHeader();
       await hakujenHallintaPage.resolveAvustushaku();
     });
 
@@ -352,7 +352,7 @@ const akuTest = defaultValues.extend<{
     });
     expectToBeDefined(hakemusID);
     await test.step("Resolve avustushaku", async () => {
-      await hakujenHallintaPage.navigate(avustushakuID);
+      await hakujenHallintaPage.navigateFromHeader();
       await hakujenHallintaPage.resolveAvustushaku();
     });
     await test.step("Add valmistelija for hakemus", async () => {
