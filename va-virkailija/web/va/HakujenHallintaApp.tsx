@@ -11,7 +11,7 @@ import { translationsFi } from "soresu-form/web/va/i18n/translations";
 
 import "./style/virkailija.less";
 import "./style/admin.less";
-import { NewHakuListing } from "./haku-list/NewHakuListing";
+import { HakuListing } from "./haku-list/HakuListing";
 import store, {
   useHakujenHallintaDispatch,
   useHakujenHallintaSelector,
@@ -46,7 +46,7 @@ const HakujenHallintaApp = () => {
         saveStatus={saveStatus}
       />
       <section>
-        <NewHakuListing hakuList={hakuList} onClickHaku={onClickHaku} />
+        <HakuListing hakuList={hakuList} onClickHaku={onClickHaku} />
         <EditorSelector />
       </section>
     </Localization>

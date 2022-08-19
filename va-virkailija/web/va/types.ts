@@ -169,19 +169,6 @@ export interface Privileges {
   "change-hakemus-state": boolean;
 }
 
-export interface Filter {
-  status: string[];
-  phase: string[];
-  avustushaku: string;
-  startdatestart: string;
-  startdateend: string;
-  enddatestart: string;
-  enddateend: string;
-}
-
-export type FilterId = keyof Filter;
-export type FilterValue = Filter[FilterId];
-
 export type AvustushakuV2 = {
   id: number;
   "register-number": string;
