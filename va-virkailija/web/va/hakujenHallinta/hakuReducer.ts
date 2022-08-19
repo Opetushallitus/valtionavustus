@@ -39,6 +39,11 @@ import {
   parseFinnishTimestamp,
 } from "soresu-form/web/va/i18n/dateformat";
 import { HakujenHallintaRootState } from "./hakujenHallintaStore";
+import { Talousarviotili } from "../koodienhallinta/types";
+
+export interface TalousarviotiliWithKoulutusasteet extends Talousarviotili {
+  koulutusasteet: string[];
+}
 
 const ValiselvitysForm = require("../data/ValiselvitysForm.json") as Form;
 const LoppuselvitysForm = require("../data/LoppuselvitysForm.json") as Form;
@@ -59,6 +64,7 @@ export interface Avustushaku extends BaseAvustushaku {
   "maksatukset-summa"?: number;
   "use-overridden-detailed-costs"?: boolean | null;
   projects?: VaCodeValue[];
+  talousarviotilit?: (TalousarviotiliWithKoulutusasteet | undefined)[];
 }
 
 export interface LainsaadantoOption {
@@ -86,15 +92,15 @@ interface OnSelectHakuData {
   avustushaku: BaseAvustushaku;
   valiselvitysForm: Form;
   loppuselvitysForm: Form;
+  talousarviotilit: TalousarviotiliWithKoulutusasteet[];
 }
 
-type SavingKey =
-  | "saveInProgress"
-  | "savingRoles"
-  | "savingForm"
-  | "savingManuallyRefactorToOwnActionsAtSomepoint";
+type ExtraSavingStateKeys = "saveInProgress" | keyof ExtraSavingStates;
 
-const startSaving = ({ saveStatus }: State, key: SavingKey): SaveStatus => {
+const startSaving = (
+  { saveStatus }: State,
+  key: ExtraSavingStateKeys
+): SaveStatus => {
   return {
     ...saveStatus,
     [key]: true,
@@ -102,7 +108,10 @@ const startSaving = ({ saveStatus }: State, key: SavingKey): SaveStatus => {
   };
 };
 
-const saveSuccess = ({ saveStatus }: State, key: SavingKey): SaveStatus => {
+const saveSuccess = (
+  { saveStatus }: State,
+  key: ExtraSavingStateKeys
+): SaveStatus => {
   return {
     ...saveStatus,
     [key]: false,
@@ -111,15 +120,19 @@ const saveSuccess = ({ saveStatus }: State, key: SavingKey): SaveStatus => {
   };
 };
 
-export interface SaveStatus {
+type ExtraSavingStates = {
+  savingRoles: boolean;
+  savingForm: boolean;
+  savingTalousarviotilit: boolean;
+  savingManuallyRefactorToOwnActionsAtSomepoint: boolean;
+};
+
+export type SaveStatus = {
   saveInProgress: boolean;
   saveTime: string | null;
   serverError: string;
-  loadingAvustushaku?: boolean;
-  savingRoles?: boolean;
-  savingForm?: boolean;
-  savingManuallyRefactorToOwnActionsAtSomepoint?: boolean;
-}
+  loadingAvustushaku: boolean;
+} & Partial<ExtraSavingStates>;
 
 interface State {
   initialData: { loading: false; data: InitialData } | { loading: true };
@@ -173,12 +186,34 @@ export const updateProjects = createAsyncThunk<
   void,
   { avustushakuId: number; projects: VaCodeValue[] },
   { state: HakujenHallintaRootState }
->("haku/saveProject", async (payload, thunkAPI) => {
+>("haku/updateProjects", async (payload, thunkAPI) => {
   thunkAPI.dispatch(updateProject(payload));
   thunkAPI.dispatch(startAutoSaveForAvustushaku(payload.avustushakuId));
   await HttpUtil.post(
     `/api/avustushaku/${payload.avustushakuId}/projects`,
     payload.projects
+  );
+});
+
+export const replaceTalousarviotilit = createAsyncThunk<
+  void,
+  {
+    avustushakuId: number;
+    talousarviotilit: (TalousarviotiliWithKoulutusasteet | undefined)[];
+  },
+  { state: HakujenHallintaRootState }
+>("haku/updateTalousarviotilit", async (payload, thunkAPI) => {
+  thunkAPI.dispatch(updateTalousarviotilit(payload));
+  const removeEmptyKoulutusasteet = (aste: string) => aste !== "";
+  const removeEmptyTalousarviot = (
+    tili: TalousarviotiliWithKoulutusasteet | undefined
+  ): tili is TalousarviotiliWithKoulutusasteet => tili !== undefined;
+  await HttpUtil.post(
+    `/api/avustushaku/${payload.avustushakuId}/talousarviotilit`,
+    payload.talousarviotilit.filter(removeEmptyTalousarviot).map((tili) => ({
+      ...tili,
+      koulutusasteet: tili.koulutusasteet.filter(removeEmptyKoulutusasteet),
+    }))
   );
 });
 
@@ -290,6 +325,7 @@ export const selectHaku = createAsyncThunk<OnSelectHakuData, BaseAvustushaku>(
       projects,
       payments,
       formContent,
+      talousarviotilit,
     ] = await Promise.all([
       HttpUtil.get<OnkoMuutoshakukelpoinenAvustushakuOk>(
         `/api/avustushaku/${avustushakuId}/onko-muutoshakukelpoinen-avustushaku-ok`
@@ -299,6 +335,9 @@ export const selectHaku = createAsyncThunk<OnSelectHakuData, BaseAvustushaku>(
       HttpUtil.get<VaCodeValue[]>(`/api/avustushaku/${avustushakuId}/projects`),
       HttpUtil.get<Payment[]>(`/api/v2/grants/${avustushakuId}/payments/`),
       HttpUtil.get<Form>(`/api/avustushaku/${avustushakuId}/form`),
+      HttpUtil.get<TalousarviotiliWithKoulutusasteet[]>(
+        `/api/avustushaku/${avustushakuId}/talousarviotilit`
+      ),
     ]);
     const valiselvitysForm = await getSelvitysFormContent(
       avustushakuId,
@@ -320,6 +359,7 @@ export const selectHaku = createAsyncThunk<OnSelectHakuData, BaseAvustushaku>(
       avustushaku,
       valiselvitysForm,
       loppuselvitysForm,
+      talousarviotilit,
     };
   }
 );
@@ -348,6 +388,7 @@ const saveHaku = createAsyncThunk<
         "maksatukset-summa",
         "use-overridden-detailed-costs",
         "projects",
+        "talousarviotilit",
       ])
     );
     return data as BaseAvustushaku;
@@ -759,10 +800,7 @@ const initialState: State = {
     saveInProgress: false,
     saveTime: null,
     serverError: "",
-    savingForm: false,
-    savingRoles: false,
     loadingAvustushaku: false,
-    savingManuallyRefactorToOwnActionsAtSomepoint: false,
   },
   formDrafts: {},
   formDraftsJson: {},
@@ -892,6 +930,18 @@ const hakuSlice = createSlice({
         const rahoitusalue = getOrCreateRahoitusalue(rahoitusalueet, payload);
         rahoitusalue.talousarviotilit.push("");
       }
+    },
+    updateTalousarviotilit: (
+      state,
+      {
+        payload,
+      }: PayloadAction<{
+        avustushakuId: number;
+        talousarviotilit: (TalousarviotiliWithKoulutusasteet | undefined)[];
+      }>
+    ) => {
+      const selectedHaku = getSelectedAvustushaku(state);
+      selectedHaku!.talousarviotilit = payload.talousarviotilit;
     },
     removeTalousarviotili: (
       state,
@@ -1074,6 +1124,16 @@ const hakuSlice = createSlice({
       .addCase(ensureKoodistoLoaded.rejected, (state) => {
         state.koodistos.content = null;
         state.koodistos.loading = false;
+      })
+      .addCase(replaceTalousarviotilit.pending, (state) => {
+        state.saveStatus = startSaving(state, "savingTalousarviotilit");
+      })
+      .addCase(replaceTalousarviotilit.fulfilled, (state) => {
+        state.saveStatus = saveSuccess(state, "savingTalousarviotilit");
+      })
+      .addCase(replaceTalousarviotilit.rejected, (state) => {
+        state.saveStatus.savingTalousarviotilit = false;
+        state.saveStatus.serverError = "unexpected-save-error";
       });
   },
 });
@@ -1091,6 +1151,7 @@ export const {
   addFocusArea,
   deleteFocusArea,
   updateProject,
+  updateTalousarviotilit,
   addSelectionCriteria,
   removeSelectionCriteria,
   addTalousarviotili,

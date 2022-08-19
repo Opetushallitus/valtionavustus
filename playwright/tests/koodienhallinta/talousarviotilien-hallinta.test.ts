@@ -20,10 +20,7 @@ const test = defaultValues.extend<{
   koodienhallintaPage: async ({ page }, use) => {
     const koodienhallintaPage = KoodienhallintaPage(page);
     await koodienhallintaPage.navigate();
-    const tiliTab = koodienhallintaPage.page.locator("text='TA-tilit'");
-    await expect(tiliTab).not.toHaveClass(/oph-tab-item-is-active/);
-    await tiliTab.click();
-    await expect(tiliTab).toHaveClass(/oph-tab-item-is-active/);
+    await koodienhallintaPage.switchToTatilitTab();
     await expectNoErrors(koodienhallintaPage);
     await use(koodienhallintaPage);
   },

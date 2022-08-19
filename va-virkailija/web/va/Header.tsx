@@ -14,6 +14,7 @@ interface HeaderSaveStatus {
   loadingAvustushaku?: boolean;
   savingRoles?: boolean;
   savingForm?: boolean;
+  savingTalousarviotilit?: boolean;
   savingManuallyRefactorToOwnActionsAtSomepoint?: boolean;
 }
 
@@ -62,6 +63,7 @@ export const HeaderContainer = ({
     saveStatus?.savingRoles,
     saveStatus?.loadingAvustushaku,
     saveStatus?.savingForm,
+    saveStatus?.savingTalousarviotilit,
     saveStatus?.savingManuallyRefactorToOwnActionsAtSomepoint,
   ]);
 
@@ -179,6 +181,7 @@ function getNotificationContent(
     saveStatus?.saveInProgress ||
     saveStatus?.savingRoles ||
     saveStatus?.savingForm ||
+    saveStatus?.savingTalousarviotilit ||
     saveStatus?.savingManuallyRefactorToOwnActionsAtSomepoint
   ) {
     return {

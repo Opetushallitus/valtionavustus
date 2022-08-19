@@ -39,6 +39,7 @@ import {
   selectSelectedAvustushaku,
   selectLoadedInitialData,
 } from "../hakujenHallinta/hakuReducer";
+import { Talousarviotilit } from "./Talousarviotilit";
 
 export const HakuEdit = () => {
   const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
@@ -360,6 +361,7 @@ export const HakuEdit = () => {
           helpTexts={helpTexts}
         />
       )}
+      {environment["ta-tilit"]?.["enabled?"] && <Talousarviotilit />}
       <EducationLevels
         enabled={allowNondisruptiveHakuEdits}
         values={avustushaku.content.rahoitusalueet ?? []}

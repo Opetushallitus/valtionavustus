@@ -520,13 +520,10 @@ export class HakujenHallintaPage {
   }
 
   async copyCurrentHaku(): Promise<number> {
-    const currentHakuTitle = await this.page.textContent("#haku-name-fi");
+    const hakuNameFi = this.hauntiedotLocators().hakuName.fi;
+    const currentHakuTitle = await hakuNameFi.textContent();
     await clickElementWithText(this.page, "a", "Kopioi uuden pohjaksi");
-
-    await this.page.waitForFunction(
-      (name) => document.querySelector("#haku-name-fi")?.textContent !== name,
-      currentHakuTitle
-    );
+    await expect(hakuNameFi).toHaveText(`${currentHakuTitle} (kopio)`);
     await this.page.waitForLoadState("networkidle");
 
     return parseInt(await expectQueryParameter(this.page, "avustushaku"));
@@ -679,7 +676,7 @@ export class HakujenHallintaPage {
     console.log(`Avustushaku ID: ${avustushakuID}`);
 
     await this.page.fill("#register-number", registerNumber);
-    await this.page.fill("#haku-name-fi", avustushakuName);
+    await this.hauntiedotLocators().hakuName.fi.fill(avustushakuName);
     await this.page.fill("#haku-name-sv", avustushakuName + " på svenska");
 
     await this.selectVaCodes(props.vaCodes);
@@ -925,6 +922,61 @@ export class HakujenHallintaPage {
       jaossaOllutSumma: baseTableLocators("jaossaOllutSumma"),
       maksettuSumma: baseTableLocators("maksettuSumma"),
       budjetti: baseTableLocators("budjetti"),
+    };
+  }
+
+  hauntiedotLocators() {
+    const createReactSelectLocators = (
+      containerLocator: Locator,
+      classNamePrefix: string
+    ) => {
+      return {
+        value: containerLocator.locator(`.${classNamePrefix}__single-value`),
+        placeholder: containerLocator.locator(
+          `.${classNamePrefix}__placeholder`
+        ),
+        option: containerLocator.locator(`.${classNamePrefix}__option`),
+        input: containerLocator.locator(`.${classNamePrefix}__input`),
+      };
+    };
+    return {
+      hakuName: {
+        fi: this.page.locator("#haku-name-fi"),
+      },
+      taTili: {
+        tili: (index: number) => {
+          const tiliLocator = this.page.locator(`#ta-tili-select-${index}`);
+          const container = this.page.locator(`#ta-tili-container-${index}`);
+          return {
+            ...createReactSelectLocators(tiliLocator, "taTiliSelection"),
+            koulutusaste: (index: number) => {
+              const selectLocator = container.locator(
+                `#koulutusaste-select-${index}`
+              );
+              return {
+                ...createReactSelectLocators(
+                  selectLocator,
+                  "koulutusasteSelection"
+                ),
+                select: selectLocator,
+                addKoulutusasteBtn: container.locator(
+                  'button[title="Lisää uusi koulutusastevalinta"]'
+                ),
+                removeKoulutusasteBtn: (aste: string) =>
+                  container.locator(
+                    `button[title="Poista koulutusaste ${aste} talousarviotililtä"]`
+                  ),
+              };
+            },
+            addTiliBtn: container.locator(
+              'button[title="Lisää talousarviotili"]'
+            ),
+            removeTiliBtn: container.locator(
+              'button[title="Poista talousarviotili"]'
+            ),
+          };
+        },
+      },
     };
   }
 }

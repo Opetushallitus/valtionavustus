@@ -2,12 +2,16 @@ import { configureStore } from "@reduxjs/toolkit";
 import hakuReducer from "./hakuReducer";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import hakuFilterReducer from "./hakuFilterReducer";
+import { hakuApiSlice } from "./hakuApiSlice";
 
 const store = configureStore({
   reducer: {
     haku: hakuReducer,
     hakuFilter: hakuFilterReducer,
+    [hakuApiSlice.reducerPath]: hakuApiSlice.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(hakuApiSlice.middleware),
 });
 
 export default store;

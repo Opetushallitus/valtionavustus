@@ -79,6 +79,12 @@ export const KoodienhallintaPage = (page: Page) => {
     },
     codeRowLocator,
     clickKoodienhallintaTab,
+    switchToTatilitTab: async () => {
+      const tiliTab = page.locator("text='TA-tilit'");
+      await expect(tiliTab).not.toHaveClass(/oph-tab-item-is-active/);
+      await tiliTab.click();
+      await expect(tiliTab).toHaveClass(/oph-tab-item-is-active/);
+    },
     clickCodeVisibilityButton: async (
       year: string,
       name: string,

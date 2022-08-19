@@ -17,6 +17,7 @@
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.va.virkailija.paatos :as paatos]
             [oph.va.virkailija.projects :as projects]
+            [oph.va.virkailija.avustushaku_talousarviotilit :as talousarvio]
             [oph.va.virkailija.saved-search :as saved-search]
             [oph.va.virkailija.schema :as virkailija-schema]
             [oph.va.virkailija.scoring :as scoring]
@@ -117,8 +118,21 @@
                      :path-params [avustushaku-id :- Long]
                      :body [projects-body (compojure-api/describe [virkailija-schema/VACodeValue] "Avustushaun projektit")]
                      :return s/Any 
-                     (http/ok (projects/update-projects avustushaku-id projects-body)
-                     )))
+                     (http/ok (projects/update-projects avustushaku-id projects-body))))
+                     
+
+(defn- get-avustushaku-talousarviotilit []
+  (compojure-api/GET "/:avustushaku-id/talousarviotilit" []
+    :path-params [avustushaku-id :- Long]
+    :return [virkailija-schema/AvustushakuTalousarviotili]
+    (http/ok (talousarvio/get-avustushaku-talousarviotilit avustushaku-id))))
+
+(defn- post-avustushaku-talousarviotilit []
+  (compojure-api/POST "/:avustushaku-id/talousarviotilit" []
+                      :path-params [avustushaku-id :- Long]
+                      :body [talousarviotilit (compojure-api/describe [virkailija-schema/AvustushakuTalousarviotili] "Avustushaun talousarviotilit")] 
+                      :return s/Any
+                      (http/ok (talousarvio/post-avustushaku-talousarviotilit avustushaku-id talousarviotilit))))
 
 (defn- post-muutoshakemus-paatos []
   (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/:muutoshakemus-id/paatos" request
@@ -627,4 +641,6 @@
   (post-project)
   (get-projects)
   (post-projects)
+  (get-avustushaku-talousarviotilit)
+  (post-avustushaku-talousarviotilit)
   (get-tapahtumaloki))

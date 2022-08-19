@@ -522,3 +522,7 @@
 (s/defschema Talousarviotili
   (assoc CreateTalousarviotili
         :id s/Int))
+
+(s/defschema AvustushakuTalousarviotili
+  (assoc Talousarviotili
+         :koulutusasteet s/Any))
