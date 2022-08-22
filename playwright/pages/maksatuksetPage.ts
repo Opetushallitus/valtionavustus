@@ -151,6 +151,7 @@ export function MaksatuksetPage(page: Page) {
     sendMaksatukset,
     clickLahtevatMaksatuksetTab,
     clickLahetetytMaksatuksetTab,
+    page,
   };
 }
 

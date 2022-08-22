@@ -1,6 +1,13 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 
 import { Maksatus } from "./Maksatukset";
+import { useSelector } from "react-redux";
+import {
+  selectLoadedInitialData,
+  selectSelectedAvustushaku,
+} from "../hakujenHallinta/hakuReducer";
+import { VaCodeValue } from "../types";
+import { useHakujenHallintaSelector } from "../hakujenHallinta/hakujenHallintaStore";
 
 type PaymentsTableProps = {
   payments?: Maksatus[];
@@ -9,6 +16,7 @@ type PaymentsTableProps = {
 
 type SortKey =
   | "pitkaviite"
+  | "project-code"
   | "paymentstatus"
   | "organization-name"
   | "project-name"
@@ -29,80 +37,94 @@ const paymentStatusTranslation = {
   paid: "Maksettu",
 };
 
-const filterBy = (filter: Filter) => (p: Maksatus) => {
-  if (filter.pitkaviite && !p.pitkaviite.includes(filter.pitkaviite)) {
-    return false;
-  }
-  if (
-    filter.paymentstatus &&
-    !paymentStatusTranslation[p["paymentstatus-id"]].includes(
-      filter.paymentstatus
-    )
-  ) {
-    return false;
-  }
-  if (
-    filter["organization-name"] &&
-    !p.hakemus?.["organization-name"].includes(filter["organization-name"])
-  ) {
-    return false;
-  }
-  if (
-    filter["project-name"] &&
-    !p.hakemus?.["project-name"].includes(filter["project-name"])
-  ) {
-    return false;
-  }
-  if (
-    filter["payment-sum"] &&
-    !p["payment-sum"].toString().includes(filter["payment-sum"])
-  ) {
-    return false;
-  }
-  if (
-    filter["bank-iban"] &&
-    !p.hakemus?.answers
-      .find((a) => a.key === "bank-iban")
-      ?.value.includes(filter["bank-iban"])
-  ) {
-    return false;
-  }
-  if (
-    filter["lkp-account"] &&
-    !p.hakemus?.["lkp-account"].includes(filter["lkp-account"])
-  ) {
-    return false;
-  }
-  if (
-    filter["takp-account"] &&
-    !p.hakemus?.["takp-account"].includes(filter["takp-account"])
-  ) {
-    return false;
-  }
-  if (
-    filter["accounting"] &&
-    !p["payment-sum"].toString().includes(filter.accounting)
-  ) {
-    return false;
-  }
-  return true;
-};
+const filterBy =
+  (filter: Filter, project?: VaCodeValue | null) => (p: Maksatus) => {
+    if (
+      filter["project-code"] &&
+      project &&
+      !project["code-value"].includes(filter["project-code"])
+    ) {
+      return false;
+    }
+    if (filter.pitkaviite && !p.pitkaviite.includes(filter.pitkaviite)) {
+      return false;
+    }
+    if (
+      filter.paymentstatus &&
+      !paymentStatusTranslation[p["paymentstatus-id"]].includes(
+        filter.paymentstatus
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter["organization-name"] &&
+      !p.hakemus?.["organization-name"].includes(filter["organization-name"])
+    ) {
+      return false;
+    }
+    if (
+      filter["project-name"] &&
+      !p.hakemus?.["project-name"].includes(filter["project-name"])
+    ) {
+      return false;
+    }
+    if (
+      filter["payment-sum"] &&
+      !p["payment-sum"].toString().includes(filter["payment-sum"])
+    ) {
+      return false;
+    }
+    if (
+      filter["bank-iban"] &&
+      !p.hakemus?.answers
+        .find((a) => a.key === "bank-iban")
+        ?.value.includes(filter["bank-iban"])
+    ) {
+      return false;
+    }
+    if (
+      filter["lkp-account"] &&
+      !p.hakemus?.["lkp-account"].includes(filter["lkp-account"])
+    ) {
+      return false;
+    }
+    if (
+      filter["takp-account"] &&
+      !p.hakemus?.["takp-account"].includes(filter["takp-account"])
+    ) {
+      return false;
+    }
+    if (
+      filter["accounting"] &&
+      !p["payment-sum"].toString().includes(filter.accounting)
+    ) {
+      return false;
+    }
+    return true;
+  };
 
 type MaksatuksetPhaseProps = {
   payments: Maksatus[];
   phase: string;
   filter: Filter;
+  multipleProjectCodesEnabled: boolean;
 };
 
 const MaksatuksetPhase = ({
   payments,
   phase,
   filter,
+  multipleProjectCodesEnabled,
 }: MaksatuksetPhaseProps) => {
   const [visiblePayments, setVisiblePayments] = useState<Maksatus[]>(payments);
+  const selectedHaku = useSelector(selectSelectedAvustushaku);
+  const { projects } = selectedHaku;
+  const projectId = selectedHaku["project-id"];
+  const project = projects ? projects.find((p) => p.id === projectId) : null;
 
   useEffect(() => {
-    const filtered = payments.filter(filterBy(filter));
+    const filtered = payments.filter(filterBy(filter, project));
     setVisiblePayments(filtered);
   }, [filter, payments]);
 
@@ -140,6 +162,20 @@ const MaksatuksetPhase = ({
                     {p.hakemus?.["project-name"]}
                   </a>
                 </td>
+                {multipleProjectCodesEnabled && (
+                  <td
+                    data-test-id={`project-code-${project?.code}`}
+                    className="align-left semi-narrow-column"
+                  >
+                    {project ? (
+                      project["code-value"]
+                    ) : (
+                      <span className={"maksatukset_error-text"}>
+                        Projektikoodi puuttuu
+                      </span>
+                    )}
+                  </td>
+                )}
                 <td className="align-right narrow-column">
                   {p["payment-sum"]} €
                 </td>
@@ -207,6 +243,9 @@ export const MaksatuksetTable = ({ payments, testId }: PaymentsTableProps) => {
     }
     return acc;
   }, {} as { [k in string]: Maksatus[] });
+  const { environment } = useHakujenHallintaSelector(selectLoadedInitialData);
+  const multipleProjectCodesEnabled =
+    environment["multiple-project-codes"]?.["enabled?"] === true;
 
   return (
     <div data-test-id={testId}>
@@ -229,6 +268,12 @@ export const MaksatuksetTable = ({ payments, testId }: PaymentsTableProps) => {
               <div>Hanke</div>
               <input onChange={setFilterByKey("project-name")} />
             </th>
+            {multipleProjectCodesEnabled && (
+              <th className={"semi-narrow-column"}>
+                <div>Projektikoodi</div>
+                <input onChange={setFilterByKey("project-code")} />
+              </th>
+            )}
             <th className="narrow-column">
               <div>Maksuun</div>
               <input onChange={setFilterByKey("payment-sum")} />
@@ -257,6 +302,7 @@ export const MaksatuksetTable = ({ payments, testId }: PaymentsTableProps) => {
           phase={phase}
           payments={groupedPayments[phase]}
           filter={filter}
+          multipleProjectCodesEnabled={multipleProjectCodesEnabled}
         />
       ))}
       {!payments ||

@@ -13,6 +13,8 @@ import {
 import { NoProjectCodeProvided } from "../../utils/types";
 import { VirkailijaValiselvitysPage } from "../../pages/virkailijaValiselvitysPage";
 import moment from "moment";
+import { randomString } from "../../utils/random";
+import { expectToBeDefined } from "../../utils/util";
 
 const correctOVTTest = test.extend({
   codes: async ({ page }, use) => {
@@ -27,8 +29,22 @@ const correctOVTTest = test.extend({
   },
 });
 
+const showProjectCodeTest = test.extend({
+  codes: async ({ page }, use) => {
+    const codes = {
+      operationalUnit: "6600105300",
+      operation: "3425324634",
+      project: [NoProjectCodeProvided.code, randomString().substring(0, 13)],
+    };
+    const koodienHallintaPage = KoodienhallintaPage(page);
+    await koodienHallintaPage.createCodeValues(codes);
+    await use(codes);
+  },
+});
+
 test.setTimeout(400000);
 correctOVTTest.setTimeout(400000);
+showProjectCodeTest.setTimeout(400000);
 
 function getUniqueFileName(): string {
   return `va_${new Date().getTime()}.xml`;
@@ -369,6 +385,21 @@ test.describe.parallel("Maksatukset", () => {
       })
     );
   });
+
+  showProjectCodeTest(
+    "shows project code in values",
+    async ({ page, acceptedHakemus, avustushakuName, codes: { project } }) => {
+      expectToBeDefined(acceptedHakemus);
+      const maksatusPage = MaksatuksetPage(page);
+      await maksatusPage.goto(avustushakuName);
+      await maksatusPage.fillMaksueranTiedotAndSendMaksatukset();
+      await maksatusPage.reloadPaymentPage();
+      await maksatusPage.clickLahetetytMaksatuksetTab();
+      await expect(
+        maksatusPage.page.locator(`[data-test-id="project-code-${project[1]}"]`)
+      ).toHaveText(`Projekti ${project[1]}`);
+    }
+  );
 
   test("sending maksatukset disables changing code values for haku", async ({
     page,
