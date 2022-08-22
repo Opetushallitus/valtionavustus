@@ -240,7 +240,8 @@ export const fetchInitialState = createAsyncThunk<InitialData, void>(
       HttpUtil.get<HelpTexts>("/api/help-texts/all"),
     ]);
     const query = queryString.parse(window.location.search);
-    const grantId = parseInt(query.avustushaku) || 1;
+    const grantId =
+      parseInt(query.avustushaku) || LocalStorage.avustushakuId() || 1;
     const modifiedHakuList = hakuList.map(
       appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing
     );
