@@ -44,6 +44,7 @@ const HakujenHallintaApp = () => {
         environment={environment}
         userInfo={userInfo}
         saveStatus={saveStatus}
+        avustushakuId={state.hakuId}
       />
       <section>
         <HakuListing hakuList={hakuList} onClickHaku={onClickHaku} />

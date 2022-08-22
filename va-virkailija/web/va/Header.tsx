@@ -129,7 +129,7 @@ const Header = ({
           Hakujen hallinta
         </a>
         <a
-          href="/"
+          href={avustushakuId ? `/avustushaku/${avustushakuId}/` : "/"}
           className={activeTab === "arviointi" ? "activeTab" : undefined}
         >
           Hakemusten arviointi
