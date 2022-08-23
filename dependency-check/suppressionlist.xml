@@ -2,56 +2,10 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
   <suppress until="2026-07-12Z">
     <notes><![CDATA[
-    file name: google-closure-library-0.0-20211011-0726fdeb.jar
-    ]]>    </notes>
-    <packageUrl regex="true">^pkg:maven/org\.clojure/google\-closure\-library@0.0-20211011-0726fdeb$</packageUrl>
-    <cve>CVE-2020-8910</cve>
-  </suppress>
-  <suppress until="2026-07-12Z">
-    <notes><![CDATA[
-   file name: google-closure-library-third-party-0.0-20211011-0726fdeb.jar
-   ]]>    </notes>
-    <packageUrl regex="true">^pkg:maven/org\.clojure/google\-closure\-library\-third\-party@0.0-20211011-0726fdeb$</packageUrl>
-    <cve>CVE-2020-8910</cve>
-  </suppress>
-  <suppress until="2026-07-12Z">
-    <notes><![CDATA[
-    file name: google-closure-library-0.0-20211011-0726fdeb.jar
-    ]]>    </notes>
-    <packageUrl regex="true">^pkg:maven/org\.clojure/google\-closure\-library@0.0-20211011-0726fdeb$</packageUrl>
-    <cve>CVE-2020-8910</cve>
-  </suppress>
-  <suppress until="2026-07-12Z">
-    <notes><![CDATA[
     file name: closure-compiler-unshaded-v20210808.jar (shaded: com.google.guava:guava:31.1-jre)
     ]]>    </notes>
     <filePath regex="true">.*\bclosure\-compiler\-unshaded\-v20210808\.jar\/META-INF\/maven\/com\.google\.guava\/guava\/pom\.xml</filePath>
     <cve>CVE-2020-8908</cve>
-  </suppress>
-  <suppress until="2026-07-12Z">
-    <notes><![CDATA[
-    file name: closure-compiler-unshaded-v20210808.jar
-    ]]>    </notes>
-    <filePath regex="true">.*\bclosure\-compiler\-unshaded\-v20210808\.jar\/META-INF\/maven\/com\.google\.code\.gson\/gson\/pom\.xml</filePath>
-    <cve>CVE-2022-25647</cve>
-  </suppress>
-  <suppress until="2022-07-12Z">
-    <notes><![CDATA[
-   file name: vorbis-java-tika-0.8.jar
-   ]]>    </notes>
-    <packageUrl regex="true">^pkg:maven/org\.gagravarr/vorbis\-java\-tika@0.8$</packageUrl>
-    <cve>CVE-2017-6888</cve>
-  </suppress>
-  <suppress until="2022-07-12Z">
-    <notes><![CDATA[
-    file name: alpn-api-1.1.3.v20160715.jar
-    ]]>    </notes>
-    <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.alpn/alpn-api.*</packageUrl>
-    <cve>CVE-2005-3747</cve>
-    <cve>CVE-2009-5049</cve>
-    <cve>CVE-2009-5048</cve>
-    <cve>CVE-2009-1523</cve>
-    <cve>CVE-2009-1524</cve>
   </suppress>
   <suppress until="2022-10-01Z">
     <notes><![CDATA[
@@ -59,13 +13,6 @@
     ]]>    </notes>
     <packageUrl regex="true">^pkg:maven/org\.apache\.poi/poi.*</packageUrl>
     <cve>CVE-2022-26336</cve>
-  </suppress>
-  <suppress until="2666-07-12Z">
-    <notes><![CDATA[
-    Wrong package matched, vulnerability is in async javscript library
-    ]]>    </notes>
-    <packageUrl regex="true">^pkg:maven/org\.clojure/core\.async.*</packageUrl>
-    <cve>CVE-2021-43138</cve>
   </suppress>
   <suppress until="2022-10-12Z">
     <notes><![CDATA[
