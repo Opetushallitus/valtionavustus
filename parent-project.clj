@@ -87,25 +87,6 @@
                          [org.http4s/http4s-client_2.11 "0.16.6"]
                          [org.http4s/http4s-dsl_2.11 "0.16.6"]
 
-                         ;; ClojureScript
-                         [org.clojure/clojurescript "1.11.4"]
-                         [reagent "0.8.1"
-                          :exclusions [cljsjs/react cljsjs/react-dom cljsjs/react-dom-server]]
-                         [cljsjs/react "16.4.2-0"]
-                         [cljsjs/react-dom "16.4.2-0"]
-                         [cljs-react-material-ui "0.2.50"
-                          :exclusions [cljsjs/react]]
-                         [cljs-http "0.1.45"]
-                         [com.andrewmcveigh/cljs-time "0.5.2"]
-                         [cljsjs/chartjs "2.7.0-0"]
-
-                         ;; CLJS Dev
-                         [com.cemerick/piggieback "0.2.2"]
-                         [binaryage/devtools "0.9.10"]
-                         [figwheel-sidecar "0.5.20"]
-                         [com.google.guava/guava "31.1-jre"
-                          :exclusions [com.google.code.findbugs/jsr305]]
-
                          ;; other
                          [clj-time "0.14.0"]
                          [com.cemerick/url "0.1.1"]

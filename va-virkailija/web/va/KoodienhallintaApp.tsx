@@ -3,13 +3,15 @@ import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-import "./style/main.less";
 import { Koodienhallinta } from "./koodienhallinta/Koodienhallinta";
 import { HeaderContainer } from "./Header";
 import { store } from "./koodienhallinta/store";
 import { VaCode } from "./koodienhallinta/VaCode";
 import { useGetEnvironmentAndUserInfoQuery } from "./koodienhallinta/apiSlice";
 import { TalousarviotilienHallinta } from "./koodienhallinta/TalousarviotilienHallinta";
+
+import "oph-virkailija-style-guide/oph-styles-min.css";
+import "./style/main.less";
 
 const KoodienhallintaApp = () => {
   const { data, isSuccess } = useGetEnvironmentAndUserInfoQuery();

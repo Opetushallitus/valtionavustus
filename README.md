@@ -599,7 +599,7 @@ Koodin tyylissä tavoitellaan
 
 Ennen oman koodin julkaisua, olisi hyvä ajaa staattiset työkalut.
 
-Sekä `va-virkailija`, `va-admin-ui` että `va-hakija` -projekteihin on lisätty
+Sekä `va-virkailija` että `va-hakija` -projekteihin on lisätty
 alias, jolla voi ajaa kaikki työkalut läpi:
 
 ``` shell
@@ -607,8 +607,7 @@ alias, jolla voi ajaa kaikki työkalut läpi:
 ```
 
 Tämä ajaa lein check, kibit, eastwood ja bikeshed -työkalut projektin
-koodipohjalle. `va-admin-ui`-projektissa ei ole Eastwood
-käytössä. Eastwood-työkalussa on filteröity pois migraatiot ja testit, jotta
+koodipohjalle. Eastwood-työkalussa on filteröity pois migraatiot ja testit, jotta
 työkalut eivät aja niitä ja muuta tietokantaa.
 
 Yksittäin työkaluja voit ajaa seuraavasti:

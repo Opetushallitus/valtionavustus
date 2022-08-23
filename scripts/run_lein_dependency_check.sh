@@ -54,7 +54,6 @@ function main {
   set +o errexit
   download_temp_db_to_workspace_in_jenkins
   lein_dep_check_for_project "soresu-form" || EXIT=$?
-  lein_dep_check_for_project "va-admin-ui" || EXIT=$?
   lein_dep_check || EXIT=$?
   set -o errexit
 

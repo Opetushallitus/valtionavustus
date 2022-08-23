@@ -4,7 +4,7 @@ LEIN := ../lein
 SPECLJ_ARGS ?= -f d
 
 NPM_PROJECTS ?= va-hakija va-virkailija
-LEIN_PROJECTS ?= soresu-form va-admin-ui
+LEIN_PROJECTS ?= soresu-form
 
 LEIN_CHECKOUTS_BASEDIRS := va-hakija/checkouts va-virkailija/checkouts
 LEIN_CHECKOUTS := soresu-form
@@ -59,21 +59,13 @@ npm-audit: check-node
 	npm audit || true
 
 .PHONY: lein-clean
-lein-clean: lein-clean-frontends lein-clean-targets
+lein-clean: lein-clean-targets
 
 .PHONY: lein-clean-targets
 lein-clean-targets:
 	$(foreach lein_project,$(LEIN_PROJECTS),$(call lein_clean_target,$(lein_project))$(newline))
 	$(call lein_clean_target,scripts/va-db-tool)
 	rm -fr target
-
-
-.PHONY: lein-clean-frontends
-lein-clean-frontends:
-	rm -fr va-virkailija/resources/public/admin-ui/js
-	rm -f va-virkailija/resources/public/admin-ui/css/*-min.css
-	rm -f va-admin-ui/package*.json
-	rm -rf va-admin-ui/node_modules
 
 .PHONY: lein-build
 lein-build: lein-install-jar-commons lein-build-frontends lein-build-backends
@@ -84,7 +76,7 @@ lein-install-jar-commons:
 
 .PHONY: lein-build-frontends
 lein-build-frontends:
-	$(call lein_build_frontend,va-admin-ui)
+	$(call lein_build_frontend)
 
 .PHONY: lein-build-backends
 lein-build-backends:
@@ -94,7 +86,6 @@ lein-build-backends:
 lein-test:
 	$(call lein_speclj,soresu-form)
 	./lein with-profile hakija-test,user spec $(SPECLJ_ARGS)
-	$(call lein_doo,va-admin-ui)
 	./lein with-profile virkailija-test,user spec $(SPECLJ_ARGS)
 
 .PHONY: lein-outdated-dependencies
@@ -138,10 +129,9 @@ Targets:
 
   lein-clean                    `lein-clean-admin-frontend`, `lein-clean-targets`
   lein-clean-targets            Remove Leiningen target directories from $$LEIN_PROJECTS.
-  lein-clean-frontends          Remove CLJS build artifacts from va-virkailija and va-hakija, produced by va-admin-ui.
   lein-build                    `lein-install-jar-commons`, `lein-build-frontends`, `lein-build-backends`
   lein-install-jar-commons      Install jars for soresu-form.
-  lein-build-frontends		Build CLJS fronends for va-virkailija and va-hakija (va-admin-ui)
+  lein-build-frontends		      Build CLJS frontends for va-virkailija and va-hakija
   lein-build-backends           Build backend uberjars for va-hakija and va-virkailija.
   lein-test                     Run Leiningen tests for $$LEIN_PROJECTS.
   lein-outdated-dependencies    Show outdated Leiningen dependencies for $$LEIN_PROJECTS.

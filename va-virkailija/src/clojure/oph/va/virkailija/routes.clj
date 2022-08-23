@@ -161,11 +161,6 @@
                               (resp/redirect (str "/haku/" "?" (codec/form-encode { :search search :order order })))
                               (resp/redirect "/haku/")))
 
-                          (compojure/GET "/admin-ui/*" [] (return-html "admin-ui/index.html"))
-
-                          (compojure-route/resources "/admin-ui/"
-                                                     {:mime-types {"html" "text/html; charset=utf-8"}})
-
                           va-routes/logo-route
 
                           (compojure-route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})

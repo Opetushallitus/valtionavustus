@@ -9,6 +9,7 @@ import { AvustushakuV2, HakemusV2, UserInfo } from "./types";
 import { HeaderContainer } from "./Header";
 import HakemusArviointiStatuses from "./hakemus-details/HakemusArviointiStatuses";
 
+import "oph-virkailija-style-guide/oph-styles-min.css";
 import "./style/main.less";
 import styles from "./Search.module.less";
 
