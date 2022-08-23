@@ -68,15 +68,11 @@ lein-clean-targets:
 	rm -fr target
 
 .PHONY: lein-build
-lein-build: lein-install-jar-commons lein-build-frontends lein-build-backends
+lein-build: lein-install-jar-commons lein-build-backends
 
 .PHONY: lein-install-jar-commons
 lein-install-jar-commons:
 	$(call lein_install_jar,soresu-form)
-
-.PHONY: lein-build-frontends
-lein-build-frontends:
-	$(call lein_build_frontend)
 
 .PHONY: lein-build-backends
 lein-build-backends:
@@ -129,9 +125,8 @@ Targets:
 
   lein-clean                    `lein-clean-admin-frontend`, `lein-clean-targets`
   lein-clean-targets            Remove Leiningen target directories from $$LEIN_PROJECTS.
-  lein-build                    `lein-install-jar-commons`, `lein-build-frontends`, `lein-build-backends`
+  lein-build                    `lein-install-jar-commons`, `lein-build-backends`
   lein-install-jar-commons      Install jars for soresu-form.
-  lein-build-frontends		      Build CLJS frontends for va-virkailija and va-hakija
   lein-build-backends           Build backend uberjars for va-hakija and va-virkailija.
   lein-test                     Run Leiningen tests for $$LEIN_PROJECTS.
   lein-outdated-dependencies    Show outdated Leiningen dependencies for $$LEIN_PROJECTS.
@@ -181,14 +176,6 @@ endef
 
 define lein_speclj
 cd '$(1)' && $(LEIN) with-profile test spec $(SPECLJ_ARGS)
-endef
-
-define lein_doo
-cd '$(1)' && $(LEIN) doo once
-endef
-
-define lein_build_frontend
-cd '$(1)' && $(LEIN) package
 endef
 
 define lein_outdated_dependencies
