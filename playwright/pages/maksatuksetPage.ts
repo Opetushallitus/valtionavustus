@@ -1,25 +1,17 @@
 import moment from "moment";
 import { Page, expect } from "@playwright/test";
 
-import {
-  clickElementWithText,
-  waitForClojureScriptLoadingDialogHidden,
-  waitForClojureScriptLoadingDialogVisible,
-  clearAndType,
-} from "../utils/util";
+import { clickElementWithText } from "../utils/util";
 import { HakujenHallintaPage } from "./hakujenHallintaPage";
 
-export function MaksatuksetPage(
-  page: Page,
-  isTypescriptImplementation: boolean
-) {
+export function MaksatuksetPage(page: Page) {
   async function goto(avustushakuName: string) {
     const hakujenHallintaPage = new HakujenHallintaPage(page);
     await hakujenHallintaPage.navigateToHakemusByClicking(avustushakuName);
     await page.locator("text=Maksatukset >> a").click();
   }
 
-  async function fillTositepaivamaaraTypescript() {
+  async function fillTositepaivamaara() {
     const openDatepicker = `[data-test-id="tosite-pvm"] button`;
     const selectToday = `${openDatepicker} >> text=tänään`;
 
@@ -27,40 +19,8 @@ export function MaksatuksetPage(
     await page.locator(selectToday).click();
   }
 
-  async function fillTositepaivamaara() {
-    const isFilledWithDateValue = async () => {
-      try {
-        const inputValue = await page.getAttribute(
-          '[id="Tositepäivämäärä"]',
-          "value"
-        );
-
-        if (typeof inputValue !== "string") return false;
-
-        return /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(inputValue);
-      } catch (e) {
-        console.log("Failed to get tositepäivämäärä", e);
-        return false;
-      }
-    };
-
-    for (let tries = 0; tries < 3; tries++) {
-      try {
-        await page.click("#Tositepäivämäärä", { timeout: 5000 });
-        await clickElementWithText(page, "button", "OK");
-        if (await isFilledWithDateValue()) {
-          break;
-        }
-      } catch (e) {
-        console.log("Failed to set tositepäivämäärä calendar date", e);
-      }
-    }
-  }
-
   async function getDueDateInputValue(): Promise<string> {
-    const datePicker = isTypescriptImplementation
-      ? `[data-test-id="eräpäivä"] input`
-      : `[id="Eräpäivä"]`;
+    const datePicker = `[data-test-id="eräpäivä"] input`;
 
     await page.waitForSelector(datePicker);
     await page.waitForFunction((selector) => {
@@ -73,11 +33,7 @@ export function MaksatuksetPage(
     const dueDate = await page.getAttribute(datePicker, "value");
     if (!dueDate) throw new Error("Cannot find due date from form");
 
-    if (isTypescriptImplementation) {
-      return moment(dueDate, "DD.MM.YYYY").format("YYYY-MM-DD");
-    } else {
-      return dueDate;
-    }
+    return moment(dueDate, "DD.MM.YYYY").format("YYYY-MM-DD");
   }
 
   async function fillMaksueranTiedotAndSendMaksatukset() {
@@ -93,7 +49,7 @@ export function MaksatuksetPage(
     return dueDate;
   }
 
-  async function fillInMaksueranTiedotTypescriptImplementation(
+  async function fillInMaksueranTiedot(
     ashaTunniste: string,
     esittelijanOsoite: string,
     hyvaksyjanOsoite: string
@@ -127,7 +83,7 @@ export function MaksatuksetPage(
       };
     }
 
-    await fillTositepaivamaaraTypescript();
+    await fillTositepaivamaara();
 
     for (let i = 0; i < amountOfInstallments; i++) {
       const rowFiller = phaseFiller(i);
@@ -138,75 +94,8 @@ export function MaksatuksetPage(
     }
   }
 
-  async function fillInMaksueranTiedot(
-    ashaTunniste: string,
-    esittelijanOsoite: string,
-    hyvaksyjanOsoite: string
-  ) {
-    if (isTypescriptImplementation) {
-      return await fillInMaksueranTiedotTypescriptImplementation(
-        ashaTunniste,
-        esittelijanOsoite,
-        hyvaksyjanOsoite
-      );
-    } else {
-      await fillInMaksueranTiedotClojure(
-        ashaTunniste,
-        esittelijanOsoite,
-        hyvaksyjanOsoite
-      );
-    }
-  }
-
-  async function fillInMaksueranTiedotClojure(
-    ashaTunniste: string,
-    esittelijanOsoite: string,
-    hyvaksyjanOsoite: string
-  ) {
-    const installmentWrapper = '[data-test-id="installment-phase"]';
-    const installmentSelect = `${installmentWrapper} select`;
-    const installmentOption = `${installmentSelect} option`;
-
-    await page.locator(installmentOption).nth(0).waitFor({ state: "attached" });
-    const amountOfInstallments: number = await page
-      .locator(installmentOption)
-      .count();
-
-    for (let i = 0; i < amountOfInstallments; i++) {
-      await page.locator(installmentSelect).selectOption({ value: `${i}` });
-      await fillTositepaivamaara();
-
-      await clearAndType(
-        page,
-        "[data-test-id=maksatukset-asiakirja--asha-tunniste]",
-        `${ashaTunniste}-${i}`
-      );
-      await clearAndType(
-        page,
-        "[data-test-id=maksatukset-asiakirja--esittelijan-sahkopostiosoite]",
-        esittelijanOsoite
-      );
-      await clearAndType(
-        page,
-        "[data-test-id=maksatukset-asiakirja--hyvaksyjan-sahkopostiosoite]",
-        hyvaksyjanOsoite
-      );
-      await page.click(
-        "button:not(disabled)[data-test-id=maksatukset-asiakirja--lisaa-asiakirja]"
-      );
-    }
-  }
-
   async function reloadPaymentPage() {
-    if (isTypescriptImplementation) {
-      await page.reload({ waitUntil: "networkidle" });
-    } else {
-      await Promise.all([
-        waitForClojureScriptLoadingDialogVisible(page),
-        page.reload({ waitUntil: "load" }),
-      ]);
-      await waitForClojureScriptLoadingDialogHidden(page);
-    }
+    await page.reload({ waitUntil: "networkidle" });
   }
 
   function getExpectedPaymentXML(
@@ -223,23 +112,6 @@ export function MaksatuksetPage(
   }
 
   async function sendMaksatukset(): Promise<void> {
-    if (isTypescriptImplementation) {
-      return await sendMaksatuksetTypescript();
-    } else {
-      return await sendMaksatuksetClojure();
-    }
-  }
-
-  async function sendMaksatuksetClojure(): Promise<void> {
-    await Promise.all([
-      page.waitForSelector(`text="Kaikki maksatukset lähetetty"`, {
-        timeout: 10000,
-      }),
-      clickElementWithText(page, "button", "Lähetä maksatukset"),
-    ]);
-  }
-
-  async function sendMaksatuksetTypescript(): Promise<void> {
     await Promise.all([
       expect(
         page
@@ -257,7 +129,7 @@ export function MaksatuksetPage(
 
   async function clickLahetetytMaksatuksetTab() {
     await page.locator(`text=Lähetetyt maksatukset`).click();
-    return lahetetytMaksueratTab(page, isTypescriptImplementation);
+    return lahetetytMaksueratTab(page);
   }
 
   return {
@@ -272,20 +144,13 @@ export function MaksatuksetPage(
   };
 }
 
-function lahetetytMaksueratTab(
-  page: Page,
-  isTypescriptImplementation: boolean
-) {
+function lahetetytMaksueratTab(page: Page) {
   return function maksuerat(phase: 1 | 2 | 3) {
-    const tableSelector = isTypescriptImplementation
-      ? `[data-test-id="maksatukset-table-batches"] tbody tr:nth-of-type(${phase})`
-      : `[data-test-id="batches-table"] [class="va-ui-table-body"] tr:nth-of-type(${phase})`;
+    const tableSelector = `[data-test-id="maksatukset-table-batches"] tbody tr:nth-of-type(${phase})`;
 
-    const paymentSelector = isTypescriptImplementation
-      ? `[data-test-id="maksatukset-table-payments"] .maksatukset_table-container >> nth=${
-          phase - 1
-        } `
-      : `[data-test-id="payments-table"] tbody >> nth=${phase - 1}`;
+    const paymentSelector = `[data-test-id="maksatukset-table-payments"] .maksatukset_table-container >> nth=${
+      phase - 1
+    } `;
 
     async function getPitkaviite(): Promise<string> {
       return await page

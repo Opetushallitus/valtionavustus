@@ -17,7 +17,6 @@ export interface EnvironmentApiResponse {
   "dont-send-loppuselvityspyynto-to-virkailija"?: FeatureFlag;
   "avustushaku-excel-extra-fields"?: FeatureFlag;
   "multiple-project-codes"?: FeatureFlag;
-  "maksatukset-typescript"?: FeatureFlag;
   "ta-tilit"?: FeatureFlag;
   payments: FeatureFlag & { "delete-payments?": boolean };
 }

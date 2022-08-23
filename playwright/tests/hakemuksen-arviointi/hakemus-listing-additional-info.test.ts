@@ -69,10 +69,7 @@ test(`hakemusten arviointi additional info`, async ({
 
   await test.step("updates maksatukset to show when it was sent", async () => {
     await expect(locators.maksatukset).toHaveText("Ei lähetetty");
-    const maksatuksetPage = MaksatuksetPage(
-      page,
-      environment["maksatukset-typescript"]?.["enabled?"] ?? false
-    );
+    const maksatuksetPage = MaksatuksetPage(page);
     await maksatuksetPage.goto(avustushakuName);
     await maksatuksetPage.fillMaksueranTiedotAndSendMaksatukset();
     await hakemustenArviointiPage.navigate(avustushakuID, {

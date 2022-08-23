@@ -70,26 +70,23 @@ const multipleInstallmentTest = test.extend({
 
 const presenter = "essi.esittelija@example.com";
 const acceptor = "hygge.hyvaksyja@example.com";
-function dateFormat(isTypescript: boolean): string {
-  return isTypescript ? "D.M.YYYY" : "DD.MM.YYYY";
-}
-function today(isTypescript: boolean): string {
-  return moment().format(dateFormat(isTypescript));
-}
-function oneWeekFromNow(isTypescript: boolean): string {
-  return moment().add(7, "day").format(dateFormat(isTypescript));
-}
+const today = (): string => {
+  return moment().format("D.M.YYYY");
+};
+const oneWeekFromNow = (): string => {
+  return moment().add(7, "day").format("D.M.YYYY");
+};
 
-async function testPaymentBatchesTableTypescript(page: Page) {
-  const maksatuksetPage = MaksatuksetPage(page, true);
+async function testPaymentBatchesTable(page: Page) {
+  const maksatuksetPage = MaksatuksetPage(page);
   const sentPayments = await maksatuksetPage.clickLahetetytMaksatuksetTab();
 
   expect(await sentPayments(3).getPhaseTitle()).toEqual("3. erä");
   expect(await sentPayments(2).getTotalSum()).toEqual("30000");
   expect(await sentPayments(3).getTotalSum()).toEqual("10000");
   expect(await sentPayments(1).getAmountOfPayments()).toEqual("1");
-  expect(await sentPayments(3).getLaskupvm()).toEqual(today(true));
-  expect(await sentPayments(2).getErapvm()).toEqual(oneWeekFromNow(true));
+  expect(await sentPayments(3).getLaskupvm()).toEqual(today());
+  expect(await sentPayments(2).getErapvm()).toEqual(oneWeekFromNow());
   expect(await sentPayments(1).getAllekirjoitettuYhteenveto()).toEqual(
     "asha pasha"
   );
@@ -97,28 +94,8 @@ async function testPaymentBatchesTableTypescript(page: Page) {
   expect(await sentPayments(3).getAcceptorEmail()).toEqual(acceptor);
 }
 
-async function testPaymentBatchesTableClojure(page: Page) {
-  const maksatuksetPage = MaksatuksetPage(page, false);
-  const sentPayments = await maksatuksetPage.clickLahetetytMaksatuksetTab();
-
-  expect(await sentPayments(3).getPhaseTitle()).toEqual("3. erä");
-  expect(await sentPayments(2).getTotalSum()).toEqual("30,000 €");
-  expect(await sentPayments(3).getTotalSum()).toEqual("10,000 €");
-  expect(await sentPayments(1).getAmountOfPayments()).toEqual("1");
-  expect(await sentPayments(3).getLaskupvm()).toEqual(today(false));
-  expect(await sentPayments(2).getErapvm()).toEqual(oneWeekFromNow(false));
-  expect(await sentPayments(1).getAllekirjoitettuYhteenveto()).toEqual(
-    "asha pasha-0"
-  );
-  expect(await sentPayments(2).getPresenterEmail()).toEqual(presenter);
-  expect(await sentPayments(3).getAcceptorEmail()).toEqual(acceptor);
-}
-
-async function testSentPaymentsTableTypescript(
-  page: Page,
-  registerNumber: string
-) {
-  const maksatuksetPage = MaksatuksetPage(page, true);
+async function testSentPaymentsTable(page: Page, registerNumber: string) {
+  const maksatuksetPage = MaksatuksetPage(page);
   const sentPayments = await maksatuksetPage.clickLahetetytMaksatuksetTab();
 
   expect(await sentPayments(1).getPitkaviite()).toEqual(
@@ -145,50 +122,6 @@ async function testSentPaymentsTableTypescript(
   expect(await sentPayments(3).getTiliöinti()).toEqual("10000 €");
 }
 
-async function testSentPaymentsTableClojure(
-  page: Page,
-  registerNumber: string
-) {
-  const maksatuksetPage = MaksatuksetPage(page, false);
-  const sentPayments = await maksatuksetPage.clickLahetetytMaksatuksetTab();
-
-  expect(await sentPayments(1).getPitkaviite()).toEqual(
-    `${registerNumber}_1 Erkki Esimerkki`
-  );
-  expect(await sentPayments(2).getPitkaviite()).toEqual(
-    `${registerNumber}_2 Erkki Esimerkki`
-  );
-  expect(await sentPayments(3).getPitkaviite()).toEqual(
-    `${registerNumber}_3 Erkki Esimerkki`
-  );
-  expect(await sentPayments(1).getPaymentStatus()).toEqual("Lähetetty");
-  expect(await sentPayments(2).getToimittaja()).toEqual("Akaan kaupunki");
-  expect(await sentPayments(3).getHanke()).toEqual("Rahassa kylpijät Ky Ay Oy");
-  expect(await sentPayments(3).getHanke()).toEqual("Rahassa kylpijät Ky Ay Oy");
-  expect(await sentPayments(1).getMaksuun()).toEqual("59,999 €");
-  expect(await sentPayments(2).getMaksuun()).toEqual("30,000 €");
-  expect(await sentPayments(3).getMaksuun()).toEqual("10,000 €");
-  expect(await sentPayments(1).getIBAN()).toEqual("FI95 6682 9530 0087 65");
-  expect(await sentPayments(2).getLKPT()).toEqual("82010000");
-  expect(await sentPayments(3).getTAKP()).toEqual("29103020");
-  expect(await sentPayments(1).getTiliöinti()).toEqual("59,999 €");
-  expect(await sentPayments(2).getTiliöinti()).toEqual("30,000 €");
-  expect(await sentPayments(3).getTiliöinti()).toEqual("10,000 €");
-}
-
-async function testPendingPaymentsClojure(page: Page) {
-  const maksatuksetPage = MaksatuksetPage(page, false);
-  const pendingPayments = await maksatuksetPage.clickLahtevatMaksatuksetTab();
-
-  expect(await pendingPayments(1).getPhaseTitle()).toEqual("1. erä");
-  expect(await pendingPayments(2).getPhaseTitle()).toEqual("2. erä");
-  expect(await pendingPayments(3).getPhaseTitle()).toEqual("3. erä");
-  expect(await pendingPayments(1).getAsha()).toEqual("asha pasha-0");
-  expect(await pendingPayments(2).getPresenterEmail()).toEqual(presenter);
-  expect(await pendingPayments(3).getAcceptorEmail()).toEqual(acceptor);
-  expect(await pendingPayments(1).getDateAdded()).toEqual(today(false));
-}
-
 test.describe.parallel("Maksatukset", () => {
   multipleInstallmentTest(
     "Hakemus voidaan maksaa monessa erässä",
@@ -197,7 +130,6 @@ test.describe.parallel("Maksatukset", () => {
       avustushakuID,
       avustushakuName,
       acceptedHakemus: { hakemusID },
-      environment,
     }) => {
       const valiselvitysPage = VirkailijaValiselvitysPage(page);
 
@@ -224,25 +156,15 @@ test.describe.parallel("Maksatukset", () => {
       await acceptValiselvitysWithInstallment(30000);
       await acceptLoppuselvitysWithInstallment(10000);
 
-      const isTypescriptImplementation =
-        environment["maksatukset-typescript"]?.["enabled?"] ?? false;
-
       const { "register-number": registerNumber } =
         await getHakemusTokenAndRegisterNumber(hakemusID);
 
-      const maksatuksetPage = MaksatuksetPage(page, isTypescriptImplementation);
+      const maksatuksetPage = MaksatuksetPage(page);
       await maksatuksetPage.goto(avustushakuName);
       await maksatuksetPage.fillMaksueranTiedotAndSendMaksatukset();
 
-      if (isTypescriptImplementation) {
-        await testPaymentBatchesTableTypescript(page);
-        await testSentPaymentsTableTypescript(page, registerNumber);
-      } else {
-        await maksatuksetPage.reloadPaymentPage();
-        await testPendingPaymentsClojure(page);
-        await testPaymentBatchesTableClojure(page);
-        await testSentPaymentsTableClojure(page, registerNumber);
-      }
+      await testPaymentBatchesTable(page);
+      await testSentPaymentsTable(page, registerNumber);
     }
   );
 
@@ -253,11 +175,8 @@ test.describe.parallel("Maksatukset", () => {
       avustushakuName,
       acceptedHakemus: { hakemusID },
       codes: codeValues,
-      environment,
     }) => {
-      const isTypescriptImplementation =
-        environment["maksatukset-typescript"]?.["enabled?"] ?? false;
-      const maksatuksetPage = MaksatuksetPage(page, isTypescriptImplementation);
+      const maksatuksetPage = MaksatuksetPage(page);
       await maksatuksetPage.goto(avustushakuName);
       const dueDate =
         await maksatuksetPage.fillMaksueranTiedotAndSendMaksatukset();
@@ -276,7 +195,7 @@ test.describe.parallel("Maksatukset", () => {
         "Rahassa kylpijät Ky Ay Oy"
       );
 
-      const maksuun = isTypescriptImplementation ? "99999 €" : "99,999 €";
+      const maksuun = "99999 €";
       expect(await paymentBatches(1).getMaksuun()).toEqual(maksuun);
       expect(await paymentBatches(1).getIBAN()).toEqual(
         "FI95 6682 9530 0087 65"
@@ -320,11 +239,8 @@ test.describe.parallel("Maksatukset", () => {
     avustushakuID,
     avustushakuName,
     acceptedHakemus: { hakemusID },
-    environment,
   }) => {
-    const isTypescriptImplementation =
-      environment["maksatukset-typescript"]?.["enabled?"] ?? false;
-    const maksatuksetPage = MaksatuksetPage(page, isTypescriptImplementation);
+    const maksatuksetPage = MaksatuksetPage(page);
     await maksatuksetPage.goto(avustushakuName);
 
     await maksatuksetPage.fillInMaksueranTiedot(
@@ -350,7 +266,7 @@ test.describe.parallel("Maksatukset", () => {
       "Rahassa kylpijät Ky Ay Oy"
     );
 
-    const maksuun = isTypescriptImplementation ? "99999 €" : "99,999 €";
+    const maksuun = "99999 €";
     expect(await sentPayments(1).getMaksuun()).toEqual(maksuun);
     expect(await sentPayments(1).getIBAN()).toEqual("FI95 6682 9530 0087 65");
     expect(await sentPayments(1).getLKPT()).toEqual("82010000");
@@ -377,11 +293,8 @@ test.describe.parallel("Maksatukset", () => {
     avustushakuName,
     acceptedHakemus: { hakemusID },
     codes: { project, operation, operationalUnit },
-    environment,
   }) => {
-    const isTypescriptImplemntation =
-      environment["maksatukset-typescript"]?.["enabled?"] ?? false;
-    const maksatuksetPage = MaksatuksetPage(page, isTypescriptImplemntation);
+    const maksatuksetPage = MaksatuksetPage(page);
     await maksatuksetPage.goto(avustushakuName);
     const dueDate =
       await maksatuksetPage.fillMaksueranTiedotAndSendMaksatukset();
@@ -398,7 +311,7 @@ test.describe.parallel("Maksatukset", () => {
     expect(await sentPayments(1).getHanke()).toEqual(
       "Rahassa kylpijät Ky Ay Oy"
     );
-    const maksuun = isTypescriptImplemntation ? "99999 €" : "99,999 €";
+    const maksuun = "99999 €";
     expect(await sentPayments(1).getMaksuun()).toEqual(maksuun);
     expect(await sentPayments(1).getIBAN()).toEqual("FI95 6682 9530 0087 65");
     expect(await sentPayments(1).getLKPT()).toEqual("82010000");
@@ -439,12 +352,8 @@ test.describe.parallel("Maksatukset", () => {
     avustushakuID,
     avustushakuName,
     acceptedHakemus: { hakemusID },
-    environment,
   }) => {
-    const maksatuksetPage = MaksatuksetPage(
-      page,
-      environment["maksatukset-typescript"]?.["enabled?"] ?? false
-    );
+    const maksatuksetPage = MaksatuksetPage(page);
 
     await maksatuksetPage.goto(avustushakuName);
     await maksatuksetPage.fillMaksueranTiedotAndSendMaksatukset();

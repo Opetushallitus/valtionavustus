@@ -12,7 +12,6 @@
  :va-users {:use-cache? false}
  :payments {:enabled? true :delete-payments? true}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
- :maksatukset-typescript {:enabled? true}
  :avustushaku-excel-extra-fields {:enabled? true}
  :test-apis {:enabled? true}
  :multiple-project-codes {:enabled? true}}

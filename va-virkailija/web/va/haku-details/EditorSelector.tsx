@@ -18,19 +18,10 @@ import {
   selectLoadedInitialData,
 } from "../hakujenHallinta/hakuReducer";
 
-function createRedirectTo(url: string) {
-  return (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-    e.preventDefault();
-    window.location.href = url;
-  };
-}
-
 export const EditorSelector = () => {
   const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
   const subTab = useHakujenHallintaSelector((state) => state.haku.subTab);
-  const { helpTexts, environment } = useHakujenHallintaSelector(
-    selectLoadedInitialData
-  );
+  const { helpTexts } = useHakujenHallintaSelector(selectLoadedInitialData);
   const dispatch = useHakujenHallintaDispatch();
   let subTabContent;
   switch (subTab) {
@@ -131,13 +122,7 @@ export const EditorSelector = () => {
           />
         </span>
         <span
-          onClick={
-            environment["maksatukset-typescript"]?.["enabled?"]
-              ? createSubTabSelector("maksatukset")
-              : createRedirectTo(
-                  "/admin-ui/payments/?grant-id=" + avustushaku.id
-                )
-          }
+          onClick={createSubTabSelector("maksatukset")}
           className={
             avustushaku.status !== "published" &&
             avustushaku.status !== "resolved"

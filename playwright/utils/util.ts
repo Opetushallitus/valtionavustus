@@ -74,18 +74,6 @@ export async function waitForElementWithText(
   });
 }
 
-export async function waitForClojureScriptLoadingDialogHidden(page: Page) {
-  return page.waitForSelector("[data-test-id=loading-dialog]", {
-    state: "detached",
-  });
-}
-
-export async function waitForClojureScriptLoadingDialogVisible(page: Page) {
-  return page.waitForSelector("[data-test-id=loading-dialog]", {
-    state: "visible",
-  });
-}
-
 export function expectToBeDefined<T>(val: T): asserts val is NonNullable<T> {
   expect(val).toBeDefined();
 }

@@ -51,10 +51,7 @@ const test = selvitysTest.extend<{
     use
   ) => {
     expectToBeDefined(secondHakuProps);
-    const maksatuksetPage = MaksatuksetPage(
-      page,
-      environment["maksatukset-typescript"]?.["enabled?"] ?? false
-    );
+    const maksatuksetPage = MaksatuksetPage(page);
     await maksatuksetPage.goto(avustushakuName);
     await maksatuksetPage.fillMaksueranTiedotAndSendMaksatukset();
     const hakujenHallintaPage = new HakujenHallintaPage(page);

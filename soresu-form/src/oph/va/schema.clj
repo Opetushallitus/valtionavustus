@@ -62,7 +62,6 @@
    (s/optional-key :dont-send-loppuselvityspyynto-to-virkailija) (s/maybe {:enabled? s/Bool})
    (s/optional-key :avustushaku-excel-extra-fields) (s/maybe {:enabled? s/Bool})
    (s/optional-key :multiple-project-codes) (s/maybe {:enabled? s/Bool})
-   (s/optional-key :maksatukset-typescript) (s/maybe {:enabled? s/Bool})
    (s/optional-key :ta-tilit) (s/maybe {:enabled? s/Bool})
    (s/optional-key :selvitys-limit) (s/maybe {:enabled? s/Bool})})
 
