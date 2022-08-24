@@ -37,7 +37,6 @@
  :payments {:enabled? true :delete-payments? true}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
- :avustushaku-excel-extra-fields {:enabled? true}
  :integration-healthcheck {:enabled? true
                            :timeout 5000
                            :interval-minutes 15}

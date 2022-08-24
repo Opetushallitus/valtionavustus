@@ -356,13 +356,11 @@ export const HakuEdit = () => {
           </div>
         </div>
       </div>
-      {environment["avustushaku-excel-extra-fields"]?.["enabled?"] && (
-        <Lainsaadanto
-          avustushaku={avustushaku}
-          lainsaadantoOptions={lainsaadantoOptions}
-          helpTexts={helpTexts}
-        />
-      )}
+      <Lainsaadanto
+        avustushaku={avustushaku}
+        lainsaadantoOptions={lainsaadantoOptions}
+        helpTexts={helpTexts}
+      />
       {environment["ta-tilit"]?.["enabled?"] && <Talousarviotilit />}
       <EducationLevels
         enabled={allowNondisruptiveHakuEdits}
@@ -599,15 +597,8 @@ export const HakuEdit = () => {
           </div>
         </div>
       </div>
-      {environment["avustushaku-excel-extra-fields"]?.["enabled?"] && (
-        <>
-          <hr className="spacer" />
-          <Raportointivelvoitteet
-            avustushaku={avustushaku}
-            helpTexts={helpTexts}
-          />
-        </>
-      )}
+      <hr className="spacer" />
+      <Raportointivelvoitteet avustushaku={avustushaku} helpTexts={helpTexts} />
       <hr className="spacer" />
       <HakuRoles
         avustushaku={avustushaku}
