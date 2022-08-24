@@ -24,10 +24,6 @@
 * [Babel](https://babeljs.io) For ES6 javascript support
 * [Node.js](https://nodejs.org) For [building](../README.md) JavaScript
   source and npm packages with [webpack](https://webpack.js.org/)
-* [ClojureScript](https://clojurescript.org/) for rendering
-  Admin UI
-* [Material UI](https://v0.material-ui.com/v0.19.1/#/) for handling few
-  components, like Calendar, with ClojureScript
 
 ### Documentation tools
 
