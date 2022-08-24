@@ -188,7 +188,6 @@ const Raportointivelvoite = ({
           Asha-tunnus
           <HelpTooltip
             content={helpTexts["hakujen_hallinta__haun_tiedot___asha-tunnus"]}
-            direction="left"
           />
         </h3>
         <input
@@ -207,7 +206,6 @@ const Raportointivelvoite = ({
                 "hakujen_hallinta__haun_tiedot___raportointi_lisätiedot"
               ]
             }
-            direction="left"
           />
         </h3>
         <input
@@ -329,7 +327,13 @@ export const Raportointivelvoitteet = ({
 
   return (
     <div className="raportointivelvoitteet">
-      <h1>Raportointivelvoitteet</h1>
+      <h1>OPH:lle asetetut raportointivelvoitteet</h1>
+      <br />
+      <span>
+        OPH:lta mahdollisesti edellytettävät raportointivelvoitteet kuvataan
+        tässä osiossa. Raportointivelvoitteet löydät määrärahan
+        asettamiskirjeestä ja muista valtionavustusta ohjaavista asiakirjoista.
+      </span>
       {raportointivelvoitteet?.map((r, i) => (
         <Raportointivelvoite
           key={`raportointivelvoite-${i}-${r.id}`}

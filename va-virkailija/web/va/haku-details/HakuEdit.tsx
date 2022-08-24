@@ -222,6 +222,7 @@ export const HakuEdit = () => {
             Projekti
             <HelpTooltip
               content={helpTexts["hakujen_hallinta__haun_tiedot___projekti"]}
+              direction="left"
             />
           </h3>
           {multipleProjectCodesEnabled ? (
@@ -254,6 +255,7 @@ export const HakuEdit = () => {
             Toiminto
             <HelpTooltip
               content={helpTexts["hakujen_hallinta__haun_tiedot___toiminto"]}
+              direction="left"
             />
           </h3>
           <AutoCompleteCodeValue
