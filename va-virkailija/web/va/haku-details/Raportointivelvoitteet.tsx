@@ -142,15 +142,7 @@ const Raportointivelvoite = ({
   return (
     <div className="raportointivelvoitteet_row">
       <div className="raportointivelvoitteet_raportointilaji">
-        <h3 className="raportointivelvoitteet_label">
-          Raportointilaji
-          <HelpTooltip
-            content={
-              helpTexts["hakujen_hallinta__haun_tiedot___raportointilaji"]
-            }
-            direction="left"
-          />
-        </h3>
+        <h3 className="raportointivelvoitteet_label">Raportointilaji</h3>
         <Select
           id={`raportointilaji-dropdown-${index}`}
           placeholder="Valitse raportointilaji"
