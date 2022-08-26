@@ -26,6 +26,7 @@
                  [ring/ring-devel]
                  [compojure]
                  [metosin/compojure-api]
+                 [com.github.java-json-tools/jackson-coreutils "1.10"  :exclusions [com.google.code.findbugs/jsr305]]
 
                  [cheshire]
                  [prismatic/schema]
