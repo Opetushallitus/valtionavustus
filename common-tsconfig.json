@@ -8,7 +8,7 @@
     "noFallthroughCasesInSwitch": true,
     "target": "es6",
     "module": "commonjs",
-    "lib": ["dom", "es2018"],
+    "lib": ["dom", "es2021"],
     "rootDir": "."
   }
 }

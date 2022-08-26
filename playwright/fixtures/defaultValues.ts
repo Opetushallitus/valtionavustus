@@ -1,4 +1,4 @@
-import { test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import moment from "moment";
 
 import { HakuProps, parseDate } from "../pages/hakujenHallintaPage";
@@ -9,9 +9,12 @@ import { Answers, VaCodeValues } from "../utils/types";
 import { expectToBeDefined, switchUserIdentityTo } from "../utils/util";
 import { EnvironmentApiResponse } from "../../soresu-form/web/va/types/environment";
 import axios from "axios";
+import { CreateTalousarvioTili } from "../../va-virkailija/web/va/koodienhallinta/types";
+import { randomInt } from "crypto";
 
 export type DefaultValueFixtures = {
   codes: VaCodeValues;
+  talousarviotili: CreateTalousarvioTili;
   randomName: string;
   avustushakuName: string;
   hakuProps: HakuProps;
@@ -23,7 +26,10 @@ export type DefaultValueFixtures = {
 };
 
 type WorkerScopedDefaultValueFixtures = {
-  defaultCodes: VaCodeValues;
+  defaultCodes: {
+    codes: VaCodeValues;
+    tatili: CreateTalousarvioTili;
+  };
 };
 
 /** Default values created only once (per worker) to save time */
@@ -34,16 +40,34 @@ const workerScopedDefaultValues = test.extend<
   defaultCodes: [
     async ({ browser }, use) => {
       let codes: VaCodeValues | null = null;
+      const page = await browser.newPage();
+      await switchUserIdentityTo(page, "valtionavustus");
+      const koodienHallintaPage = KoodienhallintaPage(page);
       await test.step("Create koodisto", async () => {
-        const page = await browser.newPage();
-
-        await switchUserIdentityTo(page, "valtionavustus");
-        const koodienHallintaPage = KoodienhallintaPage(page);
         codes = await koodienHallintaPage.createRandomCodeValues();
-        await page.close();
       });
+      const tatili = {
+        name: `TA-tili ${randomString()}`,
+        year: 2022,
+        code: `29.10.30.20.${randomInt(0, 1000)}.${randomInt(0, 1000)}`,
+        amount: 420,
+      };
+      await test.step("create talousarviotili", async () => {
+        await koodienHallintaPage.switchToTatilitTab();
+        const row = await koodienHallintaPage.page.locator(
+          `[data-test-id="${tatili.name}"]`
+        );
+        const taForm = koodienHallintaPage.taTilit.form;
+        await taForm.year.input.fill(String(tatili.year));
+        await taForm.code.input.fill(tatili.code);
+        await taForm.name.input.fill(tatili.name);
+        await taForm.amount.input.fill(String(tatili.amount));
+        await taForm.submitBtn.click();
+        await expect(row).toBeVisible();
+      });
+      await page.close();
       expectToBeDefined(codes);
-      await use(codes);
+      await use({ codes, tatili });
     },
     { scope: "worker" },
   ],
@@ -54,7 +78,10 @@ export const defaultValues =
     answers,
     swedishAnswers,
     codes: async ({ defaultCodes }, use) => {
-      use(defaultCodes);
+      use(defaultCodes.codes);
+    },
+    talousarviotili: async ({ defaultCodes }, use) => {
+      await use(defaultCodes.tatili);
     },
     randomName: async ({}, use) => {
       const randomName = randomString();
@@ -73,7 +100,10 @@ export const defaultValues =
         ).format("YYYY-MM-DD hh:mm:ss:SSSS")}`
       );
     },
-    hakuProps: ({ codes, avustushakuName, randomName }, use) => {
+    hakuProps: (
+      { codes, talousarviotili, avustushakuName, randomName },
+      use
+    ) => {
       const nextYear = new Date().getFullYear() + 1;
       use({
         avustushakuName,
@@ -84,6 +114,7 @@ export const defaultValues =
         hankkeenPaattymispaiva: "20.04.4200",
         registerNumber: randomAsiatunnus(),
         vaCodes: codes,
+        talousarviotili,
         selectionCriteria: [],
         raportointivelvoitteet: [],
         lainsaadanto: [],

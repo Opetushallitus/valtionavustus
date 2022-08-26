@@ -65,11 +65,11 @@ export const budjettimuutoshakemusTest =
       await hakemustenArviointiPage.navigate(avustushakuID);
 
       const acceptWithBudget = acceptedBudget ? acceptedBudget : budget;
-      const hakemusID = await hakemustenArviointiPage.acceptAvustushaku(
+      const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
         avustushakuID,
-        answers.projectName,
-        acceptWithBudget
-      );
+        projectName: answers.projectName,
+        budget: acceptWithBudget,
+      });
 
       await hakujenHallintaPage.navigateFromHeader();
       await hakujenHallintaPage.resolveAvustushaku();

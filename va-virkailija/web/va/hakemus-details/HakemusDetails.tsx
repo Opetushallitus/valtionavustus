@@ -115,6 +115,9 @@ export const HakemusDetails = (props: Props) => {
             multipleProjectCodesEnabled={
               environment["multiple-project-codes"]?.["enabled?"] === true
             }
+            newTaTiliSelectionEnabled={
+              environment["ta-tilit"]?.["enabled?"] === true
+            }
             projects={projects}
           />
         );

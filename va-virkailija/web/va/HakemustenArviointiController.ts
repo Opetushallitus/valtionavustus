@@ -44,12 +44,14 @@ import {
   UserInfo,
 } from "./types";
 import { Lahetys } from "./haku-details/Tapahtumaloki";
+import { TalousarviotiliWithKoulutusasteet } from "./hakujenHallinta/hakuReducer";
 
 const dispatcher = new Dispatcher();
 
 const events = {
   onNormalizedData: "onNormalizedData",
   projectLoaded: "projectLoaded",
+  talousarviotilitLoaded: "talousarviotilitLoaded",
   onMuutoshakemukset: "onMuutoshakemukset",
   beforeUnload: "beforeUnload",
   initialState: "initialState",
@@ -165,6 +167,10 @@ export default class HakemustenArviointiController {
       {} as any,
       [dispatcher.stream(events.onNormalizedData), this.onNormalizedData],
       [dispatcher.stream(events.projectLoaded), this.onProjectLoaded],
+      [
+        dispatcher.stream(events.talousarviotilitLoaded),
+        this.onTalousarviotilitLoaded,
+      ],
       [dispatcher.stream(events.onMuutoshakemukset), this.onMuutoshakemukset],
       [dispatcher.stream(events.beforeUnload), this.onBeforeUnload],
       [dispatcher.stream(events.initialState), this.onInitialState],
@@ -366,6 +372,12 @@ export default class HakemustenArviointiController {
           "/project"
       )
     ).onValue((project) => dispatcher.push(events.projectLoaded, project));
+
+    Bacon.fromPromise(
+      HttpUtil.get<TalousarviotiliWithKoulutusasteet[]>(
+        `/api/avustushaku/${avustushakuId}/talousarviotilit`
+      )
+    ).onValue((tilit) => dispatcher.push(events.talousarviotilitLoaded, tilit));
 
     const normalizedStream = Bacon.fromPromise(
       HttpUtil.get(
@@ -1294,30 +1306,34 @@ export default class HakemustenArviointiController {
     const avustushaku = state.hakuData.avustushaku;
     const availableRahoitusalueet = avustushaku.content.rahoitusalueet;
     const hakemusArvio = state.selectedHakemus?.arvio;
+    const usesOldImplementationOfTalousarviotilit =
+      !!avustushaku.content.rahoitusalueet;
 
-    const selectedRahoitusalue =
-      RahoitusalueSelections.validateRahoitusalueSelection(
-        hakemusArvio?.rahoitusalue,
-        availableRahoitusalueet
-      );
+    if (usesOldImplementationOfTalousarviotilit) {
+      const selectedRahoitusalue =
+        RahoitusalueSelections.validateRahoitusalueSelection(
+          hakemusArvio?.rahoitusalue,
+          availableRahoitusalueet
+        );
 
-    const selectedTalousarviotili =
-      RahoitusalueSelections.validateTalousarviotiliSelection({
-        selectedTalousarviotili: hakemusArvio?.talousarviotili,
-        selectedRahoitusalue,
-        availableRahoitusalueet,
-      });
+      const selectedTalousarviotili =
+        RahoitusalueSelections.validateTalousarviotiliSelection({
+          selectedTalousarviotili: hakemusArvio?.talousarviotili,
+          selectedRahoitusalue,
+          availableRahoitusalueet,
+        });
 
-    if (
-      state.selectedHakemus &&
-      (hakemusArvio?.rahoitusalue !== selectedRahoitusalue ||
-        hakemusArvio?.talousarviotili !== selectedTalousarviotili)
-    ) {
-      this.setHakemusRahoitusalueAndTalousarviotili({
-        hakemus: state.selectedHakemus,
-        rahoitusalue: selectedRahoitusalue,
-        talousarviotili: selectedTalousarviotili,
-      });
+      if (
+        state.selectedHakemus &&
+        (hakemusArvio?.rahoitusalue !== selectedRahoitusalue ||
+          hakemusArvio?.talousarviotili !== selectedTalousarviotili)
+      ) {
+        this.setHakemusRahoitusalueAndTalousarviotili({
+          hakemus: state.selectedHakemus,
+          rahoitusalue: selectedRahoitusalue,
+          talousarviotili: selectedTalousarviotili,
+        });
+      }
     }
   }
 
@@ -1458,6 +1474,16 @@ export default class HakemustenArviointiController {
     return state;
   }
 
+  onTalousarviotilitLoaded(
+    state: State,
+    talousarviotilit: TalousarviotiliWithKoulutusasteet[]
+  ) {
+    if (state.selectedHakemus) {
+      state.selectedHakemus.talousarviotilit = talousarviotilit;
+    }
+    return state;
+  }
+
   onMuutoshakemukset(state: State, muutoshakemukset: MuutoshakemusType[]) {
     if (state.selectedHakemus) {
       state.selectedHakemus.muutoshakemukset = muutoshakemukset;
@@ -1549,6 +1575,10 @@ export default class HakemustenArviointiController {
 
   setPresenterComment(hakemus: Hakemus, value: string) {
     hakemus.arvio.presentercomment = value;
+    dispatcher.push(events.updateHakemusArvio, hakemus);
+  }
+
+  updateHakemusArvio(hakemus: Hakemus) {
     dispatcher.push(events.updateHakemusArvio, hakemus);
   }
 

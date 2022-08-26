@@ -17,7 +17,6 @@ test(`hakemusten arviointi additional info`, async ({
   closedAvustushaku,
   answers,
   codes,
-  environment,
 }) => {
   expectToBeDefined(closedAvustushaku);
   const hakujenHallintaPage = new HakujenHallintaPage(page);
@@ -34,10 +33,10 @@ test(`hakemusten arviointi additional info`, async ({
     }
   );
 
-  await hakemustenArviointiPage.acceptAvustushaku(
+  await hakemustenArviointiPage.acceptAvustushaku({
     avustushakuID,
-    answers.projectName
-  );
+    projectName: answers.projectName,
+  });
 
   await hakemustenArviointiPage.page.locator('button:text("×")').click();
   await expect(locators.vastuuvalmistelija).toHaveText("_ valtionavustus");

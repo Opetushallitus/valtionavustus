@@ -13,18 +13,13 @@ import {
 import { VIRKAILIJA_URL } from "../utils/constants";
 import { VaCodeValues, Field } from "../utils/types";
 import { addFieldsToHakemusJson } from "../utils/hakemus-json";
+import { CreateTalousarvioTili } from "../../va-virkailija/web/va/koodienhallinta/types";
+import { createReactSelectLocators } from "../utils/react-select";
 
 interface Rahoitusalue {
   koulutusaste: string;
   talousarviotili: string;
 }
-
-const defaultRahoitusalueet: Rahoitusalue[] = [
-  {
-    koulutusaste: "Ammatillinen koulutus",
-    talousarviotili: "29.10.30.20",
-  },
-];
 
 interface Raportointivelvoite {
   raportointilaji: string;
@@ -49,6 +44,8 @@ export interface HakuProps {
   hakemusFields: Field[];
   jaossaOlevaSumma?: number;
   installment?: Installment;
+  legacyRahoitusalueet?: Rahoitusalue[];
+  talousarviotili: CreateTalousarvioTili;
 }
 
 export enum Installment {
@@ -538,7 +535,10 @@ export class HakujenHallintaPage {
     return await this.copyCurrentHaku();
   }
 
-  async inputTalousarviotili({ koulutusaste, talousarviotili }: Rahoitusalue) {
+  async inputLegacyTalousarviotili({
+    koulutusaste,
+    talousarviotili,
+  }: Rahoitusalue) {
     await this.page.fill(
       `input[name="education-levels"][data-title="${koulutusaste}"]`,
       talousarviotili
@@ -667,6 +667,8 @@ export class HakujenHallintaPage {
       jaossaOlevaSumma,
       raportointivelvoitteet,
       installment,
+      talousarviotili,
+      legacyRahoitusalueet,
     } = props;
     console.log(`Avustushaku name for test: ${avustushakuName}`);
 
@@ -687,8 +689,18 @@ export class HakujenHallintaPage {
         .selectOption("5000");
     }
 
-    for (const rahoitusalue of defaultRahoitusalueet) {
-      await this.inputTalousarviotili(rahoitusalue);
+    if (legacyRahoitusalueet) {
+      for (const rahoitusalue of legacyRahoitusalueet) {
+        await this.inputLegacyTalousarviotili(rahoitusalue);
+      }
+    } else {
+      const taTili = this.hauntiedotLocators().taTili;
+      await taTili.tili(0).input.fill(talousarviotili.code);
+      await this.page.keyboard.press("ArrowDown");
+      await this.page.keyboard.press("Enter");
+      await taTili.tili(0).koulutusaste(0).input.fill("Ammatillinen koulutus");
+      await this.page.keyboard.press("ArrowDown");
+      await this.page.keyboard.press("Enter");
     }
 
     if (arvioituMaksupaiva) {
@@ -924,19 +936,6 @@ export class HakujenHallintaPage {
   }
 
   hauntiedotLocators() {
-    const createReactSelectLocators = (
-      containerLocator: Locator,
-      classNamePrefix: string
-    ) => {
-      return {
-        value: containerLocator.locator(`.${classNamePrefix}__single-value`),
-        placeholder: containerLocator.locator(
-          `.${classNamePrefix}__placeholder`
-        ),
-        option: containerLocator.locator(`.${classNamePrefix}__option`),
-        input: containerLocator.locator(`.${classNamePrefix}__input`),
-      };
-    };
     return {
       hakuName: {
         fi: this.page.locator("#haku-name-fi"),

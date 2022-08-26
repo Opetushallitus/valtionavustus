@@ -77,17 +77,17 @@ const test = muutoshakemusTest.extend<{
 
     const hakemustenArviointiPage = new HakemustenArviointiPage(page);
     await hakemustenArviointiPage.navigate(avustushakuID);
-    const hakemusID1 = await hakemustenArviointiPage.acceptAvustushaku(
+    const hakemusID1 = await hakemustenArviointiPage.acceptAvustushaku({
       avustushakuID,
-      pyorijatAnswers.projectName,
-      "10000"
-    );
+      projectName: answers.projectName,
+      budget: "10000",
+    });
     await hakemustenArviointiPage.navigate(avustushakuID);
-    const hakemusID2 = await hakemustenArviointiPage.acceptAvustushaku(
+    const hakemusID2 = await hakemustenArviointiPage.acceptAvustushaku({
       avustushakuID,
-      answers.projectName,
-      "100000"
-    );
+      projectName: answers.projectName,
+      budget: "100000",
+    });
 
     const hakujenHallintaPage = new HakujenHallintaPage(page);
     await hakujenHallintaPage.navigateFromHeader();

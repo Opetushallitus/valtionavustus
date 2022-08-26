@@ -30,6 +30,7 @@ import { ChangeRequest } from "./ChangeRequest";
 import ProjectSelector from "../haku-details/ProjectSelector";
 
 import "../style/admin.less";
+import Select from "react-select";
 
 type HakemusArviointiProps = {
   controller: HakemustenArviointiController;
@@ -42,6 +43,7 @@ type HakemusArviointiProps = {
   multibatchEnabled: boolean;
   selectedHakemusAccessControl: SelectedHakemusAccessControl;
   multipleProjectCodesEnabled: boolean;
+  newTaTiliSelectionEnabled: boolean;
   projects: VaCodeValue[];
 };
 
@@ -57,6 +59,7 @@ export const HakemusArviointi = ({
   selectedHakemusAccessControl,
   multipleProjectCodesEnabled,
   projects,
+  newTaTiliSelectionEnabled,
 }: HakemusArviointiProps) => {
   const {
     allowHakemusCommenting,
@@ -95,6 +98,13 @@ export const HakemusArviointi = ({
             disabled={!allowHakemusStateChanges}
           />
         </div>
+      )}
+      {newTaTiliSelectionEnabled && (
+        <TalousarviotiliSelect
+          isDisabled={!allowHakemusStateChanges}
+          hakemus={hakemus}
+          controller={controller}
+        />
       )}
       <ChooseRahoitusalueAndTalousarviotili
         controller={controller}
@@ -476,3 +486,57 @@ class SummaryComment extends React.Component<
     );
   }
 }
+
+interface TalousarviotiliSelectProps {
+  isDisabled: boolean;
+  controller: HakemustenArviointiController;
+  hakemus: Hakemus;
+}
+
+const TalousarviotiliSelect = ({
+  isDisabled,
+  controller,
+  hakemus,
+}: TalousarviotiliSelectProps) => {
+  const tilit = hakemus.talousarviotilit ?? [];
+  const options = tilit.flatMap((tili) => {
+    if (tili.koulutusasteet.length === 0) {
+      return [];
+    }
+    return tili.koulutusasteet.map((aste) => ({
+      value: {
+        talousarviotili: tili.code,
+        rahoitusalue: aste,
+      },
+      label: `${aste} ${tili.code} ${tili.name}`,
+    }));
+  });
+  const value = options.find(
+    ({ value }) =>
+      value.rahoitusalue === hakemus.arvio.rahoitusalue &&
+      value.talousarviotili === hakemus.arvio.talousarviotili
+  );
+  return (
+    <div>
+      <h3>TA-tili *</h3>
+      <Select
+        value={value}
+        options={options}
+        classNamePrefix="tatiliSelection"
+        isOptionDisabled={(option) => option.label === value?.label}
+        onChange={(option) => {
+          if (!option) {
+            return;
+          }
+          controller.setHakemusRahoitusalueAndTalousarviotili({
+            hakemus,
+            rahoitusalue: option.value.rahoitusalue,
+            talousarviotili: option.value.talousarviotili,
+          });
+        }}
+        isDisabled={isDisabled}
+        placeholder="Valitse talousarviotili"
+      />
+    </div>
+  );
+};

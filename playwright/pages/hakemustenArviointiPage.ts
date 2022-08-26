@@ -22,6 +22,7 @@ import {
   defaultBudget,
 } from "../utils/budget";
 import { HakijaAvustusHakuPage } from "./hakijaAvustusHakuPage";
+import { createReactSelectLocators } from "../utils/react-select";
 
 const jatkoaikaSelector = "[data-test-id=muutoshakemus-jatkoaika]" as const;
 
@@ -338,12 +339,19 @@ export class HakemustenArviointiPage {
     ]);
   }
 
-  async acceptAvustushaku(
-    avustushakuID: number,
-    projectName: string,
-    budget: AcceptedBudget = "100000",
-    rahoitusalue = "Ammatillinen koulutus"
-  ) {
+  async acceptAvustushaku({
+    avustushakuID,
+    projectName,
+    budget = "100000",
+    rahoitusalue = "Ammatillinen koulutus",
+    legacyRahoitusalue,
+  }: {
+    avustushakuID: number;
+    projectName: string;
+    budget?: AcceptedBudget;
+    rahoitusalue?: string;
+    legacyRahoitusalue?: string;
+  }) {
     // Accept the hakemus
     await this.selectHakemusFromList(projectName);
     const hakemusID = await this.getHakemusID();
@@ -364,7 +372,14 @@ export class HakemustenArviointiPage {
     expectToBeDefined(hakemusID);
     console.log("Hakemus ID:", hakemusID);
 
-    await this.page.click(`label:has-text("${rahoitusalue}")`);
+    if (legacyRahoitusalue) {
+      await this.page.click(`label:has-text("${rahoitusalue}")`);
+    } else {
+      const { taTili } = this.arviointiTabLocators();
+      await taTili.input.fill(rahoitusalue);
+      await this.page.keyboard.press("ArrowDown");
+      await this.page.keyboard.press("Enter");
+    }
 
     await this.acceptHakemus(budget);
     await this.waitForArvioSave(avustushakuID, hakemusID);
@@ -733,6 +748,7 @@ export class HakemustenArviointiPage {
   }
 
   arviointiTabLocators() {
+    const arviointiTab = this.page.locator("#arviointi-tab");
     return {
       resendPaatokset: this.page.locator(
         'text="Lähetä päätössähköposti uudestaan"'
@@ -747,6 +763,7 @@ export class HakemustenArviointiPage {
           .locator(".single-comment")
           .locator("div"),
       },
+      taTili: createReactSelectLocators(arviointiTab, "tatiliSelection"),
     };
   }
 

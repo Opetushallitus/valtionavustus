@@ -22,10 +22,10 @@ const testSendingPaatos = async ({
 }: TestArgs) => {
   const hakemustenArviointiPage = new HakemustenArviointiPage(page);
   await hakemustenArviointiPage.navigate(avustushakuID);
-  const hakemusID = await hakemustenArviointiPage.acceptAvustushaku(
+  const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
     avustushakuID,
-    answers.projectName
-  );
+    projectName: answers.projectName,
+  });
   const hakujenHallintaPage = new HakujenHallintaPage(page);
   await hakujenHallintaPage.navigateFromHeader();
   await hakujenHallintaPage.resolveAvustushaku();

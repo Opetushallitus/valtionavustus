@@ -1,11 +1,7 @@
-import { randomBytes } from "crypto";
+import { randomBytes, randomInt } from "crypto";
 
 export function randomString(): string {
   return randomBytes(8).toString("hex");
-}
-
-function randomInt(min: number, max: number): number {
-  return min + Math.ceil(Math.random() * (max - min));
 }
 
 export function randomAsiatunnus(): string {

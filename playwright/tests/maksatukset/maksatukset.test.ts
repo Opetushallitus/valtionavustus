@@ -94,7 +94,15 @@ async function testPaymentBatchesTable(page: Page) {
   expect(await sentPayments(3).getAcceptorEmail()).toEqual(acceptor);
 }
 
-async function testSentPaymentsTable(page: Page, registerNumber: string) {
+const withoutDots = (tatili: string) => tatili.replaceAll(".", "");
+
+async function testSentPaymentsTable(
+  page: Page,
+  {
+    registerNumber,
+    talousarviotili,
+  }: { registerNumber: string; talousarviotili: string }
+) {
   const maksatuksetPage = MaksatuksetPage(page);
   const sentPayments = await maksatuksetPage.clickLahetetytMaksatuksetTab();
 
@@ -116,7 +124,9 @@ async function testSentPaymentsTable(page: Page, registerNumber: string) {
   expect(await sentPayments(3).getMaksuun()).toEqual("10000 €");
   expect(await sentPayments(1).getIBAN()).toEqual("FI95 6682 9530 0087 65");
   expect(await sentPayments(2).getLKPT()).toEqual("82010000");
-  expect(await sentPayments(3).getTAKP()).toEqual("29103020");
+  await expect(sentPayments(3).getTAKP()).toHaveText(
+    withoutDots(talousarviotili)
+  );
   expect(await sentPayments(1).getTiliöinti()).toEqual("59999 €");
   expect(await sentPayments(2).getTiliöinti()).toEqual("30000 €");
   expect(await sentPayments(3).getTiliöinti()).toEqual("10000 €");
@@ -130,6 +140,7 @@ test.describe.parallel("Maksatukset", () => {
       avustushakuID,
       avustushakuName,
       acceptedHakemus: { hakemusID },
+      talousarviotili,
     }) => {
       const valiselvitysPage = VirkailijaValiselvitysPage(page);
 
@@ -164,7 +175,10 @@ test.describe.parallel("Maksatukset", () => {
       await maksatuksetPage.fillMaksueranTiedotAndSendMaksatukset();
 
       await testPaymentBatchesTable(page);
-      await testSentPaymentsTable(page, registerNumber);
+      await testSentPaymentsTable(page, {
+        registerNumber,
+        talousarviotili: talousarviotili.code,
+      });
     }
   );
 
@@ -175,6 +189,7 @@ test.describe.parallel("Maksatukset", () => {
       avustushakuName,
       acceptedHakemus: { hakemusID },
       codes: codeValues,
+      talousarviotili,
     }) => {
       const maksatuksetPage = MaksatuksetPage(page);
       await maksatuksetPage.goto(avustushakuName);
@@ -201,7 +216,8 @@ test.describe.parallel("Maksatukset", () => {
         "FI95 6682 9530 0087 65"
       );
       expect(await paymentBatches(1).getLKPT()).toEqual("82010000");
-      expect(await paymentBatches(1).getTAKP()).toEqual("29103020");
+      const tatili = withoutDots(talousarviotili.code);
+      await expect(paymentBatches(1).getTAKP()).toHaveText(tatili);
       expect(await paymentBatches(1).getTiliöinti()).toEqual(maksuun);
 
       await putMaksupalauteToMaksatuspalveluAndProcessIt(`
@@ -221,15 +237,16 @@ test.describe.parallel("Maksatukset", () => {
       const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu();
 
       expect(maksatukset).toContainEqual(
-        maksatuksetPage.getExpectedPaymentXML(
-          codeValues.project[1],
-          codeValues.operation,
-          codeValues.operationalUnit,
+        maksatuksetPage.getExpectedPaymentXML({
+          projekti: codeValues.project[1],
+          toiminto: codeValues.operation,
+          toimintayksikko: codeValues.operationalUnit,
           pitkaviite,
-          `${registerNumber}_1`,
+          invoiceNumber: `${registerNumber}_1`,
           dueDate,
-          "00372769790122"
-        )
+          ovt: "00372769790122",
+          talousarviotili: tatili,
+        })
       );
     }
   );
@@ -239,6 +256,7 @@ test.describe.parallel("Maksatukset", () => {
     avustushakuID,
     avustushakuName,
     acceptedHakemus: { hakemusID },
+    talousarviotili,
   }) => {
     const maksatuksetPage = MaksatuksetPage(page);
     await maksatuksetPage.goto(avustushakuName);
@@ -270,7 +288,9 @@ test.describe.parallel("Maksatukset", () => {
     expect(await sentPayments(1).getMaksuun()).toEqual(maksuun);
     expect(await sentPayments(1).getIBAN()).toEqual("FI95 6682 9530 0087 65");
     expect(await sentPayments(1).getLKPT()).toEqual("82010000");
-    expect(await sentPayments(1).getTAKP()).toEqual("29103020");
+    await expect(sentPayments(1).getTAKP()).toHaveText(
+      withoutDots(talousarviotili.code)
+    );
     expect(await sentPayments(1).getTiliöinti()).toEqual(maksuun);
 
     await putMaksupalauteToMaksatuspalveluAndProcessIt(`
@@ -293,6 +313,7 @@ test.describe.parallel("Maksatukset", () => {
     avustushakuName,
     acceptedHakemus: { hakemusID },
     codes: { project, operation, operationalUnit },
+    talousarviotili,
   }) => {
     const maksatuksetPage = MaksatuksetPage(page);
     await maksatuksetPage.goto(avustushakuName);
@@ -315,7 +336,8 @@ test.describe.parallel("Maksatukset", () => {
     expect(await sentPayments(1).getMaksuun()).toEqual(maksuun);
     expect(await sentPayments(1).getIBAN()).toEqual("FI95 6682 9530 0087 65");
     expect(await sentPayments(1).getLKPT()).toEqual("82010000");
-    expect(await sentPayments(1).getTAKP()).toEqual("29103020");
+    const tatili = withoutDots(talousarviotili.code);
+    await expect(sentPayments(1).getTAKP()).toHaveText(tatili);
     expect(await sentPayments(1).getTiliöinti()).toEqual(maksuun);
 
     await putMaksupalauteToMaksatuspalveluAndProcessIt(`
@@ -336,14 +358,15 @@ test.describe.parallel("Maksatukset", () => {
 
     const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu();
     expect(maksatukset).toContainEqual(
-      maksatuksetPage.getExpectedPaymentXML(
-        project[1],
-        operation,
-        operationalUnit,
+      maksatuksetPage.getExpectedPaymentXML({
+        projekti: project[1],
+        toiminto: operation,
+        toimintayksikko: operationalUnit,
         pitkaviite,
-        `${registerNumber}_1`,
-        dueDate
-      )
+        invoiceNumber: `${registerNumber}_1`,
+        dueDate,
+        talousarviotili: tatili,
+      })
     );
   });
 

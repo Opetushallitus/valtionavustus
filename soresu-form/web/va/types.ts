@@ -6,6 +6,7 @@ import {
 import translations from "../../resources/public/translations.json";
 import { ImmutableObject } from "seamless-immutable";
 import { VaCodeValue } from "../../../va-virkailija/web/va/types";
+import { TalousarviotiliWithKoulutusasteet } from "../../../va-virkailija/web/va/hakujenHallinta/hakuReducer";
 
 export const languages = ["fi", "sv"] as const;
 export type Language = typeof languages[number];
@@ -269,6 +270,7 @@ export interface Hakemus {
   "loppuselvitys-taloustarkastanut-name"?: string;
   "loppuselvitys-taloustarkastettu-at"?: string;
   project?: VaCodeValue;
+  talousarviotilit?: TalousarviotiliWithKoulutusasteet[];
 }
 
 export const AVUSTUSHAKU_STATUSES = [

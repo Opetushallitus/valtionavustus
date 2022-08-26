@@ -209,10 +209,10 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
         await test.step("send päätös", async () => {
           const hakemustenArviointiPage = new HakemustenArviointiPage(page);
           await hakemustenArviointiPage.navigate(avustushakuID);
-          const hakemusID = await hakemustenArviointiPage.acceptAvustushaku(
+          const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
             avustushakuID,
-            answers.projectName
-          );
+            projectName: answers.projectName,
+          });
 
           const hakujenHallintaPage = new HakujenHallintaPage(page);
           await hakujenHallintaPage.navigateFromHeader();
