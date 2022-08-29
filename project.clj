@@ -48,8 +48,7 @@
                  [org.apache.xmlgraphics/batik-bridge "1.14" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
                  [org.apache.xmlgraphics/batik-anim "1.14" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
                  [org.apache.xmlgraphics/xmlgraphics-commons "2.6"]
-                 [cider/cider-nrepl]
-                 [org.jsoup/jsoup "1.14.2"]]
+                 [cider/cider-nrepl]]
 
   :profiles {:uberjar {:aot [oph.va.hakija.main oph.va.virkailija.main]}
              :hakija-dev     {:env {:config "va-hakija/config/dev.edn"
