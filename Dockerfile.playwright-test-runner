@@ -2,6 +2,7 @@ FROM mcr.microsoft.com/playwright:v1.17.1-focal
 RUN apt update
 ADD playwright playwright/
 ADD soresu-form soresu-form/
+ADD va-virkailija va-virkailija/
 ADD run_playwright_tests_in_container.sh run_playwright_tests_in_container.sh
 ADD package.json package.json
 ADD package-lock.json package-lock.json
