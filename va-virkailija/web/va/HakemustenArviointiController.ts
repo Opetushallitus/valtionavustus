@@ -1307,7 +1307,7 @@ export default class HakemustenArviointiController {
     const availableRahoitusalueet = avustushaku.content.rahoitusalueet;
     const hakemusArvio = state.selectedHakemus?.arvio;
     const usesOldImplementationOfTalousarviotilit =
-      !!avustushaku.content.rahoitusalueet;
+      !!avustushaku.content.rahoitusalueet?.length;
 
     if (usesOldImplementationOfTalousarviotilit) {
       const selectedRahoitusalue =
