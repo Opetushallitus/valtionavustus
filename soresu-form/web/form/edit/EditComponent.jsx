@@ -7,6 +7,7 @@ import FormEditorController from "./FormEditController";
 import SyntaxValidator from "../SyntaxValidator";
 import { isNumeric } from "../../MathUtil";
 import { addableFields } from "soresu-form/web/va/types";
+import FormUtil from "soresu-form/web/form/FormUtil";
 
 const hiddenFields = ["theme", "growingFieldsetChild", "fieldset"];
 
@@ -464,17 +465,23 @@ export class MultipleChoiceEdit extends FieldEditComponent {
 
   renderOption(field, option) {
     const indexOfOption = _.indexOf(field.options, option);
-    const labelGetter = (f) => f.options[indexOfOption].label;
-    const valueGetter = (f) => f.options[indexOfOption];
     const createOnChange = (lang) => {
       return (e) => {
-        this.fieldValueUpdater(labelGetter, lang)(e);
-        if (lang === "fi") {
-          this.fieldValueUpdater(valueGetter, "value", slug(e.target.value))(e);
-        }
+        this.props.formEditorController.editFormDraft((form) => {
+          const fieldFromJson = FormUtil.findField(
+            form.content,
+            this.props.field.id
+          );
+          fieldFromJson.options[indexOfOption].label[lang] = e.target.value;
+          if (lang === "fi") {
+            fieldFromJson.options[indexOfOption].value = slug(e.target.value);
+          }
+          return form;
+        });
       };
     };
 
+    const { fi, sv } = field.options[indexOfOption].label;
     const title = "Vastausvaihtoehto " + (indexOfOption + 1);
     return (
       <div
@@ -486,13 +493,13 @@ export class MultipleChoiceEdit extends FieldEditComponent {
           type="text"
           placeholder="Vastausvaihtoehto"
           onChange={createOnChange("fi")}
-          value={labelGetter(field).fi}
+          value={fi}
         />
         <input
           type="text"
           placeholder="Vastausvaihtoehto ruotsiksi"
           onChange={createOnChange("sv")}
-          value={labelGetter(field).sv}
+          value={sv}
         />
         <button
           onClick={this.removeOption.bind(this, field, option)}

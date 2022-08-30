@@ -36,6 +36,12 @@ export default class FormEditorController {
     }
   }
 
+  editFormDraft(editFunction: (form: Form) => Form) {
+    this.doEdit(() => {
+      this.formDraft = editFunction(this.formDraft);
+    });
+  }
+
   editField(
     fieldId: string,
     valueContainerGetter: (s: Field | null) => Field,
