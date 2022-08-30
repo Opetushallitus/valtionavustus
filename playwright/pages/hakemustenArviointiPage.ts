@@ -333,10 +333,8 @@ export class HakemustenArviointiPage {
   }
 
   async selectHakemusFromList(projectName: string) {
-    await Promise.all([
-      this.page.waitForNavigation(),
-      this.page.click(`text=${projectName}`),
-    ]);
+    await this.page.click(`text=${projectName}`);
+    await this.page.waitForLoadState("networkidle");
   }
 
   async acceptAvustushaku({
