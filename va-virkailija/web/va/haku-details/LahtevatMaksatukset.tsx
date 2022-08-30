@@ -198,6 +198,7 @@ export const LahtevatMaksatukset = ({
           <div className="maksatukset_documents">
             {phases.map((p) => (
               <DocumentEditor
+                key={`phase-${p}`}
                 avustushaku={avustushaku}
                 documents={documents}
                 helpTexts={helpTexts}
