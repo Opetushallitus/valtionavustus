@@ -281,18 +281,14 @@ export class HakujenHallintaPage {
 
   async navigateFromHeader() {
     await Promise.all([
-      expect(this.loadingAvustushaku).toBeVisible(),
+      this.page.waitForNavigation({ waitUntil: "networkidle" }),
       this.page.locator(`text="Hakujen hallinta"`).click(),
     ]);
-    await expect(this.loadingAvustushaku).toBeHidden();
   }
 
   async navigateTo(path: string) {
-    await Promise.all([
-      expect(this.loadingAvustushaku).toBeVisible(),
-      navigate(this.page, path),
-    ]);
-    await expect(this.loadingAvustushaku).toBeHidden();
+    await navigate(this.page, path);
+    await this.page.waitForLoadState("networkidle");
   }
 
   async navigate(avustushakuID: number) {
