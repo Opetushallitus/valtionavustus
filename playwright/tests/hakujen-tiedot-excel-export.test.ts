@@ -28,7 +28,7 @@ muutoshakemusTest.use({
 
 muutoshakemusTest(
   "Excel export of all hakus",
-  async ({ page, userCache, hakuProps, avustushakuID }) => {
+  async ({ page, userCache, hakuProps, avustushakuID, talousarviotili }) => {
     expectToBeDefined(userCache);
     expectToBeDefined(avustushakuID);
     const [download] = await Promise.all([
@@ -49,7 +49,7 @@ muutoshakemusTest(
     expect(columnValue("Avustuksen nimi")).toEqual(hakuProps.avustushakuName);
     expect(columnValue("Avustuslaji")).toEqual("erityisavustus");
     expect(columnValue("Koulutusaste 1")).toEqual("Ammatillinen koulutus");
-    expect(columnValue("TA-tilit 1")).toEqual("29.10.30.20");
+    expect(columnValue("TA-tilit 1")).toEqual(talousarviotili.code);
     expect(columnValue("Raportointivelvoite 1")).toEqual(
       "Muu raportti: VA-260-1, 12.12.2022"
     );

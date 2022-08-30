@@ -75,12 +75,39 @@ lainsaadanto_str AS (
   JOIN avustushaku_lainsaadanto al USING (avustushaku_id)
   JOIN lainsaadanto l ON al.lainsaadanto_id = l.id
   GROUP BY avustushaku_id
+),
+talousarviotili AS (
+  SELECT
+      avustushaku_id,
+      jsonb_agg(
+          jsonb_build_object(
+              'rahoitusalue',
+              koulutusaste,
+              'talousarviotilit',
+              tilit
+          )
+      ) as tilit
+  FROM (
+      SELECT
+          avustushaku_id,
+          jsonb_array_elements(koulutusasteet) as koulutusaste,
+          jsonb_agg(t.code) as tilit
+      FROM virkailija.avustushaku_talousarviotilit at
+      JOIN virkailija.talousarviotilit t ON talousarviotili_id = t.id
+      JOIN hakija.avustushaut a ON at.avustushaku_id = a.id
+      GROUP BY koulutusaste, avustushaku_id
+  ) as rahoitusaluetilit
+  GROUP BY avustushaku_id
 )
 SELECT
   avustushaku.id AS avustushaku_id,
   avustushaku.register_number AS asiatunnus,
   avustushaku.content->'name'->>'fi' AS avustushaku_name,
-  avustushaku.content->'rahoitusalueet' as koulutusasteet,
+  CASE
+      WHEN avustushaku.content->'rahoitusalueet' IS NULL THEN talousarviotili.tilit
+      WHEN jsonb_array_length(avustushaku.content->'rahoitusalueet') = 0 THEN talousarviotili.tilit
+      ELSE avustushaku.content->'rahoitusalueet'
+  END as koulutusasteet,
   raportointivelvoitteet,
   lainsaadanto,
   avustushaku.haku_type AS avustuslaji,
@@ -124,6 +151,7 @@ LEFT JOIN lainsaadanto_str USING (avustushaku_id)
 LEFT JOIN virkailija.va_code_values projekti ON projekti.id = avustushaku.project_id
 LEFT JOIN virkailija.va_code_values toimintayksikko ON toimintayksikko.id = avustushaku.operational_unit_id
 LEFT JOIN virkailija.va_code_values toiminto ON toiminto.id = avustushaku.operation_id
+LEFT JOIN talousarviotili USING (avustushaku_id)
 ORDER BY avustushaku.id DESC
 ")
 
