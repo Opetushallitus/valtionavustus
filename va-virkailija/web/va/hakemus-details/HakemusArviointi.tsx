@@ -104,6 +104,7 @@ export const HakemusArviointi = ({
           isDisabled={!allowHakemusStateChanges}
           hakemus={hakemus}
           controller={controller}
+          helpText={helpTexts["hankkeen_sivu__arviointi___talousarviotili"]}
         />
       )}
       <ChooseRahoitusalueAndTalousarviotili
@@ -491,12 +492,14 @@ interface TalousarviotiliSelectProps {
   isDisabled: boolean;
   controller: HakemustenArviointiController;
   hakemus: Hakemus;
+  helpText: string;
 }
 
 const TalousarviotiliSelect = ({
   isDisabled,
   controller,
   hakemus,
+  helpText,
 }: TalousarviotiliSelectProps) => {
   const tilit = hakemus.talousarviotilit ?? [];
   const options = tilit.flatMap((tili) => {
@@ -518,7 +521,15 @@ const TalousarviotiliSelect = ({
   );
   return (
     <div>
-      <h3>TA-tili *</h3>
+      <h3>
+        TA-tili{" "}
+        <HelpTooltip
+          testId={"tooltip-talousarviotili"}
+          content={helpText}
+          direction={"arviointi-slim"}
+        />
+        &nbsp;*
+      </h3>
       <Select
         value={value}
         options={options}

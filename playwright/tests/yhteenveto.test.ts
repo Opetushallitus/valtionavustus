@@ -79,10 +79,10 @@ const test = muutoshakemusTest.extend<{
     await hakemustenArviointiPage.navigate(avustushakuID);
     const hakemusID1 = await hakemustenArviointiPage.acceptAvustushaku({
       avustushakuID,
-      projectName: answers.projectName,
+      projectName: pyorijatAnswers.projectName,
       budget: "10000",
     });
-    await hakemustenArviointiPage.navigate(avustushakuID);
+    await hakemustenArviointiPage.page.click("#close-hakemus-button");
     const hakemusID2 = await hakemustenArviointiPage.acceptAvustushaku({
       avustushakuID,
       projectName: answers.projectName,

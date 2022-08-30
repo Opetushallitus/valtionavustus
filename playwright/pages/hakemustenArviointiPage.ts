@@ -364,7 +364,6 @@ export class HakemustenArviointiPage {
         )
         .click({ force: true });
     };
-
     await selectFirstAvailableProjectAsDefault();
 
     expectToBeDefined(hakemusID);
@@ -378,6 +377,7 @@ export class HakemustenArviointiPage {
       await this.page.keyboard.press("ArrowDown");
       await this.page.keyboard.press("Enter");
     }
+    await this.waitForSave();
 
     await this.acceptHakemus(budget);
     await this.waitForArvioSave(avustushakuID, hakemusID);

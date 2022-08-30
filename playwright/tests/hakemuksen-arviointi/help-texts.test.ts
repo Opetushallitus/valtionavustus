@@ -175,11 +175,6 @@ test("help texts", async ({
 
     for (const [name, selector, hoverText] of [
       [
-        "Koulutusaste",
-        '[data-test-id="tooltip-koulutusaste"]',
-        "Valitse hankkeelle koulutusaste, johon hanke kohdistuu. Valittavissa olevat koulutusasteet on tuotu automaattisesti Haun tiedot -välilehdeltä. Valtionavustuksen vastuuvalmistelija vastaa siitä, että kaikille myönteisen avustuspäätöksen saaville hankkeille on ennen päätösten hyväksymistä valittu oikea koulutusaste",
-      ],
-      [
         "Talousarviotili",
         '[data-test-id="tooltip-talousarviotili"]',
         "Valitse hankkeelle talousarviotili, jolta avustus maksetaan. Valittavissa olevat talousarviotilit on tuotu automaattisesti Haun tiedot -välilehdeltä. Valtionavustuksen vastuuvalmistelija vastaa siitä, että kaikille myönteisen avustuspäätöksen saaville hankkeille on ennen päätösten hyväksymistä valittu oikea talousarviotili",
