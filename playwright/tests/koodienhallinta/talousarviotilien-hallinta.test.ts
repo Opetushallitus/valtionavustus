@@ -2,6 +2,10 @@ import { expect } from "@playwright/test";
 import { defaultValues } from "../../fixtures/defaultValues";
 import { KoodienhallintaPage } from "../../pages/koodienHallintaPage";
 import { randomString } from "../../utils/random";
+import { muutoshakemusTest } from "../../fixtures/muutoshakemusTest";
+import { expectToBeDefined } from "../../utils/util";
+import { VIRKAILIJA_URL } from "../../utils/constants";
+import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 
 const expectNoErrors = async (
   koodienhallintaPage: ReturnType<typeof KoodienhallintaPage>
@@ -51,10 +55,11 @@ test.describe.parallel("talousarviotilien hallinta", () => {
       await expect(row).toBeVisible();
     });
     await test.step("correct values in row", async () => {
-      await expect(row.locator(`input:has-text("${name}")`));
-      await expect(row.locator(`input:has-text("${year}")`));
-      await expect(row.locator(`input:has-text("${code}")`));
-      await expect(row.locator(`input:has-text("${amount}")`));
+      const rowInput = row.locator("input");
+      await expect(rowInput.nth(0)).toHaveValue(year);
+      await expect(rowInput.nth(1)).toHaveValue(code);
+      await expect(rowInput.nth(2)).toHaveValue(name);
+      await expect(rowInput.nth(3)).toHaveValue(amount);
     });
     await test.step("form is reset after creation", async () => {
       await expect(taForm.year.input).toContainText("");
@@ -211,4 +216,72 @@ test.describe.parallel("talousarviotilien hallinta", () => {
     await taForm.year.input.evaluate((e) => e.blur());
     await expectNoErrors(koodienhallintaPage);
   });
+  muutoshakemusTest(
+    "tili that is in use cannot be deleted",
+    async ({ page, avustushakuID, talousarviotili, hakuProps }) => {
+      expectToBeDefined(avustushakuID);
+      const koodienhallintaPage = KoodienhallintaPage(page);
+      await koodienhallintaPage.navigate();
+      await koodienhallintaPage.switchToTatilitTab();
+      const row = await koodienhallintaPage.page.locator(
+        `[data-test-id="${talousarviotili.name}"]`
+      );
+      const deleteRowButton = row.locator(
+        `button[title="Poista talousarviotili ${talousarviotili.code}"]`
+      );
+      await test.step("delete button is disabled", async () => {
+        await expect(row).toBeVisible();
+        await expect(deleteRowButton).toBeDisabled();
+      });
+      const deleteRequest = () =>
+        page.request.delete(
+          `${VIRKAILIJA_URL}/api/talousarviotilit/${talousarviotili.id}/`
+        );
+      await test.step(
+        "even trying to delete without button fails",
+        async () => {
+          await expect(await deleteRequest()).not.toBeOK();
+        }
+      );
+      await test.step(
+        "navigate to avustushaku from where its used",
+        async () => {
+          await row.locator("button").locator("text=1 avustuksessa").click();
+          await row
+            .locator("a")
+            .locator(`text="${hakuProps.avustushakuName}"`)
+            .click();
+        }
+      );
+      await test.step(
+        "after removing talousarviotili its allowed to be deleted",
+        async () => {
+          const hakujenHallintaPage = new HakujenHallintaPage(page);
+          await hakujenHallintaPage
+            .hauntiedotLocators()
+            .taTili.tili(0)
+            .removeTiliBtn.click();
+          await hakujenHallintaPage.waitForSave();
+          await koodienhallintaPage.navigate();
+          await koodienhallintaPage.switchToTatilitTab();
+          await expect(
+            koodienhallintaPage.taTilit.form.submitBtn
+          ).toBeVisible();
+          await expect(row).toBeVisible();
+          await expect(deleteRowButton).toBeEnabled();
+        }
+      );
+      await test.step(
+        "delete through api to make sure the earlier api call actually did what it was supposed to",
+        async () => {
+          await expect(await deleteRequest()).toBeOK();
+          await koodienhallintaPage.page.reload();
+          await expect(
+            koodienhallintaPage.taTilit.form.submitBtn
+          ).toBeVisible();
+          await expect(row).toBeHidden();
+        }
+      );
+    }
+  );
 });

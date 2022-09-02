@@ -10,7 +10,7 @@ import {
   TalousarviotiliWithKoulutusasteet,
 } from "../hakujenHallinta/hakuReducer";
 import { useGetTalousarvioTilitQuery } from "../hakujenHallinta/hakuApiSlice";
-import { Talousarviotili } from "../koodienhallinta/types";
+import { TalousarviotiliWithUsageInfo } from "../koodienhallinta/types";
 import HelpTooltip from "../HelpTooltip";
 
 import styles from "./Talousarviotilit.module.less";
@@ -54,7 +54,12 @@ interface Option {
   label: string;
 }
 
-const mapTiliOption = ({ id, code, name, year }: Talousarviotili): Option => {
+const mapTiliOption = ({
+  id,
+  code,
+  name,
+  year,
+}: TalousarviotiliWithUsageInfo): Option => {
   return {
     value: `${id}`,
     label: `${code} ${name} (${year})`,

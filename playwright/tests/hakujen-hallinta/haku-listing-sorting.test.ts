@@ -47,7 +47,7 @@ const test = selvitysTest.extend<{
     await use(secondHakuProps);
   },
   hakujenHallintaPage: async (
-    { secondHakuProps, avustushakuID, avustushakuName, page, environment },
+    { secondHakuProps, avustushakuID, avustushakuName, page },
     use
   ) => {
     expectToBeDefined(secondHakuProps);

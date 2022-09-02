@@ -8,13 +8,12 @@ import { randomAsiatunnus, randomString } from "../utils/random";
 import { Answers, VaCodeValues } from "../utils/types";
 import { expectToBeDefined, switchUserIdentityTo } from "../utils/util";
 import { EnvironmentApiResponse } from "../../soresu-form/web/va/types/environment";
-import axios from "axios";
-import { CreateTalousarvioTili } from "../../va-virkailija/web/va/koodienhallinta/types";
+import { Talousarviotili } from "../../va-virkailija/web/va/koodienhallinta/types";
 import { randomInt } from "crypto";
 
 export type DefaultValueFixtures = {
   codes: VaCodeValues;
-  talousarviotili: CreateTalousarvioTili;
+  talousarviotili: Talousarviotili;
   randomName: string;
   avustushakuName: string;
   hakuProps: HakuProps;
@@ -28,7 +27,7 @@ export type DefaultValueFixtures = {
 type WorkerScopedDefaultValueFixtures = {
   defaultCodes: {
     codes: VaCodeValues;
-    tatili: CreateTalousarvioTili;
+    tatili: Talousarviotili;
   };
 };
 
@@ -52,6 +51,7 @@ const workerScopedDefaultValues = test.extend<
         code: `29.10.30.20.${randomInt(0, 1000)}.${randomInt(0, 1000)}`,
         amount: 420,
       };
+      let createdCode: Talousarviotili;
       await test.step("create talousarviotili", async () => {
         await koodienHallintaPage.switchToTatilitTab();
         const row = await koodienHallintaPage.page.locator(
@@ -62,12 +62,18 @@ const workerScopedDefaultValues = test.extend<
         await taForm.code.input.fill(tatili.code);
         await taForm.name.input.fill(tatili.name);
         await taForm.amount.input.fill(String(tatili.amount));
-        await taForm.submitBtn.click();
+        const [res] = await Promise.all([
+          page.waitForResponse(`${VIRKAILIJA_URL}/api/talousarviotilit/`),
+          taForm.submitBtn.click(),
+        ]);
+        createdCode = await res.json();
+        const { id, ...rest } = createdCode;
+        expect(rest).toEqual(tatili);
         await expect(row).toBeVisible();
       });
       await page.close();
       expectToBeDefined(codes);
-      await use({ codes, tatili });
+      await use({ codes, tatili: createdCode! });
     },
     { scope: "worker" },
   ],
@@ -78,7 +84,7 @@ export const defaultValues =
     answers,
     swedishAnswers,
     codes: async ({ defaultCodes }, use) => {
-      use(defaultCodes.codes);
+      await use(defaultCodes.codes);
     },
     talousarviotili: async ({ defaultCodes }, use) => {
       await use(defaultCodes.tatili);
@@ -87,11 +93,11 @@ export const defaultValues =
       const randomName = randomString();
       await use(randomName);
     },
-    environment: async ({}, use) => {
-      const res = await axios.get<EnvironmentApiResponse>(
-        `${VIRKAILIJA_URL}/environment`
-      );
-      await use(res.data);
+    environment: async ({ page }, use) => {
+      const res = await page.request.get(`${VIRKAILIJA_URL}/environment`);
+      await expect(res).toBeOK();
+      const environment = await res.json();
+      await use(environment);
     },
     avustushakuName: async ({ randomName }, use, testInfo) => {
       await use(
@@ -100,12 +106,12 @@ export const defaultValues =
         ).format("YYYY-MM-DD hh:mm:ss:SSSS")}`
       );
     },
-    hakuProps: (
+    hakuProps: async (
       { codes, talousarviotili, avustushakuName, randomName },
       use
     ) => {
       const nextYear = new Date().getFullYear() + 1;
-      use({
+      await use({
         avustushakuName,
         randomName,
         hakuaikaStart: parseDate("1.1.1970 0.00"),
@@ -150,9 +156,13 @@ export const defaultValues =
             privileges: ["va-user"],
           },
         ];
-        await page.request.post(`${VIRKAILIJA_URL}/api/test/user-cache`, {
-          data: users,
-        });
+        const response = await page.request.post(
+          `${VIRKAILIJA_URL}/api/test/user-cache`,
+          {
+            data: users,
+          }
+        );
+        await expect(response).toBeOK();
       });
       await use({});
     },

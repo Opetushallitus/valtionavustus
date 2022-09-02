@@ -13,7 +13,7 @@ import {
 import { VIRKAILIJA_URL } from "../utils/constants";
 import { VaCodeValues, Field } from "../utils/types";
 import { addFieldsToHakemusJson } from "../utils/hakemus-json";
-import { CreateTalousarvioTili } from "../../va-virkailija/web/va/koodienhallinta/types";
+import { CreateTalousarviotili } from "../../va-virkailija/web/va/koodienhallinta/types";
 import { createReactSelectLocators } from "../utils/react-select";
 
 interface Rahoitusalue {
@@ -45,7 +45,7 @@ export interface HakuProps {
   jaossaOlevaSumma?: number;
   installment?: Installment;
   legacyRahoitusalueet?: Rahoitusalue[];
-  talousarviotili: CreateTalousarvioTili;
+  talousarviotili: CreateTalousarviotili;
 }
 
 export enum Installment {
@@ -306,7 +306,9 @@ export class HakujenHallintaPage {
     const listItemSelector = await this.page.locator(
       `[data-test-id="${avustushakuName}"]`
     );
+    await expect(this.loadingAvustushaku).toBeHidden();
     await Promise.all([
+      this.page.waitForNavigation(),
       expect(this.loadingAvustushaku).toBeVisible(),
       listItemSelector.click(),
     ]);
@@ -522,6 +524,7 @@ export class HakujenHallintaPage {
     await this.navigateToDefaultAvustushaku();
     await expect(this.loadingAvustushaku).toBeHidden();
     await Promise.all([
+      this.page.waitForNavigation(),
       expect(this.loadingAvustushaku).toBeVisible(),
       this.page
         .locator('[data-test-id="Yleisavustus - esimerkkihaku"]')

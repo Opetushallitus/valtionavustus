@@ -39,9 +39,10 @@ import {
   parseFinnishTimestamp,
 } from "soresu-form/web/va/i18n/dateformat";
 import { HakujenHallintaRootState } from "./hakujenHallintaStore";
-import { Talousarviotili } from "../koodienhallinta/types";
+import { TalousarviotiliWithUsageInfo } from "../koodienhallinta/types";
 
-export interface TalousarviotiliWithKoulutusasteet extends Talousarviotili {
+export interface TalousarviotiliWithKoulutusasteet
+  extends TalousarviotiliWithUsageInfo {
   koulutusasteet: string[];
 }
 
@@ -210,10 +211,12 @@ export const replaceTalousarviotilit = createAsyncThunk<
   ): tili is TalousarviotiliWithKoulutusasteet => tili !== undefined;
   await HttpUtil.post(
     `/api/avustushaku/${payload.avustushakuId}/talousarviotilit`,
-    payload.talousarviotilit.filter(removeEmptyTalousarviot).map((tili) => ({
-      ...tili,
-      koulutusasteet: tili.koulutusasteet.filter(removeEmptyKoulutusasteet),
-    }))
+    payload.talousarviotilit
+      .filter(removeEmptyTalousarviot)
+      .map(({ avustushaut, koulutusasteet, ...rest }) => ({
+        ...rest,
+        koulutusasteet: koulutusasteet.filter(removeEmptyKoulutusasteet),
+      }))
   );
 });
 

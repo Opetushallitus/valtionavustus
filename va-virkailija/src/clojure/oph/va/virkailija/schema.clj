@@ -519,9 +519,19 @@
   :amount s/Int
  })
 
+(s/defschema TalousarvioAvustushaku
+  {
+    :id s/Int
+    :name s/Str})
+
 (s/defschema Talousarviotili
   (assoc CreateTalousarviotili
         :id s/Int))
+
+(s/defschema VaCodesTalousarviotili
+  (assoc Talousarviotili
+         :avustushaut [TalousarvioAvustushaku]
+         ))
 
 (s/defschema AvustushakuTalousarviotili
   (assoc Talousarviotili

@@ -7,8 +7,24 @@
             [oph.va.virkailija.va-code-values-routes :refer [with-admin]]))
 
 (defn- get-talousarviotilit-from-db []
-  (query "SELECT id, year, name, code, amount
-          FROM talousarviotilit" []))
+  (query "
+  SELECT t.*,
+       coalesce(
+           jsonb_agg(
+               jsonb_build_object(
+                   'id',
+                   a.id,
+                   'name',
+                   a.content->'name'->'fi'
+              )
+            ) filter ( where a.id is not null ),
+           '[]'::jsonb
+      ) as avustushaut
+  FROM virkailija.talousarviotilit t
+  LEFT JOIN virkailija.avustushaku_talousarviotilit at ON  at.talousarviotili_id = t.id
+  LEFT JOIN hakija.avustushaut a ON a.id = at.avustushaku_id
+  GROUP BY t.id;
+  " []))
 
 (defn- create-new-talousarviotili [talousarviotili]
   (with-tx (fn [tx]
@@ -25,18 +41,19 @@
   (with-tx (fn [tx]
     (execute! tx "DELETE FROM talousarviotilit WHERE id = ?" [id]))))
 
-;; TODO: check is talousarviotili used in any avustushaku
 (defn- talousarviotili-is-used? [id]
-  (-> (query "SELECT false as used
-              FROM talousarviotilit
-              WHERE id = ?" [id])
+  (-> (query "SELECT EXISTS (
+                SELECT 1
+                FROM virkailija.avustushaku_talousarviotilit at
+                WHERE at.talousarviotili_id = ?
+              ) as used" [id])
       first
       :used))
 
 (defn- get-talousarviotilit []
   (compojure-api/GET
     "/" [:as request]
-    :return [schema/Talousarviotili]
+    :return [schema/VaCodesTalousarviotili]
     :summary "Get all talousarviotilit"
     (ok (get-talousarviotilit-from-db))))
 

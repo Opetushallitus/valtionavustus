@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
-import { Talousarviotili } from "../koodienhallinta/types";
+import { TalousarviotiliWithUsageInfo } from "../koodienhallinta/types";
 
 export const hakuApiSlice = createApi({
   reducerPath: "hakuApiSlice",
   baseQuery: fetchBaseQuery({ baseUrl: "/" }),
   endpoints: (builder) => ({
-    getTalousarvioTilit: builder.query<Talousarviotili[], void>({
+    getTalousarvioTilit: builder.query<TalousarviotiliWithUsageInfo[], void>({
       query: () => `api/talousarviotilit`,
     }),
   }),

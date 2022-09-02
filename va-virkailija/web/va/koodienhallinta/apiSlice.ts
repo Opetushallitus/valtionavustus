@@ -1,6 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 import { UserInfo, VaCodeValue } from "../types";
-import { CreateTalousarvioTili, Talousarviotili, ValueType } from "./types";
+import {
+  CreateTalousarviotili,
+  TalousarviotiliWithUsageInfo,
+  ValueType,
+} from "./types";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 
 const vaCodesTag = "VaCodes";
@@ -71,13 +75,13 @@ export const apiSlice = createApi({
         };
       },
     }),
-    getTalousarvioTilit: builder.query<Talousarviotili[], void>({
+    getTalousarvioTilit: builder.query<TalousarviotiliWithUsageInfo[], void>({
       query: () => "api/talousarviotilit",
       providesTags: [talousarviotilitTag],
     }),
     createTalousarviotili: builder.mutation<
-      Talousarviotili,
-      CreateTalousarvioTili
+      TalousarviotiliWithUsageInfo,
+      CreateTalousarviotili
     >({
       query: (newTalousarviotili) => ({
         url: `api/talousarviotilit/`,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import * as yup from "yup";
 
 import styles from "./TalousarviotilienHallinta.module.less";
@@ -9,7 +9,8 @@ import {
   useGetTalousarvioTilitQuery,
   useRemoveTalousarviotiliMutation,
 } from "./apiSlice";
-import { Talousarviotili } from "./types";
+import { TalousarviotiliWithUsageInfo } from "./types";
+import useOutsideClick from "../useOutsideClick";
 
 const Label = ({ text, labelFor }: { text: string; labelFor: string }) => {
   return (
@@ -126,6 +127,7 @@ const NewTiliRow = () => {
             className={styles.inputEuro}
             error={formik.touched.amount ? formik.errors.amount : undefined}
           />
+          <AvustushautUsingTili avustushaut={[]} />
           <div className={styles.buttonContainer}>
             <button
               className={styles.plusButton}
@@ -140,7 +142,47 @@ const NewTiliRow = () => {
   );
 };
 
-const TiliRow = ({ id, year, code, name, amount }: Talousarviotili) => {
+const AvustushautUsingTili = ({
+  avustushaut,
+}: Pick<TalousarviotiliWithUsageInfo, "avustushaut">) => {
+  const [toggled, toggle] = useState(false);
+  const toggleOpen = useCallback(() => toggle((prevState) => !prevState), []);
+  const ref = useOutsideClick<HTMLDivElement>(toggleOpen);
+  const notInUse = avustushaut.length === 0;
+  const buttonText = notInUse
+    ? "Ei käytössä"
+    : `${avustushaut.length} avustuksessa`;
+  return (
+    <div className={styles.isInUse}>
+      {toggled && (
+        <div className={styles.usedInPopup} ref={ref}>
+          {avustushaut.map(({ id, name }) => {
+            return (
+              <a
+                key={`avustushaku-${id}`}
+                href={`/admin/haku-editor/?avustushaku=${id}`}
+              >
+                {name}
+              </a>
+            );
+          })}
+        </div>
+      )}
+      <button onClick={toggleOpen} disabled={notInUse}>
+        {buttonText}
+      </button>
+    </div>
+  );
+};
+
+const TiliRow = ({
+  id,
+  year,
+  code,
+  name,
+  amount,
+  avustushaut,
+}: TalousarviotiliWithUsageInfo) => {
   const [removeTili, { isLoading }] = useRemoveTalousarviotiliMutation();
   const deleteTili = async () => {
     if (
@@ -155,16 +197,18 @@ const TiliRow = ({ id, year, code, name, amount }: Talousarviotili) => {
       }
     }
   };
+  const tiliInUse = avustushaut.length > 0;
   return (
     <div className={styles.tiliRow} data-test-id={name}>
       <input className={styles.input} value={year} disabled />
       <input className={styles.input} value={code} disabled />
       <input className={styles.input} value={name} disabled />
       <input className={styles.inputEuro} value={amount} disabled />
+      <AvustushautUsingTili avustushaut={avustushaut} />
       <div className={styles.buttonContainer}>
         <button disabled={isLoading} className={styles.plusButton} />
         <button
-          disabled={isLoading}
+          disabled={isLoading || tiliInUse}
           className={styles.minusButton}
           title={`Poista talousarviotili ${code}`}
           onClick={deleteTili}
@@ -183,11 +227,14 @@ export const TalousarviotilienHallinta = () => {
         <Label text="TA-tilin koodi" labelFor="code"></Label>
         <Label text="TA-tilin nimi" labelFor="name"></Label>
         <Label text="TA-tilin euromäärä" labelFor="amount"></Label>
+        <div>
+          <span>Käytössä</span>
+        </div>
       </div>
+      <NewTiliRow />
       {data?.map((tili) => (
         <TiliRow key={tili.id} {...tili} />
       ))}
-      <NewTiliRow />
     </div>
   );
 };
