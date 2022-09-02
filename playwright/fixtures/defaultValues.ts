@@ -67,8 +67,7 @@ const workerScopedDefaultValues = test.extend<
           taForm.submitBtn.click(),
         ]);
         createdCode = await res.json();
-        const { id, ...rest } = createdCode;
-        expect(rest).toEqual(tatili);
+        expect(createdCode).toEqual(expect.objectContaining(tatili));
         await expect(row).toBeVisible();
       });
       await page.close();
