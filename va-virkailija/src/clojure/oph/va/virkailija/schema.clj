@@ -525,8 +525,14 @@
     :name s/Str})
 
 (s/defschema Talousarviotili
-  (assoc CreateTalousarviotili
-        :id s/Int))
+             {
+              :id s/Int
+              :name s/Str
+              :code s/Str
+              :year (s/maybe s/Int)
+              :amount (s/maybe s/Int)
+              :migrated-from-not-normalized-ta-tili s/Bool
+              })
 
 (s/defschema VaCodesTalousarviotili
   (assoc Talousarviotili

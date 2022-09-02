@@ -13,7 +13,7 @@ import {
 import { VIRKAILIJA_URL } from "../utils/constants";
 import { VaCodeValues, Field } from "../utils/types";
 import { addFieldsToHakemusJson } from "../utils/hakemus-json";
-import { CreateTalousarviotili } from "../../va-virkailija/web/va/koodienhallinta/types";
+import { Talousarviotili } from "../../va-virkailija/web/va/koodienhallinta/types";
 import { createReactSelectLocators } from "../utils/react-select";
 
 interface Rahoitusalue {
@@ -45,7 +45,7 @@ export interface HakuProps {
   jaossaOlevaSumma?: number;
   installment?: Installment;
   legacyRahoitusalueet?: Rahoitusalue[];
-  talousarviotili: CreateTalousarviotili;
+  talousarviotili: Talousarviotili;
 }
 
 export enum Installment {

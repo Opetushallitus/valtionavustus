@@ -11,8 +11,13 @@ export interface CreateTalousarviotili {
   amount: number;
 }
 
-export interface Talousarviotili extends CreateTalousarviotili {
+export interface Talousarviotili {
   id: number;
+  year: number | undefined;
+  code: string;
+  name: string;
+  amount: number | undefined;
+  "migrated-from-not-normalized-ta-tili": boolean;
 }
 
 interface AvustushakuInfo {
