@@ -39,7 +39,8 @@ const workerScopedDefaultValues = test.extend<
   defaultCodes: [
     async ({ browser }, use) => {
       let codes: VaCodeValues | null = null;
-      const page = await browser.newPage();
+      const koodienhallintaContext = await browser.newContext();
+      const page = await koodienhallintaContext.newPage();
       await switchUserIdentityTo(page, "valtionavustus");
       const koodienHallintaPage = KoodienhallintaPage(page);
       await test.step("Create koodisto", async () => {
