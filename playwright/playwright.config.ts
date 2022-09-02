@@ -12,7 +12,6 @@ const config: PlaywrightTestConfig = {
   retries,
   workers,
   testDir: "tests",
-  outputDir: "../../playwright-results/test-results",
   timeout: 60000,
   use: {
     actionTimeout: 10000,
@@ -39,7 +38,7 @@ const config: PlaywrightTestConfig = {
     [
       "html",
       {
-        outputFolder: "playwright-results/html-report/",
+        outputFolder: "../playwright-results/html-report/",
         open: "never",
       },
     ],
