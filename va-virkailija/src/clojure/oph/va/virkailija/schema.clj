@@ -527,7 +527,7 @@
 (s/defschema Talousarviotili
              {
               :id s/Int
-              :name s/Str
+              :name (s/maybe s/Str)
               :code s/Str
               :year (s/maybe s/Int)
               :amount (s/maybe s/Int)

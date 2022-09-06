@@ -47,11 +47,11 @@
   (let [result (query tx
       "WITH e AS(
         INSERT INTO talousarviotilit
-          (code, name, migrated_from_not_normalized_ta_tili)
+          (code, migrated_from_not_normalized_ta_tili)
         VALUES
-          (?, ?, true)
+          (?, true)
         ON CONFLICT
-          (code, name) WHERE migrated_from_not_normalized_ta_tili
+          (code) WHERE migrated_from_not_normalized_ta_tili
           DO NOTHING
         RETURNING id
       )
@@ -59,7 +59,7 @@
       UNION
         SELECT id FROM talousarviotilit
         WHERE code=?;"
-      [code, code, code])
+      [code, code])
 
       ta-tili-id (:id (first result))]
       ta-tili-id))
