@@ -60,9 +60,10 @@ const mapTiliOption = ({
   name,
   year,
 }: TalousarviotiliWithUsageInfo): Option => {
+  const yearLabel = Boolean(year) ? `(${year})` : "";
   return {
     value: `${id}`,
-    label: `${code} ${name} (${year})`,
+    label: `${code} ${name ?? ""} ${yearLabel}`,
   };
 };
 
