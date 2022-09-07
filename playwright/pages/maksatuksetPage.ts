@@ -189,28 +189,28 @@ function lahetetytMaksueratTab(page: Page) {
 
     async function getMaksuun(): Promise<string> {
       return await page
-        .locator(`${paymentSelector} >> td >> nth=4`)
+        .locator(`${paymentSelector} >> td >> nth=5`)
         .innerText();
     }
 
     async function getIBAN(): Promise<string> {
       return await page
-        .locator(`${paymentSelector} >> td >> nth=5`)
+        .locator(`${paymentSelector} >> td >> nth=6`)
         .innerText();
     }
 
     async function getLKPT(): Promise<string> {
       return await page
-        .locator(`${paymentSelector} >> td >> nth=6`)
+        .locator(`${paymentSelector} >> td >> nth=7`)
         .innerText();
     }
 
     function getTAKP() {
-      return page.locator(`${paymentSelector} >> td >> nth=7`);
+      return page.locator(`${paymentSelector} >> td >> nth=8`);
     }
     async function getTiliöinti(): Promise<string> {
       return await page
-        .locator(`${paymentSelector} >> td >> nth=8`)
+        .locator(`${paymentSelector} >> td >> nth=9`)
         .innerText();
     }
 
