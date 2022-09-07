@@ -1,4 +1,4 @@
-(ns oph.va.virkailija.oph.va.virkailija.talousarviotilimigration
+(ns oph.va.virkailija.talousarviotili_migration
   (:require [oph.soresu.common.db :refer [query with-tx execute!]]
             [clojure.tools.logging :as log]))
 
@@ -82,8 +82,22 @@
       (normalize-tilit-for-avustushaku tx id rahoitusalue talousarviotilit))))
 
 (defn migrate-non-normalized-ta-tili-to-normalized! []
+  (log/info "Migrating from non-normalized TA-tili to normalized TA-tili")
   (with-tx (fn [tx]
     (let [avustushaut (get-avustushaut-which-have-a-rahoitusalue tx)]
       (doseq [haku avustushaut]
         (normalize-rahoitusalueet-for-avustushaku tx haku)
    )))))
+
+(defn- has-migration-been-completed-successfully []
+  (let [result (query "SELECT EXISTS(SELECT 1 FROM talousarviotilit
+          WHERE migrated_from_not_normalized_ta_tili IS true)", [])]
+    (:exists (first result))))
+
+(defn- should-run-migration [config]
+  (get-in config [:ta-tilit :enabled?]))
+
+(defn run-ta-tili-normalization-migration-if-needed [config]
+  (when (and (should-run-migration config) (not (has-migration-been-completed-successfully)))
+    (migrate-non-normalized-ta-tili-to-normalized!)
+  ))
