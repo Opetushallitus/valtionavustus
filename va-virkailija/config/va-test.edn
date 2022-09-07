@@ -40,4 +40,5 @@
  :integration-healthcheck {:enabled? true
                            :timeout 5000
                            :interval-minutes 15}
+ :ta-tilit {:enabled? true}
  :multiple-project-codes {:enabled? true}}
