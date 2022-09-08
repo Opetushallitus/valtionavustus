@@ -158,59 +158,64 @@ export function MaksatuksetPage(page: Page) {
 function lahetetytMaksueratTab(page: Page) {
   return function maksuerat(phase: 1 | 2 | 3) {
     const tableSelector = `[data-test-id="maksatukset-table-batches"] tbody tr:nth-of-type(${phase})`;
-
-    const paymentSelector = `[data-test-id="maksatukset-table-payments"] .maksatukset_table-container >> nth=${
-      phase - 1
-    } `;
+    const tableRowIndex = phase - 1;
 
     async function getPitkaviite(): Promise<string> {
       return await page
-        .locator(`${paymentSelector} >> td >> nth=0`)
+        .locator("data-test-id=pitkaviite")
+        .nth(tableRowIndex)
         .innerText();
     }
 
     async function getPaymentStatus(): Promise<string> {
       return await page
-        .locator(`${paymentSelector} >> td >> nth=1`)
+        .locator("data-test-id=payment-status")
+        .nth(tableRowIndex)
         .innerText();
     }
 
     async function getToimittaja(): Promise<string> {
       return await page
-        .locator(`${paymentSelector} >> td >> nth=2`)
+        .locator("data-test-id=toimittaja")
+        .nth(tableRowIndex)
         .innerText();
     }
 
     async function getHanke(): Promise<string> {
       return await page
-        .locator(`${paymentSelector} >> td >> nth=3`)
+        .locator("data-test-id=hanke")
+        .nth(tableRowIndex)
         .innerText();
     }
 
     async function getMaksuun(): Promise<string> {
       return await page
-        .locator(`${paymentSelector} >> td >> nth=4`)
+        .locator("data-test-id=maksuun")
+        .nth(tableRowIndex)
         .innerText();
     }
 
     async function getIBAN(): Promise<string> {
       return await page
-        .locator(`${paymentSelector} >> td >> nth=5`)
+        .locator("data-test-id=iban")
+        .nth(tableRowIndex)
         .innerText();
     }
 
     async function getLKPT(): Promise<string> {
       return await page
-        .locator(`${paymentSelector} >> td >> nth=6`)
+        .locator("data-test-id=lkp-tili")
+        .nth(tableRowIndex)
         .innerText();
     }
 
     function getTAKP() {
-      return page.locator(`${paymentSelector} >> td >> nth=7`);
+      return page.locator("data-test-id=takp-tili").nth(tableRowIndex);
     }
     async function getTiliöinti(): Promise<string> {
       return await page
-        .locator(`${paymentSelector} >> td >> nth=8`)
+        .locator("data-test-id=tiliointi")
+        .nth(tableRowIndex)
         .innerText();
     }
 

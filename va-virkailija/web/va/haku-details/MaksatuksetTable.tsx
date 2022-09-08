@@ -147,14 +147,19 @@ const MaksatuksetPhase = ({
                 key={`maksatus-${p.id}`}
                 className={i % 2 === 0 ? "white" : "gray"}
               >
-                <td className="align-right semi-narrow-column">
+                <td
+                  data-test-id={"pitkaviite"}
+                  className="align-right semi-narrow-column"
+                >
                   {p.pitkaviite}
                 </td>
-                <td className="narrow-column">
+                <td data-test-id={"payment-status"} className="narrow-column">
                   {paymentStatusTranslation[p["paymentstatus-id"]]}
                 </td>
-                <td>{p.hakemus?.["organization-name"]}</td>
-                <td>
+                <td data-test-id={`toimittaja`}>
+                  {p.hakemus?.["organization-name"]}
+                </td>
+                <td data-test-id={`hanke`}>
                   <a
                     target="_blank"
                     href={`/avustushaku/${p.hakemus?.["grant-id"]}/hakemus/${p.hakemus?.id}/arviointi`}
@@ -176,19 +181,25 @@ const MaksatuksetPhase = ({
                     )}
                   </td>
                 )}
-                <td className="align-right narrow-column">
+                <td
+                  data-test-id={"maksuun"}
+                  className="align-right narrow-column"
+                >
                   {p["payment-sum"]} €
                 </td>
-                <td className="semi-narrow-column">
+                <td data-test-id={"iban"} className="semi-narrow-column">
                   {p.hakemus?.answers.find((a) => a.key === "bank-iban")?.value}
                 </td>
-                <td className="narrow-column">
+                <td data-test-id={"lkp-tili"} className="narrow-column">
                   {p.hakemus?.["lkp-account"] ?? "LKP-tili puuttuu"}
                 </td>
-                <td className="narrow-column">
+                <td data-test-id={"takp-tili"} className="narrow-column">
                   {p.hakemus?.["takp-account"] ?? "TAKP-tili puuttuu"}
                 </td>
-                <td className="align-right narrow-column">
+                <td
+                  data-test-id={"tiliointi"}
+                  className="align-right narrow-column"
+                >
                   {p["payment-sum"]} €
                 </td>
               </tr>
