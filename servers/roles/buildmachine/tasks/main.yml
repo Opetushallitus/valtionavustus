@@ -18,6 +18,13 @@
   yum: name=java-1.8.0-openjdk-devel
   when: ansible_os_family == 'RedHat'
 
+- name: Install OpenJDK Java 11 (RedHat)
+  yum: name=java-11-openjdk
+  when: ansible_os_family == 'RedHat'
+
+- name: Add systemd override so that Jenkins uses Java 11
+  template: src=jenkins-systemd-override.conf.j2 dest=/etc/systemd/system/jenkins.service.d/override.conf owner=root mode=0644
+
 - name: Disallow jenkins port access in firewall (RedHat)
   lineinfile:
     dest: '{{ iptables_script }}'
