@@ -7,6 +7,8 @@
            FROM avustushaku_talousarviotilit att
            JOIN talousarviotilit tt ON att.talousarviotili_id = tt.id
            WHERE avustushaku_id = ?
+           AND tt.deleted IS NULL
+           AND att.deleted IS NULL
         " [avustushaku-id]))
 
 (defn insert-talousarviotili [avustushaku-id talousarviotili, tx]
@@ -18,8 +20,9 @@
 (defn post-avustushaku-talousarviotilit [avustushaku-id talousarviotilit]
   (with-tx (fn [tx]
              (execute! tx
-                       "DELETE FROM avustushaku_talousarviotilit
-                        WHERE avustushaku_id = ?" [avustushaku-id])
+                       "UPDATE avustushaku_talousarviotilit
+                        SET deleted = now()
+                        WHERE avustushaku_id = ?
+                        AND deleted IS NULL" [avustushaku-id])
              (run! (fn [talousarviotili] (insert-talousarviotili avustushaku-id talousarviotili tx)) talousarviotilit))))
 
-            

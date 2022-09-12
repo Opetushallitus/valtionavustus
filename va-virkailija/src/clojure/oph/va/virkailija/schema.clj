@@ -532,6 +532,7 @@
               :year (s/maybe s/Int)
               :amount (s/maybe s/Int)
               :migrated-from-not-normalized-ta-tili s/Bool
+              :deleted (s/maybe s/Inst)
               })
 
 (s/defschema VaCodesTalousarviotili

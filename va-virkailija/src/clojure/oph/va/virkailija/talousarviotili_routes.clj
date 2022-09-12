@@ -21,8 +21,11 @@
            '[]'::jsonb
       ) as avustushaut
   FROM virkailija.talousarviotilit t
-  LEFT JOIN virkailija.avustushaku_talousarviotilit at ON  at.talousarviotili_id = t.id
+  LEFT JOIN virkailija.avustushaku_talousarviotilit at
+    ON  at.talousarviotili_id = t.id
+    AND at.deleted IS NULL
   LEFT JOIN hakija.avustushaut a ON a.id = at.avustushaku_id
+  WHERE t.deleted IS NULL
   GROUP BY t.id;
   " []))
 
@@ -39,13 +42,14 @@
 
 (defn- delete-talousarviotili! [id]
   (with-tx (fn [tx]
-    (execute! tx "DELETE FROM talousarviotilit WHERE id = ?" [id]))))
+    (execute! tx "UPDATE talousarviotilit set deleted = now() WHERE id = ?" [id]))))
 
 (defn- talousarviotili-is-used? [id]
   (-> (query "SELECT EXISTS (
                 SELECT 1
                 FROM virkailija.avustushaku_talousarviotilit at
                 WHERE at.talousarviotili_id = ?
+                AND at.deleted IS NULL
               ) as used" [id])
       first
       :used))

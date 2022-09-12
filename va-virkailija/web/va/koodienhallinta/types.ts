@@ -18,6 +18,7 @@ export interface Talousarviotili {
   name: string | undefined;
   amount: number | undefined;
   "migrated-from-not-normalized-ta-tili": boolean;
+  deleted: string | undefined;
 }
 
 interface AvustushakuInfo {
