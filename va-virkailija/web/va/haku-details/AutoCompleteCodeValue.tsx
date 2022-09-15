@@ -15,7 +15,6 @@ export interface AutoCompleteCodeValueProps {
   codeOptions: VaCodeValue[];
   selectedValue: VaCodeValue | "";
   disabled: boolean;
-  multipleProjectCodesEnabled: boolean;
 }
 
 const colorDarkGray = "rgb(153, 146, 144)";
@@ -23,14 +22,7 @@ const colorDarkGray = "rgb(153, 146, 144)";
 export default function AutocompleteCodeValue(
   props: AutoCompleteCodeValueProps
 ) {
-  const {
-    codeType,
-    selectedValue,
-    disabled,
-    multipleProjectCodesEnabled,
-    updateValue,
-    codeOptions,
-  } = props;
+  const { codeType, selectedValue, disabled, updateValue, codeOptions } = props;
 
   const getOptionValue = (option: VaCodeValue) =>
     `${option.code} ${option["code-value"]}`;
@@ -40,7 +32,7 @@ export default function AutocompleteCodeValue(
       classNamePrefix={`code-value-dropdown-${codeType}`}
       getOptionLabel={getOptionValue}
       placeholder={
-        multipleProjectCodesEnabled && codeType === "project-id"
+        codeType === "project-id"
           ? 'Syötä projektikoodi tai valitse "Ei projektikoodia"'
           : "Valitse listasta"
       }

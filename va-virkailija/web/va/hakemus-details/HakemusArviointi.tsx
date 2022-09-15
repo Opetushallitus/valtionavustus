@@ -42,7 +42,6 @@ type HakemusArviointiProps = {
   showOthersScores: boolean;
   multibatchEnabled: boolean;
   selectedHakemusAccessControl: SelectedHakemusAccessControl;
-  multipleProjectCodesEnabled: boolean;
   newTaTiliSelectionEnabled: boolean;
   projects: VaCodeValue[];
 };
@@ -57,7 +56,6 @@ export const HakemusArviointi = ({
   multibatchEnabled,
   helpTexts,
   selectedHakemusAccessControl,
-  multipleProjectCodesEnabled,
   projects,
   newTaTiliSelectionEnabled,
 }: HakemusArviointiProps) => {
@@ -84,21 +82,18 @@ export const HakemusArviointi = ({
         hakemus={hakemus}
         helpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}
       />
-      {multipleProjectCodesEnabled && (
-        <div
-          className="koodien-valinta-elementti"
-          data-test-id="code-value-dropdown__project"
-        >
-          <h3 className="koodien-valinta-otsikko required">Projektikoodi</h3>
-          <ProjectSelector
-            updateValue={selectProject}
-            codeOptions={projects}
-            selectedValue={hakemus.project || ""}
-            multipleProjectCodesEnabled={multipleProjectCodesEnabled}
-            disabled={!allowHakemusStateChanges}
-          />
-        </div>
-      )}
+      <div
+        className="koodien-valinta-elementti"
+        data-test-id="code-value-dropdown__project"
+      >
+        <h3 className="koodien-valinta-otsikko required">Projektikoodi</h3>
+        <ProjectSelector
+          updateValue={selectProject}
+          codeOptions={projects}
+          selectedValue={hakemus.project || ""}
+          disabled={!allowHakemusStateChanges}
+        />
+      </div>
       {newTaTiliSelectionEnabled && (
         <TalousarviotiliSelect
           isDisabled={!allowHakemusStateChanges}

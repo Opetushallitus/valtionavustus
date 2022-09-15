@@ -112,9 +112,6 @@ export const HakemusDetails = (props: Props) => {
             controller={controller}
             multibatchEnabled={multibatchEnabled}
             helpTexts={helpTexts}
-            multipleProjectCodesEnabled={
-              environment["multiple-project-codes"]?.["enabled?"] === true
-            }
             newTaTiliSelectionEnabled={
               environment["ta-tilit"]?.["enabled?"] === true
             }

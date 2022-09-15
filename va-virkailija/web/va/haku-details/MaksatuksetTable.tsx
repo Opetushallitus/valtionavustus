@@ -2,12 +2,8 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 
 import { Maksatus } from "./Maksatukset";
 import { useSelector } from "react-redux";
-import {
-  selectLoadedInitialData,
-  selectSelectedAvustushaku,
-} from "../hakujenHallinta/hakuReducer";
+import { selectSelectedAvustushaku } from "../hakujenHallinta/hakuReducer";
 import { VaCodeValue } from "../types";
-import { useHakujenHallintaSelector } from "../hakujenHallinta/hakujenHallintaStore";
 
 type PaymentsTableProps = {
   payments?: Maksatus[];
@@ -108,14 +104,12 @@ type MaksatuksetPhaseProps = {
   payments: Maksatus[];
   phase: string;
   filter: Filter;
-  multipleProjectCodesEnabled: boolean;
 };
 
 const MaksatuksetPhase = ({
   payments,
   phase,
   filter,
-  multipleProjectCodesEnabled,
 }: MaksatuksetPhaseProps) => {
   const [visiblePayments, setVisiblePayments] = useState<Maksatus[]>(payments);
   const selectedHaku = useSelector(selectSelectedAvustushaku);
@@ -167,20 +161,18 @@ const MaksatuksetPhase = ({
                     {p.hakemus?.["project-name"]}
                   </a>
                 </td>
-                {multipleProjectCodesEnabled && (
-                  <td
-                    data-test-id={`project-code-${project?.code}`}
-                    className="align-left semi-narrow-column"
-                  >
-                    {project ? (
-                      project["code-value"]
-                    ) : (
-                      <span className={"maksatukset_error-text"}>
-                        Projektikoodi puuttuu
-                      </span>
-                    )}
-                  </td>
-                )}
+                <td
+                  data-test-id={`project-code-${project?.code}`}
+                  className="align-left semi-narrow-column"
+                >
+                  {project ? (
+                    project["code-value"]
+                  ) : (
+                    <span className={"maksatukset_error-text"}>
+                      Projektikoodi puuttuu
+                    </span>
+                  )}
+                </td>
                 <td
                   data-test-id={"maksuun"}
                   className="align-right narrow-column"
@@ -254,9 +246,6 @@ export const MaksatuksetTable = ({ payments, testId }: PaymentsTableProps) => {
     }
     return acc;
   }, {} as { [k in string]: Maksatus[] });
-  const { environment } = useHakujenHallintaSelector(selectLoadedInitialData);
-  const multipleProjectCodesEnabled =
-    environment["multiple-project-codes"]?.["enabled?"] === true;
 
   return (
     <div data-test-id={testId}>
@@ -279,12 +268,10 @@ export const MaksatuksetTable = ({ payments, testId }: PaymentsTableProps) => {
               <div>Hanke</div>
               <input onChange={setFilterByKey("project-name")} />
             </th>
-            {multipleProjectCodesEnabled && (
-              <th className={"semi-narrow-column"}>
-                <div>Projektikoodi</div>
-                <input onChange={setFilterByKey("project-code")} />
-              </th>
-            )}
+            <th className={"semi-narrow-column"}>
+              <div>Projektikoodi</div>
+              <input onChange={setFilterByKey("project-code")} />
+            </th>
             <th className="narrow-column">
               <div>Maksuun</div>
               <input onChange={setFilterByKey("payment-sum")} />
@@ -313,7 +300,6 @@ export const MaksatuksetTable = ({ payments, testId }: PaymentsTableProps) => {
           phase={phase}
           payments={groupedPayments[phase]}
           filter={filter}
-          multipleProjectCodesEnabled={multipleProjectCodesEnabled}
         />
       ))}
       {!payments ||

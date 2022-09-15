@@ -45,5 +45,5 @@
                            :interval-minutes 15}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
- :multiple-project-codes {:enabled? true}
+
 }

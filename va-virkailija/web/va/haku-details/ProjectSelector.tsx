@@ -7,7 +7,6 @@ export interface ProjectSelectorProps {
   codeOptions: VaCodeValue[];
   selectedValue: VaCodeValue | "";
   disabled: boolean;
-  multipleProjectCodesEnabled: boolean;
   addRow?: () => void;
   removeRow?: () => void;
 }
@@ -15,7 +14,6 @@ export interface ProjectSelectorProps {
 export default function ProjectSelector({
   codeOptions,
   disabled,
-  multipleProjectCodesEnabled,
   selectedValue,
   updateValue,
   addRow,
@@ -33,7 +31,6 @@ export default function ProjectSelector({
         codeOptions={codeOptions.filter((k) => k["value-type"] === "project")}
         selectedValue={selectedValue}
         disabled={disabled}
-        multipleProjectCodesEnabled={multipleProjectCodesEnabled}
         updateValue={updateValue}
       />
       {addRow && (

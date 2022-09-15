@@ -61,8 +61,6 @@ export const HakuEdit = () => {
       avustushaku.phase === "upcoming");
   const userHasEditMyHakuRolePrivilege =
     !!avustushaku.privileges?.["edit-my-haku-role"];
-  const selectedValueProject =
-    codeOptions.find((k) => k.id === avustushaku["project-id"]) || "";
   const selectedValueOperation =
     codeOptions.find((k) => k.id === avustushaku["operation-id"]) || "";
   const selectedValueOperationalUnit =
@@ -100,9 +98,6 @@ export const HakuEdit = () => {
   const mainHelp = {
     __html: helpTexts["hakujen_hallinta__haun_tiedot___ohje"],
   };
-
-  const multipleProjectCodesEnabled =
-    environment["multiple-project-codes"]?.["enabled?"] === true;
 
   const updateCodeValue =
     (id: CodeType, avustushaku: Avustushaku) =>
@@ -210,7 +205,6 @@ export const HakuEdit = () => {
             )}
             selectedValue={selectedValueOperationalUnit}
             disabled={isAllPaymentsPaid}
-            multipleProjectCodesEnabled={multipleProjectCodesEnabled}
             updateValue={updateCodeValue("operational-unit-id", avustushaku)}
           />
         </div>
@@ -225,27 +219,13 @@ export const HakuEdit = () => {
               direction="left"
             />
           </h3>
-          {multipleProjectCodesEnabled ? (
-            <ProjectSelectors
-              avustushaku={avustushaku}
-              codeOptions={codeOptions.filter(
-                (k) => k["value-type"] === "project"
-              )}
-              disabled={isAllPaymentsPaid}
-              multipleProjectCodesEnabled={multipleProjectCodesEnabled}
-            />
-          ) : (
-            <AutoCompleteCodeValue
-              codeType="project-id"
-              codeOptions={codeOptions.filter(
-                (k) => k["value-type"] === "project"
-              )}
-              selectedValue={selectedValueProject}
-              disabled={isAllPaymentsPaid}
-              multipleProjectCodesEnabled={multipleProjectCodesEnabled}
-              updateValue={updateCodeValue("project-id", avustushaku)}
-            />
-          )}
+          <ProjectSelectors
+            avustushaku={avustushaku}
+            codeOptions={codeOptions.filter(
+              (k) => k["value-type"] === "project"
+            )}
+            disabled={isAllPaymentsPaid}
+          />
         </div>
         <div
           className="koodien-valinta-elementti"
@@ -265,7 +245,6 @@ export const HakuEdit = () => {
             )}
             selectedValue={selectedValueOperation}
             disabled={isAllPaymentsPaid}
-            multipleProjectCodesEnabled={multipleProjectCodesEnabled}
             updateValue={updateCodeValue("operation-id", avustushaku)}
           />
         </div>

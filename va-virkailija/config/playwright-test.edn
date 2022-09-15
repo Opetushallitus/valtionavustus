@@ -30,4 +30,4 @@
  :ta-tilit {:enabled? true}
  :test-apis {:enabled? true}
  :officer-edit-jwt-secret "playwright-test-secret"
- :multiple-project-codes {:enabled? true}}
+ }

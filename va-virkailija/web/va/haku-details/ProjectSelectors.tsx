@@ -13,7 +13,6 @@ interface ProjectSelectorsProps {
   avustushaku: Avustushaku;
   codeOptions: VaCodeValue[];
   disabled: boolean;
-  multipleProjectCodesEnabled: boolean;
 }
 
 export default function ProjectSelectors(props: ProjectSelectorsProps) {
@@ -21,8 +20,7 @@ export default function ProjectSelectors(props: ProjectSelectorsProps) {
     (s) => s.haku.loadingProjects
   );
   const dispatch = useHakujenHallintaDispatch();
-  const { avustushaku, multipleProjectCodesEnabled } = props;
-  let { codeOptions, disabled } = props;
+  let { codeOptions, disabled, avustushaku } = props;
   const projects = [...(avustushaku.projects ?? [])].sort((a, b) =>
     a["code-value"].localeCompare(b["code-value"])
   );
@@ -69,7 +67,6 @@ export default function ProjectSelectors(props: ProjectSelectorsProps) {
           codeOptions={codeOptions.filter((k) => k["value-type"] === "project")}
           selectedValue={""}
           disabled={disabled}
-          multipleProjectCodesEnabled={multipleProjectCodesEnabled}
           updateValue={updateValue(0)}
           removeRow={removeRow(null)}
           addRow={addRow}
@@ -84,7 +81,6 @@ export default function ProjectSelectors(props: ProjectSelectorsProps) {
               )}
               selectedValue={project}
               disabled={disabled}
-              multipleProjectCodesEnabled={multipleProjectCodesEnabled}
               updateValue={updateValue(ind)}
               removeRow={removeRow(project)}
               addRow={addRow}

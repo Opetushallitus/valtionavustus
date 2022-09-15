@@ -29,4 +29,4 @@
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :ta-tilit {:enabled? true}
  :test-apis {:enabled? true}
- :multiple-project-codes {:enabled? true}}
+ }
