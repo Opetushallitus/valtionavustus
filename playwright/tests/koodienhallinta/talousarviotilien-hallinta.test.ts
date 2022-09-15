@@ -5,7 +5,7 @@ import { muutoshakemusTest } from "../../fixtures/muutoshakemusTest";
 import { expectToBeDefined } from "../../utils/util";
 import { VIRKAILIJA_URL } from "../../utils/constants";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
-import { randomInt } from "crypto";
+import { createRandomTalousarviotiliCode } from "../../utils/random";
 
 const expectNoErrors = async (
   koodienhallintaPage: ReturnType<typeof KoodienhallintaPage>
@@ -30,15 +30,6 @@ const test = defaultValues.extend<{
   },
 });
 
-const createRandomCode = () => {
-  let code = `${randomInt(1, 10)}.`;
-  const nTimes = randomInt(3, 5);
-  for (let i = 0; i < nTimes; i++) {
-    code += `${randomInt(0, 99)}.`;
-  }
-  return code;
-};
-
 test.describe.parallel("talousarviotilien hallinta", () => {
   test("can create and remove talousarviotili", async ({
     koodienhallintaPage,
@@ -47,7 +38,7 @@ test.describe.parallel("talousarviotilien hallinta", () => {
     const taForm = koodienhallintaPage.taTilit.form;
     const name = `Talousarviotili ${randomName}`;
     const year = "2022";
-    const code = createRandomCode();
+    const code = createRandomTalousarviotiliCode();
     const amount = "420";
     const row = await koodienhallintaPage.page.locator(
       `[data-test-id="${name}"]`
@@ -96,7 +87,7 @@ test.describe.parallel("talousarviotilien hallinta", () => {
     const taForm = koodienhallintaPage.taTilit.form;
     const name = `Talousarviotili ${randomName}`;
     const year = "2022";
-    const code = createRandomCode();
+    const code = createRandomTalousarviotiliCode();
     const amount = "69";
     const row = await koodienhallintaPage.page.locator(
       `[data-test-id="${name}"]`
@@ -146,7 +137,7 @@ test.describe.parallel("talousarviotilien hallinta", () => {
     await expect(taForm.code.error).toContainText("Koodi on pakollinen");
     await expect(taForm.name.error).toContainText("Nimi on pakollinen");
     await expect(taForm.amount.error).toContainText("Euromäärä on pakollinen");
-    await taForm.code.input.fill(createRandomCode());
+    await taForm.code.input.fill(createRandomTalousarviotiliCode());
     await expect(taForm.submitBtn).toBeDisabled();
     await expect(taForm.year.error).toBeHidden();
     await expect(taForm.code.error).toBeHidden();
@@ -164,7 +155,7 @@ test.describe.parallel("talousarviotilien hallinta", () => {
   test("amount must be a number", async ({ koodienhallintaPage }) => {
     const taForm = koodienhallintaPage.taTilit.form;
     await taForm.year.input.fill("2022");
-    await taForm.code.input.fill(createRandomCode());
+    await taForm.code.input.fill(createRandomTalousarviotiliCode());
     await taForm.name.input.fill("Nimi");
     await taForm.amount.input.fill("Should fail");
     await taForm.amount.input.evaluate((e) => e.blur());
@@ -182,7 +173,7 @@ test.describe.parallel("talousarviotilien hallinta", () => {
     const taForm = koodienhallintaPage.taTilit.form;
     await expect(taForm.submitBtn).toBeEnabled();
     await taForm.year.input.fill("2022");
-    await taForm.code.input.fill(createRandomCode());
+    await taForm.code.input.fill(createRandomTalousarviotiliCode());
     await taForm.name.input.fill("Nimi");
     await taForm.amount.input.fill("-420");
     await taForm.amount.input.evaluate((e) => e.blur());
@@ -203,7 +194,7 @@ test.describe.parallel("talousarviotilien hallinta", () => {
     const taForm = koodienhallintaPage.taTilit.form;
     await expect(taForm.submitBtn).toBeEnabled();
     await taForm.year.input.fill("1930");
-    await taForm.code.input.fill(createRandomCode());
+    await taForm.code.input.fill(createRandomTalousarviotiliCode());
     await taForm.name.input.fill("Nimi");
     await taForm.amount.input.fill("420");
     await expect(taForm.submitBtn).toBeDisabled();

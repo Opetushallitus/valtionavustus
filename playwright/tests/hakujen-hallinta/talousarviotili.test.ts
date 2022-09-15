@@ -2,16 +2,19 @@ import { expect } from "@playwright/test";
 import { defaultValues } from "../../fixtures/defaultValues";
 import { KoodienhallintaPage } from "../../pages/koodienHallintaPage";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
-import { randomString } from "../../utils/random";
+import {
+  createRandomTalousarviotiliCode,
+  randomString,
+} from "../../utils/random";
 
 const tatili1 = {
-  code: randomString(),
+  code: createRandomTalousarviotiliCode(),
   name: `Tili 1 ${randomString()}`,
   year: "2022",
   amount: "10000",
 };
 const tatili2 = {
-  code: randomString(),
+  code: createRandomTalousarviotiliCode(),
   name: `Tili 2 ${randomString()}`,
   year: "2022",
   amount: "10000",
@@ -69,7 +72,7 @@ const test = defaultValues.extend<{
   },
 });
 
-test.describe.parallel("new talousarvio select", () => {
+test.describe.parallel("talousarvio select", () => {
   test("tili and koulutusaste basic flow", async ({
     page,
     hakujenHallintaPage,
