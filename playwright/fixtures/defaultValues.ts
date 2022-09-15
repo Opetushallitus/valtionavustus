@@ -49,7 +49,7 @@ const workerScopedDefaultValues = test.extend<
       const tatili = {
         name: `TA-tili ${randomString()}`,
         year: 2022,
-        code: `29.10.30.20.${randomInt(0, 1000)}.${randomInt(0, 1000)}`,
+        code: `29.10.30.20.${randomInt(0, 99)}.${randomInt(0, 99)}`,
         amount: 420,
       };
       let createdCode: Talousarviotili;
