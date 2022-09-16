@@ -1,4 +1,4 @@
-import { expect } from "@playwright/test";
+import { APIRequestContext, expect } from "@playwright/test";
 import { defaultValues } from "../../fixtures/defaultValues";
 import { KoodienhallintaPage } from "../../pages/koodienHallintaPage";
 import { muutoshakemusTest } from "../../fixtures/muutoshakemusTest";
@@ -6,6 +6,7 @@ import { expectToBeDefined } from "../../utils/util";
 import { VIRKAILIJA_URL } from "../../utils/constants";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import { createRandomTalousarviotiliCode } from "../../utils/random";
+import { CreateTalousarviotili } from "../../../va-virkailija/web/va/koodienhallinta/types";
 
 const expectNoErrors = async (
   koodienhallintaPage: ReturnType<typeof KoodienhallintaPage>
@@ -295,7 +296,7 @@ test.describe.parallel("talousarviotilien hallinta", () => {
     ...hasIllegalCharacters,
   ] as const;
   for (const badCode of badTaTiliCodes) {
-    test(`Doesnt allow bad code ${badCode}`, async ({
+    test(`client doesnt allow bad code ${badCode}`, async ({
       koodienhallintaPage,
     }) => {
       const taForm = koodienhallintaPage.taTilit.form;
@@ -308,4 +309,43 @@ test.describe.parallel("talousarviotilien hallinta", () => {
       await expect(taForm.code.error).toContainText("Tarkista koodi");
     });
   }
+  for (const badCode of badTaTiliCodes) {
+    test(`api doesnt allow bad code ${badCode}`, async ({ page }, testInfo) => {
+      const res = await createBody({
+        code: badCode,
+        name: testInfo.title,
+        request: page.request,
+      });
+      await expect(res).not.toBeOK();
+      expect(res.status()).toBe(400);
+    });
+  }
+  test("api allows good code", async ({ page }, testInfo) => {
+    const res = await createBody({
+      code: createRandomTalousarviotiliCode(),
+      name: testInfo.title,
+      request: page.request,
+    });
+    await expect(res).toBeOK();
+  });
 });
+
+const createBody = ({
+  code,
+  name,
+  request,
+}: {
+  code: string;
+  name: string;
+  request: APIRequestContext;
+}) => {
+  const body = {
+    code,
+    name,
+    year: 2022,
+    amount: 11,
+  };
+  return request.post(`${VIRKAILIJA_URL}/api/talousarviotilit/`, {
+    data: body,
+  });
+};

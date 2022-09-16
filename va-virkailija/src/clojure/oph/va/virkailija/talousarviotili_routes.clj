@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.talousarviotili-routes
   (:require [compojure.api.sweet :as compojure-api]
             [clojure.tools.logging :as log]
-            [ring.util.http-response :refer [ok method-not-allowed unauthorized unprocessable-entity! internal-server-error!]]
+            [ring.util.http-response :refer [ok method-not-allowed unauthorized unprocessable-entity! bad-request! internal-server-error!]]
             [oph.va.virkailija.schema :as schema]
             [oph.soresu.common.db :refer [query with-tx execute!]]
             [oph.va.virkailija.va-code-values-routes :refer [with-admin]]))
@@ -74,6 +74,7 @@
         (catch java.sql.SQLException e
           ((case (.getSQLState e)
              "23505" (unprocessable-entity!)
+             "23514" (bad-request!)
              (internal-server-error!)))))
       (unauthorized ""))))
 
