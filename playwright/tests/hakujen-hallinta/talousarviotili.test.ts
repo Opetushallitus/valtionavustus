@@ -1,4 +1,4 @@
-import { expect } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 import { defaultValues } from "../../fixtures/defaultValues";
 import { KoodienhallintaPage } from "../../pages/koodienHallintaPage";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
@@ -6,6 +6,8 @@ import {
   createRandomTalousarviotiliCode,
   randomString,
 } from "../../utils/random";
+import { expectToBeDefined } from "../../utils/util";
+import { HakijaAvustusHakuPage } from "../../pages/hakijaAvustusHakuPage";
 
 const tatili1 = {
   code: createRandomTalousarviotiliCode(),
@@ -282,3 +284,54 @@ test.describe.parallel("talousarvio select", () => {
     });
   });
 });
+
+test("cannot modify TA-tili or koulutusaste after haku has been published", async ({
+  page,
+  hakuProps,
+  userCache,
+}) => {
+  expectToBeDefined(userCache);
+  const hakujenHallintaPage = new HakujenHallintaPage(page);
+  await hakujenHallintaPage.navigate(1);
+  await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps);
+
+  await hakujenHallintaPage.publishAvustushaku();
+  await verifyTaTiliOrKoulutusasteCannotBeModified(page);
+
+  await hakujenHallintaPage.resolveAvustushaku();
+  await verifyTaTiliOrKoulutusasteCannotBeModified(page);
+});
+
+async function verifyTaTiliOrKoulutusasteCannotBeModified(page: Page) {
+  await test.step("Cannot add new TA-tili", async () => {
+    await expect(
+      page.locator("button[title='Lisää talousarviotili']").first()
+    ).toBeDisabled();
+  });
+
+  await test.step("Cannot remove existing TA-tili", async () => {
+    await expect(
+      page.locator("button[title='Poista talousarviotili']").first()
+    ).toBeDisabled();
+  });
+
+  await test.step("Cannot modify existing TA-tili", async () => {
+    await expect(
+      page
+        .locator('#ta-tili-container-0 input[class^="taTiliSelection"]')
+        .first()
+    ).toBeDisabled();
+  });
+
+  await test.step("Cannot add koulutusaste", async () => {
+    await expect(
+      page.locator("button[title='Lisää uusi koulutusastevalinta']").first()
+    ).toBeDisabled();
+  });
+
+  await test.step("Cannot remove koulutusaste", async () => {
+    await expect(
+      page.locator("button[title^='Poista koulutusaste']").first()
+    ).toBeDisabled();
+  });
+}
