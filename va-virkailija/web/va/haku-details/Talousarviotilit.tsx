@@ -124,12 +124,13 @@ const TalousarvioSelect = ({
       <div className={styles.outsideButtonPair}>
         <button
           title="Lisää talousarviotili"
+          disabled={isDisabled}
           onClick={onAddNewTalousarvio(talousarvioTiliIndex)}
         >
           <PlusIcon />
         </button>
         <button
-          disabled={rowCanNotBeDisabled}
+          disabled={rowCanNotBeDisabled || isDisabled}
           title="Poista talousarviotili"
           onClick={onRemoveTalousarvio(talousarvioTiliIndex)}
         >
@@ -209,12 +210,14 @@ const KoulutusasteSelect = ({
               <div className={styles.buttonPairContainer}>
                 <button
                   title={"Lisää uusi koulutusastevalinta"}
+                  disabled={isDisabled}
                   onClick={() => onAddRow(index)}
                 >
                   <PlusIcon />
                 </button>
                 <button
                   title={`Poista koulutusaste ${aste} talousarviotililtä`}
+                  disabled={isDisabled}
                   onClick={() => onRemoveRow(index)}
                 >
                   <MinusIcon />
@@ -291,6 +294,8 @@ export const Talousarviotilit = () => {
   const { data, isLoading } = useGetTalousarvioTilitQuery();
   const talousarvioOptions = data?.map(mapTiliOption) ?? [];
   const selectedHaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
+  const taTiliUpdateIsAllowed = selectedHaku.status === 'new' || selectedHaku.status === 'draft'
+
   const { talousarviotilit = [] } = selectedHaku;
   const dispatch = useHakujenHallintaDispatch();
   const allSelectedTalousarvioTilit = talousarviotilit.filter(
@@ -415,7 +420,7 @@ export const Talousarviotilit = () => {
     return (
       <div aria-busy={isLoading} aria-live="polite">
         <TalousarvioTili
-          disabled={isLoading}
+          disabled={isLoading || !taTiliUpdateIsAllowed}
           allSelectedTalousarvioTili={allSelectedTalousarvioTilit}
           options={talousarvioOptions}
           selectedTalousarvioTili={undefined}
@@ -439,7 +444,7 @@ export const Talousarviotilit = () => {
               ? `${talousarviotili?.name}-${talousarviotili?.id}`
               : `empty-${index}`
           }
-          disabled={isLoading}
+          disabled={isLoading || !taTiliUpdateIsAllowed}
           allSelectedTalousarvioTili={allSelectedTalousarvioTilit}
           options={talousarvioOptions}
           selectedTalousarvioTili={talousarviotili}
