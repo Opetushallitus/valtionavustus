@@ -7,7 +7,6 @@ import {
   randomString,
 } from "../../utils/random";
 import { expectToBeDefined } from "../../utils/util";
-import { HakijaAvustusHakuPage } from "../../pages/hakijaAvustusHakuPage";
 
 const tatili1 = {
   code: createRandomTalousarviotiliCode(),

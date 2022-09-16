@@ -1,12 +1,11 @@
 import { APIRequestContext, expect } from "@playwright/test";
 import { defaultValues } from "../../fixtures/defaultValues";
 import { KoodienhallintaPage } from "../../pages/koodienHallintaPage";
-import { muutoshakemusTest } from "../../fixtures/muutoshakemusTest";
+import { unpublishedAvustushakuTest } from "../../fixtures/muutoshakemusTest";
 import { expectToBeDefined } from "../../utils/util";
 import { VIRKAILIJA_URL } from "../../utils/constants";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import { createRandomTalousarviotiliCode } from "../../utils/random";
-import { CreateTalousarviotili } from "../../../va-virkailija/web/va/koodienhallinta/types";
 
 const expectNoErrors = async (
   koodienhallintaPage: ReturnType<typeof KoodienhallintaPage>
@@ -217,7 +216,7 @@ test.describe.parallel("talousarviotilien hallinta", () => {
     await taForm.year.input.evaluate((e) => e.blur());
     await expectNoErrors(koodienhallintaPage);
   });
-  muutoshakemusTest(
+  unpublishedAvustushakuTest(
     "tili that is in use cannot be deleted",
     async ({ page, avustushakuID, talousarviotili, hakuProps }) => {
       expectToBeDefined(avustushakuID);

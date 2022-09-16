@@ -846,6 +846,15 @@ export class HakujenHallintaPage {
   }
 
   async createMuutoshakemusEnabledHaku(hakuProps: HakuProps) {
+    const avustushakuID = await this.createUnpublishedMuutoshakemusEnabledHaku(
+      hakuProps
+    );
+
+    await this.publishAvustushaku();
+    return avustushakuID;
+  }
+
+  async createUnpublishedMuutoshakemusEnabledHaku(hakuProps: HakuProps) {
     const muutoshakemusEnabledHakuLomakeJson = await fs.readFile(
       path.join(__dirname, "../fixtures/prod.hakulomake.json"),
       "utf8"
@@ -855,7 +864,6 @@ export class HakujenHallintaPage {
       hakuProps
     );
     await this.navigate(avustushakuID);
-    await this.publishAvustushaku();
     return avustushakuID;
   }
 

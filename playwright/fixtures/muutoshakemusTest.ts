@@ -120,3 +120,23 @@ export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
     await use({ hakemusID, userKey });
   },
 });
+
+export const unpublishedAvustushakuTest =
+  defaultValues.extend<MuutoshakemusFixtures>({
+    finalAvustushakuEndDate: moment().subtract(1, "year"),
+    avustushakuID: async ({ page, hakuProps, userCache }, use, testInfo) => {
+      expect(userCache).toBeDefined();
+      testInfo.setTimeout(testInfo.timeout + 40_000);
+
+      let avustushakuID: number | null = null;
+      await test.step("Create avustushaku", async () => {
+        const hakujenHallintaPage = new HakujenHallintaPage(page);
+        avustushakuID =
+          await hakujenHallintaPage.createUnpublishedMuutoshakemusEnabledHaku(
+            hakuProps
+          );
+      });
+      expectToBeDefined(avustushakuID);
+      await use(avustushakuID);
+    },
+  });
