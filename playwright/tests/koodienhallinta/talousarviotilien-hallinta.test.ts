@@ -284,14 +284,15 @@ test.describe.parallel("talousarviotilien hallinta", () => {
       );
     }
   );
+  const doubleDots = ["..1.1.1", "00..00.00.", "0.0.21.22.."] as const;
+  const threeNumbersInARow = ["0.01.222.", "0.0.212.22", "012.0.21"] as const;
+  const startsWithDots = [".10.22.12.32"] as const;
+  const hasIllegalCharacters = ["12.10.12.4k", "20.23.4!.10"];
   const badTaTiliCodes = [
-    "0.01.222.",
-    "0.0.21.223",
-    "012.0.21",
-    "0.0.21.22..",
-    "..1.1.1",
-    "00..00.00.",
-    ".0.2.12.3",
+    ...doubleDots,
+    ...threeNumbersInARow,
+    ...startsWithDots,
+    ...hasIllegalCharacters,
   ] as const;
   for (const badCode of badTaTiliCodes) {
     test(`Doesnt allow bad code ${badCode}`, async ({
