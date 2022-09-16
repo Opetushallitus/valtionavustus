@@ -294,7 +294,8 @@ export const Talousarviotilit = () => {
   const { data, isLoading } = useGetTalousarvioTilitQuery();
   const talousarvioOptions = data?.map(mapTiliOption) ?? [];
   const selectedHaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
-  const taTiliUpdateIsAllowed = selectedHaku.status === 'new' || selectedHaku.status === 'draft'
+  const taTiliUpdateIsAllowed =
+    selectedHaku.status === "new" || selectedHaku.status === "draft";
 
   const { talousarviotilit = [] } = selectedHaku;
   const dispatch = useHakujenHallintaDispatch();
