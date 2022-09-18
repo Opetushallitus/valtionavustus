@@ -55,13 +55,17 @@ import { translationsFi } from "soresu-form/web/va/i18n/translations";
 import { getNestedInputErrorClass } from "soresu-form/web/va/formikHelpers";
 import { Role, UserInfo } from "../types";
 import HttpUtil from "soresu-form/web/HttpUtil";
-import HakemustenArviointiController from "../HakemustenArviointiController";
 import { Modal } from "./Modal";
 import { MuutoshakemusPaatos } from "soresu-form/web/va/MuutoshakemusPaatos";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 
 import "soresu-form/web/form/style/main.less";
 import "../style/main.less";
+import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
+import {
+  setModal,
+  setMuutoshakemukset,
+} from "../hakemustenArviointi/arviointiReducer";
 
 moment.locale("fi");
 const localizer = new MomentLocalizer(moment);
@@ -191,7 +195,6 @@ interface MuutoshakemusFormProps {
   muutoshakemukset: Muutoshakemus[];
   hakemus: NormalizedHakemusData;
   hakemusVersion: Hakemus;
-  controller: HakemustenArviointiController;
   userInfo: UserInfo;
   presenter: Role | undefined;
   projectEndDate: string | undefined;
@@ -265,7 +268,6 @@ export const MuutoshakemusForm = ({
   muutoshakemukset,
   projectEndDate,
   hakemus,
-  controller,
   presenter,
   isCurrentUserHakemukselleUkotettuValmistelija,
   hakemusVersion,
@@ -273,6 +275,7 @@ export const MuutoshakemusForm = ({
   environment,
 }: MuutoshakemusFormProps) => {
   const { t } = useTranslations();
+  const dispatch = useHakemustenArviointiDispatch();
   const talousarvioValues = muutoshakemus.talousarvio.length
     ? getTalousarvioValues(muutoshakemus.talousarvio)
     : undefined;
@@ -291,7 +294,12 @@ export const MuutoshakemusForm = ({
         url,
         payload
       );
-      controller.setMuutoshakemukset(newMuutoshakemukset);
+      dispatch(
+        setMuutoshakemukset({
+          hakemusId: hakemus["hakemus-id"],
+          muutoshakemukset: newMuutoshakemukset,
+        })
+      );
     },
   });
 
@@ -317,26 +325,28 @@ export const MuutoshakemusForm = ({
       }, []),
       status: undefined,
     };
-    controller.setModal(
-      <Modal title="ESIKATSELU" controller={controller}>
-        <TranslationContext.Provider
-          value={getTranslationContext(hakemusVersion.language)}
-        >
-          <MuutoshakemusPaatos
-            avustushaku={avustushaku}
-            paatos={paatos}
-            muutoshakemus={muutoshakemus}
-            hakemus={hakemus}
-            presenter={presenter}
-            isDecidedByUkotettuValmistelija={
-              isCurrentUserHakemukselleUkotettuValmistelija
-            }
-            muutoshakemukset={muutoshakemukset}
-            environment={environment}
-            muutoshakemusUrl={hakemusVersion.muutoshakemusUrl}
-          />
-        </TranslationContext.Provider>
-      </Modal>
+    dispatch(
+      setModal(
+        <Modal title="ESIKATSELU">
+          <TranslationContext.Provider
+            value={getTranslationContext(hakemusVersion.language)}
+          >
+            <MuutoshakemusPaatos
+              avustushaku={avustushaku}
+              paatos={paatos}
+              muutoshakemus={muutoshakemus}
+              hakemus={hakemus}
+              presenter={presenter}
+              isDecidedByUkotettuValmistelija={
+                isCurrentUserHakemukselleUkotettuValmistelija
+              }
+              muutoshakemukset={muutoshakemukset}
+              environment={environment}
+              muutoshakemusUrl={hakemusVersion.muutoshakemusUrl}
+            />
+          </TranslationContext.Provider>
+        </Modal>
+      )
     );
   };
 

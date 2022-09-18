@@ -4,10 +4,8 @@ import {
   Form,
   Hakemus,
   HakemusArviointiStatus,
-  HelpTexts,
 } from "soresu-form/web/va/types";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
-import { Immutable } from "seamless-immutable";
 
 export interface UserInfo {
   email: string;
@@ -50,7 +48,7 @@ interface Menoluokka {
 export interface HakuData {
   avustushaku: Avustushaku;
   environment: EnvironmentApiResponse;
-  form: Immutable<Form>;
+  form: Form;
   roles: Role[];
   privileges: HakuPrivileges;
   hakemukset: Hakemus[];
@@ -73,12 +71,7 @@ export interface HakemusFilter {
   openQuestions: string[];
 }
 
-export interface HakemusSorter {
-  field: string;
-  order: string;
-}
-
-export type SelectedHakemusAccessControl = Partial<{
+export type HakemusAccessControl = Partial<{
   allowHakemusCommenting: boolean;
   allowHakemusStateChanges: boolean;
   allowHakemusScoring: boolean;
@@ -92,17 +85,16 @@ export interface LahetysStatuses {
   loppuselvitysPyynnotSentAt?: string;
 }
 
-export interface State {
+/*export interface State {
   avustushakuList: Avustushaku[];
   hakuData: HakuData;
   projects: VaCodeValue[];
   hakemusFilter: HakemusFilter;
   helpTexts: HelpTexts;
-  hakemusSorter: HakemusSorter[];
   modal: JSX.Element | undefined;
   personSelectHakemusId: number | undefined;
   selectedHakemus: Hakemus | undefined;
-  selectedHakemusAccessControl: SelectedHakemusAccessControl;
+  selectedHakemusAccessControl: HakemusAccessControl;
   showOthersScores: boolean;
   saveStatus: {
     saveInProgress: boolean;
@@ -114,7 +106,7 @@ export interface State {
   loadingSelvitys?: boolean;
   earliestPaymentCreatedAt?: string;
   lahetykset: LahetysStatuses;
-}
+}*/
 
 export type Selvitys = "valiselvitys" | "loppuselvitys";
 export type HakujenHallintaSubTab =

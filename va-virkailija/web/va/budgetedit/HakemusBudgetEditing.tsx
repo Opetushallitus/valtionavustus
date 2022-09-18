@@ -1,0 +1,194 @@
+import React from "react";
+import _ from "lodash";
+
+import FormUtil from "soresu-form/web/form/FormUtil";
+import FormContainer from "soresu-form/web/form/FormContainer.jsx";
+import Form from "soresu-form/web/form/Form.jsx";
+import InputValueStorage from "soresu-form/web/form/InputValueStorage";
+import SyntaxValidator from "soresu-form/web/form/SyntaxValidator";
+
+import BudgetEditFormController from "./BudgetEditFormController";
+import BudgetEditComponentFactory from "./BudgetEditComponentFactory";
+import FakeFormState from "../form/FakeFormState";
+
+import "../style/budgetedit.less";
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from "../hakemustenArviointi/arviointiStore";
+import { Answer, Field, Hakemus } from "soresu-form/web/va/types";
+import {
+  getLoadedState,
+  setArvioValue,
+  startHakemusArvioAutoSave,
+} from "../hakemustenArviointi/arviointiReducer";
+import { createFieldUpdate } from "soresu-form/web/form/FieldUpdateHandler";
+import VaSyntaxValidator from "soresu-form/web/va/VaSyntaxValidator";
+
+interface Props {
+  hakemus: Hakemus;
+  allowEditing: boolean | undefined;
+}
+
+const HakemusBudgetEditing = ({ allowEditing, hakemus }: Props) => {
+  const { hakuData, helpTexts } = useHakemustenArviointiSelector((state) =>
+    getLoadedState(state.arviointi)
+  );
+  const { avustushaku } = hakuData;
+  const dispatch = useHakemustenArviointiDispatch();
+  const isEditingAllowed = (
+    allowEditingArvio: boolean | undefined,
+    formContent: Field,
+    fieldId: string
+  ) => {
+    if (!allowEditingArvio) {
+      return false;
+    }
+    const parentElem = FormUtil.findFieldWithDirectChild(formContent, fieldId);
+    const isAmountField =
+      parentElem &&
+      parentElem.fieldType === "vaBudgetItemElement" &&
+      parentElem.children?.[1]?.id === fieldId;
+    return isAmountField ? parentElem.params.incrementsTotal : true;
+  };
+
+  const onAnswerOverride = (hakemus: Hakemus, field: Field, newValue: any) => {
+    const clonedHakemus = _.cloneDeep(hakemus);
+    const key = "overridden-answers" as const;
+    console.log({ hakemus, field, newValue });
+    InputValueStorage.writeValue(
+      [field],
+      clonedHakemus.arvio[key],
+      createFieldUpdate(field, newValue, VaSyntaxValidator)
+    );
+    dispatch(
+      setArvioValue({
+        hakemusId: clonedHakemus.id,
+        key,
+        value: clonedHakemus.arvio[key],
+      })
+    );
+    dispatch(startHakemusArvioAutoSave({ hakemusId: clonedHakemus.id }));
+  };
+
+  const onDetailedCostsToggle = (hakemusId: number, value: boolean) => {
+    dispatch(
+      setArvioValue({
+        hakemusId,
+        key: "useDetailedCosts",
+        value,
+      })
+    );
+    dispatch(startHakemusArvioAutoSave({ hakemusId }));
+  };
+
+  const onCostsGranted = (hakemusId: number, value: number) => {
+    dispatch(
+      setArvioValue({
+        hakemusId,
+        key: "costsGranted",
+        value,
+      })
+    );
+    dispatch(startHakemusArvioAutoSave({ hakemusId }));
+  };
+
+  const validateFields = (
+    form: any,
+    answers: Answer[],
+    originalHakemus: Hakemus
+  ) => {
+    const budgetItems = FormUtil.findFieldsByFieldType(
+      form.content,
+      "vaBudgetItemElement"
+    );
+    budgetItems.map((budgetItem) => {
+      const amountField = budgetItem.children[1];
+      const overriddenValue = InputValueStorage.readValue(
+        form.content,
+        answers,
+        amountField.id
+      );
+      const validationErrors = SyntaxValidator.validateSyntax(
+        amountField,
+        overriddenValue
+      );
+      if (budgetItem.params.incrementsTotal && _.isEmpty(validationErrors)) {
+        const originalValue = InputValueStorage.readValue(
+          form.content,
+          originalHakemus.answers,
+          amountField.id
+        );
+        if (parseInt(overriddenValue) > parseInt(originalValue)) {
+          validationErrors.push({ error: "oph-sum-bigger-than-original" });
+        }
+      }
+      form.validationErrors = form.validationErrors.merge({
+        [amountField.id]: validationErrors,
+      });
+    });
+  };
+
+  const vaBudget = FormUtil.findFieldByFieldType(
+    hakuData.form.content,
+    "vaBudget"
+  );
+
+  if (!vaBudget) {
+    return null;
+  }
+
+  const fakeHakemus = {
+    ..._.cloneDeep(hakemus),
+    ...{
+      answers: hakemus.arvio["overridden-answers"]?.value ?? [],
+      "budget-oph-share": hakemus["budget-oph-share"],
+      "budget-total": hakemus["budget-total"],
+    },
+  };
+  const formOperations = {
+    chooseInitialLanguage: () => "fi",
+    containsExistingEntityId: undefined,
+    isFieldEnabled: (fieldId: string) =>
+      isEditingAllowed(allowEditing, vaBudget, fieldId),
+    onFieldUpdate: undefined,
+    isSaveDraftAllowed: () => allowEditing,
+    isNotFirstEdit: () => true,
+    createUiStateIdentifier: undefined,
+    urlCreator: undefined,
+    responseParser: undefined,
+    printEntityId: undefined,
+  };
+  const budgetEditFormState = FakeFormState.createHakemusFormState({
+    avustushaku,
+    formContent: [vaBudget],
+    formOperations,
+    hakemus: fakeHakemus,
+    savedHakemus: hakemus,
+  });
+  validateFields(budgetEditFormState.form, fakeHakemus.answers, hakemus);
+  const formElementProps = {
+    state: budgetEditFormState,
+    formContainerClass: Form,
+    infoElementValues: avustushaku,
+    controller: new BudgetEditFormController(
+      onAnswerOverride,
+      onDetailedCostsToggle,
+      onCostsGranted,
+      new BudgetEditComponentFactory(),
+      avustushaku,
+      budgetEditFormState.form,
+      hakemus,
+      helpTexts
+    ),
+    containerId: "budget-edit-container",
+    headerElements: [],
+  };
+  return (
+    <div className="budget-edit">
+      <FormContainer {...formElementProps} />
+    </div>
+  );
+};
+
+export default HakemusBudgetEditing;

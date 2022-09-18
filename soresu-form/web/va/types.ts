@@ -1,11 +1,15 @@
 import {
+  Muutoshakemus as MuutoshakemusType,
   Muutoshakemus,
   MuutoshakemusStatus,
   Talousarvio,
 } from "./types/muutoshakemus";
 import translations from "../../resources/public/translations.json";
 import { ImmutableObject } from "seamless-immutable";
-import { VaCodeValue } from "../../../va-virkailija/web/va/types";
+import {
+  HakemusAccessControl,
+  VaCodeValue,
+} from "../../../va-virkailija/web/va/types";
 import { TalousarviotiliWithKoulutusasteet } from "../../../va-virkailija/web/va/hakujenHallinta/hakuReducer";
 
 export const languages = ["fi", "sv"] as const;
@@ -222,6 +226,21 @@ export interface ChangeRequest {
   "user-oid": string;
 }
 
+export interface LoadedHakemusData {
+  project: VaCodeValue;
+  talousarviotilit: TalousarviotiliWithKoulutusasteet[];
+  normalizedData?: NormalizedHakemusData;
+  muutoshakemukset: MuutoshakemusType[];
+  scores: Score[];
+  scoring: Scoring;
+  payments: Payment[];
+  comments: Comment[];
+  selvitys: Hakemus["selvitys"];
+  changeRequests: ChangeRequest[];
+  attachmentVersions: unknown[];
+  accessControl: HakemusAccessControl;
+}
+
 export interface Hakemus {
   id: number;
   answers: Answer[];
@@ -260,7 +279,7 @@ export interface Hakemus {
   "refused-at"?: unknown;
   "refused-comment"?: unknown;
   payments: Payment[];
-  scores: unknown[];
+  scores: Score[];
   "selvitys-email"?: SelvitysEmail;
   "taloustarkastettu-by"?: string;
   "taloustarkastettu-at"?: string;
@@ -271,6 +290,7 @@ export interface Hakemus {
   "loppuselvitys-taloustarkastettu-at"?: string;
   project?: VaCodeValue;
   talousarviotilit?: TalousarviotiliWithKoulutusasteet[];
+  accessControl?: HakemusAccessControl;
 }
 
 export const AVUSTUSHAKU_STATUSES = [
@@ -414,7 +434,7 @@ export interface Form {
   updated_at: Date;
   validationErrors?: any;
 }
-interface LocalizedText {
+export interface LocalizedText {
   fi: string;
   sv: string;
 }

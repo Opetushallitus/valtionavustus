@@ -4,20 +4,26 @@ import ClassNames from "classnames";
 
 import FormUtil from "soresu-form/web/form/FormUtil";
 
-import HakemustenArviointiController from "../HakemustenArviointiController";
-import { HakemusFilter } from "../types";
-
 import "./hakemus-filter.less";
-import { Immutable } from "seamless-immutable";
-import { Avustushaku, Form, Hakemus } from "soresu-form/web/va/types";
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from "../hakemustenArviointi/arviointiStore";
+import {
+  clearFilters,
+  setAnswerFilter,
+  setOpenQuestions,
+  toggleFilter,
+} from "../hakemustenArviointi/filterReducer";
+import { getLoadedState } from "../hakemustenArviointi/arviointiReducer";
 
-const ToggleFilterButton = ({
-  controller,
-  hakemusFilter,
-}: Pick<Props, "controller" | "hakemusFilter">) => {
-  const activeFilterCount = hakemusFilter.answers.length;
+const ToggleFilterButton = () => {
+  const dispatch = useHakemustenArviointiDispatch();
+  const activeFilterCount = useHakemustenArviointiSelector(
+    (state) => state.filter.answers.length
+  );
   const hasActiveFilters = activeFilterCount > 0;
-  const onFilter = () => controller.toggleHakemusFilter();
+  const onFilter = () => dispatch(toggleFilter());
   const buttonClass = ClassNames("hakemus-btn");
   const suffix = hasActiveFilters ? `(${activeFilterCount})` : "listaa";
   return (
@@ -31,23 +37,18 @@ const ToggleFilterButton = ({
   );
 };
 
-const FilterQuestion = ({
-  question,
-  controller,
-  hakemusFilter,
-}: {
-  question: Question;
-  controller: HakemustenArviointiController;
-  hakemusFilter: HakemusFilter;
-}) => {
-  const openQuestions = hakemusFilter.openQuestions;
+const FilterQuestion = ({ question }: { question: Question }) => {
+  const openQuestions = useHakemustenArviointiSelector(
+    (state) => state.filter.openQuestions
+  );
+  const dispatch = useHakemustenArviointiDispatch();
   const activeFilterCount = question.options.filter((o) => o.selected).length;
   const onQuestionClick = () => {
     const questionId = question.id;
     const newOpenQuestions = openQuestions.includes(questionId)
       ? _.without(openQuestions, questionId)
       : openQuestions.concat(questionId);
-    controller.setFilter("openQuestions", newOpenQuestions);
+    dispatch(setOpenQuestions(newOpenQuestions));
   };
 
   const questionClass = ClassNames("hakemus-filter-question", {
@@ -64,10 +65,8 @@ const FilterQuestion = ({
         {question.options.map((option) => (
           <FilterOption
             key={option.label}
-            hakemusFilter={hakemusFilter}
             question={question}
             option={option}
-            controller={controller}
           ></FilterOption>
         ))}
       </div>
@@ -78,15 +77,14 @@ const FilterQuestion = ({
 const FilterOption = ({
   question,
   option,
-  controller,
-  hakemusFilter,
 }: {
   question: Question;
   option: QuestionOption;
-  controller: HakemustenArviointiController;
-  hakemusFilter: HakemusFilter;
 }) => {
-  const answers = hakemusFilter.answers;
+  const answers = useHakemustenArviointiSelector(
+    (state) => state.filter.answers
+  );
+  const dispatch = useHakemustenArviointiDispatch();
   const onClick = () => {
     const filterChange = {
       id: question.id,
@@ -95,7 +93,7 @@ const FilterOption = ({
     const newFilter = _.some(answers, filterChange)
       ? _.reject(answers, filterChange)
       : answers.concat(filterChange);
-    controller.setFilter("answers", newFilter);
+    dispatch(setAnswerFilter(newFilter));
   };
 
   const btnClass = ClassNames("btn", "btn-sm", "btn-simple", {
@@ -109,12 +107,13 @@ const FilterOption = ({
   );
 };
 
-const RemoveFilter = ({
-  controller,
-  hakemusFilter,
-}: Pick<Props, "controller" | "hakemusFilter">) => {
-  const hidden = hakemusFilter.answers.length === 0;
-  const onRemove = () => controller.clearFilters();
+const RemoveFilter = () => {
+  const answersLength = useHakemustenArviointiSelector(
+    (state) => state.filter.answers.length
+  );
+  const dispatch = useHakemustenArviointiDispatch();
+  const hidden = answersLength === 0;
+  const onRemove = () => dispatch(clearFilters());
   const explanation = "Poista listan rajaukset";
   return (
     <button
@@ -140,13 +139,13 @@ interface Question {
   open: boolean;
 }
 
-const FilterList = ({
-  hakemusFilter,
-  form,
-  avustushaku,
-  hakemukset,
-  controller,
-}: Props) => {
+const FilterList = () => {
+  const dispatch = useHakemustenArviointiDispatch();
+  const hakuData = useHakemustenArviointiSelector(
+    (state) => getLoadedState(state.arviointi).hakuData
+  );
+  const { form, avustushaku, hakemukset } = hakuData;
+  const hakemusFilter = useHakemustenArviointiSelector((state) => state.filter);
   const open = hakemusFilter.isOpen;
   const radioQuestions = FormUtil.findFieldsByFieldType(
     form.content,
@@ -170,7 +169,7 @@ const FilterList = ({
   const buildQuestions = (): Question[] => {
     const openQuestions = hakemusFilter.openQuestions;
     const filterQuestions = questions.map((r) => {
-      const options = r.options?.asMutable() ?? [];
+      const options = r.options ?? [];
       return {
         id: r.id,
         label: r.label?.fi,
@@ -220,7 +219,7 @@ const FilterList = ({
 
   const filterQuestions = buildQuestions();
 
-  const onToggleFilter = () => controller.toggleHakemusFilter();
+  const onToggleFilter = () => dispatch(toggleFilter());
 
   return (
     <div hidden={!open} className="panel hakemus-filter-panel">
@@ -234,34 +233,18 @@ const FilterList = ({
       {filterQuestions.map((question) => (
         <FilterQuestion
           key={question.label}
-          hakemusFilter={hakemusFilter}
           question={question}
-          controller={controller}
         ></FilterQuestion>
       ))}
     </div>
   );
 };
 
-interface Props {
-  controller: HakemustenArviointiController;
-  hakemusFilter: HakemusFilter;
-  form: Immutable<Form>;
-  avustushaku: Avustushaku;
-  hakemukset: Hakemus[];
-}
-
-const HakemusFilter = (props: Props) => (
+const HakemusFilter = () => (
   <div className="hakemus-filter-container">
-    <ToggleFilterButton
-      hakemusFilter={props.hakemusFilter}
-      controller={props.controller}
-    />
-    <RemoveFilter
-      hakemusFilter={props.hakemusFilter}
-      controller={props.controller}
-    />
-    <FilterList {...props} />
+    <ToggleFilterButton />
+    <RemoveFilter />
+    <FilterList />
   </div>
 );
 

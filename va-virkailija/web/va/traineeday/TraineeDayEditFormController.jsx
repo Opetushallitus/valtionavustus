@@ -1,13 +1,13 @@
 export default class TraineeDayEditFormController {
   constructor(
-    arviointiController,
+    onChange,
     customComponentFactory,
     avustushaku,
     form,
     hakemus,
     allowEditing
   ) {
-    this.arviointiController = arviointiController;
+    this.onChange = onChange;
     this.customComponentFactory = customComponentFactory;
     this.avustushaku = avustushaku;
     this.form = form;
@@ -29,11 +29,12 @@ export default class TraineeDayEditFormController {
   }
 
   componentOnChangeListener(field, newValue) {
-    this.arviointiController.setHakemusOverriddenAnswerValue(
+    this.onChange(hakemus, field, newValue);
+    /*this.arviointiController.setHakemusOverriddenAnswerValue(
       this.hakemus.id,
       field,
       newValue
-    );
+    );*/
   }
 
   componentDidMount() {}

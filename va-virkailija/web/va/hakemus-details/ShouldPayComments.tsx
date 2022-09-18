@@ -1,6 +1,4 @@
 import React from "react";
-
-import HelpTooltip from "../HelpTooltip";
 import {
   useHakemustenArviointiDispatch,
   useHakemustenArviointiSelector,
@@ -11,38 +9,33 @@ import {
   startHakemusArvioAutoSave,
 } from "../hakemustenArviointi/arviointiReducer";
 
-type PresenterCommentProps = {
-  helpText: string;
-};
-
-const PresenterComment = ({ helpText }: PresenterCommentProps) => {
+const ShouldPayComments = () => {
   const dispatch = useHakemustenArviointiDispatch();
   const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
-
-  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
+  const shouldPayComments = hakemus.arvio?.["should-pay-comments"];
+  const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(
       setArvioValue({
         hakemusId: hakemus.id,
-        key: "presentercomment",
-        value,
+        key: "should-pay-comments",
+        value: event.target.value,
       })
     );
     dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
   };
   return (
-    <div className="value-edit">
-      <label>
-        Valmistelijan huomiot
-        <HelpTooltip content={helpText} direction={"valmistelijan-huomiot"} />
-      </label>
+    <div className="value-edit should-pay-comment">
+      <label htmlFor="should-pay-comment">Perustelut, miksi ei makseta: </label>
       <textarea
+        id="should-pay-comment"
         rows={5}
-        value={hakemus.arvio.presentercomment ?? ""}
+        disabled={hakemus.arvio["should-pay"]}
+        value={shouldPayComments || ""}
         onChange={onChange}
-      ></textarea>
+        maxLength={128}
+      />
     </div>
   );
 };
 
-export default PresenterComment;
+export default ShouldPayComments;

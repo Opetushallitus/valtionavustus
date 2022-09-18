@@ -3,15 +3,15 @@ import React, { useState } from "react";
 import HttpUtil from "soresu-form/web/HttpUtil";
 import { Avustushaku, Hakemus } from "soresu-form/web/va/types";
 
-import HakemustenArviointiController from "../HakemustenArviointiController";
 import { Role, UserInfo } from "../types";
 import { VerificationBox } from "./VerificationBox";
 
 import "./LoppuselvitysForm.less";
+import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
+import { refreshHakemukset } from "../hakemustenArviointi/arviointiReducer";
 
 type LoppuselvitysFormProps = {
   avustushaku: Avustushaku;
-  controller: HakemustenArviointiController;
   hakemus: Hakemus;
   userInfo: UserInfo;
   presenter?: Role;
@@ -20,11 +20,11 @@ type LoppuselvitysFormProps = {
 export const LoppuselvitysForm = ({
   avustushaku,
   hakemus,
-  controller,
   userInfo,
   presenter,
 }: LoppuselvitysFormProps) => {
   const [message, setMessage] = useState("");
+  const dispatch = useHakemustenArviointiDispatch();
   const status = hakemus["status-loppuselvitys"];
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -34,7 +34,7 @@ export const LoppuselvitysForm = ({
       `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/loppuselvitys/verify-information`,
       { message }
     );
-    controller.refreshHakemukset(avustushaku.id);
+    dispatch(refreshHakemukset({ avustushakuId: avustushaku.id }));
   };
 
   const allowedToDoAsiatarkastus =

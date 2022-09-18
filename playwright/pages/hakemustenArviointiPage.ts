@@ -133,6 +133,17 @@ export class HakemustenArviointiPage {
     ]);
   }
 
+  async clickHakemusByHanke(hanke: string) {
+    await Promise.all([
+      this.page.waitForNavigation(),
+      this.page.click(`span:text-matches("${hanke}")`),
+    ]);
+  }
+
+  async closeHakemusDetails() {
+    await this.page.locator("#close-hakemus-button").click();
+  }
+
   async openUkotusModal(hakemusID: number) {
     await this.page
       .locator(`[data-test-id=hakemus-${hakemusID}]`)
@@ -193,6 +204,7 @@ export class HakemustenArviointiPage {
         `[aria-label="Poista ${valmistelijaName} valmistelijan roolista"]`
       )
       .waitFor();
+    await this.waitForSave();
     await this.closeUkotusModal();
   }
 
@@ -320,6 +332,7 @@ export class HakemustenArviointiPage {
       await this.page.click('label[for="useDetailedCosts-true"]');
       await this.fillBudget(budget, "virkailija");
     }
+    await this.waitForSave();
   }
 
   async getHakemusID() {
@@ -338,7 +351,6 @@ export class HakemustenArviointiPage {
   }
 
   async acceptAvustushaku({
-    avustushakuID,
     projectName,
     budget = "100000",
     rahoitusalue = "Ammatillinen koulutus",
@@ -377,9 +389,7 @@ export class HakemustenArviointiPage {
     await this.page.keyboard.press("ArrowDown");
     await this.page.keyboard.press("Enter");
     await this.waitForSave();
-
     await this.acceptHakemus(budget);
-    await this.waitForArvioSave(avustushakuID, hakemusID);
     return hakemusID;
   }
 
@@ -391,6 +401,7 @@ export class HakemustenArviointiPage {
     await this.page.click(
       "#arviointi-tab label[for='set-arvio-status-accepted']"
     );
+    await this.waitForSave();
   }
 
   async rejectHakemus() {

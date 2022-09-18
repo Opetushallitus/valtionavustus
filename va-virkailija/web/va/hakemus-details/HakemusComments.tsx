@@ -4,26 +4,33 @@ import DateUtil from "soresu-form/web/DateUtil";
 import { Comment, HelpTexts } from "soresu-form/web/va/types";
 import NameFormatter from "soresu-form/web/va/util/NameFormatter";
 
-import HakemustenArviointiController from "../HakemustenArviointiController";
 import HelpTooltip from "../HelpTooltip";
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from "../hakemustenArviointi/arviointiStore";
+import {
+  addHakemusComment,
+  getSelectedHakemus,
+} from "../hakemustenArviointi/arviointiReducer";
 
 type HakemusCommentsProps = {
-  controller: HakemustenArviointiController;
   helpTexts: HelpTexts;
   comments?: Comment[];
   allowHakemusCommenting?: boolean;
 };
 
 const HakemusComments = ({
-  controller,
   helpTexts,
   allowHakemusCommenting,
   comments,
 }: HakemusCommentsProps) => {
+  const dispatch = useHakemustenArviointiDispatch();
+  const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
   const [comment, setComment] = useState("");
   const [added, setAdded] = useState(false);
-  const addComment = () => {
-    controller.addComment(comment);
+  const addComment = async () => {
+    dispatch(addHakemusComment({ hakemusId: hakemus.id, comment }));
     setComment("");
     setAdded(true);
   };

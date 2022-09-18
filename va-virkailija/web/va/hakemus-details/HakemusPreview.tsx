@@ -30,7 +30,7 @@ export default class HakemusPreview extends Component<{
   hakuData: HakuData;
 }> {
   render() {
-    const hakemus = this.props.hakemus;
+    const hakemus = _.cloneDeep(this.props.hakemus);
     const registerNumber = _.get(hakemus, "register-number", "");
     const avustushaku = this.props.avustushaku;
     const hakuData = this.props.hakuData;

@@ -12,8 +12,14 @@ import FakeFormState from "../form/FakeFormState";
 
 export default class SelvitysPreview extends Component {
   render() {
-    const { hakemus, selvitysType, avustushaku, selvitysHakemus, form } =
-      this.props;
+    const {
+      hakemus,
+      selvitysType,
+      avustushaku,
+      selvitysHakemus: hakemusThatCannotBeMutatedDirectly,
+      form,
+    } = this.props;
+    const selvitysHakemus = _.cloneDeep(hakemusThatCannotBeMutatedDirectly);
     const selvitys = hakemus.selvitys;
     const formState = createPreviewHakemusFormState();
     const formElementProps = {

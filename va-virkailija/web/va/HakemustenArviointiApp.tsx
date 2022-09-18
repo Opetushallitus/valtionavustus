@@ -2,16 +2,13 @@ import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 // @ts-ignore route-parser doesn't have proper types
 import RouteParser from "route-parser";
-import queryString from "query-string";
 
-import HakemustenArviointiController from "./HakemustenArviointiController";
 import HakemusDetails from "./hakemus-details/HakemusDetails";
 import { HakemusHakijaSidePreviewLink } from "./hakemus-details/HakemusHakijaSidePreviewLink";
 import HakemusDecisionLink from "./hakemus-details/HakemusDecisionLink";
 import AvustushakuDropdown from "./avustushaku/AvustushakuDropdown";
 import HakemusFilter from "./hakemus-filter/HakemusFilter";
 import LocalStorage from "./LocalStorage";
-import { State } from "./types";
 import HakemusListing from "./hakemus-list/HakemusListing";
 import { Switch } from "./hakemus-list/Switch";
 import { HeaderContainer } from "./Header";
@@ -19,11 +16,17 @@ import { AvustushakuDetails } from "./hakemus-list/AvustushakuDetails";
 
 import "./style/main.less";
 import "./hakemusten-arviointi.less";
-
-interface Props {
-  state: State;
-  controller: HakemustenArviointiController;
-}
+import { Provider } from "react-redux";
+import store, {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from "./hakemustenArviointi/arviointiStore";
+import {
+  getLoadedState,
+  initialize,
+  setModal,
+} from "./hakemustenArviointi/arviointiReducer";
+import { Hakemus } from "soresu-form/web/va/types";
 
 const SHOW_ALL = "showAll" as const;
 const SHOW_ADDITIONAL_INFO = "showAdditionalInfo" as const;
@@ -35,30 +38,65 @@ const setUrlParams = (key: string, value: boolean) => {
   history.replaceState(null, document.title, newUrl);
 };
 
-const App = ({ state, controller }: Props) => {
+const unwantedHakemukset = ({ status }: Hakemus) => {
+  return (
+    status === "submitted" ||
+    status === "pending_change_request" ||
+    status === "officer_edit" ||
+    status === "applicant_edit"
+  );
+};
+
+const AppRoot = () => {
+  const initialDataLoading = useHakemustenArviointiSelector(
+    (state) => state.arviointi.initialData.loading
+  );
+  if (initialDataLoading) {
+    return null;
+  }
+  return <App />;
+};
+
+const App = () => {
   const [showAllHakemukset, toggleShowAllHakemukset] = useState(
     () => new URLSearchParams(location.search).get(SHOW_ALL) === "true"
   );
-  const {
-    avustushakuList,
-    hakuData,
-    helpTexts,
-    modal,
-    saveStatus,
-    selectedHakemusAccessControl,
-    subTab,
-    userInfo,
-  } = state;
+  const dispatch = useHakemustenArviointiDispatch();
+  const selectedHakuId = useHakemustenArviointiSelector(
+    (state) => state.arviointi.selectedHakuId
+  );
+  const { avustushakuList, hakuData, userInfo } =
+    useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi));
+  const selectedHakemusId = useHakemustenArviointiSelector(
+    (state) => state.arviointi.selectedHakuId
+  );
+  const saveStatus = useHakemustenArviointiSelector(
+    (state) => state.arviointi.saveStatus
+  );
+  const modal = useHakemustenArviointiSelector(
+    (state) => state.arviointi.modal
+  );
   const { avustushaku, environment, hakemukset } = hakuData;
   const hakemusList = showAllHakemukset
     ? hakemukset
-    : HakemustenArviointiController.filterHakemukset(hakemukset);
-  const hasSelected = typeof state.selectedHakemus === "object";
+    : hakemukset.filter(unwantedHakemukset);
+  const hasSelected = selectedHakemusId !== undefined;
   const [splitView, setSplitView] = useState(false);
   const [showInfo, setShowInfo] = useState(
     () =>
       new URLSearchParams(location.search).get(SHOW_ADDITIONAL_INFO) === "true"
   );
+  useEffect(() => {
+    const escFunction = (event: KeyboardEvent) => {
+      if (event.code === "27") {
+        dispatch(setModal(undefined));
+      }
+    };
+    document.addEventListener("keydown", escFunction, false);
+    return () => {
+      document.removeEventListener("keydown", escFunction, false);
+    };
+  }, []);
   const toggleSplitView = (forceValue?: boolean) => {
     if (forceValue !== undefined) {
       setSplitView(forceValue);
@@ -67,18 +105,9 @@ const App = ({ state, controller }: Props) => {
     }
   };
   const isResolved = avustushaku.status === "resolved";
-  useEffect(() => {
-    const escFunction = (event: KeyboardEvent) => {
-      if (event.keyCode === 27) {
-        controller.setModal(undefined);
-      }
-    };
-    document.addEventListener("keydown", escFunction, false);
-    return () => {
-      document.removeEventListener("keydown", escFunction, false);
-    };
-  }, []);
-
+  const selectedHakemus = selectedHakuId
+    ? hakemusList.find((h) => h.id === selectedHakuId)
+    : undefined;
   return (
     <section className={splitView ? "split-view" : ""}>
       <HeaderContainer
@@ -106,13 +135,7 @@ const App = ({ state, controller }: Props) => {
               >
                 {showInfo ? "Piilota" : "Näytä"} lisätiedot
               </button>
-              <HakemusFilter
-                controller={controller}
-                hakemusFilter={state.hakemusFilter}
-                form={hakuData.form}
-                avustushaku={avustushaku}
-                hakemukset={hakemusList}
-              />
+              <HakemusFilter />
               {!isResolved && (
                 <Switch
                   checked={showAllHakemukset}
@@ -136,59 +159,35 @@ const App = ({ state, controller }: Props) => {
           <div>
             {showInfo && (
               <AvustushakuDetails
-                avustushaku={avustushaku}
-                hakemusList={hakemusList}
-                lahetykset={state.lahetykset}
-                vastuuvalmistelija={hakuData.roles.find(
-                  (r) => r.role === "vastuuvalmistelija"
+                acceptedHakemus={hakemusList.find(
+                  (h) => h.arvio.status === "accepted"
                 )}
-                toimintayksikko={hakuData.toimintayksikko}
-                earliestPaymentCreatedAt={state.earliestPaymentCreatedAt}
               />
             )}
           </div>
           <HakemusListing
-            selectedHakemus={state.selectedHakemus}
+            selectedHakemus={selectedHakemus}
             hakemusList={hakemusList}
             isResolved={isResolved}
-            roles={hakuData.roles}
             splitView={splitView}
-            onSelectHakemus={(id) => controller.selectHakemus(id)}
-            onYhteenvetoClick={(filteredHakemusList) =>
-              controller.gotoSavedSearch(filteredHakemusList)
-            }
             toggleSplitView={toggleSplitView}
-            controller={controller}
-            state={state}
-            userInfo={userInfo}
-            allowHakemusScoring={hakuData.privileges["score-hakemus"]}
             additionalInfoOpen={showInfo}
           />
         </div>
         <HakemusDetails
-          hakuData={hakuData}
-          avustushaku={avustushaku}
-          hakemus={state.selectedHakemus}
-          selectedHakemusAccessControl={selectedHakemusAccessControl}
-          userInfo={state.userInfo}
-          showOthersScores={state.showOthersScores}
-          subTab={subTab}
-          controller={controller}
-          environment={environment}
+          hakemus={selectedHakemus}
           splitView={splitView}
           toggleSplitView={toggleSplitView}
-          helpTexts={helpTexts}
-          projects={state.projects}
         />
         <div hidden={!hasSelected} id="footer">
-          {state.selectedHakemus?.["user-key"] && (
+          {selectedHakemus?.["user-key"] && (
             <>
               <HakemusHakijaSidePreviewLink
-                hakemusUserKey={state.selectedHakemus["user-key"]}
+                hakemusUserKey={selectedHakemus["user-key"]}
                 avustushakuId={avustushakuId}
               />
               <HakemusDecisionLink
-                hakemus={state.selectedHakemus}
+                hakemus={selectedHakemus}
                 avustushaku={avustushaku}
               />
             </>
@@ -212,16 +211,14 @@ const avustushakuId = parsedAvustusHakuIdObject
   ? parseInt(parsedAvustusHakuIdObject["avustushaku_id"], 10)
   : defaultHakuId;
 LocalStorage.saveAvustushakuId(avustushakuId);
-const query = queryString.parse(location.search);
-const evaluator = query.arvioija ? parseInt(query.arvioija) : undefined;
-const controller = new HakemustenArviointiController();
-const stateP = controller.initializeState(avustushakuId, evaluator);
 
 const app = document.getElementById("app");
 const root = createRoot(app!);
 
-stateP.onValue((state) => {
-  if (state.hakuData && state.userInfo) {
-    root.render(<App state={state} controller={controller} />);
-  }
-});
+store.dispatch(initialize(avustushakuId));
+
+root.render(
+  <Provider store={store}>
+    <AppRoot />
+  </Provider>
+);

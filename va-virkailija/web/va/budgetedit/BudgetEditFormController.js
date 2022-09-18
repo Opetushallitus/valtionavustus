@@ -8,14 +8,18 @@ import { isValidMoney } from "soresu-form/web/form/MoneyValidator";
 
 export default class BudgetEditFormController {
   constructor(
-    arviointiController,
+    onAnswerOverride,
+    onDetailedCostsToggle,
+    onCostsGranted,
     customComponentFactory,
     avustushaku,
     form,
     hakemus,
     helpTexts
   ) {
-    this.arviointiController = arviointiController;
+    this.onAnswerOverride = onAnswerOverride;
+    this.onDetailedCostsToggle = onDetailedCostsToggle;
+    this.onCostsGranted = onCostsGranted;
     this.customComponentFactory = customComponentFactory;
     this.avustushaku = avustushaku;
     this.form = form;
@@ -75,11 +79,12 @@ export default class BudgetEditFormController {
   }
 
   overrideAnswerValue(field, newValue) {
-    this.arviointiController.setHakemusOverriddenAnswerValue(
+    this.onAnswerOverride(this.hakemus, field, newValue);
+    /*this.arviointiController.setHakemusOverriddenAnswerValue(
       this.hakemus.id,
       field,
       newValue
-    );
+    );*/
   }
 
   toggleDetailedCostsListener(event) {
@@ -103,16 +108,18 @@ export default class BudgetEditFormController {
     if (_.sum(budgetItemsAmounts) === 0) {
       this.copyOriginalValues();
     }
-    this.arviointiController.toggleDetailedCosts(
+    this.onDetailedCostsToggle(this.hakemus.id, useDetailedCosts);
+    /*this.arviointiController.toggleDetailedCosts(
       this.hakemus,
       useDetailedCosts
-    );
+    );*/
   }
 
   costsGrantedOnChangeListener(event) {
     const newValue = Number(event.target.value.replace(/\s+/, ""));
     if (!isNaN(newValue)) {
-      this.arviointiController.setCostsGrantedValue(this.hakemus, newValue);
+      this.onCostsGranted(this.hakemus.id, newValue);
+      // this.arviointiController.setCostsGrantedValue(this.hakemus, newValue);
     }
   }
 

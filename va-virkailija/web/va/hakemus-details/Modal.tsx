@@ -1,18 +1,18 @@
 import React, { ReactNode } from "react";
 import FocusLock from "react-focus-lock";
 
-import HakemustenArviointiController from "../HakemustenArviointiController";
-
 import "./hakemusDetails.less";
+import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
+import { setModal } from "../hakemustenArviointi/arviointiReducer";
 
 interface ModalProps {
   title: string;
-  controller: HakemustenArviointiController;
   children: ReactNode;
 }
 
-export const Modal = ({ title, controller, children }: ModalProps) => {
-  const closeModal = () => controller.setModal(undefined);
+export const Modal = ({ title, children }: ModalProps) => {
+  const dispatch = useHakemustenArviointiDispatch();
+  const closeModal = () => dispatch(setModal(undefined));
   return (
     <FocusLock
       returnFocus={true}

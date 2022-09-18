@@ -56,6 +56,7 @@ test(`hakemusten arviointi additional info`, async ({
     await hakemustenArviointiPage.page
       .locator('[aria-label="Lisää _ valtionavustus valmistelijaksi"]')
       .click();
+    await hakemustenArviointiPage.waitForSave();
     await hakemustenArviointiPage.closeUkotusModal();
     await hakujenHallintaPage.navigateFromHeader();
     await hakujenHallintaPage.resolveAvustushaku();

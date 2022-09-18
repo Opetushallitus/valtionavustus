@@ -1,7 +1,7 @@
 import { Scoring, PersonScoreAverage } from "soresu-form/web/va/types";
 import { UserInfo } from "./types";
 
-export function scoreToFI(score: number): string {
+export function scoreToFI(score: number | null): string {
   switch (score) {
     case 0:
       return "Ei toteudu";
@@ -16,7 +16,7 @@ export function scoreToFI(score: number): string {
 }
 
 export function createAverageSummaryText(
-  scoring: Scoring,
+  scoring: Scoring | undefined,
   userInfo: UserInfo
 ): string {
   if (
@@ -97,10 +97,10 @@ export function effectiveAverage(
 }
 
 export function scoringByOid(
-  scoring: Scoring,
+  scoring: Scoring | undefined,
   personOid: string
 ): PersonScoreAverage | undefined {
-  return scoring["score-averages-by-user"]?.find(
+  return scoring?.["score-averages-by-user"]?.find(
     (personScoreAverage: PersonScoreAverage) => {
       return (
         personScoreAverage && personScoreAverage["person-oid"] === personOid
@@ -109,8 +109,11 @@ export function scoringByOid(
   );
 }
 
-function myAverage(scoring: Scoring, userInfo: UserInfo): number | undefined {
-  const myScore = scoring["score-averages-by-user"]?.find(
+function myAverage(
+  scoring: Scoring | undefined,
+  userInfo: UserInfo
+): number | undefined {
+  const myScore = scoring?.["score-averages-by-user"]?.find(
     (personScoreAverage: PersonScoreAverage) =>
       belongsToUser(personScoreAverage, userInfo)
   );
@@ -118,11 +121,11 @@ function myAverage(scoring: Scoring, userInfo: UserInfo): number | undefined {
 }
 
 export function othersScorings(
-  scoring: Scoring,
+  scoring: Scoring | undefined,
   userInfo: UserInfo
 ): PersonScoreAverage[] {
   return (
-    scoring["score-averages-by-user"]?.filter(
+    scoring?.["score-averages-by-user"]?.filter(
       (a) => !belongsToUser(a, userInfo)
     ) ?? []
   );

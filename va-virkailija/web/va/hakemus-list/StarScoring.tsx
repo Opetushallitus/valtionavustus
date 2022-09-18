@@ -1,9 +1,10 @@
 import React from "react";
 import { createAverageSummaryText, effectiveAverage } from "../ScoreResolver";
-import { UserInfo } from "../types";
 import { Scoring } from "soresu-form/web/va/types";
 
 import styles from "./StarScoring.module.less";
+import { useHakemustenArviointiSelector } from "../hakemustenArviointi/arviointiStore";
+import { getLoadedState } from "../hakemustenArviointi/arviointiReducer";
 
 interface StarProps {
   style: "empty" | "blue";
@@ -35,7 +36,6 @@ const Star: React.FC<StarProps> = ({ style, opacity }) => {
 
 interface StarScoringProps {
   id: number;
-  userInfo: UserInfo;
   allowHakemusScoring: boolean;
   scoring?: Scoring;
 }
@@ -52,7 +52,10 @@ const toStarElem = (meanScore: number) => (indexOfStar: number) => {
 };
 
 export const StarScoring = (props: StarScoringProps) => {
-  const { userInfo, allowHakemusScoring, scoring } = props;
+  const { allowHakemusScoring, scoring } = props;
+  const userInfo = useHakemustenArviointiSelector(
+    (state) => getLoadedState(state.arviointi).userInfo
+  );
   const meanScore =
     scoring && effectiveAverage(scoring, userInfo, allowHakemusScoring);
   if (!scoring || meanScore === undefined) {

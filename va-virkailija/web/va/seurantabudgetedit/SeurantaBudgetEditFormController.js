@@ -2,13 +2,13 @@ import BudgetBusinessRules from "../budgetedit/BudgetBusinessRules";
 
 export default class SeurantaBudgetEditFormController {
   constructor(
-    arviointiController,
+    onChangeListener,
     customComponentFactory,
     avustushaku,
     form,
     hakemus
   ) {
-    this.arviointiController = arviointiController;
+    this.onChangeListener = onChangeListener;
     this.customComponentFactory = customComponentFactory;
     this.avustushaku = avustushaku;
     this.budgetBusinessRules = new BudgetBusinessRules(
@@ -28,11 +28,7 @@ export default class SeurantaBudgetEditFormController {
   }
 
   componentOnChangeListener(field, newValue) {
-    this.arviointiController.setHakemusSeurantaAnswerValue(
-      this.hakemus.id,
-      field,
-      newValue
-    );
+    this.onChangeListener(this.hakemus, field, newValue);
   }
 
   componentDidMount() {}

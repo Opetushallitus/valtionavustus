@@ -24,7 +24,6 @@ interface MuutoshakemusProps {
   avustushaku: Avustushaku;
   muutoshakemukset: MuutoshakemusType[];
   hakemusVersion: Hakemus;
-  controller: any;
   userInfo: UserInfo;
   presenter: Role | undefined;
   isCurrentUserHakemukselleUkotettuValmistelija: boolean;
@@ -35,7 +34,6 @@ export const Muutoshakemus = ({
   avustushaku,
   muutoshakemukset,
   hakemusVersion,
-  controller,
   userInfo,
   presenter,
   isCurrentUserHakemukselleUkotettuValmistelija,
@@ -61,7 +59,6 @@ export const Muutoshakemus = ({
         muutoshakemukset={muutoshakemukset}
         hakemus={hakemus}
         hakemusVersion={hakemusVersion}
-        controller={controller}
         userInfo={userInfo}
         presenter={presenter}
         projectEndDate={projectEndDate}

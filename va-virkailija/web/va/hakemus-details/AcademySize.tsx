@@ -1,87 +1,59 @@
 import React from "react";
-import * as Bacon from "baconjs";
 
 import { Avustushaku, Hakemus } from "soresu-form/web/va/types";
 
-import HakemustenArviointiController from "../HakemustenArviointiController";
+import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
+import {
+  setArvioValue,
+  startHakemusArvioAutoSave,
+} from "../hakemustenArviointi/arviointiReducer";
 
 type AcademySizeProps = {
   avustushaku: Avustushaku;
-  controller: HakemustenArviointiController;
   hakemus: Hakemus;
   allowEditing?: boolean;
 };
 
-type AcademySizeState = {
-  currentHakemusId: number;
-  invalid: boolean;
-  value: string;
+const isValueValid = (val: string) => {
+  const valueInt = parseInt(val);
+  return isNaN(valueInt);
 };
 
-export default class AcademySize extends React.Component<
-  AcademySizeProps,
-  AcademySizeState
-> {
-  changeBus: Bacon.Bus<[a: Hakemus, b: number]>;
+const AcademySize = ({
+  avustushaku,
+  hakemus,
+  allowEditing,
+}: AcademySizeProps) => {
+  const dispatch = useHakemustenArviointiDispatch();
 
-  constructor(props: AcademySizeProps) {
-    super(props);
-    this.state = AcademySize.initialState(props);
-    this.changeBus = new Bacon.Bus();
-    this.changeBus.debounce(1000).onValue(([hakemus, value]) => {
-      this.props.controller.setHakemusAcademysize(hakemus, value);
-    });
-  }
-
-  static getDerivedStateFromProps(
-    props: AcademySizeProps,
-    state: AcademySizeState
-  ) {
-    if (props.hakemus.id !== state.currentHakemusId) {
-      return AcademySize.initialState(props);
-    } else {
-      return null;
-    }
-  }
-
-  static initialState(props: AcademySizeProps) {
-    const value = props.hakemus.arvio?.academysize || 0;
-    return {
-      currentHakemusId: props.hakemus.id,
-      value: "" + value,
-      invalid: false,
-    };
-  }
-
-  render() {
-    const { avustushaku, hakemus, allowEditing } = this.props;
-    if (!avustushaku.is_academysize) {
-      return null;
-    }
-    const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = event.target.value;
-      this.setState({ ...this.state, value });
-      const valueInt = parseInt(value);
-      if (value.length > 0) {
-        this.setState({ invalid: isNaN(valueInt) });
-      }
-      if (valueInt) {
-        this.changeBus.push([hakemus, valueInt]);
-      }
-    };
-    return (
-      <div className="hakemus-arviointi-section hakemus-arviointi-section--academy-size">
-        <label>Oppilaitoksen koko:</label>
-        <input
-          type="number"
-          className={
-            this.state.invalid ? "error input-number-sm" : "input-number-sm"
-          }
-          value={this.state.value}
-          onChange={onChange}
-          disabled={!allowEditing}
-        />
-      </div>
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const valueInt = parseInt(value);
+    dispatch(
+      setArvioValue({
+        key: "academysize",
+        value: valueInt,
+        hakemusId: hakemus.id,
+      })
     );
+    dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
+  };
+  if (!avustushaku.is_academysize) {
+    return null;
   }
-}
+  const invalid = isValueValid("" + hakemus.arvio.academysize);
+  return (
+    <div className="hakemus-arviointi-section hakemus-arviointi-section--academy-size">
+      <label>Oppilaitoksen koko:</label>
+      <input
+        type="number"
+        className={invalid ? "error input-number-sm" : "input-number-sm"}
+        value={hakemus.arvio.academysize}
+        onChange={onChange}
+        disabled={!allowEditing}
+      />
+    </div>
+  );
+};
+
+export default AcademySize;

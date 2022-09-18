@@ -9,11 +9,14 @@ import { Avustushaku, Hakemus, Selvitys } from "soresu-form/web/va/types";
 import { Language } from "soresu-form/web/va/i18n/translations";
 import translations from "soresu-form/resources/public/translations.json";
 
-import HakemustenArviointiController from "../HakemustenArviointiController";
 import { UserInfo } from "../types";
+import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
+import {
+  loadSelvitys,
+  refreshHakemukset,
+} from "../hakemustenArviointi/arviointiReducer";
 
 interface ValiselvitysEmailProps {
-  controller: HakemustenArviointiController;
   avustushaku: Avustushaku;
   hakemus: Hakemus;
   valiselvitys: Selvitys;
@@ -67,7 +70,8 @@ function initialRecipientEmails(props: ValiselvitysEmailProps) {
 }
 
 export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
-  const { avustushaku, controller, lang, valiselvitys } = props;
+  const { avustushaku, lang, valiselvitys, hakemus } = props;
+  const dispatch = useHakemustenArviointiDispatch();
   const [message, setMessage] = useState<string>(initialMessage(props));
   const [subject, setSubject] = useState<string>(initialSubject(props));
   const [recipientEmails, setRecipientEmails] = useState<Email[]>(
@@ -100,10 +104,11 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
     const url = `/api/avustushaku/${avustushaku.id}/selvitys/valiselvitys/send`;
 
     HttpUtil.post(url, request)
-      .then(() => {
-        controller.loadSelvitys();
-        controller.refreshHakemukset(avustushaku.id);
-        return null;
+      .then(async () => {
+        await dispatch(
+          loadSelvitys({ avustushakuId: avustushaku.id, hakemusId: hakemus.id })
+        );
+        await dispatch(refreshHakemukset({ avustushakuId: avustushaku.id }));
       })
       .catch((error) => {
         console.error(`Error in sending selvitys email, POST ${url}`, error);
