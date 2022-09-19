@@ -112,7 +112,9 @@ const TalousarvioSelect = ({
             noOptionsMessage={() => "Ei talousarviotilejä"}
             isOptionDisabled={(option) =>
               allSelectedTalousarvioTili.some(
-                (tili) => String(tili.id) === option.value
+                (tili) =>
+                  String(tili.id) === option.value ||
+                  tili["migrated-from-not-normalized-ta-tili"]
               )
             }
             onChange={onTalousarvioChange(talousarvioTiliIndex)}
