@@ -29,6 +29,19 @@
   GROUP BY t.id;
   " []))
 
+(defn- update-existing-talousarviotili [talousarviotili]
+  (with-tx (fn [tx]
+    (log/spy (-> (query tx "UPDATE talousarviotilit
+                   SET year = ?, code = ?, name = ?, amount = ?
+                   WHERE id = ?
+                   RETURNING *"
+               [(:year talousarviotili)
+                (:code talousarviotili)
+                (:name talousarviotili)
+                (:amount talousarviotili)
+                (:id talousarviotili)])
+        first)))))
+
 (defn- create-new-talousarviotili [talousarviotili]
   (with-tx (fn [tx]
     (-> (query tx "INSERT INTO talousarviotilit (year, code, name, amount)
@@ -78,6 +91,23 @@
              (internal-server-error!)))))
       (unauthorized ""))))
 
+(defn- update-talousarviotili []
+  (compojure-api/POST
+    "/:id/" [id :as request]
+    :body [talousarviotili (compojure-api/describe schema/UpdateTalousarviotili "Update talousarviotili")]
+    :return schema/Talousarviotili
+    (with-admin request
+      (try
+        (ok (update-existing-talousarviotili talousarviotili))
+        (catch java.sql.SQLException e
+          (case (.getSQLState e)
+             "23505" (unprocessable-entity!)
+             "23514" (bad-request!)
+             (do
+               (log/error e "Unexpected error when updating talousarviotili")
+               (internal-server-error!)))))
+      (unauthorized ""))))
+
 (defn- delete-talousarviotili []
   (compojure-api/DELETE
     "/:id/" [id :as request]
@@ -95,4 +125,5 @@
   "talousarviotili routes"
   (get-talousarviotilit)
   (create-talousarviotili)
+  (update-talousarviotili)
   (delete-talousarviotili))

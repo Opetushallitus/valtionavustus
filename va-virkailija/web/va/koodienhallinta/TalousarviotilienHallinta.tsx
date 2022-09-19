@@ -8,6 +8,7 @@ import {
   useCreateTalousarviotiliMutation,
   useGetTalousarvioTilitQuery,
   useRemoveTalousarviotiliMutation,
+  useUpdateTalousarviotiliMutation,
 } from "./apiSlice";
 import { TalousarviotiliWithUsageInfo } from "./types";
 import useOutsideClick from "../useOutsideClick";
@@ -42,9 +43,10 @@ const NewTiliSchema = yup.object().shape({
 
 interface FieldInputProps {
   name: string;
-  placeholder: string;
+  placeholder?: string;
   error?: string;
   className: string;
+  disabled?: boolean;
 }
 
 const FieldInput = ({
@@ -52,6 +54,7 @@ const FieldInput = ({
   placeholder,
   className,
   error,
+  disabled,
 }: FieldInputProps) => {
   return (
     <div className={styles.fieldContainer}>
@@ -60,6 +63,7 @@ const FieldInput = ({
         id={name}
         name={name}
         placeholder={placeholder}
+        disabled={disabled}
       />
       {error && (
         <div className={styles.error} data-test-id={`error-${name}`}>
@@ -104,7 +108,10 @@ const NewTiliRow = () => {
   const submitDisabled = formik.isSubmitting || !formik.isValid;
   return (
     <FormikProvider value={formik}>
-      <form onSubmit={formik.handleSubmit}>
+      <form
+        data-test-id="new-talousarviotili-form"
+        onSubmit={formik.handleSubmit}
+      >
         <div className={styles.tiliRow}>
           <FieldInput
             name="year"
@@ -186,7 +193,42 @@ const TiliRow = ({
   amount,
   avustushaut,
 }: TalousarviotiliWithUsageInfo) => {
-  const [removeTili, { isLoading }] = useRemoveTalousarviotiliMutation();
+  const [editing, setEditing] = useState<boolean>(false);
+  const [removeTalousarviotili, { isLoading: isLoadingDelete }] =
+    useRemoveTalousarviotiliMutation();
+  const [updateTalousarviotili, { isLoading: isLoadingUpdate }] =
+    useUpdateTalousarviotiliMutation();
+  const isLoading = isLoadingDelete || isLoadingUpdate;
+  const isDisabled = isLoading || !editing;
+  const tiliInUse = avustushaut.length > 0;
+  const deleteDisabled = isLoading || tiliInUse;
+
+  const formik = useFormik({
+    initialValues: { year, code, name, amount },
+    validationSchema: NewTiliSchema,
+    onSubmit: async (values, formikHelpers) => {
+      const { year, code, name, amount } = values;
+      try {
+        await updateTalousarviotili({
+          id,
+          code,
+          name,
+          year: Number(year),
+          amount: Number(amount),
+        }).unwrap();
+      } catch (e: any) {
+        if ("status" in e && e.status === 422) {
+          formikHelpers.setErrors({
+            code: `Koodi ${code} on jo olemassa vuodelle ${year}`,
+          });
+        }
+      } finally {
+        formikHelpers.setSubmitting(false);
+        setEditing(false);
+      }
+    },
+  });
+  const submitDisabled = formik.isSubmitting || !formik.isValid;
   const deleteTili = async () => {
     if (
       window.confirm(
@@ -194,30 +236,77 @@ const TiliRow = ({
       )
     ) {
       try {
-        await removeTili(id);
+        await removeTalousarviotili(id);
       } catch (e) {
         console.log(e);
       }
     }
   };
-  const tiliInUse = avustushaut.length > 0;
   return (
-    <div className={styles.tiliRow} data-test-id={name}>
-      <input className={styles.input} value={year} disabled />
-      <input className={styles.input} value={code} disabled />
-      <input className={styles.input} value={name} disabled />
-      <input className={styles.inputEuro} value={amount} disabled />
-      <AvustushautUsingTili avustushaut={avustushaut} />
-      <div className={styles.buttonContainer}>
-        <button disabled={isLoading} className={styles.plusButton} />
-        <button
-          disabled={isLoading || tiliInUse}
-          className={styles.minusButton}
-          title={`Poista talousarviotili ${code}`}
-          onClick={deleteTili}
+    <FormikProvider value={formik}>
+      <form
+        onSubmit={formik.handleSubmit}
+        className={styles.tiliRow}
+        data-test-id={name}
+      >
+        <FieldInput
+          name="year"
+          placeholder="Vuosiluku"
+          className={styles.input}
+          disabled={!editing}
+          error={formik.touched.year ? formik.errors.year : undefined}
         />
-      </div>
-    </div>
+        <FieldInput
+          name="code"
+          placeholder="Syötä TA-tilin koodi"
+          className={styles.input}
+          disabled={!editing}
+          error={formik.touched.code ? formik.errors.code : undefined}
+        />
+        <FieldInput
+          name="name"
+          placeholder="Syötä tilin nimi"
+          className={styles.input}
+          disabled={!editing}
+          error={formik.touched.name ? formik.errors.name : undefined}
+        />
+        <FieldInput
+          name="amount"
+          placeholder="Syötä euromäärä"
+          className={styles.inputEuro}
+          disabled={!editing}
+          error={formik.touched.amount ? formik.errors.amount : undefined}
+        />
+        <AvustushautUsingTili avustushaut={avustushaut} />
+        <div className={styles.buttonContainer}>
+          {editing ? (
+            <button
+              title="Tallenna talousarviotilin tiedot"
+              className={styles.saveButton}
+              type="submit"
+              disabled={submitDisabled}
+            />
+          ) : (
+            <button
+              className={styles.editButton}
+              onClick={(e) => {
+                e.preventDefault();
+                setEditing(true);
+              }}
+              title="Muokkaa talousarviotiliä"
+            />
+          )}
+          {!editing && (
+            <button
+              disabled={deleteDisabled}
+              className={styles.minusButton}
+              title={`Poista talousarviotili ${code}`}
+              onClick={deleteTili}
+            />
+          )}
+        </div>
+      </form>
+    </FormikProvider>
   );
 };
 

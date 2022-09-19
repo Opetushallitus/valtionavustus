@@ -216,6 +216,44 @@ test.describe.parallel("talousarviotilien hallinta", () => {
     await taForm.year.input.evaluate((e) => e.blur());
     await expectNoErrors(koodienhallintaPage);
   });
+
+  test("Talousarviotili can be edited", async ({ koodienhallintaPage }) => {
+    const taForm = koodienhallintaPage.taTilit.form;
+    const code = createRandomTalousarviotiliCode();
+    const name = `Muokkaustesti ${code}`;
+    const row = koodienhallintaPage.page.locator(`[data-test-id="${name}"]`);
+    const editButton = row.locator(`button[title="Muokkaa talousarviotiliä"]`);
+    const saveButton = row.locator(
+      '[title="Tallenna talousarviotilin tiedot"]'
+    );
+    const yearField = row.locator('[placeholder="Vuosiluku"]');
+    const amountField = row.locator('[placeholder="Syötä euromäärä"]');
+
+    await test.step("Create TA-tili", async () => {
+      await expect(taForm.submitBtn).toBeEnabled();
+      await taForm.year.input.fill("2022");
+      await taForm.code.input.fill(code);
+      await taForm.name.input.fill(name);
+      await taForm.amount.input.fill("10000");
+      await expectNoErrors(koodienhallintaPage);
+      await taForm.submitBtn.click();
+    });
+
+    expect(await yearField.inputValue()).toEqual("2022");
+    expect(await amountField.inputValue()).toEqual("10000");
+
+    await test.step("Update TA-tili", async () => {
+      await expect(editButton).toBeEnabled();
+      await editButton.click();
+      await yearField.fill("2023");
+      await amountField.fill("100");
+      await saveButton.click();
+    });
+
+    expect(await yearField.inputValue()).toEqual("2023");
+    expect(await amountField.inputValue()).toEqual("100");
+  });
+
   unpublishedAvustushakuTest(
     "tili that is in use cannot be deleted",
     async ({ page, avustushakuID, talousarviotili, hakuProps }) => {

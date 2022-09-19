@@ -3,6 +3,7 @@ import { UserInfo, VaCodeValue } from "../types";
 import {
   CreateTalousarviotili,
   TalousarviotiliWithUsageInfo,
+  UpdateTalousarviotili,
   ValueType,
 } from "./types";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
@@ -97,6 +98,14 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: [talousarviotilitTag],
     }),
+    updateTalousarviotili: builder.mutation<void, UpdateTalousarviotili>({
+      query: (talousarviotili) => ({
+        url: `api/talousarviotilit/${talousarviotili.id}/`,
+        method: "POST",
+        body: talousarviotili,
+      }),
+      invalidatesTags: [talousarviotilitTag],
+    }),
   }),
 });
 
@@ -109,4 +118,5 @@ export const {
   useGetTalousarvioTilitQuery,
   useCreateTalousarviotiliMutation,
   useRemoveTalousarviotiliMutation,
+  useUpdateTalousarviotiliMutation,
 } = apiSlice;

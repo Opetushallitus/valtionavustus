@@ -63,6 +63,9 @@ export const KoodienhallintaPage = (page: Page) => {
     await createCode("Toiminto", codeValues.operation);
     return codeValues;
   };
+  const newTalousarviotiliForm = page.locator(
+    "form[data-test-id=new-talousarviotili-form]"
+  );
   return {
     page,
     yearInput: page.locator("[data-test-id=code-form__year]"),
@@ -127,22 +130,30 @@ export const KoodienhallintaPage = (page: Page) => {
     taTilit: {
       form: {
         year: {
-          input: page.locator('[placeholder="Vuosiluku"]'),
-          error: page.locator("[data-test-id=error-year]"),
+          input: newTalousarviotiliForm.locator('[placeholder="Vuosiluku"]'),
+          error: newTalousarviotiliForm.locator("[data-test-id=error-year]"),
         },
         code: {
-          input: page.locator('[placeholder="Syötä TA-tilin koodi"]'),
-          error: page.locator("[data-test-id=error-code]"),
+          input: newTalousarviotiliForm.locator(
+            '[placeholder="Syötä TA-tilin koodi"]'
+          ),
+          error: newTalousarviotiliForm.locator("[data-test-id=error-code]"),
         },
         name: {
-          input: page.locator('[placeholder="Syötä tilin nimi"]'),
-          error: page.locator("[data-test-id=error-name]"),
+          input: newTalousarviotiliForm.locator(
+            '[placeholder="Syötä tilin nimi"]'
+          ),
+          error: newTalousarviotiliForm.locator("[data-test-id=error-name]"),
         },
         amount: {
-          input: page.locator('[placeholder="Syötä euromäärä"]'),
-          error: page.locator("[data-test-id=error-amount]"),
+          input: newTalousarviotiliForm.locator(
+            '[placeholder="Syötä euromäärä"]'
+          ),
+          error: newTalousarviotiliForm.locator("[data-test-id=error-amount]"),
         },
-        submitBtn: page.locator('[title="Tallenna uusi talousarviotili"]'),
+        submitBtn: newTalousarviotiliForm.locator(
+          '[title="Tallenna uusi talousarviotili"]'
+        ),
       },
     },
   };

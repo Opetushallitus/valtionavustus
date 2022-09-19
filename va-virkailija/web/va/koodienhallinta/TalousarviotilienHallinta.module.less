@@ -31,6 +31,9 @@
 }
 
 .input {
+  &:disabled {
+    background-color: #fafafa;
+  }
   padding: 8px;
   border: 1px solid #C1C1C1;
   border-radius: 4px;
@@ -116,6 +119,20 @@
   width: 30px;
   &:after {
     position: absolute;
+  }
+}
+
+.editButton {
+  composes: button;
+  &:after {
+    content: "✎";
+  }
+}
+
+.saveButton {
+  composes: button;
+  &:after {
+    content: "💾";
   }
 }
 

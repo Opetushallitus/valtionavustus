@@ -11,6 +11,8 @@ export interface CreateTalousarviotili {
   amount: number;
 }
 
+export type UpdateTalousarviotili = CreateTalousarviotili & { id: number };
+
 export interface Talousarviotili {
   id: number;
   year: number | undefined;

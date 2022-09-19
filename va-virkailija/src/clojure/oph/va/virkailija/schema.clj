@@ -519,6 +519,13 @@
   :amount s/Int
  })
 
+(s/defschema UpdateTalousarviotili
+  {:id s/Int
+   :name s/Str
+   :code s/Str
+   :year s/Int
+   :amount s/Int})
+
 (s/defschema TalousarvioAvustushaku
   {
     :id s/Int
