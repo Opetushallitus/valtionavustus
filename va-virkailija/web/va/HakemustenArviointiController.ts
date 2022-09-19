@@ -428,7 +428,9 @@ export default class HakemustenArviointiController {
     this.setDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(state);
     this.setDefaultBudgetValuesForSelectedHakemusSeurantaAnswers(state);
     this.setDefaultTraineeDayValuesForSelectedHakemusOverriddenAnswers(state);
-    this.validateHakemusRahoitusalueAndTalousarviotiliSelection(state);
+    if (state.hakuData.environment["ta-tilit"]?.["enabled?"] === false) {
+      this.validateHakemusRahoitusalueAndTalousarviotiliSelection(state);
+    }
     this.loadScores(state, hakemusIdToSelect);
     this.loadPayments(state, hakemusIdToSelect);
     this.loadComments();
