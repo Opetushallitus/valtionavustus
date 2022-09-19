@@ -199,7 +199,6 @@ const TiliRow = ({
   const [updateTalousarviotili, { isLoading: isLoadingUpdate }] =
     useUpdateTalousarviotiliMutation();
   const isLoading = isLoadingDelete || isLoadingUpdate;
-  const isDisabled = isLoading || !editing;
   const tiliInUse = avustushaut.length > 0;
   const deleteDisabled = isLoading || tiliInUse;
 
@@ -212,7 +211,7 @@ const TiliRow = ({
         await updateTalousarviotili({
           id,
           code,
-          name,
+          name: name!, // Formik validates this is not undefined but the compiler doesn't know that
           year: Number(year),
           amount: Number(amount),
         }).unwrap();
