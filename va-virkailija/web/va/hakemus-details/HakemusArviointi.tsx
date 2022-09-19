@@ -94,21 +94,22 @@ export const HakemusArviointi = ({
           disabled={!allowHakemusStateChanges}
         />
       </div>
-      {newTaTiliSelectionEnabled && (
+      {newTaTiliSelectionEnabled ? (
         <TalousarviotiliSelect
           isDisabled={!allowHakemusStateChanges}
           hakemus={hakemus}
           controller={controller}
           helpText={helpTexts["hankkeen_sivu__arviointi___talousarviotili"]}
         />
+      ) : (
+        <ChooseRahoitusalueAndTalousarviotili
+          controller={controller}
+          hakemus={hakemus}
+          avustushaku={avustushaku}
+          allowEditing={allowHakemusStateChanges}
+          helpTexts={helpTexts}
+        />
       )}
-      <ChooseRahoitusalueAndTalousarviotili
-        controller={controller}
-        hakemus={hakemus}
-        avustushaku={avustushaku}
-        allowEditing={allowHakemusStateChanges}
-        helpTexts={helpTexts}
-      />
       <SpecifyOppilaitos
         controller={controller}
         hakemus={hakemus}

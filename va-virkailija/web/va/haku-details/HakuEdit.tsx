@@ -114,7 +114,7 @@ export const HakuEdit = () => {
         );
       }
     };
-
+  const newTaTilitEnabled = environment["ta-tilit"]?.["enabled?"];
   return (
     <div id="haku-edit">
       <div dangerouslySetInnerHTML={mainHelp}></div>
@@ -340,22 +340,25 @@ export const HakuEdit = () => {
         lainsaadantoOptions={lainsaadantoOptions}
         helpTexts={helpTexts}
       />
-      {environment["ta-tilit"]?.["enabled?"] && <Talousarviotilit />}
-      <EducationLevels
-        enabled={allowNondisruptiveHakuEdits}
-        values={avustushaku.content.rahoitusalueet ?? []}
-        grant={avustushaku}
-        onChange={onChange}
-        helpTexts={helpTexts}
-        onAdd={(_, tili) => {
-          dispatch(addTalousarviotili(tili));
-          dispatch(startAutoSaveForAvustushaku(avustushaku.id));
-        }}
-        onRemove={(_, rahoitusalue, index) => () => {
-          dispatch(removeTalousarviotili({ rahoitusalue, index }));
-          dispatch(startAutoSaveForAvustushaku(avustushaku.id));
-        }}
-      />
+      {newTaTilitEnabled ? (
+        <Talousarviotilit />
+      ) : (
+        <EducationLevels
+          enabled={allowNondisruptiveHakuEdits}
+          values={avustushaku.content.rahoitusalueet ?? []}
+          grant={avustushaku}
+          onChange={onChange}
+          helpTexts={helpTexts}
+          onAdd={(_, tili) => {
+            dispatch(addTalousarviotili(tili));
+            dispatch(startAutoSaveForAvustushaku(avustushaku.id));
+          }}
+          onRemove={(_, rahoitusalue, index) => () => {
+            dispatch(removeTalousarviotili({ rahoitusalue, index }));
+            dispatch(startAutoSaveForAvustushaku(avustushaku.id));
+          }}
+        />
+      )}
       <div>
         <div className="multibatch-fields">
           <h3>
