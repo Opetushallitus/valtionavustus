@@ -16,11 +16,6 @@ import { addFieldsToHakemusJson } from "../utils/hakemus-json";
 import { Talousarviotili } from "../../va-virkailija/web/va/koodienhallinta/types";
 import { createReactSelectLocators } from "../utils/react-select";
 
-interface Rahoitusalue {
-  koulutusaste: string;
-  talousarviotili: string;
-}
-
 interface Raportointivelvoite {
   raportointilaji: string;
   maaraaika: string;
@@ -44,7 +39,6 @@ export interface HakuProps {
   hakemusFields: Field[];
   jaossaOlevaSumma?: number;
   installment?: Installment;
-  legacyRahoitusalueet?: Rahoitusalue[];
   talousarviotili: Talousarviotili;
 }
 
@@ -534,16 +528,6 @@ export class HakujenHallintaPage {
     return await this.copyCurrentHaku();
   }
 
-  async inputLegacyTalousarviotili({
-    koulutusaste,
-    talousarviotili,
-  }: Rahoitusalue) {
-    await this.page.fill(
-      `input[name="education-levels"][data-title="${koulutusaste}"]`,
-      talousarviotili
-    );
-  }
-
   dropdownSelector(codeType: "operational-unit" | "project" | "operation") {
     return `[data-test-id=code-value-dropdown__${codeType}]`;
   }
@@ -667,7 +651,6 @@ export class HakujenHallintaPage {
       raportointivelvoitteet,
       installment,
       talousarviotili,
-      legacyRahoitusalueet,
     } = props;
     console.log(`Avustushaku name for test: ${avustushakuName}`);
 
@@ -688,19 +671,13 @@ export class HakujenHallintaPage {
         .selectOption("5000");
     }
 
-    if (legacyRahoitusalueet) {
-      for (const rahoitusalue of legacyRahoitusalueet) {
-        await this.inputLegacyTalousarviotili(rahoitusalue);
-      }
-    } else {
-      const taTili = this.hauntiedotLocators().taTili;
-      await taTili.tili(0).input.fill(talousarviotili.code);
-      await this.page.keyboard.press("ArrowDown");
-      await this.page.keyboard.press("Enter");
-      await taTili.tili(0).koulutusaste(0).input.fill("Ammatillinen koulutus");
-      await this.page.keyboard.press("ArrowDown");
-      await this.page.keyboard.press("Enter");
-    }
+    const taTili = this.hauntiedotLocators().taTili;
+    await taTili.tili(0).input.fill(talousarviotili.code);
+    await this.page.keyboard.press("ArrowDown");
+    await this.page.keyboard.press("Enter");
+    await taTili.tili(0).koulutusaste(0).input.fill("Ammatillinen koulutus");
+    await this.page.keyboard.press("ArrowDown");
+    await this.page.keyboard.press("Enter");
 
     if (arvioituMaksupaiva) {
       await this.page.fill(

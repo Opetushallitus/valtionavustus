@@ -342,13 +342,11 @@ export class HakemustenArviointiPage {
     projectName,
     budget = "100000",
     rahoitusalue = "Ammatillinen koulutus",
-    legacyRahoitusalue,
   }: {
     avustushakuID: number;
     projectName: string;
     budget?: AcceptedBudget;
     rahoitusalue?: string;
-    legacyRahoitusalue?: string;
   }) {
     // Accept the hakemus
     await this.selectHakemusFromList(projectName);
@@ -369,14 +367,10 @@ export class HakemustenArviointiPage {
     expectToBeDefined(hakemusID);
     console.log("Hakemus ID:", hakemusID);
 
-    if (legacyRahoitusalue) {
-      await this.page.click(`label:has-text("${rahoitusalue}")`);
-    } else {
-      const { taTili } = this.arviointiTabLocators();
-      await taTili.input.fill(rahoitusalue);
-      await this.page.keyboard.press("ArrowDown");
-      await this.page.keyboard.press("Enter");
-    }
+    const { taTili } = this.arviointiTabLocators();
+    await taTili.input.fill(rahoitusalue);
+    await this.page.keyboard.press("ArrowDown");
+    await this.page.keyboard.press("Enter");
     await this.waitForSave();
 
     await this.acceptHakemus(budget);

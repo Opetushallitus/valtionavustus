@@ -77,7 +77,6 @@ export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
       page,
       ukotettuValmistelija,
       submittedHakemus: { userKey },
-      hakuProps,
       answers,
     },
     use,
@@ -94,7 +93,6 @@ export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
       hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
         avustushakuID,
         projectName: answers.projectName,
-        legacyRahoitusalue: hakuProps.legacyRahoitusalueet?.[0]?.koulutusaste,
       });
     });
 
