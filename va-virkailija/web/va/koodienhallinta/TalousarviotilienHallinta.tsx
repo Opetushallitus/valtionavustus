@@ -211,7 +211,7 @@ const TiliRow = ({
   const deleteDisabled = isLoading || tiliInUse;
 
   const formik = useFormik({
-    initialValues: { year, code, name, amount },
+    initialValues: { year, code, name: name ?? "", amount },
     validationSchema: NewTiliSchema,
     onSubmit: async (values, formikHelpers) => {
       const { year, code, name, amount } = values;
@@ -219,7 +219,7 @@ const TiliRow = ({
         await updateTalousarviotili({
           id,
           code,
-          name: name!, // Formik validates this is not undefined but the compiler doesn't know that
+          name,
           year: Number(year),
           amount: Number(amount),
         }).unwrap();
