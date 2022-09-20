@@ -26,7 +26,8 @@
     AND at.deleted IS NULL
   LEFT JOIN hakija.avustushaut a ON a.id = at.avustushaku_id
   WHERE t.deleted IS NULL
-  GROUP BY t.id;
+  GROUP BY t.id
+  ORDER BY t.id DESC;
   " []))
 
 (defn- update-existing-talousarviotili [talousarviotili]
