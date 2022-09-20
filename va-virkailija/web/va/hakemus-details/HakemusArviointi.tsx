@@ -507,7 +507,7 @@ const TalousarviotiliSelect = ({
         talousarviotili: tili.code,
         rahoitusalue: aste,
       },
-      label: `${aste} ${tili.code} ${tili.name}`,
+      label: `${aste} ${tili.code} ${tili.name ?? ""}`,
     }));
   });
   const value = options.find(
