@@ -253,7 +253,7 @@ const TiliRow = ({
     <FormikProvider value={formik}>
       <form
         onSubmit={formik.handleSubmit}
-        className={styles.tiliRow}
+        className={`${styles.tiliRow} ${editing ? styles.tiliRowEditing : ''}`}
         data-test-id={name}
       >
         <FieldInput
