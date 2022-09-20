@@ -5,7 +5,10 @@ import styles from "./IconButton.module.less";
 export function IconButton(props: ButtonHTMLAttributes<any>) {
   const { className, children, ...restProps } = props;
   return (
-    <button className={`${styles.codeIconButton} ${className}`} {...restProps}>
+    <button
+      className={`${styles.codeIconButton} ${className ?? ""}`}
+      {...restProps}
+    >
       {children}
     </button>
   );
