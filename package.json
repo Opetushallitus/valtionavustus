@@ -16,7 +16,7 @@
     "formik": "^2.2.9",
     "lodash": "^4.17.21",
     "moment": "^2.29.2",
-    "moment-timezone": "^0.5.34",
+    "moment-timezone": "^0.5.35",
     "oph-virkailija-style-guide": "github:Opetushallitus/virkailija-styles",
     "query-string": "^2.2.0",
     "react": "^18.2.0",
