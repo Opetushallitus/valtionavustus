@@ -1,4 +1,4 @@
-import { expect, Page } from "@playwright/test";
+import { expect, Locator } from "@playwright/test";
 import { defaultValues } from "../../fixtures/defaultValues";
 import { KoodienhallintaPage } from "../../pages/koodienHallintaPage";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
@@ -282,55 +282,55 @@ test.describe.parallel("talousarvio select", () => {
       await expect(secondTili.input).toBeHidden();
     });
   });
+  test("cannot modify TA-tili or koulutusaste after haku has been published", async ({
+    hakujenHallintaPage,
+    hakuProps,
+    userCache,
+  }) => {
+    expectToBeDefined(userCache);
+    /*
+      reload needed as hakuProps
+      spawns a new browser context to create tilit
+      and the test continues in the first browser
+     */
+    await hakujenHallintaPage.page.reload();
+    await hakujenHallintaPage.fillAvustushaku(hakuProps);
+    const taTili = hakujenHallintaPage.hauntiedotLocators().taTili;
+    const firstTili = taTili.tili(0);
+    const { addTiliBtn, removeTiliBtn, input } = firstTili;
+    const {
+      addKoulutusasteBtn,
+      removeKoulutusasteBtn: removeKoulutusasteBtnFn,
+    } = firstTili.koulutusaste(0);
+    const removeKoulutusasteBtn = removeKoulutusasteBtnFn(
+      "Ammatillinen koulutus"
+    );
+    const locators = [
+      addTiliBtn,
+      removeTiliBtn,
+      addKoulutusasteBtn,
+      removeKoulutusasteBtn,
+      input,
+    ];
+    await verifyLocatorsAreEnabled(...locators);
+    await hakujenHallintaPage.publishAvustushaku();
+    await verifyLocatorsAreDisabled(...locators);
+    await hakujenHallintaPage.setAvustushakuInDraftState();
+    await verifyLocatorsAreEnabled(...locators);
+    await hakujenHallintaPage.publishAvustushaku();
+    await hakujenHallintaPage.resolveAvustushaku();
+    await verifyLocatorsAreDisabled(...locators);
+  });
 });
 
-test("cannot modify TA-tili or koulutusaste after haku has been published", async ({
-  page,
-  hakuProps,
-  userCache,
-}) => {
-  expectToBeDefined(userCache);
-  const hakujenHallintaPage = new HakujenHallintaPage(page);
-  await hakujenHallintaPage.navigate(1);
-  await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps);
+async function verifyLocatorsAreEnabled(...locators: Locator[]) {
+  for (const locator of locators) {
+    await expect(locator).toBeEnabled();
+  }
+}
 
-  await hakujenHallintaPage.publishAvustushaku();
-  await verifyTaTiliOrKoulutusasteCannotBeModified(page);
-
-  await hakujenHallintaPage.resolveAvustushaku();
-  await verifyTaTiliOrKoulutusasteCannotBeModified(page);
-});
-
-async function verifyTaTiliOrKoulutusasteCannotBeModified(page: Page) {
-  await test.step("Cannot add new TA-tili", async () => {
-    await expect(
-      page.locator("button[title='Lisää talousarviotili']").first()
-    ).toBeDisabled();
-  });
-
-  await test.step("Cannot remove existing TA-tili", async () => {
-    await expect(
-      page.locator("button[title='Poista talousarviotili']").first()
-    ).toBeDisabled();
-  });
-
-  await test.step("Cannot modify existing TA-tili", async () => {
-    await expect(
-      page
-        .locator('#ta-tili-container-0 input[class^="taTiliSelection"]')
-        .first()
-    ).toBeDisabled();
-  });
-
-  await test.step("Cannot add koulutusaste", async () => {
-    await expect(
-      page.locator("button[title='Lisää uusi koulutusastevalinta']").first()
-    ).toBeDisabled();
-  });
-
-  await test.step("Cannot remove koulutusaste", async () => {
-    await expect(
-      page.locator("button[title^='Poista koulutusaste']").first()
-    ).toBeDisabled();
-  });
+async function verifyLocatorsAreDisabled(...locators: Locator[]) {
+  for (const locator of locators) {
+    await expect(locator).toBeDisabled();
+  }
 }

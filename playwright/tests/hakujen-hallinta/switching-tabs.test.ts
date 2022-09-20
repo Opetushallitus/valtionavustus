@@ -17,7 +17,7 @@ test("switching between avustushaut", async ({
   const hakujenHallintaPage = new HakujenHallintaPage(page);
   await test.step("create avustushaku #1", async () => {
     await hakujenHallintaPage.copyEsimerkkihaku();
-    await hakujenHallintaPage.createHakuFromEsimerkkihaku({
+    await hakujenHallintaPage.fillAvustushaku({
       ...hakuProps,
       avustushakuName,
       hankkeenAlkamispaiva,
@@ -27,7 +27,7 @@ test("switching between avustushaut", async ({
   let avustushakuID: number;
   await test.step("create avustushaku #2", async () => {
     avustushakuID = await hakujenHallintaPage.copyEsimerkkihaku();
-    await hakujenHallintaPage.createHakuFromEsimerkkihaku({
+    await hakujenHallintaPage.fillAvustushaku({
       ...hakuProps,
       avustushakuName: `Makuulla hatata - haku ${randomString()}`,
       registerNumber: randomAsiatunnus(),

@@ -511,20 +511,15 @@ export class HakujenHallintaPage {
     await expect(hakuNameFi).toHaveText(`${currentHakuTitle} (kopio)`);
     await this.page.waitForLoadState("networkidle");
 
-    return parseInt(await expectQueryParameter(this.page, "avustushaku"));
+    const avustushakuID = parseInt(
+      await expectQueryParameter(this.page, "avustushaku")
+    );
+    console.log(`Avustushaku ID: ${avustushakuID}`);
+    return avustushakuID;
   }
 
   async copyEsimerkkihaku(): Promise<number> {
-    await this.navigateToDefaultAvustushaku();
-    await expect(this.loadingAvustushaku).toBeHidden();
-    await Promise.all([
-      this.page.waitForNavigation(),
-      expect(this.loadingAvustushaku).toBeVisible(),
-      this.page
-        .locator('[data-test-id="Yleisavustus - esimerkkihaku"]')
-        .click(),
-    ]);
-    await expect(this.loadingAvustushaku).toBeHidden();
+    await this.navigate(2);
     return await this.copyCurrentHaku();
   }
 
@@ -636,32 +631,27 @@ export class HakujenHallintaPage {
     await this.page.selectOption("select#document-type", value);
   }
 
-  async createHakuFromEsimerkkihaku(props: HakuProps): Promise<number> {
-    const {
-      avustushakuName,
-      registerNumber,
-      hakuaikaStart,
-      hakuaikaEnd,
-      hankkeenAlkamispaiva,
-      hankkeenPaattymispaiva,
-      selectionCriteria,
-      arvioituMaksupaiva,
-      lainsaadanto,
-      jaossaOlevaSumma,
-      raportointivelvoitteet,
-      installment,
-      talousarviotili,
-    } = props;
-    console.log(`Avustushaku name for test: ${avustushakuName}`);
-
-    const avustushakuID = await this.copyEsimerkkihaku();
-    console.log(`Avustushaku ID: ${avustushakuID}`);
-
+  async fillAvustushaku({
+    avustushakuName,
+    registerNumber,
+    hakuaikaStart,
+    hakuaikaEnd,
+    hankkeenAlkamispaiva,
+    hankkeenPaattymispaiva,
+    selectionCriteria,
+    arvioituMaksupaiva,
+    lainsaadanto,
+    jaossaOlevaSumma,
+    raportointivelvoitteet,
+    installment,
+    talousarviotili,
+    vaCodes,
+  }: HakuProps) {
     await this.page.fill("#register-number", registerNumber);
     await this.hauntiedotLocators().hakuName.fi.fill(avustushakuName);
     await this.page.fill("#haku-name-sv", avustushakuName + " på svenska");
 
-    await this.selectVaCodes(props.vaCodes);
+    await this.selectVaCodes(vaCodes);
 
     if (installment === Installment.MultipleInstallments) {
       await this.page.locator("text=Useampi maksuerä").click();
@@ -742,7 +732,7 @@ export class HakujenHallintaPage {
     await this.page.fill('[id="decision.taustaa.fi"]', "taustaa");
 
     await this.waitForSave();
-    return avustushakuID;
+    await this.switchToHaunTiedotTab();
   }
 
   async addValmistelija(name: string) {
@@ -766,7 +756,8 @@ export class HakujenHallintaPage {
     lomakeJson: string,
     hakuProps: HakuProps
   ): Promise<{ avustushakuID: number }> {
-    const avustushakuID = await this.createHakuFromEsimerkkihaku(hakuProps);
+    const avustushakuID = await this.copyEsimerkkihaku();
+    await this.fillAvustushaku(hakuProps);
     const formEditorPage = await this.navigateToFormEditor(avustushakuID);
 
     if (hakuProps.hakemusFields.length) {

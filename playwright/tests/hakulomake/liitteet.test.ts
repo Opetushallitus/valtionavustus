@@ -13,10 +13,8 @@ const test = defaultValues.extend<{
   ) => {
     expect(userCache).toBeDefined();
     const hakujenHallintaPage = new HakujenHallintaPage(page);
-    const avustushakuID = await hakujenHallintaPage.createHakuFromEsimerkkihaku(
-      hakuProps
-    );
-    await hakujenHallintaPage.navigate(avustushakuID);
+    const avustushakuID = await hakujenHallintaPage.copyEsimerkkihaku();
+    await hakujenHallintaPage.fillAvustushaku(hakuProps);
     await hakujenHallintaPage.publishAvustushaku();
     const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page);
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang);
