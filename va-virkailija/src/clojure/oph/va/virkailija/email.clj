@@ -91,7 +91,6 @@
                                        :lang lang
                                        :hakemus-id hakemus-id
                                        :from (-> email/smtp-config :from lang)
-                                       :reply-to presenting-officer-email
                                        :bcc presenting-officer-email
                                        :sender (-> email/smtp-config :sender)
                                        :subject (get-in mail-titles [:change-request lang])
