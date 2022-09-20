@@ -8,6 +8,7 @@ import {
   useUpdateVaCodeVisibilityMutation,
 } from "./apiSlice";
 import { Field, FormikProvider, useFormik } from "formik";
+import { IconButton } from "./IconButton";
 import { IconLockClosed } from "./IconLockClosed";
 import { IconLockOpen } from "./IconLockOpen";
 import { IconDelete } from "./IconDelete";
@@ -270,24 +271,21 @@ const Codes = ({ valueType }: { valueType: ValueType }) => {
                   <td className={fadeClass}>{code.code}</td>
                   <td className={fadeClass}>{code["code-value"]}</td>
                   <td className="code-cell__buttons">
-                    <button
+                    <IconButton
                       data-test-id={code.hidden ? "show-code" : "hide-code"}
-                      className={`code-icon-button ${
-                        code.hidden ? "code-icon-button__hidden" : ""
-                      }`}
                       onClick={setCodeVisibility(code.id, !code.hidden)}
                     >
                       {code.hidden ? <IconLockClosed /> : <IconLockOpen />}
-                    </button>
+                    </IconButton>
                   </td>
                   <td className="code-cell__buttons">
-                    <button
+                    <IconButton
                       data-test-id="delete-code"
-                      className="code-icon-button icon-delete"
+                      className="icon-delete"
                       onClick={deleteCode(code.id)}
                     >
                       <IconDelete />
-                    </button>
+                    </IconButton>
                   </td>
                 </tr>
               );

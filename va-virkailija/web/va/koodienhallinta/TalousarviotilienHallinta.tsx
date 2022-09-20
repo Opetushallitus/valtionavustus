@@ -12,6 +12,13 @@ import {
 } from "./apiSlice";
 import { TalousarviotiliWithUsageInfo } from "./types";
 import useOutsideClick from "../useOutsideClick";
+import {
+  IconAdd,
+  IconButton,
+  IconEdit,
+  IconRemove,
+  IconSave,
+} from "./IconButton";
 
 const Label = ({ text, labelFor }: { text: string; labelFor: string }) => {
   return (
@@ -139,12 +146,13 @@ const NewTiliRow = () => {
           />
           <AvustushautUsingTili avustushaut={[]} />
           <div className={styles.buttonContainer}>
-            <button
-              className={styles.plusButton}
+            <IconButton
               type="submit"
               title="Tallenna uusi talousarviotili"
               disabled={submitDisabled}
-            />
+            >
+              <IconAdd />
+            </IconButton>
           </div>
         </div>
       </form>
@@ -279,29 +287,32 @@ const TiliRow = ({
         <AvustushautUsingTili avustushaut={avustushaut} />
         <div className={styles.buttonContainer}>
           {editing ? (
-            <button
+            <IconButton
               title="Tallenna talousarviotilin tiedot"
-              className={styles.saveButton}
               type="submit"
               disabled={submitDisabled}
-            />
+            >
+              <IconSave />
+            </IconButton>
           ) : (
-            <button
-              className={styles.editButton}
+            <IconButton
               onClick={(e) => {
                 e.preventDefault();
                 setEditing(true);
               }}
               title="Muokkaa talousarviotiliä"
-            />
+            >
+              <IconEdit />
+            </IconButton>
           )}
           {!editing && (
-            <button
+            <IconButton
               disabled={deleteDisabled}
-              className={styles.minusButton}
               title={`Poista talousarviotili ${code}`}
               onClick={deleteTili}
-            />
+            >
+              <IconRemove />
+            </IconButton>
           )}
         </div>
       </form>

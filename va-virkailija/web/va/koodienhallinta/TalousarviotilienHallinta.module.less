@@ -110,59 +110,6 @@
   margin: 32px 0 32px 0;
 }
 
-.button {
-  aspect-ratio: 1;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  width: 30px;
-  &:after {
-    position: absolute;
-  }
-}
-
-.editButton {
-  composes: button;
-  &:after {
-    content: "✎";
-  }
-}
-
-.saveButton {
-  composes: button;
-  &:after {
-    content: "💾";
-  }
-}
-
-.plusButton {
-  composes: button;
-  &:after {
-    content: "+";
-  }
-}
-
-.minusButton {
-  composes: button;
-  background-color: #BA3E35;
-  border-color: #BA3E35;
-  margin-left: 8px;
-  &:not(:disabled) {
-    &:active {
-      background-color: darken(#BA3E35, 10%);
-      border-color: darken(#BA3E35, 10%);
-    }
-    &:hover {
-      background-color: lighten(#BA3E35, 10%);
-      border-color: lighten(#BA3E35, 10%);
-    }
-  }
-  &:after {
-    content: "-";
-  }
-}
-
 .fieldContainer {
   display: flex;
   flex-direction: column;
