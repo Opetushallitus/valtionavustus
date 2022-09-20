@@ -31,32 +31,29 @@
   " []))
 
 (defn- update-existing-talousarviotili [talousarviotili]
-  (with-tx (fn [tx]
-    (-> (query tx "UPDATE talousarviotilit
-                   SET year = ?, code = ?, name = ?, amount = ?
-                   WHERE id = ?
-                   RETURNING *"
-               [(:year talousarviotili)
-                (:code talousarviotili)
-                (:name talousarviotili)
-                (:amount talousarviotili)
-                (:id talousarviotili)])
-        first))))
+  (-> (query "UPDATE talousarviotilit
+                 SET year = ?, code = ?, name = ?, amount = ?
+                 WHERE id = ?
+                 RETURNING *"
+             [(:year talousarviotili)
+              (:code talousarviotili)
+              (:name talousarviotili)
+              (:amount talousarviotili)
+              (:id talousarviotili)])
+      first))
 
 (defn- create-new-talousarviotili [talousarviotili]
-  (with-tx (fn [tx]
-    (-> (query tx "INSERT INTO talousarviotilit (year, code, name, amount)
-                  VALUES (?, ?, ?, ?)
-                  RETURNING *"
-               [(:year talousarviotili)
-                (:code talousarviotili)
-                (:name talousarviotili)
-                (:amount talousarviotili)])
-        first))))
+  (-> (query "INSERT INTO talousarviotilit (year, code, name, amount)
+                VALUES (?, ?, ?, ?)
+                RETURNING *"
+             [(:year talousarviotili)
+              (:code talousarviotili)
+              (:name talousarviotili)
+              (:amount talousarviotili)])
+      first))
 
 (defn- delete-talousarviotili! [id]
-  (with-tx (fn [tx]
-    (execute! tx "UPDATE talousarviotilit set deleted = now() WHERE id = ?" [id]))))
+  (execute! "UPDATE talousarviotilit set deleted = now() WHERE id = ?" [id]))
 
 (defn- talousarviotili-is-used? [id]
   (-> (query "SELECT EXISTS (
