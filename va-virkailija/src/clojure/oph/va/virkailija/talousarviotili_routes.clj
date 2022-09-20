@@ -32,7 +32,7 @@
 
 (defn- update-existing-talousarviotili [talousarviotili]
   (with-tx (fn [tx]
-    (log/spy (-> (query tx "UPDATE talousarviotilit
+    (-> (query tx "UPDATE talousarviotilit
                    SET year = ?, code = ?, name = ?, amount = ?
                    WHERE id = ?
                    RETURNING *"
@@ -41,7 +41,7 @@
                 (:name talousarviotili)
                 (:amount talousarviotili)
                 (:id talousarviotili)])
-        first)))))
+        first))))
 
 (defn- create-new-talousarviotili [talousarviotili]
   (with-tx (fn [tx]
