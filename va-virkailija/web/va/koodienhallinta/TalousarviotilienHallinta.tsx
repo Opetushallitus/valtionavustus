@@ -209,9 +209,10 @@ const TiliRow = ({
 }: TalousarviotiliWithUsageInfo) => {
   const dispatch = useAppDispatch();
 
-  const editing = useAppSelector(
-    (state) => state.talousarviotilienHallinta.talousarviotiliIdInEditing === id
+  const talousarviotiliIdInEditing = useAppSelector(
+    (state) => state.talousarviotilienHallinta.talousarviotiliIdInEditing
   );
+  const editing = talousarviotiliIdInEditing === id;
   const [removeTalousarviotili, { isLoading: isLoadingDelete }] =
     useRemoveTalousarviotiliMutation();
   const [updateTalousarviotili, { isLoading: isLoadingUpdate }] =
@@ -226,13 +227,21 @@ const TiliRow = ({
     onSubmit: async (values, formikHelpers) => {
       const { year, code, name, amount } = values;
       try {
-        await updateTalousarviotili({
+        const updated = await updateTalousarviotili({
           id,
           code,
           name,
           year: Number(year),
           amount: Number(amount),
         }).unwrap();
+        formikHelpers.resetForm({
+          values: {
+            year: updated.year,
+            code: updated.code,
+            name: updated.name,
+            amount: updated.amount,
+          },
+        });
       } catch (e: any) {
         if ("status" in e && e.status === 422) {
           formikHelpers.setErrors({
@@ -247,10 +256,10 @@ const TiliRow = ({
   });
 
   useEffect(() => {
-    if (!editing) {
-      formik.resetForm();
-    }
-  }, [editing]);
+    const switchedToEditOtherTalousarviotili =
+      !editing && talousarviotiliIdInEditing !== undefined;
+    if (switchedToEditOtherTalousarviotili) formik.resetForm();
+  }, [editing, talousarviotiliIdInEditing]);
 
   const submitDisabled = formik.isSubmitting || !formik.isValid;
   const deleteTili = async () => {
@@ -313,6 +322,7 @@ const TiliRow = ({
             </IconButton>
           ) : (
             <IconButton
+              disabled={isLoading}
               onClick={(e) => {
                 e.preventDefault();
                 dispatch(editTalousarviotili(id));

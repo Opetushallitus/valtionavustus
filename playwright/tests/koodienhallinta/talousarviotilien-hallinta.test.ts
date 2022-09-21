@@ -237,10 +237,24 @@ test.describe.parallel("talousarviotilien hallinta", () => {
       await taForm.amount.input.fill("10000");
       await expectNoErrors(koodienhallintaPage);
       await taForm.submitBtn.click();
+
+      expect(await yearField.inputValue()).toEqual("2022");
+      expect(await amountField.inputValue()).toEqual("10000");
     });
 
-    expect(await yearField.inputValue()).toEqual("2022");
-    expect(await amountField.inputValue()).toEqual("10000");
+    await test.step("Switching to edit other TA-tili resets form", async () => {
+      await expect(editButton).toBeEnabled();
+      await editButton.click();
+      await yearField.fill("2023");
+      await amountField.fill("100");
+      await koodienhallintaPage.page.click(
+        "[title='Muokkaa talousarviotiliä']"
+      );
+      await expect(editButton).toBeEnabled();
+
+      expect(await yearField.inputValue()).toEqual("2022");
+      expect(await amountField.inputValue()).toEqual("10000");
+    });
 
     await test.step("Update TA-tili", async () => {
       await expect(editButton).toBeEnabled();
@@ -248,10 +262,11 @@ test.describe.parallel("talousarviotilien hallinta", () => {
       await yearField.fill("2023");
       await amountField.fill("100");
       await saveButton.click();
-    });
+      await expect(editButton).toBeEnabled();
 
-    expect(await yearField.inputValue()).toEqual("2023");
-    expect(await amountField.inputValue()).toEqual("100");
+      expect(await yearField.inputValue()).toEqual("2023");
+      expect(await amountField.inputValue()).toEqual("100");
+    });
   });
 
   unpublishedAvustushakuTest(
