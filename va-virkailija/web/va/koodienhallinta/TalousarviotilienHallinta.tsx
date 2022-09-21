@@ -227,21 +227,13 @@ const TiliRow = ({
     onSubmit: async (values, formikHelpers) => {
       const { year, code, name, amount } = values;
       try {
-        const updated = await updateTalousarviotili({
+        await updateTalousarviotili({
           id,
           code,
           name,
           year: Number(year),
           amount: Number(amount),
         }).unwrap();
-        formikHelpers.resetForm({
-          values: {
-            year: updated.year,
-            code: updated.code,
-            name: updated.name,
-            amount: updated.amount,
-          },
-        });
       } catch (e: any) {
         if ("status" in e && e.status === 422) {
           formikHelpers.setErrors({
