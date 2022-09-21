@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import * as yup from "yup";
 
 import styles from "./TalousarviotilienHallinta.module.less";
@@ -19,6 +19,12 @@ import {
   IconRemove,
   IconSave,
 } from "./IconButton";
+import {
+  editTalousarviotili,
+  stopEditing,
+  useAppDispatch,
+  useAppSelector,
+} from "./store";
 
 const Label = ({ text, labelFor }: { text: string; labelFor: string }) => {
   return (
@@ -201,7 +207,11 @@ const TiliRow = ({
   amount,
   avustushaut,
 }: TalousarviotiliWithUsageInfo) => {
-  const [editing, setEditing] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+
+  const editing = useAppSelector(
+    (state) => state.talousarviotilienHallinta.talousarviotiliIdInEditing === id
+  );
   const [removeTalousarviotili, { isLoading: isLoadingDelete }] =
     useRemoveTalousarviotiliMutation();
   const [updateTalousarviotili, { isLoading: isLoadingUpdate }] =
@@ -231,10 +241,17 @@ const TiliRow = ({
         }
       } finally {
         formikHelpers.setSubmitting(false);
-        setEditing(false);
+        dispatch(stopEditing());
       }
     },
   });
+
+  useEffect(() => {
+    if (!editing) {
+      formik.resetForm();
+    }
+  }, [editing]);
+
   const submitDisabled = formik.isSubmitting || !formik.isValid;
   const deleteTili = async () => {
     if (
@@ -298,7 +315,7 @@ const TiliRow = ({
             <IconButton
               onClick={(e) => {
                 e.preventDefault();
-                setEditing(true);
+                dispatch(editTalousarviotili(id));
               }}
               title="Muokkaa talousarviotiliä"
             >
