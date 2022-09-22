@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
-import { expectToBeDefined } from "../../utils/util";
+import { expectToBeDefined, lastElementFromArray } from "../../utils/util";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import moment from "moment";
 import { MaksatuksetPage } from "../../pages/maksatuksetPage";
@@ -36,6 +36,7 @@ test(`hakemusten arviointi additional info`, async ({
   await hakemustenArviointiPage.acceptAvustushaku({
     avustushakuID,
     projectName: answers.projectName,
+    projektikoodi: lastElementFromArray(codes.project),
   });
 
   await hakemustenArviointiPage.page.locator('button:text("×")').click();

@@ -342,9 +342,11 @@ export class HakemustenArviointiPage {
     projectName,
     budget = "100000",
     rahoitusalue = "Ammatillinen koulutus",
+    projektikoodi,
   }: {
     avustushakuID: number;
     projectName: string;
+    projektikoodi: string;
     budget?: AcceptedBudget;
     rahoitusalue?: string;
   }) {
@@ -352,17 +354,20 @@ export class HakemustenArviointiPage {
     await this.selectHakemusFromList(projectName);
     const hakemusID = await this.getHakemusID();
 
-    const selectFirstAvailableProjectAsDefault = async () => {
+    const selectProject = async (projectId: string) => {
+      if (!projektikoodi) throw new Error("No project selected");
+
       await this.page
         .locator("text=Syötä projektikoodi")
         .click({ force: true });
       await this.page
         .locator(
-          `[data-test-id="projekti-valitsin-initial"] [class^="code-value-dropdown-project-id__option"]`
+          `[data-test-id="projekti-valitsin-initial"] [data-test-id="${projectId}"]`
         )
         .click({ force: true });
     };
-    await selectFirstAvailableProjectAsDefault();
+
+    await selectProject(projektikoodi);
 
     expectToBeDefined(hakemusID);
     console.log("Hakemus ID:", hakemusID);

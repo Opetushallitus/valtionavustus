@@ -4,7 +4,7 @@ import { HakujenHallintaPage } from "../pages/hakujenHallintaPage";
 import moment from "moment";
 import { HakijaAvustusHakuPage } from "../pages/hakijaAvustusHakuPage";
 import { defaultValues } from "./defaultValues";
-import { expectToBeDefined } from "../utils/util";
+import { expectToBeDefined, lastElementFromArray } from "../utils/util";
 
 export interface MuutoshakemusFixtures {
   finalAvustushakuEndDate: moment.Moment;
@@ -78,6 +78,7 @@ export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
       ukotettuValmistelija,
       submittedHakemus: { userKey },
       answers,
+      codes,
     },
     use,
     testInfo
@@ -93,6 +94,7 @@ export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
       hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
         avustushakuID,
         projectName: answers.projectName,
+        projektikoodi: lastElementFromArray(codes.project),
       });
     });
 

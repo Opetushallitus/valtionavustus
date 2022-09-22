@@ -20,6 +20,9 @@ export type DefaultValueFixtures = {
   answers: Answers;
   swedishAnswers: Answers;
   ukotettuValmistelija: string;
+  arviointi: {
+    projektikoodi: string;
+  };
   userCache: {};
   environment: EnvironmentApiResponse;
 };

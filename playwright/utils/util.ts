@@ -3,6 +3,17 @@ import { expect, Page } from "@playwright/test";
 
 import { VIRKAILIJA_URL } from "./constants";
 
+export function lastElementFromArray<T>(array: T[]): T {
+  const lastElement = [...array].pop();
+  if (!lastElement) {
+    throw new Error(
+      `Failed to get last element from array ${array.toString()}`
+    );
+  }
+
+  return lastElement;
+}
+
 export async function clearAndType(
   page: Page,
   selector: string,

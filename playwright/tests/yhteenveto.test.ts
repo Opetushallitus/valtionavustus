@@ -6,7 +6,7 @@ import {
 } from "../utils/emails";
 import { expect, Page } from "@playwright/test";
 import { VIRKAILIJA_URL } from "../utils/constants";
-import { expectToBeDefined } from "../utils/util";
+import { expectToBeDefined, lastElementFromArray } from "../utils/util";
 import { YhteenvetoPage } from "../pages/yhteenvetoPage";
 import { HakijaAvustusHakuPage } from "../pages/hakijaAvustusHakuPage";
 import { HakemustenArviointiPage } from "../pages/hakemustenArviointiPage";
@@ -68,6 +68,7 @@ const test = muutoshakemusTest.extend<{
       ukotettuValmistelija,
       submittedHakemus: { userKey },
       answers,
+      codes,
     },
     use,
     testInfo
@@ -81,12 +82,14 @@ const test = muutoshakemusTest.extend<{
       avustushakuID,
       projectName: pyorijatAnswers.projectName,
       budget: "10000",
+      projektikoodi: lastElementFromArray(codes.project),
     });
     await hakemustenArviointiPage.page.click("#close-hakemus-button");
     const hakemusID2 = await hakemustenArviointiPage.acceptAvustushaku({
       avustushakuID,
       projectName: answers.projectName,
       budget: "100000",
+      projektikoodi: lastElementFromArray(codes.project),
     });
 
     const hakujenHallintaPage = new HakujenHallintaPage(page);

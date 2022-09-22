@@ -11,7 +11,7 @@ import {
   expectToBeDefined,
 } from "../utils/util";
 import { VIRKAILIJA_URL } from "../utils/constants";
-import { VaCodeValues, Field } from "../utils/types";
+import { VaCodeValues, Field, NoProjectCodeProvided } from "../utils/types";
 import { addFieldsToHakemusJson } from "../utils/hakemus-json";
 import { Talousarviotili } from "../../va-virkailija/web/va/koodienhallinta/types";
 import { createReactSelectLocators } from "../utils/react-select";
@@ -554,7 +554,14 @@ export class HakujenHallintaPage {
     if (!codes) throw new Error("No VaCodeValues provided, cannot continue");
 
     await this.selectCode("operational-unit", codes.operationalUnit);
-    await this.selectProject(codes.project[1]);
+
+    for (const projectCode of codes.project) {
+      if (projectCode !== NoProjectCodeProvided.code) {
+        await this.addProjectRow();
+        await this.overrideProject(projectCode, NoProjectCodeProvided.code);
+      }
+    }
+
     await this.selectCode("operation", codes.operation);
   }
 

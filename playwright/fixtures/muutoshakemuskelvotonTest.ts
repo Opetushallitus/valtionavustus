@@ -5,6 +5,7 @@ import moment from "moment";
 import { HakijaAvustusHakuPage } from "../pages/hakijaAvustusHakuPage";
 import { defaultValues } from "./defaultValues";
 import { markAvustushakuAsMuutoshakukelvoton } from "../utils/avustushaku";
+import { lastElementFromArray } from "../utils/util";
 
 export interface MuutoshakemusFixtures {
   finalAvustushakuEndDate: moment.Moment;
@@ -71,6 +72,7 @@ export const muutoshakemuskelvotonTest =
         ukotettuValmistelija,
         answers,
         submittedHakemus: { userKey },
+        codes,
       },
       use,
       testInfo
@@ -83,6 +85,7 @@ export const muutoshakemuskelvotonTest =
       const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
         avustushakuID,
         projectName: answers.projectName,
+        projektikoodi: lastElementFromArray(codes.project),
       });
 
       const hakujenHallintaPage = new HakujenHallintaPage(page);

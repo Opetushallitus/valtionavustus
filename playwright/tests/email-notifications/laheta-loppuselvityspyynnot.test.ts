@@ -7,7 +7,7 @@ import {
   getLahetaLoppuselvityspyynnotEmails,
   lastOrFail,
 } from "../../utils/emails";
-import { expectToBeDefined } from "../../utils/util";
+import { expectToBeDefined, lastElementFromArray } from "../../utils/util";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { selvitysTest } from "../../fixtures/selvitysTest";
 
@@ -185,6 +185,7 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
         avustushakuID,
         answers,
         ukotettuValmistelija,
+        codes,
       }) => {
         expectToBeDefined(closedAvustushaku);
         await test.step("set loppuselvitys date", async () => {
@@ -212,6 +213,7 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
           const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
             avustushakuID,
             projectName: answers.projectName,
+            projektikoodi: lastElementFromArray(codes.project),
           });
 
           const hakujenHallintaPage = new HakujenHallintaPage(page);

@@ -5,6 +5,7 @@ import { HakemustenArviointiPage } from "../pages/hakemustenArviointiPage";
 import { AcceptedBudget, Budget, defaultBudget } from "../utils/budget";
 import { defaultValues } from "./defaultValues";
 import { MuutoshakemusFixtures } from "./muutoshakemusTest";
+import { lastElementFromArray } from "../utils/util";
 
 export interface BudjettimuutoshakemusFixtures extends MuutoshakemusFixtures {
   budget: Budget;
@@ -51,6 +52,7 @@ export const budjettimuutoshakemusTest =
         acceptedBudget,
         answers,
         submittedHakemus: { userKey },
+        codes,
       },
       use,
       testInfo
@@ -69,6 +71,7 @@ export const budjettimuutoshakemusTest =
         avustushakuID,
         projectName: answers.projectName,
         budget: acceptWithBudget,
+        projektikoodi: lastElementFromArray(codes.project),
       });
 
       await hakujenHallintaPage.navigateFromHeader();
