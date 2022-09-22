@@ -28,5 +28,6 @@
       :database-name "va-dev"}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :ta-tilit {:enabled? true}
+ :new-paatoksen-liitteet {:enabled? true}
  :test-apis {:enabled? true}
  }

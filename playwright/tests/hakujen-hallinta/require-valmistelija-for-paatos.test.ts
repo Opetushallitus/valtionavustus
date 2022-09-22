@@ -34,8 +34,8 @@ const testSendingPaatos = async ({
     avustushakuID
   );
   await expect(paatosLocators.paatosSendError).toBeHidden();
-  await hakujenHallintaPage.page.locator('text="Lähetä 1 päätöstä"').click();
-  await hakujenHallintaPage.page.locator('text="Vahvista lähetys"').click();
+  await paatosLocators.sendPaatokset().click();
+  await paatosLocators.confirmSending.click();
   await expect(paatosLocators.paatosSendError).toHaveText(
     `Hakemukselle numero ${hakemusID} ei ole valittu valmistelijaa. Päätöksiä ei lähetetty.`
   );

@@ -162,7 +162,6 @@ const DateField = (props: DateFieldProps) => {
 const LiiteGroup = ({
   liite,
   helpTexts,
-  environment,
   selectedLiitteet,
   selectedVersions,
   onChangeLiite,
@@ -172,7 +171,6 @@ const LiiteGroup = ({
   helpTexts: HelpTexts;
   selectedLiitteet: Record<string, string>;
   selectedVersions: Record<string, string | undefined>;
-  environment: EnvironmentApiResponse;
   onChangeLiite: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
@@ -196,7 +194,6 @@ const LiiteGroup = ({
           key={attachment.id}
           attachment={attachment}
           groupId={liite.group}
-          environment={environment}
           selectedLiitteet={selectedLiitteet}
           selectedVersions={selectedVersions}
           onChangeLiite={onChangeLiite}
@@ -212,7 +209,6 @@ const LiiteComponent = ({
   groupId,
   selectedLiitteet,
   selectedVersions,
-  environment,
   onChangeLiite,
   onChangeLiiteVersions,
 }: {
@@ -220,11 +216,16 @@ const LiiteComponent = ({
   groupId: string;
   selectedLiitteet: Record<string, string>;
   selectedVersions: Record<string, string | undefined>;
-  environment: EnvironmentApiResponse;
   onChangeLiite: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
+  const { environment } = useHakujenHallintaSelector(selectLoadedInitialData);
   const isSelected = selectedLiitteet[groupId] === attachment.id;
+  const isYleisohje = attachment.id === "va_yleisohje";
+  const newLiitteetEnabled =
+    environment["new-paatoksen-liitteet"]?.["enabled?"];
+  const disableOldVersions = isYleisohje && newLiitteetEnabled;
+  const amountOfVersions = attachment.versions.length;
   return (
     <div key={attachment.id} className="decision-liite-selection__liite">
       <label>
@@ -244,11 +245,14 @@ const LiiteComponent = ({
       </label>
       {attachment.versions.length > 1 ? (
         <div>
-          {attachment.versions.map((v) => (
+          {attachment.versions.map((v, index) => (
             <LiiteVersion
               key={`liiteversion-${v.id}`}
               attachment={attachment}
               isLiiteSelected={isSelected}
+              isDisabled={
+                disableOldVersions ? index + 1 < amountOfVersions : undefined
+              }
               versionSpec={v}
               environment={environment}
               selectedVersions={selectedVersions}
@@ -273,17 +277,18 @@ const LiiteVersion = ({
   versionSpec,
   environment,
   selectedVersions,
+  isDisabled,
   onChangeLiiteVersions,
 }: {
   attachment: LiiteAttachment;
   isLiiteSelected: boolean;
   versionSpec: LiiteAttachmentVersion;
   environment: EnvironmentApiResponse;
+  isDisabled?: boolean;
   selectedVersions: Record<string, string | undefined>;
   onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   const isSelected = selectedVersions[attachment.id] === versionSpec.id;
-
   return (
     <label
       key={"v" + versionSpec.id}
@@ -297,7 +302,7 @@ const LiiteVersion = ({
         value={versionSpec.id}
         checked={isSelected}
         onChange={onChangeLiiteVersions}
-        disabled={!isLiiteSelected}
+        disabled={isDisabled || !isLiiteSelected}
       />
       {versionSpec.description}
       <LiiteVersionLinks
@@ -309,6 +314,8 @@ const LiiteVersion = ({
   );
 };
 
+const languages = ["fi", "sv"] as const;
+
 const LiiteVersionLinks = ({
   attachmentId,
   versionSuffix,
@@ -318,7 +325,6 @@ const LiiteVersionLinks = ({
   versionSuffix: string;
   environment: EnvironmentApiResponse;
 }) => {
-  const languages = ["fi", "sv"] as const;
   return (
     <span>
       {languages.map((lang) => {
@@ -392,7 +398,6 @@ const makeSelectedVersions = (
 };
 
 interface LiitteetSelectionProps {
-  environment: EnvironmentApiResponse;
   avustushaku: Avustushaku;
   decisionLiitteet: Liite[];
   helpTexts: HelpTexts;
@@ -406,7 +411,6 @@ interface LiitteetSelectionState {
 const LiitteetSelection = ({
   avustushaku,
   decisionLiitteet,
-  environment,
   helpTexts,
 }: LiitteetSelectionProps) => {
   const [selectedLiitteet, setSelectedLiitteet] = useState(() =>
@@ -479,7 +483,6 @@ const LiitteetSelection = ({
           <LiiteGroup
             key={`Liitegroup-${liite.group}`}
             liite={liite}
-            environment={environment}
             selectedLiitteet={selectedLiitteet}
             selectedVersions={selectedVersions}
             helpTexts={helpTexts}
@@ -1254,7 +1257,6 @@ const DecisionEditor = () => {
         />
       )}
       <LiitteetSelection
-        environment={environment}
         avustushaku={avustushaku}
         decisionLiitteet={decisionLiitteet}
         helpTexts={helpTexts}

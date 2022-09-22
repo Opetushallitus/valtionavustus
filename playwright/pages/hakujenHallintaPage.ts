@@ -356,7 +356,14 @@ export class HakujenHallintaPage {
       hankkeenAlkamisPaivaLabel: alkamisPaiva.locator(label),
       hankkeenPaattymisPaiva: paattymisPaiva.locator(datePicker),
       hankkeenPaattymisPaivaLabel: paattymisPaiva.locator(label),
+      sendPaatokset: (amount: number = 1) =>
+        this.page.locator(`text="Lähetä ${amount} päätöstä"`),
+      confirmSending: this.page.locator('text="Vahvista lähetys"'),
       paatosSendError: this.page.locator("#päätös-send-error"),
+      yleisOhjeCheckbox: this.page
+        .locator("label")
+        .locator('text="Valtionavustusten yleisohje"'),
+      yleisOhjeLiite: this.page.locator("[data-liite=va_yleisohje]"),
     };
   }
 
@@ -479,12 +486,13 @@ export class HakujenHallintaPage {
   }
 
   async sendPaatos(avustushakuID: number, amount = 1) {
-    await this.page.click(`text="Lähetä ${amount} päätöstä"`);
+    const locators = this.paatosLocators();
+    await locators.sendPaatokset(amount).click();
     await Promise.all([
       this.page.waitForResponse(
         `${VIRKAILIJA_URL}/api/paatos/sendall/${avustushakuID}`
       ),
-      clickElementWithText(this.page, "button", "Vahvista lähetys"),
+      locators.confirmSending.click(),
     ]);
     const tapahtumaloki = await this.page.waitForSelector(".tapahtumaloki");
     const logEntryCount = await tapahtumaloki.evaluate(
