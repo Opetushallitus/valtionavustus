@@ -199,6 +199,31 @@ const AvustushautUsingTili = ({
   );
 };
 
+function UneditableTiliRow({
+  code,
+  avustushaut,
+}: TalousarviotiliWithUsageInfo) {
+  const formik = useFormik({
+    initialValues: { year: "", code, name: "", amount: "" },
+    onSubmit: async () => {},
+  });
+  return (
+    <FormikProvider value={formik}>
+      <form className={styles.tiliRow} onSubmit={(e) => e.preventDefault()}>
+        <FieldInput name="year" className={styles.input} disabled={true} />
+        <FieldInput name="code" className={styles.input} disabled={true} />
+        <FieldInput name="name" className={styles.input} disabled={true} />
+        <FieldInput
+          name="amount"
+          className={styles.inputEuro}
+          disabled={true}
+        />
+        <AvustushautUsingTili avustushaut={avustushaut} />
+      </form>
+    </FormikProvider>
+  );
+}
+
 const TiliRow = ({
   id,
   year,
@@ -353,9 +378,13 @@ export const TalousarviotilienHallinta = () => {
         </div>
       </div>
       <NewTiliRow />
-      {data?.map((tili) => (
-        <TiliRow key={tili.id} {...tili} />
-      ))}
+      {data?.map((tili) =>
+        tili["migrated-from-not-normalized-ta-tili"] ? (
+          <UneditableTiliRow key={tili.id} {...tili} />
+        ) : (
+          <TiliRow key={tili.id} {...tili} />
+        )
+      )}
     </div>
   );
 };
