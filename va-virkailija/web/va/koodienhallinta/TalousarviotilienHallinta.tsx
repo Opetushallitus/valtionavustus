@@ -35,7 +35,7 @@ const Label = ({ text, labelFor }: { text: string; labelFor: string }) => {
   );
 };
 
-const NewTiliSchema = yup.object().shape({
+const TalousarviotiliSchema = yup.object().shape({
   year: yup
     .number()
     .typeError("Vuosi pitää olla numero")
@@ -96,7 +96,7 @@ const NewTiliRow = () => {
       name: "",
       amount: "",
     },
-    validationSchema: NewTiliSchema,
+    validationSchema: TalousarviotiliSchema,
     onSubmit: async (values, formikHelpers) => {
       const { year, code, name, amount } = values;
       try {
@@ -248,7 +248,7 @@ const TiliRow = ({
 
   const formik = useFormik({
     initialValues: { year, code, name: name ?? "", amount },
-    validationSchema: NewTiliSchema,
+    validationSchema: TalousarviotiliSchema,
     onSubmit: async (values, formikHelpers) => {
       const { year, code, name, amount } = values;
       try {
