@@ -391,6 +391,7 @@
    (s/optional-key :takp-account) (s/maybe s/Str)
    (s/optional-key :grant-id) s/Int
    (s/optional-key :evaluation) s/Any
+   (s/optional-key :project-code) (s/maybe s/Str)
    (s/optional-key :answers) [soresu-schema/Answer]
    (s/optional-key :payment-decisions) (s/maybe [{:id s/Int :payment-sum s/Int
                                          :takp-account s/Str}])

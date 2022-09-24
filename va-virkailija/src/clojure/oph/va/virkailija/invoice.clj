@@ -57,6 +57,7 @@
 
 (defn payment-to-invoice [{:keys [payment application grant batch]}]
   (let [answers (:answers application)
+        projectCode (or (:project-code application) (get-in grant [:project :code]))
         document (some
                    #(when (= (:phase %) (:phase payment)) %)
                    (:documents batch))]
@@ -116,7 +117,7 @@
             (let [toimintayksikko (get-in grant [:operational-unit :code])]
               (if toimintayksikko (remove-white-spaces toimintayksikko) toimintayksikko))]
          [:accountingObject02 (:takp-account application)]
-         [:accountingObject04 (get-in grant [:project :code])]
+         [:accountingObject04 projectCode]
          [:accountingObject05 (get-in grant [:operation :code])]
          [:accountingObject08 (:partner batch)]]]]
       ]]))
