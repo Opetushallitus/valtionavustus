@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 // @ts-ignore route-parser doesn't have proper types
 import RouteParser from "route-parser";
@@ -18,15 +18,14 @@ import "./style/main.less";
 import "./hakemusten-arviointi.less";
 import { Provider } from "react-redux";
 import store, {
-  useHakemustenArviointiDispatch,
   useHakemustenArviointiSelector,
 } from "./hakemustenArviointi/arviointiStore";
 import {
   getLoadedState,
   initialize,
-  setModal,
 } from "./hakemustenArviointi/arviointiReducer";
 import { Hakemus } from "soresu-form/web/va/types";
+import { MODAL_ROOT_ID } from "./hakemus-details/Modal";
 
 const SHOW_ALL = "showAll" as const;
 const SHOW_ADDITIONAL_INFO = "showAdditionalInfo" as const;
@@ -61,7 +60,6 @@ const App = () => {
   const [showAllHakemukset, toggleShowAllHakemukset] = useState(
     () => new URLSearchParams(location.search).get(SHOW_ALL) === "true"
   );
-  const dispatch = useHakemustenArviointiDispatch();
   const selectedHakuId = useHakemustenArviointiSelector(
     (state) => state.arviointi.selectedHakuId
   );
@@ -73,9 +71,6 @@ const App = () => {
   const saveStatus = useHakemustenArviointiSelector(
     (state) => state.arviointi.saveStatus
   );
-  const modal = useHakemustenArviointiSelector(
-    (state) => state.arviointi.modal
-  );
   const { avustushaku, environment, hakemukset } = hakuData;
   const hakemusList = showAllHakemukset
     ? hakemukset
@@ -86,17 +81,7 @@ const App = () => {
     () =>
       new URLSearchParams(location.search).get(SHOW_ADDITIONAL_INFO) === "true"
   );
-  useEffect(() => {
-    const escFunction = (event: KeyboardEvent) => {
-      if (event.code === "27") {
-        dispatch(setModal(undefined));
-      }
-    };
-    document.addEventListener("keydown", escFunction, false);
-    return () => {
-      document.removeEventListener("keydown", escFunction, false);
-    };
-  }, []);
+
   const toggleSplitView = (forceValue?: boolean) => {
     if (forceValue !== undefined) {
       setSplitView(forceValue);
@@ -194,7 +179,6 @@ const App = () => {
           )}
         </div>
       </section>
-      {modal}
     </section>
   );
 };
@@ -219,6 +203,9 @@ store.dispatch(initialize(avustushakuId));
 
 root.render(
   <Provider store={store}>
-    <AppRoot />
+    <React.Fragment>
+      <AppRoot />
+      <div id={MODAL_ROOT_ID} />
+    </React.Fragment>
   </Provider>
 );

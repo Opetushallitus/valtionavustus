@@ -1,26 +1,42 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import FocusLock from "react-focus-lock";
 
 import "./hakemusDetails.less";
-import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
-import { setModal } from "../hakemustenArviointi/arviointiReducer";
+
+export const MODAL_ROOT_ID = "modal-root";
 
 interface ModalProps {
   title: string;
   children: ReactNode;
+  onClose: () => void;
 }
 
-export const Modal = ({ title, children }: ModalProps) => {
-  const dispatch = useHakemustenArviointiDispatch();
-  const closeModal = () => dispatch(setModal(undefined));
-  return (
-    <FocusLock
-      returnFocus={true}
-      lockProps={{ style: { display: "contents" } }}
-    >
+export const Modal = ({ title, children, onClose }: ModalProps) => {
+  const el = useRef(document.createElement("div"));
+  const modalRoot = document.getElementById(MODAL_ROOT_ID)!;
+  useEffect(() => {
+    const escFunction = (event: KeyboardEvent) => {
+      if (event.code === "Escape") {
+        onClose();
+      }
+    };
+    document.addEventListener("keydown", escFunction, false);
+    return () => {
+      document.removeEventListener("keydown", escFunction, false);
+    };
+  }, [onClose]);
+  useEffect(() => {
+    modalRoot.appendChild(el.current);
+    return () => {
+      modalRoot.removeChild(el.current);
+    };
+  }, []);
+  return createPortal(
+    <FocusLock returnFocus lockProps={{ style: { display: "contents" } }}>
       <div
         className="hakemus-details-modal__wrapper"
-        onClick={closeModal}
+        onClick={onClose}
         role="dialog"
       >
         <div
@@ -31,7 +47,7 @@ export const Modal = ({ title, children }: ModalProps) => {
             <span>{title}</span>
             <button
               className="hakemus-details-modal__close-button"
-              onClick={closeModal}
+              onClick={onClose}
             >
               Sulje
             </button>
@@ -41,6 +57,7 @@ export const Modal = ({ title, children }: ModalProps) => {
           </div>
         </div>
       </div>
-    </FocusLock>
+    </FocusLock>,
+    modalRoot
   );
 };

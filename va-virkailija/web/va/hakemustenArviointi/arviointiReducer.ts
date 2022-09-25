@@ -550,9 +550,6 @@ const arviointiSlice = createSlice({
       const hakemus = getHakemus(state, hakemusId);
       hakemus.muutoshakemukset = muutoshakemukset;
     },
-    setModal: (state, { payload }: PayloadAction<JSX.Element | undefined>) => {
-      state.modal = payload;
-    },
     toggleShowOthersScore: (state) => {
       state.showOthersScores = !state.showOthersScores;
     },
@@ -777,7 +774,6 @@ export const {
   setSelectedHakuId,
   setArvioValue,
   setMuutoshakemukset,
-  setModal,
   toggleShowOthersScore,
 } = arviointiSlice.actions;
 

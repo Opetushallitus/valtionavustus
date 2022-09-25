@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import moment from "moment";
 // @ts-ignore react-widgets-moment doesn't have proper types
 import MomentLocalizer from "react-widgets-moment";
@@ -62,10 +62,7 @@ import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 import "soresu-form/web/form/style/main.less";
 import "../style/main.less";
 import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
-import {
-  setModal,
-  setMuutoshakemukset,
-} from "../hakemustenArviointi/arviointiReducer";
+import { setMuutoshakemukset } from "../hakemustenArviointi/arviointiReducer";
 
 moment.locale("fi");
 const localizer = new MomentLocalizer(moment);
@@ -275,6 +272,7 @@ export const MuutoshakemusForm = ({
   environment,
 }: MuutoshakemusFormProps) => {
   const { t } = useTranslations();
+  const [showModal, setModalVisibility] = useState(false);
   const dispatch = useHakemustenArviointiDispatch();
   const talousarvioValues = muutoshakemus.talousarvio.length
     ? getTalousarvioValues(muutoshakemus.talousarvio)
@@ -303,7 +301,7 @@ export const MuutoshakemusForm = ({
     },
   });
 
-  const onPaatosPreviewClick = () => {
+  const createPaatosPreviewElement = () => {
     const paatos = {
       "paatos-status-jatkoaika": f.values["haen-kayttoajan-pidennysta"]?.status,
       paattymispaiva: f.values["haen-kayttoajan-pidennysta"]?.paattymispaiva,
@@ -325,28 +323,25 @@ export const MuutoshakemusForm = ({
       }, []),
       status: undefined,
     };
-    dispatch(
-      setModal(
-        <Modal title="ESIKATSELU">
-          <TranslationContext.Provider
-            value={getTranslationContext(hakemusVersion.language)}
-          >
-            <MuutoshakemusPaatos
-              avustushaku={avustushaku}
-              paatos={paatos}
-              muutoshakemus={muutoshakemus}
-              hakemus={hakemus}
-              presenter={presenter}
-              isDecidedByUkotettuValmistelija={
-                isCurrentUserHakemukselleUkotettuValmistelija
-              }
-              muutoshakemukset={muutoshakemukset}
-              environment={environment}
-              muutoshakemusUrl={hakemusVersion.muutoshakemusUrl}
-            />
-          </TranslationContext.Provider>
-        </Modal>
-      )
+
+    return (
+      <TranslationContext.Provider
+        value={getTranslationContext(hakemusVersion.language)}
+      >
+        <MuutoshakemusPaatos
+          avustushaku={avustushaku}
+          paatos={paatos}
+          muutoshakemus={muutoshakemus}
+          hakemus={hakemus}
+          presenter={presenter}
+          isDecidedByUkotettuValmistelija={
+            isCurrentUserHakemukselleUkotettuValmistelija
+          }
+          muutoshakemukset={muutoshakemukset}
+          environment={environment}
+          muutoshakemusUrl={hakemusVersion.muutoshakemusUrl}
+        />
+      </TranslationContext.Provider>
     );
   };
 
@@ -495,11 +490,16 @@ export const MuutoshakemusForm = ({
         <div className="muutoshakemus-row muutoshakemus__preview-row">
           <a
             className="muutoshakemus__paatos-preview-link"
-            onClick={onPaatosPreviewClick}
+            onClick={() => setModalVisibility(true)}
           >
             Esikatsele päätösdokumentti
           </a>
         </div>
+        {showModal && (
+          <Modal title="ESIKATSELU" onClose={() => setModalVisibility(false)}>
+            {createPaatosPreviewElement()}
+          </Modal>
+        )}
       </MuutoshakemusSection>
     </form>
   );
