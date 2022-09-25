@@ -1,5 +1,4 @@
 import React from "react";
-import moment from "moment";
 import _ from "lodash";
 
 import JsUtil from "soresu-form/web/JsUtil";
@@ -15,7 +14,6 @@ import {
 } from "soresu-form/web/va/types";
 import { Muutoshakemus } from "soresu-form/web/va/types/muutoshakemus";
 import { getProjectEndDate } from "soresu-form/web/va/Muutoshakemus";
-import { isoFormat, fiLongFormat } from "soresu-form/web/va/i18n/dateformat";
 
 function addOrMutateAnswer(answers: Answer[], key: string, newValue: any) {
   const answer = answers.find((a) => a.key === key);
@@ -83,48 +81,6 @@ function mutateDeltaFromMuutoshakemukset(
   if (projectEnd) {
     mutateAnswersDeltaWithKey(answersDelta, answers, "project-end", projectEnd);
   }
-}
-
-function upsertAnswer(
-  answers: Answer[],
-  key: string,
-  value: string | undefined,
-  fieldType: string = "textField"
-) {
-  if (!value) return;
-
-  const answer = answers.find((a) => a.key === key);
-
-  if (answer) {
-    answer.value = value;
-  } else {
-    answers.push({
-      key: key,
-      value: value,
-      fieldType: fieldType,
-    });
-  }
-}
-
-function mutateAnswersSetProjectStartAndEndDateFromPaatos(
-  avustushaku: Avustushaku,
-  currentAnswers: Answer[]
-) {
-  upsertAnswer(
-    currentAnswers,
-    "project-begin",
-    toFinnishDateFormat(avustushaku["hankkeen-alkamispaiva"])
-  );
-  upsertAnswer(
-    currentAnswers,
-    "project-end",
-    toFinnishDateFormat(avustushaku["hankkeen-paattymispaiva"])
-  );
-}
-
-function toFinnishDateFormat(dateStamp?: string): string | undefined {
-  const date = moment(dateStamp, isoFormat);
-  return date.isValid() ? date.format(fiLongFormat) : undefined;
 }
 
 interface EditsDisplayingFormViewProps {
@@ -264,10 +220,6 @@ export default class EditsDisplayingFormView extends React.Component<EditsDispla
         muutoshakemukset
       );
     }
-    mutateAnswersSetProjectStartAndEndDateFromPaatos(
-      avustushaku,
-      currentAnswers
-    );
 
     return answersDelta;
 
