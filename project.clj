@@ -1,3 +1,5 @@
+(def batik-version "1.15")
+
 (defproject oph-va/valtionavustus "0.1.0-SNAPSHOT"
 
   :description "OPH Valtionavustus, both services"
@@ -44,9 +46,9 @@
                  [com.jcraft/jsch "0.1.55"]
                  [gov.nasa.earthdata/quartzite "2.2.1-SNAPSHOT"]
                  [clj-pdf "2.5.8"]
-                 [org.apache.xmlgraphics/batik-codec "1.14" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
-                 [org.apache.xmlgraphics/batik-bridge "1.14" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
-                 [org.apache.xmlgraphics/batik-anim "1.14" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
+                 [org.apache.xmlgraphics/batik-codec ~batik-version :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
+                 [org.apache.xmlgraphics/batik-bridge ~batik-version :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
+                 [org.apache.xmlgraphics/batik-anim ~batik-version :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
                  [org.apache.xmlgraphics/xmlgraphics-commons "2.6"]
                  [cider/cider-nrepl]]
 
