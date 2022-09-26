@@ -123,7 +123,7 @@ const MaksatuksetPhase = ({
   }, [filter, payments]);
 
   return (
-    <React.Fragment key={`phase-${phase}`}>
+    <React.Fragment>
       <table className="maksatukset_payments-table">
         <thead className="phase-header">
           <tr>
@@ -297,6 +297,7 @@ export const MaksatuksetTable = ({ payments, testId }: PaymentsTableProps) => {
       </table>
       {Object.keys(groupedPayments).map((phase) => (
         <MaksatuksetPhase
+          key={`phase-${phase}`}
           phase={phase}
           payments={groupedPayments[phase]}
           filter={filter}
