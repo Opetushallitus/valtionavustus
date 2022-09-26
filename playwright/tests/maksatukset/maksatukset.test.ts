@@ -438,10 +438,12 @@ test.describe.parallel("Maksatukset", () => {
         ".code-value-dropdown-operation-id--is-disabled"
       )
     ).toBeVisible();
-    await expect(
-      hakujenHallintaPage.page.locator(
-        ".code-value-dropdown-project-id--is-disabled"
-      )
-    ).toBeVisible();
+
+    const projects = await hakujenHallintaPage.page.locator(
+      ".code-value-dropdown-project-id--is-disabled"
+    );
+    for (let i = 0; i < (await projects.count()); i++) {
+      await expect(projects.nth(i)).toBeVisible();
+    }
   });
 });
