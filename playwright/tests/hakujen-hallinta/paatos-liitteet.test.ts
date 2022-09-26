@@ -4,8 +4,10 @@ import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import { getAcceptedPäätösEmails } from "../../utils/emails";
 import { expectToBeDefined, lastElementFromArray } from "../../utils/util";
+import { HAKIJA_URL } from "../../utils/constants";
+import { getPdfFirstPageTextContent } from "../../utils/pdfUtil";
 
-test("yleisohje", async ({
+test("paatos liitteet", async ({
   page,
   closedAvustushaku: { id: avustushakuID },
   answers,
@@ -30,7 +32,8 @@ test("yleisohje", async ({
   const paatosLocators = await hakujenHallintaPage.navigateToPaatos(
     avustushakuID
   );
-  const { yleisOhjeCheckbox, yleisOhjeLiite } = paatosLocators;
+  const { yleisOhjeCheckbox, yleisOhjeLiite, pakoteOhjeCheckbox } =
+    paatosLocators;
   const amountOfYleisohjeet = 5;
   expect(await yleisOhjeLiite.count()).toBe(amountOfYleisohjeet);
   await test.step(
@@ -69,13 +72,63 @@ test("yleisohje", async ({
       }
     }
   );
+  await test.step("pakote ohje is enabled by default", async () => {
+    await expect(pakoteOhjeCheckbox).toBeChecked();
+  });
+  await test.step("make sure link to yleisohje is in paatos", async () => {
+    await hakujenHallintaPage.sendPaatos(avustushakuID);
+    const emails = await getAcceptedPäätösEmails(hakemusID);
+    await expect(emails).toHaveLength(1);
+    const url = emails[0].formatted.match(
+      /https?:\/\/.*\/paatos\/avustushaku\/.*/
+    )?.[0];
+    expectToBeDefined(url);
+    await page.goto(url);
+    const yleisohjeLink = page
+      .locator("a")
+      .locator("text=Valtionavustusten yleisohje");
+    await expect(yleisohjeLink).toBeVisible();
+    const href = "/liitteet/va_yleisohje_2022-09_fi.pdf";
+    expect(await yleisohjeLink.getAttribute("href")).toBe(href);
+    const res = await page.request.get(`${HAKIJA_URL}${href}`);
+    const pdfBody = await res.body();
+    const pdfText = await getPdfFirstPageTextContent(pdfBody);
+    expect(pdfText).toContain("13.9.2022");
+    expect(pdfText).toContain("YLEISOHJE");
+  });
+
+  await test.step("make sure pakoteohje is in paatos", async () => {
+    const pakoteohjeLink = page
+      .locator("a")
+      .locator(
+        "text=Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen valtionavustustoiminnassa"
+      );
+    await expect(pakoteohjeLink).toBeVisible();
+    const href = "/liitteet/va_pakoteohje.pdf";
+    expect(await pakoteohjeLink.getAttribute("href")).toBe(href);
+    const res = await page.request.get(`${HAKIJA_URL}${href}`);
+    const pdfBody = await res.body();
+    const pdfText = await getPdfFirstPageTextContent(pdfBody);
+    expect(pdfText).toContain(
+      "Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen"
+    );
+  });
+  await test.step("uncheck pakoteohje", async () => {
+    await hakujenHallintaPage.navigateToPaatos(avustushakuID);
+    await expect(yleisOhjeCheckbox).toBeChecked();
+    await expect(pakoteOhjeCheckbox).toBeChecked();
+    await pakoteOhjeCheckbox.click();
+    await expect(pakoteOhjeCheckbox).not.toBeChecked();
+    await hakujenHallintaPage.waitForSave();
+  });
   await test.step(
-    "make sure link to yleisohje is in hakija paatos",
+    "pakoteohje gets removed after recreating and sending paatokset",
     async () => {
-      await hakujenHallintaPage.sendPaatos(avustushakuID);
+      await paatosLocators.recreatePaatokset();
+      await paatosLocators.resendPaatokset();
       const emails = await getAcceptedPäätösEmails(hakemusID);
-      await expect(emails).toHaveLength(1);
-      const url = emails[0].formatted.match(
+      await expect(emails).toHaveLength(2);
+      const url = emails[1].formatted.match(
         /https?:\/\/.*\/paatos\/avustushaku\/.*/
       )?.[0];
       expectToBeDefined(url);
@@ -84,9 +137,12 @@ test("yleisohje", async ({
         .locator("a")
         .locator("text=Valtionavustusten yleisohje");
       await expect(yleisohjeLink).toBeVisible();
-      expect(await yleisohjeLink.getAttribute("href")).toBe(
-        "/liitteet/va_yleisohje_2022-09_fi.pdf"
-      );
+      const pakoteohjeLink = page
+        .locator("a")
+        .locator(
+          "text=Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen valtionavustustoiminnassa"
+        );
+      await expect(pakoteohjeLink).toBeHidden();
     }
   );
 });

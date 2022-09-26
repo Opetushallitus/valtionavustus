@@ -107,9 +107,11 @@ test("sends emails to correct contact and hakemus emails", async ({
     expect(email["reply-to"]).toEqual(null);
   });
   const hakujenHallintaPage = new HakujenHallintaPage(page);
-  await hakujenHallintaPage.navigateToPaatos(avustushakuID);
+  const paatosLocators = await hakujenHallintaPage.navigateToPaatos(
+    avustushakuID
+  );
   await test.step("resends päätös", async () => {
-    await hakujenHallintaPage.resendPaatokset(1);
+    await paatosLocators.resendPaatokset(1);
     const emails = await waitUntilMinEmails(
       getAcceptedPäätösEmails,
       2,
@@ -136,8 +138,10 @@ test("sends emails to correct contact and hakemus emails", async ({
         false
       );
       expect(await getValiselvitysEmails(hakemusID)).toHaveLength(0);
-      await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-      await hakujenHallintaPage.resendPaatokset();
+      const paatosLocators = await hakujenHallintaPage.navigateToPaatos(
+        avustushakuID
+      );
+      await paatosLocators.resendPaatokset();
 
       const emails = await waitUntilMinEmails(
         getAcceptedPäätösEmails,

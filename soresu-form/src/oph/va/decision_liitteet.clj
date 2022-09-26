@@ -46,3 +46,11 @@
                                :description "Voimassa 11.5.2021 alkaen"}
                               {:id          "_2022-09"
                                :description "Voimassa 13.9.2022 alkaen"}]}]}])
+
+(def PakoteOhjeLiitteet
+  {:id    "va_pakoteohje"
+   :langs
+   {:fi "Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen valtionavustustoiminnassa"
+    :sv "Beaktande av sanktioner i anslutning till Rysslands attack mot Ukraina"
+    }
+   })

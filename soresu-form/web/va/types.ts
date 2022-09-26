@@ -355,6 +355,7 @@ export type Decision = Partial<{
   lisatiedot: LocalizedTextOptional;
   myonteinenlisateksti: LocalizedTextOptional;
   sovelletutsaannokset: LocalizedTextOptional;
+  "dont-include-pakote-ohje"?: boolean;
   johtaja: LocalizedTextOptional;
   valmistelija: LocalizedTextOptional;
   liitteet: DecisionLiite[];

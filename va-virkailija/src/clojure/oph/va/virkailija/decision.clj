@@ -7,6 +7,8 @@
             [oph.va.decision-liitteet :as decision-liitteet]
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.soresu.form.formutil :as formutil]
+            [oph.soresu.common.config :refer [feature-enabled?]]
+            [clojure.tools.logging :as log]
             [oph.va.virkailija.authorization :as authorization]
             [oph.va.virkailija.kayttosuunnitelma :as ks]
             [oph.va.virkailija.koulutusosio :as koulutusosio]
@@ -104,6 +106,17 @@
      :langs   (:langs attachment)
      :version (:version row)}))
 
+(defn get-pakote-liite []
+  (let [
+         attachment decision-liitteet/PakoteOhjeLiitteet
+
+        ]
+  {
+    :id (:id attachment)
+    :langs (:langs attachment)
+    :version ""
+   }))
+
 (defn liite-row [liite lang]
  (if-some [liite-id (:id liite)]
    (let [liite-version (:version liite)
@@ -113,8 +126,21 @@
      (html
        [:div [:a {:href link} liite-name]]))))
 
+(defn non-localized-liite-row [liite lang]
+  (if-some [liite-id (:id liite)]
+    (let [liite-version (:version liite)
+          lang-str (name lang)
+          link (str "/liitteet/" liite-id liite-version ".pdf")
+          liite-name (get-in liite [:langs lang])]
+      (html
+       [:div [:a {:href link} liite-name]]))))
+
 (defn liitteet-list [avustushaku hakemus translate lang has-budget]
   (let [liitteet (-> avustushaku :decision :liitteet)
+        dont-include-pakote-ohje (-> avustushaku :decision :dont-include-pakote-ohje)
+        pakoteohje (if (and (not dont-include-pakote-ohje) (feature-enabled? :pakoteohje))
+                     (get-pakote-liite))
+        row-pakoteohje (non-localized-liite-row pakoteohje lang)
         decision-status (-> hakemus :arvio :status)
         rejected (= decision-status "rejected")
         ehdot (find-liite liitteet "Ehdot")
@@ -124,11 +150,12 @@
         row-oikaisuvaatimus (liite-row oikaisuvaatimus lang)
         row-ehdot (liite-row ehdot lang)
         row-yleisohje (liite-row yleisohje lang)
+
         content (if rejected
                   row-oikaisuvaatimus
                   (if has-budget
-                    (str row-kayttosuunnitelma row-oikaisuvaatimus row-ehdot row-yleisohje)
-                    (str row-oikaisuvaatimus row-ehdot row-yleisohje)))
+                    (str row-kayttosuunnitelma row-oikaisuvaatimus row-ehdot row-yleisohje row-pakoteohje)
+                    (str row-oikaisuvaatimus row-ehdot row-yleisohje row-pakoteohje)))
         content-length (count content)]
         (if (pos? content-length)
           (section :liitteet content translate false)

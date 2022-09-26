@@ -2,8 +2,7 @@
 set -o errexit -o nounset -o pipefail
 
 readonly repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
-readonly node_version="16.9.1"
-readonly npm_version="7.24.0"
+readonly node_version="18.9.1"
 readonly ansible_version="4.6.0"
 readonly python_version="3.9.0"
 readonly local_docker_namespace="va"
@@ -45,7 +44,6 @@ function init_nodejs {
   source "$repo/nvm.sh"
   nvm use "${node_version}" || nvm install "${node_version}"
   set -o errexit
-  npm install -g "npm@${npm_version}"
 }
 
 function npm_ci_if_package_lock_has_changed {

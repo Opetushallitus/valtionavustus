@@ -747,7 +747,7 @@ export const updateField = createAsyncThunk<
   } else if (fieldId.startsWith("set-maksuera-")) {
     avustushaku.content["multiplemaksuera"] = update.newValue === "true";
   } else if (update.field.id.indexOf("decision.") !== -1) {
-    const fieldName = update.field.id.substr(9);
+    const fieldName = update.field.id.slice(9);
     _.set(avustushaku.decision!, fieldName, update.newValue);
   } else if (fieldId.startsWith("operational-unit-id")) {
     avustushaku["operational-unit-id"] = update.newValue;

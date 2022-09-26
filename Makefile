@@ -10,9 +10,7 @@ LEIN_CHECKOUTS_BASEDIRS := va-hakija/checkouts va-virkailija/checkouts
 LEIN_CHECKOUTS := soresu-form
 LEIN_CHECKOUT_DIRS := $(foreach basedir,$(LEIN_CHECKOUTS_BASEDIRS),$(addprefix $(basedir)/,$(LEIN_CHECKOUTS)))
 NODE_VERSION := $(shell node --version)
-REQUIRED_NODE := $(shell if [ $(NODE_VERSION) == "v16.9.1" ]; then echo true; else echo false; fi)
-NPM_VERSION := $(shell npm --version)
-REQUIRED_NPM := $(shell if [ $(NPM_VERSION) == "7.24.0" ]; then echo true; else echo false; fi)
+REQUIRED_NODE := $(shell if [ $(NODE_VERSION) == "v18.9.1" ]; then echo true; else echo false; fi)
 
 .PHONY: help
 help:
@@ -20,8 +18,7 @@ help:
 
 .PHONY: check-node
 check-node:
-	@echo Build requires Node v16.9.1 && $(REQUIRED_NODE)
-	@echo Build requires NPM 7.24.0 && $(REQUIRED_NPM)
+	@echo Build requires Node v18.9.1 && $(REQUIRED_NODE)
 
 .PHONY: clean
 clean: npm-clean lein-clean

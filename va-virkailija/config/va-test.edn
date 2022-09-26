@@ -41,4 +41,5 @@
                            :timeout 5000
                            :interval-minutes 15}
  :ta-tilit {:enabled? true}
+ :pakoteohje {:enabled? true}
  }

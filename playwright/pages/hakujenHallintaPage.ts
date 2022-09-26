@@ -360,10 +360,33 @@ export class HakujenHallintaPage {
         this.page.locator(`text="Lähetä ${amount} päätöstä"`),
       confirmSending: this.page.locator('text="Vahvista lähetys"'),
       paatosSendError: this.page.locator("#päätös-send-error"),
+      recreatePaatokset: async () => {
+        await this.page.locator("text=Luo päätökset uudelleen").click();
+        await this.page.locator("text=Vahvista päätösten luominen").click();
+        await expect(
+          this.page.locator("text=Päätökset luotu uudelleen")
+        ).toBeVisible();
+      },
+      resendPaatokset: async (amount: number = 1) => {
+        await this.page
+          .locator(`text=Lähetä ${amount} päätöstä uudelleen`)
+          .click();
+        await this.page
+          .locator("text=Vahvista päätösten uudelleenlähetys")
+          .click();
+        await expect(
+          this.page.locator("text=Päätökset lähetetty uudelleen")
+        ).toBeVisible();
+      },
       yleisOhjeCheckbox: this.page
         .locator("label")
         .locator('text="Valtionavustusten yleisohje"'),
       yleisOhjeLiite: this.page.locator("[data-liite=va_yleisohje]"),
+      pakoteOhjeCheckbox: this.page
+        .locator("label")
+        .locator(
+          "text=Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen valtionavustustoiminnassa"
+        ),
     };
   }
 
@@ -499,12 +522,6 @@ export class HakujenHallintaPage {
       (e) => e.querySelectorAll(".entry").length
     );
     expect(logEntryCount).toEqual(1);
-  }
-
-  async resendPaatokset(amountToSend = 1) {
-    await this.page.click(`text="Lähetä ${amountToSend} päätöstä uudelleen"`);
-    await this.page.click('text="Vahvista päätösten uudelleenlähetys"');
-    await this.page.waitForSelector('text="Päätökset lähetetty uudelleen"');
   }
 
   async resolveAvustushaku() {

@@ -21,6 +21,7 @@
          :multibatch-payments (:multibatch-payments config)
          :dont-send-loppuselvityspyynto-to-virkailija (:dont-send-loppuselvityspyynto-to-virkailija config)
          :ta-tilit (:ta-tilit config)
+         :pakoteohje (:pakoteohje config)
          :selvitys-limit (:selvitys-limit config)}
         opintopolku (:opintopolku config)]
     (if-let [opintopolku-url (:url opintopolku)]

@@ -61,6 +61,7 @@
    (s/optional-key :multibatch-payments) (s/maybe {:enabled? s/Bool})
    (s/optional-key :dont-send-loppuselvityspyynto-to-virkailija) (s/maybe {:enabled? s/Bool})
    (s/optional-key :ta-tilit) (s/maybe {:enabled? s/Bool})
+   (s/optional-key :pakoteohje) (s/maybe {:enabled? s/Bool})
    (s/optional-key :selvitys-limit) (s/maybe {:enabled? s/Bool})})
 
 
@@ -117,6 +118,7 @@
    (s/optional-key :valmistelija) LocalizedStringOptional
    (s/optional-key :hyvaksyminen) LocalizedStringOptional
    (s/optional-key :liitteet) [Liite]
+   (s/optional-key :dont-include-pakote-ohje) s/Bool
    (s/optional-key :updatedAt) s/Str
   }
 )

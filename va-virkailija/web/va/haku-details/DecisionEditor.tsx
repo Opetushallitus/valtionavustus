@@ -204,6 +204,103 @@ const LiiteGroup = ({
   );
 };
 
+const PakoteLiite = () => {
+  const dispatch = useHakujenHallintaDispatch();
+  const { environment, helpTexts } = useHakujenHallintaSelector((state) =>
+    selectLoadedInitialData(state)
+  );
+  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
+  const key = "dont-include-pakote-ohje";
+  const dontIncludePakoteOhje = avustushaku.decision?.[key] === true;
+  const hakijaUrl = environment["hakija-server"].url["fi"];
+  const linkUrl = `${hakijaUrl}liitteet/va_pakoteohje.pdf`;
+  return (
+    <div>
+      <h5>
+        Pakoteohje
+        <HelpTooltip
+          content={helpTexts["hakujen_hallinta__päätös___pakoteohjeet"]}
+          direction="left"
+        />
+      </h5>
+      <div className="decision-liite-selection__liite">
+        <label>
+          <input
+            type="checkbox"
+            className="decision-liite-selection__liite-input"
+            checked={!dontIncludePakoteOhje}
+            onChange={() =>
+              dispatch(
+                updateField({
+                  avustushaku,
+                  field: { id: `decision.${key}` },
+                  newValue: !dontIncludePakoteOhje,
+                })
+              )
+            }
+          />
+          Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen
+          valtionavustustoiminnassa{" "}
+        </label>
+        <span>
+          <a
+            className="decision-liite-selection__link"
+            href={linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            fi/sv
+          </a>
+        </span>
+      </div>
+    </div>
+  );
+};
+
+const AttachmentLiite = ({
+  attachment,
+  isSelected,
+  selectedVersions,
+  onChangeLiiteVersions,
+}: {
+  attachment: LiiteAttachment;
+  isSelected: boolean;
+  selectedLiitteet: Record<string, string>;
+  selectedVersions: Record<string, string | undefined>;
+  onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) => {
+  const { environment } = useHakujenHallintaSelector(selectLoadedInitialData);
+  const disableOldVersions = attachment.id === "va_yleisohje";
+  const amountOfVersions = attachment.versions.length;
+  if (attachment.versions.length > 1) {
+    return (
+      <div>
+        {attachment.versions.map((v, index) => (
+          <LiiteVersion
+            key={`liiteversion-${v.id}`}
+            attachment={attachment}
+            isLiiteSelected={isSelected}
+            isDisabled={
+              disableOldVersions ? index + 1 < amountOfVersions : undefined
+            }
+            versionSpec={v}
+            environment={environment}
+            selectedVersions={selectedVersions}
+            onChangeLiiteVersions={onChangeLiiteVersions}
+          />
+        ))}
+      </div>
+    );
+  }
+  return (
+    <LiiteVersionLinks
+      attachmentId={attachment.id}
+      versionSuffix={attachment.versions[0].id}
+      environment={environment}
+    />
+  );
+};
+
 const LiiteComponent = ({
   attachment,
   groupId,
@@ -219,10 +316,8 @@ const LiiteComponent = ({
   onChangeLiite: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
-  const { environment } = useHakujenHallintaSelector(selectLoadedInitialData);
   const isSelected = selectedLiitteet[groupId] === attachment.id;
-  const isYleisohje = attachment.id === "va_yleisohje";
-  const amountOfVersions = attachment.versions.length;
+
   return (
     <div key={attachment.id} className="decision-liite-selection__liite">
       <label>
@@ -240,30 +335,13 @@ const LiiteComponent = ({
           {attachment.id}
         </span>
       </label>
-      {attachment.versions.length > 1 ? (
-        <div>
-          {attachment.versions.map((v, index) => (
-            <LiiteVersion
-              key={`liiteversion-${v.id}`}
-              attachment={attachment}
-              isLiiteSelected={isSelected}
-              isDisabled={
-                isYleisohje ? index + 1 < amountOfVersions : undefined
-              }
-              versionSpec={v}
-              environment={environment}
-              selectedVersions={selectedVersions}
-              onChangeLiiteVersions={onChangeLiiteVersions}
-            />
-          ))}
-        </div>
-      ) : (
-        <LiiteVersionLinks
-          attachmentId={attachment.id}
-          versionSuffix={attachment.versions[0].id}
-          environment={environment}
-        />
-      )}
+      <AttachmentLiite
+        attachment={attachment}
+        isSelected={isSelected}
+        selectedLiitteet={selectedLiitteet}
+        selectedVersions={selectedVersions}
+        onChangeLiiteVersions={onChangeLiiteVersions}
+      />
     </div>
   );
 };
@@ -311,17 +389,19 @@ const LiiteVersion = ({
   );
 };
 
+interface LiiteVersionLinkProps {
+  attachmentId: string;
+  versionSuffix: string;
+  environment: EnvironmentApiResponse;
+}
+
 const languages = ["fi", "sv"] as const;
 
 const LiiteVersionLinks = ({
   attachmentId,
   versionSuffix,
   environment,
-}: {
-  attachmentId: string;
-  versionSuffix: string;
-  environment: EnvironmentApiResponse;
-}) => {
+}: LiiteVersionLinkProps) => {
   return (
     <span>
       {languages.map((lang) => {
@@ -1128,6 +1208,7 @@ const DecisionEditor = () => {
   const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
   const { decisionLiitteet, environment, helpTexts } =
     useHakujenHallintaSelector(selectLoadedInitialData);
+  const pakoteohjeEnabled = environment["pakoteohje"]?.["enabled?"];
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(
       updateField({ avustushaku, field: e.target, newValue: e.target.value })
@@ -1258,6 +1339,7 @@ const DecisionEditor = () => {
         decisionLiitteet={decisionLiitteet}
         helpTexts={helpTexts}
       />
+      {pakoteohjeEnabled && <PakoteLiite />}
       <DecisionDateAndSend
         avustushaku={avustushaku}
         environment={environment}
