@@ -3,19 +3,21 @@ import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import { getAcceptedPäätösEmails } from "../../utils/emails";
-import { expectToBeDefined } from "../../utils/util";
+import { expectToBeDefined, lastElementFromArray } from "../../utils/util";
 
 test("yleisohje", async ({
   page,
   closedAvustushaku: { id: avustushakuID },
   answers,
   ukotettuValmistelija,
+  codes,
 }) => {
   const hakemustenArviointiPage = new HakemustenArviointiPage(page);
   await hakemustenArviointiPage.navigate(avustushakuID);
   const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
     avustushakuID,
     projectName: answers.projectName,
+    projektikoodi: lastElementFromArray(codes.project),
   });
   const hakujenHallintaPage = new HakujenHallintaPage(page);
   await hakujenHallintaPage.navigateFromHeader();
