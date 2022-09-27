@@ -1,4 +1,4 @@
-import { getDocument } from "pdfjs-dist";
+import { getDocument } from "pdfjs-dist/legacy/build/pdf.js";
 
 export const getPdfFirstPageTextContent = async (pdfData: Buffer) => {
   const pdf = await getDocument({ data: pdfData }).promise;
