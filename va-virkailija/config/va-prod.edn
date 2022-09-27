@@ -45,5 +45,4 @@
                            :interval-minutes 15}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
- :new-paatoksen-liitteet {:enabled? true}
 }

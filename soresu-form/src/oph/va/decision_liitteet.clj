@@ -1,30 +1,4 @@
-(ns oph.va.decision-liitteet
-  (:require [oph.soresu.common.config :refer [feature-enabled?]]))
-
-(def NewYleisohjeVersions
-  [{:id          ""
-    :description "Alkuperäinen"}
-   {:id          "_2018-03"
-    :description "Voimassa 12.3.2018 alkaen"}
-   {:id          "_2020-12"
-    :description "Voimassa 17.12.2020 alkaen"}
-   {:id          "_2021-05"
-    :description "Voimassa 11.5.2021 alkaen"}
-   {:id          "_2022-09"
-    :description "Voimassa 13.9.2022 alkaen"}])
-
-(def OldYleisohjeVersions
-  [{:id          ""
-    :description "Alkuperäinen"}
-   {:id          "_2018-03"
-    :description "Voimassa 12.3.2018 alkaen"}
-   {:id          "_2020-12"
-    :description "Voimassa 17.12.2020 alkaen"}
-   {:id          "_2021-05"
-    :description "Voimassa 11.5.2021 alkaen"}])
-
-(defn get-yleisohje-versions []
-       (if (feature-enabled? :new-paatoksen-liitteet) NewYleisohjeVersions OldYleisohjeVersions))
+(ns oph.va.decision-liitteet)
 
 (def Liitteet
   [{:group "Ehdot"
@@ -62,4 +36,13 @@
     :attachments [{:id       "va_yleisohje"
                    :langs    {:fi "Valtionavustusten yleisohje"
                               :sv "Allmänna anvisningar om statsunderstöd"}
-                   :versions (get-yleisohje-versions)}]}])
+                   :versions [{:id          ""
+                               :description "Alkuperäinen"}
+                              {:id          "_2018-03"
+                               :description "Voimassa 12.3.2018 alkaen"}
+                              {:id          "_2020-12"
+                               :description "Voimassa 17.12.2020 alkaen"}
+                              {:id          "_2021-05"
+                               :description "Voimassa 11.5.2021 alkaen"}
+                              {:id          "_2022-09"
+                               :description "Voimassa 13.9.2022 alkaen"}]}]}])

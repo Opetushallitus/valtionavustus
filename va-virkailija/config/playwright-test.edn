@@ -29,6 +29,5 @@
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :ta-tilit {:enabled? true}
  :test-apis {:enabled? true}
- :new-paatoksen-liitteet {:enabled? true}
  :officer-edit-jwt-secret "playwright-test-secret"
  }

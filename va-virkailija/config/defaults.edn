@@ -71,6 +71,5 @@
  :tasmaytysraportti-send {:enabled? false}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :ta-tilit {:enabled? false}
- :new-paatoksen-liitteet {:enabled? false}
  :test-apis {:enabled? false}
  }

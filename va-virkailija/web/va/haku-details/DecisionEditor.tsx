@@ -222,9 +222,6 @@ const LiiteComponent = ({
   const { environment } = useHakujenHallintaSelector(selectLoadedInitialData);
   const isSelected = selectedLiitteet[groupId] === attachment.id;
   const isYleisohje = attachment.id === "va_yleisohje";
-  const newLiitteetEnabled =
-    environment["new-paatoksen-liitteet"]?.["enabled?"];
-  const disableOldVersions = isYleisohje && newLiitteetEnabled;
   const amountOfVersions = attachment.versions.length;
   return (
     <div key={attachment.id} className="decision-liite-selection__liite">
@@ -251,7 +248,7 @@ const LiiteComponent = ({
               attachment={attachment}
               isLiiteSelected={isSelected}
               isDisabled={
-                disableOldVersions ? index + 1 < amountOfVersions : undefined
+                isYleisohje ? index + 1 < amountOfVersions : undefined
               }
               versionSpec={v}
               environment={environment}
