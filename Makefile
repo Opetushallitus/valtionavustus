@@ -10,7 +10,7 @@ LEIN_CHECKOUTS_BASEDIRS := va-hakija/checkouts va-virkailija/checkouts
 LEIN_CHECKOUTS := soresu-form
 LEIN_CHECKOUT_DIRS := $(foreach basedir,$(LEIN_CHECKOUTS_BASEDIRS),$(addprefix $(basedir)/,$(LEIN_CHECKOUTS)))
 NODE_VERSION := $(shell node --version)
-REQUIRED_NODE := $(shell if [ $(NODE_VERSION) == "v18.9.1" ]; then echo true; else echo false; fi)
+REQUIRED_NODE := $(shell if [ $(NODE_VERSION) == "v16.17.1" ]; then echo true; else echo false; fi)
 
 .PHONY: help
 help:
