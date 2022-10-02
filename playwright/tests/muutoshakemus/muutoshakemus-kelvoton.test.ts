@@ -106,13 +106,12 @@ const test = defaultValues.extend<{
         hakemustenArviointiPage.page.click(`text=${hakuProps.registerNumber}`),
       ]);
       hakemusID = await hakemustenArviointiPage.getHakemusID();
+      expectToBeDefined(hakemusID);
       const { taTili } = hakemustenArviointiPage.arviointiTabLocators();
       await taTili.input.fill("Ammatillinen koulutus");
       await page.keyboard.press("ArrowDown");
       await page.keyboard.press("Enter");
       await hakemustenArviointiPage.acceptHakemus();
-      expectToBeDefined(hakemusID);
-      await hakemustenArviointiPage.waitForArvioSave(avustushakuID, hakemusID);
     });
     await test.step("Resolve avustushaku", async () => {
       await hakujenHallintaPage.navigateFromHeader();
@@ -348,7 +347,6 @@ const akuTest = defaultValues.extend<{
       await page.keyboard.press("ArrowDown");
       await page.keyboard.press("Enter");
       await hakemustenArviointiPage.acceptHakemus();
-      await hakemustenArviointiPage.waitForArvioSave(avustushakuID, hakemusID);
     });
     expectToBeDefined(hakemusID);
     await test.step("Resolve avustushaku", async () => {

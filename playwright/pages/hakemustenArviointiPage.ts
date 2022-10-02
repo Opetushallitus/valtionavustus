@@ -182,15 +182,6 @@ export class HakemustenArviointiPage {
     await this.waitForSave();
   }
 
-  async waitForArvioSave(avustushakuID: number, hakemusID: number) {
-    await this.page.waitForResponse(
-      (response) =>
-        response.url() ===
-          `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio` &&
-        response.ok()
-    );
-  }
-
   async selectValmistelijaForHakemus(
     hakemusID: number,
     valmistelijaName: string
