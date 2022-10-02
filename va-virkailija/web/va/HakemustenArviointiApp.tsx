@@ -60,9 +60,6 @@ const App = () => {
   const [showAllHakemukset, toggleShowAllHakemukset] = useState(
     () => new URLSearchParams(location.search).get(SHOW_ALL) === "true"
   );
-  const selectedHakuId = useHakemustenArviointiSelector(
-    (state) => state.arviointi.selectedHakuId
-  );
   const { avustushakuList, hakuData, userInfo } =
     useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi));
   const selectedHakemusId = useHakemustenArviointiSelector(
@@ -90,8 +87,8 @@ const App = () => {
     }
   };
   const isResolved = avustushaku.status === "resolved";
-  const selectedHakemus = selectedHakuId
-    ? hakemusList.find((h) => h.id === selectedHakuId)
+  const selectedHakemus = selectedHakemusId
+    ? hakemusList.find((h) => h.id === selectedHakemusId)
     : undefined;
   return (
     <section className={splitView ? "split-view" : ""}>
