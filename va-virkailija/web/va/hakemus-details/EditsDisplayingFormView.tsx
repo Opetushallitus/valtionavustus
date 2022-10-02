@@ -15,11 +15,18 @@ import {
 import { Muutoshakemus } from "soresu-form/web/va/types/muutoshakemus";
 import { getProjectEndDate } from "soresu-form/web/va/Muutoshakemus";
 
-function addOrMutateAnswer(answers: Answer[], key: string, newValue: any) {
-  const answer = answers.find((a) => a.key === key);
-  if (answer) {
-    answer.value = newValue;
-    return answers;
+function addOrUpdateAnswer(
+  answers: Answer[],
+  key: string,
+  newValue: any
+): Answer[] {
+  const answerIndex = answers.findIndex((a) => a.key === key);
+  if (answerIndex > -1) {
+    return [
+      ...answers.slice(0, answerIndex),
+      newValue,
+      ...answers.slice(answerIndex + 1),
+    ];
   } else {
     return [...answers, { key, value: newValue }];
   }
@@ -33,12 +40,12 @@ function mutateAnswersDeltaWithKey(
 ) {
   const oldValue = answers.find((a) => a.key === key)?.value;
   if (oldValue !== newValue) {
-    answersDelta.changedAnswers = addOrMutateAnswer(
+    answersDelta.changedAnswers = addOrUpdateAnswer(
       answersDelta.changedAnswers,
       key,
       oldValue
     );
-    answersDelta.newAnswers = addOrMutateAnswer(
+    answersDelta.newAnswers = addOrUpdateAnswer(
       answersDelta.newAnswers,
       key,
       newValue
