@@ -262,12 +262,14 @@ const AttachmentLiite = ({
   isSelected,
   selectedVersions,
   onChangeLiiteVersions,
+  disabled,
 }: {
   attachment: LiiteAttachment;
   isSelected: boolean;
   selectedLiitteet: Record<string, string>;
   selectedVersions: Record<string, string | undefined>;
   onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
 }) => {
   const { environment } = useHakujenHallintaSelector(selectLoadedInitialData);
   const disableOldVersions = attachment.id === "va_yleisohje";
@@ -281,7 +283,8 @@ const AttachmentLiite = ({
             attachment={attachment}
             isLiiteSelected={isSelected}
             isDisabled={
-              disableOldVersions ? index + 1 < amountOfVersions : undefined
+              disabled ||
+              (disableOldVersions ? index + 1 < amountOfVersions : undefined)
             }
             versionSpec={v}
             environment={environment}
@@ -317,7 +320,11 @@ const LiiteComponent = ({
   onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   const isSelected = selectedLiitteet[groupId] === attachment.id;
-
+  const environment = useHakujenHallintaSelector(
+    (state) => selectLoadedInitialData(state).environment
+  );
+  const disabledGroup =
+    groupId === "Ehdot" && environment.pakoteohje?.["enabled?"] === true;
   return (
     <div key={attachment.id} className="decision-liite-selection__liite">
       <label>
@@ -329,6 +336,7 @@ const LiiteComponent = ({
           value={attachment.id}
           checked={isSelected}
           onChange={onChangeLiite}
+          disabled={disabledGroup}
         />
         {attachment.langs.fi}{" "}
         <span className="decision-liite-selection__liite-id">
@@ -340,6 +348,7 @@ const LiiteComponent = ({
         isSelected={isSelected}
         selectedLiitteet={selectedLiitteet}
         selectedVersions={selectedVersions}
+        disabled={disabledGroup}
         onChangeLiiteVersions={onChangeLiiteVersions}
       />
     </div>

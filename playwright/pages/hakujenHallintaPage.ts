@@ -378,6 +378,12 @@ export class HakujenHallintaPage {
           this.page.locator("text=Päätökset lähetetty uudelleen")
         ).toBeVisible();
       },
+      erityisavustusEhdotCheckbox: this.page
+        .locator("label")
+        .locator("text=Eritysavustukseen liittyvät ehdot ja rajoitukset"),
+      yleisavustusEhdotCheckbox: this.page
+        .locator("label")
+        .locator("text=Yleisavustukseen liittyvät ehdot ja rajoitukset"),
       yleisOhjeCheckbox: this.page
         .locator("label")
         .locator('text="Valtionavustusten yleisohje"'),
