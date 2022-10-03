@@ -13,6 +13,7 @@ import { randomInt } from "crypto";
 
 export type DefaultValueFixtures = {
   codes: VaCodeValues;
+  projektikoodi: string;
   talousarviotili: Talousarviotili;
   randomName: string;
   avustushakuName: string;
@@ -88,6 +89,11 @@ export const defaultValues =
     swedishAnswers,
     codes: async ({ defaultCodes }, use) => {
       await use(defaultCodes.codes);
+    },
+    projektikoodi: async ({ codes }, use) => {
+      const project = codes.project[codes.project.length - 1];
+      expectToBeDefined(project);
+      await use(project);
     },
     talousarviotili: async ({ defaultCodes }, use) => {
       await use(defaultCodes.tatili);

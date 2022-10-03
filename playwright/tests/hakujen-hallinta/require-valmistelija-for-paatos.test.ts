@@ -9,7 +9,6 @@ import {
   Installment,
 } from "../../pages/hakujenHallintaPage";
 import { DefaultValueFixtures } from "../../fixtures/defaultValues";
-import { lastElementFromArray } from "../../utils/util";
 
 type TestArgs = PlaywrightTestArgs &
   DefaultValueFixtures &
@@ -20,14 +19,14 @@ const testSendingPaatos = async ({
   closedAvustushaku: { id: avustushakuID },
   answers,
   ukotettuValmistelija,
-  codes,
+  projektikoodi,
 }: TestArgs) => {
   const hakemustenArviointiPage = new HakemustenArviointiPage(page);
   await hakemustenArviointiPage.navigate(avustushakuID);
   const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
     avustushakuID,
     projectName: answers.projectName,
-    projektikoodi: lastElementFromArray(codes.project),
+    projektikoodi,
   });
   const hakujenHallintaPage = new HakujenHallintaPage(page);
   await hakujenHallintaPage.navigateFromHeader();

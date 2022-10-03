@@ -14,7 +14,7 @@ import { NoProjectCodeProvided } from "../../utils/types";
 import { VirkailijaValiselvitysPage } from "../../pages/virkailijaValiselvitysPage";
 import moment from "moment";
 import { randomString } from "../../utils/random";
-import { expectToBeDefined, lastElementFromArray } from "../../utils/util";
+import { expectToBeDefined } from "../../utils/util";
 
 const correctOVTTest = test.extend({
   codes: async ({ page }, use) => {
@@ -328,7 +328,8 @@ test.describe.parallel("Maksatukset", () => {
     page,
     avustushakuName,
     acceptedHakemus: { hakemusID },
-    codes: { project, operation, operationalUnit },
+    codes: { operation, operationalUnit },
+    projektikoodi,
     talousarviotili,
   }) => {
     const maksatuksetPage = MaksatuksetPage(page);
@@ -375,7 +376,7 @@ test.describe.parallel("Maksatukset", () => {
     const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu();
     expect(maksatukset).toContainEqual(
       maksatuksetPage.getExpectedPaymentXML({
-        projekti: lastElementFromArray(project),
+        projekti: projektikoodi,
         toiminto: operation,
         toimintayksikko: operationalUnit,
         pitkaviite,

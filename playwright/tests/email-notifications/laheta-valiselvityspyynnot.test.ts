@@ -5,7 +5,7 @@ import { VIRKAILIJA_URL } from "../../utils/constants";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { getLahetaValiselvityspyynnotEmails } from "../../utils/emails";
-import { expectToBeDefined, lastElementFromArray } from "../../utils/util";
+import { expectToBeDefined } from "../../utils/util";
 import { selvitysTest } from "../../fixtures/selvitysTest";
 
 selvitysTest(
@@ -84,7 +84,7 @@ selvitysTest(
     answers,
     page,
     ukotettuValmistelija,
-    codes,
+    projektikoodi,
   }) => {
     expectToBeDefined(closedAvustushaku);
 
@@ -112,7 +112,7 @@ selvitysTest(
       const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
         avustushakuID,
         projectName: answers.projectName,
-        projektikoodi: lastElementFromArray(codes.project),
+        projektikoodi,
       });
 
       const hakujenHallintaPage = new HakujenHallintaPage(page);

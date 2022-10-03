@@ -354,20 +354,12 @@ export class HakemustenArviointiPage {
     await this.selectHakemusFromList(projectName);
     const hakemusID = await this.getHakemusID();
 
-    const selectProject = async (projectId: string) => {
-      if (!projektikoodi) throw new Error("No project selected");
-
-      await this.page
-        .locator("text=Syötä projektikoodi")
-        .click({ force: true });
-      await this.page
-        .locator(
-          `[data-test-id="projekti-valitsin-initial"] [data-test-id="${projectId}"]`
-        )
-        .click({ force: true });
-    };
-
-    await selectProject(projektikoodi);
+    await this.page.locator("text=Syötä projektikoodi").click({ force: true });
+    await this.page
+      .locator(
+        `[data-test-id="projekti-valitsin-initial"] [data-test-id="${projektikoodi}"]`
+      )
+      .click();
 
     expectToBeDefined(hakemusID);
     console.log("Hakemus ID:", hakemusID);

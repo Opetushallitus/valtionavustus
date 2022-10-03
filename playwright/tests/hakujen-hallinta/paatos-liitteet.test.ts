@@ -3,7 +3,7 @@ import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import { getAcceptedPäätösEmails } from "../../utils/emails";
-import { expectToBeDefined, lastElementFromArray } from "../../utils/util";
+import { expectToBeDefined } from "../../utils/util";
 import { HAKIJA_URL } from "../../utils/constants";
 import { getPdfFirstPageTextContent } from "../../utils/pdfUtil";
 
@@ -12,14 +12,14 @@ test("paatos liitteet", async ({
   closedAvustushaku: { id: avustushakuID },
   answers,
   ukotettuValmistelija,
-  codes,
+  projektikoodi,
 }) => {
   const hakemustenArviointiPage = new HakemustenArviointiPage(page);
   await hakemustenArviointiPage.navigate(avustushakuID);
   const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
     avustushakuID,
     projectName: answers.projectName,
-    projektikoodi: lastElementFromArray(codes.project),
+    projektikoodi,
   });
   const hakujenHallintaPage = new HakujenHallintaPage(page);
   await hakujenHallintaPage.navigateFromHeader();
