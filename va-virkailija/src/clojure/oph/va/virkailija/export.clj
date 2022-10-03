@@ -443,7 +443,7 @@
       (>= (.indexOf unsafe-cell-string-value-prefixes value-first-char) 0))))
 
 (defn- quote-string-cell-with-formula-like-value! [^Cell cell ^CellStyle safe-formula-style]
-  (when (and (= (.getCellTypeEnum cell) CellType/STRING)
+  (when (and (= (.getCellType cell) CellType/STRING)
              (unsafe-string-cell-value? (.getStringCellValue cell)))
     (.setCellStyle cell safe-formula-style)))
 

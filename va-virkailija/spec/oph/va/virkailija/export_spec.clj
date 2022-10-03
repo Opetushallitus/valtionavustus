@@ -40,7 +40,7 @@
                 (spreadsheet/row-seq sheet))))
 
 (defn- cell-value-properties [^Cell cell]
-  {:type            (.getCellTypeEnum cell)
+  {:type            (.getCellType cell)
    :value           (spreadsheet/read-cell cell)
    :quote-prefixed? (-> cell .getCellStyle .getQuotePrefixed)})
 
