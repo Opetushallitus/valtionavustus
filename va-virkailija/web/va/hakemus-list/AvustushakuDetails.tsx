@@ -1,30 +1,21 @@
-import { Avustushaku, Hakemus } from "soresu-form/web/va/types";
+import { Hakemus } from "soresu-form/web/va/types";
 import React from "react";
 import moment from "moment";
 
-import { LahetysStatuses, Role, VaCodeValue } from "../types";
-
 import styles from "./AvustushakuDetails.module.less";
+import { useHakemustenArviointiSelector } from "../hakemustenArviointi/arviointiStore";
+import { getLoadedState } from "../hakemustenArviointi/arviointiReducer";
 
 interface Props {
-  avustushaku: Avustushaku;
-  hakemusList: Hakemus[];
-  vastuuvalmistelija: Role | undefined;
-  lahetykset: LahetysStatuses;
-  toimintayksikko?: VaCodeValue;
-  earliestPaymentCreatedAt?: string;
+  acceptedHakemus: Hakemus | undefined;
 }
 
-export const AvustushakuDetails: React.FC<Props> = ({
-  avustushaku,
-  hakemusList,
-  vastuuvalmistelija,
-  lahetykset,
-  toimintayksikko,
-  earliestPaymentCreatedAt,
-}) => {
-  const acceptedHakemus = hakemusList.find(
-    (h) => h.arvio.status === "accepted"
+export const AvustushakuDetails = ({ acceptedHakemus }: Props) => {
+  const { hakuData, lahetykset, earliestPaymentCreatedAt } =
+    useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi));
+  const { avustushaku, toimintayksikko } = hakuData;
+  const vastuuvalmistelija = hakuData.roles.find(
+    (r) => r.role === "vastuuvalmistelija"
   );
   return (
     <div className={styles.detailsContainer}>

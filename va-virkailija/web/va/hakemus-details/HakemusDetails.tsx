@@ -6,51 +6,35 @@ import { Muutoshakemus } from "./Muutoshakemus";
 import Loppuselvitys from "./Loppuselvitys";
 import Väliselvitys from "./Väliselvitys";
 import Seuranta from "./Seuranta";
-import {
-  HakuData,
-  SelectedHakemusAccessControl,
-  UserInfo,
-  VALMISTELIJA_ROLES,
-  VaCodeValue,
-} from "../types";
-import { Avustushaku, Hakemus, HelpTexts } from "soresu-form/web/va/types";
-import HakemustenArviointiController from "../HakemustenArviointiController";
-import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
+import { VALMISTELIJA_ROLES } from "../types";
+import { Hakemus } from "soresu-form/web/va/types";
 
 import "./hakemusDetails.less";
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from "../hakemustenArviointi/arviointiStore";
+import {
+  getLoadedState,
+  setSelectedHakuId,
+  setSubTab,
+} from "../hakemustenArviointi/arviointiReducer";
 
 interface Props {
-  hakuData: HakuData;
-  avustushaku: Avustushaku;
   hakemus: Hakemus | undefined;
-  selectedHakemusAccessControl: SelectedHakemusAccessControl;
-  userInfo: UserInfo;
-  showOthersScores: boolean;
-  subTab: string;
-  controller: HakemustenArviointiController;
-  environment: EnvironmentApiResponse;
-  helpTexts: HelpTexts;
   splitView: boolean;
   toggleSplitView: (forceValue?: boolean) => void;
-  projects: VaCodeValue[];
 }
 
 export const HakemusDetails = (props: Props) => {
-  const {
-    controller,
-    hakemus,
-    avustushaku,
-    hakuData,
-    userInfo,
-    showOthersScores,
-    environment,
-    splitView,
-    selectedHakemusAccessControl,
-    subTab,
-    helpTexts,
-    toggleSplitView,
-    projects,
-  } = props;
+  const { hakemus, splitView, toggleSplitView } = props;
+  const dispatch = useHakemustenArviointiDispatch();
+  const { helpTexts, hakuData, userInfo, projects } =
+    useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi));
+  const { avustushaku, environment } = hakuData;
+  const subTab = useHakemustenArviointiSelector(
+    (state) => state.arviointi.subTab
+  );
   if (!(typeof hakemus === "object")) {
     return null;
   }
@@ -77,7 +61,7 @@ export const HakemusDetails = (props: Props) => {
 
   const onClose = () => {
     toggleSplitView(false);
-    controller.closeHakemusDetail();
+    dispatch(setSelectedHakuId(undefined));
   };
 
   const onToggle = (e: React.MouseEvent) => {
@@ -106,10 +90,7 @@ export const HakemusDetails = (props: Props) => {
             hakemus={hakemus}
             avustushaku={avustushaku}
             hakuData={hakuData}
-            selectedHakemusAccessControl={selectedHakemusAccessControl}
             userInfo={userInfo}
-            showOthersScores={showOthersScores}
-            controller={controller}
             multibatchEnabled={multibatchEnabled}
             helpTexts={helpTexts}
             newTaTiliSelectionEnabled={
@@ -123,7 +104,6 @@ export const HakemusDetails = (props: Props) => {
         return (
           <Väliselvitys
             environment={environment}
-            controller={controller}
             hakemus={hakemus}
             avustushaku={avustushaku}
             userInfo={userInfo}
@@ -142,7 +122,6 @@ export const HakemusDetails = (props: Props) => {
         return (
           <Loppuselvitys
             environment={environment}
-            controller={controller}
             hakemus={hakemus}
             avustushaku={avustushaku}
             userInfo={userInfo}
@@ -177,7 +156,6 @@ export const HakemusDetails = (props: Props) => {
                 avustushaku={avustushaku}
                 muutoshakemukset={muutoshakemukset}
                 hakemusVersion={hakemus}
-                controller={controller}
                 userInfo={userInfo}
                 presenter={hakemukselleUkotettuValmistelija}
                 isCurrentUserHakemukselleUkotettuValmistelija={
@@ -192,7 +170,6 @@ export const HakemusDetails = (props: Props) => {
       case "seuranta":
         return (
           <Seuranta
-            controller={controller}
             hakemus={hakemus}
             avustushaku={avustushaku}
             muutoshakemukset={muutoshakemukset}
@@ -218,7 +195,7 @@ export const HakemusDetails = (props: Props) => {
   function createSubTabSelector(subTabToSelect: string) {
     return (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
       e.preventDefault();
-      controller.selectEditorSubtab(subTabToSelect);
+      dispatch(setSubTab(subTabToSelect));
     };
   }
 

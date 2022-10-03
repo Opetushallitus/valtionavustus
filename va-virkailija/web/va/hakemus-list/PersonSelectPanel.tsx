@@ -3,8 +3,18 @@ import classNames from "classnames";
 
 import { Hakemus } from "soresu-form/web/va/types";
 
-import { Role, State } from "../types";
-import HakemustenArviointiController from "../HakemustenArviointiController";
+import { Role } from "../types";
+
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from "../hakemustenArviointi/arviointiStore";
+import {
+  getLoadedState,
+  startHakemusArvioAutoSave,
+  toggleHakemusRole,
+  togglePersonSelect,
+} from "../hakemustenArviointi/arviointiReducer";
 
 import styles from "./Person.module.less";
 
@@ -18,7 +28,6 @@ export const isEvaluator = (hakemus: Hakemus, { id }: { id: number }) =>
 type RoleButtonProps = {
   role: Role;
   roleField: "evaluators" | "presenter";
-  controller: HakemustenArviointiController;
   hakemus: Hakemus;
 };
 
@@ -37,14 +46,8 @@ const getRoleButtonAriaLabel = (
     : `Lisää ${name} arvioijaksi`;
 };
 
-const RoleButton = ({
-  role,
-  roleField,
-  controller,
-  hakemus,
-}: RoleButtonProps) => {
-  const onClick = () =>
-    controller.toggleHakemusRole(role.id, hakemus, roleField);
+const RoleButton = ({ role, roleField, hakemus }: RoleButtonProps) => {
+  const dispatch = useHakemustenArviointiDispatch();
   const isPresenterField = roleField === "presenter";
   const active = isPresenterField
     ? isPresenter(hakemus, role)
@@ -52,7 +55,17 @@ const RoleButton = ({
   const ariaLabel = getRoleButtonAriaLabel(isPresenterField, active, role.name);
   return (
     <button
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        dispatch(
+          toggleHakemusRole({
+            roleId: role.id,
+            hakemusId: hakemus.id,
+            roleField,
+          })
+        );
+        dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
+      }}
       className={classNames(styles.roleButton, { [styles.selected]: active })}
       aria-label={ariaLabel}
     >
@@ -65,7 +78,6 @@ type RoleContainerProps = {
   roleName: string;
   roleField: "evaluators" | "presenter";
   roles: Role[];
-  controller: HakemustenArviointiController;
   hakemus: Hakemus;
 };
 
@@ -73,7 +85,6 @@ const RoleContainer = ({
   roleName,
   roleField,
   roles,
-  controller,
   hakemus,
 }: RoleContainerProps) => {
   return (
@@ -85,7 +96,6 @@ const RoleContainer = ({
             key={`${roleName}-${role.id}`}
             role={role}
             roleField={roleField}
-            controller={controller}
             hakemus={hakemus}
           />
         ))}
@@ -95,26 +105,26 @@ const RoleContainer = ({
 };
 
 type PersonSelectButtonProps = {
-  controller: HakemustenArviointiController;
   hakemus: Hakemus;
-  state: State;
   toggleSplitView: (forceValue?: boolean) => void;
 };
 
 export const PersonSelectPanel = ({
   hakemus,
-  state,
-  controller,
 }: Omit<PersonSelectButtonProps, "toggleSplitView">) => {
-  const roles = [...state.hakuData.roles].sort((a, b) =>
-    a.name > b.name ? -1 : 1
+  const hakuDataRoles = useHakemustenArviointiSelector(
+    (state) => getLoadedState(state.arviointi).hakuData.roles
   );
+  const dispatch = useHakemustenArviointiDispatch();
+  const roles = [...hakuDataRoles].sort((a, b) => (a.name > b.name ? -1 : 1));
   const presenters = roles.filter(isPresenterRole);
-  const onCloseClick = () => controller.togglePersonSelect(undefined);
   return (
     <div className="panel person-panel person-panel--top">
       <button
-        onClick={onCloseClick}
+        onClick={(e) => {
+          e.stopPropagation();
+          dispatch(togglePersonSelect(undefined));
+        }}
         className={styles.close}
         aria-label="Sulje valmistelija ja arvioija valitsin"
       />
@@ -122,14 +132,12 @@ export const PersonSelectPanel = ({
         roleName="Valmistelija"
         roleField="presenter"
         roles={presenters}
-        controller={controller}
         hakemus={hakemus}
       />
       <RoleContainer
         roleName="Arvioijat"
         roleField="evaluators"
         roles={roles}
-        controller={controller}
         hakemus={hakemus}
       />
     </div>

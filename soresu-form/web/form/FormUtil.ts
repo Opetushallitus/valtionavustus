@@ -119,7 +119,10 @@ export default class FormUtil {
     );
   }
 
-  static findFieldWithDirectChild(formContent: Field[], childId: string) {
+  static findFieldWithDirectChild(
+    formContent: Field | Field[],
+    childId: string
+  ) {
     return JsUtil.findFirst(
       formContent,
       (n: Field) => n.children?.some((c) => c.id === childId) ?? false

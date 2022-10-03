@@ -16,7 +16,7 @@ import {
 } from "soresu-form/web/va/status";
 import HakemusArviointiStatuses from "../hakemus-details/HakemusArviointiStatuses";
 import { Pill, PillProps } from "./Pill";
-import { HakemusFilter, Role, State, UserInfo } from "../types";
+import { HakemusFilter, Role } from "../types";
 
 import useOutsideClick from "../useOutsideClick";
 import {
@@ -25,24 +25,26 @@ import {
   isPresenterRole,
   PersonSelectPanel,
 } from "./PersonSelectPanel";
-import HakemustenArviointiController from "../HakemustenArviointiController";
 import classNames from "classnames";
 import { ControlledSelectPanel, RoleField } from "./ControlledSelectPanel";
 import { AddRoleImage } from "./AddRoleImage";
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from "../hakemustenArviointi/arviointiStore";
+import {
+  getLoadedState,
+  selectHakemus,
+  togglePersonSelect,
+} from "../hakemustenArviointi/arviointiReducer";
+import HttpUtil from "soresu-form/web/HttpUtil";
 
 interface Props {
   selectedHakemus: Hakemus | undefined;
   hakemusList: Hakemus[];
-  roles: Role[];
   splitView: boolean;
-  onSelectHakemus: (hakemusId: number) => void;
-  onYhteenvetoClick: (filteredHakemusList: Hakemus[]) => void;
   isResolved: boolean;
-  controller: HakemustenArviointiController;
-  state: State;
   toggleSplitView: () => void;
-  userInfo: UserInfo;
-  allowHakemusScoring: boolean;
   additionalInfoOpen: boolean;
 }
 
@@ -308,18 +310,18 @@ export default function HakemusListing(props: Props) {
   const {
     selectedHakemus,
     hakemusList,
-    onSelectHakemus,
-    onYhteenvetoClick,
-    roles,
     splitView,
     isResolved,
-    controller,
-    state,
     toggleSplitView,
-    userInfo,
-    allowHakemusScoring,
     additionalInfoOpen,
   } = props;
+  const { roles, privileges, avustushaku } = useHakemustenArviointiSelector(
+    (state) => getLoadedState(state.arviointi).hakuData
+  );
+  const allowHakemusScoring = privileges["score-hakemus"];
+  const hakemusFilterState = useHakemustenArviointiSelector(
+    (state) => state.filter
+  );
   const selectedHakemusId = selectedHakemus ? selectedHakemus.id : undefined;
   const [filterState, dispatch] = useReducer(
     reducer,
@@ -328,9 +330,9 @@ export default function HakemusListing(props: Props) {
   const [sortingState, setSorting] = useSorting();
   const filteredList = hakemusList
     .filter(hakemusFilter(filterState))
-    .filter(answerFilter(state.hakemusFilter))
-    .filter(rahoitusalueFilter(state.hakemusFilter))
-    .filter(tagFilter(state.hakemusFilter))
+    .filter(answerFilter(hakemusFilterState))
+    .filter(rahoitusalueFilter(hakemusFilterState))
+    .filter(tagFilter(hakemusFilterState))
     .sort(hakemusSorter(sortingState));
   const totalBudgetGranted = filteredList.reduce<number>(
     (totalGranted, hakemus) => {
@@ -348,6 +350,16 @@ export default function HakemusListing(props: Props) {
         ? styles.smallFixedContainer
         : styles.largeFixedContainer
       : styles.tableContainer;
+  const onYhteenvetoClick = async () => {
+    const savedSearchResponse = await HttpUtil.put(
+      `/api/avustushaku/${avustushaku.id}/searches`,
+      { "hakemus-ids": filteredList.map((h) => h.id) }
+    );
+    window.localStorage.setItem(
+      "va.arviointi.admin.summary.url",
+      savedSearchResponse["search-url"]
+    );
+  };
   return (
     <div className={styles.containerForModals}>
       <div id="hakemus-listing" className={containerClass}>
@@ -355,15 +367,12 @@ export default function HakemusListing(props: Props) {
           <ResolvedTable
             selectedHakemusId={selectedHakemusId}
             onYhteenvetoClick={onYhteenvetoClick}
-            onSelectHakemus={onSelectHakemus}
             filterState={filterState}
             filteredList={filteredList}
             list={hakemusList}
             dispatch={dispatch}
             roles={roles}
             totalBudgetGranted={totalBudgetGranted}
-            controller={controller}
-            state={state}
             toggleSplitView={toggleSplitView}
             sortingState={sortingState}
             setSorting={setSorting}
@@ -372,19 +381,15 @@ export default function HakemusListing(props: Props) {
           <HakemusTable
             selectedHakemusId={selectedHakemusId}
             onYhteenvetoClick={onYhteenvetoClick}
-            onSelectHakemus={onSelectHakemus}
             filterState={filterState}
             filteredList={filteredList}
             list={hakemusList}
             dispatch={dispatch}
             roles={roles}
             totalBudgetGranted={totalBudgetGranted}
-            controller={controller}
-            state={state}
             toggleSplitView={toggleSplitView}
             sortingState={sortingState}
             setSorting={setSorting}
-            userInfo={userInfo}
             allowHakemusScoring={allowHakemusScoring}
           />
         )}
@@ -399,16 +404,12 @@ interface HakemusTableProps {
   list: Hakemus[];
   filteredList: Hakemus[];
   dispatch: React.Dispatch<Action>;
-  onSelectHakemus: (hakemusId: number) => void;
-  onYhteenvetoClick: (filteredHakemusList: Hakemus[]) => void;
+  onYhteenvetoClick: () => void;
   roles: Role[];
   totalBudgetGranted: number;
-  controller: HakemustenArviointiController;
-  state: State;
   toggleSplitView: (forceValue?: boolean) => void;
   setSorting: (sortKey?: SortKey) => void;
   sortingState: SortState;
-  userInfo: UserInfo;
   allowHakemusScoring: boolean;
 }
 
@@ -425,18 +426,18 @@ function HakemusTable({
   list,
   filteredList,
   selectedHakemusId,
-  onSelectHakemus,
   onYhteenvetoClick,
   roles,
   totalBudgetGranted,
-  state,
-  controller,
   toggleSplitView,
   sortingState,
   setSorting,
-  userInfo,
   allowHakemusScoring,
 }: HakemusTableProps) {
+  const personSelectHakemusId = useHakemustenArviointiSelector(
+    (state) => state.arviointi.personSelectHakemusId
+  );
+  const dispatchReduxStore = useHakemustenArviointiDispatch();
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
       type: "set-organization-name-filter",
@@ -638,9 +639,10 @@ function HakemusTable({
                 { [styles.draft]: draft }
               )}
               tabIndex={0}
-              onClick={() => onSelectHakemus(hakemus.id)}
+              onClick={() => dispatchReduxStore(selectHakemus(hakemus.id))}
               onKeyDown={(e) =>
-                e.key === "Enter" && onSelectHakemus(hakemus.id)
+                e.key === "Enter" &&
+                dispatchReduxStore(selectHakemus(hakemus.id))
               }
               data-test-id={`hakemus-${hakemus.id}`}
             >
@@ -666,7 +668,6 @@ function HakemusTable({
               <td className={styles.starsCell}>
                 <StarScoring
                   id={hakemus.id}
-                  userInfo={userInfo}
                   allowHakemusScoring={allowHakemusScoring}
                   scoring={scoring}
                 />
@@ -698,30 +699,20 @@ function HakemusTable({
               <td>
                 <PeopleRoleButton
                   roles={roles}
-                  controller={controller}
                   hakemus={hakemus}
-                  state={state}
                   toggleSplitView={toggleSplitView}
-                  onSelectHakemus={onSelectHakemus}
                   selectedRole="presenter"
                 />
               </td>
               <td>
                 <PeopleRoleButton
                   roles={roles}
-                  controller={controller}
                   hakemus={hakemus}
-                  state={state}
                   toggleSplitView={toggleSplitView}
-                  onSelectHakemus={onSelectHakemus}
                   selectedRole="evaluators"
                 />
-                {state.personSelectHakemusId === hakemus.id && (
-                  <PersonSelectPanel
-                    hakemus={hakemus}
-                    state={state}
-                    controller={controller}
-                  />
+                {personSelectHakemusId === hakemus.id && (
+                  <PersonSelectPanel hakemus={hakemus} />
                 )}
               </td>
             </tr>
@@ -736,7 +727,7 @@ function HakemusTable({
               className={styles.yhteenveto}
               href="/yhteenveto/"
               target="_blank"
-              onClick={() => onYhteenvetoClick(filteredList)}
+              onClick={() => onYhteenvetoClick()}
             >
               Päätöslista
             </a>
@@ -762,12 +753,9 @@ interface ResolvedTableProps {
   list: Hakemus[];
   filteredList: Hakemus[];
   dispatch: React.Dispatch<Action>;
-  onSelectHakemus: (hakemusId: number) => void;
-  onYhteenvetoClick: (filteredHakemusList: Hakemus[]) => void;
+  onYhteenvetoClick: () => void;
   roles: Role[];
   totalBudgetGranted: number;
-  controller: HakemustenArviointiController;
-  state: State;
   toggleSplitView: (forceValue?: boolean) => void;
   setSorting: (sortKey?: SortKey) => void;
   sortingState: SortState;
@@ -778,19 +766,19 @@ function ResolvedTable(props: ResolvedTableProps) {
     selectedHakemusId,
     filterState,
     dispatch,
-    onSelectHakemus,
     onYhteenvetoClick,
     roles,
     filteredList,
     list,
     totalBudgetGranted,
-    controller,
-    state,
     toggleSplitView,
     setSorting,
     sortingState,
   } = props;
-
+  const dispatchReduxStore = useHakemustenArviointiDispatch();
+  const personSelectHakemusId = useHakemustenArviointiSelector(
+    (state) => state.arviointi.personSelectHakemusId
+  );
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
       type: "set-organization-name-filter",
@@ -1108,8 +1096,10 @@ function ResolvedTable(props: ResolvedTableProps) {
                 : styles.hakemusRow
             }
             tabIndex={0}
-            onClick={() => onSelectHakemus(hakemus.id)}
-            onKeyDown={(e) => e.key === "Enter" && onSelectHakemus(hakemus.id)}
+            onClick={() => dispatchReduxStore(selectHakemus(hakemus.id))}
+            onKeyDown={(e) =>
+              e.key === "Enter" && dispatchReduxStore(selectHakemus(hakemus.id))
+            }
             data-test-id={`hakemus-${hakemus.id}`}
           >
             <td className="organization-cell">
@@ -1154,30 +1144,20 @@ function ResolvedTable(props: ResolvedTableProps) {
             <td>
               <PeopleRoleButton
                 roles={roles}
-                controller={controller}
                 hakemus={hakemus}
-                state={state}
                 toggleSplitView={toggleSplitView}
-                onSelectHakemus={onSelectHakemus}
                 selectedRole="presenter"
               />
             </td>
             <td>
               <PeopleRoleButton
                 roles={roles}
-                controller={controller}
                 hakemus={hakemus}
-                state={state}
                 toggleSplitView={toggleSplitView}
-                onSelectHakemus={onSelectHakemus}
                 selectedRole="evaluators"
               />
-              {state.personSelectHakemusId === hakemus.id && (
-                <PersonSelectPanel
-                  hakemus={hakemus}
-                  state={state}
-                  controller={controller}
-                />
+              {personSelectHakemusId === hakemus.id && (
+                <PersonSelectPanel hakemus={hakemus} />
               )}
             </td>
           </tr>
@@ -1191,7 +1171,7 @@ function ResolvedTable(props: ResolvedTableProps) {
               className={styles.yhteenveto}
               href="/yhteenveto/"
               target="_blank"
-              onClick={() => onYhteenvetoClick(filteredList)}
+              onClick={() => onYhteenvetoClick()}
             >
               Päätöslista
             </a>
@@ -1222,27 +1202,25 @@ const getProject = (hakemus: Hakemus) => {
 
 interface PeopleRoleButton {
   roles: Role[];
-  controller: HakemustenArviointiController;
   hakemus: Hakemus;
-  state: State;
   toggleSplitView: (override?: boolean) => void;
-  onSelectHakemus: (hakemusId: number) => void;
   selectedRole: "evaluators" | "presenter";
 }
 
 const PeopleRoleButton = ({
   roles,
-  controller,
   selectedRole,
-  state,
   toggleSplitView,
-  onSelectHakemus,
   hakemus,
 }: PeopleRoleButton) => {
+  const hakuData = useHakemustenArviointiSelector(
+    (state) => getLoadedState(state.arviointi).hakuData
+  );
+  const dispatch = useHakemustenArviointiDispatch();
   const onClickCallback = (e: React.SyntheticEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    onSelectHakemus(hakemus.id);
-    controller.togglePersonSelect(hakemus.id);
+    dispatch(selectHakemus(hakemus.id));
+    dispatch(togglePersonSelect(hakemus.id));
     toggleSplitView(true);
   };
   const presentersWanted = selectedRole === "presenter";
@@ -1260,7 +1238,7 @@ const PeopleRoleButton = ({
     )
     .join(", ");
   const disallowChangeHakemusState =
-    !state.hakuData.privileges["change-hakemus-state"];
+    !hakuData.privileges["change-hakemus-state"];
   const ariaLabel = presentersWanted
     ? "Lisää valmistelija hakemukselle"
     : "Lisää arvioija hakemukselle";

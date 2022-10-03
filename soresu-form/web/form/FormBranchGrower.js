@@ -44,7 +44,7 @@ export default class FormBranchGrower {
         valuesTreeOfElement,
         (itemValueObject) => {
           const o = {};
-          _.assign(o, childPrototype.asMutable({ deep: true }));
+          _.assign(o, childPrototype);
           populateRepeatingItem(o, itemValueObject.key, itemValueObject.value);
           return o;
         }

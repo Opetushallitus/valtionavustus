@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import HttpUtil from "soresu-form/web/HttpUtil";
-import HakemustenArviointiController from "../HakemustenArviointiController";
 import { UserInfo } from "../types";
 import { Language } from "soresu-form/web/va/i18n/translations";
 import {
@@ -13,9 +12,13 @@ import { IconTrashcan } from "soresu-form/web/va/img/IconTrashcan";
 
 import "./TaloustarkastusEmail.less";
 import { VerificationBox } from "./VerificationBox";
+import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
+import {
+  loadSelvitys,
+  refreshHakemukset,
+} from "../hakemustenArviointi/arviointiReducer";
 
 type TaloustarkastusEmailProps = {
-  controller: HakemustenArviointiController;
   avustushakuId: number;
   hakemus: Hakemus;
   loppuselvitys: Selvitys;
@@ -29,10 +32,10 @@ export const TaloustarkastusEmail = ({
   loppuselvitys,
   avustushakuName,
   avustushakuId,
-  controller,
   userInfo,
   lang,
 }: TaloustarkastusEmailProps) => {
+  const dispatch = useHakemustenArviointiDispatch();
   const taloustarkastettu = hakemus["status-loppuselvitys"] === "accepted";
   const senderName =
     userInfo["first-name"].split(" ")[0] + " " + userInfo["surname"];
@@ -90,8 +93,8 @@ export const TaloustarkastusEmail = ({
         subject: email.subject,
       }
     );
-    controller.loadSelvitys();
-    controller.refreshHakemukset(avustushakuId);
+    await dispatch(loadSelvitys({ avustushakuId, hakemusId: hakemus.id }));
+    await dispatch(refreshHakemukset({ avustushakuId }));
   };
 
   return (

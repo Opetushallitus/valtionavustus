@@ -99,19 +99,16 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
       answers.projectName
     );
     await hakemustenArviointiPage.acceptHakemus("7000");
-
-    await hakemustenArviointiPage.navigateToHakemus(
-      avustushakuID,
-      answers2.projectName
-    );
+    await hakemustenArviointiPage.waitForSave();
+    await hakemustenArviointiPage.closeHakemusDetails();
+    await hakemustenArviointiPage.clickHakemusByHanke(answers2.projectName);
     await hakemustenArviointiPage.acceptHakemus("3000");
-
-    await hakemustenArviointiPage.navigateToHakemus(
-      avustushakuID,
-      answers3.projectName
-    );
+    await hakemustenArviointiPage.waitForSave();
+    await hakemustenArviointiPage.closeHakemusDetails();
+    await hakemustenArviointiPage.clickHakemusByHanke(answers3.projectName);
     await hakemustenArviointiPage.rejectHakemus();
-
+    await hakemustenArviointiPage.waitForSave();
+    await hakemustenArviointiPage.closeHakemusDetails();
     await use(hakemustenArviointiPage);
   },
 });
@@ -119,9 +116,7 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
 test("hakemus list sorting when avustushaku is not resolved", async ({
   hakemustenArviointiPage,
   hakuProps: { registerNumber },
-  avustushakuID,
 }) => {
-  await hakemustenArviointiPage.navigate(avustushakuID);
   await expect(hakemustenArviointiPage.hakemusListing).toContainText(
     "3/3 hakemusta"
   );

@@ -169,3 +169,12 @@ export function dateStringToMoment(date: string | undefined): Moment {
 export function toFinnishDateFormat(date: Moment): string | undefined {
   return date.isValid() ? date.format(fiLongFormat) : undefined;
 }
+
+export const dateStringToMaybeFinnishDate = (
+  date: string | undefined
+): string | undefined => {
+  if (!date) {
+    return undefined;
+  }
+  return toFinnishDateFormat(dateStringToMoment(date));
+};

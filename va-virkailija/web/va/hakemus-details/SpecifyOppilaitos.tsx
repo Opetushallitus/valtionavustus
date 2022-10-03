@@ -1,6 +1,10 @@
 import React from "react";
 import { Avustushaku, Hakemus } from "soresu-form/web/va/types";
-import HakemustenArviointiController from "../HakemustenArviointiController";
+import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
+import {
+  setArvioValue,
+  startHakemusArvioAutoSave,
+} from "../hakemustenArviointi/arviointiReducer";
 
 type OppilaitosRowProps = {
   value: string;
@@ -38,66 +42,91 @@ const OppilaitosRow = ({
 
 type SpecifyOppilaitosProps = {
   avustushaku: Avustushaku;
-  controller: HakemustenArviointiController;
   hakemus: Hakemus;
   allowEditing?: boolean;
 };
 
-export default class SpecifyOppilaitos extends React.Component<SpecifyOppilaitosProps> {
-  constructor(props: SpecifyOppilaitosProps) {
-    super(props);
+const SpecifyOppilaitos = ({
+  avustushaku,
+  hakemus,
+  allowEditing,
+}: SpecifyOppilaitosProps) => {
+  const dispatch = useHakemustenArviointiDispatch();
+  if (avustushaku["haku-type"] !== "yleisavustus") {
+    return null;
   }
-
-  render() {
-    const avustushaku = this.props.avustushaku;
-    if (avustushaku["haku-type"] !== "yleisavustus") {
-      return null;
-    }
-    const hakemus = this.props.hakemus;
-    const allowEditing = this.props.allowEditing;
-    const currentOppilaitokset = hakemus.arvio.oppilaitokset?.names ?? [];
-    const controller = this.props.controller;
-    const oppilaitosRows = [];
-    const onOppilaitosChange = function (index: number) {
-      return allowEditing
-        ? (event: React.ChangeEvent<HTMLInputElement>) => {
-            controller.setOppilaitos(hakemus, index, event.target.value);
+  const currentOppilaitokset = hakemus.arvio.oppilaitokset?.names ?? [];
+  const oppilaitosRows = [];
+  const onOppilaitosChange = function (index: number) {
+    return allowEditing
+      ? (event: React.ChangeEvent<HTMLInputElement>) => {
+          const oppilaitokset = {
+            names: [...(hakemus.arvio.oppilaitokset?.names ?? [])],
+          };
+          const oppilaitos = event.target.value;
+          if (index + 1 > oppilaitokset.names.length) {
+            oppilaitokset.names.push(oppilaitos);
+          } else {
+            oppilaitokset.names[index] = oppilaitos;
           }
-        : undefined;
-    };
-    const onOppilaitosRemove = function (index: number) {
-      return allowEditing
-        ? () => {
-            controller.removeOppilaitos(hakemus, index);
+          dispatch(
+            setArvioValue({
+              hakemusId: hakemus.id,
+              key: "oppilaitokset",
+              value: oppilaitokset,
+            })
+          );
+          dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
+        }
+      : undefined;
+  };
+  const onOppilaitosRemove = function (index: number) {
+    return allowEditing
+      ? () => {
+          const oppilaitokset = {
+            names: [...(hakemus.arvio.oppilaitokset?.names ?? [])],
+          };
+          if (index >= 0 && oppilaitokset.names.length > 0) {
+            oppilaitokset.names.splice(index, 1);
+            dispatch(
+              setArvioValue({
+                hakemusId: hakemus.id,
+                key: "oppilaitokset",
+                value: oppilaitokset,
+              })
+            );
+            dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
           }
-        : undefined;
-    };
-    let oppilaitosIndex = 0;
-    for (; oppilaitosIndex < currentOppilaitokset.length; oppilaitosIndex++) {
-      oppilaitosRows.push(
-        <OppilaitosRow
-          key={"oppilaitos-" + oppilaitosIndex}
-          value={currentOppilaitokset[oppilaitosIndex]}
-          onChange={onOppilaitosChange(oppilaitosIndex)}
-          onDelete={onOppilaitosRemove(oppilaitosIndex)}
-          allowEditing={allowEditing}
-        />
-      );
-    }
+        }
+      : undefined;
+  };
+  let oppilaitosIndex = 0;
+  for (; oppilaitosIndex < currentOppilaitokset.length; oppilaitosIndex++) {
     oppilaitosRows.push(
       <OppilaitosRow
         key={"oppilaitos-" + oppilaitosIndex}
-        value=""
+        value={currentOppilaitokset[oppilaitosIndex]}
         onChange={onOppilaitosChange(oppilaitosIndex)}
+        onDelete={onOppilaitosRemove(oppilaitosIndex)}
         allowEditing={allowEditing}
       />
     );
-
-    return (
-      <div className="hakemus-arviointi-section">
-        <label>Tukea saavat oppilaitokset / toimipisteet:</label>
-        {oppilaitosRows}
-      </div>
-    );
   }
-}
+  oppilaitosRows.push(
+    <OppilaitosRow
+      key={"oppilaitos-" + oppilaitosIndex}
+      value=""
+      onChange={onOppilaitosChange(oppilaitosIndex)}
+      allowEditing={allowEditing}
+    />
+  );
+
+  return (
+    <div className="hakemus-arviointi-section">
+      <label>Tukea saavat oppilaitokset / toimipisteet:</label>
+      {oppilaitosRows}
+    </div>
+  );
+};
+
+export default SpecifyOppilaitos;

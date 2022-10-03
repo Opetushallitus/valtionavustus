@@ -1,5 +1,4 @@
 import React from "react";
-import * as Bacon from "baconjs";
 
 import DateUtil from "soresu-form/web/DateUtil";
 import {
@@ -24,38 +23,40 @@ import EditStatus from "./EditStatus";
 import ReSendDecisionEmail from "./ReSendDecisionEmail";
 import ApplicationPayments from "./ApplicationPayments";
 import HelpTooltip from "../HelpTooltip";
-import HakemustenArviointiController from "../HakemustenArviointiController";
-import { HakuData, SelectedHakemusAccessControl, UserInfo } from "../types";
+import { HakuData, UserInfo } from "../types";
 import { ChangeRequest } from "./ChangeRequest";
 import ProjectSelector from "../haku-details/ProjectSelector";
 
 import "../style/admin.less";
 import Select from "react-select";
+import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
+import {
+  addPayment,
+  removePayment,
+  selectProject as selectProjectThunk,
+  setArvioValue,
+  startHakemusArvioAutoSave,
+  updateHakemusStatus,
+} from "../hakemustenArviointi/arviointiReducer";
 
 type HakemusArviointiProps = {
-  controller: HakemustenArviointiController;
   hakemus: Hakemus;
   avustushaku: Avustushaku;
   hakuData: HakuData;
   userInfo: UserInfo;
   helpTexts: HelpTexts;
-  showOthersScores: boolean;
   multibatchEnabled: boolean;
-  selectedHakemusAccessControl: SelectedHakemusAccessControl;
   newTaTiliSelectionEnabled: boolean;
   projects: VaCodeValue[];
 };
 
 export const HakemusArviointi = ({
-  controller,
   hakemus,
   avustushaku,
   hakuData,
   userInfo,
-  showOthersScores,
   multibatchEnabled,
   helpTexts,
-  selectedHakemusAccessControl,
   projects,
   newTaTiliSelectionEnabled,
 }: HakemusArviointiProps) => {
@@ -65,21 +66,19 @@ export const HakemusArviointi = ({
     allowHakemusScoring,
     allowHakemusOfficerEditing,
     allowHakemusCancellation,
-  } = selectedHakemusAccessControl;
+  } = hakemus.accessControl ?? {};
+  const dispatch = useHakemustenArviointiDispatch();
 
   const selectProject = (option: VaCodeValue | null) => {
     if (option === null) {
       return;
     }
-
-    controller.selectProject(hakemus, option);
+    dispatch(selectProjectThunk({ project: option, hakemusId: hakemus.id }));
   };
 
   return (
     <div id="arviointi-tab">
       <PresenterComment
-        controller={controller}
-        hakemus={hakemus}
         helpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}
       />
       <div
@@ -98,12 +97,10 @@ export const HakemusArviointi = ({
         <TalousarviotiliSelect
           isDisabled={!allowHakemusStateChanges}
           hakemus={hakemus}
-          controller={controller}
           helpText={helpTexts["hankkeen_sivu__arviointi___talousarviotili"]}
         />
       ) : (
         <ChooseRahoitusalueAndTalousarviotili
-          controller={controller}
           hakemus={hakemus}
           avustushaku={avustushaku}
           allowEditing={allowHakemusStateChanges}
@@ -111,46 +108,32 @@ export const HakemusArviointi = ({
         />
       )}
       <SpecifyOppilaitos
-        controller={controller}
         hakemus={hakemus}
         avustushaku={avustushaku}
         allowEditing={allowHakemusStateChanges}
       />
       <AcademySize
-        controller={controller}
         hakemus={hakemus}
         avustushaku={avustushaku}
         allowEditing={allowHakemusStateChanges}
       />
-      <HakemusScoring
-        controller={controller}
-        hakemus={hakemus}
-        avustushaku={avustushaku}
-        helpTexts={helpTexts}
-        allowHakemusScoring={allowHakemusScoring}
-        userInfo={userInfo}
-        showOthersScores={showOthersScores}
-      />
+      <HakemusScoring allowHakemusScoring={allowHakemusScoring} />
       <HakemusComments
-        controller={controller}
         comments={hakemus.comments}
         allowHakemusCommenting={allowHakemusCommenting}
         helpTexts={helpTexts}
       />
       <SetArviointiStatus
-        controller={controller}
         hakemus={hakemus}
         allowEditing={allowHakemusStateChanges}
         helpTexts={helpTexts}
       />
       <Perustelut
-        controller={controller}
         hakemus={hakemus}
         allowEditing={allowHakemusStateChanges}
         helpTexts={helpTexts}
       />
       <ChangeRequest
-        controller={controller}
         hakemus={hakemus}
         avustushaku={avustushaku}
         allowEditing={allowHakemusStateChanges}
@@ -158,18 +141,13 @@ export const HakemusArviointi = ({
         userInfo={userInfo}
       />
       <SummaryComment
-        controller={controller}
         hakemus={hakemus}
         allowEditing={allowHakemusStateChanges}
         helpTexts={helpTexts}
       />
       <HakemusBudgetEditing
-        avustushaku={avustushaku}
-        hakuData={hakuData}
-        controller={controller}
         hakemus={hakemus}
         allowEditing={allowHakemusStateChanges}
-        helpTexts={helpTexts}
       />
       {multibatchEnabled && avustushaku.content["multiplemaksuera"] && (
         <ApplicationPayments
@@ -177,15 +155,16 @@ export const HakemusArviointi = ({
           grant={avustushaku}
           index={0}
           payments={hakemus.payments}
-          onAddPayment={controller.addPayment}
-          onRemovePayment={controller.removePayment}
+          onAddPayment={(paymentSum: number, index: number) => {
+            dispatch(addPayment({ paymentSum, index, hakemusId: hakemus.id }));
+          }}
+          onRemovePayment={(paymentId: number) =>
+            dispatch(removePayment({ paymentId, hakemusId: hakemus.id }))
+          }
           readonly={true}
         />
       )}
       <TraineeDayEditing
-        avustushaku={avustushaku}
-        hakuData={hakuData}
-        controller={controller}
         hakemus={hakemus}
         allowEditing={allowHakemusStateChanges}
       />
@@ -199,13 +178,15 @@ export const HakemusArviointi = ({
       {hakemus.status === "draft" && userInfo.privileges.includes("va-admin") && (
         <div className="value-edit">
           <button
-            onClick={() =>
-              controller.setHakemusStatus(
-                hakemus,
-                "submitted",
-                "Submitted by admin"
-              )
-            }
+            onClick={() => {
+              dispatch(
+                updateHakemusStatus({
+                  hakemusId: hakemus.id,
+                  status: "submitted",
+                  comment: "Submitted by admin",
+                })
+              );
+            }}
             data-test-id="submit-hakemus"
           >
             Merkitse hakemus lähetetyksi
@@ -342,161 +323,130 @@ class ChangeLogRow extends React.Component<
 }
 
 type SetArviointiStatusProps = {
-  controller: HakemustenArviointiController;
   hakemus: Hakemus;
   helpTexts: HelpTexts;
   allowEditing?: boolean;
 };
 
-class SetArviointiStatus extends React.Component<SetArviointiStatusProps> {
-  render() {
-    const hakemus = this.props.hakemus;
-    const allowEditing = this.props.allowEditing;
-    const arvio = hakemus.arvio;
-    const status = arvio ? arvio.status : undefined;
-    const controller = this.props.controller;
-    const helpTexts = this.props.helpTexts;
-    const statuses = [];
-    const statusValues = HakemusArviointiStatuses.statuses;
-    for (let i = 0; i < statusValues.length; i++) {
-      const htmlId = "set-arvio-status-" + statusValues[i];
-      const statusFI = HakemusArviointiStatuses.statusToFI(statusValues[i]);
-      const onChange = allowEditing
-        ? controller.setHakemusArvioStatus(hakemus, statusValues[i])
-        : undefined;
-      statuses.push(
-        <input
-          id={htmlId}
-          type="radio"
-          key={htmlId}
-          name="status"
-          value={statusValues[i]}
-          disabled={!allowEditing}
-          onChange={onChange}
-          checked={statusValues[i] === status}
-        />
-      );
-      statuses.push(
-        <label key={htmlId + "-label"} htmlFor={htmlId}>
-          {statusFI}
-        </label>
-      );
-    }
-
-    return (
-      <div className="hakemus-arviointi-section">
-        <label>Hakemuksen tila:</label>
-        <HelpTooltip
-          testId={"tooltip-tila"}
-          content={helpTexts["hankkeen_sivu__arviointi___hakemuksen_tila"]}
-          direction={"arviointi"}
-        />
-        <fieldset className="soresu-radiobutton-group">{statuses}</fieldset>
-      </div>
+const SetArviointiStatus = ({
+  hakemus,
+  allowEditing,
+  helpTexts,
+}: SetArviointiStatusProps) => {
+  const arvio = hakemus.arvio;
+  const status = arvio ? arvio.status : undefined;
+  const statuses = [];
+  const statusValues = HakemusArviointiStatuses.statuses;
+  const dispatch = useHakemustenArviointiDispatch();
+  for (let i = 0; i < statusValues.length; i++) {
+    const htmlId = "set-arvio-status-" + statusValues[i];
+    const statusFI = HakemusArviointiStatuses.statusToFI(statusValues[i]);
+    const onChange = allowEditing
+      ? () => {
+          dispatch(
+            setArvioValue({
+              hakemusId: hakemus.id,
+              key: "status",
+              value: statusValues[i],
+            })
+          );
+          dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
+        }
+      : undefined;
+    statuses.push(
+      <input
+        id={htmlId}
+        type="radio"
+        key={htmlId}
+        name="status"
+        value={statusValues[i]}
+        disabled={!allowEditing}
+        onChange={onChange}
+        checked={statusValues[i] === status}
+      />
+    );
+    statuses.push(
+      <label key={htmlId + "-label"} htmlFor={htmlId}>
+        {statusFI}
+      </label>
     );
   }
-}
+
+  return (
+    <div className="hakemus-arviointi-section">
+      <label>Hakemuksen tila:</label>
+      <HelpTooltip
+        testId={"tooltip-tila"}
+        content={helpTexts["hankkeen_sivu__arviointi___hakemuksen_tila"]}
+        direction={"arviointi"}
+      />
+      <fieldset className="soresu-radiobutton-group">{statuses}</fieldset>
+    </div>
+  );
+};
 
 type SummaryCommentProps = {
-  controller: HakemustenArviointiController;
   hakemus: Hakemus;
   helpTexts: HelpTexts;
   allowEditing?: boolean;
 };
 
-type SummaryCommentState = {
-  currentHakemusId: number;
-  summaryComment: string;
-};
-
-class SummaryComment extends React.Component<
-  SummaryCommentProps,
-  SummaryCommentState
-> {
-  summaryCommentBus: Bacon.Bus<[a: Hakemus, b: string]>;
-
-  constructor(props: SummaryCommentProps) {
-    super(props);
-    this.state = SummaryComment.initialState(props);
-    this.summaryCommentBus = new Bacon.Bus();
-    this.summaryCommentBus
-      .debounce(1000)
-      .onValue(([hakemus, newSummaryComment]) =>
-        this.props.controller.setHakemusSummaryComment(
-          hakemus,
-          newSummaryComment
-        )
-      );
-  }
-
-  static getDerivedStateFromProps(
-    props: SummaryCommentProps,
-    state: SummaryCommentState
-  ) {
-    if (props.hakemus.id !== state.currentHakemusId) {
-      return SummaryComment.initialState(props);
-    } else {
-      return null;
-    }
-  }
-
-  static initialState(props: SummaryCommentProps) {
-    return {
-      currentHakemusId: props.hakemus.id,
-      summaryComment: SummaryComment.getSummaryComment(props.hakemus),
-    };
-  }
-
-  static getSummaryComment(hakemus: Hakemus) {
-    const arvio = hakemus.arvio ? hakemus.arvio : { "summary-comment": "" };
-    return arvio["summary-comment"] ?? "";
-  }
-
-  summaryCommentUpdated(newSummaryComment: string) {
-    this.setState({ summaryComment: newSummaryComment });
-    this.summaryCommentBus.push([this.props.hakemus, newSummaryComment]);
-  }
-
-  render() {
-    const allowEditing = this.props.allowEditing;
-    const helpTexts = this.props.helpTexts;
-
-    return (
-      <div className="value-edit summary-comment">
-        <label htmlFor="summary-comment">Huomautus päätöslistaan</label>
-        <HelpTooltip
-          testId={"tooltip-huomautus"}
-          content={
-            helpTexts["hankkeen_sivu__arviointi___huomautus_päätöslistaan"]
-          }
-          direction="arviointi-slim"
-        />
-        <textarea
-          id="summary-comment"
-          rows={1}
-          disabled={!allowEditing}
-          value={this.state.summaryComment}
-          onChange={(evt) => this.summaryCommentUpdated(evt.target.value)}
-          maxLength={128}
-        />
-      </div>
+const SummaryComment = ({
+  helpTexts,
+  allowEditing,
+  hakemus,
+}: SummaryCommentProps) => {
+  const dispatch = useHakemustenArviointiDispatch();
+  const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    dispatch(
+      setArvioValue({
+        hakemusId: hakemus.id,
+        key: "summary-comment",
+        value: event.target.value,
+      })
     );
-  }
-}
+    dispatch(
+      startHakemusArvioAutoSave({
+        hakemusId: hakemus.id,
+      })
+    );
+  };
+  const summaryComment = hakemus.arvio["summary-comment"] ?? "";
+
+  return (
+    <div className="value-edit summary-comment">
+      <label htmlFor="summary-comment">Huomautus päätöslistaan</label>
+      <HelpTooltip
+        testId={"tooltip-huomautus"}
+        content={
+          helpTexts["hankkeen_sivu__arviointi___huomautus_päätöslistaan"]
+        }
+        direction="arviointi-slim"
+      />
+      <textarea
+        id="summary-comment"
+        rows={1}
+        disabled={!allowEditing}
+        value={summaryComment}
+        onChange={onChange}
+        maxLength={128}
+      />
+    </div>
+  );
+};
 
 interface TalousarviotiliSelectProps {
   isDisabled: boolean;
-  controller: HakemustenArviointiController;
   hakemus: Hakemus;
   helpText: string;
 }
 
 const TalousarviotiliSelect = ({
   isDisabled,
-  controller,
   hakemus,
   helpText,
 }: TalousarviotiliSelectProps) => {
+  const dispatch = useHakemustenArviointiDispatch();
   const tilit = hakemus.talousarviotilit ?? [];
   const options = tilit.flatMap((tili) => {
     if (tili.koulutusasteet.length === 0) {
@@ -535,11 +485,21 @@ const TalousarviotiliSelect = ({
           if (!option) {
             return;
           }
-          controller.setHakemusRahoitusalueAndTalousarviotili({
-            hakemus,
-            rahoitusalue: option.value.rahoitusalue,
-            talousarviotili: option.value.talousarviotili,
-          });
+          dispatch(
+            setArvioValue({
+              hakemusId: hakemus.id,
+              key: "rahoitusalue",
+              value: option.value.rahoitusalue,
+            })
+          );
+          dispatch(
+            setArvioValue({
+              hakemusId: hakemus.id,
+              key: "talousarviotili",
+              value: option.value.talousarviotili,
+            })
+          );
+          dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
         }}
         isDisabled={isDisabled}
         placeholder="Valitse talousarviotili"

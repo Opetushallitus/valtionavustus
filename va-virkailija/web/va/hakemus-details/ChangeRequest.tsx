@@ -6,11 +6,11 @@ import DateUtil from "soresu-form/web/DateUtil";
 import { Avustushaku, Hakemus, HelpTexts } from "soresu-form/web/va/types";
 
 import HelpTooltip from "../HelpTooltip";
-import HakemustenArviointiController from "../HakemustenArviointiController";
 import { UserInfo } from "../types";
+import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
+import { updateHakemusStatus } from "../hakemustenArviointi/arviointiReducer";
 
 type ChangeRequestProps = {
-  controller: HakemustenArviointiController;
   hakemus: Hakemus;
   helpTexts: HelpTexts;
   avustushaku: Avustushaku;
@@ -28,15 +28,14 @@ export const ChangeRequest = ({
   avustushaku,
   hakemus,
   helpTexts,
-  controller,
   allowEditing,
   userInfo,
 }: ChangeRequestProps) => {
+  const dispatch = useHakemustenArviointiDispatch();
   const [mail, setMail] = useState<Mail>();
   const [preview, setPreview] = useState(false);
   const [newChangeRequest, setNewChangeRequest] = useState(false);
   const [changeRequest, setChangeRequest] = useState("");
-
   useEffect(() => {
     setPreview(false);
     setNewChangeRequest(false);
@@ -112,13 +111,15 @@ export const ChangeRequest = ({
         <button
           data-test-id="täydennyspyyntö__lähetä"
           disabled={!changeRequest.length}
-          onClick={() =>
-            controller.setHakemusStatus(
-              hakemus,
-              "pending_change_request",
-              changeRequest
-            )
-          }
+          onClick={() => {
+            dispatch(
+              updateHakemusStatus({
+                hakemusId: hakemus.id,
+                status: "pending_change_request",
+                comment: changeRequest,
+              })
+            );
+          }}
         >
           Lähetä
         </button>
@@ -154,13 +155,15 @@ export const ChangeRequest = ({
       </div>
       {canCancelChangeRequest && (
         <button
-          onClick={() =>
-            controller.setHakemusStatus(
-              hakemus,
-              "submitted",
-              "Täydennyspyyntö peruttu"
-            )
-          }
+          onClick={() => {
+            dispatch(
+              updateHakemusStatus({
+                hakemusId: hakemus.id,
+                status: "submitted",
+                comment: "Täydennyspyyntö peruttu",
+              })
+            );
+          }}
           data-test-id="täydennyspyyntö__cancel"
         >
           Peru täydennyspyyntö

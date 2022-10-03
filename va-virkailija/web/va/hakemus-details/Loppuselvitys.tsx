@@ -8,12 +8,15 @@ import SelvitysLink from "./SelvitysLink";
 import PresenterComment from "./PresenterComment";
 import ApplicationPayments from "./ApplicationPayments";
 import { Avustushaku, Hakemus } from "soresu-form/web/va/types";
-import HakemustenArviointiController from "../HakemustenArviointiController";
 import { Role, UserInfo } from "../types";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
+import {
+  addPayment,
+  removePayment,
+} from "../hakemustenArviointi/arviointiReducer";
+import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
 
 type SelvitysProps = {
-  controller: HakemustenArviointiController;
   hakemus: Hakemus;
   avustushaku: Avustushaku;
   userInfo: UserInfo;
@@ -27,7 +30,6 @@ type SelvitysProps = {
 
 const Loppuselvitys = ({
   presenter,
-  controller,
   hakemus,
   avustushaku,
   userInfo,
@@ -36,6 +38,7 @@ const Loppuselvitys = ({
   presenterCommentHelpText,
   selvitysLinkHelpText,
 }: SelvitysProps) => {
+  const dispatch = useHakemustenArviointiDispatch();
   const hasSelvitys = !!hakemus.selvitys?.loppuselvitys?.answers;
   const selvitysHakemus = hakemus.selvitys?.loppuselvitys;
   const form = hakemus.selvitys?.loppuselvitysForm;
@@ -53,11 +56,7 @@ const Loppuselvitys = ({
       className="selvitys-container"
       data-test-id="hakemus-details-loppuselvitys"
     >
-      <PresenterComment
-        controller={controller}
-        hakemus={hakemus}
-        helpText={presenterCommentHelpText}
-      />
+      <PresenterComment helpText={presenterCommentHelpText} />
       {hasSelvitys ? (
         <SelvitysPreview
           hakemus={hakemus}
@@ -78,8 +77,12 @@ const Loppuselvitys = ({
           grant={avustushaku}
           index={2}
           payments={hakemus.payments}
-          onAddPayment={controller.addPayment}
-          onRemovePayment={controller.removePayment}
+          onAddPayment={(paymentSum: number, index: number) => {
+            dispatch(addPayment({ paymentSum, index, hakemusId: hakemus.id }));
+          }}
+          onRemovePayment={(paymentId: number) =>
+            dispatch(removePayment({ paymentId, hakemusId: hakemus.id }))
+          }
           readonly={!isPresentingOfficer}
         />
       )}
@@ -91,7 +94,6 @@ const Loppuselvitys = ({
       />
       {hasSelvitys && (
         <LoppuselvitysForm
-          controller={controller}
           hakemus={hakemus}
           avustushaku={avustushaku}
           presenter={presenter}
@@ -100,7 +102,6 @@ const Loppuselvitys = ({
       )}
       {loppuselvitys && renderTaloustarkastusEmail && (
         <TaloustarkastusEmail
-          controller={controller}
           avustushakuId={avustushaku.id}
           hakemus={hakemus}
           loppuselvitys={loppuselvitys}
