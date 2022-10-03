@@ -138,7 +138,7 @@
 (defn liitteet-list [avustushaku hakemus translate lang has-budget]
   (let [liitteet (-> avustushaku :decision :liitteet)
         dont-include-pakote-ohje (-> avustushaku :decision :dont-include-pakote-ohje)
-        pakoteohje (if (and (not dont-include-pakote-ohje) (feature-enabled? :pakoteohje))
+        pakoteohje (if (not dont-include-pakote-ohje)
                      (get-pakote-liite))
         row-pakoteohje (non-localized-liite-row pakoteohje lang)
         decision-status (-> hakemus :arvio :status)

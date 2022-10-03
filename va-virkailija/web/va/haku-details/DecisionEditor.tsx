@@ -320,11 +320,7 @@ const LiiteComponent = ({
   onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   const isSelected = selectedLiitteet[groupId] === attachment.id;
-  const environment = useHakujenHallintaSelector(
-    (state) => selectLoadedInitialData(state).environment
-  );
-  const disabledGroup =
-    groupId === "Ehdot" && environment.pakoteohje?.["enabled?"] === true;
+  const disabledGroup = groupId === "Ehdot";
   return (
     <div key={attachment.id} className="decision-liite-selection__liite">
       <label>
@@ -1217,7 +1213,6 @@ const DecisionEditor = () => {
   const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
   const { decisionLiitteet, environment, helpTexts } =
     useHakujenHallintaSelector(selectLoadedInitialData);
-  const pakoteohjeEnabled = environment["pakoteohje"]?.["enabled?"];
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(
       updateField({ avustushaku, field: e.target, newValue: e.target.value })
@@ -1348,7 +1343,7 @@ const DecisionEditor = () => {
         decisionLiitteet={decisionLiitteet}
         helpTexts={helpTexts}
       />
-      {pakoteohjeEnabled && <PakoteLiite />}
+      <PakoteLiite />
       <DecisionDateAndSend
         avustushaku={avustushaku}
         environment={environment}

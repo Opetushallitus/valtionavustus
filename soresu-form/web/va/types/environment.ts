@@ -16,7 +16,6 @@ export interface EnvironmentApiResponse {
   "multibatch-payments": FeatureFlag;
   "dont-send-loppuselvityspyynto-to-virkailija"?: FeatureFlag;
   "ta-tilit"?: FeatureFlag;
-  pakoteohje?: FeatureFlag;
   payments: FeatureFlag & { "delete-payments?": boolean };
 }
 
