@@ -1,4 +1,4 @@
-(def log4j-version "2.17.1")
+(def log4j-version "2.17.2")
 (def jackson-databind-version "2.13.2.1")
 (def jackson-version "2.13.2")
 
@@ -94,7 +94,7 @@
                          [commons-codec "1.10"]
                          [commons-io "2.11.0"]
                          [de.ubercode.clostache/clostache "1.4.0"]
-                         [dk.ative/docjure "1.16.0"]
+                         [dk.ative/docjure "1.18.0"]
                          [instaparse "1.4.10"]
                          [org.apache.commons/commons-email "1.5"]
                          [org.clojure/core.async "1.5.648"]
