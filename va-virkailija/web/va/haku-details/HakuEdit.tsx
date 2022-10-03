@@ -252,7 +252,7 @@ export const HakuEdit = () => {
       <div className="two-column-container">
         <div>
           <SetStatus
-            hakuIsValid={isValidRegisterNumber(avustushaku["register-number"])}
+            hakuIsValid={checkIfAvustushakuIsValid(avustushaku)}
             currentStatus={avustushaku.status}
             userHasEditPrivilege={userHasEditPrivilege}
             onChange={onChange}
@@ -1134,3 +1134,11 @@ const RegisterNumber = ({
     </div>
   );
 };
+
+function checkIfAvustushakuIsValid(avustushaku: Avustushaku) {
+  return (
+    isValidRegisterNumber(avustushaku["register-number"]) &&
+    avustushaku["hankkeen-alkamispaiva"] != null &&
+    avustushaku["hankkeen-paattymispaiva"] != null
+  );
+}
