@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 import DateUtil from "soresu-form/web/DateUtil";
 import {
@@ -68,14 +68,6 @@ export const HakemusArviointi = ({
     allowHakemusCancellation,
   } = hakemus.accessControl ?? {};
   const dispatch = useHakemustenArviointiDispatch();
-
-  const selectProject = (option: VaCodeValue | null) => {
-    if (option === null) {
-      return;
-    }
-    dispatch(selectProjectThunk({ project: option, hakemusId: hakemus.id }));
-  };
-
   return (
     <div id="arviointi-tab">
       <PresenterComment
@@ -86,10 +78,10 @@ export const HakemusArviointi = ({
         data-test-id="code-value-dropdown__project"
       >
         <h3 className="koodien-valinta-otsikko required">Projektikoodi</h3>
-        <ProjectSelector
-          updateValue={selectProject}
-          codeOptions={projects}
-          selectedValue={hakemus.project || ""}
+        <ProjectSelect
+          hakemusId={hakemus.id}
+          projects={projects}
+          selectedProject={hakemus.project}
           disabled={!allowHakemusStateChanges}
         />
       </div>
@@ -435,6 +427,48 @@ const SummaryComment = ({
   );
 };
 
+interface ProjectSelectProps {
+  hakemusId: number;
+  disabled: boolean;
+  projects: VaCodeValue[];
+  selectedProject?: VaCodeValue;
+}
+
+const ProjectSelect = ({
+  hakemusId,
+  projects,
+  selectedProject,
+  disabled,
+}: ProjectSelectProps) => {
+  const dispatch = useHakemustenArviointiDispatch();
+  const ranOnce = useRef(false);
+  useEffect(() => {
+    const couldPreselectOnlyAvailableProjectCode =
+      !disabled &&
+      projects.length === 1 &&
+      projects[0]["code-value"] !== "Ei projektikoodia" &&
+      !selectedProject;
+    if (couldPreselectOnlyAvailableProjectCode && !ranOnce.current) {
+      ranOnce.current = true;
+      dispatch(selectProjectThunk({ project: projects[0], hakemusId }));
+    }
+  }, [disabled]);
+  const selectProject = (option: VaCodeValue | null) => {
+    if (option === null) {
+      return;
+    }
+    dispatch(selectProjectThunk({ project: option, hakemusId }));
+  };
+  return (
+    <ProjectSelector
+      updateValue={selectProject}
+      codeOptions={projects}
+      selectedValue={selectedProject || ""}
+      disabled={disabled}
+    />
+  );
+};
+
 interface TalousarviotiliSelectProps {
   isDisabled: boolean;
   hakemus: Hakemus;
@@ -447,7 +481,9 @@ const TalousarviotiliSelect = ({
   helpText,
 }: TalousarviotiliSelectProps) => {
   const dispatch = useHakemustenArviointiDispatch();
+  const { rahoitusalue, talousarviotili } = hakemus.arvio;
   const tilit = hakemus.talousarviotilit ?? [];
+  const ranOnce = useRef(false);
   const options = tilit.flatMap((tili) => {
     if (tili.koulutusasteet.length === 0) {
       return [];
@@ -462,9 +498,35 @@ const TalousarviotiliSelect = ({
   });
   const value = options.find(
     ({ value }) =>
-      value.rahoitusalue === hakemus.arvio.rahoitusalue &&
-      value.talousarviotili === hakemus.arvio.talousarviotili
+      value.rahoitusalue === rahoitusalue &&
+      value.talousarviotili === talousarviotili
   );
+  useEffect(() => {
+    const couldSelectTheOneExistingTili = !isDisabled && options.length === 1;
+    if (couldSelectTheOneExistingTili && !ranOnce.current) {
+      ranOnce.current = true;
+      if (!rahoitusalue) {
+        dispatch(
+          setArvioValue({
+            hakemusId: hakemus.id,
+            key: "rahoitusalue",
+            value: options[0].value.rahoitusalue,
+          })
+        );
+        dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
+      }
+      if (!talousarviotili) {
+        dispatch(
+          setArvioValue({
+            hakemusId: hakemus.id,
+            key: "talousarviotili",
+            value: options[0].value.talousarviotili,
+          })
+        );
+        dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
+      }
+    }
+  }, [isDisabled]);
   return (
     <div>
       <h3>

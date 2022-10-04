@@ -339,6 +339,7 @@ export class HakemustenArviointiPage {
   async selectHakemusFromList(projectName: string) {
     await this.page.click(`text=${projectName}`);
     await this.page.waitForLoadState("networkidle");
+    return this.arviointiTabLocators();
   }
 
   async acceptAvustushaku({
@@ -357,20 +358,14 @@ export class HakemustenArviointiPage {
     await this.selectHakemusFromList(projectName);
     const hakemusID = await this.getHakemusID();
 
-    await this.page.locator("text=Syötä projektikoodi").click({ force: true });
-    await this.page
-      .locator(
-        `[data-test-id="projekti-valitsin-initial"] [data-test-id="${projektikoodi}"]`
-      )
-      .click();
+    const { taTili, projektikoodi: projektikoodiSelect } =
+      this.arviointiTabLocators();
+    await expect(projektikoodiSelect.value).toContainText(projektikoodi);
 
     expectToBeDefined(hakemusID);
     console.log("Hakemus ID:", hakemusID);
 
-    const { taTili } = this.arviointiTabLocators();
-    await taTili.input.fill(rahoitusalue);
-    await this.page.keyboard.press("ArrowDown");
-    await this.page.keyboard.press("Enter");
+    await expect(taTili.value).toContainText(rahoitusalue);
     await this.waitForSave();
     await this.acceptHakemus(budget);
     return hakemusID;
@@ -755,6 +750,10 @@ export class HakemustenArviointiPage {
           .locator("div"),
       },
       taTili: createReactSelectLocators(arviointiTab, "tatiliSelection"),
+      projektikoodi: createReactSelectLocators(
+        arviointiTab,
+        "code-value-dropdown-project-id"
+      ),
     };
   }
 

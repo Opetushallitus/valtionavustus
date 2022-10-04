@@ -116,7 +116,7 @@ export const KoodienhallintaPage = (page: Page) => {
       const uniqueCode = () => randomString().substring(0, 13);
       const codeValues = {
         operationalUnit: uniqueCode(),
-        project: [uniqueCode(), uniqueCode(), uniqueCode()],
+        project: [uniqueCode()],
         operation: uniqueCode(),
       };
       return createCodeValues(codeValues);

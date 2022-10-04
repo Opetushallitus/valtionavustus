@@ -1,11 +1,10 @@
 import { expect } from "@playwright/test";
 
-import { defaultValues as test } from "../../fixtures/defaultValues";
-
 import { alustaAvustushaunTaytto } from "./multiple-projects-util";
 
 import { expectToBeDefined } from "../../utils/util";
 import { NoProjectCodeProvided } from "../../utils/types";
+import { multipleProjectCodesTest as test } from "../../multipleProjectCodesTest";
 
 test("Avustushaulle pystyy lisäämään useamman projektikoodin", async ({
   page,

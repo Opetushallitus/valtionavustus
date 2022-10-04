@@ -281,8 +281,7 @@ export class HakujenHallintaPage {
   }
 
   async navigateTo(path: string) {
-    await navigate(this.page, path);
-    await this.page.waitForLoadState("networkidle");
+    await navigate(this.page, path, true);
   }
 
   async navigate(avustushakuID: number) {

@@ -30,7 +30,8 @@
             virkailija.avustushaku_project_code ap
             ON ap.avustushaku_id = ?
           WHERE
-            deleted IS NULL AND va_code_values.id = ap.project_id"
+            deleted IS NULL AND va_code_values.id = ap.project_id
+          ORDER BY va_code_values.id"
          [avustushaku-id]))
 
 (defn insert-project [avustushaku-id project tx]

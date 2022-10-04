@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 
-import { defaultValues as test } from "../../fixtures/defaultValues";
+import { multipleProjectCodesTest as test } from "../../multipleProjectCodesTest";
 
 import { alustaAvustushaunTaytto } from "./multiple-projects-util";
 
