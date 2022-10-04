@@ -10,7 +10,6 @@ import {
 } from "../../utils/constants";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import {
-  Email,
   getAcceptedPäätösEmails,
   waitUntilMinEmails,
 } from "../../utils/emails";
@@ -18,6 +17,7 @@ import moment from "moment";
 import { expectToBeDefined } from "../../utils/util";
 import fs from "fs";
 import * as path from "path";
+import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
 
 const muutoshakuDisabledMenoluokiteltuLomakeJson = fs.readFileSync(
   path.join(
@@ -27,115 +27,116 @@ const muutoshakuDisabledMenoluokiteltuLomakeJson = fs.readFileSync(
   "utf8"
 );
 
-const test = defaultValues.extend<{
-  emails: Email[];
-}>({
-  emails: async (
-    { page, answers, hakuProps, userCache, ukotettuValmistelija },
-    use
-  ) => {
-    expect(userCache).toBeDefined();
-    const hakujenHallintaPage = new HakujenHallintaPage(page);
-    const avustushakuID = await hakujenHallintaPage.copyEsimerkkihaku();
-    await hakujenHallintaPage.fillAvustushaku(hakuProps);
-    await hakujenHallintaPage.publishAvustushaku();
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page);
-    await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang);
+test("hakija does not get an email with link to muutoshakemus when avustushaku fields could not be normalized", async ({
+  userCache,
+  page,
+  answers,
+  hakuProps,
+  ukotettuValmistelija,
+}) => {
+  expectToBeDefined(userCache);
+  const hakujenHallintaPage = new HakujenHallintaPage(page);
+  const avustushakuID = await hakujenHallintaPage.copyEsimerkkihaku();
+  await hakujenHallintaPage.fillAvustushaku(hakuProps);
+  await hakujenHallintaPage.publishAvustushaku();
+  const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page);
+  await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang);
 
-    const hakemusUrl = await hakijaAvustusHakuPage.startApplication(
-      avustushakuID,
+  const hakemusUrl = await hakijaAvustusHakuPage.startApplication(
+    avustushakuID,
+    answers.contactPersonEmail
+  );
+  await hakijaAvustusHakuPage.page.goto(hakemusUrl);
+  await test.step("fill application", async () => {
+    await hakijaAvustusHakuPage.fillInBusinessId(TEST_Y_TUNNUS);
+    await hakijaAvustusHakuPage.page.fill(
+      "#applicant-name",
+      answers.contactPersonName
+    );
+    await hakijaAvustusHakuPage.page.fill(
+      "#signature",
+      answers.contactPersonName
+    );
+    await hakijaAvustusHakuPage.page.fill(
+      "#signature-email",
       answers.contactPersonEmail
     );
-    await hakijaAvustusHakuPage.page.goto(hakemusUrl);
-    await test.step("fill application", async () => {
-      await hakijaAvustusHakuPage.fillInBusinessId(TEST_Y_TUNNUS);
-      await hakijaAvustusHakuPage.page.fill(
-        "#applicant-name",
-        answers.contactPersonName
-      );
-      await hakijaAvustusHakuPage.page.fill(
-        "#signature",
-        answers.contactPersonName
-      );
-      await hakijaAvustusHakuPage.page.fill(
-        "#signature-email",
-        answers.contactPersonEmail
-      );
-      await hakijaAvustusHakuPage.page.fill(
-        "#bank-iban",
-        "FI95 6682 9530 0087 65"
-      );
-      await hakijaAvustusHakuPage.page.fill("#bank-bic", "OKOYFIHH");
-      await hakujenHallintaPage.page.click('text="Kansanopisto"');
-      await hakujenHallintaPage.page.fill(
-        "[name='project-costs-row.amount']",
-        "100000"
-      );
-      await hakijaAvustusHakuPage.page
-        .locator("[name='previous-income-statement-and-balance-sheet']")
-        .setInputFiles(dummyPdfPath);
-      await hakijaAvustusHakuPage.page
-        .locator("[name='previous-financial-year-report']")
-        .setInputFiles(dummyPdfPath);
-      await hakijaAvustusHakuPage.page
-        .locator("[name='previous-financial-year-auditor-report']")
-        .setInputFiles(dummyPdfPath);
-      await hakijaAvustusHakuPage.page
-        .locator("[name='current-year-plan-for-action-and-budget']")
-        .setInputFiles(dummyPdfPath);
-      await hakijaAvustusHakuPage.page
-        .locator(
-          "[name='description-of-functional-development-during-last-five-years']"
-        )
-        .setInputFiles(dummyPdfPath);
-      await hakijaAvustusHakuPage.page
-        .locator("[name='financial-information-form']")
-        .setInputFiles(dummyPdfPath);
-    });
-    await hakijaAvustusHakuPage.submitApplication();
-    await hakujenHallintaPage.navigate(avustushakuID);
-    await hakujenHallintaPage.setEndDate(
-      moment().subtract(1, "year").format("D.M.YYYY H.mm")
+    await hakijaAvustusHakuPage.page.fill(
+      "#bank-iban",
+      "FI95 6682 9530 0087 65"
     );
-    const hakemustenArviointiPage = new HakemustenArviointiPage(page);
-    let hakemusID: number | undefined;
-    await test.step("accept hakemus", async () => {
-      await hakemustenArviointiPage.navigate(avustushakuID);
-      await Promise.all([
-        page.waitForNavigation(),
-        hakemustenArviointiPage.page.click(`text=${hakuProps.registerNumber}`),
-      ]);
-      hakemusID = await hakemustenArviointiPage.getHakemusID();
-      expectToBeDefined(hakemusID);
-      const { taTili } = hakemustenArviointiPage.arviointiTabLocators();
-      await taTili.input.fill("Ammatillinen koulutus");
-      await page.keyboard.press("ArrowDown");
-      await page.keyboard.press("Enter");
-      await hakemustenArviointiPage.acceptHakemus();
-    });
-    await test.step("Resolve avustushaku", async () => {
-      await hakujenHallintaPage.navigateFromHeader();
-      await hakujenHallintaPage.resolveAvustushaku();
-    });
+    await hakijaAvustusHakuPage.page.fill("#bank-bic", "OKOYFIHH");
+    await hakujenHallintaPage.page.click('text="Kansanopisto"');
+    await hakujenHallintaPage.page.fill(
+      "[name='project-costs-row.amount']",
+      "100000"
+    );
+    await hakijaAvustusHakuPage.page
+      .locator("[name='previous-income-statement-and-balance-sheet']")
+      .setInputFiles(dummyPdfPath);
+    await hakijaAvustusHakuPage.page
+      .locator("[name='previous-financial-year-report']")
+      .setInputFiles(dummyPdfPath);
+    await hakijaAvustusHakuPage.page
+      .locator("[name='previous-financial-year-auditor-report']")
+      .setInputFiles(dummyPdfPath);
+    await hakijaAvustusHakuPage.page
+      .locator("[name='current-year-plan-for-action-and-budget']")
+      .setInputFiles(dummyPdfPath);
+    await hakijaAvustusHakuPage.page
+      .locator(
+        "[name='description-of-functional-development-during-last-five-years']"
+      )
+      .setInputFiles(dummyPdfPath);
+    await hakijaAvustusHakuPage.page
+      .locator("[name='financial-information-form']")
+      .setInputFiles(dummyPdfPath);
+  });
+  await hakijaAvustusHakuPage.submitApplication();
+  await hakujenHallintaPage.navigate(avustushakuID);
+  await hakujenHallintaPage.setEndDate(
+    moment().subtract(1, "year").format("D.M.YYYY H.mm")
+  );
+  const hakemustenArviointiPage = new HakemustenArviointiPage(page);
+  let hakemusID: number | undefined;
+  await test.step("accept hakemus", async () => {
+    await hakemustenArviointiPage.navigate(avustushakuID);
+    await Promise.all([
+      page.waitForNavigation(),
+      hakemustenArviointiPage.page.click(`text=${hakuProps.registerNumber}`),
+    ]);
+    hakemusID = await hakemustenArviointiPage.getHakemusID();
+    expectToBeDefined(hakemusID);
+    const { taTili } = hakemustenArviointiPage.arviointiTabLocators();
+    await taTili.input.fill("Ammatillinen koulutus");
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+    await hakemustenArviointiPage.acceptHakemus();
+  });
+  await test.step("Resolve avustushaku", async () => {
+    await hakujenHallintaPage.navigateFromHeader();
+    await hakujenHallintaPage.resolveAvustushaku();
+  });
 
-    await test.step("Add valmistelija for hakemus", async () => {
-      await hakemustenArviointiPage.navigate(avustushakuID);
-      await hakemustenArviointiPage.selectValmistelijaForHakemus(
-        hakemusID!,
-        ukotettuValmistelija
-      );
-    });
-    await test.step("send päätökset", async () => {
-      await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-      await hakujenHallintaPage.sendPaatos(avustushakuID);
-    });
-    const emails = await waitUntilMinEmails(
-      getAcceptedPäätösEmails,
-      1,
-      hakemusID!
+  await test.step("Add valmistelija for hakemus", async () => {
+    await hakemustenArviointiPage.navigate(avustushakuID);
+    await hakemustenArviointiPage.selectValmistelijaForHakemus(
+      hakemusID!,
+      ukotettuValmistelija
     );
-    await use(emails);
-  },
+  });
+  await test.step("send päätökset", async () => {
+    await hakujenHallintaPage.navigateToPaatos(avustushakuID);
+    await hakujenHallintaPage.sendPaatos(avustushakuID);
+  });
+  const emails = await waitUntilMinEmails(
+    getAcceptedPäätösEmails,
+    1,
+    hakemusID!
+  );
+  emails.forEach((email) => {
+    expect(email.formatted).not.toContain(`${HAKIJA_URL}/muutoshakemus`);
+  });
 });
 
 const akuTest = defaultValues.extend<{
@@ -366,14 +367,6 @@ const akuTest = defaultValues.extend<{
     });
     await use(hakemusID);
   },
-});
-
-test("hakija does not get an email with link to muutoshakemu when avustushaku fields could not be normalized", async ({
-  emails,
-}) => {
-  emails.forEach((email) => {
-    expect(email.formatted).not.toContain(`${HAKIJA_URL}/muutoshakemus`);
-  });
 });
 
 akuTest(
