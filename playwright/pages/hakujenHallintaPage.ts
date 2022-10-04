@@ -39,7 +39,10 @@ export interface HakuProps {
   hakemusFields: Field[];
   jaossaOlevaSumma?: number;
   installment?: Installment;
-  talousarviotili: Talousarviotili;
+  talousarviotili: Omit<
+    Talousarviotili,
+    "id" | "migrated-from-not-normalized-ta-tili" | "deleted"
+  >;
 }
 
 export enum Installment {

@@ -1,5 +1,5 @@
-import { expect, Locator } from "@playwright/test";
-import { defaultValues } from "../../fixtures/defaultValues";
+import { expect, Locator, Page } from "@playwright/test";
+import { muutoshakemusTest } from "../../fixtures/muutoshakemusTest";
 import { KoodienhallintaPage } from "../../pages/koodienHallintaPage";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import {
@@ -7,58 +7,70 @@ import {
   randomString,
 } from "../../utils/random";
 import { expectToBeDefined } from "../../utils/util";
+import { defaultValues } from "../../fixtures/defaultValues";
+import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
+import { HakijaAvustusHakuPage } from "../../pages/hakijaAvustusHakuPage";
 
-const tatili1 = {
-  code: createRandomTalousarviotiliCode(),
-  name: `Tili 1 ${randomString()}`,
-  year: "2022",
-  amount: "10000",
+type CreateTaTili = {
+  code: string;
+  name: string;
+  year: number;
+  amount: number;
 };
-const tatili2 = {
-  code: createRandomTalousarviotiliCode(),
-  name: `Tili 2 ${randomString()}`,
-  year: "2022",
-  amount: "10000",
-};
-type CreateTaTili = typeof tatili1;
 
-const taTiliSelectValue = ({ code, name, year }: typeof tatili1) =>
+const taTiliSelectValue = ({ code, name, year }: CreateTaTili) =>
   `${code} ${name} (${year})`;
 
 const koulutus = "Ammatillinen koulutus";
 const lukio = "Lukiokoulutus";
 const kansalaisopisto = "Kansalaisopisto";
 
+const createTaTilit = async (page: Page) => {
+  const tatili1 = {
+    code: createRandomTalousarviotiliCode(),
+    name: `Tili 1 ${randomString()}`,
+    year: 2022,
+    amount: 10000,
+  };
+  const tatili2 = {
+    code: createRandomTalousarviotiliCode(),
+    name: `Tili 2 ${randomString()}`,
+    year: 2022,
+    amount: 10000,
+  };
+  await test.step("create test tatilit", async () => {
+    const koodienhallintaPage = KoodienhallintaPage(page);
+    await koodienhallintaPage.navigate();
+    await koodienhallintaPage.switchToTatilitTab();
+    const taForm = koodienhallintaPage.taTilit.form;
+    const createTaTili = async ({
+      code,
+      name,
+      year,
+      amount,
+    }: typeof tatili1) => {
+      await taForm.code.input.fill(code);
+      await taForm.name.input.fill(name);
+      await taForm.year.input.fill(String(year));
+      await taForm.amount.input.fill(String(amount));
+      await taForm.submitBtn.click();
+      await expect(taForm.submitBtn).toBeEnabled();
+    };
+    await createTaTili(tatili1);
+    await createTaTili(tatili2);
+  });
+  return {
+    tatili1,
+    tatili2,
+  };
+};
+
 const test = defaultValues.extend<{
-  tatili1: CreateTaTili;
-  tatili2: CreateTaTili;
-  hakujenHallintaPage: HakujenHallintaPage;
+  tilit: { tatili1: CreateTaTili; tatili2: CreateTaTili };
 }>({
-  tatili1,
-  tatili2,
-  hakujenHallintaPage: async ({ page, avustushakuName }, use, testInfo) => {
+  tilit: async ({ page, avustushakuName }, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 30_000);
-    await test.step("create test tatilit", async () => {
-      const koodienhallintaPage = KoodienhallintaPage(page);
-      await koodienhallintaPage.navigate();
-      await koodienhallintaPage.switchToTatilitTab();
-      const taForm = koodienhallintaPage.taTilit.form;
-      const createTaTili = async ({
-        code,
-        name,
-        year,
-        amount,
-      }: typeof tatili1) => {
-        await taForm.code.input.fill(code);
-        await taForm.name.input.fill(name);
-        await taForm.year.input.fill(year);
-        await taForm.amount.input.fill(amount);
-        await taForm.submitBtn.click();
-        await expect(taForm.submitBtn).toBeEnabled();
-      };
-      await createTaTili(tatili1);
-      await createTaTili(tatili2);
-    });
+    const tilit = await createTaTilit(page);
     const hakujenHallinta = new HakujenHallintaPage(page);
     await hakujenHallinta.copyEsimerkkihaku();
     await hakujenHallinta
@@ -69,15 +81,16 @@ const test = defaultValues.extend<{
         "text=Jossain kentässä puutteita. Tarkasta arvot."
       )
     ).toBeVisible();
-    await use(hakujenHallinta);
+    await use(tilit);
   },
 });
 
 test.describe.parallel("talousarvio select", () => {
   test("tili and koulutusaste basic flow", async ({
     page,
-    hakujenHallintaPage,
+    tilit: { tatili1 },
   }) => {
+    const hakujenHallintaPage = new HakujenHallintaPage(page);
     const locators = hakujenHallintaPage.hauntiedotLocators();
     const taTili = locators.taTili;
     const firstTili = taTili.tili(0);
@@ -137,11 +150,8 @@ test.describe.parallel("talousarvio select", () => {
       await expect(firstTiliFirstKoulutusaste.value).toHaveText(koulutus);
     });
   });
-  test("empty selects dont get saved", async ({
-    tatili1,
-    hakujenHallintaPage,
-    page,
-  }) => {
+  test("empty selects dont get saved", async ({ tilit: { tatili1 }, page }) => {
+    const hakujenHallintaPage = new HakujenHallintaPage(page);
     const locators = hakujenHallintaPage.hauntiedotLocators();
     const taTili = locators.taTili;
     const firstTili = taTili.tili(0);
@@ -203,10 +213,10 @@ test.describe.parallel("talousarvio select", () => {
     );
   });
   test("can delete tilis and koulutusaste", async ({
-    tatili1,
-    hakujenHallintaPage,
+    tilit: { tatili1, tatili2 },
     page,
   }) => {
+    const hakujenHallintaPage = new HakujenHallintaPage(page);
     const locators = hakujenHallintaPage.hauntiedotLocators();
     const taTili = locators.taTili;
     const firstTili = taTili.tili(0);
@@ -283,11 +293,14 @@ test.describe.parallel("talousarvio select", () => {
     });
   });
   test("cannot modify TA-tili or koulutusaste after haku has been published", async ({
-    hakujenHallintaPage,
+    tilit,
     hakuProps,
     userCache,
+    page,
   }) => {
     expectToBeDefined(userCache);
+    expectToBeDefined(tilit);
+    const hakujenHallintaPage = new HakujenHallintaPage(page);
     /*
       reload needed as hakuProps
       spawns a new browser context to create tilit
@@ -322,6 +335,77 @@ test.describe.parallel("talousarvio select", () => {
     await verifyLocatorsAreDisabled(...locators);
   });
 });
+
+muutoshakemusTest(
+  "does not preselect talousarviotili if there are multiple to choose from",
+  async (
+    { userCache, finalAvustushakuEndDate, page, answers, hakuProps },
+    testInfo
+  ) => {
+    testInfo.setTimeout(testInfo.timeout + 30_000);
+    expectToBeDefined(userCache);
+    const { tatili1, tatili2 } = await createTaTilit(page);
+    const hakujenHallintaPage = new HakujenHallintaPage(page);
+    const avustushakuID =
+      await hakujenHallintaPage.createUnpublishedMuutoshakemusEnabledHaku(
+        hakuProps
+      );
+    await hakujenHallintaPage.navigate(avustushakuID);
+    const hauntiedotLocators = hakujenHallintaPage.hauntiedotLocators();
+    await test.step("add 2 tilis to avustushaku", async () => {
+      for (const { index, tili } of [
+        { index: 0, tili: tatili2 },
+        { index: 1, tili: tatili1 },
+      ]) {
+        const select = hauntiedotLocators.taTili.tili(index);
+        await select.input.click();
+        await select.input.fill(tili.name);
+        await hakujenHallintaPage.page.keyboard.press("Tab");
+        await hakujenHallintaPage.page.keyboard.press("Enter");
+        await select.koulutusaste(0).input.fill(koulutus);
+        await hakujenHallintaPage.page.keyboard.press("Tab");
+        await hakujenHallintaPage.page.keyboard.press("Enter");
+        await select.addTiliBtn.click();
+      }
+      await hakujenHallintaPage.waitForSave();
+    });
+    await hakujenHallintaPage.publishAvustushaku();
+    await hakujenHallintaPage.waitForSave();
+    await test.step("fill haku", async () => {
+      const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page);
+      await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang);
+      await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(
+        avustushakuID,
+        answers
+      );
+    });
+    await test.step("close avustushaku", async () => {
+      await hakujenHallintaPage.navigate(avustushakuID);
+      await hakujenHallintaPage.setEndDate(
+        finalAvustushakuEndDate.format("D.M.YYYY H.mm")
+      );
+      await hakujenHallintaPage.waitForSave();
+    });
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page);
+    await hakemustenArviointiPage.navigate(avustushakuID);
+    const { taTili } = await hakemustenArviointiPage.selectHakemusFromList(
+      answers.projectName
+    );
+    await test.step("in arviointi tatili is not preselected", async () => {
+      await hakemustenArviointiPage.waitForSave();
+      await expect(taTili.placeholder).toHaveText("Valitse talousarviotili");
+    });
+    await test.step("can select from multiple options", async () => {
+      await taTili.input.click();
+      await expect(taTili.option).toHaveCount(2);
+      await expect(taTili.option.nth(0)).toContainText(tatili1.code);
+      await expect(taTili.option.nth(1)).toContainText(tatili2.code);
+      await taTili.option.nth(1).click();
+      await hakemustenArviointiPage.waitForSave();
+      await expect(taTili.value).toContainText(tatili2.code);
+    });
+  }
+);
 
 async function verifyLocatorsAreEnabled(...locators: Locator[]) {
   for (const locator of locators) {
