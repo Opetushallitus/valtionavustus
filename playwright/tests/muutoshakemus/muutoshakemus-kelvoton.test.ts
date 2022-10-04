@@ -33,8 +33,9 @@ test("hakija does not get an email with link to muutoshakemus when avustushaku f
   answers,
   hakuProps,
   ukotettuValmistelija,
-}) => {
+}, testInfo) => {
   expectToBeDefined(userCache);
+  testInfo.setTimeout(testInfo.timeout + 30_000);
   const hakujenHallintaPage = new HakujenHallintaPage(page);
   const avustushakuID = await hakujenHallintaPage.copyEsimerkkihaku();
   await hakujenHallintaPage.fillAvustushaku(hakuProps);
