@@ -156,7 +156,7 @@ async function testSentPaymentsTable(
   expect(await sentPayments(3).getTiliöinti()).toEqual("10000 €");
 }
 
-test.describe.parallel("Maksatukset", () => {
+test.describe("Maksatukset", () => {
   multipleInstallmentTest(
     "Hakemus voidaan maksaa monessa erässä",
     async ({
