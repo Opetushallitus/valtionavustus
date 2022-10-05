@@ -1,5 +1,4 @@
-import axios from "axios";
-import { expect, Page } from "@playwright/test";
+import { APIRequestContext, expect, Page } from "@playwright/test";
 
 import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
 import { KoodienhallintaPage } from "../../pages/koodienHallintaPage";
@@ -51,30 +50,38 @@ function getUniqueFileName(): string {
 }
 
 export async function putMaksupalauteToMaksatuspalveluAndProcessIt(
+  request: APIRequestContext,
   xml: string
 ): Promise<void> {
-  await axios.post(`${VIRKAILIJA_URL}/api/test/process-maksupalaute`, {
+  const data = {
     // The XML parser fails if the input doesn't start with "<?xml " hence the trimLeft
     xml: xml.trimStart(),
     filename: getUniqueFileName(),
+  };
+  await request.post(`${VIRKAILIJA_URL}/api/test/process-maksupalaute`, {
+    data,
+    failOnStatusCode: true,
   });
 }
 
-export async function getAllMaksatuksetFromMaksatuspalvelu(): Promise<
-  string[]
-> {
-  const resp = await axios.get<{ maksatukset: string[] }>(
-    `${VIRKAILIJA_URL}/api/test/get-sent-maksatukset`
+export async function getAllMaksatuksetFromMaksatuspalvelu(
+  request: APIRequestContext
+): Promise<string[]> {
+  const res = await request.get(
+    `${VIRKAILIJA_URL}/api/test/get-sent-maksatukset`,
+    { timeout: 60000, failOnStatusCode: true }
   );
-  return resp.data.maksatukset;
+  const { maksatukset } = await res.json();
+  return maksatukset;
 }
 
 export async function removeStoredPitkäviiteFromAllAvustushakuPayments(
+  request: APIRequestContext,
   avustushakuId: number
 ): Promise<void> {
-  await axios.post(
+  await request.post(
     `${VIRKAILIJA_URL}/api/test/remove-stored-pitkaviite-from-all-avustushaku-payments`,
-    { avustushakuId }
+    { data: { avustushakuId }, failOnStatusCode: true }
   );
 }
 
@@ -236,7 +243,9 @@ test.describe.parallel("Maksatukset", () => {
       await expect(paymentBatches(1).getTAKP()).toHaveText(tatili);
       expect(await paymentBatches(1).getTiliöinti()).toEqual(maksuun);
 
-      await putMaksupalauteToMaksatuspalveluAndProcessIt(`
+      await putMaksupalauteToMaksatuspalveluAndProcessIt(
+        page.request,
+        `
       <?xml version="1.0" encoding="UTF-8" standalone="no"?>
       <VA-invoice>
         <Header>
@@ -244,13 +253,16 @@ test.describe.parallel("Maksatukset", () => {
           <Maksupvm>2018-06-08</Maksupvm>
         </Header>
       </VA-invoice>
-    `);
+    `
+      );
 
       await maksatuksetPage.reloadPaymentPage();
       await maksatuksetPage.clickLahetetytMaksatuksetTab();
       expect(await paymentBatches(1).getPaymentStatus()).toEqual("Maksettu");
 
-      const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu();
+      const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu(
+        page.request
+      );
 
       expect(maksatukset).toContainEqual(
         maksatuksetPage.getExpectedPaymentXML({
@@ -285,7 +297,10 @@ test.describe.parallel("Maksatukset", () => {
 
     await maksatuksetPage.sendMaksatukset();
 
-    await removeStoredPitkäviiteFromAllAvustushakuPayments(avustushakuID);
+    await removeStoredPitkäviiteFromAllAvustushakuPayments(
+      page.request,
+      avustushakuID
+    );
     await maksatuksetPage.reloadPaymentPage();
 
     const sentPayments = await maksatuksetPage.clickLahetetytMaksatuksetTab();
@@ -309,7 +324,9 @@ test.describe.parallel("Maksatukset", () => {
     );
     expect(await sentPayments(1).getTiliöinti()).toEqual(maksuun);
 
-    await putMaksupalauteToMaksatuspalveluAndProcessIt(`
+    await putMaksupalauteToMaksatuspalveluAndProcessIt(
+      page.request,
+      `
       <?xml version="1.0" encoding="UTF-8" standalone="no"?>
       <VA-invoice>
         <Header>
@@ -317,7 +334,8 @@ test.describe.parallel("Maksatukset", () => {
           <Maksupvm>2018-06-08</Maksupvm>
         </Header>
       </VA-invoice>
-    `);
+    `
+    );
 
     await maksatuksetPage.reloadPaymentPage();
     await maksatuksetPage.clickLahetetytMaksatuksetTab();
@@ -357,7 +375,9 @@ test.describe.parallel("Maksatukset", () => {
     await expect(sentPayments(1).getTAKP()).toHaveText(tatili);
     expect(await sentPayments(1).getTiliöinti()).toEqual(maksuun);
 
-    await putMaksupalauteToMaksatuspalveluAndProcessIt(`
+    await putMaksupalauteToMaksatuspalveluAndProcessIt(
+      page.request,
+      `
       <?xml version="1.0" encoding="UTF-8" standalone="no"?>
       <VA-invoice>
         <Header>
@@ -365,7 +385,8 @@ test.describe.parallel("Maksatukset", () => {
           <Maksupvm>2018-06-08</Maksupvm>
         </Header>
       </VA-invoice>
-    `);
+    `
+    );
 
     await maksatuksetPage.reloadPaymentPage();
     const sentPaymentsAfterMaksupalaute =
@@ -373,7 +394,9 @@ test.describe.parallel("Maksatukset", () => {
     const statuses = sentPaymentsAfterMaksupalaute(1);
     expect(await statuses.getPaymentStatus()).toEqual("Maksettu");
 
-    const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu();
+    const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu(
+      page.request
+    );
     expect(maksatukset).toContainEqual(
       maksatuksetPage.getExpectedPaymentXML({
         projekti: projektikoodi,
@@ -417,7 +440,9 @@ test.describe.parallel("Maksatukset", () => {
     const { "register-number": registerNumber } =
       await getHakemusTokenAndRegisterNumber(hakemusID);
     const pitkaviite = `${registerNumber}_1 Erkki Esimerkki`;
-    await putMaksupalauteToMaksatuspalveluAndProcessIt(`
+    await putMaksupalauteToMaksatuspalveluAndProcessIt(
+      page.request,
+      `
       <?xml version="1.0" encoding="UTF-8" standalone="no"?>
       <VA-invoice>
         <Header>
@@ -425,7 +450,8 @@ test.describe.parallel("Maksatukset", () => {
           <Maksupvm>2018-06-08</Maksupvm>
         </Header>
       </VA-invoice>
-    `);
+    `
+    );
 
     const hakujenHallintaPage = new HakujenHallintaPage(page);
     await hakujenHallintaPage.navigate(avustushakuID);
