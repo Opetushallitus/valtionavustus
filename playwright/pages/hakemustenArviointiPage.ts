@@ -14,6 +14,7 @@ import {
   MuutoshakemusValues,
   PaatosStatus,
   PaatosValues,
+  VaCodeValues,
 } from "../utils/types";
 import {
   AcceptedBudget,
@@ -347,12 +348,14 @@ export class HakemustenArviointiPage {
     budget = "100000",
     rahoitusalue = "Ammatillinen koulutus",
     projektikoodi,
+    codes,
   }: {
     avustushakuID: number;
     projectName: string;
     projektikoodi: string;
     budget?: AcceptedBudget;
     rahoitusalue?: string;
+    codes?: VaCodeValues;
   }) {
     // Accept the hakemus
     await this.selectHakemusFromList(projectName);
@@ -360,6 +363,11 @@ export class HakemustenArviointiPage {
 
     const { taTili, projektikoodi: projektikoodiSelect } =
       this.arviointiTabLocators();
+    if (codes && codes.project.length > 1) {
+      await projektikoodiSelect.input.click();
+      await projektikoodiSelect.option.locator(`text=${projektikoodi}`).click();
+      await this.waitForSave();
+    }
     await expect(projektikoodiSelect.value).toContainText(projektikoodi);
 
     expectToBeDefined(hakemusID);

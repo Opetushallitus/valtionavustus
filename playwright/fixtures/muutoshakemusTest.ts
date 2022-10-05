@@ -79,6 +79,7 @@ export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
       submittedHakemus: { userKey },
       answers,
       projektikoodi,
+      codes,
     },
     use,
     testInfo
@@ -95,6 +96,7 @@ export const muutoshakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
         avustushakuID,
         projectName: answers.projectName,
         projektikoodi,
+        codes,
       });
     });
 

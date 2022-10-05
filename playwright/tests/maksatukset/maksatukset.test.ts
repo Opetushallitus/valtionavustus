@@ -33,7 +33,12 @@ const showProjectCodeTest = test.extend({
     const codes = {
       operationalUnit: "6600105300",
       operation: "3425324634",
-      project: [NoProjectCodeProvided.code, randomString().substring(0, 13)],
+      project: [
+        NoProjectCodeProvided.code,
+        randomString().substring(0, 13),
+        randomString().substring(0, 13),
+        randomString().substring(0, 13),
+      ],
     };
     const koodienHallintaPage = KoodienhallintaPage(page);
     await koodienHallintaPage.createCodeValues(codes);
@@ -412,17 +417,59 @@ test.describe("Maksatukset", () => {
   });
 
   showProjectCodeTest(
-    "shows project code in values",
-    async ({ page, acceptedHakemus, avustushakuName, codes: { project } }) => {
+    "sends correct project code to maksatuksen when there are multiple project codes for avustushaku",
+    async ({
+      page,
+      acceptedHakemus,
+      avustushakuName,
+      talousarviotili,
+      codes: { project, operation, operationalUnit },
+    }) => {
       expectToBeDefined(acceptedHakemus);
+      const lastProjectCode = project[project.length - 1];
+      expectToBeDefined(lastProjectCode);
       const maksatusPage = MaksatuksetPage(page);
       await maksatusPage.goto(avustushakuName);
-      await maksatusPage.fillMaksueranTiedotAndSendMaksatukset();
+      const dueDate =
+        await maksatusPage.fillMaksueranTiedotAndSendMaksatukset();
       await maksatusPage.reloadPaymentPage();
       await maksatusPage.clickLahetetytMaksatuksetTab();
       await expect(
-        maksatusPage.page.locator(`[data-test-id="project-code-${project[1]}"]`)
-      ).toHaveText(`Projekti ${project[1]}`);
+        maksatusPage.page.locator(
+          `[data-test-id="project-code-${lastProjectCode}"]`
+        )
+      ).toHaveText(`Projekti ${lastProjectCode}`);
+
+      const { "register-number": registerNumber } =
+        await getHakemusTokenAndRegisterNumber(acceptedHakemus.hakemusID);
+      const pitkaviite = `${registerNumber}_1 Erkki Esimerkki`;
+      await putMaksupalauteToMaksatuspalveluAndProcessIt(
+        page.request,
+        `
+      <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+      <VA-invoice>
+        <Header>
+          <Pitkaviite>${pitkaviite}</Pitkaviite>
+          <Maksupvm>2018-06-08</Maksupvm>
+        </Header>
+      </VA-invoice>
+    `
+      );
+      const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu(
+        page.request
+      );
+      expect(maksatukset).toContainEqual(
+        maksatusPage.getExpectedPaymentXML({
+          projekti: lastProjectCode,
+          toiminto: operation,
+          toimintayksikko: operationalUnit,
+          pitkaviite,
+          invoiceNumber: `${registerNumber}_1`,
+          dueDate,
+          ovt: "00372769790122",
+          talousarviotili: withoutDots(talousarviotili.code),
+        })
+      );
     }
   );
 
