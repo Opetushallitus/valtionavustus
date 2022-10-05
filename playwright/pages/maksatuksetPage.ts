@@ -122,12 +122,12 @@ export function MaksatuksetPage(page: Page) {
   }
 
   async function sendMaksatukset(): Promise<void> {
+    const saveStatus = page
+      .locator('[data-test-id="save-status"]')
+      .locator('text="Kaikki tiedot tallennettu"');
+    await expect(saveStatus).toBeHidden();
     await Promise.all([
-      expect(
-        page
-          .locator('[data-test-id="save-status"]')
-          .locator('text="Kaikki tiedot tallennettu"')
-      ).toBeVisible({ timeout: 10000 }),
+      expect(saveStatus).toBeVisible({ timeout: 10000 }),
       clickElementWithText(page, "button", "Lähetä maksatukset"),
     ]);
   }
