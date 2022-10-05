@@ -10,6 +10,7 @@ import { expectToBeDefined } from "../../utils/util";
 import { defaultValues } from "../../fixtures/defaultValues";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { HakijaAvustusHakuPage } from "../../pages/hakijaAvustusHakuPage";
+import { addMigratedTalousarviotili } from "../../utils/avustushaku";
 
 type CreateTaTili = {
   code: string;
@@ -86,6 +87,26 @@ const test = defaultValues.extend<{
 });
 
 test.describe.parallel("talousarvio select", () => {
+  test("migrated talousarviotili cannot be selected for new avusushaku", async ({
+    page,
+  }) => {
+    const migratedTili = createRandomTalousarviotiliCode();
+    await addMigratedTalousarviotili(page, migratedTili);
+
+    const hakujenHallintaPage = new HakujenHallintaPage(page);
+    await hakujenHallintaPage.copyEsimerkkihaku();
+    const locators = hakujenHallintaPage.hauntiedotLocators();
+    const firstTili = locators.taTili.tili(0);
+    await expect(firstTili.value).toBeHidden();
+    await firstTili.input.fill(migratedTili);
+    const firstOption = await firstTili.option.first();
+    await test.step("talousarviotili is found in list", async () => {
+      await expect(firstTili.option.first()).toHaveText(migratedTili);
+    });
+    await test.step("talousarviotili is disabled", async () => {
+      await expect(firstOption).toHaveAttribute("aria-disabled", "true");
+    });
+  });
   test("tili and koulutusaste basic flow", async ({
     page,
     tilit: { tatili1 },

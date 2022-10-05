@@ -344,6 +344,14 @@
               (hakija-api/update-avustushaku)))
       (not-found)))
 
+  (compojure-api/POST "/add-migrated-talousarviotili" []
+    :body [body (compojure-api/describe { :talousarviotili s/Str } "Talousarviotili")]
+    :return { :ok s/Str }
+    (log/info "Adding migrated talousarviotili %s" (:talousarviotili body))
+    (let [sql "INSERT INTO virkailija.talousarviotilit (code, migrated_from_not_normalized_ta_tili) VALUES (?, true)"]
+      (execute! sql [(:talousarviotili body)])
+      (ok {:message "SUCCESS"})))
+
   (compojure-api/GET "/hakemus/:hakemus-id/token-and-register-number" []
     :path-params [hakemus-id :- Long]
     :return { :token s/Str :register-number s/Str }

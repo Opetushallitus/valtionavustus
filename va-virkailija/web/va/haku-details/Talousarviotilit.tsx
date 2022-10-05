@@ -55,24 +55,29 @@ interface Option {
   label: string;
 }
 
-const mapTiliOption = ({
-  id,
-  code,
-  name,
-  year,
-}: TalousarviotiliWithUsageInfo): Option => {
+type TalousarviotiliOption = Option & {
+  migrated: boolean;
+};
+
+const mapTiliOption = (
+  props: TalousarviotiliWithUsageInfo
+): TalousarviotiliOption => {
+  const { id, code, name, year } = props;
   const yearLabel = Boolean(year) ? `(${year})` : "";
   return {
     value: `${id}`,
     label: `${code} ${name ?? ""} ${yearLabel}`,
+    migrated: props["migrated-from-not-normalized-ta-tili"],
   };
 };
 
 interface TalousarvioSelectProps {
-  options: Option[];
+  options: TalousarviotiliOption[];
   selectedTalousarvioTili?: TalousarviotiliWithKoulutusasteet;
   allSelectedTalousarvioTili: TalousarviotiliWithKoulutusasteet[];
-  onTalousarvioChange: (index: number) => (option: SingleValue<Option>) => void;
+  onTalousarvioChange: (
+    index: number
+  ) => (option: SingleValue<TalousarviotiliOption>) => void;
   onAddNewTalousarvio: (index: number) => () => void;
   onRemoveTalousarvio: (index: number) => () => void;
   talousarvioTiliIndex: number;
@@ -109,20 +114,20 @@ const TalousarvioSelect = ({
             />{" "}
             *
           </div>
-          <Select
+          <Select<TalousarviotiliOption>
             value={selectedTalousarvioTiliOption}
             options={options}
             isDisabled={isDisabled}
             id={`ta-tili-select-${talousarvioTiliIndex}`}
             classNamePrefix="taTiliSelection"
             noOptionsMessage={() => "Ei talousarviotilejä"}
-            isOptionDisabled={(option) =>
-              allSelectedTalousarvioTili.some(
-                (tili) =>
-                  String(tili.id) === option.value ||
-                  tili["migrated-from-not-normalized-ta-tili"]
-              )
-            }
+            isOptionDisabled={(option) => {
+              const talousarviotiliIsAlreadySelected =
+                allSelectedTalousarvioTili.some(
+                  (tili) => String(tili.id) === option.value
+                );
+              return option.migrated || talousarviotiliIsAlreadySelected;
+            }}
             onChange={onTalousarvioChange(talousarvioTiliIndex)}
             placeholder="Valitse talousarviotili"
           />
@@ -250,7 +255,7 @@ const KoulutusasteSelect = ({
 };
 
 interface TalousarvioTiliProps {
-  options: Option[];
+  options: TalousarviotiliOption[];
   selectedTalousarvioTili?: TalousarviotiliWithKoulutusasteet;
   allSelectedTalousarvioTili: TalousarviotiliWithKoulutusasteet[];
   onTalousarvioChange: (
