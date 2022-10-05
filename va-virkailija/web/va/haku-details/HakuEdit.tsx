@@ -341,7 +341,7 @@ export const HakuEdit = () => {
         helpTexts={helpTexts}
       />
       {newTaTilitEnabled ? (
-        <Talousarviotilit />
+        <Talousarviotilit helpTexts={helpTexts} />
       ) : (
         <EducationLevels
           enabled={allowNondisruptiveHakuEdits}

@@ -14,6 +14,7 @@ import { TalousarviotiliWithUsageInfo } from "../koodienhallinta/types";
 import HelpTooltip from "../HelpTooltip";
 
 import styles from "./Talousarviotilit.module.less";
+import { HelpTexts } from "soresu-form/web/va/types";
 
 const Koulutusasteet = [
   "Varhaiskasvatus",
@@ -77,6 +78,7 @@ interface TalousarvioSelectProps {
   talousarvioTiliIndex: number;
   isDisabled: boolean;
   children: React.ReactNode;
+  helpTexts: HelpTexts;
 }
 
 const TalousarvioSelect = ({
@@ -89,6 +91,7 @@ const TalousarvioSelect = ({
   talousarvioTiliIndex,
   isDisabled,
   children,
+  helpTexts,
 }: TalousarvioSelectProps) => {
   const selectedTalousarvioTiliOption = selectedTalousarvioTili
     ? mapTiliOption(selectedTalousarvioTili)
@@ -101,7 +104,10 @@ const TalousarvioSelect = ({
         <div>
           <div>
             TA-tili
-            <HelpTooltip content="" /> *
+            <HelpTooltip
+              content={helpTexts["hakujen_hallinta__haun_tiedot___ta_tili"]}
+            />{" "}
+            *
           </div>
           <Select
             value={selectedTalousarvioTiliOption}
@@ -151,6 +157,7 @@ interface KoulutusasteSelectProps {
   ) => (option: SingleValue<Option>) => void;
   onAddRow: (koulutusasteIndex: number) => void;
   onRemoveRow: (koulutusasteIndex: number) => void;
+  helpTexts: HelpTexts;
 }
 
 const KoulutusasteSelect = ({
@@ -159,6 +166,7 @@ const KoulutusasteSelect = ({
   onKoulutusasteChange,
   onAddRow,
   onRemoveRow,
+  helpTexts,
 }: KoulutusasteSelectProps) => {
   const koulutusPlaceholder = isDisabled
     ? "Valitse ensin talousarviotili"
@@ -168,7 +176,10 @@ const KoulutusasteSelect = ({
       <div>
         <div>
           Koulutusaste
-          <HelpTooltip content="" /> *
+          <HelpTooltip
+            content={helpTexts["hakujen_hallinta__haun_tiedot___koulutusaste"]}
+          />{" "}
+          *
         </div>
         <Select
           isDisabled={isDisabled}
@@ -233,7 +244,7 @@ const KoulutusasteSelect = ({
   return <div>{koulutusasteSelection}</div>;
 };
 
-interface TalousarviotilitProps {
+interface TalousarvioTiliProps {
   options: Option[];
   selectedTalousarvioTili?: TalousarviotiliWithKoulutusasteet;
   allSelectedTalousarvioTili: TalousarviotiliWithKoulutusasteet[];
@@ -249,6 +260,7 @@ interface TalousarviotilitProps {
   onRemoveTalousarvio: (index: number) => () => void;
   talousarvioTiliIndex: number;
   disabled: boolean;
+  helpTexts: HelpTexts;
 }
 
 const TalousarvioTili = ({
@@ -263,7 +275,8 @@ const TalousarvioTili = ({
   onRemoveTalousarvio,
   talousarvioTiliIndex,
   disabled,
-}: TalousarviotilitProps) => {
+  helpTexts,
+}: TalousarvioTiliProps) => {
   const selectedKoulutusasteet = selectedTalousarvioTili?.koulutusasteet ?? [];
   return (
     <div
@@ -279,6 +292,7 @@ const TalousarvioTili = ({
         onAddNewTalousarvio={onAddNewTalousarvio}
         onRemoveTalousarvio={onRemoveTalousarvio}
         talousarvioTiliIndex={talousarvioTiliIndex}
+        helpTexts={helpTexts}
       >
         <KoulutusasteSelect
           selectedKoulutusasteet={selectedKoulutusasteet}
@@ -286,13 +300,15 @@ const TalousarvioTili = ({
           isDisabled={disabled || !selectedTalousarvioTili}
           onAddRow={onAddKoulutusasteRow}
           onRemoveRow={onRemoveKoulutusasteRow}
+          helpTexts={helpTexts}
         />
       </TalousarvioSelect>
     </div>
   );
 };
 
-export const Talousarviotilit = () => {
+type TalousarviotilitProps = { helpTexts: HelpTexts };
+export const Talousarviotilit = ({ helpTexts }: TalousarviotilitProps) => {
   const { data, isLoading } = useGetTalousarvioTilitQuery();
   const talousarvioOptions = data?.map(mapTiliOption) ?? [];
   const selectedHaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
@@ -434,6 +450,7 @@ export const Talousarviotilit = () => {
           onAddNewTalousarvio={onAddTalousarvioTili}
           onRemoveTalousarvio={onRemoveTalousarvio}
           talousarvioTiliIndex={0}
+          helpTexts={helpTexts}
         />
       </div>
     );
@@ -458,6 +475,7 @@ export const Talousarviotilit = () => {
           onAddNewTalousarvio={onAddTalousarvioTili}
           onRemoveTalousarvio={onRemoveTalousarvio}
           talousarvioTiliIndex={index}
+          helpTexts={helpTexts}
         />
       ))}
     </div>
