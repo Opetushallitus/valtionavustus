@@ -9,6 +9,7 @@
            WHERE avustushaku_id = ?
            AND tt.deleted IS NULL
            AND att.deleted IS NULL
+           ORDER BY tt.id
         " [avustushaku-id]))
 
 (defn insert-talousarviotili [avustushaku-id talousarviotili, tx]
