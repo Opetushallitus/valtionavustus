@@ -203,7 +203,12 @@ const KoulutusasteSelect = ({
             {index === 0 && (
               <div>
                 Koulutusaste
-                <HelpTooltip content="" /> *
+                <HelpTooltip
+                  content={
+                    helpTexts["hakujen_hallinta__haun_tiedot___koulutusaste"]
+                  }
+                />{" "}
+                *
               </div>
             )}
             <div className={styles.koulutusasteSelect}>
