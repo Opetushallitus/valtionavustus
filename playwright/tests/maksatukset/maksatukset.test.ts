@@ -60,6 +60,7 @@ export async function putMaksupalauteToMaksatuspalveluAndProcessIt(
   };
   await request.post(`${VIRKAILIJA_URL}/api/test/process-maksupalaute`, {
     data,
+    timeout: 30000,
     failOnStatusCode: true,
   });
 }
