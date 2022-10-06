@@ -92,7 +92,8 @@
     (-> payment-data
         (assoc :application-version (:version application)
                :grant-id (:grant-id application)
-               :pitkaviite pitkaviite)
+               :pitkaviite pitkaviite
+               :project-code (:project-code application))
         (merge (get-user-info identity))
         convert-to-underscore-keys
         store-payment

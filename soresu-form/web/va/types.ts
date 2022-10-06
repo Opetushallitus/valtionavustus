@@ -180,6 +180,7 @@ export interface Payment {
   "paymentstatus-id": PaymentStatus;
   "file-name"?: string;
   pitkaviite: string;
+  "project-code"?: string;
   "user-name"?: string;
   "batch-id"?: number;
   phase?: number;

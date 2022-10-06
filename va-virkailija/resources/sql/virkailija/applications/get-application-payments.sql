@@ -11,6 +11,7 @@ SELECT
   payments.batch_id,
   payments.payment_sum,
   payments.phase,
+  payments.project_code,
   coalesce(
     payments.pitkaviite,
     hakemukset.register_number
