@@ -61,8 +61,10 @@
 
 (defn send-payment [payment application data]
   (let [filename (create-filename payment)
+        projectCode (or (:project-code payment) (:project-code application))
         updated-payment (payments-data/update-payment
-                          (assoc payment :batch-id (get-in data [:batch :id]))
+                          (assoc payment :batch-id (get-in data [:batch :id])
+                                         :project-code projectCode)
                           (:identity data))]
     (-> updated-payment
         (send-to-rondo! application (:grant data) filename (:batch data))
