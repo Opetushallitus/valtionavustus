@@ -73,14 +73,27 @@
       (a/timeout timeout-limit) ([_] (log/warn "Timeout from Rondo!")))))
 
 (defn processMaksupalaute []
+  (log/info "Running scheduled fetch of payments now from rondo!")
   (let [remote-service (rondo-service/create-service
                          (get-in config [:server :payment-service-sftp]))]
     (get-statuses-of-payments remote-service)))
 
-(defjob RondoJob
-  [_ctx]
-  (log/info "Running scheduled fetch of payments now from rondo!")
-        (processMaksupalaute))
+(defn calculate-exponential-backoff [retries]
+  (* 1000 (Math/pow 2 retries)))
+
+(defn retry-job [fn retries]
+  (try
+    (fn)
+    (catch Exception e
+      (let [delay-ms (calculate-exponential-backoff retries)]
+        (if (>= retries 10)
+          (log/error e "Job failed. Retrying in " delay-ms " ms")
+          (log/info e "Job failed. Retrying in " delay-ms " ms"))
+        (Thread/sleep delay-ms)
+        (retry-job fn (inc retries))))))
+
+(defjob RondoJob [_ctx]
+  (retry-job processMaksupalaute 0))
 
 (defn schedule-fetch-from-rondo []
   (let [s (qs/start (qs/initialize))
