@@ -71,36 +71,40 @@
   (java.util.UUID/randomUUID))
 
 (defn create-application [grant submission]
-  (first (exec hakija-api-tools/create-hakemus
-               {:avustushaku_id (:id grant)
-                :status :submitted
-                :user_key (generate-hash-id)
-                :form_submission_id (:id submission)
-                :form_submission_version (:version submission)
-                :version (:version submission)
-                :budget_total 200000
-                :budget_oph_share 1500000
-                :organization_name "Test Organisation"
-                :project_name "Test Project"
-                :language "fi"
-                :register_number "123/456/78"
-                :hakemus_type "hakemus"})))
+  (let [project (first (exec hakija-api-tools/create-project {}))]
+    (first (exec hakija-api-tools/create-hakemus
+                 {:avustushaku_id (:id grant)
+                  :status :submitted
+                  :user_key (generate-hash-id)
+                  :form_submission_id (:id submission)
+                  :form_submission_version (:version submission)
+                  :version (:version submission)
+                  :budget_total 200000
+                  :project_id (:id project)
+                  :budget_oph_share 1500000
+                  :organization_name "Test Organisation"
+                  :project_name "Test Project"
+                  :language "fi"
+                  :register_number "123/456/78"
+                  :hakemus_type "hakemus"}))))
 
 (defn create-valiselvitys [hakemus submission]
-  (first (exec hakija-api-tools/create-hakemus
-               {:avustushaku_id (:avustushaku hakemus)
-                :status :submitted
-                :user_key (generate-hash-id)
-                :form_submission_id (:id submission)
-                :form_submission_version (:version submission)
-                :version (:version submission)
-                :budget_total 200000
-                :budget_oph_share 1500000
-                :organization_name "Test Organisation"
-                :project_name "Test Project"
-                :language "fi"
-                :register_number "123/456/78"
-                :hakemus_type "valiselvitys"})))
+  (let [project (first (exec hakija-api-tools/create-project {}))]
+    (first (exec hakija-api-tools/create-hakemus
+                 {:avustushaku_id (:avustushaku hakemus)
+                  :status :submitted
+                  :user_key (generate-hash-id)
+                  :form_submission_id (:id submission)
+                  :form_submission_version (:version submission)
+                  :version (:version submission)
+                  :budget_total 200000
+                  :budget_oph_share 1500000
+                  :organization_name "Test Organisation"
+                  :project_name "Test Project"
+                  :project_id (:id project)
+                  :language "fi"
+                  :register_number "123/456/78"
+                  :hakemus_type "valiselvitys"}))))
 
 
 (defn create-application-evaluation

@@ -7,6 +7,7 @@
 (defquery cancel-all-applications! "sql/spec/hakija/cancel-all-applications.sql")
 (defquery set-application-refused! "sql/spec/hakija/set-application-refused.sql")
 (defquery create-hakemus "sql/spec/hakija/create-hakemus.sql")
+(defquery create-project "sql/spec/hakija/create-project.sql")
 (defquery set-all-grants-resolved! "sql/spec/hakija/set-all-grants-resolved.sql")
 
 (defn cancel-all-applications []
