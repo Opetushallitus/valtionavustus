@@ -67,7 +67,14 @@ const Väliselvitys = ({
           index={1}
           payments={hakemus.payments}
           onAddPayment={(paymentSum: number, index: number) => {
-            dispatch(addPayment({ paymentSum, index, hakemusId: hakemus.id }));
+            dispatch(
+              addPayment({
+                paymentSum,
+                index,
+                hakemusId: hakemus.id,
+                projectCode: hakemus.project?.code,
+              })
+            );
           }}
           onRemovePayment={(paymentId: number) =>
             dispatch(removePayment({ paymentId, hakemusId: hakemus.id }))

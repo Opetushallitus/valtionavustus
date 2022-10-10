@@ -382,11 +382,16 @@ export const refreshHakemukset = createAsyncThunk<
 
 export const addPayment = createAsyncThunk<
   Payment,
-  { paymentSum: number; index: number; hakemusId: number },
+  {
+    paymentSum: number;
+    index: number;
+    hakemusId: number;
+    projectCode: string | undefined;
+  },
   { state: HakemustenArviointiRootState; rejectValue: string }
 >(
   "arviointi/addPayment",
-  async ({ paymentSum, index, hakemusId }, thunkAPI) => {
+  async ({ paymentSum, index, hakemusId, projectCode }, thunkAPI) => {
     const hakemus = getHakemus(thunkAPI.getState().arviointi, hakemusId);
     try {
       return await HttpUtil.post("/api/v2/payments/", {
@@ -395,6 +400,7 @@ export const addPayment = createAsyncThunk<
         "paymentstatus-id": "waiting",
         "batch-id": null,
         "payment-sum": paymentSum,
+        "project-code": projectCode,
         phase: index,
       });
     } catch (e) {
