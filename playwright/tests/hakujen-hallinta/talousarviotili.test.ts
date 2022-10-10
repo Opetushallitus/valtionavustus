@@ -87,7 +87,7 @@ const test = defaultValues.extend<{
 });
 
 test.describe.parallel("talousarvio select", () => {
-  test("migrated talousarviotili cannot be selected for new avusushaku", async ({
+  test("migrated talousarviotili cannot be selected for new avustushaku", async ({
     page,
   }) => {
     const migratedTili = createRandomTalousarviotiliCode();
@@ -99,9 +99,10 @@ test.describe.parallel("talousarvio select", () => {
     const firstTili = locators.taTili.tili(0);
     await expect(firstTili.value).toBeHidden();
     await firstTili.input.fill(migratedTili);
+    await expect(firstTili.option).toHaveCount(1);
     const firstOption = await firstTili.option.first();
     await test.step("talousarviotili is found in list", async () => {
-      await expect(firstTili.option.first()).toHaveText(migratedTili);
+      await expect(firstOption).toHaveText(migratedTili);
     });
     await test.step("talousarviotili is disabled", async () => {
       await expect(firstOption).toHaveAttribute("aria-disabled", "true");
