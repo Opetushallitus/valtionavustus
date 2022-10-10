@@ -72,20 +72,4 @@
     <packageUrl regex="true">^pkg:maven/xalan/xalan@2.7.2</packageUrl>
     <cve>CVE-2022-34169</cve>
   </suppress>
-  <suppress until="2022-10-09Z">
-    <notes><![CDATA[
-    Latest version still has one unpatched vulnerability, suppressed for a month
-    ]]>
-    </notes>
-    <packageUrl regex="true">^pkg:maven/org.yaml/snakeyaml@1.31</packageUrl>
-    <cve>CVE-2022-38752</cve>
-  </suppress>
-  <suppress until="2022-10-09Z">
-    <notes><![CDATA[
-    Latest version still has one unpatched vulnerability, suppressed for a month
-    ]]>
-    </notes>
-    <packageUrl regex="true">^pkg:maven/org.yaml/snakeyaml@1.31</packageUrl>
-    <cve>CVE-2022-38751</cve>
-  </suppress>
 </suppressions>
