@@ -62,7 +62,8 @@
 (defn clear-db-and-grant! [schema-name grant-user]
     (if (:allow-db-clear? (:server config))
       (try (apply (partial jdbc/db-do-commands {:datasource (get-datasource)} true)
-                  (concat [(str "drop schema if exists " schema-name " cascade")
+                  (concat [(if (= schema-name "virkailija") "delete from hakija.hakemukset" "")
+                           (str "drop schema if exists " schema-name " cascade")
                            (str "create schema " schema-name)]
                           (if grant-user
                             [(str "grant usage on schema " schema-name " to " grant-user)
