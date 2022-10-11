@@ -108,11 +108,6 @@ export function MaksatuksetPage(page: Page) {
     ]);
   }
 
-  async function clickLahtevatMaksatuksetTab() {
-    await page.locator(`text=Lähtevät maksatukset`).click();
-    return lahtevatMaksueratTab(page);
-  }
-
   async function clickLahetetytMaksatuksetTab() {
     await page.locator(`text=Lähetetyt maksatukset`).click();
     return lahetetytMaksueratTab(page);
@@ -125,7 +120,6 @@ export function MaksatuksetPage(page: Page) {
     goto,
     reloadPaymentPage,
     sendMaksatukset,
-    clickLahtevatMaksatuksetTab,
     clickLahetetytMaksatuksetTab,
     page,
   };
@@ -157,35 +151,6 @@ function lahetetytMaksueratTab(page: Page) {
       allekirjoitettuYhteenveto: tableTdLocator.nth(6),
       presenterEmail: tableTdLocator.nth(7),
       acceptorEmail: tableTdLocator.nth(8),
-    };
-  };
-}
-
-function lahtevatMaksueratTab(page: Page) {
-  return function maksuerat(phase: 1 | 2 | 3) {
-    const tableSelector = `[title="Olemassaolevan maksuerän tietoja ei voi muokata"] [class="va-ui-table-body"] tr:nth-of-type(${phase})`;
-
-    async function getPhaseTitle(): Promise<string> {
-      return await page.innerText(`${tableSelector} td:nth-of-type(1)`);
-    }
-    async function getAsha(): Promise<string> {
-      return await page.innerText(`${tableSelector} td:nth-of-type(2)`);
-    }
-    async function getPresenterEmail(): Promise<string> {
-      return await page.innerText(`${tableSelector} td:nth-of-type(3)`);
-    }
-    async function getAcceptorEmail(): Promise<string> {
-      return await page.innerText(`${tableSelector} td:nth-of-type(4)`);
-    }
-    async function getDateAdded(): Promise<string> {
-      return await page.innerText(`${tableSelector} td:nth-of-type(5)`);
-    }
-    return {
-      getAsha,
-      getPresenterEmail,
-      getAcceptorEmail,
-      getDateAdded,
-      getPhaseTitle,
     };
   };
 }
