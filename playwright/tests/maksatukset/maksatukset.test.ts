@@ -110,17 +110,17 @@ async function testPaymentBatchesTable(page: Page) {
   const maksatuksetPage = MaksatuksetPage(page);
   const sentPayments = await maksatuksetPage.clickLahetetytMaksatuksetTab();
 
-  expect(await sentPayments(3).getPhaseTitle()).toEqual("3. erä");
-  expect(await sentPayments(2).getTotalSum()).toEqual("30000");
-  expect(await sentPayments(3).getTotalSum()).toEqual("10000");
-  expect(await sentPayments(1).getAmountOfPayments()).toEqual("1");
-  expect(await sentPayments(3).getLaskupvm()).toEqual(today());
-  expect(await sentPayments(2).getErapvm()).toEqual(oneWeekFromNow());
-  expect(await sentPayments(1).getAllekirjoitettuYhteenveto()).toEqual(
+  await expect(sentPayments(3).phaseTitle).toHaveText("3. erä");
+  await expect(sentPayments(2).totalSum).toHaveText("30000");
+  await expect(sentPayments(3).totalSum).toHaveText("10000");
+  await expect(sentPayments(1).amountOfPayments).toHaveText("1");
+  await expect(sentPayments(3).laskuPaivamaara).toHaveText(today());
+  await expect(sentPayments(2).eraPaivamaara).toHaveText(oneWeekFromNow());
+  await expect(sentPayments(1).allekirjoitettuYhteenveto).toHaveText(
     "asha pasha"
   );
-  expect(await sentPayments(2).getPresenterEmail()).toEqual(presenter);
-  expect(await sentPayments(3).getAcceptorEmail()).toEqual(acceptor);
+  await expect(sentPayments(2).presenterEmail).toHaveText(presenter);
+  await expect(sentPayments(3).acceptorEmail).toHaveText(acceptor);
 }
 
 const withoutDots = (tatili: string) => tatili.replaceAll(".", "");
@@ -135,30 +135,30 @@ async function testSentPaymentsTable(
   const maksatuksetPage = MaksatuksetPage(page);
   const sentPayments = await maksatuksetPage.clickLahetetytMaksatuksetTab();
 
-  expect(await sentPayments(1).getPitkaviite()).toEqual(
+  await expect(sentPayments(1).pitkaviite).toHaveText(
     `${registerNumber}_1 Erkki Esimerkki`
   );
-  expect(await sentPayments(2).getPitkaviite()).toEqual(
+  await expect(sentPayments(2).pitkaviite).toHaveText(
     `${registerNumber}_2 Erkki Esimerkki`
   );
-  expect(await sentPayments(3).getPitkaviite()).toEqual(
+  await expect(sentPayments(3).pitkaviite).toHaveText(
     `${registerNumber}_3 Erkki Esimerkki`
   );
-  expect(await sentPayments(1).getPaymentStatus()).toEqual("Lähetetty");
-  expect(await sentPayments(2).getToimittaja()).toEqual("Akaan kaupunki");
-  expect(await sentPayments(3).getHanke()).toEqual("Rahassa kylpijät Ky Ay Oy");
-  expect(await sentPayments(3).getHanke()).toEqual("Rahassa kylpijät Ky Ay Oy");
-  expect(await sentPayments(1).getMaksuun()).toEqual("59999 €");
-  expect(await sentPayments(2).getMaksuun()).toEqual("30000 €");
-  expect(await sentPayments(3).getMaksuun()).toEqual("10000 €");
-  expect(await sentPayments(1).getIBAN()).toEqual("FI95 6682 9530 0087 65");
-  expect(await sentPayments(2).getLKPT()).toEqual("82010000");
-  await expect(sentPayments(3).getTAKP()).toHaveText(
+  await expect(sentPayments(1).paymentStatus).toHaveText("Lähetetty");
+  await expect(sentPayments(2).toimittaja).toHaveText("Akaan kaupunki");
+  await expect(sentPayments(3).hanke).toHaveText("Rahassa kylpijät Ky Ay Oy");
+  await expect(sentPayments(3).hanke).toHaveText("Rahassa kylpijät Ky Ay Oy");
+  await expect(sentPayments(1).maksuun).toHaveText("59999 €");
+  await expect(sentPayments(2).maksuun).toHaveText("30000 €");
+  await expect(sentPayments(3).maksuun).toHaveText("10000 €");
+  await expect(sentPayments(1).iban).toHaveText("FI95 6682 9530 0087 65");
+  await expect(sentPayments(2).lkpTili).toHaveText("82010000");
+  await expect(sentPayments(3).takpTili).toHaveText(
     withoutDots(talousarviotili)
   );
-  expect(await sentPayments(1).getTiliöinti()).toEqual("59999 €");
-  expect(await sentPayments(2).getTiliöinti()).toEqual("30000 €");
-  expect(await sentPayments(3).getTiliöinti()).toEqual("10000 €");
+  await expect(sentPayments(1).tiliointi).toHaveText("59999 €");
+  await expect(sentPayments(2).tiliointi).toHaveText("30000 €");
+  await expect(sentPayments(3).tiliointi).toHaveText("10000 €");
 }
 
 test.describe("Maksatukset", () => {
@@ -232,22 +232,20 @@ test.describe("Maksatukset", () => {
         await getHakemusTokenAndRegisterNumber(hakemusID);
       const pitkaviite = `${registerNumber}_1 Erkki Esimerkki`;
 
-      expect(await paymentBatches(1).getPitkaviite()).toEqual(pitkaviite);
-      expect(await paymentBatches(1).getPaymentStatus()).toEqual("Lähetetty");
-      expect(await paymentBatches(1).getToimittaja()).toEqual("Akaan kaupunki");
-      expect(await paymentBatches(1).getHanke()).toEqual(
+      await expect(paymentBatches(1).pitkaviite).toHaveText(pitkaviite);
+      await expect(paymentBatches(1).paymentStatus).toHaveText("Lähetetty");
+      await expect(paymentBatches(1).toimittaja).toHaveText("Akaan kaupunki");
+      await expect(paymentBatches(1).hanke).toHaveText(
         "Rahassa kylpijät Ky Ay Oy"
       );
 
       const maksuun = "99999 €";
-      expect(await paymentBatches(1).getMaksuun()).toEqual(maksuun);
-      expect(await paymentBatches(1).getIBAN()).toEqual(
-        "FI95 6682 9530 0087 65"
-      );
-      expect(await paymentBatches(1).getLKPT()).toEqual("82010000");
+      await expect(paymentBatches(1).maksuun).toHaveText(maksuun);
+      await expect(paymentBatches(1).iban).toHaveText("FI95 6682 9530 0087 65");
+      await expect(paymentBatches(1).lkpTili).toHaveText("82010000");
       const tatili = withoutDots(talousarviotili.code);
-      await expect(paymentBatches(1).getTAKP()).toHaveText(tatili);
-      expect(await paymentBatches(1).getTiliöinti()).toEqual(maksuun);
+      await expect(paymentBatches(1).takpTili).toHaveText(tatili);
+      await expect(paymentBatches(1).tiliointi).toHaveText(maksuun);
 
       await putMaksupalauteToMaksatuspalveluAndProcessIt(
         page.request,
@@ -264,7 +262,7 @@ test.describe("Maksatukset", () => {
 
       await maksatuksetPage.reloadPaymentPage();
       await maksatuksetPage.clickLahetetytMaksatuksetTab();
-      expect(await paymentBatches(1).getPaymentStatus()).toEqual("Maksettu");
+      await expect(paymentBatches(1).paymentStatus).toHaveText("Maksettu");
 
       const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu(
         page.request
@@ -314,21 +312,19 @@ test.describe("Maksatukset", () => {
       await getHakemusTokenAndRegisterNumber(hakemusID);
     const pitkaviite = registerNumber;
 
-    expect(await sentPayments(1).getPitkaviite()).toEqual(pitkaviite);
-    expect(await sentPayments(1).getPaymentStatus()).toEqual("Lähetetty");
-    expect(await sentPayments(1).getToimittaja()).toEqual("Akaan kaupunki");
-    expect(await sentPayments(1).getHanke()).toEqual(
-      "Rahassa kylpijät Ky Ay Oy"
-    );
+    await expect(sentPayments(1).pitkaviite).toHaveText(pitkaviite);
+    await expect(sentPayments(1).paymentStatus).toHaveText("Lähetetty");
+    await expect(sentPayments(1).toimittaja).toHaveText("Akaan kaupunki");
+    await expect(sentPayments(1).hanke).toHaveText("Rahassa kylpijät Ky Ay Oy");
 
     const maksuun = "99999 €";
-    expect(await sentPayments(1).getMaksuun()).toEqual(maksuun);
-    expect(await sentPayments(1).getIBAN()).toEqual("FI95 6682 9530 0087 65");
-    expect(await sentPayments(1).getLKPT()).toEqual("82010000");
-    await expect(sentPayments(1).getTAKP()).toHaveText(
+    await expect(sentPayments(1).maksuun).toHaveText(maksuun);
+    await expect(sentPayments(1).iban).toHaveText("FI95 6682 9530 0087 65");
+    await expect(sentPayments(1).lkpTili).toHaveText("82010000");
+    await expect(sentPayments(1).takpTili).toHaveText(
       withoutDots(talousarviotili.code)
     );
-    expect(await sentPayments(1).getTiliöinti()).toEqual(maksuun);
+    await expect(sentPayments(1).tiliointi).toHaveText(maksuun);
 
     await putMaksupalauteToMaksatuspalveluAndProcessIt(
       page.request,
@@ -345,7 +341,7 @@ test.describe("Maksatukset", () => {
 
     await maksatuksetPage.reloadPaymentPage();
     await maksatuksetPage.clickLahetetytMaksatuksetTab();
-    expect(await sentPayments(1).getPaymentStatus()).toEqual("Maksettu");
+    await expect(sentPayments(1).paymentStatus).toHaveText("Maksettu");
   });
 
   test("work with pitkaviite with contact person name", async ({
@@ -367,19 +363,17 @@ test.describe("Maksatukset", () => {
       await getHakemusTokenAndRegisterNumber(hakemusID);
     const pitkaviite = `${registerNumber}_1 Erkki Esimerkki`;
 
-    expect(await sentPayments(1).getPitkaviite()).toEqual(pitkaviite);
-    expect(await sentPayments(1).getPaymentStatus()).toEqual("Lähetetty");
-    expect(await sentPayments(1).getToimittaja()).toEqual("Akaan kaupunki");
-    expect(await sentPayments(1).getHanke()).toEqual(
-      "Rahassa kylpijät Ky Ay Oy"
-    );
+    await expect(sentPayments(1).pitkaviite).toHaveText(pitkaviite);
+    await expect(sentPayments(1).paymentStatus).toHaveText("Lähetetty");
+    await expect(sentPayments(1).toimittaja).toHaveText("Akaan kaupunki");
+    await expect(sentPayments(1).hanke).toHaveText("Rahassa kylpijät Ky Ay Oy");
     const maksuun = "99999 €";
-    expect(await sentPayments(1).getMaksuun()).toEqual(maksuun);
-    expect(await sentPayments(1).getIBAN()).toEqual("FI95 6682 9530 0087 65");
-    expect(await sentPayments(1).getLKPT()).toEqual("82010000");
+    await expect(sentPayments(1).maksuun).toHaveText(maksuun);
+    await expect(sentPayments(1).iban).toHaveText("FI95 6682 9530 0087 65");
+    await expect(sentPayments(1).lkpTili).toHaveText("82010000");
     const tatili = withoutDots(talousarviotili.code);
-    await expect(sentPayments(1).getTAKP()).toHaveText(tatili);
-    expect(await sentPayments(1).getTiliöinti()).toEqual(maksuun);
+    await expect(sentPayments(1).takpTili).toHaveText(tatili);
+    await expect(sentPayments(1).tiliointi).toHaveText(maksuun);
 
     await putMaksupalauteToMaksatuspalveluAndProcessIt(
       page.request,
@@ -398,7 +392,7 @@ test.describe("Maksatukset", () => {
     const sentPaymentsAfterMaksupalaute =
       await maksatuksetPage.clickLahetetytMaksatuksetTab();
     const statuses = sentPaymentsAfterMaksupalaute(1);
-    expect(await statuses.getPaymentStatus()).toEqual("Maksettu");
+    await expect(statuses.paymentStatus).toHaveText("Maksettu");
 
     const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu(
       page.request
@@ -417,7 +411,7 @@ test.describe("Maksatukset", () => {
   });
 
   showProjectCodeTest(
-    "sends correct project code to maksatuksen when there are multiple project codes for avustushaku",
+    "sends correct project code to maksatukset when there are multiple project codes for avustushaku",
     async ({
       page,
       acceptedHakemus,

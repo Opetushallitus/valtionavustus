@@ -59,38 +59,14 @@ export function MaksatuksetPage(page: Page) {
       .locator(`.maksatukset_document-phase`)
       .count();
 
-    function phaseFiller(phase: number) {
-      const row = page.locator(`.maksatukset_document`).nth(phase);
-
-      async function fillASHA(tunniste: string) {
-        await row.locator("input").nth(0).fill(tunniste);
-      }
-      async function fillPresenterEmail(email: string) {
-        await row.locator("input").nth(1).fill(email);
-      }
-      async function fillAcceptorEmail(email: string) {
-        await row.locator("input").nth(2).fill(email);
-      }
-      async function lisaaAsiakirja() {
-        await row.locator("text=Lisää asiakirja").click();
-      }
-
-      return {
-        fillASHA,
-        fillPresenterEmail,
-        fillAcceptorEmail,
-        lisaaAsiakirja,
-      };
-    }
-
     await fillTositepaivamaara();
 
     for (let i = 0; i < amountOfInstallments; i++) {
-      const rowFiller = phaseFiller(i);
-      await rowFiller.fillASHA(ashaTunniste);
-      await rowFiller.fillPresenterEmail(esittelijanOsoite);
-      await rowFiller.fillAcceptorEmail(hyvaksyjanOsoite);
-      await rowFiller.lisaaAsiakirja();
+      const row = page.locator(`.maksatukset_document`).nth(i);
+      await row.locator("input").nth(0).fill(ashaTunniste);
+      await row.locator("input").nth(1).fill(esittelijanOsoite);
+      await row.locator("input").nth(2).fill(hyvaksyjanOsoite);
+      await row.locator("text=Lisää asiakirja").click();
     }
   }
 
@@ -159,121 +135,28 @@ function lahetetytMaksueratTab(page: Page) {
   return function maksuerat(phase: 1 | 2 | 3) {
     const tableSelector = `[data-test-id="maksatukset-table-batches"] tbody tr:nth-of-type(${phase})`;
     const tableRowIndex = phase - 1;
-
-    async function getPitkaviite(): Promise<string> {
-      return await page
-        .locator("data-test-id=pitkaviite")
-        .nth(tableRowIndex)
-        .innerText();
-    }
-
-    async function getPaymentStatus(): Promise<string> {
-      return await page
-        .locator("data-test-id=payment-status")
-        .nth(tableRowIndex)
-        .innerText();
-    }
-
-    async function getToimittaja(): Promise<string> {
-      return await page
-        .locator("data-test-id=toimittaja")
-        .nth(tableRowIndex)
-        .innerText();
-    }
-
-    async function getHanke(): Promise<string> {
-      return await page
-        .locator("data-test-id=hanke")
-        .nth(tableRowIndex)
-        .innerText();
-    }
-
-    async function getMaksuun(): Promise<string> {
-      return await page
-        .locator("data-test-id=maksuun")
-        .nth(tableRowIndex)
-        .innerText();
-    }
-
-    async function getIBAN(): Promise<string> {
-      return await page
-        .locator("data-test-id=iban")
-        .nth(tableRowIndex)
-        .innerText();
-    }
-
-    async function getLKPT(): Promise<string> {
-      return await page
-        .locator("data-test-id=lkp-tili")
-        .nth(tableRowIndex)
-        .innerText();
-    }
-
-    function getTAKP() {
-      return page.locator("data-test-id=takp-tili").nth(tableRowIndex);
-    }
-    async function getTiliöinti(): Promise<string> {
-      return await page
-        .locator("data-test-id=tiliointi")
-        .nth(tableRowIndex)
-        .innerText();
-    }
-
-    async function getPhaseTitle(): Promise<string> {
-      return await page.innerText(`${tableSelector} td:nth-of-type(1)`);
-    }
-
-    async function getTotalSum(): Promise<string> {
-      return await page.innerText(`${tableSelector} td:nth-of-type(2)`);
-    }
-
-    async function getAmountOfPayments(): Promise<string> {
-      return await page.innerText(`${tableSelector} td:nth-of-type(3)`);
-    }
-
-    async function getLaskupvm(): Promise<string> {
-      return await page.innerText(`${tableSelector} td:nth-of-type(4)`);
-    }
-
-    async function getErapvm(): Promise<string> {
-      return await page.innerText(`${tableSelector} td:nth-of-type(5)`);
-    }
-
-    async function getTositepaiva(): Promise<string> {
-      return await page.innerText(`${tableSelector} td:nth-of-type(6)`);
-    }
-
-    async function getAllekirjoitettuYhteenveto(): Promise<string> {
-      return await page.innerText(`${tableSelector} td:nth-of-type(7)`);
-    }
-
-    async function getPresenterEmail(): Promise<string> {
-      return await page.innerText(`${tableSelector} td:nth-of-type(8)`);
-    }
-
-    async function getAcceptorEmail(): Promise<string> {
-      return await page.innerText(`${tableSelector} td:nth-of-type(9)`);
-    }
-
+    const tableTdLocator = page.locator(`${tableSelector} td`);
     return {
-      getPhaseTitle,
-      getTotalSum,
-      getAmountOfPayments,
-      getLaskupvm,
-      getErapvm,
-      getTositepaiva,
-      getAllekirjoitettuYhteenveto,
-      getPresenterEmail,
-      getAcceptorEmail,
-      getPitkaviite,
-      getPaymentStatus,
-      getToimittaja,
-      getHanke,
-      getMaksuun,
-      getIBAN,
-      getLKPT,
-      getTAKP,
-      getTiliöinti,
+      pitkaviite: page.locator("data-test-id=pitkaviite").nth(tableRowIndex),
+      paymentStatus: page
+        .locator("data-test-id=payment-status")
+        .nth(tableRowIndex),
+      toimittaja: page.locator("data-test-id=toimittaja").nth(tableRowIndex),
+      hanke: page.locator("data-test-id=hanke").nth(tableRowIndex),
+      maksuun: page.locator("data-test-id=maksuun").nth(tableRowIndex),
+      iban: page.locator("data-test-id=iban").nth(tableRowIndex),
+      lkpTili: page.locator("data-test-id=lkp-tili").nth(tableRowIndex),
+      takpTili: page.locator("data-test-id=takp-tili").nth(tableRowIndex),
+      tiliointi: page.locator("data-test-id=tiliointi").nth(tableRowIndex),
+      phaseTitle: tableTdLocator.nth(0),
+      totalSum: tableTdLocator.nth(1),
+      amountOfPayments: tableTdLocator.nth(2),
+      laskuPaivamaara: tableTdLocator.nth(3),
+      eraPaivamaara: tableTdLocator.nth(4),
+      tositePaiva: tableTdLocator.nth(5),
+      allekirjoitettuYhteenveto: tableTdLocator.nth(6),
+      presenterEmail: tableTdLocator.nth(7),
+      acceptorEmail: tableTdLocator.nth(8),
     };
   };
 }
