@@ -162,7 +162,7 @@ const MaksatuksetPhase = ({
                   </a>
                 </td>
                 <td
-                  data-test-id={`project-code-${project?.code}`}
+                  data-test-id="project-code"
                   className="align-left semi-narrow-column"
                 >
                   {project ? (

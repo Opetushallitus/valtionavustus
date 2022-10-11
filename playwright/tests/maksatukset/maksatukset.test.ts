@@ -423,16 +423,17 @@ test.describe("Maksatukset", () => {
       const lastProjectCode = project[project.length - 1];
       expectToBeDefined(lastProjectCode);
       const maksatusPage = MaksatuksetPage(page);
-      await maksatusPage.goto(avustushakuName);
+      const lahtevatMaksatukset = await maksatusPage.goto(avustushakuName);
+      const projektikoodi = `Projekti ${lastProjectCode}`;
+      await expect(lahtevatMaksatukset.projektikoodi).toHaveText(projektikoodi);
       const dueDate =
         await maksatusPage.fillMaksueranTiedotAndSendMaksatukset();
       await maksatusPage.reloadPaymentPage();
-      await maksatusPage.clickLahetetytMaksatuksetTab();
-      await expect(
-        maksatusPage.page.locator(
-          `[data-test-id="project-code-${lastProjectCode}"]`
-        )
-      ).toHaveText(`Projekti ${lastProjectCode}`);
+      const lahetetytMaksatukset =
+        await maksatusPage.clickLahetetytMaksatuksetTab();
+      await expect(lahetetytMaksatukset(1).projektikoodi).toHaveText(
+        projektikoodi
+      );
 
       const { "register-number": registerNumber } =
         await getHakemusTokenAndRegisterNumber(acceptedHakemus.hakemusID);

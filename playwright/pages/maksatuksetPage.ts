@@ -9,6 +9,7 @@ export function MaksatuksetPage(page: Page) {
     const hakujenHallintaPage = new HakujenHallintaPage(page);
     await hakujenHallintaPage.navigateToHakemusByClicking(avustushakuName);
     await page.locator("text=Maksatukset >> a").click();
+    return maksatuksetTable(page);
   }
 
   async function fillTositepaivamaara() {
@@ -115,23 +116,30 @@ export function MaksatuksetPage(page: Page) {
   };
 }
 
+function maksatuksetTable(page: Page, tableRowIndex = 0) {
+  return {
+    pitkaviite: page.locator("data-test-id=pitkaviite").nth(tableRowIndex),
+    paymentStatus: page
+      .locator("data-test-id=payment-status")
+      .nth(tableRowIndex),
+    toimittaja: page.locator("data-test-id=toimittaja").nth(tableRowIndex),
+    hanke: page.locator("data-test-id=hanke").nth(tableRowIndex),
+    projektikoodi: page.locator("data-test-id=project-code").nth(tableRowIndex),
+    maksuun: page.locator("data-test-id=maksuun").nth(tableRowIndex),
+    iban: page.locator("data-test-id=iban").nth(tableRowIndex),
+    lkpTili: page.locator("data-test-id=lkp-tili").nth(tableRowIndex),
+    takpTili: page.locator("data-test-id=takp-tili").nth(tableRowIndex),
+    tiliointi: page.locator("data-test-id=tiliointi").nth(tableRowIndex),
+  };
+}
+
 function lahetetytMaksueratTab(page: Page) {
   return function maksuerat(phase: 1 | 2 | 3) {
     const tableSelector = `[data-test-id="maksatukset-table-batches"] tbody tr:nth-of-type(${phase})`;
     const tableRowIndex = phase - 1;
     const tableTdLocator = page.locator(`${tableSelector} td`);
     return {
-      pitkaviite: page.locator("data-test-id=pitkaviite").nth(tableRowIndex),
-      paymentStatus: page
-        .locator("data-test-id=payment-status")
-        .nth(tableRowIndex),
-      toimittaja: page.locator("data-test-id=toimittaja").nth(tableRowIndex),
-      hanke: page.locator("data-test-id=hanke").nth(tableRowIndex),
-      maksuun: page.locator("data-test-id=maksuun").nth(tableRowIndex),
-      iban: page.locator("data-test-id=iban").nth(tableRowIndex),
-      lkpTili: page.locator("data-test-id=lkp-tili").nth(tableRowIndex),
-      takpTili: page.locator("data-test-id=takp-tili").nth(tableRowIndex),
-      tiliointi: page.locator("data-test-id=tiliointi").nth(tableRowIndex),
+      ...maksatuksetTable(page, tableRowIndex),
       phaseTitle: tableTdLocator.nth(0),
       totalSum: tableTdLocator.nth(1),
       amountOfPayments: tableTdLocator.nth(2),
