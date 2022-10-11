@@ -162,11 +162,14 @@
    :invoice-date (first (get-content xml [:VA-invoice :Header :Maksupvm]))})
 
 (defn write-xml!
-  "Writes XML document to a file.
+  "Writes XML document to a file and returns the document as a string.
   Document should be tags as clojure.data.xml.elements."
   [tags file]
-  (with-open [out-file (java.io.FileWriter. file)]
-    (emit tags out-file)))
+  (with-open [writer (java.io.StringWriter. )]
+    (emit tags writer :encoding "UTF-8")
+    (let [xml-string (.toString writer)]
+      (spit file xml-string :encoding "UTF-8")
+      xml-string)))
 
 (defn read-xml-string [s]
   (with-open [input (io/input-stream (.getBytes s "UTF-8"))]

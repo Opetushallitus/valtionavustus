@@ -7,6 +7,7 @@
    [oph.va.virkailija.db.queries :as queries]
    [oph.va.virkailija.application-data :as application-data]
    [oph.va.virkailija.grant-data :as grant-data]
+   [oph.soresu.common.db :refer [execute!]]
    [oph.va.virkailija.invoice :as invoice]))
 
 (def system-user
@@ -53,6 +54,13 @@
 (defn get-user-info [identity]
   {:user-oid (:person-oid identity)
    :user-name (format "%s %s" (:first-name identity) (:surname identity))})
+
+(defn store-outgoing-payment-xml [payment-data xml]
+  (let [id (:id payment-data)
+        version (:version payment-data)]
+    (execute! "UPDATE virkailija.payments SET outgoing_invoice = XMLPARSE (DOCUMENT ?)
+              WHERE id = ? AND version = ?
+              AND paymentstatus_id NOT IN ('sent', 'paid')", [xml, id, version])))
 
 (defn update-payment [payment-data identity]
   (let [old-payment (get-payment (:id payment-data) (:version payment-data))

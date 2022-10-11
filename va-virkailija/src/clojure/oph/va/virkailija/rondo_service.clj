@@ -3,7 +3,8 @@
             [oph.va.virkailija.remote-file-service :refer [RemoteFileService get-local-file get-sent-maksatukset-file-list]]
             [oph.va.virkailija.invoice :as invoice]
             [clojure.tools.logging :as log]
-            [clojure.string :as strc]))
+            [clojure.string :as strc]
+            [oph.va.virkailija.payments-data :as payments-data]))
 
 
 (defn create-session
@@ -46,11 +47,11 @@
   (get-in config [:local-path] (System/getProperty "java.io.tmpdir")))
 
 (defn send-payment! [{:keys [payment application grant filename batch config func]}]
-  (let [file (format "%s/%s" (get-local-file-path config) filename)]
-    (invoice/write-xml!
-     (invoice/payment-to-xml
-      {:payment payment :application application :grant grant :batch batch})
-     file)
+  (let [file (format "%s/%s" (get-local-file-path config) filename)
+        invoice-element (invoice/payment-to-xml {:payment payment :application application :grant grant :batch batch})
+        invoice-xml (invoice/write-xml! invoice-element file)]
+
+    (payments-data/store-outgoing-payment-xml payment invoice-xml)
     (if (:enabled? config)
       (let [result
             (func :method :put :file file :path (:remote_path config)

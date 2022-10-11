@@ -84,6 +84,20 @@ export async function getAllMaksatuksetFromMaksatuspalvelu(
   return maksatukset;
 }
 
+export async function getSentInvoiceFromDB(
+  request: APIRequestContext,
+  pitkaviite: string
+): Promise<string> {
+  const res = await request.post(
+    `${VIRKAILIJA_URL}/api/test/get-sent-invoice-from-db`,
+    {
+      data: { pitkaviite },
+      failOnStatusCode: true,
+    }
+  );
+  return await res.text();
+}
+
 export async function removeStoredPitkäviiteFromAllAvustushakuPayments(
   request: APIRequestContext,
   avustushakuId: number
@@ -455,18 +469,21 @@ test.describe("Maksatukset", () => {
       const maksatukset = await getAllMaksatuksetFromMaksatuspalvelu(
         page.request
       );
-      expect(maksatukset).toContainEqual(
-        maksatusPage.getExpectedPaymentXML({
-          projekti: projektikoodi,
-          toiminto: operation,
-          toimintayksikko: operationalUnit,
-          pitkaviite,
-          invoiceNumber: `${registerNumber}_1`,
-          dueDate,
-          ovt: "00372769790122",
-          talousarviotili: withoutDots(talousarviotili.code),
-        })
-      );
+      const invoiceXML = await getSentInvoiceFromDB(page.request, pitkaviite);
+
+      const expectedXML = maksatusPage.getExpectedPaymentXML({
+        projekti: projektikoodi,
+        toiminto: operation,
+        toimintayksikko: operationalUnit,
+        pitkaviite,
+        invoiceNumber: `${registerNumber}_1`,
+        dueDate,
+        ovt: "00372769790122",
+        talousarviotili: withoutDots(talousarviotili.code),
+      })
+
+      expect(maksatukset).toContainEqual(expectedXML);
+      expect(invoiceXML).toBe(expectedXML);
     }
   );
 

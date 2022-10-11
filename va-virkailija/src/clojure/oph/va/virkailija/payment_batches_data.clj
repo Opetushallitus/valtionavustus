@@ -68,7 +68,10 @@
                           (:identity data))]
     (-> updated-payment
         (send-to-rondo! application (:grant data) filename (:batch data))
-        (assoc :filename filename :payment updated-payment))))
+        (assoc
+              :filename filename
+              :payment (payments-data/get-payment (:id updated-payment) (:version updated-payment)))
+)))
 
 (defn send-payments [data]
   (let [{:keys [identity grant]} data

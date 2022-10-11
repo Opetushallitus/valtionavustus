@@ -302,6 +302,15 @@
         (log/error e)
         (internal-server-error {:message "error"}))))
 
+  (compojure-api/POST "/get-sent-invoice-from-db" []
+    :body  [body { :pitkaviite s/Str }]
+    (let [sql "SELECT outgoing_invoice::text AS invoice FROM virkailija.payments
+               WHERE paymentstatus_id = 'sent' AND pitkaviite = ?"]
+      (if-some [row (first (query sql [(:pitkaviite body)]))]
+        (-> (ok (:invoice row))
+            (assoc-in [:headers "Content-Type"] "text/xml"))
+        (not-found))))
+
   (compojure-api/GET "/get-sent-maksatukset" []
     :return {:maksatukset [s/Str]}
     (log/info "test-api: get all maksatukset we have sent to maksatuspalvelu")
