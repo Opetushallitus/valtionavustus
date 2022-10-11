@@ -20,19 +20,9 @@ export function MaksatuksetPage(page: Page) {
   }
 
   async function getDueDateInputValue(): Promise<string> {
-    const datePicker = `[data-test-id="eräpäivä"] input`;
-
-    await page.waitForSelector(datePicker);
-    await page.waitForFunction((selector) => {
-      return (
-        (document?.querySelector(selector) as HTMLInputElement).value?.length >
-        5
-      );
-    }, datePicker);
-
-    const dueDate = await page.getAttribute(datePicker, "value");
-    if (!dueDate) throw new Error("Cannot find due date from form");
-
+    const datePickerLocator = page.locator(`[data-test-id="eräpäivä"] input`);
+    await expect(datePickerLocator).toHaveValue(/\d\d\.\d\d\.\d\d\d\d/);
+    const dueDate = await datePickerLocator.inputValue();
     return moment(dueDate, "DD.MM.YYYY").format("YYYY-MM-DD");
   }
 
