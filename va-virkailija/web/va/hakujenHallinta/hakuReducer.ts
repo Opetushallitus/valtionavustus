@@ -924,7 +924,6 @@ const hakuSlice = createSlice({
       const selectedHaku = getSelectedAvustushaku(state);
       if (selectedHaku.projects) {
         selectedHaku.projects = payload.projects;
-        selectedHaku["project-id"] = payload.projects[0]?.id;
       }
     },
     addTalousarviotili: (state, { payload }: PayloadAction<string>) => {
