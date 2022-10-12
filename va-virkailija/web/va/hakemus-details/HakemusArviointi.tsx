@@ -14,6 +14,7 @@ import HakemusScoring from "./HakemusScoring";
 import HakemusComments from "./HakemusComments";
 import HakemusArviointiStatuses from "./HakemusArviointiStatuses";
 import TraineeDayEditing from "../traineeday/TraineeDayEditing";
+import ChooseRahoitusalueAndTalousarviotili from "./ChooseRahoitusalueAndTalousarviotili";
 import SpecifyOppilaitos from "./SpecifyOppilaitos";
 import AcademySize from "./AcademySize";
 import Perustelut from "./Perustelut";
@@ -45,6 +46,7 @@ type HakemusArviointiProps = {
   userInfo: UserInfo;
   helpTexts: HelpTexts;
   multibatchEnabled: boolean;
+  newTaTiliSelectionEnabled: boolean;
   projects: VaCodeValue[];
 };
 
@@ -56,6 +58,7 @@ export const HakemusArviointi = ({
   multibatchEnabled,
   helpTexts,
   projects,
+  newTaTiliSelectionEnabled,
 }: HakemusArviointiProps) => {
   const {
     allowHakemusCommenting,
@@ -82,11 +85,20 @@ export const HakemusArviointi = ({
           disabled={!allowHakemusStateChanges}
         />
       </div>
-      <TalousarviotiliSelect
-        isDisabled={!allowHakemusStateChanges}
-        hakemus={hakemus}
-        helpText={helpTexts["hankkeen_sivu__arviointi___talousarviotili"]}
-      />
+      {newTaTiliSelectionEnabled ? (
+        <TalousarviotiliSelect
+          isDisabled={!allowHakemusStateChanges}
+          hakemus={hakemus}
+          helpText={helpTexts["hankkeen_sivu__arviointi___talousarviotili"]}
+        />
+      ) : (
+        <ChooseRahoitusalueAndTalousarviotili
+          hakemus={hakemus}
+          avustushaku={avustushaku}
+          allowEditing={allowHakemusStateChanges}
+          helpTexts={helpTexts}
+        />
+      )}
       <SpecifyOppilaitos
         hakemus={hakemus}
         avustushaku={avustushaku}

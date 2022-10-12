@@ -1,6 +1,7 @@
 import React from "react";
 import { KoodienhallintaRoutes } from "./types";
 import { NavLink } from "react-router-dom";
+import { useGetEnvironmentAndUserInfoQuery } from "./apiSlice";
 
 const tabName = {
   "operational-unit": "Toimintayksikkö",
@@ -28,12 +29,15 @@ const OphTab = ({ to }: OphTabProps) => {
 };
 
 export const Tabs = () => {
+  const { data } = useGetEnvironmentAndUserInfoQuery();
   return (
     <div className="oph-tabs oph-typography">
       <OphTab to="operational-unit" />
       <OphTab to="project" />
       <OphTab to="operation" />
-      <OphTab to="ta-tilit" />
+      {data?.environment?.["ta-tilit"]?.["enabled?"] && (
+        <OphTab to="ta-tilit" />
+      )}
     </div>
   );
 };

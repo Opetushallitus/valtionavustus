@@ -93,6 +93,9 @@ export const HakemusDetails = (props: Props) => {
             userInfo={userInfo}
             multibatchEnabled={multibatchEnabled}
             helpTexts={helpTexts}
+            newTaTiliSelectionEnabled={
+              environment["ta-tilit"]?.["enabled?"] === true
+            }
             projects={projects}
           />
         );

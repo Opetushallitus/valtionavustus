@@ -19,6 +19,7 @@ const KoodienhallintaApp = () => {
     return null;
   }
   const { environment, userInfo } = data;
+  const enableTaTilit = !!environment["ta-tilit"]?.["enabled?"];
   return (
     <>
       <HeaderContainer
@@ -35,7 +36,9 @@ const KoodienhallintaApp = () => {
           />
           <Route path="project" element={<VaCode valueType="project" />} />
           <Route path="operation" element={<VaCode valueType="operation" />} />
-          <Route path="ta-tilit" element={<TalousarviotilienHallinta />} />
+          {enableTaTilit && (
+            <Route path="ta-tilit" element={<TalousarviotilienHallinta />} />
+          )}
         </Route>
       </Routes>
     </>
