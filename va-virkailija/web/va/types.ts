@@ -214,6 +214,7 @@ export type PaymentV2 = {
   pitkaviite: string;
   "user-name": string;
   version: number;
+  "project-code"?: string;
   "version-closed": string | null;
 };
 

@@ -1,9 +1,9 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 
 import { Maksatus } from "./Maksatukset";
-import { useSelector } from "react-redux";
 import { selectSelectedAvustushaku } from "../hakujenHallinta/hakuReducer";
 import { VaCodeValue } from "../types";
+import { useHakujenHallintaSelector } from "../hakujenHallinta/hakujenHallintaStore";
 
 type PaymentsTableProps = {
   payments?: Maksatus[];
@@ -33,72 +33,70 @@ const paymentStatusTranslation = {
   paid: "Maksettu",
 };
 
-const filterBy =
-  (filter: Filter, project?: VaCodeValue | null) => (p: Maksatus) => {
-    if (
-      filter["project-code"] &&
-      project &&
-      !project["code-value"].includes(filter["project-code"])
-    ) {
-      return false;
-    }
-    if (filter.pitkaviite && !p.pitkaviite.includes(filter.pitkaviite)) {
-      return false;
-    }
-    if (
-      filter.paymentstatus &&
-      !paymentStatusTranslation[p["paymentstatus-id"]].includes(
-        filter.paymentstatus
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter["organization-name"] &&
-      !p.hakemus?.["organization-name"].includes(filter["organization-name"])
-    ) {
-      return false;
-    }
-    if (
-      filter["project-name"] &&
-      !p.hakemus?.["project-name"].includes(filter["project-name"])
-    ) {
-      return false;
-    }
-    if (
-      filter["payment-sum"] &&
-      !p["payment-sum"].toString().includes(filter["payment-sum"])
-    ) {
-      return false;
-    }
-    if (
-      filter["bank-iban"] &&
-      !p.hakemus?.answers
-        .find((a) => a.key === "bank-iban")
-        ?.value.includes(filter["bank-iban"])
-    ) {
-      return false;
-    }
-    if (
-      filter["lkp-account"] &&
-      !p.hakemus?.["lkp-account"].includes(filter["lkp-account"])
-    ) {
-      return false;
-    }
-    if (
-      filter["takp-account"] &&
-      !p.hakemus?.["takp-account"].includes(filter["takp-account"])
-    ) {
-      return false;
-    }
-    if (
-      filter["accounting"] &&
-      !p["payment-sum"].toString().includes(filter.accounting)
-    ) {
-      return false;
-    }
-    return true;
-  };
+const filterBy = (filter: Filter) => (p: Maksatus) => {
+  if (
+    filter["project-code"] &&
+    !p["project-code"]?.includes(filter["project-code"])
+  ) {
+    return false;
+  }
+  if (filter.pitkaviite && !p.pitkaviite.includes(filter.pitkaviite)) {
+    return false;
+  }
+  if (
+    filter.paymentstatus &&
+    !paymentStatusTranslation[p["paymentstatus-id"]].includes(
+      filter.paymentstatus
+    )
+  ) {
+    return false;
+  }
+  if (
+    filter["organization-name"] &&
+    !p.hakemus?.["organization-name"].includes(filter["organization-name"])
+  ) {
+    return false;
+  }
+  if (
+    filter["project-name"] &&
+    !p.hakemus?.["project-name"].includes(filter["project-name"])
+  ) {
+    return false;
+  }
+  if (
+    filter["payment-sum"] &&
+    !p["payment-sum"].toString().includes(filter["payment-sum"])
+  ) {
+    return false;
+  }
+  if (
+    filter["bank-iban"] &&
+    !p.hakemus?.answers
+      .find((a) => a.key === "bank-iban")
+      ?.value.includes(filter["bank-iban"])
+  ) {
+    return false;
+  }
+  if (
+    filter["lkp-account"] &&
+    !p.hakemus?.["lkp-account"].includes(filter["lkp-account"])
+  ) {
+    return false;
+  }
+  if (
+    filter["takp-account"] &&
+    !p.hakemus?.["takp-account"].includes(filter["takp-account"])
+  ) {
+    return false;
+  }
+  if (
+    filter["accounting"] &&
+    !p["payment-sum"].toString().includes(filter.accounting)
+  ) {
+    return false;
+  }
+  return true;
+};
 
 type MaksatuksetPhaseProps = {
   payments: Maksatus[];
@@ -111,17 +109,21 @@ const MaksatuksetPhase = ({
   phase,
   filter,
 }: MaksatuksetPhaseProps) => {
-  const [visiblePayments, setVisiblePayments] = useState<Maksatus[]>(payments);
-  const selectedHaku = useSelector(selectSelectedAvustushaku);
-  const { projects } = selectedHaku;
-  const projectId = selectedHaku["project-id"];
-  const project = projects ? projects.find((p) => p.id === projectId) : null;
-
-  useEffect(() => {
-    const filtered = payments.filter(filterBy(filter, project));
-    setVisiblePayments(filtered);
-  }, [filter, payments]);
-
+  const projectsMappedByCode = useHakujenHallintaSelector<
+    Record<string, VaCodeValue>
+  >((state) => {
+    const avustushaku = selectSelectedAvustushaku(state);
+    return (
+      avustushaku.projects?.reduce<Record<string, VaCodeValue>>(
+        (acc, project) => {
+          acc[project["code"]] = project;
+          return acc;
+        },
+        {}
+      ) ?? {}
+    );
+  });
+  const visiblePayments = payments.filter(filterBy(filter));
   return (
     <React.Fragment>
       <table className="maksatukset_payments-table">
@@ -136,66 +138,74 @@ const MaksatuksetPhase = ({
       <div className="maksatukset_table-container">
         <table className="maksatukset_payments-table">
           <tbody className="maksatukset_table-body">
-            {visiblePayments.map((p, i) => (
-              <tr
-                key={`maksatus-${p.id}`}
-                className={i % 2 === 0 ? "white" : "gray"}
-              >
-                <td
-                  data-test-id={"pitkaviite"}
-                  className="align-right semi-narrow-column"
+            {visiblePayments.map((p, i) => {
+              const paymentProjectCode = p["project-code"];
+              const projectVaCodeValue =
+                paymentProjectCode && projectsMappedByCode[paymentProjectCode];
+              return (
+                <tr
+                  key={`maksatus-${p.id}`}
+                  className={i % 2 === 0 ? "white" : "gray"}
                 >
-                  {p.pitkaviite}
-                </td>
-                <td data-test-id={"payment-status"} className="narrow-column">
-                  {paymentStatusTranslation[p["paymentstatus-id"]]}
-                </td>
-                <td data-test-id={`toimittaja`}>
-                  {p.hakemus?.["organization-name"]}
-                </td>
-                <td data-test-id={`hanke`}>
-                  <a
-                    target="_blank"
-                    href={`/avustushaku/${p.hakemus?.["grant-id"]}/hakemus/${p.hakemus?.id}/arviointi`}
+                  <td
+                    data-test-id={"pitkaviite"}
+                    className="align-right semi-narrow-column"
                   >
-                    {p.hakemus?.["project-name"]}
-                  </a>
-                </td>
-                <td
-                  data-test-id="project-code"
-                  className="align-left semi-narrow-column"
-                >
-                  {project ? (
-                    project["code-value"]
-                  ) : (
-                    <span className={"maksatukset_error-text"}>
-                      Projektikoodi puuttuu
-                    </span>
-                  )}
-                </td>
-                <td
-                  data-test-id={"maksuun"}
-                  className="align-right narrow-column"
-                >
-                  {p["payment-sum"]} €
-                </td>
-                <td data-test-id={"iban"} className="semi-narrow-column">
-                  {p.hakemus?.answers.find((a) => a.key === "bank-iban")?.value}
-                </td>
-                <td data-test-id={"lkp-tili"} className="narrow-column">
-                  {p.hakemus?.["lkp-account"] ?? "LKP-tili puuttuu"}
-                </td>
-                <td data-test-id={"takp-tili"} className="narrow-column">
-                  {p.hakemus?.["takp-account"] ?? "TAKP-tili puuttuu"}
-                </td>
-                <td
-                  data-test-id={"tiliointi"}
-                  className="align-right narrow-column"
-                >
-                  {p["payment-sum"]} €
-                </td>
-              </tr>
-            ))}
+                    {p.pitkaviite}
+                  </td>
+                  <td data-test-id={"payment-status"} className="narrow-column">
+                    {paymentStatusTranslation[p["paymentstatus-id"]]}
+                  </td>
+                  <td data-test-id={`toimittaja`}>
+                    {p.hakemus?.["organization-name"]}
+                  </td>
+                  <td data-test-id={`hanke`}>
+                    <a
+                      target="_blank"
+                      href={`/avustushaku/${p.hakemus?.["grant-id"]}/hakemus/${p.hakemus?.id}/arviointi`}
+                    >
+                      {p.hakemus?.["project-name"]}
+                    </a>
+                  </td>
+                  <td
+                    data-test-id="project-code"
+                    className="align-left semi-narrow-column"
+                  >
+                    {projectVaCodeValue ? (
+                      projectVaCodeValue["code-value"]
+                    ) : (
+                      <span className={"maksatukset_error-text"}>
+                        Projektikoodi puuttuu
+                      </span>
+                    )}
+                  </td>
+                  <td
+                    data-test-id={"maksuun"}
+                    className="align-right narrow-column"
+                  >
+                    {p["payment-sum"]} €
+                  </td>
+                  <td data-test-id={"iban"} className="semi-narrow-column">
+                    {
+                      p.hakemus?.answers.find((a) => a.key === "bank-iban")
+                        ?.value
+                    }
+                  </td>
+                  <td data-test-id={"lkp-tili"} className="narrow-column">
+                    {p.hakemus?.["lkp-account"] ?? "LKP-tili puuttuu"}
+                  </td>
+                  <td data-test-id={"takp-tili"} className="narrow-column">
+                    {p.hakemus?.["takp-account"] ?? "TAKP-tili puuttuu"}
+                  </td>
+                  <td
+                    data-test-id={"tiliointi"}
+                    className="align-right narrow-column"
+                  >
+                    {p["payment-sum"]} €
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
