@@ -99,7 +99,8 @@
           WHERE migrated_from_not_normalized_ta_tili IS true)", [])]
     (:exists (first result))))
 
-(defn- should-run-migration [config] true)
+(defn- should-run-migration [config]
+  (get-in config [:ta-tilit :enabled?]))
 
 (defn run-ta-tili-normalization-migration-if-needed [config]
   (when (and (should-run-migration config) (not (has-migration-been-completed-successfully)))

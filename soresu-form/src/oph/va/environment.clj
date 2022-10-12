@@ -20,7 +20,7 @@
          :application-change {:refuse-enabled? true}
          :multibatch-payments (:multibatch-payments config)
          :dont-send-loppuselvityspyynto-to-virkailija (:dont-send-loppuselvityspyynto-to-virkailija config)
-         :ta-tilit true
+         :ta-tilit (:ta-tilit config)
          :selvitys-limit (:selvitys-limit config)}
         opintopolku (:opintopolku config)]
     (if-let [opintopolku-url (:url opintopolku)]

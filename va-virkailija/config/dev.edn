@@ -36,5 +36,6 @@
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
+ :ta-tilit {:enabled? true}
  :test-apis {:enabled? true}
  }
