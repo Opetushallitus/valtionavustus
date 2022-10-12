@@ -44,6 +44,9 @@ const showProjectCodeTest = test.extend({
     await koodienHallintaPage.createCodeValues(codes);
     await use(codes);
   },
+  projektikoodi: async ({ codes }, use) => {
+    await use(codes.project[codes.project.length - 1]);
+  },
 });
 
 test.setTimeout(400000);
@@ -417,22 +420,21 @@ test.describe("Maksatukset", () => {
       acceptedHakemus,
       avustushakuName,
       talousarviotili,
-      codes: { project, operation, operationalUnit },
+      codes: { operation, operationalUnit },
+      projektikoodi,
     }) => {
       expectToBeDefined(acceptedHakemus);
-      const lastProjectCode = project[project.length - 1];
-      expectToBeDefined(lastProjectCode);
       const maksatusPage = MaksatuksetPage(page);
       const lahtevatMaksatukset = await maksatusPage.goto(avustushakuName);
-      const projektikoodi = `Projekti ${lastProjectCode}`;
-      await expect(lahtevatMaksatukset.projektikoodi).toHaveText(projektikoodi);
+      const projectCode = `Projekti ${projektikoodi}`;
+      await expect(lahtevatMaksatukset.projektikoodi).toHaveText(projectCode);
       const dueDate =
         await maksatusPage.fillMaksueranTiedotAndSendMaksatukset();
       await maksatusPage.reloadPaymentPage();
       const lahetetytMaksatukset =
         await maksatusPage.clickLahetetytMaksatuksetTab();
       await expect(lahetetytMaksatukset(1).projektikoodi).toHaveText(
-        projektikoodi
+        projectCode
       );
 
       const { "register-number": registerNumber } =
@@ -455,7 +457,7 @@ test.describe("Maksatukset", () => {
       );
       expect(maksatukset).toContainEqual(
         maksatusPage.getExpectedPaymentXML({
-          projekti: lastProjectCode,
+          projekti: projektikoodi,
           toiminto: operation,
           toimintayksikko: operationalUnit,
           pitkaviite,
