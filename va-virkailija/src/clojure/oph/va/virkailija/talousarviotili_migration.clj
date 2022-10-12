@@ -81,8 +81,8 @@
           ]
       (normalize-tilit-for-avustushaku tx id rahoitusalue talousarviotilit))))
 
-(defn disable-ta-tili-modified-check [tx] (execute! tx "ALTER TABLE virkailija.avustushaku_talousarviotilit DISABLE TRIGGER disallow_ta_tili_insert_or_update_when_published" []))
-(defn enable-ta-tili-modified-check [tx] (execute! tx "ALTER TABLE virkailija.avustushaku_talousarviotilit ENABLE TRIGGER disallow_ta_tili_insert_or_update_when_published" []))
+(defn disable-ta-tili-modified-check [tx] (execute! tx "ALTER TABLE virkailija.avustushaku_talousarviotilit DISABLE TRIGGER ta_tili_cannot_be_modified_if_avustushaku_has_been_published" []))
+(defn enable-ta-tili-modified-check [tx] (execute! tx "ALTER TABLE virkailija.avustushaku_talousarviotilit ENABLE TRIGGER ta_tili_cannot_be_modified_if_avustushaku_has_been_published" []))
 
 (defn migrate-non-normalized-ta-tili-to-normalized! []
   (log/info "Migrating from non-normalized TA-tili to normalized TA-tili")
