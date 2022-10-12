@@ -69,7 +69,9 @@ export const LahtevatMaksatukset = ({
         ? "Avustushaun toimintayksikkö puuttuu"
         : undefined,
       !avustushaku["operation-id"] ? "Avustushaun toiminto puuttuu" : undefined,
-      !avustushaku["project-id"] ? "Avustushaun projekti puuttuu" : undefined,
+      payments.some((p) => p["project-code"] === undefined)
+        ? "Projektikoodi puuttuu joltain hakemukselta"
+        : undefined,
       !avustushaku.content["document-type"]
         ? "Avustushaun tositelaji puuttuu"
         : undefined,
