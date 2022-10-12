@@ -45,7 +45,7 @@ const showProjectCodeTest = test.extend({
     await use(codes);
   },
   projektikoodi: async ({ codes }, use) => {
-    await use(codes.project[codes.project.length - 1]);
+    await use(codes.project[2]);
   },
 });
 
