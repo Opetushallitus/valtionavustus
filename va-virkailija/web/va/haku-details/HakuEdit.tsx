@@ -3,14 +3,13 @@ import { Moment } from "moment";
 
 import DateUtil from "soresu-form/web/DateUtil";
 import {
-  AvustushakuStatus,
   AVUSTUSHAKU_STATUSES,
+  AvustushakuStatus,
   HelpTexts,
 } from "soresu-form/web/va/types";
 
 import HakuStatus from "../avustushaku/HakuStatus";
 import { HakuRoles } from "./HakuRoles";
-import EducationLevels from "./EducationLevels";
 import AutoCompleteCodeValue, { CodeType } from "./AutoCompleteCodeValue";
 import HelpTooltip from "../HelpTooltip";
 import WarningBanner from "../WarningBanner";
@@ -28,22 +27,20 @@ import {
 import {
   addFocusArea,
   addSelectionCriteria,
-  addTalousarviotili,
+  Avustushaku,
   createHaku,
   deleteFocusArea,
   removeSelectionCriteria,
-  removeTalousarviotili,
-  Avustushaku,
+  selectLoadedInitialData,
+  selectSelectedAvustushaku,
   startAutoSaveForAvustushaku,
   updateField,
-  selectSelectedAvustushaku,
-  selectLoadedInitialData,
 } from "../hakujenHallinta/hakuReducer";
 import { Talousarviotilit } from "./Talousarviotilit";
 
 export const HakuEdit = () => {
   const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
-  const { codeOptions, lainsaadantoOptions, helpTexts, userInfo, environment } =
+  const { codeOptions, lainsaadantoOptions, helpTexts, userInfo } =
     useHakujenHallintaSelector(selectLoadedInitialData);
   const hasPayments = !!avustushaku.payments?.length;
   const dispatch = useHakujenHallintaDispatch();
@@ -114,7 +111,6 @@ export const HakuEdit = () => {
         );
       }
     };
-  const newTaTilitEnabled = environment["ta-tilit"]?.["enabled?"];
   return (
     <div id="haku-edit">
       <div dangerouslySetInnerHTML={mainHelp}></div>
@@ -340,25 +336,7 @@ export const HakuEdit = () => {
         lainsaadantoOptions={lainsaadantoOptions}
         helpTexts={helpTexts}
       />
-      {newTaTilitEnabled ? (
-        <Talousarviotilit helpTexts={helpTexts} />
-      ) : (
-        <EducationLevels
-          enabled={allowNondisruptiveHakuEdits}
-          values={avustushaku.content.rahoitusalueet ?? []}
-          grant={avustushaku}
-          onChange={onChange}
-          helpTexts={helpTexts}
-          onAdd={(_, tili) => {
-            dispatch(addTalousarviotili(tili));
-            dispatch(startAutoSaveForAvustushaku(avustushaku.id));
-          }}
-          onRemove={(_, rahoitusalue, index) => () => {
-            dispatch(removeTalousarviotili({ rahoitusalue, index }));
-            dispatch(startAutoSaveForAvustushaku(avustushaku.id));
-          }}
-        />
-      )}
+      <Talousarviotilit helpTexts={helpTexts} />
       <div>
         <div className="multibatch-fields">
           <h3>
