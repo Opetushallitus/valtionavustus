@@ -239,6 +239,7 @@ export type HakemusV2WithEvaluation = {
   status: HakemusArviointiStatus;
   "takp-account": string;
   version: number;
+  "project-code?": string;
 };
 
 export type BatchDocumentV2 = {

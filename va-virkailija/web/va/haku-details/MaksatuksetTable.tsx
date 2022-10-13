@@ -139,9 +139,10 @@ const MaksatuksetPhase = ({
         <table className="maksatukset_payments-table">
           <tbody className="maksatukset_table-body">
             {visiblePayments.map((p, i) => {
-              const paymentProjectCode = p["project-code"];
-              const projectVaCodeValue =
-                paymentProjectCode && projectsMappedByCode[paymentProjectCode];
+              const projectCode =
+                p["project-code"] ?? p.hakemus?.["project-code?"];
+              const vaCodeValue =
+                projectCode && projectsMappedByCode[projectCode];
               return (
                 <tr
                   key={`maksatus-${p.id}`}
@@ -171,8 +172,8 @@ const MaksatuksetPhase = ({
                     data-test-id="project-code"
                     className="align-left semi-narrow-column"
                   >
-                    {projectVaCodeValue ? (
-                      projectVaCodeValue["code-value"]
+                    {vaCodeValue ? (
+                      vaCodeValue["code-value"]
                     ) : (
                       <span className={"maksatukset_error-text"}>
                         Projektikoodi puuttuu
