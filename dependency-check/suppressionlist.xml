@@ -14,7 +14,7 @@
     <packageUrl regex="true">^pkg:maven/org\.apache\.poi/poi.*</packageUrl>
     <cve>CVE-2022-26336</cve>
   </suppress>
-  <suppress until="2022-10-12Z">
+  <suppress>
     <notes><![CDATA[
     Does not affect client use and update is currently very labourous
     ]]>    </notes>
