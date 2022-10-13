@@ -13,7 +13,6 @@
             [oph.common.background-job-supervisor :as job-supervisor]
             [oph.soresu.common.config :refer [config environment]]
             [oph.soresu.common.db :as db]
-            [oph.va.virkailija.talousarviotili_migration :as ta-migration]
             [oph.va.virkailija.authentication :as auth]
             [oph.va.virkailija.email :as email]
             [oph.va.virkailija.va-users :as va-users]
@@ -28,7 +27,6 @@
   (dbmigrations/migrate "virkailija"
                         "db.migration.virkailija"
                         "oph.va.virkailija.db.migrations")
-  (ta-migration/run-ta-tili-normalization-migration-if-needed config)
   (email/start-background-job-send-mails)
   (auth/start-background-job-timeout-sessions)
   (when (get-in config [:va-users :use-cache?])

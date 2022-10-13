@@ -926,14 +926,6 @@ const hakuSlice = createSlice({
         selectedHaku.projects = payload.projects;
       }
     },
-    addTalousarviotili: (state, { payload }: PayloadAction<string>) => {
-      const selectedHaku = getSelectedAvustushaku(state);
-      if (selectedHaku.content["rahoitusalueet"]) {
-        const rahoitusalueet = getOrCreateRahoitusalueet(selectedHaku);
-        const rahoitusalue = getOrCreateRahoitusalue(rahoitusalueet, payload);
-        rahoitusalue.talousarviotilit.push("");
-      }
-    },
     updateTalousarviotilit: (
       state,
       {
@@ -945,28 +937,6 @@ const hakuSlice = createSlice({
     ) => {
       const selectedHaku = getSelectedAvustushaku(state);
       selectedHaku!.talousarviotilit = payload.talousarviotilit;
-    },
-    removeTalousarviotili: (
-      state,
-      { payload }: PayloadAction<{ rahoitusalue: string; index: number }>
-    ) => {
-      const selectedHaku = getSelectedAvustushaku(state);
-      if (selectedHaku.content["rahoitusalueet"]) {
-        const rahoitusalueet = getOrCreateRahoitusalueet(selectedHaku);
-        const rahoitusalue = getOrCreateRahoitusalue(
-          rahoitusalueet,
-          payload.rahoitusalue
-        );
-        rahoitusalue.talousarviotilit.splice(payload.index, 1);
-        if (rahoitusalue.talousarviotilit.length === 0) {
-          rahoitusalueet.splice(
-            rahoitusalueet.findIndex(
-              (r) => r.rahoitusalue === payload.rahoitusalue
-            ),
-            1
-          );
-        }
-      }
     },
   },
   extraReducers: (builder) => {
@@ -1151,8 +1121,6 @@ export const {
   updateTalousarviotilit,
   addSelectionCriteria,
   removeSelectionCriteria,
-  addTalousarviotili,
-  removeTalousarviotili,
 } = hakuSlice.actions;
 
 export default hakuSlice.reducer;
