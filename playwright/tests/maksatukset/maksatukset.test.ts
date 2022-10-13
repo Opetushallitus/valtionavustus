@@ -199,6 +199,7 @@ test.describe("Maksatukset", () => {
 
         await valiselvitysTab.acceptInstallment(`${installmentSum}`);
       }
+
       async function acceptLoppuselvitysWithInstallment(
         installmentSum: number
       ) {
@@ -480,7 +481,7 @@ test.describe("Maksatukset", () => {
         dueDate,
         ovt: "00372769790122",
         talousarviotili: withoutDots(talousarviotili.code),
-      })
+      });
 
       expect(maksatukset).toContainEqual(expectedXML);
       expect(invoiceXML).toBe(expectedXML);
