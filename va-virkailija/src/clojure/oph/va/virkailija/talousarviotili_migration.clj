@@ -90,9 +90,8 @@
     (let [avustushaut (get-avustushaut-which-have-a-rahoitusalue tx)]
       (disable-ta-tili-modified-check tx)
       (doseq [haku avustushaut]
-        (normalize-rahoitusalueet-for-avustushaku tx haku)
-      (enable-ta-tili-modified-check tx)
-   )))))
+        (normalize-rahoitusalueet-for-avustushaku tx haku))
+      (enable-ta-tili-modified-check tx)))))
 
 (defn- has-migration-been-completed-successfully []
   (let [result (query "SELECT EXISTS(SELECT 1 FROM talousarviotilit
