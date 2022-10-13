@@ -7,6 +7,7 @@ readonly SSH_TUNNEL_PORT="7777"
 export PSQLRC="$repo/scripts/psqlrc"
 
 function main {
+  require_command psql
   parse_env_from_script_name "psql"
 
   trap cleanup EXIT
