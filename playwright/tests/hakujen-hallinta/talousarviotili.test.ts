@@ -171,6 +171,22 @@ test.describe.parallel("talousarvio select", () => {
       await expect(firstTili.value).toHaveText(taTiliSelectValue(tatili1));
       await expect(firstTiliFirstKoulutusaste.value).toHaveText(koulutus);
     });
+    await test.step("input is disabled when saving avustushaku", async () => {
+      await expect(firstTili.input).toBeEnabled();
+      await expect(firstTiliFirstKoulutusaste.input).toBeEnabled();
+      await Promise.all([
+        expect(firstTili.input).toBeDisabled(),
+        expect(firstTiliFirstKoulutusaste.input).toBeDisabled(),
+        locators.hakuName.fi.type("trigger auto save"),
+      ]);
+      await expect(
+        hakujenHallintaPage.page.locator(
+          "text=Jossain kentässä puutteita. Tarkasta arvot."
+        )
+      ).toBeVisible();
+      await expect(firstTili.input).toBeEnabled();
+      await expect(firstTiliFirstKoulutusaste.input).toBeEnabled();
+    });
   });
   test("empty selects dont get saved", async ({ tilit: { tatili1 }, page }) => {
     const hakujenHallintaPage = new HakujenHallintaPage(page);

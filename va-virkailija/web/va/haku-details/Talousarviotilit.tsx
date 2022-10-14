@@ -322,6 +322,9 @@ export const Talousarviotilit = ({ helpTexts }: TalousarviotilitProps) => {
   const { data, isLoading } = useGetTalousarvioTilitQuery();
   const talousarvioOptions = data?.map(mapTiliOption) ?? [];
   const selectedHaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
+  const isSaving = useHakujenHallintaSelector((state) =>
+    Object.values(state.haku.saveStatus).some((s) => s === true)
+  );
   const taTiliUpdateIsAllowed =
     selectedHaku.status === "new" || selectedHaku.status === "draft";
 
@@ -444,12 +447,13 @@ export const Talousarviotilit = ({ helpTexts }: TalousarviotilitProps) => {
       })
     );
   };
+  const disabled = isLoading || !taTiliUpdateIsAllowed || isSaving;
   if (talousarviotilit.length === 0) {
     const noOpForEmptyTalousarvioTili = () => () => {};
     return (
       <div aria-busy={isLoading} aria-live="polite">
         <TalousarvioTili
-          disabled={isLoading || !taTiliUpdateIsAllowed}
+          disabled={disabled}
           allSelectedTalousarvioTili={allSelectedTalousarvioTilit}
           options={talousarvioOptions}
           selectedTalousarvioTili={undefined}
@@ -474,7 +478,7 @@ export const Talousarviotilit = ({ helpTexts }: TalousarviotilitProps) => {
               ? `${talousarviotili?.name}-${talousarviotili?.id}`
               : `empty-${index}`
           }
-          disabled={isLoading || !taTiliUpdateIsAllowed}
+          disabled={disabled}
           allSelectedTalousarvioTili={allSelectedTalousarvioTilit}
           options={talousarvioOptions}
           selectedTalousarvioTili={talousarviotili}
