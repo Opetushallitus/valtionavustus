@@ -1264,16 +1264,6 @@ const DecisionEditor = () => {
     },
   ];
   const updatedAt = avustushaku.decision?.updatedAt;
-  const rahoitusAlueDecisionSubfields =
-    avustushaku.content.rahoitusalueet?.map((row) => (
-      <DecisionFields
-        key={row.rahoitusalue}
-        title={"Myönteisen päätöksen lisäteksti - " + row.rahoitusalue}
-        avustushaku={avustushaku}
-        id={"myonteinenlisateksti-" + row.rahoitusalue.replace(/[\s.]/g, "_")}
-        onChange={onChange}
-      />
-    )) ?? [];
 
   const mainHelp = { __html: helpTexts["hakujen_hallinta__päätös___ohje"] };
 
@@ -1303,11 +1293,6 @@ const DecisionEditor = () => {
         }
         dataTestId="myonteinenlisateksti"
       />
-      {rahoitusAlueDecisionSubfields.length > 0 && (
-        <div className="decision-subfields">
-          {rahoitusAlueDecisionSubfields}
-        </div>
-      )}
       {fields.map((field) => (
         <DecisionFields
           key={field.id}

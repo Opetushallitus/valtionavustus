@@ -144,7 +144,7 @@ const FilterList = () => {
   const hakuData = useHakemustenArviointiSelector(
     (state) => getLoadedState(state.arviointi).hakuData
   );
-  const { form, avustushaku, hakemukset } = hakuData;
+  const { form, hakemukset } = hakuData;
   const hakemusFilter = useHakemustenArviointiSelector((state) => state.filter);
   const open = hakemusFilter.isOpen;
   const radioQuestions = FormUtil.findFieldsByFieldType(
@@ -181,23 +181,6 @@ const FilterList = () => {
         open: openQuestions.includes(r.id),
       };
     });
-    if (!_.isEmpty(avustushaku.content.rahoitusalueet)) {
-      const rahoitusalueet = avustushaku.content["rahoitusalueet"] ?? [];
-      filterQuestions.unshift({
-        id: "rahoitusalue",
-        label: "Rahoitusalue",
-        options: rahoitusalueet
-          .concat([
-            { rahoitusalue: "Ei rahoitusaluetta", talousarviotilit: [] },
-          ])
-          .map((row) => ({
-            label: row.rahoitusalue,
-            value: row.rahoitusalue,
-            selected: selectedPredicate("rahoitusalue", row.rahoitusalue),
-          })),
-        open: openQuestions.includes("rahoitusalue"),
-      });
-    }
 
     const tags = _.uniq(
       _.flatten(hakemukset.map((i) => _.get(i, "arvio.tags.value")))

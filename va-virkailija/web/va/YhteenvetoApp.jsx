@@ -7,12 +7,11 @@ import RouteParser from "route-parser";
 import YhteenvetoController from "./YhteenvetoController.jsx";
 import HakemusArviointiStatuses from "./hakemus-details/HakemusArviointiStatuses";
 import DateUtil from "soresu-form/web/DateUtil";
-import { educationLevels } from "./haku-details/EducationLevels";
 
 import "./style/main.less";
 import "./style/summary.less";
 
-export default class SummaryApp extends Component {
+class SummaryApp extends Component {
   render() {
     const state = this.props.state;
     const hakuData = state.hakuData;
@@ -35,17 +34,10 @@ export default class SummaryApp extends Component {
     return (
       <section id="container" className="section-container">
         <SummaryHeading avustushaku={avustushaku} hakemusList={hakemusList} />
-        {_.isEmpty(avustushaku.content.rahoitusalueet) ? (
-          buildSummaryList(
-            SummaryApp.statusesInOrder(),
-            applicationsByStatus,
-            state.hakuData.avustushaku
-          )
-        ) : (
-          <RahoitusalueList
-            hakemusList={hakemusList}
-            grant={state.hakuData.avustushaku}
-          />
+        {buildSummaryList(
+          SummaryApp.statusesInOrder(),
+          applicationsByStatus,
+          state.hakuData.avustushaku
         )}
         <div id="summary-link">
           <a href={mailToLink}>Lähetä linkki sähköpostilla</a>
@@ -91,54 +83,6 @@ const buildSummaryList = (statuses, applicationsByStatuses, grant) => {
       />
     ));
   return summaryListingsAll;
-};
-
-const RahoitusalueList = ({ hakemusList, grant }) => {
-  const applicationsByRahoitusalue = _.groupBy(
-    hakemusList,
-    (h) => h.arvio.rahoitusalue
-  );
-  const nullValue = "null";
-  const undefinedValue = "undefined";
-  const withoutLabel = "Muut";
-  const applicationsWithoutRahoitusalue = (
-    applicationsByRahoitusalue[nullValue] || []
-  ).concat(applicationsByRahoitusalue[undefinedValue] || []);
-
-  if (applicationsWithoutRahoitusalue.length > 0) {
-    applicationsByRahoitusalue[withoutLabel] = applicationsWithoutRahoitusalue;
-  }
-
-  const educationLevelNames = educationLevels.map((el) => el.title);
-
-  const rahoitusAlueetNameValues = _.chain(applicationsByRahoitusalue)
-    .omit([nullValue, undefinedValue])
-    .keys()
-    .sortBy((x) => (x === withoutLabel ? 9999 : educationLevelNames.indexOf(x)))
-    .map((x) => {
-      return { name: x, values: applicationsByRahoitusalue[x] };
-    })
-    .value();
-
-  const rahoitusalueet = rahoitusAlueetNameValues.map((item) => {
-    const applicationsByStatuses = _.groupBy(
-      item.values,
-      (h) => h.arvio.status
-    );
-    const summaryByStates = buildSummaryList(
-      SummaryApp.statusesInOrder(),
-      applicationsByStatuses,
-      grant
-    );
-    return (
-      <div key={item.name}>
-        <h2 className="rahoitusalue-heading">{item.name}</h2>
-        {summaryByStates}
-      </div>
-    );
-  });
-
-  return <div>{rahoitusalueet}</div>;
 };
 
 const sumBy = (list, fieldFunc) => _.sum(list.map(fieldFunc));

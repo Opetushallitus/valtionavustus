@@ -314,11 +314,6 @@ export type AvustushakuPhase = typeof AVUSTUSHAKU_PHASES[number];
 
 export type AvustushakuType = "yleisavustus" | "erityisavustus";
 
-export interface RahoitusAlue {
-  rahoitusalue: string;
-  talousarviotilit: string[];
-}
-
 export interface AvustushakuContent {
   name: LocalizedText;
   duration: {
@@ -335,7 +330,6 @@ export interface AvustushakuContent {
   operation?: string;
   "operational-unit"?: string;
   project?: string;
-  rahoitusalueet?: RahoitusAlue[];
   multiplemaksuera?: boolean;
   "transaction-account"?: string;
   "document-type"?: string;

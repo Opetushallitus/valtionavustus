@@ -25,7 +25,6 @@ import {
   Language,
   Liite,
   Payment,
-  RahoitusAlue,
 } from "soresu-form/web/va/types";
 // @ts-ignore route-parser doesn't have proper types
 import RouteParser from "route-parser";
@@ -416,54 +415,6 @@ export const createHaku = createAsyncThunk<void, number>(
   }
 );
 
-const getOrCreateRahoitusalueet = (
-  avustushaku: Avustushaku
-): RahoitusAlue[] => {
-  if (!avustushaku.content["rahoitusalueet"]) {
-    avustushaku.content["rahoitusalueet"] = [];
-  }
-  return avustushaku.content["rahoitusalueet"];
-};
-
-const getOrCreateRahoitusalue = (
-  currentRahoitusalueet: RahoitusAlue[],
-  selectedRahoitusalue: string
-): RahoitusAlue => {
-  let currentValueIndex = currentRahoitusalueet.findIndex(
-    (o) => o.rahoitusalue === selectedRahoitusalue
-  );
-  if (currentValueIndex < 0) {
-    currentRahoitusalueet.push({
-      rahoitusalue: selectedRahoitusalue,
-      talousarviotilit: [],
-    });
-    currentValueIndex = currentRahoitusalueet.length - 1;
-  }
-  return currentRahoitusalueet[currentValueIndex];
-};
-
-const deleteTalousarviotili = (
-  avustushaku: Avustushaku,
-  rahoitusalue: string,
-  index: number
-) => {
-  const currentRahoitusalueet = getOrCreateRahoitusalueet(avustushaku);
-  const rahoitusalueValue = getOrCreateRahoitusalue(
-    currentRahoitusalueet,
-    rahoitusalue
-  );
-  if (index < rahoitusalueValue.talousarviotilit.length) {
-    rahoitusalueValue.talousarviotilit.splice(index, 1);
-    if (rahoitusalueValue.talousarviotilit.length === 0) {
-      currentRahoitusalueet.splice(
-        currentRahoitusalueet.findIndex((o) => o.rahoitusalue === rahoitusalue),
-        1
-      );
-    }
-  }
-  return avustushaku;
-};
-
 export const createHakuRole = createAsyncThunk<
   { roles: Role[]; privileges: Privileges; avustushakuId: number },
   { role: Omit<Role, "id">; avustushakuId: number }
@@ -699,34 +650,6 @@ export const updateField = createAsyncThunk<
     avustushaku["is_academysize"] = update.newValue === "true";
   } else if (fieldId.startsWith("set-status-")) {
     avustushaku["status"] = update.newValue as AvustushakuStatus;
-  } else if (update.field.name === "education-levels") {
-    if (update.newValue.length === 0) {
-      avustushaku = deleteTalousarviotili(
-        update.avustushaku,
-        update.field.dataset.title,
-        update.field.dataset.index
-      );
-    } else {
-      const value = {
-        rahoitusalue: update.field.dataset.title,
-        talousarviotilit: [update.newValue],
-      };
-      const educationLevels = avustushaku.content["rahoitusalueet"];
-      if (educationLevels) {
-        const index = educationLevels.findIndex(
-          (x: { rahoitusalue: string }) =>
-            x.rahoitusalue === update.field.dataset.title
-        );
-        if (index === -1) {
-          educationLevels.push(value);
-        } else {
-          educationLevels[index].talousarviotilit[update.field.dataset.index] =
-            update.newValue;
-        }
-      } else {
-        avustushaku.content["rahoitusalueet"] = [value];
-      }
-    }
   } else if (fieldId.startsWith("selection-criteria-")) {
     const selectionCriteria = /selection-criteria-(\d+)-(\w+)/.exec(fieldId);
     if (!selectionCriteria) {
