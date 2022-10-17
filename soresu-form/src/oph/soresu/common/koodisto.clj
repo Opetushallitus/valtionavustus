@@ -11,7 +11,6 @@
 
 (def koodisto-base-url "https://virkailija.opintopolku.fi:443/koodisto-service/rest/")
 (def all-koodisto-groups-path "codes")
-(def all-koodistos-group-uri "http://kaikkikoodistot")
 
 (def koodisto-version-path "codeelement/codes/")
 
@@ -29,13 +28,6 @@
 
 (defn- fetch-all-koodisto-groups []
   (do-get (str koodisto-base-url all-koodisto-groups-path)))
-
-(defn- koodisto-groups->uris-and-latest [koodisto-groups]
-  (->> koodisto-groups
-       (filter #(= all-koodistos-group-uri (:koodistoRyhmaUri %)))
-       (first)
-       (:koodistos)
-       (mapv #(select-keys % [:koodistoUri :latestKoodistoVersio]))))
 
 (defn- nil-to-empty-string [x]
   (or x ""))
@@ -70,7 +62,8 @@
 
 (defn list-koodistos []
   (->> (fetch-all-koodisto-groups)
-       (koodisto-groups->uris-and-latest)
+       (mapcat :koodistos)
+       (mapv #(select-keys % [:koodistoUri :latestKoodistoVersio]))
        (mapv koodisto-version->uri-and-name)
        (sort compare-case-insensitively)))
 
