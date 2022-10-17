@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.schema
   (:require [schema.core :as s]
+            [compojure.api.sweet :refer [describe]]
             [oph.soresu.form.schema :as soresu-schema]
             [oph.va.schema :as va-schema])
   (:import (java.time LocalDate)))
@@ -448,13 +449,13 @@
 
 (s/defschema ExternalHanke
              "Hankkeen tiedot ulkopuolisia järjestelmiä varten"
-             {:project-name (s/maybe s/Str)
+             {:project-name (describe (s/maybe s/Str) "Hankkeen nimi")
               :grant-start (s/maybe s/Str)
               :grant-decision-date (s/maybe s/Str)
-              :grant-id s/Int
+              :grant-id (describe s/Int "Avustushaun ID")
               :organization-name (s/maybe s/Str)
               :budget-total (s/maybe s/Int)
-              :id s/Int
+              :id (describe s/Int "Hakemuksen ID")
               :grant-end (s/maybe s/Str)
               :grant-name (s/maybe {:fi (s/maybe s/Str)
                                     :sv (s/maybe s/Str)})
@@ -463,20 +464,20 @@
 
 (s/defschema ExternalGrant
   "Avustushaun tiedot ulkopuolisia järjestelmiä varten"
-  {:id s/Int
-   :form-loppuselvitys s/Any
+  {:id (describe s/Int "Avustushaun ID")
+   :form-loppuselvitys (describe s/Int "Loppuselvityslomakkeen ID")
    :content s/Any
    :valiselvitysdate (s/maybe LocalDate)
-   :operation-id s/Any
+   :operation-id (describe s/Any "Toiminnont ID")
    :is-academysize s/Bool
-   :haku-type s/Any
-   :form-valiselvitys s/Any
-   :form s/Any
-   :project-id s/Any
-   :phase va-schema/HakuPhase
-   :status GrantStatus
-   :operational-unit-id s/Any
-   :register-number (s/maybe s/Str)
+   :haku-type (describe s/Any "Avustushaun tyyppi")
+   :form-valiselvitys (describe s/Int "Väliselvityslomakkeen ID")
+   :form (describe s/Int "Hakulomakkeen ID")
+   :project-id (describe s/Any "Projektin ID")
+   :phase (describe va-schema/HakuPhase "Avustushaun vaihe")
+   :status (describe GrantStatus "Avustushaun tila")
+   :operational-unit-id (describe s/Any "Toimintayksikön ID")
+   :register-number (describe (s/maybe s/Str) "Asiatunnus")
    :loppuselvitysdate (s/maybe LocalDate)
    :valmistelija (s/maybe IncompleteLocalizedString)
    :hankkeen-alkamispaiva (s/maybe LocalDate)
@@ -485,14 +486,14 @@
 
 (s/defschema ExternalApplication
   "Hakemuksen tiedot ulkopuolisia järjestelmiä varten"
-  {:id s/Int
-   :language s/Str
-   :grant-id s/Int
-   :project-name s/Str
-   :organization-name s/Str
+  {:id (describe s/Int "Hakemuksen ID")
+   :language (describe s/Str "Asiointikieli")
+   :grant-id (describe s/Int "Avustushaun ID")
+   :project-name (describe s/Str "Hankkeen nimi")
+   :organization-name (describe s/Str "Hakija")
    :user-first-name (s/maybe s/Str)
    :user-last-name (s/maybe s/Str)
-   :nutshell (s/maybe s/Str)
+   :nutshell (describe (s/maybe s/Str) "Hanke pähkinänkuoressa")
    :partners (s/maybe s/Str)
    :project-begin (s/maybe s/Str)
    :project-end (s/maybe s/Str)
