@@ -16,12 +16,7 @@ import { DateInput } from "./DateInput";
 import { Maksatus } from "./Maksatukset";
 import { MaksatuksetTable } from "./MaksatuksetTable";
 import { useVaUserSearch } from "../VaUserSearch";
-import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
-import {
-  completeManualSave,
-  Avustushaku,
-  startManuallySaving,
-} from "../hakujenHallinta/hakuReducer";
+import { Avustushaku } from "../hakujenHallinta/hakuReducer";
 
 type LahtevatMaksatuksetProps = {
   avustushaku: Avustushaku;
@@ -48,6 +43,20 @@ const hasDocumentsForAllPhases = (phases: number[], documents: Document[]) => {
   return true;
 };
 
+type LoadingState = "initial" | "loading" | "error";
+
+const maksatuksetButtonText: Record<LoadingState, string> = {
+  initial: "Lähetä maksatukset",
+  loading: "Lähetetään...",
+  error: "Maksatuksien lähetys epäonnistui",
+};
+
+const asetMaksatuksetButtonText: Record<LoadingState, string> = {
+  initial: "Aseta maksetuksi",
+  loading: "Asetetaan...",
+  error: "Maksatusten asetus epäonnistui",
+};
+
 export const LahtevatMaksatukset = ({
   avustushaku,
   helpTexts,
@@ -55,14 +64,16 @@ export const LahtevatMaksatukset = ({
   refreshPayments,
   userInfo,
 }: LahtevatMaksatuksetProps) => {
-  const dispatch = useHakujenHallintaDispatch();
   const [laskunPvm, setLaskunPvm] = useState<Date>(now.toDate());
   const [erapaiva, setErapaiva] = useState(now.add(1, "w").toDate());
   const [tositePvm, setTositePvm] = useState<Date>();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
+  const [maksatuksetSendState, setMaksatuksetSendState] =
+    useState<LoadingState>("initial");
+  const [asetaMaksatuksetState, setAsetaMaksatuksetState] =
+    useState<LoadingState>("initial");
   const phases = [...new Set(payments.map((p) => p.phase))];
-
   useEffect(() => {
     const newErrors = [
       !avustushaku["operational-unit-id"]
@@ -108,29 +119,38 @@ export const LahtevatMaksatukset = ({
   };
 
   const onLähetäMaksatukset = async () => {
-    dispatch(startManuallySaving());
-    const id = await createPaymentBatches();
-    await HttpUtil.post(`/api/v2/payment-batches/${id}/payments/`);
     try {
-      await HttpUtil.post(`/api/v2/payment-batches/${id}/payments-email/`);
-    } catch (e: unknown) {
-      window.alert(
-        "Kaikki maksatukset lähetetty, mutta vahvistussähköpostin lähetyksessä tapahtui virhe"
-      );
+      setMaksatuksetSendState("loading");
+      const id = await createPaymentBatches();
+      await HttpUtil.post(`/api/v2/payment-batches/${id}/payments/`);
+      try {
+        await HttpUtil.post(`/api/v2/payment-batches/${id}/payments-email/`);
+      } catch (e: unknown) {
+        window.alert(
+          "Kaikki maksatukset lähetetty, mutta vahvistussähköpostin lähetyksessä tapahtui virhe"
+        );
+      }
+      await refreshPayments();
+    } catch (e) {
+      setMaksatuksetSendState("error");
     }
-    await refreshPayments();
-    dispatch(completeManualSave());
   };
 
   const onAsetaMaksetuksi = async () => {
-    dispatch(startManuallySaving());
-    const id = await createPaymentBatches();
-    await HttpUtil.put(`/api/v2/payment-batches/${id}/payments/`, {
-      "paymentstatus-id": "paid",
-    });
-    await refreshPayments();
-    dispatch(completeManualSave());
+    setAsetaMaksatuksetState("loading");
+    try {
+      const id = await createPaymentBatches();
+      await HttpUtil.put(`/api/v2/payment-batches/${id}/payments/`, {
+        "paymentstatus-id": "paid",
+      });
+      await refreshPayments();
+    } catch (e) {
+      setAsetaMaksatuksetState("error");
+    }
   };
+  const sending =
+    asetaMaksatuksetState === "loading" || maksatuksetSendState === "loading";
+  const disabled = !!errors.length || sending;
 
   return (
     <>
@@ -162,6 +182,7 @@ export const LahtevatMaksatukset = ({
                 defaultValue={laskunPvm}
                 onChange={(_id, date) => setLaskunPvm(date.toDate())}
                 allowEmpty={false}
+                disabled={sending}
               />
             </div>
             <div data-test-id="eräpäivä">
@@ -177,6 +198,7 @@ export const LahtevatMaksatukset = ({
                 defaultValue={erapaiva}
                 onChange={(_id, date) => setErapaiva(date.toDate())}
                 allowEmpty={false}
+                disabled={sending}
               />
             </div>
             <div data-test-id="tosite-pvm">
@@ -194,6 +216,7 @@ export const LahtevatMaksatukset = ({
                 defaultValue={tositePvm}
                 onChange={(_id, date) => setTositePvm(date.toDate())}
                 allowEmpty={false}
+                disabled={sending}
               />
             </div>
           </div>
@@ -206,17 +229,18 @@ export const LahtevatMaksatukset = ({
                 helpTexts={helpTexts}
                 phase={p}
                 setDocuments={setDocuments}
+                disabled={sending}
               />
             ))}
           </div>
-          <button onClick={onLähetäMaksatukset} disabled={!!errors.length}>
-            Lähetä maksatukset
+          <button onClick={onLähetäMaksatukset} disabled={disabled}>
+            {maksatuksetButtonText[maksatuksetSendState]}
           </button>
           {userInfo.privileges.includes("va-admin") && (
             <>
               &nbsp;
-              <button onClick={onAsetaMaksetuksi} disabled={!!errors.length}>
-                Aseta maksetuksi
+              <button onClick={onAsetaMaksetuksi} disabled={disabled}>
+                {asetMaksatuksetButtonText[asetaMaksatuksetState]}
               </button>
             </>
           )}
@@ -234,6 +258,7 @@ type DocumentEditorProps = {
   helpTexts: HelpTexts;
   phase: number;
   setDocuments: (d: Document[]) => void;
+  disabled: boolean;
 };
 
 const DocumentEditor = ({
@@ -242,6 +267,7 @@ const DocumentEditor = ({
   helpTexts,
   phase,
   setDocuments,
+  disabled,
 }: DocumentEditorProps) => {
   const currentDocument = documents.find((d) => d.phase === phase);
   const [ashaTunniste, setAshaTunniste] = useState(
@@ -362,7 +388,9 @@ const DocumentEditor = ({
         <button
           onClick={onDocumentEdit}
           disabled={
-            !currentDocument && (!ashaTunniste || !esittelija || !hyvaksyja)
+            (!currentDocument &&
+              (!ashaTunniste || !esittelija || !hyvaksyja)) ||
+            disabled
           }
         >
           {!!currentDocument ? "Poista asiakirja" : "Lisää asiakirja"}

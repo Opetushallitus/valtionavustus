@@ -1,7 +1,6 @@
 import moment from "moment";
 import { Page, expect } from "@playwright/test";
 
-import { clickElementWithText } from "../utils/util";
 import { HakujenHallintaPage } from "./hakujenHallintaPage";
 
 export function MaksatuksetPage(page: Page) {
@@ -89,14 +88,13 @@ export function MaksatuksetPage(page: Page) {
   }
 
   async function sendMaksatukset(): Promise<void> {
-    const saveStatus = page
-      .locator('[data-test-id="save-status"]')
-      .locator('text="Kaikki tiedot tallennettu"');
-    await expect(saveStatus).toBeHidden();
-    await Promise.all([
-      expect(saveStatus).toBeVisible({ timeout: 10000 }),
-      clickElementWithText(page, "button", "Lähetä maksatukset"),
-    ]);
+    const lahetetytTab = page
+      .locator("a")
+      .locator("text=Lähetetyt maksatukset");
+    await expect(lahetetytTab).not.toContainText("uutta");
+    await page.locator("text=Lähetä maksatukset").click();
+    await expect(page.locator("text=Lähetetään...")).toBeVisible();
+    await expect(lahetetytTab).toContainText("uutta", { timeout: 10000 });
   }
 
   async function clickLahetetytMaksatuksetTab() {
