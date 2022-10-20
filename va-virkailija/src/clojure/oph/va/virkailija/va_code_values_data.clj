@@ -1,5 +1,5 @@
 (ns oph.va.virkailija.va-code-values-data
-  (:require [oph.soresu.common.db :refer [exec]]
+  (:require [oph.soresu.common.db :refer [exec query]]
             [oph.va.virkailija.db.queries :as queries]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.virkailija.utils :refer
@@ -34,10 +34,17 @@
       first
       convert-to-dash-keys))
 
+(defn- operation-or-operation-unit-code-used? [code-id]
+       (let [sql "SELECT count(a.id) > 0 AS used FROM hakija.avustushaut a WHERE a.operational_unit_id = ? OR a.operation_id = ?"]
+            (-> (query sql [code-id code-id]) first :used)))
+
+(defn- project-code-used? [code-id]
+       (let [sql "SELECT count(avustushaku_id) > 0 AS used FROM virkailija.avustushaku_project_code WHERE project_id = ?"]
+            (-> (query sql [code-id]) first :used)))
+
 (defn code-used? [id]
-  (-> (exec hakija-queries/check-code-usage {:id id})
-      first
-      :used))
+      (or (operation-or-operation-unit-code-used? id)
+          (project-code-used? id)))
 
 (defn delete-va-code-value! [id]
   (exec queries/delete-va-code-value {:id id}))
@@ -53,5 +60,4 @@
     grant
     {:operational-unit (find-code-by-id
                          (:operational-unit-id grant) va-code-values)
-     :project (find-code-by-id (:project-id grant) va-code-values)
      :operation (find-code-by-id (:operation-id grant) va-code-values)}))

@@ -34,8 +34,6 @@
     (merge grant
            {:operational-unit
             (va-code-values/get-va-code-value (:operational-unit-id grant))
-            :project
-            (va-code-values/get-va-code-value (:project-id grant))
             :operation
             (va-code-values/get-va-code-value (:operation-id grant))})))
 

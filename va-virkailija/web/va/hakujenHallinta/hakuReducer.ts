@@ -676,8 +676,6 @@ export const updateField = createAsyncThunk<
     avustushaku["operational-unit-id"] = update.newValue;
   } else if (fieldId.startsWith("operation-id")) {
     avustushaku["operation-id"] = update.newValue;
-  } else if (fieldId.startsWith("project-id")) {
-    avustushaku["project-id"] = update.newValue;
   } else if (fieldId.startsWith("allow_visibility_in_external_system")) {
     avustushaku.allow_visibility_in_external_system =
       update.newValue === "true";

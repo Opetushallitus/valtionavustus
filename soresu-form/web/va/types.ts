@@ -395,7 +395,6 @@ export type Avustushaku = {
   muutoshakukelpoinen: boolean;
   "operation-id"?: unknown;
   "operational-unit-id"?: unknown;
-  "project-id"?: unknown;
   phase: AvustushakuPhase;
   "register-number": string;
   status: AvustushakuStatus;

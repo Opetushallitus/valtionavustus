@@ -59,7 +59,6 @@ export interface HakuData {
   "operation-id"?: number;
   "operational-unit-id"?: number;
   toimintayksikko?: VaCodeValue;
-  "project-id"?: number;
   talousarvio?: Menoluokka[];
 }
 

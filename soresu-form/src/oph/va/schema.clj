@@ -38,6 +38,8 @@
                                  (s/optional-key :total-grant-size) s/Int
                                  (s/optional-key :operation) (s/maybe s/Str)
                                  (s/optional-key :operational-unit) (s/maybe s/Str)
+                                 ; This :project field is probably not used anymore but exists in the avustushaku content json blob
+                                 ; in older avustushakus. That is avustushaku 264 created on 2018-03-27 and earlier.
                                  (s/optional-key :project) (s/maybe s/Str)
                                  (s/optional-key :rahoitusalueet) [Rahoitusalue]
                                  (s/optional-key :multiplemaksuera) s/Bool
@@ -137,7 +139,6 @@
                           (s/optional-key :form_valiselvitys) (s/maybe Long)
                           (s/optional-key :operation-id) (s/maybe s/Int)
                           (s/optional-key :operational-unit-id) (s/maybe s/Int)
-                          (s/optional-key :project-id) (s/maybe s/Int)
                           :allow_visibility_in_external_system s/Bool
                           :arvioitu_maksupaiva (s/maybe java.time.LocalDate)
                           :muutoshakukelpoinen s/Bool})

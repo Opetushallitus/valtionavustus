@@ -263,7 +263,6 @@
    (s/optional-key :operation-id) (s/maybe s/Int)
    (s/optional-key :operational-unit-id) (s/maybe s/Int)
    (s/optional-key :toimintayksikko) (s/maybe VACodeValue)
-   (s/optional-key :project-id) (s/maybe s/Int)
    (s/optional-key :talousarvio) (s/maybe [Menoluokka])})
 
 (s/defschema PaatosData
@@ -364,8 +363,6 @@
    (s/optional-key :arvioitu-maksupaiva) (s/maybe LocalDate)
    (s/optional-key :operational-unit-id) (s/maybe s/Int)
    (s/optional-key :operational-unit) (s/maybe s/Str)
-   (s/optional-key :project-id) (s/maybe s/Int)
-   (s/optional-key :project) (s/maybe s/Str)
    (s/optional-key :operation-id) (s/maybe s/Int)
    (s/optional-key :operation) (s/maybe s/Str)})
 
@@ -473,7 +470,7 @@
    :haku-type (describe s/Any "Avustushaun tyyppi")
    :form-valiselvitys (describe s/Int "Väliselvityslomakkeen ID")
    :form (describe s/Int "Hakulomakkeen ID")
-   :project-id (describe s/Any "Projektin ID")
+   :project-id (describe s/Any "Aina null")
    :phase (describe va-schema/HakuPhase "Avustushaun vaihe")
    :status (describe GrantStatus "Avustushaun tila")
    :operational-unit-id (describe s/Any "Toimintayksikön ID")

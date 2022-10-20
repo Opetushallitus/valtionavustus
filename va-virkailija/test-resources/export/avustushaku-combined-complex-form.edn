@@ -29,7 +29,6 @@
   :id 21,
   :form 61,
   :haku-type "erityisavustus",
-  :project-id nil,
   :decision {:date "20.3.2018", :taustaa {:fi "asdf"}}},
  :form
  {:content

@@ -40,7 +40,7 @@
 (defn- copy-form [tx id created-at]
   (:id (hakija-queries/copy-form<! {:id id :created_at created-at} {:connection tx})))
 
-(defn create-avustushaku [tx avustushaku-content template-form-id loppuselvitys-id valiselvitys-id decision haku-type project-id operation-id operational-unit-id muutoshakukelpoinen created-at]
+(defn create-avustushaku [tx avustushaku-content template-form-id loppuselvitys-id valiselvitys-id decision haku-type operation-id operational-unit-id muutoshakukelpoinen created-at]
   (let [created-timestamp    (datetime/datetime->str created-at)
         form-id              (copy-form tx template-form-id created-timestamp)
         new-loppuselvitys-id (when loppuselvitys-id
@@ -53,7 +53,6 @@
                                :haku_type (new HakuType haku-type)
                                :register_number nil
                                :decision decision
-                               :project_id project-id
                                :operation_id operation-id
                                :operational_unit_id operational-unit-id
                                :form_loppuselvitys new-loppuselvitys-id
@@ -91,7 +90,6 @@
                                    :register_number (:register-number avustushaku)
                                    :is_academysize (:is_academysize avustushaku)
                                    :haku_type (new HakuType (:haku-type avustushaku))
-                                   :project_id (:project-id avustushaku)
                                    :hankkeen_alkamispaiva (:hankkeen-alkamispaiva avustushaku)
                                    :hankkeen_paattymispaiva (:hankkeen-paattymispaiva avustushaku)
                                    :operation_id (:operation-id avustushaku)

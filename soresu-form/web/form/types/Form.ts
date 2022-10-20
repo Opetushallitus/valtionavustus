@@ -169,7 +169,6 @@ export interface HakijaAvustusHaku {
   form_valiselvitys?: number;
   "operation-id"?: number;
   "operational-unit-id"?: number;
-  "project-id"?: number;
   muutoshakukelpoinen: boolean;
 }
 

@@ -198,7 +198,6 @@
         haku-type (:haku-type base-haku)
         form-id (:form base-haku)
         decision (merge (:decision base-haku) { :updatedAt created-at })
-        project-id (:project-id base-haku)
         operation-id (:operation-id base-haku)
         operational-unit-id (:operational-unit-id base-haku)
         avustushaku (hakija-api/get-avustushaku base-haku-id)
@@ -220,7 +219,6 @@
                    valiselvitys-id
                    decision
                    haku-type
-                   project-id
                    operation-id
                    operational-unit-id
                    muutoshakukelpoinen
