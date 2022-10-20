@@ -165,12 +165,6 @@ const AvustushakuInfo = ({
           </div>
         </div>
         <div>
-          <label>Projektit</label>
-          <div>
-            {avustushaku.projects?.map((p) => p["code-value"]).join(", ")}
-          </div>
-        </div>
-        <div>
           <label>Toiminto</label>
           <div>
             {codeValues.find((c) => c.id === avustushaku["operation-id"])?.code}
