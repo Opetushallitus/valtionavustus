@@ -212,10 +212,7 @@ muutosTest(
           { name: "talousarvio.steamship-costs-row", amount: 1000 },
           { name: "talousarvio.other-costs-row", amount: 9999 },
         ];
-        const rows = await getMenoInputRows(page);
-        expect(sortedInputFields(rows)).toEqual(
-          sortedInputFields(expectedBudgetInputs)
-        );
+        await expectMenoInputRows(page, expectedBudgetInputs);
       }
     );
     await test.step("also has correct titles", async () => {
@@ -321,10 +318,7 @@ muutosTest(
           { name: "talousarvio.steamship-costs-row", amount: 1000 },
           { name: "talousarvio.other-costs-row", amount: 9999 },
         ];
-        const rows = await getMenoInputRows(page);
-        expect(sortedInputFields(rows)).toEqual(
-          sortedInputFields(expectedBudgetInputs)
-        );
+        await expectMenoInputRows(page, expectedBudgetInputs);
       }
     );
   }
@@ -353,10 +347,7 @@ budjettimuutoshakemusTest(
         { name: "talousarvio.steamship-costs-row", amount: 100 },
         { name: "talousarvio.other-costs-row", amount: 100000 },
       ];
-      const rows = await getMenoInputRows(page);
-      expect(sortedInputFields(expectedBudgetInputs)).toEqual(
-        sortedInputFields(rows)
-      );
+      await expectMenoInputRows(page, expectedBudgetInputs);
     });
     const locators = hakijaMuutoshakemusPage.locators();
     const { budget } = locators;
@@ -419,18 +410,15 @@ const getCurrentBudget = (page: Page) =>
 const getMuutoshakemusBudget = (page: Page) =>
   getHakemusBudget(page, '[data-test-id="muutoshakemus-value"]');
 
-const sortedInputFields = (budgetList: { name: string; amount: number }[]) => {
-  return [...budgetList].sort((a, b) => (a.name < b.name ? 1 : -1));
+const expectMenoInputRows = async (
+  page: Page,
+  expectedBudgetInputs: { name: string; amount: number }[]
+) => {
+  const menoInputRowLocator = page.locator(
+    "[data-test-id=talousarvio-form] [data-test-id=meno-input] input"
+  );
+  for (const [index, { name, amount }] of expectedBudgetInputs.entries()) {
+    await expect(menoInputRowLocator.nth(index)).toHaveAttribute("name", name);
+    await expect(menoInputRowLocator.nth(index)).toHaveValue(String(amount));
+  }
 };
-
-const getMenoInputRows = (page: Page) =>
-  page
-    .locator("[data-test-id=talousarvio-form] [data-test-id=meno-input]")
-    .evaluateAll((elements) =>
-      elements.map((elem) => ({
-        name: elem.querySelector("input")?.getAttribute("name") || "",
-        amount: parseInt(
-          elem.querySelector("input")?.getAttribute("value") || ""
-        ),
-      }))
-    );
