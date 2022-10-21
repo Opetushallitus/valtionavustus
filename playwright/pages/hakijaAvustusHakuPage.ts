@@ -11,7 +11,7 @@ import {
   getHakemusUrlFromEmail,
   pollUntilNewHakemusEmailArrives,
 } from "../utils/emails";
-import { Budget, defaultBudget } from "../utils/budget";
+import { Budget, fillBudget } from "../utils/budget";
 import { Answers } from "../utils/types";
 
 export class HakijaAvustusHakuPage {
@@ -233,81 +233,10 @@ export class HakijaAvustusHakuPage {
     return await expectQueryParameter(this.page, "hakemus");
   }
 
-  async fillBudget(
-    budget: Budget = defaultBudget,
-    type: "hakija" | "virkailija"
-  ) {
-    const prefix = type === "virkailija" ? "budget-edit-" : "";
-
-    await this.page.fill(
-      `[id='${prefix}personnel-costs-row.description']`,
-      budget.description.personnel
-    );
-    await this.page.fill(
-      `[id='${prefix}personnel-costs-row.amount']`,
-      budget.amount.personnel
-    );
-    await this.page.fill(
-      `[id='${prefix}material-costs-row.description']`,
-      budget.description.material
-    );
-    await this.page.fill(
-      `[id='${prefix}material-costs-row.amount']`,
-      budget.amount.material
-    );
-    await this.page.fill(
-      `[id='${prefix}equipment-costs-row.description']`,
-      budget.description.equipment
-    );
-    await this.page.fill(
-      `[id='${prefix}equipment-costs-row.amount']`,
-      budget.amount.equipment
-    );
-    await this.page.fill(
-      `[id='${prefix}service-purchase-costs-row.description']`,
-      budget.description["service-purchase"]
-    );
-    await this.page.fill(
-      `[id='${prefix}service-purchase-costs-row.amount']`,
-      budget.amount["service-purchase"]
-    );
-    await this.page.fill(
-      `[id='${prefix}rent-costs-row.description']`,
-      budget.description.rent
-    );
-    await this.page.fill(
-      `[id='${prefix}rent-costs-row.amount']`,
-      budget.amount.rent
-    );
-    await this.page.fill(
-      `[id='${prefix}steamship-costs-row.description']`,
-      budget.description.steamship
-    );
-    await this.page.fill(
-      `[id='${prefix}steamship-costs-row.amount']`,
-      budget.amount.steamship
-    );
-    await this.page.fill(
-      `[id='${prefix}other-costs-row.description']`,
-      budget.description.other
-    );
-    await this.page.fill(
-      `[id='${prefix}other-costs-row.amount']`,
-      budget.amount.other
-    );
-
-    if (type === "hakija") {
-      await this.page.fill(
-        `[id='${prefix}self-financing-amount']`,
-        budget.selfFinancing
-      );
-    }
-  }
-
   async fillBudjettimuutoshakemusEnabledHakemus(
     avustushakuID: number,
     answers: Answers,
-    budget?: Budget
+    budget: Budget
   ) {
     const lang = answers.lang || "fi";
 
@@ -377,6 +306,6 @@ export class HakijaAvustusHakuPage {
       await this.page.fill("#organization", answers.organization);
     }
 
-    await this.fillBudget(budget, "hakija");
+    await fillBudget(this.page, budget, "hakija");
   }
 }

@@ -1,3 +1,6 @@
+import { clearAndType } from "./util";
+import { Page } from "@playwright/test";
+
 export const defaultBudget = {
   amount: {
     personnel: "200000",
@@ -37,3 +40,74 @@ export type TalousarvioFormTable = Array<{
 
 export const sortedFormTable = (budgetList: TalousarvioFormTable) =>
   [...budgetList].sort((a, b) => (a.description < b.description ? 1 : -1));
+
+export const fillBudget = async (
+  page: Page,
+  budget: Budget,
+  type: "hakija" | "virkailija"
+) => {
+  const prefix = type === "virkailija" ? "budget-edit-" : "";
+
+  await page.fill(
+    `[id='${prefix}personnel-costs-row.description']`,
+    budget.description.personnel
+  );
+  await page.fill(
+    `[id='${prefix}personnel-costs-row.amount']`,
+    budget.amount.personnel
+  );
+  await page.fill(
+    `[id='${prefix}material-costs-row.description']`,
+    budget.description.material
+  );
+  await page.fill(
+    `[id='${prefix}material-costs-row.amount']`,
+    budget.amount.material
+  );
+  await page.fill(
+    `[id='${prefix}equipment-costs-row.description']`,
+    budget.description.equipment
+  );
+  await page.fill(
+    `[id='${prefix}equipment-costs-row.amount']`,
+    budget.amount.equipment
+  );
+  await page.fill(
+    `[id='${prefix}service-purchase-costs-row.description']`,
+    budget.description["service-purchase"]
+  );
+  await page.fill(
+    `[id='${prefix}service-purchase-costs-row.amount']`,
+    budget.amount["service-purchase"]
+  );
+  await page.fill(
+    `[id='${prefix}rent-costs-row.description']`,
+    budget.description.rent
+  );
+  await page.fill(`[id='${prefix}rent-costs-row.amount']`, budget.amount.rent);
+  await page.fill(
+    `[id='${prefix}steamship-costs-row.description']`,
+    budget.description.steamship
+  );
+  await page.fill(
+    `[id='${prefix}steamship-costs-row.amount']`,
+    budget.amount.steamship
+  );
+  await page.fill(
+    `[id='${prefix}other-costs-row.description']`,
+    budget.description.other
+  );
+
+  await clearAndType(
+    page,
+    `[id='${prefix}other-costs-row.amount']`,
+    budget.amount.other
+  );
+
+  if (type === "hakija") {
+    await page.fill(
+      `[id='${prefix}self-financing-amount']`,
+      budget.selfFinancing
+    );
+  }
+};

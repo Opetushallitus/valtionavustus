@@ -2,7 +2,6 @@ import { expect, Locator, Page } from "@playwright/test";
 
 import { navigate } from "../utils/navigate";
 import {
-  clearAndType,
   clickElementWithText,
   expectToBeDefined,
   getChangedBudgetTableCells,
@@ -16,12 +15,7 @@ import {
   PaatosValues,
   VaCodeValues,
 } from "../utils/types";
-import {
-  AcceptedBudget,
-  Budget,
-  BudgetAmount,
-  defaultBudget,
-} from "../utils/budget";
+import { AcceptedBudget, BudgetAmount, fillBudget } from "../utils/budget";
 import { HakijaAvustusHakuPage } from "./hakijaAvustusHakuPage";
 import { createReactSelectLocators } from "../utils/react-select";
 
@@ -228,92 +222,6 @@ export class HakemustenArviointiPage {
     ]);
   }
 
-  async fillBudget(
-    budget: Budget = defaultBudget,
-    type: "hakija" | "virkailija"
-  ) {
-    const prefix = type === "virkailija" ? "budget-edit-" : "";
-
-    await clearAndType(
-      this.page,
-      `[id='${prefix}personnel-costs-row.description']`,
-      budget.description.personnel
-    );
-    await clearAndType(
-      this.page,
-      `[id='${prefix}personnel-costs-row.amount']`,
-      budget.amount.personnel
-    );
-    await clearAndType(
-      this.page,
-      `[id='${prefix}material-costs-row.description']`,
-      budget.description.material
-    );
-    await clearAndType(
-      this.page,
-      `[id='${prefix}material-costs-row.amount']`,
-      budget.amount.material
-    );
-    await clearAndType(
-      this.page,
-      `[id='${prefix}equipment-costs-row.description']`,
-      budget.description.equipment
-    );
-    await clearAndType(
-      this.page,
-      `[id='${prefix}equipment-costs-row.amount']`,
-      budget.amount.equipment
-    );
-    await clearAndType(
-      this.page,
-      `[id='${prefix}service-purchase-costs-row.description']`,
-      budget.description["service-purchase"]
-    );
-    await clearAndType(
-      this.page,
-      `[id='${prefix}service-purchase-costs-row.amount']`,
-      budget.amount["service-purchase"]
-    );
-    await clearAndType(
-      this.page,
-      `[id='${prefix}rent-costs-row.description']`,
-      budget.description.rent
-    );
-    await clearAndType(
-      this.page,
-      `[id='${prefix}rent-costs-row.amount']`,
-      budget.amount.rent
-    );
-    await clearAndType(
-      this.page,
-      `[id='${prefix}steamship-costs-row.description']`,
-      budget.description.steamship
-    );
-    await clearAndType(
-      this.page,
-      `[id='${prefix}steamship-costs-row.amount']`,
-      budget.amount.steamship
-    );
-    await clearAndType(
-      this.page,
-      `[id='${prefix}other-costs-row.description']`,
-      budget.description.other
-    );
-
-    await clearAndType(
-      this.page,
-      `[id='${prefix}other-costs-row.amount']`,
-      budget.amount.other
-    );
-
-    if (type === "hakija") {
-      await this.page.fill(
-        `[id='${prefix}self-financing-amount']`,
-        budget.selfFinancing
-      );
-    }
-  }
-
   async acceptBudget(budget: AcceptedBudget) {
     if (typeof budget === "string") {
       await this.page.fill(
@@ -322,7 +230,7 @@ export class HakemustenArviointiPage {
       );
     } else {
       await this.page.click('label[for="useDetailedCosts-true"]');
-      await this.fillBudget(budget, "virkailija");
+      await fillBudget(this.page, budget, "virkailija");
     }
     await this.waitForSave();
   }
