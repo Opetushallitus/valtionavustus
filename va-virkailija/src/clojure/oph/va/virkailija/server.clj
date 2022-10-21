@@ -7,6 +7,7 @@
             [buddy.auth.middleware :as buddy-middleware]
             [buddy.auth.accessrules :as buddy-accessrules]
             [oph.va.virkailija.db.migrations :as dbmigrations]
+            [oph.va.hakija.db.migrations :as hakija-dbmigrations]
             [buddy.auth.backends.session :as buddy-session]
             [clojure.tools.logging :as log]
             [oph.common.server :as server]
@@ -24,6 +25,9 @@
 
 (defn- startup [config]
   (log/info "Startup, with configuration: " config)
+  (hakija-dbmigrations/migrate "hakija"
+                               "db.migration.hakija"
+                               "oph.va.hakija.db.migrations")
   (dbmigrations/migrate "virkailija"
                         "db.migration.virkailija"
                         "oph.va.virkailija.db.migrations")
