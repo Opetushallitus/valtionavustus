@@ -1,4 +1,3 @@
-import { clearAndType } from "./util";
 import { expect, Page } from "@playwright/test";
 
 export const defaultBudget = {
@@ -41,6 +40,22 @@ export type TalousarvioFormTable = Array<{
 export const sortedFormTable = (budgetList: TalousarvioFormTable) =>
   [...budgetList].sort((a, b) => (a.description < b.description ? 1 : -1));
 
+const getSelectorsForType = (
+  type: "hakija" | "virkailija",
+  field: "amount" | "description"
+): Record<keyof BudgetAmount, string> => {
+  const prefix = type === "virkailija" ? "budget-edit-" : "";
+  return {
+    personnel: `[id='${prefix}personnel-costs-row.${field}']`,
+    material: `[id='${prefix}material-costs-row.${field}']`,
+    equipment: `[id='${prefix}equipment-costs-row.${field}']`,
+    "service-purchase": `[id='${prefix}service-purchase-costs-row.${field}']`,
+    rent: `[id='${prefix}rent-costs-row.${field}']`,
+    steamship: `[id='${prefix}steamship-costs-row.${field}']`,
+    other: `[id='${prefix}other-costs-row.${field}']`,
+  };
+};
+
 export const fillBudget = async (
   page: Page,
   budget: Budget,
@@ -48,61 +63,20 @@ export const fillBudget = async (
 ) => {
   const prefix = type === "virkailija" ? "budget-edit-" : "";
 
-  await page.fill(
-    `[id='${prefix}personnel-costs-row.description']`,
-    budget.description.personnel
-  );
-  await page.fill(
-    `[id='${prefix}personnel-costs-row.amount']`,
-    budget.amount.personnel
-  );
-  await page.fill(
-    `[id='${prefix}material-costs-row.description']`,
-    budget.description.material
-  );
-  await page.fill(
-    `[id='${prefix}material-costs-row.amount']`,
-    budget.amount.material
-  );
-  await page.fill(
-    `[id='${prefix}equipment-costs-row.description']`,
-    budget.description.equipment
-  );
-  await page.fill(
-    `[id='${prefix}equipment-costs-row.amount']`,
-    budget.amount.equipment
-  );
-  await page.fill(
-    `[id='${prefix}service-purchase-costs-row.description']`,
-    budget.description["service-purchase"]
-  );
-  await page.fill(
-    `[id='${prefix}service-purchase-costs-row.amount']`,
-    budget.amount["service-purchase"]
-  );
-  await page.fill(
-    `[id='${prefix}rent-costs-row.description']`,
-    budget.description.rent
-  );
-  await page.fill(`[id='${prefix}rent-costs-row.amount']`, budget.amount.rent);
-  await page.fill(
-    `[id='${prefix}steamship-costs-row.description']`,
-    budget.description.steamship
-  );
-  await page.fill(
-    `[id='${prefix}steamship-costs-row.amount']`,
-    budget.amount.steamship
-  );
-  await page.fill(
-    `[id='${prefix}other-costs-row.description']`,
-    budget.description.other
-  );
-
-  await clearAndType(
-    page,
-    `[id='${prefix}other-costs-row.amount']`,
-    budget.amount.other
-  );
+  for (const key of Object.keys(budget.amount)) {
+    const amountSelector = getSelectorsForType(type, "amount")[
+      key as keyof BudgetAmount
+    ];
+    await page
+      .locator(amountSelector)
+      .fill(budget.amount[key as keyof BudgetAmount]);
+    const descriptionSelector = getSelectorsForType(type, "description")[
+      key as keyof BudgetAmount
+    ];
+    await page
+      .locator(descriptionSelector)
+      .fill(budget.description[key as keyof BudgetAmount]);
+  }
 
   if (type === "hakija") {
     await page.fill(
@@ -117,16 +91,7 @@ export async function expectBudget(
   budgetAmount: BudgetAmount,
   type: "hakija" | "virkailija"
 ) {
-  const prefix = type === "virkailija" ? "budget-edit-" : "";
-  const locators: Record<keyof BudgetAmount, string> = {
-    personnel: `[id='${prefix}personnel-costs-row.amount']`,
-    material: `[id='${prefix}material-costs-row.amount']`,
-    equipment: `[id='${prefix}equipment-costs-row.amount']`,
-    "service-purchase": `[id='${prefix}service-purchase-costs-row.amount']`,
-    rent: `[id='${prefix}rent-costs-row.amount']`,
-    steamship: `[id='${prefix}steamship-costs-row.amount']`,
-    other: `[id='${prefix}other-costs-row.amount']`,
-  };
+  const locators = getSelectorsForType(type, "amount");
   for (const [key, value] of Object.entries(budgetAmount))
     await expect(page.locator(locators[key as keyof BudgetAmount])).toHaveValue(
       value
