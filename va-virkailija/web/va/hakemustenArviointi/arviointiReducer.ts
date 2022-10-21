@@ -9,6 +9,7 @@ import {
 import RouteParser from "route-parser";
 import HttpUtil from "soresu-form/web/HttpUtil";
 import {
+  Answer,
   Arvio,
   Avustushaku,
   ChangeRequest,
@@ -543,6 +544,17 @@ const arviointiSlice = createSlice({
       hakemus.arvio.hasChanges = true;
       hakemus.arvio[key] = value;
     },
+    setArvioFieldValue: (
+      state: Draft<State>,
+      {
+        payload,
+      }: PayloadAction<{ hakemusId: number; answer: Answer; index: number }>
+    ) => {
+      const { hakemusId, answer, index } = payload;
+      const hakemus = getHakemus(state, hakemusId);
+      hakemus.arvio.hasChanges = true;
+      hakemus.arvio["overridden-answers"]?.value?.splice(index, 1, answer);
+    },
     setMuutoshakemukset: (
       state,
       {
@@ -779,6 +791,7 @@ export const {
   setSubTab,
   setSelectedHakuId,
   setArvioValue,
+  setArvioFieldValue,
   setMuutoshakemukset,
   toggleShowOthersScore,
 } = arviointiSlice.actions;

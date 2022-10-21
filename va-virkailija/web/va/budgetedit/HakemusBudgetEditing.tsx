@@ -19,6 +19,7 @@ import {
 import { Answer, Field, Hakemus } from "soresu-form/web/va/types";
 import {
   getLoadedState,
+  setArvioFieldValue,
   setArvioValue,
   startHakemusArvioAutoSave,
 } from "../hakemustenArviointi/arviointiReducer";
@@ -53,22 +54,23 @@ const HakemusBudgetEditing = ({ allowEditing, hakemus }: Props) => {
   };
 
   const onAnswerOverride = (hakemus: Hakemus, field: Field, newValue: any) => {
-    const clonedHakemus = _.cloneDeep(hakemus);
-    const key = "overridden-answers" as const;
-    console.log({ hakemus, field, newValue });
-    InputValueStorage.writeValue(
-      [field],
-      clonedHakemus.arvio[key],
-      createFieldUpdate(field, newValue, VaSyntaxValidator)
-    );
-    dispatch(
-      setArvioValue({
-        hakemusId: clonedHakemus.id,
-        key,
-        value: clonedHakemus.arvio[key],
-      })
-    );
-    dispatch(startHakemusArvioAutoSave({ hakemusId: clonedHakemus.id }));
+    const overriddenAnswers = hakemus.arvio["overridden-answers"]?.value ?? [];
+    const fieldUpdate = createFieldUpdate(field, newValue, VaSyntaxValidator);
+    const index = overriddenAnswers.findIndex((a) => a.key === fieldUpdate.id);
+    const answer = {
+      ...overriddenAnswers[index],
+      value: fieldUpdate.value,
+    };
+    if (index !== -1) {
+      dispatch(
+        setArvioFieldValue({
+          hakemusId: hakemus.id,
+          answer,
+          index,
+        })
+      );
+      dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
+    }
   };
 
   const onDetailedCostsToggle = (hakemusId: number, value: boolean) => {
