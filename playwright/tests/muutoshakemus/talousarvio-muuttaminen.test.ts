@@ -8,10 +8,17 @@ import {
   getAcceptedPäätösEmails,
   getLinkToMuutoshakemusFromSentEmails,
 } from "../../utils/emails";
-import { Budget, BudgetAmount } from "../../utils/budget";
+import {
+  Budget,
+  BudgetAmount,
+  expectBudget,
+  fillBudget,
+} from "../../utils/budget";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import moment from "moment/moment";
 import { HakijaMuutoshakemusPaatosPage } from "../../pages/hakijaMuutoshakemusPaatosPage";
+import { expectToBeDefined } from "../../utils/util";
+import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 
 const testBudget: Budget = {
   amount: {
@@ -74,6 +81,73 @@ lumpSumTest(
 const muutosTest =
   budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixtures>({
     budget: testBudget,
+    acceptedHakemus: async (
+      {
+        page,
+        projektikoodi,
+        avustushakuID,
+        budget,
+        answers,
+        codes,
+        submittedHakemus: { userKey },
+        ukotettuValmistelija,
+      },
+      use
+    ) => {
+      const hakujenHallintaPage = new HakujenHallintaPage(page);
+      const hakemustenArviointiPage = new HakemustenArviointiPage(page);
+      await test.step("close avustushaku", async () => {
+        await hakujenHallintaPage.navigate(avustushakuID);
+        await hakujenHallintaPage.setEndDate(
+          moment().subtract(1, "year").format("D.M.YYYY H.mm")
+        );
+      });
+      await hakemustenArviointiPage.navigate(avustushakuID);
+      await hakemustenArviointiPage.selectHakemusFromList(answers.projectName);
+      const hakemusID = await hakemustenArviointiPage.getHakemusID();
+      expectToBeDefined(hakemusID);
+      await hakemustenArviointiPage.closeHakemusDetails();
+      await test.step("fill prerequisite info", async () => {
+        await hakemustenArviointiPage.selectValmistelijaForHakemus(
+          hakemusID,
+          ukotettuValmistelija
+        );
+        await hakemustenArviointiPage.selectHakemusFromList(
+          answers.projectName
+        );
+
+        await hakemustenArviointiPage.selectProject(projektikoodi, codes);
+        await expect(
+          hakemustenArviointiPage.arviointiTabLocators().taTili.value
+        ).toContainText("Ammatillinen koulutus");
+        await hakemustenArviointiPage.waitForSave();
+        await hakemustenArviointiPage.page.click(
+          "#arviointi-tab label[for='set-arvio-status-plausible']"
+        );
+      });
+      await test.step("budget is prefilled correctly", async () => {
+        await hakemustenArviointiPage.page.click(
+          'label[for="useDetailedCosts-true"]'
+        );
+        await expectBudget(
+          hakemustenArviointiPage.page,
+          budget.amount,
+          "virkailija"
+        );
+      });
+
+      await fillBudget(hakemustenArviointiPage.page, budget, "virkailija");
+      await hakemustenArviointiPage.page.click(
+        "#arviointi-tab label[for='set-arvio-status-accepted']"
+      );
+      await hakemustenArviointiPage.waitForSave();
+      await hakujenHallintaPage.navigate(avustushakuID);
+      await hakujenHallintaPage.resolveAvustushaku();
+      await hakujenHallintaPage.switchToPaatosTab();
+      await hakujenHallintaPage.sendPaatos(avustushakuID);
+
+      await use({ hakemusID, userKey });
+    },
   });
 
 muutosTest(

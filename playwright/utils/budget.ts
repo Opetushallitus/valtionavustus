@@ -1,5 +1,5 @@
 import { clearAndType } from "./util";
-import { Page } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 
 export const defaultBudget = {
   amount: {
@@ -111,3 +111,24 @@ export const fillBudget = async (
     );
   }
 };
+
+export async function expectBudget(
+  page: Page,
+  budgetAmount: BudgetAmount,
+  type: "hakija" | "virkailija"
+) {
+  const prefix = type === "virkailija" ? "budget-edit-" : "";
+  const locators: Record<keyof BudgetAmount, string> = {
+    personnel: `[id='${prefix}personnel-costs-row.amount']`,
+    material: `[id='${prefix}material-costs-row.amount']`,
+    equipment: `[id='${prefix}equipment-costs-row.amount']`,
+    "service-purchase": `[id='${prefix}service-purchase-costs-row.amount']`,
+    rent: `[id='${prefix}rent-costs-row.amount']`,
+    steamship: `[id='${prefix}steamship-costs-row.amount']`,
+    other: `[id='${prefix}other-costs-row.amount']`,
+  };
+  for (const [key, value] of Object.entries(budgetAmount))
+    await expect(page.locator(locators[key as keyof BudgetAmount])).toHaveValue(
+      value
+    );
+}

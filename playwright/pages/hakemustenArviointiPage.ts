@@ -251,6 +251,16 @@ export class HakemustenArviointiPage {
     return this.arviointiTabLocators();
   }
 
+  async selectProject(projectCode: string, codes?: VaCodeValues) {
+    const { projektikoodi } = this.arviointiTabLocators();
+    if (codes && codes.project.length > 1) {
+      await projektikoodi.input.click();
+      await projektikoodi.option.locator(`text=${projectCode}`).click();
+      await this.waitForSave();
+    }
+    await expect(projektikoodi.value).toContainText(projectCode);
+  }
+
   async acceptAvustushaku({
     projectName,
     budget = "100000",
@@ -269,19 +279,14 @@ export class HakemustenArviointiPage {
     await this.selectHakemusFromList(projectName);
     const hakemusID = await this.getHakemusID();
 
-    const { taTili, projektikoodi: projektikoodiSelect } =
-      this.arviointiTabLocators();
-    if (codes && codes.project.length > 1) {
-      await projektikoodiSelect.input.click();
-      await projektikoodiSelect.option.locator(`text=${projektikoodi}`).click();
-      await this.waitForSave();
-    }
-    await expect(projektikoodiSelect.value).toContainText(projektikoodi);
+    await this.selectProject(projektikoodi, codes);
 
     expectToBeDefined(hakemusID);
     console.log("Hakemus ID:", hakemusID);
 
-    await expect(taTili.value).toContainText(rahoitusalue);
+    await expect(this.arviointiTabLocators().taTili.value).toContainText(
+      rahoitusalue
+    );
     await this.waitForSave();
     await this.acceptHakemus(budget);
     return hakemusID;
