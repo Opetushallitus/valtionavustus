@@ -46,52 +46,49 @@ interface BudjettimuutoshakemusFixtures extends MuutoshakemusFixtures {
   acceptedBudget: Budget;
 }
 
-const acceptedWithInvalidBudgetValuesTest =
-  budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixtures>({
-    budget: haettuBudjetti,
-    acceptedBudget: budgetWithNonNumericValues,
+const test = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixtures>({
+  budget: haettuBudjetti,
+  acceptedBudget: budgetWithNonNumericValues,
+});
+
+test("When hakemus is approved with non-numeric budget values", async ({
+  page,
+  acceptedHakemus: { hakemusID },
+  avustushakuID,
+}) => {
+  const hakemustenArviointiPage = new HakemustenArviointiPage(page);
+  await hakemustenArviointiPage.navigateToHakemusArviointi(
+    avustushakuID,
+    hakemusID
+  );
+
+  await test.step(
+    "Non-numeric characters were ignored for approved budget",
+    async () => {
+      expect(
+        (await hakemustenArviointiPage.getNormalizedBudget()).myonnetty
+      ).toEqual(budgetWithNumericValues.amount);
+    }
+  );
+
+  await test.step("There are no errors in omarahoitus", async () => {
+    await expect(
+      page.locator(".budget-summary-financing .error")
+    ).not.toBeVisible();
   });
 
-acceptedWithInvalidBudgetValuesTest(
-  "When hakemus is approved with non-numeric budget values",
-  async ({ page, acceptedHakemus: { hakemusID }, avustushakuID }) => {
-    const hakemustenArviointiPage = new HakemustenArviointiPage(page);
-    await hakemustenArviointiPage.navigateToHakemusArviointi(
-      avustushakuID,
-      hakemusID
-    );
+  await test.step(
+    "Input field does not have error when value is 0",
+    async () => {
+      const steamshipInputSelector =
+        '[id="budget-edit-steamship-costs-row"] .soresu-money-field';
 
-    await acceptedWithInvalidBudgetValuesTest.step(
-      "Non-numeric characters were ignored for approved budget",
-      async () => {
-        expect(
-          (await hakemustenArviointiPage.getNormalizedBudget()).myonnetty
-        ).toEqual(budgetWithNumericValues.amount);
-      }
-    );
+      expect(budgetWithNumericValues.amount.steamship).toBe("0");
+      await expect(page.locator(steamshipInputSelector)).not.toHaveClass(
+        /error/
+      );
+    }
+  );
+});
 
-    await acceptedWithInvalidBudgetValuesTest.step(
-      "There are no errors in omarahoitus",
-      async () => {
-        await expect(
-          page.locator(".budget-summary-financing .error")
-        ).not.toBeVisible();
-      }
-    );
-
-    await acceptedWithInvalidBudgetValuesTest.step(
-      "Input field does not have error when value is 0",
-      async () => {
-        const steamshipInputSelector =
-          '[id="budget-edit-steamship-costs-row"] .soresu-money-field';
-
-        expect(budgetWithNumericValues.amount.steamship).toBe("0");
-        await expect(page.locator(steamshipInputSelector)).not.toHaveClass(
-          /error/
-        );
-      }
-    );
-  }
-);
-
-acceptedWithInvalidBudgetValuesTest.setTimeout(180000);
+test.setTimeout(180000);
