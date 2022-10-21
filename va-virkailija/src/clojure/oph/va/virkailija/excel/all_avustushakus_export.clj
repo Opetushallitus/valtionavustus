@@ -98,6 +98,15 @@ talousarviotili AS (
       GROUP BY koulutusaste, avustushaku_id
   ) as rahoitusaluetilit
   GROUP BY avustushaku_id
+),
+projektikoodi AS (
+  SELECT
+    avustushaku_id,
+    coalesce(jsonb_agg(va_code_values.code_value), '[]'::jsonb) AS projects
+  FROM avustushakus_to_export avustushaku
+  LEFT JOIN avustushaku_project_code USING (avustushaku_id)
+  LEFT JOIN va_code_values ON va_code_values.id = project_id
+  GROUP BY avustushaku_id
 )
 SELECT
   avustushaku.id AS avustushaku_id,
@@ -129,9 +138,7 @@ SELECT
   avustushaku.hankkeen_alkamispaiva AS ensimmainen_kayttopaiva,
   avustushaku.hankkeen_paattymispaiva AS viimeinen_kayttopaiva,
   avustushaku.arvioitu_maksupaiva AS arvioitu_maksupaiva,
-  projekti.code AS projekti_code,
-  projekti.code_value AS projekti_code_value,
-  projekti.year AS projekti_year,
+  projektikoodi.projects AS projects,
   toimintayksikko.code AS toimintayksikko_code,
   toimintayksikko.code_value AS toimintayksikko_code_value,
   toimintayksikko.year AS toimintayksikko_year,
@@ -148,7 +155,7 @@ LEFT JOIN valiselvityspyynnot_lahetetty USING (avustushaku_id)
 LEFT JOIN loppuselvityspyynnot_lahetetty USING (avustushaku_id)
 LEFT JOIN grouped_raportointivelvoitteet USING (avustushaku_id)
 LEFT JOIN lainsaadanto_str USING (avustushaku_id)
-LEFT JOIN virkailija.va_code_values projekti ON projekti.id = avustushaku.project_id
+LEFT JOIN projektikoodi USING (avustushaku_id)
 LEFT JOIN virkailija.va_code_values toimintayksikko ON toimintayksikko.id = avustushaku.operational_unit_id
 LEFT JOIN virkailija.va_code_values toiminto ON toiminto.id = avustushaku.operation_id
 LEFT JOIN talousarviotili USING (avustushaku_id)
@@ -205,7 +212,7 @@ ORDER BY avustushaku.id DESC
      (or (:asiatunnus row) "")
      (or (:avustushaku-maararaha row) "")
      (or (:toimintayksikko-code-value row) "")
-     (or (:projekti-code-value row) "")
+     (clojure.string/join ", " (:projects row))
      (or (:toiminto-code-value row) "")
      (or (:maksatukset-lahetetty row) "")
      (or (:maksatukset-summa row) "")
@@ -256,7 +263,7 @@ ORDER BY avustushaku.id DESC
       "Asiatunnus"
       "Määräraha (€)"
       "Toimintayksikkö"
-      "Projekti koodi"
+      "Projektit"
       "Toiminto"
       "Maksettu pvm"
       "Maksettu €"
