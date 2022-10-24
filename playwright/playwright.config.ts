@@ -22,6 +22,7 @@ const config: PlaywrightTestConfig = {
     video: "off",
     screenshot: "only-on-failure",
     trace: "retain-on-failure",
+    testIdAttribute: "data-test-id",
   },
   reportSlowTests: {
     max: 0,

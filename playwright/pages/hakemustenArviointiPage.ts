@@ -19,7 +19,7 @@ import { AcceptedBudget, BudgetAmount, fillBudget } from "../utils/budget";
 import { HakijaAvustusHakuPage } from "./hakijaAvustusHakuPage";
 import { createReactSelectLocators } from "../utils/react-select";
 
-const jatkoaikaSelector = "[data-test-id=muutoshakemus-jatkoaika]" as const;
+const jatkoaikaTestId = "muutoshakemus-jatkoaika";
 
 export class HakemustenArviointiPage {
   readonly page: Page;
@@ -34,11 +34,10 @@ export class HakemustenArviointiPage {
   constructor(page: Page) {
     this.page = page;
     this.avustushakuDropdown = this.page.locator("#avustushaku-dropdown");
-    this.inputFilterOrganization = this.page.locator(
-      '[placeholder="Hakijaorganisaatio"]'
-    );
-    this.inputFilterProject = this.page.locator(
-      '[placeholder="Asiatunnus tai hanke"]'
+    this.inputFilterOrganization =
+      this.page.getByPlaceholder("Hakijaorganisaatio");
+    this.inputFilterProject = this.page.getByPlaceholder(
+      "Asiatunnus tai hanke"
     );
     this.hakemusListing = this.page.locator("#hakemus-listing");
     this.showUnfinished = this.page.locator('text="Näytä keskeneräiset"');
@@ -124,7 +123,7 @@ export class HakemustenArviointiPage {
   async clickHakemus(hakemusID: number) {
     await Promise.all([
       this.page.waitForNavigation(),
-      this.page.click(`[data-test-id="hakemus-${hakemusID}"]`),
+      this.page.getByTestId(`hakemus-${hakemusID}`).click(),
     ]);
   }
 
@@ -141,7 +140,7 @@ export class HakemustenArviointiPage {
 
   async openUkotusModal(hakemusID: number) {
     await this.page
-      .locator(`[data-test-id=hakemus-${hakemusID}]`)
+      .getByTestId(`hakemus-${hakemusID}`)
       .locator(`[aria-label="Lisää valmistelija hakemukselle"]`)
       .click();
   }
@@ -155,25 +154,25 @@ export class HakemustenArviointiPage {
   async openHakemusEditPage(
     reason: string = "Kunhan editoin"
   ): Promise<HakijaAvustusHakuPage> {
-    await this.page.click("[data-test-id=virkailija-edit-hakemus]");
-    await this.page.type("[data-test-id=virkailija-edit-comment]", reason);
+    await this.page.getByTestId("virkailija-edit-hakemus").click();
+    await this.page.getByTestId("virkailija-edit-comment").type(reason);
     const [newPage] = await Promise.all([
       this.page.context().waitForEvent("page"),
-      this.page.click("[data-test-id=virkailija-edit-submit]"),
+      this.page.getByTestId("virkailija-edit-submit").click(),
     ]);
     await newPage.bringToFront();
     return new HakijaAvustusHakuPage(newPage);
   }
 
   async createChangeRequest(reason: string = "Täydennäppä") {
-    await this.page.click('[data-test-id="request-change-button"]');
-    await this.page.type('[data-test-id="täydennyspyyntö__textarea"]', reason);
-    await this.page.click('[data-test-id="täydennyspyyntö__lähetä"]');
+    await this.page.getByTestId("request-change-button").click();
+    await this.page.getByTestId("täydennyspyyntö__textarea").type(reason);
+    await this.page.getByTestId("täydennyspyyntö__lähetä").click();
     await this.waitForSave();
   }
 
   async cancelChangeRequest() {
-    await this.page.click('[data-test-id="täydennyspyyntö__cancel"]');
+    await this.page.getByTestId("täydennyspyyntö__cancel").click();
     await this.waitForSave();
   }
 
@@ -207,10 +206,9 @@ export class HakemustenArviointiPage {
 
   async fillTäydennyspyyntöField(täydennyspyyntöText: string): Promise<void> {
     await clickElementWithText(this.page, "button", "Pyydä täydennystä");
-    await this.page.fill(
-      "[data-test-id='täydennyspyyntö__textarea']",
-      täydennyspyyntöText
-    );
+    await this.page
+      .getByTestId("täydennyspyyntö__textarea")
+      .fill(täydennyspyyntöText);
   }
 
   async clickToSendTäydennyspyyntö(avustushakuID: number, hakemusID: number) {
@@ -218,7 +216,7 @@ export class HakemustenArviointiPage {
       this.page.waitForResponse(
         `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/change-requests`
       ),
-      this.page.click("[data-test-id='täydennyspyyntö__lähetä']"),
+      this.page.getByTestId("täydennyspyyntö__lähetä").click(),
     ]);
   }
 
@@ -310,7 +308,7 @@ export class HakemustenArviointiPage {
   }
 
   async submitHakemus() {
-    await this.page.click('[data-test-id="submit-hakemus"]');
+    await this.page.getByTestId("submit-hakemus").click();
   }
 
   statusFieldSelector(hakemusID: number) {
@@ -342,22 +340,23 @@ export class HakemustenArviointiPage {
 
   async clickMuutoshakemusTab() {
     await this.page.click("span.muutoshakemus-tab");
-    await this.page.waitForSelector(jatkoaikaSelector);
+    await expect(this.page.getByTestId(jatkoaikaTestId));
   }
 
   async validateMuutoshakemusValues(
     muutoshakemus: MuutoshakemusValues,
     paatos?: PaatosValues
   ) {
-    const jatkoaika = await this.page.textContent(jatkoaikaSelector);
-    expect(jatkoaika).toEqual(muutoshakemus.jatkoaika?.format("DD.MM.YYYY"));
+    await expect(this.page.getByTestId(jatkoaikaTestId)).toHaveText(
+      muutoshakemus.jatkoaika!.format("DD.MM.YYYY")
+    );
     const jatkoaikaPerustelu = await this.page.textContent(
       "[data-test-id=muutoshakemus-jatkoaika-perustelu]"
     );
     expect(jatkoaikaPerustelu).toEqual(muutoshakemus.jatkoaikaPerustelu);
 
     if (paatos) {
-      await this.page.waitForSelector('[data-test-id="muutoshakemus-paatos"]');
+      await expect(this.page.getByTestId("muutoshakemus-paatos")).toBeVisible();
       const form = await this.page.evaluate(
         (selector: string) => document.querySelectorAll(selector).length,
         '[data-test-id="muutoshakemus-form"]'
@@ -370,7 +369,7 @@ export class HakemustenArviointiPage {
         /https?:\/\/[^\/]+\/muutoshakemus\/paatos\?user-key=[a-f0-9]{64}/
       );
     } else {
-      await this.page.waitForSelector('[data-test-id="muutoshakemus-form"]');
+      await expect(this.page.getByTestId("muutoshakemus-form")).toBeVisible();
     }
   }
 
@@ -409,26 +408,20 @@ export class HakemustenArviointiPage {
         ]);
       },
       title: this.page.locator(".hakemus-details-modal__title-row > span"),
-      muutoshakemusPaatosTitle: this.page.locator(
-        "[data-test-id=muutoshakemus-paatos-title]"
+      muutoshakemusPaatosTitle: this.page.getByTestId(
+        "muutoshakemus-paatos-title"
       ),
-      jatkoaikaPaatos: this.page.locator('[data-test-id="paatos-jatkoaika"]'),
-      jatkoaikaValue: this.page.locator(
-        '[data-test-id="paattymispaiva-value"]'
-      ),
-      sisaltoPaatos: this.page.locator('[data-test-id="paatos-sisaltomuutos"]'),
-      talousarvioPaatos: this.page.locator(
-        '[data-test-id="paatos-talousarvio"]'
-      ),
-      esittelija: this.page.locator('[data-test-id="paatos-esittelija"]'),
-      lisatietoja: this.page.locator('[data-test-id="paatos-additional-info"]'),
-      hyvaksyja: this.page.locator('[data-test-id="paatos-decider"]'),
-      registerNumber: this.page.locator(
-        '[data-test-id="paatos-register-number"]'
-      ),
-      projectName: this.page.locator('[data-test-id="paatos-project-name"]'),
+      jatkoaikaPaatos: this.page.getByTestId("paatos-jatkoaika"),
+      jatkoaikaValue: this.page.getByTestId("paattymispaiva-value"),
+      sisaltoPaatos: this.page.getByTestId("paatos-sisaltomuutos"),
+      talousarvioPaatos: this.page.getByTestId("paatos-talousarvio"),
+      esittelija: this.page.getByTestId("paatos-esittelija"),
+      lisatietoja: this.page.getByTestId("paatos-additional-info"),
+      hyvaksyja: this.page.getByTestId("paatos-decider"),
+      registerNumber: this.page.getByTestId("paatos-register-number"),
+      projectName: this.page.getByTestId("paatos-project-name"),
       org: this.page.locator("h1.muutoshakemus-paatos__org"),
-      perustelu: this.page.locator('[data-test-id="paatos-reason"]'),
+      perustelu: this.page.getByTestId("paatos-reason"),
       existingBudgetTableCells: () =>
         getExistingBudgetTableCells(
           this.page,
@@ -447,26 +440,18 @@ export class HakemustenArviointiPage {
       locators: {
         showAdditionalInfo: this.page.locator('text="Näytä lisätiedot"'),
         hideAdditionalInfo: this.page.locator('text="Piilota lisätiedot"'),
-        toimintayksikko: this.page.locator(
-          '[data-test-id="lisatiedot-Toimintayksikkö"]'
-        ),
-        vastuuvalmistelija: this.page.locator(
-          '[data-test-id="lisatiedot-Vastuuvalmistelija"]'
+        toimintayksikko: this.page.getByTestId("lisatiedot-Toimintayksikkö"),
+        vastuuvalmistelija: this.page.getByTestId(
+          "lisatiedot-Vastuuvalmistelija"
         ),
         paatokset: this.page.locator('[data-test-id="lisatiedot-Päätökset"]'),
-        maksatukset: this.page.locator(
-          '[data-test-id="lisatiedot-Maksatukset"]'
+        maksatukset: this.page.getByTestId("lisatiedot-Maksatukset"),
+        valiselvitykset: this.page.getByTestId("lisatiedot-Väliselvitykset"),
+        loppuselvitykset: this.page.getByTestId("lisatiedot-Loppuselvitykset"),
+        muutoshakukelpoinen: this.page.getByTestId(
+          "lisatiedot-Muutoshakukelpoinen"
         ),
-        valiselvitykset: this.page.locator(
-          '[data-test-id="lisatiedot-Väliselvitykset"]'
-        ),
-        loppuselvitykset: this.page.locator(
-          '[data-test-id="lisatiedot-Loppuselvitykset"]'
-        ),
-        muutoshakukelpoinen: this.page.locator(
-          '[data-test-id="lisatiedot-Muutoshakukelpoinen"]'
-        ),
-        budjetti: this.page.locator('[data-test-id="lisatiedot-Budjetti"]'),
+        budjetti: this.page.getByTestId("lisatiedot-Budjetti"),
       },
     };
   }
@@ -676,20 +661,16 @@ export class HakemustenArviointiPage {
 
   muutoshakemusTabLocators() {
     return {
-      hakijaPerustelut: this.page.locator(
-        '[data-test-id="muutoshakemus-reasoning-title"]'
-      ),
-      oldBudgetTitle: this.page.locator('[data-test-id="budget-old-title"]'),
-      currentBudgetTitle: this.page.locator(
-        '[data-test-id="budget-change-title"]'
-      ),
+      hakijaPerustelut: this.page.getByTestId("muutoshakemus-reasoning-title"),
+      oldBudgetTitle: this.page.getByTestId("budget-old-title"),
+      currentBudgetTitle: this.page.getByTestId("budget-change-title"),
     };
   }
 
   seurantaTabLocators() {
     return {
-      grantedTotal: this.page.locator("[data-test-id=granted-total]"),
-      amountTotal: this.page.locator("[data-test-id=amount-total]"),
+      grantedTotal: this.page.getByTestId("granted-total"),
+      amountTotal: this.page.getByTestId("amount-total"),
       kustannusMyonnetty: this.page.locator(
         '#budget-edit-project-budget tfoot [class="granted-amount-column"] [class="money"]'
       ),

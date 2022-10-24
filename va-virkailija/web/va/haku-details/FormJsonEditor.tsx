@@ -1,7 +1,8 @@
-import React from "react";
-import _ from "lodash";
-import { Form } from "soresu-form/web/va/types";
-import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
+import React, { useRef } from "react";
+import {
+  useHakujenHallintaDispatch,
+  useHakujenHallintaSelector,
+} from "../hakujenHallinta/hakujenHallintaStore";
 import {
   Avustushaku,
   formJsonUpdated,

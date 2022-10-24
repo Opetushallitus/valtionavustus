@@ -92,7 +92,7 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
       });
 
       await test.step("tarkasta väliselvitys", async () => {
-        await page.waitForSelector('[data-test-id="selvitys-email"]');
+        await expect(page.getByTestId("selvitys-email")).toBeVisible();
         await valiselvitysPage.acceptVäliselvitys();
       });
 
@@ -164,10 +164,9 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
         acceptedHakemus.hakemusID
       );
       await valiselvitysPage.acceptVäliselvitys();
-      const valiselvitysFormUrl = await page.getAttribute(
-        '[data-test-id="selvitys-link"]',
-        "href"
-      );
+      const valiselvitysFormUrl = await page
+        .getByTestId("selvitys-link")
+        .getAttribute("href");
       if (!valiselvitysFormUrl) throw Error("väliselvitys form url not found");
       const [newPage] = await Promise.all([
         context.waitForEvent("page"),
@@ -177,7 +176,7 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
       await hakijaSelvitysPage.valiselvitysWarning.waitFor({
         state: "attached",
       });
-      await newPage.waitForSelector('[data-test-id="form-preview"]');
+      await expect(newPage.getByTestId("form-preview")).toBeVisible();
     }
   );
 });

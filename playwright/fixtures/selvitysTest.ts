@@ -44,12 +44,10 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     });
     const tapahtumaloki = page.locator("div.tapahtumaloki");
     await test.step("updates tapahtumaloki", async () => {
-      await expect(
-        tapahtumaloki.locator('[data-test-id="sender-0"]')
-      ).toHaveText(ukotettuValmistelija);
-      await expect(tapahtumaloki.locator('[data-test-id="sent-0"]')).toHaveText(
-        "1"
+      await expect(tapahtumaloki.getByTestId("sender-0")).toHaveText(
+        ukotettuValmistelija
       );
+      await expect(tapahtumaloki.getByTestId("sent-0")).toHaveText("1");
     });
     await use({});
   },
@@ -69,10 +67,9 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
           avustushakuID,
           acceptedHakemus.hakemusID
         );
-        const väliselvitysFormUrl = await page.getAttribute(
-          '[data-test-id="selvitys-link"]',
-          "href"
-        );
+        const väliselvitysFormUrl = await page
+          .getByTestId("selvitys-link")
+          .getAttribute("href");
         if (!väliselvitysFormUrl)
           throw Error("valiselvitys form url not found");
         await navigate(page, väliselvitysFormUrl);
@@ -138,16 +135,14 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
       page.waitForResponse(
         `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/loppuselvitys/send-notification`
       ),
-      page.click('[data-test-id="send-loppuselvitys"]'),
+      page.getByTestId("send-loppuselvitys").click(),
     ]);
     const tapahtumaloki = page.locator("div.tapahtumaloki");
     await test.step("updates tapahtumaloki", async () => {
-      await expect(
-        tapahtumaloki.locator('[data-test-id="sender-0"]')
-      ).toHaveText(ukotettuValmistelija);
-      await expect(tapahtumaloki.locator('[data-test-id="sent-0"]')).toHaveText(
-        "1"
+      await expect(tapahtumaloki.getByTestId("sender-0")).toHaveText(
+        ukotettuValmistelija
       );
+      await expect(tapahtumaloki.locator("sent-0")).toHaveText("1");
     });
     await use({});
   },
@@ -168,10 +163,9 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
       avustushakuID,
       hakemusID
     );
-    const loppuselvitysFormUrl = await page.getAttribute(
-      '[data-test-id="selvitys-link"]',
-      "href"
-    );
+    const loppuselvitysFormUrl = await page
+      .getByTestId("selvitys-link")
+      .getAttribute("href");
     if (!loppuselvitysFormUrl) {
       throw new Error("could not find loppuselvitys form url");
     }
@@ -232,7 +226,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     await clearAndType(page, textareaSelector, "Hyvältä näyttääpi");
     await page.click('button[name="submit-verification"]');
 
-    await page.waitForSelector('[data-test-id="taloustarkastus-email"]');
+    await page.getByTestId("taloustarkastus-email");
     await use({
       asiatarkastettu: true,
     });

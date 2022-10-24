@@ -55,7 +55,7 @@ const formatDate = (date: Date | moment.Moment) =>
   moment(date).format(dateFormat);
 export const parseDate = (input: string) => moment(input, dateFormat).toDate();
 
-const saveStatusSelector = '[data-test-id="save-status"]';
+const saveStatusTestId = "save-status";
 
 export class FormEditorPage {
   readonly page: Page;
@@ -66,16 +66,20 @@ export class FormEditorPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.formErrorState = this.page.locator(
-      '[data-test-id="form-error-state"]'
-    );
+    this.formErrorState = this.page.getByTestId("form-error-state");
     this.form = this.page.locator(".form-json-editor textarea");
     this.fieldId = this.page.locator("span.soresu-field-id");
     this.saveFormButton = this.page.locator("#saveForm");
   }
 
+  async waitFormToBeLoaded() {
+    await expect(this.formErrorState).toBeVisible();
+    await expect(this.formErrorState).toBeHidden();
+  }
+
   async changeLomakeJson(lomakeJson: string) {
-    await this.form.waitFor();
+    await this.waitFormToBeLoaded();
+    await expect(this.saveFormButton).toBeDisabled();
     /*
       for some reason
       await this.page.fill(".form-json-editor textarea", lomakeJson)
@@ -85,15 +89,15 @@ export class FormEditorPage {
       (textarea as HTMLTextAreaElement).value = lomakeJson;
     }, lomakeJson);
 
-    await this.formErrorState.waitFor({ state: "hidden" });
+    await expect(this.saveFormButton).toBeDisabled();
     // trigger autosave by typing space in the end
     await this.form.type(" ");
-    await this.page.keyboard.press("Backspace");
+    await expect(this.saveFormButton).toBeEnabled();
   }
 
   async saveForm() {
     const savedSuccessfully = this.page
-      .locator(saveStatusSelector)
+      .getByTestId(saveStatusTestId)
       .locator("text=Kaikki tiedot tallennettu");
     await expect(savedSuccessfully).toBeHidden();
     await this.saveFormButton.click();
@@ -108,7 +112,7 @@ export class FormEditorPage {
   }
 
   async addField(afterFieldId: string, newFieldType: string) {
-    await this.page.hover(`[data-test-id="field-add-${afterFieldId}"]`);
+    await this.page.getByTestId(`field-add-${afterFieldId}`).hover();
     await this.page.click(
       `[data-test-id="field-${afterFieldId}"] [data-test-id="add-field-${newFieldType}"]`
     );
@@ -124,7 +128,7 @@ export class FormEditorPage {
     await this.fieldId.locator(fieldIdWithText).waitFor();
     await Promise.all([
       // without position this clicks the padding and does nothing
-      this.page.click(`[data-test-id="delete-field-${fieldId}"]`, {
+      this.page.getByTestId(`delete-field-${fieldId}`).click({
         position: { x: 15, y: 5 },
       }),
       this.fieldId.locator(fieldIdWithText).waitFor({ state: "detached" }),
@@ -137,9 +141,7 @@ export class FormEditorPage {
     const originalIndex = fields.indexOf(fieldId);
     const expectedIndex =
       direction === "up" ? originalIndex - 1 : originalIndex + 1;
-    await this.page.click(
-      `[data-test-id="move-field-${direction}-${fieldId}"]`
-    );
+    await this.page.getByTestId(`move-field-${direction}-${fieldId}`).click();
     await this.page.waitForFunction(
       ({ fieldId, expectedIndex }) => {
         const fieldIds = Array.from(
@@ -232,21 +234,21 @@ function SelvitysTab(page: Page) {
     return await page.textContent(titleSelector);
   }
 
-  async function openFormPreview(selector: string) {
+  async function openFormPreview(testId: string) {
     const [previewPage] = await Promise.all([
       page.context().waitForEvent("page"),
-      await page.click(selector),
+      await page.getByTestId(testId).click(),
     ]);
     await previewPage.bringToFront();
     return previewPage;
   }
 
   async function openFormPreviewFi() {
-    return await openFormPreview(`[data-test-id='form-preview-fi']`);
+    return await openFormPreview("form-preview-fi");
   }
 
   async function openFormPreviewSv() {
-    return await openFormPreview(`[data-test-id='form-preview-sv']`);
+    return await openFormPreview("form-preview-sv");
   }
 
   return {
@@ -272,7 +274,7 @@ export class HakujenHallintaPage {
     this.loppuselvitysUpdatedAt = this.page.locator("#loppuselvitysUpdatedAt");
     this.decisionEditor = this.page.locator(".decision-editor");
     this.loadingAvustushaku = this.page
-      .locator(saveStatusSelector)
+      .getByTestId(saveStatusTestId)
       .locator("text=Ladataan tietoja");
   }
 
@@ -299,9 +301,7 @@ export class HakujenHallintaPage {
     await this.navigate(0);
     const { avustushaku } = this.hakuListingTableSelectors();
     await avustushaku.input.fill(avustushakuName);
-    const listItemSelector = await this.page.locator(
-      `[data-test-id="${avustushakuName}"]`
-    );
+    const listItemSelector = await this.page.getByTestId(avustushakuName);
     await expect(this.loadingAvustushaku).toBeHidden();
     await Promise.all([
       this.page.waitForNavigation(),
@@ -335,24 +335,20 @@ export class HakujenHallintaPage {
   }
 
   async switchToHaunTiedotTab() {
-    await this.page.click('[data-test-id="haun-tiedot-välilehti"]');
+    await this.page.getByTestId("haun-tiedot-välilehti").click();
     await expect(this.page.locator("#register-number")).toBeVisible();
   }
 
   async switchToPaatosTab() {
-    await this.page.click('[data-test-id="päätös-välilehti"]');
+    await this.page.getByTestId("päätös-välilehti").click();
     return this.paatosLocators();
   }
 
   paatosLocators() {
     const datePicker = "div.datepicker input";
-    const alkamisPaiva = this.page.locator(
-      '[data-test-id="hankkeen-alkamispaiva"]'
-    );
+    const alkamisPaiva = this.page.getByTestId("hankkeen-alkamispaiva");
     const label = '[data-test-id="label"]';
-    const paattymisPaiva = this.page.locator(
-      '[data-test-id="hankkeen-paattymispaiva"]'
-    );
+    const paattymisPaiva = this.page.getByTestId("hankkeen-paattymispaiva");
     return {
       hankkeenAlkamisPaiva: alkamisPaiva.locator(datePicker),
       hankkeenAlkamisPaivaLabel: alkamisPaiva.locator(label),
@@ -399,12 +395,12 @@ export class HakujenHallintaPage {
   }
 
   async switchToValiselvitysTab() {
-    await this.page.click('[data-test-id="väliselvitys-välilehti"]');
+    await this.page.getByTestId("väliselvitys-välilehti").click();
     return SelvitysTab(this.page);
   }
 
   async switchToLoppuselvitysTab() {
-    await this.page.click('[data-test-id="loppuselvitys-välilehti"]');
+    await this.page.getByTestId("loppuselvitys-välilehti").click();
     return SelvitysTab(this.page);
   }
 
@@ -420,7 +416,7 @@ export class HakujenHallintaPage {
   async waitForSave() {
     await expect(
       this.page
-        .locator(saveStatusSelector)
+        .getByTestId(saveStatusTestId)
         .locator('text="Kaikki tiedot tallennettu"')
     ).toBeVisible({ timeout: 10000 });
   }
@@ -440,24 +436,24 @@ export class HakujenHallintaPage {
   }
 
   async clearUserSearchForRoles() {
-    await this.page.click('[data-test-id="clear-role-search"]');
+    await this.page.getByTestId("clear-role-search").click();
   }
 
   async clearUserSearchForVastuuvalmistelija() {
-    await this.page.click('[data-test-id="clear-vastuuvalmistelija-search"]');
+    await this.page.getByTestId("clear-vastuuvalmistelija-search").click();
   }
 
   async fillVastuuvalmistelijaName(name: string) {
     await Promise.all([
       this.waitForRolesSaved(),
-      this.page.fill('[data-test-id="vastuuvalmistelija-name"]', name),
+      this.page.getByTestId("vastuuvalmistelija-name").fill(name),
     ]);
   }
 
   async fillVastuuvalmistelijaEmail(email: string) {
     await Promise.all([
       this.waitForRolesSaved(),
-      this.page.fill('[data-test-id="vastuuvalmistelija-email"]', email),
+      this.page.getByTestId("vastuuvalmistelija-email").fill(email),
     ]);
   }
 
@@ -564,7 +560,7 @@ export class HakujenHallintaPage {
     await this.page.click(
       `[data-test-id="projekti-valitsin-${codeToOverride}"] input`
     );
-    await this.page.click(`[data-test-id='${code}']`);
+    await this.page.getByTestId(code).click();
   }
 
   async selectProject(code: string) {
@@ -572,7 +568,7 @@ export class HakujenHallintaPage {
 
     await this.page.click(`.projekti-valitsin input`);
     await this.page.type(`.projekti-valitsin input`, code);
-    await this.page.click(`[data-test-id='${code}']`);
+    await this.page.getByTestId(code).click();
   }
 
   async selectVaCodes(codes: VaCodeValues | undefined) {
@@ -595,11 +591,11 @@ export class HakujenHallintaPage {
     await Promise.all([
       this.selectVaCodes(codes),
       expect(
-        this.page.locator(saveStatusSelector).locator("text=Tallennetaan")
+        this.page.getByTestId(saveStatusTestId).locator("text=Tallennetaan")
       ).toBeVisible(),
       expect(
         this.page
-          .locator(saveStatusSelector)
+          .getByTestId(saveStatusTestId)
           .locator("text=Kaikki tiedot tallennettu")
       ).toBeVisible({ timeout: longTimeoutAsSelectingCodesMightTakeAWhile }),
     ]);
@@ -620,7 +616,7 @@ export class HakujenHallintaPage {
     code: string
   ): Promise<void> {
     await this.page.click(`${this.dropdownSelector(codeType)} > div`);
-    await this.page.click(`[data-test-id='${code}']`);
+    await this.page.getByTestId(code).click();
   }
 
   raportointilajiSelector(index: number) {
@@ -632,7 +628,7 @@ export class HakujenHallintaPage {
     raportointilaji: string
   ): Promise<void> {
     await this.page.click(`${this.raportointilajiSelector(index)} > div`);
-    await this.page.click(`[data-test-id='${raportointilaji}']`);
+    await this.page.getByTestId(raportointilaji).click();
   }
 
   async fillCode(
@@ -727,7 +723,7 @@ export class HakujenHallintaPage {
     await this.addArvioija("Päivi Pääkäyttäjä");
 
     for (var i = 0; i < selectionCriteria.length; i++) {
-      await this.page.click('[data-test-id="add-selection-criteria"]');
+      await this.page.getByTestId("add-selection-criteria").click();
       await this.page.fill(`#selection-criteria-${i}-fi`, selectionCriteria[i]);
       await this.page.fill(`#selection-criteria-${i}-sv`, selectionCriteria[i]);
     }
@@ -901,12 +897,9 @@ export class HakujenHallintaPage {
     const hakuRows = hakuList.locator("tbody tr");
     const baseTableLocators = (columnTestId: string) => ({
       cellValue: (trTestId: string) =>
-        hakuList
-          .locator(`[data-test-id="${trTestId}"]`)
-          .locator(`[data-test-id=${columnTestId}]`),
-      cellValues: () =>
-        hakuRows.locator(`[data-test-id=${columnTestId}]`).allInnerTexts(),
-      sort: this.page.locator(`[data-test-id=sort-button-${columnTestId}]`),
+        hakuList.getByTestId(trTestId).getByTestId(columnTestId),
+      cellValues: () => hakuRows.getByTestId(columnTestId).allInnerTexts(),
+      sort: this.page.getByTestId(`sort-button-${columnTestId}`),
     });
     return {
       hakuList,
