@@ -1,4 +1,5 @@
 import { expect, Page } from "@playwright/test";
+import { clearAndType } from "./util";
 
 export const defaultBudget = {
   amount: {
@@ -64,18 +65,13 @@ export const fillBudget = async (
   const prefix = type === "virkailija" ? "budget-edit-" : "";
 
   for (const key of Object.keys(budget.amount)) {
-    const amountSelector = getSelectorsForType(type, "amount")[
-      key as keyof BudgetAmount
-    ];
-    await page
-      .locator(amountSelector)
-      .fill(budget.amount[key as keyof BudgetAmount]);
+    const budgetKey = key as keyof BudgetAmount;
+    const amountSelector = getSelectorsForType(type, "amount")[budgetKey];
+    await clearAndType(page, amountSelector, budget.amount[budgetKey]);
     const descriptionSelector = getSelectorsForType(type, "description")[
-      key as keyof BudgetAmount
+      budgetKey
     ];
-    await page
-      .locator(descriptionSelector)
-      .fill(budget.description[key as keyof BudgetAmount]);
+    await page.locator(descriptionSelector).fill(budget.description[budgetKey]);
   }
 
   if (type === "hakija") {
