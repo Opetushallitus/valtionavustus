@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.27.1-jammy
+FROM mcr.microsoft.com/playwright:v1.27.1-focal
 RUN apt update
 ADD playwright playwright/
 ADD soresu-form soresu-form/
