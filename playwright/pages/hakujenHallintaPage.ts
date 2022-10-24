@@ -72,13 +72,8 @@ export class FormEditorPage {
     this.saveFormButton = this.page.locator("#saveForm");
   }
 
-  async waitFormToBeLoaded() {
-    await expect(this.formErrorState).toBeVisible();
-    await expect(this.formErrorState).toBeHidden();
-  }
-
   async changeLomakeJson(lomakeJson: string) {
-    await this.waitFormToBeLoaded();
+    await expect(this.form).toContainText("{");
     await expect(this.saveFormButton).toBeDisabled();
     /*
       for some reason
