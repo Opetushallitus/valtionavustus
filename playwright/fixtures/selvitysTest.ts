@@ -142,7 +142,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
       await expect(tapahtumaloki.getByTestId("sender-0")).toHaveText(
         ukotettuValmistelija
       );
-      await expect(tapahtumaloki.locator("sent-0")).toHaveText("1");
+      await expect(tapahtumaloki.getByTestId("sent-0")).toHaveText("1");
     });
     await use({});
   },
