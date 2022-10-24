@@ -5,7 +5,7 @@ const workersEnv = process.env["PLAYWRIGHT_WORKERS"];
 const workersEnvNumber = Number(workersEnv);
 const workers = isNaN(workersEnvNumber) ? workersEnv : workersEnvNumber;
 const retriesEnv = Number(process.env["PLAYWRIGHT_RETRIES"]);
-const retries = isNaN(retriesEnv) ? 2 : retriesEnv;
+const retries = isNaN(retriesEnv) ? 1 : retriesEnv;
 const allowOnly = process.env["ALLOW_ONLY"] === "true";
 
 const config: PlaywrightTestConfig = {
