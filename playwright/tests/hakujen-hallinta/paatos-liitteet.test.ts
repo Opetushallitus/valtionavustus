@@ -40,7 +40,7 @@ test("paatos liitteet", async ({
     pakoteOhjeCheckbox,
   } = paatosLocators;
   const amountOfYleisohjeet = 5;
-  expect(await yleisOhjeLiite.count()).toBe(amountOfYleisohjeet);
+  await expect(yleisOhjeLiite).toHaveCount(amountOfYleisohjeet);
   await test.step("ehdot liitteet are disabled and unchecked", async () => {
     await expect(erityisavustusEhdotCheckbox).toBeDisabled();
     await expect(erityisavustusEhdotCheckbox).not.toBeChecked();
