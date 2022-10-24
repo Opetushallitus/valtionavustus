@@ -599,37 +599,33 @@ export class HakemustenArviointiPage {
     await this.page.click('[data-test-id="rajaa-listaa-close"]');
   }
 
-  async getNormalizedBudget(): Promise<{
-    haettu: BudgetAmount;
-    myonnetty: BudgetAmount;
-  }> {
-    await this.page.waitForSelector("#budget-edit-project-budget");
+  getNormalizedBudget() {
     const rowLocator = (key: keyof BudgetAmount) =>
       this.page.locator(`#budget-edit-${key}-costs-row`);
     const getHaettuAmount = (key: keyof BudgetAmount) =>
-      rowLocator(key).locator(".original-amount-column").innerText();
+      rowLocator(key).locator(".original-amount-column");
     const getMyonnettyAmount = (key: keyof BudgetAmount) =>
-      rowLocator(key).locator(".amount-column").locator("input").inputValue();
+      rowLocator(key).locator(".amount-column").locator("input");
 
-    const getBudget = async (
+    const getBudget = (
       budgetType: "haettu" | "myonnetty"
-    ): Promise<Record<keyof BudgetAmount, string>> => {
+    ): Record<keyof BudgetAmount, Locator> => {
       const getValueFunction =
         budgetType === "haettu" ? getHaettuAmount : getMyonnettyAmount;
       return {
-        "service-purchase": await getValueFunction("service-purchase"),
-        equipment: await getValueFunction("equipment"),
-        other: await getValueFunction("other"),
-        material: await getValueFunction("material"),
-        rent: await getValueFunction("rent"),
-        steamship: await getValueFunction("steamship"),
-        personnel: await getValueFunction("personnel"),
+        "service-purchase": getValueFunction("service-purchase"),
+        equipment: getValueFunction("equipment"),
+        other: getValueFunction("other"),
+        material: getValueFunction("material"),
+        rent: getValueFunction("rent"),
+        steamship: getValueFunction("steamship"),
+        personnel: getValueFunction("personnel"),
       };
     };
 
     return {
-      haettu: await getBudget("haettu"),
-      myonnetty: await getBudget("myonnetty"),
+      haettu: getBudget("haettu"),
+      myonnetty: getBudget("myonnetty"),
     };
   }
 

@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { budjettimuutoshakemusTest } from "../../fixtures/budjettimuutoshakemusTest";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
-import { Budget, defaultBudget } from "../../utils/budget";
+import { Budget, BudgetAmount, defaultBudget } from "../../utils/budget";
 import { MuutoshakemusFixtures } from "../../fixtures/muutoshakemusTest";
 
 const budgetWithNonNumericValues: Budget = {
@@ -65,9 +65,14 @@ test("When hakemus is approved with non-numeric budget values", async ({
   await test.step(
     "Non-numeric characters were ignored for approved budget",
     async () => {
-      expect(
-        (await hakemustenArviointiPage.getNormalizedBudget()).myonnetty
-      ).toEqual(budgetWithNumericValues.amount);
+      const myonnettyLocators =
+        hakemustenArviointiPage.getNormalizedBudget().myonnetty;
+      for (const [key, value] of Object.entries(
+        budgetWithNumericValues.amount
+      )) {
+        const field = myonnettyLocators[key as keyof BudgetAmount];
+        await expect(field).toHaveValue(value);
+      }
     }
   );
 
