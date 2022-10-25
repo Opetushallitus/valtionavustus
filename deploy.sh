@@ -30,6 +30,7 @@ function fix_directory_permissions_after_playwright_run {
 function main {
   if running_on_jenkins; then
     docker image prune --force
+    docker volume prune --force
     remove_all_files_ignored_or_untracked_by_git
   fi
   parse_env_from_script_name "deploy"
