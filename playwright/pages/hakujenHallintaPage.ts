@@ -72,18 +72,25 @@ export class FormEditorPage {
     this.saveFormButton = this.page.locator("#saveForm");
   }
 
-  async changeLomakeJson(lomakeJson: string) {
+  async waitFormToBeLoaded() {
     await expect(this.form).toContainText("{");
-    await expect(this.saveFormButton).toBeDisabled();
-    /*
+  }
+
+  /*
       for some reason
       await this.page.fill(".form-json-editor textarea", lomakeJson)
       takes almost 50seconds
      */
+  async replaceLomakeJson(lomakeJson: string) {
     await this.form.evaluate((textarea, lomakeJson) => {
       (textarea as HTMLTextAreaElement).value = lomakeJson;
     }, lomakeJson);
+  }
 
+  async changeLomakeJson(lomakeJson: string) {
+    await this.waitFormToBeLoaded();
+    await expect(this.saveFormButton).toBeDisabled();
+    await this.replaceLomakeJson(lomakeJson);
     await expect(this.saveFormButton).toBeDisabled();
     // trigger autosave by typing space in the end
     await this.form.type(" ");
@@ -194,7 +201,8 @@ export class FormEditorPage {
       this.fieldJson(type, fieldId, fieldLabel)
     );
     const newJson = { ...json, content: [...content, ...fieldsJson] };
-    await this.changeLomakeJson(JSON.stringify(newJson));
+    await this.replaceLomakeJson(JSON.stringify(newJson));
+    await this.form.type(" ");
     await this.saveForm();
   }
 }
@@ -321,12 +329,16 @@ export class HakujenHallintaPage {
 
   async navigateToFormEditor(avustushakuID: number) {
     await this.navigateTo(`/admin/form-editor/?avustushaku=${avustushakuID}`);
-    return new FormEditorPage(this.page);
+    const formEditorPage = new FormEditorPage(this.page);
+    await formEditorPage.waitFormToBeLoaded();
+    return formEditorPage;
   }
 
   async switchToFormEditorTab() {
     await this.page.locator('span:text-is("Hakulomake")').click();
-    return new FormEditorPage(this.page);
+    const formEditorPage = new FormEditorPage(this.page);
+    await formEditorPage.waitFormToBeLoaded();
+    return formEditorPage;
   }
 
   async switchToHaunTiedotTab() {
