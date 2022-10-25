@@ -221,13 +221,11 @@ test.describe.parallel("talousarviotilien hallinta", () => {
     const taForm = koodienhallintaPage.taTilit.form;
     const code = createRandomTalousarviotiliCode();
     const name = `Muokkaustesti ${code}`;
-    const row = koodienhallintaPage.page.locator(`[data-test-id="${name}"]`);
-    const editButton = row.locator(`button[title="Muokkaa talousarviotiliä"]`);
-    const saveButton = row.locator(
-      '[title="Tallenna talousarviotilin tiedot"]'
-    );
-    const yearField = row.locator('[placeholder="Vuosiluku"]');
-    const amountField = row.locator('[placeholder="Syötä euromäärä"]');
+    const row = koodienhallintaPage.page.getByTestId(name);
+    const editButton = row.getByTitle("Muokkaa talousarviotiliä");
+    const saveButton = row.getByTitle("Tallenna talousarviotilin tiedot");
+    const yearField = row.getByPlaceholder("Vuosiluku");
+    const amountField = row.getByPlaceholder("Syötä euromäärä");
 
     await test.step("Create TA-tili", async () => {
       await expect(taForm.submitBtn).toBeEnabled();
@@ -238,8 +236,8 @@ test.describe.parallel("talousarviotilien hallinta", () => {
       await expectNoErrors(koodienhallintaPage);
       await taForm.submitBtn.click();
 
-      expect(await yearField.inputValue()).toEqual("2022");
-      expect(await amountField.inputValue()).toEqual("10000");
+      await expect(yearField).toHaveValue("2022");
+      await expect(amountField).toHaveValue("10000");
     });
 
     await test.step("Switching to edit other TA-tili resets form", async () => {
@@ -247,13 +245,14 @@ test.describe.parallel("talousarviotilien hallinta", () => {
       await editButton.click();
       await yearField.fill("2023");
       await amountField.fill("100");
-      await koodienhallintaPage.page.click(
-        "[title='Muokkaa talousarviotiliä']"
-      );
+      await koodienhallintaPage.page
+        .getByTitle("Muokkaa talousarviotiliä")
+        .last()
+        .click();
       await expect(editButton).toBeEnabled();
 
-      expect(await yearField.inputValue()).toEqual("2022");
-      expect(await amountField.inputValue()).toEqual("10000");
+      await expect(yearField).toHaveValue("2022");
+      await expect(amountField).toHaveValue("10000");
     });
 
     await test.step("Update TA-tili", async () => {
@@ -264,8 +263,8 @@ test.describe.parallel("talousarviotilien hallinta", () => {
       await saveButton.click();
       await expect(editButton).toBeEnabled();
 
-      expect(await yearField.inputValue()).toEqual("2023");
-      expect(await amountField.inputValue()).toEqual("100");
+      await expect(yearField).toHaveValue("2023");
+      await expect(amountField).toHaveValue("100");
     });
   });
 
@@ -276,8 +275,9 @@ test.describe.parallel("talousarviotilien hallinta", () => {
       const koodienhallintaPage = KoodienhallintaPage(page);
       await koodienhallintaPage.navigate();
       await koodienhallintaPage.switchToTatilitTab();
-      const row = await koodienhallintaPage.page.locator(
-        `[data-test-id="${talousarviotili.name}"]`
+      expectToBeDefined(talousarviotili.name);
+      const row = await koodienhallintaPage.page.getByTestId(
+        talousarviotili.name
       );
       const deleteRowButton = row.locator(
         `button[title="Poista talousarviotili ${talousarviotili.code}"]`
