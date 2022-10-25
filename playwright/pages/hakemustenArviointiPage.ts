@@ -340,7 +340,7 @@ export class HakemustenArviointiPage {
 
   async clickMuutoshakemusTab() {
     await this.page.click("span.muutoshakemus-tab");
-    await expect(this.page.getByTestId(jatkoaikaTestId));
+    await expect(this.page.getByTestId(jatkoaikaTestId)).toBeVisible();
   }
 
   async validateMuutoshakemusValues(
