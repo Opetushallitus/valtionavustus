@@ -1,4 +1,4 @@
-(def batik-version "1.15")
+(def batik-version "1.16")
 
 (defproject oph-va/valtionavustus "0.1.0-SNAPSHOT"
 
