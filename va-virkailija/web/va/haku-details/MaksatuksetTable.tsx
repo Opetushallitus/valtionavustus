@@ -140,7 +140,7 @@ const MaksatuksetPhase = ({
           <tbody className="maksatukset_table-body">
             {visiblePayments.map((p, i) => {
               const projectCode =
-                p["project-code"] ?? p.hakemus?.["project-code?"];
+                p["project-code"] ?? p.hakemus?.["project-code"];
               const vaCodeValue =
                 projectCode && projectsMappedByCode[projectCode];
               return (
