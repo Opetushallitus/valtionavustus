@@ -158,11 +158,16 @@
                 from avustushaut
                 join formfield on formfield.form_id = avustushaut.form
                 where avustushaut.id = ?
-                and formfield.formfield_id = ANY(ARRAY['project-name','applicant-name','primary-email','textField-0'])", [avustushaku-id])
+                and (
+                  formfield.formfield_id = ANY(ARRAY['project-name','applicant-name','primary-email','textField-0'])
+                  or formfield.formfield_id = 'financing-plan' and
+                     exists(select formfield.children->'budget'->'project-budget' from formfield)
+                 )", [avustushaku-id])
         required-fields [{:id "project-name"}
                          {:id "applicant-name"}
                          {:id "primary-email"}
-                         {:id "textField-0"}]
+                         {:id "textField-0"}
+                         {:id "financing-plan"}]
         found-field-ids (map (fn [x] (:id x)) found-fields)
         missing-fields (remove (fn [x] (.contains found-field-ids (:id x))) required-fields)
         is-ok (empty? missing-fields)]
