@@ -6,20 +6,31 @@
 (defn update-project [hakemus-id project]
   (execute!
               "UPDATE hakija.hakemukset h
-               SET project_id = ? 
+               SET project_id = ?
                WHERE h.id = ?"
               [(:id project) hakemus-id]))
 
 (defn get-project [hakemus-id]
-  (first (query "SELECT
-            va_code_values.id, value_type, year, code, code_value, hidden
-          FROM
-            virkailija.va_code_values
-          JOIN hakija.hakemukset h
-            ON h.id = ?
-          WHERE
-            va_code_values.id = h.project_id"
-         [hakemus-id])))
+  (let [projects (query "WITH newest_hakemus AS
+         (SELECT project_id, id
+          FROM hakija.hakemukset h
+          WHERE id = ?
+            AND version = (select max(version)
+                           from hakija.hakemukset
+                           where id = h.id))
+          SELECT va_code_values.id,
+                 value_type,
+                 year,
+                 code,
+                 code_value,
+                 hidden
+          FROM virkailija.va_code_values
+                   JOIN newest_hakemus
+                        on newest_hakemus.project_id = va_code_values.id
+          WHERE va_code_values.id = newest_hakemus.project_id
+            and value_type = 'project'"
+                        [hakemus-id])]
+    (nth projects 0 nil)))
 
 (defn get-projects [avustushaku-id]
   (query "SELECT
