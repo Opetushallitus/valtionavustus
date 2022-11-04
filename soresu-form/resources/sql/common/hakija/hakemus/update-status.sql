@@ -28,6 +28,7 @@ INSERT INTO hakemukset(
        refused,
        refused_comment,
        refused_at,
+       project_id,
        submitted_version)
 SELECT id,
        :avustushaku_id,
@@ -58,6 +59,7 @@ SELECT id,
        refused,
        refused_comment,
        refused_at,
+       project_id,
        submitted_version
 FROM hakemukset
 WHERE user_key = :user_key AND form_submission_id = :form_submission_id
