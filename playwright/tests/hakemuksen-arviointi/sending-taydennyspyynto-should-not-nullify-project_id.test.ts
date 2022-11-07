@@ -6,7 +6,7 @@ import { expect } from "@playwright/test";
 
 submittedHakemusTest(
   "Sending täydennyspyyntö does not nullify project_id from hakemus",
-  async ({ page, avustushakuID, closedAvustushaku }) => {
+  async ({ page, avustushakuID, closedAvustushaku, projektikoodi }) => {
     expectToBeDefined(closedAvustushaku.id);
 
     const arviointiPage = new HakemustenArviointiPage(page);
@@ -25,6 +25,7 @@ submittedHakemusTest(
 
     expect(typeof project.id).toBe("number");
     expect(project.id).toBeGreaterThan(1);
+    expect(project.code).toBe(projektikoodi);
   }
 );
 
