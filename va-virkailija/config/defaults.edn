@@ -66,6 +66,7 @@
                  }
  :payments {:enabled? true}
  :multibatch-payments {:enabled? true}
+ :hanke-keskeytetty-aloittamatta {:enabled? false}
  :integration-healthcheck {:enabled? false}
  :tasmaytysraportti-create {:enabled? false}
  :tasmaytysraportti-send {:enabled? false}
