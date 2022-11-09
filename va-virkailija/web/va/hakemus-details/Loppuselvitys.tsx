@@ -12,9 +12,13 @@ import { Role, UserInfo } from "../types";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 import {
   addPayment,
+  getLoadedState,
   removePayment,
 } from "../hakemustenArviointi/arviointiReducer";
-import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from "../hakemustenArviointi/arviointiStore";
 
 type SelvitysProps = {
   hakemus: Hakemus;
@@ -39,6 +43,11 @@ const Loppuselvitys = ({
   selvitysLinkHelpText,
 }: SelvitysProps) => {
   const dispatch = useHakemustenArviointiDispatch();
+  const loppuselvitysPyynnotSent = useHakemustenArviointiSelector(
+    (state) =>
+      getLoadedState(state.arviointi).lahetykset.loppuselvitysPyynnotSentAt !==
+      undefined
+  );
   const hasSelvitys = !!hakemus.selvitys?.loppuselvitys?.answers;
   const selvitysHakemus = hakemus.selvitys?.loppuselvitys;
   const form = hakemus.selvitys?.loppuselvitysForm;
@@ -93,12 +102,14 @@ const Loppuselvitys = ({
           readonly={!isPresentingOfficer}
         />
       )}
-      <SelvitysLink
-        avustushaku={avustushaku}
-        hakemus={hakemus}
-        selvitysType="loppuselvitys"
-        helpText={selvitysLinkHelpText}
-      />
+      {loppuselvitysPyynnotSent && (
+        <SelvitysLink
+          avustushaku={avustushaku}
+          hakemus={hakemus}
+          selvitysType="loppuselvitys"
+          helpText={selvitysLinkHelpText}
+        />
+      )}
       {hasSelvitys && (
         <LoppuselvitysForm
           hakemus={hakemus}

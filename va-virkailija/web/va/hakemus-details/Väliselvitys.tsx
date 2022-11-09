@@ -9,9 +9,13 @@ import { Avustushaku, Hakemus } from "soresu-form/web/va/types";
 import { Role, UserInfo } from "../types";
 import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 import { ValiselvitysEmail } from "./ValiselvitysEmail";
-import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from "../hakemustenArviointi/arviointiStore";
 import {
   addPayment,
+  getLoadedState,
   removePayment,
 } from "../hakemustenArviointi/arviointiReducer";
 
@@ -36,6 +40,11 @@ const Väliselvitys = ({
   presenterCommentHelpText,
   selvitysLinkHelpText,
 }: SelvitysProps) => {
+  const valiselvitysPyynnotSent = useHakemustenArviointiSelector(
+    (state) =>
+      getLoadedState(state.arviointi).lahetykset.valiselvitysPyynnostSentAt !==
+      undefined
+  );
   const hasSelvitysAnswers = !!hakemus.selvitys?.valiselvitys?.answers;
   const valiselvitys = hakemus.selvitys?.valiselvitys;
   const form = hakemus.selvitys?.valiselvitysForm;
@@ -82,12 +91,14 @@ const Väliselvitys = ({
           readonly={!isPresentingOfficer}
         />
       )}
-      <SelvitysLink
-        avustushaku={avustushaku}
-        hakemus={hakemus}
-        selvitysType="valiselvitys"
-        helpText={selvitysLinkHelpText}
-      />
+      {valiselvitysPyynnotSent && (
+        <SelvitysLink
+          avustushaku={avustushaku}
+          hakemus={hakemus}
+          selvitysType="valiselvitys"
+          helpText={selvitysLinkHelpText}
+        />
+      )}
       {valiselvitys && hasSelvitysAnswers && (
         <ValiselvitysEmail
           hakemus={hakemus}
