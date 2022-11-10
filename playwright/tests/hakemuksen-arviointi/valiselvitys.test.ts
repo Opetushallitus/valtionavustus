@@ -84,10 +84,11 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
           valiselvitysPage.linkToHakemus.click(),
         ]);
         const hakijaSelvitysPage = HakijaSelvitysPage(newPage);
-        await hakijaSelvitysPage.valiselvitysWarning.waitFor({
-          state: "detached",
-        });
-        await hakijaSelvitysPage.submitButton.isEnabled();
+        await expect(hakijaSelvitysPage.submitButton).toBeDisabled();
+        await expect(hakijaSelvitysPage.submitButton).toHaveText(
+          "Väliselvitys lähetetty"
+        );
+        await expect(hakijaSelvitysPage.valiselvitysWarning).toBeHidden();
         await hakijaSelvitysPage.page.close();
       });
 
@@ -116,10 +117,8 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
           valiselvitysPage.linkToHakemus.click(),
         ]);
         const hakijaSelvitysPage = HakijaSelvitysPage(newPage);
-        await hakijaSelvitysPage.valiselvitysWarning.waitFor({
-          state: "attached",
-        });
-        await hakijaSelvitysPage.submitButton.waitFor({ state: "detached" });
+        await expect(hakijaSelvitysPage.valiselvitysWarning).toBeVisible();
+        await expect(hakijaSelvitysPage.submitButton).toBeHidden();
         await hakijaSelvitysPage.page.close();
       });
 
@@ -173,9 +172,7 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
         valiselvitysPage.linkToHakemus.click(),
       ]);
       const hakijaSelvitysPage = HakijaSelvitysPage(newPage);
-      await hakijaSelvitysPage.valiselvitysWarning.waitFor({
-        state: "attached",
-      });
+      await expect(hakijaSelvitysPage.valiselvitysWarning).toBeVisible();
       await expect(newPage.getByTestId("form-preview")).toBeVisible();
     }
   );
