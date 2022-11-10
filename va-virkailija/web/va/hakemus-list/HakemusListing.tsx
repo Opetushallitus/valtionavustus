@@ -448,7 +448,10 @@ function HakemusTable({
   }, 0);
   const { organization, projectNameOrCode, status: statusFilter } = filterState;
   const navigate = useNavigate();
-
+  const navigateToHakemus = (hakemusId: number) => {
+    dispatchReduxStore(selectHakemus(hakemusId));
+    navigate(`hakemus/${hakemusId}/arviointi${window.location.search}`);
+  };
   return (
     <table className={styles.table}>
       <colgroup>
@@ -637,13 +640,12 @@ function HakemusTable({
               )}
               tabIndex={0}
               onClick={() => {
-                navigate(`hakemus/${hakemus.id}/arviointi`);
-                dispatchReduxStore(selectHakemus(hakemus.id));
+                navigateToHakemus(hakemus.id);
               }}
               onKeyDown={(e) => {
-                e.key === "Enter" &&
-                  dispatchReduxStore(selectHakemus(hakemus.id));
-                navigate(`hakemus/${hakemus.id}/arviointi`);
+                if (e.key === "Enter") {
+                  navigateToHakemus(hakemus.id);
+                }
               }}
               data-test-id={`hakemus-${hakemus.id}`}
             >
@@ -787,6 +789,10 @@ function ResolvedTable(props: ResolvedTableProps) {
   };
   const { projectNameOrCode, organization, status: statusFilter } = filterState;
   const navigate = useNavigate();
+  const navigateToHakemus = (hakemusId: number) => {
+    dispatchReduxStore(selectHakemus(hakemusId));
+    navigate(`hakemus/${hakemusId}/arviointi${window.location.search}`);
+  };
   return (
     <table className={styles.table}>
       <colgroup>
@@ -1094,13 +1100,12 @@ function ResolvedTable(props: ResolvedTableProps) {
             }
             tabIndex={0}
             onClick={() => {
-              dispatchReduxStore(selectHakemus(hakemus.id));
-              navigate(`hakemus/${hakemus.id}/arviointi`);
+              navigateToHakemus(hakemus.id);
             }}
             onKeyDown={(e) => {
-              e.key === "Enter" &&
-                dispatchReduxStore(selectHakemus(hakemus.id));
-              navigate(`hakemus/${hakemus.id}/arviointi`);
+              if (e.key === "Enter") {
+                navigateToHakemus(hakemus.id);
+              }
             }}
             data-test-id={`hakemus-${hakemus.id}`}
           >

@@ -12,6 +12,7 @@ import {
   setSelectedHakuId,
 } from "../hakemustenArviointi/arviointiReducer";
 import { NavLink, Outlet, useSearchParams } from "react-router-dom";
+import { NavLinkWithQuery } from "../NavLinkWithQuery";
 
 export const HakemusDetails = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -90,25 +91,25 @@ export const HakemusDetails = () => {
           id="editor-subtab-selector"
           className="fixed-tabs section-container"
         >
-          <NavLink to="arviointi" className={isLinkActive}>
+          <NavLinkWithQuery to="arviointi" className={isLinkActive}>
             Arviointi
-          </NavLink>
-          <NavLink to="valiselvitys" className={isLinkActive}>
+          </NavLinkWithQuery>
+          <NavLinkWithQuery to="valiselvitys" className={isLinkActive}>
             Väliselvitys
-          </NavLink>
-          <NavLink to="loppuselvitys" className={isLinkActive}>
+          </NavLinkWithQuery>
+          <NavLinkWithQuery to="loppuselvitys" className={isLinkActive}>
             Loppuselvitys
-          </NavLink>
-          <NavLink to="muutoshakemukset" className={isLinkActive}>
+          </NavLinkWithQuery>
+          <NavLinkWithQuery to="muutoshakemukset" className={isLinkActive}>
             <MuutoshakemuksetLabel />
-          </NavLink>
-          <NavLink
+          </NavLinkWithQuery>
+          <NavLinkWithQuery
             to="seuranta"
             className={isLinkActive}
             data-test-id="tab-seuranta"
           >
             Seuranta
-          </NavLink>
+          </NavLinkWithQuery>
         </div>
         <div id="hakemus-arviointi" className="fixed-content">
           <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
