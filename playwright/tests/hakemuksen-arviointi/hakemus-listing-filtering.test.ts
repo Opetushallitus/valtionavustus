@@ -245,7 +245,7 @@ test("hakemus list filtering", async ({
         "0/0 hakemusta"
       );
       expect(hakemustenArviointiPage.page.url()).toMatch(
-        `${VIRKAILIJA_URL}/avustushaku/1/`
+        `${VIRKAILIJA_URL}/avustushaku/1`
       );
     }
   );

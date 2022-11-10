@@ -6,6 +6,9 @@ import { fiShortFormat } from "soresu-form/web/va/i18n/dateformat";
 import { Avustushaku } from "soresu-form/web/va/types";
 
 import styles from "./avustushaku-dropdown.module.less";
+import { useNavigate } from "react-router-dom";
+import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
+import { fetchInitialState } from "../hakemustenArviointi/arviointiReducer";
 
 interface Props {
   avustushaku: Avustushaku;
@@ -16,6 +19,8 @@ export default function AvustushakuDropdown({
   avustushaku,
   avustushakuList,
 }: Props) {
+  const navigate = useNavigate();
+  const dispatch = useHakemustenArviointiDispatch();
   // at this time react-widget typings has textField fn parameter as unknown :(
   const avustushakuToText = (avustushaku: unknown) => {
     const { content } = avustushaku as Avustushaku;
@@ -26,7 +31,8 @@ export default function AvustushakuDropdown({
     return name + " (" + date + ")";
   };
   const onChange = (value: Avustushaku) => {
-    window.location.href = "/avustushaku/" + value.id + "/" + location.search;
+    navigate(`/avustushaku/${value.id}`);
+    dispatch(fetchInitialState(value.id));
   };
   const messages = {
     filterPlaceholder: "",

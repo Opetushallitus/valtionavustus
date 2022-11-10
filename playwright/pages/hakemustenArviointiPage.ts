@@ -143,6 +143,7 @@ export class HakemustenArviointiPage {
       .getByTestId(`hakemus-${hakemusID}`)
       .locator(`[aria-label="Lisää valmistelija hakemukselle"]`)
       .click();
+    await this.page.waitForLoadState("networkidle");
   }
 
   async closeUkotusModal() {
@@ -184,11 +185,11 @@ export class HakemustenArviointiPage {
     await this.page.click(
       `[aria-label="Lisää ${valmistelijaName} valmistelijaksi"]`
     );
-    await this.page
-      .locator(
+    await expect(
+      this.page.locator(
         `[aria-label="Poista ${valmistelijaName} valmistelijan roolista"]`
       )
-      .waitFor();
+    ).toBeVisible();
     await this.waitForSave();
     await this.closeUkotusModal();
   }
@@ -198,9 +199,11 @@ export class HakemustenArviointiPage {
     await this.page.click(
       `[aria-label="Lisää ${valmistelijaName} arvioijaksi"]`
     );
-    await this.page
-      .locator(`[aria-label="Poista ${valmistelijaName} arvioijan roolista"]`)
-      .waitFor();
+    await expect(
+      this.page.locator(
+        `[aria-label="Poista ${valmistelijaName} arvioijan roolista"]`
+      )
+    ).toBeVisible();
     await this.closeUkotusModal();
   }
 

@@ -181,7 +181,7 @@ test("multiple muutoshakemus", async ({
       hakemustenArviointiPage.page.locator(
         "[data-test-id=number-of-pending-muutoshakemukset]"
       )
-    ).toHaveText("4");
+    ).toHaveText("(4)");
     await hakemustenArviointiPage.clickMuutoshakemusTab();
   });
   await test.step("muutoshakemus #4 has correct values", async () => {

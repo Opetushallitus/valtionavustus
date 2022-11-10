@@ -7,25 +7,19 @@ import SeurantaBudgetEditing from "../seurantabudgetedit/SeurantaBudgetEditing";
 import ShouldPay from "./ShouldPay";
 import AllowVisibilityInExternalSystem from "./AllowVisibilityInExternalSystem";
 import ShouldPayComments from "./ShouldPayComments";
-import { Avustushaku, Hakemus, HelpTexts } from "soresu-form/web/va/types";
-import { HakuData } from "../types";
-import { Muutoshakemus } from "soresu-form/web/va/types/muutoshakemus";
+import { useHakemustenArviointiSelector } from "../hakemustenArviointi/arviointiStore";
+import {
+  getLoadedState,
+  getSelectedHakemus,
+} from "../hakemustenArviointi/arviointiReducer";
 
-interface SeurantaProps {
-  hakemus: Hakemus;
-  avustushaku: Avustushaku;
-  hakuData: HakuData;
-  helpTexts: HelpTexts;
-  muutoshakemukset?: Muutoshakemus[];
-}
-
-const Seuranta = ({
-  hakemus,
-  avustushaku,
-  hakuData,
-  helpTexts,
-  muutoshakemukset,
-}: SeurantaProps) => {
+const Seuranta = () => {
+  const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
+  const { helpTexts, hakuData } = useHakemustenArviointiSelector((state) =>
+    getLoadedState(state.arviointi)
+  );
+  const { avustushaku } = hakuData;
+  const { muutoshakemukset } = hakemus;
   return (
     <div className="seuranta">
       <AllowVisibilityInExternalSystem

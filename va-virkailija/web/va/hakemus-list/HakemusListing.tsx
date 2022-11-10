@@ -38,13 +38,13 @@ import {
   togglePersonSelect,
 } from "../hakemustenArviointi/arviointiReducer";
 import HttpUtil from "soresu-form/web/HttpUtil";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 interface Props {
   selectedHakemus: Hakemus | undefined;
   hakemusList: Hakemus[];
   splitView: boolean;
   isResolved: boolean;
-  toggleSplitView: () => void;
   additionalInfoOpen: boolean;
 }
 
@@ -312,7 +312,6 @@ export default function HakemusListing(props: Props) {
     hakemusList,
     splitView,
     isResolved,
-    toggleSplitView,
     additionalInfoOpen,
   } = props;
   const { roles, privileges, avustushaku } = useHakemustenArviointiSelector(
@@ -373,7 +372,6 @@ export default function HakemusListing(props: Props) {
             dispatch={dispatch}
             roles={roles}
             totalBudgetGranted={totalBudgetGranted}
-            toggleSplitView={toggleSplitView}
             sortingState={sortingState}
             setSorting={setSorting}
           />
@@ -387,7 +385,6 @@ export default function HakemusListing(props: Props) {
             dispatch={dispatch}
             roles={roles}
             totalBudgetGranted={totalBudgetGranted}
-            toggleSplitView={toggleSplitView}
             sortingState={sortingState}
             setSorting={setSorting}
             allowHakemusScoring={allowHakemusScoring}
@@ -407,7 +404,6 @@ interface HakemusTableProps {
   onYhteenvetoClick: () => void;
   roles: Role[];
   totalBudgetGranted: number;
-  toggleSplitView: (forceValue?: boolean) => void;
   setSorting: (sortKey?: SortKey) => void;
   sortingState: SortState;
   allowHakemusScoring: boolean;
@@ -429,7 +425,6 @@ function HakemusTable({
   onYhteenvetoClick,
   roles,
   totalBudgetGranted,
-  toggleSplitView,
   sortingState,
   setSorting,
   allowHakemusScoring,
@@ -452,6 +447,8 @@ function HakemusTable({
     return total + ophShare;
   }, 0);
   const { organization, projectNameOrCode, status: statusFilter } = filterState;
+  const navigate = useNavigate();
+
   return (
     <table className={styles.table}>
       <colgroup>
@@ -639,11 +636,15 @@ function HakemusTable({
                 { [styles.draft]: draft }
               )}
               tabIndex={0}
-              onClick={() => dispatchReduxStore(selectHakemus(hakemus.id))}
-              onKeyDown={(e) =>
+              onClick={() => {
+                navigate(`hakemus/${hakemus.id}/arviointi`);
+                dispatchReduxStore(selectHakemus(hakemus.id));
+              }}
+              onKeyDown={(e) => {
                 e.key === "Enter" &&
-                dispatchReduxStore(selectHakemus(hakemus.id))
-              }
+                  dispatchReduxStore(selectHakemus(hakemus.id));
+                navigate(`hakemus/${hakemus.id}/arviointi`);
+              }}
               data-test-id={`hakemus-${hakemus.id}`}
             >
               <td className="organization-cell">
@@ -700,7 +701,6 @@ function HakemusTable({
                 <PeopleRoleButton
                   roles={roles}
                   hakemus={hakemus}
-                  toggleSplitView={toggleSplitView}
                   selectedRole="presenter"
                 />
               </td>
@@ -708,7 +708,6 @@ function HakemusTable({
                 <PeopleRoleButton
                   roles={roles}
                   hakemus={hakemus}
-                  toggleSplitView={toggleSplitView}
                   selectedRole="evaluators"
                 />
                 {personSelectHakemusId === hakemus.id && (
@@ -756,7 +755,6 @@ interface ResolvedTableProps {
   onYhteenvetoClick: () => void;
   roles: Role[];
   totalBudgetGranted: number;
-  toggleSplitView: (forceValue?: boolean) => void;
   setSorting: (sortKey?: SortKey) => void;
   sortingState: SortState;
 }
@@ -771,7 +769,6 @@ function ResolvedTable(props: ResolvedTableProps) {
     filteredList,
     list,
     totalBudgetGranted,
-    toggleSplitView,
     setSorting,
     sortingState,
   } = props;
@@ -789,7 +786,7 @@ function ResolvedTable(props: ResolvedTableProps) {
     dispatch({ type: "set-project-name-filter", value: event.target.value });
   };
   const { projectNameOrCode, organization, status: statusFilter } = filterState;
-
+  const navigate = useNavigate();
   return (
     <table className={styles.table}>
       <colgroup>
@@ -1096,10 +1093,15 @@ function ResolvedTable(props: ResolvedTableProps) {
                 : styles.hakemusRow
             }
             tabIndex={0}
-            onClick={() => dispatchReduxStore(selectHakemus(hakemus.id))}
-            onKeyDown={(e) =>
-              e.key === "Enter" && dispatchReduxStore(selectHakemus(hakemus.id))
-            }
+            onClick={() => {
+              dispatchReduxStore(selectHakemus(hakemus.id));
+              navigate(`hakemus/${hakemus.id}/arviointi`);
+            }}
+            onKeyDown={(e) => {
+              e.key === "Enter" &&
+                dispatchReduxStore(selectHakemus(hakemus.id));
+              navigate(`hakemus/${hakemus.id}/arviointi`);
+            }}
             data-test-id={`hakemus-${hakemus.id}`}
           >
             <td className="organization-cell">
@@ -1145,7 +1147,6 @@ function ResolvedTable(props: ResolvedTableProps) {
               <PeopleRoleButton
                 roles={roles}
                 hakemus={hakemus}
-                toggleSplitView={toggleSplitView}
                 selectedRole="presenter"
               />
             </td>
@@ -1153,7 +1154,6 @@ function ResolvedTable(props: ResolvedTableProps) {
               <PeopleRoleButton
                 roles={roles}
                 hakemus={hakemus}
-                toggleSplitView={toggleSplitView}
                 selectedRole="evaluators"
               />
               {personSelectHakemusId === hakemus.id && (
@@ -1203,16 +1203,15 @@ const getProject = (hakemus: Hakemus) => {
 interface PeopleRoleButton {
   roles: Role[];
   hakemus: Hakemus;
-  toggleSplitView: (override?: boolean) => void;
   selectedRole: "evaluators" | "presenter";
 }
 
 const PeopleRoleButton = ({
   roles,
   selectedRole,
-  toggleSplitView,
   hakemus,
 }: PeopleRoleButton) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const hakuData = useHakemustenArviointiSelector(
     (state) => getLoadedState(state.arviointi).hakuData
   );
@@ -1221,7 +1220,8 @@ const PeopleRoleButton = ({
     e.stopPropagation();
     dispatch(selectHakemus(hakemus.id));
     dispatch(togglePersonSelect(hakemus.id));
-    toggleSplitView(true);
+    searchParams.set("splitView", "true");
+    setSearchParams(searchParams);
   };
   const presentersWanted = selectedRole === "presenter";
   const filteredRoles = roles.filter((role) =>

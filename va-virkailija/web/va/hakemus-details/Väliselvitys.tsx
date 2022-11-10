@@ -5,9 +5,6 @@ import SelvitysNotFilled from "./SelvitysNotFilled";
 import SelvitysLink from "./SelvitysLink";
 import PresenterComment from "./PresenterComment";
 import ApplicationPayments from "./ApplicationPayments";
-import { Avustushaku, Hakemus } from "soresu-form/web/va/types";
-import { Role, UserInfo } from "../types";
-import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 import { ValiselvitysEmail } from "./ValiselvitysEmail";
 import {
   useHakemustenArviointiDispatch,
@@ -16,38 +13,34 @@ import {
 import {
   addPayment,
   getLoadedState,
+  getSelectedHakemus,
+  hasMultibatchPayments,
   removePayment,
+  getUserRoles,
 } from "../hakemustenArviointi/arviointiReducer";
 
-type SelvitysProps = {
-  hakemus: Hakemus;
-  avustushaku: Avustushaku;
-  userInfo: UserInfo;
-  multibatchEnabled: boolean;
-  isPresentingOfficer: boolean;
-  presenterCommentHelpText: any;
-  selvitysLinkHelpText: any;
-  environment: EnvironmentApiResponse;
-  presenter?: Role;
-};
-
-const Väliselvitys = ({
-  hakemus,
-  avustushaku,
-  userInfo,
-  multibatchEnabled,
-  isPresentingOfficer,
-  presenterCommentHelpText,
-  selvitysLinkHelpText,
-}: SelvitysProps) => {
+const Väliselvitys = () => {
+  const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
+  const { hakuData, helpTexts, userInfo } = useHakemustenArviointiSelector(
+    (state) => getLoadedState(state.arviointi)
+  );
+  const { avustushaku } = hakuData;
+  const multibatchPaymentsEnabled = useHakemustenArviointiSelector(
+    hasMultibatchPayments
+  );
   const valiselvitysPyynnotSent = useHakemustenArviointiSelector(
     (state) =>
       getLoadedState(state.arviointi).lahetykset.valiselvitysPyynnostSentAt !==
       undefined
   );
+  const presenterCommentHelpText =
+    helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"];
+  const selvitysLinkHelpText =
+    helpTexts["hankkeen_sivu__väliselvitys___linkki_lomakkeelle"];
   const hasSelvitysAnswers = !!hakemus.selvitys?.valiselvitys?.answers;
   const valiselvitys = hakemus.selvitys?.valiselvitys;
   const form = hakemus.selvitys?.valiselvitysForm;
+  const { isPresentingOfficer } = useHakemustenArviointiSelector(getUserRoles);
   const dispatch = useHakemustenArviointiDispatch();
   return (
     <div
@@ -69,7 +62,7 @@ const Väliselvitys = ({
           selvitysType="valiselvitys"
         />
       )}
-      {multibatchEnabled && (avustushaku.content as any).multiplemaksuera && (
+      {multibatchPaymentsEnabled && (
         <ApplicationPayments
           application={hakemus}
           grant={avustushaku}

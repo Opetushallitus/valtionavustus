@@ -7,47 +7,36 @@ import SelvitysNotFilled from "./SelvitysNotFilled";
 import SelvitysLink from "./SelvitysLink";
 import PresenterComment from "./PresenterComment";
 import ApplicationPayments from "./ApplicationPayments";
-import { Avustushaku, Hakemus } from "soresu-form/web/va/types";
-import { Role, UserInfo } from "../types";
-import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 import {
   addPayment,
   getLoadedState,
+  getSelectedHakemus,
+  hasMultibatchPayments,
   removePayment,
+  getUserRoles,
 } from "../hakemustenArviointi/arviointiReducer";
 import {
   useHakemustenArviointiDispatch,
   useHakemustenArviointiSelector,
 } from "../hakemustenArviointi/arviointiStore";
 
-type SelvitysProps = {
-  hakemus: Hakemus;
-  avustushaku: Avustushaku;
-  userInfo: UserInfo;
-  multibatchEnabled: boolean;
-  isPresentingOfficer: boolean;
-  presenterCommentHelpText: string;
-  selvitysLinkHelpText: string;
-  environment: EnvironmentApiResponse;
-  presenter?: Role;
-};
-
-const Loppuselvitys = ({
-  presenter,
-  hakemus,
-  avustushaku,
-  userInfo,
-  multibatchEnabled,
-  isPresentingOfficer,
-  presenterCommentHelpText,
-  selvitysLinkHelpText,
-}: SelvitysProps) => {
+const Loppuselvitys = () => {
+  const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
+  const { hakuData, helpTexts, userInfo } = useHakemustenArviointiSelector(
+    (state) => getLoadedState(state.arviointi)
+  );
+  const { avustushaku } = hakuData;
   const dispatch = useHakemustenArviointiDispatch();
   const loppuselvitysPyynnotSent = useHakemustenArviointiSelector(
     (state) =>
       getLoadedState(state.arviointi).lahetykset.loppuselvitysPyynnotSentAt !==
       undefined
   );
+  const multibatchPaymentsEnabled = useHakemustenArviointiSelector(
+    hasMultibatchPayments
+  );
+  const { isPresentingOfficer, hakemukselleUkotettuValmistelija } =
+    useHakemustenArviointiSelector(getUserRoles);
   const hasSelvitys = !!hakemus.selvitys?.loppuselvitys?.answers;
   const selvitysHakemus = hakemus.selvitys?.loppuselvitys;
   const form = hakemus.selvitys?.loppuselvitysForm;
@@ -58,7 +47,10 @@ const Loppuselvitys = ({
   const renderTaloustarkastusEmail =
     loppuselvitysStatus === "information_verified" ||
     loppuselvitysStatus === "accepted";
-
+  const presenterCommentHelpText =
+    helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"];
+  const selvitysLinkHelpText =
+    helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"];
   const lang = loppuselvitys?.language || "fi";
   return (
     <div
@@ -80,7 +72,7 @@ const Loppuselvitys = ({
           selvitysType="loppuselvitys"
         />
       )}
-      {multibatchEnabled && (avustushaku.content as any).multiplemaksuera && (
+      {multibatchPaymentsEnabled && (
         <ApplicationPayments
           application={hakemus}
           grant={avustushaku}
@@ -114,7 +106,7 @@ const Loppuselvitys = ({
         <LoppuselvitysForm
           hakemus={hakemus}
           avustushaku={avustushaku}
-          presenter={presenter}
+          presenter={hakemukselleUkotettuValmistelija}
           userInfo={userInfo}
         />
       )}

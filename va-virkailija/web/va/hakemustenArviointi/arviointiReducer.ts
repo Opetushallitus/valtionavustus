@@ -22,7 +22,13 @@ import {
   Score,
   Scoring,
 } from "soresu-form/web/va/types";
-import { HakuData, LahetysStatuses, UserInfo, VaCodeValue } from "../types";
+import {
+  HakuData,
+  LahetysStatuses,
+  UserInfo,
+  VaCodeValue,
+  VALMISTELIJA_ROLES,
+} from "../types";
 import { Lahetys } from "../haku-details/Tapahtumaloki";
 import { TalousarviotiliWithKoulutusasteet } from "../hakujenHallinta/hakuReducer";
 import { Muutoshakemus as MuutoshakemusType } from "soresu-form/web/va/types/muutoshakemus";
@@ -33,6 +39,7 @@ import {
   mutateDefaultTraineeDayValuesForSelectedHakemusOverriddenAnswers,
   mutatesDefaultBudgetValuesForSelectedHakemusSeurantaAnswers,
 } from "./overrides";
+import LocalStorage from "../LocalStorage";
 
 const oldestFirst = (a: Lahetys, b: Lahetys) =>
   a.created_at < b.created_at ? -1 : 1;
@@ -86,6 +93,7 @@ interface InitialData {
 export const fetchInitialState = createAsyncThunk<InitialData, number>(
   "arviointi/fetchInitialState",
   async (avustushakuId) => {
+    LocalStorage.saveAvustushakuId(avustushakuId);
     const [
       avustushakuList,
       hakuData,
@@ -120,35 +128,14 @@ export const fetchInitialState = createAsyncThunk<InitialData, number>(
 
 export const initialize = createAsyncThunk<
   void,
-  number,
+  { avustushakuId: number; hakemusId: number },
   { state: HakemustenArviointiRootState }
->("arviointi/initialize", async (avustushakuId, thunkAPI) => {
+>("arviointi/initialize", async ({ avustushakuId, hakemusId }, thunkAPI) => {
   await thunkAPI.dispatch(fetchInitialState(avustushakuId));
-  const parsedHakemusIdObject = new RouteParser(
-    "/*ignore/hakemus/:hakemus_id/*ignore"
-  ).match(location.pathname);
-  if (parsedHakemusIdObject && parsedHakemusIdObject["hakemus_id"]) {
-    thunkAPI.dispatch(
-      selectHakemus(Number(parsedHakemusIdObject["hakemus_id"]))
-    );
+  if (!isNaN(hakemusId)) {
+    thunkAPI.dispatch(selectHakemus(hakemusId));
   }
 });
-
-const getSubtabWithHistoryPushSideEffect = (hakemusId: number) => {
-  const pathname = location.pathname;
-  const parsedUrl = new RouteParser(
-    "/avustushaku/:avustushaku_id/(hakemus/:hakemus_id/:subTab/)*ignore"
-  ).match(pathname);
-  const subTab = parsedUrl.subTab || "arviointi";
-  if (
-    !_.isUndefined(history.pushState) &&
-    parsedUrl.hakemus_id !== hakemusId.toString()
-  ) {
-    const newUrl = `/avustushaku/${parsedUrl.avustushaku_id}/hakemus/${hakemusId}/${subTab}/${location.search}`;
-    history.pushState({}, window.document.title, newUrl);
-  }
-  return subTab;
-};
 
 export const selectHakemus = createAsyncThunk<
   { hakemus: Hakemus; extra: LoadedHakemusData },
@@ -157,9 +144,7 @@ export const selectHakemus = createAsyncThunk<
 >("arviointi/selectHakemus", async (hakemusId, thunkAPI) => {
   const { hakuData } = getLoadedState(thunkAPI.getState().arviointi);
   const hakemus = getHakemus(thunkAPI.getState().arviointi, hakemusId);
-  const subTab = getSubtabWithHistoryPushSideEffect(hakemusId);
   thunkAPI.dispatch(setSelectedHakuId(hakemusId));
-  thunkAPI.dispatch(setSubTab(subTab));
   const { avustushaku, privileges } = hakuData;
   const avustushakuId = avustushaku.id;
   const [
@@ -474,7 +459,6 @@ interface State {
   initialData: { loading: true } | { loading: false; data: InitialData };
   personSelectHakemusId?: number;
   saveStatus: SaveStatus;
-  subTab: string;
   selectedHakuId?: number;
   modal: JSX.Element | undefined;
   showOthersScores?: boolean;
@@ -488,7 +472,6 @@ const initialState: State = {
     saveTime: null,
     serverError: "",
   },
-  subTab: "arviointi",
   selectedHakuId: undefined,
   modal: undefined,
 };
@@ -525,9 +508,6 @@ const arviointiSlice = createSlice({
           ? currentRoles.filter((id) => id !== roleId)
           : currentRoles.concat(roleId);
       }
-    },
-    setSubTab: (state, { payload }: PayloadAction<string>) => {
-      state.subTab = payload;
     },
     setSelectedHakuId: (
       state,
@@ -785,10 +765,45 @@ export const getSelectedHakemus = ({
   return getHakemus(arviointi, arviointi.selectedHakuId);
 };
 
+export const hasMultibatchPayments = ({
+  arviointi,
+}: HakemustenArviointiRootState): boolean => {
+  const { hakuData } = getLoadedState(arviointi);
+  const { environment, avustushaku } = hakuData;
+  const multibatchEnabled = Boolean(
+    environment["multibatch-payments"]?.["enabled?"]
+  );
+  const multiplemaksuera = avustushaku.content.multiplemaksuera === true;
+  return multibatchEnabled && multiplemaksuera;
+};
+
+export const getUserRoles = (state: HakemustenArviointiRootState) => {
+  const { hakuData, userInfo } = getLoadedState(state.arviointi);
+  const hakemus = getSelectedHakemus(state);
+  const { roles } = hakuData;
+  const fallbackPresenter = roles.find((r) =>
+    (VALMISTELIJA_ROLES as readonly string[]).includes(r.role)
+  );
+  const hakemukselleUkotettuValmistelija =
+    roles.find((r) => r.id === hakemus.arvio["presenter-role-id"]) ||
+    fallbackPresenter;
+  const userOid = userInfo["person-oid"];
+  const isCurrentUserHakemukselleUkotettuValmistelija =
+    hakemukselleUkotettuValmistelija?.oid === userOid;
+  const userRole = roles.find((r) => r.oid === userOid)?.role;
+  const isPresentingOfficer =
+    userRole && (VALMISTELIJA_ROLES as readonly string[]).includes(userRole);
+  return {
+    userOid,
+    isPresentingOfficer,
+    hakemukselleUkotettuValmistelija,
+    isCurrentUserHakemukselleUkotettuValmistelija,
+  };
+};
+
 export const {
   togglePersonSelect,
   toggleHakemusRole,
-  setSubTab,
   setSelectedHakuId,
   setArvioValue,
   setArvioFieldValue,

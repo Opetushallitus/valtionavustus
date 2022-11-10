@@ -1,12 +1,7 @@
 import React, { useEffect, useRef } from "react";
 
 import DateUtil from "soresu-form/web/DateUtil";
-import {
-  Avustushaku,
-  ChangeLogEntry,
-  Hakemus,
-  HelpTexts,
-} from "soresu-form/web/va/types";
+import { ChangeLogEntry, Hakemus, HelpTexts } from "soresu-form/web/va/types";
 import { VaCodeValue } from "../types";
 
 import HakemusBudgetEditing from "../budgetedit/HakemusBudgetEditing";
@@ -22,15 +17,20 @@ import EditStatus from "./EditStatus";
 import ReSendDecisionEmail from "./ReSendDecisionEmail";
 import ApplicationPayments from "./ApplicationPayments";
 import HelpTooltip from "../HelpTooltip";
-import { HakuData, UserInfo } from "../types";
 import { ChangeRequest } from "./ChangeRequest";
 import ProjectSelector from "../haku-details/ProjectSelector";
 
 import "../style/admin.less";
 import Select from "react-select";
-import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from "../hakemustenArviointi/arviointiStore";
 import {
   addPayment,
+  getLoadedState,
+  getSelectedHakemus,
+  hasMultibatchPayments,
   removePayment,
   selectProject as selectProjectThunk,
   setArvioValue,
@@ -38,25 +38,14 @@ import {
   updateHakemusStatus,
 } from "../hakemustenArviointi/arviointiReducer";
 
-type HakemusArviointiProps = {
-  hakemus: Hakemus;
-  avustushaku: Avustushaku;
-  hakuData: HakuData;
-  userInfo: UserInfo;
-  helpTexts: HelpTexts;
-  multibatchEnabled: boolean;
-  projects: VaCodeValue[];
-};
-
-export const HakemusArviointi = ({
-  hakemus,
-  avustushaku,
-  hakuData,
-  userInfo,
-  multibatchEnabled,
-  helpTexts,
-  projects,
-}: HakemusArviointiProps) => {
+export const HakemusArviointi = () => {
+  const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
+  const { hakuData, helpTexts, userInfo, projects } =
+    useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi));
+  const { avustushaku } = hakuData;
+  const multibatchPaymentsEnabled = useHakemustenArviointiSelector(
+    hasMultibatchPayments
+  );
   const {
     allowHakemusCommenting,
     allowHakemusStateChanges,
@@ -129,7 +118,7 @@ export const HakemusArviointi = ({
         hakemus={hakemus}
         allowEditing={allowHakemusStateChanges}
       />
-      {multibatchEnabled && avustushaku.content["multiplemaksuera"] && (
+      {multibatchPaymentsEnabled && (
         <ApplicationPayments
           application={hakemus}
           grant={avustushaku}

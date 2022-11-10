@@ -14,10 +14,12 @@ import { Muutoshakemus as MuutoshakemusType } from "soresu-form/web/va/types/muu
 import { Avustushaku, Hakemus } from "soresu-form/web/va/types";
 
 import { MuutoshakemusForm } from "./MuutoshakemusForm";
-import { Role, UserInfo } from "../types";
+import { UserInfo } from "../types";
 import { MuutoshakemusTabs } from "./MuutoshakemusTabs";
 
 import "./Muutoshakemus.less";
+import { useHakemustenArviointiSelector } from "../hakemustenArviointi/arviointiStore";
+import { getUserRoles } from "../hakemustenArviointi/arviointiReducer";
 
 interface MuutoshakemusProps {
   environment: EnvironmentApiResponse;
@@ -25,8 +27,6 @@ interface MuutoshakemusProps {
   muutoshakemukset: MuutoshakemusType[];
   hakemusVersion: Hakemus;
   userInfo: UserInfo;
-  presenter: Role | undefined;
-  isCurrentUserHakemukselleUkotettuValmistelija: boolean;
 }
 
 export const Muutoshakemus = ({
@@ -35,9 +35,11 @@ export const Muutoshakemus = ({
   muutoshakemukset,
   hakemusVersion,
   userInfo,
-  presenter,
-  isCurrentUserHakemukselleUkotettuValmistelija,
 }: MuutoshakemusProps) => {
+  const {
+    hakemukselleUkotettuValmistelija,
+    isCurrentUserHakemukselleUkotettuValmistelija,
+  } = useHakemustenArviointiSelector(getUserRoles);
   const hakemus = hakemusVersion.normalizedData;
   const [activeMuutoshakemus, setActiveMuutoshakemus] = useState(
     muutoshakemukset[0].id
@@ -60,7 +62,7 @@ export const Muutoshakemus = ({
         hakemus={hakemus}
         hakemusVersion={hakemusVersion}
         userInfo={userInfo}
-        presenter={presenter}
+        presenter={hakemukselleUkotettuValmistelija}
         projectEndDate={projectEndDate}
         isCurrentUserHakemukselleUkotettuValmistelija={
           isCurrentUserHakemukselleUkotettuValmistelija

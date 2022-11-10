@@ -28,7 +28,7 @@ muutoshakemusTest(
       await hakemustenArviointiPage.navigateToLatestHakemusArviointi(
         avustushakuID
       );
-    await hakemustenArviointiPage.navigate(avustushakuID);
+    await hakemustenArviointiPage.closeHakemusDetails();
     await hakemustenArviointiPage.selectValmistelijaForHakemus(
       hakemusId,
       "_ valtionavustus"
@@ -42,14 +42,16 @@ muutoshakemusTest(
           "_ valtionavustus"
         );
         await hakemustenArviointiPage.openUkotusModal(hakemusId);
-        await page
-          .locator(`[aria-label="Poista _ valtionavustus arvioijan roolista"]`)
-          .waitFor();
-        await page
-          .locator(
+        await expect(
+          page.locator(
+            `[aria-label="Poista _ valtionavustus arvioijan roolista"]`
+          )
+        ).toBeVisible();
+        await expect(
+          page.locator(
             `[aria-label="Poista _ valtionavustus valmistelijan roolista"]`
           )
-          .waitFor();
+        ).toBeVisible();
         await hakemustenArviointiPage.closeUkotusModal();
       }
     );
