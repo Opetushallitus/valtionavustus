@@ -11,7 +11,7 @@ import {
   getLoadedState,
   setSelectedHakuId,
 } from "../hakemustenArviointi/arviointiReducer";
-import { NavLink, Outlet, useSearchParams } from "react-router-dom";
+import { Outlet, useSearchParams } from "react-router-dom";
 import { NavLinkWithQuery } from "../NavLinkWithQuery";
 
 export const HakemusDetails = () => {
