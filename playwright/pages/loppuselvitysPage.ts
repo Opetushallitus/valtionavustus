@@ -1,4 +1,4 @@
-import { Page } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 
 import { navigate } from "../utils/navigate";
 
@@ -11,13 +11,13 @@ export function LoppuselvitysPage(page: Page) {
       page,
       `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/loppuselvitys/`
     );
-    await page.waitForSelector(
-      '[data-test-id="hakemus-details-loppuselvitys"]',
-      { state: "visible" }
-    );
+    await expect(
+      page.getByTestId("hakemus-details-loppuselvitys")
+    ).toBeVisible();
   }
 
   return {
     navigateToLoppuselvitysTab,
+    linkToForm: page.locator("a", { hasText: "Linkki lomakkeelle" }),
   };
 }
