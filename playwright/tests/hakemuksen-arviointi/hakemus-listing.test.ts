@@ -22,7 +22,7 @@ test(`shows Muokattu pill when the application has been modified after submit`, 
   await hakemustenArviointiPage.navigate(avustushakuID);
   const firstRow = hakemustenArviointiPage.hakemusRows.first();
   const modifiedPill = firstRow.locator("[data-test-id$=modified-pill]");
-  expect(await modifiedPill.innerText()).toEqual("Muokattu");
+  await expect(modifiedPill).toHaveText("Muokattu");
 });
 
 selvitysTest(

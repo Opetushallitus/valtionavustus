@@ -103,9 +103,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
         await hakijaSelvitysPage.textArea(4).fill("Lisätietoja");
         await hakijaSelvitysPage.firstAttachment.setInputFiles(dummyPdfPath);
 
-        await hakijaSelvitysPage.valiselvitysWarning.waitFor({
-          state: "detached",
-        });
+        await expect(hakijaSelvitysPage.valiselvitysWarning).toBeHidden();
         await expect(hakijaSelvitysPage.submitButton).toHaveText(
           "Lähetä käsiteltäväksi"
         );
@@ -113,10 +111,8 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
         await expect(hakijaSelvitysPage.submitButton).toHaveText(
           "Väliselvitys lähetetty"
         );
-        await hakijaSelvitysPage.submitButton.isDisabled();
-        await hakijaSelvitysPage.valiselvitysWarning.waitFor({
-          state: "detached",
-        });
+        await expect(hakijaSelvitysPage.submitButton).toBeDisabled();
+        await expect(hakijaSelvitysPage.valiselvitysWarning).toBeHidden();
 
         userKey = new URL(page.url()).searchParams.get("valiselvitys");
       }
