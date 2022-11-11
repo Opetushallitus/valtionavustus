@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { VirkailijaValiselvitysPage } from "../../pages/virkailijaValiselvitysPage";
-import { expectToBeDefined } from "../../utils/util";
+import { expectToBeDefined, waitForNewTab } from "../../utils/util";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 
 import {
@@ -12,6 +12,7 @@ import {
 import { HAKIJA_URL } from "../../utils/constants";
 import { HakijaSelvitysPage } from "../../pages/hakijaSelvitysPage";
 import { selvitysTest } from "../../fixtures/selvitysTest";
+import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 
 test.describe("Väliselvitys", () => {
   selvitysTest(
@@ -177,3 +178,44 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
     }
   );
 });
+
+selvitysTest(
+  "Valiselvitys tab in hakemuksen arviointi should have link to hakemus form",
+  async ({ page, avustushakuID, acceptedHakemus: { hakemusID } }) => {
+    const valiselvitysPage = VirkailijaValiselvitysPage(page);
+    await test.step(
+      "link is hidden before sending loppuselvitykset",
+      async () => {
+        await valiselvitysPage.navigateToValiselvitysTab(
+          avustushakuID,
+          hakemusID
+        );
+        await expect(valiselvitysPage.linkToHakemus).toBeHidden();
+      }
+    );
+    await test.step("send väliselvitykset", async () => {
+      const hakujenHallintaPage = new HakujenHallintaPage(page);
+      await hakujenHallintaPage.navigateToValiselvitys(avustushakuID);
+      await hakujenHallintaPage.sendValiselvitys();
+    });
+    await test.step("link and lomake work", async () => {
+      await valiselvitysPage.navigateToValiselvitysTab(
+        avustushakuID,
+        hakemusID
+      );
+      const [loppuselvitysFormPage] = await Promise.all([
+        waitForNewTab(page),
+        valiselvitysPage.linkToHakemus.click(),
+      ]);
+      await loppuselvitysFormPage.waitForNavigation();
+      await expect(
+        loppuselvitysFormPage.locator("h1").locator('text="Väliselvitys"')
+      ).toBeVisible();
+      await expect(
+        loppuselvitysFormPage.locator("button", {
+          hasText: "Lähetä käsiteltäväksi",
+        })
+      ).toBeVisible();
+    });
+  }
+);
