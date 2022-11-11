@@ -58,6 +58,12 @@
        (exec queries/get-hakemus-by-user-key)
        first))
 
+(defn get-hakemus-by-id-locking [tx id]
+  (first (query tx "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL FOR UPDATE" [id])))
+
+(defn get-hakemus-by-id-tx [tx id]
+  (first (query tx "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL" [id])))
+
 (defn get-hakemus-by-id [id]
   (first (query "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL" [id])))
 
@@ -392,11 +398,29 @@
 (defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals comment]
   (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :cancelled comment))
 
+(defn close-hakemus-by-id [tx id]
+  (execute! tx "UPDATE hakemukset SET version_closed = now() WHERE id = ? AND version_closed IS NULL" [id]))
+
+(defn create-new-hakemus-version [tx id]
+  (let [hakemus (get-hakemus-by-id-locking tx id)]
+    (close-hakemus-by-id tx id)
+    (execute! tx "INSERT INTO hakemukset
+              SELECT (copy).*
+              FROM  (
+                SELECT h #= hstore(array['version_closed', null::text, 'version', h.version + 1]) AS copy
+                FROM   hakemukset h
+                WHERE  id = ? AND version = ?
+                ) sub;" [id (:version hakemus)])
+    (get-hakemus-by-id tx id)))
+
 (defn refuse-application [application comment]
-  (let [params (assoc application :refused true :refused_comment comment)]
-    (exec-all [queries/lock-hakemus params
-                        queries/close-existing-hakemus! params
-                        queries/set-refused params])))
+  (with-tx (fn [tx]
+  (let [new-hakemus (create-new-hakemus-version tx (:id application))]
+    (execute! tx "UPDATE hakemukset SET
+                refused = t,
+                refused_comment = ?,
+                refused_at = now()
+              WHERE id = ? AND version = ?" [comment (:id new-hakemus) (:version new-hakemus)])))))
 
 (defn update-loppuselvitys-status [hakemus-id status]
   (exec queries/update-loppuselvitys-status<! {:id hakemus-id :status status}))
