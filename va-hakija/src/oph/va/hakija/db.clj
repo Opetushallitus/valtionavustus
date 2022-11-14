@@ -411,7 +411,7 @@
                 FROM   hakemukset h
                 WHERE  id = ? AND version = ?
                 ) sub;" [id (:version hakemus)])
-    (get-hakemus-by-id tx id)))
+    (get-hakemus-by-id-tx tx id)))
 
 (defn refuse-application [application comment]
   (with-tx (fn [tx]
