@@ -417,7 +417,7 @@
   (with-tx (fn [tx]
   (let [new-hakemus (create-new-hakemus-version tx (:id application))]
     (execute! tx "UPDATE hakemukset SET
-                refused = t,
+                refused = true,
                 refused_comment = ?,
                 refused_at = now()
               WHERE id = ? AND version = ?" [comment (:id new-hakemus) (:version new-hakemus)])))))
