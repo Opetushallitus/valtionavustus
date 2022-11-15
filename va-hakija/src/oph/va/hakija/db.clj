@@ -249,6 +249,10 @@
         hakemus-id (:id (first hakemus-id-rows))]
     (get-muutoshakemukset hakemus-id)))
 
+(defn get-hakemus-id-by-user-key-and-form-submission-id [tx user-key submission-id]
+  (let [hakemus-id-rows (query tx "SELECT id FROM hakemukset WHERE user_key = ? AND form_submission_id = ? LIMIT 1" [user-key submission-id])]
+    (:id (first hakemus-id-rows))))
+
 (defn get-muutoshakemukset-by-user-key [user-key]
   (let [hakemus-id-rows (query "SELECT id FROM hakemukset WHERE user_key = ? LIMIT 1" [user-key])
         hakemus-id (:id (first hakemus-id-rows))]
@@ -342,62 +346,6 @@
       (change-normalized-hakemus-contact-person-details tx user-key hakemus-id (get muutoshakemus :yhteyshenkilo))
       (log/info (str "Succesfully changed contact person details with user-key: " user-key))))))
 
-(defn update-submission [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
-  (let [register-number (or register-number
-                            (generate-register-number avustushaku-id hakemus-id))
-        params (-> {:avustushaku_id avustushaku-id
-                    :user_key hakemus-id
-                    :user_oid nil
-                    :user_first_name nil
-                    :user_last_name nil
-                    :user_email nil
-                    :register_number register-number
-                    :form_submission_id submission-id
-                    :form_submission_version submission-version}
-                   (merge (convert-budget-totals budget-totals))
-                   (merge-calculated-params avustushaku-id answers))]
-    (exec-all [queries/lock-hakemus params
-                   queries/close-existing-hakemus! params
-                   queries/update-hakemus-submission<! params])))
-
-(defn- update-status [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals status status-change-comment]
-  (let [params (-> {:avustushaku_id avustushaku-id
-                    :user_key hakemus-id
-                    :user_oid nil
-                    :user_first_name nil
-                    :user_last_name nil
-                    :user_email nil
-                    :form_submission_id submission-id
-                    :form_submission_version submission-version
-                    :register_number register-number
-                    :status status
-                    :status_change_comment status-change-comment}
-                   (merge (convert-budget-totals budget-totals))
-                   (merge-calculated-params avustushaku-id answers))]
-    (exec-all [queries/lock-hakemus params
-                   queries/close-existing-hakemus! params
-                   queries/update-hakemus-status<! params])))
-
-(defn open-hakemus-applicant-edit [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
-   (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :applicant_edit nil))
-
-(defn set-submitted-version [user-key form-submission-id]
-  (let [params {:user_key user-key
-                :form_submission_id form-submission-id}]
-    (exec-all [queries/lock-hakemus params
-                        queries/close-existing-hakemus! params
-                        queries/set-application-submitted-version<! params])))
-
-(defn verify-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
-  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :draft nil))
-
-(defn submit-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
-  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :submitted nil)
-  (set-submitted-version hakemus-id submission-id))
-
-(defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals comment]
-  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :cancelled comment))
-
 (defn close-hakemus-by-id [tx id]
   (execute! tx "UPDATE hakemukset SET version_closed = now() WHERE id = ? AND version_closed IS NULL" [id]))
 
@@ -413,6 +361,71 @@
                 ) sub
 
                 RETURNING *;" [id (:version hakemus)]))))
+
+(defn create-new-hakemus-version-from-user-key-form-submission-id [tx user-key submission-id]
+  (create-new-hakemus-version tx (get-hakemus-id-by-user-key-and-form-submission-id tx user-key submission-id)))
+
+(defn update-submission [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
+  (with-tx (fn [tx]
+  (let [register-number (or register-number
+                            (generate-register-number avustushaku-id hakemus-id))
+        new-hakemus (create-new-hakemus-version-from-user-key-form-submission-id tx hakemus-id submission-id)
+        params (-> {:avustushaku_id avustushaku-id
+                    :user_key hakemus-id
+                    :version (:version new-hakemus)
+                    :user_oid nil
+                    :user_first_name nil
+                    :user_last_name nil
+                    :user_email nil
+                    :register_number register-number
+                    :form_submission_id submission-id
+                    :form_submission_version submission-version}
+                   (merge (convert-budget-totals budget-totals))
+                   (merge-calculated-params avustushaku-id answers))]
+
+    (queries/update-hakemus-submission<! params {:connection tx})))))
+
+(defn- update-status [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals status status-change-comment]
+  (with-tx (fn [tx]
+     (let [new-hakemus (create-new-hakemus-version-from-user-key-form-submission-id tx hakemus-id submission-id)
+           params (-> {:avustushaku_id avustushaku-id
+                       :version (:version new-hakemus)
+                       :user_key hakemus-id
+                       :user_oid nil
+                       :user_first_name nil
+                       :user_last_name nil
+                       :user_email nil
+                       :form_submission_id submission-id
+                       :form_submission_version submission-version
+                       :register_number register-number
+                       :status status
+                       :status_change_comment status-change-comment}
+                      (merge (convert-budget-totals budget-totals))
+                      (merge-calculated-params avustushaku-id answers))]
+
+       (queries/update-hakemus-status<! params {:connection tx})))))
+
+(defn open-hakemus-applicant-edit [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
+  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :applicant_edit nil))
+
+(defn set-submitted-version [user-key form-submission-id]
+  (with-tx (fn [tx]
+  (let [new-hakemus (create-new-hakemus-version-from-user-key-form-submission-id tx user-key form-submission-id)
+        params {:user_key user-key
+                :form_submission_id form-submission-id
+                :version (:version new-hakemus) }]
+
+        (queries/set-application-submitted-version<! params {:connection tx})))))
+
+(defn verify-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
+  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :draft nil))
+
+(defn submit-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
+  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :submitted nil)
+  (set-submitted-version hakemus-id submission-id))
+
+(defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals comment]
+  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :cancelled comment))
 
 (defn refuse-application [application comment]
   (with-tx (fn [tx]

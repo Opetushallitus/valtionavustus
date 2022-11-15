@@ -1,61 +1,22 @@
-INSERT INTO hakemukset(
-       id,
-       avustushaku,
-       user_key,
-       version,
-       form_submission_id,
-       form_submission_version,
-       user_oid,
-       user_first_name,
-       user_last_name,
-       user_email,
-       budget_total,
-       budget_oph_share,
-       organization_name,
-       project_name,
-       language,
-       status,
-       register_number,
-       last_status_change_at,
-       status_change_comment,
-       hakemus_type,
-       parent_id,
-       project_id,
-       status_valiselvitys,
-       status_loppuselvitys,
-       refused,
-       refused_comment,
-       refused_at,
-       submitted_version)
-SELECT id,
-       :avustushaku_id,
-       :user_key,
-       version + 1,
-       :form_submission_id,
-       :form_submission_version,
-       :user_oid,
-       :user_first_name,
-       :user_last_name,
-       :user_email,
-       :budget_total,
-       :budget_oph_share,
-       :organization_name,
-       :project_name,
-       :language,
-       status,
-       :register_number,
-       last_status_change_at,
-       status_change_comment,
-       hakemus_type,
-       parent_id,
-       project_id,
-       status_valiselvitys,
-       status_loppuselvitys,
-       refused,
-       refused_comment,
-       refused_at,
-       submitted_version
-FROM hakemukset
-WHERE user_key = :user_key AND form_submission_id = :form_submission_id
-ORDER BY version DESC
-LIMIT 1
+UPDATE hakemukset
+SET
+  avustushaku = :avustushaku_id,
+  user_key = :user_key,
+  form_submission_id = :form_submission_id,
+  form_submission_version = :form_submission_version,
+  user_oid = :user_oid,
+  user_first_name = :user_first_name,
+  user_last_name = :user_last_name,
+  user_email = :user_email,
+  budget_total = :budget_total,
+  budget_oph_share = :budget_oph_share,
+  organization_name = :organization_name,
+  project_name = :project_name,
+  language = :language,
+  register_number = :register_number
+
+WHERE
+  user_key = :user_key AND
+  form_submission_id = :form_submission_id AND
+  version_closed IS NULL AND
+  version = :version
