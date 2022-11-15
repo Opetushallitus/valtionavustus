@@ -68,12 +68,23 @@ const orderByCreatedAt = <T extends { "created-at": string }>(
   return newArray;
 };
 
+type LoadingState = "initial" | "loading" | "error";
+
+const searchStateText: Record<LoadingState, string> = {
+  initial: "Ei hakutuloksia",
+  loading: "Ladataan...",
+  error: "Haku epäonnistui",
+};
+
 const Search = () => {
   const query = new URLSearchParams(window.location.search);
   const [input, setInput] = useState(query.get("search") ?? "");
   const [order, setOrder] = useState(query.get("order") ?? "created-at-asc");
   const [hakemukset, setHakemukset] = useState<HakemusV2[]>([]);
   const [haut, setHaut] = useState<AvustushakuV2[]>([]);
+  const [searchState, setSearchState] = useState<LoadingState>("initial");
+  const sending = searchState === "loading";
+  const disabled = sending;
 
   const doSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     if (input.length < 3) {
@@ -81,10 +92,14 @@ const Search = () => {
       e.stopPropagation();
       return;
     }
+    setSearchState("loading");
+    setHakemukset([]);
+    setHaut([]);
   };
 
   useEffect(() => {
     const doSearch = async () => {
+      setSearchState("loading");
       try {
         const [newHakemukset, newHaut] = await Promise.all([
           HttpUtil.get<HakemusV2[]>(
@@ -96,7 +111,10 @@ const Search = () => {
         ]);
         setHakemukset(newHakemukset);
         setHaut(newHaut);
-      } catch (e: unknown) {}
+        setSearchState("initial");
+      } catch (e: unknown) {
+        setSearchState("error");
+      }
     };
 
     const params = new URLSearchParams(window.location.search);
@@ -120,6 +138,8 @@ const Search = () => {
           className="oph-input"
           onChange={(e) => setInput(e.target.value)}
           value={input}
+          readOnly={disabled}
+          autoFocus
         />
         <div className="oph-select-container">
           <select
@@ -139,7 +159,7 @@ const Search = () => {
           {haut.length ? (
             <div data-test-class="results">{haut.map(renderHaku)}</div>
           ) : (
-            "Ei hakutuloksia"
+            <div>{searchStateText[searchState]}</div>
           )}
         </div>
         <div>
@@ -147,7 +167,7 @@ const Search = () => {
           {hakemukset.length ? (
             <div data-test-class="results">{hakemukset.map(renderHakemus)}</div>
           ) : (
-            "Ei hakutuloksia"
+            <div>{searchStateText[searchState]}</div>
           )}
         </div>
       </div>
