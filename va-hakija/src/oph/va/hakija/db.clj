@@ -404,14 +404,15 @@
 (defn create-new-hakemus-version [tx id]
   (let [hakemus (get-hakemus-by-id-locking tx id)]
     (close-hakemus-by-id tx id)
-    (execute! tx "INSERT INTO hakemukset
+    (first (query tx "INSERT INTO hakemukset
               SELECT (copy).*
               FROM  (
                 SELECT h #= hstore(array['version_closed', 'version', 'created_at'], array[null::text, (version::integer + 1)::text, now()::text]) AS copy
                 FROM   hakemukset h
                 WHERE  id = ? AND version = ?
-                ) sub;" [id (:version hakemus)])
-    (get-hakemus-by-id-tx tx id)))
+                ) sub
+
+                RETURNING *;" [id (:version hakemus)]))))
 
 (defn refuse-application [application comment]
   (with-tx (fn [tx]
