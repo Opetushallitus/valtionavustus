@@ -407,7 +407,7 @@
     (execute! tx "INSERT INTO hakemukset
               SELECT (copy).*
               FROM  (
-                SELECT h #= hstore(array['version_closed', 'version'], array[null::text, (version::integer + 1)::text]) AS copy
+                SELECT h #= hstore(array['version_closed', 'version', 'created_at'], array[null::text, (version::integer + 1)::text, now()::text]) AS copy
                 FROM   hakemukset h
                 WHERE  id = ? AND version = ?
                 ) sub;" [id (:version hakemus)])
