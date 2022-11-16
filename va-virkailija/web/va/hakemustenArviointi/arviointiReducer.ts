@@ -492,23 +492,6 @@ const arviointiSlice = createSlice({
     ) => {
       state.personSelectHakemusId = payload;
     },
-    toggleHakemusRole: (
-      state,
-      {
-        payload,
-      }: PayloadAction<{ roleId: number; hakemusId: number; roleField: string }>
-    ) => {
-      const { roleId, hakemusId, roleField } = payload;
-      const hakemus = getHakemus(state, hakemusId);
-      if (roleField === "presenter") {
-        hakemus.arvio["presenter-role-id"] = roleId;
-      } else {
-        const currentRoles = hakemus.arvio.roles[roleField];
-        hakemus.arvio.roles[roleField] = currentRoles.includes(roleId)
-          ? currentRoles.filter((id) => id !== roleId)
-          : currentRoles.concat(roleId);
-      }
-    },
     setSelectedHakuId: (
       state,
       { payload }: PayloadAction<number | undefined>
@@ -803,7 +786,6 @@ export const getUserRoles = (state: HakemustenArviointiRootState) => {
 
 export const {
   togglePersonSelect,
-  toggleHakemusRole,
   setSelectedHakuId,
   setArvioValue,
   setArvioFieldValue,

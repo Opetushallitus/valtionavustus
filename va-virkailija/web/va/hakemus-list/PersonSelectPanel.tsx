@@ -11,8 +11,8 @@ import {
 } from "../hakemustenArviointi/arviointiStore";
 import {
   getLoadedState,
+  setArvioValue,
   startHakemusArvioAutoSave,
-  toggleHakemusRole,
   togglePersonSelect,
 } from "../hakemustenArviointi/arviointiReducer";
 
@@ -52,18 +52,36 @@ const RoleButton = ({ role, roleField, hakemus }: RoleButtonProps) => {
   const active = isPresenterField
     ? isPresenter(hakemus, role)
     : isEvaluator(hakemus, role);
-  const ariaLabel = getRoleButtonAriaLabel(isPresenterField, active, role.name);
+  const { id: roleId, name } = role;
+  const ariaLabel = getRoleButtonAriaLabel(isPresenterField, active, name);
   return (
     <button
       onClick={(e) => {
         e.stopPropagation();
-        dispatch(
-          toggleHakemusRole({
-            roleId: role.id,
-            hakemusId: hakemus.id,
-            roleField,
-          })
-        );
+        if (roleField === "presenter") {
+          dispatch(
+            setArvioValue({
+              hakemusId: hakemus.id,
+              key: "presenter-role-id",
+              value: roleId,
+            })
+          );
+        } else {
+          const currentRoles = hakemus.arvio.roles[roleField];
+          const newRoles = {
+            ...hakemus.arvio.roles,
+            [roleField]: currentRoles.includes(roleId)
+              ? currentRoles.filter((id) => id !== roleId)
+              : currentRoles.concat(roleId),
+          };
+          dispatch(
+            setArvioValue({
+              hakemusId: hakemus.id,
+              key: "roles",
+              value: newRoles,
+            })
+          );
+        }
         dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
       }}
       className={classNames(styles.roleButton, { [styles.selected]: active })}
