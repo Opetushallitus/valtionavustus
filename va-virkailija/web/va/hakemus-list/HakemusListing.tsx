@@ -1223,10 +1223,11 @@ const PeopleRoleButton = ({
   const dispatch = useHakemustenArviointiDispatch();
   const onClickCallback = (e: React.SyntheticEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    dispatch(selectHakemus(hakemus.id));
-    dispatch(togglePersonSelect(hakemus.id));
     searchParams.set("splitView", "true");
     setSearchParams(searchParams);
+    dispatch(selectHakemus(hakemus.id)).then(() =>
+      dispatch(togglePersonSelect(hakemus.id))
+    );
   };
   const presentersWanted = selectedRole === "presenter";
   const filteredRoles = roles.filter((role) =>
