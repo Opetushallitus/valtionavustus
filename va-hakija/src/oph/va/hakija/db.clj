@@ -9,6 +9,7 @@
             [clojure.java.jdbc :as jdbc]
             [oph.soresu.common.jdbc.extensions :refer :all]
             [oph.soresu.form.formutil :as form-util]
+            [oph.va.hakemus.db :as hakemus-copy]
             [oph.va.jdbc.extensions :refer :all]
             [oph.soresu.common.config :refer [config]]
             [oph.va.hakija.db.queries :as queries]))
@@ -57,9 +58,6 @@
   (->> {:user_key user-key}
        (exec queries/get-hakemus-by-user-key)
        first))
-
-(defn get-hakemus-by-id-locking [tx id]
-  (first (query tx "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL FOR UPDATE" [id])))
 
 (defn get-hakemus-by-id-tx [tx id]
   (first (query tx "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL" [id])))
@@ -249,10 +247,6 @@
         hakemus-id (:id (first hakemus-id-rows))]
     (get-muutoshakemukset hakemus-id)))
 
-(defn get-hakemus-id-by-user-key-and-form-submission-id [tx user-key submission-id]
-  (let [hakemus-id-rows (query tx "SELECT id FROM hakemukset WHERE user_key = ? AND form_submission_id = ? LIMIT 1" [user-key submission-id])]
-    (:id (first hakemus-id-rows))))
-
 (defn get-muutoshakemukset-by-user-key [user-key]
   (let [hakemus-id-rows (query "SELECT id FROM hakemukset WHERE user_key = ? LIMIT 1" [user-key])
         hakemus-id (:id (first hakemus-id-rows))]
@@ -346,30 +340,11 @@
       (change-normalized-hakemus-contact-person-details tx user-key hakemus-id (get muutoshakemus :yhteyshenkilo))
       (log/info (str "Succesfully changed contact person details with user-key: " user-key))))))
 
-(defn close-hakemus-by-id [tx id]
-  (execute! tx "UPDATE hakemukset SET version_closed = now() WHERE id = ? AND version_closed IS NULL" [id]))
-
-(defn create-new-hakemus-version [tx id]
-  (let [hakemus (get-hakemus-by-id-locking tx id)]
-    (close-hakemus-by-id tx id)
-    (first (query tx "INSERT INTO hakemukset
-              SELECT (copy).*
-              FROM  (
-                SELECT h #= hstore(array['version_closed', 'version', 'created_at'], array[null::text, (version::integer + 1)::text, now()::text]) AS copy
-                FROM   hakemukset h
-                WHERE  id = ? AND version = ?
-                ) sub
-
-                RETURNING *;" [id (:version hakemus)]))))
-
-(defn create-new-hakemus-version-from-user-key-form-submission-id [tx user-key submission-id]
-  (create-new-hakemus-version tx (get-hakemus-id-by-user-key-and-form-submission-id tx user-key submission-id)))
-
 (defn update-submission [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (with-tx (fn [tx]
   (let [register-number (or register-number
                             (generate-register-number avustushaku-id hakemus-id))
-        new-hakemus (create-new-hakemus-version-from-user-key-form-submission-id tx hakemus-id submission-id)
+        new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx hakemus-id submission-id)
         params (-> {:avustushaku_id avustushaku-id
                     :user_key hakemus-id
                     :version (:version new-hakemus)
@@ -387,7 +362,7 @@
 
 (defn- update-status [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals status status-change-comment]
   (with-tx (fn [tx]
-     (let [new-hakemus (create-new-hakemus-version-from-user-key-form-submission-id tx hakemus-id submission-id)
+     (let [new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx hakemus-id submission-id)
            params (-> {:avustushaku_id avustushaku-id
                        :version (:version new-hakemus)
                        :user_key hakemus-id
@@ -410,7 +385,7 @@
 
 (defn set-submitted-version [user-key form-submission-id]
   (with-tx (fn [tx]
-  (let [new-hakemus (create-new-hakemus-version-from-user-key-form-submission-id tx user-key form-submission-id)
+  (let [new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx user-key form-submission-id)
         params {:user_key user-key
                 :form_submission_id form-submission-id
                 :version (:version new-hakemus) }]
@@ -429,7 +404,7 @@
 
 (defn refuse-application [application comment]
   (with-tx (fn [tx]
-  (let [new-hakemus (create-new-hakemus-version tx (:id application))]
+  (let [new-hakemus (hakemus-copy/create-new-hakemus-version tx (:id application))]
     (execute! tx "UPDATE hakemukset SET
                 refused = true,
                 refused_comment = ?,

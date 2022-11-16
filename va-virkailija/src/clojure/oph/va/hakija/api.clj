@@ -4,10 +4,11 @@
         [clojure.pprint :only [pprint]])
   (:require [clojure.java.io :as io]
             [oph.soresu.common.config :refer [config]]
-            [oph.soresu.common.db :refer [exec exec-all execute! query with-transaction get-next-exception-or-original escape-like-pattern]]
+            [oph.soresu.common.db :refer [exec exec-all execute! query with-transaction with-tx get-next-exception-or-original escape-like-pattern]]
             [oph.soresu.form.formhandler :as formhandler]
             [oph.va.jdbc.enums]
             [oph.va.hakija.api.queries :as hakija-queries]
+            [oph.va.hakemus.db :as hakemus-copy]
             [oph.va.hakija.domain :as hakija-domain]
             [oph.va.environment :as environment]
             [oph.va.routes :refer :all]
@@ -478,16 +479,18 @@
     (get-form-by-id form-id)))
 
 (defn update-hakemus-status [hakemus status status-comment identity]
-  (let [updated-hakemus (merge hakemus {:status (keyword status)
-                                        :status_change_comment status-comment
-                                        :user_oid (:person-oid identity)
-                                        :user_first_name (:first-name identity)
-                                        :user_last_name (:surname identity)
-                                        :user_email (:email identity)
-                                        :avustushaku_id (:avustushaku hakemus)})]
-    (exec-all [hakija-queries/lock-hakemus hakemus
-                          hakija-queries/close-existing-hakemus! hakemus
-                          hakija-queries/update-hakemus-status<! updated-hakemus])))
+  (with-tx (fn [tx]
+             (let [new-hakemus (hakemus-copy/create-new-hakemus-version tx (:id hakemus))
+                   updated-hakemus (merge hakemus {:status (keyword status)
+                                                   :version (:version new-hakemus)
+                                                   :status_change_comment status-comment
+                                                   :user_oid (:person-oid identity)
+                                                   :user_first_name (:first-name identity)
+                                                   :user_last_name (:surname identity)
+                                                   :user_email (:email identity)
+                                                   :avustushaku_id (:avustushaku hakemus)})]
+
+               (hakija-queries/update-hakemus-status<! updated-hakemus {:connection tx})))))
 
 (defn list-hakemus-change-requests [hakemus-id]
   (hakemukset->json (exec hakija-queries/list-hakemus-change-requests {:id hakemus-id})))
