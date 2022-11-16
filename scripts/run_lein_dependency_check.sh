@@ -37,12 +37,11 @@ function nvd_check {
   project=$(basename "$dir")
 
   if running_on_jenkins; then
-    profiles="with-profile -user"
+    "$LEIN" with-profile -user run -m nvd.task.check "$project"-nvd-config.json "$(cd "$dir"; $LEIN classpath)"
   else
-    profiles=""
+    "$LEIN" run -m nvd.task.check "$project"-nvd-config.json "$(cd "$dir"; $LEIN classpath)"
   fi
 
-  "$LEIN" "$profiles" run -m nvd.task.check "$project"-nvd-config.json "$(cd "$dir"; $LEIN classpath)"
 }
 
 function download_temp_db_to_workspace_in_jenkins() {
