@@ -42,6 +42,9 @@ export const HakuEdit = () => {
   const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
   const { codeOptions, lainsaadantoOptions, helpTexts, userInfo } =
     useHakujenHallintaSelector(selectLoadedInitialData);
+  const loadingAvustushaku = useHakujenHallintaSelector(
+    (state) => state.haku.saveStatus.loadingAvustushaku
+  );
   const hasPayments = !!avustushaku.payments?.length;
   const dispatch = useHakujenHallintaDispatch();
   const isAllPaymentsPaid =
@@ -49,9 +52,11 @@ export const HakuEdit = () => {
     !avustushaku.payments?.find((p) => p["paymentstatus-id"] !== "paid");
   const userHasEditPrivilege = !!avustushaku.privileges?.["edit-haku"];
   const allowAllHakuEdits =
+    !loadingAvustushaku &&
     userHasEditPrivilege &&
     (avustushaku.status === "new" || avustushaku.status === "draft");
   const allowNondisruptiveHakuEdits =
+    !loadingAvustushaku &&
     userHasEditPrivilege &&
     (allowAllHakuEdits ||
       avustushaku.phase === "current" ||
@@ -200,7 +205,7 @@ export const HakuEdit = () => {
               (k) => k["value-type"] === "operational-unit"
             )}
             selectedValue={selectedValueOperationalUnit}
-            disabled={isAllPaymentsPaid}
+            disabled={isAllPaymentsPaid || loadingAvustushaku}
             updateValue={updateCodeValue("operational-unit-id", avustushaku)}
           />
         </div>
@@ -220,7 +225,7 @@ export const HakuEdit = () => {
             codeOptions={codeOptions.filter(
               (k) => k["value-type"] === "project"
             )}
-            disabled={isAllPaymentsPaid}
+            disabled={isAllPaymentsPaid || loadingAvustushaku}
           />
         </div>
         <div
@@ -240,7 +245,7 @@ export const HakuEdit = () => {
               (k) => k["value-type"] === "operation"
             )}
             selectedValue={selectedValueOperation}
-            disabled={isAllPaymentsPaid}
+            disabled={isAllPaymentsPaid || loadingAvustushaku}
             updateValue={updateCodeValue("operation-id", avustushaku)}
           />
         </div>
