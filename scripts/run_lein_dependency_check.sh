@@ -42,7 +42,7 @@ function nvd_check {
     profiles=""
   fi
 
-  echo "$LEIN" "$profiles" run -m nvd.task.check "$project"-nvd-config.json "$(cd "$dir"; $LEIN classpath)"
+  "$LEIN" "$profiles" run -m nvd.task.check "$project"-nvd-config.json "$(cd "$dir"; $LEIN classpath)"
 }
 
 function download_temp_db_to_workspace_in_jenkins() {
