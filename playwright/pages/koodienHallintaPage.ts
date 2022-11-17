@@ -8,6 +8,12 @@ type KoodienhallintaTab = "operational-unit" | "project" | "operation";
 
 export const KoodienhallintaPage = (page: Page) => {
   const submitButton = page.locator("[data-test-id=code-form__add-button]");
+
+  const clickSubmitAndWaitForSave = async () => {
+    await submitButton.click();
+    await page.waitForSelector(".code-input-saving", { state: "detached" });
+  };
+
   const codeInputError = page.locator(".code-input-error");
   const navigateToKoodienhallinta = async () => {
     await navigate(page, "/admin-ui/va-code-values/");
@@ -29,7 +35,7 @@ export const KoodienhallintaPage = (page: Page) => {
     await page.fill("[data-test-id=code-form__year]", year);
     await page.fill("[data-test-id=code-form__code]", `${code}`);
     await page.fill("[data-test-id=code-form__name]", `${name} ${code}`);
-    await submitButton.click();
+    await clickSubmitAndWaitForSave();
     await codeRowLocator(year, `${name} ${code}`, code).waitFor();
     return code;
   };
@@ -50,7 +56,7 @@ export const KoodienhallintaPage = (page: Page) => {
       "[data-test-id=code-form__name]",
       NoProjectCodeProvided.name
     );
-    await submitButton.click();
+    await clickSubmitAndWaitForSave();
 
     for (const code of codeValues.project) {
       if (code !== NoProjectCodeProvided.code) {
@@ -72,6 +78,7 @@ export const KoodienhallintaPage = (page: Page) => {
     nameInput: page.locator("[data-test-id=code-form__name]"),
     codeInput: page.locator("[data-test-id=code-form__code]"),
     submitButton,
+    clickSubmitAndWaitForSave,
     codeInputError,
     codeList: page.locator("table tbody"),
     navigate: navigateToKoodienhallinta,

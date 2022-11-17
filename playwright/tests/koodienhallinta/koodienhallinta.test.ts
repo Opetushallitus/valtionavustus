@@ -53,7 +53,7 @@ test.describe("Koodienhallinta", () => {
     await koodienhallintaPage.yearInput.fill("2022");
     await koodienhallintaPage.nameInput.fill("testName");
     await koodienhallintaPage.codeInput.fill("testCode");
-    await koodienhallintaPage.submitButton.click();
+    await koodienhallintaPage.clickSubmitAndWaitForSave();
     await koodienhallintaPage.codeList.locator("text=testCode");
     page.on("dialog", (dialog) =>
       dialog.accept("Oletko aivan varma, että haluat poistaa koodin?")
@@ -84,7 +84,7 @@ test.describe("Koodienhallinta", () => {
     await koodienhallintaPage.yearInput.fill("2022");
     await koodienhallintaPage.submitButton.isEnabled();
     await koodienhallintaPage.noCodeInputFormErrors();
-    await koodienhallintaPage.submitButton.click();
+    await koodienhallintaPage.clickSubmitAndWaitForSave();
     await koodienhallintaPage
       .codeRowLocator("2022", "testName", "testCode")
       .waitFor();
@@ -99,7 +99,7 @@ test.describe("Koodienhallinta", () => {
     await koodienhallintaPage.codeInput.fill("long test code is long");
     await koodienhallintaPage.submitButton.isEnabled();
     await koodienhallintaPage.noCodeInputFormErrors();
-    await koodienhallintaPage.submitButton.click();
+    await koodienhallintaPage.clickSubmitAndWaitForSave();
     await koodienhallintaPage
       .codeRowLocator("2022", "testName", "long test code is long")
       .waitFor();
@@ -114,7 +114,7 @@ test.describe("Koodienhallinta", () => {
     await koodienhallintaPage.nameInput.fill("testName");
     await koodienhallintaPage.submitButton.isEnabled();
     await koodienhallintaPage.noCodeInputFormErrors();
-    await koodienhallintaPage.submitButton.click();
+    await koodienhallintaPage.clickSubmitAndWaitForSave();
     await koodienhallintaPage
       .codeRowLocator("2022", "testName", "testCode")
       .waitFor();
