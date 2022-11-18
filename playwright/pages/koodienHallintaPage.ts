@@ -7,36 +7,46 @@ import { HakujenHallintaPage } from "./hakujenHallintaPage";
 type KoodienhallintaTab = "operational-unit" | "project" | "operation";
 
 export const KoodienhallintaPage = (page: Page) => {
-  const submitButton = page.locator("[data-test-id=code-form__add-button]");
-
-  const clickSubmitAndWaitForSave = async () => {
-    await submitButton.click();
-    await page.waitForSelector(".code-input-saving", { state: "detached" });
+  const locators = {
+    saveIndicator: page.locator(".code-input-saving"),
+    submitButton: page.locator("[data-test-id=code-form__add-button]"),
+    yearInput: page.locator("[data-test-id=code-form__year]"),
+    nameInput: page.locator("[data-test-id=code-form__name]"),
+    codeInput: page.locator("[data-test-id=code-form__code]"),
+    codeInputError: page.locator(".code-input-error"),
+    newTiliForm: page.getByTestId("new-talousarviotili-form"),
+  };
+  const submit = async () => {
+    await expect(locators.saveIndicator).toBeHidden();
+    await locators.submitButton
+      .click()
+      .then(() => expect(locators.saveIndicator).toBeVisible());
+    await expect(locators.saveIndicator).toBeHidden();
   };
 
-  const codeInputError = page.locator(".code-input-error");
   const navigateToKoodienhallinta = async () => {
     await navigate(page, "/admin-ui/va-code-values/");
   };
   const clickKoodienhallintaTab = async (tabName: KoodienhallintaTab) => {
-    const tabSelector = `[data-test-id=code-value-tab-${tabName}]`;
-    await page.click(tabSelector);
-    await page.waitForSelector(`.oph-tab-item-is-active${tabSelector}`);
+    const tab = page.getByTestId(`code-value-tab-${tabName}`);
+    await expect(tab).not.toHaveClass(/oph-tab-item-is-active/);
+    await tab.click();
+    await expect(tab).toHaveClass(/oph-tab-item-is-active/);
   };
   const codeRowLocator = (year: string, name: string, code: string) =>
-    page.locator(`tr[data-test-id="code-cell-${year}-${code}-${name}"]`);
-  const firstCellLocator = (year: string, name: string, code: string) =>
-    codeRowLocator(year, name, code).locator("td:first-of-type");
+    page.getByTestId(`code-cell-${year}-${code}-${name}`);
+  const firstCell = (year: string, name: string, code: string) =>
+    codeRowLocator(year, name, code).locator("td").first();
   const createCode = async (
     name: string = "Test code",
     code: string
   ): Promise<string> => {
     const year = "2020";
-    await page.fill("[data-test-id=code-form__year]", year);
-    await page.fill("[data-test-id=code-form__code]", `${code}`);
-    await page.fill("[data-test-id=code-form__name]", `${name} ${code}`);
-    await clickSubmitAndWaitForSave();
-    await codeRowLocator(year, `${name} ${code}`, code).waitFor();
+    await locators.yearInput.fill(year);
+    await locators.codeInput.fill(code);
+    await locators.nameInput.fill(`${name} ${code}`);
+    await submit();
+    await expect(codeRowLocator(year, `${name} ${code}`, code)).toBeVisible();
     return code;
   };
   const createCodeValues = async (
@@ -44,23 +54,15 @@ export const KoodienhallintaPage = (page: Page) => {
   ): Promise<VaCodeValues> => {
     await navigateToKoodienhallinta();
     await createCode("Toimintayksikkö", codeValues.operationalUnit);
-
     await clickKoodienhallintaTab("project");
     const year = "2020";
-    await page.fill("[data-test-id=code-form__year]", year);
-    await page.fill(
-      "[data-test-id=code-form__code]",
-      NoProjectCodeProvided.code
-    );
-    await page.fill(
-      "[data-test-id=code-form__name]",
-      NoProjectCodeProvided.name
-    );
-    await clickSubmitAndWaitForSave();
+    await locators.yearInput.fill(year);
+    await locators.codeInput.fill(NoProjectCodeProvided.code);
+    await locators.nameInput.fill(NoProjectCodeProvided.name);
+    await submit();
 
     for (const code of codeValues.project) {
       if (code !== NoProjectCodeProvided.code) {
-        await clickKoodienhallintaTab("project");
         await createCode("Projekti", code);
       }
     }
@@ -69,17 +71,10 @@ export const KoodienhallintaPage = (page: Page) => {
     await createCode("Toiminto", codeValues.operation);
     return codeValues;
   };
-  const newTalousarviotiliForm = page.locator(
-    "form[data-test-id=new-talousarviotili-form]"
-  );
   return {
+    ...locators,
     page,
-    yearInput: page.locator("[data-test-id=code-form__year]"),
-    nameInput: page.locator("[data-test-id=code-form__name]"),
-    codeInput: page.locator("[data-test-id=code-form__code]"),
-    submitButton,
-    clickSubmitAndWaitForSave,
-    codeInputError,
+    submit,
     codeList: page.locator("table tbody"),
     navigate: navigateToKoodienhallinta,
     navigateToHakujenHallintaPage: async () => {
@@ -102,19 +97,17 @@ export const KoodienhallintaPage = (page: Page) => {
       visibility: boolean
     ) => {
       const buttonId = visibility ? "show-code" : "hide-code";
-      await codeRowLocator(year, name, code)
-        .locator(`[data-test-id=${buttonId}]`)
-        .click();
+      await codeRowLocator(year, name, code).getByTestId(buttonId).click();
       await page.waitForLoadState("networkidle");
     },
     createCode,
     assertCodeIsVisible: async (year: string, name: string, code: string) => {
-      await expect(firstCellLocator(year, name, code)).not.toHaveClass(
+      await expect(firstCell(year, name, code)).not.toHaveClass(
         "code-cell__hidden"
       );
     },
     assertCodeIsHidden: async (year: string, name: string, code: string) => {
-      await expect(firstCellLocator(year, name, code)).toHaveClass(
+      await expect(firstCell(year, name, code)).toHaveClass(
         "code-cell__hidden"
       );
     },
@@ -129,37 +122,31 @@ export const KoodienhallintaPage = (page: Page) => {
       return createCodeValues(codeValues);
     },
     codeInputFormHasError: async (errorText: string) => {
-      await codeInputError.locator(`text="${errorText}"`);
+      await expect(locators.codeInputError).toHaveText(errorText);
     },
     noCodeInputFormErrors: async () => {
-      await codeInputError.waitFor({ state: "detached" });
+      await expect(locators.codeInputError).toBeHidden();
     },
     taTilit: {
       form: {
         year: {
-          input: newTalousarviotiliForm.locator('[placeholder="Vuosiluku"]'),
-          error: newTalousarviotiliForm.locator("[data-test-id=error-year]"),
+          input: locators.newTiliForm.getByPlaceholder("Vuosiluku"),
+          error: locators.newTiliForm.getByTestId("error-year"),
         },
         code: {
-          input: newTalousarviotiliForm.locator(
-            '[placeholder="Syötä TA-tilin koodi"]'
-          ),
-          error: newTalousarviotiliForm.locator("[data-test-id=error-code]"),
+          input: locators.newTiliForm.getByPlaceholder("Syötä TA-tilin koodi"),
+          error: locators.newTiliForm.getByTestId("error-code"),
         },
         name: {
-          input: newTalousarviotiliForm.locator(
-            '[placeholder="Syötä tilin nimi"]'
-          ),
-          error: newTalousarviotiliForm.locator("[data-test-id=error-name]"),
+          input: locators.newTiliForm.getByPlaceholder("Syötä tilin nimi"),
+          error: locators.newTiliForm.getByTestId("error-name"),
         },
         amount: {
-          input: newTalousarviotiliForm.locator(
-            '[placeholder="Syötä euromäärä"]'
-          ),
-          error: newTalousarviotiliForm.locator("[data-test-id=error-amount]"),
+          input: locators.newTiliForm.getByPlaceholder("Syötä euromäärä"),
+          error: locators.newTiliForm.getByTestId("error-amount"),
         },
-        submitBtn: newTalousarviotiliForm.locator(
-          '[title="Tallenna uusi talousarviotili"]'
+        submitBtn: locators.newTiliForm.getByTitle(
+          "Tallenna uusi talousarviotili"
         ),
       },
     },
