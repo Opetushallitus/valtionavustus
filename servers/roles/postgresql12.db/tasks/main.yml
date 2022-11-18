@@ -131,3 +131,8 @@
 - name: Fix file permissions for backups
   file: path="/var/lib/pgsql/12/data/postgresql.orig" owner="postgres" group="postgres"
   when: postgresqlorig.stat is defined and postgresqlorig.stat.exists
+
+- name: Install posgres extensions
+  yum:
+    name: postgresql12-contrib
+    state: present
