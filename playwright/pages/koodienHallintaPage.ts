@@ -17,10 +17,7 @@ export const KoodienhallintaPage = (page: Page) => {
     newTiliForm: page.getByTestId("new-talousarviotili-form"),
   };
   const submit = async () => {
-    await expect(locators.saveIndicator).toBeHidden();
-    await locators.submitButton
-      .click()
-      .then(() => expect(locators.saveIndicator).toBeVisible());
+    await locators.submitButton.click();
     await expect(locators.saveIndicator).toBeHidden();
   };
 
