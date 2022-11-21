@@ -16,7 +16,7 @@ import {
 
 const Seuranta = () => {
   const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
-  const { helpTexts, hakuData } = useHakemustenArviointiSelector((state) =>
+  const { helpTexts, hakuData, environment } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)
   );
   const { avustushaku } = hakuData;
@@ -66,7 +66,7 @@ const Seuranta = () => {
       </div>
     </div>
     </div>
-    <KeskeytaAloittamatta hakemus={hakemus} />
+    { environment["hanke-keskeytetty-aloittamatta"] && <KeskeytaAloittamatta hakemus={hakemus} />}
     </>
   );
 };

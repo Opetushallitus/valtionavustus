@@ -40,6 +40,7 @@ import {
   mutatesDefaultBudgetValuesForSelectedHakemusSeurantaAnswers,
 } from "./overrides";
 import LocalStorage from "../LocalStorage";
+import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 
 const oldestFirst = (a: Lahetys, b: Lahetys) =>
   a.created_at < b.created_at ? -1 : 1;
@@ -88,6 +89,7 @@ interface InitialData {
   userInfo: UserInfo;
   lahetykset: LahetysStatuses;
   earliestPaymentCreatedAt?: string;
+  environment: EnvironmentApiResponse;
 }
 
 export const fetchInitialState = createAsyncThunk<InitialData, number>(
@@ -97,6 +99,7 @@ export const fetchInitialState = createAsyncThunk<InitialData, number>(
     const [
       avustushakuList,
       hakuData,
+      environment,
       projects,
       helpTexts,
       userInfo,
@@ -107,6 +110,7 @@ export const fetchInitialState = createAsyncThunk<InitialData, number>(
         "/api/avustushaku/?status=published&status=resolved"
       ),
       HttpUtil.get<HakuData>(`/api/avustushaku/${avustushakuId}`),
+      HttpUtil.get<EnvironmentApiResponse>("/environment"),
       HttpUtil.get<VaCodeValue[]>(`/api/avustushaku/${avustushakuId}/projects`),
       HttpUtil.get("/api/help-texts/all"),
       HttpUtil.get<UserInfo>("/api/userinfo"),
@@ -117,6 +121,7 @@ export const fetchInitialState = createAsyncThunk<InitialData, number>(
     return {
       avustushakuList,
       hakuData,
+      environment,
       projects,
       helpTexts,
       userInfo,

@@ -73,7 +73,7 @@ const AppRoutes = () => {
             path="muutoshakemukset"
             element={<MuutoshakemusTabContent />}
           />
-          <Route path="seuranta" element={<Seuranta />} />
+          <Route path="seuranta" element={<Seuranta/>} />
         </Route>
       </Route>
       <Route
