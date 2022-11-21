@@ -8,8 +8,18 @@ interface Props {
 }
 
 const groupOptions = [
-  { htmlId: "set-keskeyta-aloittamatta-false", value: false, label: "Ei" },
-  { htmlId: "set-keskeyta-aloittamatta-true", value: true, label: "Kyllä" },
+  {
+    htmlId: "set-keskeyta-aloittamatta-false",
+    value: false,
+    label: "Ei",
+    testId: "peru-keskeyta-aloittamatta",
+  },
+  {
+    htmlId: "set-keskeyta-aloittamatta-true",
+    value: true,
+    label: "Kyllä",
+    testId: "keskeyta-aloittamatta",
+  },
 ];
 
 export default function KeskeytaAloittamatta({ hakemus }: Props) {
@@ -35,7 +45,11 @@ export default function KeskeytaAloittamatta({ hakemus }: Props) {
       onChange={onHakemusKeskeytaAloittamatta}
       checked={spec.value === !!hakemus["keskeytetty-aloittamatta"]}
     />,
-    <label key={spec.htmlId + "-label"} htmlFor={spec.htmlId}>
+    <label
+      data-test-id={spec.testId}
+      key={spec.htmlId + "-label"}
+      htmlFor={spec.htmlId}
+    >
       {spec.label}
     </label>,
   ]);

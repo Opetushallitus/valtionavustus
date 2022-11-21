@@ -23,6 +23,9 @@ const Seuranta = () => {
   const { muutoshakemukset } = hakemus;
   return (
     <>
+      {environment["hanke-keskeytetty-aloittamatta"] && (
+        <KeskeytaAloittamatta hakemus={hakemus} />
+      )}
       <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
         <div className="seuranta">
           <AllowVisibilityInExternalSystem
@@ -66,9 +69,6 @@ const Seuranta = () => {
           </div>
         </div>
       </div>
-      {environment["hanke-keskeytetty-aloittamatta"] && (
-        <KeskeytaAloittamatta hakemus={hakemus} />
-      )}
     </>
   );
 };
