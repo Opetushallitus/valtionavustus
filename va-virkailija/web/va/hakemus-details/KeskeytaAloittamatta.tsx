@@ -42,10 +42,8 @@ export default function KeskeytaAloittamatta({ hakemus }: Props) {
 
   return (
     <div id="keskeyta-aloittamatta">
-      <h3>
-        Keskeytä aloittamatta
-      </h3>
+      <h3>Keskeytä aloittamatta</h3>
       <fieldset className="soresu-radiobutton-group">{options}</fieldset>
     </div>
   );
-};
+}

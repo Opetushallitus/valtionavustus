@@ -16,57 +16,59 @@ import {
 
 const Seuranta = () => {
   const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
-  const { helpTexts, hakuData, environment } = useHakemustenArviointiSelector((state) =>
-    getLoadedState(state.arviointi)
+  const { helpTexts, hakuData, environment } = useHakemustenArviointiSelector(
+    (state) => getLoadedState(state.arviointi)
   );
   const { avustushaku } = hakuData;
   const { muutoshakemukset } = hakemus;
   return (
     <>
-    <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
-    <div className="seuranta">
-      <AllowVisibilityInExternalSystem
-        hakemus={hakemus}
-        allowEditing={true}
-        helpText={
-          helpTexts[
-            "hankkeen_sivu__seuranta___salli_näkyvyys_ulkoisessa_järjestelmässä"
-          ]
-        }
-      />
-      <ShouldPay
-        hakemus={hakemus}
-        allowEditing={true}
-        helpText={helpTexts["hankkeen_sivu__seuranta___maksuun"]}
-      />
-      <ShouldPayComments />
-      <div className="seuranta-section">
-        <PresenterComment
-          helpText={
-            helpTexts["hankkeen_sivu__seuranta___valmistelijan_huomiot"]
-          }
-        />
-        <SeurantaBudgetEditing
-          avustushaku={avustushaku}
-          hakuData={hakuData}
-          hakemus={hakemus}
-          muutoshakemukset={muutoshakemukset}
-        />
+      <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
+        <div className="seuranta">
+          <AllowVisibilityInExternalSystem
+            hakemus={hakemus}
+            allowEditing={true}
+            helpText={
+              helpTexts[
+                "hankkeen_sivu__seuranta___salli_näkyvyys_ulkoisessa_järjestelmässä"
+              ]
+            }
+          />
+          <ShouldPay
+            hakemus={hakemus}
+            allowEditing={true}
+            helpText={helpTexts["hankkeen_sivu__seuranta___maksuun"]}
+          />
+          <ShouldPayComments />
+          <div className="seuranta-section">
+            <PresenterComment
+              helpText={
+                helpTexts["hankkeen_sivu__seuranta___valmistelijan_huomiot"]
+              }
+            />
+            <SeurantaBudgetEditing
+              avustushaku={avustushaku}
+              hakuData={hakuData}
+              hakemus={hakemus}
+              muutoshakemukset={muutoshakemukset}
+            />
+          </div>
+          <div className="seuranta-section">
+            <SeurantaLiitteet
+              avustushaku={avustushaku}
+              hakuData={hakuData}
+              hakemus={hakemus}
+              helpText={helpTexts["hankkeen_sivu__seuranta___liitteet"]}
+            />
+          </div>
+          <div className="seuranta-section">
+            <SeurantaTags hakemus={hakemus} />
+          </div>
+        </div>
       </div>
-      <div className="seuranta-section">
-        <SeurantaLiitteet
-          avustushaku={avustushaku}
-          hakuData={hakuData}
-          hakemus={hakemus}
-          helpText={helpTexts["hankkeen_sivu__seuranta___liitteet"]}
-        />
-      </div>
-      <div className="seuranta-section">
-        <SeurantaTags hakemus={hakemus} />
-      </div>
-    </div>
-    </div>
-    { environment["hanke-keskeytetty-aloittamatta"] && <KeskeytaAloittamatta hakemus={hakemus} />}
+      {environment["hanke-keskeytetty-aloittamatta"] && (
+        <KeskeytaAloittamatta hakemus={hakemus} />
+      )}
     </>
   );
 };

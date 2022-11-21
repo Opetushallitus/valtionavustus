@@ -44,65 +44,65 @@ const Väliselvitys = () => {
   const dispatch = useHakemustenArviointiDispatch();
   return (
     <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
-    <div
-      className="selvitys-container"
-      data-test-id="hakemus-details-valiselvitys"
-    >
-      <PresenterComment helpText={presenterCommentHelpText} />
-      {hasSelvitysAnswers ? (
-        <SelvitysPreview
-          hakemus={hakemus}
-          avustushaku={avustushaku}
-          selvitysType="valiselvitys"
-          selvitysHakemus={valiselvitys}
-          form={form}
-        />
-      ) : (
-        <SelvitysNotFilled
-          avustushaku={avustushaku}
-          selvitysType="valiselvitys"
-        />
-      )}
-      {multibatchPaymentsEnabled && (
-        <ApplicationPayments
-          application={hakemus}
-          grant={avustushaku}
-          index={1}
-          payments={hakemus.payments}
-          onAddPayment={(paymentSum: number, index: number) => {
-            dispatch(
-              addPayment({
-                paymentSum,
-                index,
-                hakemusId: hakemus.id,
-                projectCode: hakemus.project?.code,
-              })
-            );
-          }}
-          onRemovePayment={(paymentId: number) =>
-            dispatch(removePayment({ paymentId, hakemusId: hakemus.id }))
-          }
-          readonly={!isPresentingOfficer}
-        />
-      )}
-      {valiselvitysPyynnotSent && (
-        <SelvitysLink
-          avustushaku={avustushaku}
-          hakemus={hakemus}
-          selvitysType="valiselvitys"
-          helpText={selvitysLinkHelpText}
-        />
-      )}
-      {valiselvitys && hasSelvitysAnswers && (
-        <ValiselvitysEmail
-          hakemus={hakemus}
-          avustushaku={avustushaku}
-          valiselvitys={valiselvitys}
-          userInfo={userInfo}
-          lang={hakemus.language}
-        />
-      )}
-    </div>
+      <div
+        className="selvitys-container"
+        data-test-id="hakemus-details-valiselvitys"
+      >
+        <PresenterComment helpText={presenterCommentHelpText} />
+        {hasSelvitysAnswers ? (
+          <SelvitysPreview
+            hakemus={hakemus}
+            avustushaku={avustushaku}
+            selvitysType="valiselvitys"
+            selvitysHakemus={valiselvitys}
+            form={form}
+          />
+        ) : (
+          <SelvitysNotFilled
+            avustushaku={avustushaku}
+            selvitysType="valiselvitys"
+          />
+        )}
+        {multibatchPaymentsEnabled && (
+          <ApplicationPayments
+            application={hakemus}
+            grant={avustushaku}
+            index={1}
+            payments={hakemus.payments}
+            onAddPayment={(paymentSum: number, index: number) => {
+              dispatch(
+                addPayment({
+                  paymentSum,
+                  index,
+                  hakemusId: hakemus.id,
+                  projectCode: hakemus.project?.code,
+                })
+              );
+            }}
+            onRemovePayment={(paymentId: number) =>
+              dispatch(removePayment({ paymentId, hakemusId: hakemus.id }))
+            }
+            readonly={!isPresentingOfficer}
+          />
+        )}
+        {valiselvitysPyynnotSent && (
+          <SelvitysLink
+            avustushaku={avustushaku}
+            hakemus={hakemus}
+            selvitysType="valiselvitys"
+            helpText={selvitysLinkHelpText}
+          />
+        )}
+        {valiselvitys && hasSelvitysAnswers && (
+          <ValiselvitysEmail
+            hakemus={hakemus}
+            avustushaku={avustushaku}
+            valiselvitys={valiselvitys}
+            userInfo={userInfo}
+            lang={hakemus.language}
+          />
+        )}
+      </div>
     </div>
   );
 };

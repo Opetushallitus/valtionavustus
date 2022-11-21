@@ -56,135 +56,138 @@ export const HakemusArviointi = () => {
   const dispatch = useHakemustenArviointiDispatch();
   return (
     <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
-    <div id="arviointi-tab">
-      <PresenterComment
-        helpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}
-      />
-      <div
-        className="koodien-valinta-elementti"
-        data-test-id="code-value-dropdown__project"
-      >
-        <h3 className="koodien-valinta-otsikko required">Projektikoodi</h3>
-        <ProjectSelect
-          hakemusId={hakemus.id}
-          projects={projects}
-          selectedProject={hakemus.project}
-          disabled={!allowHakemusStateChanges}
-        />
-      </div>
-      <TalousarviotiliSelect
-        isDisabled={!allowHakemusStateChanges}
-        hakemus={hakemus}
-        helpText={helpTexts["hankkeen_sivu__arviointi___talousarviotili"]}
-      />
-      <SpecifyOppilaitos
-        hakemus={hakemus}
-        avustushaku={avustushaku}
-        allowEditing={allowHakemusStateChanges}
-      />
-      <AcademySize
-        hakemus={hakemus}
-        avustushaku={avustushaku}
-        allowEditing={allowHakemusStateChanges}
-      />
-      <HakemusScoring allowHakemusScoring={allowHakemusScoring} />
-      <HakemusComments
-        comments={hakemus.comments}
-        allowHakemusCommenting={allowHakemusCommenting}
-        helpTexts={helpTexts}
-      />
-      <SetArviointiStatus
-        hakemus={hakemus}
-        allowEditing={allowHakemusStateChanges}
-        helpTexts={helpTexts}
-      />
-      <Perustelut
-        hakemus={hakemus}
-        allowEditing={allowHakemusStateChanges}
-        helpTexts={helpTexts}
-      />
-      <ChangeRequest
-        hakemus={hakemus}
-        avustushaku={avustushaku}
-        allowEditing={allowHakemusStateChanges}
-        helpTexts={helpTexts}
-        userInfo={userInfo}
-      />
-      <SummaryComment
-        hakemus={hakemus}
-        allowEditing={allowHakemusStateChanges}
-        helpTexts={helpTexts}
-      />
-      <HakemusBudgetEditing
-        hakemus={hakemus}
-        allowEditing={allowHakemusStateChanges}
-      />
-      {multibatchPaymentsEnabled && (
-        <ApplicationPayments
-          application={hakemus}
-          grant={avustushaku}
-          index={0}
-          payments={hakemus.payments}
-          onAddPayment={(paymentSum: number, index: number) => {
-            dispatch(
-              addPayment({
-                paymentSum,
-                index,
-                hakemusId: hakemus.id,
-                projectCode: hakemus.project?.code,
-              })
-            );
-          }}
-          onRemovePayment={(paymentId: number) =>
-            dispatch(removePayment({ paymentId, hakemusId: hakemus.id }))
+      <div id="arviointi-tab">
+        <PresenterComment
+          helpText={
+            helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]
           }
-          readonly={true}
         />
-      )}
-      <TraineeDayEditing
-        hakemus={hakemus}
-        allowEditing={allowHakemusStateChanges}
-      />
-      <EditStatus
-        avustushaku={avustushaku}
-        hakemus={hakemus}
-        allowEditing={allowHakemusOfficerEditing}
-        status="officer_edit"
-        helpTexts={helpTexts}
-      />
-      {hakemus.status === "draft" && userInfo.privileges.includes("va-admin") && (
-        <div className="value-edit">
-          <button
-            onClick={() => {
+        <div
+          className="koodien-valinta-elementti"
+          data-test-id="code-value-dropdown__project"
+        >
+          <h3 className="koodien-valinta-otsikko required">Projektikoodi</h3>
+          <ProjectSelect
+            hakemusId={hakemus.id}
+            projects={projects}
+            selectedProject={hakemus.project}
+            disabled={!allowHakemusStateChanges}
+          />
+        </div>
+        <TalousarviotiliSelect
+          isDisabled={!allowHakemusStateChanges}
+          hakemus={hakemus}
+          helpText={helpTexts["hankkeen_sivu__arviointi___talousarviotili"]}
+        />
+        <SpecifyOppilaitos
+          hakemus={hakemus}
+          avustushaku={avustushaku}
+          allowEditing={allowHakemusStateChanges}
+        />
+        <AcademySize
+          hakemus={hakemus}
+          avustushaku={avustushaku}
+          allowEditing={allowHakemusStateChanges}
+        />
+        <HakemusScoring allowHakemusScoring={allowHakemusScoring} />
+        <HakemusComments
+          comments={hakemus.comments}
+          allowHakemusCommenting={allowHakemusCommenting}
+          helpTexts={helpTexts}
+        />
+        <SetArviointiStatus
+          hakemus={hakemus}
+          allowEditing={allowHakemusStateChanges}
+          helpTexts={helpTexts}
+        />
+        <Perustelut
+          hakemus={hakemus}
+          allowEditing={allowHakemusStateChanges}
+          helpTexts={helpTexts}
+        />
+        <ChangeRequest
+          hakemus={hakemus}
+          avustushaku={avustushaku}
+          allowEditing={allowHakemusStateChanges}
+          helpTexts={helpTexts}
+          userInfo={userInfo}
+        />
+        <SummaryComment
+          hakemus={hakemus}
+          allowEditing={allowHakemusStateChanges}
+          helpTexts={helpTexts}
+        />
+        <HakemusBudgetEditing
+          hakemus={hakemus}
+          allowEditing={allowHakemusStateChanges}
+        />
+        {multibatchPaymentsEnabled && (
+          <ApplicationPayments
+            application={hakemus}
+            grant={avustushaku}
+            index={0}
+            payments={hakemus.payments}
+            onAddPayment={(paymentSum: number, index: number) => {
               dispatch(
-                updateHakemusStatus({
+                addPayment({
+                  paymentSum,
+                  index,
                   hakemusId: hakemus.id,
-                  status: "submitted",
-                  comment: "Submitted by admin",
+                  projectCode: hakemus.project?.code,
                 })
               );
             }}
-            data-test-id="submit-hakemus"
-          >
-            Merkitse hakemus lähetetyksi
-          </button>
-        </div>
-      )}
-      <EditStatus
-        avustushaku={avustushaku}
-        hakemus={hakemus}
-        allowEditing={allowHakemusCancellation}
-        status="cancelled"
-        helpTexts={helpTexts}
-      />
-      <ReSendDecisionEmail
-        avustushaku={avustushaku}
-        hakemus={hakemus}
-        hakuData={hakuData}
-        helpTexts={helpTexts}
-      />
-      <ChangeLog hakemus={hakemus} />
-    </div>
+            onRemovePayment={(paymentId: number) =>
+              dispatch(removePayment({ paymentId, hakemusId: hakemus.id }))
+            }
+            readonly={true}
+          />
+        )}
+        <TraineeDayEditing
+          hakemus={hakemus}
+          allowEditing={allowHakemusStateChanges}
+        />
+        <EditStatus
+          avustushaku={avustushaku}
+          hakemus={hakemus}
+          allowEditing={allowHakemusOfficerEditing}
+          status="officer_edit"
+          helpTexts={helpTexts}
+        />
+        {hakemus.status === "draft" &&
+          userInfo.privileges.includes("va-admin") && (
+            <div className="value-edit">
+              <button
+                onClick={() => {
+                  dispatch(
+                    updateHakemusStatus({
+                      hakemusId: hakemus.id,
+                      status: "submitted",
+                      comment: "Submitted by admin",
+                    })
+                  );
+                }}
+                data-test-id="submit-hakemus"
+              >
+                Merkitse hakemus lähetetyksi
+              </button>
+            </div>
+          )}
+        <EditStatus
+          avustushaku={avustushaku}
+          hakemus={hakemus}
+          allowEditing={allowHakemusCancellation}
+          status="cancelled"
+          helpTexts={helpTexts}
+        />
+        <ReSendDecisionEmail
+          avustushaku={avustushaku}
+          hakemus={hakemus}
+          hakuData={hakuData}
+          helpTexts={helpTexts}
+        />
+        <ChangeLog hakemus={hakemus} />
+      </div>
     </div>
   );
 };

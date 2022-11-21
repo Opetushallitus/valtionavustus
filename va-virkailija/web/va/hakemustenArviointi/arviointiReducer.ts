@@ -567,7 +567,7 @@ const arviointiSlice = createSlice({
           data: payload,
         };
       })
-      .addCase(setKeskeytettyAloittamatta.pending, (state, { meta}) => {
+      .addCase(setKeskeytettyAloittamatta.pending, (state, { meta }) => {
         const hakemus = getHakemus(state, meta.arg.hakemusId);
         hakemus["keskeytetty-aloittamatta"] = meta.arg.keskeyta;
         hakemus.refused = meta.arg.keskeyta;
@@ -577,7 +577,7 @@ const arviointiSlice = createSlice({
           serverError: "",
         };
       })
-      .addCase(setKeskeytettyAloittamatta.rejected, (state, {meta}) => {
+      .addCase(setKeskeytettyAloittamatta.rejected, (state, { meta }) => {
         const hakemus = getHakemus(state, meta.arg.hakemusId);
         hakemus["keskeytetty-aloittamatta"] = !meta.arg.keskeyta;
         hakemus.refused = !meta.arg.keskeyta;
