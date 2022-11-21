@@ -3,6 +3,7 @@
             [oph.va.virkailija.db.queries :as queries]
             [oph.soresu.common.db :refer [escape-like-pattern exec execute! generate-hash-id query with-transaction with-tx]]
             [clojure.data :as data]
+            [oph.va.hakemus.db :as hakemus-copy]
             [oph.va.menoluokka.db :refer [store-menoluokka-hakemus-rows]]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.hakija.api :as hakija-api]
@@ -96,6 +97,12 @@
              [paatos-id])
       first
       :status))
+
+(defn keskeyta-aloittamatta [tx id keskeyta]
+  (let [new-hakemus (hakemus-copy/create-new-hakemus-version tx id)]
+    (execute! tx "UPDATE hakemukset SET
+                keskeytetty_aloittamatta = ?
+              WHERE id = ? AND version = ?" [ keskeyta (:id new-hakemus) (:version new-hakemus)])))
 
 (defn create-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
   (if-let [created-paatos (store-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)]

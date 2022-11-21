@@ -217,6 +217,7 @@
    :refused (get hakemus :refused false)
    :refused-comment (:refused_comment hakemus)
    :refused-at (:refused_at hakemus)
+   :keskeytetty-aloittamatta (:keskeytetty_aloittamatta hakemus)
    :submitted-version (:submitted_version hakemus)})
 
 (defn- paatos-sent-emails->json [paatos]

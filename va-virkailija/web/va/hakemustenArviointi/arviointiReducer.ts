@@ -137,6 +137,25 @@ export const initialize = createAsyncThunk<
   }
 });
 
+export const setKeskeytettyAloittamatta = createAsyncThunk<
+  Hakemus,
+  { hakemusId: number; keskeyta: boolean },
+  { state: HakemustenArviointiRootState }
+>(
+  "arviointi/setKeskeytettyAloittamatta",
+  async ({ hakemusId, keskeyta }, thunkAPI) => {
+    const { hakuData } = getLoadedState(thunkAPI.getState().arviointi);
+    try {
+      return await HttpUtil.put(
+        `/api/avustushaku/${hakuData.avustushaku.id}/hakemus/${hakemusId}/keskeyta-aloittamatta`,
+        { keskeyta }
+      );
+    } catch (e) {
+      return thunkAPI.rejectWithValue("unexpected-save-error");
+    }
+  }
+);
+
 export const selectHakemus = createAsyncThunk<
   { hakemus: Hakemus; extra: LoadedHakemusData },
   number,
@@ -543,6 +562,40 @@ const arviointiSlice = createSlice({
           data: payload,
         };
       })
+      .addCase(setKeskeytettyAloittamatta.pending, (state, { meta}) => {
+        const hakemus = getHakemus(state, meta.arg.hakemusId);
+        hakemus["keskeytetty-aloittamatta"] = meta.arg.keskeyta;
+        hakemus.refused = meta.arg.keskeyta;
+        state.saveStatus = {
+          saveInProgress: true,
+          saveTime: null,
+          serverError: "",
+        };
+      })
+      .addCase(setKeskeytettyAloittamatta.rejected, (state, {meta}) => {
+        const hakemus = getHakemus(state, meta.arg.hakemusId);
+        hakemus["keskeytetty-aloittamatta"] = !meta.arg.keskeyta;
+        hakemus.refused = !meta.arg.keskeyta;
+        state.saveStatus = {
+          saveInProgress: false,
+          saveTime: null,
+          serverError: "unexpected-save-error",
+        };
+      })
+      .addCase(
+        setKeskeytettyAloittamatta.fulfilled,
+        (state, { payload, meta }) => {
+          const hakemus = getHakemus(state, meta.arg.hakemusId);
+          hakemus["keskeytetty-aloittamatta"] =
+            payload["keskeytetty-aloittamatta"];
+          hakemus.refused = payload.refused;
+          state.saveStatus = {
+            saveInProgress: false,
+            saveTime: new Date().toISOString(),
+            serverError: "",
+          };
+        }
+      )
       .addCase(selectHakemus.fulfilled, (state, { payload, meta }) => {
         const hakemusId = meta.arg;
         const { hakemukset } = getLoadedState(state).hakuData;

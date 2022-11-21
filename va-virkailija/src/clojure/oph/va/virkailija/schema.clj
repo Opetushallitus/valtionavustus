@@ -33,6 +33,9 @@
   {:id s/Str
    (s/optional-key :label) (s/maybe s/Str)})
 
+(s/defschema KeskeytaAloittamattaBody 
+  {:keskeyta s/Bool})
+
 (s/defschema OnkoMuutoshakukelpoinenAvustushakuOk
   {:is-ok s/Bool
    :ok-fields [MuutoshakemuksenVaatimaKentta]
@@ -196,6 +199,7 @@
                       :selvitys-email (s/maybe s/Str)
                       :answers [soresu-schema/Answer]
                       (s/optional-key :submitted-version) (s/maybe s/Int)
+                      (s/optional-key :keskeytetty-aloittamatta) (s/maybe s/Bool)
                       (s/optional-key :refused) (s/maybe s/Bool)
                       (s/optional-key :refused-comment) (s/maybe s/Str)
                       (s/optional-key :refused-at) (s/maybe s/Inst)})

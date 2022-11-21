@@ -10,6 +10,7 @@
             [oph.va.virkailija.authentication :as authentication]
             [oph.va.virkailija.authorization :as authorization]
             [oph.va.virkailija.db :as virkailija-db]
+            [oph.va.hakija.db :as hakija-db]
             [oph.va.virkailija.email :as email]
             [oph.va.virkailija.excel.all-avustushakus-export :refer [export-avustushakus]]
             [oph.va.virkailija.export :as export]
@@ -384,6 +385,19 @@
                                   hakudata/arvio-json)))
                         (http/not-found))))
 
+(defn- put-keskeyta-aloittamatta []
+  (compojure-api/PUT "/:avustushaku-id/hakemus/:hakemus-id/keskeyta-aloittamatta"
+                     request
+    :path-params [avustushaku-id :- Long hakemus-id :- Long]
+    :return s/Any
+    :body [body virkailija-schema/KeskeytaAloittamattaBody]
+    (with-tx (fn [tx]
+     (if (:keskeyta body)
+       (hakija-db/refuse-application tx hakemus-id "Keskeytetty aloittamatta")
+       (hakija-db/unrefuse-application tx hakemus-id))
+     (virkailija-db/keskeyta-aloittamatta tx hakemus-id (:keskeyta body))
+     (http/ok (hakija-db/get-hakemus-by-id-tx tx hakemus-id))))))
+
 (defn- get-hakemus-comments []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/comments" []
                      :path-params [avustushaku-id :- Long, hakemus-id :- Long]
@@ -624,6 +638,7 @@
   (post-avustushaku-form)
   (post-hakemus-arvio)
   (get-hakemus-comments)
+  (put-keskeyta-aloittamatta)
   (post-hakemus-comments)
   (get-hakemus-attachments)
   (get-hakemus-attachments-versions)

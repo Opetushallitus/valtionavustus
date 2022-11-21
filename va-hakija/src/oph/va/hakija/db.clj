@@ -402,14 +402,21 @@
 (defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals comment]
   (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :cancelled comment))
 
-(defn refuse-application [application comment]
-  (with-tx (fn [tx]
-  (let [new-hakemus (hakemus-copy/create-new-hakemus-version tx (:id application))]
+(defn unrefuse-application [tx id]
+  (let [new-hakemus (hakemus-copy/create-new-hakemus-version tx id)]
+    (execute! tx "UPDATE hakemukset SET
+                refused = null,
+                refused_comment = null,
+                refused_at = null
+              WHERE id = ? AND version = ?" [(:id new-hakemus) (:version new-hakemus)])))
+
+(defn refuse-application [tx id comment]
+  (let [new-hakemus (hakemus-copy/create-new-hakemus-version tx id)]
     (execute! tx "UPDATE hakemukset SET
                 refused = true,
                 refused_comment = ?,
                 refused_at = now()
-              WHERE id = ? AND version = ?" [comment (:id new-hakemus) (:version new-hakemus)])))))
+              WHERE id = ? AND version = ?" [comment (:id new-hakemus) (:version new-hakemus)])))
 
 (defn update-loppuselvitys-status [hakemus-id status]
   (exec queries/update-loppuselvitys-status<! {:id hakemus-id :status status}))

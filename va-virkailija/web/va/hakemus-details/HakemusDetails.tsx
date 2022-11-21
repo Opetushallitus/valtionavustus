@@ -112,9 +112,7 @@ export const HakemusDetails = () => {
           </NavLinkWithQuery>
         </div>
         <div id="hakemus-arviointi" className="fixed-content">
-          <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
-            <Outlet />
-          </div>
+          <Outlet />
         </div>
       </div>
     </div>

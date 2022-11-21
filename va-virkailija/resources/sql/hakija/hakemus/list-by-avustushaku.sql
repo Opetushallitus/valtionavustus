@@ -37,6 +37,7 @@ select  h.id,
         h.refused,
         h.refused_comment,
         h.refused_at,
+        h.keskeytetty_aloittamatta,
         submitted_version
   from hakija.hakemukset h
   join hakija.form_submissions s on (h.form_submission_id = s.id and h.form_submission_version = s.version)

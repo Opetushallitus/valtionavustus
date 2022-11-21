@@ -16,7 +16,7 @@ const MuutoshakemusTabContent = () => {
   const lang = language || "fi";
   const muutoshakemusUrl = `${environment["hakija-server"].url[lang]}muutoshakemus?lang=${lang}&user-key=${hakemus["user-key"]}&avustushaku-id=${avustushaku.id}`;
   return (
-    <>
+      <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
       {avustushaku.muutoshakukelpoinen && (
         <div className="muutoshakemus-link">
           <a
@@ -39,7 +39,7 @@ const MuutoshakemusTabContent = () => {
       ) : (
         <h2>Hankkeella ei ole muutoshakemuksia</h2>
       )}
-    </>
+    </div>
   );
 };
 

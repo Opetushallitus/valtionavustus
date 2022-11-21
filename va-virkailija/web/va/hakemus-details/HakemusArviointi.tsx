@@ -55,6 +55,7 @@ export const HakemusArviointi = () => {
   } = hakemus.accessControl ?? {};
   const dispatch = useHakemustenArviointiDispatch();
   return (
+    <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
     <div id="arviointi-tab">
       <PresenterComment
         helpText={helpTexts["hankkeen_sivu__arviointi___valmistelijan_huomiot"]}
@@ -183,6 +184,7 @@ export const HakemusArviointi = () => {
         helpTexts={helpTexts}
       />
       <ChangeLog hakemus={hakemus} />
+    </div>
     </div>
   );
 };

@@ -5,6 +5,7 @@ import SeurantaLiitteet from "./SeurantaLiitteet";
 import SeurantaTags from "./SeurantaTags";
 import SeurantaBudgetEditing from "../seurantabudgetedit/SeurantaBudgetEditing";
 import ShouldPay from "./ShouldPay";
+import KeskeytaAloittamatta from "./KeskeytaAloittamatta";
 import AllowVisibilityInExternalSystem from "./AllowVisibilityInExternalSystem";
 import ShouldPayComments from "./ShouldPayComments";
 import { useHakemustenArviointiSelector } from "../hakemustenArviointi/arviointiStore";
@@ -21,6 +22,8 @@ const Seuranta = () => {
   const { avustushaku } = hakuData;
   const { muutoshakemukset } = hakemus;
   return (
+    <>
+    <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
     <div className="seuranta">
       <AllowVisibilityInExternalSystem
         hakemus={hakemus}
@@ -62,6 +65,9 @@ const Seuranta = () => {
         <SeurantaTags hakemus={hakemus} />
       </div>
     </div>
+    </div>
+    <KeskeytaAloittamatta hakemus={hakemus} />
+    </>
   );
 };
 

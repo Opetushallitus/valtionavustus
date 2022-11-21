@@ -2,6 +2,7 @@
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [oph.soresu.common.config :refer [config feature-enabled?]]
+            [oph.soresu.common.db :refer [with-tx]]
             [oph.common.datetime :as datetime]
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.validation :as validation]
@@ -255,7 +256,7 @@
       (and (= (:version hakemus) base-version)
            (not (:refused hakemus)))
       (do
-        (va-db/refuse-application hakemus comment)
+        (with-tx (fn [tx] (va-db/refuse-application tx (:id hakemus) comment)))
         (let [virkailija-roles (get-valmistelijas-for-avustushaku (:id avustushaku))]
           (when (some #(when (some? (:email %)) true) virkailija-roles)
             (va-email/send-refused-message-to-presenter!

@@ -43,6 +43,7 @@ const Väliselvitys = () => {
   const { isPresentingOfficer } = useHakemustenArviointiSelector(getUserRoles);
   const dispatch = useHakemustenArviointiDispatch();
   return (
+    <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
     <div
       className="selvitys-container"
       data-test-id="hakemus-details-valiselvitys"
@@ -101,6 +102,7 @@ const Väliselvitys = () => {
           lang={hakemus.language}
         />
       )}
+    </div>
     </div>
   );
 };

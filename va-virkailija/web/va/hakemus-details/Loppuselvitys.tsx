@@ -53,6 +53,7 @@ const Loppuselvitys = () => {
     helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"];
   const lang = loppuselvitys?.language || "fi";
   return (
+    <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
     <div
       className="selvitys-container"
       data-test-id="hakemus-details-loppuselvitys"
@@ -120,6 +121,7 @@ const Loppuselvitys = () => {
           avustushakuName={avustushaku.content.name[lang]}
         />
       )}
+    </div>
     </div>
   );
 };

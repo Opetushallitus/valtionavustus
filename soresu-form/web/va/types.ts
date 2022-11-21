@@ -247,6 +247,7 @@ export interface Hakemus {
   answers: Answer[];
   arvio: Arvio;
   status: HakemusStatus;
+  "keskeytetty-aloittamatta": boolean;
   "status-comment"?: unknown;
   "status-loppuselvitys": SelvitysStatus;
   "status-valiselvitys": SelvitysStatus;
