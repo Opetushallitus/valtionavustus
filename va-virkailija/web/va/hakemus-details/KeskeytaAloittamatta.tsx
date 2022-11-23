@@ -5,6 +5,7 @@ import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointi
 
 interface Props {
   hakemus: Hakemus;
+  disabled: boolean;
 }
 
 const groupOptions = [
@@ -22,7 +23,7 @@ const groupOptions = [
   },
 ];
 
-export default function KeskeytaAloittamatta({ hakemus }: Props) {
+export default function KeskeytaAloittamatta({ hakemus, disabled }: Props) {
   const dispatch = useHakemustenArviointiDispatch();
   const onHakemusKeskeytaAloittamatta = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -43,6 +44,7 @@ export default function KeskeytaAloittamatta({ hakemus }: Props) {
       name="keskeyta-aloittamatta"
       value={String(spec.value)}
       onChange={onHakemusKeskeytaAloittamatta}
+      disabled={disabled}
       checked={spec.value === !!hakemus["keskeytetty-aloittamatta"]}
     />,
     <label
@@ -55,7 +57,7 @@ export default function KeskeytaAloittamatta({ hakemus }: Props) {
   ]);
 
   return (
-    <div id="keskeyta-aloittamatta">
+    <div id="keskeyta-aloittamatta" style={{ opacity: disabled ? 0.5 : 1 }}>
       <h3>Keskeytä aloittamatta</h3>
       <fieldset className="soresu-radiobutton-group">{options}</fieldset>
     </div>
