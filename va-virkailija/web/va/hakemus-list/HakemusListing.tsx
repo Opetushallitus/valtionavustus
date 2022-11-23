@@ -685,6 +685,7 @@ function HakemusTable({
                   <ArvioStatus
                     status={hakemus.arvio.status}
                     refused={hakemus.refused}
+                    keskeytettyAloittamatta={hakemus["keskeytetty-aloittamatta"]}
                   />
                 )}
               </td>
@@ -1120,6 +1121,7 @@ function ResolvedTable(props: ResolvedTableProps) {
               <ArvioStatus
                 status={hakemus.arvio.status}
                 refused={hakemus.refused}
+                keskeytettyAloittamatta={hakemus["keskeytetty-aloittamatta"]}
               />
             </td>
             <td data-test-class="muutoshakemus-status-cell">
@@ -1496,12 +1498,14 @@ const statusToColor: Record<HakemusArviointiStatus, PillProps["color"]> = {
 function ArvioStatus({
   status,
   refused,
+  keskeytettyAloittamatta 
 }: {
   status: HakemusArviointiStatus;
   refused: boolean | undefined;
+  keskeytettyAloittamatta: boolean | undefined
 }) {
   if (refused) {
-    return <Pill color="yellow" text="Ei tarvetta" />;
+    return <Pill color="yellow" text={keskeytettyAloittamatta ? "Kesk. aloitt." : "Ei tarvetta"} />;
   }
   const text = HakemusArviointiStatuses.statusToFI(status);
   return <Pill color={statusToColor[status]} text={text} />;
