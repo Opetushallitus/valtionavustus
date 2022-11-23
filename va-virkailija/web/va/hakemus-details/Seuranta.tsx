@@ -16,8 +16,9 @@ import {
 
 const Seuranta = () => {
   const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
-  const { helpTexts, hakuData, userInfo } =
-    useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi));
+  const { helpTexts, hakuData, userInfo } = useHakemustenArviointiSelector(
+    (state) => getLoadedState(state.arviointi)
+  );
   const { avustushaku } = hakuData;
   const { muutoshakemukset } = hakemus;
   return (
