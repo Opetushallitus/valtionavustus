@@ -545,15 +545,27 @@ export class HakujenHallintaPage {
   }
 
   async copyCurrentHaku(): Promise<number> {
+    const waitForHakuCopyToBeCompleted = async (
+      currentURL: string
+    ): Promise<void> => {
+      await this.page.waitForFunction(
+        (url) => window.location.href !== url,
+        currentURL
+      );
+      await this.page.waitForLoadState("networkidle");
+      await expect(hakuNameFi).toHaveText(`${currentHakuTitle} (kopio)`);
+      await expect(hakuNameFi).toBeEnabled();
+    };
+
     const hakuNameFi = this.hauntiedotLocators().hakuName.fi;
     const currentHakuTitle = await hakuNameFi.textContent();
+    const currentURL = this.page.url();
+
     await expect(hakuNameFi).toBeEnabled();
     await Promise.all([
-      expect(hakuNameFi).toBeDisabled(),
+      waitForHakuCopyToBeCompleted(currentURL),
       this.page.locator("a", { hasText: "Kopioi uuden pohjaksi" }).click(),
     ]);
-    await expect(hakuNameFi).toHaveText(`${currentHakuTitle} (kopio)`);
-    await expect(hakuNameFi).toBeEnabled();
     const avustushakuID = parseInt(
       await expectQueryParameter(this.page, "avustushaku")
     );
