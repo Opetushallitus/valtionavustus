@@ -19,7 +19,6 @@
          :notice (get-notice)
          :application-change {:refuse-enabled? true}
          :multibatch-payments (:multibatch-payments config)
-         :hanke-keskeytetty-aloittamatta (:hanke-keskeytetty-aloittamatta config)
          :dont-send-loppuselvityspyynto-to-virkailija (:dont-send-loppuselvityspyynto-to-virkailija config)
          :selvitys-limit (:selvitys-limit config)}
         opintopolku (:opintopolku config)]

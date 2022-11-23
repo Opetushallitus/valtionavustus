@@ -16,18 +16,16 @@ import {
 
 const Seuranta = () => {
   const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
-  const { helpTexts, hakuData, environment, userInfo } =
+  const { helpTexts, hakuData, userInfo } =
     useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi));
   const { avustushaku } = hakuData;
   const { muutoshakemukset } = hakemus;
   return (
     <>
-      {environment["hanke-keskeytetty-aloittamatta"] && (
-        <KeskeytaAloittamatta
-          hakemus={hakemus}
-          disabled={!userInfo.privileges.includes("va-admin")}
-        />
-      )}
+      <KeskeytaAloittamatta
+        hakemus={hakemus}
+        disabled={!userInfo.privileges.includes("va-admin")}
+      />
       <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
         <div className="seuranta">
           <AllowVisibilityInExternalSystem

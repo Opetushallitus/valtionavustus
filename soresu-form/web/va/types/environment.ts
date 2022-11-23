@@ -14,7 +14,6 @@ export interface EnvironmentApiResponse {
     sv: string;
   };
   "multibatch-payments": FeatureFlag;
-  "hanke-keskeytetty-aloittamatta"?: FeatureFlag;
   "dont-send-loppuselvityspyynto-to-virkailija"?: FeatureFlag;
   payments: FeatureFlag & { "delete-payments?": boolean };
 }
