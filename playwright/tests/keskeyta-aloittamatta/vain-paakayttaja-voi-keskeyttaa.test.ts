@@ -5,7 +5,7 @@ import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 
 test.setTimeout(180000);
 
-test("Keskeyttäminen aloittamatta näkyy hakemuslistauksessa", async ({
+test("Vain pääkäyttäjä voi keskeyttää hankkeen", async ({
   page,
   answers,
   avustushakuID,
