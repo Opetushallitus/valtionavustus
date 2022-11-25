@@ -40,7 +40,7 @@ export const HakijaPaatosPage = (page: Page) => {
         haettu: koulutusOsio.nth(3),
         hyvaksytty: koulutusOsio.nth(4),
       },
-      koulutettavapaivat: {
+      osio: {
         haettu: koulutusOsio.nth(5),
         hyvaksytty: koulutusOsio.nth(6),
       },

@@ -233,7 +233,11 @@ export class HakijaAvustusHakuPage {
     return await expectQueryParameter(this.page, "hakemus");
   }
 
-  async fillKoulutusosioHakemus(avustushakuID: number, answers: Answers) {
+  async fillKoulutusosioHakemus(
+    avustushakuID: number,
+    answers: Answers,
+    osioType: "koulutuspäivä" | "opintopiste"
+  ) {
     const hakemusUrl = await this.startApplication(
       avustushakuID,
       answers.contactPersonEmail
@@ -331,11 +335,13 @@ export class HakijaAvustusHakuPage {
       "Keskeinen sisältö"
     );
     await this.page.getByLabel("Kohderyhmät").first().fill("Kaikki");
-    await this.page
-      .locator(
-        `[for="koulutusosiot.koulutusosio-1.koulutettavapaivat.scope-type.radio.1"]`
-      )
-      .click();
+    if (osioType === "koulutuspäivä") {
+      await this.page
+        .locator(
+          `[for="koulutusosiot.koulutusosio-1.koulutettavapaivat.scope-type.radio.1"]`
+        )
+        .click();
+    }
     await this.page
       .locator(`[id="koulutusosiot.koulutusosio-1.koulutettavapaivat.scope"]`)
       .fill("99");

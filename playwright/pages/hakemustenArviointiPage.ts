@@ -669,9 +669,9 @@ export class HakemustenArviointiPage {
       budget,
       koulutusosio: {
         osioName: traineeLocator.nth(0),
-        koulutettavapaivat: {
-          haettuPaivat: traineeLocator.nth(1),
-          hyvaksyttyPaivatInput: traineeLocator
+        osio: {
+          haettu: traineeLocator.nth(1),
+          hyvaksyttyInput: traineeLocator
             .nth(2)
             .locator(
               `[id="trainee-day-edit-koulutusosiot.koulutusosio-1.koulutettavapaivat.scope"]`
