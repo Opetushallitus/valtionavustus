@@ -158,7 +158,7 @@ test("sends emails to correct contact and hakemus emails", async ({
   );
   await test.step("sends väliselvitys email", async () => {
     await hakujenHallintaPage.switchToValiselvitysTab();
-    await hakujenHallintaPage.sendValiselvitys();
+    await hakujenHallintaPage.sendValiselvitys(1);
     const emails = await waitUntilMinEmails(
       getValiselvitysEmails,
       1,
@@ -174,7 +174,7 @@ test("sends emails to correct contact and hakemus emails", async ({
   });
   await test.step("sends loppuselvitys email", async () => {
     await hakujenHallintaPage.switchToLoppuselvitysTab();
-    await hakujenHallintaPage.sendLoppuselvitys();
+    await hakujenHallintaPage.sendLoppuselvitys(1);
     const emails = await waitUntilMinEmails(
       getLoppuselvitysEmails,
       1,

@@ -415,13 +415,18 @@ export class HakujenHallintaPage {
     return SelvitysTab(this.page);
   }
 
-  async sendValiselvitys() {
+  async sendValiselvitys(expectedAmount = 1) {
     await this.page.click('text="Lähetä väliselvityspyynnöt"');
+    await this.page.waitForSelector(
+      `text="Lähetetty ${expectedAmount} viestiä"`
+    );
   }
 
-  async sendLoppuselvitys() {
+  async sendLoppuselvitys(expectedAmount = 1) {
     await this.page.click('text="Lähetä loppuselvityspyynnöt"');
-    await this.page.waitForSelector('text="Lähetetty 1 viestiä"');
+    await this.page.waitForSelector(
+      `text="Lähetetty ${expectedAmount} viestiä"`
+    );
   }
 
   async waitForSave() {

@@ -6,4 +6,5 @@ where h.avustushaku = :avustushaku_id
       and h.status_valiselvitys = 'missing'
       and h.status != 'new'
       and h.version_closed is null
-      and h.hakemus_type='hakemus';
+      and h.hakemus_type='hakemus'
+      and h.keskeytetty_aloittamatta is null;
