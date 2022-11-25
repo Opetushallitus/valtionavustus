@@ -60,36 +60,34 @@ telefon 029 533 1000
 fornamn.efternamn@oph.fi
 `);
     });
-    const hakijaPaatosPage = new HakijaPaatosPage(page);
+    const hakijaPaatosPage = HakijaPaatosPage(page);
     await test.step("hakija navigates to päätös", async () => {
       await hakijaPaatosPage.navigate(hakemusID);
     });
     await test.step("päätös header title is in swedish", async () => {
-      const paatosHeaderTitle = await hakijaPaatosPage.paatosHeaderTitle();
-      expect(paatosHeaderTitle?.trim()).toEqual("Beslut");
+      await expect(hakijaPaatosPage.paatosHeaderTitle).toHaveText("Beslut");
     });
     await test.step("päätös header title is in swedish", async () => {
-      const paatosHeaderTitle = await hakijaPaatosPage.paatosHeaderTitle();
-      expect(paatosHeaderTitle?.trim()).toEqual("Beslut");
+      await expect(hakijaPaatosPage.paatosHeaderTitle).toHaveText("Beslut");
     });
     await test.step("päätös title is in swedish", async () => {
-      expect(await hakijaPaatosPage.paatosTitle()).toEqual("Beslut");
+      await expect(hakijaPaatosPage.paatosTitle).toHaveText("Beslut");
     });
     await test.step("päätös accepted title is in swedish", async () => {
-      expect(await hakijaPaatosPage.acceptedTitle()).toEqual(
+      await expect(hakijaPaatosPage.acceptedTitle).toHaveText(
         "Utbildningsstyrelsen har beslutat att bevilja statsunderstöd till projektet"
       );
     });
     await test.step("lisätietoja title is in swedish", async () => {
-      expect(await hakijaPaatosPage.lisatietojaTitle()).toEqual(
+      await expect(hakijaPaatosPage.lisatietojaTitle).toHaveText(
         "Mer information"
       );
     });
     await test.step("avustuslaji is in swedish", async () => {
-      expect(await hakijaPaatosPage.avustuslajiTitle()).toEqual(
+      await expect(hakijaPaatosPage.avustuslajiTitle).toHaveText(
         "Typ av statsunderstöd"
       );
-      expect(await hakijaPaatosPage.avustuslaji()).toEqual("Specialunderstöd");
+      await expect(hakijaPaatosPage.avustuslaji).toHaveText("Specialunderstöd");
     });
   }
 );
