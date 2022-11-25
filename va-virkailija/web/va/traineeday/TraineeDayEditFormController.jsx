@@ -29,12 +29,7 @@ export default class TraineeDayEditFormController {
   }
 
   componentOnChangeListener(field, newValue) {
-    this.onChange(hakemus, field, newValue);
-    /*this.arviointiController.setHakemusOverriddenAnswerValue(
-      this.hakemus.id,
-      field,
-      newValue
-    );*/
+    this.onChange(this.hakemus, field, newValue);
   }
 
   componentDidMount() {}

@@ -18,10 +18,9 @@ import {
 } from "../hakemustenArviointi/arviointiStore";
 import {
   getLoadedState,
-  setArvioValue,
+  setArvioFieldValue,
   startHakemusArvioAutoSave,
 } from "../hakemustenArviointi/arviointiReducer";
-import InputValueStorage from "soresu-form/web/form/InputValueStorage";
 import { createFieldUpdate } from "soresu-form/web/form/FieldUpdateHandler";
 import VaSyntaxValidator from "soresu-form/web/va/VaSyntaxValidator";
 
@@ -45,21 +44,23 @@ const TraineeDayEditing = ({ hakemus, allowEditing }: Props) => {
     return null;
   }
   const onChange = (hakemus: Hakemus, field: Field, newValue: any) => {
-    const clonedHakemus = _.cloneDeep(hakemus);
-    const key = "overridden-answers" as const;
-    InputValueStorage.writeValue(
-      [field],
-      clonedHakemus.arvio[key],
-      createFieldUpdate(field, newValue, VaSyntaxValidator)
-    );
-    dispatch(
-      setArvioValue({
-        hakemusId: clonedHakemus.id,
-        key,
-        value: clonedHakemus.arvio[key],
-      })
-    );
-    dispatch(startHakemusArvioAutoSave({ hakemusId: clonedHakemus.id }));
+    const overriddenAnswers = hakemus.arvio["overridden-answers"]?.value ?? [];
+    const fieldUpdate = createFieldUpdate(field, newValue, VaSyntaxValidator);
+    const index = overriddenAnswers.findIndex((a) => a.key === fieldUpdate.id);
+    const answer = {
+      ...overriddenAnswers[index],
+      value: fieldUpdate.value,
+    };
+    if (index !== -1) {
+      dispatch(
+        setArvioFieldValue({
+          hakemusId: hakemus.id,
+          answer,
+          index,
+        })
+      );
+      dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
+    }
   };
   const formOperations = {
     chooseInitialLanguage: () => "fi",
@@ -79,7 +80,9 @@ const TraineeDayEditing = ({ hakemus, allowEditing }: Props) => {
   };
   const fakeHakemus = {
     ..._.cloneDeep(hakemus),
-    ...({ answers: hakemus.arvio["overridden-answers"] }.answers?.value ?? []),
+    ...{
+      answers: _.cloneDeep(hakemus.arvio["overridden-answers"]?.value ?? []),
+    },
   };
   const traineeDayEditFormState = FakeFormState.createHakemusFormState({
     avustushaku,

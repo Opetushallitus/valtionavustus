@@ -911,6 +911,20 @@ export class HakujenHallintaPage {
     return avustushakuID;
   }
 
+  async createKoulutusasteHaku(hakuProps: HakuProps) {
+    const lomakeJson = await fs.readFile(
+      path.join(__dirname, "../fixtures/koulutusosio.hakulomake.json"),
+      "utf8"
+    );
+    const { avustushakuID } = await this.createHakuWithLomakeJson(
+      lomakeJson,
+      hakuProps
+    );
+    await this.navigate(avustushakuID);
+    await this.publishAvustushaku();
+    return avustushakuID;
+  }
+
   async allowExternalApi(allow: boolean) {
     await this.page.click(
       `label[for="allow_visibility_in_external_system_${allow}"]`

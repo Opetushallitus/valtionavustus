@@ -640,6 +640,13 @@ export class HakemustenArviointiPage {
 
   arviointiTabLocators() {
     const arviointiTab = this.page.locator("#arviointi-tab");
+    const budget = this.page
+      .locator("#budget-edit-project-budget tfoot td")
+      .nth(2)
+      .locator("input");
+    const traineeLocator = this.page.locator(
+      "#trainee-day-edit-trainee-day-summary tbody tr td"
+    );
     return {
       resendPaatokset: this.page.locator(
         'text="Lähetä päätössähköposti uudestaan"'
@@ -659,6 +666,24 @@ export class HakemustenArviointiPage {
         arviointiTab,
         "code-value-dropdown-project-id"
       ),
+      budget,
+      koulutusosio: {
+        osioName: traineeLocator.nth(0),
+        koulutettavapaivat: {
+          haettuPaivat: traineeLocator.nth(1),
+          hyvaksyttyPaivatInput: traineeLocator
+            .nth(2)
+            .locator(
+              `[id="trainee-day-edit-koulutusosiot.koulutusosio-1.koulutettavapaivat.scope"]`
+            ),
+          haettuOsallistujaMaara: traineeLocator.nth(3),
+          hyvaksyttyOsallistujaMaaraInput: traineeLocator
+            .nth(4)
+            .locator(
+              `[id="trainee-day-edit-koulutusosiot.koulutusosio-1.koulutettavapaivat.person-count"]`
+            ),
+        },
+      },
     };
   }
 

@@ -1,7 +1,7 @@
 import { Locator, Page } from "@playwright/test";
 
 import { navigateHakija } from "../utils/navigate";
-import { TEST_Y_TUNNUS } from "../utils/constants";
+import { dummyExcelPath, TEST_Y_TUNNUS } from "../utils/constants";
 import {
   clickElementWithText,
   expectQueryParameter,
@@ -231,6 +231,134 @@ export class HakijaAvustusHakuPage {
 
   async getUserKey(): Promise<string> {
     return await expectQueryParameter(this.page, "hakemus");
+  }
+
+  async fillKoulutusosioHakemus(avustushakuID: number, answers: Answers) {
+    const hakemusUrl = await this.startApplication(
+      avustushakuID,
+      answers.contactPersonEmail
+    );
+    await this.page.goto(hakemusUrl);
+    await this.fillInBusinessId(TEST_Y_TUNNUS);
+    await this.page.fill("#applicant-name", answers.contactPersonName);
+    await this.page.fill(
+      "[id='textField-0']",
+      answers.contactPersonPhoneNumber
+    );
+    await this.page.fill("#textField-2", "Hakaniemenranta 6");
+    await this.page.fill("#textField-3", "00531");
+    await this.page.fill("#textField-4", "Helsinki");
+    await this.page
+      .locator(
+        `label:has-text("Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko")`
+      )
+      .click();
+    await this.page.click("[id='koodistoField-1_input']");
+    await this.selectMaakuntaFromDropdown("Kainuu");
+    await this.page.fill(
+      "[id='signatories-fieldset-1.name']",
+      "Erkki Esimerkki"
+    );
+    await this.page.fill(
+      "[id='signatories-fieldset-1.email']",
+      "erkki.esimerkki@example.com"
+    );
+    await this.page.fill("#bank-iban", "FI95 6682 9530 0087 65");
+    await this.page.fill("#bank-bic", "OKOYFIHH");
+    await this.page.fill("#textField-5", "Kirkko");
+    await this.page.fill("#project-name", answers.projectName);
+    await this.page.click(`[for='language.radio.0']`);
+    await this.page.click(`[for='combined-effort.radio.0']`);
+    await this.page
+      .locator(`label:has-text("Yhteistyökumppanin nimi")`)
+      .first()
+      .fill("Esmo Esimerkki");
+    await this.page
+      .locator(`label:has-text("Yhteyshenkilön nimi")`)
+      .first()
+      .fill("Esmo Esimerkki");
+    await this.page
+      .locator(`label:has-text("Yhteyshenkilön sähköposti")`)
+      .first()
+      .fill("esmo.esimerkki@example.com");
+    await this.page
+      .locator(
+        `label:has-text("Oppilaan ja opiskelijan arviointiin liittyvän osaamisen vahvistaminen")`
+      )
+      .click();
+    await this.page
+      .locator(
+        `label:has-text("Hakijayhteisön osaaminen ja kokemus opetustoimen henkilöstökoulutuksesta (kuvaile lyhyesti)")`
+      )
+      .fill("Kuvailu");
+    await this.page
+      .locator(
+        `label:has-text("Koulutushankkeen kouluttajat, heidän osaamisensa ja kokemuksensa opetustoimen henkilöstökoulutuksesta")`
+      )
+      .fill("Ei kokemusta");
+    await this.page.locator(`[for="checkboxButton-1.checkbox.7"]`).click();
+    await this.page.locator(`[for="radioButton-2.radio.6"]`).click();
+    await this.page.getByLabel("Hanke pähkinänkuoressa").fill("{Hanke}");
+    await this.page
+      .getByLabel(
+        "Kirjoita seuraavaan kenttään kolme koulutuksen sisältöä kuvaavaa asiasanaa tai sanaparia."
+      )
+      .fill("testi1 testi2 testi3");
+    await this.page
+      .getByLabel("Miksi hanke tarvitaan? Miten koulutustarve on kartoitettu?")
+      .fill("testaamaan koulutusosio toiminnallisuutta");
+    await this.page
+      .getByLabel("Hankkeen tavoitteet, toteutustapa ja tulokset")
+      .fill("koulutusosiot toimii");
+    await this.page
+      .getByLabel("Hankkeen osapuolet ja työnjako")
+      .fill("testikirjasto tekee kaiken paitsi testin kirjoittamisen");
+    await this.page.getByLabel("Toteuttamispaikkakunnat").fill("muu");
+    await this.page
+      .getByLabel("Miten osallistujat rekrytoidaan koulutukseen?")
+      .fill("inspiroidaan");
+    await this.page
+      .getByLabel("Miten hankkeen tavoitteiden toteutumista seurataan?")
+      .fill("testaamalla");
+    await this.page
+      .getByLabel(
+        "Hankkeessa syntyvät tuotokset ja materiaalit sekä niiden levittämissuunnitelma"
+      )
+      .fill("en tiedä vielä");
+    await this.page.getByLabel("Koulutusosion nimi").first().fill("Osio 1");
+    await this.page.fill(
+      '[id="koulutusosiot.koulutusosio-1.keskeiset-sisallot"]',
+      "Keskeinen sisältö"
+    );
+    await this.page.getByLabel("Kohderyhmät").first().fill("Kaikki");
+    await this.page
+      .locator(
+        `[for="koulutusosiot.koulutusosio-1.koulutettavapaivat.scope-type.radio.1"]`
+      )
+      .click();
+    await this.page
+      .locator(`[id="koulutusosiot.koulutusosio-1.koulutettavapaivat.scope"]`)
+      .fill("99");
+    await this.page
+      .locator(
+        `[id="koulutusosiot.koulutusosio-1.koulutettavapaivat.person-count"]`
+      )
+      .fill("10");
+    const koulutusTd = this.page.locator(
+      `table[id="koulutusosiot.koulutusosio-1.saametable"] td input`
+    );
+    await koulutusTd.nth(0).fill("33");
+    await koulutusTd.nth(1).fill("33");
+    await koulutusTd.nth(2).fill("33");
+    await this.page
+      .locator("[name='namedAttachment-0']")
+      .setInputFiles(dummyExcelPath);
+    await this.page.locator(`[for="vat-included.radio.1"]`).click();
+    await this.page.locator(`[id="personnel-costs-row.amount"]`).fill("1000");
+    await this.page
+      .locator(`[id="own-income-row.description"]`)
+      .fill("Oma osuus");
+    await this.page.locator(`[id="own-income-row.amount"]`).fill("500");
   }
 
   async fillBudjettimuutoshakemusEnabledHakemus(
