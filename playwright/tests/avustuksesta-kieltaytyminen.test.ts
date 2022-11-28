@@ -2,10 +2,16 @@ import { expect } from "@playwright/test";
 import { muutoshakemusTest } from "../fixtures/muutoshakemusTest";
 import { HakemustenArviointiPage } from "../pages/hakemustenArviointiPage";
 import { RefusePage } from "../pages/hakija/refuse-page";
-import { getMuutoshakemusEmails, getRefuseUrlFromEmail } from "../utils/emails";
+import {
+  getLoppuselvitysEmailsForAvustus,
+  getMuutoshakemusEmails,
+  getRefuseUrlFromEmail,
+  getValiselvitysEmailsForAvustus,
+} from "../utils/emails";
+import { HakujenHallintaPage } from "../pages/hakujenHallintaPage";
 
 muutoshakemusTest(
-  "Avustuksesta vastaanottamatta jättäminen",
+  "Avustuksesta kieltäytyminen",
   async ({ page, avustushakuID, acceptedHakemus }) => {
     const paatosEmail = await getMuutoshakemusEmails(acceptedHakemus.hakemusID);
     const refuseUrl = getRefuseUrlFromEmail(paatosEmail[0]);
@@ -43,5 +49,33 @@ muutoshakemusTest(
         ).toEqual("-");
       }
     );
+
+    const waitUntilEmailsShouldHaveAlreadyBeenSent = async () => {
+      // Assume that all emails will be sent within 10s.
+      // As we expect that _no_ emails to be sent, there is no concrete event to wait for
+      return await page.waitForTimeout(10000);
+    };
+
+    await muutoshakemusTest.step("Ei lähetä väliselvityspyyntöä", async () => {
+      const hakujenHallintaPage = new HakujenHallintaPage(page);
+      await hakujenHallintaPage.navigateFromHeader();
+      await hakujenHallintaPage.switchToValiselvitysTab();
+      await hakujenHallintaPage.sendValiselvitys(0);
+
+      await waitUntilEmailsShouldHaveAlreadyBeenSent();
+      const emails = await getValiselvitysEmailsForAvustus(avustushakuID);
+      expect(emails).toHaveLength(0);
+    });
+
+    await muutoshakemusTest.step("Ei lähetä loppuselvityspyyntöä", async () => {
+      const hakujenHallintaPage = new HakujenHallintaPage(page);
+      await hakujenHallintaPage.navigateFromHeader();
+      await hakujenHallintaPage.switchToLoppuselvitysTab();
+      await hakujenHallintaPage.sendLoppuselvitys(0);
+
+      await waitUntilEmailsShouldHaveAlreadyBeenSent();
+      const emails = await getLoppuselvitysEmailsForAvustus(avustushakuID);
+      expect(emails).toHaveLength(0);
+    });
   }
 );

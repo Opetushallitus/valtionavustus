@@ -65,6 +65,9 @@ export const getMuutoshakemusPaatosEmails = getEmails("muutoshakemus-paatos");
 export const getMuutoshakemusEmails = getEmails("paatos-refuse");
 export const getAcceptedPäätösEmails = getMuutoshakemusEmails;
 export const getValiselvitysEmails = getEmails("valiselvitys-notification");
+export const getValiselvitysEmailsForAvustus = getEmailsWithAvustushaku(
+  "valiselvitys-notification"
+);
 export const getValiselvitysSubmittedNotificationEmails = getEmails(
   "valiselvitys-submitted-notification"
 );
@@ -72,6 +75,9 @@ export const getLoppuselvitysSubmittedNotificationEmails = getEmails(
   "loppuselvitys-submitted-notification"
 );
 export const getLoppuselvitysEmails = getEmails("loppuselvitys-notification");
+export const getLoppuselvitysEmailsForAvustus = getEmailsWithAvustushaku(
+  "loppuselvitys-notification"
+);
 export const getLoppuselvitysPalauttamattaEmails = getEmails(
   "loppuselvitys-palauttamatta"
 );
