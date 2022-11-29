@@ -63,7 +63,7 @@
   (first (query tx "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL" [id])))
 
 (defn get-hakemus-by-id [id]
-  (first (query "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL" [id])))
+  (with-tx (fn [tx] (get-hakemus-by-id-tx tx id))))
 
 (defn get-hakemus-version [user-key version]
   (first
