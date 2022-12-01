@@ -1,4 +1,8 @@
 import { Page } from "@playwright/test";
+import {
+  getMuutoshakemusEmails,
+  getRefuseUrlFromEmail,
+} from "../../utils/emails";
 
 const agreeText =
   "Ymmärrän, että avustus evätään, kun olen lähettänyt ilmoituksen";
@@ -24,5 +28,10 @@ export function RefusePage(page: Page) {
   return {
     locators,
     refuseGrant,
+    navigate: async (hakemusID: number) => {
+      const paatosEmail = await getMuutoshakemusEmails(hakemusID);
+      const refuseUrl = getRefuseUrlFromEmail(paatosEmail[0]);
+      await page.goto(refuseUrl);
+    },
   };
 }

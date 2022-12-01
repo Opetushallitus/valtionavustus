@@ -69,9 +69,9 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
 
       await test.step("väliselvitys is tarkastamatta", async () => {
         await arviointi.navigate(avustushakuID);
-        expect(
-          await arviointi.getVäliselvitysStatus(acceptedHakemus.hakemusID)
-        ).toEqual("Tarkastamatta");
+        await expect(
+          arviointi.getVäliselvitysStatus(acceptedHakemus.hakemusID)
+        ).toHaveText("Tarkastamatta");
       });
 
       const valiselvitysPage = VirkailijaValiselvitysPage(page);
@@ -125,9 +125,9 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
 
       await test.step("väliselvitys is hyväksytty", async () => {
         await arviointi.navigate(avustushakuID);
-        expect(
-          await arviointi.getVäliselvitysStatus(acceptedHakemus.hakemusID)
-        ).toEqual("Hyväksytty");
+        await expect(
+          arviointi.getVäliselvitysStatus(acceptedHakemus.hakemusID)
+        ).toHaveText("Hyväksytty");
       });
 
       await test.step(

@@ -318,19 +318,18 @@ export class HakemustenArviointiPage {
     return `[data-test-id=muutoshakemus-status-${hakemusID}]`;
   }
 
-  async getLoppuselvitysStatus(hakemusID: number) {
+  getLoppuselvitysStatus(hakemusID: number) {
     return this.getSelvitysStatus(hakemusID, "loppu");
   }
 
-  async getVäliselvitysStatus(hakemusID: number) {
+  getVäliselvitysStatus(hakemusID: number) {
     return this.getSelvitysStatus(hakemusID, "vali");
   }
 
-  async getSelvitysStatus(hakemusID: number, type: "vali" | "loppu") {
-    const valiselvitysStatus = await this.page.locator(
+  getSelvitysStatus(hakemusID: number, type: "vali" | "loppu") {
+    return this.page.locator(
       `[data-test-id=\"hakemus-${hakemusID}\"] [data-test-class=${type}selvitys-status-cell]`
     );
-    return valiselvitysStatus.textContent();
   }
 
   muutoshakemusStatusFieldContent() {
