@@ -28,14 +28,11 @@ const ShouldPay = ({ hakemus, helpText, allowEditing }: Props) => {
       setArvioValue({
         hakemusId: hakemus.id,
         key: "should-pay",
-        value: event.target.value,
+        value: event.target.value === "true",
       })
     );
     dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
   };
-  const arvio = hakemus.arvio;
-  const selectedShouldPay = arvio["should-pay"] !== false;
-
   const options = groupOptions.flatMap((spec) => [
     <input
       id={spec.htmlId}
@@ -44,7 +41,7 @@ const ShouldPay = ({ hakemus, helpText, allowEditing }: Props) => {
       name="should-pay"
       value={String(spec.value)}
       onChange={onHakemusShouldPayChange}
-      checked={spec.value === selectedShouldPay}
+      checked={spec.value === hakemus.arvio["should-pay"]}
       disabled={!allowEditing}
     />,
     <label key={spec.htmlId + "-label"} htmlFor={spec.htmlId}>

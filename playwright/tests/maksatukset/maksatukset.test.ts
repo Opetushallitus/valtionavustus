@@ -14,6 +14,8 @@ import { VirkailijaValiselvitysPage } from "../../pages/virkailijaValiselvitysPa
 import moment from "moment";
 import { randomString } from "../../utils/random";
 import { expectToBeDefined } from "../../utils/util";
+import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
+import { twoAcceptedHakemusTest } from "../../fixtures/twoHakemusTest";
 
 const correctOVTTest = test.extend({
   codes: async ({ page }, use) => {
@@ -361,6 +363,51 @@ test.describe("Maksatukset", () => {
     await maksatuksetPage.clickLahetetytMaksatuksetTab();
     await expect(sentPayments(1).paymentStatus).toHaveText("Maksettu");
   });
+
+  twoAcceptedHakemusTest(
+    "does not create maksatukset if should-pay is set to false",
+    async ({
+      page,
+      avustushakuID,
+      avustushakuName,
+      acceptedHakemukset: { hakemusID },
+      answers,
+      secondAnswers,
+    }) => {
+      expectToBeDefined(hakemusID);
+      const hakemustenArviointiPage = new HakemustenArviointiPage(page);
+      await hakemustenArviointiPage.navigate(avustushakuID);
+      await test.step("set should pay to false for first hakemus", async () => {
+        await hakemustenArviointiPage.selectHakemusFromList(
+          answers.projectName
+        );
+        await hakemustenArviointiPage.tabs().seuranta.click();
+        const seuranta = hakemustenArviointiPage.seurantaTabLocators();
+        await expect(seuranta.shouldPay.truthy).toBeChecked();
+        await expect(seuranta.shouldPay.falsy).not.toBeChecked();
+        await expect(seuranta.shouldPay.comment).toBeDisabled();
+        await seuranta.shouldPay.falsy.click();
+        await hakemustenArviointiPage.waitForSave();
+        await expect(seuranta.shouldPay.comment).toBeEnabled();
+        await seuranta.shouldPay.comment.fill("Pyörrän päätökseni");
+      });
+      await test.step(
+        "only second hakemus maksatukset are created as first was marked should not pay",
+        async () => {
+          await hakemustenArviointiPage.waitForSave();
+          const maksatuksetPage = MaksatuksetPage(page);
+          await maksatuksetPage.goto(avustushakuName);
+          const firstRowHanke = maksatuksetPage.maksatuksetTableRow(0).hanke;
+          await expect(firstRowHanke).toBeHidden();
+          await maksatuksetPage.luoMaksatukset.click();
+          await expect(firstRowHanke).toHaveText(secondAnswers.projectName);
+          await expect(
+            maksatuksetPage.maksatuksetTableRow(1).hanke
+          ).toBeHidden();
+        }
+      );
+    }
+  );
 
   test("work with pitkaviite with contact person name", async ({
     page,

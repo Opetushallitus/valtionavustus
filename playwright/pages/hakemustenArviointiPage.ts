@@ -564,8 +564,8 @@ export class HakemustenArviointiPage {
 
   tabs() {
     return {
-      seuranta: this.page.locator('[data-test-id="tab-seuranta"]'),
-      muutoshakemus: this.page.locator('span:text-is("Muutoshakemukset")'),
+      seuranta: this.page.locator('a:text-is("Seuranta")'),
+      muutoshakemus: this.page.locator('a:text-is("Muutoshakemukset")'),
     };
   }
 
@@ -704,6 +704,11 @@ export class HakemustenArviointiPage {
       kustannusHyvaksytty: this.page.locator(
         '#budget-edit-project-budget [class="amount-column"] [class="money sum"]'
       ),
+      shouldPay: {
+        truthy: this.page.locator("[for=set-should-pay-true]"),
+        falsy: this.page.locator("[for=set-should-pay-false]"),
+        comment: this.page.locator("#should-pay-comment"),
+      },
     };
   }
 }

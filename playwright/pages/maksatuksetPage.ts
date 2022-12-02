@@ -111,6 +111,8 @@ export function MaksatuksetPage(page: Page) {
     sendMaksatukset,
     clickLahetetytMaksatuksetTab,
     page,
+    luoMaksatukset: page.locator("text=Luo maksatukset"),
+    maksatuksetTableRow: (nth: number) => maksatuksetTable(page, nth),
   };
 }
 

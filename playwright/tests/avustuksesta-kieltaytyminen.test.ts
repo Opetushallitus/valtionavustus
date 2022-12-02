@@ -1,5 +1,4 @@
 import { expect } from "@playwright/test";
-import { muutoshakemusTest } from "../fixtures/muutoshakemusTest";
 import { HakemustenArviointiPage } from "../pages/hakemustenArviointiPage";
 import { RefusePage } from "../pages/hakija/refuse-page";
 import {
@@ -7,95 +6,7 @@ import {
   getValiselvitysEmailsForAvustus,
 } from "../utils/emails";
 import { HakujenHallintaPage } from "../pages/hakujenHallintaPage";
-import { HakijaAvustusHakuPage } from "../pages/hakijaAvustusHakuPage";
-import { Answers } from "../utils/types";
-import { expectToBeDefined } from "../utils/util";
-
-interface Fixtures {
-  secondAnswers: Answers;
-  acceptedHakemukset: {
-    hakemusID: number;
-    secondHakemusID: number;
-  };
-}
-
-const test = muutoshakemusTest.extend<Fixtures>({
-  secondAnswers: async ({ answers }, use) => {
-    await use({
-      ...answers,
-      projectName: "Projekti 2",
-      contactPersonEmail: "erkki2.esimerkki@example.com",
-    });
-  },
-  submittedHakemus: async (
-    { avustushakuID, answers, secondAnswers, page },
-    use
-  ) => {
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page);
-    await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang);
-    const userKey =
-      await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(
-        avustushakuID,
-        answers
-      );
-    await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang);
-    await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(
-      avustushakuID,
-      secondAnswers
-    );
-    await use(userKey);
-  },
-  acceptedHakemukset: async (
-    {
-      closedAvustushaku,
-      page,
-      answers,
-      secondAnswers,
-      avustushakuID,
-      projektikoodi,
-      codes,
-      ukotettuValmistelija,
-    },
-    use
-  ) => {
-    expectToBeDefined(closedAvustushaku);
-    const hakemustenArviointiPage = new HakemustenArviointiPage(page);
-    await hakemustenArviointiPage.navigate(avustushakuID);
-    let hakemusID = 0;
-    let secondHakemusID = 0;
-    await test.step("accept first", async () => {
-      hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
-        avustushakuID,
-        projectName: answers.projectName,
-        projektikoodi,
-        codes,
-      });
-      await hakemustenArviointiPage.closeHakemusDetails();
-      await hakemustenArviointiPage.selectValmistelijaForHakemus(
-        hakemusID,
-        ukotettuValmistelija
-      );
-      await hakemustenArviointiPage.closeHakemusDetails();
-    });
-    await test.step("accept second", async () => {
-      secondHakemusID = await hakemustenArviointiPage.acceptAvustushaku({
-        avustushakuID,
-        projectName: secondAnswers.projectName,
-        projektikoodi,
-        codes,
-      });
-      await hakemustenArviointiPage.closeHakemusDetails();
-      await hakemustenArviointiPage.selectValmistelijaForHakemus(
-        secondHakemusID,
-        ukotettuValmistelija
-      );
-    });
-    await use({
-      hakemusID,
-      secondHakemusID,
-    });
-  },
-});
+import { twoAcceptedHakemusTest as test } from "../fixtures/twoHakemusTest";
 
 test("Avustuksesta kieltäytyminen", async ({
   page,
