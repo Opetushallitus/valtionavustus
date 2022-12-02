@@ -565,7 +565,7 @@ export class HakemustenArviointiPage {
   tabs() {
     return {
       seuranta: this.page.locator('a:text-is("Seuranta")'),
-      muutoshakemus: this.page.locator('a:text-is("Muutoshakemukset")'),
+      muutoshakemus: this.page.locator('a:has-text("Muutoshakemukset")'),
     };
   }
 
