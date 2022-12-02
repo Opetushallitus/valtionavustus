@@ -87,11 +87,9 @@ test("virkailija can accept loppuselvitys", async ({
     async () => {
       const arviointi = new HakemustenArviointiPage(page);
       await arviointi.navigate(avustushakuID);
-
-      await navigate(page, `/avustushaku/${avustushakuID}/`);
-      expect(
-        await arviointi.getLoppuselvitysStatus(acceptedHakemus.hakemusID)
-      ).toEqual("Hyväksytty");
+      await expect(
+        arviointi.getLoppuselvitysStatus(acceptedHakemus.hakemusID)
+      ).toHaveText("Hyväksytty");
     }
   );
 });
