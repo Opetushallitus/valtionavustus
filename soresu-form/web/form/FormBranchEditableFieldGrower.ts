@@ -12,7 +12,10 @@ import FormUtil from "./FormUtil";
 import { Field } from "soresu-form/web/va/types";
 
 export function ensureFirstChildIsRequired(state: any, growingParent: Field) {
-  const firstChildOfGrowingSet = _.head(growingParent.children)!;
+  if (!growingParent.children) {
+    return;
+  }
+
   const prototypeForm = state.configuration.form;
   const answersObject = state.saveStatus.values;
   const syntaxValidator = state.extensionApi.customFieldSyntaxValidator;
@@ -24,67 +27,82 @@ export function ensureFirstChildIsRequired(state: any, growingParent: Field) {
   const answersToWrite: FieldUpdate[] = [];
   const validationErrorsToDelete: string[] = [];
 
-  const processFirstChildChildren = (operation: (f: Field) => void) => {
-    _.forEach(
-      JsUtil.flatFilter(
-        firstChildOfGrowingSet,
-        (n: Field) => !_.isUndefined(n.id)
-      ),
-      operation
-    );
-  };
-
-  processFirstChildChildren((n: Field) => {
-    if (!_.isUndefined(n.id) && n.fieldClass === "formField") {
+  const writeAnswersIfFormField = (f: Field) => {
+    if (f.fieldClass === "formField") {
       const prototypeNode = FormUtil.findFieldIgnoringIndex(
         childPrototype,
-        n.id
+        f.id
       )!;
       const existingInputValue = InputValueStorage.readValue(
         null,
         answersObject,
-        n.id
+        f.id
       );
       answersToWrite.push(
         createFieldUpdate(prototypeNode, existingInputValue, syntaxValidator)
       );
-      validationErrorsToDelete.push(n.id);
-    } else if (n.children) {
-      answersToDelete.push(n.id);
+      validationErrorsToDelete.push(f.id);
     }
-  });
+  };
+
+  const deleteAnswersIfNotFormFieldAndHasChildren = (f: Field) => {
+    if (f.fieldClass !== "formField" && f.children) {
+      answersToDelete.push(f.id);
+    }
+  };
+
+  const mutateFieldIdToMatchPrototypeNode = (f: Field) => {
+    const prototypeNode = FormUtil.findFieldIgnoringIndex(childPrototype, f.id);
+
+    if (!prototypeNode) {
+      return;
+    }
+    
+    f.id = prototypeNode.id;
+    f.required = prototypeNode.required;
+  };
+
+  const firstChildOfGrowingSet = growingParent.children[0];
+  const flattenedC = JsUtil.flatFilter(
+    firstChildOfGrowingSet,
+    (n: Field) => !!n.id
+  );
+
+  flattenedC.forEach(writeAnswersIfFormField);
+
+  flattenedC.forEach(deleteAnswersIfNotFormFieldAndHasChildren);
 
   answersToDelete.forEach((fieldIdToEmpty) => {
     InputValueStorage.deleteValue(growingParent, answersObject, fieldIdToEmpty);
   });
 
-  processFirstChildChildren((n: Field) => {
-    const prototypeNode = FormUtil.findFieldIgnoringIndex(
-      childPrototype,
-      n.id
-    )!;
-    n.id = prototypeNode?.id;
-    if (prototypeNode?.required) {
-      n.required = true;
-    }
-  });
+  flattenedC.forEach(mutateFieldIdToMatchPrototypeNode);
 
-  answersToWrite.forEach((fieldUpdate) => {
-    InputValueStorage.writeValue(prototypeForm, answersObject, fieldUpdate);
-  });
+  answersToWrite.forEach((fieldUpdate) =>
+    InputValueStorage.writeValue(prototypeForm, answersObject, fieldUpdate)
+  );
 
-  growingParent.children?.sort((firstChild: Field, secondChild: Field) => {
-    return JsUtil.naturalCompare(firstChild.id, secondChild.id);
-  });
+  growingParent.children.sort((firstChild: Field, secondChild: Field) =>
+    JsUtil.naturalCompare(firstChild.id, secondChild.id)
+  );
 
-  // clear validation errors from the original position of moved field
-  state.form.validationErrors = state.form.validationErrors.without(
+  clearValidationErrorsFromTheOriginalPositionOfMovedField(
+    state,
     validationErrorsToDelete
   );
 
-  const fieldsToValidate = JsUtil.flatFilter(
-    firstChildOfGrowingSet,
-    (f: Field) => !_.isUndefined(f.id) && f.fieldClass === "formField"
+  const fieldsToValidate = flattenedC.filter(
+    (f) => f.fieldClass === "formField"
   );
+
   triggerFieldUpdatesForValidation(fieldsToValidate, state);
+}
+
+function clearValidationErrorsFromTheOriginalPositionOfMovedField(
+  state: any,
+  validationErrorsToDelete: string[]
+) {
+  state.form.validationErrors = state.form.validationErrors.without(
+    validationErrorsToDelete
+  );
 }
