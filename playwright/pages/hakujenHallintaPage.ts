@@ -566,11 +566,11 @@ export class HakujenHallintaPage {
     const currentHakuTitle = await hakuNameFi.textContent();
     const currentURL = this.page.url();
 
-    await expect(hakuNameFi).toBeEnabled();
     await Promise.all([
       waitForHakuCopyToBeCompleted(currentURL),
       this.page.locator("a", { hasText: "Kopioi uuden pohjaksi" }).click(),
     ]);
+    await expect(hakuNameFi).toBeEnabled();
     const avustushakuID = parseInt(
       await expectQueryParameter(this.page, "avustushaku")
     );
