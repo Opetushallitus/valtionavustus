@@ -57,7 +57,7 @@ export function ensureFirstChildIsRequired(state: any, growingParent: Field) {
     if (!prototypeNode) {
       return;
     }
-    
+
     f.id = prototypeNode.id;
     f.required = prototypeNode.required;
   };
