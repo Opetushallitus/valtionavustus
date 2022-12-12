@@ -3,6 +3,7 @@ import _ from "lodash";
 import InputValueStorage from "./InputValueStorage";
 import JsUtil from "../JsUtil";
 import FormUtil from "./FormUtil";
+import Immutable from "seamless-immutable";
 
 export default class FormBranchGrower {
   static addFormFieldsForGrowingFieldsInInitialRender(
@@ -112,12 +113,23 @@ export default class FormBranchGrower {
 
   static expandGrowingFieldSetIfNeeded(state, fieldUpdate) {
     const growingParent = fieldUpdate.growingParent;
-
     if (!growingParent) {
       return;
     }
 
-    const growingChildren = growingParent.children;
+    function getGrowingParentChildrenEnsuringTheyAreMutable(growingParent) {
+      for (const children of growingParent.children) {
+        if (children.children.some((child) => Immutable.isImmutable(child))) {
+          children.children = Immutable.asMutable(children.children, {
+            deep: true,
+          });
+        }
+      }
+      return growingParent.children;
+    }
+
+    const growingChildren =
+      getGrowingParentChildrenEnsuringTheyAreMutable(growingParent);
 
     if (
       growingChildren &&

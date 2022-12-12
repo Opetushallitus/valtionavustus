@@ -1,5 +1,3 @@
-import _ from "lodash";
-
 import FormBranchGrower from "./FormBranchGrower";
 import {
   createFieldUpdate,
@@ -10,6 +8,7 @@ import InputValueStorage from "./InputValueStorage";
 import JsUtil from "../JsUtil";
 import FormUtil from "./FormUtil";
 import { Field } from "soresu-form/web/va/types";
+import Immutable from "seamless-immutable";
 
 export function ensureFirstChildIsRequired(state: any, growingParent: Field) {
   if (!growingParent.children) {
@@ -62,7 +61,9 @@ export function ensureFirstChildIsRequired(state: any, growingParent: Field) {
     f.required = prototypeNode.required;
   };
 
-  const firstChildOfGrowingSet = growingParent.children[0];
+  const firstChildOfGrowingSet = makeImmutableChildrenMutable(
+    growingParent.children[0]
+  );
   const flattenedC = JsUtil.flatFilter(
     firstChildOfGrowingSet,
     (n: Field) => !!n.id
@@ -105,4 +106,13 @@ function clearValidationErrorsFromTheOriginalPositionOfMovedField(
   state.form.validationErrors = state.form.validationErrors.without(
     validationErrorsToDelete
   );
+}
+
+function makeImmutableChildrenMutable(firstChild: Field) {
+  if (firstChild?.children?.some((c) => Immutable.isImmutable(c))) {
+    firstChild.children = Immutable.asMutable(firstChild.children, {
+      deep: true,
+    });
+  }
+  return firstChild;
 }
