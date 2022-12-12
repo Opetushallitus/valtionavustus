@@ -39,6 +39,7 @@ interface DecisionProps {
   helpText?: string;
   dataTestId?: string;
   language: Language;
+  disabled: boolean;
 }
 
 const DecisionField: React.FC<DecisionProps> = ({
@@ -49,6 +50,7 @@ const DecisionField: React.FC<DecisionProps> = ({
   onChange,
   helpText,
   dataTestId,
+  disabled,
 }) => {
   const fieldId = `decision.${id}.${language}`;
   const value = _.get(avustushaku, fieldId, "");
@@ -63,7 +65,13 @@ const DecisionField: React.FC<DecisionProps> = ({
           ""
         )}
       </label>
-      <textarea onChange={onChange} rows={5} id={fieldId} value={value} />
+      <textarea
+        disabled={disabled}
+        onChange={onChange}
+        rows={5}
+        id={fieldId}
+        value={value}
+      />
     </div>
   );
 };
@@ -75,6 +83,7 @@ const DecisionFields: React.FC<Omit<DecisionProps, "language">> = ({
   onChange,
   helpText,
   dataTestId,
+  disabled,
 }) => (
   <div className="decision-row">
     <DecisionField
@@ -85,6 +94,7 @@ const DecisionFields: React.FC<Omit<DecisionProps, "language">> = ({
       onChange={onChange}
       helpText={helpText}
       dataTestId={dataTestId}
+      disabled={disabled}
     />
     <DecisionField
       title={title}
@@ -94,6 +104,7 @@ const DecisionFields: React.FC<Omit<DecisionProps, "language">> = ({
       onChange={onChange}
       helpText={helpText}
       dataTestId={dataTestId}
+      disabled={disabled}
     />
   </div>
 );
@@ -103,6 +114,7 @@ interface DateFieldProps {
   field: "maksudate" | "date";
   label: string;
   helpTexts: HelpTexts;
+  disabled: boolean;
 }
 
 interface DateFieldState {
@@ -153,6 +165,7 @@ const DateField = (props: DateFieldProps) => {
           value={state.value}
           id={`decision.${props.field}`}
           onChange={onChange}
+          disabled={props.disabled}
         />
       </div>
     </div>
@@ -166,6 +179,7 @@ const LiiteGroup = ({
   selectedVersions,
   onChangeLiite,
   onChangeLiiteVersions,
+  disabled,
 }: {
   liite: Liite;
   helpTexts: HelpTexts;
@@ -173,6 +187,7 @@ const LiiteGroup = ({
   selectedVersions: Record<string, string | undefined>;
   onChangeLiite: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled: boolean;
 }) => {
   return (
     <div key={liite.group}>
@@ -198,6 +213,7 @@ const LiiteGroup = ({
           selectedVersions={selectedVersions}
           onChangeLiite={onChangeLiite}
           onChangeLiiteVersions={onChangeLiiteVersions}
+          disabled={disabled}
         />
       ))}
     </div>
@@ -208,6 +224,9 @@ const PakoteLiite = () => {
   const dispatch = useHakujenHallintaDispatch();
   const { environment, helpTexts } = useHakujenHallintaSelector((state) =>
     selectLoadedInitialData(state)
+  );
+  const loadingAvustushaku = useHakujenHallintaSelector(
+    (state) => state.haku.saveStatus.loadingAvustushaku
   );
   const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
   const key = "dont-include-pakote-ohje";
@@ -229,6 +248,7 @@ const PakoteLiite = () => {
             type="checkbox"
             className="decision-liite-selection__liite-input"
             checked={!dontIncludePakoteOhje}
+            disabled={loadingAvustushaku}
             onChange={() =>
               dispatch(
                 updateField({
@@ -311,6 +331,7 @@ const LiiteComponent = ({
   selectedVersions,
   onChangeLiite,
   onChangeLiiteVersions,
+  disabled,
 }: {
   attachment: LiiteAttachment;
   groupId: string;
@@ -318,9 +339,10 @@ const LiiteComponent = ({
   selectedVersions: Record<string, string | undefined>;
   onChangeLiite: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled: boolean;
 }) => {
   const isSelected = selectedLiitteet[groupId] === attachment.id;
-  const disabledGroup = groupId === "Ehdot";
+  const disabledGroup = groupId === "Ehdot" || disabled;
   return (
     <div key={attachment.id} className="decision-liite-selection__liite">
       <label>
@@ -483,6 +505,7 @@ interface LiitteetSelectionProps {
   avustushaku: Avustushaku;
   decisionLiitteet: Liite[];
   helpTexts: HelpTexts;
+  disabled: boolean;
 }
 
 interface LiitteetSelectionState {
@@ -494,6 +517,7 @@ const LiitteetSelection = ({
   avustushaku,
   decisionLiitteet,
   helpTexts,
+  disabled,
 }: LiitteetSelectionProps) => {
   const [selectedLiitteet, setSelectedLiitteet] = useState(() =>
     makeSelectedLiitteet(
@@ -570,6 +594,7 @@ const LiitteetSelection = ({
             helpTexts={helpTexts}
             onChangeLiite={onChangeLiite}
             onChangeLiiteVersions={onChangeLiiteVersion}
+            disabled={disabled}
           />
         ))}
       </div>
@@ -762,6 +787,7 @@ interface DecisionDateAndSendProps {
   avustushaku: Avustushaku;
   environment: EnvironmentApiResponse;
   helpTexts: HelpTexts;
+  disabled: boolean;
 }
 
 interface Paatos {
@@ -867,7 +893,12 @@ class DecisionDateAndSend extends React.Component<
     return (
       <div className="send-decisions-panel">
         <div className="decision-separator" />
-        <DateField {...this.props} field="date" label="Ratkaisupäivä" />
+        <DateField
+          {...this.props}
+          field="date"
+          label="Ratkaisupäivä"
+          disabled={this.props.disabled}
+        />
         {this.props.avustushaku.status === "resolved" &&
           this.sendEmailSection()}
       </div>
@@ -1213,6 +1244,9 @@ const DecisionEditor = () => {
   const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
   const { decisionLiitteet, environment, helpTexts } =
     useHakujenHallintaSelector(selectLoadedInitialData);
+  const loadingAvustushaku = useHakujenHallintaSelector(
+    (state) => state.haku.saveStatus.loadingAvustushaku
+  );
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(
       updateField({ avustushaku, field: e.target, newValue: e.target.value })
@@ -1277,6 +1311,7 @@ const DecisionEditor = () => {
         avustushaku={avustushaku}
         id="taustaa"
         onChange={onChange}
+        disabled={loadingAvustushaku}
         helpText={helpTexts["hakujen_hallinta__päätös___taustaa"]}
         dataTestId="taustaa"
       />
@@ -1292,6 +1327,7 @@ const DecisionEditor = () => {
           ]
         }
         dataTestId="myonteinenlisateksti"
+        disabled={loadingAvustushaku}
       />
       {fields.map((field) => (
         <DecisionFields
@@ -1302,6 +1338,7 @@ const DecisionEditor = () => {
           onChange={onChange}
           helpText={field.helpText}
           dataTestId={field.dataTestId}
+          disabled={loadingAvustushaku}
         />
       ))}
       <DecisionFields
@@ -1312,27 +1349,35 @@ const DecisionEditor = () => {
         onChange={onChange}
         helpText={helpTexts["hakujen_hallinta__päätös___avustuksen_maksuaika"]}
         dataTestId={"maksu"}
+        disabled={loadingAvustushaku}
       />
-      <Kayttoaika avustushaku={avustushaku} />
-      <SelvityksienAikarajat avustushaku={avustushaku} helpTexts={helpTexts} />
+      <Kayttoaika avustushaku={avustushaku} disabled={loadingAvustushaku} />
+      <SelvityksienAikarajat
+        avustushaku={avustushaku}
+        helpTexts={helpTexts}
+        disabled={loadingAvustushaku}
+      />
       {avustushaku.content.multiplemaksuera === true && (
         <DateField
           avustushaku={avustushaku}
           field="maksudate"
           label="Viimeinen maksuerä"
           helpTexts={helpTexts}
+          disabled={loadingAvustushaku}
         />
       )}
       <LiitteetSelection
         avustushaku={avustushaku}
         decisionLiitteet={decisionLiitteet}
         helpTexts={helpTexts}
+        disabled={loadingAvustushaku}
       />
       <PakoteLiite />
       <DecisionDateAndSend
         avustushaku={avustushaku}
         environment={environment}
         helpTexts={helpTexts}
+        disabled={loadingAvustushaku}
       />
     </div>
   );

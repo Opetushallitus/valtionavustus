@@ -11,9 +11,13 @@ import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaSt
 
 interface KayttoaikaProps {
   avustushaku: Avustushaku;
+  disabled: boolean;
 }
 
-export const Kayttoaika: React.FC<KayttoaikaProps> = ({ avustushaku }) => {
+export const Kayttoaika: React.FC<KayttoaikaProps> = ({
+  avustushaku,
+  disabled,
+}) => {
   const dispatch = useHakujenHallintaDispatch();
 
   const getStoredDateFor = (
@@ -44,6 +48,7 @@ export const Kayttoaika: React.FC<KayttoaikaProps> = ({ avustushaku }) => {
           onChange={onChange}
           defaultValue={getStoredDateFor("hankkeen-alkamispaiva")}
           allowEmpty={false}
+          disabled={disabled}
         />
       </div>
 
@@ -57,6 +62,7 @@ export const Kayttoaika: React.FC<KayttoaikaProps> = ({ avustushaku }) => {
           onChange={onChange}
           defaultValue={getStoredDateFor("hankkeen-paattymispaiva")}
           allowEmpty={false}
+          disabled={disabled}
         />
       </div>
     </div>

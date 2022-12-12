@@ -13,6 +13,7 @@ import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaSt
 interface KayttoaikaProps {
   avustushaku: Avustushaku;
   helpTexts: HelpTexts;
+  disabled: boolean;
 }
 
 export const SelvityksienAikarajat = (props: KayttoaikaProps) => {
@@ -55,6 +56,7 @@ export const SelvityksienAikarajat = (props: KayttoaikaProps) => {
             onChange={onChange}
             defaultValue={getStoredDateFor("valiselvitysdate")}
             allowEmpty={true}
+            disabled={props.disabled}
           />
         </div>
         <div className="aikaraja-help-text">
@@ -83,6 +85,7 @@ export const SelvityksienAikarajat = (props: KayttoaikaProps) => {
             onChange={onChange}
             defaultValue={getStoredDateFor("loppuselvitysdate")}
             allowEmpty={true}
+            disabled={props.disabled}
           />
         </div>
       </div>

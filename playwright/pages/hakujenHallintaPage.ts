@@ -315,11 +315,7 @@ export class HakujenHallintaPage {
   }
 
   async navigateToPaatos(avustushakuID: number) {
-    await Promise.all([
-      expect(this.page.getByTestId(saveStatusTestId)).toBeVisible(),
-      this.navigateTo(`/admin/decision/?avustushaku=${avustushakuID}`),
-    ]);
-    await expect(this.page.getByTestId(saveStatusTestId)).toBeHidden();
+    await this.navigateTo(`/admin/decision/?avustushaku=${avustushakuID}`);
     return this.paatosLocators();
   }
 
