@@ -1,5 +1,6 @@
 (ns oph.common.email
   (:require [clojure.core.async :refer [<! >!! go chan]]
+            [clojure.pprint :refer [pprint]]
             [clojure.tools.logging :as log]
             [clojure.string :as string]
             [clojure.java.io :as io]
@@ -41,6 +42,15 @@
     (SimpleEmail.)))
 
 (defn store-email [msg email-msg]
+  {:pre [(coll? (:to msg))
+         (not-any? empty? (:to msg))
+         (not-empty email-msg)
+         (not-empty (:sender msg))
+         (not-empty (:from msg))
+         (not-empty (:subject msg))
+         (not-empty (:attachment msg))
+         (not-empty (:type msg))
+         (not-empty (:lang msg))]}
   (let [from (common-string/trim-ws (:from msg))
         sender (common-string/trim-ws (:sender msg))
         to (mapv common-string/trim-ws (:to msg))
@@ -62,6 +72,7 @@
           email_id (:id (first result))]
       (log/info (str "Succesfully stored email with id: " email_id))
       email_id)))
+
 
 (defn create-mail-send-fn [msg email-msg]
     (let [from          (common-string/trim-ws (:from msg))
