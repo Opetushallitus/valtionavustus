@@ -41,27 +41,27 @@
     (SimpleEmail.)))
 
 (defn store-email [msg email-msg]
-  (let [from            (common-string/trim-ws (:from msg))
-    sender          (common-string/trim-ws (:sender msg))
-    to              (mapv common-string/trim-ws (:to msg))
-    bcc             (trim-ws-or-nil (:bcc msg))
-    reply-to        (trim-ws-or-nil (:reply-to msg))
-    subject         (common-string/trim-ws (:subject msg))
-    attachment      (:attachment msg)
-    msg-description (format "%s message from %s (with sender %s) to %s (lang: %s) with subject '%s'"
-                            (name (:type msg))
-                            from
-                            sender
-                            to
-                            (name (:lang msg))
-                            subject)]
-  (log/info "Storing email: " msg-description)
-  (let [result (query "INSERT INTO virkailija.email (formatted, from_address, sender, to_address, bcc, reply_to, subject, attachment_contents, attachment_title, attachment_description)
+  (let [from (common-string/trim-ws (:from msg))
+        sender (common-string/trim-ws (:sender msg))
+        to (mapv common-string/trim-ws (:to msg))
+        bcc (trim-ws-or-nil (:bcc msg))
+        reply-to (trim-ws-or-nil (:reply-to msg))
+        subject (common-string/trim-ws (:subject msg))
+        attachment (:attachment msg)
+        msg-description (format "%s message from %s (with sender %s) to %s (lang: %s) with subject '%s'"
+                                (name (:type msg))
+                                from
+                                sender
+                                to
+                                (name (:lang msg))
+                                subject)]
+    (log/info "Storing email: " msg-description)
+    (let [result (query "INSERT INTO virkailija.email (formatted, from_address, sender, to_address, bcc, reply_to, subject, attachment_contents, attachment_title, attachment_description)
                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id"
-                      [email-msg from sender to bcc reply-to subject (:contents attachment) (:title attachment) (:description attachment)])
-        email_id (:id (first result))]
-    (log/info (str "Succesfully stored email with id: " email_id))
-    email_id)))
+                        [email-msg from sender to bcc reply-to subject (:contents attachment) (:title attachment) (:description attachment)])
+          email_id (:id (first result))]
+      (log/info (str "Succesfully stored email with id: " email_id))
+      email_id)))
 
 (defn create-mail-send-fn [msg email-msg]
     (let [from          (common-string/trim-ws (:from msg))
