@@ -29,8 +29,8 @@ export interface TalousarviotiliWithKoulutusasteet extends TalousarviotiliWithUs
   koulutusasteet: string[]
 }
 
-const ValiselvitysForm = require('../data/ValiselvitysForm.json') as Form
-const LoppuselvitysForm = require('../data/LoppuselvitysForm.json') as Form
+import ValiselvitysForm from "../data/ValiselvitysForm.json";
+import LoppuselvitysForm from "../data/LoppuselvitysForm.json";
 
 export interface Avustushaku extends BaseAvustushaku {
   roles?: Role[]
@@ -241,8 +241,15 @@ export const fetchInitialState = createAsyncThunk<
   }
 })
 
-const appendBudgetComponent = (selvitysType: Selvitys, formContent: Form | undefined) => {
-  const form = selvitysType === 'valiselvitys' ? ValiselvitysForm : LoppuselvitysForm
+const appendBudgetComponent = (
+  selvitysType: Selvitys,
+  formContent: Form | undefined
+) => {
+  const form =
+    selvitysType === "valiselvitys"
+      ? (ValiselvitysForm as any as Form)
+      : (LoppuselvitysForm as any as Form);
+
   const originalVaBudget =
     formContent?.content && FormUtil.findFieldByFieldType(formContent?.content, 'vaBudget')
   if (originalVaBudget) {

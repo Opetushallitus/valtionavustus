@@ -1,8 +1,6 @@
-import React, { Component } from 'react'
-import { createRoot } from 'react-dom/client'
-import _ from 'lodash'
-// @ts-ignore
-import RouteParser from 'route-parser'
+import React, { Component } from "react";
+import { createRoot } from "react-dom/client";
+import _ from "lodash";
 
 import YhteenvetoController from './YhteenvetoController'
 import HakemusArviointiStatuses from '../HakemusArviointiStatuses'
@@ -288,10 +286,10 @@ const HakemusRow = ({ hakemus, multiBatch, grant }) => {
   )
 }
 
-const parsedRoute = new RouteParser(
-  '/yhteenveto/avustushaku/:avustushaku_id/listaus/:saved_search_id/'
-).match(location.pathname)
-if (!parsedRoute || _.isUndefined(parsedRoute['avustushaku_id'])) {
+const parsedRoute = /*new RouteParser(
+  "/yhteenveto/avustushaku/:avustushaku_id/listaus/:saved_search_id/"
+).match(location.pathname);*/ undefined;
+if (!parsedRoute || _.isUndefined(parsedRoute["avustushaku_id"])) {
   setInterval(() => {
     const redirectUrlFromServer = localStorage.getItem('va.arviointi.admin.summary.url')
     if (!_.isEmpty(redirectUrlFromServer)) {
