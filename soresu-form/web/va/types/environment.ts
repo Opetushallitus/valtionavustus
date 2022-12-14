@@ -14,6 +14,7 @@ export interface EnvironmentApiResponse {
     sv: string;
   };
   "multibatch-payments": FeatureFlag;
+  "tasmaytysraportti-taloushallintoon-maksatuksien-yhteydessa"?: FeatureFlag;
   "dont-send-loppuselvityspyynto-to-virkailija"?: FeatureFlag;
   payments: FeatureFlag & { "delete-payments?": boolean };
 }
