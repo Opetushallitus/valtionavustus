@@ -64,6 +64,11 @@ const virkailijaRollupOptions: RollupOptions = {
   },
 };
 
+const publicAssetsDir =
+  VATYPE === "hakija"
+    ? "va-hakija/web/va/publicAssets"
+    : "va-virkailija/web/va/publicAssets";
+
 const hakijaRollupOptions: RollupOptions = {
   input: {
     hakijaApp: path.resolve(__dirname, "va-hakija/web/va/index.html"),
@@ -120,6 +125,7 @@ export default defineConfig({
       },
     ],
   },
+  publicDir: publicAssetsDir,
   build: {
     sourcemap: "inline",
     emptyOutDir: true,
