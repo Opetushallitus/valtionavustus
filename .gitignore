@@ -1,6 +1,6 @@
 **/checkouts/
-**/resources/public/hakija/js/
-**/resources/public/virkailija/js/
+**/resources/public/hakija/
+**/resources/public/virkailija/
 **/resources/public/admin-ui/js
 **/resources/public/admin-ui/css/*-min.css
 **/resources/public/applications/js

@@ -8,7 +8,10 @@ import React, {
 import Select, { components, OptionProps, GroupBase } from "react-select";
 
 import HttpUtil from "soresu-form/web/HttpUtil";
-import { HelpTexts, Raportointivelvoite } from "soresu-form/web/va/types";
+import {
+  HelpTexts,
+  Raportointivelvoite as RaportointivelvoiteType,
+} from "soresu-form/web/va/types";
 
 import HelpTooltip from "../HelpTooltip";
 import { DateInput } from "./DateInput";
@@ -26,17 +29,17 @@ type RaportointivelvoitteetProps = {
 
 type RaportointivelvoiteProps = {
   index: number;
-  raportointivelvoite?: Raportointivelvoite;
+  raportointivelvoite?: RaportointivelvoiteType;
   helpTexts: HelpTexts;
-  postRaportointivelvoite: (r: Raportointivelvoite) => void | undefined;
+  postRaportointivelvoite: (r: RaportointivelvoiteType) => void | undefined;
   putRaportointivelvoite: (
     index: number,
-    r: Raportointivelvoite
+    r: RaportointivelvoiteType
   ) => void | undefined;
   addRaportointivelvoite: (index: number) => void;
   deleteRaportointivelvoite: (
     index: number,
-    r?: Raportointivelvoite
+    r?: RaportointivelvoiteType
   ) => Promise<void> | undefined;
 };
 
@@ -234,13 +237,13 @@ export const Raportointivelvoitteet = ({
   helpTexts,
 }: RaportointivelvoitteetProps) => {
   const [raportointivelvoitteet, setRaportointivelvoitteet] = useState<
-    Raportointivelvoite[] | undefined
+    RaportointivelvoiteType[] | undefined
   >();
   const dispatch = useHakujenHallintaDispatch();
   const startAutoSave = () => dispatch(startManuallySaving());
   useEffect(() => {
     const fetchRaportointivelvoitteet = async () => {
-      const r = await HttpUtil.get<Raportointivelvoite[]>(
+      const r = await HttpUtil.get<RaportointivelvoiteType[]>(
         `/api/avustushaku/${avustushaku.id}/raportointivelvoitteet`
       );
       setRaportointivelvoitteet(
@@ -250,7 +253,7 @@ export const Raportointivelvoitteet = ({
               {
                 "asha-tunnus": "",
                 lisatiedot: "",
-              } as Raportointivelvoite,
+              } as RaportointivelvoiteType,
             ]
       );
     };
@@ -259,7 +262,7 @@ export const Raportointivelvoitteet = ({
   }, [avustushaku.id]);
 
   const putRaportointivelvoite = useCallback(
-    debounce(async (index: number, r: Raportointivelvoite) => {
+    debounce(async (index: number, r: RaportointivelvoiteType) => {
       const newRaportointivelvoite = await HttpUtil.put(
         `/api/avustushaku/${avustushaku.id}/raportointivelvoite`,
         r
@@ -275,7 +278,7 @@ export const Raportointivelvoitteet = ({
   );
 
   const postRaportointivelvoite = useCallback(
-    debounce(async (r: Raportointivelvoite) => {
+    debounce(async (r: RaportointivelvoiteType) => {
       await HttpUtil.post(
         `/api/avustushaku/${avustushaku.id}/raportointivelvoite/${r.id}`,
         r
@@ -293,13 +296,13 @@ export const Raportointivelvoitteet = ({
     newRaportointivelvoitteet.splice(index + 1, 0, {
       "asha-tunnus": "",
       lisatiedot: "",
-    } as Raportointivelvoite);
+    } as RaportointivelvoiteType);
     setRaportointivelvoitteet(newRaportointivelvoitteet);
   };
 
   const deleteRaportointivelvoite = async (
     index: number,
-    r?: Raportointivelvoite
+    r?: RaportointivelvoiteType
   ) => {
     if (r?.id) {
       dispatch(startManuallySaving());

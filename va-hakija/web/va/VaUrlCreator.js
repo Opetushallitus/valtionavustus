@@ -1,5 +1,3 @@
-import RouteParser from "route-parser";
-
 import UrlCreator from "soresu-form/web/form/UrlCreator";
 
 export default class VaUrlCreator extends UrlCreator {
@@ -186,12 +184,12 @@ export default class VaUrlCreator extends UrlCreator {
   static parseAvustusHakuId(urlContent) {
     const location = urlContent.location;
     const pathname = location.pathname;
-    const parsedAvustusHakuIdObjectFi = new RouteParser(
-      "/avustushaku/:avustushaku_id/*ignore"
-    ).match(pathname);
-    const parsedAvustusHakuIdObjectSv = new RouteParser(
-      "/statsunderstod/:avustushaku_id/*ignore"
-    ).match(pathname);
+    const parsedAvustusHakuIdObjectFi = /*new RouteParser(
+      "/avustushaku/:avustushaku_id/!*ignore"
+    ).match(pathname);*/ undefined;
+    const parsedAvustusHakuIdObjectSv = /*new RouteParser(
+      "/statsunderstod/:avustushaku_id/!*ignore"
+    ).match(pathname);*/ undefined;
     const fallbackHakuId = urlContent.parsedQuery.avustushaku; // Leave this here for now in case of old ?avustushaku=1 URLs still around
     return (
       parsedAvustusHakuIdObjectFi.avustushaku_id ||

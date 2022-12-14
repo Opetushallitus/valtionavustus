@@ -26,8 +26,6 @@ import {
   Liite,
   Payment,
 } from "soresu-form/web/va/types";
-// @ts-ignore route-parser doesn't have proper types
-import RouteParser from "route-parser";
 import HttpUtil from "soresu-form/web/HttpUtil";
 import queryString from "query-string";
 import LocalStorage from "../LocalStorage";
@@ -45,8 +43,8 @@ export interface TalousarviotiliWithKoulutusasteet
   koulutusasteet: string[];
 }
 
-const ValiselvitysForm = require("../data/ValiselvitysForm.json") as Form;
-const LoppuselvitysForm = require("../data/LoppuselvitysForm.json") as Form;
+import ValiselvitysForm from "../data/ValiselvitysForm.json";
+import LoppuselvitysForm from "../data/LoppuselvitysForm.json";
 
 export interface Avustushaku extends BaseAvustushaku {
   roles?: Role[];
@@ -268,7 +266,10 @@ const appendBudgetComponent = (
   formContent: Form | undefined
 ) => {
   const form =
-    selvitysType === "valiselvitys" ? ValiselvitysForm : LoppuselvitysForm;
+    selvitysType === "valiselvitys"
+      ? (ValiselvitysForm as any as Form)
+      : (LoppuselvitysForm as any as Form);
+
   const originalVaBudget =
     formContent?.content &&
     FormUtil.findFieldByFieldType(formContent?.content, "vaBudget");
@@ -702,9 +703,7 @@ export const updateField = createAsyncThunk<
 
 const consolidateSubTabSelectionWithUrl = (): HakujenHallintaSubTab => {
   let subTab = "haku-editor" as const;
-  const parsedUrl = new RouteParser("/admin/:subTab/*ignore").match(
-    location.pathname
-  );
+  const parsedUrl = {};
   if (!_.isUndefined(history.pushState)) {
     if (parsedUrl["subTab"]) {
       subTab = parsedUrl["subTab"];

@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { createRoot } from "react-dom/client";
 import _ from "lodash";
-// @ts-ignore
-import RouteParser from "route-parser";
 
 import YhteenvetoController from "./YhteenvetoController.jsx";
 import HakemusArviointiStatuses from "./hakemus-details/HakemusArviointiStatuses";
@@ -312,9 +310,9 @@ const HakemusRow = ({ hakemus, multiBatch, grant }) => {
   );
 };
 
-const parsedRoute = new RouteParser(
+const parsedRoute = /*new RouteParser(
   "/yhteenveto/avustushaku/:avustushaku_id/listaus/:saved_search_id/"
-).match(location.pathname);
+).match(location.pathname);*/ undefined;
 if (!parsedRoute || _.isUndefined(parsedRoute["avustushaku_id"])) {
   setInterval(() => {
     const redirectUrlFromServer = localStorage.getItem(

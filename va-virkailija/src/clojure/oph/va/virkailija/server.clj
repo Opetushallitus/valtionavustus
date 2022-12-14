@@ -103,6 +103,8 @@
                  :handler any-access}
                 {:pattern #"^/virkailija/js/.*"
                  :handler any-access}
+                {:pattern #"^/virkailija/assets/.*"
+                 :handler any-access}
                 {:pattern #"^/virkailija/img/.*"
                  :handler any-access}
                 {:pattern #"^/virkailija/css/.*"

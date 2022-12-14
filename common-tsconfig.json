@@ -2,6 +2,7 @@
   "compilerOptions": {
     "moduleResolution": "node",
     "strict": true,
+    "resolveJsonModule":  true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
