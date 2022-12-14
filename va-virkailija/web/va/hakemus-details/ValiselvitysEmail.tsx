@@ -7,7 +7,7 @@ import Translator from "soresu-form/web/form/Translator";
 import NameFormatter from "soresu-form/web/va/util/NameFormatter";
 import { Avustushaku, Hakemus, Selvitys } from "soresu-form/web/va/types";
 import { Language } from "soresu-form/web/va/i18n/translations";
-//import translations from "soresu-form/resources/public/translations.json";
+import translations from "soresu-form/resources/public/translations.json";
 
 import { UserInfo } from "../types";
 import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
