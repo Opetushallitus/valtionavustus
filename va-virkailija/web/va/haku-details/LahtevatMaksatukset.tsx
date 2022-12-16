@@ -24,6 +24,7 @@ type LahtevatMaksatuksetProps = {
   payments: Maksatus[];
   refreshPayments: () => Promise<void>;
   userInfo: UserInfo;
+  sendTasmaytysraporttiTaloushallintoon: boolean;
 };
 
 type Document = {
@@ -51,7 +52,13 @@ const maksatuksetButtonText: Record<LoadingState, string> = {
   error: "Maksatuksien lähetys epäonnistui",
 };
 
-const asetMaksatuksetButtonText: Record<LoadingState, string> = {
+const maksatuksetJaTäsmäytysraporttiButtonText: Record<LoadingState, string> = {
+  initial: "Lähetä maksatukset ja täsmäytysraportti",
+  loading: "Lähetetään...",
+  error: "Maksatuksien lähetys epäonnistui",
+};
+
+const asetaMaksetuksiButtonText: Record<LoadingState, string> = {
   initial: "Aseta maksetuksi",
   loading: "Asetetaan...",
   error: "Maksatusten asetus epäonnistui",
@@ -63,6 +70,7 @@ export const LahtevatMaksatukset = ({
   payments,
   refreshPayments,
   userInfo,
+  sendTasmaytysraporttiTaloushallintoon,
 }: LahtevatMaksatuksetProps) => {
   const [laskunPvm, setLaskunPvm] = useState<Date>(now.toDate());
   const [erapaiva, setErapaiva] = useState(now.add(1, "w").toDate());
@@ -70,6 +78,8 @@ export const LahtevatMaksatukset = ({
   const [documents, setDocuments] = useState<Document[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
   const [maksatuksetSendState, setMaksatuksetSendState] =
+    useState<LoadingState>("initial");
+  const [tasmaytysraporttiSendState, setTasmaytysraporttiSendState] =
     useState<LoadingState>("initial");
   const [asetaMaksatuksetState, setAsetaMaksatuksetState] =
     useState<LoadingState>("initial");
@@ -118,19 +128,37 @@ export const LahtevatMaksatukset = ({
     return id;
   };
 
-  const onLähetäMaksatukset = async () => {
+  const lahetaMaksatukset = async () => {
+    setMaksatuksetSendState("loading");
+    const id = await createPaymentBatches();
+    await HttpUtil.post(`/api/v2/payment-batches/${id}/payments/`);
     try {
-      setMaksatuksetSendState("loading");
-      const id = await createPaymentBatches();
-      await HttpUtil.post(`/api/v2/payment-batches/${id}/payments/`);
+      await HttpUtil.post(`/api/v2/payment-batches/${id}/payments-email/`);
+    } catch (e: unknown) {
+      window.alert(
+        "Kaikki maksatukset lähetetty, mutta vahvistussähköpostin lähetyksessä tapahtui virhe"
+      );
+    }
+  };
+
+  const lahetaTasmaytysraportti = async () => {
+    setMaksatuksetSendState("loading");
+    await HttpUtil.post(
+      `/api/v2/reports/tasmaytys/avustushaku/${avustushaku.id}/send`
+    );
+  };
+
+  const onLähetäMaksatuksetJaTäsmäytysraportti = async () => {
+    try {
+      await lahetaMaksatukset();
       try {
-        await HttpUtil.post(`/api/v2/payment-batches/${id}/payments-email/`);
-      } catch (e: unknown) {
-        window.alert(
-          "Kaikki maksatukset lähetetty, mutta vahvistussähköpostin lähetyksessä tapahtui virhe"
-        );
+        if (sendTasmaytysraporttiTaloushallintoon) {
+          await lahetaTasmaytysraportti();
+        }
+        await refreshPayments();
+      } catch (e) {
+        setTasmaytysraporttiSendState("error");
       }
-      await refreshPayments();
     } catch (e) {
       setMaksatuksetSendState("error");
     }
@@ -149,7 +177,9 @@ export const LahtevatMaksatukset = ({
     }
   };
   const sending =
-    asetaMaksatuksetState === "loading" || maksatuksetSendState === "loading";
+    asetaMaksatuksetState === "loading" ||
+    maksatuksetSendState === "loading" ||
+    tasmaytysraporttiSendState === "loading";
   const disabled = !!errors.length || sending;
 
   return (
@@ -233,14 +263,19 @@ export const LahtevatMaksatukset = ({
               />
             ))}
           </div>
-          <button onClick={onLähetäMaksatukset} disabled={disabled}>
-            {maksatuksetButtonText[maksatuksetSendState]}
+          <button
+            onClick={onLähetäMaksatuksetJaTäsmäytysraportti}
+            disabled={disabled}
+          >
+            {sendTasmaytysraporttiTaloushallintoon
+              ? maksatuksetJaTäsmäytysraporttiButtonText[maksatuksetSendState]
+              : maksatuksetButtonText[maksatuksetSendState]}
           </button>
           {userInfo.privileges.includes("va-admin") && (
             <>
               &nbsp;
               <button onClick={onAsetaMaksetuksi} disabled={disabled}>
-                {asetMaksatuksetButtonText[asetaMaksatuksetState]}
+                {asetaMaksetuksiButtonText[asetaMaksatuksetState]}
               </button>
             </>
           )}

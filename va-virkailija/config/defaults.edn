@@ -34,6 +34,7 @@
          :sender "no-reply@csc.fi"
          :to-taloustarkastaja ["taloustarkastus@localhost"]
          :to-palkeet ["palkeet@localhost"]
+         :to-palkeet-ja-talouspalvelut ["palkeet@localhost" "talouspalvelut@localhost"]
          :bounce-address "oph-va-alerts@reaktor.com"
          :print-mail-on-disable? true
          :persistent-retry {:enabled? false

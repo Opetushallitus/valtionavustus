@@ -3,6 +3,7 @@
    [clj-pdf.core :refer [pdf]]
    [clojure.java.io :refer [output-stream]]
    [clojure.java.jdbc :as jdbc]
+   [oph.soresu.common.db :refer [execute!]]
    [clojure.tools.logging :as log]
    [oph.common.email :as email]
    [oph.soresu.common.db :refer [exec get-datasource]]
@@ -84,6 +85,32 @@
                   tmp-file (create-tasmaytysraportti tasmaytysraportti_date data)]
               (store-tasmaytysraportti tasmaytysraportti_date tmp-file)))))
       (log/info "No unreported maksatus rows found"))))
+
+(defn store-successfully-sent-tasmaytysraportti [avustushaku-id to tasmaytysraportti]
+  (execute! "INSERT INTO tasmaytysraportti 
+            (avustushaku_id, contents, mailed_at, mailed_to)
+            VALUES (?, ?, now(), ?)" [avustushaku-id tasmaytysraportti to]))
+
+(defn send-tasmaytysraportti [avustushaku-id tasmaytysraportti]
+  (let [subject (str "Valtionavustukset / Täsmäytysraportti / avustushaku " avustushaku-id)
+        filename (str "valtionavustukset-tasmaytysraportti-avustushaku-" avustushaku-id ".pdf")
+        to (:to-palkeet-ja-talouspalvelut email/smtp-config)]
+    (try
+      (email/try-send-msg-once {:from (-> email/smtp-config :from :fi)
+                                :reply-to (-> email/smtp-config :bounce-address)
+                                :sender (-> email/smtp-config :sender)
+                                :subject subject
+                                :to to
+                                :type "tasmaytysraportti"
+                                :lang "fi"
+                                :attachment {:title filename
+                                              :description subject
+                                              :contents tasmaytysraportti}}
+                                (fn [_] "Täsmäytysraportti liitteenä."))
+      (store-successfully-sent-tasmaytysraportti avustushaku-id to tasmaytysraportti)
+      (log/info (str "Succesfully send tasmaytysraportti for avustushaku " avustushaku-id))
+      (catch Exception e
+        (log/warn e (str "Failed to send tasmaytysraportti for avustushaku " avustushaku-id))))))
 
 (defn send-unsent-tasmaytysraportti-mails []
   (log/info "Looking for unsent täsymäytysraportit")

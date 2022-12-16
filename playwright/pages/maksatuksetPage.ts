@@ -92,7 +92,7 @@ export function MaksatuksetPage(page: Page) {
       .locator("a")
       .locator("text=Lähetetyt maksatukset");
     await expect(lahetetytTab).not.toContainText("uutta");
-    await page.locator("text=Lähetä maksatukset").click();
+    await page.locator("text=Lähetä maksatukset ja täsmäytysraportti").click();
     await expect(page.locator("text=Lähetetään...")).toBeVisible();
     await expect(lahetetytTab).toContainText("uutta", { timeout: 10000 });
   }

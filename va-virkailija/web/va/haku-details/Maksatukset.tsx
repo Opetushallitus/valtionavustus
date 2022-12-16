@@ -130,6 +130,11 @@ export const Maksatukset = () => {
           payments={outgoingPayments}
           refreshPayments={refreshPayments}
           userInfo={userInfo}
+          sendTasmaytysraporttiTaloushallintoon={
+            environment[
+              "tasmaytysraportti-taloushallintoon-maksatuksien-yhteydessa"
+            ]?.["enabled?"] === true
+          }
         />
       )}
       {userInfo.privileges.includes("va-admin") && (
