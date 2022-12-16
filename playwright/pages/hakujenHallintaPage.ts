@@ -886,7 +886,6 @@ export class HakujenHallintaPage {
     const avustushakuID = await this.createUnpublishedMuutoshakemusEnabledHaku(
       hakuProps
     );
-
     await this.publishAvustushaku();
     return avustushakuID;
   }
@@ -900,7 +899,7 @@ export class HakujenHallintaPage {
       muutoshakemusEnabledHakuLomakeJson,
       hakuProps
     );
-    await this.navigate(avustushakuID);
+    await this.switchToHaunTiedotTab();
     return avustushakuID;
   }
 
@@ -913,7 +912,7 @@ export class HakujenHallintaPage {
       muutoshakemusEnabledHakuLomakeJson,
       hakuProps
     );
-    await this.navigate(avustushakuID);
+    await this.switchToHaunTiedotTab();
     await this.publishAvustushaku();
     return avustushakuID;
   }

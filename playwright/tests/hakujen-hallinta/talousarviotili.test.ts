@@ -388,7 +388,6 @@ muutoshakemusTest(
       await hakujenHallintaPage.createUnpublishedMuutoshakemusEnabledHaku(
         hakuProps
       );
-    await hakujenHallintaPage.navigate(avustushakuID);
     const hauntiedotLocators = hakujenHallintaPage.hauntiedotLocators();
     await test.step("add 2 tilis to avustushaku", async () => {
       for (const { index, tili } of [

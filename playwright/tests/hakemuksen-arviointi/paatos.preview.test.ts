@@ -35,7 +35,6 @@ const test = submittedHakemusTest.extend({
       );
     });
     await test.step("publish avustushaku", async () => {
-      //await hakujenHallintaPage.waitForSave();
       await hakujenHallintaPage.switchToHaunTiedotTab();
       await hakujenHallintaPage.publishAvustushaku();
     });

@@ -146,6 +146,7 @@ export const unpublishedAvustushakuTest =
           await hakujenHallintaPage.createUnpublishedMuutoshakemusEnabledHaku(
             hakuProps
           );
+        await hakujenHallintaPage.waitForSave();
       });
       expectToBeDefined(avustushakuID);
       await use(avustushakuID);
