@@ -345,38 +345,69 @@ export interface DecisionLiite {
   version: string;
 }
 
-export type Decision = Partial<{
-  date: string;
-  taustaa: LocalizedTextOptional;
-  "myonteinenlisateksti-Yleissivistävä_koulutus,_ml__varhaiskasvatus": LocalizedTextOptional;
-  "myonteinenlisateksti-Ammatillinen_koulutus": LocalizedTextOptional;
-  "myonteinenlisateksti-Aikuiskoulutus_ja_vapaa_sivistystyö": LocalizedTextOptional;
-  "myonteinenlisateksti-Koko_opetustoimi": LocalizedTextOptional;
-  "myonteinenlisateksti-Kansalaisopisto": LocalizedTextOptional;
-  "myonteinenlisateksti-Kansanopisto": LocalizedTextOptional;
-  "myonteinenlisateksti-Opintokeskus": LocalizedTextOptional;
-  "myonteinenlisateksti-Kesäyliopisto": LocalizedTextOptional;
-  "myonteinenlisateksti-Poikkeus": LocalizedTextOptional;
-  "myonteinenlisateksti-Tiedeolympialaistoiminta": LocalizedTextOptional;
-  "myonteinenlisateksti-koulut_ja_kotiperuskoulut": LocalizedTextOptional;
-  "myonteinenlisateksti-Muut_järjestöt": LocalizedTextOptional;
-  "myonteinenlisateksti-Kristillisten_koulujen_kerhotoiminta": LocalizedTextOptional;
-  maksu: LocalizedTextOptional;
-  maksudate: string;
-  kaytto: LocalizedTextOptional;
-  kayttotarkoitus: LocalizedTextOptional;
-  kayttooikeudet: LocalizedTextOptional;
-  selvitysvelvollisuus: LocalizedTextOptional;
-  kayttoaika: LocalizedTextOptional;
-  lisatiedot: LocalizedTextOptional;
-  myonteinenlisateksti: LocalizedTextOptional;
-  sovelletutsaannokset: LocalizedTextOptional;
-  "dont-include-pakote-ohje"?: boolean;
-  johtaja: LocalizedTextOptional;
-  valmistelija: LocalizedTextOptional;
-  liitteet: DecisionLiite[];
-  updatedAt: string;
-}>;
+type Underscore<S extends string> = S extends " " ? never : S;
+
+type ToUnderscore<T extends string, P extends string = ""> = string extends T
+  ? string
+  : T extends `${infer C0}${infer R}`
+  ? ToUnderscore<R, `${P}${C0 extends Underscore<C0> ? "" : "_"}${C0}`>
+  : P;
+
+type Keyprefix<Prefix extends string, Key> = Key extends string
+  ? `${Prefix}${ToUnderscore<Key>}`
+  : never;
+
+export const Koulutusasteet = [
+  "Varhaiskasvatus",
+  "Yleissivistävä koulutus, ml. varhaiskasvatus",
+  "Esiopetus",
+  "Perusopetus",
+  "Lukiokoulutus",
+  "Taiteen perusopetus",
+  "Ammatillinen koulutus",
+  "Vapaa sivistystyö",
+  "Kansalaisopisto",
+  "Tiedeolympialaistoiminta",
+  "Suomi-koulut ja kotiperuskoulut",
+  "Muut järjestöt",
+  "Kristillisten koulujen kerhotoiminta",
+  "Kansanopisto",
+  "Opintokeskus",
+  "Kesäyliopisto",
+  "Korkeakoulutus",
+  "Aikuiskoulutus ja vapaa sivistystyö",
+  "Koko opetustoimi",
+  "Poikkeus",
+  "Muut hakuryhmät",
+  "Muut",
+] as const;
+
+type MyonteinenLisateksti = Keyprefix<
+  "myonteinenlisateksti-",
+  typeof Koulutusasteet[number]
+>;
+
+export type Decision = Partial<
+  {
+    date: string;
+    taustaa: LocalizedTextOptional;
+    maksu: LocalizedTextOptional;
+    maksudate: string;
+    kaytto: LocalizedTextOptional;
+    kayttotarkoitus: LocalizedTextOptional;
+    kayttooikeudet: LocalizedTextOptional;
+    selvitysvelvollisuus: LocalizedTextOptional;
+    kayttoaika: LocalizedTextOptional;
+    lisatiedot: LocalizedTextOptional;
+    myonteinenlisateksti: LocalizedTextOptional;
+    sovelletutsaannokset: LocalizedTextOptional;
+    "dont-include-pakote-ohje"?: boolean;
+    johtaja: LocalizedTextOptional;
+    valmistelija: LocalizedTextOptional;
+    liitteet: DecisionLiite[];
+    updatedAt: string;
+  } & MyonteinenLisateksti
+>;
 
 export type Avustushaku = {
   id: number;

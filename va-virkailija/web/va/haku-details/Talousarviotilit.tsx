@@ -14,32 +14,7 @@ import { TalousarviotiliWithUsageInfo } from "../koodienhallinta/types";
 import HelpTooltip from "../HelpTooltip";
 
 import styles from "./Talousarviotilit.module.less";
-import { HelpTexts } from "soresu-form/web/va/types";
-
-const Koulutusasteet = [
-  "Varhaiskasvatus",
-  "Yleissivistävä koulutus, ml. varhaiskasvatus",
-  "Esiopetus",
-  "Perusopetus",
-  "Lukiokoulutus",
-  "Taiteen perusopetus",
-  "Ammatillinen koulutus",
-  "Vapaa sivistystyö",
-  "Kansalaisopisto",
-  "Tiedeolympialaistoiminta",
-  "Suomi-koulut ja kotiperuskoulut",
-  "Muut järjestöt",
-  "Kristillisten koulujen kerhotoiminta",
-  "Kansanopisto",
-  "Opintokeskus",
-  "Kesäyliopisto",
-  "Korkeakoulutus",
-  "Aikuiskoulutus ja vapaa sivistystyö",
-  "Koko opetustoimi",
-  "Poikkeus",
-  "Muut hakuryhmät",
-  "Muut",
-] as const;
+import { HelpTexts, Koulutusasteet } from "soresu-form/web/va/types";
 
 const koulutusasteToOption = (aste: string) => {
   return {

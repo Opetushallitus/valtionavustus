@@ -1,16 +1,16 @@
-import { muutoshakemusTest } from "../fixtures/muutoshakemusTest";
+import { muutoshakemusTest } from "../../fixtures/muutoshakemusTest";
 import {
   getPaatoksetLahetettyEmails,
   lastOrFail,
   waitUntilMinEmails,
-} from "../utils/emails";
+} from "../../utils/emails";
 import { expect, Page } from "@playwright/test";
-import { VIRKAILIJA_URL } from "../utils/constants";
-import { expectToBeDefined } from "../utils/util";
-import { YhteenvetoPage } from "../pages/yhteenvetoPage";
-import { HakijaAvustusHakuPage } from "../pages/hakijaAvustusHakuPage";
-import { HakemustenArviointiPage } from "../pages/hakemustenArviointiPage";
-import { HakujenHallintaPage } from "../pages/hakujenHallintaPage";
+import { VIRKAILIJA_URL } from "../../utils/constants";
+import { expectToBeDefined } from "../../utils/util";
+import { YhteenvetoPage } from "../../pages/yhteenvetoPage";
+import { HakijaAvustusHakuPage } from "../../pages/hakijaAvustusHakuPage";
+import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
+import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 
 const getSearchUrl = async ({
   page,

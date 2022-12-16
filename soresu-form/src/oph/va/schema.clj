@@ -92,19 +92,28 @@
   {
    (s/optional-key :date) s/Str
    (s/optional-key :taustaa) LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Varhaiskasvatus") LocalizedStringOptional
    (myonteinen-lisateksti-schema-key "Yleissivistävä_koulutus,_ml__varhaiskasvatus") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Esiopetus") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Perusopetus") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Lukiokoulutus") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Taiteen_perusopetus") LocalizedStringOptional
    (myonteinen-lisateksti-schema-key "Ammatillinen_koulutus") LocalizedStringOptional
-   (myonteinen-lisateksti-schema-key "Aikuiskoulutus_ja_vapaa_sivistystyö") LocalizedStringOptional
-   (myonteinen-lisateksti-schema-key "Koko_opetustoimi") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Vapaa_sivistystyö") LocalizedStringOptional
    (myonteinen-lisateksti-schema-key "Kansalaisopisto") LocalizedStringOptional
-   (myonteinen-lisateksti-schema-key "Kansanopisto") LocalizedStringOptional
-   (myonteinen-lisateksti-schema-key "Opintokeskus") LocalizedStringOptional
-   (myonteinen-lisateksti-schema-key "Kesäyliopisto") LocalizedStringOptional
-   (myonteinen-lisateksti-schema-key "Poikkeus") LocalizedStringOptional
    (myonteinen-lisateksti-schema-key "Tiedeolympialaistoiminta") LocalizedStringOptional
    (myonteinen-lisateksti-schema-key "Suomi-koulut_ja_kotiperuskoulut") LocalizedStringOptional
    (myonteinen-lisateksti-schema-key "Muut_järjestöt") LocalizedStringOptional
    (myonteinen-lisateksti-schema-key "Kristillisten_koulujen_kerhotoiminta") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Kansanopisto") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Opintokeskus") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Kesäyliopisto") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Korkeakoulutus") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Aikuiskoulutus_ja_vapaa_sivistystyö") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Koko_opetustoimi") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Poikkeus") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Muut_hakuryhmät") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Muut") LocalizedStringOptional
    (s/optional-key :maksu) LocalizedStringOptional
    (s/optional-key :maksudate) s/Str
    (s/optional-key :kaytto) LocalizedStringOptional

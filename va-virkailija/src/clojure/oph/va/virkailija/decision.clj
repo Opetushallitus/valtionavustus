@@ -84,13 +84,12 @@
 
 
 (defn myonteinen-lisateksti [avustushaku hakemus lang]
-  (let [rahoitusalueet (-> avustushaku :content :rahoitusalueet)
-        rahoitusalue (-> hakemus :arvio :rahoitusalue)
+  (let [rahoitusalue (-> hakemus :arvio :rahoitusalue)
         decision (:decision avustushaku)
         rahoitusalue-key (keyword (str "myonteinenlisateksti-" (if rahoitusalue (str/replace rahoitusalue #"[\s\.]" "_") "")))
         content-rahoitusalue (-> decision rahoitusalue-key lang)
         content-default (decision-field decision :myonteinenlisateksti lang)
-        content (if (and (some some? rahoitusalueet) content-rahoitusalue) content-rahoitusalue content-default)
+        content (if (nil? content-rahoitusalue) content-default content-rahoitusalue)
         ]
     (if content
       (content-with-paragraphs content)

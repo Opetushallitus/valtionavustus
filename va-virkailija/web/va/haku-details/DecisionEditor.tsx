@@ -1239,11 +1239,20 @@ class DecisionDateAndSend extends React.Component<
   }
 }
 
+const getUniqueKoulutusasteet = (
+  talousarviotilit: Avustushaku["talousarviotilit"]
+) => {
+  const allKoulutusasteet =
+    talousarviotilit?.flatMap((t) => t?.koulutusasteet ?? []) ?? [];
+  return [...new Set(allKoulutusasteet)];
+};
+
 const DecisionEditor = () => {
   const dispatch = useHakujenHallintaDispatch();
   const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
   const { decisionLiitteet, environment, helpTexts } =
     useHakujenHallintaSelector(selectLoadedInitialData);
+  const koulutusasteet = getUniqueKoulutusasteet(avustushaku.talousarviotilit);
   const loadingAvustushaku = useHakujenHallintaSelector(
     (state) => state.haku.saveStatus.loadingAvustushaku
   );
@@ -1329,6 +1338,18 @@ const DecisionEditor = () => {
         dataTestId="myonteinenlisateksti"
         disabled={loadingAvustushaku}
       />
+      <div className="decision-subfields">
+        {koulutusasteet.map((aste) => (
+          <DecisionFields
+            key={aste}
+            title={`Myönteisen päätöksen lisäteksti - ${aste}`}
+            avustushaku={avustushaku}
+            id={`myonteinenlisateksti-${aste.replace(/[\s.]/g, "_")}`}
+            onChange={onChange}
+            disabled={loadingAvustushaku}
+          />
+        ))}
+      </div>
       {fields.map((field) => (
         <DecisionFields
           key={field.id}

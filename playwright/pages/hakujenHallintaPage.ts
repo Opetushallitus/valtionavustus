@@ -398,6 +398,12 @@ export class HakujenHallintaPage {
         .locator(
           "text=Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen valtionavustustoiminnassa"
         ),
+      lisatekstiDefault: this.page.locator(
+        '[id="decision.myonteinenlisateksti.fi"]'
+      ),
+      lisatekstiAmmatillinenKoulutus: this.page.locator(
+        '[id="decision.myonteinenlisateksti-Ammatillinen_koulutus.fi"]'
+      ),
     };
   }
 
