@@ -89,7 +89,7 @@
         rahoitusalue-key (keyword (str "myonteinenlisateksti-" (if rahoitusalue (str/replace rahoitusalue #"[\s\.]" "_") "")))
         content-rahoitusalue (-> decision rahoitusalue-key lang)
         content-default (decision-field decision :myonteinenlisateksti lang)
-        content (if (nil? content-rahoitusalue) content-default content-rahoitusalue)
+        content (if (str/blank? content-rahoitusalue) content-default content-rahoitusalue)
         ]
     (if content
       (content-with-paragraphs content)
