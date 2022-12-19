@@ -41,6 +41,8 @@ test("filtering haku table", async ({ avustushakuID, page, hakuProps }) => {
     expect(afterFiltering.defaultAvustushakuIndex).toEqual(-1);
     expect(afterFiltering.testAvustushakuIndex).toEqual(0);
     expect(afterFiltering.avustusHakuAmount).toEqual(1);
+    await avustushaku.input.fill(avustushakuName.toUpperCase());
+    await expect(hakuRows).toHaveCount(1);
     await avustushaku.input.fill("");
     await expect(hakuRows).toHaveCount(beforeFiltering.avustusHakuAmount);
     const afterClearingFilter = await getIndexInHakuList(
