@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
-source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/ansible-common-functions.sh"
+source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/common-functions.sh"
 
 function main {
-  local VAULT_FILE="$1"
-  install_python_and_dependencies
+  # check absible-command docker run to see how vaults & configs are mapped
+  # e.g. configs are under /servers/config/
 
-  ansible-vault edit "$VAULT_FILE" --vault-password-file="$repo/servers/gpg-wrapper.sh"
+  local VAULT_FILE="$1"
+
+  ansible-vault edit "$VAULT_FILE" --vault-password-file=/servers/gpg-wrapper.sh
 }
 
 main "$@"
