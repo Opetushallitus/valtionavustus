@@ -741,7 +741,8 @@ const tableFilterMap: Record<
   keyof TableFilterState,
   (state: TableFilterState, avustushaku: Avustushaku) => boolean
 > = {
-  hakuName: ({ hakuName }, haku) => haku.content.name.fi.toLowerCase().includes(hakuName.toLowerCase()),
+  hakuName: ({ hakuName }, haku) =>
+    haku.content.name.fi.toLowerCase().includes(hakuName.toLowerCase()),
   phases: ({ phases }, haku) => phases.includes(haku.phase),
   statuses: ({ statuses }, haku) => statuses.includes(haku.status),
   durationStart: ({ durationStart }, haku) => {
