@@ -324,6 +324,16 @@
         (log/error e)
         (internal-server-error {:message "error"}))))
 
+  (compojure-api/GET "/avustushaku/:avustushaku-id/get-tasmaytysraportti-email" []
+    :path-params [avustushaku-id :- Long]
+    :return [{:avustushaku-id s/Num :mailed-at java.sql.Timestamp :mailed-to s/Str}] 
+    (log/info "test-api: get tasmaytysraporti for avustushaku-id")
+    (try
+        (ok (query "SELECT avustushaku_id, mailed_at, mailed_to FROM tasmaytysraportti WHERE avustushaku_id = ?" [avustushaku-id]))
+      (catch Exception e
+        (log/error e)
+        (internal-server-error {:message "error"}))))
+
   (compojure-api/POST "/remove-stored-pitkaviite-from-all-avustushaku-payments" []
     :body  [body { :avustushakuId s/Num }]
     :return {:message s/Str}
