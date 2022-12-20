@@ -8,6 +8,9 @@ adminusers:
   vllle:
     state: present
     name: Ville Aaltonen
+  dariaoksman:
+    state: present
+    name: Daria Oksman
   tokarls:
     state: present
     name: Tomi Karlstedt
