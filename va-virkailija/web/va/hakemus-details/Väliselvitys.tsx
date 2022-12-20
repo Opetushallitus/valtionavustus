@@ -85,14 +85,13 @@ const Väliselvitys = () => {
             readonly={!isPresentingOfficer}
           />
         )}
-        {valiselvitysPyynnotSent && (
-          <SelvitysLink
-            avustushaku={avustushaku}
-            hakemus={hakemus}
-            selvitysType="valiselvitys"
-            helpText={selvitysLinkHelpText}
-          />
-        )}
+        <SelvitysLink
+          avustushaku={avustushaku}
+          hakemus={hakemus}
+          selvitysType="valiselvitys"
+          helpText={selvitysLinkHelpText}
+          selvitysPyynnotSent={valiselvitysPyynnotSent}
+        />
         {valiselvitys && hasSelvitysAnswers && (
           <ValiselvitysEmail
             hakemus={hakemus}

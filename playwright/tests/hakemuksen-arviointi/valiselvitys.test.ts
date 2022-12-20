@@ -184,13 +184,13 @@ selvitysTest(
   async ({ page, avustushakuID, acceptedHakemus: { hakemusID } }) => {
     const valiselvitysPage = VirkailijaValiselvitysPage(page);
     await test.step(
-      "link is hidden before sending loppuselvitykset",
+      "warning is shown before sending loppuselvitykset",
       async () => {
         await valiselvitysPage.navigateToValiselvitysTab(
           avustushakuID,
           hakemusID
         );
-        await expect(valiselvitysPage.linkToHakemus).toBeHidden();
+        await expect(valiselvitysPage.warning).toBeVisible();
       }
     );
     await test.step("send väliselvitykset", async () => {
@@ -198,21 +198,22 @@ selvitysTest(
       await hakujenHallintaPage.navigateToValiselvitys(avustushakuID);
       await hakujenHallintaPage.sendValiselvitys();
     });
-    await test.step("link and lomake work", async () => {
+    await test.step("warhing is hidden, link and lomake work", async () => {
       await valiselvitysPage.navigateToValiselvitysTab(
         avustushakuID,
         hakemusID
       );
-      const [loppuselvitysFormPage] = await Promise.all([
+      await expect(valiselvitysPage.warning).toBeHidden();
+      const [valiselvitysFormPage] = await Promise.all([
         waitForNewTab(page),
         valiselvitysPage.linkToHakemus.click(),
       ]);
-      await loppuselvitysFormPage.waitForNavigation();
+      await valiselvitysFormPage.waitForNavigation();
       await expect(
-        loppuselvitysFormPage.locator("h1").locator('text="Väliselvitys"')
+        valiselvitysFormPage.locator("h1").locator('text="Väliselvitys"')
       ).toBeVisible();
       await expect(
-        loppuselvitysFormPage.locator("button", {
+        valiselvitysFormPage.locator("button", {
           hasText: "Lähetä käsiteltäväksi",
         })
       ).toBeVisible();

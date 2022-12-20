@@ -68,5 +68,6 @@ export function VirkailijaValiselvitysPage(page: Page) {
     acceptVäliselvitys: SelvitysTab(page, "vali").acceptSelvitys,
     navigateToLoppuselvitysTab,
     linkToHakemus: page.locator('text="Linkki lomakkeelle"'),
+    warning: page.locator("#selvitys-not-sent-warning"),
   };
 }

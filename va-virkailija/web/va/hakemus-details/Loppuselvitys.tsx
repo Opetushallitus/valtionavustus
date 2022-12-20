@@ -95,14 +95,13 @@ const Loppuselvitys = () => {
             readonly={!isPresentingOfficer}
           />
         )}
-        {loppuselvitysPyynnotSent && (
-          <SelvitysLink
-            avustushaku={avustushaku}
-            hakemus={hakemus}
-            selvitysType="loppuselvitys"
-            helpText={selvitysLinkHelpText}
-          />
-        )}
+        <SelvitysLink
+          avustushaku={avustushaku}
+          hakemus={hakemus}
+          selvitysType="loppuselvitys"
+          helpText={selvitysLinkHelpText}
+          selvitysPyynnotSent={loppuselvitysPyynnotSent}
+        />
         {hasSelvitys && (
           <LoppuselvitysForm
             hakemus={hakemus}

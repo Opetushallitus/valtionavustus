@@ -12,13 +12,13 @@ test("Loppuselvitys tab in hakemuksen arviointi should have link to correct lopp
 }) => {
   const loppuselvitysPage = LoppuselvitysPage(page);
   await test.step(
-    "link is hidden before sending loppuselvitykset",
+    "warning is shown before sending loppuselvitykset",
     async () => {
       await loppuselvitysPage.navigateToLoppuselvitysTab(
         avustushakuID,
         hakemusID
       );
-      await expect(loppuselvitysPage.linkToForm).toBeHidden();
+      await expect(loppuselvitysPage.warning).toBeVisible();
     }
   );
   await test.step("send loppuselvitykset", async () => {
@@ -26,11 +26,12 @@ test("Loppuselvitys tab in hakemuksen arviointi should have link to correct lopp
     await hakujenHallintaPage.navigateToLoppuselvitys(avustushakuID);
     await hakujenHallintaPage.sendLoppuselvitys();
   });
-  await test.step("link and lomake work", async () => {
+  await test.step("warning is hidden, link and lomake work", async () => {
     await loppuselvitysPage.navigateToLoppuselvitysTab(
       avustushakuID,
       hakemusID
     );
+    await expect(loppuselvitysPage.warning).toBeHidden();
     const [loppuselvitysFormPage] = await Promise.all([
       waitForNewTab(page),
       loppuselvitysPage.linkToForm.click(),

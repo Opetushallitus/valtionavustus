@@ -19,5 +19,6 @@ export function LoppuselvitysPage(page: Page) {
   return {
     navigateToLoppuselvitysTab,
     linkToForm: page.locator("a", { hasText: "Linkki lomakkeelle" }),
+    warning: page.locator("#selvitys-not-sent-warning"),
   };
 }
