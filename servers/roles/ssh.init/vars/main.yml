@@ -8,7 +8,7 @@ adminusers:
   vllle:
     state: present
     name: Ville Aaltonen
-  dariaoksman:
+  darant:
     state: present
     name: Daria Oksman
   tokarls:
