@@ -16,7 +16,13 @@ import { DateInput } from "./DateInput";
 import { Maksatus } from "./Maksatukset";
 import { MaksatuksetTable } from "./MaksatuksetTable";
 import { useVaUserSearch } from "../VaUserSearch";
-import { Avustushaku } from "../hakujenHallinta/hakuReducer";
+import {
+  Avustushaku,
+  startSendingMaksatuksetAndTasmaytysraportti,
+  startIndicatingThatSendingMaksatuksetAndTasmaytysraporttiFailed,
+  stopSendingMaksatuksetAndTasmaytysraportti,
+} from "../hakujenHallinta/hakuReducer";
+import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
 
 type LahtevatMaksatuksetProps = {
   avustushaku: Avustushaku;
@@ -52,12 +58,6 @@ const maksatuksetButtonText: Record<LoadingState, string> = {
   error: "Maksatuksien lähetys epäonnistui",
 };
 
-const maksatuksetJaTäsmäytysraporttiButtonText: Record<LoadingState, string> = {
-  initial: "Lähetä maksatukset ja täsmäytysraportti",
-  loading: "Lähetetään...",
-  error: "Maksatuksien lähetys epäonnistui",
-};
-
 const asetaMaksetuksiButtonText: Record<LoadingState, string> = {
   initial: "Aseta maksetuksi",
   loading: "Asetetaan...",
@@ -72,14 +72,13 @@ export const LahtevatMaksatukset = ({
   userInfo,
   sendTasmaytysraporttiTaloushallintoon,
 }: LahtevatMaksatuksetProps) => {
+  const dispatch = useHakujenHallintaDispatch();
   const [laskunPvm, setLaskunPvm] = useState<Date>(now.toDate());
   const [erapaiva, setErapaiva] = useState(now.add(1, "w").toDate());
   const [tositePvm, setTositePvm] = useState<Date>();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
   const [maksatuksetSendState, setMaksatuksetSendState] =
-    useState<LoadingState>("initial");
-  const [tasmaytysraporttiSendState, setTasmaytysraporttiSendState] =
     useState<LoadingState>("initial");
   const [asetaMaksatuksetState, setAsetaMaksatuksetState] =
     useState<LoadingState>("initial");
@@ -128,37 +127,37 @@ export const LahtevatMaksatukset = ({
     return id;
   };
 
-  const lahetaMaksatukset = async () => {
+  const onLähetäMaksatuksetJaTäsmäytysraportti = async () => {
     setMaksatuksetSendState("loading");
-    const id = await createPaymentBatches();
-    await HttpUtil.post(`/api/v2/payment-batches/${id}/payments/`);
     try {
-      await HttpUtil.post(`/api/v2/payment-batches/${id}/payments-email/`);
-    } catch (e: unknown) {
-      window.alert(
-        "Kaikki maksatukset lähetetty, mutta vahvistussähköpostin lähetyksessä tapahtui virhe"
+      dispatch(startSendingMaksatuksetAndTasmaytysraportti());
+      const paymentBatchId = await createPaymentBatches();
+      await HttpUtil.post(
+        `/api/send-maksatukset-and-tasmaytysraportti/avustushaku/${avustushaku.id}/payments-batch/${paymentBatchId}`
+      );
+      dispatch(stopSendingMaksatuksetAndTasmaytysraportti());
+      await refreshPayments();
+    } catch (e) {
+      dispatch(stopSendingMaksatuksetAndTasmaytysraportti());
+      dispatch(
+        startIndicatingThatSendingMaksatuksetAndTasmaytysraporttiFailed()
       );
     }
   };
 
-  const lahetaTasmaytysraportti = async () => {
-    setMaksatuksetSendState("loading");
-    await HttpUtil.post(
-      `/api/v2/reports/tasmaytys/avustushaku/${avustushaku.id}/send`
-    );
-  };
-
-  const onLähetäMaksatuksetJaTäsmäytysraportti = async () => {
+  const onLähetäMaksatukset = async () => {
     try {
-      await lahetaMaksatukset();
+      setMaksatuksetSendState("loading");
+      const id = await createPaymentBatches();
+      await HttpUtil.post(`/api/v2/payment-batches/${id}/payments/`);
       try {
-        if (sendTasmaytysraporttiTaloushallintoon) {
-          await lahetaTasmaytysraportti();
-        }
-        await refreshPayments();
-      } catch (e) {
-        setTasmaytysraporttiSendState("error");
+        await HttpUtil.post(`/api/v2/payment-batches/${id}/payments-email/`);
+      } catch (e: unknown) {
+        window.alert(
+          "Kaikki maksatukset lähetetty, mutta vahvistussähköpostin lähetyksessä tapahtui virhe"
+        );
       }
+      await refreshPayments();
     } catch (e) {
       setMaksatuksetSendState("error");
     }
@@ -177,9 +176,7 @@ export const LahtevatMaksatukset = ({
     }
   };
   const sending =
-    asetaMaksatuksetState === "loading" ||
-    maksatuksetSendState === "loading" ||
-    tasmaytysraporttiSendState === "loading";
+    asetaMaksatuksetState === "loading" || maksatuksetSendState === "loading";
   const disabled = !!errors.length || sending;
 
   return (
@@ -264,11 +261,15 @@ export const LahtevatMaksatukset = ({
             ))}
           </div>
           <button
-            onClick={onLähetäMaksatuksetJaTäsmäytysraportti}
+            onClick={
+              sendTasmaytysraporttiTaloushallintoon
+                ? onLähetäMaksatuksetJaTäsmäytysraportti
+                : onLähetäMaksatukset
+            }
             disabled={disabled}
           >
             {sendTasmaytysraporttiTaloushallintoon
-              ? maksatuksetJaTäsmäytysraporttiButtonText[maksatuksetSendState]
+              ? "Lähetä maksatukset ja täsmäytysraportti"
               : maksatuksetButtonText[maksatuksetSendState]}
           </button>
           {userInfo.privileges.includes("va-admin") && (

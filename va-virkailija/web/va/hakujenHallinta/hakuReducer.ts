@@ -125,6 +125,8 @@ type ExtraSavingStates = {
   savingForm: boolean;
   savingTalousarviotilit: boolean;
   savingManuallyRefactorToOwnActionsAtSomepoint: boolean;
+  sendingMaksatuksetAndTasmaytysraportti: boolean;
+  sendingMaksatuksetAndTasmaytysraporttiFailed: boolean;
 };
 
 export type SaveStatus = {
@@ -194,6 +196,23 @@ export const updateProjects = createAsyncThunk<
     payload.projects
   );
 });
+
+export const startIndicatingThatSendingMaksatuksetAndTasmaytysraporttiFailed =
+  createAsyncThunk<void, void, { state: HakujenHallintaRootState }>(
+    "haku/startIndicatingThatSendingMaksatuksetAndTasmaytysraporttiFailed",
+    async (_, thunkAPI) => {
+      thunkAPI.dispatch(
+        hakuSlice.actions.startIndicatingThatSendingMaksatuksetAndTasmaytysraporttiFailed()
+      );
+      setTimeout(
+        () =>
+          thunkAPI.dispatch(
+            hakuSlice.actions.stopIndicatingThatSendingMaksatuksetFailed()
+          ),
+        5000
+      );
+    }
+  );
 
 export const replaceTalousarviotilit = createAsyncThunk<
   void,
@@ -751,6 +770,20 @@ const hakuSlice = createSlice({
         "savingManuallyRefactorToOwnActionsAtSomepoint"
       );
     },
+    startSendingMaksatuksetAndTasmaytysraportti: (state) => {
+      state.saveStatus.sendingMaksatuksetAndTasmaytysraportti = true;
+    },
+    stopSendingMaksatuksetAndTasmaytysraportti: (state) => {
+      state.saveStatus.sendingMaksatuksetAndTasmaytysraportti = false;
+    },
+    startIndicatingThatSendingMaksatuksetAndTasmaytysraporttiFailed: (
+      state
+    ) => {
+      state.saveStatus.sendingMaksatuksetAndTasmaytysraporttiFailed = true;
+    },
+    stopIndicatingThatSendingMaksatuksetFailed: (state) => {
+      state.saveStatus.sendingMaksatuksetAndTasmaytysraporttiFailed = false;
+    },
     completeManualSave: (state) => {
       state.saveStatus = saveSuccess(
         state,
@@ -1042,6 +1075,8 @@ export const {
   updateTalousarviotilit,
   addSelectionCriteria,
   removeSelectionCriteria,
+  startSendingMaksatuksetAndTasmaytysraportti,
+  stopSendingMaksatuksetAndTasmaytysraportti,
 } = hakuSlice.actions;
 
 export default hakuSlice.reducer;

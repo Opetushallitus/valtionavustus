@@ -16,6 +16,8 @@ interface HeaderSaveStatus {
   savingForm?: boolean;
   savingTalousarviotilit?: boolean;
   savingManuallyRefactorToOwnActionsAtSomepoint?: boolean;
+  sendingMaksatuksetAndTasmaytysraportti?: boolean;
+  sendingMaksatuksetAndTasmaytysraporttiFailed?: boolean;
 }
 
 type NotificationStatus = "ok" | "error" | "warning" | "info";
@@ -67,6 +69,8 @@ export const HeaderContainer = ({
     saveStatus?.savingForm,
     saveStatus?.savingTalousarviotilit,
     saveStatus?.savingManuallyRefactorToOwnActionsAtSomepoint,
+    saveStatus?.sendingMaksatuksetAndTasmaytysraportti,
+    saveStatus?.sendingMaksatuksetAndTasmaytysraporttiFailed,
   ]);
 
   return (
@@ -218,6 +222,18 @@ function getNotificationContent(
       notification: "Ladataan tietoja",
       notificationIcon: saveInProgressIcon,
       status: "warning",
+    };
+  } else if (saveStatus?.sendingMaksatuksetAndTasmaytysraportti) {
+    return {
+      notification: "Lähettää maksatuksia ja täsmäytysraporttia",
+      notificationIcon: saveInProgressIcon,
+      status: "ok",
+    };
+  } else if (saveStatus?.sendingMaksatuksetAndTasmaytysraporttiFailed) {
+    return {
+      notification: "Maksatuksien ja täsmäytysraportin lähetys epäonnistui",
+      notificationIcon: errorIcon,
+      status: "error",
     };
   } else {
     return undefined;

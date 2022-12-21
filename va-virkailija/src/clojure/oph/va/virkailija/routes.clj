@@ -30,6 +30,7 @@
             [oph.va.virkailija.payments-routes :as payments-routes]
             [oph.va.virkailija.remote-file-service :refer [get-all-maksatukset-from-maksatuspalvelu]]
             [oph.va.virkailija.reporting-routes :as reporting-routes]
+            [oph.va.virkailija.maksatukset-and-tasmaytysraportti-routes :as maksatukset-and-tasmaytysraportti-routes]
             [oph.va.virkailija.rondo-scheduling :refer [processMaksupalaute put-maksupalaute-to-maksatuspalvelu]]
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.schema :as virkailija-schema]
@@ -587,6 +588,8 @@
                                              application-routes/routes)
                       (compojure-api/context
                        "/api/v2/reports" [] :tags ["reports"] reporting-routes/routes)
+                      (compojure-api/context "/api/send-maksatukset-and-tasmaytysraportti" [] :tags ["maksatukset and tasmaytysraportti"] 
+                                             maksatukset-and-tasmaytysraportti-routes/routes)
                       (compojure-api/context "/api/v2/payment-batches" [] :tags ["payment batches"]
                                              payment-batches-routes/routes)
                       (compojure-api/context "/api/v2/va-code-values" [] :tags ["va-code-values"]

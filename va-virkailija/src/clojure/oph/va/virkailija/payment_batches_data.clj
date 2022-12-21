@@ -1,7 +1,9 @@
 (ns oph.va.virkailija.payment-batches-data
   (:require [clojure.core.async :as a]
             [oph.soresu.common.db :refer [exec]]
+            [clojure.tools.logging :as log]
             [oph.va.virkailija.db.queries :as queries]
+            [clojure.core.async :refer [<!!]]
             [oph.va.virkailija.utils
              :refer [convert-to-dash-keys convert-to-underscore-keys
                      with-timeout]]
@@ -14,7 +16,9 @@
             [oph.va.virkailija.invoice :as invoice]
             [clj-time.core :as t]
             [clj-time.format :as f]
-            [oph.va.virkailija.email :as email]))
+            [oph.va.virkailija.email :as email]
+            [oph.va.virkailija.utils :refer [either?]]
+            [oph.va.virkailija.authentication :as authentication]))
 
 (def date-formatter (f/formatter "dd.MM.YYYY"))
 
@@ -154,3 +158,30 @@
        (map convert-to-dash-keys)
        (map payments-data/convert-timestamps-from-sql)
        (map set-batch-documents)))
+
+(defn send-payments-with-id [batch-id request]
+  (let [batch (assoc
+                (get-batch batch-id)
+                :documents (get-batch-documents batch-id))
+        c (send-payments
+            {:batch batch
+              :grant (grant-data/get-grant (:grant-id batch))
+              :identity (authentication/get-request-identity request)})]
+    (let [result
+          (loop [total-result {:count 0 :error-count 0 :errors '()}]
+            (if-let [r (<!! c)]
+              (if (or (:success r)
+                      (either? (get-in r [:error :error-type])
+                                #{:already-paid :no-payments}))
+                (recur (update total-result :count inc))
+                (do (when (= (get-in r [:error :error-type]) :exception)
+                      (log/error (get-in r [:error :exception])))
+                    (recur (-> total-result
+                                (update :count inc)
+                                (update :error-count inc)
+                                (update :errors conj (:error r))))))
+              total-result))]
+      {:success
+            (and (= (:error-count result) 0) (> (:count result) 0))
+            :errors (map :error-type (:errors result))})))
+
