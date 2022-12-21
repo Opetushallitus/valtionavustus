@@ -23,7 +23,7 @@ export default function SelvitysLink({
   const publicUrl = `/selvitys/avustushaku/${avustushaku.id}/${selvitysType}?hakemus=${userKey}`;
 
   const warningText =
-    "Huom! Mikäli jaat lomakelinkin yksittäiselle hankkeelle ennen selvityspyyntöjen lähettämistä, varmista että selvityslomakepohjaa ei tämän jälkeen enää muokata";
+    "Huom! Mikäli jaat lomakelinkin yksittäiselle hankkeelle ennen selvityspyyntöjen lähettämistä, varmista että selvityslomakepohjaa ei tämän jälkeen enää muokata.";
 
   return (
     <span className="decision">
