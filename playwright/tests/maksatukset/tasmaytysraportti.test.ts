@@ -29,7 +29,7 @@ test("tasmaytysraportti is sent when maksatuset are sent", async ({
     avustushakuID,
     page.request
   );
-  expect(tasmaytysraportitBeforeMaksatukset.length).toBeLessThanOrEqual(0);
+  expect(tasmaytysraportitBeforeMaksatukset).toHaveLength(0);
 
   const maksatuksetPage = MaksatuksetPage(page);
   await maksatuksetPage.goto(avustushakuName);
@@ -40,5 +40,5 @@ test("tasmaytysraportti is sent when maksatuset are sent", async ({
     avustushakuID,
     page.request
   );
-  expect(tasmaytysraportitAfterMaksatukset.length).toBeGreaterThanOrEqual(1);
+  expect(tasmaytysraportitAfterMaksatukset).toHaveLength(1);
 });
