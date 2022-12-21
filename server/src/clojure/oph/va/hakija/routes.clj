@@ -287,12 +287,12 @@
            (resp/redirect "http://oph.fi/rahoitus/valtionavustukset"))))
 
    ;; Finnish subcontext
-   (compojure/GET "/muutoshakemus" [] (return-html "hakija/muutoshakemus.html"))
-   (compojure/GET "/muutoshakemus/paatos" [] (return-html "hakija/muutoshakemus.html"))
-   (compojure/GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "hakija/index.html"))
-   (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "hakija/selvitys.html"))
-   (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "hakija/selvitys.html"))
-   (compojure/GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "hakija/login.html"))
+   (compojure/GET "/muutoshakemus" [] (return-html "hakija/va-hakija/web/va/muutoshakemus.html"))
+   (compojure/GET "/muutoshakemus/paatos" [] (return-html "hakija/va-hakija/web/va/muutoshakemus.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "hakija/va-hakija/web/va/index.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "hakija/va-hakija/web/va/selvitys.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "hakija/va-hakija/web/va/selvitys.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "hakija/va-hakija/web/va/login.html"))
 
    (compojure/GET "/avustushaku/:avustushaku-id/esikatselu" [avustushaku-id] (return-html "hakija/index.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys/esikatselu" [avustushaku-id] (return-html "hakija/selvitys.html"))
@@ -315,8 +315,8 @@
    (compojure-route/resources "/muutoshakemus/paatos" {:mime-types {"html" "text/html; charset=utf-8"}})
 
    ;;; Swedish subcontext
-   (compojure/GET "/statsunderstod/:avustushaku-id/visa" [avustushaku-id] (return-html "hakija/index.html"))
-   (compojure/GET "/statsunderstod/:avustushaku-id/" [avustushaku-id] (return-html "hakija/login.html"))
+   (compojure/GET "/statsunderstod/:avustushaku-id/visa" [avustushaku-id] (return-html "hakija/va-hakija/web/va/index.html"))
+   (compojure/GET "/statsunderstod/:avustushaku-id/" [avustushaku-id] (return-html "hakija/va-hakija/web/va/login.html"))
 
    va-routes/logo-route
 
