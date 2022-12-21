@@ -288,15 +288,11 @@ export class HakemustenArviointiPage {
     await expect(this.arviointiTabLocators().taTili.value).toContainText(
       rahoitusalue
     );
-    await this.waitForSave();
     await this.acceptHakemus(budget);
     return hakemusID;
   }
 
   async acceptHakemus(budget: AcceptedBudget = "100000") {
-    await this.page.click(
-      "#arviointi-tab label[for='set-arvio-status-plausible']"
-    );
     await this.acceptBudget(budget);
     await this.page.click(
       "#arviointi-tab label[for='set-arvio-status-accepted']"

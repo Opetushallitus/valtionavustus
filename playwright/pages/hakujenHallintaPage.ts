@@ -755,13 +755,13 @@ export class HakujenHallintaPage {
     await this.addValmistelija("Viivi Virkailija");
     await this.addArvioija("Päivi Pääkäyttäjä");
 
-    for (var i = 0; i < selectionCriteria.length; i++) {
+    for (let i = 0; i < selectionCriteria.length; i++) {
       await this.page.getByTestId("add-selection-criteria").click();
       await this.page.fill(`#selection-criteria-${i}-fi`, selectionCriteria[i]);
       await this.page.fill(`#selection-criteria-${i}-sv`, selectionCriteria[i]);
     }
 
-    for (var i = 0; i < raportointivelvoitteet.length; i++) {
+    for (let i = 0; i < raportointivelvoitteet.length; i++) {
       await this.selectRaportointilaji(
         i,
         raportointivelvoitteet[i].raportointilaji
@@ -780,13 +780,11 @@ export class HakujenHallintaPage {
           raportointivelvoitteet[i].lisatiedot ?? ""
         );
       }
-      await this.waitForSave();
       await this.page.click(`[id="new-raportointivelvoite-${i}"]`);
     }
 
     for (const saadanto of lainsaadanto) {
       await this.page.locator(`label:has-text("${saadanto}")`).click();
-      await this.waitForSave();
     }
 
     await this.switchToPaatosTab();
@@ -799,9 +797,8 @@ export class HakujenHallintaPage {
       hankkeenPaattymispaiva
     );
     await this.page.fill('[id="decision.taustaa.fi"]', "taustaa");
-
-    await this.waitForSave();
     await this.switchToHaunTiedotTab();
+    await this.waitForSave();
   }
 
   async addValmistelija(name: string) {
