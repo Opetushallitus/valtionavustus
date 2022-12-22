@@ -11,4 +11,5 @@
  :email {:enabled? true
          :host "localhost"
          :port 42069}
+ :paatoksen-sposti-allekirjoittaneille {:enabled? true}
  :applications-ui {:enabled? true}}
