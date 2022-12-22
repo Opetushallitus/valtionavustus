@@ -225,7 +225,7 @@ function getNotificationContent(
     };
   } else if (saveStatus?.sendingMaksatuksetAndTasmaytysraportti) {
     return {
-      notification: "Lähettää maksatuksia ja täsmäytysraporttia",
+      notification: "Lähetetään maksatuksia ja täsmäytysraporttia",
       notificationIcon: saveInProgressIcon,
       status: "ok",
     };
