@@ -35,18 +35,15 @@
   (when str
     (common-string/trim-ws str)))
 
-(defn simple-or-not [msg]
-  (if (:attachment msg)
+(defn simple-or-not [{:keys [attachment]}]
+  (if attachment
     (MultiPartEmail.)
     (SimpleEmail.)))
 
-(defn- msg->description [msg]
-  (let [from (or (:from msg) (:sender msg))
-        sender (:sender msg)
-        to (:to msg)
-        subject (:subject msg)
-        type (name (:type msg))
-        lang (name (:lang msg))]
+(defn- msg->description [{:keys [from sender to subject type lang]}]
+  (let [from (or from sender)
+        type (name type)
+        lang (name lang)]
     (format "%s message from %s (with sender %s) to %s (lang: %s) with subject '%s'"
             type
             from
@@ -55,23 +52,36 @@
             lang
             subject)))
 
-(defn store-email [msg email-msg]
-  {:pre [(coll? (:to msg))
-         (not-any? empty? (:to msg))
-         (not-empty email-msg)
-         (not-empty (:sender msg))
-         (not-empty (:from msg))
-         (not-empty (:subject msg))
-         (not-empty (name (:type msg)))
-         (not-empty (name (:lang msg)))]}
-  (let [from (common-string/trim-ws (:from msg))
-        sender (common-string/trim-ws (:sender msg))
-        to (mapv common-string/trim-ws (:to msg))
-        bcc (trim-ws-or-nil (:bcc msg))
-        reply-to (trim-ws-or-nil (:reply-to msg))
-        subject (common-string/trim-ws (:subject msg))
-        attachment (:attachment msg)]
-    (log/info "Storing email: " (msg->description msg))
+(defn- valid-message? [{:keys [to sender from subject type lang]}]
+  [(coll? to)
+   (not-any? empty? to)
+   (not-empty sender)
+   (not-empty from)
+   (not-empty subject)
+   (not-empty (name type))
+   (not-empty (name lang))])
+
+(defn store-email [{:keys [to sender from subject type lang bcc reply-to attachment]}
+                   email-msg]
+  {:pre (conj [(valid-message? {:from    from
+                                :sender  sender
+                                :to      to
+                                :subject subject
+                                :type    type
+                                :lang    lang})]
+              (not-empty email-msg))}
+  (let [from (common-string/trim-ws from)
+        sender (common-string/trim-ws sender)
+        to (mapv common-string/trim-ws to)
+        bcc (trim-ws-or-nil bcc)
+        reply-to (trim-ws-or-nil reply-to)
+        subject (common-string/trim-ws subject)]
+    (log/info "Storing email: " (msg->description {:from    from
+                                                   :sender  sender
+                                                   :to      to
+                                                   :subject subject
+                                                   :type    type
+                                                   :lang    lang}))
     (let [result (query "INSERT INTO virkailija.email (formatted, from_address, sender, to_address, bcc, reply_to, subject, attachment_contents, attachment_title, attachment_description)
                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id"
                         [email-msg from sender to bcc reply-to subject (:contents attachment) (:title attachment) (:description attachment)])
@@ -80,17 +90,22 @@
       email_id)))
 
 
-(defn create-mail-send-fn [msg email-msg]
-  (let [from (common-string/trim-ws (:from msg))
-        sender (common-string/trim-ws (:sender msg))
-        to (mapv common-string/trim-ws (:to msg))
-        bcc (trim-ws-or-nil (:bcc msg))
-        reply-to (trim-ws-or-nil (:reply-to msg))
-        subject (common-string/trim-ws (:subject msg))
-        attachment (:attachment msg)]
-    (log/info "Sending email:" (msg->description msg))
+(defn create-mail-send-fn [{:keys [from sender to bcc reply-to subject attachment lang]} email-msg]
+  (let [from (common-string/trim-ws from)
+        sender (common-string/trim-ws sender)
+        to (mapv common-string/trim-ws to)
+        bcc (trim-ws-or-nil bcc)
+        reply-to (trim-ws-or-nil reply-to)
+        subject (common-string/trim-ws subject)
+        description (msg->description {:from from
+                                       :sender sender
+                                       :to to
+                                       :subject subject
+                                       :type type
+                                       :lang lang})]
+    (log/info "Sending email:" description)
     (let [make-email-obj (fn []
-                           (let [msg (simple-or-not msg)]
+                           (let [msg (simple-or-not {:attachment attachment})]
                              (doto msg
                                (.setHostName (:host smtp-config))
                                (.setSmtpPort (:port smtp-config))
@@ -140,31 +155,47 @@
                                      (.getHeaders email-obj)
                                      (.getSubject email-obj)
                                      email-msg)))))]
-      [(msg->description msg) send-fn])))
+      [description send-fn])))
 
-(defn create-email-event [email-id success msg]
-  (let [msg-type (:type msg)
-        hakemus-id (:hakemus-id msg)
-        avustushaku-id (:avustushaku-id msg)
-        muutoshakemus-id (:muutoshakemus-id msg)]
-    (try
-      (log/info "Storing email event for email: " email-id)
-      (execute! "INSERT INTO virkailija.email_event (avustushaku_id, hakemus_id, muutoshakemus_id, email_id, email_type, success)
+(defn create-email-event [email-id success {:keys [type hakemus-id avustushaku-id muutoshakemus-id]}]
+  (try
+    (log/info "Storing email event for email: " email-id)
+    (execute! "INSERT INTO virkailija.email_event (avustushaku_id, hakemus_id, muutoshakemus_id, email_id, email_type, success)
                  VALUES (?, ?, ?, ?, ?::virkailija.email_type, ?)"
-                [avustushaku-id hakemus-id muutoshakemus-id email-id (name msg-type) success])
-      (log/info (str "Succesfully stored email event for email: " email-id))
-      (catch Exception e
-        (log/error (str "Failed to store email event for email: " email-id))))))
+              [avustushaku-id hakemus-id muutoshakemus-id email-id (name type) success])
+    (log/info (str "Succesfully stored email event for email: " email-id))
+    (catch Exception e
+      (log/error (str "Failed to store email event for email: " email-id)))))
 
-(defn try-send-msg [msg body email-id]
- (let [[_ send-fn] (create-mail-send-fn msg body)]
-   (try
-     (send-fn)
-     (create-email-event email-id true msg)
-     (catch Exception e
-       (log/info e (format "Failed to send message: %s" (.getMessage e)))
-       (create-email-event email-id false msg)
-       (throw e)))))
+(defn try-send-msg [{:keys [to from sender subject bcc type reply-to attachment hakemus-id avustushaku-id muutoshakemus-id lang]}
+                    body
+                    email-id]
+  {:pre [(valid-message? {:from    from
+                          :sender  sender
+                          :to      to
+                          :subject subject
+                          :type    type
+                          :lang    lang})]}
+  (let [email-event {:type             type
+                     :hakemus-id       hakemus-id
+                     :avustushaku-id   avustushaku-id
+                     :muutoshakemus-id muutoshakemus-id}
+        message {:to         to
+                 :from       from
+                 :sender     sender
+                 :bcc        bcc
+                 :reply-to   reply-to
+                 :subject    subject
+                 :attachment attachment
+                 :lang       lang}
+        [_ send-fn] (create-mail-send-fn message body)]
+    (try
+      (send-fn)
+      (create-email-event email-id true email-event)
+      (catch Exception e
+        (log/info e (format "Failed to send message: %s" (.getMessage e)))
+        (create-email-event email-id false email-event)
+        (throw e)))))
 
 (defn try-send-msg-once
   ([msg format-plaintext-message]
