@@ -69,7 +69,7 @@
       }
       
       function main {
-        curl -X GET --user "{{ jenkins_username }}:{{ jenkins_password }}" http://localhost:80/api/json?pretty=true > buildstatus.json
+        curl -X GET http://oph-va-ci-test01.csc.fi:8000/api/json?pretty=true > buildstatus.json
 
         AWS_PROFILE=rcs-helsinki aws s3 cp /aws/buildstatus.json s3://buildstatus/buildstatus/valtionavustus/buildstatus.json
       }
