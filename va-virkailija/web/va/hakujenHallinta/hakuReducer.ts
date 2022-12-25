@@ -702,17 +702,19 @@ export const updateField = createAsyncThunk<
 });
 
 const consolidateSubTabSelectionWithUrl = (): HakujenHallintaSubTab => {
-  let subTab = "haku-editor" as const;
-  const parsedUrl = {};
+  let subTab = "haku-editor";
+  const parsedSubTab = location.pathname.match(
+    /\/admin\/(haku-editor|form-editor|decision|valiselvitys|loppuselvitys|maksatukset)\//
+  )?.[1];
   if (!_.isUndefined(history.pushState)) {
-    if (parsedUrl["subTab"]) {
-      subTab = parsedUrl["subTab"];
+    if (parsedSubTab) {
+      subTab = parsedSubTab;
     } else {
       const newUrl = "/admin/" + subTab + "/" + location.search;
       history.pushState({}, document.title, newUrl);
     }
   }
-  return subTab;
+  return subTab as HakujenHallintaSubTab;
 };
 
 const initialState: State = {

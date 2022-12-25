@@ -5,8 +5,6 @@ import {
   Draft,
   PayloadAction,
 } from "@reduxjs/toolkit";
-// @ts-ignore route-parser doesn't have proper types
-import RouteParser from "route-parser";
 import HttpUtil from "soresu-form/web/HttpUtil";
 import {
   Answer,

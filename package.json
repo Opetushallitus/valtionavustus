@@ -37,7 +37,6 @@
     "react-transition-group": "^4.4.2",
     "react-widgets": "^5.8.4",
     "react-widgets-moment": "^5.0.20",
-    "route-parser": "^0.0.4",
     "seamless-immutable": "^7.1.4",
     "speakingurl": "^7.0.0",
     "yup": "^0.29.3"
