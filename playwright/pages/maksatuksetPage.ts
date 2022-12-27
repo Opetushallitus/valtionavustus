@@ -92,7 +92,11 @@ export function MaksatuksetPage(page: Page) {
       .locator("a")
       .locator("text=Lähetetyt maksatukset");
     await expect(lahetetytTab).not.toContainText("uutta");
-    await page.locator("text=Lähetä maksatukset ja täsmäytysraportti").click();
+    const sendBtn = page.locator(
+      "text=Lähetä maksatukset ja täsmäytysraportti"
+    );
+    await sendBtn.click();
+    await expect(sendBtn).toBeDisabled();
     await expect(
       page.locator("text=Lähetetään maksatuksia ja täsmäytysraporttia")
     ).toBeVisible();

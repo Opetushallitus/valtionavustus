@@ -22,7 +22,10 @@ import {
   startIndicatingThatSendingMaksatuksetAndTasmaytysraporttiFailed,
   stopSendingMaksatuksetAndTasmaytysraportti,
 } from "../hakujenHallinta/hakuReducer";
-import { useHakujenHallintaDispatch } from "../hakujenHallinta/hakujenHallintaStore";
+import {
+  useHakujenHallintaDispatch,
+  useHakujenHallintaSelector,
+} from "../hakujenHallinta/hakujenHallintaStore";
 
 type LahtevatMaksatuksetProps = {
   avustushaku: Avustushaku;
@@ -74,6 +77,9 @@ export const LahtevatMaksatukset = ({
     useState<LoadingState>("initial");
   const [asetaMaksatuksetState, setAsetaMaksatuksetState] =
     useState<LoadingState>("initial");
+  const sendingMaksatuksetAndTasmaytysraportti = useHakujenHallintaSelector(
+    (s) => !!s.haku.saveStatus.sendingMaksatuksetAndTasmaytysraportti
+  );
   const phases = [...new Set(payments.map((p) => p.phase))];
   useEffect(() => {
     const newErrors = [
@@ -120,7 +126,6 @@ export const LahtevatMaksatukset = ({
   };
 
   const onLähetäMaksatuksetJaTäsmäytysraportti = async () => {
-    setMaksatuksetSendState("loading");
     try {
       dispatch(startSendingMaksatuksetAndTasmaytysraportti());
       const paymentBatchId = await createPaymentBatches();
@@ -150,7 +155,9 @@ export const LahtevatMaksatukset = ({
     }
   };
   const sending =
-    asetaMaksatuksetState === "loading" || maksatuksetSendState === "loading";
+    asetaMaksatuksetState === "loading" ||
+    maksatuksetSendState === "loading" ||
+    sendingMaksatuksetAndTasmaytysraportti;
   const disabled = !!errors.length || sending;
 
   return (
