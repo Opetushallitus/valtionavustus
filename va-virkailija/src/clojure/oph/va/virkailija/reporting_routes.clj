@@ -40,14 +40,6 @@
     :summary "Yearly education levels"
     (ok (data/get-yearly-education-levels)))
 
-  (compojure-api/POST
-   "/tasmaytys/avustushaku/:avustushaku-id/send" []
-   :path-params [avustushaku-id :- Long]
-   :summary "Laheta avustushakukohtainen täsmäytysraportti"
-    (let [raportti (tasmaytysraportti/get-tasmaytysraportti-by-avustushaku-id avustushaku-id)]
-      (tasmaytysraportti/send-tasmaytysraportti avustushaku-id raportti)
-      (ok "ok")))
-
   (compojure-api/GET
    "/tasmaytys/avustushaku/:avustushaku-id" []
    :path-params [avustushaku-id :- Long]

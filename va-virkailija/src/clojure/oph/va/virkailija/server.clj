@@ -20,8 +20,7 @@
             [oph.va.virkailija.notification-scheduler :as notification-scheduler]
             [oph.va.virkailija.rondo-scheduling :as rondo-scheduling]
             [oph.va.virkailija.routes :refer [all-routes opintopolku-login-url virkailija-login-url]]
-            [oph.va.virkailija.healthcheck :as healthcheck]
-            [oph.va.virkailija.tasmaytysraportti :as tasmaytysraportti]))
+            [oph.va.virkailija.healthcheck :as healthcheck]))
 
 (defn- startup [config]
   (log/info "Startup, with configuration: " config)
@@ -41,12 +40,6 @@
   (when (get-in config [:integration-healthcheck :enabled?])
     (log/info "Starting scheduled healthcheck")
     (healthcheck/start-schedule-status-update!))
-  (when (and (get-in config [:tasmaytysraportti-create :enabled?])
-             (not (get-in config [:tasmaytysraportti-automaattisesti-taloushallintoon :enabled?])))
-    (tasmaytysraportti/start-schedule-create-tasmaytysraportti))
-  (when (and (get-in config [:tasmaytysraportti-create :enabled?])
-             (not (get-in config [:tasmaytysraportti-automaattisesti-taloushallintoon :enabled?])))
-    (tasmaytysraportti/start-schedule-send-tasmaytysraportti))
   (when (get-in config [:email :persistent-retry :enabled? ])
     (email/start-persistent-retry-job)))
 
@@ -61,10 +54,6 @@
   (notification-scheduler/stop-notification-scheduler)
   (when (get-in config [:integration-healthcheck :enabled?])
     (healthcheck/stop-schedule-status-update!))
-  (when (get-in config [:tasmaytysraportti-create :enabled?])
-    (tasmaytysraportti/stop-schedule-create-tasmaytysraportti))
-  (when (get-in config [:tasmaytysraportti-send :enabled?])
-    (tasmaytysraportti/stop-schedule-send-tasmaytysraportti))
   (when (get-in config [:email :persistent-retry :enabled? ])
     (email/stop-persistent-retry-job))
   (db/close-datasource!))
