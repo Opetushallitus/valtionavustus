@@ -19,7 +19,6 @@
          :notice (get-notice)
          :application-change {:refuse-enabled? true}
          :multibatch-payments (:multibatch-payments config)
-         :tasmaytysraportti-taloushallintoon-maksatuksien-yhteydessa (:tasmaytysraportti-taloushallintoon-maksatuksien-yhteydessa config)
          :dont-send-loppuselvityspyynto-to-virkailija (:dont-send-loppuselvityspyynto-to-virkailija config)
          :paatoksen-sposti-allekirjoittaneille (:paatoksen-sposti-allekirjoittaneille config)
          :selvitys-limit (:selvitys-limit config)}

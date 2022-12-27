@@ -30,7 +30,6 @@ type LahtevatMaksatuksetProps = {
   payments: Maksatus[];
   refreshPayments: () => Promise<void>;
   userInfo: UserInfo;
-  sendTasmaytysraporttiTaloushallintoon: boolean;
 };
 
 type Document = {
@@ -52,12 +51,6 @@ const hasDocumentsForAllPhases = (phases: number[], documents: Document[]) => {
 
 type LoadingState = "initial" | "loading" | "error";
 
-const maksatuksetButtonText: Record<LoadingState, string> = {
-  initial: "Lähetä maksatukset",
-  loading: "Lähetetään...",
-  error: "Maksatuksien lähetys epäonnistui",
-};
-
 const asetaMaksetuksiButtonText: Record<LoadingState, string> = {
   initial: "Aseta maksetuksi",
   loading: "Asetetaan...",
@@ -70,7 +63,6 @@ export const LahtevatMaksatukset = ({
   payments,
   refreshPayments,
   userInfo,
-  sendTasmaytysraporttiTaloushallintoon,
 }: LahtevatMaksatuksetProps) => {
   const dispatch = useHakujenHallintaDispatch();
   const [laskunPvm, setLaskunPvm] = useState<Date>(now.toDate());
@@ -142,24 +134,6 @@ export const LahtevatMaksatukset = ({
       dispatch(
         startIndicatingThatSendingMaksatuksetAndTasmaytysraporttiFailed()
       );
-    }
-  };
-
-  const onLähetäMaksatukset = async () => {
-    try {
-      setMaksatuksetSendState("loading");
-      const id = await createPaymentBatches();
-      await HttpUtil.post(`/api/v2/payment-batches/${id}/payments/`);
-      try {
-        await HttpUtil.post(`/api/v2/payment-batches/${id}/payments-email/`);
-      } catch (e: unknown) {
-        window.alert(
-          "Kaikki maksatukset lähetetty, mutta vahvistussähköpostin lähetyksessä tapahtui virhe"
-        );
-      }
-      await refreshPayments();
-    } catch (e) {
-      setMaksatuksetSendState("error");
     }
   };
 
@@ -261,16 +235,10 @@ export const LahtevatMaksatukset = ({
             ))}
           </div>
           <button
-            onClick={
-              sendTasmaytysraporttiTaloushallintoon
-                ? onLähetäMaksatuksetJaTäsmäytysraportti
-                : onLähetäMaksatukset
-            }
+            onClick={onLähetäMaksatuksetJaTäsmäytysraportti}
             disabled={disabled}
           >
-            {sendTasmaytysraporttiTaloushallintoon
-              ? "Lähetä maksatukset ja täsmäytysraportti"
-              : maksatuksetButtonText[maksatuksetSendState]}
+            "Lähetä maksatukset ja täsmäytysraportti"
           </button>
           {userInfo.privileges.includes("va-admin") && (
             <>

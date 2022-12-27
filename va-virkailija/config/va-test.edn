@@ -37,7 +37,6 @@
  :payments {:enabled? true :delete-payments? true}
  :tasmaytysraportti-create {:enabled? true}
  :tasmaytysraportti-send {:enabled? true}
- :tasmaytysraportti-taloushallintoon-maksatuksien-yhteydessa {:enabled? true}
  :paatoksen-sposti-allekirjoittaneille {:enabled? true}
  :integration-healthcheck {:enabled? true
                            :timeout 5000
