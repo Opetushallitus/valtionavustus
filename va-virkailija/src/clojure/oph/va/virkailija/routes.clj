@@ -212,7 +212,7 @@
   (get-emails-by-send-success true))
 
 (defn generate-emails-that-failed-to-be-sent [count]
-  (let [msg {:from "f@domain" :sender "s" :to ["t@domain"] :subject "s" :type "paatos" :lang "l"}
+  (let [msg {:from "f@domain" :sender "s" :to ["t@domain"] :subject "s" :email-type "paatos" :lang "l"}
         ids (map (fn [_] (common-email/store-email msg "m")) (range count))]
     (doseq [id ids]
       (common-email/create-email-event id false msg))

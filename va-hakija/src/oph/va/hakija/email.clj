@@ -67,7 +67,7 @@
         subject (get-in mail-titles [type lang])
         template (get-in mail-templates [type lang])
         preview-url (selvitys-preview-url avustushaku-id selvitys-user-key lang selvitys-type)]
-    (email/try-send-msg-once {:type type
+    (email/try-send-msg-once {:email-type type
                               :lang lang
                               :from (-> email/smtp-config :from lang)
                               :sender (-> email/smtp-config :sender)
@@ -88,7 +88,7 @@
         url (email/generate-url avustushaku-id lang lang-str user-key false)]
     (log/info "Url would be: " url)
     (email/enqueue-message-to-be-send {:operation :send
-                                       :type :new-hakemus
+                                       :email-type :new-hakemus
                                        :lang lang
                                        :from (-> email/smtp-config :from lang)
                                        :sender (-> email/smtp-config :sender)
@@ -104,7 +104,7 @@
 
 (defn generate-refused-email [lang recipients grant-name]
   {:operation :send
-   :type :application-refused
+   :email-type :application-refused
    :lang lang
    :from (get-in email/smtp-config [:from lang])
    :sender (:sender email/smtp-config)
@@ -120,7 +120,7 @@
   (let [url (email/generate-virkailija-url (:id grant) application-id)
         lang :fi]
     {:operation :send
-     :type :application-refused-presenter
+     :email-type :application-refused-presenter
      :lang lang
      :from (get-in email/smtp-config [:from lang])
      :sender (:sender email/smtp-config)
@@ -135,7 +135,7 @@
 
 (defn generate-applicant-edit-email [lang recipients grant-name hakemus]
   {:operation :send
-   :type :hakemus-edited-after-applicant-edit
+   :email-type :hakemus-edited-after-applicant-edit
    :lang lang
    :from (get-in email/smtp-config [:from lang])
    :sender (:sender email/smtp-config)
@@ -156,7 +156,7 @@
   (let [lang :fi
         url (email/generate-virkailija-url avustushaku-id hakemus-id)
         msg {:operation :send
-                          :type :notify-valmistelija-of-new-muutoshakemus
+                          :email-type :notify-valmistelija-of-new-muutoshakemus
                           :lang lang
                           :from (-> email/smtp-config :from lang)
                           :sender (-> email/smtp-config :sender)
@@ -175,7 +175,7 @@
         url (email/generate-virkailija-url avustushaku-id hakemus-db-id)]
     (log/info "Url would be: " url)
     (email/enqueue-message-to-be-send {:operation :send
-                                       :type :hakemus-change-request-responded
+                                       :email-type :hakemus-change-request-responded
                                        :lang lang
                                        :from (-> email/smtp-config :from lang)
                                        :sender (-> email/smtp-config :sender)
@@ -192,7 +192,7 @@
         end-time-string (datetime/time-string end-date)
         url (email/generate-url avustushaku-id lang lang-str user-key true)
         user-message {:operation :send
-                      :type  :hakemus-submitted
+                      :email-type  :hakemus-submitted
                       :lang lang
                       :from (-> email/smtp-config :from lang)
                       :sender (-> email/smtp-config :sender)

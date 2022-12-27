@@ -24,7 +24,7 @@
   (it "generates refused email for applicant"
       (should=
         {:operation :send
-         :type :application-refused
+         :email-type :application-refused
          :lang :fi
          :from "no-reply@valtionavustukset.oph.fi"
          :sender "no-reply@csc.fi"
@@ -43,7 +43,7 @@
         (should=
          (sorted-map
            :operation :send
-           :type :application-refused-presenter
+           :email-type :application-refused-presenter
            :lang :fi
            :from "no-reply@valtionavustukset.oph.fi"
            :sender "no-reply@csc.fi"

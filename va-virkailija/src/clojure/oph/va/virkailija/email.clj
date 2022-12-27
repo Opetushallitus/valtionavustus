@@ -87,7 +87,7 @@
         url (email/generate-url avustushaku-id lang lang-str user-key false)]
     (log/info "Url would be: " url)
     (email/enqueue-message-to-be-send {:operation :send
-                                       :type :change-request
+                                       :email-type :change-request
                                        :lang lang
                                        :hakemus-id hakemus-id
                                        :from (-> email/smtp-config :from lang)
@@ -151,7 +151,7 @@
         selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
         presenter (if (nil? selected-presenter) (first roles) selected-presenter)]
     (email/try-send-msg-once {
-                          :type :muutoshakemus-paatos
+                          :email-type :muutoshakemus-paatos
                           :lang lang
                           :muutoshakemus-id muutoshakemus-id
                           :from (-> email/smtp-config :from lang)
@@ -192,7 +192,7 @@
         list     (seq (map to-loppuselvitys-tarkastamatta loppuselvitys-list))
         avustushaku-id (:avustushaku-id (last list))
         total-hakemus-count (sum (map :count list))]
-    (email/try-send-msg-once {:type :loppuselvitys-taloustarkastamatta
+    (email/try-send-msg-once {:email-type :loppuselvitys-taloustarkastamatta
                               :lang lang
                               :from (-> email/smtp-config :from lang)
                               :avustushaku-id avustushaku-id
@@ -214,7 +214,7 @@
 
         url            (email/generate-url (:avustushaku-id hakemus) lang lang-str (:user-key hakemus) false) ]
     (log/info "sending to" to)
-    (email/try-send-msg-once {:type :hakuaika-paattymassa
+    (email/try-send-msg-once {:email-type :hakuaika-paattymassa
                               :lang lang
                               :from (-> email/smtp-config :from lang)
                               :sender (-> email/smtp-config :sender)
@@ -231,7 +231,7 @@
   (let [lang         :fi
         mail-subject (get-in mail-titles [:hakuaika-paattynyt lang])
         template     (get-in mail-templates [:hakuaika-paattynyt lang])]
-    (email/try-send-msg-once {:type :hakuaika-paattynyt
+    (email/try-send-msg-once {:email-type :hakuaika-paattynyt
                               :lang lang
                               :from (-> email/smtp-config :from lang)
                               :sender (-> email/smtp-config :sender)
@@ -249,7 +249,7 @@
         list     (seq (map to-loppuselvitys-tarkastamatta loppuselvitys-list))
         avustushaku-id (:avustushaku-id (last list))
         total-hakemus-count (sum (map :count list))]
-    (email/try-send-msg-once {:type :loppuselvitys-asiatarkastamatta
+    (email/try-send-msg-once {:email-type :loppuselvitys-asiatarkastamatta
                               :lang lang
                               :from (-> email/smtp-config :from lang)
                               :sender (-> email/smtp-config :sender)
@@ -265,7 +265,7 @@
         template (:valiselvitys-tarkastamatta mail-templates)
         list     (seq (map to-selvitys-tarkastamatta valiselvitys-list))
         total-hakemus-count (sum (map :count list))]
-    (email/try-send-msg-once {:type :valiselvitys-tarkastamatta
+    (email/try-send-msg-once {:email-type :valiselvitys-tarkastamatta
                               :lang lang
                               :from (-> email/smtp-config :from lang)
                               :sender (-> email/smtp-config :sender)
@@ -286,7 +286,7 @@
         avustushaku-id (:avustushaku-id notification)
         list     (seq (map to-muutoshakemus-kasittelematta (:list notification)))
         total-muutoshakemus-count (sum (map :count list))]
-    (email/try-send-msg-once {:type :muutoshakemuksia-kasittelematta
+    (email/try-send-msg-once {:email-type :muutoshakemuksia-kasittelematta
                               :lang lang
                               :avustushaku-id avustushaku-id
                               :from (-> email/smtp-config :from lang)
@@ -301,7 +301,7 @@
   (let [lang         (keyword (:language notification))
         mail-subject (get-in mail-titles [:valiselvitys-palauttamatta lang])
         template     (get-in mail-templates [:valiselvitys-palauttamatta lang])]
-    (email/try-send-msg-once {:type :valiselvitys-palauttamatta
+    (email/try-send-msg-once {:email-type :valiselvitys-palauttamatta
                               :hakemus-id (:hakemus-id notification)
                               :lang lang
                               :from (-> email/smtp-config :from lang)
@@ -316,7 +316,7 @@
 (defn send-laheta-valiselvityspyynnot [notification]
   (let [lang         :fi
         template     (:laheta-valiselvityspyynnot mail-templates)]
-    (email/try-send-msg-once {:type :laheta-valiselvityspyynnot
+    (email/try-send-msg-once {:email-type :laheta-valiselvityspyynnot
                               :avustushaku-name (:avustushaku-name notification)
                               :lang lang
                               :avustushaku-id (:avustushaku-id notification)
@@ -330,7 +330,7 @@
 (defn send-laheta-loppuselvityspyynnot [notification]
   (let [lang         :fi
         template     (:laheta-loppuselvityspyynnot mail-templates)]
-    (email/try-send-msg-once {:type :laheta-loppuselvityspyynnot
+    (email/try-send-msg-once {:email-type :laheta-loppuselvityspyynnot
                               :avustushaku-name (:avustushaku-name notification)
                               :lang lang
                               :avustushaku-id (:avustushaku-id notification)
@@ -345,7 +345,7 @@
   (let [lang           (keyword (:language notification))
         mail-subject   (get-in mail-titles [:loppuselvitys-palauttamatta lang])
         template       (get-in mail-templates [:loppuselvitys-palauttamatta lang])]
-    (email/try-send-msg-once {:type :loppuselvitys-palauttamatta
+    (email/try-send-msg-once {:email-type :loppuselvitys-palauttamatta
                               :hakemus-id (:hakemus-id notification)
                               :lang lang
                               :from (-> email/smtp-config :from lang)
@@ -365,7 +365,7 @@
         mail-subject (get-in mail-titles [:paatos lang])]
     (log/info "Url would be: " url)
     (email/try-send-msg-once {
-                          :type :paatos
+                          :email-type :paatos
                           :lang lang
                           :from (-> email/smtp-config :from lang)
                           :sender (-> email/smtp-config :sender)
@@ -381,7 +381,7 @@
 (defn send-paatokset-lahetetty [yhteenveto-url avustushaku-id avustushaku-name to]
   (let [lang (keyword "fi")]
   (email/try-send-msg-once {
-                            :type :paatokset-lahetetty
+                            :email-type :paatokset-lahetetty
                             :from (-> email/smtp-config :from lang)
                             :sender (-> email/smtp-config :sender)
                             :to to
@@ -417,7 +417,7 @@
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])
         msg {
-             :type :paatos-refuse
+             :email-type :paatos-refuse
              :lang lang
              :from (-> email/smtp-config :from lang)
              :sender (-> email/smtp-config :sender)
@@ -442,7 +442,7 @@
 (defn send-selvitys! [to hakemus mail-subject mail-message]
   (let [lang (keyword (:language hakemus))]
     (email/enqueue-message-to-be-send {:operation :send
-                                       :type :selvitys
+                                       :email-type :selvitys
                                        :lang lang
                                        :from (-> email/smtp-config :from lang)
                                        :sender (-> email/smtp-config :sender)
@@ -468,7 +468,7 @@
     (email/enqueue-message-to-be-send {:operation :send
                                        :hakemus-id (:id hakemus)
                                        :avustushaku-id (:id avustushaku)
-                                       :type (keyword type)
+                                       :email-type (keyword type)
                                        :lang lang
                                        :from (-> email/smtp-config :from lang)
                                        :sender (-> email/smtp-config :sender)
@@ -489,7 +489,7 @@
         (format (get-in mail-titles [:payments-info-notification lang])
                 grant-title)]
     (email/enqueue-message-to-be-send {:operation :send
-                                       :type :payments-info-notification
+                                       :email-type :payments-info-notification
                                        :lang lang
                                        :from (-> email/smtp-config :from lang)
                                        :sender (-> email/smtp-config :sender)
