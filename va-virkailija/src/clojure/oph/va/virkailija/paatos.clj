@@ -17,6 +17,7 @@
       [oph.va.virkailija.application-data :refer [get-application-token create-application-token]]
       [oph.va.virkailija.payments-data :as payments-data]
       [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]
+      [oph.soresu.form.formutil :refer [flatten-answers]]
       [oph.va.virkailija.authentication :as authentication]))
 
 (defn is-notification-email-field? [field has-normalized-contact-email?]
@@ -29,13 +30,20 @@
         (some #(= (:key field) %) email-fields))))
 
 (defn- emails-from-answers [answers has-normalized-contact-email?]
-  (let [email-answers (formutil/filter-values #(is-notification-email-field? % has-normalized-contact-email?) (answers :value))
+  (let [email-answers (formutil/filter-values #(is-notification-email-field? % has-normalized-contact-email?) answers)
         emails (vec (remove nil? (distinct (map :value email-answers))))]
     emails))
 
-(defn- emails-for-hakemus [hakemus contact-email]
+(defn- emails-for-hakemus-without-signatories [hakemus contact-email]
   (let [submission (hakija-api/get-hakemus-submission hakemus)
-        emails (emails-from-answers (:answers submission) (some? contact-email))]
+        emails (emails-from-answers (get-in submission [:answers :value]) (some? contact-email))]
+    (if (some? contact-email)
+      (concat [contact-email] emails)
+      emails)))
+
+(defn- emails-for-hakemus-with-signatories [hakemus contact-email]
+  (let [submission (hakija-api/get-hakemus-submission hakemus)
+        emails (emails-from-answers (flatten-answers (:answers submission) []) (some? contact-email))]
     (if (some? contact-email)
       (concat [contact-email] emails)
       emails)))
@@ -43,7 +51,9 @@
 (defn- paatos-emails [hakemus-id]
        (let [hakemus (hakija-api/get-hakemus hakemus-id)
              contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
-             emails (emails-for-hakemus hakemus contact-email)]
+             emails (if (get-in config [:paatoksen-sposti-allekirjoittaneille :enabled?])
+                      (emails-for-hakemus-with-signatories hakemus contact-email)
+                      (emails-for-hakemus-without-signatories hakemus contact-email))]
          emails))
 
 (defn send-paatokset-lahetetty [avustushaku-id ids identity]
@@ -149,7 +159,7 @@
             avustushaku (hakija-api/get-avustushaku avustushaku-id)
             roles (hakija-api/get-avustushaku-roles avustushaku-id)
             arvio (virkailija-db/get-arvio hakemus-id)
-            emails (emails-for-hakemus hakemus contact-email)]
+            emails (emails-for-hakemus-without-signatories hakemus contact-email)]
            (email/send-selvitys-notification! emails avustushaku hakemus selvitys-type arvio roles uuid identity)))
 
 (defn get-paatos-email-status

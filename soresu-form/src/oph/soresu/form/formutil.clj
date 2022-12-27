@@ -27,6 +27,12 @@
   (when-let [found-record (find-value-for-key (answers :value) key)]
     (:value found-record)))
 
+(defn flatten-answers [answers acc]
+  (let [value (:value answers)]
+    (if (coll? value)
+      (flatten (cons (map #(flatten-answers % []) value) acc))
+      (cons answers acc))))
+
 (defn has-attribute? [attribute-name expected-value field]
   (= (attribute-name field) expected-value))
 

@@ -10,12 +10,6 @@
     (some #(= (:key field) %) legacy-email-field-ids)
     (has-attribute? :fieldType "vaEmailNotification" field)))
 
-(defn- flatten-answers [answers acc]
-  (let [value (:value answers)]
-    (if (coll? value)
-      (flatten (cons (map #(flatten-answers % []) value) acc))
-      (cons answers acc))))
-
 (defn- find-emails-to-notify [answers]
   (->> (flatten-answers answers [])
        (filter is-notification-email-field)
