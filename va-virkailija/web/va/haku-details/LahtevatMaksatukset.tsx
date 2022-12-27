@@ -1,11 +1,5 @@
 import moment from "moment";
-import React, {
-  MouseEvent,
-  RefObject,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { MouseEvent, RefObject, useRef, useState } from "react";
 
 import { HelpTexts } from "soresu-form/web/va/types";
 import HttpUtil from "soresu-form/web/HttpUtil";
@@ -72,7 +66,6 @@ export const LahtevatMaksatukset = ({
   const [erapaiva, setErapaiva] = useState(now.add(1, "w").toDate());
   const [tositePvm, setTositePvm] = useState<Date>();
   const [documents, setDocuments] = useState<Document[]>([]);
-  const [errors, setErrors] = useState<string[]>([]);
   const [maksatuksetSendState, setMaksatuksetSendState] =
     useState<LoadingState>("initial");
   const [asetaMaksatuksetState, setAsetaMaksatuksetState] =
@@ -81,33 +74,31 @@ export const LahtevatMaksatukset = ({
     (s) => !!s.haku.saveStatus.sendingMaksatuksetAndTasmaytysraportti
   );
   const phases = [...new Set(payments.map((p) => p.phase))];
-  useEffect(() => {
-    const newErrors = [
-      !avustushaku["operational-unit-id"]
-        ? "Avustushaun toimintayksikkö puuttuu"
-        : undefined,
-      !avustushaku["operation-id"] ? "Avustushaun toiminto puuttuu" : undefined,
-      payments.some((p) => p["project-code"] === undefined)
-        ? "Projektikoodi puuttuu joltain hakemukselta"
-        : undefined,
-      !avustushaku.content["document-type"]
-        ? "Avustushaun tositelaji puuttuu"
-        : undefined,
-      payments.filter((p) => !p.hakemus?.["lkp-account"]).length
-        ? "LKP-tili puuttuu joltain hakemukselta"
-        : undefined,
-      payments.filter((p) => !p.hakemus?.["takp-account"]).length
-        ? "TaKP-tili puuttuu joltain hakemukselta"
-        : undefined,
-      !laskunPvm ? "Laskun päivämäärä puuttuu" : undefined,
-      !erapaiva ? "Eräpäivä puuttuu" : undefined,
-      !tositePvm ? "Tositepäivämäärä puuttuu" : undefined,
-      !hasDocumentsForAllPhases(phases, documents)
-        ? "Kaikille vaiheille ei ole lisätty asiakirjaa"
-        : undefined,
-    ].filter((e) => e !== undefined) as string[];
-    setErrors(newErrors);
-  }, [avustushaku, payments, laskunPvm, erapaiva, tositePvm, documents]);
+
+  const errors = [
+    !avustushaku["operational-unit-id"]
+      ? "Avustushaun toimintayksikkö puuttuu"
+      : undefined,
+    !avustushaku["operation-id"] ? "Avustushaun toiminto puuttuu" : undefined,
+    payments.some((p) => p["project-code"] === undefined)
+      ? "Projektikoodi puuttuu joltain hakemukselta"
+      : undefined,
+    !avustushaku.content["document-type"]
+      ? "Avustushaun tositelaji puuttuu"
+      : undefined,
+    payments.filter((p) => !p.hakemus?.["lkp-account"]).length
+      ? "LKP-tili puuttuu joltain hakemukselta"
+      : undefined,
+    payments.filter((p) => !p.hakemus?.["takp-account"]).length
+      ? "TaKP-tili puuttuu joltain hakemukselta"
+      : undefined,
+    !laskunPvm ? "Laskun päivämäärä puuttuu" : undefined,
+    !erapaiva ? "Eräpäivä puuttuu" : undefined,
+    !tositePvm ? "Tositepäivämäärä puuttuu" : undefined,
+    !hasDocumentsForAllPhases(phases, documents)
+      ? "Kaikille vaiheille ei ole lisätty asiakirjaa"
+      : undefined,
+  ].filter((e): e is string => e !== undefined);
 
   const createPaymentBatches = async () => {
     const body = {
