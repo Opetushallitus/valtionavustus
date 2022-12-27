@@ -145,14 +145,16 @@ export class HakijaAvustusHakuPage {
       "[id='textField-0']",
       answers.contactPersonPhoneNumber
     );
-    await this.page.fill(
-      "[id='signatories-fieldset-1.name']",
-      "Erkki Esimerkki"
-    );
-    await this.page.fill(
-      "[id='signatories-fieldset-1.email']",
-      answers.contactPersonEmail
-    );
+
+    const signatoryName = answers.signatory?.name
+      ? answers.signatory.name
+      : "Erkki Esimerkki";
+    const signatoryEmail = answers.signatory?.email
+      ? answers.signatory.email
+      : answers.contactPersonEmail;
+
+    await this.page.fill("[id='signatories-fieldset-1.name']", signatoryName);
+    await this.page.fill("[id='signatories-fieldset-1.email']", signatoryEmail);
     await clickElementWithText(
       this.page,
       "label",

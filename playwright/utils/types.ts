@@ -20,8 +20,14 @@ export interface Answers {
   contactPersonName: string;
   contactPersonEmail: string;
   contactPersonPhoneNumber: string;
+  signatory?: Signatory;
   lang?: "fi" | "sv";
   hakemusFields?: FieldAnswer[];
+}
+
+interface Signatory {
+  name: string;
+  email: string;
 }
 
 export interface VaCodeValues {
