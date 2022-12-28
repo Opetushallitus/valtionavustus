@@ -3,7 +3,7 @@ import { RollupOptions } from "rollup";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-import path from "path";
+import { resolve } from "path";
 
 const { VATYPE } = process.env;
 const VATYPES = ["hakija", "virkailija", "dev"];
@@ -52,15 +52,15 @@ const serverPath = "http://localhost:8081";
 
 const virkailijaRollupOptions: RollupOptions = {
   input: {
-    app: "va-virkailija/web/va/index.html",
-    adminApp: "va-virkailija/web/va/admin.html",
-    login: path.resolve(__dirname, "va-virkailija/web/va/login.html"),
-    codeValues: path.resolve(__dirname, "va-virkailija/web/va/codevalues.html"),
-    summaryApp: path.resolve(__dirname, "va-virkailija/web/va/summary.html"),
-    search: path.resolve(__dirname, "va-virkailija/web/va/search.html"),
+    app: resolve(__dirname, "va-virkailija/web/va/index.html"),
+    adminApp: resolve(__dirname, "va-virkailija/web/va/admin.html"),
+    login: resolve(__dirname, "va-virkailija/web/va/login.html"),
+    codeValues: resolve(__dirname, "va-virkailija/web/va/codevalues.html"),
+    summaryApp: resolve(__dirname, "va-virkailija/web/va/summary.html"),
+    search: resolve(__dirname, "va-virkailija/web/va/search.html"),
   },
   output: {
-    dir: `va-virkailija/resources/public/virkailija/`,
+    dir: resolve(__dirname, "va-virkailija/resources/public/virkailija/"),
   },
 };
 
@@ -71,16 +71,13 @@ const publicAssetsDir =
 
 const hakijaRollupOptions: RollupOptions = {
   input: {
-    hakijaApp: path.resolve(__dirname, "va-hakija/web/va/index.html"),
-    selvitysApp: path.resolve(__dirname, "va-hakija/web/va/selvitys.html"),
-    hakijaLogin: path.resolve(__dirname, "va-hakija/web/va/login.html"),
-    muutoshakemusApp: path.resolve(
-      __dirname,
-      "va-hakija/web/va/muutoshakemus.html"
-    ),
+    hakijaApp: resolve(__dirname, "va-hakija/web/va/index.html"),
+    selvitysApp: resolve(__dirname, "va-hakija/web/va/selvitys.html"),
+    hakijaLogin: resolve(__dirname, "va-hakija/web/va/login.html"),
+    muutoshakemusApp: resolve(__dirname, "va-hakija/web/va/muutoshakemus.html"),
   },
   output: {
-    dir: `va-hakija/resources/public/hakija`,
+    dir: resolve(__dirname, "va-hakija/resources/public/hakija/"),
   },
 };
 
@@ -91,7 +88,7 @@ export default defineConfig({
     react(),
     tsconfigPaths(),
     {
-      name: "rewrite-middleware",
+      name: "dev-rewrite-middleware",
       configureServer(serve) {
         serve.middlewares.use((req, _res, next) => {
           req.url = getHtmlFilePath(req.url) ?? req.url;
@@ -121,7 +118,7 @@ export default defineConfig({
       { find: /^~/, replacement: "" },
       {
         find: /\/soresu-form/,
-        replacement: path.resolve(__dirname, "/soresu-form"),
+        replacement: resolve(__dirname, "/soresu-form"),
       },
     ],
   },
