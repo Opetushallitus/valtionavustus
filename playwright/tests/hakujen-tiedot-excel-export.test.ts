@@ -57,7 +57,9 @@ muutoshakemusTest(
       "Loppuraportti: VA-260-2, 01.01.2023 (hyvää joulua)"
     );
     expect(columnValue("Haku auki")).toEqual("01.01.1970 00.00");
-    expect(columnValue("Haku kiinni")).toEqual("31.12.2023 23.59");
+    expect(columnValue("Haku kiinni")).toEqual(
+      `31.12.${hakuProps.hakuaikaEnd.getFullYear()} 23.59`
+    );
     expect(columnValue("Asiatunnus")).toEqual(hakuProps.registerNumber);
     expect(columnValue("Vastuuvalmistelija")).toEqual(
       "_ valtionavustus, santeri.horttanainen@reaktor.com"
