@@ -82,10 +82,10 @@
   
   :aot [oph.va.jdbc.enums oph.va.hakija.db.migrations oph.va.virkailija.db.migrations]
 
-  :source-paths ["va-hakija/src", "va-virkailija/src/clojure"]
+  :source-paths ["server/src/clojure"]
   :resource-paths ["va-hakija/resources", "va-virkailija/resources"]
 
-  :java-source-paths ["va-virkailija/src/java"]
+  :java-source-paths ["server/src/java"]
 
   :uberjar-exclusions [#"public/test"]
 
@@ -93,7 +93,7 @@
 
   :target-path "target/%s"
 
-  :auto {:default {:paths ["va-hakija/src", "va-hakija/resources", "va-hakija/spec",
-                           "va-virkailija/src", "va-virkailija/resources", "va-virkailija/spec"]
+  :auto {:default {:paths ["server/src", "va-hakija/resources", "va-hakija/spec",
+                           "va-virkailija/resources", "va-virkailija/spec"]
                    :file-pattern #"\.(clj|sql|json|edn)$"}}
 )
