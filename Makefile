@@ -9,16 +9,10 @@ LEIN_PROJECTS ?= soresu-form
 LEIN_CHECKOUTS_BASEDIRS := va-hakija/checkouts va-virkailija/checkouts
 LEIN_CHECKOUTS := soresu-form
 LEIN_CHECKOUT_DIRS := $(foreach basedir,$(LEIN_CHECKOUTS_BASEDIRS),$(addprefix $(basedir)/,$(LEIN_CHECKOUTS)))
-NODE_VERSION := $(shell node --version)
-REQUIRED_NODE := $(shell if [ $(NODE_VERSION) == "v16.17.1" ]; then echo true; else echo false; fi)
 
 .PHONY: help
 help:
 	@echo -e '$(subst $(newline),\n,$(usage_text))'
-
-.PHONY: check-node
-check-node:
-	@echo Build requires Node v18.9.1 && $(REQUIRED_NODE)
 
 .PHONY: clean
 clean: npm-clean lein-clean
@@ -40,19 +34,16 @@ npm-clean-frontends:
 	$(call npm_clean_frontend,va-virkailija)
 
 .PHONY: npm-build
-npm-build: check-node
+npm-build:
 	npm ci
 	npm run build-production
 
-.PHONY: npm-test
-npm-test: check-node
-
 .PHONY: npm-outdated-dependencies
-npm-outdated-dependencies: check-node
+npm-outdated-dependencies:
 	npm outdated || true
 
 .PHONY: npm-audit
-npm-audit: check-node
+npm-audit:
 	npm audit || true
 
 .PHONY: lein-clean
