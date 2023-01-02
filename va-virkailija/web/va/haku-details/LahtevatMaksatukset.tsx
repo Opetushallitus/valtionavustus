@@ -66,8 +66,6 @@ export const LahtevatMaksatukset = ({
   const [erapaiva, setErapaiva] = useState(now.add(1, "w").toDate());
   const [tositePvm, setTositePvm] = useState<Date>();
   const [documents, setDocuments] = useState<Document[]>([]);
-  const [maksatuksetSendState, setMaksatuksetSendState] =
-    useState<LoadingState>("initial");
   const [asetaMaksatuksetState, setAsetaMaksatuksetState] =
     useState<LoadingState>("initial");
   const sendingMaksatuksetAndTasmaytysraportti = useHakujenHallintaSelector(
@@ -147,7 +145,6 @@ export const LahtevatMaksatukset = ({
   };
   const sending =
     asetaMaksatuksetState === "loading" ||
-    maksatuksetSendState === "loading" ||
     sendingMaksatuksetAndTasmaytysraportti;
   const disabled = !!errors.length || sending;
 
