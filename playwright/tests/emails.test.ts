@@ -16,10 +16,17 @@ import { HakemustenArviointiPage } from "../pages/hakemustenArviointiPage";
 
 const contactPersonEmail = "yrjo.yhteyshenkilo@example.com";
 const newContactPersonEmail = "uusi.yhteyshenkilo@example.com";
-const signatory = {
-  name: "Kalevi Isohookana-Pikkugee",
-  email: "kalevi.isohookana-pikkugee@example.com",
-};
+
+const signatories = [
+  {
+    name: "Kalevi Isohookana-Pikkugee",
+    email: "kalevi.isohookana-pikkugee@example.com",
+  },
+  {
+    name: "Väinö J. Karjalainen",
+    email: "vaino.j.karjalainen@example.com",
+  },
+];
 
 const test = muutoshakemusTest.extend({
   answers: async ({}, use) => {
@@ -28,7 +35,7 @@ const test = muutoshakemusTest.extend({
       contactPersonName: "Yrjö Yhteyshenkilö",
       contactPersonPhoneNumber: "0501234567",
       projectName: "Hanke päätöksen uudelleenlähetyksen testaamiseksi",
-      signatory,
+      signatories,
     });
   },
 });
@@ -109,7 +116,8 @@ async function getLatestAcceptedPaatosEmailsForHakemus(
 
 const expectedSentToAddresses = [
   contactPersonEmail,
-  signatory.email,
+  signatories[0].email,
+  signatories[1].email,
   "akaan.kaupunki@akaa.fi",
 ].sort();
 
@@ -159,7 +167,8 @@ test("sends emails to correct contact and hakemus emails", async ({
       expect(email["to-address"]).toEqual(
         [
           newContactPersonEmail,
-          signatory.email,
+          signatories[0].email,
+          signatories[1].email,
           "akaan.kaupunki@akaa.fi",
         ].sort()
       );

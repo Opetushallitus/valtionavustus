@@ -12,7 +12,7 @@ import {
   pollUntilNewHakemusEmailArrives,
 } from "../utils/emails";
 import { Budget, fillBudget } from "../utils/budget";
-import { Answers } from "../utils/types";
+import { Answers, Signatory } from "../utils/types";
 
 export class HakijaAvustusHakuPage {
   readonly page: Page;
@@ -146,15 +146,31 @@ export class HakijaAvustusHakuPage {
       answers.contactPersonPhoneNumber
     );
 
-    const signatoryName = answers.signatory?.name
-      ? answers.signatory.name
-      : "Erkki Esimerkki";
-    const signatoryEmail = answers.signatory?.email
-      ? answers.signatory.email
-      : answers.contactPersonEmail;
+    const getSignatoriesOrDefault = () => {
+      if (!answers.signatories || answers.signatories.length < 1) {
+        return [
+          {
+            name: "Erkki Esimerkki",
+            email: answers.contactPersonEmail,
+          },
+        ];
+      }
 
-    await this.page.fill("[id='signatories-fieldset-1.name']", signatoryName);
-    await this.page.fill("[id='signatories-fieldset-1.email']", signatoryEmail);
+      return answers.signatories;
+    };
+
+    const fillSignatories = async (signatories: Signatory[]) => {
+      for (const [index, signatory] of signatories.entries()) {
+        const nameSelector = `[id='signatories-fieldset-${index + 1}.name']`;
+        const emailSelector = `[id='signatories-fieldset-${index + 1}.email']`;
+
+        await this.page.fill(nameSelector, signatory.name);
+        await this.page.fill(emailSelector, signatory.email);
+      }
+    };
+
+    await fillSignatories(getSignatoriesOrDefault());
+
     await clickElementWithText(
       this.page,
       "label",

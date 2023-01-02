@@ -20,12 +20,12 @@ export interface Answers {
   contactPersonName: string;
   contactPersonEmail: string;
   contactPersonPhoneNumber: string;
-  signatory?: Signatory;
+  signatories?: Signatory[];
   lang?: "fi" | "sv";
   hakemusFields?: FieldAnswer[];
 }
 
-interface Signatory {
+export interface Signatory {
   name: string;
   email: string;
 }
