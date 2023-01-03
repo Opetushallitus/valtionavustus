@@ -82,17 +82,14 @@
                               :environment "dev"
                               :configdefaults "va-virkailija/config/defaults.edn"}}
 
-             :hakija-test    {:env {:config "va-hakija/config/test.edn"
-                              :environment "test"
-                              :configdefaults "va-hakija/config/defaults.edn"}
-                              :test-paths ["va-hakija/spec"]
-                              :resource-paths ["va-hakija/test-resources"]}
-
-             :virkailija-test {:env {:config "va-virkailija/config/test.edn"
-                                     :environment "test"
-                                     :configdefaults "va-virkailija/config/defaults.edn"}
-                                     :test-paths ["va-virkailija/spec"]
-                                     :resource-paths ["va-virkailija/test-resources"]}
+             :test {:env {:config "va-virkailija/config/test.edn"
+                          :environment "test"
+                          :configdefaults "va-virkailija/config/defaults.edn"}
+                    :test-paths ["va-virkailija/spec"
+                                 "va-hakija/spec"
+                                 "soresu-form/spec"]
+                    :resource-paths ["va-virkailija/test-resources"
+                                     "va-hakija/test-resources"]}
 
              :hakija-prod     {:env {:config "va-hakija/config/prod.edn"}}
 

@@ -68,9 +68,7 @@ lein-build-backends:
 
 .PHONY: lein-test
 lein-test:
-	$(call lein_speclj,soresu-form)
-	./lein with-profile hakija-test,user spec $(SPECLJ_ARGS)
-	./lein with-profile virkailija-test,user spec $(SPECLJ_ARGS)
+	./lein with-profile test,user spec $(SPECLJ_ARGS)
 
 .PHONY: lein-outdated-dependencies
 lein-outdated-dependencies:
