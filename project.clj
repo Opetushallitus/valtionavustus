@@ -87,7 +87,7 @@
                           :configdefaults "va-virkailija/config/defaults.edn"}
                     :test-paths ["server/spec"]
                     :resource-paths ["va-virkailija/test-resources"
-                                     "va-hakija/test-resources"]}
+                                     "server/test-resources"]}
 
              :hakija-prod     {:env {:config "va-hakija/config/prod.edn"}}
 
