@@ -7,7 +7,10 @@ const makeConfig = (basedir, componentName) => {
   return {
     mode: process.env.NODE_ENV || "development",
     output: {
-      path: path.resolve(basedir, `resources/public/${componentName}`),
+      path: path.resolve(
+        basedir,
+        `../server/resources/public/${componentName}`
+      ),
       filename: "js/[name].js",
     },
     module: {
