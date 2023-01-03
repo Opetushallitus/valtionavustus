@@ -21,7 +21,6 @@
                              :nvd]}
 
   :dependencies [[org.clojure/clojure]
-                 [oph/soresu-form]
                  [de.ubercode.clostache/clostache]
                  [org.apache.commons/commons-email]
                  [org.clojure/core.async]
@@ -50,7 +49,27 @@
                  [org.apache.xmlgraphics/batik-bridge ~batik-version :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
                  [org.apache.xmlgraphics/batik-anim ~batik-version :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
                  [org.apache.xmlgraphics/xmlgraphics-commons "2.6"]
-                 [cider/cider-nrepl]]
+                 [cider/cider-nrepl]
+                 [http-kit]
+                 [ring/ring-core]
+                 [ring/ring-devel]
+                 [compojure]
+                 [metosin/compojure-api]
+                 [com.github.java-json-tools/jackson-coreutils "1.10"  :exclusions [com.google.code.findbugs/jsr305]]
+                 [com.google.guava/guava "31.1-jre" ]
+                 [cheshire]
+                 [prismatic/schema]
+                 [org.postgresql/postgresql]
+                 [yesql]
+                 [hikari-cp]
+                 [org.flywaydb/flyway-core]
+                 [speclj]
+                 [speclj-junit]
+                 [environ]
+                 [org.clojure/tools.logging]
+                 [buddy/buddy-core]
+                 [clj-time]
+                 [org.clojure/tools.trace]]
 
   :profiles {:uberjar {:aot [oph.va.hakija.main oph.va.virkailija.main]}
              :hakija-dev     {:env {:config "va-hakija/config/dev.edn"
@@ -80,10 +99,10 @@
              :virkalija-prod  {:env {:config "va-virkailija/config/va-prod.edn"}}
              }
   
-  :aot [oph.va.jdbc.enums oph.va.hakija.db.migrations oph.va.virkailija.db.migrations]
+  :aot [oph.va.jdbc.enums oph.va.hakija.db.migrations oph.va.virkailija.db.migrations clj-time.core]
 
   :source-paths ["server/src/clojure"]
-  :resource-paths ["va-hakija/resources", "va-virkailija/resources"]
+  :resource-paths ["soresu-form/resources" "va-hakija/resources", "va-virkailija/resources"]
 
   :java-source-paths ["server/src/java"]
 
