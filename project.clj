@@ -87,7 +87,7 @@
                           :configdefaults "va-virkailija/config/defaults.edn"}
                     :test-paths ["va-virkailija/spec"
                                  "va-hakija/spec"
-                                 "soresu-form/spec"]
+                                 "server/spec"]
                     :resource-paths ["va-virkailija/test-resources"
                                      "va-hakija/test-resources"]}
 
