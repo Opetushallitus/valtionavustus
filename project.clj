@@ -85,8 +85,7 @@
              :test {:env {:config "va-virkailija/config/test.edn"
                           :environment "test"
                           :configdefaults "va-virkailija/config/defaults.edn"}
-                    :test-paths ["va-virkailija/spec"
-                                 "server/spec"]
+                    :test-paths ["server/spec"]
                     :resource-paths ["va-virkailija/test-resources"
                                      "va-hakija/test-resources"]}
 
