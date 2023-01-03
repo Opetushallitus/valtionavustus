@@ -99,7 +99,7 @@
   :aot [oph.va.jdbc.enums oph.va.hakija.db.migrations oph.va.virkailija.db.migrations clj-time.core]
 
   :source-paths ["server/src/clojure"]
-  :resource-paths ["soresu-form/resources" "va-hakija/resources", "va-virkailija/resources"]
+  :resource-paths ["server/resources" "soresu-form/resources" "va-hakija/resources", "va-virkailija/resources"]
 
   :java-source-paths ["server/src/java"]
 
