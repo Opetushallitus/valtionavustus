@@ -7,7 +7,7 @@ import HelpTooltip from "../HelpTooltip";
 import AttachmentField from "soresu-form/web/form/component/AttachmentField";
 import HttpUtil from "soresu-form/web/HttpUtil";
 import Translator from "soresu-form/web/form/Translator";
-import translationJson from "soresu-form/resources/public/translations.json";
+import translationJson from "../../../../server/resources/public/translations.json";
 import { HakuData } from "../types";
 import { Avustushaku, Hakemus, Field } from "soresu-form/web/va/types";
 import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";

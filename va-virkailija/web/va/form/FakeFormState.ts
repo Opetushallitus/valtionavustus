@@ -1,7 +1,7 @@
 import Immutable from "seamless-immutable";
 import { cloneDeep } from "lodash";
 
-import translations from "soresu-form/resources/public/translations.json";
+import translations from "../../../../server/resources/public/translations.json";
 import VaBudgetCalculator from "soresu-form/web/va/VaBudgetCalculator";
 import VaSyntaxValidator from "soresu-form/web/va/VaSyntaxValidator";
 import {
