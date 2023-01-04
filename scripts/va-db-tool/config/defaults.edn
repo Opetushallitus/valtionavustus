@@ -1,6 +1,0 @@
-{:db {:pool-name "db-pool"
-      :username "va_hakija"
-      :password "va"
-      :server-name "localhost"
-      :port-number 5432
-      :database-name "va-dev"}}

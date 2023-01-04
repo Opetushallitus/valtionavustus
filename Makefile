@@ -52,7 +52,7 @@ lein-clean: lein-clean-targets
 .PHONY: lein-clean-targets
 lein-clean-targets:
 	$(foreach lein_project,$(LEIN_PROJECTS),$(call lein_clean_target,$(lein_project))$(newline))
-	$(call lein_clean_target,scripts/va-db-tool)
+	$(call lein_clean_target)
 	rm -fr target
 
 .PHONY: lein-build

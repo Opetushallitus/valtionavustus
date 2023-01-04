@@ -4,18 +4,6 @@ Komento [psql-jq](../scripts/psql-jq) on wrapperi komennoille
 [`psql`](https://www.postgresql.org/docs/current/static/app-psql.html)
 ja [`jq`](https://stedolan.github.io/jq/).
 
-Logiikkaa vaativat tietokantaoperaatiot, joita ei voi luokitella
-tietokantamigraatioiksi, voi toteuttaa
-[va-db-tool](../scripts/va-db-tool)-työkalulla. Tällaisia operaatioita
-ovat esimerkiksi ympäristökohtaiset kertaluonteiset muutokset
-tietokantaan. Käyttö:
-
-``` bash
-cd scripts/va-db-tool
-$EDITOR config/defaults.edn  # aseta tietokannan yhteysparameterit
-../../lein trampoline run
-```
-
 ### Tiedotteen asettaminen
 
 Tiedote näkyy va-hakijassa ja va-virkailijassa sivuston yläosassa.
