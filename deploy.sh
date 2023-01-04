@@ -127,11 +127,7 @@ build() {
 
 add_git_head_snippets() {
   echo "Adding git head snippets..."
-  for m in va-hakija va-virkailija; do
-    pushd "$m"
-    git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
-    popd
-  done
+  git show --pretty=short --abbrev-commit -s HEAD > server/resources/public/git-HEAD.txt
 }
 
 run_tests() {
