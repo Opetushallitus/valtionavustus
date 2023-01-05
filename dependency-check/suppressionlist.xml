@@ -86,7 +86,7 @@
     <packageUrl regex="true">^pkg:maven/org\.msgpack/msgpack@.*$</packageUrl>
     <cve>CVE-2022-41719</cve>
   </suppress>
-  <suppress until="2023-01-01Z">
+  <suppress>
     <notes><![CDATA[
    file name: snakeyaml-1.33.jar
    ]]></notes>
