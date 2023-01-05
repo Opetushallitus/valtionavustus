@@ -37,8 +37,8 @@
                  [ring/ring-ssl]
                  [com.cemerick/url :exclusions [com.cemerick/clojurescript.test]]
                  [dk.ative/docjure "1.18.0"]
-                 [fi.vm.sade/scala-cas_2.11 "2.2.2-20210929.183742-5"]
-                 [org.http4s/http4s-blaze-client_2.11 "0.16.6"]
+                 [fi.vm.sade/scala-cas_2.12 "3.0.1-20210929.183932-1"]
+                 [org.scalaz/scalaz-concurrent_3 "7.2.35"]
                  [org.clojure/data.json]
                  [org.clojure/data.xml]
                  [nivekuil/clj-ssh "d11634acf9857da4c7fc98258719a333af523cb8" :exclusions [com.jcraft/jsch.agentproxy.usocket-nc]]
@@ -92,7 +92,7 @@
 
              :virkalija-prod  {:env {:config "va-virkailija/config/va-prod.edn"}}
              }
-  
+
   :aot [oph.va.jdbc.enums oph.va.hakija.db.migrations oph.va.virkailija.db.migrations clj-time.core]
 
   :source-paths ["server/src/clojure"]

@@ -82,10 +82,8 @@
                          [buddy/buddy-sign "3.3.0"]
 
                          ;; cas
-                         [fi.vm.sade/scala-cas_2.11 "2.2.2-20210929.183742-5"]
-                         [org.http4s/http4s-blaze-client_2.11 "0.16.6"]
-                         [org.http4s/http4s-client_2.11 "0.16.6"]
-                         [org.http4s/http4s-dsl_2.11 "0.16.6"]
+                         [fi.vm.sade/scala-cas_2.12 "3.0.1-20210929.183932-1"]
+                         [org.scalaz/scalaz-concurrent_3 "7.2.35"]
 
                          ;; other
                          [clj-time "0.14.0"]

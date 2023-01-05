@@ -1,6 +1,5 @@
 package oph.va.virkailija.http;
 
-import org.http4s.AttributeMap;
 import org.http4s.Charset;
 import org.http4s.EntityDecoder$;
 import org.http4s.Header;
@@ -11,12 +10,12 @@ import org.http4s.Method;
 import org.http4s.Method$;
 import org.http4s.Request;
 import org.http4s.Response;
-import org.http4s.Service;
+import org.http4s.*;
+import org.http4s.dsl.io.*;
 import org.http4s.Uri;
 import org.http4s.client.Client;
 import org.http4s.headers.Accept$;
 import org.http4s.package$;
-import org.http4s.util.NonEmptyList;
 import org.http4s.util.Renderable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +45,7 @@ public class JavaClient {
 
     private JavaClient(Client client) {
         this.client = new Client(
-                Service.lift(new AbstractFunction1<Request, Task<Request>>() {
+          HttpService.lift(new AbstractFunction1<Request, Task<Request>>() {
                     @Override
                     public Task<Request> apply(Request request) {
                         LOG.debug("-> {}", request);
@@ -76,7 +75,7 @@ public class JavaClient {
                         ResponseException responseException = checkSuccessfulResponse(request, response, body);
 
                         if (responseException == null) {
-                            responseException = checkResponseContentType(request, response, body);
+                            //responseException = checkResponseContentType(request, response, body);
                         }
 
                         if (responseException != null) {
@@ -113,8 +112,7 @@ public class JavaClient {
                 uri,
                 HttpVersion$.MODULE$.HTTP$div1$u002E1(),
                 headers,
-                package$.MODULE$.EmptyBody(),
-                AttributeMap.empty());
+                package$.MODULE$.EmptyBody());
     }
 
     private static Headers newHeaders(Map<String, String> clientHeaders) {
@@ -149,7 +147,7 @@ public class JavaClient {
         return null;
     }
 
-    private static ResponseException checkResponseContentType(Request request, Response response, String body) {
+   /* private static ResponseException checkResponseContentType(Request request, Response response, String body) {
         Option tmpRequestAcceptHeader = request.headers().get(Accept$.MODULE$);
         @SuppressWarnings("unchecked")
         Option<Header.Recurring> requestAcceptHeader = (Option<Header.Recurring>) tmpRequestAcceptHeader;
@@ -182,5 +180,5 @@ public class JavaClient {
         }
 
         return null;
-    }
+    }*/
 }

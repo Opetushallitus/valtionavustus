@@ -9,6 +9,10 @@
   (when-not *compile-files*
     (delay (CasClient. (str (-> config :opintopolku :url) "/cas") @http/blaze-client caller-id))))
 
+(def ^:private cas-client2
+  (when-not *compile-files*
+    (delay (.statusFromString (.create (.apply Client.JavaNetClientBuilder$/MODULE$ (str (-> config :opintopolku :url) "/cas") (cats.effect.IO/asyncForIO) (caller-id)))))))
+
 (defn make-cas-authenticating-client
   ([^String service-url]
    (let [username (get-in config [:opintopolku :cas-service-username])
@@ -25,7 +29,8 @@
     ^String password
     ^Client service-client]
    {:pre [(seq service-url) (seq username) (seq password)]}
-   (CasAuthenticatingClient/apply @cas-client (CasParams/apply service-url username password) service-client caller-id "JSESSIONID")))
+   (CasAuthenticatingClient/apply @cas-client2 (CasParams/apply service-url username password) service-client caller-id "JSESSIONID")))
+
 
 (defn try-n-times [f n]
   (try
@@ -39,7 +44,7 @@
   `(try-n-times (fn [] ~@body) 3))
 
 (defn validate-service-ticket [^String virkailija-login-url ^String cas-ticket]
-  (try3 (-> @cas-client
+  (try3 (-> @cas-client2
         (.validateServiceTicketWithVirkailijaUsername virkailija-login-url cas-ticket)
         .run)))
 
