@@ -63,7 +63,8 @@ function stop_systems_under_test  {
 
 function stop_system_under_test () {
   echo "Stopping system under test"
-  scripts/docker-compose -f "$1" down --remove-orphans
+  local compose_file="$1"
+  scripts/docker-compose -f "$compose_file" down --remove-orphans
 }
 trap stop_systems_under_test EXIT
 
@@ -76,14 +77,15 @@ function build_docker_images {
 
 function start_system_under_test () {
   echo "Starting system under test"
+  local compose_file="$1"
 
-  scripts/docker-compose -f "$1" up -d hakija
+  scripts/docker-compose -f "compose_file" up -d hakija
   wait_for_container_to_be_healthy va-hakija
 
-  scripts/docker-compose -f "$1" up -d virkailija
+  scripts/docker-compose -f "compose_file" up -d virkailija
   wait_for_container_to_be_healthy va-virkailija
 
-  make_sure_all_services_are_running_and_follow_their_logs "$1"
+  make_sure_all_services_are_running_and_follow_their_logs "compose_file"
 }
 
 function make_sure_all_services_are_running_and_follow_their_logs {
