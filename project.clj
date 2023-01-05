@@ -37,7 +37,7 @@
                  [ring/ring-ssl]
                  [com.cemerick/url :exclusions [com.cemerick/clojurescript.test]]
                  [dk.ative/docjure "1.18.0"]
-                 [fi.vm.sade/scala-cas_2.11]
+                 [fi.vm.sade/scala-cas_2.11 "2.2.2-20210929.183742-5"]
                  [org.http4s/http4s-blaze-client_2.11 "0.16.6"]
                  [org.clojure/data.json]
                  [org.clojure/data.xml]
