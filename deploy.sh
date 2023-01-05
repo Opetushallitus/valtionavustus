@@ -83,9 +83,13 @@ function start_system_under_test () {
   scripts/docker-compose -f "$1" up -d virkailija
   wait_for_container_to_be_healthy va-virkailija
 
-  # Make sure all services are running and follow their logs
-  scripts/docker-compose -f "$1" up -d
-  scripts/docker-compose -f "$1" logs --follow &
+  make_sure_all_services_are_running_and_follow_their_logs "$1"
+}
+
+function make_sure_all_services_are_running_and_follow_their_logs {
+  local compose_file="$1"
+  scripts/docker-compose -f "$compose_file" up -d
+  scripts/docker-compose -f "$compose_file" logs --follow &
 }
 
 function check_requirements {
