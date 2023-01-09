@@ -131,20 +131,7 @@ export class HakijaAvustusHakuPage {
     beforeSubmitFn?: () => void
   ) {
     const lang = answers.lang || "fi";
-
-    const hakemusUrl = await this.startApplication(
-      avustushakuID,
-      answers.contactPersonEmail
-    );
-    await this.page.goto(hakemusUrl);
-
-    await this.fillInBusinessId(TEST_Y_TUNNUS);
-
-    await this.page.fill("#applicant-name", answers.contactPersonName);
-    await this.page.fill(
-      "[id='textField-0']",
-      answers.contactPersonPhoneNumber
-    );
+    await this.startAndFillApplication(answers, avustushakuID);
 
     const getSignatoriesOrDefault = () => {
       if (!answers.signatories || answers.signatories.length < 1) {
@@ -232,6 +219,26 @@ export class HakijaAvustusHakuPage {
 
     await this.page.waitForSelector("#submit:not([disabled])");
   }
+
+  private async startAndFillApplication(
+    answers: Answers,
+    avustushakuID: number
+  ) {
+    const hakemusUrl = await this.startApplication(
+      avustushakuID,
+      answers.contactPersonEmail
+    );
+    await this.page.goto(hakemusUrl);
+
+    await this.fillInBusinessId(TEST_Y_TUNNUS);
+
+    await this.page.fill("#applicant-name", answers.contactPersonName);
+    await this.page.fill(
+      "[id='textField-0']",
+      answers.contactPersonPhoneNumber
+    );
+  }
+
   async fillAndSendMuutoshakemusEnabledHakemus(
     avustushakuID: number,
     answers: Answers,
@@ -391,20 +398,7 @@ export class HakijaAvustusHakuPage {
     budget: Budget
   ) {
     const lang = answers.lang || "fi";
-
-    const hakemusUrl = await this.startApplication(
-      avustushakuID,
-      answers.contactPersonEmail
-    );
-    await this.page.goto(hakemusUrl);
-
-    await this.fillInBusinessId(TEST_Y_TUNNUS);
-
-    await this.page.fill("#applicant-name", answers.contactPersonName);
-    await this.page.fill(
-      "[id='textField-0']",
-      answers.contactPersonPhoneNumber
-    );
+    await this.startAndFillApplication(answers, avustushakuID);
     await this.page.fill(
       "[id='signatories-fieldset-1.name']",
       "Erkki Esimerkki"
