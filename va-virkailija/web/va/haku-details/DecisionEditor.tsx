@@ -1133,7 +1133,9 @@ class DecisionDateAndSend extends React.Component<
                         {paatos["organization-name"]} - {paatos["project-name"]}
                       </a>
                     </td>
-                    <td>{paatos["sent-emails"].addresses.join(" ")}</td>
+                    <td data-test-id={"sent-emails"}>
+                      {paatos["sent-emails"].addresses.join(" ")}
+                    </td>
                     <td style={{ position: "relative" }}>
                       {paatos.view_count === 0 && (
                         <span>{paatos.view_count}</span>

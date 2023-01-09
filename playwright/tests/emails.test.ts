@@ -9,10 +9,12 @@ import {
   waitUntilMinEmails,
 } from "../utils/emails";
 import { HAKIJA_URL } from "../utils/constants";
-import { expect } from "@playwright/test";
+import { selectors, expect } from "@playwright/test";
 import { HakujenHallintaPage } from "../pages/hakujenHallintaPage";
 import { HakijaMuutoshakemusPage } from "../pages/hakijaMuutoshakemusPage";
 import { HakemustenArviointiPage } from "../pages/hakemustenArviointiPage";
+
+selectors.setTestIdAttribute("data-test-id");
 
 const contactPersonEmail = "yrjo.yhteyshenkilo@example.com";
 const newContactPersonEmail = "uusi.yhteyshenkilo@example.com";
@@ -133,6 +135,11 @@ test("sends emails to correct contact and hakemus emails", async ({
     const email = await getLatestAcceptedPaatosEmailsForHakemus(hakemusID, 1);
     expect(email["to-address"]).toEqual(expectedSentToAddresses);
     expect(email["reply-to"]).toEqual(null);
+    const sentEmailsList = await page.getByTestId("sent-emails");
+    const sentEmails = await sentEmailsList.textContent();
+    expect(sentEmails!.split(" ").sort()).toEqual(
+      expectedSentToAddresses.sort()
+    );
   });
   const hakujenHallintaPage = new HakujenHallintaPage(page);
   const paatosLocators = await hakujenHallintaPage.navigateToPaatos(
