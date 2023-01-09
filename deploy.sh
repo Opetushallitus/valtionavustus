@@ -79,13 +79,13 @@ function start_system_under_test () {
   echo "Starting system under test"
   local compose_file="$1"
 
-  scripts/docker-compose -f "compose_file" up -d hakija
+  scripts/docker-compose -f "$compose_file" up -d hakija
   wait_for_container_to_be_healthy va-hakija
 
-  scripts/docker-compose -f "compose_file" up -d virkailija
+  scripts/docker-compose -f "$compose_file" up -d virkailija
   wait_for_container_to_be_healthy va-virkailija
 
-  make_sure_all_services_are_running_and_follow_their_logs "compose_file"
+  make_sure_all_services_are_running_and_follow_their_logs "$compose_file"
 }
 
 function make_sure_all_services_are_running_and_follow_their_logs {
