@@ -100,4 +100,18 @@
     </notes>
     <cve>CVE-2021-37533</cve>
   </suppress>
+  <suppress until="2023-05-01Z">
+    <notes><![CDATA[
+   file name: clj-yaml-1.0.26.jar
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/clj\-commons/clj\-yaml@.*$</packageUrl>
+    <cve>CVE-2022-3064</cve>
+  </suppress>
+  <suppress until="2023-05-01Z">
+    <notes><![CDATA[
+   file name: clj-yaml-1.0.26.jar
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/clj\-commons/clj\-yaml@.*$</packageUrl>
+    <cve>CVE-2022-3064</cve>
+  </suppress>
 </suppressions>
