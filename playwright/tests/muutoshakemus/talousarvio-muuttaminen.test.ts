@@ -120,7 +120,6 @@ const muutosTest =
         await expect(
           hakemustenArviointiPage.arviointiTabLocators().taTili.value
         ).toContainText("Ammatillinen koulutus");
-        await hakemustenArviointiPage.waitForSave();
         await hakemustenArviointiPage.page.click(
           "#arviointi-tab label[for='set-arvio-status-plausible']"
         );

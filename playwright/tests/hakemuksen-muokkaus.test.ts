@@ -63,7 +63,7 @@ test("virkailija can edit hakemus", async ({
       avustushakuID
     );
     await hakemustenArviointiPage.acceptHakemus();
-
+    await hakemustenArviointiPage.waitForSave();
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(
       avustushakuID
     );

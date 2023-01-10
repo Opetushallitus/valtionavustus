@@ -233,7 +233,6 @@ export class HakemustenArviointiPage {
       await this.page.click('label[for="useDetailedCosts-true"]');
       await fillBudget(this.page, budget, "virkailija");
     }
-    await this.waitForSave();
   }
 
   async getHakemusID() {
@@ -257,7 +256,6 @@ export class HakemustenArviointiPage {
     if (codes && codes.project.length > 1) {
       await projektikoodi.input.click();
       await projektikoodi.option.locator(`text=${projectCode}`).click();
-      await this.waitForSave();
     }
     await expect(projektikoodi.value).toContainText(projectCode);
   }
@@ -289,6 +287,7 @@ export class HakemustenArviointiPage {
       rahoitusalue
     );
     await this.acceptHakemus(budget);
+    await this.waitForSave();
     return hakemusID;
   }
 
@@ -297,7 +296,6 @@ export class HakemustenArviointiPage {
     await this.page.click(
       "#arviointi-tab label[for='set-arvio-status-accepted']"
     );
-    await this.waitForSave();
   }
 
   async rejectHakemus() {

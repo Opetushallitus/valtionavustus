@@ -113,6 +113,7 @@ test("hakija does not get an email with link to muutoshakemus when avustushaku f
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Enter");
     await hakemustenArviointiPage.acceptHakemus();
+    await hakemustenArviointiPage.waitForSave();
   });
   await test.step("Resolve avustushaku", async () => {
     await hakujenHallintaPage.navigateFromHeader();
@@ -349,6 +350,7 @@ const akuTest = defaultValues.extend<{
       await page.keyboard.press("ArrowDown");
       await page.keyboard.press("Enter");
       await hakemustenArviointiPage.acceptHakemus();
+      await hakemustenArviointiPage.waitForSave();
     });
     expectToBeDefined(hakemusID);
     await test.step("Resolve avustushaku", async () => {
