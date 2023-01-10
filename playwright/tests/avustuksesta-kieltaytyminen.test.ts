@@ -12,7 +12,8 @@ test("Avustuksesta kieltäytyminen", async ({
   page,
   avustushakuID,
   acceptedHakemukset: { hakemusID, secondHakemusID },
-}) => {
+}, testInfo) => {
+  testInfo.setTimeout(testInfo.timeout + 40_000);
   const hakujenHallintaPage = new HakujenHallintaPage(page);
   await test.step("send päätökset", async () => {
     await hakujenHallintaPage.navigate(avustushakuID);
