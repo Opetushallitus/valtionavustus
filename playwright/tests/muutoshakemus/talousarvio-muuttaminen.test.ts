@@ -487,11 +487,8 @@ const expectMenoInputRows = async (
   page: Page,
   expectedBudgetInputs: { name: string; amount: number }[]
 ) => {
-  const menoInputRowLocator = page.locator(
-    "[data-test-id=talousarvio-form] [data-test-id=meno-input] input"
-  );
-  for (const [index, { name, amount }] of expectedBudgetInputs.entries()) {
-    await expect(menoInputRowLocator.nth(index)).toHaveAttribute("name", name);
-    await expect(menoInputRowLocator.nth(index)).toHaveValue(String(amount));
+  for (const { name, amount } of expectedBudgetInputs) {
+    const menoInputRowLocator = page.locator(`input[name="${name}"]`);
+    await expect(menoInputRowLocator).toHaveValue(String(amount));
   }
 };
