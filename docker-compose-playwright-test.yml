@@ -16,7 +16,7 @@ services:
       VIRKAILIJA_HOSTNAME: va-virkailija
       HAKIJA_HOSTNAME: va-hakija
       PLAYWRIGHT_WORKERS: 5
-      PLAYWRIGHT_RETRIES: 2
+      PLAYWRIGHT_RETRIES: 1
       TZ: 'Europe/Helsinki'
     command: /run_playwright_tests_in_container.sh
     logging:
