@@ -33,10 +33,18 @@
                                                                                                 (get people-privileges person-oid)
                                                                                                 {:person-oid person-oid})})))
                                                     {:with-info [] :without-info []}
-                                                    people-info)]
+                                                    people-info)
+        {:keys [with-email without-email]} (reduce (fn [acc user]
+                                                    (if (nil? (:email user))
+                                                      (merge-with conj acc {:without-email user})
+                                                      (merge-with conj acc {:with-email user})))
+                                                  {:with-email [] :without-email []}
+                                                  with-info)]
     (if (seq without-info)
       (log/warn "Fetching all VA users, skipping users without person info:" without-info))
-    with-info))
+    (if (seq without-email)
+      (log/warn "Fetching all VA users, skipping users without email address:" without-email))
+    with-email))
 
 (defn- update-va-users-cache []
   (virkailija-db/update-va-users-cache (get-all-va-users)))
