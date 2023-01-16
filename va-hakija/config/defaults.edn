@@ -38,5 +38,5 @@
          :sender "no-reply@csc.fi"
          :bounce-address "oph-va-alerts@reaktor.com"
          :print-mail-on-disable? true}
- :paatoksen-sposti-allekirjoittaneille {:enabled? false}
+ :paatoksen-sposti-allekirjoittaneille {:enabled? true}
  :selvitys-limit {:enabled? false}}
