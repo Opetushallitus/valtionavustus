@@ -21,7 +21,10 @@ const config: PlaywrightTestConfig = {
     viewport: { width: 1920, height: 1080 },
     ignoreHTTPSErrors: true,
     video: "off",
-    screenshot: "only-on-failure",
+    screenshot: {
+      mode: "only-on-failure",
+      fullPage: true,
+    },
     trace: "retain-on-failure",
     testIdAttribute: "data-test-id",
   },
