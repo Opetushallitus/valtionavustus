@@ -7,7 +7,6 @@
           :virkailija-url "https://testi.virkailija.valtionavustukset.oph.fi"}
  :db {:database-name "va-qa"
       :port-number 5432}
- :paatoksen-sposti-allekirjoittaneille {:enabled? true}
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25

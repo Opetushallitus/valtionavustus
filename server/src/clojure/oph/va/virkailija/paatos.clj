@@ -49,12 +49,9 @@
       emails)))
 
 (defn- paatos-emails [hakemus-id]
-       (let [hakemus (hakija-api/get-hakemus hakemus-id)
-             contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
-             emails (if (get-in config [:paatoksen-sposti-allekirjoittaneille :enabled?])
-                      (emails-for-hakemus-with-signatories hakemus contact-email)
-                      (emails-for-hakemus-without-signatories hakemus contact-email))]
-         emails))
+  (let [hakemus (hakija-api/get-hakemus hakemus-id)
+        contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)]
+    (emails-for-hakemus-with-signatories hakemus contact-email)))
 
 (defn send-paatokset-lahetetty [avustushaku-id ids identity]
   (let [valmistelija-emails (virkailija-db/get-valmistelija-emails-assigned-to-avustushaku avustushaku-id)

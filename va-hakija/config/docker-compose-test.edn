@@ -12,5 +12,4 @@
  :email {:enabled? true
          :host "fakesmtp"
          :port 25}
- :paatoksen-sposti-allekirjoittaneille {:enabled? true}
  :applications-ui {:enabled? true}}
