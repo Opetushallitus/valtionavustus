@@ -15,12 +15,12 @@ trap delete_temp_files_if_running_on_jenkins EXIT
 function lein_dep_check () {
   cd "$repo/dependency-check"
 
-  project=$(basename "$repo")
+  local configuration="nvd-config.json"
 
   if running_on_jenkins; then
-    "$LEIN" with-profile -user run -m nvd.task.check "$project"-nvd-config.json "$(cd "$repo"; $LEIN classpath)"
+    "$LEIN" with-profile -user run -m nvd.task.check "$configuration" "$(cd "$repo"; $LEIN classpath)"
   else
-    "$LEIN" run -m nvd.task.check "$project"-nvd-config.json "$(cd "$repo"; $LEIN classpath)"
+    "$LEIN" run -m nvd.task.check "$configuration" "$(cd "$repo"; $LEIN classpath)"
   fi
 
 }
