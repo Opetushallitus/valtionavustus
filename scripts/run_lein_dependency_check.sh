@@ -33,7 +33,13 @@ function download_temp_db_to_workspace_in_jenkins() {
   fi
 }
 
+function check_that_dependencies_are_uptodate {
+  cd "$repo/dependency-check"
+  $LEIN ancient || fatal "Dependencies not uptodate. Update the dependencies listed above."
+}
+
 function main {
+  check_that_dependencies_are_uptodate
   download_temp_db_to_workspace_in_jenkins
   lein_dep_check
 }
