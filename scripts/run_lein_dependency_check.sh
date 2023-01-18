@@ -52,23 +52,8 @@ function download_temp_db_to_workspace_in_jenkins() {
 }
 
 function main {
-  local EXIT=0
-
-  install_soresu_jar
-
-  set +o errexit
   download_temp_db_to_workspace_in_jenkins
-  lein_dep_check_for_project "soresu-form" || EXIT=$?
-  lein_dep_check || EXIT=$?
-  set -o errexit
-
-  return $EXIT
-}
-
-function install_soresu_jar {
-  cd $repo/soresu-form
-  "$LEIN" install
-  cd $repo
+  lein_dep_check
 }
 
 main "$@"
