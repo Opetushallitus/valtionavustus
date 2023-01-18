@@ -37,4 +37,5 @@
  :tasmaytysraportti-send {:enabled? true}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :test-apis {:enabled? true}
+ :loppuselvitys-stats-endpoint {:enabled? true}
  }
