@@ -10,12 +10,6 @@ function delete_temp_files_if_running_on_jenkins () {
   fi
 }
 
-function lein_dep_check_for_project () {
-  local project_dir=$1
-  local dir="$repo/$project_dir"
-  lein_dep_check_in_dir "$dir"
-}
-
 function lein_dep_check () {
   local dir="$repo"
   lein_dep_check_in_dir "$dir"
