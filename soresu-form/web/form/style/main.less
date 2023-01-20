@@ -2,6 +2,8 @@
 @import "common.less";
 @import "tooltip.less";
 
+@formHeadingWidth: 250px;
+
 body {
   font-family: 'Open Sans', sans-serif;
   background-color: @lightest-gray;
@@ -72,6 +74,10 @@ ul {
     }
   }
 
+  h2 > {
+    width: @formHeadingWidth;
+  }
+
   h2 > span {
     text-transform: uppercase;
   }
@@ -127,7 +133,7 @@ section.soresu-theme {
   }
 
   >div {
-    margin: 0 0 0 250px;
+    margin: 0 0 0 @formHeadingWidth;
 
     >div, >fieldset, >p.soresu-info-element {
       margin: 15px 0 20px 0;
