@@ -8,6 +8,7 @@ import {
 import styles from "./HakemusListing.module.less";
 import buttonStyles from "../style/Button.module.less";
 import { StarScoring } from "./StarScoring";
+import { TaydennyspyyntoIndikaattori } from "./TaydennyspyyntoIndikaattori";
 import { MuutoshakemusStatus } from "soresu-form/web/va/types/muutoshakemus";
 import {
   HakemusSelvitys,
@@ -497,6 +498,9 @@ function HakemusTable({
             </div>
           </th>
           <th>
+            <div className="tyhjäTäydennyspyyntöTableHeader"></div>
+          </th>
+          <th>
             <div className={styles.tableHeader}>
               <TableLabel text="Arvio" disabled />
               <SortButton
@@ -667,6 +671,12 @@ function HakemusTable({
                     <Pill color="yellow" text="Keskeneräinen" compact />
                   )}
                 </div>
+              </td>
+              <td>
+                <TaydennyspyyntoIndikaattori
+                  hakemusId={hakemus.id}
+                  hakemusStatus={hakemus.status}
+                />
               </td>
               <td className={styles.starsCell}>
                 <StarScoring
