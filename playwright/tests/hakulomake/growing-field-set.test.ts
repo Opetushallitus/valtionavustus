@@ -179,67 +179,69 @@ const test = defaultValues.extend<Fixtures>({
   },
 });
 
-test("can delete first growing field set child after page reload", async ({
-  page,
-  growingSets: { first, second, third },
-}) => {
-  const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page);
-  const firstTavoite = "a";
-  const secondTavoite = "d";
-  const secondToiminta = "e";
-  const secondTulos = "f";
-  await test.step("after filling first field", async () => {
-    await first.tavoite.fill(firstTavoite);
-    await expect(second.tavoite).toBeEnabled();
-    await expect(second.toiminta).toBeEnabled();
-    await expect(second.tulos).toBeEnabled();
-    await expect(second.remove).toBeDisabled();
-    await expect(third.tavoite).toBeDisabled();
-    await expect(third.toiminta).toBeDisabled();
-    await expect(third.tulos).toBeDisabled();
-    await expect(third.remove).toBeDisabled();
+test.describe.parallel("growing field set", () => {
+  test("can delete first growing field set child after page reload", async ({
+    page,
+    growingSets: { first, second, third },
+  }) => {
+    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page);
+    const firstTavoite = "a";
+    const secondTavoite = "d";
+    const secondToiminta = "e";
+    const secondTulos = "f";
+    await test.step("after filling first field", async () => {
+      await first.tavoite.fill(firstTavoite);
+      await expect(second.tavoite).toBeEnabled();
+      await expect(second.toiminta).toBeEnabled();
+      await expect(second.tulos).toBeEnabled();
+      await expect(second.remove).toBeDisabled();
+      await expect(third.tavoite).toBeDisabled();
+      await expect(third.toiminta).toBeDisabled();
+      await expect(third.tulos).toBeDisabled();
+      await expect(third.remove).toBeDisabled();
+    });
+    await test.step("fill first and second", async () => {
+      await first.toiminta.fill("b");
+      await first.tulos.fill("c");
+      await expect(second.remove).toBeDisabled();
+      await second.tavoite.fill(secondTavoite);
+      await second.toiminta.fill(secondToiminta);
+      await second.tulos.fill(secondTulos);
+      await expect(second.remove).toBeEnabled();
+      await hakijaAvustusHakuPage.waitForEditSaved();
+    });
+    await test.step("after reload can delete first field", async () => {
+      await hakijaAvustusHakuPage.page.reload();
+      await expect(first.tavoite).toHaveValue(firstTavoite);
+      await first.remove.click();
+      await expect(first.tavoite).toHaveValue(secondTavoite);
+      await expect(first.toiminta).toHaveValue(secondToiminta);
+      await expect(first.tulos).toHaveValue(secondTulos);
+    });
+    await test.step("form submits successfully", async () => {
+      await hakijaAvustusHakuPage.submitApplication();
+    });
   });
-  await test.step("fill first and second", async () => {
-    await first.toiminta.fill("b");
-    await first.tulos.fill("c");
-    await expect(second.remove).toBeDisabled();
-    await second.tavoite.fill(secondTavoite);
-    await second.toiminta.fill(secondToiminta);
-    await second.tulos.fill(secondTulos);
-    await expect(second.remove).toBeEnabled();
-    await hakijaAvustusHakuPage.waitForEditSaved();
-  });
-  await test.step("after reload can delete first field", async () => {
-    await hakijaAvustusHakuPage.page.reload();
-    await expect(first.tavoite).toHaveValue(firstTavoite);
-    await first.remove.click();
-    await expect(first.tavoite).toHaveValue(secondTavoite);
-    await expect(first.toiminta).toHaveValue(secondToiminta);
-    await expect(first.tulos).toHaveValue(secondTulos);
-  });
-  await test.step("form submits successfully", async () => {
-    await hakijaAvustusHakuPage.submitApplication();
-  });
-});
 
-test("first growing field set field is editable after reload", async ({
-  page,
-  growingSets: { first },
-}) => {
-  const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page);
-  await test.step("fill and remove first field", async () => {
-    await first.tavoite.fill("a");
-    await first.remove.click();
-    await expect(first.tavoite).toHaveValue("");
-  });
-  await test.step("after reload can still fill field", async () => {
-    await page.reload();
-    await first.tavoite.fill("a");
-    await expect(first.tavoite).toHaveValue("a");
-    await first.toiminta.fill("b");
-    await first.tulos.fill("c");
-  });
-  await test.step("form submits successfully", async () => {
-    await hakijaAvustusHakuPage.submitApplication();
+  test("first growing field set field is editable after reload", async ({
+    page,
+    growingSets: { first },
+  }) => {
+    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page);
+    await test.step("fill and remove first field", async () => {
+      await first.tavoite.fill("a");
+      await first.remove.click();
+      await expect(first.tavoite).toHaveValue("");
+    });
+    await test.step("after reload can still fill field", async () => {
+      await page.reload();
+      await first.tavoite.fill("a");
+      await expect(first.tavoite).toHaveValue("a");
+      await first.toiminta.fill("b");
+      await first.tulos.fill("c");
+    });
+    await test.step("form submits successfully", async () => {
+      await hakijaAvustusHakuPage.submitApplication();
+    });
   });
 });
