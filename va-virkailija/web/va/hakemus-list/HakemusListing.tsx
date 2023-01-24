@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import {
   Hakemus,
   HakemusArviointiStatus,
@@ -315,9 +315,25 @@ export default function HakemusListing(props: Props) {
     isResolved,
     additionalInfoOpen,
   } = props;
+
   const { roles, privileges, avustushaku } = useHakemustenArviointiSelector(
     (state) => getLoadedState(state.arviointi).hakuData
   );
+
+  const [hakemuksetWithTaydennyspyynto, setHakemuksetWithTaydennyspyynto] =
+    useState<number[]>([]);
+  useEffect(() => {
+    const fetchHakemuksetWithTaydennyspyynto = async () => {
+      setHakemuksetWithTaydennyspyynto(
+        await HttpUtil.get<number[]>(
+          `/api/avustushaku/${avustushaku.id}/hakemus-ids-having-taydennyspyynto`
+        )
+      );
+    };
+
+    void fetchHakemuksetWithTaydennyspyynto();
+  }, [avustushaku]);
+
   const allowHakemusScoring = privileges["score-hakemus"];
   const hakemusFilterState = useHakemustenArviointiSelector(
     (state) => state.filter
@@ -389,6 +405,7 @@ export default function HakemusListing(props: Props) {
             sortingState={sortingState}
             setSorting={setSorting}
             allowHakemusScoring={allowHakemusScoring}
+            hakemuksetWithTaydennyspyynto={hakemuksetWithTaydennyspyynto}
           />
         )}
       </div>
@@ -408,6 +425,7 @@ interface HakemusTableProps {
   setSorting: (sortKey?: SortKey) => void;
   sortingState: SortState;
   allowHakemusScoring: boolean;
+  hakemuksetWithTaydennyspyynto: number[];
 }
 
 function hakemusModifiedAfterSubmitted(hakemus: Hakemus) {
@@ -429,6 +447,7 @@ function HakemusTable({
   sortingState,
   setSorting,
   allowHakemusScoring,
+  hakemuksetWithTaydennyspyynto,
 }: HakemusTableProps) {
   const personSelectHakemusId = useHakemustenArviointiSelector(
     (state) => state.arviointi.personSelectHakemusId
@@ -676,6 +695,9 @@ function HakemusTable({
                 <TaydennyspyyntoIndikaattori
                   hakemusId={hakemus.id}
                   hakemusStatus={hakemus.status}
+                  hakemukselleLahetettyTaydennyspyynto={hakemuksetWithTaydennyspyynto.includes(
+                    hakemus.id
+                  )}
                 />
               </td>
               <td className={styles.starsCell}>
