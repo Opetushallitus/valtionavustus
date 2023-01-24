@@ -82,12 +82,12 @@
                                               :contents tasmaytysraportti}}
                                 (fn [_] "Täsmäytysraportti liitteenä."))
       (store-successfully-sent-tasmaytysraportti avustushaku-id to tasmaytysraportti)
-      (log/info (str "Succesfully send tasmaytysraportti for avustushaku " avustushaku-id))
+      (log/info (str "Successfully send tasmaytysraportti for avustushaku " avustushaku-id))
       (catch Exception e
         (log/warn e (str "Failed to send tasmaytysraportti for avustushaku " avustushaku-id))))))
 
 (defn get-tasmaytysraportti-by-avustushaku-id [avustushaku-id]
-  (let [data (exec virkailija-queries/get-tasmaytysraportti-by-avustuskahu-id-data
+  (let [data (exec virkailija-queries/get-tasmaytysraportti-by-avustushaku-id-data
                    {:avustushaku_id avustushaku-id})
         tasmaytysraportti_date (:tasmaytysraportti_date (first data))
         tmp-file (create-tasmaytysraportti tasmaytysraportti_date data)]

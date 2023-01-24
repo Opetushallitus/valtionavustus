@@ -35,6 +35,12 @@
         "rejected" (data/get-rejected-count-by-year))))
 
   (compojure-api/GET
+    "/loppuselvitykset/" request
+    :return schema/YearlyReport
+    :summary "Lähetetyt loppuselvitykset vuosittain"
+    (ok (data/get-loppuselvitykset-yearly)))
+
+  (compojure-api/GET
     "/education-levels/" request
     :return s/Any
     :summary "Yearly education levels"

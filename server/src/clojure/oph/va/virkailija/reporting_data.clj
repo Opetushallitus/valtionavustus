@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.reporting-data
   (:require
-   [oph.soresu.common.db :refer [exec]]
+   [oph.soresu.common.db :refer [exec query]]
    [oph.va.virkailija.db.queries :as queries]
    [oph.va.hakija.api.queries :as hakija-queries]
    [oph.va.virkailija.utils :refer [convert-to-dash-keys]]))
@@ -62,3 +62,14 @@
   {:applications (get-yearly-application-info)
    :granted (get-yearly-granted)
    :total-grant-count (:count (get-total-grant-count))})
+
+
+(defn get-loppuselvitykset-yearly []
+  (query "select date_part('year', h.last_status_change_at) as year, count(*) as count
+        from hakija.hakemukset h
+        where hakemus_type = 'loppuselvitys'
+        and status = 'submitted'
+        group by year
+        order by year desc" {}))
+
+
