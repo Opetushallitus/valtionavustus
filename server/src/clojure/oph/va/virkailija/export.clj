@@ -1,18 +1,15 @@
 (ns oph.va.virkailija.export
-  (:use [clojure.tools.trace :only [trace]])
-  (:require [clojure.java.io :as io]
+  (:require [clj-time.format :as clj-time-format]
             [clojure.set :as clj-set]
             [clojure.string :as string]
             [clojure.tools.logging :as log]
-            [oph.va.virkailija.utils :refer [remove-white-spaces]]
-            [clj-time.core :as clj-time]
-            [clj-time.format :as clj-time-format]
             [dk.ative.docjure.spreadsheet :as spreadsheet]
+            [oph.soresu.form.formhandler :as formhandler]
             [oph.soresu.form.formutil :as formutil]
-            [oph.soresu.form.formhandler :as formhandler])
-  (:import [java.io ByteArrayOutputStream]
-           [org.apache.poi.ss.usermodel Cell CellStyle CellType Sheet Workbook]
-           [org.joda.time DateTime]))
+            [oph.va.virkailija.utils :refer [remove-white-spaces]])
+  (:use [clojure.tools.trace :only [trace]])
+  (:import (java.io ByteArrayOutputStream)
+           (org.apache.poi.ss.usermodel Cell CellStyle CellType Sheet Workbook)))
 
 (def unsafe-cell-string-value-prefixes "=-+@")
 
@@ -698,5 +695,20 @@
                       (conj maksu-sheet))]
       (adjust-cells-style! sheet header-style safe-formula-style))
 
+    (.write wb output)
+    (.toByteArray output)))
+
+(defn make-loppuselvitysraportti-rows [loppuselvitykset-yearly]
+  ;; [{:year 2022 :count 5}] -> [["2022" "5"]]
+  (map (fn [{:keys [year count]}] [year count])
+       loppuselvitykset-yearly))
+
+(defn export-loppuselvitysraportti
+  [loppuselvitykset-yearly]
+  (let [output (ByteArrayOutputStream.)
+        sheet-name "Loppuselvitysraportti"
+        wb (spreadsheet/create-workbook
+             sheet-name
+             (make-loppuselvitysraportti-rows loppuselvitykset-yearly))]
     (.write wb output)
     (.toByteArray output)))

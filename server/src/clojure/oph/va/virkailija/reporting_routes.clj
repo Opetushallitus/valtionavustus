@@ -1,11 +1,12 @@
 (ns oph.va.virkailija.reporting-routes
   (:require
-   [compojure.api.sweet :as compojure-api]
-   [schema.core :as s]
-   [ring.util.http-response :refer [ok]]
-   [oph.va.virkailija.schema :as schema]
-   [oph.va.virkailija.reporting-data :as data]
-   [oph.va.virkailija.tasmaytysraportti :as tasmaytysraportti])
+    [compojure.api.sweet :as compojure-api]
+    [oph.va.virkailija.export :refer [export-loppuselvitysraportti]]
+    [schema.core :as s]
+    [ring.util.http-response :refer [ok]]
+    [oph.va.virkailija.schema :as schema]
+    [oph.va.virkailija.reporting-data :as data]
+    [oph.va.virkailija.tasmaytysraportti :as tasmaytysraportti])
   (:import [java.io ByteArrayInputStream]))
 
 (compojure-api/defroutes routes
@@ -39,7 +40,15 @@
     :return schema/YearlyReport
     :summary "Lähetetyt loppuselvitykset vuosittain"
     (ok (data/get-loppuselvitykset-yearly)))
-
+  (compojure-api/GET
+    "/loppuselvitykset/loppuselvitysraportti.xlsx" request
+    :summary "Lähetetyt loppuselvitykset vuosittain Excel-raportti"
+    (let [document (-> (data/get-loppuselvitykset-yearly)
+                       export-loppuselvitysraportti
+                       (ByteArrayInputStream.))]
+      (-> (ok document)
+          (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
+          (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"loppuselvitysraportti.xlsx\"")))))
   (compojure-api/GET
     "/education-levels/" request
     :return s/Any
