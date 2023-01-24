@@ -189,6 +189,13 @@
 (defn get-normalized-hakemus-contact-email [hakemus-id]
   (:contact-email (get-normalized-hakemus hakemus-id)))
 
+(defn get-hakemus-ids-having-taydennyspyynto [avustushaku-id]
+  (log/info (str "Get hakemus IDs having taydennyspyynto for avustushaku: " avustushaku-id))
+  (map :id (query "SELECT distinct id
+                  FROM hakemukset
+                  WHERE status = 'pending_change_request'
+                  AND avustushaku = ?" [avustushaku-id])))
+
 (defn get-muutoshakemukset [hakemus-id]
   (log/info (str "Get muutoshakemus with hakemus id: " hakemus-id))
   (let [basic-muutoshakemukset (query

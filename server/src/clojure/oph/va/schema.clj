@@ -237,6 +237,10 @@
     :created-at s/Inst
     })
 
+(s/defschema HakemusIdList
+  "List of hakemus IDs"
+  [Long])
+
 (s/defschema MuutoshakemusList
   "Muutoshakemus for a specific hakemus"
   [Muutoshakemus])

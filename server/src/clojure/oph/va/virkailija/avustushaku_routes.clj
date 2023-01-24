@@ -48,7 +48,7 @@
   (compojure-api/GET "/export.xlsx" []
                      :summary "Export Excel XLSX document with all avustushakus"
                      (let [document (-> (export-avustushakus)
-                                        (ByteArrayInputStream.))] 
+                                        (ByteArrayInputStream.))]
                        (-> (http/ok document)
                            (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
                            (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"avustushaut.xlsx\""))))))
@@ -101,6 +101,13 @@
                      :summary "Get muutoshakemukset"
                      (http/ok (virkailija-db/get-muutoshakemukset hakemus-id))))
 
+(defn- get-hakemus-ids-having-taydennyspyynto []
+  (compojure-api/GET "/:avustushaku-id/hakemus-ids-having-taydennyspyynto" []
+                     :path-params [avustushaku-id :- Long]
+                     :return  va-schema/HakemusIdList
+                     :summary "Palauta lista avustushaun hakemus-id:stä, joille on joskus lähetetty täydennyspyyntö"
+                     (http/ok (virkailija-db/get-hakemus-ids-having-taydennyspyynto avustushaku-id))))
+
 (defn- get-onko-muutoshakukelpoinen-avustushaku-ok []
   (compojure-api/GET "/:avustushaku-id/onko-muutoshakukelpoinen-avustushaku-ok" []
                      :path-params [avustushaku-id :- Long]
@@ -118,9 +125,9 @@
   (compojure-api/POST "/:avustushaku-id/projects" []
                      :path-params [avustushaku-id :- Long]
                      :body [projects-body (compojure-api/describe [virkailija-schema/VACodeValue] "Avustushaun projektit")]
-                     :return s/Any 
+                     :return s/Any
                      (http/ok (projects/update-projects avustushaku-id projects-body))))
-                     
+
 
 (defn- get-avustushaku-talousarviotilit []
   (compojure-api/GET "/:avustushaku-id/talousarviotilit" []
@@ -131,7 +138,7 @@
 (defn- post-avustushaku-talousarviotilit []
   (compojure-api/POST "/:avustushaku-id/talousarviotilit" []
                       :path-params [avustushaku-id :- Long]
-                      :body [talousarviotilit (compojure-api/describe [virkailija-schema/AvustushakuTalousarviotili] "Avustushaun talousarviotilit")] 
+                      :body [talousarviotilit (compojure-api/describe [virkailija-schema/AvustushakuTalousarviotili] "Avustushaun talousarviotilit")]
                       :return s/Any
                       (http/ok (talousarvio/post-avustushaku-talousarviotilit avustushaku-id talousarviotilit))))
 
@@ -175,7 +182,7 @@
   (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/project" [avustushaku-id hakemus-id]
                      :path-params [avustushaku-id :- Long hakemus-id :- Long]
                      :body [project-body (compojure-api/describe virkailija-schema/VACodeValue "Hakemuksen projekti")]
-                     :return s/Any 
+                     :return s/Any
                      (http/ok (projects/update-project hakemus-id project-body)
                      )))
 
@@ -613,6 +620,7 @@
   (put-avustushaku)
   (post-avustushaku)
   (get-avustushaku)
+  (get-hakemus-ids-having-taydennyspyynto)
   (get-onko-muutoshakukelpoinen-avustushaku-ok)
   (get-muutoshakemukset)
   (post-muutoshakemus-paatos)
