@@ -699,19 +699,15 @@
     (.toByteArray output)))
 
 (defn make-loppuselvitysraportti-rows [rows]
-  (map (fn [{:keys [year loppuselvitykset-count asiatarkastetut-count taloustarkastetut-count]}]
-         [year loppuselvitykset-count asiatarkastetut-count taloustarkastetut-count])
-       rows))
-
-
+  (mapv vals rows))
 
 (defn export-loppuselvitysraportti [rows]
   (let [output (ByteArrayOutputStream.)
         sheet-name "Loppuselvitysraportti"
         wb (spreadsheet/create-workbook
-             sheet-name
-             (concat
-              [["Vuosi" "Vastaanotettu" "Asiatarkastettu" "Taloustarkastettu"]]
-              (make-loppuselvitysraportti-rows rows)))]
+            sheet-name
+            (concat
+             [["Vuosi" "Vastaanotettu" "Asiatarkastettu" "Taloustarkastettu"]]
+             (make-loppuselvitysraportti-rows rows)))]
     (.write wb output)
     (.toByteArray output)))
