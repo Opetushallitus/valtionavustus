@@ -4,7 +4,7 @@ import { expect } from "@playwright/test";
 import { selvitysTest as test } from "../../fixtures/selvitysTest";
 import { VIRKAILIJA_URL } from "../../utils/constants";
 
-test.only("excel contains at least one row after submitting loppuselvitys", async ({
+test("excel contains at least one row after submitting loppuselvitys", async ({
   page,
   loppuselvitysSubmitted: { loppuselvitysFormUrl },
   asiatarkastus: { asiatarkastettu },
