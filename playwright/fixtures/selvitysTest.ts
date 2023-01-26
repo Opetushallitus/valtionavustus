@@ -1,5 +1,9 @@
 import { muutoshakemusTest } from "./muutoshakemusTest";
-import { clearAndType, expectToBeDefined } from "../utils/util";
+import {
+  clearAndType,
+  expectToBeDefined,
+  waitForElementWithText,
+} from "../utils/util";
 import { dummyPdfPath, VIRKAILIJA_URL } from "../utils/constants";
 import { VirkailijaValiselvitysPage } from "../pages/virkailijaValiselvitysPage";
 import { navigate } from "../utils/navigate";
@@ -20,6 +24,9 @@ interface SelvitysFixtures {
   };
   asiatarkastus: {
     asiatarkastettu: boolean;
+  };
+  taloustarkastus: {
+    taloustarkastettu: boolean;
   };
   valiAndLoppuselvitysSubmitted: {};
 }
@@ -225,6 +232,43 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     await page.getByTestId("taloustarkastus-email");
     await use({
       asiatarkastettu: true,
+    });
+  },
+  taloustarkastus: async (
+    {
+      page,
+      avustushakuID,
+      acceptedHakemus: { hakemusID },
+      loppuselvitysSubmitted: { loppuselvitysFormFilled },
+      asiatarkastus: { asiatarkastettu },
+    },
+    use,
+    testInfo
+  ) => {
+    testInfo.setTimeout(testInfo.timeout + 10_000);
+    expectToBeDefined(avustushakuID);
+    expectToBeDefined(hakemusID);
+    expect(asiatarkastettu);
+    expect(loppuselvitysFormFilled);
+    await clearAndType(
+      page,
+      '[data-test-id="taloustarkastus-email-subject"]',
+      "Taloustarkastus OK"
+    );
+    await clearAndType(
+      page,
+      '[data-test-id="taloustarkastus-email-content"]',
+      "Taloustarkastus OK sähköposti content"
+    );
+    await page.click('[data-test-id="taloustarkastus-submit"]');
+
+    await waitForElementWithText(
+      page,
+      "h3",
+      "Taloustarkastettu ja lähetetty hakijalle"
+    );
+    await use({
+      taloustarkastettu: true,
     });
   },
   valiAndLoppuselvitysSubmitted: async (
