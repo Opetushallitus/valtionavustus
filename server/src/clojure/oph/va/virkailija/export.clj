@@ -699,7 +699,8 @@
     (.toByteArray output)))
 
 (defn make-loppuselvitysraportti-rows [rows]
-  (map (fn [{:keys [year loppuselvitykset-count asiatarkastetut-count]}] [year loppuselvitykset-count asiatarkastetut-count])
+  (map (fn [{:keys [year loppuselvitykset-count asiatarkastetut-count taloustarkastetut-count]}]
+         [year loppuselvitykset-count asiatarkastetut-count taloustarkastetut-count])
        rows))
 
 
@@ -710,7 +711,7 @@
         wb (spreadsheet/create-workbook
              sheet-name
              (concat
-              [["Vuosi" "Vastaanotettu" "Asiatarkastettu"]]
+              [["Vuosi" "Vastaanotettu" "Asiatarkastettu" "Taloustarkastettu"]]
               (make-loppuselvitysraportti-rows rows)))]
     (.write wb output)
     (.toByteArray output)))

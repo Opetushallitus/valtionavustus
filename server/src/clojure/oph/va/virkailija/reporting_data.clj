@@ -77,20 +77,31 @@
   with loppuselvitykset as (
     select date_part('year', h.last_status_change_at) as year, count(*) as count
     from hakija.hakemukset h
-    where hakemus_type = 'loppuselvitys'
-      and status = 'submitted'
+    where hakemus_type = 'loppuselvitys' and
+          status = 'submitted'
     group by year
     order by year desc
-), asiatarkastetut_loppuselvitykset AS (
-        select date_part('year', h.loppuselvitys_information_verified_at) as year, count(*) as count
-        from hakija.hakemukset h
-        where h.version_closed is null and
-              h.loppuselvitys_information_verified_at is not null
-        group by year
-        order by year desc
-) select  l.year,
-          l.count as loppuselvitykset_count,
-          al.count as asiatarkastetut_count
-  from loppuselvitykset l
-  left join asiatarkastetut_loppuselvitykset al on al.year = l.year;
+), asiatarkastetut_loppuselvitykset as (
+    select date_part('year', h.loppuselvitys_information_verified_at) as year, count(*) as count
+    from hakija.hakemukset h
+    where h.version_closed is null and
+          h.loppuselvitys_information_verified_at is not null
+    group by year
+    order by year desc
+), taloustarkastetut_loppuselvitykset as (
+    select date_part('year', h.loppuselvitys_taloustarkastettu_at) as year, count(*) as count
+    from hakija.hakemukset h
+    where h.version_closed is null and
+          h.loppuselvitys_taloustarkastettu_at is not null
+    group by year
+    order by year desc
+)
+select
+    l.year,
+    l.count as loppuselvitykset_count,
+    coalesce(al.count, 0) asiatarkastetut_count,
+    coalesce(tl.count, 0) taloustarkastetut_count
+from loppuselvitykset l
+left join asiatarkastetut_loppuselvitykset al on al.year = l.year
+left join taloustarkastetut_loppuselvitykset tl on tl.year = l.year
  " {}))
