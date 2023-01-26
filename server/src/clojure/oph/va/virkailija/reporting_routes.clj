@@ -45,8 +45,8 @@
     (compojure-api/GET
       "/loppuselvitykset/loppuselvitysraportti.xlsx" request
       :summary "Lähetetyt loppuselvitykset vuosittain Excel-raportti"
-      (let [document (-> (data/get-loppuselvitykset-yearly)
-                         export-loppuselvitysraportti
+      (let [rows (data/asiatarkastetut-rows)
+            document (-> (export-loppuselvitysraportti rows)
                          (ByteArrayInputStream.))]
         (-> (ok document)
             (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")

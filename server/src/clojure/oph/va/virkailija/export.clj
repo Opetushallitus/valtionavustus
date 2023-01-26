@@ -698,17 +698,19 @@
     (.write wb output)
     (.toByteArray output)))
 
-(defn make-loppuselvitysraportti-rows [loppuselvitykset-yearly]
-  ;; [{:year 2022 :count 5}] -> [["2022" "5"]]
-  (map (fn [{:keys [year count]}] [year count])
-       loppuselvitykset-yearly))
+(defn make-loppuselvitysraportti-rows [rows]
+  (map (fn [{:keys [year loppuselvitykset-count asiatarkastetut-count]}] [year loppuselvitykset-count asiatarkastetut-count])
+       rows))
 
-(defn export-loppuselvitysraportti
-  [loppuselvitykset-yearly]
+
+
+(defn export-loppuselvitysraportti [rows]
   (let [output (ByteArrayOutputStream.)
         sheet-name "Loppuselvitysraportti"
         wb (spreadsheet/create-workbook
              sheet-name
-             (make-loppuselvitysraportti-rows loppuselvitykset-yearly))]
+             (concat
+              [["Vuosi" "Vastaanotettu" "Asiatarkastettu"]]
+              (make-loppuselvitysraportti-rows rows)))]
     (.write wb output)
     (.toByteArray output)))
