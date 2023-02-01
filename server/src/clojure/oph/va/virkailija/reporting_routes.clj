@@ -36,21 +36,15 @@
         "accepted" (data/get-accepted-count-by-year)
         "rejected" (data/get-rejected-count-by-year))))
 
-  (when (get-in config [:loppuselvitys-stats-endpoint :enabled?])
-    (compojure-api/GET
-      "/loppuselvitykset/" request
-      :return schema/YearlyReport
-      :summary "Lähetetyt loppuselvitykset vuosittain"
-      (ok (data/get-loppuselvitykset-yearly)))
-    (compojure-api/GET
-      "/loppuselvitykset/loppuselvitysraportti.xlsx" request
-      :summary "Lähetetyt loppuselvitykset vuosittain Excel-raportti"
-      (let [rows (data/asiatarkastetut-rows)
-            document (-> (export-loppuselvitysraportti rows)
-                         (ByteArrayInputStream.))]
-        (-> (ok document)
-            (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
-            (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"loppuselvitysraportti.xlsx\""))))))
+  (compojure-api/GET
+   "/loppuselvitykset/loppuselvitysraportti.xlsx" request
+   :summary "Lähetetyt loppuselvitykset vuosittain Excel-raportti"
+   (let [rows (data/asiatarkastetut-rows)
+         document (-> (export-loppuselvitysraportti rows)
+                      (ByteArrayInputStream.))]
+     (-> (ok document)
+         (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
+         (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"loppuselvitysraportti.xlsx\"")))))
 
   (compojure-api/GET
     "/education-levels/" request

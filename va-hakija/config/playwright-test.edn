@@ -14,5 +14,4 @@
          :host "fakesmtp"
          :port 25}
  :applications-ui {:enabled? true}
- :loppuselvitys-stats-endpoint {:enabled? true}
  :officer-edit-jwt-secret "playwright-test-secret"}

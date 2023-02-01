@@ -12,5 +12,4 @@
  :email {:enabled? true
          :host "fakesmtp"
          :port 25}
- :loppuselvitys-stats-endpoint {:enabled? true}
  :applications-ui {:enabled? true}}

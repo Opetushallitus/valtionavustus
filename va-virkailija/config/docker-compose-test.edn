@@ -28,5 +28,4 @@
       :database-name "va-dev"}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :test-apis {:enabled? true}
- :loppuselvitys-stats-endpoint {:enabled? true}
  }

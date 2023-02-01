@@ -63,15 +63,6 @@
    :granted (get-yearly-granted)
    :total-grant-count (:count (get-total-grant-count))})
 
-
-(defn get-loppuselvitykset-yearly []
-  (query "select date_part('year', h.last_status_change_at) as year, count(*) as count
-        from hakija.hakemukset h
-        where hakemus_type = 'loppuselvitys'
-        and status = 'submitted'
-        group by year
-        order by year desc" {}))
-
 (defn asiatarkastetut-rows []
   (query "
   with loppuselvitykset as (
