@@ -9,6 +9,7 @@ file=$2
 server=`hostname`
 
 active_dir={{ postgresql_12_backup_active_dir }}
+current_backup_dir="{{ postgresql_12_backup_dir }}/current"
 backup_dir="{{ postgresql_12_backup_dir }}/current/wal"
 mutex={{ postgresql_12_backup_local_dir }}/walmutex
 mailto='{{ postgresql_12_backup_mail_recipient }}'
@@ -45,7 +46,18 @@ done
 
 echo "archive-WAL $$" > $mutex
 
-mkdir -p $backup_dir
+attempt=0
+
+while [ ! -f $current_backup_dir ]; do
+    attempt=`expr $attempt + 1`
+    if [ $attempt -gt $mutex_attempts ]; then
+        echo "archive of WAL $file failed, timed out waiting for $current_backup_dir to be created" | mail -s "$server: WAL archive failed" $mailto
+        exit 1
+    fi
+    sleep 5
+done
+
+mkdir $backup_dir
 
 handler rsync --ignore-existing -ptg $full_file $backup_dir
 
