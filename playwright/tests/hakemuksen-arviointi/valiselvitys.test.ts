@@ -164,9 +164,7 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
         acceptedHakemus.hakemusID
       );
       await valiselvitysPage.acceptVäliselvitys();
-      const valiselvitysFormUrl = await page
-        .getByTestId("selvitys-link")
-        .getAttribute("href");
+      const valiselvitysFormUrl = await valiselvitysPage.linkToHakemus.getAttribute("href");
       if (!valiselvitysFormUrl) throw Error("väliselvitys form url not found");
       const [newPage] = await Promise.all([
         context.waitForEvent("page"),

@@ -74,9 +74,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
           avustushakuID,
           acceptedHakemus.hakemusID
         );
-        const väliselvitysFormUrl = await page
-          .getByTestId("selvitys-link")
-          .getAttribute("href");
+        const väliselvitysFormUrl = await valiselvitysPage.linkToHakemus.getAttribute("href");
         if (!väliselvitysFormUrl)
           throw Error("valiselvitys form url not found");
         await navigate(page, väliselvitysFormUrl);
@@ -166,9 +164,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
       avustushakuID,
       hakemusID
     );
-    const loppuselvitysFormUrl = await page
-      .getByTestId("selvitys-link")
-      .getAttribute("href");
+    const loppuselvitysFormUrl = await loppuselvitysPage.linkToForm.getAttribute("href");
     if (!loppuselvitysFormUrl) {
       throw new Error("could not find loppuselvitys form url");
     }

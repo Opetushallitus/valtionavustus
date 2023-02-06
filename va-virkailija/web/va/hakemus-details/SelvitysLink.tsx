@@ -32,7 +32,6 @@ export default function SelvitysLink({
       )}
       <a
         href={publicUrl}
-        data-test-id="selvitys-link"
         target="_blank"
         rel="noopener noreferrer"
       >
