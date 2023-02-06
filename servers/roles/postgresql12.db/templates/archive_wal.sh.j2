@@ -17,8 +17,6 @@ mutex={{ postgresql_12_backup_local_dir }}/walmutex
 mailto='{{ postgresql_12_backup_mail_recipient }}'
 mutex_attempts=50
 
-[ '{{ postgresql_12_backup_remote_rsync_path | default("None") }}' != 'None' ] && remote_rsync='--rsync-path={{ postgresql_12_backup_remote_rsync_path | default("None") }}' || remote_rsync=''
-
 handler()
 {
     command=$@
@@ -52,13 +50,13 @@ echo "archive-WAL $$" > $mutex
 
 mkdir -p $backup_dir
 
-handler rsync $remote_rsync --ignore-existing -ptg $full_file $backup_dir
+handler rsync --ignore-existing -ptg $full_file $backup_dir
 
 # create an empty directory for --delete
 empty=`handler mktemp -d {{ postgresql_12_backup_local_dir }}/emptyXXXXXX`
 
 # clear the active directory
-handler rsync $remote_rsync -rptg --delete $empty/ $active_dir
+handler rsync -rptg --delete $empty/ $active_dir
 
 # remove the temp empty dir
 handler rmdir $empty
