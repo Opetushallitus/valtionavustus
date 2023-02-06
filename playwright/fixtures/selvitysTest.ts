@@ -229,7 +229,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     await clearAndType(page, textareaSelector, "Hyvältä näyttääpi");
     await page.click('button[name="submit-verification"]');
 
-    await page.getByTestId("taloustarkastus-email");
+    await page.getByTestId("taloustarkastus-email").waitFor();
     await use({
       asiatarkastettu: true,
     });
