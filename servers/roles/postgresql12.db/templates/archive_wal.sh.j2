@@ -52,6 +52,7 @@ while [ ! -d $current_backup_dir ]; do
     attempt=`expr $attempt + 1`
     if [ $attempt -gt $mutex_attempts ]; then
         echo "archive of WAL $file failed, timed out waiting for $current_backup_dir to be created" | mail -s "$server: WAL archive failed" $mailto
+        rm -f $mutex
         exit 1
     fi
     sleep 5
