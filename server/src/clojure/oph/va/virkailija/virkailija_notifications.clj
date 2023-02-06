@@ -293,6 +293,7 @@
                   WHERE h.avustushaku = a.id
                     AND h.version_closed IS NULL
                     AND arvio.status = 'accepted'
+                    AND h.status_loppuselvitys NOT IN ('submitted', 'information_verified')
                     AND NOT EXISTS (
                           SELECT *
                           FROM tapahtumaloki
