@@ -5,7 +5,6 @@ postgresql_12_backup_active_dir: "{{ postgresql_12_backup_local_dir }}/active"
 postgresql_12_custom_conf_dir: "{{ postgresql_12_pgdata }}/conf.d"
 postgresql_12_backup_dir: /postgresql-backups/12
 postgresql_12_backup_mail_recipient: "{{ alert_mail_recipient }}"
-postgresql_12_backup_remote_rsync_path: "None"
 
 db_accounts:
   - dbuser: va_hakija

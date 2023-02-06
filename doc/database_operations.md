@@ -127,9 +127,6 @@ Avaa hakemus va-hakijassa, tarkista ettei virheitä tule.
 
 ### Tietokannan dumpin luonti
 
-CI tekee tuotannon tietokannasta dumpin joka yö. Dumpit ovat saatavilla
-palvelimella oph-va-ci-test01 hakemistossa `/data/backups/db-dumps`.
-
 Tietokannan dumpin luonti käsin, esimerkiksi testiympäristössä:
 
 ``` bash
