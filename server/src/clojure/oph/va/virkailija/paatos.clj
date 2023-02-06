@@ -134,30 +134,20 @@
 
            (ok {:status "sent" :hakemus hakemus-id :emails emails})))
 
-(defn regenerate-paatos [hakemus-id]
+(defn- regenerate-paatos [hakemus-id]
       (let [decision (decision/paatos-html hakemus-id)]
         (hakija-api/update-paatos-decision hakemus-id decision)
         (ok {:status "regenerated"})))
 
-(defn send-paatos-for-all [batch-id identity hakemus-id]
+(defn- send-paatos-for-all [batch-id identity hakemus-id]
       (log/info "send-paatos-for-all" hakemus-id)
       (let [emails (paatos-emails hakemus-id)]
            (send-paatos hakemus-id emails batch-id identity)))
 
-(defn resend-paatos-for-all [batch-id identity hakemus-id]
+(defn- resend-paatos-for-all [batch-id identity hakemus-id]
       (log/info "resend-paatos-for-all" hakemus-id)
       (let [emails (paatos-emails hakemus-id)]
            (resend-paatos hakemus-id emails batch-id identity)))
-
-(defn send-selvitys-for-all [avustushaku-id selvitys-type uuid identity hakemus-id]
-      (log/info "send-" selvitys-type "-for-all" hakemus-id)
-      (let [hakemus (hakija-api/get-hakemus hakemus-id)
-            contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
-            avustushaku (hakija-api/get-avustushaku avustushaku-id)
-            roles (hakija-api/get-avustushaku-roles avustushaku-id)
-            arvio (virkailija-db/get-arvio hakemus-id)
-            emails (emails-for-hakemus-without-signatories hakemus contact-email)]
-           (email/send-selvitys-notification! emails avustushaku hakemus selvitys-type arvio roles uuid identity)))
 
 (defn get-paatos-email-status
       "Returns only data related to those hakemus ids which are rejected or accepted,
@@ -184,6 +174,16 @@
             :paatokset hakemukset-email-status
             :sent-time (:sent-time (first hakemukset-email-status))}))
 
+(defn- send-selvitys-for-all [avustushaku-id selvitys-type uuid identity hakemus-id]
+      (log/info "send-" selvitys-type "-for-all" hakemus-id)
+      (let [hakemus (hakija-api/get-hakemus hakemus-id)
+            contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
+            avustushaku (hakija-api/get-avustushaku avustushaku-id)
+            roles (hakija-api/get-avustushaku-roles avustushaku-id)
+            arvio (virkailija-db/get-arvio hakemus-id)
+            emails (emails-for-hakemus-without-signatories hakemus contact-email)]
+           (email/send-selvitys-notification! emails avustushaku hakemus selvitys-type arvio roles uuid identity)))
+
 (defn send-selvitys-emails [avustushaku-id selvitys-type uuid identity]
       (let [is-loppuselvitys (= selvitys-type "loppuselvitys")
             list-selvitys (if is-loppuselvitys hakija-api/list-loppuselvitys-hakemus-ids hakija-api/list-valiselvitys-hakemus-ids)
@@ -195,7 +195,7 @@
            (ok {:count (count accepted-ids)
                 :hakemukset json-ids})))
 
-(defn check-hakemukset-have-valmistelija [hakemus-ids]
+(defn- check-hakemukset-have-valmistelija [hakemus-ids]
   (let [hakemukset-missing-valmistelija (virkailija-db/get-hakemukset-without-valmistelija hakemus-ids)]
     (if (not-empty hakemukset-missing-valmistelija)
         (if (= 1 (count hakemukset-missing-valmistelija))
