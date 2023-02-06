@@ -16,7 +16,3 @@
   path: roles/3rdparty
   version: 1.7.0
 
-- src: https://github.com/timorantalaiho/ansible-postgresql
-  name: postgresql
-  path: roles/3rdparty
-  # version: not specified, contains local modifications :(
