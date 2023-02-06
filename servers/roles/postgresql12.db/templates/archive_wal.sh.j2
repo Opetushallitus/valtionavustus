@@ -15,6 +15,11 @@ mutex={{ postgresql_12_backup_local_dir }}/walmutex
 mailto='{{ postgresql_12_backup_mail_recipient }}'
 mutex_attempts=50
 
+cleanup() {
+  rm -f $mutex
+}
+trap cleanup EXIT
+
 handler()
 {
     command=$@
@@ -22,7 +27,6 @@ handler()
     ret=$?
     if [ $ret -ne 0 ]; then
         (echo "executing $command failed with code $ret:" ; echo "$out") | mail -s "$server: WAL archive failed" $mailto
-        rm -f $mutex
         exit 1
     else
         if [ -n "$out" ]; then
@@ -52,7 +56,6 @@ while [ ! -d $current_backup_dir ]; do
     attempt=`expr $attempt + 1`
     if [ $attempt -gt $mutex_attempts ]; then
         echo "archive of WAL $file failed, timed out waiting for $current_backup_dir to be created" | mail -s "$server: WAL archive failed" $mailto
-        rm -f $mutex
         exit 1
     fi
     sleep 5
@@ -75,5 +78,4 @@ handler rmdir $empty
 #echo "archive of WAL $file succeeded" | mail -s "$server: WAL archive succeeded" $mailto
 
 # exit normally
-rm -f $mutex
 exit 0
