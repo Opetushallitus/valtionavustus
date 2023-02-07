@@ -30,11 +30,7 @@ export default function SelvitysLink({
       {!selvitysPyynnotSent && (
         <div id="selvitys-not-sent-warning">{warningText}</div>
       )}
-      <a
-        href={publicUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <a href={publicUrl} target="_blank" rel="noopener noreferrer">
         Linkki lomakkeelle
       </a>
       <HelpTooltip content={helpText} direction={"arviointi"} />

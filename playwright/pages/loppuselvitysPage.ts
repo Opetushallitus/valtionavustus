@@ -6,7 +6,7 @@ export function LoppuselvitysPage(page: Page) {
   const locators = {
     linkToForm: page.locator("a", { hasText: "Linkki lomakkeelle" }),
     warning: page.locator("#selvitys-not-sent-warning"),
-  }
+  };
 
   async function navigateToLoppuselvitysTab(
     avustushakuID: number,
@@ -22,11 +22,11 @@ export function LoppuselvitysPage(page: Page) {
   }
 
   async function getSelvitysFormUrl() {
-    const formUrl = await locators.linkToForm.getAttribute('href')
+    const formUrl = await locators.linkToForm.getAttribute("href");
     if (!formUrl) {
-      throw Error(`loppuselvitys form url not found on ${page.url()}`)
+      throw Error(`loppuselvitys form url not found on ${page.url()}`);
     }
-    return formUrl
+    return formUrl;
   }
 
   return {

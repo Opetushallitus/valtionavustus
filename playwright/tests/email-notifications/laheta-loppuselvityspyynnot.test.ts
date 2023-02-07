@@ -47,7 +47,10 @@ async function expectNotificationsSentAfterLahetaLoppuselvityspyynnot(
   const emailsBefore = await getLahetaLoppuselvityspyynnotEmails(avustushakuID);
   await sendLahetaLoppuselvityspyynnotNotifications(page);
   const emailsAfter = await getLahetaLoppuselvityspyynnotEmails(avustushakuID);
-  expect(emailsAfter.length, 'Should have sent some Lähetä loppuselvityspyynnöt emails').toBeGreaterThan(emailsBefore.length);
+  expect(
+    emailsAfter.length,
+    "Should have sent some Lähetä loppuselvityspyynnöt emails"
+  ).toBeGreaterThan(emailsBefore.length);
   return emailsAfter;
 }
 
@@ -58,7 +61,10 @@ async function expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(
   const emailsBefore = await getLahetaLoppuselvityspyynnotEmails(avustushakuID);
   await sendLahetaLoppuselvityspyynnotNotifications(page);
   const emailsAfter = await getLahetaLoppuselvityspyynnotEmails(avustushakuID);
-  expect(emailsAfter.length, 'Should not have sent any Lähetä loppuselvityspyynnöt emails').toEqual(emailsBefore.length);
+  expect(
+    emailsAfter.length,
+    "Should not have sent any Lähetä loppuselvityspyynnöt emails"
+  ).toEqual(emailsBefore.length);
 }
 
 async function sendLoppuselvitysEmails(page: Page, avustushakuID: number) {
@@ -242,50 +248,56 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
     );
   });
 
-  notifyTest('notification not sent if loppuselvitys is already submitted', async ({ page, avustushakuID, loppuselvitysDateSet, acceptedHakemus }) => {
-    expectToBeDefined(loppuselvitysDateSet)
+  notifyTest(
+    "notification not sent if loppuselvitys is already submitted",
+    async ({ page, avustushakuID, loppuselvitysDateSet, acceptedHakemus }) => {
+      expectToBeDefined(loppuselvitysDateSet);
 
-    await test.step('submit loppuselvitys', async () => {
-      const loppuselvitysPage = LoppuselvitysPage(page);
-      await loppuselvitysPage.navigateToLoppuselvitysTab(
-        avustushakuID,
-        acceptedHakemus.hakemusID,
-      );
-      const loppuselvitysFormUrl = await loppuselvitysPage.getSelvitysFormUrl()
+      await test.step("submit loppuselvitys", async () => {
+        const loppuselvitysPage = LoppuselvitysPage(page);
+        await loppuselvitysPage.navigateToLoppuselvitysTab(
+          avustushakuID,
+          acceptedHakemus.hakemusID
+        );
+        const loppuselvitysFormUrl =
+          await loppuselvitysPage.getSelvitysFormUrl();
 
-      await navigate(page, loppuselvitysFormUrl);
-      const hakijaSelvitysPage = HakijaSelvitysPage(page);
+        await navigate(page, loppuselvitysFormUrl);
+        const hakijaSelvitysPage = HakijaSelvitysPage(page);
 
-      await hakijaSelvitysPage.textArea(0).fill("Yhteenveto");
-      await hakijaSelvitysPage.textArea(2).fill("Työn jako");
-      await hakijaSelvitysPage.projectGoal.fill("Tavoite");
-      await hakijaSelvitysPage.projectActivity.fill("Toiminta");
-      await hakijaSelvitysPage.projectResult.fill("Tulokset");
-      await hakijaSelvitysPage.textArea(1).fill("Arviointi");
-      await hakijaSelvitysPage.textArea(3).fill("Tiedotus");
-  
-      await hakijaSelvitysPage.outcomeTypeRadioButtons.operatingModel.click();
-      await hakijaSelvitysPage.outcomeDescription.fill("Kuvaus");
-      await hakijaSelvitysPage.outcomeAddress.fill("Saatavuustiedot");
-  
-      await hakijaSelvitysPage.goodPracticesRadioButtons.no.click();
-      await hakijaSelvitysPage.textArea(4).fill("Lisätietoja");
-  
-      await hakijaSelvitysPage.firstAttachment.setInputFiles(dummyPdfPath);
-  
-      await expect(hakijaSelvitysPage.submitButton).toHaveText(
-        "Lähetä käsiteltäväksi"
-      );
-      await hakijaSelvitysPage.submitButton.click();
-      await expect(hakijaSelvitysPage.submitButton).toHaveText(
-        "Loppuselvitys lähetetty"
-      );
-      await hakijaSelvitysPage.submitButton.isDisabled();
-    })
+        await hakijaSelvitysPage.textArea(0).fill("Yhteenveto");
+        await hakijaSelvitysPage.textArea(2).fill("Työn jako");
+        await hakijaSelvitysPage.projectGoal.fill("Tavoite");
+        await hakijaSelvitysPage.projectActivity.fill("Toiminta");
+        await hakijaSelvitysPage.projectResult.fill("Tulokset");
+        await hakijaSelvitysPage.textArea(1).fill("Arviointi");
+        await hakijaSelvitysPage.textArea(3).fill("Tiedotus");
 
-    await test.step('should not send any notifications', async () => {
-      await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
-    })
+        await hakijaSelvitysPage.outcomeTypeRadioButtons.operatingModel.click();
+        await hakijaSelvitysPage.outcomeDescription.fill("Kuvaus");
+        await hakijaSelvitysPage.outcomeAddress.fill("Saatavuustiedot");
 
-  })
+        await hakijaSelvitysPage.goodPracticesRadioButtons.no.click();
+        await hakijaSelvitysPage.textArea(4).fill("Lisätietoja");
+
+        await hakijaSelvitysPage.firstAttachment.setInputFiles(dummyPdfPath);
+
+        await expect(hakijaSelvitysPage.submitButton).toHaveText(
+          "Lähetä käsiteltäväksi"
+        );
+        await hakijaSelvitysPage.submitButton.click();
+        await expect(hakijaSelvitysPage.submitButton).toHaveText(
+          "Loppuselvitys lähetetty"
+        );
+        await hakijaSelvitysPage.submitButton.isDisabled();
+      });
+
+      await test.step("should not send any notifications", async () => {
+        await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(
+          page,
+          avustushakuID
+        );
+      });
+    }
+  );
 });
