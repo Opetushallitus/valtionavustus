@@ -324,7 +324,7 @@
                               :sender (-> email/smtp-config :sender)
                               :to (:to-email-addresses notification)
                               :subject "Muistutus väliselvityspyyntöjen lähettämisestä"
-                              :valiselvitys-deadline (datetime/java8-date-string (:valiselvitys-deadline notification))}
+                              :valiselvitys-deadline (datetime/java8-date-string (:deadline notification))}
                              (partial render template))))
 
 (defn send-laheta-loppuselvityspyynnot [notification]
