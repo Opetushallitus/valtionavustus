@@ -8,8 +8,7 @@ import { getLahetaValiselvityspyynnotEmails } from "../../utils/emails";
 import { expectToBeDefined } from "../../utils/util";
 import { selvitysTest } from "../../fixtures/selvitysTest";
 
-test.describe.parallel('Lähetä väliselvityspyynnöt notifications', () => {
-
+test.describe.parallel("Lähetä väliselvityspyynnöt notifications", () => {
   selvitysTest(
     "Lähetä väliselvityspyynnot notifications are not sent if väliselvitys deadline is not set",
     async ({ page, avustushakuID, acceptedHakemus }) => {
@@ -20,7 +19,9 @@ test.describe.parallel('Lähetä väliselvityspyynnöt notifications', () => {
       );
       await sendLahetaValiselvityspyynnotNotifications(page);
 
-      const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
+      const emailsAfter = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
       expect(emailsAfter).toEqual(emailsBefore);
     }
   );
@@ -38,7 +39,9 @@ test.describe.parallel('Lähetä väliselvityspyynnöt notifications', () => {
       );
       await sendLahetaValiselvityspyynnotNotifications(page);
 
-      const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
+      const emailsAfter = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
       expect(emailsAfter).toEqual(emailsBefore);
     }
   );
@@ -56,7 +59,9 @@ test.describe.parallel('Lähetä väliselvityspyynnöt notifications', () => {
       );
       await sendLahetaValiselvityspyynnotNotifications(page);
 
-      const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
+      const emailsAfter = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
       expect(emailsAfter).toEqual(emailsBefore);
     }
   );
@@ -73,7 +78,9 @@ test.describe.parallel('Lähetä väliselvityspyynnöt notifications', () => {
       );
       await sendLahetaValiselvityspyynnotNotifications(page);
 
-      const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
+      const emailsAfter = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
       expect(emailsAfter.length).toBeGreaterThan(emailsBefore.length);
     }
   );
@@ -93,7 +100,9 @@ test.describe.parallel('Lähetä väliselvityspyynnöt notifications', () => {
       await test.step(
         "ensure notifications are not send before paatos has been send",
         async () => {
-          const valiselvitysdate = moment().add(5, "months").format("DD.MM.YYYY");
+          const valiselvitysdate = moment()
+            .add(5, "months")
+            .format("DD.MM.YYYY");
           await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
 
           const emailsBefore = await getLahetaValiselvityspyynnotEmails(
@@ -136,7 +145,9 @@ test.describe.parallel('Lähetä väliselvityspyynnöt notifications', () => {
       );
       await sendLahetaValiselvityspyynnotNotifications(page);
 
-      const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
+      const emailsAfter = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
       expect(emailsAfter.length).toBeGreaterThan(emailsBefore.length);
     }
   );
@@ -155,7 +166,9 @@ test.describe.parallel('Lähetä väliselvityspyynnöt notifications', () => {
 
       await sendLahetaValiselvityspyynnotNotifications(page);
 
-      const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
+      const emailsAfter = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
       expect(emailsAfter).toEqual(emailsBefore);
     }
   );
@@ -172,7 +185,9 @@ test.describe.parallel('Lähetä väliselvityspyynnöt notifications', () => {
       );
       await sendLahetaValiselvityspyynnotNotifications(page);
 
-      const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
+      const emailsAfter = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
       expect(emailsAfter.length).toBeGreaterThan(emailsBefore.length);
 
       const emailsBefore2 = await getLahetaValiselvityspyynnotEmails(
@@ -205,8 +220,7 @@ test.describe.parallel('Lähetä väliselvityspyynnöt notifications', () => {
       expect(emailsAfter3).toEqual(emailsBefore3);
     }
   );
-
-})
+});
 
 const sendLahetaValiselvityspyynnotNotifications = (page: Page) =>
   page.request.post(
