@@ -277,39 +277,43 @@
       (doseq [notification notifications]
         (email/send-laheta-valiselvityspyynnot notification)))))
 
-(defn- get-laheta-loppuselvityspyynnot []
-  (query "SELECT
+(defn- get-laheta-selvityspyynnot [{:keys [date-field status-field notify-before-deadline tapahtumaloki-tyyppi]}]
+  (query (str "SELECT
             a.id AS avustushaku_id,
-            a.loppuselvitysdate AS loppuselvitys_deadline,
+            a." date-field " AS deadline,
             jsonb_agg(r.email) AS to,
             (a.content -> 'name' ->> 'fi') AS avustushaku_name
           FROM avustushaut a
           JOIN hakija.avustushaku_roles r ON r.avustushaku = a.id
           WHERE EXISTS (
                   SELECT *
-                  FROM hakemus_paatokset p
-                  JOIN hakemukset h ON p.hakemus_id = h.id
-                  JOIN arviot arvio ON arvio.hakemus_id = h.id
-                  WHERE h.avustushaku = a.id
-                    AND h.version_closed IS NULL
-                    AND arvio.status = 'accepted'
-                    AND h.status_loppuselvitys NOT IN ('submitted', 'information_verified')
-                    AND NOT EXISTS (
-                          SELECT *
-                          FROM tapahtumaloki
-                          WHERE tapahtumaloki.hakemus_id = h.id
-                            AND tyyppi = 'loppuselvitys-notification'
-                        )
+                    FROM hakemus_paatokset p
+                    JOIN hakemukset h ON p.hakemus_id = h.id
+                    JOIN arviot arvio ON arvio.hakemus_id = h.id
+                    WHERE h.avustushaku = a.id
+                      AND h.version_closed IS NULL
+                      AND arvio.status = 'accepted'
+                      AND h." status-field " NOT IN ('submitted', 'information_verified')
+                      AND NOT EXISTS (
+                        SELECT *
+                        FROM tapahtumaloki
+                        WHERE tapahtumaloki.hakemus_id = h.id
+                          AND tyyppi = ?
+                      )
                 )
-            AND loppuselvitysdate IS NOT NULL
-            AND current_timestamp::date BETWEEN (loppuselvitysdate::date - '8 month'::interval) AND loppuselvitysdate::date
+            AND " date-field " IS NOT NULL
+            AND current_timestamp::date BETWEEN (" date-field "::date - ?::interval) AND " date-field "::date 
             AND (r.role = 'presenting_officer' OR r.role = 'vastuuvalmistelija')
             AND r.email IS NOT NULL
-            GROUP BY avustushaku_name, valiselvitysdate, avustushaku_id"
-         []))
+          GROUP BY avustushaku_name, " date-field ", avustushaku_id")
+         [tapahtumaloki-tyyppi notify-before-deadline]))
+
 
 (defn send-laheta-loppuselvityspyynnot-notifications []
-  (let [notifications (get-laheta-loppuselvityspyynnot)]
+  (let [notifications (get-laheta-selvityspyynnot {:date-field "loppuselvitysdate"
+                                                   :status-field "status_loppuselvitys"
+                                                   :tapahtumaloki-tyyppi "loppuselvitys-notification"
+                                                   :notify-before-deadline "8 month"})]
     (when (>= (count notifications) 1)
       (log/info "Sending" (count notifications) "laheta-loppuselvityspyynnot notifications")
       (doseq [notification notifications]

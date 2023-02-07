@@ -338,7 +338,7 @@
                               :sender (-> email/smtp-config :sender)
                               :to (:to notification)
                               :subject "Muistutus loppuselvityspyyntöjen lähettämisestä"
-                              :loppuselvitys-deadline (datetime/java8-date-string (:loppuselvitys-deadline notification))}
+                              :loppuselvitys-deadline (datetime/java8-date-string (:deadline notification))}
                              (partial render template))))
 
 (defn send-loppuselvitys-palauttamatta [notification]
