@@ -8,201 +8,205 @@ import { getLahetaValiselvityspyynnotEmails } from "../../utils/emails";
 import { expectToBeDefined } from "../../utils/util";
 import { selvitysTest } from "../../fixtures/selvitysTest";
 
-selvitysTest(
-  "Lähetä väliselvityspyynnot notifications are not sent if väliselvitys deadline is not set",
-  async ({ page, avustushakuID, acceptedHakemus }) => {
-    expectToBeDefined(acceptedHakemus);
+test.describe.parallel('Lähetä väliselvityspyynnöt notifications', () => {
 
-    const emailsBefore = await getLahetaValiselvityspyynnotEmails(
-      avustushakuID
-    );
-    await sendLahetaValiselvityspyynnotNotifications(page);
+  selvitysTest(
+    "Lähetä väliselvityspyynnot notifications are not sent if väliselvitys deadline is not set",
+    async ({ page, avustushakuID, acceptedHakemus }) => {
+      expectToBeDefined(acceptedHakemus);
 
-    const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
-    expect(emailsAfter).toEqual(emailsBefore);
-  }
-);
+      const emailsBefore = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
+      await sendLahetaValiselvityspyynnotNotifications(page);
 
-selvitysTest(
-  "Lähetä väliselvityspyynnöt notifications are not sent if valiselvitys deadline is more than 6 months in the future",
-  async ({ page, avustushakuID, acceptedHakemus }) => {
-    expectToBeDefined(acceptedHakemus);
-    const valiselvitysdate = moment().add(7, "months").format("DD.MM.YYYY");
+      const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
+      expect(emailsAfter).toEqual(emailsBefore);
+    }
+  );
 
-    await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
+  selvitysTest(
+    "Lähetä väliselvityspyynnöt notifications are not sent if valiselvitys deadline is more than 6 months in the future",
+    async ({ page, avustushakuID, acceptedHakemus }) => {
+      expectToBeDefined(acceptedHakemus);
+      const valiselvitysdate = moment().add(7, "months").format("DD.MM.YYYY");
 
-    const emailsBefore = await getLahetaValiselvityspyynnotEmails(
-      avustushakuID
-    );
-    await sendLahetaValiselvityspyynnotNotifications(page);
+      await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
 
-    const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
-    expect(emailsAfter).toEqual(emailsBefore);
-  }
-);
+      const emailsBefore = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
+      await sendLahetaValiselvityspyynnotNotifications(page);
 
-selvitysTest(
-  "Lähetä väliselvityspyynnöt notifications are not sent if valiselvitys deadline is in the past",
-  async ({ page, avustushakuID, acceptedHakemus }) => {
-    expectToBeDefined(acceptedHakemus);
-    const valiselvitysdate = moment().subtract(1, "day").format("DD.MM.YYYY");
+      const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
+      expect(emailsAfter).toEqual(emailsBefore);
+    }
+  );
 
-    await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
+  selvitysTest(
+    "Lähetä väliselvityspyynnöt notifications are not sent if valiselvitys deadline is in the past",
+    async ({ page, avustushakuID, acceptedHakemus }) => {
+      expectToBeDefined(acceptedHakemus);
+      const valiselvitysdate = moment().subtract(1, "day").format("DD.MM.YYYY");
 
-    const emailsBefore = await getLahetaValiselvityspyynnotEmails(
-      avustushakuID
-    );
-    await sendLahetaValiselvityspyynnotNotifications(page);
+      await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
 
-    const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
-    expect(emailsAfter).toEqual(emailsBefore);
-  }
-);
+      const emailsBefore = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
+      await sendLahetaValiselvityspyynnotNotifications(page);
 
-selvitysTest(
-  "Lähetä väliselvityspyynnöt notifications are send 6 months before valiselvitys deadline",
-  async ({ page, avustushakuID, acceptedHakemus }) => {
-    expectToBeDefined(acceptedHakemus);
-    const valiselvitysdate = moment().add(6, "months").format("DD.MM.YYYY");
-    await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
+      const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
+      expect(emailsAfter).toEqual(emailsBefore);
+    }
+  );
 
-    const emailsBefore = await getLahetaValiselvityspyynnotEmails(
-      avustushakuID
-    );
-    await sendLahetaValiselvityspyynnotNotifications(page);
+  selvitysTest(
+    "Lähetä väliselvityspyynnöt notifications are send 6 months before valiselvitys deadline",
+    async ({ page, avustushakuID, acceptedHakemus }) => {
+      expectToBeDefined(acceptedHakemus);
+      const valiselvitysdate = moment().add(6, "months").format("DD.MM.YYYY");
+      await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
 
-    const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
-    expect(emailsAfter.length).toBeGreaterThan(emailsBefore.length);
-  }
-);
+      const emailsBefore = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
+      await sendLahetaValiselvityspyynnotNotifications(page);
 
-selvitysTest(
-  "Lähetä väliselvityspyynnöt notifications are send after paatos has been send",
-  async ({
-    closedAvustushaku,
-    avustushakuID,
-    answers,
-    page,
-    ukotettuValmistelija,
-    projektikoodi,
-  }) => {
-    expectToBeDefined(closedAvustushaku);
+      const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
+      expect(emailsAfter.length).toBeGreaterThan(emailsBefore.length);
+    }
+  );
 
-    await test.step(
-      "ensure notifications are not send before paatos has been send",
-      async () => {
-        const valiselvitysdate = moment().add(5, "months").format("DD.MM.YYYY");
-        await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
+  selvitysTest(
+    "Lähetä väliselvityspyynnöt notifications are send after paatos has been send",
+    async ({
+      closedAvustushaku,
+      avustushakuID,
+      answers,
+      page,
+      ukotettuValmistelija,
+      projektikoodi,
+    }) => {
+      expectToBeDefined(closedAvustushaku);
 
-        const emailsBefore = await getLahetaValiselvityspyynnotEmails(
-          avustushakuID
-        );
-        await sendLahetaValiselvityspyynnotNotifications(page);
+      await test.step(
+        "ensure notifications are not send before paatos has been send",
+        async () => {
+          const valiselvitysdate = moment().add(5, "months").format("DD.MM.YYYY");
+          await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
 
-        const emailsAfter = await getLahetaValiselvityspyynnotEmails(
-          avustushakuID
-        );
-        expect(emailsAfter).toEqual(emailsBefore);
-      }
-    );
+          const emailsBefore = await getLahetaValiselvityspyynnotEmails(
+            avustushakuID
+          );
+          await sendLahetaValiselvityspyynnotNotifications(page);
 
-    await test.step("send paatos", async () => {
-      const hakemustenArviointiPage = new HakemustenArviointiPage(page);
-      await hakemustenArviointiPage.navigate(avustushakuID);
-      const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
-        avustushakuID,
-        projectName: answers.projectName,
-        projektikoodi,
-      });
-
-      const hakujenHallintaPage = new HakujenHallintaPage(page);
-      await hakujenHallintaPage.navigateFromHeader();
-      await hakujenHallintaPage.resolveAvustushaku();
-
-      await hakemustenArviointiPage.navigate(avustushakuID);
-      await hakemustenArviointiPage.selectValmistelijaForHakemus(
-        hakemusID,
-        ukotettuValmistelija
+          const emailsAfter = await getLahetaValiselvityspyynnotEmails(
+            avustushakuID
+          );
+          expect(emailsAfter).toEqual(emailsBefore);
+        }
       );
 
-      await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-      await hakujenHallintaPage.sendPaatos(avustushakuID);
-    });
+      await test.step("send paatos", async () => {
+        const hakemustenArviointiPage = new HakemustenArviointiPage(page);
+        await hakemustenArviointiPage.navigate(avustushakuID);
+        const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
+          avustushakuID,
+          projectName: answers.projectName,
+          projektikoodi,
+        });
 
-    const emailsBefore = await getLahetaValiselvityspyynnotEmails(
-      avustushakuID
-    );
-    await sendLahetaValiselvityspyynnotNotifications(page);
+        const hakujenHallintaPage = new HakujenHallintaPage(page);
+        await hakujenHallintaPage.navigateFromHeader();
+        await hakujenHallintaPage.resolveAvustushaku();
 
-    const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
-    expect(emailsAfter.length).toBeGreaterThan(emailsBefore.length);
-  }
-);
+        await hakemustenArviointiPage.navigate(avustushakuID);
+        await hakemustenArviointiPage.selectValmistelijaForHakemus(
+          hakemusID,
+          ukotettuValmistelija
+        );
 
-selvitysTest(
-  "Lähetä väliselvityspyynnöt notifications are not sent if väliselvityspyyntö has been sent",
-  async ({ page, avustushakuID, väliselvityspyyntöSent }) => {
-    expectToBeDefined(väliselvityspyyntöSent);
+        await hakujenHallintaPage.navigateToPaatos(avustushakuID);
+        await hakujenHallintaPage.sendPaatos(avustushakuID);
+      });
 
-    const valiselvitysdate = moment().add(5, "months").format("DD.MM.YYYY");
-    await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
+      const emailsBefore = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
+      await sendLahetaValiselvityspyynnotNotifications(page);
 
-    const emailsBefore = await getLahetaValiselvityspyynnotEmails(
-      avustushakuID
-    );
+      const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
+      expect(emailsAfter.length).toBeGreaterThan(emailsBefore.length);
+    }
+  );
 
-    await sendLahetaValiselvityspyynnotNotifications(page);
+  selvitysTest(
+    "Lähetä väliselvityspyynnöt notifications are not sent if väliselvityspyyntö has been sent",
+    async ({ page, avustushakuID, väliselvityspyyntöSent }) => {
+      expectToBeDefined(väliselvityspyyntöSent);
 
-    const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
-    expect(emailsAfter).toEqual(emailsBefore);
-  }
-);
+      const valiselvitysdate = moment().add(5, "months").format("DD.MM.YYYY");
+      await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
 
-selvitysTest(
-  "Lähetä väliselvityspyynnöt notifications are sent until väliselvityspyynnöt have been sent",
-  async ({ page, avustushakuID, acceptedHakemus }) => {
-    expectToBeDefined(acceptedHakemus);
-    const valiselvitysdate = moment().add(6, "months").format("DD.MM.YYYY");
-    await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
+      const emailsBefore = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
 
-    const emailsBefore = await getLahetaValiselvityspyynnotEmails(
-      avustushakuID
-    );
-    await sendLahetaValiselvityspyynnotNotifications(page);
+      await sendLahetaValiselvityspyynnotNotifications(page);
 
-    const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
-    expect(emailsAfter.length).toBeGreaterThan(emailsBefore.length);
+      const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
+      expect(emailsAfter).toEqual(emailsBefore);
+    }
+  );
 
-    const emailsBefore2 = await getLahetaValiselvityspyynnotEmails(
-      avustushakuID
-    );
-    await sendLahetaValiselvityspyynnotNotifications(page);
+  selvitysTest(
+    "Lähetä väliselvityspyynnöt notifications are sent until väliselvityspyynnöt have been sent",
+    async ({ page, avustushakuID, acceptedHakemus }) => {
+      expectToBeDefined(acceptedHakemus);
+      const valiselvitysdate = moment().add(6, "months").format("DD.MM.YYYY");
+      await setValiselvitysDate(page, avustushakuID, valiselvitysdate);
 
-    const emailsAfter2 = await getLahetaValiselvityspyynnotEmails(
-      avustushakuID
-    );
-    expect(emailsAfter2.length).toBeGreaterThan(emailsBefore2.length);
+      const emailsBefore = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
+      await sendLahetaValiselvityspyynnotNotifications(page);
 
-    const hakujenHallinta = new HakujenHallintaPage(page);
-    await hakujenHallinta.navigateToValiselvitys(avustushakuID);
-    await Promise.all([
-      page.waitForResponse(
-        `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/valiselvitys/send-notification`
-      ),
-      page.click('[data-test-id="send-valiselvitys"]'),
-    ]);
+      const emailsAfter = await getLahetaValiselvityspyynnotEmails(avustushakuID);
+      expect(emailsAfter.length).toBeGreaterThan(emailsBefore.length);
 
-    const emailsBefore3 = await getLahetaValiselvityspyynnotEmails(
-      avustushakuID
-    );
-    await sendLahetaValiselvityspyynnotNotifications(page);
+      const emailsBefore2 = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
+      await sendLahetaValiselvityspyynnotNotifications(page);
 
-    const emailsAfter3 = await getLahetaValiselvityspyynnotEmails(
-      avustushakuID
-    );
-    expect(emailsAfter3).toEqual(emailsBefore3);
-  }
-);
+      const emailsAfter2 = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
+      expect(emailsAfter2.length).toBeGreaterThan(emailsBefore2.length);
+
+      const hakujenHallinta = new HakujenHallintaPage(page);
+      await hakujenHallinta.navigateToValiselvitys(avustushakuID);
+      await Promise.all([
+        page.waitForResponse(
+          `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/valiselvitys/send-notification`
+        ),
+        page.click('[data-test-id="send-valiselvitys"]'),
+      ]);
+
+      const emailsBefore3 = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
+      await sendLahetaValiselvityspyynnotNotifications(page);
+
+      const emailsAfter3 = await getLahetaValiselvityspyynnotEmails(
+        avustushakuID
+      );
+      expect(emailsAfter3).toEqual(emailsBefore3);
+    }
+  );
+
+})
 
 const sendLahetaValiselvityspyynnotNotifications = (page: Page) =>
   page.request.post(
