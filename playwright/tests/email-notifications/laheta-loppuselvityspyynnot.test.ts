@@ -74,7 +74,7 @@ async function sendLoppuselvitysEmails(page: Page, avustushakuID: number) {
   await hakujenHallintaPage.sendLoppuselvitys();
 }
 
-test.describe("loppuselvitys", () => {
+test.describe.parallel("loppuselvitys", () => {
   test.describe(
     "notifications are sent repeatedly until loppuselvityspyynnöt have been sent",
     () => {
