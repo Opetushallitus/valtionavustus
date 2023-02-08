@@ -257,7 +257,7 @@
                     WHERE h.avustushaku = a.id
                       AND h.version_closed IS NULL
                       AND arvio.status = 'accepted'
-                      AND h." status-field " NOT IN ('submitted', 'information_verified')
+                      AND h." status-field " NOT IN ('submitted', 'information_verified', 'accepted')
                       AND NOT EXISTS (
                         SELECT *
                         FROM tapahtumaloki
