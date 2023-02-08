@@ -7,6 +7,7 @@ const workers = isNaN(workersEnvNumber) ? workersEnv : workersEnvNumber;
 const retriesEnv = Number(process.env["PLAYWRIGHT_RETRIES"]);
 const retries = isNaN(retriesEnv) ? 1 : retriesEnv;
 const allowOnly = process.env["ALLOW_ONLY"] === "true";
+const quiet = process.env["VERBOSE"] !== "true";
 
 const config: PlaywrightTestConfig = {
   forbidOnly: !allowOnly,
@@ -14,6 +15,7 @@ const config: PlaywrightTestConfig = {
   workers,
   testDir: "tests",
   timeout: 60000,
+  quiet,
   use: {
     actionTimeout: 10000,
     navigationTimeout: 10000,
