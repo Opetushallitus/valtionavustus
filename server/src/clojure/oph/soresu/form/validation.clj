@@ -49,6 +49,14 @@
     [{:error "email"}]
     []))
 
+(defn- validate-no-unicode-null-character [field answer]
+  (if (and (or (has-field-type? "textArea" field)
+               (has-field-type? "textField" field))
+           (not (nil? answer))
+           (validation/contains-escaped-unicode-null answer))
+    [{:error "field contains escaped unicode null character \u0000"}]
+    []))
+
 (defn- validate-email-field [field answer]
   (if (or (not (has-field-type? "emailField" field))
           (empty? answer))
@@ -172,6 +180,7 @@
      (validate-textarea-maxlength field answer)
      (validate-texfield-maxlength field answer)
      (validate-email-field field answer)
+     (validate-no-unicode-null-character field answer)
      (validate-integer-field field answer)
      (validate-decimal-field field answer)
      (validate-finnish-business-id-field field answer))))
@@ -200,7 +209,8 @@
        (validate-options field answer)
        (validate-textarea-maxlength field answer)
        (validate-texfield-maxlength field answer)
-       (validate-email-security field answer))}))
+       (validate-email-security field answer)
+       (validate-no-unicode-null-character field answer))}))
 
 (defn validate-form-security [form answers]
   (let [applied-form (rules/apply-rules form answers {})
