@@ -18,10 +18,19 @@ paatokset_lahetetty AS (
   WHERE success AND tapahtumaloki.tyyppi = 'paatoksen_lahetys'
   GROUP BY avustushaku_id
 ),
-maksatukset AS (
+maksatukset_lahetetty AS (
   SELECT
     avustushaku.id AS avustushaku_id,
-    min(hakemus_version.created_at) AS maksatukset_lahetetty,
+    min(payments.created_at) AS maksatukset_lahetetty
+  FROM avustushakus avustushaku
+  JOIN hakija.hakemukset hakemus_version ON hakemus_version.avustushaku = avustushaku.id
+  JOIN virkailija.payments ON hakemus_version.id = payments.application_id AND hakemus_version.version = payments.application_version
+  WHERE payments.deleted is NULL AND payments.paymentstatus_id = 'sent'
+  GROUP BY avustushaku.id
+),
+maksatukset_summa AS (
+  SELECT
+    avustushaku.id AS avustushaku_id,
     coalesce(sum(payment_sum), 0) AS maksatukset_summa
   FROM avustushakus avustushaku
   JOIN hakija.hakemukset hakemus_version ON hakemus_version.avustushaku = avustushaku.id
@@ -65,7 +74,8 @@ SELECT
 FROM avustushakus avustushaku
 LEFT JOIN vastuuvalmistelijat USING (avustushaku_id)
 LEFT JOIN paatokset_lahetetty USING (avustushaku_id)
-LEFT JOIN maksatukset USING (avustushaku_id)
+LEFT JOIN maksatukset_lahetetty USING (avustushaku_id)
+LEFT JOIN maksatukset_summa USING (avustushaku_id)
 LEFT JOIN valiselvityspyynnot_lahetetty USING (avustushaku_id)
 LEFT JOIN loppuselvityspyynnot_lahetetty USING (avustushaku_id)
 LEFT JOIN use_detailed_costs USING (avustushaku_id)
