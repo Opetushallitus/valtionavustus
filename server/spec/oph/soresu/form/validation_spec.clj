@@ -106,6 +106,9 @@
       (should= {:email []} (validate-field (answers-for email-field "testi@test.org") [] email-field))
       (should= {:email [{:error "email"}]} (validate-field (answers-for email-field "invalid") [] email-field)))
 
+  (it "rejects unicode null values"
+      (should= {:email [{:error "email"}]} (validate-field (answers-for email-field "testi@test.o\u0000rg") [] email-field)))
+
   (it "validates empty email as required"
       (let [result (validate-field (answers-for email-field "") [] email-field)]
         (should= {:email [{:error "required"}]} result)))
