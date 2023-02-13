@@ -2,8 +2,6 @@ import { expect } from "@playwright/test";
 
 import moment from "moment";
 
-import { navigate } from "../../utils/navigate";
-
 import { waitForElementWithText, clearAndType } from "../../utils/util";
 
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
