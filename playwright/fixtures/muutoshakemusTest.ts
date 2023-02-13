@@ -5,6 +5,7 @@ import moment from "moment";
 import { HakijaAvustusHakuPage } from "../pages/hakijaAvustusHakuPage";
 import { defaultValues } from "./defaultValues";
 import { expectToBeDefined } from "../utils/util";
+import { PaatosPage } from "../pages/hakujen-hallinta/PaatosPage";
 
 export interface MuutoshakemusFixtures {
   finalAvustushakuEndDate: moment.Moment;
@@ -124,8 +125,9 @@ export const muutoshakemusTest =
       });
 
       await test.step("Send päätökset", async () => {
-        await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-        await hakujenHallintaPage.sendPaatos(avustushakuID);
+        const paatosPage = PaatosPage(page);
+        await paatosPage.navigateTo(avustushakuID);
+        await paatosPage.sendPaatos();
       });
 
       await use({ hakemusID, userKey });

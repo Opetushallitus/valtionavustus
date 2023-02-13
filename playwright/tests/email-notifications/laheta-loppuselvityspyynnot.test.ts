@@ -13,6 +13,7 @@ import { selvitysTest } from "../../fixtures/selvitysTest";
 import { LoppuselvitysPage } from "../../pages/loppuselvitysPage";
 import { navigate } from "../../utils/navigate";
 import { HakijaSelvitysPage } from "../../pages/hakijaSelvitysPage";
+import { PaatosPage } from "../../pages/hakujen-hallinta/PaatosPage";
 
 const sendLahetaLoppuselvityspyynnotNotifications = (page: Page) =>
   page.request.post(
@@ -32,10 +33,12 @@ const notifyTest = selvitysTest.extend<LoppuselvitysExtraFixtures>({
     use
   ) => {
     expectToBeDefined(acceptedHakemus);
-    const hakujenHallinta = new HakujenHallintaPage(page);
-    await hakujenHallinta.navigateToPaatos(avustushakuID);
-    await hakujenHallinta.setLoppuselvitysDate(loppuselvitysDate);
-    await hakujenHallinta.waitForSave();
+
+    const paatosPage = PaatosPage(page);
+    await paatosPage.navigateTo(avustushakuID);
+
+    await paatosPage.setLoppuselvitysDate(loppuselvitysDate);
+    await paatosPage.waitForSave();
     await use(true);
   },
 });
@@ -69,8 +72,7 @@ async function expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(
 
 async function sendLoppuselvitysEmails(page: Page, avustushakuID: number) {
   const hakujenHallintaPage = new HakujenHallintaPage(page);
-  await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-  await hakujenHallintaPage.switchToLoppuselvitysTab();
+  await hakujenHallintaPage.navigateToLoppuselvitys(avustushakuID);
   await hakujenHallintaPage.sendLoppuselvitys();
 }
 
@@ -198,12 +200,12 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
       }) => {
         expectToBeDefined(closedAvustushaku);
         await test.step("set loppuselvitys date", async () => {
-          const hakujenHallinta = new HakujenHallintaPage(page);
-          await hakujenHallinta.navigateToPaatos(avustushakuID);
-          await hakujenHallinta.setLoppuselvitysDate(
+          const paatosPage = PaatosPage(page);
+          await paatosPage.navigateTo(avustushakuID);
+          await paatosPage.setLoppuselvitysDate(
             moment().add(3, "months").format("DD.MM.YYYY")
           );
-          await hakujenHallinta.waitForSave();
+          await paatosPage.waitForSave();
         });
 
         await test.step(
@@ -235,9 +237,9 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
             ukotettuValmistelija
           );
 
-          await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-
-          await hakujenHallintaPage.sendPaatos(avustushakuID);
+          const paatosPage = PaatosPage(page);
+          await paatosPage.navigateTo(avustushakuID);
+          await paatosPage.sendPaatos();
         });
 
         await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(

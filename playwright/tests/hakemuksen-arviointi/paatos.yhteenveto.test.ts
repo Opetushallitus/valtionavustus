@@ -11,6 +11,7 @@ import { YhteenvetoPage } from "../../pages/yhteenvetoPage";
 import { HakijaAvustusHakuPage } from "../../pages/hakijaAvustusHakuPage";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
+import { PaatosPage } from "../../pages/hakujen-hallinta/PaatosPage";
 
 const getSearchUrl = async ({
   page,
@@ -123,9 +124,9 @@ test("Yhteenveto", async ({
   const yhteenvetoPage = new YhteenvetoPage(page);
   const { avustushakuName } = hakuProps;
   await test.step("sending päätökset", async () => {
-    const hakujenHallintaPage = new HakujenHallintaPage(page);
-    await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-    await hakujenHallintaPage.sendPaatos(avustushakuID, 2);
+    const paatosPage = PaatosPage(page);
+    await paatosPage.navigateTo(avustushakuID);
+    await paatosPage.sendPaatos(2);
   });
   await test.step(
     "virkailija gets päätökset lähetetty email with link to päätöslista",

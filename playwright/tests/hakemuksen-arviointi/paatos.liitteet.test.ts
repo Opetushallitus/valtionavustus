@@ -6,6 +6,7 @@ import { getAcceptedPäätösEmails } from "../../utils/emails";
 import { expectToBeDefined } from "../../utils/util";
 import { HAKIJA_URL } from "../../utils/constants";
 import { getPdfFirstPageTextContent } from "../../utils/pdfUtil";
+import { PaatosPage } from "../../pages/hakujen-hallinta/PaatosPage";
 
 test("paatos liitteet", async ({
   page,
@@ -29,24 +30,27 @@ test("paatos liitteet", async ({
     hakemusID,
     ukotettuValmistelija
   );
-  const paatosLocators = await hakujenHallintaPage.navigateToPaatos(
-    avustushakuID
-  );
+
+  const paatosPage = PaatosPage(page);
+  await paatosPage.navigateTo(avustushakuID);
+
   const {
     erityisavustusEhdotCheckbox,
     yleisavustusEhdotCheckbox,
     yleisOhjeCheckbox,
     yleisOhjeLiite,
     pakoteOhjeCheckbox,
-  } = paatosLocators;
+  } = paatosPage.locators;
   const amountOfYleisohjeet = 5;
   await expect(yleisOhjeLiite).toHaveCount(amountOfYleisohjeet);
+
   await test.step("ehdot liitteet are disabled and unchecked", async () => {
     await expect(erityisavustusEhdotCheckbox).toBeDisabled();
     await expect(erityisavustusEhdotCheckbox).not.toBeChecked();
     await expect(yleisavustusEhdotCheckbox).toBeDisabled();
     await expect(yleisavustusEhdotCheckbox).not.toBeChecked();
   });
+
   await test.step(
     "newest ohje is preselected and all are disabled",
     async () => {
@@ -87,13 +91,17 @@ test("paatos liitteet", async ({
     await expect(pakoteOhjeCheckbox).toBeChecked();
   });
   await test.step("make sure link to yleisohje is in paatos", async () => {
-    await hakujenHallintaPage.sendPaatos(avustushakuID);
+    const paatosPage = PaatosPage(page);
+    await paatosPage.navigateTo(avustushakuID);
+    await paatosPage.sendPaatos();
+
     const emails = await getAcceptedPäätösEmails(hakemusID);
-    await expect(emails).toHaveLength(1);
+    expect(emails).toHaveLength(1);
     const url = emails[0].formatted.match(
       /https?:\/\/.*\/paatos\/avustushaku\/.*/
     )?.[0];
     expectToBeDefined(url);
+
     await page.goto(url);
     const yleisohjeLink = page
       .locator("a")
@@ -125,7 +133,8 @@ test("paatos liitteet", async ({
     );
   });
   await test.step("uncheck pakoteohje", async () => {
-    await hakujenHallintaPage.navigateToPaatos(avustushakuID);
+    await paatosPage.navigateTo(avustushakuID);
+
     await expect(yleisOhjeCheckbox).toBeChecked();
     await expect(pakoteOhjeCheckbox).toBeChecked();
     await pakoteOhjeCheckbox.click();
@@ -135,10 +144,12 @@ test("paatos liitteet", async ({
   await test.step(
     "pakoteohje gets removed after recreating and sending paatokset",
     async () => {
-      await paatosLocators.recreatePaatokset();
-      await paatosLocators.resendPaatokset();
+      await paatosPage.recreatePaatokset();
+      await paatosPage.resendPaatokset();
+
       const emails = await getAcceptedPäätösEmails(hakemusID);
-      await expect(emails).toHaveLength(2);
+      expect(emails).toHaveLength(2);
+
       const url = emails[1].formatted.match(
         /https?:\/\/.*\/paatos\/avustushaku\/.*/
       )?.[0];

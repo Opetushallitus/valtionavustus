@@ -18,8 +18,8 @@ test("Avustuksesta kieltäytyminen", async ({
   await test.step("send päätökset", async () => {
     await hakujenHallintaPage.navigate(avustushakuID);
     await hakujenHallintaPage.resolveAvustushaku();
-    await hakujenHallintaPage.switchToPaatosTab();
-    await hakujenHallintaPage.sendPaatos(avustushakuID, 2);
+    const paatosPage = await hakujenHallintaPage.switchToPaatosTab();
+    await paatosPage.sendPaatos(2);
   });
 
   await test.step("refuse first hakemus", async () => {

@@ -13,6 +13,7 @@ import { selectors, expect } from "@playwright/test";
 import { HakujenHallintaPage } from "../pages/hakujenHallintaPage";
 import { HakijaMuutoshakemusPage } from "../pages/hakijaMuutoshakemusPage";
 import { HakemustenArviointiPage } from "../pages/hakemustenArviointiPage";
+import { PaatosPage } from "../pages/hakujen-hallinta/PaatosPage";
 
 selectors.setTestIdAttribute("data-test-id");
 
@@ -142,11 +143,11 @@ test("sends emails to correct contact and hakemus emails", async ({
     );
   });
   const hakujenHallintaPage = new HakujenHallintaPage(page);
-  const paatosLocators = await hakujenHallintaPage.navigateToPaatos(
-    avustushakuID
-  );
+  const paatosPage = PaatosPage(page);
+  await paatosPage.navigateTo(avustushakuID);
+
   await test.step("resends päätös", async () => {
-    await paatosLocators.resendPaatokset(1);
+    await paatosPage.resendPaatokset(1);
 
     const email = await getLatestAcceptedPaatosEmailsForHakemus(hakemusID, 2);
     expect(email["to-address"]).toEqual(expectedSentToAddresses);
@@ -165,10 +166,8 @@ test("sends emails to correct contact and hakemus emails", async ({
         false
       );
       expect(await getValiselvitysEmails(hakemusID)).toHaveLength(0);
-      const paatosLocators = await hakujenHallintaPage.navigateToPaatos(
-        avustushakuID
-      );
-      await paatosLocators.resendPaatokset();
+      await paatosPage.navigateTo(avustushakuID);
+      await paatosPage.resendPaatokset();
 
       const email = await getLatestAcceptedPaatosEmailsForHakemus(hakemusID, 3);
       expect(email["to-address"]).toEqual(

@@ -27,10 +27,10 @@ const test = submittedHakemusTest.extend({
     });
     const paatos = await hakujenHallintaPage.switchToPaatosTab();
     await test.step("add default lisäteksti", async () => {
-      await paatos.lisatekstiDefault.fill(lisatekstiDefault);
+      await paatos.locators.lisatekstiDefault.fill(lisatekstiDefault);
     });
     await test.step("add lisäteksti for only first koulutusaste", async () => {
-      await paatos.lisatekstiAmmatillinenKoulutus.fill(
+      await paatos.locators.lisatekstiAmmatillinenKoulutus.fill(
         lisatekstiAmmatillinenKoulutus
       );
     });

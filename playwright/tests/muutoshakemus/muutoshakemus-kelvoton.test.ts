@@ -18,6 +18,7 @@ import { expectToBeDefined } from "../../utils/util";
 import fs from "fs";
 import * as path from "path";
 import { muutoshakemusTest as test } from "../../fixtures/muutoshakemusTest";
+import { PaatosPage } from "../../pages/hakujen-hallinta/PaatosPage";
 
 const muutoshakuDisabledMenoluokiteltuLomakeJson = fs.readFileSync(
   path.join(
@@ -128,8 +129,9 @@ test("hakija does not get an email with link to muutoshakemus when avustushaku f
     );
   });
   await test.step("send päätökset", async () => {
-    await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-    await hakujenHallintaPage.sendPaatos(avustushakuID);
+    const paatosPage = PaatosPage(page);
+    await paatosPage.navigateTo(avustushakuID);
+    await paatosPage.sendPaatos();
   });
   const emails = await waitUntilMinEmails(
     getAcceptedPäätösEmails,
@@ -365,8 +367,9 @@ const akuTest = defaultValues.extend<{
       );
     });
     await test.step("send päätökset", async () => {
-      await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-      await hakujenHallintaPage.sendPaatos(avustushakuID);
+      const paatosPage = PaatosPage(page);
+      await paatosPage.navigateTo(avustushakuID);
+      await paatosPage.sendPaatos();
     });
     await use(hakemusID);
   },

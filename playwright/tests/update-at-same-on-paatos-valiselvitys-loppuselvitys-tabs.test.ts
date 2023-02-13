@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 import { muutoshakemusTest as test } from "../fixtures/muutoshakemusTest";
+import { PaatosPage } from "../pages/hakujen-hallinta/PaatosPage";
 import { HakujenHallintaPage } from "../pages/hakujenHallintaPage";
 
 /*
@@ -11,8 +12,9 @@ test.fixme(
   async ({ page, avustushakuID }) => {
     const hakujenHallintaPage = new HakujenHallintaPage(page);
 
-    await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-    const paatosUpdatedAt = await hakujenHallintaPage.paatosUpdatedAt
+    const paatosPage = PaatosPage(page);
+    await paatosPage.navigateTo(avustushakuID);
+    const paatosUpdatedAt = await paatosPage.locators.paatosUpdatedAt
       .locator(".date")
       .textContent();
 

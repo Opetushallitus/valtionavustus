@@ -5,6 +5,7 @@ import { expectToBeDefined } from "../../utils/util";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import moment from "moment";
 import { MaksatuksetPage } from "../../pages/maksatuksetPage";
+import { PaatosPage } from "../../pages/hakujen-hallinta/PaatosPage";
 
 const formattedMoment = () => moment(new Date()).format("DD.MM.YYYY");
 const valiselvitysDeadline = "01.01.2023";
@@ -61,8 +62,9 @@ test(`hakemusten arviointi additional info`, async ({
     await hakemustenArviointiPage.closeUkotusModal();
     await hakujenHallintaPage.navigateFromHeader();
     await hakujenHallintaPage.resolveAvustushaku();
-    await hakujenHallintaPage.switchToPaatosTab();
-    await hakujenHallintaPage.sendPaatos(avustushakuID);
+    const paatosPage = await hakujenHallintaPage.switchToPaatosTab();
+    await paatosPage.sendPaatos();
+
     await hakemustenArviointiPage.navigate(avustushakuID, {
       showAdditionalInfo: true,
     });
@@ -85,10 +87,13 @@ test(`hakemusten arviointi additional info`, async ({
     async () => {
       await expect(locators.valiselvitykset).toHaveText("-");
       await expect(locators.loppuselvitykset).toHaveText("-");
-      await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-      await hakujenHallintaPage.setValiselvitysDate(valiselvitysDeadline);
-      await hakujenHallintaPage.setLoppuselvitysDate(loppuselvitysDeadline);
-      await hakujenHallintaPage.waitForSave();
+
+      const paatosPage = PaatosPage(page);
+      await paatosPage.navigateTo(avustushakuID);
+      await paatosPage.setValiselvitysDate(valiselvitysDeadline);
+      await paatosPage.setLoppuselvitysDate(loppuselvitysDeadline);
+      await paatosPage.waitForSave();
+
       await hakemustenArviointiPage.navigate(avustushakuID, {
         showAdditionalInfo: true,
       });
@@ -106,12 +111,18 @@ test(`hakemusten arviointi additional info`, async ({
     async () => {
       await hakujenHallintaPage.navigateToValiselvitys(avustushakuID);
       await hakujenHallintaPage.page.click('text="Lähetä väliselvityspyynnöt"');
-      await hakujenHallintaPage.page.locator('text="Lähetetty 1 viestiä"');
+      await hakujenHallintaPage.page
+        .locator('text="Lähetetty 1 viestiä"')
+        .waitFor();
+
       await hakujenHallintaPage.switchToLoppuselvitysTab();
       await hakujenHallintaPage.page.click(
         'text="Lähetä loppuselvityspyynnöt"'
       );
-      await hakujenHallintaPage.page.locator('text="Lähetetty 1 viestiä"');
+      await hakujenHallintaPage.page
+        .locator('text="Lähetetty 1 viestiä"')
+        .waitFor();
+
       await hakemustenArviointiPage.navigate(avustushakuID, {
         showAdditionalInfo: true,
       });

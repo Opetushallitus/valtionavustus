@@ -104,8 +104,8 @@ test.describe.parallel("avustushaku with koulutusosio happy path", () => {
         await hakujenHallintaPage.navigate(avustushakuID);
         await hakujenHallintaPage.resolveAvustushaku();
         await hakujenHallintaPage.waitForSave();
-        await hakujenHallintaPage.switchToPaatosTab();
-        await hakujenHallintaPage.sendPaatos(avustushakuID);
+        const paatosPage = await hakujenHallintaPage.switchToPaatosTab();
+        await paatosPage.sendPaatos();
       });
       await test.step("hakija got correct koulutusosiot", async () => {
         const hakijaPaatosPage = HakijaPaatosPage(page);

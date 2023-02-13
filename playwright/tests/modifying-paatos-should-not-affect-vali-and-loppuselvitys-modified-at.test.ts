@@ -7,11 +7,11 @@ test("Modifying päätös should not affect vali- and loppuselvitys updated at t
   avustushakuID,
 }) => {
   const hakujenHallinta = new HakujenHallintaPage(page);
+  await hakujenHallinta.navigate(avustushakuID);
 
-  await hakujenHallinta.navigateToPaatos(avustushakuID);
-
+  const paatosPage = await hakujenHallinta.switchToPaatosTab();
   const originalPaatosTimestamp =
-    await hakujenHallinta.paatosUpdatedAt.textContent();
+    await paatosPage.locators.paatosUpdatedAt.textContent();
 
   await hakujenHallinta.switchToValiselvitysTab();
   const originalValiselvitysTimestamp =
@@ -28,9 +28,9 @@ test("Modifying päätös should not affect vali- and loppuselvitys updated at t
   });
 
   await test.step("päätös modified timestamp has changed", async () => {
-    await hakujenHallinta.switchToPaatosTab();
+    const paatosPage = await hakujenHallinta.switchToPaatosTab();
     const newPaatosTimestamp =
-      await hakujenHallinta.paatosUpdatedAt.textContent();
+      await paatosPage.locators.paatosUpdatedAt.textContent();
     expect(newPaatosTimestamp).not.toEqual(originalPaatosTimestamp);
   });
 

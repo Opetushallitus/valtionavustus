@@ -6,7 +6,6 @@ import {
   swedishAnswers,
   VIRKAILIJA_URL,
 } from "../../utils/constants";
-import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import {
   getValiselvitysPalauttamattaEmails,
   lastOrFail,
@@ -14,6 +13,7 @@ import {
 import { Answers } from "../../utils/types";
 import { expectToBeDefined } from "../../utils/util";
 import { selvitysTest } from "../../fixtures/selvitysTest";
+import { PaatosPage } from "../../pages/hakujen-hallinta/PaatosPage";
 
 test.describe("valiselvitys-palauttamatta", () => {
   selvitysTest(
@@ -185,8 +185,8 @@ async function setValiselvitysDate(
   avustushakuID: number,
   value: string
 ) {
-  const hakujenHallinta = new HakujenHallintaPage(page);
-  await hakujenHallinta.navigateToPaatos(avustushakuID);
-  await hakujenHallinta.setValiselvitysDate(value);
-  await hakujenHallinta.waitForSave();
+  const paatosPage = PaatosPage(page);
+  await paatosPage.navigateTo(avustushakuID);
+  await paatosPage.setValiselvitysDate(value);
+  await paatosPage.waitForSave();
 }

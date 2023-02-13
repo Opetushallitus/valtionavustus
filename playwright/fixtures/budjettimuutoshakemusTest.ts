@@ -5,6 +5,7 @@ import { HakemustenArviointiPage } from "../pages/hakemustenArviointiPage";
 import { AcceptedBudget, Budget, defaultBudget } from "../utils/budget";
 import { defaultValues } from "./defaultValues";
 import { MuutoshakemusFixtures } from "./muutoshakemusTest";
+import { PaatosPage } from "../pages/hakujen-hallinta/PaatosPage";
 
 export interface BudjettimuutoshakemusFixtures extends MuutoshakemusFixtures {
   budget: Budget;
@@ -82,8 +83,9 @@ export const budjettimuutoshakemusTest =
         ukotettuValmistelija
       );
 
-      await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-      await hakujenHallintaPage.sendPaatos(avustushakuID);
+      const paatosPage = PaatosPage(page);
+      await paatosPage.navigateTo(avustushakuID);
+      await paatosPage.sendPaatos();
 
       await use({ hakemusID, userKey });
     },

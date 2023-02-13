@@ -28,26 +28,28 @@ const testSendingPaatos = async ({
     projectName: answers.projectName,
     projektikoodi,
   });
+
   const hakujenHallintaPage = new HakujenHallintaPage(page);
   await hakujenHallintaPage.navigateFromHeader();
   await hakujenHallintaPage.resolveAvustushaku();
-  await hakemustenArviointiPage.navigate(avustushakuID);
-  const paatosLocators = await hakujenHallintaPage.navigateToPaatos(
-    avustushakuID
-  );
-  await expect(paatosLocators.paatosSendError).toBeHidden();
-  await paatosLocators.sendPaatokset().click();
-  await paatosLocators.confirmSending.click();
-  await expect(paatosLocators.paatosSendError).toHaveText(
+
+  const paatosPage = await hakujenHallintaPage.switchToPaatosTab();
+  await expect(paatosPage.locators.paatosSendError).toBeHidden();
+
+  await paatosPage.locators.sendPaatokset().click();
+  await paatosPage.locators.confirmSending.click();
+  await expect(paatosPage.locators.paatosSendError).toHaveText(
     `Hakemukselle numero ${hakemusID} ei ole valittu valmistelijaa. Päätöksiä ei lähetetty.`
   );
+
   await hakemustenArviointiPage.navigate(avustushakuID);
   await hakemustenArviointiPage.selectValmistelijaForHakemus(
     hakemusID,
     ukotettuValmistelija
   );
-  await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-  await hakujenHallintaPage.sendPaatos(avustushakuID);
+
+  await paatosPage.navigateTo(avustushakuID);
+  await paatosPage.sendPaatos();
 };
 
 const singleTest = muutoshakemusTest.extend({

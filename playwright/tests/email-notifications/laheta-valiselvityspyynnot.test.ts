@@ -7,6 +7,7 @@ import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { getLahetaValiselvityspyynnotEmails } from "../../utils/emails";
 import { expectToBeDefined } from "../../utils/util";
 import { selvitysTest } from "../../fixtures/selvitysTest";
+import { PaatosPage } from "../../pages/hakujen-hallinta/PaatosPage";
 
 test.describe.parallel("Lähetä väliselvityspyynnöt notifications", () => {
   selvitysTest(
@@ -136,8 +137,9 @@ test.describe.parallel("Lähetä väliselvityspyynnöt notifications", () => {
           ukotettuValmistelija
         );
 
-        await hakujenHallintaPage.navigateToPaatos(avustushakuID);
-        await hakujenHallintaPage.sendPaatos(avustushakuID);
+        const paatosPage = PaatosPage(page);
+        await paatosPage.navigateTo(avustushakuID);
+        await paatosPage.sendPaatos();
       });
 
       const emailsBefore = await getLahetaValiselvityspyynnotEmails(
@@ -233,8 +235,8 @@ async function setValiselvitysDate(
   avustushakuID: number,
   value: string
 ) {
-  const hakujenHallinta = new HakujenHallintaPage(page);
-  await hakujenHallinta.navigateToPaatos(avustushakuID);
-  await hakujenHallinta.setValiselvitysDate(value);
-  await hakujenHallinta.waitForSave();
+  const paatosPage = PaatosPage(page);
+  await paatosPage.navigateTo(avustushakuID);
+  await paatosPage.setValiselvitysDate(value);
+  await paatosPage.waitForSave();
 }

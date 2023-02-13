@@ -1,7 +1,7 @@
 import { Dialog, expect, Page } from "@playwright/test";
 import { expectToBeDefined } from "../../utils/util";
 import { Field } from "../../utils/types";
-import { saveStatusTestId } from "../hakujenHallintaPage";
+import { saveStatusTestId } from "./common";
 
 export function HakulomakePage(page: Page) {
   const locators = {

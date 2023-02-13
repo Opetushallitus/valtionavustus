@@ -12,6 +12,8 @@ import { addFieldsToHakemusJson } from "../utils/hakemus-json";
 import { Talousarviotili } from "../../va-virkailija/web/va/koodienhallinta/types";
 import { createReactSelectLocators } from "../utils/react-select";
 import { HakulomakePage } from "./hakujen-hallinta/HakulomakePage";
+import { PaatosPage } from "./hakujen-hallinta/PaatosPage";
+import { saveStatusTestId, waitForSave } from "./hakujen-hallinta/common";
 
 interface Raportointivelvoite {
   raportointilaji: string;
@@ -51,8 +53,6 @@ const dateFormat = "D.M.YYYY H.mm";
 const formatDate = (date: Date | moment.Moment) =>
   moment(date).format(dateFormat);
 export const parseDate = (input: string) => moment(input, dateFormat).toDate();
-
-export const saveStatusTestId = "save-status";
 
 function SelvitysTab(page: Page) {
   const titleSelector = '[name="applicant-info-label-fi"]';
@@ -111,7 +111,6 @@ function SelvitysTab(page: Page) {
 
 export class HakujenHallintaPage {
   readonly page: Page;
-  readonly paatosUpdatedAt: Locator;
   readonly valiselvitysUpdatedAt: Locator;
   readonly loppuselvitysUpdatedAt: Locator;
   readonly decisionEditor: Locator;
@@ -119,7 +118,6 @@ export class HakujenHallintaPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.paatosUpdatedAt = this.page.locator("#paatosUpdatedAt");
     this.valiselvitysUpdatedAt = this.page.locator("#valiselvitysUpdatedAt");
     this.loppuselvitysUpdatedAt = this.page.locator("#loppuselvitysUpdatedAt");
     this.decisionEditor = this.page.locator(".decision-editor");
@@ -161,11 +159,6 @@ export class HakujenHallintaPage {
     await expect(this.loadingAvustushaku).toBeHidden();
   }
 
-  async navigateToPaatos(avustushakuID: number) {
-    await this.navigateTo(`/admin/decision/?avustushaku=${avustushakuID}`);
-    return this.paatosLocators();
-  }
-
   async navigateToValiselvitys(avustushakuID: number) {
     await this.navigateTo(`/admin/valiselvitys/?avustushaku=${avustushakuID}`);
   }
@@ -195,63 +188,7 @@ export class HakujenHallintaPage {
 
   async switchToPaatosTab() {
     await this.page.getByTestId("päätös-välilehti").click();
-    return this.paatosLocators();
-  }
-
-  paatosLocators() {
-    const datePicker = "div.datepicker input";
-    const alkamisPaiva = this.page.getByTestId("hankkeen-alkamispaiva");
-    const label = '[data-test-id="label"]';
-    const paattymisPaiva = this.page.getByTestId("hankkeen-paattymispaiva");
-    return {
-      hankkeenAlkamisPaiva: alkamisPaiva.locator(datePicker),
-      hankkeenAlkamisPaivaLabel: alkamisPaiva.locator(label),
-      hankkeenPaattymisPaiva: paattymisPaiva.locator(datePicker),
-      hankkeenPaattymisPaivaLabel: paattymisPaiva.locator(label),
-      sendPaatokset: (amount: number = 1) =>
-        this.page.locator(`text="Lähetä ${amount} päätöstä"`),
-      confirmSending: this.page.locator('text="Vahvista lähetys"'),
-      paatosSendError: this.page.locator("#päätös-send-error"),
-      recreatePaatokset: async () => {
-        await this.page.locator("text=Luo päätökset uudelleen").click();
-        await this.page.locator("text=Vahvista päätösten luominen").click();
-        await expect(
-          this.page.locator("text=Päätökset luotu uudelleen")
-        ).toBeVisible();
-      },
-      resendPaatokset: async (amount: number = 1) => {
-        await this.page
-          .locator(`text=Lähetä ${amount} päätöstä uudelleen`)
-          .click();
-        await this.page
-          .locator("text=Vahvista päätösten uudelleenlähetys")
-          .click();
-        await expect(
-          this.page.locator("text=Päätökset lähetetty uudelleen")
-        ).toBeVisible();
-      },
-      erityisavustusEhdotCheckbox: this.page
-        .locator("label")
-        .locator("text=Eritysavustukseen liittyvät ehdot ja rajoitukset"),
-      yleisavustusEhdotCheckbox: this.page
-        .locator("label")
-        .locator("text=Yleisavustukseen liittyvät ehdot ja rajoitukset"),
-      yleisOhjeCheckbox: this.page
-        .locator("label")
-        .locator('text="Valtionavustusten yleisohje"'),
-      yleisOhjeLiite: this.page.locator("[data-liite=va_yleisohje]"),
-      pakoteOhjeCheckbox: this.page
-        .locator("label")
-        .locator(
-          "text=Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen valtionavustustoiminnassa"
-        ),
-      lisatekstiDefault: this.page.locator(
-        '[id="decision.myonteinenlisateksti.fi"]'
-      ),
-      lisatekstiAmmatillinenKoulutus: this.page.locator(
-        '[id="decision.myonteinenlisateksti-Ammatillinen_koulutus.fi"]'
-      ),
-    };
+    return PaatosPage(this.page);
   }
 
   async switchToValiselvitysTab() {
@@ -279,11 +216,7 @@ export class HakujenHallintaPage {
   }
 
   async waitForSave() {
-    await expect(
-      this.page
-        .getByTestId(saveStatusTestId)
-        .locator('text="Kaikki tiedot tallennettu"')
-    ).toBeVisible({ timeout: 10000 });
+    await waitForSave(this.page);
   }
 
   async searchUsersForRoles(user: string) {
@@ -359,38 +292,6 @@ export class HakujenHallintaPage {
         new RegExp(`${VIRKAILIJA_URL}/api/avustushaku/\\d+/privileges`)
       ),
     ]);
-  }
-
-  async setLoppuselvitysDate(value: string) {
-    await this.page.fill(
-      '[data-test-id="loppuselvityksen-aikaraja"] div.datepicker input',
-      value
-    );
-    await this.page.keyboard.press("Tab");
-  }
-
-  async setValiselvitysDate(value: string) {
-    await this.page.fill(
-      '[data-test-id="valiselvityksen-aikaraja"] div.datepicker input',
-      value
-    );
-    await this.page.keyboard.press("Tab");
-  }
-
-  async sendPaatos(avustushakuID: number, amount = 1) {
-    const locators = this.paatosLocators();
-    await locators.sendPaatokset(amount).click();
-    await Promise.all([
-      this.page.waitForResponse(
-        `${VIRKAILIJA_URL}/api/paatos/sendall/${avustushakuID}`
-      ),
-      locators.confirmSending.click(),
-    ]);
-    const tapahtumaloki = await this.page.waitForSelector(".tapahtumaloki");
-    const logEntryCount = await tapahtumaloki.evaluate(
-      (e) => e.querySelectorAll(".entry").length
-    );
-    expect(logEntryCount).toEqual(1);
   }
 
   async resolveAvustushaku() {

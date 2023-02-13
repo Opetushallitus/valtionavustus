@@ -4,7 +4,6 @@ import {
   swedishAnswers,
   VIRKAILIJA_URL,
 } from "../../utils/constants";
-import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import {
   getLoppuselvitysPalauttamattaEmails,
   lastOrFail,
@@ -15,6 +14,7 @@ import { expectToBeDefined } from "../../utils/util";
 import { HakijaMuutoshakemusPage } from "../../pages/hakijaMuutoshakemusPage";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { selvitysTest } from "../../fixtures/selvitysTest";
+import { PaatosPage } from "../../pages/hakujen-hallinta/PaatosPage";
 
 test.describe("loppuselvitys-palauttamatta", () => {
   selvitysTest(
@@ -259,8 +259,8 @@ async function setLoppuselvitysDate(
   avustushakuID: number,
   value: string
 ) {
-  const hakujenHallinta = new HakujenHallintaPage(page);
-  await hakujenHallinta.navigateToPaatos(avustushakuID);
-  await hakujenHallinta.setLoppuselvitysDate(value);
-  await hakujenHallinta.waitForSave();
+  const paatosPage = PaatosPage(page);
+  await paatosPage.navigateTo(avustushakuID);
+  await paatosPage.setLoppuselvitysDate(value);
+  await paatosPage.waitForSave();
 }

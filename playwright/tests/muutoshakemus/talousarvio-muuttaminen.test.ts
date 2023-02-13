@@ -142,8 +142,9 @@ const muutosTest =
       await hakemustenArviointiPage.waitForSave();
       await hakujenHallintaPage.navigate(avustushakuID);
       await hakujenHallintaPage.resolveAvustushaku();
-      await hakujenHallintaPage.switchToPaatosTab();
-      await hakujenHallintaPage.sendPaatos(avustushakuID);
+
+      const paatosPage = await hakujenHallintaPage.switchToPaatosTab();
+      await paatosPage.sendPaatos();
 
       await use({ hakemusID, userKey });
     },
