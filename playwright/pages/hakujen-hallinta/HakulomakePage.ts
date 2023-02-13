@@ -3,7 +3,7 @@ import { expectToBeDefined } from "../../utils/util";
 import { Field } from "../../utils/types";
 import { saveStatusTestId } from "../hakujenHallintaPage";
 
-export function FormEditorPage(page: Page) {
+export function HakulomakePage(page: Page) {
   const locators = {
     formErrorState: page.getByTestId("form-error-state"),
     form: page.locator(".form-json-editor textarea"),

@@ -11,7 +11,7 @@ import { VaCodeValues, Field, NoProjectCodeProvided } from "../utils/types";
 import { addFieldsToHakemusJson } from "../utils/hakemus-json";
 import { Talousarviotili } from "../../va-virkailija/web/va/koodienhallinta/types";
 import { createReactSelectLocators } from "../utils/react-select";
-import { FormEditorPage } from "./hakujen-hallinta/FormEditorPage";
+import { HakulomakePage } from "./hakujen-hallinta/HakulomakePage";
 
 interface Raportointivelvoite {
   raportointilaji: string;
@@ -176,14 +176,14 @@ export class HakujenHallintaPage {
 
   async navigateToFormEditor(avustushakuID: number) {
     await this.navigateTo(`/admin/form-editor/?avustushaku=${avustushakuID}`);
-    const formEditorPage = FormEditorPage(this.page);
+    const formEditorPage = HakulomakePage(this.page);
     await formEditorPage.waitFormToBeLoaded();
     return formEditorPage;
   }
 
   async switchToFormEditorTab() {
     await this.page.locator('span:text-is("Hakulomake")').click();
-    const formEditorPage = FormEditorPage(this.page);
+    const formEditorPage = HakulomakePage(this.page);
     await formEditorPage.waitFormToBeLoaded();
     return formEditorPage;
   }
