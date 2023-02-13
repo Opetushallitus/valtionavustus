@@ -1,20 +1,17 @@
-import { Dialog, expect, Locator, Page } from "@playwright/test";
+import { expect, Locator, Page } from "@playwright/test";
 import { Response } from "playwright-core";
 import moment from "moment";
 import fs from "fs/promises";
 import path from "path";
 
 import { navigate } from "../utils/navigate";
-import {
-  clickElementWithText,
-  expectQueryParameter,
-  expectToBeDefined,
-} from "../utils/util";
+import { clickElementWithText, expectQueryParameter } from "../utils/util";
 import { VIRKAILIJA_URL } from "../utils/constants";
 import { VaCodeValues, Field, NoProjectCodeProvided } from "../utils/types";
 import { addFieldsToHakemusJson } from "../utils/hakemus-json";
 import { Talousarviotili } from "../../va-virkailija/web/va/koodienhallinta/types";
 import { createReactSelectLocators } from "../utils/react-select";
+import { FormEditorPage } from "./hakujen-hallinta/FormEditorPage";
 
 interface Raportointivelvoite {
   raportointilaji: string;
@@ -55,157 +52,7 @@ const formatDate = (date: Date | moment.Moment) =>
   moment(date).format(dateFormat);
 export const parseDate = (input: string) => moment(input, dateFormat).toDate();
 
-const saveStatusTestId = "save-status";
-
-export class FormEditorPage {
-  readonly page: Page;
-  formErrorState: Locator;
-  form: Locator;
-  fieldId: Locator;
-  saveFormButton: Locator;
-
-  constructor(page: Page) {
-    this.page = page;
-    this.formErrorState = this.page.getByTestId("form-error-state");
-    this.form = this.page.locator(".form-json-editor textarea");
-    this.fieldId = this.page.locator("span.soresu-field-id");
-    this.saveFormButton = this.page.locator("#saveForm");
-  }
-
-  async waitFormToBeLoaded() {
-    await expect(this.form).toContainText("{");
-  }
-
-  /*
-      for some reason
-      await this.page.fill(".form-json-editor textarea", lomakeJson)
-      takes almost 50seconds
-     */
-  async replaceLomakeJson(lomakeJson: string) {
-    await this.form.evaluate((textarea, lomakeJson) => {
-      (textarea as HTMLTextAreaElement).value = lomakeJson;
-    }, lomakeJson);
-  }
-
-  async changeLomakeJson(lomakeJson: string) {
-    await this.waitFormToBeLoaded();
-    await expect(this.saveFormButton).toBeDisabled();
-    await this.replaceLomakeJson(lomakeJson);
-    await expect(this.saveFormButton).toBeDisabled();
-    // trigger autosave by typing space in the end
-    await this.form.type(" ");
-    await expect(this.saveFormButton).toBeEnabled();
-  }
-
-  async saveForm() {
-    const savedSuccessfully = this.page
-      .getByTestId(saveStatusTestId)
-      .locator("text=Kaikki tiedot tallennettu");
-    await expect(savedSuccessfully).toBeHidden();
-    await this.saveFormButton.click();
-    await expect(savedSuccessfully).toBeVisible();
-  }
-
-  async getFieldIds() {
-    const ids = await this.fieldId.evaluateAll((elems) =>
-      elems.map((e) => e.textContent)
-    );
-    return ids.filter((id): id is string => id !== null);
-  }
-
-  async addField(afterFieldId: string, newFieldType: string) {
-    await this.page.getByTestId(`field-add-${afterFieldId}`).hover();
-    await this.page.click(
-      `[data-test-id="field-${afterFieldId}"] [data-test-id="add-field-${newFieldType}"]`
-    );
-    await this.fieldId.first(); // hover on something else so that the added content from first hover doesn't change page coordinates
-  }
-
-  async removeField(fieldId: string) {
-    async function acceptDialog(dialog: Dialog) {
-      await dialog.accept("Oletko varma, että haluat poistaa kentän?");
-    }
-    this.page.on("dialog", acceptDialog);
-    const fieldIdWithText = `text="${fieldId}"`;
-    await this.fieldId.locator(fieldIdWithText).waitFor();
-    await Promise.all([
-      // without position this clicks the padding and does nothing
-      this.page.getByTestId(`delete-field-${fieldId}`).click({
-        position: { x: 15, y: 5 },
-      }),
-      this.fieldId.locator(fieldIdWithText).waitFor({ state: "detached" }),
-    ]);
-    this.page.removeListener("dialog", acceptDialog);
-  }
-
-  async moveField(fieldId: string, direction: "up" | "down") {
-    const fields = await this.getFieldIds();
-    const originalIndex = fields.indexOf(fieldId);
-    const expectedIndex =
-      direction === "up" ? originalIndex - 1 : originalIndex + 1;
-    await this.page.getByTestId(`move-field-${direction}-${fieldId}`).click();
-    await this.page.waitForFunction(
-      ({ fieldId, expectedIndex }) => {
-        const fieldIds = Array.from(
-          document.querySelectorAll("span.soresu-field-id")
-        ).map((e) => e.textContent);
-        return fieldIds[expectedIndex] === fieldId;
-      },
-      { expectedIndex, fieldId }
-    );
-  }
-
-  async addKoodisto(koodisto: string) {
-    await this.page.locator(".soresu-field-add-header").first().hover();
-    await this.page.click("text=Koodistokenttä");
-    await this.page.click(`text="${koodisto}"`);
-    await this.page.keyboard.press("ArrowDown");
-    await this.page.keyboard.press("Enter");
-    await this.page.locator('label:text-is("Pudotusvalikko")').first().click();
-  }
-
-  fieldJson(type: string, id: string, label: string) {
-    return {
-      fieldClass: "wrapperElement",
-      id: id + "wrapper",
-      fieldType: "theme",
-      children: [
-        {
-          label: {
-            fi: label + "fi",
-            sv: label + "sv",
-          },
-          fieldClass: "formField",
-          helpText: {
-            fi: "helpText fi",
-            sv: "helpText sv",
-          },
-          id: id,
-          params: {
-            size: "small",
-            maxlength: 1000,
-          },
-          required: true,
-          fieldType: type,
-        },
-      ],
-    };
-  }
-
-  async addFields(...fields: (Field & { fieldLabel: string })[]) {
-    const formContent = await this.form.textContent();
-    expectToBeDefined(formContent);
-    const json = JSON.parse(formContent);
-    const { content } = json;
-    const fieldsJson = fields.map(({ fieldId, type, fieldLabel }) =>
-      this.fieldJson(type, fieldId, fieldLabel)
-    );
-    const newJson = { ...json, content: [...content, ...fieldsJson] };
-    await this.replaceLomakeJson(JSON.stringify(newJson));
-    await this.form.type(" ");
-    await this.saveForm();
-  }
-}
+export const saveStatusTestId = "save-status";
 
 function SelvitysTab(page: Page) {
   const titleSelector = '[name="applicant-info-label-fi"]';
@@ -329,14 +176,14 @@ export class HakujenHallintaPage {
 
   async navigateToFormEditor(avustushakuID: number) {
     await this.navigateTo(`/admin/form-editor/?avustushaku=${avustushakuID}`);
-    const formEditorPage = new FormEditorPage(this.page);
+    const formEditorPage = FormEditorPage(this.page);
     await formEditorPage.waitFormToBeLoaded();
     return formEditorPage;
   }
 
   async switchToFormEditorTab() {
     await this.page.locator('span:text-is("Hakulomake")').click();
-    const formEditorPage = new FormEditorPage(this.page);
+    const formEditorPage = FormEditorPage(this.page);
     await formEditorPage.waitFormToBeLoaded();
     return formEditorPage;
   }

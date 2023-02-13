@@ -21,17 +21,17 @@ defaultValues("Editing hakulomake", async ({ page, hakuProps }) => {
   );
 
   await test.step("save button is disabled without changes", async () => {
-    await formEditorPage.saveFormButton.isDisabled();
+    await formEditorPage.locators.saveFormButton.isDisabled();
   });
 
   await test.step("changing hakulomake json enables save button", async () => {
     await formEditorPage.changeLomakeJson(puuttuvaYhteyshenkilonNimiJson);
-    await formEditorPage.saveFormButton.isEnabled();
+    await formEditorPage.locators.saveFormButton.isEnabled();
   });
 
   await test.step("saving the form disables save button", async () => {
     await formEditorPage.saveForm();
-    await formEditorPage.saveFormButton.isDisabled();
+    await formEditorPage.locators.saveFormButton.isDisabled();
   });
 
   await test.step("field can be added", async () => {
@@ -78,7 +78,7 @@ defaultValues("Editing hakulomake", async ({ page, hakuProps }) => {
     const textToSave = "tähellä merkityt ompi täytettävä";
     await page.fill('[name="p-1-text-fi"]', textToSave);
     await formEditorPage.saveForm();
-    await formEditorPage.saveFormButton.isDisabled();
+    await formEditorPage.locators.saveFormButton.isDisabled();
 
     const savedTextArea = await page.textContent('[name="p-1-text-fi"]');
     expect(savedTextArea).toEqual(textToSave);
@@ -136,7 +136,7 @@ defaultValues("Editing hakulomake", async ({ page, hakuProps }) => {
       const textToSave = "hakijampa nimmee kyselläämpi";
       await page.fill('[name="organization-label-fi"]', textToSave);
       await formEditorPage.saveForm();
-      await formEditorPage.saveFormButton.isDisabled();
+      await formEditorPage.locators.saveFormButton.isDisabled();
 
       const savedTextArea = await page.textContent(
         '[name="organization-label-fi"]'
@@ -157,17 +157,17 @@ defaultValues("Editing väliselvitys lomake", async ({ page, hakuProps }) => {
   await hakujenHallinta.switchToValiselvitysTab();
 
   await test.step("save button is disabled without changes", async () => {
-    await formEditorPage.saveFormButton.isDisabled();
+    await formEditorPage.locators.saveFormButton.isDisabled();
   });
 
   await test.step("changing hakulomake enables save button", async () => {
     await page.fill('[name="applicant-info-label-fi"]', "uus title");
-    await formEditorPage.saveFormButton.isEnabled();
+    await formEditorPage.locators.saveFormButton.isEnabled();
   });
 
   await test.step("saving the form disables save button", async () => {
     await formEditorPage.saveForm();
-    await formEditorPage.saveFormButton.isDisabled();
+    await formEditorPage.locators.saveFormButton.isDisabled();
   });
 });
 
@@ -182,16 +182,16 @@ defaultValues("Editing loppuselvitys lomake", async ({ page, hakuProps }) => {
   await hakujenHallinta.switchToLoppuselvitysTab();
 
   await test.step("save button is disabled without changes", async () => {
-    await formEditorPage.saveFormButton.isDisabled();
+    await formEditorPage.locators.saveFormButton.isDisabled();
   });
 
   await test.step("changing hakulomake enables save button", async () => {
     await page.fill('[name="applicant-info-label-fi"]', "uus title");
-    await formEditorPage.saveFormButton.isEnabled();
+    await formEditorPage.locators.saveFormButton.isEnabled();
   });
 
   await test.step("saving the form disables save button", async () => {
     await formEditorPage.saveForm();
-    await formEditorPage.saveFormButton.isDisabled();
+    await formEditorPage.locators.saveFormButton.isDisabled();
   });
 });
