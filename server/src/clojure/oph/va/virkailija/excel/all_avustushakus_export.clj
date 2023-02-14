@@ -64,7 +64,7 @@ loppuselvityspyynnot_lahetetty AS (
   GROUP BY avustushaku_id
 ),
 grouped_raportointivelvoitteet AS (
-  SELECT avustushaku_id, jsonb_agg(rv.*) AS raportointivelvoitteet
+  SELECT avustushaku_id, jsonb_agg(rv.* ORDER BY rv.maaraaika ASC) AS raportointivelvoitteet
   FROM avustushakus_to_export avustushaku
   JOIN raportointivelvoite rv USING (avustushaku_id)
   GROUP BY avustushaku_id
