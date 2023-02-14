@@ -70,7 +70,7 @@ grouped_raportointivelvoitteet AS (
   GROUP BY avustushaku_id
 ),
 lainsaadanto_str AS (
-  SELECT avustushaku_id, jsonb_agg(l.name) AS lainsaadanto
+  SELECT avustushaku_id, jsonb_agg(l.name ORDER BY name ASC) AS lainsaadanto
   FROM avustushakus_to_export avustushaku
   JOIN avustushaku_lainsaadanto al USING (avustushaku_id)
   JOIN lainsaadanto l ON al.lainsaadanto_id = l.id

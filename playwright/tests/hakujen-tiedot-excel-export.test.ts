@@ -68,7 +68,7 @@ muutoshakemusTest(
     expect(columnValue("Maksettu €")).toEqual(0);
     expect(columnValue("Arvioitu maksu pvm")).toEqual("17.12.2077");
     expect(columnValue("Lainsäädäntö")).toEqual(
-      "Valtionavustuslaki, Laki vapaasta sivistystyöstä"
+      "Laki vapaasta sivistystyöstä, Valtionavustuslaki"
     );
   }
 );
