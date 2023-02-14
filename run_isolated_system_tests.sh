@@ -8,7 +8,6 @@ function run_tests {
       npm run prettier-check-project "$@"
       npm run playwright:test "$@"
   fi
-	npm run soresu-form:test "$@"
 	make lein-test
 }
 

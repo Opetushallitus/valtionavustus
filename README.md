@@ -206,28 +206,6 @@ Frontendin tuotantoversion buildi, projektin juurihakemistossa:
 make npm-build
 ```
 
-Frontendin yksikkötestit on kirjoitettu
-[Mochalla](https://mochajs.org/). Niiden ajaminen, esimerkiksi
-va-hakijan hakemistossa:
-
-``` shell
-cd va-hakija
-npm run test         # kerta-ajo
-npm run test-watch   # monitorointi ja ajo muutoksista
-```
-
-Va-hakija-projektilla on Mocha-pohjaiset UI-testit. Ne voi ajaa
-selaimessa, kun on ensin käynnistänyt va-hakijan web-sovelluksen
-testiympäristössä:
-
-``` shell
-cd va-hakija
-../lein with-profile test trampoline run
-```
-
-ja sitten avaa [testien url](http://localhost:8081/test/runner.html)
-selaimessa.
-
 Kaikkien frontendin yksikkötestien ajo, projektin juurihakemistossa:
 
 ``` shell

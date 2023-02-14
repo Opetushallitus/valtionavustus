@@ -1,5 +1,7 @@
+import { Field } from "../../../soresu-form/web/va/types";
+
 export default class TestUtil {
-  static testFormJson() {
+  static testFormJson(): Field[] {
     return [
       {
         fieldClass: "infoElement",

@@ -481,6 +481,7 @@ export const fieldTypes: { [f in AddableFieldType]: FieldClass } = {
   namedAttachment: "formField",
   koodistoField: "formField",
   p: "infoElement",
+  h1: "infoElement",
   h3: "infoElement",
   link: "infoElement",
   theme: "wrapperElement",
@@ -504,6 +505,7 @@ export const addableFields = [
   "fieldset",
   "growingFieldset",
   "growingFieldsetChild",
+  "h1",
 ] as const;
 export type AddableFieldType = typeof addableFields[number];
 export type NonAddableFieldType =
@@ -521,11 +523,15 @@ export type BudgetFieldType =
   | "vaBudgetSummaryElement"
   | "vaSelfFinancingField"
   | "vaBudgetItemElement"
-  | "vaTraineeDayCalculator";
+  | "vaTraineeDayCalculator"
+  | "vaSummingBudgetElement"
+  | "vaProjectDescription";
 export type FieldType =
   | AddableFieldType
   | NonAddableFieldType
-  | BudgetFieldType;
+  | BudgetFieldType
+  | "endOfDateRange"
+  | "bulletList";
 export type FieldClass = "formField" | "infoElement" | "wrapperElement";
 
 export interface Option {
@@ -544,6 +550,8 @@ export interface Field {
   children?: Field[];
   params?: any;
   label?: LocalizedText;
+  helpText?: LocalizedText;
+  text?: LocalizedText;
 }
 
 export interface Liite {

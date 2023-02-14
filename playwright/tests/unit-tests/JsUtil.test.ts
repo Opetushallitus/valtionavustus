@@ -1,10 +1,10 @@
-import { expect } from "chai";
-import JsUtil from "../JsUtil";
+import { test, expect } from "@playwright/test";
+import JsUtil from "../../../soresu-form/web/JsUtil";
 
-describe("Js util", function () {
-  it("collects objects matching a predicate", function () {
+test.describe.parallel("Js util", () => {
+  test("collects objects matching a predicate", function () {
     const found = JsUtil.flatFilter(Tree, (el: any) => /id-\d+/.test(el.id));
-    expect(found).to.eql([
+    expect(found).toEqual([
       { id: "id-1" },
       { id: "id-2" },
       { id: "id-3", token: Token },
@@ -12,52 +12,52 @@ describe("Js util", function () {
     ]);
   });
 
-  it("finds first matching object", function () {
+  test("finds first matching object", function () {
     const object = JsUtil.findFirst(Tree, (el: any) => el.token === Token);
-    expect(object).to.eql({ id: "id-3", token: Token });
+    expect(object).toEqual({ id: "id-3", token: Token });
   });
 
-  describe("finding index of first matching object", function () {
-    it("returns index when object matches", function () {
+  test.describe("finding index of first matching object", function () {
+    test("returns index when object matches", function () {
       const index = JsUtil.findIndexOfFirst(
         Tree,
         (el: any) => el.token === Token
       );
-      expect(index).to.equal(TraversingStepsToToken - 1);
+      expect(index).toEqual(TraversingStepsToToken - 1);
     });
 
-    it("returns 0 when matching root object", function () {
+    test("returns 0 when matching root object", function () {
       const index = JsUtil.findIndexOfFirst(Tree, (el: any) => el.a1 && el.b1);
-      expect(index).to.equal(0);
+      expect(index).toEqual(0);
     });
 
-    it("returns -1 when match is not found", function () {
+    test("returns -1 when match is not found", function () {
       const index = JsUtil.findIndexOfFirst(
         Tree,
         (el: any) => el.token === "nosuch"
       );
-      expect(index).to.equal(-1);
+      expect(index).toEqual(-1);
     });
   });
 
-  describe("finding json node containing id", function () {
-    it("finds node", function () {
+  test.describe("finding json node containing id", function () {
+    test("finds node", function () {
       const toBeFound = {
         id: "id-b",
         children: [{ id: "id-b1" }, { id: "id-b2" }],
       };
       const tree = { a: { id: "id-a" }, b: toBeFound };
       const node = JsUtil.findJsonNodeContainingId(tree, "id-b2");
-      expect(node).to.equal(toBeFound);
+      expect(node).toEqual(toBeFound);
     });
 
-    it("throws exception if json tree contains searched id in different subtrees", function () {
+    test("throws exception if json tree contains searched id in different subtrees", function () {
       const tree = { a: { id: "id" }, b: { id: "id" } };
       const expectedMsg =
         'Cannot handle case with 2 parents ([{"id":"id"},{"id":"id"}]), expected a single one. fieldId=id';
       expect(function () {
         JsUtil.findJsonNodeContainingId(tree, "id");
-      }).to.throw(expectedMsg);
+      }).toThrow(expectedMsg);
     });
   });
 });

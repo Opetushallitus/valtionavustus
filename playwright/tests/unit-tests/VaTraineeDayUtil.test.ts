@@ -1,23 +1,22 @@
-import { expect } from "chai";
+import { expect, test } from "@playwright/test";
+import VaTraineeDayUtil from "../../../soresu-form/web/va/VaTraineeDayUtil";
 
-import VaTraineeDayUtil from "../va/VaTraineeDayUtil";
-
-describe("VA trainee day utilities", function () {
-  describe("composing total values", function () {
-    it("returns total for koulutettavapäivä scope type", function () {
-      expect(VaTraineeDayUtil.composeTotal("1,5", "3", "kp")).to.equal("4,5");
+test.describe.parallel("VA trainee day utilities", () => {
+  test.describe("composing total values", function () {
+    test("returns total for koulutettavapäivä scope type", function () {
+      expect(VaTraineeDayUtil.composeTotal("1,5", "3", "kp")).toEqual("4,5");
     });
 
-    it("returns total for opintopiste scope type", function () {
-      expect(VaTraineeDayUtil.composeTotal("1,5", "3", "op")).to.equal("20,3");
+    test("returns total for opintopiste scope type", function () {
+      expect(VaTraineeDayUtil.composeTotal("1,5", "3", "op")).toEqual("20,3");
     });
 
-    it("returns zero when scope is invalid", function () {
-      expect(VaTraineeDayUtil.composeTotal("", "2", "op")).to.equal("0");
+    test("returns zero when scope is invalid", function () {
+      expect(VaTraineeDayUtil.composeTotal("", "2", "op")).toEqual("0");
     });
   });
 
-  it("finds subfield by id", function () {
+  test("finds subfield by id", function () {
     const subfield = {
       key: "koulutusosiot.koulutusosio-2.koulutettavapaivat.scope-type",
       value: "kp",
@@ -53,10 +52,10 @@ describe("VA trainee day utilities", function () {
       "scope-type"
     );
 
-    expect(found).to.equal(subfield);
+    expect(found).toEqual(subfield);
   });
 
-  describe("summing subfield values", function () {
+  test.describe("summing subfield values", function () {
     const answers = [
       {
         key: "koulutusosiot.koulutusosio-1.koulutettavapaivat",
@@ -112,24 +111,24 @@ describe("VA trainee day utilities", function () {
       },
     ];
 
-    it("sums subfields by subfield type", function () {
+    test("sums subfields by subfield type", function () {
       expect(
         VaTraineeDayUtil.sumSubfieldValues(answers, "person-count")
-      ).to.equal(73);
-      expect(VaTraineeDayUtil.sumSubfieldValues(answers, "total")).to.equal(
+      ).toEqual(73);
+      expect(VaTraineeDayUtil.sumSubfieldValues(answers, "total")).toEqual(
         643.5
       );
     });
 
-    it("treats non-number as zero", function () {
-      expect(
-        VaTraineeDayUtil.sumSubfieldValues(answers, "scope-type")
-      ).to.equal(0);
+    test("treats non-number as zero", function () {
+      expect(VaTraineeDayUtil.sumSubfieldValues(answers, "scope-type")).toEqual(
+        0
+      );
     });
   });
 
-  describe("collecting calculator specifications", function () {
-    const makeFormSpec = (calcSpecs) =>
+  test.describe("collecting calculator specifications", function () {
+    const makeFormSpec = (calcSpecs: Record<string, string>[]) =>
       calcSpecs.map(
         ({
           growingFieldsetId,
@@ -162,7 +161,7 @@ describe("VA trainee day utilities", function () {
         }
       );
 
-    const makeAnswers = (keyIds) => {
+    const makeAnswers = (keyIds: string[]) => {
       return {
         value: keyIds.map((keyId) => {
           return {
@@ -195,7 +194,7 @@ describe("VA trainee day utilities", function () {
       };
     };
 
-    it("copies calculator specification from first growing fieldset for each answer key", function () {
+    test("copies calculator specification from first growing fieldset for each answer key", function () {
       const formSpec = makeFormSpec([
         {
           growingFieldsetId: "koulutusosiot",
@@ -215,7 +214,7 @@ describe("VA trainee day utilities", function () {
         answers
       );
 
-      expect(specs).to.deep.equal([
+      expect(specs).toEqual([
         {
           id: "koulutusosiot.koulutusosio-1.koulutettavapaivat",
           label: {
@@ -235,7 +234,7 @@ describe("VA trainee day utilities", function () {
       ]);
     });
 
-    it("collects calculator specifications from different growing fieldsets", function () {
+    test("collects calculator specifications from different growing fieldsets", function () {
       const formSpec = makeFormSpec([
         {
           growingFieldsetId: "alphakoulutusosiot",
@@ -264,7 +263,7 @@ describe("VA trainee day utilities", function () {
         answers
       );
 
-      expect(specs).to.deep.equal([
+      expect(specs).toEqual([
         {
           id: "alphakoulutusosiot.alphakoulutusosio-1.koulutettavapaivat",
           label: {
@@ -293,7 +292,7 @@ describe("VA trainee day utilities", function () {
     });
   });
 
-  it("finds growing fieldset child by nested calculator id", function () {
+  test("finds growing fieldset child by nested calculator id", function () {
     const growingFieldsetChild = {
       key: "alphakoulutusosio-1",
       value: [
@@ -345,6 +344,6 @@ describe("VA trainee day utilities", function () {
       "alphakoulutusosiot.alphakoulutusosio-1.koulutettavapaivat"
     );
 
-    expect(found).to.equal(growingFieldsetChild);
+    expect(found).toEqual(growingFieldsetChild);
   });
 });

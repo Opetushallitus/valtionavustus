@@ -92,12 +92,6 @@ Examples:
 
   make npm-test NPM_PROJECTS=soresu-form
 
-
-  Run npm unit tests with JUnit XML reporter for Mocha:
-
-  make npm-test MOCHA_ARGS="--reporter mocha-junit-reporter" MOCHA_FILE="target/junit-mocha-js-unit.xml"
-
-
   Run Leiningen tests with JUnit XML reporter for Speclj:
 
   make lein-test SPECLJ_ARGS="-f junit"

@@ -1,17 +1,20 @@
 import _ from "lodash";
-import verboseAssert from "assert";
-import { assert } from "chai";
-import JsUtil from "../JsUtil";
-import InputValueStorage from "../form/InputValueStorage";
+import JsUtil from "../../../soresu-form/web/JsUtil";
+import InputValueStorage from "../../../soresu-form/web/form/InputValueStorage";
 import TestUtil from "./TestUtil";
-
+import { test, expect } from "@playwright/test";
 const formContent = TestUtil.testFormJson();
 
-function writeValue(form, answers, fieldId, value) {
+function writeValue(
+  form: any,
+  answers: any,
+  fieldId: string,
+  value: string | string[] | string[][]
+) {
   InputValueStorage.writeValue(form, answers, {
     id: fieldId,
     field: _.head(
-      JsUtil.flatFilter(formContent, (n) => {
+      JsUtil.flatFilter(formContent, (n: any) => {
         return n.id === fieldId;
       })
     ),
@@ -19,22 +22,21 @@ function writeValue(form, answers, fieldId, value) {
   });
 }
 
-describe("Input value storage", function () {
-  let answersObject = {};
+test.describe.serial("Input value storage", function () {
+  let answersObject: any = {};
 
-  beforeEach(function () {
+  test.beforeEach(function () {
     answersObject = {};
   });
 
-  it("reading returns empty string for value not found", function () {
-    assert.equal(
-      InputValueStorage.readValue(null, answersObject, "nosuchid"),
-      ""
-    );
+  test("reading returns empty string for value not found", function () {
+    expect(
+      InputValueStorage.readValue(null, answersObject, "nosuchid")
+    ).toEqual("");
   });
 
-  describe("flat value", function () {
-    it("writes and reads", function () {
+  test.describe("flat value", function () {
+    test("writes and reads", function () {
       writeValue(
         formContent,
         answersObject,
@@ -46,40 +48,38 @@ describe("Input value storage", function () {
         answersObject,
         "organization"
       );
-      assert.equal(v, "Rovaniemen koulutuskuntayhtymä");
+      expect(v).toEqual("Rovaniemen koulutuskuntayhtymä");
     });
 
-    it("can be updated", function () {
+    test("can be updated", function () {
       writeValue(
         formContent,
         answersObject,
         "organization",
         "Rovaniemen koulutuskuntayhtymä"
       );
-      assert.equal(
-        InputValueStorage.readValue(formContent, answersObject, "organization"),
-        "Rovaniemen koulutuskuntayhtymä"
-      );
+      expect(
+        InputValueStorage.readValue(formContent, answersObject, "organization")
+      ).toEqual("Rovaniemen koulutuskuntayhtymä");
       writeValue(
         formContent,
         answersObject,
         "organization",
         "Rovaniemen koulutuskuntayhtymä (REDU)"
       );
-      assert.equal(
-        InputValueStorage.readValue(formContent, answersObject, "organization"),
-        "Rovaniemen koulutuskuntayhtymä (REDU)"
-      );
+      expect(
+        InputValueStorage.readValue(formContent, answersObject, "organization")
+      ).toEqual("Rovaniemen koulutuskuntayhtymä (REDU)");
     });
   });
 
-  describe("checkbox with multiple values", function () {
-    it("writes and reads", function () {
+  test.describe("checkbox with multiple values", function () {
+    test("writes and reads", function () {
       writeValue(formContent, answersObject, "checkboxButton-0", [
         "sininen",
         "punainen",
       ]);
-      assert.deepEqual(answersObject, {
+      expect(answersObject).toEqual({
         value: [
           {
             key: "checkboxButton-0",
@@ -88,17 +88,16 @@ describe("Input value storage", function () {
           },
         ],
       });
-      assert.deepEqual(
+      expect(
         InputValueStorage.readValue(
           formContent,
           answersObject,
           "checkboxButton-0"
-        ),
-        ["punainen", "sininen"]
-      );
+        )
+      ).toEqual(["punainen", "sininen"]);
     });
 
-    it("does not mutate answers object when reading and sorting", function () {
+    test("does not mutate answers object when reading and sorting", function () {
       writeValue(formContent, answersObject, "checkboxButton-0", [
         "sininen",
         "punainen",
@@ -112,25 +111,25 @@ describe("Input value storage", function () {
           },
         ],
       };
-      assert.deepEqual(answersObject, expectedAnswersObject);
+      expect(answersObject).toEqual(expectedAnswersObject);
       InputValueStorage.readValue(
         formContent,
         answersObject,
         "checkboxButton-0"
       );
-      assert.deepEqual(answersObject, expectedAnswersObject);
+      expect(answersObject).toEqual(expectedAnswersObject);
     });
   });
 
-  describe("growing fieldset values", function () {
-    it("writes and reads", function () {
+  test.describe("growing fieldset values", function () {
+    test("writes and reads", function () {
       writeValue(
         formContent,
         answersObject,
         "other-organizations.other-organizations-1.name",
         "Kemijärven kaupunki"
       );
-      assert.deepEqual(answersObject, {
+      expect(answersObject).toEqual({
         value: [
           {
             key: "other-organizations",
@@ -152,67 +151,63 @@ describe("Input value storage", function () {
         ],
       });
 
-      assert.deepEqual(
+      expect(
         InputValueStorage.readValue(
           formContent,
           answersObject,
           "other-organizations"
-        ),
-        [
-          {
-            key: "other-organizations-1",
-            value: [
-              {
-                key: "other-organizations.other-organizations-1.name",
-                value: "Kemijärven kaupunki",
-                fieldType: "textField",
-              },
-            ],
-            fieldType: "growingFieldsetChild",
-          },
-        ]
-      );
+        )
+      ).toEqual([
+        {
+          key: "other-organizations-1",
+          value: [
+            {
+              key: "other-organizations.other-organizations-1.name",
+              value: "Kemijärven kaupunki",
+              fieldType: "textField",
+            },
+          ],
+          fieldType: "growingFieldsetChild",
+        },
+      ]);
 
-      assert.deepEqual(
+      expect(
         InputValueStorage.readValue(
           formContent,
           answersObject,
           "other-organizations-1"
-        ),
-        [
-          {
-            key: "other-organizations.other-organizations-1.name",
-            value: "Kemijärven kaupunki",
-            fieldType: "textField",
-          },
-        ]
-      );
+        )
+      ).toEqual([
+        {
+          key: "other-organizations.other-organizations-1.name",
+          value: "Kemijärven kaupunki",
+          fieldType: "textField",
+        },
+      ]);
 
-      assert.equal(
+      expect(
         InputValueStorage.readValue(
           formContent,
           answersObject,
           "other-organizations.other-organizations-1.name"
-        ),
-        "Kemijärven kaupunki"
-      );
+        )
+      ).toEqual("Kemijärven kaupunki");
     });
 
-    it("updates", function () {
+    test("updates", function () {
       writeValue(
         formContent,
         answersObject,
         "other-organizations.other-organizations-1.name",
         "Kemijärven kaupunki"
       );
-      assert.equal(
+      expect(
         InputValueStorage.readValue(
           formContent,
           answersObject,
           "other-organizations.other-organizations-1.name"
-        ),
-        "Kemijärven kaupunki"
-      );
+        )
+      ).toEqual("Kemijärven kaupunki");
 
       writeValue(
         formContent,
@@ -220,17 +215,16 @@ describe("Input value storage", function () {
         "other-organizations.other-organizations-1.name",
         "Kemijärven kaupunki, Itä-Lapin ammattiopisto"
       );
-      assert.equal(
+      expect(
         InputValueStorage.readValue(
           formContent,
           answersObject,
           "other-organizations.other-organizations-1.name"
-        ),
-        "Kemijärven kaupunki, Itä-Lapin ammattiopisto"
-      );
+        )
+      ).toEqual("Kemijärven kaupunki, Itä-Lapin ammattiopisto");
     });
 
-    it("work with several fields in the same group", function () {
+    test("work with several fields in the same group", function () {
       writeValue(
         formContent,
         answersObject,
@@ -243,25 +237,23 @@ describe("Input value storage", function () {
         "other-organizations.other-organizations-1.email",
         "kemijarven.kaupunki@example.com"
       );
-      assert.equal(
+      expect(
         InputValueStorage.readValue(
           formContent,
           answersObject,
           "other-organizations.other-organizations-1.name"
-        ),
-        "Kemijärven kaupunki"
-      );
-      assert.equal(
+        )
+      ).toEqual("Kemijärven kaupunki");
+      expect(
         InputValueStorage.readValue(
           formContent,
           answersObject,
           "other-organizations.other-organizations-1.email"
-        ),
-        "kemijarven.kaupunki@example.com"
-      );
+        )
+      ).toEqual("kemijarven.kaupunki@example.com");
     });
 
-    it("sorts subfields in the same group when reading", function () {
+    test("sorts subfields in the same group when reading", function () {
       writeValue(
         formContent,
         answersObject,
@@ -274,7 +266,7 @@ describe("Input value storage", function () {
         "other-organizations.other-organizations-1.email",
         "kemijarven.kaupunki@example.com"
       );
-      assert.deepEqual(answersObject, {
+      expect(answersObject).toEqual({
         value: [
           {
             key: "other-organizations",
@@ -300,28 +292,27 @@ describe("Input value storage", function () {
           },
         ],
       });
-      assert.deepEqual(
+      expect(
         InputValueStorage.readValue(
           null,
           answersObject,
           "other-organizations-1"
-        ),
-        [
-          {
-            key: "other-organizations.other-organizations-1.email",
-            value: "kemijarven.kaupunki@example.com",
-            fieldType: "emailField",
-          },
-          {
-            key: "other-organizations.other-organizations-1.name",
-            value: "Kemijärven kaupunki",
-            fieldType: "textField",
-          },
-        ]
-      );
+        )
+      ).toEqual([
+        {
+          key: "other-organizations.other-organizations-1.email",
+          value: "kemijarven.kaupunki@example.com",
+          fieldType: "emailField",
+        },
+        {
+          key: "other-organizations.other-organizations-1.name",
+          value: "Kemijärven kaupunki",
+          fieldType: "textField",
+        },
+      ]);
     });
 
-    it("does not mutate answers object when reading and sorting subfields in the same group", function () {
+    test("does not mutate answers object when reading and sorting subfields in the same group", function () {
       writeValue(
         formContent,
         answersObject,
@@ -360,12 +351,12 @@ describe("Input value storage", function () {
           },
         ],
       };
-      assert.deepEqual(answersObject, expectedAnswersObject);
+      expect(answersObject).toEqual(expectedAnswersObject);
       InputValueStorage.readValue(null, answersObject, "other-organizations-1");
-      assert.deepEqual(answersObject, expectedAnswersObject);
+      expect(answersObject).toEqual(expectedAnswersObject);
     });
 
-    it("deletes", function () {
+    test("deletes", function () {
       writeValue(
         formContent,
         answersObject,
@@ -380,14 +371,10 @@ describe("Input value storage", function () {
       );
 
       const otherOrganizationsValue = answersObject.value[0].value;
-      assert.isArray(otherOrganizationsValue);
-      assert.lengthOf(
-        otherOrganizationsValue,
-        2,
-        JSON.stringify(otherOrganizationsValue)
-      );
 
-      const growingParentFields = JsUtil.flatFilter(formContent, (n) => {
+      expect(otherOrganizationsValue).toHaveLength(2);
+
+      const growingParentFields = JsUtil.flatFilter(formContent, (n: any) => {
         return n.id === "other-organizations";
       });
       InputValueStorage.deleteValue(
@@ -395,53 +382,36 @@ describe("Input value storage", function () {
         answersObject,
         "other-organizations-2"
       );
-      assert.lengthOf(
-        otherOrganizationsValue,
-        1,
-        JSON.stringify(otherOrganizationsValue)
-      );
+      expect(otherOrganizationsValue).toHaveLength(1);
     });
 
-    it("does not produce extra content in answers", function () {
-      assert.deepEqual(answersObject, {});
+    test("does not produce extra content in answers", function () {
+      expect(answersObject).toEqual({});
       writeValue(
         formContent,
         answersObject,
         "other-organizations.other-organizations-1.name",
         "Kemijärven kaupunki"
       );
-      assert.deepEqual(_.keys(answersObject), ["value"]);
+      expect(_.keys(answersObject)).toEqual(["value"]);
 
       const storedRootValue = answersObject.value;
-      assert.isArray(storedRootValue);
-      assert.lengthOf(storedRootValue, 1, JSON.stringify(storedRootValue));
+      expect(storedRootValue).toHaveLength(1);
       const otherOrganizationsItem = storedRootValue[0];
-      assert.deepEqual(_.keys(otherOrganizationsItem), [
+      expect(_.keys(otherOrganizationsItem)).toEqual([
         "key",
         "value",
         "fieldType",
       ]);
-      assert.deepEqual(otherOrganizationsItem.key, "other-organizations");
+      expect(otherOrganizationsItem.key).toEqual("other-organizations");
       const otherOrganizationsValue = otherOrganizationsItem.value;
-      assert.isArray(otherOrganizationsValue);
-      assert.lengthOf(
-        otherOrganizationsValue,
-        1,
-        JSON.stringify(otherOrganizationsValue)
-      );
+      expect(otherOrganizationsValue).toHaveLength(1);
 
       const firstOtherOrganizationValue = otherOrganizationsValue[0];
-      verboseAssert.deepEqual(
-        firstOtherOrganizationValue.key,
-        "other-organizations-1"
-      );
-      assert.isArray(firstOtherOrganizationValue.value);
-      assert.lengthOf(
-        firstOtherOrganizationValue.value,
-        1,
-        JSON.stringify(otherOrganizationsValue)
-      );
-      verboseAssert.deepEqual(firstOtherOrganizationValue, {
+      expect(firstOtherOrganizationValue.key).toEqual("other-organizations-1");
+      expect(firstOtherOrganizationValue.value).toHaveLength(1);
+
+      expect(firstOtherOrganizationValue).toEqual({
         key: "other-organizations-1",
         value: [
           {
@@ -459,52 +429,39 @@ describe("Input value storage", function () {
         "other-organizations.other-organizations-1.email",
         "kemi.jarven@kaupun.ki"
       );
-      assert.lengthOf(
-        otherOrganizationsValue,
-        1,
-        JSON.stringify(otherOrganizationsValue)
-      );
-      assert.lengthOf(
-        firstOtherOrganizationValue.value,
-        2,
-        JSON.stringify(otherOrganizationsValue)
-      );
+      expect(otherOrganizationsValue).toHaveLength(1);
 
-      verboseAssert.deepEqual(
-        firstOtherOrganizationValue.value[0].key,
+      expect(firstOtherOrganizationValue.value).toHaveLength(2);
+
+      expect(firstOtherOrganizationValue.value[0].key).toEqual(
         "other-organizations.other-organizations-1.name"
       );
-      verboseAssert.deepEqual(
-        firstOtherOrganizationValue.value[0].value,
+      expect(firstOtherOrganizationValue.value[0].value).toEqual(
         "Kemijärven kaupunki"
       );
-      verboseAssert.deepEqual(
-        firstOtherOrganizationValue.value[0].fieldType,
+      expect(firstOtherOrganizationValue.value[0].fieldType).toEqual(
         "textField"
       );
-      verboseAssert.deepEqual(
-        firstOtherOrganizationValue.value[1].key,
+      expect(firstOtherOrganizationValue.value[1].key).toEqual(
         "other-organizations.other-organizations-1.email"
       );
-      verboseAssert.deepEqual(
-        firstOtherOrganizationValue.value[1].value,
+      expect(firstOtherOrganizationValue.value[1].value).toEqual(
         "kemi.jarven@kaupun.ki"
       );
-      verboseAssert.deepEqual(
-        firstOtherOrganizationValue.value[1].fieldType,
+      expect(firstOtherOrganizationValue.value[1].fieldType).toEqual(
         "emailField"
       );
     });
   });
 
-  describe("table field value", function () {
+  test.describe("table field value", function () {
     const tableValue = [
       ["b", "20", "200"],
       ["a", "10", "100"],
       ["c", "30", "300"],
     ];
 
-    it("writes and reads", function () {
+    test("writes and reads", function () {
       writeValue(formContent, answersObject, "art-courses-plan", tableValue);
 
       const expectedAnswer = {
@@ -517,11 +474,10 @@ describe("Input value storage", function () {
         fieldType: "tableField",
       };
 
-      assert.deepEqual(answersObject, { value: [expectedAnswer] });
-      assert.deepEqual(
-        InputValueStorage.readValue(null, answersObject, "art-courses-plan"),
-        expectedAnswer.value
-      );
+      expect(answersObject).toEqual({ value: [expectedAnswer] });
+      expect(
+        InputValueStorage.readValue(null, answersObject, "art-courses-plan")
+      ).toEqual(expectedAnswer.value);
     });
   });
 });
