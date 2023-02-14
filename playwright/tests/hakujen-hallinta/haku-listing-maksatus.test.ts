@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import moment from "moment";
 import { muutoshakemusTest } from "../../fixtures/muutoshakemusTest";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import { MaksatuksetPage } from "../../pages/maksatuksetPage";
@@ -37,13 +38,8 @@ muutoshakemusTest(
           .hakuListingTableSelectors()
           .maksatukset.cellValue(avustushakuName);
 
-        const today = new Date();
-        const day = today.getDate().toString().padStart(2, "0");
-        const month = (today.getMonth() + 1).toString().padStart(2, "0");
-        const year = today.getFullYear().toString().slice(2);
-        const todayString = `${day}.${month}.${year}`;
-
-        await expect(maksatuksetCell).toHaveText(todayString);
+        const today = moment().format("DD.MM.YY");
+        await expect(maksatuksetCell).toHaveText(today);
       }
     );
   }

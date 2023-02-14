@@ -22,10 +22,19 @@ paatos_counts AS (
   WHERE hakemus_version.version_closed IS NULL
   GROUP BY avustushaku.id
 ),
-maksatukset AS (
+maksatukset_lahetetty AS (
   SELECT
     avustushaku.id AS avustushaku_id,
-    min(hakemus_version.created_at) AS maksatukset_lahetetty,
+    min(payments.created_at) AS maksatukset_lahetetty
+  FROM avustushakus_to_export avustushaku
+  JOIN hakija.hakemukset hakemus_version ON hakemus_version.avustushaku = avustushaku.id
+  JOIN virkailija.payments ON hakemus_version.id = payments.application_id AND hakemus_version.version = payments.application_version
+  WHERE payments.deleted is NULL AND payments.paymentstatus_id = 'sent'
+  GROUP BY avustushaku.id
+),
+maksatukset_summa AS (
+  SELECT
+    avustushaku.id AS avustushaku_id,
     coalesce(sum(payment_sum), 0) AS maksatukset_summa
   FROM avustushakus_to_export avustushaku
   JOIN hakija.hakemukset hakemus_version ON hakemus_version.avustushaku = avustushaku.id
@@ -134,6 +143,7 @@ SELECT
   loppuselvitykset_lahetetty,
   avustushaku.content->'total-grant-size' AS avustushaku_maararaha,
   coalesce(maksatukset_summa, 0) as maksatukset_summa,
+  maksatukset_lahetetty,
   (avustushaku.content->>'total-grant-size')::numeric - maksatukset_summa AS jakamaton_maararaha,
   avustushaku.hankkeen_alkamispaiva AS ensimmainen_kayttopaiva,
   avustushaku.hankkeen_paattymispaiva AS viimeinen_kayttopaiva,
@@ -148,7 +158,8 @@ SELECT
   avustushaku.content->'rahoitusalueet' AS rahoitusalueet
 FROM avustushakus_to_export avustushaku
 LEFT JOIN paatos_counts USING (avustushaku_id)
-LEFT JOIN maksatukset USING (avustushaku_id)
+LEFT JOIN maksatukset_summa USING (avustushaku_id)
+LEFT JOIN maksatukset_lahetetty USING (avustushaku_id)
 LEFT JOIN vastuuvalmistelijat USING (avustushaku_id)
 LEFT JOIN paatokset_lahetetty USING (avustushaku_id)
 LEFT JOIN valiselvityspyynnot_lahetetty USING (avustushaku_id)
@@ -162,23 +173,23 @@ LEFT JOIN talousarviotili USING (avustushaku_id)
 ORDER BY avustushaku.id DESC
 ")
 
-(defn format-sql-timestamp [ts]
+(defn- format-sql-timestamp [ts]
   (let [dt (from-sql-time ts)]
     (str (date-string dt) " " (time-string dt))))
 
-(defn format-sql-timestamp-as-date [ts]
+(defn- format-sql-timestamp-as-date [ts]
   (date-string (from-sql-time ts)))
 
-(defn koulutusaste-columns [koulutusaste]
+(defn- koulutusaste-columns [koulutusaste]
   [(:rahoitusalue koulutusaste)
    (clojure.string/join ", " (:talousarviotilit koulutusaste))])
 
-(defn expand-koulutusasteet [n row]
+(defn- expand-koulutusasteet [n row]
   (let [dummy-value {:rahoitusalue ""
                      :talousarviotilit []}]
     (apply concat (vec (map-indexed
-      (fn [idx _] (koulutusaste-columns (nth (:koulutusasteet row) idx dummy-value)))
-      (repeat n nil))))))
+                        (fn [idx _] (koulutusaste-columns (nth (:koulutusasteet row) idx dummy-value)))
+                        (repeat n nil))))))
 
 (defn- raportointivelvoite-str [rv]
   (if (= rv "")
@@ -187,12 +198,12 @@ ORDER BY avustushaku.id DESC
           maaraaika (date-string (parse-date (:maaraaika rv)))]
       (str (:raportointilaji rv) ": " (:asha_tunnus rv) ", " maaraaika lisatiedot))))
 
-(defn expand-raportointivelvoitteet [n row]
+(defn- expand-raportointivelvoitteet [n row]
   (apply concat (vec (map-indexed
-    (fn [idx _] [(raportointivelvoite-str (nth (:raportointivelvoitteet row) idx ""))])
-    (repeat n nil)))))
+                      (fn [idx _] [(raportointivelvoite-str (nth (:raportointivelvoitteet row) idx ""))])
+                      (repeat n nil)))))
 
-(defn db-row->excel-row [row max-koulutusaste-count max-raportointivelvoitteet-count]
+(defn- db-row->excel-row [row max-koulutusaste-count max-raportointivelvoitteet-count]
   (concat
     [(:avustushaku-id row)
      (or (:avustushaku-name row) "")
@@ -214,7 +225,7 @@ ORDER BY avustushaku.id DESC
      (or (:toimintayksikko-code-value row) "")
      (clojure.string/join ", " (:projects row))
      (or (:toiminto-code-value row) "")
-     (or (:maksatukset-lahetetty row) "")
+     (if (:maksatukset-lahetetty row) (format-sql-timestamp-as-date (:maksatukset-lahetetty row)) "")
      (or (:maksatukset-summa row) "")
      (or (:jakamaton-maararaha row) "")
      (if (:paatokset-lahetetty row) (format-sql-timestamp-as-date (:paatokset-lahetetty row)) "")
@@ -228,23 +239,23 @@ ORDER BY avustushaku.id DESC
        (join ", " (:lainsaadanto row))
        "")
      ""
-     (if (:arvioitu-maksupaiva row) (java8-date-string (:arvioitu-maksupaiva row)) "")
-     ]))
+     (if (:arvioitu-maksupaiva row) (java8-date-string (:arvioitu-maksupaiva row)) "")]))
 
-(defn koulutusaste-headers [n]
+
+(defn- koulutusaste-headers [n]
   (let [header-pairs (map-indexed
                        (fn [idx _] [(str "Koulutusaste " (+ idx 1))
                                     (str "TA-tilit " (+ idx 1))])
                        (repeat n nil))]
     (apply concat header-pairs)))
 
-(defn raportointivelvoite-headers [n]
+(defn- raportointivelvoite-headers [n]
   (let [headers (map-indexed
                   (fn [idx _] [(str "Raportointivelvoite " (+ idx 1))])
                   (repeat n nil))]
     (apply concat headers)))
 
-(defn headers [max-koulutusaste-count max-raportointivelvoite-count]
+(defn- headers [max-koulutusaste-count max-raportointivelvoite-count]
   [(concat
      ["" "" ""]
      (repeat (* 2 max-koulutusaste-count) "")

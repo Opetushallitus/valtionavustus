@@ -2,6 +2,7 @@ import moment from "moment";
 import { Page, expect } from "@playwright/test";
 
 import { HakujenHallintaPage } from "./hakujenHallintaPage";
+import { navigate } from "../utils/navigate";
 
 export function MaksatuksetPage(page: Page) {
   async function goto(avustushakuName: string) {
@@ -9,6 +10,10 @@ export function MaksatuksetPage(page: Page) {
     await hakujenHallintaPage.navigateToHakemusByClicking(avustushakuName);
     await page.locator("text=Maksatukset >> a").click();
     return maksatuksetTable(page);
+  }
+
+  async function gotoID(avustushakuID: number) {
+    await navigate(page, `/admin/maksatukset/?avustushaku=${avustushakuID}`);
   }
 
   async function fillTositepaivamaara() {
@@ -113,6 +118,7 @@ export function MaksatuksetPage(page: Page) {
     fillMaksueranTiedotAndSendMaksatukset,
     getExpectedPaymentXML,
     goto,
+    gotoID,
     reloadPaymentPage,
     sendMaksatukset,
     clickLahetetytMaksatuksetTab,
