@@ -147,7 +147,7 @@ export default class FormEditorController {
               this.generateUniqueId(`${id}-growingFieldsetChild`, 0)
             ),
           ],
-          params: { showOnlyFirstLabels: true },
+          params: { showOnlyFirstLabels: false },
         };
       case "textField":
       case "koodistoField":
