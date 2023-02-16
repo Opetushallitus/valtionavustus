@@ -171,7 +171,7 @@ const HakemusBudgetEditing = ({ allowEditing, hakemus }: Props) => {
   validateFields(budgetEditFormState.form, fakeHakemus.answers, hakemus);
   const formElementProps = {
     state: budgetEditFormState,
-    formContainerClass: Form,
+    form: Form,
     infoElementValues: avustushaku,
     controller: new BudgetEditFormController(
       onAnswerOverride,

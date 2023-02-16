@@ -61,7 +61,7 @@ const HakemusPreview = (props: HakemusPreviewProps) => {
     hakemus["submitted-version"] !== hakemus.version;
   const formElementProps = {
     state: formState,
-    formContainerClass: EditsDisplayingFormView,
+    form: EditsDisplayingFormView,
     infoElementValues: avustushaku,
     controller: new FakeFormController(
       new VaComponentFactory(),

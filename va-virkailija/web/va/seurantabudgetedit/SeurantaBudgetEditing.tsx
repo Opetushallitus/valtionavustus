@@ -141,7 +141,7 @@ const SeurantaBudgetEditing = ({
   validateFields(budgetEditFormState.form, fakeHakemus.answers);
   const formElementProps = {
     state: budgetEditFormState,
-    formContainerClass: Form,
+    form: Form,
     infoElementValues: avustushaku,
     controller: new SeurantaBudgetEditFormController(
       onChangeListener,

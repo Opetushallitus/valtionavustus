@@ -100,7 +100,7 @@ const TraineeDayEditing = ({ hakemus, allowEditing }: Props) => {
   });
   const formElementProps = {
     state: traineeDayEditFormState,
-    formContainerClass: Form,
+    form: Form,
     infoElementValues: avustushaku,
     controller: new TraineeDayEditFormController(
       onChange,

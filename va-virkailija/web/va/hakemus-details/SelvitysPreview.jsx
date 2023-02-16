@@ -24,7 +24,7 @@ export default class SelvitysPreview extends Component {
     const formState = createPreviewHakemusFormState();
     const formElementProps = {
       state: formState,
-      formContainerClass: EditsDisplayingFormView,
+      form: EditsDisplayingFormView,
       infoElementValues: avustushaku,
       controller: new FakeFormController(
         new VaComponentFactory(),

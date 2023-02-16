@@ -70,7 +70,7 @@ export default class VaForm<
       state.saveStatus &&
       state.saveStatus.savedObject &&
       state.saveStatus.savedObject["loppuselvitys-information-verified-at"];
-    const formContainerClass =
+    const form =
       preview || isLoppuselvitysInformationVerified ? FormPreview : Form;
     const showGrantRefuse =
       preview &&
@@ -119,7 +119,7 @@ export default class VaForm<
         <FormContainer
           controller={controller}
           state={state}
-          formContainerClass={formContainerClass}
+          form={form}
           headerElements={headerElements}
           infoElementValues={state.avustushaku}
           hakemusType={this.props.hakemusType}
