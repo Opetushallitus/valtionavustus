@@ -66,7 +66,7 @@ const SeurantaTags = ({ hakemus }: Props) => {
   };
 
   return (
-    <div>
+    <div data-test-id="tags-container">
       <h2>
         Tagit
         <button

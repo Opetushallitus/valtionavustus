@@ -13,6 +13,7 @@ import {
   clearFilters,
   setAnswerFilter,
   setOpenQuestions,
+  TAG_ID,
   toggleFilter,
 } from "../hakemustenArviointi/filterReducer";
 import { getLoadedState } from "../hakemustenArviointi/arviointiReducer";
@@ -183,18 +184,21 @@ const FilterList = () => {
     });
 
     const tags = _.uniq(
-      _.flatten(hakemukset.map((i) => _.get(i, "arvio.tags.value")))
+      hakemukset.flatMap((i) => {
+        const tags = i.arvio.tags?.value;
+        return tags ?? [];
+      })
     );
     if (tags.length > 0) {
       filterQuestions.push({
-        id: "tags",
+        id: TAG_ID,
         label: "Tagit",
         options: tags.map((tag) => ({
           label: tag,
           value: tag,
-          selected: selectedPredicate("tags", tag),
+          selected: selectedPredicate(TAG_ID, tag),
         })),
-        open: _.includes(openQuestions, "tags"),
+        open: openQuestions.includes(TAG_ID),
       });
     }
     return filterQuestions;

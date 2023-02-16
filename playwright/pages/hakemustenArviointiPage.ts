@@ -703,6 +703,9 @@ export class HakemustenArviointiPage {
         falsy: this.page.locator("[for=set-should-pay-false]"),
         comment: this.page.locator("#should-pay-comment"),
       },
+      budjettimuutosTag: this.page
+        .locator("[data-test-id=tags-container]")
+        .locator('button:text-is("budjettimuutos")'),
     };
   }
 }

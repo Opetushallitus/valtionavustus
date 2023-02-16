@@ -30,3 +30,5 @@ export const { toggleFilter, clearFilters, setAnswerFilter, setOpenQuestions } =
   filterSlice.actions;
 
 export default filterSlice.reducer;
+export const RAHOITUS_ALUE_ID = "rahoitusalue" as const;
+export const TAG_ID = "tags" as const;

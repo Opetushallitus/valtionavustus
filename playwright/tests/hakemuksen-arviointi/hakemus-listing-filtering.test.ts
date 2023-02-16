@@ -3,7 +3,7 @@ import { budjettimuutoshakemusTest } from "../../fixtures/budjettimuutoshakemusT
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { expectToBeDefined } from "../../utils/util";
 import { HakijaAvustusHakuPage } from "../../pages/hakijaAvustusHakuPage";
-import { VIRKAILIJA_URL } from "../../utils/constants";
+import { answers, VIRKAILIJA_URL } from "../../utils/constants";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 
 interface ArviointiUiFilteringFixtures {
@@ -187,7 +187,7 @@ test("hakemus list filtering", async ({
   });
 
   await test.step(
-    "filtering with 'Rajaa listaa' hakemus filter works",
+    "filtering with 'Rajaa listaa' Asiointikieli hakemus filter works",
     async () => {
       await hakemustenArviointiPage.clickRajaaListaaFilter(
         "Asiointikieli",
@@ -199,6 +199,34 @@ test("hakemus list filtering", async ({
       await hakemustenArviointiPage.clickRajaaListaaFilter(
         "Asiointikieli",
         "Suomi"
+      );
+      await expect(hakemustenArviointiPage.hakemusListing).toContainText(
+        "2/2 hakemusta"
+      );
+    }
+  );
+
+  await test.step(
+    "filtering with 'Rajaa listaa' Tagit hakemus filter works",
+    async () => {
+      await hakemustenArviointiPage.selectHakemusFromList(answers.projectName);
+      await hakemustenArviointiPage.tabs().seuranta.click();
+      const seuranta = hakemustenArviointiPage.seurantaTabLocators();
+      await expect(seuranta.budjettimuutosTag).not.toHaveClass(/btn-selected/);
+      await seuranta.budjettimuutosTag.click();
+      await expect(seuranta.budjettimuutosTag).toHaveClass(/btn-selected/);
+      await hakemustenArviointiPage.closeHakemusDetails();
+      await hakemustenArviointiPage.waitForSave();
+      await hakemustenArviointiPage.clickRajaaListaaFilter(
+        "Tagit",
+        "budjettimuutos"
+      );
+      await expect(hakemustenArviointiPage.hakemusListing).toContainText(
+        "1/2 hakemusta"
+      );
+      await hakemustenArviointiPage.clickRajaaListaaFilter(
+        "Tagit",
+        "budjettimuutos"
       );
       await expect(hakemustenArviointiPage.hakemusListing).toContainText(
         "2/2 hakemusta"

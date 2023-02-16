@@ -40,6 +40,7 @@ import {
 } from "../hakemustenArviointi/arviointiReducer";
 import HttpUtil from "soresu-form/web/HttpUtil";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { RAHOITUS_ALUE_ID, TAG_ID } from "../hakemustenArviointi/filterReducer";
 
 interface Props {
   selectedHakemus: Hakemus | undefined;
@@ -172,26 +173,31 @@ const hakemusFilter = (state: FilterState) => (hakemus: Hakemus) => {
 };
 
 const answerFilter = (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
+  const idsWithOwnFilter: string[] = [TAG_ID, RAHOITUS_ALUE_ID];
   const answers = hakemusFilter.answers.filter(
-    (a) => !["tagit", "rahoitusalue"].includes(a.id)
+    (a) => !idsWithOwnFilter.includes(a.id)
   );
+
   if (!answers.length) {
     return true;
   }
 
-  const filtersGroupedById = answers.reduce((prev, cur) => {
-    if (Object.keys(prev).includes(cur.id)) {
-      return {
-        ...prev,
-        [cur.id]: [...prev[cur.id], cur.answer],
-      };
-    } else {
-      return {
-        ...prev,
-        [cur.id]: [cur.answer],
-      };
-    }
-  }, {} as { [id: string]: string[] });
+  const filtersGroupedById = answers.reduce<{ [id: string]: string[] }>(
+    (prev, cur) => {
+      if (Object.keys(prev).includes(cur.id)) {
+        return {
+          ...prev,
+          [cur.id]: [...prev[cur.id], cur.answer],
+        };
+      } else {
+        return {
+          ...prev,
+          [cur.id]: [cur.answer],
+        };
+      }
+    },
+    {}
+  );
 
   return Object.keys(filtersGroupedById).every((key) => {
     const filterAnswers = filtersGroupedById[key];
@@ -203,7 +209,7 @@ const answerFilter = (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
 const rahoitusalueFilter =
   (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
     const rahoitusalues = hakemusFilter.answers
-      .filter((a) => a.id === "rahoitusalue")
+      .filter((a) => a.id === RAHOITUS_ALUE_ID)
       .map((a) => a.answer);
     if (!rahoitusalues.length) {
       return true;
@@ -218,7 +224,7 @@ const rahoitusalueFilter =
 
 const tagFilter = (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
   const tags = hakemusFilter.answers
-    .filter((a) => a.id === "tags")
+    .filter((a) => a.id === TAG_ID)
     .map((a) => a.answer);
   if (!tags.length) {
     return true;
