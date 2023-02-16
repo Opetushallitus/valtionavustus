@@ -1,4 +1,4 @@
-insert into arviot (
+insert into virkailija.arviot (
   hakemus_id,
   status,
   overridden_answers,
@@ -10,6 +10,7 @@ insert into arviot (
   rahoitusalue,
   talousarviotili,
   perustelut,
+  tags,
   costs_granted,
   use_overridden_detailed_costs,
   presentercomment,
@@ -30,6 +31,7 @@ values (
   :rahoitusalue,
   :talousarviotili,
   :perustelut,
+  :tags,
   :costs_granted,
   :use_overridden_detailed_costs,
   :presentercomment,
@@ -49,6 +51,7 @@ ON CONFLICT (hakemus_id) DO UPDATE SET
   rahoitusalue = EXCLUDED.rahoitusalue,
   talousarviotili = EXCLUDED.talousarviotili,
   perustelut = EXCLUDED.perustelut,
+  tags = EXCLUDED.tags,
   costs_granted = EXCLUDED.costs_granted,
   use_overridden_detailed_costs = EXCLUDED.use_overridden_detailed_costs,
   presentercomment = EXCLUDED.presentercomment,
@@ -56,4 +59,4 @@ ON CONFLICT (hakemus_id) DO UPDATE SET
   oppilaitokset = EXCLUDED.oppilaitokset,
   allow_visibility_in_external_system = EXCLUDED.allow_visibility_in_external_system,
   should_pay = EXCLUDED.should_pay,
-  should_pay_comments = EXCLUDED.should_pay_comments
+  should_pay_comments = EXCLUDED.should_pay_comments;
