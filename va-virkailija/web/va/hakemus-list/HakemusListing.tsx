@@ -40,7 +40,7 @@ import {
 } from "../hakemustenArviointi/arviointiReducer";
 import HttpUtil from "soresu-form/web/HttpUtil";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { RAHOITUS_ALUE_ID, TAG_ID } from "../hakemustenArviointi/filterReducer";
+import { TAG_ID } from "../hakemustenArviointi/filterReducer";
 
 interface Props {
   selectedHakemus: Hakemus | undefined;
@@ -173,7 +173,7 @@ const hakemusFilter = (state: FilterState) => (hakemus: Hakemus) => {
 };
 
 const answerFilter = (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
-  const idsWithOwnFilter: string[] = [TAG_ID, RAHOITUS_ALUE_ID];
+  const idsWithOwnFilter: string[] = [TAG_ID];
   const answers = hakemusFilter.answers.filter(
     (a) => !idsWithOwnFilter.includes(a.id)
   );
@@ -205,22 +205,6 @@ const answerFilter = (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
     return filterAnswers.includes(hakemusAnswer?.value);
   });
 };
-
-const rahoitusalueFilter =
-  (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
-    const rahoitusalues = hakemusFilter.answers
-      .filter((a) => a.id === RAHOITUS_ALUE_ID)
-      .map((a) => a.answer);
-    if (!rahoitusalues.length) {
-      return true;
-    }
-    return (
-      (!hakemus.arvio.rahoitusalue &&
-        rahoitusalues.includes("Ei rahoitusaluetta")) ||
-      (hakemus.arvio.rahoitusalue &&
-        rahoitusalues.includes(hakemus.arvio.rahoitusalue))
-    );
-  };
 
 const tagFilter = (hakemusFilter: HakemusFilter) => (hakemus: Hakemus) => {
   const tags = hakemusFilter.answers
@@ -353,7 +337,6 @@ export default function HakemusListing(props: Props) {
   const filteredList = hakemusList
     .filter(hakemusFilter(filterState))
     .filter(answerFilter(hakemusFilterState))
-    .filter(rahoitusalueFilter(hakemusFilterState))
     .filter(tagFilter(hakemusFilterState))
     .sort(hakemusSorter(sortingState));
   const totalBudgetGranted = filteredList.reduce<number>(
