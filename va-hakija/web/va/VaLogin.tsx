@@ -132,7 +132,6 @@ export default class VaLogin extends React.Component<
           <DateRangeInfoElement
             htmlId="duration"
             translations={translations}
-            translationKey="label"
             lang={lang}
             values={content}
           />
