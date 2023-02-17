@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 import { muutoshakemusTest } from "../fixtures/muutoshakemusTest";
 import { HakemustenArviointiPage } from "../pages/hakemustenArviointiPage";
 import { HakujenHallintaPage } from "../pages/hakujenHallintaPage";
+import { answers } from "../utils/constants";
 
 muutoshakemusTest.use({
   hakuProps: ({ hakuProps }, use) =>
@@ -32,6 +33,7 @@ muutoshakemusTest(
       hakemusId,
       "_ valtionavustus"
     );
+    await hakemustenArviointiPage.selectHakemusFromList(answers.projectName);
     await hakemustenArviointiPage.setSelectionCriteriaStars(1, 4);
     await hakemustenArviointiPage.setSelectionCriteriaStars(2, 1);
     const hakemusScore = await hakemustenArviointiPage.getHakemusScore(
