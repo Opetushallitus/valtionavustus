@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 import { muutoshakemusTest } from "../../fixtures/muutoshakemusTest";
 import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
 import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
+import { answers } from "../../utils/constants";
 
 test.setTimeout(180000);
 
@@ -57,6 +58,7 @@ muutoshakemusTest(
     );
 
     await test.step("can set arvio", async () => {
+      await hakemustenArviointiPage.selectHakemusFromList(answers.projectName);
       await hakemustenArviointiPage.setSelectionCriteriaStars(1, 4);
       await hakemustenArviointiPage.setSelectionCriteriaStars(2, 4);
       const hakemusScore = await hakemustenArviointiPage.getHakemusScore(

@@ -441,7 +441,6 @@ function HakemusTable({
   const personSelectHakemusId = useHakemustenArviointiSelector(
     (state) => state.arviointi.personSelectHakemusId
   );
-  const dispatchReduxStore = useHakemustenArviointiDispatch();
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
       type: "set-organization-name-filter",
@@ -458,7 +457,6 @@ function HakemusTable({
   const { organization, projectNameOrCode, status: statusFilter } = filterState;
   const navigate = useNavigate();
   const navigateToHakemus = (hakemusId: number) => {
-    dispatchReduxStore(selectHakemus(hakemusId));
     navigate(`hakemus/${hakemusId}/arviointi${window.location.search}`);
   };
   return (
@@ -798,7 +796,6 @@ function ResolvedTable(props: ResolvedTableProps) {
     setSorting,
     sortingState,
   } = props;
-  const dispatchReduxStore = useHakemustenArviointiDispatch();
   const personSelectHakemusId = useHakemustenArviointiSelector(
     (state) => state.arviointi.personSelectHakemusId
   );
@@ -814,7 +811,6 @@ function ResolvedTable(props: ResolvedTableProps) {
   const { projectNameOrCode, organization, status: statusFilter } = filterState;
   const navigate = useNavigate();
   const navigateToHakemus = (hakemusId: number) => {
-    dispatchReduxStore(selectHakemus(hakemusId));
     navigate(`hakemus/${hakemusId}/arviointi${window.location.search}`);
   };
   return (

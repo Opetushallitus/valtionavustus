@@ -1,17 +1,14 @@
 import React from "react";
+import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
 import {
-  useHakemustenArviointiDispatch,
-  useHakemustenArviointiSelector,
-} from "../hakemustenArviointi/arviointiStore";
-import {
-  getSelectedHakemus,
   setArvioValue,
   startHakemusArvioAutoSave,
 } from "../hakemustenArviointi/arviointiReducer";
+import { useHakemus } from "../hakemustenArviointi/useHakemus";
 
 const ShouldPayComments = () => {
   const dispatch = useHakemustenArviointiDispatch();
-  const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
+  const hakemus = useHakemus();
   const shouldPayComments = hakemus.arvio?.["should-pay-comments"];
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(

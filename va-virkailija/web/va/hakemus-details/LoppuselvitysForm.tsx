@@ -34,7 +34,12 @@ export const LoppuselvitysForm = ({
       `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/loppuselvitys/verify-information`,
       { message }
     );
-    dispatch(refreshHakemukset({ avustushakuId: avustushaku.id }));
+    dispatch(
+      refreshHakemukset({
+        avustushakuId: avustushaku.id,
+        hakemusId: hakemus.id,
+      })
+    );
   };
 
   const allowedToDoAsiatarkastus =

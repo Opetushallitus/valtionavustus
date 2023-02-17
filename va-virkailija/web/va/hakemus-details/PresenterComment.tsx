@@ -1,15 +1,12 @@
 import React from "react";
 
 import HelpTooltip from "../HelpTooltip";
+import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
 import {
-  useHakemustenArviointiDispatch,
-  useHakemustenArviointiSelector,
-} from "../hakemustenArviointi/arviointiStore";
-import {
-  getSelectedHakemus,
   setArvioValue,
   startHakemusArvioAutoSave,
 } from "../hakemustenArviointi/arviointiReducer";
+import { useHakemus } from "../hakemustenArviointi/useHakemus";
 
 type PresenterCommentProps = {
   helpText: string;
@@ -17,7 +14,7 @@ type PresenterCommentProps = {
 
 const PresenterComment = ({ helpText }: PresenterCommentProps) => {
   const dispatch = useHakemustenArviointiDispatch();
-  const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
+  const hakemus = useHakemus();
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;

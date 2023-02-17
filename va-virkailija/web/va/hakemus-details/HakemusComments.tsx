@@ -5,14 +5,9 @@ import { Comment, HelpTexts } from "soresu-form/web/va/types";
 import NameFormatter from "soresu-form/web/va/util/NameFormatter";
 
 import HelpTooltip from "../HelpTooltip";
-import {
-  useHakemustenArviointiDispatch,
-  useHakemustenArviointiSelector,
-} from "../hakemustenArviointi/arviointiStore";
-import {
-  addHakemusComment,
-  getSelectedHakemus,
-} from "../hakemustenArviointi/arviointiReducer";
+import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
+import { addHakemusComment } from "../hakemustenArviointi/arviointiReducer";
+import { useHakemus } from "../hakemustenArviointi/useHakemus";
 
 type HakemusCommentsProps = {
   helpTexts: HelpTexts;
@@ -26,7 +21,7 @@ const HakemusComments = ({
   comments,
 }: HakemusCommentsProps) => {
   const dispatch = useHakemustenArviointiDispatch();
-  const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
+  const hakemus = useHakemus();
   const [comment, setComment] = useState("");
   const [added, setAdded] = useState(false);
   const addComment = async () => {

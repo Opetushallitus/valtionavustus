@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import HakemusPreview from "./HakemusPreview";
 
@@ -9,28 +9,24 @@ import {
 } from "../hakemustenArviointi/arviointiStore";
 import {
   getLoadedState,
-  setSelectedHakuId,
+  selectHakemus,
 } from "../hakemustenArviointi/arviointiReducer";
-import { Outlet, useSearchParams } from "react-router-dom";
+import { Outlet, useParams, useSearchParams } from "react-router-dom";
 import { NavLinkWithQuery } from "../NavLinkWithQuery";
 
 export const HakemusDetails = () => {
+  const { hakemusId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const splitView = searchParams.get("splitView") === "true";
+  const selectedHakemusId = Number(hakemusId);
   const dispatch = useHakemustenArviointiDispatch();
-  const selectedHakemusId = useHakemustenArviointiSelector(
-    (state) => state.arviointi.selectedHakuId
-  );
+  useEffect(() => {
+    dispatch(selectHakemus(selectedHakemusId));
+  }, [selectedHakemusId]);
   const hakuData = useHakemustenArviointiSelector(
     (state) => getLoadedState(state.arviointi).hakuData
   );
   const { avustushaku, hakemukset } = hakuData;
-
-  const onClose = () => {
-    searchParams.set("splitView", "false");
-    setSearchParams(searchParams);
-    dispatch(setSelectedHakuId(undefined));
-  };
 
   const onToggle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -75,9 +71,12 @@ export const HakemusDetails = () => {
     isActive ? "selected" : "";
   return (
     <div id="hakemus-details">
-      <button id="close-hakemus-button" onClick={onClose}>
+      <NavLinkWithQuery
+        id="close-hakemus-button"
+        to={`/avustushaku/${avustushaku.id}`}
+      >
         &times;
-      </button>
+      </NavLinkWithQuery>
       <button id="toggle-hakemus-list-button" onClick={onToggle}>
         ↕
       </button>

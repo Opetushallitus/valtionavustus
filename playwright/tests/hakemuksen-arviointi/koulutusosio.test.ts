@@ -81,6 +81,7 @@ test.describe.parallel("avustushaku with koulutusosio happy path", () => {
           "_ valtionavustus"
         );
       });
+      await hakemustenArviointiPage.selectHakemusFromList(answers.projectName);
       const { koulutusosio, budget } =
         hakemustenArviointiPage.arviointiTabLocators();
       await budget.fill("1000");

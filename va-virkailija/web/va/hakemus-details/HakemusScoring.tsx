@@ -16,20 +16,21 @@ import {
 } from "../hakemustenArviointi/arviointiStore";
 import {
   getLoadedState,
-  getSelectedHakemus,
   removeScore,
   setScore,
   toggleShowOthersScore,
 } from "../hakemustenArviointi/arviointiReducer";
 import { LocalizedText, Score, Scoring } from "soresu-form/web/va/types";
 import { UserInfo } from "../types";
+import { useParams } from "react-router-dom";
+import { useHakemus } from "../hakemustenArviointi/useHakemus";
 
 interface Props {
   allowHakemusScoring?: boolean;
 }
 
 const HakemusScoring = ({ allowHakemusScoring }: Props) => {
-  const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
+  const hakemus = useHakemus();
   const {
     userInfo: myUserInfo,
     hakuData,
@@ -213,9 +214,8 @@ const StarElement = ({
   indexOfStar,
   selectionCriteriaIndex,
 }: StarElementProps) => {
-  const hakemusId = useHakemustenArviointiSelector(
-    (state) => getSelectedHakemus(state).id
-  );
+  const { hakemusId: hakemusIdFromParams } = useParams();
+  const hakemusId = Number(hakemusIdFromParams);
   const dispatch = useHakemustenArviointiDispatch();
   const createOnClickHandler = (index: number, score: number) => {
     return () => {

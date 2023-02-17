@@ -9,13 +9,11 @@ import KeskeytaAloittamatta from "./KeskeytaAloittamatta";
 import AllowVisibilityInExternalSystem from "./AllowVisibilityInExternalSystem";
 import ShouldPayComments from "./ShouldPayComments";
 import { useHakemustenArviointiSelector } from "../hakemustenArviointi/arviointiStore";
-import {
-  getLoadedState,
-  getSelectedHakemus,
-} from "../hakemustenArviointi/arviointiReducer";
+import { getLoadedState } from "../hakemustenArviointi/arviointiReducer";
+import { useHakemus } from "../hakemustenArviointi/useHakemus";
 
 const Seuranta = () => {
-  const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
+  const hakemus = useHakemus();
   const { helpTexts, hakuData, userInfo } = useHakemustenArviointiSelector(
     (state) => getLoadedState(state.arviointi)
   );

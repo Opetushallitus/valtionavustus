@@ -168,7 +168,6 @@ export const selectHakemus = createAsyncThunk<
 >("arviointi/selectHakemus", async (hakemusId, thunkAPI) => {
   const { hakuData } = getLoadedState(thunkAPI.getState().arviointi);
   const hakemus = getHakemus(thunkAPI.getState().arviointi, hakemusId);
-  thunkAPI.dispatch(setSelectedHakuId(hakemusId));
   const { avustushaku, privileges } = hakuData;
   const avustushakuId = avustushaku.id;
   const [
@@ -380,15 +379,15 @@ export const updateHakemukset = createAsyncThunk<
 
 export const refreshHakemukset = createAsyncThunk<
   void,
-  { avustushakuId: number },
+  { avustushakuId: number; hakemusId: number },
   { state: HakemustenArviointiRootState }
->("arviointi/refreshHakemukset", async ({ avustushakuId }, thunkAPI) => {
-  await thunkAPI.dispatch(updateHakemukset({ avustushakuId }));
-  const selectedHakuId = thunkAPI.getState().arviointi.selectedHakuId;
-  if (selectedHakuId) {
-    await thunkAPI.dispatch(selectHakemus(selectedHakuId));
+>(
+  "arviointi/refreshHakemukset",
+  async ({ avustushakuId, hakemusId }, thunkAPI) => {
+    await thunkAPI.dispatch(updateHakemukset({ avustushakuId }));
+    await thunkAPI.dispatch(selectHakemus(hakemusId));
   }
-});
+);
 
 export const addPayment = createAsyncThunk<
   Payment,
@@ -448,7 +447,8 @@ export const removeScore = createAsyncThunk<
   { index: number; hakemusId: number },
   { state: HakemustenArviointiRootState }
 >("arviointi/removeScore", async ({ index, hakemusId }, thunkAPI) => {
-  const evaluationId = getSelectedHakemus(thunkAPI.getState()).arvio.id;
+  const evaluationId = getHakemus(thunkAPI.getState().arviointi, hakemusId)
+    .arvio.id;
   await HttpUtil.delete(
     `/api/avustushaku/evaluations/${evaluationId}/scores/${index}/`
   );
@@ -483,7 +483,6 @@ interface State {
   initialData: { loading: true } | { loading: false; data: InitialData };
   personSelectHakemusId?: number;
   saveStatus: SaveStatus;
-  selectedHakuId?: number;
   modal: JSX.Element | undefined;
   showOthersScores?: boolean;
 }
@@ -496,7 +495,6 @@ const initialState: State = {
     saveTime: null,
     serverError: "",
   },
-  selectedHakuId: undefined,
   modal: undefined,
 };
 
@@ -515,12 +513,6 @@ const arviointiSlice = createSlice({
       { payload }: PayloadAction<number | undefined>
     ) => {
       state.personSelectHakemusId = payload;
-    },
-    setSelectedHakuId: (
-      state,
-      { payload }: PayloadAction<number | undefined>
-    ) => {
-      state.selectedHakuId = payload;
     },
     setArvioValue: <_ = State, T extends keyof Arvio = "id">(
       state: Draft<State>,
@@ -788,22 +780,13 @@ export const getLoadedState = (state: State) => {
   return state.initialData.data;
 };
 
-const getHakemus = (state: State, hakemusId: number) => {
+export const getHakemus = (state: State, hakemusId: number) => {
   const { hakuData } = getLoadedState(state);
   const hakemus = hakuData.hakemukset.find((h) => h.id === hakemusId);
   if (!hakemus) {
     throw Error(`Hakemus with id ${hakemusId} not found`);
   }
   return hakemus;
-};
-
-export const getSelectedHakemus = ({
-  arviointi,
-}: HakemustenArviointiRootState) => {
-  if (!arviointi.selectedHakuId) {
-    throw Error(`Tried to get selected hakemus when it was not defined`);
-  }
-  return getHakemus(arviointi, arviointi.selectedHakuId);
 };
 
 export const hasMultibatchPayments = ({
@@ -818,9 +801,12 @@ export const hasMultibatchPayments = ({
   return multibatchEnabled && multiplemaksuera;
 };
 
-export const getUserRoles = (state: HakemustenArviointiRootState) => {
+export const getUserRoles = (
+  state: HakemustenArviointiRootState,
+  hakemusId: number
+) => {
   const { hakuData, userInfo } = getLoadedState(state.arviointi);
-  const hakemus = getSelectedHakemus(state);
+  const hakemus = getHakemus(state.arviointi, hakemusId);
   const { roles } = hakuData;
   const fallbackPresenter = roles.find((r) =>
     (VALMISTELIJA_ROLES as readonly string[]).includes(r.role)
@@ -844,7 +830,6 @@ export const getUserRoles = (state: HakemustenArviointiRootState) => {
 
 export const {
   togglePersonSelect,
-  setSelectedHakuId,
   setArvioValue,
   setArvioFieldValue,
   setMuutoshakemukset,

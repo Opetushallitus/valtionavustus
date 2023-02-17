@@ -29,7 +29,6 @@ import {
 import {
   addPayment,
   getLoadedState,
-  getSelectedHakemus,
   hasMultibatchPayments,
   removePayment,
   selectProject as selectProjectThunk,
@@ -37,9 +36,10 @@ import {
   startHakemusArvioAutoSave,
   updateHakemusStatus,
 } from "../hakemustenArviointi/arviointiReducer";
+import { useHakemus } from "../hakemustenArviointi/useHakemus";
 
 export const HakemusArviointi = () => {
-  const hakemus = useHakemustenArviointiSelector(getSelectedHakemus);
+  const hakemus = useHakemus();
   const { hakuData, helpTexts, userInfo, projects } =
     useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi));
   const { avustushaku } = hakuData;

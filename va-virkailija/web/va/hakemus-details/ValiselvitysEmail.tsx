@@ -108,7 +108,12 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
         await dispatch(
           loadSelvitys({ avustushakuId: avustushaku.id, hakemusId: hakemus.id })
         );
-        await dispatch(refreshHakemukset({ avustushakuId: avustushaku.id }));
+        await dispatch(
+          refreshHakemukset({
+            avustushakuId: avustushaku.id,
+            hakemusId: hakemus.id,
+          })
+        );
       })
       .catch((error) => {
         console.error(`Error in sending selvitys email, POST ${url}`, error);

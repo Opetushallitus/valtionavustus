@@ -119,9 +119,8 @@ const LoadedApp = () => {
   );
   const { avustushakuList, hakuData, userInfo } =
     useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi));
-  const selectedHakemusId = useHakemustenArviointiSelector(
-    (state) => state.arviointi.selectedHakuId
-  );
+  const { hakemusId } = useParams();
+  const selectedHakemusId = hakemusId ? Number(hakemusId) : undefined;
   const saveStatus = useHakemustenArviointiSelector(
     (state) => state.arviointi.saveStatus
   );

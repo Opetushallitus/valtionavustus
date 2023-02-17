@@ -41,7 +41,7 @@ test(`hakemusten arviointi additional info`, async ({
     projektikoodi,
   });
 
-  await hakemustenArviointiPage.page.locator('button:text("×")').click();
+  await hakemustenArviointiPage.page.locator('a:text("×")').click();
   await expect(locators.vastuuvalmistelija).toHaveText("_ valtionavustus");
 
   await test.step("shows correct toimintayksikkö", async () => {

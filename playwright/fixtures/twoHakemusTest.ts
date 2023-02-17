@@ -68,7 +68,6 @@ export const twoAcceptedHakemusTest = muutoshakemusTest.extend<Fixtures>({
         hakemusID,
         ukotettuValmistelija
       );
-      await hakemustenArviointiPage.closeHakemusDetails();
     });
     await twoAcceptedHakemusTest.step("accept second", async () => {
       secondHakemusID = await hakemustenArviointiPage.acceptAvustushaku({

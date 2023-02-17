@@ -94,7 +94,7 @@ export const TaloustarkastusEmail = ({
       }
     );
     await dispatch(loadSelvitys({ avustushakuId, hakemusId: hakemus.id }));
-    await dispatch(refreshHakemukset({ avustushakuId }));
+    await dispatch(refreshHakemukset({ avustushakuId, hakemusId: hakemus.id }));
   };
 
   return (
