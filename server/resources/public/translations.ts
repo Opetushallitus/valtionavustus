@@ -1,4 +1,4 @@
-{
+const translations = {
   "languages": {
     "fi": "Suomeksi",
     "sv": "På svenska"
@@ -706,3 +706,4 @@
     }
   }
 }
+export default translations
