@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 
 import ComponentFactory from "../ComponentFactory";
 import Translator from "../Translator";
@@ -8,9 +8,17 @@ import {
   AccordionElementPropertyMapper,
   LinkPropertyMapper,
 } from "./PropertyMapper";
-import { FieldType, LegacyTranslations, Language } from "soresu-form/web/va/types";
+import {
+  FieldType,
+  LegacyTranslations,
+  Language,
+} from "soresu-form/web/va/types";
 
-function asDateTimeString(translations: LegacyTranslations, lang: Language, date: Date) {
+function asDateTimeString(
+  translations: LegacyTranslations,
+  lang: Language,
+  date: Date
+) {
   const timeLimiter = new Translator(translations["misc"]).translate(
     "time",
     lang,
@@ -26,9 +34,9 @@ function asDateTimeString(translations: LegacyTranslations, lang: Language, date
 }
 
 interface Props {
-  values: any
-  htmlId: string
-  lang: Language
+  values: any;
+  htmlId: string;
+  lang: Language;
 }
 
 function translatedValue(props: Props, valueId: "text" | "href" | "label") {
@@ -74,18 +82,20 @@ export function ParagraphInfoElement(props: Props) {
 
 interface AccordionInfoElementProps extends Props {
   renderingParameters: {
-    initiallyOpen: boolean
-  }
+    initiallyOpen: boolean;
+  };
 }
 
 function AccordionInfoElement(props: AccordionInfoElementProps) {
-  const [state, setState] = useState({open: props.renderingParameters.initiallyOpen});
+  const [state, setState] = useState({
+    open: props.renderingParameters.initiallyOpen,
+  });
 
   const handleClick = () => {
     setState({
       open: !state.open,
     });
-  }
+  };
 
   const values = props.values;
   const key = props.htmlId;
@@ -124,7 +134,7 @@ function AccordionInfoElement(props: AccordionInfoElementProps) {
 }
 
 interface DateRangeProps extends Props {
-  translations: LegacyTranslations
+  translations: LegacyTranslations;
 }
 
 export function DateRangeInfoElement(props: DateRangeProps) {
@@ -143,7 +153,7 @@ export function DateRangeInfoElement(props: DateRangeProps) {
 }
 
 interface EndOfDateRangeProps extends Props {
-  translations: LegacyTranslations
+  translations: LegacyTranslations;
 }
 
 function EndOfDateRangeInfoElement(props: EndOfDateRangeProps) {
