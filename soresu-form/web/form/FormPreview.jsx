@@ -4,7 +4,7 @@ import _ from "lodash";
 import "./style/preview.less";
 
 import FormPreviewComponent from "./preview/FormPreviewComponent.jsx";
-import InfoElement from "./component/InfoElement.jsx";
+import InfoElement from "./component/InfoElement";
 import WrapperPreviewComponent from "./preview/wrapper/WrapperPreviewComponent.jsx";
 import InputValueStorage from "./InputValueStorage.js";
 import { dropFirstInfoFields } from "soresu-form/web/form/FormPreviewTS";
