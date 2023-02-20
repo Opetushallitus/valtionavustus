@@ -1,5 +1,4 @@
 import React from "react";
-import { FieldType } from "../va/types";
 
 export default class ComponentFactory {
   fieldTypeMapping: any;
@@ -10,7 +9,7 @@ export default class ComponentFactory {
     this.fieldPropertyMapperMapping = props.fieldPropertyMapperMapping;
   }
 
-  createComponent(componentProps: { fieldType: FieldType; htmlId: string }) {
+  createComponent(componentProps: any) {
     const fieldType = componentProps.fieldType;
     if (fieldType in this.fieldTypeMapping) {
       const fieldPropertyMapper = this.fieldPropertyMapperMapping[fieldType];

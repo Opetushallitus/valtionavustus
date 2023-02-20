@@ -4,7 +4,7 @@ import {
   MuutoshakemusStatus,
   Talousarvio,
 } from "./types/muutoshakemus";
-import translations from "../../../server/resources/public/translations";
+import translations from "../../../server/resources/public/translations.json";
 import { ImmutableObject } from "seamless-immutable";
 import {
   HakemusAccessControl,
