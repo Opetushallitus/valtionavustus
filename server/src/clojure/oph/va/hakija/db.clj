@@ -430,6 +430,14 @@
        (exec queries/attachment-exists?)
        first))
 
+(defn attachment-exists-and-is-not-closed? [hakemus-id field-id]
+  (first (query "SELECT true
+    FROM attachments
+      WHERE hakemus_id = ?
+      AND field_id = ?
+      AND version_closed is null
+      LIMIT 1", [hakemus-id, field-id])))
+
 (defn convert-attachment [hakemus-id attachment]
   {:id (:id attachment)
    :hakemus-id hakemus-id

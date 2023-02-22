@@ -412,7 +412,7 @@
 
 (defn on-attachment-get [haku-id hakemus-id field-id]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
-    (if (va-db/attachment-exists? (:id hakemus) field-id)
+    (if (va-db/attachment-exists-and-is-not-closed? (:id hakemus) field-id)
       (let [{:keys [data size filename content-type]} (va-db/download-attachment (:id hakemus) field-id)]
         (-> (ok data)
             (assoc-in [:headers "Content-Type"] content-type)
