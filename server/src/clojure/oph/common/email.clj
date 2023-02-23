@@ -49,6 +49,7 @@
 
 (defn- valid-message? [{:keys [to sender from subject email-type lang]}]
   [(coll? to)
+   (not (empty? to))
    (not-any? empty? to)
    (not-empty sender)
    (not-empty from)
