@@ -18,7 +18,11 @@ export const emailSchema = yup
       .object()
       .shape<Email>({
         formatted: yup.string().required(),
-        "to-address": yup.array().of(yup.string().required()).defined(),
+        "to-address": yup
+          .array()
+          .of(yup.string().required())
+          .min(1, "Empty to-address array")
+          .defined(),
         bcc: yup.string().defined().nullable(),
         subject: yup.string().optional(),
       })

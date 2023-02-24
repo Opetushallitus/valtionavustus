@@ -322,7 +322,7 @@
                               :avustushaku-id (:avustushaku-id notification)
                               :from (-> email/smtp-config :from lang)
                               :sender (-> email/smtp-config :sender)
-                              :to (:to-email-addresses notification)
+                              :to (:to notification)
                               :subject "Muistutus väliselvityspyyntöjen lähettämisestä"
                               :valiselvitys-deadline (datetime/java8-date-string (:deadline notification))}
                              (partial render template))))
