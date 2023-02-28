@@ -114,4 +114,10 @@
     <packageUrl regex="true">^pkg:maven/clj\-commons/clj\-yaml@.*$</packageUrl>
     <cve>CVE-2022-3064</cve>
   </suppress>
+  <suppress until="2023-04-16">
+    <notes><![CDATA[
+   False positive
+   ]]></notes>
+    <cve>CVE-2022-45688</cve>
+  </suppress>
 </suppressions>
