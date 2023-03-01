@@ -47,13 +47,12 @@
                          [http-kit "2.5.3"]
                          [metosin/compojure-api "1.1.13"]
                          [org.yaml/snakeyaml "1.33"] ; dependency of compojure-api -> explicitly updated for security patches
-                         [ring/ring-codec "1.1.3"]
-                         [ring/ring-core "1.8.1"]
-                         [ring/ring-devel "1.8.1" :exclusions [hiccup]]
-                         [hiccup "2.0.0-alpha2"]
+                         [ring/ring-codec "1.2.0"]
+                         [ring/ring-core "1.9.6"]
+                         [ring/ring-devel "1.9.6"]
                          [ring.middleware.conditional "0.2.0"]
                          [radicalzephyr/ring.middleware.logger "0.6.0"]
-                         [ring/ring-defaults "0.3.3"]
+                         [ring/ring-defaults "0.3.4"]
                          [ring/ring-session-timeout "0.2.0"]
                          [ring/ring-ssl "0.3.0"]
 
