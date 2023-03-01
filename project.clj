@@ -47,14 +47,6 @@
                          [http-kit "2.5.3"]
                          [metosin/compojure-api "1.1.13"]
                          [org.yaml/snakeyaml "1.33"] ; dependency of compojure-api -> explicitly updated for security patches
-                         [ring/ring-codec "1.2.0"]
-                         [ring/ring-core "1.9.6"]
-                         [ring/ring-devel "1.9.6"]
-                         [ring.middleware.conditional "0.2.0"]
-                         [radicalzephyr/ring.middleware.logger "0.6.0"]
-                         [ring/ring-defaults "0.3.4"]
-                         [ring/ring-session-timeout "0.2.0"]
-                         [ring/ring-ssl "0.3.0"]
 
                          ;; json
                          [cheshire "5.10.1"]
@@ -124,15 +116,10 @@
                  [org.clojure/core.async]
                  [org.apache.logging.log4j/log4j-core]
                  [org.apache.logging.log4j/log4j-slf4j-impl]
-                 [ring.middleware.conditional :exclusions [ring]]
-                 [radicalzephyr/ring.middleware.logger]
-                 [ring/ring-defaults]
                  [org.apache.tika/tika-core]
                  [nrepl]
                  [buddy/buddy-auth]
                  [buddy/buddy-sign]
-                 [ring/ring-session-timeout]
-                 [ring/ring-ssl]
                  [com.cemerick/url :exclusions [com.cemerick/clojurescript.test]]
                  [dk.ative/docjure "1.18.0"]
                  [fi.vm.sade/scala-cas_2.11 "2.2.2-20210929.183742-5"]
@@ -149,8 +136,14 @@
                  [org.apache.xmlgraphics/xmlgraphics-commons "2.6"]
                  [cider/cider-nrepl]
                  [http-kit]
-                 [ring/ring-core]
-                 [ring/ring-devel]
+                 [ring.middleware.conditional "0.2.0" :exclusions [ring]]
+                 [ring/ring-codec "1.2.0"]
+                 [ring/ring-core "1.9.6"]
+                 [ring/ring-devel "1.9.6"]
+                 [radicalzephyr/ring.middleware.logger "0.6.0"]
+                 [ring/ring-defaults "0.3.4"]
+                 [ring/ring-session-timeout "0.2.0"]
+                 [ring/ring-ssl "0.3.0"]
                  [compojure]
                  [metosin/compojure-api]
                  [com.github.java-json-tools/jackson-coreutils "1.10"  :exclusions [com.google.code.findbugs/jsr305]]
@@ -190,7 +183,7 @@
 
              :virkalija-prod  {:env {:config "va-virkailija/config/va-prod.edn"}}
              }
-  
+
   :aot [oph.va.jdbc.enums oph.va.hakija.db.migrations oph.va.virkailija.db.migrations clj-time.core]
 
   :source-paths ["server/src/clojure"]
