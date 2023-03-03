@@ -23,9 +23,9 @@ export default class VaBudgetCalculator {
     });
   }
 
-  handleFixedMultiplierUpdate(state, field) {
+  handleFixedMultiplierUpdate(state, fieldId) {
     const fixedMultiplier = (25 * 86) / 100;
-    const baseId = field.id.split(".")[0];
+    const baseId = fieldId.split(".")[0];
     const target = JsUtil.flatFilter(state.saveStatus.values.value, (f) => {
       if (f.fieldType == "moneyField") {
         console.log(`moneyField with id ${f.key}`);
@@ -36,7 +36,7 @@ export default class VaBudgetCalculator {
     });
     const value = Math.floor(
       fixedMultiplier *
-        InputValueStorage.readValue(null, state.saveStatus.values, field.id)
+        InputValueStorage.readValue(null, state.saveStatus.values, fieldId)
     );
     target.forEach((t) => (t.value = value));
     this.handleBudgetAmountUpdate(state, `${baseId}.amount`);
