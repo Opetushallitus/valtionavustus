@@ -28,7 +28,6 @@ export default class VaBudgetCalculator {
     const baseId = fieldId.split(".")[0];
     const target = JsUtil.flatFilter(state.saveStatus.values.value, (f) => {
       if (f.fieldType == "moneyField") {
-        console.log(`moneyField with id ${f.key}`);
         return f.key == `${baseId}.amount`;
       } else {
         return false;
