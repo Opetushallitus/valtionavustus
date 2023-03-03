@@ -53,6 +53,8 @@ function onFieldUpdate(state: VaAppStateLoopState, field: Field) {
     field.fieldType === "vaSelfFinancingField"
   ) {
     budgetCalculator.handleBudgetAmountUpdate(state, field.id);
+  } else if (field.fieldType === "fixedMultiplierField") {
+    budgetCalculator.handleFixedMultiplierUpdate(state, field.id);
   }
 }
 

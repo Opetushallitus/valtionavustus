@@ -509,6 +509,7 @@ export const addableFields = [
 ] as const;
 export type AddableFieldType = typeof addableFields[number];
 export type NonAddableFieldType =
+  | "fixedMultiplierField"
   | "moneyField"
   | "emailField"
   | "bic"

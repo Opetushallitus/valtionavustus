@@ -54,6 +54,7 @@
                                     "nameField"
                                     "emailField"
                                     "moneyField"
+                                    "fixedMultiplierField"
                                     "integerField"
                                     "decimalField"
                                     "finnishBusinessIdField"

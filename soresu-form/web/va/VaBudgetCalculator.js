@@ -23,6 +23,25 @@ export default class VaBudgetCalculator {
     });
   }
 
+  handleFixedMultiplierUpdate(state, field) {
+    const fixedMultiplier = (25 * 86) / 100;
+    const baseId = field.id.split(".")[0];
+    const target = JsUtil.flatFilter(state.saveStatus.values.value, (f) => {
+      if (f.fieldType == "moneyField") {
+        console.log(`moneyField with id ${f.key}`);
+        return f.key == `${baseId}.amount`;
+      } else {
+        return false;
+      }
+    });
+    const value = Math.floor(
+      fixedMultiplier *
+        InputValueStorage.readValue(null, state.saveStatus.values, field.id)
+    );
+    target.forEach((t) => (t.value = value));
+    this.handleBudgetAmountUpdate(state, `${baseId}.amount`);
+  }
+
   handleBudgetAmountUpdate(state, amountFieldId) {
     const vaBudgetElements = JsUtil.flatFilter(
       state.form.content,
