@@ -1,5 +1,4 @@
-import { expect, Page } from "@playwright/test";
-import { clearAndType } from "./util";
+import { expect, Locator, Page } from "@playwright/test";
 
 export const defaultBudget = {
   amount: {
@@ -41,19 +40,22 @@ export type TalousarvioFormTable = Array<{
 export const sortedFormTable = (budgetList: TalousarvioFormTable) =>
   [...budgetList].sort((a, b) => (a.description < b.description ? 1 : -1));
 
-const getSelectorsForType = (
+export const getBudgetSelectorsForType = (
+  page: Page,
   type: "hakija" | "virkailija",
   field: "amount" | "description"
-): Record<keyof BudgetAmount, string> => {
+): Record<keyof BudgetAmount, Locator> => {
   const prefix = type === "virkailija" ? "budget-edit-" : "";
   return {
-    personnel: `[id='${prefix}personnel-costs-row.${field}']`,
-    material: `[id='${prefix}material-costs-row.${field}']`,
-    equipment: `[id='${prefix}equipment-costs-row.${field}']`,
-    "service-purchase": `[id='${prefix}service-purchase-costs-row.${field}']`,
-    rent: `[id='${prefix}rent-costs-row.${field}']`,
-    steamship: `[id='${prefix}steamship-costs-row.${field}']`,
-    other: `[id='${prefix}other-costs-row.${field}']`,
+    personnel: page.locator(`[id='${prefix}personnel-costs-row.${field}']`),
+    material: page.locator(`[id='${prefix}material-costs-row.${field}']`),
+    equipment: page.locator(`[id='${prefix}equipment-costs-row.${field}']`),
+    "service-purchase": page.locator(
+      `[id='${prefix}service-purchase-costs-row.${field}']`
+    ),
+    rent: page.locator(`[id='${prefix}rent-costs-row.${field}']`),
+    steamship: page.locator(`[id='${prefix}steamship-costs-row.${field}']`),
+    other: page.locator(`[id='${prefix}other-costs-row.${field}']`),
   };
 };
 
@@ -66,12 +68,14 @@ export const fillBudget = async (
 
   for (const key of Object.keys(budget.amount)) {
     const budgetKey = key as keyof BudgetAmount;
-    const amountSelector = getSelectorsForType(type, "amount")[budgetKey];
-    await clearAndType(page, amountSelector, budget.amount[budgetKey]);
-    const descriptionSelector = getSelectorsForType(type, "description")[
-      budgetKey
-    ];
-    await page.locator(descriptionSelector).fill(budget.description[budgetKey]);
+    const amountLocators = getBudgetSelectorsForType(page, type, "amount");
+    await amountLocators[budgetKey].fill(budget.amount[budgetKey]);
+    const descriptionLocators = getBudgetSelectorsForType(
+      page,
+      type,
+      "description"
+    );
+    await descriptionLocators[budgetKey].fill(budget.description[budgetKey]);
   }
 
   if (type === "hakija") {
@@ -87,9 +91,7 @@ export async function expectBudget(
   budgetAmount: BudgetAmount,
   type: "hakija" | "virkailija"
 ) {
-  const locators = getSelectorsForType(type, "amount");
+  const locators = getBudgetSelectorsForType(page, type, "amount");
   for (const [key, value] of Object.entries(budgetAmount))
-    await expect(page.locator(locators[key as keyof BudgetAmount])).toHaveValue(
-      value
-    );
+    await expect(locators[key as keyof BudgetAmount]).toHaveValue(value);
 }

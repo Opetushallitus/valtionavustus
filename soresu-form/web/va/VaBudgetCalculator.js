@@ -26,9 +26,10 @@ export default class VaBudgetCalculator {
   handleFixedMultiplierUpdate(state, fieldId) {
     const fixedMultiplier = (25 * 86) / 100;
     const baseId = fieldId.split(".")[0];
+    const supportedFieldTypes = ["moneyField", "fixedMultiplierMoneyField"];
     const target = JsUtil.flatFilter(state.saveStatus.values.value, (f) => {
-      if (f.fieldType == "moneyField") {
-        return f.key == `${baseId}.amount`;
+      if (supportedFieldTypes.includes(f.fieldType)) {
+        return f.key === `${baseId}.amount`;
       } else {
         return false;
       }

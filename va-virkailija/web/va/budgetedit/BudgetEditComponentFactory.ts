@@ -6,6 +6,8 @@ import BudgetEditElement, {
   EditSummingBudgetElement,
   EditBudgetItemElement,
 } from "./BudgetEditComponents";
+import MoneyTextField from "soresu-form/web/form/component/MoneyTextField";
+import { TextFieldPropertyMapper } from "soresu-form/web/form/component/PropertyMapper";
 
 export default class BudgetEditComponentFactory extends ComponentFactory {
   constructor() {
@@ -15,9 +17,11 @@ export default class BudgetEditComponentFactory extends ComponentFactory {
         vaSummingBudgetElement: EditSummingBudgetElement,
         vaBudgetItemElement: EditBudgetItemElement,
         vaBudgetSummaryElement: BudgetSummaryElement,
+        fixedMultiplierMoneyField: MoneyTextField,
       },
       fieldPropertyMapperMapping: {
         vaBudgetSummaryElement: BudgetSummaryEditPropertyMapper,
+        fixedMultiplierMoneyField: TextFieldPropertyMapper,
       },
     });
   }

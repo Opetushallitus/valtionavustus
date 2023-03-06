@@ -80,11 +80,6 @@ export default class BudgetEditFormController {
 
   overrideAnswerValue(field, newValue) {
     this.onAnswerOverride(this.hakemus, field, newValue);
-    /*this.arviointiController.setHakemusOverriddenAnswerValue(
-      this.hakemus.id,
-      field,
-      newValue
-    );*/
   }
 
   toggleDetailedCostsListener(event) {

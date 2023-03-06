@@ -54,6 +54,7 @@
                                     "nameField"
                                     "emailField"
                                     "moneyField"
+                                    "fixedMultiplierMoneyField"
                                     "fixedMultiplierField"
                                     "integerField"
                                     "decimalField"

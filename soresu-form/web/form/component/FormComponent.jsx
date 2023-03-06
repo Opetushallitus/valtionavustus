@@ -28,6 +28,7 @@ import {
   KoodistoFieldPropertyMapper,
 } from "./PropertyMapper";
 import TableFieldPropertyMapper from "./TableFieldPropertyMapper";
+import MoneyValue from "soresu-form/web/form/preview/MoneyValue";
 
 export default class FormComponent extends React.Component {
   constructor(props) {
@@ -38,6 +39,7 @@ export default class FormComponent extends React.Component {
       nameField: BasicTextField,
       emailField: EmailTextField,
       moneyField: MoneyTextField,
+      fixedMultiplierMoneyField: MoneyValue,
       fixedMultiplierField: MoneyTextField,
       integerField: IntegerTextField,
       decimalField: DecimalTextField,
@@ -58,6 +60,7 @@ export default class FormComponent extends React.Component {
       nameField: TextFieldPropertyMapper,
       emailField: TrimmingTextFieldPropertyMapper,
       moneyField: TextFieldPropertyMapper,
+      fixedMultiplierMoneyField: TextFieldPropertyMapper,
       fixedMultiplierField: TextFieldPropertyMapper,
       integerField: TextFieldPropertyMapper,
       decimalField: TextFieldPropertyMapper,

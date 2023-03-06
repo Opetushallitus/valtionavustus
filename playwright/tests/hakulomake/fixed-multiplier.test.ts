@@ -3,6 +3,10 @@ import { HakujenHallintaPage } from "../../pages/hakujenHallintaPage";
 import { HakijaAvustusHakuPage } from "../../pages/hakijaAvustusHakuPage";
 import { expect, Page } from "@playwright/test";
 import { expectToBeDefined } from "../../utils/util";
+import moment from "moment/moment";
+import { HakemustenArviointiPage } from "../../pages/hakemustenArviointiPage";
+import { getBudgetSelectorsForType } from "../../utils/budget";
+import { BrowserContext } from "playwright-chromium";
 
 const form = {
   content: [
@@ -57,7 +61,7 @@ const form = {
                         maxlength: 7,
                       },
                       required: false,
-                      fieldType: "moneyField",
+                      fieldType: "fixedMultiplierMoneyField",
                     },
                   ],
                   params: {
@@ -108,7 +112,7 @@ const form = {
                         maxlength: 16,
                       },
                       required: false,
-                      fieldType: "moneyField",
+                      fieldType: "fixedMultiplierMoneyField",
                     },
                   ],
                   params: {
@@ -155,7 +159,7 @@ const form = {
                         maxlength: 16,
                       },
                       required: false,
-                      fieldType: "moneyField",
+                      fieldType: "fixedMultiplierMoneyField",
                     },
                   ],
                   params: {
@@ -232,7 +236,13 @@ const form = {
   updated_at: "2023-03-03T07:57:02Z",
 };
 
-test("money field", async ({ page, hakuProps, userCache, answers }) => {
+test("fixed multiplier field works", async ({
+  page,
+  hakuProps,
+  userCache,
+  answers,
+  context,
+}) => {
   expectToBeDefined(userCache);
   const hakujenHallintaPage = new HakujenHallintaPage(page);
   await hakujenHallintaPage.navigate(1);
@@ -258,41 +268,116 @@ test("money field", async ({ page, hakuProps, userCache, answers }) => {
     hakijaAvustusHakuPage.page,
     "personnel-costs-row"
   );
-  await expect(firstRow.hours).toHaveValue("");
-  await expect(firstRow.euros).toHaveValue("0");
   const secondRow = getMoneyLocators(
     hakijaAvustusHakuPage.page,
     "material-costs-row"
   );
-  await expect(secondRow.hours).toHaveValue("");
-  await expect(secondRow.euros).toHaveValue("0");
   const thirdRow = getMoneyLocators(
     hakijaAvustusHakuPage.page,
     "equipment-costs-row"
   );
-  await expect(thirdRow.hours).toHaveText("");
-  await expect(thirdRow.euros).toHaveValue("0");
   const financingAmount = hakijaAvustusHakuPage.page.locator(
     "tfoot .amount-column"
   );
   const amountToFinance = hakijaAvustusHakuPage.page.locator(
     ".total-financing-amount"
   );
-  await expect(financingAmount).toHaveText("0");
-  await expect(amountToFinance).toHaveText("Rahoitettavaa jää yhteensä 0");
-  await firstRow.hours.fill("100");
-  await expect(firstRow.euros).toHaveValue("2150");
-  await expect(financingAmount).toHaveText("2150");
-  await expect(amountToFinance).toHaveText("Rahoitettavaa jää yhteensä 2150");
-  await secondRow.hours.fill("50");
-  await expect(secondRow.euros).toHaveValue("1075");
-  await expect(financingAmount).toHaveText("3225");
-  await expect(amountToFinance).toHaveText("Rahoitettavaa jää yhteensä 3225");
-  await thirdRow.hours.fill("30");
-  await expect(thirdRow.euros).toHaveValue("645");
-  await expect(financingAmount).toHaveText("3870");
-  await expect(amountToFinance).toHaveText("Rahoitettavaa jää yhteensä 3870");
+  await test.step("default state is correct", async () => {
+    await expect(firstRow.hours).toHaveValue("");
+    await expect(firstRow.euros).toHaveText("0");
+    await expect(secondRow.hours).toHaveValue("");
+    await expect(secondRow.euros).toHaveText("0");
+    await expect(thirdRow.hours).toHaveValue("");
+    await expect(thirdRow.euros).toHaveText("0");
+    await expect(financingAmount).toHaveText("0");
+    await expect(amountToFinance).toHaveText("Rahoitettavaa jää yhteensä 0");
+  });
+  await test.step("calculates financing correctly", async () => {
+    await firstRow.hours.fill("100");
+    await expect(firstRow.euros).toHaveText("2150");
+    await expect(financingAmount).toHaveText("2150");
+    await expect(amountToFinance).toHaveText("Rahoitettavaa jää yhteensä 2150");
+    await secondRow.hours.fill("50");
+    await expect(secondRow.euros).toHaveText("1075");
+    await expect(financingAmount).toHaveText("3225");
+    await expect(amountToFinance).toHaveText("Rahoitettavaa jää yhteensä 3225");
+    await thirdRow.hours.fill("30");
+    await expect(thirdRow.euros).toHaveText("645");
+    await expect(financingAmount).toHaveText("3870");
+    await expect(amountToFinance).toHaveText("Rahoitettavaa jää yhteensä 3870");
+  });
+  await hakijaAvustusHakuPage.submitApplication();
+  await hakujenHallintaPage.navigate(avustushakuID);
+  await hakujenHallintaPage.setEndDate(
+    moment().subtract(1, "year").format("D.M.YYYY H.mm")
+  );
+  await hakujenHallintaPage.waitForSave();
+  const hakemustenArviointiPage = new HakemustenArviointiPage(page);
+  await hakemustenArviointiPage.navigate(avustushakuID);
+  await hakemustenArviointiPage.selectHakemusFromList("Käsittelemättä");
+  const kokonaiskustannusInput = hakemustenArviointiPage.page.locator(
+    "tfoot .amount-column input"
+  );
+  const editingAmountToFinance = hakemustenArviointiPage.page.locator(
+    "#budget-edit-budget-summary h4"
+  );
+  await test.step("kokonaiskustannukset budget works", async () => {
+    await expect(editingAmountToFinance).toHaveText(
+      "Rahoitettavaa jää yhteensä 0"
+    );
+    await kokonaiskustannusInput.fill("100");
+    await expect(editingAmountToFinance).toHaveText(
+      "Rahoitettavaa jää yhteensä 100"
+    );
+    await hakemustenArviointiPage.waitForSave();
+    const { paatosPage, locators } = await getBudgetTableFooterTh(
+      context,
+      page
+    );
+    await expect(locators.nth(1)).toContainText("3 870 €");
+    await expect(locators.nth(2)).toContainText("100 €");
+    await paatosPage.close();
+  });
+  await test.step("menokohtainen budget works", async () => {
+    await hakemustenArviointiPage.page.click(
+      'label[for="useDetailedCosts-true"]'
+    );
+    const { personnel, material, equipment } = getBudgetSelectorsForType(
+      page,
+      "virkailija",
+      "amount"
+    );
+    await expect(personnel).toHaveValue("2150");
+    await expect(material).toHaveValue("1075");
+    await expect(equipment).toHaveValue("645");
+    await expect(editingAmountToFinance).toHaveText(
+      "Rahoitettavaa jää yhteensä 3870"
+    );
+    await personnel.fill("1280");
+    await expect(editingAmountToFinance).toHaveText(
+      "Rahoitettavaa jää yhteensä 3000"
+    );
+    await hakemustenArviointiPage.waitForSave();
+    const { paatosPage, locators } = await getBudgetTableFooterTh(
+      context,
+      page
+    );
+    await expect(locators.nth(1)).toHaveText("3 870 €");
+    await expect(locators.nth(2)).toContainText("3 000 €");
+    await paatosPage.close();
+  });
 });
+
+const getBudgetTableFooterTh = async (context: BrowserContext, page: Page) => {
+  const [paatosPage] = await Promise.all([
+    context.waitForEvent("page"),
+    page.click('a:text-is("Luonnos")'),
+  ]);
+  return {
+    locators: paatosPage.locator("table").first().locator("tfoot th"),
+    paatosPage,
+  };
+};
 
 const getMoneyLocators = (page: Page, prefix: string) => ({
   hours: page.locator(`#${prefix}\\.multiplier`),
