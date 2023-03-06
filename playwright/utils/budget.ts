@@ -69,7 +69,8 @@ export const fillBudget = async (
   for (const key of Object.keys(budget.amount)) {
     const budgetKey = key as keyof BudgetAmount;
     const amountLocators = getBudgetSelectorsForType(page, type, "amount");
-    await amountLocators[budgetKey].fill(budget.amount[budgetKey]);
+    await amountLocators[budgetKey].fill("");
+    await amountLocators[budgetKey].type(budget.amount[budgetKey]);
     const descriptionLocators = getBudgetSelectorsForType(
       page,
       type,
