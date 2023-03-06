@@ -93,6 +93,7 @@ export async function expectBudget(
   type: "hakija" | "virkailija"
 ) {
   const locators = getBudgetSelectorsForType(page, type, "amount");
-  for (const [key, value] of Object.entries(budgetAmount))
+  for (const [key, value] of Object.entries(budgetAmount)) {
     await expect(locators[key as keyof BudgetAmount]).toHaveValue(value);
+  }
 }
