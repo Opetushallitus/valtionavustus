@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import * as Bacon from "baconjs";
+/*import * as Bacon from "baconjs";
 import queryString from "query-string";
 
 import HttpUtil from "soresu-form/web/HttpUtil";
@@ -25,9 +25,14 @@ import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
 import { Muutoshakemus } from "soresu-form/web/va/types/muutoshakemus";
 
 import VaForm from "./VaForm";
-import VaUrlCreator from "./VaUrlCreator";
+import VaUrlCreator from "./VaUrlCreator";*/
+import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
+import hakijaStore, { useHakijaSelector } from "./hakemusStore";
+import { Provider } from "react-redux";
+import { initializeForm } from "soresu-form/form/formReducer";
+import { Form } from "soresu-form/form/Form";
 
-const sessionIdentifierForLocalStorageId = new Date().getTime();
+/*const sessionIdentifierForLocalStorageId = new Date().getTime();
 
 function containsExistingEntityId(urlContent: UrlContent) {
   const query = urlContent.parsedQuery;
@@ -191,10 +196,38 @@ function initVaFormController() {
   };
 }
 
-const app = initVaFormController();
+const app = initVaFormController();*/
 const container = document.getElementById("app")!;
 const root = createRoot(container!);
 
-app.stateProperty.onValue((state) => {
+/*app.stateProperty.onValue((state) => {
   root.render(app.getReactComponent(state));
-});
+});*/
+
+function App() {
+  const { avustushakuId } = useParams();
+  useEffect(() => {
+    hakijaStore.dispatch(initializeForm(5));
+  }, [avustushakuId]);
+  const { form } = useHakijaSelector((s) => s.form);
+  if (form) {
+    return <Form form={form} />;
+  }
+  return <div>no form</div>;
+}
+
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/avustushaku/:avustushakuId/nayta" element={<App />} />
+    </Routes>
+  );
+}
+
+root.render(
+  <BrowserRouter>
+    <Provider store={hakijaStore}>
+      <AppRoutes />
+    </Provider>
+  </BrowserRouter>
+);
