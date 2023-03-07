@@ -38,7 +38,7 @@ export default class VaBudgetCalculator {
       fixedMultiplier *
         InputValueStorage.readValue(null, state.saveStatus.values, fieldId)
     );
-    target.forEach((t) => (t.value = value));
+    target.forEach((t) => (t.value = String(value)));
     this.handleBudgetAmountUpdate(state, `${baseId}.amount`);
   }
 
