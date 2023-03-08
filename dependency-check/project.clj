@@ -2,5 +2,5 @@
   :description "nvd-clojure helper project"
   :plugins [[lein-ancient "0.7.0"]]
   :dependencies [
-                  [nvd-clojure "3.0.1"]
+                  [nvd-clojure "3.1.0"]
                 ])
