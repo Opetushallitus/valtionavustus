@@ -1,38 +1,36 @@
-import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { apiSlice } from "./apiSlice";
+import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
+import { apiSlice } from './apiSlice'
 
-type State = { talousarviotiliIdInEditing?: number };
-const initialState: State = { talousarviotiliIdInEditing: undefined };
+type State = { talousarviotiliIdInEditing?: number }
+const initialState: State = { talousarviotiliIdInEditing: undefined }
 
 const talousarviotilienHallintaSlice = createSlice({
-  name: "talousarviotilienHallinta",
+  name: 'talousarviotilienHallinta',
   initialState,
   reducers: {
     editTalousarviotili: (state, payload: PayloadAction<number>) => {
-      state.talousarviotiliIdInEditing = payload.payload;
+      state.talousarviotiliIdInEditing = payload.payload
     },
     stopEditing: (state) => {
-      state.talousarviotiliIdInEditing = undefined;
+      state.talousarviotiliIdInEditing = undefined
     },
   },
-});
+})
 
-export const { editTalousarviotili, stopEditing } =
-  talousarviotilienHallintaSlice.actions;
+export const { editTalousarviotili, stopEditing } = talousarviotilienHallintaSlice.actions
 
 export const store = configureStore({
   reducer: {
     talousarviotilienHallinta: talousarviotilienHallintaSlice.reducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(apiSlice.middleware),
-});
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware),
+})
 
-export type RootState = ReturnType<typeof store.getState>;
+export type RootState = ReturnType<typeof store.getState>
 
-export type AppDispatch = typeof store.dispatch;
+export type AppDispatch = typeof store.dispatch
 
-export const useAppDispatch: () => AppDispatch = useDispatch;
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+export const useAppDispatch: () => AppDispatch = useDispatch
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector

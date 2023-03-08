@@ -1,12 +1,12 @@
-import React from "react";
-import { createRoot } from "react-dom/client";
-import * as Bacon from "baconjs";
-import queryString from "query-string";
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import * as Bacon from 'baconjs'
+import queryString from 'query-string'
 
-import HttpUtil from "soresu-form/web/HttpUtil";
-import FormController from "soresu-form/web/form/FormController";
-import { triggerFieldUpdatesForValidation } from "soresu-form/web/form/FieldUpdateHandler";
-import ResponseParser from "soresu-form/web/form/ResponseParser";
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import FormController from 'soresu-form/web/form/FormController'
+import { triggerFieldUpdatesForValidation } from 'soresu-form/web/form/FieldUpdateHandler'
+import ResponseParser from 'soresu-form/web/form/ResponseParser'
 import {
   FormOperations,
   HakijaAvustusHaku,
@@ -14,47 +14,44 @@ import {
   UrlContent,
   VaAppStateLoopState,
   VaAppStateTemplate,
-} from "soresu-form/web/form/types/Form";
-import { Field, Form, NormalizedHakemusData } from "soresu-form/web/va/types";
-import VaComponentFactory from "soresu-form/web/va/VaComponentFactory";
-import VaSyntaxValidator from "soresu-form/web/va/VaSyntaxValidator";
-import VaPreviewComponentFactory from "soresu-form/web/va/VaPreviewComponentFactory";
-import VaBudgetCalculator from "soresu-form/web/va/VaBudgetCalculator";
-import { initializeStateLoop } from "soresu-form/web/form/FormStateLoop";
-import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
-import { Muutoshakemus } from "soresu-form/web/va/types/muutoshakemus";
+} from 'soresu-form/web/form/types/Form'
+import { Field, Form, NormalizedHakemusData } from 'soresu-form/web/va/types'
+import VaComponentFactory from 'soresu-form/web/va/VaComponentFactory'
+import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
+import VaPreviewComponentFactory from 'soresu-form/web/va/VaPreviewComponentFactory'
+import VaBudgetCalculator from 'soresu-form/web/va/VaBudgetCalculator'
+import { initializeStateLoop } from 'soresu-form/web/form/FormStateLoop'
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
+import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
 
-import VaForm from "./VaForm";
-import VaUrlCreator from "./VaUrlCreator";
+import VaForm from './VaForm'
+import VaUrlCreator from './VaUrlCreator'
 
-const sessionIdentifierForLocalStorageId = new Date().getTime();
+const sessionIdentifierForLocalStorageId = new Date().getTime()
 
 function containsExistingEntityId(urlContent: UrlContent) {
-  const query = urlContent.parsedQuery;
-  return query.hakemus && query.hakemus.length > 0;
+  const query = urlContent.parsedQuery
+  return query.hakemus && query.hakemus.length > 0
 }
 
 const responseParser = new ResponseParser({
   getFormAnswers: function (response) {
-    return response.submission.answers;
+    return response.submission.answers
   },
-});
+})
 
-const urlCreator = new VaUrlCreator();
+const urlCreator = new VaUrlCreator()
 const budgetCalculator = new VaBudgetCalculator(
   (descriptionField: Field, state: VaAppStateLoopState) => {
-    triggerFieldUpdatesForValidation([descriptionField], state);
+    triggerFieldUpdatesForValidation([descriptionField], state)
   }
-);
+)
 
 function onFieldUpdate(state: VaAppStateLoopState, field: Field) {
-  if (
-    field.fieldType === "moneyField" ||
-    field.fieldType === "vaSelfFinancingField"
-  ) {
-    budgetCalculator.handleBudgetAmountUpdate(state, field.id);
-  } else if (field.fieldType === "fixedMultiplierField") {
-    budgetCalculator.handleFixedMultiplierUpdate(state, field.id);
+  if (field.fieldType === 'moneyField' || field.fieldType === 'vaSelfFinancingField') {
+    budgetCalculator.handleBudgetAmountUpdate(state, field.id)
+  } else if (field.fieldType === 'fixedMultiplierField') {
+    budgetCalculator.handleFixedMultiplierUpdate(state, field.id)
   }
 }
 
@@ -63,72 +60,70 @@ function isNotFirstEdit(state: VaAppStateLoopState): boolean {
     !!state.saveStatus.savedObject &&
     !!state.saveStatus.savedObject.version &&
     state.saveStatus.savedObject.version > 1
-  );
+  )
 }
 
 function isSaveDraftAllowed(state: VaAppStateLoopState): boolean {
-  return !!state.saveStatus.hakemusId;
+  return !!state.saveStatus.hakemusId
 }
 
 function createUiStateIdentifier(state: VaAppStateLoopState) {
-  return state.configuration.form.id + "-" + sessionIdentifierForLocalStorageId;
+  return state.configuration.form.id + '-' + sessionIdentifierForLocalStorageId
 }
 
 function printEntityId(state: VaAppStateLoopState) {
-  return state.saveStatus.hakemusId;
+  return state.saveStatus.hakemusId
 }
 
-const query = queryString.parse(location.search);
-const urlContent = { parsedQuery: query, location: location };
-const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent);
+const query = queryString.parse(location.search)
+const urlContent = { parsedQuery: query, location: location }
+const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
 const avustusHakuP = Bacon.fromPromise<HakijaAvustusHaku>(
   HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId))
-);
+)
 const environmentP = Bacon.fromPromise<EnvironmentApiResponse>(
   HttpUtil.get(VaUrlCreator.environmentConfigUrl())
-);
+)
 const normalizedHakemusP = Bacon.fromPromise<NormalizedHakemusData>(
-  HttpUtil.get(
-    `/api/avustushaku/${avustusHakuId}/hakemus/${query.hakemus}/normalized`
-  ).catch(() => undefined)
-);
+  HttpUtil.get(`/api/avustushaku/${avustusHakuId}/hakemus/${query.hakemus}/normalized`).catch(
+    () => undefined
+  )
+)
 const muutoshakemuksetP = Bacon.fromPromise<Muutoshakemus[]>(
-  HttpUtil.get(
-    `/api/avustushaku/${avustusHakuId}/hakemus/${query.hakemus}/muutoshakemus`
-  ).catch(() => [])
-);
+  HttpUtil.get(`/api/avustushaku/${avustusHakuId}/hakemus/${query.hakemus}/muutoshakemus`).catch(
+    () => []
+  )
+)
 
 function initialStateTemplateTransformation(template: VaAppStateTemplate) {
-  template.avustushaku = avustusHakuP;
-  template.normalizedHakemus = normalizedHakemusP;
-  template.muutoshakemukset = muutoshakemuksetP;
-  template.configuration.environment = environmentP;
-  template.saveStatus.hakemusId = query.hakemus;
-  template.token = query.token;
+  template.avustushaku = avustusHakuP
+  template.normalizedHakemus = normalizedHakemusP
+  template.muutoshakemukset = muutoshakemuksetP
+  template.configuration.environment = environmentP
+  template.saveStatus.hakemusId = query.hakemus
+  template.token = query.token
 }
 
 function isOfficerEdit(savedObject: SavedObject) {
-  const params = new URLSearchParams(window.location.search);
-  const hasOfficerToken = params.has("officerToken");
-  return savedObject.status === "officer_edit" && hasOfficerToken;
+  const params = new URLSearchParams(window.location.search)
+  const hasOfficerToken = params.has('officerToken')
+  return savedObject.status === 'officer_edit' && hasOfficerToken
 }
 
 function isEmptyOrReopenedHakemus(savedObject: SavedObject | null) {
   return (
-    !savedObject ||
-    savedObject.status === "pending_change_request" ||
-    isOfficerEdit(savedObject)
-  );
+    !savedObject || savedObject.status === 'pending_change_request' || isOfficerEdit(savedObject)
+  )
 }
 
 function onInitialStateLoaded(initialState: VaAppStateLoopState) {
   budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {
     reportValidationErrors: isNotFirstEdit(initialState),
-  });
-  const modifyApplication = query["modify-application"];
+  })
+  const modifyApplication = query['modify-application']
   if (
     !modifyApplication &&
-    initialState.avustushaku?.phase !== "current" &&
+    initialState.avustushaku?.phase !== 'current' &&
     !initialState.configuration.preview &&
     !isEmptyOrReopenedHakemus(initialState.saveStatus.savedObject)
   ) {
@@ -137,27 +132,22 @@ function onInitialStateLoaded(initialState: VaAppStateLoopState) {
       initialState.saveStatus.hakemusId,
       initialState.configuration.lang,
       initialState.token
-    );
+    )
   }
 }
 
 function initVaFormController() {
   const formP = avustusHakuP.flatMap(function (avustusHaku) {
-    return Bacon.fromPromise<Form>(
-      HttpUtil.get(urlCreator.formApiUrl(avustusHaku.form))
-    );
-  });
-  const controller = new FormController<
-    VaAppStateLoopState,
-    VaAppStateTemplate
-  >({
+    return Bacon.fromPromise<Form>(HttpUtil.get(urlCreator.formApiUrl(avustusHaku.form)))
+  })
+  const controller = new FormController<VaAppStateLoopState, VaAppStateTemplate>({
     initialStateTemplateTransformation,
     onInitialStateLoaded,
     formP,
     customComponentFactory: new VaComponentFactory(),
     customPreviewComponentFactory: new VaPreviewComponentFactory(),
     customFieldSyntaxValidator: VaSyntaxValidator,
-  });
+  })
   const formOperations: FormOperations<VaAppStateLoopState> = {
     chooseInitialLanguage: VaUrlCreator.chooseInitialLanguage,
     containsExistingEntityId,
@@ -168,14 +158,16 @@ function initVaFormController() {
     urlCreator,
     responseParser,
     printEntityId,
-  };
+  }
   const initialValues = {
     language: VaUrlCreator.chooseInitialLanguage(urlContent),
-  };
-  const stateProperty = initializeStateLoop<
-    VaAppStateLoopState,
-    VaAppStateTemplate
-  >(controller, formOperations, initialValues, urlContent);
+  }
+  const stateProperty = initializeStateLoop<VaAppStateLoopState, VaAppStateTemplate>(
+    controller,
+    formOperations,
+    initialValues,
+    urlContent
+  )
   return {
     stateProperty,
     getReactComponent: function getReactComponent(state: VaAppStateLoopState) {
@@ -185,18 +177,18 @@ function initVaFormController() {
           state={state}
           hakemusType="hakemus"
           useBusinessIdSearch={true}
-          refuseGrant={urlContent.parsedQuery["refuse-grant"]}
-          modifyApplication={urlContent.parsedQuery["modify-application"]}
+          refuseGrant={urlContent.parsedQuery['refuse-grant']}
+          modifyApplication={urlContent.parsedQuery['modify-application']}
         />
-      );
+      )
     },
-  };
+  }
 }
 
-const app = initVaFormController();
-const container = document.getElementById("app")!;
-const root = createRoot(container!);
+const app = initVaFormController()
+const container = document.getElementById('app')!
+const root = createRoot(container!)
 
 app.stateProperty.onValue((state) => {
-  root.render(app.getReactComponent(state));
-});
+  root.render(app.getReactComponent(state))
+})

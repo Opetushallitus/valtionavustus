@@ -1,40 +1,35 @@
-import React from "react";
-import ClassNames from "classnames";
-import _ from "lodash";
+import React from 'react'
+import ClassNames from 'classnames'
+import _ from 'lodash'
 
-import LocalizedString from "./LocalizedString";
-import HelpTooltip from "./HelpTooltip";
-import FormController from "soresu-form/web/form/FormController";
-import { Field } from "soresu-form/web/va/types";
+import LocalizedString from './LocalizedString'
+import HelpTooltip from './HelpTooltip'
+import FormController from 'soresu-form/web/form/FormController'
+import { Field } from 'soresu-form/web/va/types'
 
 export interface BasicFieldComponentProps {
-  field: Field;
-  controller?: any;
-  value?: any;
-  renderingParameters?: any;
-  disabled?: boolean;
-  required?: boolean;
-  hasError?: boolean;
-  htmlId?: any;
-  lang: any;
-  translations: any;
-  translationKey: string;
+  field: Field
+  controller?: any
+  value?: any
+  renderingParameters?: any
+  disabled?: boolean
+  required?: boolean
+  hasError?: boolean
+  htmlId?: any
+  lang: any
+  translations: any
+  translationKey: string
 }
 
-export default class BasicFieldComponent<T> extends React.Component<
-  BasicFieldComponentProps & T
-> {
+export default class BasicFieldComponent<T> extends React.Component<BasicFieldComponentProps & T> {
   constructor(props: BasicFieldComponentProps & T) {
-    super(props);
-    this.componentDidMount = this.componentDidMount.bind(this);
+    super(props)
+    this.componentDidMount = this.componentDidMount.bind(this)
   }
 
   componentDidMount() {
     if (this.props.field && this.props.controller) {
-      this.props.controller.componentDidMount(
-        this.props.field,
-        this.props.value
-      );
+      this.props.controller.componentDidMount(this.props.field, this.props.value)
     }
   }
 
@@ -46,76 +41,65 @@ export default class BasicFieldComponent<T> extends React.Component<
     controller: FormController<any, any>
   ) {
     return function () {
-      const element = document.getElementById(htmlId) as HTMLInputElement;
+      const element = document.getElementById(htmlId) as HTMLInputElement
       if (element) {
-        const newValue = element.value;
+        const newValue = element.value
         if (oldValue !== newValue) {
-          onChange(field, newValue);
+          onChange(field, newValue)
         } else {
-          controller.initFieldValidation(field, newValue);
+          controller.initFieldValidation(field, newValue)
         }
       }
-    };
+    }
   }
 
   label(className?: string) {
-    const translationKey = this.props.translationKey;
+    const translationKey = this.props.translationKey
     if (this.hideLabel() || !this.props.translations[translationKey]) {
-      return undefined;
+      return undefined
     } else {
       return (
-        <label
-          htmlFor={this.props.htmlId}
-          className={this.labelClassName(className)}
-        >
+        <label htmlFor={this.props.htmlId} className={this.labelClassName(className)}>
           <LocalizedString
-            className={this.props.required ? "required" : undefined}
+            className={this.props.required ? 'required' : undefined}
             translations={this.props.translations}
             translationKey={translationKey}
             lang={this.props.lang}
           />
           {this.helpText()}
         </label>
-      );
+      )
     }
   }
 
   helpText() {
     if (this.props.translations.helpText) {
-      return (
-        <HelpTooltip
-          content={this.props.translations.helpText}
-          lang={this.props.lang}
-        />
-      );
+      return <HelpTooltip content={this.props.translations.helpText} lang={this.props.lang} />
     }
-    return undefined;
+    return undefined
   }
 
   labelClassName(className?: string) {
-    const classNames = ClassNames(className, { disabled: this.props.disabled });
-    return !_.isEmpty(classNames) ? classNames : undefined;
+    const classNames = ClassNames(className, { disabled: this.props.disabled })
+    return !_.isEmpty(classNames) ? classNames : undefined
   }
 
   resolveClassName(className?: string): string | undefined {
-    const classNames = ClassNames(className, { error: this.props.hasError });
-    return !_.isEmpty(classNames) ? classNames : undefined;
+    const classNames = ClassNames(className, { error: this.props.hasError })
+    return !_.isEmpty(classNames) ? classNames : undefined
   }
 
   hideLabel() {
-    return (
-      this.props.renderingParameters &&
-      this.props.renderingParameters.hideLabels === true
-    );
+    return this.props.renderingParameters && this.props.renderingParameters.hideLabels === true
   }
 
   param(param: any, defaultValue: any) {
     if (!this.props.field?.params) {
-      return defaultValue;
+      return defaultValue
     }
     if (this.props.field.params[param] !== undefined) {
-      return this.props.field.params[param];
+      return this.props.field.params[param]
     }
-    return defaultValue;
+    return defaultValue
   }
 }

@@ -1,14 +1,14 @@
-import React from "react";
-import moment from "moment";
-import { fiShortFormat } from "soresu-form/web/va/i18n/dateformat";
-import { Muutoshakemus } from "soresu-form/web/va/types/muutoshakemus";
+import React from 'react'
+import moment from 'moment'
+import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
+import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
 
-import "./MuutoshakemusTabs.less";
+import './MuutoshakemusTabs.less'
 
 interface MuutoshakemusTabsProps {
-  muutoshakemukset: Muutoshakemus[];
-  activeMuutoshakemus: Muutoshakemus;
-  setActiveMuutoshakemus: (muutoshakemusId: number) => void;
+  muutoshakemukset: Muutoshakemus[]
+  activeMuutoshakemus: Muutoshakemus
+  setActiveMuutoshakemus: (muutoshakemusId: number) => void
 }
 
 export const MuutoshakemusTabs = ({
@@ -16,21 +16,19 @@ export const MuutoshakemusTabs = ({
   activeMuutoshakemus,
   setActiveMuutoshakemus,
 }: MuutoshakemusTabsProps) => {
-  console.log(muutoshakemukset);
+  console.log(muutoshakemukset)
   return (
     <div className="muutoshakemus-tabs">
       {muutoshakemukset.map((m, index) => (
         <button
           key={`muutoshakemus-tab-${m.id}`}
-          className={`muutoshakemus-tabs__tab ${
-            m.id === activeMuutoshakemus.id ? "active" : ""
-          }`}
+          className={`muutoshakemus-tabs__tab ${m.id === activeMuutoshakemus.id ? 'active' : ''}`}
           onClick={() => setActiveMuutoshakemus(m.id)}
           data-test-id={`muutoshakemus-tab-${index}`}
         >
-          Muutoshakemus {moment(m["created-at"]).format(fiShortFormat)}
+          Muutoshakemus {moment(m['created-at']).format(fiShortFormat)}
         </button>
       ))}
     </div>
-  );
-};
+  )
+}

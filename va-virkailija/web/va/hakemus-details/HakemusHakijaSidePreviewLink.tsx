@@ -1,15 +1,15 @@
-import React from "react";
+import React from 'react'
 
 type HakemusHakijaSidePreviewLinkProps = {
-  avustushakuId: number;
-  hakemusUserKey: string;
-};
+  avustushakuId: number
+  hakemusUserKey: string
+}
 
 export const HakemusHakijaSidePreviewLink = ({
   avustushakuId,
   hakemusUserKey,
 }: HakemusHakijaSidePreviewLinkProps) => {
-  const previewUrl = "/hakemus-preview/" + avustushakuId + "/" + hakemusUserKey;
+  const previewUrl = '/hakemus-preview/' + avustushakuId + '/' + hakemusUserKey
 
   return (
     <span className="preview-links">
@@ -25,7 +25,7 @@ export const HakemusHakijaSidePreviewLink = ({
       </a>
       |
       <a
-        href={previewUrl + "?decision-version=true"}
+        href={previewUrl + '?decision-version=true'}
         className="preview-links"
         target="_blank"
         rel="noopener noreferrer"
@@ -33,5 +33,5 @@ export const HakemusHakijaSidePreviewLink = ({
         Alkuperäinen
       </a>
     </span>
-  );
-};
+  )
+}

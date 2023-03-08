@@ -1,57 +1,49 @@
-import React, { useEffect, useState } from "react";
-import _ from "lodash";
+import React, { useEffect, useState } from 'react'
+import _ from 'lodash'
 
-import { Hakemus, HelpTexts } from "soresu-form/web/va/types";
+import { Hakemus, HelpTexts } from 'soresu-form/web/va/types'
 
-import rejectedReasonsByLanguage from "./rejectedReasonsByLanguage.json";
-import HelpTooltip from "../HelpTooltip";
-import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
-import {
-  setArvioValue,
-  startHakemusArvioAutoSave,
-} from "../hakemustenArviointi/arviointiReducer";
+import rejectedReasonsByLanguage from './rejectedReasonsByLanguage.json'
+import HelpTooltip from '../HelpTooltip'
+import { useHakemustenArviointiDispatch } from '../hakemustenArviointi/arviointiStore'
+import { setArvioValue, startHakemusArvioAutoSave } from '../hakemustenArviointi/arviointiReducer'
 
 type PerustelutProps = {
-  hakemus: Hakemus;
-  helpTexts: HelpTexts;
-  allowEditing?: boolean;
-};
+  hakemus: Hakemus
+  helpTexts: HelpTexts
+  allowEditing?: boolean
+}
 
 const Perustelut = ({ hakemus, helpTexts, allowEditing }: PerustelutProps) => {
-  const dispatch = useHakemustenArviointiDispatch();
-  const [showReasons, toggleReason] = useState(
-    hakemus.arvio.perustelut?.length === 0
-  );
-  const hakemusId = hakemus.id;
+  const dispatch = useHakemustenArviointiDispatch()
+  const [showReasons, toggleReason] = useState(hakemus.arvio.perustelut?.length === 0)
+  const hakemusId = hakemus.id
   useEffect(() => {
-    toggleReason(hakemus.arvio.perustelut?.length === 0);
-  }, [hakemusId]);
+    toggleReason(hakemus.arvio.perustelut?.length === 0)
+  }, [hakemusId])
   const addReason = (reason: string) => {
-    const currentPerustelut = hakemus.arvio.perustelut ?? "";
-    const newPerustelut =
-      currentPerustelut.length === 0
-        ? reason
-        : currentPerustelut + " " + reason;
+    const currentPerustelut = hakemus.arvio.perustelut ?? ''
+    const newPerustelut = currentPerustelut.length === 0 ? reason : currentPerustelut + ' ' + reason
     dispatch(
       setArvioValue({
         hakemusId: hakemus.id,
-        key: "perustelut",
+        key: 'perustelut',
         value: newPerustelut,
       })
-    );
-    dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
-    toggleReason(false);
+    )
+    dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }))
+    toggleReason(false)
     setTimeout(function () {
       document
-        .getElementById("perustelut-container")
-        ?.scrollIntoView({ block: "start", behavior: "smooth" });
-      document.getElementById("perustelut")?.focus();
-    }, 300);
-  };
-  const rejected = hakemus.arvio.status === "rejected";
-  const languageTitle = hakemus.language === "fi" ? "suomeksi" : "ruotsiksi";
-  const rejectedReasons = rejectedReasonsByLanguage[hakemus.language];
-  const toggleReasons = () => toggleReason(!showReasons);
+        .getElementById('perustelut-container')
+        ?.scrollIntoView({ block: 'start', behavior: 'smooth' })
+      document.getElementById('perustelut')?.focus()
+    }, 300)
+  }
+  const rejected = hakemus.arvio.status === 'rejected'
+  const languageTitle = hakemus.language === 'fi' ? 'suomeksi' : 'ruotsiksi'
+  const rejectedReasons = rejectedReasonsByLanguage[hakemus.language]
+  const toggleReasons = () => toggleReason(!showReasons)
 
   return (
     <div>
@@ -60,24 +52,17 @@ const Perustelut = ({ hakemus, helpTexts, allowEditing }: PerustelutProps) => {
           Perustelut hakijalle <strong>{languageTitle}</strong>
         </label>
         <HelpTooltip
-          testId={"tooltip-perustelut"}
-          content={
-            helpTexts[
-              "hankkeen_sivu__arviointi___perustelut_hakijalle_suomeksi"
-            ]
-          }
-          direction={"arviointi-slim"}
+          testId={'tooltip-perustelut'}
+          content={helpTexts['hankkeen_sivu__arviointi___perustelut_hakijalle_suomeksi']}
+          direction={'arviointi-slim'}
         />
         {rejected && (
           <a onClick={toggleReasons}>
-            {showReasons ? "Piilota perustelut" : "Lisää vakioperustelu"}
+            {showReasons ? 'Piilota perustelut' : 'Lisää vakioperustelu'}
           </a>
         )}
         {rejected && (
-          <div
-            className="radio-container radio-container--perustelut"
-            hidden={!showReasons}
-          >
+          <div className="radio-container radio-container--perustelut" hidden={!showReasons}>
             {rejectedReasons.map((reason) => (
               <div key={reason} className="radio-row">
                 <div onClick={_.partial(addReason, reason)}>{reason}</div>
@@ -89,21 +74,21 @@ const Perustelut = ({ hakemus, helpTexts, allowEditing }: PerustelutProps) => {
           id="perustelut"
           rows={5}
           disabled={!allowEditing}
-          value={hakemus.arvio.perustelut ?? ""}
+          value={hakemus.arvio.perustelut ?? ''}
           onChange={(evt) => {
             dispatch(
               setArvioValue({
                 hakemusId: hakemus.id,
-                key: "perustelut",
+                key: 'perustelut',
                 value: evt.target.value,
               })
-            );
-            dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
+            )
+            dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }))
           }}
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Perustelut;
+export default Perustelut

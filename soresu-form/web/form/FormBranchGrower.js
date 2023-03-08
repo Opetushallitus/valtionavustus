@@ -1,9 +1,9 @@
-import _ from "lodash";
+import _ from 'lodash'
 
-import InputValueStorage from "./InputValueStorage";
-import JsUtil from "../JsUtil";
-import FormUtil from "./FormUtil";
-import Immutable from "seamless-immutable";
+import InputValueStorage from './InputValueStorage'
+import JsUtil from '../JsUtil'
+import FormUtil from './FormUtil'
+import Immutable from 'seamless-immutable'
 
 export default class FormBranchGrower {
   static addFormFieldsForGrowingFieldsInInitialRender(
@@ -13,108 +13,75 @@ export default class FormBranchGrower {
     addPlaceHolders
   ) {
     function populateRepeatingItem(baseObject, key, valueOfElement) {
-      _.assign(baseObject, { id: key });
+      _.assign(baseObject, { id: key })
       baseObject.children = baseObject.children
         ? baseObject.children.map((c) => {
-            const primitiveElement = _.cloneDeep(c);
-            const distinguisherOfElement = _.last(
-              primitiveElement.id.split(".")
-            ); // e.g. "email"
+            const primitiveElement = _.cloneDeep(c)
+            const distinguisherOfElement = _.last(primitiveElement.id.split('.')) // e.g. "email"
             _.forEach(valueOfElement, (primitiveElementValueObject) => {
-              if (
-                _.endsWith(
-                  primitiveElementValueObject.key,
-                  "." + distinguisherOfElement
-                )
-              ) {
-                primitiveElement.id = primitiveElementValueObject.key;
+              if (_.endsWith(primitiveElementValueObject.key, '.' + distinguisherOfElement)) {
+                primitiveElement.id = primitiveElementValueObject.key
               }
-            });
-            return primitiveElement;
+            })
+            return primitiveElement
           })
-        : [];
-      return baseObject;
+        : []
+      return baseObject
     }
 
-    function populateGrowingSet(
-      growingParentElement,
-      childPrototype,
-      valuesTreeOfElement
-    ) {
-      growingParentElement.children = _.map(
-        valuesTreeOfElement,
-        (itemValueObject) => {
-          const o = {};
-          _.assign(o, childPrototype);
-          populateRepeatingItem(o, itemValueObject.key, itemValueObject.value);
-          return o;
-        }
-      );
+    function populateGrowingSet(growingParentElement, childPrototype, valuesTreeOfElement) {
+      growingParentElement.children = _.map(valuesTreeOfElement, (itemValueObject) => {
+        const o = {}
+        _.assign(o, childPrototype)
+        populateRepeatingItem(o, itemValueObject.key, itemValueObject.value)
+        return o
+      })
       growingParentElement.children.sort((firstChild, secondChild) => {
-        return JsUtil.naturalCompare(firstChild.id, secondChild.id);
-      });
+        return JsUtil.naturalCompare(firstChild.id, secondChild.id)
+      })
     }
 
     _.forEach(
       JsUtil.flatFilter(formContent, (n) => {
-        return n.fieldType === "growingFieldset";
+        return n.fieldType === 'growingFieldset'
       }),
       (g) => {
-        const growingSetValue = InputValueStorage.readValue(
-          formContent,
-          answers,
+        const growingSetValue = InputValueStorage.readValue(formContent, answers, g.id)
+        const childPrototype = FormBranchGrower.getGrowingFieldSetChildPrototype(
+          formSpecificationContent,
           g.id
-        );
-        const childPrototype =
-          FormBranchGrower.getGrowingFieldSetChildPrototype(
-            formSpecificationContent,
-            g.id
-          );
+        )
         if (growingSetValue != null && !_.isEmpty(growingSetValue)) {
-          populateGrowingSet(g, childPrototype, growingSetValue);
+          populateGrowingSet(g, childPrototype, growingSetValue)
         }
         if (addPlaceHolders) {
           if (haveChildrenAnswers(g.children, growingSetValue)) {
-            const enabledPlaceHolderChild = FormBranchGrower.createNewChild(
-              g,
-              childPrototype,
-              true
-            );
-            g.children.push(enabledPlaceHolderChild);
+            const enabledPlaceHolderChild = FormBranchGrower.createNewChild(g, childPrototype, true)
+            g.children.push(enabledPlaceHolderChild)
           }
-          const disabledPlaceHolderChild = FormBranchGrower.createNewChild(
-            g,
-            childPrototype,
-            false
-          );
-          g.children.push(disabledPlaceHolderChild);
+          const disabledPlaceHolderChild = FormBranchGrower.createNewChild(g, childPrototype, false)
+          g.children.push(disabledPlaceHolderChild)
         }
       }
-    );
+    )
   }
 
-  static getGrowingFieldSetChildPrototype(
-    formSpecificationContent,
-    growingParentId
-  ) {
-    const growingParentSpecification = FormUtil.findField(
-      formSpecificationContent,
-      growingParentId
-    );
+  static getGrowingFieldSetChildPrototype(formSpecificationContent, growingParentId) {
+    const growingParentSpecification = FormUtil.findField(formSpecificationContent, growingParentId)
     if (growingParentSpecification.children.length === 0) {
       throw new Error(
         "Expected an existing child for growing set '" +
           growingParentId +
           "' to get the field configurations from there."
-      );
+      )
     }
-    return growingParentSpecification.children[0];
+    return growingParentSpecification.children[0]
   }
 
   static expandGrowingFieldSetIfNeeded(state, fieldUpdate) {
-    const growingParent = fieldUpdate.growingParent;
+    const growingParent = fieldUpdate.growingParent
     if (!growingParent) {
-      return;
+      return
     }
 
     function getGrowingParentChildrenEnsuringTheyAreMutable(growingParent) {
@@ -122,21 +89,17 @@ export default class FormBranchGrower {
         if (children.children.some((child) => Immutable.isImmutable(child))) {
           children.children = Immutable.asMutable(children.children, {
             deep: true,
-          });
+          })
         }
       }
-      return growingParent.children;
+      return growingParent.children
     }
 
-    const growingChildren =
-      getGrowingParentChildrenEnsuringTheyAreMutable(growingParent);
+    const growingChildren = getGrowingParentChildrenEnsuringTheyAreMutable(growingParent)
 
     if (
       growingChildren &&
-      FormUtil.findField(
-        growingChildren[growingChildren.length - 2],
-        fieldUpdate.id
-      )
+      FormUtil.findField(growingChildren[growingChildren.length - 2], fieldUpdate.id)
     ) {
       // Is the user currently editing a field in last enabled child? If
       // so, enable the disabled child and set required status for all
@@ -145,27 +108,25 @@ export default class FormBranchGrower {
       const childPrototype = FormBranchGrower.getGrowingFieldSetChildPrototype(
         state.configuration.form.content,
         growingParent.id
-      );
+      )
 
       JsUtil.fastTraverse(growingChildren[growingChildren.length - 2], (f) => {
         if (f.id != null) {
           if (FormUtil.findFieldIgnoringIndex(childPrototype, f.id).required) {
-            f.required = true;
+            f.required = true
           }
         }
-        return true;
-      });
+        return true
+      })
 
       JsUtil.fastTraverse(growingChildren[growingChildren.length - 1], (f) => {
         if (f.id != null) {
-          delete f.forceDisabled;
+          delete f.forceDisabled
         }
-        return true;
-      });
+        return true
+      })
 
-      growingChildren.push(
-        FormBranchGrower.createNewChild(growingParent, childPrototype, false)
-      );
+      growingChildren.push(FormBranchGrower.createNewChild(growingParent, childPrototype, false))
     }
   }
 
@@ -191,41 +152,38 @@ export default class FormBranchGrower {
    * @param parentNode  Node whose children are repeated
    */
   static createNewChild(parentNode, childPrototype, enable) {
-    const currentLastChild = _.last(parentNode.children);
-    const newChild = childPrototype.asMutable({ deep: true });
-    populateNewIdsTo(newChild, currentLastChild);
+    const currentLastChild = _.last(parentNode.children)
+    const newChild = childPrototype.asMutable({ deep: true })
+    populateNewIdsTo(newChild, currentLastChild)
     JsUtil.fastTraverse(newChild, (f) => {
       if (f.id != null) {
         if (f.required) {
-          f.required = false;
+          f.required = false
         }
         if (!enable) {
-          f.forceDisabled = true;
+          f.forceDisabled = true
         }
       }
-      return true;
-    });
-    return newChild;
+      return true
+    })
+    return newChild
 
     function populateNewIdsTo(node, currentLastChild) {
-      const prototypeId = node.id;
-      const lastIndex = FormUtil.parseIndexFrom(currentLastChild.id);
-      node.id = FormUtil.withOutIndex(prototypeId) + "-" + (lastIndex + 1);
+      const prototypeId = node.id
+      const lastIndex = FormUtil.parseIndexFrom(currentLastChild.id)
+      node.id = FormUtil.withOutIndex(prototypeId) + '-' + (lastIndex + 1)
       _.forEach(node.children, (n) => {
-        n.id = n.id.replace(prototypeId, node.id);
-      });
+        n.id = n.id.replace(prototypeId, node.id)
+      })
     }
   }
 }
 
 const haveChildrenAnswers = (children, answers) =>
-  children.length > 1 || hasFirstChildAnswer(children, answers);
+  children.length > 1 || hasFirstChildAnswer(children, answers)
 
 const hasFirstChildAnswer = (children, answers) =>
   children.length > 0 &&
-  !areAllFieldAnswersEmpty(
-    InputValueStorage.readValue(null, answers, children[0].id)
-  );
+  !areAllFieldAnswersEmpty(InputValueStorage.readValue(null, answers, children[0].id))
 
-const areAllFieldAnswersEmpty = (answers) =>
-  _.every(answers, (a) => _.isEmpty(a.value));
+const areAllFieldAnswersEmpty = (answers) => _.every(answers, (a) => _.isEmpty(a.value))

@@ -1,13 +1,13 @@
-import _ from "lodash";
+import _ from 'lodash'
 
-import { DefaultPropertyMapper } from "./PropertyMapper";
-import Translator from "../Translator";
-import TableFieldUtil from "./TableFieldUtil.jsx";
-import { formatDecimal, roundDecimal, parseDecimal } from "../../MathUtil";
+import { DefaultPropertyMapper } from './PropertyMapper'
+import Translator from '../Translator'
+import TableFieldUtil from './TableFieldUtil.jsx'
+import { formatDecimal, roundDecimal, parseDecimal } from '../../MathUtil'
 
 export default class TableFieldPropertyMapper {
   static map(props) {
-    const { lang, field, disabled, onChange, validationErrors } = props;
+    const { lang, field, disabled, onChange, validationErrors } = props
 
     const makeRowParams = (paramRows) =>
       _.map(paramRows, (row) =>
@@ -15,7 +15,7 @@ export default class TableFieldPropertyMapper {
           title: row.title[lang],
           required: TableFieldUtil.parseRequiredParam(row.required),
         })
-      );
+      )
 
     const makeColumnParams = (paramColumns) =>
       _.map(paramColumns, (col) =>
@@ -23,49 +23,40 @@ export default class TableFieldPropertyMapper {
           title: col.title[lang],
           required: TableFieldUtil.parseRequiredParam(col.required),
         })
-      );
+      )
 
-    const rowParams = makeRowParams(
-      DefaultPropertyMapper.param(field, "rows", [])
-    );
-    const columnParams = makeColumnParams(
-      DefaultPropertyMapper.param(field, "columns", [])
-    );
+    const rowParams = makeRowParams(DefaultPropertyMapper.param(field, 'rows', []))
+    const columnParams = makeColumnParams(DefaultPropertyMapper.param(field, 'columns', []))
 
     const sumTitle = makeSumTitle(
-      DefaultPropertyMapper.param(field, "sumTitle", {}),
-      props.translations.form["table-field"],
+      DefaultPropertyMapper.param(field, 'sumTitle', {}),
+      props.translations.form['table-field'],
       lang
-    );
+    )
     const cellValues = makeCellValues(
       rowParams.length,
       columnParams.length,
-      parseSavedValue(_.get(props, "value", []))
-    );
-    const isGrowingTable = _.isEmpty(rowParams);
-    const columnSums = makeColumnSums(columnParams, cellValues);
+      parseSavedValue(_.get(props, 'value', []))
+    )
+    const isGrowingTable = _.isEmpty(rowParams)
+    const columnSums = makeColumnSums(columnParams, cellValues)
 
     const cellOnChange = disabled
       ? null
       : (cellValue, cellRowIndex, cellColIndex) => {
           const newCellValues =
             isGrowingTable && cellRowIndex === cellValues.length
-              ? appendCellRowWithValue(
-                  cellValues,
-                  columnParams.length,
-                  cellValue,
-                  cellColIndex
-                )
+              ? appendCellRowWithValue(cellValues, columnParams.length, cellValue, cellColIndex)
               : changeCellValue(
                   cellValues,
                   columnParams.length,
                   cellValue,
                   cellRowIndex,
                   cellColIndex
-                );
+                )
 
-          onChange(field, newCellValues);
-        };
+          onChange(field, newCellValues)
+        }
 
     const cellOnBlur = disabled
       ? null
@@ -73,28 +64,28 @@ export default class TableFieldPropertyMapper {
           if (
             (cellRowIndex < cellValues.length &&
               cellValue === cellValues[cellRowIndex][cellColIndex]) ||
-            (cellRowIndex === cellValues.length && cellValue === "")
+            (cellRowIndex === cellValues.length && cellValue === '')
           ) {
-            return; // no change, skip
+            return // no change, skip
           }
 
-          cellOnChange(cellValue, cellRowIndex, cellColIndex);
-        };
+          cellOnChange(cellValue, cellRowIndex, cellColIndex)
+        }
 
     const rowOnRemove = disabled
       ? null
       : (rowIndexToRemove) => {
-          const numRows = cellValues.length;
-          const newCellValues = [];
+          const numRows = cellValues.length
+          const newCellValues = []
 
           for (let rowIndex = 0; rowIndex < numRows; rowIndex += 1) {
             if (rowIndex !== rowIndexToRemove) {
-              newCellValues.push(cellValues[rowIndex]);
+              newCellValues.push(cellValues[rowIndex])
             }
           }
 
-          onChange(field, newCellValues);
-        };
+          onChange(field, newCellValues)
+        }
 
     return _.assign({}, props, {
       cellOnChange,
@@ -110,108 +101,89 @@ export default class TableFieldPropertyMapper {
       required: field.required,
       fieldTranslations: field,
       sumTitle,
-    });
+    })
   }
 }
 
 const ensureArraySize = (size, fillValue, ary) => {
-  const numMissingValues = size - ary.length;
+  const numMissingValues = size - ary.length
 
   if (numMissingValues === 0) {
-    return ary;
+    return ary
   } else if (numMissingValues > 0) {
-    return ary.concat(_.fill(Array(numMissingValues), fillValue));
+    return ary.concat(_.fill(Array(numMissingValues), fillValue))
   } else {
-    return ary.slice(0, size);
+    return ary.slice(0, size)
   }
-};
+}
 
 const parseSavedValue = (value) =>
   _.isEmpty(value)
     ? [] // ensure empty string or array coerces to empty array
-    : value;
+    : value
 
 const makeCellValues = (numFixedRows, numColumns, savedValues) => {
-  const rows =
-    numFixedRows > 0
-      ? ensureArraySize(numFixedRows, [], savedValues)
-      : savedValues;
+  const rows = numFixedRows > 0 ? ensureArraySize(numFixedRows, [], savedValues) : savedValues
 
-  return _.map(rows, (row) => ensureArraySize(numColumns, "", row));
-};
+  return _.map(rows, (row) => ensureArraySize(numColumns, '', row))
+}
 
 const makeColumnSums = (columnParams, cellValues) => {
-  const sums = {};
-  const numColumns = columnParams.length;
-  const numRows = cellValues.length;
+  const sums = {}
+  const numColumns = columnParams.length
+  const numRows = cellValues.length
 
   for (let rowIndex = 0; rowIndex < numRows; rowIndex += 1) {
-    const cellValueRow = cellValues[rowIndex];
+    const cellValueRow = cellValues[rowIndex]
 
     for (let colIndex = 0; colIndex < numColumns; colIndex += 1) {
       if (columnParams[colIndex].calculateSum) {
-        const sum = sums[colIndex] || 0;
-        sums[colIndex] = sum + (parseDecimal(cellValueRow[colIndex]) || 0);
+        const sum = sums[colIndex] || 0
+        sums[colIndex] = sum + (parseDecimal(cellValueRow[colIndex]) || 0)
       }
     }
   }
 
-  return _.mapValues(sums, (d) => formatDecimal(roundDecimal(d, 1)));
-};
+  return _.mapValues(sums, (d) => formatDecimal(roundDecimal(d, 1)))
+}
 
-const appendCellRowWithValue = (
-  cellValues,
-  numColumns,
-  cellValue,
-  cellColIndex
-) => {
-  const newCellRow = _.fill(Array(numColumns), "");
-  newCellRow[cellColIndex] = cellValue;
-  return cellValues.concat([newCellRow]);
-};
+const appendCellRowWithValue = (cellValues, numColumns, cellValue, cellColIndex) => {
+  const newCellRow = _.fill(Array(numColumns), '')
+  newCellRow[cellColIndex] = cellValue
+  return cellValues.concat([newCellRow])
+}
 
-const changeCellValue = (
-  cellValues,
-  numColumns,
-  cellValue,
-  cellRowIndex,
-  cellColIndex
-) => {
-  const numRows = cellValues.length;
-  const newCellValues = [];
+const changeCellValue = (cellValues, numColumns, cellValue, cellRowIndex, cellColIndex) => {
+  const numRows = cellValues.length
+  const newCellValues = []
 
   for (let rowIndex = 0; rowIndex < numRows; rowIndex += 1) {
-    const cellValueRow = cellValues[rowIndex];
+    const cellValueRow = cellValues[rowIndex]
 
     if (rowIndex === cellRowIndex) {
-      const newCellValueRow = [];
+      const newCellValueRow = []
 
       for (let colIndex = 0; colIndex < numColumns; colIndex += 1) {
-        const newCellValue =
-          colIndex === cellColIndex ? cellValue : cellValueRow[colIndex];
-        newCellValueRow.push(newCellValue);
+        const newCellValue = colIndex === cellColIndex ? cellValue : cellValueRow[colIndex]
+        newCellValueRow.push(newCellValue)
       }
 
-      newCellValues.push(newCellValueRow);
+      newCellValues.push(newCellValueRow)
     } else {
-      newCellValues.push(cellValueRow);
+      newCellValues.push(cellValueRow)
     }
   }
 
-  return newCellValues;
-};
+  return newCellValues
+}
 
 const makeSumTitle = (sumTitleParam, tableFieldTranslations, lang) =>
   _.isEmpty(sumTitleParam)
-    ? new Translator(tableFieldTranslations).translate("sum-title", lang, "=")
-    : sumTitleParam[lang];
+    ? new Translator(tableFieldTranslations).translate('sum-title', lang, '=')
+    : sumTitleParam[lang]
 
 const hasTableRequiredError = (validationErrors) =>
-  _.some(validationErrors, (err) => err.error === "required");
+  _.some(validationErrors, (err) => err.error === 'required')
 
 const makeCellsWithErrors = (validationErrors) =>
-  _.reduce(
-    validationErrors,
-    (acc, err) => _.assign(acc, err.cellsWithErrors || {}),
-    {}
-  );
+  _.reduce(validationErrors, (acc, err) => _.assign(acc, err.cellsWithErrors || {}), {})

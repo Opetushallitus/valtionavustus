@@ -1,25 +1,25 @@
-import React from "react";
-import _ from "lodash";
-import Translator from "../Translator";
+import React from 'react'
+import _ from 'lodash'
+import Translator from '../Translator'
 
 export default class RemoveButton extends React.Component {
   render() {
-    const props = this.props;
-    const renderingParameters = this.props.renderingParameters;
+    const props = this.props
+    const renderingParameters = this.props.renderingParameters
     const mustNotBeRemoved = _.isObject(renderingParameters)
       ? renderingParameters.rowMustNotBeRemoved
-      : false;
+      : false
     const removalCallback = function (event) {
-      event.preventDefault();
+      event.preventDefault()
       if (renderingParameters && !props.disabled) {
-        renderingParameters.removeMe();
+        renderingParameters.removeMe()
       }
-    };
-    const removeAltText = new Translator(props.translations["misc"]).translate(
-      "remove",
+    }
+    const removeAltText = new Translator(props.translations['misc']).translate(
+      'remove',
       props.lang,
-      "POISTA"
-    );
+      'POISTA'
+    )
     return (
       <button
         type="button"
@@ -30,6 +30,6 @@ export default class RemoveButton extends React.Component {
         onClick={removalCallback}
         disabled={props.disabled || mustNotBeRemoved}
       />
-    );
+    )
   }
 }

@@ -1,15 +1,15 @@
-import React from "react";
-import { VaCodeValue } from "../types";
-import AutoCompleteCodeValue from "./AutoCompleteCodeValue";
-import { IconAdd, IconRemove } from "../koodienhallinta/IconButton";
+import React from 'react'
+import { VaCodeValue } from '../types'
+import AutoCompleteCodeValue from './AutoCompleteCodeValue'
+import { IconAdd, IconRemove } from '../koodienhallinta/IconButton'
 
 export interface ProjectSelectorProps {
-  updateValue: (option: VaCodeValue | null) => void;
-  codeOptions: VaCodeValue[];
-  selectedValue: VaCodeValue | "";
-  disabled: boolean;
-  addRow?: () => void;
-  removeRow?: () => void;
+  updateValue: (option: VaCodeValue | null) => void
+  codeOptions: VaCodeValue[]
+  selectedValue: VaCodeValue | ''
+  disabled: boolean
+  addRow?: () => void
+  removeRow?: () => void
 }
 
 export default function ProjectSelector({
@@ -22,14 +22,12 @@ export default function ProjectSelector({
 }: ProjectSelectorProps) {
   return (
     <div
-      data-test-id={`projekti-valitsin-${
-        selectedValue ? selectedValue.code : "initial"
-      }`}
+      data-test-id={`projekti-valitsin-${selectedValue ? selectedValue.code : 'initial'}`}
       className="projekti-valitsin"
     >
       <AutoCompleteCodeValue
         codeType="project-id"
-        codeOptions={codeOptions.filter((k) => k["value-type"] === "project")}
+        codeOptions={codeOptions.filter((k) => k['value-type'] === 'project')}
         selectedValue={selectedValue}
         disabled={disabled}
         updateValue={updateValue}
@@ -37,9 +35,7 @@ export default function ProjectSelector({
       {addRow && (
         <button
           disabled={disabled}
-          data-test-id={`lisaa-projekti-${
-            selectedValue ? selectedValue.code : "initial"
-          }`}
+          data-test-id={`lisaa-projekti-${selectedValue ? selectedValue.code : 'initial'}`}
           className="lisaa-projekti projekti-nappula"
           onClick={addRow}
         >
@@ -56,5 +52,5 @@ export default function ProjectSelector({
         </button>
       )}
     </div>
-  );
+  )
 }

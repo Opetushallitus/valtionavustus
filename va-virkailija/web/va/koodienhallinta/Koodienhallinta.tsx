@@ -1,9 +1,9 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
+import React from 'react'
+import { Outlet } from 'react-router-dom'
 
-import { Tabs } from "./Tabs";
+import { Tabs } from './Tabs'
 
-import "./Koodienhallinta.less";
+import './Koodienhallinta.less'
 
 export const Koodienhallinta = () => {
   return (
@@ -13,5 +13,5 @@ export const Koodienhallinta = () => {
         <Outlet />
       </div>
     </div>
-  );
-};
+  )
+}

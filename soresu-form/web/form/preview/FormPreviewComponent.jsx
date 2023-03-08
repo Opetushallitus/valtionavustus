@@ -1,25 +1,25 @@
-import React from "react";
-import ComponentFactory from "../ComponentFactory";
-import BasicValue from "./BasicValue";
-import TextAreaValue from "./TextAreaValue";
-import MoneyValue from "./MoneyValue";
-import IntegerValue from "./IntegerValue";
-import DecimalValue from "./DecimalValue";
-import OptionValue from "./OptionValue";
-import MultipleOptionValue from "./MultipleOptionValue";
-import AttachmentPreview from "./AttachmentPreview";
-import TableValue from "./TableValue";
+import React from 'react'
+import ComponentFactory from '../ComponentFactory'
+import BasicValue from './BasicValue'
+import TextAreaValue from './TextAreaValue'
+import MoneyValue from './MoneyValue'
+import IntegerValue from './IntegerValue'
+import DecimalValue from './DecimalValue'
+import OptionValue from './OptionValue'
+import MultipleOptionValue from './MultipleOptionValue'
+import AttachmentPreview from './AttachmentPreview'
+import TableValue from './TableValue'
 import {
   TextFieldPropertyMapper,
   OptionFieldPropertyMapper,
   MultipleOptionFieldOnChangePropertyMapper,
   AttachmentDisplayPropertyMapper,
-} from "../component/PropertyMapper";
-import TableValuePropertyMapper from "./TableValuePropertyMapper";
+} from '../component/PropertyMapper'
+import TableValuePropertyMapper from './TableValuePropertyMapper'
 
 export default class FormPreviewComponent extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     const fieldTypeMapping = {
       textField: BasicValue,
       textArea: TextAreaValue,
@@ -39,7 +39,7 @@ export default class FormPreviewComponent extends React.Component {
       checkboxButton: MultipleOptionValue,
       namedAttachment: AttachmentPreview,
       tableField: TableValue,
-    };
+    }
 
     const fieldPropertyMapping = {
       textField: TextFieldPropertyMapper,
@@ -60,22 +60,22 @@ export default class FormPreviewComponent extends React.Component {
       checkboxButton: MultipleOptionFieldOnChangePropertyMapper,
       namedAttachment: AttachmentDisplayPropertyMapper,
       tableField: TableValuePropertyMapper,
-    };
+    }
 
     this.componentFactory = new ComponentFactory({
       fieldTypeMapping: fieldTypeMapping,
       fieldPropertyMapperMapping: fieldPropertyMapping,
-    });
+    })
   }
 
   render() {
-    const fieldType = this.props.fieldType;
-    const controller = this.props.controller;
+    const fieldType = this.props.fieldType
+    const controller = this.props.controller
 
     if (fieldType in controller.getCustomPreviewComponentTypeMapping()) {
-      return controller.createCustomPreviewComponent(this.props);
+      return controller.createCustomPreviewComponent(this.props)
     } else {
-      return this.componentFactory.createComponent(this.props);
+      return this.componentFactory.createComponent(this.props)
     }
   }
 }

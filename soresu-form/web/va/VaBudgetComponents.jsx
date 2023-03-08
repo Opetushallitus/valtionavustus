@@ -1,21 +1,21 @@
-import React from "react";
-import _ from "lodash";
-import ClassNames from "classnames";
-import LocalizedString from "soresu-form/web/form/component/LocalizedString.tsx";
-import HelpTooltip from "soresu-form/web/form/component/HelpTooltip";
-import { percentageOf, roundDecimal, formatDecimal } from "../MathUtil";
-import Translator from "soresu-form/web/form/Translator";
+import React from 'react'
+import _ from 'lodash'
+import ClassNames from 'classnames'
+import LocalizedString from 'soresu-form/web/form/component/LocalizedString.tsx'
+import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip'
+import { percentageOf, roundDecimal, formatDecimal } from '../MathUtil'
+import Translator from 'soresu-form/web/form/Translator'
 
 export default class VaBudgetElement extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
   }
 
   render() {
-    const children = this.props.children;
-    const htmlId = this.props.htmlId;
+    const children = this.props.children
+    const htmlId = this.props.htmlId
 
-    return this.html(htmlId, children);
+    return this.html(htmlId, children)
   }
 
   html(htmlId, children) {
@@ -23,7 +23,7 @@ export default class VaBudgetElement extends React.Component {
       <fieldset className="va-budget" id={htmlId}>
         {children}
       </fieldset>
-    );
+    )
   }
 }
 
@@ -57,23 +57,19 @@ export class SummingBudgetElement extends React.Component {
             </th>
           </tr>
         </thead>
-      );
+      )
     }
-    return undefined;
+    return undefined
   }
 
   render() {
-    const { field, children, htmlId } = this.props;
-    const sum = field.sum;
-    const classNames = ClassNames({ required: field.required });
+    const { field, children, htmlId } = this.props
+    const sum = field.sum
+    const classNames = ClassNames({ required: field.required })
     return (
       <table id={htmlId} className="summing-table">
         <caption className={!_.isEmpty(classNames) ? classNames : undefined}>
-          <LocalizedString
-            translations={field}
-            translationKey="label"
-            lang={this.props.lang}
-          />
+          <LocalizedString translations={field} translationKey="label" lang={this.props.lang} />
         </caption>
         <colgroup>
           <col className="label-column" />
@@ -97,109 +93,92 @@ export class SummingBudgetElement extends React.Component {
           </tr>
         </tfoot>
       </table>
-    );
+    )
   }
 }
 
 export class BudgetItemElement extends React.Component {
   constructor(props) {
-    super(props);
-    this._bind("helpText");
+    super(props)
+    this._bind('helpText')
   }
 
   _bind(...methods) {
-    methods.forEach((method) => (this[method] = this[method].bind(this)));
+    methods.forEach((method) => (this[method] = this[method].bind(this)))
   }
 
   helpText() {
     if (this.props.field.helpText) {
-      return (
-        <HelpTooltip
-          content={this.props.field.helpText}
-          lang={this.props.lang}
-        />
-      );
+      return <HelpTooltip content={this.props.field.helpText} lang={this.props.lang} />
     }
-    return undefined;
+    return undefined
   }
 
   render() {
-    const { field, children, htmlId } = this.props;
-    const descriptionComponent = children[0];
-    const amountComponent = children[1];
-    const labelClassName = ClassNames("label-column", {
+    const { field, children, htmlId } = this.props
+    const descriptionComponent = children[0]
+    const amountComponent = children[1]
+    const labelClassName = ClassNames('label-column', {
       disabled: this.props.disabled,
-    });
+    })
     return (
       <tr id={htmlId} className="budget-item">
         <td className={labelClassName}>
-          <LocalizedString
-            translations={field}
-            translationKey="label"
-            lang={this.props.lang}
-          />
+          <LocalizedString translations={field} translationKey="label" lang={this.props.lang} />
           {this.helpText()}
         </td>
         <td>{descriptionComponent}</td>
         <td className="amount-column">{amountComponent}</td>
       </tr>
-    );
+    )
   }
 }
 
 export class BudgetSummaryElement extends React.Component {
   constructor(props) {
-    super(props);
-    this.miscTranslator = new Translator(props.translations["misc"]);
-    this.showSelfFinancingField = props.showSelfFinancingField;
+    super(props)
+    this.miscTranslator = new Translator(props.translations['misc'])
+    this.showSelfFinancingField = props.showSelfFinancingField
   }
 
   render() {
-    const htmlId = this.props.htmlId;
-    const translations = this.props.translations.form.budget;
-    const lang = this.props.lang;
-    const checkNumbersMessage = this.miscTranslator.translate(
-      "check-numbers",
-      lang,
-      "VIRHE"
-    );
-    const totalNeeded = this.props.field.totalNeeded;
-    const financing = this.props.field.financing;
+    const htmlId = this.props.htmlId
+    const translations = this.props.translations.form.budget
+    const lang = this.props.lang
+    const checkNumbersMessage = this.miscTranslator.translate('check-numbers', lang, 'VIRHE')
+    const totalNeeded = this.props.field.totalNeeded
+    const financing = this.props.field.financing
 
     const selfFinancingField = _.find(
       this.props.children,
-      (child) => child.props.field.fieldType === "vaSelfFinancingField"
-    );
+      (child) => child.props.field.fieldType === 'vaSelfFinancingField'
+    )
 
-    const isFinancingResultANumber =
-      totalNeeded.isValid && financing.isSelfValueANumber;
-    const isFinancingResultValid = totalNeeded.isValid && financing.isValid;
+    const isFinancingResultANumber = totalNeeded.isValid && financing.isSelfValueANumber
+    const isFinancingResultValid = totalNeeded.isValid && financing.isValid
 
-    const selfFinancingPercentage = percentageOf(
-      financing.selfValue,
-      totalNeeded.value
-    );
+    const selfFinancingPercentage = percentageOf(financing.selfValue, totalNeeded.value)
     const selfFinancingPercentageFormatted = formatDecimal(
-      roundDecimal(selfFinancingPercentage, 1, "floor")
-    );
+      roundDecimal(selfFinancingPercentage, 1, 'floor')
+    )
     const ophFinancingPercentageFormatted = formatDecimal(
-      roundDecimal(100 - selfFinancingPercentage, 1, "ceil")
-    );
+      roundDecimal(100 - selfFinancingPercentage, 1, 'ceil')
+    )
 
-    const financingNeededClassNames = ClassNames("total-financing-amount", {
+    const financingNeededClassNames = ClassNames('total-financing-amount', {
       error: !totalNeeded.isValid,
-    });
-    const minSelfFinancingClassNames = ClassNames("min-self-financing", {
+    })
+    const minSelfFinancingClassNames = ClassNames('min-self-financing', {
       error: totalNeeded.isValid && !financing.isValid,
-    });
+    })
     const amountClassNames = ClassNames({
       money: isFinancingResultANumber,
       error: !isFinancingResultValid,
-    });
+    })
     const percentageClassNames = ClassNames({
       percentage: isFinancingResultANumber,
       error: !isFinancingResultValid,
-    });
+    })
 
     return (
       <section id={htmlId} className="budget-summary">
@@ -208,7 +187,7 @@ export class BudgetSummaryElement extends React.Component {
             translations={translations}
             translationKey="financingNeededTotal"
             lang={lang}
-          />{" "}
+          />{' '}
           <span className="money sum">{totalNeeded.value}</span>
         </h4>
         {selfFinancingField && (
@@ -217,11 +196,11 @@ export class BudgetSummaryElement extends React.Component {
               translations={translations}
               translationKey="minSelfFinancingNeeded"
               lang={lang}
-            />{" "}
+            />{' '}
             <span className="percentage">{financing.minSelfPercentage}</span>
             {totalNeeded.isValid && (
               <span>
-                {" "}
+                {' '}
                 (<span className="money">{financing.minSelfValue}</span>)
               </span>
             )}
@@ -246,9 +225,7 @@ export class BudgetSummaryElement extends React.Component {
                   <td className="amount-value-column self-financing-amount">
                     {(this.showSelfFinancingField && selfFinancingField) || (
                       <span className={amountClassNames}>
-                        {isFinancingResultANumber
-                          ? financing.selfValue
-                          : checkNumbersMessage}
+                        {isFinancingResultANumber ? financing.selfValue : checkNumbersMessage}
                       </span>
                     )}
                   </td>
@@ -263,9 +240,7 @@ export class BudgetSummaryElement extends React.Component {
                   </td>
                   <td className="amount-value-column oph-financing-amount">
                     <span className={amountClassNames}>
-                      {isFinancingResultANumber
-                        ? financing.ophValue
-                        : checkNumbersMessage}
+                      {isFinancingResultANumber ? financing.ophValue : checkNumbersMessage}
                     </span>
                   </td>
                 </tr>
@@ -316,6 +291,6 @@ export class BudgetSummaryElement extends React.Component {
           </div>
         </div>
       </section>
-    );
+    )
   }
 }

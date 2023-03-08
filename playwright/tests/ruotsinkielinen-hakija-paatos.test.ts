@@ -1,35 +1,25 @@
-import { svBudjettimuutoshakemusTest as svTest } from "../fixtures/swedishHakemusTest";
-import { HakijaPaatosPage } from "../pages/HakijaPaatosPage";
-import { expect, test } from "@playwright/test";
+import { svBudjettimuutoshakemusTest as svTest } from '../fixtures/swedishHakemusTest'
+import { HakijaPaatosPage } from '../pages/HakijaPaatosPage'
+import { expect, test } from '@playwright/test'
 import {
   getAcceptedPäätösEmails,
   getHakemusTokenAndRegisterNumber,
   waitUntilMinEmails,
-} from "../utils/emails";
-import { HAKIJA_URL } from "../utils/constants";
+} from '../utils/emails'
+import { HAKIJA_URL } from '../utils/constants'
 
-svTest.setTimeout(180000);
+svTest.setTimeout(180000)
 
 svTest(
-  "When avustushaku has been created and swedish hakemus has been submitted and approved",
-  async ({
-    page,
-    acceptedHakemus: { hakemusID, userKey },
-    answers,
-    avustushakuID,
-    hakuProps,
-  }) => {
-    await test.step("hakija gets an email in swedish", async () => {
-      const emails = await waitUntilMinEmails(
-        getAcceptedPäätösEmails,
-        1,
+  'When avustushaku has been created and swedish hakemus has been submitted and approved',
+  async ({ page, acceptedHakemus: { hakemusID, userKey }, answers, avustushakuID, hakuProps }) => {
+    await test.step('hakija gets an email in swedish', async () => {
+      const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
+      const email = emails[emails.length - 1]
+      const { token, 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(
         hakemusID
-      );
-      const email = emails[emails.length - 1];
-      const { token, "register-number": registerNumber } =
-        await getHakemusTokenAndRegisterNumber(hakemusID);
-      expect(email.formatted)
-        .toEqual(`${registerNumber} - ${answers.projectName}
+      )
+      expect(email.formatted).toEqual(`${registerNumber} - ${answers.projectName}
 
 ${hakuProps.avustushakuName} på svenska
 
@@ -58,36 +48,32 @@ Hagnäskajen 6
 PB 380, 00531 Helsingfors
 telefon 029 533 1000
 fornamn.efternamn@oph.fi
-`);
-    });
-    const hakijaPaatosPage = HakijaPaatosPage(page);
-    await test.step("hakija navigates to päätös", async () => {
-      await hakijaPaatosPage.navigate(hakemusID);
-    });
-    await test.step("päätös header title is in swedish", async () => {
-      await expect(hakijaPaatosPage.paatosHeaderTitle).toHaveText("Beslut");
-    });
-    await test.step("päätös header title is in swedish", async () => {
-      await expect(hakijaPaatosPage.paatosHeaderTitle).toHaveText("Beslut");
-    });
-    await test.step("päätös title is in swedish", async () => {
-      await expect(hakijaPaatosPage.paatosTitle).toHaveText("Beslut");
-    });
-    await test.step("päätös accepted title is in swedish", async () => {
+`)
+    })
+    const hakijaPaatosPage = HakijaPaatosPage(page)
+    await test.step('hakija navigates to päätös', async () => {
+      await hakijaPaatosPage.navigate(hakemusID)
+    })
+    await test.step('päätös header title is in swedish', async () => {
+      await expect(hakijaPaatosPage.paatosHeaderTitle).toHaveText('Beslut')
+    })
+    await test.step('päätös header title is in swedish', async () => {
+      await expect(hakijaPaatosPage.paatosHeaderTitle).toHaveText('Beslut')
+    })
+    await test.step('päätös title is in swedish', async () => {
+      await expect(hakijaPaatosPage.paatosTitle).toHaveText('Beslut')
+    })
+    await test.step('päätös accepted title is in swedish', async () => {
       await expect(hakijaPaatosPage.acceptedTitle).toHaveText(
-        "Utbildningsstyrelsen har beslutat att bevilja statsunderstöd till projektet"
-      );
-    });
-    await test.step("lisätietoja title is in swedish", async () => {
-      await expect(hakijaPaatosPage.lisatietojaTitle).toHaveText(
-        "Mer information"
-      );
-    });
-    await test.step("avustuslaji is in swedish", async () => {
-      await expect(hakijaPaatosPage.avustuslajiTitle).toHaveText(
-        "Typ av statsunderstöd"
-      );
-      await expect(hakijaPaatosPage.avustuslaji).toHaveText("Specialunderstöd");
-    });
+        'Utbildningsstyrelsen har beslutat att bevilja statsunderstöd till projektet'
+      )
+    })
+    await test.step('lisätietoja title is in swedish', async () => {
+      await expect(hakijaPaatosPage.lisatietojaTitle).toHaveText('Mer information')
+    })
+    await test.step('avustuslaji is in swedish', async () => {
+      await expect(hakijaPaatosPage.avustuslajiTitle).toHaveText('Typ av statsunderstöd')
+      await expect(hakijaPaatosPage.avustuslaji).toHaveText('Specialunderstöd')
+    })
   }
-);
+)

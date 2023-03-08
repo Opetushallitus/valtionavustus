@@ -1,23 +1,16 @@
 export default class TraineeDayEditFormController {
-  constructor(
-    onChange,
-    customComponentFactory,
-    avustushaku,
-    form,
-    hakemus,
-    allowEditing
-  ) {
-    this.onChange = onChange;
-    this.customComponentFactory = customComponentFactory;
-    this.avustushaku = avustushaku;
-    this.form = form;
-    this.hakemus = hakemus;
-    this.componentOnChangeListener = this.componentOnChangeListener.bind(this);
-    this.allowEditing = allowEditing;
+  constructor(onChange, customComponentFactory, avustushaku, form, hakemus, allowEditing) {
+    this.onChange = onChange
+    this.customComponentFactory = customComponentFactory
+    this.avustushaku = avustushaku
+    this.form = form
+    this.hakemus = hakemus
+    this.componentOnChangeListener = this.componentOnChangeListener.bind(this)
+    this.allowEditing = allowEditing
   }
 
   constructHtmlId(formContent, fieldId) {
-    return "trainee-day-edit-" + fieldId;
+    return 'trainee-day-edit-' + fieldId
   }
 
   getCustomComponentProperties() {
@@ -25,11 +18,11 @@ export default class TraineeDayEditFormController {
       avustushaku: this.avustushaku,
       originalHakemus: this.hakemus,
       allowEditing: this.allowEditing,
-    };
+    }
   }
 
   componentOnChangeListener(field, newValue) {
-    this.onChange(this.hakemus, field, newValue);
+    this.onChange(this.hakemus, field, newValue)
   }
 
   componentDidMount() {}
@@ -37,45 +30,41 @@ export default class TraineeDayEditFormController {
   initFieldValidation() {}
 
   isSaveDraftAllowed() {
-    return true;
+    return true
   }
 
   getCustomComponentTypeMapping() {
-    return this.customComponentFactory
-      ? this.customComponentFactory.fieldTypeMapping
-      : {};
+    return this.customComponentFactory ? this.customComponentFactory.fieldTypeMapping : {}
   }
 
   createCustomComponent(componentProps) {
     if (!this.customComponentFactory) {
-      throw new Error(
-        "To create a custom field, supply customComponentFactory to FormController"
-      );
+      throw new Error('To create a custom field, supply customComponentFactory to FormController')
     }
-    return this.customComponentFactory.createComponent(componentProps);
+    return this.customComponentFactory.createComponent(componentProps)
   }
 
   createAttachmentDownloadUrl(state, field) {
     return (
-      "/api/avustushaku/" +
+      '/api/avustushaku/' +
       this.avustushaku.id +
-      "/hakemus/" +
+      '/hakemus/' +
       this.hakemus.id +
-      "/attachments/" +
+      '/attachments/' +
       field.id
-    );
+    )
   }
 
   createAttachmentVersionDownloadUrl(field, attachmentVersion) {
     return (
-      "/api/avustushaku/" +
+      '/api/avustushaku/' +
       this.avustushaku.id +
-      "/hakemus/" +
+      '/hakemus/' +
       this.hakemus.id +
-      "/attachments/" +
+      '/attachments/' +
       field.id +
-      "?attachment-version=" +
+      '?attachment-version=' +
       attachmentVersion
-    );
+    )
   }
 }

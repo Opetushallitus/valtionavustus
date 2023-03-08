@@ -1,41 +1,41 @@
-import _ from "lodash";
+import _ from 'lodash'
 
 import {
   MultipleOptionFieldOnChangePropertyMapper,
   TextFieldPropertyMapper,
-} from "soresu-form/web/form/component/PropertyMapper.js";
+} from 'soresu-form/web/form/component/PropertyMapper.js'
 
 export class VaFocusAreasPropertyMapper {
   static map(props) {
-    const avustushaku = props.customProps.avustushaku;
-    const focusAreas = avustushaku.content["focus-areas"];
-    let index = 0;
+    const avustushaku = props.customProps.avustushaku
+    const focusAreas = avustushaku.content['focus-areas']
+    let index = 0
     const options = _.map(focusAreas.items, (item) => {
-      const value = "focus-area-" + index;
-      index++;
-      return { value: value, label: item };
-    });
-    const commonProps = MultipleOptionFieldOnChangePropertyMapper.map(props);
-    const extendedProps = _.extend(commonProps, { options: options });
+      const value = 'focus-area-' + index
+      index++
+      return { value: value, label: item }
+    })
+    const commonProps = MultipleOptionFieldOnChangePropertyMapper.map(props)
+    const extendedProps = _.extend(commonProps, { options: options })
     if (!extendedProps.field.label) {
-      extendedProps.field.label = focusAreas.label;
+      extendedProps.field.label = focusAreas.label
     }
-    return extendedProps;
+    return extendedProps
   }
 }
 
 export class BudgetSummaryPropertyMapper {
   static map(props) {
-    return _.assign({}, props, { showSelfFinancingField: true });
+    return _.assign({}, props, { showSelfFinancingField: true })
   }
 }
 
 export class SelfFinancingPropertyMapper {
   static map(props) {
-    const mapped = TextFieldPropertyMapper.map(props);
+    const mapped = TextFieldPropertyMapper.map(props)
     mapped.renderingParameters = _.assign({}, mapped.renderingParameters, {
       hideLabels: true,
-    });
-    return mapped;
+    })
+    return mapped
   }
 }

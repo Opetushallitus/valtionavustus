@@ -1,7 +1,7 @@
-import BasicTextField from "./BasicTextField";
+import BasicTextField from './BasicTextField'
 
 export default class MoneyTextField extends BasicTextField<{}> {
   baseClassName() {
-    return "soresu-money-field";
+    return 'soresu-money-field'
   }
 }

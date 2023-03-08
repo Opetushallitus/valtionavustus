@@ -1,29 +1,27 @@
-import ComponentFactory from "soresu-form/web/form/ComponentFactory";
-import CheckboxButton from "soresu-form/web/form/component/CheckboxButton";
-import EmailTextField from "soresu-form/web/form/component/EmailTextField";
-import MoneyTextField from "soresu-form/web/form/component/MoneyTextField";
+import ComponentFactory from 'soresu-form/web/form/ComponentFactory'
+import CheckboxButton from 'soresu-form/web/form/component/CheckboxButton'
+import EmailTextField from 'soresu-form/web/form/component/EmailTextField'
+import MoneyTextField from 'soresu-form/web/form/component/MoneyTextField'
 import {
   TrimmingTextFieldPropertyMapper,
   FieldOnChangePropertyMapper,
-} from "soresu-form/web/form/component/PropertyMapper";
+} from 'soresu-form/web/form/component/PropertyMapper'
 
 import VaBudgetElement, {
   SummingBudgetElement,
   BudgetItemElement,
   BudgetSummaryElement,
-} from "./VaBudgetComponents";
+} from './VaBudgetComponents'
 
 import {
   VaFocusAreasPropertyMapper,
   BudgetSummaryPropertyMapper,
   SelfFinancingPropertyMapper,
-} from "./VaPropertyMapper";
+} from './VaPropertyMapper'
 
-import VaProjectDescription from "./VaProjectDescription";
+import VaProjectDescription from './VaProjectDescription'
 
-import VaTraineeDayCalculator, {
-  VaTraineeDayTotalCalculator,
-} from "./VaTraineeDayCalculator";
+import VaTraineeDayCalculator, { VaTraineeDayTotalCalculator } from './VaTraineeDayCalculator'
 
 export default class VaComponentFactory extends ComponentFactory {
   constructor() {
@@ -47,10 +45,10 @@ export default class VaComponentFactory extends ComponentFactory {
         vaSelfFinancingField: SelfFinancingPropertyMapper,
         vaTraineeDayCalculator: FieldOnChangePropertyMapper,
       },
-    });
+    })
   }
 
   getCustomComponentProperties(state: any) {
-    return { avustushaku: state.avustushaku };
+    return { avustushaku: state.avustushaku }
   }
 }

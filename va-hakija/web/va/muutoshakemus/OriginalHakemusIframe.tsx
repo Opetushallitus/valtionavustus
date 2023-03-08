@@ -1,33 +1,30 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react'
 
-import { useTranslations } from "soresu-form/web/va/i18n/TranslationContext";
+import { useTranslations } from 'soresu-form/web/va/i18n/TranslationContext'
 
 export type OriginalHakemusIframeProps = {
-  avustushakuId: number;
-  userKey: string;
-};
+  avustushakuId: number
+  userKey: string
+}
 
 export default function OriginalHakemusIframe({
   avustushakuId,
   userKey,
 }: OriginalHakemusIframeProps) {
-  const { t, lang } = useTranslations();
-  const iframeUrl = `/avustushaku/${avustushakuId}/nayta?hakemus=${userKey}&lang=${lang}&decision-version=true&preview=true&embedForMuutoshakemus=true`;
+  const { t, lang } = useTranslations()
+  const iframeUrl = `/avustushaku/${avustushakuId}/nayta?hakemus=${userKey}&lang=${lang}&decision-version=true&preview=true&embedForMuutoshakemus=true`
 
   // Beautiful solution to make the iframe the same height as its content
-  const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const [height, setHeight] = useState<number>(0);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null)
+  const [height, setHeight] = useState<number>(0)
   useEffect(() => {
     const interval = setInterval(() => {
       if (iframeRef?.current?.contentWindow) {
-        setHeight(
-          iframeRef.current.contentWindow.document.documentElement
-            .scrollHeight ?? 0
-        );
+        setHeight(iframeRef.current.contentWindow.document.documentElement.scrollHeight ?? 0)
       }
-    }, 500);
-    return () => clearInterval(interval);
-  }, [iframeRef]);
+    }, 500)
+    return () => clearInterval(interval)
+  }, [iframeRef])
 
   return (
     <>
@@ -38,9 +35,9 @@ export default function OriginalHakemusIframe({
         ref={iframeRef}
         width="100%"
         height={height}
-        style={{ border: "0" }}
+        style={{ border: '0' }}
         data-test-id="original-hakemus"
       />
     </>
-  );
+  )
 }

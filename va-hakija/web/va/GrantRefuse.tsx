@@ -1,56 +1,55 @@
-import React from "react";
+import React from 'react'
 
-import LocalizedString from "soresu-form/web/form/component/LocalizedString";
-import DateUtil from "soresu-form/web/DateUtil";
-import { BaseStateLoopState } from "soresu-form/web/form/types/Form";
+import LocalizedString from 'soresu-form/web/form/component/LocalizedString'
+import DateUtil from 'soresu-form/web/DateUtil'
+import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
 
 type GrantRefuseProps<T extends BaseStateLoopState<T>> = {
-  state: T;
-  isTokenValid: boolean;
-  onSubmit: (comment: string) => void;
-};
+  state: T
+  isTokenValid: boolean
+  onSubmit: (comment: string) => void
+}
 
 type GrantRefuseState = {
-  isChecked: boolean;
-  comment: string;
-};
+  isChecked: boolean
+  comment: string
+}
 
-export default class GrantRefuse<
-  T extends BaseStateLoopState<T>
-> extends React.Component<GrantRefuseProps<T>, GrantRefuseState> {
+export default class GrantRefuse<T extends BaseStateLoopState<T>> extends React.Component<
+  GrantRefuseProps<T>,
+  GrantRefuseState
+> {
   constructor(props: GrantRefuseProps<T>) {
-    super(props);
-    const refused = this.props.state.saveStatus.savedObject?.refused || false;
+    super(props)
+    const refused = this.props.state.saveStatus.savedObject?.refused || false
     const initialComment = refused
-      ? props.state.saveStatus.savedObject?.["refused-comment"] ?? ""
-      : "";
-    this.state = { isChecked: false, comment: initialComment };
-    this.onCheckedChange = this.onCheckedChange.bind(this);
-    this.onCommentChange = this.onCommentChange.bind(this);
-    this.onSubmitClicked = this.onSubmitClicked.bind(this);
+      ? props.state.saveStatus.savedObject?.['refused-comment'] ?? ''
+      : ''
+    this.state = { isChecked: false, comment: initialComment }
+    this.onCheckedChange = this.onCheckedChange.bind(this)
+    this.onCommentChange = this.onCommentChange.bind(this)
+    this.onSubmitClicked = this.onSubmitClicked.bind(this)
   }
 
   onCheckedChange() {
-    this.setState({ isChecked: !this.state.isChecked });
+    this.setState({ isChecked: !this.state.isChecked })
   }
 
-  onCommentChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
-    this.setState({ comment: e.target.value });
+  onCommentChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    this.setState({ comment: e.target.value })
   }
 
   onSubmitClicked() {
-    this.props.onSubmit(this.state.comment);
+    this.props.onSubmit(this.state.comment)
   }
 
   render() {
-    const configuration = this.props.state.configuration;
-    const translations = configuration.translations;
-    const lang = configuration.lang;
-    const refused = this.props.state.saveStatus.savedObject?.refused || false;
-    const refusedAt = this.props.state.saveStatus.savedObject?.["refused-at"];
-    const isTokenValid = this.props.isTokenValid;
+    const configuration = this.props.state.configuration
+    const translations = configuration.translations
+    const lang = configuration.lang
+    const refused = this.props.state.saveStatus.savedObject?.refused || false
+    const refusedAt = this.props.state.saveStatus.savedObject?.['refused-at']
+    const isTokenValid = this.props.isTokenValid
 
     return (
       <section className="container-section">
@@ -72,11 +71,7 @@ export default class GrantRefuse<
               <span> {DateUtil.asDateTimeString(refusedAt)}</span>
             </div>
           )}
-          <div
-            className={
-              refused || !this.props.isTokenValid ? "disabled" : undefined
-            }
-          >
+          <div className={refused || !this.props.isTokenValid ? 'disabled' : undefined}>
             <p>
               <LocalizedString
                 translations={translations.form}
@@ -89,10 +84,7 @@ export default class GrantRefuse<
                 <label>
                   <span className="required soresu-key">Perustelut</span>
                 </label>
-                <textarea
-                  onChange={this.onCommentChange}
-                  value={this.state.comment}
-                />
+                <textarea onChange={this.onCommentChange} value={this.state.comment} />
               </div>
               <div>
                 <label className="checkbox-label">
@@ -110,9 +102,7 @@ export default class GrantRefuse<
               </div>
               <button
                 className="soresu-text-button"
-                disabled={
-                  !this.state.isChecked || this.state.comment.length === 0
-                }
+                disabled={!this.state.isChecked || this.state.comment.length === 0}
                 onClick={this.onSubmitClicked}
               >
                 <LocalizedString
@@ -134,6 +124,6 @@ export default class GrantRefuse<
           ) : null}
         </div>
       </section>
-    );
+    )
   }
 }

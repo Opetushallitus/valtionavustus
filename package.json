@@ -76,6 +76,7 @@
     "build": "webpack",
     "build-production": "NODE_ENV=production npm run build",
     "build-watch": "webpack --progress --watch",
-    "prettier-check-project": "prettier --check ."
+    "prettier-check-project": "prettier --check .",
+    "prettier-fix": "prettier --write ."
   }
 }

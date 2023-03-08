@@ -1,27 +1,23 @@
-import { Muutoshakemus } from "./Muutoshakemus";
-import React from "react";
-import { useHakemustenArviointiSelector } from "../hakemustenArviointi/arviointiStore";
-import { getLoadedState } from "../hakemustenArviointi/arviointiReducer";
-import { useHakemus } from "../hakemustenArviointi/useHakemus";
+import { Muutoshakemus } from './Muutoshakemus'
+import React from 'react'
+import { useHakemustenArviointiSelector } from '../hakemustenArviointi/arviointiStore'
+import { getLoadedState } from '../hakemustenArviointi/arviointiReducer'
+import { useHakemus } from '../hakemustenArviointi/useHakemus'
 
 const MuutoshakemusTabContent = () => {
-  const hakemus = useHakemus();
+  const hakemus = useHakemus()
   const { hakuData, userInfo } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)
-  );
-  const { avustushaku, environment } = hakuData;
-  const { muutoshakemukset, language } = hakemus;
-  const lang = language || "fi";
-  const muutoshakemusUrl = `${environment["hakija-server"].url[lang]}muutoshakemus?lang=${lang}&user-key=${hakemus["user-key"]}&avustushaku-id=${avustushaku.id}`;
+  )
+  const { avustushaku, environment } = hakuData
+  const { muutoshakemukset, language } = hakemus
+  const lang = language || 'fi'
+  const muutoshakemusUrl = `${environment['hakija-server'].url[lang]}muutoshakemus?lang=${lang}&user-key=${hakemus['user-key']}&avustushaku-id=${avustushaku.id}`
   return (
-    <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
+    <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>
       {avustushaku.muutoshakukelpoinen && (
         <div className="muutoshakemus-link">
-          <a
-            href={muutoshakemusUrl}
-            target="_blank"
-            data-test-id="muutoshakemus-link"
-          >
+          <a href={muutoshakemusUrl} target="_blank" data-test-id="muutoshakemus-link">
             Linkki muutoshakemuslomakkeeseen
           </a>
         </div>
@@ -38,7 +34,7 @@ const MuutoshakemusTabContent = () => {
         <h2>Hankkeella ei ole muutoshakemuksia</h2>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default MuutoshakemusTabContent;
+export default MuutoshakemusTabContent

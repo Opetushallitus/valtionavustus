@@ -1,32 +1,27 @@
-import Immutable from "seamless-immutable";
-import { cloneDeep } from "lodash";
+import Immutable from 'seamless-immutable'
+import { cloneDeep } from 'lodash'
 
-import translations from "../../../../server/resources/public/translations.json";
-import VaBudgetCalculator from "soresu-form/web/va/VaBudgetCalculator";
-import VaSyntaxValidator from "soresu-form/web/va/VaSyntaxValidator";
-import {
-  Avustushaku,
-  Field,
-  Hakemus,
-  HakemusFormState,
-} from "soresu-form/web/va/types";
+import translations from '../../../../server/resources/public/translations.json'
+import VaBudgetCalculator from 'soresu-form/web/va/VaBudgetCalculator'
+import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
+import { Avustushaku, Field, Hakemus, HakemusFormState } from 'soresu-form/web/va/types'
 
 type InitialFakeFormState = {
-  avustushaku: Avustushaku;
-  formContent: any;
-  formOperations?: any;
-  hakemus: Hakemus;
-  attachments?: any;
-  savedHakemus?: any;
-};
+  avustushaku: Avustushaku
+  formContent: any
+  formOperations?: any
+  hakemus: Hakemus
+  attachments?: any
+  savedHakemus?: any
+}
 
 export default class FakeFormState {
   static resolveAttachmentsProperty(allAttachments: any, hakemus: Hakemus) {
     if (!allAttachments || !hakemus.id) {
-      return {};
+      return {}
     }
-    const attachmentsForId = allAttachments[hakemus.id.toString()];
-    return attachmentsForId ? attachmentsForId : {};
+    const attachmentsForId = allAttachments[hakemus.id.toString()]
+    return attachmentsForId ? attachmentsForId : {}
   }
 
   static createEditFormState(avustushaku: Avustushaku, formContent: Field[]) {
@@ -34,7 +29,7 @@ export default class FakeFormState {
       avustushaku,
       formContent,
       hakemus: { answers: [] } as unknown as Hakemus,
-    });
+    })
   }
 
   static createHakemusFormState({
@@ -46,26 +41,25 @@ export default class FakeFormState {
     savedHakemus,
   }: InitialFakeFormState): HakemusFormState {
     const getFixedSelfFinancingRatioOrNull = () => {
-      const ophShareFromHakemus = hakemus["budget-oph-share"];
-      const totalFromHakemus = hakemus["budget-total"];
+      const ophShareFromHakemus = hakemus['budget-oph-share']
+      const totalFromHakemus = hakemus['budget-total']
       return ophShareFromHakemus && totalFromHakemus
         ? {
             nominator: totalFromHakemus - ophShareFromHakemus,
             denominator: totalFromHakemus,
           }
-        : null;
-    };
+        : null
+    }
 
     const formState: HakemusFormState = {
       avustushaku: {
         content: {
-          "self-financing-percentage":
-            avustushaku.content["self-financing-percentage"],
+          'self-financing-percentage': avustushaku.content['self-financing-percentage'],
         },
       },
       configuration: {
         translations: Immutable(translations),
-        lang: "fi",
+        lang: 'fi',
         preview: true,
       },
       form: {
@@ -74,10 +68,7 @@ export default class FakeFormState {
       },
       saveStatus: {
         values: hakemus.answers,
-        attachments: FakeFormState.resolveAttachmentsProperty(
-          attachments,
-          hakemus
-        ),
+        attachments: FakeFormState.resolveAttachmentsProperty(attachments, hakemus),
         savedObject: savedHakemus,
       },
       changeRequests: hakemus.changeRequests,
@@ -90,14 +81,14 @@ export default class FakeFormState {
         changedAnswers: [],
         newAnswers: [],
       },
-    };
+    }
 
-    const budgetCalculator = new VaBudgetCalculator();
+    const budgetCalculator = new VaBudgetCalculator()
     budgetCalculator.deriveValuesForAllBudgetElementsByMutation(formState, {
       reportValidationErrors: true,
       fixedSelfFinancingRatio: getFixedSelfFinancingRatioOrNull(),
-    });
+    })
 
-    return formState;
+    return formState
   }
 }

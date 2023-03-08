@@ -1,6 +1,6 @@
-import _ from "lodash";
-import React from "react";
-import ClassNames from "classnames";
+import _ from 'lodash'
+import React from 'react'
+import ClassNames from 'classnames'
 
 export default class TableFieldUtil {
   static makeTable({
@@ -12,59 +12,56 @@ export default class TableFieldUtil {
     sumTitle,
     makeCaption,
     makeValueCell,
-    tableClassNames = "",
-    columnTitleCellClassNames = "",
-    rowTitleCellClassNames = "",
-    sumCellClassNames = "",
+    tableClassNames = '',
+    columnTitleCellClassNames = '',
+    rowTitleCellClassNames = '',
+    sumCellClassNames = '',
   }) {
-    const isGrowingTable = _.isEmpty(rowParams);
-    const usesSumCalculation = _.some(columnParams, (col) => col.calculateSum);
+    const isGrowingTable = _.isEmpty(rowParams)
+    const usesSumCalculation = _.some(columnParams, (col) => col.calculateSum)
 
     const makeTableClassNames = () =>
-      ClassNames("soresu-table", tableClassNames, {
-        "soresu-table--with-extra-left-space":
-          isGrowingTable && usesSumCalculation,
-      });
+      ClassNames('soresu-table', tableClassNames, {
+        'soresu-table--with-extra-left-space': isGrowingTable && usesSumCalculation,
+      })
 
     const makeColumnTitleCellClassNames = (col) =>
-      ClassNames("soresu-table__column-title-cell", columnTitleCellClassNames, {
+      ClassNames('soresu-table__column-title-cell', columnTitleCellClassNames, {
         required: col.required,
-        "soresu-table__column-title-cell--number": col.calculateSum,
-      });
+        'soresu-table__column-title-cell--number': col.calculateSum,
+      })
 
     const makeRowTitleCellClassNames = (row) =>
-      ClassNames("soresu-table__row-title-cell", rowTitleCellClassNames, {
+      ClassNames('soresu-table__row-title-cell', rowTitleCellClassNames, {
         required: row.required,
-      });
+      })
 
     const makeSumCellClassNames = (col) =>
-      ClassNames("soresu-table__sum-cell", sumCellClassNames, {
-        "soresu-table__sum-cell--number": col.calculateSum,
-      });
+      ClassNames('soresu-table__sum-cell', sumCellClassNames, {
+        'soresu-table__sum-cell--number': col.calculateSum,
+      })
 
     const makeCornerCell = () =>
       !isGrowingTable || usesSumCalculation ? (
         <th rowSpan={isGrowingTable ? cellValues.length + 2 : 1} />
-      ) : null;
+      ) : null
 
     const makeColumnTitleCell = (col, index) => (
-      <th className={makeColumnTitleCellClassNames(col)} key={"title-" + index}>
+      <th className={makeColumnTitleCellClassNames(col)} key={'title-' + index}>
         {col.title}
       </th>
-    );
+    )
 
     const makeRowTitleCell = (index) => {
-      const row = rowParams[index];
-      return row ? (
-        <th className={makeRowTitleCellClassNames(row)}>{row.title}</th>
-      ) : null;
-    };
+      const row = rowParams[index]
+      return row ? <th className={makeRowTitleCellClassNames(row)}>{row.title}</th> : null
+    }
 
     const makeColumnSumCell = (col, index) => (
-      <td className={makeSumCellClassNames(col)} key={"total-sum-" + index}>
+      <td className={makeSumCellClassNames(col)} key={'total-sum-' + index}>
         {col.calculateSum ? columnSums[index] : null}
       </td>
-    );
+    )
 
     return (
       <table id={htmlId} className={makeTableClassNames()}>
@@ -75,7 +72,7 @@ export default class TableFieldUtil {
             {_.map(columnParams, makeColumnTitleCell)}
           </tr>
           {_.map(cellValues, (cellValueRows, rowIndex) => (
-            <tr key={"row-" + rowIndex}>
+            <tr key={'row-' + rowIndex}>
               {makeRowTitleCell(rowIndex)}
               {_.map(cellValueRows, (cellValue, colIndex) =>
                 makeValueCell(cellValue, rowIndex, colIndex)
@@ -86,18 +83,16 @@ export default class TableFieldUtil {
         {usesSumCalculation && (
           <tfoot>
             <tr>
-              <th className={makeRowTitleCellClassNames({ required: false })}>
-                {sumTitle}
-              </th>
+              <th className={makeRowTitleCellClassNames({ required: false })}>{sumTitle}</th>
               {_.map(columnParams, makeColumnSumCell)}
             </tr>
           </tfoot>
         )}
       </table>
-    );
+    )
   }
 
   static parseRequiredParam(val) {
-    return _.isBoolean(val) ? val : true;
+    return _.isBoolean(val) ? val : true
   }
 }

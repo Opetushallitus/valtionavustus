@@ -1,12 +1,12 @@
-import BasicTextField, { BasicTextFieldProps } from "./BasicTextField";
+import BasicTextField, { BasicTextFieldProps } from './BasicTextField'
 
 interface BicTextFieldProps extends BasicTextFieldProps {}
 
 export default class BicTextField extends BasicTextField<BicTextFieldProps> {
-  inputType: string;
+  inputType: string
 
   constructor(props: BicTextFieldProps) {
-    super(props);
-    this.inputType = "text";
+    super(props)
+    this.inputType = 'text'
   }
 }

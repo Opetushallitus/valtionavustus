@@ -1,80 +1,63 @@
-import React from "react";
+import React from 'react'
 
-import DateUtil from "../../DateUtil";
-import LocalizedString from "./LocalizedString.tsx";
+import DateUtil from '../../DateUtil'
+import LocalizedString from './LocalizedString.tsx'
 
 export default class FormSaveStatus extends React.Component {
   render() {
-    const saveStatus = this.props.saveStatus;
-    const translations = this.props.translations.form;
-    const lang = this.props.lang;
-    const hakemusType = this.props.hakemusType;
+    const saveStatus = this.props.saveStatus
+    const translations = this.props.translations.form
+    const lang = this.props.lang
+    const hakemusType = this.props.hakemusType
 
     const notSentMessage = makeNotSentMessage({
       savedObject: saveStatus.savedObject,
       translations,
       lang,
       hakemusType,
-    });
-    const saveMessage = makeSaveMessage({ saveStatus, translations, lang });
+    })
+    const saveMessage = makeSaveMessage({ saveStatus, translations, lang })
 
     if (!saveMessage && !notSentMessage) {
-      return null;
+      return null
     }
 
     return (
       <div id="form-save-status">
         <div className="messages">
-          {notSentMessage && (
-            <div className="not-sent-message">{notSentMessage}</div>
-          )}
+          {notSentMessage && <div className="not-sent-message">{notSentMessage}</div>}
           {saveMessage && <div className="save-message">{saveMessage}</div>}
         </div>
       </div>
-    );
+    )
   }
 }
 
-const makeNotSentMessage = ({
-  savedObject,
-  translations,
-  lang,
-  hakemusType,
-}) => {
-  if (
-    savedObject &&
-    savedObject.status === "draft" &&
-    savedObject.version > 1
-  ) {
+const makeNotSentMessage = ({ savedObject, translations, lang, hakemusType }) => {
+  if (savedObject && savedObject.status === 'draft' && savedObject.version > 1) {
     return (
       <LocalizedString
         translations={translations}
-        translationKey={hakemusType + "-not-submitted"}
+        translationKey={hakemusType + '-not-submitted'}
         lang={lang}
       />
-    );
+    )
   }
 
-  return null;
-};
+  return null
+}
 
 const makeSaveMessage = ({ saveStatus, translations, lang }) => {
   if (saveStatus.saveInProgress) {
-    return (
-      <LocalizedString
-        translations={translations}
-        translationKey="saving"
-        lang={lang}
-      />
-    );
+    return <LocalizedString translations={translations} translationKey="saving" lang={lang} />
   }
 
-  const savedObject = saveStatus.savedObject;
+  const savedObject = saveStatus.savedObject
 
   if (
-    saveStatus.serverError === "" &&
+    saveStatus.serverError === '' &&
     savedObject &&
-    savedObject["created-at"] &&
+    savedObject['created-at'] &&
     savedObject.version > 1
   ) {
     return (
@@ -82,13 +65,12 @@ const makeSaveMessage = ({ saveStatus, translations, lang }) => {
         translations={translations}
         translationKey="saved"
         lang={lang}
-        keyValues={{ timestamp: formatTimestamp(savedObject["created-at"]) }}
+        keyValues={{ timestamp: formatTimestamp(savedObject['created-at']) }}
       />
-    );
+    )
   }
 
-  return null;
-};
+  return null
+}
 
-const formatTimestamp = (date) =>
-  `${DateUtil.asDateString(date)} ${DateUtil.asTimeString(date)}`;
+const formatTimestamp = (date) => `${DateUtil.asDateString(date)} ${DateUtil.asTimeString(date)}`

@@ -1,13 +1,13 @@
-import React from "react";
-import _ from "lodash";
+import React from 'react'
+import _ from 'lodash'
 
-import "./style/preview.less";
+import './style/preview.less'
 
-import FormPreviewComponent from "./preview/FormPreviewComponent.jsx";
-import InfoElement from "./component/InfoElement.jsx";
-import WrapperPreviewComponent from "./preview/wrapper/WrapperPreviewComponent.jsx";
-import InputValueStorage from "./InputValueStorage.js";
-import { dropFirstInfoFields } from "soresu-form/web/form/FormPreviewTS";
+import FormPreviewComponent from './preview/FormPreviewComponent.jsx'
+import InfoElement from './component/InfoElement.jsx'
+import WrapperPreviewComponent from './preview/wrapper/WrapperPreviewComponent.jsx'
+import InputValueStorage from './InputValueStorage.js'
+import { dropFirstInfoFields } from 'soresu-form/web/form/FormPreviewTS'
 
 export default class FormPreview extends React.Component {
   static renderField(
@@ -18,9 +18,9 @@ export default class FormPreview extends React.Component {
     field,
     renderingParameters
   ) {
-    const fields = state.form.content;
-    const htmlId = controller.constructHtmlId(fields, field.id);
-    const translations = state.configuration.translations;
+    const fields = state.form.content
+    const htmlId = controller.constructHtmlId(fields, field.id)
+    const translations = state.configuration.translations
     const fieldProperties = {
       fieldType: field.fieldType,
       lang: state.configuration.lang,
@@ -29,24 +29,18 @@ export default class FormPreview extends React.Component {
       field: field,
       controller: controller,
       translations: translations,
-    };
-    if (field.fieldClass === "formField") {
+    }
+    if (field.fieldClass === 'formField') {
       return FormPreview.createFormPreviewComponent(
         controller,
         state,
         field,
         fieldProperties,
         renderingParameters
-      );
-    } else if (field.fieldClass === "infoElement") {
-      return FormPreview.createInfoComponent(
-        state,
-        infoElementValues,
-        field,
-        fieldProperties,
-        true
-      );
-    } else if (field.fieldClass === "wrapperElement") {
+      )
+    } else if (field.fieldClass === 'infoElement') {
+      return FormPreview.createInfoComponent(state, infoElementValues, field, fieldProperties, true)
+    } else if (field.fieldClass === 'wrapperElement') {
       return FormPreview.createWrapperComponent(
         FormPreview.renderField,
         controller,
@@ -56,7 +50,7 @@ export default class FormPreview extends React.Component {
         field,
         fieldProperties,
         renderingParameters
-      );
+      )
     }
   }
 
@@ -67,11 +61,8 @@ export default class FormPreview extends React.Component {
     fieldProperties,
     renderingParameters
   ) {
-    const attachment = state.saveStatus.attachments[field.id];
-    const attachmentDownloadUrl = controller.createAttachmentDownloadUrl(
-      state,
-      field
-    );
+    const attachment = state.saveStatus.attachments[field.id]
+    const attachmentDownloadUrl = controller.createAttachmentDownloadUrl(state, field)
     return FormPreview._createFormPreviewComponent(
       controller,
       state,
@@ -80,7 +71,7 @@ export default class FormPreview extends React.Component {
       renderingParameters,
       attachment,
       attachmentDownloadUrl
-    );
+    )
   }
 
   static _createFormPreviewComponent(
@@ -92,14 +83,13 @@ export default class FormPreview extends React.Component {
     attachment,
     attachmentDownloadUrl
   ) {
-    const values = state.saveStatus.values;
-    const fields = state.form.content;
+    const values = state.saveStatus.values
+    const fields = state.form.content
     const existingInputValue =
-      renderingParameters &&
-      !_.isUndefined(renderingParameters.overridingInputValue)
+      renderingParameters && !_.isUndefined(renderingParameters.overridingInputValue)
         ? renderingParameters.overridingInputValue
-        : InputValueStorage.readValue(fields, values, field.id);
-    const value = _.isUndefined(existingInputValue) ? "" : existingInputValue;
+        : InputValueStorage.readValue(fields, values, field.id)
+    const value = _.isUndefined(existingInputValue) ? '' : existingInputValue
     return (
       <FormPreviewComponent
         {...fieldProperties}
@@ -109,7 +99,7 @@ export default class FormPreview extends React.Component {
         attachment={attachment}
         attachmentDownloadUrl={attachmentDownloadUrl}
       />
-    );
+    )
   }
 
   static createInfoComponent(
@@ -119,21 +109,11 @@ export default class FormPreview extends React.Component {
     fieldProperties,
     hideAccordingToPreviewParam
   ) {
-    if (
-      hideAccordingToPreviewParam &&
-      field.params &&
-      field.params.preview === false
-    ) {
-      return undefined;
+    if (hideAccordingToPreviewParam && field.params && field.params.preview === false) {
+      return undefined
     }
-    const values = state.saveStatus.values;
-    return (
-      <InfoElement
-        {...fieldProperties}
-        values={infoElementValues}
-        answersObject={values}
-      />
-    );
+    const values = state.saveStatus.values
+    return <InfoElement {...fieldProperties} values={infoElementValues} answersObject={values} />
   }
 
   static createWrapperComponent(
@@ -146,36 +126,30 @@ export default class FormPreview extends React.Component {
     fieldProperties,
     renderingParameters
   ) {
-    const values = state.saveStatus.values;
-    const fields = state.form.content;
+    const values = state.saveStatus.values
+    const fields = state.form.content
 
     const resolveChildRenderingParameters = (childIndex) => {
-      const result = _.isObject(renderingParameters)
-        ? _.cloneDeep(renderingParameters)
-        : {};
-      result.childIndex = childIndex;
-      const isFirstChild = childIndex === 0;
-      if (
-        field.params &&
-        field.params.showOnlyFirstLabels === true &&
-        !isFirstChild
-      ) {
-        result.hideLabels = true;
+      const result = _.isObject(renderingParameters) ? _.cloneDeep(renderingParameters) : {}
+      result.childIndex = childIndex
+      const isFirstChild = childIndex === 0
+      if (field.params && field.params.showOnlyFirstLabels === true && !isFirstChild) {
+        result.hideLabels = true
       }
       const existingInputValue = InputValueStorage.readValue(
         fields,
         values,
         field.children[childIndex].id
-      );
+      )
       if (_.isEmpty(existingInputValue)) {
-        result.valueIsEmpty = true;
+        result.valueIsEmpty = true
       }
-      return result;
-    };
+      return result
+    }
 
-    const children = [];
+    const children = []
     for (let i = 0; i < field.children.length; i++) {
-      const childRenderingParameters = resolveChildRenderingParameters(i);
+      const childRenderingParameters = resolveChildRenderingParameters(i)
       children.push(
         renderFieldFunction(
           controller,
@@ -185,7 +159,7 @@ export default class FormPreview extends React.Component {
           field.children[i],
           childRenderingParameters
         )
-      );
+      )
     }
 
     return (
@@ -198,31 +172,25 @@ export default class FormPreview extends React.Component {
       >
         {children}
       </WrapperPreviewComponent>
-    );
+    )
   }
 
   render() {
-    const controller = this.props.controller;
-    const infoElementValues = this.props.infoElementValues.content;
-    const state = this.props.state;
+    const controller = this.props.controller
+    const infoElementValues = this.props.infoElementValues.content
+    const state = this.props.state
     const fields = state.configuration.embedForMuutoshakemus
       ? dropFirstInfoFields(state.form.content)
-      : state.form.content;
+      : state.form.content
 
     const renderField = function (field) {
-      return FormPreview.renderField(
-        controller,
-        null,
-        state,
-        infoElementValues,
-        field
-      );
-    };
+      return FormPreview.renderField(controller, null, state, infoElementValues, field)
+    }
 
     return (
-      <div className="soresu-preview" data-test-id={"form-preview"}>
+      <div className="soresu-preview" data-test-id={'form-preview'}>
         {fields.map(renderField)}
       </div>
-    );
+    )
   }
 }

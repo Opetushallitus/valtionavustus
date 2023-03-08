@@ -1,26 +1,23 @@
-import React from "react";
+import React from 'react'
 
-import { FormikHook } from "soresu-form/web/va/types/muutoshakemus";
+import { FormikHook } from 'soresu-form/web/va/types/muutoshakemus'
 
-import { useTranslations } from "soresu-form/web/va/i18n/TranslationContext";
-import { TopBarNotification } from "./TopBarNotification";
+import { useTranslations } from 'soresu-form/web/va/i18n/TranslationContext'
+import { TopBarNotification } from './TopBarNotification'
 
 type TopBarProps = {
-  env: string;
-  f: FormikHook;
-};
+  env: string
+  f: FormikHook
+}
 
 export function TopBar({ env, f }: TopBarProps) {
-  const { t } = useTranslations();
+  const { t } = useTranslations()
   const isMuutoshakemus =
     f.values.haenKayttoajanPidennysta ||
     f.values.haenMuutostaTaloudenKayttosuunnitelmaan ||
-    f.values.haenSisaltomuutosta;
-  const buttonText = isMuutoshakemus
-    ? t.sendMuutoshakemus
-    : t.sendContactDetails;
-  const submitDisabled =
-    f.isSubmitting || f.isValidating || !(f.isValid && f.dirty);
+    f.values.haenSisaltomuutosta
+  const buttonText = isMuutoshakemus ? t.sendMuutoshakemus : t.sendContactDetails
+  const submitDisabled = f.isSubmitting || f.isValidating || !(f.isValid && f.dirty)
   return (
     <section id="topbar">
       <div id="top-container">
@@ -44,16 +41,12 @@ export function TopBar({ env, f }: TopBarProps) {
           </div>
         </div>
         <div className="muutospyynto-button-container">
-          <button
-            disabled={submitDisabled}
-            id="send-muutospyynto-button"
-            type="submit"
-          >
+          <button disabled={submitDisabled} id="send-muutospyynto-button" type="submit">
             {buttonText}
           </button>
           <TopBarNotification f={f} />
         </div>
       </div>
     </section>
-  );
+  )
 }

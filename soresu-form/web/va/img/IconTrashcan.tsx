@@ -1,10 +1,8 @@
-import React from "react";
+import React from 'react'
 
-export const IconTrashcan: React.FC<{ fill?: string }> = ({
-  fill = "#292929",
-}) => (
+export const IconTrashcan: React.FC<{ fill?: string }> = ({ fill = '#292929' }) => (
   <svg
-    data-test-id={"icon-trashcan"}
+    data-test-id={'icon-trashcan'}
     width="14"
     height="16"
     viewBox="0 0 14 16"
@@ -16,4 +14,4 @@ export const IconTrashcan: React.FC<{ fill?: string }> = ({
       fill={fill}
     />
   </svg>
-);
+)

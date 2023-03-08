@@ -1,62 +1,55 @@
-import React, { useEffect, useState } from "react";
-import { partition } from "lodash";
-import moment from "moment";
+import React, { useEffect, useState } from 'react'
+import { partition } from 'lodash'
+import moment from 'moment'
 
-import HttpUtil from "soresu-form/web/HttpUtil";
-import { fiShortFormat } from "soresu-form/web/va/i18n/dateformat";
-import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
-import {
-  HakemusV2WithEvaluation,
-  PaymentBatchV2,
-  PaymentV2,
-  VaCodeValue,
-} from "../types";
-import { LahtevatMaksatukset } from "./LahtevatMaksatukset";
+import { HakemusV2WithEvaluation, PaymentBatchV2, PaymentV2, VaCodeValue } from '../types'
+import { LahtevatMaksatukset } from './LahtevatMaksatukset'
 
-import "./Maksatukset.less";
-import { MaksatuksetTable } from "./MaksatuksetTable";
+import './Maksatukset.less'
+import { MaksatuksetTable } from './MaksatuksetTable'
 import {
   useHakujenHallintaDispatch,
   useHakujenHallintaSelector,
-} from "../hakujenHallinta/hakujenHallintaStore";
+} from '../hakujenHallinta/hakujenHallintaStore'
 import {
   completeManualSave,
   Avustushaku,
   startManuallySaving,
   selectSelectedAvustushaku,
   selectLoadedInitialData,
-} from "../hakujenHallinta/hakuReducer";
+} from '../hakujenHallinta/hakuReducer'
 
-type MaksatuksetTab = "outgoing" | "sent";
+type MaksatuksetTab = 'outgoing' | 'sent'
 
 export type Maksatus = PaymentV2 & {
-  hakemus?: HakemusV2WithEvaluation;
-};
+  hakemus?: HakemusV2WithEvaluation
+}
 
-const isSent = (p: Maksatus) =>
-  ["sent", "paid"].includes(p["paymentstatus-id"]);
-const today = moment().format(fiShortFormat);
-const isToday = (p: Maksatus) =>
-  moment(p["created-at"]).format(fiShortFormat) === today;
+const isSent = (p: Maksatus) => ['sent', 'paid'].includes(p['paymentstatus-id'])
+const today = moment().format(fiShortFormat)
+const isToday = (p: Maksatus) => moment(p['created-at']).format(fiShortFormat) === today
 
 export const Maksatukset = () => {
-  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
+  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku)
   const {
     codeOptions: codeValues,
     environment,
     helpTexts,
     userInfo,
-  } = useHakujenHallintaSelector(selectLoadedInitialData);
-  const [tab, setTab] = useState<MaksatuksetTab>("outgoing");
-  const [maksatukset, setMaksatukset] = useState<Maksatus[]>([]);
-  const [batches, setBatches] = useState<PaymentBatchV2[]>([]);
-  const [sentPayments, outgoingPayments] = partition(maksatukset, isSent);
-  const newSentPayments = sentPayments.filter(isToday).length;
+  } = useHakujenHallintaSelector(selectLoadedInitialData)
+  const [tab, setTab] = useState<MaksatuksetTab>('outgoing')
+  const [maksatukset, setMaksatukset] = useState<Maksatus[]>([])
+  const [batches, setBatches] = useState<PaymentBatchV2[]>([])
+  const [sentPayments, outgoingPayments] = partition(maksatukset, isSent)
+  const newSentPayments = sentPayments.filter(isToday).length
 
   useEffect(() => {
-    void refreshPayments();
-  }, [avustushaku.id]);
+    void refreshPayments()
+  }, [avustushaku.id])
 
   const refreshPayments = async () => {
     const [hakemukset, payments, batches] = await Promise.all([
@@ -64,61 +57,51 @@ export const Maksatukset = () => {
         `/api/v2/grants/${avustushaku.id}/applications/?template=with-evaluation`
       ),
       HttpUtil.get<PaymentV2[]>(`/api/v2/grants/${avustushaku.id}/payments/`),
-      HttpUtil.get<PaymentBatchV2[]>(
-        `/api/v2/grants/${avustushaku.id}/batches/`
-      ),
-    ]);
+      HttpUtil.get<PaymentBatchV2[]>(`/api/v2/grants/${avustushaku.id}/batches/`),
+    ])
     setMaksatukset(
       payments.map((p) => {
         const hakemus = hakemukset.find(
-          (h) =>
-            h.id === p["application-id"] &&
-            h.version === p["application-version"]
-        );
-        return { ...p, hakemus };
+          (h) => h.id === p['application-id'] && h.version === p['application-version']
+        )
+        return { ...p, hakemus }
       })
-    );
-    setBatches(batches);
-  };
+    )
+    setBatches(batches)
+  }
 
   return (
     <div className="maksatukset section-container">
       <AvustushakuInfo avustushaku={avustushaku} codeValues={codeValues} />
       <div className="maksatukset_tabs">
         <a
-          className={`maksatukset_tab ${tab === "outgoing" ? "active" : ""}`}
-          onClick={() => setTab("outgoing")}
+          className={`maksatukset_tab ${tab === 'outgoing' ? 'active' : ''}`}
+          onClick={() => setTab('outgoing')}
         >
           Lähtevät maksatukset
         </a>
         <a
-          className={`maksatukset_tab ${tab === "sent" ? "active" : ""}`}
-          onClick={() => setTab("sent")}
+          className={`maksatukset_tab ${tab === 'sent' ? 'active' : ''}`}
+          onClick={() => setTab('sent')}
         >
           Lähetetyt maksatukset
           {newSentPayments ? (
             <span className="maksatukset_badge">{newSentPayments} uutta</span>
           ) : (
-            ""
+            ''
           )}
         </a>
       </div>
-      {tab === "sent" ? (
+      {tab === 'sent' ? (
         <>
           <MaksatuseräTable
             batches={batches}
             payments={sentPayments}
             testId="maksatukset-table-batches"
           />
-          <MaksatuksetTable
-            payments={sentPayments}
-            testId="maksatukset-table-payments"
-          />
+          <MaksatuksetTable payments={sentPayments} testId="maksatukset-table-payments" />
           <div className="maksatukset_report">
-            <a
-              target="_blank"
-              href={`/api/v2/reports/tasmaytys/avustushaku/${avustushaku.id}`}
-            >
+            <a target="_blank" href={`/api/v2/reports/tasmaytys/avustushaku/${avustushaku.id}`}>
               Lataa täsmäytysraportti
             </a>
           </div>
@@ -132,7 +115,7 @@ export const Maksatukset = () => {
           userInfo={userInfo}
         />
       )}
-      {userInfo.privileges.includes("va-admin") && (
+      {userInfo.privileges.includes('va-admin') && (
         <AdminTools
           avustushaku={avustushaku}
           environment={environment}
@@ -140,15 +123,15 @@ export const Maksatukset = () => {
         />
       )}
     </div>
-  );
-};
+  )
+}
 
 const AvustushakuInfo = ({
   avustushaku,
   codeValues,
 }: {
-  avustushaku: Avustushaku;
-  codeValues: VaCodeValue[];
+  avustushaku: Avustushaku
+  codeValues: VaCodeValue[]
 }) => {
   return (
     <div className="maksatukset_avustushaku">
@@ -156,41 +139,33 @@ const AvustushakuInfo = ({
       <div className="maksatukset_avustushaku-info">
         <div>
           <label>Toimintayksikkö</label>
-          <div>
-            {
-              codeValues.find(
-                (c) => c.id === avustushaku["operational-unit-id"]
-              )?.code
-            }
-          </div>
+          <div>{codeValues.find((c) => c.id === avustushaku['operational-unit-id'])?.code}</div>
         </div>
         <div>
           <label>Toiminto</label>
-          <div>
-            {codeValues.find((c) => c.id === avustushaku["operation-id"])?.code}
-          </div>
+          <div>{codeValues.find((c) => c.id === avustushaku['operation-id'])?.code}</div>
         </div>
         <div>
           <label>Maksuliikemenotili</label>
-          <div>{avustushaku.content["transaction-account"]}</div>
+          <div>{avustushaku.content['transaction-account']}</div>
         </div>
         <div>
           <label>Tositelaji</label>
-          <div>{avustushaku.content["document-type"]}</div>
+          <div>{avustushaku.content['document-type']}</div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 type MaksatuseräTable = {
-  batches: PaymentBatchV2[];
-  payments: Maksatus[];
-  testId: string;
-};
+  batches: PaymentBatchV2[]
+  payments: Maksatus[]
+  testId: string
+}
 
 const MaksatuseräTable = ({ batches, payments, testId }: MaksatuseräTable) => {
-  let i = 0;
+  let i = 0
   return (
     <>
       <table className="maksatukset_payments-table" data-test-id={testId}>
@@ -212,79 +187,69 @@ const MaksatuseräTable = ({ batches, payments, testId }: MaksatuseräTable) => 
             <React.Fragment key={b.id}>
               {b.documents.map((d) => {
                 const batchPayments = payments.filter(
-                  (p) => p["batch-id"] === b.id && p.phase === d.phase
-                );
+                  (p) => p['batch-id'] === b.id && p.phase === d.phase
+                )
                 return (
-                  <tr key={d.phase} className={i % 2 === 0 ? "white" : "gray"}>
+                  <tr key={d.phase} className={i % 2 === 0 ? 'white' : 'gray'}>
                     <td>{d.phase + 1}. erä</td>
-                    <td>
-                      {batchPayments.reduce((a, c) => a + c["payment-sum"], 0)}
-                    </td>
+                    <td>{batchPayments.reduce((a, c) => a + c['payment-sum'], 0)}</td>
                     <td>{batchPayments.length}</td>
-                    <td>{moment(b["invoice-date"]).format(fiShortFormat)}</td>
-                    <td>{moment(b["due-date"]).format(fiShortFormat)}</td>
-                    <td>{moment(b["receipt-date"]).format(fiShortFormat)}</td>
-                    <td>{d["document-id"]}</td>
-                    <td>{d["presenter-email"]}</td>
-                    <td>{d["acceptor-email"]}</td>
+                    <td>{moment(b['invoice-date']).format(fiShortFormat)}</td>
+                    <td>{moment(b['due-date']).format(fiShortFormat)}</td>
+                    <td>{moment(b['receipt-date']).format(fiShortFormat)}</td>
+                    <td>{d['document-id']}</td>
+                    <td>{d['presenter-email']}</td>
+                    <td>{d['acceptor-email']}</td>
                   </tr>
-                );
+                )
               })}
             </React.Fragment>
           ))}
         </tbody>
       </table>
-      {batches.length === 0 && (
-        <div className="maksatukset_no-payments">Ei maksueriä</div>
-      )}
+      {batches.length === 0 && <div className="maksatukset_no-payments">Ei maksueriä</div>}
     </>
-  );
-};
+  )
+}
 
 type AdminToolsProps = {
-  avustushaku: Avustushaku;
-  environment: EnvironmentApiResponse;
-  refreshPayments: () => Promise<void>;
-};
+  avustushaku: Avustushaku
+  environment: EnvironmentApiResponse
+  refreshPayments: () => Promise<void>
+}
 
-const AdminTools = ({
-  avustushaku,
-  environment,
-  refreshPayments,
-}: AdminToolsProps) => {
-  const dispatch = useHakujenHallintaDispatch();
+const AdminTools = ({ avustushaku, environment, refreshPayments }: AdminToolsProps) => {
+  const dispatch = useHakujenHallintaDispatch()
   const onPoistaMaksatukset = async () => {
-    const really = window.confirm(
-      "Oletko varma, että haluat poistaa kaikki haun maksatukset?"
-    );
+    const really = window.confirm('Oletko varma, että haluat poistaa kaikki haun maksatukset?')
     if (really) {
-      dispatch(startManuallySaving());
-      await HttpUtil.delete(`/api/v2/grants/${avustushaku.id}/payments/`);
-      await refreshPayments();
-      dispatch(completeManualSave());
+      dispatch(startManuallySaving())
+      await HttpUtil.delete(`/api/v2/grants/${avustushaku.id}/payments/`)
+      await refreshPayments()
+      dispatch(completeManualSave())
     }
-  };
+  }
 
   const onLuoMaksatukset = async () => {
-    dispatch(startManuallySaving());
+    dispatch(startManuallySaving())
     await HttpUtil.post(`/api/v2/grants/${avustushaku.id}/payments/`, {
       phase: 0,
-    });
-    await refreshPayments();
-    dispatch(completeManualSave());
-  };
+    })
+    await refreshPayments()
+    dispatch(completeManualSave())
+  }
 
   return (
     <div>
       <hr className="spacer" />
       <h2>Pääkäyttäjän työkalut</h2>
       <button onClick={onLuoMaksatukset}>Luo maksatukset</button>
-      {environment.payments["delete-payments?"] && (
+      {environment.payments['delete-payments?'] && (
         <>
           &nbsp;
           <button onClick={onPoistaMaksatukset}>Poista maksatukset</button>
         </>
       )}
     </div>
-  );
-};
+  )
+}

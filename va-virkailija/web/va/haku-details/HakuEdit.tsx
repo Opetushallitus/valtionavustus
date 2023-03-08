@@ -1,29 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { Moment } from "moment";
+import React, { useEffect, useState } from 'react'
+import { Moment } from 'moment'
 
-import DateUtil from "soresu-form/web/DateUtil";
-import {
-  AVUSTUSHAKU_STATUSES,
-  AvustushakuStatus,
-  HelpTexts,
-} from "soresu-form/web/va/types";
+import DateUtil from 'soresu-form/web/DateUtil'
+import { AVUSTUSHAKU_STATUSES, AvustushakuStatus, HelpTexts } from 'soresu-form/web/va/types'
 
-import HakuStatus from "../avustushaku/HakuStatus";
-import { HakuRoles } from "./HakuRoles";
-import AutoCompleteCodeValue, { CodeType } from "./AutoCompleteCodeValue";
-import HelpTooltip from "../HelpTooltip";
-import WarningBanner from "../WarningBanner";
-import { VaCodeValue } from "../types";
-import { DateInput } from "./DateInput";
-import { Raportointivelvoitteet } from "./Raportointivelvoitteet";
-import { Lainsaadanto } from "./Lainsaadanto";
-import ProjectSelectors from "./ProjectSelectors";
+import HakuStatus from '../avustushaku/HakuStatus'
+import { HakuRoles } from './HakuRoles'
+import AutoCompleteCodeValue, { CodeType } from './AutoCompleteCodeValue'
+import HelpTooltip from '../HelpTooltip'
+import WarningBanner from '../WarningBanner'
+import { VaCodeValue } from '../types'
+import { DateInput } from './DateInput'
+import { Raportointivelvoitteet } from './Raportointivelvoitteet'
+import { Lainsaadanto } from './Lainsaadanto'
+import ProjectSelectors from './ProjectSelectors'
 
-import "../style/koodien-valinta.less";
+import '../style/koodien-valinta.less'
 import {
   useHakujenHallintaDispatch,
   useHakujenHallintaSelector,
-} from "../hakujenHallinta/hakujenHallintaStore";
+} from '../hakujenHallinta/hakujenHallintaStore'
 import {
   addFocusArea,
   addSelectionCriteria,
@@ -35,77 +31,66 @@ import {
   selectSelectedAvustushaku,
   startAutoSaveForAvustushaku,
   updateField,
-} from "../hakujenHallinta/hakuReducer";
-import { Talousarviotilit } from "./Talousarviotilit";
+} from '../hakujenHallinta/hakuReducer'
+import { Talousarviotilit } from './Talousarviotilit'
 
 export const HakuEdit = () => {
-  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
+  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku)
   const { codeOptions, lainsaadantoOptions, helpTexts, userInfo } =
-    useHakujenHallintaSelector(selectLoadedInitialData);
+    useHakujenHallintaSelector(selectLoadedInitialData)
   const loadingAvustushaku = useHakujenHallintaSelector(
     (state) => state.haku.saveStatus.loadingAvustushaku
-  );
-  const hasPayments = !!avustushaku.payments?.length;
-  const dispatch = useHakujenHallintaDispatch();
+  )
+  const hasPayments = !!avustushaku.payments?.length
+  const dispatch = useHakujenHallintaDispatch()
   const isAllPaymentsPaid =
-    hasPayments &&
-    !avustushaku.payments?.find((p) => p["paymentstatus-id"] !== "paid");
-  const userHasEditPrivilege = !!avustushaku.privileges?.["edit-haku"];
+    hasPayments && !avustushaku.payments?.find((p) => p['paymentstatus-id'] !== 'paid')
+  const userHasEditPrivilege = !!avustushaku.privileges?.['edit-haku']
   const allowAllHakuEdits =
     !loadingAvustushaku &&
     userHasEditPrivilege &&
-    (avustushaku.status === "new" || avustushaku.status === "draft");
+    (avustushaku.status === 'new' || avustushaku.status === 'draft')
   const allowNondisruptiveHakuEdits =
     !loadingAvustushaku &&
     userHasEditPrivilege &&
-    (allowAllHakuEdits ||
-      avustushaku.phase === "current" ||
-      avustushaku.phase === "upcoming");
-  const userHasEditMyHakuRolePrivilege =
-    !!avustushaku.privileges?.["edit-my-haku-role"];
-  const selectedValueOperation =
-    codeOptions.find((k) => k.id === avustushaku["operation-id"]) || "";
+    (allowAllHakuEdits || avustushaku.phase === 'current' || avustushaku.phase === 'upcoming')
+  const userHasEditMyHakuRolePrivilege = !!avustushaku.privileges?.['edit-my-haku-role']
+  const selectedValueOperation = codeOptions.find((k) => k.id === avustushaku['operation-id']) || ''
   const selectedValueOperationalUnit =
-    codeOptions.find((k) => k.id === avustushaku["operational-unit-id"]) || "";
+    codeOptions.find((k) => k.id === avustushaku['operational-unit-id']) || ''
 
-  const onChangeListener = (
-    target: EventTarget & HTMLElement,
-    value: string
-  ) => {
-    dispatch(updateField({ avustushaku, field: target, newValue: value }));
-  };
+  const onChangeListener = (target: EventTarget & HTMLElement, value: string) => {
+    dispatch(updateField({ avustushaku, field: target, newValue: value }))
+  }
 
   const onChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
-    onChangeListener(e.target, e.target.value);
-  };
+    onChangeListener(e.target, e.target.value)
+  }
 
   const onChangeDateInput = (id: string, date: Moment) => {
     dispatch(
       updateField({
         avustushaku,
         field: { id },
-        newValue: date.format("YYYY-MM-DD"),
+        newValue: date.format('YYYY-MM-DD'),
       })
-    );
-  };
+    )
+  }
 
   const onChangeTrimWs = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onChangeListener(e.target, e.target.value.replace(/\s/g, " "));
-  };
+    onChangeListener(e.target, e.target.value.replace(/\s/g, ' '))
+  }
 
   const mainHelp = {
-    __html: helpTexts["hakujen_hallinta__haun_tiedot___ohje"],
-  };
+    __html: helpTexts['hakujen_hallinta__haun_tiedot___ohje'],
+  }
 
   const updateCodeValue =
-    (id: CodeType, avustushaku: Avustushaku) =>
-    (option: VaCodeValue | null) => {
+    (id: CodeType, avustushaku: Avustushaku) => (option: VaCodeValue | null) => {
       if (option == null) {
-        dispatch(updateField({ avustushaku, field: { id }, newValue: null }));
+        dispatch(updateField({ avustushaku, field: { id }, newValue: null }))
       } else {
         dispatch(
           updateField({
@@ -113,9 +98,9 @@ export const HakuEdit = () => {
             field: { id },
             newValue: option.id,
           })
-        );
+        )
       }
-    };
+    }
   return (
     <div id="haku-edit">
       <div dangerouslySetInnerHTML={mainHelp}></div>
@@ -123,13 +108,10 @@ export const HakuEdit = () => {
         <WarningBanner>
           <div data-test-id="muutoshakukelvoton-warning">
             <p>
-              <b>Huom.!</b> Uusi muutoshakutoiminnallisuus ei ole käytössä tälle
-              avustushaulle.
+              <b>Huom.!</b> Uusi muutoshakutoiminnallisuus ei ole käytössä tälle avustushaulle.
             </p>
             <ul>
-              <li>
-                Avustushaun päätöksiin ei tule linkkiä uudelle muutoshakusivulle
-              </li>
+              <li>Avustushaun päätöksiin ei tule linkkiä uudelle muutoshakusivulle</li>
             </ul>
           </div>
         </WarningBanner>
@@ -153,7 +135,7 @@ export const HakuEdit = () => {
             <th>
               Haun nimi
               <HelpTooltip
-                content={helpTexts["hakujen_hallinta__haun_tiedot___haun_nimi"]}
+                content={helpTexts['hakujen_hallinta__haun_tiedot___haun_nimi']}
                 direction="left"
               />
             </th>
@@ -193,60 +175,46 @@ export const HakuEdit = () => {
           <h3 className="koodien-valinta-otsikko required">
             Toimintayksikkö
             <HelpTooltip
-              content={
-                helpTexts["hakujen_hallinta__haun_tiedot___toimintayksikkö"]
-              }
+              content={helpTexts['hakujen_hallinta__haun_tiedot___toimintayksikkö']}
               direction="left"
             />
           </h3>
           <AutoCompleteCodeValue
             codeType="operational-unit-id"
-            codeOptions={codeOptions.filter(
-              (k) => k["value-type"] === "operational-unit"
-            )}
+            codeOptions={codeOptions.filter((k) => k['value-type'] === 'operational-unit')}
             selectedValue={selectedValueOperationalUnit}
             disabled={isAllPaymentsPaid || loadingAvustushaku}
-            updateValue={updateCodeValue("operational-unit-id", avustushaku)}
+            updateValue={updateCodeValue('operational-unit-id', avustushaku)}
           />
         </div>
-        <div
-          className="koodien-valinta-elementti"
-          data-test-id="code-value-dropdown__project"
-        >
+        <div className="koodien-valinta-elementti" data-test-id="code-value-dropdown__project">
           <h3 className="koodien-valinta-otsikko required">
             Projekti
             <HelpTooltip
-              content={helpTexts["hakujen_hallinta__haun_tiedot___projekti"]}
+              content={helpTexts['hakujen_hallinta__haun_tiedot___projekti']}
               direction="left"
             />
           </h3>
           <ProjectSelectors
             avustushaku={avustushaku}
-            codeOptions={codeOptions.filter(
-              (k) => k["value-type"] === "project"
-            )}
+            codeOptions={codeOptions.filter((k) => k['value-type'] === 'project')}
             disabled={isAllPaymentsPaid || loadingAvustushaku}
           />
         </div>
-        <div
-          className="koodien-valinta-elementti"
-          data-test-id="code-value-dropdown__operation"
-        >
+        <div className="koodien-valinta-elementti" data-test-id="code-value-dropdown__operation">
           <h3 className="koodien-valinta-otsikko required">
             Toiminto
             <HelpTooltip
-              content={helpTexts["hakujen_hallinta__haun_tiedot___toiminto"]}
+              content={helpTexts['hakujen_hallinta__haun_tiedot___toiminto']}
               direction="left"
             />
           </h3>
           <AutoCompleteCodeValue
             codeType="operation-id"
-            codeOptions={codeOptions.filter(
-              (k) => k["value-type"] === "operation"
-            )}
+            codeOptions={codeOptions.filter((k) => k['value-type'] === 'operation')}
             selectedValue={selectedValueOperation}
             disabled={isAllPaymentsPaid || loadingAvustushaku}
-            updateValue={updateCodeValue("operation-id", avustushaku)}
+            updateValue={updateCodeValue('operation-id', avustushaku)}
           />
         </div>
       </div>
@@ -264,9 +232,7 @@ export const HakuEdit = () => {
               <h3>
                 {avustushaku.content.duration.label.fi}
                 <HelpTooltip
-                  content={
-                    helpTexts["hakujen_hallinta__haun_tiedot___hakuaika"]
-                  }
+                  content={helpTexts['hakujen_hallinta__haun_tiedot___hakuaika']}
                   direction="left"
                 />
               </h3>
@@ -288,7 +254,7 @@ export const HakuEdit = () => {
             </div>
           </div>
           <HakuType
-            hakuType={avustushaku["haku-type"]}
+            hakuType={avustushaku['haku-type']}
             disabled={!allowAllHakuEdits}
             onChange={onChange}
             helpTexts={helpTexts}
@@ -302,9 +268,7 @@ export const HakuEdit = () => {
         </div>
         <div>
           <div>
-            <h3>
-              Salli tietojen automaattinen siirtyminen www.oph.fi-sivustolle
-            </h3>
+            <h3>Salli tietojen automaattinen siirtyminen www.oph.fi-sivustolle</h3>
             <fieldset className="soresu-radiobutton-group">
               <span>
                 <input
@@ -315,9 +279,7 @@ export const HakuEdit = () => {
                   onChange={onChange}
                   checked={avustushaku.allow_visibility_in_external_system}
                 />
-                <label htmlFor="allow_visibility_in_external_system_true">
-                  Kyllä
-                </label>
+                <label htmlFor="allow_visibility_in_external_system_true">Kyllä</label>
               </span>
               <span>
                 <input
@@ -328,9 +290,7 @@ export const HakuEdit = () => {
                   onChange={onChange}
                   checked={!avustushaku.allow_visibility_in_external_system}
                 />
-                <label htmlFor="allow_visibility_in_external_system_false">
-                  Ei
-                </label>
+                <label htmlFor="allow_visibility_in_external_system_false">Ei</label>
               </span>
             </fieldset>
           </div>
@@ -347,7 +307,7 @@ export const HakuEdit = () => {
           <h3>
             Maksatus
             <HelpTooltip
-              content={helpTexts["hakujen_hallinta__haun_tiedot___maksatus"]}
+              content={helpTexts['hakujen_hallinta__haun_tiedot___maksatus']}
               direction="left"
             />
           </h3>
@@ -363,11 +323,7 @@ export const HakuEdit = () => {
               <h3>
                 Hakijan omarahoitusvaatimus
                 <HelpTooltip
-                  content={
-                    helpTexts[
-                      "hakujen_hallinta__haun_tiedot___hakijan_omarahoitusvaatimus"
-                    ]
-                  }
+                  content={helpTexts['hakujen_hallinta__haun_tiedot___hakijan_omarahoitusvaatimus']}
                 />
               </h3>
               <input
@@ -380,27 +336,23 @@ export const HakuEdit = () => {
                 maxLength={2}
                 onChange={onChange}
                 disabled={!allowAllHakuEdits}
-                value={avustushaku.content["self-financing-percentage"]}
+                value={avustushaku.content['self-financing-percentage']}
               />
               <span>%</span>
             </div>
           </div>
           <div
             title={
-              avustushaku.content.multiplemaksuera &&
-              allowAllHakuEdits &&
-              hasPayments
-                ? "Avustuksen maksatuksia on jo luotu, joten arvoja ei voi enää muuttaa"
+              avustushaku.content.multiplemaksuera && allowAllHakuEdits && hasPayments
+                ? 'Avustuksen maksatuksia on jo luotu, joten arvoja ei voi enää muuttaa'
                 : undefined
             }
           >
             <div
               className={
-                avustushaku.content.multiplemaksuera &&
-                allowAllHakuEdits &&
-                !hasPayments
+                avustushaku.content.multiplemaksuera && allowAllHakuEdits && !hasPayments
                   ? undefined
-                  : "haku-edit-disabled-form"
+                  : 'haku-edit-disabled-form'
               }
             >
               <div>
@@ -409,9 +361,7 @@ export const HakuEdit = () => {
                     type="radio"
                     name="payment-size-limit"
                     value="no-limit"
-                    checked={
-                      avustushaku.content["payment-size-limit"] === "no-limit"
-                    }
+                    checked={avustushaku.content['payment-size-limit'] === 'no-limit'}
                     className="haku-edit-radio-button"
                     onChange={onChange}
                     id="payment-size-limit-1"
@@ -423,40 +373,34 @@ export const HakuEdit = () => {
                     type="radio"
                     name="payment-size-limit"
                     value="fixed-limit"
-                    checked={
-                      avustushaku.content["payment-size-limit"] ===
-                      "fixed-limit"
-                    }
+                    checked={avustushaku.content['payment-size-limit'] === 'fixed-limit'}
                     className="haku-edit-radio-button"
                     onChange={onChange}
                     id="payment-size-limit-2"
                   />
-                  Maksetaan useammassa erässä, kun OPH:n avustus hankkeelle (ts.
-                  maksettava kokonaissumma) on vähintään
+                  Maksetaan useammassa erässä, kun OPH:n avustus hankkeelle (ts. maksettava
+                  kokonaissumma) on vähintään
                   <input
                     className="haku-edit-inline-input"
                     type="number"
                     id="payment-fixed-limit"
-                    disabled={
-                      avustushaku.content["payment-size-limit"] !==
-                      "fixed-limit"
-                    }
+                    disabled={avustushaku.content['payment-size-limit'] !== 'fixed-limit'}
                     onChange={onChange}
-                    value={avustushaku.content["payment-fixed-limit"] || ""}
+                    value={avustushaku.content['payment-fixed-limit'] || ''}
                   />
                   <span>€</span>
                 </label>
               </div>
               <div className="haku-edit-subrow">
                 <label className="haku-edit-field-label">
-                  Ensimmäisen erän osuus OPH:n avustuksesta hankkeelle (ts.
-                  maksettava kokonaissumma) on vähintään
+                  Ensimmäisen erän osuus OPH:n avustuksesta hankkeelle (ts. maksettava
+                  kokonaissumma) on vähintään
                   <input
                     type="number"
                     className="haku-edit-inline-input"
                     id="payment-min-first-batch"
                     onChange={onChange}
-                    value={avustushaku.content["payment-min-first-batch"] || ""}
+                    value={avustushaku.content['payment-min-first-batch'] || ''}
                   />
                   <span>%</span>
                 </label>
@@ -469,11 +413,7 @@ export const HakuEdit = () => {
                 <h3>
                   Maksuliikemenotili
                   <HelpTooltip
-                    content={
-                      helpTexts[
-                        "hakujen_hallinta__haun_tiedot___maksuliikennemenotili"
-                      ]
-                    }
+                    content={helpTexts['hakujen_hallinta__haun_tiedot___maksuliikennemenotili']}
                     direction="left"
                   />
                 </h3>
@@ -481,7 +421,7 @@ export const HakuEdit = () => {
                   id="transaction-account"
                   onChange={onChange}
                   name="transaction-account"
-                  value={avustushaku.content["transaction-account"] || ""}
+                  value={avustushaku.content['transaction-account'] || ''}
                 >
                   <option value=""></option>
                   <option value="5000">5000</option>
@@ -496,17 +436,13 @@ export const HakuEdit = () => {
               <label>
                 <h3>
                   Tositelaji
-                  <HelpTooltip
-                    content={
-                      helpTexts["hakujen_hallinta__haun_tiedot___tositelaji"]
-                    }
-                  />
+                  <HelpTooltip content={helpTexts['hakujen_hallinta__haun_tiedot___tositelaji']} />
                 </h3>
                 <select
                   id="document-type"
                   onChange={onChange}
                   name="document-type"
-                  value={avustushaku.content["document-type"] || ""}
+                  value={avustushaku.content['document-type'] || ''}
                 >
                   <option value=""></option>
                   <option value="XE">XE</option>
@@ -521,7 +457,7 @@ export const HakuEdit = () => {
             <h3 className="required">
               Määräraha
               <HelpTooltip
-                content={helpTexts["hakujen_hallinta__haun_tiedot___määräraha"]}
+                content={helpTexts['hakujen_hallinta__haun_tiedot___määräraha']}
                 direction="left"
               />
             </h3>
@@ -532,7 +468,7 @@ export const HakuEdit = () => {
                 disabled={!allowAllHakuEdits}
                 onChange={onChange}
                 required={true}
-                value={avustushaku.content["total-grant-size"] || ""}
+                value={avustushaku.content['total-grant-size'] || ''}
               />
             </div>
           </div>
@@ -540,11 +476,7 @@ export const HakuEdit = () => {
             <h3>
               Arvioitu maksupäivä
               <HelpTooltip
-                content={
-                  helpTexts[
-                    "hakujen_hallinta__haun_tiedot___arvioitu_maksupäivä"
-                  ]
-                }
+                content={helpTexts['hakujen_hallinta__haun_tiedot___arvioitu_maksupäivä']}
                 direction="left"
               />
             </h3>
@@ -589,21 +521,21 @@ export const HakuEdit = () => {
         helpTexts={helpTexts}
       />
     </div>
-  );
-};
+  )
+}
 
 type CreateHakuProps = {
-  avustushaku: Avustushaku;
-  helpTexts: HelpTexts;
-};
+  avustushaku: Avustushaku
+  helpTexts: HelpTexts
+}
 
 const CreateHaku = ({ avustushaku, helpTexts }: CreateHakuProps) => {
-  const dispatch = useHakujenHallintaDispatch();
+  const dispatch = useHakujenHallintaDispatch()
   function onClick(e: React.MouseEvent<HTMLAnchorElement>) {
-    dispatch(createHaku(avustushaku.id));
+    dispatch(createHaku(avustushaku.id))
     // @ts-ignore
-    e.target.blur();
-    e.preventDefault();
+    e.target.blur()
+    e.preventDefault()
   }
   return (
     <span>
@@ -611,39 +543,31 @@ const CreateHaku = ({ avustushaku, helpTexts }: CreateHakuProps) => {
         Kopioi uuden pohjaksi
       </a>
       <HelpTooltip
-        content={
-          helpTexts["hakujen_hallinta__haun_tiedot___kopioi_uuden_pohjaksi"]
-        }
+        content={helpTexts['hakujen_hallinta__haun_tiedot___kopioi_uuden_pohjaksi']}
         direction="right"
       />
     </span>
-  );
-};
+  )
+}
 
 type DateFieldProps = {
-  id: string;
-  disabled: boolean;
-  avustushakuId: number;
-  value: string | Date;
-  onBlur: (e: React.ChangeEvent<HTMLInputElement>) => void;
-};
+  id: string
+  disabled: boolean
+  avustushakuId: number
+  value: string | Date
+  onBlur: (e: React.ChangeEvent<HTMLInputElement>) => void
+}
 
 const asDateTimeString = (value: string | Date) => {
-  return DateUtil.asDateString(value) + " " + DateUtil.asTimeString(value);
-};
+  return DateUtil.asDateString(value) + ' ' + DateUtil.asTimeString(value)
+}
 
-const DateField = ({
-  id,
-  disabled,
-  avustushakuId,
-  value,
-  onBlur,
-}: DateFieldProps) => {
-  const [currentValue, setCurrentValue] = useState(asDateTimeString(value));
+const DateField = ({ id, disabled, avustushakuId, value, onBlur }: DateFieldProps) => {
+  const [currentValue, setCurrentValue] = useState(asDateTimeString(value))
 
   useEffect(() => {
-    setCurrentValue(asDateTimeString(value));
-  }, [avustushakuId, setCurrentValue]);
+    setCurrentValue(asDateTimeString(value))
+  }, [avustushakuId, setCurrentValue])
 
   return (
     <input
@@ -657,16 +581,16 @@ const DateField = ({
       value={currentValue}
       disabled={disabled}
     />
-  );
-};
+  )
+}
 
 type TextAreaProps = {
-  allowAllHakuEdits: boolean;
-  allowNondisruptiveHakuEdits: boolean;
-  avustushaku: Avustushaku;
-  helpTexts: HelpTexts;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-};
+  allowAllHakuEdits: boolean
+  allowNondisruptiveHakuEdits: boolean
+  avustushaku: Avustushaku
+  helpTexts: HelpTexts
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+}
 
 const SelectionCriteria = ({
   allowAllHakuEdits,
@@ -675,18 +599,18 @@ const SelectionCriteria = ({
   onChange,
   helpTexts,
 }: TextAreaProps) => {
-  const selectionCriteria = avustushaku.content["selection-criteria"];
-  const dispatch = useHakujenHallintaDispatch();
-  const criteriaItems = [];
+  const selectionCriteria = avustushaku.content['selection-criteria']
+  const dispatch = useHakujenHallintaDispatch()
+  const criteriaItems = []
   for (let index = 0; index < selectionCriteria.items.length; index++) {
-    const htmlId = "selection-criteria-" + index + "-";
+    const htmlId = 'selection-criteria-' + index + '-'
     criteriaItems.push(
       <tr key={index}>
         <td>
           <textarea
             onChange={onChange}
             rows={2}
-            id={htmlId + "fi"}
+            id={htmlId + 'fi'}
             value={selectionCriteria.items[index].fi}
             disabled={!allowNondisruptiveHakuEdits}
           />
@@ -695,7 +619,7 @@ const SelectionCriteria = ({
           <textarea
             onChange={onChange}
             rows={2}
-            id={htmlId + "sv"}
+            id={htmlId + 'sv'}
             value={selectionCriteria.items[index].sv}
             disabled={!allowNondisruptiveHakuEdits}
           />
@@ -705,8 +629,8 @@ const SelectionCriteria = ({
             type="button"
             className="remove"
             onClick={() => {
-              dispatch(removeSelectionCriteria(index));
-              dispatch(startAutoSaveForAvustushaku(avustushaku.id));
+              dispatch(removeSelectionCriteria(index))
+              dispatch(startAutoSaveForAvustushaku(avustushaku.id))
             }}
             title="Poista"
             tabIndex={-1}
@@ -714,7 +638,7 @@ const SelectionCriteria = ({
           />
         </td>
       </tr>
-    );
+    )
   }
 
   return (
@@ -724,9 +648,7 @@ const SelectionCriteria = ({
           <th>
             {selectionCriteria.label.fi}
             <HelpTooltip
-              content={
-                helpTexts["hakujen_hallinta__haun_tiedot___valintaperusteet"]
-              }
+              content={helpTexts['hakujen_hallinta__haun_tiedot___valintaperusteet']}
               direction="left"
             />
           </th>
@@ -741,8 +663,8 @@ const SelectionCriteria = ({
               type="button"
               disabled={!allowAllHakuEdits}
               onClick={() => {
-                dispatch(addSelectionCriteria());
-                dispatch(startAutoSaveForAvustushaku(avustushaku.id));
+                dispatch(addSelectionCriteria())
+                dispatch(startAutoSaveForAvustushaku(avustushaku.id))
               }}
               data-test-id="add-selection-criteria"
             >
@@ -752,8 +674,8 @@ const SelectionCriteria = ({
         </tr>
       </tfoot>
     </table>
-  );
-};
+  )
+}
 
 const FocusArea = ({
   allowAllHakuEdits,
@@ -762,18 +684,18 @@ const FocusArea = ({
   onChange,
   helpTexts,
 }: TextAreaProps) => {
-  const dispatch = useHakujenHallintaDispatch();
-  const focusAreas = avustushaku.content["focus-areas"];
-  const focusAreaItems = [];
+  const dispatch = useHakujenHallintaDispatch()
+  const focusAreas = avustushaku.content['focus-areas']
+  const focusAreaItems = []
   for (let index = 0; index < focusAreas.items.length; index++) {
-    const htmlId = "focus-area-" + index + "-";
+    const htmlId = 'focus-area-' + index + '-'
     focusAreaItems.push(
       <tr key={index}>
         <td>
           <textarea
             onChange={onChange}
             rows={3}
-            id={htmlId + "fi"}
+            id={htmlId + 'fi'}
             value={focusAreas.items[index].fi}
             disabled={!allowNondisruptiveHakuEdits}
           />
@@ -782,7 +704,7 @@ const FocusArea = ({
           <textarea
             onChange={onChange}
             rows={3}
-            id={htmlId + "sv"}
+            id={htmlId + 'sv'}
             value={focusAreas.items[index].sv}
             disabled={!allowNondisruptiveHakuEdits}
           />
@@ -792,8 +714,8 @@ const FocusArea = ({
             type="button"
             className="remove"
             onClick={() => {
-              dispatch(deleteFocusArea(index));
-              dispatch(startAutoSaveForAvustushaku(avustushaku.id));
+              dispatch(deleteFocusArea(index))
+              dispatch(startAutoSaveForAvustushaku(avustushaku.id))
             }}
             title="Poista"
             tabIndex={-1}
@@ -801,7 +723,7 @@ const FocusArea = ({
           />
         </td>
       </tr>
-    );
+    )
   }
 
   return (
@@ -811,9 +733,7 @@ const FocusArea = ({
           <th>
             {focusAreas.label.fi}
             <HelpTooltip
-              content={
-                helpTexts["hakujen_hallinta__haun_tiedot___painopistealueet"]
-              }
+              content={helpTexts['hakujen_hallinta__haun_tiedot___painopistealueet']}
               direction="left"
             />
           </th>
@@ -828,8 +748,8 @@ const FocusArea = ({
               type="button"
               disabled={!allowAllHakuEdits}
               onClick={() => {
-                dispatch(addFocusArea());
-                dispatch(startAutoSaveForAvustushaku(avustushaku.id));
+                dispatch(addFocusArea())
+                dispatch(startAutoSaveForAvustushaku(avustushaku.id))
               }}
             >
               Lisää uusi painopistealue
@@ -838,32 +758,27 @@ const FocusArea = ({
         </tr>
       </tfoot>
     </table>
-  );
-};
+  )
+}
 
 type HakuTypeProps = {
-  hakuType: string;
-  disabled: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  helpTexts: HelpTexts;
-};
+  hakuType: string
+  disabled: boolean
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  helpTexts: HelpTexts
+}
 
-const HakuType = ({
-  hakuType,
-  disabled,
-  onChange,
-  helpTexts,
-}: HakuTypeProps) => {
+const HakuType = ({ hakuType, disabled, onChange, helpTexts }: HakuTypeProps) => {
   const options = [
     {
-      htmlId: "set-haku-type-yleisavustus",
-      value: "yleisavustus",
-      label: "Yleisavustus",
+      htmlId: 'set-haku-type-yleisavustus',
+      value: 'yleisavustus',
+      label: 'Yleisavustus',
     },
     {
-      htmlId: "set-haku-type-eritysavustus",
-      value: "erityisavustus",
-      label: "Erityisavustus",
+      htmlId: 'set-haku-type-eritysavustus',
+      value: 'erityisavustus',
+      label: 'Erityisavustus',
     },
   ]
     .map((spec) => [
@@ -877,43 +792,38 @@ const HakuType = ({
         checked={spec.value === hakuType}
         disabled={disabled}
       />,
-      <label key={spec.htmlId + "-label"} htmlFor={spec.htmlId}>
+      <label key={spec.htmlId + '-label'} htmlFor={spec.htmlId}>
         {spec.label}
       </label>,
     ])
-    .flat();
+    .flat()
   return (
     <div id="set-haku-type">
       <h3>
         Avustuslaji
         <HelpTooltip
-          content={helpTexts["hakujen_hallinta__haun_tiedot___hakutyyppi"]}
+          content={helpTexts['hakujen_hallinta__haun_tiedot___hakutyyppi']}
           direction="left"
         />
       </h3>
       <fieldset className="soresu-radiobutton-group">{options}</fieldset>
     </div>
-  );
-};
+  )
+}
 
 type AcademySizeProps = {
-  value: boolean;
-  disabled: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  helpTexts: HelpTexts;
-};
+  value: boolean
+  disabled: boolean
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  helpTexts: HelpTexts
+}
 
-const AcademySize = ({
-  value,
-  disabled,
-  onChange,
-  helpTexts,
-}: AcademySizeProps) => {
-  const initialValue = value ? "true" : "false";
-  const values = ["false", "true"];
+const AcademySize = ({ value, disabled, onChange, helpTexts }: AcademySizeProps) => {
+  const initialValue = value ? 'true' : 'false'
+  const values = ['false', 'true']
 
   const options = values.map((optionValue) => {
-    const htmlId = "set-is_academysize-" + optionValue;
+    const htmlId = 'set-is_academysize-' + optionValue
     return (
       <span key={`span-${htmlId}`}>
         <input
@@ -926,46 +836,42 @@ const AcademySize = ({
           checked={optionValue === initialValue}
           disabled={disabled}
         />
-        <label key={htmlId + "-label"} htmlFor={htmlId}>
-          {optionValue === "true"
-            ? "Valmistelija lisää oppilaitoksen koon"
-            : "Ei käytössä"}
+        <label key={htmlId + '-label'} htmlFor={htmlId}>
+          {optionValue === 'true' ? 'Valmistelija lisää oppilaitoksen koon' : 'Ei käytössä'}
         </label>
       </span>
-    );
-  });
+    )
+  })
 
   return (
     <div id="set-academysize">
       <h3>
         Oppilaitoksen koko
         <HelpTooltip
-          content={
-            helpTexts["hakujen_hallinta__haun_tiedot___oppilaitoksen_koko"]
-          }
+          content={helpTexts['hakujen_hallinta__haun_tiedot___oppilaitoksen_koko']}
           direction="left"
         />
       </h3>
       <fieldset className="soresu-radiobutton-group">{options}</fieldset>
     </div>
-  );
-};
+  )
+}
 
 type MaksueratProps = {
-  value: boolean | undefined;
-  disabled: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-};
+  value: boolean | undefined
+  disabled: boolean
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+}
 
 const Maksuerat = ({ value, disabled, onChange }: MaksueratProps) => {
-  const multipleRahoitusalue = value ? "true" : "false";
+  const multipleRahoitusalue = value ? 'true' : 'false'
   const options = [
-    { label: "Yksi maksuerä", value: "false" },
-    { label: "Useampi maksuerä", value: "true" },
-  ];
+    { label: 'Yksi maksuerä', value: 'false' },
+    { label: 'Useampi maksuerä', value: 'true' },
+  ]
   const optionsHtml = options.map((option) => {
-    const optionValue = option.value;
-    const htmlId = "set-maksuera-" + optionValue;
+    const optionValue = option.value
+    const htmlId = 'set-maksuera-' + optionValue
     return (
       <span key={`span-${htmlId}`}>
         <input
@@ -978,27 +884,27 @@ const Maksuerat = ({ value, disabled, onChange }: MaksueratProps) => {
           checked={optionValue === multipleRahoitusalue}
           disabled={disabled}
         />
-        <label key={htmlId + "-label"} htmlFor={htmlId}>
+        <label key={htmlId + '-label'} htmlFor={htmlId}>
           {option.label}
         </label>
       </span>
-    );
-  });
+    )
+  })
 
   return (
     <div id="set-maksuerat">
       <fieldset className="soresu-radiobutton-group">{optionsHtml}</fieldset>
     </div>
-  );
-};
+  )
+}
 
 type SetStatusProps = {
-  currentStatus: AvustushakuStatus;
-  hakuIsValid: boolean;
-  helpTexts: HelpTexts;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  userHasEditPrivilege: boolean;
-};
+  currentStatus: AvustushakuStatus
+  hakuIsValid: boolean
+  helpTexts: HelpTexts
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  userHasEditPrivilege: boolean
+}
 
 const SetStatus = ({
   currentStatus,
@@ -1010,62 +916,55 @@ const SetStatus = ({
   const isDisabled = function (status: string) {
     return (
       !userHasEditPrivilege ||
-      (status === "deleted" && currentStatus !== "draft") ||
-      (status === "draft" && currentStatus === "resolved") ||
-      (status === "published" && !hakuIsValid) ||
-      (status === "resolved" && currentStatus !== "published")
-    );
-  };
+      (status === 'deleted' && currentStatus !== 'draft') ||
+      (status === 'draft' && currentStatus === 'resolved') ||
+      (status === 'published' && !hakuIsValid) ||
+      (status === 'resolved' && currentStatus !== 'published')
+    )
+  }
 
-  const statuses = AVUSTUSHAKU_STATUSES.filter((s) => s !== "new").map(
-    (status) => {
-      const htmlId = "set-status-" + status;
-      return (
-        <span key={`span-${htmlId}`}>
-          <input
-            id={htmlId}
-            type="radio"
-            key={htmlId}
-            name="status"
-            value={status}
-            onChange={onChange}
-            checked={status === currentStatus}
-            disabled={isDisabled(status)}
-          />
-          <label key={htmlId + "-label"} htmlFor={htmlId}>
-            <HakuStatus status={status} />
-          </label>
-        </span>
-      );
-    }
-  );
+  const statuses = AVUSTUSHAKU_STATUSES.filter((s) => s !== 'new').map((status) => {
+    const htmlId = 'set-status-' + status
+    return (
+      <span key={`span-${htmlId}`}>
+        <input
+          id={htmlId}
+          type="radio"
+          key={htmlId}
+          name="status"
+          value={status}
+          onChange={onChange}
+          checked={status === currentStatus}
+          disabled={isDisabled(status)}
+        />
+        <label key={htmlId + '-label'} htmlFor={htmlId}>
+          <HakuStatus status={status} />
+        </label>
+      </span>
+    )
+  })
 
   return (
     <div>
       <h3>
         Tila
-        <HelpTooltip
-          content={helpTexts["hakujen_hallinta__haun_tiedot___tila"]}
-          direction="left"
-        />
+        <HelpTooltip content={helpTexts['hakujen_hallinta__haun_tiedot___tila']} direction="left" />
       </h3>
       <fieldset className="soresu-radiobutton-group">{statuses}</fieldset>
     </div>
-  );
-};
+  )
+}
 
 type RegisterNumberProps = {
-  allowAllHakuEdits: boolean;
-  avustushaku: Avustushaku;
-  helpTexts: HelpTexts;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-};
+  allowAllHakuEdits: boolean
+  avustushaku: Avustushaku
+  helpTexts: HelpTexts
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+}
 
 const isValidRegisterNumber = (registerNumber: string) => {
-  return registerNumber == null
-    ? false
-    : /^\d{1,5}\/\d{2,6}$/.test(registerNumber);
-};
+  return registerNumber == null ? false : /^\d{1,5}\/\d{2,6}$/.test(registerNumber)
+}
 
 const RegisterNumber = ({
   avustushaku,
@@ -1073,25 +972,23 @@ const RegisterNumber = ({
   helpTexts,
   onChange,
 }: RegisterNumberProps) => {
-  const registerNumber = avustushaku["register-number"] || "";
-  const isRegisterNumberValid = isValidRegisterNumber(
-    avustushaku["register-number"]
-  );
-  const registerNumberClass = isRegisterNumberValid ? "" : "error";
-  const errorStyle = { paddingLeft: "5px" };
-  let errorString = <span></span>;
+  const registerNumber = avustushaku['register-number'] || ''
+  const isRegisterNumberValid = isValidRegisterNumber(avustushaku['register-number'])
+  const registerNumberClass = isRegisterNumberValid ? '' : 'error'
+  const errorStyle = { paddingLeft: '5px' }
+  let errorString = <span></span>
   if (!registerNumber) {
     errorString = (
       <span style={errorStyle} className="error">
         Asianumero on pakollinen tieto
       </span>
-    );
+    )
   } else if (!isRegisterNumberValid) {
     errorString = (
       <span style={errorStyle} className="error">
         Asianumero ei ole oikean muotoinen (esim. 340/2015)
       </span>
-    );
+    )
   }
 
   return (
@@ -1099,7 +996,7 @@ const RegisterNumber = ({
       <h3 className="required">
         Asianumero
         <HelpTooltip
-          content={helpTexts["hakujen_hallinta__haun_tiedot___asianumero"]}
+          content={helpTexts['hakujen_hallinta__haun_tiedot___asianumero']}
           direction="left"
         />
       </h3>
@@ -1115,13 +1012,13 @@ const RegisterNumber = ({
       />
       <div>{errorString}</div>
     </div>
-  );
-};
+  )
+}
 
 function checkIfAvustushakuIsValid(avustushaku: Avustushaku) {
   return (
-    isValidRegisterNumber(avustushaku["register-number"]) &&
-    avustushaku["hankkeen-alkamispaiva"] != null &&
-    avustushaku["hankkeen-paattymispaiva"] != null
-  );
+    isValidRegisterNumber(avustushaku['register-number']) &&
+    avustushaku['hankkeen-alkamispaiva'] != null &&
+    avustushaku['hankkeen-paattymispaiva'] != null
+  )
 }

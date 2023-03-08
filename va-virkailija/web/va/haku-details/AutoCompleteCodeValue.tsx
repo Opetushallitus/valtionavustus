@@ -1,40 +1,32 @@
-import React, { PropsWithChildren } from "react";
-import Select, {
-  SingleValueProps,
-  components,
-  OptionProps,
-  GroupBase,
-} from "react-select";
-import { VaCodeValue } from "../types";
+import React, { PropsWithChildren } from 'react'
+import Select, { SingleValueProps, components, OptionProps, GroupBase } from 'react-select'
+import { VaCodeValue } from '../types'
 
-export type CodeType = "operational-unit-id" | "project-id" | "operation-id";
+export type CodeType = 'operational-unit-id' | 'project-id' | 'operation-id'
 
 export interface AutoCompleteCodeValueProps {
-  codeType: CodeType;
-  updateValue: (option: VaCodeValue | null) => void;
-  codeOptions: VaCodeValue[];
-  selectedValue: VaCodeValue | "";
-  disabled: boolean;
+  codeType: CodeType
+  updateValue: (option: VaCodeValue | null) => void
+  codeOptions: VaCodeValue[]
+  selectedValue: VaCodeValue | ''
+  disabled: boolean
 }
 
-const colorDarkGray = "rgb(153, 146, 144)";
+const colorDarkGray = 'rgb(153, 146, 144)'
 
-export default function AutocompleteCodeValue(
-  props: AutoCompleteCodeValueProps
-) {
-  const { codeType, selectedValue, disabled, updateValue, codeOptions } = props;
+export default function AutocompleteCodeValue(props: AutoCompleteCodeValueProps) {
+  const { codeType, selectedValue, disabled, updateValue, codeOptions } = props
 
-  const getOptionValue = (option: VaCodeValue) =>
-    `${option.code} ${option["code-value"]}`;
+  const getOptionValue = (option: VaCodeValue) => `${option.code} ${option['code-value']}`
 
   return (
     <Select
       classNamePrefix={`code-value-dropdown-${codeType}`}
       getOptionLabel={getOptionValue}
       placeholder={
-        codeType === "project-id"
+        codeType === 'project-id'
           ? 'Syötä projektikoodi tai valitse "Ei projektikoodia"'
-          : "Valitse listasta"
+          : 'Valitse listasta'
       }
       options={codeOptions}
       onChange={updateValue}
@@ -42,7 +34,7 @@ export default function AutocompleteCodeValue(
       styles={{
         singleValue: (base, { data }) => ({
           ...base,
-          whiteSpace: "normal",
+          whiteSpace: 'normal',
           color: data.hidden ? colorDarkGray : base.color,
         }),
         option: (base, { data }) => ({
@@ -50,7 +42,7 @@ export default function AutocompleteCodeValue(
           color: data.hidden ? colorDarkGray : base.color,
         }),
       }}
-      noOptionsMessage={() => "Ei hakutuloksia"}
+      noOptionsMessage={() => 'Ei hakutuloksia'}
       getOptionValue={getOptionValue}
       isDisabled={disabled}
       value={selectedValue as VaCodeValue}
@@ -58,39 +50,37 @@ export default function AutocompleteCodeValue(
       isOptionDisabled={(option) => Boolean(option.hidden)}
       components={{ Option, SingleValue }}
     />
-  );
+  )
 }
 
 export function Option({
   children,
   ...props
 }: PropsWithChildren<OptionProps<VaCodeValue, false, GroupBase<VaCodeValue>>>) {
-  const { data, innerProps } = props;
+  const { data, innerProps } = props
   // add data-test-id to component
   const propsWithDataTestId = Object.assign({}, innerProps, {
-    "data-test-id": data.code,
-  });
+    'data-test-id': data.code,
+  })
   return (
     <components.Option {...props} innerProps={propsWithDataTestId}>
       {children}
     </components.Option>
-  );
+  )
 }
 
 function SingleValue({
   children,
   ...props
-}: PropsWithChildren<
-  SingleValueProps<VaCodeValue, false, GroupBase<VaCodeValue>>
->) {
-  const { data, innerProps } = props;
+}: PropsWithChildren<SingleValueProps<VaCodeValue, false, GroupBase<VaCodeValue>>>) {
+  const { data, innerProps } = props
   // add data-test-id to component
   const propsWithDataTestId = Object.assign({}, innerProps, {
-    "data-test-id": `singlevalue-${data["value-type"]}`,
-  });
+    'data-test-id': `singlevalue-${data['value-type']}`,
+  })
   return (
     <components.SingleValue {...props} innerProps={propsWithDataTestId}>
       {children}
     </components.SingleValue>
-  );
+  )
 }

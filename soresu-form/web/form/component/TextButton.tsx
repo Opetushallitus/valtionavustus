@@ -1,15 +1,15 @@
-import React from "react";
+import React from 'react'
 
-import LocalizedString from "./LocalizedString";
-import { Language, LegacyTranslationDict } from "soresu-form/web/va/types";
+import LocalizedString from './LocalizedString'
+import { Language, LegacyTranslationDict } from 'soresu-form/web/va/types'
 
 interface Props {
-  htmlId: string;
-  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  disabled: boolean;
-  translations: LegacyTranslationDict;
-  translationKey: string;
-  lang: Language;
+  htmlId: string
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
+  disabled: boolean
+  translations: LegacyTranslationDict
+  translationKey: string
+  lang: Language
 }
 
 /**
@@ -30,7 +30,7 @@ const TextButton = (props: Props) => {
         lang={props.lang}
       />
     </button>
-  );
-};
+  )
+}
 
-export default TextButton;
+export default TextButton

@@ -1,29 +1,29 @@
 function fallbackCopyTextToClipboard(text: string) {
-  const textArea = document.createElement("textarea");
-  textArea.value = text;
+  const textArea = document.createElement('textarea')
+  textArea.value = text
 
   // Avoid scrolling to bottom
-  textArea.style.top = "0";
-  textArea.style.left = "0";
-  textArea.style.position = "fixed";
+  textArea.style.top = '0'
+  textArea.style.left = '0'
+  textArea.style.position = 'fixed'
 
-  document.body.appendChild(textArea);
-  textArea.focus();
-  textArea.select();
+  document.body.appendChild(textArea)
+  textArea.focus()
+  textArea.select()
 
   try {
-    document.execCommand("copy");
+    document.execCommand('copy')
   } catch (_err) {
     // fail silently
   }
 
-  document.body.removeChild(textArea);
+  document.body.removeChild(textArea)
 }
 
 export async function copyToClipboard(text: string) {
   if (!navigator.clipboard) {
-    return fallbackCopyTextToClipboard(text);
+    return fallbackCopyTextToClipboard(text)
   }
 
-  await navigator.clipboard.writeText(text);
+  await navigator.clipboard.writeText(text)
 }

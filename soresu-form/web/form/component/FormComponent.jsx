@@ -1,22 +1,22 @@
-import React from "react";
+import React from 'react'
 
-import ComponentFactory from "../ComponentFactory";
+import ComponentFactory from '../ComponentFactory'
 
-import BasicTextField from "./BasicTextField";
-import BasicTextArea from "./BasicTextArea";
-import EmailTextField from "./EmailTextField";
-import MoneyTextField from "./MoneyTextField";
-import IntegerTextField from "./IntegerTextField";
-import DecimalTextField from "./DecimalTextField";
-import FinnishBusinessIdTextField from "./FinnishBusinessIdTextField";
-import IbanTextField from "./IbanTextField";
-import BicTextField from "./BicTextField";
-import Dropdown from "./Dropdown";
-import RadioButton from "./RadioButton";
-import CheckboxButton from "./CheckboxButton";
-import AttachmentField from "./AttachmentField";
-import KoodistoField from "./KoodistoField";
-import TableField from "./TableField";
+import BasicTextField from './BasicTextField'
+import BasicTextArea from './BasicTextArea'
+import EmailTextField from './EmailTextField'
+import MoneyTextField from './MoneyTextField'
+import IntegerTextField from './IntegerTextField'
+import DecimalTextField from './DecimalTextField'
+import FinnishBusinessIdTextField from './FinnishBusinessIdTextField'
+import IbanTextField from './IbanTextField'
+import BicTextField from './BicTextField'
+import Dropdown from './Dropdown'
+import RadioButton from './RadioButton'
+import CheckboxButton from './CheckboxButton'
+import AttachmentField from './AttachmentField'
+import KoodistoField from './KoodistoField'
+import TableField from './TableField'
 import {
   TextFieldPropertyMapper,
   TrimmingTextFieldPropertyMapper,
@@ -26,13 +26,13 @@ import {
   MultipleOptionFieldOnChangePropertyMapper,
   AttachmentFieldPropertyMapper,
   KoodistoFieldPropertyMapper,
-} from "./PropertyMapper";
-import TableFieldPropertyMapper from "./TableFieldPropertyMapper";
-import MoneyValue from "soresu-form/web/form/preview/MoneyValue";
+} from './PropertyMapper'
+import TableFieldPropertyMapper from './TableFieldPropertyMapper'
+import MoneyValue from 'soresu-form/web/form/preview/MoneyValue'
 
 export default class FormComponent extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     const fieldTypeMapping = {
       textField: BasicTextField,
       textArea: BasicTextArea,
@@ -53,7 +53,7 @@ export default class FormComponent extends React.Component {
       namedAttachment: AttachmentField,
       koodistoField: KoodistoField,
       tableField: TableField,
-    };
+    }
     const fieldPropertyMapperMapping = {
       textField: TextFieldPropertyMapper,
       textArea: TextFieldPropertyMapper,
@@ -74,21 +74,21 @@ export default class FormComponent extends React.Component {
       namedAttachment: AttachmentFieldPropertyMapper,
       koodistoField: KoodistoFieldPropertyMapper,
       tableField: TableFieldPropertyMapper,
-    };
+    }
     this.componentFactory = new ComponentFactory({
       fieldTypeMapping: fieldTypeMapping,
       fieldPropertyMapperMapping: fieldPropertyMapperMapping,
-    });
+    })
   }
 
   render() {
-    const controller = this.props.controller;
-    const fieldType = this.props.fieldType;
+    const controller = this.props.controller
+    const fieldType = this.props.fieldType
 
     if (fieldType in controller.getCustomComponentTypeMapping()) {
-      return controller.createCustomComponent(this.props);
+      return controller.createCustomComponent(this.props)
     } else {
-      return this.componentFactory.createComponent(this.props);
+      return this.componentFactory.createComponent(this.props)
     }
   }
 }

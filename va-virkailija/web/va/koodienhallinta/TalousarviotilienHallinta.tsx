@@ -1,30 +1,19 @@
-import React, { useCallback, useEffect, useState } from "react";
-import * as yup from "yup";
+import React, { useCallback, useEffect, useState } from 'react'
+import * as yup from 'yup'
 
-import styles from "./TalousarviotilienHallinta.module.less";
+import styles from './TalousarviotilienHallinta.module.less'
 
-import { Field, FormikProvider, useFormik } from "formik";
+import { Field, FormikProvider, useFormik } from 'formik'
 import {
   useCreateTalousarviotiliMutation,
   useGetTalousarvioTilitQuery,
   useRemoveTalousarviotiliMutation,
   useUpdateTalousarviotiliMutation,
-} from "./apiSlice";
-import { TalousarviotiliWithUsageInfo } from "./types";
-import useOutsideClick from "../useOutsideClick";
-import {
-  IconAdd,
-  IconButton,
-  IconEdit,
-  IconRemove,
-  IconSave,
-} from "./IconButton";
-import {
-  editTalousarviotili,
-  stopEditing,
-  useAppDispatch,
-  useAppSelector,
-} from "./store";
+} from './apiSlice'
+import { TalousarviotiliWithUsageInfo } from './types'
+import useOutsideClick from '../useOutsideClick'
+import { IconAdd, IconButton, IconEdit, IconRemove, IconSave } from './IconButton'
+import { editTalousarviotili, stopEditing, useAppDispatch, useAppSelector } from './store'
 
 const Label = ({ text, labelFor }: { text: string; labelFor: string }) => {
   return (
@@ -32,47 +21,41 @@ const Label = ({ text, labelFor }: { text: string; labelFor: string }) => {
       <label htmlFor={labelFor}>{text}</label>
       <span className={styles.required}>*</span>
     </div>
-  );
-};
+  )
+}
 
 const TalousarviotiliSchema = yup.object().shape({
   year: yup
     .number()
-    .typeError("Vuosi pitää olla numero")
-    .min(1970, "Vuosi voi olla minimissään 1970")
-    .max(2100, "Vuosi voi olla maksimissaan 2100")
-    .required("Vuosi on pakollinen"),
+    .typeError('Vuosi pitää olla numero')
+    .min(1970, 'Vuosi voi olla minimissään 1970')
+    .max(2100, 'Vuosi voi olla maksimissaan 2100')
+    .required('Vuosi on pakollinen'),
   code: yup
     .string()
-    .matches(/^(\d{1,2}\.)(\d{1,2}\.)*(\d{1,2}\.?)$/, "Tarkista koodi")
-    .required("Koodi on pakollinen"),
-  name: yup.string().required("Nimi on pakollinen"),
+    .matches(/^(\d{1,2}\.)(\d{1,2}\.)*(\d{1,2}\.?)$/, 'Tarkista koodi')
+    .required('Koodi on pakollinen'),
+  name: yup.string().required('Nimi on pakollinen'),
   amount: yup
     .number()
-    .positive("Euromäärä ei voi olla negatiivinen")
-    .typeError("Euromäärän pitää olla numero")
-    .required("Euromäärä on pakollinen"),
-});
+    .positive('Euromäärä ei voi olla negatiivinen')
+    .typeError('Euromäärän pitää olla numero')
+    .required('Euromäärä on pakollinen'),
+})
 
 interface FieldInputProps {
-  name: string;
-  placeholder?: string;
-  error?: string;
-  className: string;
-  disabled?: boolean;
+  name: string
+  placeholder?: string
+  error?: string
+  className: string
+  disabled?: boolean
 }
 
-const FieldInput = ({
-  name,
-  placeholder,
-  className,
-  error,
-  disabled,
-}: FieldInputProps) => {
+const FieldInput = ({ name, placeholder, className, error, disabled }: FieldInputProps) => {
   return (
     <div className={styles.fieldContainer}>
       <Field
-        className={`${className} ${error ? styles.inputError : ""}`}
+        className={`${className} ${error ? styles.inputError : ''}`}
         id={name}
         name={name}
         placeholder={placeholder}
@@ -84,47 +67,44 @@ const FieldInput = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
 const NewTiliRow = () => {
-  const [createTalousarviotili] = useCreateTalousarviotiliMutation();
+  const [createTalousarviotili] = useCreateTalousarviotiliMutation()
   const formik = useFormik({
     initialValues: {
-      year: "",
-      code: "",
-      name: "",
-      amount: "",
+      year: '',
+      code: '',
+      name: '',
+      amount: '',
     },
     validationSchema: TalousarviotiliSchema,
     onSubmit: async (values, formikHelpers) => {
-      const { year, code, name, amount } = values;
+      const { year, code, name, amount } = values
       try {
         await createTalousarviotili({
           code,
           name,
           year: Number(year),
           amount: Number(amount),
-        }).unwrap();
-        formikHelpers.resetForm();
+        }).unwrap()
+        formikHelpers.resetForm()
       } catch (e: any) {
-        if ("status" in e && e.status === 422) {
+        if ('status' in e && e.status === 422) {
           formikHelpers.setErrors({
             code: `Koodi ${code} on jo olemassa vuodelle ${year}`,
-          });
+          })
         }
       } finally {
-        formikHelpers.setSubmitting(false);
+        formikHelpers.setSubmitting(false)
       }
     },
-  });
-  const submitDisabled = formik.isSubmitting || !formik.isValid;
+  })
+  const submitDisabled = formik.isSubmitting || !formik.isValid
   return (
     <FormikProvider value={formik}>
-      <form
-        data-test-id="new-talousarviotili-form"
-        onSubmit={formik.handleSubmit}
-      >
+      <form data-test-id="new-talousarviotili-form" onSubmit={formik.handleSubmit}>
         <div className={styles.tiliRow}>
           <FieldInput
             name="year"
@@ -163,32 +143,27 @@ const NewTiliRow = () => {
         </div>
       </form>
     </FormikProvider>
-  );
-};
+  )
+}
 
 const AvustushautUsingTili = ({
   avustushaut,
-}: Pick<TalousarviotiliWithUsageInfo, "avustushaut">) => {
-  const [toggled, toggle] = useState(false);
-  const toggleOpen = useCallback(() => toggle((prevState) => !prevState), []);
-  const ref = useOutsideClick<HTMLDivElement>(toggleOpen);
-  const notInUse = avustushaut.length === 0;
-  const buttonText = notInUse
-    ? "Ei käytössä"
-    : `${avustushaut.length} avustuksessa`;
+}: Pick<TalousarviotiliWithUsageInfo, 'avustushaut'>) => {
+  const [toggled, toggle] = useState(false)
+  const toggleOpen = useCallback(() => toggle((prevState) => !prevState), [])
+  const ref = useOutsideClick<HTMLDivElement>(toggleOpen)
+  const notInUse = avustushaut.length === 0
+  const buttonText = notInUse ? 'Ei käytössä' : `${avustushaut.length} avustuksessa`
   return (
     <div className={styles.isInUse}>
       {toggled && (
         <div className={styles.usedInPopup} ref={ref}>
           {avustushaut.map(({ id, name }) => {
             return (
-              <a
-                key={`avustushaku-${id}`}
-                href={`/admin/haku-editor/?avustushaku=${id}`}
-              >
+              <a key={`avustushaku-${id}`} href={`/admin/haku-editor/?avustushaku=${id}`}>
                 {name}
               </a>
-            );
+            )
           })}
         </div>
       )}
@@ -196,61 +171,45 @@ const AvustushautUsingTili = ({
         {buttonText}
       </button>
     </div>
-  );
-};
+  )
+}
 
-function UneditableTiliRow({
-  code,
-  avustushaut,
-}: TalousarviotiliWithUsageInfo) {
+function UneditableTiliRow({ code, avustushaut }: TalousarviotiliWithUsageInfo) {
   const formik = useFormik({
-    initialValues: { year: "", code, name: "", amount: "" },
+    initialValues: { year: '', code, name: '', amount: '' },
     onSubmit: async () => {},
-  });
+  })
   return (
     <FormikProvider value={formik}>
       <form className={styles.tiliRow} onSubmit={(e) => e.preventDefault()}>
         <FieldInput name="year" className={styles.input} disabled={true} />
         <FieldInput name="code" className={styles.input} disabled={true} />
         <FieldInput name="name" className={styles.input} disabled={true} />
-        <FieldInput
-          name="amount"
-          className={styles.inputEuro}
-          disabled={true}
-        />
+        <FieldInput name="amount" className={styles.inputEuro} disabled={true} />
         <AvustushautUsingTili avustushaut={avustushaut} />
       </form>
     </FormikProvider>
-  );
+  )
 }
 
-const TiliRow = ({
-  id,
-  year,
-  code,
-  name,
-  amount,
-  avustushaut,
-}: TalousarviotiliWithUsageInfo) => {
-  const dispatch = useAppDispatch();
+const TiliRow = ({ id, year, code, name, amount, avustushaut }: TalousarviotiliWithUsageInfo) => {
+  const dispatch = useAppDispatch()
 
   const talousarviotiliIdInEditing = useAppSelector(
     (state) => state.talousarviotilienHallinta.talousarviotiliIdInEditing
-  );
-  const editing = talousarviotiliIdInEditing === id;
-  const [removeTalousarviotili, { isLoading: isLoadingDelete }] =
-    useRemoveTalousarviotiliMutation();
-  const [updateTalousarviotili, { isLoading: isLoadingUpdate }] =
-    useUpdateTalousarviotiliMutation();
-  const isLoading = isLoadingDelete || isLoadingUpdate;
-  const tiliInUse = avustushaut.length > 0;
-  const deleteDisabled = isLoading || tiliInUse;
+  )
+  const editing = talousarviotiliIdInEditing === id
+  const [removeTalousarviotili, { isLoading: isLoadingDelete }] = useRemoveTalousarviotiliMutation()
+  const [updateTalousarviotili, { isLoading: isLoadingUpdate }] = useUpdateTalousarviotiliMutation()
+  const isLoading = isLoadingDelete || isLoadingUpdate
+  const tiliInUse = avustushaut.length > 0
+  const deleteDisabled = isLoading || tiliInUse
 
   const formik = useFormik({
-    initialValues: { year, code, name: name ?? "", amount },
+    initialValues: { year, code, name: name ?? '', amount },
     validationSchema: TalousarviotiliSchema,
     onSubmit: async (values, formikHelpers) => {
-      const { year, code, name, amount } = values;
+      const { year, code, name, amount } = values
       try {
         await updateTalousarviotili({
           id,
@@ -258,45 +217,42 @@ const TiliRow = ({
           name,
           year: Number(year),
           amount: Number(amount),
-        }).unwrap();
+        }).unwrap()
       } catch (e: any) {
-        if ("status" in e && e.status === 422) {
+        if ('status' in e && e.status === 422) {
           formikHelpers.setErrors({
             code: `Koodi ${code} on jo olemassa vuodelle ${year}`,
-          });
+          })
         }
       } finally {
-        formikHelpers.setSubmitting(false);
-        dispatch(stopEditing());
+        formikHelpers.setSubmitting(false)
+        dispatch(stopEditing())
       }
     },
-  });
+  })
 
   useEffect(() => {
-    const switchedToEditOtherTalousarviotili =
-      !editing && talousarviotiliIdInEditing !== undefined;
-    if (switchedToEditOtherTalousarviotili) formik.resetForm();
-  }, [editing, talousarviotiliIdInEditing]);
+    const switchedToEditOtherTalousarviotili = !editing && talousarviotiliIdInEditing !== undefined
+    if (switchedToEditOtherTalousarviotili) formik.resetForm()
+  }, [editing, talousarviotiliIdInEditing])
 
-  const submitDisabled = formik.isSubmitting || !formik.isValid;
+  const submitDisabled = formik.isSubmitting || !formik.isValid
   const deleteTili = async () => {
     if (
-      window.confirm(
-        `Oletko aivan varma, että haluat poistaa talousarviotilin ${code} ${name}?`
-      )
+      window.confirm(`Oletko aivan varma, että haluat poistaa talousarviotilin ${code} ${name}?`)
     ) {
       try {
-        await removeTalousarviotili(id);
+        await removeTalousarviotili(id)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     }
-  };
+  }
   return (
     <FormikProvider value={formik}>
       <form
         onSubmit={formik.handleSubmit}
-        className={`${styles.tiliRow} ${editing ? styles.tiliRowEditing : ""}`}
+        className={`${styles.tiliRow} ${editing ? styles.tiliRowEditing : ''}`}
         data-test-id={name}
       >
         <FieldInput
@@ -341,8 +297,8 @@ const TiliRow = ({
             <IconButton
               disabled={isLoading}
               onClick={(e) => {
-                e.preventDefault();
-                dispatch(editTalousarviotili(id));
+                e.preventDefault()
+                dispatch(editTalousarviotili(id))
               }}
               title="Muokkaa talousarviotiliä"
             >
@@ -361,11 +317,11 @@ const TiliRow = ({
         </div>
       </form>
     </FormikProvider>
-  );
-};
+  )
+}
 
 export const TalousarviotilienHallinta = () => {
-  const { data } = useGetTalousarvioTilitQuery();
+  const { data } = useGetTalousarvioTilitQuery()
   return (
     <div className={styles.grid}>
       <div className={styles.row}>
@@ -379,12 +335,12 @@ export const TalousarviotilienHallinta = () => {
       </div>
       <NewTiliRow />
       {data?.map((tili) =>
-        tili["migrated-from-not-normalized-ta-tili"] ? (
+        tili['migrated-from-not-normalized-ta-tili'] ? (
           <UneditableTiliRow key={tili.id} {...tili} />
         ) : (
           <TiliRow key={tili.id} {...tili} />
         )
       )}
     </div>
-  );
-};
+  )
+}

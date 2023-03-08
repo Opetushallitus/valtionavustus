@@ -1,35 +1,34 @@
-import React from "react";
-import ClassNames from "classnames";
-import { HakemusStatus } from "soresu-form/web/va/types";
-import styles from "./TaydennyspyyntoIndikaattori.module.less";
+import React from 'react'
+import ClassNames from 'classnames'
+import { HakemusStatus } from 'soresu-form/web/va/types'
+import styles from './TaydennyspyyntoIndikaattori.module.less'
 
 export const TaydennyspyyntoIndikaattori = ({
   hakemusId,
   hakemusStatus,
   hakemukselleLahetettyTaydennyspyynto,
 }: {
-  hakemusId: number;
-  hakemusStatus: HakemusStatus;
-  hakemukselleLahetettyTaydennyspyynto: boolean;
+  hakemusId: number
+  hakemusStatus: HakemusStatus
+  hakemukselleLahetettyTaydennyspyynto: boolean
 }) => {
   if (!hakemukselleLahetettyTaydennyspyynto) {
-    return <div className={styles.container}></div>;
+    return <div className={styles.container}></div>
   }
 
-  const taydennyspyyntoOdottaaVastausta =
-    hakemusStatus === "pending_change_request";
+  const taydennyspyyntoOdottaaVastausta = hakemusStatus === 'pending_change_request'
 
   const testId = taydennyspyyntoOdottaaVastausta
     ? `taydennyspyynto-odottaa-vastausta-${hakemusId}`
-    : `taydennyspyyntoon-vastattu-${hakemusId}`;
+    : `taydennyspyyntoon-vastattu-${hakemusId}`
 
   const vastausStyle = taydennyspyyntoOdottaaVastausta
     ? styles.odottaaVastausta
-    : styles.taydennyspyyntoonVastattu;
+    : styles.taydennyspyyntoonVastattu
 
   const vastausTitle = taydennyspyyntoOdottaaVastausta
-    ? "Täydennyspyyntö odottaa vastausta"
-    : "Täydennyspyyntöön vastattu";
+    ? 'Täydennyspyyntö odottaa vastausta'
+    : 'Täydennyspyyntöön vastattu'
 
   return (
     <div className={styles.container}>
@@ -41,5 +40,5 @@ export const TaydennyspyyntoIndikaattori = ({
         T
       </div>
     </div>
-  );
-};
+  )
+}

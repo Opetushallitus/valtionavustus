@@ -1,27 +1,20 @@
-import { Page } from "@playwright/test";
+import { Page } from '@playwright/test'
 
-import { getLinkToPaatosFromEmails } from "../utils/emails";
+import { getLinkToPaatosFromEmails } from '../utils/emails'
 
 export const HakijaPaatosPage = (page: Page) => {
   async function navigate(hakemusID: number) {
-    const link = await getLinkToPaatosFromEmails(hakemusID);
-    await page.goto(link);
+    const link = await getLinkToPaatosFromEmails(hakemusID)
+    await page.goto(link)
   }
   const koulutusosioSection = page
-    .locator("section", {
-      hasText:
-        "Valtionavustusta / määrärahaa voidaan käyttää seuraaviin koulutusosioihin:",
+    .locator('section', {
+      hasText: 'Valtionavustusta / määrärahaa voidaan käyttää seuraaviin koulutusosioihin:',
     })
-    .locator("table");
+    .locator('table')
 
-  const koulutusOsio = koulutusosioSection
-    .locator("tbody")
-    .locator("tr")
-    .locator("td");
-  const koulutusOsioYhteensa = koulutusosioSection
-    .locator("tfoot")
-    .locator("tr")
-    .locator("th");
+  const koulutusOsio = koulutusosioSection.locator('tbody').locator('tr').locator('td')
+  const koulutusOsioYhteensa = koulutusosioSection.locator('tfoot').locator('tr').locator('th')
   return {
     navigate,
     paatosHeaderTitle: page.locator('[data-test-id="paatos-header-title"]'),
@@ -49,5 +42,5 @@ export const HakijaPaatosPage = (page: Page) => {
         hyvaksytty: koulutusOsioYhteensa.nth(2),
       },
     },
-  };
-};
+  }
+}

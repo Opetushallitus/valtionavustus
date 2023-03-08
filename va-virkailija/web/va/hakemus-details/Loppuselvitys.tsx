@@ -1,63 +1,54 @@
-import React from "react";
+import React from 'react'
 
-import { LoppuselvitysForm } from "./LoppuselvitysForm";
-import { TaloustarkastusEmail } from "./TaloustarkastusEmail";
-import SelvitysPreview from "./SelvitysPreview";
-import SelvitysNotFilled from "./SelvitysNotFilled";
-import SelvitysLink from "./SelvitysLink";
-import PresenterComment from "./PresenterComment";
-import ApplicationPayments from "./ApplicationPayments";
+import { LoppuselvitysForm } from './LoppuselvitysForm'
+import { TaloustarkastusEmail } from './TaloustarkastusEmail'
+import SelvitysPreview from './SelvitysPreview'
+import SelvitysNotFilled from './SelvitysNotFilled'
+import SelvitysLink from './SelvitysLink'
+import PresenterComment from './PresenterComment'
+import ApplicationPayments from './ApplicationPayments'
 import {
   addPayment,
   getLoadedState,
   getUserRoles,
   hasMultibatchPayments,
   removePayment,
-} from "../hakemustenArviointi/arviointiReducer";
+} from '../hakemustenArviointi/arviointiReducer'
 import {
   useHakemustenArviointiDispatch,
   useHakemustenArviointiSelector,
-} from "../hakemustenArviointi/arviointiStore";
-import { useHakemus } from "../hakemustenArviointi/useHakemus";
+} from '../hakemustenArviointi/arviointiStore'
+import { useHakemus } from '../hakemustenArviointi/useHakemus'
 
 const Loppuselvitys = () => {
-  const hakemus = useHakemus();
-  const { hakuData, helpTexts, userInfo } = useHakemustenArviointiSelector(
-    (state) => getLoadedState(state.arviointi)
-  );
-  const { avustushaku } = hakuData;
-  const dispatch = useHakemustenArviointiDispatch();
+  const hakemus = useHakemus()
+  const { hakuData, helpTexts, userInfo } = useHakemustenArviointiSelector((state) =>
+    getLoadedState(state.arviointi)
+  )
+  const { avustushaku } = hakuData
+  const dispatch = useHakemustenArviointiDispatch()
   const loppuselvitysPyynnotSent = useHakemustenArviointiSelector(
-    (state) =>
-      getLoadedState(state.arviointi).lahetykset.loppuselvitysPyynnotSentAt !==
-      undefined
-  );
-  const multibatchPaymentsEnabled = useHakemustenArviointiSelector(
-    hasMultibatchPayments
-  );
-  const { isPresentingOfficer, hakemukselleUkotettuValmistelija } =
-    useHakemustenArviointiSelector((state) => getUserRoles(state, hakemus.id));
-  const hasSelvitys = !!hakemus.selvitys?.loppuselvitys?.answers;
-  const selvitysHakemus = hakemus.selvitys?.loppuselvitys;
-  const form = hakemus.selvitys?.loppuselvitysForm;
+    (state) => getLoadedState(state.arviointi).lahetykset.loppuselvitysPyynnotSentAt !== undefined
+  )
+  const multibatchPaymentsEnabled = useHakemustenArviointiSelector(hasMultibatchPayments)
+  const { isPresentingOfficer, hakemukselleUkotettuValmistelija } = useHakemustenArviointiSelector(
+    (state) => getUserRoles(state, hakemus.id)
+  )
+  const hasSelvitys = !!hakemus.selvitys?.loppuselvitys?.answers
+  const selvitysHakemus = hakemus.selvitys?.loppuselvitys
+  const form = hakemus.selvitys?.loppuselvitysForm
 
-  const loppuselvitysStatus = hakemus["status-loppuselvitys"];
+  const loppuselvitysStatus = hakemus['status-loppuselvitys']
 
-  const loppuselvitys = hakemus.selvitys?.loppuselvitys;
+  const loppuselvitys = hakemus.selvitys?.loppuselvitys
   const renderTaloustarkastusEmail =
-    loppuselvitysStatus === "information_verified" ||
-    loppuselvitysStatus === "accepted";
-  const presenterCommentHelpText =
-    helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"];
-  const selvitysLinkHelpText =
-    helpTexts["hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"];
-  const lang = loppuselvitys?.language || "fi";
+    loppuselvitysStatus === 'information_verified' || loppuselvitysStatus === 'accepted'
+  const presenterCommentHelpText = helpTexts['hankkeen_sivu__loppuselvitys___linkki_lomakkeelle']
+  const selvitysLinkHelpText = helpTexts['hankkeen_sivu__loppuselvitys___linkki_lomakkeelle']
+  const lang = loppuselvitys?.language || 'fi'
   return (
-    <div id="tab-content" className={hakemus.refused ? "disabled" : ""}>
-      <div
-        className="selvitys-container"
-        data-test-id="hakemus-details-loppuselvitys"
-      >
+    <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>
+      <div className="selvitys-container" data-test-id="hakemus-details-loppuselvitys">
         <PresenterComment helpText={presenterCommentHelpText} />
         {hasSelvitys ? (
           <SelvitysPreview
@@ -68,10 +59,7 @@ const Loppuselvitys = () => {
             form={form}
           />
         ) : (
-          <SelvitysNotFilled
-            avustushaku={avustushaku}
-            selvitysType="loppuselvitys"
-          />
+          <SelvitysNotFilled avustushaku={avustushaku} selvitysType="loppuselvitys" />
         )}
         {multibatchPaymentsEnabled && (
           <ApplicationPayments
@@ -87,7 +75,7 @@ const Loppuselvitys = () => {
                   hakemusId: hakemus.id,
                   projectCode: hakemus.project?.code,
                 })
-              );
+              )
             }}
             onRemovePayment={(paymentId: number) =>
               dispatch(removePayment({ paymentId, hakemusId: hakemus.id }))
@@ -122,7 +110,7 @@ const Loppuselvitys = () => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Loppuselvitys;
+export default Loppuselvitys

@@ -1,54 +1,55 @@
-import { translations } from "soresu-form/web/va/i18n/translations";
-import { MuutoshakemusPaatosFormValues } from "./hakemusTypes";
-import { TalousarvioValues } from "soresu-form/web/va/types/muutoshakemus";
-import React from "react";
+import { translations } from 'soresu-form/web/va/i18n/translations'
+import { MuutoshakemusPaatosFormValues } from './hakemusTypes'
+import { TalousarvioValues } from 'soresu-form/web/va/types/muutoshakemus'
+import React from 'react'
 
 export const paatosStatuses = [
   {
-    value: "accepted",
-    text: "Hyväksytään",
+    value: 'accepted',
+    text: 'Hyväksytään',
     defaultReason: {
       fi: translations.fi.muutoshakemus.paatos.vakioperustelut.accepted,
       sv: translations.sv.muutoshakemus.paatos.vakioperustelut.accepted,
     },
   },
   {
-    value: "accepted_with_changes",
-    text: "Hyväksytään muutettuna",
+    value: 'accepted_with_changes',
+    text: 'Hyväksytään muutettuna',
     defaultReason: {
-      fi: translations.fi.muutoshakemus.paatos.vakioperustelut
-        .accepted_with_changes,
-      sv: translations.sv.muutoshakemus.paatos.vakioperustelut
-        .accepted_with_changes,
+      fi: translations.fi.muutoshakemus.paatos.vakioperustelut.accepted_with_changes,
+      sv: translations.sv.muutoshakemus.paatos.vakioperustelut.accepted_with_changes,
     },
   },
   {
-    value: "rejected",
-    text: "Hylätään",
+    value: 'rejected',
+    text: 'Hylätään',
     defaultReason: {
       fi: translations.fi.muutoshakemus.paatos.vakioperustelut.rejected,
       sv: translations.sv.muutoshakemus.paatos.vakioperustelut.rejected,
     },
   },
-] as const;
+] as const
 
 interface PaatosStatusRadioButtonProps {
-  paatosStatus: typeof paatosStatuses[number];
-  f: MuutoshakemusPaatosFormValues;
-  group: keyof Omit<MuutoshakemusPaatosFormValues["values"], "reason">;
-  talousarvioValues: TalousarvioValues | undefined;
+  paatosStatus: typeof paatosStatuses[number]
+  f: MuutoshakemusPaatosFormValues
+  group: keyof Omit<MuutoshakemusPaatosFormValues['values'], 'reason'>
+  talousarvioValues: TalousarvioValues | undefined
 }
 
-export const PaatosStatusRadioButton: React.FC<
-  PaatosStatusRadioButtonProps
-> = ({ paatosStatus: { value, text }, f, talousarvioValues, group }) => {
+export const PaatosStatusRadioButton: React.FC<PaatosStatusRadioButtonProps> = ({
+  paatosStatus: { value, text },
+  f,
+  talousarvioValues,
+  group,
+}) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (talousarvioValues) {
-      f.setFieldValue("talousarvio.talousarvio", talousarvioValues, true);
+      f.setFieldValue('talousarvio.talousarvio', talousarvioValues, true)
     }
-    f.setFieldValue(`${group}.status`, e.target.value);
-  };
-  const key = `${group}-${value}`;
+    f.setFieldValue(`${group}.status`, e.target.value)
+  }
+  const key = `${group}-${value}`
   return (
     <React.Fragment key={`paatos-status-${key}`}>
       <input
@@ -61,13 +62,13 @@ export const PaatosStatusRadioButton: React.FC<
       />
       <label htmlFor={key}>{text}</label>
     </React.Fragment>
-  );
-};
+  )
+}
 
 interface GroupProps {
-  group: keyof Omit<MuutoshakemusPaatosFormValues["values"], "reason">;
-  f: MuutoshakemusPaatosFormValues;
-  talousarvioValues?: TalousarvioValues;
+  group: keyof Omit<MuutoshakemusPaatosFormValues['values'], 'reason'>
+  f: MuutoshakemusPaatosFormValues
+  talousarvioValues?: TalousarvioValues
 }
 
 export const PaatosStatusRadioButtonGroup: React.FC<GroupProps> = ({
@@ -87,5 +88,5 @@ export const PaatosStatusRadioButtonGroup: React.FC<GroupProps> = ({
         />
       ))}
     </fieldset>
-  );
-};
+  )
+}

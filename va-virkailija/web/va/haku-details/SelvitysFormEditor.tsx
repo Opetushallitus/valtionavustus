@@ -1,19 +1,19 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { isEqual } from "lodash";
-import * as Bacon from "baconjs";
-import moment from "moment";
+import React, { ChangeEvent, useEffect, useState } from 'react'
+import { isEqual } from 'lodash'
+import * as Bacon from 'baconjs'
+import moment from 'moment'
 
-import HttpUtil from "soresu-form/web/HttpUtil";
-import { fiShortFormat } from "soresu-form/web/va/i18n/dateformat";
-import { Avustushaku, Form } from "soresu-form/web/va/types";
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
+import { Avustushaku, Form } from 'soresu-form/web/va/types'
 
-import FormEditor from "./FormEditor";
-import { Lahetys, Tapahtumaloki } from "./Tapahtumaloki";
-import { LastUpdated } from "./LastUpdated";
+import FormEditor from './FormEditor'
+import { Lahetys, Tapahtumaloki } from './Tapahtumaloki'
+import { LastUpdated } from './LastUpdated'
 import {
   useHakujenHallintaDispatch,
   useHakujenHallintaSelector,
-} from "../hakujenHallinta/hakujenHallintaStore";
+} from '../hakujenHallinta/hakujenHallintaStore'
 import {
   selectHakuState,
   selectLoadedInitialData,
@@ -23,68 +23,52 @@ import {
   selectSelectedAvustushaku,
   selvitysFormJsonUpdated,
   selvitysFormUpdated,
-} from "../hakujenHallinta/hakuReducer";
+} from '../hakujenHallinta/hakuReducer'
 
 type SelvitysFormEditorProps = {
-  selvitysType: "valiselvitys" | "loppuselvitys";
-};
+  selvitysType: 'valiselvitys' | 'loppuselvitys'
+}
 
-export const SelvitysFormEditor = ({
-  selvitysType,
-}: SelvitysFormEditorProps) => {
-  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
-  const isValiSelvitys = selvitysType === "valiselvitys";
-  const { environment, helpTexts } = useHakujenHallintaSelector(
-    selectLoadedInitialData
-  );
-  const { koodistos } = useHakujenHallintaSelector(selectHakuState);
+export const SelvitysFormEditor = ({ selvitysType }: SelvitysFormEditorProps) => {
+  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku)
+  const isValiSelvitys = selvitysType === 'valiselvitys'
+  const { environment, helpTexts } = useHakujenHallintaSelector(selectLoadedInitialData)
+  const { koodistos } = useHakujenHallintaSelector(selectHakuState)
   const {
     valiselvitysFormDraft,
     loppuselvitysFormDraft,
     valiselvitysFormDraftJson,
     loppuselvitysFormDraftsJson,
-  } = useHakujenHallintaSelector(selectDraftsForAvustushaku(avustushaku.id));
-  const [count, setCount] = useState<number | undefined>(undefined);
-  const [sending, setSending] = useState(false);
-  const [lahetykset, setLahetykset] = useState<Lahetys[]>([]);
-  const dispatch = useHakujenHallintaDispatch();
+  } = useHakujenHallintaSelector(selectDraftsForAvustushaku(avustushaku.id))
+  const [count, setCount] = useState<number | undefined>(undefined)
+  const [sending, setSending] = useState(false)
+  const [lahetykset, setLahetykset] = useState<Lahetys[]>([])
+  const dispatch = useHakujenHallintaDispatch()
   const formContent =
-    selvitysType === "valiselvitys"
-      ? avustushaku.valiselvitysForm
-      : avustushaku.loppuselvitysForm;
-  const updatedAtElementId = `${selvitysType}UpdatedAt`;
-  const updatedAt = formContent?.updated_at;
-  const formDraft = isValiSelvitys
-    ? valiselvitysFormDraft
-    : loppuselvitysFormDraft;
-  const formDraftJson = isValiSelvitys
-    ? valiselvitysFormDraftJson
-    : loppuselvitysFormDraftsJson;
+    selvitysType === 'valiselvitys' ? avustushaku.valiselvitysForm : avustushaku.loppuselvitysForm
+  const updatedAtElementId = `${selvitysType}UpdatedAt`
+  const updatedAt = formContent?.updated_at
+  const formDraft = isValiSelvitys ? valiselvitysFormDraft : loppuselvitysFormDraft
+  const formDraftJson = isValiSelvitys ? valiselvitysFormDraftJson : loppuselvitysFormDraftsJson
   const previewUrlFi =
-    environment["hakija-server"].url.fi +
-    "avustushaku/" +
-    avustushaku.id +
-    "/" +
-    selvitysType;
+    environment['hakija-server'].url.fi + 'avustushaku/' + avustushaku.id + '/' + selvitysType
   const previewUrlSv =
-    environment["hakija-server"].url.sv +
-    "avustushaku/" +
+    environment['hakija-server'].url.sv +
+    'avustushaku/' +
     avustushaku.id +
-    "/" +
+    '/' +
     selvitysType +
-    "?lang=sv";
+    '?lang=sv'
   const onFormChange = ({ id }: Avustushaku, newDraft: Form) => {
-    dispatch(
-      selvitysFormUpdated({ selvitysType, newDraft, avustushakuId: id })
-    );
+    dispatch(selvitysFormUpdated({ selvitysType, newDraft, avustushakuId: id }))
     dispatch(
       selvitysFormJsonUpdated({
         selvitysType,
         newDraftJson: JSON.stringify(newDraft, null, 2),
         avustushakuId: id,
       })
-    );
-  };
+    )
+  }
 
   const onJsonChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(
@@ -93,18 +77,18 @@ export const SelvitysFormEditor = ({
         avustushakuId: avustushaku.id,
         newDraftJson: e.target.value,
       })
-    );
+    )
     try {
-      const parsedDraft = JSON.parse(e.target.value);
+      const parsedDraft = JSON.parse(e.target.value)
       dispatch(
         selvitysFormUpdated({
           avustushakuId: avustushaku.id,
           selvitysType,
           newDraft: parsedDraft,
         })
-      );
+      )
     } catch (err) {}
-  };
+  }
 
   const onSaveForm = () => {
     dispatch(
@@ -113,142 +97,123 @@ export const SelvitysFormEditor = ({
         form: formDraft,
         selvitysType,
       })
-    );
-  };
+    )
+  }
   const scrollToTop = () => {
-    window.scrollTo(0, 0);
-  };
+    window.scrollTo(0, 0)
+  }
 
-  let parsedForm = formDraft;
-  let parseError: string | undefined = undefined;
+  let parsedForm = formDraft
+  let parseError: string | undefined = undefined
   try {
-    parsedForm = JSON.parse(formDraftJson);
+    parsedForm = JSON.parse(formDraftJson)
   } catch (error: unknown) {
     if (error instanceof Error) {
-      parseError = error.toString();
+      parseError = error.toString()
     } else {
-      parseError = `Unknown error: ${error}`;
+      parseError = `Unknown error: ${error}`
     }
   }
 
   function formHasBeenEdited() {
-    return formDraft && formContent && !isEqual(parsedForm, formContent);
+    return formDraft && formContent && !isEqual(parsedForm, formContent)
   }
 
-  const hasFormBeenEdited = !formHasBeenEdited();
-  const disableSave = !!parseError || hasFormBeenEdited;
+  const hasFormBeenEdited = !formHasBeenEdited()
+  const disableSave = !!parseError || hasFormBeenEdited
   const recreateForm = () => {
-    dispatch(recreateSelvitysForm({ avustushaku, selvitysType }));
-  };
+    dispatch(recreateSelvitysForm({ avustushaku, selvitysType }))
+  }
 
   const onSendSelvitys = () => {
-    setSending(true);
+    setSending(true)
     HttpUtil.post(
       `/api/avustushaku/${avustushaku.id}/selvitys/${selvitysType}/send-notification`
     ).then((response) => {
-      setCount(response.count);
-      setSending(false);
-      fetchTapahtumaloki();
-    });
-  };
+      setCount(response.count)
+      setSending(false)
+      fetchTapahtumaloki()
+    })
+  }
 
   const fetchTapahtumaloki = () => {
-    setLahetykset([]);
+    setLahetykset([])
     const tapahtumaloki = Bacon.fromPromise<Lahetys[]>(
-      HttpUtil.get(
-        `/api/avustushaku/${avustushaku.id}/tapahtumaloki/${selvitysType}-notification`
-      )
-    );
-    tapahtumaloki.onValue(setLahetykset);
-  };
+      HttpUtil.get(`/api/avustushaku/${avustushaku.id}/tapahtumaloki/${selvitysType}-notification`)
+    )
+    tapahtumaloki.onValue(setLahetykset)
+  }
 
   useEffect(() => {
-    setCount(undefined);
-    setSending(false);
-    fetchTapahtumaloki();
-  }, [avustushaku.id, selvitysType]);
+    setCount(undefined)
+    setSending(false)
+    fetchTapahtumaloki()
+  }, [avustushaku.id, selvitysType])
 
   const valiselvitysSection = (
     <div>
       <h4>Väliselvitysten lähettäminen</h4>
       {avustushaku.loppuselvitysdate ? (
         <p>
-          Väliselvitys tulee toimittaa viimeistään{" "}
-          <strong>
-            {moment(avustushaku.valiselvitysdate).format(fiShortFormat)}
-          </strong>
-          .
+          Väliselvitys tulee toimittaa viimeistään{' '}
+          <strong>{moment(avustushaku.valiselvitysdate).format(fiShortFormat)}</strong>.
         </p>
       ) : (
         <p>Väliselvityksen toimitukselle ei ole asetettu takarajaa.</p>
       )}
       <p>
-        Väliselvityspyynnöt lähetetään niille hakijoille, joiden hakemukset on
-        hyväksytty ja jotka eivät ole vielä toimittaneet väliselvitystä.
+        Väliselvityspyynnöt lähetetään niille hakijoille, joiden hakemukset on hyväksytty ja jotka
+        eivät ole vielä toimittaneet väliselvitystä.
       </p>
       <p
         data-test-id="valiselvitys-ohje"
         dangerouslySetInnerHTML={{
-          __html: helpTexts["hakujen_hallinta__väliselvitys___ohje"],
+          __html: helpTexts['hakujen_hallinta__väliselvitys___ohje'],
         }}
       />
-      <button
-        data-test-id="send-valiselvitys"
-        disabled={sending}
-        onClick={onSendSelvitys}
-      >
+      <button data-test-id="send-valiselvitys" disabled={sending} onClick={onSendSelvitys}>
         Lähetä väliselvityspyynnöt
       </button>
       {count !== undefined && <span> Lähetetty {count} viestiä</span>}
       {!!lahetykset.length && <Tapahtumaloki lahetykset={lahetykset} />}
       <h1>Väliselvityslomake</h1>
     </div>
-  );
+  )
 
   const loppuSelvitysSection = (
     <div>
       <h4>Loppuselvityksen lähettäminen</h4>
       {avustushaku.loppuselvitysdate ? (
         <p>
-          Loppuselvitys on koko ajan täytettävissä ja se tulee toimittaa
-          viimeistään{" "}
-          <strong>
-            {moment(avustushaku.loppuselvitysdate).format(fiShortFormat)}
-          </strong>
-          .
+          Loppuselvitys on koko ajan täytettävissä ja se tulee toimittaa viimeistään{' '}
+          <strong>{moment(avustushaku.loppuselvitysdate).format(fiShortFormat)}</strong>.
         </p>
       ) : (
         <p>Loppuselvityksen toimitukselle ei ole asetettu takarajaa.</p>
       )}
       <p>
-        Loppuselvityspyynnöt lähetetään niille hakijoille, joiden hakemukset on
-        hyväksytty ja jotka eivät ole vielä toimittaneet loppuselvitystä.
+        Loppuselvityspyynnöt lähetetään niille hakijoille, joiden hakemukset on hyväksytty ja jotka
+        eivät ole vielä toimittaneet loppuselvitystä.
       </p>
       <p
         data-test-id="loppuselvitys-ohje"
         dangerouslySetInnerHTML={{
-          __html: helpTexts["hakujen_hallinta__loppuselvitys___ohje"],
+          __html: helpTexts['hakujen_hallinta__loppuselvitys___ohje'],
         }}
       />
-      <button
-        data-test-id="send-loppuselvitys"
-        disabled={sending}
-        onClick={onSendSelvitys}
-      >
+      <button data-test-id="send-loppuselvitys" disabled={sending} onClick={onSendSelvitys}>
         Lähetä loppuselvityspyynnöt
       </button>
       {count !== undefined && <span> Lähetetty {count} viestiä</span>}
       {!!lahetykset.length && <Tapahtumaloki lahetykset={lahetykset} />}
       <h1>Loppuselvityslomake</h1>
     </div>
-  );
+  )
 
   return (
     <div>
-      {selvitysType === "valiselvitys"
-        ? valiselvitysSection
-        : loppuSelvitysSection}
-      <button style={{ float: "right" }} onClick={recreateForm}>
+      {selvitysType === 'valiselvitys' ? valiselvitysSection : loppuSelvitysSection}
+      <button style={{ float: 'right' }} onClick={recreateForm}>
         Palauta alkuperäiset kysymykset
       </button>
       <LastUpdated updatedAt={updatedAt} id={updatedAtElementId} />
@@ -300,5 +265,5 @@ export const SelvitysFormEditor = ({
         <textarea onChange={onJsonChange} value={formDraftJson} />
       </div>
     </div>
-  );
-};
+  )
+}

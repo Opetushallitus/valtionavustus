@@ -1,28 +1,22 @@
-import React from "react";
-import { createAverageSummaryText, effectiveAverage } from "../ScoreResolver";
-import { Scoring } from "soresu-form/web/va/types";
+import React from 'react'
+import { createAverageSummaryText, effectiveAverage } from '../ScoreResolver'
+import { Scoring } from 'soresu-form/web/va/types'
 
-import styles from "./StarScoring.module.less";
-import { useHakemustenArviointiSelector } from "../hakemustenArviointi/arviointiStore";
-import { getLoadedState } from "../hakemustenArviointi/arviointiReducer";
+import styles from './StarScoring.module.less'
+import { useHakemustenArviointiSelector } from '../hakemustenArviointi/arviointiStore'
+import { getLoadedState } from '../hakemustenArviointi/arviointiReducer'
 
 interface StarProps {
-  style: "empty" | "blue";
-  opacity: number;
+  style: 'empty' | 'blue'
+  opacity: number
 }
 
 const Star: React.FC<StarProps> = ({ style, opacity }) => {
-  const emptyStyle = style === "empty";
-  const fill = emptyStyle ? "none" : "#499CC7";
-  const stroke = emptyStyle ? "#1A1919" : "#499CC7";
+  const emptyStyle = style === 'empty'
+  const fill = emptyStyle ? 'none' : '#499CC7'
+  const stroke = emptyStyle ? '#1A1919' : '#499CC7'
   return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fill={fill}
         stroke={stroke}
@@ -31,44 +25,43 @@ const Star: React.FC<StarProps> = ({ style, opacity }) => {
         opacity={!emptyStyle ? `${opacity}%` : undefined}
       />
     </svg>
-  );
-};
+  )
+}
 
 interface StarScoringProps {
-  id: number;
-  allowHakemusScoring: boolean;
-  scoring?: Scoring;
+  id: number
+  allowHakemusScoring: boolean
+  scoring?: Scoring
 }
 
 const toStarElem = (meanScore: number) => (indexOfStar: number) => {
-  const opacity = Math.ceil((meanScore + 1 - indexOfStar) * 100);
+  const opacity = Math.ceil((meanScore + 1 - indexOfStar) * 100)
   return (
     <Star
       key={`star-scoring-${indexOfStar}`}
-      style={opacity > 0 ? "blue" : "empty"}
+      style={opacity > 0 ? 'blue' : 'empty'}
       opacity={opacity}
     />
-  );
-};
+  )
+}
 
 export const StarScoring = (props: StarScoringProps) => {
-  const { allowHakemusScoring, scoring } = props;
+  const { allowHakemusScoring, scoring } = props
   const userInfo = useHakemustenArviointiSelector(
     (state) => getLoadedState(state.arviointi).userInfo
-  );
-  const meanScore =
-    scoring && effectiveAverage(scoring, userInfo, allowHakemusScoring);
+  )
+  const meanScore = scoring && effectiveAverage(scoring, userInfo, allowHakemusScoring)
   if (!scoring || meanScore === undefined) {
-    return <EmptyScore />;
+    return <EmptyScore />
   }
 
-  const starElements = [0, 1, 2, 3].map(toStarElem(meanScore));
+  const starElements = [0, 1, 2, 3].map(toStarElem(meanScore))
   const titleText =
     meanScore === undefined
       ? allowHakemusScoring
-        ? "Pisteytä hakemus jokaisen valintaperusteen mukaan nähdäksesi kaikkien arvioiden keskiarvon"
+        ? 'Pisteytä hakemus jokaisen valintaperusteen mukaan nähdäksesi kaikkien arvioiden keskiarvon'
         : undefined
-      : createAverageSummaryText(scoring, userInfo);
+      : createAverageSummaryText(scoring, userInfo)
 
   return (
     <div
@@ -78,13 +71,13 @@ export const StarScoring = (props: StarScoringProps) => {
     >
       {starElements}
     </div>
-  );
-};
+  )
+}
 
 function EmptyScore() {
   const emptyStarElements = [0, 1, 2, 3].map((indexOfStar) => (
     <Star key={`empty-score-star-${indexOfStar}`} style="empty" opacity={100} />
-  ));
+  ))
 
-  return <div className={styles.starContainer}>{emptyStarElements}</div>;
+  return <div className={styles.starContainer}>{emptyStarElements}</div>
 }

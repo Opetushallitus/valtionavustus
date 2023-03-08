@@ -1,19 +1,19 @@
-import { PlaywrightTestConfig } from "@playwright/test";
+import { PlaywrightTestConfig } from '@playwright/test'
 
-const headless = process.env["HEADLESS"] === "true";
-const workersEnv = process.env["PLAYWRIGHT_WORKERS"];
-const workersEnvNumber = Number(workersEnv);
-const workers = isNaN(workersEnvNumber) ? workersEnv : workersEnvNumber;
-const retriesEnv = Number(process.env["PLAYWRIGHT_RETRIES"]);
-const retries = isNaN(retriesEnv) ? 1 : retriesEnv;
-const allowOnly = process.env["ALLOW_ONLY"] === "true";
-const quiet = process.env["VERBOSE"] !== "true";
+const headless = process.env['HEADLESS'] === 'true'
+const workersEnv = process.env['PLAYWRIGHT_WORKERS']
+const workersEnvNumber = Number(workersEnv)
+const workers = isNaN(workersEnvNumber) ? workersEnv : workersEnvNumber
+const retriesEnv = Number(process.env['PLAYWRIGHT_RETRIES'])
+const retries = isNaN(retriesEnv) ? 1 : retriesEnv
+const allowOnly = process.env['ALLOW_ONLY'] === 'true'
+const quiet = process.env['VERBOSE'] !== 'true'
 
 const config: PlaywrightTestConfig = {
   forbidOnly: !allowOnly,
   retries,
   workers,
-  testDir: "tests",
+  testDir: 'tests',
   timeout: 60000,
   quiet,
   use: {
@@ -22,34 +22,34 @@ const config: PlaywrightTestConfig = {
     headless,
     viewport: { width: 1920, height: 1080 },
     ignoreHTTPSErrors: true,
-    video: "off",
+    video: 'off',
     screenshot: {
-      mode: "only-on-failure",
+      mode: 'only-on-failure',
       fullPage: true,
     },
-    trace: "retain-on-failure",
-    testIdAttribute: "data-test-id",
+    trace: 'retain-on-failure',
+    testIdAttribute: 'data-test-id',
   },
   reportSlowTests: {
     max: 0,
     threshold: 120000,
   },
   reporter: [
-    ["list"],
+    ['list'],
     [
-      "junit",
+      'junit',
       {
-        outputFile: "playwright-results/junit-playwright-js-unit.xml",
+        outputFile: 'playwright-results/junit-playwright-js-unit.xml',
       },
     ],
     [
-      "html",
+      'html',
       {
-        outputFolder: "../playwright-results/html-report/",
-        open: "never",
+        outputFolder: '../playwright-results/html-report/',
+        open: 'never',
       },
     ],
   ],
-};
+}
 
-export default config;
+export default config

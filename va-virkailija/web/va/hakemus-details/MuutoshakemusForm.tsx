@@ -1,33 +1,29 @@
-import React, { useMemo, useState } from "react";
-import moment from "moment";
+import React, { useMemo, useState } from 'react'
+import moment from 'moment'
 // @ts-ignore react-widgets-moment doesn't have proper types
-import MomentLocalizer from "react-widgets-moment";
-import { omit } from "lodash";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import DatePicker from "react-widgets/DatePicker";
-import Localization from "react-widgets/Localization";
+import MomentLocalizer from 'react-widgets-moment'
+import { omit } from 'lodash'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import DatePicker from 'react-widgets/DatePicker'
+import Localization from 'react-widgets/Localization'
 
-import {
-  Avustushaku,
-  Hakemus,
-  NormalizedHakemusData,
-} from "soresu-form/web/va/types";
+import { Avustushaku, Hakemus, NormalizedHakemusData } from 'soresu-form/web/va/types'
 import {
   Meno,
   Muutoshakemus,
   Talousarvio,
   TalousarvioValues,
-} from "soresu-form/web/va/types/muutoshakemus";
-import { MuutosTaloudenKayttosuunnitelmaan } from "soresu-form/web/va/muutoshakemus/MuutosTaloudenKayttosuunnitelmaan";
-import { MuutoshakemusSection } from "soresu-form/web/va/MuutoshakemusSection";
-import { isError, isSubmitDisabled } from "../formikHelpers";
-import { copyToClipboard } from "../copyToClipboard";
+} from 'soresu-form/web/va/types/muutoshakemus'
+import { MuutosTaloudenKayttosuunnitelmaan } from 'soresu-form/web/va/muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
+import { MuutoshakemusSection } from 'soresu-form/web/va/MuutoshakemusSection'
+import { isError, isSubmitDisabled } from '../formikHelpers'
+import { copyToClipboard } from '../copyToClipboard'
 import {
   getTranslationContext,
   TranslationContext,
   useTranslations,
-} from "soresu-form/web/va/i18n/TranslationContext";
+} from 'soresu-form/web/va/i18n/TranslationContext'
 import {
   dateStringToMoment,
   getTalousarvio,
@@ -38,102 +34,79 @@ import {
   isAcceptedWithOrWithoutChanges,
   isRejected,
   toFinnishDateFormat,
-} from "soresu-form/web/va/Muutoshakemus";
-import {
-  MuutoshakemusPaatosRequest,
-  MuutoshakemusPaatosFormValues,
-} from "./hakemusTypes";
+} from 'soresu-form/web/va/Muutoshakemus'
+import { MuutoshakemusPaatosRequest, MuutoshakemusPaatosFormValues } from './hakemusTypes'
 import {
   fiLongFormat,
   isoFormat,
   parseDateString,
   parseDateStringToMoment,
-} from "soresu-form/web/va/i18n/dateformat";
-import { paatosStatuses, PaatosStatusRadioButtonGroup } from "./PaatosStatus";
-import { TalousarvioAcceptWithChangesForm } from "./TalousarvioAcceptWithChangesForm";
-import { translationsFi } from "soresu-form/web/va/i18n/translations";
-import { getNestedInputErrorClass } from "soresu-form/web/va/formikHelpers";
-import { Role, UserInfo } from "../types";
-import HttpUtil from "soresu-form/web/HttpUtil";
-import { Modal } from "./Modal";
-import { MuutoshakemusPaatos } from "soresu-form/web/va/MuutoshakemusPaatos";
-import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
+} from 'soresu-form/web/va/i18n/dateformat'
+import { paatosStatuses, PaatosStatusRadioButtonGroup } from './PaatosStatus'
+import { TalousarvioAcceptWithChangesForm } from './TalousarvioAcceptWithChangesForm'
+import { translationsFi } from 'soresu-form/web/va/i18n/translations'
+import { getNestedInputErrorClass } from 'soresu-form/web/va/formikHelpers'
+import { Role, UserInfo } from '../types'
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import { Modal } from './Modal'
+import { MuutoshakemusPaatos } from 'soresu-form/web/va/MuutoshakemusPaatos'
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
-import "soresu-form/web/form/style/main.less";
-import "../style/main.less";
-import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
-import { setMuutoshakemukset } from "../hakemustenArviointi/arviointiReducer";
+import 'soresu-form/web/form/style/main.less'
+import '../style/main.less'
+import { useHakemustenArviointiDispatch } from '../hakemustenArviointi/arviointiStore'
+import { setMuutoshakemukset } from '../hakemustenArviointi/arviointiReducer'
 
-moment.locale("fi");
-const localizer = new MomentLocalizer(moment);
+moment.locale('fi')
+const localizer = new MomentLocalizer(moment)
 
 const formatDate = (date?: string): string => {
-  const d = parseDateStringToMoment(date);
-  return d && d.isValid() ? d.format(fiLongFormat) : "";
-};
-
-interface PaattymispaivaValuesProps {
-  muutoshakemus: Muutoshakemus;
-  projectEndDate?: string;
+  const d = parseDateStringToMoment(date)
+  return d && d.isValid() ? d.format(fiLongFormat) : ''
 }
 
-const PaattymispaivaValues = ({
-  muutoshakemus,
-  projectEndDate,
-}: PaattymispaivaValuesProps) => {
-  const { t } = useTranslations();
+interface PaattymispaivaValuesProps {
+  muutoshakemus: Muutoshakemus
+  projectEndDate?: string
+}
 
-  const acceptedWithChanges = isAcceptedWithChanges(
-    muutoshakemus["paatos-status-jatkoaika"]
-  );
+const PaattymispaivaValues = ({ muutoshakemus, projectEndDate }: PaattymispaivaValuesProps) => {
+  const { t } = useTranslations()
+
+  const acceptedWithChanges = isAcceptedWithChanges(muutoshakemus['paatos-status-jatkoaika'])
   const currentEndDateTitle = acceptedWithChanges
     ? t.muutoshakemus.previousProjectEndDate
-    : t.muutoshakemus.currentProjectEndDate;
+    : t.muutoshakemus.currentProjectEndDate
   const newEndDateTitle = acceptedWithChanges
     ? t.muutoshakemus.acceptedChange
-    : t.muutoshakemus.appliedChange;
+    : t.muutoshakemus.appliedChange
   const newEndDateValue = acceptedWithChanges
-    ? muutoshakemus["paatos-hyvaksytty-paattymispaiva"]
-    : muutoshakemus["haettu-kayttoajan-paattymispaiva"];
-  const perustelut = muutoshakemus["kayttoajan-pidennys-perustelut"];
+    ? muutoshakemus['paatos-hyvaksytty-paattymispaiva']
+    : muutoshakemus['haettu-kayttoajan-paattymispaiva']
+  const perustelut = muutoshakemus['kayttoajan-pidennys-perustelut']
 
   return (
     <React.Fragment>
       <div className="muutoshakemus__project-end-row">
         <div>
-          <h3
-            className="muutoshakemus__header"
-            data-test-id="muutoshakemus-current-end-date-title"
-          >
+          <h3 className="muutoshakemus__header" data-test-id="muutoshakemus-current-end-date-title">
             {currentEndDateTitle}
           </h3>
-          <div
-            data-test-id="project-end-date"
-            className="muutoshakemus-description-box"
-          >
+          <div data-test-id="project-end-date" className="muutoshakemus-description-box">
             {projectEndDate}
           </div>
         </div>
         <div>
-          <h3
-            className="muutoshakemus__header"
-            data-test-id="muutoshakemus-new-end-date-title"
-          >
+          <h3 className="muutoshakemus__header" data-test-id="muutoshakemus-new-end-date-title">
             {newEndDateTitle}
           </h3>
-          <div
-            data-test-id="muutoshakemus-jatkoaika"
-            className="muutoshakemus-description-box"
-          >
+          <div data-test-id="muutoshakemus-jatkoaika" className="muutoshakemus-description-box">
             {formatDate(newEndDateValue)}
           </div>
         </div>
       </div>
       <div className="muutoshakemus-row">
-        <h4
-          className="muutoshakemus__header"
-          data-test-id="muutoshakemus-reasoning-title"
-        >
+        <h4 className="muutoshakemus__header" data-test-id="muutoshakemus-reasoning-title">
           {t.muutoshakemus.applicantReasoning}
         </h4>
         <div
@@ -144,119 +117,106 @@ const PaattymispaivaValues = ({
         </div>
       </div>
     </React.Fragment>
-  );
-};
+  )
+}
 
 const errors = {
-  required: "Pakollinen kenttä",
+  required: 'Pakollinen kenttä',
   talousarvioSum: (sum: number) => `Loppusumman on oltava ${sum}`,
-};
+}
 
 const getPaatosSchema = (muutoshakemus: Muutoshakemus) =>
   Yup.object().shape({
-    reason: Yup.string().required("Perustelu on pakollinen kenttä"),
+    reason: Yup.string().required('Perustelu on pakollinen kenttä'),
     talousarvio: Yup.lazy<any>((talousarvio) =>
       talousarvio?.talousarvio
         ? Yup.object().shape({
             status: Yup.string(),
-            talousarvio: Yup.object(
-              getTalousarvioSchema(talousarvio.talousarvio, errors)
-            ),
+            talousarvio: Yup.object(getTalousarvioSchema(talousarvio.talousarvio, errors)),
           })
         : Yup.object()
     ),
-    "haen-kayttoajan-pidennysta": Yup.lazy<any>((paattymispaiva) => {
-      return muutoshakemus["haen-kayttoajan-pidennysta"] &&
-        paattymispaiva?.status === "accepted_with_changes"
+    'haen-kayttoajan-pidennysta': Yup.lazy<any>((paattymispaiva) => {
+      return muutoshakemus['haen-kayttoajan-pidennysta'] &&
+        paattymispaiva?.status === 'accepted_with_changes'
         ? Yup.object({
             status: Yup.string().required(),
-            paattymispaiva: Yup.date().required(
-              "Päättymispäivä on pakollinen kenttä"
-            ),
+            paattymispaiva: Yup.date().required('Päättymispäivä on pakollinen kenttä'),
           })
-        : Yup.object();
+        : Yup.object()
     }),
-    "haen-sisaltomuutosta": Yup.lazy<any>((haenSisaltomuutosta) => {
-      const sisaltomuutosStatus = haenSisaltomuutosta?.status;
+    'haen-sisaltomuutosta': Yup.lazy<any>((haenSisaltomuutosta) => {
+      const sisaltomuutosStatus = haenSisaltomuutosta?.status
       return isAcceptedWithOrWithoutChanges(sisaltomuutosStatus)
         ? Yup.object({
             status: Yup.string().required(),
           })
-        : Yup.string();
+        : Yup.string()
     }),
-  });
+  })
 
 interface MuutoshakemusFormProps {
-  avustushaku: Avustushaku;
-  muutoshakemus: Muutoshakemus;
-  muutoshakemukset: Muutoshakemus[];
-  hakemus: NormalizedHakemusData;
-  hakemusVersion: Hakemus;
-  userInfo: UserInfo;
-  presenter: Role | undefined;
-  projectEndDate: string | undefined;
-  isCurrentUserHakemukselleUkotettuValmistelija: boolean;
-  currentTalousarvio: Talousarvio;
-  environment: EnvironmentApiResponse;
+  avustushaku: Avustushaku
+  muutoshakemus: Muutoshakemus
+  muutoshakemukset: Muutoshakemus[]
+  hakemus: NormalizedHakemusData
+  hakemusVersion: Hakemus
+  userInfo: UserInfo
+  presenter: Role | undefined
+  projectEndDate: string | undefined
+  isCurrentUserHakemukselleUkotettuValmistelija: boolean
+  currentTalousarvio: Talousarvio
+  environment: EnvironmentApiResponse
 }
 
 const getInitialValues =
-  (
-    talousarvioValues: TalousarvioValues | undefined,
-    muutoshakemus: Muutoshakemus
-  ) =>
+  (talousarvioValues: TalousarvioValues | undefined, muutoshakemus: Muutoshakemus) =>
   (): MuutoshakemusPaatosRequest => {
-    const initialTalousarvio: MuutoshakemusPaatosRequest["talousarvio"] =
-      talousarvioValues
+    const initialTalousarvio: MuutoshakemusPaatosRequest['talousarvio'] = talousarvioValues
+      ? {
+          status: 'accepted',
+          talousarvio: talousarvioValues,
+        }
+      : undefined
+    const initialPidennys: MuutoshakemusPaatosRequest['haen-kayttoajan-pidennysta'] = muutoshakemus[
+      'haen-kayttoajan-pidennysta'
+    ]
+      ? {
+          status: 'accepted',
+        }
+      : undefined
+    const initialSisaltomuutokset: MuutoshakemusPaatosRequest['haen-sisaltomuutosta'] =
+      muutoshakemus['haen-sisaltomuutosta']
         ? {
-            status: "accepted",
-            talousarvio: talousarvioValues,
+            status: 'accepted',
           }
-        : undefined;
-    const initialPidennys: MuutoshakemusPaatosRequest["haen-kayttoajan-pidennysta"] =
-      muutoshakemus["haen-kayttoajan-pidennysta"]
-        ? {
-            status: "accepted",
-          }
-        : undefined;
-    const initialSisaltomuutokset: MuutoshakemusPaatosRequest["haen-sisaltomuutosta"] =
-      muutoshakemus["haen-sisaltomuutosta"]
-        ? {
-            status: "accepted",
-          }
-        : undefined;
+        : undefined
     return {
       talousarvio: initialTalousarvio,
-      "haen-kayttoajan-pidennysta": initialPidennys,
-      "haen-sisaltomuutosta": initialSisaltomuutokset,
-      reason: "",
-    };
-  };
+      'haen-kayttoajan-pidennysta': initialPidennys,
+      'haen-sisaltomuutosta': initialSisaltomuutokset,
+      reason: '',
+    }
+  }
 
 const formToPayload = (values: MuutoshakemusPaatosRequest) => {
   return {
     reason: values.reason,
-    "haen-sisaltomuutosta": values["haen-sisaltomuutosta"] && {
-      status: values["haen-sisaltomuutosta"]?.status,
+    'haen-sisaltomuutosta': values['haen-sisaltomuutosta'] && {
+      status: values['haen-sisaltomuutosta']?.status,
     },
     talousarvio: values.talousarvio && {
-      talousarvio: omit(values.talousarvio.talousarvio, [
-        "currentSum",
-        "originalSum",
-      ]),
+      talousarvio: omit(values.talousarvio.talousarvio, ['currentSum', 'originalSum']),
       status: values.talousarvio.status,
     },
-    "haen-kayttoajan-pidennysta": values["haen-kayttoajan-pidennysta"]
-      ?.status && {
-      paattymispaiva: values["haen-kayttoajan-pidennysta"].paattymispaiva
-        ? moment(values["haen-kayttoajan-pidennysta"].paattymispaiva).format(
-            isoFormat
-          )
+    'haen-kayttoajan-pidennysta': values['haen-kayttoajan-pidennysta']?.status && {
+      paattymispaiva: values['haen-kayttoajan-pidennysta'].paattymispaiva
+        ? moment(values['haen-kayttoajan-pidennysta'].paattymispaiva).format(isoFormat)
         : undefined,
-      status: values["haen-kayttoajan-pidennysta"].status,
+      status: values['haen-kayttoajan-pidennysta'].status,
     },
-  };
-};
+  }
+}
 
 export const MuutoshakemusForm = ({
   avustushaku,
@@ -271,94 +231,79 @@ export const MuutoshakemusForm = ({
   userInfo,
   environment,
 }: MuutoshakemusFormProps) => {
-  const { t } = useTranslations();
-  const [showModal, setModalVisibility] = useState(false);
-  const dispatch = useHakemustenArviointiDispatch();
+  const { t } = useTranslations()
+  const [showModal, setModalVisibility] = useState(false)
+  const dispatch = useHakemustenArviointiDispatch()
   const talousarvioValues = muutoshakemus.talousarvio.length
     ? getTalousarvioValues(muutoshakemus.talousarvio)
-    : undefined;
-  const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio);
-  const initialValues = useMemo(
-    getInitialValues(talousarvioValues, muutoshakemus),
-    []
-  );
+    : undefined
+  const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
+  const initialValues = useMemo(getInitialValues(talousarvioValues, muutoshakemus), [])
   const f = useFormik<MuutoshakemusPaatosRequest>({
     initialValues,
     validationSchema: getPaatosSchema(muutoshakemus),
     onSubmit: async (values) => {
-      const payload = formToPayload(values);
-      const url = `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus["hakemus-id"]}/muutoshakemus/${muutoshakemus.id}/paatos`;
-      const newMuutoshakemukset: Muutoshakemus[] = await HttpUtil.post(
-        url,
-        payload
-      );
+      const payload = formToPayload(values)
+      const url = `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus['hakemus-id']}/muutoshakemus/${muutoshakemus.id}/paatos`
+      const newMuutoshakemukset: Muutoshakemus[] = await HttpUtil.post(url, payload)
       dispatch(
         setMuutoshakemukset({
-          hakemusId: hakemus["hakemus-id"],
+          hakemusId: hakemus['hakemus-id'],
           muutoshakemukset: newMuutoshakemukset,
         })
-      );
+      )
     },
-  });
+  })
 
   const createPaatosPreviewElement = () => {
     const paatos = {
-      "paatos-status-jatkoaika": f.values["haen-kayttoajan-pidennysta"]?.status,
-      paattymispaiva: f.values["haen-kayttoajan-pidennysta"]?.paattymispaiva,
-      "paatos-status-sisaltomuutos": f.values["haen-sisaltomuutosta"]?.status,
-      "paatos-status-talousarvio": f.values.talousarvio?.status,
+      'paatos-status-jatkoaika': f.values['haen-kayttoajan-pidennysta']?.status,
+      paattymispaiva: f.values['haen-kayttoajan-pidennysta']?.paattymispaiva,
+      'paatos-status-sisaltomuutos': f.values['haen-sisaltomuutosta']?.status,
+      'paatos-status-talousarvio': f.values.talousarvio?.status,
       reason: f.values.reason,
-      "created-at": new Date().toISOString(),
-      decider: `${userInfo["first-name"]} ${userInfo["surname"]}`,
+      'created-at': new Date().toISOString(),
+      decider: `${userInfo['first-name']} ${userInfo['surname']}`,
       talousarvio: muutoshakemus.talousarvio.reduce<Meno[]>((acc, meno) => {
-        const formTalousArvio = f.values.talousarvio?.talousarvio;
+        const formTalousArvio = f.values.talousarvio?.talousarvio
         if (!formTalousArvio) {
-          return acc;
+          return acc
         }
-        const amount = formTalousArvio[meno.type];
+        const amount = formTalousArvio[meno.type]
         if (amount) {
-          acc.push({ ...meno, amount });
+          acc.push({ ...meno, amount })
         }
-        return acc;
+        return acc
       }, []),
       status: undefined,
-    };
+    }
 
     return (
-      <TranslationContext.Provider
-        value={getTranslationContext(hakemusVersion.language)}
-      >
+      <TranslationContext.Provider value={getTranslationContext(hakemusVersion.language)}>
         <MuutoshakemusPaatos
           avustushaku={avustushaku}
           paatos={paatos}
           muutoshakemus={muutoshakemus}
           hakemus={hakemus}
           presenter={presenter}
-          isDecidedByUkotettuValmistelija={
-            isCurrentUserHakemukselleUkotettuValmistelija
-          }
+          isDecidedByUkotettuValmistelija={isCurrentUserHakemukselleUkotettuValmistelija}
           muutoshakemukset={muutoshakemukset}
           environment={environment}
           muutoshakemusUrl={hakemusVersion.muutoshakemusUrl}
         />
       </TranslationContext.Provider>
-    );
-  };
+    )
+  }
 
   return (
     <form onSubmit={f.handleSubmit} data-test-id="muutoshakemus-form">
-      {muutoshakemus["haettu-kayttoajan-paattymispaiva"] && (
+      {muutoshakemus['haettu-kayttoajan-paattymispaiva'] && (
         <MuutoshakemusSection
           blueMiddleComponent={
-            <PaatosStatusRadioButtonGroup
-              f={f}
-              group="haen-kayttoajan-pidennysta"
-            />
+            <PaatosStatusRadioButtonGroup f={f} group="haen-kayttoajan-pidennysta" />
           }
           bottomComponent={
-            isAcceptedWithChanges(
-              f.values["haen-kayttoajan-pidennysta"]?.status
-            ) ? (
+            isAcceptedWithChanges(f.values['haen-kayttoajan-pidennysta']?.status) ? (
               <KayttoajanPidennysAcceptWithChangesForm
                 f={f}
                 muutoshakemus={muutoshakemus}
@@ -369,10 +314,7 @@ export const MuutoshakemusForm = ({
           datepickerFix
         >
           <h2 className="muutoshakemus-section-title">Käyttöaika</h2>
-          <PaattymispaivaValues
-            muutoshakemus={muutoshakemus}
-            projectEndDate={projectEndDate}
-          />
+          <PaattymispaivaValues muutoshakemus={muutoshakemus} projectEndDate={projectEndDate} />
         </MuutoshakemusSection>
       )}
       {!!muutoshakemus.talousarvio.length && (
@@ -398,48 +340,34 @@ export const MuutoshakemusForm = ({
           <MuutosTaloudenKayttosuunnitelmaan
             currentTalousarvio={currentTalousarvio}
             newTalousarvio={muutoshakemus.talousarvio}
-            status={muutoshakemus["paatos-status-talousarvio"]}
-            reason={muutoshakemus["talousarvio-perustelut"]}
+            status={muutoshakemus['paatos-status-talousarvio']}
+            reason={muutoshakemus['talousarvio-perustelut']}
           />
         </MuutoshakemusSection>
       )}
-      {muutoshakemus["haen-sisaltomuutosta"] && (
+      {muutoshakemus['haen-sisaltomuutosta'] && (
         <MuutoshakemusSection
-          blueMiddleComponent={
-            <PaatosStatusRadioButtonGroup group="haen-sisaltomuutosta" f={f} />
-          }
+          blueMiddleComponent={<PaatosStatusRadioButtonGroup group="haen-sisaltomuutosta" f={f} />}
         >
-          <h2 className="muutoshakemus-section-title">
-            Sisältö ja toteutustapa
-          </h2>
+          <h2 className="muutoshakemus-section-title">Sisältö ja toteutustapa</h2>
           <div className="muutoshakemus-row">
-            <h4 className="muutoshakemus__header">
-              {t.sisaltomuutos.appliedChange}
-            </h4>
-            <div
-              className="muutoshakemus-description-box"
-              data-test-id="sisaltomuutos-perustelut"
-            >
-              {muutoshakemus["sisaltomuutos-perustelut"]}
+            <h4 className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
+            <div className="muutoshakemus-description-box" data-test-id="sisaltomuutos-perustelut">
+              {muutoshakemus['sisaltomuutos-perustelut']}
             </div>
           </div>
-          {isAcceptedWithChanges(f.values["haen-sisaltomuutosta"]?.status) && (
+          {isAcceptedWithChanges(f.values['haen-sisaltomuutosta']?.status) && (
             <div className="muutoshakemus-notice">
-              Olet tekemässä päätöksen, jossa haetut sisältömuutokset
-              hyväksytään muutettuna. Varmista, että perusteluissa hakijalle
-              kuvataan mitkä haetuista sisältömuutoksista hyväksytään ja mitkä
-              hylätään.
+              Olet tekemässä päätöksen, jossa haetut sisältömuutokset hyväksytään muutettuna.
+              Varmista, että perusteluissa hakijalle kuvataan mitkä haetuista sisältömuutoksista
+              hyväksytään ja mitkä hylätään.
             </div>
           )}
         </MuutoshakemusSection>
       )}
       <MuutoshakemusSection
         blueMiddleComponent={
-          <button
-            type="submit"
-            disabled={isSubmitDisabled(f)}
-            data-test-id="muutoshakemus-submit"
-          >
+          <button type="submit" disabled={isSubmitDisabled(f)} data-test-id="muutoshakemus-submit">
             Tee päätös ja lähetä hakijalle
           </button>
         }
@@ -449,8 +377,8 @@ export const MuutoshakemusForm = ({
             Yhteiset perustelut ja päätöksen lähettäminen
           </h2>
           <div className="muutoshakemus-paatos-notice">
-            Jos päätös tarvitsee päällikön hyväksynnän, pyydä häntä katsomaan
-            hakemus ja tekemään päätös.
+            Jos päätös tarvitsee päällikön hyväksynnän, pyydä häntä katsomaan hakemus ja tekemään
+            päätös.
           </div>
           <a onClick={() => copyToClipboard(window.location.href)}>
             Kopioi leikepöydälle linkki hakemukseen
@@ -458,15 +386,10 @@ export const MuutoshakemusForm = ({
         </div>
         <div className="muutoshakemus-row">
           <h4 className="muutoshakemus__header">
-            Perustelut{" "}
+            Perustelut{' '}
             <span className="muutoshakemus__default-reason-link">
-              <a onClick={() => setDefaultReason(f, "fi")}>
-                Lisää vakioperustelu suomeksi
-              </a>{" "}
-              |{" "}
-              <a onClick={() => setDefaultReason(f, "sv")}>
-                Lisää vakioperustelu ruotsiksi
-              </a>
+              <a onClick={() => setDefaultReason(f, 'fi')}>Lisää vakioperustelu suomeksi</a> |{' '}
+              <a onClick={() => setDefaultReason(f, 'sv')}>Lisää vakioperustelu ruotsiksi</a>
             </span>
           </h4>
           <textarea
@@ -477,14 +400,10 @@ export const MuutoshakemusForm = ({
             onChange={f.handleChange}
             onBlur={f.handleBlur}
             value={f.values.reason}
-            className={
-              isError(f, "reason") ? "muutoshakemus__error" : undefined
-            }
+            className={isError(f, 'reason') ? 'muutoshakemus__error' : undefined}
           />
-          {isError(f, "reason") && (
-            <div className="muutoshakemus__error">
-              Perustelu on pakollinen kenttä!
-            </div>
+          {isError(f, 'reason') && (
+            <div className="muutoshakemus__error">Perustelu on pakollinen kenttä!</div>
           )}
         </div>
         <div className="muutoshakemus-row muutoshakemus__preview-row">
@@ -502,31 +421,31 @@ export const MuutoshakemusForm = ({
         )}
       </MuutoshakemusSection>
     </form>
-  );
-};
+  )
+}
 
-function setDefaultReason(f: MuutoshakemusPaatosFormValues, lang: "fi" | "sv") {
+function setDefaultReason(f: MuutoshakemusPaatosFormValues, lang: 'fi' | 'sv') {
   const currentStatuses = [
     f.values.talousarvio?.status,
-    f.values["haen-kayttoajan-pidennysta"]?.status,
-    f.values["haen-sisaltomuutosta"]?.status,
-  ].filter((status) => status !== undefined);
+    f.values['haen-kayttoajan-pidennysta']?.status,
+    f.values['haen-sisaltomuutosta']?.status,
+  ].filter((status) => status !== undefined)
   if (currentStatuses.some(isAcceptedWithChanges)) {
-    return f.setFieldValue("reason", paatosStatuses[1].defaultReason[lang]);
+    return f.setFieldValue('reason', paatosStatuses[1].defaultReason[lang])
   }
   if (currentStatuses.every(isAccepted)) {
-    return f.setFieldValue("reason", paatosStatuses[0].defaultReason[lang]);
+    return f.setFieldValue('reason', paatosStatuses[0].defaultReason[lang])
   }
   if (currentStatuses.every(isRejected)) {
-    return f.setFieldValue("reason", paatosStatuses[2].defaultReason[lang]);
+    return f.setFieldValue('reason', paatosStatuses[2].defaultReason[lang])
   }
-  return f.setFieldValue("reason", "");
+  return f.setFieldValue('reason', '')
 }
 
 interface KayttoajanPidennysAcceptWithChangesFormProps {
-  f: MuutoshakemusPaatosFormValues;
-  muutoshakemus: Muutoshakemus;
-  projectEndDate: string | undefined;
+  f: MuutoshakemusPaatosFormValues
+  muutoshakemus: Muutoshakemus
+  projectEndDate: string | undefined
 }
 
 const KayttoajanPidennysAcceptWithChangesForm = ({
@@ -534,20 +453,13 @@ const KayttoajanPidennysAcceptWithChangesForm = ({
   muutoshakemus,
   projectEndDate,
 }: KayttoajanPidennysAcceptWithChangesFormProps): JSX.Element => {
-  const haettuPaiva = dateStringToMoment(
-    muutoshakemus["haettu-kayttoajan-paattymispaiva"]
-  );
+  const haettuPaiva = dateStringToMoment(muutoshakemus['haettu-kayttoajan-paattymispaiva'])
   const errorInPaattymispaiva =
-    f.touched["haen-kayttoajan-pidennysta"] &&
-    getNestedInputErrorClass(f, [
-      "haen-kayttoajan-pidennysta",
-      "paattymispaiva",
-    ]);
+    f.touched['haen-kayttoajan-pidennysta'] &&
+    getNestedInputErrorClass(f, ['haen-kayttoajan-pidennysta', 'paattymispaiva'])
   return (
     <div className="muutoshakemus-row muutoshakemus__project-end-row muutoshakemus__accept-with-changes">
-      <h3 className="muutoshakemus__header row1 col1">
-        Voimassaoleva päättymisaika
-      </h3>
+      <h3 className="muutoshakemus__header row1 col1">Voimassaoleva päättymisaika</h3>
       <div
         data-test-id="current-project-end-date"
         className="row2 col1 muutoshakemus-description-box"
@@ -564,47 +476,35 @@ const KayttoajanPidennysAcceptWithChangesForm = ({
       </div>
 
       <h3 className="muutoshakemus__header row1 col3">OPH:n hyväksymä</h3>
-      <div
-        id="approve-with-changes-muutoshakemus-jatkoaika-oph"
-        className="row2 col3 calendar"
-      >
+      <div id="approve-with-changes-muutoshakemus-jatkoaika-oph" className="row2 col3 calendar">
         <Localization date={localizer} messages={translationsFi.calendar}>
           <DatePicker
             name="paattymispaiva"
-            onBlur={() => f.setFieldTouched("haen-kayttoajan-pidennysta")}
+            onBlur={() => f.setFieldTouched('haen-kayttoajan-pidennysta')}
             onChange={(newDate) => {
-              const d = moment(newDate);
+              const d = moment(newDate)
               if (d.isValid()) {
                 f.setFieldValue(
-                  "haen-kayttoajan-pidennysta.paattymispaiva",
+                  'haen-kayttoajan-pidennysta.paattymispaiva',
                   d.toDate().toISOString()
-                );
+                )
               } else {
-                f.setFieldValue(
-                  "haen-kayttoajan-pidennysta.paattymispaiva",
-                  undefined
-                );
+                f.setFieldValue('haen-kayttoajan-pidennysta.paattymispaiva', undefined)
               }
             }}
             parse={parseDateString}
             defaultValue={
-              f.values["haen-kayttoajan-pidennysta"]?.paattymispaiva
-                ? moment(
-                    f.values["haen-kayttoajan-pidennysta"]?.paattymispaiva
-                  ).toDate()
+              f.values['haen-kayttoajan-pidennysta']?.paattymispaiva
+                ? moment(f.values['haen-kayttoajan-pidennysta']?.paattymispaiva).toDate()
                 : haettuPaiva.toDate()
             }
-            containerClassName={`datepicker ${
-              errorInPaattymispaiva ? "muutoshakemus__error" : ""
-            }`}
+            containerClassName={`datepicker ${errorInPaattymispaiva ? 'muutoshakemus__error' : ''}`}
           />
         </Localization>
       </div>
       {errorInPaattymispaiva && (
-        <span className="muutoshakemus__error row3 col3">
-          Päättymispäivä on pakollinen kenttä!
-        </span>
+        <span className="muutoshakemus__error row3 col3">Päättymispäivä on pakollinen kenttä!</span>
       )}
     </div>
-  );
-};
+  )
+}

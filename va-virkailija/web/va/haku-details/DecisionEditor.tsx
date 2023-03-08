@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
-import _ from "lodash";
-import * as Bacon from "baconjs";
+import React, { useEffect, useState } from 'react'
+import _ from 'lodash'
+import * as Bacon from 'baconjs'
 
-import DateUtil from "soresu-form/web/DateUtil";
-import HttpUtil from "soresu-form/web/HttpUtil";
+import DateUtil from 'soresu-form/web/DateUtil'
+import HttpUtil from 'soresu-form/web/HttpUtil'
 
-import PaatosUrl from "../hakemus-details/PaatosUrl";
-import HelpTooltip from "../HelpTooltip";
-import { Kayttoaika } from "./Kayttoaika";
-import { SelvityksienAikarajat } from "./SelvityksienAikarajat";
-import { Lahetys, Tapahtumaloki } from "./Tapahtumaloki";
-import { LastUpdated } from "./LastUpdated";
+import PaatosUrl from '../hakemus-details/PaatosUrl'
+import HelpTooltip from '../HelpTooltip'
+import { Kayttoaika } from './Kayttoaika'
+import { SelvityksienAikarajat } from './SelvityksienAikarajat'
+import { Lahetys, Tapahtumaloki } from './Tapahtumaloki'
+import { LastUpdated } from './LastUpdated'
 import {
   DecisionLiite,
   HelpTexts,
@@ -18,28 +18,28 @@ import {
   Liite,
   LiiteAttachment,
   LiiteAttachmentVersion,
-} from "soresu-form/web/va/types";
-import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
+} from 'soresu-form/web/va/types'
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 import {
   Avustushaku,
   selectLoadedInitialData,
   selectSelectedAvustushaku,
   updateField,
-} from "../hakujenHallinta/hakuReducer";
+} from '../hakujenHallinta/hakuReducer'
 import {
   useHakujenHallintaDispatch,
   useHakujenHallintaSelector,
-} from "../hakujenHallinta/hakujenHallintaStore";
+} from '../hakujenHallinta/hakujenHallintaStore'
 
 interface DecisionProps {
-  title: string;
-  avustushaku: Avustushaku;
-  id: string;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  helpText?: string;
-  dataTestId?: string;
-  language: Language;
-  disabled: boolean;
+  title: string
+  avustushaku: Avustushaku
+  id: string
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+  helpText?: string
+  dataTestId?: string
+  language: Language
+  disabled: boolean
 }
 
 const DecisionField: React.FC<DecisionProps> = ({
@@ -52,31 +52,21 @@ const DecisionField: React.FC<DecisionProps> = ({
   dataTestId,
   disabled,
 }) => {
-  const fieldId = `decision.${id}.${language}`;
-  const value = _.get(avustushaku, fieldId, "");
-  const titleLanguage = language === "sv" ? `${title} ruotsiksi` : title;
+  const fieldId = `decision.${id}.${language}`
+  const value = _.get(avustushaku, fieldId, '')
+  const titleLanguage = language === 'sv' ? `${title} ruotsiksi` : title
   return (
     <div className="decision-column" data-test-id={dataTestId}>
       <label>
         {titleLanguage}
-        {helpText && language === "fi" ? (
-          <HelpTooltip content={helpText} direction="left" />
-        ) : (
-          ""
-        )}
+        {helpText && language === 'fi' ? <HelpTooltip content={helpText} direction="left" /> : ''}
       </label>
-      <textarea
-        disabled={disabled}
-        onChange={onChange}
-        rows={5}
-        id={fieldId}
-        value={value}
-      />
+      <textarea disabled={disabled} onChange={onChange} rows={5} id={fieldId} value={value} />
     </div>
-  );
-};
+  )
+}
 
-const DecisionFields: React.FC<Omit<DecisionProps, "language">> = ({
+const DecisionFields: React.FC<Omit<DecisionProps, 'language'>> = ({
   title,
   avustushaku,
   id,
@@ -107,46 +97,46 @@ const DecisionFields: React.FC<Omit<DecisionProps, "language">> = ({
       disabled={disabled}
     />
   </div>
-);
+)
 
 interface DateFieldProps {
-  avustushaku: Avustushaku;
-  field: "maksudate" | "date";
-  label: string;
-  helpTexts: HelpTexts;
-  disabled: boolean;
+  avustushaku: Avustushaku
+  field: 'maksudate' | 'date'
+  label: string
+  helpTexts: HelpTexts
+  disabled: boolean
 }
 
 interface DateFieldState {
-  currentAvustushakuId: number;
-  value: any;
+  currentAvustushakuId: number
+  value: any
 }
 
 const DateField = (props: DateFieldProps) => {
-  const dispatch = useHakujenHallintaDispatch();
+  const dispatch = useHakujenHallintaDispatch()
   const getInitialState = (): DateFieldState => {
     return {
       currentAvustushakuId: props.avustushaku.id,
-      value: props.avustushaku.decision?.[props.field] || "",
-    };
-  };
-  const [state, setState] = useState<DateFieldState>(getInitialState);
+      value: props.avustushaku.decision?.[props.field] || '',
+    }
+  }
+  const [state, setState] = useState<DateFieldState>(getInitialState)
   useEffect(() => {
     if (props.avustushaku.id !== state.currentAvustushakuId) {
-      setState(getInitialState());
+      setState(getInitialState())
     }
-  }, [props.avustushaku.id, state.currentAvustushakuId]);
+  }, [props.avustushaku.id, state.currentAvustushakuId])
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState((state) => ({ ...state, value: event.target.value }));
+    setState((state) => ({ ...state, value: event.target.value }))
     dispatch(
       updateField({
         avustushaku: props.avustushaku,
         field: event.target,
         newValue: event.target.value,
       })
-    );
-  };
+    )
+  }
 
   return (
     <div className="decision-date">
@@ -154,9 +144,7 @@ const DateField = (props: DateFieldProps) => {
         <span className="decision-date-label" data-test-id="ratkaisupäivä">
           {props.label}
           <HelpTooltip
-            content={
-              props.helpTexts["hakujen_hallinta__päätös___ratkaisupäivä"]
-            }
+            content={props.helpTexts['hakujen_hallinta__päätös___ratkaisupäivä']}
             direction="left"
           />
         </span>
@@ -169,8 +157,8 @@ const DateField = (props: DateFieldProps) => {
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
 const LiiteGroup = ({
   liite,
@@ -181,13 +169,13 @@ const LiiteGroup = ({
   onChangeLiiteVersions,
   disabled,
 }: {
-  liite: Liite;
-  helpTexts: HelpTexts;
-  selectedLiitteet: Record<string, string>;
-  selectedVersions: Record<string, string | undefined>;
-  onChangeLiite: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  disabled: boolean;
+  liite: Liite
+  helpTexts: HelpTexts
+  selectedLiitteet: Record<string, string>
+  selectedVersions: Record<string, string | undefined>
+  onChangeLiite: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void
+  disabled: boolean
 }) => {
   return (
     <div key={liite.group}>
@@ -195,11 +183,7 @@ const LiiteGroup = ({
         {liite.group}
         <HelpTooltip
           content={
-            helpTexts[
-              `hakujen_hallinta__päätös___${liite.group
-                .toLowerCase()
-                .replace(/ /g, "_")}`
-            ]
+            helpTexts[`hakujen_hallinta__päätös___${liite.group.toLowerCase().replace(/ /g, '_')}`]
           }
           direction="left"
         />
@@ -217,28 +201,28 @@ const LiiteGroup = ({
         />
       ))}
     </div>
-  );
-};
+  )
+}
 
 const PakoteLiite = () => {
-  const dispatch = useHakujenHallintaDispatch();
+  const dispatch = useHakujenHallintaDispatch()
   const { environment, helpTexts } = useHakujenHallintaSelector((state) =>
     selectLoadedInitialData(state)
-  );
+  )
   const loadingAvustushaku = useHakujenHallintaSelector(
     (state) => state.haku.saveStatus.loadingAvustushaku
-  );
-  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
-  const key = "dont-include-pakote-ohje";
-  const dontIncludePakoteOhje = avustushaku.decision?.[key] === true;
-  const hakijaUrl = environment["hakija-server"].url["fi"];
-  const linkUrl = `${hakijaUrl}liitteet/va_pakoteohje.pdf`;
+  )
+  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku)
+  const key = 'dont-include-pakote-ohje'
+  const dontIncludePakoteOhje = avustushaku.decision?.[key] === true
+  const hakijaUrl = environment['hakija-server'].url['fi']
+  const linkUrl = `${hakijaUrl}liitteet/va_pakoteohje.pdf`
   return (
     <div>
       <h5>
         Pakoteohje
         <HelpTooltip
-          content={helpTexts["hakujen_hallinta__päätös___pakoteohjeet"]}
+          content={helpTexts['hakujen_hallinta__päätös___pakoteohjeet']}
           direction="left"
         />
       </h5>
@@ -259,8 +243,7 @@ const PakoteLiite = () => {
               )
             }
           />
-          Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen
-          valtionavustustoiminnassa{" "}
+          Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen valtionavustustoiminnassa{' '}
         </label>
         <span>
           <a
@@ -274,8 +257,8 @@ const PakoteLiite = () => {
         </span>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const AttachmentLiite = ({
   attachment,
@@ -284,16 +267,16 @@ const AttachmentLiite = ({
   onChangeLiiteVersions,
   disabled,
 }: {
-  attachment: LiiteAttachment;
-  isSelected: boolean;
-  selectedLiitteet: Record<string, string>;
-  selectedVersions: Record<string, string | undefined>;
-  onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  disabled?: boolean;
+  attachment: LiiteAttachment
+  isSelected: boolean
+  selectedLiitteet: Record<string, string>
+  selectedVersions: Record<string, string | undefined>
+  onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void
+  disabled?: boolean
 }) => {
-  const { environment } = useHakujenHallintaSelector(selectLoadedInitialData);
-  const disableOldVersions = attachment.id === "va_yleisohje";
-  const amountOfVersions = attachment.versions.length;
+  const { environment } = useHakujenHallintaSelector(selectLoadedInitialData)
+  const disableOldVersions = attachment.id === 'va_yleisohje'
+  const amountOfVersions = attachment.versions.length
   if (attachment.versions.length > 1) {
     return (
       <div>
@@ -302,10 +285,7 @@ const AttachmentLiite = ({
             key={`liiteversion-${v.id}`}
             attachment={attachment}
             isLiiteSelected={isSelected}
-            isDisabled={
-              disabled ||
-              (disableOldVersions ? index + 1 < amountOfVersions : undefined)
-            }
+            isDisabled={disabled || (disableOldVersions ? index + 1 < amountOfVersions : undefined)}
             versionSpec={v}
             environment={environment}
             selectedVersions={selectedVersions}
@@ -313,7 +293,7 @@ const AttachmentLiite = ({
           />
         ))}
       </div>
-    );
+    )
   }
   return (
     <LiiteVersionLinks
@@ -321,8 +301,8 @@ const AttachmentLiite = ({
       versionSuffix={attachment.versions[0].id}
       environment={environment}
     />
-  );
-};
+  )
+}
 
 const LiiteComponent = ({
   attachment,
@@ -333,16 +313,16 @@ const LiiteComponent = ({
   onChangeLiiteVersions,
   disabled,
 }: {
-  attachment: LiiteAttachment;
-  groupId: string;
-  selectedLiitteet: Record<string, string>;
-  selectedVersions: Record<string, string | undefined>;
-  onChangeLiite: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  disabled: boolean;
+  attachment: LiiteAttachment
+  groupId: string
+  selectedLiitteet: Record<string, string>
+  selectedVersions: Record<string, string | undefined>
+  onChangeLiite: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void
+  disabled: boolean
 }) => {
-  const isSelected = selectedLiitteet[groupId] === attachment.id;
-  const disabledGroup = groupId === "Ehdot" || disabled;
+  const isSelected = selectedLiitteet[groupId] === attachment.id
+  const disabledGroup = groupId === 'Ehdot' || disabled
   return (
     <div key={attachment.id} className="decision-liite-selection__liite">
       <label>
@@ -350,16 +330,14 @@ const LiiteComponent = ({
           type="checkbox"
           className="decision-liite-selection__liite-input"
           data-group={groupId}
-          name={"decision-liite-group--" + groupId}
+          name={'decision-liite-group--' + groupId}
           value={attachment.id}
           checked={isSelected}
           onChange={onChangeLiite}
           disabled={disabledGroup}
         />
-        {attachment.langs.fi}{" "}
-        <span className="decision-liite-selection__liite-id">
-          {attachment.id}
-        </span>
+        {attachment.langs.fi}{' '}
+        <span className="decision-liite-selection__liite-id">{attachment.id}</span>
       </label>
       <AttachmentLiite
         attachment={attachment}
@@ -370,8 +348,8 @@ const LiiteComponent = ({
         onChangeLiiteVersions={onChangeLiiteVersions}
       />
     </div>
-  );
-};
+  )
+}
 
 const LiiteVersion = ({
   attachment,
@@ -382,25 +360,22 @@ const LiiteVersion = ({
   isDisabled,
   onChangeLiiteVersions,
 }: {
-  attachment: LiiteAttachment;
-  isLiiteSelected: boolean;
-  versionSpec: LiiteAttachmentVersion;
-  environment: EnvironmentApiResponse;
-  isDisabled?: boolean;
-  selectedVersions: Record<string, string | undefined>;
-  onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  attachment: LiiteAttachment
+  isLiiteSelected: boolean
+  versionSpec: LiiteAttachmentVersion
+  environment: EnvironmentApiResponse
+  isDisabled?: boolean
+  selectedVersions: Record<string, string | undefined>
+  onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void
 }) => {
-  const isSelected = selectedVersions[attachment.id] === versionSpec.id;
+  const isSelected = selectedVersions[attachment.id] === versionSpec.id
   return (
-    <label
-      key={"v" + versionSpec.id}
-      className="decision-liite-selection__liite-version"
-    >
+    <label key={'v' + versionSpec.id} className="decision-liite-selection__liite-version">
       <input
         type="radio"
         className="decision-liite-selection__liite-version-input"
         data-liite={attachment.id}
-        name={"decision-liite-version--" + attachment.id}
+        name={'decision-liite-version--' + attachment.id}
         value={versionSpec.id}
         checked={isSelected}
         onChange={onChangeLiiteVersions}
@@ -413,27 +388,23 @@ const LiiteVersion = ({
         environment={environment}
       />
     </label>
-  );
-};
-
-interface LiiteVersionLinkProps {
-  attachmentId: string;
-  versionSuffix: string;
-  environment: EnvironmentApiResponse;
+  )
 }
 
-const languages = ["fi", "sv"] as const;
+interface LiiteVersionLinkProps {
+  attachmentId: string
+  versionSuffix: string
+  environment: EnvironmentApiResponse
+}
 
-const LiiteVersionLinks = ({
-  attachmentId,
-  versionSuffix,
-  environment,
-}: LiiteVersionLinkProps) => {
+const languages = ['fi', 'sv'] as const
+
+const LiiteVersionLinks = ({ attachmentId, versionSuffix, environment }: LiiteVersionLinkProps) => {
   return (
     <span>
       {languages.map((lang) => {
-        const hakijaUrl = environment["hakija-server"].url[lang];
-        const linkUrl = `${hakijaUrl}liitteet/${attachmentId}${versionSuffix}_${lang}.pdf`;
+        const hakijaUrl = environment['hakija-server'].url[lang]
+        const linkUrl = `${hakijaUrl}liitteet/${attachmentId}${versionSuffix}_${lang}.pdf`
         return (
           <a
             key={lang}
@@ -444,73 +415,61 @@ const LiiteVersionLinks = ({
           >
             {lang}
           </a>
-        );
+        )
       })}
     </span>
-  );
-};
+  )
+}
 
-const makeSelectedLiitteet = (
-  available: Liite[],
-  selectedLiitteet: DecisionLiite[]
-) => {
-  const findAvailableLiite = (
-    liite: DecisionLiite
-  ): LiiteAttachment | undefined => {
-    const foundGroup = available.find((l) => l.group === liite.group);
+const makeSelectedLiitteet = (available: Liite[], selectedLiitteet: DecisionLiite[]) => {
+  const findAvailableLiite = (liite: DecisionLiite): LiiteAttachment | undefined => {
+    const foundGroup = available.find((l) => l.group === liite.group)
     if (!foundGroup) {
-      return undefined;
+      return undefined
     }
-    return foundGroup.attachments.find((l) => l.id === liite.id);
-  };
+    return foundGroup.attachments.find((l) => l.id === liite.id)
+  }
 
   return selectedLiitteet.reduce<Record<string, string>>((acc, l) => {
-    const foundSelected = findAvailableLiite(l);
+    const foundSelected = findAvailableLiite(l)
     if (foundSelected) {
-      acc[l.group] = foundSelected.id;
+      acc[l.group] = foundSelected.id
     }
-    return acc;
-  }, {});
-};
+    return acc
+  }, {})
+}
 
-const makeSelectedVersions = (
-  decisionLiitteet: Liite[],
-  selectedLiitteet: DecisionLiite[]
-) => {
-  const candidateVersionsInSelectedLiitteet = selectedLiitteet.reduce<
-    Record<string, string>
-  >((acc, l) => {
-    acc[l.id] = l.version;
-    return acc;
-  }, {});
-
-  return decisionLiitteet.reduce<Record<string, string | undefined>>(
-    (acc, g) => {
-      _.forEach(g.attachments, (a) => {
-        const userSelectedVersion = candidateVersionsInSelectedLiitteet[a.id];
-        const isVersionAvailable =
-          userSelectedVersion !== undefined &&
-          _.find(a.versions, (v) => v.id === userSelectedVersion) !== undefined;
-        acc[a.id] = isVersionAvailable
-          ? userSelectedVersion
-          : _.last(a.versions)?.id;
-      });
-      return acc;
+const makeSelectedVersions = (decisionLiitteet: Liite[], selectedLiitteet: DecisionLiite[]) => {
+  const candidateVersionsInSelectedLiitteet = selectedLiitteet.reduce<Record<string, string>>(
+    (acc, l) => {
+      acc[l.id] = l.version
+      return acc
     },
     {}
-  );
-};
+  )
+
+  return decisionLiitteet.reduce<Record<string, string | undefined>>((acc, g) => {
+    _.forEach(g.attachments, (a) => {
+      const userSelectedVersion = candidateVersionsInSelectedLiitteet[a.id]
+      const isVersionAvailable =
+        userSelectedVersion !== undefined &&
+        _.find(a.versions, (v) => v.id === userSelectedVersion) !== undefined
+      acc[a.id] = isVersionAvailable ? userSelectedVersion : _.last(a.versions)?.id
+    })
+    return acc
+  }, {})
+}
 
 interface LiitteetSelectionProps {
-  avustushaku: Avustushaku;
-  decisionLiitteet: Liite[];
-  helpTexts: HelpTexts;
-  disabled: boolean;
+  avustushaku: Avustushaku
+  decisionLiitteet: Liite[]
+  helpTexts: HelpTexts
+  disabled: boolean
 }
 
 interface LiitteetSelectionState {
-  selectedLiitteet: Record<string, string>;
-  selectedVersions: Record<string, string | undefined>;
+  selectedLiitteet: Record<string, string>
+  selectedVersions: Record<string, string | undefined>
 }
 
 const LiitteetSelection = ({
@@ -520,67 +479,61 @@ const LiitteetSelection = ({
   disabled,
 }: LiitteetSelectionProps) => {
   const [selectedLiitteet, setSelectedLiitteet] = useState(() =>
-    makeSelectedLiitteet(
-      decisionLiitteet,
-      avustushaku?.decision?.liitteet ?? []
-    )
-  );
+    makeSelectedLiitteet(decisionLiitteet, avustushaku?.decision?.liitteet ?? [])
+  )
   const [selectedVersions, setSelectedVersions] = useState(() =>
-    makeSelectedVersions(
-      decisionLiitteet,
-      avustushaku?.decision?.liitteet ?? []
-    )
-  );
-  const dispatch = useHakujenHallintaDispatch();
+    makeSelectedVersions(decisionLiitteet, avustushaku?.decision?.liitteet ?? [])
+  )
+  const dispatch = useHakujenHallintaDispatch()
 
   const updateSelectedLiitteet = (
-    selectedLiitteet: LiitteetSelectionState["selectedLiitteet"],
-    selectedVersions: LiitteetSelectionState["selectedVersions"]
+    selectedLiitteet: LiitteetSelectionState['selectedLiitteet'],
+    selectedVersions: LiitteetSelectionState['selectedVersions']
   ) => {
     const liitteet = _.map(selectedLiitteet, (liiteId, groupId) => ({
       group: groupId,
       id: liiteId,
       version: selectedVersions[liiteId],
-    }));
+    }))
     dispatch(
       updateField({
         avustushaku,
-        field: { id: "decision.liitteet" },
+        field: { id: 'decision.liitteet' },
         newValue: liitteet as any,
       })
-    );
-  };
+    )
+  }
 
   const onChangeLiite = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value: liiteId, checked: isChecked } = event.target;
-    const liiteGroup = event.target.dataset.group;
+    const { value: liiteId, checked: isChecked } = event.target
+    const liiteGroup = event.target.dataset.group
     if (liiteGroup) {
       const newSelectedLiitteet = isChecked
         ? _.assign({}, selectedLiitteet, { [liiteGroup]: liiteId })
-        : _.omit(selectedLiitteet, [liiteGroup]);
-      updateSelectedLiitteet(newSelectedLiitteet, selectedVersions);
-      setSelectedLiitteet(newSelectedLiitteet);
+        : _.omit(selectedLiitteet, [liiteGroup])
+      updateSelectedLiitteet(newSelectedLiitteet, selectedVersions)
+      setSelectedLiitteet(newSelectedLiitteet)
     }
-  };
+  }
 
   const onChangeLiiteVersion = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const versionId = event.target.value;
-    const liiteId = event.target.dataset.liite;
+    const versionId = event.target.value
+    const liiteId = event.target.dataset.liite
     if (liiteId) {
       const newSelectedVersions = _.assign({}, selectedVersions, {
         [liiteId]: versionId,
-      });
-      updateSelectedLiitteet(selectedLiitteet, newSelectedVersions);
-      setSelectedVersions(newSelectedVersions);
+      })
+      updateSelectedLiitteet(selectedLiitteet, newSelectedVersions)
+      setSelectedVersions(newSelectedVersions)
     }
-  };
+  }
 
   return (
     <div>
       <h4 data-test-id="paatoksenliitteet">
         Päätöksen liitteet
         <HelpTooltip
-          content={helpTexts["hakujen_hallinta__päätös___päätöksen_liitteet"]}
+          content={helpTexts['hakujen_hallinta__päätös___päätöksen_liitteet']}
           direction="left"
         />
       </h4>
@@ -599,18 +552,18 @@ const LiitteetSelection = ({
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
 interface RegenerateDecisionsProps {
-  avustushaku: Avustushaku;
-  helpTexts: HelpTexts;
+  avustushaku: Avustushaku
+  helpTexts: HelpTexts
 }
 
 interface RegenerateDecisionState {
-  completed: boolean;
-  confirm: boolean;
-  regenerating?: boolean;
+  completed: boolean
+  confirm: boolean
+  regenerating?: boolean
 }
 
 class RegenerateDecisions extends React.Component<
@@ -618,32 +571,30 @@ class RegenerateDecisions extends React.Component<
   RegenerateDecisionState
 > {
   constructor(props: RegenerateDecisionsProps) {
-    super(props);
-    this.state = { completed: false, confirm: false };
+    super(props)
+    this.state = { completed: false, confirm: false }
   }
 
   render() {
-    const avustushaku = this.props.avustushaku;
+    const avustushaku = this.props.avustushaku
 
     const onConfirm = () => {
-      this.setState({ confirm: true });
-    };
+      this.setState({ confirm: true })
+    }
 
     const onRegenerate = () => {
-      this.setState({ regenerating: true });
-      const sendS = Bacon.fromPromise(
-        HttpUtil.post(`/api/paatos/regenerate/${avustushaku.id}`, {})
-      );
+      this.setState({ regenerating: true })
+      const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/regenerate/${avustushaku.id}`, {}))
       sendS.onValue(() => {
-        this.setState({ completed: true });
-      });
-    };
+        this.setState({ completed: true })
+      })
+    }
 
-    const regenerating = this.state.regenerating;
+    const regenerating = this.state.regenerating
     return (
       <div>
         {this.state.completed && (
-          <div style={{ fontWeight: "bold", marginBottom: 10, marginTop: 10 }}>
+          <div style={{ fontWeight: 'bold', marginBottom: 10, marginTop: 10 }}>
             Päätökset luotu uudelleen
           </div>
         )}
@@ -651,7 +602,7 @@ class RegenerateDecisions extends React.Component<
           <div>
             {this.state.confirm && (
               <button onClick={onRegenerate} disabled={regenerating}>
-                {regenerating ? "Vahvistetaan" : "Vahvista päätösten luominen"}
+                {regenerating ? 'Vahvistetaan' : 'Vahvista päätösten luominen'}
               </button>
             )}
             {!this.state.confirm && (
@@ -659,9 +610,7 @@ class RegenerateDecisions extends React.Component<
                 Luo päätökset uudelleen
                 <HelpTooltip
                   content={
-                    this.props.helpTexts[
-                      "hakujen_hallinta__päätös___luo_päätökset_uudelleen"
-                    ]
+                    this.props.helpTexts['hakujen_hallinta__päätös___luo_päätökset_uudelleen']
                   }
                   direction="left"
                 />
@@ -670,69 +619,62 @@ class RegenerateDecisions extends React.Component<
           </div>
         )}
       </div>
-    );
+    )
   }
 }
 
 interface ResendDecisionProps {
-  avustushaku: Avustushaku;
-  helpTexts: HelpTexts;
-  reload: () => void;
-  sent?: number;
+  avustushaku: Avustushaku
+  helpTexts: HelpTexts
+  reload: () => void
+  sent?: number
 }
 
 interface ResendDecisionsState {
-  completed: boolean;
-  confirm: boolean;
-  resending?: boolean;
-  resendError?: string;
+  completed: boolean
+  confirm: boolean
+  resending?: boolean
+  resendError?: string
 }
 
-class ResendDecisions extends React.Component<
-  ResendDecisionProps,
-  ResendDecisionsState
-> {
-  state: ResendDecisionsState = { completed: false, confirm: false };
+class ResendDecisions extends React.Component<ResendDecisionProps, ResendDecisionsState> {
+  state: ResendDecisionsState = { completed: false, confirm: false }
 
   render() {
-    const avustushaku = this.props.avustushaku;
+    const avustushaku = this.props.avustushaku
 
     const onConfirm = () => {
-      this.setState({ confirm: true });
-    };
+      this.setState({ confirm: true })
+    }
 
     const onResend = () => {
       this.setState({
         resending: true,
         resendError: undefined,
         completed: false,
-      });
-      const sendS = Bacon.fromPromise(
-        HttpUtil.post(`/api/paatos/resendall/${avustushaku.id}`, {})
-      );
+      })
+      const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/resendall/${avustushaku.id}`, {}))
       sendS.onValue(() => {
-        this.setState({ completed: true, resending: false });
-        this.props.reload();
-      });
+        this.setState({ completed: true, resending: false })
+        this.props.reload()
+      })
       sendS.onError((err) => {
         const setPäätösResendError = (errorText: string) =>
           this.setState({
             resending: false,
             resendError: errorText,
             confirm: false,
-          });
-        if (err.name === "HttpResponseError" && err.response.status === 400) {
-          setPäätösResendError(err.response.data.error);
+          })
+        if (err.name === 'HttpResponseError' && err.response.status === 400) {
+          setPäätösResendError(err.response.data.error)
         } else {
-          setPäätösResendError(
-            "Odottamaton virhe tapahtui lähettäessä päätöksiä"
-          );
+          setPäätösResendError('Odottamaton virhe tapahtui lähettäessä päätöksiä')
         }
-        this.props.reload();
-      });
-    };
+        this.props.reload()
+      })
+    }
 
-    const resending = this.state.resending;
+    const resending = this.state.resending
     return (
       <div>
         {this.state.resending && (
@@ -743,7 +685,7 @@ class ResendDecisions extends React.Component<
         )}
         {this.state.completed && (
           <div
-            style={{ fontWeight: "bold", marginBottom: 10, marginTop: 10 }}
+            style={{ fontWeight: 'bold', marginBottom: 10, marginTop: 10 }}
             data-test-id="resend-completed-message"
           >
             Päätökset lähetetty uudelleen
@@ -753,9 +695,7 @@ class ResendDecisions extends React.Component<
           <div>
             {this.state.confirm && (
               <button onClick={onResend} disabled={resending}>
-                {resending
-                  ? "Lähetetään"
-                  : "Vahvista päätösten uudelleenlähetys"}
+                {resending ? 'Lähetetään' : 'Vahvista päätösten uudelleenlähetys'}
               </button>
             )}
             {!this.state.confirm && (
@@ -763,9 +703,7 @@ class ResendDecisions extends React.Component<
                 Lähetä {this.props.sent} päätöstä uudelleen
                 <HelpTooltip
                   content={
-                    this.props.helpTexts[
-                      "hakujen_hallinta__päätös___lähetä_päätökset_uudelleen"
-                    ]
+                    this.props.helpTexts['hakujen_hallinta__päätös___lähetä_päätökset_uudelleen']
                   }
                   direction="left"
                 />
@@ -779,93 +717,87 @@ class ResendDecisions extends React.Component<
           </p>
         )}
       </div>
-    );
+    )
   }
 }
 
 interface DecisionDateAndSendProps {
-  avustushaku: Avustushaku;
-  environment: EnvironmentApiResponse;
-  helpTexts: HelpTexts;
-  disabled: boolean;
+  avustushaku: Avustushaku
+  environment: EnvironmentApiResponse
+  helpTexts: HelpTexts
+  disabled: boolean
 }
 
 interface Paatos {
-  id: number;
-  version: number;
-  "organization-name": string;
-  "project-name": string;
-  "sent-emails": any;
-  view_count: number;
-  user_key: string;
-  "sent-time": string;
+  id: number
+  version: number
+  'organization-name': string
+  'project-name': string
+  'sent-emails': any
+  view_count: number
+  user_key: string
+  'sent-time': string
 }
 
 interface PaatosSentRes {
-  count: number;
-  sent: number;
-  mail: any;
-  "sent-time": string;
-  "example-url": string;
-  "example-refuse-url": string;
-  "example-modify-url": string;
-  paatokset: Paatos[];
+  count: number
+  sent: number
+  mail: any
+  'sent-time': string
+  'example-url': string
+  'example-refuse-url': string
+  'example-modify-url': string
+  paatokset: Paatos[]
 }
 
 interface DecisionAndSendState {
-  currentAvustushakuId: number;
-  preview: boolean;
-  sending: boolean;
-  count?: number;
-  sent?: number;
-  mail?: any;
-  sentTime?: string;
-  exampleUrl?: string;
-  exampleRefuseUrl?: string;
-  exampleModifyUrl?: string;
-  paatokset?: Paatos[];
-  lahetykset?: Lahetys[];
-  sendError?: string;
-  paatosDetail?: number;
-  paatosViews?: (PaatosView & { timeFormatted: string })[];
+  currentAvustushakuId: number
+  preview: boolean
+  sending: boolean
+  count?: number
+  sent?: number
+  mail?: any
+  sentTime?: string
+  exampleUrl?: string
+  exampleRefuseUrl?: string
+  exampleModifyUrl?: string
+  paatokset?: Paatos[]
+  lahetykset?: Lahetys[]
+  sendError?: string
+  paatosDetail?: number
+  paatosViews?: (PaatosView & { timeFormatted: string })[]
 }
 
 interface PaatosView {
-  id: number;
-  hakemus_id: number;
-  view_time: string;
-  headers: any;
-  remote_addr: string;
+  id: number
+  hakemus_id: number
+  view_time: string
+  headers: any
+  remote_addr: string
 }
 
 interface PaatosViewsRes {
-  views: PaatosView[];
+  views: PaatosView[]
 }
 
-class DecisionDateAndSend extends React.Component<
-  DecisionDateAndSendProps,
-  DecisionAndSendState
-> {
+class DecisionDateAndSend extends React.Component<DecisionDateAndSendProps, DecisionAndSendState> {
   constructor(props: DecisionDateAndSendProps) {
-    super(props);
-    this.state = DecisionDateAndSend.initialState(props);
-    this.rerenderParentCallback = this.rerenderParentCallback.bind(this);
-    this.fetchLahetetytPaatokset = this.fetchLahetetytPaatokset.bind(this);
+    super(props)
+    this.state = DecisionDateAndSend.initialState(props)
+    this.rerenderParentCallback = this.rerenderParentCallback.bind(this)
+    this.fetchLahetetytPaatokset = this.fetchLahetetytPaatokset.bind(this)
   }
 
   rerenderParentCallback() {
-    this.fetchEmailState(this.props.avustushaku.id);
-    this.fetchLahetetytPaatokset(this.props.avustushaku.id);
+    this.fetchEmailState(this.props.avustushaku.id)
+    this.fetchLahetetytPaatokset(this.props.avustushaku.id)
   }
 
-  static getDerivedStateFromProps(
-    props: DecisionDateAndSendProps,
-    state: DecisionAndSendState
-  ) {
+  static getDerivedStateFromProps(props: DecisionDateAndSendProps, state: DecisionAndSendState) {
     if (props.avustushaku.id !== state.currentAvustushakuId) {
-      return DecisionDateAndSend.initialState(props);
+      return DecisionDateAndSend.initialState(props)
     } else {
-      return null;
+      return null
     }
   }
 
@@ -875,17 +807,17 @@ class DecisionDateAndSend extends React.Component<
       preview: false,
       count: undefined,
       sending: false,
-    };
+    }
   }
 
   componentDidMount() {
-    this.fetchEmailState(this.props.avustushaku.id);
-    this.fetchLahetetytPaatokset(this.props.avustushaku.id);
+    this.fetchEmailState(this.props.avustushaku.id)
+    this.fetchLahetetytPaatokset(this.props.avustushaku.id)
   }
 
   componentDidUpdate(prevProps: DecisionDateAndSendProps) {
     if (prevProps.avustushaku.id !== this.state.currentAvustushakuId) {
-      this.fetchEmailState(this.props.avustushaku.id);
+      this.fetchEmailState(this.props.avustushaku.id)
     }
   }
 
@@ -899,87 +831,77 @@ class DecisionDateAndSend extends React.Component<
           label="Ratkaisupäivä"
           disabled={this.props.disabled}
         />
-        {this.props.avustushaku.status === "resolved" &&
-          this.sendEmailSection()}
+        {this.props.avustushaku.status === 'resolved' && this.sendEmailSection()}
       </div>
-    );
+    )
   }
 
   sendEmailSection() {
     return (
       <div>
-        <span className="decision-row">
-          Päätösten lähettäminen sähköpostilla
-        </span>
+        <span className="decision-row">Päätösten lähettäminen sähköpostilla</span>
         <span>
-          Huomaathan, että linkkiä avustuksen hylkäämiseen ei lisätä hylättyyn
-          päätökseen.
+          Huomaathan, että linkkiä avustuksen hylkäämiseen ei lisätä hylättyyn päätökseen.
         </span>
         <div className="decision-separator" />
         {this.sendControls(this.rerenderParentCallback)}
       </div>
-    );
+    )
   }
 
   sentOk() {
-    return _.isNumber(this.state.count) && this.state.count === this.state.sent;
+    return _.isNumber(this.state.count) && this.state.count === this.state.sent
   }
 
   mailsToSend() {
-    return !this.sentOk() && !this.state.sending;
+    return !this.sentOk() && !this.state.sending
   }
 
   mailsToSendLabel() {
     if (this.sentOk()) {
-      return "0";
+      return '0'
     }
     //If, for some reason not all of the mails have been sent
-    if (
-      _.isNumber(this.state.sent) &&
-      this.state.sent !== 0 &&
-      this.state.count! > 0
-    ) {
-      return `${this.state.count! - this.state.sent}/${this.state.count}`;
+    if (_.isNumber(this.state.sent) && this.state.sent !== 0 && this.state.count! > 0) {
+      return `${this.state.count! - this.state.sent}/${this.state.count}`
     }
-    return this.state.count + "";
+    return this.state.count + ''
   }
 
   fetchEmailState(avustushakuId: number) {
     const sendS = Bacon.fromPromise<PaatosSentRes>(
       HttpUtil.get(`/api/paatos/sent/${avustushakuId}`)
-    );
+    )
     sendS.onValue((res) => {
       this.setState({
         ...this.state,
         count: res.count,
         sent: res.sent,
         mail: res.mail,
-        sentTime: res["sent-time"],
-        exampleUrl: res["example-url"],
-        exampleRefuseUrl: res["example-refuse-url"],
-        exampleModifyUrl: res["example-modify-url"],
+        sentTime: res['sent-time'],
+        exampleUrl: res['example-url'],
+        exampleRefuseUrl: res['example-refuse-url'],
+        exampleModifyUrl: res['example-modify-url'],
         paatokset: res.paatokset,
-      });
-    });
+      })
+    })
   }
 
   fetchLahetetytPaatokset(avustushakuId: number) {
     const sendS = Bacon.fromPromise<Lahetys[]>(
-      HttpUtil.get(
-        `/api/avustushaku/${avustushakuId}/tapahtumaloki/paatoksen_lahetys`
-      )
-    );
+      HttpUtil.get(`/api/avustushaku/${avustushakuId}/tapahtumaloki/paatoksen_lahetys`)
+    )
     sendS.onValue((lahetykset) => {
-      this.setState({ lahetykset });
-    });
+      this.setState({ lahetykset })
+    })
   }
 
   hasLahetetytPaatokset() {
     return (
-      typeof this.state.lahetykset !== "undefined" &&
+      typeof this.state.lahetykset !== 'undefined' &&
       Array.isArray(this.state.lahetykset) &&
       this.state.lahetykset.length > 0
-    );
+    )
   }
 
   showTapahtumaLokiOrViimeisinLahetys() {
@@ -989,16 +911,16 @@ class DecisionDateAndSend extends React.Component<
       <strong>
         {this.state.sent} päätöstä lähetetty {this.sentTimeStamp()}
       </strong>
-    );
+    )
   }
 
   sendControls(rerenderParentCallback: () => void) {
     const onPreview = () => {
-      this.setState({ ...this.state, preview: true });
+      this.setState({ ...this.state, preview: true })
       setTimeout(() => {
-        this.setState({ ...this.state, preview: false });
-      }, 5000);
-    };
+        this.setState({ ...this.state, preview: false })
+      }, 5000)
+    }
 
     const onSend = () => {
       this.setState({
@@ -1006,54 +928,52 @@ class DecisionDateAndSend extends React.Component<
         sending: true,
         preview: false,
         sendError: undefined,
-      });
+      })
       const sendS = Bacon.fromPromise(
         HttpUtil.post(`/api/paatos/sendall/${this.props.avustushaku.id}`, {})
-      );
+      )
       sendS.onValue((res) => {
         this.setState({
           ...this.state,
           count: res.count,
           sent: res.sent,
-          sentTime: res["sent-time"],
+          sentTime: res['sent-time'],
           paatokset: res.paatokset,
           sending: false,
-        });
-        this.fetchLahetetytPaatokset(this.props.avustushaku.id);
-      });
+        })
+        this.fetchLahetetytPaatokset(this.props.avustushaku.id)
+      })
       sendS.onError((err) => {
         const setPäätösSendError = (errorText: string) =>
-          this.setState({ sending: false, sendError: errorText });
-        if (err.name === "HttpResponseError" && err.response.status === 400) {
-          setPäätösSendError(err.response.data.error);
+          this.setState({ sending: false, sendError: errorText })
+        if (err.name === 'HttpResponseError' && err.response.status === 400) {
+          setPäätösSendError(err.response.data.error)
         } else {
-          setPäätösSendError(
-            "Odottamaton virhe tapahtui lähettäessä päätöksiä"
-          );
+          setPäätösSendError('Odottamaton virhe tapahtui lähettäessä päätöksiä')
         }
-      });
-    };
+      })
+    }
 
     if (!_.isNumber(this.state.count)) {
-      return <img src="/virkailija/img/ajax-loader.gif" />;
+      return <img src="/virkailija/img/ajax-loader.gif" />
     }
 
     const onShowViews = (paatos: Paatos) => {
       const sendS = Bacon.fromPromise<PaatosViewsRes>(
         HttpUtil.get(`/api/paatos/views/${paatos.id}`)
-      );
+      )
       sendS.onValue((res) => {
         const paatosViews = res.views.map((v) => {
-          const dateTime = `${DateUtil.asDateString(
+          const dateTime = `${DateUtil.asDateString(v.view_time)} ${DateUtil.asTimeString(
             v.view_time
-          )} ${DateUtil.asTimeString(v.view_time)}`;
-          return { ...v, timeFormatted: dateTime };
-        });
-        this.setState({ paatosDetail: paatos.id, paatosViews: paatosViews });
-      });
-    };
+          )}`
+          return { ...v, timeFormatted: dateTime }
+        })
+        this.setState({ paatosDetail: paatos.id, paatosViews: paatosViews })
+      })
+    }
 
-    const onCloseViews = () => this.setState({ paatosDetail: undefined });
+    const onCloseViews = () => this.setState({ paatosDetail: undefined })
 
     return (
       <div className="decision-send-controls">
@@ -1067,10 +987,7 @@ class DecisionDateAndSend extends React.Component<
         )}
         {this.mailsToSend() && (
           <span>
-            <button
-              disabled={this.state.preview || this.sentOk()}
-              onClick={onPreview}
-            >
+            <button disabled={this.state.preview || this.sentOk()} onClick={onPreview}>
               Lähetä {this.mailsToSendLabel()} päätöstä
             </button>
             &nbsp;
@@ -1090,9 +1007,7 @@ class DecisionDateAndSend extends React.Component<
             helpTexts={this.props.helpTexts}
           />
         )}
-        {this.state.preview && (
-          <button onClick={onSend}>Vahvista lähetys</button>
-        )}
+        {this.state.preview && <button onClick={onSend}>Vahvista lähetys</button>}
         {this.state.sendError && (
           <p id="päätös-send-error" className="error">
             {this.state.sendError}
@@ -1125,25 +1040,18 @@ class DecisionDateAndSend extends React.Component<
                       <a
                         target="_blank"
                         rel="noopener noreferrer"
-                        href={PaatosUrl.publicLink(
-                          this.props.avustushaku.id,
-                          paatos.user_key
-                        )}
+                        href={PaatosUrl.publicLink(this.props.avustushaku.id, paatos.user_key)}
                       >
-                        {paatos["organization-name"]} - {paatos["project-name"]}
+                        {paatos['organization-name']} - {paatos['project-name']}
                       </a>
                     </td>
-                    <td data-test-id={"sent-emails"}>
-                      {paatos["sent-emails"].addresses.join(" ")}
+                    <td data-test-id={'sent-emails'}>
+                      {paatos['sent-emails'].addresses.join(' ')}
                     </td>
-                    <td style={{ position: "relative" }}>
-                      {paatos.view_count === 0 && (
-                        <span>{paatos.view_count}</span>
-                      )}
+                    <td style={{ position: 'relative' }}>
+                      {paatos.view_count === 0 && <span>{paatos.view_count}</span>}
                       {paatos.view_count > 0 && (
-                        <a onClick={onShowViews.bind(this, paatos)}>
-                          {paatos.view_count}
-                        </a>
+                        <a onClick={onShowViews.bind(this, paatos)}>{paatos.view_count}</a>
                       )}
                       {this.state.paatosDetail === paatos.id && (
                         <div className="panel person-panel person-panel--view-details">
@@ -1157,15 +1065,13 @@ class DecisionDateAndSend extends React.Component<
                               <col width="60%" />
                             </colgroup>
                             <tbody>
-                              {(this.state.paatosViews ?? []).map(
-                                (view, index) => (
-                                  <tr key={index}>
-                                    <td>{view.timeFormatted}</td>
-                                    <td>{view.remote_addr}</td>
-                                    <td>{view.headers["user-agent"]}</td>
-                                  </tr>
-                                )
-                              )}
+                              {(this.state.paatosViews ?? []).map((view, index) => (
+                                <tr key={index}>
+                                  <td>{view.timeFormatted}</td>
+                                  <td>{view.remote_addr}</td>
+                                  <td>{view.headers['user-agent']}</td>
+                                </tr>
+                              ))}
                             </tbody>
                           </table>
                         </div>
@@ -1178,56 +1084,45 @@ class DecisionDateAndSend extends React.Component<
           </div>
         )}
       </div>
-    );
+    )
   }
 
   sentTimeStamp() {
     if (this.state.sentTime) {
-      const sentTimeStamp = new Date(this.state.sentTime);
-      return `${DateUtil.asDateString(
-        sentTimeStamp
-      )} klo ${DateUtil.asTimeString(sentTimeStamp)}`;
+      const sentTimeStamp = new Date(this.state.sentTime)
+      return `${DateUtil.asDateString(sentTimeStamp)} klo ${DateUtil.asTimeString(sentTimeStamp)}`
     }
-    return "";
+    return ''
   }
 
   emailPreview() {
     const mailContent = this.state.mail.content
+      .replace('URL_PLACEHOLDER', `<a href=${this.state.exampleUrl}>${this.state.exampleUrl}</a>`)
       .replace(
-        "URL_PLACEHOLDER",
-        `<a href=${this.state.exampleUrl}>${this.state.exampleUrl}</a>`
-      )
-      .replace(
-        "REFUSE_URL_PLACEHOLDER",
+        'REFUSE_URL_PLACEHOLDER',
         `<a href=${this.state.exampleRefuseUrl}>${this.state.exampleRefuseUrl}</a>`
       )
       .replace(
-        "MODIFY_URL_PLACEHOLDER",
+        'MODIFY_URL_PLACEHOLDER',
         `<a href=${this.state.exampleModifyUrl}>${this.state.exampleModifyUrl}</a>`
-      );
+      )
 
     return (
       <div className="decision-email-preview">
         <div className="decision-email-row">
-          <strong className="decision-email-field-label">
-            Vastaanottajat:
-          </strong>
+          <strong className="decision-email-field-label">Vastaanottajat:</strong>
           <div className="decision-email-field-value">
-            {this.state.count} hakemuksen yhteyshenkilö, organisaation
-            virallinen sähköpostiosoite ja nimenkirjoitusoikeudelliset henkilöt
+            {this.state.count} hakemuksen yhteyshenkilö, organisaation virallinen sähköpostiosoite
+            ja nimenkirjoitusoikeudelliset henkilöt
           </div>
         </div>
         <div className="decision-email-row">
           <strong className="decision-email-field-label">Lähettäjä:</strong>
-          <div className="decision-email-field-value">
-            {this.state.mail.sender}
-          </div>
+          <div className="decision-email-field-value">{this.state.mail.sender}</div>
         </div>
         <div className="decision-email-row">
           <strong className="decision-email-field-label">Aihe:</strong>
-          <div className="decision-email-field-value">
-            {this.state.mail.subject}
-          </div>
+          <div className="decision-email-field-value">{this.state.mail.subject}</div>
         </div>
         <div className="decision-email-row">
           <strong className="decision-email-field-label">Viesti:</strong>
@@ -1237,85 +1132,79 @@ class DecisionDateAndSend extends React.Component<
           ></div>
         </div>
       </div>
-    );
+    )
   }
 }
 
-const getUniqueKoulutusasteet = (
-  talousarviotilit: Avustushaku["talousarviotilit"]
-) => {
-  const allKoulutusasteet =
-    talousarviotilit?.flatMap((t) => t?.koulutusasteet ?? []) ?? [];
-  return [...new Set(allKoulutusasteet)];
-};
+const getUniqueKoulutusasteet = (talousarviotilit: Avustushaku['talousarviotilit']) => {
+  const allKoulutusasteet = talousarviotilit?.flatMap((t) => t?.koulutusasteet ?? []) ?? []
+  return [...new Set(allKoulutusasteet)]
+}
 
 const DecisionEditor = () => {
-  const dispatch = useHakujenHallintaDispatch();
-  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku);
+  const dispatch = useHakujenHallintaDispatch()
+  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku)
   const { decisionLiitteet, environment, helpTexts } =
-    useHakujenHallintaSelector(selectLoadedInitialData);
-  const koulutusasteet = getUniqueKoulutusasteet(avustushaku.talousarviotilit);
+    useHakujenHallintaSelector(selectLoadedInitialData)
+  const koulutusasteet = getUniqueKoulutusasteet(avustushaku.talousarviotilit)
   const loadingAvustushaku = useHakujenHallintaSelector(
     (state) => state.haku.saveStatus.loadingAvustushaku
-  );
+  )
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    dispatch(
-      updateField({ avustushaku, field: e.target, newValue: e.target.value })
-    );
-  };
+    dispatch(updateField({ avustushaku, field: e.target, newValue: e.target.value }))
+  }
   const fields = [
     {
-      id: "sovelletutsaannokset",
-      title: "Sovelletut säännökset",
-      helpText: helpTexts["hakujen_hallinta__päätös___sovelletut_säännökset"],
-      dataTestId: "sovelletutsaannokset",
+      id: 'sovelletutsaannokset',
+      title: 'Sovelletut säännökset',
+      helpText: helpTexts['hakujen_hallinta__päätös___sovelletut_säännökset'],
+      dataTestId: 'sovelletutsaannokset',
     },
     {
-      id: "kayttooikeudet",
-      title: "Tekijänoikeudet",
-      helpText: helpTexts["hakujen_hallinta__päätös___tekijänoikeudet"],
-      dataTestId: "kayttooikeudet",
+      id: 'kayttooikeudet',
+      title: 'Tekijänoikeudet',
+      helpText: helpTexts['hakujen_hallinta__päätös___tekijänoikeudet'],
+      dataTestId: 'kayttooikeudet',
     },
     {
-      id: "kayttotarkoitus",
-      title: "Avustuksen käyttötarkoitus",
-      helpText:
-        helpTexts["hakujen_hallinta__päätös___avustuksen_käyttötarkoitus"],
-      dataTestId: "kayttotarkoitus",
+      id: 'kayttotarkoitus',
+      title: 'Avustuksen käyttötarkoitus',
+      helpText: helpTexts['hakujen_hallinta__päätös___avustuksen_käyttötarkoitus'],
+      dataTestId: 'kayttotarkoitus',
     },
     {
-      id: "selvitysvelvollisuus",
-      title: "Selvitysvelvollisuus",
-      helpText: helpTexts["hakujen_hallinta__päätös___selvitysvelvollisuus"],
-      dataTestId: "selvitysvelvollisuus",
+      id: 'selvitysvelvollisuus',
+      title: 'Selvitysvelvollisuus',
+      helpText: helpTexts['hakujen_hallinta__päätös___selvitysvelvollisuus'],
+      dataTestId: 'selvitysvelvollisuus',
     },
     {
-      id: "hyvaksyminen",
-      title: "Päätöksen hyväksyminen",
-      helpText: helpTexts["hakujen_hallinta__päätös___päätöksen_hyväksyminen"],
-      dataTestId: "hyvaksyminen",
+      id: 'hyvaksyminen',
+      title: 'Päätöksen hyväksyminen',
+      helpText: helpTexts['hakujen_hallinta__päätös___päätöksen_hyväksyminen'],
+      dataTestId: 'hyvaksyminen',
     },
     {
-      id: "johtaja",
-      title: "Johtaja",
-      helpText: helpTexts["hakujen_hallinta__päätös___johtaja"],
-      dataTestId: "johtaja",
+      id: 'johtaja',
+      title: 'Johtaja',
+      helpText: helpTexts['hakujen_hallinta__päätös___johtaja'],
+      dataTestId: 'johtaja',
     },
     {
-      id: "valmistelija",
-      title: "Esittelijä",
-      helpText: helpTexts["hakujen_hallinta__päätös___esittelijä"],
-      dataTestId: "valmistelija",
+      id: 'valmistelija',
+      title: 'Esittelijä',
+      helpText: helpTexts['hakujen_hallinta__päätös___esittelijä'],
+      dataTestId: 'valmistelija',
     },
-  ];
-  const updatedAt = avustushaku.decision?.updatedAt;
+  ]
+  const updatedAt = avustushaku.decision?.updatedAt
 
-  const mainHelp = { __html: helpTexts["hakujen_hallinta__päätös___ohje"] };
+  const mainHelp = { __html: helpTexts['hakujen_hallinta__päätös___ohje'] }
 
   return (
     <div className="decision-editor">
       <div data-test-id="paatos-ohje" dangerouslySetInnerHTML={mainHelp} />
-      <LastUpdated updatedAt={updatedAt} id={"paatosUpdatedAt"} />
+      <LastUpdated updatedAt={updatedAt} id={'paatosUpdatedAt'} />
       <DecisionFields
         key="taustaa"
         title="Taustaa"
@@ -1323,7 +1212,7 @@ const DecisionEditor = () => {
         id="taustaa"
         onChange={onChange}
         disabled={loadingAvustushaku}
-        helpText={helpTexts["hakujen_hallinta__päätös___taustaa"]}
+        helpText={helpTexts['hakujen_hallinta__päätös___taustaa']}
         dataTestId="taustaa"
       />
       <DecisionFields
@@ -1332,11 +1221,7 @@ const DecisionEditor = () => {
         avustushaku={avustushaku}
         id="myonteinenlisateksti"
         onChange={onChange}
-        helpText={
-          helpTexts[
-            "hakujen_hallinta__päätös___myönteisen_päätöksen_lisäteksti"
-          ]
-        }
+        helpText={helpTexts['hakujen_hallinta__päätös___myönteisen_päätöksen_lisäteksti']}
         dataTestId="myonteinenlisateksti"
         disabled={loadingAvustushaku}
       />
@@ -1346,7 +1231,7 @@ const DecisionEditor = () => {
             key={aste}
             title={`Myönteisen päätöksen lisäteksti - ${aste}`}
             avustushaku={avustushaku}
-            id={`myonteinenlisateksti-${aste.replace(/[\s.]/g, "_")}`}
+            id={`myonteinenlisateksti-${aste.replace(/[\s.]/g, '_')}`}
             onChange={onChange}
             disabled={loadingAvustushaku}
           />
@@ -1370,8 +1255,8 @@ const DecisionEditor = () => {
         avustushaku={avustushaku}
         id="maksu"
         onChange={onChange}
-        helpText={helpTexts["hakujen_hallinta__päätös___avustuksen_maksuaika"]}
-        dataTestId={"maksu"}
+        helpText={helpTexts['hakujen_hallinta__päätös___avustuksen_maksuaika']}
+        dataTestId={'maksu'}
         disabled={loadingAvustushaku}
       />
       <Kayttoaika avustushaku={avustushaku} disabled={loadingAvustushaku} />
@@ -1403,7 +1288,7 @@ const DecisionEditor = () => {
         disabled={loadingAvustushaku}
       />
     </div>
-  );
-};
+  )
+}
 
-export default DecisionEditor;
+export default DecisionEditor

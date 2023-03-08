@@ -1,29 +1,25 @@
-import React from "react";
-import _ from "lodash";
+import React from 'react'
+import _ from 'lodash'
 
-import PreviewComponent from "./PreviewComponent.jsx";
-import LocalizedString from "../component/LocalizedString.tsx";
+import PreviewComponent from './PreviewComponent.jsx'
+import LocalizedString from '../component/LocalizedString.tsx'
 
 export default class MultipleOptionValue extends PreviewComponent {
   render() {
-    const options = this.props.options;
-    const lang = this.props.lang;
-    const values = [];
+    const options = this.props.options
+    const lang = this.props.lang
+    const values = []
     if (options) {
       for (let i = 0; i < options.length; i++) {
-        const isFirst = values.length === 0;
-        const option = options[i];
+        const isFirst = values.length === 0
+        const option = options[i]
         if (_.includes(this.props.value, option.value)) {
           values.push(
             <span key={i}>
               <span hidden={isFirst}>, </span>
-              <LocalizedString
-                translations={option}
-                translationKey="label"
-                lang={lang}
-              />
+              <LocalizedString translations={option} translationKey="label" lang={lang} />
             </span>
-          );
+          )
         }
       }
     }
@@ -31,6 +27,6 @@ export default class MultipleOptionValue extends PreviewComponent {
       <span className="soresu-value" id={this.props.htmlId}>
         {values}
       </span>
-    );
+    )
   }
 }

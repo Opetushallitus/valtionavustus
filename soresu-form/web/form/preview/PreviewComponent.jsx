@@ -1,7 +1,7 @@
-import React from "react";
-import ClassNames from "classnames";
-import _ from "lodash";
-import LocalizedString from "./../component/LocalizedString.tsx";
+import React from 'react'
+import ClassNames from 'classnames'
+import _ from 'lodash'
+import LocalizedString from './../component/LocalizedString.tsx'
 
 export default class PreviewComponent extends React.Component {
   render(preview) {
@@ -10,28 +10,25 @@ export default class PreviewComponent extends React.Component {
         {this.label()}
         {preview}
       </div>
-    );
+    )
   }
 
   className() {
-    const classNames = ClassNames(
-      "soresu-preview-element",
-      this.sizeClassName()
-    );
-    return !_.isEmpty(classNames) ? classNames : undefined;
+    const classNames = ClassNames('soresu-preview-element', this.sizeClassName())
+    return !_.isEmpty(classNames) ? classNames : undefined
   }
 
   sizeClassName() {
-    if (this.param("size") && !Number.isInteger(this.param("size"))) {
-      return this.param("size");
+    if (this.param('size') && !Number.isInteger(this.param('size'))) {
+      return this.param('size')
     } else {
-      return undefined;
+      return undefined
     }
   }
 
   label() {
     if (this.hideLabel() || !this.props.field.label) {
-      return undefined;
+      return undefined
     } else {
       return (
         <LocalizedString
@@ -40,24 +37,21 @@ export default class PreviewComponent extends React.Component {
           translationKey="label"
           lang={this.props.lang}
         />
-      );
+      )
     }
   }
 
   hideLabel() {
-    return (
-      this.props.renderingParameters &&
-      this.props.renderingParameters.hideLabels === true
-    );
+    return this.props.renderingParameters && this.props.renderingParameters.hideLabels === true
   }
 
   param(param, defaultValue) {
     if (!this.props.field.params) {
-      return defaultValue;
+      return defaultValue
     }
     if (this.props.field.params[param] !== undefined) {
-      return this.props.field.params[param];
+      return this.props.field.params[param]
     }
-    return defaultValue;
+    return defaultValue
   }
 }

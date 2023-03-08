@@ -1,33 +1,32 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AnswerFilter, HakemusFilter } from "../types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { AnswerFilter, HakemusFilter } from '../types'
 
 const initialState: HakemusFilter = {
   answers: [],
   isOpen: false,
   openQuestions: [],
-};
+}
 
 const filterSlice = createSlice({
-  name: "arviointiFilter",
+  name: 'arviointiFilter',
   initialState,
   reducers: {
     toggleFilter: (state) => {
-      state.isOpen = !state.isOpen;
+      state.isOpen = !state.isOpen
     },
     clearFilters: (state) => {
-      state.answers = [];
+      state.answers = []
     },
     setAnswerFilter: (state, { payload }: PayloadAction<AnswerFilter[]>) => {
-      state.answers = payload;
+      state.answers = payload
     },
     setOpenQuestions: (state, { payload }: PayloadAction<string[]>) => {
-      state.openQuestions = payload;
+      state.openQuestions = payload
     },
   },
-});
+})
 
-export const { toggleFilter, clearFilters, setAnswerFilter, setOpenQuestions } =
-  filterSlice.actions;
+export const { toggleFilter, clearFilters, setAnswerFilter, setOpenQuestions } = filterSlice.actions
 
-export default filterSlice.reducer;
-export const TAG_ID = "tags" as const;
+export default filterSlice.reducer
+export const TAG_ID = 'tags' as const

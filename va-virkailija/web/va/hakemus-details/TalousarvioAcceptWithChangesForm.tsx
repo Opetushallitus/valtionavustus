@@ -1,80 +1,64 @@
-import React from "react";
+import React from 'react'
 
-import { getNestedInputErrorClass } from "soresu-form/web/va/formikHelpers";
-import {
-  Meno,
-  Talousarvio,
-  TalousarvioValues,
-} from "soresu-form/web/va/types/muutoshakemus";
-import { MuutoshakemusPaatosFormValues } from "./hakemusTypes";
+import { getNestedInputErrorClass } from 'soresu-form/web/va/formikHelpers'
+import { Meno, Talousarvio, TalousarvioValues } from 'soresu-form/web/va/types/muutoshakemus'
+import { MuutoshakemusPaatosFormValues } from './hakemusTypes'
 
-import "soresu-form/web/va/muutoshakemus/talous.less";
+import 'soresu-form/web/va/muutoshakemus/talous.less'
 
 interface TalousarvioAcceptWithChangesFormProps {
-  f: MuutoshakemusPaatosFormValues;
-  talousarvio: Talousarvio;
-  requestedTalousarvio: Talousarvio;
+  f: MuutoshakemusPaatosFormValues
+  talousarvio: Talousarvio
+  requestedTalousarvio: Talousarvio
 }
 
 const calculateCurrentSum = (talousarvio: TalousarvioValues): number => {
   return Object.keys(talousarvio).reduce(
-    (acc, cur) =>
-      cur !== "currentSum" && cur !== "originalSum"
-        ? acc + talousarvio[cur]
-        : acc,
+    (acc, cur) => (cur !== 'currentSum' && cur !== 'originalSum' ? acc + talousarvio[cur] : acc),
     0
-  );
-};
+  )
+}
 
 const getMenoValues = (f: MuutoshakemusPaatosFormValues, meno: Meno) => {
   return {
-    inputClass: getNestedInputErrorClass(f, [
-      "talousarvio",
-      "talousarvio",
-      meno.type,
-    ]),
+    inputClass: getNestedInputErrorClass(f, ['talousarvio', 'talousarvio', meno.type]),
     value: f.values.talousarvio?.talousarvio?.[meno.type],
-  };
-};
+  }
+}
 
 const MenoRow = ({
   f,
   meno,
   requestedTalousarvio,
 }: {
-  f: MuutoshakemusPaatosFormValues;
-  meno: Meno;
-  requestedTalousarvio: Talousarvio;
+  f: MuutoshakemusPaatosFormValues
+  meno: Meno
+  requestedTalousarvio: Talousarvio
 }) => {
-  const name = `talousarvio.${meno.type}`;
-  const { inputClass, value } = getMenoValues(f, meno);
-  const amountClass = value === meno.amount ? "" : "linethrough";
-  const requestedAmount = requestedTalousarvio.find(
-    (m) => m.type === meno.type
-  )?.amount;
+  const name = `talousarvio.${meno.type}`
+  const { inputClass, value } = getMenoValues(f, meno)
+  const amountClass = value === meno.amount ? '' : 'linethrough'
+  const requestedAmount = requestedTalousarvio.find((m) => m.type === meno.type)?.amount
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    const value = parseInt(e.target.value);
-    const valueIsNaN = isNaN(value);
-    f.setFieldValue(`talousarvio.${name}`, valueIsNaN ? "" : value);
+    const value = parseInt(e.target.value)
+    const valueIsNaN = isNaN(value)
+    f.setFieldValue(`talousarvio.${name}`, valueIsNaN ? '' : value)
     if (f.values.talousarvio?.talousarvio && !valueIsNaN) {
       f.setFieldValue(
-        "talousarvio.talousarvio.currentSum",
+        'talousarvio.talousarvio.currentSum',
         calculateCurrentSum({
           ...f.values.talousarvio.talousarvio,
           [meno.type]: value,
         })
-      );
+      )
     }
-  };
+  }
 
   return (
-    <div
-      className="muutoshakemus_talousarvio_row"
-      data-test-id="meno-input-row"
-    >
+    <div className="muutoshakemus_talousarvio_row" data-test-id="meno-input-row">
       <div className="currentBudget">
-        <span>{meno["translation-fi"]}</span>
+        <span>{meno['translation-fi']}</span>
         <span className={amountClass}>{meno.amount} €</span>
       </div>
       <div className="separator" />
@@ -94,8 +78,8 @@ const MenoRow = ({
       </div>
       <div className="changedAmountEur">€</div>
     </div>
-  );
-};
+  )
+}
 
 export const TalousarvioAcceptWithChangesForm = ({
   f,
@@ -103,12 +87,12 @@ export const TalousarvioAcceptWithChangesForm = ({
   requestedTalousarvio,
 }: TalousarvioAcceptWithChangesFormProps) => {
   // @ts-ignore Formik provides incorrect error type
-  const currentSumError = f.errors.talousarvio?.talousarvio?.currentSum;
-  const currentSumErrorClass = currentSumError ? "currentSumError" : "";
+  const currentSumError = f.errors.talousarvio?.talousarvio?.currentSum
+  const currentSumErrorClass = currentSumError ? 'currentSumError' : ''
   const currentSumErrorElem = currentSumError && (
     <span className="muutoshakemus__error">{currentSumError}</span>
-  );
-  const { originalSum, currentSum } = f.values.talousarvio?.talousarvio ?? {};
+  )
+  const { originalSum, currentSum } = f.values.talousarvio?.talousarvio ?? {}
   return (
     <React.Fragment>
       <div className="muutoshakemus_talousarvio_row">
@@ -129,7 +113,7 @@ export const TalousarvioAcceptWithChangesForm = ({
           <MenoRow
             f={f}
             meno={meno}
-            key={meno["type"]}
+            key={meno['type']}
             requestedTalousarvio={requestedTalousarvio}
           />
         ))}
@@ -161,5 +145,5 @@ export const TalousarvioAcceptWithChangesForm = ({
         <div className="changedAmountEur" />
       </div>
     </React.Fragment>
-  );
-};
+  )
+}

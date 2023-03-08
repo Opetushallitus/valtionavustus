@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react'
 
-import styles from "./Switch.module.less";
+import styles from './Switch.module.less'
 
 interface Props {
-  onChange: () => void;
-  checked: boolean;
-  label: string;
+  onChange: () => void
+  checked: boolean
+  label: string
 }
 
 export function Switch({ checked, onChange, label }: Props) {
@@ -15,5 +15,5 @@ export function Switch({ checked, onChange, label }: Props) {
       <input type="checkbox" id={label} onChange={onChange} checked={checked} />
       <i />
     </label>
-  );
+  )
 }

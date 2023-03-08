@@ -1,104 +1,97 @@
-import _ from "lodash";
-import React from "react";
+import _ from 'lodash'
+import React from 'react'
 
 import BasicFieldComponent, {
   BasicFieldComponentProps,
-} from "soresu-form/web/form/component/BasicFieldComponent";
-import BasicTextField from "soresu-form/web/form/component/BasicTextField";
-import Translator from "soresu-form/web/form/Translator";
-import { parseDecimal } from "soresu-form/web/MathUtil";
+} from 'soresu-form/web/form/component/BasicFieldComponent'
+import BasicTextField from 'soresu-form/web/form/component/BasicTextField'
+import Translator from 'soresu-form/web/form/Translator'
+import { parseDecimal } from 'soresu-form/web/MathUtil'
 
-import VaTraineeDayUtil from "soresu-form/web/va/VaTraineeDayUtil";
-import VaTraineeDayCalculator from "soresu-form/web/va/VaTraineeDayCalculator";
+import VaTraineeDayUtil from 'soresu-form/web/va/VaTraineeDayUtil'
+import VaTraineeDayCalculator from 'soresu-form/web/va/VaTraineeDayCalculator'
 
 interface TraineeDayEditCalculatorProps extends BasicFieldComponentProps {}
 
 export default class TraineeDayEditCalculator extends BasicFieldComponent<TraineeDayEditCalculatorProps> {
-  translator: Translator;
+  translator: Translator
   constructor(props: TraineeDayEditCalculatorProps) {
-    super(props);
-    this.translator = new Translator(
-      props.translations.form["trainee-day-calculator"]
-    );
+    super(props)
+    this.translator = new Translator(props.translations.form['trainee-day-calculator'])
   }
 
   render() {
-    const props = this.props;
-    const htmlId = props.htmlId;
-    const field = props.field;
-    const fieldId = field.id;
-    const answers = props.controller.hakemus.answers;
+    const props = this.props
+    const htmlId = props.htmlId
+    const field = props.field
+    const fieldId = field.id
+    const answers = props.controller.hakemus.answers
     const currentTraineeDayGrowingFieldsetChild =
-      VaTraineeDayUtil.findGrowingFieldsetChildByCalculatorId(answers, fieldId);
+      VaTraineeDayUtil.findGrowingFieldsetChildByCalculatorId(answers, fieldId)
     const originalCalcAnswer = _.find(
       currentTraineeDayGrowingFieldsetChild.value,
       (ans) => ans.key === fieldId
-    );
+    )
     const grantedCalcAnswer = {
       value: this.props.value
         ? this.props.value
         : VaTraineeDayCalculator.emptySubfieldsFor(field.id),
-    };
+    }
 
-    const allowEditing = props.controller.allowEditing;
-    const hasError = props.hasError;
+    const allowEditing = props.controller.allowEditing
+    const hasError = props.hasError
 
     const onChange = (subfield: any) => {
-      return VaTraineeDayCalculator.onChange(
-        subfield,
-        props,
-        grantedCalcAnswer,
-        field
-      );
-    };
+      return VaTraineeDayCalculator.onChange(subfield, props, grantedCalcAnswer, field)
+    }
 
     const nameStr = TraineeDayEditCalculator.renderNameAnswer(
       currentTraineeDayGrowingFieldsetChild.value
-    );
+    )
 
     const orgScopeStr = VaTraineeDayUtil.readSubfieldValue(
       originalCalcAnswer.value,
       fieldId,
-      "scope"
-    );
+      'scope'
+    )
     const orgScopeTypeStr = VaTraineeDayUtil.readSubfieldValue(
       originalCalcAnswer.value,
       fieldId,
-      "scope-type"
-    );
+      'scope-type'
+    )
     const orgPersonCountStr = VaTraineeDayUtil.readSubfieldValue(
       originalCalcAnswer.value,
       fieldId,
-      "person-count"
-    );
+      'person-count'
+    )
     const orgTotalStr = VaTraineeDayUtil.readSubfieldValue(
       originalCalcAnswer.value,
       fieldId,
-      "total"
-    );
+      'total'
+    )
 
     const grtScopeStr = VaTraineeDayUtil.readSubfieldValue(
       grantedCalcAnswer.value,
       fieldId,
-      "scope"
-    );
-    const grtScopeIsValid = parseDecimal(grtScopeStr) >= 0;
+      'scope'
+    )
+    const grtScopeIsValid = parseDecimal(grtScopeStr) >= 0
     const grtScopeTypeStr = VaTraineeDayUtil.readSubfieldValue(
       grantedCalcAnswer.value,
       fieldId,
-      "scope-type"
-    );
+      'scope-type'
+    )
     const grtPersonCountStr = VaTraineeDayUtil.readSubfieldValue(
       grantedCalcAnswer.value,
       fieldId,
-      "person-count"
-    );
-    const grtPersonCountIsValid = parseInt(grtPersonCountStr, 10) >= 0;
+      'person-count'
+    )
+    const grtPersonCountIsValid = parseInt(grtPersonCountStr, 10) >= 0
     const grtTotalStr = VaTraineeDayUtil.readSubfieldValue(
       grantedCalcAnswer.value,
       fieldId,
-      "total"
-    );
+      'total'
+    )
 
     return (
       <tr>
@@ -106,21 +99,19 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent<Traine
         <td className="text-gray original-value">
           {orgScopeStr}&nbsp;{orgScopeTypeStr}
         </td>
-        <td style={{ whiteSpace: "nowrap" }}>
+        <td style={{ whiteSpace: 'nowrap' }}>
           <BasicTextField
             field={field}
-            htmlId={htmlId + ".scope"}
+            htmlId={htmlId + '.scope'}
             disabled={!allowEditing}
-            onChange={onChange(
-              VaTraineeDayCalculator.subfieldSpecFor(field.id, "scope")
-            )}
+            onChange={onChange(VaTraineeDayCalculator.subfieldSpecFor(field.id, 'scope'))}
             value={grtScopeStr}
             translations={{}}
             hasError={hasError && !grtScopeIsValid}
             size="extra-extra-small"
             lang={this.props.lang}
             renderingParameters={{}}
-            translationKey={""}
+            translationKey={''}
           />
           {grtScopeTypeStr}
         </td>
@@ -128,18 +119,16 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent<Traine
         <td>
           <BasicTextField
             field={field}
-            htmlId={htmlId + ".person-count"}
+            htmlId={htmlId + '.person-count'}
             disabled={!allowEditing}
-            onChange={onChange(
-              VaTraineeDayCalculator.subfieldSpecFor(field.id, "person-count")
-            )}
+            onChange={onChange(VaTraineeDayCalculator.subfieldSpecFor(field.id, 'person-count'))}
             value={grtPersonCountStr}
             translations={{}}
             hasError={hasError && !grtPersonCountIsValid}
             size="extra-extra-small"
             lang={this.props.lang}
             renderingParameters={{}}
-            translationKey={""}
+            translationKey={''}
           />
         </td>
         <td className="text-gray">{orgTotalStr}</td>
@@ -147,11 +136,11 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent<Traine
           <strong>{grtTotalStr}</strong>
         </td>
       </tr>
-    );
+    )
   }
 
   static renderNameAnswer(subfields: any) {
-    const subfield = _.find(subfields, (ans) => ans.fieldType === "nameField");
-    return subfield ? subfield.value : "";
+    const subfield = _.find(subfields, (ans) => ans.fieldType === 'nameField')
+    return subfield ? subfield.value : ''
   }
 }

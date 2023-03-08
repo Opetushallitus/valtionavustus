@@ -1,31 +1,23 @@
-import React, { useState, useEffect } from "react";
-import HttpUtil from "soresu-form/web/HttpUtil";
-import { UserInfo } from "../types";
-import { Language } from "soresu-form/web/va/i18n/translations";
-import {
-  Hakemus,
-  Answer,
-  Selvitys,
-  SelvitysEmail,
-} from "soresu-form/web/va/types";
-import { IconTrashcan } from "soresu-form/web/va/img/IconTrashcan";
+import React, { useState, useEffect } from 'react'
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import { UserInfo } from '../types'
+import { Language } from 'soresu-form/web/va/i18n/translations'
+import { Hakemus, Answer, Selvitys, SelvitysEmail } from 'soresu-form/web/va/types'
+import { IconTrashcan } from 'soresu-form/web/va/img/IconTrashcan'
 
-import "./TaloustarkastusEmail.less";
-import { VerificationBox } from "./VerificationBox";
-import { useHakemustenArviointiDispatch } from "../hakemustenArviointi/arviointiStore";
-import {
-  loadSelvitys,
-  refreshHakemukset,
-} from "../hakemustenArviointi/arviointiReducer";
+import './TaloustarkastusEmail.less'
+import { VerificationBox } from './VerificationBox'
+import { useHakemustenArviointiDispatch } from '../hakemustenArviointi/arviointiStore'
+import { loadSelvitys, refreshHakemukset } from '../hakemustenArviointi/arviointiReducer'
 
 type TaloustarkastusEmailProps = {
-  avustushakuId: number;
-  hakemus: Hakemus;
-  loppuselvitys: Selvitys;
-  userInfo: UserInfo;
-  avustushakuName: string;
-  lang: Language;
-};
+  avustushakuId: number
+  hakemus: Hakemus
+  loppuselvitys: Selvitys
+  userInfo: UserInfo
+  avustushakuName: string
+  lang: Language
+}
 
 export const TaloustarkastusEmail = ({
   hakemus,
@@ -35,34 +27,23 @@ export const TaloustarkastusEmail = ({
   userInfo,
   lang,
 }: TaloustarkastusEmailProps) => {
-  const dispatch = useHakemustenArviointiDispatch();
-  const taloustarkastettu = hakemus["status-loppuselvitys"] === "accepted";
-  const senderName =
-    userInfo["first-name"].split(" ")[0] + " " + userInfo["surname"];
-  const projectName =
-    loppuselvitys["project-name"] || hakemus["project-name"] || "";
-  const registerNumber = loppuselvitys["register-number"] || "";
-  const emailAnswers = flattenAnswers(
-    loppuselvitys.answers?.concat(hakemus.answers) || []
-  ).filter((answer) => answer.key && answer.key.includes("email"));
-  const organizationEmail = emailAnswers.find(
-    (a) => a.key === "organization-email"
-  );
-  const primaryEmail = emailAnswers.find((a) => a.key === "primary-email");
-  const selvitysEmail = loppuselvitys["selvitys-email"];
+  const dispatch = useHakemustenArviointiDispatch()
+  const taloustarkastettu = hakemus['status-loppuselvitys'] === 'accepted'
+  const senderName = userInfo['first-name'].split(' ')[0] + ' ' + userInfo['surname']
+  const projectName = loppuselvitys['project-name'] || hakemus['project-name'] || ''
+  const registerNumber = loppuselvitys['register-number'] || ''
+  const emailAnswers = flattenAnswers(loppuselvitys.answers?.concat(hakemus.answers) || []).filter(
+    (answer) => answer.key && answer.key.includes('email')
+  )
+  const organizationEmail = emailAnswers.find((a) => a.key === 'organization-email')
+  const primaryEmail = emailAnswers.find((a) => a.key === 'primary-email')
+  const selvitysEmail = loppuselvitys['selvitys-email']
 
   const [email, setEmail] = useState(
     taloustarkastettu && selvitysEmail
       ? sentEmail(lang, selvitysEmail)
-      : initialEmail(
-          lang,
-          projectName,
-          avustushakuName,
-          registerNumber,
-          senderName,
-          userInfo
-        )
-  );
+      : initialEmail(lang, projectName, avustushakuName, registerNumber, senderName, userInfo)
+  )
 
   useEffect(() => {
     if (taloustarkastettu && selvitysEmail) {
@@ -71,47 +52,37 @@ export const TaloustarkastusEmail = ({
         receivers: selvitysEmail.to,
         subject: selvitysEmail.subject,
         message: selvitysEmail.message,
-      }));
+      }))
     } else {
-      const receivers: string[] = [];
-      organizationEmail && receivers.push(organizationEmail.value);
-      primaryEmail && receivers.push(primaryEmail.value);
+      const receivers: string[] = []
+      organizationEmail && receivers.push(organizationEmail.value)
+      primaryEmail && receivers.push(primaryEmail.value)
 
-      setEmail((email) => ({ ...email, receivers }));
+      setEmail((email) => ({ ...email, receivers }))
     }
-  }, [organizationEmail, primaryEmail, selvitysEmail]);
+  }, [organizationEmail, primaryEmail, selvitysEmail])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    await HttpUtil.post(
-      `/api/avustushaku/${avustushakuId}/selvitys/loppuselvitys/send`,
-      {
-        message: email.content,
-        "selvitys-hakemus-id": loppuselvitys.id,
-        to: email.receivers,
-        subject: email.subject,
-      }
-    );
-    await dispatch(loadSelvitys({ avustushakuId, hakemusId: hakemus.id }));
-    await dispatch(refreshHakemukset({ avustushakuId, hakemusId: hakemus.id }));
-  };
+    e.preventDefault()
+    e.stopPropagation()
+    await HttpUtil.post(`/api/avustushaku/${avustushakuId}/selvitys/loppuselvitys/send`, {
+      message: email.content,
+      'selvitys-hakemus-id': loppuselvitys.id,
+      to: email.receivers,
+      subject: email.subject,
+    })
+    await dispatch(loadSelvitys({ avustushakuId, hakemusId: hakemus.id }))
+    await dispatch(refreshHakemukset({ avustushakuId, hakemusId: hakemus.id }))
+  }
 
   return (
     <div data-test-id="taloustarkastus-email" className="taloustarkastus">
       <form onSubmit={onSubmit} className="soresu-form">
         <div className="taloustarkastus-body">
-          <h2 className="taloustarkastus-header">
-            Taloustarkastus ja loppuselvityksen hyväksyntä
-          </h2>
+          <h2 className="taloustarkastus-header">Taloustarkastus ja loppuselvityksen hyväksyntä</h2>
           <fieldset>
             <legend>Lähettäjä</legend>
-            <input
-              type="text"
-              name="sender"
-              disabled={true}
-              value="no-reply@oph.fi"
-            />
+            <input type="text" name="sender" disabled={true} value="no-reply@oph.fi" />
           </fieldset>
           <fieldset disabled={taloustarkastettu}>
             <legend>Vastaanottajat</legend>
@@ -123,34 +94,32 @@ export const TaloustarkastusEmail = ({
                     type="text"
                     name="receiver"
                     onChange={(e) => {
-                      const newReceivers = email.receivers;
-                      newReceivers[idx] = e.target.value;
-                      setEmail({ ...email, receivers: newReceivers });
+                      const newReceivers = email.receivers
+                      newReceivers[idx] = e.target.value
+                      setEmail({ ...email, receivers: newReceivers })
                     }}
                     value={address}
                   />
                   {!taloustarkastettu && (
                     <span
-                      className={"taloustarkastus-trashcan"}
+                      className={'taloustarkastus-trashcan'}
                       onClick={() => {
-                        const newReceivers = email.receivers;
-                        newReceivers.splice(idx, 1);
-                        setEmail({ ...email, receivers: newReceivers });
+                        const newReceivers = email.receivers
+                        newReceivers.splice(idx, 1)
+                        setEmail({ ...email, receivers: newReceivers })
                       }}
                     >
                       <IconTrashcan />
                     </span>
                   )}
                 </div>
-              );
+              )
             })}
             {!taloustarkastettu && (
               <button
                 data-test-id="taloustarkastus-add-receiver"
                 className="taloustarkastus-add-receiver"
-                onClick={() =>
-                  setEmail({ ...email, receivers: [...email.receivers, ""] })
-                }
+                onClick={() => setEmail({ ...email, receivers: [...email.receivers, ''] })}
               >
                 + Lisää uusi vastaanottaja
               </button>
@@ -178,8 +147,8 @@ export const TaloustarkastusEmail = ({
           {taloustarkastettu ? (
             <VerificationBox
               title="Taloustarkastettu ja lähetetty hakijalle"
-              date={hakemus["loppuselvitys-taloustarkastettu-at"]}
-              verifier={hakemus["loppuselvitys-taloustarkastanut-name"]}
+              date={hakemus['loppuselvitys-taloustarkastettu-at']}
+              verifier={hakemus['loppuselvitys-taloustarkastanut-name']}
             />
           ) : (
             <div className="taloustarkastus-footer">
@@ -195,15 +164,15 @@ export const TaloustarkastusEmail = ({
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
 function createEmailSubjectFi(registerNumber: string) {
-  return `Loppuselvitys ${registerNumber} käsitelty`;
+  return `Loppuselvitys ${registerNumber} käsitelty`
 }
 
 function createEmailSubjectSv(registerNumber: string) {
-  return `Slutredovisningen ${registerNumber} är behandlad`;
+  return `Slutredovisningen ${registerNumber} är behandlad`
 }
 
 function createEmailContentFi(
@@ -220,7 +189,7 @@ Opetushallitus voi asian käsittelyn päättämisestä huolimatta periä avustuk
 
 Terveisin,
 ${senderName}
-${senderEmail}`;
+${senderEmail}`
 }
 
 function createEmailContentSv(
@@ -237,7 +206,7 @@ Utbildningsstyrelsen kan trots beslut om att ärendet är slutbehandlat kräva t
 
 Med vänlig hälsning,
 ${senderName}
-${senderEmail}`;
+${senderEmail}`
 }
 
 function createEmailContent(
@@ -247,32 +216,20 @@ function createEmailContent(
   senderEmail: string
 ) {
   return {
-    fi: createEmailContentFi(
-      projectName,
-      avustushakuName,
-      senderName,
-      senderEmail
-    ),
-    sv: createEmailContentSv(
-      projectName,
-      avustushakuName,
-      senderName,
-      senderEmail
-    ),
-  };
+    fi: createEmailContentFi(projectName, avustushakuName, senderName, senderEmail),
+    sv: createEmailContentSv(projectName, avustushakuName, senderName, senderEmail),
+  }
 }
 
 function createEmailSubject(registerNumber: string) {
   return {
     fi: createEmailSubjectFi(registerNumber),
     sv: createEmailSubjectSv(registerNumber),
-  };
+  }
 }
 
 function flattenAnswers(answers: Answer[]): Answer[] {
-  return answers.flatMap((a) =>
-    Array.isArray(a.value) ? flattenAnswers(a.value) : a
-  );
+  return answers.flatMap((a) => (Array.isArray(a.value) ? flattenAnswers(a.value) : a))
 }
 
 function initialEmail(
@@ -286,14 +243,9 @@ function initialEmail(
   return {
     lang,
     subject: createEmailSubject(registerNumber)[lang],
-    content: createEmailContent(
-      projectName,
-      avustushakuName,
-      senderName,
-      userInfo.email
-    )[lang],
+    content: createEmailContent(projectName, avustushakuName, senderName, userInfo.email)[lang],
     receivers: new Array<string>(),
-  };
+  }
 }
 
 function sentEmail(lang: Language, sentEmail: SelvitysEmail) {
@@ -302,5 +254,5 @@ function sentEmail(lang: Language, sentEmail: SelvitysEmail) {
     receivers: sentEmail.to,
     subject: sentEmail.subject,
     content: sentEmail.message,
-  };
+  }
 }

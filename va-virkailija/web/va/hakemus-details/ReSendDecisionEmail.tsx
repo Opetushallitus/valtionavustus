@@ -1,50 +1,46 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import HttpUtil from "soresu-form/web/HttpUtil";
-import { Avustushaku, Hakemus, HelpTexts } from "soresu-form/web/va/types";
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import { Avustushaku, Hakemus, HelpTexts } from 'soresu-form/web/va/types'
 
-import HelpTooltip from "../HelpTooltip";
-import { HakuData } from "../types";
+import HelpTooltip from '../HelpTooltip'
+import { HakuData } from '../types'
 
 type ReSendDecisionEmailProps = {
-  avustushaku: Avustushaku;
-  hakuData: HakuData;
-  hakemus: Hakemus;
-  helpTexts: HelpTexts;
-};
+  avustushaku: Avustushaku
+  hakuData: HakuData
+  hakemus: Hakemus
+  helpTexts: HelpTexts
+}
 
 type ReSendDecisionEmailState = {
-  submitting: boolean;
-  submitted: boolean;
-};
+  submitting: boolean
+  submitted: boolean
+}
 
 export default class ReSendDecisionEmail extends Component<
   ReSendDecisionEmailProps,
   ReSendDecisionEmailState
 > {
   constructor(props: ReSendDecisionEmailProps) {
-    super(props);
-    this.state = { submitting: false, submitted: false };
+    super(props)
+    this.state = { submitting: false, submitted: false }
   }
 
   render() {
-    const { avustushaku, hakemus, helpTexts } = this.props;
-    const avustushakuId = avustushaku.id;
-    const hakemusId = hakemus.id;
-    const isResolved = this.props.hakuData.avustushaku.status === "resolved";
+    const { avustushaku, hakemus, helpTexts } = this.props
+    const avustushakuId = avustushaku.id
+    const hakemusId = hakemus.id
+    const isResolved = this.props.hakuData.avustushaku.status === 'resolved'
     const onSubmit = () => {
-      if (
-        confirm(
-          "Oletko varma, että haluat lähettää hakijalle sähköpostin uudestaan?"
-        )
-      ) {
-        this.setState({ submitting: true });
-        const url = `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/re-send-paatos`;
+      if (confirm('Oletko varma, että haluat lähettää hakijalle sähköpostin uudestaan?')) {
+        this.setState({ submitting: true })
+        const url = `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/re-send-paatos`
         HttpUtil.post(url).then(() => {
-          this.setState({ submitting: false, submitted: true });
-        });
+          this.setState({ submitting: false, submitted: true })
+        })
       }
-    };
+    }
 
     return (
       <div className="value-edit">
@@ -58,20 +54,14 @@ export default class ReSendDecisionEmail extends Component<
               Lähetä päätössähköposti uudestaan
             </button>
             <HelpTooltip
-              testId={"tooltip-laheta-email-uudestaan"}
-              content={
-                helpTexts[
-                  "hankkeen_sivu__arviointi___lähetä_päätössähköposti_uudelleen"
-                ]
-              }
-              direction={"arviointi-slim"}
+              testId={'tooltip-laheta-email-uudestaan'}
+              content={helpTexts['hankkeen_sivu__arviointi___lähetä_päätössähköposti_uudelleen']}
+              direction={'arviointi-slim'}
             />
-            {this.state.submitted && (
-              <span data-test-id="paatos-resent">Sähköposti lähetetty</span>
-            )}
+            {this.state.submitted && <span data-test-id="paatos-resent">Sähköposti lähetetty</span>}
           </div>
         )}
       </div>
-    );
+    )
   }
 }

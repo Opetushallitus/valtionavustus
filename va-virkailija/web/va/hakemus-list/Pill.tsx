@@ -1,6 +1,6 @@
-import React from "react";
-import classNames from "classnames";
-import styles from "./Pill.module.less";
+import React from 'react'
+import classNames from 'classnames'
+import styles from './Pill.module.less'
 
 const pillStyles = {
   green: styles.greenPill,
@@ -8,13 +8,13 @@ const pillStyles = {
   yellow: styles.yellowPill,
   grey: styles.greyPill,
   blue: styles.bluePill,
-} as const;
+} as const
 
 export interface PillProps {
-  color: keyof typeof pillStyles;
-  text: string;
-  compact?: boolean;
-  testId?: string | null;
+  color: keyof typeof pillStyles
+  text: string
+  compact?: boolean
+  testId?: string | null
 }
 
 export const Pill = ({ color, text, compact, testId = null }: PillProps) => (
@@ -26,4 +26,4 @@ export const Pill = ({ color, text, compact, testId = null }: PillProps) => (
   >
     {text}
   </div>
-);
+)

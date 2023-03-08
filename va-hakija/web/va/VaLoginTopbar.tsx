@@ -1,19 +1,19 @@
-import React from "react";
+import React from 'react'
 
-import LocalizedString from "soresu-form/web/form/component/LocalizedString";
-import EnvironmentInfo from "soresu-form/web/va/EnvironmentInfo";
-import { LegacyTranslations } from "soresu-form/web/va/types";
-import { EnvironmentApiResponse } from "soresu-form/web/va/types/environment";
+import LocalizedString from 'soresu-form/web/form/component/LocalizedString'
+import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo'
+import { LegacyTranslations } from 'soresu-form/web/va/types'
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 type VaLoginTopBarProps = {
-  lang: "fi" | "sv";
-  translations: LegacyTranslations;
-  environment: EnvironmentApiResponse;
-};
+  lang: 'fi' | 'sv'
+  translations: LegacyTranslations
+  environment: EnvironmentApiResponse
+}
 
 export default class VaLoginTopbar extends React.Component<VaLoginTopBarProps> {
   render() {
-    const lang = this.props.lang;
+    const lang = this.props.lang
     return (
       <section id="topbar">
         <div id="top-container">
@@ -34,15 +34,12 @@ export default class VaLoginTopbar extends React.Component<VaLoginTopBarProps> {
             </h1>
             <div>
               <div className="important-info">
-                <EnvironmentInfo
-                  environment={this.props.environment}
-                  lang={lang}
-                />
+                <EnvironmentInfo environment={this.props.environment} lang={lang} />
               </div>
             </div>
           </div>
         </div>
       </section>
-    );
+    )
   }
 }

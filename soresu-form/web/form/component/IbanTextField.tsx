@@ -1,12 +1,12 @@
-import BasicTextField, { BasicTextFieldProps } from "./BasicTextField";
+import BasicTextField, { BasicTextFieldProps } from './BasicTextField'
 
 interface IbanTextFieldProps extends BasicTextFieldProps {}
 
 export default class IbanTextField extends BasicTextField<IbanTextFieldProps> {
-  inputType: string;
+  inputType: string
 
   constructor(props: IbanTextFieldProps) {
-    super(props);
-    this.inputType = "text";
+    super(props)
+    this.inputType = 'text'
   }
 }

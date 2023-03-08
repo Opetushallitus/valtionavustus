@@ -70,61 +70,58 @@ export default class BankAccountValidator {
       TR: 26,
       VG: 24,
       XK: 20,
-    };
-    return this.codeLengths[countryCode];
+    }
+    return this.codeLengths[countryCode]
   }
 
   static iso7064Mod97_10(iban) {
-    let block;
-    let remainder = iban;
+    let block
+    let remainder = iban
 
     while (remainder.length > 2) {
-      block = remainder.slice(0, 9);
-      remainder = (parseInt(block, 10) % 97) + remainder.slice(block.length);
+      block = remainder.slice(0, 9)
+      remainder = (parseInt(block, 10) % 97) + remainder.slice(block.length)
     }
 
-    return parseInt(remainder, 10) % 97;
+    return parseInt(remainder, 10) % 97
   }
 
   static isValidBic(bic) {
     // match and capture (1) institution code, (2) ISO 3166-1 alpha-2 country code,
     // (3) location code, and (4) optional branch code
-    const bicGroups = bic.match(
-      /^([A-Z]{4})([A-Z]{2})([0-9A-Z]{2})([0-9A-Z]{3})?$/
-    );
+    const bicGroups = bic.match(/^([A-Z]{4})([A-Z]{2})([0-9A-Z]{2})([0-9A-Z]{3})?$/)
 
     if (!bicGroups) {
-      return false;
+      return false
     }
 
-    const testChar = bicGroups[3].slice(-1);
-    return testChar !== "0";
+    const testChar = bicGroups[3].slice(-1)
+    return testChar !== '0'
   }
 
   static isValidIban(input) {
-    const iban = String(input).toUpperCase().replace(/\s+/g, "");
-    const isUpperCaseAlphanumeric = /^[A-Z0-9]+$/;
+    const iban = String(input).toUpperCase().replace(/\s+/g, '')
+    const isUpperCaseAlphanumeric = /^[A-Z0-9]+$/
     // match and capture (1) ISO 3166-1 alpha-2 country code, (2) check digits,
     // and (3) Basic Bank Account Number (BBAN)
-    const ibanGroups = iban.match(/^([A-Z]{2})(\d{2})([A-Z\d]+)$/);
+    const ibanGroups = iban.match(/^([A-Z]{2})(\d{2})([A-Z\d]+)$/)
 
     if (
       !isUpperCaseAlphanumeric.test(iban) ||
       !ibanGroups ||
       iban.length !== BankAccountValidator.codeLength([ibanGroups[1]])
     ) {
-      return false;
+      return false
     }
 
     // rearrange country code and check digits, and convert chars to ints
-    const iso13616digits = (
-      ibanGroups[3] +
-      ibanGroups[1] +
-      ibanGroups[2]
-    ).replace(/[A-Z]/g, (letter) => {
-      return letter.charCodeAt(0) - 55;
-    });
+    const iso13616digits = (ibanGroups[3] + ibanGroups[1] + ibanGroups[2]).replace(
+      /[A-Z]/g,
+      (letter) => {
+        return letter.charCodeAt(0) - 55
+      }
+    )
 
-    return BankAccountValidator.iso7064Mod97_10(iso13616digits) === 1;
+    return BankAccountValidator.iso7064Mod97_10(iso13616digits) === 1
   }
 }

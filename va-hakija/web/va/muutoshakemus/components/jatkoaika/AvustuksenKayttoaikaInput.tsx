@@ -1,30 +1,24 @@
-import React from "react";
-import DatePicker from "react-widgets/DatePicker";
-import moment from "moment";
-import { FormikHook } from "soresu-form/web/va/types/muutoshakemus";
-import { getInputErrorClass } from "soresu-form/web/va/formikHelpers";
-import { useTranslations } from "soresu-form/web/va/i18n/TranslationContext";
-import { parseDateString } from "soresu-form/web/va/i18n/dateformat";
-import { ErrorMessage } from "../../ErrorMessage";
-import { PerustelutTextArea } from "../PerustelutTextArea";
+import React from 'react'
+import DatePicker from 'react-widgets/DatePicker'
+import moment from 'moment'
+import { FormikHook } from 'soresu-form/web/va/types/muutoshakemus'
+import { getInputErrorClass } from 'soresu-form/web/va/formikHelpers'
+import { useTranslations } from 'soresu-form/web/va/i18n/TranslationContext'
+import { parseDateString } from 'soresu-form/web/va/i18n/dateformat'
+import { ErrorMessage } from '../../ErrorMessage'
+import { PerustelutTextArea } from '../PerustelutTextArea'
 
-import "react-widgets/styles.css";
-import "./jatkoaika.less";
+import 'react-widgets/styles.css'
+import './jatkoaika.less'
 
 type AvustuksenKayttoaikaInputProps = {
-  f: FormikHook;
-  projectEnd: string | undefined;
-};
+  f: FormikHook
+  projectEnd: string | undefined
+}
 
-export const AvustuksenKayttoaikaInput = ({
-  f,
-  projectEnd,
-}: AvustuksenKayttoaikaInputProps) => {
-  const { t } = useTranslations();
-  const datepickerError = getInputErrorClass(
-    f,
-    "haettuKayttoajanPaattymispaiva"
-  );
+export const AvustuksenKayttoaikaInput = ({ f, projectEnd }: AvustuksenKayttoaikaInputProps) => {
+  const { t } = useTranslations()
+  const datepickerError = getInputErrorClass(f, 'haettuKayttoajanPaattymispaiva')
 
   return (
     <>
@@ -43,11 +37,11 @@ export const AvustuksenKayttoaikaInput = ({
             <DatePicker
               name="haettuKayttoajanPaattymispaiva"
               onChange={(newDate: Date | null | undefined) => {
-                const d = moment(newDate);
+                const d = moment(newDate)
                 if (d.isValid()) {
-                  f.setFieldValue("haettuKayttoajanPaattymispaiva", newDate);
+                  f.setFieldValue('haettuKayttoajanPaattymispaiva', newDate)
                 } else {
-                  f.setFieldValue("haettuKayttoajanPaattymispaiva", undefined);
+                  f.setFieldValue('haettuKayttoajanPaattymispaiva', undefined)
                 }
               }}
               parse={parseDateString}
@@ -60,5 +54,5 @@ export const AvustuksenKayttoaikaInput = ({
       </div>
       <PerustelutTextArea f={f} name="kayttoajanPidennysPerustelut" />
     </>
-  );
-};
+  )
+}

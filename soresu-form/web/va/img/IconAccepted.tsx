@@ -1,10 +1,8 @@
-import React from "react";
+import React from 'react'
 
-export const IconAccepted: React.FC<{ fill?: string }> = ({
-  fill = "#159ECB",
-}) => (
+export const IconAccepted: React.FC<{ fill?: string }> = ({ fill = '#159ECB' }) => (
   <svg
-    data-test-id={"icon-accepted"}
+    data-test-id={'icon-accepted'}
     xmlns="http://www.w3.org/2000/svg"
     width="16"
     height="12"
@@ -16,4 +14,4 @@ export const IconAccepted: React.FC<{ fill?: string }> = ({
       fill={fill}
     />
   </svg>
-);
+)

@@ -1,13 +1,13 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode } from 'react'
 
-import { FormikHook, FormValues } from "soresu-form/web/va/types/muutoshakemus";
+import { FormikHook, FormValues } from 'soresu-form/web/va/types/muutoshakemus'
 
 type AvustuksenKayttoajanPidennysProps = {
-  f: FormikHook;
-  name: keyof FormValues;
-  title: string;
-  children: ReactNode;
-};
+  f: FormikHook
+  name: keyof FormValues
+  title: string
+  children: ReactNode
+}
 
 export const MuutoshakemusFormSection = ({
   f,
@@ -28,9 +28,7 @@ export const MuutoshakemusFormSection = ({
         />
         <label htmlFor={`checkbox-${name}`}>{title}</label>
       </div>
-      {f.values[name] && (
-        <div className="muutoshakemus__form-section-content">{children}</div>
-      )}
+      {f.values[name] && <div className="muutoshakemus__form-section-content">{children}</div>}
     </>
-  );
-};
+  )
+}

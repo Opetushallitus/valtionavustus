@@ -1,24 +1,22 @@
-import React from "react";
-import classNames from "classnames";
+import React from 'react'
+import classNames from 'classnames'
 
-import { Role } from "../types";
+import { Role } from '../types'
 
-import styles from "./Person.module.less";
+import styles from './Person.module.less'
 
-export type RoleField = "evaluator" | "presenter";
+export type RoleField = 'evaluator' | 'presenter'
 
 const getRoleButtonAriaLabel = (roleField: RoleField, name: string) => {
-  return roleField === "presenter"
-    ? `Rajaa valmistelijalla ${name}`
-    : `Rajaa arvioijalla ${name}`;
-};
+  return roleField === 'presenter' ? `Rajaa valmistelijalla ${name}` : `Rajaa arvioijalla ${name}`
+}
 
 interface ControlledSelectPanelProps {
-  onClickClose: () => void;
-  roles: Role[];
-  roleField: RoleField;
-  onClickRole: (id: number) => void;
-  activeId?: number;
+  onClickClose: () => void
+  roles: Role[]
+  roleField: RoleField
+  onClickRole: (id: number) => void
+  activeId?: number
 }
 
 export function ControlledSelectPanel({
@@ -29,15 +27,13 @@ export function ControlledSelectPanel({
   activeId,
 }: ControlledSelectPanelProps) {
   const roleName = {
-    presenter: "Valmistelija",
-    evaluator: "Arvioija",
-  };
+    presenter: 'Valmistelija',
+    evaluator: 'Arvioija',
+  }
   const roleFieldRoles =
-    roleField === "presenter"
-      ? roles.filter((r) =>
-          ["presenting_officer", "vastuuvalmistelija"].includes(r.role)
-        )
-      : roles;
+    roleField === 'presenter'
+      ? roles.filter((r) => ['presenting_officer', 'vastuuvalmistelija'].includes(r.role))
+      : roles
   return (
     <React.Fragment>
       <button
@@ -48,7 +44,7 @@ export function ControlledSelectPanel({
       <div className={styles.roleTitle}>{[roleName[roleField]]}</div>
       <div className={styles.roleContainer}>
         {roleFieldRoles.map(({ id, name }) => {
-          const active = id === activeId;
+          const active = id === activeId
           return (
             <button
               key={`${roleField}-${id}`}
@@ -60,9 +56,9 @@ export function ControlledSelectPanel({
             >
               {name}
             </button>
-          );
+          )
         })}
       </div>
     </React.Fragment>
-  );
+  )
 }

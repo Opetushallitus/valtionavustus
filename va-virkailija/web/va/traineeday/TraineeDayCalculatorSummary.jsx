@@ -1,39 +1,35 @@
-import React from "react";
+import React from 'react'
 
-import InputValueStorage from "soresu-form/web/form/InputValueStorage";
-import VaTraineeDayUtil from "soresu-form/web/va/VaTraineeDayUtil";
+import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
+import VaTraineeDayUtil from 'soresu-form/web/va/VaTraineeDayUtil'
 
 export default class TraineeDayCalculatorSummary extends React.Component {
   render() {
-    const children = this.props.children;
-    const htmlId = this.props.htmlId;
-    const hakemus = this.props.customProps.originalHakemus;
+    const children = this.props.children
+    const htmlId = this.props.htmlId
+    const hakemus = this.props.customProps.originalHakemus
     const originalSum = VaTraineeDayUtil.sumSubfieldValues(
-      InputValueStorage.readValues(hakemus.answers, "vaTraineeDayCalculator"),
-      "total"
-    );
+      InputValueStorage.readValues(hakemus.answers, 'vaTraineeDayCalculator'),
+      'total'
+    )
     const grantedSum = VaTraineeDayUtil.sumSubfieldValues(
-      InputValueStorage.readValues(
-        hakemus.arvio["overridden-answers"],
-        "vaTraineeDayCalculator"
-      ),
-      "total"
-    );
-    const originalCostsPerTraineeDay = hakemus["budget-total"] / originalSum;
-    const grantedCostsPerTraineeDay =
-      hakemus.arvio["budget-granted"] / grantedSum;
+      InputValueStorage.readValues(hakemus.arvio['overridden-answers'], 'vaTraineeDayCalculator'),
+      'total'
+    )
+    const originalCostsPerTraineeDay = hakemus['budget-total'] / originalSum
+    const grantedCostsPerTraineeDay = hakemus.arvio['budget-granted'] / grantedSum
 
     return (
       <div>
         <table id={htmlId}>
           <colgroup>
-            <col style={{ width: "60%" }} />
-            <col style={{ width: "5%" }} />
-            <col style={{ width: "5%" }} />
-            <col style={{ width: "5%" }} />
-            <col style={{ width: "5%" }} />
-            <col style={{ width: "10%" }} />
-            <col style={{ width: "10%" }} />
+            <col style={{ width: '60%' }} />
+            <col style={{ width: '5%' }} />
+            <col style={{ width: '5%' }} />
+            <col style={{ width: '5%' }} />
+            <col style={{ width: '5%' }} />
+            <col style={{ width: '10%' }} />
+            <col style={{ width: '10%' }} />
           </colgroup>
           <thead>
             <tr>
@@ -56,9 +52,7 @@ export default class TraineeDayCalculatorSummary extends React.Component {
               <td colSpan="5">
                 <strong>Koulutettavapäivät yhteensä:</strong>
               </td>
-              <td className="text-gray">
-                {VaTraineeDayUtil.formatFloat(originalSum)}
-              </td>
+              <td className="text-gray">{VaTraineeDayUtil.formatFloat(originalSum)}</td>
               <td>
                 <strong>{VaTraineeDayUtil.formatFloat(grantedSum)}</strong>
               </td>
@@ -71,14 +65,12 @@ export default class TraineeDayCalculatorSummary extends React.Component {
                 {VaTraineeDayUtil.formatFloat(originalCostsPerTraineeDay)} €
               </td>
               <td>
-                <strong>
-                  {VaTraineeDayUtil.formatFloat(grantedCostsPerTraineeDay)} €
-                </strong>
+                <strong>{VaTraineeDayUtil.formatFloat(grantedCostsPerTraineeDay)} €</strong>
               </td>
             </tr>
           </tfoot>
         </table>
       </div>
-    );
+    )
   }
 }

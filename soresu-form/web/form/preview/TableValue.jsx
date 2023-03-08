@@ -1,8 +1,8 @@
-import React from "react";
-import ClassNames from "classnames";
+import React from 'react'
+import ClassNames from 'classnames'
 
-import TableFieldUtil from "../component/TableFieldUtil.jsx";
-import LocalizedString from "../component/LocalizedString.tsx";
+import TableFieldUtil from '../component/TableFieldUtil.jsx'
+import LocalizedString from '../component/LocalizedString.tsx'
 
 export default class TableValue extends React.Component {
   render() {
@@ -16,12 +16,12 @@ export default class TableValue extends React.Component {
       sumTitle,
       fieldTranslations,
       lang,
-    } = this.props;
+    } = this.props
 
     const makeValueCellClassNames = (rowIndex, colIndex) =>
-      ClassNames("soresu-table__value-cell soresu-table__value-cell--preview", {
-        "soresu-table__value-cell--number": columnParams[colIndex].calculateSum,
-      });
+      ClassNames('soresu-table__value-cell soresu-table__value-cell--preview', {
+        'soresu-table__value-cell--number': columnParams[colIndex].calculateSum,
+      })
 
     const makeValueCell = (cellValue, rowIndex, colIndex) => (
       <td
@@ -30,23 +30,19 @@ export default class TableValue extends React.Component {
       >
         {cellValue}
       </td>
-    );
+    )
 
     const makeCaption = () => {
-      if (renderingParameters.hideLabels || !fieldTranslations["label"]) {
-        return null;
+      if (renderingParameters.hideLabels || !fieldTranslations['label']) {
+        return null
       }
 
       return (
         <caption className="soresu-table__caption">
-          <LocalizedString
-            translations={fieldTranslations}
-            translationKey="label"
-            lang={lang}
-          />
+          <LocalizedString translations={fieldTranslations} translationKey="label" lang={lang} />
         </caption>
-      );
-    };
+      )
+    }
 
     return TableFieldUtil.makeTable({
       htmlId,
@@ -57,10 +53,10 @@ export default class TableValue extends React.Component {
       sumTitle,
       makeCaption,
       makeValueCell,
-      tableClassNames: "soresu-table--preview",
-      columnTitleCellClassNames: "soresu-table__column-title-cell--preview",
-      rowTitleCellClassNames: "soresu-table__row-title-cell--preview",
-      sumCellClassNames: "soresu-table__sum-cell--preview",
-    });
+      tableClassNames: 'soresu-table--preview',
+      columnTitleCellClassNames: 'soresu-table__column-title-cell--preview',
+      rowTitleCellClassNames: 'soresu-table__row-title-cell--preview',
+      sumCellClassNames: 'soresu-table__sum-cell--preview',
+    })
   }
 }

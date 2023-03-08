@@ -1,35 +1,35 @@
-import React, { Component } from "react";
-import { createRoot } from "react-dom/client";
-import _ from "lodash";
+import React, { Component } from 'react'
+import { createRoot } from 'react-dom/client'
+import _ from 'lodash'
 // @ts-ignore
-import RouteParser from "route-parser";
+import RouteParser from 'route-parser'
 
-import YhteenvetoController from "./YhteenvetoController.jsx";
-import HakemusArviointiStatuses from "./hakemus-details/HakemusArviointiStatuses";
-import DateUtil from "soresu-form/web/DateUtil";
+import YhteenvetoController from './YhteenvetoController.jsx'
+import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses'
+import DateUtil from 'soresu-form/web/DateUtil'
 
-import "./style/main.less";
-import "./style/summary.less";
+import './style/main.less'
+import './style/summary.less'
 
 class SummaryApp extends Component {
   render() {
-    const state = this.props.state;
-    const hakuData = state.hakuData;
+    const state = this.props.state
+    const hakuData = state.hakuData
     const hakemusList = hakuData.hakemukset.map((h) =>
       h.refused
         ? Object.assign(h, {
-            status: "refused",
-            arvio: Object.assign(h.arvio, { status: "refused" }),
+            status: 'refused',
+            arvio: Object.assign(h.arvio, { status: 'refused' }),
           })
         : h
-    );
-    const avustushaku = hakuData.avustushaku;
-    const applicationsByStatus = _.groupBy(hakemusList, (h) => h.arvio.status);
-    const titleString = SummaryApp.titleString(avustushaku);
+    )
+    const avustushaku = hakuData.avustushaku
+    const applicationsByStatus = _.groupBy(hakemusList, (h) => h.arvio.status)
+    const titleString = SummaryApp.titleString(avustushaku)
     const mailToBody = encodeURIComponent(
-      titleString + "\n\nLinkki päätöslistaan:\n\n" + location.href
-    );
-    const mailToLink = "mailto:?subject=" + titleString + "&body=" + mailToBody;
+      titleString + '\n\nLinkki päätöslistaan:\n\n' + location.href
+    )
+    const mailToLink = 'mailto:?subject=' + titleString + '&body=' + mailToBody
 
     return (
       <section id="container" className="section-container">
@@ -43,35 +43,33 @@ class SummaryApp extends Component {
           <a href={mailToLink}>Lähetä linkki sähköpostilla</a>
         </div>
       </section>
-    );
+    )
   }
 
   static statusesInOrder() {
-    const statuses = ["refused"].concat(HakemusArviointiStatuses.statuses);
-    statuses.reverse();
-    return statuses;
+    const statuses = ['refused'].concat(HakemusArviointiStatuses.statuses)
+    statuses.reverse()
+    return statuses
   }
 
   static titleString(avustushaku) {
-    return "Päätöslista – " + SummaryApp.avustusHakuLabelString(avustushaku);
+    return 'Päätöslista – ' + SummaryApp.avustusHakuLabelString(avustushaku)
   }
 
   static toDateStr(dateTime) {
-    return DateUtil.asDateString(dateTime);
+    return DateUtil.asDateString(dateTime)
   }
 
   static avustusHakuLabelString(avustushaku) {
-    const hakuDuration = avustushaku.content.duration;
+    const hakuDuration = avustushaku.content.duration
     const durationString =
-      SummaryApp.toDateStr(hakuDuration.start) +
-      "-" +
-      SummaryApp.toDateStr(hakuDuration.end);
-    return avustushaku.content.name.fi + " (" + durationString + ")";
+      SummaryApp.toDateStr(hakuDuration.start) + '-' + SummaryApp.toDateStr(hakuDuration.end)
+    return avustushaku.content.name.fi + ' (' + durationString + ')'
   }
 }
 
 const buildSummaryList = (statuses, applicationsByStatuses, grant) => {
-  const statusKeys = _.keys(applicationsByStatuses);
+  const statusKeys = _.keys(applicationsByStatuses)
   const summaryListingsAll = statuses
     .filter((s) => _.includes(statusKeys, s))
     .map((s) => (
@@ -81,36 +79,28 @@ const buildSummaryList = (statuses, applicationsByStatuses, grant) => {
         hakemusList={applicationsByStatuses[s]}
         grant={grant}
       />
-    ));
-  return summaryListingsAll;
-};
+    ))
+  return summaryListingsAll
+}
 
-const sumBy = (list, fieldFunc) => _.sum(list.map(fieldFunc));
-const sumByOphShare = _.partialRight(
-  sumBy,
-  (hakemus) => hakemus["budget-oph-share"]
-);
-const sumByBudgetGranted = _.partialRight(
-  sumBy,
-  (hakemus) => hakemus.arvio["budget-granted"]
-);
+const sumBy = (list, fieldFunc) => _.sum(list.map(fieldFunc))
+const sumByOphShare = _.partialRight(sumBy, (hakemus) => hakemus['budget-oph-share'])
+const sumByBudgetGranted = _.partialRight(sumBy, (hakemus) => hakemus.arvio['budget-granted'])
 
 class SummaryHeading extends Component {
   render() {
-    const titleString = SummaryApp.avustusHakuLabelString(
-      this.props.avustushaku
-    );
-    const hakemusList = this.props.hakemusList;
-    const ophShareSum = sumByOphShare(hakemusList);
-    const budgetGrantedSum = sumByBudgetGranted(hakemusList);
+    const titleString = SummaryApp.avustusHakuLabelString(this.props.avustushaku)
+    const hakemusList = this.props.hakemusList
+    const ophShareSum = sumByOphShare(hakemusList)
+    const budgetGrantedSum = sumByBudgetGranted(hakemusList)
 
-    const applicationsByStatus = _.groupBy(hakemusList, (h) => h.arvio.status);
-    const statusKeys = _.keys(applicationsByStatus);
+    const applicationsByStatus = _.groupBy(hakemusList, (h) => h.arvio.status)
+    const statusKeys = _.keys(applicationsByStatus)
 
     return (
       <div>
         <h1>{titleString}</h1>
-        <h2 style={{ textTransform: "uppercase" }}>Päätöslista</h2>
+        <h2 style={{ textTransform: 'uppercase' }}>Päätöslista</h2>
         <table className="summary-heading-table">
           <thead>
             <tr>
@@ -124,7 +114,7 @@ class SummaryHeading extends Component {
             {SummaryApp.statusesInOrder()
               .filter((s) => _.includes(statusKeys, s))
               .map((s) => {
-                const applications = applicationsByStatus[s];
+                const applications = applicationsByStatus[s]
                 return (
                   <SummaryTableRow
                     key={s}
@@ -134,7 +124,7 @@ class SummaryHeading extends Component {
                     granted={sumByBudgetGranted(applications)}
                     testIdPrefix={s}
                   />
-                );
+                )
               })}
           </tbody>
           <tfoot>
@@ -150,7 +140,7 @@ class SummaryHeading extends Component {
           </tfoot>
         </table>
       </div>
-    );
+    )
   }
 }
 
@@ -162,12 +152,9 @@ const SummaryTableRow = ({
   isTotalSummary = false,
   testIdPrefix,
 }) => {
-  const moneyClasses = isTotalSummary ? "money sum" : "money";
+  const moneyClasses = isTotalSummary ? 'money sum' : 'money'
   return (
-    <tr
-      className="summary-heading-table-row"
-      data-test-id={`summary-for-${testIdPrefix}`}
-    >
+    <tr className="summary-heading-table-row" data-test-id={`summary-for-${testIdPrefix}`}>
       <td className="arvio-status-column">{label}</td>
       <td className="count-column">{count}</td>
       <td className="applied-money-column">
@@ -177,22 +164,17 @@ const SummaryTableRow = ({
         <span className={moneyClasses}>{granted}</span>
       </td>
     </tr>
-  );
-};
+  )
+}
 
 class SummaryListing extends Component {
   render() {
-    const { hakemusList, grant, arvioStatus } = this.props;
-    const hakemusListSorted = _.sortBy(hakemusList, "organization-name");
-    const hakemusCount = hakemusListSorted.length;
-    const heading =
-      SummaryListing.arvioStatusFiForSummary(arvioStatus) +
-      " (" +
-      hakemusCount +
-      ")";
-    const ophShareSum = sumByOphShare(hakemusListSorted);
-    const multiBatch =
-      grant.content.multiplemaksuera && grant.content["payment-size-limit"];
+    const { hakemusList, grant, arvioStatus } = this.props
+    const hakemusListSorted = _.sortBy(hakemusList, 'organization-name')
+    const hakemusCount = hakemusListSorted.length
+    const heading = SummaryListing.arvioStatusFiForSummary(arvioStatus) + ' (' + hakemusCount + ')'
+    const ophShareSum = sumByOphShare(hakemusListSorted)
+    const multiBatch = grant.content.multiplemaksuera && grant.content['payment-size-limit']
     const hakemusElements = hakemusListSorted.map((hakemus) => (
       <HakemusRow
         key={hakemus.id}
@@ -200,8 +182,8 @@ class SummaryListing extends Component {
         multiBatch={multiBatch}
         grant={this.props.grant}
       />
-    ));
-    const budgetGrantedSum = sumByBudgetGranted(hakemusListSorted);
+    ))
+    const budgetGrantedSum = sumByBudgetGranted(hakemusListSorted)
 
     return (
       <table
@@ -247,94 +229,86 @@ class SummaryListing extends Component {
           </tr>
         </tfoot>
       </table>
-    );
+    )
   }
 
   static arvioStatusFiForSummary(status) {
     switch (status) {
-      case "rejected":
-        return "Kielteiset päätökset";
-      case "accepted":
-        return "Myönteiset päätökset";
-      case "refused":
-        return "Vastaanottamatta jättäneet";
+      case 'rejected':
+        return 'Kielteiset päätökset'
+      case 'accepted':
+        return 'Myönteiset päätökset'
+      case 'refused':
+        return 'Vastaanottamatta jättäneet'
     }
-    return HakemusArviointiStatuses.statusToFI(status);
+    return HakemusArviointiStatuses.statusToFI(status)
   }
 }
 
 function calculateBatchSize(application, grant) {
   if (
-    grant.content["payment-size-limit"] === "no-limit" ||
-    application.arvio["budget-granted"] >= grant.content["payment-fixed-limit"]
+    grant.content['payment-size-limit'] === 'no-limit' ||
+    application.arvio['budget-granted'] >= grant.content['payment-fixed-limit']
   ) {
-    return (
-      (application.arvio["budget-granted"] *
-        grant.content["payment-min-first-batch"]) /
-      100.0
-    );
+    return (application.arvio['budget-granted'] * grant.content['payment-min-first-batch']) / 100.0
   } else {
-    return application.arvio["budget-granted"];
+    return application.arvio['budget-granted']
   }
 }
 
 const HakemusRow = ({ hakemus, multiBatch, grant }) => {
-  const htmlId = "hakemus-" + hakemus.id;
-  const hakemusName = hakemus["project-name"];
-  const firstBatch = multiBatch ? calculateBatchSize(hakemus, grant) : 0;
+  const htmlId = 'hakemus-' + hakemus.id
+  const hakemusName = hakemus['project-name']
+  const firstBatch = multiBatch ? calculateBatchSize(hakemus, grant) : 0
 
   return (
     <tr id={htmlId} className="overview-row">
-      <td className="organization-column" title={hakemus["organization-name"]}>
-        {hakemus["organization-name"]}
+      <td className="organization-column" title={hakemus['organization-name']}>
+        {hakemus['organization-name']}
       </td>
       <td className="project-name-column" title={hakemusName}>
         {hakemusName}
       </td>
       <td className="applied-money-column">
-        <span className="money">{hakemus["budget-oph-share"]}</span>
+        <span className="money">{hakemus['budget-oph-share']}</span>
       </td>
       <td className="granted-money-column">
-        <span className="money">{hakemus.arvio["budget-granted"]}</span>
+        <span className="money">{hakemus.arvio['budget-granted']}</span>
       </td>
-      {multiBatch ? (
-        <td className="batch-column">{firstBatch.toFixed(0)} €</td>
-      ) : null}
+      {multiBatch ? <td className="batch-column">{firstBatch.toFixed(0)} €</td> : null}
       {multiBatch ? (
         <td className="batch-column">
-          {(hakemus.arvio["budget-granted"] - firstBatch).toFixed(0)} €
+          {(hakemus.arvio['budget-granted'] - firstBatch).toFixed(0)} €
         </td>
       ) : null}
-      <td className="comment-column" title={hakemus.arvio["summary-comment"]}>
-        {hakemus.arvio["summary-comment"]}
+      <td className="comment-column" title={hakemus.arvio['summary-comment']}>
+        {hakemus.arvio['summary-comment']}
       </td>
     </tr>
-  );
-};
-
-const parsedRoute = new RouteParser(
-  "/yhteenveto/avustushaku/:avustushaku_id/listaus/:saved_search_id/"
-).match(location.pathname);
-if (!parsedRoute || _.isUndefined(parsedRoute["avustushaku_id"])) {
-  setInterval(() => {
-    const redirectUrlFromServer = localStorage.getItem(
-      "va.arviointi.admin.summary.url"
-    );
-    if (!_.isEmpty(redirectUrlFromServer)) {
-      localStorage.removeItem("va.arviointi.admin.summary.url");
-      window.location.href = redirectUrlFromServer;
-    }
-  }, 500);
+  )
 }
 
-const controller = new YhteenvetoController();
-const stateP = controller.initializeState(parsedRoute);
+const parsedRoute = new RouteParser(
+  '/yhteenveto/avustushaku/:avustushaku_id/listaus/:saved_search_id/'
+).match(location.pathname)
+if (!parsedRoute || _.isUndefined(parsedRoute['avustushaku_id'])) {
+  setInterval(() => {
+    const redirectUrlFromServer = localStorage.getItem('va.arviointi.admin.summary.url')
+    if (!_.isEmpty(redirectUrlFromServer)) {
+      localStorage.removeItem('va.arviointi.admin.summary.url')
+      window.location.href = redirectUrlFromServer
+    }
+  }, 500)
+}
 
-const app = document.getElementById("app");
-const root = createRoot(app);
+const controller = new YhteenvetoController()
+const stateP = controller.initializeState(parsedRoute)
+
+const app = document.getElementById('app')
+const root = createRoot(app)
 
 stateP.onValue((state) => {
   if (state.hakuData && state.userInfo) {
-    root.render(<SummaryApp state={state} controller={controller} />);
+    root.render(<SummaryApp state={state} controller={controller} />)
   }
-});
+})

@@ -1,110 +1,95 @@
-import React from "react";
-import classNames from "classnames";
+import React from 'react'
+import classNames from 'classnames'
 
-import { Hakemus } from "soresu-form/web/va/types";
+import { Hakemus } from 'soresu-form/web/va/types'
 
-import { Role } from "../types";
+import { Role } from '../types'
 
 import {
   useHakemustenArviointiDispatch,
   useHakemustenArviointiSelector,
-} from "../hakemustenArviointi/arviointiStore";
+} from '../hakemustenArviointi/arviointiStore'
 import {
   getLoadedState,
   setArvioValue,
   startHakemusArvioAutoSave,
   togglePersonSelect,
-} from "../hakemustenArviointi/arviointiReducer";
+} from '../hakemustenArviointi/arviointiReducer'
 
-import styles from "./Person.module.less";
+import styles from './Person.module.less'
 
 export const isPresenterRole = ({ role }: Role): boolean =>
-  ["presenting_officer", "vastuuvalmistelija"].includes(role);
+  ['presenting_officer', 'vastuuvalmistelija'].includes(role)
 export const isPresenter = (hakemus: Hakemus, { id }: { id: number }) =>
-  hakemus.arvio["presenter-role-id"] === id;
+  hakemus.arvio['presenter-role-id'] === id
 export const isEvaluator = (hakemus: Hakemus, { id }: { id: number }) =>
-  hakemus.arvio.roles["evaluators"].includes(id);
+  hakemus.arvio.roles['evaluators'].includes(id)
 
 type RoleButtonProps = {
-  role: Role;
-  roleField: "evaluators" | "presenter";
-  hakemus: Hakemus;
-};
+  role: Role
+  roleField: 'evaluators' | 'presenter'
+  hakemus: Hakemus
+}
 
-const getRoleButtonAriaLabel = (
-  isPresenterField: boolean,
-  active: boolean,
-  name: string
-) => {
+const getRoleButtonAriaLabel = (isPresenterField: boolean, active: boolean, name: string) => {
   if (isPresenterField) {
-    return active
-      ? `Poista ${name} valmistelijan roolista`
-      : `Lisää ${name} valmistelijaksi`;
+    return active ? `Poista ${name} valmistelijan roolista` : `Lisää ${name} valmistelijaksi`
   }
-  return active
-    ? `Poista ${name} arvioijan roolista`
-    : `Lisää ${name} arvioijaksi`;
-};
+  return active ? `Poista ${name} arvioijan roolista` : `Lisää ${name} arvioijaksi`
+}
 
 const RoleButton = ({ role, roleField, hakemus }: RoleButtonProps) => {
-  const dispatch = useHakemustenArviointiDispatch();
-  const isPresenterField = roleField === "presenter";
-  const active = isPresenterField
-    ? isPresenter(hakemus, role)
-    : isEvaluator(hakemus, role);
-  const { id: roleId, name } = role;
-  const ariaLabel = getRoleButtonAriaLabel(isPresenterField, active, name);
+  const dispatch = useHakemustenArviointiDispatch()
+  const isPresenterField = roleField === 'presenter'
+  const active = isPresenterField ? isPresenter(hakemus, role) : isEvaluator(hakemus, role)
+  const { id: roleId, name } = role
+  const ariaLabel = getRoleButtonAriaLabel(isPresenterField, active, name)
   return (
     <button
       onClick={(e) => {
-        e.stopPropagation();
-        if (roleField === "presenter") {
+        e.stopPropagation()
+        if (roleField === 'presenter') {
           dispatch(
             setArvioValue({
               hakemusId: hakemus.id,
-              key: "presenter-role-id",
+              key: 'presenter-role-id',
               value: roleId,
             })
-          );
+          )
         } else {
-          const currentRoles = hakemus.arvio.roles[roleField];
+          const currentRoles = hakemus.arvio.roles[roleField]
           const newRoles = {
             ...hakemus.arvio.roles,
             [roleField]: currentRoles.includes(roleId)
               ? currentRoles.filter((id) => id !== roleId)
               : currentRoles.concat(roleId),
-          };
+          }
           dispatch(
             setArvioValue({
               hakemusId: hakemus.id,
-              key: "roles",
+              key: 'roles',
               value: newRoles,
             })
-          );
+          )
         }
-        dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }));
+        dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }))
       }}
       className={classNames(styles.roleButton, { [styles.selected]: active })}
       aria-label={ariaLabel}
     >
       {role.name}
     </button>
-  );
-};
+  )
+}
 
 type RoleContainerProps = {
-  roleName: string;
-  roleField: "evaluators" | "presenter";
-  roles: Role[];
-  hakemus: Hakemus;
-};
+  roleName: string
+  roleField: 'evaluators' | 'presenter'
+  roles: Role[]
+  hakemus: Hakemus
+}
 
-const RoleContainer = ({
-  roleName,
-  roleField,
-  roles,
-  hakemus,
-}: RoleContainerProps) => {
+const RoleContainer = ({ roleName, roleField, roles, hakemus }: RoleContainerProps) => {
   return (
     <React.Fragment>
       <div className={styles.roleTitle}>{roleName}</div>
@@ -119,29 +104,29 @@ const RoleContainer = ({
         ))}
       </div>
     </React.Fragment>
-  );
-};
+  )
+}
 
 type PersonSelectButtonProps = {
-  hakemus: Hakemus;
-  toggleSplitView: (forceValue?: boolean) => void;
-};
+  hakemus: Hakemus
+  toggleSplitView: (forceValue?: boolean) => void
+}
 
 export const PersonSelectPanel = ({
   hakemus,
-}: Omit<PersonSelectButtonProps, "toggleSplitView">) => {
+}: Omit<PersonSelectButtonProps, 'toggleSplitView'>) => {
   const hakuDataRoles = useHakemustenArviointiSelector(
     (state) => getLoadedState(state.arviointi).hakuData.roles
-  );
-  const dispatch = useHakemustenArviointiDispatch();
-  const roles = [...hakuDataRoles].sort((a, b) => (a.name > b.name ? -1 : 1));
-  const presenters = roles.filter(isPresenterRole);
+  )
+  const dispatch = useHakemustenArviointiDispatch()
+  const roles = [...hakuDataRoles].sort((a, b) => (a.name > b.name ? -1 : 1))
+  const presenters = roles.filter(isPresenterRole)
   return (
     <div className="panel person-panel person-panel--top">
       <button
         onClick={(e) => {
-          e.stopPropagation();
-          dispatch(togglePersonSelect(undefined));
+          e.stopPropagation()
+          dispatch(togglePersonSelect(undefined))
         }}
         className={styles.close}
         aria-label="Sulje valmistelija ja arvioija valitsin"
@@ -152,12 +137,7 @@ export const PersonSelectPanel = ({
         roles={presenters}
         hakemus={hakemus}
       />
-      <RoleContainer
-        roleName="Arvioijat"
-        roleField="evaluators"
-        roles={roles}
-        hakemus={hakemus}
-      />
+      <RoleContainer roleName="Arvioijat" roleField="evaluators" roles={roles} hakemus={hakemus} />
     </div>
-  );
-};
+  )
+}

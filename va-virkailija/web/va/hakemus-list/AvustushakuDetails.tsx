@@ -1,37 +1,30 @@
-import { Hakemus } from "soresu-form/web/va/types";
-import React from "react";
-import moment from "moment";
+import { Hakemus } from 'soresu-form/web/va/types'
+import React from 'react'
+import moment from 'moment'
 
-import styles from "./AvustushakuDetails.module.less";
-import { useHakemustenArviointiSelector } from "../hakemustenArviointi/arviointiStore";
-import { getLoadedState } from "../hakemustenArviointi/arviointiReducer";
+import styles from './AvustushakuDetails.module.less'
+import { useHakemustenArviointiSelector } from '../hakemustenArviointi/arviointiStore'
+import { getLoadedState } from '../hakemustenArviointi/arviointiReducer'
 
 interface Props {
-  acceptedHakemus: Hakemus | undefined;
+  acceptedHakemus: Hakemus | undefined
 }
 
 export const AvustushakuDetails = ({ acceptedHakemus }: Props) => {
-  const { hakuData, lahetykset, earliestPaymentCreatedAt } =
-    useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi));
-  const { avustushaku, toimintayksikko } = hakuData;
-  const vastuuvalmistelija = hakuData.roles.find(
-    (r) => r.role === "vastuuvalmistelija"
-  );
+  const { hakuData, lahetykset, earliestPaymentCreatedAt } = useHakemustenArviointiSelector(
+    (state) => getLoadedState(state.arviointi)
+  )
+  const { avustushaku, toimintayksikko } = hakuData
+  const vastuuvalmistelija = hakuData.roles.find((r) => r.role === 'vastuuvalmistelija')
   return (
     <div className={styles.detailsContainer}>
-      <Box title="Toimintayksikkö">
-        {toimintayksikko?.["code-value"] ?? "-"}
-      </Box>
-      <Box title="Vastuuvalmistelija">{vastuuvalmistelija?.name ?? "-"}</Box>
+      <Box title="Toimintayksikkö">{toimintayksikko?.['code-value'] ?? '-'}</Box>
+      <Box title="Vastuuvalmistelija">{vastuuvalmistelija?.name ?? '-'}</Box>
       <Box title="Päätökset">
-        {lahetykset.paatoksetSentAt
-          ? format(lahetykset.paatoksetSentAt)
-          : "Ei lähetetty"}
+        {lahetykset.paatoksetSentAt ? format(lahetykset.paatoksetSentAt) : 'Ei lähetetty'}
       </Box>
       <Box title="Maksatukset">
-        {earliestPaymentCreatedAt
-          ? format(earliestPaymentCreatedAt)
-          : "Ei lähetetty"}
+        {earliestPaymentCreatedAt ? format(earliestPaymentCreatedAt) : 'Ei lähetetty'}
       </Box>
       <Box title="Väliselvitykset">
         <Deadline
@@ -45,23 +38,21 @@ export const AvustushakuDetails = ({ acceptedHakemus }: Props) => {
           sentAt={lahetykset.loppuselvitysPyynnotSentAt}
         />
       </Box>
-      <Box title="Muutoshakukelpoinen">
-        {avustushaku.muutoshakukelpoinen ? "Kyllä" : "Ei"}
-      </Box>
+      <Box title="Muutoshakukelpoinen">{avustushaku.muutoshakukelpoinen ? 'Kyllä' : 'Ei'}</Box>
       <Box title="Budjetti">
         {acceptedHakemus
           ? acceptedHakemus.arvio.useDetailedCosts
-            ? "Menoluokittelu"
-            : "Kokonaiskustannus"
-          : "-"}
+            ? 'Menoluokittelu'
+            : 'Kokonaiskustannus'
+          : '-'}
       </Box>
     </div>
-  );
-};
+  )
+}
 
 interface BoxProps {
-  title: string;
-  children: React.ReactNode;
+  title: string
+  children: React.ReactNode
 }
 
 const Box: React.FC<BoxProps> = ({ title, children }) => {
@@ -70,19 +61,19 @@ const Box: React.FC<BoxProps> = ({ title, children }) => {
       <span className={styles.title}>{title}</span>
       <span data-test-id={`lisatiedot-${title}`}>{children}</span>
     </div>
-  );
-};
+  )
+}
 
-const format = (date: string) => moment(date).format("DD.MM.YYYY");
+const format = (date: string) => moment(date).format('DD.MM.YYYY')
 
 interface DeadlineProps {
-  deadline?: string;
-  sentAt?: string;
+  deadline?: string
+  sentAt?: string
 }
 
 const Deadline: React.FC<DeadlineProps> = ({ deadline, sentAt }) => {
   if (!deadline) {
-    return <>-</>;
+    return <>-</>
   }
   if (!sentAt) {
     return (
@@ -90,7 +81,7 @@ const Deadline: React.FC<DeadlineProps> = ({ deadline, sentAt }) => {
         Ei lähetetty
         <span className={styles.deadline}>{` (DL ${format(deadline)})`}</span>
       </>
-    );
+    )
   }
-  return <>{format(sentAt)}</>;
-};
+  return <>{format(sentAt)}</>
+}

@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react'
 
-export const IconLockOpen = ({ fill = "gray" }: { fill?: string }) => (
+export const IconLockOpen = ({ fill = 'gray' }: { fill?: string }) => (
   <svg
     className="icon-lock-open"
     width="21"
@@ -14,4 +14,4 @@ export const IconLockOpen = ({ fill = "gray" }: { fill?: string }) => (
       fill={fill}
     />
   </svg>
-);
+)

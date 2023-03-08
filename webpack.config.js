@@ -1,32 +1,27 @@
-const path = require("path");
-const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const path = require('path')
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 
-const plugins = [new ForkTsCheckerWebpackPlugin()];
+const plugins = [new ForkTsCheckerWebpackPlugin()]
 
 const makeConfig = (basedir, componentName) => {
   return {
-    mode: process.env.NODE_ENV || "development",
+    mode: process.env.NODE_ENV || 'development',
     output: {
-      path: path.resolve(
-        basedir,
-        `../server/resources/public/${componentName}`
-      ),
-      filename: "js/[name].js",
+      path: path.resolve(basedir, `../server/resources/public/${componentName}`),
+      filename: 'js/[name].js',
     },
     module: {
       rules: [
         {
           test: /\.(ts)x?$/,
           exclude: /node_modules/,
-          loader: "ts-loader",
+          loader: 'ts-loader',
         },
         {
           test: /\.jsx?$/,
-          include: ["web/", "../soresu-form/web/"].map((m) =>
-            path.resolve(basedir, m)
-          ),
+          include: ['web/', '../soresu-form/web/'].map((m) => path.resolve(basedir, m)),
           use: {
-            loader: "babel-loader",
+            loader: 'babel-loader',
             options: {
               cacheDirectory: true,
             },
@@ -35,91 +30,75 @@ const makeConfig = (basedir, componentName) => {
         {
           test: /\.less$/,
           use: [
-            { loader: "style-loader" },
+            { loader: 'style-loader' },
             {
-              loader: "css-loader",
+              loader: 'css-loader',
               options: {
                 modules: {
                   auto: true,
-                  localIdentName: "[local]__[hash:base64]",
+                  localIdentName: '[local]__[hash:base64]',
                 },
               },
             },
-            { loader: "less-loader" },
+            { loader: 'less-loader' },
           ],
         },
         {
           test: /\.css$/,
-          use: [{ loader: "style-loader" }, { loader: "css-loader" }],
+          use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
         },
         {
           test: /\.(?:png|gif|jpe?g|svg)$/,
-          type: "asset/inline",
+          type: 'asset/inline',
         },
       ],
     },
     plugins,
     resolve: {
       alias: {
-        "soresu-form": path.resolve(basedir, "../soresu-form"),
+        'soresu-form': path.resolve(basedir, '../soresu-form'),
       },
-      extensions: [".ts", ".tsx", ".js", ".jsx"],
+      extensions: ['.ts', '.tsx', '.js', '.jsx'],
     },
     optimization: {
       splitChunks: {
         cacheGroups: {
           commons: {
             test: /soresu-form/,
-            name: "commons",
-            chunks: "all",
+            name: 'commons',
+            chunks: 'all',
           },
         },
       },
     },
-  };
-};
+  }
+}
 
 const virkailijaConfig = Object.assign(
   {},
-  makeConfig(path.resolve(__dirname, "va-virkailija"), "virkailija"),
+  makeConfig(path.resolve(__dirname, 'va-virkailija'), 'virkailija'),
   {
     entry: {
-      app: path.resolve(
-        __dirname,
-        "va-virkailija/web/va/HakemustenArviointiApp.tsx"
-      ),
-      adminApp: path.resolve(
-        __dirname,
-        "va-virkailija/web/va/HakujenHallintaApp.tsx"
-      ),
-      summaryApp: path.resolve(
-        __dirname,
-        "va-virkailija/web/va/YhteenvetoApp.jsx"
-      ),
-      login: path.resolve(__dirname, "va-virkailija/web/va/Login.jsx"),
-      codeValues: path.resolve(
-        __dirname,
-        "va-virkailija/web/va/KoodienhallintaApp.tsx"
-      ),
-      search: path.resolve(__dirname, "va-virkailija/web/va/SearchApp.tsx"),
+      app: path.resolve(__dirname, 'va-virkailija/web/va/HakemustenArviointiApp.tsx'),
+      adminApp: path.resolve(__dirname, 'va-virkailija/web/va/HakujenHallintaApp.tsx'),
+      summaryApp: path.resolve(__dirname, 'va-virkailija/web/va/YhteenvetoApp.jsx'),
+      login: path.resolve(__dirname, 'va-virkailija/web/va/Login.jsx'),
+      codeValues: path.resolve(__dirname, 'va-virkailija/web/va/KoodienhallintaApp.tsx'),
+      search: path.resolve(__dirname, 'va-virkailija/web/va/SearchApp.tsx'),
     },
   }
-);
+)
 
-const hakijaConfig = Object.assign(
-  {},
-  makeConfig(path.resolve(__dirname, "va-hakija"), "hakija"),
-  {
-    entry: {
-      app: path.resolve(__dirname, "va-hakija/web/va/VaApp.tsx"),
-      selvitysApp: path.resolve(__dirname, "va-hakija/web/va/SelvitysApp.tsx"),
-      login: path.resolve(__dirname, "va-hakija/web/va/VaLogin.tsx"),
-      muutoshakemusApp: path.resolve(
-        __dirname,
-        "va-hakija/web/va/muutoshakemus/MuutoshakemusApp.tsx"
-      ),
-    },
-  }
-);
+const hakijaConfig = Object.assign({}, makeConfig(path.resolve(__dirname, 'va-hakija'), 'hakija'), {
+  entry: {
+    app: path.resolve(__dirname, 'va-hakija/web/va/VaApp.tsx'),
+    selvitysApp: path.resolve(__dirname, 'va-hakija/web/va/SelvitysApp.tsx'),
+    login: path.resolve(__dirname, 'va-hakija/web/va/VaLogin.tsx'),
+    muutoshakemusApp: path.resolve(
+      __dirname,
+      'va-hakija/web/va/muutoshakemus/MuutoshakemusApp.tsx'
+    ),
+  },
+})
 
-module.exports = [hakijaConfig, virkailijaConfig];
+module.exports = [hakijaConfig, virkailijaConfig]
