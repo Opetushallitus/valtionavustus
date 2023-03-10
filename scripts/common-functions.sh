@@ -8,17 +8,113 @@ readonly ansible_version="4.6.0"
 readonly python_version="3.9.0"
 readonly local_docker_namespace="va"
 
+readonly HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}
+readonly VIRKAILIJA_HOSTNAME=${VIRKAILIJA_HOSTNAME:-"localhost"}
+readonly DOCKER_COMPOSE_FILE="$repo"/docker-compose-test.yml
+readonly PLAYWRIGHT_COMPOSE_FILE="$repo"/docker-compose-playwright-test.yml
+
 function remove_all_files_ignored_or_untracked_by_git {
   git clean -xdf
 }
 
 function install_docker_compose {
   echo "Installing docker compose"
-  pushd "$repo/scripts"
-  curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o ./docker-compose
-  chmod u+x ./docker-compose
-  ./docker-compose --version
-  popd
+  curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o "$repo"/scripts/docker-compose
+  chmod u+x "$repo"/scripts/docker-compose
+  "$repo"/scripts/docker-compose --version
+}
+
+function check_requirements {
+  if ! [[ -x "$(command -v curl)" ]]; then
+    echo "Curl is required, cannot continue"
+    exit 1
+  fi
+}
+
+function make_clean() {
+  time make clean
+}
+
+function make_build() {
+  add_git_head_snippets
+  time make build
+}
+
+function add_git_head_snippets() {
+  echo "Adding git head snippets..."
+  git show --pretty=short --abbrev-commit -s HEAD > "$repo"/server/resources/public/git-HEAD.txt
+}
+
+function build_docker_images {
+  docker build -t "rcs-fakesmtp:latest" -f "$repo"/Dockerfile.rcs-fakesmtp ./
+  docker build -t "va-virkailija:latest" -f "$repo"/Dockerfile.virkailija ./
+  docker build -t "va-hakija:latest" -f "$repo"/Dockerfile.hakija ./
+  docker build -t "playwright-test-runner:latest" -f "$repo"/Dockerfile.playwright-test-runner ./
+}
+
+function docker-compose () {
+    if running_on_jenkins; then
+      docker-compose $@
+    else
+      docker compose $@
+    fi
+}
+
+function stop_system_under_test () {
+  echo "Stopping system under test"
+  local compose_file="$1"
+  docker-compose -f "$compose_file" down --remove-orphans
+}
+
+function stop_systems_under_test  {
+  echo "Stopping all systems under test"
+  fix_directory_permissions_after_playwright_run
+  stop_system_under_test "${DOCKER_COMPOSE_FILE}"
+  stop_system_under_test "${PLAYWRIGHT_COMPOSE_FILE}"
+}
+
+function fix_directory_permissions_after_playwright_run {
+  echo "Fixing directory permissions after Playwright run"
+
+  set +e
+  JENKINS_ID="$(id -u jenkins)"
+  JENKINS_GID="$(id -g jenkins)"
+
+  docker run \
+    --env JENKINS_ID="${JENKINS_ID}" \
+    --env JENKINS_GID="${JENKINS_GID}" \
+    --rm \
+    -v "$repo"/playwright-results:/playwright-results bash:latest bash -c "chown -R ${JENKINS_ID}:${JENKINS_GID} /playwright-results"
+
+  set -e
+}
+
+function start_system_under_test () {
+  echo "Starting system under test"
+  local compose_file="$1"
+
+  docker-compose -f "$compose_file" up -d hakija
+  wait_for_container_to_be_healthy va-hakija
+
+  docker-compose -f "$compose_file" up -d virkailija
+  wait_for_container_to_be_healthy va-virkailija
+
+  make_sure_all_services_are_running_and_follow_their_logs "$compose_file"
+}
+
+function make_sure_all_services_are_running_and_follow_their_logs {
+  local compose_file="$1"
+  docker-compose -f "$compose_file" up -d
+  docker-compose -f "$compose_file" logs --follow &
+}
+
+function run_tests() {
+  echo "Running isolated system tests"
+  export HEADLESS=true
+  export PLAYWRIGHT_WORKERS=6
+  export SPECLJ_ARGS="-f junit"
+
+  "$repo"/run_isolated_system_tests.sh
 }
 
 function parse_env_from_script_name {
@@ -33,7 +129,6 @@ function parse_env_from_script_name {
     exit 1
   fi
 }
-
 
 function running_on_jenkins {
   [ "${JENKINS_HOME:-}" != "" ]
