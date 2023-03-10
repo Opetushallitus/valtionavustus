@@ -2,7 +2,6 @@
 
 [Palvelukortti](https://confluence.csc.fi/pages/viewpage.action?pageId=51873238)
 
-
 Opetushallituksen (OPH) valtionavustusten hakemiseen, käsittelyyn ja
 myöntämiseen tarkoitetut palvelut.
 
