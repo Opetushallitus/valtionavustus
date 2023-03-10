@@ -54,9 +54,9 @@ function build_docker_images {
 
 function docker-compose () {
     if running_on_jenkins; then
-      docker-compose $@
+      "$repo"/scripts/docker-compose "$@"
     else
-      docker compose $@
+      docker compose "$@"
     fi
 }
 
