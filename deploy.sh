@@ -2,29 +2,10 @@
 set -o errexit -o nounset -o pipefail
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 
-HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}
-VIRKAILIJA_HOSTNAME=${VIRKAILIJA_HOSTNAME:-"localhost"}
-DOCKER_COMPOSE_FILE=./docker-compose-test.yml
-PLAYWRIGHT_COMPOSE_FILE=./docker-compose-playwright-test.yml
+# trap stop_systems_under_test EXIT
 
 function current-commit-is-not-tested {
   ! git tag --contains | grep -q "green-qa"
-}
-
-function fix_directory_permissions_after_playwright_run {
-  echo "Fixing directory permissions after Playwright run"
-
-  set +e
-  JENKINS_ID="$(id -u jenkins)"
-  JENKINS_GID="$(id -g jenkins)"
-
-  docker run \
-    --env JENKINS_ID=${JENKINS_ID} \
-    --env JENKINS_GID=${JENKINS_GID} \
-    --rm \
-    -v ${PWD}/playwright-results:/playwright-results bash:latest bash -c "chown -R ${JENKINS_ID}:${JENKINS_GID} /playwright-results"
-
-  set -e
 }
 
 function main {
@@ -38,111 +19,20 @@ function main {
   init_nodejs
   install_docker_compose
   set_env_vars
-  clean
-  build
+  make_clean
+  make_build
   if current-commit-is-not-tested;
   then
     npm run prettier-check-project
     build_docker_images
     if running_on_jenkins; then
-      scripts/docker-compose -f ${PLAYWRIGHT_COMPOSE_FILE} up --abort-on-container-exit
+      docker-compose -f ${PLAYWRIGHT_COMPOSE_FILE} up --abort-on-container-exit
     fi
     start_system_under_test ${DOCKER_COMPOSE_FILE}
     run_tests
     stop_system_under_test ${DOCKER_COMPOSE_FILE}
   fi
   deploy_jars
-}
-
-function stop_systems_under_test  {
-  echo "Stopping all systems under test"
-  fix_directory_permissions_after_playwright_run
-  stop_system_under_test ${DOCKER_COMPOSE_FILE}
-  stop_system_under_test ${PLAYWRIGHT_COMPOSE_FILE}
-}
-
-function stop_system_under_test () {
-  echo "Stopping system under test"
-  local compose_file="$1"
-  scripts/docker-compose -f "$compose_file" down --remove-orphans
-}
-trap stop_systems_under_test EXIT
-
-function build_docker_images {
-  docker build -t "rcs-fakesmtp:latest" -f ./Dockerfile.rcs-fakesmtp ./
-  docker build -t "va-virkailija:latest" -f ./Dockerfile.virkailija ./
-  docker build -t "va-hakija:latest" -f ./Dockerfile.hakija ./
-  docker build -t "playwright-test-runner:latest" -f ./Dockerfile.playwright-test-runner ./
-}
-
-function start_system_under_test () {
-  echo "Starting system under test"
-  local compose_file="$1"
-
-  scripts/docker-compose -f "$compose_file" up -d hakija
-  wait_for_container_to_be_healthy va-hakija
-
-  scripts/docker-compose -f "$compose_file" up -d virkailija
-  wait_for_container_to_be_healthy va-virkailija
-
-  make_sure_all_services_are_running_and_follow_their_logs "$compose_file"
-}
-
-function make_sure_all_services_are_running_and_follow_their_logs {
-  local compose_file="$1"
-  scripts/docker-compose -f "$compose_file" up -d
-  scripts/docker-compose -f "$compose_file" logs --follow &
-}
-
-function check_requirements {
-  if ! [[ -x "$(command -v curl)" ]]; then
-    echo "Curl is required, cannot continue"
-    exit 1
-  fi
-}
-
-function waitport {
-  i=0
-  HOSTNAME=$1
-  PORT=$2
-  MAX_WAIT=${3:-100}
-
-  while ! curl -s "http://${HOSTNAME}:${PORT}/" > /dev/null; do
-    echo "Waiting for port ${PORT} to respond on host ${HOSTNAME}, ${i}/${MAX_WAIT}"
-
-    if [[ $i -gt ${MAX_WAIT} ]]; then
-      echo "Port not responding and max time exceeded, exiting..."
-      exit 1
-    fi
-
-    sleep 1
-    ((i=i+1))
-  done
-
-  echo "Port ${PORT} is responding on host ${HOSTNAME}"
-}
-
-clean() {
-  time make clean
-}
-
-build() {
-  add_git_head_snippets
-  time make build
-}
-
-add_git_head_snippets() {
-  echo "Adding git head snippets..."
-  git show --pretty=short --abbrev-commit -s HEAD > server/resources/public/git-HEAD.txt
-}
-
-run_tests() {
-  echo "Running isolated system tests"
-  export HEADLESS=true
-  export PLAYWRIGHT_WORKERS=6
-  export SPECLJ_ARGS="-f junit"
-
-  ./run_isolated_system_tests.sh
 }
 
 valtionavustus_jar="$repo"/target/*uberjar*/valtionavustus-*-standalone.jar
