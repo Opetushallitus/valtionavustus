@@ -20,7 +20,10 @@ test('excel contains at least one row after submitting loppuselvitys', async ({
   const buffer = await res.body()
   const workbook = xlsx.read(buffer)
   expect(workbook.SheetNames).toMatchObject(['Loppuselvitysraportti'])
-  const sheet = workbook.Sheets['Loppuselvitysraportti']
+  checkLoppuselvitysraportti(workbook.Sheets['Loppuselvitysraportti'])
+})
+
+function checkLoppuselvitysraportti(sheet: xlsx.WorkSheet) {
   expect(sheet['A1'].v).toEqual('Vuosi')
   expect(sheet['B1'].v).toEqual('Vastaanotettu')
   expect(sheet['C1'].v).toEqual('Asiatarkastettu')
@@ -40,4 +43,4 @@ test('excel contains at least one row after submitting loppuselvitys', async ({
   expect(sheet['B2'].v).toBeGreaterThan(0)
   expect(sheet['C2'].v).toBeGreaterThan(0)
   expect(sheet['D2'].v).toBeGreaterThan(0)
-})
+}
