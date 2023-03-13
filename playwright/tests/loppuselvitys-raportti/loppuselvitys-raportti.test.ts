@@ -19,8 +19,23 @@ test('excel contains at least one row after submitting loppuselvitys', async ({
 
   const buffer = await res.body()
   const workbook = xlsx.read(buffer)
-  expect(workbook.SheetNames).toMatchObject(['Loppuselvitysraportti'])
+  expect(workbook.SheetNames).toMatchObject(['Loppuselvitysraportti', 'Asiatarkastamattomat'])
   checkLoppuselvitysraportti(workbook.Sheets['Loppuselvitysraportti'])
+})
+
+test('at least one loppuselvitys is not asiatarkastettu', async ({
+  page,
+  loppuselvitysSubmitted: { loppuselvitysFormFilled },
+}) => {
+  expect(loppuselvitysFormFilled)
+  const res = await page.request.get(
+    `${VIRKAILIJA_URL}/api/v2/reports/loppuselvitykset/loppuselvitysraportti.xlsx`
+  )
+
+  const buffer = await res.body()
+  const workbook = xlsx.read(buffer)
+  expect(workbook.SheetNames).toMatchObject(['Loppuselvitysraportti', 'Asiatarkastamattomat'])
+  checkAsiatarkastamattomat(workbook.Sheets['Asiatarkastamattomat'])
 })
 
 function checkLoppuselvitysraportti(sheet: xlsx.WorkSheet) {
@@ -43,4 +58,18 @@ function checkLoppuselvitysraportti(sheet: xlsx.WorkSheet) {
   expect(sheet['B2'].v).toBeGreaterThan(0)
   expect(sheet['C2'].v).toBeGreaterThan(0)
   expect(sheet['D2'].v).toBeGreaterThan(0)
+}
+
+function checkAsiatarkastamattomat(sheet: xlsx.WorkSheet) {
+  expect(sheet['A1'].v).toEqual('Avustushaku')
+  expect(sheet['B1'].v).toEqual('Lukumäärä')
+  expect(sheet['C1'].v).toEqual('Valmistelija')
+
+  expect(sheet['A2'].t).toEqual('n')
+  expect(sheet['B2'].t).toEqual('n')
+  expect(sheet['C2'].t).toEqual('s')
+
+  expect(sheet['A2'].v).toBeGreaterThan(0)
+  expect(sheet['B2'].v).toBeGreaterThan(0)
+  expect(sheet['C2'].v.length).toBeGreaterThan(0)
 }

@@ -63,6 +63,21 @@
    :granted (get-yearly-granted)
    :total-grant-count (:count (get-total-grant-count))})
 
+(defn get-loppuselvitys-asiatarkastamatta-rows []
+  (query "
+    select hakemus.avustushaku as avustushaku_id,
+    count(*) as lukumäärä,
+    coalesce(rooli.email, 'Ei valmistelijaa') as valmistelija
+    from hakija.hakemukset as hakemus
+    left join virkailija.arviot arvio on arvio.hakemus_id = hakemus.id
+    left join hakija.avustushaku_roles rooli on rooli.id = arvio.presenter_role_id
+    where hakemus.loppuselvitys_information_verified_at is null and
+          hakemus.status_loppuselvitys = 'submitted' and
+          hakemus.version_closed is null
+    group by avustushaku_id, valmistelija
+    order by avustushaku_id
+    " []))
+
 (defn asiatarkastetut-rows []
   (query "
   with loppuselvitykset as (
