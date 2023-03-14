@@ -5,7 +5,6 @@ import { HakemusHakijaSidePreviewLink } from './hakemus-details/HakemusHakijaSid
 import HakemusDecisionLink from './hakemus-details/HakemusDecisionLink'
 import AvustushakuDropdown from './avustushaku/AvustushakuDropdown'
 import HakemusFilter from './hakemus-filter/HakemusFilter'
-import LocalStorage from './LocalStorage'
 import HakemusListing from './hakemus-list/HakemusListing'
 import { Switch } from './hakemus-list/Switch'
 import { HeaderContainer } from './Header'
@@ -39,7 +38,7 @@ import Seuranta from './hakemus-details/Seuranta'
 const SHOW_ALL = 'showAll' as const
 const SHOW_ADDITIONAL_INFO = 'showAdditionalInfo' as const
 
-const defaultHakuId = LocalStorage.avustushakuId() || 1
+const defaultHakuId = 1
 
 const setUrlParams = (key: string, value: boolean) => {
   const searchParams = new URLSearchParams(location.search)

@@ -141,7 +141,7 @@ export class HakujenHallintaPage {
   }
 
   async navigateToHakemusByClicking(avustushakuName: string) {
-    await this.navigate(0)
+    await this.navigate(1)
     const { avustushaku } = this.hakuListingTableSelectors()
     await avustushaku.input.fill(avustushakuName)
     const listItemSelector = await this.page.getByTestId(avustushakuName)
@@ -170,7 +170,7 @@ export class HakujenHallintaPage {
   }
 
   async switchToFormEditorTab() {
-    await this.page.locator('span:text-is("Hakulomake")').click()
+    await this.page.getByTestId('hakulomake-välilehti').click()
     const formEditorPage = HakulomakePage(this.page)
     await formEditorPage.waitFormToBeLoaded()
     return formEditorPage

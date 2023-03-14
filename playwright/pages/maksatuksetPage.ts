@@ -8,7 +8,7 @@ export function MaksatuksetPage(page: Page) {
   async function goto(avustushakuName: string) {
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigateToHakemusByClicking(avustushakuName)
-    await page.locator('text=Maksatukset >> a').click()
+    await page.locator('a').getByText('Maksatukset').click()
     return maksatuksetTable(page)
   }
 

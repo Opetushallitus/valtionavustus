@@ -5,8 +5,6 @@ import {
   Draft,
   PayloadAction,
 } from '@reduxjs/toolkit'
-// @ts-ignore route-parser doesn't have proper types
-import RouteParser from 'route-parser'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import {
   Answer,
@@ -33,7 +31,6 @@ import {
   mutateDefaultTraineeDayValuesForSelectedHakemusOverriddenAnswers,
   mutatesDefaultBudgetValuesForSelectedHakemusSeurantaAnswers,
 } from './overrides'
-import LocalStorage from '../LocalStorage'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 const oldestFirst = (a: Lahetys, b: Lahetys) => (a.created_at < b.created_at ? -1 : 1)
@@ -82,7 +79,6 @@ interface InitialData {
 export const fetchInitialState = createAsyncThunk<InitialData, number>(
   'arviointi/fetchInitialState',
   async (avustushakuId) => {
-    LocalStorage.saveAvustushakuId(avustushakuId)
     const [
       avustushakuList,
       hakuData,
@@ -102,7 +98,6 @@ export const fetchInitialState = createAsyncThunk<InitialData, number>(
       getLahetysStatuses(avustushakuId),
       getEarliestPaymentCreatedAt(avustushakuId),
     ])
-
     return {
       avustushakuList,
       hakuData,

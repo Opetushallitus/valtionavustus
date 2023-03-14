@@ -472,11 +472,7 @@ const TalousarviotiliSelect = ({ isDisabled, hakemus, helpText }: Talousarviotil
     <div>
       <h3>
         TA-tili{' '}
-        <HelpTooltip
-          testId={'tooltip-talousarviotili'}
-          content={helpText}
-          direction={'arviointi-slim'}
-        />
+        <HelpTooltip testId={'tooltip-talousarviotili'} content={helpText} direction="left" />
         &nbsp;*
       </h3>
       <Select

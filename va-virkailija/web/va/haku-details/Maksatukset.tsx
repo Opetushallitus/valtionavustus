@@ -19,9 +19,9 @@ import {
   completeManualSave,
   Avustushaku,
   startManuallySaving,
-  selectSelectedAvustushaku,
   selectLoadedInitialData,
 } from '../hakujenHallinta/hakuReducer'
+import { useCurrentAvustushaku } from '../hakujenHallinta/useAvustushaku'
 
 type MaksatuksetTab = 'outgoing' | 'sent'
 
@@ -34,7 +34,7 @@ const today = moment().format(fiShortFormat)
 const isToday = (p: Maksatus) => moment(p['created-at']).format(fiShortFormat) === today
 
 export const Maksatukset = () => {
-  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku)
+  const avustushaku = useCurrentAvustushaku()
   const {
     codeOptions: codeValues,
     environment,

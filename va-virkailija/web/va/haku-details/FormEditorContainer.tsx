@@ -15,12 +15,12 @@ import {
   selectDraftsForAvustushaku,
   selectHakuState,
   selectLoadedInitialData,
-  selectSelectedAvustushaku,
 } from '../hakujenHallinta/hakuReducer'
+import { useCurrentAvustushaku } from '../hakujenHallinta/useAvustushaku'
 
 const FormEditorContainer = () => {
   const dispatch = useHakujenHallintaDispatch()
-  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku)
+  const avustushaku = useCurrentAvustushaku()
   const { environment, helpTexts } = useHakujenHallintaSelector(selectLoadedInitialData)
   const { formDraft, formDraftJson } = useHakujenHallintaSelector(
     selectDraftsForAvustushaku(avustushaku.id)

@@ -6,7 +6,6 @@ import {
 } from '../hakujenHallinta/hakujenHallintaStore'
 import {
   replaceTalousarviotilit,
-  selectSelectedAvustushaku,
   TalousarviotiliWithKoulutusasteet,
 } from '../hakujenHallinta/hakuReducer'
 import { useGetTalousarvioTilitQuery } from '../hakujenHallinta/hakuApiSlice'
@@ -15,6 +14,7 @@ import HelpTooltip from '../HelpTooltip'
 
 import styles from './Talousarviotilit.module.less'
 import { HelpTexts, Koulutusasteet } from 'soresu-form/web/va/types'
+import { useCurrentAvustushaku } from '../hakujenHallinta/useAvustushaku'
 
 const koulutusasteToOption = (aste: string) => {
   return {
@@ -273,7 +273,7 @@ type TalousarviotilitProps = { helpTexts: HelpTexts }
 export const Talousarviotilit = ({ helpTexts }: TalousarviotilitProps) => {
   const { data, isLoading } = useGetTalousarvioTilitQuery()
   const talousarvioOptions = data?.map(mapTiliOption) ?? []
-  const selectedHaku = useHakujenHallintaSelector(selectSelectedAvustushaku)
+  const selectedHaku = useCurrentAvustushaku()
   const isSaving = useHakujenHallintaSelector((state) =>
     Object.values(state.haku.saveStatus).some((s) => s === true)
   )

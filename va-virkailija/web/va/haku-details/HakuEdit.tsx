@@ -28,14 +28,15 @@ import {
   deleteFocusArea,
   removeSelectionCriteria,
   selectLoadedInitialData,
-  selectSelectedAvustushaku,
   startAutoSaveForAvustushaku,
   updateField,
 } from '../hakujenHallinta/hakuReducer'
 import { Talousarviotilit } from './Talousarviotilit'
+import { useCurrentAvustushaku } from '../hakujenHallinta/useAvustushaku'
+import { useSearchParams } from 'react-router-dom'
 
 export const HakuEdit = () => {
-  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku)
+  const avustushaku = useCurrentAvustushaku()
   const { codeOptions, lainsaadantoOptions, helpTexts, userInfo } =
     useHakujenHallintaSelector(selectLoadedInitialData)
   const loadingAvustushaku = useHakujenHallintaSelector(
@@ -531,8 +532,11 @@ type CreateHakuProps = {
 
 const CreateHaku = ({ avustushaku, helpTexts }: CreateHakuProps) => {
   const dispatch = useHakujenHallintaDispatch()
-  function onClick(e: React.MouseEvent<HTMLAnchorElement>) {
-    dispatch(createHaku(avustushaku.id))
+  const [searchParams, setSearchParams] = useSearchParams()
+  async function onClick(e: React.MouseEvent<HTMLAnchorElement>) {
+    const newAvustushakuId = await dispatch(createHaku(avustushaku.id))
+    searchParams.set('avustushaku', String(newAvustushakuId.payload))
+    setSearchParams(searchParams)
     // @ts-ignore
     e.target.blur()
     e.preventDefault()
@@ -629,7 +633,7 @@ const SelectionCriteria = ({
             type="button"
             className="remove"
             onClick={() => {
-              dispatch(removeSelectionCriteria(index))
+              dispatch(removeSelectionCriteria({ avustushakuId: avustushaku.id, index }))
               dispatch(startAutoSaveForAvustushaku(avustushaku.id))
             }}
             title="Poista"
@@ -663,7 +667,7 @@ const SelectionCriteria = ({
               type="button"
               disabled={!allowAllHakuEdits}
               onClick={() => {
-                dispatch(addSelectionCriteria())
+                dispatch(addSelectionCriteria({ avustushakuId: avustushaku.id }))
                 dispatch(startAutoSaveForAvustushaku(avustushaku.id))
               }}
               data-test-id="add-selection-criteria"
@@ -714,7 +718,7 @@ const FocusArea = ({
             type="button"
             className="remove"
             onClick={() => {
-              dispatch(deleteFocusArea(index))
+              dispatch(deleteFocusArea({ avustushakuId: avustushaku.id, index }))
               dispatch(startAutoSaveForAvustushaku(avustushaku.id))
             }}
             title="Poista"
@@ -748,7 +752,7 @@ const FocusArea = ({
               type="button"
               disabled={!allowAllHakuEdits}
               onClick={() => {
-                dispatch(addFocusArea())
+                dispatch(addFocusArea({ avustushakuId: avustushaku.id }))
                 dispatch(startAutoSaveForAvustushaku(avustushaku.id))
               }}
             >

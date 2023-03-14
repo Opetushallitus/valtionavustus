@@ -20,16 +20,12 @@ import {
   LiiteAttachmentVersion,
 } from 'soresu-form/web/va/types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
-import {
-  Avustushaku,
-  selectLoadedInitialData,
-  selectSelectedAvustushaku,
-  updateField,
-} from '../hakujenHallinta/hakuReducer'
+import { Avustushaku, selectLoadedInitialData, updateField } from '../hakujenHallinta/hakuReducer'
 import {
   useHakujenHallintaDispatch,
   useHakujenHallintaSelector,
 } from '../hakujenHallinta/hakujenHallintaStore'
+import { useCurrentAvustushaku } from '../hakujenHallinta/useAvustushaku'
 
 interface DecisionProps {
   title: string
@@ -212,7 +208,7 @@ const PakoteLiite = () => {
   const loadingAvustushaku = useHakujenHallintaSelector(
     (state) => state.haku.saveStatus.loadingAvustushaku
   )
-  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku)
+  const avustushaku = useCurrentAvustushaku()
   const key = 'dont-include-pakote-ohje'
   const dontIncludePakoteOhje = avustushaku.decision?.[key] === true
   const hakijaUrl = environment['hakija-server'].url['fi']
@@ -1143,7 +1139,7 @@ const getUniqueKoulutusasteet = (talousarviotilit: Avustushaku['talousarviotilit
 
 const DecisionEditor = () => {
   const dispatch = useHakujenHallintaDispatch()
-  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku)
+  const avustushaku = useCurrentAvustushaku()
   const { decisionLiitteet, environment, helpTexts } =
     useHakujenHallintaSelector(selectLoadedInitialData)
   const koulutusasteet = getUniqueKoulutusasteet(avustushaku.talousarviotilit)

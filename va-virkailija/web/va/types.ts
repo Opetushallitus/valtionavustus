@@ -81,38 +81,7 @@ export interface LahetysStatuses {
   loppuselvitysPyynnotSentAt?: string
 }
 
-/*export interface State {
-  avustushakuList: Avustushaku[];
-  hakuData: HakuData;
-  projects: VaCodeValue[];
-  hakemusFilter: HakemusFilter;
-  helpTexts: HelpTexts;
-  modal: JSX.Element | undefined;
-  personSelectHakemusId: number | undefined;
-  selectedHakemus: Hakemus | undefined;
-  selectedHakemusAccessControl: HakemusAccessControl;
-  showOthersScores: boolean;
-  saveStatus: {
-    saveInProgress: boolean;
-    saveTime: Date | null;
-    serverError: string;
-  };
-  userInfo: UserInfo;
-  subTab: string;
-  loadingSelvitys?: boolean;
-  earliestPaymentCreatedAt?: string;
-  lahetykset: LahetysStatuses;
-}*/
-
 export type Selvitys = 'valiselvitys' | 'loppuselvitys'
-export type HakujenHallintaSubTab =
-  | 'haku-editor'
-  | 'form-editor'
-  | 'decision'
-  | 'valiselvitys'
-  | 'loppuselvitys'
-  | 'maksatukset'
-
 export interface VaUserSearch {
   loading: boolean
   result: {

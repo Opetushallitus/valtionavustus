@@ -1,9 +1,8 @@
 import React, { ChangeEvent, useState } from 'react'
 
 import { Maksatus } from './Maksatukset'
-import { selectSelectedAvustushaku } from '../hakujenHallinta/hakuReducer'
 import { VaCodeValue } from '../types'
-import { useHakujenHallintaSelector } from '../hakujenHallinta/hakujenHallintaStore'
+import { useCurrentAvustushaku } from '../hakujenHallinta/useAvustushaku'
 
 type PaymentsTableProps = {
   payments?: Maksatus[]
@@ -83,15 +82,13 @@ type MaksatuksetPhaseProps = {
 }
 
 const MaksatuksetPhase = ({ payments, phase, filter }: MaksatuksetPhaseProps) => {
-  const projectsMappedByCode = useHakujenHallintaSelector<Record<string, VaCodeValue>>((state) => {
-    const avustushaku = selectSelectedAvustushaku(state)
-    return (
-      avustushaku.projects?.reduce<Record<string, VaCodeValue>>((acc, project) => {
-        acc[project['code']] = project
-        return acc
-      }, {}) ?? {}
-    )
-  })
+  const avustushaku = useCurrentAvustushaku()
+  const projectsMappedByCode =
+    avustushaku.projects?.reduce<Record<string, VaCodeValue>>((acc, project) => {
+      acc[project['code']] = project
+      return acc
+    }, {}) ?? {}
+
   const visiblePayments = payments.filter(filterBy(filter))
   return (
     <React.Fragment>

@@ -5,7 +5,6 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit'
 import {
-  HakujenHallintaSubTab,
   OnkoMuutoshakukelpoinenAvustushakuOk,
   Privileges,
   Role,
@@ -26,11 +25,7 @@ import {
   Liite,
   Payment,
 } from 'soresu-form/web/va/types'
-// @ts-ignore route-parser doesn't have proper types
-import RouteParser from 'route-parser'
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import queryString from 'query-string'
-import LocalStorage from '../LocalStorage'
 import _ from 'lodash'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import { fiLongDateTimeFormat, parseFinnishTimestamp } from 'soresu-form/web/va/i18n/dateformat'
@@ -128,7 +123,6 @@ export type SaveStatus = {
 
 interface State {
   initialData: { loading: false; data: InitialData } | { loading: true }
-  hakuId: number
   saveStatus: SaveStatus
   formDrafts: Record<number, Form>
   formDraftsJson: Record<number, string>
@@ -136,7 +130,6 @@ interface State {
   loppuselvitysFormDraftsJson: Record<number, string>
   valiselvitysFormDrafts: Record<number, Form>
   valiselvitysFormDraftsJson: Record<number, string>
-  subTab: HakujenHallintaSubTab
   koodistos: Koodistos
   loadingProjects: boolean
 }
@@ -221,43 +214,40 @@ export const replaceTalousarviotilit = createAsyncThunk<
   )
 })
 
-export const fetchInitialState = createAsyncThunk<InitialData, void>(
-  'haku/fetchInitialState',
-  async (_, thunkAPI) => {
-    const [
-      hakuList,
-      userInfo,
-      environment,
-      codeOptions,
-      lainsaadantoOptions,
-      decisionLiitteet,
-      helpTexts,
-    ] = await Promise.all([
-      HttpUtil.get<Avustushaku[]>('/api/avustushaku/listing'),
-      HttpUtil.get<UserInfo>('/api/userinfo'),
-      HttpUtil.get<EnvironmentApiResponse>('/environment'),
-      HttpUtil.get<VaCodeValue[]>('/api/v2/va-code-values/'),
-      HttpUtil.get<LainsaadantoOption[]>('/api/avustushaku/lainsaadanto-options'),
-      HttpUtil.get('/api/paatos/liitteet'),
-      HttpUtil.get<HelpTexts>('/api/help-texts/all'),
-    ])
-    const query = queryString.parse(window.location.search)
-    const grantId = parseInt(query.avustushaku) || LocalStorage.avustushakuId() || 1
-    const modifiedHakuList = hakuList.map(appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing)
-    const selectedHaku = modifiedHakuList.find((h) => h.id === grantId) || hakuList[0]
-
-    thunkAPI.dispatch(selectHaku(selectedHaku))
-    return {
-      hakuList: modifiedHakuList,
-      userInfo,
-      environment,
-      codeOptions,
-      lainsaadantoOptions,
-      decisionLiitteet,
-      helpTexts,
-    }
+export const fetchInitialState = createAsyncThunk<
+  InitialData,
+  number,
+  { state: HakujenHallintaRootState }
+>('haku/fetchInitialState', async (avustushakuId, thunkAPI) => {
+  const [
+    hakuList,
+    userInfo,
+    environment,
+    codeOptions,
+    lainsaadantoOptions,
+    decisionLiitteet,
+    helpTexts,
+  ] = await Promise.all([
+    HttpUtil.get<Avustushaku[]>('/api/avustushaku/listing'),
+    HttpUtil.get<UserInfo>('/api/userinfo'),
+    HttpUtil.get<EnvironmentApiResponse>('/environment'),
+    HttpUtil.get<VaCodeValue[]>('/api/v2/va-code-values/'),
+    HttpUtil.get<LainsaadantoOption[]>('/api/avustushaku/lainsaadanto-options'),
+    HttpUtil.get('/api/paatos/liitteet'),
+    HttpUtil.get<HelpTexts>('/api/help-texts/all'),
+  ])
+  const modifiedHakuList = hakuList.map(appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing)
+  thunkAPI.dispatch(selectHaku(avustushakuId))
+  return {
+    hakuList: modifiedHakuList,
+    userInfo,
+    environment,
+    codeOptions,
+    lainsaadantoOptions,
+    decisionLiitteet,
+    helpTexts,
   }
-)
+})
 
 const appendBudgetComponent = (selvitysType: Selvitys, formContent: Form | undefined) => {
   const form = selvitysType === 'valiselvitys' ? ValiselvitysForm : LoppuselvitysForm
@@ -302,55 +292,52 @@ const getSelvitysFormContent = async (
   return HttpUtil.post(`/api/avustushaku/${avustushakuId}/init-selvitysform/${selvitysType}`, form)
 }
 
-export const selectHaku = createAsyncThunk<OnSelectHakuData, BaseAvustushaku>(
-  'haku/selectHaku',
-  async (avustushaku) => {
-    const avustushakuId = avustushaku.id
-    const [
-      muutoshakukelpoisuus,
-      privileges,
-      roles,
-      projects,
-      payments,
-      formContent,
-      talousarviotilit,
-    ] = await Promise.all([
-      HttpUtil.get<OnkoMuutoshakukelpoinenAvustushakuOk>(
-        `/api/avustushaku/${avustushakuId}/onko-muutoshakukelpoinen-avustushaku-ok`
-      ),
-      HttpUtil.get<Privileges>(`/api/avustushaku/${avustushakuId}/privileges`),
-      HttpUtil.get<Role[]>(`/api/avustushaku/${avustushakuId}/role`),
-      HttpUtil.get<VaCodeValue[]>(`/api/avustushaku/${avustushakuId}/projects`),
-      HttpUtil.get<Payment[]>(`/api/v2/grants/${avustushakuId}/payments/`),
-      HttpUtil.get<Form>(`/api/avustushaku/${avustushakuId}/form`),
-      HttpUtil.get<TalousarviotiliWithKoulutusasteet[]>(
-        `/api/avustushaku/${avustushakuId}/talousarviotilit`
-      ),
-    ])
-    const valiselvitysForm = await getSelvitysFormContent(
-      avustushakuId,
-      'valiselvitys',
-      formContent
-    )
-    const loppuselvitysForm = await getSelvitysFormContent(
-      avustushakuId,
-      'loppuselvitys',
-      formContent
-    )
-    return {
-      muutoshakukelpoisuus,
-      privileges,
-      roles,
-      projects,
-      payments,
-      formContent,
-      avustushaku,
-      valiselvitysForm,
-      loppuselvitysForm,
-      talousarviotilit,
-    }
+export const selectHaku = createAsyncThunk<
+  OnSelectHakuData,
+  number,
+  { state: HakujenHallintaRootState }
+>('haku/selectHaku', async (avustushakuId, thunkAPI) => {
+  const [
+    muutoshakukelpoisuus,
+    privileges,
+    roles,
+    projects,
+    payments,
+    formContent,
+    talousarviotilit,
+  ] = await Promise.all([
+    HttpUtil.get<OnkoMuutoshakukelpoinenAvustushakuOk>(
+      `/api/avustushaku/${avustushakuId}/onko-muutoshakukelpoinen-avustushaku-ok`
+    ),
+    HttpUtil.get<Privileges>(`/api/avustushaku/${avustushakuId}/privileges`),
+    HttpUtil.get<Role[]>(`/api/avustushaku/${avustushakuId}/role`),
+    HttpUtil.get<VaCodeValue[]>(`/api/avustushaku/${avustushakuId}/projects`),
+    HttpUtil.get<Payment[]>(`/api/v2/grants/${avustushakuId}/payments/`),
+    HttpUtil.get<Form>(`/api/avustushaku/${avustushakuId}/form`),
+    HttpUtil.get<TalousarviotiliWithKoulutusasteet[]>(
+      `/api/avustushaku/${avustushakuId}/talousarviotilit`
+    ),
+  ])
+  const valiselvitysForm = await getSelvitysFormContent(avustushakuId, 'valiselvitys', formContent)
+  const loppuselvitysForm = await getSelvitysFormContent(
+    avustushakuId,
+    'loppuselvitys',
+    formContent
+  )
+  const avustushaku = selectAvustushaku(thunkAPI.getState().haku, avustushakuId)
+  return {
+    muutoshakukelpoisuus,
+    privileges,
+    roles,
+    projects,
+    payments,
+    formContent,
+    avustushaku,
+    valiselvitysForm,
+    loppuselvitysForm,
+    talousarviotilit,
   }
-)
+})
 
 const saveHaku = createAsyncThunk<Avustushaku, Avustushaku, { rejectValue: string }>(
   'haku/saveHaku',
@@ -388,14 +375,14 @@ const saveHaku = createAsyncThunk<Avustushaku, Avustushaku, { rejectValue: strin
   }
 )
 
-export const createHaku = createAsyncThunk<void, number>(
+export const createHaku = createAsyncThunk<number, number, { state: HakujenHallintaRootState }>(
   'haku/createHaku',
   async (baseHakuId, thunkAPI) => {
     const newAvustushaku = await HttpUtil.put('/api/avustushaku', {
       baseHakuId,
     })
     thunkAPI.dispatch(addAvustushaku(newAvustushaku))
-    thunkAPI.dispatch(selectHaku(newAvustushaku))
+    return newAvustushaku.id
   }
 )
 
@@ -458,7 +445,7 @@ const debouncedSave: AsyncThunkPayloadCreator<
   number,
   { state: HakujenHallintaRootState }
 > = async (id, thunkAPI) => {
-  const haku = getAvustushaku(thunkAPI.getState().haku, id)
+  const haku = selectAvustushaku(thunkAPI.getState().haku, id)
   thunkAPI.dispatch(saveHaku(haku))
 }
 
@@ -650,25 +637,10 @@ export const updateField = createAsyncThunk<
   thunkAPI.dispatch(startAutoSaveForAvustushaku(avustushaku.id))
 })
 
-const consolidateSubTabSelectionWithUrl = (): HakujenHallintaSubTab => {
-  let subTab = 'haku-editor' as const
-  const parsedUrl = new RouteParser('/admin/:subTab/*ignore').match(location.pathname)
-  if (!_.isUndefined(history.pushState)) {
-    if (parsedUrl['subTab']) {
-      subTab = parsedUrl['subTab']
-    } else {
-      const newUrl = '/admin/' + subTab + '/' + location.search
-      history.pushState({}, document.title, newUrl)
-    }
-  }
-  return subTab
-}
-
 const initialState: State = {
   initialData: {
     loading: true,
   },
-  hakuId: LocalStorage.avustushakuId() || 1,
   saveStatus: {
     saveInProgress: false,
     saveTime: null,
@@ -681,7 +653,6 @@ const initialState: State = {
   loppuselvitysFormDraftsJson: {},
   valiselvitysFormDrafts: {},
   valiselvitysFormDraftsJson: {},
-  subTab: consolidateSubTabSelectionWithUrl(),
   koodistos: {
     content: null,
     loading: false,
@@ -710,11 +681,6 @@ const hakuSlice = createSlice({
     },
     completeManualSave: (state) => {
       state.saveStatus = saveSuccess(state, 'savingManuallyRefactorToOwnActionsAtSomepoint')
-    },
-    selectEditorSubTab: (state, action: PayloadAction<HakujenHallintaSubTab>) => {
-      state.subTab = action.payload
-      const newUrl = '/admin/' + action.payload + '/' + location.search
-      history.pushState({}, document.title, newUrl)
     },
     formUpdated: (state, { payload }: PayloadAction<{ avustushakuId: number; newForm: Form }>) => {
       state.formDrafts[payload.avustushakuId] = payload.newForm
@@ -764,21 +730,27 @@ const hakuSlice = createSlice({
       const index = hakuList.findIndex(({ id }) => id === payload.id)
       hakuList[index] = payload
     },
-    addFocusArea: (state) => {
-      const selectedHaku = getSelectedAvustushaku(state)
+    addFocusArea: (state, { payload }: PayloadAction<{ avustushakuId: number }>) => {
+      const selectedHaku = selectAvustushaku(state, payload.avustushakuId)
       selectedHaku.content['focus-areas'].items.push({ fi: '', sv: '' })
     },
-    deleteFocusArea: (state, { payload }: PayloadAction<number>) => {
-      const selectedHaku = getSelectedAvustushaku(state)
-      selectedHaku.content['focus-areas'].items.splice(payload, 1)
+    deleteFocusArea: (
+      state,
+      { payload }: PayloadAction<{ avustushakuId: number; index: number }>
+    ) => {
+      const selectedHaku = selectAvustushaku(state, payload.avustushakuId)
+      selectedHaku.content['focus-areas'].items.splice(payload.index, 1)
     },
-    addSelectionCriteria: (state) => {
-      const selectedHaku = getSelectedAvustushaku(state)
+    addSelectionCriteria: (state, { payload }: PayloadAction<{ avustushakuId: number }>) => {
+      const selectedHaku = selectAvustushaku(state, payload.avustushakuId)
       selectedHaku.content['selection-criteria'].items.push({ fi: '', sv: '' })
     },
-    removeSelectionCriteria: (state, { payload }: PayloadAction<number>) => {
-      const selectedHaku = getSelectedAvustushaku(state)
-      selectedHaku.content['selection-criteria'].items.splice(payload, 1)
+    removeSelectionCriteria: (
+      state,
+      { payload }: PayloadAction<{ avustushakuId: number; index: number }>
+    ) => {
+      const selectedHaku = selectAvustushaku(state, payload.avustushakuId)
+      selectedHaku.content['selection-criteria'].items.splice(payload.index, 1)
     },
     updateProject: (
       state,
@@ -789,7 +761,7 @@ const hakuSlice = createSlice({
         projects: VaCodeValue[]
       }>
     ) => {
-      const selectedHaku = getSelectedAvustushaku(state)
+      const selectedHaku = selectAvustushaku(state, payload.avustushakuId)
       if (selectedHaku.projects) {
         selectedHaku.projects = payload.projects
       }
@@ -803,7 +775,7 @@ const hakuSlice = createSlice({
         talousarviotilit: (TalousarviotiliWithKoulutusasteet | undefined)[]
       }>
     ) => {
-      const selectedHaku = getSelectedAvustushaku(state)
+      const selectedHaku = selectAvustushaku(state, payload.avustushakuId)
       selectedHaku!.talousarviotilit = payload.talousarviotilit
     },
   },
@@ -818,12 +790,7 @@ const hakuSlice = createSlice({
           data: action.payload,
         }
       })
-      .addCase(selectHaku.pending, (state, action) => {
-        const avustushaku = action.meta.arg
-        LocalStorage.saveAvustushakuId(avustushaku.id)
-        const url = `?avustushaku=${avustushaku.id}`
-        window.history.pushState(null, document.title, url)
-        state.hakuId = avustushaku.id
+      .addCase(selectHaku.pending, (state) => {
         state.saveStatus.loadingAvustushaku = true
       })
       .addCase(selectHaku.fulfilled, (state, action) => {
@@ -874,7 +841,7 @@ const hakuSlice = createSlice({
       .addCase(createHakuRole.fulfilled, (state, action) => {
         state.saveStatus = saveSuccess(state, 'savingRoles')
         const { avustushakuId, roles, privileges } = action.payload
-        const haku = getAvustushaku(state, avustushakuId)
+        const haku = selectAvustushaku(state, avustushakuId)
         haku.roles = roles
         haku.privileges = privileges
       })
@@ -888,7 +855,7 @@ const hakuSlice = createSlice({
       .addCase(saveRole.fulfilled, (state, action) => {
         state.saveStatus = saveSuccess(state, 'savingRoles')
         const payload = action.payload
-        const haku = getAvustushaku(state, payload.avustushakuId)
+        const haku = selectAvustushaku(state, payload.avustushakuId)
         if ('roles' in payload) {
           haku.roles = payload.roles
         } else {
@@ -901,7 +868,7 @@ const hakuSlice = createSlice({
       .addCase(deleteRole.fulfilled, (state, action) => {
         state.saveStatus = saveSuccess(state, 'savingRoles')
         const payload = action.payload
-        const haku = getAvustushaku(state, payload.avustushakuId)
+        const haku = selectAvustushaku(state, payload.avustushakuId)
         haku.privileges = payload.privileges
         haku.roles = payload.roles
       })
@@ -910,7 +877,7 @@ const hakuSlice = createSlice({
       })
       .addCase(saveForm.fulfilled, (state, action) => {
         const { avustushakuId, form, muutoshakukelpoinen } = action.payload
-        const haku = getAvustushaku(state, avustushakuId)
+        const haku = selectAvustushaku(state, avustushakuId)
         haku.formContent = form
         state.formDrafts[avustushakuId] = form
         state.formDraftsJson[avustushakuId] = JSON.stringify(form, null, 2)
@@ -926,7 +893,7 @@ const hakuSlice = createSlice({
       })
       .addCase(saveSelvitysForm.fulfilled, (state, action) => {
         const { avustushakuId, form, selvitysType } = action.payload
-        const haku = getAvustushaku(state, avustushakuId)
+        const haku = selectAvustushaku(state, avustushakuId)
         haku[selvitysFormMap[selvitysType]] = form
         state[selvitysFormDraftMap[selvitysType]][avustushakuId] = form
         state[selvitysFormDraftJsonMap[selvitysType]][avustushakuId] = JSON.stringify(form, null, 2)
@@ -963,7 +930,6 @@ const hakuSlice = createSlice({
 export const {
   startManuallySaving,
   completeManualSave,
-  selectEditorSubTab,
   formUpdated,
   formJsonUpdated,
   selvitysFormUpdated,
@@ -1002,18 +968,10 @@ const getAvustushakuFromList = (hakuList: Avustushaku[], avustushakuId: number) 
   return haku
 }
 
-const getSelectedAvustushaku = (state: State) => {
-  const hakuList = getHakuList(state)
-  return getAvustushakuFromList(hakuList, state.hakuId)
-}
-
-const getAvustushaku = (state: State, avustushakuId: number) => {
+export const selectAvustushaku = (state: State, avustushakuId: number) => {
   const hakuList = getHakuList(state)
   return getAvustushakuFromList(hakuList, avustushakuId)
 }
-
-export const selectSelectedAvustushaku = (state: HakujenHallintaRootState) =>
-  getSelectedAvustushaku(state.haku)
 
 export const selectDraftsForAvustushaku =
   (avustushakuId: number) =>

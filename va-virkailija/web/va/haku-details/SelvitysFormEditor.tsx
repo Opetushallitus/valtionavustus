@@ -20,17 +20,17 @@ import {
   recreateSelvitysForm,
   saveSelvitysForm,
   selectDraftsForAvustushaku,
-  selectSelectedAvustushaku,
   selvitysFormJsonUpdated,
   selvitysFormUpdated,
 } from '../hakujenHallinta/hakuReducer'
+import { useCurrentAvustushaku } from '../hakujenHallinta/useAvustushaku'
 
 type SelvitysFormEditorProps = {
   selvitysType: 'valiselvitys' | 'loppuselvitys'
 }
 
 export const SelvitysFormEditor = ({ selvitysType }: SelvitysFormEditorProps) => {
-  const avustushaku = useHakujenHallintaSelector(selectSelectedAvustushaku)
+  const avustushaku = useCurrentAvustushaku()
   const isValiSelvitys = selvitysType === 'valiselvitys'
   const { environment, helpTexts } = useHakujenHallintaSelector(selectLoadedInitialData)
   const { koodistos } = useHakujenHallintaSelector(selectHakuState)

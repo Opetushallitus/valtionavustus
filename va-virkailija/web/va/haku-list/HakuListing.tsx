@@ -13,10 +13,10 @@ import moment from 'moment-timezone'
 import DatePicker from 'react-widgets/DatePicker'
 
 import buttonStyles from '../style/Button.module.less'
-import { useSelector } from 'react-redux'
-import { Avustushaku, selectSelectedAvustushaku } from '../hakujenHallinta/hakuReducer'
+import { Avustushaku } from '../hakujenHallinta/hakuReducer'
 
 import styles from './HakuListing.module.less'
+import { useCurrentAvustushaku } from '../hakujenHallinta/useAvustushaku'
 
 export const AVUSTUSHAKU_STATUSES_AVAILABLE_FOR_FILTER = AVUSTUSHAKU_STATUSES.filter(
   (status) => status !== 'deleted'
@@ -346,7 +346,7 @@ const filterReducer = (state: TableFilterState, action: FilterAction): TableFilt
 }
 
 export const HakuListing: React.FC<Props> = ({ hakuList, onClickHaku }) => {
-  const selectedHaku = useSelector(selectSelectedAvustushaku)
+  const selectedHaku = useCurrentAvustushaku()
   const [sortKey, setSortKey] = useState<SortKey | undefined>()
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
   const [filterState, dispatch] = useReducer(filterReducer, defaultFilterState)

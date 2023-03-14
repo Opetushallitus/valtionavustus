@@ -6,15 +6,13 @@ type HelpTooltipProps = {
   testId?: string
 }
 
-export default class HelpTooltip extends React.Component<HelpTooltipProps> {
-  render() {
-    return (
-      <a
-        className={`soresu-tooltip soresu-tooltip-${this.props.direction || 'up'} soresu-help-icon`}
-        data-test-id={this.props.testId || ''}
-      >
-        <span dangerouslySetInnerHTML={{ __html: this.props.content }} />
-      </a>
-    )
-  }
-}
+const HelpTooltip = ({ direction, testId, content }: HelpTooltipProps) => (
+  <div
+    className={`soresu-tooltip soresu-tooltip-${direction || 'up'} soresu-help-icon`}
+    data-test-id={testId || ''}
+  >
+    <span dangerouslySetInnerHTML={{ __html: content }} />
+  </div>
+)
+
+export default HelpTooltip
