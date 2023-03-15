@@ -17,7 +17,7 @@ test('Vahintaan yksi projekti pitaa valita', async ({
   testInfo.setTimeout(testInfo.timeout + 40_000)
   expectToBeDefined(userCache)
   expectToBeDefined(closedAvustushaku)
-  const hakujenHallintaPage = await alustaAvustushaunTaytto(page, hakuProps)
+  const haunTiedotPage = await alustaAvustushaunTaytto(page, hakuProps)
   await test.step('saving fails with something is wrong as no project code selected', async () => {
     await page.fill('#haku-name-fi', hakuProps.avustushakuName + '-lisays')
     await Promise.all([
@@ -27,8 +27,8 @@ test('Vahintaan yksi projekti pitaa valita', async ({
   })
   await test.step('saving ok after selecting project code', async () => {
     const firstProjectToSelect = hakuProps.vaCodes.project[1]
-    await hakujenHallintaPage.selectProject(firstProjectToSelect)
-    await hakujenHallintaPage.waitForSave()
+    await haunTiedotPage.selectProject(firstProjectToSelect)
+    await haunTiedotPage.common.waitForSave()
   })
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   await hakemustenArviointiPage.navigate(closedAvustushaku.id)

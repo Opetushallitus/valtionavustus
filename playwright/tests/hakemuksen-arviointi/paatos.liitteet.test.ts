@@ -1,7 +1,6 @@
 import { expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
 import { getAcceptedPäätösEmails } from '../../utils/emails'
 import { expectToBeDefined } from '../../utils/util'
 import { HAKIJA_URL } from '../../utils/constants'
@@ -22,9 +21,8 @@ test('paatos liitteet', async ({
     projectName: answers.projectName,
     projektikoodi,
   })
-  const hakujenHallintaPage = new HakujenHallintaPage(page)
-  await hakujenHallintaPage.navigateFromHeader()
-  await hakujenHallintaPage.resolveAvustushaku()
+  const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+  await haunTiedotPage.resolveAvustushaku()
   await hakemustenArviointiPage.navigate(avustushakuID)
   await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
 
@@ -127,7 +125,7 @@ test('paatos liitteet', async ({
     await expect(pakoteOhjeCheckbox).toBeChecked()
     await pakoteOhjeCheckbox.click()
     await expect(pakoteOhjeCheckbox).not.toBeChecked()
-    await hakujenHallintaPage.waitForSave()
+    await paatosPage.common.waitForSave()
   })
   await test.step('pakoteohje gets removed after recreating and sending paatokset', async () => {
     await paatosPage.recreatePaatokset()

@@ -29,7 +29,8 @@ test('hakija does not get an email with link to muutoshakemus when avustushaku f
   const hakujenHallintaPage = new HakujenHallintaPage(page)
   const avustushakuID = await hakujenHallintaPage.copyEsimerkkihaku()
   await hakujenHallintaPage.fillAvustushaku(hakuProps)
-  await hakujenHallintaPage.publishAvustushaku()
+  const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
+  await haunTiedotPage.publishAvustushaku()
   const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
   await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
 
@@ -68,7 +69,7 @@ test('hakija does not get an email with link to muutoshakemus when avustushaku f
   })
   await hakijaAvustusHakuPage.submitApplication()
   await hakujenHallintaPage.navigate(avustushakuID)
-  await hakujenHallintaPage.setEndDate(moment().subtract(1, 'year').format('D.M.YYYY H.mm'))
+  await haunTiedotPage.setEndDate(moment().subtract(1, 'year').format('D.M.YYYY H.mm'))
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   let hakemusID: number | undefined
   await test.step('accept hakemus', async () => {
@@ -87,8 +88,8 @@ test('hakija does not get an email with link to muutoshakemus when avustushaku f
     await hakemustenArviointiPage.waitForSave()
   })
   await test.step('Resolve avustushaku', async () => {
-    await hakujenHallintaPage.navigateFromHeader()
-    await hakujenHallintaPage.resolveAvustushaku()
+    const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+    await haunTiedotPage.resolveAvustushaku()
   })
 
   await test.step('Add valmistelija for hakemus', async () => {
@@ -128,7 +129,8 @@ const akuTest = defaultValues.extend<{
     expectToBeDefined(userCache)
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.publishAvustushaku()
+    const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
+    await haunTiedotPage.publishAvustushaku()
     const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
 
@@ -242,7 +244,7 @@ const akuTest = defaultValues.extend<{
 
     await hakijaAvustusHakuPage.submitApplication()
     await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.setEndDate(moment().subtract(1, 'year').format('D.M.YYYY H.mm'))
+    await haunTiedotPage.setEndDate(moment().subtract(1, 'year').format('D.M.YYYY H.mm'))
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     let hakemusID: number | undefined
     await test.step('accept hakemus', async () => {
@@ -261,8 +263,8 @@ const akuTest = defaultValues.extend<{
     })
     expectToBeDefined(hakemusID)
     await test.step('Resolve avustushaku', async () => {
-      await hakujenHallintaPage.navigateFromHeader()
-      await hakujenHallintaPage.resolveAvustushaku()
+      const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+      await haunTiedotPage.resolveAvustushaku()
     })
     await test.step('Add valmistelija for hakemus', async () => {
       await hakemustenArviointiPage.navigate(avustushakuID)

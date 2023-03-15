@@ -4,14 +4,15 @@ import { HakujenHallintaPage, HakuProps } from '../../pages/hakujenHallintaPage'
 import { expectToBeDefined } from '../../utils/util'
 import { markAvustushakuAsMuutoshakukelvoton } from '../../utils/avustushaku'
 import moment from 'moment'
-import { MaksatuksetPage } from '../../pages/maksatuksetPage'
+import { MaksatuksetPage } from '../../pages/hakujen-hallinta/maksatuksetPage'
+import { HaunTiedotPage } from '../../pages/hakujen-hallinta/HaunTiedotPage'
 
 const prefix1 = 'AAAAA1'
 const prefix2 = 'AAAAA2'
 
 const test = selvitysTest.extend<{
   secondHakuProps: HakuProps
-  hakujenHallintaPage: HakujenHallintaPage
+  haunTiedotPage: ReturnType<typeof HaunTiedotPage>
 }>({
   avustushakuName: async ({ avustushakuName }, use) => {
     await use(`${prefix1} ${avustushakuName}`)
@@ -36,18 +37,17 @@ const test = selvitysTest.extend<{
     await markAvustushakuAsMuutoshakukelvoton(page, avustushakuID)
     await use(secondHakuProps)
   },
-  hakujenHallintaPage: async ({ secondHakuProps, avustushakuID, avustushakuName, page }, use) => {
+  haunTiedotPage: async ({ secondHakuProps, avustushakuID, avustushakuName, page }, use) => {
     expectToBeDefined(secondHakuProps)
     const maksatuksetPage = MaksatuksetPage(page)
     await maksatuksetPage.goto(avustushakuName)
     await maksatuksetPage.fillMaksueranTiedotAndSendMaksatukset()
     const hakujenHallintaPage = new HakujenHallintaPage(page)
-    await hakujenHallintaPage.navigate(avustushakuID)
-    await use(hakujenHallintaPage)
+    await use(await hakujenHallintaPage.navigate(avustushakuID))
   },
 })
 
-test('sorting haku table', async ({ hakujenHallintaPage, avustushakuName, secondHakuProps }) => {
+test('sorting haku table', async ({ haunTiedotPage, avustushakuName, secondHakuProps }) => {
   const todayFormatted = moment().format('DD.MM.YY')
   const { hakuaikaStart, hakuaikaEnd, avustushakuName: secondAvustushakuName } = secondHakuProps
   const secondAvustushakuStartFormatted = moment(hakuaikaStart).format('DD.MM.YY')
@@ -68,7 +68,7 @@ test('sorting haku table', async ({ hakujenHallintaPage, avustushakuName, second
     jaossaOllutSumma,
     maksettuSumma,
     budjetti,
-  } = hakujenHallintaPage.hakuListingTableSelectors()
+  } = haunTiedotPage.common.locators.hakuListingTable
   await test.step('can be sorted by avustushaku name', async () => {
     await avustushaku.sort.click()
     const descSorted = await avustushaku.cellValues()

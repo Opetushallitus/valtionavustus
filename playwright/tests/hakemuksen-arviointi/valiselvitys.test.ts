@@ -162,8 +162,8 @@ selvitysTest(
     })
     await test.step('send väliselvitykset', async () => {
       const hakujenHallintaPage = new HakujenHallintaPage(page)
-      await hakujenHallintaPage.navigateToValiselvitys(avustushakuID)
-      await hakujenHallintaPage.sendValiselvitys()
+      const valiselvitysPage = await hakujenHallintaPage.navigateToValiselvitys(avustushakuID)
+      await valiselvitysPage.sendValiselvitys()
     })
     await test.step('warhing is hidden, link and lomake work', async () => {
       await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, hakemusID)

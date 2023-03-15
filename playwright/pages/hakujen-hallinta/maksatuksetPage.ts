@@ -1,14 +1,16 @@
 import moment from 'moment'
 import { Page, expect } from '@playwright/test'
 
-import { HakujenHallintaPage } from './hakujenHallintaPage'
-import { navigate } from '../utils/navigate'
+import { navigate } from '../../utils/navigate'
+import { Header } from '../Header'
 
 export function MaksatuksetPage(page: Page) {
   async function goto(avustushakuName: string) {
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
-    await hakujenHallintaPage.navigateToHakemusByClicking(avustushakuName)
-    await page.locator('a').getByText('Maksatukset').click()
+    const haunTiedotPage = await Header(page).switchToHakujenHallinta()
+    const { avustushaku, hakuList } = haunTiedotPage.common.locators.hakuListingTable
+    await avustushaku.input.fill(avustushakuName)
+    await hakuList.getByTestId(avustushakuName).click()
+    await haunTiedotPage.common.switchToMaksatuksetTab()
     return maksatuksetTable(page)
   }
 

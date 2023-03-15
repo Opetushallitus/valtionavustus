@@ -102,9 +102,8 @@ test.describe.parallel('Lähetä väliselvityspyynnöt notifications', () => {
           projektikoodi,
         })
 
-        const hakujenHallintaPage = new HakujenHallintaPage(page)
-        await hakujenHallintaPage.navigateFromHeader()
-        await hakujenHallintaPage.resolveAvustushaku()
+        const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+        await haunTiedotPage.resolveAvustushaku()
 
         await hakemustenArviointiPage.navigate(avustushakuID)
         await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
@@ -159,12 +158,12 @@ test.describe.parallel('Lähetä väliselvityspyynnöt notifications', () => {
       expect(emailsAfter2.length).toBeGreaterThan(emailsBefore2.length)
 
       const hakujenHallinta = new HakujenHallintaPage(page)
-      await hakujenHallinta.navigateToValiselvitys(avustushakuID)
+      const valiselvitysPage = await hakujenHallinta.navigateToValiselvitys(avustushakuID)
       await Promise.all([
         page.waitForResponse(
           `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/valiselvitys/send-notification`
         ),
-        page.click('[data-test-id="send-valiselvitys"]'),
+        valiselvitysPage.sendValiselvitys(),
       ])
 
       const emailsBefore3 = await getLahetaValiselvityspyynnotEmails(avustushakuID)

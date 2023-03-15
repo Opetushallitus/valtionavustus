@@ -57,8 +57,8 @@ export const submittedHakemusTest = defaultValues.extend<MuutoshakemusFixtures>(
     expect(submittedHakemus).toBeDefined()
     await test.step('Close avustushaku', async () => {
       const hakujenHallintaPage = new HakujenHallintaPage(page)
-      await hakujenHallintaPage.navigate(avustushakuID)
-      await hakujenHallintaPage.setEndDate(finalAvustushakuEndDate.format('D.M.YYYY H.mm'))
+      const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+      await haunTiedotPage.setEndDate(finalAvustushakuEndDate.format('D.M.YYYY H.mm'))
     })
     await use({ id: avustushakuID })
   },
@@ -99,8 +99,8 @@ export const muutoshakemusTest = submittedHakemusTest.extend<MuutoshakemusFixtur
 
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await test.step('Resolve avustushaku', async () => {
-      await hakujenHallintaPage.navigate(avustushakuID)
-      await hakujenHallintaPage.resolveAvustushaku()
+      const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+      await haunTiedotPage.resolveAvustushaku()
     })
 
     await test.step('Add valmistelija for hakemus', async () => {

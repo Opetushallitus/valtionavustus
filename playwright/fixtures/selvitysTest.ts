@@ -5,8 +5,8 @@ import { VirkailijaValiselvitysPage } from '../pages/virkailijaValiselvitysPage'
 import { navigate } from '../utils/navigate'
 import { HakijaSelvitysPage } from '../pages/hakijaSelvitysPage'
 import { expect, test } from '@playwright/test'
-import { LoppuselvitysPage } from '../pages/loppuselvitysPage'
 import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
+import { LoppuselvitysPage } from '../pages/hakujen-hallinta/LoppuselvitysPage'
 
 interface SelvitysFixtures {
   väliselvityspyyntöSent: {}
@@ -34,18 +34,18 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     testInfo
   ) => {
     testInfo.setTimeout(testInfo.timeout + 5_000)
+    expectToBeDefined(acceptedHakemus)
+    const hakujenHallinta = new HakujenHallintaPage(page)
+    const valiselvitysPage = await hakujenHallinta.navigateToValiselvitys(avustushakuID)
     await muutoshakemusTest.step('Send väliselvityspyynnöt', async () => {
-      expectToBeDefined(acceptedHakemus)
-      const hakujenHallinta = new HakujenHallintaPage(page)
-      await hakujenHallinta.navigateToValiselvitys(avustushakuID)
       await Promise.all([
         page.waitForResponse(
           `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/valiselvitys/send-notification`
         ),
-        hakujenHallinta.sendValiselvitys(),
+        valiselvitysPage.sendValiselvitys(),
       ])
     })
-    const tapahtumaloki = page.locator('div.tapahtumaloki')
+    const tapahtumaloki = valiselvitysPage.locators.tapahtumaloki
     await test.step('updates tapahtumaloki', async () => {
       await expect(tapahtumaloki.getByTestId('sender-0')).toHaveText(ukotettuValmistelija)
       await expect(tapahtumaloki.getByTestId('sent-0')).toHaveText('1')

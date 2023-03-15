@@ -1,6 +1,7 @@
 import { expect, Page } from '@playwright/test'
 import { navigate } from '../../utils/navigate'
-import * as common from './common'
+import * as common from './CommonHakujenHallintaPage'
+import { CommonHakujenHallintaPage } from './CommonHakujenHallintaPage'
 
 export function PaatosPage(page: Page) {
   const datePicker = 'div.datepicker input'
@@ -14,6 +15,8 @@ export function PaatosPage(page: Page) {
     hankkeenAlkamisPaivaLabel: alkamisPaiva.locator(label),
     hankkeenPaattymisPaiva: paattymisPaiva.locator(datePicker),
     hankkeenPaattymisPaivaLabel: paattymisPaiva.locator(label),
+    taustaa: page.locator('[id="decision.taustaa.fi"]'),
+    decisionEditor: page.locator('.decision-editor'),
     confirmSending: page.locator('text="Vahvista lähetys"'),
     paatosSendError: page.locator('#päätös-send-error'),
     erityisavustusEhdotCheckbox: page
@@ -74,6 +77,7 @@ export function PaatosPage(page: Page) {
   }
 
   return {
+    common: CommonHakujenHallintaPage(page),
     locators,
     navigateTo,
     sendPaatos,

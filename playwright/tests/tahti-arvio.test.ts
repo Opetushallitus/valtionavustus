@@ -17,8 +17,8 @@ muutoshakemusTest(
   async ({ page, avustushakuID, submittedHakemus }) => {
     expect(submittedHakemus).toBeDefined()
     const hakujenHallintaPage = new HakujenHallintaPage(page)
-    await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast()
+    const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+    await haunTiedotPage.closeAvustushakuByChangingEndDateToPast()
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     const hakemusId = await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
     await hakemustenArviointiPage.page.locator('#close-hakemus-button').click()

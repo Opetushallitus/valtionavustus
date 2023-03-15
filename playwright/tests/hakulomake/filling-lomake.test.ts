@@ -41,10 +41,10 @@ test('can add and validate different fields', async ({
   testInfo.setTimeout(testInfo.timeout + 30_000)
   expectToBeDefined(userCache)
   const hakujenHallintaPage = new HakujenHallintaPage(page)
-  await hakujenHallintaPage.navigate(1)
+  const haunTiedotPage = await hakujenHallintaPage.navigate(1)
   const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
-  await hakujenHallintaPage.setAvustushakuInDraftState()
-  const formEditorPage = await hakujenHallintaPage.switchToFormEditorTab()
+  await haunTiedotPage.setAvustushakuInDraftState()
+  const hakulomakePage = await hakujenHallintaPage.commonHakujenHallinta.switchToHakulomakeTab()
   const decimalField = {
     type: 'decimalField',
     fieldId: 'id-decimalField',
@@ -55,10 +55,11 @@ test('can add and validate different fields', async ({
     fieldId: 'id-integerField',
     fieldLabel: 'label-integerField',
   }
-  await formEditorPage.addKoodisto('ammattiluokitus')
-  await formEditorPage.addFields(decimalField, integerField)
+  await hakulomakePage.addKoodisto('ammattiluokitus')
+  await hakulomakePage.addFields(decimalField, integerField)
   await hakujenHallintaPage.navigate(avustushakuID)
-  await hakujenHallintaPage.publishAvustushaku()
+  await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
+  await haunTiedotPage.publishAvustushaku()
   const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
   await hakijaAvustusHakuPage.navigate(avustushakuID, 'fi')
   await hakijaAvustusHakuPage.fillMuutoshakemusEnabledHakemus(avustushakuID, answers, async () => {

@@ -2,8 +2,8 @@ import { expect } from '@playwright/test'
 
 import moment from 'moment'
 
-import { LoppuselvitysPage } from '../../pages/loppuselvitysPage'
 import { selvitysTest as test } from '../../fixtures/selvitysTest'
+import { LoppuselvitysPage } from '../../pages/hakujen-hallinta/LoppuselvitysPage'
 
 test('information verification is shown', async ({
   page,

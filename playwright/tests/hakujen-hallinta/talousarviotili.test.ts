@@ -8,6 +8,7 @@ import { defaultValues } from '../../fixtures/defaultValues'
 import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
 import { HakijaAvustusHakuPage } from '../../pages/hakijaAvustusHakuPage'
 import { addMigratedTalousarviotili } from '../../utils/avustushaku'
+import { HaunTiedotPage } from '../../pages/hakujen-hallinta/HaunTiedotPage'
 
 type CreateTaTili = {
   code: string
@@ -65,10 +66,9 @@ const test = defaultValues.extend<{
     const tilit = await createTaTilit(page)
     const hakujenHallinta = new HakujenHallintaPage(page)
     await hakujenHallinta.copyEsimerkkihaku()
-    await hakujenHallinta.hauntiedotLocators().hakuName.fi.fill(avustushakuName)
-    await expect(
-      hakujenHallinta.page.locator('text=Jossain kentässä puutteita. Tarkasta arvot.')
-    ).toBeVisible()
+    const haunTiedotPage = HaunTiedotPage(page)
+    await haunTiedotPage.locators.hakuName.fi.fill(avustushakuName)
+    await expect(haunTiedotPage.locators.puutteita).toBeVisible()
     await use(tilit)
   },
 })
@@ -80,7 +80,8 @@ test.describe.parallel('talousarvio select', () => {
 
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.copyEsimerkkihaku()
-    const locators = hakujenHallintaPage.hauntiedotLocators()
+    const haunTiedotPage = HaunTiedotPage(page)
+    const locators = haunTiedotPage.locators
     const firstTili = locators.taTili.tili(0)
     await expect(firstTili.value).toBeHidden()
     await firstTili.input.fill(migratedTili)
@@ -94,9 +95,8 @@ test.describe.parallel('talousarvio select', () => {
     })
   })
   test('tili and koulutusaste basic flow', async ({ page, tilit: { tatili1 } }) => {
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const locators = hakujenHallintaPage.hauntiedotLocators()
-    const taTili = locators.taTili
+    const haunTiedotPage = HaunTiedotPage(page)
+    const taTili = haunTiedotPage.locators.taTili
     const firstTili = taTili.tili(0)
     const firstTiliFirstKoulutusaste = firstTili.koulutusaste(0)
     await test.step('correct starting states', async () => {
@@ -112,7 +112,7 @@ test.describe.parallel('talousarvio select', () => {
       await expect(firstTili.option.first()).toBeEnabled()
       await page.keyboard.press('Tab')
       await page.keyboard.press('Enter')
-      await hakujenHallintaPage.waitForSave()
+      await haunTiedotPage.common.waitForSave()
       await expect(firstTili.placeholder).toBeHidden()
       await expect(firstTili.value).toHaveText(taTiliSelectValue(tatili1))
     })
@@ -136,7 +136,7 @@ test.describe.parallel('talousarvio select', () => {
       await page.keyboard.press('Enter')
       await expect(firstTiliFirstKoulutusaste.placeholder).toBeHidden()
       await expect(firstTiliFirstKoulutusaste.value).toHaveText(koulutus)
-      await hakujenHallintaPage.waitForSave()
+      await haunTiedotPage.common.waitForSave()
       await expect(firstTiliFirstKoulutusaste.addKoulutusasteBtn).toBeVisible()
     })
     await test.step('values where saved', async () => {
@@ -150,18 +150,16 @@ test.describe.parallel('talousarvio select', () => {
       await Promise.all([
         expect(firstTili.input).toBeDisabled(),
         expect(firstTiliFirstKoulutusaste.input).toBeDisabled(),
-        locators.hakuName.fi.type('trigger auto save'),
+        haunTiedotPage.locators.hakuName.fi.type('trigger auto save'),
       ])
-      await expect(
-        hakujenHallintaPage.page.locator('text=Jossain kentässä puutteita. Tarkasta arvot.')
-      ).toBeVisible()
+      await expect(haunTiedotPage.locators.puutteita).toBeVisible()
       await expect(firstTili.input).toBeEnabled()
       await expect(firstTiliFirstKoulutusaste.input).toBeEnabled()
     })
   })
   test('empty selects dont get saved', async ({ tilit: { tatili1 }, page }) => {
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const locators = hakujenHallintaPage.hauntiedotLocators()
+    const haunTiedotPage = HaunTiedotPage(page)
+    const locators = haunTiedotPage.locators
     const taTili = locators.taTili
     const firstTili = taTili.tili(0)
     const secondTili = taTili.tili(1)
@@ -171,20 +169,20 @@ test.describe.parallel('talousarvio select', () => {
       await expect(secondTili.input).toBeVisible()
       await firstTili.addTiliBtn.click()
       await expect(thirdTili.input).toBeVisible()
-      await hakujenHallintaPage.waitForSave()
+      await haunTiedotPage.common.waitForSave()
     })
     await test.step('add value to 3rd tili', async () => {
       await thirdTili.input.fill(tatili1.name)
       await page.keyboard.press('Tab')
       await page.keyboard.press('Enter')
-      await hakujenHallintaPage.waitForSave()
+      await haunTiedotPage.common.waitForSave()
       await expect(thirdTili.value).toHaveText(taTiliSelectValue(tatili1))
     })
     await test.step('add koulutusaste to 3rd tili', async () => {
       await thirdTili.koulutusaste(0).input.fill(lukio)
       await page.keyboard.press('Tab')
       await page.keyboard.press('Enter')
-      await hakujenHallintaPage.waitForSave()
+      await haunTiedotPage.common.waitForSave()
     })
     await test.step('add 3 more koulutusaste to third tili', async () => {
       await thirdTili.koulutusaste(0).addKoulutusasteBtn.click()
@@ -193,13 +191,13 @@ test.describe.parallel('talousarvio select', () => {
       await expect(thirdTili.koulutusaste(2).input).toBeVisible()
       await thirdTili.koulutusaste(0).addKoulutusasteBtn.first().click()
       await expect(thirdTili.koulutusaste(3).input).toBeVisible()
-      await hakujenHallintaPage.waitForSave()
+      await haunTiedotPage.common.waitForSave()
     })
     await test.step('add koulutusaste to 4th koulutusaste on 3rd tili', async () => {
       await thirdTili.koulutusaste(3).input.fill(kansalaisopisto)
       await page.keyboard.press('Tab')
       await page.keyboard.press('Enter')
-      await hakujenHallintaPage.waitForSave()
+      await haunTiedotPage.common.waitForSave()
     })
     await test.step(
       'after page reload empty selects disappear (as they are not saved)',
@@ -217,8 +215,8 @@ test.describe.parallel('talousarvio select', () => {
     )
   })
   test('can delete tilis and koulutusaste', async ({ tilit: { tatili1, tatili2 }, page }) => {
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const locators = hakujenHallintaPage.hauntiedotLocators()
+    const haunTiedotPage = HaunTiedotPage(page)
+    const locators = haunTiedotPage.locators
     const taTili = locators.taTili
     const firstTili = taTili.tili(0)
     const secondTili = taTili.tili(1)
@@ -232,13 +230,13 @@ test.describe.parallel('talousarvio select', () => {
       await expect(secondTili.input).toBeVisible()
       await firstTili.addTiliBtn.click()
       await expect(thirdTili.input).toBeVisible()
-      await hakujenHallintaPage.waitForSave()
+      await haunTiedotPage.common.waitForSave()
     })
     await test.step('add value to 2nd tili with koulutusaste', async () => {
       await secondTili.input.fill(tatili1.name)
       await page.keyboard.press('Tab')
       await page.keyboard.press('Enter')
-      await hakujenHallintaPage.waitForSave()
+      await haunTiedotPage.common.waitForSave()
       await expect(secondTili.value).toHaveText(taTiliSelectValue(tatili1))
       await secondTiliFirstKoulutusaste.input.fill(lukio)
       await page.keyboard.press('Tab')
@@ -248,7 +246,7 @@ test.describe.parallel('talousarvio select', () => {
       await thirdTili.input.fill(tatili2.name)
       await page.keyboard.press('Tab')
       await page.keyboard.press('Enter')
-      await hakujenHallintaPage.waitForSave()
+      await haunTiedotPage.common.waitForSave()
       await expect(thirdTili.value).toHaveText(taTiliSelectValue(tatili2))
     })
     await test.step('add 3 koulutusaste to 3rd tili', async () => {
@@ -263,11 +261,11 @@ test.describe.parallel('talousarvio select', () => {
       await thirdTiliThirdKoulutusaste.input.fill(kansalaisopisto)
       await page.keyboard.press('Tab')
       await page.keyboard.press('Enter')
-      await hakujenHallintaPage.waitForSave()
+      await haunTiedotPage.common.waitForSave()
     })
     await test.step('remove 2nd koulutusaste from 3rd tili', async () => {
       await thirdTili.koulutusaste(1).removeKoulutusasteBtn(lukio).click()
-      await hakujenHallintaPage.waitForSave()
+      await haunTiedotPage.common.waitForSave()
       await expect(thirdTiliFirstKoulutusaste.value).toHaveText(koulutus)
       await expect(thirdTiliSecondKoulutusaste.value).toHaveText(kansalaisopisto)
       await expect(thirdTiliThirdKoulutusaste.value).toBeHidden()
@@ -280,7 +278,7 @@ test.describe.parallel('talousarvio select', () => {
       await firstTili.removeTiliBtn.click()
       await expect(firstTili.value).toHaveText(taTiliSelectValue(tatili2))
       await expect(secondTili.input).toBeHidden()
-      await hakujenHallintaPage.waitForSave()
+      await haunTiedotPage.common.waitForSave()
     })
     await test.step('reload to see they saved correctly', async () => {
       await page.reload()
@@ -307,7 +305,8 @@ test.describe.parallel('talousarvio select', () => {
      */
     await hakujenHallintaPage.page.reload()
     await hakujenHallintaPage.fillAvustushaku(hakuProps)
-    const taTili = hakujenHallintaPage.hauntiedotLocators().taTili
+    const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
+    const taTili = haunTiedotPage.locators.taTili
     const firstTili = taTili.tili(0)
     const { addTiliBtn, removeTiliBtn, input } = firstTili
     const { addKoulutusasteBtn, removeKoulutusasteBtn: removeKoulutusasteBtnFn } =
@@ -315,12 +314,12 @@ test.describe.parallel('talousarvio select', () => {
     const removeKoulutusasteBtn = removeKoulutusasteBtnFn('Ammatillinen koulutus')
     const locators = [addTiliBtn, removeTiliBtn, addKoulutusasteBtn, removeKoulutusasteBtn, input]
     await verifyLocatorsAreEnabled(...locators)
-    await hakujenHallintaPage.publishAvustushaku()
+    await haunTiedotPage.publishAvustushaku()
     await verifyLocatorsAreDisabled(...locators)
-    await hakujenHallintaPage.setAvustushakuInDraftState()
+    await haunTiedotPage.setAvustushakuInDraftState()
     await verifyLocatorsAreEnabled(...locators)
-    await hakujenHallintaPage.publishAvustushaku()
-    await hakujenHallintaPage.resolveAvustushaku()
+    await haunTiedotPage.locators.status.published.click()
+    await haunTiedotPage.resolveAvustushaku()
     await verifyLocatorsAreDisabled(...locators)
   })
 })
@@ -335,13 +334,13 @@ muutoshakemusTest(
     const avustushakuID = await hakujenHallintaPage.createUnpublishedMuutoshakemusEnabledHaku(
       hakuProps
     )
-    const hauntiedotLocators = hakujenHallintaPage.hauntiedotLocators()
+    const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
     await test.step('add 2 tilis to avustushaku', async () => {
       for (const { index, tili } of [
         { index: 0, tili: tatili2 },
         { index: 1, tili: tatili1 },
       ]) {
-        const select = hauntiedotLocators.taTili.tili(index)
+        const select = haunTiedotPage.locators.taTili.tili(index)
         await select.input.click()
         await select.input.fill(tili.name)
         await hakujenHallintaPage.page.keyboard.press('Tab')
@@ -351,19 +350,17 @@ muutoshakemusTest(
         await hakujenHallintaPage.page.keyboard.press('Enter')
         await select.addTiliBtn.click()
       }
-      await hakujenHallintaPage.waitForSave()
     })
-    await hakujenHallintaPage.publishAvustushaku()
-    await hakujenHallintaPage.waitForSave()
+    await haunTiedotPage.publishAvustushaku()
+    await haunTiedotPage.common.waitForSave()
     await test.step('fill haku', async () => {
       const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
       await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
       await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(avustushakuID, answers)
     })
     await test.step('close avustushaku', async () => {
-      await hakujenHallintaPage.navigate(avustushakuID)
-      await hakujenHallintaPage.setEndDate(finalAvustushakuEndDate.format('D.M.YYYY H.mm'))
-      await hakujenHallintaPage.waitForSave()
+      const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+      await haunTiedotPage.setEndDate(finalAvustushakuEndDate.format('D.M.YYYY H.mm'))
     })
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigate(avustushakuID)

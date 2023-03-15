@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test'
 import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
 import { selvitysTest as test } from '../fixtures/selvitysTest'
+import { expectToBeDefined } from '../utils/util'
 
 test('Modifying päätös should not affect vali- and loppuselvitys updated at timestamps', async ({
   page,
@@ -9,23 +10,24 @@ test('Modifying päätös should not affect vali- and loppuselvitys updated at t
   const hakujenHallinta = new HakujenHallintaPage(page)
   await hakujenHallinta.navigate(avustushakuID)
 
-  const paatosPage = await hakujenHallinta.switchToPaatosTab()
+  const paatosPage = await hakujenHallinta.commonHakujenHallinta.switchToPaatosTab()
   const originalPaatosTimestamp = await paatosPage.locators.paatosUpdatedAt.textContent()
 
-  await hakujenHallinta.switchToValiselvitysTab()
-  const originalValiselvitysTimestamp = await hakujenHallinta.valiselvitysUpdatedAt.textContent()
+  const valiselvitysPage = await hakujenHallinta.commonHakujenHallinta.switchToValiselvitysTab()
+  const originalValiselvitysTimestamp = await valiselvitysPage.locators.updatedAt.textContent()
+  expectToBeDefined(originalValiselvitysTimestamp)
 
   await hakujenHallinta.switchToLoppuselvitysTab()
   const originalLoppuselvitysTimestamp = await hakujenHallinta.loppuselvitysUpdatedAt.textContent()
 
   await test.step('modify paatos', async () => {
-    await hakujenHallinta.switchToPaatosTab()
-    await page.fill('[id="decision.taustaa.fi"]', 'Burger Time')
+    const paatosPage = await hakujenHallinta.commonHakujenHallinta.switchToPaatosTab()
+    await paatosPage.locators.taustaa.fill('Burger Time')
     await hakujenHallinta.waitForSave()
   })
 
   await test.step('päätös modified timestamp has changed', async () => {
-    const paatosPage = await hakujenHallinta.switchToPaatosTab()
+    const paatosPage = await hakujenHallinta.commonHakujenHallinta.switchToPaatosTab()
     const newPaatosTimestamp = await paatosPage.locators.paatosUpdatedAt.textContent()
     expect(newPaatosTimestamp).not.toEqual(originalPaatosTimestamp)
   })
@@ -37,8 +39,7 @@ test('Modifying päätös should not affect vali- and loppuselvitys updated at t
   })
 
   await test.step('väliselvitys modified timestamp has not changed', async () => {
-    await hakujenHallinta.switchToValiselvitysTab()
-    const newValiselvitysTimestamp = await hakujenHallinta.valiselvitysUpdatedAt.textContent()
-    expect(newValiselvitysTimestamp).toEqual(originalValiselvitysTimestamp)
+    const valiselvitysPage = await hakujenHallinta.commonHakujenHallinta.switchToValiselvitysTab()
+    await expect(valiselvitysPage.locators.updatedAt).toHaveText(originalValiselvitysTimestamp)
   })
 })

@@ -6,7 +6,6 @@ import { expectToBeDefined } from '../../utils/util'
 import { YhteenvetoPage } from '../../pages/yhteenvetoPage'
 import { HakijaAvustusHakuPage } from '../../pages/hakijaAvustusHakuPage'
 import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
 import { PaatosPage } from '../../pages/hakujen-hallinta/PaatosPage'
 
 const getSearchUrl = async ({
@@ -88,9 +87,8 @@ const test = muutoshakemusTest.extend<{
       projektikoodi,
     })
 
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
-    await hakujenHallintaPage.navigateFromHeader()
-    await hakujenHallintaPage.resolveAvustushaku()
+    const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+    await haunTiedotPage.resolveAvustushaku()
 
     await hakemustenArviointiPage.navigate(avustushakuID)
     await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID1, ukotettuValmistelija)

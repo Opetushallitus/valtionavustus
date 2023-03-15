@@ -4,8 +4,8 @@ import { KoodienhallintaPage } from '../../pages/koodienHallintaPage'
 import { unpublishedAvustushakuTest } from '../../fixtures/muutoshakemusTest'
 import { expectToBeDefined } from '../../utils/util'
 import { VIRKAILIJA_URL } from '../../utils/constants'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
 import { createRandomTalousarviotiliCode } from '../../utils/random'
+import { HaunTiedotPage } from '../../pages/hakujen-hallinta/HaunTiedotPage'
 
 const expectNoErrors = async (koodienhallintaPage: ReturnType<typeof KoodienhallintaPage>) => {
   const taForm = koodienhallintaPage.taTilit.form
@@ -266,9 +266,9 @@ test.describe.parallel('talousarviotilien hallinta', () => {
         await row.locator('a').locator(`text="${hakuProps.avustushakuName}"`).click()
       })
       await test.step('after removing talousarviotili its allowed to be deleted', async () => {
-        const hakujenHallintaPage = new HakujenHallintaPage(page)
-        await hakujenHallintaPage.hauntiedotLocators().taTili.tili(0).removeTiliBtn.click()
-        await hakujenHallintaPage.waitForSave()
+        const haunTiedotPage = HaunTiedotPage(page)
+        await haunTiedotPage.locators.taTili.tili(0).removeTiliBtn.click()
+        await haunTiedotPage.common.waitForSave()
         await koodienhallintaPage.navigate()
         await koodienhallintaPage.switchToTatilitTab()
         await expect(koodienhallintaPage.taTilit.form.submitBtn).toBeVisible()

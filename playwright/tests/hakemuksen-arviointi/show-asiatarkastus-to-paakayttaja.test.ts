@@ -2,8 +2,8 @@ import { expect } from '@playwright/test'
 
 import { switchUserIdentityTo, countElements } from '../../utils/util'
 
-import { LoppuselvitysPage } from '../../pages/loppuselvitysPage'
 import { selvitysTest as test } from '../../fixtures/selvitysTest'
+import { LoppuselvitysPage } from '../../pages/hakujen-hallinta/LoppuselvitysPage'
 
 test('shows asiatarkastus to pääkäyttäjä who is not valmistelija', async ({
   page,

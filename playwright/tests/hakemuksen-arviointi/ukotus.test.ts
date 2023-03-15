@@ -23,8 +23,8 @@ muutoshakemusTest(
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     const hakujenHallintaPage = new HakujenHallintaPage(page)
 
-    await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast()
+    const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+    await haunTiedotPage.closeAvustushakuByChangingEndDateToPast()
     const hakemusId = await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
     await hakemustenArviointiPage.closeHakemusDetails()
     await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusId, '_ valtionavustus')

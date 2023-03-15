@@ -32,8 +32,9 @@ test('Älä lähetä selvityspyyntöjä jos hakemus on kekeytetty aloittamatta',
   const hakujenHallintaPage = new HakujenHallintaPage(page)
   await test.step('no väliselvitys email', async () => {
     await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.switchToValiselvitysTab()
-    await hakujenHallintaPage.sendValiselvitys(0)
+    const valiselvitysPage =
+      await hakujenHallintaPage.commonHakujenHallinta.switchToValiselvitysTab()
+    await valiselvitysPage.sendValiselvitys(0)
     const emails = await waitUntilMinEmails(getValiselvitysEmails, 0, acceptedHakemus.hakemusID)
     expect(emails).toHaveLength(0)
   })

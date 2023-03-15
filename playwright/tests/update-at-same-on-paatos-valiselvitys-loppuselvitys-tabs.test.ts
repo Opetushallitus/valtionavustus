@@ -16,8 +16,9 @@ test.fixme(
     await paatosPage.navigateTo(avustushakuID)
     const paatosUpdatedAt = await paatosPage.locators.paatosUpdatedAt.locator('.date').textContent()
 
-    await hakujenHallintaPage.switchToValiselvitysTab()
-    const valiselvitysUpdatedAt = await hakujenHallintaPage.valiselvitysUpdatedAt
+    const valiselvitysPage =
+      await hakujenHallintaPage.commonHakujenHallinta.switchToValiselvitysTab()
+    const valiselvitysUpdatedAt = await valiselvitysPage.locators.updatedAt
       .locator('.date')
       .textContent()
 

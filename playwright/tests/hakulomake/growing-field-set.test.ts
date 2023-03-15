@@ -130,8 +130,8 @@ const test = defaultValues.extend<Fixtures>({
       const formEditorPage = await hakujenHallintaPage.navigateToFormEditor(avustushakuID)
       await formEditorPage.changeLomakeJson(formJsonString)
       await formEditorPage.saveForm()
-      await hakujenHallintaPage.switchToHaunTiedotTab()
-      await hakujenHallintaPage.publishAvustushaku()
+      const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
+      await haunTiedotPage.publishAvustushaku()
     })
     const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
     const growingSets = {

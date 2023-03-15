@@ -1,13 +1,14 @@
 import { expect } from '@playwright/test'
 import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
+import { HaunTiedotPage } from '../../pages/hakujen-hallinta/HaunTiedotPage'
 
 const getIndexInHakuList = async (
-  hakujenHallintaPage: HakujenHallintaPage,
+  haunTiedotPage: ReturnType<typeof HaunTiedotPage>,
   avustushakuName: string
 ) => {
-  const { hakuList, avustushaku } = hakujenHallintaPage.hakuListingTableSelectors()
-  await hakuList.waitFor()
+  const { hakuList, avustushaku } = haunTiedotPage.common.locators.hakuListingTable
+  await expect(hakuList).toBeVisible()
   const rows = await avustushaku.cellValues()
   const defaultAvustushakuName = 'Yleisavustus - esimerkkihaku'
   return {
@@ -20,17 +21,17 @@ const getIndexInHakuList = async (
 test('filtering haku table', async ({ avustushakuID, page, hakuProps }) => {
   const { avustushakuName } = hakuProps
   const hakujenHallintaPage = new HakujenHallintaPage(page)
-  await hakujenHallintaPage.navigate(avustushakuID)
+  const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
   const { avustushaku, tila, vaihe, hakuaika, hakuRows } =
-    hakujenHallintaPage.hakuListingTableSelectors()
+    haunTiedotPage.common.locators.hakuListingTable
   await test.step('filtering with avustushaku name works', async () => {
-    const beforeFiltering = await getIndexInHakuList(hakujenHallintaPage, avustushakuName)
+    const beforeFiltering = await getIndexInHakuList(haunTiedotPage, avustushakuName)
     expect(beforeFiltering.avustusHakuAmount).toBeGreaterThanOrEqual(2)
     expect(beforeFiltering.defaultAvustushakuIndex).toBeGreaterThanOrEqual(0)
     expect(beforeFiltering.testAvustushakuIndex).toBeGreaterThanOrEqual(0)
     await avustushaku.input.fill(avustushakuName)
     await expect(hakuRows).toHaveCount(1)
-    const afterFiltering = await getIndexInHakuList(hakujenHallintaPage, avustushakuName)
+    const afterFiltering = await getIndexInHakuList(haunTiedotPage, avustushakuName)
     expect(afterFiltering.defaultAvustushakuIndex).toEqual(-1)
     expect(afterFiltering.testAvustushakuIndex).toEqual(0)
     expect(afterFiltering.avustusHakuAmount).toEqual(1)
@@ -38,18 +39,18 @@ test('filtering haku table', async ({ avustushakuID, page, hakuProps }) => {
     await expect(hakuRows).toHaveCount(1)
     await avustushaku.input.fill('')
     await expect(hakuRows).toHaveCount(beforeFiltering.avustusHakuAmount)
-    const afterClearingFilter = await getIndexInHakuList(hakujenHallintaPage, avustushakuName)
+    const afterClearingFilter = await getIndexInHakuList(haunTiedotPage, avustushakuName)
     expect(afterClearingFilter).toEqual(beforeFiltering)
   })
   await test.step('filters with tila', async () => {
     const { toggle, uusiCheckbox } = tila
     await toggle.click()
     await uusiCheckbox.uncheck()
-    const afterFiltering = await getIndexInHakuList(hakujenHallintaPage, avustushakuName)
+    const afterFiltering = await getIndexInHakuList(haunTiedotPage, avustushakuName)
     expect(afterFiltering.defaultAvustushakuIndex).toEqual(-1)
     expect(afterFiltering.testAvustushakuIndex).toBeGreaterThanOrEqual(0)
     await uusiCheckbox.check()
-    const afterClearing = await getIndexInHakuList(hakujenHallintaPage, avustushakuName)
+    const afterClearing = await getIndexInHakuList(haunTiedotPage, avustushakuName)
     expect(afterClearing.defaultAvustushakuIndex).toBeGreaterThanOrEqual(0)
     expect(afterClearing.testAvustushakuIndex).toBeGreaterThanOrEqual(0)
   })
@@ -57,11 +58,11 @@ test('filtering haku table', async ({ avustushakuID, page, hakuProps }) => {
     const { toggle, kiinniCheckbox } = vaihe
     await toggle.click()
     await kiinniCheckbox.uncheck()
-    const afterFiltering = await getIndexInHakuList(hakujenHallintaPage, avustushakuName)
+    const afterFiltering = await getIndexInHakuList(haunTiedotPage, avustushakuName)
     expect(afterFiltering.defaultAvustushakuIndex).toEqual(-1)
     expect(afterFiltering.testAvustushakuIndex).toBeGreaterThanOrEqual(0)
     await kiinniCheckbox.check()
-    const afterClearing = await getIndexInHakuList(hakujenHallintaPage, avustushakuName)
+    const afterClearing = await getIndexInHakuList(haunTiedotPage, avustushakuName)
     expect(afterClearing.defaultAvustushakuIndex).toBeGreaterThanOrEqual(0)
     expect(afterClearing.testAvustushakuIndex).toBeGreaterThanOrEqual(0)
   })
@@ -69,19 +70,19 @@ test('filtering haku table', async ({ avustushakuID, page, hakuProps }) => {
     const { toggle, hakuaikaStart, hakuaikaEnd, clear } = hakuaika
     await clear.waitFor({ state: 'hidden' })
     await toggle.click()
-    const beforeFiltering = await getIndexInHakuList(hakujenHallintaPage, avustushakuName)
+    const beforeFiltering = await getIndexInHakuList(haunTiedotPage, avustushakuName)
     await hakuaikaStart.fill('17.9.2015')
     await page.keyboard.press('Tab')
-    const afterStartFilter = await getIndexInHakuList(hakujenHallintaPage, avustushakuName)
+    const afterStartFilter = await getIndexInHakuList(haunTiedotPage, avustushakuName)
     expect(afterStartFilter.avustusHakuAmount).toBeLessThan(beforeFiltering.avustusHakuAmount)
     await clear.waitFor()
     await hakuaikaEnd.fill('31.12.2015')
     await page.keyboard.press('Tab')
-    const afterBothFilters = await getIndexInHakuList(hakujenHallintaPage, avustushakuName)
+    const afterBothFilters = await getIndexInHakuList(haunTiedotPage, avustushakuName)
     expect(afterBothFilters.avustusHakuAmount).toEqual(1)
     expect(afterBothFilters.defaultAvustushakuIndex).toEqual(0)
     await clear.click()
-    const afterClearing = await getIndexInHakuList(hakujenHallintaPage, avustushakuName)
+    const afterClearing = await getIndexInHakuList(haunTiedotPage, avustushakuName)
     expect(afterClearing.avustusHakuAmount).toEqual(beforeFiltering.avustusHakuAmount)
   })
 })

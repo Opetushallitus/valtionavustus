@@ -12,7 +12,8 @@ const test = defaultValues.extend<{
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     const avustushakuID = await hakujenHallintaPage.copyEsimerkkihaku()
     await hakujenHallintaPage.fillAvustushaku(hakuProps)
-    await hakujenHallintaPage.publishAvustushaku()
+    const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
+    await haunTiedotPage.publishAvustushaku()
     const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
 

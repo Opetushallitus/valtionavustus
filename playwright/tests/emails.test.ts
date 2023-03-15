@@ -151,8 +151,9 @@ test('sends emails to correct contact and hakemus emails', async ({
   })
 
   await test.step('sends väliselvitys email', async () => {
-    await hakujenHallintaPage.switchToValiselvitysTab()
-    await hakujenHallintaPage.sendValiselvitys(1)
+    const valiselvitysPage =
+      await hakujenHallintaPage.commonHakujenHallinta.switchToValiselvitysTab()
+    await valiselvitysPage.sendValiselvitys(1)
     const emails = await waitUntilMinEmails(getValiselvitysEmails, 1, hakemusID)
     expect(emails).toHaveLength(1)
     const email = lastOrFail(emails)

@@ -12,8 +12,8 @@ test(`shows Muokattu pill when the application has been modified after submit`, 
 }) => {
   expectToBeDefined(submittedHakemus)
   const hakujenHallintaPage = new HakujenHallintaPage(page)
-  await hakujenHallintaPage.navigate(avustushakuID)
-  await hakujenHallintaPage.setEndDate('1.1.2000 16.00')
+  const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+  await haunTiedotPage.setEndDate('1.1.2000 16.00')
 
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)

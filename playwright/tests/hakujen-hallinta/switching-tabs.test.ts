@@ -30,7 +30,7 @@ test('switching between avustushaut', async ({ page, hakuProps, userCache }) => 
     })
   })
   await test.step('assert correct paatos paiva values for avustushaku #2', async () => {
-    const paatosPage = await hakujenHallintaPage.switchToPaatosTab()
+    const paatosPage = await hakujenHallintaPage.commonHakujenHallinta.switchToPaatosTab()
     const paatosLocators = paatosPage.locators
     await expect(paatosLocators.hankkeenAlkamisPaivaLabel).toHaveText(
       'Avustuksen ensimmäinen käyttöpäivä'
@@ -52,7 +52,7 @@ test('switching between avustushaut', async ({ page, hakuProps, userCache }) => 
     }
   )
   await test.step('assert correct paatos paiva values for avustushaku #2', async () => {
-    const paatosPage = await hakujenHallintaPage.switchToPaatosTab()
+    const paatosPage = await hakujenHallintaPage.commonHakujenHallinta.switchToPaatosTab()
     const paatosLocators = paatosPage.locators
     await expect(paatosLocators.hankkeenAlkamisPaivaLabel).toHaveText(
       'Avustuksen ensimmäinen käyttöpäivä'

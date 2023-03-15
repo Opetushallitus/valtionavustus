@@ -13,9 +13,9 @@ test('Avustuksesta kieltäytyminen', async ({
   testInfo.setTimeout(testInfo.timeout + 40_000)
   const hakujenHallintaPage = new HakujenHallintaPage(page)
   await test.step('send päätökset', async () => {
-    await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.resolveAvustushaku()
-    const paatosPage = await hakujenHallintaPage.switchToPaatosTab()
+    const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+    await haunTiedotPage.resolveAvustushaku()
+    const paatosPage = await hakujenHallintaPage.commonHakujenHallinta.switchToPaatosTab()
     await paatosPage.sendPaatos(2)
   })
 
@@ -58,16 +58,17 @@ test('Avustuksesta kieltäytyminen', async ({
   await test.step('sends only one väliselvityspyyntö', async () => {
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigateFromHeader()
-    await hakujenHallintaPage.switchToValiselvitysTab()
+    const valiselvitysPage =
+      await hakujenHallintaPage.commonHakujenHallinta.switchToValiselvitysTab()
     expect(await getValiselvitysEmailsForAvustus(avustushakuID)).toHaveLength(0)
-    await hakujenHallintaPage.sendValiselvitys(1)
+    await valiselvitysPage.sendValiselvitys(1)
     expect(await getValiselvitysEmailsForAvustus(avustushakuID)).toHaveLength(1)
   })
 
   await test.step('sends only one loppuselvityspyyntö', async () => {
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigateFromHeader()
-    await hakujenHallintaPage.switchToLoppuselvitysTab()
+    await hakujenHallintaPage.commonHakujenHallinta.switchToLoppuselvitysTab()
     expect(await getLoppuselvitysEmailsForAvustus(avustushakuID)).toHaveLength(0)
     await hakujenHallintaPage.sendLoppuselvitys(1)
     expect(await getLoppuselvitysEmailsForAvustus(avustushakuID)).toHaveLength(1)

@@ -4,7 +4,7 @@ import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
 import { expectToBeDefined } from '../../utils/util'
 import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
 import moment from 'moment'
-import { MaksatuksetPage } from '../../pages/maksatuksetPage'
+import { MaksatuksetPage } from '../../pages/hakujen-hallinta/maksatuksetPage'
 import { PaatosPage } from '../../pages/hakujen-hallinta/PaatosPage'
 
 const formattedMoment = () => moment(new Date()).format('DD.MM.YYYY')
@@ -55,9 +55,9 @@ test(`hakemusten arviointi additional info`, async ({
       .click()
     await hakemustenArviointiPage.waitForSave()
     await hakemustenArviointiPage.closeUkotusModal()
-    await hakujenHallintaPage.navigateFromHeader()
-    await hakujenHallintaPage.resolveAvustushaku()
-    const paatosPage = await hakujenHallintaPage.switchToPaatosTab()
+    const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+    await haunTiedotPage.resolveAvustushaku()
+    const paatosPage = await hakujenHallintaPage.commonHakujenHallinta.switchToPaatosTab()
     await paatosPage.sendPaatos()
 
     await hakemustenArviointiPage.navigate(avustushakuID, {
@@ -95,9 +95,8 @@ test(`hakemusten arviointi additional info`, async ({
   })
 
   await test.step('update vali and loppuselvitys to show when they were sent', async () => {
-    await hakujenHallintaPage.navigateToValiselvitys(avustushakuID)
-    await hakujenHallintaPage.page.click('text="Lähetä väliselvityspyynnöt"')
-    await hakujenHallintaPage.page.locator('text="Lähetetty 1 viestiä"').waitFor()
+    const valiselvitysPage = await hakujenHallintaPage.navigateToValiselvitys(avustushakuID)
+    await valiselvitysPage.sendValiselvitys()
 
     await hakujenHallintaPage.switchToLoppuselvitysTab()
     await hakujenHallintaPage.page.click('text="Lähetä loppuselvityspyynnöt"')

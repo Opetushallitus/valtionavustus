@@ -54,8 +54,8 @@ export const budjettimuutoshakemusTest = defaultValues.extend<Budjettimuutoshake
     testInfo.setTimeout(testInfo.timeout + 25_000)
 
     const hakujenHallintaPage = new HakujenHallintaPage(page)
-    await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast()
+    const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+    await haunTiedotPage.closeAvustushakuByChangingEndDateToPast()
 
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigate(avustushakuID)
@@ -68,8 +68,8 @@ export const budjettimuutoshakemusTest = defaultValues.extend<Budjettimuutoshake
       projektikoodi,
     })
 
-    await hakujenHallintaPage.navigateFromHeader()
-    await hakujenHallintaPage.resolveAvustushaku()
+    await hakemustenArviointiPage.header.switchToHakujenHallinta()
+    await haunTiedotPage.resolveAvustushaku()
 
     await hakemustenArviointiPage.navigate(avustushakuID)
     await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)

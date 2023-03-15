@@ -13,6 +13,7 @@ import { MuutoshakemusValues, PaatosStatus, PaatosValues, VaCodeValues } from '.
 import { AcceptedBudget, BudgetAmount, fillBudget } from '../utils/budget'
 import { HakijaAvustusHakuPage } from './hakijaAvustusHakuPage'
 import { createReactSelectLocators } from '../utils/react-select'
+import { Header } from './Header'
 
 const jatkoaikaTestId = 'muutoshakemus-jatkoaika'
 
@@ -25,6 +26,7 @@ export class HakemustenArviointiPage {
   readonly showUnfinished: Locator
   readonly hakemusRows: Locator
   readonly toggleHakemusList: Locator
+  readonly header: ReturnType<typeof Header>
 
   constructor(page: Page) {
     this.page = page
@@ -35,6 +37,7 @@ export class HakemustenArviointiPage {
     this.showUnfinished = this.page.locator('text="Näytä keskeneräiset"')
     this.hakemusRows = this.hakemusListing.locator('tbody tr')
     this.toggleHakemusList = this.page.locator('#toggle-hakemus-list-button')
+    this.header = Header(this.page)
   }
 
   async navigate(

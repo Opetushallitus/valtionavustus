@@ -1,8 +1,8 @@
 import { expect, Page } from '@playwright/test'
+import SelvitysTab from './CommonSelvitysPage'
+import { navigate } from '../../utils/navigate'
 
-import { navigate } from '../utils/navigate'
-
-export function LoppuselvitysPage(page: Page) {
+export const LoppuselvitysPage = (page: Page) => {
   const locators = {
     linkToForm: page.locator('a', { hasText: 'Linkki lomakkeelle' }),
     warning: page.locator('#selvitys-not-sent-warning'),
@@ -20,10 +20,10 @@ export function LoppuselvitysPage(page: Page) {
     }
     return formUrl
   }
-
   return {
+    locators,
     navigateToLoppuselvitysTab,
     getSelvitysFormUrl,
-    ...locators,
+    commonSelvitys: SelvitysTab(page),
   }
 }

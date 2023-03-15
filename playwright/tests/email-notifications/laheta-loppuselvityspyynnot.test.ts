@@ -6,10 +6,10 @@ import { Email, getLahetaLoppuselvityspyynnotEmails, lastOrFail } from '../../ut
 import { expectToBeDefined } from '../../utils/util'
 import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
 import { selvitysTest } from '../../fixtures/selvitysTest'
-import { LoppuselvitysPage } from '../../pages/loppuselvitysPage'
 import { navigate } from '../../utils/navigate'
 import { HakijaSelvitysPage } from '../../pages/hakijaSelvitysPage'
 import { PaatosPage } from '../../pages/hakujen-hallinta/PaatosPage'
+import { LoppuselvitysPage } from '../../pages/hakujen-hallinta/LoppuselvitysPage'
 
 const sendLahetaLoppuselvityspyynnotNotifications = (page: Page) =>
   page.request.post(`${VIRKAILIJA_URL}/api/test/send-laheta-loppuselvityspyynnot-notifications`, {
@@ -188,9 +188,8 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
             projektikoodi,
           })
 
-          const hakujenHallintaPage = new HakujenHallintaPage(page)
-          await hakujenHallintaPage.navigateFromHeader()
-          await hakujenHallintaPage.resolveAvustushaku()
+          const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+          await haunTiedotPage.resolveAvustushaku()
 
           await hakemustenArviointiPage.navigate(avustushakuID)
           await hakemustenArviointiPage.selectValmistelijaForHakemus(

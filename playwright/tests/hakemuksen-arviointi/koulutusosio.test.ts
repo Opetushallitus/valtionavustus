@@ -56,8 +56,8 @@ test.describe.parallel('avustushaku with koulutusosio happy path', () => {
       const hakujenHallintaPage = new HakujenHallintaPage(page)
       const hakemustenArviointiPage = new HakemustenArviointiPage(page)
       await test.step('get ready', async () => {
-        await hakujenHallintaPage.navigate(avustushakuID)
-        await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast()
+        const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+        await haunTiedotPage.closeAvustushakuByChangingEndDateToPast()
         await hakemustenArviointiPage.navigate(avustushakuID)
         await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
         hakemusID = await hakemustenArviointiPage.getHakemusID()
@@ -87,10 +87,9 @@ test.describe.parallel('avustushaku with koulutusosio happy path', () => {
         await hakemustenArviointiPage.waitForSave()
       })
       await test.step('send paatos', async () => {
-        await hakujenHallintaPage.navigate(avustushakuID)
-        await hakujenHallintaPage.resolveAvustushaku()
-        await hakujenHallintaPage.waitForSave()
-        const paatosPage = await hakujenHallintaPage.switchToPaatosTab()
+        const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+        await haunTiedotPage.resolveAvustushaku()
+        const paatosPage = await hakujenHallintaPage.commonHakujenHallinta.switchToPaatosTab()
         await paatosPage.sendPaatos()
       })
       await test.step('hakija got correct koulutusosiot', async () => {

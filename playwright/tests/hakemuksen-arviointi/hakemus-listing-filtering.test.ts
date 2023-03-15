@@ -4,7 +4,6 @@ import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
 import { expectToBeDefined } from '../../utils/util'
 import { HakijaAvustusHakuPage } from '../../pages/hakijaAvustusHakuPage'
 import { answers, VIRKAILIJA_URL } from '../../utils/constants'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
 
 interface ArviointiUiFilteringFixtures {
   hakemustenArviointiPage: HakemustenArviointiPage
@@ -15,7 +14,6 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
     expectToBeDefined(submittedHakemus)
 
     const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
-    await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
     const answers2 = {
       ...answers,
       contactPersonEmail: 'erkki2.esimerkki@example.com',
@@ -164,9 +162,8 @@ test('hakemus list filtering', async ({ hakemustenArviointiPage, hakuProps, avus
   })
 
   await test.step('hylätyt are filtered by default when avustushaku is resolved', async () => {
-    const hakujenHallintaPage = new HakujenHallintaPage(hakemustenArviointiPage.page)
-    await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.resolveAvustushaku()
+    const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+    await haunTiedotPage.resolveAvustushaku()
     await hakemustenArviointiPage.navigate(avustushakuID)
     const { page } = hakemustenArviointiPage
     await page.click('text=Tila')

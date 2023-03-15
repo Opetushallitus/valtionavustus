@@ -59,8 +59,8 @@ export const muutoshakemuskelvotonTest = defaultValues.extend<MuutoshakemusFixtu
     await test.step('Close avustushaku', async () => {
       expect(submittedHakemus).toBeDefined()
       const hakujenHallintaPage = new HakujenHallintaPage(page)
-      await hakujenHallintaPage.navigate(avustushakuID)
-      await hakujenHallintaPage.setEndDate(finalAvustushakuEndDate.format('D.M.YYYY H.mm'))
+      const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+      await haunTiedotPage.setEndDate(finalAvustushakuEndDate.format('D.M.YYYY H.mm'))
     })
     await use({ id: avustushakuID })
   },
@@ -91,10 +91,9 @@ export const muutoshakemuskelvotonTest = defaultValues.extend<MuutoshakemusFixtu
       return hakemusID
     })
 
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
     await test.step('Ratkaise avustushaku', async () => {
-      await hakujenHallintaPage.navigateFromHeader()
-      await hakujenHallintaPage.resolveAvustushaku()
+      const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+      await haunTiedotPage.resolveAvustushaku()
 
       await hakemustenArviointiPage.navigate(avustushakuID)
       await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)

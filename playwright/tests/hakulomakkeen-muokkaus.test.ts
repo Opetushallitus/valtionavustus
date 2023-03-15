@@ -13,9 +13,9 @@ defaultValues('Editing hakulomake', async ({ page, hakuProps }) => {
   )
   const hakujenHallinta = new HakujenHallintaPage(page)
   const avustushakuID = await hakujenHallinta.copyEsimerkkihaku()
-  await hakujenHallinta.selectVaCodes(hakuProps.vaCodes)
-
-  await hakujenHallinta.setStartDate(moment().subtract(1, 'day'))
+  const haunTiedotPage = await hakujenHallinta.commonHakujenHallinta.switchToHaunTiedotTab()
+  await haunTiedotPage.selectVaCodes(hakuProps.vaCodes)
+  await haunTiedotPage.setStartDate(moment().subtract(1, 'day'))
   const formEditorPage = await hakujenHallinta.navigateToFormEditor(avustushakuID)
 
   await test.step('save button is disabled without changes', async () => {
@@ -132,10 +132,11 @@ defaultValues('Editing hakulomake', async ({ page, hakuProps }) => {
 defaultValues('Editing väliselvitys lomake', async ({ page, hakuProps }) => {
   const hakujenHallinta = new HakujenHallintaPage(page)
   const avustushakuID = await hakujenHallinta.copyEsimerkkihaku()
-  await hakujenHallinta.selectVaCodes(hakuProps.vaCodes)
-  await hakujenHallinta.setStartDate(moment().subtract(1, 'day'))
+  const haunTiedotPage = await hakujenHallinta.commonHakujenHallinta.switchToHaunTiedotTab()
+  await haunTiedotPage.selectVaCodes(hakuProps.vaCodes)
+  await haunTiedotPage.setStartDate(moment().subtract(1, 'day'))
   const formEditorPage = await hakujenHallinta.navigateToFormEditor(avustushakuID)
-  await hakujenHallinta.switchToValiselvitysTab()
+  await hakujenHallinta.commonHakujenHallinta.switchToValiselvitysTab()
 
   await test.step('save button is disabled without changes', async () => {
     await formEditorPage.locators.saveFormButton.isDisabled()
@@ -155,8 +156,9 @@ defaultValues('Editing väliselvitys lomake', async ({ page, hakuProps }) => {
 defaultValues('Editing loppuselvitys lomake', async ({ page, hakuProps }) => {
   const hakujenHallinta = new HakujenHallintaPage(page)
   const avustushakuID = await hakujenHallinta.copyEsimerkkihaku()
-  await hakujenHallinta.selectVaCodes(hakuProps.vaCodes)
-  await hakujenHallinta.setStartDate(moment().subtract(1, 'day'))
+  const haunTiedotPage = await hakujenHallinta.commonHakujenHallinta.switchToHaunTiedotTab()
+  await haunTiedotPage.selectVaCodes(hakuProps.vaCodes)
+  await haunTiedotPage.setStartDate(moment().subtract(1, 'day'))
   const formEditorPage = await hakujenHallinta.navigateToFormEditor(avustushakuID)
   await hakujenHallinta.switchToLoppuselvitysTab()
 

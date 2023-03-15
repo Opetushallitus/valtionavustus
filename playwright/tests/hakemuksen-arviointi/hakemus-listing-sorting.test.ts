@@ -87,8 +87,8 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
     await hakijaAvustusHakuPage.submitApplication()
 
     const hakujenHallintaPage = new HakujenHallintaPage(page)
-    await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast()
+    const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+    await haunTiedotPage.closeAvustushakuByChangingEndDateToPast()
 
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigateToHakemus(avustushakuID, answers.projectName)

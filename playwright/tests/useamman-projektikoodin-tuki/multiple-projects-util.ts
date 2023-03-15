@@ -1,6 +1,7 @@
 import { Page } from '@playwright/test'
 import { HakuProps } from '../../pages/hakujenHallintaPage'
 import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
+import { HaunTiedotPage } from '../../pages/hakujen-hallinta/HaunTiedotPage'
 
 export async function alustaAvustushaunTaytto(page: Page, hakuProps: HakuProps) {
   const hakujenHallintaPage = new HakujenHallintaPage(page)
@@ -11,13 +12,15 @@ export async function alustaAvustushaunTaytto(page: Page, hakuProps: HakuProps) 
   const avustushakuID = await hakujenHallintaPage.copyEsimerkkihaku()
   console.log(`Avustushaku ID: ${avustushakuID}`)
 
-  await page.fill('#register-number', registerNumber)
-  await page.fill('#haku-name-fi', avustushakuName)
-  await page.fill('#haku-name-sv', avustushakuName + ' på svenska')
+  const haunTiedotPage = HaunTiedotPage(page)
+
+  await haunTiedotPage.locators.registerNumber.fill(registerNumber)
+  await haunTiedotPage.locators.hakuName.fi.fill(avustushakuName)
+  await haunTiedotPage.locators.hakuName.sv.fill(avustushakuName + ' på svenska')
 
   if (hakuProps.vaCodes) {
-    await hakujenHallintaPage.selectCode('operational-unit', hakuProps.vaCodes.operationalUnit)
-    await hakujenHallintaPage.selectCode('operation', hakuProps.vaCodes.operation)
+    await haunTiedotPage.selectCode('operational-unit', hakuProps.vaCodes.operationalUnit)
+    await haunTiedotPage.selectCode('operation', hakuProps.vaCodes.operation)
   }
-  return hakujenHallintaPage
+  return haunTiedotPage
 }

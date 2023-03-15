@@ -129,9 +129,9 @@ test.describe('Koodienhallinta', () => {
     })
 
     await test.step('the code is visible in haku editor dropdown', async () => {
-      const hakujenHallintaPage = await koodienhallintaPage.navigateToHakujenHallintaPage()
-
-      await hakujenHallintaPage.selectVaCodesAndWaitForSave(codeValues)
+      const haunTiedotPage = await koodienhallintaPage.navigateToHakujenHallintaPage()
+      await haunTiedotPage.selectVaCodes(codeValues)
+      await haunTiedotPage.common.waitForSave()
     })
 
     await test.step('And virkailija hides the code', async () => {

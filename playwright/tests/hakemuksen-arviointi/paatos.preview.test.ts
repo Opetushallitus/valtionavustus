@@ -4,6 +4,7 @@ import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
 import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
 import { expectToBeDefined } from '../../utils/util'
 import { BrowserContext } from 'playwright-chromium'
+import { HaunTiedotPage } from '../../pages/hakujen-hallinta/HaunTiedotPage'
 
 const lisatekstiDefault = 'myönteinenlisäteksti default'
 const lisatekstiAmmatillinenKoulutus = 'myönteinenlisäteksti ammatillinen koulutus'
@@ -17,13 +18,13 @@ const test = submittedHakemusTest.extend({
       hakuProps
     )
     await test.step('add second koulutusaste', async () => {
-      const { taTili } = hakujenHallintaPage.hauntiedotLocators()
+      const { taTili } = HaunTiedotPage(page).locators
       await taTili.tili(0).koulutusaste(0).addKoulutusasteBtn.click()
       await taTili.tili(0).koulutusaste(1).input.fill('Muut')
       await hakujenHallintaPage.page.keyboard.press('ArrowDown')
       await hakujenHallintaPage.page.keyboard.press('Enter')
     })
-    const paatos = await hakujenHallintaPage.switchToPaatosTab()
+    const paatos = await hakujenHallintaPage.commonHakujenHallinta.switchToPaatosTab()
     await test.step('add default lisäteksti', async () => {
       await paatos.locators.lisatekstiDefault.fill(lisatekstiDefault)
     })
@@ -31,8 +32,8 @@ const test = submittedHakemusTest.extend({
       await paatos.locators.lisatekstiAmmatillinenKoulutus.fill(lisatekstiAmmatillinenKoulutus)
     })
     await test.step('publish avustushaku', async () => {
-      await hakujenHallintaPage.switchToHaunTiedotTab()
-      await hakujenHallintaPage.publishAvustushaku()
+      const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
+      await haunTiedotPage.publishAvustushaku()
     })
     await use(avustushakuID)
   },

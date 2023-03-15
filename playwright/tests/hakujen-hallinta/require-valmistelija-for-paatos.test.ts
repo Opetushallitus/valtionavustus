@@ -1,7 +1,7 @@
 import { expect, PlaywrightTestArgs } from '@playwright/test'
 import { MuutoshakemusFixtures, muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
 import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
-import { HakujenHallintaPage, Installment } from '../../pages/hakujenHallintaPage'
+import { Installment } from '../../pages/hakujenHallintaPage'
 import { DefaultValueFixtures } from '../../fixtures/defaultValues'
 
 type TestArgs = PlaywrightTestArgs & DefaultValueFixtures & MuutoshakemusFixtures
@@ -21,11 +21,10 @@ const testSendingPaatos = async ({
     projektikoodi,
   })
 
-  const hakujenHallintaPage = new HakujenHallintaPage(page)
-  await hakujenHallintaPage.navigateFromHeader()
-  await hakujenHallintaPage.resolveAvustushaku()
+  const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+  await haunTiedotPage.resolveAvustushaku()
 
-  const paatosPage = await hakujenHallintaPage.switchToPaatosTab()
+  const paatosPage = await haunTiedotPage.common.switchToPaatosTab()
   await expect(paatosPage.locators.paatosSendError).toBeHidden()
 
   await paatosPage.locators.sendPaatokset().click()

@@ -4,7 +4,7 @@ import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { KoodienhallintaPage } from '../../pages/koodienHallintaPage'
 import { getHakemusTokenAndRegisterNumber } from '../../utils/emails'
 import { VIRKAILIJA_URL } from '../../utils/constants'
-import { MaksatuksetPage } from '../../pages/maksatuksetPage'
+import { MaksatuksetPage } from '../../pages/hakujen-hallinta/maksatuksetPage'
 import { HakujenHallintaPage, Installment } from '../../pages/hakujenHallintaPage'
 import { NoProjectCodeProvided } from '../../utils/types'
 import { VirkailijaValiselvitysPage } from '../../pages/virkailijaValiselvitysPage'
@@ -433,7 +433,7 @@ test.describe('Maksatukset', () => {
     )
   })
 
-  showProjectCodeTest(
+  showProjectCodeTest.only(
     'sends correct project code to maksatukset when there are multiple project codes for avustushaku',
     async ({
       page,

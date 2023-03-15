@@ -70,9 +70,8 @@ export const KoodienhallintaPage = (page: Page) => {
     codeList: page.locator('table tbody'),
     navigate: navigateToKoodienhallinta,
     navigateToHakujenHallintaPage: async () => {
-      const hakujenHallintaPage = new HakujenHallintaPage(page)
-      await hakujenHallintaPage.navigateToDefaultAvustushaku()
-      return hakujenHallintaPage
+      const haunTiedotPage = await new HakujenHallintaPage(page).navigateToDefaultAvustushaku()
+      return haunTiedotPage
     },
     codeRowLocator,
     clickKoodienhallintaTab,

@@ -79,8 +79,8 @@ const muutosTest = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixture
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await test.step('close avustushaku', async () => {
-      await hakujenHallintaPage.navigate(avustushakuID)
-      await hakujenHallintaPage.setEndDate(moment().subtract(1, 'year').format('D.M.YYYY H.mm'))
+      const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+      await haunTiedotPage.setEndDate(moment().subtract(1, 'year').format('D.M.YYYY H.mm'))
     })
     await hakemustenArviointiPage.navigate(avustushakuID)
     await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
@@ -109,10 +109,10 @@ const muutosTest = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixture
       "#arviointi-tab label[for='set-arvio-status-accepted']"
     )
     await hakemustenArviointiPage.waitForSave()
-    await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.resolveAvustushaku()
+    const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+    await haunTiedotPage.resolveAvustushaku()
 
-    const paatosPage = await hakujenHallintaPage.switchToPaatosTab()
+    const paatosPage = await hakujenHallintaPage.commonHakujenHallinta.switchToPaatosTab()
     await paatosPage.sendPaatos()
 
     await use({ hakemusID, userKey })

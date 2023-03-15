@@ -38,11 +38,11 @@ test('help texts', async ({ page, avustushakuID, submittedHakemus, answers }) =>
     )
   })
 
-  await hakujenHallintaPage.switchToPaatosTab()
+  const paatosPage = await hakujenHallintaPage.commonHakujenHallinta.switchToPaatosTab()
 
   await test.step('päätös tab', async () => {
     await test.step('shows päätös help text', async () => {
-      await expect(hakujenHallintaPage.decisionEditor).toContainText(
+      await expect(paatosPage.locators.decisionEditor).toContainText(
         'Jokaiselle valtionavustushakemukselle annetaan arviointien jälkeen avustuspäätös, joka on joko myönteinen tai kielteinen. Haun vastuuvalmistelija vastaa avustuspäätösten laadusta, hyväksyttämisestä ja lähettämisestä'
       )
     })
@@ -138,11 +138,9 @@ test('help texts', async ({ page, avustushakuID, submittedHakemus, answers }) =>
     })
 
     await test.step('väliselvitys tab', async () => {
-      await hakujenHallintaPage.switchToValiselvitysTab()
+      const valiselvitysPage = await hakujenHallintaPage.switchToValiselvitysTab()
       await test.step('shows väliselvitys help text', async () => {
-        await expect(
-          hakujenHallintaPage.page.locator('[data-test-id=valiselvitys-ohje]')
-        ).toContainText(
+        await expect(valiselvitysPage.locators.ohje).toContainText(
           'Väliselvitysten käyttämisestä voidaan päättää hakukohtaisesti. Mikäli väliselvityksiä käytetään, tulee väliselvityksen käytöstä ja aikataulusta ilmoittaa avustuksen saajalle jo avustuspäätöksessä. Väliselvityspyynnöt on hyvä toimittaa avustuksen saajille mahdollisimman pian hankekauden alkamisen jälkeen. Tällöin hankkeen yhteyshenkilö voi dokumentoida hankkeen etenemistä väliselvityslomakkeelle jo heti hankkeen käynnistymisestä lähtien, mutta lähettää täytetyn väliselvityslomakkeen VA-järjestelmään vasta määräaikaan mennessä.  Voit kopioida minkä tahansa haun väliselvityslomakkeen sellaisenaan kopioimalla Hakulomakkeen sisältö -kentän koodin (Väliselvitys-välilehden lopussa) haluamasi haun Väliselvitys-välilehdeltä ja liittämällä sen valmistelemasi haun vastaavaan kenttään. Väliselvityslomaketta muokataan samalla tavalla kuin haku- ja loppuselvityslomaketta. Voit lisätä, poistaa ja muokata lomakkeen kysymyksiä, ohjetekstiä ja väliotsikoita. Huomaa, että väliselvityslomakkeeseen tekemäsi muutokset tallentuvat ainoastaan silloin kun painat Tallenna -painiketta.  Väliselvityksille tehdään ainoastaan asiatarkastus hankkeelle osoitetun yhteyshenkilön toimesta. Asiatarkastus tulee tehdä mahdollisimman pian väliselvityksen vastaanottamisen jälkeen, jotta mahdollisiin epäkohtiin voidaan puuttua. Kun väliselvitys on asiatarkastettu, lähettää yhteyshenkilöksi osoitettu virkailija väliselvityksen hyväksyntäviestin erikseen jokaiselle hankkeelle hankekohtaiselta Väliselvitys-välilehdeltä'
         )
       })
@@ -151,8 +149,8 @@ test('help texts', async ({ page, avustushakuID, submittedHakemus, answers }) =>
 
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   await test.step('hakemuksen arviointi', async () => {
-    await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast()
+    const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+    await haunTiedotPage.closeAvustushakuByChangingEndDateToPast()
     await hakemustenArviointiPage.navigateToHakemus(avustushakuID, answers.projectName)
     const hakemusId = await hakemustenArviointiPage.getHakemusID()
     expectToBeDefined(hakemusId)
@@ -216,8 +214,8 @@ test('help texts', async ({ page, avustushakuID, submittedHakemus, answers }) =>
       })
     }
     await test.step('after hakemus is set to ratkaistu', async () => {
-      await hakujenHallintaPage.navigate(avustushakuID)
-      await hakujenHallintaPage.resolveAvustushaku()
+      const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+      await haunTiedotPage.resolveAvustushaku()
     })
     await test.step(
       `Hovering over Lähetä sähköpostit uudestaan displays correct help text`,

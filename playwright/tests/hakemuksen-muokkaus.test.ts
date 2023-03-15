@@ -4,12 +4,10 @@ import { URLSearchParams } from 'url'
 import { muutoshakemusTest as test } from '../fixtures/muutoshakemusTest'
 import { HakemustenArviointiPage } from '../pages/hakemustenArviointiPage'
 import { HakijaAvustusHakuPage } from '../pages/hakijaAvustusHakuPage'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
 import { waitForElementWithText } from '../utils/util'
 
 test('virkailija can edit hakemus', async ({ page, avustushakuID, submittedHakemus: hakemus }) => {
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
-  const hakujenHallintaPage = new HakujenHallintaPage(page)
   hakemus.userKey = hakemus.userKey // here to ensure we have a hakemus :-)
 
   const assertTokens = (assertedPage: Page) => {
@@ -31,8 +29,8 @@ test('virkailija can edit hakemus', async ({ page, avustushakuID, submittedHakem
   })
 
   await test.step('when the avustushaku has been closed', async () => {
-    await hakujenHallintaPage.navigateFromHeader()
-    await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast()
+    const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+    await haunTiedotPage.closeAvustushakuByChangingEndDateToPast()
 
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
     const hakemusPage = await hakemustenArviointiPage.openHakemusEditPage()
@@ -66,7 +64,6 @@ test('virkailija can edit hakemus', async ({ page, avustushakuID, submittedHakem
 test('hakija', async ({ page, avustushakuID, submittedHakemus: hakemus }) => {
   const hakemusPage = new HakijaAvustusHakuPage(page)
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
-  const hakujenHallintaPage = new HakujenHallintaPage(page)
 
   await test.step('can edit hakemus when hakemus has been submitted', async () => {
     await hakemusPage.navigateToExistingHakemusPage(avustushakuID, hakemus.userKey)
@@ -78,8 +75,8 @@ test('hakija', async ({ page, avustushakuID, submittedHakemus: hakemus }) => {
   })
 
   await test.step('can edit hakemus when a change request has been made', async () => {
-    await hakujenHallintaPage.navigateFromHeader()
-    await hakujenHallintaPage.closeAvustushakuByChangingEndDateToPast()
+    const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+    await haunTiedotPage.closeAvustushakuByChangingEndDateToPast()
 
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
     await hakemustenArviointiPage.createChangeRequest()

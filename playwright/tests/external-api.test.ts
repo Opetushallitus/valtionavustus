@@ -69,8 +69,8 @@ test('external api', async ({
   })
 
   await test.step('disallow avustushaku from external api', async () => {
-    await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.allowExternalApi(false)
+    const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+    await haunTiedotPage.allowExternalApi(false)
   })
 
   await test.step('does not return avustushaku when external api is disallowed', async () => {
