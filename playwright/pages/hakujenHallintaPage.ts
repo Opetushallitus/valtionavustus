@@ -137,7 +137,7 @@ export class HakujenHallintaPage {
   }
 
   async navigateToDefaultAvustushaku() {
-    await this.navigateTo('/admin/haku-editor/')
+    await this.navigateTo('/admin/haku-editor/?avustushaku=1')
   }
 
   async navigateToHakemusByClicking(avustushakuName: string) {
