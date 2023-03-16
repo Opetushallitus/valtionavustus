@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import moment from 'moment'
 // @ts-ignore react-widgets-moment doesn't have proper types
@@ -13,7 +13,7 @@ import store, {
   useHakujenHallintaSelector,
 } from './hakujenHallinta/hakujenHallintaStore'
 import { Provider } from 'react-redux'
-import { Avustushaku, fetchInitialState, selectHaku } from './hakujenHallinta/hakuReducer'
+import { fetchInitialState, selectHaku } from './hakujenHallinta/hakuReducer'
 import { BrowserRouter, Outlet, Route, Routes, useSearchParams } from 'react-router-dom'
 import { HakuEdit } from './haku-details/HakuEdit'
 import FormEditorContainer from './haku-details/FormEditorContainer'
@@ -31,12 +31,8 @@ const HakujenHallintaApp = () => {
   const state = useHakujenHallintaSelector((state) => state.haku)
   const { saveStatus, initialData } = state
   const dispatch = useHakujenHallintaDispatch()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const avustushakuId = Number(searchParams.get('avustushaku'))
-  const onClickHaku = useCallback((avustushaku: Avustushaku) => {
-    searchParams.set('avustushaku', String(avustushaku.id))
-    setSearchParams(searchParams)
-  }, [])
   useEffect(() => {
     dispatch(selectHaku(avustushakuId))
   }, [avustushakuId])
@@ -54,7 +50,7 @@ const HakujenHallintaApp = () => {
         avustushakuId={avustushakuId}
       />
       <section>
-        <HakuListing hakuList={hakuList} onClickHaku={onClickHaku} />
+        <HakuListing hakuList={hakuList} />
         <EditorSelector>
           <Outlet />
         </EditorSelector>

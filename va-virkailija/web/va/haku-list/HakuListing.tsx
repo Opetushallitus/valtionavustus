@@ -17,6 +17,7 @@ import { Avustushaku } from '../hakujenHallinta/hakuReducer'
 
 import styles from './HakuListing.module.less'
 import { useCurrentAvustushaku } from '../hakujenHallinta/useAvustushaku'
+import { useSearchParams } from 'react-router-dom'
 
 export const AVUSTUSHAKU_STATUSES_AVAILABLE_FOR_FILTER = AVUSTUSHAKU_STATUSES.filter(
   (status) => status !== 'deleted'
@@ -269,7 +270,6 @@ const TableHeader: React.FC<SortButtonProps & { children: React.ReactNode }> = (
 
 interface Props {
   hakuList: Avustushaku[]
-  onClickHaku: (avustushaku: Avustushaku) => void
 }
 
 const toShortDate = (date: Date | string) => moment(date).format('DD.MM.YY')
@@ -345,7 +345,7 @@ const filterReducer = (state: TableFilterState, action: FilterAction): TableFilt
   }
 }
 
-export const HakuListing: React.FC<Props> = ({ hakuList, onClickHaku }) => {
+export const HakuListing: React.FC<Props> = ({ hakuList }) => {
   const selectedHaku = useCurrentAvustushaku()
   const [sortKey, setSortKey] = useState<SortKey | undefined>()
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
@@ -514,7 +514,6 @@ export const HakuListing: React.FC<Props> = ({ hakuList, onClickHaku }) => {
                 key={avustushaku.id}
                 avustushaku={avustushaku}
                 selectedHakuId={selectedHaku.id}
-                onClickHaku={onClickHaku}
               />
             ))}
           </tbody>
@@ -537,12 +536,15 @@ export const HakuListing: React.FC<Props> = ({ hakuList, onClickHaku }) => {
 const AvustushakuItem = ({
   avustushaku,
   selectedHakuId,
-  onClickHaku,
 }: {
   avustushaku: Avustushaku
   selectedHakuId: number
-  onClickHaku: (avustushaku: Avustushaku) => void
 }) => {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const onClick = () => {
+    searchParams.set('avustushaku', String(avustushaku.id))
+    setSearchParams(searchParams)
+  }
   const { start, end } = avustushaku.content.duration
   const startEnd = start && end ? `${toShortDate(start)} - ${toShortDate(end)}` : '-'
   return (
@@ -551,7 +553,7 @@ const AvustushakuItem = ({
       className={classNames(
         selectedHakuId === avustushaku.id ? styles.selectedHakemusRow : styles.hakemusRow
       )}
-      onClick={() => onClickHaku(avustushaku)}
+      onClick={onClick}
       tabIndex={0}
       data-test-id={avustushaku.content.name.fi}
     >
