@@ -433,7 +433,7 @@ test.describe('Maksatukset', () => {
     )
   })
 
-  showProjectCodeTest.only(
+  showProjectCodeTest(
     'sends correct project code to maksatukset when there are multiple project codes for avustushaku',
     async ({
       page,
