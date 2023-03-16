@@ -33,6 +33,25 @@ export const HaunTiedotPage = (page: Page) => {
       resolved: page.locator("label[for='set-status-resolved']"),
     },
     registerNumber: page.locator('#register-number'),
+    hakuRole: {
+      vastuuvalmistelija: {
+        name: page.getByTestId('vastuuvalmistelija-name'),
+        email: page.getByTestId('vastuuvalmistelija-email'),
+      },
+      roleRow: (name: string) => {
+        const testId = 'role-' + name.toLowerCase().replace(' ', '-')
+        const row = page.getByTestId(testId)
+        return {
+          row,
+          removeButton: row.locator('button'),
+          select: row.locator('select[name=role]'),
+          nameInput: row.locator('input[name=name]'),
+          emailInput: row.locator('input[name=email]'),
+        }
+      },
+      searchInput: page.locator('#va-user-search-input'),
+      clearSearch: page.getByTestId('clear-role-search'),
+    },
     taTili: {
       tili: (index: number) => {
         const tiliLocator = page.locator(`#ta-tili-select-${index}`)
@@ -134,6 +153,36 @@ export const HaunTiedotPage = (page: Page) => {
     await selectCode('operation', codes.operation)
   }
 
+  async function addValmistelija(name: string) {
+    await locators.hakuRole.searchInput.fill(name)
+    await page.locator('a').getByText(name).click()
+    await common.waitForSave()
+  }
+
+  async function setUserRole(
+    name: string,
+    role: 'presenting_officer' | 'evaluator' | 'vastuuvalmistelija'
+  ) {
+    const testId = 'role-' + name.toLowerCase().replace(' ', '-')
+    await page.selectOption(`[data-test-id="${testId}"] select[name=role]`, role)
+    // tab out of the field to trigger save
+    await page.keyboard.press('Tab')
+  }
+
+  async function addArvioija(name: string) {
+    await locators.hakuRole.searchInput.fill(name)
+    await page.locator('a').getByText(name).click()
+    await setUserRole(name, 'evaluator')
+    await common.waitForSave()
+  }
+
+  async function addVastuuvalmistelija(name: string) {
+    await locators.hakuRole.searchInput.fill(name)
+    await page.locator('a').getByText(name).click()
+    await setUserRole(name, 'vastuuvalmistelija')
+    await common.waitForSave()
+  }
+
   return {
     common,
     locators,
@@ -148,5 +197,8 @@ export const HaunTiedotPage = (page: Page) => {
     selectCode,
     selectProject,
     overrideProject,
+    addValmistelija,
+    addVastuuvalmistelija,
+    addArvioija,
   }
 }

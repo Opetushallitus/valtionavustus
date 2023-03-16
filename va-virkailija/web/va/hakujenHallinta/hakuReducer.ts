@@ -413,7 +413,7 @@ export const deleteRole = createAsyncThunk<
   return { roles, privileges, avustushakuId }
 })
 
-export const saveRole = createAsyncThunk<
+const saveRole = createAsyncThunk<
   | {
       roles: Role[]
       avustushakuId: number
@@ -438,6 +438,19 @@ export const saveRole = createAsyncThunk<
     }
   }
 })
+
+const callSaveRole: AsyncThunkPayloadCreator<
+  void,
+  { role: Role; avustushakuId: number },
+  { state: HakujenHallintaRootState }
+> = async ({ role, avustushakuId }, thunkAPI) => {
+  thunkAPI.dispatch(saveRole({ role, avustushakuId }))
+}
+
+export const debouncedSaveRole = createAsyncThunk<void, { role: Role; avustushakuId: number }>(
+  'haku/debouncedSaveRole',
+  _.debounce(callSaveRole, 2000)
+)
 
 const debouncedSave: AsyncThunkPayloadCreator<
   void,
@@ -848,7 +861,7 @@ const hakuSlice = createSlice({
         state.saveStatus.serverError = 'unexpected-create-error'
         state.saveStatus.saveInProgress = false
       })
-      .addCase(saveRole.pending, (state) => {
+      .addCase(debouncedSaveRole.pending, (state) => {
         state.saveStatus = startSaving(state, 'savingRoles')
       })
       .addCase(saveRole.fulfilled, (state, action) => {

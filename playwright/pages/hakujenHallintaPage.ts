@@ -4,8 +4,7 @@ import fs from 'fs/promises'
 import path from 'path'
 
 import { navigate } from '../utils/navigate'
-import { clickElementWithText, expectQueryParameter } from '../utils/util'
-import { VIRKAILIJA_URL } from '../utils/constants'
+import { expectQueryParameter } from '../utils/util'
 import { VaCodeValues, Field } from '../utils/types'
 import { addFieldsToHakemusJson } from '../utils/hakemus-json'
 import { Talousarviotili } from '../../va-virkailija/web/va/koodienhallinta/types'
@@ -127,52 +126,6 @@ export class HakujenHallintaPage {
     await waitForSave(this.page)
   }
 
-  async searchUsersForRoles(user: string) {
-    await Promise.all([
-      this.page.waitForResponse(`${VIRKAILIJA_URL}/api/va-user/search`),
-      this.page.fill('#va-user-search-input', user),
-    ])
-  }
-
-  async clearUserSearchForRoles() {
-    await this.page.getByTestId('clear-role-search').click()
-  }
-
-  async fillVastuuvalmistelijaName(name: string) {
-    await Promise.all([
-      this.waitForRolesSaved(),
-      this.page.getByTestId('vastuuvalmistelija-name').fill(name),
-    ])
-  }
-
-  async fillVastuuvalmistelijaEmail(email: string) {
-    await Promise.all([
-      this.waitForRolesSaved(),
-      this.page.getByTestId('vastuuvalmistelija-email').fill(email),
-    ])
-  }
-
-  async selectUser(user: string) {
-    await Promise.all([this.waitForRolesSaved(), clickElementWithText(this.page, 'a', user)])
-  }
-
-  async setUserRole(name: string, role: 'presenting_officer' | 'evaluator' | 'vastuuvalmistelija') {
-    const testId = 'role-' + name.toLowerCase().replace(' ', '-')
-    await Promise.all([
-      this.waitForRolesSaved(),
-      this.page
-        .selectOption(`[data-test-id="${testId}"] select[name=role]`, role)
-        .then((_) => this.page.keyboard.press('Tab')), // tab out of the field to trigger save
-    ])
-  }
-
-  async waitForRolesSaved() {
-    return await Promise.all([
-      this.page.waitForResponse(new RegExp(`${VIRKAILIJA_URL}/api/avustushaku/\\d+/role(/\\d+)?`)),
-      this.page.waitForResponse(new RegExp(`${VIRKAILIJA_URL}/api/avustushaku/\\d+/privileges`)),
-    ])
-  }
-
   async copyCurrentHaku(): Promise<number> {
     const waitForHakuCopyToBeCompleted = async (currentURL: string): Promise<void> => {
       await this.page.waitForFunction((url) => window.location.href !== url, currentURL)
@@ -261,8 +214,8 @@ export class HakujenHallintaPage {
     await this.selectTositelaji('XE')
     await this.page.fill('#hakuaika-start', formatDate(hakuaikaStart))
     await this.page.fill('#hakuaika-end', formatDate(hakuaikaEnd))
-    await this.addValmistelija('Viivi Virkailija')
-    await this.addArvioija('Päivi Pääkäyttäjä')
+    await haunTiedotPage.addValmistelija('Viivi Virkailija')
+    await haunTiedotPage.addArvioija('Päivi Pääkäyttäjä')
 
     for (let i = 0; i < selectionCriteria.length; i++) {
       await this.page.getByTestId('add-selection-criteria').click()
@@ -290,23 +243,6 @@ export class HakujenHallintaPage {
     await paatosTab.locators.taustaa.fill('taustaa')
     await this.commonHakujenHallinta.switchToHaunTiedotTab()
     await haunTiedotPage.common.waitForSave()
-  }
-
-  async addValmistelija(name: string) {
-    await this.searchUsersForRoles(name)
-    await this.selectUser(name)
-  }
-
-  async addArvioija(name: string) {
-    await this.searchUsersForRoles(name)
-    await this.selectUser(name)
-    await this.setUserRole(name, 'evaluator')
-  }
-
-  async addVastuuvalmistelija(name: string) {
-    await this.searchUsersForRoles(name)
-    await this.selectUser(name)
-    await this.setUserRole(name, 'vastuuvalmistelija')
   }
 
   async createHakuWithLomakeJson(

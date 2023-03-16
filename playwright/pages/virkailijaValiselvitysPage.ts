@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 
 import { navigate } from '../utils/navigate'
 
@@ -20,7 +20,7 @@ function SelvitysTab(page: Page, type: SelvitysType) {
   }
 
   async function waitForSave() {
-    await page.locator('text=Kaikki tiedot tallennettu').waitFor()
+    await expect(page.locator('text=Kaikki tiedot tallennettu')).toBeVisible()
   }
 
   return {

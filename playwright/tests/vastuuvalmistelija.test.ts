@@ -2,77 +2,60 @@ import { test, expect } from '@playwright/test'
 
 import { defaultValues } from '../fixtures/defaultValues'
 import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
+import { HaunTiedotPage } from '../pages/hakujen-hallinta/HaunTiedotPage'
 
 defaultValues('Vastuuvalmistelija role', async ({ page, userCache }) => {
   expect(userCache).toBeDefined()
 
   const hakujenHallinta = new HakujenHallintaPage(page)
   await hakujenHallinta.copyEsimerkkihaku()
-
+  const haunTiedot = HaunTiedotPage(page)
+  const { hakuRole } = haunTiedot.locators
+  const vastuuvalmistelija = '_ valtionavustus'
   await test.step('is set to current user when copying a haku', async () => {
-    await expect(
-      hakujenHallinta.page.locator('[data-test-id="vastuuvalmistelija-name"]')
-    ).toHaveValue('_ valtionavustus')
-    await expect(
-      hakujenHallinta.page.locator('[data-test-id="vastuuvalmistelija-email"]')
-    ).toHaveValue('santeri.horttanainen@reaktor.com')
+    await expect(hakuRole.vastuuvalmistelija.name).toHaveValue(vastuuvalmistelija)
+    await expect(hakuRole.vastuuvalmistelija.email).toHaveValue('santeri.horttanainen@reaktor.com')
   })
 
+  const vaRoleRow = hakuRole.roleRow(vastuuvalmistelija)
   await test.step('can not be removed', async () => {
-    await expect(
-      hakujenHallinta.page.locator('[data-test-id="role-_-valtionavustus"] button')
-    ).toBeDisabled()
+    await expect(vaRoleRow.removeButton).toBeDisabled()
   })
 
   await test.step('can not change role', async () => {
-    await expect(
-      hakujenHallinta.page.locator('[data-test-id="role-_-valtionavustus"] select[name=role]')
-    ).toBeDisabled()
+    await expect(vaRoleRow.select).toBeDisabled()
   })
 
   await test.step('can be set for a new user', async () => {
-    await hakujenHallinta.addVastuuvalmistelija('Viivi Virkailija')
-    await hakujenHallinta.page.reload()
-    await expect(
-      hakujenHallinta.page.locator('[data-test-id="vastuuvalmistelija-name"]')
-    ).toHaveValue('Viivi Virkailija')
-    await expect(
-      hakujenHallinta.page.locator('[data-test-id="vastuuvalmistelija-email"]')
-    ).toHaveValue('viivi.virkailja@exmaple.com')
+    await haunTiedot.addVastuuvalmistelija('Viivi Virkailija')
+    await page.reload()
+    await expect(hakuRole.vastuuvalmistelija.name).toHaveValue('Viivi Virkailija')
+    await expect(hakuRole.vastuuvalmistelija.email).toHaveValue('viivi.virkailja@exmaple.com')
   })
 
   await test.step(
     'the previous vastuuvalmistelija is automatically set as regular valmistelija to avoid losing edit rights to haku',
     async () => {
-      await expect(
-        hakujenHallinta.page.locator('[data-test-id="role-_-valtionavustus"] select[name=role]')
-      ).toHaveValue('presenting_officer')
-      await expect(
-        hakujenHallinta.page.locator('[data-test-id="role-_-valtionavustus"] input[name=name]')
-      ).toHaveValue('_ valtionavustus')
-      await expect(
-        hakujenHallinta.page.locator('[data-test-id="role-_-valtionavustus"] input[name=email]')
-      ).toHaveValue('santeri.horttanainen@reaktor.com')
+      await expect(vaRoleRow.select).toHaveValue('presenting_officer')
+      await expect(vaRoleRow.nameInput).toHaveValue('_ valtionavustus')
+      await expect(vaRoleRow.emailInput).toHaveValue('santeri.horttanainen@reaktor.com')
     }
   )
 
   await test.step('name and email can be changed', async () => {
-    await hakujenHallinta.fillVastuuvalmistelijaName('vastuu')
-    await hakujenHallinta.fillVastuuvalmistelijaEmail('vastuu@valmistelija.fi')
-    await hakujenHallinta.page.reload()
-    await expect(
-      hakujenHallinta.page.locator('[data-test-id="vastuuvalmistelija-name"]')
-    ).toHaveValue('vastuu')
-    await expect(
-      hakujenHallinta.page.locator('[data-test-id="vastuuvalmistelija-email"]')
-    ).toHaveValue('vastuu@valmistelija.fi')
+    await hakuRole.vastuuvalmistelija.name.fill('vastuu')
+    await hakuRole.vastuuvalmistelija.email.fill('vastuu@valmistelija.fi')
+    await haunTiedot.common.waitForSave()
+    await page.reload()
+    await expect(hakuRole.vastuuvalmistelija.name).toHaveValue('vastuu')
+    await expect(hakuRole.vastuuvalmistelija.email).toHaveValue('vastuu@valmistelija.fi')
   })
 
   await test.step('can not be set as a valmistelija', async () => {
-    await hakujenHallinta.searchUsersForRoles('Viivi')
+    await hakuRole.searchInput.fill('Viivi')
     await expect(
-      hakujenHallinta.page.locator('#roles-list li[data-test-id="1.2.246.562.24.99000000002"]')
+      page.locator('#roles-list li[data-test-id="1.2.246.562.24.99000000002"]')
     ).toHaveAttribute('class', 'disabled')
-    await hakujenHallinta.clearUserSearchForRoles()
+    await hakuRole.clearSearch.click()
   })
 })

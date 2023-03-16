@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ClassNames from 'classnames'
-import { debounce, isEqual } from 'lodash'
+import { isEqual } from 'lodash'
 
 import CSSTransitionGroup from 'soresu-form/web/form/component/wrapper/CSSTransitionGroup.jsx'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
@@ -10,7 +10,12 @@ import HelpTooltip from '../HelpTooltip'
 import { Role, RoleType, UserInfo, VaUserSearch } from '../types'
 import { minimumSearchInputLength, useVaUserSearch } from '../VaUserSearch'
 import { useHakujenHallintaDispatch } from '../hakujenHallinta/hakujenHallintaStore'
-import { createHakuRole, deleteRole, saveRole, Avustushaku } from '../hakujenHallinta/hakuReducer'
+import {
+  createHakuRole,
+  deleteRole,
+  Avustushaku,
+  debouncedSaveRole,
+} from '../hakujenHallinta/hakuReducer'
 
 type HakuRolesProps = {
   avustushaku: Avustushaku
@@ -213,12 +218,6 @@ const RoleRow = ({
   userHasEditMyHakuRolePrivilege,
 }: RoleRowProps) => {
   const dispatch = useHakujenHallintaDispatch()
-  const debouncedSave = useCallback(
-    debounce((savedRole: Role) => {
-      dispatch(saveRole({ role: savedRole, avustushakuId: avustushaku.id }))
-    }, 2000),
-    []
-  )
   const [editedRole, setEditedRole] = useState(role)
   const [emailOk, setEmailOk] = useState(true)
 
@@ -228,7 +227,7 @@ const RoleRow = ({
 
   useEffect(() => {
     if (emailOk && !isEqual(role, editedRole)) {
-      debouncedSave(editedRole)
+      dispatch(debouncedSaveRole({ role: editedRole, avustushakuId: avustushaku.id }))
     }
   }, [editedRole])
 
