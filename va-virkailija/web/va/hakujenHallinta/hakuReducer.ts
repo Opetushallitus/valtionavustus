@@ -216,9 +216,9 @@ export const replaceTalousarviotilit = createAsyncThunk<
 
 export const fetchInitialState = createAsyncThunk<
   InitialData,
-  number,
+  void,
   { state: HakujenHallintaRootState }
->('haku/fetchInitialState', async (avustushakuId, thunkAPI) => {
+>('haku/fetchInitialState', async () => {
   const [
     hakuList,
     userInfo,
@@ -237,7 +237,6 @@ export const fetchInitialState = createAsyncThunk<
     HttpUtil.get<HelpTexts>('/api/help-texts/all'),
   ])
   const modifiedHakuList = hakuList.map(appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing)
-  thunkAPI.dispatch(selectHaku(avustushakuId))
   return {
     hakuList: modifiedHakuList,
     userInfo,

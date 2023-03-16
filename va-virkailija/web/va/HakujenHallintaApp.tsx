@@ -79,8 +79,7 @@ const AppRoutes = () => (
 const app = document.getElementById('app')
 const root = createRoot(app!)
 
-const initialAvustushakuId = new URLSearchParams(window.location.search).get('avustushaku')
-store.dispatch(fetchInitialState(Number(initialAvustushakuId) ?? 1))
+store.dispatch(fetchInitialState())
 
 root.render(
   <BrowserRouter>
