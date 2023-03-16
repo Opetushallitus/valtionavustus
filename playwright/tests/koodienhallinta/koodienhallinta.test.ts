@@ -188,20 +188,16 @@ test.describe('Koodienhallinta', () => {
         })
 
         await test.step('the code is not displayed as gray', async () => {
-          const hakujenHallintaPage = await koodienhallintaPage.navigateToHakujenHallintaPage()
+          const haunTiedotPage = await koodienhallintaPage.navigateToHakujenHallintaPage()
 
           await test.step('in haku editor dropdown placeholder', async () => {
-            const styles = await hakujenHallintaPage.getInputPlaceholderCodeStyles(
-              'operational-unit'
-            )
+            const styles = await haunTiedotPage.getInputPlaceholderCodeStyles('operational-unit')
             expect(styles.color).not.toEqual(colorDarkGray)
           })
 
           await test.step('in haku editor dropdown options', async () => {
-            await hakujenHallintaPage.fillCode('operational-unit', codeValues.operationalUnit)
-            const styles = await hakujenHallintaPage.getInputOptionCodeStyles(
-              codeValues.operationalUnit
-            )
+            await haunTiedotPage.fillCode('operational-unit', codeValues.operationalUnit)
+            const styles = await haunTiedotPage.getInputOptionCodeStyles(codeValues.operationalUnit)
             expect(styles.color).not.toEqual(colorDarkGray)
           })
         })

@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 import { createReactSelectLocators } from '../../utils/react-select'
 import { CommonHakujenHallintaPage } from './CommonHakujenHallintaPage'
 import moment from 'moment/moment'
@@ -16,7 +16,7 @@ export const HaunTiedotPage = (page: Page) => {
     },
     addProject: page.locator('.lisaa-projekti'),
     removeProject: (code: string) =>
-      page.getByTestId(`projekti-valitsin-${code}"]`).locator('.poista-projekti'),
+      page.getByTestId(`projekti-valitsin-${code}`).locator('.poista-projekti'),
     selectProject: page.locator('.projekti-valitsin input'),
     selectProjectWithCode: (code: string) =>
       page.getByTestId(`projekti-valitsin-${code}`).locator('input'),
@@ -83,7 +83,7 @@ export const HaunTiedotPage = (page: Page) => {
   }
 
   async function setAvustushakuInDraftState() {
-    await locators.status.published.click()
+    await locators.status.draft.click()
     await common.waitForSave()
   }
 
@@ -126,6 +126,14 @@ export const HaunTiedotPage = (page: Page) => {
     await page.getByTestId(code).click()
   }
 
+  async function fillCode(codeType: 'operational-unit' | 'project' | 'operation', code: string) {
+    const selectLocators = createReactSelectLocators(
+      locators.dropdownForCode(codeType),
+      `code-value-dropdown-${codeType}-id`
+    )
+    await selectLocators.input.fill(code)
+  }
+
   async function selectProject(code: string) {
     await locators.selectProject.click()
     await locators.selectProject.type(code)
@@ -133,7 +141,7 @@ export const HaunTiedotPage = (page: Page) => {
   }
 
   async function overrideProject(code: string, codeToOverride: string) {
-    await locators.selectProjectWithCode(codeToOverride)
+    await locators.selectProjectWithCode(codeToOverride).click()
     await page.getByTestId(code).click()
   }
 
@@ -183,6 +191,20 @@ export const HaunTiedotPage = (page: Page) => {
     await common.waitForSave()
   }
 
+  async function getInputPlaceholderCodeStyles(
+    codeType: 'operational-unit' | 'project' | 'operation'
+  ): Promise<CSSStyleDeclaration> {
+    const locator = page.getByTestId(`singlevalue-${codeType}`)
+    await expect(locator).toBeVisible()
+    return locator.evaluate((e) => getComputedStyle(e))
+  }
+
+  async function getInputOptionCodeStyles(code: string): Promise<CSSStyleDeclaration> {
+    const codeLocator = page.getByTestId(code)
+    await expect(codeLocator).toBeVisible()
+    return await codeLocator.evaluate((e) => getComputedStyle(e))
+  }
+
   return {
     common,
     locators,
@@ -194,11 +216,14 @@ export const HaunTiedotPage = (page: Page) => {
     setEndDate,
     closeAvustushakuByChangingEndDateToPast,
     selectVaCodes,
+    fillCode,
     selectCode,
     selectProject,
     overrideProject,
     addValmistelija,
     addVastuuvalmistelija,
     addArvioija,
+    getInputOptionCodeStyles,
+    getInputPlaceholderCodeStyles,
   }
 }

@@ -33,7 +33,7 @@ selvitysTest('Selvityspyyntö can be previewed', async ({ page, avustushakuID })
     const tab = await hakujenHallintaPage.switchToLoppuselvitysTab()
 
     await test.step('in finnish', async () => {
-      const previewPage = await tab.openFormPreviewFi()
+      const previewPage = await tab.commonSelvitys.openFormPreviewFi()
 
       expect(await previewPage.textContent('h1')).toEqual('Loppuselvitys')
       expect(await previewPage.textContent('[id="financing-plan"] h2')).toEqual('Talousarvio')
@@ -41,7 +41,7 @@ selvitysTest('Selvityspyyntö can be previewed', async ({ page, avustushakuID })
 
     await test.step('in swedish', async () => {
       await page.bringToFront()
-      const previewPage = await tab.openFormPreviewSv()
+      const previewPage = await tab.commonSelvitys.openFormPreviewSv()
 
       expect(await previewPage.textContent('h1')).toEqual('Slutredovisning')
       expect(await previewPage.textContent('[id="financing-plan"] h2')).toEqual('Projektets budget')
