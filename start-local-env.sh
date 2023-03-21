@@ -23,10 +23,8 @@ done
 
 require_command tmux
 require_command nc
-require_command docker
+require_docker
 init_nodejs
-
-docker ps > /dev/null 2>&1 || { echo >&2 "Running 'docker ps' failed. Is docker daemon running? Aborting."; exit 1; }
 
 session="valtionavustus"
 
