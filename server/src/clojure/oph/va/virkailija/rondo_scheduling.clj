@@ -87,8 +87,8 @@
     (catch Exception e
       (let [delay-ms (calculate-exponential-backoff retries)]
         (if (>= retries 10)
-          (log/error e "Job failed. Retrying in " delay-ms " ms")
-          (log/info e "Job failed. Retrying in " delay-ms " ms"))
+          (log/error e "Job failed for " retries " retries. Retrying again in " (/ delay-ms 60000) " m")
+          (log/info e "Job failed for " retries " retries. Retrying again in " (/ delay-ms 60000) " m"))
         (Thread/sleep delay-ms)
         (retry-job fn (inc retries))))))
 
