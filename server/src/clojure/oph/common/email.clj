@@ -155,7 +155,6 @@
 
 (defn create-email-event [email-id success {:keys [email-type hakemus-id avustushaku-id muutoshakemus-id]}]
   (try
-    (println email-type hakemus-id avustushaku-id muutoshakemus-id)
     (log/info "Storing email event for email: " email-id)
     (execute! "INSERT INTO virkailija.email_event (avustushaku_id, hakemus_id, muutoshakemus_id, email_id, email_type, success)
                  VALUES (?, ?, ?, ?, ?::virkailija.email_type, ?)"
