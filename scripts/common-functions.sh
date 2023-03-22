@@ -269,3 +269,13 @@ function start-service {
   docker-compose -f "${DOCKER_COMPOSE_FILE}" up --force-recreate ${service_name}
   popd
 }
+
+function build_and_test_jars {
+  check_requirements
+  init_nodejs
+  make_clean
+  make_build
+  start_system_under_test
+  run_tests
+  stop_system_under_test
+}

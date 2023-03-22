@@ -14,17 +14,8 @@ function main {
     install_docker_compose
   fi
   parse_env_from_script_name "deploy"
-  check_requirements
-  init_nodejs
   set_env_vars
-  make_clean
-  make_build
-  if current-commit-is-not-tested;
-  then
-    start_system_under_test
-    run_tests
-    stop_system_under_test
-  fi
+  build_and_test_jars
   deploy_jars
 }
 
