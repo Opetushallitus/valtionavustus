@@ -10,9 +10,6 @@ function main {
   make_clean
   make_build
   npm run prettier-check-project
-
-  docker-compose -f "${PLAYWRIGHT_COMPOSE_FILE}" up --abort-on-container-exit
-
   start_system_under_test "${DOCKER_COMPOSE_FILE}"
   run_tests
   stop_system_under_test "${DOCKER_COMPOSE_FILE}"
