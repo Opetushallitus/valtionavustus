@@ -37,7 +37,7 @@
       :username "va_virkailija"
       :password "va"
       :server-name "localhost"
-      :port-number 5432}
+      :port-number 42042}
  :email {:enabled? false
          :host nil
          :port nil

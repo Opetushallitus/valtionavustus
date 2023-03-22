@@ -51,7 +51,7 @@ services:
     container_name: va-postgres
     hostname: va-postgres
     ports:
-      - '5432:5432'
+      - '42042:5432'
     networks:
       - subnet-private
     command: ["postgres", "-c", "log_statement=all"]
@@ -61,10 +61,19 @@ services:
       PGDATA: '/tmp/'
       TZ: "Europe/Helsinki"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  db_restore-backup:
+    extends: db
+    volumes:
+      - ./init-db-restore.sql:/docker-entrypoint-initdb.d/init.sql
+      - va-postgres-pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: 'va'
+      POSTGRES_PASSWORD: 'va'
 
   fakesmtp:
     build:
@@ -94,3 +103,6 @@ services:
 
 networks:
   subnet-private:
+
+volumes:
+  va-postgres-pgdata:

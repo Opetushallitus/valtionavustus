@@ -3,7 +3,6 @@ set -o errexit -o nounset -o pipefail
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 
 function stop() {
-  "$repo/scripts/stop_database.sh"
   docker-compose --file docker-compose-test.yml down || true
 }
 trap stop EXIT
