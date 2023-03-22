@@ -15,8 +15,6 @@ services:
       - hakija
       - fakesmtp
       - maksatuspalvelu
-    networks:
-      - subnet-private
     healthcheck:
       test: ["CMD-SHELL", "curl http://localhost:8081/api/healthcheck"]
       interval: 10s
@@ -36,8 +34,6 @@ services:
     depends_on:
       - db
       - fakesmtp
-    networks:
-      - subnet-private
     healthcheck:
       test: ["CMD-SHELL", "curl http://localhost:8080/api/healthcheck"]
       interval: 10s
@@ -52,8 +48,6 @@ services:
     hostname: va-postgres
     ports:
       - '42042:5432'
-    networks:
-      - subnet-private
     command: ["postgres", "-c", "log_statement=all"]
     environment:
       POSTGRES_USER: 'va'
@@ -85,8 +79,6 @@ services:
       - ./mail:/var/mail
     ports:
       - '42069:25'
-    networks:
-      - subnet-private
 
   maksatuspalvelu:
     image: atmoz/sftp
@@ -98,11 +90,6 @@ services:
     ports:
       - '42022:22'
     command: demo:pass:1001:100
-    networks:
-      - subnet-private
-
-networks:
-  subnet-private:
 
 volumes:
   va-postgres-pgdata:
