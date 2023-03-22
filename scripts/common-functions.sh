@@ -78,6 +78,10 @@ function fix_directory_permissions_after_playwright_run {
 
 function start_system_under_test () {
   info "Starting system under test"
+  if running_on_jenkins
+  then
+    disable_docker_buildkit_builder
+  fi
 
   docker-compose -f "$DOCKER_COMPOSE_FILE" up -d hakija
   wait_for_container_to_be_healthy va-hakija
@@ -89,6 +93,10 @@ function start_system_under_test () {
   then
     follow_service_logs
   fi
+}
+
+function disable_docker_buildkit_builder {
+  export DOCKER_BUILDKIT=0
 }
 
 function follow_service_logs {
