@@ -87,7 +87,10 @@ function start_system_under_test () {
   docker-compose -f "$compose_file" up -d virkailija
   wait_for_container_to_be_healthy va-virkailija
 
-  follow_service_logs "$compose_file"
+  if [ ${VERBOSE:-"false"} == "true" ]
+  then
+    follow_service_logs "$compose_file"
+  fi
 }
 
 function follow_service_logs {
