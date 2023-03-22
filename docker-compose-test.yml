@@ -116,7 +116,7 @@ services:
     container_name: rcs-fakesmtp
     hostname: fakesmtp
     volumes:
-      - ./mail:/var/mail
+      - ./fakesmtp/mail:/var/mail
     ports:
       - '42069:25'
     logging:
