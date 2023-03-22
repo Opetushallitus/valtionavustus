@@ -4,9 +4,9 @@ scriptdir="$( cd "$( dirname "$0" )" && pwd )"
 repo="$scriptdir/.."
 
 function main {
-  pushd "$repo/fakesmtp"
-
-  docker-compose up --force-recreate
+  pushd "$repo"
+  docker-compose -f docker-compose-test.yml up --force-recreate fakesmtp
+  popd
 }
 
 main "$@"

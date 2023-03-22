@@ -4,9 +4,7 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functio
 
 function stop() {
   "$repo/scripts/stop_database.sh"
-  pushd "$repo/fakesmtp"
-  docker-compose down || true
-  popd
+  docker-compose --file docker-compose-test.yml down || true
 }
 trap stop EXIT
 

@@ -46,7 +46,6 @@ function add_git_head_snippets() {
 }
 
 function build_docker_images {
-  docker build -t "rcs-fakesmtp:latest" -f "$repo"/Dockerfile.rcs-fakesmtp ./
   docker build -t "va-virkailija:latest" -f "$repo"/Dockerfile.virkailija ./
   docker build -t "va-hakija:latest" -f "$repo"/Dockerfile.hakija ./
   docker build -t "playwright-test-runner:latest" -f "$repo"/Dockerfile.playwright-test-runner ./
