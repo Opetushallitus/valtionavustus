@@ -9,9 +9,9 @@ function main {
   init_nodejs
   make_clean
   make_build
-  start_system_under_test "${DOCKER_COMPOSE_FILE}"
+  start_system_under_test
   run_tests
-  stop_system_under_test "${DOCKER_COMPOSE_FILE}"
+  stop_system_under_test
 }
 
 main "$@"

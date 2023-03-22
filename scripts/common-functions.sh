@@ -51,14 +51,13 @@ function docker-compose () {
 
 function stop_system_under_test () {
   info "Stopping system under test"
-  local compose_file="$1"
-  docker-compose -f "$compose_file" down --remove-orphans
+  docker-compose -f "${DOCKER_COMPOSE_FILE}" down --remove-orphans
 }
 
 function stop_systems_under_test  {
   info "Stopping all systems under test"
   fix_directory_permissions_after_playwright_run
-  stop_system_under_test "${DOCKER_COMPOSE_FILE}"
+  stop_system_under_test
 }
 
 function fix_directory_permissions_after_playwright_run {
@@ -79,23 +78,21 @@ function fix_directory_permissions_after_playwright_run {
 
 function start_system_under_test () {
   info "Starting system under test"
-  local compose_file="$1"
 
-  docker-compose -f "$compose_file" up -d hakija
+  docker-compose -f "$DOCKER_COMPOSE_FILE" up -d hakija
   wait_for_container_to_be_healthy va-hakija
 
-  docker-compose -f "$compose_file" up -d virkailija
+  docker-compose -f "$DOCKER_COMPOSE_FILE" up -d virkailija
   wait_for_container_to_be_healthy va-virkailija
 
   if [ ${VERBOSE:-"false"} == "true" ]
   then
-    follow_service_logs "$compose_file"
+    follow_service_logs
   fi
 }
 
 function follow_service_logs {
-  local compose_file="$1"
-  docker-compose -f "$compose_file" logs --follow &
+  docker-compose -f "$DOCKER_COMPOSE_FILE" logs --follow &
 }
 
 function run_tests() {
@@ -264,6 +261,7 @@ EOF
 function start-service {
   local service_name=$1
   pushd "$repo"
-  docker-compose -f docker-compose-test.yml up --force-recreate ${service_name}
+  trap stop-services EXIT
+  docker-compose -f "${DOCKER_COMPOSE_FILE}" up --force-recreate ${service_name}
   popd
 }

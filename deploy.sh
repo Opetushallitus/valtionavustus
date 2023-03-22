@@ -23,9 +23,9 @@ function main {
   make_build
   if current-commit-is-not-tested;
   then
-    start_system_under_test ${DOCKER_COMPOSE_FILE}
+    start_system_under_test
     run_tests
-    stop_system_under_test ${DOCKER_COMPOSE_FILE}
+    stop_system_under_test
   fi
   deploy_jars
 }
