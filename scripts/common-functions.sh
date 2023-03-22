@@ -11,7 +11,6 @@ readonly local_docker_namespace="va"
 readonly HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}
 readonly VIRKAILIJA_HOSTNAME=${VIRKAILIJA_HOSTNAME:-"localhost"}
 readonly DOCKER_COMPOSE_FILE="$repo"/docker-compose-test.yml
-readonly PLAYWRIGHT_COMPOSE_FILE="$repo"/docker-compose-playwright-test.yml
 
 function remove_all_files_ignored_or_untracked_by_git {
   git clean -xdf
@@ -67,7 +66,6 @@ function stop_systems_under_test  {
   echo "Stopping all systems under test"
   fix_directory_permissions_after_playwright_run
   stop_system_under_test "${DOCKER_COMPOSE_FILE}"
-  stop_system_under_test "${PLAYWRIGHT_COMPOSE_FILE}"
 }
 
 function fix_directory_permissions_after_playwright_run {
