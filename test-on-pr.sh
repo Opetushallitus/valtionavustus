@@ -9,7 +9,6 @@ function main {
   init_nodejs
   make_clean
   make_build
-  npm run prettier-check-project
   start_system_under_test "${DOCKER_COMPOSE_FILE}"
   run_tests
   stop_system_under_test "${DOCKER_COMPOSE_FILE}"

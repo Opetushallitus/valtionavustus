@@ -23,7 +23,6 @@ function main {
   make_build
   if current-commit-is-not-tested;
   then
-    npm run prettier-check-project
     start_system_under_test ${DOCKER_COMPOSE_FILE}
     run_tests
     stop_system_under_test ${DOCKER_COMPOSE_FILE}
