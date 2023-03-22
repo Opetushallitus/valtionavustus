@@ -258,6 +258,10 @@ EOF
          "$@"
 }
 
+function stop-services {
+   docker-compose -f "${DOCKER_COMPOSE_FILE}" down --remove-orphans
+}
+
 function start-service {
   local service_name=$1
   pushd "$repo"
