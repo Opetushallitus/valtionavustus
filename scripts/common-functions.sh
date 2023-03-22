@@ -94,12 +94,11 @@ function start_system_under_test () {
   docker-compose -f "$compose_file" up -d virkailija
   wait_for_container_to_be_healthy va-virkailija
 
-  make_sure_all_services_are_running_and_follow_their_logs "$compose_file"
+  follow_service_logs "$compose_file"
 }
 
-function make_sure_all_services_are_running_and_follow_their_logs {
+function follow_service_logs {
   local compose_file="$1"
-  docker-compose -f "$compose_file" up -d
   docker-compose -f "$compose_file" logs --follow &
 }
 
