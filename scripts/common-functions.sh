@@ -17,7 +17,7 @@ function remove_all_files_ignored_or_untracked_by_git {
 }
 
 function install_docker_compose {
-  echo "Installing docker compose"
+  info "Installing docker compose"
   curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o "$repo"/scripts/docker-compose
   chmod u+x "$repo"/scripts/docker-compose
   "$repo"/scripts/docker-compose --version
@@ -40,7 +40,7 @@ function make_build() {
 }
 
 function add_git_head_snippets() {
-  echo "Adding git head snippets..."
+  info "Adding git head snippets..."
   git show --pretty=short --abbrev-commit -s HEAD > "$repo"/server/resources/public/git-HEAD.txt
 }
 
@@ -53,19 +53,19 @@ function docker-compose () {
 }
 
 function stop_system_under_test () {
-  echo "Stopping system under test"
+  info "Stopping system under test"
   local compose_file="$1"
   docker-compose -f "$compose_file" down --remove-orphans
 }
 
 function stop_systems_under_test  {
-  echo "Stopping all systems under test"
+  info "Stopping all systems under test"
   fix_directory_permissions_after_playwright_run
   stop_system_under_test "${DOCKER_COMPOSE_FILE}"
 }
 
 function fix_directory_permissions_after_playwright_run {
-  echo "Fixing directory permissions after Playwright run"
+  info "Fixing directory permissions after Playwright run"
 
   set +e
   CURRENT_USER_ID="$(id -u)"
@@ -81,7 +81,7 @@ function fix_directory_permissions_after_playwright_run {
 }
 
 function start_system_under_test () {
-  echo "Starting system under test"
+  info "Starting system under test"
   local compose_file="$1"
 
   docker-compose -f "$compose_file" up -d hakija
@@ -99,7 +99,7 @@ function follow_service_logs {
 }
 
 function run_tests() {
-  echo "Running isolated system tests"
+  info "Running isolated system tests"
   export HEADLESS=true
   export PLAYWRIGHT_WORKERS=6
   export SPECLJ_ARGS="-f junit"
@@ -113,7 +113,7 @@ function parse_env_from_script_name {
   if echo "${FILE_NAME}" | grep -E -q "$BASE_FILENAME-.([^-]+)\.sh"; then
     ENV=$(echo "${FILE_NAME}" | sed -E -e "s|$BASE_FILENAME-([^-]+)\.sh|\1|g")
     export ENV
-    echo "Targeting environment [${ENV}]"
+    info "Targeting environment [${ENV}]"
   else
     echo >&2 "Don't call this script directly"
     exit 1
@@ -143,7 +143,7 @@ function npm_ci_if_package_lock_has_changed {
   }
 
   if [ ! -f "$checksum_file" ]; then
-    echo "new package-lock.json; running npm ci"
+    info "new package-lock.json; running npm ci"
     run_npm_ci
   elif ! shasum --check "$checksum_file"; then
     info "package-lock.json seems to have changed, running npm ci"
