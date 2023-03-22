@@ -44,10 +44,6 @@ function add_git_head_snippets() {
   git show --pretty=short --abbrev-commit -s HEAD > "$repo"/server/resources/public/git-HEAD.txt
 }
 
-function build_docker_images {
-  docker build -t "playwright-test-runner:latest" -f "$repo"/Dockerfile.playwright-test-runner ./
-}
-
 function docker-compose () {
     if running_on_jenkins; then
       "$repo"/scripts/docker-compose "$@"

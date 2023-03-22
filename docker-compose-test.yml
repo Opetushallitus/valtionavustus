@@ -2,7 +2,9 @@ version: '3.3'
 
 services:
   test-runner:
-    image: playwright-test-runner:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.playwright-test-runner
     container_name: va-playwright-tests
     depends_on:
       virkailija:

@@ -10,7 +10,6 @@ function main {
   make_clean
   make_build
   npm run prettier-check-project
-  build_docker_images
 
   docker-compose -f "${PLAYWRIGHT_COMPOSE_FILE}" up --abort-on-container-exit
 
