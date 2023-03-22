@@ -74,14 +74,14 @@ function fix_directory_permissions_after_playwright_run {
   echo "Fixing directory permissions after Playwright run"
 
   set +e
-  JENKINS_ID="$(id -u jenkins)"
-  JENKINS_GID="$(id -g jenkins)"
+  CURRENT_USER_ID="$(id -u)"
+  CURRENT_USER_GID="$(id -g)"
 
   docker run \
-    --env JENKINS_ID="${JENKINS_ID}" \
-    --env JENKINS_GID="${JENKINS_GID}" \
+    --env CURRENT_USER_ID="${CURRENT_USER_ID}" \
+    --env CURRENT_USER_GID="${CURRENT_USER_GID}" \
     --rm \
-    -v "$repo"/playwright-results:/playwright-results bash:latest bash -c "chown -R ${JENKINS_ID}:${JENKINS_GID} /playwright-results"
+    -v "$repo"/playwright-results:/playwright-results bash:latest bash -c "chown -R ${CURRENT_USER_ID}:${CURRENT_USER_GID} /playwright-results"
 
   set -e
 }
