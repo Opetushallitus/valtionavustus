@@ -270,3 +270,10 @@ EOF
          ${image}:${tag} \
          "$@"
 }
+
+function start-service {
+  local service_name=$1
+  pushd "$repo"
+  docker-compose -f docker-compose-test.yml up --force-recreate ${service_name}
+  popd
+}

@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
-scriptdir="$( cd "$( dirname "$0" )" && pwd )"
-repo="$scriptdir/.."
+
+source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/common-functions.sh"
 
 function main {
-  pushd "$repo"
-  docker-compose -f docker-compose-test.yml up --force-recreate maksatuspalvelu
-  popd
+  start-service maksatuspalvelu
 }
 
 main "$@"
