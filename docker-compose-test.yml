@@ -2,7 +2,9 @@ version: '3.3'
 
 services:
   virkailija:
-    image: va-virkailija:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile.virkailija
     container_name: va-virkailija
     hostname: va-virkailija
     environment:
@@ -22,7 +24,9 @@ services:
       retries: 5
 
   hakija:
-    image: va-hakija:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile.hakija
     container_name: va-hakija
     hostname: va-hakija
     environment:
