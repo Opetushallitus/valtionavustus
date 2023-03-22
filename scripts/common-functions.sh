@@ -60,8 +60,8 @@ function stop_systems_under_test  {
   stop_system_under_test
 }
 
-function fix_directory_permissions_after_playwright_run {
-  info "Fixing directory permissions after Playwright run"
+function fix_directory_permissions_after_test_run {
+  info "Fixing directory permissions after test run"
 
   set +e
   CURRENT_USER_ID="$(id -u)"
@@ -71,7 +71,9 @@ function fix_directory_permissions_after_playwright_run {
     --env CURRENT_USER_ID="${CURRENT_USER_ID}" \
     --env CURRENT_USER_GID="${CURRENT_USER_GID}" \
     --rm \
-    -v "$repo"/playwright-results:/playwright-results bash:latest bash -c "chown -R ${CURRENT_USER_ID}:${CURRENT_USER_GID} /playwright-results"
+    -v "$repo"/playwright-results:/playwright-results \
+    -v "$repo"/fakesmtp/mail:/mail \
+    bash:latest bash -c "chown -R ${CURRENT_USER_ID}:${CURRENT_USER_GID} /playwright-results /mail"
 
   set -e
 }
