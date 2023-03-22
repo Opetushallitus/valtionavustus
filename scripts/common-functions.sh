@@ -24,10 +24,7 @@ function install_docker_compose {
 }
 
 function check_requirements {
-  if ! [[ -x "$(command -v curl)" ]]; then
-    echo "Curl is required, cannot continue"
-    exit 1
-  fi
+  require_command curl
 }
 
 function make_clean() {
