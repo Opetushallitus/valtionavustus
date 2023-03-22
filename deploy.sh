@@ -13,11 +13,11 @@ function main {
     docker image prune --force
     docker volume prune --force
     remove_all_files_ignored_or_untracked_by_git
+    install_docker_compose
   fi
   parse_env_from_script_name "deploy"
   check_requirements
   init_nodejs
-  install_docker_compose
   set_env_vars
   make_clean
   make_build
