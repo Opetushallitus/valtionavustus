@@ -13,18 +13,23 @@ trap stop EXIT
 RESTORE_FILE=""
 RUN_DATABASE_ARGS=""
 
-while getopts "r:" opt
-do
-    case $opt in
-    (r) RUN_DATABASE_ARGS="-r"; RESTORE_FILE="$OPTARG" ;;
-    (*) printf "Illegal option '-%s'\n" "$opt" && exit 1 ;;
-    esac
-done
+function init {
+  require_command tmux
+  require_command nc
+  require_docker
+  init_nodejs
 
-require_command tmux
-require_command nc
-require_docker
-init_nodejs
+  while getopts "r:" opt
+  do
+    case $opt in
+      (r) RUN_DATABASE_ARGS="-r"; RESTORE_FILE="$OPTARG" ;;
+      (*) printf "Illegal option '-%s'\n" "$opt" && exit 1 ;;
+    esac
+  done
+
+}
+
+init
 
 session="valtionavustus"
 
