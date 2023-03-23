@@ -72,7 +72,7 @@ function fix_directory_permissions_after_test_run {
     --env CURRENT_USER_GID="${CURRENT_USER_GID}" \
     --rm \
     -v "$repo"/playwright-results:/playwright-results \
-    -v "$repo"/fakesmtp/mail:/mail \
+    -v "$repo"/fakesmtp:/fakesmtp \
     bash:latest bash -c "chown -R ${CURRENT_USER_ID}:${CURRENT_USER_GID} /playwright-results /fakesmtp"
 
   set -e
