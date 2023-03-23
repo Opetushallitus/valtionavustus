@@ -59,7 +59,6 @@ function stop_systems_under_test  {
   fix_directory_permissions_after_test_run
   stop_system_under_test
 }
-trap stop_systems_under_test EXIT
 
 function fix_directory_permissions_after_test_run {
   info "Fixing directory permissions after test run"
