@@ -59,6 +59,7 @@ function stop_systems_under_test  {
   fix_directory_permissions_after_playwright_run
   stop_system_under_test
 }
+trap stop_systems_under_test EXIT
 
 function fix_directory_permissions_after_test_run {
   info "Fixing directory permissions after test run"
@@ -268,14 +269,9 @@ EOF
          "$@"
 }
 
-function stop-services {
-   docker-compose -f "${DOCKER_COMPOSE_FILE}" down --remove-orphans
-}
-
 function start-service {
   local service_name=$1
   pushd "$repo"
-  trap stop-services EXIT
   docker-compose -f "${DOCKER_COMPOSE_FILE}" up --force-recreate ${service_name}
   popd
 }
