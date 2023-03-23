@@ -3,7 +3,6 @@ FROM openjdk:8-jdk
 COPY ./target/uberjar/valtionavustus-0.1.0-SNAPSHOT-standalone.jar /app/va-virkailija/app.jar
 COPY ./va-virkailija/config/defaults.edn /app/va-virkailija/config/defaults.edn
 COPY ./va-virkailija/config/docker-compose-test.edn /app/va-virkailija/config/docker-compose-test.edn
-COPY ./va-virkailija/config/playwright-test.edn /app/va-virkailija/config/playwright-test.edn
 
 WORKDIR /app/va-virkailija
 ENV environment=dev
