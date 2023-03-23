@@ -271,7 +271,7 @@ EOF
 function start-service {
   local service_name=$1
   pushd "$repo"
-  docker-compose -f "${DOCKER_COMPOSE_FILE}" up --force-recreate ${service_name}
+  docker-compose -f "${DOCKER_COMPOSE_FILE}" up --force-recreate --build ${service_name}
   popd
 }
 
