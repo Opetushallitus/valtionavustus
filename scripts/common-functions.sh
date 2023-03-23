@@ -56,7 +56,7 @@ function stop_system_under_test () {
 
 function stop_systems_under_test  {
   info "Stopping all systems under test"
-  fix_directory_permissions_after_playwright_run
+  fix_directory_permissions_after_test_run
   stop_system_under_test
 }
 trap stop_systems_under_test EXIT
