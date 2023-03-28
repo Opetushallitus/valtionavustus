@@ -91,10 +91,7 @@ function start_system_under_test () {
   docker-compose -f "$DOCKER_COMPOSE_FILE" up --force-recreate --build -d virkailija
   wait_for_container_to_be_healthy va-virkailija
 
-  if [ ${VERBOSE:-"false"} == "true" ]
-  then
-    follow_service_logs
-  fi
+  follow_service_logs
 }
 
 function disable_docker_buildkit_builder {
