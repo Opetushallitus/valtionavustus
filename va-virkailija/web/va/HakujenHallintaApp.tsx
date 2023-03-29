@@ -30,13 +30,16 @@ const momentLocalizer = new MomentLocalizer(moment)
 const HakujenHallintaApp = () => {
   const state = useHakujenHallintaSelector((state) => state.haku)
   const { saveStatus, initialData } = state
+  const { loading: initialDataLoading } = initialData
   const dispatch = useHakujenHallintaDispatch()
   const [searchParams] = useSearchParams()
   const avustushakuId = Number(searchParams.get('avustushaku'))
   useEffect(() => {
-    dispatch(selectHaku(avustushakuId))
-  }, [avustushakuId])
-  if (initialData.loading) {
+    if (!initialDataLoading) {
+      dispatch(selectHaku(avustushakuId))
+    }
+  }, [avustushakuId, initialDataLoading])
+  if (initialDataLoading) {
     return null
   }
   const { environment, hakuList, userInfo } = initialData.data
