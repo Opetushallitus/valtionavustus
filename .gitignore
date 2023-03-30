@@ -38,3 +38,4 @@ git-HEAD.txt
 playwright-results/
 scripts/docker-compose
 scripts/launch-db-with-prod-db-state/valtionavustukset.backup
+test-results
