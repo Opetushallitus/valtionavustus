@@ -61,7 +61,7 @@
     tmp-file))
 
 (defn store-successfully-sent-tasmaytysraportti [avustushaku-id to tasmaytysraportti]
-  (execute! "INSERT INTO tasmaytysraportti 
+  (execute! "INSERT INTO tasmaytysraportti
             (avustushaku_id, contents, mailed_at, mailed_to)
             VALUES (?, ?, now(), ?)" [avustushaku-id tasmaytysraportti to]))
 
@@ -84,7 +84,7 @@
       (store-successfully-sent-tasmaytysraportti avustushaku-id to tasmaytysraportti)
       (log/info (str "Successfully send tasmaytysraportti for avustushaku " avustushaku-id))
       (catch Exception e
-        (log/warn e (str "Failed to send tasmaytysraportti for avustushaku " avustushaku-id))))))
+        (log/error e (str "Failed to send tasmaytysraportti for avustushaku " avustushaku-id))))))
 
 (defn get-tasmaytysraportti-by-avustushaku-id [avustushaku-id]
   (let [data (exec virkailija-queries/get-tasmaytysraportti-by-avustushaku-id-data
