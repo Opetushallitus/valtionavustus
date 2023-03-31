@@ -1,3 +1,4 @@
+name: Lein dependency check
 on:
   push:
     branches:
