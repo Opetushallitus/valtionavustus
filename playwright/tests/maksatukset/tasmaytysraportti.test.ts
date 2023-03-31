@@ -2,6 +2,7 @@ import { APIRequestContext, expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { VIRKAILIJA_URL } from '../../utils/constants'
 import { expectToBeDefined } from '../../utils/util'
+import { MaksatuksetPage } from '../../pages/hakujen-hallinta/maksatuksetPage'
 
 export async function getTasmaytysraporit(
   avustushakuId: number,
@@ -24,5 +25,12 @@ test('tasmaytysraportti is sent when maksatuset are sent', async ({
   expectToBeDefined(avustushakuName)
 
   const tasmaytysraportitBeforeMaksatukset = await getTasmaytysraporit(avustushakuID, page.request)
-  expect(tasmaytysraportitBeforeMaksatukset.length).toBeLessThanOrEqual(0)
+  expect(tasmaytysraportitBeforeMaksatukset).toHaveLength(0)
+  const maksatuksetPage = MaksatuksetPage(page)
+  await maksatuksetPage.goto(avustushakuName)
+  await maksatuksetPage.fillMaksueranTiedotAndSendMaksatukset()
+  await maksatuksetPage.reloadPaymentPage()
+
+  const tasmaytysraportitAfterMaksatukset = await getTasmaytysraporit(avustushakuID, page.request)
+  expect(tasmaytysraportitAfterMaksatukset).toHaveLength(1)
 })

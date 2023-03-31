@@ -75,7 +75,7 @@
                                 :sender (-> email/smtp-config :sender)
                                 :subject subject
                                 :to to
-                                :type "tasmaytysraportti"
+                                :email-type "tasmaytysraportti"
                                 :lang "fi"
                                 :attachment {:title filename
                                               :description subject
