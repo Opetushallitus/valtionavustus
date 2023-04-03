@@ -16,3 +16,7 @@ export const createRandomTalousarviotiliCode = () => {
   }
   return code
 }
+
+export const createThreeDigitTalousarviotiliCode = () => {
+  return `${randomInt(1, 10)}${randomInt(1, 10)}${randomInt(1, 10)}`
+}
