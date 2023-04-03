@@ -4,7 +4,11 @@ import { KoodienhallintaPage } from '../../pages/koodienHallintaPage'
 import { unpublishedAvustushakuTest } from '../../fixtures/muutoshakemusTest'
 import { expectToBeDefined } from '../../utils/util'
 import { VIRKAILIJA_URL } from '../../utils/constants'
-import { createRandomTalousarviotiliCode } from '../../utils/random'
+import {
+  createRandomTalousarviotiliCode,
+  createThreeDigitTalousarviotiliCode,
+  randomString,
+} from '../../utils/random'
 import { HaunTiedotPage } from '../../pages/hakujen-hallinta/HaunTiedotPage'
 
 const expectNoErrors = async (koodienhallintaPage: ReturnType<typeof KoodienhallintaPage>) => {
@@ -68,6 +72,21 @@ test.describe.parallel('talousarviotilien hallinta', () => {
       await row.locator(`button[title="Poista talousarviotili ${code}"]`).click()
       await expect(row).toBeHidden()
     })
+  })
+  test('can create 3 digit tatili', async ({ koodienhallintaPage }) => {
+    const code = createThreeDigitTalousarviotiliCode()
+    const name = `Tili ${randomString()}`
+    const year = '2022'
+    const amount = '10000'
+    const row = await koodienhallintaPage.page.locator(`[data-test-id="${name}"]`)
+    await expect(row).toBeHidden()
+    const taForm = koodienhallintaPage.taTilit.form
+    await taForm.year.input.fill(year)
+    await taForm.code.input.fill(code)
+    await taForm.name.input.fill(name)
+    await taForm.amount.input.fill(amount)
+    await taForm.submitBtn.click()
+    await expect(row).toBeVisible()
   })
   test('same talousarviotili code cannot be created again for the same year', async ({
     koodienhallintaPage,
@@ -290,11 +309,13 @@ test.describe.parallel('talousarviotilien hallinta', () => {
   const threeNumbersInARow = ['0.01.222.', '0.0.212.22', '012.0.21'] as const
   const startsWithDots = ['.10.22.12.32'] as const
   const hasIllegalCharacters = ['12.10.12.4k', '20.23.4!.10']
+  const wrongNumberOfDigits = ['1', '12', '1234', '12345']
   const badTaTiliCodes = [
     ...doubleDots,
     ...threeNumbersInARow,
     ...startsWithDots,
     ...hasIllegalCharacters,
+    ...wrongNumberOfDigits,
   ] as const
   for (const badCode of badTaTiliCodes) {
     test(`client doesnt allow bad code ${badCode}`, async ({ koodienhallintaPage }) => {

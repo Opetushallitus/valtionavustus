@@ -2,11 +2,7 @@ import { expect, Locator, Page } from '@playwright/test'
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
 import { KoodienhallintaPage } from '../../pages/koodienHallintaPage'
 import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
-import {
-  createRandomTalousarviotiliCode,
-  createThreeDigitTalousarviotiliCode,
-  randomString,
-} from '../../utils/random'
+import { createRandomTalousarviotiliCode, randomString } from '../../utils/random'
 import { expectToBeDefined } from '../../utils/util'
 import { defaultValues } from '../../fixtures/defaultValues'
 import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
@@ -40,12 +36,6 @@ const createTaTilit = async (page: Page) => {
     year: 2022,
     amount: 10000,
   }
-  const tatili3 = {
-    code: createThreeDigitTalousarviotiliCode(),
-    name: `Tili 3 ${randomString()}`,
-    year: 2022,
-    amount: 10000,
-  }
   await test.step('create test tatilit', async () => {
     const koodienhallintaPage = KoodienhallintaPage(page)
     await koodienhallintaPage.navigate()
@@ -61,12 +51,10 @@ const createTaTilit = async (page: Page) => {
     }
     await createTaTili(tatili1)
     await createTaTili(tatili2)
-    await createTaTili(tatili3)
   })
   return {
     tatili1,
     tatili2,
-    tatili3,
   }
 }
 
@@ -74,7 +62,6 @@ const test = defaultValues.extend<{
   tilit: {
     tatili1: CreateTaTili
     tatili2: CreateTaTili
-    tatili3: CreateTaTili
   }
 }>({
   tilit: async ({ page, avustushakuName }, use, testInfo) => {
