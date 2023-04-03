@@ -23,7 +23,6 @@
  :payments {:enabled? true
             :delete-payments? true}
  :va-users {:use-cache? false }
- :tasmaytysraportti-create {:enabled? true}
  :db {:server-name "va-postgres"
       :database-name "va-dev"}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}

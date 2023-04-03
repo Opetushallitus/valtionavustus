@@ -43,6 +43,4 @@
  :integration-healthcheck {:enabled? true
                            :timeout 5000
                            :interval-minutes 15}
- :tasmaytysraportti-create {:enabled? true}
- :tasmaytysraportti-send {:enabled? true}
 }
