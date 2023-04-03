@@ -33,7 +33,7 @@ const TalousarviotiliSchema = yup.object().shape({
     .required('Vuosi on pakollinen'),
   code: yup
     .string()
-    .matches(/^(\d{1,2}\.)(\d{1,2}\.)*(\d{1,2}\.?)$/, 'Tarkista koodi')
+    .matches(/^(\d{1,2}\.)(\d{1,2}\.)*(\d{1,2}\.?)$|^\d{3}$/, 'Tarkista koodi')
     .required('Koodi on pakollinen'),
   name: yup.string().required('Nimi on pakollinen'),
   amount: yup
