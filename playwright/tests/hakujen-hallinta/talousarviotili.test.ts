@@ -89,7 +89,7 @@ const test = defaultValues.extend<{
   },
 })
 
-test.describe.parallel.only('talousarvio select', () => {
+test.describe.parallel('talousarvio select', () => {
   test('migrated talousarviotili cannot be selected for new avustushaku', async ({ page }) => {
     const migratedTili = createRandomTalousarviotiliCode()
     await addMigratedTalousarviotili(page, migratedTili)
