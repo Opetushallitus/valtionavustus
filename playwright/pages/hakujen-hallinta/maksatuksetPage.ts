@@ -153,6 +153,7 @@ function lahetetytMaksueratTab(page: Page) {
       allekirjoitettuYhteenveto: tableTdLocator.nth(6),
       presenterEmail: tableTdLocator.nth(7),
       acceptorEmail: tableTdLocator.nth(8),
+      lataaTasmaytysraportti: page.getByText('Lataa täsmäytysraportti'),
     }
   }
 }

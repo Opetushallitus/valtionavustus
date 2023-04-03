@@ -327,10 +327,10 @@
 
   (compojure-api/GET "/avustushaku/:avustushaku-id/get-tasmaytysraportti-email" []
     :path-params [avustushaku-id :- Long]
-    :return [{:avustushaku-id s/Num :mailed-at java.sql.Timestamp :mailed-to s/Str}] 
+    :return [{:avustushaku-id s/Num :contents s/Any :mailed-at java.sql.Timestamp :mailed-to s/Str}]
     (log/info "test-api: get tasmaytysraporti for avustushaku-id")
     (try
-        (ok (query "SELECT avustushaku_id, mailed_at, mailed_to FROM tasmaytysraportti WHERE avustushaku_id = ?" [avustushaku-id]))
+        (ok (query "SELECT avustushaku_id, contents, mailed_at, mailed_to FROM tasmaytysraportti WHERE avustushaku_id = ?" [avustushaku-id]))
       (catch Exception e
         (log/error e)
         (internal-server-error {:message "error"}))))
@@ -588,7 +588,7 @@
                                              application-routes/routes)
                       (compojure-api/context
                        "/api/v2/reports" [] :tags ["reports"] reporting-routes/routes)
-                      (compojure-api/context "/api/send-maksatukset-and-tasmaytysraportti" [] :tags ["maksatukset and tasmaytysraportti"] 
+                      (compojure-api/context "/api/send-maksatukset-and-tasmaytysraportti" [] :tags ["maksatukset and tasmaytysraportti"]
                                              maksatukset-and-tasmaytysraportti-routes/routes)
                       (compojure-api/context "/api/v2/payment-batches" [] :tags ["payment batches"]
                                              payment-batches-routes/routes)
