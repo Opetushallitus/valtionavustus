@@ -34,7 +34,7 @@ Rahassa kylpijät Ky Ay Oy
 ${registerNumber}
 `)
       expect(email.formatted).toContain(`
-Hakija voi muokata jo lähetettyä väliselvitystä oheisen linkin kautta selvityksen määräaikaan saakka. Tällöin selvitystä ei kuitenkaan enää lähetetä uudelleen käsiteltäväksi, vaan muokkausten tallentuminen varmistetaan hakulomakkeen yläreunan lokitietokentästä.
+Voitte muokata jo lähetettyä selvitystä alkuperäisessä selvityspyynnössä olevan lomakelinkin kautta selvityksen määräaikaan saakka. Tällöin selvitystä ei kuitenkaan enää lähetetä uudelleen käsiteltäväksi, vaan muokkausten tallentuminen varmistetaan lomakkeen yläreunan lokitietokentästä.
 
 Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi
 
