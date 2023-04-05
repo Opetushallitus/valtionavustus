@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
 
-source_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-readonly source_dir
 # shellcheck source=scripts/common-functions.sh
-source "$source_dir/scripts/common-functions.sh"
+source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 # shellcheck source=deploy-scripts/jenkins-functions.sh
-source "$source_dir/deploy-scripts/jenkins-functions.sh"
+source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/deploy-scripts/jenkins-functions.sh"
 
 trap stop_systems_under_test EXIT
 
