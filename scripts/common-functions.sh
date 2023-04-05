@@ -16,25 +16,6 @@ function remove_all_files_ignored_or_untracked_by_git {
   git clean -xdf
 }
 
-function install_docker_compose {
-  info "Installing docker compose"
-  curl -L "https://github.com/docker/compose/releases/download/v2.17.0/docker-compose-$(uname -s)-$(uname -m)" -o "$repo"/scripts/docker-compose
-  chmod u+x "$repo"/scripts/docker-compose
-  "$repo"/scripts/docker-compose --version
-}
-
-function check_requirements {
-  require_command curl
-}
-
-function make_clean() {
-  time make clean
-}
-
-function make_build() {
-  time make build
-}
-
 function docker-compose () {
     if running_on_jenkins; then
       "$repo"/scripts/docker-compose "$@"
@@ -267,10 +248,13 @@ function start-service {
 }
 
 function build_and_test_jars {
-  check_requirements
+  require_command curl
+
   init_nodejs
-  make_clean
-  make_build
+
+  make clean
+  make build
+
   start_system_under_test
   run_tests
   stop_system_under_test
