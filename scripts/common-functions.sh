@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
 
+# allow sourcing this file multiple times from different scripts
+if [ -n "${COMMON_FUNCTIONS_SOURCED:-}" ]; then
+  return
+fi
+readonly COMMON_FUNCTIONS_SOURCED="true"
+
+
 readonly repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 readonly VA_SECRETS_REPO="$repo/../valtionavustus-secret"
 readonly node_version="16.20.0"
