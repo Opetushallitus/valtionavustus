@@ -32,13 +32,7 @@ function make_clean() {
 }
 
 function make_build() {
-  add_git_head_snippets
   time make build
-}
-
-function add_git_head_snippets() {
-  info "Adding git head snippets..."
-  git show --pretty=short --abbrev-commit -s HEAD > "$repo"/server/resources/public/git-HEAD.txt
 }
 
 function docker-compose () {
