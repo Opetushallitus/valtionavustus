@@ -10,10 +10,10 @@ function run_tests {
 }
 
 function run_playwright_tests {
-  if running_on_jenkins;
+  if running_on_jenkins || running_on_gh_actions;
   then
     start-service test-runner
-    return $(playwright_test_runner_exit_code)
+    return "$(playwright_test_runner_exit_code)"
   else
     npm run playwright:test "$@"
   fi

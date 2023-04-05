@@ -109,6 +109,10 @@ function running_on_jenkins {
   [ "${JENKINS_HOME:-}" != "" ]
 }
 
+function running_on_gh_actions {
+  [ "${GITHUB_ACTIONS:-}" == "true" ]
+}
+
 function init_nodejs {
   export NVM_DIR="${NVM_DIR:-$HOME/.cache/nvm}"
   set +o errexit
