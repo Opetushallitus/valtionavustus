@@ -2,7 +2,7 @@ name: Renovate
 on:
   push:
     branches:
-      - main
+      - master
 
 permissions:
   checks: write
