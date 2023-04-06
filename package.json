@@ -9,7 +9,7 @@
   },
   "overrides": {
     "babel-loader": {
-      "loader-utils": "^2.0.4"
+      "loader-utils": "^3.0.0"
     }
   },
   "dependencies": {
