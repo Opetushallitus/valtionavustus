@@ -31,5 +31,6 @@
         "enabled": true,
         "automerge": true
       }
-    ]
+    ],
+    "prConcurrentLimit": 5
   }
