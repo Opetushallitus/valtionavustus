@@ -4,7 +4,7 @@
     "dependencyDashboard": true,
     "dependencyDashboardTitle": "Dependency Dashboard self-hosted",
     "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
-    "username": "Renovate",
+    "username": "Renovate[bot]",
     "branchPrefix": "github-renovate/",
     "platform": "github",
     "includeForks": false,
