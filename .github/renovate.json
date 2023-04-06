@@ -9,7 +9,7 @@
     "platform": "github",
     "includeForks": false,
     "ignoreTests": false,
-    "automergeType": "branch",
+    "automergeType": "pr",
     "repositories": [
       "Opetushallitus/valtionavustus"
     ],
