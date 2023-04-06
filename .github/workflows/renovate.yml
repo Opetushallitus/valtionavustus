@@ -1,0 +1,29 @@
+name: Renovate
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  checks: write
+  statuses: write
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: write
+
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.3.0
+      - name: Self-hosted Renovate
+        uses: renovatebot/github-action@v34.157.0
+        with:
+          configurationFile: .github/renovate.json
+          token: ${{ secrets.GITHUB_TOKEN }}
+          useSlim: false
+        env:
+          LOG_LEVEL: 'debug'
