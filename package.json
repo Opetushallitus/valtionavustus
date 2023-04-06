@@ -59,7 +59,7 @@
     "fork-ts-checker-webpack-plugin": "^7.2.11",
     "less": "^4.1.2",
     "less-loader": "^11.0.0",
-    "pdfjs-dist": "^2.16.105",
+    "pdfjs-dist": "^3.0.0",
     "playwright-chromium": "^1.31.2",
     "prettier": "^2.6.2",
     "style-loader": "^3.3.1",
