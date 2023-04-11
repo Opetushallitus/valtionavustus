@@ -15,7 +15,7 @@ services:
       HEADLESS: 'true'
       VIRKAILIJA_HOSTNAME: va-virkailija
       HAKIJA_HOSTNAME: va-hakija
-      PLAYWRIGHT_WORKERS: 5
+      PLAYWRIGHT_WORKERS: "${PLAYWRIGHT_WORKERS:-5}"
       PLAYWRIGHT_RETRIES: 1
       TZ: 'Europe/Helsinki'
     logging:
