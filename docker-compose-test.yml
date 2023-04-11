@@ -18,7 +18,6 @@ services:
       PLAYWRIGHT_WORKERS: 5
       PLAYWRIGHT_RETRIES: 1
       TZ: 'Europe/Helsinki'
-    command: /run_playwright_tests_in_container.sh
     logging:
       options:
         mode: 'non-blocking'
