@@ -1,5 +1,4 @@
 FROM mcr.microsoft.com/playwright:v1.31.2-focal
-RUN apt update
 
 ADD package.json package.json
 ADD package-lock.json package-lock.json
