@@ -12,6 +12,8 @@ jobs:
       - name: Run test-on-pr.sh
         shell: bash
         run: ./test-on-pr.sh
+        env:
+          PLAYWRIGHT_WORKERS: 1 # GH Actions will choke to death with more workers
 
       - name: Upload Playwright results
         if: always()
