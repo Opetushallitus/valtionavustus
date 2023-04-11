@@ -17,6 +17,8 @@ services:
       HAKIJA_HOSTNAME: va-hakija
       PLAYWRIGHT_WORKERS: "${PLAYWRIGHT_WORKERS:-5}"
       PLAYWRIGHT_RETRIES: 1
+      PLAYWRIGHT_SHARD: "${PLAYWRIGHT_SHARD-}"
+      PLAYWRIGHT_SHARDS_AMOUNT: "${PLAYWRIGHT_SHARDS_AMOUNT-}"
       TZ: 'Europe/Helsinki'
     logging:
       options:

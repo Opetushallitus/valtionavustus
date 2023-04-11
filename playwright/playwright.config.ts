@@ -9,6 +9,19 @@ const retries = isNaN(retriesEnv) ? 1 : retriesEnv
 const allowOnly = process.env['ALLOW_ONLY'] === 'true'
 const quiet = process.env['VERBOSE'] !== 'true'
 
+const shard = (function () {
+  const shardNumber = process.env['PLAYWRIGHT_SHARD']
+  const shardAmount = process.env['PLAYWRIGHT_SHARDS_AMOUNT']
+
+  if (shardNumber && shardAmount) {
+    return {
+      current: parseInt(shardNumber, 10),
+      total: parseInt(shardAmount, 10),
+    }
+  }
+  return null
+})()
+
 const config: PlaywrightTestConfig = {
   forbidOnly: !allowOnly,
   retries,
@@ -16,6 +29,7 @@ const config: PlaywrightTestConfig = {
   testDir: 'tests',
   timeout: 60000,
   quiet,
+  shard,
   use: {
     actionTimeout: 10000,
     navigationTimeout: 10000,
