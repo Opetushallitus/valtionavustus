@@ -1,4 +1,5 @@
 FROM openjdk:8-jdk
+LABEL org.opencontainers.image.source=https://github.com/Opetushallitus/valtionavustus
 
 COPY target/uberjar/valtionavustus-0.1.0-SNAPSHOT-standalone.jar /app/va-hakija/app.jar
 COPY va-hakija/config/defaults.edn /app/va-hakija/config/defaults.edn

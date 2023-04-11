@@ -56,6 +56,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.hakija
+    image: "${HAKIJA_IMAGE-}"
     container_name: va-hakija
     hostname: va-hakija
     environment:
