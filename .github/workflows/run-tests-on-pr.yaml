@@ -4,7 +4,13 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    name: Run tests (${{ matrix.shard }}/${{ matrix.total_shards }})
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5]
+        total_shards: [5]
     steps:
       - name: Checkout
         uses: actions/checkout@v3.3.0
@@ -14,10 +20,12 @@ jobs:
         run: ./test-on-pr.sh
         env:
           PLAYWRIGHT_WORKERS: 1 # GH Actions will choke to death with more workers
+          PLAYWRIGHT_SHARD: ${{ matrix.shard }}
+          PLAYWRIGHT_SHARDS_AMOUNT: ${{ matrix.total_shards }}
 
       - name: Upload Playwright results
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: playwright-results
+          name: playwright-results-${{ matrix.shard }}
           path: playwright-results/
