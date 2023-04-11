@@ -260,13 +260,17 @@ function start-service {
   popd
 }
 
-function build_and_test_jars {
+function build_jars {
   require_command curl
 
   init_nodejs
 
   make clean
   make build
+}
+
+function build_and_test_jars {
+  build_jars
 
   start_system_under_test
   run_tests
