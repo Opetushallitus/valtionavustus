@@ -87,8 +87,10 @@ function follow_service_logs {
 function run_tests() {
   info "Running isolated system tests"
   export HEADLESS=true
-  export PLAYWRIGHT_WORKERS=6
-  export SPECLJ_ARGS="-f junit"
+  if running_on_jenkins; then
+    export PLAYWRIGHT_WORKERS=6
+    export SPECLJ_ARGS="-f junit"
+  fi
 
   "$repo"/run_isolated_system_tests.sh
 }
