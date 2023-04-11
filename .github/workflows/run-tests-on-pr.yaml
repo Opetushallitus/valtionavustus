@@ -12,3 +12,10 @@ jobs:
       - name: Run test-on-pr.sh
         shell: bash
         run: ./test-on-pr.sh
+
+      - name: Upload Playwright results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-results
+          path: playwright-results/
