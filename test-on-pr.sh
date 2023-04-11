@@ -10,7 +10,7 @@ function main {
   if [ -n "${GITHUB_SHA:-}" ]; then
     export HAKIJA_IMAGE="ghcr.io/opetushallitus/va-hakija:$GITHUB_SHA"
 
-    docker compose --file "$DOCKER_COMPOSE_FILE" pull
+    docker compose --file "$DOCKER_COMPOSE_FILE" pull --ignore-pull-failures
   fi
 
   readonly test_runner_service="test-runner"

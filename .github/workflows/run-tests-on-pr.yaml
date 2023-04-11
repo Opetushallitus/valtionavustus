@@ -3,8 +3,34 @@ on:
   pull_request
 
 jobs:
+  build-images:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.3.0
+
+      - name: build
+        run: ./build-on-pr.sh
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: push
+        run: docker compose --file docker-compose-test.yml push
+        env:
+          HAKIJA_IMAGE: ghcr.io/opetushallitus/va-hakija:${{ github.sha }}
+      
+
   test:
     runs-on: ubuntu-22.04
+    needs: build-images
     name: Run tests (${{ matrix.shard }}/${{ matrix.total_shards }})
     strategy:
       fail-fast: false
@@ -13,7 +39,7 @@ jobs:
         total_shards: [5]
     permissions:
       contents: read
-      packages: write
+      packages: read
     steps:
       - name: Checkout
         uses: actions/checkout@v3.3.0
