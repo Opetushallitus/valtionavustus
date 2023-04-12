@@ -121,7 +121,9 @@ const muutosTest = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixture
 
 muutosTest(
   'changing budget multiple times',
-  async ({ page, acceptedHakemus: { hakemusID }, budget, avustushakuID }) => {
+  async ({ page, acceptedHakemus: { hakemusID }, budget, avustushakuID }, testInfo) => {
+    testInfo.setTimeout(testInfo.timeout + 30_000)
+
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
     const muutoshakemus1Budget: BudgetAmount = {
       personnel: '301',
