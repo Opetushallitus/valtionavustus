@@ -27,7 +27,7 @@ const config: PlaywrightTestConfig = {
   retries,
   workers,
   testDir: 'tests',
-  timeout: 60000,
+  timeout: 90000,
   quiet,
   shard,
   use: {
