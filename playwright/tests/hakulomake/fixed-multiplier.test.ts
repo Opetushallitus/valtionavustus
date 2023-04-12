@@ -236,7 +236,17 @@ const form = {
   updated_at: '2023-03-03T07:57:02Z',
 }
 
-test('fixed multiplier field works', async ({ page, hakuProps, userCache, answers, context }) => {
+test('fixed multiplier field works', async ({
+  page,
+  hakuProps,
+  userCache,
+  answers,
+  context,
+}, testInfo) => {
+  // This test creates avustushaku as a part of the test, which easily pushes the
+  // duration past the default timeout of 60 seconds
+  testInfo.setTimeout(120_000)
+
   expectToBeDefined(userCache)
   const hakujenHallintaPage = new HakujenHallintaPage(page)
   await hakujenHallintaPage.navigate(1)
