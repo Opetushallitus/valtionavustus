@@ -32,6 +32,30 @@
           "https://repo.clojars.org/",
           "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"
         ]
+      },
+      {
+        "matchPackageNames": [
+          "playwright-chromium",
+          "@playwright/test",
+          "mcr.microsoft.com/playwright"
+        ],
+        "groupName": "playwright packages"
+      },
+      {
+        "matchPackageNames": [
+          "react",
+          "react-dom",
+          "@types/react",
+          "@types/react-dom"
+        ],
+        "groupName": "react packages"
+      },
+      {
+        "matchPackageNames": [
+          "@reduxjs/toolkit",
+          "react-redux"
+        ],
+        "groupName": "redux packages"
       }
     ],
     "prConcurrentLimit": 5
