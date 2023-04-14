@@ -11,7 +11,15 @@
     "ignoreTests": false,
     "automergeType": "pr",
     "repositories": ["Opetushallitus/valtionavustus"],
-    "enabledManagers": ["npm", "github-actions", "leiningen"],
+    "enabledManagers": [
+      "npm",
+      "github-actions",
+      "leiningen",
+      "dockerfile"
+    ],
+    "dockerfile": {
+      "automerge": true
+    },
     "github-actions": {
       "automerge": true
     },
