@@ -41,7 +41,13 @@ const SeurantaTags = ({ hakemus }: Props) => {
   }
 
   const predefinedTags = ['budjettimuutos', 'sisällön muutos', 'lisäaika']
-  const hakuUsedTags = _.uniq(_.flatten(hakemukset.map((i) => _.get(i, 'arvio.tags.value'))))
+  const hakuUsedTags = hakemukset.flatMap((i) => {
+    const tags = i.arvio.tags?.value ?? []
+    if (tags.length === 0) {
+      return []
+    }
+    return tags
+  })
   const allTags = _.sortBy(_.uniq(hakuUsedTags.concat(predefinedTags)))
 
   const classNames = (tag: string) => {
