@@ -1,0 +1,31 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "onboarding": false,
+    "dependencyDashboard": true,
+    "dependencyDashboardTitle": "Dependency Dashboard self-hosted",
+    "gitAuthor": "Self-hosted Renovate Bot <130737409+valtionavustus-renovate[bot]@users.noreply.github.com>",
+    "username": "valtionavustus-renovate[bot]",
+    "branchPrefix": "github-renovate/",
+    "platform": "github",
+    "includeForks": false,
+    "ignoreTests": false,
+    "automergeType": "pr",
+    "repositories": ["Opetushallitus/valtionavustus"],
+    "enabledManagers": ["npm", "github-actions", "leiningen"],
+    "github-actions": {
+      "automerge": true
+    },
+    "leiningen": {
+      "automerge": true
+    },
+    "packageRules": [
+      {
+        "matchPackagePatterns": ["*"],
+        "matchManagers": ["npm"],
+        "enabled": true,
+        "automerge": true
+      }
+    ],
+    "prConcurrentLimit": 5
+  }
+  
