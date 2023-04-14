@@ -98,7 +98,7 @@
                          [commons-io "2.11.0"]
                          [de.ubercode.clostache/clostache "1.4.0"]
                          [dk.ative/docjure "1.18.0"]
-                         [instaparse "1.4.10"]
+                         [instaparse "1.4.12"]
                          [org.apache.commons/commons-email "1.5"]
                          [org.clojure/core.async "1.5.648"]
                          [org.clojure/tools.trace "0.7.9"]
