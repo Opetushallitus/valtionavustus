@@ -16,12 +16,7 @@
       "automerge": true
     },
     "leiningen": {
-      "automerge": true,
-      "registryUrls": [
-        "https://repo1.maven.org/maven2/",
-        "https://repo.clojars.org/",
-        "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"
-      ]
+      "automerge": true
     },
     "packageRules": [
       {
@@ -29,6 +24,14 @@
         "matchManagers": ["npm"],
         "enabled": true,
         "automerge": true
+      },
+      {
+        "matchDatasources": ["clojure"],
+        "registryUrls": [
+          "https://repo1.maven.org/maven2/",
+          "https://repo.clojars.org/",
+          "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"
+        ]
       }
     ],
     "prConcurrentLimit": 5
