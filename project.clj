@@ -28,7 +28,7 @@
             [speclj "3.3.2"]
             [lein-kibit "0.1.6"]
             [jonase/eastwood "0.2.9"]
-            [lein-bikeshed "0.5.1"]
+            [lein-bikeshed "0.5.2"]
             [reifyhealth/lein-git-down "0.4.0"]]
 
   :managed-dependencies [[org.clojure/clojure "1.9.0"]
