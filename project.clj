@@ -75,7 +75,7 @@
                          [org.apache.logging.log4j/log4j-core ~log4j-version]
                          [org.apache.logging.log4j/log4j-slf4j-impl ~log4j-version]
                          [org.clojure/tools.logging "1.1.0"]
-                         [org.slf4j/slf4j-api "1.7.32"]
+                         [org.slf4j/slf4j-api "1.7.36"]
                          [commons-logging "1.2"]
                          [org.log4s/log4s_2.11 "1.10.0"]
 
