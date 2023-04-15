@@ -29,7 +29,7 @@
             [lein-kibit "0.1.8"]
             [jonase/eastwood "0.2.9"]
             [lein-bikeshed "0.5.2"]
-            [reifyhealth/lein-git-down "0.4.0"]]
+            [reifyhealth/lein-git-down "0.4.1"]]
 
   :managed-dependencies [[org.clojure/clojure "1.9.0"]
                          [nrepl "0.9.0"]
