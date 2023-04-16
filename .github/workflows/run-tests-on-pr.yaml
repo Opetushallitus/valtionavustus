@@ -13,7 +13,7 @@ jobs:
         total_shards: [5]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.5.2
 
       - name: Run test-on-pr.sh
         shell: bash
