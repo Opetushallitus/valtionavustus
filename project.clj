@@ -1,6 +1,6 @@
 (def batik-version "1.16")
 (def log4j-version "2.17.2")
-(def jackson-version "2.14.0-rc1")
+(def jackson-version "2.14.2")
 
 (defproject oph-va/valtionavustus "0.1.0-SNAPSHOT"
 
