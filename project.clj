@@ -49,7 +49,7 @@
                          [org.yaml/snakeyaml "1.33"] ; dependency of compojure-api -> explicitly updated for security patches
 
                          ;; json
-                         [cheshire "5.10.1"]
+                         [cheshire "5.11.0"]
                          [org.clojure/data.json "0.2.7"]
                          [com.fasterxml.jackson.core/jackson-core ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-databind ~jackson-version]
