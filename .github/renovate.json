@@ -10,6 +10,7 @@
     "includeForks": false,
     "ignoreTests": false,
     "automergeType": "pr",
+    "platformAutomerge": true,
     "repositories": ["Opetushallitus/valtionavustus"],
     "enabledManagers": [
       "npm",
