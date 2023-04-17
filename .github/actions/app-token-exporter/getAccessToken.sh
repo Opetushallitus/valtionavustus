@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
-export PRIVATE_KEY=${1}
-export APP_ID=${2}
+export PRIVATE_KEY="${1}"
+export APP_ID="${2}"
 jwt=$(node "$(dirname "$0")"/jwt.js)
 repo=${GITHUB_REPOSITORY}
 
@@ -20,7 +20,7 @@ access_tokens_response=$(curl -s -X POST \
 
 token=$(echo "$access_tokens_response" | jq -r '.token')
 
-echo "token=${token}" >> $GITHUB_OUTPUT
+echo "token=${token}" >> "$GITHUB_OUTPUT"
 
 
 
