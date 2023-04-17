@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 export PRIVATE_KEY="${1}"
 export APP_ID="${2}"
