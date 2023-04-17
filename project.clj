@@ -92,7 +92,7 @@
                          [org.http4s/http4s-dsl_2.11 "0.16.6"]
 
                          ;; other
-                         [clj-time "0.14.0"]
+                         [clj-time "0.15.2"]
                          [com.cemerick/url "0.1.1"]
                          [commons-codec "1.10"]
                          [commons-io "2.11.0"]
