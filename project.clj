@@ -129,7 +129,7 @@
                  [nivekuil/clj-ssh "d11634acf9857da4c7fc98258719a333af523cb8" :exclusions [com.jcraft/jsch.agentproxy.usocket-nc]]
                  [com.jcraft/jsch "0.1.55"]
                  [gov.nasa.earthdata/quartzite "2.2.1-SNAPSHOT"]
-                 [clj-pdf "2.5.8"]
+                 [clj-pdf "2.6.2"]
                  [org.apache.xmlgraphics/batik-codec ~batik-version :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
                  [org.apache.xmlgraphics/batik-bridge ~batik-version :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
                  [org.apache.xmlgraphics/batik-anim ~batik-version :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
