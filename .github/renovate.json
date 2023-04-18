@@ -11,6 +11,7 @@
     "ignoreTests": false,
     "automergeType": "pr",
     "platformAutomerge": true,
+    "automerge": true,
     "repositories": ["Opetushallitus/valtionavustus"],
     "enabledManagers": [
       "npm",
@@ -18,22 +19,7 @@
       "leiningen",
       "dockerfile"
     ],
-    "dockerfile": {
-      "automerge": true
-    },
-    "github-actions": {
-      "automerge": true
-    },
-    "leiningen": {
-      "automerge": true
-    },
     "packageRules": [
-      {
-        "matchPackagePatterns": ["*"],
-        "matchManagers": ["npm"],
-        "enabled": true,
-        "automerge": true
-      },
       {
         "matchDatasources": ["clojure"],
         "registryUrls": [
