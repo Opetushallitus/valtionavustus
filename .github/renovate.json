@@ -53,5 +53,5 @@
         "groupName": "redux packages"
       }
     ],
-    "prConcurrentLimit": 5
+    "prConcurrentLimit": 10
   }
