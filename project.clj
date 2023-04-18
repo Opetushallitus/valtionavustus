@@ -105,7 +105,7 @@
                          [org.scala-lang.modules/scala-xml_2.11 "1.0.6"]
                          [org.scala-lang/scala-library "2.11.12"]
                          [org.clojure/data.xml "0.0.8"]
-                         [clojurewerkz/quartzite "2.0.0"]
+                         [clojurewerkz/quartzite "2.1.0"]
                          [org.checkerframework/checker-qual "3.17.0"]
                          [clj-commons/clj-yaml "1.0.26"]
                          [metosin/ring-swagger-ui "4.5.0"]]
