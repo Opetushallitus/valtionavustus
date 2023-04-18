@@ -26,7 +26,7 @@
             [lein-environ "1.1.0"]
             [speclj "3.3.2"]
             [lein-kibit "0.1.8"]
-            [jonase/eastwood "0.2.9"]
+            [jonase/eastwood "0.9.9"]
             [lein-bikeshed "0.5.2"]
             [reifyhealth/lein-git-down "0.4.1"]]
 
