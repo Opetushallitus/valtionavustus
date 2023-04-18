@@ -1,4 +1,3 @@
-(def batik-version "1.16")
 (def log4j-version "2.17.2")
 (def jackson-version "2.14.2")
 
@@ -129,11 +128,7 @@
                  [nivekuil/clj-ssh "d11634acf9857da4c7fc98258719a333af523cb8" :exclusions [com.jcraft/jsch.agentproxy.usocket-nc]]
                  [com.jcraft/jsch "0.1.55"]
                  [gov.nasa.earthdata/quartzite "2.2.1-SNAPSHOT"]
-                 [clj-pdf "2.6.2"]
-                 [org.apache.xmlgraphics/batik-codec ~batik-version :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
-                 [org.apache.xmlgraphics/batik-bridge ~batik-version :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
-                 [org.apache.xmlgraphics/batik-anim ~batik-version :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
-                 [org.apache.xmlgraphics/xmlgraphics-commons "2.6"]
+                 [clj-pdf "2.6.2" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
                  [cider/cider-nrepl]
                  [http-kit]
                  [ring.middleware.conditional "0.2.0" :exclusions [ring]]
