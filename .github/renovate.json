@@ -10,6 +10,7 @@
     "includeForks": false,
     "ignoreTests": false,
     "automergeType": "pr",
+    "automergeSchedule": "after 6pm and before 8am",
     "platformAutomerge": true,
     "automerge": true,
     "repositories": ["Opetushallitus/valtionavustus"],
@@ -53,5 +54,5 @@
         "groupName": "redux packages"
       }
     ],
-    "prConcurrentLimit": 10
+    "prConcurrentLimit": 5
   }
