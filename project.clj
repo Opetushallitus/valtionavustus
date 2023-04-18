@@ -23,7 +23,7 @@
 
   :plugins [[lein-ancient "0.7.0"]
             [lein-auto "0.1.3"]
-            [lein-environ "1.1.0"]
+            [lein-environ "1.2.0"]
             [speclj "3.3.2"]
             [lein-kibit "0.1.8"]
             [jonase/eastwood "0.9.9"]
