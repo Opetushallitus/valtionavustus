@@ -33,7 +33,7 @@
 
   :managed-dependencies [[org.clojure/clojure "1.9.0"]
                          [nrepl "0.9.0"]
-                         [cider/cider-nrepl "0.27.4"]
+                         [cider/cider-nrepl "0.30.0"]
 
                          ;; our child projects
                          [oph/soresu-form "0.1.0-SNAPSHOT"]
