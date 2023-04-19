@@ -85,7 +85,7 @@
                          [buddy/buddy-sign "3.4.333"]
 
                          ;; cas
-                         [fi.vm.sade/scala-cas_2.11 "2.2.2-20210929.183742-5"]
+                         [fi.vm.sade/scala-cas_2.11 "2.2.3-SNAPSHOT"]
                          [org.http4s/http4s-blaze-client_2.11 "0.16.6"]
                          [org.http4s/http4s-client_2.11 "0.16.6"]
                          [org.http4s/http4s-dsl_2.11 "0.16.6"]
@@ -121,7 +121,7 @@
                  [buddy/buddy-sign]
                  [com.cemerick/url :exclusions [com.cemerick/clojurescript.test]]
                  [dk.ative/docjure "1.18.0"]
-                 [fi.vm.sade/scala-cas_2.11 "2.2.2-20210929.183742-5"]
+                 [fi.vm.sade/scala-cas_2.11]
                  [org.http4s/http4s-blaze-client_2.11 "0.16.6"]
                  [org.clojure/data.json]
                  [org.clojure/data.xml]
