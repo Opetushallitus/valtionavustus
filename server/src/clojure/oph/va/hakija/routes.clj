@@ -1,8 +1,6 @@
 (ns oph.va.hakija.routes
-  (:use [clojure.tools.trace :only [trace]]
-        [oph.soresu.common.db :only [generate-hash-id exec]])
+  (:use [clojure.tools.trace :only [trace]])
   (:require [clojure.tools.logging :as log]
-            [clojure.string :refer [includes?]]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
             [compojure.core :as compojure]
@@ -13,7 +11,7 @@
             [ring.swagger.json-schema-dirty]  ; for schema.core/conditional
             [schema.core :as s]
             [oph.common.datetime :as datetime]
-            [oph.soresu.common.config :refer [config-simple-name config]]
+            [oph.soresu.common.config :refer [config-simple-name]]
             [oph.soresu.common.routes :refer :all]
             [oph.va.schema :refer :all]
             [oph.soresu.form.schema :refer :all]
@@ -23,9 +21,7 @@
             [oph.va.hakija.schema :refer :all]
             [oph.va.hakija.handlers :refer :all]
             [oph.va.hakija.selvitys.routes :as selvitys-routes]
-            [oph.common.organisation-service :as org]
-            [oph.va.hakija.db.queries :as queries]
-            [oph.va.hakija.officer-edit-auth :as officer-edit-auth]))
+            [oph.common.organisation-service :as org]))
 
 (defn- on-healthcheck []
   (if (hakija-db/health-check)

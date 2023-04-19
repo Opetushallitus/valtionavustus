@@ -2,7 +2,7 @@
   (:use [oph.va.hakija.routes :only [all-routes restricted-routes]])
   (:require [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.not-modified :refer [wrap-not-modified]]
-            [ring.middleware.defaults :refer :all]
+            [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
             [buddy.auth.middleware :refer [wrap-authentication]]
             [clojure.tools.logging :as log]
             [oph.common.background-job-supervisor :as job-supervisor]
@@ -59,7 +59,6 @@
         attachment-max-size (or (-> config :server :attachment-max-size) 50)]
     (server/start-server {:host host
                           :port port
-                          :auto-reload? auto-reload?
                           :routes handler
                           :on-startup (partial startup config)
                           :on-shutdown shutdown

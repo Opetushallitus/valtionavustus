@@ -155,7 +155,6 @@
          attachment-max-size (or (-> config :server :attachment-max-size) 50)]
      (server/start-server {:host host
                            :port port
-                           :auto-reload? auto-reload?
                            :routes handler
                            :on-startup (partial startup config)
                            :on-shutdown shutdown
