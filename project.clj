@@ -30,7 +30,7 @@
             [lein-bikeshed "0.5.2"]
             [reifyhealth/lein-git-down "0.4.1"]]
 
-  :managed-dependencies [[org.clojure/clojure "1.9.0"]
+  :managed-dependencies [[org.clojure/clojure "1.11.1"]
                          [nrepl "0.9.0"]
                          [cider/cider-nrepl "0.30.0"]
 
