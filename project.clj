@@ -107,7 +107,7 @@
                          [clojurewerkz/quartzite "2.1.0"]
                          [org.checkerframework/checker-qual "3.17.0"]
                          [clj-commons/clj-yaml "1.0.26"]
-                         [metosin/ring-swagger-ui "4.5.0"]]
+                         [metosin/ring-swagger-ui "4.18.1"]]
 
   :dependencies [[org.clojure/clojure]
                  [de.ubercode.clostache/clostache]
