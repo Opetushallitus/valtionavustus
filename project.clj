@@ -30,9 +30,6 @@
                          [nrepl "0.9.0"]
                          [cider/cider-nrepl "0.30.0"]
 
-                         ;; our child projects
-                         [oph/soresu-form "0.1.0-SNAPSHOT"]
-
                          ;; http
                          [buddy/buddy-auth "2.1.0"]
                          [clout "2.2.1"]
