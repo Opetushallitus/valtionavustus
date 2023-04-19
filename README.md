@@ -306,38 +306,6 @@ automaattisesti. [Lisätietoja Leiningenin profiileista](https://github.com/tech
 
 ### Yleisiä komentoja
 
-Tietokannan tyhjennys:
-
-``` shell
-cd va-hakija
-../lein dbclear
-```
-
-Leiningenin komentoja voi ketjuttaa käyttämällä `do`-komentoa ja
-erottelemalla halutut komennot pilkulla ja välilyönnillä. Esimerkiksi
-tietokannan tyhjennys ja sovelluksen käynnistys:
-
-``` shell
-cd va-hakija
-../lein trampoline do dbclear, run
-```
-
-Jos muutat backendin riippuvuutena toimivan soresu-formin Clojure-koodia, pitää soresu-formin jar-paketit asentaa uudelleen,
-jotta backendit saavat muutokset käyttöön:
-
-``` shell
-cd soresu-form
-../lein do clean, install
-```
-
-Vaihtoehtoisesti jarrien buildaus automaattisesti, kun lähdekoodi
-muuttuu:
-
-``` shell
-cd soresu-form
-../lein auto install
-```
-
 Hakijasovelluksen tuotantoversion ajo:
 
 ``` shell
@@ -567,63 +535,3 @@ Jokaiselle hakemukselle luodaan lähetysvaiheessa (submit) vahvistussähköposti
 luonnissa uniikki tunniste, jolla hakija pääsee lähettämään
 muutoshakemuksen. Tämä tunniste vanhenee, kun avustuksen ensimmäinen maksatus
 lähetetään.
-
-## Käytänteitä
-
-### Koodi
-
-Koodin tyylissä tavoitellaan
-[The Clojure Style Guidea](https://github.com/bbatsov/clojure-style-guide).
-
-Ennen oman koodin julkaisua, olisi hyvä ajaa staattiset työkalut.
-
-Sekä `va-virkailija` että `va-hakija` -projekteihin on lisätty
-alias, jolla voi ajaa kaikki työkalut läpi:
-
-``` shell
-../lein checkall
-```
-
-Tämä ajaa lein check, kibit, eastwood ja bikeshed -työkalut projektin
-koodipohjalle. Eastwood-työkalussa on filteröity pois migraatiot ja testit, jotta
-työkalut eivät aja niitä ja muuta tietokantaa.
-
-Yksittäin työkaluja voit ajaa seuraavasti:
-
-``` shell
-../lein check
-../lein kibit
-../lein eastwood
-../lein bikeshed
-```
-
-Myös yksittäisille nimiavaruudelle voi ajaa eastwood-linterin:
-
-``` shell
-../lein eastwood "{:namespaces [oph.va.virkailija.payment-batches-routes oph.va.virkailija.payment-batches-data]}"
-```
-
-Kibitille voi antaa tarkastettavan tiedoston parametrina:
-
-``` shell
-../lein kibit src/clojure/oph/va/virkailija/payments_data.clj
-```
-
-Bikeshedin kanssa joutuu käyttämään grepiä hyväkseen:
-
-``` shell
-../lein bikeshed | grep 'Checking\|payments_data.clj'
-```
-
-Lisätietoja:
-
-- [kibit](https://github.com/jonase/kibit)
-- [eastwood](https://github.com/jonase/eastwood)
-- [lein-bikeshed](https://github.com/dakrone/lein-bikeshed)
-
-### Tyyli
-
-- `.editorconfig`-tiedostossa on määritelty perustyylit, kuten
-  - sisennys: 2 välilyöntiä
-  - rivin pituus 80 merkkiä
-- Frontendissä CSS-luokkien nimet pienellä ja sanat viivalla eroteltuna

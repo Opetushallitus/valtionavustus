@@ -22,12 +22,8 @@
   :pedantic? :abort
 
   :plugins [[lein-ancient "0.7.0"]
-            [lein-auto "0.1.3"]
             [lein-environ "1.2.0"]
             [speclj "3.3.2"]
-            [lein-kibit "0.1.8"]
-            [jonase/eastwood "0.9.9"]
-            [lein-bikeshed "0.5.2"]
             [reifyhealth/lein-git-down "0.4.1"]]
 
   :managed-dependencies [[org.clojure/clojure "1.11.1"]
@@ -198,8 +194,4 @@
   :javac-options ["-target" "1.8" "-source" "1.8" "-encoding" "UTF-8" "-deprecation"]
 
   :jvm-opts ["-Xmx500m" "-Djava.awt.headless=true" "-Dfile.encoding=UTF-8"]
-
-  :auto {:default {:paths ["server/src"
-                           "server/resources"]
-                   :file-pattern #"\.(clj|sql|json|edn)$"}}
 )
