@@ -31,7 +31,7 @@
                          [cider/cider-nrepl "0.30.0"]
 
                          ;; http
-                         [buddy/buddy-auth "2.1.0"]
+                         [buddy/buddy-auth "2.2.0"]
                          [clout "2.2.1"]
                          [org.apache.commons/commons-compress "1.23.0"]
                          [org.apache.tika/tika-core "2.7.0"]
