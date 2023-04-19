@@ -53,7 +53,7 @@
                          ;; database
                          [hikari-cp "1.8.3"]
                          [org.flywaydb/flyway-core "4.2.0"]
-                         [org.postgresql/postgresql "42.4.3"]
+                         [org.postgresql/postgresql "42.6.0"]
                          [yesql "0.5.3"]
 
                          ;; testing
