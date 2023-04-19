@@ -1,4 +1,4 @@
-(def log4j-version "2.17.2")
+(def log4j-version "2.20.0")
 (def jackson-version "2.14.2")
 
 (defproject oph-va/valtionavustus "0.1.0-SNAPSHOT"
