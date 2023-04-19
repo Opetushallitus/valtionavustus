@@ -80,7 +80,7 @@
 
                          ;; cryptography
                          [org.bouncycastle/bcpkix-jdk15on "1.70"]
-                         [org.bouncycastle/bcprov-jdk15on "1.69"]
+                         [org.bouncycastle/bcprov-jdk15on "1.70"]
                          [buddy/buddy-core "1.10.413"]
                          [buddy/buddy-sign "3.4.333"]
 
