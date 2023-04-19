@@ -40,7 +40,7 @@
                          ;; http
                          [buddy/buddy-auth "2.1.0"]
                          [clout "2.2.1"]
-                         [org.apache.commons/commons-compress "1.21"]
+                         [org.apache.commons/commons-compress "1.23.0"]
                          [org.apache.tika/tika-core "2.4.1"]
                          [compojure "1.7.0"]
                          [http-kit "2.6.0"]
