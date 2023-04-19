@@ -91,7 +91,7 @@
                          [commons-codec "1.15"]
                          [commons-io "2.11.0"]
                          [de.ubercode.clostache/clostache "1.4.0"]
-                         [dk.ative/docjure "1.18.0"]
+                         [dk.ative/docjure "1.19.0"]
                          [funcool/cuerdas "2.2.1"] ; 2.2.0 is absolutely mental and wants clojurescript, no thanks
                          [instaparse "1.4.12"]
                          [metosin/ring-swagger-ui "4.18.1"]
@@ -114,7 +114,7 @@
                  [buddy/buddy-auth]
                  [buddy/buddy-sign]
                  [com.cemerick/url :exclusions [com.cemerick/clojurescript.test]]
-                 [dk.ative/docjure "1.18.0"]
+                 [dk.ative/docjure "1.19.0"]
                  [fi.vm.sade/scala-cas_2.11]
                  [org.http4s/http4s-blaze-client_2.11 "0.16.6"]
                  [org.clojure/data.json]
