@@ -133,7 +133,7 @@
                  [ring/ring-devel "1.9.6"]
                  [radicalzephyr/ring.middleware.logger "0.6.0"]
                  [ring/ring-defaults "0.3.4"]
-                 [ring/ring-session-timeout "0.2.0"]
+                 [ring/ring-session-timeout "0.3.0"]
                  [ring/ring-ssl "0.3.0"]
                  [compojure]
                  [metosin/compojure-api]
