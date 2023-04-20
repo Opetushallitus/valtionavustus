@@ -128,7 +128,7 @@
                  [http-kit]
                  [ring.middleware.conditional "0.2.0" :exclusions [ring]]
                  [ring/ring-codec "1.2.0"]
-                 [ring/ring-core "1.9.6" :exclusions [commons-fileupload]]
+                 [ring/ring-core "1.10.0" :exclusions [commons-fileupload]]
                  [commons-fileupload "1.5"]
                  [ring/ring-devel "1.9.6"]
                  [radicalzephyr/ring.middleware.logger "0.6.0"]
