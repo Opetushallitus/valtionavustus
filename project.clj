@@ -48,7 +48,7 @@
                          [com.fasterxml.jackson.core/jackson-annotations ~jackson-version]
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor ~jackson-version]
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-smile ~jackson-version]
-                         [prismatic/schema "1.1.6"]
+                         [prismatic/schema "1.4.1"]
 
                          ;; database
                          [hikari-cp "1.8.3"]
