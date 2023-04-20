@@ -130,7 +130,7 @@
                  [ring/ring-codec "1.2.0"]
                  [ring/ring-core "1.10.0" :exclusions [commons-fileupload]]
                  [commons-fileupload "1.5"]
-                 [ring/ring-devel "1.9.6"]
+                 [ring/ring-devel "1.10.0"]
                  [radicalzephyr/ring.middleware.logger "0.6.0"]
                  [ring/ring-defaults "0.3.4"]
                  [ring/ring-session-timeout "0.2.0"]
