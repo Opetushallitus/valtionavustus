@@ -24,7 +24,7 @@
 
   :plugins [[lein-ancient "0.7.0"]
             [lein-environ "1.2.0"]
-            [speclj "3.3.2"]
+            [speclj "3.4.3"]
             [reifyhealth/lein-git-down "0.4.1"]]
 
   :managed-dependencies [[org.clojure/clojure "1.11.1"]
@@ -58,7 +58,7 @@
                          [yesql "0.5.3"]
 
                          ;; testing
-                         [speclj "3.3.2"]
+                         [speclj "3.4.3"]
                          [speclj-junit "0.0.11"]
 
                          ;; configuration
