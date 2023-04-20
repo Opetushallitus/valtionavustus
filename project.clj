@@ -81,7 +81,7 @@
                          [fi.vm.sade/scala-cas_2.11 "2.2.3-SNAPSHOT"]
                          [org.http4s/http4s-blaze-client_2.11 "0.16.6"]
                          [org.http4s/http4s-client_2.11 "0.16.6"]
-                         [org.http4s/http4s-dsl_2.11 "0.16.6"]
+                         [org.http4s/http4s-dsl_2.11 "0.20.23"]
 
                          ;; other
                          [clj-commons/clj-yaml "1.0.26"]
