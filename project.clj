@@ -117,7 +117,7 @@
                  [com.cemerick/url :exclusions [com.cemerick/clojurescript.test]]
                  [dk.ative/docjure "1.19.0"]
                  [fi.vm.sade/scala-cas_2.11]
-                 [org.http4s/http4s-blaze-client_2.11 "0.16.6"]
+                 [org.http4s/http4s-blaze-client_2.11 "0.20.23"]
                  [org.clojure/data.json]
                  [org.clojure/data.xml]
                  [nivekuil/clj-ssh "d11634acf9857da4c7fc98258719a333af523cb8" :exclusions [com.jcraft/jsch.agentproxy.usocket-nc]]
