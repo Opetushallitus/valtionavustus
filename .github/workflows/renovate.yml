@@ -7,6 +7,8 @@ on:
   schedule:
     - cron: '0 */2 * * *'
 
+concurrency: renovate
+
 jobs:
   renovate:
     runs-on: ubuntu-latest
