@@ -5,12 +5,21 @@ set -o errexit -o nounset -o pipefail
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 
 function main {
+  start_gh_actions_group "build"
   build_jars
+  init_nodejs
+  end_gh_actions_group
 
+  start_gh_actions_group "run prettier"
+  npm run prettier-check-project
+  end_gh_actions_group
+
+  start_gh_actions_group "run playwright tests"
   readonly test_runner_service="test-runner"
   docker-compose --file "${DOCKER_COMPOSE_FILE}" up \
     --exit-code-from $test_runner_service \
     --build $test_runner_service
+  end_gh_actions_group
 }
 
 main "$@"

@@ -260,6 +260,26 @@ function start-service {
   popd
 }
 
+CURRENT_GROUP=""
+GROUP_START_TIME=0
+function start_gh_actions_group {
+  local group_title="$1"
+  GROUP_START_TIME=$(date +%s)
+  CURRENT_GROUP="$group_title"
+
+  if [ "${GITHUB_ACTIONS:-}" == "true" ]; then
+    echo "::group::$group_title"
+  fi
+}
+
+function end_gh_actions_group {
+  if [ "${GITHUB_ACTIONS:-}" == "true" ]; then
+    echo "::endgroup::"
+  fi
+  END_TIME=$(date +%s)
+  info "$CURRENT_GROUP took $(( END_TIME - GROUP_START_TIME )) seconds"
+}
+
 function build_jars {
   require_command curl
 
