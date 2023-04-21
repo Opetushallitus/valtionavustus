@@ -1,8 +1,9 @@
-(ns oph.va.virkailija.reporting-data
-  (:require
-   [oph.soresu.common.db :refer [query]]))
+(ns oph.va.virkailija.reports.loppuselvitysraportti
+  (:require [dk.ative.docjure.spreadsheet :as spreadsheet]
+            [oph.soresu.common.db :refer [query]])
+  (:import (java.io ByteArrayOutputStream)))
 
-(defn get-loppuselvitys-asiatarkastamatta-rows []
+(defn- get-loppuselvitys-asiatarkastamatta-rows []
   (query "
     select hakemus.avustushaku as avustushaku_id,
     count(*) as lukumäärä,
@@ -17,7 +18,7 @@
     order by avustushaku_id
     " []))
 
-(defn asiatarkastetut-rows []
+(defn- get-loppuselvitys-tarkastetut-rows []
   (query "
   with loppuselvitykset as (
     select date_part('year', h.last_status_change_at) as year, count(*) as count
@@ -50,3 +51,22 @@ from loppuselvitykset l
 left join asiatarkastetut_loppuselvitykset al on al.year = l.year
 left join taloustarkastetut_loppuselvitykset tl on tl.year = l.year
  " {}))
+
+(defn- make-loppuselvitysraportti-rows [rows]
+  (mapv vals rows))
+
+(defn export-loppuselvitysraportti []
+  (let [asiatarkastettu-rows (get-loppuselvitys-tarkastetut-rows)
+        asiatarkastamatta-rows (get-loppuselvitys-asiatarkastamatta-rows)
+        output (ByteArrayOutputStream.)
+        wb (spreadsheet/create-workbook
+            "Loppuselvitysraportti"
+            (concat
+             [["Vuosi" "Vastaanotettu" "Asiatarkastettu" "Taloustarkastettu"]]
+             (make-loppuselvitysraportti-rows asiatarkastettu-rows))
+            "Asiatarkastamattomat"
+            (concat
+             [["Avustushaku", "Lukumäärä", "Valmistelija"]]
+             (make-loppuselvitysraportti-rows asiatarkastamatta-rows)))]
+    (.write wb output)
+    (.toByteArray output)))

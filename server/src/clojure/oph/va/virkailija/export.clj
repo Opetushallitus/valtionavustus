@@ -7,7 +7,6 @@
             [oph.soresu.form.formhandler :as formhandler]
             [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.utils :refer [remove-white-spaces]])
-  (:use [clojure.tools.trace :only [trace]])
   (:import (java.io ByteArrayOutputStream)
            (org.apache.poi.ss.usermodel Cell CellStyle CellType Sheet Workbook)))
 
@@ -695,22 +694,5 @@
                       (conj maksu-sheet))]
       (adjust-cells-style! sheet header-style safe-formula-style))
 
-    (.write wb output)
-    (.toByteArray output)))
-
-(defn make-loppuselvitysraportti-rows [rows]
-  (mapv vals rows))
-
-(defn export-loppuselvitysraportti [asiatarkastettu-rows asiatarkastamatta-rows]
-  (let [output (ByteArrayOutputStream.)
-        wb (spreadsheet/create-workbook
-            "Loppuselvitysraportti"
-            (concat
-             [["Vuosi" "Vastaanotettu" "Asiatarkastettu" "Taloustarkastettu"]]
-             (make-loppuselvitysraportti-rows asiatarkastettu-rows))
-            "Asiatarkastamattomat"
-            (concat
-             [["Avustushaku", "Lukumäärä", "Valmistelija"]]
-             (make-loppuselvitysraportti-rows asiatarkastamatta-rows)))]
     (.write wb output)
     (.toByteArray output)))

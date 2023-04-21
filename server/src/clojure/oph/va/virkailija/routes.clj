@@ -29,7 +29,7 @@
             [oph.va.virkailija.payment-batches-routes :as payment-batches-routes]
             [oph.va.virkailija.payments-routes :as payments-routes]
             [oph.va.virkailija.remote-file-service :refer [get-all-maksatukset-from-maksatuspalvelu]]
-            [oph.va.virkailija.reporting-routes :as reporting-routes]
+            [oph.va.virkailija.reports.routes :as reporting-routes]
             [oph.va.virkailija.maksatukset-and-tasmaytysraportti-routes :as maksatukset-and-tasmaytysraportti-routes]
             [oph.va.virkailija.rondo-scheduling :refer [processMaksupalaute put-maksupalaute-to-maksatuspalvelu]]
             [oph.va.virkailija.rondo-service :as rondo-service]
