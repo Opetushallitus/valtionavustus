@@ -66,7 +66,11 @@ left join taloustarkastetut_loppuselvitykset tl on tl.year = l.year
              (make-loppuselvitysraportti-rows asiatarkastettu-rows))
             "Asiatarkastamattomat"
             (concat
-             [["Avustushaku", "Lukumäärä", "Valmistelija"]]
-             (make-loppuselvitysraportti-rows asiatarkastamatta-rows)))]
+             [["Avustushaku" "Lukumäärä" "Valmistelija"]]
+             (make-loppuselvitysraportti-rows asiatarkastamatta-rows))
+            "Hakemukset"
+            (concat
+             [["Hakemuksen asiatunnus" "Avustushaun nimi" "Hakijaorganisaatio" "Myönnetty avustus"]]
+             [[]]))]
     (.write wb output)
     (.toByteArray output)))
