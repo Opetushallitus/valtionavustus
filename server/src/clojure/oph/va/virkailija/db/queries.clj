@@ -72,12 +72,6 @@
 (defquery delete-va-user-cache! "sql/virkailija/va_users_cache/delete.sql")
 (defquery get-va-user-cache-by-person-oid "sql/virkailija/va_users_cache/get-by-person-oid.sql")
 
-(defquery get-yearly-evaluation-count-by-status
-  "sql/virkailija/reporting/get-yearly-evaluation-count-by-status.sql")
-(defquery get-yearly-granted "sql/virkailija/reporting/get-yearly-granted.sql")
-(defquery get-yearly-education-level
-  "sql/virkailija/reporting/get-yearly-education-level.sql")
-
 (defquery get-va-code-value
   "sql/virkailija/va_code_values/get-va-code-value.sql")
 (defquery get-va-code-values-by-type-and-year
