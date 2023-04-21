@@ -53,6 +53,11 @@
           "react-redux"
         ],
         "groupName": "redux packages"
+      },
+      {
+        "matchManagers": ["nvm", "npm"],
+        "matchPackageNames": ["@types/node", "node"],
+        "groupName": "Node.js"
       }
     ],
     "prConcurrentLimit": 5
