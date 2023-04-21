@@ -15,6 +15,7 @@
     "automerge": true,
     "repositories": ["Opetushallitus/valtionavustus"],
     "enabledManagers": [
+      "nvm",
       "npm",
       "github-actions",
       "leiningen",
