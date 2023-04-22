@@ -137,7 +137,7 @@
                  [ring/ring-ssl "0.3.0"]
                  [compojure]
                  [metosin/compojure-api]
-                 [com.github.java-json-tools/jackson-coreutils "1.12"  :exclusions [com.google.code.findbugs/jsr305]]
+                 [com.github.java-json-tools/jackson-coreutils "2.0"  :exclusions [com.google.code.findbugs/jsr305]]
                  [com.google.guava/guava "31.1-jre" ]
                  [cheshire]
                  [prismatic/schema]
