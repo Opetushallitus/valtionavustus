@@ -55,9 +55,19 @@ left join taloustarkastetut_loppuselvitykset tl on tl.year = l.year
 (defn- make-loppuselvitysraportti-rows [rows]
   (mapv vals rows))
 
+(defn- get-hakemukset-rows []
+  (query "
+  select register_number, project_name, organization_name, va.budget_granted
+  from hakija.hakemukset ha
+           join virkailija.arviot va on va.hakemus_id = ha.id
+           where version_closed is null
+           and ha.status in ('submitted', 'pending_change_request', 'officer_edit')
+    " {}))
+
 (defn export-loppuselvitysraportti []
   (let [asiatarkastettu-rows (get-loppuselvitys-tarkastetut-rows)
         asiatarkastamatta-rows (get-loppuselvitys-asiatarkastamatta-rows)
+        hakemukset-rows (get-hakemukset-rows)
         output (ByteArrayOutputStream.)
         wb (spreadsheet/create-workbook
             "Loppuselvitysraportti"
@@ -71,6 +81,6 @@ left join taloustarkastetut_loppuselvitykset tl on tl.year = l.year
             "Hakemukset"
             (concat
              [["Hakemuksen asiatunnus" "Avustushaun nimi" "Hakijaorganisaatio" "Myönnetty avustus"]]
-             [[]]))]
+             (make-loppuselvitysraportti-rows hakemukset-rows)))]
     (.write wb output)
     (.toByteArray output)))
