@@ -84,6 +84,18 @@ test('at least one loppuselvitys is not asiatarkastettu', async ({
     const sheet = workbook.Sheets['Hakemukset']
     expectHakemusSheetHeaders(sheet)
   })
+
+  await test.step('Hakemukset sheet has at least one row', () => {
+    const sheet = workbook.Sheets['Hakemukset']
+    expect(sheet['A2'].t).toEqual('s')
+    expect(sheet['A2'].v.length).toBeGreaterThan(0)
+    expect(sheet['B2'].t).toEqual('s')
+    expect(sheet['B2'].v.length).toBeGreaterThan(0)
+    expect(sheet['C2'].t).toEqual('s')
+    expect(sheet['C2'].v.length).toBeGreaterThan(0)
+    expect(sheet['D2'].t).toEqual('n')
+    expect(sheet['D2'].v).toBeGreaterThan(0)
+  })
 })
 
 function expectHakemusSheetHeaders(sheet: xlsx.WorkSheet) {
