@@ -4,6 +4,14 @@ set -o errexit -o nounset -o pipefail
 # shellcheck source=scripts/common-functions.sh
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 
+trap extract_docker_compose_logs EXIT
+
+function extract_docker_compose_logs {
+  cd "$repo"
+  mkdir -p playwright-results
+  docker-compose --file "$DOCKER_COMPOSE_FILE" logs --timestamps > playwright-results/docker-compose-logs.txt
+}
+
 function main {
   start_gh_actions_group "build"
   build_jars
