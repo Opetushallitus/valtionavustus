@@ -1,6 +1,6 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import * as queryString from 'query-string'
+import queryString from 'query-string'
 // @ts-ignore react-widgets-moment doesn't have proper types
 import MomentLocalizer from 'react-widgets-moment'
 import Localization from 'react-widgets/Localization'

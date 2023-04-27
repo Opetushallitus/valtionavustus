@@ -100,8 +100,8 @@ function initialStateTemplateTransformation(template: VaAppStateTemplate) {
   template.normalizedHakemus = normalizedHakemusP
   template.muutoshakemukset = muutoshakemuksetP
   template.configuration.environment = environmentP
-  template.saveStatus.hakemusId = query.hakemus
-  template.token = query.token
+  template.saveStatus.hakemusId = query.hakemus as string
+  template.token = query.token as string
 }
 
 function isOfficerEdit(savedObject: SavedObject) {
@@ -177,8 +177,8 @@ function initVaFormController() {
           state={state}
           hakemusType="hakemus"
           useBusinessIdSearch={true}
-          refuseGrant={urlContent.parsedQuery['refuse-grant']}
-          modifyApplication={urlContent.parsedQuery['modify-application']}
+          refuseGrant={urlContent.parsedQuery['refuse-grant'] as string | undefined}
+          modifyApplication={urlContent.parsedQuery['modify-application'] as string | undefined}
         />
       )
     },

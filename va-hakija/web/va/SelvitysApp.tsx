@@ -30,7 +30,7 @@ const selvitysType =
   location.pathname.indexOf('loppuselvitys') !== -1 ? 'loppuselvitys' : 'valiselvitys'
 const query = queryString.parse(location.search)
 const selvitysId = query[selvitysType]
-const showPreview = query.preview
+const showPreview = query.preview as string
 const lang = query.lang
 
 function containsExistingEntityId(urlContent: UrlContent): boolean {
@@ -192,7 +192,7 @@ const environmentP = Bacon.fromPromise<EnvironmentApiResponse>(
 function initialStateTemplateTransformation(template: SelvitysAppStateTemplate) {
   template.avustushaku = avustusHakuP
   template.configuration.environment = environmentP
-  template.saveStatus.hakemusId = query[selvitysType]
+  template.saveStatus.hakemusId = query[selvitysType] as string
 }
 
 function onInitialStateLoaded(initialState: SelvitysAppStateLoopState) {
@@ -288,8 +288,9 @@ function redirectToNewSelvitys(
   })
 }
 
-if (!selvitysId && query.hakemus) {
-  redirectToNewSelvitys(avustusHakuId, query.hakemus, selvitysType, showPreview)
+const hakemus = query.hakemus
+if (!selvitysId && typeof hakemus === 'string') {
+  redirectToNewSelvitys(avustusHakuId, hakemus, selvitysType, showPreview)
 } else {
   const app = initFormController()
   const container = document.getElementById('app')
