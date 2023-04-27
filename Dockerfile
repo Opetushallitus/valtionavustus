@@ -18,7 +18,7 @@ COPY .babelrc .
 RUN npm run build-production
 
 
-FROM openjdk:8
+FROM eclipse-temurin:8
 
 WORKDIR /app
 
