@@ -35,8 +35,15 @@ function rename_panes_to_match_the_script_they_run {
 
 init
 
-docker compose pull
-docker compose create
+if [ -d "$repo/../valtionavustus-secret/" ]; then
+  readonly compose="docker compose -f docker-compose.yml -f docker-compose.with-secret.yml"
+else
+  readonly compose="docker compose -f docker-compose.yml"
+fi
+
+
+$compose pull
+$compose create
 
 session="valtionavustus"
 
@@ -47,7 +54,7 @@ tmux new-session -d -s $session -c "$repo"
 tmux splitw -h
 tmux splitw -h
 
-readonly up_cmd="docker compose up --no-log-prefix --build"
+readonly up_cmd="$compose up --no-log-prefix --build"
 
 tmux select-pane -t 0
 tmux send-keys "$up_cmd db" C-m

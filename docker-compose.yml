@@ -18,10 +18,6 @@ services:
         read_only: true
         source: ./server/src
         target: /app/server/src
-      - type: bind
-        read_only: true
-        source: ../valtionavustus-secret/
-        target: /valtionavustus-secret/
     ports:
       - '8081:8081'
     depends_on:
@@ -53,6 +49,10 @@ services:
       JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
     volumes:
       - /dev/urandom:/dev/random
+      - type: bind
+        read_only: true
+        source: ./server/src
+        target: /app/server/src
     ports:
       - '8080:8080'
     depends_on:
