@@ -75,7 +75,7 @@
   "private": false,
   "scripts": {
     "playwright:test": "playwright test --config=playwright/playwright.config.ts",
-    "build": "webpack",
+    "build": "webpack --progress",
     "build-production": "NODE_ENV=production npm run build",
     "build-watch": "webpack --progress --watch",
     "prettier-check-project": "prettier --check .",

@@ -8,8 +8,8 @@
           :without-authentication? true
           :require-https? false
           :payment-service-sftp {:enabled? true
-                                 :host-ip "127.0.0.1"
-                                 :port 42022
+                                 :host-ip "maksatuspalvelu"
+                                 :port 22
                                  :local-path "/tmp/"
                                  :remote_path "./to_handi/va/"
                                  :remote_path_from "./from_handi/va/"
@@ -17,8 +17,8 @@
                                  :password "pass"}
 
           :rondo-sftp {:enabled? true
-                       :host-ip "127.0.0.1"
-                       :port 42022
+                       :host-ip "maksatuspalvelu"
+                       :port 22
                        :local-path "/tmp/"
                        :remote_path "./to_handi/va/"
                        :remote_path_from "./from_handi/va/"
@@ -26,11 +26,12 @@
                        :password "pass"}}
  :api {:restricted-routes? false}
  :db {:database-name "va-dev"
-      :port-number 42042}
+      :server-name "va-postgres"
+      :port-number 5432}
  :nrepl-enabled? true
  :email {:enabled? true
-         :host "localhost"
-         :port 42069}
+         :host "fakesmtp"
+         :port 25}
  :payments {:enabled? true
             :delete-payments? true}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}

@@ -6,3 +6,6 @@
 
 ./scripts/postgres-docker/postgres-data
 ./scripts/postgres-docker/postgres-data-12-2
+
+./server/resources/public/hakija/js/
+./server/resources/public/virkailija/js/

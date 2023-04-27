@@ -3,7 +3,7 @@ set -o errexit -o nounset -o pipefail
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 
 function stop() {
-  docker-compose --file docker-compose-test.yml down || true
+  docker compose down --remove-orphans || true
 }
 trap stop EXIT
 
@@ -12,9 +12,7 @@ RUN_DATABASE_ARGS=""
 
 function init {
   require_command tmux
-  require_command nc
   require_docker
-  init_nodejs
 
   while getopts "r:" opt
   do
@@ -37,32 +35,37 @@ function rename_panes_to_match_the_script_they_run {
 
 init
 
+docker compose pull
+docker compose create
+
 session="valtionavustus"
 
 tmux kill-session -t $session || true
 tmux start-server
-tmux new-session -d -s $session
+tmux new-session -d -s $session -c "$repo"
 
 tmux splitw -h
 tmux splitw -h
+
+readonly up_cmd="docker compose up --no-log-prefix --build"
 
 tmux select-pane -t 0
-tmux send-keys "$repo/scripts/run_database.sh ${RUN_DATABASE_ARGS}" C-m
+tmux send-keys "$up_cmd db" C-m
 
 tmux splitw -v
 tmux send-keys "$repo/scripts/run_frontend.sh" C-m
 
 tmux select-pane -t 2
-tmux send-keys "$repo/scripts/run_hakija_server.sh" C-m
+tmux send-keys "$up_cmd hakija" C-m
 
 tmux splitw -v
-tmux send-keys "$repo/scripts/run_fakesmtp.sh" C-m
+tmux send-keys "$up_cmd fakesmtp" C-m
 
 tmux select-pane -t 4
-tmux send-keys "$repo/scripts/run_virkailija_server.sh" C-m
+tmux send-keys "$up_cmd virkailija" C-m
 
 tmux splitw
-tmux send-keys "$repo/scripts/run_maksatuspalvelu.sh" C-m
+tmux send-keys "$up_cmd maksatuspalvelu" C-m
 
 if [ ! -z $RESTORE_FILE ]; then
   tmux new-window

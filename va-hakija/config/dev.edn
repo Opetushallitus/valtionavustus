@@ -6,9 +6,10 @@
                 :sv "http://localhost:8080/"}}
  :api {:restricted-routes? false}
  :db {:database-name "va-dev"
-      :port-number 42042}
+      :server-name "va-postgres"
+      :port-number 5432}
  :nrepl-enabled? true
  :email {:enabled? true
-         :host "localhost"
-         :port 42069}
+         :host "fakesmtp"
+         :port 25}
  :applications-ui {:enabled? true}}

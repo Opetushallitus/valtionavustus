@@ -1,0 +1,126 @@
+version: '3.3'
+
+services:
+  virkailija:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: va-server:latest
+    pull_policy: never
+    command: with-profile virkailija-dev run -m oph.va.virkailija.main
+    container_name: va-virkailija
+    hostname: va-virkailija
+    environment:
+      JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
+    volumes:
+      - /dev/urandom:/dev/random
+      - type: bind
+        read_only: true
+        source: ./server/src
+        target: /app/server/src
+      - type: bind
+        read_only: true
+        source: ../valtionavustus-secret/
+        target: /valtionavustus-secret/
+    ports:
+      - '8081:8081'
+    depends_on:
+      hakija:
+        condition: service_healthy
+      fakesmtp:
+        condition: service_started
+      maksatuspalvelu:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:8081/api/healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 666
+    logging:
+      options:
+        mode: 'non-blocking'
+
+  hakija:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: va-server:latest
+    pull_policy: never
+    command: with-profile hakija-dev run -m oph.va.hakija.main
+    container_name: va-hakija
+    hostname: va-hakija
+    environment:
+      JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
+    volumes:
+      - /dev/urandom:/dev/random
+    ports:
+      - '8080:8080'
+    depends_on:
+      db:
+        condition: service_healthy
+      fakesmtp:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:8080/api/healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging:
+      options:
+        mode: 'non-blocking'
+
+
+  db:
+    image: postgres:12.2
+    volumes:
+      - ./scripts/postgres-docker/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    container_name: va-postgres
+    hostname: va-postgres
+    ports:
+      - '42042:5432'
+    command: ["postgres", "-c", "log_statement=all"]
+    environment:
+      POSTGRES_USER: 'va'
+      POSTGRES_PASSWORD: 'va'
+      PGDATA: '/tmp/'
+      TZ: "Europe/Helsinki"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      options:
+        mode: 'non-blocking'
+
+
+  fakesmtp:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.rcs-fakesmtp
+    container_name: rcs-fakesmtp
+    hostname: fakesmtp
+    volumes:
+      - ./fakesmtp/mail:/var/mail
+    ports:
+      - '42069:25'
+    logging:
+      options:
+        mode: 'non-blocking'
+
+  maksatuspalvelu:
+    image: atmoz/sftp
+    hostname: maksatuspalvelu
+    volumes:
+      - ./maksatuspalvelu/initialize-maksatuspalvelu.sh:/etc/sftp.d/initialize-maksatuspalvelu.sh
+      - ./maksatuspalvelu/identity/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
+      - ./maksatuspalvelu/identity/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
+    ports:
+      - '42022:22'
+    command: demo:pass:1001:100
+    logging:
+      options:
+        mode: 'non-blocking'
+
+volumes:
+  va-postgres-pgdata:
