@@ -55,9 +55,19 @@
         "groupName": "redux packages"
       },
       {
-        "matchManagers": ["nvm", "npm"],
+        "matchManagers": ["nvm", "npm", "dockerfile"],
         "matchPackageNames": ["@types/node", "node"],
         "groupName": "Node.js"
+      },
+      {
+        "matchManagers": ["dockerfile"],
+        "matchPackageNames": ["eclipse-temurin"],
+        "versioning": "regex:^(?<major>\\d+)(((\\.|u)(?<minor>\\d+))?(\\.(?<patch>\\d+))?((_|-b)(?<build>\\d+))?)-(?<compatibility>.*)$"
+      },
+      {
+        "matchPackageNames": ["eclipse-temurin"],
+        "matchUpdateTypes": ["major"],
+        "enabled": false
       }
     ],
     "prConcurrentLimit": 5
