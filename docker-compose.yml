@@ -41,7 +41,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    image: va-server:latest
+    image: ${VA_SERVER_TAG-va-server:latest}
     pull_policy: never
     volumes:
       - /dev/urandom:/dev/random
