@@ -6,13 +6,15 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functio
 
 trap extract_docker_compose_logs EXIT
 
+readonly RESULTS_DIR="$repo/playwright-results"
 function extract_docker_compose_logs {
   cd "$repo"
-  mkdir -p playwright-results
-  docker-compose --file "$DOCKER_COMPOSE_FILE" logs --timestamps > playwright-results/docker-compose-logs.txt
+  docker-compose --file "$DOCKER_COMPOSE_FILE" logs --timestamps > "$RESULTS_DIR/docker-compose-logs.txt"
 }
 
 function main {
+  mkdir -p "$RESULTS_DIR"
+
   start_gh_actions_group "build"
   build_jars
   init_nodejs
@@ -21,6 +23,7 @@ function main {
   start_gh_actions_group "run prettier"
   npm run prettier-check-project
   end_gh_actions_group
+
 
   start_gh_actions_group "run playwright tests"
   readonly test_runner_service="test-runner"
