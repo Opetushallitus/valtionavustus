@@ -4,7 +4,11 @@ set -o errexit -o nounset -o pipefail
 # shellcheck source=../scripts/common-functions.sh
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../scripts/common-functions.sh"
 
-readonly github_registry="ghcr.io/opetushallitus"
+# shellcheck source=./deploy-functions.sh
+source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/deploy-functions.sh"
+
+readonly service_name="va-server"
+readonly image_tag="$github_registry:$revision"
 
 function main {
   require_command docker
@@ -14,21 +18,18 @@ function main {
 
   local tags_to_push=()
 
-  local image_tag="$github_registry/va-server:${GITHUB_SHA:-$(git rev-parse HEAD)}"
-
-  info "Building $image_tag"
+  start_gh_actions_group "Building $image_tag"
   export VA_SERVER_TAG="$image_tag"
-  docker compose build --pull va-server
+  docker compose build --pull "$service_name"
   tags_to_push+=("$image_tag")
-
+  end_gh_actions_group
 
   if [ -n "${GITHUB_REF_NAME:-}" ]; then
-    readonly ref_tag="$github_registry/va-server:$GITHUB_REF_NAME"
+    readonly ref_tag="$github_registry:$GITHUB_REF_NAME"
     info "Tagging as $ref_tag"
     docker tag "$image_tag" "$ref_tag"
     tags_to_push+=("$ref_tag")
   fi
-
 
   if [ "${GITHUB_ACTIONS:-}" == "true" ]; then
     info "Pushing tags"
@@ -40,10 +41,25 @@ function main {
   else
     info "Not pushing tags when running locally"
   fi
+
+  build_jar
 }
 
-function require_docker_compose {
-  docker compose > /dev/null || fatal "docker compose missing"
+function build_jar {
+  start_gh_actions_group "lein uberjar"
+
+  info "lein uberjar"
+  readonly uberjar_container="va-server-uberjar"
+  docker rm $uberjar_container || true
+  docker compose run \
+    --name "$uberjar_container" \
+    $service_name \
+    uberjar
+  docker cp \
+    "$uberjar_container:/app/target/uberjar/valtionavustus-0.1.0-SNAPSHOT-standalone.jar" \
+    "$standalone_jar"
+
+  end_gh_actions_group
 }
 
 main

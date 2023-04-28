@@ -31,6 +31,10 @@ function docker-compose () {
     fi
 }
 
+function require_docker_compose {
+  docker compose > /dev/null || fatal "docker compose missing"
+}
+
 function stop_system_under_test () {
   info "Stopping system under test"
   docker-compose -f "${DOCKER_COMPOSE_FILE}" down --remove-orphans
