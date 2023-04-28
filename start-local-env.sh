@@ -2,8 +2,15 @@
 set -o errexit -o nounset -o pipefail
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 
+compose="docker compose -f docker-compose.yml"
+if [ -d "$repo/../valtionavustus-secret/" ]; then
+  compose="$compose -f docker-compose.with-secret.yml"
+fi
+compose="$compose -f docker-compose.local-dev.yml"
+readonly compose
+
 function stop() {
-  docker compose down --remove-orphans || true
+  $compose down --remove-orphans || true
 }
 trap stop EXIT
 
@@ -22,14 +29,6 @@ function rename_panes_to_match_the_script_they_run {
 }
 
 init
-
-compose="docker compose -f docker-compose.yml"
-if [ -d "$repo/../valtionavustus-secret/" ]; then
-  compose="$compose -f docker-compose.with-secret.yml"
-fi
-compose="$compose -f docker-compose.local-dev.yml"
-readonly compose
-
 
 $compose pull
 $compose create db hakija virkailija fakesmtp maksatuspalvelu
