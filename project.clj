@@ -43,7 +43,7 @@
 
                          ;; json
                          [cheshire "5.11.0"]
-                         [org.clojure/data.json "0.2.7"]
+                         [org.clojure/data.json "2.4.0"]
                          [com.fasterxml.jackson.core/jackson-core ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-databind ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-annotations ~jackson-version]
