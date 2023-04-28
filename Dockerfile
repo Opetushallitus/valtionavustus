@@ -19,6 +19,7 @@ RUN npm run build-production
 
 
 FROM eclipse-temurin:8u372-b07-jdk-jammy
+LABEL org.opencontainers.image.source=https://github.com/opetushallitus/valtionavustus
 
 WORKDIR /app
 
