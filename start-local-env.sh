@@ -35,11 +35,12 @@ function rename_panes_to_match_the_script_they_run {
 
 init
 
+compose="docker compose -f docker-compose.yml"
 if [ -d "$repo/../valtionavustus-secret/" ]; then
-  readonly compose="docker compose -f docker-compose.yml -f docker-compose.with-secret.yml"
-else
-  readonly compose="docker compose -f docker-compose.yml"
+  compose="$compose -f docker-compose.with-secret.yml"
 fi
+compose="$compose -f docker-compose.local-dev.yml"
+readonly compose
 
 
 $compose pull

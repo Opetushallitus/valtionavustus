@@ -1,0 +1,11 @@
+services:
+  hakija:
+    volumes:
+      - type: bind
+        source: ./server/
+        target: /app/server/
+  virkailija:
+    volumes:
+      - type: bind
+        source: ./server/
+        target: /app/server/
