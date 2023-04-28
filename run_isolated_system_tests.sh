@@ -25,7 +25,6 @@ function playwright_test_runner_exit_code {
 
 function main {
   init_nodejs
-  npm_ci_if_package_lock_has_changed
   run_tests "$@"
 }
 
