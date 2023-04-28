@@ -7,21 +7,9 @@ function stop() {
 }
 trap stop EXIT
 
-RESTORE_FILE=""
-RUN_DATABASE_ARGS=""
-
 function init {
   require_command tmux
   require_docker
-
-  while getopts "r:" opt
-  do
-    case $opt in
-      (r) RUN_DATABASE_ARGS="-r"; RESTORE_FILE="$OPTARG" ;;
-      (*) printf "Illegal option '-%s'\n" "$opt" && exit 1 ;;
-    esac
-  done
-
 }
 
 function rename_panes_to_match_the_script_they_run {
@@ -44,7 +32,7 @@ readonly compose
 
 
 $compose pull
-$compose create
+$compose create db hakija virkailija fakesmtp maksatuspalvelu
 
 session="valtionavustus"
 
@@ -74,11 +62,6 @@ tmux send-keys "$up_cmd virkailija" C-m
 
 tmux splitw
 tmux send-keys "$up_cmd maksatuspalvelu" C-m
-
-if [ ! -z $RESTORE_FILE ]; then
-  tmux new-window
-  tmux send-keys "$repo/scripts/restore_dump.sh $RESTORE_FILE" C-m
-fi
 
 rename_panes_to_match_the_script_they_run
 

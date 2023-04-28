@@ -1,3 +1,4 @@
+name: valtionavustus-dev
 services:
   hakija:
     volumes:

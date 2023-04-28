@@ -1,5 +1,7 @@
 version: '3.3'
 
+name: valtionavustus
+
 services:
   virkailija:
     extends:
@@ -105,6 +107,3 @@ services:
     logging:
       options:
         mode: 'non-blocking'
-
-volumes:
-  va-postgres-pgdata:
