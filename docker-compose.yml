@@ -10,7 +10,7 @@ services:
     container_name: va-virkailija
     hostname: va-virkailija
     ports:
-      - '8081:8081'
+      - '127.0.0.1:8081:8081'
     depends_on:
       hakija:
         condition: service_healthy
@@ -28,7 +28,7 @@ services:
     container_name: va-hakija
     hostname: va-hakija
     ports:
-      - '8080:8080'
+      - '127.0.0.1:8080:8080'
     depends_on:
       db:
         condition: service_healthy
@@ -63,7 +63,7 @@ services:
     container_name: va-postgres
     hostname: va-postgres
     ports:
-      - '42042:5432'
+      - '127.0.0.1:42042:5432'
     command: ["postgres", "-c", "log_statement=all"]
     environment:
       POSTGRES_USER: 'va'
@@ -89,7 +89,7 @@ services:
     volumes:
       - ./fakesmtp/mail:/var/mail
     ports:
-      - '42069:25'
+      - '127.0.0.1:42069:25'
     logging:
       options:
         mode: 'non-blocking'
@@ -102,7 +102,7 @@ services:
       - ./maksatuspalvelu/identity/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
       - ./maksatuspalvelu/identity/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
     ports:
-      - '42022:22'
+      - '127.0.0.1:42022:22'
     command: demo:pass:1001:100
     logging:
       options:
