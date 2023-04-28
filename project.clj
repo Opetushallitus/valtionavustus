@@ -28,7 +28,7 @@
             [reifyhealth/lein-git-down "0.4.1"]]
 
   :managed-dependencies [[org.clojure/clojure "1.11.1"]
-                         [nrepl "0.9.0"]
+                         [nrepl "1.0.0"]
                          [cider/cider-nrepl "0.30.0"]
 
                          ;; http
