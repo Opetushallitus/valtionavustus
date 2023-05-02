@@ -40,7 +40,7 @@
     "route-parser": "^0.0.5",
     "seamless-immutable": "^7.1.4",
     "speakingurl": "^14.0.0",
-    "yup": "^0.29.3"
+    "yup": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.10",
