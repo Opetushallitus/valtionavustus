@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk
+FROM openjdk:21-jdk
 
 COPY ./target/uberjar/valtionavustus-0.1.0-SNAPSHOT-standalone.jar /app/va-virkailija/app.jar
 COPY ./va-virkailija/config/defaults.edn /app/va-virkailija/config/defaults.edn
