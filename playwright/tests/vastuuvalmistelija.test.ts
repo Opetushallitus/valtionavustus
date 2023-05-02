@@ -33,14 +33,11 @@ defaultValues('Vastuuvalmistelija role', async ({ page, userCache }) => {
     await expect(hakuRole.vastuuvalmistelija.email).toHaveValue('viivi.virkailja@exmaple.com')
   })
 
-  await test.step(
-    'the previous vastuuvalmistelija is automatically set as regular valmistelija to avoid losing edit rights to haku',
-    async () => {
-      await expect(vaRoleRow.select).toHaveValue('presenting_officer')
-      await expect(vaRoleRow.nameInput).toHaveValue('_ valtionavustus')
-      await expect(vaRoleRow.emailInput).toHaveValue('santeri.horttanainen@reaktor.com')
-    }
-  )
+  await test.step('the previous vastuuvalmistelija is automatically set as regular valmistelija to avoid losing edit rights to haku', async () => {
+    await expect(vaRoleRow.select).toHaveValue('presenting_officer')
+    await expect(vaRoleRow.nameInput).toHaveValue('_ valtionavustus')
+    await expect(vaRoleRow.emailInput).toHaveValue('santeri.horttanainen@reaktor.com')
+  })
 
   await test.step('name and email can be changed', async () => {
     await hakuRole.vastuuvalmistelija.name.fill('vastuu')

@@ -9,7 +9,14 @@ export async function getTasmaytysraporit(
   avustushakuId: number,
   request: APIRequestContext
 ): Promise<
-  [{ 'avustushaku-id': string; contents: string; 'mailed-at': string; mailed_at: string }]
+  [
+    {
+      'avustushaku-id': string
+      contents: string
+      'mailed-at': string
+      mailed_at: string
+    }
+  ]
 > {
   const res = await request.get(
     `${VIRKAILIJA_URL}/api/test/avustushaku/${avustushakuId}/get-tasmaytysraportti-email`,

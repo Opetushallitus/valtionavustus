@@ -10,7 +10,7 @@ import { HakemusAccessControl, VaCodeValue } from '../../../va-virkailija/web/va
 import { TalousarviotiliWithKoulutusasteet } from '../../../va-virkailija/web/va/hakujenHallinta/hakuReducer'
 
 export const languages = ['fi', 'sv'] as const
-export type Language = typeof languages[number]
+export type Language = (typeof languages)[number]
 export type LegacyTranslations = typeof translations
 export type LegacyTranslationDict = {
   [k in string]: string | LegacyTranslationDict
@@ -94,7 +94,7 @@ export const ALL_STATUSES = [
   'rejected',
   'accepted',
 ] as const
-export type HakemusArviointiStatus = typeof ALL_STATUSES[number]
+export type HakemusArviointiStatus = (typeof ALL_STATUSES)[number]
 
 export interface Answers {
   value: Answer[]
@@ -289,11 +289,11 @@ export interface Hakemus {
 }
 
 export const AVUSTUSHAKU_STATUSES = ['new', 'draft', 'published', 'resolved', 'deleted'] as const
-export type AvustushakuStatus = typeof AVUSTUSHAKU_STATUSES[number]
+export type AvustushakuStatus = (typeof AVUSTUSHAKU_STATUSES)[number]
 
 export const AVUSTUSHAKU_PHASES = ['upcoming', 'current', 'ended', 'unpublished'] as const
 
-export type AvustushakuPhase = typeof AVUSTUSHAKU_PHASES[number]
+export type AvustushakuPhase = (typeof AVUSTUSHAKU_PHASES)[number]
 
 export type AvustushakuType = 'yleisavustus' | 'erityisavustus'
 
@@ -364,7 +364,7 @@ export const Koulutusasteet = [
   'Muut',
 ] as const
 
-type MyonteinenLisateksti = Keyprefix<'myonteinenlisateksti-', typeof Koulutusasteet[number]>
+type MyonteinenLisateksti = Keyprefix<'myonteinenlisateksti-', (typeof Koulutusasteet)[number]>
 
 export type Decision = Partial<
   {
@@ -486,7 +486,7 @@ export const addableFields = [
   'growingFieldsetChild',
   'h1',
 ] as const
-export type AddableFieldType = typeof addableFields[number]
+export type AddableFieldType = (typeof addableFields)[number]
 export type NonAddableFieldType =
   | 'fixedMultiplierField'
   | 'moneyField'

@@ -79,11 +79,8 @@ test('external api', async ({
     expect(avustushaku).toBeUndefined()
   })
 
-  await test.step(
-    'does not return hakemuses when avustushaku is disallowed from external api',
-    async () => {
-      const hakemukset = await getHakemuksetForAvustushaku(avustushakuID)
-      expect(hakemukset).toEqual([])
-    }
-  )
+  await test.step('does not return hakemuses when avustushaku is disallowed from external api', async () => {
+    const hakemukset = await getHakemuksetForAvustushaku(avustushakuID)
+    expect(hakemukset).toEqual([])
+  })
 })

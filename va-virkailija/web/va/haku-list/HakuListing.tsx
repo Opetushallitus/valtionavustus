@@ -43,7 +43,7 @@ const SORTING_KEYS = [
 
 type SortOrder = 'asc' | 'desc'
 
-type SortKey = typeof SORTING_KEYS[number]
+type SortKey = (typeof SORTING_KEYS)[number]
 
 type SorterMap = {
   [k in SortKey]: (h: Avustushaku) => number | string

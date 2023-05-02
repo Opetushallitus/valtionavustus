@@ -575,7 +575,7 @@ export const updateField = createAsyncThunk<
   const basicFields = ['loppuselvitysdate', 'valiselvitysdate', 'register-number'] as const
   let avustushaku = _.cloneDeep(update.avustushaku)
   if (basicFields.indexOf(fieldId as any) > -1) {
-    avustushaku[fieldId as typeof basicFields[number]] = update.newValue
+    avustushaku[fieldId as (typeof basicFields)[number]] = update.newValue
   } else if (fieldId === 'haku-self-financing-percentage') {
     avustushaku.content['self-financing-percentage'] = parseInt(update.newValue)
   } else if (fieldId.startsWith('haku-name-')) {

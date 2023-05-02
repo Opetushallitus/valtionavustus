@@ -294,15 +294,12 @@ test.describe.parallel('talousarviotilien hallinta', () => {
         await expect(row).toBeVisible()
         await expect(deleteRowButton).toBeEnabled()
       })
-      await test.step(
-        'delete through api to make sure the earlier api call actually did what it was supposed to',
-        async () => {
-          await expect(await deleteRequest()).toBeOK()
-          await koodienhallintaPage.page.reload()
-          await expect(koodienhallintaPage.taTilit.form.submitBtn).toBeVisible()
-          await expect(row).toBeHidden()
-        }
-      )
+      await test.step('delete through api to make sure the earlier api call actually did what it was supposed to', async () => {
+        await expect(await deleteRequest()).toBeOK()
+        await koodienhallintaPage.page.reload()
+        await expect(koodienhallintaPage.taTilit.form.submitBtn).toBeVisible()
+        await expect(row).toBeHidden()
+      })
     }
   )
   const doubleDots = ['..1.1.1', '00..00.00.', '0.0.21.22..'] as const

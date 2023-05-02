@@ -35,22 +35,19 @@ newHakemusTest('an unsubmitted (draft) hakemus', async ({ avustushakuID, newHake
     expect(await hakemusListPage.hakemusRows.count()).toBe(0)
   })
 
-  await test.step(
-    'is shown in showAll list after applicant has edited application for the first time',
-    async () => {
-      await page.goto(newHakemus)
-      await hakijaPage.fillInBusinessId(TEST_Y_TUNNUS)
-      await hakijaPage.waitForEditSaved()
+  await test.step('is shown in showAll list after applicant has edited application for the first time', async () => {
+    await page.goto(newHakemus)
+    await hakijaPage.fillInBusinessId(TEST_Y_TUNNUS)
+    await hakijaPage.waitForEditSaved()
 
-      await hakemusListPage.navigate(avustushakuID)
-      await hakemusListPage.showUnfinished.check()
-      await hakemusListPage.hakemusListing.waitFor({ timeout: 5000 })
-      const rows = hakemusListPage.hakemusRows
-      expect(await rows.count()).toBe(1)
-      const row = rows.first()
-      await row.locator('text=Keskeneräinen').waitFor()
-    }
-  )
+    await hakemusListPage.navigate(avustushakuID)
+    await hakemusListPage.showUnfinished.check()
+    await hakemusListPage.hakemusListing.waitFor({ timeout: 5000 })
+    const rows = hakemusListPage.hakemusRows
+    expect(await rows.count()).toBe(1)
+    const row = rows.first()
+    await row.locator('text=Keskeneräinen').waitFor()
+  })
 
   await test.step('can be submitted by admin', async () => {
     await hakemusListPage.navigateToLatestHakemusArviointi(avustushakuID, true)

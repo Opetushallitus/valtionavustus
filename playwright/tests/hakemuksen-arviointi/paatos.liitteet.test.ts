@@ -63,22 +63,19 @@ test('paatos liitteet', async ({
     await expect(yleisOhjeCheckbox).toBeChecked()
     await hakemustenArviointiPage.waitForSave()
   })
-  await test.step(
-    'after selecting to add yleisohje only the newest ohje is enabled and checked',
-    async () => {
-      for (let i = 0; i <= 4; i++) {
-        const nthYleisohje = yleisOhjeLiite.nth(i)
-        if (i === 4) {
-          await expect(nthYleisohje).toBeEnabled()
-          await expect(nthYleisohje).toBeChecked()
-          await nthYleisohje.click()
-        } else {
-          await expect(nthYleisohje).toBeDisabled()
-          await expect(nthYleisohje).not.toBeChecked()
-        }
+  await test.step('after selecting to add yleisohje only the newest ohje is enabled and checked', async () => {
+    for (let i = 0; i <= 4; i++) {
+      const nthYleisohje = yleisOhjeLiite.nth(i)
+      if (i === 4) {
+        await expect(nthYleisohje).toBeEnabled()
+        await expect(nthYleisohje).toBeChecked()
+        await nthYleisohje.click()
+      } else {
+        await expect(nthYleisohje).toBeDisabled()
+        await expect(nthYleisohje).not.toBeChecked()
       }
     }
-  )
+  })
   await test.step('pakote ohje is enabled by default', async () => {
     await expect(pakoteOhjeCheckbox).toBeChecked()
   })

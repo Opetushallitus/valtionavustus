@@ -31,7 +31,7 @@ export const paatosStatuses = [
 ] as const
 
 interface PaatosStatusRadioButtonProps {
-  paatosStatus: typeof paatosStatuses[number]
+  paatosStatus: (typeof paatosStatuses)[number]
   f: MuutoshakemusPaatosFormValues
   group: keyof Omit<MuutoshakemusPaatosFormValues['values'], 'reason'>
   talousarvioValues: TalousarvioValues | undefined

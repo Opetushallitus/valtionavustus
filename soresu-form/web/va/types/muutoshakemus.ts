@@ -31,10 +31,10 @@ const PAATOS_ACCEPTED_WITH_CHANGES = 'accepted_with_changes'
 const PAATOS_REJECTED = 'rejected'
 
 const PAATOS_STATUSES = [PAATOS_ACCEPTED, PAATOS_ACCEPTED_WITH_CHANGES, PAATOS_REJECTED] as const
-export type PaatosStatus = typeof PAATOS_STATUSES[number]
+export type PaatosStatus = (typeof PAATOS_STATUSES)[number]
 
 export const MuutoshakemusStatuses = [...PAATOS_STATUSES, 'new'] as const
-export type MuutoshakemusStatus = typeof MuutoshakemusStatuses[number]
+export type MuutoshakemusStatus = (typeof MuutoshakemusStatuses)[number]
 
 export interface Muutoshakemus {
   id: number

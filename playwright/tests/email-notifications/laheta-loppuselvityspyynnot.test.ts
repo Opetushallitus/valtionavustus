@@ -71,22 +71,19 @@ async function sendLoppuselvitysEmails(page: Page, avustushakuID: number) {
 }
 
 test.describe.parallel('loppuselvitys', () => {
-  test.describe(
-    'notifications are sent repeatedly until loppuselvityspyynnöt have been sent',
-    () => {
-      const loppuselvitysDeadline = moment().add(8, 'months').format('DD.MM.YYYY')
-      notifyTest.use({ loppuselvitysDate: loppuselvitysDeadline })
-      notifyTest(
-        'loppuselvitys notification is sent repeatedly',
-        async ({ page, loppuselvitysDateSet, avustushakuID }) => {
-          expect(loppuselvitysDateSet)
-          await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
-          await sendLoppuselvitysEmails(page, avustushakuID)
-          await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
-        }
-      )
-    }
-  )
+  test.describe('notifications are sent repeatedly until loppuselvityspyynnöt have been sent', () => {
+    const loppuselvitysDeadline = moment().add(8, 'months').format('DD.MM.YYYY')
+    notifyTest.use({ loppuselvitysDate: loppuselvitysDeadline })
+    notifyTest(
+      'loppuselvitys notification is sent repeatedly',
+      async ({ page, loppuselvitysDateSet, avustushakuID }) => {
+        expect(loppuselvitysDateSet)
+        await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
+        await sendLoppuselvitysEmails(page, avustushakuID)
+        await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
+      }
+    )
+  })
 
   test.describe('when loppuselvitys deadline is in the past', () => {
     notifyTest.use({

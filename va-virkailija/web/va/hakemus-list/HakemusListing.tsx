@@ -37,9 +37,9 @@ interface Props {
   additionalInfoOpen: boolean
 }
 
-type MuutoshakemusStatuses = typeof Muutoshakemus.statuses[number]
-type ValiselvitysStatuses = typeof HakemusSelvitys.statuses[number]
-type LoppuselvitysStatuses = typeof Loppuselvitys.statuses[number]
+type MuutoshakemusStatuses = (typeof Muutoshakemus.statuses)[number]
+type ValiselvitysStatuses = (typeof HakemusSelvitys.statuses)[number]
+type LoppuselvitysStatuses = (typeof Loppuselvitys.statuses)[number]
 
 interface FilterState {
   status: {
@@ -69,7 +69,7 @@ const SORTING_KEYS = [
   'score',
 ] as const
 type SortOrder = 'asc' | 'desc'
-type SortKey = typeof SORTING_KEYS[number]
+type SortKey = (typeof SORTING_KEYS)[number]
 type SorterMap = {
   [k in SortKey]: (h: Hakemus) => number | string
 }

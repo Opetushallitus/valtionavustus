@@ -633,7 +633,12 @@ const SelectionCriteria = ({
             type="button"
             className="remove"
             onClick={() => {
-              dispatch(removeSelectionCriteria({ avustushakuId: avustushaku.id, index }))
+              dispatch(
+                removeSelectionCriteria({
+                  avustushakuId: avustushaku.id,
+                  index,
+                })
+              )
               dispatch(startAutoSaveForAvustushaku(avustushaku.id))
             }}
             title="Poista"

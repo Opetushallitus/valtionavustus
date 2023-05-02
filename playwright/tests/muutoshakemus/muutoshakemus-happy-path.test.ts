@@ -223,19 +223,15 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
       )
     })
 
-    await test.step(
-      'ukotettu valmistelija no longer gets notification for this avustushaku',
-      async () => {
-        await sendMuutoshakemuksiaKasittelemattaNotifications(page.request)
-        const emailsAfterSending = await getMuutoshakemuksetKasittelemattaEmails(
-          ukotettuValmistelijaEmail,
-          avustushakuID
-        )
-        const emailsAfterWithCurrentAvustushaku =
-          emailsAfterSending.filter(isCurrentAvustushakuEmail)
-        expect(emailsBeforeWithCurrentAvustushaku).toEqual(emailsAfterWithCurrentAvustushaku)
-      }
-    )
+    await test.step('ukotettu valmistelija no longer gets notification for this avustushaku', async () => {
+      await sendMuutoshakemuksiaKasittelemattaNotifications(page.request)
+      const emailsAfterSending = await getMuutoshakemuksetKasittelemattaEmails(
+        ukotettuValmistelijaEmail,
+        avustushakuID
+      )
+      const emailsAfterWithCurrentAvustushaku = emailsAfterSending.filter(isCurrentAvustushakuEmail)
+      expect(emailsBeforeWithCurrentAvustushaku).toEqual(emailsAfterWithCurrentAvustushaku)
+    })
 
     await test.step('Values are not overwritten after re-sending päätös', async () => {
       await hakemustenArviointiPage.page.click('text="Arviointi"')

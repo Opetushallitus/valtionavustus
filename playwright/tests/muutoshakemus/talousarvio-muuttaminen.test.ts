@@ -168,25 +168,22 @@ muutosTest(
       steamship: '1000',
       other: '9999',
     }
-    await test.step(
-      'virkailija seuranta tab shows the granted budget as accepted by OPH',
-      async () => {
-        await hakemustenArviointiPage.navigateToLatestMuutoshakemus(avustushakuID, hakemusID)
-        await hakemustenArviointiPage.tabs().seuranta.click()
-        for (const key of Object.keys(budget.description)) {
-          const budgetAmount = budget.amount[key as keyof BudgetAmount]
-          await expect(
-            page.locator(`[data-test-id=${key}-costs-row] td.granted-amount-column`)
-          ).toHaveText(budgetAmount)
-          await expect(page.locator(`[data-test-id=${key}-costs-row] td.amount-column`)).toHaveText(
-            budgetAmount
-          )
-        }
-        const seurantaLocators = hakemustenArviointiPage.seurantaTabLocators()
-        await expect(seurantaLocators.grantedTotal).toHaveText('5329134')
-        await expect(seurantaLocators.amountTotal).toHaveText('5329134')
+    await test.step('virkailija seuranta tab shows the granted budget as accepted by OPH', async () => {
+      await hakemustenArviointiPage.navigateToLatestMuutoshakemus(avustushakuID, hakemusID)
+      await hakemustenArviointiPage.tabs().seuranta.click()
+      for (const key of Object.keys(budget.description)) {
+        const budgetAmount = budget.amount[key as keyof BudgetAmount]
+        await expect(
+          page.locator(`[data-test-id=${key}-costs-row] td.granted-amount-column`)
+        ).toHaveText(budgetAmount)
+        await expect(page.locator(`[data-test-id=${key}-costs-row] td.amount-column`)).toHaveText(
+          budgetAmount
+        )
       }
-    )
+      const seurantaLocators = hakemustenArviointiPage.seurantaTabLocators()
+      await expect(seurantaLocators.grantedTotal).toHaveText('5329134')
+      await expect(seurantaLocators.amountTotal).toHaveText('5329134')
+    })
     await test.step('accept muutoshakemus #1 with changes', async () => {
       await hakemustenArviointiPage.tabs().muutoshakemus.click()
       await hakemustenArviointiPage.setMuutoshakemusBudgetDecision(
@@ -200,44 +197,34 @@ muutosTest(
       await hakemustenArviointiPage.selectVakioperusteluInFinnish()
       await hakemustenArviointiPage.saveMuutoshakemus()
     })
-    await test.step(
-      'virkailija seuranta tab shows the accepted muutoshakemus budget as accepted by OPH',
-      async () => {
-        await hakemustenArviointiPage.tabs().seuranta.click()
-        for (const key of Object.keys(budget.description)) {
-          const grantedSelector = `[data-test-id=${key}-costs-row] td.granted-amount-column`
-          await expect(hakemustenArviointiPage.page.locator(grantedSelector)).toHaveText(
-            budget.amount[key as keyof BudgetAmount]
-          )
-          await expect(
-            hakemustenArviointiPage.page.locator(`[data-test-id=${key}-costs-row] td.amount-column`)
-          ).toHaveText(acceptedBudget[key as keyof BudgetAmount])
-        }
-        await expect(hakemustenArviointiPage.seurantaTabLocators().grantedTotal).toHaveText(
-          '5329134'
+    await test.step('virkailija seuranta tab shows the accepted muutoshakemus budget as accepted by OPH', async () => {
+      await hakemustenArviointiPage.tabs().seuranta.click()
+      for (const key of Object.keys(budget.description)) {
+        const grantedSelector = `[data-test-id=${key}-costs-row] td.granted-amount-column`
+        await expect(hakemustenArviointiPage.page.locator(grantedSelector)).toHaveText(
+          budget.amount[key as keyof BudgetAmount]
         )
-        await expect(hakemustenArviointiPage.seurantaTabLocators().amountTotal).toHaveText(
-          '5329134'
-        )
+        await expect(
+          hakemustenArviointiPage.page.locator(`[data-test-id=${key}-costs-row] td.amount-column`)
+        ).toHaveText(acceptedBudget[key as keyof BudgetAmount])
       }
-    )
-    await test.step(
-      'newest approved budget is prefilled on the new muutoshakemus form',
-      async () => {
-        await hakijaMuutoshakemusPage.navigate(hakemusID)
-        await hakijaMuutoshakemusPage.clickHaenMuutostaTaloudenKayttosuunnitelmaan()
-        const expectedBudgetInputs = [
-          { name: 'talousarvio.personnel-costs-row', amount: 1301 },
-          { name: 'talousarvio.material-costs-row', amount: 1421 },
-          { name: 'talousarvio.equipment-costs-row', amount: 2338 },
-          { name: 'talousarvio.service-purchase-costs-row', amount: 5312007 },
-          { name: 'talousarvio.rent-costs-row', amount: 1068 },
-          { name: 'talousarvio.steamship-costs-row', amount: 1000 },
-          { name: 'talousarvio.other-costs-row', amount: 9999 },
-        ]
-        await expectMenoInputRows(page, expectedBudgetInputs)
-      }
-    )
+      await expect(hakemustenArviointiPage.seurantaTabLocators().grantedTotal).toHaveText('5329134')
+      await expect(hakemustenArviointiPage.seurantaTabLocators().amountTotal).toHaveText('5329134')
+    })
+    await test.step('newest approved budget is prefilled on the new muutoshakemus form', async () => {
+      await hakijaMuutoshakemusPage.navigate(hakemusID)
+      await hakijaMuutoshakemusPage.clickHaenMuutostaTaloudenKayttosuunnitelmaan()
+      const expectedBudgetInputs = [
+        { name: 'talousarvio.personnel-costs-row', amount: 1301 },
+        { name: 'talousarvio.material-costs-row', amount: 1421 },
+        { name: 'talousarvio.equipment-costs-row', amount: 2338 },
+        { name: 'talousarvio.service-purchase-costs-row', amount: 5312007 },
+        { name: 'talousarvio.rent-costs-row', amount: 1068 },
+        { name: 'talousarvio.steamship-costs-row', amount: 1000 },
+        { name: 'talousarvio.other-costs-row', amount: 9999 },
+      ]
+      await expectMenoInputRows(page, expectedBudgetInputs)
+    })
     await test.step('also has correct titles', async () => {
       const hakijaMuutoshakemusPaatosPage = new HakijaMuutoshakemusPaatosPage(page)
       await expect(hakijaMuutoshakemusPaatosPage.locators().oldBudgetTitle).toHaveText(
@@ -305,23 +292,20 @@ muutosTest(
         'Voimassaoleva budjetti'
       )
     })
-    await test.step(
-      'prefilled budget for next muutoshakemus is still the one accepted',
-      async () => {
-        await hakijaMuutoshakemusPage.navigate(hakemusID)
-        await hakijaMuutoshakemusPage.clickHaenMuutostaTaloudenKayttosuunnitelmaan()
-        const expectedBudgetInputs = [
-          { name: 'talousarvio.personnel-costs-row', amount: 1301 },
-          { name: 'talousarvio.material-costs-row', amount: 1421 },
-          { name: 'talousarvio.equipment-costs-row', amount: 2338 },
-          { name: 'talousarvio.service-purchase-costs-row', amount: 5312007 },
-          { name: 'talousarvio.rent-costs-row', amount: 1068 },
-          { name: 'talousarvio.steamship-costs-row', amount: 1000 },
-          { name: 'talousarvio.other-costs-row', amount: 9999 },
-        ]
-        await expectMenoInputRows(page, expectedBudgetInputs)
-      }
-    )
+    await test.step('prefilled budget for next muutoshakemus is still the one accepted', async () => {
+      await hakijaMuutoshakemusPage.navigate(hakemusID)
+      await hakijaMuutoshakemusPage.clickHaenMuutostaTaloudenKayttosuunnitelmaan()
+      const expectedBudgetInputs = [
+        { name: 'talousarvio.personnel-costs-row', amount: 1301 },
+        { name: 'talousarvio.material-costs-row', amount: 1421 },
+        { name: 'talousarvio.equipment-costs-row', amount: 2338 },
+        { name: 'talousarvio.service-purchase-costs-row', amount: 5312007 },
+        { name: 'talousarvio.rent-costs-row', amount: 1068 },
+        { name: 'talousarvio.steamship-costs-row', amount: 1000 },
+        { name: 'talousarvio.other-costs-row', amount: 9999 },
+      ]
+      await expectMenoInputRows(page, expectedBudgetInputs)
+    })
   }
 )
 

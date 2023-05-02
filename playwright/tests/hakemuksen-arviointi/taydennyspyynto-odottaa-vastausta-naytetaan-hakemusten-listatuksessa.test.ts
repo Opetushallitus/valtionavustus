@@ -21,25 +21,19 @@ test('Täydennyspyyntö odottaa vastausta näytetään hakemusten listauksessa',
   await Promise.all([page.waitForNavigation(), page.click(`text=${answers.projectName}`)])
   const hakemusID = await hakemustenArviointiPage.getHakemusID()
 
-  await test.step(
-    'Varmista että ennen täydennyspyyntöä hakemukselta ei odoteta täydennystä',
-    async () => {
-      await hakemustenArviointiPage.navigate(avustushakuID)
-      await expect(
-        hakemustenArviointiPage.page.getByTestId(`taydennyspyynto-odottaa-vastausta-${hakemusID}`)
-      ).toHaveCount(0)
-    }
-  )
+  await test.step('Varmista että ennen täydennyspyyntöä hakemukselta ei odoteta täydennystä', async () => {
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    await expect(
+      hakemustenArviointiPage.page.getByTestId(`taydennyspyynto-odottaa-vastausta-${hakemusID}`)
+    ).toHaveCount(0)
+  })
 
-  await test.step(
-    'Varmista lisäksi, että ennen täydennyspyynön perumista hakemuksen täydennyspyyntöön ei ole vastattu',
-    async () => {
-      await hakemustenArviointiPage.navigate(avustushakuID)
-      await expect(
-        hakemustenArviointiPage.page.getByTestId(`taydennyspyyntoon-vastattu-${hakemusID}`)
-      ).toHaveCount(0)
-    }
-  )
+  await test.step('Varmista lisäksi, että ennen täydennyspyynön perumista hakemuksen täydennyspyyntöön ei ole vastattu', async () => {
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    await expect(
+      hakemustenArviointiPage.page.getByTestId(`taydennyspyyntoon-vastattu-${hakemusID}`)
+    ).toHaveCount(0)
+  })
 
   await test.step('Tee täydennyspyyntö', async () => {
     await Promise.all([page.waitForNavigation(), page.click(`text=${answers.projectName}`)])
@@ -61,13 +55,10 @@ test('Täydennyspyyntö odottaa vastausta näytetään hakemusten listauksessa',
     await hakemustenArviointiPage.cancelChangeRequest()
   })
 
-  await test.step(
-    'Hakemuksen taydennyspyyntöön on vastattu ja se indikoidaan listauksessa',
-    async () => {
-      await hakemustenArviointiPage.navigate(avustushakuID)
-      await expect(
-        hakemustenArviointiPage.page.getByTestId(`taydennyspyyntoon-vastattu-${hakemusID}`)
-      ).toHaveCount(1)
-    }
-  )
+  await test.step('Hakemuksen taydennyspyyntöön on vastattu ja se indikoidaan listauksessa', async () => {
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    await expect(
+      hakemustenArviointiPage.page.getByTestId(`taydennyspyyntoon-vastattu-${hakemusID}`)
+    ).toHaveCount(1)
+  })
 })

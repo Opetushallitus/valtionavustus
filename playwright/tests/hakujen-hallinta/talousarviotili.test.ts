@@ -202,20 +202,17 @@ test.describe.parallel('talousarvio select', () => {
       await page.keyboard.press('Enter')
       await haunTiedotPage.common.waitForSave()
     })
-    await test.step(
-      'after page reload empty selects disappear (as they are not saved)',
-      async () => {
-        await page.reload()
-        await expect(firstTili.input).toBeVisible()
-        await expect(firstTili.value).toHaveText(taTiliSelectValue(tatili1))
-        await expect(secondTili.input).toBeHidden()
-        await expect(firstTili.koulutusaste(0).input).toBeVisible()
-        await expect(firstTili.koulutusaste(0).value).toHaveText(lukio)
-        await expect(firstTili.koulutusaste(1).input).toBeVisible()
-        await expect(firstTili.koulutusaste(1).value).toHaveText(kansalaisopisto)
-        await expect(firstTili.koulutusaste(2).input).toBeHidden()
-      }
-    )
+    await test.step('after page reload empty selects disappear (as they are not saved)', async () => {
+      await page.reload()
+      await expect(firstTili.input).toBeVisible()
+      await expect(firstTili.value).toHaveText(taTiliSelectValue(tatili1))
+      await expect(secondTili.input).toBeHidden()
+      await expect(firstTili.koulutusaste(0).input).toBeVisible()
+      await expect(firstTili.koulutusaste(0).value).toHaveText(lukio)
+      await expect(firstTili.koulutusaste(1).input).toBeVisible()
+      await expect(firstTili.koulutusaste(1).value).toHaveText(kansalaisopisto)
+      await expect(firstTili.koulutusaste(2).input).toBeHidden()
+    })
   })
   test('can delete tilis and koulutusaste', async ({ tilit: { tatili1, tatili2 }, page }) => {
     const haunTiedotPage = HaunTiedotPage(page)

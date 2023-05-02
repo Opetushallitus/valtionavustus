@@ -24,21 +24,15 @@ defaultValues('Copying haku', async ({ page }) => {
     await expectLoppuselvitysTitleToBe(hakujenHallinta, loppuselvitysTitle)
   })
 
-  await test.step(
-    'changing väliselvitys and loppuselvitys on the copied avustushaku does not change the original selvitys values',
-    async () => {
-      await setValiselvitysTitleTo(hakujenHallinta, `Uudelleen ${valiselvitysTitle.toLowerCase()}`)
-      await setLoppuselvitysTitleTo(
-        hakujenHallinta,
-        `Uudelleen ${loppuselvitysTitle.toLowerCase()}`
-      )
+  await test.step('changing väliselvitys and loppuselvitys on the copied avustushaku does not change the original selvitys values', async () => {
+    await setValiselvitysTitleTo(hakujenHallinta, `Uudelleen ${valiselvitysTitle.toLowerCase()}`)
+    await setLoppuselvitysTitleTo(hakujenHallinta, `Uudelleen ${loppuselvitysTitle.toLowerCase()}`)
 
-      await hakujenHallinta.navigate(avustushakuID)
+    await hakujenHallinta.navigate(avustushakuID)
 
-      await expectValiselvitysTitleToBe(hakujenHallinta, valiselvitysTitle)
-      await expectLoppuselvitysTitleToBe(hakujenHallinta, loppuselvitysTitle)
-    }
-  )
+    await expectValiselvitysTitleToBe(hakujenHallinta, valiselvitysTitle)
+    await expectLoppuselvitysTitleToBe(hakujenHallinta, loppuselvitysTitle)
+  })
 })
 
 async function expectLoppuselvitysTitleToBe(page: HakujenHallintaPage, title: string) {

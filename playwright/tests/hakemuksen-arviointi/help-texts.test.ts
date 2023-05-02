@@ -217,16 +217,13 @@ test('help texts', async ({ page, avustushakuID, submittedHakemus, answers }) =>
       const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
       await haunTiedotPage.resolveAvustushaku()
     })
-    await test.step(
-      `Hovering over Lähetä sähköpostit uudestaan displays correct help text`,
-      async () => {
-        await hakemustenArviointiPage.navigateToHakemus(avustushakuID, answers.projectName)
-        await verifyTooltipText(
-          page,
-          '[data-test-id="tooltip-laheta-email-uudestaan"]',
-          'Hankkeelle voidaan lähettää päätössähköposti uudestaan koska tahansa hakukohtaisten avustuspäätösten laatimisen jälkeen. Painiketta painamalla hakijalle lähetetään avustuspäätös sekä yhteyshenkilön että hakijan viralliseen sähköpostiosoitteeseen. Päätössähköpostissa olevan linkin kautta avustuksen saaja voi päivittää hankkeen yhteyshenkilöä itse, joten tätä ominaisuutta voi hyödyntää esimerkiksi henkilövaihdosten kirjaamisessa järjestelmään'
-        )
-      }
-    )
+    await test.step(`Hovering over Lähetä sähköpostit uudestaan displays correct help text`, async () => {
+      await hakemustenArviointiPage.navigateToHakemus(avustushakuID, answers.projectName)
+      await verifyTooltipText(
+        page,
+        '[data-test-id="tooltip-laheta-email-uudestaan"]',
+        'Hankkeelle voidaan lähettää päätössähköposti uudestaan koska tahansa hakukohtaisten avustuspäätösten laatimisen jälkeen. Painiketta painamalla hakijalle lähetetään avustuspäätös sekä yhteyshenkilön että hakijan viralliseen sähköpostiosoitteeseen. Päätössähköpostissa olevan linkin kautta avustuksen saaja voi päivittää hankkeen yhteyshenkilöä itse, joten tätä ominaisuutta voi hyödyntää esimerkiksi henkilövaihdosten kirjaamisessa järjestelmään'
+      )
+    })
   })
 })

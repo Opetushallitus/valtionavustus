@@ -67,18 +67,15 @@ test('hakemus list filtering', async ({ hakemustenArviointiPage, hakuProps, avus
   await hakemustenArviointiPage.navigate(avustushakuID)
   await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
 
-  await test.step(
-    'hylätyt are not filtered by default when avustushaku is not yet resolved',
-    async () => {
-      const { page } = hakemustenArviointiPage
-      await page.click('text=Tila')
-      await expect(page.locator('#unhandled')).toBeChecked()
-      await expect(page.locator('#processing')).toBeChecked()
-      await expect(page.locator('#plausible')).toBeChecked()
-      await expect(page.locator('#rejected')).toBeChecked()
-      await expect(page.locator('#accepted')).toBeChecked()
-    }
-  )
+  await test.step('hylätyt are not filtered by default when avustushaku is not yet resolved', async () => {
+    const { page } = hakemustenArviointiPage
+    await page.click('text=Tila')
+    await expect(page.locator('#unhandled')).toBeChecked()
+    await expect(page.locator('#processing')).toBeChecked()
+    await expect(page.locator('#plausible')).toBeChecked()
+    await expect(page.locator('#rejected')).toBeChecked()
+    await expect(page.locator('#accepted')).toBeChecked()
+  })
 
   await test.step('filtering with organization works', async () => {
     await hakemustenArviointiPage.inputFilterOrganization.fill('Nothing will be found')
@@ -94,17 +91,14 @@ test('hakemus list filtering', async ({ hakemustenArviointiPage, hakuProps, avus
     await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
   })
 
-  await test.step(
-    'clicking näytä keskeneräiset shows unfinished hakemuses in the listing',
-    async () => {
-      await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
-      await expect(hakemustenArviointiPage.showUnfinished).not.toBeChecked()
-      await hakemustenArviointiPage.showUnfinished.click()
-      await expect(hakemustenArviointiPage.showUnfinished).toBeChecked()
-      await expect(hakemustenArviointiPage.hakemusListing).toContainText('3/3 hakemusta')
-      await hakemustenArviointiPage.showUnfinished.click()
-    }
-  )
+  await test.step('clicking näytä keskeneräiset shows unfinished hakemuses in the listing', async () => {
+    await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
+    await expect(hakemustenArviointiPage.showUnfinished).not.toBeChecked()
+    await hakemustenArviointiPage.showUnfinished.click()
+    await expect(hakemustenArviointiPage.showUnfinished).toBeChecked()
+    await expect(hakemustenArviointiPage.hakemusListing).toContainText('3/3 hakemusta')
+    await hakemustenArviointiPage.showUnfinished.click()
+  })
 
   await test.step('can filter with arvioija', async () => {
     await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')

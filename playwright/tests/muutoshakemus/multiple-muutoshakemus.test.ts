@@ -141,14 +141,11 @@ test('multiple muutoshakemus', async ({ page, acceptedHakemus: { hakemusID }, av
   await test.step('muutoshakemus #4 has correct values', async () => {
     await hakemustenArviointiPage.validateMuutoshakemusValues(muutoshakemus4)
   })
-  await test.step(
-    'project end date is the same which was approved at muutoshakemus #2',
-    async () => {
-      await expect(
-        hakemustenArviointiPage.page.locator('[data-test-id="project-end-date"]')
-      ).toHaveText(muutoshakemus2.jatkoaika!.format('DD.MM.YYYY'))
-    }
-  )
+  await test.step('project end date is the same which was approved at muutoshakemus #2', async () => {
+    await expect(
+      hakemustenArviointiPage.page.locator('[data-test-id="project-end-date"]')
+    ).toHaveText(muutoshakemus2.jatkoaika!.format('DD.MM.YYYY'))
+  })
   await test.step('navigate with tab and check muutoshakemus #3 values', async () => {
     await hakemustenArviointiPage.page.locator('[data-test-id="muutoshakemus-tab-1"]').click()
     await hakemustenArviointiPage.validateMuutoshakemusValues(muutoshakemus3, {

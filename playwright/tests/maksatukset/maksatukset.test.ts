@@ -254,19 +254,16 @@ test.describe('Maksatukset', () => {
         await expect(seuranta.shouldPay.comment).toBeEnabled()
         await seuranta.shouldPay.comment.fill('Pyörrän päätökseni')
       })
-      await test.step(
-        'only second hakemus maksatukset are created as first was marked should not pay',
-        async () => {
-          await hakemustenArviointiPage.waitForSave()
-          const maksatuksetPage = MaksatuksetPage(page)
-          await maksatuksetPage.goto(avustushakuName)
-          const firstRowHanke = maksatuksetPage.maksatuksetTableRow(0).hanke
-          await expect(firstRowHanke).toBeHidden()
-          await maksatuksetPage.luoMaksatukset.click()
-          await expect(firstRowHanke).toHaveText(secondAnswers.projectName)
-          await expect(maksatuksetPage.maksatuksetTableRow(1).hanke).toBeHidden()
-        }
-      )
+      await test.step('only second hakemus maksatukset are created as first was marked should not pay', async () => {
+        await hakemustenArviointiPage.waitForSave()
+        const maksatuksetPage = MaksatuksetPage(page)
+        await maksatuksetPage.goto(avustushakuName)
+        const firstRowHanke = maksatuksetPage.maksatuksetTableRow(0).hanke
+        await expect(firstRowHanke).toBeHidden()
+        await maksatuksetPage.luoMaksatukset.click()
+        await expect(firstRowHanke).toHaveText(secondAnswers.projectName)
+        await expect(maksatuksetPage.maksatuksetTableRow(1).hanke).toBeHidden()
+      })
     }
   )
 

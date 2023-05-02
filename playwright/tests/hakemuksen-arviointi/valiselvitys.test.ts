@@ -90,14 +90,11 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
         await valiselvitysPage.acceptVäliselvitys()
       })
 
-      await test.step(
-        'väliselvitys accepted email is sent to primary and organization emails',
-        async () => {
-          const emails = await getValiselvitysEmails(acceptedHakemus.hakemusID)
-          const expected = ['erkki.esimerkki@example.com', 'akaan.kaupunki@akaa.fi']
-          expect(emails[0]['to-address'].every((addr) => expected.includes(addr))).toBeTruthy()
-        }
-      )
+      await test.step('väliselvitys accepted email is sent to primary and organization emails', async () => {
+        const emails = await getValiselvitysEmails(acceptedHakemus.hakemusID)
+        const expected = ['erkki.esimerkki@example.com', 'akaan.kaupunki@akaa.fi']
+        expect(emails[0]['to-address'].every((addr) => expected.includes(addr))).toBeTruthy()
+      })
 
       await test.step('väliselvitys no longer editable', async () => {
         const [newPage] = await Promise.all([

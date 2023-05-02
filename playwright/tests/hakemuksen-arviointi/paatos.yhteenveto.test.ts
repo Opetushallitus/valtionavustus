@@ -115,19 +115,17 @@ test('Yhteenveto', async ({
     await paatosPage.navigateTo(avustushakuID)
     await paatosPage.sendPaatos(2)
   })
-  await test.step(
-    'virkailija gets päätökset lähetetty email with link to päätöslista',
-    async () => {
-      const emails = await waitUntilMinEmails(getPaatoksetLahetettyEmails, 1, avustushakuID)
-      const searchUrl = await getSearchUrl({ page, hakemusIds, avustushakuID })
-      expect(emails).toHaveLength(1)
-      const email = lastOrFail(emails)
-      expect(email['to-address']).toEqual([
-        'santeri.horttanainen@reaktor.com',
-        'viivi.virkailja@exmaple.com',
-      ])
-      expect(email.subject).toEqual('Avustuspäätökset on lähetetty')
-      expect(email.formatted).toEqual(`Hyvä vastaanottaja,
+  await test.step('virkailija gets päätökset lähetetty email with link to päätöslista', async () => {
+    const emails = await waitUntilMinEmails(getPaatoksetLahetettyEmails, 1, avustushakuID)
+    const searchUrl = await getSearchUrl({ page, hakemusIds, avustushakuID })
+    expect(emails).toHaveLength(1)
+    const email = lastOrFail(emails)
+    expect(email['to-address']).toEqual([
+      'santeri.horttanainen@reaktor.com',
+      'viivi.virkailja@exmaple.com',
+    ])
+    expect(email.subject).toEqual('Avustuspäätökset on lähetetty')
+    expect(email.formatted).toEqual(`Hyvä vastaanottaja,
 
 valtionavustuksen ${avustushakuName} päätökset on lähetetty kaikkien hakijoiden yhteyshenkilöille sekä hakijoiden virallisiin sähköpostiosoitteisiin.
 
@@ -139,12 +137,11 @@ Avustusten maksatukset toteutetaan päätöksessä kuvatun aikataulun mukaan. Oh
 
 Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
 `)
-      await test.step('navigates to päätöslista', async () => {
-        await yhteenvetoPage.navigate(searchUrl)
-        await yhteenvetoPage.page.waitForSelector('text="Päätöslista"')
-      })
-    }
-  )
+    await test.step('navigates to päätöslista', async () => {
+      await yhteenvetoPage.navigate(searchUrl)
+      await yhteenvetoPage.page.waitForSelector('text="Päätöslista"')
+    })
+  })
   await test.step('displays title', async () => {
     expect(await yhteenvetoPage.title()).toContain(avustushakuName)
   })

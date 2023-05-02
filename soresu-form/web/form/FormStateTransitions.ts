@@ -31,7 +31,7 @@ const serverOperations = {
   modifyApplicationContacts: 'modifyApplicationContacts',
 } as const
 
-type ServerOperation = typeof serverOperations[keyof typeof serverOperations]
+type ServerOperation = (typeof serverOperations)[keyof typeof serverOperations]
 
 export default class FormStateTransitions {
   dispatcher: Dispatcher

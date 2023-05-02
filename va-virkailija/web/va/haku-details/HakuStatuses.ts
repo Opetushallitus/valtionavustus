@@ -1,5 +1,5 @@
 export const ALL_STATUSES = ['new', 'draft', 'published', 'resolved'] as const
-export type HakuStatus = typeof ALL_STATUSES[number]
+export type HakuStatus = (typeof ALL_STATUSES)[number]
 
 export default class HakuStatuses {
   static allStatuses() {
