@@ -102,7 +102,7 @@
                          [org.clojure/data.xml "0.0.8"]
                          [org.clojure/tools.trace "0.7.11"]
                          [org.scala-lang.modules/scala-xml_2.11 "1.3.0"]
-                         [org.scala-lang/scala-library "2.11.12"]]
+                         [org.scala-lang/scala-library "2.13.10"]]
 
   :dependencies [[org.clojure/clojure]
                  [de.ubercode.clostache/clostache]
