@@ -61,7 +61,9 @@
 (defn- calculate-floating-self-financing-fraction [hakemus]
   (let [hakemus-oph-share (:budget-oph-share hakemus)
         hakemus-total (:budget-total hakemus)]
-    (/ (- hakemus-total hakemus-oph-share) hakemus-total)))
+    (if (> hakemus-total 0)
+      (/ (- hakemus-total hakemus-oph-share) hakemus-total)
+      0)))
 
 (defn kayttosuunnitelma [avustushaku hakemus form-content answers translate language]
   (let [template (email/load-template "templates/kayttosuunnitelma.html")

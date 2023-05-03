@@ -6,7 +6,9 @@
   (reduce + (map key-fn scores)))
 
 (defn- avg-of-scores [scores selection-criteria-count]
-  (/ (sum-scores scores :score) selection-criteria-count))
+  (if (> selection-criteria-count 0)
+    (/ (sum-scores scores :score) selection-criteria-count)
+    0))
 
 (defn- aggregate-complete-arvio-scores-by-user [arvio-scores selection-criteria-count]
   (letfn [(make-user-map [arvio-scores] (->> arvio-scores

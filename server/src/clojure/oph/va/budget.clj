@@ -64,7 +64,7 @@
   (if (:id (find-self-financing-field budget-field-children))
     (let [hakemus-oph-share (:budget_oph_share hakemus)
           hakemus-total (:budget_total hakemus)
-          user-self-financing-ratio (/ (- hakemus-total hakemus-oph-share) hakemus-total)]
+          user-self-financing-ratio (if (> hakemus-total 0) (/ (- hakemus-total hakemus-oph-share) hakemus-total) 0)]
         (share-rounded-up-of user-self-financing-ratio total-sum))
     (percentage-share-rounded-up-of self-financing-percentage total-sum)))
 
