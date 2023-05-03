@@ -70,4 +70,5 @@
  :integration-healthcheck {:enabled? false}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :test-apis {:enabled? false}
+ :grant-reporting-deadline {:enabled? false}
  }

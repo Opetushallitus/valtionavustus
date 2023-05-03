@@ -37,4 +37,6 @@
  :payments {:enabled? true :delete-payments? true}
  :integration-healthcheck {:enabled? true
                            :timeout 5000
-                           :interval-minutes 15}}
+                           :interval-minutes 15}
+ :grant-reporting-deadline {:enabled? true}
+ }

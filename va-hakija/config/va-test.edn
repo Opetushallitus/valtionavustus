@@ -11,4 +11,5 @@
          :host "smtp.sdn.csc.fi"
          :port 25
          :sender "no-reply@csc.fi"}
+ :grant-reporting-deadline {:enabled? true}
  }

@@ -36,4 +36,5 @@
             :delete-payments? true}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :test-apis {:enabled? true}
+ :grant-reporting-deadline {:enabled? true}
  }

@@ -38,4 +38,6 @@
          :sender "no-reply@csc.fi"
          :bounce-address "oph-va-alerts@reaktor.com"
          :print-mail-on-disable? true}
- :selvitys-limit {:enabled? false}}
+ :selvitys-limit {:enabled? false}
+ :grant-reporting-deadline {:enabled? true}
+ }
