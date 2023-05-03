@@ -8,10 +8,6 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/deploy-scripts/jenkins
 
 trap stop_systems_under_test EXIT
 
-function current-commit-is-not-tested {
-  ! git tag --contains | grep -q "green-qa"
-}
-
 function main {
   if running_on_jenkins; then
     docker image prune --force

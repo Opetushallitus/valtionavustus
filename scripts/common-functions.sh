@@ -293,10 +293,17 @@ function build_jars {
   make build
 }
 
+function current-commit-is-not-tested {
+  ! git tag --contains | grep -q "green-qa"
+}
+
 function build_and_test_jars {
   build_jars
 
-  start_system_under_test
-  run_tests
-  stop_system_under_test
+  if current-commit-is-not-tested;
+  then
+    start_system_under_test
+    run_tests
+    stop_system_under_test
+  fi
 }
