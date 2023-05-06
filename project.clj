@@ -123,7 +123,7 @@
                  [nivekuil/clj-ssh "d11634acf9857da4c7fc98258719a333af523cb8" :exclusions [com.jcraft/jsch.agentproxy.usocket-nc]]
                  [com.jcraft/jsch "0.1.55"]
                  [gov.nasa.earthdata/quartzite "2.2.1-SNAPSHOT"]
-                 [clj-pdf "2.6.2" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
+                 [clj-pdf "2.6.3" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
                  [cider/cider-nrepl]
                  [http-kit]
                  [ring.middleware.conditional "0.2.0" :exclusions [ring]]
