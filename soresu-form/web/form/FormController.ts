@@ -35,10 +35,8 @@ export const events = {
 
 export type FormEvents = typeof events
 
-interface FormControllerProps<T extends BaseStateLoopState<T>, K> {
-  initialStateTemplateTransformation: (
-    initialState: K extends InitialStateTemplate<T> ? K : never
-  ) => void
+interface FormControllerProps<T extends BaseStateLoopState<T>> {
+  initialStateTemplateTransformation: (initialState: InitialStateTemplate<T>) => void
   onInitialStateLoaded: (initialState: T) => void
   formP: EventStream<Form>
   customComponentFactory: VaComponentFactory
@@ -46,17 +44,15 @@ interface FormControllerProps<T extends BaseStateLoopState<T>, K> {
   customFieldSyntaxValidator: typeof VaSyntaxValidator
 }
 
-export default class FormController<T extends BaseStateLoopState<T>, K> {
-  initialStateTemplateTransformation: (
-    initialState: K extends InitialStateTemplate<T> ? K : never
-  ) => void
+export default class FormController<T extends BaseStateLoopState<T>> {
+  initialStateTemplateTransformation: (initialState: InitialStateTemplate<T>) => void
   onInitialStateLoaded: (initialState: T) => void
   formP: EventStream<Form>
   customComponentFactory: VaComponentFactory
   customPreviewComponentFactory: VaPreviewComponentFactory
   customFieldSyntaxValidator: typeof VaSyntaxValidator
 
-  constructor(props: FormControllerProps<T, K>) {
+  constructor(props: FormControllerProps<T>) {
     this.initialStateTemplateTransformation = props.initialStateTemplateTransformation
     this.onInitialStateLoaded = props.onInitialStateLoaded
     this.formP = props.formP

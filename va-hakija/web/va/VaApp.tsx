@@ -10,10 +10,10 @@ import ResponseParser from 'soresu-form/web/form/ResponseParser'
 import {
   FormOperations,
   HakijaAvustusHaku,
+  InitialStateTemplate,
   SavedObject,
   UrlContent,
   VaAppStateLoopState,
-  VaAppStateTemplate,
 } from 'soresu-form/web/form/types/Form'
 import { Field, Form, NormalizedHakemusData } from 'soresu-form/web/va/types'
 import VaComponentFactory from 'soresu-form/web/va/VaComponentFactory'
@@ -95,7 +95,7 @@ const muutoshakemuksetP = Bacon.fromPromise<Muutoshakemus[]>(
   )
 )
 
-function initialStateTemplateTransformation(template: VaAppStateTemplate) {
+function initialStateTemplateTransformation(template: InitialStateTemplate<VaAppStateLoopState>) {
   template.avustushaku = avustusHakuP
   template.normalizedHakemus = normalizedHakemusP
   template.muutoshakemukset = muutoshakemuksetP
@@ -140,7 +140,7 @@ function initVaFormController() {
   const formP = avustusHakuP.flatMap(function (avustusHaku) {
     return Bacon.fromPromise<Form>(HttpUtil.get(urlCreator.formApiUrl(avustusHaku.form)))
   })
-  const controller = new FormController<VaAppStateLoopState, VaAppStateTemplate>({
+  const controller = new FormController<VaAppStateLoopState>({
     initialStateTemplateTransformation,
     onInitialStateLoaded,
     formP,
@@ -162,7 +162,7 @@ function initVaFormController() {
   const initialValues = {
     language: VaUrlCreator.chooseInitialLanguage(urlContent),
   }
-  const stateProperty = initializeStateLoop<VaAppStateLoopState, VaAppStateTemplate>(
+  const stateProperty = initializeStateLoop<VaAppStateLoopState>(
     controller,
     formOperations,
     initialValues,

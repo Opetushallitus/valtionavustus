@@ -105,8 +105,8 @@ function getInitialFormValuesPromise<T>(
   )
 }
 
-export function initializeStateLoop<T extends BaseStateLoopState<T>, K>(
-  controller: FormController<T, K>,
+export function initializeStateLoop<T extends BaseStateLoopState<T>>(
+  controller: FormController<T>,
   formOperations: FormOperations<T>,
   initialValues: InitialValues,
   urlContent: UrlContent
@@ -170,9 +170,7 @@ export function initializeStateLoop<T extends BaseStateLoopState<T>, K>(
     },
   }
 
-  if (_.isFunction(controller.initialStateTemplateTransformation)) {
-    controller.initialStateTemplateTransformation(initialStateTemplate)
-  }
+  controller.initialStateTemplateTransformation(initialStateTemplate)
 
   const initialState = Bacon.combineTemplate(initialStateTemplate)
 
