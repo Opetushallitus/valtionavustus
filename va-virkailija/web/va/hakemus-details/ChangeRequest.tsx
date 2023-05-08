@@ -101,7 +101,6 @@ export const ChangeRequest = ({
           value={changeRequest}
         />
         <button
-          data-test-id="täydennyspyyntö__lähetä"
           disabled={!changeRequest.length}
           onClick={() => {
             dispatch(

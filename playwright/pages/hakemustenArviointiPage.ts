@@ -28,6 +28,7 @@ export class HakemustenArviointiPage {
   readonly toggleHakemusList: Locator
   readonly header: ReturnType<typeof Header>
   readonly taydennyspyynto: Locator
+  readonly sendTaydennyspyynto: Locator
   constructor(page: Page) {
     this.page = page
     this.avustushakuDropdown = this.page.locator('#avustushaku-dropdown')
@@ -41,6 +42,7 @@ export class HakemustenArviointiPage {
     this.taydennyspyynto = this.page.getByRole('textbox', {
       name: 'Kirjoita tähän hakijalle täydennyspyyntö ja määräaika, johon mennessä hakijan tulee vastata täydennyspyyntöön',
     })
+    this.sendTaydennyspyynto = this.page.getByRole('button', { name: 'Lähetä' })
   }
 
   async navigate(
@@ -147,7 +149,7 @@ export class HakemustenArviointiPage {
   async createChangeRequest(reason: string = 'Täydennäppä') {
     await this.page.getByTestId('request-change-button').click()
     await this.taydennyspyynto.type(reason)
-    await this.page.getByTestId('täydennyspyyntö__lähetä').click()
+    await this.sendTaydennyspyynto.click()
     await this.waitForSave()
   }
 
@@ -185,7 +187,7 @@ export class HakemustenArviointiPage {
       this.page.waitForResponse(
         `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/change-requests`
       ),
-      this.page.getByTestId('täydennyspyyntö__lähetä').click(),
+      this.sendTaydennyspyynto.click(),
     ])
   }
 
