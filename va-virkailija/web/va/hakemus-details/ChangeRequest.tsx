@@ -152,7 +152,6 @@ export const ChangeRequest = ({
               })
             )
           }}
-          data-test-id="täydennyspyyntö__cancel"
         >
           Peru täydennyspyyntö
         </button>

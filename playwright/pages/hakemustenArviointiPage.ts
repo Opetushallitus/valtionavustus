@@ -154,7 +154,7 @@ export class HakemustenArviointiPage {
   }
 
   async cancelChangeRequest() {
-    await this.page.getByTestId('täydennyspyyntö__cancel').click()
+    await this.page.getByRole('button', { name: 'Peru täydennyspyyntö' }).click()
     await this.waitForSave()
   }
 
