@@ -38,7 +38,7 @@ export default class BasicFieldComponent<T> extends React.Component<BasicFieldCo
     htmlId: string,
     oldValue: string,
     onChange: any,
-    controller: FormController<any, any>
+    controller: FormController<any>
   ) {
     return function () {
       const element = document.getElementById(htmlId) as HTMLInputElement

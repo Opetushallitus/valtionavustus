@@ -235,7 +235,7 @@ function initFormController() {
   const initialValues = {
     language: VaUrlCreator.chooseInitialLanguage(urlContent),
   }
-  const stateProperty = initializeStateLoop<SelvitysAppStateLoopState, SelvitysAppStateTemplate>(
+  const stateProperty = initializeStateLoop<SelvitysAppStateLoopState>(
     controller,
     formOperations,
     initialValues,

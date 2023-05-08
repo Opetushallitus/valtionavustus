@@ -13,14 +13,14 @@ import ServerError from 'soresu-form/web/form/component/ServerError.jsx'
 import FormController from 'soresu-form/web/form/FormController'
 import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
 
-interface Props<T extends BaseStateLoopState<T>, K> {
-  controller: FormController<T, K>
+interface Props<T extends BaseStateLoopState<T>> {
+  controller: FormController<T>
   state: any
   hakemusType: 'loppuselvitys' | 'valiselvitys' | 'hakemus'
   isExpired?: boolean
 }
 
-const VaFormTopbar = <T extends BaseStateLoopState<T>, K>(props: Props<T, K>) => {
+const VaFormTopbar = <T extends BaseStateLoopState<T>>(props: Props<T>) => {
   const { controller, state, hakemusType, isExpired } = props
   const saveStatus = state.saveStatus
   const configuration = state.configuration

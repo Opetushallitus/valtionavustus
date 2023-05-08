@@ -114,6 +114,9 @@ export interface BaseStateLoopState<T> {
 
 export interface InitialStateTemplate<T extends BaseStateLoopState<T>> {
   avustushaku?: EventStream<HakijaAvustusHaku>
+  normalizedHakemus?: EventStream<NormalizedHakemusData>
+  muutoshakemukset?: EventStream<Muutoshakemus[]>
+  token?: string
   form: any
   tokenValidation: EventStream<{ valid: boolean }> | { valid: boolean }
   saveStatus: {
@@ -142,12 +145,6 @@ export interface InitialStateTemplate<T extends BaseStateLoopState<T>> {
 }
 
 export interface SelvitysAppStateTemplate extends InitialStateTemplate<SelvitysAppStateLoopState> {}
-
-export interface VaAppStateTemplate extends InitialStateTemplate<VaAppStateLoopState> {
-  normalizedHakemus: EventStream<NormalizedHakemusData>
-  muutoshakemukset: EventStream<Muutoshakemus[]>
-  token: string
-}
 
 export interface HakijaAvustusHaku {
   id: number

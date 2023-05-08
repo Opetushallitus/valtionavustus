@@ -17,8 +17,8 @@ import './style/main.less'
 
 const allowedStatuses = ['officer_edit', 'submitted', 'pending_change_request', 'applicant_edit']
 
-type VaFormProps<T extends BaseStateLoopState<T>, K> = {
-  controller: FormController<T, K>
+type VaFormProps<T extends BaseStateLoopState<T>> = {
+  controller: FormController<T>
   state: T
   hakemusType: 'hakemus' | 'valiselvitys' | 'loppuselvitys'
   refuseGrant?: string
@@ -27,8 +27,8 @@ type VaFormProps<T extends BaseStateLoopState<T>, K> = {
   useBusinessIdSearch?: boolean
 }
 
-export default class VaForm<T extends BaseStateLoopState<T>, K> extends React.Component<
-  VaFormProps<T, K>
+export default class VaForm<T extends BaseStateLoopState<T>> extends React.Component<
+  VaFormProps<T>
 > {
   render() {
     const { controller, state, hakemusType, isExpired, refuseGrant, modifyApplication } = this.props
