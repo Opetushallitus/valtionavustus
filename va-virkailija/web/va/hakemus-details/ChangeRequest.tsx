@@ -94,8 +94,7 @@ export const ChangeRequest = ({
       <div hidden={!newChangeRequest || !allowEditing}>
         <span onClick={() => setNewChangeRequest(false)} className="close"></span>
         <textarea
-          data-test-id="täydennyspyyntö__textarea"
-          placeholder="Täydennyspyyntö hakijalle"
+          placeholder="Kirjoita tähän hakijalle täydennyspyyntö ja määräaika, johon mennessä hakijan tulee vastata täydennyspyyntöön"
           onChange={(e) => setChangeRequest(e.target.value)}
           rows={4}
           disabled={!allowEditing}

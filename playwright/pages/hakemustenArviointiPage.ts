@@ -27,7 +27,7 @@ export class HakemustenArviointiPage {
   readonly hakemusRows: Locator
   readonly toggleHakemusList: Locator
   readonly header: ReturnType<typeof Header>
-
+  readonly taydennyspyynto: Locator
   constructor(page: Page) {
     this.page = page
     this.avustushakuDropdown = this.page.locator('#avustushaku-dropdown')
@@ -38,6 +38,9 @@ export class HakemustenArviointiPage {
     this.hakemusRows = this.hakemusListing.locator('tbody tr')
     this.toggleHakemusList = this.page.locator('#toggle-hakemus-list-button')
     this.header = Header(this.page)
+    this.taydennyspyynto = this.page.getByRole('textbox', {
+      name: 'Kirjoita tähän hakijalle täydennyspyyntö ja määräaika, johon mennessä hakijan tulee vastata täydennyspyyntöön',
+    })
   }
 
   async navigate(
@@ -143,7 +146,7 @@ export class HakemustenArviointiPage {
 
   async createChangeRequest(reason: string = 'Täydennäppä') {
     await this.page.getByTestId('request-change-button').click()
-    await this.page.getByTestId('täydennyspyyntö__textarea').type(reason)
+    await this.taydennyspyynto.type(reason)
     await this.page.getByTestId('täydennyspyyntö__lähetä').click()
     await this.waitForSave()
   }
@@ -174,7 +177,7 @@ export class HakemustenArviointiPage {
 
   async fillTäydennyspyyntöField(täydennyspyyntöText: string): Promise<void> {
     await clickElementWithText(this.page, 'button', 'Pyydä täydennystä')
-    await this.page.getByTestId('täydennyspyyntö__textarea').fill(täydennyspyyntöText)
+    await this.taydennyspyynto.fill(täydennyspyyntöText)
   }
 
   async clickToSendTäydennyspyyntö(avustushakuID: number, hakemusID: number) {
