@@ -8,13 +8,12 @@
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.soresu.form.formutil :as formutil]
             [oph.soresu.common.config :refer [feature-enabled?]]
-            [clojure.tools.logging :as log]
             [oph.va.virkailija.authorization :as authorization]
             [oph.va.virkailija.kayttosuunnitelma :as ks]
             [oph.va.virkailija.koulutusosio :as koulutusosio]
             [hiccup.core :refer [html]]
             [oph.va.virkailija.payments-data :as payments-data])
-  (:import  [java.time.format DateTimeFormatter]))
+  (:import (java.time.format DateTimeFormatter)))
 
 (defn decision-translation [translations lang translation-key]
   (get-in translations [:paatos (keyword translation-key) lang]))
@@ -160,11 +159,28 @@
           (section :liitteet content translate false)
           "")))
 
+(defn- format-date [date]
+  (.format date (DateTimeFormatter/ofPattern "dd.MM.yyyy")))
+
 (defn kayttoaika-section [avustushaku translate]
-  (let [first-day (.format (:hankkeen-alkamispaiva avustushaku) (DateTimeFormatter/ofPattern "dd.MM.yyyy"))
-        last-day (.format (:hankkeen-paattymispaiva avustushaku) (DateTimeFormatter/ofPattern "dd.MM.yyyy"))
+  (let [first-day (format-date (:hankkeen-alkamispaiva avustushaku))
+        last-day (format-date (:hankkeen-paattymispaiva avustushaku))
         content [:span [:p (str (translate :ensimmainen-kayttopaiva) " " first-day)] [:p (str (translate :viimeinen-kayttopaiva) " " last-day)]]]
     (section :valtionavustuksen-kayttoaika content translate false)))
+
+(defn selvitysvelvollisuus-section [{:keys [valiselvitysdate loppuselvitysdate decision translate language]}]
+  (if (feature-enabled? :grant-reporting-deadline)
+    (let [valiselvitysdate valiselvitysdate
+          loppuselvitysdate loppuselvitysdate
+          formatted-date-or-empty (fn [date key] (if date [:p (translate key) " " (format-date date)] ""))
+          valiselvitysdate (formatted-date-or-empty valiselvitysdate :valiselvitys-viimeistaan)
+          loppuselvitysdate (formatted-date-or-empty loppuselvitysdate :loppuselvitys-viimeistaan)
+          selvitysvelvollisuus-freeform-text (get-in decision [:selvitysvelvollisuus language])
+          content [:span valiselvitysdate loppuselvitysdate
+                   (when (not (empty? selvitysvelvollisuus-freeform-text))
+                     [:p selvitysvelvollisuus-freeform-text])]]
+      (section :selvitysvelvollisuus content translate false))
+    (optional-section decision :selvitysvelvollisuus :selvitysvelvollisuus translate language)))
 
 (defn paatos-html [hakemus-id]
   (let [haku-data (hakudata/get-combined-paatos-data hakemus-id)
@@ -205,8 +221,15 @@
         koulutusosio (koulutusosio/koulutusosio hakemus answers translate)
         has-koulutusosio (:has-koulutusosio koulutusosio)
         kayttoaika (if (or (nil? (:hankkeen-alkamispaiva avustushaku)) (nil? (:hankkeen-paattymispaiva avustushaku)))
-                    (optional-section decision :valtionavustuksen-kayttoaika :kayttoaika translate language)
-                    (kayttoaika-section avustushaku translate))
+                     (optional-section decision :valtionavustuksen-kayttoaika :kayttoaika translate language)
+                     (kayttoaika-section avustushaku translate))
+        selvitysvelvollisuus (selvitysvelvollisuus-section
+                               {:valiselvitysdate  (:valiselvitysdate avustushaku)
+                                :loppuselvitysdate (:loppuselvitysdate avustushaku)
+                                :decision          decision
+                                :translate         translate
+                                :language          language})
+
 
         params {
                 :avustushaku                   avustushaku
@@ -218,7 +241,7 @@
                 :section-sovelletut-saannokset (optional-section decision :sovelletut-saannokset :sovelletutsaannokset translate language)
                 :section-kayttoaika            kayttoaika
                 :section-kayttotarkoitus       (optional-section decision :avustuksen-kayttotarkoitus :kayttotarkoitus translate language)
-                :section-selvitysvelvollisuus  (optional-section decision :selvitysvelvollisuus :selvitysvelvollisuus translate language)
+                :section-selvitysvelvollisuus  selvitysvelvollisuus
                 :section-kayttooikeudet        (optional-section decision :kayttooikeudet :kayttooikeudet translate language)
                 :section-hyvaksyminen          (optional-section decision :hyvaksyminen :hyvaksyminen translate language)
                 :section-perustelut            (optional-section-content :paatoksen-perustelut (:perustelut arvio) translate)
@@ -242,9 +265,8 @@
                 :has-koulutusosio              has-koulutusosio
                 :oppilaitokset                 oppilaitokset
                 :avustuslaji                   (translate avustushaku-type)
-                }
-        body (render template params)]
-    body))
+                }]
+    (render template params)))
 
 (compojure-api/defroutes decision-routes
   "Decision"

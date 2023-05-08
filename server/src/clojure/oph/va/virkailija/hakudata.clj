@@ -162,8 +162,8 @@
     {:avustushaku avustushaku-simple :hakemukset hakemukset-simple}))
 
 (defn get-combined-paatos-data [hakemus-id]
-    (when-let [paatosdata (hakija-api/get-hakemusdata hakemus-id)]
-      (paatosdata-with-arvio paatosdata)))
+  (when-let [paatosdata (hakija-api/get-hakemusdata hakemus-id)]
+    (paatosdata-with-arvio paatosdata)))
 
 (defn get-final-combined-paatos-data [hakemus-id]
   (let [combined (get-combined-paatos-data hakemus-id)

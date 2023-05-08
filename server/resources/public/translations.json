@@ -584,6 +584,14 @@
       "fi": "Avustuksen viimeinen käyttöpäivä",
       "sv": "Understödets sista användningsdag"
     },
+    "valiselvitys-viimeistaan": {
+      "fi": "Väliselvitys toimitettava viimeistään",
+      "sv": "Mellanredovisningen ska lämnas senast"
+    },
+    "loppuselvitys-viimeistaan": {
+      "fi": "Loppuselvitys toimitettava viimeistään",
+      "sv": "Slutredovisningen ska lämnas senast"
+    },
     "kayttosuunnitelma": {
       "fi": "Käyttösuunnitelma",
       "sv": "Användningsplan"
