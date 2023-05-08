@@ -3,7 +3,6 @@
         [clojure.data :as data]
         [clojure.pprint :only [pprint]])
   (:require [clojure.java.io :as io]
-            [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :refer [exec exec-all execute! query with-transaction with-tx get-next-exception-or-original escape-like-pattern]]
             [oph.soresu.form.formhandler :as formhandler]
             [oph.va.jdbc.enums]
@@ -12,10 +11,7 @@
             [oph.va.hakija.domain :as hakija-domain]
             [oph.va.environment :as environment]
             [oph.va.routes :refer :all]
-            [clojure.tools.logging :as log]
-            [clojure.java.jdbc :as jdbc]
             [clj-time.core :as clj-time]
-            [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.authorization :as authorization]
             [oph.va.virkailija.email :as email]
             [oph.common.datetime :as datetime])
