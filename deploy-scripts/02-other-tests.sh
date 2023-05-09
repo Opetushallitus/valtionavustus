@@ -12,8 +12,9 @@ function main {
     require_docker_compose
     
     cd "$repo"
+
     start_gh_actions_group "Run lein tests"
-    docker compose up --wait db 
+    docker compose up -d db 
     ./lein with-profile test,user spec -f d
     docker compose down
     end_gh_actions_group
