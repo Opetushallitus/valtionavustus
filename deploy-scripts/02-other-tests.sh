@@ -12,8 +12,8 @@ function main {
     require_docker_compose
     
     cd "$repo"
-    mkdir -p "$repo/target/uberjar/"
-    mv "${standalone_jar}" "$repo/target/uberjar/valtionavustus-0.1.0-SNAPSHOT-standalone.jar"
+    mkdir -p target/uberjar/
+    mv "valtionavustus-standalone.jar" "target/uberjar/valtionavustus-0.1.0-SNAPSHOT-standalone.jar"
 
     start_gh_actions_group "Run lein tests"
 
