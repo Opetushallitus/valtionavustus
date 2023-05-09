@@ -13,11 +13,9 @@ function main {
     
     cd "$repo"
     start_gh_actions_group "Run lein tests"
-
-    start_system_under_test
-    make lein-test
-    stop_system_under_test
-
+    docker compose up --wait db 
+    ./lein with-profile test,user spec -f d
+    docker compose down
     end_gh_actions_group
 }
 main "$@"
