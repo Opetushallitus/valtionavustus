@@ -29,6 +29,8 @@ export class HakemustenArviointiPage {
   readonly header: ReturnType<typeof Header>
   readonly taydennyspyynto: Locator
   readonly sendTaydennyspyynto: Locator
+  readonly saveStatus: Locator
+  readonly saveStatusSuccess: Locator
   constructor(page: Page) {
     this.page = page
     this.avustushakuDropdown = this.page.locator('#avustushaku-dropdown')
@@ -43,6 +45,8 @@ export class HakemustenArviointiPage {
       name: 'Kirjoita tähän hakijalle täydennyspyyntö ja määräaika, johon mennessä hakijan tulee vastata täydennyspyyntöön',
     })
     this.sendTaydennyspyynto = this.page.getByRole('button', { name: 'Lähetä' })
+    this.saveStatus = this.page.getByTestId('save-status')
+    this.saveStatusSuccess = this.saveStatus.getByText('Kaikki tiedot tallennettu')
   }
 
   async navigate(
@@ -100,9 +104,7 @@ export class HakemustenArviointiPage {
   }
 
   async waitForSave() {
-    await this.page.waitForSelector(
-      '[data-test-id="save-status"]:has-text("Kaikki tiedot tallennettu")'
-    )
+    await expect(this.saveStatusSuccess).toBeVisible()
   }
 
   async clickHakemus(hakemusID: number) {
