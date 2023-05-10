@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 
 import DateUtil from 'soresu-form/web/DateUtil'
 import { ChangeLogEntry, Hakemus, HelpTexts } from 'soresu-form/web/va/types'
@@ -388,18 +388,16 @@ interface ProjectSelectProps {
 
 const ProjectSelect = ({ hakemusId, projects, selectedProject, disabled }: ProjectSelectProps) => {
   const dispatch = useHakemustenArviointiDispatch()
-  const ranOnce = useRef(false)
   useEffect(() => {
     const couldPreselectOnlyAvailableProjectCode =
       !disabled &&
       projects.length === 1 &&
       projects[0]['code-value'] !== 'Ei projektikoodia' &&
       !selectedProject
-    if (couldPreselectOnlyAvailableProjectCode && !ranOnce.current) {
-      ranOnce.current = true
+    if (couldPreselectOnlyAvailableProjectCode) {
       dispatch(selectProjectThunk({ project: projects[0], hakemusId }))
     }
-  }, [disabled])
+  }, [disabled, projects, selectedProject])
   const selectProject = (option: VaCodeValue | null) => {
     if (option === null) {
       return
@@ -410,7 +408,7 @@ const ProjectSelect = ({ hakemusId, projects, selectedProject, disabled }: Proje
     <ProjectSelector
       updateValue={selectProject}
       codeOptions={projects}
-      selectedValue={selectedProject || ''}
+      selectedValue={selectedProject}
       disabled={disabled}
     />
   )
@@ -425,8 +423,8 @@ interface TalousarviotiliSelectProps {
 const TalousarviotiliSelect = ({ isDisabled, hakemus, helpText }: TalousarviotiliSelectProps) => {
   const dispatch = useHakemustenArviointiDispatch()
   const { rahoitusalue, talousarviotili } = hakemus.arvio
+  const hakemusId = hakemus.id
   const tilit = hakemus.talousarviotilit ?? []
-  const ranOnce = useRef(false)
   const options = tilit.flatMap((tili) => {
     if (tili.koulutusasteet.length === 0) {
       return []
@@ -444,30 +442,27 @@ const TalousarviotiliSelect = ({ isDisabled, hakemus, helpText }: Talousarviotil
   )
   useEffect(() => {
     const couldSelectTheOneExistingTili = !isDisabled && options.length === 1
-    if (couldSelectTheOneExistingTili && !ranOnce.current) {
-      ranOnce.current = true
-      if (!rahoitusalue) {
-        dispatch(
-          setArvioValue({
-            hakemusId: hakemus.id,
-            key: 'rahoitusalue',
-            value: options[0].value.rahoitusalue,
-          })
-        )
-        dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }))
-      }
-      if (!talousarviotili) {
-        dispatch(
-          setArvioValue({
-            hakemusId: hakemus.id,
-            key: 'talousarviotili',
-            value: options[0].value.talousarviotili,
-          })
-        )
-        dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }))
-      }
+    if (couldSelectTheOneExistingTili && !rahoitusalue) {
+      dispatch(
+        setArvioValue({
+          hakemusId,
+          key: 'rahoitusalue',
+          value: options[0].value.rahoitusalue,
+        })
+      )
+      dispatch(startHakemusArvioAutoSave({ hakemusId }))
     }
-  }, [isDisabled])
+    if (couldSelectTheOneExistingTili && !talousarviotili) {
+      dispatch(
+        setArvioValue({
+          hakemusId,
+          key: 'talousarviotili',
+          value: options[0].value.talousarviotili,
+        })
+      )
+      dispatch(startHakemusArvioAutoSave({ hakemusId }))
+    }
+  }, [isDisabled, rahoitusalue, talousarviotili, options, hakemusId])
   return (
     <div>
       <h3>

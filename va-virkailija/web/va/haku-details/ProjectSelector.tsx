@@ -6,7 +6,7 @@ import { IconAdd, IconRemove } from '../koodienhallinta/IconButton'
 export interface ProjectSelectorProps {
   updateValue: (option: VaCodeValue | null) => void
   codeOptions: VaCodeValue[]
-  selectedValue: VaCodeValue | ''
+  selectedValue?: VaCodeValue
   disabled: boolean
   addRow?: () => void
   removeRow?: () => void

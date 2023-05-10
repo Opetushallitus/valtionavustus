@@ -8,7 +8,7 @@ export interface AutoCompleteCodeValueProps {
   codeType: CodeType
   updateValue: (option: VaCodeValue | null) => void
   codeOptions: VaCodeValue[]
-  selectedValue: VaCodeValue | ''
+  selectedValue?: VaCodeValue
   disabled: boolean
 }
 
@@ -45,7 +45,7 @@ export default function AutocompleteCodeValue(props: AutoCompleteCodeValueProps)
       noOptionsMessage={() => 'Ei hakutuloksia'}
       getOptionValue={getOptionValue}
       isDisabled={disabled}
-      value={selectedValue as VaCodeValue}
+      value={selectedValue}
       backspaceRemovesValue={true}
       isOptionDisabled={(option) => Boolean(option.hidden)}
       components={{ Option, SingleValue }}

@@ -3,6 +3,7 @@ import {
   createAsyncThunk,
   createSlice,
   Draft,
+  isPending,
   PayloadAction,
 } from '@reduxjs/toolkit'
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -281,13 +282,6 @@ export const startHakemusArvioAutoSave = createAsyncThunk<
   { hakemusId: number },
   { state: HakemustenArviointiRootState }
 >('arviointi/startHakemusArvioAutoSave', async (arg, thunkApi) => {
-  thunkApi.dispatch(
-    setArvioValue({
-      hakemusId: arg.hakemusId,
-      key: 'hasChanges',
-      value: true,
-    })
-  )
   thunkApi.dispatch(debouncedSaveHakemusArvio(arg))
 })
 
@@ -615,10 +609,12 @@ const arviointiSlice = createSlice({
       .addCase(selectProject.fulfilled, (state, { meta, payload }) => {
         const hakemus = getHakemus(state, meta.arg.hakemusId)
         hakemus.project = payload
-        state.saveStatus = {
-          saveInProgress: false,
-          saveTime: new Date().toISOString(),
-          serverError: '',
+        if (!isPending(debouncedSaveHakemusArvio)) {
+          state.saveStatus = {
+            saveInProgress: false,
+            saveTime: new Date().toISOString(),
+            serverError: '',
+          }
         }
       })
       .addCase(selectProject.rejected, (state) => {
