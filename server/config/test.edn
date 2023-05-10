@@ -36,8 +36,8 @@
       :database-name "va-test"
       :username "va_virkailija"
       :password "va"
-      :server-name "localhost"
-      :port-number 42042}
+      :server-name "va-postgres"
+      :port-number 5432}
  :email {:enabled? false
          :host nil
          :port nil

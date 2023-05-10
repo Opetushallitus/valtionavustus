@@ -12,7 +12,7 @@ function main {
 
     start_gh_actions_group "Run lein tests"
     docker compose up -d db 
-    ./lein with-profile test,user spec -f d
+    docker run -it --network container:va-postgres "$(docker build -q .)" with-profile test spec -f d
     docker compose down
     end_gh_actions_group
 }
