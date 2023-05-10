@@ -10,11 +10,13 @@
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.va.virkailija.common-utils
              :refer [test-server-port create-submission create-application
-                     create-application-evaluation]]))
+                     create-application-evaluation]])
+  (:import (java.time LocalDate)))
 
 (def translations-str (email/load-template "public/translations.json"))
 (def translations (json/read-str translations-str :key-fn keyword))
 (def translate (partial d/decision-translation translations :fi))
+(def translate-sv (partial d/decision-translation translations :sv))
 
 (def grant-payment-fields-single
   {:decision {:maksudate "20.6.2018"
@@ -147,10 +149,35 @@
                :translate translate})))))
 
   (it "gets correct start and end dates in Käyttöaika section"
-      (let [avustushaku {:hankkeen-alkamispaiva (java.time.LocalDate/parse "2020-12-31")
-                         :hankkeen-paattymispaiva (java.time.LocalDate/parse "2021-12-31")}
+      (let [avustushaku {:hankkeen-alkamispaiva (LocalDate/parse "2020-12-31")
+                         :hankkeen-paattymispaiva (LocalDate/parse "2021-12-31")}
             actual (d/kayttoaika-section avustushaku translate)]
         (should-contain "Avustuksen ensimmäinen käyttöpäivä 31.12.2020" actual)
-        (should-contain "Avustuksen viimeinen käyttöpäivä 31.12.2021" actual))))
+        (should-contain "Avustuksen viimeinen käyttöpäivä 31.12.2021" actual)))
+
+  (it "gets correct data in Selvitysvelvollisuus section in finnish"
+      (let [avustushaku {:translate         translate
+                         :language          :fi
+                         :valiselvitysdate  (LocalDate/parse "2023-12-31")
+                         :loppuselvitysdate (LocalDate/parse "2024-12-31")
+                         :decision          {:selvitysvelvollisuus {:fi "Selvitysvelvollisuus fi"
+                                                                    :sv "Selvitysvelvollisuus sv"}}}
+
+            actual (d/selvitysvelvollisuus-section avustushaku)]
+        (should-contain "Väliselvitys toimitettava viimeistään 31.12.2023" actual)
+        (should-contain "Loppuselvitys toimitettava viimeistään 31.12.2024" actual)
+        (should-contain "Selvitysvelvollisuus fi" actual)))
+  (it "gets correct data in Selvitysvelvollisuus section in swedish"
+      (let [avustushaku {:translate         translate-sv
+                         :language          :sv
+                         :valiselvitysdate  (LocalDate/parse "2023-12-31")
+                         :loppuselvitysdate (LocalDate/parse "2024-12-31")
+                         :decision          {:selvitysvelvollisuus {:fi "Selvitysvelvollisuus fi"
+                                                                    :sv "Selvitysvelvollisuus sv"}}}
+
+            actual (d/selvitysvelvollisuus-section avustushaku)]
+        (should-contain "Mellanredovisningen ska lämnas senast 31.12.2023" actual)
+        (should-contain "Slutredovisningen ska lämnas senast 31.12.2024" actual)
+        (should-contain "Selvitysvelvollisuus sv" actual))))
 
 (run-specs)
