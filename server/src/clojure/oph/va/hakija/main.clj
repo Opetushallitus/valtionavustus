@@ -1,5 +1,5 @@
 (ns oph.va.hakija.main
-  (:use [oph.va.hakija.server :only [start-server]])
+  (:use [oph.va.hakija.server :only [start-hakija-server]])
   (:require [clojure.tools.logging :as log]
             [nrepl.server :as nrepl-server]
             [oph.soresu.common.config :refer [config]])
@@ -23,5 +23,5 @@
         port (:port server-config)
         host (:host server-config)]
     (if (:nrepl-enabled? config) (run-nrepl))
-    (let [stop-server (start-server host port auto-reload?)]
+    (let [stop-server (start-hakija-server host port auto-reload?)]
       (.addShutdownHook (Runtime/getRuntime) (Thread. stop-server)))))

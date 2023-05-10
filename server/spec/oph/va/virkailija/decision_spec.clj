@@ -2,7 +2,7 @@
   (:require [speclj.core
              :refer [describe it should= should-contain tags run-specs around-all]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
-            [oph.va.virkailija.server :refer [start-server]]
+            [oph.va.virkailija.server :refer [start-virkailija-server]]
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.decision :as d]
             [oph.common.email :as email]

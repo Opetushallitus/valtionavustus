@@ -41,7 +41,7 @@
 (defn- drop-last-char [s]
   (clojure.string/join "" (drop-last s)))
 
-(defn start-server [host port auto-reload?]
+(defn start-hakija-server [host port auto-reload?]
   (let [defaults (assoc-in site-defaults [:security :anti-forgery] false)
         csp-url (str (drop-last-char (-> config :server :url :fi)) " " (drop-last-char (-> config :server :url :sv)))
         handler (as-> (create-routes) h

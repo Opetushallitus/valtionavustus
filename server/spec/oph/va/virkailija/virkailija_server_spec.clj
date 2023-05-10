@@ -3,7 +3,7 @@
   (:require [speclj.core
              :refer [describe tags around-all it
                      should= should-contain run-specs]]
-            [oph.va.virkailija.server :refer [start-server]]
+            [oph.va.virkailija.server :refer [start-virkailija-server]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.common-utils :refer [get! test-server-port]]))
 

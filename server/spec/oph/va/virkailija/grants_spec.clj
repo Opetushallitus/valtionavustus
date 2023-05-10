@@ -9,7 +9,7 @@
                     add-mock-authentication remove-mock-authentication
                     create-application-evaluation create-evaluation]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
-            [oph.va.virkailija.server :refer [start-server]]
+            [oph.va.virkailija.server :refer [start-virkailija-server]]
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.grant-data :as grant-data]

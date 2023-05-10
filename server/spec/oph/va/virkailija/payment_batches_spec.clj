@@ -3,7 +3,7 @@
                                  it tags around-all run-specs after]]
             [clj-time.core :as t]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
-            [oph.va.virkailija.server :refer [start-server]]
+            [oph.va.virkailija.server :refer [start-virkailija-server]]
             [oph.va.virkailija.common-utils
              :refer [test-server-port get! post! json->map create-submission
                      create-application create-application-evaluation

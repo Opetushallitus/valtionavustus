@@ -3,7 +3,7 @@
             :refer [should should-not should= describe
                     it tags around-all run-specs]]
            [oph.common.testing.spec-plumbing :refer [with-test-server!]]
-           [oph.va.virkailija.server :refer [start-server]]
+           [oph.va.virkailija.server :refer [start-virkailija-server]]
            [oph.va.virkailija.payments-data :as payments-data]
            [oph.va.virkailija.payment-batches-data :as payment-batches-data]
            [oph.va.virkailija.grant-data :as grant-data]

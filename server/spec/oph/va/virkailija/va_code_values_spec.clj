@@ -3,7 +3,7 @@
              :refer [describe it should should-not should=
                      tags around-all run-specs]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
-            [oph.va.virkailija.server :refer [start-server]]
+            [oph.va.virkailija.server :refer [start-virkailija-server]]
             [oph.va.virkailija.va-code-values-routes :refer [has-privilege?]]
             [oph.va.virkailija.va-code-values-data :as data]
             [oph.va.hakija.api :as hakija-api]

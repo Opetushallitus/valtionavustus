@@ -3,7 +3,7 @@
                :refer [describe it should= should-throw should should-not
                        tags around-all run-specs after]]
       [oph.common.testing.spec-plumbing :refer [with-test-server!]]
-      [oph.va.virkailija.server :refer [start-server]]
+      [oph.va.virkailija.server :refer [start-virkailija-server]]
       [oph.va.virkailija.common-utils
        :refer [test-server-port create-submission
                create-application admin-authentication

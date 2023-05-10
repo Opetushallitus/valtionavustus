@@ -121,7 +121,7 @@
                  :on-error (fn [request _]
                              (redirect-to-login request))}]})))
 
-(defn start-server [{:keys [host port auto-reload? without-authentication?]}]
+(defn start-virkailija-server [{:keys [host port auto-reload? without-authentication?]}]
    (let [defaults (-> site-defaults
                       (assoc-in [:security :anti-forgery] false)
                       (assoc-in [:session :store]

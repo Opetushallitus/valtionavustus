@@ -2,7 +2,7 @@
   (:require [clojure.tools.logging :as log]
             [nrepl.server :as nrepl-server]
             [oph.soresu.common.config :refer [config without-authentication?]]
-            [oph.va.virkailija.server :refer [start-server]])
+            [oph.va.virkailija.server :refer [start-virkailija-server]])
   (:gen-class))
 
 (defn write-nrepl-port-file [port]
@@ -25,8 +25,8 @@
 
     (if (:nrepl-enabled? config) (run-nrepl))
 
-    (let [stop-server (start-server {:host host
-                                     :port port
-                                     :auto-reload? auto-reload?
+    (let [stop-server (start-virkailija-server {:host         host
+                                     :port                    port
+                                     :auto-reload?            auto-reload?
                                      :without-authentication? (without-authentication?)})]
       (.addShutdownHook (Runtime/getRuntime) (Thread. stop-server)))))
