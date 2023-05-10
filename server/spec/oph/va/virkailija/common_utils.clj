@@ -6,7 +6,7 @@
             [oph.soresu.common.db :refer [exec]]
             [org.httpkit.client :as http]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
-            [oph.va.virkailija.server :refer [start-server]]
+            [oph.va.virkailija.server :refer [start-virkailija-server]]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.virkailija.authentication :as auth]
             [oph.va.virkailija.db :as virkailija-db]

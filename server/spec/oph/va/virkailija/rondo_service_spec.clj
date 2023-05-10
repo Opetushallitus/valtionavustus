@@ -5,7 +5,7 @@
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.common-utils
              :refer [test-server-port create-submission create-application]]
-            [oph.va.virkailija.server :refer [start-server]]
+            [oph.va.virkailija.server :refer [start-virkailija-server]]
             [oph.va.virkailija.remote-file-service :refer [RemoteFileService]]
             [oph.va.virkailija.remote-file-service :refer :all]
             [oph.va.virkailija.rondo-service :as rondo-service]

@@ -3,7 +3,7 @@
   (:require [speclj.core
              :refer [describe tags around-all it should should= run-specs]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
-            [oph.va.hakija.server :refer [start-server]]
+            [oph.va.hakija.server :refer [start-hakija-server]]
             [oph.va.hakija.email :as va-email]
             [oph.va.hakija.db :as va-db]))
 

@@ -4,7 +4,7 @@
             :refer [should should-not should= describe
                     it tags around-all run-specs]]
            [oph.common.testing.spec-plumbing :refer [with-test-server!]]
-           [oph.va.virkailija.server :refer [start-server]]
+           [oph.va.virkailija.server :refer [start-virkailija-server]]
            [oph.va.virkailija.external-data :as external-data]
            [oph.va.virkailija.schema :refer [ExternalGrant ExternalApplication]]
            [oph.va.virkailija.grant-data :as grant-data]
