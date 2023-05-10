@@ -1,7 +1,7 @@
 FROM node:20.1-alpine3.17 AS web-builder
 
 WORKDIR /app
-COPY package.json package-lock.json .
+COPY package.json package-lock.json ./
 RUN npm ci
 
 RUN mkdir -p server/resources/public/hakija/
@@ -12,7 +12,7 @@ COPY va-virkailija/web/ va-virkailija/web/
 COPY server/resources/public/translations.json server/resources/public/translations.json
 COPY va-hakija/web/ va-hakija/web/
 COPY webpack.config.js .
-COPY common-tsconfig.json tsconfig.json .
+COPY common-tsconfig.json tsconfig.json ./
 COPY .babelrc .
 
 RUN npm run build-production
