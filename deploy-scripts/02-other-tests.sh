@@ -11,8 +11,9 @@ function main {
     cd "$repo"
     
     start_gh_actions_group "Run lein tests"
-    docker compose up -d db 
-    docker run --rm --network container:va-postgres "$(docker build -q .)" with-profile test spec -f d
+    docker compose up -d db
+    docker build -t lein .
+    docker run --rm --network container:va-postgres lein with-profile test spec -f d
     docker compose down
     end_gh_actions_group
 }
