@@ -66,7 +66,7 @@
 
                          ;; logging
                          [org.apache.logging.log4j/log4j-core ~log4j-version]
-                         [org.apache.logging.log4j/log4j-slf4j-impl ~log4j-version]
+                         [org.apache.logging.log4j/log4j-slf4j2-impl ~log4j-version]
                          [org.clojure/tools.logging "1.2.4"]
                          [org.slf4j/slf4j-api "2.0.7"]
                          [commons-logging "1.2"]
@@ -109,7 +109,7 @@
                  [org.apache.commons/commons-email]
                  [org.clojure/core.async]
                  [org.apache.logging.log4j/log4j-core]
-                 [org.apache.logging.log4j/log4j-slf4j-impl]
+                 [org.apache.logging.log4j/log4j-slf4j2-impl]
                  [org.apache.tika/tika-core]
                  [nrepl]
                  [buddy/buddy-auth]
