@@ -170,6 +170,12 @@
                     :test-paths ["server/spec"]
                     :resource-paths ["server/test-resources"]}
 
+             :test-legacy {:env {:config "server/config/test-legacy.edn"
+                          :configdefaults "server/config/test.edn"
+                          :environment "test"}
+                    :test-paths ["server/spec"]
+                    :resource-paths ["server/test-resources"]}
+
              :hakija-prod     {:env {:config "va-hakija/config/prod.edn"}}
 
              :virkalija-prod  {:env {:config "va-virkailija/config/va-prod.edn"}}

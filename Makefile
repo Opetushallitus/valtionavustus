@@ -49,7 +49,7 @@ lein-build:
 
 .PHONY: lein-test
 lein-test:
-	./lein with-profile test,user spec $(SPECLJ_ARGS)
+	./lein with-profile test-legacy,user spec $(SPECLJ_ARGS)
 
 .PHONY: lein-outdated-dependencies
 lein-outdated-dependencies:
