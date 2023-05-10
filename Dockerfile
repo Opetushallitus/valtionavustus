@@ -34,12 +34,17 @@ RUN ./lein deps
 # add project code
 COPY server/src/ ./server/src/
 COPY server/resources/ ./server/resources/
+
+# add spec files
+COPY server/spec/ ./server/spec/
+COPY server/test-resources/ ./server/test-resources/
+
 RUN ./lein compile
 
+COPY server/config/ ./server/config/
 COPY va-hakija/config/ ./va-hakija/config/
 COPY va-virkailija/config/ ./va-virkailija/config/
 
 COPY --from=web-builder /app/server/resources/public/hakija/js/ server/resources/public/hakija/js/
 COPY --from=web-builder /app/server/resources/public/virkailija/js/ server/resources/public/virkailija/js/
-
 ENTRYPOINT ["./lein"]
