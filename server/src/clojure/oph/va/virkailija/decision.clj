@@ -170,9 +170,7 @@
 
 (defn selvitysvelvollisuus-section [{:keys [valiselvitysdate loppuselvitysdate decision translate language]}]
   (if (feature-enabled? :grant-reporting-deadline)
-    (let [valiselvitysdate valiselvitysdate
-          loppuselvitysdate loppuselvitysdate
-          formatted-date-or-empty (fn [date key] (if date [:p (translate key) " " (format-date date)] ""))
+    (let [formatted-date-or-empty (fn [date key] (if date [:p (translate key) " " (format-date date)] ""))
           valiselvitysdate (formatted-date-or-empty valiselvitysdate :valiselvitys-viimeistaan)
           loppuselvitysdate (formatted-date-or-empty loppuselvitysdate :loppuselvitys-viimeistaan)
           selvitysvelvollisuus-freeform-text (get-in decision [:selvitysvelvollisuus language])
