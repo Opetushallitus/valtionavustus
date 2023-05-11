@@ -3,7 +3,10 @@ import {
   createAsyncThunk,
   createSlice,
   Draft,
+  isAnyOf,
+  isFulfilled,
   isPending,
+  isRejected,
   PayloadAction,
 } from '@reduxjs/toolkit'
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -436,6 +439,17 @@ type ArvioAction<T extends keyof Arvio> = PayloadAction<{
   hakemusId: number
 }>
 
+const saveStatusAwareActions = [
+  setKeskeytettyAloittamatta,
+  addPayment,
+  selectProject,
+  removePayment,
+  updateHakemusStatus,
+  addHakemusComment,
+  setScore,
+  removeScore,
+] as const
+
 const arviointiSlice = createSlice({
   name: 'hakemustenArviointi',
   initialState,
@@ -490,31 +504,16 @@ const arviointiSlice = createSlice({
         const hakemus = getHakemus(state, meta.arg.hakemusId)
         hakemus['keskeytetty-aloittamatta'] = meta.arg.keskeyta
         hakemus.refused = meta.arg.keskeyta
-        state.saveStatus = {
-          saveInProgress: true,
-          saveTime: null,
-          serverError: '',
-        }
       })
       .addCase(setKeskeytettyAloittamatta.rejected, (state, { meta }) => {
         const hakemus = getHakemus(state, meta.arg.hakemusId)
         hakemus['keskeytetty-aloittamatta'] = !meta.arg.keskeyta
         hakemus.refused = !meta.arg.keskeyta
-        state.saveStatus = {
-          saveInProgress: false,
-          saveTime: null,
-          serverError: 'unexpected-save-error',
-        }
       })
       .addCase(setKeskeytettyAloittamatta.fulfilled, (state, { payload, meta }) => {
         const hakemus = getHakemus(state, meta.arg.hakemusId)
         hakemus['keskeytetty-aloittamatta'] = payload['keskeytetty-aloittamatta']
         hakemus.refused = payload.refused
-        state.saveStatus = {
-          saveInProgress: false,
-          saveTime: new Date().toISOString(),
-          serverError: '',
-        }
       })
       .addCase(selectHakemus.fulfilled, (state, { payload, meta }) => {
         const hakemusId = meta.arg
@@ -527,22 +526,10 @@ const arviointiSlice = createSlice({
           }
         }
       })
-      .addCase(saveHakemusArvio.pending, (state) => {
-        state.saveStatus = {
-          saveInProgress: true,
-          saveTime: null,
-          serverError: '',
-        }
-      })
       .addCase(saveHakemusArvio.fulfilled, (state, { meta, payload }) => {
         const hakemus = getHakemus(state, meta.arg.hakemusId)
         hakemus.arvio.hasChanges = false
         hakemus.arvio['budget-granted'] = payload.budgetGranted
-        state.saveStatus = {
-          saveInProgress: false,
-          saveTime: new Date().toISOString(),
-          serverError: '',
-        }
       })
       .addCase(saveHakemusArvio.rejected, (state, { payload }) => {
         state.saveStatus = {
@@ -550,9 +537,6 @@ const arviointiSlice = createSlice({
           saveTime: null,
           serverError: payload ?? 'unexpected-save-error',
         }
-      })
-      .addCase(startHakemusArvioAutoSave.pending, (state) => {
-        state.saveStatus.saveInProgress = true
       })
       .addCase(loadSelvitys.fulfilled, (state, { meta, payload }) => {
         const hakemus = getHakemus(state, meta.arg.hakemusId)
@@ -562,27 +546,9 @@ const arviointiSlice = createSlice({
         const loadedState = getLoadedState(state)
         loadedState.hakuData = payload
       })
-      .addCase(addPayment.pending, (state) => {
-        state.saveStatus.saveInProgress = true
-      })
       .addCase(addPayment.fulfilled, (state, { payload, meta }) => {
         const hakemus = getHakemus(state, meta.arg.hakemusId)
         hakemus.payments.push(payload)
-        state.saveStatus = {
-          saveInProgress: false,
-          saveTime: new Date().toISOString(),
-          serverError: '',
-        }
-      })
-      .addCase(addPayment.rejected, (state, { payload }) => {
-        state.saveStatus = {
-          saveInProgress: false,
-          saveTime: null,
-          serverError: payload ?? 'unexpected-save-error',
-        }
-      })
-      .addCase(removePayment.pending, (state) => {
-        state.saveStatus.saveInProgress = true
       })
       .addCase(removePayment.fulfilled, (state, { meta }) => {
         const hakemus = getHakemus(state, meta.arg.hakemusId)
@@ -590,107 +556,52 @@ const arviointiSlice = createSlice({
         if (index !== -1) {
           hakemus.payments.splice(index, 1)
         }
-        state.saveStatus = {
-          saveInProgress: false,
-          saveTime: new Date().toISOString(),
-          serverError: '',
-        }
-      })
-      .addCase(removePayment.rejected, (state) => {
-        state.saveStatus = {
-          saveInProgress: false,
-          saveTime: null,
-          serverError: 'unexpected-save-error',
-        }
-      })
-      .addCase(selectProject.pending, (state) => {
-        state.saveStatus.saveInProgress = true
       })
       .addCase(selectProject.fulfilled, (state, { meta, payload }) => {
         const hakemus = getHakemus(state, meta.arg.hakemusId)
         hakemus.project = payload
-        if (!isPending(debouncedSaveHakemusArvio)) {
-          state.saveStatus = {
-            saveInProgress: false,
-            saveTime: new Date().toISOString(),
-            serverError: '',
-          }
-        }
-      })
-      .addCase(selectProject.rejected, (state) => {
-        state.saveStatus = {
-          saveInProgress: false,
-          saveTime: null,
-          serverError: 'unexpected-save-error',
-        }
-      })
-      .addCase(updateHakemusStatus.pending, (state) => {
-        state.saveStatus.saveInProgress = true
       })
       .addCase(updateHakemusStatus.fulfilled, (state, { meta, payload }) => {
         const hakemus = getHakemus(state, meta.arg.hakemusId)
         hakemus.status = meta.arg.status
         hakemus.changeRequests = payload
-        state.saveStatus = {
-          saveInProgress: false,
-          saveTime: new Date().toISOString(),
-          serverError: '',
-        }
-      })
-      .addCase(updateHakemusStatus.rejected, (state) => {
-        state.saveStatus = {
-          saveInProgress: false,
-          saveTime: null,
-          serverError: 'unexpected-save-error',
-        }
-      })
-      .addCase(addHakemusComment.pending, (state) => {
-        state.saveStatus.saveInProgress = true
       })
       .addCase(addHakemusComment.fulfilled, (state, { payload, meta }) => {
         const hakemus = getHakemus(state, meta.arg.hakemusId)
         hakemus.comments = payload
-        state.saveStatus = {
-          saveInProgress: false,
-          saveTime: new Date().toISOString(),
-          serverError: '',
-        }
-      })
-      .addCase(addHakemusComment.rejected, (state) => {
-        state.saveStatus = {
-          saveInProgress: false,
-          saveTime: null,
-          serverError: 'unexpected-save-error',
-        }
-      })
-      .addCase(setScore.pending, (state) => {
-        state.saveStatus.saveInProgress = true
       })
       .addCase(setScore.fulfilled, (state, { payload, meta }) => {
         const hakemus = getHakemus(state, meta.arg.hakemusId)
         hakemus.arvio.scoring = payload.scoring
         hakemus.scores = payload.scores
       })
-      .addCase(setScore.rejected, (state) => {
+      .addCase(removeScore.fulfilled, (state, { payload, meta }) => {
+        const hakemus = getHakemus(state, meta.arg.hakemusId)
+        hakemus.arvio.scoring = payload.scoring
+        hakemus.scores = payload.scores
+      })
+      .addMatcher(isAnyOf(isRejected(...saveStatusAwareActions)), (state) => {
         state.saveStatus = {
           saveInProgress: false,
           saveTime: null,
           serverError: 'unexpected-save-error',
         }
       })
-      .addCase(removeScore.pending, (state) => {
-        state.saveStatus.saveInProgress = true
-      })
-      .addCase(removeScore.fulfilled, (state, { payload, meta }) => {
-        const hakemus = getHakemus(state, meta.arg.hakemusId)
-        hakemus.arvio.scoring = payload.scoring
-        hakemus.scores = payload.scores
-      })
-      .addCase(removeScore.rejected, (state) => {
+      .addMatcher(
+        isAnyOf(isPending(...saveStatusAwareActions, startHakemusArvioAutoSave)),
+        (state) => {
+          state.saveStatus = {
+            saveInProgress: true,
+            saveTime: null,
+            serverError: '',
+          }
+        }
+      )
+      .addMatcher(isAnyOf(isFulfilled(...saveStatusAwareActions, saveHakemusArvio)), (state) => {
         state.saveStatus = {
           saveInProgress: false,
-          saveTime: null,
-          serverError: 'unexpected-save-error',
+          saveTime: new Date().toISOString(),
+          serverError: '',
         }
       })
   },
