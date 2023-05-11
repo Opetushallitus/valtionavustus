@@ -1,5 +1,5 @@
 import {
-  AsyncThunkPayloadCreator,
+  createAction,
   createAsyncThunk,
   createSlice,
   Draft,
@@ -36,6 +36,7 @@ import {
   mutatesDefaultBudgetValuesForSelectedHakemusSeurantaAnswers,
 } from './overrides'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
+import { startHakemustenArviointiListening } from './hakemustenArviointiListening'
 
 const oldestFirst = (a: Lahetys, b: Lahetys) => (a.created_at < b.created_at ? -1 : 1)
 const successfullySent = (lahetys: Lahetys) => lahetys.success
@@ -266,27 +267,9 @@ const saveHakemusArvio = createAsyncThunk<
   return thunkAPI.rejectWithValue('unexpected-save-error')
 })
 
-const debouncedHakemusArvioSave: AsyncThunkPayloadCreator<
-  void,
-  { hakemusId: number },
-  { state: HakemustenArviointiRootState }
-> = async (arg, thunkAPI) => {
-  thunkAPI.dispatch(saveHakemusArvio(arg))
-}
-
-const debouncedSaveHakemusArvio = createAsyncThunk<
-  void,
-  { hakemusId: number },
-  { state: HakemustenArviointiRootState }
->('arviointi/debouncedSaveHakemusArvio', _.debounce(debouncedHakemusArvioSave, 3000))
-
-export const startHakemusArvioAutoSave = createAsyncThunk<
-  void,
-  { hakemusId: number },
-  { state: HakemustenArviointiRootState }
->('arviointi/startHakemusArvioAutoSave', async (arg, thunkApi) => {
-  thunkApi.dispatch(debouncedSaveHakemusArvio(arg))
-})
+export const startHakemusArvioAutoSave = createAction<{ hakemusId: number }>(
+  'arviointi/startHakemusArvioAutoSave'
+)
 
 export const loadSelvitys = createAsyncThunk<
   Hakemus['selvitys'],
@@ -406,6 +389,15 @@ export const selectProject = createAsyncThunk<
   const avustushakuId = getLoadedState(thunkAPI.getState().arviointi).hakuData.avustushaku.id
   await HttpUtil.post(`/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/project`, project)
   return project
+})
+
+startHakemustenArviointiListening({
+  actionCreator: startHakemusArvioAutoSave,
+  effect: async (action, listenerApi) => {
+    listenerApi.cancelActiveListeners()
+    await listenerApi.delay(3000)
+    await listenerApi.dispatch(saveHakemusArvio(action.payload))
+  },
 })
 
 interface SaveStatus {
@@ -588,7 +580,7 @@ const arviointiSlice = createSlice({
         }
       })
       .addMatcher(
-        isAnyOf(isPending(...saveStatusAwareActions, startHakemusArvioAutoSave)),
+        isAnyOf(isPending(...saveStatusAwareActions), startHakemusArvioAutoSave),
         (state) => {
           state.saveStatus = {
             saveInProgress: true,

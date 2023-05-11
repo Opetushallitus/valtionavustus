@@ -55,7 +55,12 @@ export const HeaderContainer = ({
   useEffect(() => {
     const content = getNotificationContent(saveStatus)
     setNotificationContent(content)
-    const timeout = setTimeout(() => setNotificationContent(undefined), 5000)
+    const timeout = setTimeout(() => {
+      const nothingPending = Object.values(saveStatus ?? {}).some((status) => status === true)
+      if (!nothingPending) {
+        setNotificationContent(undefined)
+      }
+    }, 5000)
 
     return () => {
       clearTimeout(timeout)
