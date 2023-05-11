@@ -16,7 +16,7 @@
   (:import (java.time.format DateTimeFormatter)))
 
 (defn decision-translation [translations lang translation-key]
-  (get-in translations [:paatos (keyword translation-key) lang]))
+  (-> translations :paatos (keyword translation-key) lang))
 
 (defn content-with-paragraphs [content]
   (let [rows (str/split content #"\n")
@@ -105,15 +105,11 @@
      :version (:version row)}))
 
 (defn get-pakote-liite []
-  (let [
-         attachment decision-liitteet/PakoteOhjeLiitteet
-
-        ]
-  {
-    :id (:id attachment)
-    :langs (:langs attachment)
-    :version ""
-   }))
+  (let [attachment decision-liitteet/PakoteOhjeLiitteet]
+    {:id      (:id attachment)
+     :langs   (:langs attachment)
+     :version ""
+     }))
 
 (defn liite-row [liite lang]
  (if-some [liite-id (:id liite)]
@@ -199,7 +195,7 @@
         arvio-role (first (filter #(= (:id %) arvio-role-id) roles))
         role (if (nil? arvio-role) (first presenting-officers) arvio-role)
         language (keyword (:language hakemus))
-        avustushaku-name (get-in avustushaku [:content :name language])
+        avustushaku-name (-> avustushaku :content :name language)
         total-granted (:budget-granted arvio)
         template (email/load-template (str "templates/paatos.html"))
         translations-str (email/load-template "public/translations.json")
@@ -228,8 +224,7 @@
                                 :language          language})
 
 
-        params {
-                :avustushaku                   avustushaku
+        params {:avustushaku                   avustushaku
                 :is-yleisavustus               is-yleisavustus
                 :is-erityisavustus             is-erityisavustus
                 :hakemus                       hakemus
