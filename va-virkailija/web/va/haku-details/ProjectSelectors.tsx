@@ -60,7 +60,6 @@ export default function ProjectSelectors(props: ProjectSelectorsProps) {
       {projects.length < 1 ? (
         <ProjectSelector
           codeOptions={codeOptions.filter((k) => k['value-type'] === 'project')}
-          selectedValue={''}
           disabled={disabled}
           updateValue={updateValue(0)}
           removeRow={removeRow(null)}

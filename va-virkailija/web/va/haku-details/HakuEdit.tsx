@@ -56,9 +56,10 @@ export const HakuEdit = () => {
     userHasEditPrivilege &&
     (allowAllHakuEdits || avustushaku.phase === 'current' || avustushaku.phase === 'upcoming')
   const userHasEditMyHakuRolePrivilege = !!avustushaku.privileges?.['edit-my-haku-role']
-  const selectedValueOperation = codeOptions.find((k) => k.id === avustushaku['operation-id']) || ''
-  const selectedValueOperationalUnit =
-    codeOptions.find((k) => k.id === avustushaku['operational-unit-id']) || ''
+  const selectedValueOperation = codeOptions.find((k) => k.id === avustushaku['operation-id'])
+  const selectedValueOperationalUnit = codeOptions.find(
+    (k) => k.id === avustushaku['operational-unit-id']
+  )
 
   const onChangeListener = (target: EventTarget & HTMLElement, value: string) => {
     dispatch(updateField({ avustushaku, field: target, newValue: value }))
