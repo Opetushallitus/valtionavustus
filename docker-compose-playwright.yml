@@ -1,0 +1,8 @@
+name: valtionavustus-playwright
+services:
+  virkailija:
+    command: with-profile virkailija-test run -m oph.va.virkailija.main
+  
+  hakija:
+    command: with-profile hakija-test run -m oph.va.hakija.main
+
