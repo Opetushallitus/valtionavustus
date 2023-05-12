@@ -338,30 +338,40 @@ export const selectHaku = createAsyncThunk<
   }
 })
 
+function avustusHakuPayload(haku: Avustushaku) {
+  const payload = _.omit(haku, [
+    'roles',
+    'formContent',
+    'privileges',
+    'valiselvitysForm',
+    'loppuselvitysForm',
+    'payments',
+    'muutoshakukelpoisuus',
+    'vastuuvalmistelija',
+    'paatokset-lahetetty',
+    'maksatukset-lahetetty',
+    'valiselvitykset-lahetetty',
+    'loppuselvitykset-lahetetty',
+    'maksatukset-summa',
+    'use-overridden-detailed-costs',
+    'projects',
+    'talousarviotilit',
+  ])
+
+  return {
+    ...payload,
+    valiselvitysdate: payload.valiselvitysdate === '' ? null : payload.valiselvitysdate,
+    loppuselvitysdate: payload.loppuselvitysdate === '' ? null : payload.loppuselvitysdate,
+  }
+}
+
 const saveHaku = createAsyncThunk<Avustushaku, Avustushaku, { rejectValue: string }>(
   'haku/saveHaku',
   async (selectedHaku, { rejectWithValue }) => {
     try {
       const data = await HttpUtil.post(
         `/api/avustushaku/${selectedHaku.id}`,
-        _.omit(selectedHaku, [
-          'roles',
-          'formContent',
-          'privileges',
-          'valiselvitysForm',
-          'loppuselvitysForm',
-          'payments',
-          'muutoshakukelpoisuus',
-          'vastuuvalmistelija',
-          'paatokset-lahetetty',
-          'maksatukset-lahetetty',
-          'valiselvitykset-lahetetty',
-          'loppuselvitykset-lahetetty',
-          'maksatukset-summa',
-          'use-overridden-detailed-costs',
-          'projects',
-          'talousarviotilit',
-        ])
+        avustusHakuPayload(selectedHaku)
       )
       return data as BaseAvustushaku
     } catch (error: any) {
