@@ -25,7 +25,7 @@ function main {
   end_gh_actions_group
 
   start_gh_actions_group "run playwright tests"
-  docker run --rm -it --network valtionavustus-playwright_default \
+  docker run --rm --network valtionavustus-playwright_default \
   -v "$RESULTS_DIR":/playwright-results\
   --env TZ='Europe/Helsinki'\
   --env VIRKAILIJA_HOSTNAME=va-virkailija \
