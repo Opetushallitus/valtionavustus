@@ -158,9 +158,17 @@
                               :configsecrets "../valtionavustus-secret/config/secret-dev.edn"
                               :environment "dev"
                               :configdefaults "va-hakija/config/defaults.edn"}}
+                              
+             :hakija-test     {:env {:config "va-hakija/config/docker-compose-test.edn"
+                              :environment "dev"
+                              :configdefaults "va-hakija/config/defaults.edn"}}
 
              :virkailija-dev {:env {:config "va-virkailija/config/dev.edn"
                               :configsecrets "../valtionavustus-secret/config/secret-dev.edn"
+                              :environment "dev"
+                              :configdefaults "va-virkailija/config/defaults.edn"}}
+
+             :virkailija-test {:env {:config "va-virkailija/config/docker-compose-test.edn"
                               :environment "dev"
                               :configdefaults "va-virkailija/config/defaults.edn"}}
 
