@@ -36,7 +36,8 @@ test('paatos liitteet', async ({
     yleisOhjeLiite,
     pakoteOhjeCheckbox,
   } = paatosPage.locators
-  const amountOfYleisohjeet = 5
+  const amountOfYleisohjeet = 6
+  const yleisohjeAmountStartingFromZero = amountOfYleisohjeet - 1
   await expect(yleisOhjeLiite).toHaveCount(amountOfYleisohjeet)
 
   await test.step('ehdot liitteet are disabled and unchecked', async () => {
@@ -47,10 +48,10 @@ test('paatos liitteet', async ({
   })
 
   await test.step('newest ohje is preselected and all are disabled', async () => {
-    for (let i = 0; i <= 4; i++) {
+    for (let i = 0; i <= yleisohjeAmountStartingFromZero; i++) {
       const nthYleisohje = yleisOhjeLiite.nth(i)
       await expect(nthYleisohje).toBeDisabled()
-      if (i === 4) {
+      if (i === yleisohjeAmountStartingFromZero) {
         await expect(nthYleisohje).toBeChecked()
       } else {
         await expect(nthYleisohje).not.toBeChecked()
@@ -64,9 +65,9 @@ test('paatos liitteet', async ({
     await hakemustenArviointiPage.waitForSave()
   })
   await test.step('after selecting to add yleisohje only the newest ohje is enabled and checked', async () => {
-    for (let i = 0; i <= 4; i++) {
+    for (let i = 0; i <= yleisohjeAmountStartingFromZero; i++) {
       const nthYleisohje = yleisOhjeLiite.nth(i)
-      if (i === 4) {
+      if (i === yleisohjeAmountStartingFromZero) {
         await expect(nthYleisohje).toBeEnabled()
         await expect(nthYleisohje).toBeChecked()
         await nthYleisohje.click()
@@ -92,12 +93,12 @@ test('paatos liitteet', async ({
     await page.goto(url)
     const yleisohjeLink = page.locator('a').locator('text=Valtionavustusten yleisohje')
     await expect(yleisohjeLink).toBeVisible()
-    const href = '/liitteet/va_yleisohje_2022-09_fi.pdf'
+    const href = '/liitteet/va_yleisohje_2023-05_fi.pdf'
     expect(await yleisohjeLink.getAttribute('href')).toBe(href)
     const res = await page.request.get(`${HAKIJA_URL}${href}`)
     const pdfBody = await res.body()
     const pdfText = await getPdfFirstPageTextContent(pdfBody)
-    expect(pdfText).toContain('13.9.2022')
+    expect(pdfText).toContain('12.5.2023')
     expect(pdfText).toContain('YLEISOHJE')
   })
 
