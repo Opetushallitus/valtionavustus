@@ -263,6 +263,15 @@ export const startHakemusArvioAutoSave = createAction<{ hakemusId: number }>(
   'arviointi/startHakemusArvioAutoSave'
 )
 
+startHakemustenArviointiListening({
+  actionCreator: startHakemusArvioAutoSave,
+  effect: async (action, listenerApi) => {
+    listenerApi.cancelActiveListeners()
+    await listenerApi.delay(3000)
+    await listenerApi.dispatch(saveHakemusArvio(action.payload))
+  },
+})
+
 export const loadSelvitys = createAsyncThunk<
   Hakemus['selvitys'],
   { avustushakuId: number; hakemusId: number }
@@ -377,15 +386,6 @@ export const selectProject = createAsyncThunk<
   const avustushakuId = getLoadedState(thunkAPI.getState().arviointi).hakuData.avustushaku.id
   await HttpUtil.post(`/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/project`, project)
   return project
-})
-
-startHakemustenArviointiListening({
-  actionCreator: startHakemusArvioAutoSave,
-  effect: async (action, listenerApi) => {
-    listenerApi.cancelActiveListeners()
-    await listenerApi.delay(3000)
-    await listenerApi.dispatch(saveHakemusArvio(action.payload))
-  },
 })
 
 interface SaveStatus {
