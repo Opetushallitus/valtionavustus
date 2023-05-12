@@ -1,12 +1,11 @@
 import { defaultValues } from '../fixtures/defaultValues'
-import { Page, expect } from '@playwright/test'
 import { expectToBeDefined } from '../utils/util'
 import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
 import { randomString } from '../utils/random'
 
 const test = defaultValues
 
-test.only('virkailija can set and unset selvitysvelvollisuus dates', async ({
+test('virkailija can set and unset selvitysvelvollisuus dates', async ({
   page,
   hakuProps,
   userCache,
