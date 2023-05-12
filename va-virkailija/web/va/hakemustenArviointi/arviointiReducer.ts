@@ -133,14 +133,10 @@ export const setKeskeytettyAloittamatta = createAsyncThunk<
   { state: HakemustenArviointiRootState }
 >('arviointi/setKeskeytettyAloittamatta', async ({ hakemusId, keskeyta }, thunkAPI) => {
   const { hakuData } = getLoadedState(thunkAPI.getState().arviointi)
-  try {
-    return await HttpUtil.put(
-      `/api/avustushaku/${hakuData.avustushaku.id}/hakemus/${hakemusId}/keskeyta-aloittamatta`,
-      { keskeyta }
-    )
-  } catch (e) {
-    return thunkAPI.rejectWithValue('unexpected-save-error')
-  }
+  return await HttpUtil.put(
+    `/api/avustushaku/${hakuData.avustushaku.id}/hakemus/${hakemusId}/keskeyta-aloittamatta`,
+    { keskeyta }
+  )
 })
 
 export const selectHakemus = createAsyncThunk<
@@ -246,25 +242,21 @@ export const selectHakemus = createAsyncThunk<
 const saveHakemusArvio = createAsyncThunk<
   { budgetGranted: number | undefined },
   { hakemusId: number },
-  { state: HakemustenArviointiRootState; rejectValue: string }
+  { state: HakemustenArviointiRootState }
 >('arviointi/saveHakemusArvio', async ({ hakemusId }, thunkAPI) => {
   const avustushakuId = getLoadedState(thunkAPI.getState().arviointi).hakuData.avustushaku.id
   const hakemus = getHakemus(thunkAPI.getState().arviointi, hakemusId)
   const { hasChanges, ...actualArvio } = hakemus.arvio
   if (hasChanges) {
-    try {
-      const res = await HttpUtil.post(
-        `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/arvio`,
-        actualArvio
-      )
-      return {
-        budgetGranted: res['budget-granted'],
-      }
-    } catch (e) {
-      return thunkAPI.rejectWithValue('unexpected-save-error')
+    const res = await HttpUtil.post(
+      `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/arvio`,
+      actualArvio
+    )
+    return {
+      budgetGranted: res['budget-granted'],
     }
   }
-  return thunkAPI.rejectWithValue('unexpected-save-error')
+  throw Error('no changes')
 })
 
 export const startHakemusArvioAutoSave = createAction<{ hakemusId: number }>(
@@ -335,19 +327,15 @@ export const addPayment = createAsyncThunk<
   { state: HakemustenArviointiRootState; rejectValue: string }
 >('arviointi/addPayment', async ({ paymentSum, index, hakemusId, projectCode }, thunkAPI) => {
   const hakemus = getHakemus(thunkAPI.getState().arviointi, hakemusId)
-  try {
-    return await HttpUtil.post('/api/v2/payments/', {
-      'application-id': hakemus!.id,
-      'application-version': hakemus!.version,
-      'paymentstatus-id': 'waiting',
-      'batch-id': null,
-      'payment-sum': paymentSum,
-      'project-code': projectCode,
-      phase: index,
-    })
-  } catch (e) {
-    return thunkAPI.rejectWithValue('unexpected-save-error')
-  }
+  return await HttpUtil.post('/api/v2/payments/', {
+    'application-id': hakemus!.id,
+    'application-version': hakemus!.version,
+    'paymentstatus-id': 'waiting',
+    'batch-id': null,
+    'payment-sum': paymentSum,
+    'project-code': projectCode,
+    phase: index,
+  })
 })
 
 export const removePayment = createAsyncThunk<
@@ -440,6 +428,7 @@ const saveStatusAwareActions = [
   addHakemusComment,
   setScore,
   removeScore,
+  saveHakemusArvio,
 ] as const
 
 const arviointiSlice = createSlice({
@@ -523,13 +512,6 @@ const arviointiSlice = createSlice({
         hakemus.arvio.hasChanges = false
         hakemus.arvio['budget-granted'] = payload.budgetGranted
       })
-      .addCase(saveHakemusArvio.rejected, (state, { payload }) => {
-        state.saveStatus = {
-          saveInProgress: false,
-          saveTime: null,
-          serverError: payload ?? 'unexpected-save-error',
-        }
-      })
       .addCase(loadSelvitys.fulfilled, (state, { meta, payload }) => {
         const hakemus = getHakemus(state, meta.arg.hakemusId)
         hakemus.selvitys = payload
@@ -589,7 +571,7 @@ const arviointiSlice = createSlice({
           }
         }
       )
-      .addMatcher(isAnyOf(isFulfilled(...saveStatusAwareActions, saveHakemusArvio)), (state) => {
+      .addMatcher(isAnyOf(isFulfilled(...saveStatusAwareActions)), (state) => {
         state.saveStatus = {
           saveInProgress: false,
           saveTime: new Date().toISOString(),
