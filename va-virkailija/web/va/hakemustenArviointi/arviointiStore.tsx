@@ -3,7 +3,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 
 import arviointiReducer from './arviointiReducer'
 import filterReducer from './filterReducer'
-import { hakemustenArviointiListenerMiddleware } from './hakemustenArviointiListening'
+import { hakemustenArviointiListenerMiddleware } from './hakemustenArviointiListenerMiddleware'
 
 const store = configureStore({
   reducer: {

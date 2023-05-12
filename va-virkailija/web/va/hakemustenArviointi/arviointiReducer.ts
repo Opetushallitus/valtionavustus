@@ -36,7 +36,7 @@ import {
   mutatesDefaultBudgetValuesForSelectedHakemusSeurantaAnswers,
 } from './overrides'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
-import { startHakemustenArviointiListening } from './hakemustenArviointiListening'
+import { startHakemustenArviointiListening } from './hakemustenArviointiListenerMiddleware'
 
 const oldestFirst = (a: Lahetys, b: Lahetys) => (a.created_at < b.created_at ? -1 : 1)
 const successfullySent = (lahetys: Lahetys) => lahetys.success
