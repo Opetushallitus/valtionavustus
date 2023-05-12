@@ -8,6 +8,8 @@ export function PaatosPage(page: Page) {
   const alkamisPaiva = page.getByTestId('hankkeen-alkamispaiva')
   const label = '[data-test-id="label"]'
   const paattymisPaiva = page.getByTestId('hankkeen-paattymispaiva')
+  const valiselvitysPaiva = page.getByTestId('valiselvityksen-aikaraja')
+  const loppuselvitysPaiva = page.getByTestId('loppuselvityksen-aikaraja')
 
   const locators = {
     sendPaatokset: (amount: number = 1) => page.locator(`text="Lähetä ${amount} päätöstä"`),
@@ -37,6 +39,8 @@ export function PaatosPage(page: Page) {
       '[id="decision.myonteinenlisateksti-Ammatillinen_koulutus.fi"]'
     ),
     paatosUpdatedAt: page.locator('#paatosUpdatedAt'),
+    valiselvitysDate: valiselvitysPaiva.locator(datePicker),
+    loppuselvitysDate: loppuselvitysPaiva.locator(datePicker),
   }
 
   async function navigateTo(avustushakuID: number) {
