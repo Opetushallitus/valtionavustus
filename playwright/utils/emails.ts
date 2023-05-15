@@ -55,7 +55,7 @@ const getEmailsWithAvustushaku =
       })
       .then((r) => emailSchema.validate(r.data))
 
-export const getTäydennyspyyntöEmails = getEmails('change-request')
+export const getTäydennyspyyntöEmails = getEmails('taydennyspyynto')
 
 export const getValmistelijaEmails = getEmails('notify-valmistelija-of-new-muutoshakemus')
 export const getMuutoshakemusPaatosEmails = getEmails('muutoshakemus-paatos')

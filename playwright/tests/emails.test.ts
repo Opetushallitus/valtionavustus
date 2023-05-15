@@ -48,6 +48,7 @@ test('Täydennyspyyntö email', async ({
   page,
   submittedHakemus: { userKey },
   answers,
+  avustushakuName,
 }, testInfo) => {
   const avustushakuID = closedAvustushaku.id
   testInfo.setTimeout(testInfo.timeout + 25_000)
@@ -55,8 +56,7 @@ test('Täydennyspyyntö email', async ({
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
 
   await hakemustenArviointiPage.navigate(avustushakuID)
-
-  await Promise.all([page.waitForNavigation(), page.click(`text=${answers.projectName}`)])
+  await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
 
   const hakemusID = await hakemustenArviointiPage.getHakemusID()
 
@@ -67,23 +67,37 @@ test('Täydennyspyyntö email', async ({
 
   await hakemustenArviointiPage.clickToSendTäydennyspyyntö(avustushakuID, hakemusID)
 
-  expect(await page.textContent('#arviointi-tab .change-request-title')).toMatch(
+  await expect(page.locator('#arviointi-tab .change-request-title')).toHaveText(
     /\* Täydennyspyyntö lähetetty \d{1,2}\.\d{1,2}\.\d{4} \d{1,2}\.\d{1,2}/
   )
   // The quotes around täydennyspyyntö message are done with CSS :before
   // and :after pseudo elements and not shown in Node.textContent
-  expect(await page.textContent('#arviointi-tab .change-request-text')).toStrictEqual(
-    täydennyspyyntöText
-  )
+  await expect(page.locator('#arviointi-tab .change-request-text')).toHaveText(täydennyspyyntöText)
 
   const emails = await waitUntilMinEmails(getTäydennyspyyntöEmails, 1, hakemusID)
   expect(emails).toHaveLength(1)
   expect(emails[0]['to-address']).toHaveLength(1)
   expect(emails[0]['to-address']).toContain(answers.contactPersonEmail)
   expect(emails[0]['bcc']).toStrictEqual('santeri.horttanainen@reaktor.com')
-  expect(emails[0].formatted)
-    .toContain(`Pääset täydentämään avustushakemusta tästä linkistä: ${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=${userKey}&lang=fi
-Muokkaa vain pyydettyjä kohtia.`)
+  expect(emails[0].formatted).toEqual(
+    `Valtionavustus: ${avustushakuName}
+
+Täydennyspyyntö:
+"${täydennyspyyntöText}"
+
+Pääset täydentämään avustushakemusta tästä linkistä: ${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=${userKey}&lang=fi
+
+Muokkaa vain pyydettyjä kohtia.
+
+Lisätietoja voit kysyä sähköpostitse yhteyshenkilöltä santeri.horttanainen@reaktor.com
+
+Opetushallitus
+Hakaniemenranta 6
+PL 380, 00531 Helsinki
+puhelin 029 533 1000
+etunimi.sukunimi@oph.fi
+`
+  )
 })
 
 async function getLatestAcceptedPaatosEmailsForHakemus(hakemusID: number, nthSentEmail: number) {

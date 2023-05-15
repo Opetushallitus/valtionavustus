@@ -118,6 +118,7 @@
                                        :to [to]
                                        :avustushaku avustushaku-name
                                        :url url
+                                       :yhteyshenkilo presenting-officer-email
                                        :taydennyspyynto change-request})))
 
 (defn paatos-url [avustushaku-id user-key lang]
