@@ -3,6 +3,7 @@
             [compojure.api.sweet :as compojure-api]
             [oph.common.datetime :as datetime]
             [oph.soresu.common.db :refer [with-tx]]
+            [oph.soresu.common.config :refer [feature-enabled?]]
             [oph.soresu.form.formutil :as formutil]
             [oph.soresu.form.schema :as form-schema]
             [oph.va.hakija.api :as hakija-api]
@@ -250,16 +251,24 @@
                         hakemus-id (.toString (java.util.UUID/randomUUID)) (authentication/get-request-identity request))))
 
 (defn- post-change-request-email []
-  (compojure-api/POST "/:avustushaku-id/change-request-email" [avustushaku-id]
+  (compojure-api/POST "/:avustushaku-id/change-request-email" request
                       :path-params [avustushaku-id :- Long]
                       :body [change-request (compojure-api/describe virkailija-schema/ChangeRequestEmail "Change request")]
                       (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
                             avustushaku-name (-> avustushaku :content :name :fi)
-                            change-request (:text change-request)]
-                        (http/ok {:mail (email/mail-example
-                                    :change-request {:avustushaku avustushaku-name
-                                                     :change-request change-request
-                                                     :url "[linkki hakemukseen]"})}))))
+                            change-request (:text change-request)
+                            identity (authentication/get-request-identity request)
+                            presenting-officer-email (:email identity)]
+                           (if (feature-enabled? :uusi-taydennyspyynto-email)
+                             (http/ok {:mail (email/mail-example
+                                               :taydennyspyynto {:avustushaku avustushaku-name
+                                                                 :taydennyspyynto change-request
+                                                                 :yhteyshenkilo presenting-officer-email
+                                                                 :url "[linkki hakemukseen]"})})
+                              (http/ok {:mail (email/mail-example
+                                                :change-request {:avustushaku avustushaku-name
+                                                                 :change-request change-request
+                                                                 :url "[linkki hakemukseen]"})})))))
 
 (defn- get-avustushaku-export []
   (compojure-api/GET "/:haku-id/export.xslx" [haku-id]
@@ -561,7 +570,9 @@
                                   email (formutil/find-answer-value answers "primary-email")
                                   user-key (:user_key updated-hakemus)
                                   presenting-officer-email (:email identity)]
-                              (email/send-change-request-message! language email avustushaku-id hakemus-id avustushaku-name user-key status-comment presenting-officer-email)))
+                              (if (feature-enabled? :uusi-taydennyspyynto-email)
+                                    (email/send-taydennyspyynto-message! language email avustushaku-id hakemus-id avustushaku-name user-key status-comment presenting-officer-email)
+                                    (email/send-change-request-message! language email avustushaku-id hakemus-id avustushaku-name user-key status-comment presenting-officer-email))))
                           (if (= new-status "submitted")
                             (virkailija-db/update-submitted-hakemus-version (:id hakemus)))
                           (http/ok {:hakemus-id hakemus-id
