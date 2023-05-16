@@ -90,7 +90,7 @@
                          [clojurewerkz/quartzite "2.1.0"]
                          [com.cemerick/url "0.1.1"]
                          [commons-codec "1.15"]
-                         [commons-io "2.11.0"]
+                         [commons-io "2.12.0"]
                          [de.ubercode.clostache/clostache "1.4.0"]
                          [dk.ative/docjure "1.19.0"]
                          [funcool/cuerdas "2022.06.16-403"] ; 2.2.0 is absolutely mental and wants clojurescript, no thanks
