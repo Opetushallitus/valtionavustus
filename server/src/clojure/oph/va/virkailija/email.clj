@@ -103,7 +103,7 @@
                                        :url url
                                        :change-request change-request})))
 
-(defn send-taydennyspyynto-message! [lang to avustushaku-id hakemus-id avustushaku-name user-key change-request presenting-officer-email]
+(defn send-taydennyspyynto-message! [lang to cc avustushaku-id hakemus-id avustushaku-name user-key change-request presenting-officer-email]
   (let [lang-str (or (clojure.core/name lang) "fi")
         url (email/generate-url avustushaku-id lang lang-str user-key false)]
     (log/info "Url would be: " url)
@@ -113,6 +113,7 @@
                                        :hakemus-id hakemus-id
                                        :from (-> email/smtp-config :from lang)
                                        :bcc presenting-officer-email
+                                       :cc cc
                                        :sender (-> email/smtp-config :sender)
                                        :subject (get-in mail-titles [:change-request lang])
                                        :to [to]

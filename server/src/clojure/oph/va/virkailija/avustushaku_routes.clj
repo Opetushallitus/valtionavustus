@@ -547,6 +547,9 @@
                           (scoring/delete-score id index identity)
                           (http/ok ""))))
 
+(defn map-email-field-value [field]
+      (map :value (filter #(formutil/has-field-type? "vaEmailNotification" %) field)))
+
 (defn- post-hakemus-status []
   (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/status" request
                       :path-params [avustushaku-id :- Long, hakemus-id :- Long]
@@ -567,11 +570,15 @@
                                   answers (:answers submission)
                                   language (keyword (or (formutil/find-answer-value answers "language") "fi"))
                                   avustushaku-name (-> avustushaku :content :name language)
+                                  organisaatio-email (formutil/find-answer-value answers "organization-email")
+                                  allekirjoitusoikeudelliset (formutil/find-answer-value answers "signatories-fieldset")
                                   email (formutil/find-answer-value answers "primary-email")
                                   user-key (:user_key updated-hakemus)
-                                  presenting-officer-email (:email identity)]
+                                  presenting-officer-email (:email identity)
+                                  allekirjoitusomaavat (map #(map-email-field-value %) (map :value allekirjoitusoikeudelliset))
+                                  cc (vec (conj (flatten allekirjoitusomaavat) organisaatio-email))]
                               (if (feature-enabled? :uusi-taydennyspyynto-email)
-                                    (email/send-taydennyspyynto-message! language email avustushaku-id hakemus-id avustushaku-name user-key status-comment presenting-officer-email)
+                                    (email/send-taydennyspyynto-message! language email cc avustushaku-id hakemus-id avustushaku-name user-key status-comment presenting-officer-email)
                                     (email/send-change-request-message! language email avustushaku-id hakemus-id avustushaku-name user-key status-comment presenting-officer-email))))
                           (if (= new-status "submitted")
                             (virkailija-db/update-submitted-hakemus-version (:id hakemus)))

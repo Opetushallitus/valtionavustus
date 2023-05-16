@@ -79,7 +79,12 @@ test('Täydennyspyyntö email', async ({
   expect(emails[0]['to-address']).toHaveLength(1)
   expect(emails[0]['to-address']).toContain(answers.contactPersonEmail)
   expect(emails[0]['bcc']).toStrictEqual('santeri.horttanainen@reaktor.com')
-  expect(emails[0].cc).toStrictEqual([])
+  expect(emails[0].cc).toHaveLength(3)
+  expect(emails[0].cc).toStrictEqual([
+    'akaan.kaupunki@akaa.fi',
+    answers.signatories![0].email,
+    answers.signatories![1].email,
+  ])
   expect(emails[0].formatted).toEqual(
     `Valtionavustus: ${avustushakuName}
 
