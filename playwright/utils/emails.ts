@@ -7,6 +7,7 @@ export interface Email {
   formatted: string
   'to-address': string[]
   bcc: string | null
+  cc?: string[]
   subject?: string
   'reply-to'?: string
 }
@@ -24,6 +25,7 @@ export const emailSchema = yup
           .min(1, 'Empty to-address array')
           .defined(),
         bcc: yup.string().defined().nullable(),
+        cc: yup.array().of(yup.string().required()).optional(),
         subject: yup.string().optional(),
       })
       .required()

@@ -172,16 +172,16 @@
 
 (defn get-emails [hakemus-id email-type]
   (log/info (str "Fetching emails for hakemus with id: " hakemus-id))
-  (let [emails (query "SELECT formatted, to_address, bcc, subject, reply_to FROM virkailija.email
+  (let [emails (query "SELECT formatted, to_address, bcc, cc, subject, reply_to FROM virkailija.email
                        JOIN email_event ON (email.id = email_event.email_id)
                        WHERE hakemus_id = ? AND email_type = ?::email_type"
                       [hakemus-id email-type])]
-    (log/info (str "Succesfully fetched email for hakemus with hakemus-id: " hakemus-id))
+    (log/info (str "Succesfully fetched email for hakemus with hakemus-id: " hakemus-id emails))
     emails))
 
 (defn get-avustushaku-emails [avustushaku-id email-type]
   (log/info (str "Fetching emails for avustushaku with id: " avustushaku-id))
-  (let [emails (query "SELECT formatted, to_address, bcc, subject FROM virkailija.email
+  (let [emails (query "SELECT formatted, to_address, bcc, cc, subject FROM virkailija.email
                        JOIN email_event ON (email.id = email_event.email_id)
                        WHERE avustushaku_id = ? AND email_type = ?::virkailija.email_type"
                        [avustushaku-id email-type])]
@@ -189,7 +189,7 @@
     emails))
 
 (defn get-emails-by-type [type]
-  (query "SELECT formatted, to_address, bcc, subject FROM virkailija.email
+  (query "SELECT formatted, to_address, bcc, cc, subject FROM virkailija.email
           JOIN email_event ON (email.id = email_event.email_id)
           WHERE email_type = ?::virkailija.email_type
           ORDER BY virkailija.email.id"
@@ -197,7 +197,7 @@
 
 (defn get-emails-by-send-success [success?]
   (let [rows (query "SELECT * FROM (
-                       SELECT DISTINCT ON (e.id) e.formatted, e.to_address, e.bcc, e.subject, ee.success
+                       SELECT DISTINCT ON (e.id) e.formatted, e.to_address, e.bcc, e.cc, e.subject, ee.success
                        FROM virkailija.email e
                        JOIN email_event ee ON (e.id = ee.email_id)
                        ORDER BY e.id, ee.created_at DESC

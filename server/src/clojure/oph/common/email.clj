@@ -57,7 +57,7 @@
    (not-empty (name email-type))
    (not-empty (name lang))])
 
-(defn store-email [{:keys [to sender from subject email-type lang bcc reply-to attachment]}
+(defn store-email [{:keys [to sender from subject email-type lang bcc cc reply-to attachment]}
                    email-msg]
   {:pre (conj [(valid-message? {:from       from
                                 :sender     sender
@@ -70,6 +70,7 @@
         sender (common-string/trim-ws sender)
         to (mapv common-string/trim-ws to)
         bcc (trim-ws-or-nil bcc)
+        cc (mapv common-string/trim-ws cc)
         reply-to (trim-ws-or-nil reply-to)
         subject (common-string/trim-ws subject)]
     (log/info "Storing email: " (msg->description {:from       from
@@ -78,19 +79,20 @@
                                                    :subject    subject
                                                    :email-type email-type
                                                    :lang       lang}))
-    (let [result (query "INSERT INTO virkailija.email (formatted, from_address, sender, to_address, bcc, reply_to, subject, attachment_contents, attachment_title, attachment_description)
-                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id"
-                        [email-msg from sender to bcc reply-to subject (:contents attachment) (:title attachment) (:description attachment)])
+    (let [result (query "INSERT INTO virkailija.email (formatted, from_address, sender, to_address, bcc, cc, reply_to, subject, attachment_contents, attachment_title, attachment_description)
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id"
+                        [email-msg from sender to bcc cc reply-to subject (:contents attachment) (:title attachment) (:description attachment)])
           email_id (:id (first result))]
       (log/info (str "Succesfully stored email with id: " email_id))
       email_id)))
 
 
-(defn create-mail-send-fn [{:keys [from sender to bcc reply-to subject attachment email-type lang]} email-msg]
+(defn create-mail-send-fn [{:keys [from sender to bcc cc reply-to subject attachment email-type lang]} email-msg]
   (let [from (common-string/trim-ws from)
         sender (common-string/trim-ws sender)
         to (mapv common-string/trim-ws to)
         bcc (trim-ws-or-nil bcc)
+        cc (mapv common-string/trim-ws cc)
         reply-to (trim-ws-or-nil reply-to)
         subject (common-string/trim-ws subject)
         description (msg->description {:from       from
@@ -114,6 +116,8 @@
                                (.addReplyTo msg reply-to))
                              (when bcc
                                (.addBcc msg bcc))
+                             (doseq [address cc]
+                               (.addCc msg address))
                              (when attachment
                                (let [is (ByteArrayInputStream. (:contents attachment))
                                      ds (ByteArrayDataSource. is, "application/pdf")]
@@ -134,6 +138,7 @@
                                                    "smtp port: %s"
                                                    "to: %s"
                                                    "bcc: %s"
+                                                   "cc: %s"
                                                    "from: %s"
                                                    "reply-to: %s"
                                                    "bounce address: %s"
@@ -145,6 +150,7 @@
                                      (.getSmtpPort email-obj)
                                      (.getToAddresses email-obj)
                                      (.getBccAddresses email-obj)
+                                     (.getCcAddresses email-obj)
                                      (.getFromAddress email-obj)
                                      (.getReplyToAddresses email-obj)
                                      (.getBounceAddress email-obj)
@@ -164,7 +170,7 @@
       (log/error (.toString e))
       (log/error (str "Failed to store email event for email: " email-id)))))
 
-(defn try-send-msg [{:keys [to from sender subject bcc email-type reply-to attachment hakemus-id avustushaku-id muutoshakemus-id lang]}
+(defn try-send-msg [{:keys [to from sender subject bcc cc email-type reply-to attachment hakemus-id avustushaku-id muutoshakemus-id lang]}
                     body
                     email-id]
   {:pre (valid-message? {:from       from
@@ -181,6 +187,7 @@
                  :from       from
                  :sender     sender
                  :bcc        bcc
+                 :cc         cc
                  :reply-to   reply-to
                  :subject    subject
                  :attachment attachment
