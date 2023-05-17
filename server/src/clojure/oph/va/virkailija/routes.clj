@@ -203,7 +203,7 @@
                        ORDER BY e.id, ee.created_at DESC
                      ) AS r
                      WHERE r.success = ?" [success?])]
-    (map (fn [row] (select-keys row [:formatted :to-address :bcc :subject])) rows)))
+    (map (fn [row] (select-keys row [:formatted :to-address :bcc :cc :subject])) rows)))
 
 (defn get-emails-that-failed-to-be-sent []
   (get-emails-by-send-success false))
