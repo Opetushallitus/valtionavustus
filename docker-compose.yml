@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.9'
 
 name: valtionavustus
 
@@ -20,6 +20,7 @@ services:
         condition: service_started
     healthcheck:
       test: ["CMD-SHELL", "curl http://localhost:8081/api/healthcheck"]
+      start_period: 30s
 
   hakija:
     extends:
