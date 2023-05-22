@@ -127,7 +127,6 @@
 (defn non-localized-liite-row [liite lang]
   (if-some [liite-id (:id liite)]
     (let [liite-version (:version liite)
-          lang-str (name lang)
           link (str "/liitteet/" liite-id liite-version ".pdf")
           liite-name (get-in liite [:langs lang])]
       (html
@@ -171,13 +170,15 @@
 (defn selvitysvelvollisuus-section [{:keys [valiselvitysdate loppuselvitysdate decision translate language]}]
   (if (feature-enabled? :grant-reporting-deadline)
     (let [formatted-date-or-empty (fn [date key] (if date [:p (translate key) " " (format-date date)] ""))
-          valiselvitysdate (formatted-date-or-empty valiselvitysdate :valiselvitys-viimeistaan)
-          loppuselvitysdate (formatted-date-or-empty loppuselvitysdate :loppuselvitys-viimeistaan)
+          formatted-valiselvitysdate (formatted-date-or-empty valiselvitysdate :valiselvitys-viimeistaan)
+          formatted-loppuselvitysdate (formatted-date-or-empty loppuselvitysdate :loppuselvitys-viimeistaan)
           selvitysvelvollisuus-freeform-text (get-in decision [:selvitysvelvollisuus language])
-          content [:span valiselvitysdate loppuselvitysdate
+          content [:span formatted-valiselvitysdate formatted-loppuselvitysdate
                    (when (not (empty? selvitysvelvollisuus-freeform-text))
                      [:p selvitysvelvollisuus-freeform-text])]]
-      (section :selvitysvelvollisuus content translate false))
+      (if (or valiselvitysdate loppuselvitysdate (not (empty? selvitysvelvollisuus-freeform-text)))
+        (section :selvitysvelvollisuus content translate false)
+        ""))
     (optional-section decision :selvitysvelvollisuus :selvitysvelvollisuus translate language)))
 
 (defn paatos-html [hakemus-id]
