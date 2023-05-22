@@ -15,5 +15,4 @@
          :port 25}
  :applications-ui {:enabled? true}
  :officer-edit-jwt-secret "playwright-test-secret"
- :grant-reporting-deadline {:enabled? true}
  }

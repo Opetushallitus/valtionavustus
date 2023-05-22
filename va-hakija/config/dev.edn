@@ -13,5 +13,4 @@
          :host "fakesmtp"
          :port 25}
  :applications-ui {:enabled? true}
- :grant-reporting-deadline {:enabled? true}
  }

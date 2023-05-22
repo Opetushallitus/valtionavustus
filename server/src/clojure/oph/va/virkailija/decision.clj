@@ -168,18 +168,16 @@
     (section :valtionavustuksen-kayttoaika content translate false)))
 
 (defn selvitysvelvollisuus-section [{:keys [valiselvitysdate loppuselvitysdate decision translate language]}]
-  (if (feature-enabled? :grant-reporting-deadline)
-    (let [formatted-date-or-empty (fn [date key] (if date [:p (translate key) " " (format-date date)] ""))
-          formatted-valiselvitysdate (formatted-date-or-empty valiselvitysdate :valiselvitys-viimeistaan)
-          formatted-loppuselvitysdate (formatted-date-or-empty loppuselvitysdate :loppuselvitys-viimeistaan)
-          selvitysvelvollisuus-freeform-text (get-in decision [:selvitysvelvollisuus language])
-          content [:span formatted-valiselvitysdate formatted-loppuselvitysdate
-                   (when (not (empty? selvitysvelvollisuus-freeform-text))
-                     [:p selvitysvelvollisuus-freeform-text])]]
-      (if (or valiselvitysdate loppuselvitysdate (not (empty? selvitysvelvollisuus-freeform-text)))
-        (section :selvitysvelvollisuus content translate false)
-        ""))
-    (optional-section decision :selvitysvelvollisuus :selvitysvelvollisuus translate language)))
+  (let [formatted-date-or-empty (fn [date key] (if date [:p (translate key) " " (format-date date)] ""))
+        formatted-valiselvitysdate (formatted-date-or-empty valiselvitysdate :valiselvitys-viimeistaan)
+        formatted-loppuselvitysdate (formatted-date-or-empty loppuselvitysdate :loppuselvitys-viimeistaan)
+        selvitysvelvollisuus-freeform-text (get-in decision [:selvitysvelvollisuus language])
+        content [:span formatted-valiselvitysdate formatted-loppuselvitysdate
+                  (when (not (empty? selvitysvelvollisuus-freeform-text))
+                    [:p selvitysvelvollisuus-freeform-text])]]
+    (if (or valiselvitysdate loppuselvitysdate (not (empty? selvitysvelvollisuus-freeform-text)))
+      (section :selvitysvelvollisuus content translate false)
+      "")))
 
 (defn paatos-html [hakemus-id]
   (let [haku-data (hakudata/get-combined-paatos-data hakemus-id)
