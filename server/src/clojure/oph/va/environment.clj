@@ -19,8 +19,7 @@
          :notice (get-notice)
          :application-change {:refuse-enabled? true}
          :multibatch-payments (:multibatch-payments config)
-         :dont-send-loppuselvityspyynto-to-virkailija (:dont-send-loppuselvityspyynto-to-virkailija config)
-         :selvitys-limit (:selvitys-limit config)}
+         :dont-send-loppuselvityspyynto-to-virkailija (:dont-send-loppuselvityspyynto-to-virkailija config)}
         opintopolku (:opintopolku config)]
     (if-let [opintopolku-url (:url opintopolku)]
       (assoc common-environment :opintopolku {:url opintopolku-url

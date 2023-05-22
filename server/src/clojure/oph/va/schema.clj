@@ -61,8 +61,7 @@
    (s/optional-key :application-change)
    (s/maybe {(s/optional-key :refuse-enabled?) s/Bool})
    (s/optional-key :multibatch-payments) (s/maybe {:enabled? s/Bool})
-   (s/optional-key :dont-send-loppuselvityspyynto-to-virkailija) (s/maybe {:enabled? s/Bool})
-   (s/optional-key :selvitys-limit) (s/maybe {:enabled? s/Bool})})
+   (s/optional-key :dont-send-loppuselvityspyynto-to-virkailija) (s/maybe {:enabled? s/Bool})})
 
 
 (s/defschema HakuType
