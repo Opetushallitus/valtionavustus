@@ -43,4 +43,5 @@
  :integration-healthcheck {:enabled? true
                            :timeout 5000
                            :interval-minutes 15}
+ :uusi-taydennyspyynto-email {:enabled? true}
 }
