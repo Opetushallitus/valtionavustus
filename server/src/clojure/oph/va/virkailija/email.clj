@@ -14,9 +14,7 @@
             [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]))
 
 (def mail-titles
-  {:change-request {:fi "Täydennyspyyntö avustushakemukseesi"
-                    :sv "Begäran om komplettering av ansökan"}
-   :taydennyspyynto {:fi "Täydennyspyyntö avustushakemukseesi"
+  {:taydennyspyynto {:fi "Täydennyspyyntö avustushakemukseesi"
                      :sv "Begäran om komplettering av ansökan"}
    :paatos {:fi "Automaattinen viesti: organisaationne avustushakemus on käsitelty - Linkki päätösasiakirjaan"
             :sv "Automatiskt meddelande: Er ansökan om understöd har behandlats – Länk till beslutet"}
@@ -40,9 +38,7 @@
     :sv "Automatiskt meddelande - Statsunderstöd '%s' betald"}})
 
 (def mail-templates
-  {:change-request {:fi (email/load-template "email-templates/change-request.plain.fi")
-                    :sv (email/load-template "email-templates/change-request.plain.sv")}
-   :taydennyspyynto {:fi (email/load-template "email-templates/taydennyspyynto.plain.fi")
+  {:taydennyspyynto {:fi (email/load-template "email-templates/taydennyspyynto.plain.fi")
                      :sv (email/load-template "email-templates/taydennyspyynto.plain.sv")}
    :paatos {:fi (email/load-template "email-templates/paatos.plain.fi")
             :sv (email/load-template "email-templates/paatos.plain.sv")}
@@ -86,24 +82,7 @@
 (defn stop-background-job-send-mails []
   (email/stop-background-job-send-mails))
 
-(defn send-change-request-message! [lang to avustushaku-id hakemus-id avustushaku-name user-key change-request presenting-officer-email]
-  (let [lang-str (or (clojure.core/name lang) "fi")
-        url (email/generate-url avustushaku-id lang lang-str user-key false)]
-    (log/info "Url would be: " url)
-    (email/enqueue-message-to-be-send {:operation :send
-                                       :email-type :change-request
-                                       :lang lang
-                                       :hakemus-id hakemus-id
-                                       :from (-> email/smtp-config :from lang)
-                                       :bcc presenting-officer-email
-                                       :sender (-> email/smtp-config :sender)
-                                       :subject (get-in mail-titles [:change-request lang])
-                                       :to [to]
-                                       :avustushaku avustushaku-name
-                                       :url url
-                                       :change-request change-request})))
-
-(defn send-taydennyspyynto-message! [lang to cc avustushaku-id hakemus-id avustushaku-name user-key change-request presenting-officer-email]
+(defn send-taydennyspyynto-message! [lang to cc avustushaku-id hakemus-id avustushaku-name user-key taydennyspyynto presenting-officer-email]
   (let [lang-str (or (clojure.core/name lang) "fi")
         url (email/generate-url avustushaku-id lang lang-str user-key false)]
     (log/info "Url would be: " url)
@@ -115,12 +94,12 @@
                                        :bcc presenting-officer-email
                                        :cc cc
                                        :sender (-> email/smtp-config :sender)
-                                       :subject (get-in mail-titles [:change-request lang])
+                                       :subject (get-in mail-titles [:taydennyspyynto lang])
                                        :to [to]
                                        :avustushaku avustushaku-name
                                        :url url
                                        :yhteyshenkilo presenting-officer-email
-                                       :taydennyspyynto change-request})))
+                                       :taydennyspyynto taydennyspyynto})))
 
 (defn paatos-url [avustushaku-id user-key lang]
   (let [va-url (-> config :server :url lang)]
