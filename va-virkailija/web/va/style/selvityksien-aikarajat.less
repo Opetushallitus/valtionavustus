@@ -6,16 +6,12 @@ div.selvityksien-aikarajat {
     .aikaraja-input {
       grid-area: input;
     }
-    .aikaraja-help-text {
-      grid-area: help-text;
-    }
 
     div.date-input-container {
       display: grid;
       grid-template-columns: 1fr 3fr;
-      grid-template-areas: "label input"
-                           "help-text help-text";
- 
+      grid-template-areas: "label input";
+
       align-items: center;
 
       &:not(:first-of-type) {

@@ -52,9 +52,6 @@ export const SelvityksienAikarajat = (props: KayttoaikaProps) => {
             disabled={props.disabled}
           />
         </div>
-        <div className="aikaraja-help-text">
-          Väliselvitys avautuu täytettäväksi kun väliselvityspyyntö on lähetetty
-        </div>
       </div>
 
       <h4 data-test-id="loppuselvitys">
