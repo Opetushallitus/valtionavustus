@@ -259,16 +259,11 @@
                             change-request (:text change-request)
                             identity (authentication/get-request-identity request)
                             presenting-officer-email (:email identity)]
-                           (if (feature-enabled? :uusi-taydennyspyynto-email)
-                             (http/ok {:mail (email/mail-example
-                                               :taydennyspyynto {:avustushaku avustushaku-name
-                                                                 :taydennyspyynto change-request
-                                                                 :yhteyshenkilo presenting-officer-email
-                                                                 :url "[linkki hakemukseen]"})})
-                              (http/ok {:mail (email/mail-example
-                                                :change-request {:avustushaku avustushaku-name
-                                                                 :change-request change-request
-                                                                 :url "[linkki hakemukseen]"})})))))
+                           (http/ok {:mail (email/mail-example
+                                     :taydennyspyynto {:avustushaku avustushaku-name
+                                                       :taydennyspyynto change-request
+                                                       :yhteyshenkilo presenting-officer-email
+                                                       :url "[linkki hakemukseen]"})}))))
 
 (defn- get-avustushaku-export []
   (compojure-api/GET "/:haku-id/export.xslx" [haku-id]
@@ -577,9 +572,7 @@
                                   presenting-officer-email (:email identity)
                                   allekirjoitusomaavat (map #(map-email-field-value %) (map :value allekirjoitusoikeudelliset))
                                   cc (vec (conj (flatten allekirjoitusomaavat) organisaatio-email))]
-                              (if (feature-enabled? :uusi-taydennyspyynto-email)
-                                    (email/send-taydennyspyynto-message! language email cc avustushaku-id hakemus-id avustushaku-name user-key status-comment presenting-officer-email)
-                                    (email/send-change-request-message! language email avustushaku-id hakemus-id avustushaku-name user-key status-comment presenting-officer-email))))
+                                 (email/send-taydennyspyynto-message! language email cc avustushaku-id hakemus-id avustushaku-name user-key status-comment presenting-officer-email)))
                           (if (= new-status "submitted")
                             (virkailija-db/update-submitted-hakemus-version (:id hakemus)))
                           (http/ok {:hakemus-id hakemus-id
