@@ -75,7 +75,7 @@ test('help texts', async ({ page, avustushakuID, submittedHakemus, answers }) =>
       [
         'Selvitysvelvollisuus',
         '[data-test-id="selvitysvelvollisuus"] label div',
-        'Kuvataan selvitysvelvollisuus ja mahdollisen väliselvityksen sekä loppuselvityksen aikataulutus. Informoidaan avustuksen saajaan siitä, miten ja milloin selvityslomakkeet avustuksen saajille toimitetaan. Voidaan lisäksi tarkentaa selvitykseen ja kirjanpitoon liittyviä ehtoja',
+        'Tässä kentässä kuvataan vapaamuotoisesti selvitysvelvollisuuteen liittyviä ehtoja, kuten velvollisuus pitää yhteyshenkilön tiedot ajan tasalla, velvollisuus hakea lupa hankesuunnitelman muutoksille tai velvollisuus kuvata hankkeessa syntyneitä tuloksia Opetushallituksen osoittamalla tavalla. Muodollisten selvitysten määräajat valitaan alla olevissa "Väli-/loppuselvitys toimitettava viimeistään" -kentissä, eikä määräaikoja näin ollen kirjoiteta tähän tekstikenttään.',
       ],
       [
         'Päätöksen hyväksyminen',
@@ -100,12 +100,12 @@ test('help texts', async ({ page, avustushakuID, submittedHakemus, answers }) =>
       [
         'Väliselvitys',
         '[data-test-id="valiselvitys"] div',
-        'Kirjataan päivämäärä (muodossa xx.x.xxxx), jolloin väliselvitys on viimeistään toimitettava OPH:n valtionavustusjärjestelmään. Yleensä väliselvitysten viimeinen toimituspäivämäärä noin hankekauden puolivälissä. Suositellaan käyttämään valitun kuukauden viimeistä päivää. Kirjattu päivämäärä siirtyy automaattisesti Väliselvitys-välilehdelle sekä Väliselvitys-välilehdeltä lähetettävän väliselvityspyynnön sähköpostiviestiin',
+        'Kirjataan päivämäärä (muodossa xx.x.xxxx), jolloin väliselvitys on viimeistään toimitettava OPH:n valtionavustusjärjestelmään. Yleensä väliselvitysten viimeinen toimituspäivämäärä noin hankekauden puolivälissä. Suositellaan käyttämään valitun kuukauden viimeistä päivää. Kirjattu päivämäärä siirtyy automaattisesti hakijalle lähtevän päätöksen selvitysvelvollisuus-kappaleen alkuun (kts. Päätös: Luonnos Arviointi-välilehdeltä), Väliselvitys-välilehdelle ja Väliselvitys-välilehdeltä lähetettävän väliselvityspyynnön sähköpostiviestiin.',
       ],
       [
         'Loppuselvitys',
         '[data-test-id="loppuselvitys"] div',
-        'Kirjataan päivämäärä (muodossa xx.x.xxxx), jolloin loppuselvitys on viimeistään toimitettava OPH:n valtionavustusjärjestelmään. Loppuselvitysten viimeinen toimituspäivämäärä on kaksi kuukautta avustuksen käyttöajan päättymisestä. Kirjattu päivämäärä siirtyy automaattisesti Loppuselvitys-välilehdelle sekä Loppuselvitys-välilehdeltä lähetettävän loppuselvityspyynnön sähköpostiviestiin',
+        'Kirjataan päivämäärä (muodossa xx.x.xxxx), jolloin loppuselvitys on viimeistään toimitettava OPH:n valtionavustusjärjestelmään. Loppuselvitysten viimeinen toimituspäivämäärä on kaksi kuukautta avustuksen käyttöajan päättymisestä. Kirjattu päivämäärä siirtyy automaattisesti hakijalle lähtevän päätöksen selvitysvelvollisuus-kappaleen alkuun (kts. Päätös: Luonnos Arviointi-välilehdeltä), Loppuselvitys-välilehdelle ja Loppuselvitys-välilehdeltä lähetettävän loppuselvityspyynnön sähköpostiviestiin.',
       ],
       [
         'Päätöksen liitteet',
