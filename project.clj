@@ -138,7 +138,7 @@
                  [compojure]
                  [metosin/compojure-api]
                  [com.github.java-json-tools/jackson-coreutils "2.0"  :exclusions [com.google.code.findbugs/jsr305]]
-                 [com.google.guava/guava "31.1-jre" ]
+                 [com.google.guava/guava "32.0.0-jre" ]
                  [cheshire]
                  [prismatic/schema]
                  [org.postgresql/postgresql]
