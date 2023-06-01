@@ -48,24 +48,27 @@
             subject)))
 
 (defn- valid-message? [{:keys [to sender from subject email-type lang]}]
-  [(coll? to)
+  (and (coll? to)
    (not (empty? to))
    (not-any? empty? to)
    (not-empty sender)
    (not-empty from)
    (not-empty subject)
    (not-empty (name email-type))
-   (not-empty (name lang))])
+   (not-empty (name lang))))
 
 (defn store-email [{:keys [to sender from subject email-type lang bcc cc reply-to attachment]}
                    email-msg]
-  {:pre (conj [(valid-message? {:from       from
-                                :sender     sender
-                                :to         to
-                                :subject    subject
-                                :email-type email-type
-                                :lang       lang})]
-              (not-empty email-msg))}
+
+  (when (not (and (valid-message? {:from       from
+                                   :sender     sender
+                                   :to         to
+                                   :subject    subject
+                                   :email-type email-type
+                                   :lang       lang})
+                  (not-empty email-msg)))
+    ((log/info "Failed to store invalid email")
+     (throw (Exception. "Failed to store invalid email"))))
   (let [from (common-string/trim-ws from)
         sender (common-string/trim-ws sender)
         to (mapv common-string/trim-ws to)
@@ -173,17 +176,21 @@
 (defn try-send-msg [{:keys [to from sender subject bcc cc email-type reply-to attachment hakemus-id avustushaku-id muutoshakemus-id lang]}
                     body
                     email-id]
-  {:pre (valid-message? {:from       from
-                         :sender     sender
-                         :to         to
-                         :subject    subject
-                         :email-type email-type
-                         :lang       lang})}
   (let [email-event {:email-type       email-type
                      :hakemus-id       hakemus-id
                      :avustushaku-id   avustushaku-id
-                     :muutoshakemus-id muutoshakemus-id}
-        message {:to         to
+                     :muutoshakemus-id muutoshakemus-id}]
+  (when (not (valid-message? {:from       from
+                              :sender     sender
+                              :to         to
+                              :subject    subject
+                              :email-type email-type
+                              :lang       lang}))
+    ((log/info (format "Failed to send invalid email with id: %s" email-id))
+     (create-email-event email-id false email-event)
+     (throw (Exception.
+             (format "Failed to send invalid email with id: %s" email-id)))))
+  (let [message {:to         to
                  :from       from
                  :sender     sender
                  :bcc        bcc
@@ -200,7 +207,7 @@
       (catch Exception e
         (log/info e (format "Failed to send message: %s" (.getMessage e)))
         (create-email-event email-id false email-event)
-        (throw e)))))
+        (throw e))))))
 
 (defn try-send-msg-once
   ([msg format-plaintext-message]
