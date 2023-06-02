@@ -89,13 +89,15 @@
       (log/info (str "Succesfully stored email with id: " email_id))
       email_id)))
 
+(defn- filter-blank-addresses [addresses]
+  (filter (comp not string/blank?) addresses))
 
 (defn create-mail-send-fn [{:keys [from sender to bcc cc reply-to subject attachment email-type lang]} email-msg]
   (let [from (common-string/trim-ws from)
         sender (common-string/trim-ws sender)
-        to (mapv common-string/trim-ws to)
+        to (filter-blank-addresses (mapv common-string/trim-ws to))
         bcc (trim-ws-or-nil bcc)
-        cc (mapv common-string/trim-ws cc)
+        cc (filter-blank-addresses (mapv common-string/trim-ws cc))
         reply-to (trim-ws-or-nil reply-to)
         subject (common-string/trim-ws subject)
         description (msg->description {:from       from
